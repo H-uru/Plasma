@@ -43,6 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plTriUtils_inc
 #define plTriUtils_inc
 
+struct hsPoint3;
+struct hsVector3;
+
 class plTriUtils
 {
 public:

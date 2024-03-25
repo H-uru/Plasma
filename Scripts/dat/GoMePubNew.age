@@ -1,0 +1,14 @@
+StartDateTime=0672211080
+DayLength=24.000000
+MaxCapacity=50
+LingerTime=180
+SequencePrefix=1234
+ReleaseVersion=0
+Page=StoreRoom,1
+Page=GoMePub,2
+Page=Alcoves,3
+Page=GoMeConfRoom,4
+Page=Entry,5
+Page=Holidays,6
+Page=gmpnCones,7
+Page=Mysterium,8

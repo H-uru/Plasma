@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define pyCluster_h
 
 #include "pnKeyedObject/plKey.h"
-#include "pyGlueHelpers.h"
+
+#include "pyGlueDefinitions.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -51,13 +52,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+class pyKey;
+
 class pyCluster
 {
 private:
     plKey fClusterKey;
 
 protected:
-    pyCluster(): fClusterKey(nil) {} // for python glue only, do NOT call
+    pyCluster() = default; // for python glue only, do NOT call
     pyCluster(plKey key);
     pyCluster(pyKey& key);
 

@@ -62,10 +62,10 @@ public:
         kNumProps // last
     };
     
-    virtual int32_t GetNumProperties() const { return kNumProps; }    
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    int32_t GetNumProperties() const override { return kNumProps; }
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override { }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, float &angularResult, float elapsed);
 
@@ -83,11 +83,11 @@ public:
     CLASSNAME_REGISTER( plSwimCircularCurrentRegion );
     GETINTERFACE_ANY( plSwimCircularCurrentRegion, plSwimRegionInterface );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, float &angularResult, float elapsed);    
-    virtual bool MsgReceive(plMessage* msg);
+    void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, float &angularResult, float elapsed) override;
+    bool MsgReceive(plMessage* msg) override;
     
     float fRotation;
     float fPullNearDistSq;
@@ -108,11 +108,11 @@ public:
     CLASSNAME_REGISTER( plSwimStraightCurrentRegion );
     GETINTERFACE_ANY( plSwimStraightCurrentRegion, plSwimRegionInterface );
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
     
-    virtual void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, float &angularResult, float elapsed);    
-    virtual bool MsgReceive(plMessage* msg);
+    void GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, float &angularResult, float elapsed) override;
+    bool MsgReceive(plMessage* msg) override;
     
     float fNearDist;
     float fNearVel;

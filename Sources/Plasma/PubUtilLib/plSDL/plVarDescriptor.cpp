@@ -39,12 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsStream.h"
+
 #include "plSDL.h"
 
+#include "hsStream.h"
+
 #include "pnKeyedObject/plUoid.h"
-#include "pnNetCommon/plNetApp.h"
 #include "pnMessage/plMessage.h"
+#include "pnNetCommon/plNetApp.h"
 
 #include "plUnifiedTime/plUnifiedTime.h"
 
@@ -57,69 +59,69 @@ const uint8_t plVarDescriptor::kVersion=3;        // for Read/Write format
 //
 // Set type from a string.  Return false on err.
 //
-bool plVarDescriptor::SetType(const plString& type)
+bool plVarDescriptor::SetType(const ST::string& type)
 {
-    if (type.IsNull())
+    if (type.empty())
         return false;
 
-    if (!type.CompareI("vector3"))
+    if (!type.compare_i("vector3"))
         fType=kVector3;
     else
-    if (!type.CompareI("point3"))
+    if (!type.compare_i("point3"))
         fType=kPoint3;
     else
-    if (!type.CompareI("rgb"))
+    if (!type.compare_i("rgb"))
         fType=kRGB;
     else
-    if (!type.CompareI("rgba"))
+    if (!type.compare_i("rgba"))
         fType=kRGBA;
     else
-    if (!type.CompareI("rgb8"))
+    if (!type.compare_i("rgb8"))
         fType=kRGB8;
     else
-    if (!type.CompareI("rgba8"))
+    if (!type.compare_i("rgba8"))
         fType=kRGBA8;
     else
-    if (!type.CompareNI("quat", 4))
+    if (!type.compare_ni("quat", 4))
         fType=kQuaternion;
     else
-    if (!type.CompareI("rgba"))
+    if (!type.compare_i("rgba"))
         fType=kRGBA;
     else
-    if (!type.CompareI("int"))
+    if (!type.compare_i("int"))
         fType=kInt;
     else
-    if (!type.CompareI("byte"))
+    if (!type.compare_i("byte"))
         fType=kByte;
     else
-    if (!type.CompareI("short"))
+    if (!type.compare_i("short"))
         fType=kShort;
     else
-    if (!type.CompareI("float"))
+    if (!type.compare_i("float"))
         fType=kFloat;
     else
-    if (!type.CompareI("double"))
+    if (!type.compare_i("double"))
         fType=kDouble;
     else
-    if (!type.CompareI("time"))
+    if (!type.compare_i("time"))
         fType=kTime;
     else
-    if (!type.CompareI("ageTimeOfDay"))
+    if (!type.compare_i("ageTimeOfDay"))
         fType=kAgeTimeOfDay;
     else
-    if (!type.CompareI("bool"))
+    if (!type.compare_i("bool"))
         fType=kBool;
     else
-    if (!type.CompareI("string32"))
+    if (!type.compare_i("string32"))
         fType=kString32;
     else
-    if (!type.CompareI("plKey"))
+    if (!type.compare_i("plKey"))
         fType=kKey;
     else
-    if (!type.CompareI("message") || !type.CompareI("creatable") )
+    if (!type.compare_i("message") || !type.compare_i("creatable") )
         fType=kCreatable;
     else
-    if (type.CharAt(0)=='$')
+    if (type.front() == '$')
         fType=kStateDescriptor;
     else
         return false;   // err
@@ -147,12 +149,11 @@ void plVarDescriptor::CopyFrom(const plVarDescriptor* other)
 //
 bool plVarDescriptor::Read(hsStream* s) 
 {
-    uint8_t version;
-    s->ReadLE(&version);
+    uint8_t version = s->ReadByte();
     if (version != kVersion)
     {
         if (plSDLMgr::GetInstance()->GetNetApp())
-            plSDLMgr::GetInstance()->GetNetApp()->WarningMsg("SDL VarDescriptor version mismatch, read %d, should be %d - ignoring",
+            plSDLMgr::GetInstance()->GetNetApp()->WarningMsg("SDL VarDescriptor version mismatch, read {}, should be {} - ignoring",
             version, kVersion);
         return false;
     }
@@ -176,7 +177,7 @@ bool plVarDescriptor::Read(hsStream* s)
 //
 void plVarDescriptor::Write(hsStream* s) const
 {
-    s->WriteLE(kVersion);
+    s->WriteByte(kVersion);
     s->WriteSafeString(fName);
     plMsgStdStringHelper::Poke(fDisplayOptions, s);
     s->WriteLE32(fCount);
@@ -236,84 +237,84 @@ int plSimpleVarDescriptor::GetSize() const
 // Set type from a string.  Return false on err.
 // Sets atomicCount and atomicType
 //
-bool plSimpleVarDescriptor::SetType(const plString& type)
+bool plSimpleVarDescriptor::SetType(const ST::string& type)
 {
     if (!plVarDescriptor::SetType(type))
         return false;
 
-    if (!type.CompareI("vector3"))
+    if (!type.compare_i("vector3"))
     {
         fAtomicCount = 3;
         fAtomicType=kFloat;
     }
     else
-    if (!type.CompareI("point3"))
+    if (!type.compare_i("point3"))
     {
         fAtomicCount = 3;
         fAtomicType=kFloat;
     }
     else
-    if (!type.CompareI("rgb"))
+    if (!type.compare_i("rgb"))
     {
         fAtomicCount = 3;
         fAtomicType=kFloat;
     }
     else
-    if (!type.CompareI("rgba"))
+    if (!type.compare_i("rgba"))
     {
         fAtomicCount = 4;
         fAtomicType=kFloat;
     }
     else
-    if (!type.CompareI("rgb8"))
+    if (!type.compare_i("rgb8"))
     {
         fAtomicCount = 3;
         fAtomicType=kByte;
     }
     else
-    if (!type.CompareI("rgba8"))
+    if (!type.compare_i("rgba8"))
     {
         fAtomicCount = 4;
         fAtomicType=kByte;
     }
     else
-    if (!type.CompareNI("quat", 4))
+    if (!type.compare_ni("quat", 4))
     {
         fAtomicCount = 4;
         fAtomicType=kFloat;
     }
     else
-    if (!type.CompareI("int"))
+    if (!type.compare_i("int"))
         fAtomicType=kInt;
     else
-    if (!type.CompareI("byte"))
+    if (!type.compare_i("byte"))
         fAtomicType=kByte;
     else
-    if (!type.CompareI("short"))
+    if (!type.compare_i("short"))
         fAtomicType=kShort;
     else
-    if (!type.CompareI("float"))
+    if (!type.compare_i("float"))
         fAtomicType=kFloat;
     else
-    if (!type.CompareI("double"))
+    if (!type.compare_i("double"))
         fAtomicType=kDouble;
     else
-    if (!type.CompareI("time"))
+    if (!type.compare_i("time"))
         fAtomicType=kTime;
     else
-    if (!type.CompareI("ageTimeOfDay"))
+    if (!type.compare_i("ageTimeOfDay"))
         fAtomicType=kAgeTimeOfDay;
     else
-    if (!type.CompareI("bool"))
+    if (!type.compare_i("bool"))
         fAtomicType=kBool;
     else
-    if (!type.CompareI("string32"))
+    if (!type.compare_i("string32"))
         fAtomicType=kString32;
     else
-    if (!type.CompareI("plKey"))
+    if (!type.compare_i("plKey"))
         fAtomicType=kKey;
     else
-    if (!type.CompareI("message") || !type.CompareI("creatable"))
+    if (!type.compare_i("message") || !type.compare_i("creatable"))
         fAtomicType=kCreatable;
     else
         return false;   // err
@@ -372,10 +373,10 @@ bool plSDVarDescriptor::Read(hsStream* s)
     if (!plVarDescriptor::Read(s))
         return false;
 
-    plString sdName=s->ReadSafeString();
+    ST::string sdName=s->ReadSafeString();
     uint16_t version = s->ReadLE16();
     plStateDescriptor* sd=plSDLMgr::GetInstance()->FindDescriptor(sdName, version);
-    hsAssert(sd, plFormat("Failed to find sdl descriptor: {},{}. Missing legacy descriptor?", sdName, version).c_str());
+    hsAssert(sd, ST::format("Failed to find sdl descriptor: {},{}. Missing legacy descriptor?", sdName, version).c_str());
     SetStateDesc(sd);
     return true;
 }
@@ -389,5 +390,5 @@ void plSDVarDescriptor::Write(hsStream* s) const
 
     s->WriteSafeString(GetStateDescriptor()->GetName());
     uint16_t version=GetStateDescriptor()->GetVersion();
-    s->WriteLE(version);
+    s->WriteLE16(version);
 }

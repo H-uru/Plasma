@@ -47,10 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "MaxMain/plMaxNode.h"
+#include "MaxMain/MaxAPI.h"
 
-#include <iparamm2.h>
 #include "resource.h"
-#pragma hdrstop
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 #include "plPickNode.h"
@@ -142,14 +141,14 @@ public:
     
     plFootPrintComponent();
     virtual ~plFootPrintComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
 
     static plDynaDecalMgr* GetDecalMgr(INode* node);
@@ -162,14 +161,12 @@ CLASS_DESC(plFootPrintComponent, gFootPrintCompDesc, "Foot Print",  "FootPrint",
 class plWetProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
         case WM_INITDIALOG:
-            {
-            }
-            return true;
+            return TRUE;
 
         case WM_COMMAND:
             if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_ADD_NOTIFY)
@@ -199,9 +196,9 @@ public:
             break;
         }
 
-        return false;
+        return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plWetProc gWetProc;
 
@@ -219,76 +216,76 @@ ParamBlockDesc2 gFootPrintBk
         p_range, 25.0, 400.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_WIDTH, IDC_COMP_FP_WIDTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLength, _T("Length"), TYPE_FLOAT,    0, 0,   
         p_default, 100.0,
         p_range, 25.0, 400.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_LENGTH, IDC_COMP_FP_LENGTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeOut, _T("FadeOut"), TYPE_FLOAT,  0, 0,   
 //      p_default, 10.0,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_FADEOUT, IDC_COMP_FP_FADEOUT_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLifeSpan, _T("LifeSpan"), TYPE_FLOAT,    0, 0,   
         p_default, 30.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_LIFESPAN2, IDC_COMP_FP_LIFESPAN_SPIN2, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeIn, _T("FadeIn"), TYPE_FLOAT,    0, 0,   
 //      p_default, 0.1,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_RAMPEND, IDC_COMP_FP_RAMPEND_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLayer,   _T("Layer"),    TYPE_TEXMAP, 0, 0,
         p_ui, TYPE_TEXMAPBUTTON, IDC_COMP_FP_TEXMAP,
-        end,
+        p_end,
 
     plFootPrintComponent::kBlend, _T("Blend"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_RADIO_ALPHA, IDC_RADIO_MADD, IDC_RADIO_ADD, IDC_RADIO_MULT,
         p_vals, plFootPrintComponent::kAlpha, plFootPrintComponent::kMADD, plFootPrintComponent::kAdd, plFootPrintComponent::kMult,
         p_default, plFootPrintComponent::kAlpha,
-        end,
+        p_end,
 
     plFootPrintComponent::kDirtyTime, _T("DirtyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 10.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_DIRTYTIME, IDC_COMP_FP_DIRTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kNotifies,    _T("Notifies"), TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plFootPrintComponent::kIntensity, _T("Intensity"), TYPE_FLOAT,  0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_INTENSITY, IDC_COMP_FP_INTENSITY_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kParticles,   _T("Particles"),    TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS2, 0, 0, IDC_DEL_TARGS2,
-        end,
+        p_end,
 
     plFootPrintComponent::kPartyTime, _T("PartyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 0.25,
         p_range, 0.1, 5.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_PARTYTIME, IDC_COMP_FP_PARTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 bool plFootPrintComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -303,7 +300,7 @@ bool plFootPrintComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
         return true;
     }
 
-    fDecalMgr = nil;
+    fDecalMgr = nullptr;
 
     fValid = true;
     fNotifiesSetup = false;
@@ -341,12 +338,12 @@ bool plFootPrintComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 
 bool plFootPrintComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    fDecalMgr = nil;
+    fDecalMgr = nullptr;
     return true;
 }
 
 plFootPrintComponent::plFootPrintComponent()
-:   fDecalMgr(nil)
+:   fDecalMgr()
 {
     fClassDesc = &gFootPrintCompDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -397,7 +394,7 @@ bool plFootPrintComponent::ISetupDecalMgr(plMaxNode* node, plErrorMsg* pErrMsg, 
     if( !ICreateDecalMaterials(node, pErrMsg) )
     {
         delete fDecalMgr;
-        fDecalMgr = nil;
+        fDecalMgr = nullptr;
         return fValid = false;
     }
 
@@ -438,7 +435,7 @@ bool plFootPrintComponent::ISetupParticles(plMaxNode* node, plErrorMsg* pErrMsg)
         plParticleComponent* partyComp = IGetParticleComp(fCompPB->GetINode(kParticles, TimeValue(0), i));
         if( partyComp && partyComp->NumTargets() )
         {
-            plMaxNodeBase* partyNode = nil;
+            plMaxNodeBase* partyNode = nullptr;
             const int numTarg = partyComp->NumTargets();
             int j;
             for( j = 0; j < numTarg; j++ )
@@ -521,11 +518,11 @@ bool plFootPrintComponent::ISetupColorDecalMaterials(plMaxNode* node, plErrorMsg
 plParticleComponent* plFootPrintComponent::IGetParticleComp(INode* node)
 {
     if( !node )
-        return nil;
+        return nullptr;
 
     plComponentBase *comp = ((plMaxNodeBase*)node)->ConvertToComponent();
-    if( comp == nil )
-        return nil;
+    if (comp == nullptr)
+        return nullptr;
 
     if( comp->ClassID() == PARTICLE_SYSTEM_COMPONENT_CLASS_ID )
     {
@@ -533,17 +530,17 @@ plParticleComponent* plFootPrintComponent::IGetParticleComp(INode* node)
         return party;
     }
 
-    return nil;
+    return nullptr;
 }
 
 plDynaDecalMgr* plFootPrintComponent::GetDecalMgr(INode* node)
 {
     if( !node )
-        return nil;
+        return nullptr;
 
     plComponentBase *comp = ((plMaxNodeBase*)node)->ConvertToComponent();
-    if( comp == nil )
-        return nil;
+    if (comp == nullptr)
+        return nullptr;
 
     if( (comp->ClassID() == FOOTPRINT_COMP_CID)
         || (comp->ClassID() == RIPPLE_COMP_CID) 
@@ -555,7 +552,7 @@ plDynaDecalMgr* plFootPrintComponent::GetDecalMgr(INode* node)
         return foot->fDecalMgr;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -564,18 +561,18 @@ plDynaDecalMgr* plFootPrintComponent::GetDecalMgr(INode* node)
 class plRippleComponent : public plFootPrintComponent
 {
 protected:
-    virtual void    IFakeParams();
+    void    IFakeParams() override;
 public:
     
     plRippleComponent();
     virtual ~plRippleComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -596,76 +593,76 @@ ParamBlockDesc2 gRippleBk
         p_range, 25.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_WIDTH, IDC_COMP_FP_WIDTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLength, _T("Length"), TYPE_FLOAT,    0, 0,   
 //      p_default, 1.0,
 //      p_range, 0.25, 10.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_LENGTH, IDC_COMP_FP_LENGTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeOut, _T("FadeOut"), TYPE_FLOAT,  0, 0,   
 //      p_default, 3.5,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_FADEOUT, IDC_COMP_FP_FADEOUT_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLifeSpan, _T("LifeSpan"), TYPE_FLOAT,    0, 0,   
 //      p_default, 5.0,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_LIFESPAN2, IDC_COMP_FP_LIFESPAN_SPIN2, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeIn, _T("FadeIn"), TYPE_FLOAT,    0, 0,   
 //      p_default, 0.25,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_RAMPEND, IDC_COMP_FP_RAMPEND_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLayer,   _T("Layer"),    TYPE_TEXMAP, 0, 0,
         p_ui, TYPE_TEXMAPBUTTON, IDC_COMP_FP_TEXMAP,
-        end,
+        p_end,
 
     plFootPrintComponent::kBlend, _T("Blend"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_RADIO_ALPHA, IDC_RADIO_MADD, IDC_RADIO_ADD, IDC_RADIO_MULT,
         p_vals, plFootPrintComponent::kAlpha, plFootPrintComponent::kMADD, plFootPrintComponent::kAdd, plFootPrintComponent::kMult,
         p_default, plFootPrintComponent::kAlpha,
-        end,
+        p_end,
 
     plFootPrintComponent::kDirtyTime, _T("DirtyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 10.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_DIRTYTIME, IDC_COMP_FP_DIRTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kNotifies,    _T("Notifies"), TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plFootPrintComponent::kIntensity, _T("Intensity"), TYPE_FLOAT,  0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_INTENSITY, IDC_COMP_FP_INTENSITY_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kParticles,   _T("Particles"),    TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS2, 0, 0, IDC_DEL_TARGS2,
-        end,
+        p_end,
 
     plFootPrintComponent::kPartyTime, _T("PartyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 0.25,
         p_range, 0.1, 5.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_PARTYTIME, IDC_COMP_FP_PARTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 void plRippleComponent::IFakeParams()
@@ -689,8 +686,8 @@ bool plRippleComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     // If we haven't already, create our DynaDecalMgr and stash it away.
     if( !fDecalMgr )
     {
-        plDynaRippleMgr* ripple = nil;
-        if( node->GetVS() || node->UserPropExists("XXXWaterColor") )
+        plDynaRippleMgr* ripple = nullptr;
+        if( node->GetVS() || node->UserPropExists(_M("XXXWaterColor")) )
         {
             ripple = new plDynaRippleVSMgr;
         }
@@ -752,13 +749,13 @@ public:
     
     plPuddleComponent();
     virtual ~plPuddleComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -779,76 +776,76 @@ ParamBlockDesc2 gPuddleBk
         p_range, 25.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_WIDTH, IDC_COMP_FP_WIDTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLength, _T("Length"), TYPE_FLOAT,    0, 0,   
 //      p_default, 1.0,
 //      p_range, 0.25, 10.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_LENGTH, IDC_COMP_FP_LENGTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeOut, _T("FadeOut"), TYPE_FLOAT,  0, 0,   
 //      p_default, 3.5,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_FADEOUT, IDC_COMP_FP_FADEOUT_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLifeSpan, _T("LifeSpan"), TYPE_FLOAT,    0, 0,   
 //      p_default, 5.0,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_LIFESPAN2, IDC_COMP_FP_LIFESPAN_SPIN2, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeIn, _T("FadeIn"), TYPE_FLOAT,    0, 0,   
 //      p_default, 0.25,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_RAMPEND, IDC_COMP_FP_RAMPEND_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLayer,   _T("Layer"),    TYPE_TEXMAP, 0, 0,
         p_ui, TYPE_TEXMAPBUTTON, IDC_COMP_FP_TEXMAP,
-        end,
+        p_end,
 
     plFootPrintComponent::kBlend, _T("Blend"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_RADIO_ALPHA, IDC_RADIO_MADD, IDC_RADIO_ADD, IDC_RADIO_MULT,
         p_vals, plFootPrintComponent::kAlpha, plFootPrintComponent::kMADD, plFootPrintComponent::kAdd, plFootPrintComponent::kMult,
         p_default, plFootPrintComponent::kAlpha,
-        end,
+        p_end,
 
     plFootPrintComponent::kDirtyTime, _T("DirtyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 10.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_DIRTYTIME, IDC_COMP_FP_DIRTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kNotifies,    _T("Notifies"), TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plFootPrintComponent::kIntensity, _T("Intensity"), TYPE_FLOAT,  0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_INTENSITY, IDC_COMP_FP_INTENSITY_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kParticles,   _T("Particles"),    TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS2, 0, 0, IDC_DEL_TARGS2,
-        end,
+        p_end,
 
     plFootPrintComponent::kPartyTime, _T("PartyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 0.25,
         p_range, 0.1, 5.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_PARTYTIME, IDC_COMP_FP_PARTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 bool plPuddleComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -906,18 +903,18 @@ plPuddleComponent::~plPuddleComponent()
 class plBulletComponent : public plFootPrintComponent
 {
 protected:
-    virtual void    IFakeParams();
+    void    IFakeParams() override;
 public:
     
     plBulletComponent();
     virtual ~plBulletComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -938,76 +935,76 @@ ParamBlockDesc2 gBulletBk
         p_range, 25.0, 400.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_SCALE, IDC_COMP_FP_SCALE_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLength, _T("Length"), TYPE_FLOAT,    0, 0,   
 //      p_default, 100.0,
 //      p_range, 25.0, 400.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_LENGTH, IDC_COMP_FP_LENGTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeOut, _T("FadeOut"), TYPE_FLOAT,  0, 0,   
 //      p_default, 10.0,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_FADEOUT, IDC_COMP_FP_FADEOUT_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLifeSpan, _T("LifeSpan"), TYPE_FLOAT,    0, 0,   
         p_default, 15.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_LIFESPAN2, IDC_COMP_FP_LIFESPAN_SPIN2, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeIn, _T("FadeIn"), TYPE_FLOAT,    0, 0,   
 //      p_default, 0.1,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_RAMPEND, IDC_COMP_FP_RAMPEND_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLayer,   _T("Layer"),    TYPE_TEXMAP, 0, 0,
         p_ui, TYPE_TEXMAPBUTTON, IDC_COMP_FP_TEXMAP,
-        end,
+        p_end,
 
     plFootPrintComponent::kBlend, _T("Blend"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_RADIO_ALPHA, IDC_RADIO_MADD, IDC_RADIO_ADD, IDC_RADIO_MULT,
         p_vals, plFootPrintComponent::kAlpha, plFootPrintComponent::kMADD, plFootPrintComponent::kAdd, plFootPrintComponent::kMult,
         p_default, plFootPrintComponent::kAlpha,
-        end,
+        p_end,
 
     plFootPrintComponent::kDirtyTime, _T("DirtyTime"), TYPE_FLOAT,  0, 0,   
 //      p_default, 10.0,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_DIRTYTIME, IDC_COMP_FP_DIRTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kNotifies,    _T("Notifies"), TYPE_INODE_TAB, 0,      0, 0,
 //      p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plFootPrintComponent::kIntensity, _T("Intensity"), TYPE_FLOAT,  0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_INTENSITY, IDC_COMP_FP_INTENSITY_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kParticles,   _T("Particles"),    TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS2, 0, 0, IDC_DEL_TARGS2,
-        end,
+        p_end,
 
     plFootPrintComponent::kPartyTime, _T("PartyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 0.25,
         p_range, 0.1, 5.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_PARTYTIME, IDC_COMP_FP_PARTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 void plBulletComponent::IFakeParams()
@@ -1068,18 +1065,18 @@ plBulletComponent::~plBulletComponent()
 class plTorpedoComponent : public plRippleComponent
 {
 protected:
-    virtual void    IFakeParams();
+    void    IFakeParams() override;
 public:
     
     plTorpedoComponent();
     virtual ~plTorpedoComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -1100,76 +1097,76 @@ ParamBlockDesc2 gTorpedoBk
         p_range, 25.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_WIDTH, IDC_COMP_FP_WIDTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLength, _T("Length"), TYPE_FLOAT,    0, 0,   
 //      p_default, 1.0,
 //      p_range, 0.25, 10.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_LENGTH, IDC_COMP_FP_LENGTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeOut, _T("FadeOut"), TYPE_FLOAT,  0, 0,   
 //      p_default, 3.5,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_FADEOUT, IDC_COMP_FP_FADEOUT_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLifeSpan, _T("LifeSpan"), TYPE_FLOAT,    0, 0,   
         p_default, 5.0,
         p_range, 0.0, 10.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_LIFESPAN2, IDC_COMP_FP_LIFESPAN_SPIN2, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeIn, _T("FadeIn"), TYPE_FLOAT,    0, 0,   
 //      p_default, 0.25,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_RAMPEND, IDC_COMP_FP_RAMPEND_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLayer,   _T("Layer"),    TYPE_TEXMAP, 0, 0,
         p_ui, TYPE_TEXMAPBUTTON, IDC_COMP_FP_TEXMAP,
-        end,
+        p_end,
 
     plFootPrintComponent::kBlend, _T("Blend"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_RADIO_ALPHA, IDC_RADIO_MADD, IDC_RADIO_ADD, IDC_RADIO_MULT,
         p_vals, plFootPrintComponent::kAlpha, plFootPrintComponent::kMADD, plFootPrintComponent::kAdd, plFootPrintComponent::kMult,
         p_default, plFootPrintComponent::kAlpha,
-        end,
+        p_end,
 
     plFootPrintComponent::kDirtyTime, _T("DirtyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 10.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_DIRTYTIME, IDC_COMP_FP_DIRTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kNotifies,    _T("Notifies"), TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plFootPrintComponent::kIntensity, _T("Intensity"), TYPE_FLOAT,  0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_INTENSITY, IDC_COMP_FP_INTENSITY_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kParticles,   _T("Particles"),    TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS2, 0, 0, IDC_DEL_TARGS2,
-        end,
+        p_end,
 
     plFootPrintComponent::kPartyTime, _T("PartyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 0.25,
         p_range, 0.1, 5.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_PARTYTIME, IDC_COMP_FP_PARTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 void plTorpedoComponent::IFakeParams()
@@ -1228,18 +1225,18 @@ plTorpedoComponent::~plTorpedoComponent()
 class plWakeComponent : public plFootPrintComponent
 {
 protected:
-    virtual void    IFakeParams();
+    void    IFakeParams() override;
 public:
     
     plWakeComponent();
     virtual ~plWakeComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -1260,76 +1257,76 @@ ParamBlockDesc2 gWakeBk
         p_range, 25.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_WIDTH, IDC_COMP_FP_WIDTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLength, _T("Length"), TYPE_FLOAT,    0, 0,   
         p_default, 100.0,
         p_range, 25.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_LENGTH, IDC_COMP_FP_LENGTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeOut, _T("FadeOut"), TYPE_FLOAT,  0, 0,   
 //      p_default, 3.5,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_FADEOUT, IDC_COMP_FP_FADEOUT_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLifeSpan, _T("LifeSpan"), TYPE_FLOAT,    0, 0,   
 //      p_default, 5.0,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_LIFESPAN2, IDC_COMP_FP_LIFESPAN_SPIN2, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeIn, _T("FadeIn"), TYPE_FLOAT,    0, 0,   
 //      p_default, 0.25,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_RAMPEND, IDC_COMP_FP_RAMPEND_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLayer,   _T("Layer"),    TYPE_TEXMAP, 0, 0,
         p_ui, TYPE_TEXMAPBUTTON, IDC_COMP_FP_TEXMAP,
-        end,
+        p_end,
 
     plFootPrintComponent::kBlend, _T("Blend"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_RADIO_ALPHA, IDC_RADIO_MADD, IDC_RADIO_ADD, IDC_RADIO_MULT,
         p_vals, plFootPrintComponent::kAlpha, plFootPrintComponent::kMADD, plFootPrintComponent::kAdd, plFootPrintComponent::kMult,
         p_default, plFootPrintComponent::kAlpha,
-        end,
+        p_end,
 
     plFootPrintComponent::kDirtyTime, _T("DirtyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 10.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_DIRTYTIME, IDC_COMP_FP_DIRTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kNotifies,    _T("Notifies"), TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plFootPrintComponent::kIntensity, _T("Intensity"), TYPE_FLOAT,  0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_INTENSITY, IDC_COMP_FP_INTENSITY_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kParticles,   _T("Particles"),    TYPE_INODE_TAB, 0,      0, 0,
 //      p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS2, 0, 0, IDC_DEL_TARGS2,
-        end,
+        p_end,
 
     plFootPrintComponent::kPartyTime, _T("PartyTime"), TYPE_FLOAT,  0, 0,   
 //      p_default, 0.25,
 //      p_range, 0.1, 5.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_PARTYTIME, IDC_COMP_FP_PARTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 void plWakeComponent::IFakeParams()
@@ -1404,13 +1401,13 @@ public:
     
     plDirtyComponent();
     virtual ~plDirtyComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -1420,14 +1417,12 @@ CLASS_DESC(plDirtyComponent, gDirtyCompDesc, "Dirty/Wet Region",  "Dirty/Wet", C
 class plDirtyProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
         case WM_INITDIALOG:
-            {
-            }
-            return true;
+            return TRUE;
 
         case WM_COMMAND:
             if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_ADD_DECAL)
@@ -1446,9 +1441,9 @@ public:
             break;
         }
 
-        return false;
+        return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plDirtyProc gDirtyProc;
 
@@ -1464,16 +1459,16 @@ ParamBlockDesc2 gDirtyBk
 
     plDirtyComponent::kDecals,  _T("Decals"),   TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plDirtyComponent::kDirtyTime, _T("DirtyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 10.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_DIRTYTIME, IDC_COMP_FP_DIRTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 bool plDirtyComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -1493,7 +1488,7 @@ bool plDirtyComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     // to miss.
     if( !node->IsPhysical() )
     {
-        pErrMsg->Set(true, node->GetName(), "Has no physical component to notify %s Dirty/Wet component", GetINode()->GetName()).CheckAndAsk();
+        pErrMsg->Set(true, node->GetName(), ST::format("Has no physical component to notify {} Dirty/Wet component", GetINode()->GetName())).CheckAndAsk();
         pErrMsg->Set(false);
         return true;
     }
@@ -1555,13 +1550,13 @@ public:
     
     plPrintShapeComponent();
     virtual ~plPrintShapeComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -1576,32 +1571,30 @@ ParamBlockDesc2 gPrintShapeBk
 (   
     plComponent::kBlkComp, _T("PrintShape"), 0, &gPrintShapeCompDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_FP_PRINTSHAPE, IDS_COMP_FP_PRINTSHAPE, 0, 0, NULL,
+    IDD_COMP_FP_PRINTSHAPE, IDS_COMP_FP_PRINTSHAPE, 0, 0, nullptr,
 
     plPrintShapeComponent::kWidth, _T("Width"), TYPE_FLOAT,     0, 0,   
         p_default, 0.45,
         p_range, 0.1, 30.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_WIDTH, IDC_COMP_WIDTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plPrintShapeComponent::kLength, _T("Length"), TYPE_FLOAT,   0, 0,   
         p_default, 0.9,
         p_range, 0.1, 30.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_LENGTH, IDC_COMP_LENGTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plPrintShapeComponent::kHeight, _T("Height"), TYPE_FLOAT,   0, 0,   
         p_default, 1.0,
         p_range, 0.1, 30.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_HEIGHT, IDC_COMP_HEIGHT_SPIN, 0.1,
-        end,    
+        p_end,    
 
-
-
-    end
+    p_end
 );
 
 bool plPrintShapeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -1668,13 +1661,13 @@ public:
     
     plActivePrintShapeComponent();
     virtual ~plActivePrintShapeComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -1684,14 +1677,12 @@ CLASS_DESC(plActivePrintShapeComponent, gActivePrintShapeCompDesc, "Active Shape
 class plActiveProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
         case WM_INITDIALOG:
-            {
-            }
-            return true;
+            return TRUE;
 
         case WM_COMMAND:
             if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_ADD_NOTIFY2)
@@ -1710,9 +1701,9 @@ public:
             break;
         }
 
-        return false;
+        return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plActiveProc gActiveProc;
 
@@ -1731,27 +1722,27 @@ ParamBlockDesc2 gActivePrintShapeBk
         p_range, 0.1, 30.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_WIDTH, IDC_COMP_WIDTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plActivePrintShapeComponent::kLength, _T("Length"), TYPE_FLOAT,     0, 0,   
         p_default, 0.9,
         p_range, 0.1, 30.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_LENGTH, IDC_COMP_LENGTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plActivePrintShapeComponent::kHeight, _T("Height"), TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 30.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_HEIGHT, IDC_COMP_HEIGHT_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plActivePrintShapeComponent::kNotifies, _T("Notifies"), TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 bool plActivePrintShapeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)

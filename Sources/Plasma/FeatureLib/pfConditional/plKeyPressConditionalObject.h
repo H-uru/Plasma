@@ -43,8 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plKeyPressConditionalObject_inc
 #define plKeyPressConditionalObject_inc
 
-#include "pnModifier/plConditionalObject.h"
 #include "pnInputCore/plKeyDef.h"
+#include "pnModifier/plConditionalObject.h"
 
 
 class plKeyPressConditionalObject : public plConditionalObject
@@ -56,18 +56,18 @@ protected:
 public:
     
     plKeyPressConditionalObject();
-    ~plKeyPressConditionalObject(){;}
+    ~plKeyPressConditionalObject() { }
     
     CLASSNAME_REGISTER( plKeyPressConditionalObject );
     GETINTERFACE_ANY( plKeyPressConditionalObject, plConditionalObject );
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     
-    void Evaluate(){;}
-    void Reset() { SetSatisfied(false); }
+    void Evaluate() override { }
+    void Reset() override { SetSatisfied(false); }
     void SetKeyEvent(const plKeyDef k ) { fKeyEvent = k; }
 
 };

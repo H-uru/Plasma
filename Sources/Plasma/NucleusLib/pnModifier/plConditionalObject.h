@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "hsBitVector.h"
-#include "pnNetCommon/plSynchedValue.h"
 
 class plLogicModBase;
 
@@ -73,12 +72,12 @@ public:
     CLASSNAME_REGISTER( plConditionalObject );
     GETINTERFACE_ANY( plConditionalObject, hsKeyedObject );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr) { hsKeyedObject::Read(stream, mgr); bSatisfied = stream->ReadBool(); fToggle = stream->ReadBool();}
-    virtual void Write(hsStream* stream, hsResMgr* mgr){ hsKeyedObject::Write(stream, mgr); stream->WriteBool( bSatisfied ); stream->WriteBool(fToggle);}
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     virtual void SetLogicMod(plLogicModBase* pMod) { fLogicMod = pMod; }
 
-//  virtual bool MsgReceive(plMessage* msg) = 0;
+//  bool MsgReceive(plMessage* msg) override = 0;
 
     virtual bool Satisfied() { if(HasFlag(kNOT)) return !bSatisfied; else return bSatisfied; }
     void SetSatisfied(bool b) { bSatisfied=b; }

@@ -46,9 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreator.h"
 
 #include "pfJournalBook.h"
-
-REGISTER_CREATABLE( pfBookData );
-REGISTER_NONCREATABLE( pfJournalBook );
-
+REGISTER_CREATABLE(pfBookData);
+REGISTER_NONCREATABLE(pfJournalBook);
 
 #endif // _pfJournalBookCreatable_h

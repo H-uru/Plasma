@@ -40,11 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "plPythonSDLModifier.h"
+
+#include <string_theory/string>
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptSDL, pySDLModifier);
@@ -59,10 +60,10 @@ PYTHON_INIT_DEFINITION(ptSDL, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptSDL, setIndex, args)
 {
-    char* key;
+    ST::string key;
     int idx;
-    PyObject* value = NULL;
-    if (!PyArg_ParseTuple(args, "siO", &key, &idx, &value))
+    PyObject* value = nullptr;
+    if (!PyArg_ParseTuple(args, "O&iO", PyUnicode_STStringConverter, &key, &idx, &value))
     {
         PyErr_SetString(PyExc_TypeError, "setIndex expects a string, int, and an object");
         PYTHON_RETURN_ERROR;
@@ -73,10 +74,10 @@ PYTHON_METHOD_DEFINITION(ptSDL, setIndex, args)
 
 PYTHON_METHOD_DEFINITION(ptSDL, setIndexNow, args)
 {
-    char* key;
+    ST::string key;
     int idx;
-    PyObject* value = NULL;
-    if (!PyArg_ParseTuple(args, "etiO", "utf8", &key, &idx, &value))
+    PyObject* value = nullptr;
+    if (!PyArg_ParseTuple(args, "O&iO", PyUnicode_STStringConverter, &key, &idx, &value))
     {
         PyErr_SetString(PyExc_TypeError, "setIndexNow expects a string, int, and an object");
         PYTHON_RETURN_ERROR;
@@ -87,9 +88,9 @@ PYTHON_METHOD_DEFINITION(ptSDL, setIndexNow, args)
 
 PYTHON_METHOD_DEFINITION(ptSDL, setDefault, args)
 {
-    char* key;
-    PyObject* value = NULL;
-    if (!PyArg_ParseTuple(args, "etO", "utf8", &key, &value))
+    ST::string key;
+    PyObject* value = nullptr;
+    if (!PyArg_ParseTuple(args, "O&O", PyUnicode_STStringConverter, &key, &value))
     {
         PyErr_SetString(PyExc_TypeError, "setDefault expects a string and a tuple");
         PYTHON_RETURN_ERROR;
@@ -105,8 +106,8 @@ PYTHON_METHOD_DEFINITION(ptSDL, setDefault, args)
 
 PYTHON_METHOD_DEFINITION(ptSDL, sendToClients, args)
 {
-    char* key;
-    if (!PyArg_ParseTuple(args, "et", "utf8", &key))
+    ST::string key;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &key))
     {
         PyErr_SetString(PyExc_TypeError, "sendToClients expects a string");
         PYTHON_RETURN_ERROR;
@@ -118,9 +119,9 @@ PYTHON_METHOD_DEFINITION(ptSDL, sendToClients, args)
 PYTHON_METHOD_DEFINITION(ptSDL, setNotify, args)
 {
     PyObject* selfKeyObj;
-    char* key;
+    ST::string key;
     float tolerance;
-    if (!PyArg_ParseTuple(args, "Oetf", &selfKeyObj, "utf8", &key, &tolerance))
+    if (!PyArg_ParseTuple(args, "OO&f", &selfKeyObj, PyUnicode_STStringConverter, &key, &tolerance))
     {
         PyErr_SetString(PyExc_TypeError, "setNotify expects a ptKey, string, and float");
         PYTHON_RETURN_ERROR;
@@ -137,9 +138,9 @@ PYTHON_METHOD_DEFINITION(ptSDL, setNotify, args)
 
 PYTHON_METHOD_DEFINITION(ptSDL, setFlags, args)
 {
-    char* key;
+    ST::string key;
     char sendImmediate, skipOwnershipCheck;
-    if (!PyArg_ParseTuple(args, "etbb", "utf8", &key, &sendImmediate, &skipOwnershipCheck))
+    if (!PyArg_ParseTuple(args, "O&bb", PyUnicode_STStringConverter, &key, &sendImmediate, &skipOwnershipCheck))
     {
         PyErr_SetString(PyExc_TypeError, "setFlags expects a string and two booleans");
         PYTHON_RETURN_ERROR;
@@ -150,9 +151,9 @@ PYTHON_METHOD_DEFINITION(ptSDL, setFlags, args)
 
 PYTHON_METHOD_DEFINITION(ptSDL, setTagString, args)
 {
-    char* key;
-    char* tag;
-    if (!PyArg_ParseTuple(args, "etet", "utf8", &key, "utf8", &tag))
+    ST::string key;
+    ST::string tag;
+    if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_STStringConverter, &key, PyUnicode_STStringConverter, &tag))
     {
         PyErr_SetString(PyExc_TypeError, "setTagString expects two strings");
         PYTHON_RETURN_ERROR;
@@ -179,23 +180,23 @@ PYTHON_END_METHODS_TABLE;
 
 PyObject* ptSDL_subscript(ptSDL* self, PyObject* key)
 {
-    if (!PyString_CheckEx(key))
+    if (!PyUnicode_Check(key))
     {
         PyErr_SetString(PyExc_TypeError, "SDL indexes must be strings");
         PYTHON_RETURN_ERROR;
     }
-    plString keyStr = PyString_AsStringEx(key);
+    ST::string keyStr = PyUnicode_AsSTString(key);
     return pySDLModifier::GetItem(*(self->fThis), keyStr);
 }
 
 int ptSDL_ass_subscript(ptSDL* self, PyObject* key, PyObject* value)
 {
-    if (value == NULL) // remove, which isn't supported
+    if (value == nullptr) // remove, which isn't supported
     {
         PyErr_SetString(PyExc_RuntimeError, "Cannot remove sdl records");
         return -1; // error return
     }
-    if (!PyString_CheckEx(key))
+    if (!PyUnicode_Check(key))
     {
         PyErr_SetString(PyExc_TypeError, "SDL indexes must be strings");
         return -1; // error return
@@ -205,22 +206,23 @@ int ptSDL_ass_subscript(ptSDL* self, PyObject* key, PyObject* value)
         PyErr_SetString(PyExc_TypeError, "SDL values must be tuples");
         return -1; // error return
     }
-    plString keyStr = PyString_AsStringEx(key);
+    ST::string keyStr = PyUnicode_AsSTString(key);
     pySDLModifier::SetItem(*(self->fThis), keyStr, value);
     return 0; // success return
 }
 
 PYTHON_START_AS_MAPPING_TABLE(ptSDL)
-    0,                                  /* mp_length */
+    nullptr,                            /* mp_length */
     (binaryfunc)ptSDL_subscript,        /* mp_subscript */
     (objobjargproc)ptSDL_ass_subscript, /* mp_ass_subscript */
 PYTHON_END_AS_MAPPING_TABLE;
 
-#define ptSDL_COMPARE       PYTHON_NO_COMPARE
 #define ptSDL_AS_NUMBER     PYTHON_NO_AS_NUMBER
 #define ptSDL_AS_SEQUENCE   PYTHON_NO_AS_SEQUENCE
 #define ptSDL_AS_MAPPING    PYTHON_DEFAULT_AS_MAPPING(ptSDL)
 #define ptSDL_STR           PYTHON_NO_STR
+#define ptSDL_GETATTRO      PYTHON_NO_GETATTRO
+#define ptSDL_SETATTRO      PYTHON_NO_SETATTRO
 #define ptSDL_RICH_COMPARE  PYTHON_NO_RICH_COMPARE
 #define ptSDL_GETSET        PYTHON_NO_GETSET
 #define ptSDL_BASE          PYTHON_NO_BASE
@@ -231,7 +233,7 @@ PYTHON_CLASS_NEW_IMPL(ptSDL, pySDLModifier)
 
 PyObject *pySDLModifier::New(plPythonSDLModifier *sdlMod)
 {
-    ptSDL *newObj = (ptSDL*)ptSDL_type.tp_new(&ptSDL_type, NULL, NULL);
+    ptSDL *newObj = (ptSDL*)ptSDL_type.tp_new(&ptSDL_type, nullptr, nullptr);
     newObj->fThis->fRecord = sdlMod;
     return (PyObject*)newObj;
 }
@@ -255,7 +257,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeSDL, "Returns the global ptSDL fo
     return pySDLModifier::GetAgeSDL();
 }
 
-void pySDLModifier::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void pySDLModifier::AddPlasmaMethods(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetAgeSDL);
+    PYTHON_START_GLOBAL_METHOD_TABLE(ptSDL)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetAgeSDL)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, ptSDL)
 }

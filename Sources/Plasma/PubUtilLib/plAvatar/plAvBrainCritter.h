@@ -43,13 +43,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_AV_BRAIN_CRITTER_H
 
 #include <map>
-#include "plAvBrain.h"
-#include "hsTemplates.h"
-#include "pnKeyedObject/plKey.h"
+#include <string_theory/string>
+#include <vector>
 
-class plArmatureMod;
-class plWalkingStrategy;
+#include "plAvBrain.h"
+
+#include "hsGeometry3.h"
+
 class plAIMsg;
+class plArmatureMod;
+class plKey;
+class plMessage;
+class plRandom;
+class plSceneObject;
+class plWalkingStrategy;
 
 class plAvBrainCritter : public plArmatureBrain
 {
@@ -76,13 +83,13 @@ public:
     CLASSNAME_REGISTER(plAvBrainCritter);
     GETINTERFACE_ANY(plAvBrainCritter, plArmatureBrain);
 
-    bool Apply(double time, float elapsed);
-    bool MsgReceive(plMessage* msg);
+    bool Apply(double time, float elapsed) override;
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Activate(plArmatureModBase* avMod);
-    virtual void Deactivate();
-    virtual void Suspend();
-    virtual void Resume();
+    void Activate(plArmatureModBase* avMod) override;
+    void Deactivate() override;
+    void Suspend() override;
+    void Resume() override;
 
     /**
      * Gets the SceneObject root for this avatar
@@ -94,18 +101,18 @@ public:
      */
     plSceneObject* GetTarget() const;
 
-    void AddBehavior(const std::string& animationName, const std::string& behaviorName, bool loop = true, bool randomStartPos = true,
+    void AddBehavior(const ST::string& animationName, const ST::string& behaviorName, bool loop = true, bool randomStartPos = true,
         float fadeInLen = 2.f, float fadeOutLen = 2.f);
-    void StartBehavior(const std::string& behaviorName, bool fade = true);
-    bool RunningBehavior(const std::string& behaviorName) const;
+    void StartBehavior(const ST::string& behaviorName, bool fade = true);
+    bool RunningBehavior(const ST::string& behaviorName) const;
 
-    std::string BehaviorName(int behavior) const;
-    plString AnimationName(int behavior) const;
+    ST::string BehaviorName(int behavior) const;
+    ST::string AnimationName(int behavior) const;
     int CurBehavior() const {return fCurMode;}
     int NextBehavior() const {return fNextMode;}
 
-    std::string IdleBehaviorName() const;
-    std::string RunBehaviorName() const;
+    ST::string IdleBehaviorName() const;
+    ST::string RunBehaviorName() const;
 
     void GoToGoal(hsPoint3 newGoal, bool avoidingAvatars = false);
     hsPoint3 CurrentGoal() const {return fFinalGoalPos;}
@@ -130,10 +137,10 @@ public:
 
     hsVector3 VectorToPlayer(unsigned long id) const;
 
-    void AddReceiver(const plKey key);
-    void RemoveReceiver(const plKey key);
+    void AddReceiver(plKey key);
+    void RemoveReceiver(const plKey& key);
 
-    virtual void DumpToDebugDisplay(int& x, int& y, int lineHeight, plDebugText& debugTxt);
+    void DumpToDebugDisplay(int& x, int& y, int lineHeight, plDebugText& debugTxt) override;
 
     // For the console
     static bool fDrawDebug;
@@ -142,7 +149,7 @@ protected:
     virtual bool IInitBaseAnimations();
 
     int IPickBehavior(int behavior) const;
-    int IPickBehavior(const std::string& behavior) const;
+    int IPickBehavior(const ST::string& behavior) const;
 
     void IFadeOutBehavior(); // fades out fCurMode
     void IStartBehavior(); // fades in and initializes fNextMode, then sets fCurMode
@@ -180,9 +187,12 @@ protected:
     float fHearingDistanceSquared; // the above, squared, for faster calculation
     float fLoudHearingDistanceSquared; // how far away we can hear loud noises, squared, for faster calculation
 
-    std::map<std::string, std::vector<int> > fUserBehaviors; // string is behavior name, internal vector is the list of behaviors that are randomly picked from
+    std::map<ST::string, std::vector<int> > fUserBehaviors; // string is behavior name, internal vector is the list of behaviors that are randomly picked from
 
     std::vector<plKey> fReceivers; // list of people that want messages from us
+
+private:
+    static plRandom sRandom;
 };
 
 #endif // PL_AV_BRAIN_CRITTER_H

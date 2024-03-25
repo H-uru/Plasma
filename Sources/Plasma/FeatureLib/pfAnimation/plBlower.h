@@ -43,14 +43,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plBlower_inc
 #define plBlower_inc
 
-#include "pnModifier/plSingleModifier.h"
 #include "hsGeometry3.h"
-#include "pnEncryption/plRandom.h"
-#include "hsTemplates.h"
 
+#include "pnEncryption/plRandom.h"
+#include "pnModifier/plSingleModifier.h"
+
+class hsResMgr;
 class plSceneObject;
 class hsStream;
-class hsResMgr;
 
 class plBlower : public plSingleModifier
 {
@@ -73,7 +73,7 @@ protected:
     float        fBias;
 
     float                    fAccumTime;
-    hsTArray<Oscillator>        fOscillators;
+    std::vector<Oscillator>  fOscillators;
 
     // CurrentState
     hsVector3       fDirection;
@@ -86,18 +86,17 @@ protected:
     void    ISetTargetTransform();
     void    IBlow(double secs, float delSecs);
     
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
 public:
-    ~plBlower();
     plBlower();
 
     CLASSNAME_REGISTER( plBlower );
     GETINTERFACE_ANY( plBlower, plSingleModifier );
     
-    virtual void SetTarget(plSceneObject* so);
+    void SetTarget(plSceneObject* so) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     void SetMasterPower(float f) { fMasterPower = f; }
     void SetMasterFrequency(float f) { fMasterFrequency = f; }

@@ -45,25 +45,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "plgDispatch.h"
-#include "pyGeometry3.h"
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyNotify.h"
 
+#include <string_theory/string>
+
+#include "plgDispatch.h"
+
+#include "pyGeometry3.h"
+#include "pyKey.h"
 
 pyNotify::pyNotify()
+    : fNetPropagate(true), fNetForce(false)
 {
-    fSenderKey = nil;
-    fNetPropagate = true;
-    fNetForce = false;
     fBuildMsg.fType = plNotifyMsg::kActivator;
     fBuildMsg.fState = 0.0f;
     fBuildMsg.fID = 0;
 }
 
-pyNotify::pyNotify(pyKey& selfkey) 
+pyNotify::pyNotify(const pyKey& selfkey)
 {
     fSenderKey = selfkey.getKey();
     fNetPropagate = true;
@@ -72,33 +71,28 @@ pyNotify::pyNotify(pyKey& selfkey)
     fBuildMsg.fState = 0.0f;
     fBuildMsg.fID = 0;
     // loop though adding the ones that want to be notified of the change
-    int j;
-    for ( j=0 ; j<selfkey.NotifyListCount() ; j++ )
-        fReceivers.Append(selfkey.GetNotifyListItem(j));
+    for (size_t j = 0; j < selfkey.NotifyListCount(); j++)
+        fReceivers.emplace_back(selfkey.GetNotifyListItem(j));
 }
 
-pyNotify::~pyNotify()
-{
-}
-
-void pyNotify::SetSender(pyKey& selfKey)
+void pyNotify::SetSender(const pyKey& selfKey)
 {
     fSenderKey = selfKey.getKey();
-    fReceivers.Reset();
-    for (int j = 0; j < selfKey.NotifyListCount(); j++)
-        fReceivers.Append(selfKey.GetNotifyListItem(j));
+    fReceivers.clear();
+    for (size_t j = 0; j < selfKey.NotifyListCount(); j++)
+        fReceivers.emplace_back(selfKey.GetNotifyListItem(j));
 }
 
 // methods that will be exposed to Python
 void pyNotify::ClearReceivers()
 {
-    fReceivers.Reset();
+    fReceivers.clear();
 }
 
 void pyNotify::AddReceiver(pyKey* key)
 {
     if (key)
-        fReceivers.Append(key->getKey());
+        fReceivers.emplace_back(key->getKey());
 }
 
 
@@ -136,22 +130,22 @@ void pyNotify::AddControlKeyEvent( int32_t key, bool down )
     fBuildMsg.AddControlKeyEvent(key,down);
 }
 
-void pyNotify::AddVarNumber(const char* name, float number)
+void pyNotify::AddVarNumber(const ST::string& name, float number)
 {
     fBuildMsg.AddVariableEvent(name, number);
 }
 
-void pyNotify::AddVarNumber(const char* name, int32_t number)
+void pyNotify::AddVarNumber(const ST::string& name, int32_t number)
 {
     fBuildMsg.AddVariableEvent(name, number);
 }
 
-void pyNotify::AddVarNull(const char* name)
+void pyNotify::AddVarNull(const ST::string& name)
 {
     fBuildMsg.AddVariableEvent(name);
 }
 
-void pyNotify::AddVarKey(const char* name, pyKey* key)
+void pyNotify::AddVarKey(const ST::string& name, pyKey* key)
 {
     fBuildMsg.AddVariableEvent(name, key ? key->getKey() : plKey() );
 }
@@ -187,7 +181,7 @@ void pyNotify::AddResponderState(int32_t state)
 
 void pyNotify::Send()
 {
-    if (!fReceivers.Count())        // Notify msgs must have receivers, can't be bcast by type
+    if (fReceivers.empty())        // Notify msgs must have receivers, can't be bcast by type
         return;
 
     // create new notify message to do the actual send with
@@ -206,18 +200,13 @@ void pyNotify::Send()
     pNMsg->fState = fBuildMsg.fState;
     pNMsg->fID = fBuildMsg.fID;
     // need to recreate all the events in the new message by Adding them
-    int i;
-    for ( i=0; i<fBuildMsg.fEvents.GetCount(); i++ )
-    {
-        proEventData* pED = fBuildMsg.fEvents.Get(i);
+    for (proEventData* pED : fBuildMsg.fEvents)
         pNMsg->AddEvent( pED );
-    }
 
     // add receivers
     // loop though adding the ones that want to be notified of the change
-    int j;
-    for ( j=0 ; j<fReceivers.Count() ; j++ )
-        pNMsg->AddReceiver(fReceivers[j]);
+    for (const plKey& rcKey : fReceivers)
+        pNMsg->AddReceiver(rcKey);
 
     pNMsg->SetSender(fSenderKey);
     plgDispatch::MsgSend( pNMsg );

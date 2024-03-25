@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plActivatorBaseComponent.h"
 #include "MaxMain/plMaxNode.h"
-#pragma hdrstop
 
 #include "plModifier/plLogicModifier.h"
 #include "pnSceneObject/plSceneObject.h"
@@ -62,22 +61,22 @@ plKey plActivatorBaseComponent::GetLogicKey(plMaxNode* node)
     if (it != fLogicModKeys.end())
         return it->second;
 
-    return nil;
+    return nullptr;
 }
 
-void plActivatorBaseComponent::IGetReceivers(plMaxNode* node, hsTArray<plKey>& receivers)
+void plActivatorBaseComponent::IGetReceivers(plMaxNode* node, std::vector<plKey>& receivers)
 {
     // Add the guys who want to be notified by all instances
-    ReceiverKeys::iterator lowIt = fReceivers.lower_bound(nil);
-    ReceiverKeys::iterator highIt = fReceivers.upper_bound(nil);
+    ReceiverKeys::iterator lowIt = fReceivers.lower_bound(nullptr);
+    ReceiverKeys::iterator highIt = fReceivers.upper_bound(nullptr);
     for (; lowIt != highIt; lowIt++)
-        receivers.Append(lowIt->second);
+        receivers.emplace_back(lowIt->second);
 
     // Add the ones for just this instance
     lowIt = fReceivers.lower_bound(node);
     highIt = fReceivers.upper_bound(node);
     for (; lowIt != highIt; lowIt++)
-        receivers.Append(lowIt->second);
+        receivers.emplace_back(lowIt->second);
 }
 
 // Internal setup and write-only set properties on the MaxNode. No reading

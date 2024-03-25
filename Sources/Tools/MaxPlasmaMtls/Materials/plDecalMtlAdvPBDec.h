@@ -42,6 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDecalMtl.h"
 #include "plPassBaseParamIDs.h"
 
+#include "MaxMain/MaxCompat.h"
+
+
 using namespace plPassBaseParamIDs;
 
 static ParamBlockDesc2 gDecalAdvPB
@@ -50,62 +53,62 @@ static ParamBlockDesc2 gDecalAdvPB
     P_AUTO_CONSTRUCT + P_AUTO_UI, plDecalMtl::kRefAdv,
 
     // UI
-    IDD_PASS_ADV, IDS_PASS_ADV, 0, APPENDROLL_CLOSED, NULL,
+    IDD_PASS_ADV, IDS_PASS_ADV, 0, APPENDROLL_CLOSED, nullptr,
 
     // Misc Properties
     kPBAdvWire,         _T("basicWire"),    TYPE_BOOL,      0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_MISC_WIRE,
-        end,
+        p_end,
     kPBAdvMeshOutlines, _T("meshOutlines"), TYPE_BOOL,      0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_MISC_MESHOUTLINES,
-        end,
+        p_end,
     kPBAdvTwoSided,     _T("twoSided"),     TYPE_BOOL,      0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_MISC_TWOSIDED,
-        end,
+        p_end,
 
     // Shade properties
     kPBAdvSoftShadow,       _T("softShadow"),   TYPE_BOOL,      0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_SHADE_SOFTSHADOW,
-        end,
+        p_end,
     kPBAdvNoProj,           _T("noProj"),       TYPE_BOOL,      0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_SHADE_NO_PROJ,
-        end,
+        p_end,
     kPBAdvVertexShade,  _T("vertexShade"),  TYPE_BOOL,      0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_SHADE_VERTEXSHADE,
-        end,
+        p_end,
     kPBAdvNoShade,      _T("noShade"),      TYPE_BOOL,      0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_SHADE_NOSHADE,
-        end,
+        p_end,
     kPBAdvNoFog,            _T("noFog"),        TYPE_BOOL,      0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_SHADE_NO_FOG,
-        end,
+        p_end,
     kPBAdvWhite,            _T("white"),        TYPE_BOOL,      0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_SHADE_WHITE,
-        end,
+        p_end,
 
     // Z Properties
     kPBAdvZOnly,        _T("zOnly"),        TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_Z_ZONLY,
-        end,
+        p_end,
     kPBAdvZClear,       _T("zClear"),       TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_Z_ZCLEAR,
-        end,
+        p_end,
     kPBAdvZNoRead,      _T("zNoRead"),      TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_Z_ZNOREAD,
-        end,
+        p_end,
     kPBAdvZNoWrite,     _T("zNoWrite"),     TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_Z_ZNOWRITE,
         p_default,      TRUE,
-        end,
+        p_end,
     kPBAdvZInc,         _T("zInc"),         TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_Z_INC,
         p_default,      TRUE,
-        end,
+        p_end,
 
     kPBAdvAlphaTestHigh,            _T("aTestHigh"),            TYPE_BOOL,      0, 0,
         p_default,      FALSE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 ParamBlockDesc2 *GetDecalAdvPB() { return &gDecalAdvPB; }

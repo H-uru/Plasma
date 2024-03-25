@@ -41,17 +41,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <cmath>
-#include "HeadSpin.h"
-#pragma hdrstop
+#include "hsMatrix44.h"
 
+
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
 #include "hsQuat.h"
-#include "hsMatrix44.h"
 #include "hsStream.h"
 
-#ifdef HS_SIMD_INCLUDE
-#  include HS_SIMD_INCLUDE
+#include <cmath>
+#include <string_theory/format>
+
+#ifdef HS_BUILD_FOR_APPLE
+#include <Accelerate/Accelerate.h>
 #endif
 
 static hsMatrix44 myIdent = hsMatrix44().Reset();
@@ -59,15 +61,15 @@ const hsMatrix44& hsMatrix44::IdentityMatrix() { return myIdent; }
 
 /*
     For the rotation:
-         ¦        2     2                                      ¦
-         ¦ 1 - (2Y  + 2Z )   2XY + 2ZW         2XZ - 2YW       ¦
-         ¦                                                     ¦
-         ¦                          2     2                    ¦
-     M = ¦ 2XY - 2ZW         1 - (2X  + 2Z )   2YZ + 2XW       ¦
-         ¦                                                     ¦
-         ¦                                            2     2  ¦
-         ¦ 2XZ + 2YW         2YZ - 2XW         1 - (2X  + 2Y ) ¦
-         ¦                                                     ¦
+         Â¦        2     2                                      Â¦
+         Â¦ 1 - (2Y  + 2Z )   2XY + 2ZW         2XZ - 2YW       Â¦
+         Â¦                                                     Â¦
+         Â¦                          2     2                    Â¦
+     M = Â¦ 2XY - 2ZW         1 - (2X  + 2Z )   2YZ + 2XW       Â¦
+         Â¦                                                     Â¦
+         Â¦                                            2     2  Â¦
+         Â¦ 2XZ + 2YW         2YZ - 2XW         1 - (2X  + 2Y ) Â¦
+         Â¦                                                     Â¦
 
     The translation is far too complex to discuss here. ;^)
 */
@@ -96,10 +98,32 @@ hsMatrix44::hsMatrix44(const hsScalarTriple &translate, const hsQuat &rotate)
 void hsMatrix44::DecompRigid(hsScalarTriple &translate, hsQuat &rotate) const
 {
     translate = GetTranslate();
-    rotate.QuatFromMatrix44(*this);
+    rotate = hsQuat::QuatFromMatrix44(*this);
 }
 
-static hsMatrix44 mat_mult_fpu(const hsMatrix44 &a, const hsMatrix44 &b)
+#ifdef HS_BUILD_FOR_APPLE
+hsMatrix44 hsMatrix44::mult_accelerate(const hsMatrix44 &a, const hsMatrix44 &b)
+{
+    hsMatrix44 c;
+
+    if( a.fFlags & b.fFlags & hsMatrix44::kIsIdent )
+    {
+        c.Reset();
+        return c;
+    }
+
+    if( a.fFlags & hsMatrix44::kIsIdent )
+        return b;
+    if( b.fFlags & hsMatrix44::kIsIdent )
+        return a;
+
+    vDSP_mmul(const_cast<float*>(a.fMap[0]), 1, const_cast<float*>(b.fMap[0]), 1, c.fMap[0], 1, 4, 4, 4);
+
+    return c;
+}
+#endif
+
+hsMatrix44 hsMatrix44::mult_fpu(const hsMatrix44 &a, const hsMatrix44 &b)
 {
     hsMatrix44 c;
 
@@ -137,73 +161,12 @@ static hsMatrix44 mat_mult_fpu(const hsMatrix44 &a, const hsMatrix44 &b)
     return c;
 }
 
-#ifdef HS_SSE3
-#   define MULTBEGIN(i) \
-        xmm[0]   = _mm_loadu_ps(a.fMap[i]);
-#   define MULTCELL(i, j) \
-        xmm[1]   = _mm_set_ps(b.fMap[3][j], b.fMap[2][j], b.fMap[1][j], b.fMap[0][j]); \
-        xmm[j+2] = _mm_mul_ps(xmm[0], xmm[1]);
-#   define MULTFINISH(i) \
-        xmm[6] = _mm_hadd_ps(xmm[2], xmm[3]); \
-        xmm[7] = _mm_hadd_ps(xmm[4], xmm[5]); \
-        xmm[1] = _mm_hadd_ps(xmm[6], xmm[7]); \
-        _mm_storeu_ps(c.fMap[i], xmm[1]);
-#endif  // HS_SSE3
-
-static hsMatrix44 mat_mult_sse3(const hsMatrix44 &a, const hsMatrix44 &b)
-{
-    hsMatrix44 c;
-#ifdef HS_SSE3
-    if( a.fFlags & b.fFlags & hsMatrix44::kIsIdent )
-    {
-        c.Reset();
-        return c;
-    }
-
-    if( a.fFlags & hsMatrix44::kIsIdent )
-        return b;
-    if( b.fFlags & hsMatrix44::kIsIdent )
-        return a;
-
-    __m128 xmm[8];
-
-    MULTBEGIN(0);
-    MULTCELL(0, 0);
-    MULTCELL(0, 1);
-    MULTCELL(0, 2);
-    MULTCELL(0, 3);
-    MULTFINISH(0);
-
-    MULTBEGIN(1);
-    MULTCELL(1, 0);
-    MULTCELL(1, 1);
-    MULTCELL(1, 2);
-    MULTCELL(1, 3);
-    MULTFINISH(1);
-
-    MULTBEGIN(2);
-    MULTCELL(2, 0);
-    MULTCELL(2, 1);
-    MULTCELL(2, 2);
-    MULTCELL(2, 3);
-    MULTFINISH(2);
-
-    MULTBEGIN(3);
-    MULTCELL(3, 0);
-    MULTCELL(3, 1);
-    MULTCELL(3, 2);
-    MULTCELL(3, 3);
-    MULTFINISH(3);
-#endif  // HS_SSE3
-    return c;
-}
-
 // CPU-optimized functions requiring dispatch
 hsCpuFunctionDispatcher<hsMatrix44::mat_mult_ptr> hsMatrix44::mat_mult {
-    &mat_mult_fpu,
+    &hsMatrix44::mult_fpu,
     nullptr,            // SSE1
     nullptr,            // SSE2
-    &mat_mult_sse3
+    &hsMatrix44::mult_sse3
 };
 
 hsPoint3 hsMatrix44::operator*(const hsPoint3& p) const
@@ -211,10 +174,9 @@ hsPoint3 hsMatrix44::operator*(const hsPoint3& p) const
     if (fFlags & hsMatrix44::kIsIdent)
         return p;
 
-    hsPoint3 rVal;
-    rVal.fX = (p.fX * fMap[0][0]) + (p.fY * fMap[0][1]) + (p.fZ * fMap[0][2]) + fMap[0][3];
-    rVal.fY = (p.fX * fMap[1][0]) + (p.fY * fMap[1][1]) + (p.fZ * fMap[1][2]) + fMap[1][3];
-    rVal.fZ = (p.fX * fMap[2][0]) + (p.fY * fMap[2][1]) + (p.fZ * fMap[2][2]) + fMap[2][3];
+    hsPoint3 rVal((p.fX * fMap[0][0]) + (p.fY * fMap[0][1]) + (p.fZ * fMap[0][2]) + fMap[0][3],
+                  (p.fX * fMap[1][0]) + (p.fY * fMap[1][1]) + (p.fZ * fMap[1][2]) + fMap[1][3],
+                  (p.fX * fMap[2][0]) + (p.fY * fMap[2][1]) + (p.fZ * fMap[2][2]) + fMap[2][3]);
     return rVal;
 }
 
@@ -230,6 +192,30 @@ hsVector3 hsMatrix44::operator*(const hsVector3& p) const
     rVal.fZ = (p.fX * fMap[2][0]) + (p.fY * fMap[2][1]) + (p.fZ * fMap[2][2]);
 
     return rVal;
+}
+
+bool hsMatrix44::Compare(const hsMatrix44& rhs, float tolerance) const
+{
+    return
+        (fabs(fMap[0][0] - rhs.fMap[0][0]) < tolerance) &&
+        (fabs(fMap[0][1] - rhs.fMap[0][1]) < tolerance) &&
+        (fabs(fMap[0][2] - rhs.fMap[0][2]) < tolerance) &&
+        (fabs(fMap[0][3] - rhs.fMap[0][3]) < tolerance) &&
+
+        (fabs(fMap[1][0] - rhs.fMap[1][0]) < tolerance) &&
+        (fabs(fMap[1][1] - rhs.fMap[1][1]) < tolerance) &&
+        (fabs(fMap[1][2] - rhs.fMap[1][2]) < tolerance) &&
+        (fabs(fMap[1][3] - rhs.fMap[1][3]) < tolerance) &&
+
+        (fabs(fMap[2][0] - rhs.fMap[2][0]) < tolerance) &&
+        (fabs(fMap[2][1] - rhs.fMap[2][1]) < tolerance) &&
+        (fabs(fMap[2][2] - rhs.fMap[2][2]) < tolerance) &&
+        (fabs(fMap[2][3] - rhs.fMap[2][3]) < tolerance) &&
+
+        (fabs(fMap[3][0] - rhs.fMap[3][0]) < tolerance) &&
+        (fabs(fMap[3][1] - rhs.fMap[3][1]) < tolerance) &&
+        (fabs(fMap[3][2] - rhs.fMap[3][2]) < tolerance) &&
+        (fabs(fMap[3][3] - rhs.fMap[3][3]) < tolerance);
 }
 
 bool hsMatrix44::operator==(const hsMatrix44& ss) const
@@ -507,16 +493,15 @@ hsMatrix44& hsMatrix44::MakeCamera(const hsPoint3* from, const hsPoint3* at,
 {
     hsVector3 dirZ(at, from);
     hsVector3 trans( -from->fX, -from->fY, -from->fZ );
-    hsVector3 dirY, dirX;
     hsMatrix44 rmat;
-    
-    dirX = (*up) % dirZ; // Stop passing in down!!! // mf_flip_up - mf
+
+    hsVector3 dirX = (*up) % dirZ; // Stop passing in down!!! // mf_flip_up - mf
     if (dirX.MagnitudeSquared())
         dirX.Normalize();
 
     if (dirZ.MagnitudeSquared())
         dirZ.Normalize();
-    dirY = dirZ % dirX;
+    hsVector3 dirY = dirZ % dirX;
     if (dirY.MagnitudeSquared())
         dirY.Normalize();
 
@@ -569,17 +554,17 @@ void hsMatrix44::MakeCameraMatrices(const hsPoint3& from, const hsPoint3& at, co
 
 void hsMatrix44::MakeEnvMapMatrices(const hsPoint3& pos, hsMatrix44* worldToCameras, hsMatrix44* cameraToWorlds)
 {
-    MakeCameraMatrices(pos, hsPoint3(pos.fX - 1.f, pos.fY, pos.fZ), hsVector3(0, 0, 1.f), worldToCameras[0], cameraToWorlds[0]);
+    MakeCameraMatrices(pos, hsPoint3(pos.fX - 1.f, pos.fY, pos.fZ), hsVector3(0.f, 0.f, 1.f), worldToCameras[0], cameraToWorlds[0]);
 
-    MakeCameraMatrices(pos, hsPoint3(pos.fX + 1.f, pos.fY, pos.fZ), hsVector3(0, 0, 1.f), worldToCameras[1], cameraToWorlds[1]);
+    MakeCameraMatrices(pos, hsPoint3(pos.fX + 1.f, pos.fY, pos.fZ), hsVector3(0.f, 0.f, 1.f), worldToCameras[1], cameraToWorlds[1]);
 
-    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY + 1.f, pos.fZ), hsVector3(0, 0, 1.f), worldToCameras[2], cameraToWorlds[2]);
+    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY + 1.f, pos.fZ), hsVector3(0.f, 0.f, 1.f), worldToCameras[2], cameraToWorlds[2]);
 
-    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY - 1.f, pos.fZ), hsVector3(0, 0, 1.f), worldToCameras[3], cameraToWorlds[3]);
+    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY - 1.f, pos.fZ), hsVector3(0.f, 0.f, 1.f), worldToCameras[3], cameraToWorlds[3]);
 
-    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY, pos.fZ + 1.f), hsVector3(0, -1.f, 0), worldToCameras[4], cameraToWorlds[4]);
+    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY, pos.fZ + 1.f), hsVector3(0.f, -1.f, 0.f), worldToCameras[4], cameraToWorlds[4]);
 
-    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY, pos.fZ - 1.f), hsVector3(0, 1.f, 0), worldToCameras[5], cameraToWorlds[5]);
+    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY, pos.fZ - 1.f), hsVector3(0.f, 1.f, 0.f), worldToCameras[5], cameraToWorlds[5]);
 }
 
 //
@@ -604,10 +589,9 @@ hsMatrix44& hsMatrix44::MakeCameraUpPreserving(const hsPoint3* from, const hsPoi
     hsVector3 dirZ(at, from);
     hsVector3 trans( -from->fX, -from->fY, -from->fZ );
     hsVector3 dirY( up->fX, up->fY, up->fZ );
-    hsVector3 dirX;
     hsMatrix44 rmat;
-    
-    dirX =   dirY % dirZ;
+
+    hsVector3 dirX =   dirY % dirZ;
     dirX.Normalize();
 
     dirY.Normalize();
@@ -629,16 +613,6 @@ hsMatrix44& hsMatrix44::MakeCameraUpPreserving(const hsPoint3* from, const hsPoi
 }
 
 ///////////////////////////////////////////////////////
-
-static float GetDeterminant33(const hsMatrix44* mat)
-{
-    return  ((mat->fMap[0][0] * mat->fMap[1][1]) * mat->fMap[2][2]) +
-            ((mat->fMap[0][1] * mat->fMap[1][2]) * mat->fMap[2][0]) +
-            ((mat->fMap[0][2] * mat->fMap[1][0]) * mat->fMap[2][1]) -
-            ((mat->fMap[0][2] * mat->fMap[1][1]) * mat->fMap[2][0]) -
-            ((mat->fMap[0][1] * mat->fMap[1][0]) * mat->fMap[2][2]) -
-            ((mat->fMap[0][0] * mat->fMap[1][2]) * mat->fMap[2][1]);
-}
 
 hsMatrix44* hsMatrix44::GetTranspose(hsMatrix44* transp) const
 {
@@ -805,16 +779,6 @@ hsVector3* hsMatrix44::GetTranslate(hsVector3 *pt) const
     return pt;
 }
 
-const hsPoint3 hsMatrix44::GetTranslate() const
-{
-    hsPoint3 pt;
-    for (int i =0; i < 3; i++)
-    {
-        (pt)[i] = fMap[i][3];
-    }
-    return pt;
-}
-
 
 hsPoint3*  hsMatrix44::MapPoints(long count, hsPoint3 points[]) const
 {
@@ -829,7 +793,7 @@ hsPoint3*  hsMatrix44::MapPoints(long count, hsPoint3 points[]) const
     return points;
 }
 
-bool hsMatrix44::IsIdentity(void)
+bool hsMatrix44::IsIdentity()
 {
     bool retVal = true;
     int i, j;
@@ -930,9 +894,9 @@ void hsMatrix44::Write(hsStream *stream)
 }
 
 
-PL_FORMAT_IMPL(const hsMatrix44&)
+ST_FORMAT_TYPE(const hsMatrix44&)
 {
-    PL_FORMAT_FORWARD(plFormat("hsMatrix44[[{.4f}, {.4f}, {.4f}, {.4f}]; [{.4f}, {.4f}, {.4f}, {.4f}]; [{.4f}, {.4f}, {.4f}, {.4f}]; [{.4f}, {.4f}, {.4f}, {.4f}]]",
+    ST_FORMAT_FORWARD(ST::format("hsMatrix44[[{.4f}, {.4f}, {.4f}, {.4f}]; [{.4f}, {.4f}, {.4f}, {.4f}]; [{.4f}, {.4f}, {.4f}, {.4f}]; [{.4f}, {.4f}, {.4f}, {.4f}]]",
                     value.fMap[0][0], value.fMap[0][1], value.fMap[0][2], value.fMap[0][3],
                     value.fMap[1][0], value.fMap[1][1], value.fMap[1][2], value.fMap[1][3],
                     value.fMap[2][0], value.fMap[2][1], value.fMap[2][2], value.fMap[2][3],

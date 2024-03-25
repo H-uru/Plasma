@@ -52,6 +52,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plDynamicEnvLayer.h"
 
+#include "MaxMain/MaxCompat.h"
+
 ///////////////////////////////////////////////////////////////////////////////
 //// PickAnchorNode ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -63,11 +65,11 @@ class PickAnchorNode : public PickObjectProc
         HWND                fHWnd;
         int bleah;
 
-        PickAnchorNode() { fLayer = NULL; }
+        PickAnchorNode() { fLayer = nullptr; }
 
-        BOOL    Pick( INode *node )
+        BOOL    Pick(INode *node) override
         {
-            const char *dbgNodeName = node->GetName();
+            const MCHAR* dbgNodeName = node->GetName();
 
             if( fLayer )
                 fLayer->GetParamBlockByID( plDynamicEnvLayer::kBlkBitmap )->SetValue( plDynamicEnvLayer::kBmpAnchorNode, TimeValue( 0 ), node );
@@ -75,13 +77,13 @@ class PickAnchorNode : public PickObjectProc
             return TRUE;
         }
 
-        void    EnterMode()     { ISetButton( TRUE ); }
-        void    ExitMode()      { ISetButton( FALSE ); }
+        void    EnterMode() override    { ISetButton( TRUE ); }
+        void    ExitMode() override     { ISetButton( FALSE ); }
 
-        BOOL    Filter( INode *node )
+        BOOL    Filter(INode *node) override
         {
             Object  *obj = node->EvalWorldState( 0 ).obj;
-            if( obj != NULL )
+            if (obj != nullptr)
             {
                 if( obj->CanConvertToType( triObjectClassID ) || 
                     obj->ClassID() == Class_ID( DUMMY_CLASS_ID, 0 ) )
@@ -100,7 +102,7 @@ class PickAnchorNode : public PickObjectProc
                 iBut->SetCheck( checkIt );
                 if( fLayer )
                 {
-                    if( fLayer->GetParamBlockByID( plDynamicEnvLayer::kBlkBitmap )->GetINode( plDynamicEnvLayer::kBmpAnchorNode ) == NULL )
+                    if (fLayer->GetParamBlockByID(plDynamicEnvLayer::kBlkBitmap)->GetINode(plDynamicEnvLayer::kBmpAnchorNode) == nullptr)
                         iBut->SetText( _T( "<self>" ) );
                 }
             }
@@ -119,7 +121,7 @@ public:
     PickAnchorNode  fPickAnchorCallback;
 
     /// Called to update the controls of the dialog
-    virtual void    Update( TimeValue t, Interval &valid, IParamMap2 *map )
+    void    Update(TimeValue t, Interval &valid, IParamMap2 *map) override
     {
         IParamBlock2    *pblock;
         int             i;
@@ -132,7 +134,7 @@ public:
         i = pblock->GetInt( plDynamicEnvLayer::kBmpTextureSize, t );
         pblock->SetValue( plDynamicEnvLayer::kBmpLastTextureSize, t, i );
 
-        if( pblock->GetINode( plDynamicEnvLayer::kBmpAnchorNode ) == NULL )
+        if (pblock->GetINode(plDynamicEnvLayer::kBmpAnchorNode) == nullptr)
         {
             ICustButton     *bmSelectBtn = GetICustButton( GetDlgItem( pblock->GetMap()->GetHWnd(), IDC_ANCHOR_NODE ) );
             bmSelectBtn->SetText( _T( "<self>" ) );
@@ -166,7 +168,7 @@ public:
     }
 
     /// Main message proc
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -200,7 +202,7 @@ public:
         return FALSE;
     }
 
-    virtual void DeleteThis() {};
+    void DeleteThis() override { }
 };
 
 static DELBitmapDlgProc gDELBitmapDlgProc;
@@ -208,7 +210,7 @@ static DELBitmapDlgProc gDELBitmapDlgProc;
 class BleahPBAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         plDynamicEnvLayer* layer = (plDynamicEnvLayer *)owner;
         IParamBlock2 *pb = layer->GetParamBlockByID( plDynamicEnvLayer::kBlkBitmap );
@@ -217,7 +219,7 @@ public:
         {
             case plDynamicEnvLayer::kBmpAnchorNode:
                 INode   *newNode = (INode *)val.r;
-                if( newNode == NULL )
+                if (newNode == nullptr)
                 {
                     // Instead of displaying "none", display "<self>", since that's what nil means
                     // for us
@@ -228,7 +230,7 @@ public:
                 break;
         }
     }
-    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid)
+    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid) override
     {
     }
 };
@@ -251,18 +253,18 @@ static ParamBlockDesc2 gBitmapParamBlk
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_TEXSIZE_EDIT, IDC_TEXSIZE_SPIN, SPIN_AUTOSCALE,
         p_range,        4, 512,
         p_default,      64,
-        end,
+        p_end,
     plDynamicEnvLayer::kBmpAnchorNode, _T("anchorNode"), TYPE_INODE, 0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_ANCHOR_NODE,
         p_prompt,       IDS_SELECT_ANCHOR,
         p_accessor,     &gBleahPBAccessor,
-        end,
+        p_end,
     plDynamicEnvLayer::kBmpLastTextureSize, _T("lastTextureSize"),  TYPE_INT,       0, 0,
-        end,
+        p_end,
 
     plDynamicEnvLayer::kBmpRefract, _T("refract"),TYPE_BOOL,        0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_REFRACT,
-        end,
+        p_end,
 
-    end
+    p_end
 );

@@ -42,10 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plWin32Sound_h
 #define plWin32Sound_h
 
-#include "hsTemplates.h"
 #include "plSound.h"
 #include "hsThread.h"
 #include "plSoundEvent.h"
+
+#include <vector>
 
 #define NUM_MAX_HANDLES     16
 #define REPEAT_INFINITE     0xffffffff
@@ -62,29 +63,31 @@ class plWin32Sound : public plSound
 {
 public:
 
-    plWin32Sound();
-    virtual ~plWin32Sound();
+    plWin32Sound()
+        : fFailed(), fPositionInited(), fAwaitingPosition(), fTotalBytes(),
+          fReallyPlaying(), fChannelSelect(), fDSoundBuffer(), fWasPlaying()
+    { }
 
     CLASSNAME_REGISTER( plWin32Sound );
     GETINTERFACE_ANY( plWin32Sound, plSound );
     
-    virtual void        Activate(bool forcePlay = false);
-    virtual void        DeActivate();
+    void        Activate(bool forcePlay = false) override;
+    void        DeActivate() override;
 
-    virtual void        AddCallbacks(plSoundMsg* pMsg);
-    virtual void        RemoveCallbacks(plSoundMsg* pMsg);
+    void        AddCallbacks(plSoundMsg* pMsg) override;
+    void        RemoveCallbacks(plSoundMsg* pMsg) override;
 
-    virtual plSoundMsg* GetStatus(plSoundMsg* pMsg);
-    virtual bool        MsgReceive(plMessage* pMsg);
-    virtual void        Update();
+    plSoundMsg* GetStatus(plSoundMsg* pMsg) override;
+    bool        MsgReceive(plMessage* pMsg) override;
+    void        Update() override;
     
-    virtual void    SetMin(const int m); // sets minimum falloff distance
-    virtual void    SetMax(const int m); // sets maximum falloff distance
-    virtual void    SetConeOrientation(float x, float y, float z);
-    virtual void    SetOuterVolume( const int v ); // volume for the outer cone (if applicable)
-    virtual void    SetConeAngles( int inner, int outer );
-    virtual void    SetPosition(const hsPoint3 pos);
-    virtual void    SetVelocity(const hsVector3 vel);
+    void    SetMin(const int m) override; // sets minimum falloff distance
+    void    SetMax(const int m) override; // sets maximum falloff distance
+    void    SetConeOrientation(float x, float y, float z) override;
+    void    SetOuterVolume(const int v) override; // volume for the outer cone (if applicable)
+    void    SetConeAngles(int inner, int outer) override;
+    void    SetPosition(const hsPoint3& pos) override;
+    void    SetVelocity(const hsVector3& vel) override;
 
     enum ChannelSelect
     {
@@ -94,7 +97,7 @@ public:
 
     // Selects a channel source from a multi-channel (stereo) file. Ignored if source is mono
     void            SetChannelSelect( ChannelSelect source ) { fChannelSelect = (uint8_t)source; }
-    virtual uint8_t   GetChannelSelect( void ) const { return fChannelSelect; }
+    uint8_t   GetChannelSelect() const override { return fChannelSelect; }
     
 protected:
 
@@ -109,28 +112,28 @@ protected:
     
     uint8_t               fChannelSelect;     // For selecting a mono channel from a stereo file
 
-    hsTArray<plSoundEvent *>    fSoundEvents;
+    std::vector<plSoundEvent *> fSoundEvents;
 
-    virtual void    ISetActualVolume(float v);
-    virtual void    IActuallyStop( void );
-    virtual bool    IActuallyPlaying( void ) { return fReallyPlaying; }
-    virtual void    IActuallyPlay( void );
-    virtual void    IFreeBuffers( void );
-    virtual bool    IActuallyLoaded( void ) { return ( fDSoundBuffer != nil ) ? true : false; }
+    void    ISetActualVolume(float v) override;
+    void    IActuallyStop() override;
+    bool    IActuallyPlaying() override { return fReallyPlaying; }
+    void    IActuallyPlay() override;
+    void    IFreeBuffers() override;
+    bool    IActuallyLoaded() override { return (fDSoundBuffer != nullptr); }
 
     // Override to make sure the buffer is available before the base class is called
-    virtual void    IRefreshParams( void );
+    void    IRefreshParams() override;
 
-    virtual void    IDerivedActuallyPlay( void ) = 0;
+    virtual void    IDerivedActuallyPlay() = 0;
 
     virtual void    IAddCallback( plEventCallbackMsg *pMsg );
     virtual void    IRemoveCallback( plEventCallbackMsg *pMsg );
     plSoundEvent    *IFindEvent( plSoundEvent::Types type, uint32_t bytePos = 0 );
 
-    virtual void    IRead( hsStream *s, hsResMgr *mgr );
-    virtual void    IWrite( hsStream *s, hsResMgr *mgr );
+    void    IRead(hsStream *s, hsResMgr *mgr) override;
+    void    IWrite(hsStream *s, hsResMgr *mgr) override;
 
-    virtual void    IRefreshEAXSettings( bool force = false );
+    void    IRefreshEAXSettings(bool force = false) override;
 };
 
 #endif //plWin32Sound_h

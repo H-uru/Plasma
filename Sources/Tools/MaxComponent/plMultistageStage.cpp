@@ -42,24 +42,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsStream.h"
-#include "hsWindows.h"
-#include "MaxMain/MaxCompat.h"
 
-#include <iparamb2.h>
-#include <max.h>
+#include "MaxMain/MaxAPI.h"
 
 #include "resource.h"
-#pragma hdrstop
 
 #include "plMultistageStage.h"
 #include "plAvatar/plAnimStage.h"
 
-BOOL plBaseStage::IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plBaseStage::IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (msg == WM_INITDIALOG)
-        SetWindowLong(hDlg, GWL_USERDATA, lParam);
+        SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
 
-    plBaseStage *stage = (plBaseStage*)GetWindowLong(hDlg, GWL_USERDATA);
+    plBaseStage *stage = (plBaseStage*)GetWindowLongPtr(hDlg, GWLP_USERDATA);
 
     if (!stage)
         return FALSE;
@@ -67,17 +63,17 @@ BOOL plBaseStage::IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
     return stage->IDlgProc(hDlg, msg, wParam, lParam);
 }
 
-BOOL plBaseStage::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plBaseStage::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     return FALSE;
 }
 
-HWND plBaseStage::ICreateDlg(int dialogID, char* title)
+HWND plBaseStage::ICreateDlg(int dialogID, const MCHAR* title)
 {
     return GetCOREInterface()->AddRollupPage(hInstance,
                                             MAKEINTRESOURCE(dialogID),
                                             IStaticDlgProc,
-                                            title,
+                                            const_cast<MCHAR*>(title),
                                             (LPARAM)this);
 }
 
@@ -87,22 +83,22 @@ void plBaseStage::IDestroyDlg(HWND hDlg)
         GetCOREInterface()->DeleteRollupPage(hDlg);
 }
 
-plString plBaseStage::GetName()
+ST::string plBaseStage::GetName()
 {
-    if (fName.IsEmpty())
-        fName = "DefaultName";
+    if (fName.empty())
+        fName = ST_LITERAL("DefaultName");
     return fName;
 }
 
 void plBaseStage::Read(hsStream *stream)
 {
-    stream->ReadLE16();
+    (void)stream->ReadLE16();
     fName = stream->ReadSafeString();
 }
 
 void plBaseStage::Write(hsStream *stream)
 {
-    stream->WriteLE16(1);
+    stream->WriteLE16(uint16_t(1));
     stream->WriteSafeString(fName);
 }
 
@@ -114,7 +110,7 @@ void plBaseStage::IBaseClone(plBaseStage* clone)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-HWND plStandardStage::fDlg = NULL;
+HWND plStandardStage::fDlg = nullptr;
 
 plStandardStage::plStandardStage()
 {
@@ -161,7 +157,7 @@ void plStandardStage::Write(hsStream *stream)
 {
     plBaseStage::Write(stream);
 
-    stream->WriteLE16(2);
+    stream->WriteLE16(uint16_t(2));
 
     stream->WriteSafeString(fAnimName);
     stream->WriteLE32(fNumLoops);
@@ -183,7 +179,7 @@ void plStandardStage::Write(hsStream *stream)
 void plStandardStage::CreateDlg()
 {
     hsAssert(!fDlg, "Dialog wasn't destroyed");
-    fDlg = ICreateDlg(IDD_COMP_MULTIBEH_NORMAL, "Standard Stage");
+    fDlg = ICreateDlg(IDD_COMP_MULTIBEH_NORMAL, _M("Standard Stage"));
 
     IInitDlg();
 }
@@ -195,12 +191,12 @@ void plStandardStage::DestroyDlg()
     IGetAnimName();
 
     IDestroyDlg(fDlg);
-    fDlg = nil;
+    fDlg = nullptr;
 }
 
 #define SetBit(f,b,on) on ? hsSetBits(f,b) : hsClearBits(f,b)
 
-BOOL plStandardStage::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plStandardStage::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -213,7 +209,7 @@ BOOL plStandardStage::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam
             if (code == CBN_SELCHANGE)
             {
                 int sel = ComboBox_GetCurSel((HWND)lParam);
-                int type = ComboBox_GetItemData((HWND)lParam, sel);
+                int type = (int)ComboBox_GetItemData((HWND)lParam, sel);
 
                 if (id == IDC_FORWARD_COMBO)
                     fForward = type;
@@ -303,8 +299,8 @@ BOOL plStandardStage::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam
 void plStandardStage::IGetAnimName()
 {
     ICustEdit* edit = GetICustEdit(GetDlgItem(fDlg, IDC_ANIM_NAME));
-    char buf[256];
-    edit->GetText(buf, sizeof(buf));
+    MCHAR buf[256];
+    edit->GetText(buf, std::size(buf));
 
     if (fAnimName != buf)
     {
@@ -316,34 +312,34 @@ void plStandardStage::IGetAnimName()
 
 struct NameType
 {
-    const char* name;
+    const MCHAR* name;
     int type;
 };
 
 static NameType gForward[] =
 {
-    { "None",       plAnimStage::kForwardNone },
-    { "Keyboard",   plAnimStage::kForwardKey },
-    { "Automatic",  plAnimStage::kForwardAuto }
+    { _M("None"),       plAnimStage::kForwardNone },
+    { _M("Keyboard"),   plAnimStage::kForwardKey },
+    { _M("Automatic"),  plAnimStage::kForwardAuto }
 };
 
 static NameType gBackward[] =
 {
-    { "None",       plAnimStage::kBackNone },
-    { "Keyboard",   plAnimStage::kBackKey },
-    { "Automatic",  plAnimStage::kBackAuto }
+    { _M("None"),       plAnimStage::kBackNone },
+    { _M("Keyboard"),   plAnimStage::kBackKey },
+    { _M("Automatic"),  plAnimStage::kBackAuto }
 };
 
 static NameType gAdvance[] =
 {
-    { "None",       plAnimStage::kAdvanceNone },
-    { "Auto At End",plAnimStage::kAdvanceAuto }
+    { _M("None"),       plAnimStage::kAdvanceNone },
+    { _M("Auto At End"),plAnimStage::kAdvanceAuto }
 };
 
 static NameType gRegress[] =
 {
-    { "None",       plAnimStage::kRegressNone },
-    { "Auto At End",plAnimStage::kRegressAuto }
+    { _M("None"),       plAnimStage::kRegressNone },
+    { _M("Auto At End"),plAnimStage::kRegressAuto }
 };
 
 static void LoadCombo(HWND hCombo, NameType* nameInt, int size, int curVal)
@@ -363,7 +359,7 @@ static void LoadCombo(HWND hCombo, NameType* nameInt, int size, int curVal)
 void plStandardStage::IInitDlg()
 {
     ICustEdit* edit = GetICustEdit(GetDlgItem(fDlg, IDC_ANIM_NAME));
-    edit->SetText(const_cast<SETTEXT_VALUE_TYPE>(fAnimName.c_str()));
+    edit->SetText(const_cast<MAX10_CONST MCHAR*>(ST2M(fAnimName)));
 
     HWND hForward = GetDlgItem(fDlg, IDC_FORWARD_COMBO);
     LoadCombo(hForward, gForward, sizeof(gForward), fForward);

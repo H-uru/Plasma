@@ -39,6 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef plMultistageBehComponent_inc
+#define plMultistageBehComponent_inc
+
 #define MULTISTAGE_BEH_CID Class_ID(0x6c5234ab, 0x6c955a61)
 
 class plKey;
@@ -50,3 +54,5 @@ namespace MultiStageBeh
 {
     plKey GetMultiStageBehKey(plComponentBase *multiStageBehComp, plMaxNodeBase *target);
 }
+
+#endif

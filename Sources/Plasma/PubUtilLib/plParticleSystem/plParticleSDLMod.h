@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plParticleSDLMod_inc
 #define plParticleSDLMod_inc
 
+#include "pnNetCommon/plSDLTypes.h"
+
 #include "plModifier/plSDLModifier.h"
 
 //
@@ -55,9 +57,9 @@ private:
     bool fAttachedToAvatar;
 
 protected:
-    void IPutCurrentStateIn(plStateDataRecord* dstState);
-    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
-    uint32_t IApplyModFlags(uint32_t sendFlags);
+    void IPutCurrentStateIn(plStateDataRecord* dstState) override;
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
+    uint32_t IApplyModFlags(uint32_t sendFlags) override;
 public:
     // var labels 
     static char kStrNumParticles[]; 
@@ -68,7 +70,7 @@ public:
     plParticleSDLMod(bool attachedToAvatar = false): fAttachedToAvatar(attachedToAvatar) {}
     
     void PutCurrentStateIn(plStateDataRecord* dstState);
-    const char* GetSDLName() const { return kSDLParticleSystem; }
+    const char* GetSDLName() const override { return kSDLParticleSystem; }
 
     void SetAttachedToAvatar(bool attached) {fAttachedToAvatar = attached;}
 };

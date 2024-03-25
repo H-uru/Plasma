@@ -1,13 +1,6 @@
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
-include_directories(${OPENAL_INCLUDE_DIR})
-
 set(plPhysical_SOURCES
     plCollisionDetector.cpp
+    plDetectorModifier.cpp
     plPhysicalProxy.cpp
     plPhysicalSDLModifier.cpp
     plPhysicalSndGroup.cpp
@@ -27,7 +20,30 @@ set(plPhysical_HEADERS
     plSimDefs.h
 )
 
-add_library(plPhysical STATIC ${plPhysical_SOURCES} ${plPhysical_HEADERS})
+plasma_library(plPhysical SOURCES ${plPhysical_SOURCES} ${plPhysical_HEADERS})
+target_link_libraries(
+    plPhysical
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        pnNetCommon
+        plDrawable
+        plModifier
+    PRIVATE
+        pnMessage
+        pnNucleusInc
+        pnSceneObject
+        plAvatar
+        plMessage
+        plPhysX
+        plSDL
+        plStatusLog
+        plSurface
+    INTERFACE
+        pnFactory
+)
+
+target_include_directories(plPhysical PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 
 source_group("Source Files" FILES ${plPhysical_SOURCES})
 source_group("Header Files" FILES ${plPhysical_HEADERS})

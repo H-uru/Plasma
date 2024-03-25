@@ -60,7 +60,7 @@ protected:
     std::vector<plKey> fReceivers;
 
     void IDeleteStageVec();
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
 public:
     plMultistageBehMod();
@@ -76,12 +76,12 @@ public:
     void SetNetProp(bool netProp) { fNetProp = netProp; }
     void SetNetForce(bool netForce) { fNetForce = netForce; }
     
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     virtual void Init(plAnimStageVec *stages, bool freezePhys, bool smartSeek, bool reverseFBControlsOnRelease, std::vector<plKey>* receivers);
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 #endif // plMultistageBehMod_h_inc

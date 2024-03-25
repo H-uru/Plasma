@@ -42,7 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __PLGENERIC_H__
 #define __PLGENERIC_H__
 
-#include "hsStream.h"
+#include <string_theory/string>
+
+class hsStream;
 
 class plGeneric
 {
@@ -61,7 +63,7 @@ private:
     bool            fBoolVal;
     int             fIntVal;
     double          fFloatVal;
-    plString        fStringVal;
+    ST::string      fStringVal;
 
     void IReset();
 
@@ -70,13 +72,13 @@ public:
     plGeneric(const bool& val);
     plGeneric(const int& val);
     plGeneric(const double& val);
-    plGeneric(const plString& val);
+    plGeneric(const ST::string& val);
 
     void SetToNull() {IReset();}
     plGeneric& operator=(const bool& val);
     plGeneric& operator=(const int& val);
     plGeneric& operator=(const double& val);
-    plGeneric& operator=(const plString& val);
+    plGeneric& operator=(const ST::string& val);
 
     // the cast functions will NOT cast from one type to another, use
     // GetType() to determine the type of parameter, then cast it to that type
@@ -84,7 +86,7 @@ public:
     operator bool() const {return fBoolVal;}
     operator int() const {return fIntVal;}
     operator double() const {return fFloatVal;}
-    operator plString() const {return fStringVal;}
+    operator ST::string() const {return fStringVal;}
 
     int Write(hsStream* stream);
     int Read(hsStream* stream);

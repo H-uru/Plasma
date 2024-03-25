@@ -47,10 +47,10 @@ class plClothingComponent : public plComponent
 public:
     plClothingComponent();
 
-    virtual void DeleteThis() { delete this; }
-    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg); 
+    void DeleteThis() override { delete this; }
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum // ParamBlock indices
     {
@@ -70,9 +70,9 @@ class plClothingComponentProc : public ParamMap2UserDlgProc
 public:
     plClothingComponentProc() {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 
 #endif

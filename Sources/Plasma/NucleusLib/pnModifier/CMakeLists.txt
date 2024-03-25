@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(pnModifier_HEADERS
     plConditionalObject.h
     plLogicModBase.h
@@ -20,7 +15,22 @@ set(pnModifier_SOURCES
     plSingleModifier.cpp
 )
 
-add_library(pnModifier STATIC ${pnModifier_HEADERS} ${pnModifier_SOURCES})
+plasma_library(pnModifier
+    SOURCES ${pnModifier_HEADERS} ${pnModifier_SOURCES}
+    PRECOMPILED_HEADERS Pch.h
+)
+target_link_libraries(
+    pnModifier
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnKeyedObject
+        pnNetCommon
+    PRIVATE
+        pnMessage
+        pnNucleusInc
+        pnSceneObject
+)
 
 source_group("Header Files" FILES ${pnModifier_HEADERS})
 source_group("Source Files" FILES ${pnModifier_SOURCES})

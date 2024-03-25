@@ -84,27 +84,28 @@ plFont::plCharacter::plCharacter()
 void    plFont::plCharacter::Read( hsStream *s )
 {
     // Rocket science here...
-    s->ReadLE( &fBitmapOff );
-    s->ReadLE( &fHeight );
-    s->ReadLE( &fBaseline );
-    s->ReadLE( &fLeftKern );
-    s->ReadLE( &fRightKern );
+    s->ReadLE32(&fBitmapOff);
+    s->ReadLE32(&fHeight);
+    s->ReadLE32(&fBaseline);
+    s->ReadLEFloat(&fLeftKern);
+    s->ReadLEFloat(&fRightKern);
 }
 
-void    plFont::plCharacter::Write( hsStream *s )
+void plFont::plCharacter::Write(hsStream *s) const
 {
-    s->WriteLE( fBitmapOff );
-    s->WriteLE( fHeight );
-    s->WriteLE( fBaseline );
-    s->WriteLE( fLeftKern );
-    s->WriteLE( fRightKern );
+    s->WriteLE32(fBitmapOff);
+    s->WriteLE32(fHeight);
+    s->WriteLE32(fBaseline);
+    s->WriteLEFloat(fLeftKern);
+    s->WriteLEFloat(fRightKern);
 }
 
 //// Constructor/Read/Write/Destructor/etc ////////////////////////////////////
 
 plFont::plFont()
+    : fFontAscent(), fFontDescent()
 {
-    IClear( true );
+    IClear(true);
 }
 
 plFont::~plFont()
@@ -117,26 +118,26 @@ void    plFont::IClear( bool onConstruct )
     if( !onConstruct )
         delete [] fBMapData;
 
-    fFace = plString::Null;
+    fFace = ST::string();
     fSize = 0;
     fFlags = 0;
 
     fWidth = fHeight = 0;
     fBPP = 0;
-    fBMapData = nil;
+    fBMapData = nullptr;
     fFirstChar = 0;
     fMaxCharHeight = 0;
-    fCharacters.Reset();
+    fCharacters.clear();
 
     fRenderInfo.fFlags = 0;
     fRenderInfo.fX = fRenderInfo.fY = fRenderInfo.fNumCols = 0;
     fRenderInfo.fMaxWidth = fRenderInfo.fMaxHeight = 0;
-    fRenderInfo.fDestPtr = nil;
+    fRenderInfo.fDestPtr = nullptr;
     fRenderInfo.fDestStride = 0;
     fRenderInfo.fColor = 0;
-    fRenderInfo.fMipmap = nil;
-    fRenderInfo.fRenderFunc = nil;
-    fRenderInfo.fVolatileStringPtr = nil;
+    fRenderInfo.fMipmap = nullptr;
+    fRenderInfo.fRenderFunc = nullptr;
+    fRenderInfo.fVolatileStringPtr = nullptr;
     fRenderInfo.fFirstLineIndent = 0;
     fRenderInfo.fLineSpacing = 0;
 }
@@ -181,13 +182,13 @@ void    plFont::SetRenderWrapping( int16_t x, int16_t y, int16_t width, int16_t 
     SetRenderClipRect( x, y, width, height );
 }
 
-void    plFont::ICalcFontAscent( void )
+void    plFont::ICalcFontAscent()
 {
-    uint32_t  i;
-
-
     // Hack for now, only calc the ascent for characters in the 127 character ASCII range
-    for( i = 0, fFontAscent = 0, fFontDescent = 0, fMaxCharHeight = 0; i < fCharacters.GetCount(); i++ )
+    fFontAscent = 0;
+    fFontDescent = 0;
+    fMaxCharHeight = 0;
+    for (size_t i = 0; i < fCharacters.size(); i++)
     {
         if( i + fFirstChar < 128 && fFontAscent < fCharacters[ i ].fBaseline )
             fFontAscent = fCharacters[ i ].fBaseline;
@@ -206,7 +207,7 @@ void    plFont::ICalcFontAscent( void )
 
 static inline bool  IIsWordBreaker( const char c )
 {
-    return ( strchr( " \t,.;\n", c ) != nil ) ? true : false;
+    return (strchr(" \t,.;\n", c) != nullptr);
 }
 
 //// IIsDrawableWordBreak /////////////////////////////////////////////////////
@@ -215,17 +216,17 @@ static inline bool  IIsWordBreaker( const char c )
 
 static inline bool  IIsDrawableWordBreak( const char c )
 {
-    return ( strchr( ",.;", c ) != nil ) ? true : false;
+    return (strchr(",.;", c) != nullptr);
 }
 
 //// RenderString /////////////////////////////////////////////////////////////
 //  The base render function. Additional options are specified externally,
 //  so that their effects can be cached for optimization
 
-void    plFont::RenderString( plMipmap *mip, uint16_t x, uint16_t y, const plString &string, uint16_t *lastX, uint16_t *lastY )
+void    plFont::RenderString( plMipmap *mip, uint16_t x, uint16_t y, const ST::string &string, uint16_t *lastX, uint16_t *lastY )
 {
     // TEMP
-    RenderString(mip, x, y, string.ToWchar().GetData(), lastX, lastY);
+    RenderString(mip, x, y, string.to_wchar().data(), lastX, lastY);
 }
 
 
@@ -238,10 +239,20 @@ void    plFont::RenderString( plMipmap *mip, uint16_t x, uint16_t y, const wchar
     }
 
     IRenderString( mip, x, y, string, false );
-    if( lastX != nil )
+    if (lastX != nullptr)
         *lastX = fRenderInfo.fLastX;
-    if( lastY != nil )
+    if (lastY != nullptr)
         *lastY = fRenderInfo.fLastY;
+}
+
+const plFont::plCharacter& plFont::IGetCharacter(wchar_t c) const
+{
+    if (c - fFirstChar < fCharacters.size()) {
+        return fCharacters[c - fFirstChar];
+    } else {
+        // Ignore any characters that the font doesn't support.
+        return fCharacters[0];
+    }
 }
 
 void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wchar_t *string, bool justCalc )
@@ -277,7 +288,7 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
 
     if( justCalc )
     {
-        plCharacter &ch = fCharacters[ (uint16_t)string[ 0 ] - fFirstChar ];
+        const plCharacter& ch = IGetCharacter(string[0]);
         fRenderInfo.fX = fRenderInfo.fFarthestX = x - (int16_t)ch.fLeftKern;
         if( fRenderInfo.fX < 0 )
             fRenderInfo.fX = 0;
@@ -323,7 +334,7 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
     }
 
     // Choose an optimal rendering function
-    fRenderInfo.fRenderFunc = nil;
+    fRenderInfo.fRenderFunc = nullptr;
     if( justCalc )
         fRenderInfo.fRenderFunc = &plFont::IRenderCharNull;
     else if( mip->GetPixelSize() == 32 )
@@ -351,7 +362,7 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
         }
     }
 
-    if( fRenderInfo.fRenderFunc == nil )
+    if (fRenderInfo.fRenderFunc == nullptr)
     {
         hsAssert( false, "Invalid combination of source and destination formats in RenderString()" );
         return;
@@ -376,7 +387,7 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
         // Just calculating, no wrapping, so the max is as far as we can go
         // Note: 32767 isn't quite right, since we'll be adding the left kern in before we
         // calc the first character, so adjust so we make sure we don't underflow
-        plCharacter &ch = fCharacters[ (uint16_t)(uint8_t)string[ 0 ] - fFirstChar ];
+        const plCharacter& ch = IGetCharacter(string[0]);
 
         fRenderInfo.fMaxHeight = (int16_t)fMaxCharHeight;
         fRenderInfo.fMaxWidth = (int16_t)32767 + (int16_t)ch.fLeftKern;
@@ -440,13 +451,9 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
                 }
                 
                 // handle invalid chars discretely
-                plCharacter* charToDraw = NULL;
-                if (fCharacters.Count() <= ((uint16_t)string[i] - fFirstChar))
-                    charToDraw = &(fCharacters[(uint16_t)L' ' - fFirstChar]);
-                else
-                    charToDraw = &(fCharacters[(uint16_t)string[i] - fFirstChar]);
+                const plCharacter& charToDraw = IGetCharacter(string[i]);
 
-                int16_t leftKern = (int16_t)charToDraw->fLeftKern;
+                int16_t leftKern = (int16_t)charToDraw.fLeftKern;
                 if( fRenderInfo.fFlags & kRenderScaleAA )
                     x += leftKern / 2;
                 else
@@ -455,7 +462,7 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
                 // Update our position and see if we're over
                 // Note that our wrapping is slightly off, in that it doesn't take into account
                 // the left kerning of characters. Hopefully that won't matter much...
-                uint16_t charWidth = (uint16_t)(fWidth + (int16_t)charToDraw->fRightKern);
+                uint16_t charWidth = (uint16_t)(fWidth + (int16_t)charToDraw.fRightKern);
                 if( fRenderInfo.fFlags & kRenderScaleAA )
                     charWidth >>= 1;
 
@@ -574,7 +581,7 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
                 {
                     int16_t baseX = fRenderInfo.fX;
 
-                    plCharacter &ch = fCharacters[ (uint16_t)string[ 0 ] - fFirstChar ];
+                    const plCharacter& ch = IGetCharacter(string[0]);
 
                     fRenderInfo.fX -= (int16_t)ch.fLeftKern;
                     fRenderInfo.fDestPtr -= (int16_t)ch.fLeftKern * fRenderInfo.fDestBPP;
@@ -694,7 +701,7 @@ void    plFont::IRenderLoop( const wchar_t *string, int32_t maxCount )
         else
         {
             c -= fFirstChar;
-            if( c >= fCharacters.GetCount() )
+            if (c >= fCharacters.size())
                 ;   // Invalid char
             else
             {
@@ -745,7 +752,7 @@ void    plFont::IRenderLoop( const wchar_t *string, int32_t maxCount )
 void    plFont::IRenderChar1To32( const plFont::plCharacter &c )
 {
     uint8_t   bitMask, *src = fBMapData + c.fBitmapOff;
-    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)(fRenderInfo.fDestPtr - c.fBaseline * int32_t(fRenderInfo.fDestStride));
     uint16_t  x, y;
 
     
@@ -778,7 +785,7 @@ void    plFont::IRenderChar1To32( const plFont::plCharacter &c )
 void    plFont::IRenderChar1To32AA( const plFont::plCharacter &c )
 {
     uint8_t   bitMask, *src = fBMapData + c.fBitmapOff;
-    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - ( c.fBaseline >> 1 ) * fRenderInfo.fDestStride );
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)(fRenderInfo.fDestPtr - (c.fBaseline >> 1) * int32_t(fRenderInfo.fDestStride));
     uint16_t  x, y;
 
     
@@ -843,7 +850,7 @@ void    plFont::IRenderChar1To32AA( const plFont::plCharacter &c )
 void    plFont::IRenderChar8To32( const plFont::plCharacter &c )
 {
     uint8_t   *src = fBMapData + c.fBitmapOff;
-    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)(fRenderInfo.fDestPtr - c.fBaseline * int32_t(fRenderInfo.fDestStride));
     int16_t   x, y, thisHeight, xstart, thisWidth;
     uint32_t  srcAlpha, oneMinusAlpha, r, g, b, dR, dG, dB, destAlpha;
     uint8_t   srcR, srcG, srcB;
@@ -918,7 +925,7 @@ void    plFont::IRenderChar8To32( const plFont::plCharacter &c )
 void    plFont::IRenderChar8To32FullAlpha( const plFont::plCharacter &c )
 {
     uint8_t   *src = fBMapData + c.fBitmapOff;
-    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)(fRenderInfo.fDestPtr - c.fBaseline * int32_t(fRenderInfo.fDestStride));
     int16_t   x, y, thisHeight, xstart, thisWidth;
     uint32_t  destColorOnly;
 
@@ -969,7 +976,7 @@ void    plFont::IRenderChar8To32FullAlpha( const plFont::plCharacter &c )
 void    plFont::IRenderChar8To32Alpha( const plFont::plCharacter &c )
 {
     uint8_t   val, *src = fBMapData + c.fBitmapOff;
-    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)(fRenderInfo.fDestPtr - c.fBaseline * int32_t(fRenderInfo.fDestStride));
     int16_t   x, y, thisHeight, xstart, thisWidth;
     uint32_t  destColorOnly, alphaMult, fullAlpha;
 
@@ -1029,7 +1036,7 @@ void    plFont::IRenderChar8To32Alpha( const plFont::plCharacter &c )
 void    plFont::IRenderChar8To32AlphaPremultiplied( const plFont::plCharacter &c )
 {
     uint8_t   *src = fBMapData + c.fBitmapOff;
-    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)(fRenderInfo.fDestPtr - c.fBaseline * int32_t(fRenderInfo.fDestStride));
     int16_t   x, y, thisHeight, xstart, thisWidth;
     uint8_t   srcA, srcR, srcG, srcB;
 
@@ -1087,7 +1094,7 @@ void    plFont::IRenderChar8To32AlphaPremultiplied( const plFont::plCharacter &c
 
 void    plFont::IRenderChar8To32AlphaPremShadow( const plFont::plCharacter &c )
 {
-    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)(fRenderInfo.fDestPtr - c.fBaseline * int32_t(fRenderInfo.fDestStride));
     int16_t   x, y, thisHeight, xstart, thisWidth;
     uint8_t   srcA, srcR, srcG, srcB;
 
@@ -1127,7 +1134,7 @@ void    plFont::IRenderChar8To32AlphaPremShadow( const plFont::plCharacter &c )
     y = fRenderInfo.fClipRect.fY - fRenderInfo.fY + (int16_t)c.fBaseline;
     if( y < -2 )
         y = -2;
-    destBasePtr = (uint32_t *)( (uint8_t *)destBasePtr + y*fRenderInfo.fDestStride );
+    destBasePtr = (uint32_t *)((uint8_t *)destBasePtr + y * int32_t(fRenderInfo.fDestStride));
 
     thisHeight = fRenderInfo.fMaxHeight + (int16_t)c.fBaseline;
     if( thisHeight > (int16_t)c.fHeight + 2 )
@@ -1172,11 +1179,10 @@ void    plFont::IRenderCharNull( const plCharacter &c )
 
 //// CalcString Variations ////////////////////////////////////////////////////
 
-uint16_t  plFont::CalcStringWidth( const plString &string )
+uint16_t  plFont::CalcStringWidth( const ST::string &string )
 {
     uint16_t w, h, a, lX, lY;
-    uint32_t s;
-    CalcStringExtents( string, w, h, a, s, lX, lY );
+    CalcStringExtents( string, w, h, a, lX, lY );
     return w;
 }
 
@@ -1188,15 +1194,19 @@ uint16_t  plFont::CalcStringWidth( const wchar_t *string )
     return w;
 }
 
-void    plFont::CalcStringExtents( const plString &string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY )
+void    plFont::CalcStringExtents( const ST::string &string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint16_t &lastX, uint16_t &lastY )
 {
     // convert the char string to a wchar_t string
-    CalcStringExtents(string.ToWchar().GetData(), width, height, ascent, firstClippedChar, lastX, lastY);
+    // We don't expose firstClippedChar as an out parameter in the ST::string overload,
+    // because converting it to a correct UTF-8-based count is a bit complicated
+    // and currently nothing uses this information.
+    uint32_t firstClippedChar;
+    CalcStringExtents(string.to_wchar().data(), width, height, ascent, firstClippedChar, lastX, lastY);
 }
 
 void    plFont::CalcStringExtents( const wchar_t *string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY )
 {
-    IRenderString( nil, 0, 0, string, true );
+    IRenderString(nullptr, 0, 0, string, true);
     width = fRenderInfo.fFarthestX;
     height = (uint16_t)(fRenderInfo.fY + fFontDescent);//fRenderInfo.fMaxDescent;
     ascent = fRenderInfo.fMaxAscent;
@@ -1205,8 +1215,7 @@ void    plFont::CalcStringExtents( const wchar_t *string, uint16_t &width, uint1
 
     // firstClippedChar is an index into the given string that points to the start of the part of the string
     // that got clipped (i.e. not rendered).
-    firstClippedChar = (uintptr_t)fRenderInfo.fVolatileStringPtr - (uintptr_t)string;
-    firstClippedChar /= 2; // divide by 2 because a wchar_t is two bytes wide, instead of one (like a char)
+    firstClippedChar = fRenderInfo.fVolatileStringPtr - string;
 }
 
 //// IGetFreeCharData /////////////////////////////////////////////////////////
@@ -1216,11 +1225,8 @@ void    plFont::CalcStringExtents( const wchar_t *string, uint16_t &width, uint1
 
 uint8_t   *plFont::IGetFreeCharData( uint32_t &newOffset )
 {
-    int32_t i;
-
-
     newOffset = 0;
-    for( i = fCharacters.GetCount() - 1; i >= 0; i-- )
+    for (hsSsize_t i = fCharacters.size() - 1; i >= 0; i--)
     {
         uint32_t thisOff = fCharacters[ i ].fBitmapOff + ( ( fCharacters[ i ].fHeight * fWidth * fBPP ) >> 3 );
         if( newOffset < thisOff )
@@ -1233,7 +1239,7 @@ uint8_t   *plFont::IGetFreeCharData( uint32_t &newOffset )
     if( newOffset >= ( ( fWidth * fHeight * fBPP ) >> 3 ) )
     {
         hsAssert( false, "Invalid position found in IGetFreeCharData()" );
-        return nil;
+        return nullptr;
     }
 
     // Return pointer to the new area
@@ -1312,40 +1318,40 @@ bool    plFont::LoadFromFNTStream( hsStream *stream )
 
                 s->Read( sizeof( copyright ), copyright );
             
-                s->ReadLE( &type );
-                s->ReadLE( &points );
-                s->ReadLE( &vertRes );
-                s->ReadLE( &horzRes );
-                s->ReadLE( &ascent );
-                s->ReadLE( &internalLeading );
-                s->ReadLE( &externalLeading );
-                s->ReadLE( &italic );
-                s->ReadLE( &underline );
-                s->ReadLE( &strikeout );
-                s->ReadLE( &weight );
-                s->ReadLE( &charSet );
-                s->ReadLE( &pixWidth );
-                s->ReadLE( &pixHeight );
-                s->ReadLE( &pitchFamily );
-                s->ReadLE( &avgWidth );
-                s->ReadLE( &maxWidth );
-                s->ReadLE( &firstChar );
-                s->ReadLE( &lastChar );
-                s->ReadLE( &defaultChar );
-                s->ReadLE( &breakChar );
-                s->ReadLE( &widthBytes );
-                s->ReadLE( &device );
-                s->ReadLE( &face );
-                s->ReadLE( &bitsPointer );
-                s->ReadLE( &bitsOffset );
-                s->ReadLE( &reserved );
+                s->ReadLE16(&type);
+                s->ReadLE16(&points);
+                s->ReadLE16(&vertRes);
+                s->ReadLE16(&horzRes);
+                s->ReadLE16(&ascent);
+                s->ReadLE16(&internalLeading);
+                s->ReadLE16(&externalLeading);
+                s->ReadByte(&italic);
+                s->ReadByte(&underline);
+                s->ReadByte(&strikeout);
+                s->ReadLE16(&weight);
+                s->ReadByte(&charSet);
+                s->ReadLE16(&pixWidth);
+                s->ReadLE16(&pixHeight);
+                s->ReadByte(&pitchFamily);
+                s->ReadLE16(&avgWidth);
+                s->ReadLE16(&maxWidth);
+                s->ReadByte(&firstChar);
+                s->ReadByte(&lastChar);
+                s->ReadByte(&defaultChar);
+                s->ReadByte(&breakChar);
+                s->ReadLE16(&widthBytes);
+                s->ReadLE32(&device);
+                s->ReadLE32(&face);
+                s->ReadLE32(&bitsPointer);
+                s->ReadLE32(&bitsOffset);
+                s->ReadByte(&reserved);
                 if( version == 0x0300 )
                 {
-                    s->ReadLE( &flags );
-                    s->ReadLE( &aSpace );
-                    s->ReadLE( &bSpace );
-                    s->ReadLE( &cSpace );
-                    s->ReadLE( &colorPointer );
+                    s->ReadLE32(&flags);
+                    s->ReadLE16(&aSpace);
+                    s->ReadLE16(&bSpace);
+                    s->ReadLE16(&cSpace);
+                    s->ReadLE32(&colorPointer);
                     s->Read( sizeof( reserved1 ), reserved1 );
                 }
                 else
@@ -1441,7 +1447,7 @@ bool    plFont::LoadFromFNTStream( hsStream *stream )
             outChar.fBaseline = fntInfo.ascent;
             outChar.fLeftKern = 0.f;
             outChar.fRightKern = (float)(charEntries[ i ].width - fWidth);
-            fCharacters.Append( outChar );
+            fCharacters.emplace_back(outChar);
 
             if( outChar.fHeight > fMaxCharHeight )
                 fMaxCharHeight = outChar.fHeight;
@@ -1529,14 +1535,11 @@ class plLineParser
             *fCursor = fRestore;
 
             // Scan for the start of the next token
-            while( *fCursor != 0 && (*tester)( *fCursor ) )
+            while (*fCursor != 0 && (*tester)(static_cast<unsigned char>(*fCursor)))
                 fCursor++;
 
             if( *fCursor == 0 )
                 return;
-
-            // This is the start of our token
-            const char *start = fCursor;
 
             // Put a stopper here
             fRestore = *fCursor;
@@ -1552,15 +1555,15 @@ class plLineParser
             *fCursor = fRestore;
 
             // Scan for the start of the next token
-            while( *fCursor != 0 && (*tester)( *fCursor ) )
+            while (*fCursor != 0 && (*tester)(static_cast<unsigned char>(*fCursor)))
                 fCursor++;
 
             if( *fCursor == 0 )
-                return nil;
+                return nullptr;
 
             // This is the start of our token; find the end
             const char *start = fCursor;
-            while( *fCursor != 0 && !(*tester)( *fCursor ) )
+            while (*fCursor != 0 && !(*tester)(static_cast<unsigned char>(*fCursor)))
                 fCursor++;
 
             // Put a stopper here
@@ -1582,28 +1585,28 @@ class plLineParser
 
         ~plLineParser() { }
 
-        const char  *GetKeyword( void )
+        const char  *GetKeyword()
         {
             return IGetNextToken();
         }
 
-        const char  *GetString( void )
+        const char  *GetString()
         {
             IAdvanceToNextToken();
             return IGetNextToken( sQuoteTester );
         }
 
-        const char  *GetKeywordNoDashes( void )
+        const char  *GetKeywordNoDashes()
         {
             return IGetNextToken( sDashTester );
         }
 
-        int32_t       GetInt( void )
+        int32_t       GetInt()
         {
             return atoi( IGetNextToken() );
         }
 
-        float    GetFloat( void )
+        float    GetFloat()
         {
             return (float)atof( IGetNextToken() );
         }
@@ -1622,9 +1625,11 @@ class plBDFSectParser
     public:
         plBDFSectParser( plFont &myFont, plBDFConvertCallback *callback ) : fFont( myFont ), fCallback( callback ) {}
 
+        virtual ~plBDFSectParser() { }
+
         virtual plBDFSectParser *ParseKeyword( const char *keyword, plLineParser &line )
         {
-            return nil;
+            return nullptr;
         }
 };
 
@@ -1634,7 +1639,7 @@ class plBDFLookForEndCharParser : public plBDFSectParser
     public:
         plBDFLookForEndCharParser( plFont &myFont, plBDFConvertCallback *callback ) : plBDFSectParser( myFont, callback ) {}
 
-        virtual plBDFSectParser *ParseKeyword( const char *keyword, plLineParser &line );
+        plBDFSectParser *ParseKeyword(const char *keyword, plLineParser &line) override;
 };
 
 inline uint8_t    iHexCharToByte( char c )
@@ -1676,10 +1681,10 @@ class plBDFCharsParser : public plBDFSectParser
         bool                fDoingData;
         uint32_t              fBytesWide, fBMapStride;
 
-        inline void IReset( void )
+        inline void IReset()
         {
-            fBitmap = nil;
-            fCharacter = nil;
+            fBitmap = nullptr;
+            fCharacter = nullptr;
             fWhichChar = 0;
             fDoingData = false;
         }
@@ -1687,27 +1692,30 @@ class plBDFCharsParser : public plBDFSectParser
     public:
         static uint32_t       fResolution;
 
-        plBDFCharsParser( plFont &myFont, plBDFConvertCallback *callback ) : plBDFSectParser( myFont, callback ), fDoingData( false ) {}
+        plBDFCharsParser(plFont& myFont, plBDFConvertCallback* callback)
+            : plBDFSectParser(myFont, callback), fDoingData(), fWhichChar(),
+              fRowsLeft(), fCharacter(), fBitmap(), fBytesWide(), fBMapStride()
+        { }
 
-        virtual plBDFSectParser *ParseKeyword( const char *keyword, plLineParser &line )
+        plBDFSectParser *ParseKeyword(const char *keyword, plLineParser &line) override
         {
             if( strcmp( keyword, "ENDFONT" ) == 0 )
             {
                 // All done!
-                return nil;
+                return nullptr;
             }
             else if( strcmp( keyword, "ENDCHAR" ) == 0 )
             {
                 // End of the character, reset
                 IReset();
-                if( fCallback != nil )
+                if (fCallback != nullptr)
                     fCallback->CharDone();
             }
             else if( fDoingData )
             {
                 // If we're doing data, all lines are hex values until we hit "ENDCHAR"
                 if( fRowsLeft == 0 )
-                    throw;
+                    throw false;
 
                 int hDigit;
                 for( hDigit = 0; *keyword != 0 && hDigit < fBytesWide; hDigit++, keyword += 2 )
@@ -1738,8 +1746,8 @@ class plBDFCharsParser : public plBDFSectParser
 
                     // Set up our pointer. Note that since BDFs don't tell us the starting character,
                     // we just make it 0
-                    if( fFont.fCharacters.GetCount() < fWhichChar + 1 )
-                        fFont.fCharacters.SetCount( fWhichChar + 1 );
+                    if (fFont.fCharacters.size() < fWhichChar + 1)
+                        fFont.fCharacters.resize(fWhichChar + 1);
 
                     fCharacter = &fFont.fCharacters[ fWhichChar ];
                 }
@@ -1779,13 +1787,13 @@ class plBDFCharsParser : public plBDFSectParser
 
                 // Got enough info now to allocate us a bitmap for this char
                 fBitmap = fFont.IGetFreeCharData( fCharacter->fBitmapOff );
-                if( fBitmap == nil )
+                if (fBitmap == nullptr)
                     throw false;
 
                 if( fCharacter->fBitmapOff > ( ( fFont.fWidth * ( fFont.fHeight - pixH ) * fFont.fBPP ) >> 3 ) )
                 {
                     hsAssert( false, "Invalid position found in IGetFreeCharData()" );
-                    return nil;
+                    return nullptr;
                 }
 
                 // Set these now, since setting them before would've changed the IGetFreeCharData results
@@ -1832,7 +1840,7 @@ class plBDFLookForCharParser : public plBDFSectParser
     public:
         plBDFLookForCharParser( plFont &myFont, plBDFConvertCallback *callback ) : plBDFSectParser( myFont, callback ) {}
 
-        virtual plBDFSectParser *ParseKeyword( const char *keyword, plLineParser &line )
+        plBDFSectParser *ParseKeyword(const char *keyword, plLineParser &line) override
         {
             if( strcmp( keyword, "CHARS" ) == 0 )
             {
@@ -1849,7 +1857,7 @@ class plBDFPropertiesParser : public plBDFSectParser
     public:
         plBDFPropertiesParser( plFont &myFont, plBDFConvertCallback *callback ) : plBDFSectParser( myFont, callback ) {}
 
-        virtual plBDFSectParser *ParseKeyword( const char *keyword, plLineParser &line )
+        plBDFSectParser *ParseKeyword(const char *keyword, plLineParser &line) override
         {
             // Note: the properties section is entirely optional and arbitrary, but we
             // parse it in case we can get more accurate info about the font name and props
@@ -1877,7 +1885,7 @@ class plBDFHeaderParser : public plBDFSectParser
     public:
         plBDFHeaderParser( plFont &myFont, plBDFConvertCallback *callback ) : plBDFSectParser( myFont, callback ) {}
 
-        virtual plBDFSectParser *ParseKeyword( const char *keyword, plLineParser &line )
+        plBDFSectParser *ParseKeyword(const char *keyword, plLineParser &line) override
         {
             if( strcmp( keyword, "STARTFONT" ) == 0 )
             {
@@ -1897,11 +1905,11 @@ class plBDFHeaderParser : public plBDFSectParser
                 const char *vendor = line.GetKeywordNoDashes();
                 const char *face = line.GetKeywordNoDashes();
 
-                fFont.SetFace( face != nil ? face : vendor );
+                fFont.SetFace(face != nullptr ? face : vendor);
 
                 const char *weight = line.GetKeywordNoDashes();
 
-                if( weight != nil && stricmp( weight, "Bold" ) == 0 )
+                if (weight != nullptr && stricmp(weight, "Bold") == 0)
                     fFont.SetFlag( plFont::kFlagBold, true );
             }
             else if( strcmp( keyword, "COMMENT" ) == 0 )
@@ -1950,7 +1958,7 @@ class plBDFHeaderParser : public plBDFSectParser
                 // Allocate our bitmap if we haven't already
 
                 // Since we're 1 bbp, make sure width is a multiple of 8
-                if( fFont.fBMapData == nil )
+                if (fFont.fBMapData == nullptr)
                 {
                     fFont.fWidth = ( ( fFont.fWidth + 7 ) >> 3 ) << 3;
 
@@ -1982,14 +1990,14 @@ class plBDFCheckDimsParser : public plBDFSectParser
         uint32_t  fMaxWidth, fMaxHeight, fNumChars, fTotalHeight;
         uint16_t  fMaxChar;
 
-        plBDFCheckDimsParser( plFont &myFont ) : plBDFSectParser( myFont, nil ) { fMaxWidth = fMaxHeight = fNumChars = fTotalHeight = 0; fSkipNext = false; fMaxChar = 0; }
+        plBDFCheckDimsParser(plFont &myFont) : plBDFSectParser(myFont, nullptr) { fMaxWidth = fMaxHeight = fNumChars = fTotalHeight = 0; fSkipNext = false; fMaxChar = 0; }
 
-        virtual plBDFSectParser *ParseKeyword( const char *keyword, plLineParser &line )
+        plBDFSectParser *ParseKeyword(const char *keyword, plLineParser &line) override
         {
             if( strcmp( keyword, "ENDFONT" ) == 0 )
             {
                 // All done!
-                return nil;
+                return nullptr;
             }
             // Encoding
             else if( strcmp( keyword, "ENCODING" ) == 0 )
@@ -2037,7 +2045,7 @@ bool    plFont::LoadFromBDFStream( hsStream *stream, plBDFConvertCallback *callb
 bool    plFont::LoadFromBDF( const plFileName &path, plBDFConvertCallback *callback )
 {
     FILE *fp = fopen( path.AsString().c_str(), "rt" );
-    if( fp == nil )
+    if (fp == nullptr)
         return false;
     try
     {
@@ -2053,9 +2061,9 @@ bool    plFont::LoadFromBDF( const plFileName &path, plBDFConvertCallback *callb
         {
             plLineParser    parser( line );
             const char *keyword = parser.GetKeyword();
-            if( keyword != nil )
+            if (keyword != nullptr)
             {
-                if( checkDims.ParseKeyword( keyword, parser ) == nil )
+                if (checkDims.ParseKeyword(keyword, parser) == nullptr)
                     break;
             }
         }
@@ -2066,10 +2074,10 @@ bool    plFont::LoadFromBDF( const plFileName &path, plBDFConvertCallback *callb
         fBPP = 1;
 
         // Pre-expand our char list
-        fCharacters.ExpandAndZero( checkDims.fMaxChar + 1 );
-        fCharacters.SetCount( 0 );
+        fCharacters.clear();
+        fCharacters.reserve(checkDims.fMaxChar + 1);
 
-        if( callback != nil )
+        if (callback != nullptr)
             callback->NumChars( (uint16_t)(checkDims.fNumChars) );
 
         // Rewind and continue normally
@@ -2079,14 +2087,14 @@ bool    plFont::LoadFromBDF( const plFileName &path, plBDFConvertCallback *callb
         plBDFSectParser *currParser = new plBDFHeaderParser( *this, callback );
 
         // Read from the stream one line at a time (don't want comments, and char #1 should be invalid for a BDF)
-        while( fgets( line, sizeof( line ), fp ) && currParser != nil )
+        while (fgets(line, sizeof(line), fp) && currParser != nullptr)
         {
             // Parse this one
             plLineParser    parser( line );
 
             // Get the keyword for this line
             const char *keyword = parser.GetKeyword();
-            if( keyword != nil )
+            if (keyword != nullptr)
             {
                 // Pass on to the current parser
                 plBDFSectParser *newParser = currParser->ParseKeyword( keyword, parser );
@@ -2126,11 +2134,11 @@ bool    plFont::ReadRaw( hsStream *s )
     fFace = face_buf;
 
     fSize = s->ReadByte();
-    s->ReadLE( &fFlags );
+    s->ReadLE32(&fFlags);
 
-    s->ReadLE( &fWidth );
-    s->ReadLE( &fHeight );
-    s->ReadLE( &fMaxCharHeight );
+    s->ReadLE32(&fWidth);
+    s->ReadLE32(&fHeight);
+    s->ReadLE32(&fMaxCharHeight);
 
     fBPP = s->ReadByte();
 
@@ -2141,14 +2149,13 @@ bool    plFont::ReadRaw( hsStream *s )
         s->Read( size, fBMapData );
     }
     else
-        fBMapData = nil;
+        fBMapData = nullptr;
 
-    s->ReadLE( &fFirstChar );
+    s->ReadLE16(&fFirstChar);
 
-    uint32_t i;
-    fCharacters.SetCountAndZero( s->ReadLE32() );
-    for( i = 0; i < fCharacters.GetCount(); i++ )
-        fCharacters[ i ].Read( s );
+    fCharacters.resize(s->ReadLE32());
+    for (plCharacter& ch : fCharacters)
+        ch.Read(s);
 
     ICalcFontAscent();
 
@@ -2158,15 +2165,15 @@ bool    plFont::ReadRaw( hsStream *s )
 bool    plFont::WriteRaw( hsStream *s )
 {
     char face_buf[256] = { 0 };
-    memcpy(face_buf, fFace.c_str(), fFace.GetSize() * sizeof(char));
+    memcpy(face_buf, fFace.c_str(), fFace.size() * sizeof(char));
     s->Write(sizeof(face_buf), face_buf);
 
     s->WriteByte( fSize );
-    s->WriteLE( fFlags );
+    s->WriteLE32(fFlags);
 
-    s->WriteLE( fWidth );
-    s->WriteLE( fHeight );
-    s->WriteLE( fMaxCharHeight );
+    s->WriteLE32(fWidth);
+    s->WriteLE32(fHeight);
+    s->WriteLE32(fMaxCharHeight);
 
     s->WriteByte( fBPP );
 
@@ -2174,12 +2181,11 @@ bool    plFont::WriteRaw( hsStream *s )
     if( size > 0 )
         s->Write( size, fBMapData );
 
-    s->WriteLE( fFirstChar );
+    s->WriteLE16(fFirstChar);
 
-    uint32_t i;
-    s->WriteLE32( fCharacters.GetCount() );
-    for( i = 0; i < fCharacters.GetCount(); i++ )
-        fCharacters[ i ].Write( s );
+    s->WriteLE32((uint32_t)fCharacters.size());
+    for (const plCharacter& ch : fCharacters)
+        ch.Write(s);
 
     return true;
 }

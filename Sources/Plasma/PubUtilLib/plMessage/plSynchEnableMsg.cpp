@@ -40,10 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pnNetCommon/plNetApp.h"
-#pragma hdrstop
-
 #include "plSynchEnableMsg.h"
+
+#include "hsStream.h"
+
+#include "pnNetCommon/plNetApp.h"
 
 plSynchEnableMsg::plSynchEnableMsg(bool push, bool enable) : fPush(push), fEnable(enable)
 {
@@ -53,13 +54,13 @@ plSynchEnableMsg::plSynchEnableMsg(bool push, bool enable) : fPush(push), fEnabl
 void plSynchEnableMsg::Read(hsStream* stream, hsResMgr* mgr) 
 { 
     plMessage::IMsgRead( stream, mgr ); 
-    stream->WriteLE(fEnable);
-    stream->WriteLE(fPush);
+    stream->WriteBool(fEnable);
+    stream->WriteBool(fPush);
 }
 
 void plSynchEnableMsg::Write(hsStream* stream, hsResMgr* mgr)
 { 
     plMessage::IMsgWrite( stream, mgr ); 
-    stream->ReadLE(&fEnable);
-    stream->ReadLE(&fPush);
+    fEnable = stream->ReadBool();
+    fPush = stream->ReadBool();
 }

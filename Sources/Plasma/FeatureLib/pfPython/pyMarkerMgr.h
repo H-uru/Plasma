@@ -49,7 +49,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
+
+#include "pyGlueDefinitions.h"
+
+class pyPoint3;
 
 class pyMarkerMgr
 {
@@ -66,7 +69,7 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    void AddMarker(double x, double y, double z, uint32_t id, bool justCreated);
+    void AddMarker(pyPoint3* pos, uint32_t id, bool justCreated);
     void RemoveMarker(uint32_t id);
     void RemoveAllMarkers();
 

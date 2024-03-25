@@ -42,16 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 #include "hsWindows.h"
 
-#include <commdlg.h>
-#include <max.h>
-#include <stdmat.h>
-#include <bmmlib.h>
-#include <iparamb2.h>
-#include <meshdlib.h> 
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
 
 #include "MaxExport/plExportProgressBar.h"
 #include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
@@ -96,7 +89,7 @@ static inline Matrix3 Transpose(const Matrix3& m)
 plDistributor::plDistributor()
 {
     IClear();
-    fRand.SetSeed(uint32_t(this));
+    fRand.SetSeed((int)(uintptr_t)this);
 }
 
 plDistributor::~plDistributor()
@@ -116,15 +109,15 @@ void plDistributor::Reset()
 
 void plDistributor::IClear()
 {
-    fInterface = nil;
+    fInterface = nullptr;
 
-    fDistTree = nil;
+    fDistTree = nullptr;
 
     fMeshTree.Reset();
 
-    fSurfNode = nil;
-    fSurfMesh = nil;
-    fSurfObjToDelete = nil;
+    fSurfNode = nullptr;
+    fSurfMesh = nullptr;
+    fSurfObjToDelete = nullptr;
 
     fRepNodes.ZeroCount();
 
@@ -144,7 +137,7 @@ void plDistributor::IClear()
 
     fPolarRange = 0;
     fTanPolarRange = 0;
-    fAzimuthRange = M_PI;
+    fAzimuthRange = hsConstants::pi<float>;
 
     fOverallProb = 1.f;
 
@@ -154,8 +147,8 @@ void plDistributor::IClear()
     fScaleLo.Set(1.f,1.f,1.f);
     fScaleHi.Set(1.f,1.f,1.f);
 
-    fProbBitmapTex = nil;
-    fProbLayerTex = nil;
+    fProbBitmapTex = nullptr;
+    fProbLayerTex = nullptr;
     fProbColorChan = kRed;
 
     fProbRemapFromLo = 0;
@@ -172,7 +165,7 @@ void plDistributor::IClear()
 
     fFade.pmin = fFade.pmax = Point3(0,0,0);
 
-    fBone = nil;
+    fBone = nullptr;
 }
 
 BOOL plDistributor::IGetMesh(INode* node, TriObject*& objToDelete, Mesh*& retMesh) const
@@ -180,8 +173,8 @@ BOOL plDistributor::IGetMesh(INode* node, TriObject*& objToDelete, Mesh*& retMes
     if( objToDelete )
         objToDelete->DeleteThis();
 
-    retMesh = nil;
-    objToDelete = nil;
+    retMesh = nullptr;
+    objToDelete = nullptr;
 
     // Get da object
     Object *obj = node->EvalWorldState(TimeValue(0)).obj;
@@ -205,7 +198,7 @@ BOOL plDistributor::IGetMesh(INode* node, TriObject*& objToDelete, Mesh*& retMes
     {
         if( objToDelete )
             objToDelete->DeleteThis();
-        objToDelete = nil;
+        objToDelete = nullptr;
         return false;
     }
 
@@ -236,8 +229,8 @@ void plDistributor::ISetAngProbCosines() const
     if( transAng > (maxAng - minAng) * 0.5f )
         transAng = (maxAng - minAng) * 0.5f;
 
-    float transAngMax = maxAng < M_PI ? transAng : 0;
-    float transAngMin = minAng > 0 ? transAng : 0;
+    float transAngMax = maxAng < hsConstants::pi<float> ? transAng : 0.f;
+    float transAngMin = minAng > 0.f ? transAng : 0.f;
 
     fCosAngProbHi = cos(minAng);
     fCosAngProbLo = cos(maxAng);
@@ -353,7 +346,7 @@ BOOL plDistributor::IDistributeOverMesh(plDistribInstTab& reps, plMeshCacheTab& 
 
         if( ((i / iUpdate) * iUpdate) == i )
         {
-            if( bar.Update(nil) )
+            if (bar.Update(nullptr))
                 return false;
         }
     }
@@ -403,7 +396,7 @@ bool plDistributor::IFailsProbBitmap(int iFace, const Point3& bary) const
     // with no valid probability map, everything goes.
     int uvwChan = 1;
     Matrix3 uvtrans(true);
-    Bitmap* bm = nil;
+    Bitmap* bm = nullptr;
     UINT filtType = BMM_FILTER_PYRAMID;
     if( fProbBitmapTex )
     {
@@ -746,7 +739,7 @@ Matrix3 plDistributor::IGenerateTransform(int iRepNode, int iFace, const Point3&
     Point3 out = dir ^ norm;
     if( out.LengthSquared() < kMinVecLengthSq )
     {
-        if( fAzimuthRange < M_PI * 0.5f )
+        if (fAzimuthRange < hsConstants::half_pi<float>)
         {
             l2w.IdentityMatrix();
             return l2w;
@@ -812,7 +805,7 @@ int plDistributor::ISelectRepNode() const
 
 BOOL plDistributor::ISetupNormals(plMaxNode* node, Mesh* mesh, BOOL radiateNorm) const
 {
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
 
     UVVert *normMap = mesh->mapVerts(kNormMapChan); 
     int numNormVerts = mesh->getNumMapVerts(kNormMapChan);
@@ -865,7 +858,7 @@ BOOL plDistributor::ISetupNormals(plMaxNode* node, Mesh* mesh, BOOL radiateNorm)
 
 BOOL plDistributor::ISetupSkinWeights(plMaxNode* node, Mesh* mesh, const Point3& flex) const
 {
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
 
     Matrix3 otm = node->GetOTM();
 
@@ -964,8 +957,8 @@ BOOL plDistributor::IReadyRepNodes(plMeshCacheTab& cache) const
     int i;
     for( i = 0; i < fRepNodes.Count(); i++ )
     {
-        Mesh* mesh = nil;
-        TriObject* obj = nil;
+        Mesh* mesh = nullptr;
+        TriObject* obj = nullptr;
         if( IGetMesh(fRepNodes[i], obj, mesh) )
         {
             plMaxNode* repNode = (plMaxNode*)fRepNodes[i];
@@ -979,7 +972,7 @@ BOOL plDistributor::IReadyRepNodes(plMeshCacheTab& cache) const
             if( obj )
                 obj->DeleteThis();
 
-            BOOL hasXImp = nil != repNode->GetXImposterComp();
+            BOOL hasXImp = nullptr != repNode->GetXImposterComp();
 
             ISetupNormals(repNode, cache[iCache].fMesh, hasXImp);
 
@@ -1474,13 +1467,13 @@ void plDistributor::SetPolarRange(float deg)
 
 void plDistributor::SetProbabilityBitmapTex(BitmapTex* t)
 {
-    fProbLayerTex = nil;
+    fProbLayerTex = nullptr;
     fProbBitmapTex = t;
 }
 
 void plDistributor::SetProbabilityLayerTex(plLayerTex* t)
 {
-    fProbBitmapTex = nil;
+    fProbBitmapTex = nullptr;
     fProbLayerTex = t;
 }
 

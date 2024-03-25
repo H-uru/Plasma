@@ -45,6 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
+#include "pfConfirmationMgr.h"
+REGISTER_NONCREATABLE(pfConfirmationMgr);
+
 #include "pfMarkerMgr.h"
 REGISTER_NONCREATABLE(pfMarkerMgr);
 

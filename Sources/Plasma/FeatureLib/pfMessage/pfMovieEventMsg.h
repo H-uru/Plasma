@@ -57,13 +57,14 @@ public:
 
     plFileName fMovieName;
 
-    pfMovieEventMsg(const plFileName& movieName, Reason reason=kMovieDone) : plMessage(nil, nil, nil)
+    pfMovieEventMsg(const plFileName& movieName, Reason reason=kMovieDone)
+        : plMessage(nullptr, nullptr, nullptr)
     {
         fReason = reason;
         fMovieName = movieName;
     }
 
-    pfMovieEventMsg() : plMessage(nil, nil, nil), fReason(kMovieDone)
+    pfMovieEventMsg() : plMessage(nullptr, nullptr, nullptr), fReason(kMovieDone)
     {
     }
 
@@ -71,8 +72,8 @@ public:
     CLASSNAME_REGISTER(pfMovieEventMsg);
     GETINTERFACE_ANY(pfMovieEventMsg, plMessage);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // pfMovieEventMsg_h_inc

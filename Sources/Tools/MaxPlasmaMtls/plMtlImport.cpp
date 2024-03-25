@@ -57,7 +57,7 @@ extern ClassDesc2* GetStealthClassDesc();
 extern ClassDesc2* GetBinkClassDesc();
 extern ClassDesc2* GetMAXCameraLayerDesc();
 
-int         plPlasmaMtlImport::GetNumMtlDescs( void )
+int         plPlasmaMtlImport::GetNumMtlDescs()
 {
     return 15;
 }
@@ -81,6 +81,6 @@ ClassDesc2  *plPlasmaMtlImport::GetMtlDesc( int i )
         case 12: return GetStealthClassDesc();
         case 13: return GetBinkClassDesc();
         case 14: return GetMAXCameraLayerDesc();
-        default: return 0;
+        default: return nullptr;
     }
 }

@@ -39,32 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plPhysicalProxy.h"
 #include "plPhysical.h"
-#include "plPhysX/plPXPhysicalControllerCore.h"
+
+#include "pnMessage/plProxyDrawMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plDrawable/plDrawableSpans.h"
 #include "plDrawable/plDrawableGenerator.h"
-#include "pnMessage/plProxyDrawMsg.h"
-
+#include "plPhysX/plPXPhysicalControllerCore.h" // Potential loop
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayer.h"
 
-plPhysicalProxy::plPhysicalProxy()
-:   plProxyGen(hsColorRGBA().Set(0,0,0,1.f), hsColorRGBA().Set(1.f,0.8f,0.2f,1.f), 0.5f),
-    fOwner(nil)
-{
-}
-
-plPhysicalProxy::plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac)
-:   plProxyGen(amb, dif, opac),
-    fOwner(nil),
-    fController(nil)
-{
-}
-
-plPhysicalProxy::~plPhysicalProxy()
-{
-}
 
 bool plPhysicalProxy::Init(plPhysical* liInfo)
 {
@@ -73,7 +60,7 @@ bool plPhysicalProxy::Init(plPhysical* liInfo)
     fOwner = liInfo;
     fProxyMsgType = plProxyDrawMsg::kPhysical;
 
-    return fOwner != nil;
+    return fOwner != nullptr;
 }
 
 bool plPhysicalProxy::Init(plPXPhysicalControllerCore* controller)
@@ -85,19 +72,22 @@ bool plPhysicalProxy::Init(plPXPhysicalControllerCore* controller)
     fController = controller;
     fProxyMsgType = plProxyDrawMsg::kPhysical;
 
-    return fController != nil;
+    return fController != nullptr;
 }
 
-plKey plPhysicalProxy::IGetNode() const 
+plKey plPhysicalProxy::IGetNode() const
 {
     if (fOwner)
         return fOwner->GetSceneNode();
-    if (fController)
-        return fController->GetOwner();
-    return nil;
+    if (fController) {
+        plSceneObject* owner = plSceneObject::ConvertNoRef(fController->GetOwner()->ObjectIsLoaded());
+        if (owner)
+            return owner->GetSceneNode();
+    }
+    return nullptr;
 }
 
-plDrawableSpans* plPhysicalProxy::ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plPhysicalProxy::ICreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
 {
     if (fOwner)
     {
@@ -107,5 +97,5 @@ plDrawableSpans* plPhysicalProxy::ICreateProxy(hsGMaterial* mat, hsTArray<uint32
     {
         return fController->CreateProxy(mat,idx,addTo);
     }
-    return nil;
+    return nullptr;
 }

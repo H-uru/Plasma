@@ -1,13 +1,4 @@
-include_directories(../../CoreLib)
-include_directories(../../FeatureLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-include_directories(../../)
-
-include_directories(${PYTHON_INCLUDE_DIR})
-include_directories(${OPENAL_INCLUDE_DIR})
-
+include_directories(${PLASMA_SOURCE_ROOT})
 set(pfPython_SOURCES
     cyAccountManagement.cpp
     cyAnimation.cpp
@@ -19,6 +10,7 @@ set(pfPython_SOURCES
     cyParticleSys.cpp
     cyPhysics.cpp
     cyPythonInterface.cpp
+    cyPythonModule451.cpp
     plPythonFileMod.cpp
     plPythonPack.cpp
     plPythonSDLModifier.cpp
@@ -27,7 +19,6 @@ set(pfPython_SOURCES
     pyAgeVault.cpp
     pyAlarm.cpp
     pyAudioControl.cpp
-    pyCCRMgr.cpp
     pyCluster.cpp
     pyColor.cpp
     pyCritterBrain.cpp
@@ -36,10 +27,12 @@ set(pfPython_SOURCES
     pyDrawControl.cpp
     pyDynamicText.cpp
     pyEnum.cpp
+    pyGameCli.cpp
     pyGameScore.cpp
     pyGameScoreMsg.cpp
-    pyGeometry3.cpp
     pyGlueHelpers.cpp
+    pyGmBlueSpiral.cpp
+    pyGmMarker.cpp
     pyGrassShader.cpp
     pyGUIControl.cpp
     pyGUIControlButton.cpp
@@ -65,7 +58,6 @@ set(pfPython_SOURCES
     pyMatrix44.cpp
     pyMoviePlayer.cpp
     pyNetLinkingMgr.cpp
-    pyNetServerSessionInfo.cpp
     pyNotify.cpp
     pyPlayer.cpp
     pySceneObject.cpp
@@ -104,9 +96,10 @@ set(pfPython_HEADERS
     cyParticleSys.h
     cyPhysics.h
     cyPythonInterface.h
+    plPythonCallable.h
+    plPythonConvert.h
     pfPythonCreatable.h
     plPythonFileMod.h
-    plPythonHelpers.h
     plPythonPack.h
     plPythonParameter.h
     plPythonSDLModifier.h
@@ -115,7 +108,6 @@ set(pfPython_HEADERS
     pyAgeVault.h
     pyAlarm.h
     pyAudioControl.h
-    pyCCRMgr.h
     pyCluster.h
     pyColor.h
     pyCritterBrain.h
@@ -124,9 +116,14 @@ set(pfPython_HEADERS
     pyDrawControl.h
     pyDynamicText.h
     pyEnum.h
+    pyGameCli.h
+    pyGameHandler.h
+    pyGameMgr.h
     pyGameScore.h
     pyGameScoreMsg.h
     pyGeometry3.h
+    pyGmBlueSpiral.h
+    pyGmMarker.h
     pyGrassShader.h
     pyGUIControl.h
     pyGUIControlButton.h
@@ -152,8 +149,8 @@ set(pfPython_HEADERS
     pyMatrix44.h
     pyMoviePlayer.h
     pyNetLinkingMgr.h
-    pyNetServerSessionInfo.h
     pyNotify.h
+    pyObjectRef.h
     pyPlayer.h
     pySceneObject.h
     pySDL.h
@@ -205,10 +202,15 @@ set(pfPython_GLUE
     pyDniInfoSourceGlue.cpp
     pyDrawControlGlue.cpp
     pyDynamicTextGlue.cpp
+    pyGameCliGlue.cpp
+    pyGameMgrGlue.cpp
     pyGameScoreGlue.cpp
     pyGameScoreMsgGlue.cpp
     pyGeometry3Glue.cpp
+    pyGlueDefinitions.h
     pyGlueHelpers.h
+    pyGmBlueSpiralGlue.cpp
+    pyGmMarkerGlue.cpp
     pyGrassShaderGlue.cpp
     pyGUIControlButtonGlue.cpp
     pyGUIControlCheckBoxGlue.cpp
@@ -234,7 +236,6 @@ set(pfPython_GLUE
     pyMatrix44Glue.cpp
     pyMoviePlayerGlue.cpp
     pyNetLinkingMgrGlue.cpp
-    pyNetServerSessionInfoGlue.cpp
     pyNotifyGlue.cpp
     pyPlayerGlue.cpp
     pySceneObjectGlue.cpp
@@ -262,92 +263,60 @@ set(pfPython_GLUE
     pyWaveSetGlue.cpp
 )
 
-set(pfPython_GAME_GLUE
-    Games/pyGameCli.cpp
-    Games/pyGameCli.h
-    Games/pyGameCliGlue.cpp
-    Games/pyGameCliMsg.cpp
-    Games/pyGameCliMsg.h
-    Games/pyGameCliMsgGlue.cpp
-    Games/pyGameMgrMsg.cpp
-    Games/pyGameMgrMsg.h
-    Games/pyGameMgrMsg.cpp
-    Games/pyGameMgrMsgGlue.cpp
+plasma_library(pfPython
+    SOURCES ${pfPython_SOURCES} ${pfPython_HEADERS} ${pfPython_GLUE}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
 )
-
-set(pfPython_TTT
-    Games/TicTacToe/pyTTTGame.cpp
-    Games/TicTacToe/pyTTTGame.h
-    Games/TicTacToe/pyTTTGameGlue.cpp
-    Games/TicTacToe/pyTTTMsg.cpp
-    Games/TicTacToe/pyTTTMsg.h
-    Games/TicTacToe/pyTTTMsgGlue.cpp
+target_link_libraries(
+    pfPython
+    PUBLIC
+        CoreLib
+        pnNucleusInc
+        plMessage
+    PRIVATE
+        pnEncryption
+        pnInputCore
+        pnKeyedObject
+        pnMessage
+        pnModifier
+        pnNetCommon
+        pnNucleusInc
+        pnSceneObject
+        pnUUID
+        plAgeDescription
+        plAnimation
+        plAudio
+        plAvatar
+        plDrawable
+        plFile
+        plGImage
+        plGLight
+        plInputCore
+        plModifier
+        plNetClient
+        plNetClientComm
+        plNetCommon
+        plNetTransport
+        plPipeline
+        plResMgr
+        plSDL
+        plStatusLog
+        plSurface
+        plVault
+        pfCamera
+        pfCharacter
+        pfGameGUIMgr
+        pfGameMgr
+        pfGameScoreMgr
+        pfJournalBook
+        pfLocalizationMgr
+        pfMessage
+        Python3::Python
+    INTERFACE
+        pnFactory
 )
-
-set(pfPython_HEEK
-    Games/Heek/pyHeekGame.cpp
-    Games/Heek/pyHeekGame.h
-    Games/Heek/pyHeekGameGlue.cpp
-    Games/Heek/pyHeekMsg.cpp
-    Games/Heek/pyHeekMsg.h
-    Games/Heek/pyHeekMsgGlue.cpp
-)
-
-set(pfPython_MARKER
-    Games/Marker/pyMarkerGame.cpp
-    Games/Marker/pyMarkerGame.h
-    Games/Marker/pyMarkerGameGlue.cpp
-    Games/Marker/pyMarkerMsg.cpp
-    Games/Marker/pyMarkerMsg.h
-    Games/Marker/pyMarkerMsgGlue.cpp
-)
-
-set(pfPython_BSPIRAL
-    Games/BlueSpiral/pyBlueSpiralGame.cpp
-    Games/BlueSpiral/pyBlueSpiralGame.h
-    Games/BlueSpiral/pyBlueSpiralGameGlue.cpp
-    Games/BlueSpiral/pyBlueSpiralMsg.cpp
-    Games/BlueSpiral/pyBlueSpiralMsg.h
-    Games/BlueSpiral/pyBlueSpiralMsgGlue.cpp
-)
-
-set(pfPython_WALL
-    Games/ClimbingWall/pyClimbingWallGame.cpp
-    Games/ClimbingWall/pyClimbingWallGame.h
-    Games/ClimbingWall/pyClimbingWallGameGlue.cpp
-    Games/ClimbingWall/pyClimbingWallMsg.cpp
-    Games/ClimbingWall/pyClimbingWallMsg.h
-    Games/ClimbingWall/pyClimbingWallMsgGlue.cpp
-)
-
-set(pfPython_VSYNC
-    Games/VarSync/pyVarSyncGame.cpp
-    Games/VarSync/pyVarSyncGame.h
-    Games/VarSync/pyVarSyncGameGlue.cpp
-    Games/VarSync/pyVarSyncMsg.cpp
-    Games/VarSync/pyVarSyncMsg.h
-    Games/VarSync/pyVarSyncMsgGlue.cpp
-)
-
-set(pfPython_GAMES
-    ${pfPython_TTT}
-    ${pfPython_HEEK}
-    ${pfPython_MARKER}
-    ${pfPython_BSPIRAL}
-    ${pfPython_WALL}
-    ${pfPython_VSYNC}
-)
-
-use_precompiled_header(Pch.h Pch.cpp pfPython_HEADERS pfPython_SOURCES)
-add_library(pfPython STATIC ${pfPython_SOURCES} ${pfPython_HEADERS} ${pfPython_GLUE} ${pfPython_GAME_GLUE} ${pfPython_GAMES})
 
 source_group("Source Files" FILES ${pfPython_SOURCES})
 source_group("Header Files" FILES ${pfPython_HEADERS})
 source_group("Glue Files" FILES ${pfPython_GLUE})
-source_group("Game Glue" FILES ${pfPython_GAME_GLUE})
-source_group("Game Glue\\TicTacToe" FILES ${pfPython_TTT})
-source_group("Game Glue\\Heek" FILES ${pfPython_HEEK})
-source_group("Game Glue\\Marker" FILES ${pfPython_MARKER})
-source_group("Game Glue\\BlueSpiral" FILES ${pfPython_BSPIRAL})
-source_group("Game Glue\\ClimbingWall" FILES ${pfPython_WALL})
-source_group("Game Glue\\VarSync" FILES ${pfPython_VSYNC})

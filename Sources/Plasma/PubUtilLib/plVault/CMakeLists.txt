@@ -1,9 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plVault_SOURCES
     plDniCoordinateInfo.cpp
     plVaultClientApi.cpp
@@ -14,7 +8,6 @@ set(plVault_SOURCES
 set(plVault_HEADERS
     Intern.h
     Pch.h
-    plAgeInfoSource.h
     plDniCoordinateInfo.h
     plVault.h
     plVaultClientApi.h
@@ -23,7 +16,33 @@ set(plVault_HEADERS
     plVaultNodeAccess.h
 )
 
-add_library(plVault STATIC ${plVault_SOURCES} ${plVault_HEADERS})
+plasma_library(plVault
+    SOURCES ${plVault_SOURCES} ${plVault_HEADERS}
+    PRECOMPILED_HEADERS Pch.h
+    UNITY_BUILD
+)
+target_link_libraries(
+    plVault
+    PUBLIC
+        CoreLib
+        pnNetBase
+        pnNetProtocol # plVaultNodeAccess
+    PRIVATE
+        pnDispatch
+        pnNucleusInc
+        plGImage
+        plMessage
+        plNetCommon
+        plNetGameLib
+        plSDL
+        plStatusLog
+        plUnifiedTime
+        pfMessage # For pfKIMsg
+    INTERFACE
+        pnFactory
+)
+
+target_include_directories(plVault PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 
 source_group("Source Files" FILES ${plVault_SOURCES})
 source_group("Header Files" FILES ${plVault_HEADERS})

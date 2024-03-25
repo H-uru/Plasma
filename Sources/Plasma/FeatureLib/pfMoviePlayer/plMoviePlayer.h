@@ -44,14 +44,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plMoviePlayer_inc
 
 #include "HeadSpin.h"
+#include "hsColorRGBA.h"
 #include "plFileSystem.h"
 #include "hsPoint2.h"
-#include "hsColorRGBA.h"
-#include "plMessage/plMovieMsg.h"
+#include "hsRefCnt.h"
 
 #include <memory>
-#include <vector>
 #include <tuple>
+#include <vector>
+
+class plMessage;
 
 namespace mkvparser
 {
@@ -62,6 +64,7 @@ namespace mkvparser
 }
 
 typedef std::tuple<std::unique_ptr<uint8_t>, int32_t> blkbuf_t;
+typedef struct vpx_image vpx_image_t;
 
 class plMoviePlayer
 {
@@ -69,8 +72,11 @@ protected:
     class plPlate* fPlate;
     class plMipmap* fTexture;
 
+#ifdef USE_WEBM
     mkvparser::MkvReader* fReader;
     std::unique_ptr<mkvparser::Segment> fSegment;
+    vpx_image_t* fLastImg;
+#endif
     std::unique_ptr<class TrackMgr> fAudioTrack, fVideoTrack; // TODO: vector of tracks?
     std::unique_ptr<class plWin32VideoSound> fAudioSound;
     std::unique_ptr<class VPX> fVpx;
@@ -81,6 +87,8 @@ protected:
 
     bool fPlaying;
     bool fPaused;
+
+    void IInitPlate(uint32_t width, uint32_t height);
 
     bool IOpenMovie();
     bool ILoadAudio();
@@ -96,7 +104,7 @@ public:
     bool Stop();
     bool NextFrame();
 
-    void AddCallback(plMessage* msg) { hsRefCnt_SafeRef(msg); fCallbacks.push_back(msg); }
+    void AddCallback(plMessage* msg);
     uint32_t GetNumCallbacks() const { return 0; }
     plMessage* GetCallback(int i) const { return nullptr; }
 

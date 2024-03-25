@@ -42,11 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plClothingSDLModifier_inc
 #define plClothingSDLModifier_inc
 
-#include "plModifier/plSDLModifier.h"
-
-#include "hsColorRGBA.h"
-#include "hsTemplates.h"
 #include "HeadSpin.h"
+#include "hsColorRGBA.h"
+
+#include "pnNetCommon/plSDLTypes.h"
+
+#include "plModifier/plSDLModifier.h"
 
 //
 // This modifier is responsible for sending and recving 
@@ -54,8 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 class plClothingOutfit;
 class plClothingItem;
-class plClothingItemOptions;
-class plClosetItem;
+struct plClothingItemOptions;
+struct plClosetItem;
 class plStateDataRecord;
 class plKey;
 class plClothingSDLModifier : public plSDLModifier
@@ -63,10 +64,10 @@ class plClothingSDLModifier : public plSDLModifier
 protected:
     plClothingOutfit* fClothingOutfit;
         
-    void IPutCurrentStateIn(plStateDataRecord* dstState);
-    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState) override;
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
     
-    uint32_t IApplyModFlags(uint32_t sendFlags) { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
+    uint32_t IApplyModFlags(uint32_t sendFlags) override { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
 
 public:
     // var labels 
@@ -90,14 +91,14 @@ public:
     void SetClothingOutfit(plClothingOutfit* c) { fClothingOutfit=c; }
     
     void PutCurrentStateIn(plStateDataRecord* dstState);
-    const char* GetSDLName() const { return kSDLClothing; }
+    const char* GetSDLName() const override { return kSDLClothing; }
     static const char* GetClothingItemSDRName() { return kStrClothingDescName; }
 
     // Pass in a clothing outfit if you want to apply the clothing item. Pass in a closet item if you're just
     // looking to parse the SDL info.
     // Aw heck. Go crazy if you want and pass them BOTH in! Muahahaha!
-    static void HandleSingleSDR(const plStateDataRecord *sdr, plClothingOutfit *clothing = nil, plClosetItem *closetItem = nil);
-    static void PutSingleItemIntoSDR(plClosetItem *item, plStateDataRecord *sdr);
+    static void HandleSingleSDR(const plStateDataRecord *sdr, plClothingOutfit *clothing = nullptr, plClosetItem *closetItem = nullptr);
+    static void PutSingleItemIntoSDR(const plClosetItem *item, plStateDataRecord *sdr);
         
     static const plClothingSDLModifier *FindClothingSDLModifier(const plSceneObject *obj);
 };

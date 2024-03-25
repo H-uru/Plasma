@@ -61,8 +61,8 @@ public:
     GETINTERFACE_ANY(plOneShotMsg, plResponderMsg);
 
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plOneShotMsg_inc

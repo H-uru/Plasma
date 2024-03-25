@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsColorRGBA.h"
 
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 
 class pyColor
 {
@@ -96,27 +96,27 @@ public:
     bool operator!=(const pyColor &color) const { return !(color == *this); }
 
     // helper colors settings
-    void White()    { fColor.Set(1.0,1.0,1.0,1.0); }
-    void Black()    { fColor.Set(0.0,0.0,0.0,1.0); }
-    void Red()      { fColor.Set(1.0,0.0,0.0,1.0); }
-    void Green()    { fColor.Set(0.0,1.0,0.0,1.0); }
-    void Blue()     { fColor.Set(0.0,0.0,1.0,1.0); }
-    void Magenta()  { fColor.Set(1.0,0.0,1.0,1.0); }
-    void Cyan()     { fColor.Set(0.0,1.0,1.0,1.0); }
-    void Yellow()   { fColor.Set(1.0,1.0,0.0,1.0); }
+    void White()    { fColor.Set(1.f, 1.f, 1.f, 1.f); }
+    void Black()    { fColor.Set(0.f, 0.f, 0.f, 1.f); }
+    void Red()      { fColor.Set(1.f, 0.f, 0.f, 1.f); }
+    void Green()    { fColor.Set(0.f, 1.f, 0.f, 1.f); }
+    void Blue()     { fColor.Set(0.f, 0.f, 1.f, 1.f); }
+    void Magenta()  { fColor.Set(1.f, 0.f, 1.f, 1.f); }
+    void Cyan()     { fColor.Set(0.f, 1.f, 1.f, 1.f); }
+    void Yellow()   { fColor.Set(1.f, 1.f, 0.f, 1.f); }
 
-    void Brown()        { fColor.Set(0.65, 0.165,0.165,1.0); }
-    void Gray()         { fColor.Set(0.75, 0.75, 0.75, 1.0); }
-    void Orange()       { fColor.Set(1.0,  0.5,  0.0,  1.0); }
-    void Pink()         { fColor.Set(0.73, 0.56, 0.56, 1.0); }
-    void DarkBrown()    { fColor.Set(0.36, 0.25, 0.20, 1.0); }
-    void DarkGreen()    { fColor.Set(0.18, 0.31, 0.18, 1.0); }
-    void DarkPurple()   { fColor.Set(0.53, 0.12, 0.47, 1.0); }
-    void NavyBlue()     { fColor.Set(0.137,0.137,0.557,1.0); }
-    void Maroon()       { fColor.Set(0.557,0.137,0.42, 1.0); }
-    void Tan()          { fColor.Set(0.858,0.576,0.439,1.0); }
-    void SlateBlue()    { fColor.Set(0.0,  0.495,1.0,  1.0); }
-    void SteelBlue()    { fColor.Set(0.137,0.42, 0.557,1.0); }
+    void Brown()        { fColor.Set(0.65f,  0.165f, 0.165f, 1.f); }
+    void Gray()         { fColor.Set(0.75f,  0.75f,  0.75f,  1.f); }
+    void Orange()       { fColor.Set(1.0f,   0.5f,   0.0f,   1.f); }
+    void Pink()         { fColor.Set(0.73f,  0.56f,  0.56f,  1.f); }
+    void DarkBrown()    { fColor.Set(0.36f,  0.25f,  0.20f,  1.f); }
+    void DarkGreen()    { fColor.Set(0.18f,  0.31f,  0.18f,  1.f); }
+    void DarkPurple()   { fColor.Set(0.53f,  0.12f,  0.47f,  1.f); }
+    void NavyBlue()     { fColor.Set(0.137f, 0.137f, 0.557f, 1.f); }
+    void Maroon()       { fColor.Set(0.557f, 0.137f, 0.42f,  1.f); }
+    void Tan()          { fColor.Set(0.858f, 0.576f, 0.439f, 1.f); }
+    void SlateBlue()    { fColor.Set(0.0f,   0.495f, 1.0f,   1.f); }
+    void SteelBlue()    { fColor.Set(0.137f, 0.42f,  0.557f, 1.f); }
 
 };
 

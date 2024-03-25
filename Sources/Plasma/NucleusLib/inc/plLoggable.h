@@ -43,8 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plLoggable_inc
 
 #include "HeadSpin.h"
-#include "plString.h"
-#include "plFormat.h"
+#include <string_theory/format>
 
 
 // Stub interface implemented by plStatusLog
@@ -53,7 +52,7 @@ class plLog
 public:
     virtual ~plLog() { }
 
-    virtual bool AddLine(const plString& line) = 0;
+    virtual bool AddLine(const ST::string& line) = 0;
 };
 
 
@@ -122,9 +121,9 @@ public:
     }
 
     // logging
-    virtual bool Log(const plString& str) const
+    virtual bool Log(const ST::string& str) const
     {
-        if (str.IsNull() || str.IsEmpty()) {
+        if (str.empty()) {
             return true;
         }
 
@@ -138,110 +137,68 @@ public:
     }
 
 
-    virtual bool ErrorMsg(const plString& msg) const
+    virtual bool ErrorMsg(const ST::string& msg) const
     {
-        return Log(plFormat("ERR: {}", msg));
+        return Log("ERR: " + msg);
     }
 
-    virtual bool WarningMsg(const plString& msg) const
+    virtual bool WarningMsg(const ST::string& msg) const
     {
-        return Log(plFormat("WRN: {}", msg));
+        return Log("WRN: " + msg);
     }
 
-    virtual bool AppMsg(const plString& msg) const
+    virtual bool AppMsg(const ST::string& msg) const
     {
-        return Log(plFormat("APP: {}", msg));
+        return Log("APP: " + msg);
     }
 
-    virtual bool DebugMsg(const plString& msg) const
+    virtual bool DebugMsg(const ST::string& msg) const
     {
-        return Log(plFormat("DBG: {}", msg));
+        return Log("DBG: " + msg);
     }
 
-
-
-    /////////////////////////////////////////////////////////////////////////
-    // DEPRECATED Log methods
-    /////////////////////////////////////////////////////////////////////////
-
-    hsDeprecated("plLoggable::LogF is deprecated -- use plFormat instead")
-    virtual bool LogF( const char * fmt, ... ) const
+    virtual bool ErrorMsg(const char* msg) const
     {
-        va_list args;
-        va_start(args, fmt);
-        bool ret = Log(plString::IFormat(fmt, args));
-        va_end(args);
-
-        return ret;
+        return Log(ST_LITERAL("ERR: ") + msg);
     }
 
-    virtual bool LogV( const char * fmt, va_list args ) const
+    virtual bool WarningMsg(const char* msg) const
     {
-        return Log(plString::IFormat(fmt, args));
+        return Log(ST_LITERAL("WRN: ") + msg);
     }
 
-    virtual bool ErrorMsgV(const char* fmt, va_list args) const
+    virtual bool AppMsg(const char* msg) const
     {
-        return ErrorMsg(plString::IFormat(fmt, args));
+        return Log(ST_LITERAL("APP: ") + msg);
     }
 
-    virtual bool DebugMsgV(const char* fmt, va_list args) const
+    virtual bool DebugMsg(const char* msg) const
     {
-        return DebugMsg(plString::IFormat(fmt, args));
+        return Log(ST_LITERAL("DBG: ") + msg);
     }
 
-    virtual bool WarningMsgV(const char* fmt, va_list args) const
+    template <typename... _Args>
+    bool ErrorMsg(const char* fmt, _Args... args) const
     {
-        return WarningMsg(plString::IFormat(fmt, args));
+        return ErrorMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 
-    virtual bool AppMsgV(const char* fmt, va_list args) const
+    template <typename... _Args>
+    bool DebugMsg(const char* fmt, _Args... args) const
     {
-        return AppMsg(plString::IFormat(fmt, args));
+        return DebugMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 
-    hsDeprecated("plLoggable::ErrorMsg with format is deprecated -- use plFormat instead")
-    virtual bool ErrorMsg(const char* fmt, ...) const
+    template <typename... _Args>
+    bool WarningMsg(const char* fmt, _Args... args) const
     {
-        va_list args;
-        va_start(args, fmt);
-        bool ret = ErrorMsgV(fmt, args);
-        va_end(args);
-
-        return ret;
+        return WarningMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 
-    hsDeprecated("plLoggable::DebugMsg with format is deprecated -- use plFormat instead")
-    virtual bool DebugMsg(const char* fmt, ...) const
+    template <typename... _Args>
+    bool AppMsg(const char* fmt, _Args... args) const
     {
-        va_list args;
-        va_start(args, fmt);
-        bool ret = DebugMsgV(fmt, args);
-        va_end(args);
-
-        return ret;
-    }
-
-    hsDeprecated("plLoggable::WarningMsg with format is deprecated -- use plFormat instead")
-    virtual bool WarningMsg(const char* fmt, ...) const
-    {
-        va_list args;
-        va_start(args, fmt);
-        bool ret = WarningMsgV(fmt, args);
-        va_end(args);
-
-        return ret;
-    }
-
-    hsDeprecated("plLoggable::AppMsg with format is deprecated -- use plFormat instead")
-    virtual bool AppMsg(const char* fmt, ...) const
-    {
-        va_list args;
-        va_start(args, fmt);
-        bool ret = AppMsgV(fmt, args);
-        va_end(args);
-
-        return ret;
+        return AppMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 };
 

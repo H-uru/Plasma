@@ -43,14 +43,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsResMgr.h"
 
+#include "MaxMain/MaxAPI.h"
+
 #include "plComponentReg.h"
 #include "plBehavioralComponents.h"
 #include "plResponderComponent.h"
 #include "MaxMain/plMaxNode.h"
 #include "resource.h"
-
-#include <iparamm2.h>
-#pragma hdrstop
 
 #include "MaxMain/plPhysicalProps.h"
 
@@ -66,11 +65,11 @@ protected:
     void IUpdateButtonText(HWND hWnd, IParamBlock2 *pb)
     {
         INode *node = pb->GetINode(plAvBehaviorSittingComponent::kDetector);
-        SetWindowText(GetDlgItem(hWnd, IDC_DETECTOR), node ? node->GetName() : "(none)");
+        SetWindowText(GetDlgItem(hWnd, IDC_DETECTOR), node ? node->GetName() : _T("(none)"));
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -91,7 +90,7 @@ public:
 
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plSittingComponentProc gSittingComponentProc;
 
@@ -106,29 +105,29 @@ ParamBlockDesc2 gAvBehavioralSittingBk
     
     // params
     plAvBehaviorSittingComponent::kDetector, _T("detector"),    TYPE_INODE,     0, 0,
-        end,
+        p_end,
     
     plAvBehaviorSittingComponent::kApproachFront, _T("ApproachFront"),      TYPE_BOOL,      0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_SIT_APP_FRONT,
         p_default, FALSE,
-        end,
+        p_end,
 
     plAvBehaviorSittingComponent::kApproachLeft, _T("ApproachLeft"),        TYPE_BOOL,      0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_SIT_APP_LEFT,
         p_default, TRUE,
-        end,
+        p_end,
 
     plAvBehaviorSittingComponent::kApproachRight, _T("ApproachRight"),      TYPE_BOOL,      0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_SIT_APP_RIGHT,
         p_default, TRUE,
-        end,
+        p_end,
         
     plAvBehaviorSittingComponent::kDisableForward, _T("DisableForward"),        TYPE_BOOL,      0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_SIT_NOFORWARD,
         p_default, TRUE,
-        end,        
+        p_end,        
 
-    end
+    p_end
 );
 
 plAvBehaviorSittingComponent::plAvBehaviorSittingComponent()
@@ -150,7 +149,7 @@ bool plAvBehaviorSittingComponent::SetupProperties(plMaxNode* node, plErrorMsg *
 bool plAvBehaviorSittingComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     plMaxNode *detectNode = (plMaxNode*)fCompPB->GetINode(kDetector);
-    plComponentBase *detectComp = detectNode ? detectNode->ConvertToComponent() : nil;
+    plComponentBase *detectComp = detectNode ? detectNode->ConvertToComponent() : nullptr;
     if (detectComp)
     {
         bool hasFrontApproach = fCompPB->GetInt(ParamID(kApproachFront)) ? true : false;
@@ -179,10 +178,10 @@ bool plAvBehaviorSittingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         // XXX sitMod->SetSeekTime(fCompPB->GetFloat(kSeekTimeFloat));
 
         // Get all the keys who want to be notified when the avatar ass hits the seat
-        hsTArray<plKey> receivers;
+        std::vector<plKey> receivers;
         IGetReceivers(node, receivers);
-        for (int i = 0; i < receivers.Count(); i++)
-            sitMod->AddNotifyKey(receivers[i]);
+        for (const plKey& receiver : receivers)
+            sitMod->AddNotifyKey(receiver);
     }
 
     return true;

@@ -39,10 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsResMgr.h"
+
 #include "plRelevanceRegion.h"
 #include "plRelevanceMgr.h"
+
+#include "hsResMgr.h"
+
+#include "pnMessage/plRefMsg.h"
+
 #include "plIntersect/plRegionBase.h"
+
 
 void plRelevanceRegion::Read(hsStream* s, hsResMgr* mgr)
 {
@@ -78,7 +84,7 @@ bool plRelevanceRegion::MsgReceive(plMessage* msg)
         }
         else if( genMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
         {
-            fRegion = nil;
+            fRegion = nullptr;
         }
         return true;
     }           

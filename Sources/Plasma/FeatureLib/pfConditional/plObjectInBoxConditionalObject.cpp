@@ -39,21 +39,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
 #include "plObjectInBoxConditionalObject.h"
-#include "plPhysical/plDetectorModifier.h"
-#include "pnModifier/plLogicModBase.h"
-#include "plMessage/plActivatorMsg.h"
-#include "pnMessage/plNotifyMsg.h"
+
+#include "plgDispatch.h"
+
 #include "pnMessage/plFakeOutMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "pnMessage/plPlayerPageMsg.h"
+#include "pnModifier/plLogicModBase.h"
 #include "pnNetCommon/plNetApp.h"
-#include "plAvatar/plArmatureMod.h"
 #include "pnSceneObject/plSceneObject.h"
 
-bool plVolumeSensorConditionalObject::makeBriceHappyVar = true;
+#include "plAvatar/plArmatureMod.h"
+#include "plMessage/plActivatorMsg.h"
 
-plObjectInBoxConditionalObject::plObjectInBoxConditionalObject() :
-fCurrentTrigger(nil)
+plObjectInBoxConditionalObject::plObjectInBoxConditionalObject()
 {
     SetSatisfied(true);
 }
@@ -65,23 +66,27 @@ bool plObjectInBoxConditionalObject::MsgReceive(plMessage* msg)
     {
         if (pActivateMsg->fTriggerType == plActivatorMsg::kVolumeEnter)
         {
-            fInside.Append(pActivateMsg->fHitterObj);
+            fInside.emplace_back(pActivateMsg->fHitterObj);
             return true;
         }
         else
         if (pActivateMsg->fTriggerType == plActivatorMsg::kVolumeExit)
         {
-            for (int i = 0; i < fInside.Count(); i++)
+            for (auto iter = fInside.begin(); iter != fInside.end(); )
             {
-                if (fInside[i] == pActivateMsg->fHitterObj)
+                if (*iter == pActivateMsg->fHitterObj)
                 {
-                    fInside.Remove(i);
+                    iter = fInside.erase(iter);
                     if (pActivateMsg->fHitterObj == fCurrentTrigger && fCurrentTrigger && fLogicMod->HasFlag(plLogicModBase::kTriggered) && !IsToggle())
                     {
-                        fCurrentTrigger = nil;
-                        fLogicMod->GetNotify()->AddContainerEvent( pActivateMsg->fHiteeObj, pActivateMsg->fHitterObj, false );
+                        fCurrentTrigger = nullptr;
+                        fLogicMod->GetNotify()->AddContainerEvent(pActivateMsg->fHiteeObj, pActivateMsg->fHitterObj, false);
                         fLogicMod->RequestUnTrigger();
                     }
+                }
+                else
+                {
+                    ++iter;
                 }
             }
             return true;
@@ -96,12 +101,12 @@ bool plObjectInBoxConditionalObject::Verify(plMessage* msg)
 {
     plActivatorMsg* pActivateMsg = plActivatorMsg::ConvertNoRef(msg);
     if (pActivateMsg)
-    {   
-        for (int i = 0; i < fInside.Count(); i++)
+    {
+        for (const plKey& inKey : fInside)
         {
-            if (pActivateMsg->fHitterObj == fInside[i])
+            if (pActivateMsg->fHitterObj == inKey)
             {
-                fLogicMod->GetNotify()->AddContainerEvent( pActivateMsg->fHiteeObj, pActivateMsg->fHitterObj, true );
+                fLogicMod->GetNotify()->AddContainerEvent(pActivateMsg->fHiteeObj, pActivateMsg->fHitterObj, true);
                 fCurrentTrigger = pActivateMsg->fHiteeObj;
                 return true;
             }
@@ -111,9 +116,9 @@ bool plObjectInBoxConditionalObject::Verify(plMessage* msg)
     plFakeOutMsg* pFakeMsg = plFakeOutMsg::ConvertNoRef(msg);
     if (pFakeMsg && plNetClientApp::GetInstance()->GetLocalPlayerKey())
     {
-        for (int i = 0; i < fInside.Count(); i++)
+        for (const plKey& inKey : fInside)
         {
-            if (plNetClientApp::GetInstance()->GetLocalPlayerKey() == fInside[i])
+            if (plNetClientApp::GetInstance()->GetLocalPlayerKey() == inKey)
                 return true;
         }
     }
@@ -125,134 +130,139 @@ bool plObjectInBoxConditionalObject::Verify(plMessage* msg)
 // volume sensor conditional 
 //
 plVolumeSensorConditionalObject::plVolumeSensorConditionalObject() :
-fTrigNum(-1),
-fType(0),
-fFirst(false),
-fTriggered(false),
-fIgnoreExtraEnters(true)
+    fTrigNum(-1),
+    fType(0),
+    fFirst(false),
+    fTriggered(false),
+    fFlags(kIgnoreExtraEnters)
 {
     SetSatisfied(true);
 }
 
+void plVolumeSensorConditionalObject::IgnoreExtraEnters(bool ignore)
+{
+    if (ignore)
+        fFlags |= kIgnoreExtraEnters;
+    else
+        fFlags &= ~kIgnoreExtraEnters;
+}
+
+void plVolumeSensorConditionalObject::NoServerArbitration(bool noArbitration)
+{
+    if (noArbitration) {
+        plgDispatch::Dispatch()->RegisterForExactType(plPlayerPageMsg::Index(), GetKey());
+        fFlags |= kNoServerArbitration;
+    } else {
+        plgDispatch::Dispatch()->UnRegisterForExactType(plPlayerPageMsg::Index(), GetKey());
+        fFlags &= ~kNoServerArbitration;
+    }
+}
+
+bool plVolumeSensorConditionalObject::IIsLocal(const plKey& key) const
+{
+    if (key == plNetClientApp::GetInstance()->GetLocalPlayerKey())
+        return true;
+
+    const plSceneObject* hitter = plSceneObject::ConvertNoRef(key->ObjectIsLoaded());
+    if (hitter) {
+        for (size_t i = 0; i < hitter->GetNumModifiers(); ++i) {
+            const plArmatureMod* am = plArmatureMod::ConvertNoRef(hitter->GetModifier(i));
+            if (am && !am->IsLocalAI())
+                return false;
+        }
+        if (hitter->IsLocallyOwned() != plSynchedObject::kYes)
+            return false;
+    }
+
+    // Yes, I know that we're saying YES for not loaded objects. This matches the previous behavior.
+    return true;
+}
 
 bool plVolumeSensorConditionalObject::MsgReceive(plMessage* msg)
 {
     plActivatorMsg* pActivateMsg = plActivatorMsg::ConvertNoRef(msg);
-    if (pActivateMsg)
-    {
+    if (pActivateMsg) {
         // single player hack
         if (!fLogicMod->HasFlag(plLogicModBase::kRequestingTrigger))
             fLogicMod->GetNotify()->ClearEvents();
 
-        if (pActivateMsg->fTriggerType == plActivatorMsg::kVolumeEnter)
-        {
-            int i;
-            for (i = 0; i < fInside.Count(); i++)
-            {
-                if (fInside[i] == pActivateMsg->fHitterObj)
-                {
-                    if (fIgnoreExtraEnters)
-                        return false; // this is the "correct" way to handle this situation
-                    break; // this is for those special situations where, due to some physics oddity, we need to allow the avatar to enter without exiting
-                }
-            }
-            if (i == fInside.Count())
-                fInside.Append(pActivateMsg->fHitterObj);
-            if (makeBriceHappyVar)
-            {
-                plSceneObject *pObj = plSceneObject::ConvertNoRef( pActivateMsg->fHitterObj->ObjectIsLoaded() );
-                if( pObj )
-                {
-                    //need to check for human vs quabish type things in here                
-                    int i;
-                    for( i = 0; i < pObj->GetNumModifiers(); i++ )
-                    {
-                        if (plArmatureMod::ConvertNoRef( pObj->GetModifier(i)))
-                        {   
-                            if (plNetClientApp::GetInstance()->GetLocalPlayerKey() != pActivateMsg->fHitterObj)
-                            {
-                                plArmatureMod *am=const_cast<plArmatureMod*>( plArmatureMod::ConvertNoRef(pObj->GetModifier(i)));
-                                if (!am->IsLocalAI())
-                                {
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                    plSynchedObject* syncObj = (plSynchedObject*)pObj;
-                    if (syncObj->IsLocallyOwned() != plSynchedObject::kYes) 
-                    {
-                        return false;
-                    }
-                }
-            }
+        // Track the hittee for the NoArbitration case so we can trigger the exit volume on link out
+        fHittee = pActivateMsg->fHiteeObj;
 
-            if (fType == kTypeEnter)
-            {
-                fLogicMod->GetNotify()->AddCollisionEvent(true, pActivateMsg->fHitterObj, pActivateMsg->fHiteeObj, false);
-                fLogicMod->RequestTrigger(false);
+        // Track the enters/exits on all clients
+        if (pActivateMsg->fTriggerType == plActivatorMsg::kVolumeEnter) {
+            auto it = fInside.find(pActivateMsg->fHitterObj);
+            if (it != fInside.end() && fFlags & kIgnoreExtraEnters) {
+                // This is normally what we should do. You're already inside the region,
+                // so we don't care about a dupe enter. However, PhysX is weird, so sometimes
+                // we might want to allow dupe enters.
+                return false;
             }
-            else
-            {
+            fInside.insert(pActivateMsg->fHitterObj);
+
+            // From here on out, we only care about local avatars
+            if (!IIsLocal(pActivateMsg->fHitterObj))
+                return false;
+
+            if (fType == kTypeEnter) {
+                fLogicMod->GetNotify()->AddCollisionEvent(true, pActivateMsg->fHitterObj, pActivateMsg->fHiteeObj, false);
+                if ((fFlags & kNoServerArbitration)) {
+                    if (Satisfied())
+                        fLogicMod->Trigger(false);
+                } else {
+                    fLogicMod->RequestTrigger(false);
+                }
+            } else if (fType == kTypeExit && !(fFlags & kNoServerArbitration)) {
                 fLogicMod->GetNotify()->AddCollisionEvent(false, pActivateMsg->fHitterObj, pActivateMsg->fHiteeObj, false);
                 fLogicMod->RequestUnTrigger();
             }
             return false;
+        } else if (pActivateMsg->fTriggerType == plActivatorMsg::kVolumeExit) {
+            auto it = fInside.find(pActivateMsg->fHitterObj);
+            if (it == fInside.end())
+                return false;
+            fInside.erase(it);
+
+            // From here on out, we only care about local avatars
+            if (!IIsLocal(pActivateMsg->fHitterObj))
+                return false;
+
+            if (fType == kTypeExit) {
+                fLogicMod->GetNotify()->AddCollisionEvent(false, pActivateMsg->fHitterObj, pActivateMsg->fHiteeObj, false);
+                if (fFlags & kNoServerArbitration) {
+                    if (Satisfied())
+                        fLogicMod->Trigger(false);
+                } else {
+                    fLogicMod->RequestTrigger(false);
+                }
+            } else if (fType == kTypeEnter && !(fFlags & kNoServerArbitration)) {
+                fLogicMod->GetNotify()->AddCollisionEvent(true, pActivateMsg->fHitterObj, pActivateMsg->fHiteeObj, false);
+                fLogicMod->RequestUnTrigger();
+            }
+            return true;
         }
-        else
-        if (pActivateMsg->fTriggerType == plActivatorMsg::kVolumeExit)
-        {
-            for (int i = 0; i < fInside.Count(); i++)
-            {
-                if (fInside[i] == pActivateMsg->fHitterObj)
-                {
-                    fInside.Remove(i);
-                    if (makeBriceHappyVar)
-                    {
-                    //need to check for human vs quabish type things in here    
-                        plSceneObject *pObj = plSceneObject::ConvertNoRef( pActivateMsg->fHitterObj->ObjectIsLoaded() );
-                        if( pObj )
-                        {
-                            int i;
-                            for( i = 0; i < pObj->GetNumModifiers(); i++ )
-                            {
-                                if (plArmatureMod::ConvertNoRef( pObj->GetModifier(i)))
-                                {   
-                                    if (plNetClientApp::GetInstance()->GetLocalPlayerKey() != pActivateMsg->fHitterObj)
-                                    {
-                                        plArmatureMod *am=const_cast<plArmatureMod*>( plArmatureMod::ConvertNoRef(pObj->GetModifier(i)));
-                                        if (!am->IsLocalAI())
-                                        {
-                                            return false;
-                                        }
-                                    }
-                                }
-                            }
-                            plSynchedObject* syncObj = (plSynchedObject*)pObj;
-                            if (syncObj->IsLocallyOwned() != plSynchedObject::kYes) 
-                            {
-                                return false;
-                            }
-                        }
-                    }
-                    if (fType == kTypeExit)
-                    {
-                        fLogicMod->GetNotify()->AddCollisionEvent(false, pActivateMsg->fHitterObj, pActivateMsg->fHiteeObj, false);
-                        fLogicMod->RequestTrigger(false);
-    
-                    }
-                    else
-                    {
-                        fLogicMod->GetNotify()->AddCollisionEvent(true, pActivateMsg->fHitterObj, pActivateMsg->fHiteeObj, false);
-                        fLogicMod->RequestUnTrigger();
-                    }
-                    return false;
+        return true;
+    }
+
+    plPlayerPageMsg* page = plPlayerPageMsg::ConvertNoRef(msg);
+    if (page && page->fUnload) {
+        hsAssert(fFlags & kNoServerArbitration, "WTF -- should only get here if the VSCO skips arbitration!");
+
+        auto it = fInside.find(page->fPlayer);
+        if (it != fInside.end()) {
+            fInside.erase(it);
+            if (fHittee && fType == kTypeExit) {
+                const plSceneObject* hitteeSO = plSceneObject::ConvertNoRef(fHittee->ObjectIsLoaded());
+                if (hitteeSO && hitteeSO->IsLocallyOwned() == plSynchedObject::kYes) {
+                    fLogicMod->GetNotify()->AddCollisionEvent(false, page->fPlayer, fHittee, false);
+                    if (Satisfied())
+                        fLogicMod->Trigger(false);
                 }
             }
         }
-
-        return false;
+        return true;
     }
+
     return plConditionalObject::MsgReceive(msg);
 }
 
@@ -260,20 +270,20 @@ bool plVolumeSensorConditionalObject::Satisfied()
 {
     if (fType == kTypeExit && fFirst && !fTriggered)
     {
-        if (fInside.Count())
+        if (!fInside.empty())
             fTriggered = true;
         return true;
     }
-    if (fTriggered) 
+    if (fTriggered)
     {
-        if (fInside.Count() == 0)
+        if (fInside.empty())
             fTriggered = false;
         return false;
     }
 
     if (fTrigNum == -1)
         return true;
-    if (fInside.Count() == fTrigNum)
+    if (fInside.size() == fTrigNum)
         return true;
     else
         return false;
@@ -286,6 +296,7 @@ void plVolumeSensorConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
     fType = stream->ReadLE32();
     fFirst = stream->ReadBool();
 }
+
 void plVolumeSensorConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
@@ -293,156 +304,11 @@ void plVolumeSensorConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLE32(fType);
     stream->WriteBool(fFirst);
 }
-#include "pnMessage/plPlayerPageMsg.h"
-#include "plgDispatch.h"
-bool plVolumeSensorConditionalObjectNoArbitration::MsgReceive(plMessage* msg)
-{
-    plActivatorMsg* pActivateMsg = plActivatorMsg::ConvertNoRef(msg);
-    if (pActivateMsg)
-    {
-        // single player hack
-        if (!fLogicMod->HasFlag(plLogicModBase::kRequestingTrigger))
-            fLogicMod->GetNotify()->ClearEvents();
-        fHittee= pActivateMsg->fHiteeObj;
-        if (pActivateMsg->fTriggerType == plActivatorMsg::kVolumeEnter)
-        {
-            int i;
-            for (i = 0; i < fInside.Count(); i++)
-            {
-                if (fInside[i] == pActivateMsg->fHitterObj)
-                {
-                    if (fIgnoreExtraEnters)
-                        return false; // this is the "correct" way to handle this situation
-                    break; // this is for those special situations where, due to some physics oddity, we need to allow the avatar to enter without exiting
-                }
-            }
-            if (i == fInside.Count())
-                fInside.Append(pActivateMsg->fHitterObj);
-            if (makeBriceHappyVar)
-            {
-                plSceneObject *pObj = plSceneObject::ConvertNoRef( pActivateMsg->fHitterObj->ObjectIsLoaded() );
-                if( pObj )
-                {
-                    //need to check for human vs quabish type things in here                
-                    int i;
-                    for( i = 0; i < pObj->GetNumModifiers(); i++ )
-                    {
-                        if (plArmatureMod::ConvertNoRef( pObj->GetModifier(i)))
-                        {   
-                            if (plNetClientApp::GetInstance()->GetLocalPlayerKey() != pActivateMsg->fHitterObj)
-                            {
-                                plArmatureMod *am=const_cast<plArmatureMod*>( plArmatureMod::ConvertNoRef(pObj->GetModifier(i)));
-                                if (!am->IsLocalAI())
-                                {
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                    plSynchedObject* syncObj = (plSynchedObject*)pObj;
-                    if (syncObj->IsLocallyOwned() != plSynchedObject::kYes) 
-                    {
-                        return false;
-                    }
-                }
-            }
 
-            if (fType == kTypeEnter)
-            {
-                fLogicMod->GetNotify()->AddCollisionEvent(true, pActivateMsg->fHitterObj, pActivateMsg->fHiteeObj, false);
-                //fLogicMod->RequestTrigger(false);
-                
-                if (!Satisfied())
-                    return false;
-                
-                fLogicMod->Trigger(false);
-            }
-        
-            return false;
-        }
-        else
-        if (pActivateMsg->fTriggerType == plActivatorMsg::kVolumeExit)
-        {
-            for (int i = 0; i < fInside.Count(); i++)
-            {
-                if (fInside[i] == pActivateMsg->fHitterObj)
-                {
-                    fInside.Remove(i);
-                    if (makeBriceHappyVar)
-                    {
-                    //need to check for human vs quabish type things in here    
-                        plSceneObject *pObj = plSceneObject::ConvertNoRef( pActivateMsg->fHitterObj->ObjectIsLoaded() );
-                        if( pObj )
-                        {
-                            int i;
-                            for( i = 0; i < pObj->GetNumModifiers(); i++ )
-                            {
-                                if (plArmatureMod::ConvertNoRef( pObj->GetModifier(i)))
-                                {   
-                                    if (plNetClientApp::GetInstance()->GetLocalPlayerKey() != pActivateMsg->fHitterObj)
-                                    {
-                                        plArmatureMod *am=const_cast<plArmatureMod*>( plArmatureMod::ConvertNoRef(pObj->GetModifier(i)));
-                                        if (!am->IsLocalAI())
-                                        {
-                                            return false;
-                                        }
-                                    }
-                                }
-                            }
-                            plSynchedObject* syncObj = (plSynchedObject*)pObj;
-                            if (syncObj->IsLocallyOwned() != plSynchedObject::kYes) 
-                            {
-                                return false;
-                            }
-                        }
-                    }
-                    if (fType == kTypeExit)
-                    {
-                        fLogicMod->GetNotify()->AddCollisionEvent(false, pActivateMsg->fHitterObj, pActivateMsg->fHiteeObj, false);
-                        //fLogicMod->RequestTrigger(false);
-                        if (!Satisfied())
-                            return false;
-                    
-                        fLogicMod->Trigger(false);
-                    }
-                    return false;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    plPlayerPageMsg* page = plPlayerPageMsg::ConvertNoRef(msg);
-    if(page && page->fUnload)
-    {
-        for(int j= 0; j< fInside.Count(); j++)
-        {
-            if(fInside[j] == page->fPlayer)
-            {//this is the one inside
-                if(fHittee)
-                {
-                    plSceneObject *so = plSceneObject::ConvertNoRef(fHittee->ObjectIsLoaded());
-                    if(so && so->IsLocallyOwned())
-                    {
-                        if (fType == kTypeExit)
-                        {
-                            fLogicMod->GetNotify()->AddCollisionEvent(false, page->fPlayer, fHittee, false);
-                            //fLogicMod->RequestTrigger(false);
-                            if (!Satisfied())
-                                return false;
-                            fLogicMod->Trigger(false);
-                        }
-                    }
-                }
-                fInside.Remove(j);
-            }
-        }
-    }
-        return plConditionalObject::MsgReceive(msg);
-}
 void plVolumeSensorConditionalObjectNoArbitration::Read(hsStream* stream, hsResMgr* mgr)
 {
     plVolumeSensorConditionalObject::Read(stream, mgr);
-    plgDispatch::Dispatch()->RegisterForExactType(plPlayerPageMsg::Index(), GetKey());
+
+    // We must have a valid fpKey before we do this, hence why this is not in the constructor
+    NoServerArbitration(true);
 }

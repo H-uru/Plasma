@@ -49,19 +49,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plSpanEncoding::Read(hsStream* s)
 {
     fCode = s->ReadByte();
-    fPosScale = s->ReadLEScalar();
+    fPosScale = s->ReadLEFloat();
 }
 
 void plSpanEncoding::Write(hsStream* s) const
 {
     s->WriteByte((uint8_t)fCode);
-    s->WriteLEScalar(fPosScale);
+    s->WriteLEFloat(fPosScale);
 }
 
 
 plSpanInstance::plSpanInstance()
-:   fPosDelta(nil),
-    fCol(nil)
+:   fPosDelta(),
+    fCol()
 {
     fL2W[0][1] = fL2W[0][2] = 0.f;
     fL2W[1][0] = fL2W[1][2] = 0.f;
@@ -77,9 +77,9 @@ plSpanInstance::~plSpanInstance()
 void plSpanInstance::DeAlloc()
 {
     delete [] fPosDelta;
-    fPosDelta = nil;
+    fPosDelta = nullptr;
     delete [] fCol;
-    fCol = nil;
+    fCol = nullptr;
 }
 
 void plSpanInstance::Alloc(const plSpanEncoding& encoding, uint32_t numVerts)

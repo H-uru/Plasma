@@ -72,14 +72,14 @@ public:
 
     // tors
     plClimbMsg();
-    plClimbMsg(const plKey &sender, const plKey &receiver, Command command = kNoCommand, Direction direction = kCenter, bool status = false, plKey target = nil);
+    plClimbMsg(const plKey &sender, const plKey &receiver, Command command = kNoCommand, Direction direction = kCenter, bool status = false, plKey target = {});
 
     // plasma protocol
     CLASSNAME_REGISTER( plClimbMsg );
     GETINTERFACE_ANY( plClimbMsg, plMessage );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
     Command fCommand;
     Direction fDirection;

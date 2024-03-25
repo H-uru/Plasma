@@ -40,9 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
 #include "pyGeometry3.h"
-#pragma hdrstop
+
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptPoint3, pyPoint3);
@@ -126,7 +126,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptPoint3, copy)
 
 PYTHON_METHOD_DEFINITION(ptPoint3, distance, args)
 {
-    PyObject *otherObject = NULL;
+    PyObject *otherObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &otherObject))
     {
         PyErr_SetString(PyExc_TypeError, "distance expects a ptPoint3");
@@ -144,7 +144,7 @@ PYTHON_METHOD_DEFINITION(ptPoint3, distance, args)
 
 PYTHON_METHOD_DEFINITION(ptPoint3, distanceSq, args)
 {
-    PyObject *otherObject = NULL;
+    PyObject *otherObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &otherObject))
     {
         PyErr_SetString(PyExc_TypeError, "distanceSq expects a ptPoint3");
@@ -182,7 +182,7 @@ PYTHON_CLASS_NEW_IMPL(ptPoint3, pyPoint3)
 
 PyObject *pyPoint3::New(const hsPoint3 &obj)
 {
-    ptPoint3 *newObj = (ptPoint3*)ptPoint3_type.tp_new(&ptPoint3_type, NULL, NULL);
+    ptPoint3 *newObj = (ptPoint3*)ptPoint3_type.tp_new(&ptPoint3_type, nullptr, nullptr);
     newObj->fThis->fPoint.Set(&obj);
     return (PyObject*)newObj;
 }
@@ -425,28 +425,29 @@ PyObject *ptVector3_add(PyObject *v, PyObject *w)
 PYTHON_START_AS_NUMBER_TABLE(ptVector3)
     (binaryfunc)ptVector3_add,  /*nb_add*/
     (binaryfunc)ptVector3_sub,  /*nb_subtract*/
-    0,                          /*nb_multiply*/
-    0                           /*nb_divide*/
+    nullptr,                    /*nb_multiply*/
+    nullptr                     /*nb_divide*/
     /* the rest can be null */
 PYTHON_END_AS_NUMBER_TABLE;
 
 // Type structure definition
-#define ptVector3_COMPARE       PYTHON_NO_COMPARE
 #define ptVector3_AS_NUMBER     PYTHON_DEFAULT_AS_NUMBER(ptVector3)
 #define ptVector3_AS_SEQUENCE   PYTHON_NO_AS_SEQUENCE
 #define ptVector3_AS_MAPPING    PYTHON_NO_AS_MAPPING
 #define ptVector3_STR           PYTHON_NO_STR
+#define ptVector3_GETATTRO      PYTHON_NO_GETATTRO
+#define ptVector3_SETATTRO      PYTHON_NO_SETATTRO
 #define ptVector3_RICH_COMPARE  PYTHON_NO_RICH_COMPARE
 #define ptVector3_GETSET        PYTHON_NO_GETSET
 #define ptVector3_BASE          PYTHON_NO_BASE
-PLASMA_CUSTOM_TYPE(ptVector3, "Params: x=0, y=0, z=0\nPlasma Point class");
+PLASMA_CUSTOM_TYPE(ptVector3, "Params: x=0, y=0, z=0\nPlasma 3D Vector class");
 
 // required functions for PyObject interoperability
 PYTHON_CLASS_NEW_IMPL(ptVector3, pyVector3)
 
 PyObject *pyVector3::New(const hsVector3 &obj)
 {
-    ptVector3 *newObj = (ptVector3*)ptVector3_type.tp_new(&ptVector3_type, NULL, NULL);
+    ptVector3 *newObj = (ptVector3*)ptVector3_type.tp_new(&ptVector3_type, nullptr, nullptr);
     newObj->fThis->fVector.Set(&obj);
     return (PyObject*)newObj;
 }

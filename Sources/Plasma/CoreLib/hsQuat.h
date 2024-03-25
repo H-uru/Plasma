@@ -42,9 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef HSQUAT_inc
 #define HSQUAT_inc
 
-#include "hsGeometry3.h"
-
 struct hsMatrix44;
+struct hsScalarTriple;
+class hsStream;
+struct hsPoint3;
+struct hsVector3;
 
 //
 // Quaternion class.
@@ -56,14 +58,17 @@ public:
     float fX,fY,fZ,fW;   
 
     // Constructors
-    hsQuat(){}
+    hsQuat() : fX(), fY(), fZ(), fW(1.f) { }
     hsQuat(float X, float Y, float Z, float W) : 
         fX(X), fY(Y), fZ(Z), fW(W) {}
-    hsQuat(const hsQuat& a) { fX = a.fX; fY = a.fY; fZ = a.fZ; fW = a.fW; } 
+    hsQuat(const hsQuat& a) = default;
     hsQuat(float af[4]) { fX = af[0]; fY = af[1]; fZ = af[2]; fW = af[3]; }
     hsQuat(float rad, const hsVector3* axis);
 
-    static hsQuat   QuatFromMatrix44(const hsMatrix44& mat);
+    hsQuat& operator=(const hsQuat& a) = default;
+
+    [[nodiscard]]
+    static hsQuat QuatFromMatrix44(const hsMatrix44& mat);
     hsQuat& SetFromMatrix44(const hsMatrix44& mat);
     void SetFromMatrix(const hsMatrix44 *mat);
     void SetFromSlerp(const hsQuat &q1, const hsQuat &q2, float t, int spin=0);
@@ -71,8 +76,10 @@ public:
         { fX = X; fY = Y; fZ = Z; fW = W; }
     void GetAngleAxis(float *rad, hsVector3 *axis) const;
     void SetAngleAxis(const float rad, const hsVector3 &axis);
+
+    [[nodiscard]]
     hsPoint3 Rotate(const hsScalarTriple* v) const;
-    
+
     // Access operators
     float& operator[](int i) { return (&fX)[i]; }     
     const float& operator[](int i) const { return (&fX)[i]; }  
@@ -90,11 +97,20 @@ public:
     void Normalize();  
     void NormalizeIfNeeded();  
     void MakeMatrix(hsMatrix44 *mat) const;
+
+    [[nodiscard]]
     float Magnitude();
+
+    [[nodiscard]]
     float MagnitudeSquared();
+
+    [[nodiscard]]
     hsQuat Conjugate() const
         { return hsQuat(-fX,-fY,-fZ,fW); }
+
+    [[nodiscard]]
     hsQuat Inverse() const;
+
     // Binary operators
     hsQuat operator-(const hsQuat&) const;
     hsQuat operator+(const hsQuat&) const;
@@ -105,6 +121,7 @@ public:
         { return hsQuat(fX/f,fY/f,fZ/f,fW/f); }
     hsQuat operator/(const hsQuat&) const;
 
+    [[nodiscard]]
     float Dot(const hsQuat &q2) const
         {   return (fX*q2.fX + fY*q2.fY + fZ*q2.fZ + fW*q2.fW); }
 

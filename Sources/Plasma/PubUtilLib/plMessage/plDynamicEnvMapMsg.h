@@ -74,15 +74,15 @@ public:
     float            fRefresh;
 
 public:
-    plDynamicEnvMapMsg() : plMessage(nil, nil, nil), fCmd(0) {}
-    plDynamicEnvMapMsg(const plKey& rcv) : plMessage(nil, rcv, nil), fCmd(0) {}
+    plDynamicEnvMapMsg() : plMessage(nullptr, nullptr, nullptr), fCmd() { }
+    plDynamicEnvMapMsg(const plKey& rcv) : plMessage(nullptr, rcv, nullptr), fCmd() { }
     virtual ~plDynamicEnvMapMsg() {}
 
     CLASSNAME_REGISTER( plDynamicEnvMapMsg );
     GETINTERFACE_ANY( plDynamicEnvMapMsg, plMessage );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plDynamicEnvMapMsg_inc

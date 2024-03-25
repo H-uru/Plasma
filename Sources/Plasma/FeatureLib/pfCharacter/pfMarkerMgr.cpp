@@ -39,23 +39,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "pfMarkerMgr.h"
-#include "pfMessage/pfMarkerMsg.h"
 #include "pfMarkerInfo.h"
 
+#include "plgDispatch.h"
+#include "hsTimer.h"
+
+#include "pnMessage/plNotifyMsg.h"
+#include "pnMessage/plTimeMsg.h"
+
 #include "plModifier/plCloneSpawnModifier.h"
+#include "plMessage/plLoadCloneMsg.h"
+#include "plNetClient/plNetClientMgr.h"
 #include "plStatusLog/plStatusLog.h"
 
-#include "plMessage/plLoadCloneMsg.h"
-#include "pnMessage/plTimeMsg.h"
-#include "pnMessage/plNotifyMsg.h"
-
-#include "plNetClient/plNetClientMgr.h"
-#include "plgDispatch.h"
+#include "pfMessage/pfMarkerMsg.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
-pfMarkerMgr* pfMarkerMgr::fInstance = nil;
+pfMarkerMgr* pfMarkerMgr::fInstance = nullptr;
 const uint32_t pfMarkerMgr::kNoMarkerSelected = (uint32_t)(-1);
 
 pfMarkerMgr* pfMarkerMgr::Instance()
@@ -74,7 +77,7 @@ void pfMarkerMgr::Shutdown()
     if (pfMarkerMgr::fInstance)
     {
         pfMarkerMgr::fInstance->IShutdown();
-        pfMarkerMgr::fInstance = nil;
+        pfMarkerMgr::fInstance = nullptr;
     }
 }
 
@@ -112,7 +115,7 @@ void pfMarkerMgr::IShutdown()
     UnRegisterAs(kMarkerMgr_KEY);
 }
 
-pfMarkerInfo* pfMarkerMgr::IFindMarker(plKey markerKey, uint32_t& id)
+pfMarkerInfo* pfMarkerMgr::IFindMarker(const plKey& markerKey, uint32_t& id)
 {
     std::map<uint32_t, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
     while (curMarker != fMarkers.end())
@@ -125,7 +128,7 @@ pfMarkerInfo* pfMarkerMgr::IFindMarker(plKey markerKey, uint32_t& id)
         ++curMarker;
     }
     id = kNoMarkerSelected;
-    return nil;
+    return nullptr;
 }
 
 void pfMarkerMgr::IUpdate()
@@ -139,7 +142,7 @@ void pfMarkerMgr::IUpdate()
     }
 }
 
-void pfMarkerMgr::IMarkerHit(plKey markerKey, plKey playerKey)
+void pfMarkerMgr::IMarkerHit(const plKey& markerKey, const plKey& playerKey)
 {
     if (playerKey != plNetClientMgr::GetInstance()->GetLocalPlayerKey())
         return; // not the local player, abort
@@ -159,7 +162,7 @@ void pfMarkerMgr::IMarkerHit(plKey markerKey, plKey playerKey)
     msg->Send();
 }
 
-void pfMarkerMgr::AddMarker(double x, double y, double z, uint32_t id, bool justCreated)
+void pfMarkerMgr::AddMarker(const hsPoint3& pos, uint32_t id, bool justCreated)
 {
     if (fMarkers.find(id) != fMarkers.end())
     {
@@ -168,7 +171,6 @@ void pfMarkerMgr::AddMarker(double x, double y, double z, uint32_t id, bool just
         delete fMarkers[id];
     }
 
-    hsPoint3 pos((float)x, (float)y, (float)z);
     fMarkers[id] = new pfMarkerInfo(pos, justCreated);
     fMarkers[id]->Spawn(pfMarkerInfo::kMarkerOpen);
 }
@@ -210,10 +212,10 @@ void pfMarkerMgr::SetSelectedMarker(uint32_t id)
 
     if (id != kNoMarkerSelected)
     {
+        fSelectedMarker = id;
         if (fMarkers.find(id) != fMarkers.end())
         {
             fMarkers[id]->SetType(pfMarkerInfo::kMarkerLocalSelected);
-            fSelectedMarker = id;
         }
     }
 }
@@ -319,7 +321,8 @@ bool pfMarkerMgr::MsgReceive(plMessage* msg)
         {
             uint32_t id;
             pfMarkerInfo* marker = IFindMarker(cloneKey, id);
-            marker->InitSpawned(cloneKey);
+            if (marker)
+                marker->InitSpawned(cloneKey);
         }
 
         return true;

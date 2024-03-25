@@ -1,0 +1,19 @@
+#net.LocalTriggers
+
+Graphics.Renderer.Setyon 10000 
+Graphics.Renderer.Fog.SetDefLinear -1500 15000 2
+Graphics.Renderer.Fog.SetDefColor .3 .2 .05
+Graphics.Renderer.SetClearColor .3 .2 .05
+
+#mouse.disable
+
+#Camera.Cut 0
+#Camera.SetFOV 70 50
+#Camera.CheckLos 0
+#Camera.SetOffset 0 20 5
+#Camera.SetMouseAdjY 30
+
+#Camera.SetCameraDeceleration 10
+#Camera.SetCameraAcceleration 10
+#Camera.SetCameraVelocity 20
+

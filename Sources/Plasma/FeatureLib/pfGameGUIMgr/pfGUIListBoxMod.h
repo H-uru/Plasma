@@ -48,14 +48,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIListBoxMod_h
 #define _pfGUIListBoxMod_h
 
+#include <vector>
+
 #include "pfGUIControlMod.h"
 
-class plMessage;
 class hsGMaterial;
-class plTextGenerator;
 class pfGUIListElement;
-class pfScrollProc;
 class pfGUIValueCtrl;
+class plMessage;
+class pfScrollProc;
+
+namespace ST { class string; }
 
 class pfGUIListBoxMod : public pfGUIControlMod
 {
@@ -67,38 +70,38 @@ class pfGUIListBoxMod : public pfGUIControlMod
         {
             int16_t   fLeft, fTop, fRight, fBottom;
 
+            plSmallRect() : fLeft(), fTop(), fRight(), fBottom() { }
+
             void    Set( int16_t l, int16_t t, int16_t r, int16_t b );
             bool    Contains( int16_t x, int16_t y );
-
-            plSmallRect& operator=(const int zero) { fLeft = fTop = fRight = fBottom = 0; return *this; }
         };
 
         pfGUIValueCtrl  *fScrollControl;
 
         pfScrollProc    *fScrollProc;
 
-        hsTArray<pfGUIListElement *>    fElements;
-        int32_t                           fCurrClick, fScrollPos, fCurrHover;
-        uint8_t                           fModsAtDragTime;
-        int32_t                           fMinSel, fMaxSel;
+        std::vector<pfGUIListElement *> fElements;
+        int32_t                         fCurrClick, fScrollPos, fCurrHover;
+        uint8_t                         fModsAtDragTime;
+        int32_t                         fMinSel, fMaxSel;
         bool                            fCheckScroll, fClicking;
-        int32_t                           fSingleSelElement;
+        int32_t                         fSingleSelElement;
         bool                            fScrollRangeUpdateDeferred;
         bool                            fLocked, fReadyToRoll;
-        hsTArray<plSmallRect>           fElementBounds;
-        hsTArray<int16_t>                 fWrapStartIdxs;
+        std::vector<plSmallRect>        fElementBounds;
+        std::vector<size_t>             fWrapStartIdxs;
 
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
-        void    ICalcScrollRange( void );
-        void    ICalcWrapStarts( void );
+        void    ICalcScrollRange();
+        void    ICalcWrapStarts();
 
-        virtual void    IUpdate( void );
-        virtual void    IPostSetUpDynTextMap( void );
-        virtual uint32_t  IGetDesiredCursor( void ) const;
+        void    IUpdate() override;
+        void    IPostSetUpDynTextMap() override;
+        uint32_t  IGetDesiredCursor() const override;
 
-        int32_t   IGetItemFromPoint( hsPoint3 &mousePt );
+        int32_t   IGetItemFromPoint(const hsPoint3 &mousePt);
         void    IFindSelectionRange( int32_t *min, int32_t *max );
         void    ISelectRange( int8_t min, int8_t max, bool select );
 
@@ -119,7 +122,7 @@ class pfGUIListBoxMod : public pfGUIControlMod
             kAllowMultipleElementsPerRow,
             kScrollLeftToRight,
             kAllowMousePassThrough,
-            kGrowLeavesAndProcessOxygen,
+            kGrowLeavesAndProcessOxygen,    // It's a tree!
             kHandsOffMultiSelect,       // Do multiselect w/o needing ctrl or shift
             kForbidNoSelection
         };
@@ -138,56 +141,56 @@ class pfGUIListBoxMod : public pfGUIControlMod
             kRefScrollCtrl = kRefDerivedStart
         };
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseHover( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseDblClick( hsPoint3 &mousePt, uint8_t modifiers );
+        void    HandleMouseDown(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseHover(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseDblClick(hsPoint3 &mousePt, uint8_t modifiers) override;
 
-        virtual bool    HandleKeyPress( wchar_t key, uint8_t modifiers );
-        virtual bool    HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
+        bool    HandleKeyPress(wchar_t key, uint8_t modifiers) override;
+        bool    HandleKeyEvent(pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers) override;
 
-        virtual bool    FilterMousePosition( hsPoint3 &mousePt );
+        bool    FilterMousePosition(hsPoint3 &mousePt) override;
 
-        virtual void PurgeDynaTextMapImage();
+        void PurgeDynaTextMapImage() override;
 
         // Returns selected element. Only valid for kSingleSelect list boxes
-        int32_t   GetSelection( void ) { return fSingleSelElement; }
+        int32_t   GetSelection() { return fSingleSelElement; }
         void    SetSelection( int32_t item );
         void    RemoveSelection( int32_t item );
         void    AddSelection( int32_t item );
         
-        virtual void    ScrollToBegin( void );
-        virtual void    ScrollToEnd( void );
+        virtual void    ScrollToBegin();
+        virtual void    ScrollToEnd();
         virtual void    SetScrollPos( int32_t pos );
-        virtual int32_t   GetScrollPos( void );
-        virtual int32_t   GetScrollRange( void );
+        virtual int32_t   GetScrollPos();
+        virtual int32_t   GetScrollRange();
 
 
-        void    Refresh( void ) { IUpdate(); }
+        void    Refresh() override { IUpdate(); }
 
-        virtual void        SetColorScheme( pfGUIColorScheme *newScheme );
+        void        SetColorScheme(pfGUIColorScheme *newScheme) override;
 
         // Element manipulation
 
         uint16_t  AddElement( pfGUIListElement *el );
         void    RemoveElement( uint16_t index );
         int16_t   FindElement( pfGUIListElement *toCompareTo );
-        void    ClearAllElements( void );
+        void    ClearAllElements();
 
-        void    LockList( void );
-        void    UnlockList( void );
+        void    LockList();
+        void    UnlockList();
 
-        uint16_t              GetNumElements( void );
+        uint16_t              GetNumElements();
         pfGUIListElement    *GetElement( uint16_t idx );
 
-        uint16_t  AddString( const plString &string );
-        int16_t   FindString( const plString &toCompareTo );
+        uint16_t  AddString( ST::string string );
+        int16_t   FindString( ST::string toCompareTo );
 
         // Export only
         void    SetScrollCtrl( pfGUIValueCtrl *ctrl ) { fScrollControl = ctrl; }

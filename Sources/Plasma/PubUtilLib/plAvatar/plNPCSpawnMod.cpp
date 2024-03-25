@@ -47,26 +47,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // local
 #include "plAvatarMgr.h"
 
-// global
-#include "hsMatrix44.h"
-
 // other
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-//#include "pnMessage/plWarpMsg.h"
+#include "hsResMgr.h"
+
 #include "pnMessage/plNotifyMsg.h"
+#include "pnSceneObject/plSceneObject.h"
 
 
 // plNPCSpawnMod ctor
 plNPCSpawnMod::plNPCSpawnMod()
-: fAutoSpawn(false),
-  fNotify(nil)
+: fAutoSpawn(),
+  fNotify()
 {
 }
 
 // plNPCSpawnMod ctor modelName accountName
-plNPCSpawnMod::plNPCSpawnMod(const plString &modelName, const plString &accountName, bool autoSpawn)
-: fAutoSpawn(autoSpawn), fNotify(nil)
+plNPCSpawnMod::plNPCSpawnMod(const ST::string &modelName, const ST::string &accountName, bool autoSpawn)
+: fAutoSpawn(autoSpawn), fNotify()
 {
     fModelName = modelName;
     fAccountName = accountName;
@@ -96,13 +93,13 @@ bool plNPCSpawnMod::Trigger()
     // will netpropagate
     if(this->IsLocallyOwned())
     {
-        if (!fModelName.IsEmpty())
+        if (!fModelName.empty())
         {
             // spawn the NPC
             plKey spawnPoint = GetTarget(0)->GetKey();
 
             // Note: we will be unloaded by the NetApp's NPC magick
-            fSpawnedKey = plAvatarMgr::GetInstance()->LoadAvatar(fModelName, fAccountName, false, spawnPoint, nil);
+            fSpawnedKey = plAvatarMgr::GetInstance()->LoadAvatar(fModelName, fAccountName, false, spawnPoint, nullptr);
 
             ISendNotify(fSpawnedKey);
         }
@@ -170,7 +167,6 @@ void plNPCSpawnMod::ISendNotify(plKey &avatarKey)
         fNotify->ClearEvents();
         fNotify->AddEvent(event);
         delete event; // fNotify->AddEvent makes a copy
-        int i = fNotify->GetEventCount();
         fNotify->Ref();     // so we still hold onto it after it is delivered
         fNotify->Send();
     } else {

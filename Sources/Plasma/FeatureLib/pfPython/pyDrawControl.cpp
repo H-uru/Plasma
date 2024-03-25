@@ -45,25 +45,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-#pragma hdrstop
-
 #include "pyDrawControl.h"
+
+#include <string_theory/format>
+
+#include "hsResMgr.h"
+#include "plgDispatch.h"
+
 #ifndef BUILDING_PYPLASMA
+#   include "pnMessage/plClientMsg.h"
+
 #   include "plAvatar/plArmatureMod.h"
 #   include "plGLight/plShadowCaster.h"
 #   include "plGLight/plShadowMaster.h"
 #   include "plInputCore/plInputDevice.h"
-#   include "pnMessage/plClientMsg.h"
 #   include "plMessage/plInputEventMsg.h"
 #endif
 
 void pyDrawControl::SetGamma2(float gamma)
 {
 #ifndef BUILDING_PYPLASMA
-    char command[256];
-    sprintf(command,"Graphics.Renderer.Gamma2 %f",gamma);
+    ST::string command = ST::format("Graphics.Renderer.Gamma2 {}", gamma);
     // create message to send to the console
     plControlEventMsg* pMsg = new plControlEventMsg;
     pMsg->SetBCastFlag(plMessage::kBCastByType);

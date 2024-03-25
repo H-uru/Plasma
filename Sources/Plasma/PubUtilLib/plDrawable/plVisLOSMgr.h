@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plVisLOSMgr_inc
 #define plVisLOSMgr_inc
 
+#include <vector>
+
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 
 class plSpaceTreeNode;
 class plSpaceTree;
@@ -55,17 +56,17 @@ class plPageTreeMgr;
 class plPipeline;
 class hsBounds3Ext;
 
-class plVisHit
+struct plVisHit
 {
-public:
-    hsPoint3        fPos;
+    hsPoint3 fPos;
 };
 
-class plSpaceHit
+struct plSpaceHit
 {
-public:
-    int         fIdx;
-    float    fClosest;
+    plSpaceHit(int idx, float closest) : fIdx(idx), fClosest(closest) { }
+
+    int     fIdx;
+    float   fClosest;
 };
 
 class plVisLOSMgr
@@ -81,8 +82,8 @@ protected:
 
     bool ISetup(const hsPoint3& pStart, const hsPoint3& pEnd);
     bool ICheckBound(const hsBounds3Ext& bnd, float& closest);
-    bool ICheckSpaceTreeRecur(plSpaceTree* space, int which, hsTArray<plSpaceHit>& hits);
-    bool ICheckSpaceTree(plSpaceTree* space, hsTArray<plSpaceHit>& hits);
+    bool ICheckSpaceTreeRecur(plSpaceTree* space, int which, std::vector<plSpaceHit>& hits);
+    bool ICheckSpaceTree(plSpaceTree* space, std::vector<plSpaceHit>& hits);
     bool ICheckSceneNode(plSceneNode* node, plVisHit& hit);
     bool ICheckDrawable(plDrawable* d, plVisHit& hit);
     bool ICheckSpan(plDrawableSpans* dr, uint32_t spanIdx, plVisHit& hit);
@@ -94,7 +95,7 @@ public:
     static plVisLOSMgr* Instance();
 
     static void Init(plPipeline* pipe, plPageTreeMgr* mgr) { Instance()->fPipe = pipe; Instance()->fPageMgr = mgr; }
-    static void DeInit() { Instance()->fPipe = nil; Instance()->fPageMgr = nil; }
+    static void DeInit() { Instance()->fPipe = nullptr; Instance()->fPageMgr = nullptr; }
 };
 
 #endif // plVisLOSMgr_inc

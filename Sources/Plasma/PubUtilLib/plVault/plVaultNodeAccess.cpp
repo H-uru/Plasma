@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "Pch.h"
-#pragma hdrstop
 
 /*****************************************************************************
 *
@@ -66,9 +65,8 @@ enum EAgeInfoFields {
     kNumAgeInfoFields
 };
 
-#ifdef CLIENT
 void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
-    plStringStream str;
+    ST::string_stream str;
 
     for (unsigned i = 0; i < kNumAgeInfoFields; ++i) {
         switch (i) {
@@ -97,40 +95,38 @@ void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
         DEFAULT_FATAL(i);
         }
 
-        str << "|";
+        if (i+1 != kNumAgeInfoFields)
+            str << "|";
     }
 
-    SetNoteText(str.GetString());
+    SetNoteText(str.to_string());
 }
-#endif
 
 //============================================================================
-#ifdef CLIENT
 bool VaultTextNoteNode::GetVisitInfo (plAgeInfoStruct * info) {
-    std::vector<plString> toks = GetNoteText().Split("|");
+    std::vector<ST::string> toks = GetNoteText().split('|');
     hsAssert(toks.size() == kNumAgeInfoFields, "visit text note malformed--discarding");
     if (toks.size() != kNumAgeInfoFields)
         return false;
 
-    if (!toks[kAgeFilename].IsEmpty())
+    if (!toks[kAgeFilename].empty())
         info->SetAgeFilename(toks[kAgeFilename]);
-    if (!toks[kAgeInstName].IsEmpty())
+    if (!toks[kAgeInstName].empty())
         info->SetAgeInstanceName(toks[kAgeInstName]);
-    if (!toks[kAgeUserName].IsEmpty())
+    if (!toks[kAgeUserName].empty())
         info->SetAgeUserDefinedName(toks[kAgeUserName]);
-    if (!toks[kAgeDesc].IsEmpty())
+    if (!toks[kAgeDesc].empty())
         info->SetAgeDescription(toks[kAgeDesc]);
-    if (!toks[kAgeInstGuid].IsEmpty()) {
+    if (!toks[kAgeInstGuid].empty()) {
         std::unique_ptr<plUUID> guid = std::make_unique<plUUID>(toks[kAgeInstGuid]);
         info->SetAgeInstanceGuid(guid.get());
     }
-    if (!toks[kAgeLanguage].IsEmpty())
-        info->SetAgeLanguage(toks[kAgeLanguage].ToUInt());
-    if (!toks[kAgeSequence].IsEmpty())
-        info->SetAgeSequenceNumber(toks[kAgeSequence].ToUInt());
+    if (!toks[kAgeLanguage].empty())
+        info->SetAgeLanguage(toks[kAgeLanguage].to_uint());
+    if (!toks[kAgeSequence].empty())
+        info->SetAgeSequenceNumber(toks[kAgeSequence].to_uint());
     return true;
 }
-#endif
 
 
 /*****************************************************************************
@@ -140,16 +136,15 @@ bool VaultTextNoteNode::GetVisitInfo (plAgeInfoStruct * info) {
 ***/
 
 //============================================================================
-#ifdef CLIENT
 bool VaultSDLNode::GetStateDataRecord (plStateDataRecord * rec, unsigned readOptions) {
-    if (!GetSDLDataLength() || !GetSDLData())
+    if (GetSDLData().empty())
         return false;
 
     hsRAMStream ram;
-    ram.Write(GetSDLDataLength(), GetSDLData());
+    ram.Write(GetSDLData().size(), GetSDLData().data());
     ram.Rewind();
 
-    plString sdlRecName;
+    ST::string sdlRecName;
     int sdlRecVersion;
     if (!plStateDataRecord::ReadStreamHeader(&ram, &sdlRecName, &sdlRecVersion))
         return false;
@@ -170,10 +165,8 @@ bool VaultSDLNode::GetStateDataRecord (plStateDataRecord * rec, unsigned readOpt
     
     return true;
 }
-#endif // def CLIENT
 
 //============================================================================
-#ifdef CLIENT
 void VaultSDLNode::SetStateDataRecord (const plStateDataRecord * rec, unsigned writeOptions) {
     hsRAMStream ram;
     rec->WriteStreamHeader(&ram);
@@ -181,18 +174,16 @@ void VaultSDLNode::SetStateDataRecord (const plStateDataRecord * rec, unsigned w
     ram.Rewind();
 
     unsigned bytes = ram.GetEOF();
-    uint8_t * buf = nil;
+    uint8_t * buf = nullptr;
     buf = (uint8_t *)malloc(bytes);
 
     ram.CopyToMem(buf);
     SetSDLData(buf, bytes);
     free(buf);
 }
-#endif // def CLIENT
 
 //============================================================================
-#ifdef CLIENT
-void VaultSDLNode::InitStateDataRecord (const plString& sdlRecName, unsigned writeOptions) {
+void VaultSDLNode::InitStateDataRecord (const ST::string& sdlRecName, unsigned writeOptions) {
     {
         plStateDataRecord * rec = new plStateDataRecord;
         bool exists = GetStateDataRecord(rec, 0);
@@ -207,7 +198,6 @@ void VaultSDLNode::InitStateDataRecord (const plString& sdlRecName, unsigned wri
         SetStateDataRecord(&rec, writeOptions|plSDL::kDontWriteDirtyFlag);
     }
 }
-#endif // def CLIENT
 
 
 /*****************************************************************************
@@ -217,7 +207,6 @@ void VaultSDLNode::InitStateDataRecord (const plString& sdlRecName, unsigned wri
 ***/
 
 //============================================================================
-#ifdef CLIENT
 void VaultImageNode::StuffImage (plMipmap * src, int dstType) {
     hsRAMStream ramStream;
     bool compressSuccess = false;
@@ -242,17 +231,15 @@ void VaultImageNode::StuffImage (plMipmap * src, int dstType) {
         SetImageType(dstType);
         free(buffer);
     } else {
-        SetImageData(nil, 0);
+        SetImageData(nullptr, 0);
         SetImageType(kNone);
     }
 }
-#endif
 
 //============================================================================
-#ifdef CLIENT
 bool VaultImageNode::ExtractImage (plMipmap ** dst) {
     hsRAMStream ramStream;
-    ramStream.Write(GetImageDataLength(), GetImageData());
+    ramStream.Write(GetImageData().size(), GetImageData().data());
     ramStream.Rewind();
 
     switch (GetImageType()) {
@@ -266,12 +253,11 @@ bool VaultImageNode::ExtractImage (plMipmap ** dst) {
 
         case kNone:
         default:
-            (*dst) = nil;
+            (*dst) = nullptr;
             break;
     }
-    return ((*dst) != nil);
+    return ((*dst) != nullptr);
 }
-#endif
 
 
 /*****************************************************************************
@@ -280,23 +266,20 @@ bool VaultImageNode::ExtractImage (plMipmap ** dst) {
 *
 ***/
 
-#ifdef CLIENT
 struct MatchesSpawnPointTitle
 {
-    plString fTitle;
-    MatchesSpawnPointTitle( const plString & title ):fTitle( title ){}
+    ST::string fTitle;
+    MatchesSpawnPointTitle( const ST::string & title ):fTitle( title ){}
     bool operator ()( const plSpawnPointInfo & p ) const { return ( p.fTitle==fTitle ); }
 };
 struct MatchesSpawnPointName
 {
-    plString fName;
-    MatchesSpawnPointName( const plString & name ):fName( name ){}
+    ST::string fName;
+    MatchesSpawnPointName( const ST::string & name ):fName( name ){}
     bool operator ()( const plSpawnPointInfo & p ) const { return ( p.fSpawnPt==fName ); }
 };
-#endif
 
 //============================================================================
-#ifdef CLIENT
 bool VaultAgeLinkNode::CopyTo (plAgeLinkStruct * link) {
     if (hsRef<RelVaultNode> me = VaultGetNode(base->GetNodeId())) {
         if (hsRef<RelVaultNode> info = me->GetChildNode(plVault::kNodeType_AgeInfo, 1)) {
@@ -308,10 +291,8 @@ bool VaultAgeLinkNode::CopyTo (plAgeLinkStruct * link) {
     link->Clear();
     return false;
 }
-#endif
 
 //============================================================================
-#ifdef CLIENT
 void VaultAgeLinkNode::AddSpawnPoint (const plSpawnPointInfo & point) {
 
     plSpawnPointVec points;
@@ -327,11 +308,9 @@ void VaultAgeLinkNode::AddSpawnPoint (const plSpawnPointInfo & point) {
     points.push_back( point );
     SetSpawnPoints( points );
 }
-#endif
 
 //============================================================================
-#ifdef CLIENT
-void VaultAgeLinkNode::RemoveSpawnPoint (const plString & spawnPtName) {
+void VaultAgeLinkNode::RemoveSpawnPoint (const ST::string & spawnPtName) {
 
     plSpawnPointVec points;
     GetSpawnPoints( &points );                                                  
@@ -343,36 +322,31 @@ void VaultAgeLinkNode::RemoveSpawnPoint (const plString & spawnPtName) {
         it = std::find_if( points.begin(), points.end(), MatchesSpawnPointName( spawnPtName ) );
     }
 }
-#endif
 
 //============================================================================
-#ifdef CLIENT
-bool VaultAgeLinkNode::HasSpawnPoint (const plString & spawnPtName) const {
+bool VaultAgeLinkNode::HasSpawnPoint (const ST::string & spawnPtName) const {
 
     plSpawnPointVec points;
     GetSpawnPoints( &points );                                                  
     return ( std::find_if( points.begin(), points.end(), MatchesSpawnPointName( spawnPtName ) )!=points.end() );
 }
-#endif
 
 //============================================================================
-#ifdef CLIENT
 bool VaultAgeLinkNode::HasSpawnPoint (const plSpawnPointInfo & point) const {
 
     return HasSpawnPoint(point.GetName());
 }
-#endif
 
 //============================================================================
-#ifdef CLIENT
 void VaultAgeLinkNode::GetSpawnPoints (plSpawnPointVec * out) const {
-    
-    plString str = plString::FromUtf8(reinterpret_cast<const char*>(GetSpawnPoints()), GetSpawnPointsLength());
-    std::vector<plString> izer = str.Tokenize(";");
+
+    ST::string str = ST::string::from_utf8(reinterpret_cast<const char*>(GetSpawnPoints().data()),
+                                           GetSpawnPoints().size());
+    std::vector<ST::string> izer = str.tokenize(";");
     for (auto token1 = izer.begin(); token1 != izer.end(); ++token1)
     {
         plSpawnPointInfo point;
-        std::vector<plString> izer2 = token1->Tokenize(":");
+        std::vector<ST::string> izer2 = token1->tokenize(":");
         if ( izer2.size() > 0)
             point.fTitle = izer2[0];
         if ( izer2.size() > 1)
@@ -383,23 +357,20 @@ void VaultAgeLinkNode::GetSpawnPoints (plSpawnPointVec * out) const {
         out->push_back(point);
     }
 }
-#endif
 
 //============================================================================
-#ifdef CLIENT
 void VaultAgeLinkNode::SetSpawnPoints (const plSpawnPointVec & in) {
 
-    plStringStream ss;
+    ST::string_stream ss;
     for ( unsigned i=0; i<in.size(); i++ ) {
         ss
             << in[i].fTitle << ":"
             << in[i].fSpawnPt << ":"
             << in[i].fCameraStack << ";";
     }
-    plString blob = ss.GetString();
-    SetSpawnPoints(reinterpret_cast<const uint8_t *>(blob.c_str()), blob.GetSize());
+    ST::string blob = ss.to_string();
+    SetSpawnPoints(reinterpret_cast<const uint8_t *>(blob.c_str()), blob.size());
 }
-#endif
 
 /*****************************************************************************
 *
@@ -408,15 +379,12 @@ void VaultAgeLinkNode::SetSpawnPoints (const plSpawnPointVec & in) {
 ***/
 
 //============================================================================
-#ifdef CLIENT
 const class plUnifiedTime * VaultAgeInfoNode::GetAgeTime () const {
     hsAssert(false, "eric, implement me.");
-    return nil;
+    return nullptr;
 }
-#endif // def CLIENT
 
 //============================================================================
-#ifdef CLIENT
 void VaultAgeInfoNode::CopyFrom (const plAgeInfoStruct * info) {
     // age filename
     SetAgeFilename(info->HasAgeFilename() ? info->GetAgeFilename() : "");
@@ -439,10 +407,8 @@ void VaultAgeInfoNode::CopyFrom (const plAgeInfoStruct * info) {
     // age language
     SetAgeLanguage(info->GetAgeLanguage());
 }
-#endif // def CLIENT
 
 //============================================================================
-#ifdef CLIENT
 void VaultAgeInfoNode::CopyTo (plAgeInfoStruct * info) const {
     // age filename
     info->SetAgeFilename(GetAgeFilename());
@@ -466,4 +432,39 @@ void VaultAgeInfoNode::CopyTo (plAgeInfoStruct * info) const {
     // age language
     info->SetAgeLanguage(GetAgeLanguage());
 }
-#endif // def CLIENT
+
+//============================================================================
+void VaultMarkerGameNode::GetMarkerData(std::vector<VaultMarker>& data) const
+{
+    if (base->GetBlob_1().size() < sizeof(uint32_t))
+        return;
+
+    hsReadOnlyStream stream(base->GetBlob_1().size(), base->GetBlob_1().data());
+    uint32_t size = stream.ReadLE32();
+    data.reserve(size);
+
+    for (uint32_t i = 0; i < size; ++i) {
+        VaultMarker marker;
+        marker.id = stream.ReadLE32();
+        marker.age = stream.ReadSafeString();
+        marker.pos.Read(&stream);
+        marker.description = stream.ReadSafeString();
+        data.push_back(marker);
+    }
+}
+
+//============================================================================
+void VaultMarkerGameNode::SetMarkerData(const std::vector<VaultMarker>& data)
+{
+    hsRAMStream stream;
+    stream.WriteLE32((uint32_t)data.size());
+    for (const VaultMarker& marker : data) {
+        stream.WriteLE32(marker.id);
+        stream.WriteSafeString(marker.age);
+        marker.pos.Write(&stream);
+        stream.WriteSafeString(marker.description);
+    }
+
+    // copies the buffer
+    base->SetBlob_1(reinterpret_cast<const uint8_t*>(stream.GetData()), stream.GetEOF());
+}

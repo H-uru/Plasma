@@ -50,14 +50,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "plRenderTarget.h"
-#include "plCubicRenderTarget.h"
-#include "hsStream.h"
-#include "hsGDeviceRef.h"
 
-#include "plPipeline.h"
+#include "plCubicRenderTarget.h"
+
 #include "plgDispatch.h"
+#include "hsGDeviceRef.h"
+#include "hsStream.h"
+#include "plPipeline.h"
+
 #include "pnMessage/plPipeResMakeMsg.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -100,10 +101,10 @@ uint32_t  plRenderTarget::Read( hsStream *s )
     fProportionalViewport = s->ReadBool();
     if( fProportionalViewport )
     {
-        fViewport.fProportional.fLeft = s->ReadLEScalar();
-        fViewport.fProportional.fTop = s->ReadLEScalar();
-        fViewport.fProportional.fRight = s->ReadLEScalar();
-        fViewport.fProportional.fBottom = s->ReadLEScalar();
+        fViewport.fProportional.fLeft = s->ReadLEFloat();
+        fViewport.fProportional.fTop = s->ReadLEFloat();
+        fViewport.fProportional.fRight = s->ReadLEFloat();
+        fViewport.fProportional.fBottom = s->ReadLEFloat();
     }
     else
     {
@@ -129,10 +130,10 @@ uint32_t  plRenderTarget::Write( hsStream *s )
     s->WriteBool( fProportionalViewport );
     if( fProportionalViewport )
     {
-        s->WriteLEScalar( fViewport.fProportional.fLeft );
-        s->WriteLEScalar( fViewport.fProportional.fTop );
-        s->WriteLEScalar( fViewport.fProportional.fRight );
-        s->WriteLEScalar( fViewport.fProportional.fBottom );
+        s->WriteLEFloat(fViewport.fProportional.fLeft);
+        s->WriteLEFloat(fViewport.fProportional.fTop);
+        s->WriteLEFloat(fViewport.fProportional.fRight);
+        s->WriteLEFloat(fViewport.fProportional.fBottom);
     }
     else
     {
@@ -160,7 +161,7 @@ uint32_t  plCubicRenderTarget::Read( hsStream *s )
 
     for( i = 0; i < 6; i++ )
     {
-        if( fFaces[ i ] == nil )
+        if (fFaces[i] == nullptr)
             fFaces[ i ] = new plRenderTarget();
 
         fFaces[ i ]->fParent = this;
@@ -184,13 +185,13 @@ uint32_t  plCubicRenderTarget::Write( hsStream *s )
     return total;
 }
 
-uint32_t  plCubicRenderTarget::GetTotalSize( void ) const
+uint32_t  plCubicRenderTarget::GetTotalSize() const
 {
     uint32_t      size = 0, i;
     
     for( i = 0; i < 6; i++ )
     {
-        if( fFaces[ i ] != nil )
+        if (fFaces[i] != nullptr)
             size += fFaces[ i ]->GetTotalSize();
     }
 

@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsFastMath.h"
 #include "hsStream.h"
-#pragma hdrstop
 
 #include "plBulletMsg.h"
 
@@ -55,9 +54,9 @@ void plBulletMsg::Read(hsStream* stream, hsResMgr* mgr)
 
     fFrom.Read(stream);
     fDir.Read(stream);
-    fRange = stream->ReadLEScalar();
-    fRadius = stream->ReadLEScalar();
-    fPartyTime = stream->ReadLEScalar();
+    fRange = stream->ReadLEFloat();
+    fRadius = stream->ReadLEFloat();
+    fPartyTime = stream->ReadLEFloat();
 }
 
 void plBulletMsg::Write(hsStream* stream, hsResMgr* mgr) 
@@ -68,9 +67,9 @@ void plBulletMsg::Write(hsStream* stream, hsResMgr* mgr)
 
     fFrom.Write(stream);
     fDir.Write(stream);
-    stream->WriteLEScalar(fRange);
-    stream->WriteLEScalar(fRadius);
-    stream->WriteLEScalar(fPartyTime);
+    stream->WriteLEFloat(fRange);
+    stream->WriteLEFloat(fRadius);
+    stream->WriteLEFloat(fPartyTime);
 }
 
 void plBulletMsg::FireShot(const hsPoint3& from, const hsVector3& dir, float radius, float range, float psecs)

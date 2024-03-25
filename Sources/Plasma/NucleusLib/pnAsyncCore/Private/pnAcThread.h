@@ -50,6 +50,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACTHREAD_H
 
+#include <mutex>
+#include <thread>
+
+#include "pnNetBase/pnNbError.h"
+
 
 /****************************************************************************
 *
@@ -58,33 +63,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 // for IoWaitId/TimerCreate/TimerUpdate
-const unsigned kAsyncTimeInfinite = (unsigned) -1;
-
-#ifdef   _MSC_VER
-#define  THREADCALL __stdcall
-#else
-#define  THREADCALL CDECL
-#endif
+constexpr unsigned kAsyncTimeInfinite = (unsigned) -1;
 
 struct AsyncThread;
-typedef unsigned (THREADCALL * FAsyncThreadProc)(AsyncThread * thread);
+
+struct AsyncThreadRef {
+    std::shared_ptr<AsyncThread> impl;
+    std::thread&                 thread() const;
+    bool joinable() const;
+};
 
 
 // Threads are also allowed to set the workTimeMs field of their
 // structure to a nonzero value for "on", and IO_TIME_INFINITE for
 // "off" to avoid the overhead of calling these functions. Note
 // that this function may not be called for the main thread. I
-// suggest that application code not worry that timeMs might 
-// "accidentally" equal the IO_TIME_INFINITE value, as it only 
+// suggest that application code not worry that timeMs might
+// "accidentally" equal the IO_TIME_INFINITE value, as it only
 // happens for one millisecond every 49 days.
 struct AsyncThread {
-    LINK(AsyncThread)   link;
-    FAsyncThreadProc    proc;
-    void *              handle;
-    void *              argument;
-    unsigned            workTimeMs;
-    wchar_t             name[16];
+    std::function<void()>                proc;
+    std::thread                          handle;
+    unsigned                             workTimeMs;
+    std::timed_mutex                     completion;
 };
+
 
 /*****************************************************************************
 *
@@ -92,55 +95,8 @@ struct AsyncThread {
 *
 ***/
 
-void * AsyncThreadCreate (
-    FAsyncThreadProc    proc,
-    void *              argument,
-    const wchar_t       name[]
+AsyncThreadRef AsyncThreadCreate (
+    std::function<void()>    procs
 );
 
-// This function should ONLY be called during shutdown while waiting for things to expire
-void AsyncSleep (unsigned sleepMs);
-
-
-/*****************************************************************************
-*
-*   Thread task functions
-*
-***/
-
-enum EThreadTaskPriority {
-    kThreadTaskPriorityNormal = 1,
-    kNumThreadTaskPriorities
-};
-
-const unsigned kThreadTaskMinThreads = 5;
-const unsigned kThreadTaskDefThreads = 100;
-const unsigned kThreadTaskMaxThreads = 1000;
-
-struct AsyncThreadTaskList;
-
-typedef void (* FAsyncThreadTask)(
-    void *                  param, 
-    ENetError               error
-);
-
-
-void AsyncThreadTaskInitialize (unsigned threads);
-void AsyncThreadTaskDestroy ();
-
-unsigned AsyncThreadTaskGetThreadCount ();
-void AsyncThreadTaskSetThreadCount (unsigned threads);
-
-AsyncThreadTaskList * AsyncThreadTaskListCreate ();
-void AsyncThreadTaskListDestroy (
-    AsyncThreadTaskList *   taskList,
-    ENetError               error
-);
-
-void AsyncThreadTaskAdd (
-    AsyncThreadTaskList *   taskList,
-    FAsyncThreadTask        callback,
-    void *                  param,
-    const wchar_t             debugStr[],
-    EThreadTaskPriority     priority = kThreadTaskPriorityNormal
-);
+void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs);

@@ -45,7 +45,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPointShadowMaster.h"
 #include "plShadowSlave.h"
 #include "plShadowCaster.h"
+
+#include "plIntersect/plVolumeIsect.h"
 #include "plMessage/plShadowCastMsg.h"
+
 
 #include "plLightInfo.h"
 
@@ -92,29 +95,25 @@ static inline void InverseOfPureRotTran(const hsMatrix44& src, hsMatrix44& inv)
 ////////////////////////////////////////////////////////////////////////////////////
 // Point first
 ////////////////////////////////////////////////////////////////////////////////////
+
 plPointShadowMaster::plPointShadowMaster()
 {
-    fLastUp.Set(0,0,0);
 }
 
 plPointShadowMaster::~plPointShadowMaster()
 {
-    fIsectPool.SetCount(fIsectPool.GetNumAlloc());
-    int i;
-    for( i = 0; i < fIsectPool.GetCount(); i++ )
-        delete fIsectPool[i];
 }
 
-plShadowSlave* plPointShadowMaster::INewSlave(const plShadowCaster* caster)
+std::unique_ptr<plShadowSlave> plPointShadowMaster::INewSlave(const plShadowCaster* caster)
 {
-    return new plPointShadowSlave;
+    return std::make_unique<plPointShadowSlave>();
 }
 
 void plPointShadowMaster::IBeginRender()
 {
     plShadowMaster::IBeginRender();
 
-    fIsectPool.SetCount(0);
+    fIsectPool.clear();
 }
 
 void plPointShadowMaster::IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const
@@ -141,11 +140,10 @@ void plPointShadowMaster::IComputeWorldToLight(const hsBounds3Ext& bnd, plShadow
         from += atToFrom;
     }
 
-    hsVector3 up(0,0,1.f);
+    hsVector3 up(0.f, 0.f, 1.f);
     if( CrossProd(up, (at - from)).MagnitudeSquared() < kMinMag )
-    {
-        up.Set(0, 1.f, 0);
-    }
+        up.Set(0.f, 1.f, 0.f);
+
     hsMatrix44 w2light;
     w2light.MakeCamera(&from, &at, &up); // mf_flip_up - mf
 
@@ -171,13 +169,7 @@ void plPointShadowMaster::IComputeProjections(plShadowCastMsg* castMsg, plShadow
 
 void plPointShadowMaster::IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* slave) const
 {
-    int iIsect = fIsectPool.GetCount();
-    fIsectPool.ExpandAndZero(iIsect+1);
-    if( !fIsectPool[iIsect] )
-    {
-        fIsectPool[iIsect] = new plBoundsIsect;
-    }
-    plBoundsIsect* isect = fIsectPool[iIsect];
+    plBoundsIsect* isect = fIsectPool.next([] { return new plBoundsIsect; }).get();
 
     const hsBounds3Ext& wBnd = slave->fWorldBounds;
 

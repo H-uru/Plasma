@@ -40,14 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsStream.h"
-#pragma hdrstop
-
 #include "plVaultNotifyMsg.h"
+
+#include "hsStream.h"
 
 plVaultNotifyMsg::plVaultNotifyMsg()
 : fType( kNothing )
-, fResultCode( hsOK )
+, fResultCode(kNetSuccess)
 {
     SetBCastFlag( kBCastByType );
 }
@@ -58,15 +57,17 @@ plVaultNotifyMsg::~plVaultNotifyMsg()
 
 void plVaultNotifyMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-    stream->ReadLE( &fType );
-    stream->ReadLE( &fResultCode );
+    stream->ReadLE16(&fType);
+    int8_t resultCode;
+    stream->ReadByte(&resultCode);
+    fResultCode = static_cast<ENetError>(resultCode);
     fArgs.Read( stream, mgr );
 }
 
 void plVaultNotifyMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-    stream->WriteLE( fType );
-    stream->WriteLE( fResultCode );
+    stream->WriteLE16(fType);
+    stream->WriteByte(static_cast<int8_t>(fResultCode));
     fArgs.Write( stream, mgr );
 }
 

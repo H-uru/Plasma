@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plOneShotMod_INC
 
 #include "pnModifier/plMultiModifier.h"
-#include "pnMessage/plMessage.h"
 
 // PLONESHOTMOD
 // A one shot
@@ -55,8 +54,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plOneShotMod : public plMultiModifier
 {
 protected:
-    virtual bool IEval(double secs, float del, uint32_t dirty) {return true;}
-    plString fAnimName;       // the name of the animation associated with this one-shot
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
+    ST::string fAnimName;   // the name of the animation associated with this one-shot
     bool fDrivable;       // whether the user can control the position of the animation
     bool fReversable;     // whether the user can back up the animation (fDrivable must be true as well)
     float fSeekDuration;    // how long to take to get to the seek point (??? should this be speed instead?)
@@ -64,20 +63,20 @@ protected:
     bool fNoSeek;
 public:
     plOneShotMod();
-    plOneShotMod(const plString &animName, bool drivable, bool reversable,
+    plOneShotMod(const ST::string &animName, bool drivable, bool reversable,
                  float seekDuration, bool smartSeek, bool noSeek = false);
 
-    void Init(const plString &animName, bool drivable, bool reversable,
+    void Init(const ST::string &animName, bool drivable, bool reversable,
               float seekDuration, bool smartSeek, bool noSeek = false);
 
     CLASSNAME_REGISTER( plOneShotMod );
     GETINTERFACE_ANY( plOneShotMod, plMultiModifier );
     
-    virtual void AddTarget(plSceneObject* so);
-    bool MsgReceive(plMessage* msg);
+    void AddTarget(plSceneObject* so) override;
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 #endif

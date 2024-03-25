@@ -39,12 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef SERVER
-#ifndef NO_AV_MSGS
 
 #include "hsStream.h"
 #include "hsResMgr.h"
-#pragma hdrstop
 
 // singular
 #include "plAvCoopMsg.h"
@@ -56,11 +53,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // plAvCoopMsg -----------
 // ------------
 plAvCoopMsg::plAvCoopMsg()
-: plMessage(nil, nil, nil),
-  fInitiatorID(0),
-  fInitiatorSerial(0),
+: plMessage(nullptr, nullptr, nullptr),
+  fInitiatorID(),
+  fInitiatorSerial(),
   fCommand(kNone),
-  fCoordinator(nil)
+  fCoordinator()
 {
 }
 
@@ -73,19 +70,19 @@ plAvCoopMsg::~plAvCoopMsg()
 // plAvCoopMsg -----------------------------------
 // ------------
 plAvCoopMsg::plAvCoopMsg(Command cmd, uint32_t id, uint16_t serial)
-: plMessage(nil, plAvatarMgr::GetInstance()->GetKey(), nil),
+: plMessage(nullptr, plAvatarMgr::GetInstance()->GetKey(), nullptr),
   fInitiatorID(id),
   fInitiatorSerial(serial),
   fCommand(cmd),
-  fCoordinator(nil)
+  fCoordinator()
 {
 
 }
 
 // plAvCoopMsg ----------------------------------
 // ------------
-plAvCoopMsg::plAvCoopMsg(plKey sender, plCoopCoordinator *coordinator)
-: plMessage(sender, plAvatarMgr::GetInstance()->GetKey(), nil),
+plAvCoopMsg::plAvCoopMsg(const plKey& sender, plCoopCoordinator *coordinator)
+: plMessage(sender, plAvatarMgr::GetInstance()->GetKey(), nullptr),
   fInitiatorID(coordinator->GetInitiatorID()),
   fInitiatorSerial(coordinator->GetInitiatorSerial()),
   fCommand(kStartNew),
@@ -114,15 +111,12 @@ void plAvCoopMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
 
-    stream->WriteBool(fCoordinator != nil);
+    stream->WriteBool(fCoordinator != nullptr);
     if(fCoordinator)
         mgr->WriteCreatable(stream, fCoordinator);
 
     stream->WriteLE32(fInitiatorID);
     stream->WriteLE16(fInitiatorSerial);
 
-    stream->WriteLE16(fCommand);
+    stream->WriteLE16((uint16_t)fCommand);
 }
-
-#endif // ndef NO_AV_MSGS
-#endif // ndef SERVER

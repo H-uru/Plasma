@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAccMeshSmooth_inc
 #define plAccMeshSmooth_inc
 
-#include "hsTemplates.h"
+#include <vector>
+
 #include "plAccessGeometry.h"
 #include "plAccessSpan.h"
 
@@ -75,19 +76,19 @@ protected:
     float        fDistTolSq;
 
     plAccessGeometry            fAccGeom;
-    hsTArray<plAccessSpan>      fSpans;
+    std::vector<plAccessSpan>   fSpans;
 
     hsPoint3        IPositionToWorld(plAccessSpan& span, int i) const;
     hsVector3       INormalToWorld(plAccessSpan& span, int i) const;
     hsPoint3        IPositionToLocal(plAccessSpan& span, const hsPoint3& wPos) const;
     hsVector3       INormalToLocal(plAccessSpan& span, const hsVector3& wNorm) const;
 
-    void            FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, hsTArray<uint16_t>& edgeVerts);
-    void            FindEdges(hsTArray<plGeometrySpan*>& sets, hsTArray<uint16_t>* edgeVerts);
-    void            FindSharedVerts(plAccessSpan& span, int numEdgeVerts, hsTArray<uint16_t>& edgeVerts, hsTArray<uint16_t>& shareVtx, VtxAccum& accum);
-    void            SetNormals(plAccessSpan& span, hsTArray<uint16_t>& shareVtx, const hsVector3& norm) const;
-    void            SetPositions(plAccessSpan& span, hsTArray<uint16_t>& shareVtx, const hsPoint3& pos) const;
-    void            SetDiffuse(plAccessSpan& span, hsTArray<uint16_t>& shareVtx, const hsColorRGBA& diff) const;
+    void            FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, std::vector<uint16_t>& edgeVerts);
+    void            FindEdges(std::vector<plGeometrySpan*>& sets, std::vector<uint16_t>* edgeVerts);
+    void            FindSharedVerts(plAccessSpan& span, size_t numEdgeVerts, std::vector<uint16_t>& edgeVerts, std::vector<uint16_t>& shareVtx, VtxAccum& accum);
+    void            SetNormals(plAccessSpan& span, std::vector<uint16_t>& shareVtx, const hsVector3& norm) const;
+    void            SetPositions(plAccessSpan& span, std::vector<uint16_t>& shareVtx, const hsPoint3& pos) const;
+    void            SetDiffuse(plAccessSpan& span, std::vector<uint16_t>& shareVtx, const hsColorRGBA& diff) const;
 
 public:
     plAccMeshSmooth() : fFlags(kSmoothNorm), fMinNormDot(0.25f), fDistTolSq(1.e-4f), fAccGeom() {}
@@ -98,7 +99,7 @@ public:
     void        SetDistTol(float dist);
     float    GetDistTol() const;
 
-    void        Smooth(hsTArray<plGeometrySpan*>& sets);
+    void        Smooth(std::vector<plGeometrySpan*>& sets);
 
     void        SetFlags(uint32_t f) { fFlags = f; }
     uint32_t      GetFlags() const { return fFlags; }

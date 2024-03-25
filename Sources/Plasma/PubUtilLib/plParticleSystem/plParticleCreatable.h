@@ -45,45 +45,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-#include "plParticleSystem.h"
-#include "plParticleEffect.h"
-#include "plParticleEmitter.h"
-#include "plParticleGenerator.h"
-#include "plParticleSystem.h"
-#include "plParticleApplicator.h"
-#include "plParticleSDLMod.h"
-#include "plConvexVolume.h"
 #include "plBoundInterface.h"
+REGISTER_CREATABLE(plBoundInterface);
 
-REGISTER_CREATABLE( plParticleSystem );
-REGISTER_NONCREATABLE( plParticleEffect );
-REGISTER_NONCREATABLE( plParticleCollisionEffect );
-REGISTER_CREATABLE( plParticleCollisionEffectBeat );
-REGISTER_CREATABLE( plParticleCollisionEffectDie );
-REGISTER_CREATABLE( plParticleCollisionEffectBounce );
-REGISTER_CREATABLE( plParticleFadeVolumeEffect );
-REGISTER_NONCREATABLE( plParticleGenerator );
-REGISTER_CREATABLE( plSimpleParticleGenerator );
-REGISTER_CREATABLE( plOneTimeParticleGenerator );
-REGISTER_CREATABLE( plParticleEmitter );
-REGISTER_CREATABLE( plConvexVolume );
-REGISTER_CREATABLE( plBoundInterface );
-REGISTER_NONCREATABLE( plParticleApplicator );
-REGISTER_CREATABLE( plParticleLifeMinApplicator );
-REGISTER_CREATABLE( plParticleLifeMaxApplicator );
-REGISTER_CREATABLE( plParticlePPSApplicator );
-REGISTER_CREATABLE( plParticleAngleApplicator );
-REGISTER_CREATABLE( plParticleVelMinApplicator );
-REGISTER_CREATABLE( plParticleVelMaxApplicator );
-REGISTER_CREATABLE( plParticleScaleMinApplicator );
-REGISTER_CREATABLE( plParticleScaleMaxApplicator );
-//REGISTER_CREATABLE( plParticleGravityApplicator );
-//REGISTER_CREATABLE( plParticleDragApplicator );
-REGISTER_NONCREATABLE( plParticleWindEffect );
-REGISTER_CREATABLE( plParticleLocalWind );
-REGISTER_CREATABLE( plParticleUniformWind );
-REGISTER_CREATABLE( plParticleFlockEffect );
-REGISTER_CREATABLE( plParticleFollowSystemEffect );
-REGISTER_CREATABLE( plParticleSDLMod );
+#include "plConvexVolume.h"
+REGISTER_CREATABLE(plConvexVolume);
+
+#include "plParticleApplicator.h"
+REGISTER_CREATABLE(plParticleAngleApplicator);
+REGISTER_NONCREATABLE(plParticleApplicator);
+REGISTER_CREATABLE(plParticleLifeMaxApplicator);
+REGISTER_CREATABLE(plParticleLifeMinApplicator);
+REGISTER_CREATABLE(plParticlePPSApplicator);
+REGISTER_CREATABLE(plParticleScaleMaxApplicator);
+REGISTER_CREATABLE(plParticleScaleMinApplicator);
+REGISTER_CREATABLE(plParticleVelMaxApplicator);
+REGISTER_CREATABLE(plParticleVelMinApplicator);
+
+#include "plParticleEffect.h"
+REGISTER_NONCREATABLE(plParticleCollisionEffect);
+REGISTER_CREATABLE(plParticleCollisionEffectBeat);
+REGISTER_CREATABLE(plParticleCollisionEffectDie);
+REGISTER_CREATABLE(plParticleCollisionEffectBounce);
+REGISTER_NONCREATABLE(plParticleEffect);
+REGISTER_CREATABLE(plParticleFadeVolumeEffect);
+REGISTER_CREATABLE(plParticleFlockEffect);
+REGISTER_CREATABLE(plParticleFollowSystemEffect);
+REGISTER_CREATABLE(plParticleLocalWind);
+REGISTER_CREATABLE(plParticleUniformWind);
+REGISTER_NONCREATABLE(plParticleWindEffect);
+
+#include "plParticleEmitter.h"
+REGISTER_CREATABLE(plParticleEmitter);
+
+#include "plParticleGenerator.h"
+REGISTER_CREATABLE(plOneTimeParticleGenerator);
+REGISTER_NONCREATABLE(plParticleGenerator);
+REGISTER_CREATABLE(plSimpleParticleGenerator);
+
+#include "plParticleSDLMod.h"
+REGISTER_CREATABLE(plParticleSDLMod);
+
+#include "plParticleSystem.h"
+REGISTER_CREATABLE(plParticleSystem);
 
 #endif // plParticleCreatable_inc

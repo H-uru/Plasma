@@ -48,9 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////////////
 
+#include "plWinRegistryTools.h"
+
 #include "HeadSpin.h"
 #include "hsWindows.h"
-#include "plWinRegistryTools.h"
 
 #include <QString>
 #include <string>
@@ -171,7 +172,7 @@ QString plWinRegistryTools::GetCurrentFileExtensionAssociation(const QString &ex
     if (retVal != ERROR_SUCCESS)
     {
         char msg[512];
-        FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, 0, retVal, 0, msg, arrsize(msg), nullptr);
+        FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, retVal, 0, msg, std::size(msg), nullptr);
         hsStatusMessageF("Error querying registry key '%s' : %s\n", qPrintable(extension), msg);
         return QString();
     }

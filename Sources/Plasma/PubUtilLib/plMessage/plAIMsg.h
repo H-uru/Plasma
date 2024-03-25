@@ -42,10 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAIMsg_inc
 #define plAIMsg_inc
 
-#ifndef SERVER // we use stuff the server doesn't link with
-#ifndef NO_AV_MSGS
-
 #include "hsGeometry3.h"
+#include <string_theory/string>
+
 #include "pnMessage/plMessage.h"
 
 class plAvBrainCritter;
@@ -60,11 +59,11 @@ public:
     CLASSNAME_REGISTER(plAIMsg);
     GETINTERFACE_ANY(plAIMsg, plMessage);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    void BrainUserString(const plString& userStr) {fBrainUserStr = userStr;}
-    plString BrainUserString() const {return fBrainUserStr;}
+    void BrainUserString(const ST::string& userStr) {fBrainUserStr = userStr;}
+    ST::string BrainUserString() const {return fBrainUserStr;}
 
     // enum for all messages to make things easier for people that use us
     enum
@@ -75,7 +74,7 @@ public:
     };
 
 private:
-    plString fBrainUserStr;
+    ST::string fBrainUserStr;
 };
 
 // message spammed to anyone listening so they can grab the brain's key and talk to it
@@ -84,13 +83,13 @@ class plAIBrainCreatedMsg : public plAIMsg
 {
 public:
     plAIBrainCreatedMsg(): plAIMsg() {SetBCastFlag(plMessage::kBCastByExactType);}
-    plAIBrainCreatedMsg(const plKey& sender): plAIMsg(sender, nil) {SetBCastFlag(plMessage::kBCastByExactType);}
+    plAIBrainCreatedMsg(const plKey& sender): plAIMsg(sender, nullptr) { SetBCastFlag(plMessage::kBCastByExactType); }
 
     CLASSNAME_REGISTER(plAIBrainCreatedMsg);
     GETINTERFACE_ANY(plAIBrainCreatedMsg, plAIMsg);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr) {plAIMsg::Read(stream, mgr);}
-    virtual void Write(hsStream* stream, hsResMgr* mgr) {plAIMsg::Write(stream, mgr);}
+    void Read(hsStream* stream, hsResMgr* mgr) override { plAIMsg::Read(stream, mgr); }
+    void Write(hsStream* stream, hsResMgr* mgr) override { plAIMsg::Write(stream, mgr); }
 };
 
 // message sent when the brain arrives at it's specified goal
@@ -98,23 +97,20 @@ public:
 class plAIArrivedAtGoalMsg : public plAIMsg
 {
 public:
-    plAIArrivedAtGoalMsg(): plAIMsg(), fGoal(0, 0, 0) {}
-    plAIArrivedAtGoalMsg(const plKey& sender, const plKey& receiver): plAIMsg(sender, receiver), fGoal(0, 0, 0) {}
+    plAIArrivedAtGoalMsg(): plAIMsg() {}
+    plAIArrivedAtGoalMsg(const plKey& sender, const plKey& receiver): plAIMsg(sender, receiver) {}
 
     CLASSNAME_REGISTER(plAIArrivedAtGoalMsg);
     GETINTERFACE_ANY(plAIArrivedAtGoalMsg, plAIMsg);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    void Goal(hsPoint3 goal) {fGoal = goal;}
+    void Goal(const hsPoint3& goal) {fGoal = goal;}
     hsPoint3 Goal() const {return fGoal;}
 
 private:
     hsPoint3 fGoal;
 };
-
-#endif // NO_AV_MSGS
-#endif // SERVER
 
 #endif // plAIMsg_inc

@@ -40,15 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyMoviePlayer.h"
-#include "pyEnum.h"
-#include "pyColor.h"
 
 #include "pfMessage/pfMovieEventMsg.h"
+
+#include "pyColor.h"
+#include "pyEnum.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptMoviePlayer, pyMoviePlayer);
@@ -58,9 +57,9 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptMoviePlayer)
 
 PYTHON_INIT_DEFINITION(ptMoviePlayer, args, keywords)
 {
-    char* movieName;
-    PyObject* selfKeyObj = NULL;
-    if (!PyArg_ParseTuple(args, "sO", &movieName, &selfKeyObj))
+    ST::string movieName;
+    PyObject* selfKeyObj = nullptr;
+    if (!PyArg_ParseTuple(args, "O&O", PyUnicode_STStringConverter, &movieName, &selfKeyObj))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a string and ptKey");
         PYTHON_RETURN_INIT_ERROR;
@@ -101,7 +100,7 @@ PYTHON_METHOD_DEFINITION(ptMoviePlayer, setScale, args)
 
 PYTHON_METHOD_DEFINITION(ptMoviePlayer, setColor, args)
 {
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "setColor expects a ptColor");
@@ -164,9 +163,9 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_DEFAULT_TYPE(ptMoviePlayer, "Params: movieName,selfKey\nAccessor class to play in the MoviePlayer");
 
 // required functions for PyObject interoperability
-PyObject *pyMoviePlayer::New(const plString& movieName, pyKey& selfKey)
+PyObject *pyMoviePlayer::New(const ST::string& movieName, pyKey& selfKey)
 {
-    ptMoviePlayer *newObj = (ptMoviePlayer*)ptMoviePlayer_type.tp_new(&ptMoviePlayer_type, NULL, NULL);
+    ptMoviePlayer *newObj = (ptMoviePlayer*)ptMoviePlayer_type.tp_new(&ptMoviePlayer_type, nullptr, nullptr);
     newObj->fThis->MakeMovie(movieName, selfKey);
     return (PyObject*)newObj;
 }
@@ -187,7 +186,7 @@ void pyMoviePlayer::AddPlasmaClasses(PyObject *m)
 
 void pyMoviePlayer::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtMovieEventReason);
-    PYTHON_ENUM_ELEMENT(PtMovieEventReason, kMovieDone, pfMovieEventMsg::kMovieDone);
-    PYTHON_ENUM_END(m, PtMovieEventReason);
+    PYTHON_ENUM_START(PtMovieEventReason)
+    PYTHON_ENUM_ELEMENT(PtMovieEventReason, kMovieDone, pfMovieEventMsg::kMovieDone)
+    PYTHON_ENUM_END(m, PtMovieEventReason)
 }

@@ -48,7 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plSoundEvent_h
 #define _plSoundEvent_h
 
-#include "hsTemplates.h"
+#include "HeadSpin.h"
+
+#include <vector>
 
 class plEventCallbackMsg;
 class plSound;
@@ -68,20 +70,23 @@ public:
         kLoop
     };
 
-    plSoundEvent( Types type, plSound *owner );
-    plSoundEvent( Types type, uint32_t bytePos, plSound *owner );
-    plSoundEvent();
+    plSoundEvent(Types type, plSound *owner)
+        : fType(type), fBytePosTime(), fOwner(owner) { }
+    plSoundEvent(Types type, uint32_t bytePos, plSound *owner)
+        : fType(type), fBytePosTime(bytePos), fOwner(owner) { }
+    plSoundEvent()
+        : fType(kStart), fBytePosTime(), fOwner() { }
     ~plSoundEvent();
 
     void    AddCallback( plEventCallbackMsg *msg );
     bool    RemoveCallback( plEventCallbackMsg *msg );
 
-    uint32_t  GetNumCallbacks( void ) const;
-    int     GetType( void ) const;
+    size_t  GetNumCallbacks() const { return fCallbacks.size(); }
+    int     GetType() const;
     void    SetType( Types type );
-    uint32_t  GetTime( void ) const;
+    uint32_t  GetTime() const;
 
-    void    SendCallbacks( void );
+    void    SendCallbacks();
 
     static Types    GetTypeFromCallbackMsg( plEventCallbackMsg *msg );
 
@@ -91,8 +96,9 @@ protected:
     uint32_t      fBytePosTime;
     plSound     *fOwner;
 
-    hsTArray<plEventCallbackMsg *>  fCallbacks;
-    hsTArray<uint8_t>                 fCallbackEndingFlags;
+    // TODO: Consider a tuple?
+    std::vector<plEventCallbackMsg *>  fCallbacks;
+    std::vector<uint8_t>               fCallbackEndingFlags;
 };
 
 

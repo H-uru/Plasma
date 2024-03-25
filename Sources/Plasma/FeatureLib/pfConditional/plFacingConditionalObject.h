@@ -56,23 +56,23 @@ protected:
 public:
     
     plFacingConditionalObject();
-    ~plFacingConditionalObject(){;}
+    ~plFacingConditionalObject() { }
     
     CLASSNAME_REGISTER( plFacingConditionalObject );
     GETINTERFACE_ANY( plFacingConditionalObject, plConditionalObject );
     
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     void SetTolerance(float d) { fTolerance = d; }
     void SetDirectional(bool d) { fDirectional = d; }
 
-    virtual bool Verify(plMessage* msg);
+    bool Verify(plMessage* msg) override;
 
-    void Evaluate(){;}
-    void Reset() { SetSatisfied(true); }
+    void Evaluate() override { }
+    void Reset() override { SetSatisfied(true); }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 };
 

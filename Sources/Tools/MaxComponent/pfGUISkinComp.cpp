@@ -41,22 +41,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
-#include "hsWindows.h"
 
-#include <max.h>
-#include <iparamm2.h>
+#include "MaxMain/MaxAPI.h"
 
 #include "MaxMain/MaxCompat.h"
 #include "MaxMain/plMaxNodeBase.h"
 #include "resource.h"
-#pragma hdrstop
 
 #include "pfGUISkinComp.h"
 #include "plGUICompClassIDs.h"
 
 
-pfGUISkinEditProc   *pfGUISkinEditProc::fInstance = nil;
+pfGUISkinEditProc   *pfGUISkinEditProc::fInstance = nullptr;
 int                 pfGUISkinEditProc::fZoom = 3;       // So re-opening the dialog will keep the same zoom level
 
 extern HINSTANCE hInstance;
@@ -66,8 +62,8 @@ pfGUISkinEditProc::pfGUISkinEditProc( plGUISkinComp *comp )
     fInstance = this; 
     fComp = comp;
 
-    fDblDC = nil;
-    fDblBitmap = nil;
+    fDblDC = nullptr;
+    fDblBitmap = nullptr;
 
     fXOffset = fYOffset = 0;
 
@@ -93,7 +89,7 @@ pfGUISkinEditProc::pfGUISkinEditProc( plGUISkinComp *comp )
 
 pfGUISkinEditProc::~pfGUISkinEditProc() 
 {
-    fInstance = nil;
+    fInstance = nullptr;
     DeleteObject( fDefPen );
     IKillDblBuffer();
 }
@@ -116,7 +112,7 @@ void    pfGUISkinEditProc::IJustDrawOneRect( int whichElement, IParamBlock2 *pb,
     SelectObject( hDC, whichPen );
     int rop2 = SetROP2( hDC, R2_NOTXORPEN );
 
-    MoveToEx( hDC, r.left, r.top, nil );
+    MoveToEx(hDC, r.left, r.top, nullptr);
     LineTo( hDC, r.right, r.top );
     LineTo( hDC, r.right, r.bottom );
     LineTo( hDC, r.left, r.bottom );
@@ -125,10 +121,10 @@ void    pfGUISkinEditProc::IJustDrawOneRect( int whichElement, IParamBlock2 *pb,
     SetROP2( hDC, rop2 );
 }
 
-void    pfGUISkinEditProc::IRefreshDblBuffer( void )
+void    pfGUISkinEditProc::IRefreshDblBuffer()
 {
     // Image buffer is where we keep our resized image. Dbl buffer is where we draw our bounds
-    if( fDblDC == nil )
+    if (fDblDC == nullptr)
         IInitDblBuffer();
     else
     {
@@ -137,7 +133,7 @@ void    pfGUISkinEditProc::IRefreshDblBuffer( void )
 
         RECT    r;
         IParamBlock2    *pb = fComp->GetParamBlockByID( plComponent::kBlkComp );
-        if( pb != nil )
+        if (pb != nullptr)
         {
             // Draw all the other elements other than our current one
             for( int i = 0; i < pfGUISkin::kNumElements; i++ )
@@ -150,8 +146,8 @@ void    pfGUISkinEditProc::IRefreshDblBuffer( void )
                          pb->GetInt( fCurrPBRefSet + 1 ) + pb->GetInt( fCurrPBRefSet + 3 ) );
             
             // While we have it here, go ahead and update our status text for this element
-            char str[ 256 ];
-            sprintf( str, "Left: %d\nTop: %d\nWidth: %d\nHeight: %d\n", r.left, r.top, r.right - r.left, r.bottom - r.top );
+            TCHAR str[ 256 ];
+            _sntprintf( str, std::size(str), _T("Left: %d\nTop: %d\nWidth: %d\nHeight: %d\n"), r.left, r.top, r.right - r.left, r.bottom - r.top );
             SetDlgItemText( fHWnd, IDC_GUI_INFO, str );
                             
             r.left *= fZoom; r.right *= fZoom; r.top *= fZoom; r.bottom *= fZoom;
@@ -159,7 +155,7 @@ void    pfGUISkinEditProc::IRefreshDblBuffer( void )
             SelectObject( fDblDC, fDefPen );
             int rop2 = SetROP2( fDblDC, R2_NOTXORPEN );
 
-            MoveToEx( fDblDC, r.left, r.top, nil );
+            MoveToEx(fDblDC, r.left, r.top, nullptr);
             LineTo( fDblDC, r.right, r.top );
             LineTo( fDblDC, r.right, r.bottom );
             LineTo( fDblDC, r.left, r.bottom );
@@ -174,16 +170,16 @@ void    pfGUISkinEditProc::IRefreshDblBuffer( void )
     }
 }
 
-void    pfGUISkinEditProc::IRefreshImageBuffer( void )
+void    pfGUISkinEditProc::IRefreshImageBuffer()
 {
     IInitDblBuffer();
 
     plLayerTex *layer = fComp->GetSkinBitmap();
     PBBitmap *pbBMap = layer->GetPBBitmap();
 
-    if( pbBMap->bm == nil )
+    if (pbBMap->bm == nullptr)
         pbBMap->Load();
-    if( pbBMap->bm != nil )
+    if (pbBMap->bm != nullptr)
     {
         // Copy into a new temp bitmap that is the right format for us to read
         Bitmap *newBM;
@@ -196,11 +192,11 @@ void    pfGUISkinEditProc::IRefreshImageBuffer( void )
         newBM = TheManager->Create( &bi );
 
         BMM_Color_64 foo = BMMCOLOR(0, 0, 0, 0);
-        newBM->CopyImage( pbBMap->bm, COPY_IMAGE_RESIZE_LO_QUALITY, foo, nil );
+        newBM->CopyImage(pbBMap->bm, COPY_IMAGE_RESIZE_LO_QUALITY, foo, nullptr);
 
         // Now copy from our newly created bitmap into our DC....way slow :(
-        BITMAPINFO *bitInfo = newBM->ToDib( 24, nil, false );
-        if( bitInfo != nil )
+        BITMAPINFO *bitInfo = newBM->ToDib(24, nullptr, false);
+        if (bitInfo != nullptr)
         {
             SetDIBitsToDevice( fImageDC, 0, 0, fDblWidth, fDblHeight,
                                 0, 0, 0, fDblHeight,
@@ -215,16 +211,16 @@ void    pfGUISkinEditProc::IRefreshImageBuffer( void )
     IRefreshDblBuffer();
 }
 
-void    pfGUISkinEditProc::IInitDblBuffer( void )
+void    pfGUISkinEditProc::IInitDblBuffer()
 {
-    if( fDblDC == NULL )
+    if (fDblDC == nullptr)
     {
         int     width, height;
-        HDC     desk = GetDC( NULL );
+        HDC     desk = GetDC(nullptr);
 
         plLayerTex *layer = fComp->GetSkinBitmap();
         PBBitmap *pbBMap = layer->GetPBBitmap();
-        if( pbBMap == nil )
+        if (pbBMap == nullptr)
             return;
         width = pbBMap->bi.Width() * fZoom;
         height = pbBMap->bi.Height() * fZoom;
@@ -244,7 +240,7 @@ void    pfGUISkinEditProc::IInitDblBuffer( void )
         fImageBitmap = CreateCompatibleBitmap( desk/*fDblDC*/, width, height );
         SelectObject( fImageDC, fImageBitmap );
 
-        ReleaseDC( NULL, desk );
+        ReleaseDC(nullptr, desk);
 
         fDblWidth = width;
         fDblHeight = height;
@@ -254,27 +250,27 @@ void    pfGUISkinEditProc::IInitDblBuffer( void )
     }
 }
 
-void    pfGUISkinEditProc::IKillDblBuffer( void )
+void    pfGUISkinEditProc::IKillDblBuffer()
 {
-    if( fDblDC != NULL )
+    if (fDblDC != nullptr)
     {
-        SelectObject( fDblDC, (HBITMAP)NULL );
+        SelectObject(fDblDC, nullptr);
         DeleteObject( fDblBitmap );
         DeleteDC( fDblDC );
     }
 
-    if( fImageDC != NULL )
+    if (fImageDC != nullptr)
     {
-        SelectObject( fImageDC, (HBITMAP)NULL );
+        SelectObject(fImageDC, nullptr);
         DeleteObject( fImageBitmap );
         DeleteDC( fImageDC );
     }
 
-    fDblDC = fImageDC = nil;
-    fDblBitmap = fImageBitmap = nil;
+    fDblDC = fImageDC = nullptr;
+    fDblBitmap = fImageBitmap = nullptr;
 }
 
-void    pfGUISkinEditProc::ISetScrollRanges( void )
+void    pfGUISkinEditProc::ISetScrollRanges()
 {
     SCROLLINFO  info;
 
@@ -400,22 +396,22 @@ INT_PTR CALLBACK    pfGUISkinEditProc::DialogProc( HWND hDlg, UINT msg, WPARAM w
     static struct plElemPair
     {
         pfGUISkin::Elements el;
-        const char          *name;
-    } sElemPairs[] = { { pfGUISkin::kUpLeftCorner,          "Upper-left Corner" },
-                       { pfGUISkin::kTopSpan,               "Top Span" },
-                       { pfGUISkin::kUpRightCorner,         "Upper-right Corner" },
-                       { pfGUISkin::kRightSpan,             "Right Span" },
-                       { pfGUISkin::kLowerRightCorner,      "Lower-right Corner" },
-                       { pfGUISkin::kBottomSpan,            "Bottom Span" },
-                       { pfGUISkin::kLowerLeftCorner,       "Lower-left Corner" },
-                       { pfGUISkin::kLeftSpan,              "Left Span" },
-                       { pfGUISkin::kMiddleFill,            "Middle Fill" },
-                       { pfGUISkin::kSelectedFill,          "Selected Middle Fill" },
-                       { pfGUISkin::kSubMenuArrow,          "Sub-Menu Arrow" },
-                       { pfGUISkin::kSelectedSubMenuArrow,  "Selected Sub-Menu Arrow" },
-                       { pfGUISkin::kTreeButtonClosed,      "Tree-view Button, Closed" },
-                       { pfGUISkin::kTreeButtonOpen,        "Tree-view Button, Open" },
-                       { pfGUISkin::kNumElements, nil } };
+        const TCHAR          *name;
+    } sElemPairs[] = { { pfGUISkin::kUpLeftCorner,          _T("Upper-left Corner") },
+                       { pfGUISkin::kTopSpan,               _T("Top Span") },
+                       { pfGUISkin::kUpRightCorner,         _T("Upper-right Corner") },
+                       { pfGUISkin::kRightSpan,             _T("Right Span") },
+                       { pfGUISkin::kLowerRightCorner,      _T("Lower-right Corner") },
+                       { pfGUISkin::kBottomSpan,            _T("Bottom Span") },
+                       { pfGUISkin::kLowerLeftCorner,       _T("Lower-left Corner") },
+                       { pfGUISkin::kLeftSpan,              _T("Left Span") },
+                       { pfGUISkin::kMiddleFill,            _T("Middle Fill") },
+                       { pfGUISkin::kSelectedFill,          _T("Selected Middle Fill") },
+                       { pfGUISkin::kSubMenuArrow,          _T("Sub-Menu Arrow") },
+                       { pfGUISkin::kSelectedSubMenuArrow,  _T("Selected Sub-Menu Arrow") },
+                       { pfGUISkin::kTreeButtonClosed,      _T("Tree-view Button, Closed") },
+                       { pfGUISkin::kTreeButtonOpen,        _T("Tree-view Button, Open") },
+                       { pfGUISkin::kNumElements, nullptr } };
 
 
     fHWnd = hDlg;
@@ -437,14 +433,14 @@ INT_PTR CALLBACK    pfGUISkinEditProc::DialogProc( HWND hDlg, UINT msg, WPARAM w
             SendDlgItemMessage( hDlg, IDC_GUI_ELEMENTS, LB_RESETCONTENT, 0, 0 );
             for( i = 0; sElemPairs[ i ].el != pfGUISkin::kNumElements; i++ )
             {
-                int idx = SendDlgItemMessage( hDlg, IDC_GUI_ELEMENTS, LB_ADDSTRING, 0, (LPARAM)sElemPairs[ i ].name );
+                int idx = (int)SendDlgItemMessage(hDlg, IDC_GUI_ELEMENTS, LB_ADDSTRING, 0, (LPARAM)sElemPairs[i].name);
                 SendDlgItemMessage( hDlg, IDC_GUI_ELEMENTS, LB_SETITEMDATA, (WPARAM)idx, (LPARAM)sElemPairs[ i ].el );
                 if( sElemPairs[ i ].el == pfGUISkin::kUpLeftCorner )
                     j = idx;
             }
             SendDlgItemMessage( hDlg, IDC_GUI_ELEMENTS, LB_SETCURSEL, j, 0 );
 
-            fOrigCursor = LoadCursor( nil, IDC_ARROW );//GetCursor();
+            fOrigCursor = LoadCursor(nullptr, IDC_ARROW);//GetCursor();
 
             break;
 
@@ -491,8 +487,8 @@ INT_PTR CALLBACK    pfGUISkinEditProc::DialogProc( HWND hDlg, UINT msg, WPARAM w
             }
             else if( LOWORD( wParam ) == IDC_GUI_ELEMENTS )
             {
-                int idx = SendDlgItemMessage( hDlg, IDC_GUI_ELEMENTS, LB_GETCURSEL, 0, 0 );
-                fCurrPBRefSet = SendDlgItemMessage( hDlg, IDC_GUI_ELEMENTS, LB_GETITEMDATA, (WPARAM)idx, 0 ) * 4 + plGUISkinComp::kRefUpLeftCorner;
+                int idx = (int)SendDlgItemMessage(hDlg, IDC_GUI_ELEMENTS, LB_GETCURSEL, 0, 0);
+                fCurrPBRefSet = (int)SendDlgItemMessage(hDlg, IDC_GUI_ELEMENTS, LB_GETITEMDATA, (WPARAM)idx, 0) * 4 + plGUISkinComp::kRefUpLeftCorner;
 
                 IRefreshDblBuffer();
                 InvalidateRect( hDlg, &fPreviewRect, false );
@@ -556,7 +552,7 @@ INT_PTR CALLBACK    pfGUISkinEditProc::DialogProc( HWND hDlg, UINT msg, WPARAM w
                 BeginPaint( hDlg, &pInfo );
                 hDC = (HDC)pInfo.hdc;
 
-                if( fDblDC == NULL )
+                if (fDblDC == nullptr)
                     IInitDblBuffer();
 
                 int width = fDblWidth;
@@ -610,7 +606,7 @@ INT_PTR CALLBACK    pfGUISkinEditProc::DialogProc( HWND hDlg, UINT msg, WPARAM w
             {
                 POINT pt;
                 GetCursorPos( &pt );
-                MapWindowPoints( nil, hDlg, &pt, 1 );
+                MapWindowPoints(nullptr, hDlg, &pt, 1);
                 lParam = MAKELPARAM( pt.x, pt.y );
             }
             // Fall thru...
@@ -714,7 +710,7 @@ INT_PTR CALLBACK    pfGUISkinEditProc::DialogProc( HWND hDlg, UINT msg, WPARAM w
                         // do it once and then wait for the mouse to nudge again. We'd rather it keep going until the user
                         // moves the mouse again, so we create a timer that calls us back in n somethingths so we can check again
                         if( fDragTimer == 0 )
-                            fDragTimer = SetTimer( hDlg, 0, 200, nil );
+                            fDragTimer = SetTimer(hDlg, 0, 200, nullptr);
                         timerActive = true;     // So we don't kill it at the end here...
                     }
                 }
@@ -730,22 +726,22 @@ INT_PTR CALLBACK    pfGUISkinEditProc::DialogProc( HWND hDlg, UINT msg, WPARAM w
                 {
                     case kLeft | kTop:      
                     case kRight | kBottom:
-                        cursor = LoadCursor( nil, IDC_SIZENWSE );
+                        cursor = LoadCursor(nullptr, IDC_SIZENWSE);
                         break;
                     case kLeft | kBottom:       
                     case kRight | kTop:
-                        cursor = LoadCursor( nil, IDC_SIZENESW );
+                        cursor = LoadCursor(nullptr, IDC_SIZENESW);
                         break;
                     case kLeft:     
                     case kRight:
-                        cursor = LoadCursor( nil, IDC_SIZEWE );
+                        cursor = LoadCursor(nullptr, IDC_SIZEWE);
                         break;
                     case kTop:      
                     case kBottom:
-                        cursor = LoadCursor( nil, IDC_SIZENS );
+                        cursor = LoadCursor(nullptr, IDC_SIZENS);
                         break;
                     case kLeft | kTop | kRight | kBottom:       
-                        cursor = LoadCursor( nil, IDC_SIZEALL );
+                        cursor = LoadCursor(nullptr, IDC_SIZEALL);
                         break;
                     default:
                         {
@@ -753,7 +749,7 @@ INT_PTR CALLBACK    pfGUISkinEditProc::DialogProc( HWND hDlg, UINT msg, WPARAM w
                             pt.x = x;
                             pt.y = y;
                             if( PtInRect( &fPreviewRect, pt ) )
-                                cursor = LoadCursor( nil, IDC_HAND );
+                                cursor = LoadCursor(nullptr, IDC_HAND);
                             else
                                 cursor = fOrigCursor;
                         }
@@ -777,16 +773,16 @@ INT_PTR CALLBACK    pfGUISkinEditProc::DialogProc( HWND hDlg, UINT msg, WPARAM w
 
 plGUISkinComp   *plGUISkinComp::GetGUIComp( INode *node )
 {
-    if( node == nil )
-        return nil;
+    if (node == nullptr)
+        return nullptr;
 
     plComponentBase *base = ( ( plMaxNodeBase *)node )->ConvertToComponent();
-    if( base == nil )
-        return nil;
+    if (base == nullptr)
+        return nullptr;
 
     if( base->ClassID() == GUI_SKIN_CLASSID )
         return (plGUISkinComp *)base;
 
-    return nil;
+    return nullptr;
 }
 

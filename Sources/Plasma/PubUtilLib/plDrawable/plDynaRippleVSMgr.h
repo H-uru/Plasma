@@ -57,9 +57,9 @@ protected:
 
     plWaveSetBase*      fWaveSetBase;
 
-    virtual bool        IRippleFromShape(const plPrintShape* shape, bool force=false);
+    bool        IRippleFromShape(const plPrintShape* shape, bool force=false) override;
 
-    virtual int         INewDecal();
+    size_t      INewDecal() override;
 
     virtual bool        ICheckRTMat();
 
@@ -70,10 +70,10 @@ public:
     CLASSNAME_REGISTER( plDynaRippleVSMgr );
     GETINTERFACE_ANY( plDynaRippleVSMgr, plDynaRippleMgr );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 };
 
 #endif // plDynaRippleVSMgr_inc

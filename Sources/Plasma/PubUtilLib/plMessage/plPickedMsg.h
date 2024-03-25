@@ -55,31 +55,24 @@ public:
     
     bool    fPicked;
     hsPoint3    fHitPoint;      // where in the world the object was picked on
-        
-    plPickedMsg() : fPicked(true),fHitPoint(0,0,0){SetBCastFlag(plMessage::kPropagateToModifiers);}
-    plPickedMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t) : fPicked(true),fHitPoint(0,0,0) {SetBCastFlag(plMessage::kPropagateToModifiers);}
-    ~plPickedMsg(){;}
+
+    plPickedMsg()
+        : fPicked(true)
+    {
+        SetBCastFlag(plMessage::kPropagateToModifiers);
+    }
+    plPickedMsg(const plKey &s, const plKey &r, const double* t)
+        : fPicked(true)
+    {
+        SetBCastFlag(plMessage::kPropagateToModifiers);
+    }
 
     CLASSNAME_REGISTER( plPickedMsg );
     GETINTERFACE_ANY( plPickedMsg, plMessage );
 
-    // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgRead(stream, mgr);
-        fPicked = stream->ReadBool();
-        fHitPoint.Read(stream);
-    }
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->WriteBool(fPicked);
-        fHitPoint.Write(stream);
-    }
-    
-
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 

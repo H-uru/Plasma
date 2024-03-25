@@ -55,11 +55,11 @@ class plSpawnModMsg : public plMessage
 {
 
 public:
-    plSpawnModMsg(){;}
+    plSpawnModMsg() { }
     plSpawnModMsg(const plKey &s, 
                     const plKey &r, 
-                    const double* t){;}
-    ~plSpawnModMsg(){;}
+                    const double* t) { }
+    ~plSpawnModMsg() { }
 
     CLASSNAME_REGISTER( plSpawnModMsg );
     GETINTERFACE_ANY( plSpawnModMsg, plMessage );
@@ -68,14 +68,14 @@ public:
     plUoid      fObj;
 
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
+    void Read(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgRead(stream, mgr);
         fPos.Read(stream);
         fObj.Read(stream);
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
+    void Write(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgWrite(stream, mgr);
         fPos.Write(stream);

@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plDrawable_SOURCES
     plAccessGeometry.cpp
     plAccessSnapShot.cpp
@@ -105,7 +100,42 @@ set(plDrawable_HEADERS
     plWaveSetShaderConsts.h
 )
 
-add_library(plDrawable STATIC ${plDrawable_SOURCES} ${plDrawable_HEADERS})
+plasma_library(plDrawable
+    SOURCES ${plDrawable_SOURCES} ${plDrawable_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
+
+target_link_libraries(plDrawable
+    PUBLIC
+        CoreLib
+        pnEncryption
+        pnFactory
+        pnKeyedObject
+        pnMessage
+        pnModifier
+        pnNetCommon
+        pnSceneObject
+        pnTimer
+        plIntersect
+        plModifier
+    PRIVATE
+        pnNucleusInc
+        plAvatar
+        plGImage
+        plGLight
+        plInputCore # From plVisLOSMgr
+        plInterp
+        plIntersect
+        plMath
+        plMessage
+        plParticleSystem
+        plPipeline
+        plScene
+        plSDL
+        plStatusLog
+        plSurface
+)
 
 source_group("Source Files" FILES ${plDrawable_SOURCES})
 source_group("Header Files" FILES ${plDrawable_HEADERS})

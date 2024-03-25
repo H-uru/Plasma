@@ -48,8 +48,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIDraggableMod_h
 #define _pfGUIDraggableMod_h
 
+#include "hsGeometry3.h"
+
 #include "pfGUIControlMod.h"
 
+struct hsMatrix44;
 class plMessage;
 
 class pfGUIDraggableMod : public pfGUIControlMod
@@ -61,9 +64,9 @@ class pfGUIDraggableMod : public pfGUIControlMod
         bool        fDragging;
 
         
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
-        virtual uint32_t      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
+        uint32_t      IGetDesiredCursor() const override;    // As specified in plInputInterface.h
 
     public:
 
@@ -88,19 +91,19 @@ class pfGUIDraggableMod : public pfGUIControlMod
             kStartingDrag
         };
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
+        void    HandleMouseDown(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
 
-        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, bool force = false );
+        void    UpdateBounds(hsMatrix44 *invXformMatrix = nullptr, bool force = false) override;
 
         void            StopDragging( bool cancel );
-        const hsPoint3  &GetLastMousePt( void ) const { return fLastMousePt; }
+        const hsPoint3  &GetLastMousePt() const { return fLastMousePt; }
 };
 
 #endif // _pfGUIDraggableMod_h

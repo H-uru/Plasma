@@ -53,22 +53,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plRegistryHelpers_h
 
 #include "HeadSpin.h"
+
 #include "pnKeyedObject/plKey.h"
+
 #include <set>
 
-class plKey;
 class plRegistryPageNode;
 
 //// Little Iterator Class Defs //////////////////////////////////////////////
 
-class plRegistryKeyIterator 
+class plRegistryKeyIterator
 {
 public:
     virtual ~plRegistryKeyIterator() {}
     virtual bool EatKey(const plKey& key) = 0;
 };
 
-class plRegistryPageIterator 
+class plRegistryPageIterator
 {
 public:
     virtual ~plRegistryPageIterator() {}
@@ -84,7 +85,7 @@ protected:
 
 public:
     plKeyCollector(std::set<plKey>& keys) : fKeys(keys) { }
-    virtual bool EatKey(const plKey& key)
+    bool EatKey(const plKey& key) override
     {
         fKeys.insert(key);
         return true;
@@ -97,8 +98,8 @@ class plIndirectUnloadIterator : public plRegistryPageIterator, public plRegistr
 public:
     plIndirectUnloadIterator() {}
 
-    bool EatKey(const plKey& key) { return true; }
-    bool EatPage(plRegistryPageNode* page);
+    bool EatKey(const plKey& key) override { return true; }
+    bool EatPage(plRegistryPageNode* page) override;
 };
 
 #endif // _plRegistryHelpers_h

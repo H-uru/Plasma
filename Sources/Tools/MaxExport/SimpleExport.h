@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __SIMPLEEXPORT_H
 #define __SIMPLEEXPORT_H
 
+#include <MaxMain/MaxAPI.h>
+
 //
 // Inlines
 //
@@ -59,42 +61,42 @@ class HSExport2 : public SceneExport
 public:
                     HSExport2();
                     ~HSExport2();
-    int             ExtCount();                 // Number of extensions supported
-    const TCHAR *   Ext(int n);                 // Extension #n (i.e. "HS")
-    const TCHAR *   LongDesc();                 // Long ASCII description (i.e. "Autodesk 3D Studio File")
-    const TCHAR *   ShortDesc();                // Short ASCII description (i.e. "3D Studio")
-    const TCHAR *   AuthorName();               // ASCII Author name
-    const TCHAR *   CopyrightMessage();         // ASCII Copyright message
-    const TCHAR *   OtherMessage1();            // Other message #1
-    const TCHAR *   OtherMessage2();            // Other message #2
-    unsigned int    Version();                  // Version number * 100 (i.e. v3.01 = 301)
-    void            ShowAbout(HWND hWnd);       // Show DLL's "About..." box
-    virtual int     DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0);
+    int             ExtCount() override;                 // Number of extensions supported
+    const MCHAR *   Ext(int n) override;                 // Extension #n (i.e. "HS")
+    const MCHAR *   LongDesc() override;                 // Long ASCII description (i.e. "Autodesk 3D Studio File")
+    const MCHAR *   ShortDesc() override;                // Short ASCII description (i.e. "3D Studio")
+    const MCHAR *   AuthorName() override;               // ASCII Author name
+    const MCHAR *   CopyrightMessage() override;         // ASCII Copyright message
+    const MCHAR *   OtherMessage1() override;            // Other message #1
+    const MCHAR *   OtherMessage2() override;            // Other message #2
+    unsigned int    Version() override;                  // Version number * 100 (i.e. v3.01 = 301)
+    void            ShowAbout(HWND hWnd) override;       // Show DLL's "About..." box
+    int             DoExport(const MCHAR* name,ExpInterface *ei,Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0) override;
 
-    const char*         GetName()                   { return fName; }
+    const MCHAR*    GetName()                   { return fName; }
 
 private:
     static bool         IProgressCallback(float percent);
     static DWORD WINAPI IProgressDummyFunc(LPVOID arg); 
 
-    char                fName[128];
+    MCHAR               fName[128];
 };
 
 //------------------------------------------------------
 
-class HSClassDesc2 : public ClassDesc 
+class HSClassDesc2 : public plMaxClassDesc<ClassDesc>
 {
 public:
-    int             IsPublic() { return 1; }
-    void *          Create(BOOL loading = FALSE) { return new HSExport2; }
-    const TCHAR *   ClassName() { return "Plasma 2.0 Scene Exporter"; }
-    SClass_ID       SuperClassID() { return SCENE_EXPORT_CLASS_ID; }
+    int             IsPublic() override { return 1; }
+    void *          Create(BOOL loading = FALSE) override { return new HSExport2; }
+    const MCHAR *   ClassName() override { return _M("Plasma 2.0 Scene Exporter"); }
+    SClass_ID       SuperClassID() override { return SCENE_EXPORT_CLASS_ID; }
 #ifdef HS_DEBUGGING
-    Class_ID        ClassID() { return Class_ID(0x547962c7, 0x520a702d); }
+    Class_ID        ClassID() override { return Class_ID(0x547962c7, 0x520a702d); }
 #else
-    Class_ID        ClassID() { return Class_ID(0x717f791f, 0x79412447); }
+    Class_ID        ClassID() override { return Class_ID(0x717f791f, 0x79412447); }
 #endif
-    const TCHAR*    Category() { return "Plasma Export...";  }
+    const MCHAR*    Category() override { return _M("Plasma Export..."); }
 };
 
 
@@ -102,7 +104,7 @@ public:
 class SimpleExportExitCallback : public ExitMAXCallback
 {
 public:
-    BOOL Exit(HWND hWnd)    { return false; }
+    BOOL Exit(HWND hWnd) override { return false; }
 };
 
 //

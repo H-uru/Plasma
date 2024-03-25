@@ -72,7 +72,7 @@ void plAccessSpan::SetSource(plSpan* s)
     fLocalBounds = &s->fLocalBounds;
     fWorldBounds = &s->fWorldBounds;
 
-    fWaterHeight = s->fProps & plSpan::kWaterHeight ? &s->fWaterHeight : nil;
+    fWaterHeight = s->fProps & plSpan::kWaterHeight ? &s->fWaterHeight : nullptr;
 }
 void plAccessSpan::SetSource(plGeometrySpan* s)
 { 
@@ -81,7 +81,7 @@ void plAccessSpan::SetSource(plGeometrySpan* s)
     fLocalBounds = &s->fLocalBounds;
     fWorldBounds = &s->fWorldBounds;
 
-    fWaterHeight = s->fProps & plGeometrySpan::kWaterHeight ? &s->fWaterHeight : nil;
+    fWaterHeight = s->fProps & plGeometrySpan::kWaterHeight ? &s->fWaterHeight : nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -98,7 +98,7 @@ plAccessGeometry::plAccessGeometry(plPipeline* pipe)
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 // Global access stuff.
-plAccessGeometry*   plAccessGeometry::fInstance = nil;
+plAccessGeometry*   plAccessGeometry::fInstance = nullptr;
 
 void plAccessGeometry::Init(plPipeline* pipe)
 {
@@ -132,13 +132,12 @@ void plAccessGeometry::SetTheIntance(plAccessGeometry* i)
 // The first couple of these just interpret between the SceneObjects we like to
 // think about and the clumps of geometry that comprise each one.
 
-void plAccessGeometry::OpenRO(const plDrawInterface* di, hsTArray<plAccessSpan>& accs, bool useSnap) const
+void plAccessGeometry::OpenRO(const plDrawInterface* di, std::vector<plAccessSpan>& accs, bool useSnap) const
 {
     int numGot = 0;
-    accs.SetCount(di->GetNumDrawables());
-    accs.SetCount(0);
-    int j;
-    for( j = 0; j < di->GetNumDrawables(); j++ )
+    accs.clear();
+    accs.reserve(di->GetNumDrawables());
+    for (size_t j = 0; j < di->GetNumDrawables(); j++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
         // Nil dr - it hasn't loaded yet or something.
@@ -147,11 +146,9 @@ void plAccessGeometry::OpenRO(const plDrawInterface* di, hsTArray<plAccessSpan>&
             plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(j));
             if( !diIndex.IsMatrixOnly() )
             {
-                int k;
-                for( k = 0; k < diIndex.GetCount(); k++ )
+                for (size_t k = 0; k < diIndex.GetCount(); k++)
                 {
-                    accs.Expand(numGot+1);
-                    accs.SetCount(numGot+1);
+                    accs.resize(numGot+1);
                     OpenRO(dr, diIndex[k], accs[numGot++]);
                 }
             }
@@ -160,13 +157,12 @@ void plAccessGeometry::OpenRO(const plDrawInterface* di, hsTArray<plAccessSpan>&
 
 }
 
-void plAccessGeometry::OpenRW(const plDrawInterface* di, hsTArray<plAccessSpan>& accs, bool idxToo) const
+void plAccessGeometry::OpenRW(const plDrawInterface* di, std::vector<plAccessSpan>& accs, bool idxToo) const
 {
     int numGot = 0;
-    accs.Expand(di->GetNumDrawables());
-    accs.SetCount(0);
-    int j;
-    for( j = 0; j < di->GetNumDrawables(); j++ )
+    accs.clear();
+    accs.reserve(di->GetNumDrawables());
+    for (size_t j = 0; j < di->GetNumDrawables(); j++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
         // Nil dr - it hasn't loaded yet or something.
@@ -175,11 +171,9 @@ void plAccessGeometry::OpenRW(const plDrawInterface* di, hsTArray<plAccessSpan>&
             plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(j));
             if( !diIndex.IsMatrixOnly() )
             {
-                int k;
-                for( k = 0; k < diIndex.GetCount(); k++ )
+                for (size_t k = 0; k < diIndex.GetCount(); k++)
                 {
-                    accs.Expand(numGot+1);
-                    accs.SetCount(numGot+1);
+                    accs.resize(numGot+1);
                     OpenRW(dr, diIndex[k], accs[numGot++], idxToo);
                 }
             }
@@ -187,17 +181,15 @@ void plAccessGeometry::OpenRW(const plDrawInterface* di, hsTArray<plAccessSpan>&
     }
 }
 
-void plAccessGeometry::Close(hsTArray<plAccessSpan>& accs) const
+void plAccessGeometry::Close(std::vector<plAccessSpan>& accs) const
 {
-    int i;
-    for( i = 0; i < accs.GetCount(); i++ )
-        Close(accs[i]);
+    for (plAccessSpan& span : accs)
+        Close(span);
 }
 
 void plAccessGeometry::TakeSnapShot(const plDrawInterface* di, uint32_t channels) const
 {
-    int j;
-    for( j = 0; j < di->GetNumDrawables(); j++ )
+    for (size_t j = 0; j < di->GetNumDrawables(); j++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
         // Nil dr - it hasn't loaded yet or something.
@@ -206,8 +198,7 @@ void plAccessGeometry::TakeSnapShot(const plDrawInterface* di, uint32_t channels
             plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(j));
             if( !diIndex.IsMatrixOnly() )
             {
-                int k;
-                for( k = 0; k < diIndex.GetCount(); k++ )
+                for (size_t k = 0; k < diIndex.GetCount(); k++)
                 {
                     TakeSnapShot(dr, diIndex[k], channels);
                 }
@@ -218,8 +209,7 @@ void plAccessGeometry::TakeSnapShot(const plDrawInterface* di, uint32_t channels
 
 void plAccessGeometry::RestoreSnapShot(const plDrawInterface* di, uint32_t channels) const
 {
-    int j;
-    for( j = 0; j < di->GetNumDrawables(); j++ )
+    for (size_t j = 0; j < di->GetNumDrawables(); j++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
         // Nil dr - it hasn't loaded yet or something.
@@ -228,8 +218,7 @@ void plAccessGeometry::RestoreSnapShot(const plDrawInterface* di, uint32_t chann
             plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(j));
             if( !diIndex.IsMatrixOnly() )
             {
-                int k;
-                for( k = 0; k < diIndex.GetCount(); k++ )
+                for (size_t k = 0; k < diIndex.GetCount(); k++ )
                 {
                     RestoreSnapShot(dr, diIndex[k], channels);
                 }
@@ -240,8 +229,7 @@ void plAccessGeometry::RestoreSnapShot(const plDrawInterface* di, uint32_t chann
 
 void plAccessGeometry::ReleaseSnapShot(const plDrawInterface* di) const
 {
-    int j;
-    for( j = 0; j < di->GetNumDrawables(); j++ )
+    for (size_t j = 0; j < di->GetNumDrawables(); j++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
         // Nil dr - it hasn't loaded yet or something.
@@ -250,8 +238,7 @@ void plAccessGeometry::ReleaseSnapShot(const plDrawInterface* di) const
             plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(j));
             if( !diIndex.IsMatrixOnly() )
             {
-                int k;
-                for( k = 0; k < diIndex.GetCount(); k++ )
+                for (size_t k = 0; k < diIndex.GetCount(); k++)
                 {
                     ReleaseSnapShot(dr, diIndex[k]);
                 }
@@ -279,7 +266,7 @@ void plAccessGeometry::IOpen(plDrawable* d, uint32_t spanIdx, plAccessSpan& acc,
     if( !drawable )
         return;
 
-    if( drawable->GetSourceSpans().GetCount() && !drawable->GetNumSpans() )
+    if (!drawable->GetSourceSpans().empty() && !drawable->GetNumSpans())
         IAccessSpanFromSourceSpan(acc, drawable->GetSourceSpans()[spanIdx]);
     else
         IAccessSpanFromSpan(acc, drawable, drawable->GetSpan(spanIdx), useSnap, readOnly);
@@ -378,7 +365,7 @@ void plAccessGeometry::IAccessSpanFromSourceSpan(plAccessSpan& dst, const plGeom
     plAccessTriSpan& tri = dst.AccessTri();
     tri.fNumTris = src->fNumIndices / 3;
     tri.fTris = src->fIndexData;
-    tri.fIdxDeviceRef = nil;
+    tri.fIdxDeviceRef = nullptr;
 
     dst.SetSource(const_cast<plGeometrySpan*>(src));
     dst.SetMaterial(src->fMaterial);
@@ -396,7 +383,7 @@ void plAccessGeometry::IAccessSpanFromSourceSpan(plAccessSpan& dst, const plGeom
     acc.UVWStream(ptr, (uint16_t)sz, 0);
     acc.SetNumUVWs(src->CalcNumUVs(src->fFormat));
 
-    acc.fVtxDeviceRef = nil;
+    acc.fVtxDeviceRef = nullptr;
 }
 
 void plAccessGeometry::IAccessSpanFromSpan(plAccessSpan& dst, plDrawableSpans* drawable, const plSpan* span, bool useSnap, bool readOnly) const
@@ -476,7 +463,7 @@ void plAccessGeometry::IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSp
             }
             else
             {
-                acc.WgtIndexStream(nil, 0, offset);
+                acc.WgtIndexStream(nullptr, 0, offset);
             }
         }
         else
@@ -521,7 +508,7 @@ void plAccessGeometry::IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSp
             }
             else
             {
-                acc.WgtIndexStream(nil, 0, 0);
+                acc.WgtIndexStream(nullptr, 0, 0);
             }
         }
         else
@@ -546,7 +533,7 @@ void plAccessGeometry::IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSp
         acc.SetNumUVWs(grp->GetNumUVs());
     }
 
-    acc.fVtxDeviceRef = nil;
+    acc.fVtxDeviceRef = nullptr;
 }
 
 void plAccessGeometry::IAccessConnectivity(plAccessSpan& dst, plDrawableSpans* drawable, const plSpan* src) const
@@ -563,7 +550,7 @@ void plAccessGeometry::IAccessConnectivity(plAccessSpan& dst, plDrawableSpans* d
         plGBufferGroup* grp = drawable->GetBufferGroup(span->fGroupIdx);
         acc.fTris = grp->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
 
-        acc.fIdxDeviceRef = nil;
+        acc.fIdxDeviceRef = nullptr;
     }
     // Hmm, particle should probably go here...
     else 
@@ -585,7 +572,7 @@ void plAccessGeometry::IAccessSpanFromIcicle(plAccessSpan& dst, plDrawableSpans*
     plGBufferGroup* grp = drawable->GetBufferGroup(span->fGroupIdx);
     acc.fTris = grp->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
 
-    acc.fIdxDeviceRef = nil;
+    acc.fIdxDeviceRef = nullptr;
 }
 
 void plAccessGeometry::IAccessSpanFromParticle(plAccessSpan& dst, plDrawableSpans* drawable, const plParticleSpan* span, bool readOnly) const

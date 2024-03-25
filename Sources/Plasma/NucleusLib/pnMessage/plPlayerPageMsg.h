@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPlayerPageMsg_inc
 #define plPlayerPageMsg_inc
 
-#include "pnMessage/plMessage.h"
+#include "plMessage.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
 
@@ -54,13 +54,13 @@ class plPlayerPageMsg : public plMessage
 protected:
 
 public:
-    plPlayerPageMsg() : fPlayer(nil),fLocallyOriginated(false),fUnload(false),fLastOut(false),fClientID(-1){;}
+    plPlayerPageMsg() : fLocallyOriginated(), fUnload(), fLastOut(), fClientID(-1) { }
     plPlayerPageMsg(const plKey &s, 
                     const plKey &r, 
-                    const double* t) : fPlayer(nil),fLocallyOriginated(false),fUnload(false),fLastOut(false),fClientID(-1){;}
+                    const double* t) : fLocallyOriginated(), fUnload(), fLastOut(), fClientID(-1) { }
     
-    CLASSNAME_REGISTER( plPlayerPageMsg );
-    GETINTERFACE_ANY( plPlayerPageMsg, plMessage );
+    CLASSNAME_REGISTER(plPlayerPageMsg);
+    GETINTERFACE_ANY(plPlayerPageMsg, plMessage);
 
 
     plKey           fPlayer;
@@ -70,24 +70,8 @@ public:
     bool            fLastOut;
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgRead(stream, mgr);
-        fPlayer = mgr->ReadKey(stream);
-        fLocallyOriginated = stream->ReadBool();
-        fLastOut = stream->ReadBool();
-        fUnload = stream->ReadBool();
-        fClientID = stream->ReadLE32();
-    }
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        mgr->WriteKey(stream, fPlayer);
-        stream->WriteBool(fLocallyOriginated);
-        stream->WriteBool(fLastOut);
-        stream->WriteBool(fUnload);
-        stream->WriteLE32(fClientID);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plPlayerPageMsg_inc

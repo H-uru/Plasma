@@ -55,15 +55,15 @@ protected:
     plShadowCaster*     fCaster;
 
 public:
-    plShadowCastMsg() : fPipe(nil), fCaster(nil) { SetBCastFlag(kBCastByType); }
-    plShadowCastMsg(plKey sender, plShadowCaster* cast, plPipeline* pipe) : plMessage(sender, nil, nil), fPipe(pipe), fCaster(cast) { SetBCastFlag(kBCastByType); }
+    plShadowCastMsg() : fPipe(), fCaster() { SetBCastFlag(kBCastByType); }
+    plShadowCastMsg(const plKey& sender, plShadowCaster* cast, plPipeline* pipe) : plMessage(sender, nullptr, nullptr), fPipe(pipe), fCaster(cast) { SetBCastFlag(kBCastByType); }
     ~plShadowCastMsg() {}
 
     CLASSNAME_REGISTER( plShadowCastMsg );
     GETINTERFACE_ANY( plShadowCastMsg, plMessage );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Non-networkable"); }
-    virtual void Write(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Non-networkable"); }
+    void Read(hsStream* stream, hsResMgr* mgr) override { hsAssert(false, "Non-networkable"); }
+    void Write(hsStream* stream, hsResMgr* mgr) override { hsAssert(false, "Non-networkable"); }
 
     plPipeline*     Pipeline() const { return fPipe; }
     plShadowCaster* Caster() const { return fCaster; }

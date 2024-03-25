@@ -39,64 +39,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plDetectorLog.h"
-#include "plStatusLog/plStatusLog.h"
 
-// Don't bother logging detectors in the external release, since it isn't written to disk
 #ifdef PLASMA_EXTERNAL_RELEASE
-
-void DetectorLog(const char* format, ...) {}
-void DetectorLogSpecial(const char* format, ...) {}
-void DetectorLogRed(const char* format, ...) {}
-void DetectorLogYellow(const char* format, ...) {}
-
+plStatusLog* plDetectorLog::fLog = nullptr;
 #else
+plStatusLog* plDetectorLog::fLog = plStatusLogMgr::GetInstance().CreateStatusLog(
+    20,
+    "Detector.log",
+    plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe |
+    plStatusLog::kDontWriteFile | plStatusLog::kAlignToTop);
+#endif
 
-static plStatusLog* gLog =
-plStatusLogMgr::GetInstance().CreateStatusLog(
-                                              20,
-                                              "Detector",
-                                              plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe |
-                                              plStatusLog::kDontWriteFile | plStatusLog::kAlignToTop);
-
-
-void DetectorDoLogfile()
+void plDetectorLog::Output()
 {
-    delete gLog;
-    gLog = plStatusLogMgr::GetInstance().CreateStatusLog(20,"Detector.log",plStatusLog::kFilledBackground|plStatusLog::kDeleteForMe|plStatusLog::kAlignToTop);
+#ifndef PLASMA_EXTERNAL_RELEASE
+    delete fLog;
 
+    fLog = plStatusLogMgr::GetInstance().CreateStatusLog(
+        20,
+        "Detector.log",
+        plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe | plStatusLog::kAlignToTop);
+#endif
 }
-
-void DetectorLog(const char* format, ...)
-{
-    va_list args;
-    va_start(args, format);
-    gLog->AddLineV(format, args);
-    va_end(args);
-}
-
-void DetectorLogSpecial(const char* format, ...)
-{
-    va_list args;
-    va_start(args, format);
-    gLog->AddLineV(plStatusLog::kGreen, format, args);
-    va_end(args);
-}
-
-void DetectorLogRed(const char* format, ...)
-{
-    va_list args;
-    va_start(args, format);
-    gLog->AddLineV(plStatusLog::kRed, format, args);
-    va_end(args);
-}
-
-void DetectorLogYellow(const char* format, ...)
-{
-    va_list args;
-    va_start(args, format);
-    gLog->AddLineV(plStatusLog::kYellow, format, args);
-    va_end(args);
-}
-
-#endif // PLASMA_EXTERNAL_RELEASE

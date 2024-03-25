@@ -39,10 +39,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plNetGroup.h"
+
+#include "hsStream.h"
 
 plNetGroupId plNetGroup::kNetGroupUnknown( plLocation::MakeReserved( 0 ) );
 plNetGroupId plNetGroup::kNetGroupLocalPlayer( plLocation::MakeReserved( 1 ), 1);
 plNetGroupId plNetGroup::kNetGroupRemotePlayer( plLocation::MakeReserved( 2 ) , 1);
 plNetGroupId plNetGroup::kNetGroupLocalPhysicals( plLocation::MakeReserved( 3 ) , 1);
 plNetGroupId plNetGroup::kNetGroupRemotePhysicals( plLocation::MakeReserved( 4 ) , 1);
+
+void plNetGroupId::Write(hsStream* s) const
+{
+    fId.Write(s);
+    s->WriteByte(fFlags);
+}
+
+void plNetGroupId::Read(hsStream* s)
+{
+    fId.Read(s);
+    s->ReadByte(&fFlags);
+}

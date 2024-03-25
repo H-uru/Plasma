@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plGLight_SOURCES
     plDirectShadowMaster.cpp
     plLightInfo.cpp
@@ -29,7 +24,26 @@ set(plGLight_HEADERS
     plShadowSlave.h
 )
 
-add_library(plGLight STATIC ${plGLight_SOURCES} ${plGLight_HEADERS})
+plasma_library(plGLight SOURCES ${plGLight_SOURCES} ${plGLight_HEADERS})
+
+target_link_libraries(plGLight
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        pnModifier
+        pnSceneObject
+        plDrawable
+        plScene
+    PRIVATE
+        pnMessage
+        pnNucleusInc
+        plIntersect
+        plMessage
+        plPipeline
+        plSurface
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${plGLight_SOURCES})
 source_group("Header Files" FILES ${plGLight_HEADERS})

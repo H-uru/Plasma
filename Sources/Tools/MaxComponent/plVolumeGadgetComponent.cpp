@@ -49,10 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysicalComponents.h"
 #include "plResponderComponent.h"
 #include "MaxMain/plMaxNode.h"
-#include "resource.h"
+#include "MaxMain/MaxAPI.h"
 
-#include <iparamm2.h>
-#pragma hdrstop
+#include "resource.h"
 
 #include "plVolumeGadgetComponent.h"
 
@@ -144,7 +143,7 @@ protected:
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         if (msg == WM_COMMAND && HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_TRIGGER_ON_FACING_CHECK)
             IEnable(hWnd, Button_GetCheck((HWND)lParam) == BST_CHECKED);
@@ -153,7 +152,7 @@ public:
         return FALSE;
     }
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static VolumeDlgProc gVolumeDlgProc;
 
@@ -167,94 +166,95 @@ ParamBlockDesc2 gVolumeGadgetBlock
     kVolumeGadgetEnter,     _T("Enter"),        TYPE_BOOL,              0, 0,
         p_ui,               kVolumeMain, TYPE_SINGLECHEKBOX,    IDC_COMP_PHYSGADGET_ENTERBOX,
         p_enable_ctrls, 2, kVolumeEnterType, kVolumeEnterNum,
-        end,
+        p_end,
     
     kVolumeGadgetExit,      _T("Exit"),     TYPE_BOOL,              0, 0,
         p_ui,               kVolumeMain, TYPE_SINGLECHEKBOX,    IDC_COMP_PHYSGADGET_EXITBOX,
         p_enable_ctrls, 2, kVolumeExitType, kVolumeExitNum,
-        end,
+        p_end,
 
     kVolumeTriggerOnFacing, _T("triggerOnFacing"), TYPE_BOOL,       0, 0,
         p_ui,               kVolumeMain, TYPE_SINGLECHEKBOX, IDC_TRIGGER_ON_FACING_CHECK,
         p_enable_ctrls, 2, kVolumeDegrees, kVolumeWalkingForward,
-        end,
+        p_end,
 
     kVolumeOneShot,     _T("oneshot"),      TYPE_BOOL,              0, 0,
         p_ui,               kVolumeMain, TYPE_SINGLECHEKBOX,    IDC_ONESHOT,
-        end,
+        p_end,
     kVolumeEnterType,   _T("enterType"),    TYPE_INT,       0, 0,
         p_ui,   kVolumeMain, TYPE_RADIO, 2, IDC_RADIO_EACHENTRY, IDC_RADIO_ENTRYCOUNT,
         p_vals, kEnterTypeEach, kEnterTypeCount,
-        end,
+        p_end,
     
     kVolumeExitType,    _T("exitType"), TYPE_INT,       0, 0,
         p_ui,   kVolumeMain, TYPE_RADIO, 3, IDC_RADIO_EACHEXIT, IDC_RADIO_FIRSTEXIT, IDC_RADIO_EXITCOUNT,
         p_vals, kExitTypeEach, kExitTypeFirst, kExitTypeCount,
-        end,
+        p_end,
 
     kVolumeExitNum, _T("exitNum"), TYPE_INT,    P_ANIMATABLE,   0,
         p_range, 0, 100,
         p_default, 1,
         p_ui,   kVolumeMain, TYPE_SPINNER, EDITTYPE_INT,
         IDC_CAMERACMD_OFFSETX3, IDC_CAMERACMD_SPIN_OFFSETX3, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kVolumeEnterNum,    _T("nterNum"), TYPE_INT,    P_ANIMATABLE,   0,
         p_range, 0, 100,
         p_default, 1,
         p_ui,   kVolumeMain, TYPE_SPINNER, EDITTYPE_INT,
         IDC_CAMERACMD_OFFSETX2, IDC_CAMERACMD_SPIN_OFFSETX2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
 
 
     kUseVolumeNode,     _T("UseVolumeNode"),        TYPE_BOOL,      0, 0,
         p_ui,       kVolumeMain,        TYPE_SINGLECHEKBOX, IDC_COMP_PHYS_CUSTOMCHK,
-        end,
+        p_end,
         
     kVolumeNode,        _T("UserBoundChoice"),  TYPE_INODE,     0, 0,
         p_ui,   kVolumeMain, TYPE_PICKNODEBUTTON, IDC_COMP_PHYS_PICKSTATE_DETECTOR,
         p_sclassID, GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_SIMP,
         //p_accessor, &gPhysCoreAccessor,
-        end,
+        p_end,
 
     kVolumeBoundsType,  _T("BoundingConditions"),       TYPE_INT,       0, 0,
         p_ui,       kVolumeMain, TYPE_RADIO, 4, IDC_RADIO_BSPHERE2, IDC_RADIO_BBOX, IDC_RADIO_BHULL, IDC_RADIO_PICKSTATE,
         p_vals,                     plSimDefs::kSphereBounds,       plSimDefs::kBoxBounds,      plSimDefs::kHullBounds,     plSimDefs::kProxyBounds,
         p_default, plSimDefs::kHullBounds,
-        end,
+        p_end,
 
     kVolumeReportGroups_DEAD, _T("reportGroups"), TYPE_INT, 0,0,
-        end,
+        p_end,
 
     kVolumeEnabled,     _T("enabled"),      TYPE_BOOL,          0, 0,
         p_ui,   kVolumeMain, TYPE_SINGLECHEKBOX, IDC_ENABLED,
         p_default, TRUE,
-        end,
+        p_end,
 
     kVolumeDegrees, _T("degrees"),  TYPE_INT,   0, 0,   
         p_range, 1, 180,
         p_default, 45,
         p_ui,   kVolumeMain,    TYPE_SPINNER,   EDITTYPE_POS_INT, 
         IDC_COMP_CLICK_DEG, IDC_COMP_CLICK_DEGSPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kVolumeWalkingForward, _T("walkingForward"),    TYPE_BOOL,  0, 0,
         p_ui, kVolumeMain,  TYPE_SINGLECHEKBOX, IDC_WALKING_FORWARD_CHECK,
-        end,
+        p_end,
 
     kVolumeReportOn,    _T("reportOn"),     TYPE_INT,       0, 0,
         p_ui,       kVolumeMain, TYPE_RADIO, 3, IDC_RADIO_REPORT_AVATAR, IDC_RADIO_REPORT_DYN, IDC_RADIO_REPORT_BOTH,
         p_vals,     1<<plSimDefs::kGroupAvatar,     1<<plSimDefs::kGroupDynamic,        1<<plSimDefs::kGroupAvatar | 1<<plSimDefs::kGroupDynamic,
         p_default, 1<<plSimDefs::kGroupAvatar,
-        end,
+        p_end,
         
         kSkipServerArbitration, _T("Don't Arbitrate"),      TYPE_BOOL,              0, 0,
         p_default, 0,
         p_ui,               kVolumeMain, TYPE_SINGLECHEKBOX,    IDC_ARBITRATION_CHECK,
-        end,
-    end
+        p_end,
+
+    p_end
 );
 
 plVolumeGadgetComponent::plVolumeGadgetComponent()
@@ -270,7 +270,7 @@ plKey plVolumeGadgetComponent::GetLogicOutKey(plMaxNode* node)
         return it->second;
 
 
-    return nil;
+    return nullptr;
 }
 
 void plVolumeGadgetComponent::CollectNonDrawables(INodeTab& nonDrawables) 
@@ -307,9 +307,12 @@ bool plVolumeGadgetComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrM
                 physProps->SetProxyNode(boundNode, node, pErrMsg);
             else
             {
-                pErrMsg->Set(true, "Volume Sensor Warning", "The Volume Sensor %s has a Proxy Surface %s that was Ignored.\nThe Sensors geometry will be used instead.", node->GetName(), boundNode->GetName()).Show();
+                pErrMsg->Set(true, "Volume Sensor Warning",
+                    ST::format("The Volume Sensor {} has a Proxy Surface {} that was Ignored.\nThe Sensors geometry will be used instead.",
+                        node->GetName(), boundNode->GetName())
+                    ).Show();
                 pErrMsg->Set(false);
-                physProps->SetProxyNode(nil, node, pErrMsg);
+                physProps->SetProxyNode(nullptr, node, pErrMsg);
             }
     }
 
@@ -335,7 +338,7 @@ bool plVolumeGadgetComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     if(fCompPB->GetInt(kVolumeGadgetEnter) || fCompPB->GetInt(kVolumeTriggerOnFacing))
     {   
         plLogicModifier *logic = new plLogicModifier;
-        plString tmpName = plFormat("{}_Enter", IGetUniqueName(node));
+        ST::string tmpName = ST::format("{}_Enter", IGetUniqueName(node));
         plKey logicKey = hsgResMgr::ResMgr()->NewKey(tmpName, logic, node->GetLocation());
         hsgResMgr::ResMgr()->AddViaNotify(logicKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
@@ -349,7 +352,7 @@ bool plVolumeGadgetComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     if(fCompPB->GetInt(kVolumeGadgetExit))
     {   
         plLogicModifier *logic = new plLogicModifier;
-        plString tmpName = plFormat("{}_Exit", IGetUniqueName(node));
+        ST::string tmpName = ST::format("{}_Exit", IGetUniqueName(node));
         plKey logicKey = hsgResMgr::ResMgr()->NewKey(tmpName, logic, node->GetLocation());
         hsgResMgr::ResMgr()->AddViaNotify(logicKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
@@ -377,14 +380,14 @@ void plVolumeGadgetComponent::ICreateConditions(plMaxNode* node, plErrorMsg* err
 
     plLogicModifier *logic = plLogicModifier::ConvertNoRef(logicKey->GetObjectPtr());
 
-    hsTArray<plKey> receivers;
+    std::vector<plKey> receivers;
     IGetReceivers(node, receivers);
-    for (int i = 0; i < receivers.Count(); i++)
-        logic->AddNotifyReceiver(receivers[i]);
+    for (const plKey& receiver : receivers)
+        logic->AddNotifyReceiver(receiver);
 
 
     // Create the detector
-    plDetectorModifier* detector = nil;
+    plDetectorModifier* detector = nullptr;
     if (enter && fCompPB->GetInt(kVolumeTriggerOnFacing))
     {
         plObjectInVolumeAndFacingDetector* newDetector = new plObjectInVolumeAndFacingDetector;
@@ -407,10 +410,10 @@ void plVolumeGadgetComponent::ICreateConditions(plMaxNode* node, plErrorMsg* err
         prefix = "Enter";
 
     // Register the detector
-    plString tmpName = plFormat("{}_{}", IGetUniqueName(node), prefix);
+    ST::string tmpName = ST::format("{}_{}", IGetUniqueName(node), prefix);
     plKey detectorKey = hsgResMgr::ResMgr()->NewKey(tmpName, detector, loc);
     hsgResMgr::ResMgr()->AddViaNotify(detectorKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
-    plVolumeSensorConditionalObject* boxCond=nil;
+    plVolumeSensorConditionalObject* boxCond = nullptr;
     if((fCompPB->GetInt(kSkipServerArbitration)==0))
     {//we want server arbitration
         boxCond = new plVolumeSensorConditionalObject;
@@ -419,7 +422,7 @@ void plVolumeGadgetComponent::ICreateConditions(plMaxNode* node, plErrorMsg* err
     {
         boxCond = new plVolumeSensorConditionalObjectNoArbitration;
     }
-    tmpName = plFormat("{}_{}", IGetUniqueName(node), prefix);
+    tmpName = ST::format("{}_{}", IGetUniqueName(node), prefix);
     plKey boxKey = hsgResMgr::ResMgr()->NewKey(tmpName, boxCond, loc);
 
     if (enter)

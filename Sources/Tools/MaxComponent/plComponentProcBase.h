@@ -42,13 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __PLCOMPONENT_PROC_BASE_H__
 #define __PLCOMPONENT_PROC_BASE_H__
 
-#pragma warning(disable: 4786)
-
 #include <string>
 #include <vector>
 
-#include "hsWindows.h"
-#include <iparamm2.h>
+#include "MaxMain/MaxAPI.h"
 
 //
 //  Const Char* [] Version
@@ -56,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plBaseComponentProc : public ParamMap2UserDlgProc
 {
 protected:
-    void ILoadComboBox(HWND hComboBox, const char *names[])
+    void ILoadComboBox(HWND hComboBox, const TCHAR* names[])
     {
         SendMessage(hComboBox, CB_RESETCONTENT, 0, 0);
         for (int i = 0; names[i]; i++)
@@ -68,7 +65,7 @@ protected:
 class plLCBoxComponentProc : public plBaseComponentProc
 {
 protected:
-    void ILoadListBox(HWND hListBox, IParamBlock2 *pb, int param, const char *names[])
+    void ILoadListBox(HWND hListBox, IParamBlock2 *pb, int param, const TCHAR* names[])
     {
         SendMessage(hListBox, LB_RESETCONTENT, 0, 0);
         for (int i = 0; i < pb->Count(param); i++)
@@ -84,7 +81,7 @@ protected:
 //
 
 
-typedef std::vector<std::string> VStringArray;
+typedef std::vector<M_STD_STRING> VStringArray;
 
 class plVSBaseComponentProc : public ParamMap2UserDlgProc
 {
@@ -103,7 +100,7 @@ protected:
         if(nNames)
             for (int i = 0; i < nNames ; i++)
             {
-                const char * name = names[i].c_str();
+                const auto* name = names[i].c_str();
                 SendMessage(hComboBox, CB_INSERTSTRING, i, (LPARAM)name);
                 
             }
@@ -119,8 +116,8 @@ protected:
         SendMessage(hListBox, LB_RESETCONTENT, 0, 0);
         for (int i = 0; i < names.size(); i++)
         {
-            const char* c_name = names[i].c_str();
-            int idxptr = SendMessage(hListBox, LB_ADDSTRING, 0, (LPARAM)c_name);
+            const auto* c_name = names[i].c_str();
+            LRESULT idxptr = SendMessage(hListBox, LB_ADDSTRING, 0, (LPARAM)c_name);
             
             SendMessage(hListBox, LB_SETITEMDATA, (WPARAM) idxptr, (LPARAM) GetItemVals[i]);
             

@@ -40,11 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyGUIControlDragBar.h"
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControlDragBar, pyGUIControlDragBar);
@@ -54,7 +53,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlDragBar)
 
 PYTHON_INIT_DEFINITION(ptGUIControlDragBar, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -92,15 +91,15 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlDragBar, pyGUIControl, "Params: ctrlKey\nP
 // required functions for PyObject interoperability
 PyObject *pyGUIControlDragBar::New(pyKey& gckey)
 {
-    ptGUIControlDragBar *newObj = (ptGUIControlDragBar*)ptGUIControlDragBar_type.tp_new(&ptGUIControlDragBar_type, NULL, NULL);
+    ptGUIControlDragBar *newObj = (ptGUIControlDragBar*)ptGUIControlDragBar_type.tp_new(&ptGUIControlDragBar_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlDragBar::New(plKey objkey)
 {
-    ptGUIControlDragBar *newObj = (ptGUIControlDragBar*)ptGUIControlDragBar_type.tp_new(&ptGUIControlDragBar_type, NULL, NULL);
-    newObj->fThis->fGCkey = objkey;
+    ptGUIControlDragBar *newObj = (ptGUIControlDragBar*)ptGUIControlDragBar_type.tp_new(&ptGUIControlDragBar_type, nullptr, nullptr);
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

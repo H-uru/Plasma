@@ -42,8 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetMsgHandler_inc
 #define plNetMsgHandler_inc
 
-#include "HeadSpin.h"
-
 class plNetMessage;
 class plNetApp;
 
@@ -58,14 +56,19 @@ class plNetMsgHandler
 protected:
     plNetApp* fNetApp;
 public:
-    plNetMsgHandler() : fNetApp(nil) {}
+    enum class Status
+    {
+        kError,
+        kHandled,
+    };
+
+    plNetMsgHandler() : fNetApp() { }
     virtual ~plNetMsgHandler() {}
 
     void SetNetApp(plNetApp* na) { fNetApp=na; }
     plNetApp* GetNetApp() { return fNetApp; }
 
-    // return -1 on error, 0 if ok. 
-    virtual int ReceiveMsg(plNetMessage*& netMsg) = 0;
+    virtual Status ReceiveMsg(plNetMessage* netMsg) = 0;
 };
 
 #define MSG_HANDLER(msgClassName) msgClassName##HandleMsg
@@ -74,13 +77,13 @@ public:
 // Use to declare msg handler fxns in your MsgHandler .h class header
 //
 #define MSG_HANDLER_DECL(msgClassName) \
-virtual int MSG_HANDLER(msgClassName)(plNetMessage*& netMsg); 
+virtual plNetMsgHandler::Status MSG_HANDLER(msgClassName)(plNetMessage* netMsg); 
 
 //
 // Use to define msg handler fxns in your MsgHandler .cpp file
 //
 #define MSG_HANDLER_DEFN(handlerClassName, msgClassName) \
-int handlerClassName::MSG_HANDLER(msgClassName)(plNetMessage*& netMsg)
+plNetMsgHandler::Status handlerClassName::MSG_HANDLER(msgClassName)(plNetMessage* netMsg)
 
 //
 // Use in the switch statement in your ReceiveMsg function

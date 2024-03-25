@@ -43,24 +43,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plSoundMsg_h
 
 #include "plMessageWithCallbacks.h"
-#include "hsTemplates.h"
 #include "hsBitVector.h"
 
 class plSoundMsg : public plMessageWithCallbacks
 {
 private:
-    void IInit() { fLoop=false; fPlaying = false; fBegin=fEnd=fTime=fRepeats=0; fSpeed = 0.f; fVolume = 0.f; fIndex = -1; fNameStr = 0; fFadeType = kLinear; }
+    void IInit() {
+        fLoop = false;
+        fPlaying = false;
+        fBegin = fEnd = fTime = fRepeats = 0;
+        fSpeed = 0.f;
+        fVolume = 0.f;
+        fIndex = -1;
+        fNameStr = 0;
+        fFadeType = kLinear;
+    }
 public:
-    plSoundMsg()
-        : plMessageWithCallbacks(nil, nil, nil) { IInit(); }
-    plSoundMsg(const plKey &s, 
-                const plKey &r, 
-                const double* t)
-        : plMessageWithCallbacks(s, r, t) { IInit(); }
+    plSoundMsg() : plMessageWithCallbacks(nullptr, nullptr, nullptr) {
+        IInit();
+    }
+
+    plSoundMsg(const plKey& s, const plKey& r, const double* t)
+        : plMessageWithCallbacks(s, r, t)
+    {
+        IInit();
+    }
+
     ~plSoundMsg();
 
-    CLASSNAME_REGISTER( plSoundMsg );
-    GETINTERFACE_ANY( plSoundMsg, plMessageWithCallbacks );
+    CLASSNAME_REGISTER(plSoundMsg);
+    GETINTERFACE_ANY(plSoundMsg, plMessageWithCallbacks);
 
     enum ModCmds
     {
@@ -89,22 +101,22 @@ public:
         kSynchedPlay,
     };
 
-    hsBitVector     fCmd;
+    hsBitVector fCmd;
 
     bool Cmd(int n) const { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd();
 
-    double   fBegin;
-    double   fEnd;
-    bool     fLoop;
-    float fSpeed;
-    double   fTime;
-    int      fIndex;
-    int      fRepeats;
-    bool     fPlaying;
-    uint32_t   fNameStr;  
-    float fVolume;   // Range: 0 - silence, 1.f - loudest
+    double      fBegin;
+    double      fEnd;
+    bool        fLoop;
+    float       fSpeed;
+    double      fTime;
+    int         fIndex;
+    int         fRepeats;
+    bool        fPlaying;
+    uint32_t    fNameStr;
+    float       fVolume;   // Range: 0 - silence, 1.f - loudest
 
     enum FadeType
     {
@@ -114,8 +126,8 @@ public:
     } fFadeType;
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 

@@ -60,9 +60,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 // Performance counter functions
-long PerfAddCounter (unsigned id, unsigned n);
-long PerfSubCounter (unsigned id, unsigned n);
-long PerfSetCounter (unsigned id, unsigned n);
+long PerfAddCounter (unsigned id, long n);
+long PerfSubCounter (unsigned id, long n);
+long PerfSetCounter (unsigned id, long n);
 
 
 /*****************************************************************************
@@ -72,6 +72,16 @@ long PerfSetCounter (unsigned id, unsigned n);
 ***/
 
 void DnsDestroy (unsigned exitThreadWaitMs);
+
+
+/*****************************************************************************
+*
+*   Socket.cpp
+*
+***/
+
+void SocketInitialize();
+void SocketDestroy(unsigned exitThreadWaitMs);
 
 
 /*****************************************************************************
@@ -90,112 +100,3 @@ void ThreadDestroy (unsigned exitThreadWaitMs);
 ***/
 
 void TimerDestroy (unsigned exitThreadWaitMs);
-
-
-/****************************************************************************
-*
-*   Async API function types
-*
-***/
-
-// Core
-typedef void (* FInitialize) ();
-typedef void (* FDestroy) (unsigned exitThreadWaitMs);
-typedef void (* FSignalShutdown) ();
-typedef void (* FWaitForShutdown) ();
-typedef void (* FSleep) (unsigned sleepMs);
-
-// Sockets
-typedef void (* FAsyncSocketConnect) (
-    AsyncCancelId *         cancelId,
-    const plNetAddress&     netAddr,
-    FAsyncNotifySocketProc  notifyProc,
-    void *                  param,
-    const void *            sendData,
-    unsigned                sendBytes,
-    unsigned                connectMs,
-    unsigned                localPort
-);
-
-typedef void (* FAsyncSocketConnectCancel) (
-    FAsyncNotifySocketProc  notifyProc,
-    AsyncCancelId           cancelId
-);
-
-typedef void (* FAsyncSocketDisconnect) (
-    AsyncSocket     sock,
-    bool            hardClose
-);
-
-typedef void (* FAsyncSocketDelete) (AsyncSocket sock);
-
-typedef bool (* FAsyncSocketSend) (
-    AsyncSocket     sock,
-    const void *    data,
-    unsigned        bytes
-);
-
-typedef bool (* FAsyncSocketWrite) (
-    AsyncSocket     sock,
-    const void *    buffer,
-    unsigned        bytes,
-    void *          param
-);
-
-typedef void (* FAsyncSocketSetNotifyProc) (
-    AsyncSocket             sock,
-    FAsyncNotifySocketProc  notifyProc
-);
-
-typedef void (* FAsyncSocketSetBacklogAlloc) (
-    AsyncSocket             sock,
-    unsigned                bufferSize
-);
-
-typedef unsigned (* FAsyncSocketStartListening) (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
-);
-
-typedef void (* FAsyncSocketStopListening) (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
-);
-
-typedef void (* FAsyncSocketEnableNagling) (
-    AsyncSocket             conn,
-    bool                    enable
-);
-
-
-
-/****************************************************************************
-*
-*   I/O API
-*
-***/
-
-struct AsyncApi {
-
-    // Init
-    FInitialize                     initialize;
-    FDestroy                        destroy;
-    FSignalShutdown                 signalShutdown;
-    FWaitForShutdown                waitForShutdown;
-    FSleep                          sleep;
-    
-    // Sockets
-    FAsyncSocketConnect             socketConnect;
-    FAsyncSocketConnectCancel       socketConnectCancel;
-    FAsyncSocketDisconnect          socketDisconnect;
-    FAsyncSocketDelete              socketDelete;
-    FAsyncSocketSend                socketSend;
-    FAsyncSocketWrite               socketWrite;
-    FAsyncSocketSetNotifyProc       socketSetNotifyProc;
-    FAsyncSocketSetBacklogAlloc     socketSetBacklogAlloc;
-    FAsyncSocketStartListening      socketStartListening;
-    FAsyncSocketStopListening       socketStopListening;
-    FAsyncSocketEnableNagling       socketEnableNagling;
-};
-
-extern AsyncApi g_api;

@@ -49,12 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "plDTProgressMgr.h"
-#include "plPipeline.h"
-#include "plDebugText.h"
-#include "plPlates.h"
 
+#include "plDebugText.h"
+#include "plPipeline.h"
+#include "plPlates.h"
 #include "hsTimer.h"
 
 // Draw Colors
@@ -69,10 +68,10 @@ enum
 //// Constructor & Destructor ////////////////////////////////////////////////
 
 plDTProgressMgr::plDTProgressMgr() :
-    fCurrentImage(0),
-    fLastDraw(0.0f),
-    fStaticTextPlate(nil),
-    fActivePlate(nil)
+    fCurrentImage(),
+    fLastDraw(),
+    fStaticTextPlate(),
+    fActivePlate()
 {
 }
 
@@ -80,14 +79,14 @@ plDTProgressMgr::~plDTProgressMgr()
 {
 }
 
-void    plDTProgressMgr::DeclareThyself( void )
+void    plDTProgressMgr::DeclareThyself()
 {
     static plDTProgressMgr  thyself;
 }
 
 void    plDTProgressMgr::Activate()
 {
-    if (fStaticTextPlate == nil && fCurrentStaticText != plProgressMgr::kNone)
+    if (fStaticTextPlate == nullptr && fCurrentStaticText != plProgressMgr::kNone)
     {
         plPlateManager::Instance().CreatePlate(&fStaticTextPlate);
 
@@ -98,14 +97,14 @@ void    plDTProgressMgr::Activate()
         fStaticTextPlate->SetPosition(0, 0.5f, 0);
     }
 
-    if (fActivePlate == nil)
+    if (fActivePlate == nullptr)
     {
         plPlateManager::Instance().CreatePlate( &fActivePlate );
 
         fActivePlate->CreateFromResource(plProgressMgr::GetLoadingFrameID(fCurrentImage));
         fActivePlate->SetVisible(true);
         fActivePlate->SetOpacity(1.0f);
-        fActivePlate->SetSize(1, 1, true);
+        fActivePlate->SetSize(0.6f, 0.6f, true);
         fActivePlate->SetPosition(0, 0, 0);
     }
 }
@@ -116,14 +115,14 @@ void    plDTProgressMgr::Deactivate()
     {
         fStaticTextPlate->SetVisible(false);
         plPlateManager::Instance().DestroyPlate( fStaticTextPlate );
-        fStaticTextPlate = nil;
+        fStaticTextPlate = nullptr;
     }
 
     if (fActivePlate)
     {
         fActivePlate->SetVisible(false);
         plPlateManager::Instance().DestroyPlate( fActivePlate );
-        fActivePlate = nil;
+        fActivePlate = nullptr;
     }
 }
 
@@ -133,18 +132,19 @@ void    plDTProgressMgr::Draw( plPipeline *p )
 {
     uint16_t      scrnWidth, scrnHeight, width, height, x, y;
     plDebugText &text = plDebugText::Instance();
+    float drawScale = p->fBackingScale;
 
     plOperationProgress *prog;
 
 
-    if( fOperations == nil )
+    if (fOperations == nullptr)
         return;
 
     scrnWidth = (uint16_t)p->Width();
     scrnHeight = (uint16_t)p->Height();
 
     width = scrnWidth - 64;
-    height = 16;
+    height = 16 * drawScale;
     x = ( scrnWidth - width ) >> 1;
     y = scrnHeight - 44 - (2 * height) - text.GetFontSize();
 
@@ -165,15 +165,15 @@ void    plDTProgressMgr::Draw( plPipeline *p )
             fActivePlate->ReloadFromResource(plProgressMgr::GetLoadingFrameID(fCurrentImage));
             fActivePlate->SetVisible(true);
             fActivePlate->SetOpacity(1.0f);
-            fActivePlate->SetSize(1, 1, true);
+            fActivePlate->SetSize(0.6f, 0.6f, true);
             fActivePlate->SetPosition(0, 0, 0);
         }
     }
 
-    for( prog = fOperations; prog != nil; prog = prog->GetNext() )
+    for (prog = fOperations; prog != nullptr; prog = prog->GetNext())
     {
-        if (IDrawTheStupidThing(p, prog, x, y, width, height))
-            y -= text.GetFontSize() + 8 + height + 4;
+        if (IDrawTheStupidThing(p, prog, x, y, width, height, drawScale))
+            y -= text.GetFontSize() + (8 * drawScale) + height + (4 * drawScale);
     }
 
     text.SetDrawOnTopMode( false );
@@ -182,16 +182,26 @@ void    plDTProgressMgr::Draw( plPipeline *p )
 //// IDrawTheStupidThing /////////////////////////////////////////////////////
 
 bool    plDTProgressMgr::IDrawTheStupidThing(plPipeline *p, plOperationProgress *prog,
-                                             uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+                                             uint16_t x, uint16_t y, uint16_t width, uint16_t height, float scale)
 {
     plDebugText &text = plDebugText::Instance();
     bool drew_something = false;
-    uint16_t downsz = (text.GetFontSize() << 1) + 4;
+    /*
+    * downsz used to be set to double the font size, plus the margin
+    * This was refactored to use font height instead, which accurately
+    * accounts for display DPI. However - the font spacing became too large.
+    * Instead of doubling, the margin is now the font height * 1.5.
+    * Font size is at 72 DPI, but Windows renders at 96 DPI by default.
+    * Therefor to infer the original spacing ratio, we can take:
+    * (72 * 2) / 96 to translate the intended line spacing out of font
+    * space and into device render space.
+    */
+    uint16_t downsz = (text.GetFontHeight() * 1.50f) + (4 * scale);
 
     // draw the title
-    if (!prog->GetTitle().IsEmpty()) {
+    if (!prog->GetTitle().empty()) {
         y -= downsz;
-        text.DrawString_TEMP(x, y, prog->GetTitle(), kTitleColor);
+        text.DrawString(x, y, prog->GetTitle(), kTitleColor);
         y += downsz;
         drew_something = true;
     }
@@ -200,10 +210,10 @@ bool    plDTProgressMgr::IDrawTheStupidThing(plPipeline *p, plOperationProgress 
     if (prog->GetMax() > 0.f) {
         text.Draw3DBorder(x, y, x + width - 1, y + height - 1, kProgressBarColor, kProgressBarColor);
 
-        x += 2;
-        y += 2;
-        width -= 4;
-        height -= 4;
+        x += (2 * scale);
+        y += (2 * scale);
+        width -= (4 * scale);
+        height -= (4 * scale);
 
         uint16_t drawWidth = width;
         int16_t drawX = x;
@@ -215,21 +225,21 @@ bool    plDTProgressMgr::IDrawTheStupidThing(plPipeline *p, plOperationProgress 
         rightX = drawX + drawWidth;
         if (drawWidth > 0)
             text.DrawRect(drawX, y, rightX, y + height, kProgressBarColor);
-        y += height + 2;
+        y += height + (2 * scale);
 
         drew_something = true;
     }
 
     // draw the left justified status text
-    if (!prog->GetStatusText().IsEmpty()) {
-        text.DrawString_TEMP(x, y, prog->GetStatusText(), kInfoColor);
+    if (!prog->GetStatusText().empty()) {
+        text.DrawString(x, y, prog->GetStatusText(), kInfoColor);
         drew_something = true;
     }
 
     // draw the right justified info text
-    if (!prog->GetInfoText().IsEmpty()) {
-        uint16_t right_x = 2 + x + width - text.CalcStringWidth_TEMP(prog->GetInfoText());
-        text.DrawString_TEMP(right_x, y, prog->GetInfoText(), kInfoColor);
+    if (!prog->GetInfoText().empty()) {
+        uint16_t right_x = 2 + x + width - text.CalcStringWidth(prog->GetInfoText());
+        text.DrawString(right_x, y, prog->GetInfoText(), kInfoColor);
         drew_something = true;
     }
 

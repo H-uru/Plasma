@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // camera message class
 //
-#include "pnMessage/plMessage.h"
+#include "plMessage.h"
 #include "hsBitVector.h"
 #include "hsGeometry3.h"
 
@@ -59,18 +59,21 @@ class plCameraConfig
 {
 public:
 
-    plCameraConfig() : 
-    fAccel(0),fDecel(0),
-    fVel(0),fFPAccel(0),
-    fFPDecel(0),fFPVel(0),
-    fFOVw(0),fFOVh(0),fType(0),fWorldspace(false){fOffset.Set(0,0,0);}
-    
-    plCameraConfig(int flags) : 
-    fAccel(0),fDecel(0),
-    fVel(0),fFPAccel(0),
-    fFPDecel(0),fFPVel(0),
-    fFOVw(0),fFOVh(0),fType(0),fWorldspace(false) { fType |= flags;fOffset.Set(0,0,0);}
+    plCameraConfig()
+        : fAccel(),fDecel(),
+          fVel(), fFPAccel(),
+          fFPDecel(), fFPVel(),
+          fFOVw(), fFOVh(),
+          fType(), fWorldspace()
+    { }
 
+    plCameraConfig(int flags)
+        : fAccel(), fDecel(),
+        fVel(), fFPAccel(),
+        fFPDecel(), fFPVel(),
+        fFOVw(), fFOVh(),
+        fType(flags), fWorldspace()
+    { }
 
     enum
     {
@@ -112,16 +115,16 @@ public:
     void SetFadeOut(bool b) { fFadeOut = b; }
 
     
-    plCameraTargetFadeMsg(){;}
+    plCameraTargetFadeMsg() { }
     plCameraTargetFadeMsg(const plKey &s, 
                     const plKey &r, 
-                    const double* t){;}
+                    const double* t) { }
     
-    CLASSNAME_REGISTER( plCameraTargetFadeMsg );
-    GETINTERFACE_ANY( plCameraTargetFadeMsg, plMessage );
+    CLASSNAME_REGISTER(plCameraTargetFadeMsg);
+    GETINTERFACE_ANY(plCameraTargetFadeMsg, plMessage);
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 };
 
@@ -160,8 +163,8 @@ public:
                     const plKey &r, 
                     const double* t);
     
-    CLASSNAME_REGISTER( plCameraMsg );
-    GETINTERFACE_ANY( plCameraMsg, plMessage );
+    CLASSNAME_REGISTER(plCameraMsg);
+    GETINTERFACE_ANY(plCameraMsg, plMessage);
 
     enum ModCmds
     {
@@ -217,11 +220,10 @@ public:
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd() { fCmd.Clear(); }
     void ClearCmd(int n) { fCmd.ClearBit(n); }
-    
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 };
 
@@ -246,16 +248,16 @@ public:
     bool GetEnable() const { return fEnable; }
     bool GetDisable() const { return fDisable; }
 
-    plIfaceFadeAvatarMsg() : fEnable(false),fDisable(false){;}
+    plIfaceFadeAvatarMsg() : fEnable(false),fDisable(false) { }
     plIfaceFadeAvatarMsg(const plKey &s, 
                     const plKey &r, 
-                    const double* t): fEnable(false),fDisable(false){;}
+                    const double* t): fEnable(false),fDisable(false) { }
     
-    CLASSNAME_REGISTER( plIfaceFadeAvatarMsg );
-    GETINTERFACE_ANY( plIfaceFadeAvatarMsg, plMessage );
+    CLASSNAME_REGISTER(plIfaceFadeAvatarMsg);
+    GETINTERFACE_ANY(plIfaceFadeAvatarMsg, plMessage);
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 };
 

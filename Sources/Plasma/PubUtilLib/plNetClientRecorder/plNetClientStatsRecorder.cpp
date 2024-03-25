@@ -40,19 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plNetClientRecorder.h"
-#include "hsStream.h"
-#include "plNetMessage/plNetMessage.h"
+
 #include "plCreatableIndex.h"
 #include "plgDispatch.h"
-#include "plSDL/plSDL.h"
-#include "pnNetCommon/plNetApp.h"
+#include "hsStream.h"
 
-#include "plMessage/plLinkToAgeMsg.h"
-#include "plMessage/plLoadAvatarMsg.h"
-#include "plMessage/plLinkToAgeMsg.h"
+#include "pnFactory/plFactory.h"
 #include "pnMessage/plNotifyMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
 
+#include "plNetMessage/plNetMessage.h"
+#include "plSDL/plSDL.h"
 #include "plStatusLog/plStatusLog.h"
 
 
@@ -93,13 +90,13 @@ void plNetClientStatsRecorder::ILogMsg(plNetMessage* msg, const char* preText)
     if (msg->ClassIndex() == CLASS_INDEX_SCOPED(plNetMsgGameMessage))
     {
         plNetMsgGameMessage* gameMsg = plNetMsgGameMessage::ConvertNoRef(msg);
-        fLog->AddLineF("%s%s(%s)", preText, msg->ClassName(), plFactory::GetNameOfClass(gameMsg->StreamInfo()->GetStreamType()));
+        fLog->AddLineF("{}{}({})", preText, msg->ClassName(), plFactory::GetNameOfClass(gameMsg->StreamInfo()->GetStreamType()));
 
         if (gameMsg->StreamInfo()->GetStreamType() == CLASS_INDEX_SCOPED(plNotifyMsg))
         {
             plNotifyMsg* notifyMsg = plNotifyMsg::ConvertNoRef(gameMsg->GetContainedMsg());
-            int numEvents = notifyMsg->GetEventCount();
-            for (int i = 0; i < numEvents; i++)
+            size_t numEvents = notifyMsg->GetEventCount();
+            for (size_t i = 0; i < numEvents; i++)
             {
                 const char* eventName = "";
 
@@ -120,7 +117,7 @@ void plNetClientStatsRecorder::ILogMsg(plNetMessage* msg, const char* preText)
                 case proEventData::kClickDrag:      eventName = "ClickDrag";        break;
                 }
 
-                fLog->AddLineF("\t%s", eventName);
+                fLog->AddLineF("\t{}", eventName);
             }
 
             hsRefCnt_SafeUnRef(notifyMsg);
@@ -129,11 +126,11 @@ void plNetClientStatsRecorder::ILogMsg(plNetMessage* msg, const char* preText)
     else if (plNetMsgSDLState* sdlMsg = plNetMsgSDLState::ConvertNoRef(msg))
     {
         hsReadOnlyStream stream(sdlMsg->StreamInfo()->GetStreamLen(), sdlMsg->StreamInfo()->GetStreamBuf());        
-        plString descName;
+        ST::string descName;
         int ver;
         if (plStateDataRecord::ReadStreamHeader(&stream, &descName, &ver))
         {
-            fLog->AddLineF("%s%s(%s)", preText, msg->ClassName(), descName.c_str());
+            fLog->AddLineF("{}{}({})", preText, msg->ClassName(), descName);
 
             int i;
 
@@ -143,17 +140,17 @@ void plNetClientStatsRecorder::ILogMsg(plNetMessage* msg, const char* preText)
             sdRec.GetDirtyVars(&vars);
             for (i = 0; i < vars.size(); i++)
             {
-                fLog->AddLineF("\t%s", vars[i]->GetVarDescriptor()->GetName().c_str());
+                fLog->AddLineF("\t{}", vars[i]->GetVarDescriptor()->GetName());
             }
 
             plStateDataRecord::SDVarsList sdVars;
             sdRec.GetDirtySDVars(&sdVars);
             for (i = 0; i < sdVars.size(); i++)
             {
-                fLog->AddLineF("\t%s", sdVars[i]->GetSDVarDescriptor()->GetName().c_str());
+                fLog->AddLineF("\t{}", sdVars[i]->GetSDVarDescriptor()->GetName());
             }
         }
     }
     else
-        fLog->AddLineF("%s%s", preText, msg->ClassName());
+        fLog->AddLineF("{}{}", preText, msg->ClassName());
 }

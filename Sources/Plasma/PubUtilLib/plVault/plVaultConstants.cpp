@@ -46,10 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "Pch.h"
-#pragma hdrstop
 
 namespace plVault {
-#ifdef CLIENT
 
 const char * NodeTypeStr( int type, bool pretty )
 {
@@ -138,5 +136,4 @@ const char * StandardNodeStr( int type )
     }
 }
 
-#endif // def CLIENT
 } // namespace plVault

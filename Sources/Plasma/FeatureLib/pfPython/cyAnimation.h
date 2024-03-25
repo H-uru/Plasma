@@ -49,30 +49,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper to map animation functions to plasma2 message
 //
 
-#include "hsTemplates.h"
-#include "pyGlueHelpers.h"
+#include <string_theory/string>
+
+#include "pnKeyedObject/plKey.h"
+
+#include "pyGlueDefinitions.h"
+
+class pyKey;
 
 class cyAnimation
 {
 
     plKey           fSender;
-    hsTArray<plKey> fRecvr;
-    char*           fAnimName;
+    std::vector<plKey> fRecvr;
+    ST::string      fAnimName;
     bool            fNetForce;
 
-    virtual void IRunOneCmd(int cmd);
+    void IRunOneCmd(int cmd);
 
 protected:
     cyAnimation();
-    cyAnimation(pyKey& sender);
+    cyAnimation(const pyKey& sender);
 
-    // copy constructor
-    cyAnimation(const cyAnimation& anim);
 public:
-
-    // clean up on the way out
-    ~cyAnimation();
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptAnimation);
     PYTHON_CLASS_NEW_DEFINITION;
@@ -84,78 +83,78 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     // setters
-    virtual void SetSender(pyKey& sender);
-    virtual void AddRecvr(pyKey& recvr);
-    virtual void SetAnimName(const char* name);
+    void SetSender(const pyKey& sender);
+    void AddRecvr(const pyKey& recvr);
+    void SetAnimName(ST::string name) { fAnimName = std::move(name); }
 
-    virtual PyObject* GetFirstRecvr();
+    PyObject* GetFirstRecvr();
 
-    virtual void SetNetForce(bool state) { fNetForce = state; }
+    void SetNetForce(bool state) { fNetForce = state; }
 
     //  Play animation from start to end (whatever is already set)
     //
-    virtual void Play();
+    void Play();
 
     //  Stop an animation
     //
-    virtual void Stop();
+    void Stop();
 
     //  Continue playing animation from wherever it last stopped
     //
-    virtual void Resume();
+    void Resume();
 
     //  Play an animation only from specific time start to end
     //
-    virtual void PlayRange(float start, float end);
+    void PlayRange(float start, float end);
 
     //  Play (continue) an animation until the specified time is reached
     //
-    virtual void PlayToTime(float time);
+    void PlayToTime(float time);
 
     //  Play (continue) an animation until the specified point is reached
     //
-    virtual void PlayToPercentage(float zeroToOne);  
+    void PlayToPercentage(float zeroToOne);  
 
     //  Jump the animation to the specified time
     //  Doesn't start or stop playing of animation
     //
-    virtual void SkipToTime(float time);
+    void SkipToTime(float time);
 
     //  Set whether the animation is to be looped or not
     //
-    virtual void Looped(bool looped);
+    void Looped(bool looped);
 
     //  Sets the backwards state for the animation
     //
-    virtual void Backwards(bool backwards);
+    void Backwards(bool backwards);
 
 
     // Sets the start and end of the looping points in the animation
     //
-    virtual void SetLoopStart(float start);
-    virtual void SetLoopEnd(float end);
+    void SetLoopStart(float start);
+    void SetLoopEnd(float end);
     
     //  Sets the speed of the animation
     //  Doesn't start or stop playing animation
     //
-    virtual void Speed(float speed);
+    void Speed(float speed);
 
 
     //  Jump the animation to the specified time
     //  Doesn't start or stop playing of animation
     //
-    virtual void SkipToBegin();
-    virtual void SkipToEnd();
-    virtual void SkipToLoopBegin();
-    virtual void SkipToLoopEnd();
+    void SkipToBegin();
+    void SkipToEnd();
+    void SkipToLoopBegin();
+    void SkipToLoopEnd();
 
     //  Bump the animation ahead one frame (whatever deltime is)
     //
-    virtual void IncrementForward();
+    void IncrementForward();
 
     //  Bump the animation back one frame (whatever deltime is)
     //
-    virtual void IncrementBackward();
+    void IncrementBackward();
 };
 
 

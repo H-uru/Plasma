@@ -46,11 +46,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentReg.h"
 #include "plAudioComponents.h"
 #include "MaxMain/plMaxNode.h"
+#include "MaxMain/MaxAPI.h"
+
 #include "resource.h"
 
-#include <iparamm2.h>
 #include <map>
-#pragma hdrstop
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 
@@ -83,15 +83,15 @@ ParamBlockDesc2 gFootstepSoundBk
 
     plFootstepSoundComponent::kSurface, _T("Surface"),      TYPE_INT,   0, 0,
         p_default, plArmatureEffectsMgr::kFootDirt,
-        end,
+        p_end,
 
     plFootstepSoundComponent::kSurfaceList, _T("SoundGroups"),  TYPE_INODE_TAB, plArmatureEffectsMgr::kMaxSurface,      0, 0,
-        end,
+        p_end,
 
     plFootstepSoundComponent::kNodePicker, _T("NodePicker"),    TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plFootstepSoundComponent::plFootstepSoundComponent()
@@ -111,7 +111,7 @@ extern const plArmatureMod * FindArmatureMod(const plSceneObject *obj);
         if(avMod)
             return avMod;
     }
-    return nil;
+    return nullptr;
 }*/
 
 bool plFootstepSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
@@ -132,7 +132,7 @@ bool plFootstepSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             if (rsComp)
             {
                 plRandomSoundMod *mod = rsComp->fSoundMods[node];
-                if (mod != nil)
+                if (mod != nullptr)
                 {
                     msg = new plGenRefMsg(effect->GetKey(), plRefMsg::kOnCreate, i, -1);
                     hsgResMgr::ResMgr()->AddViaNotify(mod->GetKey(), msg, plRefFlags::kActiveRef);
@@ -150,12 +150,12 @@ bool plFootstepSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-BOOL plFootstepSoundComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plFootstepSoundComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     IParamBlock2 *pb = pm->GetParamBlock();
     HWND hSurface = GetDlgItem(hWnd, IDC_COMP_FOOTSTEP_SOUND_SURFACE);
     HWND hPick = GetDlgItem(hWnd, IDC_COMP_FOOTSTEP_SOUND_PICK);
-    INode *curPick = nil;
+    INode *curPick = nullptr;
     int curSurface = 0;
 
     switch (msg)
@@ -164,13 +164,13 @@ BOOL plFootstepSoundComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWn
         {
             int i;
             for (i = 0; i < plArmatureEffectsMgr::kMaxSurface; i++)
-                ComboBox_AddString(hSurface, plArmatureEffectsMgr::SurfaceStrings[i]);
+                ComboBox_AddString(hSurface, ST2T(plArmatureEffectsMgr::SurfaceStrings[i]));
 
             curSurface = pb->GetInt(ParamID(plFootstepSoundComponent::kSurface));
             ComboBox_SetCurSel(hSurface, curSurface);
 
             curPick = pb->GetINode(ParamID(plFootstepSoundComponent::kSurfaceList), 0, curSurface);
-            Button_SetText(hPick, (curPick == nil ? "None" : curPick->GetName()));
+            Button_SetText(hPick, (curPick == nullptr ? _T("None") : curPick->GetName()));
         }
         return TRUE;
 
@@ -187,7 +187,7 @@ BOOL plFootstepSoundComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWn
                     curPick = pb->GetINode(ParamID(plFootstepSoundComponent::kNodePicker));
                     curSurface = pb->GetInt(ParamID(plFootstepSoundComponent::kSurface));
                     pb->SetValue(ParamID(plFootstepSoundComponent::kSurfaceList), 0, curPick, curSurface); 
-                    Button_SetText(hPick, (curPick == nil ? "None" : curPick->GetName()));
+                    Button_SetText(hPick, (curPick == nullptr ? _T("None") : curPick->GetName()));
                 }
             
                 return TRUE;
@@ -198,7 +198,7 @@ BOOL plFootstepSoundComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWn
             curSurface = ComboBox_GetCurSel(hSurface);
             curPick = pb->GetINode(ParamID(plFootstepSoundComponent::kSurfaceList), 0, curSurface);
             pb->SetValue(ParamID(plFootstepSoundComponent::kSurface), 0, curSurface);
-            Button_SetText(hPick, (curPick == nil ? "None" : curPick->GetName()));
+            Button_SetText(hPick, (curPick == nullptr ? _T("None") : curPick->GetName()));
         }
     }
 

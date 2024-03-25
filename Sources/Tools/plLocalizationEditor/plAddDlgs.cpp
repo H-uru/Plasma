@@ -48,9 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfLocalizationMgr/pfLocalizationDataMgr.h"
 
 #include <QPushButton>
-#include "ui_AddElement.h"
-#include "ui_AddLocalization.h"
+#include "res/ui_AddElement.h"
+#include "res/ui_AddLocalization.h"
 
+#include <algorithm>
 #include <vector>
 
 // very simple validator for edit controls (and combo boxes) so that they only accept alphanumeric values
@@ -59,7 +60,7 @@ class AlphaNumericValidator : public QValidator
 public:
     AlphaNumericValidator(QObject *parent = nullptr) : QValidator(parent) { }
 
-    State validate(QString &input, int &pos) const HS_OVERRIDE
+    State validate(QString &input, int &pos) const override
     {
         for (int ch = 0; ch < input.size(); ++ch)
         {
@@ -72,7 +73,7 @@ public:
     }
 };
 
-plAddElementDlg::plAddElementDlg(const plString &parentPath, QWidget *parent)
+plAddElementDlg::plAddElementDlg(const ST::string &parentPath, QWidget *parent)
     : QDialog(parent), fBlockUpdates(false)
 {
     fUI = new Ui_AddElement;
@@ -89,7 +90,7 @@ plAddElementDlg::plAddElementDlg(const plString &parentPath, QWidget *parent)
     connect(fUI->fElementName, SIGNAL(textChanged(QString)), SLOT(Update(QString)));
 
     // throw away vars
-    plString element, lang;
+    ST::string element, lang;
     SplitLocalizationPath(parentPath, fAgeName, fSetName, element, lang);
 }
 
@@ -100,7 +101,7 @@ plAddElementDlg::~plAddElementDlg()
 
 bool plAddElementDlg::DoPick()
 {
-    std::vector<plString> ageNames = pfLocalizationDataMgr::Instance().GetAgeList();
+    std::vector<ST::string> ageNames = pfLocalizationDataMgr::Instance().GetAgeList();
 
     fBlockUpdates = true;
     // add the age names to the list
@@ -121,11 +122,11 @@ void plAddElementDlg::Update(const QString &text)
         return;
 
     if (sender() == fUI->fParentAge)
-        fAgeName = plString(text.toUtf8().constData());
+        fAgeName = ST::string(text.toUtf8().constData());
     else if (sender() == fUI->fParentSet)
-        fSetName = plString(text.toUtf8().constData());
+        fSetName = ST::string(text.toUtf8().constData());
     else if (sender() == fUI->fElementName)
-        fElementName = plString(text.toUtf8().constData());
+        fElementName = ST::string(text.toUtf8().constData());
 
     fUI->fPathLabel->setText(tr("%1.%2.%3").arg(fAgeName.c_str())
                              .arg(fSetName.c_str()).arg(fElementName.c_str()));
@@ -136,7 +137,7 @@ void plAddElementDlg::Update(const QString &text)
         fUI->fParentSet->clear();
         fUI->fParentSet->clearEditText();
 
-        std::vector<plString> setNames = pfLocalizationDataMgr::Instance().GetSetList(fAgeName);
+        std::vector<ST::string> setNames = pfLocalizationDataMgr::Instance().GetSetList(fAgeName);
 
         // add the set names to the list
         fBlockUpdates = true;
@@ -149,28 +150,12 @@ void plAddElementDlg::Update(const QString &text)
         fUI->fParentSet->setCurrentText(fSetName.c_str());
     }
 
-    bool valid = !(fAgeName.IsEmpty() || fSetName.IsEmpty() || fElementName.IsEmpty());
+    bool valid = !(fAgeName.empty() || fSetName.empty() || fElementName.empty());
     fUI->fButtons->button(QDialogButtonBox::Ok)->setEnabled(valid);
 }
 
 // plAddLocalizationDlg - dialog for adding a single localization
-std::vector<plString> IGetAllLanguageNames()
-{
-    int numLocales = plLocalization::GetNumLocales();
-    std::vector<plString> retVal;
-
-    for (int curLocale = 0; curLocale <= numLocales; curLocale++)
-    {
-        const char *name = plLocalization::GetLanguageName((plLocalization::Language)curLocale);
-        wchar_t *wName = hsStringToWString(name);
-        retVal.push_back(plString::FromWchar(wName));
-        delete [] wName;
-    }
-
-    return retVal;
-}
-
-plAddLocalizationDlg::plAddLocalizationDlg(const plString &parentPath, QWidget *parent)
+plAddLocalizationDlg::plAddLocalizationDlg(const ST::string &parentPath, QWidget *parent)
     : QDialog(parent)
 {
     fUI = new Ui_AddLocalization;
@@ -180,7 +165,7 @@ plAddLocalizationDlg::plAddLocalizationDlg(const plString &parentPath, QWidget *
     connect(fUI->fLanguage, SIGNAL(currentIndexChanged(int)), SLOT(SelectLanguage(int)));
 
     // throw away vars
-    plString lang;
+    ST::string lang;
     SplitLocalizationPath(parentPath, fAgeName, fSetName, fElementName, lang);
 }
 
@@ -189,18 +174,13 @@ bool plAddLocalizationDlg::DoPick()
     fUI->fPathLabel->setText(tr("%1.%2.%3").arg(fAgeName.c_str())
                              .arg(fSetName.c_str()).arg(fElementName.c_str()));
 
-    std::vector<plString> existingLanguages;
+    std::vector<ST::string> existingLanguages;
     existingLanguages = pfLocalizationDataMgr::Instance().GetLanguages(fAgeName, fSetName, fElementName);
 
-    std::vector<plString> missingLanguages = IGetAllLanguageNames();
-    for (int i = 0; i < existingLanguages.size(); i++) // remove all languages we already have
-    {
-        for (auto lit = missingLanguages.begin(); lit != missingLanguages.end(); )
-        {
-            if (*lit == existingLanguages[i])
-                lit = missingLanguages.erase(lit);
-            else
-                ++lit;
+    std::vector<ST::string> missingLanguages;
+    for (const auto &langName : plLocalization::GetAllLanguageNames()) {
+        if (std::find(existingLanguages.begin(), existingLanguages.end(), langName) == existingLanguages.end()) {
+            missingLanguages.push_back(langName);
         }
     }
 

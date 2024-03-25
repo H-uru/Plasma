@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "pnNbError.h"
+#include <iterator>
 
 
 /*****************************************************************************
@@ -105,9 +106,10 @@ const wchar_t * NetErrorToString (ENetError code) {
         L"Server Busy",                     // kNetErrServerBusy
         L"Vault Node Access Violation",     // kNetErrVaultNodeAccessViolation
     };
-    static_assert(arrsize(s_errors) == kNumNetErrors, "Number of Net Error descriptions and total Net Error count are not equal");
+    static_assert(std::size(s_errors) == kNumNetErrors,
+                  "Number of Net Error descriptions and total Net Error count are not equal");
     
-    if ((unsigned)code >= arrsize(s_errors)) {
+    if ((unsigned)code >= std::size(s_errors)) {
         if (code == kNetPending)
             return L"Pending";
         return L"Unknown Error";
@@ -172,9 +174,10 @@ const wchar_t * NetErrorAsString (ENetError code) {
         L"kNetErrServerBusy",
         L"kNetErrVaultNodeAccessViolation",
     };
-    static_assert(arrsize(s_errors) == kNumNetErrors, "Number of string-ized Net Errors and total Net Error count are not equal");
+    static_assert(std::size(s_errors) == kNumNetErrors,
+                  "Number of string-ized Net Errors and total Net Error count are not equal");
     
-    if ((unsigned)code >= arrsize(s_errors)) {
+    if ((unsigned)code >= std::size(s_errors)) {
         if (code == kNetPending)
             return L"kNetPending";
         return L"ErrUnknown";

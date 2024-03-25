@@ -43,36 +43,61 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plPXConvert_h_inc
 
 #include "hsGeometry3.h"
-#include "hsQuat.h"
 #include "hsMatrix44.h"
+#include "hsQuat.h"
 
-#include <NxVec3.h>
-#include <NxQuat.h>
-#include <NxMat34.h>
+#include <characterkinematic/PxExtended.h>
+#include <foundation/PxQuat.h>
+#include <foundation/PxTransform.h>
+#include <foundation/PxVec3.h>
 
-// Converts to and from the PhysX types
 namespace plPXConvert
 {
     // The following conversions are just casts, due to the fact that the Plasma
     // and PhysX vector and quat classes don't have any virtual fuctions and have
     // all their data in the same offsets.
-    inline NxVec3&         Point(hsPoint3& vec)         { return *((NxVec3*)&vec); }
-    inline const NxVec3&   Point(const hsPoint3& vec)   { return *((NxVec3*)&vec); }
-    inline hsPoint3&       Point(NxVec3& vec)           { return *((hsPoint3*)&vec); }
-    inline const hsPoint3& Point(const NxVec3& vec)     { return *((hsPoint3*)&vec); }
+    inline physx::PxVec3&       Point(hsPoint3& vec)            { return *((physx::PxVec3*)&vec); }
+    inline const physx::PxVec3& Point(const hsPoint3& vec)      { return *((physx::PxVec3*)&vec); }
+    inline hsPoint3&            Point(physx::PxVec3& vec)       { return *((hsPoint3*)&vec); }
+    inline const hsPoint3&      Point(const physx::PxVec3& vec) { return *((hsPoint3*)&vec); }
 
-    inline NxVec3&          Vector(hsVector3& vel)      { return *((NxVec3*)&vel); }
-    inline const NxVec3&    Vector(const hsVector3& vel){ return *((NxVec3*)&vel); }
-    inline hsVector3&       Vector(NxVec3& vec)         { return *((hsVector3*)&vec); }
-    inline const hsVector3& Vector(const NxVec3& vec)   { return *((hsVector3*)&vec); }
+    inline physx::PxVec3&       Vector(hsVector3& vel)           { return *((physx::PxVec3*)&vel); }
+    inline const physx::PxVec3& Vector(const hsVector3& vel)     { return *((physx::PxVec3*)&vel); }
+    inline hsVector3&           Vector(physx::PxVec3& vec)       { return *((hsVector3*)&vec); }
+    inline const hsVector3&     Vector(const physx::PxVec3& vec) { return *((hsVector3*)&vec); }
 
-    inline const NxQuat& Quat(const hsQuat& quat) { return *((NxQuat*)&quat); }
-    inline const hsQuat& Quat(const NxQuat& quat) { return *((hsQuat*)&quat); }
+    inline const physx::PxQuat& Quat(const hsQuat& quat) { return *((physx::PxQuat*)&quat); }
+    inline const hsQuat& Quat(const physx::PxQuat& quat) { return *((hsQuat*)&quat); }
 
-    // The matrix data doesn't match up, so we have to convert it
-    inline void Matrix(const hsMatrix44& fromMat, NxMat34& toMat) { toMat.setRowMajor44(&fromMat.fMap[0][0]); }
-    inline void Matrix(const NxMat34& fromMat, hsMatrix44& toMat) { toMat.NotIdentity(); fromMat.getRowMajor44(&toMat.fMap[0][0]); }
+    inline physx::PxExtendedVec3 ExtPoint(const hsPoint3& vec)
+    {
+        return { vec.fX, vec.fY, vec.fZ };
+    }
 
+    inline hsPoint3 ExtPoint(const physx::PxExtendedVec3& vec)
+    {
+        return { (float)vec.x, (float)vec.y, (float)vec.z };
+    }
+
+    inline physx::PxTransform Transform(const hsPoint3& p, hsQuat q)
+    {
+        q.Normalize();
+        return physx::PxTransform(Point(p), Quat(q));
+    }
+
+    inline physx::PxTransform Transform(const hsMatrix44& mat)
+    {
+        hsPoint3 p;
+        hsQuat q;
+        mat.DecompRigid(p, q);
+        q.Normalize();
+        return Transform(p, q);
+    }
+
+    inline hsMatrix44 Transform(const physx::PxTransform& pose)
+    {
+        return hsMatrix44(Point(pose.p), Quat(pose.q));
+    }
 };
 
 #endif // plPXConvert_h_inc

@@ -40,16 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "plgDispatch.h"
-#pragma hdrstop
-
 #include "cyInputInterface.h"
-#include "plMessage/plInputIfaceMgrMsg.h"
+
 #include "plInputCore/plTelescopeInputInterface.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
 
 cyInputInterface::cyInputInterface() :
-fTelescopeInterface(nil)
+fTelescopeInterface()
 {
 }
 
@@ -95,6 +92,6 @@ void cyInputInterface::PopTelescope()
         pMsg->SetIFace(fTelescopeInterface);
         pMsg->Send();
         hsRefCnt_SafeUnRef( fTelescopeInterface );
-        fTelescopeInterface = nil;
+        fTelescopeInterface = nullptr;
     }
 }

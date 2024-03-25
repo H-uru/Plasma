@@ -65,10 +65,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plCommonObjLib_h
 #define _plCommonObjLib_h
 
+#include <vector>
+
 class plCommonObjLibList;
 class plKey;
 class hsKeyedObject;
-class plString;
+namespace ST { class string; }
 
 //// Class Definition /////////////////////////////////////////////////////////
 
@@ -76,7 +78,7 @@ class plCommonObjLib
 {
     protected:
 
-        hsTArray<hsKeyedObject *>   fObjects;
+        std::vector<hsKeyedObject *> fObjects;
 
     public:
 
@@ -87,16 +89,16 @@ class plCommonObjLib
 
         void            AddObject( hsKeyedObject *object );
         bool            RemoveObjectAndKey( plKey &key );
-        hsKeyedObject   *FindObject( const plString &name, uint16_t classType = (uint16_t)-1 );
-        void            ClearObjectList( void );
+        hsKeyedObject   *FindObject( const ST::string &name, uint16_t classType = (uint16_t)-1 );
+        void            ClearObjectList();
 
         /// THIS IS YOUR VIRTUAL HERE. Override this to define which objects you collect
         virtual bool    IsInteresting( const plKey &objectKey ) { return false; }
 
 
         /// Static functions for use only by the export resManager
-        static uint32_t           GetNumLibs( void );
-        static plCommonObjLib   *GetLib( uint32_t idx );
+        static size_t           GetNumLibs();
+        static plCommonObjLib*  GetLib(size_t idx);
 
 
     private:

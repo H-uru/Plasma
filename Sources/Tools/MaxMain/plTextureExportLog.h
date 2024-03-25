@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plTextureExportLog_h
 #define _plTextureExportLog_h
 
+#include <plFileSystem.h>
 
 //// Class Definition ////////////////////////////////////////////////////////
 
@@ -61,7 +62,7 @@ class plTextureExportLog
 {
     protected:
 
-        char    *fFileName;
+        plFileName fFileName;
 
         // Tiny linked list helper
         class plBMapNode
@@ -76,15 +77,15 @@ class plTextureExportLog
 
 
         void    IAddBMapNode( uint32_t rank, plBitmap *bMap );
-        void    IWriteTabbedString( hsStream *stream, const char *string, int8_t numTabs );
+        void IWriteTabbedString(hsStream& stream, const char *string, int numTabs);
 
     public: 
 
-        plTextureExportLog( const char *fileName );
+        plTextureExportLog( plFileName fileName );
         ~plTextureExportLog();
 
         void    AddTexture( plBitmap *texture );
-        void    Write( void );
+        void    Write();
 };
 
 

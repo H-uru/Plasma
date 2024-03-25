@@ -55,6 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPlasmaMAXLayer.h"
 
+#include "MaxMain/MaxCompat.h"
+
 class ClassDesc2;
 class IParamBlock2;
 class Bitmap;
@@ -87,7 +89,7 @@ protected:
 
 
     Matrix3     IGetViewTM( int i );
-    int         IWriteBM( BitmapInfo *bi, Bitmap *bm, TCHAR *name );
+    int         IWriteBM( BitmapInfo *bi, Bitmap *bm, BMNAME_VALUE_TYPE name );
 
 public:
     // Ref nums
@@ -116,70 +118,71 @@ public:
 
     plStaticEnvLayer();
     ~plStaticEnvLayer();
-    void DeleteThis() { delete this; }      
+    void DeleteThis() override { delete this; }
 
     //From MtlBase
-    ParamDlg* CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
-    BOOL SetDlgThing(ParamDlg* dlg);
-    void Update(TimeValue t, Interval& valid);
-    void Reset();
-    Interval Validity(TimeValue t);
-    ULONG LocalRequirements(int subMtlNum);
+    ParamDlg* CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) override;
+    BOOL SetDlgThing(ParamDlg* dlg) override;
+    void Update(TimeValue t, Interval& valid) override;
+    void Reset() override;
+    Interval Validity(TimeValue t) override;
+    ULONG LocalRequirements(int subMtlNum) override;
 
     //From Texmap
-    RGBA EvalColor(ShadeContext& sc);
-    float EvalMono(ShadeContext& sc);
-    Point3 EvalNormalPerturb(ShadeContext& sc);
+    RGBA EvalColor(ShadeContext& sc) override;
+    float EvalMono(ShadeContext& sc) override;
+    Point3 EvalNormalPerturb(ShadeContext& sc) override;
 
     // For displaying textures in the viewport
-    BOOL SupportTexDisplay() { return TRUE; }
-    void ActivateTexDisplay(BOOL onoff);
-    BITMAPINFO *GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono=FALSE, int forceW=0, int forceH=0);
-    DWORD GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker);
+    BOOL SupportTexDisplay() override { return TRUE; }
+    void ActivateTexDisplay(BOOL onoff) override;
+    BITMAPINFO *GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono=FALSE, int forceW=0, int forceH=0) override;
+    DWORD_PTR GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker) override;
 protected:
     void IChanged();
     void IDiscardTexHandle();
 
+    void IGetClassName(MSTR& s) const override;
+    MSTR ISubAnimName(int i) override;
+
 public:
-    void GetUVTransform(Matrix3 &uvtrans) { fUVGen->GetUVTransform(uvtrans); }
-    int GetTextureTiling() { return  fUVGen->GetTextureTiling(); }
-    int GetUVWSource() { return fUVGen->GetUVWSource(); }
-    virtual int GetMapChannel () { return fUVGen->GetMapChannel(); }    // only relevant if above returns UVWSRC_EXPLICIT
-    UVGen *GetTheUVGen() { return fUVGen; }
+    void GetUVTransform(Matrix3 &uvtrans) override { fUVGen->GetUVTransform(uvtrans); }
+    int GetTextureTiling() override { return  fUVGen->GetTextureTiling(); }
+    int GetUVWSource() override { return fUVGen->GetUVWSource(); }
+    int GetMapChannel() override { return fUVGen->GetMapChannel(); }    // only relevant if above returns UVWSRC_EXPLICIT
+    UVGen *GetTheUVGen() override { return fUVGen; }
     
     //TODO: Return anim index to reference index
-    int SubNumToRefNum(int subNum) { return subNum; }
+    int SubNumToRefNum(int subNum) override { return subNum; }
     
     
     // Loading/Saving
-    IOResult Load(ILoad *iload);
-    IOResult Save(ISave *isave);
+    IOResult Load(ILoad *iload) override;
+    IOResult Save(ISave *isave) override;
 
     //From Animatable
-    Class_ID ClassID() { return STATIC_ENV_LAYER_CLASS_ID; }        
-    SClass_ID SuperClassID() { return TEXMAP_CLASS_ID; }
-    void GetClassName(TSTR& s);
+    Class_ID ClassID() override { return STATIC_ENV_LAYER_CLASS_ID; }
+    SClass_ID SuperClassID() override { return TEXMAP_CLASS_ID; }
 
-    RefTargetHandle Clone( RemapDir &remap );
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-        PartID& partID,  RefMessage message);
+    RefTargetHandle Clone(RemapDir &remap) override;
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+        PartID& partID, RefMessage message MAX_REF_PROPAGATE) override;
 
-    int NumSubs();
-    Animatable* SubAnim(int i); 
-    TSTR SubAnimName(int i);
+    int NumSubs() override;
+    Animatable* SubAnim(int i) override;
 
     // TODO: Maintain the number or references here 
-    int NumRefs();
-    RefTargetHandle GetReference(int i);
-    void SetReference(int i, RefTargetHandle rtarg);
+    int NumRefs() override;
+    RefTargetHandle GetReference(int i) override;
+    void SetReference(int i, RefTargetHandle rtarg) override;
 
-    int NumParamBlocks();   // return number of ParamBlocks in this instance
-    IParamBlock2* GetParamBlock(int i); // return i'th ParamBlock
-    IParamBlock2* GetParamBlockByID(BlockID id); // return id'd ParamBlock
+    int NumParamBlocks() override;   // return number of ParamBlocks in this instance
+    IParamBlock2* GetParamBlock(int i) override; // return i'th ParamBlock
+    IParamBlock2* GetParamBlockByID(BlockID id) override; // return id'd ParamBlock
 
-    const char *GetTextureName( int which );
+    const MCHAR* GetTextureName( int which );
 
-    void        SetBaseFilename( const TCHAR *name, TimeValue t );
+    void        SetBaseFilename( const MCHAR *name, TimeValue t );
     const TCHAR *GetBaseFilename( TimeValue t );
 
     void    RenderCubicMap( INode *node );
@@ -237,13 +240,13 @@ public:
     };
 
         // Pure virtual accessors for the various bitmap related elements
-        virtual Bitmap *GetMaxBitmap(int index = 0) { return fBitmaps[ index ]; }
-        virtual PBBitmap *GetPBBitmap( int index = 0 );
-        virtual int     GetNumBitmaps( void ) { return 6; }
+        Bitmap *GetMaxBitmap(int index = 0) override { return fBitmaps[ index ]; }
+        PBBitmap *GetPBBitmap(int index = 0) override;
+        int     GetNumBitmaps() override { return 6; }
 
     protected:
-        virtual void ISetMaxBitmap(Bitmap *bitmap, int index = 0) { fBitmaps[ index ] = bitmap; }
-        virtual void ISetPBBitmap( PBBitmap *pbbm, int index = 0 );
+        void ISetMaxBitmap(Bitmap *bitmap, int index = 0) override { fBitmaps[ index ] = bitmap; }
+        void ISetPBBitmap(PBBitmap *pbbm, int index = 0) override;
 
 
 };

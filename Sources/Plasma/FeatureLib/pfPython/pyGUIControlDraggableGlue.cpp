@@ -40,11 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyGUIControlDraggable.h"
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControlDraggable, pyGUIControlDraggable);
@@ -54,7 +53,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlDraggable)
 
 PYTHON_INIT_DEFINITION(ptGUIControlDraggable, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -100,15 +99,15 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlDraggable, pyGUIControl, "Params: ctrlKey\
 // required functions for PyObject interoperability
 PyObject *pyGUIControlDraggable::New(pyKey& gckey)
 {
-    ptGUIControlDraggable *newObj = (ptGUIControlDraggable*)ptGUIControlDraggable_type.tp_new(&ptGUIControlDraggable_type, NULL, NULL);
+    ptGUIControlDraggable *newObj = (ptGUIControlDraggable*)ptGUIControlDraggable_type.tp_new(&ptGUIControlDraggable_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlDraggable::New(plKey objkey)
 {
-    ptGUIControlDraggable *newObj = (ptGUIControlDraggable*)ptGUIControlDraggable_type.tp_new(&ptGUIControlDraggable_type, NULL, NULL);
-    newObj->fThis->fGCkey = objkey;
+    ptGUIControlDraggable *newObj = (ptGUIControlDraggable*)ptGUIControlDraggable_type.tp_new(&ptGUIControlDraggable_type, nullptr, nullptr);
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

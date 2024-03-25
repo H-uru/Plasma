@@ -40,21 +40,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <algorithm>
-#include <cfloat>
-#include "hsMatrix44.h"
-#include "hsGeometry3.h"
 #include "plNetClientMgr.h"
 
-#include "plNetMessage/plNetMessage.h"
-#include "pnNetCommon/plNetServers.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnKeyedObject/plKey.h"
+#include "hsMatrix44.h"
+#include "hsGeometry3.h"
 
-#include "plNetTransport/plNetTransportMember.h"
+#include <algorithm>
+
+#include "pnKeyedObject/plKey.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plMessage/plMemberUpdateMsg.h"
 #include "plMessage/plNetVoiceListMsg.h"
+#include "plNetMessage/plNetMessage.h"
+#include "plNetTransport/plNetTransportMember.h"
 #include "plStatusLog/plStatusLog.h"
 #include "plVault/plVault.h"
 
@@ -102,11 +102,10 @@ bool plNetClientMgr::IApplyNewListenList(std::vector<DistSqInfo>& newListenList,
     // set as new listen list
     if (changed)
     {   
-        DebugMsg("ListenList changed, forceSynch=%d\n", forceSynch);
+        DebugMsg("ListenList changed, forceSynch={}\n", forceSynch);
 
         plNetMsgListenListUpdate llu;
         llu.SetPlayerID(GetPlayerID());
-        llu.SetNetProtocol(kNetProtocolCli2Game);
         
         //
         // for each client in the old list, if not in the new list, send a ListenList remove msg
@@ -143,8 +142,8 @@ bool plNetClientMgr::IApplyNewListenList(std::vector<DistSqInfo>& newListenList,
             {
                 int idx=fTransport.FindMember(llu.Receivers()->GetReceiverClientNum(i));
                 plNetTransportMember* mbr=fTransport.GetMember(idx);
-                DebugMsg("<SEND %s> ListenListUpdate msg, adding=%d\n", 
-                    mbr->AsStdString().c_str(), llu.GetAdding());
+                DebugMsg("<SEND {}> ListenListUpdate msg, adding={}\n",
+                    mbr->AsStdString(), llu.GetAdding());
             }
             
             SendMsg(&llu);
@@ -175,8 +174,8 @@ bool plNetClientMgr::IApplyNewListenList(std::vector<DistSqInfo>& newListenList,
                 int cNum=llu.Receivers()->GetReceiverClientNum(i);
                 int idx=fTransport.FindMember(cNum);
                 plNetTransportMember* mbr=fTransport.GetMember(idx);
-                DebugMsg("<SEND %s> ListenListUpdate msg, adding=%d, cNum=%d\n", 
-                    mbr->AsStdString().c_str(), llu.GetAdding(), cNum);
+                DebugMsg("<SEND {}> ListenListUpdate msg, adding={}, cNum={}\n",
+                    mbr->AsStdString(), llu.GetAdding(), cNum);
             }
 
             SendMsg(&llu);
@@ -188,14 +187,14 @@ bool plNetClientMgr::IApplyNewListenList(std::vector<DistSqInfo>& newListenList,
         //
         GetListenList()->Clear();
 #ifdef HS_DEBUGGING
-        DebugMsg("New ListenList, size=%d\n", newListenList.size());
+        DebugMsg("New ListenList, size={}\n", newListenList.size());
 #endif
         for(i=0;i<newListenList.size(); i++)
         {
             GetListenList()->AddMember(newListenList[i].fMbr);
 #ifdef HS_DEBUGGING
-            DebugMsg("\tLL Member %d, name=%s, cNum=%d, dist=%f\n", 
-                i, newListenList[i].fMbr->AsString().c_str(),
+            DebugMsg("\tLL Member {}, name={}, cNum={}, dist={f}\n",
+                i, newListenList[i].fMbr->AsString(),
                 newListenList[i].fMbr->GetPlayerID(), newListenList[i].fDistSq);
 #endif
         }
@@ -243,8 +242,7 @@ bool plNetClientMgr::IUpdateListenList(double secs)
                 hsMatrix44 l2w=locPlayer->GetCoordinateInterface()->GetLocalToWorld();
                 hsPoint3 locPlayerPos=l2w.GetTranslate();
 
-                int i;
-                for(i=0;i<fTransport.GetNumMembers();i++)
+                for (size_t i = 0; i < fTransport.GetNumMembers(); i++)
                 {
                     fTransport.GetMember(i)->SetDistSq(FLT_MAX);
 
@@ -258,11 +256,11 @@ bool plNetClientMgr::IUpdateListenList(double secs)
 #if 0
                     if (!k)
                     {
-                        DebugMsg("UpdateListenList: Nil avatar key on member %s\n", 
-                            fTransport.GetMember(i)->AsStdString().c_str());
+                        DebugMsg("UpdateListenList: Nil avatar key on member {}\n",
+                            fTransport.GetMember(i)->AsStdString());
                     }
 #endif
-                    plSceneObject* obj=plSceneObject::ConvertNoRef(k ? k->ObjectIsLoaded() : nil);
+                    plSceneObject* obj=plSceneObject::ConvertNoRef(k ? k->ObjectIsLoaded() : nullptr);
                     if (obj && obj->GetCoordinateInterface())
                     {
 #if 1
@@ -276,11 +274,6 @@ bool plNetClientMgr::IUpdateListenList(double secs)
                         // I can't listen to players that are more than 50 ft away 
                         if (distSq>plNetListenList::kMaxListenDistSq)
                             continue;
-                        // if we are p2p and member isn't, skip them.
-                        if ( IsPeerToPeer() && !fTransport.GetMember(i)->IsPeerToPeer() )
-                            continue;
-                        // otherwise, we aren't p2p so just update the listen list
-                        // normally so it will update in the gui as distance changes.
 #else
                         float distSq=1;
 #endif
@@ -367,37 +360,22 @@ void plNetClientMgr::IHandleNetVoiceListMsg(plNetVoiceListMsg* msg)
     if (msg->GetCmd() == plNetVoiceListMsg::kForcedListenerMode)
     {
         // first make sure this message applies to us:
-        int i;
-        bool included = false;
-        for (i = 0; i < msg->GetClientList()->Count(); i++)
-        {   
-            if (msg->GetClientList()->AcquireArray()[i] == NetCommGetPlayer()->playerInt)
-            {   
-                included = true;
-                break;
-            }
-        }
-        if (!included)
+        const std::vector<uint32_t>& clientList = msg->GetClientList();
+        if (std::find(clientList.cbegin(), clientList.cend(), NetCommGetPlayer()->playerInt) == clientList.cend())
             return;
         SetListenListMode(kListenList_Forced);
         // add in the members we receive from python
-        for (i = 0; i < msg->GetClientList()->Count(); i++)
+        for (uint32_t clientId : clientList)
         {
-            plNetTransportMember **members = nil;
-            plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted( members );
-                    
-            if( members != nil)
+            std::vector<plNetTransportMember*> members = plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted();
+
+            for (plNetTransportMember* mbr : members)
             {
-                for(int j= 0; j < plNetClientMgr::GetInstance()->TransportMgr().GetNumMembers(); j++ )
+                if (mbr != nullptr && mbr->GetAvatarKey() != nullptr && mbr->GetPlayerID() == clientId)
                 {
-                    plNetTransportMember *mbr = members[ j ];
-                    if( mbr != nil && mbr->GetAvatarKey() != nil && mbr->GetPlayerID() == msg->GetClientList()->AcquireArray()[i])
-                    {
-                        plNetClientMgr::GetInstance()->GetListenList()->AddMember(mbr);
-                    }
+                    plNetClientMgr::GetInstance()->GetListenList()->AddMember(mbr);
                 }
             }
-            delete [] members;
         }
     }
     else

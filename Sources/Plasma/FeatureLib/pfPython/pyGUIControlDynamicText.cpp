@@ -40,28 +40,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
+#include "pyGUIControlDynamicText.h"
+
+#include "plGImage/plDynamicTextMap.h"
 
 #include "pfGameGUIMgr/pfGUIDynDisplayCtrl.h"
-#include "plGImage/plDynamicTextMap.h"
-#include "pyDynamicText.h"
 
-#include "pyGUIControlDynamicText.h"
+#include "pyDynamicText.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 pyGUIControlDynamicText::pyGUIControlDynamicText(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlDynamicText::pyGUIControlDynamicText(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlDynamicText::pyGUIControlDynamicText(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 
 
-bool pyGUIControlDynamicText::IsGUIControlDynamicText(pyKey& gckey)
+bool pyGUIControlDynamicText::IsGUIControlDynamicText(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUIDynDisplayCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUIDynDisplayCtrl::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }
@@ -103,8 +103,6 @@ PyObject* pyGUIControlDynamicText::GetMap(uint32_t i)
             }
         }
     }
-    char errmsg[256];
-    sprintf(errmsg,"DynamicDisplay map number %d could be found on this control...?",i);
-    PyErr_SetString(PyExc_KeyError, errmsg);
+    PyErr_Format(PyExc_KeyError, "DynamicDisplay map number %d could be found on this control...?", i);
     PYTHON_RETURN_ERROR;
 }

@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plComponentBase.h"
 #include "plNoteTrackDlgComp.h"
-#pragma hdrstop
 
 
 void plComponentNoteTrackDlg::ICacheNoteTrack()
@@ -60,5 +59,5 @@ void plComponentNoteTrackDlg::ICacheNoteTrack()
             targets.push_back((Animatable*)comp->GetTarget(i));
     }
 
-    fSegMap = GetSharedAnimSegmentMap(targets, nil);
+    fSegMap = GetSharedAnimSegmentMap(targets, nullptr);
 }

@@ -42,14 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_RTLIGHT_BASE_H
 #define PL_RTLIGHT_BASE_H
 
-// Our generic headers
 #include "HeadSpin.h"
-#include "hsWindows.h"
-
-// Max related headers
-#include <max.h>
-#include <iparamm2.h>
-#include "MaxMain/MaxCompat.h"
+#include "MaxMain/MaxAPI.h"
 
 
 extern TCHAR *GetString(int id);
@@ -95,11 +89,11 @@ class plRTLightBase;
 class plBaseLightProc : public ParamMap2UserDlgProc
 {
     protected:
-        void            ILoadComboBox( HWND hComboBox, const char *names[] );
+        void            ILoadComboBox( HWND hComboBox, const TCHAR* names[] );
         void            IBuildLightMesh( plRTLightBase *base, float coneSize );
 
     public:
-        virtual BOOL    DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+        INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -109,10 +103,10 @@ class plBaseLightProc : public ParamMap2UserDlgProc
 class plLightTexPBAccessor : public PBAccessor
 {
     public:
-        void Set( PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t );
-        void Get( PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid );
+        void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override;
+        void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid) override;
 
-        static plLightTexPBAccessor *Instance( void ) { return &fAccessor; }
+        static plLightTexPBAccessor *Instance() { return &fAccessor; }
 
     protected:
 
@@ -123,7 +117,7 @@ class plLightTexPBAccessor : public PBAccessor
 //// plRTLightBase Class //////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-class plRTLightBase : public GenLight
+class plRTLightBase : public plMaxObject<GenLight>
 {
 
 protected:
@@ -134,7 +128,7 @@ protected:
     plLayerTex*  fTex;
 
 
-    virtual bool    IHasAttenuation( void ) { return false; }
+    virtual bool    IHasAttenuation() { return false; }
     virtual void    IBuildMeshes( BOOL isNew ) {}
 
     void    BuildStaticMeshes();
@@ -146,6 +140,9 @@ protected:
     Mesh    staticMesh[2];
     Mesh    spotMesh;
 
+    const MCHAR* IGetObjectName() const override { return fClassDesc->ClassName(); }
+    void IGetClassName(MSTR& s) const override { s = fClassDesc->ClassName(); }
+    MSTR ISubAnimName(int i) override;
 
 public:
     friend class plBaseLightProc;
@@ -319,46 +316,42 @@ public:
         kAnimLoopName
     };
     
-    plRTLightBase() { }//meshBuilt = 0; fClassDesc = NULL;  fLightPB = NULL; fIP = NULL; BuildMeshes(true); }
+    plRTLightBase() { }//meshBuilt = 0; fClassDesc = nullptr;  fLightPB = nullptr; fIP = nullptr; BuildMeshes(true); }
     virtual ~plRTLightBase();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    static ParamBlockDesc2  *GetAnimPBDesc( void );
+    static ParamBlockDesc2  *GetAnimPBDesc();
 
-    TCHAR* GetObjectName()      { return (TCHAR*)fClassDesc->ClassName(); }
-    void GetClassName(TSTR& s)  { s = fClassDesc->ClassName(); }
-
-    virtual IParamBlock2 *GetParamBlock( int i );
+    IParamBlock2 *GetParamBlock(int i) override;
     virtual IParamBlock2* GetParamBlock2();
-    virtual IParamBlock2* GetParamBlockByID(short id);
+    IParamBlock2* GetParamBlockByID(short id) override;
     plLayerTex*   GetTex() { return fTex; }
     // So our animatables will show up in the trackview
-    virtual int NumParamBlocks() { return 1; }
-    virtual int NumSubs();
-    virtual Animatable* SubAnim(int i);
-    virtual TSTR SubAnimName(int i);
+    int NumParamBlocks() override { return 1; }
+    int NumSubs() override;
+    Animatable* SubAnim(int i) override;
 
     // plug-in mouse creation callback
-    CreateMouseCallBack* GetCreateMouseCallBack();
-    RefTargetHandle Clone(RemapDir &remap = DEFAULTREMAP){ plRTLightBase* thisObj = new plRTLightBase(); BaseClone(this, thisObj, remap); return thisObj;}
+    CreateMouseCallBack* GetCreateMouseCallBack() override;
+    RefTargetHandle Clone(RemapDir &remap = DEFAULTREMAP) override { plRTLightBase* thisObj = new plRTLightBase(); BaseClone(this, thisObj, remap); return thisObj;}
     
-    virtual void BeginEditParams(IObjParam *ip, ULONG flags, Animatable *prev);
-    virtual void EndEditParams(IObjParam *ip, ULONG flags, Animatable *next);
+    void BeginEditParams(IObjParam *ip, ULONG flags, Animatable *prev) override;
+    void EndEditParams(IObjParam *ip, ULONG flags, Animatable *next) override;
     
     // main function that will build our mesh
-    void FreeCaches();
+    void FreeCaches() override;
     
     // retreives bounding box in object space/world space
-    void GetLocalBoundBox(TimeValue t, INode *node, ViewExp *vpt, Box3 &box);
-    void GetWorldBoundBox(TimeValue t, INode *node, ViewExp *vpt, Box3 &box);
+    void GetLocalBoundBox(TimeValue t, INode *node, ViewExp *vpt, Box3 &box) override;
+    void GetWorldBoundBox(TimeValue t, INode *node, ViewExp *vpt, Box3 &box) override;
     
     // main display function for this object
-    int Display(TimeValue t, INode *node, ViewExp *vpt, int flags);
+    int Display(TimeValue t, INode *node, ViewExp *vpt, int flags) override;
     virtual int DrawConeAndLine(TimeValue t, INode* inode, GraphicsWindow *gw, int drawing );
     void GetConePoints(TimeValue t, float aspect, float angle, float dist, Point3 *q);
     virtual void DrawCone(TimeValue t, GraphicsWindow *gw, float dist);
-    int GetSpotShape(void){ return 0; }
-    void SetExtendedDisplay(int flags){ extDispFlags = flags; }
+    int GetSpotShape() override { return 0; }
+    void SetExtendedDisplay(int flags) override { extDispFlags = flags; }
     void BoxCircle(TimeValue t, float r, float d, Box3& box, int extraPt, Matrix3 *tm);
     void BoxDirPoints(TimeValue t, float angle, float dist, Box3 &box, Matrix3 *tm);
     void BoxPoints(TimeValue t, float angle, float dist, Box3 &box, Matrix3 *tm);
@@ -385,126 +378,126 @@ public:
     
 
     // hit testing of this object
-    int HitTest(TimeValue t, INode *node, int type, int crossing, int flags, IPoint2 *p, ViewExp *vpt);
+    int HitTest(TimeValue t, INode *node, int type, int crossing, int flags, IPoint2 *p, ViewExp *vpt) override;
     
-    void Snap(TimeValue t, INode* inode, SnapInfo *snap, IPoint2 *p, ViewExp *vpt);
-    void GetDeformBBox(TimeValue t, Box3& box, Matrix3 *tm, BOOL useSel );
+    void Snap(TimeValue t, INode* inode, SnapInfo *snap, IPoint2 *p, ViewExp *vpt) override;
+    void GetDeformBBox(TimeValue t, Box3& box, Matrix3 *tm, BOOL useSel) override;
 
 
     //Internal routines
     void BoxLight(TimeValue t, INode *inode, Box3& box, Matrix3 *tm);
     void GetMat(TimeValue t, INode* inode, ViewExp *vpt, Matrix3& tm);
 
-    virtual RefTargetHandle GetReference(int i);
-    virtual void SetReference(int ref, RefTargetHandle rtarg);
-    virtual int NumRefs() { return kNumRefs;}
+    RefTargetHandle GetReference(int i) override;
+    void SetReference(int ref, RefTargetHandle rtarg) override;
+    int NumRefs() override { return kNumRefs;}
     
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message);
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message MAX_REF_PROPAGATE) override;
 
     // Called to retreive the state of this object at the specified time.
-    ObjectState Eval(TimeValue t) { return ObjectState(this); }
+    ObjectState Eval(TimeValue t) override { return ObjectState(this); }
 
-    const char *GetCategory(){ return fClassDesc->Category(); }
+    const MCHAR* GetCategory() { return fClassDesc->Category(); }
 
     //
     //  LightObject Specific Stuff below
     //
     //
 
-    virtual BOOL IsSpot( void ) { return FALSE; }
-    virtual BOOL IsDir( void )  { return FALSE; }
+    BOOL IsSpot() override { return FALSE; }
+    BOOL IsDir() override  { return FALSE; }
 
-    RefResult EvalLightState(TimeValue time, Interval& valid, LightState *ls);
-    ObjLightDesc *CreateLightDesc(INode *n, BOOL forceShadowBuffer=FALSE);
-    void SetUseLight(int onOff) { fLightPB->SetValue(kLightOn, 0, onOff); NotifyDependents(FOREVER, PART_OBJ, REFMSG_CHANGE); }
-    BOOL GetUseLight(void) { BOOL v; fLightPB->GetValue(kLightOn, 0, v, FOREVER); return v; }
-    void SetHotspot(TimeValue time, float f); 
-    float GetHotspot(TimeValue t, Interval& valid = Interval(0,0));
-    void SetFallsize(TimeValue time, float f); 
-    float GetFallsize(TimeValue t, Interval& valid = Interval(0,0));
-    void SetAtten(TimeValue time, int which, float f);
-    float GetAtten(TimeValue t, int which, Interval& valid = Interval(0,0));
+    RefResult EvalLightState(TimeValue time, Interval& valid, LightState *ls) override;
+    ObjLightDesc *CreateLightDesc(INode *n, BOOL forceShadowBuffer=FALSE) override;
+    void SetUseLight(int onOff) override { fLightPB->SetValue(kLightOn, 0, onOff); NotifyDependents(FOREVER, PART_OBJ, REFMSG_CHANGE); }
+    BOOL GetUseLight() override { BOOL v; fLightPB->GetValue(kLightOn, 0, v, FOREVER); return v; }
+    void SetHotspot(TimeValue time, float f) override;
+    float GetHotspot(TimeValue t, Interval& valid = Interval(0,0)) override;
+    void SetFallsize(TimeValue time, float f) override;
+    float GetFallsize(TimeValue t, Interval& valid = Interval(0,0)) override;
+    void SetAtten(TimeValue time, int which, float f) override;
+    float GetAtten(TimeValue t, int which, Interval& valid = Interval(0,0)) override;
     
     // TDist funcs needs implementation  as of 31/5/01
-    void SetTDist(TimeValue time, float f); 
-    float GetTDist(TimeValue t, Interval& valid = Interval(0,0));
+    void SetTDist(TimeValue time, float f) override;
+    float GetTDist(TimeValue t, Interval& valid = Interval(0,0)) override;
 
-    void SetConeDisplay(int s, int notify=TRUE);
-    BOOL GetConeDisplay(void);
+    void SetConeDisplay(int s, int notify=TRUE) override;
+    BOOL GetConeDisplay() override;
 
-    void SetRGBColor(TimeValue t, Point3& rgb); //fLightPB->SetValue(kRGB, t, rgb); NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);}
-    Point3 GetRGBColor(TimeValue t, Interval &valid = Interval(0,0)); //return fLightPB->GetPoint3(kRGB, t); }        
-    void SetIntensity(TimeValue t, float f) { fLightPB->SetValue(kIntensity, t, f); NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);}
-    float GetIntensity(TimeValue t, Interval& valid = Interval(0,0)) {return fLightPB->GetFloat(kIntensity, t); }
-    void SetAspect(TimeValue t, float f) {}
-    float GetAspect(TimeValue t, Interval& valid = Interval(0,0)) { return 0.0; }    
-    void SetUseAtten(int s){ fLightPB->SetValue(kUseAttenuationBool, 0, s); NotifyDependents(FOREVER, PART_OBJ, REFMSG_CHANGE); }
-    BOOL GetUseAtten(void) {return fLightPB->GetInt(kUseAttenuationBool, 0);}
-    void SetUseAttenNear(int s) {  }
-    BOOL GetUseAttenNear(void) {return false;}
-    void SetAttenDisplay(int s){  }
-    BOOL GetAttenDisplay(void) {return fLightPB->GetInt(kUseAttenuationBool, 0);}      
-    void SetAttenDisplayNear(int s){ }
-    BOOL GetAttenDisplayNear(void){return false;}      
-    void Enable(int enab) { fLightPB->SetValue(kLightOn, 0, enab); }
-    void SetMapBias(TimeValue t, float f) {}
-    float GetMapBias(TimeValue t, Interval& valid = Interval(0,0)){return 0.0f;}
-    void SetMapRange(TimeValue t, float f) {}
-    float GetMapRange(TimeValue t, Interval& valid = Interval(0,0)) {return 0.0f;}
-    void SetMapSize(TimeValue t, int f) {}
-    int GetMapSize(TimeValue t, Interval& valid = Interval(0,0)){return 0;}
-    void SetRayBias(TimeValue t, float f) {}
-    float GetRayBias(TimeValue t, Interval& valid = Interval(0,0)) {return 0.0;} //{return 0.0f;}
-    int GetAbsMapBias() {return 0;}
-    void SetAbsMapBias(int a) {}
-    int GetOvershoot(){return 0;}
-    void SetOvershoot(int a){}
-    virtual int GetProjector() { return 0; }
-    void SetProjector(int a){fLightPB->SetValue(kUseProjectorBool, 0, a); }
-    ExclList* GetExclList(){return NULL;}
-    BOOL Include() {return false;}
-    virtual Texmap* GetProjMap(); //{ Interval valid = Interval(0,0); Texmap* MyMap; fLightPB->GetValue(kProjMapTexButton, 0, MyMap, valid); return MyMap; }
+    void SetRGBColor(TimeValue t, MAX24_CONST Point3& rgb) override; //fLightPB->SetValue(kRGB, t, rgb); NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);}
+    Point3 GetRGBColor(TimeValue t, Interval &valid = Interval(0,0)) override; //return fLightPB->GetPoint3(kRGB, t); }        
+    void SetIntensity(TimeValue t, float f) override { fLightPB->SetValue(kIntensity, t, f); NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE); }
+    float GetIntensity(TimeValue t, Interval& valid = Interval(0,0)) override { return fLightPB->GetFloat(kIntensity, t); }
+    void SetAspect(TimeValue t, float f) override { }
+    float GetAspect(TimeValue t, Interval& valid = Interval(0,0)) override { return 0.0; }
+    void SetUseAtten(int s) override { fLightPB->SetValue(kUseAttenuationBool, 0, s); NotifyDependents(FOREVER, PART_OBJ, REFMSG_CHANGE); }
+    BOOL GetUseAtten() override { return fLightPB->GetInt(kUseAttenuationBool, 0); }
+    void SetUseAttenNear(int s) override { }
+    BOOL GetUseAttenNear() override { return false; }
+    void SetAttenDisplay(int s) override { }
+    BOOL GetAttenDisplay() override { return fLightPB->GetInt(kUseAttenuationBool, 0); }
+    void SetAttenDisplayNear(int s) { }
+    BOOL GetAttenDisplayNear() { return false; }
+    void Enable(int enab) override { fLightPB->SetValue(kLightOn, 0, enab); }
+    void SetMapBias(TimeValue t, float f) override { }
+    float GetMapBias(TimeValue t, Interval& valid = Interval(0,0)) override { return 0.0f; }
+    void SetMapRange(TimeValue t, float f) override { }
+    float GetMapRange(TimeValue t, Interval& valid = Interval(0,0)) override { return 0.0f; }
+    void SetMapSize(TimeValue t, int f) override { }
+    int GetMapSize(TimeValue t, Interval& valid = Interval(0,0)) override { return 0; }
+    void SetRayBias(TimeValue t, float f) override { }
+    float GetRayBias(TimeValue t, Interval& valid = Interval(0,0)) override { return 0.0; } //{return 0.0f;}
+    int GetAbsMapBias() override { return 0; }
+    void SetAbsMapBias(int a) override { }
+    int GetOvershoot() override { return 0; }
+    void SetOvershoot(int a) override { }
+    int GetProjector() override { return 0; }
+    void SetProjector(int a) override { fLightPB->SetValue(kUseProjectorBool, 0, a); }
+    ExclList* GetExclList() override { return nullptr; }
+    BOOL Include() override { return false; }
+    Texmap* GetProjMap() override; //{ Interval valid = Interval(0,0); Texmap* MyMap; fLightPB->GetValue(kProjMapTexButton, 0, MyMap, valid); return MyMap; }
     void SetProjMap(BitmapInfo* pmap);
-    void UpdateTargDistance(TimeValue t, INode* inode);
+    void UpdateTargDistance(TimeValue t, INode* inode) override;
 
     // GenLight Specific Stuff below
 
-    BOOL GetUseGlobal() { return false; }   //Global Shadow param
-    void SetUseGlobal(int a) {}
-    BOOL GetShadow();
-    void SetShadow(int a);
-    BOOL GetShadowType() { return -1; } //No Shadows generated ....
-    void SetShadowType(int a) {}        //Until implemented....
-    GenLight* NewLight(int type) { return NULL;} 
-    int Type()  {return -1;}
-    void SetSpotShape(int a) {}
-    void SetHSVColor(TimeValue t, class Point3 &b);
-    Point3 GetHSVColor(TimeValue t, Interval& b);
-    void SetContrast(int a, float other) {} // fLightPB->SetValue(kContrast, a, other); NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);}
-    float GetContrast(int a, Interval &valid) {return 0.0;} //float f; f = fLightPB->GetFloat(kContrast, a); return f;}
-    void SetAttenNearDisplay(int a) {}
-    BOOL GetAttenNearDisplay() {return false;}
-    ExclList& GetExclusionList() {return exclList;}
-    void SetExclusionList(ExclList & a) {}
-    BOOL SetHotSpotControl(Control* a) {SetParamBlock2Controller(fLightPB, ParamID(kHotSpot),0, a); return true;}
-    BOOL SetFalloffControl(Control* a) {SetParamBlock2Controller(fLightPB, ParamID(kFallOff),0, a); return true;}
-    Control* GetHotSpotControl() {return GetParamBlock2Controller(fLightPB, ParamID(kHotSpot));}
-    Control* GetFalloffControl() {return GetParamBlock2Controller(fLightPB, ParamID(kFallOff));}
-    BOOL SetColorControl(Control * a) {SetParamBlock2Controller(fLightPB, ParamID(kLightColor),0, a); return true;}
-    Control* GetColorControl() {return GetParamBlock2Controller(fLightPB, ParamID(kLightColor)); }
+    BOOL GetUseGlobal() override { return false; }   //Global Shadow param
+    void SetUseGlobal(int a) override { }
+    BOOL GetShadow() override;
+    void SetShadow(int a) override;
+    BOOL GetShadowType() override { return -1; } //No Shadows generated ....
+    void SetShadowType(int a) override { }       //Until implemented....
+    GenLight* NewLight(int type) override { return nullptr; }
+    int Type() override { return -1; }
+    void SetSpotShape(int a) override { }
+    void SetHSVColor(TimeValue t, class Point3 &b) override;
+    Point3 GetHSVColor(TimeValue t, Interval& b) override;
+    void SetContrast(int a, float other) override { } // fLightPB->SetValue(kContrast, a, other); NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);}
+    float GetContrast(int a, Interval &valid) override { return 0.0; } //float f; f = fLightPB->GetFloat(kContrast, a); return f;}
+    void SetAttenNearDisplay(int a) override { }
+    BOOL GetAttenNearDisplay() override { return false; }
+    ExclList& GetExclusionList() override { return exclList; }
+    void SetExclusionList(ExclList & a) override { }
+    BOOL SetHotSpotControl(Control* a) override { SetParamBlock2Controller(fLightPB, ParamID(kHotSpot),0, a); return true; }
+    BOOL SetFalloffControl(Control* a) override { SetParamBlock2Controller(fLightPB, ParamID(kFallOff),0, a); return true; }
+    Control* GetHotSpotControl() override { return GetParamBlock2Controller(fLightPB, ParamID(kHotSpot)); }
+    Control* GetFalloffControl() override { return GetParamBlock2Controller(fLightPB, ParamID(kFallOff)); }
+    BOOL SetColorControl(Control * a) override { SetParamBlock2Controller(fLightPB, ParamID(kLightColor),0, a); return true; }
+    Control* GetColorControl() override { return GetParamBlock2Controller(fLightPB, ParamID(kLightColor)); }
 
-    BOOL GetDecayType() { return fLightPB->GetInt(kAttenTypeRadio, 0) + 1;} //Offset for the radio.
-    void SetDecayType(BOOL onOff) {if (!onOff) return; else {fLightPB->SetValue(kAttenTypeRadio, 0, ((int) onOff - 1)); return;} } 
-    void SetDecayRadius(TimeValue time, float f) { fLightPB->SetValue(kAttenMaxFalloffEdit, time, f); }
-    float GetDecayRadius(TimeValue t, Interval& valid = Interval(0,0)) {return fLightPB->GetFloat(kAttenMaxFalloffEdit, t); }
+    BOOL GetDecayType() override { return fLightPB->GetInt(kAttenTypeRadio, 0) + 1; } //Offset for the radio.
+    void SetDecayType(BOOL onOff) override { if (!onOff) return; else { fLightPB->SetValue(kAttenTypeRadio, 0, ((int) onOff - 1)); return; } }
+    void SetDecayRadius(TimeValue time, float f) override { fLightPB->SetValue(kAttenMaxFalloffEdit, time, f); }
+    float GetDecayRadius(TimeValue t, Interval& valid = Interval(0,0)) override { return fLightPB->GetFloat(kAttenMaxFalloffEdit, t); }
 
-    void SetDiffuseSoft(TimeValue time, float f) {}//fLightPB->SetValue(kDiffSoft, time, f);}
-    float GetDiffuseSoft(TimeValue t, Interval& valid = Interval(0,0)) {return 0.0;} //return fLightPB->GetFloat(kDiffSoft, t);}
-    void SetAffectDiffuse(BOOL onOff) {}//fLightPB->SetValue(kDiffOn, 0, onOff); }
-    BOOL GetAffectDiffuse() {return false; } //fLightPB->GetInt(kDiffOn, 0); }
+    void SetDiffuseSoft(TimeValue time, float f) override { }//fLightPB->SetValue(kDiffSoft, time, f);}
+    float GetDiffuseSoft(TimeValue t, Interval& valid = Interval(0,0)) override { return 0.0; } //return fLightPB->GetFloat(kDiffSoft, t);}
+    void SetAffectDiffuse(BOOL onOff) override { }//fLightPB->SetValue(kDiffOn, 0, onOff); }
+    BOOL GetAffectDiffuse() override { return false; } //fLightPB->GetInt(kDiffOn, 0); }
 
     LRESULT CALLBACK TrackViewWinProc( HWND hwnd,  UINT message, 
-            WPARAM wParam,   LPARAM lParam ){return(0);}
+            WPARAM wParam,   LPARAM lParam ) override { return(0); }
 };
 
 #endif

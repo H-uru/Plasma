@@ -61,7 +61,8 @@ public:
         fEvent = kTime;
         SetBCastFlag(plMessage::kBCastByExactType);
     }
-    plAvatarFootMsg(const plKey& s, plArmatureMod *armature, bool isLeft) : plEventCallbackMsg(s, nil, nil), fArmature(armature), fIsLeft(isLeft) 
+    plAvatarFootMsg(const plKey& s, plArmatureMod *armature, bool isLeft)
+        : plEventCallbackMsg(s, nullptr, nullptr), fArmature(armature), fIsLeft(isLeft)
     {
         fEvent = kTime;
         SetBCastFlag(plMessage::kBCastByExactType);
@@ -70,11 +71,11 @@ public:
     CLASSNAME_REGISTER( plAvatarFootMsg );
     GETINTERFACE_ANY( plAvatarFootMsg, plEventCallbackMsg );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr)
+    void Read(hsStream *stream, hsResMgr *mgr) override
     {
         hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
     }
-    virtual void Write(hsStream *stream, hsResMgr *mgr)
+    void Write(hsStream *stream, hsResMgr *mgr) override
     {
         hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
     }

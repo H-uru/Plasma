@@ -48,20 +48,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
-
 #include "plWin32GroupedSound.h"
+
+#include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "plProfile.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "plDSoundBuffer.h"
 
 #include "plAudioSystem.h"
 #include "plAudioCore/plSoundBuffer.h"
 #include "plAudioCore/plSoundDeswizzler.h"
-#include "plgDispatch.h"
+
 #include "pnMessage/plSoundMsg.h"
 
 #include "plStatusLog/plStatusLog.h"
-#include "plProfile.h"
-#include "hsResMgr.h"
 
 plProfile_Extern( MemSounds );
 plProfile_Extern( StaticSndShoveTime );
@@ -69,28 +72,10 @@ plProfile_Extern( StaticSwizzleTime );
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-plWin32GroupedSound::plWin32GroupedSound()
+void    plWin32GroupedSound::SetPositionArray(size_t numSounds, const uint32_t *posArray, const float *volumeArray)
 {
-    fCurrentSound = 0;
-}
-
-plWin32GroupedSound::~plWin32GroupedSound()
-{
-    DeActivate();
-}
-
-void    plWin32GroupedSound::SetPositionArray( uint16_t numSounds, uint32_t *posArray, float *volumeArray )
-{
-    uint16_t  i;
-
-
-    fStartPositions.SetCountAndZero( numSounds );
-    fVolumes.SetCountAndZero( numSounds );
-    for( i = 0; i < numSounds; i++ )
-    {
-        fStartPositions[ i ] = posArray[ i ];
-        fVolumes[ i ] = volumeArray[ i ];
-    }
+    fStartPositions.assign(posArray, posArray + numSounds);
+    fVolumes.assign(volumeArray, volumeArray + numSounds);
 }
 
 //// IRead/IWrite ////////////////////////////////////////////////////////////
@@ -98,13 +83,13 @@ void    plWin32GroupedSound::SetPositionArray( uint16_t numSounds, uint32_t *pos
 void plWin32GroupedSound::IRead( hsStream *s, hsResMgr *mgr )
 {
     plWin32StaticSound::IRead( s, mgr );
-    uint16_t i, n = s->ReadLE16();
-    fStartPositions.SetCountAndZero( n );
-    fVolumes.SetCountAndZero( n );
-    for( i = 0; i < n; i++ )
+    uint16_t n = s->ReadLE16();
+    fStartPositions.resize(n);
+    fVolumes.resize(n);
+    for (uint16_t i = 0; i < n; i++)
     {
         fStartPositions[ i ] = s->ReadLE32();
-        fVolumes[ i ] = s->ReadLEScalar();
+        fVolumes[i] = s->ReadLEFloat();
     }
 }
 
@@ -112,12 +97,11 @@ void plWin32GroupedSound::IWrite( hsStream *s, hsResMgr *mgr )
 {
     plWin32StaticSound::IWrite( s, mgr );
 
-    s->WriteLE16( fStartPositions.GetCount() );
-    uint16_t i;
-    for( i = 0; i < fStartPositions.GetCount(); i++ )
+    s->WriteLE16((uint16_t)fStartPositions.size());
+    for (size_t i = 0; i < fStartPositions.size(); i++)
     {
         s->WriteLE32( fStartPositions[ i ] );
-        s->WriteLEScalar( fVolumes[ i ] );
+        s->WriteLEFloat(fVolumes[i]);
     }
 }
 
@@ -131,7 +115,7 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
     if( fPriority > plgAudioSys::GetPriorityCutoff() )
         return false;   // Don't set the failed flag, just return
 
-    if( !plgAudioSys::Active() || fDSoundBuffer != nil )
+    if (!plgAudioSys::Active() || fDSoundBuffer != nullptr)
         return false;
 
 
@@ -160,8 +144,8 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
     // We need it to be resident to read in
     if( retVal == plSoundBuffer::kError) 
     {
-        plString str = plFormat("Unable to open .wav file {}", fDataBufferKey ? fDataBufferKey->GetName() : "nil");
-        IPrintDbgMessage( str.c_str(), true );
+        ST::string str = ST::format("Unable to open .wav file {}", fDataBufferKey ? fDataBufferKey->GetName() : "nil");
+        IPrintDbgMessage(str, true);
         fFailed = true;
         return false;
     }
@@ -181,15 +165,14 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
 
     // Calculate the maximum size for our buffer. This will be the length of the longest sound we're going to 
     // have to play.
-    uint16_t i;
-    uint32_t maxSoundSize, len;
-    for( i = 1, maxSoundSize = 0; i < fStartPositions.GetCount(); i++ )
+    uint32_t maxSoundSize = 0, len = 0;
+    for (size_t i = 1; i < fStartPositions.size(); i++)
     {
         len = fStartPositions[ i ] - fStartPositions[ i - 1 ];
         if( len > maxSoundSize )
             maxSoundSize = len;
     }
-    len = buffer->GetDataLength() - fStartPositions[ fStartPositions.GetCount() - 1 ];
+    len = buffer->GetDataLength() - fStartPositions.back();
     if( len > maxSoundSize )
         maxSoundSize = len;
 
@@ -211,14 +194,14 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
     fDSoundBuffer = new plDSoundBuffer( bufferSize, header, is3D, IsPropertySet( kPropLooping ), true );
     if( !fDSoundBuffer->IsValid() )
     {
-        plString str = plFormat("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
-                                " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
-                                GetFileName());
-        IPrintDbgMessage(str.c_str(), true);
+        ST::string str = ST::format("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
+                                    " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
+                                    GetFileName());
+        IPrintDbgMessage(str, true);
         fFailed = true;
 
         delete fDSoundBuffer;
-        fDSoundBuffer = nil;
+        fDSoundBuffer = nullptr;
 
         return false;
     }
@@ -229,20 +212,20 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
     IFillCurrentSound( 0 );
 
     // Logging
-    plString str = plFormat("   Grouped {} {} allocated ({} msec).", buffer->GetFileName().IsValid() ? "file" : "buffer",
-                            buffer->GetFileName().IsValid() ? buffer->GetFileName() : buffer->GetKeyName(),
-                            //fDSoundBuffer->IsHardwareAccelerated() ? "hardware" : "software",
-                            //fDSoundBuffer->IsStaticVoice() ? "static" : "dynamic",
+    ST::string str = ST::format("   Grouped {} {} allocated ({} msec).", buffer->GetFileName().IsValid() ? "file" : "buffer",
+                                buffer->GetFileName().IsValid() ? buffer->GetFileName() : buffer->GetKeyName(),
+                                //fDSoundBuffer->IsHardwareAccelerated() ? "hardware" : "software",
+                                //fDSoundBuffer->IsStaticVoice() ? "static" : "dynamic",
 #ifdef PL_PROFILE_ENABLED
                             gProfileVarStaticSndShoveTime.GetValue());
 #else
                             0);
 #endif
-    IPrintDbgMessage( str.c_str() );
-    if( GetKey() != nil && GetKeyName().Find( "Footstep" ) >= 0 )
+    IPrintDbgMessage(str);
+    if (GetKey() != nullptr && GetKeyName().contains("Footstep"))
         ;
     else
-        plStatusLog::AddLineS( "audioTimes.log", "%s (%s)", str.c_str(), GetKey() ? GetKeyName().c_str() : "unkeyed" );
+        plStatusLog::AddLineSF( "audioTimes.log", "{} ({})", str, GetKey() ? GetKeyName() : ST_LITERAL("unkeyed") );
 
     fTotalBytes = bufferSize;
 
@@ -259,7 +242,7 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
 //// GetSoundLength //////////////////////////////////////////////////////////
 //  Gets the length (in seconds) of the given sound index from the group.
 
-float    plWin32GroupedSound::GetSoundLength( int16_t soundIndex )
+float    plWin32GroupedSound::GetSoundLength(uint16_t soundIndex)
 {
     plSoundBuffer *buffer = (plSoundBuffer *)fDataBufferKey->ObjectIsLoaded();
     if(buffer)
@@ -273,10 +256,9 @@ float    plWin32GroupedSound::GetSoundLength( int16_t soundIndex )
 //// IGetSoundbyteLength /////////////////////////////////////////////////////
 //  uint8_t version of above.
 
-uint32_t      plWin32GroupedSound::IGetSoundbyteLength( int16_t soundIndex )
+uint32_t      plWin32GroupedSound::IGetSoundbyteLength(uint16_t soundIndex)
 {
-
-    if( soundIndex == fStartPositions.GetCount() - 1 )
+    if (soundIndex == fStartPositions.size() - 1)
         return ((plSoundBuffer *)fDataBufferKey->ObjectIsLoaded())->GetDataLength() - fStartPositions[ soundIndex ];
     else
         return fStartPositions[ soundIndex + 1 ] - fStartPositions[ soundIndex ];
@@ -285,12 +267,12 @@ uint32_t      plWin32GroupedSound::IGetSoundbyteLength( int16_t soundIndex )
 //// IGetDataPointer/Length //////////////////////////////////////////////////
 // Abstracting a few things here for the incidentalMgr
 
-void    *plWin32GroupedSound::IGetDataPointer( void ) const
+void    *plWin32GroupedSound::IGetDataPointer() const
 {
-    return ( fDataBufferKey->ObjectIsLoaded() ) ? (void *)( (uint8_t *)((plSoundBuffer *)fDataBufferKey->ObjectIsLoaded())->GetData() + fStartPositions[ fCurrentSound ] ) : nil;
+    return (fDataBufferKey->ObjectIsLoaded()) ? (void *)((uint8_t *)((plSoundBuffer *)fDataBufferKey->ObjectIsLoaded())->GetData() + fStartPositions[fCurrentSound]) : nullptr;
 }
 
-uint32_t  plWin32GroupedSound::IGetDataLength( void ) const
+uint32_t  plWin32GroupedSound::IGetDataLength() const
 {
     return ( fDataBufferKey->ObjectIsLoaded() ) ? fCurrentSoundLength : 0;
 }
@@ -316,7 +298,7 @@ void    plWin32GroupedSound::IFillCurrentSound( int16_t newCurrent /*= -1*/ )
     {
         fCurrentSound = (uint16_t)newCurrent;
 
-        if( fCurrentSound >= fStartPositions.GetCount() )
+        if (fCurrentSound >= fStartPositions.size())
         {
             // Invalid index!
             hsAssert( false, "Invalid index in plWin32GroupedSound::IFillCurrentSound()" );
@@ -333,7 +315,7 @@ void    plWin32GroupedSound::IFillCurrentSound( int16_t newCurrent /*= -1*/ )
         SetVolume( fVolumes[ fCurrentSound ] );
     }
 
-    if( fDSoundBuffer != nil )
+    if (fDSoundBuffer != nullptr)
     {
         /// Lock our buffer
         //fDSoundBuffer->Lock( dataLength, dataPtr );
@@ -374,7 +356,7 @@ void    plWin32GroupedSound::IFillCurrentSound( int16_t newCurrent /*= -1*/ )
     plProfile_EndTiming( StaticSndShoveTime );
 }
 
-void plWin32GroupedSound::IDerivedActuallyPlay( void )
+void plWin32GroupedSound::IDerivedActuallyPlay()
 {
     // Ensure there's a stop notify for us
     if( !fReallyPlaying )
@@ -384,19 +366,19 @@ void plWin32GroupedSound::IDerivedActuallyPlay( void )
     }
 
     plSoundEvent    *event = IFindEvent( plSoundEvent::kStart );
-    if( event != nil )
+    if (event != nullptr)
         event->SendCallbacks();
 }
 
 bool    plWin32GroupedSound::MsgReceive( plMessage* pMsg )
 {
     plSoundMsg *soundMsg = plSoundMsg::ConvertNoRef( pMsg );
-    if( soundMsg != nil && soundMsg->Cmd( plSoundMsg::kSelectFromGroup ) )
+    if (soundMsg != nullptr && soundMsg->Cmd(plSoundMsg::kSelectFromGroup))
     {
         IFillCurrentSound( soundMsg->fIndex );
         return true;
     }
-    else if( soundMsg != nil && soundMsg->Cmd( plSoundMsg::kPlay ) )
+    else if (soundMsg != nullptr && soundMsg->Cmd(plSoundMsg::kPlay))
     {
         Play();
         //plIncidentalMgr::GetInstance()->Play( this, plIncidentalMgr::kNormal );

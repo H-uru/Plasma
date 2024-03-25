@@ -44,8 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plLogicModBase_inc
 
 #include "plSingleModifier.h"
-#include "pnNetCommon/plSynchedValue.h"
-#include "hsTemplates.h"
 
 class plConditionalObject;
 class plSceneObject;
@@ -66,46 +64,49 @@ public:
     };
 
 protected:
-    hsTArray<plMessage*>            fCommandList;
-    hsTArray<plKey>                 fReceiverList;
-    uint32_t                          fCounterLimit;
-    float                        fTimer;
-    hsBitVector                     fFlags;
-    uint32_t                          fCounter;
-    plNotifyMsg*                    fNotify;
-    bool                            fDisabled;
+    static uint32_t sArbitrationDelayMs;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) {return false;}
-    void IUpdateSharedState(bool triggered) const;
+    std::vector<plMessage*> fCommandList;
+    std::vector<plKey>      fReceiverList;
+    uint32_t                fCounterLimit;
+    float                   fTimer;
+    hsBitVector             fFlags;
+    uint32_t                fCounter;
+    plNotifyMsg*            fNotify;
+    bool                    fDisabled;
+
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
+    void IHandleArbitration(class plServerReplyMsg* msg);
     bool IEvalCounter();
     virtual void PreTrigger(bool netRequest);
     virtual void Trigger(bool netRequest);
     virtual void UnTrigger();
-    
+    virtual void UpdateSharedState(bool triggered) const = 0;
+
     void CreateNotifyMsg();
-    
+
 public:
-    friend class plVolumeSensorConditionalObjectNoArbitration;
+    friend class plVolumeSensorConditionalObject;
     plLogicModBase();
     ~plLogicModBase();
     CLASSNAME_REGISTER( plLogicModBase );
     GETINTERFACE_ANY( plLogicModBase, plSingleModifier );
 
-    void AddTarget(plSceneObject* so);
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void AddTarget(plSceneObject* so) override;
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     virtual bool VerifyConditions(plMessage* msg) { return true;}
 
     virtual void Reset(bool bCounterReset);
 
     void SetDisabled(bool disabled) { fDisabled = disabled; }
-    bool Disabled() { return fDisabled; }
+    bool Disabled() const { return fDisabled; }
 
     plNotifyMsg* GetNotify() { return fNotify; }
 
-    void AddCommand(plMessage* msg) { fCommandList.Append(msg); }
+    void AddCommand(plMessage* msg) { fCommandList.emplace_back(msg); }
     void SetOneShot(bool b) { if (b) SetFlag(kOneShot); else ClearFlag(kOneShot); }
     void RegisterForMessageType(uint16_t hClass);
 
@@ -116,11 +117,14 @@ public:
     void    SetFlag(int f) { fFlags.SetBit(f); }
     void    ClearFlag(int which) { fFlags.ClearBit(which); }
 
-    void AddNotifyReceiver(plKey receiver);
+    void AddNotifyReceiver(const plKey& receiver);
 
     // for debug purposes only!
     void ConsoleTrigger(plKey playerKey);
     void ConsoleRequestTrigger();
+
+    /** Specifies an amount of time (in milliseconds) to delay processing server arbitration responses */
+    static void SetArbitrationDelay(uint32_t ms) { sArbitrationDelayMs = ms; }
 };
 
 

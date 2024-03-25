@@ -50,31 +50,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCliAgeJoiner.h"
 #include "plNetClientMgr.h"
 #include "plNetLinkingMgr.h"
-#include "plNetCommon/plNetObjectDebugger.h"
 
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-
+#include "pnDispatch/plDispatch.h"
 #include "pnMessage/plPlayerPageMsg.h"
-#include "pnMessage/plTimeMsg.h"
 
-#include "plNetClientComm/plNetClientComm.h"
 #include "plAgeLoader/plAgeLoader.h"
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvatarMgr.h"
-#include "plVault/plVault.h"
-
-#include "plNetMessage/plNetMessage.h"
-
 #include "plMessage/plNetCommMsgs.h"
 #include "plMessage/plAgeLoadedMsg.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
 #include "plMessage/plNetClientMgrMsg.h"
 #include "plMessage/plResPatcherMsg.h"
-
+#include "plNetClientComm/plNetClientComm.h"
+#include "plNetCommon/plNetObjectDebugger.h"
+#include "plNetMessage/plNetMessage.h"
 #include "plProgressMgr/plProgressMgr.h"
-#include "pnDispatch/plDispatch.h"
 #include "plResMgr/plResManager.h"
+#include "plVault/plVault.h"
 
 
 /*****************************************************************************
@@ -121,12 +114,12 @@ struct plNCAgeJoiner {
     void ExecNextOp ();
 
     static void IDispatchMsgReceiveCallback ();
-    static void IResMgrProgressBarCallback (plKey key);
+    static void IResMgrProgressBarCallback (const plKey& key);
 
     static plNCAgeJoiner* s_instance;
 };
 
-plNCAgeJoiner* plNCAgeJoiner::s_instance = nil;
+plNCAgeJoiner* plNCAgeJoiner::s_instance = nullptr;
 
 
 /*****************************************************************************
@@ -146,7 +139,7 @@ void AgeVaultDownloadCallback (
     }
     else {
         // vault downloaded. start loading age data
-        LogMsg(kLogPerf, L"AgeJoiner: Next:kLoadAge (vault downloaded)");
+        plNetApp::StaticDebugMsg("AgeJoiner: Next:kLoadAge (vault downloaded)");
         joiner->nextOp = plNCAgeJoiner::kLoadAge;
     }
 }
@@ -169,8 +162,8 @@ plNCAgeJoiner::plNCAgeJoiner (
 ,   muteLinkSfx(muteSfx)
 ,   callback(callback)
 ,   userState(userState)
-,   complete(false)
-,   progressBar(nil)
+,   complete()
+,   progressBar()
 {
 }
 
@@ -185,7 +178,7 @@ void plNCAgeJoiner::IDispatchMsgReceiveCallback () {
 }
 
 //============================================================================
-void plNCAgeJoiner::IResMgrProgressBarCallback (plKey key) {
+void plNCAgeJoiner::IResMgrProgressBarCallback (const plKey& key) {
 #ifndef PLASMA_EXTERNAL_RELEASE
     if (s_instance)
         s_instance->progressBar->SetStatusText(key->GetName());
@@ -200,7 +193,7 @@ void plNCAgeJoiner::Complete (bool success, const char msg[]) {
     if (!complete) {
         complete = true;
         
-        s_instance = nil;
+        s_instance = nullptr;
         
         NCAgeJoinerCompleteNotify   notify;
         notify.success  = success;
@@ -218,7 +211,7 @@ void plNCAgeJoiner::Start () {
 
     plNetClientMgr * nc = plNetClientMgr::GetInstance();
     nc->SetFlagsBit(plNetClientMgr::kPlayingGame, false);
-    nc->fServerTimeOffset               = 0;    // reset since we're connecting to a new server
+    nc->ResetServerTimeOffset();
     nc->fRequiredNumInitialSDLStates    = 0;
     nc->fNumInitialSDLStates            = 0;
     nc->SetFlagsBit(plNetClientApp::kNeedInitialAgeStateCount);
@@ -226,7 +219,7 @@ void plNCAgeJoiner::Start () {
 
     // if we're linking to startup then set the OfflineAge flag
     // so we by-pass the game server
-    if (age.ageDatasetName.IsEmpty() || age.ageDatasetName.CompareI("StartUp") == 0) {
+    if (age.ageDatasetName.empty() || age.ageDatasetName.compare_i("StartUp") == 0) {
         nc->SetFlagsBit(plNetClientApp::kLinkingToOfflineAge);
 
         // no need to update if we're not using a GameSrv
@@ -256,12 +249,12 @@ void plNCAgeJoiner::ExecNextOp () {
             
         //====================================================================
         case kLoadAge: {
-            LogMsg(kLogPerf, L"AgeJoiner: Exec:kLoadAge");
+            nc->DebugMsg("AgeJoiner: Exec:kLoadAge");
 
             // Start progress bar
-            plString str;
+            ST::string str;
 #ifndef PLASMA_EXTERNAL_RELEASE
-            str = plFormat("Loading age... {}", age.ageDatasetName);
+            str = ST::format("Loading age... {}", age.ageDatasetName);
 #endif
             progressBar = plProgressMgr::GetInstance()->RegisterOperation(0, str.c_str(), plProgressMgr::kNone, false, true);
             plDispatch::SetMsgRecieveCallback(IDispatchMsgReceiveCallback);
@@ -274,19 +267,19 @@ void plNCAgeJoiner::ExecNextOp () {
 
         //====================================================================
         case kLoadPlayer: {
-            LogMsg(kLogPerf, L"AgeJoiner: Exec:kLoadPlayer");
+            nc->DebugMsg("AgeJoiner: Exec:kLoadPlayer");
             // Start loading local player
-            plString avatarName;
+            ST::string avatarName;
             if (NetCommNeedToLoadAvatar()) {
                 if (nc->GetFlagsBit(plNetClientApp::kLinkingToOfflineAge))
-                    avatarName = "Male";
+                    avatarName = ST_LITERAL("Male");
                 else
                     avatarName = NetCommGetPlayer()->avatarDatasetName;
-                plString linkInName = plNetLinkingMgr::GetInstance()->GetAgeLink()->SpawnPoint().GetName();
+                ST::string linkInName = plNetLinkingMgr::GetInstance()->GetAgeLink()->SpawnPoint().GetName();
                 am->LoadPlayer(avatarName, "", linkInName);
             }
             else {
-                LogMsg(kLogPerf, L"AgeJoiner: Next:kPropagatePlayer");
+                nc->DebugMsg("AgeJoiner: Next:kPropagatePlayer");
                 nextOp = kPropagatePlayer;
             }
         }
@@ -294,7 +287,7 @@ void plNCAgeJoiner::ExecNextOp () {
 
         //====================================================================
         case kPropagatePlayer: {
-            LogMsg(kLogPerf, L"AgeJoiner: Exec:kPropagatePlayer");
+            nc->DebugMsg("AgeJoiner: Exec:kPropagatePlayer");
             // Add our avatar to the scene
             int spawnPt = am->FindSpawnPoint(age.spawnPtName);
             nc->IPlayerChangeAge(false /*not exiting*/, spawnPt);
@@ -303,16 +296,16 @@ void plNCAgeJoiner::ExecNextOp () {
                 // Add our avatar to the game state
                 am->PropagateLocalPlayer(spawnPt);
             
-            LogMsg(kLogPerf, L"AgeJoiner: Next:kRequestAgeState");
+            nc->DebugMsg("AgeJoiner: Next:kRequestAgeState");
             nextOp = kRequestAgeState;
         }
         break;
 
         //============================================================================
         case kRequestAgeState: {
-            LogMsg(kLogPerf, L"AgeJoiner: Exec:kRequestAgeState");
+            nc->DebugMsg("AgeJoiner: Exec:kRequestAgeState");
             if (nc->GetFlagsBit(plNetClientApp::kLinkingToOfflineAge)) {
-                LogMsg(kLogPerf, L"AgeJoiner: Next:kSimStateRcvd");
+                nc->DebugMsg("AgeJoiner: Next:kSimStateRcvd");
                 nextOp = kSimStateRcvd;
             }
             else {
@@ -321,7 +314,6 @@ void plNCAgeJoiner::ExecNextOp () {
 
                 // Request initial SDL state
                 plNetMsgGameStateRequest gsmsg;
-                gsmsg.SetNetProtocol(kNetProtocolCli2Game);
                 gsmsg.SetBit(plNetMessage::kInitialAgeStateRequest);
                 nc->SendMsg(&gsmsg);
                 
@@ -339,10 +331,10 @@ void plNCAgeJoiner::ExecNextOp () {
 
         //============================================================================
         case kDestroyProgressBar: {
-            plDispatch::SetMsgRecieveCallback(nil);
-            ((plResManager*)hsgResMgr::ResMgr())->SetProgressBarProc(nil);
+            plDispatch::SetMsgRecieveCallback(nullptr);
+            ((plResManager*)hsgResMgr::ResMgr())->SetProgressBarProc(nullptr);
             delete progressBar;
-            progressBar = nil;
+            progressBar = nullptr;
             nc->EndTask();
 
             nextOp = kEnableClickables;
@@ -351,18 +343,18 @@ void plNCAgeJoiner::ExecNextOp () {
 
         //====================================================================
         case kEnableClickables: {
-            LogMsg(kLogPerf, L"AgeJoiner: Exec:kEnableClickables");
+            nc->DebugMsg("AgeJoiner: Exec:kEnableClickables");
             // Enable scene clickables
             (void)(new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableClickables))->Send();
 
-            LogMsg(kLogPerf, L"AgeJoiner: Next:kNotifyAgeLoaded");
+            nc->DebugMsg("AgeJoiner: Next:kNotifyAgeLoaded");
             nextOp = kNotifyAgeLoaded;
         }
         break;
         
         //====================================================================
         case kNotifyAgeLoaded: {
-            LogMsg(kLogPerf, L"AgeJoiner: Exec:kNotifyAgeLoaded");
+            nc->DebugMsg("AgeJoiner: Exec:kNotifyAgeLoaded");
             nc->SetFlagsBit(plNetClientApp::kPlayingGame);
             nc->SetFlagsBit(plNetClientApp::kNeedToSendInitialAgeStateLoadedMsg);
             plAgeLoader::GetInstance()->NotifyAgeLoaded(true);
@@ -392,7 +384,7 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
                 age,
                 this
             );
-            LogMsg(kLogPerf, L"AgeJoiner: Next:kNoOp (age updated)");
+            nc->DebugMsg("AgeJoiner: Next:kNoOp (age updated)");
         } else
             Complete(false, resMsg->GetError().c_str());
         return true;
@@ -407,18 +399,18 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
         }
         else if (unsigned ageVaultId = NetCommGetAge()->ageVaultId) {
             // Download the age vault
-            VaultDownload(
+            VaultDownloadNoCallbacks(
                 "AgeJoin",
                 ageVaultId,
                 AgeVaultDownloadCallback,
                 this,
-                nil, // FVaultDownloadProgressCallback
+                nullptr, // FVaultDownloadProgressCallback
                 this
             );
         }
         else {
             // not vault to downloaded, just start loading age data
-            LogMsg(kLogPerf, L"AgeJoiner: Next:kLoadAge (no vault)");
+            nc->DebugMsg("AgeJoiner: Next:kLoadAge (no vault)");
             nextOp = kLoadAge;
         }
         return true;
@@ -432,7 +424,7 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
         al->ExecPendingAgeFniFiles();
         al->ExecPendingAgeCsvFiles();
 
-        LogMsg(kLogPerf, L"AgeJoiner: Next:kLoadPlayer");
+        nc->DebugMsg("AgeJoiner: Next:kLoadPlayer");
         nextOp = kLoadPlayer;
         return true;
     }
@@ -446,7 +438,7 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
         if (NetCommNeedToLoadAvatar())
             NetCommSetAvatarLoaded();
         
-        LogMsg(kLogPerf, L"AgeJoiner: Next:kPropagatePlayer");
+        nc->DebugMsg("AgeJoiner: Next:kPropagatePlayer");
         nextOp = kPropagatePlayer;
         return false;   // NetClientMgr must also handle this message
     }
@@ -456,7 +448,7 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
     //========================================================================
     plNetClientMgrMsg * netClientMgrMsg = plNetClientMgrMsg::ConvertNoRef(msg);
     if (netClientMgrMsg && netClientMgrMsg->type == plNetClientMgrMsg::kNotifyRcvdAllSDLStates) {
-        LogMsg(kLogPerf, L"AgeJoiner: Next:kEnableClickables");
+        nc->DebugMsg("AgeJoiner: Next:kEnableClickables");
         nextOp = kDestroyProgressBar;
         return true;
     }
@@ -466,7 +458,7 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
     //========================================================================
     plInitialAgeStateLoadedMsg * stateMsg = plInitialAgeStateLoadedMsg::ConvertNoRef(msg);
     if(stateMsg) {
-        plNetObjectDebugger::GetInstance()->LogMsg("OnServerInitComplete");
+        plNetObjectDebugger::GetInstance()->LogMsg(ST_LITERAL("OnServerInitComplete"));
         nc->SetFlagsBit(plNetClientApp::kLoadingInitialAgeState, false);
 
         const plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();

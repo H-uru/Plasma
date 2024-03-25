@@ -45,19 +45,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIDynDisplayCtrl.h"
-#include "pfGameGUIMgr.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
 
 #include "pnMessage/plRefMsg.h"
-#include "plGImage/plDynamicTextMap.h"
-#include "plSurface/plLayerInterface.h"
-#include "plSurface/hsGMaterial.h"
-#include "plPipeline/plTextGenerator.h"
-#include "plPipeline.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
 
+#include "plGImage/plDynamicTextMap.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
@@ -82,14 +80,14 @@ bool    pfGUIDynDisplayCtrl::IEval( double secs, float del, uint32_t dirty )
 bool    pfGUIDynDisplayCtrl::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
-    if( refMsg != nil )
+    if (refMsg != nullptr)
     {
         if( refMsg->fType == kRefTextMap )
         {
             if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fTextMaps[ refMsg->fWhich ] = plDynamicTextMap::ConvertNoRef( refMsg->GetRef() );
             else
-                fTextMaps[ refMsg->fWhich ] = nil;
+                fTextMaps[refMsg->fWhich] = nullptr;
             return true;
         }
         else if( refMsg->fType == kRefLayer )
@@ -97,7 +95,7 @@ bool    pfGUIDynDisplayCtrl::MsgReceive( plMessage *msg )
             if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fLayers[ refMsg->fWhich ] = plLayerInterface::ConvertNoRef( refMsg->GetRef() );
             else
-                fLayers[ refMsg->fWhich ] = nil;
+                fLayers[refMsg->fWhich] = nullptr;
             return true;
         }
         else if( refMsg->fType == kRefMaterial )
@@ -105,7 +103,7 @@ bool    pfGUIDynDisplayCtrl::MsgReceive( plMessage *msg )
             if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fMaterials[ refMsg->fWhich ] = hsGMaterial::ConvertNoRef( refMsg->GetRef() );
             else
-                fMaterials[ refMsg->fWhich ] = nil;
+                fMaterials[refMsg->fWhich] = nullptr;
         }
     }
 
@@ -116,45 +114,39 @@ bool    pfGUIDynDisplayCtrl::MsgReceive( plMessage *msg )
 
 void    pfGUIDynDisplayCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
-    uint32_t  count, i;
-
-
     pfGUIControlMod::Read(s, mgr);
 
-    count = s->ReadLE32();
-    fTextMaps.SetCountAndZero( count );
-    for( i = 0; i < count; i++ )
+    uint32_t count = s->ReadLE32();
+    fTextMaps.resize(count);
+    for (uint32_t i = 0; i < count; i++)
         mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefTextMap ), plRefFlags::kActiveRef );
 
     count = s->ReadLE32();
-    fLayers.SetCountAndZero( count );
-    for( i = 0; i < count; i++ )
+    fLayers.resize(count);
+    for (uint32_t i = 0; i < count; i++)
         mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefLayer ), plRefFlags::kActiveRef );
 
     count = s->ReadLE32();
-    fMaterials.SetCountAndZero( count );
-    for( i = 0; i < count; i++ )
+    fMaterials.resize(count);
+    for (uint32_t i = 0; i < count; i++)
         mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefMaterial ), plRefFlags::kActiveRef );
 }
 
 void    pfGUIDynDisplayCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
-    uint32_t  i;
-
-
     pfGUIControlMod::Write( s, mgr );
 
-    s->WriteLE32( fTextMaps.GetCount() );
-    for( i = 0; i < fTextMaps.GetCount(); i++ )
-        mgr->WriteKey( s, fTextMaps[ i ]->GetKey() );
+    s->WriteLE32((uint32_t)fTextMaps.size());
+    for (plDynamicTextMap* textMap : fTextMaps)
+        mgr->WriteKey(s, textMap->GetKey());
 
-    s->WriteLE32( fLayers.GetCount() );
-    for( i = 0; i < fLayers.GetCount(); i++ )
-        mgr->WriteKey( s, fLayers[ i ]->GetKey() );
+    s->WriteLE32((uint32_t)fLayers.size());
+    for (plLayerInterface* layer : fLayers)
+        mgr->WriteKey(s, layer->GetKey());
 
-    s->WriteLE32( fMaterials.GetCount() );
-    for( i = 0; i < fMaterials.GetCount(); i++ )
-        mgr->WriteKey( s, fMaterials[ i ]->GetKey() );
+    s->WriteLE32((uint32_t)fMaterials.size());
+    for (hsGMaterial* mat : fMaterials)
+        mgr->WriteKey(s, mat->GetKey());
 }
 
 //// AddMap //////////////////////////////////////////////////////////////////
@@ -162,8 +154,8 @@ void    pfGUIDynDisplayCtrl::Write( hsStream *s, hsResMgr *mgr )
 
 void    pfGUIDynDisplayCtrl::AddMap( plDynamicTextMap *map )
 {
-    fTextMaps.Append( map );
-    hsgResMgr::ResMgr()->AddViaNotify( map->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fTextMaps.GetCount() - 1, kRefTextMap ), plRefFlags::kActiveRef );
+    fTextMaps.emplace_back(map);
+    hsgResMgr::ResMgr()->AddViaNotify(map->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, fTextMaps.size() - 1, kRefTextMap), plRefFlags::kActiveRef);
 }
 
 //// AddLayer ////////////////////////////////////////////////////////////////
@@ -171,8 +163,8 @@ void    pfGUIDynDisplayCtrl::AddMap( plDynamicTextMap *map )
 
 void    pfGUIDynDisplayCtrl::AddLayer( plLayerInterface *layer )
 {
-    fLayers.Append( layer );
-    hsgResMgr::ResMgr()->AddViaNotify( layer->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fLayers.GetCount() - 1, kRefLayer ), plRefFlags::kActiveRef );
+    fLayers.emplace_back(layer);
+    hsgResMgr::ResMgr()->AddViaNotify(layer->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, fLayers.size() - 1, kRefLayer), plRefFlags::kActiveRef);
 }
 
 //// AddMaterial /////////////////////////////////////////////////////////////
@@ -180,6 +172,6 @@ void    pfGUIDynDisplayCtrl::AddLayer( plLayerInterface *layer )
 
 void    pfGUIDynDisplayCtrl::AddMaterial( hsGMaterial *material )
 {
-    fMaterials.Append( material );
-    hsgResMgr::ResMgr()->AddViaNotify( material->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fMaterials.GetCount() - 1, kRefMaterial ), plRefFlags::kActiveRef );
+    fMaterials.emplace_back(material);
+    hsgResMgr::ResMgr()->AddViaNotify(material->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, fMaterials.size() - 1, kRefMaterial), plRefFlags::kActiveRef);
 }

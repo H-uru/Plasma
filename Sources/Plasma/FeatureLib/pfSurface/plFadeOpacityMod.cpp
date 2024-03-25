@@ -40,31 +40,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plFadeOpacityMod.h"
+
+#include "HeadSpin.h"
+#include "hsBounds.h"
+#include "plgDispatch.h"
+#include "plPipeline.h"
+#include "hsResMgr.h"
+#include "hsTimer.h"
 
 #include "plFadeOpacityLay.h"
 
-#include "plMessage/plRenderMsg.h"
-#include "plMessage/plMatRefMsg.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
 
-#include "plSurface/hsGMaterial.h"
-
-#include "plDrawable/plVisLOSMgr.h"
 #include "plDrawable/plAccessGeometry.h"
 #include "plDrawable/plAccessSpan.h"
 #include "plDrawable/plDrawableSpans.h"
-
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plDrawInterface.h"
-
+#include "plDrawable/plVisLOSMgr.h"
+#include "plMessage/plRenderMsg.h"
+#include "plMessage/plMatRefMsg.h"
 #include "plScene/plVisMgr.h"
-
-#include "plgDispatch.h"
-#include "plPipeline.h"
-#include "hsBounds.h"
-#include "hsTimer.h"
-#include "hsResMgr.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 
 /*
     curr = (t - t0) / fadeUp;
@@ -90,14 +88,9 @@ plFadeOpacityMod::plFadeOpacityMod()
 :   fFadeUp(kDefFadeUp),
     fFadeDown(kDefFadeDown),
     fOpCurrent(1.f),
-    fStart(0),
+    fStart(),
     fFade(kImmediate),
-    fLastEye(0.f, 0.f, 0.f),
-    fSetup(false)
-{
-}
-
-plFadeOpacityMod::~plFadeOpacityMod()
+    fSetup()
 {
 }
 
@@ -126,16 +119,16 @@ void plFadeOpacityMod::Read(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Read(s, mgr);
 
-    fFadeUp = s->ReadLEScalar();
-    fFadeDown = s->ReadLEScalar();
+    fFadeUp = s->ReadLEFloat();
+    fFadeDown = s->ReadLEFloat();
 }
 
 void plFadeOpacityMod::Write(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Write(s, mgr);
 
-    s->WriteLEScalar(fFadeUp);
-    s->WriteLEScalar(fFadeDown);
+    s->WriteLEFloat(fFadeUp);
+    s->WriteLEFloat(fFadeDown);
 }
 
 void plFadeOpacityMod::SetTarget(plSceneObject* so)
@@ -211,7 +204,7 @@ bool plFadeOpacityMod::IReady()
     if( !fSetup )
         ISetup(so);
 
-    if( !fFadeLays.GetCount() )
+    if (fFadeLays.empty())
         return false;
 
     return true;
@@ -274,10 +267,8 @@ void plFadeOpacityMod::ISetOpacity()
 {
     ICalcOpacity();
 
-    const int num = fFadeLays.GetCount();
-    int i;
-    for( i = 0; i < num; i++ )
-        fFadeLays[i]->SetOpacity(fOpCurrent);   
+    for (plFadeOpacityLay* lay : fFadeLays)
+        lay->SetOpacity(fOpCurrent);
 }
 
 void plFadeOpacityMod::IFadeUp()
@@ -343,7 +334,7 @@ void plFadeOpacityMod::IFadeDown()
 
 void plFadeOpacityMod::ISetup(plSceneObject* so)
 {
-    fFadeLays.Reset();
+    fFadeLays.clear();
     
     if( !so )
         return;
@@ -352,16 +343,14 @@ void plFadeOpacityMod::ISetup(plSceneObject* so)
     if( !di )
         return;
 
-    hsTArray<plAccessSpan> src;
+    std::vector<plAccessSpan> src;
     plAccessGeometry::Instance()->OpenRO(di, src, false);
 
-    int i;
-    for( i = 0; i < src.GetCount(); i++ )
+    for (size_t i = 0; i < src.size(); i++)
     {
         hsGMaterial* mat = src[i].GetMaterial();
 
-        int j;
-        for( j = 0; j < mat->GetNumLayers(); j++ )
+        for (size_t j = 0; j < mat->GetNumLayers(); j++)
         {
             plLayerInterface* lay = mat->GetLayer(j);
             if( !j || !(lay->GetZFlags() & hsGMatState::kZNoZWrite) || (lay->GetMiscFlags() & hsGMatState::kMiscRestartPassHere) )
@@ -373,7 +362,7 @@ void plFadeOpacityMod::ISetup(plSceneObject* so)
                 fade->AttachViaNotify(lay);
 
                 // We should add a ref or something here if we're going to hold on to this (even though we created and "own" it).
-                fFadeLays.Append(fade);
+                fFadeLays.emplace_back(fade);
 
                 plMatRefMsg* msg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnReplace, i, plMatRefMsg::kLayer);
                 msg->SetOldRef(lay);

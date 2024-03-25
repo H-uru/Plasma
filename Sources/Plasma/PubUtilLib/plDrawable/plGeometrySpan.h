@@ -63,8 +63,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plGeometrySpan_h
 #define _plGeometrySpan_h
 
+#include <vector>
 
-#include "hsTemplates.h"
 #include "hsBounds.h"
 #include "hsMatrix44.h"
 #include "hsColorRGBA.h"
@@ -168,12 +168,12 @@ class plGeometrySpan
         uint32_t*       fDiffuseRGBA;
         uint32_t*       fSpecularRGBA;
 
-        mutable hsTArray<plGeometrySpan *>* fInstanceRefs;
+        mutable std::vector<plGeometrySpan *>* fInstanceRefs;
         mutable uint32_t                    fInstanceGroupID;       // For writing out/reading in instance refs
 
         // The following is only used for logging during export. It is never set
         // at runtime. Don't even think about using it for anything.
-        plString                            fMaxOwner;
+        ST::string                          fMaxOwner;
 
         // The following is ONLY used during pack; it's so we can do a reverse lookup
         // from the instanceRefs list to the correct span in the drawable
@@ -191,7 +191,7 @@ class plGeometrySpan
         ~plGeometrySpan();
 
         /// UV stuff
-        uint8_t   GetNumUVs( void ) const { return ( fFormat & kUVCountMask ); }
+        uint8_t   GetNumUVs() const { return ( fFormat & kUVCountMask ); }
         void    SetNumUVs( uint8_t numUVs ) 
         {
             hsAssert( numUVs < kMaxNumUVChannels, "Invalid UV count to plGeometrySpan" );
@@ -210,32 +210,32 @@ class plGeometrySpan
         uint16_t  AddVertex( hsPoint3 *position, hsPoint3 *normal, hsColorRGBA& multColor, hsColorRGBA& addColor,
                             hsPoint3 **uvPtrArray, float weight1 = -1.0f, float weight2 = -1.0f, float weight3 = -1.0f, uint32_t weightIndices = 0 );
         uint16_t  AddVertex( hsPoint3 *position, hsPoint3 *normal, uint32_t hexColor, uint32_t specularColor = 0,
-                            hsPoint3 **uvPtrArray = nil, float weight1 = -1.0f, float weight2 = -1.0f, float weight3 = -1.0f, uint32_t weightIndices = 0 );
+                            hsPoint3 **uvPtrArray = nullptr, float weight1 = -1.0f, float weight2 = -1.0f, float weight3 = -1.0f, uint32_t weightIndices = 0);
 
         void    AddIndex( uint16_t index );
         void    AddTriIndices( uint16_t index1, uint16_t index2, uint16_t index3 );
         void    AddTriangle( hsPoint3 *vert1, hsPoint3 *vert2, hsPoint3 *vert3, uint32_t color );
 
-        // uvws is an array count*uvwsPerVtx long in order [uvw(s) for vtx0, uvw(s) for vtx1, ...], or is nil
-        void    AddVertexArray( uint32_t count, hsPoint3 *positions, hsVector3 *normals, uint32_t *colors, hsPoint3 *uvws=nil, int uvwsPerVtx=0 );
+        // uvws is an array count*uvwsPerVtx long in order [uvw(s) for vtx0, uvw(s) for vtx1, ...], or is nullptr
+        void    AddVertexArray(uint32_t count, hsPoint3 *positions, hsVector3 *normals, uint32_t *colors, hsPoint3 *uvws=nullptr, int uvwsPerVtx=0);
         void    AddIndexArray( uint32_t count, uint16_t *indices );
 
-        void    EndCreate( void );
+        void    EndCreate();
 
 
         /// Manipulation--currently only used for applying static lighting, which of course needs individual vertices
         // Wrong. Also used for the interleaving of the multiple vertex data streams here into single vertex
         //      stream within the plGBufferGroups. mf.
         void    ExtractInitColor( uint32_t index, hsColorRGBA *multColor, hsColorRGBA *addColor) const;
-        void    ExtractVertex( uint32_t index, hsPoint3 *pos, hsVector3 *normal, hsColorRGBA *color, hsColorRGBA *specColor = nil );
-        void    ExtractVertex( uint32_t index, hsPoint3 *pos, hsVector3 *normal, uint32_t *color, uint32_t *specColor = nil );
+        void    ExtractVertex(uint32_t index, hsPoint3 *pos, hsVector3 *normal, hsColorRGBA *color, hsColorRGBA *specColor = nullptr);
+        void    ExtractVertex(uint32_t index, hsPoint3 *pos, hsVector3 *normal, uint32_t *color, uint32_t *specColor = nullptr);
         void    ExtractUv( uint32_t vIdx, uint8_t uvIdx, hsPoint3* uv );
         void    ExtractWeights( uint32_t vIdx, float *weightArray, uint32_t *indices );
-        void    StuffVertex( uint32_t index, hsPoint3 *pos, hsPoint3 *normal, hsColorRGBA *color, hsColorRGBA *specColor = nil );
-        void    StuffVertex( uint32_t index, hsColorRGBA *color, hsColorRGBA *specColor = nil );
+        void    StuffVertex(uint32_t index, hsPoint3 *pos, hsPoint3 *normal, hsColorRGBA *color, hsColorRGBA *specColor = nullptr);
+        void    StuffVertex(uint32_t index, hsColorRGBA *color, hsColorRGBA *specColor = nullptr);
 
         // Clear out the buffers
-        void            ClearBuffers( void );
+        void            ClearBuffers();
 
         // Duplicate this span from a given span
         void            CopyFrom( const plGeometrySpan *source );
@@ -271,19 +271,19 @@ class plGeometrySpan
         };
 
         bool                    fCreating;
-        hsTArray<TempVertex>    fVertAccum;
-        hsTArray<uint16_t>        fIndexAccum;
+        std::vector<TempVertex> fVertAccum;
+        std::vector<uint16_t>   fIndexAccum;
 
         void        IUnShareData();
         void        IDuplicateUniqueData( const plGeometrySpan *source );
-        void        IClearMembers( void );
+        void        IClearMembers();
 
         // Please don't yell at me. We can't write out the instanceRef pointers, and we can't write
         // out keys because we're not keyed objects, and we can't be keyed objects because we need
         // to be deleted eventually. So instead, we assign each geoSpan a instanceGroupID, unique
         // for each instance group but identical among all geoSpans in a given group (i.e. all
         // members of the instanceRef list). We write these IDs out, then on read, we rebuild the
-        // instanceRef arrays by using a hash table to find insert new hsTArrays at the given groupID,
+        // instanceRef arrays by using a hash table to find insert new vectors at the given groupID,
         // and looking up in that hash table to get pointers for each geoSpan's instanceRef array.
         // THIS is because we need a way of assigning unique, unused groupIDs to each geoSpan instance
         // group, and since we only need to know if the ID has been used yet, we can just use a bitVector.
@@ -296,16 +296,16 @@ class plGeometrySpan
         // have to write out the instanceRef array count for each geoSpan, so that when we read in
         // to do the lookup here, we know that we've read everything and can dump the entry in this
         // table.
-        static hsTArray<hsTArray<plGeometrySpan *> *>   fInstanceGroups;
+        static std::vector<std::vector<plGeometrySpan *> *> fInstanceGroups;
 
         // THIS is so we can clear fInstanceGroups as early and as efficiently as possible; see
         // the notes on IGetInstanceGroup().
         static uint32_t   fHighestReadInstanceGroup;
 
-        static uint32_t   IAllocateNewGroupID( void );
+        static uint32_t   IAllocateNewGroupID();
         static void     IClearGroupID( uint32_t groupID );
 
-        static hsTArray<plGeometrySpan *>   *IGetInstanceGroup( uint32_t groupID, uint32_t expectedCount );
+        static std::vector<plGeometrySpan *> *IGetInstanceGroup(uint32_t groupID, uint32_t expectedCount);
 };
 
 

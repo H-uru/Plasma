@@ -63,10 +63,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 plInputInterface::plInputInterface()
-{
-    fEnabled = false;
-    fControlMap = new plKeyMap;
-}
+    : fEnabled(), fControlMap(new plKeyMap),
+      fManager(), fMessageQueue()
+{ }
 
 plInputInterface::~plInputInterface()
 {
@@ -75,7 +74,7 @@ plInputInterface::~plInputInterface()
 
 void plInputInterface::ClearKeyMap()
 { 
-    if( fControlMap != nil ) 
+    if (fControlMap != nullptr)
         fControlMap->ClearAll(); 
 }
 
@@ -93,7 +92,7 @@ void    plInputInterface::Write( hsStream* s, hsResMgr* mgr )
 
 bool        plInputInterface::IOwnsControlCode( ControlEventCode code )
 {
-    if( fControlMap->FindBinding( code ) != nil )
+    if (fControlMap->FindBinding(code) != nullptr)
         return true;
     
     return false;
@@ -129,7 +128,7 @@ void plInputInterface::IDeactivateBinding(const plKeyBinding *binding)
         pCmd->SetCmdString( binding->GetExtendedString() );
         pCmd->fNetPropagateToPlayers = ( binding->GetCodeFlags() & kControlFlagNetPropagate ) ? true : false;
     
-        fMessageQueue->Append( pCmd );      
+        fMessageQueue->emplace_back(pCmd);
     }
     IClearKeyControlFlag(binding->GetCode());
 }
@@ -140,29 +139,28 @@ void plInputInterface::IDeactivateBinding(const plKeyBinding *binding)
 
 bool    plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
 {
-    int     i;
     bool    activate;
     
     plKeyEventMsg   *keyMsg = plKeyEventMsg::ConvertNoRef( msg );
-    if( keyMsg == nil )
+    if (keyMsg == nullptr)
         return false;
 
 
     /// We might have controls that are currently enabled that are triggered in part by 
     /// modifiers (ctrl or shift)...if that is true, then we want to disable them if either
     /// of those modifiers are up, no matter what key this message is for
-    hsTArray<int16_t> enabledCtrls;
-    fKeyControlFlags.Enumerate( enabledCtrls );
+    std::vector<int16_t> enabledCtrls;
+    fKeyControlFlags.Enumerate(enabledCtrls);
 
-    for( i = 0; i < enabledCtrls.GetCount(); i++ )
+    for (int16_t ctrl : enabledCtrls)
     {
-        const plKeyBinding *binding = fControlMap->FindBinding( (ControlEventCode)enabledCtrls[ i ] );
-        if( binding == nil )
+        const plKeyBinding *binding = fControlMap->FindBinding((ControlEventCode)ctrl);
+        if (binding == nullptr)
             ; // Somehow we lost the binding??
         else
         {
             bool wantShift, wantCtrl;
-            if( fKeyControlsFrom2ndKeyFlags.IsBitSet( enabledCtrls[ i ] ) )
+            if( fKeyControlsFrom2ndKeyFlags.IsBitSet(ctrl) )
             {
                 wantShift = ( binding->GetKey2().fFlags & plKeyCombo::kShift ) || ( binding->GetKey2().fKey == KEY_SHIFT );
                 wantCtrl = ( binding->GetKey2().fFlags & plKeyCombo::kCtrl ) || ( binding->GetKey2().fKey == KEY_CTRL );
@@ -176,7 +174,7 @@ bool    plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
             if( ( wantShift && !keyMsg->GetShiftKeyDown() ) || ( wantCtrl && !keyMsg->GetCtrlKeyDown() ) )
             {
                 IDeactivateBinding(binding);
-                fKeyControlsFrom2ndKeyFlags.SetBit(enabledCtrls[i], false); 
+                fKeyControlsFrom2ndKeyFlags.SetBit(ctrl, false);
             }
         }
     }
@@ -186,19 +184,19 @@ bool    plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
     plKeyCombo  combo( keyMsg->GetKeyCode(), ( keyMsg->GetShiftKeyDown() ? plKeyCombo::kShift : 0 ) |
                                             ( keyMsg->GetCtrlKeyDown() ? plKeyCombo::kCtrl : 0 ) );
 
-    hsTArray<const plKeyBinding *> bindings;
+    std::vector<const plKeyBinding *> bindings;
     fControlMap->FindAllBindingsByKey(combo, bindings);
 
     // The first binding is the one we want. (FindAllBindingsByKey guarantees this)
-    const plKeyBinding *binding = (bindings.GetCount() ? bindings[0] : nil);
+    const plKeyBinding *binding = (bindings.empty() ? nullptr : bindings.front());
 
     // If other bindings were found, they lose out to the first one.
-    for (i = 1; i < bindings.GetCount(); i++)
+    for (size_t i = 1; i < bindings.size(); i++)
         IDeactivateBinding(bindings[i]);
 
     /*
     const plKeyBinding *binding = fControlMap->FindBindingByKey( combo );
-    if( binding == nil )
+    if (binding == nullptr)
     {
         // Don't panic just yet, there are some special cases with the shift key to check first
         if( keyMsg->GetKeyCode() == KEY_SHIFT || keyMsg->GetShiftKeyDown() )
@@ -300,7 +298,7 @@ bool    plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
     pCmd->SetCmdString( binding->GetExtendedString() );
     pCmd->fNetPropagateToPlayers = ( codeFlags & kControlFlagNetPropagate ) ? true : false;
 
-    fMessageQueue->Append( pCmd );
+    fMessageQueue->emplace_back(pCmd);
 
     return true;
 }

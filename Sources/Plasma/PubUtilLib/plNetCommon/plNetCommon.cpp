@@ -40,8 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plNetCommon.h"
-#include "pnUUID/pnUUID.h"
-#include <algorithm>
 
 namespace plNetCommon
 {

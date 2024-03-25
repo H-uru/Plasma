@@ -43,24 +43,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAccessGeometry_inc
 #define plAccessGeometry_inc
 
-#include "hsTemplates.h"
+#include "hsRefCnt.h"
 
+#include <vector>
+
+class plAccessSpan;
+class plDrawInterface;
 class plDrawable;
 class plDrawableSpans;
 class plGeometrySpan;
-class plDrawInterface;
-class plAccessSpan;
-class plSpan;
-class plParticleSpan;
 class plIcicle;
-class plVertexSpan;
-
+class plParticleSpan;
 class plPipeline;
+class plSpan;
+class plVertexSpan;
 
 class plAccessGeometry : public hsRefCnt
 {
 protected:
-    void                    Nilify() { fPipe = nil; }
+    void                    Nilify() { fPipe = nullptr; }
 
     plPipeline*                     fPipe;
 
@@ -69,7 +70,7 @@ public:
     // You're welcome to make your own,
     // but this is normally just called by the global plAccessGeometry's Init() function.
     // You should normally just use the instance supplied by Instance();
-    plAccessGeometry(plPipeline* pipe=nil);
+    plAccessGeometry(plPipeline* pipe=nullptr);
 
     static plAccessGeometry*        Instance() { return fInstance; }
 
@@ -126,10 +127,10 @@ public:
     // as likely that they will have different underlying formats (number of UVs, etc.).
     // Again, if you are using the iterators supplied, you probably don't care, but sometimes
     // you will (like if you are messing with the UVs).
-    void    OpenRO(const plDrawInterface* di, hsTArray<plAccessSpan>& accs, bool useSnapShot=true) const;
-    void    OpenRW(const plDrawInterface* di, hsTArray<plAccessSpan>& accs, bool idxToo=false) const;
+    void    OpenRO(const plDrawInterface* di, std::vector<plAccessSpan>& accs, bool useSnapShot=true) const;
+    void    OpenRW(const plDrawInterface* di, std::vector<plAccessSpan>& accs, bool idxToo=false) const;
 
-    void    Close(hsTArray<plAccessSpan>& accs) const;
+    void    Close(std::vector<plAccessSpan>& accs) const;
 
     // SnapShot functions.
     // If you need to generate channel values based on the original values (e.g. normal perterbation)

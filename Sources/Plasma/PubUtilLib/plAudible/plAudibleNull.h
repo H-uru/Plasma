@@ -52,55 +52,55 @@ class plAudibleNull : public plAudible
 {
 public:
 
-    plAudibleNull() : fSceneNode(nil),fSceneObj(nil) {;}
+    plAudibleNull() = default;
 
     CLASSNAME_REGISTER( plAudibleNull );
     GETINTERFACE_ANY( plAudibleNull, plAudible );
 
-    virtual plKey GetSceneNode() const { return fSceneNode; }
-    virtual void SetSceneNode(plKey newNode);
+    plKey GetSceneNode() const override { return fSceneNode; }
+    void SetSceneNode(const plKey& newNode) override;
 
-    virtual plKey GetSceneObject() const { return fSceneObj; }
-    virtual void SetSceneObject(plKey newNode) { }
+    plKey GetSceneObject() const override { return fSceneObj; }
+    void SetSceneObject(const plKey& newNode) override { }
 
-    virtual plAudible& SetProperty(int prop, bool on) { return *this; }
-    virtual bool GetProperty(int prop) { return false; }
+    plAudible& SetProperty(int prop, bool on) override { return *this; }
+    bool GetProperty(int prop) override { return false; }
 
-    void        Play(int index = -1){;}
-    void        SynchedPlay(int index = -1) {;}
-    void        Stop(int index = -1){;}
-    void        FastForwardPlay(int index = -1){;}
-    void        FastForwardToggle(int index = -1){;}
-    void        SetMin(const float m,int index = -1){;} // sets minimum falloff distance
-    void        SetMax(const float m,int index = -1){;} // sets maximum falloff distance
-    virtual plAudible& SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, int index = -1){return *this;}
-    float    GetMin(int index = -1) const{return 0;}
-    float    GetMax(int index = -1) const{return 0;}
-    void        SetVelocity(const hsVector3 vel,int index = -1){;}
-    hsVector3   GetVelocity(int index = -1) const;
-    hsPoint3    GetPosition(int index = -1);
-    void        SetLooping(bool loop,int index = -1){;} // sets continuous loop or stops looping
-    bool        IsPlaying(int index = -1){return false;}
-    virtual void        SetTime(double t, int index = -1) {}
-    virtual void        Activate(){}
-    virtual void        DeActivate(){}
-    virtual void        GetStatus(plSoundMsg* pMsg) {;}
-    virtual int         GetNumSounds() const {return 0;}
-    virtual plSound*    GetSound(int i) const { return nil; }
-    virtual int         GetSoundIndex(const char *keyname) const { return -1; }
-    virtual void        SetVolume(const float volume,int index = -1) {;}
-    virtual void        SetFilename(int index, const char *filename, bool isCompressed){}
+    void        Play(int index = -1) override { }
+    void        SynchedPlay(int index = -1) override { }
+    void        Stop(int index = -1) override { }
+    void        FastForwardPlay(int index = -1) override { }
+    void        FastForwardToggle(int index = -1) override { }
+    void        SetMin(const float m,int index = -1) override { } // sets minimum falloff distance
+    void        SetMax(const float m,int index = -1) override { } // sets maximum falloff distance
+    plAudible& SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, int index = -1) override { return *this; }
+    float    GetMin(int index = -1) const override { return 0; }
+    float    GetMax(int index = -1) const override { return 0; }
+    void        SetVelocity(const hsVector3& vel,int index = -1) override { }
+    hsVector3   GetVelocity(int index = -1) const override;
+    hsPoint3    GetPosition(int index = -1) override;
+    void        SetLooping(bool loop,int index = -1) override { } // sets continuous loop or stops looping
+    bool        IsPlaying(int index = -1) override { return false; }
+    void        SetTime(double t, int index = -1) override { }
+    void        Activate() override { }
+    void        DeActivate() override { }
+    void        GetStatus(plSoundMsg* pMsg) override { }
+    size_t      GetNumSounds() const override { return 0; }
+    plSound*    GetSound(size_t i) const override { return nullptr; }
+    int         GetSoundIndex(const char *keyname) const override { return -1; }
+    void        SetVolume(const float volume,int index = -1) override { }
+    void        SetFilename(int index, const char *filename, bool isCompressed) override { }
 
-    virtual void    RemoveCallbacks(plSoundMsg* pMsg) {}
-    virtual void    AddCallbacks(plSoundMsg* pMsg) {}
+    void    RemoveCallbacks(plSoundMsg* pMsg) override { }
+    void    AddCallbacks(plSoundMsg* pMsg) override { }
 
-    virtual void    SetMuted( bool muted, int index = -1 ) {;}
-    virtual void    ToggleMuted( int index = -1 ) {;}
-    virtual void    SetTalkIcon(int index, uint32_t str){;}
-    virtual void    ClearTalkIcon(){;}
+    void    SetMuted(bool muted, int index = -1) override { }
+    void    ToggleMuted(int index = -1) override { }
+    void    SetTalkIcon(int index, uint32_t str) override { }
+    void    ClearTalkIcon() override { }
 
-    virtual void        SetFadeIn( const int type, const float length, int index = -1 ) {}
-    virtual void        SetFadeOut( const int type, const float length, int index = -1 ) {}
+    void        SetFadeIn(const int type, const float length, int index = -1) override { }
+    void        SetFadeOut(const int type, const float length, int index = -1) override { }
 
 protected:
     plKey               fSceneNode, fSceneObj;

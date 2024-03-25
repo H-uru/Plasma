@@ -40,13 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#pragma hdrstop
-
 #include "hsBounds.h"
+
+#include "HeadSpin.h"
+#include "hsFastMath.h"
 #include "hsStream.h"
 
-#include "hsFastMath.h"
+#include <algorithm>
 
 const float hsBounds::kRealSmall = 1.0e-5f;
 
@@ -63,7 +63,7 @@ void hsBounds::Read(hsStream *s)
 
 void hsBounds::Write(hsStream *s) 
 {
-    s->WriteLE32((int32_t)fType);
+    s->WriteLE32((uint32_t)fType);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -215,7 +215,7 @@ void hsBounds3::InscribeSphere()
     if( fType != kBoundsNormal )
         return;
 
-    const float ooSix = hsInvert(2.f * 3.f);
+    constexpr float ooSix = hsInvert(2.f * 3.f);
     float a = GetMaxDim() * ooSix;
     hsPoint3 p = GetCenter();
     p.fX += a;
@@ -249,6 +249,12 @@ int32_t hsBounds3::TestBound(const hsBounds3& other) const
             retVal = 0;
     }
     return retVal;
+}
+
+float hsBounds3::GetMaxDim() const
+{
+    hsAssert(kBoundsNormal == fType, "Invalid type for GetMaxDim");
+    return std::max({ fMaxs.fX - fMins.fX, fMaxs.fY - fMins.fY, fMaxs.fZ - fMins.fZ });
 }
 
 bool hsBounds3::IsInside(const hsPoint3* pos) const
@@ -292,11 +298,11 @@ void hsBounds3::MakeTriMeshSphere(hsGTriMesh* tMesh, hsPoint3* cornersIn) const
     {
         for( j = 0; j < nLati; j++ )
         {
-            float theta = (float(i) / nLong) * 2.f * M_PI;
+            float theta = (float(i) / nLong) * hsConstants::two_pi<float>;
             float cosTheta = cos(theta);
             float sinTheta = sin(theta);
 
-            float phi = (float(j+1) / (nLati+1)) * M_PI;
+            float phi = (float(j+1) / (nLati+1)) * hsConstants::pi<float>;
             float cosPhi = cos(phi);
             float sinPhi = sin(phi);
 
@@ -460,7 +466,7 @@ float hsBounds3::ClosestPointToInfiniteLine(const hsPoint3* p, const hsVector3* 
 {
     float magSq = v->MagnitudeSquared();
     float t = 0.f;
-    hsPoint3 origin(0,0,0);
+    hsPoint3 origin;
     if( magSq < hsBounds::kRealSmall )
     {
         *out = origin;
@@ -541,8 +547,8 @@ bool hsBoundsOriented::IsInside(const hsPoint3* pos) const
         return false;
     if(fType == kBoundsFull)
         return true;
-    int i;
-    for( i = 0; i < fNumPlanes; i++ )
+ 
+    for (uint32_t i = 0; i < fNumPlanes; i++)
     {
         float dis = fPlanes[i].fN.InnerProduct(pos);
         dis += fPlanes[i].fD;
@@ -567,8 +573,7 @@ void hsBoundsOriented::SetPlane(uint32_t i, hsPlane3 *pln)
         hsPlane3 *newPlanes = new hsPlane3[i+1];
         if( fPlanes )
         {
-            int k;
-            for( k = 0; k < fNumPlanes; k++ )
+            for (uint32_t k = 0; k < fNumPlanes; k++)
                 *newPlanes++ = *fPlanes++;
             delete [] fPlanes;
         }
@@ -618,10 +623,10 @@ void hsBoundsOriented::Write(hsStream *stream)
 {
     hsBounds::Write(stream);
     fCenter.Write(stream);
-    stream->WriteLE32(fCenterValid);
+    stream->WriteBOOL(fCenterValid);
     stream->WriteLE32(fNumPlanes);
-    int i;
-    for( i = 0; i < fNumPlanes; i++ )
+
+    for (uint32_t i = 0; i < fNumPlanes; i++)
     {
         fPlanes[i].Write(stream);
     }
@@ -631,13 +636,13 @@ void hsBoundsOriented::Read(hsStream *stream)
 {
     hsBounds::Read(stream);
     fCenter.Read(stream);
-    fCenterValid = (bool)stream->ReadLE32();
+    fCenterValid = stream->ReadBOOL();
     fNumPlanes = stream->ReadLE32();
     if (fPlanes)
         delete [] fPlanes;
     fPlanes = new hsPlane3[fNumPlanes];
-    int i;
-    for( i = 0; i < fNumPlanes; i++ )
+
+    for (uint32_t i = 0; i < fNumPlanes; i++)
     {
         fPlanes[i].Read(stream);
     }
@@ -649,6 +654,7 @@ void hsBoundsOriented::Read(hsStream *stream)
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 hsBounds3Ext::hsBounds3Ext(const hsBounds3 &b)
+    : fDists(), fRadius()
 {
     Reset(&b);
 }
@@ -742,7 +748,6 @@ void hsBounds3Ext::IMakeSphere() const
         else
         {
             hsVector3 accum;
-            accum.Set(0,0,0);
             int i;
             for( i = 0; i < 3; i++ )
             {
@@ -1618,7 +1623,6 @@ bool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel, hs
     {
         // now do a weighted average of the axes
         hsAssert(totDepth > 0, "nobody home");
-        norm.Set(0,0,0);
         for( i =0; i < 6; i++ )
         {
             if( tstDepths[i] > 0 )
@@ -2591,8 +2595,8 @@ void hsBounds3Ext::Read(hsStream *s)
         for( i = 0; i < 3; i++ )
         {
             fAxes[i].Read(s);
-            fDists[i].fX = s->ReadLEScalar();
-            fDists[i].fY = s->ReadLEScalar();
+            fDists[i].fX = s->ReadLEFloat();
+            fDists[i].fY = s->ReadLEFloat();
         }
         IMakeMinsMaxs();
         IMakeDists();
@@ -2612,14 +2616,14 @@ void hsBounds3Ext::Write(hsStream *s)
             fAxes[i].Write(s);
             if( fExtFlags & kDistsSet )
             {
-                s->WriteLEScalar(fDists[i].fX);
-                s->WriteLEScalar(fDists[i].fY);
+                s->WriteLEFloat(fDists[i].fX);
+                s->WriteLEFloat(fDists[i].fY);
             }
             else
             {
                 // Playing nice with binary patches--writing uninited values BAD!
-                s->WriteLEScalar( 0.f );
-                s->WriteLEScalar( 0.f );
+                s->WriteLEFloat(0.f);
+                s->WriteLEFloat(0.f);
             }
         }
     }

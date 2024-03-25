@@ -13,11 +13,14 @@ tags
 Makefile
 CMakeCache.txt
 CMakeFiles
+CMakeSettings.json
 cmake_install.cmake
 install_manifest.txt
 build/
 build-*/
 Docs/Doxygen/
+out/
+.vs/
 
 *.aps
 *.user

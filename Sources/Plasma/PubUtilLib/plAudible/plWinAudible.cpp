@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "plWinAudible.h"
 #include "hsMatrix44.h"
-#include "hsTimer.h"
 #include "plAudio/plSound.h"
 #include "plAudio/plWin32Sound.h"
 #include "plAudio/plVoiceChat.h"
@@ -53,50 +52,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plSoundMsg.h"
 #include "pnMessage/plTimeMsg.h"
 #include "pnMessage/plAudioSysMsg.h"
-#include "plMessage/plLinkToAgeMsg.h"
 #include "hsResMgr.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsQuat.h"
 
 #include "plgDispatch.h"
 #include "pnMessage/plNodeRefMsg.h"
-#include "pnMessage/plEventCallbackMsg.h"
 #include "pnMessage/plCmdIfaceModMsg.h"
 #include "pnMessage/plProxyDrawMsg.h"
 #include "plMessage/plInputEventMsg.h"
-#include "pnInputCore/plControlEventCodes.h"
 #include "plModifier/plSoundSDLModifier.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "plStatusLog/plStatusLog.h"
 
+// Visualization
+#include "plWinAudibleProxy.h"
+
 #define SND_INDEX_CHECK( index, ret )           \
-    if( index >= fSoundObjs.GetCount() ) \
-    { \
-        hsStatusMessageF( "ERROR: Sound index out of range (index %d, count %d)\n", index,  fSoundObjs.GetCount() ); \
-        return ret; \
-    } 
+    if ((size_t)index >= fSoundObjs.size())     \
+    {                                           \
+        hsStatusMessageF("ERROR: Sound index out of range (index %d, count %zu)\n", index, fSoundObjs.size()); \
+        return ret;                             \
+    }
 
 #define SND_APPLY_LOOP( index, func, ret )      \
     if( index != -1 )                           \
     {                                           \
         SND_INDEX_CHECK( index, ret );          \
-        if( fSoundObjs[ index ] != nil )        \
-        fSoundObjs[ index ]->func;              \
+        if (fSoundObjs[index] != nullptr)       \
+            fSoundObjs[index]->func;            \
     }                                           \
     else                                        \
     {                                           \
-        for( int i = 0; i < fSoundObjs.Count(); i++ )   \
+        for (plSound* sound : fSoundObjs)       \
         {                                       \
-            if( fSoundObjs[ i ] != nil )        \
-                fSoundObjs[ i ]->func;          \
+            if (sound != nullptr)               \
+                sound->func;                    \
         }                                       \
     }                                           
 
-// Visualization
-#include "plWinAudibleProxy.h"
-
 plWinAudible::plWinAudible()
-:   fSceneNode(nil), fSceneObj(nil), fSDLMod(nil)
+:   fSDLMod()
 {
     fProxyGen = new plWinAudibleProxy;
     fProxyGen->Init(this);
@@ -116,15 +111,14 @@ plWinAudible::~plWinAudible()
     delete fSDLMod;
 
     delete fProxyGen;
-    for (int i = 0; i < fSoundObjs.Count(); i++)
-        delete(fSoundObjs[i]);
-    fSoundObjs.SetCountAndZero(0);
-
+    for (plSound* sound : fSoundObjs)
+        delete sound;
+    fSoundObjs.clear();
 }
 
-void plWinAudible::SetSceneObject(plKey obj)
+void plWinAudible::SetSceneObject(const plKey& obj)
 {
-    plKey oldKey = nil;
+    plKey oldKey;
     // remove old SDL mod
     if (fSDLMod && fSceneObj && fSceneObj != obj)
     {
@@ -133,11 +127,11 @@ void plWinAudible::SetSceneObject(plKey obj)
         if (so)
             so->RemoveModifier(fSDLMod);
         delete fSDLMod;
-        fSDLMod=nil;
+        fSDLMod = nullptr;
     }
 
     fSceneObj = obj;
-    plSceneObject* so=plSceneObject::ConvertNoRef(obj ? obj->ObjectIsLoaded() : nil);
+    plSceneObject* so = plSceneObject::ConvertNoRef(obj ? obj->ObjectIsLoaded() : nullptr);
     if (so)
     {
         so->RemoveModifier(fSDLMod);        
@@ -146,22 +140,22 @@ void plWinAudible::SetSceneObject(plKey obj)
         so->AddModifier(fSDLMod);
     }
 
-    for( int i = 0; i < fSoundObjs.Count(); i++ )
-    {                                   
-        if( fSoundObjs[ i ] != nil && fSoundObjs[ i ]->GetKey() != nil )        
+    for (plSound* sound : fSoundObjs)
+    {
+        if (sound != nullptr && sound->GetKey() != nullptr)
         {
-            if( obj != nil )
+            if (obj != nullptr)
             {
-                plGenRefMsg *replaceMsg = new plGenRefMsg( fSoundObjs[ i ]->GetKey(), plRefMsg::kOnReplace, 0, plSound::kRefParentSceneObject );
+                plGenRefMsg *replaceMsg = new plGenRefMsg(sound->GetKey(), plRefMsg::kOnReplace, 0, plSound::kRefParentSceneObject);
                 hsgResMgr::ResMgr()->AddViaNotify( obj, replaceMsg, plRefFlags::kPassiveRef );
             }
-            else if( oldKey != nil )
-                fSoundObjs[ i ]->GetKey()->Release( oldKey );
+            else if (oldKey != nullptr)
+                sound->GetKey()->Release(oldKey);
         }
-    }                                       
+    }
 }
 
-void plWinAudible::SetSceneNode(plKey newNode)
+void plWinAudible::SetSceneNode(const plKey& newNode)
 {
     plKey oldNode = GetSceneNode();
     if( oldNode == newNode )
@@ -192,15 +186,14 @@ void plWinAudible::GetStatus(plSoundMsg* pMsg)
 {
     if (pMsg->fIndex == -1)
     {
-        for (int i = 0; i < fSoundObjs.Count(); i++)
+        for (size_t i = 0; i < fSoundObjs.size(); i++)
         {
             plSoundMsg* pReply = fSoundObjs[i]->GetStatus(pMsg);
-            pReply->fIndex = i;
+            pReply->fIndex = (int)i;
             plgDispatch::MsgSend(pReply);
         }
     }
-    else
-    if (pMsg->fIndex < fSoundObjs.Count())
+    else if ((size_t)pMsg->fIndex < fSoundObjs.size())
     {
         plSoundMsg* pReply = fSoundObjs[pMsg->fIndex]->GetStatus(pMsg);
         pReply->fIndex = pMsg->fIndex;
@@ -210,7 +203,7 @@ void plWinAudible::GetStatus(plSoundMsg* pMsg)
 
 bool plWinAudible::AddSound( plSound *pSnd, int index, bool is3D )
 {
-    hsAssert(pSnd->GetKey() != nil, "Adding a new sound with no key.");
+    hsAssert(pSnd->GetKey() != nullptr, "Adding a new sound with no key.");
     if (plgAudioSys::Active())
     {
         hsgResMgr::ResMgr()->AddViaNotify( pSnd->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, index, 0 ), plRefFlags::kActiveRef );
@@ -257,7 +250,7 @@ plAudible& plWinAudible::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w
     if (index != -1)
     {
         SND_INDEX_CHECK( index, (*this) );
-        if( fSoundObjs[ index ] != nil )
+        if (fSoundObjs[index] != nullptr)
         {
             fSoundObjs[index]->SetPosition( pos );
             fSoundObjs[index]->SetConeOrientation( v.fX,v.fY,v.fZ );
@@ -265,12 +258,12 @@ plAudible& plWinAudible::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w
     }
     else
     {
-        for (int i = 0; i < fSoundObjs.Count(); i++)
+        for (plSound* sound : fSoundObjs)
         {
-            if( fSoundObjs[ i ] != nil )
+            if (sound != nullptr)
             {
-                fSoundObjs[i]->SetConeOrientation( v.fX,v.fY,v.fZ );
-                fSoundObjs[i]->SetPosition( pos );
+                sound->SetConeOrientation(v.fX, v.fY, v.fZ);
+                sound->SetPosition(pos);
             }
         }
     }
@@ -287,11 +280,11 @@ void plWinAudible::SetTime(double t, int index)
 
 void plWinAudible::SynchedPlay(int index)
 {
-    for(int i = 0; i < fSoundObjs.Count(); ++i)
+    for (plSound* sound : fSoundObjs)
     {
-        if(fSoundObjs[i]->IsPlaying())
+        if (sound->IsPlaying())
         {
-            fSoundObjs[index]->SynchedPlay(fSoundObjs[i]->GetByteOffset());
+            fSoundObjs[index]->SynchedPlay(sound->GetByteOffset());
             return;
         }
     }
@@ -299,7 +292,6 @@ void plWinAudible::SynchedPlay(int index)
 
 void plWinAudible::Play(int index )
 {   
-    // hsStatusMessageF( "Playing sound %s, index %d, time=%f\n", GetKeyName().c_str(), index, hsTimer::GetSeconds());
     SND_APPLY_LOOP( index, Play(), ; );
 }
 
@@ -354,15 +346,15 @@ void    plWinAudible::ToggleMuted( int index )
     if( index != -1 )
     {
         SND_INDEX_CHECK( index, ; );
-        if( fSoundObjs[ index ] != nil )
+        if (fSoundObjs[index] != nullptr)
             fSoundObjs[ index ]->SetMuted( !fSoundObjs[ index ]->IsMuted() );
     }
     else
     {
-        for( int i = 0; i < fSoundObjs.Count(); i++ )
+        for (plSound* sound : fSoundObjs)
         {
-            if( fSoundObjs[ i ] != nil )
-                fSoundObjs[ i ]->SetMuted( !fSoundObjs[ i ]->IsMuted() );
+            if (sound != nullptr)
+                sound->SetMuted(!sound->IsMuted());
         }
     }
 }
@@ -377,7 +369,7 @@ float plWinAudible::GetMax(int index) const
     return (float)(fSoundObjs[index]->GetMax());
 }
 
-void plWinAudible::SetVelocity(const hsVector3 vel,int index)
+void plWinAudible::SetVelocity(const hsVector3& vel,int index)
 {
     SND_APPLY_LOOP( index, SetVelocity( vel ), ; );
 }
@@ -409,11 +401,8 @@ void    plWinAudible::SetFadeOut( const int type, const float length, int index 
 
 void plWinAudible::SetFilename(int index, const char *filename, bool isCompressed)
 {
-    if(index < 0 || index >= fSoundObjs.Count())
-    {
-        hsStatusMessageF( "ERROR: Sound index out of range (index %d, count %d)\n", index,  fSoundObjs.GetCount() );
-        return;
-    }
+    SND_INDEX_CHECK(index, ; )
+
     plWin32StreamingSound *pStreamingSound = plWin32StreamingSound::ConvertNoRef(fSoundObjs[ index ]);
     if(pStreamingSound)
     {
@@ -421,28 +410,26 @@ void plWinAudible::SetFilename(int index, const char *filename, bool isCompresse
     }
     else
     {
-        plStatusLog::AddLineS("audio.log", "Cannot set filename of non-streaming sound. %s",
-                              fSoundObjs[ index ]->GetKeyName().c_str());
+        plStatusLog::AddLineSF("audio.log", "Cannot set filename of non-streaming sound. {}",
+                               fSoundObjs[ index ]->GetKeyName());
     }
 }
 
 bool plWinAudible::IsPlaying(int index)
 {
-    int count = fSoundObjs.Count();
-
-    if(index < count)
+    if (index < (int)fSoundObjs.size())
     {
         if (index == -1)
         {
-            for (int i = 0; i < fSoundObjs.Count(); i++)
+            for (plSound* sound : fSoundObjs)
             {
-                if( fSoundObjs[ i ] != nil && fSoundObjs[i]->IsPlaying() )
+                if (sound != nullptr && sound->IsPlaying())
                     return true;
             }
             return false;
         }
 
-        if( fSoundObjs[ index ] == nil )
+        if (fSoundObjs[index] == nullptr)
             return false;
 
         return(fSoundObjs[index]->IsPlaying());
@@ -454,19 +441,14 @@ bool plWinAudible::IsPlaying(int index)
 void plWinAudible::Read(hsStream* s, hsResMgr* mgr)
 {
     plAudible::Read(s, mgr);
-    int n = s->ReadLE32();
-    fSoundObjs.SetCountAndZero(n);
-    for(int i = 0; i < n; i++ )
-    {   
+    uint32_t n = s->ReadLE32();
+    fSoundObjs.resize(n);
+    for (uint32_t i = 0; i < n; i++)
+    {
         plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, 0);
         mgr->ReadKeyNotifyMe(s, msg, plRefFlags::kActiveRef);
-        //plSound* pSnd =  plSound::ConvertNoRef(mgr->ReadCreatable(s));
-        //IAssignSoundKey( pSnd, GetKey() ? GetKeyName() : "", i );
-        //if (plWin32LinkSound::ConvertNoRef(pSnd))
-        //  plgDispatch::Dispatch()->RegisterForExactType(plLinkEffectBCMsg::Index(), pSnd->GetKey());
-        //fSoundObjs[i] = pSnd;
-    }   
-        
+    }
+
     plKey pSceneKey = mgr->ReadKey(s);
     plNodeRefMsg* refMsg = new plNodeRefMsg(pSceneKey, plRefMsg::kOnCreate, -1, plNodeRefMsg::kAudible); 
     mgr->AddViaNotify(GetKey(), refMsg, plRefFlags::kPassiveRef);
@@ -474,37 +456,34 @@ void plWinAudible::Read(hsStream* s, hsResMgr* mgr)
 
 void plWinAudible::IAssignSoundKey( plSound *sound, const char *name, uint32_t i )
 {
-    plString keyName = plFormat("{}_{}", name, i);
+    ST::string keyName = ST::format("{}_{}", name, i);
     hsgResMgr::ResMgr()->NewKey( keyName, sound, GetKey() ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
 }
 
 void plWinAudible::Write(hsStream* s, hsResMgr* mgr)
 {
     plAudible::Write(s, mgr);
-    s->WriteLE32(fSoundObjs.GetCount());
-    for(int i = 0; i < fSoundObjs.GetCount(); i++ )
-//      mgr->WriteCreatable( s, fSoundObjs[i] );
-        mgr->WriteKey(s, fSoundObjs[i]);
+    s->WriteLE32((uint32_t)fSoundObjs.size());
+    for (plSound* sound : fSoundObjs)
+        mgr->WriteKey(s, sound);
 
     mgr->WriteKey(s, fSceneNode);
 }
 
 void plWinAudible::Activate()
 {
-    for (int i = 0; i < fSoundObjs.Count(); i++)
-        if (fSoundObjs[i] != nil)
-            fSoundObjs[i]->Activate();
+    for (plSound* sound : fSoundObjs)
+        if (sound != nullptr)
+            sound->Activate();
 }
 
 
 void plWinAudible::DeActivate()
 {
-    for (int i = 0; i < fSoundObjs.Count(); i++)
+    for (plSound* sound : fSoundObjs)
     {
-        if (fSoundObjs[i] != nil)
-        {
-            fSoundObjs[i]->DeActivate();
-        }
+        if (sound != nullptr)
+            sound->DeActivate();
     }
 }
 
@@ -519,22 +498,16 @@ bool plWinAudible::MsgReceive(plMessage* msg)
             int index = refMsg->fWhich;
             if( refMsg->GetContext() & (plRefMsg::kOnCreate | plRefMsg::kOnRequest) )
             {
-                int i = fSoundObjs.Count();
-                if (index >= i)
-                {
-                    fSoundObjs.ExpandAndZero(index + 1);
-                }
+                if (index >= (int)fSoundObjs.size())
+                    fSoundObjs.resize(index + 1);
                 fSoundObjs[index] = plSound::ConvertNoRef(refMsg->GetRef());
                 if (plgAudioSys::Active())
                     fSoundObjs[index]->Activate();
             }
             else if( refMsg->GetContext() & (plRefMsg::kOnRemove | plRefMsg::kOnDestroy) )
             {
-                int i = fSoundObjs.Count();
-                if (index < i)
-                {
-                    fSoundObjs[index] = nil;
-                }
+                if ((size_t)index < fSoundObjs.size())
+                    fSoundObjs[index] = nullptr;
             }
             return true;
         }
@@ -551,7 +524,7 @@ bool plWinAudible::MsgReceive(plMessage* msg)
 
     // proxyDrawMsg handling--just pass it on to the proxy object
     plProxyDrawMsg *pdMsg = plProxyDrawMsg::ConvertNoRef( msg );
-    if( pdMsg != nil )
+    if (pdMsg != nullptr)
     {
         if( fProxyGen )
             return fProxyGen->MsgReceive( pdMsg );
@@ -565,13 +538,12 @@ bool plWinAudible::MsgReceive(plMessage* msg)
 void plWinAudible::RemoveCallbacks(plSoundMsg* pMsg)
 {
     // sanity check
-    if (pMsg->fIndex >= fSoundObjs.Count())
+    if (pMsg->fIndex >= (int)fSoundObjs.size())
         return;
     if( pMsg->fIndex < 0 )
     {
-        int i;
-        for( i = 0; i < fSoundObjs.Count(); i++ )
-            fSoundObjs[i]->RemoveCallbacks(pMsg);
+        for (plSound* sound : fSoundObjs)
+            sound->RemoveCallbacks(pMsg);
     }
     else
     {
@@ -582,18 +554,17 @@ void plWinAudible::RemoveCallbacks(plSoundMsg* pMsg)
 void plWinAudible::AddCallbacks(plSoundMsg* pMsg)
 {
     // sanity check
-    if (pMsg->fIndex >= fSoundObjs.Count())
+    if (pMsg->fIndex >= (int)fSoundObjs.size())
         return;
-    int i;
-    for( i = 0; i < pMsg->GetNumCallbacks(); i++ )
+    for (size_t i = 0; i < pMsg->GetNumCallbacks(); i++)
     {
         pMsg->GetEventCallback(i)->fIndex = pMsg->fIndex;
         pMsg->GetEventCallback(i)->SetSender(GetKey());
     }
     if( pMsg->fIndex < 0 )
     {
-        for( i = 0; i < fSoundObjs.Count(); i++ )
-            fSoundObjs[i]->AddCallbacks(pMsg);
+        for (plSound* sound : fSoundObjs)
+            sound->AddCallbacks(pMsg);
     }
     else
     {
@@ -603,29 +574,27 @@ void plWinAudible::AddCallbacks(plSoundMsg* pMsg)
 
 int plWinAudible::GetSoundIndex(const char *keyname) const
 {
-    for( int i = 0; i < fSoundObjs.Count(); i++)
+    for (size_t i = 0; i < fSoundObjs.size(); i++)
     {
-        if(!fSoundObjs[i]) continue;
-        if(!fSoundObjs[i]->GetKeyName().Compare( keyname ))
-        {
-            return i;
-        }
+        if (!fSoundObjs[i])
+            continue;
+        if (fSoundObjs[i]->GetKeyName() == keyname)
+            return int(i);
     }
     return -1;
 }
 
-plSound* plWinAudible::GetSound(int i) const 
+plSound* plWinAudible::GetSound(size_t i) const
 { 
-    return fSoundObjs[i]; 
+    return fSoundObjs[i];
 }
 
 // Visualization
-plDrawableSpans* plWinAudible::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plWinAudible::CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
 {
     plDrawableSpans* myDraw = addTo;
-    int i;
-    for( i = 0; i < fSoundObjs.Count(); i++ )
-        myDraw = fSoundObjs[i]->CreateProxy(fLocalToWorld, mat, idx, myDraw);
+    for (plSound* sound : fSoundObjs)
+        myDraw = sound->CreateProxy(fLocalToWorld, mat, idx, myDraw);
     return myDraw;
 }
 
@@ -635,9 +604,9 @@ plDrawableSpans* plWinAudible::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>&
 //
 
 pl2WayWinAudible::pl2WayWinAudible() :
-fVoicePlayer(nil),
-fVoiceRecorder(nil),
-fActive(false)
+fVoicePlayer(),
+fVoiceRecorder(),
+fActive()
 {
 }
 
@@ -664,7 +633,7 @@ bool pl2WayWinAudible::MsgReceive(plMessage* msg)
     if (pCtrlMsg)
     {
         if (pCtrlMsg->GetControlCode() == S_PUSH_TO_TALK && fVoiceRecorder)
-            fVoiceRecorder->SetMikeOpen(pCtrlMsg->ControlActivated());
+            fVoiceRecorder->SetMicOpen(pCtrlMsg->ControlActivated());
         return true;
     }
 
@@ -674,16 +643,10 @@ bool pl2WayWinAudible::MsgReceive(plMessage* msg)
 void pl2WayWinAudible::Init(bool isLocal)
 {
     if (!fVoicePlayer)
-    {
-        if(!isLocal)
-            fVoicePlayer = new plVoicePlayer;
-    }
-    if(!fVoiceRecorder)
-    {
-        if(isLocal)
-        {
+        fVoicePlayer = new plVoicePlayer;
+    if (!fVoiceRecorder) {
+        if (isLocal)
             fVoiceRecorder = new plVoiceRecorder;
-        }
     }
     Activate();
 }
@@ -738,15 +701,10 @@ void pl2WayWinAudible::Read(hsStream* s, hsResMgr* mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 
-void pl2WayWinAudible::PlayNetworkedSpeech(const char* addr, int32_t size, int numFrames, unsigned char flags)
+void pl2WayWinAudible::PlayNetworkedSpeech(const char* addr, size_t size, int numFrames, unsigned char flags)
 {
     if (fVoicePlayer)
-    {
-        if (!(flags & VOICE_ENCODED))
-            fVoicePlayer->PlaybackUncompressedVoiceMessage((uint8_t*)addr, size);
-        else
-            fVoicePlayer->PlaybackVoiceMessage((uint8_t*)addr, size, numFrames);
-    }
+        fVoicePlayer->PlaybackVoiceMessage((uint8_t*)addr, size, numFrames, flags);
 }
 
 plAudible& pl2WayWinAudible::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, int index)
@@ -765,7 +723,7 @@ plAudible& pl2WayWinAudible::SetTransform(const hsMatrix44& l2w, const hsMatrix4
     return (*this);
 }
 
-void pl2WayWinAudible::SetVelocity(const hsVector3 vel,int index)
+void pl2WayWinAudible::SetVelocity(const hsVector3& vel,int index)
 {
     plWinAudible::SetVelocity(vel, index);
     if (fVoicePlayer)

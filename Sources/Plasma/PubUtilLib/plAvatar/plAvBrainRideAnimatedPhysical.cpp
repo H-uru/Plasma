@@ -39,12 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plAvBrainRideAnimatedPhysical.h"
-#include "plArmatureMod.h"
 
-#include "plAvBrainHuman.h"
+#include "plAvBrainRideAnimatedPhysical.h"
+
+#include "plArmatureMod.h"
 #include "plAvBrain.h"
+#include "plAvBrainHuman.h"
 #include "plPhysicalControllerCore.h"
+
+#include "plAnimation/plAGModifier.h"
 #include "plMessage/plRideAnimatedPhysMsg.h"
 
 
@@ -57,14 +60,15 @@ void plAvBrainRideAnimatedPhysical::Activate(plArmatureModBase *avMod)
         plSceneObject* avObj = fArmature->GetTarget(0);
         plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
         plPhysicalControllerCore* controller = avMod->GetController();
-        fWalkingStrategy = new plDynamicWalkingStrategy(agMod->GetApplicator(kAGPinTransform), controller);
+        fWalkingStrategy = new plWalkingStrategy(agMod->GetApplicator(kAGPinTransform), controller);
+        fWalkingStrategy->ToggleRiding(true);
         controller->SetMovementStrategy(fWalkingStrategy);
     }
 }
 plAvBrainRideAnimatedPhysical::~plAvBrainRideAnimatedPhysical()
 {
     delete fWalkingStrategy;
-    fWalkingStrategy = nil;
+    fWalkingStrategy = nullptr;
 }
 
 void plAvBrainRideAnimatedPhysical::Deactivate()
@@ -105,8 +109,8 @@ bool plAvBrainRideAnimatedPhysical::IInitAnimations()
     plAGAnim *runJump = fAvMod->FindCustomAnim("RunningJump");
     plAGAnim *groundImpact = fAvMod->FindCustomAnim("GroundImpact");
     plAGAnim *runningImpact = fAvMod->FindCustomAnim("RunningImpact");
-    plAGAnim *movingLeft = nil; // fAvMod->FindCustomAnim("LeanLeft");
-    plAGAnim *movingRight = nil; // fAvMod->FindCustomAnim("LeanRight");
+    plAGAnim *movingLeft = nullptr; // fAvMod->FindCustomAnim("LeanLeft");
+    plAGAnim *movingRight = nullptr; // fAvMod->FindCustomAnim("LeanRight");
     plAGAnim *pushWalk = fAvMod->FindCustomAnim("BallPushWalk");
 
     //plAGAnim *pushIdle = fAvMod->FindCustomAnim("BallPushIdle");
@@ -116,7 +120,7 @@ bool plAvBrainRideAnimatedPhysical::IInitAnimations()
     if (idle && walk && run && walkBack && standingLeft && standingRight && stepLeft && stepRight)
     {
         plHBehavior *behavior;
-        fBehaviors.SetCountAndZero(kHuBehaviorMax);
+        fBehaviors.assign(kHuBehaviorMax, nullptr);
         fBehaviors[kIdle] = behavior = new Idle;
         behavior->Init(idle, true, this, fAvMod, kDefaultFade, kDefaultFade, kIdle, plHBehavior::kBehaviorTypeIdle);
         behavior->SetStrength(1.f, 0.f);

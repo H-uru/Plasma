@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfEditDlg_h
 
 #include <QMainWindow>
-#include "plString.h"
+#include <string_theory/string>
 
 class QTreeWidgetItem;
 
@@ -65,11 +65,11 @@ public:
     }
 
     void SaveLocalizationText();
-    void LoadLocalization(const plString &path);
+    void LoadLocalization(const ST::string &path);
     void EnableEdit(bool enable);
 
 protected:
-    virtual void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event) override;
 
 private slots:
     void OpenDataDirectory();
@@ -83,7 +83,7 @@ private slots:
 private:
     class Ui_EditDialog *fUI;
     QString fCurrentSavePath;
-    plString fCurrentLocPath;
+    ST::string fCurrentLocPath;
 
     enum { kEditNothing, kEditElement, kEditLocalization } fEditMode;
 };
@@ -105,7 +105,7 @@ public:
     }
 };
 
-void SplitLocalizationPath(const plString &path, plString &ageName,
-        plString &setName, plString &locName, plString &locLanguage);
+void SplitLocalizationPath(const ST::string &path, ST::string &ageName,
+        ST::string &setName, ST::string &locName, ST::string &locLanguage);
 
 #endif

@@ -40,10 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pyColor.h"
+
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptColor, pyColor);
@@ -53,13 +52,14 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptColor)
 
 PYTHON_INIT_DEFINITION(ptColor, args, keywords)
 {
-    char *kwlist[] = {"red", "green", "blue", "alpha", NULL};
-    PyObject* redObj = NULL;
-    PyObject* greenObj = NULL;
-    PyObject* blueObj = NULL;
-    PyObject* alphaObj = NULL;
+    const char *kwlist[] = {"red", "green", "blue", "alpha", nullptr};
+    PyObject* redObj = nullptr;
+    PyObject* greenObj = nullptr;
+    PyObject* blueObj = nullptr;
+    PyObject* alphaObj = nullptr;
     float red = 0.0f, green = 0.0f, blue = 0.0f, alpha = 0.0f;
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "|OOOO", kwlist, &redObj, &greenObj, &blueObj, &alphaObj))
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "|OOOO", const_cast<char **>(kwlist),
+                                     &redObj, &greenObj, &blueObj, &alphaObj))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects four optional floats");
         PYTHON_RETURN_INIT_ERROR;
@@ -69,8 +69,8 @@ PYTHON_INIT_DEFINITION(ptColor, args, keywords)
     {
         if (PyFloat_Check(redObj))
             red = (float)PyFloat_AsDouble(redObj);
-        else if (PyInt_Check(redObj))
-            red = (float)PyInt_AsLong(redObj);
+        else if (PyLong_Check(redObj))
+            red = (float)PyLong_AsLong(redObj);
         else
         {
             PyErr_SetString(PyExc_TypeError, "__init__ expects four optional floats");
@@ -81,8 +81,8 @@ PYTHON_INIT_DEFINITION(ptColor, args, keywords)
     {
         if (PyFloat_Check(greenObj))
             green = (float)PyFloat_AsDouble(greenObj);
-        else if (PyInt_Check(greenObj))
-            green = (float)PyInt_AsLong(greenObj);
+        else if (PyLong_Check(greenObj))
+            green = (float)PyLong_AsLong(greenObj);
         else
         {
             PyErr_SetString(PyExc_TypeError, "__init__ expects four optional floats");
@@ -93,8 +93,8 @@ PYTHON_INIT_DEFINITION(ptColor, args, keywords)
     {
         if (PyFloat_Check(blueObj))
             blue = (float)PyFloat_AsDouble(blueObj);
-        else if (PyInt_Check(blueObj))
-            blue = (float)PyInt_AsLong(blueObj);
+        else if (PyLong_Check(blueObj))
+            blue = (float)PyLong_AsLong(blueObj);
         else
         {
             PyErr_SetString(PyExc_TypeError, "__init__ expects four optional floats");
@@ -105,8 +105,8 @@ PYTHON_INIT_DEFINITION(ptColor, args, keywords)
     {
         if (PyFloat_Check(alphaObj))
             alpha = (float)PyFloat_AsDouble(alphaObj);
-        else if (PyInt_Check(alphaObj))
-            alpha = (float)PyInt_AsLong(alphaObj);
+        else if (PyLong_Check(alphaObj))
+            alpha = (float)PyLong_AsLong(alphaObj);
         else
         {
             PyErr_SetString(PyExc_TypeError, "__init__ expects four optional floats");
@@ -269,11 +269,12 @@ PYTHON_START_METHODS_TABLE(ptColor)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-#define ptColor_COMPARE         PYTHON_NO_COMPARE
 #define ptColor_AS_NUMBER       PYTHON_NO_AS_NUMBER
 #define ptColor_AS_SEQUENCE     PYTHON_NO_AS_SEQUENCE
 #define ptColor_AS_MAPPING      PYTHON_NO_AS_MAPPING
 #define ptColor_STR             PYTHON_NO_STR
+#define ptColor_GETATTRO        PYTHON_NO_GETATTRO
+#define ptColor_SETATTRO        PYTHON_NO_SETATTRO
 #define ptColor_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptColor)
 #define ptColor_GETSET          PYTHON_NO_GETSET
 #define ptColor_BASE            PYTHON_NO_BASE
@@ -284,7 +285,7 @@ PYTHON_CLASS_NEW_IMPL(ptColor, pyColor)
 
 PyObject *pyColor::New(float red, float green, float blue, float alpha)
 {
-    ptColor *newObj = (ptColor*)ptColor_type.tp_new(&ptColor_type, NULL, NULL);
+    ptColor *newObj = (ptColor*)ptColor_type.tp_new(&ptColor_type, nullptr, nullptr);
     newObj->fThis->setRed(red);
     newObj->fThis->setGreen(green);
     newObj->fThis->setBlue(blue);
@@ -294,7 +295,7 @@ PyObject *pyColor::New(float red, float green, float blue, float alpha)
 
 PyObject *pyColor::New(const hsColorRGBA & color)
 {
-    ptColor *newObj = (ptColor*)ptColor_type.tp_new(&ptColor_type, NULL, NULL);
+    ptColor *newObj = (ptColor*)ptColor_type.tp_new(&ptColor_type, nullptr, nullptr);
     newObj->fThis->setColor(color);
     return (PyObject*)newObj;
 }

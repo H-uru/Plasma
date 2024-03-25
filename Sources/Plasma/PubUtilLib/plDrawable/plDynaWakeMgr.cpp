@@ -65,12 +65,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsFastMath.h"
 #include "pnEncryption/plRandom.h"
-static plRandom sRand;
 
 
-int plDynaWakeMgr::INewDecal()
+size_t plDynaWakeMgr::INewDecal()
 {
-    int idx = fDecals.GetCount();
+    size_t idx = fDecals.size();
 
     plDynaWake* wake = new plDynaWake();
     wake->fC1U = fInitUVW.fX;
@@ -79,14 +78,14 @@ int plDynaWakeMgr::INewDecal()
     wake->fC1V = fInitUVW.fY;
     wake->fC2V = (fInitUVW.fY - fFinalUVW.fY) / (fLifeSpan * fFinalUVW.fY);
 
-    fDecals.Append(wake);
+    fDecals.emplace_back(wake);
 
     return idx;
 }
 
 plDynaWakeMgr::plDynaWakeMgr()
 :
-    fAnimPath(nil),
+    fAnimPath(),
     fDefaultDir(0.f, 1.f, 0.f),
     fAnimWgt(0),
     fVelWgt(1.f)
@@ -117,8 +116,8 @@ void plDynaWakeMgr::Read(hsStream* stream, hsResMgr* mgr)
     fDefaultDir.Read(stream);
     fAnimPath = plAnimPath::ConvertNoRef(mgr->ReadCreatable(stream));
 
-    fAnimWgt = stream->ReadLEScalar();
-    fVelWgt = stream->ReadLEScalar();
+    fAnimWgt = stream->ReadLEFloat();
+    fVelWgt = stream->ReadLEFloat();
 }
 
 void plDynaWakeMgr::Write(hsStream* stream, hsResMgr* mgr)
@@ -128,8 +127,8 @@ void plDynaWakeMgr::Write(hsStream* stream, hsResMgr* mgr)
     fDefaultDir.Write(stream);
     mgr->WriteCreatable(stream, fAnimPath);
 
-    stream->WriteLEScalar(fAnimWgt);
-    stream->WriteLEScalar(fVelWgt);
+    stream->WriteLEFloat(fAnimWgt);
+    stream->WriteLEFloat(fVelWgt);
 }
 
 hsVector3 plDynaWakeMgr::IGetDirection(const plDynaDecalInfo& info, const hsPoint3& pos) const
@@ -168,6 +167,8 @@ hsVector3 plDynaWakeMgr::IGetDirection(const plDynaDecalInfo& info, const hsPoin
 
 bool plDynaWakeMgr::IRippleFromShape(const plPrintShape* shape, bool force)
 {
+    static plRandom sRand;
+
     if( !shape )
         return false;
 

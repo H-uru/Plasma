@@ -43,6 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAvatarSDLModifier_inc
 
 #include "HeadSpin.h"
+
+#include "pnNetCommon/plSDLTypes.h"
+
 #include "plModifier/plSDLModifier.h"
 
 
@@ -64,16 +67,16 @@ protected:
     static char kStrRotation[];
     static char kStrSubworld[];
 
-    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
-    void IPutCurrentStateIn(plStateDataRecord* dstState);
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
+    void IPutCurrentStateIn(plStateDataRecord* dstState) override;
 
-    uint32_t IApplyModFlags(uint32_t sendFlags) { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
+    uint32_t IApplyModFlags(uint32_t sendFlags) override { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
 
 public:
     CLASSNAME_REGISTER( plAvatarPhysicalSDLModifier );
     GETINTERFACE_ANY( plAvatarPhysicalSDLModifier, plSDLModifier);
-        
-    const char* GetSDLName() const { return kSDLAvatarPhysical; }
+
+    const char* GetSDLName() const override { return kSDLAvatarPhysical; }
 
 };
 
@@ -129,7 +132,7 @@ protected:
     /** Top level: gets the current avatar brain state for any number of brains
         of varying type from the data record into the avatar.
         Will destroy all optional brains and recreate them from the incoming SDL. */
-    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
     /** Set the base state for the avatar. This primarily consists of the state of the
         human brain, which is required for all avatars. */
     void ISetBaseAvatarStateFrom(plArmatureMod *avMod, const plStateDataRecord* src);
@@ -142,20 +145,20 @@ protected:
     /** Generic brains have multiple "stages" parse *one* out of the SDL stream and return it. */
     plAnimStage * IGetStageFrom(plArmatureMod *avMod, const plStateDataRecord* srcState);
 
-    void IPutCurrentStateIn(plStateDataRecord* dstState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState) override;
     void IPutBaseAvatarStateIn(plArmatureMod *avMod, plStateDataRecord* dst);
     void IPutGenericBrainIn(plArmatureMod *avMod, plAvBrainGeneric *brain, plStateDataRecord* dstState);
     void IPutClimbBrainIn(plArmatureMod *avMod, plAvBrainClimb *brain, plStateDataRecord* dstState);
     void IPutDriveBrainIn(plArmatureMod *avMod, plAvBrainDrive *brain, plStateDataRecord* dstState);
     bool IPutStageIn(plArmatureMod *avMod, plAnimStage *stage, plStateDataRecord* dstState);
     
-    uint32_t IApplyModFlags(uint32_t sendFlags) { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
+    uint32_t IApplyModFlags(uint32_t sendFlags) override { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
 
 public:
     CLASSNAME_REGISTER( plAvatarSDLModifier );
     GETINTERFACE_ANY( plAvatarSDLModifier, plSDLModifier);
         
-    const char* GetSDLName() const { return kSDLAvatar; }
+    const char* GetSDLName() const override { return kSDLAvatar; }
 
     // trying a new approach, which is to let the climb brain read its own SDL.
     // this allows us to synch protected data members with either creating a friend

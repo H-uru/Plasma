@@ -54,14 +54,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSound_h
 #define plSound_h
 
-#include "hsTemplates.h"
 #include "hsGeometry3.h"
 #include "plEAXEffects.h"
-#include "pnNetCommon/plSynchedObject.h"
-#include "plAnimation/plAGChannel.h"
+
 #include "plAnimation/plAGApplicator.h"
 #include "plAudioCore/plSoundBuffer.h"
+#include "pnNetCommon/plSynchedObject.h"
 
+class plAGChannel;
 class hsResMgr;
 class hsStream;
 class plSoundProxy;
@@ -71,9 +71,9 @@ class plSoundMsg;
 class plSoftVolume;
 class plGraphPlate;
 struct hsMatrix44;
-class plSoundBuffer;
 class plSceneObject;
 class plSoundVolumeApplicator;
+namespace ST { class string; }
 
 // Set this to 1 to do our own distance attenuation (model doesn't work yet tho)
 #define MCN_HACK_OUR_ATTEN  0
@@ -168,14 +168,14 @@ public:
             void    Read( hsStream *s );
             void    Write( hsStream *s );
 
-            float    InterpValue( void );
+            float    InterpValue();
 
         protected:
             float    fCurrTime;          // -1 if we aren't active, else it's how far we're into the animation
     };
 
     virtual bool        LoadSound( bool is3D ) = 0;
-    float            GetVirtualStartTime( void ) const { return (float)fVirtualStartTime; }
+    float            GetVirtualStartTime() const { return (float)fVirtualStartTime; }
 
     virtual void        Play();
     void                SynchedPlay( unsigned bytes );
@@ -188,38 +188,38 @@ public:
     virtual int         GetMin() const;
     virtual int         GetMax() const;
     virtual void        SetVolume(const float volume);
-    virtual float       GetVolume(void) const { return fCurrVolume; }
+    virtual float       GetVolume() const { return fCurrVolume; }
     float            GetMaxVolume() { return fMaxVolume; }
     virtual bool        IsPlaying() { return fPlaying; }
     void                SetTime(double t);
-    virtual double      GetTime( void ) { return 0.f; }
+    virtual double      GetTime() { return 0.f; }
     virtual void        Activate(bool forcePlay = false);
     virtual void        DeActivate();
     virtual void        SetLength(double l) { fLength = l; }
     virtual void        SetMuted( bool muted );
-    virtual bool        IsMuted( void ) { return fMuted; }
+    virtual bool        IsMuted() { return fMuted; }
     void                Disable() { fDistAttenuation = 0; }
-    virtual plSoundMsg* GetStatus(plSoundMsg* pMsg){return NULL;}
+    virtual plSoundMsg* GetStatus(plSoundMsg* pMsg) { return nullptr; }
     virtual void        SetConeOrientation(float x, float y, float z);
     virtual void        SetOuterVolume( const int v ); // volume for the outer cone (if applicable)
     virtual void        SetConeAngles( int inner, int outer );
-    virtual void        SetPosition(const hsPoint3 pos);
-    virtual void        SetVelocity(const hsVector3 vel);
+    virtual void        SetPosition(const hsPoint3& pos);
+    virtual void        SetVelocity(const hsVector3& vel);
     virtual hsPoint3    GetPosition() const;
     virtual hsVector3   GetVelocity() const;
 
     virtual void        Update();
     
-    plSoundBuffer *     GetDataBuffer( void ) const { return (plSoundBuffer *)fDataBufferKey->ObjectIsLoaded(); }
-    float               QueryCurrVolume( void ) const;  // Returns the current volume, attenuated
+    plSoundBuffer *     GetDataBuffer() const { return (plSoundBuffer *)fDataBufferKey->ObjectIsLoaded(); }
+    float               QueryCurrVolume() const;  // Returns the current volume, attenuated
 
-    plFileName          GetFileName( void ) const;
+    plFileName          GetFileName() const;
     virtual double      GetLength();
 
     void                SetProperty( Property prop, bool on ) { if( on ) fProperties |= prop; else fProperties &= ~prop; }
     bool                IsPropertySet( Property prop ) const { return ( fProperties & prop ) ? true : false; }
 
-    virtual void        RefreshVolume( void );
+    virtual void        RefreshVolume();
 
     virtual void        SetStartPos(unsigned bytes) = 0;
     virtual unsigned    GetByteOffset(){return 0;}
@@ -228,52 +228,52 @@ public:
     virtual void        AddCallbacks(plSoundMsg* pMsg) = 0;
     virtual void        RemoveCallbacks(plSoundMsg* pMsg) = 0;
 
-    virtual uint8_t       GetChannelSelect( void ) const { return 0; }    // Only defined on Win32Sound right now, should be here tho
+    virtual uint8_t       GetChannelSelect() const { return 0; }    // Only defined on Win32Sound right now, should be here tho
 
-    virtual void        Read(hsStream* s, hsResMgr* mgr);
-    virtual void        Write(hsStream* s, hsResMgr* mgr);
+    void        Read(hsStream* s, hsResMgr* mgr) override;
+    void        Write(hsStream* s, hsResMgr* mgr) override;
     
     virtual void        SetFadeInEffect( plFadeParams::Type type, float length );
     virtual void        SetFadeOutEffect( plFadeParams::Type type, float length );
     virtual float    CalcSoftVolume( bool enable, float distToListenerSquared );
     virtual void        UpdateSoftVolume( bool enable, bool firstTime = false );
 
-    virtual bool        MsgReceive( plMessage* pMsg );
-    virtual bool        DirtySynchState( const plString &sdlName = "", uint32_t sendFlags = 0 ); // call when state has changed
+    bool        MsgReceive(plMessage* pMsg) override;
+    bool        DirtySynchState(const ST::string &sdlName = {}, uint32_t sendFlags = 0) override; // call when state has changed
 
     // Tests whether this sound is within range of the given position, not counting soft regions
     bool                IsWithinRange( const hsPoint3 &listenerPos, float *distSquared );
 
     // Type setting and getting, from the Types enum
     void                SetType( uint8_t type ) { fType = type; }
-    uint8_t               GetType( void ) const { return fType; }
+    uint8_t               GetType() const { return fType; }
 
     // Priority stuff
     void                SetPriority( uint8_t pri ) { fPriority = pri; }
-    uint8_t               GetPriority( void ) const { return fPriority; }
+    uint8_t               GetPriority() const { return fPriority; }
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
+    virtual plDrawableSpans*    CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo);
 
     // Forced loading/unloading (for when the audio system's LOD just doesn't cut it)
     virtual void        ForceLoad(  );
-    virtual void        ForceUnload( void );
+    virtual void        ForceUnload();
 
     // Note: ONLY THE AUDIOSYS SHOULD CALL THIS. If you're not the audioSys, get lost.
     static void         SetCurrDebugPlate( const plKey& soundKey );
 
-    void                RegisterOnAudioSys( void );
-    void                UnregisterOnAudioSys( void );
+    void                RegisterOnAudioSys();
+    void                UnregisterOnAudioSys();
 
     // Also only for the audio system
-    float            GetVolumeRank( void );
-    void                ForceUnregisterFromAudioSys( void );
+    float            GetVolumeRank();
+    void                ForceUnregisterFromAudioSys();
 
     static void         SetLoadOnDemand( bool activate ) { fLoadOnDemandFlag = activate; }
     static void         SetLoadFromDiskOnDemand( bool activate ) { fLoadFromDiskOnDemand = activate; }
 
-    const plEAXSourceSettings   &GetEAXSettings( void ) const { return fEAXSettings; }
-    plEAXSourceSettings         &GetEAXSettings( void ) { return fEAXSettings; }
+    const plEAXSourceSettings   &GetEAXSettings() const { return fEAXSettings; }
+    plEAXSourceSettings         &GetEAXSettings() { return fEAXSettings; }
     virtual StreamType          GetStreamType() const { return kNoStream; }
     virtual void    FreeSoundData();
 
@@ -340,40 +340,40 @@ protected:
     static bool         fLoadOnDemandFlag, fLoadFromDiskOnDemand;
     bool                fLoading;
 
-    void            IUpdateDebugPlate( void );
-    void            IPrintDbgMessage( const char *msg, bool isErr = false );
+    void            IUpdateDebugPlate();
+    void            IPrintDbgMessage( const ST::string& msg, bool isErr = false );
 
     virtual void    ISetActualVolume(float v) = 0;
-    virtual void    IActuallyStop( void );
-    virtual bool    IActuallyPlaying( void ) = 0;
-    virtual void    IActuallyPlay( void ) = 0;
-    virtual void    IFreeBuffers( void ) = 0;
+    virtual void    IActuallyStop();
+    virtual bool    IActuallyPlaying() = 0;
+    virtual void    IActuallyPlay() = 0;
+    virtual void    IFreeBuffers() = 0;
 
     //NOTE: if isIncidental is true the entire sound will be loaded. 
     virtual plSoundBuffer::ELoadReturnVal   IPreLoadBuffer( bool playWhenLoaded, bool isIncidental = false );   
     virtual void        ISetActualTime( double t ) = 0;
     
-    virtual bool        IActuallyLoaded( void ) = 0;
+    virtual bool        IActuallyLoaded() = 0;
     virtual void        IRefreshEAXSettings( bool force = false ) = 0;
 
-    virtual float    IGetChannelVolume( void ) const;
+    virtual float    IGetChannelVolume() const;
 
-    void    ISynchToStartTime( void );
+    void    ISynchToStartTime();
     void    ISynchedPlay( double virtualStartTime );
     void    IStartFade( plFadeParams *params, float offsetIntoFade = 0.f );
     void    IStopFade( bool shuttingDown = false, bool SetVolEnd = true);
     
-    bool    IWillBeAbleToPlay( void );
+    bool    IWillBeAbleToPlay();
 
     void        ISetSoftRegion( plSoftVolume *region );
     float    IAttenuateActualVolume( float volume ) const;
     void        ISetSoftOcclusionRegion( plSoftVolume *region );
 
     // Override to make sure the buffer is available before the base class is called
-    virtual void    IRefreshParams( void );
+    virtual void    IRefreshParams();
 
-    virtual bool    ILoadDataBuffer( void );
-    virtual void    IUnloadDataBuffer( void );
+    virtual bool    ILoadDataBuffer();
+    virtual void    IUnloadDataBuffer();
 
     //virtual void  ISetMinDistance( const int m ) = 0;
     //virtual void  ISetMaxDistance( const int m ) = 0;
@@ -394,19 +394,19 @@ protected:
 class plSoundVolumeApplicator : public plAGApplicator
 {
 public:
-    plSoundVolumeApplicator() { }
-    plSoundVolumeApplicator( uint32_t index ) { fIndex = index; }
+    plSoundVolumeApplicator() : fIndex() { }
+    plSoundVolumeApplicator(uint32_t index) : fIndex(index) { }
 
     CLASSNAME_REGISTER( plSoundVolumeApplicator );
     GETINTERFACE_ANY( plSoundVolumeApplicator, plAGApplicator );
 
-    virtual plAGApplicator *CloneWithChannel( plAGChannel *channel );
-    virtual void            Write( hsStream *stream, hsResMgr *mgr );
-    virtual void            Read( hsStream *s, hsResMgr *mgr );
+    plAGApplicator *CloneWithChannel(plAGChannel *channel) override;
+    void            Write(hsStream *stream, hsResMgr *mgr) override;
+    void            Read(hsStream *s, hsResMgr *mgr) override;
 
 protected:
     uint32_t      fIndex;
-    virtual void IApply( const plAGModifier *mod, double time );
+    void IApply(const plAGModifier *mod, double time) override;
 };
 
 #endif //plWin32Sound_h

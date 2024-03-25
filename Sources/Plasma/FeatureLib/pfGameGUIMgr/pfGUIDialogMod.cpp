@@ -45,51 +45,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
+
 #include "pfGameGUIMgr.h"
-#include "pfGUIDialogMod.h"
-#include "pfGUIControlMod.h"
-#include "pfGUIDialogHandlers.h"
-#include "pfGUIDialogNotifyProc.h"
-#include "pfGUIListElement.h"
-#include "plScene/plPostEffectMod.h"
 
-#include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "plScene/plSceneNode.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plFixedKey.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-
-#include "plStatusLog/plStatusLog.h"
-
-#include "plgDispatch.h"
+#include "HeadSpin.h"
+#include "hsGeometry3.h"
 #include "hsResMgr.h"
 #include "plViewTransform.h"
 
+#include "pfGUIControlMod.h"
+#include "pfGUIDialogHandlers.h"
+#include "pfGUIDialogMod.h"
+#include "pfGUIDialogNotifyProc.h"
+#include "pfGUIListElement.h"
+
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plMessage/plAnimCmdMsg.h"
+#include "plPipeline/plDebugText.h"
+#include "plScene/plPostEffectMod.h"
+#include "plScene/plSceneNode.h"
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-pfGUIDialogMod::pfGUIDialogMod() : fRenderMod( nil ), fNext( nil ), fPrevPtr( nil )
-{
-    memset( fName, 0, sizeof( fName ) );
-    fEnabled = false;
-    fControlOfInterest = nil;
-    fFocusCtrl = nil;
-    fMousedCtrl = nil;
-    fTagID = 0;
-    fHandler = nil;
-    fVersion = 0;
-
-    fDragMode = false;
-    fDragReceptive = false;
-    fDragTarget = nil;
-    fProcReceiver = nil;
-
-    fColorScheme = new pfGUIColorScheme();
-}
+pfGUIDialogMod::pfGUIDialogMod()
+    : fRenderMod(), fNext(), fPrevPtr(), fEnabled(),
+      fControlOfInterest(), fFocusCtrl(), fMousedCtrl(),
+      fTagID(), fHandler(), fVersion(), fProcReceiver(),
+      fDragMode(), fDragReceptive(), fDragTarget(),
+      fDragSource(), fColorScheme(new pfGUIColorScheme())
+{ }
 
 pfGUIDialogMod::~pfGUIDialogMod()
 {
@@ -104,13 +94,13 @@ pfGUIDialogMod::~pfGUIDialogMod()
     {
         plGenRefMsg *refMsg = new plGenRefMsg( mgrKey, plRefMsg::kOnRemove, 0, pfGameGUIMgr::kDlgModRef );
         refMsg->SetRef( this );
-        plgDispatch::MsgSend( refMsg );
+        refMsg->Send();
     }
 
-    SetHandler( nil );
+    SetHandler(nullptr);
 
     hsRefCnt_SafeUnRef( fColorScheme );
-    fColorScheme = nil;
+    fColorScheme = nullptr;
 }
 
 //// ScreenToWorldPoint //////////////////////////////////////////////////////
@@ -163,25 +153,25 @@ bool    pfGUIDialogMod::MsgReceive( plMessage *msg )
 
                     if( fEnabled )
                     {
-                        plAnimCmdMsg    *animMsg = new plAnimCmdMsg( GetKey(), fRenderMod->GetKey(), nil );
+                        plAnimCmdMsg    *animMsg = new plAnimCmdMsg(GetKey(), fRenderMod->GetKey(), nullptr);
                         animMsg->SetCmd( plAnimCmdMsg::kContinue );
-                        plgDispatch::MsgSend( animMsg );
+                        animMsg->Send();
                     }
                 }
                 else if( ref->GetContext() & ( plRefMsg::kOnRemove | plRefMsg::kOnDestroy ) )
                 {
-                    plAnimCmdMsg    *animMsg = new plAnimCmdMsg( GetKey(), fRenderMod->GetKey(), nil );
+                    plAnimCmdMsg    *animMsg = new plAnimCmdMsg(GetKey(), fRenderMod->GetKey(), nullptr);
                     animMsg->SetCmd( plAnimCmdMsg::kStop );
-                    plgDispatch::MsgSend( animMsg );
+                    animMsg->Send();
 
-                    fRenderMod = nil;
+                    fRenderMod = nullptr;
                 }
                 break;
 
             case kControlRef:
                 if( ref->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 {
-                    if( ref->fWhich >= fControls.GetCount() )
+                    if ((size_t)ref->fWhich >= fControls.size())
                     {
                         hsAssert( false, "Bad index in reffing a control on a GUI dialog" );
                     }
@@ -202,15 +192,15 @@ bool    pfGUIDialogMod::MsgReceive( plMessage *msg )
 
                 else if( ref->GetContext() & ( plRefMsg::kOnRemove | plRefMsg::kOnDestroy ) )
                 {
-                    if( ref->fWhich >= fControls.GetCount() )
+                    if ((size_t)ref->fWhich >= fControls.size())
                     {
                         hsAssert( false, "Bad index in unreffing a control on a GUI dialog." );
                     }
                     else
                     {
-                        if( fControls[ ref->fWhich ] != nil )
-                            fControls[ ref->fWhich ]->ISetDialog( nil );
-                        fControls[ ref->fWhich ] = nil;
+                        if (fControls[ref->fWhich] != nullptr)
+                            fControls[ref->fWhich]->ISetDialog(nullptr);
+                        fControls[ref->fWhich] = nullptr;
                     }
                 }
                 break;
@@ -225,7 +215,7 @@ bool    pfGUIDialogMod::MsgReceive( plMessage *msg )
 
 void        pfGUIDialogMod::AddControl( pfGUIControlMod *ctrl )
 {
-    fControls.Append( ctrl );
+    fControls.emplace_back(ctrl);
     ctrl->ISetDialog( this );
     ctrl->CalcInitialBounds();
 }
@@ -234,8 +224,8 @@ void        pfGUIDialogMod::AddControl( pfGUIControlMod *ctrl )
 
 void        pfGUIDialogMod::AddControlOnExport( pfGUIControlMod *ctrl )
 {
-    fControls.Append( ctrl );
-    hsgResMgr::ResMgr()->AddViaNotify( ctrl->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, fControls.GetCount() - 1, pfGUIDialogMod::kControlRef ), plRefFlags::kActiveRef );
+    fControls.emplace_back(ctrl);
+    hsgResMgr::ResMgr()->AddViaNotify(ctrl->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, fControls.size() - 1, pfGUIDialogMod::kControlRef), plRefFlags::kActiveRef);
 }
 
 //// SetEnabled //////////////////////////////////////////////////////////////
@@ -247,7 +237,7 @@ void    pfGUIDialogMod::SetEnabled( bool e )
 
     fEnabled = e;
 
-    if( fHandler != nil )
+    if (fHandler != nullptr)
     {
         if( fEnabled )
             fHandler->OnShow();
@@ -258,20 +248,19 @@ void    pfGUIDialogMod::SetEnabled( bool e )
     if ( !fEnabled )
     {
         // if we are being hidden then there should be no controls that have interest
-        fControlOfInterest = nil;
+        fControlOfInterest = nullptr;
         // also we can purge the dynaText images on the controls
-        int i;
-        for( i = 0; i < fControls.GetCount(); i++ )
+        for (pfGUIControlMod* ctrl : fControls)
         {
-            if( fControls[ i ] == nil )
+            if (ctrl == nullptr)
                 continue;
-            fControls[ i ]->PurgeDynaTextMapImage();
+            ctrl->PurgeDynaTextMapImage();
         }
     }
 
-    if( fRenderMod != nil )
+    if (fRenderMod != nullptr)
     {
-        plAnimCmdMsg    *animMsg = new plAnimCmdMsg( GetKey(), fRenderMod->GetKey(), nil );
+        plAnimCmdMsg    *animMsg = new plAnimCmdMsg(GetKey(), fRenderMod->GetKey(), nullptr);
         if( fEnabled )
         {
             animMsg->SetCmd( plAnimCmdMsg::kContinue );
@@ -281,7 +270,7 @@ void    pfGUIDialogMod::SetEnabled( bool e )
         }
         else
             animMsg->SetCmd( plAnimCmdMsg::kStop );
-        plgDispatch::MsgSend( animMsg );
+        animMsg->Send();
     }
 
 }
@@ -294,11 +283,14 @@ void    pfGUIDialogMod::Read( hsStream *s, hsResMgr *mgr )
 
     mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRenderModRef ), plRefFlags::kActiveRef );
 
-    s->Read( sizeof( fName ), fName );
+    char nameBuf[128];
+    s->Read(sizeof(nameBuf), nameBuf);
+    nameBuf[sizeof(nameBuf) - 1] = 0;
+    fName = ST::string(nameBuf);
 
-    uint32_t  i, count = s->ReadLE32();
-    fControls.SetCountAndZero( count );
-    for( i = 0; i < count; i++ )
+    uint32_t count = s->ReadLE32();
+    fControls.assign(count, nullptr);
+    for (uint32_t i = 0; i < count; i++)
         mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kControlRef ), plRefFlags::kActiveRef );
 
     // Register us with the Game GUI manager
@@ -310,13 +302,13 @@ void    pfGUIDialogMod::Read( hsStream *s, hsResMgr *mgr )
         hsgResMgr::ResMgr()->AddViaNotify( GetKey(), refMsg, plRefFlags::kPassiveRef );     
     }
 
-    s->ReadLE( &fTagID );
+    s->ReadLE32(&fTagID);
 
     fProcReceiver = mgr->ReadKey( s );
-    if( fProcReceiver != nil )
+    if (fProcReceiver != nullptr)
         SetHandler( new pfGUIDialogNotifyProc( fProcReceiver ) );
 
-    s->ReadLE( &fVersion );
+    s->ReadLE32(&fVersion);
 
     fColorScheme->Read( s );
 
@@ -325,39 +317,41 @@ void    pfGUIDialogMod::Read( hsStream *s, hsResMgr *mgr )
 
 void    pfGUIDialogMod::Write( hsStream *s, hsResMgr *mgr )
 {
-    uint32_t  i;
-
-
     plSingleModifier::Write( s, mgr );
 
     mgr->WriteKey( s, fRenderMod->GetKey() );
-    s->Write( sizeof( fName ), fName );
 
-    s->WriteLE32( fControls.GetCount() );
-    for( i = 0; i < fControls.GetCount(); i++ )
-        mgr->WriteKey( s, fControls[ i ]->GetKey() );
+    char name[128]{ 0 };
+    memcpy(name, fName.c_str(), std::min(sizeof(name), fName.size()));
+    name[sizeof(name) - 1] = 0;
 
-    s->WriteLE( fTagID );
+    s->Write( sizeof( name ), name );
+
+    s->WriteLE32((uint32_t)fControls.size());
+    for (pfGUIControlMod* ctrl : fControls)
+        mgr->WriteKey(s, ctrl->GetKey());
+
+    s->WriteLE32(fTagID);
 
     mgr->WriteKey( s, fProcReceiver );
 
-    s->WriteLE( fVersion );
+    s->WriteLE32(fVersion);
 
     fColorScheme->Write( s );
 
     mgr->WriteKey( s, fSceneNodeKey );
 }
 
-plKey   pfGUIDialogMod::GetSceneNodeKey( void )
+plKey   pfGUIDialogMod::GetSceneNodeKey()
 {
-    if( fSceneNodeKey != nil )
+    if (fSceneNodeKey != nullptr)
         return fSceneNodeKey;
 
     // Attempt to grab it
-    if( GetTarget() != nil && GetTarget()->GetSceneNode() != nil )
+    if (GetTarget() != nullptr && GetTarget()->GetSceneNode() != nullptr)
         return ( fSceneNodeKey = GetTarget()->GetSceneNode() );
 
-    return nil;
+    return nullptr;
 }
 
 //// UpdateInterestingThings /////////////////////////////////////////////////
@@ -366,34 +360,31 @@ plKey   pfGUIDialogMod::GetSceneNodeKey( void )
 
 void    pfGUIDialogMod::UpdateInterestingThings( float mouseX, float mouseY, uint8_t modifiers, bool modalPreset )
 {
-    int         i;
-    hsPoint3    mousePoint;
+    hsPoint3    mousePoint(mouseX, mouseY, 0.f);
 
-
-    mousePoint.Set( mouseX, mouseY, 0.f );
-
-    for( i = 0; i < fControls.GetCount(); i++ )
+    for (pfGUIControlMod* ctrl : fControls)
     {
-        if( fControls[ i ] == nil )
+        if (ctrl == nullptr)
             continue;
 
         // if there was a modal present and we are not modal, then everything is unInteresting!
         if ( modalPreset && !HasFlag(pfGUIDialogMod::kModal) )
         {
-            if( fControls[ i ]->IsInteresting() )
-                fControls[ i ]->SetInteresting( false );
+            if (ctrl->IsInteresting())
+                ctrl->SetInteresting(false);
         }
         else
         {
-            if( !fControls[ i ]->HasFlag( pfGUIControlMod::kIntangible ) && fControls[ i ]->PointInBounds( mousePoint ) || fControls[ i ] == fControlOfInterest )
+            if (!ctrl->HasFlag(pfGUIControlMod::kIntangible) && ctrl->PointInBounds(mousePoint)
+                || ctrl == fControlOfInterest)
             {
-                if( !fControls[ i ]->IsInteresting() )
-                    fControls[ i ]->SetInteresting( true );
+                if (!ctrl->IsInteresting())
+                    ctrl->SetInteresting(true);
             }
             else
             {
-                if( fControls[ i ]->IsInteresting() )
-                    fControls[ i ]->SetInteresting( false );
+                if (ctrl->IsInteresting())
+                    ctrl->SetInteresting(false);
             }
         }
     }
@@ -401,18 +392,10 @@ void    pfGUIDialogMod::UpdateInterestingThings( float mouseX, float mouseY, uin
 
 //// HandleMouseEvent ////////////////////////////////////////////////////////
 
-#ifdef HS_DEBUGGING      // Debugging bounds rects
-#include "plPipeline/plDebugText.h"
-#endif
-
 bool        pfGUIDialogMod::HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY,
                                                 uint8_t modifiers )
 {
     hsPoint3    mousePoint;
-    uint32_t      i;
-
-    pfGUIControlMod *oldInterestingCtrl = nil;
-    float        smallestZ;
 
 #ifdef HS_DEBUGGING  // Debugging bounds rects
 static bool     showBounds = false;
@@ -421,36 +404,34 @@ static bool     showBounds = false;
     {
         uint32_t sW, sH;
         plDebugText::Instance().GetScreenSize(&sW,&sH);
-        for( i = 0; i < fControls.GetCount(); i++ )
+        for (pfGUIControlMod* ctrl : fControls)
         {
-            if( fControls[ i ] == nil )
+            if (ctrl == nullptr)
                 continue;
-            if( fControls[ i ]->HasFlag( pfGUIControlMod::kIntangible ) )
+            if (ctrl->HasFlag(pfGUIControlMod::kIntangible))
                 continue;
 
-            if( fControls[ i ]->fBoundsPoints.GetCount() > 0 )
+            if (!ctrl->fBoundsPoints.empty())
             {
-                const hsBounds3 &bnds = fControls[ i ]->GetBounds();
+                const hsBounds3 &bnds = ctrl->GetBounds();
                 plDebugText::Instance().Draw3DBorder( (uint16_t)(sW * bnds.GetMins().fX),
                                         (uint16_t)(sH * bnds.GetMins().fY),
                                         (uint16_t)(sW * bnds.GetMaxs().fX),
                                         (uint16_t)(sH * bnds.GetMaxs().fY), 0x3000ffff, 0x3000ffff );
 
                 uint32_t color = 0xffff0000;
-                for( int j = 0; j < fControls[ i ]->fBoundsPoints.GetCount(); j++ )
+                for (size_t j = 0; j < ctrl->fBoundsPoints.size(); j++)
                 {
 //                  color = 0xff000000 | ( ( j * 16 ) << 16 );
-                    float x = sW * fControls[ i ]->fBoundsPoints[ j ].fX;
-                    float y = sH * fControls[ i ]->fBoundsPoints[ j ].fY;
+                    float x = sW * ctrl->fBoundsPoints[j].fX;
+                    float y = sH * ctrl->fBoundsPoints[j].fY;
                     plDebugText::Instance().DrawRect( (uint16_t)(x - 2), (uint16_t)(y - 2), (uint16_t)(x + 2), (uint16_t)(y + 2), color );
-                    char str[ 16 ];
-                    snprintf(str, 16, "%d", j);
-                    plDebugText::Instance().DrawString( (uint16_t)(x + 8), (uint16_t)(y - 8), str, color );
+                    plDebugText::Instance().DrawString((uint16_t)(x + 8), (uint16_t)(y - 8), ST::string::from_uint(j), color);
                 }
             }
             else
             {
-                const hsBounds3 &bnds = fControls[ i ]->GetBounds();
+                const hsBounds3 &bnds = ctrl->GetBounds();
                 plDebugText::Instance().Draw3DBorder( (uint16_t)(sW * bnds.GetMins().fX),
                                         (uint16_t)(sH * bnds.GetMins().fY),
                                         (uint16_t)(sW * bnds.GetMaxs().fX),
@@ -468,38 +449,41 @@ static bool     showBounds = false;
         return true;        // We ALWAYS handle events if we're in drag mode
     }
 
-    oldInterestingCtrl = fMousedCtrl;
-    if( fControlOfInterest != nil )
+    if (fControlOfInterest != nullptr)
     {
         // A particular control already has interest--pass messages directly to it no matter what
         fMousedCtrl = fControlOfInterest;
     }
     else
     {
-        for( i = 0, fMousedCtrl = nil, smallestZ = 1.e30f; i < fControls.GetCount(); i++ )
+        fMousedCtrl = nullptr;
+        float smallestZ = 1.e30f;
+        for (pfGUIControlMod* ctrl : fControls)
         {
-            if( fControls[ i ] != nil && !fControls[ i ]->HasFlag( pfGUIControlMod::kIntangible ) && fControls[ i ]->PointInBounds( mousePoint ) && fControls[ i ]->IsVisible() && fControls[ i ]->IsEnabled() )
+            if (ctrl != nullptr && !ctrl->HasFlag(pfGUIControlMod::kIntangible) && ctrl->PointInBounds(mousePoint)
+                && ctrl->IsVisible() && ctrl->IsEnabled())
             {
-                if( fControls[ i ]->GetScreenMinZ() < smallestZ )
+                if (ctrl->GetScreenMinZ() < smallestZ)
                 {
-                    if( fControls[ i ]->FilterMousePosition( mousePoint ) )
+                    if (ctrl->FilterMousePosition(mousePoint))
                     {
-                        fMousedCtrl = fControls[ i ];
-                        smallestZ = fControls[ i ]->GetScreenMinZ();
+                        fMousedCtrl = ctrl;
+                        smallestZ = ctrl->GetScreenMinZ();
                     }
                 }
             }
         }
     }
 
-    if( fMousedCtrl != nil )
+    if (fMousedCtrl != nullptr)
     {
 #ifdef HS_DEBUGGING  // Debugging bounds rects
-if( showBounds )
-{
-    const hsBounds3 &bnds = fMousedCtrl->GetBounds();
-    plDebugText::Instance().DrawString( (uint16_t)(bnds.GetMins().fX), (uint16_t)(bnds.GetMins().fY), fMousedCtrl->GetKeyName().c_str(), (uint32_t)0xffffff00 );
-}
+        if (showBounds)
+        {
+            const hsBounds3 &bnds = fMousedCtrl->GetBounds();
+            plDebugText::Instance().DrawString((uint16_t)(bnds.GetMins().fX), (uint16_t)(bnds.GetMins().fY),
+                                               fMousedCtrl->GetKeyName(), (uint32_t)0xffffff00);
+        }
 #endif
 
         if( event == pfGameGUIMgr::kMouseDown )
@@ -511,12 +495,12 @@ if( showBounds )
 
             // Clicking on a control (mouse down) also sets focus to that control. Unlike
             // control-of-interest, this does NOT get reset until a new control is clicked on
-            if( fFocusCtrl != fMousedCtrl )
+            if (fFocusCtrl != fMousedCtrl && fMousedCtrl->FocusOnMouseDown(mousePoint, modifiers))
             {
-                if( fHandler != nil )
+                if (fHandler != nullptr)
                     fHandler->OnCtrlFocusChange( fFocusCtrl, fMousedCtrl );
 
-                if( fFocusCtrl != nil )
+                if (fFocusCtrl != nullptr)
                     fFocusCtrl->SetFocused( false );
                 fFocusCtrl = fMousedCtrl;
                 fFocusCtrl->SetFocused( true );
@@ -527,7 +511,7 @@ if( showBounds )
             fMousedCtrl->HandleMouseUp( mousePoint, modifiers );
 
             // Controls lose interest on mouse up
-            fControlOfInterest = nil;
+            fControlOfInterest = nullptr;
         }
         else if( event == pfGameGUIMgr::kMouseMove )
             fMousedCtrl->HandleMouseHover( mousePoint, modifiers );
@@ -539,14 +523,14 @@ if( showBounds )
         return true;
     }
     // Clicked on nobody, make sure we lose focus on any controls
-    if( fFocusCtrl != nil && event == pfGameGUIMgr::kMouseDown )
+    if (fFocusCtrl != nullptr && event == pfGameGUIMgr::kMouseDown)
     {
-        if( fHandler != nil )
-            fHandler->OnCtrlFocusChange( fFocusCtrl, nil );
+        if (fHandler != nullptr)
+            fHandler->OnCtrlFocusChange(fFocusCtrl, nullptr);
 
-        if( fFocusCtrl != nil ) // The handler call could've changed it
+        if (fFocusCtrl != nullptr) // The handler call could've changed it
             fFocusCtrl->SetFocused( false );
-        fFocusCtrl = nil;
+        fFocusCtrl = nullptr;
     }
 
     return false;
@@ -557,7 +541,7 @@ if( showBounds )
 bool        pfGUIDialogMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers )
 {
     // Only process if a control has focus...
-    if( fFocusCtrl != nil )
+    if (fFocusCtrl != nullptr)
     {
         // And guess what, it's up to that control to process it! Gee, how easy...
         return fFocusCtrl->HandleKeyEvent( event, key, modifiers );
@@ -573,7 +557,7 @@ bool        pfGUIDialogMod::HandleKeyPress( wchar_t key, uint8_t modifiers )
     // to a char, so it had to be done up at the mgr level (sadly)
     // Only process if a control has focus...
 
-    if( fFocusCtrl != nil )
+    if (fFocusCtrl != nullptr)
     {
         return fFocusCtrl->HandleKeyPress( key, modifiers );
     }
@@ -585,64 +569,59 @@ bool        pfGUIDialogMod::HandleKeyPress( wchar_t key, uint8_t modifiers )
 
 void    pfGUIDialogMod::SetFocus( pfGUIControlMod *ctrl )
 {
-    if( ctrl != nil && ctrl->fDialog != this )
+    if (ctrl != nullptr && ctrl->fDialog != this)
     {
-        if( fHandler != nil )
-            fHandler->OnCtrlFocusChange( fFocusCtrl, nil );
+        if (fHandler != nullptr)
+            fHandler->OnCtrlFocusChange(fFocusCtrl, nullptr);
 
-        if( fFocusCtrl != nil )
+        if (fFocusCtrl != nullptr)
             fFocusCtrl->SetFocused( false );
-        fFocusCtrl = nil;
+        fFocusCtrl = nullptr;
 
         ctrl->fDialog->SetFocus( ctrl );
     }
     else if( ctrl != fFocusCtrl )
     {
-        if( fFocusCtrl != nil )
+        if (fFocusCtrl != nullptr)
             fFocusCtrl->SetFocused( false );
 
-        if( fHandler != nil )
+        if (fHandler != nullptr)
             fHandler->OnCtrlFocusChange( fFocusCtrl, ctrl );
 
         fFocusCtrl = ctrl;
-        if( fFocusCtrl != nil )
+        if (fFocusCtrl != nullptr)
             fFocusCtrl->SetFocused( true );
     }
 }
 
 //// Show/Hide ///////////////////////////////////////////////////////////////
 
-void    pfGUIDialogMod::Show( void )
+void    pfGUIDialogMod::Show()
 {
     pfGameGUIMgr::GetInstance()->ShowDialog( this );
 }
 
-void    pfGUIDialogMod::ShowNoReset( void )
+void    pfGUIDialogMod::ShowNoReset()
 {
     pfGameGUIMgr::GetInstance()->ShowDialog( this, false );
 }
 
-void    pfGUIDialogMod::Hide( void )
+void    pfGUIDialogMod::Hide()
 {
     pfGameGUIMgr::GetInstance()->HideDialog( this );
 }
 
 //// GetControlFromTag ///////////////////////////////////////////////////////
 
-pfGUIControlMod *pfGUIDialogMod::GetControlFromTag( uint32_t tagID )
+pfGUIControlMod *pfGUIDialogMod::GetControlFromTag( uint32_t tagID ) const
 {
-    int     i;
-
-    int ctrlCount = fControls.GetCount();
-
-    for( i = 0; i < ctrlCount; i++ )
+    for (pfGUIControlMod* ctrl : fControls)
     {
-        pfGUIControlMod *ctrl = fControls[i];
-        if( ctrl && ctrl->GetTagID() == tagID )
-            return fControls[ i ];
+        if (ctrl && ctrl->GetTagID() == tagID)
+            return ctrl;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// SetControlOfInterest ////////////////////////////////////////////////////
@@ -656,14 +635,11 @@ void    pfGUIDialogMod::SetControlOfInterest( pfGUIControlMod *c )
 
 void    pfGUIDialogMod::SetHandler( pfGUIDialogProc *hdlr )
 {
-    int     i;
-
-
     if( fHandler && fHandler->DecRef() )
         delete fHandler;
 
     fHandler = hdlr;
-    if( fHandler != nil )
+    if (fHandler != nullptr)
     {
         fHandler->IncRef();
         fHandler->SetDialog( this );
@@ -672,11 +648,11 @@ void    pfGUIDialogMod::SetHandler( pfGUIDialogProc *hdlr )
     // We also set the handler for any controls that are flagged to inherit
     // from the parent dialog. Note that SetHandlerForAll() can thus be
     // seen as a function that forces this flag (temporarily) on all controls
-    for( i = 0; i < fControls.GetCount(); i++ )
+    for (pfGUIControlMod* ctrl : fControls)
     {
         // Test for nil controls since we get this also on destruct
-        if( fControls[ i ] != nil && fControls[ i ]->HasFlag( pfGUIControlMod::kInheritProcFromDlg ) )
-            fControls[ i ]->ISetHandler( hdlr );
+        if (ctrl != nullptr && ctrl->HasFlag(pfGUIControlMod::kInheritProcFromDlg))
+            ctrl->ISetHandler(hdlr);
     }
 }
 
@@ -686,24 +662,20 @@ void    pfGUIDialogMod::SetHandler( pfGUIDialogProc *hdlr )
 
 void    pfGUIDialogMod::SetHandlerForAll( pfGUIDialogProc *hdlr )
 {
-    int     i;
-
-
     SetHandler( hdlr );
-    for( i = 0; i < fControls.GetCount(); i++ )
-        fControls[ i ]->ISetHandler( hdlr );
+    for (pfGUIControlMod* ctrl : fControls)
+        ctrl->ISetHandler(hdlr);
 }
 
 //// SetControlHandler ///////////////////////////////////////////////////////
 
 void    pfGUIDialogMod::SetControlHandler( uint32_t tagID, pfGUIDialogProc *hdlr )
 {
-    int     i;
-    for( i = 0; i < fControls.GetCount(); i++ )
+    for (pfGUIControlMod* ctrl : fControls)
     {
-        if( fControls[ i ]->GetTagID() == tagID )
+        if (ctrl->GetTagID() == tagID)
         {
-            fControls[ i ]->SetHandler( hdlr );
+            ctrl->SetHandler(hdlr);
             break;
         }
     }
@@ -712,7 +684,7 @@ void    pfGUIDialogMod::SetControlHandler( uint32_t tagID, pfGUIDialogProc *hdlr
 
 //// UpdateAspectRatio ///////////////////////////////////////////////////////
 
-void    pfGUIDialogMod::UpdateAspectRatio( void )
+void    pfGUIDialogMod::UpdateAspectRatio()
 {
     if (fRenderMod)
     {
@@ -725,23 +697,21 @@ void    pfGUIDialogMod::UpdateAspectRatio( void )
 
 //// UpdateAllBounds /////////////////////////////////////////////////////////
 
-void    pfGUIDialogMod::UpdateAllBounds( void )
+void    pfGUIDialogMod::UpdateAllBounds()
 {
-    int i;
-    for( i = 0; i < fControls.GetCount(); i++ )
+    for (pfGUIControlMod* ctrl : fControls)
     {
-        if( fControls[ i ] != nil )
-            fControls[ i ]->UpdateBounds( nil, true );
+        if (ctrl != nullptr)
+            ctrl->UpdateBounds(nullptr, true);
     }
 }
 
 //// RefreshAllControls //////////////////////////////////////////////////////
 
-void    pfGUIDialogMod::RefreshAllControls( void )
+void    pfGUIDialogMod::RefreshAllControls()
 {
-    int i;
-    for( i = 0; i < fControls.GetCount(); i++ )
-        fControls[ i ]->IUpdate();
+    for (pfGUIControlMod* ctrl : fControls)
+        ctrl->IUpdate();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -750,27 +720,27 @@ void    pfGUIDialogMod::RefreshAllControls( void )
 
 //// ClearDragList ///////////////////////////////////////////////////////////
 
-void    pfGUIDialogMod::ClearDragList( void )
+void    pfGUIDialogMod::ClearDragList()
 {
-    fDragElements.Reset();
+    fDragElements.clear();
 }
 
 //// AddToDragList ///////////////////////////////////////////////////////////
 
 void    pfGUIDialogMod::AddToDragList( pfGUIListElement *e )
 {
-    fDragElements.Append( e );
+    fDragElements.emplace_back(e);
 }
 
 //// EnterDragMode ///////////////////////////////////////////////////////////
 
 void    pfGUIDialogMod::EnterDragMode( pfGUIControlMod *source )
 {
-    if( fDragElements.GetCount() > 0 )
+    if (!fDragElements.empty())
     {
         fDragMode = true;
         fDragReceptive = false;
-        fDragTarget = nil;
+        fDragTarget = nullptr;
 
         fDragSource = source;
     }
@@ -786,34 +756,32 @@ void    pfGUIDialogMod::EnterDragMode( pfGUIControlMod *source )
 
 void    pfGUIDialogMod::IHandleDrag( hsPoint3 &mousePoint, pfGameGUIMgr::EventType event, uint8_t modifiers )
 {
-    int             i;
-    float        smallestZ;
-
-
     // First, see if our target control has changed
-    for( i = 0, fMousedCtrl = nil, smallestZ = 1.e30f; i < fControls.GetCount(); i++ )
+    fMousedCtrl = nullptr;
+    float smallestZ = 1.e30f;
+    for (pfGUIControlMod* ctrl : fControls)
     {
-        if( fControls[ i ]->PointInBounds( mousePoint ) && fControls[ i ]->GetBounds().GetMaxs().fZ < smallestZ )
-            fMousedCtrl = fControls[ i ];
+        if (ctrl->PointInBounds(mousePoint) && ctrl->GetBounds().GetMaxs().fZ < smallestZ)
+            fMousedCtrl = ctrl;
     }
 
     if( fMousedCtrl != fDragTarget )
     {
         // Target has changed, update our receptive flag
         fDragTarget = fMousedCtrl;
-        if( fDragTarget == nil )
+        if (fDragTarget == nullptr)
             fDragReceptive = false;
         else
         {
             pfGUIDropTargetProc *dropProc = fDragTarget->GetDropTargetHdlr();
-            if( dropProc == nil )
+            if (dropProc == nullptr)
                 fDragReceptive = false;
             else
             {
                 fDragReceptive = true;
-                for( i = 0; i < fDragElements.GetCount(); i++ )
+                for (pfGUIListElement* dragElement : fDragElements)
                 {
-                    if( !dropProc->CanEat( fDragElements[ i ], fDragSource ) )
+                    if (!dropProc->CanEat(dragElement, fDragSource))
                     {
                         fDragReceptive = false;
                         break;
@@ -830,19 +798,18 @@ void    pfGUIDialogMod::IHandleDrag( hsPoint3 &mousePoint, pfGameGUIMgr::EventTy
         if( fDragReceptive )
         {
             pfGUIDropTargetProc *dropProc = fDragTarget->GetDropTargetHdlr();
-            for( i = 0; i < fDragElements.GetCount(); i++ )
-                dropProc->Eat( fDragElements[ i ], fDragSource, fDragTarget );
+            for (pfGUIListElement* dragElement : fDragElements)
+                dropProc->Eat(dragElement, fDragSource, fDragTarget);
         }
     }   
 }
 
 //// GetDesiredCursor ////////////////////////////////////////////////////////
 
-uint32_t      pfGUIDialogMod::GetDesiredCursor( void ) const
+uint32_t      pfGUIDialogMod::GetDesiredCursor() const
 {
-    if( fMousedCtrl != nil ) 
+    if (fMousedCtrl != nullptr)
         return fMousedCtrl->IGetDesiredCursor();
 
     return 0;
 }
-

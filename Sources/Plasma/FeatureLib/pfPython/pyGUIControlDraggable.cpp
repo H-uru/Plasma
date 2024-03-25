@@ -40,22 +40,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
+#include "pyGUIControlDraggable.h"
 
 #include "pfGameGUIMgr/pfGUIDraggableMod.h"
-#include "pfGameGUIMgr/pfGUIDialogMod.h"
 
-#include "pyGUIControlDraggable.h"
-#include "pyGUIDialog.h"
 #include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 pyGUIControlDraggable::pyGUIControlDraggable(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlDraggable::pyGUIControlDraggable(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlDraggable::pyGUIControlDraggable(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 
@@ -78,7 +75,7 @@ void pyGUIControlDraggable::StopDragging( bool cancel )
     }
 }
 
-PyObject* pyGUIControlDraggable::GetLastMousePt( void )
+PyObject* pyGUIControlDraggable::GetLastMousePt()
 {
     if ( fGCkey )
     {

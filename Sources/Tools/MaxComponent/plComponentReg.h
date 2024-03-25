@@ -43,18 +43,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_COMPONENT_REG_H
 
 #include "plComponentMgr.h"
+#include "MaxMain/MaxCompat.h"
 
 class TargetValidator;
 extern TargetValidator gTargetValidator;
 enum { kTargs };
 
-class plComponentClassDesc : public ClassDesc2
+class plComponentClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
-    int         IsPublic()      { return 0; }
-    SClass_ID   SuperClassID()  { return HELPER_CLASS_ID; }
-    HINSTANCE   HInstance()     { return hInstance; }
-    BOOL        NeedsToSave()   { return TRUE; }
+    int         IsPublic()     override { return 0; }
+    SClass_ID   SuperClassID() override { return HELPER_CLASS_ID; }
+    HINSTANCE   HInstance()    override { return hInstance; }
+    BOOL        NeedsToSave()  override { return TRUE; }
 
     virtual bool IsAutoUI()     { return false; }
     virtual bool IsObsolete()   { return false; }
@@ -88,17 +89,17 @@ class classname##ClassDesc : public plComponentClassDesc                    \
 {                                                                           \
     FUNC_CLASS_DESC(classname, longname, shortname, category, id)           \
     CONSTRUCT_DESC(classname)                                               \
-    virtual bool IsObsolete() { return true; }                              \
+    bool IsObsolete() override { return true; }                             \
 };                                                                          \
 DECLARE_CLASS_DESC(classname, varname)
 
 #define FUNC_CLASS_DESC(classname, longname, shortname, category, id)   \
 public:                                                                 \
-    void*           Create(BOOL loading) { return new classname##; }    \
-    const TCHAR*    ClassName()     { return _T(longname); }            \
-    Class_ID        ClassID()       { return id; }                      \
-    const TCHAR*    Category()      { return _T(category); }            \
-    const TCHAR*    InternalName()  { return _T(shortname); }
+    void*         Create(BOOL loading) override { return new classname; } \
+    const TCHAR*  ClassName()    override { return _T(longname); }      \
+    Class_ID      ClassID()      override { return id; }                \
+    const TCHAR*  Category()     override { return _T(category); }      \
+    const TCHAR*  InternalName() override { return _T(shortname); }
 
 #define CONSTRUCT_DESC(classname) \
     classname##ClassDesc() { plComponentMgr::Inst().Register(this); }
@@ -115,10 +116,10 @@ TARG_BLOCK(classname, varname)
 //  EXCEPT the CLASS_DESC line, then change CLASS_DESC to OBSOLETE_CLASS. This macro
 //  will handle the rest for you! -mcn
 //
-#define OBSOLETE_CLASS( classname, descname, strname, sn, type, classid ) class classname : public plComponent { public:    classname##(); bool Convert( plMaxNode *n, plErrorMsg *e ) { return true; } }; \
+#define OBSOLETE_CLASS( classname, descname, strname, sn, type, classid ) class classname : public plComponent { public:    classname(); bool Convert( plMaxNode *n, plErrorMsg *e ) { return true; } }; \
                             OBSOLETE_CLASS_DESC( classname, descname, strname, sn, type, classid ) \
-                            classname##::##classname() { fClassDesc = &##descname##; fClassDesc->MakeAutoParamBlocks(this); } \
-                            ParamBlockDesc2 classname##blk ( plComponent::kBlkComp, _T("##descname##"), 0, &##descname##, P_AUTO_CONSTRUCT, plComponent::kRefComp, end );
+                            classname::classname() { fClassDesc = &descname; fClassDesc->MakeAutoParamBlocks(this); } \
+                            ParamBlockDesc2 classname##blk ( plComponent::kBlkComp, _T(#descname), 0, &descname, P_AUTO_CONSTRUCT, plComponent::kRefComp, p_end );
 
 //
 // Creates the targets paramblock for a component
@@ -130,8 +131,8 @@ static ParamBlockDesc2 g##classname##TargsBlock             \
     P_AUTO_CONSTRUCT, plComponentBase::kRefTargs,           \
                                                             \
     kTargs, _T("targets"), TYPE_INODE_TAB, 0, 0, 0,         \
-        end,                                                \
-    end                                                     \
+        p_end,                                              \
+    p_end                                                   \
 );
 
 // Component categories

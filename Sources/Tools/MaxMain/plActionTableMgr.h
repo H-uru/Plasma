@@ -90,7 +90,7 @@ public:
         ContextId = actionId;
         Name = name;
         Created = false;
-        ActionCB = NULL;
+        ActionCB = nullptr;
 
         for(int i = 0; i < numActions; i++)
         {
@@ -103,7 +103,7 @@ public:
         TableId = 0;
         ContextId = 0;
         Created = false;
-        ActionCB = NULL;
+        ActionCB = nullptr;
     }
 
     virtual ~ActionTableInfo()

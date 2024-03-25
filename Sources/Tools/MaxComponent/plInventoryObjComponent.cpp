@@ -48,11 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plActivatorBaseComponent.h"
 #include "plResponderComponent.h"
 #include "MaxMain/plMaxNode.h"
+#include "MaxMain/MaxAPI.h"
 #include "resource.h"
 
-#include <iparamm2.h>
-
-#pragma hdrstop
 
 #include "plInventoryObjComponent.h"
 
@@ -122,35 +120,33 @@ ParamBlockDesc2 gInventoryObjBlock
 (
     plComponent::kBlkComp, _T("ClickDragComp"), 0, &gInventoryObjDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_INV_OBJECT, IDS_COMP_INV_OBJECTS, 0, 0, NULL, //&gInventoryObjComponentProc,
+    IDD_COMP_INV_OBJECT, IDS_COMP_INV_OBJECTS, 0, 0, nullptr, //&gInventoryObjComponentProc,
 
     kAgeSpecificCheckBx,  _T("AgeSpecificObject"), TYPE_BOOL,       0, 0,
         p_default,  FALSE,
         p_enable_ctrls, 1, kRespawnAfterLostCheckBx,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_INV_OBJECT_ITINERANTBOOL,
-        end,
+        p_end,
 
     kRespawnAfterLostCheckBx,  _T("RespawnAtSPObject"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_INV_OBJECT_RESPAWNBOOL,
-        end,
+        p_end,
     
     kConsumableCheckbx , _T("TemporaryObject"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_enable_ctrls, 1, kLifeSpan,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_INV_OBJECT_CONSUMABLE,
-        end,    
+        p_end,    
 
     kLifeSpan,  _T("LifeSpan"), TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 0.0,
         p_range, 0.0, 100000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_INV_OBJECT_LIFE_EDIT, IDC_COMP_INV_OBJECT_LIFE_SPIN, 1.0f,
-        end,
+        p_end,
 
-
-
-    end
+    p_end
 );
 
 plInventoryObjComponent::plInventoryObjComponent()
@@ -169,7 +165,7 @@ const plInventoryObjComponent::LogicKeys& plInventoryObjComponent::GetLogicKeys(
 bool plInventoryObjComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fLogicModKeys.clear();
-    fReceivers.Reset();
+    fReceivers.clear();
     return true;
 }
 
@@ -182,7 +178,7 @@ plKey plInventoryObjComponent::GetLogicKey(plMaxNode* node)
         if (node == it->first)
             return(it->second);
     }
-    return nil;
+    return nullptr;
 }
 
 
@@ -193,7 +189,7 @@ bool plInventoryObjComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     // Create and register the ClickDrag's logic component
     plLogicModifier *logic = new plLogicModifier;
-    plString tmpName = plFormat("{}_{}_LogicModifier", obj->GetKeyName(), GetINode()->GetName());
+    ST::string tmpName = ST::format("{}_{}_LogicModifier", obj->GetKeyName(), GetINode()->GetName());
     plKey logicKey = hsgResMgr::ResMgr()->NewKey(tmpName, logic, node->GetLocation());
     hsgResMgr::ResMgr()->AddViaNotify(logicKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
@@ -206,7 +202,7 @@ return true;
 
 void plInventoryObjComponent::AddReceiverKey(plKey key, plMaxNode* node)
 {
-    fReceivers.Append(key);
+    fReceivers.emplace_back(std::move(key));
 }
 
 bool plInventoryObjComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
@@ -224,7 +220,7 @@ protected:
     IParamBlock2 *fPB;
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -232,9 +228,9 @@ public:
 //          fPB = map->GetParamBlock();
 /*          
 //          fNoteTrackDlgX.Init(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIMX),
-//                              nil,
+//                              nullptr,
 ///                             kClickDragAnimX,
-/                               nil,
+/                               nullptr,
                                 fPB,
                                 fPB->GetOwner());
 
@@ -243,9 +239,9 @@ public:
             EnableWindow(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIMX), true);
             
             fNoteTrackDlgY.Init(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIM_Y),
-                                nil,
+                                nullptr,
                                 kClickDragAnimY,
-                                nil,
+                                nullptr,
                                 fPB,
                                 fPB->GetOwner());
 
@@ -270,10 +266,10 @@ public:
             */
         }
 
-        return false;   
+        return FALSE;
     }
 
-    void DeleteThis()
+    void DeleteThis() override
     {
 //      fNoteTrackDlgX.DeleteCache();
 //      fNoteTrackDlgY.DeleteCache();

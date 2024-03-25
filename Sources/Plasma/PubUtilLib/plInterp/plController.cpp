@@ -56,7 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static const char *kInvalidInterpString = "Invalid call to plController::Interp()";
 
-plControllerCacheInfo::plControllerCacheInfo() : fNumSubControllers(0), fSubControllers(nil), fKeyIndex(0), fAtc(nil) {}
+plControllerCacheInfo::plControllerCacheInfo()
+    : fNumSubControllers(), fSubControllers(), fKeyIndex(), fAtc() { }
 
 plControllerCacheInfo::~plControllerCacheInfo()
 {
@@ -280,7 +281,7 @@ uint32_t plLeafController::GetStride() const
 hsPoint3Key *plLeafController::GetPoint3Key(uint32_t i) const
 {
     if (fType != hsKeyFrame::kPoint3KeyFrame)
-        return nil;
+        return nullptr;
 
     return (hsPoint3Key *)((uint8_t *)fKeys + i * sizeof(hsPoint3Key));
 }
@@ -288,7 +289,7 @@ hsPoint3Key *plLeafController::GetPoint3Key(uint32_t i) const
 hsBezPoint3Key *plLeafController::GetBezPoint3Key(uint32_t i) const
 {
     if (fType != hsKeyFrame::kBezPoint3KeyFrame)
-        return nil;
+        return nullptr;
 
     return (hsBezPoint3Key *)((uint8_t *)fKeys + i * sizeof(hsBezPoint3Key));
 }
@@ -296,7 +297,7 @@ hsBezPoint3Key *plLeafController::GetBezPoint3Key(uint32_t i) const
 hsScalarKey *plLeafController::GetScalarKey(uint32_t i) const
 {
     if (fType != hsKeyFrame::kScalarKeyFrame)
-        return nil;
+        return nullptr;
 
     return (hsScalarKey *)((uint8_t *)fKeys + i * sizeof(hsScalarKey));
 }
@@ -304,7 +305,7 @@ hsScalarKey *plLeafController::GetScalarKey(uint32_t i) const
 hsBezScalarKey *plLeafController::GetBezScalarKey(uint32_t i) const
 {
     if (fType != hsKeyFrame::kBezScalarKeyFrame)
-        return nil;
+        return nullptr;
 
     return (hsBezScalarKey *)((uint8_t *)fKeys + i * sizeof(hsBezScalarKey));
 }
@@ -312,7 +313,7 @@ hsBezScalarKey *plLeafController::GetBezScalarKey(uint32_t i) const
 hsScaleKey *plLeafController::GetScaleKey(uint32_t i) const
 {
     if (fType != hsKeyFrame::kScaleKeyFrame)
-        return nil;
+        return nullptr;
 
     return (hsScaleKey *)((uint8_t *)fKeys + i * sizeof(hsScaleKey));
 }
@@ -320,7 +321,7 @@ hsScaleKey *plLeafController::GetScaleKey(uint32_t i) const
 hsBezScaleKey *plLeafController::GetBezScaleKey(uint32_t i) const
 {
     if (fType != hsKeyFrame::kBezScaleKeyFrame)
-        return nil;
+        return nullptr;
 
     return (hsBezScaleKey *)((uint8_t *)fKeys + i * sizeof(hsBezScaleKey));
 }
@@ -328,7 +329,7 @@ hsBezScaleKey *plLeafController::GetBezScaleKey(uint32_t i) const
 hsQuatKey *plLeafController::GetQuatKey(uint32_t i) const
 {
     if (fType != hsKeyFrame::kQuatKeyFrame)
-        return nil;
+        return nullptr;
 
     return (hsQuatKey *)((uint8_t *)fKeys + i * sizeof(hsQuatKey));
 }
@@ -336,7 +337,7 @@ hsQuatKey *plLeafController::GetQuatKey(uint32_t i) const
 hsCompressedQuatKey32 *plLeafController::GetCompressedQuatKey32(uint32_t i) const
 {
     if (fType != hsKeyFrame::kCompressedQuatKeyFrame32)
-        return nil;
+        return nullptr;
 
     return (hsCompressedQuatKey32 *)((uint8_t *)fKeys + i * sizeof(hsCompressedQuatKey32));
 }
@@ -344,7 +345,7 @@ hsCompressedQuatKey32 *plLeafController::GetCompressedQuatKey32(uint32_t i) cons
 hsCompressedQuatKey64 *plLeafController::GetCompressedQuatKey64(uint32_t i) const
 {
     if (fType != hsKeyFrame::kCompressedQuatKeyFrame64)
-        return nil;
+        return nullptr;
 
     return (hsCompressedQuatKey64 *)((uint8_t *)fKeys + i * sizeof(hsCompressedQuatKey64));
 }
@@ -352,7 +353,7 @@ hsCompressedQuatKey64 *plLeafController::GetCompressedQuatKey64(uint32_t i) cons
 hsG3DSMaxKeyFrame *plLeafController::Get3DSMaxKey(uint32_t i) const
 {
     if (fType != hsKeyFrame::k3dsMaxKeyFrame)
-        return nil;
+        return nullptr;
 
     return (hsG3DSMaxKeyFrame *)((uint8_t *)fKeys + i * sizeof(hsG3DSMaxKeyFrame));
 }
@@ -360,7 +361,7 @@ hsG3DSMaxKeyFrame *plLeafController::Get3DSMaxKey(uint32_t i) const
 hsMatrix33Key *plLeafController::GetMatrix33Key(uint32_t i) const
 {
     if (fType != hsKeyFrame::kMatrix33KeyFrame)
-        return nil;
+        return nullptr;
 
     return (hsMatrix33Key *)((uint8_t *)fKeys + i * sizeof(hsMatrix33Key));
 }
@@ -368,34 +369,34 @@ hsMatrix33Key *plLeafController::GetMatrix33Key(uint32_t i) const
 hsMatrix44Key *plLeafController::GetMatrix44Key(uint32_t i) const
 {
     if (fType != hsKeyFrame::kMatrix44KeyFrame)
-        return nil;
+        return nullptr;
 
     return (hsMatrix44Key *)((uint8_t *)fKeys + i * sizeof(hsMatrix44Key));
 }
 
-void plLeafController::GetKeyTimes(hsTArray<float> &keyTimes) const
+void plLeafController::GetKeyTimes(std::vector<float> &keyTimes) const
 {
-    int cIdx = 0;
-    int kIdx = 0;
+    uint32_t cIdx = 0;
+    auto kIter = keyTimes.begin();
     uint32_t stride = GetStride();
     uint8_t *keyPtr = (uint8_t *)fKeys;
-    while (cIdx < fNumKeys && kIdx < keyTimes.GetCount())
+    while (cIdx < fNumKeys && kIter != keyTimes.end())
     {
-        float kTime = keyTimes[kIdx];
+        float kTime = *kIter;
         float cTime = ((hsKeyFrame*)(keyPtr + cIdx * stride))->fFrame / MAX_FRAMES_PER_SEC;
         if (cTime < kTime)
         {
-            keyTimes.InsertAtIndex(kIdx, cTime);
+            kIter = keyTimes.insert(kIter, cTime);
             cIdx++;
-            kIdx++;
+            kIter++;
         }
         else if (cTime > kTime)
         {
-            kIdx++;
+            kIter++;
         }
         else
         {
-            kIdx++;
+            kIter++;
             cIdx++;
         }
     }
@@ -404,7 +405,7 @@ void plLeafController::GetKeyTimes(hsTArray<float> &keyTimes) const
     for (; cIdx < fNumKeys; cIdx++)
     {
         float cTime = ((hsKeyFrame*)(keyPtr + cIdx * stride))->fFrame / MAX_FRAMES_PER_SEC;
-        keyTimes.Append(cTime);
+        keyTimes.emplace_back(cTime);
     }
 }
 
@@ -783,7 +784,7 @@ void plLeafController::Write(hsStream* s, hsResMgr *mgr)
 
 /////////////////////////////////////////////////////////////////////////////////
 
-plCompoundController::plCompoundController() : fXController(nil), fYController(nil), fZController(nil) {}
+plCompoundController::plCompoundController() : fXController(), fYController(), fZController() { }
 
 plCompoundController::~plCompoundController()
 {
@@ -795,20 +796,20 @@ plCompoundController::~plCompoundController()
 void plCompoundController::Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache) const
 {
     if (fXController)
-        fXController->Interp(time, &result->fX, (cache ? cache->fSubControllers[0] : nil));
+        fXController->Interp(time, &result->fX, (cache ? cache->fSubControllers[0] : nullptr));
     if (fYController)
-        fYController->Interp(time, &result->fY, (cache ? cache->fSubControllers[1] : nil));
+        fYController->Interp(time, &result->fY, (cache ? cache->fSubControllers[1] : nullptr));
     if (fZController)
-        fZController->Interp(time, &result->fZ, (cache ? cache->fSubControllers[2] : nil));
+        fZController->Interp(time, &result->fZ, (cache ? cache->fSubControllers[2] : nullptr));
 }
 
 void plCompoundController::Interp(float time, hsQuat* result, plControllerCacheInfo *cache) const
 {
     hsEuler eul(0,0,0,EulOrdXYZs);
 
-    fXController->Interp(time, &eul.fX, (cache ? cache->fSubControllers[0] : nil));
-    fYController->Interp(time, &eul.fY, (cache ? cache->fSubControllers[1] : nil));
-    fZController->Interp(time, &eul.fZ, (cache ? cache->fSubControllers[2] : nil));
+    fXController->Interp(time, &eul.fX, (cache ? cache->fSubControllers[0] : nullptr));
+    fYController->Interp(time, &eul.fY, (cache ? cache->fSubControllers[1] : nullptr));
+    fZController->Interp(time, &eul.fZ, (cache ? cache->fSubControllers[2] : nullptr));
 
     eul.GetQuat(result);
 }
@@ -816,15 +817,15 @@ void plCompoundController::Interp(float time, hsQuat* result, plControllerCacheI
 void plCompoundController::Interp(float time, hsAffineParts* parts, plControllerCacheInfo *cache) const
 {
     if (fXController)
-        fXController->Interp(time, &parts->fT, (cache ? cache->fSubControllers[0] : nil));
+        fXController->Interp(time, &parts->fT, (cache ? cache->fSubControllers[0] : nullptr));
 
     if (fYController)
-        fYController->Interp(time, &parts->fQ, (cache ? cache->fSubControllers[1] : nil));
+        fYController->Interp(time, &parts->fQ, (cache ? cache->fSubControllers[1] : nullptr));
 
     hsScaleValue sv;
     if (fZController)
     {
-        fZController->Interp(time, &sv, (cache ? cache->fSubControllers[2] : nil));
+        fZController->Interp(time, &sv, (cache ? cache->fSubControllers[2] : nullptr));
         parts->fU = sv.fQ;
         parts->fK = sv.fS;
     }
@@ -832,9 +833,9 @@ void plCompoundController::Interp(float time, hsAffineParts* parts, plController
 
 void plCompoundController::Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache) const
 {
-    fXController->Interp(time, &result->r, (cache ? cache->fSubControllers[0] : nil));
-    fYController->Interp(time, &result->g, (cache ? cache->fSubControllers[1] : nil));
-    fZController->Interp(time, &result->b, (cache ? cache->fSubControllers[2] : nil));
+    fXController->Interp(time, &result->r, (cache ? cache->fSubControllers[0] : nullptr));
+    fYController->Interp(time, &result->g, (cache ? cache->fSubControllers[1] : nullptr));
+    fZController->Interp(time, &result->b, (cache ? cache->fSubControllers[2] : nullptr));
 }
 
 float plCompoundController::GetLength() const
@@ -849,7 +850,7 @@ float plCompoundController::GetLength() const
     return len;
 }
 
-void plCompoundController::GetKeyTimes(hsTArray<float> &keyTimes) const
+void plCompoundController::GetKeyTimes(std::vector<float> &keyTimes) const
 {
     if (fXController)
         fXController->GetKeyTimes(keyTimes);
@@ -887,19 +888,19 @@ bool plCompoundController::PurgeRedundantSubcontrollers()
     if (fXController && fXController->AllKeysMatch())
     {
         delete fXController;
-        fXController = nil;
+        fXController = nullptr;
     }
 
     if (fYController && fYController->AllKeysMatch())
     {
         delete fYController;
-        fYController = nil;
+        fYController = nullptr;
     }
 
     if (fZController && fZController->AllKeysMatch())
     {
         delete fZController;
-        fZController = nil;
+        fZController = nullptr;
     }
 
     return (!fXController && !fYController && !fZController);
@@ -912,7 +913,7 @@ plControllerCacheInfo* plCompoundController::CreateCache() const
     cache->fSubControllers = new plControllerCacheInfo*[cache->fNumSubControllers];
     int i;
     for (i = 0; i < cache->fNumSubControllers; i++)
-        cache->fSubControllers[i] = (GetController(i) ? GetController(i)->CreateCache() : nil);
+        cache->fSubControllers[i] = (GetController(i) ? GetController(i)->CreateCache() : nullptr);
 
     return cache;
 }

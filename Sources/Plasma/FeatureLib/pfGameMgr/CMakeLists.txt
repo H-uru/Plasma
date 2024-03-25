@@ -1,33 +1,33 @@
-include_directories(../../CoreLib)
-include_directories(../../FeatureLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
+set(pfGameMgr_HEADERS
+    pfGameCli.h
+    pfGameMgr.h
+    pfGameMgrCreatable.h
+    pfGameMgrTrans.h
+    pfGmBlueSpiral.h
+    pfGmMarker.h
+)
 
 set(pfGameMgr_SOURCES
+    pfGameCli.cpp
     pfGameMgr.cpp
-    BlueSpiral/pfGmBlueSpiral.cpp
-    ClimbingWall/pfGmClimbingWall.cpp
-    Heek/pfGmHeek.cpp
-    Marker/pfGmMarker.cpp
-    TicTacToe/pfGmTicTacToe.cpp
-    VarSync/pfGmVarSync.cpp
+    pfGameMgrTrans.cpp
+    pfGmBlueSpiral.cpp
+    pfGmMarker.cpp
 )
 
-set(pfGameMgr_HEADERS
-    Intern.h
-    Pch.h
-    pfGameMgr.h
-    pfGameMgrCreatables.h
-    BlueSpiral/pfGmBlueSpiral.h
-    ClimbingWall/pfGmClimbingWall.h
-    Heek/pfGmHeek.h
-    Marker/pfGmMarker.h
-    TicTacToe/pfGmTicTacToe.h
-    VarSync/pfGmVarSync.cpp
+plasma_library(pfGameMgr SOURCES ${pfGameMgr_HEADERS} ${pfGameMgr_SOURCES})
+target_link_libraries(
+    pfGameMgr
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnGameMgr
+    PRIVATE
+        pnUtils
+        pnUUID
+        plNetClientComm
+        plNetGameLib
 )
 
-add_library(pfGameMgr ${pfGameMgr_SOURCES} ${pfGameMgr_HEADERS})
-
-source_group("Source Files" FILES ${pfGameMgr_SOURCES})
 source_group("Header Files" FILES ${pfGameMgr_HEADERS})
+source_group("Source Files" FILES {pfGameMgr_SOURCES})

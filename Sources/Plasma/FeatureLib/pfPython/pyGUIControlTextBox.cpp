@@ -40,77 +40,54 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
-#include "pfGameGUIMgr/pfGUITextBoxMod.h"
-#include "pfGameGUIMgr/pfGUIListElement.h"
-
 #include "pyGUIControlTextBox.h"
+
+#include <string_theory/string>
+
+#include "pfGameGUIMgr/pfGUIListElement.h"
+#include "pfGameGUIMgr/pfGUITextBoxMod.h"
+
 #include "pyColor.h"
+#include "pyKey.h"
 
 pyGUIControlTextBox::pyGUIControlTextBox(pyKey& gckey) : pyGUIControl(gckey)
 {
-    fOriginalColorScheme = nil;
+    fOriginalColorScheme = nullptr;
 }
 
-pyGUIControlTextBox::pyGUIControlTextBox(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlTextBox::pyGUIControlTextBox(plKey objkey) : pyGUIControl(std::move(objkey))
 {
-    fOriginalColorScheme = nil;
+    fOriginalColorScheme = nullptr;
 }
 
 
-bool pyGUIControlTextBox::IsGUIControlTextBox(pyKey& gckey)
+bool pyGUIControlTextBox::IsGUIControlTextBox(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUITextBoxMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUITextBoxMod::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }
 
 
-std::string pyGUIControlTextBox::GetText()
+ST::string pyGUIControlTextBox::GetText() const
 {
-    char *temp = hsWStringToString(GetTextW().c_str());
-    std::string retVal = temp;
-    delete [] temp;
-    return retVal;
-}
-
-std::wstring pyGUIControlTextBox::GetTextW()
-{
-    if (fGCkey)
-    {
+    if (fGCkey) {
         // get the pointer to the modifier
         pfGUITextBoxMod* ptbmod = pfGUITextBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( ptbmod )
-        {
-            if ( ptbmod->GetText() )
-            {
-                std::wstring retVal = ptbmod->GetText();
-                return retVal;
-            }
-        }
+        if (ptbmod)
+            return ptbmod->GetText();
     }
     // else if there is no string... fake one
-    return L"";
+    return {};
 }
 
-void pyGUIControlTextBox::SetText( const char *text )
+void pyGUIControlTextBox::SetText(ST::string text)
 {
-    wchar_t *wText = hsStringToWString(text);
-    SetTextW(wText);
-    delete [] wText;
-}
-
-void pyGUIControlTextBox::SetTextW( std::wstring text )
-{
-    if ( fGCkey )
-    {
+    if (fGCkey) {
         // get the pointer to the modifier
         pfGUITextBoxMod* ptbmod = pfGUITextBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( ptbmod )
-            ptbmod->SetText(text.c_str());
+        if (ptbmod)
+            ptbmod->SetText(std::move(text));
     }
 }
 
@@ -144,21 +121,6 @@ void pyGUIControlTextBox::SetForeColor( pyColor& color )
         }
     }
 
-}
-
-PyObject* pyGUIControlTextBox::GetForeColor() const
-{
-    if ( fGCkey )
-    {
-        // get the pointer to the modifier
-        pfGUITextBoxMod* ptbmod = pfGUITextBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( ptbmod )
-        {
-            pfGUIColorScheme* colorscheme = ptbmod->GetColorScheme();
-            return pyColor::New(colorscheme->fForeColor);
-        }
-    }
-    PYTHON_RETURN_NONE;
 }
 
 void pyGUIControlTextBox::SetBackColor( pyColor& color )

@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsExceptions.h"
 
-#include "plGImage/plMipmap.h"
+#include "plMipmap.h"
 
 #include <jpeglib.h>
 #include <jerror.h>
@@ -88,7 +88,7 @@ static void clear_jpegmsg()
 
 //// Instance /////////////////////////////////////////////////////////////////
 
-plJPEG  &plJPEG::Instance( void )
+plJPEG  &plJPEG::Instance()
 {
     clear_jpegmsg();
 
@@ -98,7 +98,7 @@ plJPEG  &plJPEG::Instance( void )
 
 //// GetLastError /////////////////////////////////////////////////////////////
 
-const char  *plJPEG::GetLastError( void )
+const char  *plJPEG::GetLastError()
 {
     return jpegmsg;
 }
@@ -109,14 +109,14 @@ const char  *plJPEG::GetLastError( void )
 //  being a packed RGBx buffer, where x is 8 bits of unused alpha (go figure 
 //  that JPEG images can't store alpha, or even if they can, IJL certainly 
 //  doesn't know about it).
-//  Returns a pointer to the new mipmap if successful, nil otherwise.
+//  Returns a pointer to the new mipmap if successful, nullptr otherwise.
 //  Note: more or less lifted straight out of the IJL documentation, with
 //  some changes to fit Plasma coding style and formats.
 
 plMipmap    *plJPEG::IRead( hsStream *inStream )
 {
-    plMipmap    *newMipmap = nil;
-    uint8_t       *jpegSourceBuffer = nil;
+    plMipmap    *newMipmap = nullptr;
+    uint8_t       *jpegSourceBuffer = nullptr;
     uint32_t      jpegSourceSize;
     
     struct jpeg_decompress_struct   cinfo;
@@ -209,7 +209,7 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
     catch (...)
     {
         delete newMipmap;
-        newMipmap = nil;
+        newMipmap = nullptr;
     }
 
     // Cleanup
@@ -228,7 +228,7 @@ plMipmap*   plJPEG::ReadFromFile( const plFileName &fileName )
     hsRAMStream tempstream;
     hsUNIXStream in;
     if (!in.Open(fileName, "rb"))
-        return nil;
+        return nullptr;
 
     // The stream reader for JPEGs expects a 32-bit size at the start,
     // so insert that into the stream before passing it on
@@ -242,9 +242,7 @@ plMipmap*   plJPEG::ReadFromFile( const plFileName &fileName )
     delete [] tempbuffer;
     tempstream.Rewind();
 
-    plMipmap* ret = IRead(&tempstream);
-    in.Close();
-    return ret;
+    return IRead(&tempstream);
 }
 
 //// IWrite ///////////////////////////////////////////////////////////////////
@@ -253,7 +251,7 @@ plMipmap*   plJPEG::ReadFromFile( const plFileName &fileName )
 bool    plJPEG::IWrite( plMipmap *source, hsStream *outStream )
 {
     bool    result = true, swapped = false;
-    uint8_t   *jpgBuffer = nil;
+    uint8_t   *jpgBuffer = nullptr;
     uint32_t  jpgBufferSize = 0;
 
     struct jpeg_compress_struct cinfo;
@@ -321,7 +319,7 @@ bool    plJPEG::IWrite( plMipmap *source, hsStream *outStream )
         delete [] jbuffer;
 
         // jpeglib changes bufferSize and bufferAddr
-        outStream->WriteLE32( bufferSize );
+        outStream->WriteLE32((uint32_t)bufferSize);
         outStream->Write( bufferSize, bufferAddr );
     }
     catch (...)
@@ -360,7 +358,6 @@ bool    plJPEG::WriteToFile( const plFileName &fileName, plMipmap *sourceData )
 
         delete [] tempbuffer;
     }
-    out.Close();
     return ret;
 }
 

@@ -46,11 +46,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
-#pragma hdrstop
+
+#include "pnUtils/pnUtStr.h"
 
 // Define this if the file servers are running behind load-balancing hardware.
 // It changes the logic by which the decision to attempt a reconnect is made.
 #define LOAD_BALANCER_HARDWARE
+
+static void StrCopyLE16(char16_t* dest, const char16_t source[], size_t chars) {
+    while ((chars > 1) && ((*dest = hsToLE16(*source++)) != 0)) {
+        --chars;
+        ++dest;
+    }
+    if (chars)
+        *dest = 0;
+}
 
 
 namespace Ngl { namespace File {
@@ -60,20 +70,19 @@ namespace Ngl { namespace File {
 *
 ***/
 
-struct CliFileConn : hsRefCnt {
-    LINK(CliFileConn)   link;
-    hsReaderWriterLock  sockLock; // to protect the socket pointer so we don't nuke it while using it
-    AsyncSocket         sock;
-    plString            name;
+struct CliFileConn : hsRefCnt, AsyncNotifySocketCallbacks {
+    hsReaderWriterLock  socketLock; // to protect the socket pointer so we don't nuke it while using it
+    AsyncSocket         socket;
+    ST::string          name;
     plNetAddress        addr;
     unsigned            seq;
-    ARRAY(uint8_t)      recvBuffer;
+    std::vector<uint8_t> recvBuffer;
     AsyncCancelId       cancelId;
     bool                abandoned;
     unsigned            buildId;
     unsigned            serverType;
 
-    CCritSect           timerCritsect; // critsect for both timers
+    std::recursive_mutex timerCritsect; // critsect for both timers
 
     // Reconnection
     AsyncTimer *        reconnectTimer;
@@ -90,11 +99,17 @@ struct CliFileConn : hsRefCnt {
     CliFileConn ();
     ~CliFileConn ();
 
+    // Callbacks
+    void AsyncNotifySocketConnectFailed(plNetAddress remoteAddr) override;
+    bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAddress& localAddr, const plNetAddress& remoteAddr) override;
+    void AsyncNotifySocketDisconnect(AsyncSocket sock) override;
+    std::optional<size_t> AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes) override;
+
     // This function should be called during object construction
     // to initiate connection attempts to the remote host whenever
     // the socket is disconnected.
     void AutoReconnect ();
-    bool AutoReconnectEnabled () {return (reconnectTimer != nil);}
+    bool AutoReconnectEnabled() { return (reconnectTimer != nullptr); }
     void StopAutoReconnect (); // call before destruction
     void StartAutoReconnect ();
     void TimerReconnect ();
@@ -108,12 +123,12 @@ struct CliFileConn : hsRefCnt {
 
     void Destroy(); // cleans up the socket and buffer
 
-    void Dispatch (const Cli2File_MsgHeader * msg);
-    bool Recv_PingReply (const File2Cli_PingReply * msg);
-    bool Recv_BuildIdReply (const File2Cli_BuildIdReply * msg);
-    bool Recv_BuildIdUpdate (const File2Cli_BuildIdUpdate * msg);
-    bool Recv_ManifestReply (const File2Cli_ManifestReply * msg);
-    bool Recv_FileDownloadReply (const File2Cli_FileDownloadReply * msg);
+    void Dispatch (Cli2File_MsgHeader * msg);
+    bool Recv_PingReply (File2Cli_PingReply * msg);
+    bool Recv_BuildIdReply (File2Cli_BuildIdReply * msg);
+    bool Recv_BuildIdUpdate (File2Cli_BuildIdUpdate * msg);
+    bool Recv_ManifestReply (File2Cli_ManifestReply * msg);
+    bool Recv_FileDownloadReply (File2Cli_FileDownloadReply * msg);
 };
 
 
@@ -131,12 +146,12 @@ struct BuildIdRequestTrans : NetFileTrans {
         void *                              param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -145,25 +160,25 @@ struct BuildIdRequestTrans : NetFileTrans {
 struct ManifestRequestTrans : NetFileTrans {
     FNetCliFileManifestRequestCallback  m_callback;
     void *                              m_param;
-    wchar_t                             m_group[MAX_PATH];
+    char16_t                            m_group[kNetDefaultStringSize];
     unsigned                            m_buildId;
 
-    ARRAY(NetCliFileManifestEntry)      m_manifest;
+    std::vector<NetCliFileManifestEntry>  m_manifest;
     unsigned                            m_numEntriesReceived;
 
     ManifestRequestTrans (
         FNetCliFileManifestRequestCallback  callback,
         void *                              param,
-        const wchar_t                       group[],
+        const char16_t                      group[],
         unsigned                            buildId
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -187,12 +202,12 @@ struct DownloadRequestTrans : NetFileTrans {
         unsigned                            buildId
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -204,9 +219,12 @@ struct RcvdFileDownloadChunkTrans : NetNotifyTrans {
     uint8_t *      data;
     hsStream *  writer;
 
-    RcvdFileDownloadChunkTrans () : NetNotifyTrans (kFileRcvdFileDownloadChunkTrans) {}
+    RcvdFileDownloadChunkTrans()
+        : NetNotifyTrans(kFileRcvdFileDownloadChunkTrans),
+          bytes(), data(), writer()
+    { }
     ~RcvdFileDownloadChunkTrans ();
-    void Post ();
+    void Post() override;
 };
 
 
@@ -222,14 +240,14 @@ enum {
 };
 
 static bool                         s_running;
-static CCritSect                    s_critsect;
-static LISTDECL(CliFileConn, link)  s_conns;
+static std::recursive_mutex         s_critsect;
+static CliFileConn* s_conn = nullptr;
 static CliFileConn *                s_active;
 static std::atomic<long>            s_perf[kNumPerf];
 static unsigned                     s_connectBuildId;
 static unsigned                     s_serverType;
 
-static FNetCliFileBuildIdUpdateCallback s_buildIdCallback = nil;
+static FNetCliFileBuildIdUpdateCallback s_buildIdCallback = nullptr;
 
 const unsigned kMinValidConnectionMs                = 25 * 1000;
 
@@ -254,23 +272,18 @@ static CliFileConn * GetConnIncRef_CS (const char tag[]) {
         conn->Ref(tag);
         return conn;
     }
-    return nil;
+    return nullptr;
 }
 
 //============================================================================
 static CliFileConn * GetConnIncRef (const char tag[]) {
-    CliFileConn * conn;
-    s_critsect.Enter();
-    {
-        conn = GetConnIncRef_CS(tag);
-    }
-    s_critsect.Leave();
-    return conn;
+    hsLockGuard(s_critsect);
+    return GetConnIncRef_CS(tag);
 }
 
 //============================================================================
-static void UnlinkAndAbandonConn_CS (CliFileConn * conn) {
-    s_conns.Unlink(conn);
+static void AbandonConn(CliFileConn* conn) {
+    hsLockGuard(s_critsect);
     conn->abandoned = true;
 
     if (conn->AutoReconnectEnabled())
@@ -278,14 +291,14 @@ static void UnlinkAndAbandonConn_CS (CliFileConn * conn) {
 
     bool needsDecref = true;
     if (conn->cancelId) {
-        AsyncSocketConnectCancel(nil, conn->cancelId);
-        conn->cancelId  = 0;
+        AsyncSocketConnectCancel(conn->cancelId);
+        conn->cancelId  = nullptr;
         needsDecref = false;
     }
     else {
-        hsLockForReading lock(conn->sockLock);
-        if (conn->sock) {
-            AsyncSocketDisconnect(conn->sock, true);
+        hsLockForReading lock(conn->socketLock);
+        if (conn->socket) {
+            AsyncSocketDisconnect(conn->socket, true);
             needsDecref = false;
         }
     }
@@ -295,87 +308,84 @@ static void UnlinkAndAbandonConn_CS (CliFileConn * conn) {
 }
 
 //============================================================================
-static void NotifyConnSocketConnect (CliFileConn * conn) {
+bool CliFileConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAddress& localAddr, const plNetAddress& remoteAddr)
+{
+    {
+        hsLockGuard(s_critsect);
+        hsLockForWriting lock(socketLock);
+        socket = sock;
+        cancelId = nullptr;
+    }
 
-    conn->TransferRef("Connecting", "Connected");
-    conn->connectStartMs = hsTimer::GetMilliSeconds<uint32_t>();
-    conn->numFailedConnects = 0;
+    TransferRef("Connecting", "Connected");
+    connectStartMs = hsTimer::GetMilliSeconds<uint32_t>();
+    numFailedConnects = 0;
 
     // Make this the active server
-    s_critsect.Enter();
-    {
-        if (!conn->abandoned) {
-            conn->AutoPing();
-            s_active = conn;
-        }
-        else
-        {
-            hsLockForReading lock(conn->sockLock);
-            AsyncSocketDisconnect(conn->sock, true);
-        }
+    hsLockGuard(s_critsect);
+    if (!abandoned) {
+        AutoPing();
+        s_active = this;
+    } else {
+        hsLockForReading lock(socketLock);
+        AsyncSocketDisconnect(sock, true);
     }
-    s_critsect.Leave();
+    return true;
 }
 
 //============================================================================
-static void NotifyConnSocketConnectFailed (CliFileConn * conn) {
-    s_critsect.Enter();
+void CliFileConn::AsyncNotifySocketConnectFailed(plNetAddress remoteAddr)
+{
     {
-        conn->cancelId = 0;
-        s_conns.Unlink(conn);
+        hsLockGuard(s_critsect);
+        cancelId = nullptr;
+        if (s_conn == this) {
+            s_conn = nullptr;
+        }
 
-        if (conn == s_active)
-            s_active = nil;
+        if (s_active == this) {
+            s_active = nullptr;
+        }
     }
-    s_critsect.Leave();
-    
+
     // Cancel all transactions in progress on this connection.
-    NetTransCancelByConnId(conn->seq, kNetErrTimeout);
-    
-#ifndef SERVER
+    NetTransCancelByConnId(seq, kNetErrTimeout);
+
     // Client apps fail if unable to connect for a time
-    if (++conn->numFailedConnects >= kMaxFailedConnects) {
+    if (++numFailedConnects >= kMaxFailedConnects) {
         ReportNetError(kNetProtocolCli2File, kNetErrConnectFailed);
-    }
-    else
-#endif // ndef SERVER
-    {
+    } else {
         // start reconnect, if we are doing that
-        if (s_running && conn->AutoReconnectEnabled())
-            conn->StartAutoReconnect();
-        else
-            conn->UnRef("Lifetime"); // if we are not reconnecting, this socket is done, so remove the lifetime ref
+        if (s_running && AutoReconnectEnabled()) {
+            StartAutoReconnect();
+        } else {
+            UnRef("Lifetime"); // if we are not reconnecting, this socket is done, so remove the lifetime ref
+        }
     }
-    conn->UnRef("Connecting");
+    UnRef("Connecting");
 }
 
 //============================================================================
-static void NotifyConnSocketDisconnect (CliFileConn * conn) {
-    conn->StopAutoPing();
-    s_critsect.Enter();
+void CliFileConn::AsyncNotifySocketDisconnect(AsyncSocket sock)
+{
+    StopAutoPing();
     {
-        conn->cancelId = 0;
-        s_conns.Unlink(conn);
-            
-        if (conn == s_active)
-            s_active = nil;
+        hsLockGuard(s_critsect);
+        cancelId = nullptr;
+        if (s_conn == this) {
+            s_conn = nullptr;
+        }
+
+        if (s_active == this) {
+            s_active = nullptr;
+        }
     }
-    s_critsect.Leave();
 
     // Cancel all transactions in progress on this connection.
-    NetTransCancelByConnId(conn->seq, kNetErrTimeout);
-
+    NetTransCancelByConnId(seq, kNetErrTimeout);
 
     bool notify = false;
 
-#ifdef SERVER
-    {
-        if (hsTimer::GetMilliSeconds<uint32_t>() - conn->connectStartMs > kMinValidConnectionMs)
-            conn->reconnectStartMs = 0;
-        else
-            conn->reconnectStartMs = GetNonZeroTimeMs() + kMaxReconnectIntervalMs;
-    }
-#else
     {
     #ifndef LOAD_BALANCER_HARDWARE
         // If the connection to the remote server was open for longer than
@@ -384,113 +394,70 @@ static void NotifyConnSocketDisconnect (CliFileConn * conn) {
         // less time elapsed then the connection was likely to a server
         // with an open port but with no notification procedure registered
         // for this type of communication channel.
-        if (hsTimer::GetMilliSeconds<uint32_t>() - conn->connectStartMs > kMinValidConnectionMs) {
-            conn->reconnectStartMs = 0;
-        }
-        else {
-            if (++conn->numImmediateDisconnects < kMaxImmediateDisconnects)
-                conn->reconnectStartMs = GetNonZeroTimeMs() + kMaxReconnectIntervalMs;
-            else
+        if (hsTimer::GetMilliSeconds<uint32_t>() - connectStartMs > kMinValidConnectionMs) {
+            reconnectStartMs = 0;
+        } else {
+            if (++numImmediateDisconnects < kMaxImmediateDisconnects) {
+                reconnectStartMs = GetNonZeroTimeMs() + kMaxReconnectIntervalMs;
+            } else {
                 notify = true;
+            }
         }
     #else
         // File server is running behind a load-balancer, so the next connection may
         // send us to a new server, therefore attempt a reconnection to the same
         // address even if the disconnect was immediate.  This is safe because the
         // file server is stateless with respect to clients.
-        if (hsTimer::GetMilliSeconds<uint32_t>() - conn->connectStartMs <= kMinValidConnectionMs) {
-            if (++conn->numImmediateDisconnects < kMaxImmediateDisconnects)
-                conn->reconnectStartMs = GetNonZeroTimeMs() + kMaxReconnectIntervalMs;
-            else
+        if (hsTimer::GetMilliSeconds<uint32_t>() - connectStartMs <= kMinValidConnectionMs) {
+            if (++numImmediateDisconnects < kMaxImmediateDisconnects) {
+                reconnectStartMs = GetNonZeroTimeMs() + kMaxReconnectIntervalMs;
+            } else {
                 notify = true;
-        }
-        else {
+            }
+        } else {
             // disconnect was not immediate. attempt a reconnect unless we're shutting down
-            conn->numImmediateDisconnects = 0;
-            conn->reconnectStartMs = 0;
+            numImmediateDisconnects = 0;
+            reconnectStartMs = 0;
         }
     #endif  // LOAD_BALANCER
     }
-#endif // ndef SERVER
 
     if (notify) {
         ReportNetError(kNetProtocolCli2File, kNetErrDisconnected);
-    }
-    else {  
+    } else {  
         // clean up the socket and start reconnect, if we are doing that
-        conn->Destroy();
-        if (conn->AutoReconnectEnabled())
-            conn->StartAutoReconnect();
-        else
-            conn->UnRef("Lifetime"); // if we are not reconnecting, this socket is done, so remove the lifetime ref
+        Destroy();
+        if (AutoReconnectEnabled()) {
+            StartAutoReconnect();
+        } else {
+            UnRef("Lifetime"); // if we are not reconnecting, this socket is done, so remove the lifetime ref
+        }
     }
 
-    conn->UnRef("Connected");
+    UnRef("Connected");
 }
 
 //============================================================================
-static bool NotifyConnSocketRead (CliFileConn * conn, AsyncNotifySocketRead * read) {
-    conn->lastHeardTimeMs = GetNonZeroTimeMs();
-    conn->recvBuffer.Add(read->buffer, read->bytes);
-    read->bytesProcessed += read->bytes;
+std::optional<size_t> CliFileConn::AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes)
+{
+    lastHeardTimeMs = GetNonZeroTimeMs();
+    recvBuffer.insert(recvBuffer.end(), buffer, buffer + bytes);
 
     for (;;) {
-        if (conn->recvBuffer.Count() < sizeof(uint32_t))
-            return true;
+        if (recvBuffer.size() < sizeof(uint32_t)) {
+            return bytes;
+        }
 
-        uint32_t msgSize = *(uint32_t *)conn->recvBuffer.Ptr();
-        if (conn->recvBuffer.Count() < msgSize)
-            return true;
+        uint32_t msgSize = hsToLE32(*(uint32_t*)recvBuffer.data());
+        if (recvBuffer.size() < msgSize) {
+            return bytes;
+        }
 
-        const Cli2File_MsgHeader * msg = (const Cli2File_MsgHeader *) conn->recvBuffer.Ptr();
-        conn->Dispatch(msg);
+        Cli2File_MsgHeader* msg = (Cli2File_MsgHeader*)recvBuffer.data();
+        Dispatch(msg);
 
-        conn->recvBuffer.Move(0, msgSize, conn->recvBuffer.Count() - msgSize);
-        conn->recvBuffer.ShrinkBy(msgSize);
+        recvBuffer.erase(recvBuffer.begin(), recvBuffer.begin() + msgSize);
     }
-}
-
-//============================================================================
-static bool SocketNotifyCallback (
-    AsyncSocket         sock,
-    EAsyncNotifySocket  code,
-    AsyncNotifySocket * notify,
-        void **             userState
-) {
-    bool result = true;
-    CliFileConn * conn;
-
-    switch (code) {
-        case kNotifySocketConnectSuccess:
-            conn = (CliFileConn *) notify->param;
-            *userState = conn;
-            s_critsect.Enter();
-            {
-                hsLockForWriting lock(conn->sockLock);
-                conn->sock      = sock;
-                conn->cancelId  = 0;
-            }
-            s_critsect.Leave();
-            NotifyConnSocketConnect(conn);
-        break;
-
-        case kNotifySocketConnectFailed:
-            conn = (CliFileConn *) notify->param;
-            NotifyConnSocketConnectFailed(conn);
-        break;
-
-        case kNotifySocketDisconnect:
-            conn = (CliFileConn *) *userState;
-            NotifyConnSocketDisconnect(conn);
-        break;
-
-        case kNotifySocketRead:
-            conn = (CliFileConn *) *userState;
-            result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
-        break;
-    }
-
-    return result;
 }
 
 //============================================================================
@@ -499,44 +466,40 @@ static void Connect (CliFileConn * conn) {
 
     conn->pingSendTimeMs = 0;
 
-    s_critsect.Enter();
     {
-        while (CliFileConn * oldConn = s_conns.Head()) {
-            if (oldConn != conn)
-                UnlinkAndAbandonConn_CS(oldConn);
-            else
-                s_conns.Unlink(oldConn);
+        hsLockGuard(s_critsect);
+        if (CliFileConn* oldConn = s_conn) {
+            s_conn = nullptr;
+            if (oldConn != conn) {
+                AbandonConn(oldConn);
+            }
         }
-        s_conns.Link(conn);
+        s_conn = conn;
     }
-    s_critsect.Leave();
 
     Cli2File_Connect connect;
     connect.hdr.connType    = kConnTypeCliToFile;
-    connect.hdr.hdrBytes    = sizeof(connect.hdr);
-    connect.hdr.buildId     = kFileSrvBuildId;
-    connect.hdr.buildType   = plProduct::BuildType();
-    connect.hdr.branchId    = plProduct::BranchId();
+    connect.hdr.hdrBytes    = hsToLE16(sizeof(connect.hdr));
+    connect.hdr.buildId     = hsToLE32(kFileSrvBuildId);
+    connect.hdr.buildType   = hsToLE32(plProduct::BuildType());
+    connect.hdr.branchId    = hsToLE32(plProduct::BranchId());
     connect.hdr.productId   = plProduct::UUID();
-    connect.data.buildId    = conn->buildId;
-    connect.data.serverType = conn->serverType;
-    connect.data.dataBytes  = sizeof(connect.data);
+    connect.data.buildId    = hsToLE32(conn->buildId);
+    connect.data.serverType = hsToLE32(conn->serverType);
+    connect.data.dataBytes  = hsToLE32(sizeof(connect.data));
 
     AsyncSocketConnect(
         &conn->cancelId,
         conn->addr,
-        SocketNotifyCallback,
         conn,
         &connect,
-        sizeof(connect),
-        0,
-        0
+        sizeof(connect)
     );
 }
 
 //============================================================================
 static void Connect (
-    const plString&     name,
+    const ST::string&   name,
     const plNetAddress& addr
 ) {
     ASSERT(s_running);
@@ -553,23 +516,6 @@ static void Connect (
     conn->AutoReconnect();
 }
 
-//============================================================================
-static void AsyncLookupCallback (
-    void *              param,
-    const char          name[],
-    unsigned            addrCount,
-    const plNetAddress  addrs[]
-) {
-    if (!addrCount) {
-        ReportNetError(kNetProtocolCli2File, kNetErrNameLookupFailed);
-        return;
-    }
-
-    for (unsigned i = 0; i < addrCount; ++i) {
-        Connect(name, addrs[i]);
-    }
-}
-
 /*****************************************************************************
 *
 *   CliFileConn
@@ -578,11 +524,11 @@ static void AsyncLookupCallback (
 
 //============================================================================
 CliFileConn::CliFileConn ()
-    : hsRefCnt(0), sock(nil), seq(0), cancelId(nil), abandoned(false)
-    , buildId(0), serverType(0)
-    , reconnectTimer(nil), reconnectStartMs(0), connectStartMs(0)
-    , numImmediateDisconnects(0), numFailedConnects(0)
-    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
+    : hsRefCnt(0), socket(), seq(), cancelId(), abandoned()
+    , buildId(), serverType()
+    , reconnectTimer(), reconnectStartMs(), connectStartMs()
+    , numImmediateDisconnects(), numFailedConnects()
+    , pingTimer(), pingSendTimeMs(), lastHeardTimeMs()
 {
     ++s_perf[kPerfConnCount];
 }
@@ -597,19 +543,21 @@ CliFileConn::~CliFileConn () {
 
 //===========================================================================
 void CliFileConn::TimerReconnect () {
-    ASSERT(!sock);
+    ASSERT(!socket);
     ASSERT(!cancelId);
     
     if (!s_running) {
-        s_critsect.Enter();
-        UnlinkAndAbandonConn_CS(this);
-        s_critsect.Leave();
+        hsLockGuard(s_critsect);
+        if (s_conn == this) {
+            s_conn = nullptr;
+            AbandonConn(this);
+        }
     }
     else {
         Ref("Connecting");
 
         // Remember the time we started the reconnect attempt, guarding against
-        // TimeGetMs() returning zero (unlikely), as a value of zero indicates
+        // hsTimer::GetMilliSeconds() returning zero (unlikely), as a value of zero indicates
         // a first-time connect condition to StartAutoReconnect()
         reconnectStartMs = GetNonZeroTimeMs();
 
@@ -618,15 +566,9 @@ void CliFileConn::TimerReconnect () {
 }
 
 //===========================================================================
-static unsigned CliFileConnTimerReconnectProc (void * param) {
-    ((CliFileConn *) param)->TimerReconnect();
-    return kAsyncTimeInfinite;
-}
-
-//===========================================================================
 // This function is called when after a disconnect to start a new connection
 void CliFileConn::StartAutoReconnect () {
-    timerCritsect.Enter();
+    hsLockGuard(timerCritsect);
     if (reconnectTimer) {
         // Make reconnect attempts at regular intervals. If the last attempt
         // took more than the specified max interval time then reconnect
@@ -640,7 +582,6 @@ void CliFileConn::StartAutoReconnect () {
         }
         AsyncTimerUpdate(reconnectTimer, remainingMs);
     }
-    timerCritsect.Leave();
 }
 
 //===========================================================================
@@ -648,85 +589,60 @@ void CliFileConn::StartAutoReconnect () {
 // to initiate connection attempts to the remote host whenever
 // the socket is disconnected.
 void CliFileConn::AutoReconnect () {
-    timerCritsect.Enter();
-    {
-        ASSERT(!reconnectTimer);
-        Ref("ReconnectTimer");
-        AsyncTimerCreate(
-            &reconnectTimer,
-            CliFileConnTimerReconnectProc,
-            0,  // immediate callback
-            this
-        );
-    }
-    timerCritsect.Leave();
-}
-
-//===========================================================================
-static unsigned CliFileConnTimerDestroyed (void * param) {
-    CliFileConn * sock = (CliFileConn *) param;
-    sock->UnRef("TimerDestroyed");
-    return kAsyncTimeInfinite;
+    hsLockGuard(timerCritsect);
+    ASSERT(!reconnectTimer);
+    Ref("ReconnectTimer");
+    reconnectTimer = AsyncTimerCreate(0, [this]() { // immediate callback
+        TimerReconnect();
+        return kAsyncTimeInfinite;
+    });
 }
 
 //============================================================================
 void CliFileConn::StopAutoReconnect () {
-    timerCritsect.Enter();
-    {
-        if (AsyncTimer * timer = reconnectTimer) {
-            reconnectTimer = nil;
-            AsyncTimerDeleteCallback(timer, CliFileConnTimerDestroyed);
-        }
+    hsLockGuard(timerCritsect);
+    if (AsyncTimer * timer = reconnectTimer) {
+        reconnectTimer = nullptr;
+        AsyncTimerDeleteCallback(timer, [this]() {
+            UnRef("ReconnectTimer");
+        });
     }
-    timerCritsect.Leave();
-}
-
-//===========================================================================
-static unsigned CliFileConnPingTimerProc (void * param) {
-    ((CliFileConn *) param)->TimerPing();
-    return kPingIntervalMs;
 }
 
 //============================================================================
 void CliFileConn::AutoPing () {
     ASSERT(!pingTimer);
     Ref("PingTimer");
-    timerCritsect.Enter();
+    hsLockGuard(timerCritsect);
+    unsigned timerPeriod;
     {
-        unsigned timerPeriod;
-        {
-            hsLockForReading lock(sockLock);
-            timerPeriod = sock ? 0 : kAsyncTimeInfinite;
-        }
-
-        AsyncTimerCreate(
-            &pingTimer,
-            CliFileConnPingTimerProc,
-            timerPeriod,
-            this
-        );
+        hsLockForReading lock(socketLock);
+        timerPeriod = socket ? 0 : kAsyncTimeInfinite;
     }
-    timerCritsect.Leave();
+
+    pingTimer = AsyncTimerCreate(timerPeriod, [this]() {
+        TimerPing();
+        return kPingIntervalMs;
+    });
 }
 
 //============================================================================
 void CliFileConn::StopAutoPing () {
-    timerCritsect.Enter();
-    {
-        if (AsyncTimer * timer = pingTimer) {
-            pingTimer = nil;
-            AsyncTimerDeleteCallback(timer, CliFileConnTimerDestroyed);
-        }
+    hsLockGuard(timerCritsect);
+    if (AsyncTimer * timer = pingTimer) {
+        pingTimer = nullptr;
+        AsyncTimerDeleteCallback(timer, [this]() {
+            UnRef("PingTimer");
+        });
     }
-    timerCritsect.Leave();
 }
 
 //============================================================================
 void CliFileConn::TimerPing () {
-    hsLockForReading lock(sockLock);
+    hsLockForReading lock(socketLock);
 
     for (;;) {
-        if (!sock) // make sure it exists
+        if (!socket) // make sure it exists
             break;
 #if 0
         // if the time difference between when we last sent a ping and when we last
@@ -742,12 +658,12 @@ void CliFileConn::TimerPing () {
             pingSendTimeMs = GetNonZeroTimeMs();
 
             Cli2File_PingRequest msg;
-            msg.messageId = kCli2File_PingRequest;
-            msg.messageBytes = sizeof(msg);
-            msg.pingTimeMs = pingSendTimeMs;
+            msg.messageId = hsToLE32(kCli2File_PingRequest);
+            msg.messageBytes = hsToLE32(sizeof(msg));
+            msg.pingTimeMs = hsToLE32(pingSendTimeMs);
 
             // read locks are reentrant, so calling Send is ok here within the read lock
-            Send(&msg, msg.messageBytes);
+            Send(&msg, sizeof(msg));
         }
         break;
     }
@@ -755,32 +671,32 @@ void CliFileConn::TimerPing () {
 
 //============================================================================
 void CliFileConn::Destroy () {
-    AsyncSocket oldSock = nil;
+    AsyncSocket oldSock = nullptr;
 
     {
-        hsLockForWriting lock(sockLock);
-        std::swap(oldSock, sock);
+        hsLockForWriting lock(socketLock);
+        std::swap(oldSock, socket);
     }
 
     if (oldSock)
         AsyncSocketDelete(oldSock);
-    recvBuffer.Clear();
+    recvBuffer.clear();
 }
 
 //============================================================================
 void CliFileConn::Send (const void * data, unsigned bytes) {
-    hsLockForReading lock(sockLock);
+    hsLockForReading lock(socketLock);
 
-    if (sock) {
-        AsyncSocketSend(sock, data, bytes);
+    if (socket) {
+        AsyncSocketSend(socket, data, bytes);
     }
 }
 
 //============================================================================
-void CliFileConn::Dispatch (const Cli2File_MsgHeader * msg) {
+void CliFileConn::Dispatch (Cli2File_MsgHeader * msg) {
 
-#define DISPATCH(a) case kFile2Cli_##a: Recv_##a((const File2Cli_##a *) msg); break
-    switch (msg->messageId) {
+#define DISPATCH(a) case kFile2Cli_##a: Recv_##a((File2Cli_##a *) msg); break
+    switch (hsToLE32(msg->messageId)) {
         DISPATCH(PingReply);
         DISPATCH(BuildIdReply);
         DISPATCH(BuildIdUpdate);
@@ -793,15 +709,21 @@ void CliFileConn::Dispatch (const Cli2File_MsgHeader * msg) {
 
 //============================================================================
 bool CliFileConn::Recv_PingReply (
-    const File2Cli_PingReply * msg
+    File2Cli_PingReply* msg
 ) {
     return true;
 }
 
 //============================================================================
 bool CliFileConn::Recv_BuildIdReply (
-    const File2Cli_BuildIdReply * msg
+    File2Cli_BuildIdReply* msg
 ) {
+    msg->messageId = hsToLE32(msg->messageId);
+    msg->messageBytes = hsToLE32(msg->messageBytes);
+    msg->transId = hsToLE32(msg->transId);
+    msg->result = (ENetError)hsToLE32(msg->result);
+    msg->buildId = hsToLE32(msg->buildId);
+
     NetTransRecv(msg->transId, (const uint8_t *)msg, msg->messageBytes);
 
     return true;
@@ -809,17 +731,30 @@ bool CliFileConn::Recv_BuildIdReply (
 
 //============================================================================
 bool CliFileConn::Recv_BuildIdUpdate (
-    const File2Cli_BuildIdUpdate * msg
+    File2Cli_BuildIdUpdate* msg
 ) {
     if (s_buildIdCallback)
-        s_buildIdCallback(msg->buildId);
+        s_buildIdCallback(hsToLE32(msg->buildId));
     return true;
 }
 
 //============================================================================
 bool CliFileConn::Recv_ManifestReply (
-    const File2Cli_ManifestReply * msg
+    File2Cli_ManifestReply* msg
 ) {
+    msg->messageId = hsToLE32(msg->messageId);
+    msg->messageBytes = hsToLE32(msg->messageBytes);
+    msg->transId = hsToLE32(msg->transId);
+    msg->result = (ENetError)hsToLE32(msg->result);
+    msg->readerId = hsToLE32(msg->readerId);
+    msg->numFiles = hsToLE32(msg->numFiles);
+    msg->wcharCount = hsToLE32(msg->wcharCount);
+
+    // The manifest format includes \0 characters, so we can't just StrCopy
+    for (size_t i = 0; i < msg->wcharCount; i++) {
+        msg->manifestData[i] = hsToLE16(msg->manifestData[i]);
+    }
+
     NetTransRecv(msg->transId, (const uint8_t *)msg, msg->messageBytes);
 
     return true;
@@ -827,8 +762,16 @@ bool CliFileConn::Recv_ManifestReply (
 
 //============================================================================
 bool CliFileConn::Recv_FileDownloadReply (
-    const File2Cli_FileDownloadReply * msg
+    File2Cli_FileDownloadReply* msg
 ) {
+    msg->messageId = hsToLE32(msg->messageId);
+    msg->messageBytes = hsToLE32(msg->messageBytes);
+    msg->transId = hsToLE32(msg->transId);
+    msg->result = (ENetError)hsToLE32(msg->result);
+    msg->readerId = hsToLE32(msg->readerId);
+    msg->totalFileSize = hsToLE32(msg->totalFileSize);
+    msg->byteCount = hsToLE32(msg->byteCount);
+
     NetTransRecv(msg->transId, (const uint8_t *)msg, msg->messageBytes);
 
     return true;
@@ -842,13 +785,11 @@ bool CliFileConn::Recv_FileDownloadReply (
 ***/
 
 //============================================================================
-BuildIdRequestTrans::BuildIdRequestTrans (
-    FNetCliFileBuildIdRequestCallback   callback,
-    void *                              param
-) : NetFileTrans(kBuildIdRequestTrans)
-,   m_callback(callback)
-,   m_param(param)
-{}
+BuildIdRequestTrans::BuildIdRequestTrans(
+        FNetCliFileBuildIdRequestCallback callback, void* param)
+    : NetFileTrans(kBuildIdRequestTrans),
+      m_callback(callback), m_param(param), m_buildId()
+{ }
 
 //============================================================================
 bool BuildIdRequestTrans::Send () {
@@ -856,12 +797,12 @@ bool BuildIdRequestTrans::Send () {
         return false;
 
     Cli2File_BuildIdRequest buildIdReq;
-    buildIdReq.messageId = kCli2File_BuildIdRequest;
-    buildIdReq.transId = m_transId;
-    buildIdReq.messageBytes = sizeof(buildIdReq);
+    buildIdReq.messageId = hsToLE32(kCli2File_BuildIdRequest);
+    buildIdReq.transId = hsToLE32(m_transId);
+    buildIdReq.messageBytes = hsToLE32(sizeof(buildIdReq));
 
-    m_conn->Send(&buildIdReq, buildIdReq.messageBytes); 
-    
+    m_conn->Send(&buildIdReq, sizeof(buildIdReq));
+
     return true;
 }
 
@@ -904,7 +845,7 @@ bool BuildIdRequestTrans::Recv (
 ManifestRequestTrans::ManifestRequestTrans (
     FNetCliFileManifestRequestCallback  callback,
     void *                              param,
-    const wchar_t                       group[],
+    const char16_t                      group[],
     unsigned                            buildId
 ) : NetFileTrans(kManifestRequestTrans)
 ,   m_callback(callback)
@@ -913,7 +854,7 @@ ManifestRequestTrans::ManifestRequestTrans (
 ,   m_buildId(buildId)
 {
     if (group)
-        StrCopy(m_group, group, arrsize(m_group));
+        StrCopy(m_group, group, std::size(m_group));
     else
         m_group[0] = L'\0';
 }
@@ -924,34 +865,42 @@ bool ManifestRequestTrans::Send () {
         return false;
 
     Cli2File_ManifestRequest manifestReq;
-    StrCopy(manifestReq.group, m_group, arrsize(manifestReq.group));
-    manifestReq.messageId = kCli2File_ManifestRequest;
-    manifestReq.transId = m_transId;
-    manifestReq.messageBytes = sizeof(manifestReq);
-    manifestReq.buildId = m_buildId;
+    StrCopyLE16(manifestReq.group, m_group, std::size(manifestReq.group));
+    manifestReq.messageId = hsToLE32(kCli2File_ManifestRequest);
+    manifestReq.transId = hsToLE32(m_transId);
+    manifestReq.messageBytes = hsToLE32(sizeof(manifestReq));
+    manifestReq.buildId = hsToLE32(m_buildId);
 
-    m_conn->Send(&manifestReq, manifestReq.messageBytes);   
+    m_conn->Send(&manifestReq, sizeof(manifestReq));
 
     return true;
 }
 
 //============================================================================
 void ManifestRequestTrans::Post () {
-    m_callback(m_result, m_param, m_group, m_manifest.Ptr(), m_manifest.Count());
+    m_callback(m_result, m_param, m_group, m_manifest.data(), m_manifest.size());
+}
+
+// Neither char_traits nor C's string library have a "strnlen" equivalent for
+// char16_t strings...
+inline size_t FIXME_u16snlen(const char16_t* str, size_t maxlen)
+{
+    const char16_t* end = std::char_traits<char16_t>::find(str, maxlen, 0);
+    return end ? size_t(end - str) : maxlen;
 }
 
 //============================================================================
-void ReadStringFromMsg(const wchar_t* curMsgPtr, wchar_t* destPtr, unsigned* length) {
+void ReadStringFromMsg(const char16_t* curMsgPtr, char16_t* destPtr, unsigned* length) {
     if (!(*length)) {
-        size_t maxlen = wcsnlen(curMsgPtr, MAX_PATH - 1);   // Hacky sack
+        size_t maxlen = FIXME_u16snlen(curMsgPtr, kNetDefaultStringSize - 1);   // Hacky sack
         (*length) = maxlen;
         destPtr[maxlen] = 0;    // Don't do this on fixed length, because there's no room for it
     }
-    memcpy(destPtr, curMsgPtr, *length * sizeof(wchar_t));
+    memcpy(destPtr, curMsgPtr, *length * sizeof(char16_t));
 }
 
 //============================================================================
-void ReadUnsignedFromMsg(const wchar_t* curMsgPtr, unsigned* val) {
+void ReadUnsignedFromMsg(const char16_t* curMsgPtr, unsigned* val) {
     (*val) = ((*curMsgPtr) << 16) + (*(curMsgPtr + 1));
 }
 
@@ -965,34 +914,34 @@ bool ManifestRequestTrans::Recv (
     const File2Cli_ManifestReply & reply = *(const File2Cli_ManifestReply *) msg;
 
     uint32_t numFiles = reply.numFiles;
-    uint32_t wchar_tCount = reply.wchar_tCount;
-    const wchar_t* curChar = reply.manifestData; // the pointer is not yet dereferenced here!
+    uint32_t wcharCount = reply.wcharCount;
+    const char16_t* curChar = reply.manifestData; // the pointer is not yet dereferenced here!
 
     // tell the server we got the data
     Cli2File_ManifestEntryAck manifestAck;
-    manifestAck.messageId = kCli2File_ManifestEntryAck;
-    manifestAck.transId = reply.transId;
-    manifestAck.messageBytes = sizeof(manifestAck);
-    manifestAck.readerId = reply.readerId;
+    manifestAck.messageId = hsToLE32(kCli2File_ManifestEntryAck);
+    manifestAck.transId = hsToLE32(reply.transId);
+    manifestAck.messageBytes = hsToLE32(sizeof(manifestAck));
+    manifestAck.readerId = hsToLE32(reply.readerId);
 
-    m_conn->Send(&manifestAck, manifestAck.messageBytes);   
+    m_conn->Send(&manifestAck, sizeof(manifestAck));
 
-    // if wchar_tCount is 2 or less, the data only contains the terminator "\0\0" and we
+    // if wcharCount is 2 or less, the data only contains the terminator "\0\0" and we
     // don't need to convert anything (and we are done)
-    if ((IS_NET_ERROR(reply.result)) || (wchar_tCount <= 2)) {
+    if ((IS_NET_ERROR(reply.result)) || (wcharCount <= 2)) {
         // we have a problem... or we have nothing to so, so we're done
         m_result    = reply.result;
         m_state     = kTransStateComplete;
         return true;
     }
 
-    if (numFiles > m_manifest.Count())
-        m_manifest.SetCount(numFiles); // reserve the space ahead of time
+    if (numFiles > m_manifest.size())
+        m_manifest.resize(numFiles); // reserve the space ahead of time
 
     // manifestData format: "clientFile\0downloadFile\0md5\0filesize\0zipsize\0flags\0...\0\0"
     bool done = false;
     while (!done) {
-        if (wchar_tCount == 0)
+        if (wcharCount == 0)
         {
             done = true;
             break;
@@ -1006,101 +955,101 @@ bool ManifestRequestTrans::Recv (
         unsigned filenameLen = 0;
         ReadStringFromMsg(curChar, entry.clientName, &filenameLen);
         curChar += filenameLen; // advance the pointer
-        wchar_tCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
+        wcharCount -= filenameLen; // keep track of the amount remaining
+        if ((*curChar != L'\0') || (wcharCount <= 0))
             return false; // something is screwy, abort and disconnect
 
         // point it at the downloadFile
         curChar++;
-        wchar_tCount--;
+        wcharCount--;
 
         // --------------------------------------------------------------------
         // read in the downloadFilename
         filenameLen = 0;
         ReadStringFromMsg(curChar, entry.downloadName, &filenameLen);
         curChar += filenameLen; // advance the pointer
-        wchar_tCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
+        wcharCount -= filenameLen; // keep track of the amount remaining
+        if ((*curChar != L'\0') || (wcharCount <= 0))
             return false; // something is screwy, abort and disconnect
 
         // point it at the md5
         curChar++;
-        wchar_tCount--;
+        wcharCount--;
 
         // --------------------------------------------------------------------
         // read in the md5
         filenameLen = 32;
         ReadStringFromMsg(curChar, entry.md5, &filenameLen);
         curChar += filenameLen; // advance the pointer
-        wchar_tCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
+        wcharCount -= filenameLen; // keep track of the amount remaining
+        if ((*curChar != L'\0') || (wcharCount <= 0))
             return false; // something is screwy, abort and disconnect
 
         // point it at the md5 for compressed files
         curChar++; 
-        wchar_tCount--;
+        wcharCount--;
 
         // --------------------------------------------------------------------
         // read in the md5 for compressed files
         filenameLen = 32;
         ReadStringFromMsg(curChar, entry.md5compressed, &filenameLen);
         curChar += filenameLen; // advance the pointer
-        wchar_tCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
+        wcharCount -= filenameLen; // keep track of the amount remaining
+        if ((*curChar != L'\0') || (wcharCount <= 0))
             return false; // something is screwy, abort and disconnect
 
         // point it at the first part of the filesize value (format: 0xHHHHLLLL)
         curChar++; 
-        wchar_tCount--;
+        wcharCount--;
 
         // --------------------------------------------------------------------
-        if (wchar_tCount < 2) // we have to have 2 chars for the size
+        if (wcharCount < 2) // we have to have 2 chars for the size
             return false; // screwy data
         ReadUnsignedFromMsg(curChar, &entry.fileSize);
         curChar += 2;
-        wchar_tCount -= 2;
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
+        wcharCount -= 2;
+        if ((*curChar != L'\0') || (wcharCount <= 0))
             return false; // screwy data
 
         // point it at the first part of the zipsize value (format: 0xHHHHLLLL)
         curChar++; 
-        wchar_tCount--;
+        wcharCount--;
 
         // --------------------------------------------------------------------
-        if (wchar_tCount < 2) // we have to have 2 chars for the size
+        if (wcharCount < 2) // we have to have 2 chars for the size
             return false; // screwy data
         ReadUnsignedFromMsg(curChar, &entry.zipSize);
         curChar += 2;
-        wchar_tCount -= 2;
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
+        wcharCount -= 2;
+        if ((*curChar != L'\0') || (wcharCount <= 0))
             return false; // screwy data
 
         // point it at the first part of the flags value (format: 0xHHHHLLLL)
         curChar++; 
-        wchar_tCount--;
+        wcharCount--;
 
         // --------------------------------------------------------------------
-        if (wchar_tCount < 2) // we have to have 2 chars for the size
+        if (wcharCount < 2) // we have to have 2 chars for the size
             return false; // screwy data
         ReadUnsignedFromMsg(curChar, &entry.flags);
         curChar += 2;
-        wchar_tCount -= 2;
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
+        wcharCount -= 2;
+        if ((*curChar != L'\0') || (wcharCount <= 0))
             return false; // screwy data
 
         // --------------------------------------------------------------------
         // point it at either the second part of the terminator, or the next filename
         curChar++;
-        wchar_tCount--;
+        wcharCount--;
 
         // do sanity checking
         if (*curChar == L'\0') {
             // we hit the terminator
-            if (wchar_tCount != 1)
+            if (wcharCount != 1)
                 return false; // invalid data, we shouldn't have any more
             done = true; // we're done
         }
-        else if (wchar_tCount < 14)
+        else if (wcharCount < 14)
             // we must have at least three 1-char strings, three nulls, three 32-bit ints, and 2-char terminator left (3+3+6+2)
             return false; // screwy data
 
@@ -1154,11 +1103,12 @@ bool DownloadRequestTrans::Send () {
         return false;
 
     Cli2File_FileDownloadRequest filedownloadReq;
-    StrCopy(filedownloadReq.filename, m_filename.AsString().ToWchar(), arrsize(filedownloadReq.filename));
-    filedownloadReq.messageId = kCli2File_FileDownloadRequest;
-    filedownloadReq.transId = m_transId;
-    filedownloadReq.messageBytes = sizeof(filedownloadReq);
-    filedownloadReq.buildId = m_buildId;
+    const ST::utf16_buffer buffer = m_filename.AsString().to_utf16();
+    StrCopyLE16(filedownloadReq.filename, buffer.data(), std::size(filedownloadReq.filename));
+    filedownloadReq.messageId = hsToLE32(kCli2File_FileDownloadRequest);
+    filedownloadReq.transId = hsToLE32(m_transId);
+    filedownloadReq.messageBytes = hsToLE32(sizeof(filedownloadReq));
+    filedownloadReq.buildId = hsToLE32(m_buildId);
 
     m_conn->Send(&filedownloadReq, sizeof(filedownloadReq));
     
@@ -1184,12 +1134,12 @@ bool DownloadRequestTrans::Recv (
 
     // tell the server we got the data
     Cli2File_FileDownloadChunkAck fileAck;
-    fileAck.messageId = kCli2File_FileDownloadChunkAck;
-    fileAck.transId = reply.transId;
-    fileAck.messageBytes = sizeof(fileAck);
-    fileAck.readerId = reply.readerId;
+    fileAck.messageId = hsToLE32(kCli2File_FileDownloadChunkAck);
+    fileAck.transId = hsToLE32(reply.transId);
+    fileAck.messageBytes = hsToLE32(sizeof(fileAck));
+    fileAck.readerId = hsToLE32(reply.readerId);
 
-    m_conn->Send(&fileAck, fileAck.messageBytes);
+    m_conn->Send(&fileAck, sizeof(fileAck));
 
     if (IS_NET_ERROR(reply.result)) {
         // we have a problem... indicate we are done and abort
@@ -1249,7 +1199,7 @@ void RcvdFileDownloadChunkTrans::Post () {
 //============================================================================
 NetFileTrans::NetFileTrans (ETransType transType)
 :   NetTrans(kNetProtocolCli2File, transType)
-,   m_conn(nil)
+,   m_conn()
 {
 }
 
@@ -1262,14 +1212,14 @@ NetFileTrans::~NetFileTrans () {
 bool NetFileTrans::AcquireConn () {
     if (!m_conn)
         m_conn = GetConnIncRef("AcquireConn");
-    return m_conn != nil;
+    return m_conn != nullptr;
 }
 
 //============================================================================
 void NetFileTrans::ReleaseConn () {
     if (m_conn) {
         m_conn->UnRef("AcquireConn");
-        m_conn = nil;
+        m_conn = nullptr;
     }
 }
 
@@ -1292,45 +1242,36 @@ void FileDestroy (bool wait) {
     NetTransCancelByProtocol(
         kNetProtocolCli2File,
         kNetErrRemoteShutdown
-    );    
-    NetMsgProtocolDestroy(
-        kNetProtocolCli2File,
-        false
     );
 
-    s_critsect.Enter();
     {
-        while (CliFileConn * conn = s_conns.Head())
-            UnlinkAndAbandonConn_CS(conn);
-        s_active = nil;
+        hsLockGuard(s_critsect);
+        if (CliFileConn* conn = s_conn) {
+            s_conn = nullptr;
+            AbandonConn(conn);
+        }
+        s_active = nullptr;
     }
-    s_critsect.Leave();
 
     if (!wait)
         return;
 
     while (s_perf[kPerfConnCount]) {
         NetTransUpdate();
-        AsyncSleep(10);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 
 //============================================================================
 bool FileQueryConnected () {
-    bool result;
-    s_critsect.Enter();
-    result = s_active != nil;
-    s_critsect.Leave();
-    return result;
+    hsLockGuard(s_critsect);
+    return s_active != nullptr;
 }
 
 //============================================================================
 unsigned FileGetConnId () {
-    unsigned connId;
-    s_critsect.Enter();
-    connId = (s_active) ? s_active->seq : 0;
-    s_critsect.Leave();
-    return connId;
+    hsLockGuard(s_critsect);
+    return (s_active) ? s_active->seq : 0;
 }
 
 } using namespace Ngl;
@@ -1343,7 +1284,7 @@ unsigned FileGetConnId () {
 
 //============================================================================
 void NetCliFileStartConnect (
-    const plString  fileAddrList[],
+    const ST::string  fileAddrList[],
     uint32_t        fileAddrCount,
     bool            isPatcher /* = false */
 ) {
@@ -1355,37 +1296,43 @@ void NetCliFileStartConnect (
 
     for (unsigned i = 0; i < fileAddrCount; ++i) {
         // Do we need to lookup the address?
-        const char* name = fileAddrList[i].c_str();
-        while (unsigned ch = *name) {
-            ++name;
-            if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
-                AsyncCancelId cancelId;
-                AsyncAddressLookupName(
-                    &cancelId,
-                    AsyncLookupCallback,
-                    fileAddrList[i].c_str(),
-                    GetClientPort(),
-                    nil
-                );
+        const ST::string& name = fileAddrList[i];
+        const char* pos;
+        for (pos = name.begin(); pos != name.end(); ++pos) {
+            if (!(isdigit(*pos) || *pos == '.' || *pos == ':')) {
+                AsyncAddressLookupName(name, GetClientPort(), [name](auto addrs) {
+                    if (addrs.empty()) {
+                        ReportNetError(kNetProtocolCli2File, kNetErrNameLookupFailed);
+                        return;
+                    }
+
+                    for (const plNetAddress& addr : addrs) {
+                        Connect(name, addr);
+                    }
+                });
                 break;
             }
         }
-        if (!name[0]) {
-            plNetAddress addr(fileAddrList[i], GetClientPort());
-            Connect(fileAddrList[i], addr);
+        if (pos == name.end()) {
+            plNetAddress addr(name, GetClientPort());
+            Connect(name, addr);
         }
     }
 }
 
 //============================================================================
+bool NetCliFileQueryConnected () {
+    return FileQueryConnected();
+}
+
+//============================================================================
 void NetCliFileDisconnect () {
-    s_critsect.Enter();
-    {
-        while (CliFileConn * conn = s_conns.Head())
-            UnlinkAndAbandonConn_CS(conn);
-        s_active = nil;
+    hsLockGuard(s_critsect);
+    if (CliFileConn* conn = s_conn) {
+        s_conn = nullptr;
+        AbandonConn(conn);
     }
-    s_critsect.Leave();
+    s_active = nullptr;
 }
 
 //============================================================================
@@ -1409,7 +1356,7 @@ void NetCliFileRegisterBuildIdUpdate (FNetCliFileBuildIdUpdateCallback callback)
 void NetCliFileManifestRequest (
     FNetCliFileManifestRequestCallback  callback,
     void *                              param,
-    const wchar_t                       group[],
+    const char16_t                      group[],
     unsigned                            buildId /* = 0 */
 ) {
     ManifestRequestTrans * trans = new ManifestRequestTrans(

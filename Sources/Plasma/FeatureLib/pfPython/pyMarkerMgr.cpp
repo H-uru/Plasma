@@ -45,16 +45,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#pragma hdrstop
 
 #include "pyMarkerMgr.h"
+
 #include "pfCharacter/pfMarkerMgr.h"
 
-void pyMarkerMgr::AddMarker(double x, double y, double z, uint32_t id, bool justCreated)
+#include "pyGeometry3.h"
+
+void pyMarkerMgr::AddMarker(pyPoint3* pos, uint32_t id, bool justCreated)
 {
     pfMarkerMgr* mmi = pfMarkerMgr::Instance();
     if (mmi)
-        mmi->AddMarker(x, y, z, id, justCreated);
+        mmi->AddMarker(pos->fPoint, id, justCreated);
 }
 
 void pyMarkerMgr::RemoveMarker(uint32_t id)

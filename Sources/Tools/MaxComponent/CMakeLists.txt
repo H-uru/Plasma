@@ -1,15 +1,3 @@
-include_directories("../")
-include_directories("../../Plasma/CoreLib")
-include_directories("../../Plasma/FeatureLib")
-include_directories("../../Plasma/FeatureLib/inc")
-include_directories("../../Plasma/NucleusLib")
-include_directories("../../Plasma/NucleusLib/inc")
-include_directories("../../Plasma/PubUtilLib")
-include_directories("../../Plasma/PubUtilLib/inc")
-include_directories(${3dsm_INCLUDE_DIR})
-include_directories(${OPENAL_INCLUDE_DIR})
-include_directories(${PYTHON_INCLUDE_DIR})
-
 set(MaxComponent_HEADERS
     BipedKiller.h
     ComponentDummies.h
@@ -28,7 +16,6 @@ set(MaxComponent_HEADERS
     plAvatarComponent.h
     plBehavioralComponents.h
     plBlowComponent.h
-    plCameraComponent.h
     plCameraComponents.h
     plCAnimParamBlock.h
     plClickableComponent.h
@@ -115,7 +102,6 @@ set(MaxComponent_SOURCES
     plBehavioralComponents.cpp
     plBipedKiller.cpp
     plBlowComponent.cpp
-    plCameraComponent.cpp
     plCameraComponents.cpp
     plCAnimParamBlock.cpp
     plClickableComponent.cpp
@@ -179,12 +165,60 @@ set(MaxComponent_SOURCES
     plXImposter.cpp
 )
 
-use_precompiled_header(Pch.h Pch.cpp MaxComponent_HEADERS MaxComponent_SOURCES)
-add_library(MaxComponent
-            STATIC
-            ${MaxComponent_HEADERS}
-            ${MaxComponent_RESOURCES}
-            ${MaxComponent_SOURCES}
+plasma_library(MaxComponent
+    SOURCES ${MaxComponent_HEADERS} ${MaxComponent_RESOURCES} ${MaxComponent_SOURCES}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+    NO_SANITIZE # The 3ds Max headers are full of clang diagnostic errors.
+)
+target_link_libraries(
+    MaxComponent
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        pnNucleusInc
+        plAvatar
+        pfGameGUIMgr
+    PRIVATE
+        pnEncryption
+        pnMessage
+        pnModifier
+        pnNetCommon
+        pnSceneObject
+        plAgeDescription
+        plAnimation
+        plAudio
+        plAudioCore
+        plDrawable
+        plFile
+        plGImage
+        plGLight
+        plInterp
+        plIntersect
+        plMath
+        plMessage
+        plMessageBox
+        plModifier
+        plNetCommon
+        plPipeline
+        plPhysical
+        plPhysX
+        plScene
+        plSDL
+        plSurface
+        plResMgr
+        plTransform
+        pfAnimation
+        pfAudio
+        pfCamera
+        pfConditional
+        pfGameGUIMgr
+        pfPython
+        pfSurface
+
+        3dsm
+        Comctl32
+        Shlwapi
 )
 
 source_group("Header Files" FILES ${MaxComponent_HEADERS})

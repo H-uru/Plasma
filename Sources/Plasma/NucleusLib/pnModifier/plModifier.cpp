@@ -57,34 +57,34 @@ plModifier::~plModifier()
 {
 }
 
-plDrawInterface* plModifier::IGetTargetDrawInterface(int iTarg) const
+plDrawInterface* plModifier::IGetTargetDrawInterface(size_t iTarg) const
 { 
-    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileDrawInterface() : nil; 
+    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileDrawInterface() : nullptr;
 }
 
-plSimulationInterface* plModifier::IGetTargetSimulationInterface(int iTarg) const
+plSimulationInterface* plModifier::IGetTargetSimulationInterface(size_t iTarg) const
 { 
-    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileSimulationInterface() : nil; 
+    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileSimulationInterface() : nullptr;
 }
 
-plCoordinateInterface* plModifier::IGetTargetCoordinateInterface(int iTarg) const
+plCoordinateInterface* plModifier::IGetTargetCoordinateInterface(size_t iTarg) const
 { 
-    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileCoordinateInterface() : nil; 
+    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileCoordinateInterface() : nullptr;
 }
 
-plAudioInterface* plModifier::IGetTargetAudioInterface(int iTarg) const
+plAudioInterface* plModifier::IGetTargetAudioInterface(size_t iTarg) const
 { 
-    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileAudioInterface() : nil; 
+    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileAudioInterface() : nullptr;
 }
 
-plObjInterface* plModifier::IGetTargetGenericInterface(int iTarg, uint32_t classIdx) const
+plObjInterface* plModifier::IGetTargetGenericInterface(size_t iTarg, uint32_t classIdx) const
 {
-    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileGenericInterface((uint16_t)classIdx) : nil; 
+    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileGenericInterface((uint16_t)classIdx) : nullptr;
 }
 
-plModifier* plModifier::IGetTargetModifier(int iTarg, int iMod) const
+plModifier* plModifier::IGetTargetModifier(size_t iTarg, size_t iMod) const
 { 
-    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileModifier(iMod) : nil; 
+    return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileModifier(iMod) : nullptr;
 }
 
 bool plModifier::MsgReceive(plMessage* msg)

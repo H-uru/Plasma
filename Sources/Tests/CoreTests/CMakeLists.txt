@@ -1,17 +1,15 @@
-include_directories(${GTEST_INCLUDE_DIR})
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-include_directories(../../Plasma/CoreLib)
-
-SET(CoreLibTest_SOURCES
-    test_plString.cpp
-    test_plFormat.cpp
+set(CoreLibTest_SOURCES
+    test_endianSwap.cpp
     test_plCmdParser.cpp
-    )
+    $<$<PLATFORM_ID:Darwin>:test_hsDarwin_CF.cpp>
+    $<$<PLATFORM_ID:Darwin>:test_hsDarwin_NS.mm>
+)
 
-add_executable(test_CoreLib ${CoreLibTest_SOURCES})
-
-target_link_libraries(test_CoreLib gtest gtest_main)
-target_link_libraries(test_CoreLib CoreLib)
-
-add_test(NAME test_CoreLib COMMAND test_CoreLib)
-add_dependencies(check test_CoreLib)
+plasma_test(test_CoreLib SOURCES ${CoreLibTest_SOURCES})
+target_link_libraries(
+    test_CoreLib
+    PRIVATE
+        CoreLib
+        gtest_main
+        "$<$<PLATFORM_ID:Darwin>:-framework Foundation>"
+)

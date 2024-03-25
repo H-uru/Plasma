@@ -41,49 +41,47 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
 
-#include <bmmlib.h>
-#include <iparamb2.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
 
 /** Stubbed out BitmapIO instance for deprecated bink layers **/
 class plBinkBitmapIO : public BitmapIO
 {
 public:
-    int ExtCount()                  { return 1; }
-    const TCHAR* Ext(int n)         { return _T("bik"); }
+    int ExtCount() override           { return 1; }
+    const MCHAR* Ext(int n) override  { return _M("bik"); }
 
-    const TCHAR* LongDesc()         { return _T("DEAD: Bink File"); }
-    const TCHAR* ShortDesc()        { return _T("Bink"); }
+    const MCHAR* LongDesc() override  { return _M("DEAD: Bink File"); }
+    const MCHAR* ShortDesc() override { return _M("Bink"); }
 
-    const TCHAR* AuthorName()       { return _T("Colin Bonstead"); }
-    const TCHAR* CopyrightMessage() { return _T("Copyright 2004, Cyan Inc."); }
+    const MCHAR* AuthorName()       { return _M("Colin Bonstead"); }
+    const MCHAR* CopyrightMessage() { return _M("Copyright 2004, Cyan Inc."); }
     unsigned int Version()          { return 100; }
 
     int Capability()                { return 0; }
     DWORD EvaluateConfigure()       { return 0; }
-    BOOL LoadConfigure(void* ptr)   { return FALSE; }
+    BOOL LoadConfigure(void* ptr BITMAP_LOAD_CONFIGURE_DATASIZE) { return FALSE; }
     BOOL SaveConfigure(void* ptr)   { return FALSE; }
 
     BMMRES GetImageInfo(BitmapInfo* fbi) { return BMMRES_INTERNALERROR; }
     BitmapStorage* Load(BitmapInfo* fbi, Bitmap* map, BMMRES* status) { return nullptr; }
+
     void ShowAbout(HWND hWnd)
     {
-        hsMessageBoxWithOwner(hWnd, "Bink Layers removed due to license issues", "DEAD", hsMessageBoxNormal, MB_ICONEXCLAMATION);
+        plMaxMessageBox(hWnd, _T("Bink Layers removed due to license issues"), _T("DEAD"), MB_ICONEXCLAMATION);
     }
 };
 
-class BinkClassDesc : public ClassDesc2
+class BinkClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
-    int IsPublic() { return 1; }
-    void* Create(BOOL loading=FALSE) { return static_cast<void*>(new plBinkBitmapIO); }
+    int IsPublic() override { return 1; }
+    void* Create(BOOL loading=FALSE) override { return static_cast<void*>(new plBinkBitmapIO); }
 
-    const TCHAR* ClassName() { return "Bink"; }
-    SClass_ID SuperClassID() { return BMM_IO_CLASS_ID; }
-    Class_ID ClassID() { return Class_ID(0x71c75c3c, 0x206f480e); }
-    const TCHAR* Category() { return "Bitmap I/O"; }
+    const MCHAR* ClassName() override { return _M("Bink"); }
+    SClass_ID SuperClassID() override { return BMM_IO_CLASS_ID; }
+    Class_ID ClassID() override { return Class_ID(0x71c75c3c, 0x206f480e); }
+    const MCHAR* Category() override { return _M("Bitmap I/O"); }
 };
 
 static BinkClassDesc BinkDesc;

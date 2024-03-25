@@ -43,22 +43,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRenderRequest_inc
 #define plRenderRequest_inc
 
-#include "hsMatrix44.h"
-#include "hsColorRGBA.h"
-#include "plViewTransform.h"
-#include "hsRefCnt.h"
 #include "hsBitVector.h"
+#include "hsColorRGBA.h"
+#include "hsRefCnt.h"
+#include "hsMatrix44.h"
+#include "plViewTransform.h"
 
 #include "pnKeyedObject/plKey.h"
+
 #include "plMessage/plRenderRequestMsg.h"
 
-class plRenderTarget;
-class plPageTreeMgr;
-class hsStream;
-class hsResMgr;
 class plDrawable;
 class hsGMaterial;
 class plPipeline;
+class plPageTreeMgr;
+class plRenderTarget;
+class hsStream;
+class hsResMgr;
 
 class plRenderRequest : public plRenderRequestBase
 {
@@ -111,7 +112,7 @@ public:
     void            SetSubDrawableMask(uint32_t m) { fSubDrawableMask = m; }
     uint32_t          GetSubDrawableMask() const { return fSubDrawableMask; }
 
-    void            RequestAck(plKey key) { fAck = key; }
+    void            RequestAck(plKey key) { fAck = std::move(key); }
     plKey           GetAck() const { return fAck; }
 
     plDrawable*             GetClearDrawable() const { return fClearDrawable; }

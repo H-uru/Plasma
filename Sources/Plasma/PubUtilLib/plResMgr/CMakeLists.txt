@@ -1,11 +1,4 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plResMgr_SOURCES
-    plBSDiffBuffer.cpp
-    plDiffBuffer.cpp
     plKeyFinder.cpp
     plLocalization.cpp
     plPageInfo.cpp
@@ -18,8 +11,6 @@ set(plResMgr_SOURCES
 )
 
 set(plResMgr_HEADERS
-    plBSDiffBuffer.h
-    plDiffBuffer.h
     plKeyFinder.h
     plLocalization.h
     plPageInfo.h
@@ -33,15 +24,40 @@ set(plResMgr_HEADERS
     plVersion.h
 )
 
-add_library(plResMgr STATIC ${plResMgr_SOURCES} ${plResMgr_HEADERS})
-target_link_libraries(plResMgr CoreLib)
-target_link_libraries(plResMgr pnDispatch)
-target_link_libraries(plResMgr pnFactory)
-target_link_libraries(plResMgr pnKeyedObject)
-target_link_libraries(plResMgr pnMessage)
-target_link_libraries(plResMgr pnTimer)
-target_link_libraries(plResMgr plFile)
-target_link_libraries(plResMgr plStatusLog)
+plasma_library(plResMgr
+    SOURCES ${plResMgr_SOURCES} ${plResMgr_HEADERS}
+    PRECOMPILED_HEADERS Pch.h
+)
+target_link_libraries(
+    plResMgr
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        pnNucleusInc
+    PRIVATE
+        pnDispatch
+        pnMessage
+        pnNetCommon
+        plMessage
+        plMessageBox
+        plStatusLog
+    INTERFACE
+        pnFactory
+)
+
+# Good luck with this...
+option(PLASMA_RESMGR_DEBUGGING "Use mcn's ResManager debug console" OFF)
+target_compile_definitions(
+    plResMgr
+    PUBLIC # This is used in headers and sources, sadly...
+        $<$<BOOL:${PLASMA_RESMGR_DEBUGGING}>:MCN_RESMGR_DEBUGGING>
+)
+target_link_libraries(
+    plResMgr
+    PRIVATE
+        $<$<BOOL:${PLASMA_RESMGR_DEBUGGING}>:pnInputCore>
+        $<$<BOOL:${PLASMA_RESMGR_DEBUGGING}>:plInputCore>
+)
 
 source_group("Source Files" FILES ${plResMgr_SOURCES})
 source_group("Header Files" FILES ${plResMgr_HEADERS})

@@ -48,8 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plTransitionMgr_h
 #define _plTransitionMgr_h
 
+#include <vector>
+
 #include "HeadSpin.h"
-#include "hsTemplates.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 
 
@@ -82,11 +83,11 @@ class plTransitionMgr : public hsKeyedObject
         void    IStartFadeIn( float lengthInSecs, uint8_t effect = kFadeIn );
         void    IStartFadeOut( float lengthInSecs, uint8_t effect = kFadeOut );
 
-        void    ICreatePlate( void );
+        void    ICreatePlate();
 
         void    IStop( bool aboutToStartAgain = false );
 
-        hsTArray<plEventCallbackMsg *>  fCallbacks;
+        std::vector<plEventCallbackMsg *> fCallbacks;
 
     public:
 
@@ -96,9 +97,9 @@ class plTransitionMgr : public hsKeyedObject
         CLASSNAME_REGISTER( plTransitionMgr );
         GETINTERFACE_ANY( plTransitionMgr, hsKeyedObject );
 
-        void    Init( void );
+        void    Init();
 
-        virtual bool MsgReceive( plMessage* msg );
+        bool MsgReceive(plMessage* msg) override;
 };
 
 

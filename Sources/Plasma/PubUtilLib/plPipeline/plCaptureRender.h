@@ -54,13 +54,13 @@ class plCaptureRenderRequest : public plRenderRequest
 {
 public:
 
-    virtual void    Render(plPipeline* pipe, plPageTreeMgr* pageMgr);
+    void    Render(plPipeline* pipe, plPageTreeMgr* pageMgr) override;
 };
 
 class plCaptureRender
 {
 protected:
-    static hsTArray<plCaptureRenderMsg*>        fProcessed;
+    static std::vector<plCaptureRenderMsg*> fProcessed;
 
     static bool         IProcess(plPipeline* pipe, const plKey& ack, plRenderTarget* targ);
 
@@ -77,7 +77,8 @@ public:
 
 #else // MF_FRONTBUFF_CAPTURE
 
-#include "hsTemplates.h"
+#include <vector>
+
 #include "pnKeyedObject/plKey.h"
 
 class plPipeline;
@@ -85,15 +86,17 @@ class plPipeline;
 class plCaptureRender
 {
 protected:
-    class CapInfo
+    struct CapInfo
     {
-    public:
+        CapInfo(plKey ack, uint16_t width, uint16_t height)
+            : fAck(std::move(ack)), fWidth(width), fHeight(height) { }
+
         plKey       fAck;
         uint16_t      fWidth;
         uint16_t      fHeight;
     };
 
-    static hsTArray<CapInfo>        fCapReqs;
+    static std::vector<CapInfo> fCapReqs;
 
     // Only the client calls this (during the update phase).
     static void         Update(plPipeline* pipe);

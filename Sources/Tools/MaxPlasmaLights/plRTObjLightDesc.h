@@ -79,9 +79,9 @@ class BaseObjLight : public ObjLightDesc
         float decayRadius;
         plRTLightBase* gl;
         BaseObjLight(INode *n);
-        void DeleteThis() {delete this;}
-        int Update(TimeValue t, const RendContext& rc, RenderGlobalContext * rgc, BOOL shadows, BOOL shadowGeomChanged);
-        void UpdateGlobalLightLevel(Color globLightLevel) { intensCol = ls.intens*ls.color*globLightLevel;}
+        void DeleteThis() override { delete this; }
+        int Update(TimeValue t, const RendContext& rc, RenderGlobalContext * rgc, BOOL shadows, BOOL shadowGeomChanged) override;
+        void UpdateGlobalLightLevel(Color globLightLevel) override { intensCol = ls.intens*ls.color*globLightLevel; }
         virtual Color AttenuateIllum(ShadeContext& sc,Point3 p,Color &colStep,Point3 &dp,int filt, float ldp, float &distAtten, AttenRanges &ranges) {return Color(0,0,0);}     
         virtual BOOL UseAtten()=0;
         virtual BOOL IsFacingLight(Point3 &dir) {return FALSE;}
@@ -111,10 +111,10 @@ class OmniLight : public BaseObjLight
     public:     
         OmniLight(INode *inode, BOOL forceShadowBuf );
         ~OmniLight();
-        int Update(TimeValue t, const RendContext& rc, RenderGlobalContext *rgc, BOOL shadows, BOOL shadowGeomChanged);
-        int UpdateViewDepParams(const Matrix3& worldToCam);
-        BOOL UseAtten() {return TRUE;}
-        int LightType() { return plRTLightBase::RT_OMNI; }
+        int Update(TimeValue t, const RendContext& rc, RenderGlobalContext *rgc, BOOL shadows, BOOL shadowGeomChanged) override;
+        int UpdateViewDepParams(const Matrix3& worldToCam) override;
+        BOOL UseAtten() override { return TRUE; }
+        int LightType() override { return plRTLightBase::RT_OMNI; }
 };
 
 //// SpotLight Class //////////////////////////////////////////////////////////
@@ -132,11 +132,11 @@ class SpotLight: public BaseObjLight
     public:
         SpotLight(INode *inode, BOOL forceShadowBuf );
         ~SpotLight() {} //  FreeShadGens();     }
-        int Update(TimeValue t, const RendContext& rc, RenderGlobalContext *rgc, BOOL shadows, BOOL shadowGeomChanged);
-        int UpdateViewDepParams(const Matrix3& worldToCam);
-        BOOL UseAtten() {return ls.useAtten;}
-        BOOL IsFacingLight(Point3 &dir);
-        int LightType() { return FSPOT_LIGHT; }
+        int Update(TimeValue t, const RendContext& rc, RenderGlobalContext *rgc, BOOL shadows, BOOL shadowGeomChanged) override;
+        int UpdateViewDepParams(const Matrix3& worldToCam) override;
+        BOOL UseAtten() override { return ls.useAtten; }
+        BOOL IsFacingLight(Point3 &dir) override;
+        int LightType() override { return FSPOT_LIGHT; }
 };
 
 //// DirLight Class ///////////////////////////////////////////////////////////
@@ -155,10 +155,10 @@ class DirLight : public BaseObjLight
     public:
         DirLight(INode *inode, BOOL forceShadowBuf );
         ~DirLight() {   /*  FreeShadGens();*/}
-        int Update(TimeValue t, const RendContext& rc, RenderGlobalContext *rgc, BOOL shadows, BOOL shadowGeomChanged);
-        int UpdateViewDepParams(const Matrix3& worldToCam);
-        BOOL UseAtten() {return FALSE;}
-        int LightType() { return plRTLightBase::RT_FREE_DIR; }
+        int Update(TimeValue t, const RendContext& rc, RenderGlobalContext *rgc, BOOL shadows, BOOL shadowGeomChanged) override;
+        int UpdateViewDepParams(const Matrix3& worldToCam) override;
+        BOOL UseAtten() override { return FALSE; }
+        int LightType() override { return plRTLightBase::RT_FREE_DIR; }
 };
 
 

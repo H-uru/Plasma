@@ -62,7 +62,7 @@ class plAGModifier;
 /////////////////////////////////////////////////////////////////////////////////////////
 #include "pnFactory/plCreatable.h"
 #include "plAGDefs.h"
-#include "plString.h"
+#include <string_theory/string>
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -89,7 +89,7 @@ public:
     // -- methods --
     /** Base constructor. */
     plAGApplicator();
-    plAGApplicator(const plString &channelName);
+    plAGApplicator(const ST::string &channelName);
     virtual ~plAGApplicator();
 
     /** Return our single input channel. Applicators only ever
@@ -101,8 +101,8 @@ public:
     /** Set our input channel. Does not free the previous input channel. */
     void SetChannel(plAGChannel *channel) { fChannel = channel; }
 
-    void SetChannelName(const plString &name);
-    plString GetChannelName();
+    void SetChannelName(const ST::string &name);
+    ST::string GetChannelName();
 
     /** Optionally suppress the action of this applicator.
         The applicator can still be forced to apply using the force
@@ -148,8 +148,8 @@ public:
     CLASSNAME_REGISTER( plAGApplicator );
     GETINTERFACE_ANY( plAGApplicator, plCreatable );
 
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *s, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *s, hsResMgr *mgr) override;
 
 protected:
     // -- methods --
@@ -168,7 +168,7 @@ protected:
     // -- members --
     plAGChannel *fChannel;
     bool fEnabled;
-    plString fChannelName;
+    ST::string fChannelName;
 };
 
 #endif

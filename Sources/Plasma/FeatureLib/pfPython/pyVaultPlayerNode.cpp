@@ -45,42 +45,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pyVaultPlayerNode.h"
-#include "pyAgeInfoStruct.h"
-#include "pyVaultAgeLinkNode.h"
-#include "pyVaultPlayerInfoNode.h"
-#include "pyVaultPlayerInfoListNode.h"
-#include "pyVaultFolderNode.h"
-#include "pyVaultChronicleNode.h"
-#include "pyVaultSDLNode.h"
-#include "pyAgeLinkStruct.h"
+
+#include <string_theory/string>
+
 #include "plVault/plVault.h"
-#ifndef BUILDING_PYPLASMA
-#   include "pyVault.h"
-#endif
+
+#include "pyAgeInfoStruct.h"
+#include "pyAgeLinkStruct.h"
+#include "pyGlueHelpers.h"
+#include "pyVaultAgeLinkNode.h"
+#include "pyVaultChronicleNode.h"
+#include "pyVaultFolderNode.h"
+#include "pyVaultPlayerInfoNode.h"
 
 //============================================================================
 static PyObject * GetPlayerVaultFolder (unsigned folderType) {
-    PyObject * result = nil;
     if (hsRef<RelVaultNode> rvnPlr = VaultGetPlayerNode()) {
         if (hsRef<RelVaultNode> rvnFldr = rvnPlr->GetChildFolderNode(folderType, 1))
-            result = pyVaultFolderNode::New(rvnFldr);
+            return pyVaultFolderNode::New(rvnFldr);
     }
-    
-    return result;
-}
-
-pyVaultPlayerNode::pyVaultPlayerNode(RelVaultNode *nfsNode)
-: pyVaultNode(nfsNode)
-{
+    return nullptr;
 }
 
 //create from the Python side
 pyVaultPlayerNode::pyVaultPlayerNode()
-: pyVaultNode(nil)  // may not create player nodes from python
+    : pyVaultNode(nullptr)
 {
 }
 
@@ -206,11 +196,11 @@ PyObject *pyVaultPlayerNode::GetOwnedAgeLink(const pyAgeInfoStruct *info)
     PYTHON_RETURN_NONE;
 }
 
-void pyVaultPlayerNode::RemoveOwnedAgeLink(const char* ageFilename)
+void pyVaultPlayerNode::RemoveOwnedAgeLink(const ST::string& ageFilename)
 {
     plAgeInfoStruct info;
     info.SetAgeFilename(ageFilename);
-    VaultUnregisterOwnedAgeAndWait(&info);
+    VaultUnregisterOwnedAge(&info);
 }
 
 PyObject *pyVaultPlayerNode::GetVisitAgeLink(const pyAgeInfoStruct *info)
@@ -221,15 +211,15 @@ PyObject *pyVaultPlayerNode::GetVisitAgeLink(const pyAgeInfoStruct *info)
     PYTHON_RETURN_NONE;
 }
 
-void pyVaultPlayerNode::RemoveVisitAgeLink(const char *guidstr)
+void pyVaultPlayerNode::RemoveVisitAgeLink(const ST::string& guidstr)
 {
     plAgeInfoStruct info;
     plUUID guid(guidstr);
     info.SetAgeInstanceGuid(&guid);
-    VaultUnregisterOwnedAgeAndWait(&info);
+    VaultUnregisterOwnedAge(&info);
 }
 
-PyObject *pyVaultPlayerNode::FindChronicleEntry(const char *entryName)
+PyObject *pyVaultPlayerNode::FindChronicleEntry(const ST::string& entryName)
 {
     if (hsRef<RelVaultNode> rvn = VaultFindChronicleEntry(entryName))
         return pyVaultChronicleNode::New(rvn);
@@ -237,32 +227,32 @@ PyObject *pyVaultPlayerNode::FindChronicleEntry(const char *entryName)
     PYTHON_RETURN_NONE;
 }
 
-void pyVaultPlayerNode::SetPlayerName(const char *value)
+void pyVaultPlayerNode::SetPlayerName(const ST::string& value)
 {
     hsAssert(false, "python may not change a player's name this way");
 }
 
-plString pyVaultPlayerNode::GetPlayerName() const
+ST::string pyVaultPlayerNode::GetPlayerName() const
 {
     if (fNode) {
         VaultPlayerNode player(fNode);
         return player.GetPlayerName();
     }
-    return "";
+    return ST::string();
 }
 
-void pyVaultPlayerNode::SetAvatarShapeName(const char *value)
+void pyVaultPlayerNode::SetAvatarShapeName(const ST::string& value)
 {
     hsAssert(false, "python may not change a player's avatar this way");
 }
 
-plString pyVaultPlayerNode::GetAvatarShapeName() const
+ST::string pyVaultPlayerNode::GetAvatarShapeName() const
 {
     if (fNode) {
         VaultPlayerNode player(fNode);
         return player.GetAvatarShapeName();
     }
-    return "";
+    return ST::string();
 }
 
 void pyVaultPlayerNode::SetDisabled(bool value)

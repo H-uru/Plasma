@@ -40,10 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsResMgr.h"
-#pragma hdrstop
+#include "plSimStateMsg.h"
 
-#include "plMessage/plSimStateMsg.h"
+#include "hsResMgr.h"
 
 void plSubWorldMsg::Read(hsStream *stream, hsResMgr *mgr)
 {

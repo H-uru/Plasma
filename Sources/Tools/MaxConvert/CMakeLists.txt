@@ -1,13 +1,3 @@
-include_directories("../")
-include_directories("../../Plasma/CoreLib")
-include_directories("../../Plasma/FeatureLib")
-include_directories("../../Plasma/FeatureLib/inc")
-include_directories("../../Plasma/NucleusLib")
-include_directories("../../Plasma/NucleusLib/inc")
-include_directories("../../Plasma/PubUtilLib")
-include_directories("../../Plasma/PubUtilLib/inc")
-include_directories(${3dsm_INCLUDE_DIR})
-
 set(MaxConvert_HEADERS
     hsControlConverter.h
     hsConverterUtils.h
@@ -25,7 +15,6 @@ set(MaxConvert_HEADERS
     plMeshConverter.h
     plRenderGlobalContext.h
     plRenderInstance.h
-    StringTokenizer.h
     UserPropMgr.h
 )
 
@@ -44,12 +33,45 @@ set(MaxConvert_SOURCES
     plMeshConverter.cpp
     plRenderGlobalContext.cpp
     plRenderInstance.cpp
-    StringTokenizer.cpp
     UserPropMgr.cpp
 )
 
-use_precompiled_header(Pch.h Pch.cpp MaxConvert_HEADERS MaxConvert_SOURCES)
-add_library(MaxConvert STATIC ${MaxConvert_HEADERS} ${MaxConvert_SOURCES})
+plasma_library(MaxConvert
+    SOURCES ${MaxConvert_HEADERS} ${MaxConvert_SOURCES}
+    PRECOMPILED_HEADERS Pch.h
+    NO_SANITIZE # The 3ds Max headers are full of clang diagnostic errors.
+)
+target_link_libraries(
+    MaxConvert
+    PUBLIC
+        CoreLib
+        pnEncryption
+        pnNucleusInc
+        plDrawable
+        plInterp
+    PRIVATE
+        pnKeyedObject
+        pnMessage
+        pnSceneObject
+        plAgeDescription
+        plAvatar
+        plGImage
+        plGLight
+        plMath
+        plMessage
+        plParticleSystem
+        plPhysX
+        plPipeline
+        plResMgr
+        plScene
+        plSDL
+        plStatusLog
+        plSurface
+        pfCamera
+        pfSurface
+
+        3dsm
+)
 
 source_group("Header Files" FILES ${MaxConvert_HEADERS})
 source_group("Source Files" FILES ${MaxConvert_SOURCES})

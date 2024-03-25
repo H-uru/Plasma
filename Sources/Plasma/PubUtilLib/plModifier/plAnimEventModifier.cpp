@@ -42,16 +42,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimEventModifier.h"
 
 #include "hsResMgr.h"
-#include "pnMessage/plMessage.h"
+#include "hsStream.h"
 
-#include "pnMessage/plRefMsg.h"
 #include "pnMessage/plEnableMsg.h"
 #include "pnMessage/plEventCallbackMsg.h"
-
-#include "pnNetCommon/plNetApp.h"
 #include "pnMessage/plNotifyMsg.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnNetCommon/plNetApp.h"
 
-plAnimEventModifier::plAnimEventModifier() : fCallback(nil), fDisabled(false)
+plAnimEventModifier::plAnimEventModifier() : fCallback(), fDisabled()
 {
 }
 
@@ -64,10 +63,11 @@ void plAnimEventModifier::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Read(stream, mgr);
 
-    int numReceivers = stream->ReadLE32();
-    fReceivers.Expand(numReceivers);
-    for (int i = 0; i < numReceivers; i++)
-        fReceivers.Push(mgr->ReadKey(stream));
+    fReceivers.clear();
+    uint32_t numReceivers = stream->ReadLE32();
+    fReceivers.reserve(numReceivers);
+    for (uint32_t i = 0; i < numReceivers; i++)
+        fReceivers.emplace_back(mgr->ReadKey(stream));
 
     fCallback = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
 
@@ -85,10 +85,9 @@ void plAnimEventModifier::Write(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Write(stream, mgr);
 
-    int numReceivers = fReceivers.Count();
-    stream->WriteLE32(numReceivers);
-    for (int i = 0; i < numReceivers; i++)
-        mgr->WriteKey(stream, fReceivers[i]);
+    stream->WriteLE32((uint32_t)fReceivers.size());
+    for (const plKey& key : fReceivers)
+        mgr->WriteKey(stream, key);
 
     mgr->WriteCreatable(stream, fCallback);
 }
@@ -132,7 +131,7 @@ void plAnimEventModifier::ISendNotify(bool triggered)
     
     // Setup the event data in case this is a OneShot responder that needs it
     plKey playerKey = plNetClientApp::GetInstance()->GetLocalPlayerKey();
-    notify->AddPickEvent(playerKey, nil, true, hsPoint3(0,0,0) );
+    notify->AddPickEvent(playerKey, nullptr, true, {});
 
     notify->SetSender(GetKey());
     notify->AddReceivers(fReceivers);

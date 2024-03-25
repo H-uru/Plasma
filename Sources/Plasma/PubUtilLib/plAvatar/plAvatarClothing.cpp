@@ -39,67 +39,54 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "hsTemplates.h"
-#include "hsStream.h"
-#include "hsResMgr.h"
-#include "plgDispatch.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plFixedKey.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "plDrawable/plInstanceDrawInterface.h"
-#include "pnMessage/plRefMsg.h"
-#include "pnMessage/plPipeResMakeMsg.h"
-#include "pfMessage/plClothingMsg.h"
-#include "plMessage/plRenderMsg.h"
-#include "plGImage/plMipmap.h"
-#include "hsGDeviceRef.h"
-#include "plPipeline/plRenderTarget.h"
-#include "plPipeline.h"
-#include "plClothingLayout.h"
+
 #include "plAvatarClothing.h"
+
+#include "plgDispatch.h"
+#include "plPipeline.h"
+#include "hsResMgr.h"
+
+#include "plArmatureEffects.h"
+#include "plArmatureMod.h"
+#include "plAvatarMgr.h"
 #include "plClothingSDLModifier.h"
-#include "plGImage/hsCodecManager.h"
-#include "plAvatar/plArmatureMod.h"
-#include "plAvatar/plAvatarMgr.h"
-#include "plAvatar/plArmatureEffects.h"
+
+#include "pnEncryption/plRandom.h"
 #include "pnNetCommon/plNetApp.h"
-#include "pnMessage/plSDLModifierMsg.h"
-#include "plMessage/plReplaceGeometryMsg.h"
+#include "pnNetCommon/plSDLTypes.h"
+
 #include "plDrawable/plDrawableSpans.h"
-#include "plDrawable/plSharedMesh.h"
+#include "plDrawable/plInstanceDrawInterface.h"
 #include "plDrawable/plMorphSequence.h"
 #include "plDrawable/plMorphSequenceSDLMod.h"
+#include "plDrawable/plSharedMesh.h"
 #include "plDrawable/plSpaceTree.h"
+#include "plGImage/plMipmap.h"
+#include "plMessage/plRenderMsg.h"
+#include "plMessageBox/hsMessageBox.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plSDL/plSDL.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayer.h"
-#include "pnEncryption/plRandom.h"
-#include "plSDL/plSDL.h"
 #include "plVault/plVault.h"
-#include "plResMgr/plKeyFinder.h"
-#include "plNetClientComm/plNetClientComm.h"
 
+#include "pfMessage/plClothingMsg.h"
 
-plClothingItem::plClothingItem() : fGroup(0), fTileset(0), fType(0), fSortOrder(0),
-                                   fThumbnail(nil), fAccessory(nil)
-{   
-    int i;
-    fTextures.Reset();
-    fElementNames.Reset();
-    fElements.Reset();
-    
-    for (i = 0; i < 3; i++)
-    {
-        fDefaultTint1[i] = fDefaultTint2[i] = 255;
-    }
-    for (i = 0; i < kMaxNumLODLevels; i++)
-        fMeshes[i] = nil;
+plClothingItem::plClothingItem()
+    : fGroup(), fType(), fTileset(), fSortOrder(), fThumbnail(),
+      fAccessory()
+{
+    std::fill(std::begin(fMeshes), std::end(fMeshes), nullptr);
+    std::fill(std::begin(fDefaultTint1), std::end(fDefaultTint1), 255);
+    std::fill(std::begin(fDefaultTint2), std::end(fDefaultTint2), 255);
 }
 
 plClothingItem::~plClothingItem()
 {
-    while (fTextures.GetCount() > 0)
-        delete [] fTextures.Pop();
+    while (!fTextures.empty()) {
+        delete[] fTextures.back();
+        fTextures.pop_back();
+    }
 }
 
 bool plClothingItem::CanWearWith(plClothingItem *item)
@@ -135,8 +122,7 @@ bool plClothingItem::WearBefore(plClothingItem *item)
 
 bool plClothingItem::HasBaseAlpha()
 {
-    int i;
-    for (i = 0; i < fElements.GetCount(); i++)
+    for (size_t i = 0; i < fElements.size(); i++)
     {
         plMipmap *tex = fTextures[i][plClothingElement::kLayerBase];
 //      if (tex && (tex->GetFlags() & (plMipmap::kAlphaBitFlag | plMipmap::kAlphaChannelFlag)))
@@ -146,10 +132,9 @@ bool plClothingItem::HasBaseAlpha()
     return false;
 }
 
-bool plClothingItem::HasSameMeshes(plClothingItem *other)
+bool plClothingItem::HasSameMeshes(const plClothingItem *other) const
 {
-    int i;
-    for (i = 0; i < kMaxNumLODLevels; i++)
+    for (int i = 0; i < kMaxNumLODLevels; i++)
         if (fMeshes[i] != other->fMeshes[i])
             return false;
 
@@ -171,27 +156,26 @@ void plClothingItem::Read(hsStream *s, hsResMgr *mgr)
     if (s->ReadBool())
         mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // thumbnail
 
-    int tileCount = s->ReadLE32();
-    int i, j;
-    for (i = 0; i < tileCount; i++)
+    uint32_t tileCount = s->ReadLE32();
+    for (uint32_t i = 0; i < tileCount; i++)
     {
-        fElementNames.Append(s->ReadSafeString());
+        fElementNames.emplace_back(s->ReadSafeString());
 
-        int layerCount = s->ReadByte();
-        for (j = 0; j < layerCount; j++)
+        uint8_t layerCount = s->ReadByte();
+        for (uint8_t j = 0; j < layerCount; j++)
         {
             int layer = s->ReadByte();
-            mgr->ReadKeyNotifyMe(s, new plElementRefMsg(GetKey(), plRefMsg::kOnCreate, i, -1, plString::Null, layer), plRefFlags::kActiveRef); // texture
+            mgr->ReadKeyNotifyMe(s, new plElementRefMsg(GetKey(), plRefMsg::kOnCreate, i, -1, ST::string(), layer), plRefFlags::kActiveRef); // texture
         }
     }
 
-    for (i = 0; i < kMaxNumLODLevels; i++)
+    for (int i = 0; i < kMaxNumLODLevels; i++)
     {
         if (s->ReadBool())
             mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, -1), plRefFlags::kActiveRef); // shared mesh
     }
 
-    fElements.SetCountAndZero(tileCount);
+    fElements.assign(tileCount, nullptr);
     if (plClothingMgr::GetClothingMgr())
     {
         plGenRefMsg *msg = new plGenRefMsg(plClothingMgr::GetClothingMgr()->GetKey(), plRefMsg::kOnCreate, -1, -1);
@@ -199,7 +183,7 @@ void plClothingItem::Read(hsStream *s, hsResMgr *mgr)
     }
     mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // forced accessory    
 
-    for (i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
         fDefaultTint1[i] = s->ReadByte();
         fDefaultTint2[i] = s->ReadByte();
@@ -209,7 +193,6 @@ void plClothingItem::Read(hsStream *s, hsResMgr *mgr)
 void plClothingItem::Write(hsStream *s, hsResMgr *mgr)
 {
     hsKeyedObject::Write(s, mgr);
-    int i, j;
 
     s->WriteSafeString(fName);
     s->WriteByte(fGroup);
@@ -219,65 +202,64 @@ void plClothingItem::Write(hsStream *s, hsResMgr *mgr)
 
     s->WriteSafeString(fCustomText);
     s->WriteSafeString(fDescription);
-    s->WriteBool(fThumbnail != nil);
-    if (fThumbnail != nil)
+    s->WriteBool(fThumbnail != nullptr);
+    if (fThumbnail != nullptr)
         mgr->WriteKey(s, fThumbnail->GetKey());
 
-    uint32_t texSkip = 0;
-    for (i = 0; i < fTextures.GetCount(); i++)
-        if (fTextures[i] == nil)
+    size_t texSkip = 0;
+    for (plMipmap** texList : fTextures)
+        if (texList == nullptr)
             texSkip++;
 
-    s->WriteLE32(fTextures.GetCount() - texSkip);
-    for (i = 0; i < fTextures.GetCount(); i++)
+    s->WriteLE32((uint32_t)(fTextures.size() - texSkip));
+    for (size_t i = 0; i < fTextures.size(); i++)
     {
-        if (fTextures[i] == nil)
+        if (fTextures[i] == nullptr)
             continue;
 
-        s->WriteSafeString(fElementNames.Get(i));
+        s->WriteSafeString(fElementNames[i]);
 
-        int layerCount = 0;
-        for (j = 0; j < plClothingElement::kLayerMax; j++)
+        uint8_t layerCount = 0;
+        for (int j = 0; j < plClothingElement::kLayerMax; j++)
         {
             // Run through once to get the count of valid layers
-            if (fTextures[i][j] != nil)
+            if (fTextures[i][j] != nullptr)
                 layerCount++;
         }
 
         s->WriteByte(layerCount);
-        for (j = 0; j < plClothingElement::kLayerMax; j++)
+        for (uint8_t j = 0; j < plClothingElement::kLayerMax; j++)
         {
-            if (fTextures[i][j] != nil)
+            if (fTextures[i][j] != nullptr)
             {
                 s->WriteByte(j);
                 mgr->WriteKey(s, fTextures[i][j]->GetKey());
             }
         }
-        
     }
-    
-    for (i = 0; i < kMaxNumLODLevels; i++)
+
+    for (int i = 0; i < kMaxNumLODLevels; i++)
     {
-        s->WriteBool(fMeshes[i] != nil);
-        if (fMeshes[i] != nil)
+        s->WriteBool(fMeshes[i] != nullptr);
+        if (fMeshes[i] != nullptr)
             mgr->WriteKey(s, fMeshes[i]->GetKey());
     }
 
     // EXPORT ONLY
-    plKey accessoryKey = nil;
-    if (!fAccessoryName.IsEmpty())
+    plKey accessoryKey;
+    if (!fAccessoryName.empty())
     {
-        plString strBuf = plFormat("CItm_{}", fAccessoryName);
+        ST::string strBuf = ST::format("CItm_{}", fAccessoryName);
         accessoryKey = plKeyFinder::Instance().StupidSearch("GlobalClothing", "", plClothingItem::Index(), strBuf);
-        if (accessoryKey == nil)
+        if (accessoryKey == nullptr)
         {
-            strBuf = plFormat("Couldn't find accessory \"{}\". It won't show at runtime.", fAccessoryName);
-            hsMessageBox(strBuf.c_str(), GetKeyName().c_str(), hsMessageBoxNormal);
+            strBuf = ST::format("Couldn't find accessory \"{}\". It won't show at runtime.", fAccessoryName);
+            hsMessageBox(strBuf, GetKeyName(), hsMessageBoxNormal);
         }
     }
     mgr->WriteKey(s, accessoryKey);
     
-    for (i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
         s->WriteByte(fDefaultTint1[i]);
         s->WriteByte(fDefaultTint2[i]);
@@ -294,27 +276,25 @@ bool plClothingItem::MsgReceive(plMessage* msg)
         {
             if( eMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
             {
-                if (fTextures.GetCount() <= eMsg->fWhich)
-                    fTextures.ExpandAndZero(eMsg->fWhich + 1);
-                if (fElementNames.GetCount() <= eMsg->fWhich)
-                    fElementNames.Expand(eMsg->fWhich + 1);
+                if ((int32_t)fTextures.size() <= eMsg->fWhich)
+                    fTextures.resize(eMsg->fWhich + 1);
+                if ((int32_t)fElementNames.size() <= eMsg->fWhich)
+                    fElementNames.resize(eMsg->fWhich + 1);
                 
-                if (fElementNames.Get(eMsg->fWhich).IsEmpty())
-                    fElementNames.Set(eMsg->fWhich, eMsg->fElementName);
-                if (fTextures.Get(eMsg->fWhich) == nil)
+                if (fElementNames[eMsg->fWhich].empty())
+                    fElementNames[eMsg->fWhich] = eMsg->fElementName;
+                if (fTextures[eMsg->fWhich] == nullptr)
                 {
                     plMipmap **layers = new plMipmap*[plClothingElement::kLayerMax];
-                    int i;
-                    for (i = 0; i < plClothingElement::kLayerMax; i++)
-                        layers[i] = nil;
-                    fTextures.Set(eMsg->fWhich, layers);
+                    std::fill(layers, layers + plClothingElement::kLayerMax, nullptr);
+                    fTextures[eMsg->fWhich] = layers;
                 }
 
-                fTextures.Get(eMsg->fWhich)[eMsg->fLayer] = tex;
+                fTextures[eMsg->fWhich][eMsg->fLayer] = tex;
             }
             else if( eMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
             {
-                fTextures.Get(eMsg->fWhich)[eMsg->fLayer] = nil;
+                fTextures[eMsg->fWhich][eMsg->fLayer] = nullptr;
             }
             return true;
         }
@@ -331,7 +311,7 @@ bool plClothingItem::MsgReceive(plMessage* msg)
                 if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                     fMeshes[refMsg->fWhich] = mesh;
                 else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-                    fMeshes[refMsg->fWhich] = nil;
+                    fMeshes[refMsg->fWhich] = nullptr;
             }
             return true;
         }
@@ -342,7 +322,7 @@ bool plClothingItem::MsgReceive(plMessage* msg)
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fThumbnail = thumbnail;
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-                fThumbnail = nil;
+                fThumbnail = nullptr;
             return true;
         }
 
@@ -352,7 +332,7 @@ bool plClothingItem::MsgReceive(plMessage* msg)
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fAccessory = accessory;
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-                fAccessory = nil;
+                fAccessory = nullptr;
             return true;
         }       
     }
@@ -362,14 +342,14 @@ bool plClothingItem::MsgReceive(plMessage* msg)
 
 /////////////////////////////////////////////////////////////////////////////
 
-bool plClosetItem::IsMatch(plClosetItem *other)
+bool plClosetItem::IsMatch(const plClosetItem *other) const
 {
     return (fItem == other->fItem && fOptions.IsMatch(&other->fOptions));
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
-plClothingBase::plClothingBase() : fBaseTexture(nil) {}
+plClothingBase::plClothingBase() : fBaseTexture() { }
 
 void plClothingBase::Read(hsStream* s, hsResMgr* mgr)
 {
@@ -386,8 +366,8 @@ void plClothingBase::Write(hsStream* s, hsResMgr* mgr)
     hsKeyedObject::Write(s, mgr);
 
     s->WriteSafeString(fName);
-    s->WriteBool(fBaseTexture != nil);
-    if (fBaseTexture != nil)
+    s->WriteBool(fBaseTexture != nullptr);
+    if (fBaseTexture != nullptr)
         mgr->WriteKey(s, fBaseTexture->GetKey());
     s->WriteSafeString(fLayoutName);
 }
@@ -403,7 +383,7 @@ bool plClothingBase::MsgReceive(plMessage* msg)
         }
         else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
         {
-            fBaseTexture = nil;
+            fBaseTexture = nullptr;
         }
         return true;
     }
@@ -418,27 +398,28 @@ plClothingOutfit::plClothingOutfit() :
     fTargetLayer(nullptr), fBase(nullptr), fGroup(0), fAvatar(nullptr), fSynchClients(false), fMaterial(nullptr),
     fVaultSaveEnabled(true), fMorphsInitDone(false)
 {
-    fSkinTint.Set(1.f, 0.84, 0.71, 1.f);
-    fItems.Reset();
-    int i;
-    for (i = 0; i < plClothingLayout::kMaxTileset; i++)
+    fSkinTint.Set(1.f, 0.84f, 0.71f, 1.f);
+    fItems.clear();
+    for (int i = 0; i < plClothingLayout::kMaxTileset; i++)
         fDirtyItems.SetBit(i);
 
-    for (i = 0; i < plClothingElement::kLayerSkinLast - plClothingElement::kLayerSkinFirst; i++)
+    for (int i = 0; i < plClothingElement::kLayerSkinLast - plClothingElement::kLayerSkinFirst; i++)
         fSkinBlends[i] = 0.f;
 }
 
 plClothingOutfit::~plClothingOutfit()
 {
-    fItems.Reset();
-    while (fOptions.GetCount() > 0)
-        delete fOptions.Pop();
+    fItems.clear();
+    while (!fOptions.empty()) {
+        delete fOptions.back();
+        fOptions.pop_back();
+    }
     plgDispatch::Dispatch()->UnRegisterForExactType(plPreResourceMsg::Index(), GetKey());
 }
 
 void plClothingOutfit::AddItem(plClothingItem *item, bool update /* = true */, bool broadcast /* = true */, bool netForce /* = false */)
 {
-    if (fItems.Find(item) != fItems.kMissingIndex)
+    if (std::find(fItems.cbegin(), fItems.cend(), item) != fItems.cend())
         return;
 
     plClothingMsg *msg = new plClothingMsg();
@@ -471,7 +452,7 @@ void plClothingOutfit::ForceUpdate(bool retry)
 
 void plClothingOutfit::RemoveItem(plClothingItem *item, bool update /* = true */, bool netForce /* = false */)
 {
-    if (fItems.Find(item) == fItems.kMissingIndex)
+    if (std::find(fItems.cbegin(), fItems.cend(), item) == fItems.cend())
         return;
 
     plClothingMsg *msg = new plClothingMsg();
@@ -568,7 +549,7 @@ float plClothingOutfit::GetSkinBlend(uint8_t layer)
 
     return 0;
 }
-    
+
 void plClothingOutfit::IAddItem(plClothingItem *item)
 {
     if (item->fGroup != fGroup)
@@ -578,11 +559,10 @@ void plClothingOutfit::IAddItem(plClothingItem *item)
         return;
     }
 
-    if (fItems.Find(item) == fItems.kMissingIndex)
+    if (std::find(fItems.cbegin(), fItems.cend(), item) == fItems.cend())
     {
         // Remove any other item we have that can't be worn with this
-        int i;
-        for (i = fItems.GetCount() - 1; i >= 0; i--)
+        for (hsSsize_t i = fItems.size() - 1; i >= 0; i--)
         {
             if (!item->CanWearWith(fItems[i]))
             {
@@ -596,15 +576,16 @@ void plClothingOutfit::IAddItem(plClothingItem *item)
                 IRemoveItem(goner); // Can't wait for the ref message to process                
             }
         }
-    
-        for (i = 0; i < fItems.GetCount(); i++)
+
+        size_t iItem;
+        for (iItem = 0; iItem < fItems.size(); iItem++)
         {
-            if (item->WearBefore(fItems[i]))
+            if (item->WearBefore(fItems[iItem]))
                 break;
         }
-        fItems.Insert(i, item);
+        fItems.emplace(fItems.begin() + iItem, item);
         plClothingItemOptions *op = new plClothingItemOptions;
-        fOptions.Insert(i, op);
+        fOptions.emplace(fOptions.begin() + iItem, op);
         IInstanceSharedMeshes(item);
         fDirtyItems.SetBit(item->fTileset);
         
@@ -612,11 +593,10 @@ void plClothingOutfit::IAddItem(plClothingItem *item)
         if (item->fType == plClothingMgr::kTypeLeftFoot)
         {
             plArmatureEffectsMgr *mgr = fAvatar->GetArmatureEffects();
-            plArmatureEffectFootSound *soundEffect = nil;
-            int num = mgr->GetNumEffects();
-            int i;
+            plArmatureEffectFootSound *soundEffect = nullptr;
+            size_t num = mgr->GetNumEffects();
 
-            for (i = 0; i < num; i++)
+            for (size_t i = 0; i < num; i++)
             {
                 soundEffect = plArmatureEffectFootSound::ConvertNoRef(mgr->GetEffect(i));
                 if (soundEffect)
@@ -637,12 +617,13 @@ void plClothingOutfit::IAddItem(plClothingItem *item)
 void plClothingOutfit::IRemoveItem(plClothingItem *item)
 {
     // We may just be removing the ref...
-    uint32_t index = fItems.Find(item);
-    if (index != fItems.kMissingIndex)
+    auto iter = std::find(fItems.cbegin(), fItems.cend(), item);
+    if (iter != fItems.cend())
     {
-        fItems.Remove(index);
-        delete fOptions.Get(index);
-        fOptions.Remove(index);
+        auto index = std::distance(fItems.cbegin(), iter);
+        fItems.erase(fItems.begin() + index);
+        delete fOptions[index];
+        fOptions.erase(fOptions.begin() + index);
         IRemoveSharedMeshes(item);
         fDirtyItems.SetBit(item->fTileset);
     }
@@ -650,9 +631,10 @@ void plClothingOutfit::IRemoveItem(plClothingItem *item)
 
 bool plClothingOutfit::ITintItem(plClothingItem *item, hsColorRGBA color, uint8_t layer)
 {
-    uint32_t index = fItems.Find(item);
-    if (index != fItems.kMissingIndex)
+    auto iter = std::find(fItems.cbegin(), fItems.cend(), item);
+    if (iter != fItems.cend())
     {
+        auto index = std::distance(fItems.cbegin(), iter);
         if (layer == plClothingElement::kLayerTint1)
             fOptions[index]->fTint1 = color;
         if (layer == plClothingElement::kLayerTint2)
@@ -662,20 +644,21 @@ bool plClothingOutfit::ITintItem(plClothingItem *item, hsColorRGBA color, uint8_
         if (fItems[index]->fAccessory)
         {
             plClothingItem *acc = fItems[index]->fAccessory;
-            uint32_t accIndex = fItems.Find(acc);
-            if (accIndex != fItems.kMissingIndex)
+            auto accIter = std::find(fItems.cbegin(), fItems.cend(), acc);
+            if (accIter != fItems.cend())
             {
+                auto accIndex = std::distance(fItems.cbegin(), accIter);
                 if (layer == plClothingElement::kLayerTint1)
                     fOptions[accIndex]->fTint1 = color;
                 if (layer == plClothingElement::kLayerTint2)
                     fOptions[accIndex]->fTint2 = color;
                 fDirtyItems.SetBit(acc->fTileset);
-            }               
+            }
         }
         return true;
     }
     
-    return false;       
+    return false;
 }
 
 hsColorRGBA plClothingOutfit::GetItemTint(plClothingItem *item, uint8_t layer /* = kLayerTint1 */) const
@@ -684,9 +667,10 @@ hsColorRGBA plClothingOutfit::GetItemTint(plClothingItem *item, uint8_t layer /*
         layer <= plClothingElement::kLayerSkinLast)
         return fSkinTint;
     
-    uint32_t index = fItems.Find(item);
-    if (index != fItems.kMissingIndex)
+    auto iter = std::find(fItems.cbegin(), fItems.cend(), item);
+    if (iter != fItems.cend())
     {
+        auto index = std::distance(fItems.cbegin(), iter);
         if (layer == plClothingElement::kLayerTint1)
             return fOptions[index]->fTint1;
         if (layer == plClothingElement::kLayerTint2)
@@ -700,12 +684,11 @@ hsColorRGBA plClothingOutfit::GetItemTint(plClothingItem *item, uint8_t layer /*
 
 bool plClothingOutfit::IMorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight)
 {
-    uint32_t index = fItems.Find(item);
-    if (fAvatar && index != fItems.kMissingIndex)
+    if (fAvatar && std::find(fItems.cbegin(), fItems.cend(), item) != fItems.cend())
     {
         for (uint8_t i = 0; i < fAvatar->GetNumLOD(); i++)
         {
-            if (item->fMeshes[i]->fMorphSet == nil)
+            if (item->fMeshes[i]->fMorphSet == nullptr)
                 continue;
 
             const plSceneObject *so = fAvatar->GetClothingSO(i);
@@ -722,7 +705,7 @@ bool plClothingOutfit::IMorphItem(plClothingItem *item, uint8_t layer, uint8_t d
         return true;
     }
     
-    return false;       
+    return false;
 }
 
 void plClothingOutfit::Read(hsStream* s, hsResMgr* mgr)
@@ -758,8 +741,7 @@ void plClothingOutfit::Write(hsStream* s, hsResMgr* mgr)
 
 void plClothingOutfit::StripAccessories()
 {
-    int i;
-    for (i = fItems.GetCount() - 1; i >= 0; i--)
+    for (hsSsize_t i = fItems.size() - 1; i >= 0; i--)
     {
         if (fItems[i]->fType == plClothingMgr::kTypeAccessory)
         {
@@ -811,12 +793,12 @@ bool plClothingOutfit::IReadFromVault()
 
     for (const hsRef<RelVaultNode> &node : nodes) {
         VaultSDLNode sdl(node);
-        if (sdl.GetSDLDataLength()) {
+        if (!sdl.GetSDLData().empty()) {
             hsRAMStream ram;
-            ram.Write(sdl.GetSDLDataLength(), sdl.GetSDLData());
+            ram.Write(sdl.GetSDLData().size(), sdl.GetSDLData().data());
             ram.Rewind();
-            
-            plString sdlRecName;
+
+            ST::string sdlRecName;
             int sdlRecVersion;
             plStateDataRecord::ReadStreamHeader(&ram, &sdlRecName, &sdlRecVersion);
             plStateDescriptor * desc = plSDLMgr::GetInstance()->FindDescriptor(sdlRecName, sdlRecVersion);
@@ -859,22 +841,22 @@ void plClothingOutfit::WriteToVault()
     if (!rvn)
         return;
 
-    ARRAY(plStateDataRecord*) SDRs;
+    std::vector<plStateDataRecord*> SDRs;
     
     plStateDataRecord clothingSDR(kSDLClothing);
     fAvatar->GetClothingSDLMod()->PutCurrentStateIn(&clothingSDR);
     plSDStateVariable * clothesStateDesc = clothingSDR.FindSDVar(plClothingSDLModifier::kStrWardrobe);
 
     for (unsigned i = 0; i < clothesStateDesc->GetCount(); ++i)
-        SDRs.Add(clothesStateDesc->GetStateDataRecord(i));
+        SDRs.emplace_back(clothesStateDesc->GetStateDataRecord(i));
 
     plSDStateVariable * appearanceStateDesc = clothingSDR.FindSDVar(plClothingSDLModifier::kStrAppearance); // for skin tint
-    SDRs.Add(appearanceStateDesc->GetStateDataRecord(0));
+    SDRs.emplace_back(appearanceStateDesc->GetStateDataRecord(0));
     
     WriteToVault(SDRs);
 }
 
-void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
+void plClothingOutfit::WriteToVault(const std::vector<plStateDataRecord*> & SDRs)
 {
     // We'll hit this case when the server asks us to save state for NPCs.
     if (fAvatar->GetTarget(0) != plNetClientApp::GetInstance()->GetLocalPlayer())
@@ -884,21 +866,21 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
     if (!rvn)
         return;
         
-    ARRAY(plStateDataRecord*)   morphs;
+    std::vector<plStateDataRecord*>   morphs;
 
-    // Gather morph SDRs    
-    hsTArray<const plMorphSequence*> morphsSDRs;
+    // Gather morph SDRs
+    std::vector<const plMorphSequence*> morphsSDRs;
     plMorphSequence::FindMorphMods(fAvatar->GetTarget(0), morphsSDRs);
-    for (unsigned i = 0; i < morphsSDRs.GetCount(); ++i) {
+    for (const plMorphSequence* morphSeq : morphsSDRs) {
         for (unsigned j = 0; j < fAvatar->GetNumLOD(); j++) {
-            if (fAvatar->GetClothingSO(j) == morphsSDRs[i]->GetTarget(0)) {
+            if (fAvatar->GetClothingSO(j) == morphSeq->GetTarget(0)) {
                 plStateDataRecord * morphSDR = new plStateDataRecord(kSDLMorphSequence);
                 plSimpleStateVariable * lodVar = morphSDR->FindVar(plMorphSequenceSDLMod::kStrTargetID);
                 if (lodVar)
                     lodVar->Set((int)j);
 
-                morphsSDRs[i]->GetSDLMod()->PutCurrentStateIn(morphSDR);
-                morphs.Add(morphSDR);
+                morphSeq->GetSDLMod()->PutCurrentStateIn(morphSDR);
+                morphs.emplace_back(morphSDR);
             }
         }
     }
@@ -910,28 +892,26 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
     // Get all existing clothing SDRs
     rvn->GetChildNodes(plVault::kNodeType_SDL, 1, &nodes);    // REF: Find
 
-    const ARRAY(plStateDataRecord*) * arrs[] = {
+    const std::vector<plStateDataRecord*> * arrs[] = {
         &SDRs,
         &morphs,
     };
-    for (unsigned arrIdx = 0; arrIdx < arrsize(arrs); ++arrIdx) {
-        const ARRAY(plStateDataRecord*) * arr = arrs[arrIdx];
-        
+    for (const auto * arr : arrs) {
         // Write all SDL to to the outfit folder, reusing existing nodes and creating new ones as necessary
-        for (unsigned i = 0; i < arr->Count(); ++i) {
+        for (plStateDataRecord * rec : *arr) {
             hsRef<RelVaultNode> node;
             if (!nodes.empty()) {
                 node = nodes.front();
                 nodes.pop_front();
             }
             else {
-                node = new RelVaultNode;
+                node.Steal(new RelVaultNode);
                 node->SetNodeType(plVault::kNodeType_SDL);
                 templates.push_back(node);
             }
 
             VaultSDLNode sdl(node);
-            sdl.SetStateDataRecord((*arr)[i], 0);
+            sdl.SetStateDataRecord(rec, 0);
         }
     }
 
@@ -948,12 +928,11 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
 
     // Add new nodes to outfit folder
     for (const hsRef<RelVaultNode> &act : actuals)
-        VaultAddChildNodeAndWait(rvn->GetNodeId(), act->GetNodeId(), NetCommGetPlayer()->playerInt);
+        VaultAddChildNodeAndWait(rvn->GetNodeId(), act->GetNodeId(), plNetClientApp::GetInstance()->GetPlayerID());
 
     // Cleanup morph SDRs
-    for (unsigned i = 0; i < morphs.Count(); ++i) {
-        delete morphs[i];
-    }
+    for (plStateDataRecord *morph : morphs)
+        delete morph;
 }
 
 // XXX HACK. DON'T USE (this function exists for the temp console command Clothing.SwapClothTexHACK)
@@ -980,74 +959,82 @@ void plClothingOutfit::IUpdate()
     }
 }
 
-void plClothingOutfit::WearDefaultClothing()
+void plClothingOutfit::WearDefaultClothing(bool broadcast)
 {
     StripAccessories();
     
     plClothingMgr *cMgr = plClothingMgr::GetClothingMgr();
-    hsTArray<plClothingItem *>items;
+    std::vector<plClothingItem *> items;
     cMgr->GetItemsByGroup(fGroup, items);
 
     // Wear one thing of each type
-    uint32_t i, j;
-    for (i = 0; i < plClothingMgr::kMaxType; i++)
+    for (int i = 0; i < plClothingMgr::kMaxType; i++)
     {
         if (i == plClothingMgr::kTypeAccessory)
             continue;
 
-        for (j = 0; j < items.GetCount(); j++)
+        for (plClothingItem* item : items)
         {
-            if (items[j]->fType == i)
+            if (item->fType == i)
             {
-                AddItem(items[j], false, false);
+                AddItem(item, false, false);
                 if (i == plClothingMgr::kTypeHair || i == plClothingMgr::kTypeFace)
                 {   
                     // Hair tint color
-                    TintItem(items[j], 0.5, 0.3, 0.2, false, false);
+                    TintItem(item, 0.5f, 0.3f, 0.2f, false, false);
                 }
                 else
                 {
-                    TintItem(items[j], items[j]->fDefaultTint1[0] / 255.f, items[j]->fDefaultTint1[1] / 255.f,
-                             items[j]->fDefaultTint1[2] / 255.f, false, false);
+                    TintItem(item, item->fDefaultTint1[0] / 255.f, item->fDefaultTint1[1] / 255.f,
+                             item->fDefaultTint1[2] / 255.f, false, false);
                 }
 
                 // Everyone can tint layer 2. Go nuts!
-                TintItem(items[j], items[j]->fDefaultTint2[0] / 255.f, items[j]->fDefaultTint2[1] / 255.f,
-                         items[j]->fDefaultTint2[2] / 255.f, false, false, false, true, plClothingElement::kLayerTint2);                    
+                TintItem(item, item->fDefaultTint2[0] / 255.f, item->fDefaultTint2[1] / 255.f,
+                         item->fDefaultTint2[2] / 255.f, false, false, false, true, plClothingElement::kLayerTint2);
                 break;
             }
         }
     }
+
+    if (broadcast) {
+        fSynchClients = true;
+        ForceUpdate(true);
+    }
 }
 
-void plClothingOutfit::WearDefaultClothingType(uint32_t clothingType)
+void plClothingOutfit::WearDefaultClothingType(uint32_t clothingType, bool broadcast)
 {
     plClothingMgr *cMgr = plClothingMgr::GetClothingMgr();
-    hsTArray<plClothingItem *> items;
+    std::vector<plClothingItem *> items;
     cMgr->GetItemsByGroup(fGroup, items);
 
-    uint32_t i;
-    for (i=0; i<items.GetCount(); i++)
+    for (plClothingItem* item : items)
     {
-        if (items[i]->fType == clothingType)
+        if (item->fType == clothingType)
         {
-            AddItem(items[i], false, false);
+            AddItem(item, false, false);
             if (clothingType == plClothingMgr::kTypeHair || clothingType == plClothingMgr::kTypeFace)
             {
                 // Hair tint color
-                TintItem(items[i], 0.5, 0.3, 0.2, false, false);
+                TintItem(item, 0.5f, 0.3f, 0.2f, false, false);
             }
             else
             {
-                TintItem(items[i], items[i]->fDefaultTint1[0] / 255.f, items[i]->fDefaultTint1[1] / 255.f,
-                         items[i]->fDefaultTint1[2] / 255.f, false, false);
+                TintItem(item, item->fDefaultTint1[0] / 255.f, item->fDefaultTint1[1] / 255.f,
+                         item->fDefaultTint1[2] / 255.f, false, false);
             }
 
             // Everyone can tint layer 2. Go nuts!
-            TintItem(items[i], items[i]->fDefaultTint2[0] / 255.f, items[i]->fDefaultTint2[1] / 255.f,
-                     items[i]->fDefaultTint2[2] / 255.f, false, false, false, true, plClothingElement::kLayerTint2);
+            TintItem(item, item->fDefaultTint2[0] / 255.f, item->fDefaultTint2[1] / 255.f,
+                     item->fDefaultTint2[2] / 255.f, false, false, false, true, plClothingElement::kLayerTint2);
             break;
         }
+    }
+
+    if (broadcast) {
+        fSynchClients = true;
+        ForceUpdate(true);
     }
 }
 
@@ -1118,23 +1105,22 @@ void plClothingOutfit::RemoveMaintainerOutfit()
     fVaultSaveEnabled = true;
 }
 
-static plRandom sRandom;
-
 void plClothingOutfit::WearRandomOutfit()
 {
+    static plRandom sRandom;
+
     plClothingMgr *cMgr = plClothingMgr::GetClothingMgr();
-    hsTArray<plClothingItem *>items;
+    std::vector<plClothingItem *> items;
 
     // Wear one thing of each type
-    uint32_t i, j;
-    for (i = 0; i < plClothingMgr::kMaxType; i++)
+    for (uint8_t i = 0; i < plClothingMgr::kMaxType; i++)
     {
         if (i == plClothingMgr::kTypeAccessory)
             continue;
 
-        items.Reset();
-        cMgr->GetItemsByGroupAndType(fGroup, (uint8_t)i, items);
-        j = (uint32_t)(sRandom.RandZeroToOne() * items.GetCount());
+        items.clear();
+        cMgr->GetItemsByGroupAndType(fGroup, i, items);
+        size_t j = (size_t)(sRandom.RandZeroToOne() * items.size());
 
         float r1 = sRandom.RandZeroToOne();
         float g1 = sRandom.RandZeroToOne();
@@ -1173,7 +1159,7 @@ bool plClothingOutfit::ReadItems(hsStream* s, hsResMgr* mgr, bool broadcast /* =
         
         // Make sure to read everything in before hitting this and possibly skipping to
         // the next item, lest we disrupt the stream.
-        if( key == nil )
+        if (key == nullptr)
         {
             hsAssert( false, "Nil item in plClothingOutfit::ReadItems(). The vault probably contains a key with a plLocation that's moved since then. Tsk, tsk." );
             result = false;
@@ -1191,13 +1177,12 @@ bool plClothingOutfit::ReadItems(hsStream* s, hsResMgr* mgr, bool broadcast /* =
 
 void plClothingOutfit::WriteItems(hsStream *s, hsResMgr *mgr)
 {
-    s->WriteLE32(fItems.GetCount());
-    int i;
-    for (i = 0; i < fItems.GetCount(); i++)
+    s->WriteLE32((uint32_t)fItems.size());
+    for (size_t i = 0; i < fItems.size(); i++)
     {
-        mgr->WriteKey(s, fItems.Get(i)->GetKey());
-        fOptions.Get(i)->fTint1.Write(s);
-        fOptions.Get(i)->fTint2.Write(s);
+        mgr->WriteKey(s, fItems[i]->GetKey());
+        fOptions[i]->fTint1.Write(s);
+        fOptions[i]->fTint2.Write(s);
     }
 }
 
@@ -1236,7 +1221,7 @@ bool plClothingOutfit::MsgReceive(plMessage* msg)
             if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fTargetLayer = layer;
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-                fTargetLayer = nil;
+                fTargetLayer = nullptr;
             
             return true;
         }
@@ -1259,7 +1244,7 @@ bool plClothingOutfit::MsgReceive(plMessage* msg)
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fBase = base;
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-                fBase = nil;
+                fBase = nullptr;
             
             return true;        
         }
@@ -1270,7 +1255,7 @@ bool plClothingOutfit::MsgReceive(plMessage* msg)
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fMaterial = mat;
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-                fMaterial = nil;
+                fMaterial = nullptr;
         }
     }
 
@@ -1328,11 +1313,10 @@ bool plClothingOutfit::MsgReceive(plMessage* msg)
         if (cMsg->GetCommand(plClothingMsg::kTintSkin))
         {
             fSkinTint = cMsg->fColor;
-            int i, j;
-            for (i = 0; i < fItems.GetCount(); i++)
-                for (j = 0; j < fItems[i]->fElements.GetCount(); j++)
-                    if (fItems[i]->fTextures[j][plClothingElement::kLayerSkin] != nil)
-                        fDirtyItems.SetBit(fItems[i]->fTileset);
+            for (plClothingItem* item : fItems)
+                for (size_t j = 0; j < item->fElements.size(); j++)
+                    if (item->fTextures[j][plClothingElement::kLayerSkin] != nullptr)
+                        fDirtyItems.SetBit(item->fTileset);
         }
 
         if (cMsg->GetCommand(plClothingMsg::kBlendSkin))
@@ -1346,12 +1330,11 @@ bool plClothingOutfit::MsgReceive(plMessage* msg)
                 cMsg->fLayer <= plClothingElement::kLayerSkinBlend6)
             {
                 fSkinBlends[cMsg->fLayer - plClothingElement::kLayerSkinBlend1] = blend;
-            
-                int i, j;
-                for (i = 0; i < fItems.GetCount(); i++)
-                    for (j = 0; j < fItems[i]->fElements.GetCount(); j++)
-                        if (fItems[i]->fTextures[j][cMsg->fLayer] != nil)
-                            fDirtyItems.SetBit(fItems[i]->fTileset);
+
+                for (plClothingItem* item : fItems)
+                    for (size_t j = 0; j < item->fElements.size(); j++)
+                        if (item->fTextures[j][cMsg->fLayer] != nullptr)
+                            fDirtyItems.SetBit(item->fTileset);
             }
         }
         if (cMsg->GetCommand(plClothingMsg::kSaveCustomizations))
@@ -1387,7 +1370,7 @@ bool plClothingOutfit::MsgReceive(plMessage* msg)
 // TESTING SDL
 // Send clothing sendState msg to object's plClothingSDLModifier
 //
-bool plClothingOutfit::DirtySynchState(const plString& SDLStateName, uint32_t synchFlags)
+bool plClothingOutfit::DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags)
 {
     plSynchEnabler ps(true);    // make sure synching is enabled, since this happens during load
     synchFlags |= plSynchedObject::kForceFullSend;  // TEMP
@@ -1407,7 +1390,7 @@ void plClothingOutfit::IInstanceSharedMeshes(plClothingItem *item)
 
     fAvatar->ValidateMesh();
 
-    bool partialSort = (item->fCustomText.Find("NeedsSort") >= 0);
+    bool partialSort = item->fCustomText.contains("NeedsSort");
     for (int i = 0; i < plClothingItem::kMaxNumLODLevels; i++)
     {
         const plSceneObject *so = fAvatar->GetClothingSO(i);
@@ -1422,14 +1405,14 @@ void plClothingOutfit::IInstanceSharedMeshes(plClothingItem *item)
 
 void plClothingOutfit::IRemoveSharedMeshes(plClothingItem *item)
 {   
-    if (fAvatar == nil)
+    if (fAvatar == nullptr)
         return;
 
     int i;
     for (i = 0; i < plClothingItem::kMaxNumLODLevels; i++)
     {
         const plSceneObject *so = fAvatar->GetClothingSO(i);
-        if (so != nil && item->fMeshes[i] != nil)
+        if (so != nullptr && item->fMeshes[i] != nullptr)
         {
             plInstanceDrawInterface *idi = const_cast<plInstanceDrawInterface*>(plInstanceDrawInterface::ConvertNoRef(so->GetDrawInterface()));
             if (idi)
@@ -1442,15 +1425,15 @@ void plClothingOutfit::SetupMorphSDL()
 {
     if (!fMorphsInitDone)
     {
-        hsTArray<const plMorphSequence*> morphs;
+        std::vector<const plMorphSequence*> morphs;
         plMorphSequence::FindMorphMods(fAvatar->GetTarget(0), morphs);
-        for (unsigned i = 0; i < morphs.GetCount(); ++i)
+        for (const plMorphSequence* morphSeq : morphs)
         {
             for (unsigned j = 0; j < fAvatar->GetNumLOD(); j++)
             {
-                if (fAvatar->GetClothingSO(j) == morphs[i]->GetTarget(0))
+                if (fAvatar->GetClothingSO(j) == morphSeq->GetTarget(0))
                 {
-                    plMorphSequenceSDLMod* morph = morphs[i]->GetSDLMod();
+                    plMorphSequenceSDLMod* morph = morphSeq->GetSDLMod();
                     if (morph)
                         morph->SetIsAvatar(true);
                 }
@@ -1478,15 +1461,14 @@ bool plClothingOutfit::WriteToFile(const plFileName &filename)
 
     RelVaultNode::RefList nodes;
     rvn->GetChildNodes(plVault::kNodeType_SDL, 1, &nodes);
-    S.WriteLE32(nodes.size());
+    S.WriteLE32((uint32_t)nodes.size());
     for (const hsRef<RelVaultNode> &node : nodes) {
         VaultSDLNode sdl(node);
-        S.WriteLE32(sdl.GetSDLDataLength());
-        if (sdl.GetSDLDataLength())
-            S.Write(sdl.GetSDLDataLength(), sdl.GetSDLData());
+        S.WriteLE32((uint32_t)sdl.GetSDLData().size());
+        if (!sdl.GetSDLData().empty())
+            S.Write(sdl.GetSDLData().size(), sdl.GetSDLData().data());
     }
 
-    S.Close();
     return true;
 }
 
@@ -1509,7 +1491,6 @@ bool plClothingOutfit::IReadFromFile(const plFileName &filename)
             else if (gender == plClothingMgr::kClothingBaseFemale)
                 plClothingMgr::ChangeAvatar("Female", filename);
         }
-        S.Close();
         return true;
     }
 
@@ -1519,7 +1500,7 @@ bool plClothingOutfit::IReadFromFile(const plFileName &filename)
     for (size_t i = 0; i < nodeCount; i++) {
         uint32_t dataLen = S.ReadLE32();
         if (dataLen) {
-            plString sdlRecName;
+            ST::string sdlRecName;
             int sdlRecVersion;
             plStateDataRecord::ReadStreamHeader(&S, &sdlRecName, &sdlRecVersion);
             plStateDescriptor* desc = plSDLMgr::GetInstance()->FindDescriptor(sdlRecName, sdlRecVersion);
@@ -1535,7 +1516,6 @@ bool plClothingOutfit::IReadFromFile(const plFileName &filename)
         }
     }
 
-    S.Close();
     fSynchClients = true;
     ForceUpdate(true);
     SaveCustomizations(); // Sync with the vault
@@ -1545,92 +1525,89 @@ bool plClothingOutfit::IReadFromFile(const plFileName &filename)
 
 /////////////////////////////////////////////////////////////////////////////
 
-const char *plClothingMgr::GroupStrings[] = 
+using namespace ST::literals;
+
+const ST::string plClothingMgr::GroupStrings[] = 
 {
-    "Male Clothing",
-    "Female Clothing",
-    "(No Clothing Options)"
+    "Male Clothing"_st,
+    "Female Clothing"_st,
+    "(No Clothing Options)"_st
 };
 
-const char *plClothingMgr::TypeStrings[] =
+const ST::string plClothingMgr::TypeStrings[] =
 {
-    "Pants",
-    "Shirt",
-    "LeftHand",
-    "RightHand",
-    "Face",
-    "Hair",
-    "LeftFoot",
-    "RightFoot",
-    "Accessory"
+    "Pants"_st,
+    "Shirt"_st,
+    "LeftHand"_st,
+    "RightHand"_st,
+    "Face"_st,
+    "Hair"_st,
+    "LeftFoot"_st,
+    "RightFoot"_st,
+    "Accessory"_st
 };
 
-plClothingMgr *plClothingMgr::fInstance = nil;
-
-plClothingMgr::plClothingMgr()
-{
-    fLayouts.Reset();
-    fItems.Reset();
-}
+plClothingMgr *plClothingMgr::fInstance = nullptr;
 
 plClothingMgr::~plClothingMgr()
 {
-    while (fElements.GetCount() > 0)
-        delete fElements.Pop();
-    while (fLayouts.GetCount() > 0)
-        delete fLayouts.Pop();
-    while (fItems.GetCount() > 0)
-        delete fItems.Pop();
-}
-
-plClothingLayout *plClothingMgr::GetLayout(const plString &name) const
-{
-    for (int i = 0; i < fLayouts.GetCount(); i++)
-    {
-        if (fLayouts.Get(i)->fName == name)
-            return fLayouts.Get(i);
+    while (!fElements.empty()) {
+        delete fElements.back();
+        fElements.pop_back();
     }
-    return nil;
-}
-
-plClothingElement *plClothingMgr::FindElementByName(const plString &name) const
-{
-    for (int i = 0; i < fElements.GetCount(); i++)
-    {
-        if (fElements.Get(i)->fName == name)
-            return fElements.Get(i);
+    while (!fLayouts.empty()) {
+        delete fLayouts.back();
+        fLayouts.pop_back();
     }
-    return nil; 
+    while (!fItems.empty()) {
+        delete fItems.back();
+        fItems.pop_back();
+    }
 }
 
-void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
+plClothingLayout *plClothingMgr::GetLayout(const ST::string &name) const
+{
+    for (plClothingLayout* layout : fLayouts)
+    {
+        if (layout->fName == name)
+            return layout;
+    }
+    return nullptr;
+}
+
+plClothingElement *plClothingMgr::FindElementByName(const ST::string &name) const
+{
+    for (plClothingElement* element : fElements)
+    {
+        if (element->fName == name)
+            return element;
+    }
+    return nullptr;
+}
+
+void plClothingMgr::AddItemsToCloset(const std::vector<plClosetItem> &items)
 {
     hsRef<RelVaultNode> rvn = VaultGetAvatarClosetFolder();
     if (!rvn)
         return;
         
-    hsTArray<plClosetItem> closet;
+    std::vector<plClosetItem> closet;
     GetClosetItems(closet);
     
     RelVaultNode::RefList templates;
-    
-    for (unsigned i = 0; i < items.GetCount(); ++i) {
-        bool match = false;
-        for (unsigned j = 0; j < closet.GetCount(); ++j) {
-            if (closet[j].IsMatch(&items[i]))
-            {
-                match = true;
-                break;
-            }
-        }
-        
+
+    for (const plClosetItem& item : items) {
+        bool match = std::any_of(closet.cbegin(), closet.cend(),
+                                 [&item](const plClosetItem& closetItem) {
+                                     return closetItem.IsMatch(&item);
+                                 });
         if (match)
             continue;
 
         plStateDataRecord rec(plClothingSDLModifier::GetClothingItemSDRName());
-        plClothingSDLModifier::PutSingleItemIntoSDR(&items[i], &rec);
+        plClothingSDLModifier::PutSingleItemIntoSDR(&item, &rec);
         
-        hsRef<RelVaultNode> templateNode = new RelVaultNode;
+        hsRef<RelVaultNode> templateNode(new RelVaultNode, hsStealRef);
         templateNode->SetNodeType(plVault::kNodeType_SDL);
         
         VaultSDLNode sdl(templateNode);
@@ -1645,13 +1622,13 @@ void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
             VaultAddChildNodeAndWait(
                 rvn->GetNodeId(),
                 actual->GetNodeId(),
-                NetCommGetPlayer()->playerInt
+                plNetClientApp::GetInstance()->GetPlayerID()
             );
         }
     }
 }
 
-void plClothingMgr::GetClosetItems(hsTArray<plClosetItem> &out)
+void plClothingMgr::GetClosetItems(std::vector<plClosetItem> &out)
 {
     hsRef<RelVaultNode> rvn = VaultGetAvatarClosetFolder();
     if (!rvn)
@@ -1659,98 +1636,91 @@ void plClothingMgr::GetClosetItems(hsTArray<plClosetItem> &out)
 
     RelVaultNode::RefList nodes;
     rvn->GetChildNodes(plVault::kNodeType_SDL, 1, &nodes);
-    out.SetCount(nodes.size());
+    out.resize(nodes.size());
     
     auto iter = nodes.begin();
     for (unsigned i = 0; i < nodes.size(); ++i, ++iter) {
         VaultSDLNode sdl(*iter);
         plStateDataRecord * rec = new plStateDataRecord;
         if (sdl.GetStateDataRecord(rec, 0))
-            plClothingSDLModifier::HandleSingleSDR(rec, nil, &out[i]);
+            plClothingSDLModifier::HandleSingleSDR(rec, nullptr, &out[i]);
         delete rec;
     }
 
-    if (out.GetCount()) {
-        for (int i = out.GetCount() - 1; i >= 0; i--) {
-            if (out[i].fItem == nil)
-                out.Remove(i);
-        }
+    for (auto iter = out.cbegin(); iter != out.cend(); ) {
+        if (iter->fItem == nullptr)
+            iter = out.erase(iter);
+        else
+            ++iter;
     }
 }
 
-void plClothingMgr::GetAllWithSameMesh(plClothingItem *item, hsTArray<plClothingItem*> &out)
+void plClothingMgr::GetAllWithSameMesh(plClothingItem *item, std::vector<plClothingItem*> &out)
 {
-    int i;
-    for (i = 0; i < fItems.GetCount(); i++)
+    for (plClothingItem* myItem : fItems)
     {
-        if (item->HasSameMeshes(fItems[i]))
-            out.Append(fItems[i]);
+        if (item->HasSameMeshes(myItem))
+            out.emplace_back(myItem);
     }
 }
 
 // Yes, it's a lame n^2 function. Show me that we have enough items for it
 // to matter and I'll speed it up.
-void plClothingMgr::FilterUniqueMeshes(hsTArray<plClothingItem*> &items)
+void plClothingMgr::FilterUniqueMeshes(std::vector<plClothingItem*> &items)
 {
-    int i, j;
-    for (i = items.GetCount() - 1; i >= 1; i--)
+    for (auto i = items.cbegin(); i != items.cend(); ++i)
     {
-        for (j = i - 1; j >= 0; j--)
+        for (auto j = std::next(i); j != items.cend(); )
         {
-            if (items[i]->HasSameMeshes(items[j]))
-            {
-                items.Remove(i);
-                break;
-            }
+            if ((*i)->HasSameMeshes(*j))
+                j = items.erase(j);
+            else
+                ++j;
         }
     }
 }
 
-plClothingItem *plClothingMgr::FindItemByName(const plString &name) const
+plClothingItem *plClothingMgr::FindItemByName(const ST::string &name) const
 {
-    if (name.IsEmpty())
-        return nil;
+    if (name.empty())
+        return nullptr;
 
-    for (int i = 0; i < fItems.GetCount(); i++)
+    for (plClothingItem* item : fItems)
     {
-        plClothingItem* item = fItems.Get(i);
         if (item->fName == name)
             return item;
     }
-    return nil;
+    return nullptr;
 }
 
-void plClothingMgr::GetItemsByGroup(uint8_t group, hsTArray<plClothingItem*> &out)
+void plClothingMgr::GetItemsByGroup(uint8_t group, std::vector<plClothingItem*> &out)
 {
-    int i;
-    for (i = 0; i < fItems.GetCount(); i++)
+    for (plClothingItem* item : fItems)
     {
-        if (fItems.Get(i)->fGroup == group)
-            out.Append(fItems.Get(i));
+        if (item->fGroup == group)
+            out.emplace_back(item);
     }
 }
 
-void plClothingMgr::GetItemsByGroupAndType(uint8_t group, uint8_t type, hsTArray<plClothingItem*> &out)
+void plClothingMgr::GetItemsByGroupAndType(uint8_t group, uint8_t type, std::vector<plClothingItem*> &out)
 {
-    int i;
-    for (i = 0; i < fItems.GetCount(); i++)
+    for (plClothingItem* item : fItems)
     {
-        if (fItems.Get(i)->fGroup == group && fItems.Get(i)->fType == type)
-            out.Append(fItems.Get(i));
+        if (item->fGroup == group && item->fType == type)
+            out.emplace_back(item);
     }
 }
 
 plClothingItem *plClothingMgr::GetLRMatch(plClothingItem *item)
 {
-    int i;
-    for (i = 0; i < fItems.GetCount(); i++)
+    for (plClothingItem* myItem : fItems)
     {
-        if (IsLRMatch(item, fItems[i]))
-            return fItems[i];
+        if (IsLRMatch(item, myItem))
+            return myItem;
     }
 
     // Couldn't find one.
-    return nil;
+    return nullptr;
 }
 
 bool plClothingMgr::IsLRMatch(plClothingItem *item1, plClothingItem *item2)
@@ -1778,12 +1748,12 @@ bool plClothingMgr::IsLRMatch(plClothingItem *item1, plClothingItem *item2)
     }
 
     // Types check out fine, now compare textures
-    if (item1->fTextures.GetCount() != item2->fTextures.GetCount()) return false;
+    if (item1->fTextures.size() != item2->fTextures.size())
+        return false;
 
-    int i, j;
-    for (i = 0; i < item1->fTextures.GetCount(); i++)
+    for (size_t i = 0; i < item1->fTextures.size(); i++)
     {
-        for (j = 0; j < plClothingElement::kLayerMax; j++)
+        for (int j = 0; j < plClothingElement::kLayerMax; j++)
             if (item1->fTextures[i][j] != item2->fTextures[i][j])
                 return false;
     }
@@ -1803,18 +1773,18 @@ void plClothingMgr::IInit()
 {
     plClothingElement::GetElements(fElements);
     plClothingLayout *layout = new plClothingLayout("BasicHuman", 1024);
-    layout->fElements.Append(FindElementByName("shirt-chest"));
-    layout->fElements.Append(FindElementByName("shirt-sleeve"));
-    layout->fElements.Append(FindElementByName("face"));
-    layout->fElements.Append(FindElementByName("eyeball"));
-    layout->fElements.Append(FindElementByName("shoe-top"));
-    layout->fElements.Append(FindElementByName("shoe-bottom"));
-    layout->fElements.Append(FindElementByName("pants"));
-    layout->fElements.Append(FindElementByName("hand-LOD"));
-    layout->fElements.Append(FindElementByName("hand-square"));
-    layout->fElements.Append(FindElementByName("hand-wide"));
+    layout->fElements.emplace_back(FindElementByName("shirt-chest"));
+    layout->fElements.emplace_back(FindElementByName("shirt-sleeve"));
+    layout->fElements.emplace_back(FindElementByName("face"));
+    layout->fElements.emplace_back(FindElementByName("eyeball"));
+    layout->fElements.emplace_back(FindElementByName("shoe-top"));
+    layout->fElements.emplace_back(FindElementByName("shoe-bottom"));
+    layout->fElements.emplace_back(FindElementByName("pants"));
+    layout->fElements.emplace_back(FindElementByName("hand-LOD"));
+    layout->fElements.emplace_back(FindElementByName("hand-square"));
+    layout->fElements.emplace_back(FindElementByName("hand-wide"));
     
-    fLayouts.Append(layout);
+    fLayouts.emplace_back(layout);
 }
 
 void plClothingMgr::DeInit()
@@ -1822,7 +1792,7 @@ void plClothingMgr::DeInit()
     if (fInstance)
     {
         fInstance->UnRegisterAs(kClothingMgr_KEY);
-        fInstance = nil;
+        fInstance = nullptr;
     }
 }   
 
@@ -1840,7 +1810,9 @@ bool plClothingMgr::MsgReceive(plMessage* msg)
             }
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
             {
-                fItems.RemoveItem(item);
+                auto idx = std::find(fItems.cbegin(), fItems.cend(), item);
+                if (idx != fItems.end())
+                    fItems.erase(idx);
             }
             return true;
         }
@@ -1852,18 +1824,18 @@ bool plClothingMgr::MsgReceive(plMessage* msg)
 void plClothingMgr::IAddItem(plClothingItem *item)
 {
     bool allFound = true;
-    int i, j;
-    for (i = 0; i < item->fElementNames.GetCount(); i++)
+    for (size_t i = 0; i < item->fElementNames.size(); i++)
     {
-        for (j = 0; j < fElements.GetCount(); j++)
+        size_t j;
+        for (j = 0; j < fElements.size(); j++)
         {   
-            if (item->fElementNames.Get(i) == fElements.Get(j)->fName)
+            if (item->fElementNames[i] == fElements[j]->fName)
             {
-                item->fElements.Set(i, fElements.Get(j));
+                item->fElements[i] = fElements[j];
                 break;
             }
         }
-        if (j >= fElements.GetCount())
+        if (j >= fElements.size())
         {
             allFound = false;
             break;
@@ -1872,18 +1844,19 @@ void plClothingMgr::IAddItem(plClothingItem *item)
 
     if (allFound)
     {
-        for (i = 0; i < fItems.GetCount(); i++)
+        auto iter =  fItems.cbegin();
+        for (; iter != fItems.cend(); ++iter)
         {
-            if (fItems[i]->fSortOrder >= item->fSortOrder)
+            if ((*iter)->fSortOrder >= item->fSortOrder)
                 break;
         }
-        fItems.InsertAtIndex(i, item);
+        fItems.insert(iter, item);
     }
     else
         hsAssert(false, "Couldn't match all elements of added clothing item.");
 }
 
-void plClothingMgr::ChangeAvatar(const plString& name, const plFileName &clothingFile)
+void plClothingMgr::ChangeAvatar(const ST::string& name, const plFileName &clothingFile)
 {
     plAvatarMgr::GetInstance()->UnLoadLocalPlayer();
     plAvatarMgr::GetInstance()->LoadPlayerFromFile(name, "", clothingFile);

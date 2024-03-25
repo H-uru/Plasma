@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "hsStream.h"
-#pragma hdrstop
 
 #include "plAnimCmdMsg.h"
 
@@ -79,13 +78,13 @@ void plAnimCmdMsg::Read(hsStream* stream, hsResMgr* mgr)
     plMessageWithCallbacks::Read(stream, mgr);
 
     fCmd.Read(stream);
-    stream->ReadLE(&fBegin);
-    stream->ReadLE(&fEnd);
-    stream->ReadLE(&fLoopEnd);
-    stream->ReadLE(&fLoopBegin);
-    stream->ReadLE(&fSpeed);
-    stream->ReadLE(&fSpeedChangeRate);
-    stream->ReadLE(&fTime);
+    stream->ReadLEFloat(&fBegin);
+    stream->ReadLEFloat(&fEnd);
+    stream->ReadLEFloat(&fLoopEnd);
+    stream->ReadLEFloat(&fLoopBegin);
+    stream->ReadLEFloat(&fSpeed);
+    stream->ReadLEFloat(&fSpeedChangeRate);
+    stream->ReadLEFloat(&fTime);
 
     fAnimName = stream->ReadSafeString();
     fLoopName = stream->ReadSafeString();
@@ -96,13 +95,13 @@ void plAnimCmdMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessageWithCallbacks::Write(stream, mgr);
 
     fCmd.Write(stream);
-    stream->WriteLE(fBegin);
-    stream->WriteLE(fEnd);
-    stream->WriteLE(fLoopEnd);
-    stream->WriteLE(fLoopBegin);
-    stream->WriteLE(fSpeed);
-    stream->WriteLE(fSpeedChangeRate);
-    stream->WriteLE(fTime);
+    stream->WriteLEFloat(fBegin);
+    stream->WriteLEFloat(fEnd);
+    stream->WriteLEFloat(fLoopEnd);
+    stream->WriteLEFloat(fLoopBegin);
+    stream->WriteLEFloat(fSpeed);
+    stream->WriteLEFloat(fSpeedChangeRate);
+    stream->WriteLEFloat(fTime);
 
     stream->WriteSafeString(fAnimName);
     stream->WriteSafeString(fLoopName);
@@ -120,10 +119,10 @@ void plAGCmdMsg::Read(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgRead(stream, mgr);
 
     fCmd.Read(stream);
-    stream->ReadLE(&fBlend);
-    stream->ReadLE(&fBlendRate);
-    stream->ReadLE(&fAmp);
-    stream->ReadLE(&fAmpRate);
+    stream->ReadLEFloat(&fBlend);
+    stream->ReadLEFloat(&fBlendRate);
+    stream->ReadLEFloat(&fAmp);
+    stream->ReadLEFloat(&fAmpRate);
 
     fAnimName = stream->ReadSafeString();
 }
@@ -133,10 +132,10 @@ void plAGCmdMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgWrite(stream, mgr);
 
     fCmd.Write(stream);
-    stream->WriteLE(fBlend);
-    stream->WriteLE(fBlendRate);
-    stream->WriteLE(fAmp);
-    stream->WriteLE(fAmpRate);
+    stream->WriteLEFloat(fBlend);
+    stream->WriteLEFloat(fBlendRate);
+    stream->WriteLEFloat(fAmp);
+    stream->WriteLEFloat(fAmpRate);
 
     stream->WriteSafeString(fAnimName);
 }

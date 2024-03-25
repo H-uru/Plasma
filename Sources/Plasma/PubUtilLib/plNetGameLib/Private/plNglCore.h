@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLCORE_H
 
+#include <functional>
 
 
 /*****************************************************************************
@@ -67,8 +68,7 @@ void NetClientUpdate ();
 void NetClientSetTransTimeoutMs (unsigned ms);
 void NetClientPingEnable (bool enable);
 
-typedef void (*FNetClientErrorProc)(
-    ENetProtocol    protocol,
-    ENetError       error
-);
-void NetClientSetErrorHandler (FNetClientErrorProc errorProc);
+
+typedef std::function<void(ENetProtocol, ENetError)> NetClientErrorFunc;
+
+void NetClientSetErrorHandler(NetClientErrorFunc errorFunc);

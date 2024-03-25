@@ -41,20 +41,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plFormat.h"
+#include <string_theory/format>
+
+#include "plMessageBox/hsMessageBox.h"
 
 #include "plComponentBase.h"
 #include "plComponentReg.h"
 #include "MaxMain/plMaxNodeBase.h"
-
-#include <iparamm2.h>
-#include <notify.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 #include "plAutoUIComp.h"
 
-plComponentBase::plComponentBase() : fClassDesc(nil), fCompPB(nil), fTargsPB(nil)
+plComponentBase::plComponentBase() : fClassDesc(), fCompPB(), fTargsPB()
 {
 }
 
@@ -65,7 +64,7 @@ plComponentBase::~plComponentBase()
 
 CreateMouseCallBack* plComponentBase::GetCreateMouseCallBack()
 {
-    return NULL;
+    return nullptr;
 }
 
 void plComponentBase::BeginEditParams(IObjParam *ip, ULONG flags, Animatable *prev)
@@ -90,7 +89,7 @@ IParamBlock2 *plComponentBase::GetParamBlock(int i)
     else if (i == kRefTargs)
         return fTargsPB;
 
-    return nil;
+    return nullptr;
 }
 
 IParamBlock2 *plComponentBase::GetParamBlockByID(BlockID id)
@@ -100,7 +99,7 @@ IParamBlock2 *plComponentBase::GetParamBlockByID(BlockID id)
     else if (fTargsPB && fTargsPB->ID() == id)
         return fTargsPB;
 
-    return nil;
+    return nullptr;
 }
 
 // So our animatables will show up in the trackview
@@ -112,11 +111,6 @@ int plComponentBase::NumSubs()
 Animatable *plComponentBase::SubAnim(int i)
 {
     return fCompPB;
-}
-
-TSTR plComponentBase::SubAnimName(int i)
-{
-    return fClassDesc->ClassName();
 }
 
 RefTargetHandle plComponentBase::Clone(RemapDir &remap)
@@ -173,7 +167,7 @@ RefTargetHandle plComponentBase::GetReference(int i)
     else if (i == kRefTargs)
         return fTargsPB;
 
-    return nil;
+    return nullptr;
 }
 
 void plComponentBase::SetReference(int i, RefTargetHandle rtarg)
@@ -184,7 +178,9 @@ void plComponentBase::SetReference(int i, RefTargetHandle rtarg)
         fCompPB = (IParamBlock2*)rtarg;
 }
 
-RefResult plComponentBase::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message)
+RefResult plComponentBase::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                            PartID& partID, RefMessage message
+                                            MAX_REF_PROPAGATE)
 {
     return REF_SUCCEED;
 }
@@ -223,7 +219,7 @@ plMaxNodeBase *plComponentBase::GetTarget(uint32_t i)
     if (fTargsPB && i < NumTargets())
         return (plMaxNodeBase*)fTargsPB->GetINode(kTargs, 0, i);
 
-    return nil;
+    return nullptr;
 }
 
 void plComponentBase::AddTarget(plMaxNodeBase *target)
@@ -286,7 +282,7 @@ bool plComponentBase::IsTarget(plMaxNodeBase *node)
     return false;
 }
 
-plString plComponentBase::IGetUniqueName(plMaxNodeBase* target)
+ST::string plComponentBase::IGetUniqueName(plMaxNodeBase* target)
 {
     // Make sure we've actually got multiple *used* targets.  (Some could be nil)
     int numUsedTargs = 0;
@@ -310,9 +306,9 @@ plString plComponentBase::IGetUniqueName(plMaxNodeBase* target)
     hsAssert(thisTargIdx != -1, "Bad target for IGetUniqueName");
 
     if (numUsedTargs > 1)
-        return plFormat("{}_{}", GetINode()->GetName(), thisTargIdx);
+        return ST::format("{}_{}", GetINode()->GetName(), thisTargIdx);
     else
-        return plString::FromUtf8(GetINode()->GetName());
+        return M2ST(GetINode()->GetName());
 }
 
 plMaxNodeBase *plComponentBase::GetINode()
@@ -321,7 +317,7 @@ plMaxNodeBase *plComponentBase::GetINode()
     // There should only be one INode in this list.
     DependentIterator di(this);
     ReferenceMaker* rm = di.Next();
-    while (rm != nil) 
+    while (rm != nullptr)
     {
         if (rm->SuperClassID() == BASENODE_CLASS_ID)
             return (plMaxNodeBase*)rm;
@@ -329,7 +325,7 @@ plMaxNodeBase *plComponentBase::GetINode()
         rm = di.Next();
     }
 
-    return nil;
+    return nullptr;
 }
 
 bool plComponentBase::IsExternal()
@@ -462,7 +458,7 @@ void plComponentBase::CreateRollups()
                                                     GetString(spec.title),
                                                     spec.rollup_flags,
                                                     spec.dlgProc,
-                                                    NULL,
+                                                    nullptr,
                                                     ROLLUP_CAT_STANDARD);
 
                 // Save the rollout in the paramblock
@@ -480,7 +476,7 @@ void plComponentBase::CreateRollups()
                                                 GetString(pd->title),
                                                 pd->flags,
                                                 pd->dlgProc,
-                                                NULL,
+                                                nullptr,
                                                 ROLLUP_CAT_STANDARD);
 
             // Save the rollout in the paramblock
@@ -516,7 +512,7 @@ void plComponentBase::DestroyRollups()
                 MapID id = pd->map_specs[i].map_id;
                 // Destroy any parammap saved in the rollup
                 IParamMap2 *map = fCompPB->GetMap(id);
-                fCompPB->SetMap(nil, id);
+                fCompPB->SetMap(nullptr, id);
                 if (map)
                     DestroyCPParamMap2(map);
             }
@@ -525,7 +521,7 @@ void plComponentBase::DestroyRollups()
         {
             // Destroy any parammap saved in the rollup
             IParamMap2 *map = fCompPB->GetMap();
-            fCompPB->SetMap(nil);
+            fCompPB->SetMap(nullptr);
             if (map)
                 DestroyCPParamMap2(map);
         }
@@ -630,7 +626,7 @@ static void FindObsoleteComponents(plMaxNodeBase *node, std::vector<plComponentB
 
 static bool gUpdatingComponents = false;
 
-#include <set>
+#include <unordered_set>
 
 
 static void ComponentNotify(void *param, NotifyInfo *info)
@@ -640,7 +636,7 @@ static void ComponentNotify(void *param, NotifyInfo *info)
         if (!gUpdatingComponents)
         {
             plMaxNodeBase *node = (plMaxNodeBase*)info->callParam;
-            plComponentBase *comp = node ? node->ConvertToComponent() : nil;
+            plComponentBase *comp = node ? node->ConvertToComponent() : nullptr;
             if (comp)
             {
                 node->Hide(!comp->AllowUnhide());
@@ -660,25 +656,17 @@ static void ComponentNotify(void *param, NotifyInfo *info)
             FindObsoleteComponents((plMaxNodeBase*)GetCOREInterface()->GetRootNode(), obsoleteComps);
 
             // For now, just get the categories (could get the component names)
-            std::set<const char *> names;
-            for (int i = 0; i < obsoleteComps.size(); i++)
-            {
-                const char *name = obsoleteComps[i]->GetObjectName();
-                names.insert(name);
-            }
+            std::unordered_set<ST::string> names;
+            for (auto i : obsoleteComps)
+                names.insert(M2ST(i->GetObjectName(true)));
 
-            if (obsoleteComps.size() > 0)
+            if (!obsoleteComps.empty())
             {
-                char buf[1024];
-                strcpy(buf, "Components of the following obsolete types\nwere found in this scene.  Please delete them.\n\n");
-                std::set<const char *>::iterator it = names.begin();
-                for (; it != names.end(); it++)
-                {
-                    strcat(buf, (*it));
-                    strcat(buf, "\n");
-                }
-
-                hsMessageBox(buf, "Obsolete Components", hsMBoxOk);
+                ST::string_stream ss;
+                ss << "Components of the following obsolete types\nwere found in this scene.  Please delete them.\n\n";
+                for (const auto& name : names)
+                    ss << name << '\n';
+                plMaxMessageBox(nullptr, ST2T(ss.to_string()), _T("Obsolete Components"), MB_OK);
             }
         }
     }
@@ -697,10 +685,10 @@ static void ComponentNotify(void *param, NotifyInfo *info)
 
 void plComponentShow::Init()
 {
-    RegisterNotification(ComponentNotify, 0, NOTIFY_FILE_POST_OPEN);
-    RegisterNotification(ComponentNotify, 0, NOTIFY_NODE_UNHIDE);
-    RegisterNotification(ComponentNotify, 0, NOTIFY_SYSTEM_SHUTDOWN);
-    RegisterNotification(ComponentNotify, 0, NOTIFY_FILE_PRE_OPEN);
+    RegisterNotification(ComponentNotify, nullptr, NOTIFY_FILE_POST_OPEN);
+    RegisterNotification(ComponentNotify, nullptr, NOTIFY_NODE_UNHIDE);
+    RegisterNotification(ComponentNotify, nullptr, NOTIFY_SYSTEM_SHUTDOWN);
+    RegisterNotification(ComponentNotify, nullptr, NOTIFY_FILE_PRE_OPEN);
 }
 
 void plComponentShow::Update()

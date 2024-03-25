@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plDrawable/plSpanInstance.h"
 
+#include <tab.h>
+
 class hsBounds3Ext;
 class plCluster;
 class plClusterGroup;
@@ -139,7 +141,7 @@ public:
 
     plSpanTemplTab  MakeTemplates(INode* templNode);
 
-    plClusterGroup* CreateGroup(plMaxNode* node, const char* name);
+    plClusterGroup* CreateGroup(plMaxNode* node, const ST::string& name);
     plClusterGroup* SetupGroup(plClusterGroup* group, plMaxNode* node, plSpanTemplateB* templ);
     plClusterGroup* GetGroup() const { return fGroup; }
 

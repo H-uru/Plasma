@@ -57,19 +57,19 @@ protected:
     uint32_t fMgrIdx;
     
 public:
-    plRelevanceRegion() : fRegion(nil), fMgrIdx((uint32_t)-1) {}
+    plRelevanceRegion() : fRegion(), fMgrIdx((uint32_t)-1) { }
     virtual ~plRelevanceRegion() {}
     
     CLASSNAME_REGISTER( plRelevanceRegion );
     GETINTERFACE_ANY( plRelevanceRegion, plObjInterface );
     
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
-    virtual int32_t GetNumProperties() const { return 1; }    
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override { }
+    int32_t GetNumProperties() const override { return 1; }
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     void SetMgrIndex(uint32_t idx);
 };

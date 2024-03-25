@@ -55,15 +55,15 @@ protected:
     virtual bool IHandleShot(plBulletMsg* bull);
 
 public:
-    plDynaTorpedoMgr();
-    virtual ~plDynaTorpedoMgr();
+    plDynaTorpedoMgr() = default;
+    ~plDynaTorpedoMgr() = default;
 
     CLASSNAME_REGISTER( plDynaTorpedoMgr );
     GETINTERFACE_ANY( plDynaTorpedoMgr, plDynaRippleMgr );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
 };
 

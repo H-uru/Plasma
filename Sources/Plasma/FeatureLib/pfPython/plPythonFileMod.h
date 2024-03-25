@@ -55,115 +55,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class PythonVaultCallback;
 class plPythonSDLModifier;
-class pyKey;
 class pfPythonKeyCatcher;
-class plKeyEventMsg;
 class plPipeline;
 
 typedef struct _object PyObject;
 
-class plPythonFileMod   : public plMultiModifier
+class plPythonFileMod : public plMultiModifier
 {
-protected:
-    friend class plPythonSDLModifier;
+private:
+    friend class PythonVaultCallback;
+    friend class pfPythonKeyCatcher;
 
-    plPythonSDLModifier* fSDLMod;
-
-    bool IEval(double secs, float del, uint32_t dirty);
-
-    plString IMakeModuleName(plSceneObject* sobj);
-
-    plString    fPythonFile;
-    plString    fModuleName;
-
-    // the list of receivers that want to be notified
-    hsTArray<plKey>         fReceivers;
-
-    PyObject*   fSelfKey;
-    plPipeline  *fPipe;
-
-    // the list of parameters (attributes)
-    hsTArray<plPythonParameter> fParameters;
-
-    // internal data
-    PyObject*   fModule;        // python module object
-    PyObject*   fInstance;      // python object that the instance of the class to run
-    static bool     fAtConvertTime; // flag for when in convert time within Max, don't run code
-    bool        fLocalNotify;   // True when This Mod was Notified by a local plNotify
-    bool        fIsFirstTimeEval;   // flag to determine when the first time at the eval,
-                                // so the Python coders can hava a chance to run initialization
-                                // code after the system is up, but before things are displayed
-    bool        fAmIAttachedToClone;    // is this python file mod attached to a cloned object
-    
-    // callback class for the KI
-    PythonVaultCallback *fVaultCallback;
-    pfPythonKeyCatcher  *fKeyCatcher;
-
-    struct NamedComponent
-    {
-        plString    name;
-        int32_t     id;
-        bool        isActivator;
-    };
-
-    hsTArray<NamedComponent> fNamedCompQueue;
-
-    virtual void IFindResponderAndAdd(const plString &responderName, int32_t id);
-    virtual void IFindActivatorAndAdd(const plString &activatorName, int32_t id);
-    void ISetKeyValue(const plKey& key, int32_t id);
-
-    bool ILoadPythonCode();
-
-    enum genref_whats
-    {
-        kNotSure = 0,
-        kAddNotify
-    };
-
-public:
-
-    plPythonFileMod();
-    ~plPythonFileMod();
-
-    CLASSNAME_REGISTER( plPythonFileMod );
-    GETINTERFACE_ANY( plPythonFileMod, plMultiModifier );
-
-    plPythonSDLModifier* GetSDLMod() { return fSDLMod; }
-    bool WasLocalNotify() { return fLocalNotify; }
-    plPipeline* GetPipeline() { return fPipe; }
-    virtual void SetSourceFile(const plString& filename);
-    virtual int getPythonOutput(std::string* line);
-    virtual void ReportError();
-    virtual void DisplayPythonOutput();
-    static void SetAtConvertTime() { fAtConvertTime=true; }
-    virtual bool AmIAttachedToClone() { return fAmIAttachedToClone; }
-
-    virtual void AddToNotifyList(plKey pKey) { fReceivers.Append(pKey); }
-    virtual int32_t NotifyListCount() { return fReceivers.Count(); }
-    virtual plKey GetNotifyListItem(int32_t i) { return fReceivers[i]; }
-
-    virtual void AddParameter(plPythonParameter param) { fParameters.Append(param); }
-    virtual int32_t GetParameterListCount() { return fParameters.Count(); }
-    virtual plPythonParameter GetParameterItem(int32_t i) { return fParameters[i]; }
-    
-    virtual void AddTarget(plSceneObject* sobj);
-    virtual void RemoveTarget(plSceneObject* so); 
-
-    virtual void EnableControlKeyEvents();
-    virtual void DisableControlKeyEvents();
-    
-    virtual bool MsgReceive(plMessage* msg);
-
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
-
-    // this is to keep track of what python functions are available and working,
-    // so there is no need to keep trying and banging our head until its bloody
     enum func_num
     {
-        kfunc_FirstUpdate = 0,      // these enums _have_ to match the static names in fEventFunctionNames
+        kfunc_FirstUpdate = 0,
         kfunc_Update,
-        kfunc_Notify,       // OnNotify
+        kfunc_Notify,
         kfunc_AtTimer,
         kfunc_OnKeyEvent,
         kfunc_Load,
@@ -196,22 +103,147 @@ public:
         kfunc_OnAvatarSpawn,
         kfunc_OnAccountUpdate,
         kfunc_gotPublicAgeList,
-        kfunc_OnGameMgrMsg,
-        kfunc_OnGameCliMsg,
         kfunc_OnAIMsg,
         kfunc_OnGameScoreMsg,
+        kfunc_OnSubtitleMsg,
         kfunc_lastone
     };
+
+    template<typename T>
+    T* IScriptWantsMsg(func_num methodId, plMessage* msg) const;
+
+    /**
+     * \brief Calls a bound method in this Python script.
+     * \detail Calls the bound method in this Python script specified by methodId with the arguments
+     *         provided as variadic template arugments.
+     * \note Calling a method that is not a member of the script instance is a no-op.
+     * \remarks Instance methods are resolved at initialization; therefore, Python metaprogramming
+     *          hacks such as `OnNotify = new_callable` will not actually override the OnNotify
+     *          method called when the plPythonFileMod receives a plNotifyMsg.
+     */
+    template<typename... Args>
+    void ICallScriptMethod(func_num methodId, Args&&... args);
+
+protected:
+    friend class plPythonSDLModifier;
+
+    plPythonSDLModifier* fSDLMod;
+
+    bool IEval(double secs, float del, uint32_t dirty) override;
+
+    ST::string IMakeModuleName(const plSceneObject* sobj);
+
+    ST::string fPythonFile;
+    ST::string fModuleName;
+
+    /** the list of receivers that want to be notified */
+    std::vector<plKey> fReceivers;
+
+    /** pyKey of the target plSceneObject */
+    PyObject*   fSelfKey;
+    plPipeline* fPipe;
+
+    /** List of ptAttributes */
+    std::vector<plPythonParameter> fParameters;
+
+    /** Python Module */
+    PyObject*   fModule;
+
+    /** Instance of the python script class */
+    PyObject*   fInstance;
+
+    /** Set when converting in 3ds Max indicating to NOT run the script */
+    static bool fAtConvertTime;
+
+    /** The last plNotifyMsg was sent by the local client */
+    bool        fLocalNotify;
+
+    /**
+     * Flag to determine when the first time at the eval, so the Python coders can have
+     * a chance to run initialization code after the system is up, but before things are displayed
+     */
+    bool        fIsFirstTimeEval;
+
+    /** This python script is attached to a cloned key */
+    bool        fAmIAttachedToClone;
+
+    // callback class for the KI
+    PythonVaultCallback* fVaultCallback;
+    pfPythonKeyCatcher * fKeyCatcher;
+
+    struct NamedComponent
+    {
+        ST::string  name;
+        int32_t     id;
+        bool        isActivator;
+
+        NamedComponent()
+            : name(), id(), isActivator()
+        { }
+
+        NamedComponent(const ST::string& n, int32_t i, bool a)
+            : name(n), id(i), isActivator(a)
+        { }
+    };
+
+    std::vector<NamedComponent> fNamedCompQueue;
+
+    void IFindResponderAndAdd(const ST::string& responderName, int32_t id);
+    void IFindActivatorAndAdd(const ST::string& activatorName, int32_t id);
+    void ISetKeyValue(const plKey& key, int32_t id);
+
+    bool ILoadPythonCode();
+
+    enum genref_whats
+    {
+        kNotSure = 0,
+        kAddNotify
+    };
+
+public:
+
+    plPythonFileMod();
+    ~plPythonFileMod();
+
+    CLASSNAME_REGISTER(plPythonFileMod );
+    GETINTERFACE_ANY(plPythonFileMod, plMultiModifier);
+
+    plPythonSDLModifier* GetSDLMod() const { return fSDLMod; }
+    bool WasLocalNotify() const { return fLocalNotify; }
+    plPipeline* GetPipeline() const { return fPipe; }
+    void SetSourceFile(const ST::string& filename) { fPythonFile = filename; }
+    ST::string getPythonOutput();
+    void ReportError();
+    void DisplayPythonOutput();
+    static void SetAtConvertTime() { fAtConvertTime = true; }
+    bool AmIAttachedToClone() const { return fAmIAttachedToClone; }
+
+    void AddToNotifyList(plKey pKey) { fReceivers.emplace_back(std::move(pKey)); }
+    size_t NotifyListCount() const { return fReceivers.size(); }
+    plKey GetNotifyListItem(size_t i) const { return fReceivers[i]; }
+
+    void AddParameter(const plPythonParameter& param) { fParameters.emplace_back(param); }
+    int32_t GetParameterListCount() const { return fParameters.size(); }
+    plPythonParameter GetParameterItem(int32_t i) { return fParameters[i]; }
+
+    void AddTarget(plSceneObject* sobj) override;
+    void RemoveTarget(plSceneObject* so) override;
+
+    void EnableControlKeyEvents();
+    void DisableControlKeyEvents();
+
+    bool MsgReceive(plMessage* msg) override;
+
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
+
     // array of matching Python instance where the functions are, if defined
     PyObject* fPyFunctionInstances[kfunc_lastone];
     // array of the names of the standard functions that can be called
     static const char* fFunctionNames[];
 
     // The konstant hard-coded name to be used for all global pythonFileMods
-    static plString kGlobalNameKonstant;
-
-    // API for processing discarded keys as the deafult key catcher
-    void    HandleDiscardedKey( plKeyEventMsg *msg );
+    static ST::string kGlobalNameKonstant;
 };
 
 #endif // _plPythonFileMod_h

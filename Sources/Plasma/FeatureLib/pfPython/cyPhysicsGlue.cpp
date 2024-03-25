@@ -40,13 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include "cyPhysics.h"
+
 #include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
 #include "pyKey.h"
 #include "pyMatrix44.h"
-#pragma hdrstop
-
-#include "cyPhysics.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptPhysics, cyPhysics);
@@ -90,7 +89,7 @@ PYTHON_BASIC_METHOD_DEFINITION(ptPhysics, enableCollision, EnableCollision)
 
 PYTHON_METHOD_DEFINITION(ptPhysics, warp, args)
 {
-    PyObject *positionObject = NULL;
+    PyObject *positionObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &positionObject))
     {
         PyErr_SetString(PyExc_TypeError, "warp expects a ptPoint3 or ptMatrix44 object");
@@ -114,7 +113,7 @@ PYTHON_METHOD_DEFINITION(ptPhysics, warp, args)
 
 PYTHON_METHOD_DEFINITION(ptPhysics, warpObj, args)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "warpObj expects a ptKey");
@@ -132,7 +131,7 @@ PYTHON_METHOD_DEFINITION(ptPhysics, warpObj, args)
 
 PYTHON_METHOD_DEFINITION(ptPhysics, move, args)
 {
-    PyObject *directionObject = NULL;
+    PyObject *directionObject = nullptr;
     float distance;
     if (!PyArg_ParseTuple(args, "Of", &directionObject, &distance))
     {
@@ -152,7 +151,7 @@ PYTHON_METHOD_DEFINITION(ptPhysics, move, args)
 PYTHON_METHOD_DEFINITION(ptPhysics, rotate, args)
 {
     float radians;
-    PyObject *axisObject = NULL;
+    PyObject *axisObject = nullptr;
     if (!PyArg_ParseTuple(args, "fO", &radians, &axisObject))
     {
         PyErr_SetString(PyExc_TypeError, "rotate expects a float and ptVector3");
@@ -170,7 +169,7 @@ PYTHON_METHOD_DEFINITION(ptPhysics, rotate, args)
 
 PYTHON_METHOD_DEFINITION(ptPhysics, force, args)
 {
-    PyObject *forceObject = NULL;
+    PyObject *forceObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &forceObject))
     {
         PyErr_SetString(PyExc_TypeError, "force expects a ptVector3");
@@ -188,8 +187,8 @@ PYTHON_METHOD_DEFINITION(ptPhysics, force, args)
 
 PYTHON_METHOD_DEFINITION(ptPhysics, forceWithOffset, args)
 {
-    PyObject *forceObject = NULL;
-    PyObject *offsetObject = NULL;
+    PyObject *forceObject = nullptr;
+    PyObject *offsetObject = nullptr;
     if (!PyArg_ParseTuple(args, "OO", &forceObject, &offsetObject))
     {
         PyErr_SetString(PyExc_TypeError, "forceWithOffset expects a ptVector3 and a ptPoint3");
@@ -208,7 +207,7 @@ PYTHON_METHOD_DEFINITION(ptPhysics, forceWithOffset, args)
 
 PYTHON_METHOD_DEFINITION(ptPhysics, torque, args)
 {
-    PyObject *torqueObject = NULL;
+    PyObject *torqueObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &torqueObject))
     {
         PyErr_SetString(PyExc_TypeError, "torque expects a ptVector3");
@@ -226,7 +225,7 @@ PYTHON_METHOD_DEFINITION(ptPhysics, torque, args)
 
 PYTHON_METHOD_DEFINITION(ptPhysics, impulse, args)
 {
-    PyObject *forceObject = NULL;
+    PyObject *forceObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &forceObject))
     {
         PyErr_SetString(PyExc_TypeError, "impulse expects a ptVector3");
@@ -244,8 +243,8 @@ PYTHON_METHOD_DEFINITION(ptPhysics, impulse, args)
 
 PYTHON_METHOD_DEFINITION(ptPhysics, impulseWithOffset, args)
 {
-    PyObject *forceObject = NULL;
-    PyObject *offsetObject = NULL;
+    PyObject *forceObject = nullptr;
+    PyObject *offsetObject = nullptr;
     if (!PyArg_ParseTuple(args, "OO", &forceObject, &offsetObject))
     {
         PyErr_SetString(PyExc_TypeError, "impulseWithOffset expects a ptVector3 and a ptPoint3");
@@ -264,7 +263,7 @@ PYTHON_METHOD_DEFINITION(ptPhysics, impulseWithOffset, args)
 
 PYTHON_METHOD_DEFINITION(ptPhysics, angularImpulse, args)
 {
-    PyObject *forceObject = NULL;
+    PyObject *forceObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &forceObject))
     {
         PyErr_SetString(PyExc_TypeError, "angularImpulse expects a ptVector3");
@@ -294,7 +293,7 @@ PYTHON_METHOD_DEFINITION(ptPhysics, damp, args)
 
 PYTHON_METHOD_DEFINITION(ptPhysics, shiftMass, args)
 {
-    PyObject *offestObject = NULL;
+    PyObject *offestObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &offestObject))
     {
         PyErr_SetString(PyExc_TypeError, "shiftMass expects a ptVector3");
@@ -323,7 +322,7 @@ PYTHON_METHOD_DEFINITION(ptPhysics, suppress, args)
 }
 PYTHON_METHOD_DEFINITION(ptPhysics, setLinearVelocity, args)
 {
-    PyObject *velocity = NULL;
+    PyObject *velocity = nullptr;
     if (!PyArg_ParseTuple(args, "O", &velocity))
     {
         PyErr_SetString(PyExc_TypeError, "setVelocity expects a ptVector3");
@@ -341,7 +340,7 @@ PYTHON_METHOD_DEFINITION(ptPhysics, setLinearVelocity, args)
 
 PYTHON_METHOD_DEFINITION(ptPhysics, setAngularVelocity, args)
 {
-    PyObject *velocity = NULL;
+    PyObject *velocity = nullptr;
     if (!PyArg_ParseTuple(args, "O", &velocity))
     {
         PyErr_SetString(PyExc_TypeError, "setAngularVelocity expects a ptVector3");
@@ -395,16 +394,14 @@ PLASMA_DEFAULT_TYPE(ptPhysics, "Plasma physics class");
 // required functions for PyObject interoperability
 PyObject *cyPhysics::New(PyObject *sender, PyObject *recvr)
 {
-    ptPhysics *newObj = (ptPhysics*)ptPhysics_type.tp_new(&ptPhysics_type, NULL, NULL);
-    if (sender != NULL)
+    ptPhysics *newObj = (ptPhysics*)ptPhysics_type.tp_new(&ptPhysics_type, nullptr, nullptr);
+    if (sender != nullptr)
     {
-        plKey senderKey = pyKey::ConvertFrom(sender)->getKey();
-        newObj->fThis->SetSender(senderKey);
+        newObj->fThis->SetSender(pyKey::ConvertFrom(sender)->getKey());
     }
-    if (recvr != NULL)
+    if (recvr != nullptr)
     {
-        plKey recvrKey = pyKey::ConvertFrom(recvr)->getKey();
-        newObj->fThis->AddRecvr(recvrKey);
+        newObj->fThis->AddRecvr(pyKey::ConvertFrom(recvr)->getKey());
     }
     newObj->fThis->SetNetForce(false);
     return (PyObject*)newObj;

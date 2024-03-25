@@ -40,21 +40,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plLayer.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "hsStream.h"
-#include "hsResMgr.h"
-#include "hsMatrix44.h"
-#include "hsGMatState.inl"
-#include "plMessage/plLayRefMsg.h"
-#include "plGImage/plBitmap.h"
+
+#include "HeadSpin.h"
+#include "plgDispatch.h"
 #include "hsGDeviceRef.h"
+#include "hsGMatState.inl"
+#include "hsMatrix44.h"
+#include "plPipeline.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "plShader.h"
 
-#include "plPipeline.h"
-#include "plgDispatch.h"
 #include "pnMessage/plPipeResMakeMsg.h"
+
+#include "plGImage/plBitmap.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plMessage/plLayRefMsg.h"
 
 plLayer::plLayer()
 {
@@ -90,13 +93,13 @@ plLayer::plLayer()
     fSpecularPower = new float;
 
     fTexture = new plBitmap*;
-    *fTexture = nil;
+    *fTexture = nullptr;
 
     fVertexShader = new plShader*;
-    *fVertexShader = nil;
+    *fVertexShader = nullptr;
 
     fPixelShader = new plShader*;
-    *fPixelShader = nil;
+    *fPixelShader = nullptr;
 
     fBumpEnvXfm = new hsMatrix44;
     fBumpEnvXfm->Reset();
@@ -124,9 +127,9 @@ void plLayer::Read(hsStream* s, hsResMgr* mgr)
     fSpecularColor->Read( s );
 
     *fUVWSrc = s->ReadLE32();
-    *fOpacity = s->ReadLEScalar();
-    *fLODBias = s->ReadLEScalar();
-    *fSpecularPower = s->ReadLEScalar();
+    *fOpacity = s->ReadLEFloat();
+    *fLODBias = s->ReadLEFloat();
+    *fSpecularPower = s->ReadLEFloat();
 
     plLayRefMsg* refMsg = new plLayRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plLayRefMsg::kTexture); 
     mgr->ReadKeyNotifyMe(s,refMsg, plRefFlags::kActiveRef); 
@@ -155,9 +158,9 @@ void plLayer::Write(hsStream* s, hsResMgr* mgr)
     fSpecularColor->Write( s );
     
     s->WriteLE32(*fUVWSrc);
-    s->WriteLEScalar(*fOpacity);
-    s->WriteLEScalar(*fLODBias);
-    s->WriteLEScalar(*fSpecularPower);
+    s->WriteLEFloat(*fOpacity);
+    s->WriteLEFloat(*fLODBias);
+    s->WriteLEFloat(*fSpecularPower);
 
 
     mgr->WriteKey(s, GetTexture());
@@ -187,7 +190,7 @@ bool plLayer::MsgReceive(plMessage* msg)
                 }
                 else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
                 {
-                    *fTexture = nil;
+                    *fTexture = nullptr;
                     plgDispatch::Dispatch()->UnRegisterForExactType(plPipeTexMakeMsg::Index(), GetKey());
                 }
             }
@@ -201,7 +204,7 @@ bool plLayer::MsgReceive(plMessage* msg)
                 }
                 else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
                 {
-                    *fVertexShader = nil;
+                    *fVertexShader = nullptr;
                 }
             }
             return true;
@@ -214,7 +217,7 @@ bool plLayer::MsgReceive(plMessage* msg)
                 }
                 else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
                 {
-                    *fPixelShader = nil;
+                    *fPixelShader = nullptr;
                 }
             }
             return true;
@@ -249,7 +252,7 @@ plLayer& plLayer::InitToDefault()
 {
     fState->Reset();
 
-    *fTexture = nil;
+    *fTexture = nullptr;
 
     SetRuntimeColor(hsColorRGBA().Set(0.5f, 0.5f, 0.5f, 1.f));
     SetPreshadeColor(hsColorRGBA().Set(0.5f, 0.5f, 0.5f, 1.f));
@@ -263,8 +266,8 @@ plLayer& plLayer::InitToDefault()
     SetSpecularColor( hsColorRGBA().Set(0,0,0,1.f));
     SetSpecularPower(1.f);
 
-    *fVertexShader = nil;
-    *fPixelShader = nil;
+    *fVertexShader = nullptr;
+    *fPixelShader = nullptr;
 
     fBumpEnvXfm->Reset();
 

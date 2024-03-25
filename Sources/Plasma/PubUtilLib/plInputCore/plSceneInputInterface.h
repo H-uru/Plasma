@@ -50,6 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plInputInterface.h"
 #include "hsGeometry3.h"
+#include <string_theory/string>
+#include <vector>
+
 #include "pnKeyedObject/plKey.h"
 #include "pnUUID/pnUUID.h"
 
@@ -83,40 +86,38 @@ class plSceneInputInterface : public plInputInterface
         plKey   fBookKey;  // key for the python file modifier for the book we are offering
         plKey   fOffereeKey;
         uint32_t fOffereeID; // ID for the guy who's accepted our link offer
-        plString fOfferedAgeFile;
-        plString fOfferedAgeInstance;
-        plString fSpawnPoint;
+        ST::string fOfferedAgeFile;
+        ST::string fOfferedAgeInstance;
+        ST::string fSpawnPoint;
         plUUID fAgeInstanceGuid;
         struct clickableTest
         {
             clickableTest(plKey k)
-            {
-                key = k;
-                val = false;
-            }
+                : key(std::move(k)), val()
+            { }
             plKey key;
             bool val;
         };
 
-        hsTArray<clickableTest *> fClickableMap;
-        hsTArray<plKey> fIgnoredAvatars; // these are ignored because they are engaged in avatar-avatar interactions which need to be left undisturbed
-        hsTArray<plKey> fGUIIgnoredAvatars; // these are ignored because they have a GUI in their face right now
-        hsTArray<plKey> fLocalIgnoredAvatars; // these are ALL avatars currently in your age.  they are ignored when you press the 'ignore' key so you can
-                                              // select clickable non-avatar objects through them.
+        std::vector<clickableTest *> fClickableMap;
+        std::vector<plKey> fIgnoredAvatars; // these are ignored because they are engaged in avatar-avatar interactions which need to be left undisturbed
+        std::vector<plKey> fGUIIgnoredAvatars; // these are ignored because they have a GUI in their face right now
+        std::vector<plKey> fLocalIgnoredAvatars; // these are ALL avatars currently in your age.  they are ignored when you press the 'ignore' key so you can
+                                                 // select clickable non-avatar objects through them.
         hsPoint3    fLastStartPt, fLastEndPt;
         plPipeline  *fPipe;
 
-        virtual bool IEval( double secs, float del, uint32_t dirty );
+        bool IEval(double secs, float del, uint32_t dirty) override;
 
         
         void    IRequestLOSCheck( float xPos, float yPos, int ID );
         void    ISetLastClicked( plKey obj, hsPoint3 hitPoint );
         void    IHalfFadeAvatar(bool out);
 
-        bool    IWorldPosMovedSinceLastLOSCheck( void );
+        bool    IWorldPosMovedSinceLastLOSCheck();
         void ClearClickableMap();
-        void ISendOfferNotification(plKey& offeree, int ID, bool net);
-        void IManageIgnoredAvatars(plKey& offeree, bool add);
+        void ISendOfferNotification(const plKey& offeree, int ID, bool net);
+        void IManageIgnoredAvatars(const plKey& offeree, bool add);
         void ISendAvatarDisabledNotification(bool enabled);
         void ILinkOffereeToAge();
     public:
@@ -127,22 +128,22 @@ class plSceneInputInterface : public plInputInterface
         static bool     fShowLOS;
 
         // Always return true, since the cursor should be representing how we control the avatar
-        virtual bool    HasInterestingCursorID( void ) const { return ( fCurrentCursor != kNullCursor ) ? true : false; }
-        virtual uint32_t  GetPriorityLevel( void ) const { return kSceneInteractionPriority; }
-        virtual uint32_t  GetCurrentCursorID( void ) const {return fCurrentCursor;}
+        bool    HasInterestingCursorID() const override { return (fCurrentCursor != kNullCursor) ? true : false; }
+        uint32_t  GetPriorityLevel() const override { return kSceneInteractionPriority; }
+        uint32_t  GetCurrentCursorID() const override { return fCurrentCursor; }
         uint32_t          SetCurrentCursorID(uint32_t id);
-        virtual bool    InterpretInputEvent( plInputEventMsg *pMsg );
+        bool    InterpretInputEvent(plInputEventMsg *pMsg) override;
         void            RequestAvatarTurnToPointLOS();
 
-        virtual bool    MsgReceive( plMessage *msg );
+        bool    MsgReceive(plMessage *msg) override;
 
-        virtual void    Init( plInputInterfaceMgr *manager );
-        virtual void    Shutdown( void );
+        void    Init(plInputInterfaceMgr *manager) override;
+        void    Shutdown() override;
         
-        virtual void ResetClickableState();
+        void ResetClickableState() override;
 
-        plKey           GetCurrMousedAvatar( void ) const { if( fCurrClickIsAvatar ) return fCurrentClickable; else return nil; }
-        static plSceneInputInterface *GetInstance( void ) { return fInstance; }     
+        plKey GetCurrMousedAvatar() const { if (fCurrClickIsAvatar) return fCurrentClickable; else return nullptr; }
+        static plSceneInputInterface *GetInstance() { return fInstance; }
 };
 
 

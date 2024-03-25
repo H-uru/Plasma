@@ -42,24 +42,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __HSVERTEXSHADER_H
 #define __HSVERTEXSHADER_H
 
-class hsConverterUtils;
-class hsBitVector;
+#include <vector>
 
-class plMaxLightContext;
-class plGeometrySpan;
+#include "hsGeometry3.h"
+#include "hsMatrix44.h"
+
+class hsBitVector;
 struct hsColorRGBA;
+class hsConverterUtils;
+class plGeometrySpan;
 class plLightMapGen;
+class hsGMaterial;
+class plMaxLightContext;
+
+class INode;
+class Interface;
 
 class hsVertexShader 
 {
 private:
     hsVertexShader();
 public:
-    virtual ~hsVertexShader();
+    virtual ~hsVertexShader() noexcept(false);
 
     static hsVertexShader& Instance();
 
-    void ShadeNode(INode* node, hsMatrix44& l2w, hsMatrix44& w2l, hsTArray<plGeometrySpan *> &spans);
+    void ShadeNode(INode* node, hsMatrix44& l2w, hsMatrix44& w2l, std::vector<plGeometrySpan *> &spans);
 
     void Open();
     void Close();

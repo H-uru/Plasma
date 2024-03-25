@@ -48,18 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETCLIENT_PLNETCLIAGELEAVER_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETCLIENT_PLNETCLIAGELEAVER_H
 
-
-#include "HeadSpin.h"
-#include "pnUtils/pnUtils.h"
-#include "pnNetBase/pnNetBase.h"
-
-
-/*****************************************************************************
-*
-*   
-*
-***/
-
 class plMessage;
 struct plNCAgeLeaver;
 

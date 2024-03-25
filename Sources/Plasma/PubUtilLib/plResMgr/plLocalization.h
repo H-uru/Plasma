@@ -42,10 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLocalization_h_inc
 #define plLocalization_h_inc
 
+#include <array>
+#include <unordered_set>
 #include <vector>
-#include <string>
-#include <set>
-#include "plFileSystem.h"
+
+class plFileName;
+namespace ST { class string; }
 
 class plLocalization
 {
@@ -58,43 +60,59 @@ public:
         kSpanish,
         kItalian,
         kJapanese,
+        kDutch,
+        kRussian,
+        kPolish,
+        kCzech,
 
         kNumLanguages,
-    };
-    
-    enum encodingTypes
-    {
-        Enc_Unencoded,  // This can also mean that python did the decoding for us and we don't need to tweak it on our end
-        Enc_Split_String,
-        Enc_Hybrid_Split_String,
-        Enc_UTF8,
-        Enc_UTF16,
-        Enc_Unicode_Escape,
-        Enc_Raw_Unicode_Escape,
-        Enc_Latin_1,
-        Enc_ASCII,
-        Enc_MBCS
     };
 
 protected:
     static Language fLanguage;
-    static const char* fLangTags[kNumLanguages];
-    static std::set<plString> fLangCodes[kNumLanguages];
-    static const char* fLangNames[kNumLanguages];
-    static bool fUsesUnicode[kNumLanguages];
-    static encodingTypes fUnicodeEncoding[kNumLanguages];
+    static const std::array<ST::string, kNumLanguages> fLangTags;
+    static const std::array<std::unordered_set<ST::string>, kNumLanguages> fLangCodes;
+    static const std::array<ST::string, kNumLanguages> fLangNames;
 
     static plFileName IGetLocalized(const plFileName& name, Language lang);
 
 public:
+    // Get all defined langauge numbers as an array for convenient iteration.
+    // Note that this includes some languages that aren't suitable for regular gameplay (yet),
+    // due to missing translations or font support, such as Japanese - see IsLanguageUsable.
+    static std::array<Language, kNumLanguages> GetAllLanguages()
+    {
+        std::array<Language, kNumLanguages> languages;
+        for (int lang = 0; lang < kNumLanguages; lang++) {
+            languages[lang] = static_cast<Language>(lang);
+        }
+        return languages;
+    }
+
+    // Check whether the given language is considered usable/supported.
+    // This controls which languages are shown to players in the login window.
+    // Languages listed here should have some reasonable amount of translations
+    // and must have the necessary characters included in the game fonts.
+    static bool IsLanguageUsable(Language lang)
+    {
+        return (
+            lang == kEnglish
+            || lang == kFrench
+            || lang == kGerman
+            || lang == kSpanish
+            || lang == kItalian
+            || lang == kRussian
+        );
+    }
+
     static void SetLanguage(Language lang) { fLanguage = lang; }
     static Language GetLanguage() { return fLanguage; }
 
-    static const char* GetLanguageName(Language lang) { return fLangNames[lang]; }
-    static std::set<plString> GetLanguageCodes(Language lang) { return fLangCodes[lang]; }
+    static const std::array<ST::string, kNumLanguages>& GetAllLanguageNames() { return fLangNames; };
+    static ST::string GetLanguageName(Language lang);
 
-    static bool UsingUnicode() { return fUsesUnicode[fLanguage]; }
-    static encodingTypes UnicodeEncoding() { return fUnicodeEncoding[fLanguage]; }
+    static const std::array<std::unordered_set<ST::string>, kNumLanguages>& GetAllLanguageCodes() { return fLangCodes; };
+    static std::unordered_set<ST::string> GetLanguageCodes(Language lang);
 
     // Returns true if we're using localized assets.  If it returns false, you
     // don't need to bother calling GetLocalized
@@ -102,7 +120,7 @@ public:
 
     // Pass in a key name and this will give you the localized name
     // Returns an invalid filename if the original keyname is not for a localized asset
-    static plFileName GetLocalized(const plFileName& name) { return IGetLocalized(name, fLanguage); }
+    static plFileName GetLocalized(const plFileName& name);
 
     //
     // Export only
@@ -110,26 +128,20 @@ public:
     // When you're exporting an asset that could be localized, you'll want to do
     // a loop something like this to try and find any localized versions.
     //
-    // for (int i = 0; i < plLocalization::GetNumLocales(); i++)
-    // {
-    //     char localName[MAX_PATH];
-    //     if (plLocalization::ExportGetLocalized(fileName, i, localName))
-    //     {
+    // for (auto lang : plLocalization::GetAllLanguages()) {
+    //     plFileName localName = plLocalization::ExportGetLocalized(fileName, lang);
+    //     if (localName.IsValid()) {
     //         ...
     //     }
     // }
     //
-    static int GetNumLocales() { return kNumLanguages - 1; }
-    static plFileName ExportGetLocalized(const plFileName& name, int lang);
-    // Just tells us if this is localized, doesn't actually convert it for us
-    static bool IsLocalizedName(const plFileName& name) { return IGetLocalized(name, kEnglish).IsValid(); }
+    static plFileName ExportGetLocalized(const plFileName& name, Language lang);
 
     // Converts a vector of translated strings to a encoded string that can be decoded by StringToLocal()
     // The index in the vector of a string is it's language
-    static std::string LocalToString(const std::vector<std::string> & localizedText);
+    static ST::string LocalToString(const std::vector<ST::string>& localizedText);
     // Converts a string encoded by LocalToString to a vector of translated strings
-    static std::vector<std::string> StringToLocal(const std::string & localizedText);
-    static std::vector<std::wstring> StringToLocal(const std::wstring & localizedText);
+    static std::vector<ST::string> StringToLocal(const ST::string& localizedText);
 };
 
 #endif // plLocalization_h_inc

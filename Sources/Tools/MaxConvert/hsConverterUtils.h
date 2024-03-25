@@ -42,11 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __HSCONVERTERUTILS_H
 #define __HSCONVERTERUTILS_H
 
+#include <unordered_set>
+
 class Control;
 class INode;
 class Interface;
 
-template <class T> class hsHashTable;
 class hsMaxLayerBase;
 class plSimplePosController;
 class plScalarController;
@@ -66,7 +67,6 @@ public: // MSDEV bug
     ~hsConverterUtils() {}
 public:
     static hsConverterUtils& Instance();
-    static bool IsReservedKeyword(const char* nodeName);
 
     void Init(bool save, plErrorMsg *msg);
     bool IsEnvironHolder(INode *node);
@@ -76,31 +76,18 @@ public:
     void StripOffTail(char* path);
     void StripOffPath(char* fileName);
 
-    INode* FindINodeFromKeyedObject(hsKeyedObject* obj);
-    INode* FindINodeFromMangledName(const char* mangName);
-#if 0
-    void MangleRPRefs(hsBaseRenderProc* base, hsGRenderProcs* rp);
-#endif
-    char* MangleReference(char *mangName, const char *nodeName, const char* defRoom="global");
-    char* MangleReference(char *mangName, INode *node, const char* defRoom="global");
-    char* MangleRefWithRoom(char *mangName, const char *nodeName, const char* roomName);
-    char* UnMangleReference(char *dest, const char *name);
-    bool IsMangled(const char *name);
-    int32_t FindNamedSelSetFromName(const char *name);
-    char* StripMangledReference(char* dest, const char* name);
-
     bool IsInstanced(Object* maxObject);
 
     void CreateNodeSearchCache();
     void DestroyNodeSearchCache();
-    INode* GetINodeByName(const char* name, bool caseSensitive=false);
+    INode* GetINodeByName(const MCHAR* name, bool caseSensitive=false);
     
-    static const char fTagSeps[];
+    static const MCHAR fTagSeps[];
 
 private:
 
     void IBuildNodeSearchCacheRecur(INode* node);
-    INode* IGetINodeByNameRecur(INode* node, const char* wantName);
+    INode* IGetINodeByNameRecur(INode* node, const MCHAR* wantName);
 
 private:
     enum {
@@ -118,15 +105,15 @@ private:
     {
     private:
         INode* fNode;
-        const char* fName;
+        const MCHAR* fName;
         bool fCaseSensitive;
     public:
-        CacheNode(INode* node=nil) : fNode(node), fName(nil), fCaseSensitive(false) { }
-        CacheNode(const char* name) : fName(name), fNode(nil), fCaseSensitive(false) { }
+        CacheNode(INode* node=nullptr) : fNode(node), fName(), fCaseSensitive() { }
+        CacheNode(const MCHAR* name) : fName(name), fNode(), fCaseSensitive() { }
         ~CacheNode() { }
 
-        INode* GetNode() { return fNode; }
-        const char* GetName() const { return fNode ? fNode->GetName() : fName; }
+        INode* GetNode() const { return fNode; }
+        const MCHAR* GetName() const { return fNode ? fNode->GetName() : fName; }
 
         void SetCaseSensitive(bool b) { fCaseSensitive = b; }
         bool GetCaseSensitive() { return fCaseSensitive; }
@@ -134,9 +121,23 @@ private:
         uint32_t GetHash() const;
         bool operator==(const CacheNode& other) const;
     };
-    hsHashTable<CacheNode>* fNodeSearchCache;
+
+    friend struct std::hash<CacheNode>;
+
+    std::unordered_set<CacheNode>* fNodeSearchCache;
 };
 
+namespace std
+{
+    template <>
+    struct hash<hsConverterUtils::CacheNode>
+    {
+        size_t operator()(const hsConverterUtils::CacheNode& node) const
+        {
+            return node.GetHash();
+        }
+    };
+}
 
 #endif
 

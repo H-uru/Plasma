@@ -40,76 +40,67 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-
 #include "plGrabCubeMap.h"
 
-#include "plPipeline.h"
-#include "plDrawable.h"
-
-#include "hsMatrix44.h"
-#include "hsGeometry3.h"
-#include "hsColorRGBA.h"
+#include "HeadSpin.h"
 #include "hsBounds.h"
+#include "hsColorRGBA.h"
+#include "plDrawable.h"
+#include "hsGeometry3.h"
+#include "hsMatrix44.h"
+#include "plPipeline.h"
 
-#include "pnSceneObject/plSceneObject.h"
+#include <string_theory/format>
+
 #include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
 
 #include "plGImage/plMipmap.h"
-#include "plGImage/plJPEG.h"
-
+#include "plGImage/plPNG.h"
 #include "plMessage/plRenderRequestMsg.h"
+#include "plScene/plRenderRequest.h"
 
-plGrabCubeRenderRequest::plGrabCubeRenderRequest()
-:   fQuality(75)
+class plGrabCubeRenderRequest : public plRenderRequest
 {
-}
+public:
+    plFileName fFileName;
 
-void plGrabCubeRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)
-{
-    if( !fFileName[0] )
-        return;
-
-    plRenderRequest::Render(pipe, pageMgr);
-
-    pipe->EndRender();
-
-    plMipmap        mipmap;
-    if( pipe->CaptureScreen(&mipmap) )
+    // This function is called after the render request is processed by the client
+    void Render(plPipeline* pipe, plPageTreeMgr* pageMgr) override
     {
-        plJPEG::Instance().SetWriteQuality(fQuality);
+        if (!fFileName.IsValid())
+            return;
 
-        plJPEG::Instance().WriteToFile(fFileName, &mipmap);
+        plRenderRequest::Render(pipe, pageMgr);
+        pipe->EndRender();
+
+        plMipmap mipmap;
+        if (pipe->CaptureScreen(&mipmap))
+            plPNG::Instance().WriteToFile(fFileName, &mipmap);
+        pipe->BeginRender();
     }
+};
 
-    pipe->BeginRender();
-}
+// ==============================================================================================
 
-
-void plGrabCubeMap::GrabCube(plPipeline* pipe, plSceneObject* obj, const char* pref, const hsColorRGBA& clearColor, uint8_t q)
+void plGrabCubeMap::GrabCube(plPipeline* pipe, plSceneObject* obj, const char* pref, const hsColorRGBA& clearColor)
 {
     hsPoint3 center;
-    if( obj && !(obj->GetLocalToWorld().fFlags & hsMatrix44::kIsIdent) )
-    {
+    if (obj && !(obj->GetLocalToWorld().fFlags & hsMatrix44::kIsIdent))
         center = obj->GetLocalToWorld().GetTranslate();
-    }
-    else if( obj && obj->GetDrawInterface() )
-    {
+    else if (obj && obj->GetDrawInterface())
         center = obj->GetDrawInterface()->GetWorldBounds().GetCenter();
-    }
     else
-    {
         center = pipe->GetCameraToWorld().GetTranslate();
-    }
-    ISetupRenderRequests(pipe, center, pref, clearColor, q);
+    ISetupRenderRequests(pipe, center, pref, clearColor);
 }
 
-void plGrabCubeMap::GrabCube(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor, uint8_t q)
+void plGrabCubeMap::GrabCube(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor)
 {
-    ISetupRenderRequests(pipe, center, pref, clearColor, q);
+    ISetupRenderRequests(pipe, center, pref, clearColor);
 }
 
-void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor, uint8_t q) const
+void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& center, const char* pref, const hsColorRGBA& clearColor) const
 {
     hsMatrix44 worldToCameras[6];
     hsMatrix44 cameraToWorlds[6];
@@ -127,14 +118,15 @@ void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& cente
     const char* suff[6] = {
         "LF",
         "RT",
-        "BK",
         "FR",
+        "BK",
         "UP",
         "DN" };
 
-    int i;
-    for( i = 0; i < 6; i++ )
-    {
+    plFileName cubedir = plFileName::Join(plFileSystem::GetUserDataPath(), "CubeMaps");
+    plFileSystem::CreateDir(cubedir, false); // just in case...
+
+    for (int i = 0; i < 6; i++) {
         plGrabCubeRenderRequest* req = new plGrabCubeRenderRequest;
         req->SetRenderState(renderState);
 
@@ -150,15 +142,14 @@ void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& cente
         req->SetClearColor(clearColor);
         req->SetClearDepth(1.f);
 
-        req->SetClearDrawable(nil);
-        req->SetRenderTarget(nil);
+        req->SetClearDrawable(nullptr);
+        req->SetRenderTarget(nullptr);
 
         req->SetCameraTransform(worldToCameras[i], cameraToWorlds[i]);
 
-        req->fQuality = q;
-        sprintf(req->fFileName, "%s_%s.jpg", pref, suff[i]);
+        req->fFileName = plFileName::Join(cubedir, ST::format("{}_{}.png", pref, suff[i]));
 
-        plRenderRequestMsg* reqMsg = new plRenderRequestMsg(nil, req);
+        plRenderRequestMsg* reqMsg = new plRenderRequestMsg(nullptr, req);
         reqMsg->Send();
         hsRefCnt_SafeUnRef(req);
     }

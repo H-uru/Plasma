@@ -39,6 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef plMaxAccelerators_inc
+#define plMaxAccelerators_inc
+
 class plMaxAccelerators
 {
 protected:
@@ -48,3 +52,5 @@ public:
     static void Enable();
     static void Disable();
 };
+
+#endif

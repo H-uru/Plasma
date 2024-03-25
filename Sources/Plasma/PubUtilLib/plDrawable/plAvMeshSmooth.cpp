@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <memory>
+
 #include "HeadSpin.h"
 #include "plAvMeshSmooth.h"
 
@@ -49,18 +51,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsFastMath.h"
 
-class EdgeBin
+void plAvMeshSmooth::FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, std::vector<uint16_t>& edgeVerts)
 {
-public:
-    uint16_t  fVtx;
-    uint16_t  fCount;
+    struct EdgeBin
+    {
+        uint16_t  fVtx;
+        uint16_t  fCount;
 
-    EdgeBin() : fVtx(0), fCount(0) {}
-};
+        EdgeBin(uint16_t vtx, uint16_t count) : fVtx(vtx), fCount(count) { }
+    };
 
-void plAvMeshSmooth::FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, hsTArray<uint16_t>& edgeVerts)
-{
-    hsTArray<EdgeBin>*  bins = new hsTArray<EdgeBin>[maxVtxIdx+1];
+    std::vector<std::vector<EdgeBin>> bins(maxVtxIdx + 1);
 
     hsBitVector edgeVertBits;
     // For each vert pair (edge) in idxList
@@ -88,43 +89,32 @@ void plAvMeshSmooth::FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idx
                 hi = idx0;
             }
 
-            hsTArray<EdgeBin>& loBin = bins[lo];
+            std::vector<EdgeBin>& loBin = bins[lo];
             // In that bucket, look for the higher index.
-            int k;
-            for( k = 0; k < loBin.GetCount(); k++ )
-            {
-                if( loBin[k].fVtx == hi )
-                    break;
-            }
+            auto iter = std::find_if(loBin.begin(), loBin.end(),
+                                     [hi](const EdgeBin& bin) { return bin.fVtx == hi; });
 
             // If we find it, increment it's count,
             // else add it.
-            if( k < loBin.GetCount() )
-            {
-                loBin[k].fCount++;
-            }
+            if (iter != loBin.end())
+                iter->fCount++;
             else
-            {
-                EdgeBin* b = loBin.Push();
-                b->fVtx = hi;
-                b->fCount = 1;
-            }
+                loBin.emplace_back(hi, 1);
         }
     }
 
     // For each bucket in the LUT,
     for( i = 0; i < maxVtxIdx+1; i++ )
     {
-        hsTArray<EdgeBin>& loBin = bins[i];
+        std::vector<EdgeBin>& loBin = bins[i];
         // For each higher index
-        int j;
-        for( j = 0; j < loBin.GetCount(); j++ )
+        for (const EdgeBin& bin : loBin)
         {
             // If the count is one, it's an edge, so set the edge bit for both indices (hi and lo)
-            if( 1 == loBin[j].fCount )
+            if (bin.fCount == 1)
             {
                 edgeVertBits.SetBit(i);
-                edgeVertBits.SetBit(loBin[j].fVtx);
+                edgeVertBits.SetBit(bin.fVtx);
             }
         }
     }
@@ -133,15 +123,13 @@ void plAvMeshSmooth::FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idx
     for( i = 0; i < maxVtxIdx+1; i++ )
     {
         if( edgeVertBits.IsBitSet(i) )
-            edgeVerts.Append(i);
+            edgeVerts.emplace_back(i);
     }
-    delete [] bins;
 }
 
-void plAvMeshSmooth::FindEdges(hsTArray<XfmSpan>& spans, hsTArray<uint16_t>* edgeVerts)
+void plAvMeshSmooth::FindEdges(std::vector<XfmSpan>& spans, std::vector<uint16_t>* edgeVerts)
 {
-    int i;
-    for( i = 0; i < spans.GetCount(); i++ )
+    for (size_t i = 0; i < spans.size(); i++)
     {
         fAccGeom.AccessSpanFromGeometrySpan(spans[i].fAccSpan, spans[i].fSpan);
         if( !spans[i].fAccSpan.HasAccessTri() )
@@ -169,28 +157,26 @@ void plAvMeshSmooth::FindEdges(hsTArray<XfmSpan>& spans, hsTArray<uint16_t>* edg
 // The funny painful thing is that later, when we go to use these smoothed delta meshes,
 // again we need to coerce them into a neutral space. At that time, we'll use the
 // morph target mesh's local space. Whatever.
-void plAvMeshSmooth::Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstSpans)
+void plAvMeshSmooth::Smooth(std::vector<XfmSpan>& srcSpans, std::vector<XfmSpan>& dstSpans)
 {
-    hsTArray<uint16_t>* dstEdgeVerts = new hsTArray<uint16_t>[dstSpans.GetCount()];
-    FindEdges(dstSpans, dstEdgeVerts);
+    auto dstEdgeVerts = std::make_unique<std::vector<uint16_t>[]>(dstSpans.size());
+    FindEdges(dstSpans, dstEdgeVerts.get());
 
-    hsTArray<uint16_t>* srcEdgeVerts = new hsTArray<uint16_t>[srcSpans.GetCount()];
-    FindEdges(srcSpans, srcEdgeVerts);
+    auto srcEdgeVerts = std::make_unique<std::vector<uint16_t>[]>(srcSpans.size());
+    FindEdges(srcSpans, srcEdgeVerts.get());
 
-    int i;
-    for( i = 0; i < dstSpans.GetCount(); i++ )
+    for (size_t i = 0; i < dstSpans.size(); i++)
     {
         plAccessTriSpan& dstTriSpan = dstSpans[i].fAccSpan.AccessTri();
 
-        int j;
-        for( j = 0; j < dstEdgeVerts[i].GetCount(); j++ )
+        for (uint16_t dstEdgeVert : dstEdgeVerts[i])
         {
 
-            hsPoint3 dstPos = IPositionToNeutral(dstSpans[i], dstEdgeVerts[i][j]);
-            hsVector3 dstNorm = INormalToNeutral(dstSpans[i], dstEdgeVerts[i][j]);
+            hsPoint3 dstPos = IPositionToNeutral(dstSpans[i], dstEdgeVert);
+            hsVector3 dstNorm = INormalToNeutral(dstSpans[i], dstEdgeVert);
             hsColorRGBA dstDiff;
             if( dstTriSpan.HasDiffuse() )
-                dstDiff = dstTriSpan.DiffuseRGBA(dstEdgeVerts[i][j]);
+                dstDiff = dstTriSpan.DiffuseRGBA(dstEdgeVert);
             else
                 dstDiff.Set(1.f, 1.f, 1.f, 1.f);
 
@@ -200,14 +186,12 @@ void plAvMeshSmooth::Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstS
             hsVector3 smoothNorm = dstNorm;
             hsColorRGBA smoothDiff = dstDiff;
 
-            int k;
-            for( k = 0; k < srcSpans.GetCount(); k++ )
+            for (size_t k = 0; k < srcSpans.size(); k++)
             {
-                int m;
-                for( m = 0; m < srcEdgeVerts[k].GetCount(); m++ )
+                for (uint16_t srcEdgeVert : srcEdgeVerts[k])
                 {
-                    hsPoint3 srcPos = IPositionToNeutral(srcSpans[k], srcEdgeVerts[k][m]);
-                    hsVector3 srcNorm = INormalToNeutral(srcSpans[k], srcEdgeVerts[k][m]);
+                    hsPoint3 srcPos = IPositionToNeutral(srcSpans[k], srcEdgeVert);
+                    hsVector3 srcNorm = INormalToNeutral(srcSpans[k], srcEdgeVert);
 
                     float dist = hsVector3(&dstPos, &srcPos).MagnitudeSquared();
                     if( dist <= fDistTolSq )
@@ -220,7 +204,7 @@ void plAvMeshSmooth::Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstS
                             maxDot = currDot;
                             smoothNorm = srcNorm;
                             if( srcSpans[k].fAccSpan.AccessTri().HasDiffuse() )
-                                smoothDiff = srcSpans[k].fAccSpan.AccessTri().DiffuseRGBA(srcEdgeVerts[k][m]);
+                                smoothDiff = srcSpans[k].fAccSpan.AccessTri().DiffuseRGBA(srcEdgeVert);
                             else
                                 smoothDiff = dstDiff;
                         }
@@ -228,17 +212,13 @@ void plAvMeshSmooth::Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstS
                 }
             }
             if( fFlags & kSmoothPos )
-                dstTriSpan.Position(dstEdgeVerts[i][j]) = IPositionToSpan(dstSpans[i], smoothPos);
+                dstTriSpan.Position(dstEdgeVert) = IPositionToSpan(dstSpans[i], smoothPos);
             if( fFlags & kSmoothNorm )
-                dstTriSpan.Normal(dstEdgeVerts[i][j]) = INormalToSpan(dstSpans[i], smoothNorm);
+                dstTriSpan.Normal(dstEdgeVert) = INormalToSpan(dstSpans[i], smoothNorm);
             if( (fFlags & kSmoothDiffuse) && dstTriSpan.HasDiffuse() )
-                dstTriSpan.Diffuse32(dstEdgeVerts[i][j]) = smoothDiff.ToARGB32();
+                dstTriSpan.Diffuse32(dstEdgeVert) = smoothDiff.ToARGB32();
         }
-
     }
-
-    delete [] srcEdgeVerts;
-    delete [] dstEdgeVerts;
 }
 
 hsPoint3 plAvMeshSmooth::IPositionToNeutral(XfmSpan& span, int i) const

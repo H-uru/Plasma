@@ -43,38 +43,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDecalEnableMod_inc
 #define plDecalEnableMod_inc
 
-#include "hsTemplates.h"
+#include <vector>
+
 #include "pnModifier/plSingleModifier.h"
-#include "pnKeyedObject/plKey.h"
+
+class plKey;
 
 class plDecalEnableMod : public plSingleModifier
 {
 protected:
-    
-    hsTArray<plKey>     fDecalMgrs;
+    std::vector<plKey> fDecalMgrs;
 
     float            fWetLength;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
 
 public:
-    plDecalEnableMod();
-    virtual ~plDecalEnableMod();
+    plDecalEnableMod() : fWetLength() { }
 
     CLASSNAME_REGISTER( plDecalEnableMod );
     GETINTERFACE_ANY( plDecalEnableMod, plSingleModifier );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     void SetWetLength(float t) { fWetLength = t; }
     float GetWetLength() const { return fWetLength; }
 
-    void AddDecalKey(const plKey& k) { fDecalMgrs.Append(k); }
-    uint32_t GetNumDecalKeys() const { return fDecalMgrs.GetCount(); }
-    const plKey& GetDecalKey(int i) const { return fDecalMgrs[i]; }
+    void AddDecalKey(plKey k) { fDecalMgrs.emplace_back(std::move(k)); }
+    size_t GetNumDecalKeys() const { return fDecalMgrs.size(); }
+    const plKey& GetDecalKey(size_t i) const { return fDecalMgrs[i]; }
 };
 
 #endif // plDecalEnableMod_inc

@@ -40,11 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyGUIDialog.h"
+
+#include <string_theory/string>
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIDialog, pyGUIDialog);
@@ -54,7 +55,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIDialog)
 
 PYTHON_INIT_DEFINITION(ptGUIDialog, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -135,7 +136,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIDialog, isEnabled)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIDialog, getName)
 {
-    return PyString_FromString(self->fThis->GetName());
+    return PyUnicode_FromSTString(self->fThis->GetName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIDialog, getVersion)
@@ -159,9 +160,19 @@ PYTHON_METHOD_DEFINITION(ptGUIDialog, getControlFromIndex, args)
     return self->fThis->GetControl(index);
 }
 
+PYTHON_METHOD_DEFINITION(ptGUIDialog, getControlModFromIndex, args)
+{
+    unsigned long index;
+    if (!PyArg_ParseTuple(args, "l", &index)) {
+        PyErr_SetString(PyExc_TypeError, "getControlModFromIndex expects an unsigned long");
+        PYTHON_RETURN_ERROR;
+    }
+    return self->fThis->GetControlMod(index);
+}
+
 PYTHON_METHOD_DEFINITION(ptGUIDialog, setFocus, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "setFocus expects a ptKey");
@@ -192,6 +203,16 @@ PYTHON_METHOD_DEFINITION(ptGUIDialog, getControlFromTag, args)
         PYTHON_RETURN_ERROR;
     }
     return self->fThis->GetControlFromTag(tagID);
+}
+
+PYTHON_METHOD_DEFINITION(ptGUIDialog, getControlModFromTag, args)
+{
+    unsigned long tagID;
+    if (!PyArg_ParseTuple(args, "l", &tagID)) {
+        PyErr_SetString(PyExc_TypeError, "getControlModFromTag expects an unsigned long");
+        PYTHON_RETURN_ERROR;
+    }
+    return self->fThis->GetControlModFromTag(tagID);
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIDialog, getForeColor)
@@ -292,12 +313,14 @@ PYTHON_START_METHODS_TABLE(ptGUIDialog)
     PYTHON_METHOD_NOARGS(ptGUIDialog, getVersion, "UNKNOWN"),
     PYTHON_METHOD_NOARGS(ptGUIDialog, getNumControls, "Returns the number of controls in this dialog"),
     PYTHON_METHOD(ptGUIDialog, getControlFromIndex, "Params: index\nReturns the ptKey of the control with the specified index (not tag ID!)"),
+    PYTHON_METHOD(ptGUIDialog, getControlModFromIndex, "Params: index\nReturns the ptGUIControl with the specified index (not tag ID!)"),
     PYTHON_METHOD(ptGUIDialog, setFocus, "Params: ctrlKey\nSets the control that has input focus"),
     PYTHON_BASIC_METHOD(ptGUIDialog, noFocus, "Makes sure no control has input focus"),
     PYTHON_BASIC_METHOD(ptGUIDialog, show, "Shows the dialog"),
     PYTHON_BASIC_METHOD(ptGUIDialog, showNoReset, "Show dialog without resetting clickables"),
     PYTHON_BASIC_METHOD(ptGUIDialog, hide, "Hides the dialog"),
     PYTHON_METHOD(ptGUIDialog, getControlFromTag, "Params: tagID\nReturns the ptKey of the control with the specified tag ID"),
+    PYTHON_METHOD(ptGUIDialog, getControlModFromTag, "Params: tagID\nReturns the ptGUIControl with the specified tag ID"),
     PYTHON_METHOD_NOARGS(ptGUIDialog, getForeColor, "Returns the fore color as a ptColor object"),
     PYTHON_METHOD_NOARGS(ptGUIDialog, getSelectColor, "Returns the select color as a ptColor object"),
     PYTHON_METHOD_NOARGS(ptGUIDialog, getBackColor, "Returns the back color as a ptColor object"),
@@ -313,11 +336,12 @@ PYTHON_START_METHODS_TABLE(ptGUIDialog)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-#define ptGUIDialog_COMPARE         PYTHON_NO_COMPARE
 #define ptGUIDialog_AS_NUMBER       PYTHON_NO_AS_NUMBER
 #define ptGUIDialog_AS_SEQUENCE     PYTHON_NO_AS_SEQUENCE
 #define ptGUIDialog_AS_MAPPING      PYTHON_NO_AS_MAPPING
 #define ptGUIDialog_STR             PYTHON_NO_STR
+#define ptGUIDialog_GETATTRO        PYTHON_NO_GETATTRO
+#define ptGUIDialog_SETATTRO        PYTHON_NO_SETATTRO
 #define ptGUIDialog_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptGUIDialog)
 #define ptGUIDialog_GETSET          PYTHON_NO_GETSET
 #define ptGUIDialog_BASE            PYTHON_NO_BASE
@@ -328,15 +352,15 @@ PYTHON_CLASS_NEW_IMPL(ptGUIDialog, pyGUIDialog)
 
 PyObject *pyGUIDialog::New(pyKey& gckey)
 {
-    ptGUIDialog *newObj = (ptGUIDialog*)ptGUIDialog_type.tp_new(&ptGUIDialog_type, NULL, NULL);
+    ptGUIDialog *newObj = (ptGUIDialog*)ptGUIDialog_type.tp_new(&ptGUIDialog_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIDialog::New(plKey objkey)
 {
-    ptGUIDialog *newObj = (ptGUIDialog*)ptGUIDialog_type.tp_new(&ptGUIDialog_type, NULL, NULL);
-    newObj->fThis->fGCkey = objkey;
+    ptGUIDialog *newObj = (ptGUIDialog*)ptGUIDialog_type.tp_new(&ptGUIDialog_type, nullptr, nullptr);
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 
@@ -356,7 +380,7 @@ void pyGUIDialog::AddPlasmaClasses(PyObject *m)
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtWhatGUIControlType, args, "Params: guiKey\nReturns the control type of the key passed in")
 {
-    PyObject* guiKeyObj = NULL;
+    PyObject* guiKeyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &guiKeyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtWhatGUIControlType expects a ptKey");
@@ -368,17 +392,19 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtWhatGUIControlType, args, "Params: guiKey\nRet
         PYTHON_RETURN_ERROR;
     }
     pyKey* guiKey = pyKey::ConvertFrom(guiKeyObj);
-    return PyLong_FromUnsignedLong(pyGUIDialog::WhatControlType(*guiKey));
+    return PyLong_FromUnsignedLong(pyGUIDialog::WhatControlType(guiKey->getKey()));
 }
 
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtGUICursorOff, pyGUIDialog::GUICursorOff, "Turns the GUI cursor off")
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtGUICursorOn, pyGUIDialog::GUICursorOn, "Turns the GUI cursor on")
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtGUICursorDimmed, pyGUIDialog::GUICursorDimmed, "Dimms the GUI cursor")
 
-void pyGUIDialog::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void pyGUIDialog::AddPlasmaMethods(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD(methods, PtWhatGUIControlType);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtGUICursorOff);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtGUICursorOn);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtGUICursorDimmed);
+    PYTHON_START_GLOBAL_METHOD_TABLE(ptGUIDialog)
+        PYTHON_GLOBAL_METHOD(PtWhatGUIControlType)
+        PYTHON_BASIC_GLOBAL_METHOD(PtGUICursorOff)
+        PYTHON_BASIC_GLOBAL_METHOD(PtGUICursorOn)
+        PYTHON_BASIC_GLOBAL_METHOD(PtGUICursorDimmed)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, ptGUIDialog)
 }

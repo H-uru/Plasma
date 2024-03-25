@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plMaxNode.h"
 
 #include "resource.h"
-#pragma hdrstop
 
 #include "plClickableComponent.h"
 
@@ -100,69 +99,69 @@ ParamBlockDesc2 gClickableBlock
 (
     plComponent::kBlkComp, _T("clickable"), 0, &gClickableDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_DETECTOR_CLICKABLE, IDS_COMP_DETECTOR_CLICKABLE, 0, 0, NULL,
+    IDD_COMP_DETECTOR_CLICKABLE, IDS_COMP_DETECTOR_CLICKABLE, 0, 0, nullptr,
 
     kClickableDirectional,      _T("directional"),      TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_CLICK_OMNI,
-        end,
+        p_end,
 
     kClickableDegrees, _T("degrees"),   TYPE_INT,   P_ANIMATABLE, 0,    
         p_range, 1, 180,
         p_default, 180,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_INT, 
         IDC_COMP_CLICK_DEG, IDC_COMP_CLICK_DEGSPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kClickableUseProxy,     _T("useProxy"),     TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_CLICK_USEPROXY,
         p_enable_ctrls, 1, kClickableProxy,
-        end,
+        p_end,
         
 
     kClickableProxy, _T("proxyPrimitave"),  TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CLICK_PROXY,
 //      p_sclassID,  GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
 
     kClickableProxyRegion, _T("proxyRegion"),   TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CLICK_PROXYREGION,
 //      p_sclassID,  GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
     
     kClickableOneShot,      _T("oneshot"),      TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_ONESHOT,
-        end,
+        p_end,
 
     kClickableBoundsType,   _T("BoundingConditions"),       TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4, IDC_RADIO_BSPHERE, IDC_RADIO_BBOX, IDC_RADIO_BHULL, IDC_RADIO_PICKSTATE,
         p_vals,                     plSimDefs::kSphereBounds,       plSimDefs::kBoxBounds,      plSimDefs::kHullBounds,     plSimDefs::kProxyBounds,
         p_default, plSimDefs::kHullBounds,
-        end,
+        p_end,
 
     kClickableEnabled,      _T("enabled"),      TYPE_BOOL,          0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_ENABLED,
         p_default, TRUE,
-        end,
+        p_end,
 
     kClickablePhysical,     _T("physical"),     TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COLLIDABLE_CHECK,
         p_default, TRUE,
-        end,
+        p_end,
 
     kClickableIgnoreProxyRegion, _T("ignoreProxyRegion"), TYPE_BOOL,    0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_IGNORE_REGION_CHECK,
         p_default, FALSE,
-        end,
+        p_end,
 
     kClickableFriction, _T("friction"), TYPE_FLOAT, 0, 0,   
         p_range, 0.0f, FLT_MAX,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_CLICKABLE_FRIC_EDIT1,  IDC_COMP_CLICKABLE_FRIC_SPIN1, SPIN_AUTOSCALE,
-        end,
-    end
+        p_end,
+    p_end
 );
 
 plClickableComponent::plClickableComponent()
@@ -292,11 +291,14 @@ bool plClickableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         clickProxyNode = (plMaxNode*)fCompPB->GetINode(kClickableProxy);
         if (!clickProxyNode || !clickProxyNode->CanConvert())
         {
-            pErrMsg->Set(true,
-                        "Clickable Error",
-                        "The Clickable '%s' on node '%s' is set to use a proxy but doesn't have one, or it didn't convert.\n"
-                        "The node the Clickable is attached to will be used instead.",
-                        GetINode()->GetName(), node->GetName()).Show();
+            pErrMsg->Set(
+                true, "Clickable Error",
+                ST::format(
+                    "The Clickable '{}' on node '{}' is set to use a proxy but doesn't have one, or it didn't convert.\n"
+                    "The node the Clickable is attached to will be used instead.",
+                    GetINode()->GetName(), node->GetName()
+                )
+            ).Show();
             pErrMsg->Set(false);
 
             clickProxyNode = node;
@@ -306,11 +308,15 @@ bool plClickableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plMaxNode* detectNode = (plMaxNode*)fCompPB->GetINode(kClickableProxyRegion);
     if ((!detectNode || !detectNode->CanConvert()) && (!ignoreProxyRegion))
     {
-        pErrMsg->Set(true,
-                    "Clickable Error",
-                    "The Clickable '%s' on node '%s' has a required region that is missing, or didn't convert.\n"
-                    "The export will be aborted.",
-                    GetINode()->GetName(), node->GetName()).Show();
+        pErrMsg->Set(
+            true,
+            "Clickable Error",
+            ST::format(
+                "The Clickable '{}' on node '{}' has a required region that is missing, or didn't convert.\n"
+                "The export will be aborted.",
+                GetINode()->GetName(), node->GetName()
+            )
+        ).Show();
         return false;
     }
 
@@ -325,13 +331,13 @@ bool plClickableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if (fCompPB->GetInt(kClickableOneShot))
         logic->SetFlag(plLogicModBase::kOneShot);
 
-    hsTArray<plKey> receivers;
+    std::vector<plKey> receivers;
     IGetReceivers(node, receivers);
-    for (int i = 0; i < receivers.Count(); i++)
-        logic->AddNotifyReceiver(receivers[i]);
+    for (const plKey& receiver : receivers)
+        logic->AddNotifyReceiver(receiver);
 
         // Create the detector
-    plDetectorModifier *detector = nil;
+    plDetectorModifier *detector = nullptr;
     detector = new plPickingDetector;
 
     // Register the detector
@@ -369,7 +375,7 @@ bool plClickableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     int deg = fCompPB->GetInt(kClickableDegrees);
     if (deg > 180)
         deg = 180;
-    float rad = hsDegreesToRadians(deg);
+    float rad = hsDegreesToRadians(float(deg));
     facingCond->SetTolerance(cos(rad));
     plKey facingKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), facingCond, loc);
     
@@ -398,13 +404,13 @@ class plNoBlkClickableComponent : public plComponent
 {
 public:
     plNoBlkClickableComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
-    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; } 
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override { return true; }
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override { return true; }
 
-    virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
+    void CollectNonDrawables(INodeTab& nonDrawables) override { AddTargetsToList(nonDrawables); }
 };
 
 OBSOLETE_CLASS_DESC(plNoBlkClickableComponent, gNoBlkClickableDesc, "(ex)Non Physical Clickable Proxy",  "(ex)Non Physical Clickable Proxy", COMP_TYPE_PHYSICAL, Class_ID(0x66325afc, 0x253a3760))
@@ -413,7 +419,7 @@ ParamBlockDesc2 gNoBlkClickableBlock
 (
     plComponent::kBlkComp, _T("NonPhysicalClickableProxy"), 0, &gNoBlkClickableDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 
-    end
+    p_end
 );
 
 plNoBlkClickableComponent::plNoBlkClickableComponent()

@@ -46,14 +46,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMiscComponents.h"
 #include "MaxMain/plMaxNodeBase.h"
 
-#include <CS/bipexp.h>
-#include <decomp.h>
-#include <windowsx.h>
+#include "MaxMain/MaxAPI.h"
 
 #include <map>
 #include <vector>
 #include "resource.h"
-#pragma hdrstop
 
 #include "BipedKiller.h"
 #include "plTransform/hsAffineParts.h"
@@ -144,7 +141,7 @@ void RemoveBiped(INode *bipRoot, Interface *theInterface)
     SetDefaultController(CTRL_POSITION_CLASS_ID, posCtrl);
     SetDefaultController(CTRL_SCALE_CLASS_ID, scaleCtrl);
 
-    ProcessNodeRecurse(bipRoot, nil, theInterface);
+    ProcessNodeRecurse(bipRoot, nullptr, theInterface);
 
     //deinit
     ResumeAnimate();
@@ -174,13 +171,13 @@ void ProcessNodeRecurse(INode *node, INode *parent, Interface *theInterface)
 void ProcessBipedNodeRecurse(INode *bipNode, INode *parent, Interface *theInterface)
 {
     int numChildren = bipNode->NumberOfChildren();
-    char *bipName = bipNode ? bipNode->GetName() : nil;
-    INode *replacement = nil;
+    auto bipName = bipNode ? bipNode->GetName() : nullptr;
+    INode *replacement = nullptr;
 
     for (int i = 0; i < numChildren; i++)
     {
         INode *child = bipNode->GetChildNode(i);
-        char *childName = child ? child->GetName() : nil;
+        auto childName = child ? child->GetName() : nullptr;
 
         if( ! HasBipController(child) )
         {
@@ -223,9 +220,9 @@ void ProcessBipedNodeRecurse(INode *bipNode, INode *parent, Interface *theInterf
         }
     } else {
         // this is an error condition: we've got a bip node that has no non-bip child for us to promote
-        char buf[256];
-        sprintf(buf, "Couldn't find non-bip node to transfer motion to for bip node %s\n", bipNode->GetName());
-        hsStatusMessage(buf);
+        TCHAR buf[256];
+        _sntprintf(buf, std::size(buf), _T("Couldn't find non-bip node to transfer motion to for bip node %s\n"), bipNode->GetName());
+        OutputDebugString(buf);
     }
 }
 
@@ -275,7 +272,7 @@ void AdjustRotKeys(INode *node)
 // *** todo: generalize this for rotation keys as well.
 int CompareKeys(ILinPoint3Key &a, ILinPoint3Key &b)
 {
-    int result = a.val.Equals(b.val, .001);
+    int result = a.val.Equals(b.val, .001f);
 #if 0
     hsStatusMessageF("COMPAREKEYS(point): (%f %f %f) vs (%f, %f, %f) = %s\n", a.val.x, a.val.y, a.val.z, b.val.x, b.val.y, b.val.z, result ? "yes" : "no");
 #endif
@@ -378,7 +375,7 @@ bool HasBipController(INode* node)
     if (!node)
         return false;
     Control* c = node->GetTMController();
-    if (c && ((c->ClassID()== BIPSLAVE_CONTROL_CLASS_ID) ||
+    if (c && ((c->ClassID()== BIPDRIVEN_CONTROL_CLASS_ID) ||
         (c->ClassID()== BIPBODY_CONTROL_CLASS_ID) || 
         (c->ClassID()== FOOTPRINT_CLASS_ID)) )
         return true;

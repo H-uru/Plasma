@@ -40,17 +40,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <vector>
+
 #include "HeadSpin.h"
 #include "hsResMgr.h"
-#include "hsTemplates.h"
 
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "MaxMain/plMaxNode.h"
+#include "MaxMain/MaxAPI.h"
 
-#include <iparamm2.h>
 #include "resource.h"
-#pragma hdrstop
 
 #include "plResMgr/plKeyFinder.h"
 #include "plResMgr/plPageInfo.h"
@@ -95,7 +95,7 @@ public:
     converts.
     */
 
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (id == plClothingComponent::kMeshNodeAddBtn)
         {
@@ -127,30 +127,30 @@ ParamBlockDesc2 gClothingBk
     IDD_COMP_CLOTHING, IDS_COMP_CLOTHING, 0, 0, &gClothingComponentProc,
 
     plClothingComponent::kMaterials,    _T("ClothingMaterials"),    TYPE_MTL_TAB, 0,    0, 0,   
-        end,
+        p_end,
         
     plClothingComponent::kGroup,    _T("ClothingGroup"),    TYPE_INT, 0, 0,
-        end,
+        p_end,
         
     plClothingComponent::kType,     _T("ClothingType"),     TYPE_INT, 0, 0,
-        end,
+        p_end,
 
     plClothingComponent::kLODState, _T("LODState"),     TYPE_INT,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     plClothingComponent::kMeshNodeTab,  _T("MeshObject"),   TYPE_INODE_TAB, plLODAvatarComponent::kMaxNumLODLevels,     0, 0,
         p_accessor,     &gClothingAccessor,
-        end,
+        p_end,
 
     plClothingComponent::kMeshNodeAddBtn, _T("MshNodePicker"),  TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_LOD_CLOTHING_MESH_PICKB,
         p_sclassID, GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_AVATAR_PROXYS,
         p_accessor, &gClothingAccessor,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plClothingComponent::plClothingComponent()
@@ -165,9 +165,9 @@ bool plClothingComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
     for (i = 0; i < fCompPB->Count(kMeshNodeTab); i++)
     {
         plMaxNode *LODNode = (plMaxNode *)fCompPB->GetINode(kMeshNodeTab, 0, i);
-        if (LODNode != nil)
+        if (LODNode != nullptr)
         {
-            char *dbgNodeName = LODNode->GetName();
+            auto dbgNodeName = LODNode->GetName();
             //LODNode->SetCanConvert(false);
             LODNode->SetDrawable(false);
             LODNode->SetForceShadow(true);
@@ -192,11 +192,11 @@ bool plClothingComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    int i, j;
-    hsTArray<plGeometrySpan*> spanArray;
-    hsTArray<plKey> keys;
-    plMaxNode *LODNode = nil;
-    plMaxNode *locationNode = nil;
+    int i;
+    std::vector<plGeometrySpan*> spanArray;
+    std::vector<plKey> keys;
+    plMaxNode *LODNode = nullptr;
+    plMaxNode *locationNode = nullptr;
 
 
     if (fCompPB->Count(plClothingComponent::kMaterials) <= 0)
@@ -204,13 +204,13 @@ bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     for (i = 0; i < fCompPB->Count(kMeshNodeTab); i++)
     {
-        spanArray.Reset();
+        spanArray.clear();
         //plSharedMesh *mesh = new plSharedMesh;
         LODNode = (plMaxNode *)fCompPB->GetINode(kMeshNodeTab, 0, i);
-        if (LODNode != nil)
+        if (LODNode != nullptr)
         {
-            char *dbgNodeName = LODNode->GetName();
-            keys.Append(LODNode->GetSwappableGeom()->GetKey());
+            auto dbgNodeName = LODNode->GetName();
+            keys.emplace_back(LODNode->GetSwappableGeom()->GetKey());
             locationNode = LODNode;
 
             if (fCompPB->GetInt(ParamID(kType)) != plClothingMgr::kTypeFace)
@@ -227,7 +227,7 @@ bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
         else
         {
-            keys.Append(nil);
+            keys.emplace_back();
             //delete mesh;
         }
     }
@@ -243,9 +243,9 @@ bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         cloth->fType = fCompPB->GetInt(ParamID(kType));
 
         plGenRefMsg *refMsg;
-        for (j = 0; j < keys.GetCount(); j++)
+        for (size_t j = 0; j < keys.size(); j++)
         {
-            if (keys[j] != nil)
+            if (keys[j] != nullptr)
             {
                 refMsg = new plGenRefMsg(cloth->GetKey(), plRefMsg::kOnCreate, j, -1);
                 hsgResMgr::ResMgr()->AddViaNotify(keys[j], refMsg, plRefFlags::kActiveRef);
@@ -257,7 +257,7 @@ bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-BOOL plClothingComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plClothingComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     IParamBlock2 *pb = pm->GetParamBlock();
     HWND hList = GetDlgItem(hWnd, IDC_CLOTHING_LIST);
@@ -276,16 +276,16 @@ BOOL plClothingComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UI
             ListBox_SetCurSel(hList, -1);
 
             for (i = 0; i < plClothingMgr::kMaxGroup; i++)
-                ComboBox_AddString(hGroup, plClothingMgr::GroupStrings[i]);
+                ComboBox_AddString(hGroup, ST2T(plClothingMgr::GroupStrings[i]));
             ComboBox_SetCurSel(hGroup, pb->GetInt(plClothingComponent::kGroup));
 
             for (i = 0; i < plClothingMgr::kMaxType; i++)
-                ComboBox_AddString(hType, plClothingMgr::TypeStrings[i]);
+                ComboBox_AddString(hType, ST2T(plClothingMgr::TypeStrings[i]));
             ComboBox_SetCurSel(hType, pb->GetInt(plClothingComponent::kType));
 
-            ComboBox_AddString(hLOD, "High");
-            ComboBox_AddString(hLOD, "Medium");
-            ComboBox_AddString(hLOD, "Low");
+            ComboBox_AddString(hLOD, _T("High"));
+            ComboBox_AddString(hLOD, _T("Medium"));
+            ComboBox_AddString(hLOD, _T("Low"));
             ComboBox_SetCurSel(hLOD, pb->GetInt(plClothingComponent::kLODState));
         }
         return TRUE;
@@ -297,7 +297,7 @@ BOOL plClothingComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UI
             if (LOWORD(wParam) == IDC_CLOTHING_ADD)
             {
                 Mtl *pickedMtl = plPickMaterialMap::PickMaterial(plMtlCollector::kClothingMtlOnly);
-                if (pickedMtl != nil)
+                if (pickedMtl != nullptr)
                 {
                     LRESULT stringIdx = ListBox_FindStringExact(hList, -1, pickedMtl->GetName());
                     if (stringIdx == LB_ERR) // It's not already there, go and add it
@@ -322,7 +322,7 @@ BOOL plClothingComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UI
             else if( LOWORD( wParam ) == IDC_CLOTHING_CLEARMESH )
             {
                 int state = pb->GetInt(plClothingComponent::kLODState);
-                pb->SetValue(plClothingComponent::kMeshNodeTab, 0, (INode*)nil, state );
+                pb->SetValue(plClothingComponent::kMeshNodeTab, 0, (INode*)nullptr, state);
                 pb->Reset(plClothingComponent::kMeshNodeAddBtn);
             }
         }
@@ -350,7 +350,7 @@ BOOL plClothingComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UI
 
             if(LOWORD(wParam) == IDC_COMP_LOD_CLOTHING_STATE && HIWORD(wParam) == CBN_SELCHANGE)
             {
-                int idx = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+                int idx = (int)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
                 pb->SetValue(plClothingComponent::kLODState, 0, idx);
             
                 node = pb->GetINode(plClothingComponent::kMeshNodeTab, 0, idx);

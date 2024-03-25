@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plVaultNotifyMsg_h_inc
 
 #include "pnMessage/plMessage.h"
+#include "pnNetBase/pnNbError.h"
 #include "plNetCommon/plNetCommonHelpers.h"
 #include "plNetCommon/plNetCommon.h"
 
@@ -50,7 +51,7 @@ class plVaultNotifyMsg : public plMessage
 {
     uint16_t                fType;
     plCreatableListHelper   fArgs;
-    int8_t                  fResultCode;
+    ENetError               fResultCode;
 
 public:
     enum VaultNotifyTypes
@@ -75,14 +76,14 @@ public:
     uint16_t  GetType() const { return fType; }
     void      SetType( uint16_t v ) { fType=v; }
 
-    int8_t  GetResultCode() const { return fResultCode; }
-    void    SetResultCode( int8_t v ) { fResultCode=v; }
+    ENetError GetResultCode() const { return fResultCode; }
+    void SetResultCode(ENetError resultCode) { fResultCode = resultCode; }
 
     plCreatableListHelper * GetArgs() { return &fArgs; }
     const plCreatableListHelper * GetArgs() const { return &fArgs; }
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plVaultNotifyMsg_h_inc

@@ -45,18 +45,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include <list>
 
-struct pyAlarm;
 typedef struct _object PyObject;
+
 class pyAlarmMgr
 {
-    typedef std::list<pyAlarm*> Alarms;
-    Alarms  fAlarms;
+    struct Alarm
+    {
+        double  fStart;
+        float   fSecs;
+        PyObject* fCb;
+        uint32_t  fCbContext;
+
+        Alarm(double start, float secs, PyObject* cb, uint32_t cbContext);
+        ~Alarm();
+        bool MaybeFire(double secs);
+        void Fire();
+    };
+
+    std::list<Alarm>  fAlarms;
+
 public:
-    ~pyAlarmMgr();
     static pyAlarmMgr * GetInstance();
-    void    Update( double secs );
-    void    SetAlarm( float secs, PyObject * cb, uint32_t cbContext );
-    void    Clear();
+    void    Update(double secs);
+    void    SetAlarm(float secs, PyObject* cb, uint32_t cbContext);
+    void    Clear() { fAlarms.clear(); }
 };
 
 

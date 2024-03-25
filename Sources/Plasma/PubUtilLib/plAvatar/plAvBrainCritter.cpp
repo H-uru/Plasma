@@ -40,33 +40,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plPhysicalControllerCore.h"
 #include "plAvBrainCritter.h"
-#include "plAvBrainHuman.h"
-#include "plArmatureMod.h"
-#include "plAvBehaviors.h"
-#include "plAnimation/plAGAnim.h"
-#include "plAnimation/plAGAnimInstance.h"
-#include "plAvatarMgr.h"
 
 #include "plgDispatch.h"
 
-#include "plMessage/plAIMsg.h"
+#include <string_theory/formatter>
+#include <utility>
 
-#include "plPipeline/plDebugText.h"
-#include "pnSceneObject/plCoordinateInterface.h"
+#include "plArmatureMod.h"
+#include "plAvatarMgr.h"
+#include "plAvBehaviors.h"
+#include "plAvBrainHuman.h"
+#include "plAvDefs.h"
+#include "plPhysicalControllerCore.h"
+
 #include "pnEncryption/plRandom.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+
+#include "plAnimation/plAGAnim.h"
+#include "plAnimation/plAGAnimInstance.h"
+#include "plAnimation/plAGModifier.h"
+
+#include "plMessage/plAIMsg.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetTransport/plNetTransportMember.h"
+#include "plPipeline/plDebugText.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static plRandom sRandom; // random number generator
+plRandom plAvBrainCritter::sRandom; // random number generator
 
-const char kDefaultIdleAnimName[] = "Idle";
-const char kDefaultIdleBehName[] = "Idle";
-const char kDefaultRunAnimName[] = "Run";
-const char kDefaultRunBehName[] = "Run";
+const ST::string kDefaultIdleAnimName = ST_LITERAL("Idle");
+const ST::string kDefaultIdleBehName = ST_LITERAL("Idle");
+const ST::string kDefaultRunAnimName = ST_LITERAL("Run");
+const ST::string kDefaultRunBehName = ST_LITERAL("Run");
 
 const float kLoudSoundMultiplyer = 2.0f;
 
@@ -77,8 +84,8 @@ class CritterBehavior : public plArmatureBehavior
     friend class plAvBrainCritter;
 
 public: 
-    CritterBehavior(const std::string& name, bool randomStart = false, float fadeInLength = 2.f, float fadeOutLength = 2.f) : plArmatureBehavior(),
-        fAvMod(nil), fCritterBrain(nil), fName(name), fRandomStartPoint(randomStart), fFadeInLength(fadeInLength), fFadeOutLength(fadeOutLength) {}
+    CritterBehavior(ST::string name, bool randomStart = false, float fadeInLength = 2.f, float fadeOutLength = 2.f) : plArmatureBehavior(),
+        fAvMod(), fCritterBrain(), fName(std::move(name)), fRandomStartPoint(randomStart), fFadeInLength(fadeInLength), fFadeOutLength(fadeOutLength) { }
     virtual ~CritterBehavior() {}
 
     void Init(plAGAnim* anim, bool loop, plAvBrainCritter* brain, plArmatureMod* body, uint8_t index)
@@ -94,20 +101,20 @@ public:
     float GetAnimLength() {return (fAnim->GetAnimation()->GetLength());}
     void SetAnimTime(float time) {fAnim->SetCurrentTime(time, true);}
 
-    std::string Name() const {return fName;}
-    plString AnimName() const {return fAnimName;}
+    ST::string Name() const {return fName;}
+    ST::string AnimName() const {return fAnimName;}
     bool RandomStartPoint() const {return fRandomStartPoint;}
     float FadeInLength() const {return fFadeInLength;}
     float FadeOutLength() const {return fFadeOutLength;}
 
 protected:
-    virtual void IStart()
+    void IStart() override
     {
         plArmatureBehavior::IStart();
         fAvMod->SynchIfLocal(hsTimer::GetSysSeconds(), false);
     }
 
-    virtual void IStop()
+    void IStop() override
     {
         plArmatureBehavior::IStop();
         fAvMod->SynchIfLocal(hsTimer::GetSysSeconds(), false);
@@ -116,8 +123,8 @@ protected:
     plArmatureMod *fAvMod;
     plAvBrainCritter *fCritterBrain;
 
-    std::string fName; // user-created name for this behavior, also used as the index into the brain's behavior map
-    plString fAnimName; // physical animation's name, for reference
+    ST::string fName; // user-created name for this behavior, also used as the index into the brain's behavior map
+    ST::string fAnimName; // physical animation's name, for reference
     bool fRandomStartPoint; // do we want this behavior to start at a random frame every time we start it?
     float fFadeInLength; // how long to fade in this behavior
     float fFadeOutLength; // how long to fade out this behavior
@@ -125,26 +132,27 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-plAvBrainCritter::plAvBrainCritter(): fWalkingStrategy(nil), fCurMode(kIdle), fNextMode(kIdle), fFadingNextBehavior(true),
-    fAvoidingAvatars(false), fFinalGoalPos(0, 0, 0), fImmediateGoalPos(0, 0, 0), fDotGoal(0),
-    fAngRight(0)
+plAvBrainCritter::plAvBrainCritter()
+    : fWalkingStrategy(), fCurMode(kIdle), fNextMode(kIdle),
+      fFadingNextBehavior(true), fAvoidingAvatars(), fDotGoal(),
+      fAngRight()
 {
-    SightCone(M_PI/2); // 90deg
-    StopDistance(1);
-    SightDistance(10);
-    HearingDistance(10);
+    SightCone(hsConstants::half_pi<float>); // 90deg
+    StopDistance(1.f);
+    SightDistance(10.f);
+    HearingDistance(10.f);
 }
 
 plAvBrainCritter::~plAvBrainCritter()
 {
-    for (int i = 0; i < fBehaviors.GetCount(); ++i)
+    for (size_t i = 0; i < fBehaviors.size(); ++i)
     {
         delete fBehaviors[i];
-        fBehaviors[i] = nil;
+        fBehaviors[i] = nullptr;
     }
 
     delete fWalkingStrategy;
-    fWalkingStrategy = nil;
+    fWalkingStrategy = nullptr;
 
     fUserBehaviors.clear();
     fReceivers.clear();
@@ -233,25 +241,25 @@ plSceneObject* plAvBrainCritter::GetTarget() const
 {
     if (fArmature)
         return fArmature->GetTarget(0);
-    return nil;
+    return nullptr;
 }
 
-void plAvBrainCritter::AddBehavior(const std::string& animationName, const std::string& behaviorName, bool loop /* = true */, bool randomStartPos /* = true */,
+void plAvBrainCritter::AddBehavior(const ST::string& animationName, const ST::string& behaviorName, bool loop /* = true */, bool randomStartPos /* = true */,
                  float fadeInLen /* = 2.f */, float fadeOutLen /* = 2.f */)
 {
     // grab the animations
-    plAGAnim* anim = fAvMod->FindCustomAnim(animationName.c_str());
+    plAGAnim* anim = fAvMod->FindCustomAnim(animationName);
     if (!anim)
         return; // can't find it, die
 
     // create the behavior and set it up
     CritterBehavior* behavior = new CritterBehavior(behaviorName, randomStartPos, fadeInLen, fadeOutLen);
-    fBehaviors.Push(behavior);
-    behavior->Init(anim, loop, this, fAvMod, fBehaviors.Count() - 1);
-    fUserBehaviors[behaviorName].push_back(fBehaviors.Count() - 1);
+    fBehaviors.emplace_back(behavior);
+    behavior->Init(anim, loop, this, fAvMod, fBehaviors.size() - 1);
+    fUserBehaviors[behaviorName].push_back(fBehaviors.size() - 1);
 }
 
-void plAvBrainCritter::StartBehavior(const std::string& behaviorName, bool fade /* = true */)
+void plAvBrainCritter::StartBehavior(const ST::string& behaviorName, bool fade /* = true */)
 {
     // make sure the new behavior exists
     if (fUserBehaviors.find(behaviorName) == fUserBehaviors.end())
@@ -269,10 +277,10 @@ void plAvBrainCritter::StartBehavior(const std::string& behaviorName, bool fade 
     fNextMode = IPickBehavior(behaviorName);
 }
 
-bool plAvBrainCritter::RunningBehavior(const std::string& behaviorName) const
+bool plAvBrainCritter::RunningBehavior(const ST::string& behaviorName) const
 {
     // make sure the behavior exists
-    std::map<std::string, std::vector<int> >::const_iterator behaviorIterator = fUserBehaviors.find(behaviorName);
+    auto behaviorIterator = fUserBehaviors.find(behaviorName);
     if (behaviorIterator == fUserBehaviors.end())
         return false;
     else
@@ -282,7 +290,7 @@ bool plAvBrainCritter::RunningBehavior(const std::string& behaviorName) const
     }
 
     // check all behaviors that use this tag and return true if we are running one of them
-    for (unsigned i = 0; i < behaviorIterator->second.size(); ++i)
+    for (size_t i = 0; i < behaviorIterator->second.size(); ++i)
     {
         if (fCurMode == behaviorIterator->second[i])
             return true;
@@ -290,26 +298,26 @@ bool plAvBrainCritter::RunningBehavior(const std::string& behaviorName) const
     return false;
 }
 
-std::string plAvBrainCritter::BehaviorName(int behavior) const
+ST::string plAvBrainCritter::BehaviorName(int behavior) const
 {
-    if ((behavior >= fBehaviors.Count()) || (behavior < 0))
-        return "";
+    if ((behavior < 0) || ((size_t)behavior >= fBehaviors.size()))
+        return {};
     return ((CritterBehavior*)fBehaviors[behavior])->Name();
 }
 
-plString plAvBrainCritter::AnimationName(int behavior) const
+ST::string plAvBrainCritter::AnimationName(int behavior) const
 {
-    if ((behavior >= fBehaviors.Count()) || (behavior < 0))
-        return "";
+    if ((behavior < 0) || ((size_t)behavior >= fBehaviors.size()))
+        return {};
     return ((CritterBehavior*)fBehaviors[behavior])->AnimName();
 }
 
-std::string plAvBrainCritter::IdleBehaviorName() const
+ST::string plAvBrainCritter::IdleBehaviorName() const
 {
     return kDefaultIdleBehName;
 }
 
-std::string plAvBrainCritter::RunBehaviorName() const
+ST::string plAvBrainCritter::RunBehaviorName() const
 {
     return kDefaultRunBehName;
 }
@@ -341,7 +349,9 @@ void plAvBrainCritter::SightCone(float coneRad)
     fSightConeAngle = coneRad;
 
     // calculate the minimum dot product for the cone of sight (angle/2 vector dotted with straight ahead)
-    hsVector3 straightVector(1, 0, 0), viewVector(1, 0, 0), up(0, 1, 0);
+    hsVector3 straightVector(1.f, 0.f, 0.f);
+    hsVector3 viewVector(1.f, 0.f, 0.f);
+    hsVector3 up(0.f, 1.f, 0.f);
     hsQuat rotation(fSightConeAngle/2, &up);
     viewVector = hsVector3(rotation.Rotate(&viewVector));
     viewVector.Normalize();
@@ -399,7 +409,7 @@ hsVector3 plAvBrainCritter::VectorToPlayer(unsigned long id) const
 {
     plArmatureMod* avatar = plAvatarMgr::GetInstance()->FindAvatarByPlayerID(id);
     if (!avatar)
-        return hsVector3(0, 0, 0);
+        return {};
 
     hsPoint3 avPos;
     hsQuat avRot;
@@ -412,17 +422,17 @@ hsVector3 plAvBrainCritter::VectorToPlayer(unsigned long id) const
     return hsVector3(creaturePos - avPos);
 }
 
-void plAvBrainCritter::AddReceiver(const plKey key)
+void plAvBrainCritter::AddReceiver(plKey key)
 {
     for (unsigned i = 0; i < fReceivers.size(); ++i)
     {
         if (fReceivers[i] == key)
             return; // already in our list
     }
-    fReceivers.push_back(key);
+    fReceivers.emplace_back(std::move(key));
 }
 
-void plAvBrainCritter::RemoveReceiver(const plKey key)
+void plAvBrainCritter::RemoveReceiver(const plKey& key)
 {
     for (unsigned i = 0; i < fReceivers.size(); ++i)
     {
@@ -437,19 +447,19 @@ void plAvBrainCritter::RemoveReceiver(const plKey key)
 
 void plAvBrainCritter::DumpToDebugDisplay(int& x, int& y, int lineHeight, plDebugText& debugTxt)
 {
-    debugTxt.DrawString(x, y, "Brain type: Critter", 0, 255, 255);
+    debugTxt.DrawString(x, y, ST_LITERAL("Brain type: Critter"), 0, 255, 255);
     y += lineHeight;
 
     // extract the name from the behavior running
-    plString mode = "Mode: Unknown";
+    ST::string mode = ST_LITERAL("Mode: Unknown");
     if (fBehaviors[fCurMode])
-        mode = plFormat("Mode: {}", ((CritterBehavior*)(fBehaviors[fCurMode]))->Name());
+        mode = ST::format("Mode: {}", ((CritterBehavior*)(fBehaviors[fCurMode]))->Name());
     
     // draw it
     debugTxt.DrawString(x, y, mode);
     y += lineHeight;
-    for (int i = 0; i < fBehaviors.GetCount(); ++i)
-        fBehaviors[i]->DumpDebug(x, y, lineHeight, debugTxt);
+    for (plArmatureBehavior* behavior : fBehaviors)
+        behavior->DumpDebug(x, y, lineHeight, debugTxt);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -463,7 +473,7 @@ bool plAvBrainCritter::IInitBaseAnimations()
     hsAssert(idle, "Creature is missing idle animation");
     hsAssert(run, "Creature is missing run animation");
 
-    fBehaviors.SetCountAndZero(kNumDefaultModes);
+    fBehaviors.assign(kNumDefaultModes, nullptr);
 
     CritterBehavior* behavior;
     if (idle)
@@ -485,17 +495,17 @@ bool plAvBrainCritter::IInitBaseAnimations()
 
 int plAvBrainCritter::IPickBehavior(int behavior) const
 {
-    if ((behavior >= fBehaviors.Count()) || (behavior < 0))
+    if ((behavior < 0) || ((size_t)behavior >= fBehaviors.size()))
         return IPickBehavior(kDefaultIdleBehName); // do an idle if the behavior is invalid
 
     CritterBehavior* behaviorObj = (CritterBehavior*)(fBehaviors[behavior]);
     return IPickBehavior(behaviorObj->Name());
 }
 
-int plAvBrainCritter::IPickBehavior(const std::string& behavior) const
+int plAvBrainCritter::IPickBehavior(const ST::string& behavior) const
 {
     // make sure the behavior exists
-    std::map<std::string, std::vector<int> >::const_iterator behaviorIterator = fUserBehaviors.find(behavior);
+    auto behaviorIterator = fUserBehaviors.find(behavior);
     if (behaviorIterator == fUserBehaviors.end())
     {
         if (behavior != kDefaultIdleBehName)
@@ -504,7 +514,7 @@ int plAvBrainCritter::IPickBehavior(const std::string& behavior) const
     }
     else
     {
-        unsigned numBehaviors = behaviorIterator->second.size();
+        size_t numBehaviors = behaviorIterator->second.size();
         if (numBehaviors == 0)
         {
             if (behavior != kDefaultIdleBehName)
@@ -520,7 +530,7 @@ int plAvBrainCritter::IPickBehavior(const std::string& behavior) const
 
 void plAvBrainCritter::IFadeOutBehavior()
 {
-    if ((fCurMode >= fBehaviors.Count()) || (fCurMode < 0))
+    if ((fCurMode < 0) || ((size_t)fCurMode >= fBehaviors.size()))
         return; // invalid fCurMode
 
     // fade out currently playing behavior
@@ -530,7 +540,7 @@ void plAvBrainCritter::IFadeOutBehavior()
 
 void plAvBrainCritter::IStartBehavior()
 {
-    if ((fNextMode >= fBehaviors.Count()) || (fNextMode < 0))
+    if ((fNextMode < 0) || (fNextMode >= fBehaviors.size()))
         return; // invalid fNextMode
 
     // fade in our behavior
@@ -643,7 +653,7 @@ std::vector<unsigned long> plAvBrainCritter::IGetAgePlayerIDList() const
     std::vector<unsigned long> playerIDs;
     std::map<unsigned long, bool> tempMap; // slightly hacky way to remove dups
     plNetClientMgr* nc = plNetClientMgr::GetInstance();
-    for (int i = 0; i < nc->TransportMgr().GetNumMembers(); ++i)
+    for (size_t i = 0; i < nc->TransportMgr().GetNumMembers(); ++i)
     {
         plNetTransportMember* mbr = nc->TransportMgr().GetMember(i);
         unsigned long id = mbr->GetPlayerID();

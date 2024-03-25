@@ -64,9 +64,9 @@ class pfKIMsg : public plMessage
         uint32_t  fFlags;
 
         // for the hack chat message thingy
-        plString  fUser;
-        uint32_t  fPlayerID;
-        plString  fString;
+        ST::string  fUser;
+        uint32_t    fPlayerID;
+        ST::string  fString;
 
         // for the SetChatFadeDelay
         float fDelay;
@@ -77,8 +77,8 @@ class pfKIMsg : public plMessage
         void IInit()
         {
             fCommand = kNoCommand;
-            fString = plString::Null;
-            fUser = plString::Null;
+            fString = ST::string();
+            fUser = ST::string();
             fPlayerID = 0;
             fFlags = 0;
             fDelay = 0.0;
@@ -164,6 +164,8 @@ class pfKIMsg : public plMessage
             kInterAgeMsg    = 0x00000008,
             kStatusMsg      = 0x00000010,
             kNeighborMsg    = 0x00000020,   // sending to all the neighbors
+            kSubtitleMsg    = 0x00000040,
+            kLocKeyMsg      = 0x00000080,
             kChannelMask    = 0x0000ff00
         };
 
@@ -177,54 +179,54 @@ class pfKIMsg : public plMessage
 
 #ifndef KI_CONSTANTS_ONLY
 
-        pfKIMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); IInit(); }
-        pfKIMsg( uint8_t command ) : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); IInit(); fCommand = command; }
-        pfKIMsg( plKey &receiver, uint8_t command ) : plMessage( nil, nil, nil ) { AddReceiver( receiver ); IInit(); fCommand = command; }
+        pfKIMsg() : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); IInit(); }
+        pfKIMsg(uint8_t command) : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); IInit(); fCommand = command; }
+        pfKIMsg(plKey &receiver, uint8_t command) : plMessage(nullptr, nullptr, nullptr) { AddReceiver(receiver); IInit(); fCommand = command; }
 
         CLASSNAME_REGISTER( pfKIMsg );
         GETINTERFACE_ANY( pfKIMsg, plMessage );
 
-        virtual void Read(hsStream* s, hsResMgr* mgr) 
+        void Read(hsStream* s, hsResMgr* mgr) override
         { 
             plMessage::IMsgRead( s, mgr ); 
-            s->ReadLE( &fCommand );
+            s->ReadByte(&fCommand);
             fUser = s->ReadSafeString();
             fPlayerID = s->ReadLE32();
             fString = s->ReadSafeWString();
             fFlags = s->ReadLE32();
-            fDelay = s->ReadLEScalar();
+            fDelay = s->ReadLEFloat();
             fValue = s->ReadLE32();
         }
         
-        virtual void Write(hsStream* s, hsResMgr* mgr) 
+        void Write(hsStream* s, hsResMgr* mgr) override
         { 
             plMessage::IMsgWrite( s, mgr ); 
-            s->WriteLE( fCommand );
+            s->WriteByte(fCommand);
             s->WriteSafeString( fUser );
             s->WriteLE32( fPlayerID );
             s->WriteSafeWString( fString );
             s->WriteLE32( fFlags );
-            s->WriteLEScalar(fDelay);
+            s->WriteLEFloat(fDelay);
             s->WriteLE32( fValue );
         }
 
-        uint8_t     GetCommand( void ) const { return fCommand; }
+        uint8_t     GetCommand() const { return fCommand; }
 
-        void        SetString( const plString &str ) { fString = str; }
-        plString    GetString( void ) { return fString; }
+        void        SetString( const ST::string &str ) { fString = str; }
+        ST::string  GetString() { return fString; }
 
-        void        SetUser(const plString &str, uint32_t pid=0) { fUser = str; fPlayerID = pid; }
-        plString    GetUser() const { return fUser; }
+        void        SetUser(const ST::string &str, uint32_t pid=0) { fUser = str; fPlayerID = pid; }
+        ST::string  GetUser() const { return fUser; }
         uint32_t    GetPlayerID() const { return fPlayerID; }
 
         void        SetFlags( uint32_t flags ) { fFlags = flags; }
-        uint32_t    GetFlags( void ) const { return fFlags; }
+        uint32_t    GetFlags() const { return fFlags; }
 
         void        SetDelay( float delay ) { fDelay = delay; }
-        float       GetDelay( void ) { return fDelay; }
+        float       GetDelay() { return fDelay; }
 
         void        SetIntValue( int32_t value ) { fValue = value; }
-        int32_t     GetIntValue( void ) { return fValue; }
+        int32_t     GetIntValue() { return fValue; }
 
 #endif // def KI_CONSTANTS_ONLY
 };

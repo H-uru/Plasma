@@ -1,14 +1,3 @@
-include_directories("../")
-include_directories("../../Plasma/CoreLib")
-include_directories("../../Plasma/FeatureLib")
-include_directories("../../Plasma/FeatureLib/inc")
-include_directories("../../Plasma/NucleusLib")
-include_directories("../../Plasma/NucleusLib/inc")
-include_directories("../../Plasma/PubUtilLib")
-include_directories("../../Plasma/PubUtilLib/inc")
-include_directories(${3dsm_INCLUDE_DIR})
-include_directories(${PYTHON_INCLUDE_DIR})
-
 set(MaxExport_HEADERS
     plErrorMsg.h
     plExportDlg.h
@@ -28,8 +17,30 @@ set(MaxExport_SOURCES
     SimpleExport.cpp
 )
 
-use_precompiled_header(Pch.h Pch.cpp MaxExport_HEADERS MaxExport_SOURCES)
-add_library(MaxExport STATIC ${MaxExport_HEADERS} ${MaxExport_SOURCES})
+plasma_library(MaxExport
+    SOURCES ${MaxExport_HEADERS} ${MaxExport_SOURCES}
+    PRECOMPILED_HEADERS Pch.h
+    NO_SANITIZE # The 3ds Max headers are full of clang diagnostic errors.
+)
+target_link_libraries(
+    MaxExport
+    PUBLIC
+        CoreLib
+        pnNucleusInc
+    PRIVATE
+        pnKeyedObject
+        plAvatar
+        plGImage
+        plMessageBox
+        plPhysX
+        plResMgr
+        plScene
+        plSDL
+        plStatusLog
+        pfPython
+
+        3dsm
+)
 
 source_group("Header Files" FILES ${MaxExport_HEADERS})
 source_group("Source Files" FILES ${MaxExport_SOURCES})

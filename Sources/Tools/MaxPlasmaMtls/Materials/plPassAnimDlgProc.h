@@ -76,14 +76,14 @@ class plPassAnimDlgProc : public ParamMap2UserDlgProc, public plMtlChangeCallbac
         plPassAnimDlgProc();
         virtual ~plPassAnimDlgProc();
 
-        virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-        virtual void DeleteThis() {}
-        virtual void SetThing(ReferenceTarget *m);
-        virtual void Update(TimeValue t, Interval& valid, IParamMap2* pmap);
+        INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+        void DeleteThis() override { }
+        void SetThing(ReferenceTarget *m) override;
+        void Update(TimeValue t, Interval& valid, IParamMap2* pmap) override;
 
-        void    SegmentListChanged( void );
+        void    SegmentListChanged() override;
 
-        static plPassAnimDlgProc    &Get( void );
+        static plPassAnimDlgProc    &Get();
 
     protected:
         // Set all the controls to their stored value

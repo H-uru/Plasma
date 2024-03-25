@@ -52,11 +52,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
+#include <vector>
+
 #include "HeadSpin.h"
-#include "hsTemplates.h"
 
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "pnKeyedObject/plUoid.h"
 
 class plSound;
 class plPhysicalSndGroup : public hsKeyedObject
@@ -80,10 +80,10 @@ public:
     GETINTERFACE_ANY( plPhysicalSndGroup, hsKeyedObject );
 
     // Our required virtual
-    virtual bool    MsgReceive( plMessage *pMsg );
+    bool MsgReceive(plMessage *pMsg) override;
 
-    virtual void Read( hsStream *s, hsResMgr *mgr );
-    virtual void Write( hsStream *s, hsResMgr *mgr );
+    void Read(hsStream *s, hsResMgr *mgr) override;
+    void Write(hsStream *s, hsResMgr *mgr) override;
 
     void PlaySlideSound(uint32_t against);
     void StopSlideSound(uint32_t against);
@@ -92,7 +92,7 @@ public:
     bool HasSlideSound(uint32_t against);
     bool HasImpactSound(uint32_t against);
 
-    uint32_t GetGroup( void ) const { return fGroup; }
+    uint32_t GetGroup() const { return fGroup; }
 
     // Export only
     void    AddImpactSound( uint32_t against, plKey receiver );
@@ -111,9 +111,8 @@ protected:
     bool fPlayingSlideSound;
 
     // Sound key arrays for, well, our sounds!
-    hsTArray<plKey> fImpactSounds;
-    hsTArray<plKey> fSlideSounds;
+    std::vector<plKey> fImpactSounds;
+    std::vector<plKey> fSlideSounds;
 };
-
 
 #endif //_plPhysicalSndGroup_h

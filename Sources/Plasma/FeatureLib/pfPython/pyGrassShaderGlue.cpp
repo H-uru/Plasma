@@ -40,11 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyGrassShader.h"
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGrassShader, pyGrassShader);
@@ -54,7 +53,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGrassShader)
 
 PYTHON_INIT_DEFINITION(ptGrassShader, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "init expects a ptKey");
@@ -75,7 +74,7 @@ PYTHON_INIT_DEFINITION(ptGrassShader, args, keywords)
 PYTHON_METHOD_DEFINITION(ptGrassShader, setWaveDistortion, args)
 {
     int waveNum;
-    PyObject *tupleObject = NULL;
+    PyObject *tupleObject = nullptr;
     if (!PyArg_ParseTuple(args, "iO", &waveNum, &tupleObject))
     {
         PyErr_SetString(PyExc_TypeError, "setWaveDistortion expects a integer and tuple of floats");
@@ -87,9 +86,9 @@ PYTHON_METHOD_DEFINITION(ptGrassShader, setWaveDistortion, args)
         PYTHON_RETURN_ERROR;
     }
 
-    int len = PyTuple_Size(tupleObject);
+    Py_ssize_t len = PyTuple_Size(tupleObject);
     std::vector<float> vecArgs;
-    for (int curArg = 0; curArg < len; curArg++)
+    for (Py_ssize_t curArg = 0; curArg < len; curArg++)
     {
         PyObject *arg = PyTuple_GetItem(tupleObject, curArg);
         if (!PyFloat_Check(arg))
@@ -107,7 +106,7 @@ PYTHON_METHOD_DEFINITION(ptGrassShader, setWaveDistortion, args)
 PYTHON_METHOD_DEFINITION(ptGrassShader, setWaveDirection, args)
 {
     int waveNum;
-    PyObject *tupleObject = NULL;
+    PyObject *tupleObject = nullptr;
     if (!PyArg_ParseTuple(args, "iO", &waveNum, &tupleObject))
     {
         PyErr_SetString(PyExc_TypeError, "setWaveDirection expects a integer and tuple of floats");
@@ -119,9 +118,9 @@ PYTHON_METHOD_DEFINITION(ptGrassShader, setWaveDirection, args)
         PYTHON_RETURN_ERROR;
     }
 
-    int len = PyTuple_Size(tupleObject);
+    Py_ssize_t len = PyTuple_Size(tupleObject);
     std::vector<float> vecArgs;
-    for (int curArg = 0; curArg < len; curArg++)
+    for (Py_ssize_t curArg = 0; curArg < len; curArg++)
     {
         PyObject *arg = PyTuple_GetItem(tupleObject, curArg);
         if (!PyFloat_Check(arg))
@@ -212,8 +211,8 @@ PLASMA_DEFAULT_TYPE(ptGrassShader, "Params: key\nPlasma Grass Shader class");
 // required functions for PyObject interoperability
 PyObject *pyGrassShader::New(plKey key)
 {
-    ptGrassShader *newObj = (ptGrassShader*)ptGrassShader_type.tp_new(&ptGrassShader_type, NULL, NULL);
-    newObj->fThis->SetKey(key);
+    ptGrassShader *newObj = (ptGrassShader*)ptGrassShader_type.tp_new(&ptGrassShader_type, nullptr, nullptr);
+    newObj->fThis->SetKey(std::move(key));
     return (PyObject*)newObj;
 }
 

@@ -41,12 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-#include "hsKeyedObject.h"
+#include "hsRefCnt.h"
 
-
-struct hsMatrix44;
 class hsBounds3Ext;
 class hsGMaterial;
+struct hsMatrix44;
 class hsTriangle3;
 struct hsGSplat3;
 
@@ -67,7 +66,7 @@ protected:
     hsGMaterial*    fMaterial;
 
 public:
-    plDrawPrim() : fMaterial(nil), fDrawProps(0), fPrimType(kTypeNone) {}
+    plDrawPrim() : fMaterial(), fDrawProps(), fPrimType(kTypeNone) { }
     virtual ~plDrawPrim();
 
     virtual const hsBounds3Ext& GetLocalBounds() const = 0;
@@ -83,7 +82,7 @@ public:
     plTriListPrim() { fPrimType |= kTypeTriList; }
     virtual ~plTriListPrim();
 
-    virtual const hsBounds3Ext& GetLocalBounds() const = 0;
+    const hsBounds3Ext& GetLocalBounds() const override = 0;
 
     virtual hsTriangle3*        GetTriList(int& num) = 0;
 
@@ -94,7 +93,7 @@ class plSplatListPrim : public plDrawPrim
 public:
     plSplatListPrim() { fPrimType |= kTypeSplatList; }
 
-    virtual const hsBounds3Ext& GetLocalBounds() const = 0;
+    const hsBounds3Ext& GetLocalBounds() const override = 0;
 
     virtual hsGSplat3*          GetSplatList(int& num) = 0;
 };

@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#pragma hdrstop
 
 #ifdef BUILDING_PYPLASMA
 # error "pyNetLinkingMgr is not compatible with pyPlasma.pyd. Use BUILDING_PYPLASMA macro to ifdef out unwanted headers."
@@ -48,14 +47,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyNetLinkingMgr.h"
 
-#include "plNetClient/plNetLinkingMgr.h"
-#include "plAvatar/plAvatarMgr.h"
-#include "plAvatar/plArmatureMod.h"
+#include <string_theory/string>
 
-#include "pyAgeInfoStruct.h"
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plNetClient/plNetLinkingMgr.h"
+
 #include "pyAgeLinkStruct.h"
 
-bool pyNetLinkingMgr::IsEnabled( void ) const
+bool pyNetLinkingMgr::IsEnabled() const
 {
     return plNetLinkingMgr::GetInstance()->IsEnabled();
 }
@@ -65,9 +65,9 @@ void pyNetLinkingMgr::SetEnabled( bool b ) const
     plNetLinkingMgr::GetInstance()->SetEnabled( b );
 }
 
-void pyNetLinkingMgr::LinkToAge( pyAgeLinkStruct & link, const char* linkAnim, bool linkInSfx, bool linkOutSfx )
+void pyNetLinkingMgr::LinkToAge(pyAgeLinkStruct & link, const ST::string& linkAnim, bool linkInSfx, bool linkOutSfx)
 {
-    plNetLinkingMgr::GetInstance()->LinkToAge( link.GetAgeLink(), linkAnim, linkInSfx, linkOutSfx );
+    plNetLinkingMgr::GetInstance()->LinkToAge(link.GetAgeLink(), linkAnim, linkInSfx, linkOutSfx);
 }
 
 void pyNetLinkingMgr::LinkToMyPersonalAge()

@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPipeResMakeMsg_inc
 #define plPipeResMakeMsg_inc
 
-#include "pnMessage/plMessage.h"
+#include "plMessage.h"
 
 class plPipeline;
 
@@ -53,18 +53,22 @@ protected:
     plPipeline*             fPipe;
 public:
 
-    plPipeResMakeMsg() : plMessage(nil, nil, nil), fPipe(nil) { SetBCastFlag(kBCastByExactType); }
-    plPipeResMakeMsg(plPipeline* pipe) : plMessage(nil, nil, nil), fPipe(pipe) { SetBCastFlag(kBCastByExactType); }
+    plPipeResMakeMsg() : plMessage(nullptr, nullptr, nullptr), fPipe() { SetBCastFlag(kBCastByExactType); }
+    plPipeResMakeMsg(plPipeline* pipe) : plMessage(nullptr, nullptr, nullptr), fPipe(pipe) { SetBCastFlag(kBCastByExactType); }
 
     ~plPipeResMakeMsg() {}
-    
-    CLASSNAME_REGISTER( plPipeResMakeMsg );
-    GETINTERFACE_ANY( plPipeResMakeMsg, plMessage );
+
+    CLASSNAME_REGISTER(plPipeResMakeMsg);
+    GETINTERFACE_ANY(plPipeResMakeMsg, plMessage);
 
     plPipeline* Pipeline() const { return fPipe; }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr) { plMessage::IMsgRead(s, mgr); }
-    virtual void Write(hsStream* s, hsResMgr* mgr) { plMessage::IMsgWrite(s, mgr); }
+    void Read(hsStream* s, hsResMgr* mgr) override {
+        plMessage::IMsgRead(s, mgr);
+    }
+    void Write(hsStream* s, hsResMgr* mgr) override {
+        plMessage::IMsgWrite(s, mgr);
+    }
 };
 
 class plPipeRTMakeMsg : public plPipeResMakeMsg
@@ -74,9 +78,9 @@ public:
     plPipeRTMakeMsg(plPipeline* pipe) : plPipeResMakeMsg(pipe) { }
 
     ~plPipeRTMakeMsg() {}
-    
-    CLASSNAME_REGISTER( plPipeRTMakeMsg );
-    GETINTERFACE_ANY( plPipeRTMakeMsg, plPipeResMakeMsg );
+
+    CLASSNAME_REGISTER(plPipeRTMakeMsg);
+    GETINTERFACE_ANY(plPipeRTMakeMsg, plPipeResMakeMsg);
 };
 
 class plPipeGeoMakeMsg : public plPipeResMakeMsg
@@ -86,11 +90,11 @@ public:
     plPipeGeoMakeMsg(plPipeline* pipe, bool def) : plPipeResMakeMsg(pipe), fDefault(def) { }
 
     ~plPipeGeoMakeMsg() {}
-    
-    CLASSNAME_REGISTER( plPipeGeoMakeMsg );
-    GETINTERFACE_ANY( plPipeGeoMakeMsg, plPipeResMakeMsg );
 
-    bool            fDefault;
+    CLASSNAME_REGISTER(plPipeGeoMakeMsg);
+    GETINTERFACE_ANY(plPipeGeoMakeMsg, plPipeResMakeMsg);
+
+    bool fDefault;
 };
 
 class plPipeTexMakeMsg : public plPipeResMakeMsg
@@ -100,9 +104,9 @@ public:
     plPipeTexMakeMsg(plPipeline* pipe) : plPipeResMakeMsg(pipe) { }
 
     ~plPipeTexMakeMsg() {}
-    
-    CLASSNAME_REGISTER( plPipeTexMakeMsg );
-    GETINTERFACE_ANY( plPipeTexMakeMsg, plPipeResMakeMsg );
+
+    CLASSNAME_REGISTER(plPipeTexMakeMsg);
+    GETINTERFACE_ANY(plPipeTexMakeMsg, plPipeResMakeMsg);
 };
 
 

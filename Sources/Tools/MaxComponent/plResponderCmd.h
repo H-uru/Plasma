@@ -51,16 +51,15 @@ class plMaxNode;
 class plMessage;
 class ParamBlockDesc2;
 class IParamBlock2;
-class plString;
 
 class ResponderWaitInfo
 {
 public:
-    plString responderName;  // For error messages
+    ST::string responderName;  // For error messages
 
     plMessage *msg;     // Message created by the responder command
     plKey receiver;     // Key to send the callback message to
-    plString point;     // Marker name to wait on (nil for end)
+    ST::string point;   // Marker name to wait on (nil for end)
     int callbackUser;   // Value to set the callback user value to
 };
 
@@ -72,9 +71,9 @@ public:
     virtual ParamBlockDesc2 *GetDesc()=0;
 
     virtual int NumTypes()=0;
-    virtual const char *GetCategory(int idx)=0;
-    virtual const char *GetName(int idx)=0;
-    virtual const char *GetInstanceName(IParamBlock2 *pb)=0;
+    virtual const TCHAR* GetCategory(int idx)=0;
+    virtual const TCHAR* GetName(int idx)=0;
+    virtual const TCHAR* GetInstanceName(IParamBlock2 *pb)=0;
 
     virtual IParamBlock2 *CreatePB(int idx);
 
@@ -82,7 +81,7 @@ public:
     virtual void SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb) {}
     virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb)=0;
 
-    typedef std::vector<plString> WaitPoints;
+    typedef std::vector<ST::string> WaitPoints;
     // Can other commands wait on you?
     virtual bool IsWaitable(IParamBlock2 *pb) { return false; }
     // The names of the points commands can wait on (or leave empty for only 'end')

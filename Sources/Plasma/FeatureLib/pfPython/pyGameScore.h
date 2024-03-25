@@ -50,9 +50,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
+
+#include "pyGlueDefinitions.h"
 
 class pfGameScore;
+class pyKey;
+namespace ST { class string; }
 
 class pyGameScore
 {
@@ -76,7 +79,7 @@ public:
     uint32_t        GetOwnerID() const;
     int32_t         GetGameType() const;
     int32_t         GetPoints() const;
-    plString        GetGameName() const;
+    ST::string      GetGameName() const;
 
     void            AddPoints(int32_t numPoints, pyKey& rcvr);
     void            Delete();
@@ -84,18 +87,18 @@ public:
     void            TransferPoints(pyGameScore* dest, int32_t numPoints, pyKey& rcvr);
     void            SetPoints(int32_t numPoints, pyKey& rcvr);
 
-    static void     CreateAgeScore(const plString& name, uint32_t type, int32_t points, pyKey& rcvr);
-    static void     CreateGlobalScore(const plString& name, uint32_t type, int32_t points, pyKey& rcvr);
-    static void     CreatePlayerScore(const plString& name, uint32_t type, int32_t points, pyKey& rcvr);
-    static void     CreateScore(uint32_t ownerId, const plString& name, uint32_t type, int32_t points, pyKey& rcvr);
+    static void     CreateAgeScore(const ST::string& name, uint32_t type, int32_t points, pyKey& rcvr);
+    static void     CreateGlobalScore(const ST::string& name, uint32_t type, int32_t points, pyKey& rcvr);
+    static void     CreatePlayerScore(const ST::string& name, uint32_t type, int32_t points, pyKey& rcvr);
+    static void     CreateScore(uint32_t ownerId, const ST::string& name, uint32_t type, int32_t points, pyKey& rcvr);
 
-    static void     FindAgeScores(const plString& name, pyKey& rcvr);
-    static void     FindGlobalScores(const plString& name, pyKey& rcvr);
-    static void     FindPlayerScores(const plString& name, pyKey& rcvr);
-    static void     FindScores(uint32_t ownerId, const plString& name, pyKey& rcvr);
+    static void     FindAgeScores(const ST::string& name, pyKey& rcvr);
+    static void     FindGlobalScores(const ST::string& name, pyKey& rcvr);
+    static void     FindPlayerScores(const ST::string& name, pyKey& rcvr);
+    static void     FindScores(uint32_t ownerId, const ST::string& name, pyKey& rcvr);
 
-    static void     FindAgeHighScores(const plString& name, uint32_t maxScores, pyKey& rcvr);
-    static void     FindGlobalHighScores(const plString& name, uint32_t maxScores, pyKey& rcvr);
+    static void     FindAgeHighScores(const ST::string& name, uint32_t maxScores, pyKey& rcvr);
+    static void     FindGlobalHighScores(const ST::string& name, uint32_t maxScores, pyKey& rcvr);
 };
 
 #endif

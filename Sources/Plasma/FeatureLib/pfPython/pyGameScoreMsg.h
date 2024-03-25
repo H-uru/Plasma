@@ -43,7 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pyGameScoreMsg_h_
 
 #include "pfMessage/pfGameScoreMsg.h"
-#include "pyGlueHelpers.h"
+
+#include "pyGlueDefinitions.h"
+
+namespace ST { class string; }
 
 class pyGameScoreMsg
 {
@@ -51,7 +54,7 @@ protected:
     pfGameScoreMsg* fMsg;
 
     pyGameScoreMsg()
-        : fMsg(nil)
+        : fMsg()
     { }
 
     pyGameScoreMsg(pfGameScoreMsg* msg)
@@ -73,7 +76,7 @@ public:
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGameScoreMsg object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGameScoreMsg); // converts a PyObject to a pyGameScoreMsg (throws error if not correct type)
 
-    plString    GetError() const;
+    ST::string  GetError() const;
     bool        IsValid() const;
 
     static void AddPlasmaClasses(PyObject* m);
@@ -97,7 +100,7 @@ public:
 
     static void AddPlasmaClasses(PyObject* m);
 
-    plString GetName() const;
+    ST::string GetName() const;
     uint32_t GetOwnerID() const;
     size_t GetNumScores() const;
     PyObject* GetScore(size_t idx) const;

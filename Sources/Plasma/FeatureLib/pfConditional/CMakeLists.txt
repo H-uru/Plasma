@@ -1,8 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-
 set(pfConditional_SOURCES
     plActivatorConditionalObject.cpp
     plANDConditionalObject.cpp
@@ -34,7 +29,28 @@ set(pfConditional_HEADERS
     plPickedConditionalObject.h
 )
 
-add_library(pfConditional ${pfConditional_SOURCES} ${pfConditional_HEADERS})
+plasma_library(pfConditional
+    SOURCES ${pfConditional_SOURCES} ${pfConditional_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
+target_link_libraries(
+    pfConditional
+    PUBLIC
+        CoreLib
+        pnInputCore
+        pnKeyedObject
+        pnMessage
+        pnModifier
+    PRIVATE
+        pnNetCommon
+        pnNucleusInc
+        pnSceneObject
+        plAvatar
+        plMessage
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${pfConditional_SOURCES})
 source_group("Header Files" FILES ${pfConditional_HEADERS})

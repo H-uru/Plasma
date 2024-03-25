@@ -40,10 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyGeometry3.h"
 #include "pyMatrix44.h"
-#pragma hdrstop
+
+#include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
 
 PyObject* pyMatrix44::operator*(const pyVector3& p) const
 {

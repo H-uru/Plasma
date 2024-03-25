@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-
 #include "plResManagerHelper.h"
 REGISTER_NONCREATABLE(plResManagerHelper);
-
 
 #endif // plResMgrCreatable_inc

@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentBase.h"
 #include "MaxMain/plMaxNode.h"
 #include "resource.h"
-#pragma hdrstop
 
 #include "plPickNodeBase.h"
 #include "MaxMain/plMaxAccelerators.h"
@@ -60,7 +59,7 @@ bool plPickNodeBase::DoPick()
     plMaxAccelerators::Disable();
 
     // Create Dlg
-    BOOL ret = DialogBoxParam(hInstance,
+    INT_PTR ret = DialogBoxParam(hInstance,
                             MAKEINTRESOURCE(IDD_PICK_NODE),
                             GetCOREInterface()->GetMAXHWnd(),
                             IDlgProc,
@@ -83,7 +82,7 @@ void plPickNodeBase::IInitDlg(HWND hDlg)
 //  LONG style = GetWindowLong(hList, GWL_STYLE);
 //  SetWindowLong(hList, GWL_STYLE, style | LBS_MULTIPLESEL);
 
-    plMaxNode* curSelNode = nil;
+    plMaxNode* curSelNode = nullptr;
     ParamType2 type = fPB->GetParameterType(fNodeParamID);
     if (type == TYPE_REFTARG)
         curSelNode = (plMaxNode*)fPB->GetReferenceTarget(fNodeParamID);
@@ -93,9 +92,9 @@ void plPickNodeBase::IInitDlg(HWND hDlg)
     IGetNodesRecur((plMaxNode*)GetCOREInterface()->GetRootNode(), hList, curSelNode);
 }
 
-BOOL plPickNodeBase::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plPickNodeBase::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    static plPickNodeBase* pthis = nil;
+    static plPickNodeBase* pthis = nullptr;
 
     switch (msg)
     {
@@ -175,21 +174,21 @@ void plPickNodeBase::IGetSelNode(HWND hList)
     if (node)
     {
         ISetNodeValue(node);
-        ISetUserType(node, nil);
+        ISetUserType(node, nullptr);
     }
     else
     {
         int len = ListBox_GetTextLen(hList, sel);
-        char* buf = new char[len+1];
+        TCHAR* buf = new TCHAR[len+1];
         ListBox_GetText(hList, sel, buf);
 
-/*      if (!strcmp(buf, kUserTypeNone))
+/*      if (_tcsncmp(buf, std::size(buf), kUserTypeNone) == 0)
         {
-            ISetNodeValue(nil);
-            ISetUserType(nil, nil);
+            ISetNodeValue(nullptr);
+            ISetUserType(nullptr, nullptr);
         }
         else
-*/          ISetUserType(nil, buf);
+*/          ISetUserType(nullptr, buf);
 
         delete [] buf;
     }

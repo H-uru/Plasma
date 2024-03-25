@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plKeyFinder.h"
 #include "pnSceneObject/plSceneObject.h"
 
-#include "plScene/plSceneNode.h"
 #include "pnMessage/plClientMsg.h"
 #include "plgDispatch.h"
 #include "pnMessage/plWarpMsg.h"
@@ -77,8 +76,8 @@ void plCloneSpawnModifier::SetTarget(plSceneObject* so)
     {
         // Assume the clone template is in the same age we are
         const plLocation& loc = GetKey()->GetUoid().GetLocation();
-        plString ageName;
-        ((plResManager*)hsgResMgr::ResMgr())->GetLocationStrings(loc, &ageName, nil);
+        ST::string ageName;
+        ((plResManager*)hsgResMgr::ResMgr())->GetLocationStrings(loc, &ageName, nullptr);
 
         // Spawn the clone
         plKey cloneKey = SpawnClone(fTemplateName, ageName, GetTarget()->GetLocalToWorld(), GetKey());
@@ -86,7 +85,7 @@ void plCloneSpawnModifier::SetTarget(plSceneObject* so)
 }
 
 
-plKey plCloneSpawnModifier::SpawnClone(const plString& cloneName, const plString& cloneAge, const hsMatrix44& pos, plKey requestor)
+plKey plCloneSpawnModifier::SpawnClone(const ST::string& cloneName, const ST::string& cloneAge, const hsMatrix44& pos, plKey requestor)
 {
     plResManager* resMgr = (plResManager*)hsgResMgr::ResMgr();
 
@@ -99,7 +98,7 @@ plKey plCloneSpawnModifier::SpawnClone(const plString& cloneName, const plString
 
     if (key)
     {
-        plLoadCloneMsg* cloneMsg = new plLoadCloneMsg(objUoid, requestor, 0);
+        plLoadCloneMsg* cloneMsg = new plLoadCloneMsg(objUoid, std::move(requestor), 0);
         cloneMsg->SetBCastFlag(plMessage::kMsgWatch);
         plKey cloneKey = cloneMsg->GetCloneKey();//resMgr->CloneKey(key);
         cloneMsg->Send();
@@ -118,5 +117,5 @@ plKey plCloneSpawnModifier::SpawnClone(const plString& cloneName, const plString
         return cloneKey;
     }
 
-    return nil;
+    return nullptr;
 }

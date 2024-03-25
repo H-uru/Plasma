@@ -40,11 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plString.h"
-#pragma hdrstop
-
 #include "pyGameScoreMsg.h"
+
+#include <string_theory/string>
+
 #include "pfMessage/pfGameScoreMsg.h"
+
 #include "pyGameScore.h"
 
 PyObject* pyGameScoreMsg::CreateFinal(pfGameScoreMsg* msg)
@@ -55,14 +56,14 @@ PyObject* pyGameScoreMsg::CreateFinal(pfGameScoreMsg* msg)
         return pyGameScoreTransferMsg::New(t);
     if (pfGameScoreUpdateMsg* u = pfGameScoreUpdateMsg::ConvertNoRef(msg))
         return pyGameScoreUpdateMsg::New(u);
-    return nil;
+    return nullptr;
 }
 
-plString pyGameScoreMsg::GetError() const
+ST::string pyGameScoreMsg::GetError() const
 {
     if (fMsg)
-        return plString::FromWchar(NetErrorToString(fMsg->GetResult()));
-    return "pfGameScoreMsg is NULL";
+        return ST::string::from_wchar(NetErrorToString(fMsg->GetResult()));
+    return ST_LITERAL("pfGameScoreMsg is NULL");
 }
 
 bool pyGameScoreMsg::IsValid() const
@@ -72,11 +73,11 @@ bool pyGameScoreMsg::IsValid() const
     return false;
 }
 
-plString pyGameScoreListMsg::GetName() const
+ST::string pyGameScoreListMsg::GetName() const
 {
     if (pfGameScoreListMsg* pList = pfGameScoreListMsg::ConvertNoRef(fMsg))
         return pList->GetName();
-    return plString::Null;
+    return ST::string();
 }
 
 uint32_t pyGameScoreListMsg::GetOwnerID() const
@@ -97,26 +98,26 @@ PyObject* pyGameScoreListMsg::GetScore(size_t idx) const
 {
     if (pfGameScoreListMsg* pList = pfGameScoreListMsg::ConvertNoRef(fMsg))
         return pyGameScore::New(pList->GetScore(idx));
-    return nil;
+    return nullptr;
 }
 
 PyObject* pyGameScoreTransferMsg::GetDestinationScore() const
 {
     if (pfGameScoreTransferMsg* pTrans = pfGameScoreTransferMsg::ConvertNoRef(fMsg))
         return pyGameScore::New(pTrans->GetDestination());
-    return nil;
+    return nullptr;
 }
 
 PyObject* pyGameScoreTransferMsg::GetSourceScore() const
 {
     if (pfGameScoreTransferMsg* pTrans = pfGameScoreTransferMsg::ConvertNoRef(fMsg))
         return pyGameScore::New(pTrans->GetSource());
-    return nil;
+    return nullptr;
 }
 
 PyObject* pyGameScoreUpdateMsg::GetScore() const
 {
     if (pfGameScoreUpdateMsg* pUp = pfGameScoreUpdateMsg::ConvertNoRef(fMsg))
         return pyGameScore::New(pUp->GetScore());
-    return nil;
+    return nullptr;
 }

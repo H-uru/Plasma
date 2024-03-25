@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python
+#!/usr/bin/env python
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
@@ -75,7 +75,7 @@ def create_resource_dat(resfilepath, inrespath):
 		datFile.write(struct.pack("<I",len(resourceList)))
 		for res in resourceList:
 			with open(res, "rb") as resFile:
-				name = os.path.basename(res)
+				name = os.path.basename(res).encode("utf-8")
 				datFile.write(struct.pack("<I", len(name)))
 				datFile.write(name)
 				datFile.write(struct.pack("<I", os.path.getsize(res)))

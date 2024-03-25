@@ -56,8 +56,8 @@ private:
 public:
     pfFilePasswordStore();
 
-    virtual const plString GetPassword(const plString& username);
-    virtual bool SetPassword(const plString& username, const plString& password);
+    ST::string GetPassword(const ST::string& username) override;
+    bool SetPassword(const ST::string& username, const ST::string& password) override;
 };
 
 
@@ -70,28 +70,37 @@ class pfWin32PasswordStore : public pfPasswordStore
 public:
     pfWin32PasswordStore() { }
 
-    virtual const plString GetPassword(const plString& username);
-    virtual bool SetPassword(const plString& username, const plString& password);
+    ST::string GetPassword(const ST::string& username) override;
+    bool SetPassword(const ST::string& username, const ST::string& password) override;
 };
 #endif //HS_BUILD_FOR_WIN32
 
-
+#ifdef HAVE_LIBSECRET
 /**
-* @todo A Linux libsecret-based storage mechanism.
-*/
-
-#ifdef HS_BUILD_FOR_OSX
-/**
- * An OSX Keychain password storage mechanism.
+ * A libsecret-based password storage mechanism.
  */
-class pfMacPasswordStore : public pfPasswordStore
+class pfUnixPasswordStore : public pfPasswordStore
 {
 public:
-    pfMacPasswordStore() { }
+    pfUnixPasswordStore() { }
 
-    virtual const plString GetPassword(const plString& username);
-    virtual bool SetPassword(const plString& username, const plString& password);
+    ST::string GetPassword(const ST::string& username) override;
+    bool SetPassword(const ST::string& username, const ST::string& password) override;
 };
-#endif //HS_BUILD_FOR_OSX
+#endif // HAVE_LIBSECRET
+
+#ifdef HAVE_SECURITY
+/**
+ * An Apple Keychain password storage mechanism.
+ */
+class pfApplePasswordStore : public pfPasswordStore
+{
+public:
+    pfApplePasswordStore() { }
+
+    ST::string GetPassword(const ST::string& username) override;
+    bool SetPassword(const ST::string& username, const ST::string& password) override;
+};
+#endif // HAVE_SECURITY
 
 #endif //pfPasswordStore_impl_inc

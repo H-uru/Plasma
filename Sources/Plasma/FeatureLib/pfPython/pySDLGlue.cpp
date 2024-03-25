@@ -40,44 +40,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pySDL.h"
+
+#include <string_theory/string>
+
 #include "plSDL/plSDL.h"
+
 #include "pyEnum.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 void pySDL::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtSDLReadWriteOptions);
-    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kDirtyOnly,              plSDL::kDirtyOnly);
-    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kSkipNotificationInfo,   plSDL::kSkipNotificationInfo);
-    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kBroadcast,              plSDL::kBroadcast);
-    //PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kWriteTimeStamps,      plSDL::kWriteTimeStamps);
-    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kTimeStampOnRead,        plSDL::kTimeStampOnRead);
-    //PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kTimeStampDirtyOnRead, plSDL::kTimeStampDirtyOnRead);
-    PYTHON_ENUM_END(m, PtSDLReadWriteOptions);
+    PYTHON_ENUM_START(PtSDLReadWriteOptions)
+    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kDirtyOnly,              plSDL::kDirtyOnly)
+    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kSkipNotificationInfo,   plSDL::kSkipNotificationInfo)
+    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kBroadcast,              plSDL::kBroadcast)
+    //PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kWriteTimeStamps,      plSDL::kWriteTimeStamps)
+    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kTimeStampOnRead,        plSDL::kTimeStampOnRead)
+    //PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kTimeStampDirtyOnRead, plSDL::kTimeStampDirtyOnRead)
+    PYTHON_ENUM_END(m, PtSDLReadWriteOptions)
     
-    PYTHON_ENUM_START(PtSDLVarType);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kNone,            plVarDescriptor::kNone);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kInt,             plVarDescriptor::kInt);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kFloat,           plVarDescriptor::kFloat);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kBool,            plVarDescriptor::kBool);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kString32,        plVarDescriptor::kString32);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kKey,             plVarDescriptor::kKey);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kStateDescriptor, plVarDescriptor::kStateDescriptor);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kCreatable,       plVarDescriptor::kCreatable);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kDouble,          plVarDescriptor::kDouble);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kTime,            plVarDescriptor::kTime);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kVector3,         plVarDescriptor::kVector3);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kPoint3,          plVarDescriptor::kPoint3);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kRGB,             plVarDescriptor::kRGB);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kRGBA,            plVarDescriptor::kRGBA);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kQuaternion,      plVarDescriptor::kQuaternion);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kByte,            plVarDescriptor::kByte);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kShort,           plVarDescriptor::kShort);
-    PYTHON_ENUM_END(m, PtSDLVarType);
+    PYTHON_ENUM_START(PtSDLVarType)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kNone,            plVarDescriptor::kNone)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kInt,             plVarDescriptor::kInt)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kFloat,           plVarDescriptor::kFloat)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kBool,            plVarDescriptor::kBool)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kString32,        plVarDescriptor::kString32)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kKey,             plVarDescriptor::kKey)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kStateDescriptor, plVarDescriptor::kStateDescriptor)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kCreatable,       plVarDescriptor::kCreatable)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kDouble,          plVarDescriptor::kDouble)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kTime,            plVarDescriptor::kTime)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kVector3,         plVarDescriptor::kVector3)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kPoint3,          plVarDescriptor::kPoint3)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kRGB,             plVarDescriptor::kRGB)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kRGBA,            plVarDescriptor::kRGBA)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kQuaternion,      plVarDescriptor::kQuaternion)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kByte,            plVarDescriptor::kByte)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kShort,           plVarDescriptor::kShort)
+    PYTHON_ENUM_END(m, PtSDLVarType)
 }
 
 // glue functions
@@ -93,8 +95,8 @@ PYTHON_INIT_DEFINITION(ptSDLStateDataRecord, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptSDLStateDataRecord, findVar, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "findVar expects a string");
         PYTHON_RETURN_ERROR;
@@ -104,15 +106,15 @@ PYTHON_METHOD_DEFINITION(ptSDLStateDataRecord, findVar, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSDLStateDataRecord, getName)
 {
-    return PyString_FromString(self->fThis->GetName().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSDLStateDataRecord, getVarList)
 {
-    std::vector<plString> vars = self->fThis->GetVarList();
+    std::vector<ST::string> vars = self->fThis->GetVarList();
     PyObject* varList = PyList_New(vars.size());
     for (int i = 0; i < vars.size(); i++)
-        PyList_SetItem(varList, i, PyString_FromString(vars[i].c_str()));
+        PyList_SetItem(varList, i, PyUnicode_FromSTString(vars[i]));
     return varList;
 }
 
@@ -143,7 +145,7 @@ PYTHON_CLASS_NEW_IMPL(ptSDLStateDataRecord, pySDLStateDataRecord)
 
 PyObject *pySDLStateDataRecord::New(plStateDataRecord* rec)
 {
-    ptSDLStateDataRecord* newObj = (ptSDLStateDataRecord*)ptSDLStateDataRecord_type.tp_new(&ptSDLStateDataRecord_type, NULL, NULL);
+    ptSDLStateDataRecord* newObj = (ptSDLStateDataRecord*)ptSDLStateDataRecord_type.tp_new(&ptSDLStateDataRecord_type, nullptr, nullptr);
     newObj->fThis->fRec = rec;
     return (PyObject*)newObj;
 }
@@ -204,7 +206,19 @@ STATEVAR_SET(setShort, SetShort, short, short, h)
 STATEVAR_SET(setFloat, SetFloat, float, float, f)
 STATEVAR_SET(setDouble, SetDouble, double, double, d)
 STATEVAR_SET(setInt, SetInt, int, int, i)
-STATEVAR_SET(setString, SetString, string, char*, s)
+
+// setString is special because of the ST::string conversion
+PYTHON_METHOD_DEFINITION(ptSimpleStateVariable, setString, args)
+{
+    ST::string val;
+    int idx = 0;
+    if (!PyArg_ParseTuple(args, "O&|i", PyUnicode_STStringConverter, &val, &idx))
+    {
+        PyErr_SetString(PyExc_TypeError, "setString expects a string and an optional int");
+        PYTHON_RETURN_ERROR;
+    }
+    PYTHON_RETURN_BOOL(self->fThis->SetString(val, idx));
+}
 
 // setBool is special cause of the way python represents booleans
 PYTHON_METHOD_DEFINITION(ptSimpleStateVariable, setBool, args)
@@ -219,12 +233,12 @@ PYTHON_METHOD_DEFINITION(ptSimpleStateVariable, setBool, args)
     PYTHON_RETURN_BOOL(self->fThis->SetBool(val != 0, idx));
 }
 
-STATEVAR_GET(getByte, GetByte, PyInt_FromLong)
-STATEVAR_GET(getShort, GetShort, PyInt_FromLong)
-STATEVAR_GET(getInt, GetInt, PyInt_FromLong)
+STATEVAR_GET(getByte, GetByte, PyLong_FromLong)
+STATEVAR_GET(getShort, GetShort, PyLong_FromLong)
+STATEVAR_GET(getInt, GetInt, PyLong_FromLong)
 STATEVAR_GET(getFloat, GetFloat, PyFloat_FromDouble)
 STATEVAR_GET(getDouble, GetDouble, PyFloat_FromDouble)
-STATEVAR_GET(getString, GetString, PyString_FromPlString)
+STATEVAR_GET(getString, GetString, PyUnicode_FromSTString)
 STATEVAR_GET(getKey, GetKey, pyKey::New)
 
 // getBool is special cause of the way python represents booleans
@@ -241,17 +255,17 @@ PYTHON_METHOD_DEFINITION(ptSimpleStateVariable, getBool, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSimpleStateVariable, getType)
 {
-    return PyInt_FromLong(self->fThis->GetType());
+    return PyLong_FromLong(self->fThis->GetType());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSimpleStateVariable, getDisplayOptions)
 {
-    return PyString_FromString(self->fThis->GetDisplayOptions().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetDisplayOptions());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSimpleStateVariable, getDefault)
 {
-    return PyString_FromString(self->fThis->GetDefault().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetDefault());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSimpleStateVariable, isAlwaysNew)
@@ -301,7 +315,7 @@ PYTHON_CLASS_NEW_IMPL(ptSimpleStateVariable, pySimpleStateVariable)
 
 PyObject *pySimpleStateVariable::New(plSimpleStateVariable* var)
 {
-    ptSimpleStateVariable* newObj = (ptSimpleStateVariable*)ptSimpleStateVariable_type.tp_new(&ptSimpleStateVariable_type, NULL, NULL);
+    ptSimpleStateVariable* newObj = (ptSimpleStateVariable*)ptSimpleStateVariable_type.tp_new(&ptSimpleStateVariable_type, nullptr, nullptr);
     newObj->fThis->fVar = var;
     return (PyObject*)newObj;
 }

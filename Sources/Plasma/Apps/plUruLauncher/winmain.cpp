@@ -47,22 +47,31 @@ Mead, WA   99021
 #include "pfPatcher/plManifests.h"
 #include "pfPatcher/pfPatcher.h"
 
+#include "plWinDpi/plWinDpi.h"
+
 #include "plClientLauncher.h"
 
 #include "hsWindows.h"
 #include "resource.h"
+#include <string_theory/format>
 #include <commctrl.h>
 #include <shellapi.h>
 #include <shlobj.h>
+#include <ShellScalingApi.h>
 
 // ===================================================
+
+#ifndef ERROR_ELEVATION_REQUIRED
+    // MinGW is missing this definition
+#   define ERROR_ELEVATION_REQUIRED 740
+#endif
 
 #define PLASMA_PHAILURE 1
 #define PLASMA_OK 0
 
 static HWND             s_dialog;
-static plString         s_error; // This is highly unfortunate.
-static plClientLauncher s_launcher;
+static ST::string       s_error; // This is highly unfortunate.
+static plClientLauncher* s_launcher;
 static UINT             s_taskbarCreated = RegisterWindowMessageW(L"TaskbarButtonCreated");
 static ITaskbarList3*   s_taskbar = nullptr;
 
@@ -73,7 +82,7 @@ typedef std::unique_ptr<void, std::function<BOOL(HANDLE)>> handleptr_t;
 /** Create a global patcher mutex that is backwards compatible with eap's */
 static handleptr_t CreatePatcherMutex()
 {
-    return handleptr_t(CreateMutexW(nullptr, TRUE, plManifest::PatcherExecutable().AsString().ToWchar()),
+    return handleptr_t(CreateMutexW(nullptr, TRUE, plManifest::PatcherExecutable().WideString().data()),
                        CloseHandle);
 }
 
@@ -116,10 +125,17 @@ static inline void IShowMarquee(bool marquee=true)
     PostMessageW(GetDlgItem(s_dialog, IDC_MARQUEE), PBM_SETMARQUEE, static_cast<WPARAM>(marquee), 0);
 }
 
-BOOL CALLBACK PatcherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK PatcherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    // DPI Helper can eat messages.
+    auto result = plWinDpi::Instance().WndProc(hwndDlg, uMsg, wParam, lParam, nullptr);
+    if (result.has_value())
+        return result.value();
+
     // NT6 Taskbar Majick
     if (uMsg == s_taskbarCreated) {
+        hsRequireCOM();
+
         if (s_taskbar)
             s_taskbar->Release();
         HRESULT result = CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_ALL, IID_ITaskbarList3, (void**)&s_taskbar);
@@ -143,10 +159,10 @@ BOOL CALLBACK PatcherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         s_dialog = nullptr;
         break;
     case WM_NCHITTEST:
-        SetWindowLongW(hwndDlg, DWL_MSGRESULT, (LONG_PTR)HTCAPTION);
+        SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, (LONG_PTR)HTCAPTION);
         return TRUE;
     case WM_QUIT:
-        s_launcher.ShutdownNetCore();
+        s_launcher->ShutdownNetCore();
         DestroyWindow(hwndDlg);
         break;
     }
@@ -158,7 +174,7 @@ static void ShowPatcherDialog(HINSTANCE hInstance)
 {
     s_dialog = ::CreateDialogW(hInstance, MAKEINTRESOURCEW(IDD_DIALOG), nullptr, PatcherDialogProc);
     SetDlgItemTextW(s_dialog, IDC_TEXT, L"Connecting...");
-    SetDlgItemTextW(s_dialog, IDC_PRODUCTSTRING, plProduct::ProductString().ToWchar());
+    SetDlgItemTextW(s_dialog, IDC_PRODUCTSTRING, plProduct::ProductString().to_wchar().data());
     SetDlgItemTextW(s_dialog, IDC_DLSIZE, L"");
     SetDlgItemTextW(s_dialog, IDC_DLSPEED, L"");
     IShowMarquee();
@@ -169,7 +185,7 @@ static void PumpMessages()
     MSG msg;
     do {
         // Pump all Win32 messages
-        while (PeekMessageW(&msg, 0, 0, 0, PM_REMOVE)) {
+        while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE)) {
             if (!IsDialogMessageW(s_dialog, &msg)) {
                 TranslateMessage(&msg);
                 DispatchMessageW(&msg);
@@ -177,30 +193,29 @@ static void PumpMessages()
         }
 
         // Now we need to pump the netcore while we have some spare time...
-        s_launcher.PumpNetCore();
-    } while (msg.message != WM_QUIT);
+    } while (s_launcher->PumpNetCore());
 }
 
 // ===================================================
 
 static void IOnDownloadBegin(const plFileName& file)
 {
-    plString msg = plFormat("Downloading... {}", file);
-    SetDlgItemTextW(s_dialog, IDC_TEXT, msg.ToWchar());
+    ST::string msg = ST::format("Downloading... {}", file);
+    SetDlgItemTextW(s_dialog, IDC_TEXT, msg.to_wchar().data());
 }
 
-static void IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const plString& status)
+static void IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const ST::string& status)
 {
     // Swap marquee/real progress
     IShowMarquee(false);
 
     // DL size
-    plString size = plFormat("{} / {}", plFileSystem::ConvertFileSize(curBytes),
-                             plFileSystem::ConvertFileSize(totalBytes));
-    SetDlgItemTextW(s_dialog, IDC_DLSIZE, size.ToWchar());
+    ST::string size = ST::format("{} / {}", plFileSystem::ConvertFileSize(curBytes),
+                                 plFileSystem::ConvertFileSize(totalBytes));
+    SetDlgItemTextW(s_dialog, IDC_DLSIZE, size.to_wchar().data());
 
     // DL speed
-    SetDlgItemTextW(s_dialog, IDC_DLSPEED, status.ToWchar());
+    SetDlgItemTextW(s_dialog, IDC_DLSPEED, status.to_wchar().data());
     HWND progress = GetDlgItem(s_dialog, IDC_PROGRESS);
 
     // hey look... ULONGLONG. that's exactly what we need >.<
@@ -220,9 +235,9 @@ static void IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const plStri
 
 // ===================================================
 
-static void ISetDownloadStatus(const plString& status)
+static void ISetDownloadStatus(const ST::string& status)
 {
-    SetDlgItemTextW(s_dialog, IDC_TEXT, status.ToWchar());
+    SetDlgItemTextW(s_dialog, IDC_TEXT, status.to_wchar().data());
 
     // consider this a reset of the download status...
     IShowMarquee();
@@ -234,7 +249,7 @@ static void ISetDownloadStatus(const plString& status)
 }
 
 
-static handleptr_t ICreateProcess(const plFileName& exe, const plString& args)
+static handleptr_t ICreateProcess(const plFileName& exe, const ST::string& args)
 {
     STARTUPINFOW        si;
     PROCESS_INFORMATION pi;
@@ -243,15 +258,15 @@ static handleptr_t ICreateProcess(const plFileName& exe, const plString& args)
     si.cb = sizeof(si);
 
     // Create wchar things and stuff :/
-    plString cmd = plFormat("{} {}", exe, args);
-    plStringBuffer<wchar_t> file = exe.AsString().ToWchar();
-    plStringBuffer<wchar_t> params = cmd.ToWchar();
+    ST::string cmd = ST::format("{} {}", exe, args);
+    ST::wchar_buffer file = exe.WideString();
+    ST::wchar_buffer params = cmd.to_wchar();
 
     // Guess what? CreateProcess isn't smart enough to throw up an elevation dialog... We need ShellExecute for that.
     // But guess what? ShellExecute won't run ".exe.tmp" files. GAAAAAAAAHHHHHHHHH!!!!!!!
     BOOL result = CreateProcessW(
-        file,
-        const_cast<wchar_t*>(params.GetData()),
+        file.data(),
+        const_cast<wchar_t*>(params.data()),
         nullptr,
         nullptr,
         FALSE,
@@ -270,9 +285,10 @@ static handleptr_t ICreateProcess(const plFileName& exe, const plString& args)
         SHELLEXECUTEINFOW info;
         memset(&info, 0, sizeof(info));
         info.cbSize = sizeof(info);
-        info.lpFile = file.GetData();
+        info.lpFile = file.data();
         info.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NOASYNC;
-        info.lpParameters = args.ToWchar();
+        ST::wchar_buffer argsW = args.to_wchar();
+        info.lpParameters = argsW.data();
         ShellExecuteExW(&info);
 
         return handleptr_t(info.hProcess, CloseHandle);
@@ -287,7 +303,7 @@ static handleptr_t ICreateProcess(const plFileName& exe, const plString& args)
             0,
             nullptr
         );
-        s_error = plString::FromWchar(msg);
+        s_error = ST::string::from_wchar(msg);
         LocalFree(msg);
     }
 
@@ -296,20 +312,20 @@ static handleptr_t ICreateProcess(const plFileName& exe, const plString& args)
 
 static bool IInstallRedist(const plFileName& exe)
 {
-    ISetDownloadStatus(plFormat("Installing... {}", exe));
+    ISetDownloadStatus(ST::format("Installing... {}", exe));
     Sleep(2500); // let's Sleep for a bit so the user can see that we're doing something before the UAC dialog pops up!
 
     // Try to guess some arguments... Unfortunately, the file manifest format is fairly immutable.
-    plStringStream ss;
-    if (exe.AsString().CompareI("oalinst.exe") == 0)
+    ST::string_stream ss;
+    if (exe.AsString().compare_i("oalinst.exe") == 0)
         ss << "/s"; // rarg nonstandard
     else
         ss << "/q";
-    if (exe.AsString().Find("vcredist", plString::kCaseInsensitive) != -1)
+    if (exe.AsString().find("vcredist", ST::case_insensitive) != -1)
         ss << " /norestart"; // I don't want to image the accusations of viruses and hacking if this happened...
 
     // Now fire up the process...
-    handleptr_t process = ICreateProcess(exe, ss.GetString());
+    handleptr_t process = ICreateProcess(exe, ss.to_string());
     if (process) {
         WaitForSingleObject(process.get(), INFINITE);
 
@@ -322,7 +338,7 @@ static bool IInstallRedist(const plFileName& exe)
     return PLASMA_PHAILURE;
 }
 
-static void ILaunchClientExecutable(const plFileName& exe, const plString& args)
+static void ILaunchClientExecutable(const plFileName& exe, const ST::string& args)
 {
     // Once we start launching something, we no longer need to trumpet any taskbar status
     if (s_taskbar)
@@ -330,12 +346,12 @@ static void ILaunchClientExecutable(const plFileName& exe, const plString& args)
 
     // Only launch a client executable if we're given one. If not, that's probably a cue that we're
     // done with some service operation and need to go away.
-    if (!exe.AsString().IsEmpty()) {
+    if (!exe.AsString().empty()) {
         handleptr_t hEvent = handleptr_t(CreateEventW(nullptr, TRUE, FALSE, L"UruPatcherEvent"), CloseHandle);
         handleptr_t process = ICreateProcess(exe, args);
 
         // if this is the real game client, then we need to make sure it gets this event...
-        if (plManifest::ClientExecutable().AsString().CompareI(exe.AsString()) == 0) {
+        if (plManifest::ClientExecutable().AsString().compare_i(exe.AsString()) == 0) {
             WaitForInputIdle(process.get(), 1000);
             WaitForSingleObject(hEvent.get(), INFINITE);
         }
@@ -345,18 +361,18 @@ static void ILaunchClientExecutable(const plFileName& exe, const plString& args)
     IQuit();
 }
 
-static void IOnNetError(ENetError result, const plString& msg)
+static void IOnNetError(ENetError result, const ST::string& msg)
 {
     if (s_taskbar)
         s_taskbar->SetProgressState(s_dialog, TBPF_ERROR);
 
-    s_error = plFormat("Error: {}\r\n{}", NetErrorAsString(result), msg);
+    s_error = ST::format("Error: {}\r\n{}", NetErrorAsString(result), msg);
     IQuit(PLASMA_PHAILURE);
 }
 
-static void ISetShardStatus(const plString& status)
+static void ISetShardStatus(const ST::string& status)
 {
-    SetDlgItemTextW(s_dialog, IDC_STATUS_TEXT, status.ToWchar());
+    SetDlgItemTextW(s_dialog, IDC_STATUS_TEXT, status.to_wchar().data());
 }
 
 static pfPatcher* IPatcherFactory()
@@ -372,36 +388,41 @@ static pfPatcher* IPatcherFactory()
 
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLink, int nCmdShow)
 {
+    plWinDpi::Instance();
+
+    plClientLauncher launcher;
+    s_launcher = &launcher;
+
     // Let's initialize our plClientLauncher friend
-    s_launcher.ParseArguments();
-    s_launcher.SetErrorProc(IOnNetError);
-    s_launcher.SetInstallerProc(IInstallRedist);
-    s_launcher.SetLaunchClientProc(ILaunchClientExecutable);
-    s_launcher.SetPatcherFactory(IPatcherFactory);
-    s_launcher.SetShardProc(ISetShardStatus);
-    s_launcher.SetStatusProc(ISetDownloadStatus);
+    launcher.ParseArguments();
+    launcher.SetErrorProc(IOnNetError);
+    launcher.SetInstallerProc(IInstallRedist);
+    launcher.SetLaunchClientProc(ILaunchClientExecutable);
+    launcher.SetPatcherFactory(IPatcherFactory);
+    launcher.SetShardProc(ISetShardStatus);
+    launcher.SetStatusProc(ISetDownloadStatus);
 
     // If we're newly updated, then our filename will be something we don't expect!
     // Let's go ahead and take care of that nao.
-    if (s_launcher.CompleteSelfPatch(WaitForOldPatcher))
+    if (launcher.CompleteSelfPatch(WaitForOldPatcher))
         return PLASMA_OK; // see you on the other side...
 
     // Load the doggone server.ini
-    if (!s_launcher.LoadServerIni()) {
+    if (!launcher.LoadServerIni()) {
         IShowErrorDialog(L"No server.ini file found.  Please check your URU installation.");
         return PLASMA_PHAILURE;
     }
 
     // Ensure there is only ever one patcher running...
     if (IsPatcherRunning()) {
-        plString text = plFormat("{} is already running", plProduct::LongName());
-        IShowErrorDialog(text.ToWchar());
+        ST::string text = ST::format("{} is already running", plProduct::LongName());
+        IShowErrorDialog(text.to_wchar().data());
         return PLASMA_OK;
     }
     HANDLE _onePatcherMut = CreatePatcherMutex().release();
 
     // Initialize the network core
-    s_launcher.InitializeNetCore();
+    launcher.InitializeNetCore();
 
     // Welp, now that we know we're (basically) sane, let's create our client window
     // and pump window messages until we're through.
@@ -410,8 +431,8 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
     // So there appears to be some sort of issue with calling MessageBox once we've set up our dialog...
     // WTF?!?! So, to hack around that, we'll wait until everything shuts down to display any error.
-    if (!s_error.IsEmpty())
-        IShowErrorDialog(s_error.ToWchar());
+    if (!s_error.empty())
+        IShowErrorDialog(s_error.to_wchar().data());
 
     // Alrighty now we just need to clean up behind ourselves!
     // NOTE: We shut down the netcore in the WM_QUIT handler so
@@ -421,10 +442,6 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     CloseHandle(_onePatcherMut);
 
     // kthxbai
-    return s_error.IsEmpty() ? PLASMA_OK : PLASMA_PHAILURE;
+    return s_error.empty() ? PLASMA_OK : PLASMA_PHAILURE;
 }
 
-/* Enable themes in Windows XP and later */
-#pragma comment(linker,"\"/manifestdependency:type='win32' \
-                name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
-                processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")

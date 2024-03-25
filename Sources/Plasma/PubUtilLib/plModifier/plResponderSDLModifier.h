@@ -42,7 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plResponderSDLModifier_inc
 #define plResponderSDLModifier_inc
 
-#include "plModifier/plSDLModifier.h"
+#include "plSDLModifier.h"
+
+#include "pnNetCommon/plSDLTypes.h"
 
 //
 // This modifier is responsible for sending and recving responder state
@@ -63,19 +65,19 @@ protected:
     
     plResponderModifier* fResponder;
 
-    void IPutCurrentStateIn(plStateDataRecord* dstState);
-    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState) override;
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
 public:
     CLASSNAME_REGISTER( plResponderSDLModifier );
     GETINTERFACE_ANY( plResponderSDLModifier, plSDLModifier);
         
-    plResponderSDLModifier() : fResponder(nil) {}
+    plResponderSDLModifier() : fResponder() { }
 
-    const char* GetSDLName() const { return kSDLResponder; }
-    plKey GetStateOwnerKey() const;
-    
+    const char* GetSDLName() const override { return kSDLResponder; }
+    plKey GetStateOwnerKey() const override;
+
     plResponderModifier* GetResponder() const { return fResponder; }
-    void SetResponder(plResponderModifier* r) { fResponder=r; AddTarget(nil); }
+    void SetResponder(plResponderModifier* r) { fResponder = r; AddTarget(nullptr); }
 };
 
 #endif  // plResponderSDLModifier_inc

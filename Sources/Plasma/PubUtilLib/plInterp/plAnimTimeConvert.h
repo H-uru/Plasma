@@ -43,11 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAnimTimeConvert_inc
 
 #include <list>
-#include "pnFactory/plCreatable.h"
-#include "hsTemplates.h"
-#include "pnNetCommon/plSynchedValue.h"
+#include <vector>
 
-#pragma warning (disable: 4284) 
+#include "pnFactory/plCreatable.h"
 
 class plSynchedObject;
 class plAnimCmdMsg;
@@ -64,7 +62,7 @@ class plAnimTimeConvert : public plCreatable
     friend class plAGAnimInstance;
 
 protected:
-    uint16_t                  fFlags;
+    uint32_t             fFlags;
     float                fBegin;
     float                fEnd;
     float                fLoopEnd;
@@ -81,8 +79,8 @@ protected:
     typedef std::list<plATCState *> plATCStateList;
     plATCStateList fStates;
     
-    hsTArray<float>              fStopPoints;
-    hsTArray<plEventCallbackMsg*>   fCallbackMsgs;
+    std::vector<float>               fStopPoints;
+    std::vector<plEventCallbackMsg*> fCallbackMsgs;
 
     /////////////////////////
     // Ease In/Out stuff
@@ -103,20 +101,25 @@ protected:
 
     void        ICheckTimeCallbacks(float frameStart, float frameStop);
     bool        ITimeInFrame(float secs, float start, float stop);
-    void        ISendCallback(int i);
+    void        ISendCallback(hsSsize_t i);
 
     plAnimTimeConvert& IStop(double time, float animTime);
-    bool IIsStoppedAt(const double &wSecs, const uint32_t &flags, const plATCEaseCurve *curve) const;
+    bool IIsStoppedAt(double wSecs, uint32_t flags, const plATCEaseCurve *curve) const;
     plAnimTimeConvert& IProcessStateChange(double worldTime, float animTime = -1);
     void IFlushOldStates();
     void IClearAllStates();
     plATCState *IGetState(double wSecs) const;
     plATCState *IGetLatestState() const;
     
-    plAnimTimeConvert& SetFlag(uint8_t f, bool on) { if(on)fFlags |= f; else fFlags &= ~f; return *this; }
+    plAnimTimeConvert& SetFlag(uint32_t f, bool on) { if (on) fFlags |= f; else fFlags &= ~f; return *this; }
 
 public:
-    plAnimTimeConvert();
+    plAnimTimeConvert()
+        : fCurrentAnimTime(), fLastEvalWorldTime(), fLastStateChange(),
+          fBegin(), fEnd(), fLoopBegin(), fLoopEnd(), fSpeed(1.f), fFlags(),
+          fOwner(), fEaseInCurve(), fEaseOutCurve(), fSpeedEaseCurve(),
+          fCurrentEaseCurve(), fInitialBegin(), fInitialEnd(), fWrapTime()
+    { }
     virtual ~plAnimTimeConvert();
 
     CLASSNAME_REGISTER( plAnimTimeConvert );
@@ -153,7 +156,7 @@ public:
     float GetInitialBegin() const { return fInitialBegin; }
     float GetInitialEnd() const { return fInitialEnd; }
     float GetSpeed() const { return fSpeed; }
-    hsTArray<float> &GetStopPoints() { return fStopPoints; }
+    std::vector<float> &GetStopPoints() { return fStopPoints; }
     float GetBestStopDist(float min, float max, float norm, float time) const;
     int GetCurrentEaseCurve() const;    // returns  0=nil, 1=easeIn, 2=easeOut, 3=speed
 
@@ -161,7 +164,7 @@ public:
     void ResetWrap();
 
     plAnimTimeConvert& ClearFlags() { fFlags = kNone; return *this; }
-    bool GetFlag(uint8_t f) const { return (fFlags & f) ? true : false; }
+    bool GetFlag(uint32_t f) const { return (fFlags & f) ? true : false; }
 
     plAnimTimeConvert& InitStop(); // Called when initializing an anim that doesn't autostart
     plAnimTimeConvert& Stop(bool on);
@@ -187,8 +190,8 @@ public:
     float CurrentAnimTime() const { return fCurrentAnimTime; }
     void SetCurrentAnimTime(float s, bool jump = false);
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     bool HandleCmd(plAnimCmdMsg* msg);
     void AddCallback(plEventCallbackMsg* pMsg);
@@ -246,8 +249,8 @@ public:
     double GetEndWorldTime() const { return fBeginWorldTime + fLength; } 
 
     virtual plATCEaseCurve *Clone() const = 0;
-    virtual void Read(hsStream *s, hsResMgr *mgr);
-    virtual void Write(hsStream *s, hsResMgr *mgr);
+    void Read(hsStream *s, hsResMgr *mgr) override;
+    void Write(hsStream *s, hsResMgr *mgr) override;
     
     virtual void RecalcToSpeed(float startSpeed, float goalSpeed, bool preserveRate = false);
     virtual void SetLengthOnRate(float rate);
@@ -270,11 +273,11 @@ public:
     CLASSNAME_REGISTER( plConstAccelEaseCurve );
     GETINTERFACE_ANY( plConstAccelEaseCurve, plATCEaseCurve );
 
-    virtual plATCEaseCurve *Clone() const;
-    virtual void SetLengthOnDistance(float dist);
-    virtual float PositionGivenTime(float time) const;
-    virtual float VelocityGivenTime(float time) const;
-    virtual float TimeGivenVelocity(float velocity) const;
+    plATCEaseCurve *Clone() const override;
+    void SetLengthOnDistance(float dist) override;
+    float PositionGivenTime(float time) const override;
+    float VelocityGivenTime(float time) const override;
+    float TimeGivenVelocity(float velocity) const override;
 };
 
 class plSplineEaseCurve : public plATCEaseCurve
@@ -287,15 +290,15 @@ public:
     CLASSNAME_REGISTER( plSplineEaseCurve );
     GETINTERFACE_ANY( plSplineEaseCurve, plATCEaseCurve );
 
-    virtual void Read(hsStream *s, hsResMgr *mgr);
-    virtual void Write(hsStream *s, hsResMgr *mgr);
+    void Read(hsStream *s, hsResMgr *mgr) override;
+    void Write(hsStream *s, hsResMgr *mgr) override;
 
-    virtual plATCEaseCurve *Clone() const;
-    virtual void RecalcToSpeed(float startSpeed, float goalSpeed, bool preserveRate = false); 
-    virtual void SetLengthOnDistance(float dist);
-    virtual float PositionGivenTime(float time) const;
-    virtual float VelocityGivenTime(float time) const;
-    virtual float TimeGivenVelocity(float velocity) const;
+    plATCEaseCurve *Clone() const override;
+    void RecalcToSpeed(float startSpeed, float goalSpeed, bool preserveRate = false) override;
+    void SetLengthOnDistance(float dist) override;
+    float PositionGivenTime(float time) const override;
+    float VelocityGivenTime(float time) const override;
+    float TimeGivenVelocity(float velocity) const override;
 
     float fCoef[4];
 };
@@ -303,7 +306,10 @@ public:
 class plATCState
 {
 public:
-    plATCState() : fEaseCurve(nil) {}
+    plATCState()
+        : fEaseCurve(), fStartWorldTime(), fStartAnimTime(), fFlags(),
+          fBegin(), fEnd(), fLoopBegin(), fLoopEnd(), fSpeed(), fWrapTime()
+    { }
     ~plATCState() { delete fEaseCurve; }
 
     void Read(hsStream *s, hsResMgr *mgr);
@@ -312,7 +318,7 @@ public:
     double fStartWorldTime;
     float fStartAnimTime;
 
-    uint8_t fFlags;
+    uint32_t fFlags;
     float fBegin;
     float fEnd;
     float fLoopBegin;

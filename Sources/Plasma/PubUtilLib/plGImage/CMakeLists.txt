@@ -1,14 +1,5 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
-include_directories(${JPEG_INCLUDE_DIR})
-include_directories(${PNG_INCLUDE_DIR})
-
 set(plGImage_SOURCES
     hsCodecManager.cpp
-    hsDXTDirectXCodec.cpp
     hsDXTSoftwareCodec.cpp
     plAVIWriter.cpp
     plBitmap.cpp
@@ -25,8 +16,8 @@ set(plGImage_SOURCES
 )
 
 set(plGImage_HEADERS
+    hsCodec.h
     hsCodecManager.h
-    hsDXTDirectXCodec.h
     hsDXTSoftwareCodec.h
     plAVIWriter.h
     plBitmap.h
@@ -43,7 +34,29 @@ set(plGImage_HEADERS
     plTGAWriter.h
 )
 
-add_library(plGImage STATIC ${plGImage_SOURCES} ${plGImage_HEADERS})
+plasma_library(plGImage
+    SOURCES ${plGImage_SOURCES} ${plGImage_HEADERS}
+    PRECOMPILED_HEADERS Pch.h
+)
+target_link_libraries(
+    plGImage
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        plMessage
+        plResMgr
+    PRIVATE
+        pnDispatch
+        pnMessage
+        pnNucleusInc
+        plMessageBox
+        plResMgr
+        JPEG::JPEG
+        PNG::PNG
+        $<$<PLATFORM_ID:Windows>:vfw32>
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${plGImage_SOURCES})
 source_group("Header Files" FILES ${plGImage_HEADERS})

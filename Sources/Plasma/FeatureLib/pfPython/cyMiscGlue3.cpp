@@ -40,40 +40,43 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "cyMisc.h"
-#include "pyGlueHelpers.h"
-#include "pySceneObject.h"
-#include "pnUtils/pnUtils.h"
+
+#include <string_theory/string>
+#include <utility>
+
+#include "plFileSystem.h"
+
 #include "pnUUID/pnUUID.h"
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
+#include "pySceneObject.h"
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendPetitionToCCR, args, "Params: message,reason=0,title=\"\"\nSends a petition with a message to the CCR group")
 {
-    char* message;
+    ST::string message;
     unsigned char reason = 0;
-    char* title = nil;
-    if (!PyArg_ParseTuple(args, "s|bs", &message, &reason, &title))
+    ST::string title;
+    if (!PyArg_ParseTuple(args, "O&|bO&", PyUnicode_STStringConverter, &message, &reason, PyUnicode_STStringConverter, &title))
     {
         PyErr_SetString(PyExc_TypeError, "PtSendPetitionToCCR expects a string, and an optional unsigned 8-bit int and optional string");
         PYTHON_RETURN_ERROR;
     }
-    cyMisc::SendPetitionToCCRI(message, reason, title);
+    cyMisc::SendPetitionToCCR(std::move(message), reason, std::move(title));
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendChatToCCR, args, "Params: message,CCRPlayerID\nSends a chat message to a CCR that has contacted this player")
 {
-    char* message;
+    ST::string message;
     long CCRPlayerID;
-    if (!PyArg_ParseTuple(args, "sl", &message, &CCRPlayerID))
+    if (!PyArg_ParseTuple(args, "O&l", PyUnicode_STStringConverter, &message, &CCRPlayerID))
     {
         PyErr_SetString(PyExc_TypeError, "PtSendChatToCCR expects a string and a long");
         PYTHON_RETURN_ERROR;
     }
-    cyMisc::SendChatToCCR(message, CCRPlayerID);
+    cyMisc::SendChatToCCR(std::move(message), CCRPlayerID);
     PYTHON_RETURN_NONE;
 }
 
@@ -96,8 +99,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetPythonLoggingLevel, args, "Params: level\nS
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtConsole, args, "Params: command\nThis will execute 'command' as if it were typed into the Plasma console.")
 {
-    char* command;
-    if (!PyArg_ParseTuple(args, "s", &command))
+    ST::string command;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &command))
     {
         PyErr_SetString(PyExc_TypeError, "PtConsole expects a string");
         PYTHON_RETURN_ERROR;
@@ -109,9 +112,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtConsole, args, "Params: command\nThis will exe
 PYTHON_GLOBAL_METHOD_DEFINITION(PtConsoleNet, args, "Params: command,netForce\nThis will execute 'command' on the console, over the network, on all clients.\n"
             "If 'netForce' is true then force command to be sent over the network.")
 {
-    char* command;
+    ST::string command;
     char netForce;
-    if (!PyArg_ParseTuple(args, "sb", &command, &netForce))
+    if (!PyArg_ParseTuple(args, "O&b", PyUnicode_STStringConverter, &command, &netForce))
     {
         PyErr_SetString(PyExc_TypeError, "PtConsoleNet expects a string and a boolean");
         PYTHON_RETURN_ERROR;
@@ -120,37 +123,22 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtConsoleNet, args, "Params: command,netForce\nT
     PYTHON_RETURN_NONE;
 }
 
-#if 1
-// TEMP
-PYTHON_GLOBAL_METHOD_DEFINITION(PtPrintToScreen, args, "Params: message\nPrints 'message' to the status log, for debug only.")
-{
-    char* message;
-    if (!PyArg_ParseTuple(args, "s", &message))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtPrintToScreen expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    cyMisc::PrintToScreen(message);
-    PYTHON_RETURN_NONE;
-}
-#endif
-
 PYTHON_GLOBAL_METHOD_DEFINITION(PtAtTimeCallback, args, "Params: selfkey,time,id\nThis will create a timer callback that will call OnTimer when complete\n"
             "- 'selfkey' is the ptKey of the PythonFile component\n"
             "- 'time' is how much time from now (in seconds) to call back\n"
             "- 'id' is an integer id that will be returned in the OnTimer call")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     float time;
-    unsigned long id;
-    if (!PyArg_ParseTuple(args, "Ofl", &keyObj, &time, &id))
+    int id;
+    if (!PyArg_ParseTuple(args, "Ofi", &keyObj, &time, &id))
     {
-        PyErr_SetString(PyExc_TypeError, "PtAtTimeCallback expects a ptKey, a float, and an unsigned long");
+        PyErr_SetString(PyExc_TypeError, "PtAtTimeCallback expects a ptKey, a float, and an int");
         PYTHON_RETURN_ERROR;
     }
     if (!pyKey::Check(keyObj))
     {
-        PyErr_SetString(PyExc_TypeError, "PtAtTimeCallback expects a ptKey, a float, and an unsigned long");
+        PyErr_SetString(PyExc_TypeError, "PtAtTimeCallback expects a ptKey, a float, and an int");
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
@@ -160,7 +148,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtAtTimeCallback, args, "Params: selfkey,time,id
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtClearTimerCallbacks, args, "Params: key\nThis will remove timer callbacks to the specified key")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtClearTimerCallbacks expects a ptKey");
@@ -180,46 +168,44 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFindSceneobject, args, "Params: name,ageName\n
             "- it will return a ptSceneObject if found"
             "- if not found then a NameError exception will happen")
 {
-    char* name;
-    char* ageName;
-    if (!PyArg_ParseTuple(args, "ss", &name, &ageName))
+    ST::string name;
+    ST::string ageName;
+    if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_STStringConverter, &name, PyUnicode_STStringConverter, &ageName))
     {
         PyErr_SetString(PyExc_TypeError, "PtFindSceneobject expects two strings");
         PYTHON_RETURN_ERROR;
     }
-    return cyMisc::FindSceneObject(plString::FromUtf8(name), ageName);
+    return cyMisc::FindSceneObject(name, ageName);
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtFindSceneobjects, args, "Params: name\nThis will try to find a any sceneobject containing string in name")
 {
-    char* name = NULL;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "PtFindSceneobject expects string");
         PYTHON_RETURN_ERROR;
     }
-    return cyMisc::FindSceneObjects(plString::FromUtf8(name));
+    return cyMisc::FindSceneObjects(name);
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtFindActivator, args, "Params: name\nThis will try to find an activator based on its name\n"
             "- it will return a ptKey if found"
             "- it will return None if not found")
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "PtFindActivator expects a string");
         PYTHON_RETURN_ERROR;
     }
 
-    return cyMisc::FindActivator(plString::FromUtf8(name));
+    return cyMisc::FindActivator(name);
 }
-
-PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtClearCameraStack, cyMisc::ClearCameraStack, "Clears the camera stack")
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtWasLocallyNotified, args, "Params: selfKey\nReturns 1 if the last notify was local or 0 if the notify originated on the network")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtWasLocallyNotified expects a ptKey");
@@ -239,8 +225,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtAttachObject, args, "Params: child,parent,netF
             "- parentKey is the ptKey or ptSceneobject of the one being attached to\n"
             "(both arguments must be ptKeys or ptSceneobjects, you cannot mix types)")
 {
-    PyObject* childObj = NULL;
-    PyObject* parentObj = NULL;
+    PyObject* childObj = nullptr;
+    PyObject* parentObj = nullptr;
     char netForce = 0;
     if (!PyArg_ParseTuple(args, "OO|b", &childObj, &parentObj, &netForce))
     {
@@ -272,8 +258,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDetachObject, args, "Params: child,parent,netF
             "- parent is the ptKey or ptSceneobject of the one being detached from\n"
             "(both arguments must be ptKeys or ptSceneobjects, you cannot mix types)")
 {
-    PyObject* childObj = NULL;
-    PyObject* parentObj = NULL;
+    PyObject* childObj = nullptr;
+    PyObject* parentObj = nullptr;
     char netForce = 0;
     if (!PyArg_ParseTuple(args, "OO|b", &childObj, &parentObj, &netForce))
     {
@@ -300,32 +286,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDetachObject, args, "Params: child,parent,netF
     PYTHON_RETURN_NONE;
 }
 
-/*PYTHON_GLOBAL_METHOD_DEFINITION(PtLinkToAge, args, "Params: selfKey,ageName,spawnPointName\nDEPRECIATED: Links you to the specified age and spawnpoint")
-{
-    PyObject* keyObj = NULL;
-    char* ageName;
-    char* spawnPointName;
-    if (!PyArg_ParseTuple(args, "Oss", &keyObj, &ageName, &spawnPointName))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtLinkToAge expects a ptKey, and two strings");
-        PYTHON_RETURN_ERROR;
-    }
-    if (!pyKey::Check(keyObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtLinkToAge expects a ptKey, and two strings");
-        PYTHON_RETURN_ERROR;
-    }
-    pyKey* key = pyKey::ConvertFrom(keyObj);
-    cyMisc::LinkToAge(*key, ageName, spawnPointName);
-    PYTHON_RETURN_NONE;
-}*/
-
 PYTHON_GLOBAL_METHOD_DEFINITION(PtDirtySynchState, args, "Params: selfKey,SDLStateName,flags\nDO NOT USE - handled by ptSDL")
 {
-    PyObject* keyObj = NULL;
-    char* SDLStateName;
+    PyObject* keyObj = nullptr;
+    ST::string SDLStateName;
     unsigned long flags;
-    if (!PyArg_ParseTuple(args, "Osl", &keyObj, &SDLStateName, &flags))
+    if (!PyArg_ParseTuple(args, "OO&l", &keyObj, PyUnicode_STStringConverter, &SDLStateName, &flags))
     {
         PyErr_SetString(PyExc_TypeError, "PtDirtySynchState expects a ptKey, a string, and an unsigned long");
         PYTHON_RETURN_ERROR;
@@ -342,10 +308,10 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDirtySynchState, args, "Params: selfKey,SDLSta
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtDirtySynchClients, args, "Params: selfKey,SDLStateName,flags\nDO NOT USE - handled by ptSDL")
 {
-    PyObject* keyObj = NULL;
-    char* SDLStateName;
+    PyObject* keyObj = nullptr;
+    ST::string SDLStateName;
     unsigned long flags;
-    if (!PyArg_ParseTuple(args, "Osl", &keyObj, &SDLStateName, &flags))
+    if (!PyArg_ParseTuple(args, "OO&l", &keyObj, PyUnicode_STStringConverter, &SDLStateName, &flags))
     {
         PyErr_SetString(PyExc_TypeError, "PtDirtySynchClients expects a ptKey, a string, and an unsigned long");
         PYTHON_RETURN_ERROR;
@@ -362,7 +328,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDirtySynchClients, args, "Params: selfKey,SDLS
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtEnableControlKeyEvents, args, "Params: selfKey\nEnable control key events to call OnControlKeyEvent(controlKey,activateFlag)")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtEnableControlKeyEvents expects a ptKey");
@@ -380,7 +346,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtEnableControlKeyEvents, args, "Params: selfKey
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtDisableControlKeyEvents, args, "Params: selfKey\nDisable the control key events from calling OnControlKeyEvent")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtDisableControlKeyEvents expects a ptKey");
@@ -413,10 +379,10 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFadeLocalAvatar, args, "Params: fade\nFade (or
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetOfferBookMode, args, "Params: selfkey,ageFilename,ageInstanceName\nPut us into the offer book interface")
 {
-    PyObject* keyObj = NULL;
-    char* ageFilename;
-    char* ageInstanceName;
-    if (!PyArg_ParseTuple(args, "Oss", &keyObj, &ageFilename, &ageInstanceName))
+    PyObject* keyObj = nullptr;
+    ST::string ageFilename;
+    ST::string ageInstanceName;
+    if (!PyArg_ParseTuple(args, "OO&O&", &keyObj, PyUnicode_STStringConverter, &ageFilename, PyUnicode_STStringConverter, &ageInstanceName))
     {
         PyErr_SetString(PyExc_TypeError, "PtSetOfferBookMode expects a ptKey, and two strings");
         PYTHON_RETURN_ERROR;
@@ -433,8 +399,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetOfferBookMode, args, "Params: selfkey,ageFi
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetShareSpawnPoint, args, "Params: spawnPoint\nThis sets the desired spawn point for the receiver to link to")
 {
-    char* spawnPoint;
-    if (!PyArg_ParseTuple(args, "s", &spawnPoint))
+    ST::string spawnPoint;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &spawnPoint))
     {
         PyErr_SetString(PyExc_TypeError, "PtSetShareSpawnPoint expects a string");
         PYTHON_RETURN_ERROR;
@@ -445,8 +411,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetShareSpawnPoint, args, "Params: spawnPoint\
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetShareAgeInstanceGuid, args, "Params: instanceGuid\nThis sets the desired age instance guid for the receiver to link to")
 {
-    char* guidStr;
-    if (!PyArg_ParseTuple(args, "s", &guidStr))
+    ST::string guidStr;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guidStr))
     {
         PyErr_SetString(PyExc_TypeError, "PtSetShareAgeInstanceGuid expects a string");
         PYTHON_RETURN_ERROR;
@@ -503,7 +469,7 @@ PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtClearOfferBookMode, cyMisc::DisableOffer
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetLocalClientID, "Returns our local client ID number")
 {
-    return PyInt_FromLong(cyMisc::GetLocalClientID());
+    return PyLong_FromLong(cyMisc::GetLocalClientID());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtIsCCRAway, "Returns current status of CCR dept")
@@ -530,8 +496,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtToggleAvatarClickability, args, "Params: on\nT
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtTransferParticlesToObject, args, "Params: objFrom, objTo, num\nTransfers num particles from objFrom to objTo")
 {
-    PyObject* objFrom = NULL;
-    PyObject* objTo = NULL;
+    PyObject* objFrom = nullptr;
+    PyObject* objTo = nullptr;
     int num;
     if (!PyArg_ParseTuple(args, "OOi", &objFrom, &objTo, &num))
     {
@@ -552,7 +518,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtTransferParticlesToObject, args, "Params: objF
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetParticleDissentPoint, args, "Params: x, y, z, particlesys\nSets the dissent point of the particlesys to x,y,z")
 {
     float x,y,z;
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "fffO", &x, &y, &z, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtSetParticleDissentPoint expects three floats and a ptKey");
@@ -571,7 +537,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetParticleDissentPoint, args, "Params: x, y, 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtGetControlEvents, args, "Params: on, key\nRegisters or unregisters for control event messages")
 {
     char on;
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "bO", &on, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtGetControlEvents expects a boolean and a ptKey");
@@ -589,18 +555,13 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetControlEvents, args, "Params: on, key\nRegi
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetLanguage, "Returns the current language as a PtLanguage enum")
 {
-    return PyInt_FromLong(cyMisc::GetLanguage());
-}
-
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtUsingUnicode, "Returns true if the current language is a unicode language (like Japanese)")
-{
-    PYTHON_RETURN_BOOL(cyMisc::UsingUnicode());
+    return PyLong_FromLong(cyMisc::GetLanguage());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtFakeLinkAvatarToObject, args, "Params: avatar,object\nPseudo-links avatar to object within the same age\n")
 {
-    PyObject* avatarObj = NULL;
-    PyObject* objectObj = NULL;
+    PyObject* avatarObj = nullptr;
+    PyObject* objectObj = nullptr;
     if (!PyArg_ParseTuple(args, "OO", &avatarObj, &objectObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtFakeLinkAvatarToObject expects two ptKeys");
@@ -617,73 +578,59 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFakeLinkAvatarToObject, args, "Params: avatar,
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtWearDefaultClothingType, args, "Params: key,type\nForces the avatar to wear the default clothing of the specified type")
+PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtWearDefaultClothingType, args, kw, "Params: key, type, broadcast=False\nForces the avatar to wear the default clothing of the specified type")
 {
-    PyObject* keyObj = NULL;
+    const char* kwlist[] = { "key", "type", "broadcast", nullptr };
+    PyObject* keyObj = nullptr;
     unsigned long type;
-    if (!PyArg_ParseTuple(args, "Ol", &keyObj, &type))
+    bool broadcast = false;
+    if (!PyArg_ParseTupleAndKeywords(args, kw, "Ol|b", const_cast<char**>(kwlist), &keyObj, &type, &broadcast))
     {
-        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothingType expects a ptKey and an unsigned long");
+        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothingType expects a ptKey, an unsigned long, and an optional bool");
         PYTHON_RETURN_ERROR;
     }
     if (!pyKey::Check(keyObj))
     {
-        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothingType expects a ptKey and an unsigned long");
+        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothingType expects a ptKey, an unsigned long, and an optional bool");
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    cyMisc::WearDefaultClothingType(*key, type);
+    cyMisc::WearDefaultClothingType(*key, type, broadcast);
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtFileExists, args, "Params: filename\nReturns true if the specified file exists")
 {
-    PyObject* filenameObj;
-    if (!PyArg_ParseTuple(args, "O", &filenameObj))
+    plFileName filename;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_PlFileNameDecoder, &filename))
     {
-        PyErr_SetString(PyExc_TypeError, "PtFileExists expects a string");
+        PyErr_SetString(PyExc_TypeError, "PtFileExists expects a pathlike object or string");
         PYTHON_RETURN_ERROR;
     }
 
-    if (PyString_CheckEx(filenameObj))
-    {
-        PYTHON_RETURN_BOOL(cyMisc::FileExists(PyString_AsStringEx(filenameObj)));
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "PtFileExists expects a string");
-        PYTHON_RETURN_ERROR;
-    }
+    PYTHON_RETURN_BOOL(cyMisc::FileExists(filename));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtCreateDir, args, "Params: directory\nCreates the directory and all parent folders. Returns false on failure")
 {
-    PyObject* directoryObj;
-    if (!PyArg_ParseTuple(args, "O", &directoryObj))
+    plFileName directory;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_PlFileNameDecoder, &directory))
     {
-        PyErr_SetString(PyExc_TypeError, "PtCreateDir expects a string");
+        PyErr_SetString(PyExc_TypeError, "PtCreateDir expects a pathlike object or string");
         PYTHON_RETURN_ERROR;
     }
 
-    if (PyString_CheckEx(directoryObj))
-    {
-        PYTHON_RETURN_BOOL(cyMisc::CreateDir(PyString_AsStringEx(directoryObj)));
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "PtCreateDir expects a string");
-        PYTHON_RETURN_ERROR;
-    }
+    PYTHON_RETURN_BOOL(cyMisc::CreateDir(directory));
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetUserPath, "Returns the unicode path to the client's root user directory. Do NOT convert to a standard string.")
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetUserPath, "Returns the path to the client's root user directory.")
 {
-    return PyUnicode_FromPlString(cyMisc::GetUserPath().AsString());
+    return PyUnicode_FromSTString(cyMisc::GetUserPath().AsString());
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetInitPath, "Returns the unicode path to the client's init directory. Do NOT convert to a standard string.")
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetInitPath, "Returns the path to the client's init directory.")
 {
-    return PyUnicode_FromPlString(cyMisc::GetInitPath().AsString());
+    return PyUnicode_FromSTString(cyMisc::GetInitPath().AsString());
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -691,76 +638,69 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetInitPath, "Returns the unicode path 
 // AddPlasmaMethods - the python method definitions
 //
 
-void cyMisc::AddPlasmaMethods3(std::vector<PyMethodDef> &methods)
+void cyMisc::AddPlasmaMethods3(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD(methods, PtSendPetitionToCCR);
-    PYTHON_GLOBAL_METHOD(methods, PtSendChatToCCR);
+    PYTHON_START_GLOBAL_METHOD_TABLE(cyMisc3)
+        PYTHON_GLOBAL_METHOD(PtSendPetitionToCCR)
+        PYTHON_GLOBAL_METHOD(PtSendChatToCCR)
 
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetPythonLoggingLevel);
-    PYTHON_GLOBAL_METHOD(methods, PtSetPythonLoggingLevel);
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetPythonLoggingLevel)
+        PYTHON_GLOBAL_METHOD(PtSetPythonLoggingLevel)
 
-    PYTHON_GLOBAL_METHOD(methods, PtConsole);
-    PYTHON_GLOBAL_METHOD(methods, PtConsoleNet);
+        PYTHON_GLOBAL_METHOD(PtConsole)
+        PYTHON_GLOBAL_METHOD(PtConsoleNet)
 
-#if 1
-    // TEMP
-    PYTHON_GLOBAL_METHOD(methods, PtPrintToScreen);
-#endif
+        PYTHON_GLOBAL_METHOD(PtAtTimeCallback)
+        PYTHON_GLOBAL_METHOD(PtClearTimerCallbacks)
 
-    PYTHON_GLOBAL_METHOD(methods, PtAtTimeCallback);
-    PYTHON_GLOBAL_METHOD(methods, PtClearTimerCallbacks);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtFindSceneobject);
-    PYTHON_GLOBAL_METHOD(methods, PtFindSceneobjects);
-    PYTHON_GLOBAL_METHOD(methods, PtFindActivator);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtClearCameraStack);
-    PYTHON_GLOBAL_METHOD(methods, PtWasLocallyNotified);
+        PYTHON_GLOBAL_METHOD(PtFindSceneobject)
+        PYTHON_GLOBAL_METHOD(PtFindSceneobjects)
+        PYTHON_GLOBAL_METHOD(PtFindActivator)
+        PYTHON_GLOBAL_METHOD(PtWasLocallyNotified)
 
-    PYTHON_GLOBAL_METHOD(methods, PtAttachObject);
-    PYTHON_GLOBAL_METHOD(methods, PtDetachObject);
-    
-    //PYTHON_GLOBAL_METHOD(methods, PtLinkToAge);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtDirtySynchState);
-    PYTHON_GLOBAL_METHOD(methods, PtDirtySynchClients);
+        PYTHON_GLOBAL_METHOD(PtAttachObject)
+        PYTHON_GLOBAL_METHOD(PtDetachObject)
 
-    PYTHON_GLOBAL_METHOD(methods, PtEnableControlKeyEvents);
-    PYTHON_GLOBAL_METHOD(methods, PtDisableControlKeyEvents);
+        PYTHON_GLOBAL_METHOD(PtDirtySynchState)
+        PYTHON_GLOBAL_METHOD(PtDirtySynchClients)
 
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtEnableAvatarCursorFade);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtDisableAvatarCursorFade);
-    PYTHON_GLOBAL_METHOD(methods, PtFadeLocalAvatar);
+        PYTHON_GLOBAL_METHOD(PtEnableControlKeyEvents)
+        PYTHON_GLOBAL_METHOD(PtDisableControlKeyEvents)
 
-    PYTHON_GLOBAL_METHOD(methods, PtSetOfferBookMode);
-    PYTHON_GLOBAL_METHOD(methods, PtSetShareSpawnPoint);
-    PYTHON_GLOBAL_METHOD(methods, PtSetShareAgeInstanceGuid);
-    PYTHON_GLOBAL_METHOD(methods, PtNotifyOffererLinkAccepted);
-    PYTHON_GLOBAL_METHOD(methods, PtNotifyOffererLinkRejected);
-    PYTHON_GLOBAL_METHOD(methods, PtNotifyOffererLinkCompleted);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtClearOfferBookMode);
+        PYTHON_BASIC_GLOBAL_METHOD(PtEnableAvatarCursorFade)
+        PYTHON_BASIC_GLOBAL_METHOD(PtDisableAvatarCursorFade)
+        PYTHON_GLOBAL_METHOD(PtFadeLocalAvatar)
 
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetLocalClientID);
-    
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtIsCCRAway);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAmCCR);
+        PYTHON_GLOBAL_METHOD(PtSetOfferBookMode)
+        PYTHON_GLOBAL_METHOD(PtSetShareSpawnPoint)
+        PYTHON_GLOBAL_METHOD(PtSetShareAgeInstanceGuid)
+        PYTHON_GLOBAL_METHOD(PtNotifyOffererLinkAccepted)
+        PYTHON_GLOBAL_METHOD(PtNotifyOffererLinkRejected)
+        PYTHON_GLOBAL_METHOD(PtNotifyOffererLinkCompleted)
+        PYTHON_BASIC_GLOBAL_METHOD(PtClearOfferBookMode)
 
-    PYTHON_GLOBAL_METHOD(methods, PtToggleAvatarClickability);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtTransferParticlesToObject);
-    PYTHON_GLOBAL_METHOD(methods, PtSetParticleDissentPoint);
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetLocalClientID)
 
-    PYTHON_GLOBAL_METHOD(methods, PtGetControlEvents);
-    
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetLanguage);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtUsingUnicode);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtFakeLinkAvatarToObject);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtWearDefaultClothingType);
+        PYTHON_GLOBAL_METHOD_NOARGS(PtIsCCRAway)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtAmCCR)
 
-    PYTHON_GLOBAL_METHOD(methods, PtFileExists);
-    PYTHON_GLOBAL_METHOD(methods, PtCreateDir);
+        PYTHON_GLOBAL_METHOD(PtToggleAvatarClickability)
 
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetUserPath);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetInitPath);
+        PYTHON_GLOBAL_METHOD(PtTransferParticlesToObject)
+        PYTHON_GLOBAL_METHOD(PtSetParticleDissentPoint)
+
+        PYTHON_GLOBAL_METHOD(PtGetControlEvents)
+
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetLanguage)
+
+        PYTHON_GLOBAL_METHOD(PtFakeLinkAvatarToObject)
+
+        PYTHON_GLOBAL_METHOD(PtWearDefaultClothingType)
+
+        PYTHON_GLOBAL_METHOD(PtFileExists)
+        PYTHON_GLOBAL_METHOD(PtCreateDir)
+
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetUserPath)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetInitPath)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, cyMisc3)
 }

@@ -44,16 +44,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plArmatureMod.h"
 
 // global includes
-#include "hsTimer.h"
 #include "hsGeometry3.h"
+#include "hsMatrix44.h"
+#include "hsQuat.h"
+#include "hsTimer.h"
 
 // other includes
-#include "hsQuat.h"
-#include "plMessage/plSimStateMsg.h"
 #include "pnMessage/plCameraMsg.h"
+#include "pnMessage/plCmdIfaceModMsg.h"
+#include "pnSceneObject/plSceneObject.h"
 
-// messages
 #include "plMessage/plInputEventMsg.h"
+#include "plMessage/plSimStateMsg.h"
 
 // CTOR default
 plAvBrainDrive::plAvBrainDrive()
@@ -73,7 +75,9 @@ void plAvBrainDrive::Activate(plArmatureModBase *avMod)
 {
     plArmatureBrain::Activate(avMod);
 
-    IEnablePhysics(false, avMod->GetTarget(0)->GetKey());
+    IEnablePhysics(false);
+    IToggleCtrlCodes(true);
+
     plCameraMsg* pMsg = new plCameraMsg;
     pMsg->SetCmd(plCameraMsg::kNonPhysOn);
     pMsg->SetBCastFlag(plMessage::kBCastByExactType);
@@ -84,16 +88,33 @@ void plAvBrainDrive::Activate(plArmatureModBase *avMod)
 void plAvBrainDrive::Deactivate()
 {
     if (fAvMod)
-    {   
-        IEnablePhysics(true, fAvMod->GetTarget(0)->GetKey());
+    {
+        IEnablePhysics(true);
+        IToggleCtrlCodes(false);
+
         plCameraMsg* pMsg = new plCameraMsg;
         pMsg->SetCmd(plCameraMsg::kNonPhysOff);
         pMsg->SetBCastFlag(plMessage::kBCastByExactType);
-        pMsg->Send();               
+        pMsg->Send();
     }
 }
 
-void plAvBrainDrive::IEnablePhysics(bool enable, plKey avKey)
+void plAvBrainDrive::IToggleCtrlCodes(bool on) const
+{
+    if (fAvMod->IsLocalAvatar()) {
+        plCmdIfaceModMsg* pUpMsg = new plCmdIfaceModMsg;
+        pUpMsg->fCmd.SetBit(on ? plCmdIfaceModMsg::kEnableControlCode : plCmdIfaceModMsg::kDisableControlCode);
+        pUpMsg->fControlCode = B_CONTROL_MOVE_UP;
+        pUpMsg->Send();
+
+        plCmdIfaceModMsg* pDownMsg = new plCmdIfaceModMsg;
+        pDownMsg->fCmd.SetBit(on ? plCmdIfaceModMsg::kEnableControlCode : plCmdIfaceModMsg::kDisableControlCode);
+        pDownMsg->fControlCode = B_CONTROL_MOVE_DOWN;
+        pDownMsg->Send();
+    }
+}
+
+void plAvBrainDrive::IEnablePhysics(bool enable)
 {
     fAvMod->EnablePhysics(enable);
 }
@@ -144,8 +165,8 @@ bool plAvBrainDrive::Apply(double timeNow, float elapsed)
     hsPoint3 desiredPosition = playerPos;
     // calculate rotation matrix
 
-    hsVector3 rotUp(0,0,1);
-    hsVector3 rotRight(1,0,0);
+    hsVector3 rotUp(0.f, 0.f, 1.f);
+    hsVector3 rotRight(1.f, 0.f, 0.f);
     hsMatrix44 rot;
     float angle = 0;
 
@@ -155,7 +176,7 @@ bool plAvBrainDrive::Apply(double timeNow, float elapsed)
     }
 
     hsMatrix44 justRot(targetMatrix);
-    hsPoint3 zero(0,0,0);
+    hsPoint3 zero;
     justRot.SetTranslate(&zero);
 
     if( angle ) {

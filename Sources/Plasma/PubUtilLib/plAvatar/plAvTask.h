@@ -102,11 +102,11 @@ public:
 
     /** Read the task from a stream. Not all tasks need to read/write, so the base implementation
         gives a warning to expose tasks that are being read/written unexpectedly. */
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
 
     /** Write the task to a stream. Not all tasks need to read/write, so the base implementation
         gives a warning to expose tasks that are being read/written unexpectedly. */
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
     
 protected:
     virtual void ILimitPlayersInput(plArmatureMod *avatar);

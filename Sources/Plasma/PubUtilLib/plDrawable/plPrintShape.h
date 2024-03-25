@@ -59,11 +59,11 @@ public:
     GETINTERFACE_ANY( plPrintShape, plObjInterface );
 
 
-    virtual int32_t   GetNumProperties() const { return 1; }
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
+    int32_t GetNumProperties() const override { return 1; }
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override { }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     float GetWidth() const { return fWidth; }
     float GetLength() const { return fLength; }

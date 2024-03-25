@@ -65,21 +65,21 @@ public:
                     plAudioCore::ChannelSelect whichChan = plAudioCore::kAll);
     virtual ~plCachedFileReader();
 
-    virtual plWAVHeader &GetHeader();
+    plWAVHeader &GetHeader() override;
 
-    virtual void    Close();
+    void    Close() override;
 
-    virtual uint32_t  GetDataSize();
-    virtual float   GetLengthInSecs();
+    uint32_t  GetDataSize() override;
+    float   GetLengthInSecs() override;
 
-    virtual bool    SetPosition(uint32_t numBytes);
-    virtual bool    Read(uint32_t numBytes, void *buffer);
-    virtual uint32_t  NumBytesLeft();
+    bool    SetPosition(uint32_t numBytes) override;
+    bool    Read(uint32_t numBytes, void *buffer) override;
+    uint32_t  NumBytesLeft() override;
 
-    virtual bool    OpenForWriting(const plFileName &path, plWAVHeader &header);
-    virtual uint32_t  Write(uint32_t bytes, void *buffer);
+    bool    OpenForWriting(const plFileName &path, plWAVHeader &header) override;
+    uint32_t  Write(uint32_t bytes, void *buffer) override;
 
-    virtual bool    IsValid() { return fFileHandle != nil; }
+    bool    IsValid() override { return fFileHandle != nullptr; }
 
 protected:
     enum

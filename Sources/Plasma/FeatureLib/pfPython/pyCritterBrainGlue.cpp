@@ -40,15 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyGeometry3.h"
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyCritterBrain.h"
-#include "pyEnum.h"
+
+#include <string_theory/string>
 
 #include "plMessage/plAIMsg.h"
+
+#include "pyEnum.h"
+#include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -56,11 +57,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 void pyAIMsg::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtAIMsgType);
-    PYTHON_ENUM_ELEMENT(PtAIMsgType, kUnknown, plAIMsg::kAIMsg_Unknown);
-    PYTHON_ENUM_ELEMENT(PtAIMsgType, kBrainCreated, plAIMsg::kAIMsg_BrainCreated);
-    PYTHON_ENUM_ELEMENT(PtAIMsgType, kArrivedAtGoal, plAIMsg::kAIMsg_ArrivedAtGoal);
-    PYTHON_ENUM_END(m, PtAIMsgType);
+    PYTHON_ENUM_START(PtAIMsgType)
+    PYTHON_ENUM_ELEMENT(PtAIMsgType, kUnknown, plAIMsg::kAIMsg_Unknown)
+    PYTHON_ENUM_ELEMENT(PtAIMsgType, kBrainCreated, plAIMsg::kAIMsg_BrainCreated)
+    PYTHON_ENUM_ELEMENT(PtAIMsgType, kArrivedAtGoal, plAIMsg::kAIMsg_ArrivedAtGoal)
+    PYTHON_ENUM_END(m, PtAIMsgType)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -108,7 +109,7 @@ PYTHON_RICH_COMPARE_DEFINITION(ptCritterBrain, obj1, obj2, compareType)
 
 PYTHON_METHOD_DEFINITION(ptCritterBrain, addReceiver, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "addReceiver expects a ptKey");
@@ -126,7 +127,7 @@ PYTHON_METHOD_DEFINITION(ptCritterBrain, addReceiver, args)
 
 PYTHON_METHOD_DEFINITION(ptCritterBrain, removeReceiver, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "removeReceiver expects a ptKey");
@@ -149,52 +150,17 @@ PYTHON_METHOD_DEFINITION(ptCritterBrain, getSceneObject, GetSceneObject)
 
 PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, addBehavior, args, keywords)
 {
-    char* kwlist[] = {"animationName", "behaviorName", "loop", "randomStartPos", "fadeInLen", "fadeOutLen", NULL};
-    PyObject* animNameObj = NULL;
-    PyObject* behNameObj = NULL;
+    const char* kwlist[] = {"animationName", "behaviorName", "loop", "randomStartPos",
+                            "fadeInLen", "fadeOutLen", nullptr};
+    ST::string animName;
+    ST::string behName;
     char loop = 1, randomStartPos = 1;
     float fadeInLen = 2.f, fadeOutLen = 2.f;
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "OO|bbff", kwlist, &animNameObj, &behNameObj, &loop, &randomStartPos, &fadeInLen, &fadeOutLen))
-    {
-        PyErr_SetString(PyExc_TypeError, "addBehavior expects two strings, and optionally two booleans and two floats");
-        PYTHON_RETURN_ERROR;
-    }
-
-    std::string animName = "";
-    if (PyUnicode_Check(animNameObj))
-    {
-        int strLen = PyUnicode_GetSize(animNameObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)animNameObj, text, strLen);
-        text[strLen] = L'\0';
-        char* cText = hsWStringToString(text);
-        animName = cText;
-        delete [] cText;
-        delete [] text;
-    }
-    else if (PyString_Check(animNameObj))
-        animName = PyString_AsString(animNameObj);
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "addBehavior expects two strings, and optionally two booleans and two floats");
-        PYTHON_RETURN_ERROR;
-    }
-
-    std::string behName = "";
-    if (PyUnicode_Check(behNameObj))
-    {
-        int strLen = PyUnicode_GetSize(behNameObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)behNameObj, text, strLen);
-        text[strLen] = L'\0';
-        char* cText = hsWStringToString(text);
-        behName = cText;
-        delete [] cText;
-        delete [] text;
-    }
-    else if (PyString_Check(behNameObj))
-        behName = PyString_AsString(behNameObj);
-    else
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O&O&|bbff", const_cast<char **>(kwlist),
+                                     PyUnicode_STStringConverter, &animName,
+                                     PyUnicode_STStringConverter, &behName,
+                                     &loop, &randomStartPos,
+                                     &fadeInLen, &fadeOutLen))
     {
         PyErr_SetString(PyExc_TypeError, "addBehavior expects two strings, and optionally two booleans and two floats");
         PYTHON_RETURN_ERROR;
@@ -206,33 +172,13 @@ PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, addBehavior, args, keywords)
 
 PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, startBehavior, args, keywords)
 {
-    char* kwlist[] = {"behaviorName", "fade", NULL};
-    PyObject* behNameObj = NULL;
+    const char* kwlist[] = {"behaviorName", "fade", nullptr};
+    ST::string behName;
     char fade = 1;
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O|b", kwlist, &behNameObj, &fade))
-    {
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O&|b", const_cast<char**>(kwlist),
+                                     PyUnicode_STStringConverter, &behName, &fade)) {
         PyErr_SetString(PyExc_TypeError, "startBehavior expects a string, and an optional boolean");
         PYTHON_RETURN_NONE;
-    }
-
-    std::string behName = "";
-    if (PyUnicode_Check(behNameObj))
-    {
-        int strLen = PyUnicode_GetSize(behNameObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)behNameObj, text, strLen);
-        text[strLen] = L'\0';
-        char* cText = hsWStringToString(text);
-        behName = cText;
-        delete [] cText;
-        delete [] text;
-    }
-    else if (PyString_Check(behNameObj))
-        behName = PyString_AsString(behNameObj);
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "startBehavior expects a string, and an optional boolean");
-        PYTHON_RETURN_ERROR;
     }
 
     self->fThis->StartBehavior(behName, fade != 0);
@@ -241,35 +187,13 @@ PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, startBehavior, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptCritterBrain, runningBehavior, args)
 {
-    PyObject* behNameObj = NULL;
-    if (!PyArg_ParseTuple(args, "O", &behNameObj))
+    ST::string behName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &behName))
     {
         PyErr_SetString(PyExc_TypeError, "runningBehavior expects a string");
         PYTHON_RETURN_ERROR;
     }
-
-    if (PyUnicode_Check(behNameObj))
-    {
-        int strLen = PyUnicode_GetSize(behNameObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)behNameObj, text, strLen);
-        text[strLen] = L'\0';
-        char* cText = hsWStringToString(text);
-        bool retVal = self->fThis->RunningBehavior(cText);
-        delete [] cText;
-        delete [] text;
-        PYTHON_RETURN_BOOL(retVal);
-    }
-    else if (PyString_Check(behNameObj))
-    {
-        bool retVal = self->fThis->RunningBehavior(PyString_AsString(behNameObj));
-        PYTHON_RETURN_BOOL(retVal);
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "runningBehavior expects a string");
-        PYTHON_RETURN_ERROR;
-    }
+    PYTHON_RETURN_BOOL(self->fThis->RunningBehavior(behName));
 }
 
 PYTHON_METHOD_DEFINITION(ptCritterBrain, behaviorName, args)
@@ -280,7 +204,7 @@ PYTHON_METHOD_DEFINITION(ptCritterBrain, behaviorName, args)
         PyErr_SetString(PyExc_TypeError, "behaviorName expects an integer");
         PYTHON_RETURN_ERROR;
     }
-    return PyString_FromString(self->fThis->BehaviorName(behavior).c_str());
+    return PyUnicode_FromSTString(self->fThis->BehaviorName(behavior));
 }
 
 PYTHON_METHOD_DEFINITION(ptCritterBrain, animationName, args)
@@ -291,35 +215,36 @@ PYTHON_METHOD_DEFINITION(ptCritterBrain, animationName, args)
         PyErr_SetString(PyExc_TypeError, "animationName expects an integer");
         PYTHON_RETURN_ERROR;
     }
-    return PyString_FromString(self->fThis->AnimationName(behavior).c_str());
+    return PyUnicode_FromSTString(self->fThis->AnimationName(behavior));
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptCritterBrain, curBehavior)
 {
-    return PyInt_FromLong(self->fThis->CurBehavior());
+    return PyLong_FromLong(self->fThis->CurBehavior());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptCritterBrain, nextBehavior)
 {
-    return PyInt_FromLong(self->fThis->NextBehavior());
+    return PyLong_FromLong(self->fThis->NextBehavior());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptCritterBrain, idleBehaviorName)
 {
-    return PyString_FromString(self->fThis->IdleBehaviorName().c_str());
+    return PyUnicode_FromSTString(self->fThis->IdleBehaviorName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptCritterBrain, runBehaviorName)
 {
-    return PyString_FromString(self->fThis->RunBehaviorName().c_str());
+    return PyUnicode_FromSTString(self->fThis->RunBehaviorName());
 }
 
 PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, goToGoal, args, keywords)
 {
-    char* kwlist[] = {"newGoal", "avoidingAvatars", NULL};
-    PyObject* goalObj = NULL;
+    const char* kwlist[] = {"newGoal", "avoidingAvatars", nullptr};
+    PyObject* goalObj = nullptr;
     char avoidingAvatars = 0;
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O|b", kwlist, &goalObj, &avoidingAvatars))
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O|b", const_cast<char **>(kwlist),
+                                     &goalObj, &avoidingAvatars))
     {
         PyErr_SetString(PyExc_TypeError, "goToGoal expects a ptPoint and an optional boolean.");
         PYTHON_RETURN_ERROR;
@@ -498,11 +423,12 @@ PYTHON_START_METHODS_TABLE(ptCritterBrain)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-#define ptCritterBrain_COMPARE      PYTHON_NO_COMPARE
 #define ptCritterBrain_AS_NUMBER    PYTHON_NO_AS_NUMBER
 #define ptCritterBrain_AS_SEQUENCE  PYTHON_NO_AS_SEQUENCE
 #define ptCritterBrain_AS_MAPPING   PYTHON_NO_AS_MAPPING
 #define ptCritterBrain_STR          PYTHON_NO_STR
+#define ptCritterBrain_GETATTRO     PYTHON_NO_GETATTRO
+#define ptCritterBrain_SETATTRO     PYTHON_NO_SETATTRO
 #define ptCritterBrain_RICH_COMPARE PYTHON_DEFAULT_RICH_COMPARE(ptCritterBrain)
 #define ptCritterBrain_GETSET       PYTHON_NO_GETSET
 #define ptCritterBrain_BASE         PYTHON_NO_BASE
@@ -511,7 +437,7 @@ PLASMA_CUSTOM_TYPE(ptCritterBrain, "Object to manipulate critter brains");
 // required functions for PyObject interoperability
 PyObject* pyCritterBrain::New(plAvBrainCritter* brain)
 {
-    ptCritterBrain *newObj = (ptCritterBrain*)ptCritterBrain_type.tp_new(&ptCritterBrain_type, NULL, NULL);
+    ptCritterBrain *newObj = (ptCritterBrain*)ptCritterBrain_type.tp_new(&ptCritterBrain_type, nullptr, nullptr);
     newObj->fThis->fBrain = brain;
     return (PyObject*)newObj;
 }

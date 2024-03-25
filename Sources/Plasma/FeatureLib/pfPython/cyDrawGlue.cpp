@@ -40,11 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "cyDraw.h"
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptDraw, cyDraw);
@@ -96,16 +95,14 @@ PLASMA_DEFAULT_TYPE(ptDraw, "Plasma Draw class");
 // required functions for PyObject interoperability
 PyObject *cyDraw::New(PyObject *sender, PyObject *recvr)
 {
-    ptDraw *newObj = (ptDraw*)ptDraw_type.tp_new(&ptDraw_type, NULL, NULL);
-    if (sender != NULL)
+    ptDraw *newObj = (ptDraw*)ptDraw_type.tp_new(&ptDraw_type, nullptr, nullptr);
+    if (sender != nullptr)
     {
-        plKey senderKey = pyKey::ConvertFrom(sender)->getKey();
-        newObj->fThis->SetSender(senderKey);
+        newObj->fThis->SetSender(pyKey::ConvertFrom(sender)->getKey());
     }
-    if (recvr != NULL)
+    if (recvr != nullptr)
     {
-        plKey recvrKey = pyKey::ConvertFrom(recvr)->getKey();
-        newObj->fThis->AddRecvr(recvrKey);
+        newObj->fThis->AddRecvr(pyKey::ConvertFrom(recvr)->getKey());
     }
     newObj->fThis->fNetForce = false;
 

@@ -49,46 +49,47 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define LIMIT_CONSOLE_COMMANDS 1
 #endif
 
-#include "pfConsoleCore/pfConsoleCmd.h"
+#include <string_theory/format>
+#include <string_theory/string>
+
 #include "plgDispatch.h"
-#include "pfConsole.h"
 #include "hsResMgr.h"
+#include "hsTimer.h"
 
-#include "pfMessage/plArmatureEffectMsg.h"
+#include "pfConsole.h"
 
-#include "plMessage/plOneShotMsg.h"
-#include "plMessage/plAvatarMsg.h"
-#include "plMessage/plInputEventMsg.h"
-#include "plMessage/plSimStateMsg.h"
-#include "plMessage/plCCRMsg.h"
-#include "plMessage/plLinkToAgeMsg.h"
 #include "pnMessage/plNotifyMsg.h"
+#include "pnNetCommon/plNetApp.h"
 
-#include "plModifier/plSpawnModifier.h"
-
-#include "plResMgr/plKeyFinder.h"
-
+#include "plAnimation/plAGAnim.h"
+#include "plAnimation/plAGAnimInstance.h"
+#include "plAvatar/plArmatureEffects.h"
 #include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAnimStage.h"
+#include "plAvatar/plAvBrainClimb.h"
 #include "plAvatar/plAvBrainCritter.h"
 #include "plAvatar/plAvBrainHuman.h"
 #include "plAvatar/plAvBrainSwim.h"
 #include "plAvatar/plAvBrainGeneric.h"
+#include "plAvatar/plAvTaskSeek.h"
 #include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plNPCSpawnMod.h"
 #include "plAvatar/plSeekPointMod.h"
 #include "plAvatar/plOneShotMod.h"
-#include "plAnimation/plAGAnim.h"
-#include "plAvatar/plAvBrainUser.h"
-#include "plAvatar/plAvBrainHuman.h"
-#include "plAvatar/plNPCSpawnMod.h"
-#include "plAnimation/plAGAnimInstance.h"
-#include "plAvatar/plArmatureEffects.h"
-#include "plAvatar/plAvTaskSeek.h"
-
-//#include "plHavok1/plSimulationMgr.h"
-#include "pnNetCommon/plNetApp.h"
-#include "plNetClient/plNetClientMgr.h"
-#include "plDrawable/plInstanceDrawInterface.h"
 #include "plDrawable/plDrawableSpans.h"
+#include "plDrawable/plInstanceDrawInterface.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plCCRMsg.h"
+#include "plMessage/plInputEventMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "plMessage/plOneShotMsg.h"
+#include "plMessage/plSimStateMsg.h"
+#include "plModifier/plSpawnModifier.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plScene/plRelevanceMgr.h"
+
+#include "pfConsoleCore/pfConsoleCmd.h"
+#include "pfMessage/plArmatureEffectMsg.h"
 
 #define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
 
@@ -112,11 +113,10 @@ PF_CONSOLE_FILE_DUMMY(Avatar)
 //
 /////////////////////////////////////////////////////////////////
 
-plKey FindSceneObjectByName(const plString& name, const plString& ageName, char* statusStr, bool subString=false);
-plKey FindObjectByName(const plString& name, int type, const plString& ageName, char* statusStr, bool subString=false);
-plKey FindObjectByNameAndType(const plString& name, const char* typeName, const plString& ageName,
-                               char* statusStr, bool subString=false);
-void PrintStringF(void pfun(const char *),const char * fmt, ...);
+plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, ST::string& statusStr, bool subString=false);
+plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, ST::string& statusStr, bool subString=false);
+plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
+                              ST::string& statusStr, bool subString=false);
 
 PF_CONSOLE_GROUP( Avatar )
 
@@ -135,8 +135,6 @@ PF_CONSOLE_SUBGROUP( Avatar, LOD )
 
 #endif // LIMIT_CONSOLE_COMMANDS
 
-#include "plAvatar/plAnimStage.h"
-
 plAvBrainHuman * GetMainAvatarBrain()
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
@@ -146,7 +144,7 @@ plAvBrainHuman * GetMainAvatarBrain()
         if(brain)
             return brain;
     }
-    return nil;
+    return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -173,7 +171,7 @@ PF_CONSOLE_CMD( Avatar_Spawn, Show, "", "Print a list of spawn points.")
         const plSpawnModifier * spawn = mgr->GetSpawnPoint(i);
         if(spawn)
         {
-            plString soName = "(none)";
+            ST::string soName = ST_LITERAL("(none)");
 
             if (spawn->GetNumTargets() > 0) 
             {
@@ -181,7 +179,7 @@ PF_CONSOLE_CMD( Avatar_Spawn, Show, "", "Print a list of spawn points.")
                 if (so)
                     soName = so->GetKeyName();
             }
-            PrintStringF(PrintString, "%d. %s -> %s", i, soName.c_str(), spawn->GetKeyName().c_str());
+            PrintString(ST::format("{}. {} -> {}", i, soName, spawn->GetKeyName()));
         }
     }
 }
@@ -215,7 +213,7 @@ PF_CONSOLE_CMD( Avatar_Spawn, next, "", "Go to the next spawn point in sequence.
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
     if(avatar)
     {
-        PrintStringF(PrintString, "Spawning at point %d", whichSpawn);
+        PrintString(ST::format("Spawning at point {}", whichSpawn));
         double fakeTime = 0.0f;
         avatar->SpawnAt(whichSpawn, fakeTime);
     }
@@ -231,7 +229,7 @@ PF_CONSOLE_CMD( Avatar_Spawn, prev, "", "Go to the prev spawn point in sequence.
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
     if(avatar)
     {
-        PrintStringF(PrintString, "Spawning at point %d", whichSpawn);
+        PrintString(ST::format("Spawning at point {}", whichSpawn));
         double fakeTime = 0.0f;
         avatar->SpawnAt(whichSpawn, fakeTime);
     }
@@ -249,8 +247,9 @@ PF_CONSOLE_CMD( Avatar_Spawn, Respawn,"", "Moves the avatar back to the start po
 
 PF_CONSOLE_CMD( Avatar_Spawn, SetSpawnOverride, "string spawnPointName", "Overrides the normal spawn point choice to be the object specified.")
 {
-    plArmatureMod::SetSpawnPointOverride( (const char *)params[ 0 ] );
-    PrintStringF(PrintString, "Spawn point override set to object %s", (const char *)params[ 0 ]);
+    const ST::string& spawnPointName = params[0];
+    plArmatureMod::SetSpawnPointOverride(spawnPointName);
+    PrintString(ST::format("Spawn point override set to object {}", spawnPointName));
 }
 
 PF_CONSOLE_CMD( Avatar_Spawn, DontPanic,"", "Toggles the Don't panic link flag.")
@@ -260,7 +259,7 @@ PF_CONSOLE_CMD( Avatar_Spawn, DontPanic,"", "Toggles the Don't panic link flag."
     if (avatar)
     {
         bool state = avatar->ToggleDontPanicLinkFlag();
-        PrintStringF(PrintString, "DontPanic set to %s", state ? "true" : "false");
+        PrintString(ST::format("DontPanic set to {}", state));
     }
 }
 
@@ -277,7 +276,7 @@ PF_CONSOLE_CMD( Avatar_Turn, GetMaxTurn, "int walk", "Show the maximum turn spee
 
     float maxTurn = brain->GetMaxTurnSpeed((int)params[0] != 0);
 
-    PrintStringF(PrintString, "Avatar max turn speed is %f radians per second.", maxTurn);
+    PrintString(ST::format("Avatar max turn speed is {f} radians per second.", maxTurn));
 }
 
 PF_CONSOLE_CMD( Avatar_Turn, SetMaxTurn, "float maxTurn, int walk", "Set the maximum turn speed in radians per second.")
@@ -288,7 +287,7 @@ PF_CONSOLE_CMD( Avatar_Turn, SetMaxTurn, "float maxTurn, int walk", "Set the max
 
     brain->SetMaxTurnSpeed(newMaxTurn, (int)params[1] != 0);
 
-    PrintStringF(PrintString, "Set the avatar max turn speed to %f radians per second.", newMaxTurn);
+    PrintString(ST::format("Set the avatar max turn speed to {f} radians per second.", newMaxTurn));
 }
 
 // TURN TIME
@@ -299,7 +298,7 @@ PF_CONSOLE_CMD( Avatar_Turn, GetTurnTime, "int walk", "Show the amount of time r
 
     float turnTime = brain->GetTimeToMaxTurn((int)params[0] != 0);
 
-    PrintStringF(PrintString, "The amount of time required to reach max avatar turn speed is %f seconds.", turnTime);
+    PrintString(ST::format("The amount of time required to reach max avatar turn speed is {f} seconds.", turnTime));
 }
 
 PF_CONSOLE_CMD( Avatar_Turn, SetTurnTime, "float turnTime, int walk", "Set the amount of time required to reach max turn speed.")
@@ -310,7 +309,7 @@ PF_CONSOLE_CMD( Avatar_Turn, SetTurnTime, "float turnTime, int walk", "Set the a
 
     brain->SetTimeToMaxTurn(newTurnTime, (int)params[1] != 0);
 
-    PrintStringF(PrintString, "Set the amount of time required to reach max avatar turn speed to %f seconds.", newTurnTime);
+    PrintString(ST::format("Set the amount of time required to reach max avatar turn speed to {f} seconds.", newTurnTime));
 }
 
 // TURN TYPE
@@ -321,7 +320,7 @@ PF_CONSOLE_CMD( Avatar_Turn, GetTurnType, "int walk", "Show the amount of time r
     
     int turnType = brain->GetTurnCurve((int)params[0] != 0);
     
-    PrintStringF(PrintString, "The avatar turn curve type is  %d.", turnType);
+    PrintString(ST::format("The avatar turn curve type is  {}.", turnType));
 }
 
 PF_CONSOLE_CMD( Avatar_Turn, SetTurnType, "int turnType, int walk", "Set the turn acceleration curve type [0..2].")
@@ -332,7 +331,7 @@ PF_CONSOLE_CMD( Avatar_Turn, SetTurnType, "int turnType, int walk", "Set the tur
     
     brain->SetTurnCurve(plAvBrainHuman::TurnCurve(newCurveType), (int)params[1] != 0);
     
-    PrintStringF(PrintString, "Set turn curve to %d.", newCurveType);
+    PrintString(ST::format("Set turn curve to {}.", newCurveType));
 }
 
 
@@ -340,7 +339,7 @@ PF_CONSOLE_CMD( Avatar_Turn, SetMouseTurnSensitivity, "float sensitivity", "Set 
 {
     plArmatureMod::SetMouseTurnSensitivity(params[0]);
     
-    PrintStringF(PrintString, "Set mouse sensitivity to %f", (float)params[0]);
+    PrintString(ST::format("Set mouse sensitivity to {f}", (float)params[0]));
 }
 
 
@@ -355,9 +354,9 @@ PF_CONSOLE_CMD( Avatar_Turn, SetMouseTurnSensitivity, "float sensitivity", "Set 
 // MULTISTAGE.TRIGGER
 PF_CONSOLE_CMD( Avatar_Multistage, Trigger, "string multiComp", "Triggers the named Multistage Animation component")
 {
-    char str[256];
-    plKey key = FindObjectByNameAndType(plString::FromUtf8(params[0]), "plMultistageBehMod", "", str, true);
-    PrintString(str);
+    ST::string status;
+    plKey key = FindObjectByNameAndType(params[0], "plMultistageBehMod", {}, status, true);
+    PrintString(status);
 
     if (key)
     {
@@ -386,9 +385,9 @@ PF_CONSOLE_CMD( Avatar_Multistage, Advance, "", "Advances the avatar's current m
     
     if (avatar)
     {
-        plKey avKey = avatar->GetKey();
-        
-        plAvBrainGenericMsg *msg = new plAvBrainGenericMsg(nil, avKey, plAvBrainGenericMsg::kNextStage, 0, true, 0.5f);
+        const plKey& avKey = avatar->GetKey();
+
+        plAvBrainGenericMsg *msg = new plAvBrainGenericMsg(nullptr, avKey, plAvBrainGenericMsg::kNextStage, 0, true, 0.5f);
         msg->Send();
     }
 }
@@ -400,9 +399,9 @@ PF_CONSOLE_CMD( Avatar_Multistage, Regress, "", "Regresses the avatar's current 
     
     if (avatar)
     {
-        plKey avKey = avatar->GetKey();
-        
-        plAvBrainGenericMsg *msg = new plAvBrainGenericMsg(nil, avKey, plAvBrainGenericMsg::kPrevStage, 0, true, 0.5f);
+        const plKey& avKey = avatar->GetKey();
+
+        plAvBrainGenericMsg *msg = new plAvBrainGenericMsg(nullptr, avKey, plAvBrainGenericMsg::kPrevStage, 0, true, 0.5f);
         msg->Send();
     }
 }
@@ -411,9 +410,9 @@ PF_CONSOLE_CMD( Avatar_Multistage, Mode, "string stage1, string stage2, string s
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
     
-    const char *one = params[0];
-    const char *two = params[1];
-    const char *three = params[2];
+    ST::string one(params[0]);
+    ST::string two(params[1]);
+    ST::string three(params[2]);
     
     PushSimpleMultiStage(avatar, one, two, three, true, true, plAGAnim::kBodyFull);
 }
@@ -459,17 +458,13 @@ PF_CONSOLE_CMD( Avatar, PopBrain, "", "Remove the topmost brain from the avatar.
     }
 }
 
-#include "plScene/plRelevanceMgr.h"
-
 PF_CONSOLE_CMD( Avatar, 
                MarkRelevanceRegion,
                "string regionA, string regionB, int wantsUpdate",
                "Mark whether avatars in regionA want updates on those on regionB" )
 {
     plRelevanceMgr *mgr = plRelevanceMgr::Instance();
-    plString regA = plString::FromUtf8(params[0]);
-    plString regB = plString::FromUtf8(params[1]);
-    mgr->MarkRegion(mgr->GetIndex(regA), mgr->GetIndex(regB), params[2]);
+    mgr->MarkRegion(mgr->GetIndex(params[0]), mgr->GetIndex(params[1]), params[2]);
 }
 
 PF_CONSOLE_CMD( Avatar,
@@ -480,32 +475,25 @@ PF_CONSOLE_CMD( Avatar,
     plRelevanceMgr *mgr = plRelevanceMgr::Instance();
     mgr->SetEnabled(!mgr->GetEnabled());
 
-    PrintStringF(PrintString, "All relevance regions are now %s", (mgr->GetEnabled() ? "ENABLED" : "DISABLED"));
+    PrintString(ST::format("All relevance regions are now {}", (mgr->GetEnabled() ? "ENABLED" : "DISABLED")));
 }
 
 PF_CONSOLE_CMD( Avatar, SeekPoint, "string seekpoint", "Move to the given seekpoint.")
 {
-    plString spName = plString::FromUtf8(params[0]);
+    const ST::string& spName = params[0];
     
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
     
     if(avatar)
     {
-        char buff[256];
-        plKey seekKey = FindSceneObjectByName(spName, "", buff);
+        ST::string status;
+        plKey seekKey = FindSceneObjectByName(spName, {}, status);
         plSeekPointMod *mod = plAvatarMgr::GetInstance()->FindSeekPoint(spName);
         
         if(mod)
         {
-            plKey seekKey = mod->GetKey();
-            plSeekPointMod *seekMod = (plSeekPointMod *)seekKey->GetObjectPtr();
-            plSceneObject *seekTarget = seekMod->GetTarget(0);
-            plKey targetKey = seekTarget->GetKey();
-            
-            plKey avKey = avatar->GetKey();
-            float unused = 0.0f;
-            plAvSeekMsg *msg = new plAvSeekMsg(nil, avKey, targetKey, unused, false);
-            
+            plSceneObject *seekTarget = mod->GetTarget(0);
+            plAvSeekMsg *msg = new plAvSeekMsg(nullptr, avatar->GetKey(), seekTarget->GetKey(), 0.f, false);
             plgDispatch::MsgSend(msg);
         }
     }
@@ -575,7 +563,7 @@ PF_CONSOLE_CMD( Avatar, SetMouseTurnSensitivity, "float sensitivity", "Set how s
 {
     plArmatureMod::SetMouseTurnSensitivity(params[0]);
     
-    PrintStringF(PrintString, "Set mouse sensitivity to %f", (float)params[0]);
+    PrintString(ST::format("Set mouse sensitivity to {f}", (float)params[0]));
 }
 
 
@@ -587,16 +575,16 @@ PF_CONSOLE_CMD( Avatar, ClickToTurn, "bool b", "Set click-to-turn functionality.
 
 PF_CONSOLE_CMD( Avatar, FakeLinkToObj, "string objName", "Pseudo-Link the avatar to the specified object's location")
 {
-    plString spName = plString::FromUtf8(params[0]);
-    char buff[256];
-    plKey seekKey = FindSceneObjectByName(spName, "", buff);
+    const ST::string& spName = params[0];
+    ST::string status;
+    plKey seekKey = FindSceneObjectByName(spName, {}, status);
     if (!seekKey)
     {
-        PrintString("Can't find object with that name, fake link failed.");
+        PrintString("Can't find object with that name, fake link failed: " + status);
         return;
     }
     plPseudoLinkEffectMsg* msg = new plPseudoLinkEffectMsg;
-    msg->fAvatarKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+    msg->fAvatarKey = plNetClientApp::GetInstance()->GetLocalPlayerKey();
     msg->fLinkObjKey = seekKey;
     plgDispatch::MsgSend(msg);
     
@@ -633,11 +621,11 @@ PF_CONSOLE_CMD( Avatar_Physics, TogglePhysical, "", "Disable/enable physics on t
 
 PF_CONSOLE_CMD( Avatar_Anim, BlendAnim, "string Animation, float blendFactor", "Blend the given animation with the current animation.")
 {
-    plString animationName = plString::FromUtf8(params[0]);
+    const ST::string& animationName = params[0];
     float blendFactor = params[1];
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && !animationName.IsNull())
+    if (avatar && !animationName.empty())
     {
         plAGAnim * anim = plAGAnim::FindAnim(animationName);
         if(anim)
@@ -651,12 +639,12 @@ PF_CONSOLE_CMD( Avatar_Anim, BlendAnim, "string Animation, float blendFactor", "
 
 PF_CONSOLE_CMD( Avatar_Anim, BlendAnimPri, "string Animation, float blendFactor, int priority", "Blend animation using priority.")
 {
-    plString animationName = plString::FromUtf8(params[0]);
+    const ST::string& animationName = params[0];
     float blendFactor = params[1];
     int priority = params[2];
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && !animationName.IsNull())
+    if (avatar && !animationName.empty())
     {
         plAGAnim * anim = plAGAnim::FindAnim(animationName);
         if(anim)
@@ -670,17 +658,17 @@ PF_CONSOLE_CMD( Avatar_Anim, BlendAnimPri, "string Animation, float blendFactor,
 
 PF_CONSOLE_CMD( Avatar_Anim, PlaySimpleAnim, "string AvatarName, string Animation", "Play a simple (root not animated) one time animation on the avatar")
 {
-    plArmatureMod *avatar = plAvatarMgr::GetInstance()->FindAvatarByModelName((const char*)params[0]);
+    plArmatureMod *avatar = plAvatarMgr::GetInstance()->FindAvatarByModelName(params[0]);
     if (avatar)
-        avatar->PlaySimpleAnim(plString::FromUtf8(params[1]));
+        avatar->PlaySimpleAnim(params[1]);
 }
 
 PF_CONSOLE_CMD( Avatar_Anim, DetachAnim, "string Animation", "Remove the given animation from the avatar.")
 {
-    plString animationName = plString::FromUtf8(params[0]);
+    const ST::string& animationName = params[0];
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && !animationName.IsNull())
+    if (avatar && !animationName.empty())
     {
         plAGAnimInstance * instance = avatar->FindAnimInstance(animationName);
         if(instance)
@@ -692,11 +680,11 @@ PF_CONSOLE_CMD( Avatar_Anim, DetachAnim, "string Animation", "Remove the given a
 
 PF_CONSOLE_CMD( Avatar_Anim, SetBlend, "string Animation, float blend", "Set the blend of the given animation.")
 {
-    plString animationName = plString::FromUtf8(params[0]);
+    const ST::string& animationName = params[0];
     float blend = params[1];
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && !animationName.IsNull())
+    if (avatar && !animationName.empty())
     {
         plAGAnimInstance *anim = avatar->FindAnimInstance(animationName);
         if(anim)
@@ -749,7 +737,7 @@ PF_CONSOLE_CMD( Avatar_LOD, SetLODDistance, "float newDist", "Set Distance for s
 
 PF_CONSOLE_CMD( Avatar_LOD,  GetLODDistance, "", "Get Distance for switching Avatar LOD" )
 {
-    PrintStringF(PrintString, "Lod Distance = %f", plArmatureLODMod::fLODDistance);
+    PrintString(ST::format("Lod Distance = {f}", plArmatureLODMod::fLODDistance));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -759,23 +747,20 @@ PF_CONSOLE_CMD( Avatar_LOD,  GetLODDistance, "", "Get Distance for switching Ava
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-#include "plAvatar/plAvBrainClimb.h"
-
 PF_CONSOLE_CMD( Avatar_Climb, Start, "string direction", "Specify initial mount direction: up, down, left, right")
 {
     plArmatureMod *avMod = const_cast<plArmatureMod *>(plAvatarMgr::GetInstance()->GetLocalAvatar());
     if(avMod)
     {
-        const char *dirStr = params[0];
+        const ST::string& dirStr = params[0];
         plAvBrainClimb::Mode mode;
-        if(stricmp(dirStr, "up") == 0)
+        if (dirStr.compare_i("up") == 0)
             mode = plAvBrainClimb::kMountingUp;
-        else if(stricmp(dirStr, "down") == 0)
+        else if (dirStr.compare_i("down") == 0)
             mode = plAvBrainClimb::kMountingDown;
-        else if(stricmp(dirStr, "left") == 0)
+        else if (dirStr.compare_i("left") == 0)
             mode = plAvBrainClimb::kMountingLeft;
-        else if(stricmp(dirStr, "right") == 0)
+        else if (dirStr.compare_i("right") == 0)
             mode = plAvBrainClimb::kMountingRight;
         plAvBrainClimb *brain = new plAvBrainClimb(mode);
         avMod->PushBrain(brain);
@@ -787,17 +772,17 @@ PF_CONSOLE_CMD( Avatar_Climb, EnableDismount, "string direction", "Let the avata
     plArmatureMod *avMod = const_cast<plArmatureMod *>(plAvatarMgr::GetInstance()->GetLocalAvatar());
     if(avMod)
     {
-        plKey mgr = plAvatarMgr::GetInstance()->GetKey();
-        plKey avKey = avMod->GetKey();
-        const char *dirStr = params[0];
+        const plKey& mgr = plAvatarMgr::GetInstance()->GetKey();
+        const plKey& avKey = avMod->GetKey();
+        const ST::string& dirStr = params[0];
         plClimbMsg::Direction dir;
-        if(stricmp(dirStr, "up") == 0)
+        if (dirStr.compare_i("up") == 0)
             dir = plClimbMsg::kUp;
-        else if(stricmp(dirStr, "down") == 0)
+        else if (dirStr.compare_i("down") == 0)
             dir = plClimbMsg::kDown;
-        else if(stricmp(dirStr, "left") == 0)
+        else if (dirStr.compare_i("left") == 0)
             dir = plClimbMsg::kLeft;
-        else if(stricmp(dirStr, "right") == 0)
+        else if (dirStr.compare_i("right") == 0)
             dir = plClimbMsg::kRight;
         plClimbMsg *msg = new plClimbMsg(mgr, avKey, plClimbMsg::kEnableDismount, dir, true);
         msg->Send();
@@ -809,17 +794,17 @@ PF_CONSOLE_CMD( Avatar_Climb, EnableClimb, "string direction, int onOff", "Allow
     plArmatureMod *avMod = const_cast<plArmatureMod *>(plAvatarMgr::GetInstance()->GetLocalAvatar());
     if(avMod)
     {
-        plKey mgr = plAvatarMgr::GetInstance()->GetKey();
-        plKey avKey = avMod->GetKey();
-        const char *dirStr = params[0];
+        const plKey& mgr = plAvatarMgr::GetInstance()->GetKey();
+        const plKey& avKey = avMod->GetKey();
+        const ST::string& dirStr = params[0];
         plClimbMsg::Direction dir;
-        if(stricmp(dirStr, "up") == 0)
+        if (dirStr.compare_i("up") == 0)
             dir = plClimbMsg::kUp;
-        else if(stricmp(dirStr, "down") == 0)
+        else if (dirStr.compare_i("down") == 0)
             dir = plClimbMsg::kDown;
-        else if(stricmp(dirStr, "left") == 0)
+        else if (dirStr.compare_i("left") == 0)
             dir = plClimbMsg::kLeft;
-        else if(stricmp(dirStr, "right") == 0)
+        else if (dirStr.compare_i("right") == 0)
             dir = plClimbMsg::kRight;
         bool enable = static_cast<int>(params[1]) ? true : false;
         plClimbMsg *msg = new plClimbMsg(mgr, avKey, plClimbMsg::kEnableClimb, dir, enable);
@@ -832,8 +817,8 @@ PF_CONSOLE_CMD( Avatar_Climb, Release, "", "")
     plArmatureMod *avMod = const_cast<plArmatureMod *>(plAvatarMgr::GetInstance()->GetLocalAvatar());
     if(avMod)
     {
-        plKey mgr = plAvatarMgr::GetInstance()->GetKey();
-        plKey avKey = avMod->GetKey();
+        const plKey& mgr = plAvatarMgr::GetInstance()->GetKey();
+        const plKey& avKey = avMod->GetKey();
         plClimbMsg *msg = new plClimbMsg(mgr, avKey, plClimbMsg::kRelease);
         msg->Send();
     }
@@ -844,8 +829,8 @@ PF_CONSOLE_CMD( Avatar_Climb, FallOff, "", "")
     plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
     if(avMod)
     {
-        plKey mgr = plAvatarMgr::GetInstance()->GetKey();
-        plKey avKey = avMod->GetKey();
+        const plKey& mgr = plAvatarMgr::GetInstance()->GetKey();
+        const plKey& avKey = avMod->GetKey();
         plClimbMsg *msg = new plClimbMsg(mgr, avKey, plClimbMsg::kFallOff);
         msg->Send();
     }
@@ -900,15 +885,13 @@ PF_CONSOLE_CMD( Avatar_Warp, WarpToXYZ, "float x, float y, float z", "Warp our a
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "hsTimer.h"
-
 PF_CONSOLE_CMD( Avatar_AG, DumpFull, "", "print out the animation graph for the avatar")
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
     double time = hsTimer::GetSysSeconds();
 
-    avatar->DumpAniGraph(nil, false, time);
+    avatar->DumpAniGraph(nullptr, false, time);
 }
 
 PF_CONSOLE_CMD( Avatar_AG, DumpFullOptimized, "", "print out the optimized animation graph for the avatar")
@@ -916,23 +899,23 @@ PF_CONSOLE_CMD( Avatar_AG, DumpFullOptimized, "", "print out the optimized anima
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
     double time = hsTimer::GetSysSeconds();
-    avatar->DumpAniGraph(nil, true, time);
+    avatar->DumpAniGraph(nullptr, true, time);
 }
 
 PF_CONSOLE_CMD( Avatar_AG, DumpSingle, "string boneName", "print out the animation graph for the given (avatar) bone")
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
     double time = hsTimer::GetSysSeconds();
-    const char *bone = params[0];
-    avatar->DumpAniGraph(bone, false, time);
+    const ST::string& bone = params[0];
+    avatar->DumpAniGraph(bone.c_str(), false, time);
 }
 
 PF_CONSOLE_CMD( Avatar_AG, DumpSingleOptimized, "string boneName", "print out the optimized animatoin graph for the given (avatar) bone")
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
     double time = hsTimer::GetSysSeconds();
-    const char *bone = params[0];
-    avatar->DumpAniGraph(bone, true, time);
+    const ST::string& bone = params[0];
+    avatar->DumpAniGraph(bone.c_str(), true, time);
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS

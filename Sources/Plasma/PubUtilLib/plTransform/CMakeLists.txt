@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plTransform_SOURCES
     hsAffineParts.cpp
     hsEuler.cpp
@@ -15,7 +10,15 @@ set(plTransform_HEADERS
     mat_decomp.h
 )
 
-add_library(plTransform STATIC ${plTransform_SOURCES} ${plTransform_HEADERS})
+plasma_library(plTransform SOURCES ${plTransform_SOURCES} ${plTransform_HEADERS})
+target_link_libraries(
+    plTransform
+    PUBLIC
+        CoreLib
+    PRIVATE
+        pnNucleusInc
+        plInterp
+)
 
 source_group("Source Files" FILES ${plTransform_SOURCES})
 source_group("Header Files" FILES ${plTransform_HEADERS})

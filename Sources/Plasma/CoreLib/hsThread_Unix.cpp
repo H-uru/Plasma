@@ -45,13 +45,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <cstring>
+#include <string_theory/format>
 
 #define NO_POSIX_CLOCK 1
 
 #if NO_POSIX_CLOCK
 #include <sys/time.h>
 #include <unistd.h>
-#define CLOCK_REALTIME 0
+
+#ifndef CLOCK_REALTIME
+#   define CLOCK_REALTIME 0
+#endif
 
 //
 // A linux hack b/c we're not quite POSIX
@@ -70,152 +74,57 @@ int clock_gettime(int clocktype, struct timespec* ts)
 
 #endif
 
-extern "C" {
-    static void* gEntryPoint(void* param)
-    {
-        pthread_mutex_lock(((hsThread*)param)->GetStartupMutex());
-        void* ret = (void*)(uintptr_t)((hsThread*)param)->Run();
-        pthread_mutex_unlock(((hsThread*)param)->GetStartupMutex());
-        ((hsThread*)param)->OnQuit();
-        pthread_exit(ret);
-        return ret;
-    }
-}
-
-#define kInvalidStackSize   uint32_t(~0)
-
-hsThread::hsThread(uint32_t stackSize) : fStackSize(stackSize), fQuit(false)
-{
-    fIsValid = false;
-    pthread_mutex_init(&fMutex,nil);
-}
-
-hsThread::~hsThread()
-{
-    this->Stop();
-}
-
-void hsThread::Start()
-{
-    if (fIsValid == false)
-    {
-        pthread_mutex_lock(GetStartupMutex());
-
-        int status = ::pthread_create(&fPThread, nil, gEntryPoint, this);
-        pthread_mutex_unlock(GetStartupMutex());
-
-        hsThrowIfOSErr(status);
-
-        fIsValid = true;
-    }
-    else
-        hsDebugMessage("Calling hsThread::Start() more than once", 0);
-}
-
-void hsThread::Stop()
-{
-    if (fIsValid)
-    {   this->fQuit = true;
-
-        int status = ::pthread_join(fPThread, nil);
-        hsThrowIfOSErr(status);
-
-        fIsValid = false;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-
-void* hsThread::Alloc(size_t size)
-{
-    return ::malloc(size);
-}
-
-void hsThread::Free(void* p)
-{
-    if (p)
-        ::free(p);
-}
-
-void hsThread::ThreadYield()
-{
-//  ::sched_yield();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-
-//#define MUTEX_TIMING
-#ifdef MUTEX_TIMING
-
-#include <ctime>
-#include <cstdio>
-#include <unistd.h>
-#include "hsWide.h"
-
-
-static FILE * gMutexTimerFile = nil;
-static void InitMutexTimerFile()
-{
-    if ( !gMutexTimerFile )
-    {
-        gMutexTimerFile = fopen( "log/MutexTimes.log", "wt" );
-        if ( gMutexTimerFile )
-            fprintf( gMutexTimerFile, "------------------------------------\n" );
-    }
-}
-
-#endif
-
-//#define EVENT_LOGGING
-#ifdef EVENT_LOGGING
-
-#include <ctime>
-#include <cstdio>
-#include <unistd.h>
-#include "NucleusLib/inc/hsTimer.h"
-
-
-static FILE * gEventLoggingFile = nil;
-static void InitEventLoggingFile()
-{
-    if ( !gEventLoggingFile )
-    {
-        char fname[256];
-        sprintf(fname,"log/Events-%u.log",getpid());
-        gEventLoggingFile = fopen( fname, "wt" );
-        if ( gEventLoggingFile )
-            fprintf( gEventLoggingFile, "------------------------------------\n" );
-    }
-}
-
-#endif
-
 /////////////////////////////////////////////////////////////////////////////
 
-hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const char* name)
+void hsThread::SetThisThreadName(const ST::string& name)
+{
+#if defined(HS_BUILD_FOR_APPLE)
+    // The Apple version doesn't take a thread argument and always operates on the current thread.
+    int res = pthread_setname_np(name.c_str());
+    hsAssert(res == 0, "Failed to set thread name");
+#elif defined(HS_BUILD_FOR_LINUX)
+    // On Linux, thread names must fit into 16 bytes, including the terminator.
+    int res = pthread_setname_np(pthread_self(), name.left(15).c_str());
+    hsAssert(res == 0, "Failed to set thread name");
+#endif
+    // Because this is just a debugging help, do nothing by default (sorry, BSDs).
+}
+
+hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const ST::string& name)
 {
 #ifdef USE_SEMA
-    fPSema = nil;
-    if ((fNamed = (name != nil))) {
+    fPSema = nullptr;
+    fNamed = !name.empty();
+    if (fNamed) {
+        ST::string semName = name;
+        if (semName.front() != '/') {
+            /* UNIX named semaphores need to start with a slash */
+            semName = ST::format("/{}", name);
+        }
+
         /* Named semaphore shared between processes */
-        fPSema = sem_open(name, O_CREAT, 0666, initialValue);
+        fPSema = sem_open(semName.c_str(), O_CREAT, 0666, initialValue);
         if (fPSema == SEM_FAILED)
         {
             hsAssert(0, "hsOSException");
             throw hsOSException(errno);
         }
     } else {
+        IGNORE_WARNINGS_BEGIN("deprecated-declarations")
+
         /* Anonymous semaphore shared between threads */
         int shared = 0; // 1 if sharing between processes
         fPSema = new sem_t;
         int status = sem_init(fPSema, shared, initialValue);
         hsThrowIfOSErr(status);
+
+        IGNORE_WARNINGS_END
     }
 #else
-    int status = ::pthread_mutex_init(&fPMutex, nil);
+    int status = ::pthread_mutex_init(&fPMutex, nullptr);
     hsThrowIfOSErr(status);
 
-    status = ::pthread_cond_init(&fPCond, nil);
+    status = ::pthread_cond_init(&fPCond, nullptr);
     hsThrowIfOSErr(status);
 
     fCounter = initialValue;
@@ -229,8 +138,12 @@ hsGlobalSemaphore::~hsGlobalSemaphore()
     if (fNamed) {
         status = sem_close(fPSema);
     } else {
+        IGNORE_WARNINGS_BEGIN("deprecated-declarations")
+
         status = sem_destroy(fPSema);
         delete fPSema;
+
+        IGNORE_WARNINGS_END
     }
     hsThrowIfOSErr(status);
 #else
@@ -246,7 +159,7 @@ bool hsGlobalSemaphore::Wait(hsMilliseconds timeToWait)
 {
 #ifdef USE_SEMA  // SHOULDN'T THIS USE timeToWait??!?!? -rje
     // shouldn't this use sem_timedwait? -dpogue (2012-03-04)
-    hsAssert( timeToWait==kPosInfinity32, "sem_t does not support wait with timeout. #undef USE_SEMA and recompile." );
+    hsAssert( timeToWait==kWaitForever, "sem_t does not support wait with timeout. #undef USE_SEMA and recompile." );
     int status = sem_wait(fPSema);
     hsThrowIfOSErr(status);
     return true;
@@ -255,7 +168,7 @@ bool hsGlobalSemaphore::Wait(hsMilliseconds timeToWait)
     int status = ::pthread_mutex_lock(&fPMutex);
     hsThrowIfOSErr(status);
 
-    if (timeToWait == kPosInfinity32)
+    if (timeToWait == kWaitForever)
     {   while (fCounter == 0)
         {   status = ::pthread_cond_wait(&fPCond, &fPMutex);
             hsThrowIfOSErr(status);
@@ -311,15 +224,4 @@ void hsGlobalSemaphore::Signal()
     status = ::pthread_cond_signal(&fPCond);
     hsThrowIfOSErr(status);
 #endif
-}
-
-void hsSleep::Sleep(uint32_t millis)
-{
-    uint32_t secs = millis / 1000;
-    if (secs > 0)
-    {
-        millis %= 1000;
-        ::sleep(secs);
-    }
-    usleep(millis*1000);
 }

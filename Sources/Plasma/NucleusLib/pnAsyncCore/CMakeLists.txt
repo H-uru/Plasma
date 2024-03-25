@@ -1,8 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-
 set(pnAsyncCore_HEADERS
     Pch.h
     pnAsyncCore.h
@@ -18,7 +13,20 @@ set(pnAsyncCore_PRIVATE
     Private/pnAcTimer.h
 )
 
-add_library(pnAsyncCore STATIC ${pnAsyncCore_PRIVATE} ${pnAsyncCore_HEADERS})
+plasma_library(pnAsyncCore SOURCES ${pnAsyncCore_PRIVATE} ${pnAsyncCore_HEADERS})
+
+target_include_directories(pnAsyncCore PRIVATE "${PLASMA_SOURCE_ROOT}/PubUtilLib")
+target_link_libraries(
+    pnAsyncCore
+    PUBLIC
+        CoreLib
+        pnNetCommon
+        pnUUID
+    PRIVATE
+        pnAsyncCoreExe # Implementation is here
+        pnNetBase
+        plStatusLog # :(
+)
 
 source_group("Header Files" FILES ${pnAsyncCore_HEADERS})
 source_group("Private" FILES ${pnAsyncCore_PRIVATE})

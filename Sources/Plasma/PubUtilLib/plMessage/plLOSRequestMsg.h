@@ -62,13 +62,13 @@ public:
     };
 
     plLOSRequestMsg();
-    plLOSRequestMsg(const plKey& sender, hsPoint3& fromPoint, hsPoint3& toPoint, plSimDefs::plLOSDB db,
+    plLOSRequestMsg(const plKey& sender, const hsPoint3& fromPoint, const hsPoint3& toPoint, plSimDefs::plLOSDB db,
         TestType test = kTestAny, ReportType report = kReportHit);
 
     void SetFrom(const hsPoint3& from) { fFrom = from; }
     void SetTo(const hsPoint3& to) { fTo = to; }
 
-    void SetWorldKey(plKey world) { fWorldKey = world; }
+    void SetWorldKey(plKey world) { fWorldKey = std::move(world); }
 
     /** Determines which database we're testing against.
         See plSimDefs::plLOSDB for a list of valid databases. */
@@ -89,6 +89,10 @@ public:
     void SetRequestID(uint32_t id) { fRequestID = id; }
     uint32_t GetRequestID() { return fRequestID; }
 
+    /** A name invented by the caller for debugging purposes (not identification) */
+    void SetRequestName(ST::string name) { fRequestName = std::move(name); }
+    ST::string GetRequestName() const { return fRequestName; }
+
     /** If we get a hit on the first pass, we'll then double-check the remaining
         segment (start->first hit) against the "cull db". If *any* hit is found,
         the entire test fails. */
@@ -99,8 +103,8 @@ public:
     GETINTERFACE_ANY( plLOSRequestMsg, plMessage );
 
     // Local only, runtime, no IO necessary
-    virtual void Read(hsStream* s, hsResMgr* mgr) {}
-    virtual void Write(hsStream* s, hsResMgr* mgr) {}
+    void Read(hsStream* s, hsResMgr* mgr) override { }
+    void Write(hsStream* s, hsResMgr* mgr) override { }
     
 private:
     friend class plLOSDispatch;
@@ -111,7 +115,8 @@ private:
     plSimDefs::plLOSDB      fCullDB;            // if we find a hit, see if anything in this DB blocks it.
     TestType                fTestType;          // testing closest hit or just any?
     ReportType              fReportType;        // reporting hits, misses, or both?
-    uint32_t                  fRequestID;
+    ST::string              fRequestName;       // internal name for debugging purposes
+    uint32_t                fRequestID;
 };
 
 #endif // plLOSRequestMsg_inc

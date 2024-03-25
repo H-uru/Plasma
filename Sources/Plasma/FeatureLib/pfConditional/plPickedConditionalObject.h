@@ -45,8 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnModifier/plConditionalObject.h"
 
-class plKey;
-
 class plPickedConditionalObject : public plConditionalObject
 {
 protected:
@@ -55,15 +53,15 @@ protected:
 public:
     
     plPickedConditionalObject();
-    ~plPickedConditionalObject(){;}
+    ~plPickedConditionalObject() { }
     
     CLASSNAME_REGISTER( plPickedConditionalObject );
     GETINTERFACE_ANY( plPickedConditionalObject, plConditionalObject );
     
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     
-    void Evaluate(){;}
-    void Reset() { SetSatisfied(false); }
+    void Evaluate() override { }
+    void Reset() override { SetSatisfied(false); }
 
 };
 

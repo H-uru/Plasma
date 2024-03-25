@@ -50,12 +50,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACTIMER_H
 
+#include <functional>
 
 /*****************************************************************************
 *
 *   Timer functions
 *
-*   Timers are repeatedly called back at a scheduled interval. Not that all
+*   Timers are repeatedly called back at a scheduled interval. Note that all
 *   timer procedures share the same thread, so timer procedures should:
 *
 *   1) Not be called too frequently
@@ -67,39 +68,29 @@ struct AsyncTimer;
 
 // Return callbackMs to wait that long until next callback.
 // Return kAsyncTimeInfinite to stop callbacks (note: does not destroy Timer structure)
-typedef unsigned (* FAsyncTimerProc)(void * param);
+typedef std::function<unsigned()> FAsyncTimerProc;
 
 // 1) Timer procs do not get starved by I/O, they are called periodically.
 // 2) Timer procs will never be called by multiple threads simultaneously.
-void AsyncTimerCreate (
-    AsyncTimer **   timer,
-    FAsyncTimerProc timerProc, 
-    unsigned        callbackMs,
-    void *          param = nil
+AsyncTimer* AsyncTimerCreate (
+    unsigned callbackMs,
+    FAsyncTimerProc timerProc
 );
+
+typedef std::function<void()> FAsyncTimerDestroyProc;
 
 // Timer procs can be in the process of getting called in
 // another thread during the unregister function -- be careful!
-// -- waitComplete = will wait until the timer has been unregistered and is
-//    no longer in the process of being called before returning. The flag may only
-//    be set by init/destruct threads, not I/O worker threads. In addition, extreme
-//    care should be used to avoid a deadlock when this flag is set; in general, it
-//    is a good idea not to hold any locks or critical sections when setting the flag.
-const unsigned kAsyncTimerDestroyWaitComplete = 1<<0;
-void AsyncTimerDelete (
-    AsyncTimer *    timer,
-    unsigned        flags = 0
-);
+// This will wait until the timer has been unregistered and is
+// no longer in the process of being called before returning.
+void AsyncTimerDelete(AsyncTimer* timer);
 void AsyncTimerDeleteCallback (
     AsyncTimer *    timer,
-    FAsyncTimerProc destroyProc
+    FAsyncTimerDestroyProc destroyProc
 );
 
-// To set the time value for a timer, use this function with flags = 0.
-// To set the time to MoreRecentOf(nextTimerCallbackMs, callbackMs), use SetPriorityHigher
-const unsigned kAsyncTimerUpdateSetPriorityHigher = 1<<0;
+// Set the time value for a timer
 void AsyncTimerUpdate (
     AsyncTimer *    timer,
-    unsigned        callbackMs,
-    unsigned        flags = 0
+    unsigned        callbackMs
 );

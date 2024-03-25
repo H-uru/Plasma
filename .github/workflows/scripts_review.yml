@@ -1,0 +1,27 @@
+name: Scripts Review
+
+on:
+  pull_request:
+    paths:
+      - 'Scripts/**.py'
+      - '.github/workflows/scripts_review.yml'
+      - '.github/scripts_matchers.json'
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    env:
+      PLASMA_PATH: ${{ github.workspace }}
+    steps:
+      - name: Checkout Plasma
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: Review Game Python
+        run: |
+          echo "::add-matcher::.github/scripts_matchers.json"
+          python Scripts/Tests/xGamePythonReview.py

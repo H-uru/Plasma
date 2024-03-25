@@ -43,30 +43,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCursorChangeMsg_inc
 #define plCursorChangeMsg_inc
 
-//
-// this message is to fake out a gadget to see if it would potentially trigger...
-//
-#include "pnMessage/plMessage.h"
+#include "plMessage.h"
 #include "hsBitVector.h"
-
-class hsStream;
-class hsResMgr;
 
 class plCursorChangeMsg : public plMessage
 {
 protected:
 
 public:
-    plCursorChangeMsg() : fType(0),fPriority(0){;}
+    plCursorChangeMsg() : fType(0),fPriority(0) { }
     plCursorChangeMsg(int i, int p) { fType = i;fPriority =p; }
     plCursorChangeMsg(const plKey &s, 
                     const plKey &r, 
-                    const double* t) : fType(0),fPriority(0){;}
-    
-    CLASSNAME_REGISTER( plCursorChangeMsg );
-    GETINTERFACE_ANY( plCursorChangeMsg, plMessage );
+                    const double* t) : fType(0),fPriority(0) { }
 
-    enum 
+    CLASSNAME_REGISTER(plCursorChangeMsg);
+    GETINTERFACE_ANY(plCursorChangeMsg, plMessage);
+
+    enum
     {
         kNoChange   = 0,
         kCursorUp,
@@ -83,25 +77,13 @@ public:
         kNullCursor
     };
 
-    int             fType;
-    int             fPriority;
+    int fType;
+    int fPriority;
 
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgRead(stream, mgr);
-        fType = stream->ReadLE32();
-        fPriority = stream->ReadLE32();
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->WriteLE32(fType);
-        stream->WriteLE32(fPriority);
-    }
-
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plCursorChangeMsg_inc

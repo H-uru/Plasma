@@ -63,7 +63,7 @@ protected:
         bool            fB;
         char            fC;
     };
-    plString fS;
+    ST::string fS;
 
 public:
     
@@ -83,13 +83,13 @@ public:
 protected:
     uint8_t   fType;
     
-    int32_t   IToInt( void ) const;
-    uint32_t  IToUInt( void ) const;
-    float     IToFloat( void ) const;
-    double    IToDouble( void ) const;
-    bool      IToBool( void ) const;
-    plString  IToString( void ) const;
-    char      IToChar( void ) const;
+    int32_t   IToInt() const;
+    uint32_t  IToUInt() const;
+    float     IToFloat() const;
+    double    IToDouble() const;
+    bool      IToBool() const;
+    ST::string  IToString() const;
+    char      IToChar() const;
 
 public:
 
@@ -106,13 +106,13 @@ public:
     operator double() const { return IToDouble(); }
     operator float() const { return IToFloat(); }
     operator bool() const { return IToBool(); }
-    operator plString() const { return IToString(); }
+    operator ST::string() const { return IToString(); }
     operator char() const { return IToChar(); }
 
     void    SetType(Types t)        { fType=t; }
-    uint8_t GetType( void ) const   { return fType; }
-    
-    plString GetAsString() const;
+    uint8_t GetType() const   { return fType; }
+
+    ST::string GetAsString() const;
 
     // implicit set
     void    Set( int32_t i )    { fI = i; fType = kInt; }
@@ -120,7 +120,7 @@ public:
     void    Set( float f )      { fF = f; fType = kFloat; }
     void    Set( double d )     { fD = d; fType = kDouble; }
     void    Set( bool b )       { fB = b; fType = kBool; }
-    void    Set( const plString& s )  { fS = s; fType = kString; }
+    void    Set( const ST::string& s )  { fS = s; fType = kString; }
     void    Set( char c )       { fC = c; fType = kChar; }
 
     // explicit set
@@ -129,10 +129,10 @@ public:
     void    SetFloat( float f )     { fF = f; fType = kFloat; }
     void    SetDouble( double d )   { fD = d; fType = kDouble; }
     void    SetBool( bool b )       { fB = b; fType = kBool; }
-    void    SetString( const plString& s )  { fS = s; fType = kString; }
+    void    SetString( const ST::string& s )  { fS = s; fType = kString; }
     void    SetChar( char c )       { fC = c; fType = kChar; }
-    void    SetAny( const plString& s )     { fS = s; fType = kAny; }
-    void    SetNone( void )         { fType = kNone; }
+    void    SetAny( const ST::string& s )     { fS = s; fType = kAny; }
+    void    SetNone()         { fType = kNone; }
 
     virtual void    Read(hsStream* s);
     virtual void    Write(hsStream* s);
@@ -145,17 +145,17 @@ class plGenericVar
 {
 protected:
     plGenericType fValue;
-    plString      fName;
+    ST::string    fName;
 public:
     plGenericVar(const plGenericVar &c) { CopyFrom(c); }
-    plGenericVar(const plString& name="") : fName(name) { }
+    plGenericVar(const ST::string& name={}) : fName(name) { }
     virtual ~plGenericVar() { }
 
     virtual void Reset() { Value().Reset(); }   // reset runtime state, not inherent state
     plGenericVar& operator=(const plGenericVar &c) { CopyFrom(c); return *this; }
     void CopyFrom(const plGenericVar &c) { fName=c.GetName(); fValue=c.Value();  }
-    plString GetName()   const           { return fName; }
-    void     SetName(const plString& n)  { fName = n; }
+    ST::string GetName()   const         { return fName; }
+    void   SetName(const ST::string& n)  { fName = n; }
     plGenericType& Value() { return fValue; }
     const plGenericType& Value() const { return fValue; }
 
@@ -169,19 +169,27 @@ public:
 class plCreatableGenericValue : public plCreatable
 {
 public:
-    plGenericType   fValue;
-    CLASSNAME_REGISTER( plCreatableGenericValue );
-    GETINTERFACE_ANY( plCreatableGenericValue, plCreatable );
-    void    Read(hsStream* s, hsResMgr* mgr) { fValue.Read(s);}
-    void    Write(hsStream* s, hsResMgr* mgr) { fValue.Write(s);}
+    plGenericType fValue;
+
+    CLASSNAME_REGISTER(plCreatableGenericValue);
+    GETINTERFACE_ANY(plCreatableGenericValue, plCreatable);
+
+    void Read(hsStream* s, hsResMgr*) override {
+        fValue.Read(s);
+    }
+    void Write(hsStream* s, hsResMgr*) override {
+        fValue.Write(s);
+    }
+
     plGenericType& Value() { return fValue; }
     const plGenericType& Value() const { return fValue; }
+
     operator int32_t() const { return (int32_t)fValue; }
     operator uint32_t() const { return (uint32_t)fValue; }
     operator float() const { return (float)fValue; }
     operator double() const { return (double)fValue; }
     operator bool() const { return (bool)fValue; }
-    operator plString() const { return (plString)fValue; }
+    operator ST::string() const { return (ST::string)fValue; }
     operator char() const { return (char)fValue; }
 };
 

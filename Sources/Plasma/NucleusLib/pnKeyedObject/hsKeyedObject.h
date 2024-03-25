@@ -55,26 +55,26 @@ class plUoid;
 class hsKeyedObject : public plReceiver
 {
 public:
-    hsKeyedObject() : fpKey(nil) {}
+    hsKeyedObject() = default;
     virtual ~hsKeyedObject();
 
     CLASSNAME_REGISTER(hsKeyedObject);
     GETINTERFACE_ANY(hsKeyedObject, plReceiver);
 
     const plKey&    GetKey() const { return fpKey; }
-    plString        GetKeyName() const;
+    ST::string      GetKeyName() const;
 
     virtual void Validate();
-    virtual bool IsFinal() { return true; };     // experimental; currently "is ready to process Loads"
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    // experimental; currently "is ready to process Loads"
+    virtual bool IsFinal() { return true; };
 
-    virtual bool MsgReceive(plMessage* msg);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
-    //----------------------
+    bool MsgReceive(plMessage* msg) override;
+
     // Send a reference to GetKey() via enclosed message. See plKey::SendRef()
-    //----------------------
     bool SendRef(plRefMsg* refMsg, plRefFlags::Type flags);
 
     //----------------------------------------
@@ -85,12 +85,13 @@ public:
     void    UnRegisterAs(plFixedKeyId fixedKey);
 
     // used when manually loading the player room
-    plKey   RegisterAsManual(plUoid& uoid, const plString& p);
+    plKey   RegisterAsManual(plUoid& uoid, const ST::string& p);
     void    UnRegisterAsManual(plUoid& uoid);
 
-    // If you want clone keys to share a type of object, override this function for it.
-    // (You can also return a new object that shares only some of the original's data)
-    virtual hsKeyedObject* GetSharedObject() { return nil; }
+    // If you want clone keys to share a type of object, override this function
+    // for it. (You can also return a new object that shares only some of the
+    // original's data)
+    virtual hsKeyedObject* GetSharedObject() { return nullptr; }
 
 protected:
     friend class plResManager;

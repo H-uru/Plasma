@@ -48,19 +48,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSelfDestructMsg : public plMessage
 {
 protected:
-    plSelfDestructMsg(plKey &victim) : plMessage(victim, victim, nil) {}
+    plSelfDestructMsg(plKey& victim) : plMessage(victim, victim, nullptr) {}
 
     friend class plKeyImp;
-public:
 
+public:
     plSelfDestructMsg() { hsAssert(false, "For system use only"); }
 
-    CLASSNAME_REGISTER( plSelfDestructMsg );
-    GETINTERFACE_ANY( plSelfDestructMsg, plMessage );
+    CLASSNAME_REGISTER(plSelfDestructMsg);
+    GETINTERFACE_ANY(plSelfDestructMsg, plMessage);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr) { IMsgRead(stream, mgr); }
-    virtual void Write(hsStream* stream, hsResMgr* mgr) { IMsgWrite(stream, mgr); }
-    
+    void Read(hsStream* stream, hsResMgr* mgr) override {
+        IMsgRead(stream, mgr);
+    }
+    void Write(hsStream* stream, hsResMgr* mgr) override {
+        IMsgWrite(stream, mgr);
+    }
 };
 
 #endif // plSelfDestructMsg_inc

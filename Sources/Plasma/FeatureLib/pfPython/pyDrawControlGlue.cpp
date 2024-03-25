@@ -40,11 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pyDrawControl.h"
-#include "pyEnum.h"
+
+#include "pyGlueHelpers.h"
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetGamma2, args, "Params: gamma\nSet the gamma with gamma2 rules")
 {
@@ -121,28 +119,22 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtIsClickToTurn, "Is click-to-turn on?")
 // AddPlasmaMethods - the python method definitions
 //
 
-void pyDrawControl::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void pyDrawControl::AddPlasmaMethods(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD(methods, PtSetGamma2);
-    PYTHON_GLOBAL_METHOD(methods, PtSetShadowVisDistance);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetShadowVisDistance);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtEnableShadows);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtDisableShadows);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtIsShadowsEnabled);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtCanShadowCast);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtDisableRenderScene);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtEnableRenderScene);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtSetMouseInverted);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtSetMouseUninverted);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtIsMouseInverted);
-    PYTHON_GLOBAL_METHOD(methods, PtSetClickToTurn);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtIsClickToTurn);
+    PYTHON_START_GLOBAL_METHOD_TABLE(ptDraw)
+        PYTHON_GLOBAL_METHOD(PtSetGamma2)
+        PYTHON_GLOBAL_METHOD(PtSetShadowVisDistance)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetShadowVisDistance)
+        PYTHON_BASIC_GLOBAL_METHOD(PtEnableShadows)
+        PYTHON_BASIC_GLOBAL_METHOD(PtDisableShadows)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtIsShadowsEnabled)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtCanShadowCast)
+        PYTHON_BASIC_GLOBAL_METHOD(PtDisableRenderScene)
+        PYTHON_BASIC_GLOBAL_METHOD(PtEnableRenderScene)
+        PYTHON_BASIC_GLOBAL_METHOD(PtSetMouseInverted)
+        PYTHON_BASIC_GLOBAL_METHOD(PtSetMouseUninverted)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtIsMouseInverted)
+        PYTHON_GLOBAL_METHOD(PtSetClickToTurn)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtIsClickToTurn)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, ptDraw)
 }
-
-/*void pyDrawControl::AddPlasmaConstantsClasses(PyObject *m)
-{
-    PYTHON_ENUM_START(PtMovieType);
-    PYTHON_ENUM_ELEMENT(PtMovieType, kUnknownTypeMovie, pyMoviePlayer::kUnknownTypeMovie);
-    PYTHON_ENUM_ELEMENT(PtMovieType, kBinkMovie,        pyMoviePlayer::kBinkMovie);
-    PYTHON_ENUM_END;
-}*/

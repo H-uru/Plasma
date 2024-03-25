@@ -39,10 +39,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#ifndef plLOSDispatch_H
+#define plLOSDispatch_H
+
+#include <vector>
+#include <string_theory/string>
+
+#include "hsGeometry3.h"
+
 #include "pnKeyedObject/hsKeyedObject.h"
+
+#include "plPhysical/plSimDefs.h"
 
 class plLOSRequestMsg;
 struct hsMatrix44;
+class plSceneObject;
+class plStatusLog;
 
 /** \class plLOSDispatch
     Line-of-sight requests are sent to this guy, who then hands them
@@ -52,16 +64,62 @@ struct hsMatrix44;
     "search all subworlds," etc.  */
 class plLOSDispatch : public hsKeyedObject
 {
+protected:
+    enum class LOSResult
+    {
+        kHit,
+        kCull,
+        kMiss,
+    };
+
+private:
+    friend class plPXRaycastQueryFilter;
+
+    struct LOSRequest
+    {
+        ST::string fName;
+        uint32_t fID;
+        LOSResult fResult;
+        plKey fHit;
+        plKey fCull;
+
+        LOSRequest(ST::string name, uint32_t id, LOSResult result, plKey hit=nullptr, plKey cull=nullptr)
+            : fName(std::move(name)), fID(id), fResult(result), fHit(std::move(hit)), fCull(std::move(cull))
+        { }
+    };
+
+    plStatusLog* fDebugDisplay;
+    std::vector<LOSRequest> fRequests;
+
 public:
     plLOSDispatch();
     ~plLOSDispatch();
 
     CLASSNAME_REGISTER(plLOSDispatch);
     GETINTERFACE_ANY(plLOSDispatch, hsKeyedObject);
-    
-    virtual bool MsgReceive(plMessage* msg);
+
+    bool MsgReceive(plMessage* msg) override;
 
 protected:
-    plMessage* ICreateHitMsg(plLOSRequestMsg* requestMsg, hsMatrix44& l2w);
-    plMessage* ICreateMissMsg(plLOSRequestMsg* requestMsg);
+    bool ITestHit(const plSceneObject* obj) const;
+
+    struct RaycastResult
+    {
+        LOSResult fResult;
+        plKey fHitObj;
+        hsPoint3 fPoint;
+        hsVector3 fNormal;
+        float fDistance;
+
+        RaycastResult(LOSResult result, plKey hit = {}, const hsPoint3& point = { 0.f, 0.f, 0.f },
+                      const hsVector3& normal = { 0.f, 0.f, 0.f }, float dist = 0.f)
+            : fResult(result), fHitObj(std::move(hit)), fPoint(point),
+              fNormal(normal), fDistance(dist)
+        { }
+    };
+
+    RaycastResult IRaycast(hsPoint3 origin, hsPoint3 destination, const plKey& world, plSimDefs::plLOSDB db,
+                           bool closest, plSimDefs::plLOSDB cullDB = plSimDefs::kLOSDBNone);
 };
+
+#endif

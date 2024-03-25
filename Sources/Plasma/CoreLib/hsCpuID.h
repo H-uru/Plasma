@@ -47,16 +47,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //     == Example Usage ==
 //
-//  #ifdef HS_SIMD_INCLUDE
-//  #   include HS_SIMD_INCLUDE
-//  #endif
+//  #include "hsSIMD.h"
 //
 //  float my_func_fpu() {
 //    ...
 //  }
 //
 //  float my_func_avx() {
-//  #ifdef HS_AVX
+//  #ifdef HAVE_AVX
 //    ...
 //  #endif
 //  }
@@ -75,55 +73,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsCpuID_inc
 #define hsCpuID_inc
 
-#if defined __AVX2__ || _MSC_VER >= 1600
-#define HS_AVX2
-#ifndef HS_SIMD_INCLUDE
-# define HS_SIMD_INCLUDE "immintrin.h"
-#endif
-#endif
-#if defined __AVX__ || _MSC_VER >= 1600
-#define HS_AVX
-#ifndef HS_SIMD_INCLUDE
-# define HS_SIMD_INCLUDE "immintrin.h"
-#endif
-#endif
-#if defined __SSE4_2__ || _MSC_VER >= 1600
-#define HS_SSE42
-#ifndef HS_SIMD_INCLUDE
-# define HS_SIMD_INCLUDE "nmmintrin.h"
-#endif
-#endif
-#if defined __SSE4_1__ || _MSC_VER >= 1600
-#define HS_SSE41
-#ifndef HS_SIMD_INCLUDE
-# define HS_SIMD_INCLUDE "smmintrin.h"
-#endif
-#endif
-#if defined __SSSE3__ || _MSC_VER >= 1600
-#define HS_SSSE3
-#ifndef HS_SIMD_INCLUDE
-# define HS_SIMD_INCLUDE "tmmintrin.h"
-#endif
-#endif
-#if defined __SSE3__ || _MSC_VER >= 1400
-#define HS_SSE3
-#ifndef HS_SIMD_INCLUDE
-# define HS_SIMD_INCLUDE "pmmintrin.h"
-#endif
-#endif
-#if defined __SSE2__ || _MSC_VER >= 1300
-#define HS_SSE2
-#ifndef HS_SIMD_INCLUDE
-# define HS_SIMD_INCLUDE "emmintrin.h"
-#endif
-#endif
-#if defined __SSE__ || _MSC_VER >= 1300
-#define HS_SSE1
-#ifndef HS_SIMD_INCLUDE
-# define HS_SIMD_INCLUDE "xmmintrin.h"
-#endif
-#endif
-
+#include "hsConfig.h"
 
 struct hsCpuId {
     bool has_sse1;
@@ -153,42 +103,42 @@ struct hsCpuFunctionDispatcher {
     {
         hsAssert(fpu, "FPU fallback function required.");
         const hsCpuId& cpu = hsCpuId::Instance();
-#ifdef HS_AVX2
+#ifdef HAVE_AVX2
         if (cpu.has_avx2 && avx2) {
             call = avx2;
         } else
 #endif
-#ifdef HS_AVX
+#ifdef HAVE_AVX
         if (cpu.has_avx && avx) {
             call = avx;
         } else
 #endif
-#ifdef HS_SSE42
+#ifdef HAVE_SSE42
         if (cpu.has_sse42 && sse42) {
             call = sse42;
         } else
 #endif
-#ifdef HS_SSE41
+#ifdef HAVE_SSE41
         if (cpu.has_sse41 && sse41) {
             call = sse41;
         } else
 #endif
-#ifdef HS_SSSE3
+#ifdef HAVE_SSSE3
         if (cpu.has_ssse3 && ssse3) {
             call = ssse3;
         } else
 #endif
-#ifdef HS_SSE3
+#ifdef HAVE_SSE3
         if (cpu.has_sse3 && sse3) {
             call = sse3;
         } else
 #endif
-#ifdef HS_SSE2
+#ifdef HAVE_SSE2
         if (cpu.has_sse2 && sse2) {
             call = sse2;
         } else
 #endif
-#ifdef HS_SSE1
+#ifdef HAVE_SSE1
         if (cpu.has_sse1 && sse1) {
             call = sse1;
         } else

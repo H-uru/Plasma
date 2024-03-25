@@ -42,12 +42,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pfMarkerInfo_h_inc
 #define pfMarkerInfo_h_inc
 
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plUoid.h"
 #include "hsGeometry3.h"
 
-class plMessage;
+#include "pnKeyedObject/plKey.h"
+
 class plGameMarkerModifier;
+class plMessage;
+class plUoid;
 
 class pfMarkerInfo
 {
@@ -73,7 +74,7 @@ protected:
 
 public:
     pfMarkerInfo(const hsPoint3& pos, bool isNew);
-    ~pfMarkerInfo() {}
+    ~pfMarkerInfo() { Remove(); }
 
     static void Init();
 

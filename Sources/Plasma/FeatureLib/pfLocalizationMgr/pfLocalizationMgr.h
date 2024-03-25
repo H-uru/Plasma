@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 
 class plFileName;
+namespace ST { class string; }
 
 class pfLocalizationMgr
 {
@@ -64,16 +65,16 @@ public:
 
     static void Initialize(const plFileName & dataPath);
     static void Shutdown();
-    static pfLocalizationMgr &Instance(void) {return *fInstance;}
-    static bool InstanceValid(void) {return fInstance != nil;}
+    static pfLocalizationMgr &Instance() {return *fInstance;}
+    static bool InstanceValid() { return fInstance != nullptr; }
 
     // Returns the final localized string, designated by path, and with the arguments properly substituted
     // if you want to use the default argument order, just use %s like you would with printf, BUT, if you
     // want the arguments in a different order (like you had to switch things around for a specific language)
     // then you use %1s, %2s, %3s and so on to specify arguments, these two cannot be mixed and you won't get
     // the results you expect if you do mix them. Path is specified by Age.Set.Name
-    plString GetString(const plString & path, const std::vector<plString> & args);
-    plString GetString(const plString & path);
+    ST::string GetString(const ST::string & path, const std::vector<ST::string> & args) const;
+    ST::string GetString(const ST::string & path) const;
 };
 
 #endif

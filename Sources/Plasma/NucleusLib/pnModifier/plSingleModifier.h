@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plModifier.h"
 #include "hsBitVector.h"
-#include "pnNetCommon/plSynchedValue.h"
 
 class plSceneObject;
 class plSingleModMsg;
@@ -56,7 +55,7 @@ protected:
     plSceneObject*  fTarget;
     hsBitVector     fFlags;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) = 0;
+    bool IEval(double secs, float del, uint32_t dirty) override = 0;
     
 public:
     plSingleModifier();
@@ -65,13 +64,13 @@ public:
     CLASSNAME_REGISTER( plSingleModifier );
     GETINTERFACE_ANY( plSingleModifier, plModifier );
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual int GetNumTargets() const { return 1; }
-    virtual plSceneObject* GetTarget(int iTarg) const {return fTarget;}
-    virtual void AddTarget(plSceneObject* so) {SetTarget(so);}
-    virtual void RemoveTarget(plSceneObject* so) {fTarget = 0;} 
+    size_t GetNumTargets() const override { return 1; }
+    plSceneObject* GetTarget(size_t iTarg) const override { return fTarget; }
+    void AddTarget(plSceneObject* so) override { SetTarget(so); }
+    void RemoveTarget(plSceneObject* so) override { fTarget = nullptr; }
 
 
     virtual plSceneObject* GetTarget() const { return fTarget; }

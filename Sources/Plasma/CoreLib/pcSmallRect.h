@@ -65,10 +65,10 @@ class pcSmallRect
         pcSmallRect( int16_t x, int16_t y, int16_t w, int16_t h ) { Set( x, y, w, h ); }
         
         void    Set( int16_t x, int16_t y, int16_t w, int16_t h ) { fX = x; fY = y; fWidth = w; fHeight = h; }
-        void    Empty( void ) { fX = fY = fWidth = fHeight = 0; }
+        void    Empty() { fX = fY = fWidth = fHeight = 0; }
 
-        int16_t   GetRight( void ) const { return fX + fWidth; }
-        int16_t   GetBottom( void ) const { return fY + fHeight; }
+        int16_t   GetRight() const { return fX + fWidth; }
+        int16_t   GetBottom() const { return fY + fHeight; }
 
         void    Read( hsStream *s );
         void    Write( hsStream *s );

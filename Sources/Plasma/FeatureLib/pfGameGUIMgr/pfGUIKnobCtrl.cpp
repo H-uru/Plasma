@@ -45,41 +45,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIKnobCtrl.h"
-#include "pfGameGUIMgr.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pfGUIDialogMod.h"
 
-#include "plInputCore/plInputInterface.h"
-#include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
-// #include "plAnimation/plAGModifier.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plAnimation/plAGMasterMod.h"
 #include "plAnimation/plAGAnimInstance.h"
+#include "plInputCore/plInputInterface.h"
+#include "plMessage/plAnimCmdMsg.h"
 #include "plSurface/plLayerAnimation.h"
-
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-pfGUIKnobCtrl::pfGUIKnobCtrl() :
-    fDragStart(0.f, 0.f, 0.f),
-    fDragging(false),
-    fAnimStartPos(0.f, 0.f, 0.f),
-    fAnimEndPos(0.f, 0.f, 0.f),
-    fDragRangeMin(0.f),
-    fDragRangeMax(0.f),
-    fAnimBegin(0.f),
-    fAnimEnd(0.f),
-    fAnimTimesCalced(false)
+pfGUIKnobCtrl::pfGUIKnobCtrl()
+    : fDragging(), fDragValue(),
+      fDragRangeMin(), fDragRangeMax(),
+      fAnimTimesCalced(), fAnimBegin(),
+      fAnimEnd()
 {
-    SetFlag( kWantsInterest );
+    SetFlag(kWantsInterest);
 }
 
 //// IEval ///////////////////////////////////////////////////////////////////
@@ -102,10 +93,11 @@ void    pfGUIKnobCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIValueCtrl::Read(s, mgr);
 
-    fAnimationKeys.Reset();
-    uint32_t i, count = s->ReadLE32();
-    for( i = 0; i < count; i++ )
-        fAnimationKeys.Append( mgr->ReadKey( s ) );
+    fAnimationKeys.clear();
+    uint32_t count = s->ReadLE32();
+    fAnimationKeys.reserve(count);
+    for (uint32_t i = 0; i < count; i++)
+        fAnimationKeys.emplace_back(mgr->ReadKey(s));
     fAnimName = s->ReadSafeString();
 
     fAnimTimesCalced = false;
@@ -118,10 +110,9 @@ void    pfGUIKnobCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIValueCtrl::Write( s, mgr );
 
-    uint32_t i, count = fAnimationKeys.GetCount();
-    s->WriteLE32( count );
-    for( i = 0; i < count; i++ )
-        mgr->WriteKey( s, fAnimationKeys[ i ] );
+    s->WriteLE32((uint32_t)fAnimationKeys.size());
+    for (const plKey& key : fAnimationKeys)
+        mgr->WriteKey(s, key);
     s->WriteSafeString( fAnimName );
 
     fAnimStartPos.Write( s );
@@ -133,7 +124,7 @@ void    pfGUIKnobCtrl::Write( hsStream *s, hsResMgr *mgr )
 void    pfGUIKnobCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 {
     pfGUIValueCtrl::UpdateBounds( invXformMatrix, force );
-    if( fAnimationKeys.GetCount() > 0 )
+    if (!fAnimationKeys.empty())
         fBoundsValid = false;
 }
 
@@ -147,23 +138,21 @@ void    pfGUIKnobCtrl::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 
     if( HasFlag( kMapToAnimationRange ) )
     {
-        hsPoint3    scrnStart, scrnEnd;
-
         // At mouse-down, we take our local-space start and end points and
         // translate them by our parent object's local-to-world to get the
         // right points in world-space. We do this now because our parent
         // might be animated, which could complicate matters a tad.
-        scrnStart = fAnimStartPos;
-        scrnEnd = fAnimEndPos;
+        hsPoint3 scrnStart = fAnimStartPos;
+        hsPoint3 scrnEnd = fAnimEndPos;
 
         plSceneObject *target = GetTarget();
-        if( target != nil )
+        if (target != nullptr)
         {
             const plCoordinateInterface *ci = target->GetCoordinateInterface();
-            if( ci != nil )
+            if (ci != nullptr)
             {
                 const plCoordinateInterface *parentCI = ci->GetParent();
-                if( parentCI != nil )
+                if (parentCI != nullptr)
                 {
                     const hsMatrix44 &parentLocalToWorld = parentCI->GetLocalToWorld();
     
@@ -204,7 +193,7 @@ void    pfGUIKnobCtrl::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 
 void    pfGUIKnobCtrl::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
-    float oldValue = fValue, newValue = fDragValue;
+    float newValue = fDragValue;
 
     if( fDragRangeMin != -1 )
     {
@@ -256,7 +245,7 @@ void    pfGUIKnobCtrl::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 
 //// SetAnimationKeys ////////////////////////////////////////////////////////
 
-void    pfGUIKnobCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const plString &name )
+void pfGUIKnobCtrl::SetAnimationKeys(const std::vector<plKey> &keys, const ST::string &name)
 {
     fAnimationKeys = keys;
     fAnimName = name;
@@ -266,19 +255,19 @@ void    pfGUIKnobCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const plString &
 //  Loops through and computes the max begin and end for our animations. If
 //  none of them are loaded and we're not already calced, returns false.
 
-bool    pfGUIKnobCtrl::ICalcAnimTimes( void )
+bool    pfGUIKnobCtrl::ICalcAnimTimes()
 {
     if( fAnimTimesCalced )
         return true;
 
-    float tBegin = 1e30, tEnd = -1e30;
+    float tBegin = 1e30f, tEnd = -1e30f;
     bool     foundOne = false;
 
-    for( int i = 0; i < fAnimationKeys.GetCount(); i++ )
+    for (const plKey &animKey : fAnimationKeys)
     {
         // Handle AGMasterMods
-        plAGMasterMod *mod = plAGMasterMod::ConvertNoRef( fAnimationKeys[ i ]->ObjectIsLoaded() );
-        if( mod != nil )
+        plAGMasterMod *mod = plAGMasterMod::ConvertNoRef(animKey->ObjectIsLoaded());
+        if (mod != nullptr)
         {
             for( int j = 0; j < mod->GetNumAnimations(); j++ )
             {
@@ -292,8 +281,8 @@ bool    pfGUIKnobCtrl::ICalcAnimTimes( void )
             foundOne = true;
         }
         // Handle layer animations
-        plLayerAnimation *layer = plLayerAnimation::ConvertNoRef( fAnimationKeys[ i ]->ObjectIsLoaded() );
-        if( layer != nil )
+        plLayerAnimation *layer = plLayerAnimation::ConvertNoRef(animKey->ObjectIsLoaded());
+        if (layer != nullptr)
         {
             float begin = layer->GetTimeConvert().GetBegin();
             float end = layer->GetTimeConvert().GetEnd();
@@ -326,7 +315,7 @@ void    pfGUIKnobCtrl::SetCurrValue( float v )
 //  if( old == (int)fValue )
 //      return;
 
-    if( fAnimationKeys.GetCount() > 0 )
+    if (!fAnimationKeys.empty())
     {
         ICalcAnimTimes();
 
@@ -345,13 +334,13 @@ void    pfGUIKnobCtrl::SetCurrValue( float v )
         msg->SetAnimName( fAnimName );
         msg->fTime = newTime;
         msg->AddReceivers( fAnimationKeys );
-        plgDispatch::MsgSend( msg );
+        msg->Send();
     }
 }
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-uint32_t      pfGUIKnobCtrl::IGetDesiredCursor( void ) const
+uint32_t      pfGUIKnobCtrl::IGetDesiredCursor() const
 {
     if( HasFlag( kLeftRightOrientation ) )
     {

@@ -42,10 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pfDispatchLog_inc
 #define pfDispatchLog_inc
 
-#include "pnDispatch/plDispatchLogBase.h"
+#include "HeadSpin.h"
 #include "hsBitVector.h"
 
+#include "pnDispatch/plDispatchLogBase.h"
+
+class plMessage;
 class plStatusLog;
+namespace ST { class string; }
 
 class plDispatchLog : public plDispatchLogBase
 {
@@ -60,16 +64,16 @@ public:
 
     static void InitInstance();
 
-    void AddFilterType(uint16_t type);
-    void AddFilterExactType(uint16_t type);
+    void AddFilterType(uint16_t type) override;
+    void AddFilterExactType(uint16_t type) override;
 
-    void RemoveFilterType(uint16_t type);
-    void RemoveFilterExactType(uint16_t type);
+    void RemoveFilterType(uint16_t type) override;
+    void RemoveFilterExactType(uint16_t type) override;
 
-    void LogStatusBarChange(const char* name, const char* action);
-    void LogLongReceive(const char* keyname, const char* className, uint32_t clonePlayerID, plMessage* msg, float ms);
+    void LogStatusBarChange(const ST::string& name, const char* action) override;
+    void LogLongReceive(const ST::string& keyname, const char* className, uint32_t clonePlayerID, plMessage* msg, float ms) override;
 
-    void DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, int32_t indent);
+    void DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, int32_t indent) override;
 };
 
 #endif  // pfDispatchLog_inc

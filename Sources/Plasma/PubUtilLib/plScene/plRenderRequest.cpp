@@ -40,32 +40,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plRenderRequest.h"
-#include "plPageTreeMgr.h"
-#include "plPipeline/plRenderTarget.h"
-#include "hsFastMath.h"
-#include "hsStream.h"
-#include "plPipeline.h"
-#include "plMessage/plRenderRequestMsg.h"
+
+#include "HeadSpin.h"
 #include "plgDispatch.h"
+#include "hsFastMath.h"
+#include "plPipeline.h"
+#include "hsStream.h"
+
+#include "plPageTreeMgr.h"
 #include "plVisMgr.h"
 
+#include "plPipeline/plRenderTarget.h"
+
 plRenderRequest::plRenderRequest()
-:   fRenderTarget(nil),
-    fPageMgr(nil),
-    fAck(nil),
-    fOverrideMat(nil),
-    fEraseMat(nil),
+:   fRenderTarget(),
+    fPageMgr(),
+    fOverrideMat(),
+    fEraseMat(),
     fDrawableMask(uint32_t(-1)),
     fSubDrawableMask(uint32_t(-1)),
-    fRenderState(0),
+    fRenderState(),
     fClearDepth(1.f),
     fFogStart(-1.f),
-    fClearDrawable(nil),
+    fClearDrawable(),
     fPriority(-1.e6f),
-    fUserData(0),
-    fIgnoreOccluders(false)
+    fUserData(),
+    fIgnoreOccluders()
 {
     fClearColor.Set(0,0,0,1.f);
 
@@ -86,9 +87,9 @@ void plRenderRequest::SetLocalTransform(const hsMatrix44& l2w, const hsMatrix44&
 
 void plRenderRequest::Read(hsStream* s, hsResMgr* mgr)
 {
-    fClearDrawable = nil;
-    fRenderTarget = nil;
-    fPageMgr = nil;
+    fClearDrawable = nullptr;
+    fRenderTarget = nullptr;
+    fPageMgr = nullptr;
 
     fDrawableMask = s->ReadLE32();
     fSubDrawableMask = s->ReadLE32();
@@ -98,7 +99,7 @@ void plRenderRequest::Read(hsStream* s, hsResMgr* mgr)
     fLocalToWorld.Read(s);
     fWorldToLocal.Read(s);
 
-    fPriority = s->ReadLEScalar();
+    fPriority = s->ReadLEFloat();
 }
 
 void plRenderRequest::Write(hsStream* s, hsResMgr* mgr)
@@ -111,7 +112,7 @@ void plRenderRequest::Write(hsStream* s, hsResMgr* mgr)
     fLocalToWorld.Write(s);
     fWorldToLocal.Write(s);
 
-    s->WriteLEScalar(fPriority);
+    s->WriteLEFloat(fPriority);
 }
 
 void plRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)

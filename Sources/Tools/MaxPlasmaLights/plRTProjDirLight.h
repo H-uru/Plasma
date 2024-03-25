@@ -66,10 +66,10 @@ class ReferenceMaker;
 class plRTProjPBAccessor : public PBAccessor
 {
     public:
-        void Set( PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t );
-        void Get( PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid );
+        void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override;
+        void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid) override;
 
-        static plRTProjPBAccessor   *Instance( void ) { return &fAccessor; }
+        static plRTProjPBAccessor   *Instance() { return &fAccessor; }
 
     protected:
 
@@ -82,6 +82,9 @@ class plRTProjPBAccessor : public PBAccessor
 
 class plRTProjDirLight : public plRTLightBase
 {
+    protected:
+        MSTR ISubAnimName(int i) override;
+
     public:
 
         friend class plRTProjPBAccessor;
@@ -119,52 +122,51 @@ class plRTProjDirLight : public plRTLightBase
         plRTProjDirLight();
 
         /// Class ID stuff
-        Class_ID    ClassID( void ) { return RTPDIR_LIGHT_CLASSID; }        
-        SClass_ID   SuperClassID( void ) { return LIGHT_CLASS_ID; }
+        Class_ID    ClassID() override { return RTPDIR_LIGHT_CLASSID; }
+        SClass_ID   SuperClassID() override { return LIGHT_CLASS_ID; }
 
-        ObjLightDesc    *CreateLightDesc( INode *n, BOOL forceShadowBuf = FALSE );
-        GenLight        *NewLight( int type ) { return new plRTProjDirLight(); }
-        RefTargetHandle Clone( RemapDir &remap );
+        ObjLightDesc    *CreateLightDesc(INode *n, BOOL forceShadowBuf = FALSE) override;
+        GenLight        *NewLight(int type) override { return new plRTProjDirLight(); }
+        RefTargetHandle Clone(RemapDir &remap) override;
 
-        int             CanConvertToType( Class_ID obtype ) { return ( obtype ==  RTPDIR_LIGHT_CLASSID ) ? 1 : 0; }
+        int     CanConvertToType(Class_ID obtype) override { return ( obtype ==  RTPDIR_LIGHT_CLASSID ) ? 1 : 0; }
 
-        virtual void    GetLocalBoundBox( TimeValue t, INode *node, ViewExp *vpt, Box3 &box );
-        virtual int     DrawConeAndLine( TimeValue t, INode* inode, GraphicsWindow *gw, int drawing );
-        virtual void    DrawCone( TimeValue t, GraphicsWindow *gw, float dist );
+        void    GetLocalBoundBox(TimeValue t, INode *node, ViewExp *vpt, Box3 &box) override;
+        int     DrawConeAndLine(TimeValue t, INode* inode, GraphicsWindow *gw, int drawing) override;
+        void    DrawCone(TimeValue t, GraphicsWindow *gw, float dist) override;
 
-        virtual BOOL            IsDir( void )   { return TRUE; }
-        virtual RefTargetHandle GetReference( int i );
-        virtual void            SetReference( int ref, RefTargetHandle rtarg );
-        virtual int             NumRefs() { return kNumRefs; }
+        BOOL            IsDir() override { return TRUE; }
+        RefTargetHandle GetReference(int i) override;
+        void            SetReference(int ref, RefTargetHandle rtarg) override;
+        int             NumRefs() override { return kNumRefs; }
 
-        virtual int             NumSubs() { return 2; }
-        virtual TSTR            SubAnimName( int i );
-        virtual Animatable      *SubAnim( int i );
+        int             NumSubs() override { return 2; }
+        Animatable      *SubAnim(int i) override;
 
-        virtual int             NumParamBlocks();
-        virtual IParamBlock2    *GetParamBlock( int i );
-        virtual IParamBlock2    *GetParamBlock2() { return fLightPB; }
-        virtual IParamBlock2    *GetParamBlockByID( BlockID id );
+        int             NumParamBlocks() override;
+        IParamBlock2    *GetParamBlock(int i) override;
+        IParamBlock2    *GetParamBlock2() override { return fLightPB; }
+        IParamBlock2    *GetParamBlockByID(BlockID id) override;
 
-        virtual Texmap          *GetProjMap();
+        Texmap          *GetProjMap() override;
         
-        virtual void            InitNodeName( TSTR &s ) { s = _T( "RTProjDirLight" ); }
+        void            InitNodeName(MSTR &s) override { s = _M( "RTProjDirLight" ); }
 
         // To get using-light-as-camera-viewport to work
-        virtual int             GetSpotShape( void ) { return RECT_LIGHT; }
-        virtual float           GetAspect( TimeValue t, Interval &valid = Interval(0,0) );
-        virtual float           GetFallsize( TimeValue t, Interval &valid = Interval(0,0) );
-        virtual int             Type() { return DIR_LIGHT; }
-        virtual float           GetTDist( TimeValue t, Interval &valid = Interval(0,0) );
-        virtual void            SetFallsize( TimeValue time, float f ); 
+        int             GetSpotShape() override { return RECT_LIGHT; }
+        float           GetAspect(TimeValue t, Interval &valid = Interval(0,0)) override;
+        float           GetFallsize(TimeValue t, Interval &valid = Interval(0,0)) override;
+        int             Type() override { return DIR_LIGHT; }
+        float           GetTDist(TimeValue t, Interval &valid = Interval(0,0)) override;
+        void            SetFallsize(TimeValue time, float f) override;
 
-        RefResult               EvalLightState(TimeValue t, Interval& valid, LightState *ls);
+        RefResult       EvalLightState(TimeValue t, Interval& valid, LightState *ls) override;
 
     protected:
 
         IParamBlock2    *fProjPB;
 
-        virtual void    IBuildMeshes( BOOL isNew );
+        void            IBuildMeshes(BOOL isNew) override;
         
         void            IBuildRectangle( float width, float height, float z, Point3 *pts );
 };

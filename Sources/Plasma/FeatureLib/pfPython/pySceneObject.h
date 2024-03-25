@@ -49,39 +49,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pyGlueHelpers.h"
-#include "pnKeyedObject/plKey.h"
-#include "hsTemplates.h"
 #include <vector>
 
+#include "pnKeyedObject/plKey.h"
+
+#include "pyGlueDefinitions.h"
+#include "pyKey.h"
+
 class pyMatrix44;
+namespace ST { class string; }
 
 class pySceneObject
 {
 private:
-    hsTArray<plKey>     fSceneObjects;
+    std::vector<plKey>  fSceneObjects;
     plKey               fSenderKey;     // the holder of the who (the modifier) we are
     plKey               fPyMod;         // pyKey that points to modifier
     bool                fNetForce;
 
-    virtual void IAddObjKeyToAll(plKey key);
-    virtual void ISetAllSenderKeys();
+    void IAddObjKeyToAll(const plKey& key);
+    void ISetAllSenderKeys();
 
 protected:
     pySceneObject();
-    pySceneObject(pyKey& objkey, pyKey& selfkey);
-    pySceneObject(plKey objkey,pyKey& selfkey);
-    pySceneObject(plKey objkey);
+    pySceneObject(const pyKey& objkey, const pyKey& selfkey);
+    pySceneObject(const plKey& objkey, const pyKey& selfkey);
+    pySceneObject(const plKey& objkey);
 
 public:
     ~pySceneObject();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptSceneobject);
-    static PyObject *New(plKey objKey, PyObject *selfKeyObj);
-    static PyObject *New(plKey objKey, pyKey &selfKey);
-    static PyObject *New(plKey objKey, plKey selfkey);
-    static PyObject *New(plKey objKey);
+    static PyObject *New(const plKey& objKey, PyObject *selfKeyObj);
+    static PyObject *New(const plKey& objKey, pyKey &selfKey);
+    static PyObject *New(const plKey& objKey, const plKey& selfkey);
+    static PyObject *New(const plKey& objKey);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pySceneObject object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySceneObject); // converts a PyObject to a pySceneObject (throws error if not correct type)
 
@@ -97,74 +100,74 @@ public:
     PyObject*               fParticle; // cyParticleSys
 
     // getter and setters
-    virtual void addObjKey(plKey key);
-    virtual void addObjPyKey(pyKey& objkey);
-    virtual plKey getObjKey();
-    virtual PyObject* getObjPyKey(); // pyKey
+    void addObjKey(const plKey& key);
+    void addObjPyKey(const pyKey& objkey);
+    plKey getObjKey() const;
+    PyObject* getObjPyKey() const; // pyKey
 
-    virtual void setSenderKey(plKey key);
-    virtual void setPyMod(pyKey& pymod) { fPyMod = pymod.getKey(); }
-    virtual void setPyMod(const plKey& key) { fPyMod = key; }
+    void setSenderKey(plKey key);
+    void setPyMod(const pyKey& pymod) { fPyMod = pymod.getKey(); }
+    void setPyMod(const plKey& key) { fPyMod = key; }
 
-    virtual void SetNetForce(bool state);
+    void SetNetForce(bool state);
 
-    virtual PyObject* findObj(const plString& name); // pySceneObject
+    PyObject* findObj(const ST::string& name); // pySceneObject
 
-    virtual plString GetName();
-    virtual std::vector<PyObject*> GetResponders(); // pyKey list
-    virtual std::vector<PyObject*> GetPythonMods(); // pyKey list
+    ST::string GetName();
+    std::vector<PyObject*> GetResponders(); // pyKey list
+    std::vector<PyObject*> GetPythonMods(); // pyKey list
     //
     // deteremine if this object (or the first object in the list)
     // ...is locally owned
-    virtual bool IsLocallyOwned();
+    bool IsLocallyOwned();
     
     //
     // get the local to world matrix
-    virtual PyObject* GetLocalToWorld();
+    PyObject* GetLocalToWorld();
 
     //
     // get the local to world matrix
-    virtual PyObject* GetWorldToLocal();
+    PyObject* GetWorldToLocal();
 
     //
     // get the local to world matrix
-    virtual PyObject* GetLocalToParent();
+    PyObject* GetLocalToParent();
 
     //
     // get the local to world matrix
-    virtual PyObject* GetParentToLocal();
+    PyObject* GetParentToLocal();
 
     //
     // set the local to world matrix
-    virtual void SetTransform(pyMatrix44& l2w, pyMatrix44& w2l);
+    void SetTransform(pyMatrix44& l2w, pyMatrix44& w2l);
 
     //
     // find the position of this object (if there are more than one, just the first one)
-    virtual PyObject* GetWorldPosition(); // pyPoint3
+    PyObject* GetWorldPosition(); // pyPoint3
 
     //
     // find the view vector for this object (if there are more than one, just the first one)
-    virtual PyObject* GetViewVector(); // pyVector3
+    PyObject* GetViewVector(); // pyVector3
 
     //
     // find the up vector for this object (if there are more than one, just the first one)
-    virtual PyObject* GetUpVector(); // pyVector3
+    PyObject* GetUpVector(); // pyVector3
 
     //
     // find the up vector for this object (if there are more than one, just the first one)
-    virtual PyObject* GetRightVector(); // pyVector3
+    PyObject* GetRightVector(); // pyVector3
 
     //
     // deteremine if this object (or any of the object attached)
     // ...is an avatar, of any type
-    virtual bool IsAvatar();
+    bool IsAvatar();
 
-    virtual PyObject* GetAvatarVelocity(); // pyVector3
+    PyObject* GetAvatarVelocity(); // pyVector3
 
     //
     // deteremine if this object (or the first object in the list)
     // ...is a human avatar
-    virtual bool IsHumanAvatar();
+    bool IsHumanAvatar();
 
     //
     // switch to / from this camera (if it is a camera)
@@ -182,18 +185,21 @@ public:
     
     // some animation commands for s.o.'s w/ multiple animations attached
 
-    void RewindAnim(const char* animName);
-    void PlayAnim(const char* animName);
-    void StopAnim(const char* animName);
+    void RewindAnim(const ST::string& animName);
+    void PlayAnim(const ST::string& animName);
+    void StopAnim(const ST::string& animName);
 
     void RunResponder(int state);
     void FFResponder(int state);
     
-    void SetSoundFilename(int index, const char* filename, bool isCompressed);
-    int GetSoundObjectIndex(const char* sndObj);
+    void SetSoundFilename(int index, const ST::string& filename, bool isCompressed);
+    int GetSoundObjectIndex(const ST::string& sndObj);
 
     // hack for garrison
     void VolumeSensorIgnoreExtraEnters(bool ignore);
+
+    /** More SubWorld hacks */
+    void VolumeSensorNoArbitration(bool noArbitration);
 };
 
 #endif // _pySceneObject_h_

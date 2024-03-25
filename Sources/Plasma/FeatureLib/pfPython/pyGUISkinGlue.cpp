@@ -40,11 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyGUISkin.h"
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUISkin, pyGUISkin);
@@ -54,7 +53,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUISkin)
 
 PYTHON_INIT_DEFINITION(ptGUISkin, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -115,11 +114,12 @@ PYTHON_START_METHODS_TABLE(ptGUISkin)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-#define ptGUISkin_COMPARE       PYTHON_NO_COMPARE
 #define ptGUISkin_AS_NUMBER     PYTHON_NO_AS_NUMBER
 #define ptGUISkin_AS_SEQUENCE   PYTHON_NO_AS_SEQUENCE
 #define ptGUISkin_AS_MAPPING    PYTHON_NO_AS_MAPPING
 #define ptGUISkin_STR           PYTHON_NO_STR
+#define ptGUISkin_GETATTRO      PYTHON_NO_GETATTRO
+#define ptGUISkin_SETATTRO      PYTHON_NO_SETATTRO
 #define ptGUISkin_RICH_COMPARE  PYTHON_DEFAULT_RICH_COMPARE(ptGUISkin)
 #define ptGUISkin_GETSET        PYTHON_NO_GETSET
 #define ptGUISkin_BASE          PYTHON_NO_BASE
@@ -130,15 +130,15 @@ PYTHON_CLASS_NEW_IMPL(ptGUISkin, pyGUISkin)
 
 PyObject *pyGUISkin::New(pyKey& gckey)
 {
-    ptGUISkin *newObj = (ptGUISkin*)ptGUISkin_type.tp_new(&ptGUISkin_type, NULL, NULL);
+    ptGUISkin *newObj = (ptGUISkin*)ptGUISkin_type.tp_new(&ptGUISkin_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUISkin::New(plKey objkey)
 {
-    ptGUISkin *newObj = (ptGUISkin*)ptGUISkin_type.tp_new(&ptGUISkin_type, NULL, NULL);
-    newObj->fThis->fGCkey = objkey;
+    ptGUISkin *newObj = (ptGUISkin*)ptGUISkin_type.tp_new(&ptGUISkin_type, nullptr, nullptr);
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

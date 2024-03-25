@@ -44,12 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plANDConditionalObject_inc
 
 #include "pnModifier/plConditionalObject.h"
-#include "hsTemplates.h"
 
 class plANDConditionalObject : public plConditionalObject
 {
 protected:
-    hsTArray<plConditionalObject*>  fChildren;
+    std::vector<plConditionalObject*>  fChildren;
 
 public:
     
@@ -59,12 +58,12 @@ public:
     CLASSNAME_REGISTER( plANDConditionalObject );
     GETINTERFACE_ANY( plANDConditionalObject, plConditionalObject );
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    bool MsgReceive(plMessage* msg);
-    void Evaluate();
-    void Reset();
+    bool MsgReceive(plMessage* msg) override;
+    void Evaluate() override;
+    void Reset() override;
 
 };
 

@@ -43,16 +43,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInterfaceInfoMod_inc
 #define plInterfaceInfoMod_inc
 
+#include <vector>
+
 #include "pnModifier/plSingleModifier.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsTemplates.h"
 
 class plInterfaceInfoModifier : public plSingleModifier
 {
 protected:
-    
-    hsTArray<plKey> fKeyList;
-    virtual bool IEval(double secs, float del, uint32_t dirty){ return true; }
+    std::vector<plKey> fKeyList;
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
+
 public:
 
     plInterfaceInfoModifier(); 
@@ -61,12 +62,12 @@ public:
     CLASSNAME_REGISTER( plInterfaceInfoModifier );
     GETINTERFACE_ANY( plInterfaceInfoModifier, plSingleModifier );
 
-    void AddRefdKey(plKey &k) { fKeyList.Append(k); }
+    void AddRefdKey(plKey k) { fKeyList.emplace_back(std::move(k)); }
 
-    int GetNumReferencedKeys() const { return fKeyList.Count(); }
-    plKey GetReferencedKey(int i) const { return fKeyList[i]; }
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    size_t GetNumReferencedKeys() const { return fKeyList.size(); }
+    plKey GetReferencedKey(size_t i) const { return fKeyList[i]; }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plInterfaceInfoMod_inc

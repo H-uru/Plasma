@@ -77,7 +77,7 @@ hsDXTSoftwareCodec::~hsDXTSoftwareCodec()
 plMipmap *hsDXTSoftwareCodec::CreateCompressedMipmap( plMipmap *uncompressed )
 {
     uint8_t           format;
-    plMipmap        *compressed = nil;
+    plMipmap        *compressed = nullptr;
     uint8_t           i;
 
 
@@ -87,11 +87,11 @@ plMipmap *hsDXTSoftwareCodec::CreateCompressedMipmap( plMipmap *uncompressed )
 
     /// Check width and height
     if( ( uncompressed->GetWidth() | uncompressed->GetHeight() ) & 0x03 )
-        return nil;     /// Width and height must be multiple of 4
+        return nullptr;     /// Width and height must be multiple of 4
 
     format = ICalcCompressedFormat( uncompressed );
     if( format == plMipmap::DirectXInfo::kError )
-        return nil;
+        return nullptr;
 
 
     /// Set up structure
@@ -134,7 +134,7 @@ plMipmap *hsDXTSoftwareCodec::CreateCompressedMipmap( plMipmap *uncompressed )
 
 plMipmap *hsDXTSoftwareCodec::CreateUncompressedMipmap( plMipmap *compressed, uint8_t flags )
 {
-    plMipmap    *uncompressed = nil;
+    plMipmap    *uncompressed = nullptr;
     int32_t       totalSize;
     int32_t       width, height;
     uint8_t       i;
@@ -373,8 +373,8 @@ void hsDXTSoftwareCodec::UncompressMipmap(plMipmap *uncompressed, plMipmap *comp
             uint16_t color[4];
             uint32_t *block = &compressedImage[(x + xMax * y) * (blockSize >> 2)];
             uint8_t *charBlock = (uint8_t *)block;
-            uint8_t *alphaBlock = nil;
-            uint8_t *colorBlock = nil;
+            uint8_t *alphaBlock = nullptr;
+            uint8_t *colorBlock = nullptr;
 
             if (compressed->fDirectXInfo.fCompressionType == hsGBitmap::DirectXInfo::kDXT5)
             {
@@ -407,7 +407,7 @@ void hsDXTSoftwareCodec::UncompressMipmap(plMipmap *uncompressed, plMipmap *comp
             }
             else if (compressed->fDirectXInfo.fCompressionType == hsGBitmap::DirectXInfo::kDXT1)
             {
-                alphaBlock = nil;
+                alphaBlock = nullptr;
                 colorBlock = charBlock;
             }
             else
@@ -1928,7 +1928,6 @@ uint8_t   hsDXTSoftwareCodec::IMixEqualInten( uint8_t color1, uint8_t color2 )
 void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *compressed )
 {
     uint32_t *compressedImage = (uint32_t *)compressed->GetCurrLevelPtr();
-    uint32_t *uncompressedImage = (uint32_t *)uncompressed->GetCurrLevelPtr();
     int32_t x, y;
     int32_t xMax = uncompressed->GetCurrWidth() >> 2;
     int32_t yMax = uncompressed->GetCurrHeight() >> 2;
@@ -2097,8 +2096,8 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
             uint32_t blockSize = compressed->fDirectXInfo.fBlockSize;
             uint32_t *block = &compressedImage[(x + xMax * y) * (blockSize >> 2)];
             uint8_t *byteBlock = (uint8_t *)block;
-            uint8_t *alphaBlock = nil;
-            uint16_t *colorBlock = nil;
+            uint8_t *alphaBlock = nullptr;
+            uint16_t *colorBlock = nullptr;
             if (compressed->fDirectXInfo.fCompressionType == plMipmap::DirectXInfo::kDXT5)
             {
                 alphaBlock = byteBlock;
@@ -2114,7 +2113,7 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
             }
             else if (compressed->fDirectXInfo.fCompressionType == plMipmap::DirectXInfo::kDXT1)
             {
-                alphaBlock = nil;
+                alphaBlock = nullptr;
                 colorBlock = (uint16_t *)(byteBlock);
             }
             else
@@ -2166,7 +2165,6 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
                         }
                     }
                     
-                    uint32_t colorShift = 2 * (4 * yy + xx);
                     uint32_t colorIndex = 0;
                     uint32_t colorDistance = ColorDistanceARGBSquared(*pixel, color[0]);
                     
@@ -2303,8 +2301,8 @@ bool hsDXTSoftwareCodec::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colo
 
 
     /// Sanity checks
-    hsAssert( bMap != nil, "Nil bitmap passed to ColorizeCompMipmap()" );
-    hsAssert( colorMask != nil, "Nil color mask passed to ColorizeCompMipmap()" );
+    hsAssert(bMap != nullptr, "Nil bitmap passed to ColorizeCompMipmap()");
+    hsAssert(colorMask != nullptr, "Nil color mask passed to ColorizeCompMipmap()");
     hsAssert( bMap->IsCompressed(), "Trying to colorize uncompressed bitmap" );
 
 

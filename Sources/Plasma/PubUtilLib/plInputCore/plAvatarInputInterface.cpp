@@ -65,13 +65,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plProxyDrawMsg.h"
 #include "pnMessage/plCmdIfaceModMsg.h"
 
-// DEHACK
-// used to run debug drawing stuff only; should never be checked in with this enabled
- #if 0
-#include "FeatureLib/pfCamera/plVirtualCam.h"
-#include "plDrawable/plDrawableSpans.h"
- #endif
-
 #include "plAudio/plVoiceChat.h"
 #include "plInputDevice.h"
 #include "plInputManager.h"
@@ -82,11 +75,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plCoordinateInterface.h"
 
-#include "pnNetCommon/plNetApp.h"
-
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plAvatarInputInterface  *plAvatarInputInterface::fInstance = nil;
+plAvatarInputInterface  *plAvatarInputInterface::fInstance = nullptr;
 
 plAvatarInputInterface::plAvatarInputInterface()
 {
@@ -97,7 +88,7 @@ plAvatarInputInterface::plAvatarInputInterface()
     fCursorTimeout = 0;
     fCursorFadeDelay = 3.f;
     f3rdPerson = true;
-    fInputMap = nil;
+    fInputMap = nullptr;
     ISetBasicMode(); // Must be after 3rdPerson and fInputMap are set.
     SetEnabled( true );         // Always enabled
 
@@ -135,38 +126,43 @@ plAvatarInputInterface::plAvatarInputInterface()
     fControlMap->AddCode( B_CONTROL_DIVE,                   kControlFlagNormal | kControlFlagNoRepeat );
     fControlMap->AddCode( B_CONTROL_IGNORE_AVATARS,         kControlFlagNormal | kControlFlagNoRepeat );
 
-    fControlMap->AddConsoleCommand( "Game.EnterChatMode" );
-    fControlMap->AddConsoleCommand( "Game.Emote.wave" );
-    fControlMap->AddConsoleCommand( "Game.Emote.laugh" );
-    fControlMap->AddConsoleCommand( "Game.Emote.clap" );
-    fControlMap->AddConsoleCommand( "Game.Emote.dance" );
-    fControlMap->AddConsoleCommand( "Game.Emote.talk" );
-    fControlMap->AddConsoleCommand( "Game.Emote.sneeze" );
-    fControlMap->AddConsoleCommand( "Game.Emote.sit" );
-    fControlMap->AddConsoleCommand( "Keyboard.ResetBindings" );
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.EnterChatMode"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.Emote.wave"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.Emote.laugh"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.Emote.clap"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.Emote.dance"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.Emote.talk"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.Emote.sneeze"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.Emote.sit"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Keyboard.ResetBindings"));
     
-    fControlMap->AddConsoleCommand( "Game.KIOpenKI" );
-    fControlMap->AddConsoleCommand( "Game.KIHelp" );
-    fControlMap->AddConsoleCommand( "Game.KICreateMarker" );
-    fControlMap->AddConsoleCommand( "Game.KICreateMarkerFolder" );
-    fControlMap->AddConsoleCommand( "Game.KIOpenYeeshaBook" );
-    fControlMap->AddConsoleCommand( "Game.KIToggleMini" );
-    fControlMap->AddConsoleCommand( "Game.KIPutAway" );
-    fControlMap->AddConsoleCommand( "Game.KIChatPageUp" );
-    fControlMap->AddConsoleCommand( "Game.KIChatPageDown" );
-    fControlMap->AddConsoleCommand( "Game.KIChatToStart" );
-    fControlMap->AddConsoleCommand( "Game.KIChatToEnd" );
-    fControlMap->AddConsoleCommand( "Game.KIUpSizeFont" );
-    fControlMap->AddConsoleCommand( "Game.KIDownSizeFont" );
-    fControlMap->AddConsoleCommand( "Game.KITakePicture" );
-    fControlMap->AddConsoleCommand( "Game.KICreateJournal" );
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIOpenKI"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIHelp"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KICreateMarker"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KICreateMarkerFolder"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIOpenYeeshaBook"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIToggleMini"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIPutAway"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIChatPageUp"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIChatPageDown"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIChatToStart"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIChatToEnd"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIUpSizeFont"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIDownSizeFont"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KITakePicture"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KICreateJournal"));
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     fControlMap->AddCode( B_CONTROL_TOGGLE_PHYSICAL,        kControlFlagDownEvent | kControlFlagNoRepeat );
     fControlMap->AddCode( B_CONTROL_MOVE_UP,                kControlFlagNormal | kControlFlagNoRepeat );
     fControlMap->AddCode( B_CONTROL_MOVE_DOWN,              kControlFlagNormal | kControlFlagNoRepeat );
     fControlMap->AddCode( B_TOGGLE_DRIVE_MODE,              kControlFlagDownEvent | kControlFlagNoRepeat );
-    fControlMap->AddConsoleCommand( "NextStatusLog" );
+
+    // These by default conflict with text characters, so we deactivate the bindings until they are needed.
+    IDisableControl(B_CONTROL_MOVE_UP);
+    IDisableControl(B_CONTROL_MOVE_DOWN);
+
+    fControlMap->AddConsoleCommand(ST_LITERAL("NextStatusLog"));
 #endif
 
     // IF YOU ARE LOOKING TO CHANGE THE DEFAULT KEY BINDINGS, DO NOT LOOK HERE. GO TO
@@ -185,7 +181,7 @@ void    plAvatarInputInterface::Init( plInputInterfaceMgr *manager )
     plInputInterface::Init( manager );
 }
 
-void    plAvatarInputInterface::Shutdown( void )
+void    plAvatarInputInterface::Shutdown()
 {
 }
 
@@ -212,7 +208,7 @@ void plAvatarInputInterface::IDeactivateCommand(plMouseInfo *info)
         pCmd->fControlActivated = false;
         pCmd->fControlCode = info->fCode;
         IClearControlFlag(pCmd->fControlCode);
-        fMessageQueue->Append(pCmd);
+        fMessageQueue->emplace_back(pCmd);
     }
 }
 
@@ -224,12 +220,8 @@ void plAvatarInputInterface::IChangeInputMaps( plAvatarInputMap *newMap )
 
     if (fInputMap)
     {
-        int i;
-        for (i = 0; i < fInputMap->fMouseMap->fMap.GetCount(); i++)
-        {
-            plMouseInfo *info = fInputMap->fMouseMap->fMap[i];
+        for (plMouseInfo *info : fInputMap->fMouseMap->fMap)
             IDeactivateCommand(info);
-        }
         delete fInputMap;
     }
 
@@ -291,20 +283,20 @@ void plAvatarInputInterface::ISetMouseWalkMode(ControlEventCode code)
 void plAvatarInputInterface::ClearKeyMap()
 { 
     // Note: we might be clearing our key bindings, but we still want to be owners of the commands,
-    if( fControlMap != nil )
+    if (fControlMap != nullptr)
     {
         fControlMap->UnmapAllBindings();
         
         // Still want this one tho
-        fControlMap->BindKeyToConsoleCmd( plCtrlShiftKeyCombo( KEY_0 ), "Keyboard.ResetBindings" );
+        fControlMap->BindKeyToConsoleCmd(plCtrlShiftKeyCombo(KEY_0), ST_LITERAL("Keyboard.ResetBindings"));
     }
 }
 
 //// RestoreDefaultKeyMappings ///////////////////////////////////////////////
 
-void    plAvatarInputInterface::RestoreDefaultKeyMappings( void )
+void    plAvatarInputInterface::RestoreDefaultKeyMappings()
 {
-    if( fControlMap == nil )
+    if (fControlMap == nullptr)
         return;
 
     fControlMap->UnmapAllBindings();
@@ -321,7 +313,7 @@ void    plAvatarInputInterface::RestoreDefaultKeyMappings( void )
     fControlMap->BindKey( KEY_NUMPAD_SUBTRACT,          B_CAMERA_ZOOM_OUT );
 
     fControlMap->BindKey( KEY_SHIFT,                    B_CONTROL_MODIFIER_FAST );
-    fControlMap->BindKey( KEY_Z,                        B_CONTROL_MODIFIER_STRAFE );
+    fControlMap->BindKey( KEY_ALT,                      B_CONTROL_MODIFIER_STRAFE );
     fControlMap->BindKey( KEY_UP,                       B_CONTROL_MOVE_FORWARD );
     fControlMap->BindKey( KEY_DOWN,                     B_CONTROL_MOVE_BACKWARD );
     fControlMap->BindKey( KEY_LEFT,                     B_CONTROL_ROTATE_LEFT );
@@ -336,40 +328,40 @@ void    plAvatarInputInterface::RestoreDefaultKeyMappings( void )
 //  fControlMap->BindKey( KEY_D,                        B_CONTROL_DIVE );
     fControlMap->BindKey( KEY_DELETE,                   B_CONTROL_IGNORE_AVATARS );
 
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_1 ),  "Game.Emote.wave" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_2 ),  "Game.Emote.laugh" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_3 ),  "Game.Emote.clap" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_4 ),  "Game.Emote.dance" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_5 ),  "Game.Emote.talk" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_6 ),  "Game.Emote.sneeze" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_7 ),  "Game.Emote.sit" );
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_1), ST_LITERAL("Game.Emote.wave"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_2), ST_LITERAL("Game.Emote.laugh"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_3), ST_LITERAL("Game.Emote.clap"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_4), ST_LITERAL("Game.Emote.dance"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_5), ST_LITERAL("Game.Emote.talk"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_6), ST_LITERAL("Game.Emote.sneeze"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_7), ST_LITERAL("Game.Emote.sit"));
 
-    fControlMap->BindKeyToConsoleCmd( plCtrlShiftKeyCombo( KEY_0 ), "Keyboard.ResetBindings" );
+    fControlMap->BindKeyToConsoleCmd(plCtrlShiftKeyCombo(KEY_0), ST_LITERAL("Keyboard.ResetBindings"));
     
     // KI shortcut keyboard commands
-    fControlMap->BindKeyToConsoleCmd( KEY_F2,                                   "Game.KIOpenKI" );
-    fControlMap->BindKeyToConsoleCmd( KEY_F3,                                   "Game.KIOpenYeeshaBook" );
-    fControlMap->BindKeyToConsoleCmd( KEY_F4,                                   "Game.KIHelp" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_HOME ),               "Game.KIToggleMini" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_END ),                "Game.KIPutAway" );
-    fControlMap->BindKeyToConsoleCmd( KEY_PAGEUP,                               "Game.KIChatPageUp" );
-    fControlMap->BindKeyToConsoleCmd( KEY_PAGEDOWN,                             "Game.KIChatPageDown" );
-    fControlMap->BindKeyToConsoleCmd( KEY_HOME,                                 "Game.KIChatToStart" );
-    fControlMap->BindKeyToConsoleCmd( KEY_END,                                  "Game.KIChatToEnd" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_NUMPAD_ADD ),         "Game.KIUpSizeFont" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_NUMPAD_SUBTRACT ),    "Game.KIDownSizeFont" );
-    fControlMap->BindKeyToConsoleCmd( KEY_F5,                                   "Game.KITakePicture" );
-    fControlMap->BindKeyToConsoleCmd( KEY_F6,                                   "Game.KICreateJournal" );
-    fControlMap->BindKeyToConsoleCmd( KEY_F7,                                   "Game.KICreateMarker" );
-    fControlMap->BindKeyToConsoleCmd( KEY_F8,                                   "Game.KICreateMarkerFolder" );
+    fControlMap->BindKeyToConsoleCmd(KEY_F2,                              ST_LITERAL("Game.KIOpenKI"));
+    fControlMap->BindKeyToConsoleCmd(KEY_F3,                              ST_LITERAL("Game.KIOpenYeeshaBook"));
+    fControlMap->BindKeyToConsoleCmd(KEY_F4,                              ST_LITERAL("Game.KIHelp"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_HOME),            ST_LITERAL("Game.KIToggleMini"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_END),             ST_LITERAL("Game.KIPutAway"));
+    fControlMap->BindKeyToConsoleCmd(KEY_PAGEUP,                          ST_LITERAL("Game.KIChatPageUp"));
+    fControlMap->BindKeyToConsoleCmd(KEY_PAGEDOWN,                        ST_LITERAL("Game.KIChatPageDown"));
+    fControlMap->BindKeyToConsoleCmd(KEY_HOME,                            ST_LITERAL("Game.KIChatToStart"));
+    fControlMap->BindKeyToConsoleCmd(KEY_END,                             ST_LITERAL("Game.KIChatToEnd"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_NUMPAD_ADD),      ST_LITERAL("Game.KIUpSizeFont"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_NUMPAD_SUBTRACT), ST_LITERAL("Game.KIDownSizeFont"));
+    fControlMap->BindKeyToConsoleCmd(KEY_F5,                              ST_LITERAL("Game.KITakePicture"));
+    fControlMap->BindKeyToConsoleCmd(KEY_F6,                              ST_LITERAL("Game.KICreateJournal"));
+    fControlMap->BindKeyToConsoleCmd(KEY_F7,                              ST_LITERAL("Game.KICreateMarker"));
+    fControlMap->BindKeyToConsoleCmd(KEY_F8,                              ST_LITERAL("Game.KICreateMarkerFolder"));
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-    fControlMap->BindKey( plShiftKeyCombo( KEY_P ),     B_CONTROL_TOGGLE_PHYSICAL );
+    fControlMap->BindKey( plCtrlKeyCombo( KEY_P ),      B_CONTROL_TOGGLE_PHYSICAL );
     fControlMap->BindKey( KEY_U,                        B_CONTROL_MOVE_UP );
     fControlMap->BindKey( KEY_H,                        B_CONTROL_MOVE_DOWN );
-    fControlMap->BindKey( plShiftKeyCombo( KEY_C ),     B_TOGGLE_DRIVE_MODE );
-    
-    fControlMap->BindKeyToConsoleCmd( KEY_L,            "NextStatusLog" );
+    fControlMap->BindKey( plCtrlKeyCombo( KEY_D ),      B_TOGGLE_DRIVE_MODE );
+
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_L), ST_LITERAL("NextStatusLog"));
 #endif
 }
 
@@ -418,7 +410,7 @@ void plAvatarInputInterface::ForceAlwaysRun(bool val)
     pCmd->fControlActivated = val;
     pCmd->fNetPropagateToPlayers = false;
         
-    fMessageQueue->Append( pCmd );
+    fMessageQueue->emplace_back(pCmd);
 }   
 
 //// IEval ///////////////////////////////////////////////////////////////////
@@ -486,11 +478,6 @@ bool    plAvatarInputInterface::IHandleCtrlCmd( plCtrlCmd *cmd )
             if( cmd->fControlActivated )
             {
                 ISetBasicMode();                
-#if 0
-plProxyDrawMsg* Dmsg = new plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
-plgDispatch::MsgSend(Dmsg);
-plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Instance()->GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kCameraProxy);
-#endif
             }
             return true;
 
@@ -500,17 +487,11 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
             if( cmd->fControlActivated )
             {
                 bool abort = false;
-                for (int i = 0; i < fMessageQueue->GetCount(); i++)
+                for (plCtrlCmd* ctrlMsg : *fMessageQueue)
                 {
-                    if ((*fMessageQueue)[i]->fControlCode == S_SET_WALK_MODE && !(*fMessageQueue)[i]->fControlActivated)
+                    if (ctrlMsg->fControlCode == S_SET_WALK_MODE && !ctrlMsg->fControlActivated)
                     {   
                         abort = true;
-#if 0                       
-
-                    plProxyDrawMsg* Dmsg = new plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
-                    plgDispatch::MsgSend(Dmsg);
-                    plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Instance()->GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kCameraProxy);
-#endif
                         break;
                     }
                 }
@@ -525,17 +506,11 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
             if( cmd->fControlActivated )
             {
                 bool abort = false;
-                for (int i = 0; i < fMessageQueue->GetCount(); i++)
+                for (plCtrlCmd* ctrlMsg : *fMessageQueue)
                 {
-                    if ((*fMessageQueue)[i]->fControlCode == S_SET_WALK_BACK_MODE && !(*fMessageQueue)[i]->fControlActivated)
+                    if (ctrlMsg->fControlCode == S_SET_WALK_BACK_MODE && !ctrlMsg->fControlActivated)
                     {   
                         abort = true;
-#if 0                       
-                        
-                        plProxyDrawMsg* Dmsg = new plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
-                        plgDispatch::MsgSend(Dmsg);
-                        plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Instance()->GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kCameraProxy);
-#endif
                         break;
                     }
                 }
@@ -550,17 +525,11 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
             if( cmd->fControlActivated )
             {
                 bool abort = false;
-                for (int i = 0; i < fMessageQueue->GetCount(); i++)
+                for (plCtrlCmd* ctrlMsg : *fMessageQueue)
                 {
-                    if ((*fMessageQueue)[i]->fControlCode == S_SET_WALK_BACK_MODE && !(*fMessageQueue)[i]->fControlActivated)
-                    {   
+                    if (ctrlMsg->fControlCode == S_SET_WALK_BACK_MODE && !ctrlMsg->fControlActivated)
+                    {
                         abort = true;
-#if 0                       
-                        
-                        plProxyDrawMsg* Dmsg = new plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
-                        plgDispatch::MsgSend(Dmsg);
-                        plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Instance()->GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kCameraProxy);
-#endif
                         break;
                     }
                 }
@@ -598,6 +567,9 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
             }
             break;
     */
+
+        default:
+            break;
     } 
 
     return false;
@@ -656,7 +628,7 @@ void    plAvatarInputInterface::MissedInputEvent( plInputEventMsg *pMsg )
     int                 i;
 
 
-    if( plKeyEventMsg::ConvertNoRef( pMsg ) == nil )
+    if (plKeyEventMsg::ConvertNoRef(pMsg) == nullptr)
     {
         // We only "lose focus" if someone else grabbed a key message. Don't care about anything else.
         return;
@@ -679,7 +651,7 @@ void    plAvatarInputInterface::MissedInputEvent( plInputEventMsg *pMsg )
             else
                 pCmd->fNetPropagateToPlayers = false;
 
-            fMessageQueue->Append( pCmd );
+            fMessageQueue->emplace_back(pCmd);
             IClearKeyControlFlag( binding.GetCode() );
         }
     }
@@ -692,8 +664,8 @@ bool plAvatarInputInterface::IsEnterChatModeBound()
     {
         const plKeyBinding &binding = fControlMap->GetBinding( i );
 
-        const char* extString = binding.GetExtendedString();
-        if ( extString && strcmp("Game.EnterChatMode",extString) == 0 )
+        ST::string extString = binding.GetExtendedString();
+        if (extString == "Game.EnterChatMode")
         {
             if (binding.GetKey1() != plKeyCombo::kUnmapped )
                 return true;
@@ -707,7 +679,7 @@ bool plAvatarInputInterface::IsEnterChatModeBound()
 
 bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 {
-    if( fInputMap == nil )
+    if (fInputMap == nullptr)
         return false;
 
     plMouseMap  *mouseMap = fInputMap->fMouseMap;
@@ -792,75 +764,75 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
         else
             fManager->ReleaseCurrentFocus(this);
 
-        for (int i=0; i < mouseMap->fMap.Count(); i++)
+        for (plMouseInfo *mouseInfo : mouseMap->fMap)
         {
             // is this control already set?
-            if (IHasControlFlag(mouseMap->fMap[i]->fCode))
+            if (IHasControlFlag(mouseInfo->fCode))
             {
                 // Control isn't enabled, ignore
-                if (!IControlCodeEnabled(mouseMap->fMap[i]->fCode))
+                if (!IControlCodeEnabled(mouseInfo->fCode))
                     return true;                
                 
                 // can we disable this control?
                 bool disable = false;
                 
                 // can we disable this control based on a button?
-                if (mouseMap->fMap[i]->fControlFlags & kControlFlagLeftButton && !(fInputMap->fButtonState & kLeftButtonDown))
+                if (mouseInfo->fControlFlags & kControlFlagLeftButton && !(fInputMap->fButtonState & kLeftButtonDown))
                     disable = true;
-                if (mouseMap->fMap[i]->fControlFlags & kControlFlagRightButton && !(fInputMap->fButtonState & kRightButtonDown))
+                if (mouseInfo->fControlFlags & kControlFlagRightButton && !(fInputMap->fButtonState & kRightButtonDown))
                     disable = true;
-                if (mouseMap->fMap[i]->fControlFlags & kControlFlagMiddleButton && !(fInputMap->fButtonState & kMiddleButtonDown))
+                if (mouseInfo->fControlFlags & kControlFlagMiddleButton && !(fInputMap->fButtonState & kMiddleButtonDown))
                     disable = true;
-                if (mouseMap->fMap[i]->fControlFlags & kControlFlagLeftButtonEx && (fInputMap->fButtonState & kLeftButtonRepeat))
+                if (mouseInfo->fControlFlags & kControlFlagLeftButtonEx && (fInputMap->fButtonState & kLeftButtonRepeat))
                     disable = true;
-                if (mouseMap->fMap[i]->fControlFlags & kControlFlagRightButtonEx && (fInputMap->fButtonState & kRightButtonRepeat))
+                if (mouseInfo->fControlFlags & kControlFlagRightButtonEx && (fInputMap->fButtonState & kRightButtonRepeat))
                     disable = true;
-                if (mouseMap->fMap[i]->fControlFlags & kControlFlagMiddleButtonEx && (fInputMap->fButtonState & kMiddleButtonRepeat))
+                if (mouseInfo->fControlFlags & kControlFlagMiddleButtonEx && (fInputMap->fButtonState & kMiddleButtonRepeat))
                     disable = true;
-                if (mouseMap->fMap[i]->fControlFlags & kControlFlagLeftButtonEx && !(fInputMap->fButtonState & kLeftButtonDown))
+                if (mouseInfo->fControlFlags & kControlFlagLeftButtonEx && !(fInputMap->fButtonState & kLeftButtonDown))
                     disable = true;
-                if (mouseMap->fMap[i]->fControlFlags & kControlFlagRightButtonEx && !(fInputMap->fButtonState & kRightButtonDown))
+                if (mouseInfo->fControlFlags & kControlFlagRightButtonEx && !(fInputMap->fButtonState & kRightButtonDown))
                     disable = true;
-                if (mouseMap->fMap[i]->fControlFlags & kControlFlagMiddleButtonEx && !(fInputMap->fButtonState & kMiddleButtonDown))
+                if (mouseInfo->fControlFlags & kControlFlagMiddleButtonEx && !(fInputMap->fButtonState & kMiddleButtonDown))
                     disable = true;
-                if (mouseMap->fMap[i]->fControlFlags & kControlFlagLeftButtonRepeat && !(fInputMap->fButtonState & kLeftButtonDown))
+                if (mouseInfo->fControlFlags & kControlFlagLeftButtonRepeat && !(fInputMap->fButtonState & kLeftButtonDown))
                     disable = true;
-                if (mouseMap->fMap[i]->fControlFlags & kControlFlagRightButtonRepeat && !(fInputMap->fButtonState & kRightButtonDown))
+                if (mouseInfo->fControlFlags & kControlFlagRightButtonRepeat && !(fInputMap->fButtonState & kRightButtonDown))
                     disable = true;
-                if (mouseMap->fMap[i]->fControlFlags & kControlFlagMiddleButtonRepeat && !(fInputMap->fButtonState & kMiddleButtonDown))
+                if (mouseInfo->fControlFlags & kControlFlagMiddleButtonRepeat && !(fInputMap->fButtonState & kMiddleButtonDown))
                     disable = true;
 
                 // can we disable this control based on the cursor position?
-                if (!CursorInBox(pMouseMsg, mouseMap->fMap[i]->fBox) && mouseMap->fMap[i]->fControlFlags & kControlFlagBoxDisable)
+                if (!CursorInBox(pMouseMsg, mouseInfo->fBox) && mouseInfo->fControlFlags & kControlFlagBoxDisable)
                     disable = true;
 
                 if (disable)
                 {
-                    IDeactivateCommand(mouseMap->fMap[i]);
+                    IDeactivateCommand(mouseInfo);
                     continue;
                 }
                 // is it a range control?  If so we need to re-send the command
                 
-                if ((mouseMap->fMap[i]->fControlFlags & kControlFlagRangePos) || (mouseMap->fMap[i]->fControlFlags & kControlFlagRangeNeg))
+                if ((mouseInfo->fControlFlags & kControlFlagRangePos) || (mouseInfo->fControlFlags & kControlFlagRangeNeg))
                 {
                     plCtrlCmd* pCmd = new plCtrlCmd( this );
                     pCmd->fControlActivated = true;
-                    pCmd->fControlCode = mouseMap->fMap[i]->fCode;
+                    pCmd->fControlCode = mouseInfo->fCode;
                     float pct = 0.0f;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagRangePos)
+                    if (mouseInfo->fControlFlags & kControlFlagRangePos)
                     {
-                        if (mouseMap->fMap[i]->fControlFlags & kControlFlagXAxisEvent)
-                            pct = fabs((mouseMap->fMap[i]->fBox.fX - pMouseMsg->GetXPos()) / (mouseMap->fMap[i]->fBox.fY - mouseMap->fMap[i]->fBox.fX));
+                        if (mouseInfo->fControlFlags & kControlFlagXAxisEvent)
+                            pct = fabs((mouseInfo->fBox.fX - pMouseMsg->GetXPos()) / (mouseInfo->fBox.fY - mouseInfo->fBox.fX));
                         else
-                            pct = fabs((mouseMap->fMap[i]->fBox.fZ - pMouseMsg->GetYPos()) / (mouseMap->fMap[i]->fBox.fW - mouseMap->fMap[i]->fBox.fZ));
+                            pct = fabs((mouseInfo->fBox.fZ - pMouseMsg->GetYPos()) / (mouseInfo->fBox.fW - mouseInfo->fBox.fZ));
                     }
                     else 
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagRangeNeg)
+                    if (mouseInfo->fControlFlags & kControlFlagRangeNeg)
                     {
-                        if (mouseMap->fMap[i]->fControlFlags & kControlFlagXAxisEvent)
-                            pct = fabs((mouseMap->fMap[i]->fBox.fY - pMouseMsg->GetXPos()) / (mouseMap->fMap[i]->fBox.fY - mouseMap->fMap[i]->fBox.fX));
+                        if (mouseInfo->fControlFlags & kControlFlagXAxisEvent)
+                            pct = fabs((mouseInfo->fBox.fY - pMouseMsg->GetXPos()) / (mouseInfo->fBox.fY - mouseInfo->fBox.fX));
                         else
-                            pct = fabs((mouseMap->fMap[i]->fBox.fW - pMouseMsg->GetYPos()) / (mouseMap->fMap[i]->fBox.fW - mouseMap->fMap[i]->fBox.fZ));
+                            pct = fabs((mouseInfo->fBox.fW - pMouseMsg->GetYPos()) / (mouseInfo->fBox.fW - mouseInfo->fBox.fZ));
                     }
                     pCmd->fPct = pct;
                     if (pct == 1.0f || pct == -1.0f)
@@ -868,17 +840,17 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                         delete pCmd;
                         break;
                     }
-                    pCmd->fNetPropagateToPlayers = mouseMap->fMap[i]->fControlFlags & kControlFlagNetPropagate;
-                    fMessageQueue->Append(pCmd);
+                    pCmd->fNetPropagateToPlayers = mouseInfo->fControlFlags & kControlFlagNetPropagate;
+                    fMessageQueue->emplace_back(pCmd);
                 }
-                if (mouseMap->fMap[i]->fControlFlags & kControlFlagDelta)
+                if (mouseInfo->fControlFlags & kControlFlagDelta)
                 {
                     plCtrlCmd* pCmd = new plCtrlCmd( this );
                     pCmd->fControlActivated = true;
-                    pCmd->fControlCode = mouseMap->fMap[i]->fCode;
+                    pCmd->fControlCode = mouseInfo->fCode;
                     float pct = 0.0f;
 
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagXAxisEvent)
+                    if (mouseInfo->fControlFlags & kControlFlagXAxisEvent)
                         pct = pMouseMsg->GetDX();
                     else
                         pct = pMouseMsg->GetDY();
@@ -889,89 +861,89 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                         continue;
                     }
                     pCmd->fPct = pct;
-                    pCmd->fNetPropagateToPlayers = mouseMap->fMap[i]->fControlFlags & kControlFlagNetPropagate;
-                    fMessageQueue->Append(pCmd);
+                    pCmd->fNetPropagateToPlayers = mouseInfo->fControlFlags & kControlFlagNetPropagate;
+                    fMessageQueue->emplace_back(pCmd);
                 }
                 
             }
             else // if it is an 'always if in box' command see if it's not in the box
-            if ( (mouseMap->fMap[i]->fControlFlags & kControlFlagInBox) && (!CursorInBox(pMouseMsg, mouseMap->fMap[i]->fBox)) )
+            if ((mouseInfo->fControlFlags & kControlFlagInBox) && (!CursorInBox(pMouseMsg, mouseInfo->fBox)))
             {   
                 plCtrlCmd* pCmd = new plCtrlCmd( this );
                 pCmd->fControlActivated = false;
-                pCmd->fControlCode = mouseMap->fMap[i]->fCode;
-                pCmd->fNetPropagateToPlayers = mouseMap->fMap[i]->fControlFlags & kControlFlagNetPropagate;
-                fMessageQueue->Append(pCmd);
+                pCmd->fControlCode = mouseInfo->fCode;
+                pCmd->fNetPropagateToPlayers = mouseInfo->fControlFlags & kControlFlagNetPropagate;
+                fMessageQueue->emplace_back(pCmd);
                 continue;
             }
             else // the control is not set, see if we should set it.
             {
                 // is the control disabled?
-                if (fDisabledControls.IsBitSet(mouseMap->fMap[i]->fCode))
+                if (fDisabledControls.IsBitSet(mouseInfo->fCode))
                     continue;
                 
                 // is the cursor in the appropriate box?
-                if (CursorInBox(pMouseMsg, mouseMap->fMap[i]->fBox))
+                if (CursorInBox(pMouseMsg, mouseInfo->fBox))
                 {   
                     // do we require a button?
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagLeftButton && !(fInputMap->fButtonState & kLeftButtonDown))
+                    if (mouseInfo->fControlFlags & kControlFlagLeftButton && !(fInputMap->fButtonState & kLeftButtonDown))
                         continue;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagRightButton && !(fInputMap->fButtonState & kRightButtonDown))
+                    if (mouseInfo->fControlFlags & kControlFlagRightButton && !(fInputMap->fButtonState & kRightButtonDown))
                         continue;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagMiddleButton && !(fInputMap->fButtonState & kMiddleButtonDown))
+                    if (mouseInfo->fControlFlags & kControlFlagMiddleButton && !(fInputMap->fButtonState & kMiddleButtonDown))
                         continue;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagLeftButtonEx && (fInputMap->fButtonState & kLeftButtonRepeat))
+                    if (mouseInfo->fControlFlags & kControlFlagLeftButtonEx && (fInputMap->fButtonState & kLeftButtonRepeat))
                         continue;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagRightButtonEx && (fInputMap->fButtonState & kRightButtonRepeat))
+                    if (mouseInfo->fControlFlags & kControlFlagRightButtonEx && (fInputMap->fButtonState & kRightButtonRepeat))
                         continue;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagMiddleButtonEx && (fInputMap->fButtonState & kMiddleButtonRepeat))
+                    if (mouseInfo->fControlFlags & kControlFlagMiddleButtonEx && (fInputMap->fButtonState & kMiddleButtonRepeat))
                         continue;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagLeftButtonRepeat && !(fInputMap->fButtonState & kLeftButtonRepeat))
+                    if (mouseInfo->fControlFlags & kControlFlagLeftButtonRepeat && !(fInputMap->fButtonState & kLeftButtonRepeat))
                         continue;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagRightButtonRepeat && !(fInputMap->fButtonState & kRightButtonRepeat))
+                    if (mouseInfo->fControlFlags & kControlFlagRightButtonRepeat && !(fInputMap->fButtonState & kRightButtonRepeat))
                         continue;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagMiddleButtonRepeat && !(fInputMap->fButtonState & kMiddleButtonRepeat))
+                    if (mouseInfo->fControlFlags & kControlFlagMiddleButtonRepeat && !(fInputMap->fButtonState & kMiddleButtonRepeat))
                         continue;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagLeftButtonEx && !(fInputMap->fButtonState & kLeftButtonDown))
+                    if (mouseInfo->fControlFlags & kControlFlagLeftButtonEx && !(fInputMap->fButtonState & kLeftButtonDown))
                         continue;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagRightButtonEx && !(fInputMap->fButtonState & kLeftButtonDown))
+                    if (mouseInfo->fControlFlags & kControlFlagRightButtonEx && !(fInputMap->fButtonState & kLeftButtonDown))
                         continue;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagMiddleButtonEx && !(fInputMap->fButtonState & kMiddleButtonDown))
+                    if (mouseInfo->fControlFlags & kControlFlagMiddleButtonEx && !(fInputMap->fButtonState & kMiddleButtonDown))
                         continue;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagLeftButtonUp && !(pMouseMsg->GetButton() == kLeftButtonUp))
+                    if (mouseInfo->fControlFlags & kControlFlagLeftButtonUp && !(pMouseMsg->GetButton() == kLeftButtonUp))
                         continue;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagRightButtonUp && !(pMouseMsg->GetButton() == kRightButtonUp))
+                    if (mouseInfo->fControlFlags & kControlFlagRightButtonUp && !(pMouseMsg->GetButton() == kRightButtonUp))
                         continue;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagMiddleButtonUp && !(pMouseMsg->GetButton() == kMiddleButtonUp))
+                    if (mouseInfo->fControlFlags & kControlFlagMiddleButtonUp && !(pMouseMsg->GetButton() == kMiddleButtonUp))
                         continue;
 
                     // okay, we're in the box and either we don't require a button or our button is pressed.
                     // so set the command as 'enabled' 
                     // UNLESS it has kControlFlagInBox, which means we want it sent every frame it is in the box
-                    if (!(mouseMap->fMap[i]->fControlFlags & kControlFlagInBox))
-                        SetControlFlag(mouseMap->fMap[i]->fCode);
+                    if (!(mouseInfo->fControlFlags & kControlFlagInBox))
+                        SetControlFlag(mouseInfo->fCode);
                     // issue the command
                     plCtrlCmd* pCmd = new plCtrlCmd( this );
                     pCmd->fControlActivated = true;
-                    pCmd->fControlCode = mouseMap->fMap[i]->fCode;
-                    pCmd->fNetPropagateToPlayers = mouseMap->fMap[i]->fControlFlags & kControlFlagNetPropagate;
+                    pCmd->fControlCode = mouseInfo->fCode;
+                    pCmd->fNetPropagateToPlayers = mouseInfo->fControlFlags & kControlFlagNetPropagate;
 
                     // figure out what percent (if any)
                     float pct = 0.0f;
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagRangePos)
+                    if (mouseInfo->fControlFlags & kControlFlagRangePos)
                     {
-                        if (mouseMap->fMap[i]->fControlFlags & kControlFlagXAxisEvent)
-                            pct = fabs((mouseMap->fMap[i]->fBox.fX - pMouseMsg->GetXPos()) / (mouseMap->fMap[i]->fBox.fY - mouseMap->fMap[i]->fBox.fX));
+                        if (mouseInfo->fControlFlags & kControlFlagXAxisEvent)
+                            pct = fabs((mouseInfo->fBox.fX - pMouseMsg->GetXPos()) / (mouseInfo->fBox.fY - mouseInfo->fBox.fX));
                         else
-                            pct = fabs((mouseMap->fMap[i]->fBox.fZ - pMouseMsg->GetYPos()) / (mouseMap->fMap[i]->fBox.fW - mouseMap->fMap[i]->fBox.fZ));
+                            pct = fabs((mouseInfo->fBox.fZ - pMouseMsg->GetYPos()) / (mouseInfo->fBox.fW - mouseInfo->fBox.fZ));
                     }
                     else 
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagRangeNeg)
+                    if (mouseInfo->fControlFlags & kControlFlagRangeNeg)
                     {
-                        if (mouseMap->fMap[i]->fControlFlags & kControlFlagXAxisEvent)
-                            pct = fabs((mouseMap->fMap[i]->fBox.fY - pMouseMsg->GetXPos()) / (mouseMap->fMap[i]->fBox.fY - mouseMap->fMap[i]->fBox.fX));
+                        if (mouseInfo->fControlFlags & kControlFlagXAxisEvent)
+                            pct = fabs((mouseInfo->fBox.fY - pMouseMsg->GetXPos()) / (mouseInfo->fBox.fY - mouseInfo->fBox.fX));
                         else
-                            pct = fabs((mouseMap->fMap[i]->fBox.fW - pMouseMsg->GetYPos()) / (mouseMap->fMap[i]->fBox.fW - mouseMap->fMap[i]->fBox.fZ));
+                            pct = fabs((mouseInfo->fBox.fW - pMouseMsg->GetYPos()) / (mouseInfo->fBox.fW - mouseInfo->fBox.fZ));
                     }
                     pCmd->fPct = pct;
                     if (pct == 1.0f || pct == -1.0f)
@@ -980,9 +952,9 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                         break;
                     }
 
-                    if (mouseMap->fMap[i]->fControlFlags & kControlFlagDelta)
+                    if (mouseInfo->fControlFlags & kControlFlagDelta)
                     {
-                        if (mouseMap->fMap[i]->fControlFlags & kControlFlagXAxisEvent)
+                        if (mouseInfo->fControlFlags & kControlFlagXAxisEvent)
                             pct = pMouseMsg->GetDX();
                         else
                             pct = pMouseMsg->GetDY();
@@ -991,7 +963,7 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     }
                     
                     // and add it to the list
-                    fMessageQueue->Append(pCmd);
+                    fMessageQueue->emplace_back(pCmd);
                     continue;
                 }
             }
@@ -1033,50 +1005,50 @@ plAvatarInputMap::~plAvatarInputMap()
         
 plSuspendedMovementMap::plSuspendedMovementMap() : plAvatarInputMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_ACTION_MOUSE,      kControlFlagLeftButtonEx, 0.0f, 1.0f, 0.0f, 1.0f, "The Picked key") );
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_PICK,              kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f, "The Picked key") );
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_ACTION_MOUSE,      kControlFlagLeftButtonEx, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_PICK,              kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f));
 }
 
 plBasicControlMap::plBasicControlMap() : plSuspendedMovementMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_ROTATE_RIGHT,      kControlFlagLeftButton | kControlFlagBoxDisable,    0.95f, 1.0f, 0.0f, 1.0f,        "Rotate Player Right") );
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_ROTATE_LEFT,       kControlFlagLeftButton | kControlFlagBoxDisable,    0.0f, 0.05f,    0.0f, 1.0f,     "Rotate Player Left") );
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_ROTATE_RIGHT,      kControlFlagLeftButton | kControlFlagBoxDisable,    0.95f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_ROTATE_LEFT,       kControlFlagLeftButton | kControlFlagBoxDisable,    0.0f, 0.05f,    0.0f, 1.0f));
     
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_TURN_TO,           kControlFlagLeftButtonEx, 0.05f, 0.95f, 0.0f, 0.95f,        "Turn to") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_WALK_MODE,             kControlFlagLeftButton, 0.05f, 0.95f,   0.0f, 0.95f,        "Set Walk Mode") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_WALK_BACK_LB_MODE,     kControlFlagLeftButton, 0.05f, 0.95f,   0.95f, 1.0f,        "Set Walk Back LB Mode") );
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_WALK_BACK_MODE,        kControlFlagMiddleButton,   0.05f, 0.95f,   0.0f, 1.0f,     "Set Walk Back Mode") ); 
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_TURN_TO,           kControlFlagLeftButtonEx, 0.05f, 0.95f, 0.0f, 0.95f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_WALK_MODE,             kControlFlagLeftButton, 0.05f, 0.95f,   0.0f, 0.95f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_WALK_BACK_LB_MODE,     kControlFlagLeftButton, 0.05f, 0.95f,   0.95f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_WALK_BACK_MODE,        kControlFlagMiddleButton,   0.05f, 0.95f,   0.0f, 1.0f)); 
 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_UP,             kControlFlagNormal | kControlFlagInBox,     0.05f, 0.95f, 0.0f, 0.95f,  "set cursor up") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_DOWN,           kControlFlagNormal | kControlFlagInBox,     0.05f, 0.95f, 0.95f, 1.0f,  "set cursor down") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_RIGHT,          kControlFlagNormal | kControlFlagInBox,     0.95f, 1.0f, 0.0f, 1.0f,    "set cursor right") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_LEFT,           kControlFlagNormal | kControlFlagInBox,     0.0f, 0.05f, 0.0f, 1.0f,    "set cursor left") ); 
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_CURSOR_UP,             kControlFlagNormal | kControlFlagInBox,     0.05f, 0.95f, 0.0f, 0.95f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_CURSOR_DOWN,           kControlFlagNormal | kControlFlagInBox,     0.05f, 0.95f, 0.95f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_CURSOR_RIGHT,          kControlFlagNormal | kControlFlagInBox,     0.95f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_CURSOR_LEFT,           kControlFlagNormal | kControlFlagInBox,     0.0f, 0.05f, 0.0f, 1.0f));
 }
 
 plLadderControlMap::plLadderControlMap() : plSuspendedMovementMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MOVE_FORWARD,      kControlFlagLeftButton | kControlFlagBoxDisable,    0.0f, 1.0f, 0.0f, 0.5f,     "Set Walk Mode") ); 
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagLeftButton | kControlFlagBoxDisable, 0.0f, 1.0f,    0.5f, 1.0f,     "Set Walk Back LB Mode") );
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_MOVE_FORWARD,      kControlFlagLeftButton | kControlFlagBoxDisable,    0.0f, 1.0f, 0.0f, 0.5f) ); 
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagLeftButton | kControlFlagBoxDisable, 0.0f, 1.0f,    0.5f, 1.0f) );
 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_UPWARD,         kControlFlagNormal | kControlFlagInBox,     0.0f, 1.0f, 0.0f, 0.5f, "set cursor up") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_DOWN,           kControlFlagNormal | kControlFlagInBox,     0.0f, 1.0f, 0.5f, 1.0f, "set cursor down") ); 
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_CURSOR_UPWARD,         kControlFlagNormal | kControlFlagInBox,     0.0f, 1.0f, 0.0f, 0.5f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_CURSOR_DOWN,           kControlFlagNormal | kControlFlagInBox,     0.0f, 1.0f, 0.5f, 1.0f));
 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f,        "Set Camera first-person z-axis panning") ); 
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f));
 }
 
 
 plLadderMountMap::plLadderMountMap() : plSuspendedMovementMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagLeftButtonUp,   0.0f, 1.0f, 0.0f, 1.0f,     "Set Ladder Mode") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagRightButtonUp,  0.0f, 1.0f, 0.0f, 1.0f,     "Set Ladder Mode") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Ladder Mode") ); 
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagLeftButtonUp,   0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagRightButtonUp,  0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f));
 }
 
 plLadderDismountMap::plLadderDismountMap() : plSuspendedMovementMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,                kControlFlagLeftButtonUp,   0.0f, 1.0f, 0.0f, 1.0f,     "Set Basic Mode") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,                kControlFlagRightButtonUp,  0.0f, 1.0f, 0.0f, 1.0f,     "Set Basic Mode") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,                kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Basic Mode") ); 
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_BASIC_MODE,                kControlFlagLeftButtonUp,   0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_BASIC_MODE,                kControlFlagRightButtonUp,  0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_BASIC_MODE,                kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f));
 }
 
 
@@ -1084,22 +1056,22 @@ plLadderDismountMap::plLadderDismountMap() : plSuspendedMovementMap()
 
 plBasicThirdPersonControlMap::plBasicThirdPersonControlMap() : plBasicControlMap()
 {   
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.0f, 1.0f, 0.0f, 1.0f,     "Freelook Mode") );     
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.0f, 1.0f, 0.0f, 1.0f));
 }   
 
 plBasicFirstPersonControlMap::plBasicFirstPersonControlMap() : plBasicControlMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(A_CONTROL_TURN,              kControlFlagRightButtonRepeat | kControlFlagXAxisEvent | kControlFlagDelta, 0.0f, 1.0f, 0.0f, 1.0f,     "Rotate Player") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f,        "Set Camera first-person z-axis panning") ); 
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f,        "Set Camera first-person z-axis panning") ); 
+    fMouseMap->AddMapping(new plMouseInfo(A_CONTROL_TURN,              kControlFlagRightButtonRepeat | kControlFlagXAxisEvent | kControlFlagDelta, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f));
 }
 
 // also used in 1st person walk mode    
 pl3rdWalkMap::pl3rdWalkMap() : plAvatarInputMap()
 {
     // control special to this mode.
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MODIFIER_FAST,     kControlFlagRightButton,    0.0f, 1.0f, 0.0f, 1.0f, "Run Modifier"  ) );
-    fMouseMap->AddMapping( new plMouseInfo(A_CONTROL_TURN,              kControlFlagXAxisEvent | kControlFlagDelta, 0.0f, 1.0f, 0.0f, 1.0f,     "Rotate Player") );
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_MODIFIER_FAST,     kControlFlagRightButton,    0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(A_CONTROL_TURN,              kControlFlagXAxisEvent | kControlFlagDelta, 0.0f, 1.0f, 0.0f, 1.0f));
 
     plInputManager::SetRecenterMouse(true);     
     plMouseDevice::HideCursor();
@@ -1115,22 +1087,22 @@ pl3rdWalkMap::~pl3rdWalkMap()
 
 pl3rdWalkForwardMap::pl3rdWalkForwardMap() : pl3rdWalkMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,            kControlFlagLeftButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,       "Third Person") ); 
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MOVE_FORWARD,      kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Walk forward") );
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Camera first-person z-axis panning") );    
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_BASIC_MODE,            kControlFlagLeftButtonUp, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_MOVE_FORWARD,      kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f));
 }
 
 pl3rdWalkBackwardMap::pl3rdWalkBackwardMap() : pl3rdWalkMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,            kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,     "Third Person") ); 
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagMiddleButton, 0.0f, 1.0f, 0.0f, 1.0f,       "Walk backward") );
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagMiddleButton, 0.0f, 1.0f, 0.0f, 1.0f,       "Set Camera first-person z-axis panning") ); 
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_BASIC_MODE,            kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagMiddleButton, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagMiddleButton, 0.0f, 1.0f, 0.0f, 1.0f));
 }
 
 // same as the other backward walk map, but this one is triggered by the left mouse button.
 pl3rdWalkBackwardLBMap::pl3rdWalkBackwardLBMap() : pl3rdWalkMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,            kControlFlagLeftButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,       "Third Person") ); 
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Walk backward") );
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Camera first-person z-axis panning") ); 
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_BASIC_MODE,            kControlFlagLeftButtonUp, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f));
 }

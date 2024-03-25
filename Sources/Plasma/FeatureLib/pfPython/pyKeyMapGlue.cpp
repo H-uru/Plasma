@@ -40,10 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pyKeyMap.h"
+
+#include <string_theory/string>
+
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptKeyMap, pyKeyMap);
@@ -64,40 +65,40 @@ PYTHON_METHOD_DEFINITION(ptKeyMap, convertVKeyToChar, args)
         PyErr_SetString(PyExc_TypeError, "convertVKeyToChar expects two unsigned longs");
         PYTHON_RETURN_ERROR;
     }
-    return PyString_FromString(self->fThis->ConvertVKeyToChar(virtualKey, keyFlags));
+    return PyUnicode_FromSTString(self->fThis->ConvertVKeyToChar(virtualKey, keyFlags));
 }
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, convertCharToVKey, args)
 {
-    char* charString;
-    if (!PyArg_ParseTuple(args, "s", &charString))
+    ST::string charString;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &charString))
     {
         PyErr_SetString(PyExc_TypeError, "convertCharToVKey expects a string");
         PYTHON_RETURN_ERROR;
     }
-    return PyInt_FromLong(self->fThis->ConvertCharToVKey(charString));
+    return PyLong_FromLong(self->fThis->ConvertCharToVKey(charString));
 }
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, convertCharToFlags, args)
 {
-    char* charString;
-    if (!PyArg_ParseTuple(args, "s", &charString))
+    ST::string charString;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &charString))
     {
         PyErr_SetString(PyExc_TypeError, "convertCharToFlags expects a string");
         PYTHON_RETURN_ERROR;
     }
-    return PyInt_FromLong(self->fThis->ConvertCharToFlags(charString));
+    return PyLong_FromLong(self->fThis->ConvertCharToFlags(charString));
 }
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, convertCharToControlCode, args)
 {
-    char* charString;
-    if (!PyArg_ParseTuple(args, "s", &charString))
+    ST::string charString;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &charString))
     {
         PyErr_SetString(PyExc_TypeError, "convertCharToControlCode expects a string");
         PYTHON_RETURN_ERROR;
     }
-    return PyInt_FromLong(self->fThis->ConvertCharToControlCode(charString));
+    return PyLong_FromLong(self->fThis->ConvertCharToControlCode(charString));
 }
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, convertControlCodeToString, args)
@@ -108,15 +109,15 @@ PYTHON_METHOD_DEFINITION(ptKeyMap, convertControlCodeToString, args)
         PyErr_SetString(PyExc_TypeError, "convertControlCodeToString expects an unsigned long");
         PYTHON_RETURN_ERROR;
     }
-    return PyString_FromString(self->fThis->ConvertControlCodeToString(code));
+    return PyUnicode_FromSTString(self->fThis->ConvertControlCodeToString(code));
 }
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, bindKey, args)
 {
-    char* key1;
-    char* key2;
-    char* action;
-    if (!PyArg_ParseTuple(args, "sss", &key1, &key2, &action))
+    ST::string key1;
+    ST::string key2;
+    ST::string action;
+    if (!PyArg_ParseTuple(args, "O&O&O&", PyUnicode_STStringConverter, &key1, PyUnicode_STStringConverter, &key2, PyUnicode_STStringConverter, &action))
     {
         PyErr_SetString(PyExc_TypeError, "bindKey expects three strings");
         PYTHON_RETURN_ERROR;
@@ -133,7 +134,7 @@ PYTHON_METHOD_DEFINITION(ptKeyMap, getBindingKey1, args)
         PyErr_SetString(PyExc_TypeError, "getBindingKey1 expects an unsigned long");
         PYTHON_RETURN_ERROR;
     }
-    return PyInt_FromLong(self->fThis->GetBindingKey1(code));
+    return PyLong_FromLong(self->fThis->GetBindingKey1(code));
 }
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, getBindingFlags1, args)
@@ -144,7 +145,7 @@ PYTHON_METHOD_DEFINITION(ptKeyMap, getBindingFlags1, args)
         PyErr_SetString(PyExc_TypeError, "getBindingFlags1 expects an unsigned long");
         PYTHON_RETURN_ERROR;
     }
-    return PyInt_FromLong(self->fThis->GetBindingFlags1(code));
+    return PyLong_FromLong(self->fThis->GetBindingFlags1(code));
 }
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, getBindingKey2, args)
@@ -155,7 +156,7 @@ PYTHON_METHOD_DEFINITION(ptKeyMap, getBindingKey2, args)
         PyErr_SetString(PyExc_TypeError, "getBindingKey2 expects an unsigned long");
         PYTHON_RETURN_ERROR;
     }
-    return PyInt_FromLong(self->fThis->GetBindingKey2(code));
+    return PyLong_FromLong(self->fThis->GetBindingKey2(code));
 }
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, getBindingFlags2, args)
@@ -166,14 +167,14 @@ PYTHON_METHOD_DEFINITION(ptKeyMap, getBindingFlags2, args)
         PyErr_SetString(PyExc_TypeError, "getBindingFlags2 expects an unsigned long");
         PYTHON_RETURN_ERROR;
     }
-    return PyInt_FromLong(self->fThis->GetBindingFlags2(code));
+    return PyLong_FromLong(self->fThis->GetBindingFlags2(code));
 }
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, bindKeyToConsoleCommand, args)
 {
-    char* keyStr1;
-    char* command;
-    if (!PyArg_ParseTuple(args, "ss", &keyStr1, &command))
+    ST::string keyStr1;
+    ST::string command;
+    if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_STStringConverter, &keyStr1, PyUnicode_STStringConverter, &command))
     {
         PyErr_SetString(PyExc_TypeError, "bindKeyToConsoleCommand expects two strings");
         PYTHON_RETURN_ERROR;
@@ -184,24 +185,24 @@ PYTHON_METHOD_DEFINITION(ptKeyMap, bindKeyToConsoleCommand, args)
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, getBindingKeyConsole, args)
 {
-    char* command;
-    if (!PyArg_ParseTuple(args, "s", &command))
+    ST::string command;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &command))
     {
         PyErr_SetString(PyExc_TypeError, "getBindingKeyConsole expects a string");
         PYTHON_RETURN_ERROR;
     }
-    return PyInt_FromLong(self->fThis->GetBindingKeyConsole(command));
+    return PyLong_FromLong(self->fThis->GetBindingKeyConsole(command));
 }
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, getBindingFlagsConsole, args)
 {
-    char* command;
-    if (!PyArg_ParseTuple(args, "s", &command))
+    ST::string command;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &command))
     {
         PyErr_SetString(PyExc_TypeError, "getBindingFlagsConsole expects a string");
         PYTHON_RETURN_ERROR;
     }
-    return PyInt_FromLong(self->fThis->GetBindingFlagsConsole(command));
+    return PyLong_FromLong(self->fThis->GetBindingFlagsConsole(command));
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptKeyMap, writeKeyMap, WriteKeyMap)

@@ -273,7 +273,7 @@ static const char * s_transTypes[] = {
     "GkAuthSrvIpAddress",
 
 };
-static_assert(arrsize(s_transTypes) == kNumTransTypes, "Ngl Trans array and enum differ in size");
+static_assert(std::size(s_transTypes) == kNumTransTypes, "Ngl Trans array and enum differ in size");
 
 static std::atomic<long> s_perfTransCount[kNumTransTypes];
 
@@ -290,7 +290,6 @@ enum ENetTransState {
 };
 
 struct NetTrans : hsRefCnt {
-    LINK(NetTrans)  m_link;
     ENetTransState  m_state;
     ENetError       m_result;
     unsigned        m_transId;
@@ -355,13 +354,13 @@ struct NetGateKeeperTrans : NetTrans {
 
 
 struct NetNotifyTrans : NetTrans {
-    NetNotifyTrans (ETransType transType);
-    bool CanStart () const { return true; }
-    bool Send () { m_state = kTransStateComplete; return true; }
-    bool Recv (
+    NetNotifyTrans(ETransType transType);
+    bool CanStart() const override { return true; }
+    bool Send() override { m_state = kTransStateComplete; return true; }
+    bool Recv(
         const uint8_t [],
         unsigned
-    ) { return true; }
+    ) override { return true; }
 };
 
 void NetTransInitialize ();
@@ -376,6 +375,26 @@ void NetTransCancelByProtocol (ENetProtocol protocol, ENetError error);
 void NetTransCancelByConnId (unsigned connId, ENetError error);
 void NetTransCancelAll (ENetError error);
 void NetTransUpdate ();
+
+template<typename T, typename = void>
+struct HasTransId : std::false_type { };
+
+template<typename T>
+struct HasTransId<T, std::void_t<decltype(&T::transId)>> : std::true_type { };
+
+template<typename T>
+inline std::enable_if_t<HasTransId<T>::value, bool>
+NetTransRecvFromMsgGeneric(const uint8_t msg[], unsigned bytes, void*)
+{
+    const T* reply = reinterpret_cast<const T*>(msg);
+
+    // transId == 0 is a special "not a transaction" value, usually used
+    // by things no one cares else about, like pings. This value is never
+    // used automatically, see NetTransSend().
+    if (reply->transId != 0)
+        NetTransRecv(reply->transId, msg, bytes);
+    return true;
+}
 
 
 /*****************************************************************************

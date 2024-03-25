@@ -48,8 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
-#pragma hdrstop
 
 #include "plCommonObjLib.h"
 #include "pnKeyedObject/hsKeyedObject.h"
@@ -67,21 +65,21 @@ class plCommonObjLibList
 {
     public:
         uint32_t                      fRefCount;
-        hsTArray<plCommonObjLib *>  fLibs;
+        std::vector<plCommonObjLib *> fLibs;
 
         plCommonObjLibList() { fRefCount = 0; }
 
         void    Add( plCommonObjLib *lib )
         {
-            fLibs.Append( lib );
+            fLibs.emplace_back(lib);
             fRefCount++;
         }
 
         bool    Remove( plCommonObjLib *lib )
         {
-            int idx = fLibs.Find( lib );
-            if( idx != fLibs.kMissingIndex )
-                fLibs.Remove( idx );
+            auto iter = std::find(fLibs.cbegin(), fLibs.cend(), lib);
+            if (iter != fLibs.cend())
+                fLibs.erase(iter);
             else
             {
                 hsAssert( false, "Common Object Lib not found in list upon deletion. Are you misusing this class? Tsk tsk!" );
@@ -92,22 +90,22 @@ class plCommonObjLibList
         }
 };
 
-plCommonObjLibList  *plCommonObjLib::fLibList = nil;
+plCommonObjLibList  *plCommonObjLib::fLibList = nullptr;
 
-uint32_t  plCommonObjLib::GetNumLibs( void )
+size_t plCommonObjLib::GetNumLibs()
 {
-    return ( fLibList != nil ) ? fLibList->fLibs.GetCount() : 0;
+    return (fLibList != nullptr) ? fLibList->fLibs.size() : 0;
 }
 
-plCommonObjLib  *plCommonObjLib::GetLib( uint32_t idx )
+plCommonObjLib* plCommonObjLib::GetLib(size_t idx)
 {
-    if( fLibList == nil )
-        return nil;
+    if (fLibList == nullptr)
+        return nullptr;
 
-    if( idx < fLibList->fLibs.GetCount() )
+    if (idx < fLibList->fLibs.size())
         return fLibList->fLibs[ idx ];
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -118,7 +116,7 @@ plCommonObjLib  *plCommonObjLib::GetLib( uint32_t idx )
 plCommonObjLib::plCommonObjLib()
 {
     // Make sure we have a list to add ourselves to
-    if( fLibList == nil )
+    if (fLibList == nullptr)
         fLibList = new plCommonObjLibList();
 
     // Add ourselves to the list of libs
@@ -134,7 +132,7 @@ plCommonObjLib::~plCommonObjLib()
     {
         // List is no longer needed
         delete fLibList;
-        fLibList = nil;
+        fLibList = nullptr;
     }
 }
 
@@ -145,15 +143,12 @@ plCommonObjLib::~plCommonObjLib()
 
 //// ClearObjectList /////////////////////////////////////////////////////////
 
-void    plCommonObjLib::ClearObjectList( void )
+void    plCommonObjLib::ClearObjectList()
 {
-    int     i;
-
-
     // Unref our object list, so they'll go away properly
-    for( i = 0; i < fObjects.GetCount(); i++ )
-        fObjects[ i ]->GetKey()->UnRefObject();
-    fObjects.Reset();
+    for (hsKeyedObject* obj : fObjects)
+        obj->GetKey()->UnRefObject();
+    fObjects.clear();
 }
 
 //// AddObject ///////////////////////////////////////////////////////////////
@@ -161,7 +156,7 @@ void    plCommonObjLib::ClearObjectList( void )
 
 void    plCommonObjLib::AddObject( hsKeyedObject *object )
 {
-    if( object == nil || object->GetKey() == nil )
+    if (object == nullptr || object->GetKey() == nullptr)
     {
         hsAssert( false, "Trying to add an object to a commonLib that doesn't have a key" );
         return;
@@ -169,7 +164,7 @@ void    plCommonObjLib::AddObject( hsKeyedObject *object )
 
     // Ref it so it won't go away on us
     object->GetKey()->RefObject();
-    fObjects.Append( object );
+    fObjects.emplace_back(object);
 }
 
 //// RemoveObjectAndKey //////////////////////////////////////////////////////
@@ -182,28 +177,28 @@ bool    plCommonObjLib::RemoveObjectAndKey( plKey &key )
     if (!key)
     {
         hsAssert( false, "Received RemoveObjectAndKey() call for a key that is invalid. Nillifying key anyway." );
-        key = nil;
+        key = nullptr;
         return true;
     }
     hsKeyedObject *object = hsKeyedObject::ConvertNoRef( key->ObjectIsLoaded() );
-    if( object == nil )
+    if (object == nullptr)
     {
         hsAssert( false, "Received RemoveObjectAndKey() call for a key that isn't loaded. Nillifying key anyway." );
-        key = nil;
+        key = nullptr;
         return true;
     }
 
-    int idx = fObjects.Find( object );
-    if( idx == fObjects.kMissingIndex )
+    auto iter = std::find(fObjects.begin(), fObjects.end(), object);
+    if (iter == fObjects.end())
     {
         hsAssert( false, "Trying to RemoveObjectAndKey() for a common object not in the lib." );
-        key = nil;
+        key = nullptr;
         return true;
     }
 
     // Unref and remove from our list
-    fObjects[ idx ]->GetKey()->UnRefObject();
-    fObjects.Remove( idx );
+    (*iter)->GetKey()->UnRefObject();
+    fObjects.erase(iter);
 
     // Nuke out the key and its object
     if( !plPluginResManager::ResMgr()->NukeKeyAndObject( key ) )
@@ -218,25 +213,22 @@ bool    plCommonObjLib::RemoveObjectAndKey( plKey &key )
 
 //// FindObject //////////////////////////////////////////////////////////////
 //  Given a name and an optional class type, tries to find that object in
-//  our lib. Returns nil if not found. Use to find out if you already have a
+//  our lib. Returns nullptr if not found. Use to find out if you already have a
 //  object of a given name that was previously exported.
 
-hsKeyedObject   *plCommonObjLib::FindObject( const plString &name, uint16_t classType /* = -1 */ )
+hsKeyedObject   *plCommonObjLib::FindObject( const ST::string &name, uint16_t classType /* = -1 */ )
 {
-    int     i;
-
-
-    for( i = 0; i < fObjects.GetCount(); i++ )
+    for (hsKeyedObject* obj : fObjects)
     {
-        const plUoid    &uoid = fObjects[ i ]->GetKey()->GetUoid();
+        const plUoid    &uoid = obj->GetKey()->GetUoid();
 
 
-        if( uoid.GetObjectName().Compare( name, plString::kCaseInsensitive ) == 0 &&
+        if( uoid.GetObjectName().compare( name, ST::case_insensitive ) == 0 &&
             ( classType == (uint16_t)-1 || classType == uoid.GetClassType() ) )
         {
-            return fObjects[ i ];
+            return obj;
         }
     }
 
-    return nil;
+    return nullptr;
 }

@@ -43,15 +43,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLightModifier_inc
 #define plLightModifier_inc
 
-#include "plModifier/plSimpleModifier.h"
 #include "hsGeometry3.h"
+#include "plModifier/plSimpleModifier.h"
 
 class plController;
 class plController;
 class plLightInfo;
+class plLimitedDirLightInfo;
 class plOmniLightInfo;
 class plSpotLightInfo;
-class plLimitedDirLightInfo;
 
 class plLightModifier : public plSimpleModifier
 {
@@ -63,7 +63,7 @@ protected:
 
     plLightInfo*        fLight;
 
-    virtual void IApplyDynamic();
+    void IApplyDynamic() override;
 
     virtual void IClearCtls();
 public:
@@ -73,11 +73,11 @@ public:
     CLASSNAME_REGISTER( plLightModifier );
     GETINTERFACE_ANY( plLightModifier, plSimpleModifier );
 
-    virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget(plSceneObject* so);
+    void AddTarget(plSceneObject* so) override;
+    void RemoveTarget(plSceneObject* so) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     virtual bool HasAnima() const { return fColorCtl || fAmbientCtl || fSpecularCtl; }
 
@@ -99,9 +99,9 @@ protected:
     plController*       fAttenCtl;
     hsPoint3            fInitAtten;
 
-    virtual void IApplyDynamic();
+    void IApplyDynamic() override;
 
-    virtual void IClearCtls();
+    void IClearCtls() override;
 public:
     plOmniModifier();
     virtual ~plOmniModifier();
@@ -109,19 +109,19 @@ public:
     CLASSNAME_REGISTER( plOmniModifier );
     GETINTERFACE_ANY( plOmniModifier, plLightModifier );
 
-    virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget(plSceneObject* so);
+    void AddTarget(plSceneObject* so) override;
+    void RemoveTarget(plSceneObject* so) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool HasAnima() const { return plLightModifier::HasAnima() || fAttenCtl; }
+    bool HasAnima() const override { return plLightModifier::HasAnima() || fAttenCtl; }
 
     // Export Only
     void SetAttenCtl(plController* ctl) { fAttenCtl = ctl; }
     void SetInitAtten(const hsPoint3& p) { fInitAtten = p; }
 
-    virtual float MaxAnimLength(float len) const;
+    float MaxAnimLength(float len) const override;
 };
 
 class plSpotModifier : public plOmniModifier
@@ -133,9 +133,9 @@ protected:
     plController*           fInnerCtl;
     plController*           fOuterCtl;
 
-    virtual void IApplyDynamic();
+    void IApplyDynamic() override;
 
-    virtual void IClearCtls();
+    void IClearCtls() override;
 public:
     plSpotModifier();
     virtual ~plSpotModifier();
@@ -143,19 +143,19 @@ public:
     CLASSNAME_REGISTER( plSpotModifier );
     GETINTERFACE_ANY( plSpotModifier, plLightModifier );
 
-    virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget(plSceneObject* so);
+    void AddTarget(plSceneObject* so) override;
+    void RemoveTarget(plSceneObject* so) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool HasAnima() const { return plOmniModifier::HasAnima() || fInnerCtl || fOuterCtl; }
+    bool HasAnima() const override { return plOmniModifier::HasAnima() || fInnerCtl || fOuterCtl; }
 
     // Export Only
     void SetInnerCtl(plController* ctl) { fInnerCtl = ctl; }
     void SetOuterCtl(plController* ctl) { fOuterCtl = ctl; }
 
-    virtual float MaxAnimLength(float len) const;
+    float MaxAnimLength(float len) const override;
 };
 
 class plLtdDirModifier : public plLightModifier
@@ -168,9 +168,9 @@ protected:
     plController*           fHeightCtl;
     plController*           fDepthCtl;
 
-    virtual void IApplyDynamic();
+    void IApplyDynamic() override;
 
-    virtual void IClearCtls();
+    void IClearCtls() override;
 public:
     plLtdDirModifier();
     virtual ~plLtdDirModifier();
@@ -178,20 +178,20 @@ public:
     CLASSNAME_REGISTER( plLtdDirModifier );
     GETINTERFACE_ANY( plLtdDirModifier, plLightModifier );
 
-    virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget(plSceneObject* so);
+    void AddTarget(plSceneObject* so) override;
+    void RemoveTarget(plSceneObject* so) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool HasAnima() const { return plLightModifier::HasAnima() || fWidthCtl || fHeightCtl || fDepthCtl; }
+    bool HasAnima() const override { return plLightModifier::HasAnima() || fWidthCtl || fHeightCtl || fDepthCtl; }
 
     // Export Only
     void SetWidthCtl(plController* ctl) { fWidthCtl = ctl; }
     void SetHeightCtl(plController* ctl) { fHeightCtl = ctl; }
     void SetDepthCtl(plController* ctl) { fDepthCtl = ctl; }
 
-    virtual float MaxAnimLength(float len) const;
+    float MaxAnimLength(float len) const override;
 };
 
 #endif // plLightModifier_inc

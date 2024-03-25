@@ -47,14 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsBitVector.h"
-#include "hsWindows.h"
-#include "../resource.h"
 
-#include <iparamb2.h>
-#include <max.h>
-#include <notetrck.h>
-#include <notify.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include "../resource.h"
 
 #include "plPassMtlBase.h"
 #include "plPassBaseParamIDs.h"
@@ -71,7 +67,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 using namespace plPassBaseParamIDs;
 
-IMtlParams *plPassMtlBase::fIMtlParams = nil;
+IMtlParams *plPassMtlBase::fIMtlParams = nullptr;
 
 //// plPostLoadHandler ///////////////////////////////////////////////////////
 //  Small class to keep track of all the materials to update after load
@@ -79,7 +75,7 @@ IMtlParams *plPassMtlBase::fIMtlParams = nil;
 class plPostLoadHandler
 {
     static bool fLoading;
-    static hsTArray<plPassMtlBase *> fPostLoads;
+    static std::vector<plPassMtlBase *> fPostLoads;
 
     public:
         static bool IsLoading() { return fLoading; }
@@ -88,10 +84,10 @@ class plPostLoadHandler
         {
             fLoading = false;
 
-            for( int i = 0; i < fPostLoads.GetCount(); i++ )
-                fPostLoads[ i ]->PostLoadAnimPBFixup();
+            for (plPassMtlBase* mtl : fPostLoads)
+                mtl->PostLoadAnimPBFixup();
 
-            fPostLoads.Reset();
+            fPostLoads.clear();
             UnRegisterNotification( PostLoadFixupFunction, param, NOTIFY_FILE_POST_OPEN );
             UnRegisterNotification( PostLoadFixupFunction, param, NOTIFY_FILE_POST_MERGE );
         }
@@ -100,33 +96,28 @@ class plPostLoadHandler
         {
             fLoading = true;
 
-            if( fPostLoads.GetCount() == 0 )
+            if (fPostLoads.empty())
             {
                 RegisterNotification( PostLoadFixupFunction, mtl, NOTIFY_FILE_POST_OPEN );
                 RegisterNotification( PostLoadFixupFunction, mtl, NOTIFY_FILE_POST_MERGE );
             }
 
             mtl->SetLoadingFlag( true );
-            fPostLoads.Append( mtl );
+            fPostLoads.emplace_back(mtl);
         }
 
         static void RemovePostLoad( plPassMtlBase *mtl )
         {
-            for( int i = 0; i < fPostLoads.GetCount(); i++ )
-            {
-                if( fPostLoads[ i ] == mtl )
-                {
-                    fPostLoads.Remove( i );
-                    break;
-                }
-            }
+            auto iter = std::find(fPostLoads.cbegin(), fPostLoads.cend(), mtl);
+            if (iter != fPostLoads.cend())
+                fPostLoads.erase(iter);
         }
 };
-hsTArray<plPassMtlBase *>   plPostLoadHandler::fPostLoads;
+std::vector<plPassMtlBase *> plPostLoadHandler::fPostLoads;
 bool plPostLoadHandler::fLoading = false;
 
 
-plPassMtlBase::plPassMtlBase( BOOL loading ) : fNTWatcher( nil ), fBasicPB(NULL), fAdvPB(NULL), fLayersPB(NULL), fAnimPB(NULL),
+plPassMtlBase::plPassMtlBase(BOOL loading) : fNTWatcher(), fBasicPB(), fAdvPB(), fLayersPB(), fAnimPB(),
                                  fLoading( loading )
 {
     fNTWatcher = new plNoteTrackWatcher( this );
@@ -139,26 +130,26 @@ plPassMtlBase::~plPassMtlBase()
         plPostLoadHandler::RemovePostLoad( this );
 
     // Force the watcher's parent pointer to nil, otherwise the de-ref will attempt to re-delete us
-    fNTWatcher->SetReference( plNoteTrackWatcher::kRefParentMtl, nil );
+    fNTWatcher->SetReference(plNoteTrackWatcher::kRefParentMtl, nullptr);
     delete fNTWatcher;
-    fNTWatcher = nil;
+    fNTWatcher = nullptr;
 
     // Manually delete our notetrack refs, otherwise there'll be hell to pay
-    for( int i = 0; i < fNotetracks.GetCount(); i++ )
+    for (size_t i = 0; i < fNotetracks.size(); i++)
     {
-        if( fNotetracks[ i ] != nil )
+        if (fNotetracks[i] != nullptr)
             DeleteReference( kRefNotetracks + i );
     }
 }
 
-void    plPassMtlBase::Reset( void ) 
+void    plPassMtlBase::Reset()
 {
     fIValid.SetEmpty();
 }
 
 //// Stealth Accessors ///////////////////////////////////////////////////////
 
-int     plPassMtlBase::GetNumStealths( void )
+int     plPassMtlBase::GetNumStealths()
 {
     return IGetNumStealths( true );
 }
@@ -184,7 +175,7 @@ plAnimStealthNode   *plPassMtlBase::IGetStealth( int index, bool update )
     return (plAnimStealthNode *)fAnimPB->GetReferenceTarget( (ParamID)kPBAnimStealthNodes, 0, index );
 }
 
-plAnimStealthNode   *plPassMtlBase::IFindStealth( const plString &segmentName )
+plAnimStealthNode   *plPassMtlBase::IFindStealth( const ST::string &segmentName )
 {
     int     i;
 
@@ -192,33 +183,33 @@ plAnimStealthNode   *plPassMtlBase::IFindStealth( const plString &segmentName )
     for( i = 0; i < fAnimPB->Count( (ParamID)kPBAnimStealthNodes ); i++ )
     {
         plAnimStealthNode *node = (plAnimStealthNode *)fAnimPB->GetReferenceTarget( (ParamID)kPBAnimStealthNodes, 0, i );
-        plString name = node->GetSegmentName();
+        ST::string name = node->GetSegmentName();
 
-        if( node != nil && name.Compare( segmentName ) == 0 )
+        if (node != nullptr && name.compare(segmentName) == 0)
         {
             return node;
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// IVerifyStealthPresent ///////////////////////////////////////////////////
 //  Ensures that we have a stealth for the given segment.
 
-plAnimStealthNode   *plPassMtlBase::IVerifyStealthPresent( const plString &animName )
+plAnimStealthNode   *plPassMtlBase::IVerifyStealthPresent( const ST::string &animName )
 {
     // If we're in the middle of loading, don't check
     if (plPostLoadHandler::IsLoading())
-        return nil;
+        return nullptr;
 
     plAnimStealthNode *stealth = IFindStealth( animName );
-    if( stealth == nil )
+    if (stealth == nullptr)
     {
         // New segment, add a new stealth node
         stealth = (plAnimStealthNode *)GetCOREInterface()->CreateInstance( HELPER_CLASS_ID, ANIMSTEALTH_CLASSID );
         INode *node = GetCOREInterface()->CreateObjectNode( stealth );
-        stealth->SetSegment( ( animName.Compare(ENTIRE_ANIMATION_NAME) != 0 ) ? animName.c_str() : nil );
+        stealth->SetSegment((animName.compare(ENTIRE_ANIMATION_NAME) != 0) ? animName : "");
         stealth->SetNodeName( GetName() );
         node->Freeze( true );
 
@@ -234,7 +225,7 @@ plAnimStealthNode   *plPassMtlBase::IVerifyStealthPresent( const plString &animN
 
         fAnimPB->Append( (ParamID)kPBAnimStealthNodes, 1, (ReferenceTarget **)&stealth );
 
-        plString realName = stealth->GetSegmentName();
+        ST::string realName = stealth->GetSegmentName();
 
         fStealthsChanged = true;
     }
@@ -250,41 +241,40 @@ plAnimStealthNode   *plPassMtlBase::IVerifyStealthPresent( const plString &animN
 
 void    plPassMtlBase::RegisterChangeCallback( plMtlChangeCallback *callback )
 {
-    if( fChangeCallbacks.Find( callback ) == fChangeCallbacks.kMissingIndex )
-        fChangeCallbacks.Append( callback );
+    if (std::find(fChangeCallbacks.cbegin(), fChangeCallbacks.cend(), callback) == fChangeCallbacks.cend())
+        fChangeCallbacks.emplace_back(callback);
 }
 
 void    plPassMtlBase::UnregisterChangeCallback( plMtlChangeCallback *callback )
 {
-    int idx = fChangeCallbacks.Find( callback );
-    if( idx != fChangeCallbacks.kMissingIndex )
-        fChangeCallbacks.Remove( idx );
+    auto iter = std::find(fChangeCallbacks.cbegin(), fChangeCallbacks.cend(), callback);
+    if (iter != fChangeCallbacks.cend())
+        fChangeCallbacks.erase(iter);
 }
 
 //// IUpdateAnimNodes ////////////////////////////////////////////////////////
 //  Updates the list of stealth nodes in the anim paramBlock to match our
 //  list of anim segments.
 
-void    plPassMtlBase::IUpdateAnimNodes( void )
+void    plPassMtlBase::IUpdateAnimNodes()
 {
     // Our beautiful hack, to make sure we don't update until we actually are loaded
     if( fLoading )
         return;
 
-    SegmentMap *segMap = GetAnimSegmentMap( this, nil );
+    SegmentMap *segMap = GetAnimSegmentMap(this, nullptr);
 
-    hsTArray<plAnimStealthNode *>   goodNodes;
-    
+    std::vector<plAnimStealthNode *> goodNodes;
 
     // Keep track of whether we change anything
     fStealthsChanged = false;
 
     // Verify one for "entire animation"
     plAnimStealthNode *stealth = IVerifyStealthPresent( ENTIRE_ANIMATION_NAME );
-    goodNodes.Append( stealth );
+    goodNodes.emplace_back(stealth);
 
     // Verify segment nodes
-    if( segMap != nil )
+    if (segMap != nullptr)
     {
         for( SegmentMap::iterator i = segMap->begin(); i != segMap->end(); i++ )
         {
@@ -293,7 +283,7 @@ void    plPassMtlBase::IUpdateAnimNodes( void )
             if( spec->fType == SegmentSpec::kAnim )
             {
                 plAnimStealthNode *stealth = IVerifyStealthPresent( spec->fName );
-                goodNodes.Append( stealth );
+                goodNodes.emplace_back(stealth);
             }
         }
 
@@ -301,12 +291,11 @@ void    plPassMtlBase::IUpdateAnimNodes( void )
     }
 
     // Remove nodes that no longer have segments
-    int idx;
-    for( idx = 0; idx < fAnimPB->Count( (ParamID)kPBAnimStealthNodes ); )
+    for (int idx = 0; idx < fAnimPB->Count((ParamID)kPBAnimStealthNodes); )
     {
         plAnimStealthNode *node = (plAnimStealthNode *)fAnimPB->GetReferenceTarget( (ParamID)kPBAnimStealthNodes, 0, idx );
 
-        if( node != nil && goodNodes.Find( node ) == goodNodes.kMissingIndex )
+        if (node != nullptr && std::find(goodNodes.cbegin(), goodNodes.cend(), node) == goodNodes.cend())
         {
             fAnimPB->Delete( (ParamID)kPBAnimStealthNodes, idx, 1 );
 //          GetCOREInterface()->DeleteNode( node->GetINode() );
@@ -319,20 +308,20 @@ void    plPassMtlBase::IUpdateAnimNodes( void )
     if( fStealthsChanged )
     {
         // Yup, our list of stealths got updated. Notify everyone of such.
-        for( idx = 0; idx < fChangeCallbacks.GetCount(); idx++ )
-            fChangeCallbacks[ idx ]->SegmentListChanged();
+        for (plMtlChangeCallback* callback : fChangeCallbacks)
+            callback->SegmentListChanged();
     }
 }
 
 //// NameChanged /////////////////////////////////////////////////////////////
 //  Notify from NTWatcher so we can update the names of our stealth nodes
 
-void    plPassMtlBase::NameChanged( void )
+void    plPassMtlBase::NameChanged()
 {
     for( int idx = 0; idx < fAnimPB->Count( (ParamID)kPBAnimStealthNodes ); idx++ )
     {
         plAnimStealthNode *node = (plAnimStealthNode *)fAnimPB->GetReferenceTarget( (ParamID)kPBAnimStealthNodes, 0, idx );
-        if( node != nil )
+        if (node != nullptr)
             node->SetNodeName( GetName() );
     }
 }
@@ -340,55 +329,51 @@ void    plPassMtlBase::NameChanged( void )
 //// NoteTrackAdded/Removed //////////////////////////////////////////////////
 //  Notifies from NTWatcher so we can update our list of stealths
 
-void    plPassMtlBase::NoteTrackAdded( void )
+void    plPassMtlBase::NoteTrackAdded()
 {
-    int     i;
-
-
     // Make a ref to our new notetrack
-    for( i = 0; i < NumNoteTracks(); i++ )
+    for (int i = 0; i < NumNoteTracks(); i++)
     {
         NoteTrack *track = GetNoteTrack( i );
 
-        if( fNotetracks.Find( track ) == fNotetracks.kMissingIndex )
+        if (std::find(fNotetracks.cbegin(), fNotetracks.cend(), track) == fNotetracks.cend())
         {
-            ReplaceReference(kRefNotetracks + fNotetracks.GetCount(), track);
+            ReplaceReference(kRefNotetracks + fNotetracks.size(), track);
             break;
         }
     }
 
-    for( i = 0; i < fChangeCallbacks.GetCount(); i++ )
-        fChangeCallbacks[ i ]->NoteTrackListChanged();
+    for (plMtlChangeCallback* callback : fChangeCallbacks)
+        callback->NoteTrackListChanged();
     IUpdateAnimNodes();
 }
 
-void    plPassMtlBase::NoteTrackRemoved( void )
+void    plPassMtlBase::NoteTrackRemoved()
 {
-    int         i;
     hsBitVector stillThere;
 
 
     // Make a ref to our new notetrack
-    for( i = 0; i < NumNoteTracks(); i++ )
+    for (int i = 0; i < NumNoteTracks(); i++)
     {
         NoteTrack *track = GetNoteTrack( i );
 
-        int idx = fNotetracks.Find( track );
-        if( idx != fNotetracks.kMissingIndex )
-            stillThere.Set( idx );
+        auto iter = std::find(fNotetracks.cbegin(), fNotetracks.cend(), track);
+        if (iter != fNotetracks.cend())
+            stillThere.Set((int)(iter - fNotetracks.cbegin()));
     }
 
-    for( i = 0; i < fNotetracks.GetCount(); i++ )
+    for (size_t i = 0; i < fNotetracks.size(); i++)
     {
-        if( !stillThere.IsBitSet( i ) && fNotetracks[ i ] != nil )
+        if (!stillThere.IsBitSet(i) && fNotetracks[i] != nullptr)
         {
 //          DeleteReference( kRefNotetracks + i );
-            SetReference( kRefNotetracks + i, nil );
+            SetReference(kRefNotetracks + i, nullptr);
         }
     }
 
-    for( i = 0; i < fChangeCallbacks.GetCount(); i++ )
-        fChangeCallbacks[ i ]->NoteTrackListChanged();
+    for (plMtlChangeCallback* callback : fChangeCallbacks)
+        callback->NoteTrackListChanged();
     IUpdateAnimNodes();
 }
 
@@ -401,14 +386,14 @@ void    plPassMtlBase::NoteTrackRemoved( void )
 
 int plPassMtlBase::NumRefs()
 {
-    return 4 + fNotetracks.GetCount();
+    return 4 + (int)fNotetracks.size();
 }
 
 //// GetReference ////////////////////////////////////////////////////////////
 
 RefTargetHandle plPassMtlBase::GetReference( int i )
 {
-    if( i >= kRefNotetracks && i < kRefNotetracks + fNotetracks.GetCount() )
+    if (i >= kRefNotetracks && i < kRefNotetracks + (int)fNotetracks.size())
         return fNotetracks[ i - kRefNotetracks ];
     return nullptr;
 }
@@ -419,15 +404,16 @@ void plPassMtlBase::SetReference(int i, RefTargetHandle rtarg)
 {
     if( i >= kRefNotetracks )
     {
-        fNotetracks.ExpandAndZero(i - kRefNotetracks + 1);
+        if (i - kRefNotetracks >= (int)fNotetracks.size())
+            fNotetracks.resize(i - kRefNotetracks + 1);
         fNotetracks[i - kRefNotetracks] = (NoteTrack*)rtarg;
     }
 }
 
 //// NotifyRefChanged ////////////////////////////////////////////////////////
 
-RefResult plPassMtlBase::NotifyRefChanged( Interval changeInt, RefTargetHandle hTarget, 
-                                           PartID &partID, RefMessage message ) 
+RefResult plPassMtlBase::NotifyRefChanged( MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                           PartID &partID, RefMessage message MAX_REF_PROPAGATE )
 {
     switch( message )
     {
@@ -445,12 +431,13 @@ RefResult plPassMtlBase::NotifyRefChanged( Interval changeInt, RefTargetHandle h
                 
                 // And let the SceneWatcher know that the material on some of it's
                 // referenced objects changed.
-                NotifyDependents( FOREVER, PART_ALL, REFMSG_USER_MAT );
+                if (MAX_REF_PROPAGATE_VALUE)
+                    NotifyDependents( FOREVER, PART_ALL, REFMSG_USER_MAT );
             }
             else 
             {
                 // Was it a notetrack ref?
-                if( fNotetracks.Find( (NoteTrack *)hTarget ) != fNotetracks.kMissingIndex )
+                if (std::find(fNotetracks.cbegin(), fNotetracks.cend(), (NoteTrack *)hTarget) != fNotetracks.cend())
                 {
                     // Yup, so update our notetrack list
                     IUpdateAnimNodes();
@@ -496,7 +483,7 @@ RefResult plPassMtlBase::NotifyRefChanged( Interval changeInt, RefTargetHandle h
 //        callbacks don't work because they're called right after our object
 //        is loaded but not necessarily before the notetracks are attached)
 
-void    plPassMtlBase::PostLoadAnimPBFixup( void )
+void    plPassMtlBase::PostLoadAnimPBFixup()
 {
     SetLoadingFlag( false );
 
@@ -517,7 +504,7 @@ void    plPassMtlBase::PostLoadAnimPBFixup( void )
         for( int i = 0; i < fAnimPB->Count( (ParamID)kPBAnimStealthNodes ); i++ )
         {
             plAnimStealthNode *node = (plAnimStealthNode *)fAnimPB->GetReferenceTarget( (ParamID)kPBAnimStealthNodes, 0, i );
-            plString name = node->GetSegmentName();
+            ST::string name = node->GetSegmentName();
             node->SetAutoStart( false );
             node->SetLoop( true, ENTIRE_ANIMATION_NAME );
             node->SetEaseIn( plAnimEaseTypes::kNoEase, 1.f, 1.f, 1.f );
@@ -525,17 +512,15 @@ void    plPassMtlBase::PostLoadAnimPBFixup( void )
         }
 
         // Step 3...
-        const char *oldSel = (const char *)fAnimPB->GetStr( (ParamID)kPBAnimName );
-        if( oldSel == nil )
-            oldSel = ENTIRE_ANIMATION_NAME;
-        plAnimStealthNode *myNew = IFindStealth( plString::FromUtf8( oldSel ) );
-        if( myNew != nil )
+        const MCHAR* oldSel = fAnimPB->GetStr( (ParamID)kPBAnimName );
+        if (oldSel == nullptr)
+            oldSel = _M(ENTIRE_ANIMATION_NAME);
+        plAnimStealthNode *myNew = IFindStealth( M2ST( oldSel ) );
+        if (myNew != nullptr)
         {
-#pragma warning( push ) // Forcing value to bool true or false (go figure, i'm even explicitly casting)
-#pragma warning( disable:4800 ) // Forcing value to bool true or false (go figure, i'm even explicitly casting)
             myNew->SetAutoStart( (bool)fAnimPB->GetInt( (ParamID)kPBAnimAutoStart ) );
             myNew->SetLoop( (bool)fAnimPB->GetInt( (ParamID)kPBAnimLoop ),
-                            plString::FromUtf8( (char *)fAnimPB->GetStr( (ParamID)kPBAnimLoopName ) ) );
+                            M2ST(fAnimPB->GetStr( (ParamID)kPBAnimLoopName ) ) );
             myNew->SetEaseIn( (uint8_t)fAnimPB->GetInt( (ParamID)kPBAnimEaseInType ),
                                 (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInLength ),
                                 (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInMin ),
@@ -544,7 +529,6 @@ void    plPassMtlBase::PostLoadAnimPBFixup( void )
                                 (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutLength ),
                                 (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutMin ),
                                 (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutMax ) );
-#pragma warning( pop )
         }               
     }
 #endif // MCN_UPGRADE_OLD_ANIM_BLOCKS
@@ -630,8 +614,8 @@ void    plPassMtlBase::ICloneBase( plPassMtlBase *target, RemapDir &remap )
 
 plPassMtlBase   *plPassMtlBase::ConvertToPassMtl( Mtl *mtl )
 {
-    if( mtl == nil )
-        return nil;
+    if (mtl == nullptr)
+        return nullptr;
 
     if( mtl->ClassID() == PASS_MTL_CLASS_ID 
         || mtl->ClassID() == BUMP_MTL_CLASS_ID
@@ -640,7 +624,7 @@ plPassMtlBase   *plPassMtlBase::ConvertToPassMtl( Mtl *mtl )
         return (plPassMtlBase *)mtl;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// SetupProperties /////////////////////////////////////////////////////////

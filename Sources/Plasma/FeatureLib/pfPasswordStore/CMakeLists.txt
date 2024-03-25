@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../PubUtilLib")
-
 set(pfPasswordStore_HEADERS
     pfPasswordStore.h
     pfPasswordStore_impl.h
@@ -13,30 +8,32 @@ set(pfPasswordStore_SOURCES
 )
 
 if(WIN32 AND NOT CYGWIN)
-    set(pfPasswordStore_SOURCES ${pfPasswordStore_SOURCES}
-        pfPasswordStore_Win.cpp
-    )
-endif(WIN32 AND NOT CYGWIN)
+    list(APPEND pfPasswordStore_SOURCES pfPasswordStore_Win.cpp)
+elseif(TARGET PkgConfig::LIBSECRET AND NOT TARGET Security::Security)
+    list(APPEND pfPasswordStore_SOURCES pfPasswordStore_Unix.cpp)
+elseif(TARGET Security::Security)
+    list(APPEND pfPasswordStore_SOURCES pfPasswordStore_Apple.cpp)
+endif()
 
-if(UNIX)
-    set(pfPasswordStore_SOURCES ${pfPasswordStore_SOURCES}
-        pfPasswordStore_Unix.cpp
-    )
-endif(UNIX)
+plasma_library(pfPasswordStore SOURCES ${pfPasswordStore_HEADERS} ${pfPasswordStore_SOURCES})
+target_link_libraries(
+    pfPasswordStore
+    PUBLIC
+        CoreLib
+    PRIVATE
+        pnNetBase
+        plFile
+)
 
-if(APPLE)
-    set(pfPasswordStore_SOURCES ${pfPasswordStore_SOURCES}
-        pfPasswordStore_Mac.cpp
-    )
-endif(APPLE)
-
-add_library(pfPasswordStore STATIC ${pfPasswordStore_HEADERS} ${pfPasswordStore_SOURCES})
-target_link_libraries(pfPasswordStore CoreLib plFile)
-
-if(APPLE)
-    find_library(SECURITY_LIBRARY Security)
-    target_link_libraries(pfPasswordStore ${SECURITY_LIBRARY})
-endif(APPLE)
+if(WIN32 AND NOT CYGWIN)
+    target_link_libraries(pfPasswordStore PRIVATE advapi32)
+elseif(TARGET PkgConfig::LIBSECRET AND NOT TARGET Security::Security)
+    target_compile_definitions(pfPasswordStore PRIVATE HAVE_LIBSECRET)
+    target_link_libraries(pfPasswordStore PRIVATE PkgConfig::LIBSECRET)
+elseif(TARGET Security::Security)
+    target_compile_definitions(pfPasswordStore PRIVATE HAVE_SECURITY)
+    target_link_libraries(pfPasswordStore PRIVATE Security::Security)
+endif()
 
 source_group("Header Files" FILES ${pfPasswordStore_HEADERS})
 source_group("Source Files" FILES ${pfPasswordStore_SOURCES})

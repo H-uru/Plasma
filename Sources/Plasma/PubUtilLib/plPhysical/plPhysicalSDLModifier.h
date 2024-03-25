@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPhysicalSDLModifier_inc
 #define plPhysicalSDLModifier_inc
 
+#include "pnNetCommon/plSDLTypes.h"
+
 #include "plModifier/plSDLModifier.h"
 
 class plStateDataRecord;
@@ -58,7 +60,7 @@ public:
     CLASSNAME_REGISTER( plPhysicalSDLModifier );
     GETINTERFACE_ANY( plPhysicalSDLModifier, plSDLModifier);
 
-    const char* GetSDLName() const { return kSDLPhysical; }
+    const char* GetSDLName() const override { return kSDLPhysical; }
 
     // For the console
     static void SetLogLevel(int level) { fLogLevel = level; }
@@ -69,9 +71,9 @@ protected:
     void ILogState(const plStateDataRecord* state, bool useDirty, const char* prefix, uint32_t color);
 
     plPhysical* IGetPhysical();
-    virtual void IPutCurrentStateIn(plStateDataRecord* dstState);
-    virtual void ISetCurrentStateFrom(const plStateDataRecord* srcState);
-    virtual void ISentState(const plStateDataRecord* sentState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState) override;
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
+    void ISentState(const plStateDataRecord* sentState) override;
 };
 
 #endif  // plPhysicalSDLModifier_inc

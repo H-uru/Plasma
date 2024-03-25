@@ -48,15 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTSTR_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTSTR_H
 
-#include "Pch.h"
-#include "pnUtArray.h"
-#include <wchar.h>
-
-// Got Damn eap...
-// Duplicate Symbols in shlwapi!
-#ifdef _INC_SHLWAPI
-#   undef StrDup
-#endif // _INC_SHLWAPI
+#include "HeadSpin.h"
 
 /*****************************************************************************
 *
@@ -64,33 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-inline char  CharLowerFast (char  ch) { return ((ch >=  'A') && (ch <=  'Z')) ? (char )(ch +  'a' -  'A') : ch; }
-inline wchar_t CharLowerFast (wchar_t ch) { return ((ch >= L'A') && (ch <= L'Z')) ? (wchar_t)(ch + L'a' - L'A') : ch; }
-
-unsigned StrPrintf (char * dest, unsigned count, const char format[], ...);
-unsigned StrPrintf (wchar_t * dest, unsigned count, const wchar_t format[], ...);
-
-unsigned StrPrintfV (char * dest, unsigned count, const char format[], va_list args);
-unsigned StrPrintfV (wchar_t * dest, unsigned count, const wchar_t format[], va_list args);
-
-unsigned StrLen (const char str[]);
-unsigned StrLen (const wchar_t str[]);
-
-char * StrDup (const char str[]);
-wchar_t * StrDup (const wchar_t str[]);
-
-int StrCmp (const char str1[], const char str2[], unsigned chars = (unsigned)-1);
-int StrCmp (const wchar_t str1[], const wchar_t str2[], unsigned chars = (unsigned)-1);
-
-int StrCmpI (const char str1[], const char str2[], unsigned chars = (unsigned)-1);
-int StrCmpI (const wchar_t str1[], const wchar_t str2[], unsigned chars = (unsigned)-1);
-
-void StrCopy (char * dest, const char source[], unsigned chars);
-void StrCopy (wchar_t * dest, const wchar_t source[], unsigned chars);
-
-uint32_t StrHash (const char str[], unsigned chars = (unsigned)-1);
-uint32_t StrHash (const wchar_t str[], unsigned chars = (unsigned)-1);
-
-uint32_t StrHashI (const char str[], unsigned chars = (unsigned)-1);
-uint32_t StrHashI (const wchar_t str[], unsigned chars = (unsigned)-1);
+void StrCopy (char * dest, const char source[], size_t chars);
+void StrCopy (char16_t * dest, const char16_t source[], size_t chars);
 #endif

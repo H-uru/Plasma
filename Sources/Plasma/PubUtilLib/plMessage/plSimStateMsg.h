@@ -51,12 +51,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSubWorldMsg : public plSimulationMsg
 {
 public:
-    plSubWorldMsg()
-    {
-        fWorldKey = nil;
-    }
+    plSubWorldMsg() = default;
     plSubWorldMsg(const plKey &sender, const plKey &receiver, const plKey &worldKey)
-        : plSimulationMsg(sender, receiver, 0)
+        : plSimulationMsg(sender, receiver, nullptr)
     {
         fWorldKey = worldKey;
         SetBCastFlag(plMessage::kNetPropagate);
@@ -67,8 +64,8 @@ public:
     CLASSNAME_REGISTER(plSubWorldMsg);
     GETINTERFACE_ANY( plSubWorldMsg, plSimulationMsg);
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 #endif // PLSIMSTATEMSG_INC

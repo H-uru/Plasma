@@ -51,20 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnKeyedObject/plUoid.h"
 
-#define plVerifyConditionRet(NetApp,cond,ret,str)   \
-    do {    \
-        if (!(cond)) {  \
-            char * _str_ = str; \
-            (NetApp)->ErrorMsg(_str_);  \
-            hsAssert(cond,_str_);   \
-            return ret; \
-        }   \
-    } while (0)
-
-#define plVerifyCondition(NetApp,cond,str)  \
-    plVerifyConditionRet(NetApp,cond,hsFail,str)
-
-
 class plNetMember;
 class plSynchedObject;
 class plKey;
@@ -106,24 +92,54 @@ public:
     void SetFlagsBit(int b, bool on=true) { fFlagsVec.SetBit(b, on); }
     bool GetFlagsBit(int b) const { return fFlagsVec.IsBitSet(b) ? true : false; }
 
-    static bool StaticErrorMsg(const plString& msg);
-    static bool StaticWarningMsg(const plString& msg);
-    static bool StaticAppMsg(const plString& msg);
-    static bool StaticDebugMsg(const plString& msg);
+    static bool StaticErrorMsg(const ST::string& msg);
+    static bool StaticWarningMsg(const ST::string& msg);
+    static bool StaticAppMsg(const ST::string& msg);
+    static bool StaticDebugMsg(const ST::string& msg);
 
+    static bool StaticErrorMsg(const char* msg)
+    {
+        return StaticErrorMsg(ST::string(msg));
+    }
 
-    // Deprecated
-    hsDeprecated("StaticErrorMsg with format is deprecated -- use plFormat instead")
-    static bool StaticErrorMsg(const char* fmt, ...);
+    static bool StaticWarningMsg(const char* msg)
+    {
+        return StaticWarningMsg(ST::string(msg));
+    }
 
-    hsDeprecated("StaticWarningMsg with format is deprecated -- use plFormat instead")
-    static bool StaticWarningMsg(const char* fmt, ...);
+    static bool StaticAppMsg(const char* msg)
+    {
+        return StaticAppMsg(ST::string(msg));
+    }
 
-    hsDeprecated("StaticAppMsg with format is deprecated -- use plFormat instead")
-    static bool StaticAppMsg(const char* fmt, ...);
+    static bool StaticDebugMsg(const char* msg)
+    {
+        return StaticDebugMsg(ST::string(msg));
+    }
 
-    hsDeprecated("StaticDebugMsg with format is deprecated -- use plFormat instead")
-    static bool StaticDebugMsg(const char* fmt, ...);
+    template <typename... _Args>
+    static bool StaticErrorMsg(const char* fmt, _Args... args)
+    {
+        return StaticErrorMsg(ST::format(fmt, args...));
+    }
+
+    template <typename... _Args>
+    static bool StaticWarningMsg(const char* fmt, _Args... args)
+    {
+        return StaticWarningMsg(ST::format(fmt, args...));
+    }
+
+    template <typename... _Args>
+    static bool StaticAppMsg(const char* fmt, _Args... args)
+    {
+        return StaticAppMsg(ST::format(fmt, args...));
+    }
+
+    template <typename... _Args>
+    static bool StaticDebugMsg(const char* fmt, _Args... args)
+    {
+        return StaticDebugMsg(ST::format(fmt, args...));
+    }
 };
 
 //
@@ -137,7 +153,7 @@ private:
 
     friend class plDispatch;
 
-    virtual int ISendGameMessage(plMessage* msg) { hsAssert(false, "stub"); return hsFail; }
+    virtual void ISendGameMessage(plMessage* msg) { hsAssert(false, "stub"); }
 
 public:
     enum ClientFlagBits
@@ -173,8 +189,8 @@ public:
         kLinkingToOfflineAge,               // set if we're linking to the startup age
     };
 
-    CLASSNAME_REGISTER( plNetClientApp );
-    GETINTERFACE_ANY( plNetClientApp, plNetApp);
+    CLASSNAME_REGISTER(plNetClientApp);
+    GETINTERFACE_ANY(plNetClientApp, plNetApp);
 
     plNetClientApp();
     
@@ -186,24 +202,24 @@ public:
     static void UnInheritNetMsgFlags(plMessage* msg);
 
     // functions that all net client apps should implement
-    virtual int SendMsg(plNetMessage* msg) = 0;
+    virtual void SendMsg(plNetMessage* msg) = 0;
     virtual uint32_t GetPlayerID() const = 0;
-    virtual plString GetPlayerName( const plKey avKey=nil ) const = 0;
+    virtual ST::string GetPlayerName(const plKey avKey={}) const = 0;
 
     // commonly used net client app functions
     virtual float GetCurrentAgeTimeOfDayPercent() const { hsAssert(false, "stub"); return 0.; }
     virtual bool ObjectInLocalAge(const plSynchedObject* obj) const { hsAssert(false, "stub"); return false; }
     virtual uint8_t GetJoinOrder() const { hsAssert(false, "stub"); return 0; }
-    virtual bool IsRemotePlayerKey(const plKey p, int* idx=nil) { hsAssert(false, "stub"); return false; }
-    virtual plKey GetLocalPlayerKey()   const { hsAssert(false, "stub"); return nil; }
-    virtual plSynchedObject* GetLocalPlayer(bool forceLoad=false) const { hsAssert(false, "stub"); return nil; }
-    virtual plNetGroupId SelectNetGroup(plSynchedObject* objIn, plKey groupKey) { hsAssert(false, "stub"); return plNetGroup::kNetGroupUnknown; }
+    virtual bool IsRemotePlayerKey(const plKey& p, int* idx=nullptr) { hsAssert(false, "stub"); return false; }
+    virtual plKey GetLocalPlayerKey()   const { hsAssert(false, "stub"); return nullptr; }
+    virtual plSynchedObject* GetLocalPlayer(bool forceLoad=false) const { hsAssert(false, "stub"); return nullptr; }
+    virtual plNetGroupId SelectNetGroup(plSynchedObject* objIn, const plKey& groupKey) { hsAssert(false, "stub"); return plNetGroup::kNetGroupUnknown; }
     virtual int IsLocallyOwned(const plSynchedObject* obj) const { hsAssert(false, "stub"); return 0; }
     virtual int IsLocallyOwned(const plUoid&) const { hsAssert(false, "stub"); return 0; }  
     virtual plNetGroupId GetEffectiveNetGroup(const plSynchedObject* obj) const { hsAssert(false, "stub"); return plNetGroup::kNetGroupUnknown; }
-    virtual int Update(double secs) { return hsOK;}
-    virtual const char* GetServerLogTimeAsString(plString& ts) const { hsAssert(false, "stub"); return nil; }
-    virtual plUoid GetAgeSDLObjectUoid(const plString& ageName) const { hsAssert(false, "stub"); return plUoid(); }
+    virtual void Update(double secs) {}
+    virtual const char* GetServerLogTimeAsString(ST::string& ts) const { hsAssert(false, "stub"); return nullptr; }
+    virtual plUoid GetAgeSDLObjectUoid(const ST::string& ageName) const { hsAssert(false, "stub"); return plUoid(); }
     virtual void StayAlive(double secs) {}
     virtual void QueueDisableNet( bool showDlg, const char msg[] ) {}
 
@@ -244,8 +260,8 @@ public:
         kProcessedPendingMsgs,              // Used by front-end server
     };
 
-    CLASSNAME_REGISTER( plNetServerApp );
-    GETINTERFACE_ANY( plNetServerApp, plNetApp);
+    CLASSNAME_REGISTER(plNetServerApp);
+    GETINTERFACE_ANY(plNetServerApp, plNetApp);
 
     virtual int SendMsg(plNetMessage* msg) = 0;
 };
@@ -261,8 +277,8 @@ public:
     static plNetObjectDebuggerBase* GetInstance() { return fInstance;   }
     static void SetInstance(plNetObjectDebuggerBase* i) { fInstance=i;  }
     virtual bool IsDebugObject(const hsKeyedObject* obj) const = 0;
-    virtual void LogMsgIfMatch(const char* msg) const = 0;      // write to status log if there's a string match    
-    virtual void LogMsg(const char* msg) const = 0;
+    virtual void LogMsgIfMatch(const ST::string& msg) const = 0;      // write to status log if there's a string match
+    virtual void LogMsg(const ST::string& msg) const = 0;
     
     virtual bool GetDebugging() const = 0;
     virtual void SetDebugging(bool b) = 0;

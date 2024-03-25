@@ -45,14 +45,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plParticleFiller.h"
 
 // Core background
-#include "hsTemplates.h"
 #include "hsFastMath.h"
 #include "plPipeline.h"
 #include "plViewTransform.h"
 
 // Getting at the destination data
 #include "pnSceneObject/plDrawInterface.h"
-#include "plDrawable/plDrawableSpans.h"
+#include "plDrawableSpans.h"
 #include "plGBufferGroup.h"
 
 // For shading
@@ -61,6 +60,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Getting at the source data
 #include "plParticleSystem/plParticleEmitter.h"
 #include "plParticleSystem/plParticle.h"
+
+// Profiling
+#include "hsTimer.h"
+#include "plProfile.h"
+plProfile_CreateTimer("Fill Polys", "Particles", ParticleFillPoly);
 
 static float sInvDelSecs;
 
@@ -323,13 +327,13 @@ void inline IInlSetNormalViewFace( hsVector3 &partNorm, const hsVector3 &zVec )
 void inline IInlSetNormalStrongestLight( hsVector3 &partNorm, const plParticleCore &particle, 
                                         const plOmniLightInfo *omniLight, const plDirectionalLightInfo *directionLight, const hsVector3 &zVec )
 {
-    if( omniLight != nil )
+    if (omniLight != nullptr)
     {
         hsPoint3 pos = omniLight->GetWorldPosition();
         partNorm.Set( &particle.fPos, &pos );
         partNorm = -partNorm;
     }
-    else if( directionLight != nil )
+    else if (directionLight != nullptr)
     {
         partNorm = -directionLight->GetWorldDirection();
     }
@@ -631,10 +635,6 @@ void inline IIPL_0UV_OExp_NExp( const uint32_t &numParticles, const plParticleCo
 
 //// IFillParticlePolys ///////////////////////////////////////////////////////
 //  Takes a list of particles and makes the polys for them.
-#include "hsTimer.h"
-#include "plProfile.h"
-plProfile_CreateTimer("Fill Polys", "Particles", ParticleFillPoly);
-
 void plParticleFiller::FillParticles(plPipeline* pipe, plDrawableSpans* drawable, plParticleSpan* span)
 {
     if (!span->fSource || span->fNumParticles <= 0)
@@ -658,8 +658,8 @@ void plParticleFiller::FillParticles(plPipeline* pipe, plDrawableSpans* drawable
     /// Get the z vector (pointing away from the camera) in worldspace
     hsMatrix44 viewToWorld = pipe->GetCameraToWorld();
 
-    plOmniLightInfo* omniLight = nil;
-    plDirectionalLightInfo* directionLight = nil;
+    plOmniLightInfo* omniLight = nullptr;
+    plDirectionalLightInfo* directionLight = nullptr;
 
     /// Get strongest light, if there is one, for normal generation
     if( span->GetNumLights( false ) > 0 )
@@ -799,11 +799,10 @@ void plParticleFiller::FillParticlePolys(plPipeline* pipe, plDrawInterface* di)
     // Currently, the di always points to exactly 1 drawable with 1 span index. If
     // that changes, this would just become a loop.
     uint32_t diIndex = di->GetDrawableMeshIndex(0);
-    hsAssert(diIndex >= 0, "Bogus input to fill particles");
+    hsAssert(diIndex != uint32_t(-1), "Bogus input to fill particles");
 
     const plDISpanIndex& diSpans = drawable->GetDISpans(diIndex);
-    int i;
-    for( i = 0; i < diSpans.GetCount(); i++ )
+    for (size_t i = 0; i < diSpans.GetCount(); i++)
     {
         uint32_t spanIdx = diSpans[i];
         hsAssert(drawable->GetSpan(spanIdx), "Bogus input to fill particles");

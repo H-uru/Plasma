@@ -39,13 +39,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <algorithm>
-#include "plgDispatch.h"
-#include "plNetClientMgr.h"
+
 #include "plNetVoiceList.h"
-#include "plNetTransport/plNetTransportMember.h"
-#include "pnMessage/plSoundMsg.h"
+#include "plNetClientMgr.h"
+
+#include "plgDispatch.h"
+
+#include <algorithm>
+
 #include "pnKeyedObject/plKey.h"
+#include "pnMessage/plSoundMsg.h"
+
+#include "plNetTransport/plNetTransportMember.h"
 #include "plStatusLog/plStatusLog.h"
 
 // statics
@@ -56,7 +61,7 @@ float plNetListenList::kMaxListenDistSq=75.0f*75.0f;
 int plNetVoiceList::FindMember(plNetTransportMember* e) 
 {
     VoiceListType::iterator result = std::find(fMembers.begin(), fMembers.end(), e);
-    return result!=fMembers.end() ? result-fMembers.begin() : -1;
+    return result!=fMembers.end() ? (int)(result-fMembers.begin()) : -1;
 }
 
 
@@ -66,32 +71,13 @@ int plNetVoiceList::FindMember(plNetTransportMember* e)
 *
 ***/
 
-void plNetTalkList::UpdateTransportGroup(plNetClientMgr* nc)
-{
-    if (fFlags & kDirty)
-    {
-        nc->fTransport.ClearChannelGrp(plNetClientMgr::kNetChanVoice);
-        if (nc->IsPeerToPeer())
-        {
-            int i;
-            for(i=0;i<GetNumMembers();i++)
-            {
-                if (GetMember(i)->IsPeerToPeer())
-                    nc->fTransport.SubscribeToChannelGrp(GetMember(i), plNetClientMgr::kNetChanVoice);
-            }
-        }
-        fFlags &= ~kDirty;
-    }
-}
-
 void plNetTalkList::AddMember(plNetTransportMember* e) 
 { 
     if (FindMember(e)==-1)
     {
-        plStatusLog::AddLineS("voice.log", "Adding %s to talk list", e->AsString().c_str());
+        plStatusLog::AddLineSF("voice.log", "Adding {} to talk list", e->AsString());
         fMembers.push_back(e);
     }
-    fFlags |= kDirty;   
 }
     
 void plNetTalkList::RemoveMember(plNetTransportMember* e) 
@@ -99,16 +85,9 @@ void plNetTalkList::RemoveMember(plNetTransportMember* e)
     int idx=FindMember(e);
     if (idx!=-1)
     {
-        plStatusLog::AddLineS("voice.log", "Removing %s from talklist", e->AsString().c_str());
+        plStatusLog::AddLineSF("voice.log", "Removing {} from talklist", e->AsString());
         fMembers.erase(fMembers.begin()+idx);
     }
-    fFlags |= kDirty; 
-}
-    
-void plNetTalkList::Clear() 
-{ 
-    plNetVoiceList::Clear(); 
-    fFlags |= kDirty; 
 }
 
 
@@ -122,7 +101,7 @@ void plNetListenList::AddMember(plNetTransportMember* e)
 {
     if (FindMember(e)==-1)
     {
-        plStatusLog::AddLineS("voice.log", "Adding %s to listen list ", e->AsString().c_str());
+        plStatusLog::AddLineSF("voice.log", "Adding {} to listen list ", e->AsString());
         fMembers.push_back(e);
     
 #if 0   
@@ -146,7 +125,7 @@ void plNetListenList::RemoveMember(plNetTransportMember* e)
     if (idx!=-1)
     {
         fMembers.erase(fMembers.begin()+idx);
-        plStatusLog::AddLineS("voice.log", "Removing %s from listen list", e->AsString().c_str());
+        plStatusLog::AddLineSF("voice.log", "Removing {} from listen list", e->AsString());
 #if 0
         // call the new member's win audible and set talk icon parameters
 

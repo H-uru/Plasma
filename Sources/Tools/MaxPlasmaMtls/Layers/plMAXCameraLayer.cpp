@@ -40,29 +40,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "../resource.h"
 
-#include <iparamm2.h>
-#include <stdmat.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include "../resource.h"
 
 #include "plMAXCameraLayer.h"
 
 #include "../plBMSampler.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
 
-class plMAXCameraLayerClassDesc : public ClassDesc2
+const TCHAR* kUVStrings[] = { _T("1"), _T("2"), _T("3"), _T("4"), _T("5"), _T("6"), _T("7"), _T("8") };
+
+class plMAXCameraLayerClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading = FALSE) { return new plMAXCameraLayer(); }
-    const TCHAR*    ClassName()     { return GetString(IDS_MAX_CAMERA_LAYER); }
-    SClass_ID       SuperClassID()  { return TEXMAP_CLASS_ID; }
-    Class_ID        ClassID()       { return MAX_CAMERA_LAYER_CLASS_ID; }
-    const TCHAR*    Category()      { return TEXMAP_CAT_COLMOD; }
-    const TCHAR*    InternalName()  { return _T("PlasmaMAXCameraLayer"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading = FALSE) override { return new plMAXCameraLayer(); }
+    const TCHAR*    ClassName() override    { return GetString(IDS_MAX_CAMERA_LAYER); }
+    SClass_ID       SuperClassID() override { return TEXMAP_CLASS_ID; }
+    Class_ID        ClassID() override      { return MAX_CAMERA_LAYER_CLASS_ID; }
+    const TCHAR*    Category() override     { return TEXMAP_CAT_COLMOD; }
+    const TCHAR*    InternalName() override { return _T("PlasmaMAXCameraLayer"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plMAXCameraLayerClassDesc plMAXCameraLayerDesc;
 ClassDesc2* GetMAXCameraLayerDesc() { return &plMAXCameraLayerDesc; }
@@ -84,24 +84,23 @@ public:
         EnableWindow(GetDlgItem(hWnd, IDC_CAM_LAYER_UV_SRC), !reflect);
     }
 
-    virtual void Update(TimeValue t, Interval& valid, IParamMap2* pmap) { UpdateDisplay(pmap); }
+    void Update(TimeValue t, Interval& valid, IParamMap2* pmap) override { UpdateDisplay(pmap); }
 
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int id = LOWORD(wParam);
         int code = HIWORD(wParam);
 
         IParamBlock2 *pb = map->GetParamBlock();
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
 
         switch (msg)
         {
         case WM_INITDIALOG:
-            int i;
-            for (i = 0; i < plMAXCameraLayer::kMaxUVSrc; i++)
+            for (const TCHAR* uvString : kUVStrings)
             {
                 cbox = GetDlgItem(hWnd, IDC_CAM_LAYER_UV_SRC);
-                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)plMAXCameraLayer::kUVStrings[i]);
+                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)uvString);
             }
             UpdateDisplay(map);
             return TRUE;
@@ -109,7 +108,7 @@ public:
         case WM_COMMAND:
             if (id == IDC_CAM_LAYER_UV_SRC)
             {
-                pb->SetValue(plMAXCameraLayer::kUVSource, t, SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0));
+                pb->SetValue(plMAXCameraLayer::kUVSource, t, (int)SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0));
                 return TRUE;
             }
             else if (id == IDC_CAM_LAYER_EXPLICIT_CAM)
@@ -121,7 +120,7 @@ public:
         }
         return FALSE;
     }
-    virtual void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static MAXCameraLayerDlgProc gMAXCameraLayerDlgProc;
 
@@ -139,43 +138,40 @@ static ParamBlockDesc2 gMAXCameraLayerParamBlk
         p_ui, TYPE_PICKNODEBUTTON, IDC_CAM_LAYER_CAMERA,
         p_classID, Class_ID(LOOKAT_CAM_CLASS_ID, 0),
         p_prompt, IDS_CAM_LAYER_CAMERA,
-        end,
+        p_end,
 
     plMAXCameraLayer::kUVSource, _T("UVSource"),    TYPE_INT,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     plMAXCameraLayer::kExplicitCam, _T("explicitCam"),  TYPE_BOOL,      0, 0,
         p_ui, TYPE_SINGLECHEKBOX, IDC_CAM_LAYER_EXPLICIT_CAM,
         p_default, false,
         p_enable_ctrls, 1, plMAXCameraLayer::kCamera,
-        end,
+        p_end,
 
     plMAXCameraLayer::kRootNode, _T("rootNode"),    TYPE_INODE, 0, 0,
         p_ui, TYPE_PICKNODEBUTTON, IDC_CAM_LAYER_ROOT_NODE,
         p_prompt, IDS_CAM_LAYER_ROOT_NODE,
-        end,
+        p_end,
 
     plMAXCameraLayer::kDisableColor, _T("disableColor"), TYPE_RGBA, 0, 0,
         p_ui,           TYPE_COLORSWATCH, IDC_CAM_LAYER_DISABLE_COLOR,
         p_default,      Color(0,0,0),
-        end,
+        p_end,
 
     plMAXCameraLayer::kForce, _T("force"),  TYPE_BOOL,      0, 0,
         p_ui, TYPE_SINGLECHEKBOX, IDC_CAM_LAYER_FORCE,
         p_default, false,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 /////////////////////////////////////////////////////////////////////////////
 
-const char *plMAXCameraLayer::kUVStrings[] = { "1", "2", "3", "4", "5", "6", "7", "8" };
-const uint8_t plMAXCameraLayer::kMaxUVSrc = 8;
-
 plMAXCameraLayer::plMAXCameraLayer() :
-fParmsPB(NULL),
+fParmsPB(),
 fIValid(NEVER)
 {
     plMAXCameraLayerDesc.MakeAutoParamBlocks(this);
@@ -185,7 +181,7 @@ plMAXCameraLayer::~plMAXCameraLayer()
 {
 }
 
-void plMAXCameraLayer::GetClassName(TSTR& s)
+void plMAXCameraLayer::IGetClassName(MSTR& s) const
 {
     s = GetString(IDS_MAX_CAMERA_LAYER);
 }
@@ -238,7 +234,7 @@ RefTargetHandle plMAXCameraLayer::GetReference(int i)
     switch (i)
     {
     case kRefMain:      return fParmsPB;
-    default:                return NULL;
+    default:            return nullptr;
     }
 }
 
@@ -264,7 +260,7 @@ IParamBlock2* plMAXCameraLayer::GetParamBlock(int i)
     switch (i)
     {
     case 0: return fParmsPB;
-    default: return NULL;
+    default: return nullptr;
     }
 }
 
@@ -273,7 +269,7 @@ IParamBlock2* plMAXCameraLayer::GetParamBlockByID(BlockID id)
     if (fParmsPB->ID() == id)
         return fParmsPB;
     else
-        return NULL;
+        return nullptr;
 }
 
 //From ReferenceTarget
@@ -296,21 +292,21 @@ Animatable* plMAXCameraLayer::SubAnim(int i)
     switch (i)
     {
         case kRefMain:      return fParmsPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
-TSTR plMAXCameraLayer::SubAnimName(int i)
+MSTR plMAXCameraLayer::ISubAnimName(int i)
 {
     switch (i)
     {
-        case kRefMain:      return "Main";
-        default: return "";
+        case kRefMain:      return _M("Main");
+        default: return _M("");
     }
 }
 
-RefResult plMAXCameraLayer::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget,
-                                              PartID& partID, RefMessage message)
+RefResult plMAXCameraLayer::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                             PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -325,7 +321,7 @@ RefResult plMAXCameraLayer::NotifyRefChanged(Interval changeInt, RefTargetHandle
                 ParamID changingParam = fParmsPB->LastNotifyParamID();
                 fParmsPB->GetDesc()->InvalidateUI(changingParam);
 
-                if (changingParam != -1)
+                if (changingParam != -1 && MAX_REF_PROPAGATE_VALUE)
                     IChanged();
             }
         }
@@ -408,15 +404,15 @@ void plMAXCameraLayer::ActivateTexDisplay(BOOL onoff)
 
 BITMAPINFO *plMAXCameraLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono, BOOL forceW, BOOL forceH)
 {
-    return nil;
+    return nullptr;
 }
 
-DWORD plMAXCameraLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
+DWORD_PTR plMAXCameraLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
 {
     return 0;
 }
 
 const char *plMAXCameraLayer::GetTextureName( int which )
 {
-    return NULL;
+    return nullptr;
 }

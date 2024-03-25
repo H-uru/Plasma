@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentReg.h"
 #include "MaxMain/plMaxNode.h"
 #include "resource.h"
-#pragma hdrstop
 
 #include "plMultistageBehComponent.h"
 
@@ -85,8 +84,8 @@ protected:
 
     void IDeleteStages();
 
-    static BOOL CALLBACK IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-    BOOL IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    INT_PTR IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
     void IInitDlg();
     void FixStageNames();
@@ -102,22 +101,22 @@ public:
 
     plKey GetMultiStageBehKey(plMaxNode *node);
 
-    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    virtual void AddReceiverKey(plKey pKey, plMaxNode* node=nil);
+    void AddReceiverKey(plKey pKey, plMaxNode* node=nullptr) override;
 
-    virtual void CreateRollups();
-    virtual void DestroyRollups();
+    void CreateRollups() override;
+    void DestroyRollups() override;
 
-    IOResult Save(ISave* isave);
-    IOResult Load(ILoad* iload);
+    IOResult Save(ISave* isave) override;
+    IOResult Load(ILoad* iload) override;
 
-    RefTargetHandle Clone(RemapDir &remap);
+    RefTargetHandle Clone(RemapDir &remap) override;
 };
 
-HWND plMultistageBehComponent::fDlg = NULL;
+HWND plMultistageBehComponent::fDlg = nullptr;
 int plMultistageBehComponent::fCurStage = -1;
 
 //
@@ -131,7 +130,7 @@ plKey MultiStageBeh::GetMultiStageBehKey(plComponentBase *multiStageBehComp, plM
         return comp->GetMultiStageBehKey((plMaxNode*)target);
     }
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -164,7 +163,7 @@ plKey plMultistageBehComponent::GetMultiStageBehKey(plMaxNode *node)
     if (fMods.find(node) != fMods.end())
         return fMods[node]->GetKey();
 
-    return nil;
+    return nullptr;
 }
 
 void plMultistageBehComponent::AddReceiverKey(plKey pKey, plMaxNode* node)
@@ -175,8 +174,8 @@ void plMultistageBehComponent::AddReceiverKey(plKey pKey, plMaxNode* node)
 void plMultistageBehComponent::IGetReceivers(plMaxNode* node, std::vector<plKey>& receivers)
 {
     // Add the guys who want to be notified by all instances
-    ReceiverKeys::iterator lowIt = fReceivers.lower_bound(nil);
-    ReceiverKeys::iterator highIt = fReceivers.upper_bound(nil);
+    ReceiverKeys::iterator lowIt = fReceivers.lower_bound(nullptr);
+    ReceiverKeys::iterator highIt = fReceivers.upper_bound(nullptr);
     for (; lowIt != highIt; lowIt++)
         receivers.push_back(lowIt->second);
 
@@ -262,10 +261,10 @@ void plMultistageBehComponent::CreateRollups()
     plComponent::CreateRollups();
 
     fDlg = GetCOREInterface()->AddRollupPage(hInstance,
-                                            MAKEINTRESOURCE(IDD_COMP_MULTIBEH),
-                                            IStaticDlgProc,
-                                            "Multistage Behavior",
-                                            (LPARAM)this);
+                                             MAKEINTRESOURCE(IDD_COMP_MULTIBEH),
+                                             IStaticDlgProc,
+                                             _M("Multistage Behavior"),
+                                             (LPARAM)this);
     IInitDlg();
 
     ICreateStageDlg();
@@ -278,17 +277,17 @@ void plMultistageBehComponent::DestroyRollups()
     if (fDlg)
     {
         GetCOREInterface()->DeleteRollupPage(fDlg);
-        fDlg = NULL;
+        fDlg = nullptr;
     }
 
     plComponent::DestroyRollups();
 }
 
-int ListView_AddString(HWND hList, const char* str)
+int ListView_AddString(HWND hList, const TCHAR* str)
 {
     LVITEM item = {0};
     item.mask = LVIF_TEXT;
-    item.pszText = const_cast<char*>(str); // F*** you Windows
+    item.pszText = const_cast<TCHAR*>(str); // F*** you Windows
     item.iItem = ListView_GetItemCount(hList);
     return ListView_InsertItem(hList, &item);
 }
@@ -299,14 +298,14 @@ void plMultistageBehComponent::IInitDlg()
     HWND hList = GetDlgItem(fDlg, IDC_STAGE_LIST);
     LVCOLUMN lvc;
     lvc.mask = LVCF_TEXT;
-    lvc.pszText = "Blah";
+    lvc.pszText = _T("Blah");
     ListView_InsertColumn(hList, 0, &lvc);
 
     FixStageNames();
     for (int i = 0; i < fStages.size(); i++)
     {
         plBaseStage* stage = fStages[i];
-        ListView_AddString(hList, stage->GetName().c_str());
+        ListView_AddString(hList, ST2T(stage->GetName()));
     }
 
     // Make sure the column is wide enough
@@ -326,21 +325,21 @@ void plMultistageBehComponent::FixStageNames()
     if (fStages.size() > 0)
     {
         plBaseStage* stage = fStages[0];
-        plString stageName = stage->GetName();
+        ST::string stageName = stage->GetName();
 
         if (stageName == "Stage 1")
         {
             for (int i = 0; i < fStages.size(); i++)
             {
                 plBaseStage* stage = fStages[i];
-                stage->SetName(plFormat("Stage {}", i));
+                stage->SetName(ST::format("Stage {}", i));
             }
         }
     }
 }
 
 
-BOOL plMultistageBehComponent::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plMultistageBehComponent::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -354,13 +353,13 @@ BOOL plMultistageBehComponent::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPAR
                 plBaseStage* stage = new plStandardStage;
                 int count = fStages.size();
                 fStages.push_back(stage);
-                char buf[64];
-                sprintf(buf, "Stage %d", count);
+                TCHAR buf[64];
+                _sntprintf(buf, std::size(buf), _T("Stage %d"), count);
                 stage->SetName(buf);
 
                 // Add the new stage to the list and make sure the list is wide enough
                 HWND hList = GetDlgItem(fDlg, IDC_STAGE_LIST);
-                int idx = ListView_AddString(hList, stage->GetName().c_str());
+                int idx = ListView_AddString(hList, ST2T(stage->GetName()));
                 ListView_SetColumnWidth(hList, 0, LVSCW_AUTOSIZE);
                 ListView_SetItemState(hList, idx, LVIS_SELECTED, LVIS_SELECTED);
 
@@ -433,10 +432,10 @@ BOOL plMultistageBehComponent::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPAR
                 case LVN_ENDLABELEDIT:
                     {
                         NMLVDISPINFO *di = (NMLVDISPINFO*)lParam;
-                        const char *name = di->item.pszText;
+                        const TCHAR* name = di->item.pszText;
 
                         // If the name was changed...
-                        if (name && *name != '\0')
+                        if (name && *name != _T('\0'))
                         {
                             plBaseStage* stage = fStages[fCurStage];
                             stage->SetName(name);
@@ -449,7 +448,7 @@ BOOL plMultistageBehComponent::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPAR
                             }
 
                             // Return true to keep the changes
-                            SetWindowLong(hDlg, DWL_MSGRESULT, TRUE);
+                            SetWindowLongPtr(hDlg, DWLP_MSGRESULT, TRUE);
                         }
                         
                         plMaxAccelerators::Enable();
@@ -484,32 +483,37 @@ protected:
     ILoad* fLoad;
 
 public:
-    MaxStream(ISave* isave) : fSave(isave), fLoad(nil) {}
-    MaxStream(ILoad* iload) : fSave(nil), fLoad(iload) {}
+    MaxStream(ISave* isave) : fSave(isave), fLoad() { }
+    MaxStream(ILoad* iload) : fSave(), fLoad(iload) { }
+    MaxStream(const MaxStream& other) = delete;
+    MaxStream(MaxStream&& other) = delete;
+    const MaxStream& operator=(const MaxStream& other) = delete;
+    MaxStream& operator=(MaxStream&& other) = delete;
 
     // Don't support any of this
-    virtual bool Open(const plFileName &, const char * = "rb") { hsAssert(0, "Not supported"); return false; }
-    virtual bool Close() {  hsAssert(0, "Not supported"); return false; }
-    virtual void Skip(uint32_t deltaByteCount) { hsAssert(0, "Not supported"); }
-    virtual void Rewind() { hsAssert(0, "Not supported"); }
+    bool AtEnd() override { hsAssert(false, "Not supported"); return false; }
+    void Skip(uint32_t deltaByteCount) override { hsAssert(0, "Not supported"); }
+    void Rewind() override { hsAssert(0, "Not supported"); }
+    void FastFwd() override { hsAssert(false, "Not supported"); }
+    void Truncate() override { hsAssert(false, "Not supported"); }
 
-    virtual uint32_t  GetEOF() { return (uint32_t)fLoad->CurChunkLength(); }
+    uint32_t  GetEOF() override { return (uint32_t)fLoad->CurChunkLength(); }
 
-    virtual uint32_t Read(uint32_t byteCount, void * buffer)
+    uint32_t Read(uint32_t byteCount, void * buffer) override
     {
         ULONG numRead = 0;
         hsAssert(fLoad, "No Max ILoad!");
         if (fLoad)
-            fLoad->Read(buffer, byteCount, &numRead);
+            READ_VOID_BUFFER(fLoad)(buffer, byteCount, &numRead);
         fPosition += numRead;
         return numRead;
     }
-    virtual uint32_t Write(uint32_t byteCount, const void* buffer)
+    uint32_t Write(uint32_t byteCount, const void* buffer) override
     {
         ULONG numWritten;
         hsAssert(fSave, "No Max ISave!");
         if (fSave)
-            fSave->Write(buffer, byteCount, &numWritten);
+            WRITE_VOID_BUFFER(fSave)(buffer, byteCount, &numWritten);
         return numWritten;
     }
 };
@@ -547,7 +551,7 @@ IOResult plMultistageBehComponent::Load(ILoad* iload)
 
     while (iload->OpenChunk() == IO_OK)
     {
-        plBaseStage *stage = nil;
+        plBaseStage *stage = nullptr;
 
         switch (iload->CurChunkID())
         {
@@ -608,12 +612,12 @@ RefTargetHandle plMultistageBehComponent::Clone(RemapDir &remap)
     return clone;
 }
 
-BOOL plMultistageBehComponent::IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plMultistageBehComponent::IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (msg == WM_INITDIALOG)
-        SetWindowLong(hDlg, GWL_USERDATA, lParam);
+        SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
 
-    plMultistageBehComponent *multi = (plMultistageBehComponent*)GetWindowLong(hDlg, GWL_USERDATA);
+    plMultistageBehComponent *multi = (plMultistageBehComponent*)GetWindowLongPtr(hDlg, GWLP_USERDATA);
 
     if (!multi)
         return FALSE;

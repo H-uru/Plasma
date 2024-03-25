@@ -43,16 +43,59 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfPasswordStore.h"
 #include "pfPasswordStore_impl.h"
 
-#include "plProduct.h"
+#include "pnNetBase/pnNbSrvs.h"
 
+#include <string_theory/format>
+#include <libsecret/secret.h>
+
+static const SecretSchema pfPasswordStore_Schema = {
+    "com.mystonline.Password", SECRET_SCHEMA_NONE,
+    {
+        { "username", SECRET_SCHEMA_ATTRIBUTE_STRING },
+        { "server", SECRET_SCHEMA_ATTRIBUTE_STRING },
+        { nullptr, (SecretSchemaAttributeType)0 }
+    }
+};
 
 /*****************************************************************************
  ** pfUnixPasswordStore                                                     **
  *****************************************************************************/
-const plString pfUnixPasswordStore::GetPassword(const plString& username)
+ST::string pfUnixPasswordStore::GetPassword(const ST::string& username)
 {
+    GError *error = nullptr;
+    gchar *password = secret_password_lookup_sync(&pfPasswordStore_Schema,
+                            nullptr, &error,
+                            "username", username.c_str(),
+                            "server", GetServerDisplayName().c_str(),
+                            nullptr);
+
+    ST::string result;
+    if (error) {
+        // Throw away the error and treat it as if no password was found...
+        g_error_free(error);
+    } else if (password) {
+        result = ST::string::from_utf8(password);
+        secret_password_free(password);
+    }
+
+    return result;
 }
 
-bool pfUnixPasswordStore::SetPassword(const plString& username, const plString& password)
+bool pfUnixPasswordStore::SetPassword(const ST::string& username,
+                                      const ST::string& password)
 {
+    GError *error = nullptr;
+    ST::string server = GetServerDisplayName();
+    secret_password_store_sync(&pfPasswordStore_Schema, SECRET_COLLECTION_DEFAULT,
+                               ST::format("Myst Online Password for {}", server).c_str(),
+                               password.c_str(), nullptr, &error,
+                               "username", username.c_str(),
+                               "server", server.c_str(),
+                               nullptr);
+    if (error) {
+        g_error_free(error);
+        return false;
+    } else {
+        return true;
+    }
 }

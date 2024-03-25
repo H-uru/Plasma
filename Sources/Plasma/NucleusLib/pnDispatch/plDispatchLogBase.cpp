@@ -41,5 +41,5 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plDispatchLogBase.h"
     
-plDispatchLogBase* plDispatchLogBase::fInstance = nil;
+plDispatchLogBase* plDispatchLogBase::fInstance = nullptr;
 uint32_t plDispatchLogBase::fFlags = 0;

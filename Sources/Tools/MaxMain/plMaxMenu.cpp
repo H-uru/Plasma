@@ -42,16 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsTemplates.h"
-#include "hsWindows.h"
 #include "plFileSystem.h"
 
-#include <iMenuMan.h>
-#include <max.h>
-#include <notify.h>
+#include "MaxAPI.h"
 #include "resource.h"
 #include <vector>
-#pragma hdrstop
 
 #include "plMaxMenu.h"
 #include "plActionTableMgr.h"
@@ -228,7 +223,7 @@ bool DoAction(int id)
     return false;
 }
 
-static ActionTableInfo actionInfo(kActionId, "Plasma", spActions, sizeof(spActions) / sizeof(ActionDescription));
+static ActionTableInfo actionInfo(kActionId, _T("Plasma"), spActions, std::size(spActions));
 
 // static or global declaration of action table manager
 plActionTableMgr theActionTableMgr(actionInfo, DoAction);
@@ -241,7 +236,7 @@ plActionTableMgr theActionTableMgr(actionInfo, DoAction);
 // Menu Creation Junk
 
 MenuContextId kMyMenuContextId=0xcff95f6c;  //<random number>
-static char *kMenuName = "Plasma";
+static MCHAR* kMenuName = _M("Plasma");
 static int kMenuVersion = 11;   // Increment this number if you add an entry to the menu
 
 extern TCHAR *GetString(int id);
@@ -249,7 +244,7 @@ extern TCHAR *GetString(int id);
 void AddPlasmaExportMenu()
 {
     IMenuManager* pMenuMan = GetCOREInterface()->GetMenuManager();
-    IMenu* fileMenu = pMenuMan->FindMenu("&File");
+    IMenu* fileMenu = pMenuMan->FindMenu(_M("&File"));
 
     int i;
 
@@ -260,17 +255,17 @@ void AddPlasmaExportMenu()
     for (i = 0; i < fileMenu->NumItems(); i++)
     {
         IMenuItem* fileMenuItem = fileMenu->GetItem(i);
-        const TSTR& title = fileMenuItem->GetTitle();
+        auto title = fileMenuItem->GetTitle();
         if (title == ourName)
             plasmaExportFound = true;
 
         // KLUDGE - MaxAss didn't define the file submenu with an accelerator.
         // This fixes it.
-        if (title == (CStr)"MAX File Operations")
+        if (title == MSTR(_M("MAX File Operations")))
         {
             fileMenuItem->SetUseCustomTitle(true);
             bool custom = fileMenuItem->GetUseCustomTitle();
-            fileMenuItem->SetTitle("MAX File Opera&tions");
+            fileMenuItem->SetTitle(_M("MAX File Opera&tions"));
 
             pMenuMan->UpdateMenuBar();
         }
@@ -282,9 +277,9 @@ void AddPlasmaExportMenu()
         for (i = 0; i < fileMenu->NumItems(); i++)
         {
             IMenuItem* fileMenuItem = fileMenu->GetItem(i);
-            const TSTR& title = fileMenuItem->GetTitle();
+            auto title = fileMenuItem->GetTitle();
             // We want to add it after the "Export Selected" menu item
-            if (title == (CStr)"Export Selected...")
+            if (title == MSTR(_M("Export Selected...")))
             {
                 ActionTable* pActionTable = GetCOREInterface()->GetActionManager()->FindTable(kActionId);
                 if (!pActionTable)
@@ -315,7 +310,7 @@ void plCreateMenu()
     bool newlyRegistered = pMenuMan->RegisterMenuBarContext(kMyMenuContextId, kMenuName);
 
     // Is the Max menu version the most recent?
-    bool wrongVersion = GetPrivateProfileIntW(L"Menu", L"Version", 0, plMaxConfig::GetPluginIni().AsString().ToWchar()) < kMenuVersion;
+    bool wrongVersion = GetPrivateProfileIntW(L"Menu", L"Version", 0, plMaxConfig::GetPluginIni().WideString().data()) < kMenuVersion;
     if (wrongVersion)
     {
         // Delete the old version of the menu
@@ -325,8 +320,8 @@ void plCreateMenu()
 
         // Update the menu version
         wchar_t buf[12];
-        snwprintf(buf, arrsize(buf), L"%d", kMenuVersion);
-        WritePrivateProfileStringW(L"Menu", L"Version", buf, plMaxConfig::GetPluginIni().AsString().ToWchar());
+        swprintf(buf, std::size(buf), L"%d", kMenuVersion);
+        WritePrivateProfileStringW(L"Menu", L"Version", buf, plMaxConfig::GetPluginIni().WideString().data());
     }
     
     if (wrongVersion || newlyRegistered)
@@ -438,10 +433,9 @@ void plCreateMenu()
         pMenuMan->UpdateMenuBar();
 
         // Save the dang menu, in case Max crashes
-        const char *uiDir = GetCOREInterface()->GetDir(APP_UI_DIR);
-        char path[MAX_PATH];
-        sprintf(path, "%s\\%s", uiDir, "MaxMenus.mnu");
-        
+        auto uiDir = GetCOREInterface()->GetDir(APP_UI_DIR);
+        MSTR path;
+        path.printf(_M("%s\\MaxMenus.mnu"), uiDir);
         pMenuMan->SaveMenuFile(path);
     }
 

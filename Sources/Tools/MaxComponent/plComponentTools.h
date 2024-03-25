@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_COMPONENT_TOOLS_H
 #define PL_COMPONENT_TOOLS_H
 
-#include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
+#include "MaxMain/MaxCompat.h"
 
 class plComponentBase;
 class plKey;
@@ -55,12 +55,12 @@ class INode;
 class plResponderModifier;
 
 typedef plKey       (*PAddModFunc) (plMaxNodeBase *, plModifier *);
-typedef plKey       (*PGetNewKeyFunc) (const plString&, plModifier*, plLocation);
+typedef plKey       (*PGetNewKeyFunc) (const ST::string&, plModifier*, plLocation);
 typedef void        (*PSetActivatorKeyFunc) (plMaxNodeBase*, plMaxNodeBase*, plMaxNodeBase*, plResponderModifier*);
 typedef plKey       (*PGetAnimModKeyFunc) (plComponentBase*, plMaxNodeBase*);
-typedef plString    (*PGetAnimNameFunc) (plComponentBase*);
-typedef int         (*PGetMaterialAnimModKeyFunc) (Mtl* mtl, plMaxNodeBase* node, const plString &segName, hsTArray<plKey>& keys);
-typedef int         (*PGetSoundNameAndIndex) (plComponentBase*, plMaxNodeBase* node, const char*& name);
+typedef ST::string  (*PGetAnimNameFunc) (plComponentBase*);
+typedef int         (*PGetMaterialAnimModKeyFunc) (Mtl* mtl, plMaxNodeBase* node, const ST::string &segName, std::vector<plKey>& keys);
+typedef int         (*PGetSoundNameAndIndex) (plComponentBase*, plMaxNodeBase* node, const MCHAR*& name);
 
 //
 // A "toolbox" for external components to do their conversion with.  The idea
@@ -101,16 +101,16 @@ public:
             {}
 
     plKey AddModifier(plMaxNodeBase *node, plModifier *mod);
-    plKey GetNewKey(const plString &name, plModifier *mod, plLocation loc);
+    plKey GetNewKey(const ST::string &name, plModifier *mod, plLocation loc);
     void SetActivatorKey(plMaxNodeBase *activatorNode, plMaxNodeBase *responderNode, plMaxNodeBase *convertNode, plResponderModifier *responderLogic);
 
-    plString GetAnimCompAnimName(plComponentBase *comp);
+    ST::string GetAnimCompAnimName(plComponentBase *comp);
     plKey GetAnimCompModKey(plComponentBase *comp, plMaxNodeBase *node);
 //  plKey GetAnimCompLightModKey(plComponentBase *comp, plMaxNodeBase *node);
 
-    int GetMaterialAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString &segName, hsTArray<plKey>& keys);
+    int GetMaterialAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string &segName, std::vector<plKey>& keys);
 
-    int GetSoundNameAndIndex(plComponentBase* comp, plMaxNodeBase* node, const char*& name);
+    int GetSoundNameAndIndex(plComponentBase* comp, plMaxNodeBase* node, const MCHAR*& name);
 };
 
 #endif //PL_COMPONENT_TOOLS_H

@@ -52,8 +52,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plIntersect/plVolumeIsect.h"
 
 plModulator::plModulator()
-:   fVolume(nil),
-    fSoftDist(0)
+:   fVolume(),
+    fSoftDist()
 {
 }
 
@@ -111,13 +111,13 @@ float plModulator::Modulation(const hsPoint3& pos) const
 void plModulator::Read(hsStream* s, hsResMgr* mgr)
 {
     fVolume = plVolumeIsect::ConvertNoRef(mgr->ReadCreatable(s));
-    fSoftDist = s->ReadLEScalar();
+    fSoftDist = s->ReadLEFloat();
 }
 
 void plModulator::Write(hsStream* s, hsResMgr* mgr)
 {
     mgr->WriteCreatable(s, fVolume);
-    s->WriteLEScalar(fSoftDist);
+    s->WriteLEFloat(fSoftDist);
 }
 
 

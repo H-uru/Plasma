@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plResManagerHelper_h
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
 #include "plRegistryHelpers.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 
@@ -110,13 +109,13 @@ class plResManagerHelper : public hsKeyedObject
         CLASSNAME_REGISTER( plResManagerHelper );
         GETINTERFACE_ANY( plResManagerHelper, hsKeyedObject );
 
-        virtual bool    MsgReceive( plMessage *msg );
+        bool    MsgReceive(plMessage *msg) override;
     
-        virtual void    Read( hsStream *s, hsResMgr *mgr );
-        virtual void    Write( hsStream *s, hsResMgr *mgr );
+        void    Read(hsStream *s, hsResMgr *mgr) override;
+        void    Write(hsStream *s, hsResMgr *mgr) override;
 
-        void    Init( void );
-        void    Shutdown( void );
+        void    Init();
+        void    Shutdown();
 
         void    LoadAndHoldPageKeys( plRegistryPageNode *page );
 
@@ -126,7 +125,7 @@ class plResManagerHelper : public hsKeyedObject
         void    SetInShutdown(bool b) { fInShutdown = b; }
         bool    GetInShutdown() const { return fInShutdown; }
 
-        static plResManagerHelper   *GetInstance( void ) { return fInstance; }
+        static plResManagerHelper   *GetInstance() { return fInstance; }
 };
 
 //// Reffer Class ////////////////////////////////////////////////////////////

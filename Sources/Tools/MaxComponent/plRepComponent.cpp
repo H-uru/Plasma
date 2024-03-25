@@ -48,11 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentReg.h"
 #include "plMiscComponents.h"
 #include "MaxMain/plMaxNode.h"
-#include "resource.h"
+#include "MaxMain/MaxAPI.h"
 
-#include <dummy.h>
-#include <iparamm2.h>
-#pragma hdrstop
+#include "resource.h"
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 #include "MaxExport/plExportErrorMsg.h"
@@ -68,11 +66,11 @@ const Class_ID REPCOMP_CID(0x157c29f3, 0x18fa54cd);
 const Class_ID REPGROUP_CID(0x20ce74a2, 0x471b2386);
 
 static const int kNumQualities = 4;
-static const char* kQualityStrings[kNumQualities] = {
-    "Low",
-    "Medium",
-    "High",
-    "Ultra"
+static const TCHAR* kQualityStrings[kNumQualities] = {
+    _T("Low"),
+    _T("Medium"),
+    _T("High"),
+    _T("Ultra")
 };
 
 class plRepresentComp : public plComponent
@@ -83,14 +81,14 @@ public:
     };
 public:
     plRepresentComp();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     int GetQuality();
     int GetCapability();
@@ -105,7 +103,7 @@ public:
 class plRepresentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -122,21 +120,21 @@ public:
                 SendMessage(cbox, CB_SETCURSEL, map->GetParamBlock()->GetInt(plRepresentComp::kQuality), 0);
 
             }
-            return true;
+            return TRUE;
 
         case WM_COMMAND:
             switch( LOWORD(wParam) )
             {
             case IDC_COMP_REPRESENT_QUALITY:
-                map->GetParamBlock()->SetValue(plRepresentComp::kQuality, t, SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
+                map->GetParamBlock()->SetValue(plRepresentComp::kQuality, t, (int)SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
                 return TRUE;
             }
             break;
         }
 
-        return false;
+        return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plRepresentProc gRepresentProc;
 
@@ -151,9 +149,9 @@ ParamBlockDesc2 gRepresentBk
 
     plRepresentComp::kQuality,  _T("Quality"),  TYPE_INT,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plRepresentComp::plRepresentComp()
@@ -197,7 +195,7 @@ int plRepresentComp::GetCapability()
         plMaxNodeBase* node = GetTarget(iTarg);
         if( node )
         {
-            const char* name = node->GetName();
+            const MCHAR* name = node->GetName();
             int numComp = node->NumAttachedComponents();
             int iComp;
             for( iComp = 0; iComp < numComp; iComp++ )
@@ -205,7 +203,7 @@ int plRepresentComp::GetCapability()
                 plComponentBase* comp = node->GetAttachedComponent(iComp);
                 if( comp )
                 {
-                    const char* compName = comp->GetINode()->GetName();
+                    const MCHAR* compName = comp->GetINode()->GetName();
                     int cap = comp->GetMinCap();
                     if( cap > maxCap )
                         maxCap = cap;
@@ -225,7 +223,6 @@ void plRepresentComp::SetLoadMask(const plLoadMask& m)
         plMaxNodeBase* node = GetTarget(iTarg);
         if( node )
         {
-            const char* nodeName = node->GetName();
             node->AddLoadMask(m);
             plLoadMask x = node->GetLoadMask();
             x |= m;
@@ -235,17 +232,17 @@ void plRepresentComp::SetLoadMask(const plLoadMask& m)
 
 plRepresentComp* plRepresentComp::GetComp(INode* node)
 {
-    if( node == nil )
-        return nil;
+    if (node == nullptr)
+        return nullptr;
 
     plComponentBase *comp = ((plMaxNodeBase*)node)->ConvertToComponent();
-    if( comp == nil )
-        return nil;
+    if (comp == nullptr)
+        return nullptr;
 
     if( comp->ClassID() == REPCOMP_CID )
         return (plRepresentComp*) comp;
 
-    return nil;
+    return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -267,14 +264,14 @@ public:
     void CleanDeadNodes();
 public:
     plRepGroupComp();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     bool Validate(plErrorMsg* pErrMsg);
 };
@@ -293,14 +290,12 @@ void plRepGroupComp::CleanDeadNodes()
 class plRepGroupProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
         case WM_INITDIALOG:
-            {
-            }
-            return true;
+            return TRUE;
 
         case WM_COMMAND:
             if( HIWORD(wParam) == BN_CLICKED )
@@ -363,9 +358,9 @@ public:
             break;
         }
 
-        return false;
+        return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plRepGroupProc gRepGroupProc;
 
@@ -379,9 +374,9 @@ ParamBlockDesc2 gRepGroupBk
 
     plRepGroupComp::kReps,  _T("Reps"), TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_REPS, 0, 0, IDC_DEL_REPS,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plRepGroupComp::plRepGroupComp()
@@ -404,13 +399,13 @@ void plRepGroupComp::IGetQC(int quals[], int caps[])
 bool plRepGroupComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     const int numReps = fCompPB->Count(kReps);
-    hsTArray<int> quals(numReps);
-    hsTArray<int> caps(numReps);
-    hsTArray<plLoadMask> masks(numReps);
+    std::vector<int> quals(numReps);
+    std::vector<int> caps(numReps);
+    std::vector<plLoadMask> masks(numReps);
 
-    IGetQC(quals.AcquireArray(), caps.AcquireArray());
+    IGetQC(quals.data(), caps.data());
 
-    ComputeAndValidate(pErrMsg, quals.AcquireArray(), caps.AcquireArray(), masks.AcquireArray());
+    ComputeAndValidate(pErrMsg, quals.data(), caps.data(), masks.data());
 
     int i;
     for( i = 0; i < numReps; i++ )
@@ -449,9 +444,11 @@ bool plRepGroupComp::ComputeAndValidate(plErrorMsg* pErrMsg, int quals[], int ca
         {
             if( preVal & (1 << i) )
             {
-                char buff[256];
+                TCHAR buff[256];
                 INode* rep = fCompPB->GetINode(kReps, TimeValue(0), i);
-                sprintf(buff, "Rep %d - %s is obscured by an earlier representation in preVal", i, rep ? rep->GetName() : "Unknown");
+                _sntprintf(buff, std::size(buff),
+                    _T("Rep %d - %s is obscured by an earlier representation in preVal"),
+                    i, rep ? rep->GetName() : _T("Unknown"));
                 pErrMsg->Set(true, GetINode()->GetName(), buff).Show();
                 pErrMsg->Set(false);
             }
@@ -469,9 +466,11 @@ bool plRepGroupComp::ComputeAndValidate(plErrorMsg* pErrMsg, int quals[], int ca
         {
             if( !(preVal & (1 << i)) && (postVal & (1 << i)) )
             {
-                char buff[256];
+                TCHAR buff[256];
                 INode* rep = fCompPB->GetINode(kReps, TimeValue(0), i);
-                sprintf(buff, "Rep %d - %s is obscured by an earlier representation in postVal", i, rep ? rep->GetName() : "Unknown");
+                _sntprintf(buff, std::size(buff),
+                    _T("Rep %d - %s is obscured by an earlier representation in postVal"),
+                    i, rep ? rep->GetName() : _T("Unknown"));
                 pErrMsg->Set(true, GetINode()->GetName(), buff).Show();
                 pErrMsg->Set(false);
             }
@@ -486,11 +485,11 @@ bool plRepGroupComp::Validate(plErrorMsg* pErrMsg)
     CleanDeadNodes();
 
     const int numReps = fCompPB->Count(kReps);
-    hsTArray<int> quals(numReps);
-    hsTArray<int> caps(numReps);
-    hsTArray<plLoadMask> masks(numReps);
+    std::vector<int> quals(numReps);
+    std::vector<int> caps(numReps);
+    std::vector<plLoadMask> masks(numReps);
 
-    IGetQC(quals.AcquireArray(), caps.AcquireArray());
+    IGetQC(quals.data(), caps.data());
 
-    return ComputeAndValidate(pErrMsg, quals.AcquireArray(), caps.AcquireArray(), masks.AcquireArray());
+    return ComputeAndValidate(pErrMsg, quals.data(), caps.data(), masks.data());
 }

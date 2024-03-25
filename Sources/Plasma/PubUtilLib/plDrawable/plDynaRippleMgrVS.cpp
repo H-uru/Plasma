@@ -62,6 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/plLayerInterface.h"
 
 #include "plMessage/plDynaDecalEnableMsg.h"
+#include "pnMessage/plRefMsg.h"
 #include "plMessage/plRippleShapeMsg.h"
 
 #include "plMessage/plAvatarMsg.h"
@@ -69,13 +70,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 
 #include "pnEncryption/plRandom.h"
-static plRandom sRand;
 
 #include "plTweak.h"
 
-int plDynaRippleVSMgr::INewDecal()
+size_t plDynaRippleVSMgr::INewDecal()
 {
-    int idx = fDecals.GetCount();
+    size_t idx = fDecals.size();
 
     plDynaRippleVS* rip = new plDynaRippleVS();
     rip->fC1U = fInitUVW.fX;
@@ -84,14 +84,14 @@ int plDynaRippleVSMgr::INewDecal()
     rip->fC1V = fInitUVW.fY;
     rip->fC2V = (fInitUVW.fY - fFinalUVW.fY) / (fLifeSpan * fFinalUVW.fY);
 
-    fDecals.Append(rip);
+    fDecals.emplace_back(rip);
 
     return idx;
 }
 
 
 plDynaRippleVSMgr::plDynaRippleVSMgr()
-:   fWaveSetBase(nil)
+:   fWaveSetBase()
 {
 }
 
@@ -128,7 +128,7 @@ bool plDynaRippleVSMgr::MsgReceive(plMessage* msg)
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fWaveSetBase = plWaveSetBase::ConvertNoRef(refMsg->GetRef());
             else
-                fWaveSetBase = nil;
+                fWaveSetBase = nullptr;
             return true;
         }
     }
@@ -164,6 +164,8 @@ bool plDynaRippleVSMgr::ICheckRTMat()
 
 bool plDynaRippleVSMgr::IRippleFromShape(const plPrintShape* shape, bool force)
 {
+    static plRandom sRand;
+
     if( !ICheckRTMat() )
         return false;
 

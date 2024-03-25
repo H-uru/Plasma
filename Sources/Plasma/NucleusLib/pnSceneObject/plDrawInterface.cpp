@@ -61,7 +61,7 @@ plDrawInterface::~plDrawInterface()
 
 }
 
-void plDrawInterface::SetDrawableMeshIndex( uint8_t which, uint32_t index ) 
+void plDrawInterface::SetDrawableMeshIndex(size_t which, size_t index)
 {
     ICheckDrawableIndex(which);
 
@@ -72,21 +72,19 @@ void plDrawInterface::SetProperty(int prop, bool on)
 {
     plObjInterface::SetProperty(prop, on);
 
-    int i;
-    for( i = 0; i < fDrawables.GetCount(); i++ )
+    for (size_t i = 0; i < fDrawables.size(); i++)
     {
         if( fDrawables[i] )
             fDrawables[i]->SetProperty(fDrawableIndices[i], prop, on);
     }
 }
 
-void plDrawInterface::ISetSceneNode(plKey newNode)
+void plDrawInterface::ISetSceneNode(const plKey& newNode)
 {
-    int i;
-    for( i = 0; i < fDrawables.GetCount(); i++ )
+    for (plDrawable* draw : fDrawables)
     {
-        if( fDrawables[i] )
-            fDrawables[i]->SetSceneNode(newNode);
+        if (draw)
+            draw->SetSceneNode(newNode);
     }
 }
 
@@ -94,8 +92,7 @@ void plDrawInterface::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
 {
     if( !GetProperty(kDisable) )
     {
-        int i;
-        for( i = 0; i < fDrawables.GetCount(); i++ )
+        for (size_t i = 0; i < fDrawables.size(); i++)
         {
             if( fDrawables[i] )
                 fDrawables[i]->SetTransform( fDrawableIndices[i], l2w, w2l );
@@ -107,8 +104,7 @@ const hsBounds3Ext plDrawInterface::GetLocalBounds() const
 {
     hsBounds3Ext retVal;
     retVal.MakeEmpty();
-    int i;
-    for( i = 0; i < fDrawables.GetCount(); i++ )
+    for (size_t i = 0; i < fDrawables.size(); i++)
     {
         if( fDrawables[i] )
             retVal.Union(&fDrawables[i]->GetLocalBounds(fDrawableIndices[i]));
@@ -120,8 +116,7 @@ const hsBounds3Ext plDrawInterface::GetWorldBounds() const
 {
     hsBounds3Ext retVal;
     retVal.MakeEmpty();
-    int i;
-    for( i = 0; i < fDrawables.GetCount(); i++ )
+    for (size_t i = 0; i < fDrawables.size(); i++)
     {
         if( fDrawables[i] )
             retVal.Union(&fDrawables[i]->GetWorldBounds(fDrawableIndices[i]));
@@ -133,8 +128,7 @@ const hsBounds3Ext plDrawInterface::GetMaxWorldBounds() const
 {
     hsBounds3Ext retVal;
     retVal.MakeEmpty();
-    int i;
-    for( i = 0; i < fDrawables.GetCount(); i++ )
+    for (size_t i = 0; i < fDrawables.size(); i++)
     {
         if( fDrawables[i] )
             retVal.Union(&fDrawables[i]->GetMaxWorldBounds(fDrawableIndices[i]));
@@ -146,11 +140,11 @@ void plDrawInterface::Read(hsStream* s, hsResMgr* mgr)
 {
     plObjInterface::Read(s, mgr);
 
-    int nDrawables = s->ReadLE32();
+    uint32_t nDrawables = s->ReadLE32();
     if (nDrawables > 0) 
         ICheckDrawableIndex(nDrawables-1);
-    int i;
-    for( i = 0; i < fDrawables.GetCount(); i++ )
+
+    for (size_t i = 0; i < fDrawables.size(); i++)
     {
         fDrawableIndices[i] = s->ReadLE32();
 
@@ -158,9 +152,9 @@ void plDrawInterface::Read(hsStream* s, hsResMgr* mgr)
         mgr->ReadKeyNotifyMe(s,refMsg, plRefFlags::kActiveRef);
     }
 
-    int nReg = s->ReadLE32();
-    fRegions.SetCountAndZero(nReg);
-    for( i = 0; i < nReg; i++ )
+    uint32_t nReg = s->ReadLE32();
+    fRegions.resize(nReg);
+    for (uint32_t i = 0; i < nReg; i++)
     {
         plGenRefMsg* refMsg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefVisRegion);
         mgr->ReadKeyNotifyMe(s, refMsg, plRefFlags::kActiveRef);
@@ -171,30 +165,26 @@ void plDrawInterface::Write(hsStream* s, hsResMgr* mgr)
 {
     plObjInterface::Write(s, mgr);
 
-    s->WriteLE32(fDrawables.GetCount());
-    int i;
-    for( i = 0; i < fDrawables.GetCount(); i++ )
+    s->WriteLE32((uint32_t)fDrawables.size());
+    for (size_t i = 0; i < fDrawables.size(); i++)
     {
         s->WriteLE32(fDrawableIndices[i]);
         
         mgr->WriteKey(s, fDrawables[i]);
     }
     
-    s->WriteLE32(fRegions.GetCount());
-    for( i = 0; i < fRegions.GetCount(); i++ )
-    {
-        mgr->WriteKey(s, fRegions[i]);
-    }
+    s->WriteLE32((uint32_t)fRegions.size());
+    for (hsKeyedObject* region : fRegions)
+        mgr->WriteKey(s, region);
 }
 
 //// ReleaseData //////////////////////////////////////////////////////////////
 //  Called by SceneViewer to release the data for this given object (when
 //  its parent sceneObject is deleted).
 
-void    plDrawInterface::ReleaseData( void )
+void    plDrawInterface::ReleaseData()
 {
-    int i;
-    for( i = 0; i < fDrawables.GetCount(); i++ )
+    for (size_t i = 0; i < fDrawables.size(); i++)
     {
         if( fDrawables[i] && (fDrawableIndices[i] != uint32_t(-1)) )
         {
@@ -203,26 +193,21 @@ void    plDrawInterface::ReleaseData( void )
             diMsg->Send();
         }
         //fDrawableIndices[i] = uint32_t(-1);
-        fDrawables.Reset();
-        fDrawableIndices.Reset();
     }
+    fDrawables.clear();
+    fDrawableIndices.clear();
 }
 
-void plDrawInterface::ICheckDrawableIndex(uint8_t which)
+void plDrawInterface::ICheckDrawableIndex(size_t which)
 {
-    if( which >= fDrawableIndices.GetCount() )
+    if (which >= fDrawableIndices.size())
     {
-        fDrawables.ExpandAndZero(which+1);
-        
-        int n = fDrawableIndices.GetCount();
-        fDrawableIndices.ExpandAndZero(which+1);
-        int i;
-        for( i = n; i <= which; i++ )
-            fDrawableIndices[i] = uint32_t(-1);
+        fDrawables.resize(which + 1);
+        fDrawableIndices.resize(which + 1, uint32_t(-1));
     }
 }
 
-void plDrawInterface::ISetDrawable(uint8_t which, plDrawable* dr)
+void plDrawInterface::ISetDrawable(size_t which, plDrawable* dr)
 {
     ICheckDrawableIndex(which);
     fDrawables[which] = dr;
@@ -246,10 +231,11 @@ void plDrawInterface::ISetDrawable(uint8_t which, plDrawable* dr)
 
 void plDrawInterface::IRemoveDrawable(plDrawable *dr)
 {
-    int idx = fDrawables.Find(dr);
-    if( fDrawables.kMissingIndex != idx )
+    auto iter = std::find(fDrawables.cbegin(), fDrawables.cend(), dr);
+    if (iter != fDrawables.cend())
     {
-        fDrawables[idx] = nil;
+        size_t idx = std::distance(fDrawables.cbegin(), iter);
+        fDrawables[idx] = nullptr;
         fDrawableIndices[idx] = uint32_t(-1);
     }
     else
@@ -260,42 +246,39 @@ void plDrawInterface::IRemoveDrawable(plDrawable *dr)
 
 void plDrawInterface::ISetVisRegion(hsKeyedObject* reg, bool on)
 {
-    int i;
-    for( i = 0; i < fDrawables.GetCount(); i++ )
+    for (size_t i = 0; i < fDrawables.size(); i++)
     {
         if( fDrawables[i] && (fDrawableIndices[i] != uint32_t(-1)) )
         {
             fDrawables[i]->SetDISpanVisSet(fDrawableIndices[i], reg, on);
         }
     }
-    int idx = fRegions.Find(reg);
+    auto idx = std::find(fRegions.cbegin(), fRegions.cend(), reg);
     if( on )
     {
-        if( idx == fRegions.kMissingIndex )
-            fRegions.Append(reg);
+        if (idx == fRegions.cend())
+            fRegions.emplace_back(reg);
     }
     else
     {
-        if( idx != fRegions.kMissingIndex )
-            fRegions.Remove(idx);
+        if (idx != fRegions.cend())
+            fRegions.erase(idx);
     }
-
 }
 
-void plDrawInterface::ISetVisRegions(int iDraw)
+void plDrawInterface::ISetVisRegions(size_t iDraw)
 {
     if( fDrawables[iDraw] && (fDrawableIndices[iDraw] != uint32_t(-1)) )
     {
-        int i;
-        for( i = 0; i < fRegions.GetCount(); i++ )
+        for (hsKeyedObject* region : fRegions)
         {
-            fDrawables[iDraw]->SetDISpanVisSet(fDrawableIndices[iDraw], fRegions[i], true);
+            fDrawables[iDraw]->SetDISpanVisSet(fDrawableIndices[iDraw], region, true);
         }
     }
 }
 
 // Export only. Use messages for runtime
-void plDrawInterface::SetDrawable(uint8_t which, plDrawable *dr)
+void plDrawInterface::SetDrawable(size_t which, plDrawable *dr)
 {
     if( dr )
     {
@@ -307,7 +290,7 @@ void plDrawInterface::SetDrawable(uint8_t which, plDrawable *dr)
     }
     else
     {
-        ISetDrawable(which, nil);
+        ISetDrawable(which, nullptr);
     }
 }
 
@@ -325,7 +308,7 @@ bool plDrawInterface::MsgReceive(plMessage* msg)
             }
             else
             {
-                ISetDrawable((uint8_t)intRefMsg->fWhich, plDrawable::ConvertNoRef(intRefMsg->GetRef()));
+                ISetDrawable(intRefMsg->fWhich, plDrawable::ConvertNoRef(intRefMsg->GetRef()));
             }
             return true;
         default:
@@ -359,28 +342,28 @@ bool plDrawInterface::MsgReceive(plMessage* msg)
     return plObjInterface::MsgReceive(msg);
 }
 
-void    plDrawInterface::SetUpForParticleSystem( uint32_t maxNumEmitters, uint32_t maxNumParticles, hsGMaterial *material, hsTArray<plKey>& lights )
+void plDrawInterface::SetUpForParticleSystem(uint32_t maxNumEmitters, uint32_t maxNumParticles,
+                                             hsGMaterial *material, const std::vector<plKey>& lights)
 {
-    hsAssert( fDrawables[0] != nil, "No drawable to use for particle system!" );
+    hsAssert(fDrawables[0] != nullptr, "No drawable to use for particle system!");
     SetDrawableMeshIndex( 0, fDrawables[0]->CreateParticleSystem( maxNumEmitters, maxNumParticles, material ) );
-    int i;
-    for( i = 0; i < lights.GetCount(); i++ )
+    for (const plKey& light : lights)
     {
-        hsgResMgr::ResMgr()->AddViaNotify(lights[i], new plGenRefMsg(fDrawables[0]->GetKey(), plRefMsg::kOnCreate, fDrawableIndices[0], plDrawable::kMsgPermaLightDI), plRefFlags::kPassiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(light, new plGenRefMsg(fDrawables[0]->GetKey(), plRefMsg::kOnCreate, fDrawableIndices[0], plDrawable::kMsgPermaLightDI), plRefFlags::kPassiveRef);
     }
 
     ISetVisRegions(0);
 }
 
-void    plDrawInterface::ResetParticleSystem( void )
+void    plDrawInterface::ResetParticleSystem()
 {
-    hsAssert( fDrawables[0] != nil, "No drawable to use for particle system!" );
+    hsAssert(fDrawables[0] != nullptr, "No drawable to use for particle system!");
     fDrawables[0]->ResetParticleSystem( fDrawableIndices[0] );
 }
 
 void    plDrawInterface::AssignEmitterToParticleSystem( plParticleEmitter *emitter )
 {
-    hsAssert( fDrawables[0] != nil, "No drawable to use for particle system!" );
+    hsAssert(fDrawables[0] != nullptr, "No drawable to use for particle system!");
     fDrawables[0]->AssignEmitterToParticleSystem( fDrawableIndices[0], emitter );
 }
 

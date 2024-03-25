@@ -41,14 +41,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
 
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "plMiscComponents.h"
 #include "MaxMain/plMaxNode.h"
 #include "resource.h"
-#pragma hdrstop
 
 
 
@@ -59,26 +57,26 @@ void DummyCodeIncludeFuncTemplate()
 {
 }
 
-static const char *GetPBString(IParamBlock2 *pb, ParamID id)
+static const MCHAR* GetPBString(IParamBlock2 *pb, ParamID id)
 {
-    const char *str = pb->GetStr(id, 0);
-    if (str && *str == '\0')
-        return nil;
+    const MCHAR* str = pb->GetStr(id, 0);
+    if (str && *str == _M('\0'))
+        return nullptr;
     return str;
 }
 
 class plTemplateComponent : public plComponent
 {
 protected:
-    const char* IGetAgeName(plMaxNode *node);
+    const MCHAR* IGetAgeName(plMaxNode *node);
 
 public:
     plTemplateComponent();
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 CLASS_DESC(plTemplateComponent, gTemplateDesc, "Template", "CloneTemplate", "Clone", Class_ID(0x6742590b, 0x14fd2135))
@@ -92,7 +90,7 @@ ParamBlockDesc2 gTemplateBlk
 (
     plComponent::kBlkComp, _T("Template"), 0, &gTemplateDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 
-    end
+    p_end
 );
 
 
@@ -102,7 +100,7 @@ plTemplateComponent::plTemplateComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-const char* plTemplateComponent::IGetAgeName(plMaxNode *node)
+const MCHAR* plTemplateComponent::IGetAgeName(plMaxNode *node)
 {
     uint32_t numComps = node->NumAttachedComponents();
     for (uint32_t i = 0; i < numComps; i++)
@@ -115,7 +113,7 @@ const char* plTemplateComponent::IGetAgeName(plMaxNode *node)
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 #include "MaxMain/plMaxNodeData.h"
@@ -124,7 +122,7 @@ const char* plTemplateComponent::IGetAgeName(plMaxNode *node)
 // of properties on the MaxNode, as it's still indeterminant.
 bool plTemplateComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    const char* ageName = IGetAgeName(node);
+    const MCHAR* ageName = IGetAgeName(node);
     if (!ageName)
         return false;
 
@@ -177,8 +175,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 CLASS_DESC(plSpawnComponent, gSpawnDesc, "Instance", "CloneInst", "Clone", Class_ID(0x5702450d, 0x2c636131))
@@ -187,13 +185,13 @@ ParamBlockDesc2 gSpawnBlk
 (
     plComponent::kBlkComp, _T("Spawn"), 0, &gSpawnDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_TEMPLATE, IDS_COMP_CLONE_INST, 0, 0, NULL,
+    IDD_COMP_TEMPLATE, IDS_COMP_CLONE_INST, 0, 0, nullptr,
 
     kTemplateName,  _T("name"),     TYPE_STRING,    0, 0,
         p_ui,       TYPE_EDITBOX, IDC_NAME,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 
@@ -209,7 +207,8 @@ bool plSpawnComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (!GetPBString(fCompPB, kTemplateName))
     {
-        pErrMsg->Set(true, "Clone Instance Component", "Clone Instance component on node %s can't convert because it doesn't have a name", node->GetName());
+        pErrMsg->Set(true, "Clone Instance Component",
+            ST::format("Clone Instance component on node {} can't convert because it doesn't have a name", node->GetName()));
         pErrMsg->Set(false);
         return false;
     }
@@ -222,7 +221,7 @@ bool plSpawnComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 
 bool plSpawnComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    const char *templateName = GetPBString(fCompPB, kTemplateName);
+    const MCHAR* templateName = GetPBString(fCompPB, kTemplateName);
     if (!templateName)
         return false;
 

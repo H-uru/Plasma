@@ -75,13 +75,13 @@ plBitmap::plBitmap()
     fFlags = 0;
     fCompressionType = kUncompressed;
     fUncompressedInfo.fType = UncompressedInfo::kRGB8888;
-    fDeviceRef = nil;
+    fDeviceRef = nullptr;
     fLowModifiedTime = fHighModifiedTime = 0;
 }
 
 plBitmap::~plBitmap()
 {
-    if( fDeviceRef != nil )
+    if (fDeviceRef != nullptr)
         hsRefCnt_SafeUnRef( fDeviceRef );
 }
 
@@ -113,7 +113,8 @@ uint32_t  plBitmap::Read( hsStream *s )
     fFlags = s->ReadLE16();
     fCompressionType = s->ReadByte();
 
-    if(( fCompressionType == kUncompressed )||( fCompressionType == kJPEGCompression ))
+    if( fCompressionType == kUncompressed || fCompressionType == kJPEGCompression ||
+        fCompressionType == kPNGCompression )
     {
         fUncompressedInfo.fType = s->ReadByte();
         read++;
@@ -145,7 +146,8 @@ uint32_t  plBitmap::Write( hsStream *s )
     s->WriteLE16( fFlags );
     s->WriteByte( fCompressionType );
 
-    if(( fCompressionType == kUncompressed )||(fCompressionType == kJPEGCompression ))
+    if( fCompressionType == kUncompressed || fCompressionType == kJPEGCompression ||
+        fCompressionType == kPNGCompression )
     {
         s->WriteByte( fUncompressedInfo.fType );
         written++;

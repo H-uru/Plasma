@@ -48,11 +48,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIListElement_h
 #define _pfGUIListElement_h
 
+#include <string_theory/string>
+
 #include "pfGUIControlMod.h"
 
-class plDynamicTextMap;
+#include "pnKeyedObject/plKey.h"
 
+class plDynamicTextMap;
 class pfGUISkin;
+
 class pfGUIListElement
 {
     protected:
@@ -75,8 +79,10 @@ class pfGUIListElement
             kTreeRoot
         };
 
-        pfGUIListElement( uint8_t type ) : fType( type ), fSelected( false ), fCollapsed( false ), fIndentLevel( 0 ) {}
-        virtual ~pfGUIListElement() {}
+        pfGUIListElement( uint8_t type )
+            : fType(type), fSelected(), fCollapsed(), fIndentLevel(),
+              fColors(), fSkin() { }
+        virtual ~pfGUIListElement() { }
         
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
@@ -86,22 +92,22 @@ class pfGUIListElement
         virtual int     CompareTo( pfGUIListElement *rightSide ) = 0;
 
         virtual void    SetSelected( bool sel ) { fSelected = sel; }
-        virtual bool    IsSelected( void ) { return fSelected; }
+        virtual bool    IsSelected() { return fSelected; }
 
-        virtual bool    CanBeDragged( void ) { return false; }
+        virtual bool    CanBeDragged() { return false; }
 
         // Return true here if you need the list refreshed
         virtual bool    MouseClicked( uint16_t localX, uint16_t localY ) { return false; }
 
-        uint8_t   GetType( void ) { return fType; }
+        uint8_t   GetType() { return fType; }
 
         void    SetColorScheme( pfGUIColorScheme *scheme ) { fColors = scheme; }
         void    SetSkin( pfGUISkin *skin ) { fSkin = skin; }
 
-        bool            IsCollapsed( void ) const { return fCollapsed; }
+        bool            IsCollapsed() const { return fCollapsed; }
         virtual void    SetCollapsed( bool c ) { fCollapsed = c; }
 
-        uint8_t   GetIndentLevel( void ) const { return fIndentLevel; }
+        uint8_t   GetIndentLevel() const { return fIndentLevel; }
         void    SetIndentLevel( uint8_t i ) { fIndentLevel = i; }
 };
 
@@ -117,28 +123,28 @@ class pfGUIListText : public pfGUIListElement
         };
 
     protected:
-        
-        plString    fText;
+
+        ST::string  fText;
         uint8_t     fJustify;   // This is not our JustifyTypes, but from plDynamicTextMap
 
     public:
 
         pfGUIListText();
-        pfGUIListText( const plString &text );
+        pfGUIListText( ST::string text );
         
-        virtual void    Read( hsStream *s, hsResMgr *mgr );
-        virtual void    Write( hsStream *s, hsResMgr *mgr );
+        void    Read(hsStream *s, hsResMgr *mgr) override;
+        void    Write(hsStream *s, hsResMgr *mgr) override;
 
-        virtual bool    Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight );
-        virtual void    GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height );
-        virtual int     CompareTo( pfGUIListElement *rightSide );
+        bool    Draw(plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight) override;
+        void    GetSize(plDynamicTextMap *textGen, uint16_t *width, uint16_t *height) override;
+        int     CompareTo(pfGUIListElement *rightSide) override;
 
-        virtual bool    CanBeDragged( void ) { return true; }
+        bool    CanBeDragged() override { return true; }
         virtual void    SetJustify( JustifyTypes justify );
 
         // These two are virtual so we can derive and override them
-        virtual plString    GetText() const { return fText; }
-        virtual void        SetText(const plString &text) { fText = text; }
+        virtual ST::string  GetText() const { return fText; }
+        virtual void        SetText(ST::string text) { fText = std::move(text); }
 };
 
 class pfGUIListPicture : public pfGUIListElement
@@ -146,23 +152,23 @@ class pfGUIListPicture : public pfGUIListElement
     protected:
 
         plKey   fMipmapKey;
-        uint8_t   fBorderSize;    // Defaults to 2
+        uint8_t fBorderSize;    // Defaults to 2
         bool    fRespectAlpha;
 
     public:
 
-        pfGUIListPicture();
+        pfGUIListPicture() : pfGUIListElement(kPicture), fRespectAlpha(), fBorderSize(2), fMipmapKey() { }
         pfGUIListPicture( plKey mipKey, bool respectAlpha );
         virtual ~pfGUIListPicture(); 
         
-        virtual void    Read( hsStream *s, hsResMgr *mgr );
-        virtual void    Write( hsStream *s, hsResMgr *mgr );
+        void    Read(hsStream *s, hsResMgr *mgr) override;
+        void    Write(hsStream *s, hsResMgr *mgr) override;
 
-        virtual bool    Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight );
-        virtual void    GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height );
-        virtual int     CompareTo( pfGUIListElement *rightSide );
+        bool    Draw(plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight) override;
+        void    GetSize(plDynamicTextMap *textGen, uint16_t *width, uint16_t *height) override;
+        int     CompareTo(pfGUIListElement *rightSide) override;
 
-        virtual bool    CanBeDragged( void ) { return false; }
+        bool    CanBeDragged() override { return false; }
 
         void    SetBorderSize( uint32_t size ) { fBorderSize = (uint8_t)size; }
         void    SetRespectAlpha( bool r ) { fRespectAlpha = r; }
@@ -172,39 +178,39 @@ class pfGUIListPicture : public pfGUIListElement
 class pfGUIListTreeRoot : public pfGUIListElement
 {
     protected:
-        
-        plString        fText;
+
+        ST::string      fText;
         bool            fShowChildren;
 
-        hsTArray<pfGUIListElement *>    fChildren;
+        std::vector<pfGUIListElement *> fChildren;
 
     public:
 
-        pfGUIListTreeRoot();
-        pfGUIListTreeRoot( const plString &text );
+        pfGUIListTreeRoot() : pfGUIListElement(kTreeRoot), fShowChildren(true) { }
+        pfGUIListTreeRoot( ST::string text) : pfGUIListElement(kTreeRoot), fShowChildren(true), fText(std::move(text)) { }
         
-        virtual void    Read( hsStream *s, hsResMgr *mgr );
-        virtual void    Write( hsStream *s, hsResMgr *mgr );
+        void    Read(hsStream *s, hsResMgr *mgr) override;
+        void    Write(hsStream *s, hsResMgr *mgr) override;
 
-        virtual bool    Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight );
-        virtual void    GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height );
-        virtual int     CompareTo( pfGUIListElement *rightSide );
+        bool    Draw(plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight) override;
+        void    GetSize(plDynamicTextMap *textGen, uint16_t *width, uint16_t *height) override;
+        int     CompareTo(pfGUIListElement *rightSide) override;
 
-        virtual bool    MouseClicked( uint16_t localX, uint16_t localY );
+        bool    MouseClicked(uint16_t localX, uint16_t localY) override;
 
-        const plString   GetTitle() const { return fText; }
-        void        SetTitle(const plString &text) { fText = text; }
+        ST::string GetTitle() const { return fText; }
+        void SetTitle(ST::string text) { fText = std::move(text); }
 
-        uint32_t            GetNumChildren() const { return fChildren.GetCount(); }
-        pfGUIListElement    *GetChild( uint32_t i ) const { return fChildren[ i ]; }
+        size_t              GetNumChildren() const { return fChildren.size(); }
+        pfGUIListElement    *GetChild(size_t i) const { return fChildren[i]; }
         
         void        AddChild( pfGUIListElement *el );
-        void        RemoveChild( uint32_t idx );
+        void        RemoveChild(size_t idx);
 
-        virtual void    SetCollapsed( bool c );
+        void    SetCollapsed(bool c) override;
 
         void        ShowChildren( bool s );
-        bool        IsShowingChildren( void ) const { return fShowChildren; }
+        bool        IsShowingChildren() const { return fShowChildren; }
 };
 
 //// pfGUIDropTargetProc /////////////////////////////////////////////////////
@@ -232,8 +238,8 @@ class pfGUIDropTargetProc
         virtual void    Eat( pfGUIListElement *element, pfGUIControlMod *source, pfGUIControlMod *parent ) = 0;
 
         // ONLY THE GUI SYSTEM SHOULD CALL THESE
-        void    IncRef( void ) { fRefCnt++; }
-        bool    DecRef( void ) { fRefCnt--; return ( fRefCnt > 0 ) ? false : true; }
+        void    IncRef() { fRefCnt++; }
+        bool    DecRef() { fRefCnt--; return ( fRefCnt > 0 ) ? false : true; }
 };
 
 #endif // _pfGUIListElement_h

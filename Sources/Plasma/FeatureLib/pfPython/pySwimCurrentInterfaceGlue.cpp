@@ -40,11 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pySwimCurrentInterface.h"
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptSwimCurrentInterface, pySwimCurrentInterface);
@@ -54,7 +53,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptSwimCurrentInterface)
 
 PYTHON_INIT_DEFINITION(ptSwimCurrentInterface, args, keywords)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -197,10 +196,11 @@ PYTHON_START_GETSET_TABLE(ptSwimCurrentInterface)
 PYTHON_END_GETSET_TABLE;
 
 // Type structure definition
-#define ptSwimCurrentInterface_COMPARE          PYTHON_NO_COMPARE
 #define ptSwimCurrentInterface_AS_NUMBER        PYTHON_NO_AS_NUMBER
 #define ptSwimCurrentInterface_AS_SEQUENCE      PYTHON_NO_AS_SEQUENCE
 #define ptSwimCurrentInterface_AS_MAPPING       PYTHON_NO_AS_MAPPING
+#define ptSwimCurrentInterface_GETATTRO         PYTHON_NO_GETATTRO
+#define ptSwimCurrentInterface_SETATTRO         PYTHON_NO_SETATTRO
 #define ptSwimCurrentInterface_STR              PYTHON_NO_STR
 #define ptSwimCurrentInterface_RICH_COMPARE     PYTHON_NO_RICH_COMPARE
 #define ptSwimCurrentInterface_GETSET           PYTHON_DEFAULT_GETSET(ptSwimCurrentInterface)
@@ -210,14 +210,14 @@ PLASMA_CUSTOM_TYPE(ptSwimCurrentInterface, "Params: key\nCreates a new ptSwimCur
 // required functions for PyObject interoperability
 PyObject *pySwimCurrentInterface::New(plKey key)
 {
-    ptSwimCurrentInterface *newObj = (ptSwimCurrentInterface*)ptSwimCurrentInterface_type.tp_new(&ptSwimCurrentInterface_type, NULL, NULL);
-    newObj->fThis->fSwimCurrentKey = key;
+    ptSwimCurrentInterface *newObj = (ptSwimCurrentInterface*)ptSwimCurrentInterface_type.tp_new(&ptSwimCurrentInterface_type, nullptr, nullptr);
+    newObj->fThis->fSwimCurrentKey = std::move(key);
     return (PyObject*)newObj;
 }
 
 PyObject *pySwimCurrentInterface::New(pyKey& key)
 {
-    ptSwimCurrentInterface *newObj = (ptSwimCurrentInterface*)ptSwimCurrentInterface_type.tp_new(&ptSwimCurrentInterface_type, NULL, NULL);
+    ptSwimCurrentInterface *newObj = (ptSwimCurrentInterface*)ptSwimCurrentInterface_type.tp_new(&ptSwimCurrentInterface_type, nullptr, nullptr);
     newObj->fThis->fSwimCurrentKey = key.getKey();
     return (PyObject*)newObj;
 }

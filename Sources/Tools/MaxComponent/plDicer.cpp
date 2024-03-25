@@ -41,11 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
 
-#include <max.h>
-#include <meshdlib.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
 
 #include "plDicer.h"
 

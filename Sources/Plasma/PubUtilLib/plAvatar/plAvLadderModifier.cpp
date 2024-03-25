@@ -39,39 +39,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plPhysicalControllerCore.h"
-
-#include "HeadSpin.h"
-#include <cmath>
 
 // singular
 #include "plAvLadderModifier.h"
 
+// global
+#include "HeadSpin.h"
+#include "hsStream.h"
+#include "plCreatableIndex.h"
+#include "plgDispatch.h"
+
+#include <cmath>
+
 // local
+#include "plAnimStage.h"
 #include "plArmatureMod.h"
 #include "plAvatarMgr.h"
 #include "plAvBrainGeneric.h"
-#include "plAnimation/plAGAnim.h"
-#include "plAnimStage.h"
+#include "plAvBrainHuman.h"
+#include "plPhysicalControllerCore.h"
 
-// global
-#include "plCreatableIndex.h"
-// #include "plgDispatch.h"                     // Message Dependencies
-#include "hsStream.h"
-
-//other
-#include "plMessage/plCollideMsg.h"
-#include "plMessage/plAvatarMsg.h"
-#include "pnMessage/plNotifyMsg.h"
-#include "plStatusLog/plStatusLog.h"
+// other
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plEnableMsg.h"
-
+#include "pnMessage/plNotifyMsg.h"
 #include "pnMessage/plTimeMsg.h"
-#include "plgDispatch.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnSceneObject/plCoordinateInterface.h"
-#include "plAvatar/plAvBrainHuman.h"
+
+#include "plAnimation/plAGAnim.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plCollideMsg.h"
 #include "plModifier/plDetectorLog.h"
 
 enum NotifyType
@@ -79,31 +77,6 @@ enum NotifyType
     kNotifyTrigger,
     kNotifyAvatarOnLadder,
 };
-
-// CTOR default
-plAvLadderMod::plAvLadderMod()
-: fGoingUp(true),
-  fType(kBig),
-  fLoops(0),
-  fEnabled(true),
-  fAvatarInBox(false),
-  fLadderView(0,0,0),
-  fAvatarMounting(false)
-{
-    fTarget = nil;
-}
-
-// CTOR goingUp, type, loops
-plAvLadderMod::plAvLadderMod(bool goingUp, int type, int loops, bool enabled, hsVector3& ladderView)
-: fGoingUp(goingUp),
-  fType(type),
-  fLoops(loops),
-  fEnabled(enabled),
-  fAvatarInBox(false),
-  fLadderView(ladderView)
-{
-    fTarget = nil;
-}
 
 // Must be facing within 45 degrees of the ladder
 static const float kTolerance = cos(hsDegreesToRadians(45));
@@ -136,13 +109,13 @@ bool plAvLadderMod::IIsReadyToClimb()
 
         if (dot >= kTolerance && movingForward)
         {
-            DetectorLogSpecial("%s: Ladder starting climb (%f)",
-                               GetKeyName().c_str(), hsRadiansToDegrees(acos(dot)));
+            plDetectorLog::Special("{}: Ladder starting climb ({f})",
+                                  GetKeyName(), hsRadiansToDegrees(acos(dot)));
             return true;
         }
         else if (movingForward)
         {
-//          DetectorLog("%s: Ladder rejecting climb (%f)", GetKeyName().c_str(), hsRadiansToDegrees(acos(dot)));
+//          plDetectorLog::Log("{}: Ladder rejecting climb ({f})", GetKeyName(), hsRadiansToDegrees(acos(dot)));
             return false;
         }
     }
@@ -151,13 +124,12 @@ bool plAvLadderMod::IIsReadyToClimb()
 }
 
 // use a plNotify (to ourself) to propagate across the network
-void plAvLadderMod::ITriggerSelf(plKey avKey)
+void plAvLadderMod::ITriggerSelf(const plKey& avKey)
 {
     if (fEnabled)
     {
-        plKey avPhysKey = avKey;
         // I'm going to lie and pretend it's from the avatar. the alternative is lengthy and unreadable.
-        plNotifyMsg *notifyMsg = new plNotifyMsg(avPhysKey, GetKey());
+        plNotifyMsg *notifyMsg = new plNotifyMsg(avKey, GetKey());
         notifyMsg->fID = kNotifyTrigger;
         notifyMsg->Send();
         fAvatarMounting = true;
@@ -181,7 +153,7 @@ bool plAvLadderMod::MsgReceive(plMessage* msg)
         // we can check every frame
         if (fAvatarInBox)
         {
-            DetectorLogSpecial("%s: Avatar entered ladder region", GetKeyName().c_str());
+            plDetectorLog::Special("{}: Avatar entered ladder region", GetKeyName());
 
             if (IIsReadyToClimb())
                 ITriggerSelf(collMsg->fOtherKey);
@@ -190,7 +162,7 @@ bool plAvLadderMod::MsgReceive(plMessage* msg)
         }
         else
         {
-            DetectorLogSpecial("%s: Avatar exited ladder region", GetKeyName().c_str());
+            plDetectorLog::Special("{}: Avatar exited ladder region", GetKeyName());
 
             plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
         }
@@ -217,7 +189,7 @@ bool plAvLadderMod::MsgReceive(plMessage* msg)
         }
         else if (notifyMsg->fID == kNotifyAvatarOnLadder)
         {
-            DetectorLogSpecial("%s: Avatar mounted ladder", GetKeyName().c_str());
+            plDetectorLog::Special("{}: Avatar mounted ladder", GetKeyName());
             fAvatarMounting = false;
         }
 
@@ -237,7 +209,7 @@ bool plAvLadderMod::MsgReceive(plMessage* msg)
 }
 
 // EMITCOMMAND
-void plAvLadderMod::EmitCommand(const plKey receiver)
+void plAvLadderMod::EmitCommand(const plKey& receiver)
 {
     hsKeyedObject *object = receiver->ObjectIsLoaded();
     plSceneObject *SO = plSceneObject::ConvertNoRef(object);
@@ -253,7 +225,7 @@ void plAvLadderMod::EmitCommand(const plKey receiver)
             if( ! alreadyOnLadder)
             {
                 plSceneObject *seekObj = GetTarget();
-                plKey seekKey = seekObj->GetKey();      // this modifier's target is the seek object
+                const plKey& seekKey = seekObj->GetKey();      // this modifier's target is the seek object
 
                 const char *mountName, *dismountName, *traverseName;
 
@@ -314,18 +286,18 @@ void plAvLadderMod::EmitCommand(const plKey receiver)
 
                 uint32_t exitFlags = plAvBrainGeneric::kExitNormal;
 
-                plAvBrainGeneric *ladBrain = new plAvBrainGeneric(v, enterNotify, nil, nil, exitFlags, plAvBrainGeneric::kDefaultFadeIn, 
+                plAvBrainGeneric *ladBrain = new plAvBrainGeneric(v, enterNotify, nullptr, nullptr, exitFlags, plAvBrainGeneric::kDefaultFadeIn,
                                                                   plAvBrainGeneric::kDefaultFadeOut, plAvBrainGeneric::kMoveRelative);
                 ladBrain->SetType(plAvBrainGeneric::kLadder);
                 ladBrain->SetReverseFBControlsOnRelease(!fGoingUp);
 
-                plKey avKey = constAvMod->GetKey();
+                const plKey& avKey = constAvMod->GetKey();
 
                 // Very important that we dumb seek here. Otherwise you can run off the edge of a ladder, and seek will be helpless
                 // until you hit the ground, at which point you have no hope of successfully seeking.
-                plAvSeekMsg *seeker = new plAvSeekMsg(nil, avKey, seekKey, 1.0f, false);
+                plAvSeekMsg *seeker = new plAvSeekMsg(nullptr, avKey, seekKey, 1.0f, false);
                 seeker->Send();
-                plAvPushBrainMsg *brainer = new plAvPushBrainMsg(nil, avKey, ladBrain);
+                plAvPushBrainMsg *brainer = new plAvPushBrainMsg(nullptr, avKey, ladBrain);
                 brainer->Send();
             }
         }
@@ -340,9 +312,9 @@ void plAvLadderMod::Read(hsStream *stream, hsResMgr *mgr)
     fLoops = stream->ReadLE32();
     fGoingUp = stream->ReadBool();
     fEnabled = stream->ReadBool();
-    fLadderView.fX = stream->ReadLEScalar();
-    fLadderView.fY = stream->ReadLEScalar();
-    fLadderView.fZ = stream->ReadLEScalar();
+    fLadderView.fX = stream->ReadLEFloat();
+    fLadderView.fY = stream->ReadLEFloat();
+    fLadderView.fZ = stream->ReadLEFloat();
 }
 
 void plAvLadderMod::Write(hsStream *stream, hsResMgr *mgr)
@@ -353,9 +325,9 @@ void plAvLadderMod::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteLE32(fLoops);
     stream->WriteBool(fGoingUp);
     stream->WriteBool(fEnabled);
-    stream->WriteLEScalar(fLadderView.fX);
-    stream->WriteLEScalar(fLadderView.fY);
-    stream->WriteLEScalar(fLadderView.fZ);
+    stream->WriteLEFloat(fLadderView.fX);
+    stream->WriteLEFloat(fLadderView.fY);
+    stream->WriteLEFloat(fLadderView.fZ);
 }
 
 // true is up; false is down

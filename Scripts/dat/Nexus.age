@@ -1,0 +1,8 @@
+StartDateTime=0000000000
+DayLength=24.000000
+MaxCapacity=1
+LingerTime=180
+SequencePrefix=16
+ReleaseVersion=0
+Page=NexusAgeDialog,2,1
+Page=nxusBookMachine,1

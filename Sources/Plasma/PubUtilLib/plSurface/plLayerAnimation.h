@@ -43,12 +43,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayerAnimation_inc
 #define plLayerAnimation_inc
 
+#include <string_theory/string>
+
 #include "plLayerInterface.h"
+
 #include "plInterp/plAnimTimeConvert.h"
 
-class plMessage;
 class plController;
 class plLayerSDLModifier;
+class plMessage;
 class plSimpleStateVariable;
 
 // LayerAnimations take advantage of the simplifying
@@ -60,7 +63,7 @@ class plSimpleStateVariable;
 class plLayerAnimationBase : public plLayerInterface
 {
 protected:
-    plString        fSegmentID;
+    ST::string      fSegmentID;
     double          fEvalTime;
     float           fCurrentTime;
     float           fLength;
@@ -76,24 +79,28 @@ protected:
     void IEvalConvertedTime(float secs, uint32_t passChans, uint32_t evalChans, uint32_t &dirty);
 
 public:
-    plLayerAnimationBase();
+    plLayerAnimationBase()
+        : fPreshadeColorCtl(), fRuntimeColorCtl(), fAmbientColorCtl(), 
+          fSpecularColorCtl(), fOpacityCtl(), fTransformCtl(),
+          fEvalTime(-1.0), fCurrentTime(-1.f), fLength()
+    { }
     virtual ~plLayerAnimationBase();
 
     CLASSNAME_REGISTER( plLayerAnimationBase );
     GETINTERFACE_ANY( plLayerAnimationBase, plLayerInterface );
     
-    virtual plLayerInterface*           Attach(plLayerInterface* prev);
+    plLayerInterface*           Attach(plLayerInterface* prev) override;
     //virtual uint32_t                        Eval(double secs, uint32_t frame, uint32_t ignore) = 0;
 
-    virtual bool                        MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void                        Read(hsStream* s, hsResMgr* mgr);
-    virtual void                        Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     // Specialized
     float GetLength() const { return fLength; }
-    plString GetSegmentID() const { return fSegmentID; }
-    void SetSegmentID(const plString &ID) { fSegmentID = ID; }
+    ST::string GetSegmentID() const { return fSegmentID; }
+    void SetSegmentID(const ST::string &ID) { fSegmentID = ID; }
 
     // Export construction functions follow
     void SetPreshadeColorCtl(plController* colCtl);
@@ -126,13 +133,13 @@ public:
     CLASSNAME_REGISTER( plLayerAnimation );
     GETINTERFACE_ANY( plLayerAnimation, plLayerAnimationBase );
 
-    virtual plLayerInterface*           Attach(plLayerInterface* prev);
-    virtual uint32_t                      Eval(double wSecs, uint32_t frame, uint32_t ignore);
+    plLayerInterface*           Attach(plLayerInterface* prev) override;
+    uint32_t                      Eval(double wSecs, uint32_t frame, uint32_t ignore) override;
 
-    virtual bool                        MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void                        Read(hsStream* s, hsResMgr* mgr);
-    virtual void                        Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
     
     const plLayerSDLModifier* GetSDLModifier() const { return fLayerSDLMod; }
     plAnimTimeConvert& GetTimeConvert() { return fTimeConvert; }
@@ -166,19 +173,19 @@ public:
     CLASSNAME_REGISTER( plLayerLinkAnimation );
     GETINTERFACE_ANY( plLayerLinkAnimation, plLayerAnimation );
 
-    void SetLinkKey(plKey linkKey) { fLinkKey = linkKey; }
+    void SetLinkKey(plKey linkKey) { fLinkKey = std::move(linkKey); }
     plKey GetLinkKey() { return fLinkKey; }
 
     // NOTE: The link animation should NEVER NEVER NEVER send its state to the server.
     // NEVER!
     // If you think it should... talk to Bob. He will explain why it can't be, and beat you up.
     // If he can't remember, beat him up until he does (or ask Moose).
-    virtual bool DirtySynchState(const plString& sdlName, uint32_t sendFlags) { return false; } // don't send link state
+    bool DirtySynchState(const ST::string& sdlName, uint32_t sendFlags) override { return false; } // don't send link state
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
-    virtual uint32_t Eval(double wSecs, uint32_t frame, uint32_t ignore); 
-    virtual bool MsgReceive(plMessage* pMsg);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
+    uint32_t Eval(double wSecs, uint32_t frame, uint32_t ignore) override;
+    bool MsgReceive(plMessage* pMsg) override;
     void Enable(bool b) { fEnabled = b; }
     void SetFadeFlag(uint8_t flag, bool val);
 
@@ -189,7 +196,7 @@ class plLayerSDLAnimation : public plLayerAnimationBase
 {
 protected:
     plSimpleStateVariable *fVar;
-    plString fVarName;
+    ST::string fVarName;
 
 public:
     plLayerSDLAnimation();
@@ -197,15 +204,15 @@ public:
     CLASSNAME_REGISTER( plLayerSDLAnimation );
     GETINTERFACE_ANY( plLayerSDLAnimation, plLayerAnimationBase );
 
-    virtual uint32_t                      Eval(double wSecs, uint32_t frame, uint32_t ignore);
+    uint32_t Eval(double wSecs, uint32_t frame, uint32_t ignore) override;
 
-    virtual bool                        MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void                        Read(hsStream* s, hsResMgr* mgr);
-    virtual void                        Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
-    plString GetVarName() const { return fVarName; }
-    void SetVarName(const plString &name) { fVarName = name; }
+    ST::string GetVarName() const { return fVarName; }
+    void SetVarName(const ST::string &name) { fVarName = name; }
 };
 
 #endif // plLayerAnimation_inc

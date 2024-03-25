@@ -1,9 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../FeatureLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-
 set(pfGameGUIMgr_SOURCES
     pfGameGUIMgr.cpp
     pfGUIButtonMod.cpp
@@ -62,7 +56,39 @@ set(pfGameGUIMgr_HEADERS
     pfGUIValueCtrl.h
 )
 
-add_library(pfGameGUIMgr STATIC ${pfGameGUIMgr_SOURCES} ${pfGameGUIMgr_HEADERS})
+plasma_library(pfGameGUIMgr
+    SOURCES ${pfGameGUIMgr_SOURCES} ${pfGameGUIMgr_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
+target_link_libraries(
+    pfGameGUIMgr
+    PUBLIC
+        CoreLib
+        pnInputCore
+        pnKeyedObject
+        pnModifier
+    PRIVATE
+        pnNucleusInc
+        pnMessage
+        pnNucleusInc
+        pnSceneObject
+        plAnimation
+        plClipboard
+        plGImage
+        plInputCore
+        plInterp
+        plMessage
+        plPipeline
+        plResMgr
+        plScene
+        plStatusLog
+        plSurface
+        pfLocalizationMgr
+        pfMessage
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${pfGameGUIMgr_SOURCES})
 source_group("Header Files" FILES ${pfGameGUIMgr_HEADERS})

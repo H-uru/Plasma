@@ -45,7 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-template <class T> class hsTArray;
+#include <vector>
+
 class hsStream;
 
 class hsBitVector {
@@ -59,13 +60,10 @@ protected:
     friend      class hsBitIterator;
 public:
     hsBitVector(const hsBitVector& other);
-    hsBitVector(uint32_t which) : fBitVectors(nil), fNumBitVectors(0) { SetBit(which); }
-    hsBitVector(int b, ...); // list of one or more integer bits to set. -1 (or any negative) terminates the list (e.g. hsBitVector(0,1,4,-1);
-    hsBitVector(const hsTArray<int16_t>& list); // sets bit for each int in list
-    hsBitVector() : fBitVectors(nil), fNumBitVectors(0) {}
+    hsBitVector() : fBitVectors(), fNumBitVectors() { }
     virtual ~hsBitVector() { Reset(); }
 
-    hsBitVector& Reset() { delete [] fBitVectors; fBitVectors = nil; fNumBitVectors = 0; return *this; }
+    hsBitVector& Reset() { delete [] fBitVectors; fBitVectors = nullptr; fNumBitVectors = 0; return *this; }
     hsBitVector& Clear(); // everyone clear, but no dealloc
     hsBitVector& Set(int upToBit=-1); // WARNING - see comments at function
 
@@ -105,10 +103,8 @@ public:
     void SetNumBitVectors(uint32_t n) { Reset(); fNumBitVectors=n; fBitVectors = new uint32_t[n]; }
     void SetBitVector(int i, uint32_t val) { fBitVectors[i]=val; }
 
-    // Do dst.SetCount(0), then add each set bit's index into dst, returning dst.
-    hsTArray<int16_t>& Enumerate(hsTArray<int16_t>& dst) const;
-    // this->Clear(), then set all bits listed in src, returning *this.
-    hsBitVector& FromList(const hsTArray<int16_t>& src);
+    // Do dst.clear(), then add each set bit's index into dst, returning dst.
+    std::vector<int16_t>& Enumerate(std::vector<int16_t>& dst) const;
 
     void Read(hsStream* s);
     void Write(hsStream* s) const;
@@ -116,23 +112,19 @@ public:
 
 inline hsBitVector::hsBitVector(const hsBitVector& other)
 {
-    if( 0 != (fNumBitVectors = other.fNumBitVectors) )
-    {       
+    if ((fNumBitVectors = other.fNumBitVectors) != 0) {
         fBitVectors = new uint32_t[fNumBitVectors];
-        int i;
-        for( i = 0; i < fNumBitVectors; i++ )
+        for (uint32_t i = 0; i < fNumBitVectors; i++)
             fBitVectors[i] = other.fBitVectors[i];
+    } else {
+        fBitVectors = nullptr;
     }
-    else
-        fBitVectors = nil;
 }
 
 inline bool hsBitVector::Empty() const
 {
-    int i;
-    for( i = 0; i < fNumBitVectors; i++ )
-    {
-        if( fBitVectors[i] )
+    for (uint32_t i = 0; i < fNumBitVectors; i++ ) {
+        if (fBitVectors[i])
             return false;
     }
     return true;
@@ -140,13 +132,11 @@ inline bool hsBitVector::Empty() const
 
 inline bool hsBitVector::Overlap(const hsBitVector& other) const
 {
-    if( fNumBitVectors > other.fNumBitVectors )
+    if (fNumBitVectors > other.fNumBitVectors)
         return other.Overlap(*this);
 
-    int i;
-    for( i = 0; i < fNumBitVectors; i++ )
-    {
-        if( fBitVectors[i] & other.fBitVectors[i] )
+    for (uint32_t i = 0; i < fNumBitVectors; i++ ){
+        if (fBitVectors[i] & other.fBitVectors[i])
             return true;
     }
     return false;
@@ -154,21 +144,16 @@ inline bool hsBitVector::Overlap(const hsBitVector& other) const
 
 inline hsBitVector& hsBitVector::operator=(const hsBitVector& other)
 {
-    if( this != &other )
-    {
-        if( fNumBitVectors < other.fNumBitVectors )
-        {
+    if (this != &other) {
+        if (fNumBitVectors < other.fNumBitVectors) {
             Reset();
             fNumBitVectors = other.fNumBitVectors;
             fBitVectors = new uint32_t[fNumBitVectors];
-        }
-        else
-        {
+        } else {
             Clear();
         }
 
-        int i;
-        for( i = 0; i < other.fNumBitVectors; i++ )
+        for (uint32_t i = 0; i < other.fNumBitVectors; i++)
             fBitVectors[i] = other.fBitVectors[i];
     }
     return *this;
@@ -176,77 +161,65 @@ inline hsBitVector& hsBitVector::operator=(const hsBitVector& other)
 
 inline bool hsBitVector::operator==(const hsBitVector& other) const
 {
-    if( fNumBitVectors < other.fNumBitVectors )
+    if (fNumBitVectors < other.fNumBitVectors)
         return other.operator==(*this);
-    int i;
-    for( i = 0; i < other.fNumBitVectors; i++ )
-        if( fBitVectors[i] ^ other.fBitVectors[i] )
+    uint32_t i;
+    for (i = 0; i < other.fNumBitVectors; i++)
+        if (fBitVectors[i] != other.fBitVectors[i])
             return false;
-    for( ; i < fNumBitVectors; i++ )
-        if( fBitVectors[i] )
+    for (; i < fNumBitVectors; i++)
+        if (fBitVectors[i])
             return false;
     return true;
 }
 
 inline hsBitVector& hsBitVector::operator&=(const hsBitVector& other)
 {
-    if( this == &other )
+    if (this == &other)
         return *this;
 
-    if( fNumBitVectors > other.fNumBitVectors )
-    {
+    if (fNumBitVectors > other.fNumBitVectors)
         fNumBitVectors = other.fNumBitVectors;
-    }
-    int i;
-    for( i = 0; i < fNumBitVectors; i++ )
+    for (uint32_t i = 0; i < fNumBitVectors; i++)
         fBitVectors[i] &= other.fBitVectors[i];
     return *this;
 }
 
 inline hsBitVector& hsBitVector::operator|=(const hsBitVector& other)
 {
-    if( this == &other )
+    if (this == &other)
         return *this;
 
-    if( fNumBitVectors < other.fNumBitVectors )
-    {
+    if (fNumBitVectors < other.fNumBitVectors)
         IGrow(other.fNumBitVectors);
-    }
-    int i;
-    for( i = 0; i < other.fNumBitVectors; i++ )
+    for (uint32_t i = 0; i < other.fNumBitVectors; i++)
         fBitVectors[i] |= other.fBitVectors[i];
     return *this;
 }
 
 inline hsBitVector& hsBitVector::operator^=(const hsBitVector& other)
 {
-    if( this == &other )
-    {
+    if (this == &other) {
         Clear();
         return *this;
     }
 
-    if( fNumBitVectors < other.fNumBitVectors )
-    {
+    if (fNumBitVectors < other.fNumBitVectors)
         IGrow(other.fNumBitVectors);
-    }
-    int i;
-    for( i = 0; i < other.fNumBitVectors; i++ )
+    for (uint32_t i = 0; i < other.fNumBitVectors; i++)
         fBitVectors[i] ^= other.fBitVectors[i];
     return *this;
 }
 
 inline hsBitVector& hsBitVector::operator-=(const hsBitVector& other)
 {
-    if( this == &other )
-    {
+    if (this == &other) {
         Clear();
         return *this;
     }
 
-    int minNum = fNumBitVectors < other.fNumBitVectors ? fNumBitVectors : other.fNumBitVectors;
-    int i;
-    for( i = 0; i < minNum; i++ )
+    uint32_t minNum = fNumBitVectors < other.fNumBitVectors ? fNumBitVectors : other.fNumBitVectors;
+    for (uint32_t i = 0; i < minNum; i++)
         fBitVectors[i] &= ~other.fBitVectors[i];
     return *this;
 }
@@ -277,8 +250,7 @@ inline hsBitVector operator-(const hsBitVector& rhs, const hsBitVector& lhs)
 
 inline hsBitVector& hsBitVector::Clear()
 {
-    int i;
-    for( i = 0; i < fNumBitVectors; i++ )
+    for (uint32_t i = 0; i < fNumBitVectors; i++)
         fBitVectors[i] = 0;
     return *this;
 }
@@ -293,23 +265,19 @@ inline hsBitVector& hsBitVector::Clear()
 // the bits from 0 to upToBit, but won't clear any higher bits.
 inline hsBitVector& hsBitVector::Set(int upToBit)
 {
-    if( upToBit >= 0 )
-    {
+    if (upToBit >= 0) {
         uint32_t major = upToBit >> 5;
         uint32_t minor = 1 << (upToBit & 0x1f);
-        if( major >= fNumBitVectors )
+        if (major >= fNumBitVectors)
             IGrow(major+1);
 
         uint32_t i;
-        for( i = 0; i < major; i++ )
+        for (i = 0; i < major; i++)
             fBitVectors[i] = 0xffffffff;
-        for( i = 1; i <= minor && i > 0; i <<= 1 )
+        for (i = 1; i <= minor && i > 0; i <<= 1)
             fBitVectors[major] |= i;
-    }
-    else
-    {
-        int i;
-        for( i = 0; i < fNumBitVectors; i++ )
+    } else {
+        for(uint32_t i = 0; i < fNumBitVectors; i++ )
             fBitVectors[i] = 0xffffffff;
     }
     return *this;
@@ -318,21 +286,18 @@ inline hsBitVector& hsBitVector::Set(int upToBit)
 inline bool hsBitVector::IsBitSet(uint32_t which) const
 {
     uint32_t major = which >> 5;
-    return 
-        (major < fNumBitVectors)
-        && (0 != (fBitVectors[major] & 1 << (which & 0x1f)));
+    return (major < fNumBitVectors) && (0 != (fBitVectors[major] & 1 << (which & 0x1f)));
 }
 
 inline bool hsBitVector::SetBit(uint32_t which, bool on)
 {
     uint32_t major = which >> 5;
     uint32_t minor = 1 << (which & 0x1f);
-    if( major >= fNumBitVectors )
+    if (major >= fNumBitVectors)
         IGrow(major+1);
     bool ret = 0 != (fBitVectors[major] & minor);
-    if( ret != on )
-    {
-        if( on )
+    if (ret != on) {
+        if (on)
             fBitVectors[major] |= minor;
         else
             fBitVectors[major] &= ~minor;
@@ -345,10 +310,10 @@ inline bool hsBitVector::ToggleBit(uint32_t which)
 {
     uint32_t major = which >> 5;
     uint32_t minor = 1 << (which & 0x1f);
-    if( major >= fNumBitVectors )
+    if (major >= fNumBitVectors)
         IGrow(major);
     bool ret = 0 != (fBitVectors[major] & minor);
-    if( ret )
+    if (ret)
         fBitVectors[major] &= ~minor;
     else
         fBitVectors[major] |= minor;
@@ -358,18 +323,16 @@ inline bool hsBitVector::ToggleBit(uint32_t which)
 inline hsBitVector& hsBitVector::RemoveBit(uint32_t which)
 {
     uint32_t major = which >> 5;
-    if( major >= fNumBitVectors )
+    if (major >= fNumBitVectors)
         return *this;
     uint32_t minor = 1 << (which & 0x1f);
     uint32_t lowMask = minor-1;
     uint32_t hiMask = ~(lowMask);
 
-    fBitVectors[major] = (fBitVectors[major] & lowMask)
-        | ((fBitVectors[major] >> 1) & hiMask);
+    fBitVectors[major] = (fBitVectors[major] & lowMask) | ((fBitVectors[major] >> 1) & hiMask);
 
-    while( major < fNumBitVectors-1 )
-    {
-        if( fBitVectors[major+1] & 0x1 )
+    while (major < fNumBitVectors-1) {
+        if (fBitVectors[major+1] & 0x1)
             fBitVectors[major] |= 0x80000000;
         else
             fBitVectors[major] &= ~0x80000000;
@@ -393,16 +356,16 @@ protected:
     int                 fCurrVec;
     int                 fCurrBit;
 
-    int         IAdvanceBit();
-    int         IAdvanceVec();
+    int                 IAdvanceBit();
+    int                 IAdvanceVec();
 
 public:
     // Must call begin after instanciating.
-    hsBitIterator(const hsBitVector& bits) : fBits(bits) {}
+    hsBitIterator(const hsBitVector& bits) : fBits(bits), fCurrent(), fCurrVec(), fCurrBit() { }
 
-    int         Begin();
+    int                 Begin();
     int                 Current() const { return fCurrent; }
-    int         Advance();
+    int                 Advance();
     int                 End() const { return fCurrVec < 0; }
 };
 

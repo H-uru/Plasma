@@ -46,12 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ******************************************************************************/
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
-
-#include <max.h>
-#include <notify.h>
-#include <vector>
-#pragma hdrstop
+#include "MaxAPI.h"
 
 #include "plActionTableMgr.h"
 
@@ -103,7 +98,7 @@ ActionTable* plActionTableMgr::GetActionTable(int i)
 {
     if(i > this->NumActionTables())
     {
-        return NULL;
+        return nullptr;
     }
 
     ActionTableInfo* pTableInfo = fActionTables[i];
@@ -117,7 +112,7 @@ ActionTable* plActionTableMgr::GetActionTable(int i)
     ActionTable *pTab = new plActionTable(
         pTableInfo->TableId, 
         pTableInfo->ContextId, 
-        pTableInfo->Name, NULL, 
+        pTableInfo->Name, nullptr,
         pTableInfo->Actions.size(), 
         &pTableInfo->Actions[0], 
         hInstance

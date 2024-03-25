@@ -47,10 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptionStack.h"
 #include "hsStream.h"
 
-#include <bitmap.h>
-#include <notify.h>
-#include <max.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
 
 #include "SimpleExport.h"
 #include "plExportErrorMsg.h"
@@ -78,6 +75,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plCubicEnvironmap.h"
 #include "plGImage/plDynamicTextMap.h"
 #include "plGImage/plMipmap.h"
+#include "plMessageBox/hsMessageBox.h"
 #include "plScene/plSceneNode.h"
 
 #include "plExportDlg.h"
@@ -112,15 +110,15 @@ int HSExport2::ExtCount()
 //
 // Extensions supported for import/export modules
 //
-const TCHAR *HSExport2::Ext(int n) 
+const MCHAR* HSExport2::Ext(int n)
 {
 static  char str[64];
     switch(n) 
     {
         case 0:
-            return "";
+            return _M("");
         case 1:
-            return "prd";
+            return _M("prd");
     }
     return _T("");
 }
@@ -128,53 +126,53 @@ static  char str[64];
 //
 // Long ASCII description (i.e. "Targa 2.0 Image File")
 //
-const TCHAR *HSExport2::LongDesc() 
+const MCHAR* HSExport2::LongDesc()
 {
-    return "Plasma 2.0";
+    return _M("Plasma 2.0");
 }
 
 //
 // Short ASCII description (i.e. "Targa")   
 //
-const TCHAR *HSExport2::ShortDesc() 
+const MCHAR* HSExport2::ShortDesc()
 {
 #ifdef HS_DEBUGGING
-    return "Plasma 2.0 Debug";
+    return _M("Plasma 2.0 Debug");
 #else
-    return "Plasma 2.0";
+    return _M("Plasma 2.0");
 #endif
 }
 
 //
 // ASCII Author name
 //
-const TCHAR *HSExport2::AuthorName() 
+const MCHAR* HSExport2::AuthorName()
 {
-    return "Billy Bob";
+    return _M("Cyan, Inc.");
 }
 
 //
 // ASCII Copyright message
 //
-const TCHAR *HSExport2::CopyrightMessage() 
+const MCHAR* HSExport2::CopyrightMessage() 
 {
-    return "Copyright 1997 HeadSpin Technology Inc.";
+    return _M("Copyright 1997 HeadSpin Technology Inc.");
 }
 
 //
 // Other message #1
 //
-const TCHAR *HSExport2::OtherMessage1() 
+const MCHAR* HSExport2::OtherMessage1()
 {
-    return _T("");
+    return _M("");
 }
 
 //
 // Other message #2
 //
-const TCHAR *HSExport2::OtherMessage2() 
+const MCHAR* HSExport2::OtherMessage2()
 {
-    return _T("");
+    return _M("");
 }
 
 //
@@ -201,10 +199,10 @@ protected:
 public:
     plTextureLoggerCBack(plTextureExportLog* teLog) { fTELog = teLog; }
 
-    virtual bool EatKey(const plKey& key)
+    bool EatKey(const plKey& key) override
     {
         plBitmap* bmap = plBitmap::ConvertNoRef(key->ObjectIsLoaded());
-        if (bmap != nil)
+        if (bmap != nullptr)
             fTELog->AddTexture(bmap);
         return true;    // Always continue
     }
@@ -214,12 +212,12 @@ public:
 class plOptimizeIterator : public plRegistryKeyIterator
 {
 public:
-    virtual bool EatKey(const plKey& key)
+    bool EatKey(const plKey& key) override
     {
         if (key->GetUoid().GetClassType() == plSceneNode::Index())
         {
             plSceneNode* sn = plSceneNode::ConvertNoRef(key->ObjectIsLoaded());
-            if (sn != nil)
+            if (sn != nullptr)
                 sn->OptimizeDrawables();
         }
         return true;    // Always continue
@@ -229,7 +227,7 @@ public:
 //
 //
 // 
-int HSExport2::DoExport(const TCHAR *name,ExpInterface *ei,Interface *gi, BOOL suppressPrompts, DWORD options)
+int HSExport2::DoExport(const MCHAR *name,ExpInterface *ei,Interface *gi, BOOL suppressPrompts, DWORD options)
 {
     BOOL backupEnabled = gi->AutoBackupEnabled();
     gi->EnableAutoBackup(FALSE);
@@ -251,10 +249,11 @@ int HSExport2::DoExport(const TCHAR *name,ExpInterface *ei,Interface *gi, BOOL s
     BroadcastNotification(NOTIFY_PRE_EXPORT);
 
     // get just the path (not the file) of where we are going to export to
-    plFileName out_path = plFileName(name).StripFileName();
+    plFileName out_name = M2ST(name);
+    plFileName out_path = out_name.StripFileName();
 
     // Apparently this was implied by the open dialog, but not if you call Max's ExportToFile() func
-    SetCurrentDirectoryW(out_path.AsString().ToWchar());
+    SetCurrentDirectoryW(out_path.WideString().data());
 
     // 
     // Setup ErrorMsg
@@ -262,13 +261,12 @@ int HSExport2::DoExport(const TCHAR *name,ExpInterface *ei,Interface *gi, BOOL s
     // Needs to be outside try/catch so it doesn't stack unwind...
     plExportErrorMsg hituser_errorMessage;  // This is the errorMessage that slaps user
 
-    TSTR filename = gi->GetCurFileName();
-    hsStrncpy(fName, filename, 128);
-    char *dot = strrchr(fName, '.');
+    _tcsncpy(fName, gi->GetCurFileName(), std::size(fName));
+    TCHAR* dot = _tcsrchr(fName, _T('.'));
     if (dot)
         *dot = 0;
-    char ErrorLogName[512];
-    sprintf(ErrorLogName, "%s%s.err", out_path.AsString().c_str(), fName);
+
+    plFileName ErrorLogName = plFileName::Join(out_path, ST::format("{}.err", T2ST(fName)));
     plExportLogErrorMsg logonly_errorMessage(ErrorLogName);     // This errorMessage just writes it all to a file
 
     // now decide which errorMessage object to use
@@ -306,7 +304,7 @@ int HSExport2::DoExport(const TCHAR *name,ExpInterface *ei,Interface *gi, BOOL s
 
     // Add disk source for writing
     plFileName datPath = plFileName::Join(out_path, "dat");
-    CreateDirectoryW(datPath.AsString().ToWchar(), NULL);
+    CreateDirectoryW(datPath.WideString().data(), nullptr);
     plPluginResManager::ResMgr()->SetDataPath(datPath);
 
     if (hsgResMgr::Reset())
@@ -335,8 +333,7 @@ int HSExport2::DoExport(const TCHAR *name,ExpInterface *ei,Interface *gi, BOOL s
             plPluginResManager::ResMgr()->WriteAllPages();
 
             // Write out a texture log file
-            char textureLog[MAX_PATH];
-            sprintf(textureLog, "log\\exportedTextures_%s.log", fName);
+            plFileName textureLog = plFileName::Join("log", ST::format("exportedTextures_{}.log", fName));
             plTextureExportLog      textureExportLog( textureLog );
             plTextureLoggerCBack    loggerCallback( &textureExportLog );
             
@@ -365,13 +362,14 @@ int HSExport2::DoExport(const TCHAR *name,ExpInterface *ei,Interface *gi, BOOL s
     // Write a log entry to the Db file name for now
     //----------------------------------------------
     hsUNIXStream dbLog;
-    dbLog.Open(name,"at");
-    char str[256];
+    dbLog.Open(out_name, "at");
     exportTime = (timeGetTime() - exportTime) / 1000;
-    snprintf(str, arrsize(str), "Export from Max File \"%s\" on %02d/%02d/%4d took %d:%02d\n",
-             (const char *)filename, tm.wMonth, tm.wDay, tm.wYear, exportTime/60, exportTime%60);
-    dbLog.WriteString(str);
-    dbLog.Close();
+    dbLog.WriteString(
+        ST::format(
+            "Export from Max File \"{}\" on {02d}/{02d}/{4d} took {d}:{02d}\n",
+            out_name, tm.wMonth, tm.wDay, tm.wYear, exportTime / 60, exportTime % 60
+        )
+    );
 
     // Allow plugins to clean up after export
     BroadcastNotification(NOTIFY_POST_EXPORT);

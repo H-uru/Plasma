@@ -63,8 +63,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plInputInterface_h
 
 #include "hsRefCnt.h"
-#include "hsTemplates.h"
 #include "hsBitVector.h"
+#include <vector>
+
 // Needed for UNIX Build
 //  only windows will let you predeclare an enum
 #include "pnInputCore/plKeyDef.h"
@@ -101,15 +102,15 @@ class plInputInterface : public hsRefCnt
         plInputInterfaceMgr *fManager;
 
         plKeyMap                *fControlMap;
-        hsTArray<plCtrlCmd *>   *fMessageQueue;
+        std::vector<plCtrlCmd *> *fMessageQueue;
 
         hsBitVector     fKeyControlFlags;
         hsBitVector     fKeyControlsFrom2ndKeyFlags;
         hsBitVector     fDisabledControls;
         bool            fEnabled;
 
-        void        ISetMessageQueue( hsTArray<plCtrlCmd *> *queue ) { fMessageQueue = queue; }
-        plKeyMap    *IGetControlMap( void ) const { return fControlMap; }
+        void        ISetMessageQueue(std::vector<plCtrlCmd *> *queue) { fMessageQueue = queue; }
+        plKeyMap    *IGetControlMap() const { return fControlMap; }
         bool        IOwnsControlCode( ControlEventCode code );
         bool        IVerifyShiftKey( plKeyDef key, int index );
 
@@ -175,32 +176,32 @@ class plInputInterface : public hsRefCnt
         virtual void    Write( hsStream* s, hsResMgr* mgr );
 
         // Returns the priority of this interface layer, based on the Priorities enum
-        virtual uint32_t      GetPriorityLevel( void ) const = 0;
+        virtual uint32_t      GetPriorityLevel() const = 0;
 
         // Returns true if the message was handled, false if not and we want to pass it on to others in the stack
         virtual bool        InterpretInputEvent( plInputEventMsg *pMsg ) = 0;
 
         // Returns the currently active mouse cursor for this layer, as defined in pnMessage/plCursorChangeMsg.h
-        virtual uint32_t      GetCurrentCursorID( void ) const = 0;
+        virtual uint32_t      GetCurrentCursorID() const = 0;
 
         // Returns the current opacity that this layer wants the cursor to be, from 0 (xparent) to 1 (opaque)
-        virtual float    GetCurrentCursorOpacity( void ) const { return 1.f; }
+        virtual float    GetCurrentCursorOpacity() const { return 1.f; }
 
         // Returns true if this layer is wanting to change the mouse, false if it isn't interested
-        virtual bool        HasInterestingCursorID( void ) const = 0;
+        virtual bool        HasInterestingCursorID() const = 0;
 
         // Gets called by the manager. If you want a message to come to you, set your manager as the destination
         virtual bool        MsgReceive( plMessage *msg ) { return false; }
 
         // Any initialization that requires a pointer to the manager needs to be done on Init()/Shutdown()
         virtual void        Init( plInputInterfaceMgr *manager ) { fManager = manager; RestoreDefaultKeyMappings(); }
-        virtual void        Shutdown( void ) {}
+        virtual void        Shutdown() {}
 
         // Gets called when any of the key mappings are changed, so that the interface layer can refresh the ones its interested in
-        virtual void        RefreshKeyMap( void ) {}
+        virtual void        RefreshKeyMap() {}
 
         // Called when the interface manager is setting all key mappings to default
-        virtual void        RestoreDefaultKeyMappings( void ) {}
+        virtual void        RestoreDefaultKeyMappings() {}
 
         // Called on each interface layer that gets missed when processing inputEvents in the manager (i.e. you either get this call or InterpretInputEvent)
         virtual void        MissedInputEvent( plInputEventMsg *pMsg ) {}
@@ -209,13 +210,13 @@ class plInputInterface : public hsRefCnt
         bool                ProcessKeyBindings( plInputEventMsg *keyMsg );
 
         void        SetEnabled( bool e ) { fEnabled = e; }
-        bool        IsEnabled( void ) const { return fEnabled; }
+        bool        IsEnabled() const { return fEnabled; }
         
         // clear all keys from map
         virtual void    ClearKeyMap(); 
         
         // reset clickable state
-        virtual void ResetClickableState() {;}
+        virtual void ResetClickableState() { }
 };
 
 

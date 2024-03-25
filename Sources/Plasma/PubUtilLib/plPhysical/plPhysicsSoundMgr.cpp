@@ -39,15 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <algorithm>
-#include <iterator>
-#include "hsTimer.h"
+
 #include "plPhysicsSoundMgr.h"
 #include "plPhysicalSndGroup.h"
-#include "pnKeyedObject/plFixedKey.h"
-#include "plStatusLog/plStatusLog.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "pfAudio/plRandomSoundMod.h"
+
+#include <algorithm>
+#include <iterator>
+
+#include "plPhysical.h"
 
 #define MIN_VOLUME 0.0001f
 
@@ -223,10 +222,10 @@ bool plPhysicsSoundMgr::CollidePair::operator==(const CollidePair& rhs) const
 
 plPhysical* plPhysicsSoundMgr::CollidePair::FirstPhysical() const
 {
-    return firstPhysKey ? static_cast<plPhysical*>(firstPhysKey->GetObjectPtr()) : nil;
+    return firstPhysKey ? static_cast<plPhysical*>(firstPhysKey->GetObjectPtr()) : nullptr;
 }
 
 plPhysical* plPhysicsSoundMgr::CollidePair::SecondPhysical() const
 {
-    return secondPhysKey ? static_cast<plPhysical*>(secondPhysKey->GetObjectPtr()) : nil;
+    return secondPhysKey ? static_cast<plPhysical*>(secondPhysKey->GetObjectPtr()) : nullptr;
 }

@@ -42,25 +42,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLAVBRAIN_INC
 #define PLAVBRAIN_INC
 
-#include "plAnimation/plAGModifier.h"
 #include "HeadSpin.h"
-#include "hsTemplates.h"
 #include "hsBitVector.h"
 #include "hsGeometry3.h"
 #include "hsResMgr.h"
 
-#include "pnNetCommon/plSynchedObject.h"
+#include "pnFactory/plCreatable.h"
 
-#pragma warning(disable: 4284)
 #include <deque>
+#include <vector>
 
 class plArmatureModBase;
 class plArmatureMod;
 class plArmatureBehavior;
-class plHKAction;
 class plAvTask;
 class plAvTaskMsg;
 class plDebugText;
+class plMessage;
 
 class plArmatureBrain : public plCreatable
 {
@@ -83,8 +81,8 @@ public:
     virtual void QueueTask(plAvTask *task);
     virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt) {}
     
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *stream, hsResMgr *mgr) override;
     virtual bool MsgReceive(plMessage *msg);
     
 protected:
@@ -97,7 +95,7 @@ protected:
     
     plArmatureModBase *fArmature;
     plArmatureMod *fAvMod;
-    hsTArray<plArmatureBehavior*> fBehaviors;
+    std::vector<plArmatureBehavior*> fBehaviors;
 };
 
 

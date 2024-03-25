@@ -62,28 +62,28 @@ public:
     long        fParam;
     char        fWhat[64];
 
-    hsException(hsErrorEnum error, long param = 0) HS_NOEXCEPT;
-    const char *what() const HS_NOEXCEPT HS_OVERRIDE { return fWhat; }
+    hsException(hsErrorEnum error, long param = 0) noexcept;
+    const char *what() const noexcept override { return fWhat; }
 };
 
 class hsNilParamException : public hsException {
 public:
-    hsNilParamException() HS_NOEXCEPT : hsException(kNilParam_hsError) {}
+    hsNilParamException() noexcept : hsException(kNilParam_hsError) {}
 };
 
 class hsBadParamException : public hsException {
 public:
-    hsBadParamException() HS_NOEXCEPT : hsException(kBadParam_hsError) {}
+    hsBadParamException() noexcept : hsException(kBadParam_hsError) {}
 };
 
 class hsInternalException : public hsException {
 public:
-    hsInternalException() HS_NOEXCEPT : hsException(kInternal_hsError) {}
+    hsInternalException() noexcept : hsException(kInternal_hsError) {}
 };
 
 class hsOSException : public hsException {
 public:
-    hsOSException(long error) HS_NOEXCEPT : hsException(kOS_hsError, error) {}
+    hsOSException(long error) noexcept : hsException(kOS_hsError, error) {}
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ public:
 
 inline void hsThrowIfNilParam(const void* p)
 {
-    if (p == nil)
+    if (p == nullptr)
     {
         hsAssert(0,"hsNilParamException");
         throw hsNilParamException();

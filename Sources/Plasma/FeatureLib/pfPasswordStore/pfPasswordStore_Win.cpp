@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfPasswordStore.h"
 #include "pfPasswordStore_impl.h"
 
-#include "plFormat.h"
+#include <string_theory/format>
 #include "pnNetBase/pnNbSrvs.h"
 
 #include "hsWindows.h"
@@ -52,17 +52,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /*****************************************************************************
  ** pfWin32PasswordStore                                                    **
  *****************************************************************************/
-const plString pfWin32PasswordStore::GetPassword(const plString& username)
+ST::string pfWin32PasswordStore::GetPassword(const ST::string& username)
 {
     PCREDENTIALW credential;
-    plString target = plFormat("{}__{}", GetServerDisplayName(), username);
-    plString password = plString::Null;
+    ST::string target = ST::format("{}__{}", GetServerDisplayName(), username);
+    ST::string password;
 
-    if (!CredReadW(target.ToWchar().GetData(), CRED_TYPE_GENERIC, 0, &credential)) {
+    if (!CredReadW(target.to_wchar().data(), CRED_TYPE_GENERIC, 0, &credential)) {
         return password;
     }
 
-    password = plString::FromUtf8(reinterpret_cast<const char *>(credential->CredentialBlob), credential->CredentialBlobSize);
+    password = ST::string::from_utf8(reinterpret_cast<const char *>(credential->CredentialBlob), credential->CredentialBlobSize);
 
     memset(credential->CredentialBlob, 0, credential->CredentialBlobSize);
     CredFree(credential);
@@ -71,29 +71,29 @@ const plString pfWin32PasswordStore::GetPassword(const plString& username)
 }
 
 
-bool pfWin32PasswordStore::SetPassword(const plString& username, const plString& password)
+bool pfWin32PasswordStore::SetPassword(const ST::string& username, const ST::string& password)
 {
     CREDENTIALW credential;
-    plString target = plFormat("{}__{}", GetServerDisplayName(), username);
+    ST::string target = ST::format("{}__{}", GetServerDisplayName(), username);
 
-    if (password.IsNull()) {
-        if (CredDeleteW(target.ToWchar().GetData(), CRED_TYPE_GENERIC, 0)) {
+    if (password.empty()) {
+        if (CredDeleteW(target.to_wchar().data(), CRED_TYPE_GENERIC, 0)) {
             return true;
         }
         return false;
     }
 
-    plStringBuffer<wchar_t> tbuff = target.ToWchar();
-    plStringBuffer<char> pbuff = password.ToUtf8();
-    plStringBuffer<wchar_t> ubuff = username.ToWchar();
+    ST::wchar_buffer tbuff = target.to_wchar();
+    ST::char_buffer pbuff = password.to_utf8();
+    ST::wchar_buffer ubuff = username.to_wchar();
 
     memset(&credential, 0, sizeof(CREDENTIALW));
     credential.Type = CRED_TYPE_GENERIC;
-    credential.TargetName = (LPWSTR)tbuff.GetData();
-    credential.CredentialBlobSize = pbuff.GetSize();
-    credential.CredentialBlob = (LPBYTE)pbuff.GetData();
+    credential.TargetName = (LPWSTR)tbuff.data();
+    credential.CredentialBlobSize = pbuff.size();
+    credential.CredentialBlob = (LPBYTE)pbuff.data();
     credential.Persist = CRED_PERSIST_LOCAL_MACHINE;
-    credential.UserName = (LPWSTR)ubuff.GetData();
+    credential.UserName = (LPWSTR)ubuff.data();
 
     if (!CredWriteW(&credential, 0)) {
         return false;

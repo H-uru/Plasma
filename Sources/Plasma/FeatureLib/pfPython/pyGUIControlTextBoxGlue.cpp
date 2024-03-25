@@ -40,12 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyGUIControlTextBox.h"
+
+#include <string_theory/string>
+
 #include "pyColor.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControlTextBox, pyGUIControlTextBox);
@@ -55,7 +56,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlTextBox)
 
 PYTHON_INIT_DEFINITION(ptGUIControlTextBox, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -75,57 +76,18 @@ PYTHON_INIT_DEFINITION(ptGUIControlTextBox, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setString, args)
 {
-    char* text;
-    if (!PyArg_ParseTuple(args, "s", &text))
-    {
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text)) {
         PyErr_SetString(PyExc_TypeError, "setString expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetText(text);
+    self->fThis->SetText(std::move(text));
     PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setStringW, args)
-{
-    PyObject* textObj;
-    if (!PyArg_ParseTuple(args, "O", &textObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "setStringW expects a unicode string");
-        PYTHON_RETURN_ERROR;
-    }
-    if (PyUnicode_Check(textObj))
-    {
-        int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* temp = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)textObj, temp, strLen);
-        temp[strLen] = L'\0';
-        self->fThis->SetTextW(temp);
-        delete [] temp;
-        PYTHON_RETURN_NONE;
-    }
-    else if (PyString_Check(textObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* temp = PyString_AsString(textObj);
-        self->fThis->SetText(temp);
-        PYTHON_RETURN_NONE;
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "setStringW expects a unicode string");
-        PYTHON_RETURN_ERROR;
-    }
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlTextBox, getString)
 {
-    return PyString_FromString(self->fThis->GetText().c_str());
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlTextBox, getStringW)
-{
-    std::wstring retVal = self->fThis->GetTextW();
-    return PyUnicode_FromWideChar(retVal.c_str(), retVal.length());
+    return PyUnicode_FromSTString(self->fThis->GetText());
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setFontSize, args)
@@ -142,7 +104,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setFontSize, args)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setForeColor, args)
 {
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "setForeColor expects a ptColor");
@@ -160,7 +122,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setForeColor, args)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setBackColor, args)
 {
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "setBackColor expects a ptColor");
@@ -192,7 +154,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setStringJustify, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlTextBox, getStringJustify)
 {
-    return PyInt_FromLong(self->fThis->GetJustify());
+    return PyLong_FromLong(self->fThis->GetJustify());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlTextBox, getForeColor)
@@ -202,9 +164,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlTextBox, getForeColor)
 
 PYTHON_START_METHODS_TABLE(ptGUIControlTextBox)
     PYTHON_METHOD(ptGUIControlTextBox, setString, "Params: text\nSets the textbox string to 'text'"),
-    PYTHON_METHOD(ptGUIControlTextBox, setStringW, "Params: text\nUnicode version of setString"),
     PYTHON_METHOD_NOARGS(ptGUIControlTextBox, getString, "Returns the string that the TextBox is set to (in case you forgot)"),
-    PYTHON_METHOD_NOARGS(ptGUIControlTextBox, getStringW, "Unicode version of getString"),
     PYTHON_METHOD(ptGUIControlTextBox, setFontSize, "Params: size\nDon't use"),
     PYTHON_METHOD(ptGUIControlTextBox, setForeColor, "Params: color\nSets the text forecolor to 'color', which is a ptColor object."),
     PYTHON_METHOD(ptGUIControlTextBox, setBackColor, "Params: color\nSets the text backcolor to 'color', which is a ptColor object."),
@@ -219,15 +179,15 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlTextBox, pyGUIControl, "Params: ctrlKey\nP
 // required functions for PyObject interoperability
 PyObject *pyGUIControlTextBox::New(pyKey& gckey)
 {
-    ptGUIControlTextBox *newObj = (ptGUIControlTextBox*)ptGUIControlTextBox_type.tp_new(&ptGUIControlTextBox_type, NULL, NULL);
+    ptGUIControlTextBox *newObj = (ptGUIControlTextBox*)ptGUIControlTextBox_type.tp_new(&ptGUIControlTextBox_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlTextBox::New(plKey objkey)
 {
-    ptGUIControlTextBox *newObj = (ptGUIControlTextBox*)ptGUIControlTextBox_type.tp_new(&ptGUIControlTextBox_type, NULL, NULL);
-    newObj->fThis->fGCkey = objkey;
+    ptGUIControlTextBox *newObj = (ptGUIControlTextBox*)ptGUIControlTextBox_type.tp_new(&ptGUIControlTextBox_type, nullptr, nullptr);
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

@@ -52,10 +52,10 @@ class plPickingDetector : public plDetectorModifier
 protected:
     
 public:
-    plPickingDetector(){;}
-    virtual ~plPickingDetector(){;}
+    plPickingDetector() { }
+    virtual ~plPickingDetector() { }
     
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     CLASSNAME_REGISTER( plPickingDetector );
     GETINTERFACE_ANY( plPickingDetector, plDetectorModifier );
@@ -67,10 +67,10 @@ class plClickDragDetector : public plDetectorModifier
 protected:
     
 public:
-    plPickingDetector(){;}
-    virtual ~plPickingDetector(){;}
+    plPickingDetector() { }
+    virtual ~plPickingDetector() { }
     
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     CLASSNAME_REGISTER( plPickingDetector );
     GETINTERFACE_ANY( plPickingDetector, plDetectorModifier );

@@ -53,10 +53,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plLayerConverter_h
 #define _plLayerConverter_h
 
+#include <vector>
 
 //// Class Definition /////////////////////////////////////////////////////////
 
 class plErrorMsg;
+class plFileName;
 class plLayerInterface;
 class plMaxNode;
 class plPlasmaMAXLayer;
@@ -68,7 +70,6 @@ class plBitmap;
 class plCubicRenderTarget;
 class hsConverterUtils;
 class plDynamicTextLayer;
-class plString;
 
 class plLayerConverter
 {
@@ -83,17 +84,17 @@ class plLayerConverter
     public:
 
         ~plLayerConverter();
-        static plLayerConverter &Instance( void );
+        static plLayerConverter &Instance();
 
         void    Init( bool save, plErrorMsg *msg );
-        void    DeInit( void );
+        void    DeInit();
 
         plLayerInterface    *ConvertTexmap( Texmap *texmap, plMaxNode *maxNode,
                                             uint32_t blendFlags, bool preserveUVOffset, bool upperLayer );
-        plBitmap *CreateSimpleTexture(const char *fileName, const plLocation &loc, uint32_t clipID = 0, uint32_t texFlags = 0, bool useJPEG = false);
+        plBitmap *CreateSimpleTexture(plFileName fileName, const plLocation &loc, uint32_t clipID = 0, uint32_t texFlags = 0, bool usePNG = false);
         
-        void    MuteWarnings( void );
-        void    UnmuteWarnings( void );
+        void    MuteWarnings();
+        void    UnmuteWarnings();
 
     protected:
 
@@ -104,17 +105,17 @@ class plLayerConverter
         Interface           *fInterface;
         hsConverterUtils    &fConverterUtils;
 
-        const char  *fDbgNodeName;
+        const MCHAR* fDbgNodeName;
 
-        hsTArray<plPlasmaMAXLayer *>    fConvertedLayers;
+        std::vector<plPlasmaMAXLayer *> fConvertedLayers;
 
 
-        plLayer             *ICreateLayer( const plString &name, bool upperLayer, plLocation &loc );
+        plLayer             *ICreateLayer( const ST::string &name, bool upperLayer, plLocation &loc );
         void                IProcessUVGen( plPlasmaMAXLayer *srcLayer, plLayer *destLayer, plBitmapData *bitmapData, bool preserveUVOffset );
-        plDynamicTextMap    *ICreateDynTextMap( const plString &layerName, uint32_t width, uint32_t height, bool includeAlpha, plMaxNode *node );
+        plDynamicTextMap    *ICreateDynTextMap( const ST::string &layerName, uint32_t width, uint32_t height, bool includeAlpha, plMaxNode *node );
 
         plLayer             *IAssignTexture( plBitmapData *bd, plMaxNode *maxNode, plLayer *destLayer, bool upperLayer, int clipID = -1 );
-        plCubicRenderTarget *IMakeCubicRenderTarget( const plString &name, plMaxNode *maxNode, plMaxNode *anchor );
+        plCubicRenderTarget *IMakeCubicRenderTarget( const ST::string &name, plMaxNode *maxNode, plMaxNode *anchor );
 
         // Add your function to process your layer type here
         plLayerInterface    *IConvertLayerTex( plPlasmaMAXLayer *layer, plMaxNode *maxNode, uint32_t blendFlags, bool preserveUVOffset, bool upperLayer );
@@ -124,7 +125,7 @@ class plLayerConverter
         plLayerInterface    *IConvertDynamicTextLayer( plPlasmaMAXLayer *layer, plMaxNode *maxNode, uint32_t blendFlags, bool preserveUVOffset, bool upperLayer );
 
         plBitmap*           IGetAttenRamp( plMaxNode *maxNode, BOOL isAdd, int loClamp, int hiClamp);
-        plLayer*            ICreateAttenuationLayer(const plString& name, plMaxNode *maxNode, int uvwSrc, float tr0, float op0, float tr1, float op1, int loClamp, int hiClamp);
+        plLayer*            ICreateAttenuationLayer(const ST::string& name, plMaxNode *maxNode, int uvwSrc, float tr0, float op0, float tr1, float op1, int loClamp, int hiClamp);
         plLayerInterface*   IConvertAngleAttenLayer(plPlasmaMAXLayer *layer, plMaxNode *maxNode, uint32_t blendFlags, bool preserveUVOffset, bool upperLayer);
 
         void                IRegisterConversion( plPlasmaMAXLayer *origLayer, plLayerInterface *convertedLayer );

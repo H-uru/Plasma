@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plCoordinateInterface_inc
 
 #include "plObjInterface.h"
-#include "hsTemplates.h"
 #include "hsMatrix44.h"
-#include "pnNetCommon/plSynchedValue.h"
 
 class hsStream;
 class hsResMgr;
@@ -99,7 +97,7 @@ protected:
     uint16_t                                fState;
     uint16_t                                fReason;        // why we've changed position (if we have)
 
-    hsTArray<plSceneObject*>                fChildren;
+    std::vector<plSceneObject*>             fChildren;
     plCoordinateInterface*                  fParent;    // if this changes, marks us as dirty
 
     hsMatrix44                              fLocalToParent;
@@ -108,20 +106,20 @@ protected:
     hsMatrix44                              fLocalToWorld;
     hsMatrix44                              fWorldToLocal;
 
-    virtual void ISetOwner(plSceneObject* so);
+    void ISetOwner(plSceneObject* so) override;
 
     virtual void ISetParent(plCoordinateInterface* par); // don't use, use AddChild on parent
-    virtual void ISetSceneNode(plKey newNode);
+    void ISetSceneNode(const plKey& newNode) override;
     // objectToo moves the sceneObject to the new room, else just move the data and remove
     // the object from whatever room he's in.
 
     // Network only strange functions. Do not emulate or generalize this functionality.
-    void                    ISetNetGroupRecur(plNetGroupId netGroup);
+    void                    ISetNetGroupRecur(const plNetGroupId& netGroup);
 
-    virtual void ISetChild(plSceneObject* child, int which); // sets parent on child
+    virtual void ISetChild(plSceneObject* child, hsSsize_t which); // sets parent on child
     virtual void IAddChild(plSceneObject* child); // sets parent on child
     virtual void IRemoveChild(plSceneObject* child); // removes this as parent of child
-    virtual void IRemoveChild(int i); // removes this as parent of child
+    virtual void IRemoveChild(size_t i); // removes this as parent of child
     virtual void IAttachChild(plSceneObject* child, uint8_t flags); // physically attaches child to us
     virtual void IDetachChild(plSceneObject* child, uint8_t flags); // physically detach this child from us
     virtual void IUpdateDelayProp(); // Called whenever a child is added/removed
@@ -143,10 +141,10 @@ public:
     CLASSNAME_REGISTER( plCoordinateInterface );
     GETINTERFACE_ANY( plCoordinateInterface, plObjInterface );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
     virtual void SetLocalToParent(const hsMatrix44& l2p, const hsMatrix44& p2l);
     // special version for setting transform from physics.
     // separate to keep from changing interface to add "reason" parameter
@@ -182,16 +180,16 @@ public:
 
     virtual const hsPoint3 GetWorldPos() const { return fLocalToWorld.GetTranslate(); }
 
-    virtual int GetNumChildren() const { return fChildren.GetCount(); }
-    virtual plCoordinateInterface* GetChild(int i) const;
+    virtual size_t GetNumChildren() const { return fChildren.size(); }
+    virtual plCoordinateInterface* GetChild(size_t i) const;
     virtual plCoordinateInterface* GetParent() const { return fParent; }
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     uint16_t GetReasons();
     void ClearReasons();
 
-    int32_t   GetNumProperties() const { return kNumProps; }
+    int32_t   GetNumProperties() const override { return kNumProps; }
     static uint8_t    GetTransformPhase() { return fTransformPhase; }
     static void     SetTransformPhase(uint8_t phase) { fTransformPhase = phase; }
 

@@ -41,24 +41,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include "MaxAPI.h"
+
 #include "plgDispatch.h"
 #include "hsFastMath.h"
 #include "pnKeyedObject/plKey.h"
 #include "plRenderLevel.h"
-#include "hsSTLStream.h"
-#include "hsStringTokenizer.h"
-#include "hsTemplates.h"
 
 #include "plMaxNode.h"
 #include "plMaxNodeData.h"
 #include "MaxComponent/plComponent.h"
-
-#include <guplib.h>
-#include <iparamm2.h>
-#include <iskin.h>
-#include <mnmath.h>
-#include <utilapi.h>
-#pragma hdrstop
+#include "MaxMain/hsMStringTokenizer.h"
 
 #include "GlobalUtility.h"
 #include "plPluginResManager.h"
@@ -78,6 +71,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnSceneObject/plSceneObject.h"
 #include "plScene/plSceneNode.h"
+#include "plPhysX/plPXCooking.h"
 #include "plPhysX/plPXPhysical.h"
 #include "plDrawable/plInstanceDrawInterface.h"
 #include "plDrawable/plSharedMesh.h"
@@ -104,6 +98,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plTimeMsg.h"
 #include "pfAnimation/plViewFaceModifier.h" // mf horse temp hack testing to be thrown away
 
+#include "plScene/plCullPoly.h"
 #include "plScene/plOccluder.h"
 
 #include "plDrawable/plDrawableSpans.h"
@@ -141,6 +136,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxPlasmaLights/plRealTimeLightBase.h"
 #include "MaxPlasmaLights/plRTProjDirLight.h"
 
+#include "plGetLocationDlg.h"
+
+#include "plResMgr/plKeyFinder.h"
+#include "plMaxCFGFile.h"
+#include "plAgeDescription/plAgeDescription.h"
+#include "plResMgr/plPageInfo.h"
+#include "pnNetCommon/plSDLTypes.h"
+
+#include "plMaxMeshExtractor.h"
+#include "plPhysX/plSimulationMgr.h"
 
 extern UserPropMgr gUserPropMgr;
 
@@ -151,36 +156,36 @@ bool ThreePlaneIntersect(const hsVector3& norm0, const hsPoint3& point0,
 // Begin external component toolbox ///////////////////////////////////////////////////////////////
 static plKey ExternAddModifier(plMaxNodeBase *node, plModifier *mod)
 {
-    return nil;//((plMaxNode*)node)->AddModifier(mod);
+    return nullptr;//((plMaxNode*)node)->AddModifier(mod);
 }
 
-static plKey ExternGetNewKey(const plString &name, plModifier *mod, plLocation loc)
+static plKey ExternGetNewKey(const ST::string &name, plModifier *mod, plLocation loc)
 {
-    return nil;//hsgResMgr::ResMgr()->NewKey(name, mod, loc);
+    return nullptr;//hsgResMgr::ResMgr()->NewKey(name, mod, loc);
 }
 
 // In plResponderComponent (for no apparent reason).
-int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString &segName, hsTArray<plKey>& keys);
+int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string &segName, std::vector<plKey>& keys);
 // In plAudioComponents
-int GetSoundNameAndIdx(plComponentBase *comp, plMaxNodeBase *node, const char*& name);
+int GetSoundNameAndIdx(plComponentBase *comp, plMaxNodeBase *node, const MCHAR*& name);
 
-static plString GetAnimCompAnimName(plComponentBase *comp)
+static ST::string GetAnimCompAnimName(plComponentBase *comp)
 {
     if (comp->ClassID() == ANIM_COMP_CID || comp->ClassID() == ANIM_GROUP_COMP_CID)
         return ((plAnimComponentBase*)comp)->GetAnimName();
-    return plString::Null;
+    return ST::string();
 }
 
 static plKey GetAnimCompModKey(plComponentBase *comp, plMaxNodeBase *node)
 {
     if (comp->ClassID() == ANIM_COMP_CID || comp->ClassID() == ANIM_GROUP_COMP_CID)
         return ((plAnimComponentBase*)comp)->GetModKey((plMaxNode*)node);
-    return nil;
+    return nullptr;
 }
 
 plComponentTools gComponentTools(ExternAddModifier, 
                                 ExternGetNewKey, 
-                                nil, 
+                                nullptr,
                                 GetAnimCompModKey,
                                 GetAnimCompAnimName,
                                 GetMatAnimModKey,
@@ -190,7 +195,7 @@ plComponentTools gComponentTools(ExternAddModifier,
 
 void plMaxBoneMap::AddBone(plMaxNodeBase *bone)
 {
-    char *dbgNodeName = bone->GetName();
+    auto dbgNodeName = bone->GetName();
     if (fBones.find(bone) == fBones.end())
         fBones[bone] = fNumBones++;
 }
@@ -236,7 +241,7 @@ void plMaxBoneMap::SortBones()
         bool swap = false;        
         for (j = i + 1; j < fNumBones; j++)
         {
-            if (strcmp(tempBones[i]->GetName(), tempBones[j]->GetName()) > 0)
+            if (_tcscmp(tempBones[i]->GetName(), tempBones[j]->GetName()) > 0)
             {
                 plMaxNodeBase *temp = tempBones[i];
                 tempBones[i] = tempBones[j];
@@ -256,7 +261,7 @@ void plMaxBoneMap::SortBones()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-plKey plMaxNode::AddModifier(plModifier *pMod, const plString& name)
+plKey plMaxNode::AddModifier(plModifier *pMod, const ST::string& name)
 {
     plKey modKey = pMod->GetKey();
     if (!modKey)
@@ -268,7 +273,7 @@ plKey plMaxNode::AddModifier(plModifier *pMod, const plString& name)
 bool plMaxNode::DoRecur(PMaxNodeFunc pDoFunction,plErrorMsg *pErrMsg, plConvertSettings *settings,plExportProgressBar*bar)
 {
 #ifdef HS_DEBUGGING
-    const char *tmpName = GetName();
+    auto tmpName = GetName();
 #endif
 
     // If there is a progess bar, update it with the current node
@@ -298,7 +303,7 @@ bool plMaxNode::DoRecur(PMaxNodeFunc pDoFunction,plErrorMsg *pErrMsg, plConvertS
 bool plMaxNode::DoAllRecur(PMaxNodeFunc pDoFunction,plErrorMsg *pErrMsg, plConvertSettings *settings,plExportProgressBar*bar)
 {
 #ifdef HS_DEBUGGING
-    const char *tmpName = GetName();
+    auto tmpName = GetName();
 #endif
 
     // If there is a progess bar, update it with the current node
@@ -323,7 +328,7 @@ bool plMaxNode::ConvertValidate(plErrorMsg *pErrMsg, plConvertSettings *settings
 {
     TimeValue   t = hsConverterUtils::Instance().GetTime(GetInterface());
     Object *obj = EvalWorldState( t ).obj;
-    const char* dbgName = GetName();
+    auto dbgName = GetName();
 
     // Always want to recalculate if this object can convert at this point.
     // In general there won't be any cached flag anyway, but in the SceneViewer
@@ -354,11 +359,11 @@ bool plMaxNode::ConvertValidate(plErrorMsg *pErrMsg, plConvertSettings *settings
         thisNodeData.SetForceLocal(true);
     }
 
-    if (UserPropExists("Occluder"))
+    if (UserPropExists(_M("Occluder")))
     {
 //      thisNodeData.SetDrawable(false);
     }
-    if( UserPropExists("PSRunTimeLight") )
+    if( UserPropExists(_M("PSRunTimeLight")) )
         thisNodeData.SetRunTimeLight(true);
 
     if (GetParticleRelated())
@@ -382,7 +387,7 @@ bool plMaxNode::ConvertValidate(plErrorMsg *pErrMsg, plConvertSettings *settings
     // Send this node off to the instance list, to see if we're instanced
     if( CanMakeMesh( obj, pErrMsg, settings ) ) 
     {
-        hsTArray<plMaxNode *> nodes;
+        std::vector<plMaxNode *> nodes;
         uint32_t numInstances = IBuildInstanceList( GetObjectRef(), t, nodes );
         if( numInstances > 1 )
         {
@@ -416,20 +421,15 @@ bool plMaxNode::ClearMaxNodeData(plErrorMsg *pErrMsg, plConvertSettings *setting
         GetSwappableGeom()->GetKey()->UnRefObject();
     }
 
-    SetMaxNodeData( nil );
+    SetMaxNodeData(nullptr);
     return true;
 }
 
-#include "plGetLocationDlg.h"
+
 
 //
 // Helper for setting synchedObject options, until we have a GUI
 //
-#include "plResMgr/plKeyFinder.h"
-#include "plMaxCFGFile.h"
-#include "plAgeDescription/plAgeDescription.h"
-#include "plResMgr/plPageInfo.h"
-#include "pnNetCommon/plSDLTypes.h"
 
 void plMaxNode::CheckSynchOptions(plSynchedObject* so)
 {
@@ -444,35 +444,35 @@ void plMaxNode::CheckSynchOptions(plSynchedObject* so)
         //
         // check for LocalOnly or DontPersist props
         //
-        if (gUserPropMgr.UserPropExists(this, "LocalOnly"))
+        if (gUserPropMgr.UserPropExists(this, _M("LocalOnly")))
             so->SetLocalOnly(true); // disable net synching and persistence
         else
-        if (gUserPropMgr.UserPropExists(this, "DontPersistAny"))    // disable all types of persistence
+        if (gUserPropMgr.UserPropExists(this, _M("DontPersistAny")))    // disable all types of persistence
             so->SetSynchFlagsBit(plSynchedObject::kExcludeAllPersistentState);
         else
         {
-            if (gUserPropMgr.GetUserPropStringList(this, "DontPersist", num, sdataList))
+            if (gUserPropMgr.GetUserPropStringList(this, _M("DontPersist"), num, sdataList))
             {
                 for(i=0;i<num;i++)
-                    so->AddToSDLExcludeList((const char *)sdataList[i]);  // disable a type of persistence
+                    so->AddToSDLExcludeList(M2ST(sdataList[i]));  // disable a type of persistence
             }
         }
 
         //
         // Check for Volatile prop
         //
-        if (gUserPropMgr.UserPropExists(this, "VolatileAll"))   // make all sdl types on this object Volatile
+        if (gUserPropMgr.UserPropExists(this, _M("VolatileAll")))   // make all sdl types on this object Volatile
             so->SetSynchFlagsBit(plSynchedObject::kAllStateIsVolatile);
         else
         {
-            if (gUserPropMgr.GetUserPropStringList(this, "Volatile", num, sdataList))
+            if (gUserPropMgr.GetUserPropStringList(this, _M("Volatile"), num, sdataList))
             {
                 for(i=0;i<num;i++)
-                    so->AddToSDLVolatileList((const char *)sdataList[i]); // make volatile a type of persistence
+                    so->AddToSDLVolatileList(M2ST(sdataList[i])); // make volatile a type of persistence
             }
         }
 
-        bool tempOldOverride = (gUserPropMgr.UserPropExists(this, "OverrideHighLevelSDL") != 0);
+        bool tempOldOverride = gUserPropMgr.UserPropExists(this, _M("OverrideHighLevelSDL"));
 
         //
         // TEMP - remove
@@ -511,7 +511,7 @@ void plMaxNode::CheckSynchOptions(plSynchedObject* so)
 
 bool plMaxNode::MakeSceneObject(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    const char* dbgName = GetName();
+    auto dbgName = GetName();
     if (!CanConvert()) 
         return false;
 
@@ -537,7 +537,7 @@ bool plMaxNode::MakeSceneObject(plErrorMsg *pErrMsg, plConvertSettings *settings
 
     // Handle this as a SceneObject
     pso = new plSceneObject;
-    objKey = hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(GetName()), pso, nodeLoc, GetLoadMask());
+    objKey = hsgResMgr::ResMgr()->NewKey(M2ST(GetName()), pso, nodeLoc, GetLoadMask());
 
     // Remember info in MaxNodeData block for later
     plMaxNodeData *pDat = GetMaxNodeData();
@@ -572,7 +572,7 @@ bool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
     if( !CanConvert() )
         return false;
 
-    if (UserPropExists("Bone"))
+    if (UserPropExists(_M("Bone")))
     {
         AddBone(this);
         SetForceLocal(true);
@@ -581,7 +581,7 @@ bool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
     ISkin* skin = FindSkinModifier();
     if( skin && skin->GetNumBones() )
     {
-        char *dbgNodeName = GetName();
+        auto dbgNodeName = GetName();
 
         // BoneUpdate
         //SetForceLocal(true);
@@ -593,7 +593,7 @@ bool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
             {
                 if( !bone->CanConvert() || !bone->GetMaxNodeData() )
                 {
-                    if( pErrMsg->Set(true, GetName(), "Trouble connecting to bone %s - skipping", bone->GetName()).CheckAndAsk() )
+                    if( pErrMsg->Set(true, GetName(), ST::format("Trouble connecting to bone {} - skipping", bone->GetName())).CheckAndAsk() )
                         SetDrawable(false);
                 }
                 else
@@ -613,14 +613,9 @@ bool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
     return true;
 }
 
-#include "plMaxMeshExtractor.h"
-#include "plPhysXCooking.h"
-#include "plPhysX/plPXStream.h"
-#include "plPhysX/plSimulationMgr.h"
-
 bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     if( !CanConvert() )
         return false;
@@ -672,7 +667,8 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
     plMaxNode* subworld = physProps->GetSubworld();
 
-    PhysRecipe recipe;
+    plPXPhysical* physical = new plPXPhysical();
+    PhysRecipe& recipe = physical->GetRecipe();
     recipe.mass = mass;
     recipe.friction = physProps->GetFriction();
     recipe.restitution = physProps->GetRestitution();
@@ -681,15 +677,13 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
     recipe.reportsOn = physProps->GetReportGroup();
     recipe.objectKey = GetKey();
     recipe.sceneNode = roomKey;
-    recipe.worldKey = subworld ? subworld->GetKey() : nil;
+    recipe.worldKey = subworld ? subworld->GetKey() : nullptr;
 
     plMaxMeshExtractor::NeutralMesh mesh;
     plMaxMeshExtractor::Extract(mesh, proxyNode, bounds == plSimDefs::kBoxBounds, this);
 
-    if (subworld)
-        recipe.l2s = subworld->GetWorldToLocal44() * mesh.fL2W;
-    else
-        recipe.l2s = mesh.fL2W;
+    hsMatrix44 l2s = subworld ? (subworld->GetWorldToLocal44() * mesh.fL2W) : mesh.fL2W;
+    l2s.DecompRigid(recipe.l2sP, recipe.l2sQ);
 
     switch (bounds)
     {
@@ -713,55 +707,17 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
     case plSimDefs::kProxyBounds:
     case plSimDefs::kExplicitBounds:
         {
-            // if this is a detector then try to convert to a convex hull first... if that doesn't succeed then do it as an exact
-            if ( group == plSimDefs::kGroupDetector )
-            {
-                // try converting to a convex hull mesh
-                recipe.meshStream = plPhysXCooking::CookHull(mesh.fNumVerts, mesh.fVerts,false);
-                if (recipe.meshStream)
-                {
-                    plPXStream pxs(recipe.meshStream);
-                    recipe.convexMesh = plSimulationMgr::GetInstance()->GetSDK()->createConvexMesh(pxs);
-                    recipe.bounds = plSimDefs::kHullBounds;
-                    // then test to see if the original mesh was convex (unless they said to skip 'em)
-#ifdef WARNINGS_ON_CONCAVE_PHYSX_WORKAROUND
-                    if ( !plPhysXCooking::fSkipErrors )
-                    {
-                        if ( !plPhysXCooking::TestIfConvex(recipe.convexMesh, mesh.fNumVerts, mesh.fVerts) )
-                        {
-                            int retStatus = pErrMsg->Set(true, "Physics Warning: PhysX workaround", "Detector region that is marked as exact and is concave but switching to convex hull for PhysX: %s", GetName()).CheckAskOrCancel();
-                            pErrMsg->Set();
-                            if ( retStatus == 1 )  // cancel?
-                                plPhysXCooking::fSkipErrors = true;
-                        }
-                    }
-#endif  // WARNINGS_ON_CONCAVE_PHYSX_WORKAROUND
-                }
-                if (!recipe.meshStream)
-                {
-                    if ( !pErrMsg->Set(true, "Physics Warning", "Detector region exact failed to be made a Hull, trying trimesh: %s", GetName()).Show() )
-                        pErrMsg->Set();
-                    recipe.meshStream = plPhysXCooking::CookTrimesh(mesh.fNumVerts, mesh.fVerts, mesh.fNumFaces, mesh.fFaces);
-                    if (!recipe.meshStream)
-                    {
-                        pErrMsg->Set(true, "Physics Error", "Trimesh creation failed for physical %s", GetName()).Show();
-                        return false;
-                    }
-                    plPXStream pxs(recipe.meshStream);
-                    recipe.triMesh = plSimulationMgr::GetInstance()->GetSDK()->createTriangleMesh(pxs);
-                }
+            recipe.meshStream = std::make_unique<hsRAMStream>();
+            plPXCooking::WriteTriMesh(recipe.meshStream.get(), mesh.fNumFaces, mesh.fFaces,
+                                      mesh.fNumVerts, mesh.fVerts);
+            recipe.meshStream->Rewind();
+
+            // Attempt to cook the physical
+            if (!(recipe.triMesh = physical->ICookTriMesh(recipe.meshStream.get()))) {
+                pErrMsg->Set("Physics Error", ST::format("Failed to cook triangle mesh {}", GetName())).Show();
+                return false;
             }
-            else
-            {
-                recipe.meshStream = plPhysXCooking::CookTrimesh(mesh.fNumVerts, mesh.fVerts, mesh.fNumFaces, mesh.fFaces);
-                if (!recipe.meshStream)
-                {
-                    pErrMsg->Set(true, "Physics Error", "Trimesh creation failed for physical %s", GetName()).Show();
-                    return false;
-                }
-                plPXStream pxs(recipe.meshStream);
-                recipe.triMesh = plSimulationMgr::GetInstance()->GetSDK()->createTriangleMesh(pxs);
-            }
+            recipe.meshStream->Rewind();
         }
         break;
     case plSimDefs::kSphereBounds:
@@ -784,33 +740,16 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
         break;
     case plSimDefs::kHullBounds:
         {
-            
-            
-            
-            if ( group == plSimDefs::kGroupDynamic )
-            {
-                
-                            
-                recipe.meshStream = plPhysXCooking::IMakePolytope(mesh);
-                
-                
-                if (!recipe.meshStream)
-                {
-                    pErrMsg->Set(true, "Physics Error", "polyTope-convexhull failed for physical %s", GetName()).Show();
-                    return false;
-                }
+            recipe.meshStream = std::make_unique<hsRAMStream>();
+            plPXCooking::WriteConvexHull(recipe.meshStream.get(), mesh.fNumVerts, mesh.fVerts);
+            recipe.meshStream->Rewind();
+
+            // Attempt to cook the physical
+            if (!(recipe.convexMesh = physical->ICookHull(recipe.meshStream.get()))) {
+                pErrMsg->Set("Physics Error", ST::format("Failed to cook convex hull {}", GetName())).Show();
+                return false;
             }
-            else
-            {
-                recipe.meshStream = plPhysXCooking::CookHull(mesh.fNumVerts, mesh.fVerts,false);
-                if(!recipe.meshStream)
-                {
-                    pErrMsg->Set(true, "Physics Error", "Convex hull creation failed for physical %s", GetName()).Show();
-                    return false;
-                }
-            }
-            plPXStream pxs(recipe.meshStream);
-            recipe.convexMesh = plSimulationMgr::GetInstance()->GetSDK()->createConvexMesh(pxs);
+            recipe.meshStream->Rewind();
         }
         break;
     }
@@ -818,19 +757,16 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
     delete [] mesh.fFaces;
     delete [] mesh.fVerts;
 
-    //
-    // Create the physical
-    //
-    plPXPhysical* physical = new plPXPhysical;
-
     // add the object to the resource manager, keyed to the new name
     plLocation nodeLoc = GetKey()->GetUoid().GetLocation();
-    plString objName = GetKey()->GetName();
+    ST::string objName = GetKey()->GetName();
     plKey physKey = hsgResMgr::ResMgr()->NewKey(objName, physical, nodeLoc, GetLoadMask());
 
-    if (!physical->Init(recipe))
+    // Sanity check creating the physical actor
+    physical->DirtyRecipe();
+    if (!physical->InitActor())
     {
-        pErrMsg->Set(true, "Physics Error", "Physical creation failed for object %s", GetName()).Show();
+        pErrMsg->Set(true, "Physics Error", ST::format("Physical creation failed for object {}", GetName())).Show();
         physKey->RefObject();
         physKey->UnRefObject();
         return false;
@@ -890,10 +826,10 @@ bool plMaxNode::MakeController(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
 bool plMaxNode::MakeCoordinateInterface(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
     if (!CanConvert()) 
         return false;
-    plCoordinateInterface* ci = nil;
+    plCoordinateInterface* ci = nullptr;
 
     bool forceLocal = GetForceLocal();
 
@@ -914,7 +850,7 @@ bool plMaxNode::MakeCoordinateInterface(plErrorMsg *pErrMsg, plConvertSettings *
         //-------------------------
         plKey pNodeKey = GetKey();
         hsAssert(pNodeKey, "Missing key for this Object");
-        plString pName = pNodeKey->GetName();
+        ST::string pName = pNodeKey->GetName();
         plLocation nodeLoc = GetLocation();
 
         plKey pCiKey = hsgResMgr::ResMgr()->NewKey(pName, ci,nodeLoc, GetLoadMask());
@@ -935,7 +871,7 @@ bool plMaxNode::MakeModifiers(plErrorMsg *pErrMsg, plConvertSettings *settings)
         return false;
     
     bool forceLocal = GetForceLocal();
-    const char *dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     bool addMods = (!GetParentNode()->IsRootNode())
         || forceLocal;
@@ -945,49 +881,48 @@ bool plMaxNode::MakeModifiers(plErrorMsg *pErrMsg, plConvertSettings *settings)
     // create / add modifiers
 
         // mf horse hack testing ViewFace which is already obsolete
-        if ( UserPropExists("ViewFacing") )
+        if (UserPropExists(_M("ViewFacing")))
         {
             plViewFaceModifier* pMod = new plViewFaceModifier;
-            if( UserPropExists("VFPivotFavorY") )
+            if (UserPropExists(_M("VFPivotFavorY")))
                 pMod->SetFlag(plViewFaceModifier::kPivotFavorY);
-            else if( UserPropExists("VFPivotY") )
+            else if (UserPropExists(_M("VFPivotY")))
                 pMod->SetFlag(plViewFaceModifier::kPivotY);
-            else if( UserPropExists("VFPivotTumble") )
+            else if (UserPropExists(_M("VFPivotTumble")))
                 pMod->SetFlag(plViewFaceModifier::kPivotTumble);
             else
                 pMod->SetFlag(plViewFaceModifier::kPivotFace);
-            if( UserPropExists("VFScale") )
+            if (UserPropExists(_M("VFScale")))
             {
                 pMod->SetFlag(plViewFaceModifier::kScale);
-                TSTR sdata;
-                GetUserPropString("VFScale",sdata);
-                hsStringTokenizer toker;
-                toker.Reset(sdata, hsConverterUtils::fTagSeps);
+                MSTR sdata;
+                GetUserPropString(_M("VFScale"), sdata);
+                hsMStringTokenizer toker;
+                toker.Reset(sdata.data(), hsConverterUtils::fTagSeps);
                 int nGot = 0;
-                char* token;
-                hsVector3 scale;
-                scale.Set(1.f,1.f,1.f);
+                MCHAR* token;
+                hsVector3 scale(1.f, 1.f, 1.f);
                 while( (nGot < 3) && (token = toker.next()) )
                 {
                     switch( nGot )
                     {
                     case 0:
-                        scale.fZ = float(atof(token));
+                        scale.fZ = float(_ttof(token));
                         break;
                     case 1:
                         scale.fX = scale.fZ;
-                        scale.fY = float(atof(token));
+                        scale.fY = float(_ttof(token));
                         scale.fZ = 1.f;
                         break;
                     case 2:
-                        scale.fZ = float(atof(token));
+                        scale.fZ = float(_ttof(token));
                         break;
                     }
                     nGot++;
                 }
                 pMod->SetScale(scale);
             }
-            AddModifier(pMod, plString::FromUtf8(GetName()));
+            AddModifier(pMod, M2ST(GetName()));
         }
     }
     return true;
@@ -999,7 +934,7 @@ bool plMaxNode::MakeParentOrRoomConnection(plErrorMsg *pErrMsg, plConvertSetting
     if (!CanConvert()) 
         return false;
 
-    char *dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
     plSceneObject *pso = GetSceneObject();
     if( !GetParentNode()->IsRootNode() )
     {
@@ -1036,10 +971,10 @@ void plMaxNode::IWipeBranchDrawable(bool b)
 
 bool    plMaxNode::CanMakeMesh( Object *obj, plErrorMsg *pErrMsg, plConvertSettings *settings )
 {
-    if( obj == nil )
+    if (obj == nullptr)
         return false;
 
-    if( UserPropExists( "Plasma2_Camera" ) )
+    if (UserPropExists(_M("Plasma2_Camera")))
         return false;
 
     if( !GetSwappableGeom() && !GetDrawable() )
@@ -1054,21 +989,20 @@ bool    plMaxNode::CanMakeMesh( Object *obj, plErrorMsg *pErrMsg, plConvertSetti
     return false;
 }
 
-void ITestAdjacencyRecur(const hsTArray<int>* vertList, int iVert, hsBitVector& adjVerts)
+void ITestAdjacencyRecur(const std::vector<int>* vertList, int iVert, hsBitVector& adjVerts)
 {
     adjVerts.SetBit(iVert);
 
-    int i;
-    for( i = 0; i < vertList[iVert].GetCount(); i++ )
+    for (int vert : vertList[iVert])
     {
-        if( !adjVerts.IsBitSet(vertList[iVert][i]) )
+        if (!adjVerts.IsBitSet(vert))
         {
-            ITestAdjacencyRecur(vertList, vertList[iVert][i], adjVerts);
+            ITestAdjacencyRecur(vertList, vert, adjVerts);
         }
     }
 }
 
-bool ITestAdjacency(const hsTArray<int>* vertList, int numVerts)
+bool ITestAdjacency(const std::vector<int>* vertList, int numVerts)
 {
     hsBitVector adjVerts;
     ITestAdjacencyRecur(vertList, 0, adjVerts);
@@ -1147,7 +1081,7 @@ int IsGeoSpanConvex(plMaxNode* node, const plGeometrySpan* span)
         return 0;
 
     // May not be now, but could become.
-    if( node->GetConcave() || node->UserPropExists("XXXWaterColor") )
+    if (node->GetConcave() || node->UserPropExists(_M("XXXWaterColor")))
         return 0;
 
     if( span->fMaterial && span->fMaterial->GetLayer(0) && (span->fMaterial->GetLayer(0)->GetMiscFlags() & hsGMatState::kMiscTwoSided) )
@@ -1165,10 +1099,10 @@ int IsGeoSpanConvex(plMaxNode* node, const plGeometrySpan* span)
     if( numFaces <= kSmallNumFaces )
         return IsGeoSpanConvexExhaust(span);
 
-    hsTArray<int>*  vertList = new hsTArray<int> [numVerts];
+    std::vector<int>* vertList = new std::vector<int>[numVerts];
 
-    hsTArray<hsVector3>* normList = new hsTArray<hsVector3> [numVerts];
-    hsTArray<float>* distList = new hsTArray<float> [numVerts];
+    std::vector<hsVector3>* normList = new std::vector<hsVector3>[numVerts];
+    std::vector<float>* distList = new std::vector<float>[numVerts];
 
     uint16_t* idx = span->fIndexData;
 
@@ -1204,12 +1138,13 @@ int IsGeoSpanConvex(plMaxNode* node, const plGeometrySpan* span)
                 if( iVtx != jVtx )
                 {
                     // if idx[jVtx] not in list vertList[idx[iVtx]], add it
-                    if( vertList[idx[iVtx]].kMissingIndex == vertList[idx[iVtx]].Find(idx[jVtx]) )
-                        vertList[idx[iVtx]].Append(idx[jVtx]);
+                    std::vector<int>& verts = vertList[idx[iVtx]];
+                    if (std::find(verts.cbegin(), verts.cend(), idx[jVtx]) == verts.cend())
+                        verts.emplace_back(idx[jVtx]);
                 }
             }
-            normList[idx[iVtx]].Append(faceNorm);
-            distList[idx[iVtx]].Append(faceDist);
+            normList[idx[iVtx]].emplace_back(faceNorm);
+            distList[idx[iVtx]].emplace_back(faceDist);
 
         }
         idx += 3;
@@ -1217,14 +1152,11 @@ int IsGeoSpanConvex(plMaxNode* node, const plGeometrySpan* span)
 
     bool someIn = false;
     bool someOut = false;
-    int i;
-    for( i = 0; i < numVerts; i++ )
+    for (int i = 0; i < numVerts; i++)
     {
-        int k;
-        for( k = 0; k < normList[i].GetCount(); k++ )
+        for (size_t k = 0; k < normList[i].size(); k++)
         {
-            int j;
-            for( j = 0; j < vertList[i].GetCount(); j++ )
+            for (size_t j = 0; j < vertList[i].size(); j++)
             {
                 hsPoint3* pos = (hsPoint3*)(vertData + vertList[i][j] * stride);
                 float dist = pos->InnerProduct(normList[i][k]) - distList[i][k];
@@ -1255,10 +1187,10 @@ cleanUp:
     return someIn ? -1 : 1;
 }
 
-// Returns nil if there isn't a sceneobject and a drawinterface.
+// Returns nullptr if there isn't a sceneobject and a drawinterface.
 plDrawInterface* plMaxNode::GetDrawInterface()
 {
-    plDrawInterface* di = nil;
+    plDrawInterface* di = nullptr;
     plSceneObject* obj = GetSceneObject();
     if( obj )
     {
@@ -1269,15 +1201,15 @@ plDrawInterface* plMaxNode::GetDrawInterface()
 
 bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    hsTArray<plGeometrySpan *>  spanArray;
-    plDrawInterface             *newDI = nil;
+    std::vector<plGeometrySpan *> spanArray;
+    plDrawInterface             *newDI = nullptr;
 
     bool        gotMade = false;
     bool        haveAddedToSceneNode = false;
-    hsGMesh     *myMesh = nil;
-    uint32_t      i, triMeshIndex = (uint32_t)-1;
-    const char  *dbgNodeName = GetName();
-    TSTR sdata;
+    hsGMesh     *myMesh = nullptr;
+    uint32_t    triMeshIndex = (uint32_t)-1;
+    auto        dbgNodeName = GetName();
+    MSTR sdata;
     hsStringTokenizer toker;
     plLocation nodeLoc = GetLocation();
     
@@ -1286,9 +1218,9 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         if (!CanConvert()) 
             return false;
 
-        if( UserPropExists( "Plasma2_Camera" ) || !GetDrawable()  )
+        if (UserPropExists(_M("Plasma2_Camera")) || !GetDrawable())
         {
-            SetMesh( nil );
+            SetMesh(nullptr);
             return true;
         }
     }
@@ -1312,12 +1244,12 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
     if( GetInstanced() )
     {
-        hsTArray<plMaxNode *>   nodes;
+        std::vector<plMaxNode *> nodes;
         TimeValue   t = hsConverterUtils::Instance().GetTime(GetInterface());
-        uint32_t      numInstances = IBuildInstanceList( GetObjectRef(), t, nodes, true );
+        size_t      numInstances = IBuildInstanceList(GetObjectRef(), t, nodes, true);
 
         /// Instanced, find an iNode in the list that's been converted already
-        for( i = 0; i < numInstances; i++ )
+        for (size_t i = 0; i < numInstances; i++)
         {
             if( nodes[ i ]->GetSceneObject() && nodes[ i ]->GetSceneObject()->GetDrawInterface() )
             {
@@ -1344,11 +1276,11 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         if( !plMeshConverter::Instance().CreateSpans( this, spanArray, !settings->fDoPreshade ) )
             return false;
     }
-    if( !spanArray.GetCount() )
+    if (spanArray.empty())
         return true;
 
-    for( i = 0; i < spanArray.GetCount(); i++ )
-        spanArray[i]->fMaxOwner = GetKey()->GetName();
+    for (plGeometrySpan* span : spanArray)
+        span->fMaxOwner = GetKey()->GetName();
 
     uint32_t shadeFlags = 0;
     if( GetNoPreShade() )
@@ -1365,24 +1297,24 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         shadeFlags |= plGeometrySpan::kVisLOS;
     if( shadeFlags )
     {
-        for( i = 0; i < spanArray.GetCount(); i++ )
-            spanArray[ i ]->fProps |= shadeFlags;
+        for (plGeometrySpan* span : spanArray)
+            span->fProps |= shadeFlags;
     }
 
     bool DecalMat = false;
     bool NonDecalMat = false;
-        
-    for (i = 0; i < spanArray.GetCount(); i++)
+
+    for (plGeometrySpan* span : spanArray)
     {
-        if (spanArray[i]->fMaterial->IsDecal())
+        if (span->fMaterial->IsDecal())
             DecalMat = true;
         else
-            NonDecalMat = true;                 
+            NonDecalMat = true;
     }
     if (!(DecalMat ^ NonDecalMat))
     {
-        for( i = 0; i < spanArray.GetCount(); i++ )
-            spanArray[ i ]->ClearBuffers();
+        for (plGeometrySpan* span : spanArray)
+            span->ClearBuffers();
 
         if (pErrMsg->Set((plConvert::Instance().fWarned & plConvert::kWarnedDecalAndNonDecal) == 0, GetName(), 
             "This node has both regular and decal materials, and thus will be ignored.").CheckAskOrCancel())
@@ -1403,9 +1335,9 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
     hsMatrix44 w2l = GetWorldToLocal44();
 
     /// 4.17.2001 mcn - TEMP HACK to test fog by adding a key to a bogus fogEnviron object to ALL spans
-/*      plFogEnvironment    *myFog = nil;
+/*      plFogEnvironment    *myFog = nullptr;
     plKey               myFogKey = hsgResMgr::ResMgr()->FindExportAlias( "HACK_FOG", plFogEnvironment::Index() );   
-    if( myFogKey != nil )
+    if (myFogKey != nullptr)
         myFog = plFogEnvironment::ConvertNoRef( myFogKey->GetObjectPtr() );
     else
     {
@@ -1425,8 +1357,8 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 */      /// 4.17.2001 mcn - TEMP HACK end
 
 
-    plDrawable* drawable = nil;
-    plSceneNode* tmpNode = nil;
+    plDrawable* drawable = nullptr;
+    plSceneNode* tmpNode = nullptr;
 
     /// Find the ice to add it to
 
@@ -1438,11 +1370,10 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         plDrawableSpans *drawable = IGetSceneNodeSpans(tmpNode, true, true);
         ISetupBones(drawable, spanArray, l2w, w2l, pErrMsg, settings);
 
-        hsTArray<plGeometrySpan *> *swapSpans = &GetSwappableGeom()->fSpans;
-        for (i = 0; i < spanArray.GetCount(); i++)
-            swapSpans->Append(spanArray.Get(i));
+        std::vector<plGeometrySpan *> *swapSpans = &GetSwappableGeom()->fSpans;
+        swapSpans->insert(swapSpans->end(), spanArray.begin(), spanArray.end());
 
-        plString tmpName = plFormat("{}_SMsh", GetName());
+        ST::string tmpName = ST::format("{}_SMsh", GetName());
         hsgResMgr::ResMgr()->NewKey(tmpName, GetSwappableGeom(), GetLocation(), GetLoadMask());
                 
         return true;
@@ -1458,8 +1389,8 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
             plMaxNode *parent = (plMaxNode *)GetParentNode();
                             
             SetDecalLevel(parent->GetDecalLevel() + 1);
-            for( i = 0; i < spanArray.GetCount(); i++ )
-                spanArray[ i ]->fDecalLevel = GetDecalLevel();
+            for (plGeometrySpan* span : spanArray)
+                span->fDecalLevel = GetDecalLevel();
         }
 
         {
@@ -1478,7 +1409,7 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
 plSceneNode *plMaxNode::IGetDrawableSceneNode(plErrorMsg *pErrMsg)
 {
-    plSceneNode *sn = nil;
+    plSceneNode *sn = nullptr;
 
     sn = plSceneNode::ConvertNoRef( GetRoomKey()->GetObjectPtr() );
 
@@ -1490,46 +1421,23 @@ plSceneNode *plMaxNode::IGetDrawableSceneNode(plErrorMsg *pErrMsg)
 //  necessary. Then it takes the resulting indices and drawable pointers
 //  and assigns them to the given drawInterface.
 
-void    plMaxNode::IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArray, plDrawInterface *di,
-                                            plErrorMsg *pErrMsg, plConvertSettings *settings )
+void plMaxNode::IAssignSpansToDrawables(std::vector<plGeometrySpan *> &spanArray, plDrawInterface *di,
+                                        plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    hsTArray<plGeometrySpan *>  opaqueArray, blendingArray, sortingArray;
-    plDrawableSpans             *oSpans = nil, *bSpans = nil, *sSpans = nil;
+    std::vector<plGeometrySpan *> opaqueArray, blendingArray, sortingArray;
+    plDrawableSpans             *oSpans = nullptr, *bSpans = nullptr, *sSpans = nullptr;
 
-    int         sCount, oCount, bCount, i;
-    plSceneNode *tmpNode = nil;
+    size_t      sCount = 0, oCount = 0, bCount = 0;
+    plSceneNode *tmpNode = nullptr;
     hsMatrix44  l2w = GetLocalToWorld44();
     hsMatrix44  w2l = GetWorldToLocal44();
     uint32_t      oIndex = (uint32_t)-1, bIndex = (uint32_t)-1, sIndex = uint32_t(-1);
 
     tmpNode = IGetDrawableSceneNode(pErrMsg);
-/*
-    /// Get sceneNode. If we're itinerant and not the parent node, this won't just
-    /// be GetRoomKey()->GetObjectPtr()....
-    if( GetItinerant() && !GetParentNode()->IsRootNode() )
-    {
-        /// Step up to the top of the chain
-        plMaxNode *baseNode = this;
-        while( !baseNode->GetParentNode()->IsRootNode() )
-            baseNode = (plMaxNode *)baseNode->GetParentNode();
-
-        if( baseNode->GetItinerant() )
-            tmpNode = plSceneNode::ConvertNoRef( baseNode->GetRoomKey()->GetObjectPtr() );
-        else
-        {
-            tmpNode = plSceneNode::ConvertNoRef( GetRoomKey()->GetObjectPtr() );
-
-            /// Warn, since we should only be itinerant if our parent is as well
-            pErrMsg->Set( true, "Warning", "Itinerant flag in child '%s' of non-itinerant tree. This should never happen. You should inform a programmer...", GetName() ).Show();
-        }       
-    }
-    else
-        tmpNode = plSceneNode::ConvertNoRef( GetRoomKey()->GetObjectPtr() );
-*/
 
     hsBitVector convexBits;
     /// Separate the array into two arrays, one opaque and one blending
-    for( sCount = 0, oCount = 0, bCount = 0, i = 0; i < spanArray.GetCount(); i++ )
+    for (size_t i = 0; i < spanArray.size(); i++)
     {
         if( spanArray[ i ]->fProps & plGeometrySpan::kRequiresBlending )
         {
@@ -1548,12 +1456,11 @@ void    plMaxNode::IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArra
             oCount++;
     }
 
-    // Done this way, since expanding an hsTArray has the nasty side effect of just copying data, which we don't
-    // want when we have memory pointers...
-    opaqueArray.SetCount( oCount );
-    blendingArray.SetCount( bCount );
-    sortingArray.SetCount( sCount );
-    for( sCount = 0, oCount = 0, bCount = 0, i = 0; i < spanArray.GetCount(); i++ )
+    opaqueArray.resize(oCount);
+    blendingArray.resize(bCount);
+    sortingArray.resize(sCount);
+    sCount = oCount = bCount = 0;
+    for (size_t i = 0; i < spanArray.size(); i++)
     {
         if( spanArray[ i ]->fProps & plGeometrySpan::kRequiresBlending )
         {
@@ -1567,16 +1474,16 @@ void    plMaxNode::IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArra
     }
 
     /// Get some drawable pointers
-    if( opaqueArray.GetCount() > 0 )
+    if (!opaqueArray.empty())
         oSpans = plDrawableSpans::ConvertNoRef( IGetSceneNodeSpans( tmpNode, false ) );
-    if( blendingArray.GetCount() > 0 )
+    if (!blendingArray.empty())
         bSpans = plDrawableSpans::ConvertNoRef( IGetSceneNodeSpans( tmpNode, true, false ) );
-    if( sortingArray.GetCount() > 0 )
+    if (!sortingArray.empty())
         sSpans = plDrawableSpans::ConvertNoRef( IGetSceneNodeSpans( tmpNode, true, true ) );
 
-    if( oSpans != nil )
+    if (oSpans != nullptr)
         IAssignSpan( oSpans, opaqueArray, oIndex, l2w, w2l, pErrMsg, settings );
-    if( bSpans != nil )
+    if (bSpans != nullptr)
         IAssignSpan( bSpans, blendingArray, bIndex, l2w, w2l, pErrMsg, settings );
     if( sSpans )
         IAssignSpan( sSpans, sortingArray, sIndex, l2w, w2l, pErrMsg, settings );
@@ -1584,21 +1491,21 @@ void    plMaxNode::IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArra
     /// Now assign to the interface
     if( oSpans )
     {
-        uint8_t iDraw = di->GetNumDrawables();
+        size_t iDraw = di->GetNumDrawables();
         di->SetDrawable( iDraw, oSpans );
         di->SetDrawableMeshIndex( iDraw, oIndex );
     }
 
     if( bSpans )
     {
-        uint8_t iDraw = di->GetNumDrawables();
+        size_t iDraw = di->GetNumDrawables();
         di->SetDrawable( iDraw, bSpans );
         di->SetDrawableMeshIndex( iDraw, bIndex );
     }
 
     if( sSpans )
     {
-        uint8_t iDraw = di->GetNumDrawables();
+        size_t iDraw = di->GetNumDrawables();
         di->SetDrawable( iDraw, sSpans );
         di->SetDrawableMeshIndex( iDraw, sIndex );
     }
@@ -1609,9 +1516,9 @@ void    plMaxNode::IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArra
 //  Small utility function for IAssignSpansToDrawables, just does some of
 //  the low-down work that's identical for each drawable/spans/etc.
 
-void    plMaxNode::IAssignSpan( plDrawableSpans *drawable, hsTArray<plGeometrySpan *> &spanArray, uint32_t &index,
-                                hsMatrix44 &l2w, hsMatrix44 &w2l,
-                                plErrorMsg *pErrMsg, plConvertSettings *settings )
+void plMaxNode::IAssignSpan(plDrawableSpans *drawable, std::vector<plGeometrySpan *> &spanArray, uint32_t &index,
+                            hsMatrix44 &l2w, hsMatrix44 &w2l,
+                            plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     if( NumBones() )
         ISetupBones( drawable, spanArray, l2w, w2l, pErrMsg, settings );
@@ -1631,24 +1538,23 @@ void    plMaxNode::IAssignSpan( plDrawableSpans *drawable, hsTArray<plGeometrySp
 }
 
 // Tiny helper for the function below
-void SetSpansBoneInfo(hsTArray<plGeometrySpan *> &spanArray, uint32_t baseMatrix, uint32_t numMatrices)
+static void SetSpansBoneInfo(std::vector<plGeometrySpan *> &spanArray, uint32_t baseMatrix, uint32_t numMatrices)
 {
-    int i;
-    for( i = 0; i < spanArray.GetCount(); i++ )
+    for (plGeometrySpan* span : spanArray)
     {
-        spanArray[ i ]->fBaseMatrix = baseMatrix;
-        spanArray[ i ]->fNumMatrices = numMatrices;
+        span->fBaseMatrix = baseMatrix;
+        span->fNumMatrices = numMatrices;
     }
 }
 
 //// ISetupBones /////////////////////////////////////////////////////////////
 //  Adds the given bones to the given drawable, then sets up the given spans
 //  with the right indices and sets the initial bone positions.
-void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpan *> &spanArray,
-                                hsMatrix44 &l2w, hsMatrix44 &w2l,
-                                plErrorMsg *pErrMsg, plConvertSettings *settings)
+void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpan *> &spanArray,
+                            hsMatrix44 &l2w, hsMatrix44 &w2l,
+                            plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     if( !NumBones() )
         return;
@@ -1659,31 +1565,25 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
         SetSpansBoneInfo(spanArray, boneMap->GetBaseMatrixIndex(drawable), boneMap->fNumBones);
         return;
     }
-    
-    int baseMatrix, i;
 
-    uint8_t numBones = (boneMap ? boneMap->fNumBones : NumBones()) + 1;
+    int numBones = (boneMap ? boneMap->fNumBones : NumBones()) + 1;
     plMaxNodeBase **boneArray = new plMaxNodeBase*[numBones];
 
     if (boneMap)
         boneMap->FillBoneArray(boneArray);
     else
     {
-        for (i = 0; i < NumBones(); i++)
+        for (int i = 0; i < NumBones(); i++)
         {
             boneArray[i] = GetBone(i);
         }
     }
 
-    hsTArray<hsMatrix44>    initialB2W;
-    hsTArray<hsMatrix44>    initialW2B;
-    initialB2W.SetCount(numBones);
-    initialW2B.SetCount(numBones);
+    std::vector<hsMatrix44> initialB2W(numBones);
+    std::vector<hsMatrix44> initialW2B(numBones);
 
-    hsTArray<hsMatrix44>    initialL2B;
-    hsTArray<hsMatrix44>    initialB2L;
-    initialL2B.SetCount(numBones);
-    initialB2L.SetCount(numBones);
+    std::vector<hsMatrix44> initialL2B(numBones);
+    std::vector<hsMatrix44> initialB2L(numBones);
 
     initialB2W[0].Reset();
     initialW2B[0].Reset();
@@ -1691,7 +1591,7 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
     initialL2B[0].Reset();
     initialB2L[0].Reset();
 
-    for( i = 1; i < numBones; i++ )
+    for (int i = 1; i < numBones; i++)
     {
         hsMatrix44 b2w;
         hsMatrix44 w2b;
@@ -1699,7 +1599,7 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
         hsMatrix44 b2l;
 
         plMaxNodeBase *bone = boneArray[i-1];
-        const char* dbgBoneName = bone->GetName();
+        auto dbgBoneName = bone->GetName();
 
         Matrix3 localTM = bone->GetNodeTM(TimeValue(0));
 
@@ -1724,7 +1624,7 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
     //      our transform as well as the bone's. If we've been flattened into world
     //      space, our transform is ident and we can share. This is the normal case
     //      in scene boning. So InitialBones have to match in count and matrix value.
-    baseMatrix = drawable->FindBoneBaseMatrix(initialL2B, GetSwappableGeom() != nil);
+    uint32_t baseMatrix = drawable->FindBoneBaseMatrix(initialL2B, GetSwappableGeom() != nullptr);
     if( baseMatrix != uint32_t(-1) )
     {
         SetSpansBoneInfo(spanArray, baseMatrix, numBones);
@@ -1737,14 +1637,14 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
     if (boneMap)
         boneMap->SetBaseMatrixIndex(drawable, baseMatrix);
 
-    for( i = 1; i < numBones; i++ )
+    for (int i = 1; i < numBones; i++)
     {
         plMaxNodeBase *bone = boneArray[i-1];
         plSceneObject* obj = bone->GetSceneObject();
-        const char  *dbgBoneName = bone->GetName();
+        auto dbgBoneName = bone->GetName();
 
         // Pick which drawable to point the DI to
-        uint8_t iDraw = 0;
+        size_t iDraw = 0;
 
         /// Now create the actual bone DI, or grab it if it's already created
         plDrawInterface *di = obj->GetVolatileDrawInterface();
@@ -1766,7 +1666,7 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
 
         if( di->GetNumDrawables() <= iDraw )
         {
-            uint32_t diIndex = drawable->NewDIMatrixIndex();
+            size_t diIndex = drawable->NewDIMatrixIndex();
             di->SetDrawableMeshIndex(iDraw, diIndex);
 
             di->SetDrawable(iDraw, drawable);
@@ -1786,10 +1686,9 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
 //  Given an instance node, instances the geoSpans that the node owns and
 //  stores them in the given array.
 
-bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray,
-                                       plErrorMsg *pErrMsg, plConvertSettings *settings )
+bool plMaxNode::IMakeInstanceSpans(plMaxNode *node, std::vector<plGeometrySpan *> &spanArray,
+                                   plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    uint8_t   iDraw;
     int     index, i;
 
     
@@ -1809,8 +1708,8 @@ bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
     }
 
     index = 0;
-    spanArray.Reset();
-    for( iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++ )
+    spanArray.clear();
+    for (size_t iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(iDraw));
         if( !dr )
@@ -1820,11 +1719,11 @@ bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
 
         plDISpanIndex disi = dr->GetDISpans(di->GetDrawableMeshIndex(iDraw));
 
-        spanArray.ExpandAndZero( spanArray.GetCount() + disi.fIndices.GetCount() );
-        for( i = 0; i < disi.fIndices.GetCount(); i++ )
+        spanArray.resize(spanArray.size() + disi.GetCount());
+        for (size_t i = 0; i < disi.GetCount(); i++)
         {
-            spanArray[ index ] = new plGeometrySpan;
-            spanArray[ index ]->MakeInstanceOf( dr->GetGeometrySpan( disi.fIndices[ i ] ) );
+            spanArray[index] = new plGeometrySpan;
+            spanArray[index]->MakeInstanceOf(dr->GetGeometrySpan(disi[i]));
 
             if( setVisDists )
             {
@@ -1832,7 +1731,7 @@ bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
                 spanArray[ index ]->fMaxDist = (maxDist);
             }
 
-            dr->GetGeometrySpan(disi.fIndices[i])->fProps |= plGeometrySpan::kInstanced;
+            dr->GetGeometrySpan(disi[i])->fProps |= plGeometrySpan::kInstanced;
 
             spanArray[ index++ ]->fProps |= plGeometrySpan::kInstanced;
         }
@@ -1851,9 +1750,9 @@ bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
     // in the new array (i.e. same position) and assign that new material to the span.
 #if 1       // Change this to 0 to just always use the same materials on instances (old, incorrect way)
     Mtl *newMtl = GetMtl(), *origMtl = node->GetMtl();
-    if( newMtl != nil && newMtl == origMtl )    // newMtl should == origMtl, but check just in case
+    if (newMtl != nullptr && newMtl == origMtl)    // newMtl should == origMtl, but check just in case
     {
-        hsTArray<hsGMaterial *> oldMaterials, newMaterials;
+        std::vector<hsGMaterial *> oldMaterials, newMaterials;
 
         if( hsMaterialConverter::IsMultiMat( newMtl ) )
         {
@@ -1873,17 +1772,14 @@ bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
         /// The good thing is that this is all done before the spans are added to the drawable,
         /// so we don't have to worry about reffing or unreffing or any of that messiness; all of
         /// that will be done for us as part of the normal AppendDISpans() process.
-        for( i = 0; i < spanArray.GetCount(); i++ )
+        for (plGeometrySpan* span : spanArray)
         {
-            int     j;
-
-
             // Find the span's original material
-            for( j = 0; j < oldMaterials.GetCount(); j++ )
+            for (size_t j = 0; j < oldMaterials.size(); j++)
             {
-                if( spanArray[ i ]->fMaterial == oldMaterials[ j ] )
+                if (span->fMaterial == oldMaterials[j])
                 {
-                    spanArray[ i ]->fMaterial = newMaterials[ j ];
+                    span->fMaterial = newMaterials[j];
                     break;
                 }
             }
@@ -1899,7 +1795,7 @@ bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
 //  For the given object, builds a list of all the iNodes that have that
 //  object as their object. Returns the total node count
 
-uint32_t  plMaxNode::IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMaxNode *> &nodes, bool beMoreAccurate )
+size_t plMaxNode::IBuildInstanceList(Object *obj, TimeValue t, std::vector<plMaxNode *> &nodes, bool beMoreAccurate)
 {
     Object              *thisObj = EvalWorldState( t ).obj;
     DependentIterator   di( obj );
@@ -1910,7 +1806,7 @@ uint32_t  plMaxNode::IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMa
 
     /// Use the DependentIterator to loop through all the dependents of the object,
     /// looking for nodes that use it
-    nodes.Reset();
+    nodes.clear();
     while( rm = di.Next() )
     {
         if( rm->SuperClassID() == BASENODE_CLASS_ID )
@@ -1931,13 +1827,13 @@ uint32_t  plMaxNode::IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMa
                 {
                     // Make sure the materials generated for both of these nodes will be the same
                     if( IMaterialsMatch( node, beMoreAccurate ) )
-                        nodes.Append( node );
+                        nodes.emplace_back(node);
                 }
             }
         }
     }
 
-    return nodes.GetCount();
+    return nodes.size();
 }
 
 //// IMaterialsMatch /////////////////////////////////////////////////////////
@@ -1955,7 +1851,7 @@ bool    plMaxNode::IMaterialsMatch( plMaxNode *otherNode, bool beMoreAccurate )
     if( mtl != otherMtl )
         return false;   // The two objects have different materials, no way we
                         // can try to instance them now
-    if( mtl == nil )
+    if (mtl == nullptr)
         return true;    // Both nodes have no material, works for me
 
     // If we're not told to be accurate, then we just quit here. This is because
@@ -1985,9 +1881,9 @@ bool    plMaxNode::IMaterialsMatch( plMaxNode *otherNode, bool beMoreAccurate )
 
 bool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
-    hsTArray<plGeometrySpan *> spanArray;
+    std::vector<plGeometrySpan *> spanArray;
 
     if( !(CanConvert() && GetDrawable()) ) 
         return true;
@@ -2000,8 +1896,7 @@ bool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
     if( !di )
         return true;
 
-    uint8_t iDraw;
-    for( iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++ )
+    for (size_t iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(iDraw));
         if( !dr )
@@ -2011,10 +1906,9 @@ bool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
         plDISpanIndex disi = dr->GetDISpans(di->GetDrawableMeshIndex(iDraw));
 
-        int i;
-        for( i = 0; i < disi.fIndices.GetCount(); i++ )
+        for (size_t i = 0; i < disi.GetCount(); i++)
         {
-            spanArray.Append( dr->GetGeometrySpan( disi.fIndices[ i ] ) );
+            spanArray.emplace_back(dr->GetGeometrySpan(disi[i]));
         }
 
         hsMatrix44 l2w = GetLocalToWorld44();
@@ -2024,7 +1918,7 @@ bool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         // Either do vertex shading or generate a light map.
         if( GetLightMapComponent() )
         {
-            plLightMapGen::Instance().MakeMaps(this, l2w, w2l, spanArray, pErrMsg, nil);
+            plLightMapGen::Instance().MakeMaps(this, l2w, w2l, spanArray, pErrMsg, nullptr);
 
             // Since they were already pointers to the geometry spans, we don't have
             // to re-stuff them. Horray!
@@ -2042,22 +1936,21 @@ bool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
 bool plMaxNode::MakeOccluder(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    if( !UserPropExists("Occluder") )
+    if( !UserPropExists(_M("Occluder")) )
         return true;
 
-    bool twoSided = UserPropExists("OccTwoSided");
-    bool isHole = UserPropExists("OccHole");
+    bool twoSided = UserPropExists(_M("OccTwoSided"));
+    bool isHole = UserPropExists(_M("OccHole"));
 
     return ConvertToOccluder(pErrMsg, twoSided, isHole);
 }
 
-static void IRemoveCollinearPoints(hsTArray<Point3>& facePts)
+static void IRemoveCollinearPoints(std::vector<Point3>& facePts)
 {
-    int i;
-    for( i = 0; i < facePts.GetCount(); )
+    for (size_t i = 0; i < facePts.size(); )
     {
-        int j = i + 1 >= facePts.GetCount() ? 0 : i + 1;
-        int k = j + 1 >= facePts.GetCount() ? 0 : j + 1;
+        size_t j = i + 1 >= facePts.size() ? 0 : i + 1;
+        size_t k = j + 1 >= facePts.size() ? 0 : j + 1;
         Point3 ab = FNormalize(facePts[i] - facePts[j]);
         Point3 bc = FNormalize(facePts[j] - facePts[k]);
 
@@ -2069,7 +1962,7 @@ static void IRemoveCollinearPoints(hsTArray<Point3>& facePts)
         }
         else
         {
-            facePts.Remove(j);
+            facePts.erase(facePts.begin() + j);
         }
     }
 }
@@ -2083,15 +1976,13 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
     plLocation nodeLoc = GetLocation();
 
     bool moving = IsMovable();
-    if( moving )
-        moving++;
 
     Matrix3 tmp(true);
 
     Matrix3 maxL2V = GetLocalToVert(TimeValue(0));
     Matrix3 maxV2L = GetVertToLocal(TimeValue(0));
 
-    hsTArray<plCullPoly> polys;
+    std::vector<plCullPoly> polys;
 
     uint32_t polyInitFlags = plCullPoly::kNone;
     if( isHole )
@@ -2109,11 +2000,11 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
 
             Mesh mesh(meshObj->mesh);
             
-            const float kNormThresh = M_PI / 20.f;
-            const float kEdgeThresh = M_PI / 20.f;
-            const float kBias = 0.1f;
-            const float kMaxEdge = -1.f;
-            const DWORD kOptFlags = OPTIMIZE_SAVESMOOTHBOUNDRIES; 
+            constexpr float kNormThresh = hsConstants::pi<float> / 20.f;
+            constexpr float kEdgeThresh = hsConstants::pi<float> / 20.f;
+            constexpr float kBias = 0.1f;
+            constexpr float kMaxEdge = -1.f;
+            constexpr DWORD kOptFlags = OPTIMIZE_SAVESMOOTHBOUNDRIES;
 
             mesh.Optimize(
                 kNormThresh, // threshold of normal differences to preserve
@@ -2121,7 +2012,7 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
                 kBias, // Increasing the bias parameter keeps triangles from becoming degenerate. range [0..1] (0 = no bias).
                 kMaxEdge, // This will prevent the optimize function from creating edges longer than this value. If this parameter is <=0 no limit is placed on the length of the edges.
                 kOptFlags, // Let them input using smoothing groups, but nothing else.
-                NULL); // progress bar
+                nullptr); // progress bar
 
             
             MNMesh mnMesh(mesh);
@@ -2133,12 +2024,12 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
 //          mnMesh.MakeConvexPolyMesh();
             mnMesh.MakePolyMesh();
             mnMesh.MakeConvex();
-//          mnMesh.MakePlanar(1.f * M_PI / 180.f); // Completely ineffective. Winding up with majorly non-planar polys.
+//          mnMesh.MakePlanar(hsDegreesToRadians(1.f)); // Completely ineffective. Winding up with majorly non-planar polys.
 
             mnMesh.Transform(maxV2L);
 
-            polys.SetCount(mesh.getNumFaces());
-            polys.SetCount(0);
+            polys.clear();
+            polys.reserve(mesh.getNumFaces());
 
             // Unfortunate problem here. Max is assuming that eventually this will get rendered, and so
             // we need to avoid T-junctions. Fact is, T-junctions don't bother us at all, where-as colinear
@@ -2147,44 +2038,42 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
             // its own mnMesh, then eliminate colinear verts on that single poly mesh. Except
             // EliminateCollinearVerts doesn't seem to actually do that. So we'll just have to
             // manually detect and skip collinear verts.
-            hsTArray<Point3> facePts;
-            int i;
-            for( i = 0; i < mnMesh.numf; i++ )
+            std::vector<Point3> facePts;
+            for (int i = 0; i < mnMesh.numf; i++)
             {
                 MNFace& face = mnMesh.f[i];
 
-                facePts.SetCount(0);
-                int j;
-                for( j = 0; j < face.deg; j++ )
+                facePts.clear();
+                for (int j = 0; j < face.deg; j++)
                 {
-                    facePts.Append(mnMesh.v[face.vtx[j]].p);
+                    facePts.emplace_back(mnMesh.v[face.vtx[j]].p);
                 }
                 IRemoveCollinearPoints(facePts);
 
-                if( facePts.GetCount() < 3 )
+                if (facePts.size() < 3)
                     continue;
 
-                int lastAdded = 2;
+                size_t lastAdded = 2;
 
-                plCullPoly* poly = polys.Push();
-                poly->fVerts.SetCount(0);
+                plCullPoly* poly = &polys.emplace_back();
+                poly->fVerts.clear();
 
                 Point3 p;
                 hsPoint3 pt;
 
                 p = facePts[0];
                 pt.Set(p.x, p.y, p.z);
-                poly->fVerts.Append(pt);
+                poly->fVerts.emplace_back(pt);
 
                 p = facePts[1];
                 pt.Set(p.x, p.y, p.z);
-                poly->fVerts.Append(pt);
+                poly->fVerts.emplace_back(pt);
 
                 p = facePts[2];
                 pt.Set(p.x, p.y, p.z);
-                poly->fVerts.Append(pt);
+                poly->fVerts.emplace_back(pt);
 
-                for( j = lastAdded+1; j < facePts.GetCount(); j++ )
+                for (size_t j = lastAdded + 1; j < facePts.size(); j++)
                 {
                     p = facePts[j];
                     pt.Set(p.x, p.y, p.z);
@@ -2215,16 +2104,16 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
                     {
                         poly->InitFromVerts(polyInitFlags);
 
-                        poly = polys.Push();
-                        plCullPoly* lastPoly = &polys[polys.GetCount()-2];
-                        poly->fVerts.SetCount(0);
-                        poly->fVerts.Append(lastPoly->fVerts[0]);
-                        poly->fVerts.Append(lastPoly->fVerts[lastAdded]);
+                        plCullPoly* lastPoly = &polys.back();
+                        poly = &polys.emplace_back();
+                        poly->fVerts.clear();
+                        poly->fVerts.emplace_back(lastPoly->fVerts[0]);
+                        poly->fVerts.emplace_back(lastPoly->fVerts[lastAdded]);
     
                         lastAdded = 1;
                     }
 
-                    poly->fVerts.Append(pt);
+                    poly->fVerts.emplace_back(pt);
                     lastAdded++;
                 }
 
@@ -2233,10 +2122,10 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
         }
     }
 
-    if( polys.GetCount() )
+    if (!polys.empty())
     {
-        plOccluder* occ = nil;
-        plMobileOccluder* mob = nil;
+        plOccluder* occ = nullptr;
+        plMobileOccluder* mob = nullptr;
         if( moving )
         {
             mob = new plMobileOccluder;
@@ -2251,15 +2140,15 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
         occ->ComputeFromPolys();
 
         // Register it.
-        plString tmpName;
-        if( GetKey() && !GetKey()->GetName().IsEmpty() )
+        ST::string tmpName;
+        if( GetKey() && !GetKey()->GetName().empty() )
         {
-            tmpName = plFormat("{}_Occluder", GetKey()->GetName());
+            tmpName = ST::format("{}_Occluder", GetKey()->GetName());
         }
         else
         {
             static int numOcc = 0;
-            tmpName = plFormat("Occluder_{_04d}", numOcc);
+            tmpName = ST::format("Occluder_{04}", numOcc);
         }
         plKey key = hsgResMgr::ResMgr()->NewKey( tmpName, occ, nodeLoc, GetLoadMask() );
 
@@ -2289,7 +2178,7 @@ bool plMaxNode::MakeLight(plErrorMsg *pErrMsg, plConvertSettings *settings)
     hsMatrix44 l2lt = GetLocalToVert44();
 
 
-    plLightInfo* liInfo = nil;
+    plLightInfo* liInfo = nullptr;
 
 
     liInfo = IMakeLight(pErrMsg, settings);
@@ -2324,7 +2213,7 @@ bool plMaxNode::MakeLight(plErrorMsg *pErrMsg, plConvertSettings *settings)
 plLightInfo* plMaxNode::IMakeLight(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     TimeValue timeVal = hsConverterUtils::Instance().GetTime(GetInterface());
-    plLightInfo* liInfo = nil;
+    plLightInfo* liInfo = nullptr;
     Object *obj = EvalWorldState(timeVal).obj;
     if( obj->ClassID() == Class_ID(OMNI_LIGHT_CLASS_ID, 0) )
         liInfo = IMakeOmni(pErrMsg, settings);
@@ -2547,7 +2436,7 @@ plLightInfo* plMaxNode::IMakeSpot(plErrorMsg* pErrMsg, plConvertSettings* settin
     if (!(REF_SUCCEED == light->EvalLightState(timeVal, Interval(timeVal, timeVal), &ls)))
     {
         pErrMsg->Set(true, GetName(), "Trouble evaluating light").CheckAndAsk();
-        return nil;
+        return nullptr;
     }
 
     plSpotLightInfo* spot = new plSpotLightInfo;
@@ -2576,7 +2465,7 @@ plLightInfo* plMaxNode::IMakeOmni(plErrorMsg* pErrMsg, plConvertSettings* settin
     if (!(REF_SUCCEED == light->EvalLightState(timeVal, Interval(timeVal, timeVal), &ls)))
     {
         pErrMsg->Set(true, GetName(), "Trouble evaluating light").CheckAndAsk();
-        return nil;
+        return nullptr;
     }
 
     plOmniLightInfo* omni = new plOmniLightInfo;
@@ -2604,10 +2493,10 @@ plLightInfo* plMaxNode::IMakeDirectional(plErrorMsg* pErrMsg, plConvertSettings*
     if (!(REF_SUCCEED == light->EvalLightState(timeVal, Interval(timeVal, timeVal), &ls)))
     {
         pErrMsg->Set(true, GetName(), "Trouble evaluating light").CheckAndAsk();
-        return nil;
+        return nullptr;
     }
 
-    plLightInfo* plasLight = nil;
+    plLightInfo* plasLight = nullptr;
     if( light->GetProjMap() )
     {
         plLimitedDirLightInfo* ldl = new plLimitedDirLightInfo;
@@ -2646,7 +2535,7 @@ plLightInfo* plMaxNode::IMakeRTSpot(plErrorMsg* pErrMsg, plConvertSettings* sett
     if(!obj->CanConvertToType(RTSPOT_LIGHT_CLASSID))
     {
         pErrMsg->Set(true, GetName(), "Trouble evaluating light, improper classID").CheckAndAsk();
-        return nil;
+        return nullptr;
 
     }
 
@@ -2804,7 +2693,7 @@ bool plMaxNode::IGetProjection(plLightInfo* li, plErrorMsg* pErrMsg)
         return false;
     }
 
-    IParamBlock2 *pb = nil;
+    IParamBlock2 *pb = nullptr;
 
     Class_ID cid = obj->ClassID();
 
@@ -2867,13 +2756,10 @@ bool plMaxNode::IGetProjection(plLightInfo* li, plErrorMsg* pErrMsg)
         }
         else
         {
-            char buff[256];
-            if( projMap && projMap->GetName() && *projMap->GetName() )
-                sprintf(buff, "Can't find projected bitmap - %s", (const char *)projMap->GetName());
-            else
-                sprintf(buff, "Can't find projected bitmap - <unknown>");
+            ST::string msg = ST::format("Can't find projected bitmap - {}",
+                (projMap && projMap->GetName() && *projMap->GetName()) ? M2ST(projMap->GetName()) : "<unknown>");
             if( pErrMsg->Set(!(convert.fWarned & plConvert::kWarnedMissingProj), GetName(),
-                    buff).CheckAskOrCancel() )
+                    msg).CheckAskOrCancel() )
                 convert.fWarned |= plConvert::kWarnedMissingProj;
             pErrMsg->Set(false);
             retVal = false;
@@ -2916,7 +2802,7 @@ bool plMaxNode::IsAnimatedLight()
     if (!obj)
         return false;
 
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     Class_ID cid = obj->ClassID();
 
@@ -2926,7 +2812,7 @@ bool plMaxNode::IsAnimatedLight()
         cid == RTPDIR_LIGHT_CLASSID))
         return false;
 
-    IParamBlock2 *pb = nil;
+    IParamBlock2 *pb = nullptr;
 
     // Get the paramblock
     if (cid == RTSPOT_LIGHT_CLASSID)
@@ -2982,7 +2868,7 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
         if( falloffCtl )
         {
             plLeafController* subCtl;
-            if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+            if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
                 subCtl = hsControlConverter::Instance().MakeScalarController(falloffCtl, this);
             else
                 subCtl = hsControlConverter::Instance().MakeScalarController(falloffCtl, this,
@@ -2998,7 +2884,7 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
                     plScalarControllerChannel *chan = new plScalarControllerChannel(subCtl);
                     app->SetChannel(chan);
                     anim->AddApplicator(app);
-                    if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+                    if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
                         anim->ExtendToLength(subCtl->GetLength());
                 }
                 else
@@ -3012,7 +2898,7 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
                         if (key)
                         {
                             float attenEnd = key->fValue;
-                            TimeValue tv = key->fFrame * MAX_TICKS_PER_FRAME;
+                            TimeValue tv = (TimeValue)(key->fFrame * MAX_TICKS_PER_FRAME);
                             float intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
                             float newVal = (intens * plSillyLightKonstants::GetFarPowerKonst() - 1.f) / attenEnd;
                             if( distSq )
@@ -3024,7 +2910,7 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
                         if (bezKey)
                         {
                             float attenEnd = bezKey->fValue;
-                            TimeValue tv = bezKey->fFrame * MAX_TICKS_PER_FRAME;
+                            TimeValue tv = (TimeValue)(bezKey->fFrame * MAX_TICKS_PER_FRAME);
                             float intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
                             float newVal = (intens * plSillyLightKonstants::GetFarPowerKonst() - 1.f) / attenEnd;
                             if( distSq )
@@ -3052,7 +2938,7 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
                     plScalarControllerChannel *chan = new plScalarControllerChannel(subCtl);
                     app->SetChannel(chan);
                     anim->AddApplicator(app);
-                    if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+                    if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
                         anim->ExtendToLength(subCtl->GetLength());
 
                     float attenConst, attenLinear, attenQuadratic, attenCutoff;
@@ -3086,14 +2972,14 @@ void plMaxNode::IAdjustRTColorByIntensity(plController* ctl, IParamBlock2* Prope
             hsPoint3Key* key = simp->GetPoint3Key(i);
             if (key)
             {
-                TimeValue tv = key->fFrame * MAX_TICKS_PER_FRAME;
+                TimeValue tv = (TimeValue)(key->fFrame * MAX_TICKS_PER_FRAME);
                 float intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
                 key->fValue *= intens;
             }
             hsBezPoint3Key* bezKey = simp->GetBezPoint3Key(i);
             if (bezKey)
             {
-                TimeValue tv = bezKey->fFrame * MAX_TICKS_PER_FRAME;
+                TimeValue tv = (TimeValue)(bezKey->fFrame * MAX_TICKS_PER_FRAME);
                 float intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
                 bezKey->fInTan *= intens;
                 bezKey->fOutTan *= intens;
@@ -3113,7 +2999,7 @@ void plMaxNode::IAdjustRTColorByIntensity(plController* ctl, IParamBlock2* Prope
 
 void plMaxNode::GetRTLightColAnim(IParamBlock2* ProperPB, plAGAnim *anim)
 {
-    Control* ambientCtl = nil; // Ambient not currently supported
+    Control* ambientCtl = nullptr; // Ambient not currently supported
     Control* colorCtl = GetParamBlock2Controller(ProperPB, ParamID(plRTLightBase::kLightColor));
     Control* specCtl = GetParamBlock2Controller(ProperPB, ParamID(plRTLightBase::kSpecularColorSwatch));
     plPointControllerChannel *chan;
@@ -3121,7 +3007,7 @@ void plMaxNode::GetRTLightColAnim(IParamBlock2* ProperPB, plAGAnim *anim)
     if( ambientCtl )
     {
         plController* ctl;
-        if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+        if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
             ctl = hsControlConverter::Instance().MakeColorController(ambientCtl, this);
         else
             ctl = hsControlConverter::Instance().MakeColorController(ambientCtl, this, anim->GetStart(), anim->GetEnd());
@@ -3133,14 +3019,14 @@ void plMaxNode::GetRTLightColAnim(IParamBlock2* ProperPB, plAGAnim *anim)
             chan = new plPointControllerChannel(ctl);
             app->SetChannel(chan);
             anim->AddApplicator(app);
-            if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+            if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
                 anim->ExtendToLength(ctl->GetLength());
         }
     }
     if( colorCtl )
     {
         plController* ctl;
-        if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+        if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
             ctl = hsControlConverter::Instance().MakeColorController(colorCtl, this);
         else
             ctl = hsControlConverter::Instance().MakeColorController(colorCtl, this, anim->GetStart(), anim->GetEnd());
@@ -3153,14 +3039,14 @@ void plMaxNode::GetRTLightColAnim(IParamBlock2* ProperPB, plAGAnim *anim)
             chan = new plPointControllerChannel(ctl);
             app->SetChannel(chan);
             anim->AddApplicator(app);
-            if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+            if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
                 anim->ExtendToLength(ctl->GetLength());
         }
     }
     if( specCtl )
     {
         plController* ctl;
-        if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+        if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
             ctl = hsControlConverter::Instance().MakeColorController(specCtl, this);
         else
             ctl = hsControlConverter::Instance().MakeColorController(specCtl, this, anim->GetStart(), anim->GetEnd());
@@ -3172,7 +3058,7 @@ void plMaxNode::GetRTLightColAnim(IParamBlock2* ProperPB, plAGAnim *anim)
             chan = new plPointControllerChannel(ctl);
             app->SetChannel(chan);
             anim->AddApplicator(app);
-            if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+            if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
                 anim->ExtendToLength(ctl->GetLength());
         }
     }
@@ -3187,7 +3073,7 @@ void plMaxNode::GetRTConeAnim(IParamBlock2* ProperPB, plAGAnim *anim)
     if( innerCtl )
     {
         plLeafController* ctl;
-        if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+        if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
             ctl = hsControlConverter::Instance().MakeScalarController(innerCtl, this);
         else
             ctl = hsControlConverter::Instance().MakeScalarController(innerCtl, this, anim->GetStart(), anim->GetEnd());
@@ -3199,14 +3085,14 @@ void plMaxNode::GetRTConeAnim(IParamBlock2* ProperPB, plAGAnim *anim)
             chan = new plScalarControllerChannel(ctl);
             app->SetChannel(chan);
             anim->AddApplicator(app);
-            if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+            if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
                 anim->ExtendToLength(ctl->GetLength());
         }
     }
     if( outerCtl )
     {
         plController* ctl;
-        if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+        if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
             ctl = hsControlConverter::Instance().MakeScalarController(outerCtl, this);
         else
             ctl = hsControlConverter::Instance().MakeScalarController(outerCtl, this, anim->GetStart(), anim->GetEnd());
@@ -3218,7 +3104,7 @@ void plMaxNode::GetRTConeAnim(IParamBlock2* ProperPB, plAGAnim *anim)
             chan = new plScalarControllerChannel(ctl);
             app->SetChannel(chan);
             anim->AddApplicator(app);
-            if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+            if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
                 anim->ExtendToLength(ctl->GetLength());
         }
     }
@@ -3238,7 +3124,7 @@ plXImposterComp* plMaxNode::GetXImposterComp()
             return ximp;
         }
     }
-    return nil;
+    return nullptr;
 }
 
 Point3 plMaxNode::GetFlexibility()
@@ -3274,7 +3160,7 @@ plLightMapComponent* plMaxNode::GetLightMapComponent()
             return lmap;
         }
     }
-    return nil;
+    return nullptr;
 }
 
 plDrawableCriteria plMaxNode::GetDrawableCriteria(bool needBlending, bool needSorting)
@@ -3314,7 +3200,7 @@ plDrawableSpans *plMaxNode::IGetSceneNodeSpans( plSceneNode *node, bool needBlen
 {
 
     plDrawableSpans *spans;
-    plString        tmpName;
+    ST::string      tmpName;
     plLocation      nodeLoc = GetLocation();  
     
     if( !needBlending )
@@ -3324,7 +3210,7 @@ plDrawableSpans *plMaxNode::IGetSceneNodeSpans( plSceneNode *node, bool needBlen
 
     spans = plDrawableSpans::ConvertNoRef( node->GetMatchingDrawable( crit ) );
 
-    if( spans != nil )
+    if (spans != nullptr)
     {
         if( GetNoSpanReSort() )
         {
@@ -3340,13 +3226,13 @@ plDrawableSpans *plMaxNode::IGetSceneNodeSpans( plSceneNode *node, bool needBlen
     {
         /// Blending (deferred) spans
         spans->SetCriteria( crit );
-        tmpName = plFormat("{}_{_08x}_{x}BlendSpans", node->GetKeyName(), crit.fLevel.fLevel, crit.fCriteria);
+        tmpName = ST::format("{}_{08x}_{x}BlendSpans", node->GetKeyName(), crit.fLevel.fLevel, crit.fCriteria);
     }
     else
     {
         /// Normal spans
         spans->SetCriteria( crit );
-        tmpName = plFormat("{}_{_08x}_{x}Spans", node->GetKeyName(), crit.fLevel.fLevel, crit.fCriteria);
+        tmpName = ST::format("{}_{08x}_{x}Spans", node->GetKeyName(), crit.fLevel.fLevel, crit.fCriteria);
     }
 
     if (GetSwappableGeomTarget() != (uint32_t)-1 || GetSwappableGeom()) // We intend to swap geometry with this node... flag the drawable as volatile
@@ -3403,7 +3289,7 @@ bool plMaxNode::SetupPropertiesPass(plErrorMsg *pErrMsg, plConvertSettings *sett
     {
         // Now loop through all the plPassMtlBase-derived materials that are applied to this node
         Mtl *mtl = GetMtl();
-        if( mtl != nil && !GetParticleRelated() )
+        if (mtl != nullptr && !GetParticleRelated())
         {
             if( hsMaterialConverter::IsMultiMat( mtl ) || hsMaterialConverter::IsMultipassMat( mtl ) || hsMaterialConverter::IsCompositeMat( mtl ) )
             {
@@ -3411,7 +3297,7 @@ bool plMaxNode::SetupPropertiesPass(plErrorMsg *pErrMsg, plConvertSettings *sett
                 for (i = 0; i < mtl->NumSubMtls(); i++)
                 {
                     plPassMtlBase *pass = plPassMtlBase::ConvertToPassMtl( mtl->GetSubMtl( i ) );
-                    if( pass != nil )
+                    if (pass != nullptr)
                     {
                         if( !pass->SetupProperties( this, pErrMsg ) )
                             ret = false;
@@ -3421,7 +3307,7 @@ bool plMaxNode::SetupPropertiesPass(plErrorMsg *pErrMsg, plConvertSettings *sett
             else
             {
                 plPassMtlBase *pass = plPassMtlBase::ConvertToPassMtl( mtl );
-                if( pass != nil )
+                if (pass != nullptr)
                 {
                     if( !pass->SetupProperties( this, pErrMsg ) )
                         ret = false;
@@ -3488,7 +3374,7 @@ bool plMaxNode::ConvertComponents(plErrorMsg *pErrMsg, plConvertSettings *settin
 
     bool ret = true;
 
-    char *dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
     if (!CanConvert())
         return ret;
 
@@ -3525,7 +3411,7 @@ bool plMaxNode::DeInitComponents(plErrorMsg *pErrMsg, plConvertSettings *setting
 
     bool ret = true;
 
-    char *dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
     if (!CanConvert())
         return ret;
 
@@ -3555,7 +3441,7 @@ bool plMaxNode::DeInitComponents(plErrorMsg *pErrMsg, plConvertSettings *setting
         // Now loop through all the plPassMtlBase-derived materials that are applied to this node
         // So we can call ConvertDeInit() on them
         Mtl *mtl = GetMtl();
-        if( mtl != nil && !GetParticleRelated() )
+        if (mtl != nullptr && !GetParticleRelated())
         {
             if( hsMaterialConverter::IsMultiMat( mtl ) || hsMaterialConverter::IsMultipassMat( mtl ) || hsMaterialConverter::IsCompositeMat( mtl ) )
             {
@@ -3563,7 +3449,7 @@ bool plMaxNode::DeInitComponents(plErrorMsg *pErrMsg, plConvertSettings *setting
                 for (i = 0; i < mtl->NumSubMtls(); i++)
                 {
                     plPassMtlBase *pass = plPassMtlBase::ConvertToPassMtl( mtl->GetSubMtl( i ) );
-                    if( pass != nil )
+                    if (pass != nullptr)
                     {
                         if( !pass->ConvertDeInit( this, pErrMsg ) )
                             ret = false;
@@ -3573,7 +3459,7 @@ bool plMaxNode::DeInitComponents(plErrorMsg *pErrMsg, plConvertSettings *setting
             else
             {
                 plPassMtlBase *pass = plPassMtlBase::ConvertToPassMtl( mtl );
-                if( pass != nil )
+                if (pass != nullptr)
                 {
                     if( !pass->ConvertDeInit( this, pErrMsg ) )
                         ret = false;
@@ -3602,13 +3488,13 @@ bool plMaxNode::ClearData(plErrorMsg *pErrMsg, plConvertSettings *settings)
 // Little special-purpose thing to see if a node has an animation graph modifier on it.
 plAGModifier *plMaxNode::HasAGMod()
 {
-    char *name = GetName();
+    auto name = GetName();
     if (CanConvert())
     {
         plSceneObject *SO = GetSceneObject();
-        int numMods = SO->GetNumModifiers();
+        size_t numMods = SO->GetNumModifiers();
 
-        for (int i = 0; i < numMods; i++)
+        for (size_t i = 0; i < numMods; i++)
         {
             const plModifier *mod = SO->GetModifier(i);
 
@@ -3617,18 +3503,18 @@ plAGModifier *plMaxNode::HasAGMod()
             }
         }
     }
-    return nil;
+    return nullptr;
 }
 
 plAGMasterMod *plMaxNode::GetAGMasterMod()
 {
-    char *name = GetName();
+    auto name = GetName();
     if (CanConvert())
     {
         plSceneObject *SO = GetSceneObject();
-        int numMods = SO->GetNumModifiers();
+        size_t numMods = SO->GetNumModifiers();
 
-        for (int i = 0; i < numMods; i++)
+        for (size_t i = 0; i < numMods; i++)
         {
             const plModifier *mod = SO->GetModifier(i);
 
@@ -3637,51 +3523,50 @@ plAGMasterMod *plMaxNode::GetAGMasterMod()
             }
         }
     }
-    return nil;
+    return nullptr;
 }
 
 
 // SETUPBONESALIASESRECUR
-void plMaxNode::SetupBonesAliasesRecur(const char *rootName)
+void plMaxNode::SetupBonesAliasesRecur(const ST::string& rootName)
 {
     if(CanConvert()) {
         if (!HasAGMod()) {
-            plString nameToUse;
+            ST::string nameToUse;
             
             // parse UserPropsBuf for entire BoneName line
-            char localName[256];
+            TCHAR localName[256];
             TSTR propsBuf;
             GetUserPropBuffer(propsBuf);
-            char* start=strstr(propsBuf, "BoneName=");
+            auto start = _tcsstr(propsBuf, _T("BoneName="));
             if (!start)
-                start=strstr(propsBuf, "bonename=");
-            const int len = strlen("BoneName=");
-            if(start && UserPropExists("BoneName"))
+                start = _tcsstr(propsBuf, _T("bonename="));
+            constexpr size_t len = std::string_view("BoneName=").size();
+            if(start && UserPropExists(_M("BoneName")))
             {
                 start+=len;
                 int i=0;
-                while(*start != '\n' && *start)
+                while(*start != _T('\n') && *start)
                 {
                     hsAssert(i<256, "localName overflow");
                     localName[i++]=*start++;
                 }
                 localName[i]=0;
 
-                nameToUse = plString::FromUtf8(localName);
+                nameToUse = T2ST(localName);
 
             }
             else
             {
-                plString nodeName = plString::FromUtf8(GetName());
-        //      char str[256];
-        //      sprintf(str, "Missing 'BoneName=foo' UserProp, on object %s, using node name", nodeName ? nodeName : "?");
-        //      hsAssert(false, str);
+                ST::string nodeName = M2ST(GetName());
+        //      ST::string str = ST::format("Missing 'BoneName=foo' UserProp, on object {}, using node name", nodeName ? nodeName : "?");
+        //      hsAssert(false, str.c_str());
 
                 nameToUse = nodeName;
             }
 
-        /*  char aliasName[256];
-            sprintf(aliasName, "%s_%s", rootName, nameToUse);
+        /*
+            ST::string aliasName = ST::format("{}_{}", rootName, nameToUse);
 
             plUoid* uoid = hsgResMgr::ResMgr()->FindAlias(aliasName, plSceneObject::Index());
             if( !uoid )
@@ -3692,7 +3577,7 @@ void plMaxNode::SetupBonesAliasesRecur(const char *rootName)
             }
         */
             plAGModifier *mod = new plAGModifier(nameToUse);
-            AddModifier(mod, plString::FromUtf8(GetName()));
+            AddModifier(mod, M2ST(GetName()));
         }
     }
 
@@ -3716,12 +3601,12 @@ plMaxNode* plMaxNode::GetBonesRoot()
 {
     ISkin* skin = FindSkinModifier();
     if( !skin )
-        return nil;
+        return nullptr;
 
     INode* bone = skin->GetBone(0);
 
     if( !bone )
-        return nil;
+        return nullptr;
 
     while( !bone->GetParentNode()->IsRootNode() )
         bone = bone->GetParentNode();
@@ -3729,19 +3614,19 @@ plMaxNode* plMaxNode::GetBonesRoot()
     plMaxNode* boneRoot = (plMaxNode*)bone;
 
     if( !(boneRoot && boneRoot->CanConvert()) )
-        return nil;
+        return nullptr;
 
     return boneRoot;
 }
 
-void plMaxNode::GetBonesRootsRecur(hsTArray<plMaxNode*>& nodes)
+void plMaxNode::GetBonesRootsRecur(std::vector<plMaxNode*>& nodes)
 {
     plMaxNode* bRoot = GetBonesRoot();
     if( bRoot )
     {
-        int idx = nodes.Find(bRoot);
-        if( idx == nodes.kMissingIndex )
-            nodes.Append(bRoot);
+        auto iter = std::find(nodes.cbegin(), nodes.cend(), bRoot);
+        if (iter == nodes.cend())
+            nodes.emplace_back(bRoot);
     }
 
     int i;
@@ -3752,39 +3637,44 @@ void plMaxNode::GetBonesRootsRecur(hsTArray<plMaxNode*>& nodes)
 plSceneObject* plMaxNode::MakeCharacterHierarchy(plErrorMsg *pErrMsg)
 {
     plSceneObject* playerRoot = GetSceneObject();
-    if( pErrMsg->Set(playerRoot->GetDrawInterface() != nil, GetName(), "Non-helper as player root").CheckAndAsk() )
-        return nil;
-    const char *playerRootName = GetName();
+    if (pErrMsg->Set(playerRoot->GetDrawInterface() != nullptr, GetName(), "Non-helper as player root").CheckAndAsk())
+        return nullptr;
+    auto playerRootName = GetName();
 
-    hsTArray<plMaxNode*> bonesRoots;
-    int i;
-    for( i = 0; i < NumberOfChildren(); i++ )
+    std::vector<plMaxNode*> bonesRoots;
+    for (int i = 0; i < NumberOfChildren(); i++)
         ((plMaxNode*)GetChildNode(i))->GetBonesRootsRecur(bonesRoots);
 
-    if( pErrMsg->Set(bonesRoots.GetCount() > 1, playerRootName, "Found multiple bones hierarchies").CheckAndAsk() )
-        return nil;
+    if (pErrMsg->Set(bonesRoots.size() > 1, playerRootName, "Found multiple bones hierarchies").CheckAndAsk())
+        return nullptr;
 
-    if( bonesRoots.GetCount() )
+    if (!bonesRoots.empty())
     {
         bonesRoots[0]->SetupBonesAliasesRecur(playerRootName);
 
         plSceneObject* boneRootObj = bonesRoots[0]->GetSceneObject();
 
-        if( pErrMsg->Set(boneRootObj == nil, playerRootName, "No scene object for the bones root").CheckAndAsk() )
-            return nil;
+        if (pErrMsg->Set(boneRootObj == nullptr, playerRootName, "No scene object for the bones root").CheckAndAsk())
+            return nullptr;
 
-        if( boneRootObj != playerRoot )
-            hsMessageBox("This avatar's bone hierarchy does not have the avatar root node linked as a parent. "
-                         "This may cause the avatar draw incorrectly.", playerRootName, hsMessageBoxNormal);
+        if (boneRootObj != playerRoot) {
+            plMaxMessageBox(
+                nullptr,
+                _T("This avatar's bone hierarchy does not have the avatar root node linked as a parent. "
+                   "This may cause the avatar draw incorrectly."),
+                playerRootName,
+                MB_OK
+            );
+        }
     }
 
     return playerRoot;
 }
 
 // Takes all bones found on this node (and any descendents) and sets up a single palette
-void plMaxNode::SetupBoneHierarchyPalette(plMaxBoneMap *bones /* = nil */)
+void plMaxNode::SetupBoneHierarchyPalette(plMaxBoneMap *bones /* = nullptr */)
 {
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     if( !CanConvert() )
         return;
@@ -3792,13 +3682,13 @@ void plMaxNode::SetupBoneHierarchyPalette(plMaxBoneMap *bones /* = nil */)
     if (GetBoneMap())
         return;
     
-    if (bones == nil)
+    if (bones == nullptr)
     {
         bones = new plMaxBoneMap();
         bones->fOwner = this;
     }
     
-    if (UserPropExists("Bone"))
+    if (UserPropExists(_M("Bone")))
         bones->AddBone(this);
 
     int i;
@@ -3819,7 +3709,7 @@ void plMaxNode::SetupBoneHierarchyPalette(plMaxBoneMap *bones /* = nil */)
 bool plMaxNode::IsLegalDecal(bool checkParent /* = true */)
 {
     Mtl *mtl = GetMtl();
-    if (mtl == nil || GetParticleRelated())
+    if (mtl == nullptr || GetParticleRelated())
         return false;
     if (hsMaterialConverter::IsMultiMat(mtl))
     {
@@ -3862,7 +3752,7 @@ int plMaxNode::NumUVWChannels()
         for( i = 0; i < numChannels; i++ )
         {
             // i + 1 is exactly what IGenerateUVs uses, so I'm not questioning it...
-            if( mesh->mapFaces( i + 1 ) == nil )
+            if (mesh->mapFaces(i + 1) == nullptr)
             {
                 numChannels = i;
                 break;
@@ -3897,15 +3787,15 @@ int plMaxNode::NumUVWChannels()
 int plMaxNode::IGetCachedAlphaHackValue( int iSubMtl )
 {
     plMaxNodeData *pDat = GetMaxNodeData();
-    if( pDat == nil )
+    if (pDat == nullptr)
         return -1;
 
-    hsTArray<int>   *cache = pDat->GetAlphaHackLayersCache();
-    if( cache == nil )
+    std::vector<int>* cache = pDat->GetAlphaHackLayersCache();
+    if (cache == nullptr)
         return -1;
 
     iSubMtl++;
-    if( iSubMtl >= cache->GetCount() )
+    if (iSubMtl >= (int)cache->size())
         return -1;
 
     return (*cache)[ iSubMtl ];
@@ -3914,25 +3804,20 @@ int plMaxNode::IGetCachedAlphaHackValue( int iSubMtl )
 void    plMaxNode::ISetCachedAlphaHackValue( int iSubMtl, int value )
 {
     plMaxNodeData *pDat = GetMaxNodeData();
-    if( pDat == nil )
+    if (pDat == nullptr)
         return;
 
-    hsTArray<int>   *cache = pDat->GetAlphaHackLayersCache();
-    if( cache == nil )
+    std::vector<int>* cache = pDat->GetAlphaHackLayersCache();
+    if (cache == nullptr)
     {
-        cache = new hsTArray<int>;
+        cache = new std::vector<int>;
         pDat->SetAlphaHackLayersCache( cache );
     }
 
     iSubMtl++;
 
-    if( iSubMtl >= cache->GetCount() )
-    {
-        int i = cache->GetCount();
-        cache->ExpandAndZero( iSubMtl + 1 );
-        for( ; i < cache->GetCount(); i++ )
-            (*cache)[ i ] = -1;
-    }
+    if (iSubMtl >= (int)cache->size())
+        cache->resize(iSubMtl + 1, -1);
 
     (*cache)[ iSubMtl ] = value;
 }
@@ -3949,7 +3834,7 @@ void    plMaxNode::ISetCachedAlphaHackValue( int iSubMtl, int value )
 
 int plMaxNode::AlphaHackLayersNeeded(int iSubMtl)
 {
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     int cached = IGetCachedAlphaHackValue( iSubMtl );
     if( cached != -1 )
@@ -3978,30 +3863,30 @@ bool plMaxNode::NonVtxPreshaded()
     if( GetForceMatShade() )
         return false;
 
-    if( GetAvatarSO() != nil ||
+    if (GetAvatarSO() != nullptr ||
         hsMaterialConverter::Instance().HasMaterialDiffuseOrOpacityAnimation(this) )
         return false;
 
     if( GetRunTimeLight() && !hsMaterialConverter::Instance().HasEmissiveLayer(this) )
         return true;
 
-    return( GetLightMapComponent() != nil );
+    return (GetLightMapComponent() != nullptr);
 }
 
 TriObject* plMaxNode::GetTriObject(bool& deleteIt)
 {
     // Get da object
     Object *obj = EvalWorldState(TimeValue(0)).obj;
-    if( obj == nil )
-        return nil;
+    if (obj == nullptr)
+        return nullptr;
 
     if( !obj->CanConvertToType(triObjectClassID) )
-        return nil;
+        return nullptr;
 
     // Convert to triMesh object
     TriObject   *meshObj = (TriObject *)obj->ConvertToType(TimeValue(0), triObjectClassID);
-    if( meshObj == nil )
-        return nil;
+    if (meshObj == nullptr)
+        return nullptr;
 
     deleteIt = meshObj != obj;
 
@@ -4012,7 +3897,7 @@ TriObject* plMaxNode::GetTriObject(bool& deleteIt)
 //  Starting at 0, returns an incrementing index for each maxNode. Useful for 
 //  assigning indices to sound objects attached to the node.
 
-uint32_t  plMaxNode::GetNextSoundIdx( void )
+uint32_t  plMaxNode::GetNextSoundIdx()
 {
     uint32_t  idx = GetSoundIdxCounter();
     SetSoundIdxCounter( idx + 1 );
@@ -4023,7 +3908,7 @@ uint32_t  plMaxNode::GetNextSoundIdx( void )
 //  Fun temp hack function to tell if a maxNode is physical. Useful after
 //  preConvert (checks for a physical on the simInterface)
 
-bool    plMaxNode::IsPhysical( void )
+bool    plMaxNode::IsPhysical()
 {
     if( GetSceneObject() && GetSceneObject()->GetSimulationInterface() && 
         GetSceneObject()->GetSimulationInterface()->GetPhysical() )
@@ -4039,18 +3924,18 @@ plPhysicalProps *plMaxNode::GetPhysicalProps()
     if (pDat)
         return pDat->GetPhysicalProps();
 
-    return nil;
+    return nullptr;
 }
 
 //// FindPageKey /////////////////////////////////////////////////////////////
 //  Little helper function. Calls FindKey() in the resManager using the location (page) of this node
 
-plKey   plMaxNode::FindPageKey( uint16_t classIdx, const plString &name )
+plKey   plMaxNode::FindPageKey( uint16_t classIdx, const ST::string &name )
 {
     return hsgResMgr::ResMgr()->FindKey( plUoid( GetLocation(), classIdx, name ) );
 }
 
-const char *plMaxNode::GetAgeName()
+const MCHAR* plMaxNode::GetAgeName()
 {
     int i;
     for (i = 0; i < NumAttachedComponents(); i++)
@@ -4059,7 +3944,7 @@ const char *plMaxNode::GetAgeName()
         if (comp->ClassID() == PAGEINFO_CID)
             return ((plPageInfoComponent*)comp)->GetAgeName();
     }
-    return nil;
+    return nullptr;
 }
 
 // create a list of keys used by the run-time interface for things like
@@ -4073,15 +3958,15 @@ bool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *sett
 {
     bool ret = true;
 
-    char *dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
     if (!CanConvert())
         return ret;
     
-    uint32_t count = GetSceneObject()->GetNumModifiers();
-    hsTArray<plKey> keys;
+    size_t count = GetSceneObject()->GetNumModifiers();
+    std::vector<plKey> keys;
     // Go through all the modifiers attached to this node's scene object
     // and grab keys for objects who we would need to send interface messages to
-    for (uint32_t i = 0; i < count; i++)
+    for (size_t i = 0; i < count; i++)
     {
         const plModifier* pMod = GetSceneObject()->GetModifier(i);
         // right now all we care about are these, but I guarentee you we will
@@ -4090,26 +3975,26 @@ bool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *sett
         const plLogicModifier* pLog = plLogicModifier::ConvertNoRef(pMod);
         if( pDet )
         {
-            for (int j = 0; j < pDet->GetNumReceivers(); j++)
-                keys.Append(pDet->GetReceiver(j));
+            for (size_t j = 0; j < pDet->GetNumReceivers(); j++)
+                keys.emplace_back(pDet->GetReceiver(j));
         }
         else
         if( pLog )
         {
-            keys.Append(pLog->GetKey());
+            keys.emplace_back(pLog->GetKey());
         }
     }
     // if there is anything there, create an 'interface object modifier' which simply stores 
     // the list in a handy form
-    if (keys.Count())
+    if (!keys.empty())
     {
         plInterfaceInfoModifier* pMod = new plInterfaceInfoModifier;
         
-        plKey modifierKey = hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(GetName()), pMod, GetLocation(), GetLoadMask());
+        plKey modifierKey = hsgResMgr::ResMgr()->NewKey(M2ST(GetName()), pMod, GetLocation(), GetLoadMask());
         hsgResMgr::ResMgr()->AddViaNotify(modifierKey, new plObjRefMsg(GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
         
-        for(int i = 0; i < keys.Count(); i++)
-            pMod->AddRefdKey(keys[i]);
+        for (const plKey& key : keys)
+            pMod->AddRefdKey(key);
     }
 
     return ret;

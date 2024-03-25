@@ -42,7 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_PASSMTLBASE_H
 #define PL_PASSMTLBASE_H
 
-#include "hsTemplates.h"
+#include <vector>
+
 #include "plInterp/plAnimEaseTypes.h"
 
 class plNoteTrackWatcher;
@@ -53,9 +54,9 @@ class plPassAnimDlgProc;
 class plStealthNodeAccessor;
 class plMaxNode;
 class plErrorMsg;
-class plString;
+namespace ST { class string; }
 
-class plPassMtlBase : public Mtl
+class plPassMtlBase : public plMaxMtl<Mtl>
 {
 protected:
 
@@ -74,14 +75,14 @@ protected:
 
     bool            fLoading;
 
-    hsTArray<NoteTrack *>   fNotetracks;
+    std::vector<NoteTrack *> fNotetracks;
 
-    bool                            fStealthsChanged;
-    hsTArray<plMtlChangeCallback *> fChangeCallbacks;
+    bool                               fStealthsChanged;
+    std::vector<plMtlChangeCallback *> fChangeCallbacks;
 
-    void                IUpdateAnimNodes( void );
-    plAnimStealthNode   *IFindStealth( const plString &animName );
-    plAnimStealthNode   *IVerifyStealthPresent( const plString &animName );
+    void                IUpdateAnimNodes();
+    plAnimStealthNode   *IFindStealth( const ST::string &animName );
+    plAnimStealthNode   *IVerifyStealthPresent( const ST::string &animName );
 
     int                 IGetNumStealths( bool update = true );
     plAnimStealthNode   *IGetStealth( int index, bool update = true );
@@ -110,32 +111,32 @@ public:
         kRefNotetracks  = 4 // MUST BE THE LAST REF ID SPECIFIED
     };
     void    SetLoadingFlag( bool f ) { fLoading = f; }
-    void    PostLoadAnimPBFixup( void );
+    void    PostLoadAnimPBFixup();
 
     void    RegisterChangeCallback( plMtlChangeCallback *callback );
     void    UnregisterChangeCallback( plMtlChangeCallback *callback );
 
     // Change notifys from our ntWatcher
-    virtual void    NoteTrackAdded( void );
-    virtual void    NoteTrackRemoved( void );
-    virtual void    NameChanged( void );
+    virtual void    NoteTrackAdded();
+    virtual void    NoteTrackRemoved();
+    virtual void    NameChanged();
 
     // Loading/Saving
-    IOResult Load(ILoad *iload);
-    IOResult Save(ISave *isave);
+    IOResult Load(ILoad *iload) override;
+    IOResult Save(ISave *isave) override;
 
-    virtual void    Reset( void );
+    void    Reset() override;
 
-    int                     NumRefs();
-    virtual RefTargetHandle GetReference( int i );
-    virtual void            SetReference( int i, RefTargetHandle rtarg );
-    RefResult               NotifyRefChanged( Interval changeInt, RefTargetHandle hTarget, PartID &partID, RefMessage message );
+    int             NumRefs() override;
+    RefTargetHandle GetReference(int i) override;
+    void            SetReference(int i, RefTargetHandle rtarg) override;
+    RefResult       NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget, PartID &partID, RefMessage message MAX_REF_PROPAGATE) override;
 
     // Convert time, called on the setupProps pass for each material applied to a node in the scene
     virtual bool    SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg );
     virtual bool    ConvertDeInit( plMaxNode *node, plErrorMsg *pErrMsg );
 
-    int                 GetNumStealths( void );
+    int                 GetNumStealths();
     plAnimStealthNode   *GetStealth( int index );
 
     // Static convert to our plPassMtlBase type, if possible
@@ -176,10 +177,10 @@ public:
     virtual int     GetAlphaTestHigh() = 0;
 
     // Animation block
-    virtual const char*  GetAnimName() = 0;
+    virtual const MCHAR* GetAnimName() = 0;
     virtual int          GetAutoStart() = 0;
     virtual int          GetLoop() = 0;
-    virtual const char*  GetAnimLoopName() = 0;
+    virtual const MCHAR* GetAnimLoopName() = 0;
     virtual int          GetEaseInType() { return plAnimEaseTypes::kNoEase; }
     virtual float        GetEaseInMinLength() { return 1; }
     virtual float        GetEaseInMaxLength() { return 1; }
@@ -188,7 +189,7 @@ public:
     virtual float        GetEaseOutMinLength() { return 1; }
     virtual float        GetEaseOutMaxLength() { return 1; }
     virtual float        GetEaseOutNormLength() { return 1; }
-    virtual const char*  GetGlobalVarName() { return NULL; }
+    virtual const MCHAR* GetGlobalVarName() { return nullptr; }
     virtual int          GetUseGlobal() { return 0; }
 
     // Basic block
@@ -262,7 +263,7 @@ public:
         fEaseOutMinID = easeOutMinID; fEaseOutMaxID = easeOutMaxID; fEaseOutNormID = easeOutNormID;
     }
 
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (fDoingUpdate)
             return;
@@ -293,8 +294,8 @@ public:
 class plMtlChangeCallback
 {
     public:
-        virtual void    NoteTrackListChanged( void ) { ; }
-        virtual void    SegmentListChanged( void ) { ; }
+        virtual void    NoteTrackListChanged() { }
+        virtual void    SegmentListChanged() { }
 };
 
 #endif // PL_PASSMTLBASE_H

@@ -42,8 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __PLAVATARCOMPONENT_H__
 #define __PLAVATARCOMPONENT_H__
 
+#include "plComponentProcBase.h"
+
 #include "plAvatar/plCritterCommands.h"
-#include "plAvatar/plPuppetCommands.h"
 
 #define AVATAR_CLASS_ID     Class_ID(0x49247847, 0xd3908fe)
 #define LOD_AVATAR_CLASS_ID Class_ID(0x50100640, 0x72f94120)
@@ -74,7 +75,7 @@ private:
 protected:
     plArmatureMod *fArmMod;
 
-    plArmatureComponent() : fArmMod(nil) {}
+    plArmatureComponent() : fArmMod() { }
     plArmatureMod* IGenerateMyArmMod(plHKPhysical* myHKPhys, plMaxNode* node);
     bool IVerifyUsedNode(INode* thisNode, plErrorMsg *pErrMsg, bool isHull);
 
@@ -103,18 +104,18 @@ public:
     };
     //static const char *BrainStrings[];
 
-    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool Convert(plMaxNode* node, plErrorMsg* pErrMsg) override;
 
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 };
 
 class plAvatarComponent : public plArmatureComponent
 {
 
 private:
-    void IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg);
+    void IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
 
 
@@ -150,11 +151,11 @@ public:
             kAnimationPrefix,
         };
 
-        virtual void ISetupClothes(plMaxNode *node, plArmatureMod *mod, plErrorMsg *pErrMsg);
-        bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-        bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)         { return (plArmatureComponent::PreConvert(node, pErrMsg)); }
-        bool Convert(plMaxNode* node, plErrorMsg* pErrMsg)            { return (plArmatureComponent::Convert(node, pErrMsg)); }
-        void DeleteThis() { delete this; }
+        void ISetupClothes(plMaxNode *node, plArmatureMod *mod, plErrorMsg *pErrMsg) override;
+        bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+        bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg) override { return (plArmatureComponent::PreConvert(node, pErrMsg)); }
+        bool Convert(plMaxNode* node, plErrorMsg* pErrMsg) override { return (plArmatureComponent::Convert(node, pErrMsg)); }
+        void DeleteThis() override { delete this; }
 
 
 };
@@ -167,16 +168,16 @@ private:
     void IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg);
 
 protected:
-    virtual void ISetupClothes(plMaxNode *node, plArmatureMod *mod, plErrorMsg *pErrMsg);
+    void ISetupClothes(plMaxNode *node, plArmatureMod *mod, plErrorMsg *pErrMsg) override;
     // Create a single shadowcaster modifier, and apply it to the 
     // sceneobject hierarchies for each LOD.
     virtual void IAttachShadowCastToLODs(plMaxNode* rootNode); 
-    virtual void IAttachShadowCastModifiersRecur(plMaxNode* node, plShadowCaster* caster);
+    void IAttachShadowCastModifiersRecur(plMaxNode* node, plShadowCaster* caster) override;
 
     hsGMaterial *fMaterial;
     
 public:
-        VCharArray fLODLevels;  //Initialized in the CTR.
+        VStringArray fLODLevels;  //Initialized in the CTR.
 
 
         // Do not change any of the entries in this list. Only add at the end.
@@ -219,10 +220,10 @@ public:
         };
 
         plLODAvatarComponent();
-        bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-        bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-        bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
-        void DeleteThis() { delete this; }
+        bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+        bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg) override;
+        bool Convert(plMaxNode* node, plErrorMsg* pErrMsg) override;
+        void DeleteThis() override { delete this; }
 
         void RemoveBone(int index);
         void AddSelectedBone();

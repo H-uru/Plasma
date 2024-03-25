@@ -45,155 +45,140 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-#include "plMessage.h"
-
-REGISTER_NONCREATABLE( plMessage );
-
-#include "plRefMsg.h"
-
-REGISTER_CREATABLE( plRefMsg );
-REGISTER_CREATABLE( plGenRefMsg );
-
-#include "plObjRefMsg.h"
-
-REGISTER_CREATABLE( plObjRefMsg );
-
-#include "plIntRefMsg.h"
-
-REGISTER_CREATABLE( plIntRefMsg );
-
-#include "plNodeRefMsg.h"
-
-REGISTER_CREATABLE( plNodeRefMsg );
-
-#include "plSatisfiedMsg.h"
-
-REGISTER_CREATABLE( plSatisfiedMsg );
-
-#include "plSingleModMsg.h"
-
-REGISTER_CREATABLE( plSingleModMsg );
-
-#include "plMultiModMsg.h"
-
-REGISTER_CREATABLE( plMultiModMsg );
-
-#include "plTimeMsg.h"
-
-REGISTER_CREATABLE( plTimeMsg );
-REGISTER_CREATABLE( plEvalMsg );
-REGISTER_CREATABLE( plTransformMsg );
-REGISTER_CREATABLE( plDelayedTransformMsg );
-
-#include "plWarpMsg.h"
-
-REGISTER_CREATABLE( plWarpMsg );
-
 #include "plAttachMsg.h"
-
-REGISTER_CREATABLE( plAttachMsg );
-
-#include "plCorrectionMsg.h"
-
-REGISTER_CREATABLE( plCorrectionMsg );
-
-#include "plSoundMsg.h"
-
-REGISTER_CREATABLE( plSoundMsg );
+REGISTER_CREATABLE(plAttachMsg);
 
 #include "plAudioSysMsg.h"
+REGISTER_CREATABLE(plAudioSysMsg);
 
-REGISTER_CREATABLE( plAudioSysMsg );
-
-#include "plEnableMsg.h"
-
-REGISTER_CREATABLE( plEnableMsg );
-
-#include "plServerReplyMsg.h"
-
-REGISTER_CREATABLE( plServerReplyMsg );
-
-#include "plSharedStateMsg.h"
-REGISTER_CREATABLE( plSharedStateMsg );
-
-#include "plClientMsg.h"
-REGISTER_CREATABLE( plClientMsg );
-REGISTER_CREATABLE( plClientRefMsg );
-
-#include "plSimulationMsg.h"
-
-REGISTER_NONCREATABLE( plSimulationMsg );
-
-#include "plSimulationSynchMsg.h"
-
-REGISTER_NONCREATABLE( plSimulationSynchMsg );
-
-#include "plProxyDrawMsg.h"
-
-REGISTER_CREATABLE( plProxyDrawMsg );
-
-#include "plEventCallbackMsg.h"
-
-REGISTER_CREATABLE( plEventCallbackMsg );
-REGISTER_CREATABLE( plEventCallbackInterceptMsg );
-
-#include "plSelfDestructMsg.h"
-
-REGISTER_CREATABLE( plSelfDestructMsg );
-
+// -> PubUtilLib
 #include "plCameraMsg.h"
+REGISTER_CREATABLE(plCameraMsg);
+REGISTER_CREATABLE(plCameraTargetFadeMsg);
+REGISTER_CREATABLE(plIfaceFadeAvatarMsg);
 
-REGISTER_CREATABLE( plCameraMsg );
-REGISTER_CREATABLE( plCameraTargetFadeMsg );
-REGISTER_CREATABLE( plIfaceFadeAvatarMsg );
+// -> PubUtilLib
+#include "plClientMsg.h"
+REGISTER_CREATABLE(plClientMsg);
+REGISTER_CREATABLE(plClientRefMsg);
 
-#include "plPlayerPageMsg.h"
-
-REGISTER_CREATABLE( plPlayerPageMsg );
-
+// -> PubUtilLib
 #include "plCmdIfaceModMsg.h"
+REGISTER_CREATABLE(plCmdIfaceModMsg);
 
-REGISTER_CREATABLE( plCmdIfaceModMsg );
+#include "plCorrectionMsg.h"
+REGISTER_CREATABLE(plCorrectionMsg);
 
-#include "plNotifyMsg.h"
-
-REGISTER_CREATABLE( plNotifyMsg );
-
-#include "plFakeOutMsg.h"
-
-REGISTER_CREATABLE( plFakeOutMsg );
-
+// -> PubUtilLib
 #include "plCursorChangeMsg.h"
-
-REGISTER_CREATABLE( plCursorChangeMsg );
-
-#include "plNodeChangeMsg.h"
-
-REGISTER_CREATABLE( plNodeChangeMsg );
-
-#include "plMessageWithCallbacks.h"
-REGISTER_CREATABLE( plMessageWithCallbacks );
-
-#include "plRemoteAvatarInfoMsg.h"
-REGISTER_CREATABLE( plRemoteAvatarInfoMsg );
-
-#include "plSDLModifierMsg.h"
-REGISTER_CREATABLE(plSDLModifierMsg);
-
-#include "plSDLNotificationMsg.h"
-REGISTER_CREATABLE(plSDLNotificationMsg);
-
-#include "plPipeResMakeMsg.h"
-REGISTER_CREATABLE(plPipeResMakeMsg);
-REGISTER_CREATABLE(plPipeRTMakeMsg);
-REGISTER_CREATABLE(plPipeGeoMakeMsg);
-REGISTER_CREATABLE(plPipeTexMakeMsg);
+REGISTER_CREATABLE(plCursorChangeMsg);
 
 #include "plDISpansMsg.h"
 REGISTER_CREATABLE(plDISpansMsg);
 
+#include "plEnableMsg.h"
+REGISTER_CREATABLE(plEnableMsg);
+
+#include "plEventCallbackMsg.h"
+REGISTER_CREATABLE(plEventCallbackMsg);
+REGISTER_CREATABLE(plEventCallbackInterceptMsg);
+
+#include "plFakeOutMsg.h"
+REGISTER_CREATABLE(plFakeOutMsg);
+
+#include "plIntRefMsg.h"
+REGISTER_CREATABLE(plIntRefMsg);
+
+#include "plMessage.h"
+REGISTER_NONCREATABLE(plMessage);
+
+#include "plMessageWithCallbacks.h"
+REGISTER_CREATABLE(plMessageWithCallbacks);
+
+// UNUSED
+#include "plMultiModMsg.h"
+REGISTER_CREATABLE(plMultiModMsg);
+
+#include "plNodeChangeMsg.h"
+REGISTER_CREATABLE(plNodeChangeMsg);
+
+#include "plNodeRefMsg.h"
+REGISTER_CREATABLE(plNodeRefMsg);
+
+#include "plNotifyMsg.h"
+REGISTER_CREATABLE(plNotifyMsg);
+
+#include "plObjRefMsg.h"
+REGISTER_CREATABLE(plObjRefMsg);
+
+// -> PubUtilLib
+#include "plPipeResMakeMsg.h"
+REGISTER_CREATABLE(plPipeGeoMakeMsg);
+REGISTER_CREATABLE(plPipeResMakeMsg);
+REGISTER_CREATABLE(plPipeRTMakeMsg);
+REGISTER_CREATABLE(plPipeTexMakeMsg);
+
+// -> PubUtilLib
+#include "plPlayerPageMsg.h"
+REGISTER_CREATABLE(plPlayerPageMsg);
+
+#include "plProxyDrawMsg.h"
+REGISTER_CREATABLE(plProxyDrawMsg);
+
+#include "plRefMsg.h"
+REGISTER_CREATABLE(plGenRefMsg);
+REGISTER_CREATABLE(plRefMsg);
+
+// -> PubUtilLib
+#include "plRemoteAvatarInfoMsg.h"
+REGISTER_CREATABLE(plRemoteAvatarInfoMsg);
+
+// Probably UNUSED
+#include "plSatisfiedMsg.h"
+REGISTER_CREATABLE(plSatisfiedMsg);
+
+#include "plSDLModifierMsg.h"
+REGISTER_CREATABLE(plSDLModifierMsg);
+
+// -> PubUtilLib
+// possibly unused
+#include "plSDLNotificationMsg.h"
+REGISTER_CREATABLE(plSDLNotificationMsg);
+
+#include "plSelfDestructMsg.h"
+REGISTER_CREATABLE(plSelfDestructMsg);
+
+#include "plServerReplyMsg.h"
+REGISTER_CREATABLE(plServerReplyMsg);
+
 #include "plSetNetGroupIDMsg.h"
 REGISTER_CREATABLE(plSetNetGroupIDMsg);
+
+#include "plSharedStateMsg.h"
+REGISTER_CREATABLE(plSharedStateMsg);
+
+#include "plSimulationMsg.h"
+REGISTER_NONCREATABLE(plSimulationMsg);
+
+// UNUSED
+#include "plSimulationSynchMsg.h"
+REGISTER_NONCREATABLE(plSimulationSynchMsg);
+
+// UNUSED
+#include "plSingleModMsg.h"
+REGISTER_CREATABLE(plSingleModMsg);
+
+#include "plSoundMsg.h"
+REGISTER_CREATABLE(plSoundMsg);
+
+#include "plTimeMsg.h"
+REGISTER_CREATABLE(plDelayedTransformMsg);
+REGISTER_CREATABLE(plEvalMsg);
+REGISTER_CREATABLE(plTimeMsg);
+REGISTER_CREATABLE(plTransformMsg);
+
+#include "plWarpMsg.h"
+REGISTER_CREATABLE(plWarpMsg);
 
 #endif // pnMessageCreatable_inc
 

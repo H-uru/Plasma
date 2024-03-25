@@ -64,13 +64,13 @@ public:
     int32_t                   fIndex;
 
     plDISpansMsg() : plMessage(), fType(0), fFlags(0), fIndex(-1) {}
-    plDISpansMsg(const plKey &r, uint8_t type, int index, int flags) : plMessage(nil, r, nil), fType(type), fIndex(index), fFlags(flags) {}   
-    
-    CLASSNAME_REGISTER( plDISpansMsg );
-    GETINTERFACE_ANY( plDISpansMsg, plMessage );
-    
-    void Read(hsStream* stream, hsResMgr* mgr) {}
-    void Write(hsStream* stream, hsResMgr* mgr) {}
+    plDISpansMsg(const plKey &r, uint8_t type, int index, int flags) : plMessage(nullptr, r, nullptr), fType(type), fIndex(index), fFlags(flags) { }
+
+    CLASSNAME_REGISTER(plDISpansMsg);
+    GETINTERFACE_ANY(plDISpansMsg, plMessage);
+
+    void Read(hsStream* stream, hsResMgr* mgr) override {}
+    void Write(hsStream* stream, hsResMgr* mgr) override {}
 };
 
 #endif // plDISpansMsg_inc

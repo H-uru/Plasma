@@ -52,9 +52,13 @@ class plPXPhysicalControllerCore;
 class plPhysicalProxy : public plProxyGen
 {
 public:
-    plPhysicalProxy();
-    plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac);
-    virtual ~plPhysicalProxy();
+    plPhysicalProxy()
+        : plProxyGen(hsColorRGBA().Set(0.f, 0.f, 0.f, 1.f), hsColorRGBA().Set(1.f, 0.8f, 0.2f, 1.f), 0.5f),
+          fOwner(), fController()
+    { }
+    plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac)
+        : plProxyGen(amb, dif, opac), fOwner(), fController()
+    { }
 
     bool Init(plPhysical* phys);
     bool Init(plPXPhysicalControllerCore* controller);
@@ -63,8 +67,8 @@ protected:
     plPhysical* fOwner;
     plPXPhysicalControllerCore* fController;
 
-    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo=nil);
-    virtual plKey               IGetNode() const;
+    plDrawableSpans*    ICreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo=nullptr) override;
+    plKey               IGetNode() const override;
 };
 
 #endif // plPhysicalProxy_inc

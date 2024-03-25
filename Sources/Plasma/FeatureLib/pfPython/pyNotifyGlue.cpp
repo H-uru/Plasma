@@ -40,13 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyGeometry3.h"
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyNotify.h"
+
+#include <string_theory/string>
+
 #include "pyEnum.h"
+#include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptNotify, pyNotify);
@@ -56,7 +57,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptNotify)
 
 PYTHON_INIT_DEFINITION(ptNotify, args, keywords)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -76,7 +77,7 @@ PYTHON_BASIC_METHOD_DEFINITION(ptNotify, clearReceivers, ClearReceivers)
 
 PYTHON_METHOD_DEFINITION(ptNotify, addReceiver, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "addReceiver expects a ptKey");
@@ -143,8 +144,8 @@ PYTHON_METHOD_DEFINITION(ptNotify, setType, args)
 PYTHON_METHOD_DEFINITION(ptNotify, addCollisionEvent, args)
 {
     char enterFlag;
-    PyObject* hitterKey = NULL;
-    PyObject* hitteeKey = NULL;
+    PyObject* hitterKey = nullptr;
+    PyObject* hitteeKey = nullptr;
     if (!PyArg_ParseTuple(args, "bOO", &enterFlag, &hitterKey, &hitteeKey))
     {
         PyErr_SetString(PyExc_TypeError, "addCollisionEvent expects a boolean, and two ptKeys");
@@ -164,9 +165,9 @@ PYTHON_METHOD_DEFINITION(ptNotify, addCollisionEvent, args)
 PYTHON_METHOD_DEFINITION(ptNotify, addPickEvent, args)
 {
     char enabledFlag;
-    PyObject* pickerKey = NULL;
-    PyObject* pickeeKey = NULL;
-    PyObject* hitPointObj = NULL;
+    PyObject* pickerKey = nullptr;
+    PyObject* pickeeKey = nullptr;
+    PyObject* hitPointObj = nullptr;
     if (!PyArg_ParseTuple(args, "bOOO", &enabledFlag, &pickerKey, &pickeeKey, &hitPointObj))
     {
         PyErr_SetString(PyExc_TypeError, "addPickEvent expects a boolean, two ptKeys and a ptPoint3");
@@ -199,18 +200,18 @@ PYTHON_METHOD_DEFINITION(ptNotify, addControlKeyEvent, args)
 
 PYTHON_METHOD_DEFINITION(ptNotify, addVarNumber, args)
 {
-    char* name;
-    PyObject* number = NULL;
-    if (!PyArg_ParseTuple(args, "s|O", &name, &number))
+    ST::string name;
+    PyObject* number = nullptr;
+    if (!PyArg_ParseTuple(args, "O&|O", PyUnicode_STStringConverter, &name, &number))
     {
         PyErr_SetString(PyExc_TypeError, "addVarNumber expects a string and optional number");
         PYTHON_RETURN_ERROR;
     }
 
-    if (number == NULL || number == Py_None)
+    if (number == nullptr || number == Py_None)
         self->fThis->AddVarNull(name);
-    else if (PyInt_Check(number))
-        self->fThis->AddVarNumber(name, static_cast<int32_t>(PyInt_AsLong(number)));
+    else if (PyLong_Check(number))
+        self->fThis->AddVarNumber(name, static_cast<int32_t>(PyLong_AsLong(number)));
     else if (PyLong_Check(number))
     {
         // try as int first
@@ -242,9 +243,9 @@ PYTHON_METHOD_DEFINITION(ptNotify, addVarNumber, args)
 
 PYTHON_METHOD_DEFINITION(ptNotify, addVarFloat, args)
 {
-    char* name;
+    ST::string name;
     float number;
-    if (!PyArg_ParseTuple(args, "sf", &name, &number))
+    if (!PyArg_ParseTuple(args, "O&f", PyUnicode_STStringConverter, &name, &number))
     {
         PyErr_SetString(PyExc_TypeError, "addVarFloat expects a string and a float");
         PYTHON_RETURN_ERROR;
@@ -255,9 +256,9 @@ PYTHON_METHOD_DEFINITION(ptNotify, addVarFloat, args)
 
 PYTHON_METHOD_DEFINITION(ptNotify, addVarInt, args)
 {
-    char* name;
+    ST::string name;
     int number;
-    if (!PyArg_ParseTuple(args, "si", &name, &number))
+    if (!PyArg_ParseTuple(args, "O&i", PyUnicode_STStringConverter, &name, &number))
     {
         PyErr_SetString(PyExc_TypeError, "addVarInt expects a string and a integer");
         PYTHON_RETURN_ERROR;
@@ -268,8 +269,8 @@ PYTHON_METHOD_DEFINITION(ptNotify, addVarInt, args)
 
 PYTHON_METHOD_DEFINITION(ptNotify, addVarNull, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "addVarNull expects a string");
         PYTHON_RETURN_ERROR;
@@ -280,9 +281,9 @@ PYTHON_METHOD_DEFINITION(ptNotify, addVarNull, args)
 
 PYTHON_METHOD_DEFINITION(ptNotify, addVarKey, args)
 {
-    char* name;
-    PyObject* keyObj = NULL;
-    if (!PyArg_ParseTuple(args, "sO", &name, &keyObj))
+    ST::string name;
+    PyObject* keyObj = nullptr;
+    if (!PyArg_ParseTuple(args, "O&O", PyUnicode_STStringConverter, &name, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "addVarKey expects a string and a ptKey");
         PYTHON_RETURN_ERROR;
@@ -300,8 +301,8 @@ PYTHON_METHOD_DEFINITION(ptNotify, addVarKey, args)
 PYTHON_METHOD_DEFINITION(ptNotify, addFacingEvent, args)
 {
     char enabledFlag;
-    PyObject* facerKey = NULL;
-    PyObject* faceeKey = NULL;
+    PyObject* facerKey = nullptr;
+    PyObject* faceeKey = nullptr;
     float dot;
     if (!PyArg_ParseTuple(args, "bOOf", &enabledFlag, &facerKey, &faceeKey, &dot))
     {
@@ -322,16 +323,16 @@ PYTHON_METHOD_DEFINITION(ptNotify, addFacingEvent, args)
 PYTHON_METHOD_DEFINITION(ptNotify, addContainerEvent, args)
 {
     char enterFlag;
-    PyObject* containerKey = NULL;
-    PyObject* containedKey = NULL;
+    PyObject* containerKey = nullptr;
+    PyObject* containedKey = nullptr;
     if (!PyArg_ParseTuple(args, "bOO", &enterFlag, &containerKey, &containedKey))
     {
         PyErr_SetString(PyExc_TypeError, "addContainerEvent expects a boolean, and two ptKeys");
         PYTHON_RETURN_ERROR;
     }
 
-    pyKey* container = NULL;
-    pyKey* contained = NULL;
+    pyKey* container = nullptr;
+    pyKey* contained = nullptr;
     
     if (containerKey != Py_None)
     {
@@ -432,9 +433,9 @@ PLASMA_DEFAULT_TYPE(ptNotify, "Params: selfKey\nCreates a Notify message\n"
             "- selfKey is ptKey of your PythonFile modifier");
 
 // required functions for PyObject interoperability
-PyObject *pyNotify::New(pyKey& selfkey)
+PyObject *pyNotify::New(const pyKey& selfkey)
 {
-    ptNotify *newObj = (ptNotify*)ptNotify_type.tp_new(&ptNotify_type, NULL, NULL);
+    ptNotify *newObj = (ptNotify*)ptNotify_type.tp_new(&ptNotify_type, nullptr, nullptr);
     newObj->fThis->SetSender(selfkey);
     return (PyObject*)newObj;
 }
@@ -455,42 +456,42 @@ void pyNotify::AddPlasmaClasses(PyObject *m)
 
 void pyNotify::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtNotificationType);
-    PYTHON_ENUM_ELEMENT(PtNotificationType, kActivator,             plNotifyMsg::kActivator);
-    PYTHON_ENUM_ELEMENT(PtNotificationType, kVarNotification,       plNotifyMsg::kVarNotification);
-    PYTHON_ENUM_ELEMENT(PtNotificationType, kNotifySelf,            plNotifyMsg::kNotifySelf);
-    PYTHON_ENUM_ELEMENT(PtNotificationType, kResponderFF,           plNotifyMsg::kResponderFF);
-    PYTHON_ENUM_ELEMENT(PtNotificationType, kResponderChangeState,  plNotifyMsg::kResponderChangeState);
-    PYTHON_ENUM_END(m, PtNotificationType);
+    PYTHON_ENUM_START(PtNotificationType)
+    PYTHON_ENUM_ELEMENT(PtNotificationType, kActivator,             plNotifyMsg::kActivator)
+    PYTHON_ENUM_ELEMENT(PtNotificationType, kVarNotification,       plNotifyMsg::kVarNotification)
+    PYTHON_ENUM_ELEMENT(PtNotificationType, kNotifySelf,            plNotifyMsg::kNotifySelf)
+    PYTHON_ENUM_ELEMENT(PtNotificationType, kResponderFF,           plNotifyMsg::kResponderFF)
+    PYTHON_ENUM_ELEMENT(PtNotificationType, kResponderChangeState,  plNotifyMsg::kResponderChangeState)
+    PYTHON_ENUM_END(m, PtNotificationType)
 
-    PYTHON_ENUM_START(PtEventType);
-    PYTHON_ENUM_ELEMENT(PtEventType, kCollision,        proEventData::kCollision);
-    PYTHON_ENUM_ELEMENT(PtEventType, kPicked,           proEventData::kPicked);
-    PYTHON_ENUM_ELEMENT(PtEventType, kControlKey,       proEventData::kControlKey);
-    PYTHON_ENUM_ELEMENT(PtEventType, kVariable,         proEventData::kVariable);
-    PYTHON_ENUM_ELEMENT(PtEventType, kFacing,           proEventData::kFacing);
-    PYTHON_ENUM_ELEMENT(PtEventType, kContained,        proEventData::kContained);
-    PYTHON_ENUM_ELEMENT(PtEventType, kActivate,         proEventData::kActivate);
-    PYTHON_ENUM_ELEMENT(PtEventType, kCallback,         proEventData::kCallback);
-    PYTHON_ENUM_ELEMENT(PtEventType, kResponderState,   proEventData::kResponderState);
-    PYTHON_ENUM_ELEMENT(PtEventType, kMultiStage,       proEventData::kMultiStage);
-    PYTHON_ENUM_ELEMENT(PtEventType, kSpawned,          proEventData::kSpawned);
-    PYTHON_ENUM_ELEMENT(PtEventType, kClickDrag,        proEventData::kClickDrag);
-    PYTHON_ENUM_ELEMENT(PtEventType, kOfferLinkingBook, proEventData::kOfferLinkingBook);
-    PYTHON_ENUM_ELEMENT(PtEventType, kBook,             proEventData::kBook);
-    PYTHON_ENUM_END(m, PtEventType);
+    PYTHON_ENUM_START(PtEventType)
+    PYTHON_ENUM_ELEMENT(PtEventType, kCollision,        proEventData::kCollision)
+    PYTHON_ENUM_ELEMENT(PtEventType, kPicked,           proEventData::kPicked)
+    PYTHON_ENUM_ELEMENT(PtEventType, kControlKey,       proEventData::kControlKey)
+    PYTHON_ENUM_ELEMENT(PtEventType, kVariable,         proEventData::kVariable)
+    PYTHON_ENUM_ELEMENT(PtEventType, kFacing,           proEventData::kFacing)
+    PYTHON_ENUM_ELEMENT(PtEventType, kContained,        proEventData::kContained)
+    PYTHON_ENUM_ELEMENT(PtEventType, kActivate,         proEventData::kActivate)
+    PYTHON_ENUM_ELEMENT(PtEventType, kCallback,         proEventData::kCallback)
+    PYTHON_ENUM_ELEMENT(PtEventType, kResponderState,   proEventData::kResponderState)
+    PYTHON_ENUM_ELEMENT(PtEventType, kMultiStage,       proEventData::kMultiStage)
+    PYTHON_ENUM_ELEMENT(PtEventType, kSpawned,          proEventData::kSpawned)
+    PYTHON_ENUM_ELEMENT(PtEventType, kClickDrag,        proEventData::kClickDrag)
+    PYTHON_ENUM_ELEMENT(PtEventType, kOfferLinkingBook, proEventData::kOfferLinkingBook)
+    PYTHON_ENUM_ELEMENT(PtEventType, kBook,             proEventData::kBook)
+    PYTHON_ENUM_END(m, PtEventType)
 
-    PYTHON_ENUM_START(PtNotifyDataType);
-    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kFloat,  proEventData::kFloat);
-    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kInt,  proEventData::kInt);
-    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kNull,  proEventData::kNull);
-    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kKey,     proEventData::kKey);
-    PYTHON_ENUM_END(m, PtNotifyDataType);
+    PYTHON_ENUM_START(PtNotifyDataType)
+    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kFloat,  proEventData::kFloat)
+    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kInt,  proEventData::kInt)
+    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kNull,  proEventData::kNull)
+    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kKey,     proEventData::kKey)
+    PYTHON_ENUM_END(m, PtNotifyDataType)
 
-    PYTHON_ENUM_START(PtMultiStageEventType);
-    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kEnterStage,         proEventData::kEnterStage);
-    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kBeginingOfLoop,     proEventData::kBeginingOfLoop);
-    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kAdvanceNextStage,   proEventData::kAdvanceNextStage);
-    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kRegressPrevStage,   proEventData::kRegressPrevStage);
-    PYTHON_ENUM_END(m, PtMultiStageEventType);
+    PYTHON_ENUM_START(PtMultiStageEventType)
+    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kEnterStage,         proEventData::kEnterStage)
+    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kBeginingOfLoop,     proEventData::kBeginingOfLoop)
+    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kAdvanceNextStage,   proEventData::kAdvanceNextStage)
+    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kRegressPrevStage,   proEventData::kRegressPrevStage)
+    PYTHON_ENUM_END(m, PtMultiStageEventType)
 }

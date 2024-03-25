@@ -42,7 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAutoUIBase_h_inc
 #define plAutoUIBase_h_inc
 
+#include <unordered_set>
 #include <vector>
+
 
 class ParamBlockDesc2;
 class IParamBlock2;
@@ -50,6 +52,8 @@ class Class_ID;
 
 class plAutoUIParam;
 class plAutoUIClassDesc;
+
+namespace ST { class string; }
 
 class plAutoUIBase
 {
@@ -59,7 +63,7 @@ protected:
 
     ParamBlockDesc2 *fDesc;
     IParamBlock2 *fPBlock;
-    char *fName;
+    ST::string fName;
 
     HWND fhRollup;
 
@@ -75,59 +79,59 @@ public:
     //
     // 'scriptName' is a MaxScript visible name.  Here's what the help file says:
     //   "They should begin with an alpha character, have only alphanumerics, and have no
-    //    spaces, punctuations, etc.  The convention for multi-uint16_t names is to use
+    //    spaces, punctuations, etc.  The convention for multi-word names is to use
     //    studly-caps, eg, paintRadius."
     //  (Note: if this is nil, one will be generated from 'name'.)
     //
     // 'name' is the name that will show up in the user interface (a copy is made, so you
     // can free the pointer after this function returns if it was allocated)
     //
-    void AddCheckBox    (int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
+    void AddCheckBox    (int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates,
                         bool def=false);
-    void AddFloatSpinner(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
+    void AddFloatSpinner(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates,
                         float def=0.f, float min=0.f, float max=1.f);
-    void AddIntSpinner  (int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
+    void AddIntSpinner  (int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates,
                         int def=1, int min=0, int max=1);
-    void AddEditBox     (int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
-                        const char *def=nil, int lines=1);
-    void AddPickNodeList(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
-                        std::vector<Class_ID>* filter=nil);
-    void AddPickNodeButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
-                        std::vector<Class_ID>* filter=nil, bool canConvertToType=false);
-    void AddPickComponentButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
-                        std::vector<Class_ID>* filter=nil, bool canConvertToType=false);
-    void AddPickComponentList(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
-                        std::vector<Class_ID>* filter=nil);
-    void AddPickActivatorList(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
-    void AddPickActivatorButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
-    void AddPickDynamicTextButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
-    void AddPickGUIDialogButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
-    void AddPickExcludeRegionButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
-    void AddPickAnimationButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
-    void AddPickBehaviorButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
-    void AddPickMaterialButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
-    void AddPickMaterialAnimationButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
-    void AddPickWaterComponentButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
-    void AddPickSwimCurrentInterfaceButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
-    void AddPickClusterComponentButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
+    void AddEditBox     (int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates,
+                        const ST::string& def={}, int lines=1);
+    void AddPickNodeList(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates,
+                        std::vector<Class_ID>* filter=nullptr);
+    void AddPickNodeButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates,
+                        std::vector<Class_ID>* filter=nullptr, bool canConvertToType=false);
+    void AddPickComponentButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates,
+                        std::vector<Class_ID>* filter=nullptr, bool canConvertToType=false);
+    void AddPickComponentList(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates,
+                        std::vector<Class_ID>* filter=nullptr);
+    void AddPickActivatorList(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates);
+    void AddPickActivatorButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates);
+    void AddPickDynamicTextButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates);
+    void AddPickGUIDialogButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates);
+    void AddPickExcludeRegionButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates);
+    void AddPickAnimationButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates);
+    void AddPickBehaviorButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates);
+    void AddPickMaterialButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates);
+    void AddPickMaterialAnimationButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates);
+    void AddPickWaterComponentButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates);
+    void AddPickSwimCurrentInterfaceButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates);
+    void AddPickClusterComponentButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates);
 
-    void AddPickGUIPopUpMenuButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
-    void AddPickGUISkinButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
+    void AddPickGUIPopUpMenuButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates);
+    void AddPickGUISkinButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates);
     
-    void AddDropDownList(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, std::vector<std::string>* options = nil);
-    void AddPickGrassComponentButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
+    void AddDropDownList(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates, std::vector<ST::string> options);
+    void AddPickGrassComponentButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates);
 
     void CreateAutoRollup(IParamBlock2 *pb);
     void DestroyAutoRollup();
 
-    const char *GetName() { return fName; }
+    ST::string GetName() const { return fName; }
 
 protected:
-    char *IMakeScriptName(const char *fullName);
+    ST::string IMakeScriptName(const ST::string& fullName);
     void ICreateControls();
 
-    static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-    BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    INT_PTR DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 };
 
 #endif // plAutoUIBase_h_inc

@@ -39,18 +39,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "hsGeometry3.h"
-#include "plParticle.h"
+
 #include "plParticleEffect.h"
-#include "plEffectTargetInfo.h"
-#include "plConvexVolume.h"
+
 #include "plBoundInterface.h"
-#include "hsResMgr.h"
-#include "plPipeline.h"
-#include "hsFastMath.h"
-#include "pnEncryption/plRandom.h"
+#include "plConvexVolume.h"
+#include "plEffectTargetInfo.h"
+#include "plParticle.h"
 #include "plParticleSystem.h"
+
+#include "hsFastMath.h"
+#include "hsGeometry3.h"
+#include "plPipeline.h"
+#include "hsResMgr.h"
+
+#include "pnEncryption/plRandom.h"
+#include "pnMessage/plRefMsg.h"
+
 #include "plMessage/plParticleUpdateMsg.h"
 
 #include <algorithm>
@@ -58,8 +63,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////////////////////////////////////////////////
 plParticleCollisionEffect::plParticleCollisionEffect()
 {
-    fBounds = nil;
-    fSceneObj = nil;
+    fBounds = nullptr;
+    fSceneObj = nullptr;
 }
 
 plParticleCollisionEffect::~plParticleCollisionEffect()
@@ -68,10 +73,10 @@ plParticleCollisionEffect::~plParticleCollisionEffect()
 
 void plParticleCollisionEffect::PrepareEffect(const plEffectTargetInfo &target)
 {
-    if (fBounds == nil)
+    if (fBounds == nullptr)
     {
         plBoundInterface *bi = plBoundInterface::ConvertNoRef(fSceneObj->GetGenericInterface(plBoundInterface::Index()));
-        if (bi == nil)
+        if (bi == nullptr)
             return;
         fBounds = bi->GetVolume();
     }
@@ -88,7 +93,7 @@ bool plParticleCollisionEffect::MsgReceive(plMessage* msg)
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fSceneObj = so;
             else
-                fSceneObj = nil;
+                fSceneObj = nullptr;
             return true;
         }
     }
@@ -102,7 +107,7 @@ void plParticleCollisionEffect::Read(hsStream *s, hsResMgr *mgr)
     plGenRefMsg* msg;
     msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0); // SceneObject
     mgr->ReadKeyNotifyMe(s, msg, plRefFlags::kActiveRef);
-    fBounds = nil;
+    fBounds = nullptr;
 }
 
 void plParticleCollisionEffect::Write(hsStream *s, hsResMgr *mgr)
@@ -176,16 +181,16 @@ void plParticleCollisionEffectBounce::Read(hsStream *s, hsResMgr *mgr)
 {
     plParticleCollisionEffect::Read(s, mgr);
 
-    fBounce = s->ReadLEScalar();
-    fFriction = s->ReadLEScalar();
+    fBounce = s->ReadLEFloat();
+    fFriction = s->ReadLEFloat();
 }
 
 void plParticleCollisionEffectBounce::Write(hsStream *s, hsResMgr *mgr)
 {
     plParticleCollisionEffect::Write(s, mgr);
 
-    s->WriteLEScalar(fBounce);
-    s->WriteLEScalar(fFriction);
+    s->WriteLEFloat(fBounce);
+    s->WriteLEFloat(fFriction);
 }
 
 
@@ -352,7 +357,7 @@ void plParticleFadeVolumeEffect::Read(hsStream *s, hsResMgr *mgr)
 {
     hsKeyedObject::Read(s, mgr);
 
-    fLength = s->ReadLEScalar();
+    fLength = s->ReadLEFloat();
     fIgnoreZ = s->ReadBool();
 }
 
@@ -360,36 +365,21 @@ void plParticleFadeVolumeEffect::Write(hsStream *s, hsResMgr *mgr)
 {
     hsKeyedObject::Write(s, mgr);
 
-    s->WriteLEScalar(fLength);
+    s->WriteLEFloat(fLength);
     s->WriteBool(fIgnoreZ);
 }
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 // Particle wind - Base class first
-plParticleWindEffect::plParticleWindEffect()
-:   fWindVec(0,0,0),
-    fDir(1.f,0,0),
-    fSwirl(0.1f),
-    fConstancy(0),
-    fHorizontal(0),
-    fLastDirSecs(-1.f),
-    fRefDir(0.f,0.f,0.f),
-    fRandDir(1.f,0.f,0.f)
-{
-}
-
-plParticleWindEffect::~plParticleWindEffect()
-{
-}
 
 void plParticleWindEffect::Read(hsStream *s, hsResMgr *mgr)
 {
     hsKeyedObject::Read(s, mgr);
 
-    fStrength = s->ReadLEScalar();
-    fConstancy = s->ReadLEScalar();
-    fSwirl = s->ReadLEScalar();
+    fStrength = s->ReadLEFloat();
+    fConstancy = s->ReadLEFloat();
+    fSwirl = s->ReadLEFloat();
     fHorizontal = s->ReadBool();
     fRefDir.Read(s);
     fDir.Read(s);
@@ -400,9 +390,9 @@ void plParticleWindEffect::Write(hsStream *s, hsResMgr *mgr)
 {
     hsKeyedObject::Write(s, mgr);
 
-    s->WriteLEScalar(fStrength);
-    s->WriteLEScalar(fConstancy);
-    s->WriteLEScalar(fSwirl);
+    s->WriteLEFloat(fStrength);
+    s->WriteLEFloat(fConstancy);
+    s->WriteLEFloat(fSwirl);
     s->WriteBool(fHorizontal);
     fRefDir.Write(s);
     fDir.Write(s);
@@ -440,25 +430,12 @@ void plParticleWindEffect::PrepareEffect(const plEffectTargetInfo& target)
 
 ////////////////////////////////////////////////////////////////////////
 // Localized wind (how much wind you're getting depends on where you are
-plParticleLocalWind::plParticleLocalWind()
-:   fScale(0, 0, 0),
-    fSpeed(0),
-    fPhase(0,0,0),
-    fInvScale(0,0,0),
-    fLastPhaseSecs(-1.f)
-{
-}
-
-plParticleLocalWind::~plParticleLocalWind()
-{
-}
-
 void plParticleLocalWind::Read(hsStream *s, hsResMgr *mgr)
 {
     plParticleWindEffect::Read(s, mgr);
 
     fScale.Read(s);
-    fSpeed = s->ReadLEScalar();
+    fSpeed = s->ReadLEFloat();
 }
 
 void plParticleLocalWind::Write(hsStream *s, hsResMgr *mgr)
@@ -466,7 +443,7 @@ void plParticleLocalWind::Write(hsStream *s, hsResMgr *mgr)
     plParticleWindEffect::Write(s, mgr);
 
     fScale.Write(s);
-    s->WriteLEScalar(fSpeed);
+    s->WriteLEFloat(fSpeed);
 }
 
 void plParticleLocalWind::PrepareEffect(const plEffectTargetInfo& target)
@@ -548,9 +525,9 @@ void plParticleUniformWind::Read(hsStream *s, hsResMgr *mgr)
 {
     plParticleWindEffect::Read(s, mgr);
 
-    fFreqMin = s->ReadLEScalar();
-    fFreqMax = s->ReadLEScalar();
-    fFreqRate = s->ReadLEScalar();
+    fFreqMin = s->ReadLEFloat();
+    fFreqMax = s->ReadLEFloat();
+    fFreqRate = s->ReadLEFloat();
 
 #if 0
     fFreqMin = 1.f / 6.f;
@@ -566,9 +543,9 @@ void plParticleUniformWind::Write(hsStream *s, hsResMgr *mgr)
 {
     plParticleWindEffect::Write(s, mgr);
 
-    s->WriteLEScalar(fFreqMin);
-    s->WriteLEScalar(fFreqMax);
-    s->WriteLEScalar(fFreqRate);
+    s->WriteLEFloat(fFreqMin);
+    s->WriteLEFloat(fFreqMax);
+    s->WriteLEFloat(fFreqRate);
 }
 
 void plParticleUniformWind::SetFrequencyRange(float minSecsPerCycle, float maxSecsPerCycle)
@@ -608,9 +585,8 @@ void plParticleUniformWind::PrepareEffect(const plEffectTargetInfo& target)
     {
         static plRandom random;
 
-        const double kTwoPi = M_PI * 2.0;
         double t0 = fFreqCurr * fLastFreqSecs + fCurrPhase;
-        float t1 = (float)fmod(t0, kTwoPi);
+        float t1 = (float)std::fmod(t0, hsConstants::two_pi<double>);
         fCurrPhase -= t0 - t1;
 
         fFreqCurr += fFreqRate * target.fContext.fDelSecs * random.RandZeroToOne();
@@ -656,25 +632,6 @@ bool plParticleUniformWind::ApplyEffect(const plEffectTargetInfo& target, int32_
 
 ////////////////////////////////////////////////////////////////////////
 // Simplified flocking.
-
-plParticleFlockEffect::plParticleFlockEffect() :
-    fInfAvgRadSq(1),
-    fInfRepRadSq(1),
-    fAvgVelStr(1),
-    fRepDirStr(1),
-    fGoalOrbitStr(1),
-    fGoalChaseStr(1),
-    fGoalDistSq(1),
-    fFullChaseDistSq(1),
-    fMaxOrbitSpeed(1),
-    fMaxChaseSpeed(1),
-    fMaxParticles(0),
-    fDistSq(nil),
-    fInfluences(nil)
-{
-    fTargetOffset.Set(0.f, 0.f, 0.f);
-    fDissenterTarget.Set(0.f, 0.f, 0.f);
-}
 
 plParticleFlockEffect::~plParticleFlockEffect()
 {
@@ -758,9 +715,7 @@ bool plParticleFlockEffect::ApplyEffect(const plEffectTargetInfo& target, int32_
     else
         goal = fDissenterTarget;
     
-    hsVector3 goalDir;
-    hsPoint3 tmp = goal - pos;
-    goalDir.Set(&tmp);
+    hsVector3 goalDir(&goal, &pos);
     float distSq = goalDir.MagnitudeSquared();
     
     goalDir.Normalize();
@@ -823,17 +778,17 @@ void plParticleFlockEffect::Read(hsStream *s, hsResMgr *mgr)
 
     fTargetOffset.Read(s);
     fDissenterTarget.Read(s);
-    fInfAvgRadSq = s->ReadLEScalar();
-    fInfRepRadSq = s->ReadLEScalar();
-    fGoalDistSq = s->ReadLEScalar();
-    fFullChaseDistSq = s->ReadLEScalar();
-    fAvgVelStr = s->ReadLEScalar();
-    fRepDirStr = s->ReadLEScalar();
-    fGoalOrbitStr = s->ReadLEScalar();
-    fGoalChaseStr = s->ReadLEScalar();
-    SetMaxOrbitSpeed(s->ReadLEScalar());
-    SetMaxChaseSpeed(s->ReadLEScalar());
-    SetMaxParticles((uint16_t)s->ReadLEScalar());
+    fInfAvgRadSq = s->ReadLEFloat();
+    fInfRepRadSq = s->ReadLEFloat();
+    fGoalDistSq = s->ReadLEFloat();
+    fFullChaseDistSq = s->ReadLEFloat();
+    fAvgVelStr = s->ReadLEFloat();
+    fRepDirStr = s->ReadLEFloat();
+    fGoalOrbitStr = s->ReadLEFloat();
+    fGoalChaseStr = s->ReadLEFloat();
+    SetMaxOrbitSpeed(s->ReadLEFloat());
+    SetMaxChaseSpeed(s->ReadLEFloat());
+    SetMaxParticles((uint16_t)s->ReadLEFloat());
 }
 
 void plParticleFlockEffect::Write(hsStream *s, hsResMgr *mgr)
@@ -842,17 +797,17 @@ void plParticleFlockEffect::Write(hsStream *s, hsResMgr *mgr)
 
     fTargetOffset.Write(s);
     fDissenterTarget.Write(s);
-    s->WriteLEScalar(fInfAvgRadSq);
-    s->WriteLEScalar(fInfRepRadSq);
-    s->WriteLEScalar(fGoalDistSq);
-    s->WriteLEScalar(fFullChaseDistSq);
-    s->WriteLEScalar(fAvgVelStr);
-    s->WriteLEScalar(fRepDirStr);
-    s->WriteLEScalar(fGoalOrbitStr);
-    s->WriteLEScalar(fGoalChaseStr);
-    s->WriteLEScalar(fMaxOrbitSpeed);
-    s->WriteLEScalar(fMaxChaseSpeed);
-    s->WriteLEScalar(fMaxParticles);
+    s->WriteLEFloat(fInfAvgRadSq);
+    s->WriteLEFloat(fInfRepRadSq);
+    s->WriteLEFloat(fGoalDistSq);
+    s->WriteLEFloat(fFullChaseDistSq);
+    s->WriteLEFloat(fAvgVelStr);
+    s->WriteLEFloat(fRepDirStr);
+    s->WriteLEFloat(fGoalOrbitStr);
+    s->WriteLEFloat(fGoalChaseStr);
+    s->WriteLEFloat(fMaxOrbitSpeed);
+    s->WriteLEFloat(fMaxChaseSpeed);
+    s->WriteLEFloat((float)fMaxParticles);
 }
 
 bool plParticleFlockEffect::MsgReceive(plMessage *msg)

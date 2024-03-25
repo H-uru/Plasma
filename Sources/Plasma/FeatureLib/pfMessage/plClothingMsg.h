@@ -60,7 +60,7 @@ public:
     uint8_t fDelta;
     float fWeight;
 
-    plClothingMsg() : fCommands(0), fItemKey(nil), fLayer(0), fDelta(0), fWeight(0) { fColor.Set(1.f, 1.f, 1.f, 1.f); }
+    plClothingMsg() : fCommands(), fLayer(), fDelta(), fWeight() { fColor.Set(1.f, 1.f, 1.f, 1.f); }
     ~plClothingMsg() {}
 
     CLASSNAME_REGISTER( plClothingMsg );
@@ -84,23 +84,23 @@ public:
     bool ResendUpdate() { return fCommands != kUpdateTexture; }
 
     // IO 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
     
     // WriteVersion writes the current version of this creatable and ReadVersion will read in
     // any previous version.
-    virtual void ReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 class plElementRefMsg : public plGenRefMsg
 {
 public:
-    plString    fElementName;
+    ST::string  fElementName;
     uint32_t    fLayer;
 
     plElementRefMsg() : plGenRefMsg(), fLayer(1) {}
-    plElementRefMsg(const plKey &r, uint8_t c, int which, int type, const plString &name, uint8_t layer) : plGenRefMsg(r, c, which, type)
+    plElementRefMsg(const plKey &r, uint8_t c, int which, int type, const ST::string &name, uint8_t layer) : plGenRefMsg(r, c, which, type)
     {
         fLayer = layer;
         fElementName = name;
@@ -119,8 +119,8 @@ public:
     CLASSNAME_REGISTER( plClothingUpdateBCMsg );
     GETINTERFACE_ANY( plClothingUpdateBCMsg, plMessage );   
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plClothingMsg_inc

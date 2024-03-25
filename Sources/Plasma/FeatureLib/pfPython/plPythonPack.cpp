@@ -43,18 +43,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 #include <marshal.h>
 #include <ctime>
-#include <string>
+#include <string_theory/format>
 
 #include "HeadSpin.h"
 #include "hsStream.h"
-#pragma hdrstop
 
 #include "plPythonPack.h"
 
-#include "plFile/plSecureStream.h"
 #include "plFile/plStreamSource.h"
-
-static const char* kPackFilePath = ".\\Python\\";
 
 struct plPackOffsetInfo
 {
@@ -68,7 +64,7 @@ protected:
     std::vector<hsStream*> fPackStreams;
     bool fPackNotFound;     // No pack file, don't keep trying
 
-    typedef std::map<plString, plPackOffsetInfo> FileOffset;
+    typedef std::map<ST::string, plPackOffsetInfo> FileOffset;
     FileOffset fFileOffsets;
 
     plPythonPack();
@@ -81,16 +77,16 @@ public:
     bool Open();
     void Close();
 
-    PyObject* OpenPacked(const plString& sfileName);
-    bool IsPackedFile(const plString& fileName);
+    PyObject* OpenPacked(const ST::string& sfileName);
+    bool IsPackedFile(const ST::string& fileName);
 };
 
-PyObject* PythonPack::OpenPythonPacked(const plString& fileName)
+PyObject* PythonPack::OpenPythonPacked(const ST::string& fileName)
 {
     return plPythonPack::Instance().OpenPacked(fileName);
 }
 
-bool PythonPack::IsItPythonPacked(const plString& fileName)
+bool PythonPack::IsItPythonPacked(const ST::string& fileName)
 {
     return plPythonPack::Instance().IsPackedFile(fileName);
 }
@@ -148,7 +144,7 @@ bool plPythonPack::Open()
             for (int i = 0; i < numFiles; i++)
             {
                 // and pack the index into our own data structure
-                plString pythonName = fPackStream->ReadSafeString();
+                ST::string pythonName = fPackStream->ReadSafeString();
                 uint32_t offset = fPackStream->ReadLE32();
 
                 plPackOffsetInfo offsetInfo;
@@ -179,22 +175,20 @@ void plPythonPack::Close()
     int i;
     for (i=0; i<fPackStreams.size(); i++)
     {
-        hsStream* fPackStream = fPackStreams[i];
-
         // do NOT close or delete the streams, the preloader will do that for us
-        fPackStreams[i] = nil;
+        fPackStreams[i] = nullptr;
     }
 
     fPackStreams.clear();
     fFileOffsets.clear();
 }
 
-PyObject* plPythonPack::OpenPacked(const plString& fileName)
+PyObject* plPythonPack::OpenPacked(const ST::string& fileName)
 {
     if (!Open())
-        return nil;
+        return nullptr;
 
-    plString pythonName = fileName + ".py";
+    ST::string pythonName = fileName + ".py";
 
     FileOffset::iterator it = fFileOffsets.find(pythonName);
     if (it != fFileOffsets.end())
@@ -209,7 +203,7 @@ PyObject* plPythonPack::OpenPacked(const plString& fileName)
         {
             char *buf = new char[size];
             uint32_t readSize = fPackStream->Read(size, buf);
-            hsAssert(readSize <= size, plFormat("Python PackFile {}: Incorrect amount of data, read {} instead of {}",
+            hsAssert(readSize <= size, ST::format("Python PackFile {}: Incorrect amount of data, read {} instead of {}",
                      fileName, readSize, size).c_str());
 
             // let the python marshal make it back into a code object
@@ -221,15 +215,15 @@ PyObject* plPythonPack::OpenPacked(const plString& fileName)
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
-bool plPythonPack::IsPackedFile(const plString& fileName)
+bool plPythonPack::IsPackedFile(const ST::string& fileName)
 {
     if (!Open())
         return false;
 
-    plString pythonName = fileName + ".py";
+    ST::string pythonName = fileName + ".py";
 
     FileOffset:: iterator it = fFileOffsets.find(pythonName);
     if (it != fFileOffsets.end())

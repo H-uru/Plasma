@@ -42,10 +42,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plExcludeRegionModifier_inc
 #define plExcludeRegionModifier_inc
 
-#include "pnModifier/plSingleModifier.h"
 #include "hsMatrix44.h"
-#include "hsTemplates.h"
-#include "plModifier/plSDLModifier.h"
+#include <vector>
+
+#include "plSDLModifier.h"
+
+#include "pnModifier/plSingleModifier.h"
+#include "pnNetCommon/plSDLTypes.h"
 
 //
 // Moves all of the avatars out of the area it's SceneObject occupies and makes it
@@ -59,17 +62,17 @@ protected:
     {
         kBlockCameras,  
     };
+
     std::vector<plKey> fSafePoints; // Safe positions to move avatars to
-    hsTArray<plKey> fContainedAvatars;      // Avatars inside our volume
+    std::vector<plKey> fContainedAvatars;   // Avatars inside our volume
     plExcludeRegionSDLModifier  *fSDLModifier;
     bool fSeek; // use smart seek or teleport?
     float fSeekTime; // how long to seek for
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
     void ISetPhysicalState(bool cleared);
 
-    int IFindClosestSafePoint(plKey avatar);
-    bool ICheckSubworlds(plKey avatar);
+    int IFindClosestSafePoint(const plKey& avatar);
     void IMoveAvatars();
 
     friend class plExcludeRegionSDLModifier;
@@ -81,15 +84,15 @@ public:
     CLASSNAME_REGISTER(plExcludeRegionModifier);
     GETINTERFACE_ANY(plExcludeRegionModifier, plSingleModifier);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget( plSceneObject *so );
+    void AddTarget(plSceneObject* so) override;
+    void RemoveTarget(plSceneObject *so) override;
 
-    void AddSafePoint(plKey& key);
+    void AddSafePoint(plKey key) { fSafePoints.emplace_back(std::move(key)); }
     void UseSmartSeek() { fSeek = true; }
     void SetSeekTime(float s) { fSeekTime = s; }
     void SetBlockCameras(bool block) { fFlags.SetBit(kBlockCameras, block); }
@@ -100,8 +103,8 @@ class plExcludeRegionSDLModifier : public plSDLModifier
 protected:
     plExcludeRegionModifier* fXRegion;
 
-    void IPutCurrentStateIn(plStateDataRecord* dstState);
-    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState) override;
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
 
 public:
     plExcludeRegionSDLModifier();
@@ -110,7 +113,7 @@ public:
     CLASSNAME_REGISTER(plExcludeRegionSDLModifier);
     GETINTERFACE_ANY(plExcludeRegionSDLModifier, plSDLModifier);
 
-    const char* GetSDLName() const { return kSDLXRegion; }
+    const char* GetSDLName() const override { return kSDLXRegion; }
 };
 
 #endif // plExcludeRegionModifier_inc

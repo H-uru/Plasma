@@ -42,12 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plViewFaceModifier_inc
 #define plViewFaceModifier_inc
 
-#include "hsMatrix44.h"
 #include "hsBounds.h"
+#include "hsMatrix44.h"
+
 #include "pnModifier/plSingleModifier.h"
 
 class plGenRefMsg;
 class plPipeline;
+class plSceneObject;
 
 class plViewFaceModifier : public plSingleModifier
 {
@@ -84,7 +86,7 @@ protected:
     hsBounds3Ext            fMaxBounds;
 
     virtual bool IFacePoint(plPipeline* pipe, const hsPoint3& at);
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
 
     enum RefType
     {
@@ -92,21 +94,20 @@ protected:
     };
     void            IOnReceive(plGenRefMsg* refMsg);
     void            IOnRemove(plGenRefMsg* refMsg);
-    void            ISetObject(plKey soKey);
+    void            ISetObject(const plKey& soKey);
 
 public:
     plViewFaceModifier();
-    virtual ~plViewFaceModifier();
 
     CLASSNAME_REGISTER( plViewFaceModifier );
     GETINTERFACE_ANY( plViewFaceModifier, plSingleModifier );
     
-    virtual void SetTarget(plSceneObject* so);
+    void SetTarget(plSceneObject* so) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     // ViewFace specific
     void SetScale(const hsVector3& s) { fScale = s; }
@@ -125,7 +126,7 @@ public:
         kFollowPlayer,
         kFollowObject
     };
-    void            SetFollowMode(FollowMode m, plKey soKey=nil); // For follow object, set obj, else it's ignored.
+    void            SetFollowMode(FollowMode m, const plKey& soKey = {}); // For follow object, set obj, else it's ignored.
     FollowMode      GetFollowMode() const;
     plSceneObject*  GetFollowObject() const { return fFaceObj; }
 

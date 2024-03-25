@@ -43,15 +43,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plWarpMsg_inc
 #define plWarpMsg_inc
 
-#include "hsStream.h"
 #include "plMessage.h"
 #include "hsMatrix44.h"
 
 class plWarpMsg : public plMessage
 {
 private:
-    uint32_t  fWarpFlags;
+    uint32_t fWarpFlags;
     hsMatrix44 fTransform;
+
 public:
     enum WarpFlags
     {
@@ -59,42 +59,38 @@ public:
         kZeroVelocity   = 0x2
     };
 
-    plWarpMsg() { Clear(); }
-    plWarpMsg(const hsMatrix44& mat ){ Clear(); fTransform = mat; }
-    plWarpMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t) { Clear(); }
-    plWarpMsg(const plKey &s, const plKey &r, uint32_t flags, const hsMatrix44 &mat)
-        : fWarpFlags(flags), fTransform(mat), plMessage(s, r, nil)
-    {  };
-    
-    ~plWarpMsg(){}
+    plWarpMsg() {
+        Clear();
+    }
 
-    CLASSNAME_REGISTER( plWarpMsg );
-    GETINTERFACE_ANY( plWarpMsg, plMessage );
+    plWarpMsg(const hsMatrix44& mat) {
+        Clear();
+        fTransform = mat;
+    }
 
-    void Clear() { fWarpFlags=0; }
+    plWarpMsg(const plKey& s, const plKey& r, const double* t) {
+        Clear();
+    }
+
+    plWarpMsg(const plKey& s, const plKey& r, uint32_t flags, const hsMatrix44& mat)
+        : fWarpFlags(flags), fTransform(mat), plMessage(s, r, nullptr) { }
+
+    ~plWarpMsg() {}
+
+    CLASSNAME_REGISTER(plWarpMsg);
+    GETINTERFACE_ANY(plWarpMsg, plMessage);
+
+    void Clear() { fWarpFlags = 0; }
 
     uint32_t GetWarpFlags() { return fWarpFlags; }
-    void SetWarpFlags(uint32_t f) { fWarpFlags=f; }
+    void SetWarpFlags(uint32_t f) { fWarpFlags = f; }
 
-    void SetTransform(const hsMatrix44& mat) { fTransform=mat;  }
     hsMatrix44& GetTransform() { return fTransform; }
+    void SetTransform(const hsMatrix44& mat) { fTransform = mat; }
 
-    // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgRead(stream, mgr);
-        fTransform.Read(stream);
-        stream->ReadLE(&fWarpFlags);
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        fTransform.Write(stream);
-        stream->WriteLE(fWarpFlags);
-    }
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plWarpMsg_inc

@@ -1,9 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plAgeLoader_SOURCES
     plAgeLoader.cpp
     plAgeLoaderPaging.cpp
@@ -16,9 +10,32 @@ set(plAgeLoader_HEADERS
     plResPatcher.h
 )
 
-add_library(plAgeLoader STATIC ${plAgeLoader_SOURCES} ${plAgeLoader_HEADERS})
+plasma_library(plAgeLoader SOURCES ${plAgeLoader_SOURCES} ${plAgeLoader_HEADERS})
 
-target_link_libraries(plAgeLoader pfPatcher)
+target_include_directories(plAgeLoader PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
+target_link_libraries(
+    plAgeLoader
+    PUBLIC
+        CoreLib
+        plAgeDescription
+        pnKeyedObject
+        pnNetBase
+    PRIVATE
+        pnMessage
+        pnNetCommon
+        pnNucleusInc
+        pnSceneObject
+        plFile
+        plMessage
+        plNetClient
+        plProgressMgr
+        plScene
+        plSDL
+        plResMgr
+        pfPatcher # :(
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${plAgeLoader_SOURCES})
 source_group("Header Files" FILES ${plAgeLoader_HEADERS})

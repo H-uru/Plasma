@@ -1,21 +1,25 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(pnInputCore_HEADERS
     plControlDefinition.h
     plControlEventCodes.h
     plInputMap.h
     plKeyDef.h
     plKeyMap.h
-    plOSMsg.h
 )
 
 set(pnInputCore_SOURCES
     plInputMap.cpp
 )
 
-add_library(pnInputCore STATIC ${pnInputCore_HEADERS} ${pnInputCore_SOURCES})
+plasma_library(pnInputCore SOURCES ${pnInputCore_HEADERS} ${pnInputCore_SOURCES})
+target_link_libraries(
+    pnInputCore
+    PUBLIC
+        CoreLib
+    PRIVATE
+        plResMgr # :(
+)
+
+target_include_directories(pnInputCore PRIVATE "${PLASMA_SOURCE_ROOT}/PubUtilLib")
 
 source_group("Header Files" FILES ${pnInputCore_HEADERS})
 source_group("Source Files" FILES ${pnInputCore_SOURCES})

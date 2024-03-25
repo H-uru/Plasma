@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyGeometry3.h"
-#pragma hdrstop
-
 #include "pyDniCoordinates.h"
+
 #include "plVault/plDniCoordinateInfo.h"
+
+#include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptDniCoordinates, pyDniCoordinates);
@@ -60,24 +60,24 @@ PYTHON_INIT_DEFINITION(ptDniCoordinates, args, keywords)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDniCoordinates, getHSpans)
 {
-    return PyInt_FromLong(self->fThis->GetHSpans());
+    return PyLong_FromLong(self->fThis->GetHSpans());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDniCoordinates, getVSpans)
 {
-    return PyInt_FromLong(self->fThis->GetVSpans());
+    return PyLong_FromLong(self->fThis->GetVSpans());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDniCoordinates, getTorans)
 {
-    return PyInt_FromLong(self->fThis->GetTorans());
+    return PyLong_FromLong(self->fThis->GetTorans());
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptDniCoordinates, update, UpdateCoordinates)
 
 PYTHON_METHOD_DEFINITION(ptDniCoordinates, fromPoint, args)
 {
-    PyObject* pointObj = NULL;
+    PyObject* pointObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &pointObj))
     {
         PyErr_SetString(PyExc_TypeError, "fromPoint expects a ptPoint3");
@@ -109,7 +109,7 @@ PYTHON_CLASS_NEW_IMPL(ptDniCoordinates, pyDniCoordinates)
 
 PyObject *pyDniCoordinates::New(plDniCoordinateInfo* coord)
 {
-    ptDniCoordinates *newObj = (ptDniCoordinates*)ptDniCoordinates_type.tp_new(&ptDniCoordinates_type, NULL, NULL);
+    ptDniCoordinates *newObj = (ptDniCoordinates*)ptDniCoordinates_type.tp_new(&ptDniCoordinates_type, nullptr, nullptr);
     if (coord) {
         newObj->fThis->fCoords->SetTorans(coord->GetTorans());
         newObj->fThis->fCoords->SetHSpans(coord->GetHSpans());

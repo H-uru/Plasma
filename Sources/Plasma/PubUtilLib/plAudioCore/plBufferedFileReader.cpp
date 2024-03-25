@@ -66,7 +66,7 @@ plBufferedFileReader::plBufferedFileReader( const plFileName &path, plAudioCore:
 {
     // Init some stuff
     fBufferSize = 0;
-    fBuffer = nil;
+    fBuffer = nullptr;
     fCursor = 0;
 
     hsAssert( path.IsValid(), "Invalid path specified in plBufferedFileReader" );
@@ -74,7 +74,7 @@ plBufferedFileReader::plBufferedFileReader( const plFileName &path, plAudioCore:
     // Ask plAudioFileReader for another reader to get this file
     // Note: have this reader do the chanSelect for us
     plAudioFileReader *reader = plAudioFileReader::CreateReader( path, whichChan );
-    if( reader == nil || !reader->IsValid() )
+    if (reader == nullptr || !reader->IsValid())
     {
         delete reader;
         IError( "Unable to open file to read in to RAM buffer" );
@@ -86,7 +86,7 @@ plBufferedFileReader::plBufferedFileReader( const plFileName &path, plAudioCore:
     fBufferSize = reader->GetDataSize();
     fBuffer = new uint8_t[ fBufferSize ];
     //plProfile_NewMem( SndBufferedMem, fBufferSize );
-    if( fBuffer == nil )
+    if (fBuffer == nullptr)
     {
         delete reader;
         IError( "Unable to allocate RAM buffer" );
@@ -109,12 +109,12 @@ plBufferedFileReader::~plBufferedFileReader()
     Close();
 }
 
-void    plBufferedFileReader::Close( void )
+void    plBufferedFileReader::Close()
 {
     //plProfile_DelMem( SndBufferedMem, fBufferSize );
 
     delete fBuffer;
-    fBuffer = nil;
+    fBuffer = nullptr;
     fBufferSize = 0;
     fCursor = 0;
 }
@@ -125,14 +125,14 @@ void    plBufferedFileReader::IError( const char *msg )
     Close();
 }
 
-plWAVHeader &plBufferedFileReader::GetHeader( void )
+plWAVHeader &plBufferedFileReader::GetHeader()
 {
     hsAssert( IsValid(), "GetHeader() called on an invalid RAM buffer" );
 
     return fHeader;
 }
 
-float   plBufferedFileReader::GetLengthInSecs( void )
+float   plBufferedFileReader::GetLengthInSecs()
 {
     hsAssert( IsValid(), "GetLengthInSecs() called on an invalid RAM buffer" );
 
@@ -172,7 +172,7 @@ bool    plBufferedFileReader::Read( uint32_t numBytes, void *buffer )
     return valid;
 }
 
-uint32_t  plBufferedFileReader::NumBytesLeft( void )
+uint32_t  plBufferedFileReader::NumBytesLeft()
 {
     hsAssert( IsValid(), "NumBytesLeft() called on an invalid RAM buffer" );
 

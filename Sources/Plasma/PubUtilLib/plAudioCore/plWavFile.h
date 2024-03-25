@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plWavFile_H
 #define plWavFile_H
 
-#ifdef BUILDING_MAXPLUGIN
+#ifdef HS_BUILD_FOR_WIN32
 #define WAVEFILE_READ   1
 #define WAVEFILE_WRITE  2
 
@@ -56,11 +56,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct plSoundMarker
 {
-    char *fName;
+    TCHAR* fName;
     double fOffset; // in Secs
 
-    plSoundMarker () { fName = NULL;fOffset = 0.0; }
-
+    plSoundMarker() : fName(), fOffset() { }
 };
 
 
@@ -77,7 +76,7 @@ public:
     CWaveFile();
     ~CWaveFile();
 
-    HRESULT Open(const char *strFileName, WAVEFORMATEX* pwfx, DWORD dwFlags );
+    HRESULT Open(const plFileName &strFileName, WAVEFORMATEX* pwfx, DWORD dwFlags);
     HRESULT OpenFromMemory( BYTE* pbData, ULONG ulDataSize, WAVEFORMATEX* pwfx, DWORD dwFlags );
 
     HRESULT Read( BYTE* pBuffer, DWORD dwSizeToRead, DWORD* pdwSizeRead );
@@ -93,19 +92,19 @@ public:
 
 
     // Overloads for plAudioFileReader
-    CWaveFile( const char *path, plAudioCore::ChannelSelect whichChan );
-    virtual bool    OpenForWriting( const char *path, plWAVHeader &header );
-    virtual plWAVHeader &GetHeader( void );
-    virtual void    Close( void );
-    virtual uint32_t  GetDataSize( void );
-    virtual float   GetLengthInSecs( void );
+    CWaveFile(const plFileName &path, plAudioCore::ChannelSelect whichChan);
+    bool OpenForWriting(const plFileName& path, plWAVHeader &header) override;
+    plWAVHeader &GetHeader() override;
+    void Close() override;
+    uint32_t GetDataSize() override;
+    float GetLengthInSecs() override;
 
-    virtual bool    SetPosition( uint32_t numBytes );
-    virtual bool    Read( uint32_t numBytes, void *buffer );
-    virtual uint32_t  NumBytesLeft( void );
-    virtual uint32_t  Write( uint32_t bytes, void *buffer );
+    bool SetPosition(uint32_t numBytes) override;
+    bool Read(uint32_t numBytes, void *buffer) override;
+    uint32_t NumBytesLeft() override;
+    uint32_t Write(uint32_t bytes, void *buffer) override;
 
-    virtual bool    IsValid( void );
+    bool IsValid() override;
     WAVEFORMATEX* m_pwfx;        // Pointer to WAVEFORMATEX structure
     HMMIO         m_hmmio;       // MM I/O handle for the WAVE
     MMCKINFO      m_ck;          // Multimedia RIFF chunk
@@ -128,6 +127,6 @@ protected:
     HRESULT WriteMMIO( WAVEFORMATEX *pwfxDest );
     HRESULT IClose();
 };
-#endif // BUILDING_MAXPLUGIN
+#endif // HS_BUILD_FOR_WIN32
 
 #endif // plWavFile_H

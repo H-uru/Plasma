@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <string_theory/string>
+#include <vector>
+
 // Plasma CoreLib
 #include "HeadSpin.h"
 #include "hsBitVector.h"
@@ -47,8 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsFastMath.h"
 #include "hsGeometry3.h"
 #include "hsStream.h"
-#include "plString.h"
-#include "hsTemplates.h"
 
 // Plasma Nucleus
 #include "plgDispatch.h"

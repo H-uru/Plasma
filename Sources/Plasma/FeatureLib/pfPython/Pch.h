@@ -49,16 +49,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  */
 
 // Standard Library Includes
-#include <algorithm>
 #include <array>
-#include <exception>
-#include <locale>
-#include <string>
-
-// Platform Library Includes
 #include <ctime>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <functional>
+#include <memory>
+
+// string_theory Library Includes
+#include <string_theory/string>
+#include <string_theory/string_stream>
+#include <string_theory/format>
 
 // Python Library Includes
 #include <Python.h>
@@ -72,13 +71,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsQuat.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
-#include "hsTemplates.h"
 #include "hsTimer.h"
 #include "plAudible.h"
 #include "plgDispatch.h"
 #include "plPhysical.h"
 #include "plPipeline.h"
-#include "plString.h"
 #include "pnKeyedObject/plKey.h"
 
 // pfPython Components
@@ -87,5 +84,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
 #include "pyMatrix44.h"
+#include "pyObjectRef.h"
 
 #endif

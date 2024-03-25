@@ -43,8 +43,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plPhysicsSoundMgr_h_inc
 
 #include <set>
-#include "plPhysical.h"
+
 #include "hsGeometry3.h"
+
+#include "pnKeyedObject/plKey.h"
+
+class plPhysical;
+class plPhysicalSndGroup;
 
 class plPhysicsSoundMgr
 {

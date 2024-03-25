@@ -70,17 +70,6 @@ bool plUUID::IsNull() const
     return 1 == UuidIsNil( (GUID *)this, &s );
 }
 
-void plUUID::CopyFrom( const plUUID * v ) {
-    if (!v)
-        Clear();
-    else
-        CopyFrom(*v);
-}
-
-void plUUID::CopyFrom( const plUUID & v ) {
-    memcpy(fData, v.fData, sizeof(fData));
-}
-
 bool plUUID::FromString( const char * str )
 {
     Clear();
@@ -89,7 +78,7 @@ bool plUUID::FromString( const char * str )
     return RPC_S_OK == UuidFromString( (unsigned char *)str, (GUID *)this );
 }
 
-bool plUUID::ToString( plString & out ) const
+bool plUUID::ToString( ST::string & out ) const
 {
     out = "";
     unsigned char * ubuf;
@@ -97,7 +86,7 @@ bool plUUID::ToString( plString & out ) const
     s = UuidToString( (GUID *) this, &ubuf );
     bool success = ( s==RPC_S_OK );
     if ( success )
-        out = plString::FromIso8859_1( (char*)ubuf );
+        out = ST::string::from_latin_1( (char*)ubuf );
     RpcStringFree( &ubuf );
     return success;
 }

@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plDistribComponent_inc
-#define plDistribComponent_inc
+#ifndef plDistribComponent_old_inc
+#define plDistribComponent_old_inc
 
 const Class_ID DISTRIBUTOR_COMP_CID_OLD(0x490b247f, 0x56f60a0e);
 
@@ -133,10 +133,10 @@ public:
 
 public:
     plDistribComponent_old();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
 
-    BOOL            Distribute(plDistribInstTab& reps, plExportProgressBar& bar, plDistTree* dt=nil);
+    BOOL            Distribute(plDistribInstTab& reps, plExportProgressBar& bar, plDistTree* dt=nullptr);
     void            Done();
 
     void            Clear();
@@ -150,9 +150,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { return true; }
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override { return true; }
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override { return true; }
 };
 
 

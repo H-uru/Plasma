@@ -51,18 +51,18 @@ protected:
     plKey           fNodeKey;
 
 public:
-    plNodeChangeMsg() : fNodeKey(nil) {}
-    plNodeChangeMsg(plKey s, plKey &r, plKey node, double* t=nil)
-        :   plMessage(s, r, t), fNodeKey(node) {}
+    plNodeChangeMsg() = default;
+    plNodeChangeMsg(const plKey& s, const plKey &r, plKey node, double* t=nullptr)
+        :   plMessage(s, r, t), fNodeKey(std::move(node)) {}
 
-    CLASSNAME_REGISTER( plNodeChangeMsg );
-    GETINTERFACE_ANY( plNodeChangeMsg, plMessage );
+    CLASSNAME_REGISTER(plNodeChangeMsg);
+    GETINTERFACE_ANY(plNodeChangeMsg, plMessage);
 
     plKey       GetNodeKey() const { return fNodeKey; }
-    void        SetNodeKey(plKey &k) { fNodeKey = k; }
+    void        SetNodeKey(plKey k) { fNodeKey = std::move(k); }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif //plNodeChangeMsg_inc

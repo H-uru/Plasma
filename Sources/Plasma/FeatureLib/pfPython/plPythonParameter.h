@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/plKey.h"
 #include "hsResMgr.h"
+#include "hsStream.h"
 
 //
 //  This is the data for the parameters (or attributes) for the PythonFile components
@@ -104,7 +105,7 @@ public:
     } datarecord;
 
     plKey       fObjectKey;     // the plKey of the scene object (should be part of the union, but unions don't allow complex types)
-    plString    fString;
+    ST::string  fString;
 
 
     plPythonParameter()
@@ -235,7 +236,7 @@ public:
         fValueType = kbool;
         datarecord.fBool = state;
     }
-    void SetToString(const plString& string)
+    void SetToString(const ST::string& string)
     {
         SetToNone();
         fValueType = kString;
@@ -248,103 +249,103 @@ public:
             fValueType = kSceneObjectList;
         else
             fValueType = kSceneObject;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
     void SetToActivator(plKey key)
     {
         SetToNone();
         fValueType = kActivatorList;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
     void SetToResponder(plKey key)
     {
         SetToNone();
         fValueType = kResponderList;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
     void SetToDynamicText(plKey key)
     {
         SetToNone();
         fValueType = kDynamicText;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
     void SetToGUIDialog(plKey key)
     {
         SetToNone();
         fValueType = kGUIDialog;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
     void SetToExcludeRegion(plKey key)
     {
         SetToNone();
         fValueType = kExcludeRegion;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
     void SetToWaterComponent(plKey key)
     {
         SetToNone();
         fValueType = kWaterComponent;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
     void SetToSwimCurrentInterface(plKey key)
     {
         SetToNone();
         fValueType = kSwimCurrentInterface;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
     void SetToAnimation(plKey key)
     {
         SetToNone();
         fValueType = kAnimation;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
-    void SetToAnimationName(const plString& string)
+    void SetToAnimationName(ST::string string)
     {
         SetToNone();
         fValueType = kAnimationName;
-        fString = string;
+        fString = std::move(string);
     }
     void SetToBehavior(plKey key)
     {
         SetToNone();
         fValueType = kBehavior;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
     void SetToMaterial(plKey key)
     {
         SetToNone();
         fValueType = kMaterial;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
     void SetToGUIPopUpMenu(plKey key)
     {
         SetToNone();
         fValueType = kGUIPopUpMenu;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
     void SetToGUISkin(plKey key)
     {
         SetToNone();
         fValueType = kGUISkin;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
     void SetToClusterComponent(plKey key)
     {
         SetToNone();
         fValueType = kClusterComponentList;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
     void SetToMaterialAnimation(plKey key)
     {
         SetToNone();
         fValueType = kMaterialAnimation;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
     void SetToGrassShaderComponent(plKey key)
     {
         SetToNone();
         fValueType = kGrassShaderComponent;
-        fObjectKey = key;
+        fObjectKey = std::move(key);
     }
 
     // read and write routines for export and reading in at runtime
@@ -364,11 +365,11 @@ public:
                 break;
 
             case kFloat:
-                stream->ReadLE(&datarecord.fFloatNumber);
+                stream->ReadLEFloat(&datarecord.fFloatNumber);
                 break;
 
             case kbool:
-                datarecord.fBool = stream->ReadLE32();
+                datarecord.fBool = stream->ReadBOOL();
                 break;
 
             case kString:
@@ -376,14 +377,14 @@ public:
                 count = stream->ReadLE32();
                 if ( count != 0 )
                 {
-                    plStringBuffer<char> str;
-                    char *buffer = str.CreateWritableBuffer(count-1);
-                    stream->ReadLE(count, buffer);
-                    buffer[count-1] = 0;
+                    ST::char_buffer str;
+                    str.allocate(count - 1);
+                    stream->Read(count - 1, str.data());
+                    (void)stream->ReadByte();
                     fString = str;
                 }
                 else
-                    fString = plString::Null;
+                    fString = ST::string();
                 break;
 
             case kSceneObject:
@@ -420,21 +421,21 @@ public:
                 break;
 
             case kFloat:
-                stream->WriteLE(datarecord.fFloatNumber);
+                stream->WriteLEFloat(datarecord.fFloatNumber);
                 break;
 
             case kbool:
-                stream->WriteLE32(datarecord.fBool);
+                stream->WriteBOOL(datarecord.fBool);
                 break;
 
             case kString:
             case kAnimationName:
-                if ( !fString.IsNull() )
-                    count = fString.GetSize()+1;
+                if ( !fString.empty() )
+                    count = fString.size()+1;
                 else
                     count = 0;
-                stream->WriteLE(count);
-                stream->WriteLE(count, fString.c_str());
+                stream->WriteLE32(count);
+                stream->Write(count, fString.c_str());
                 break;
 
             case kSceneObject:

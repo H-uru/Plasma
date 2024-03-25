@@ -39,10 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef plOneShotCallbacks_inc
+#define plOneShotCallbacks_inc
+
 #include "HeadSpin.h"
 #include "hsRefCnt.h"
 
 #include "pnKeyedObject/plKey.h"
+
+#include <vector>
+#include <string_theory/string>
 
 class hsStream;
 class hsResMgr;
@@ -58,10 +65,10 @@ public:
     class plOneShotCallback
     {
     public:
-        plOneShotCallback(const plString &marker, plKey &receiver, int16_t user) :
+        plOneShotCallback(const ST::string &marker, plKey &receiver, int16_t user) :
           fMarker(marker), fReceiver(receiver) , fUser(user) {}
 
-        plString fMarker;
+        ST::string fMarker;
         plKey fReceiver;
         int16_t fUser;
     };
@@ -73,7 +80,7 @@ public:
     plOneShotCallbacks();
     ~plOneShotCallbacks();
 
-    void AddCallback(const plString &marker, plKey &receiver, int16_t user=0);
+    void AddCallback(const ST::string &marker, plKey &receiver, int16_t user=0);
     int GetNumCallbacks();
     plOneShotCallback& GetCallback(int i);
 
@@ -81,3 +88,5 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr);
     void Write(hsStream* stream, hsResMgr* mgr);
 };
+
+#endif

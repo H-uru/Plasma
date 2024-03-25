@@ -71,8 +71,8 @@ protected:
     void ISetAudible(plAudible* aud);
     void IRemoveAudible(plAudible* aud);
     
-    virtual void    ISetOwner(plSceneObject* owner);
-    virtual void    ISetSceneNode(plKey node);
+    void    ISetOwner(plSceneObject* owner) override;
+    void    ISetSceneNode(const plKey& node) override;
     
     friend class plSceneObject;
 
@@ -83,25 +83,25 @@ public:
     CLASSNAME_REGISTER( plAudioInterface );
     GETINTERFACE_ANY( plAudioInterface, plObjInterface );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    void          SetProperty(int prop, bool on);
-    int32_t       GetNumProperties() const { return kNumProps; }
+    void          SetProperty(int prop, bool on) override;
+    int32_t       GetNumProperties() const override { return kNumProps; }
 
     plSound*    GetSound(int i) const;
-    int         GetNumSounds() const;
+    size_t      GetNumSounds() const;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     // for export only!!!!!
     plAudible* GetAudible() const { return fAudible; }
     /// don't call this otherwise!
     
     // Transform settable only, if you want it get it from the coordinate interface.
-    void        SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void        SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
-    virtual void    ReleaseData( void );
+    void    ReleaseData() override;
     void SetSoundFilename(int index, const char *filename, bool isCompressed);
     int GetSoundIndex(const char *keyname);
 };

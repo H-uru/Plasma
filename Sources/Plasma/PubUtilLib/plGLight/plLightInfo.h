@@ -43,30 +43,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLightInfo_inc
 #define plLightInfo_inc
 
-#include "pnSceneObject/plObjInterface.h"
-#include "hsMatrix44.h"
-#include "hsColorRGBA.h"
-#include "plIntersect/plVolumeIsect.h"
+#include <vector>
+
 #include "hsBitVector.h"
+#include "hsColorRGBA.h"
+#include "hsMatrix44.h"
 
-class hsStream;
-class hsResMgr;
-class plSpaceTree;
+#include "pnSceneObject/plObjInterface.h"
 
+class hsBounds3Ext;
+class plConeIsect;
+class plDrawable;
+class plDrawableSpans;
 class hsGDeviceRef;
 class hsGMaterial;
-class plDrawableSpans;
 class plLayerInterface;
+class plLightProxy;
+class plParallelIsect;
 class plPipeline;
-class plDrawable;
-class plSoftVolume;
-class hsBounds3Ext;
-class plVisRegion;
-
+class hsResMgr;
 class plRenderRequest;
 class plRenderTarget;
-
-class plLightProxy;
+class plSoftVolume;
+class plSpaceTree;
+class plSphereIsect;
+class hsStream;
+class plVisRegion;
+class plVolumeIsect;
 
 class plLightInfo : public plObjInterface
 {
@@ -108,7 +111,7 @@ protected:
 
     hsBitVector                 fVisSet;
     hsBitVector                 fVisNot;
-    hsTArray<plVisRegion*>      fVisRegions;
+    std::vector<plVisRegion*>   fVisRegions;
 
     plLightInfo**               fPrevDevPtr;
     plLightInfo*                fNextDevPtr;
@@ -144,7 +147,7 @@ protected:
     hsBitVector                 fSlaveBits;
 
     virtual void                IMakeIsect() = 0;
-    virtual plVolumeIsect*      IGetIsect() = 0;
+    virtual plVolumeIsect*      IGetIsect() const = 0;
     virtual void                IRefresh();
     
     virtual const hsMatrix44&   IGetWorldToProj() const { return fWorldToProj; }
@@ -152,7 +155,7 @@ protected:
     void                        IAddVisRegion(plVisRegion* reg);
     void                        IRemoveVisRegion(plVisRegion* reg);
 
-    virtual void ISetSceneNode(plKey node);
+    void ISetSceneNode(const plKey& node) override;
 
     void                        ICheckMaxStrength();
 public:
@@ -185,10 +188,10 @@ public:
     void Refresh() { if( IsDirty() ) { IRefresh(); SetDirty(false); } }
     virtual void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const;
 
-    bool AffectsBound(const hsBounds3Ext& bnd) { return IGetIsect() ? IGetIsect()->Test(bnd) != kVolumeCulled : true; }
+    bool AffectsBound(const hsBounds3Ext& bnd);
     void GetAffectedForced(const plSpaceTree* space, hsBitVector& list, bool charac);
     void GetAffected(const plSpaceTree* space, hsBitVector& list, bool charac);
-    const hsTArray<int16_t>& GetAffected(plSpaceTree* space, const hsTArray<int16_t>& visList, hsTArray<int16_t>& litList, bool charac);
+    const std::vector<int16_t>& GetAffected(plSpaceTree* space, const std::vector<int16_t>& visList, std::vector<int16_t>& litList, bool charac);
     bool InVisSet(const hsBitVector& visSet) const { return fVisSet.Overlap(visSet); }
     bool InVisNot(const hsBitVector& visNot) const { return fVisNot.Overlap(visNot); }
 
@@ -202,29 +205,29 @@ public:
 
     plLayerInterface*   GetProjection() const { return fProjection; }
 
-    virtual void SetProperty(int prop, bool on);
+    void SetProperty(int prop, bool on) override;
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
     virtual const hsMatrix44& GetLocalToWorld() const;
     virtual const hsMatrix44& GetWorldToLocal() const;
     virtual const hsMatrix44& GetLightToWorld() const;
     virtual const hsMatrix44& GetWorldToLight() const;
 
-    virtual int32_t   GetNumProperties() const { return kNumProps; }
+    int32_t   GetNumProperties() const override { return kNumProps; }
 
     const plSoftVolume* GetSoftVolume() const { return fSoftVolume; }
 
     virtual hsVector3 GetNegativeWorldDirection(const hsPoint3& pos) const = 0;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool        MsgReceive(plMessage* msg);
+    bool        MsgReceive(plMessage* msg) override;
 
-    virtual void        Unlink( void );
+    virtual void        Unlink();
     virtual void        Link( plLightInfo **back );
-    virtual plLightInfo *GetNext( void ) { return fNextDevPtr; }
-    virtual bool        IsLinked( void ) { return ( fNextDevPtr != nil || fPrevDevPtr != nil ) ? true : false; }
+    virtual plLightInfo *GetNext() { return fNextDevPtr; }
+    virtual bool        IsLinked() { return (fNextDevPtr != nullptr || fPrevDevPtr != nullptr); }
 
     // New shadow
     void                ClearSlaveBits() { fSlaveBits.Clear(); }
@@ -232,13 +235,13 @@ public:
     const hsBitVector&  GetSlaveBits() const { return fSlaveBits; }
 
     // These two should only be called internally and on export/convert
-    virtual plKey GetSceneNode() const;
+    plKey GetSceneNode() const override;
 
     // Export only. At runtime, the LocalToLight should be considered const.
     void                SetLocalToLight(const hsMatrix44& l2lt, const hsMatrix44& lt2l);
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo) { return addTo; }
+    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo) { return addTo; }
 
 };
 
@@ -246,8 +249,8 @@ class plDirectionalLightInfo : public plLightInfo
 {
 protected:
 
-    virtual void                IMakeIsect() {}
-    virtual plVolumeIsect*      IGetIsect() { return nil; }
+    void                IMakeIsect() override { }
+    plVolumeIsect*      IGetIsect() const override { return nullptr; }
 
 public:
     plDirectionalLightInfo();
@@ -256,13 +259,13 @@ public:
     CLASSNAME_REGISTER( plDirectionalLightInfo );
     GETINTERFACE_ANY( plDirectionalLightInfo, plLightInfo );
 
-    virtual void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const;
+    void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const override;
 
     hsVector3 GetWorldDirection() const;
-    virtual hsVector3 GetNegativeWorldDirection(const hsPoint3& pos) const { return -GetWorldDirection(); }
+    hsVector3 GetNegativeWorldDirection(const hsPoint3& pos) const override { return -GetWorldDirection(); }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 };
 
@@ -276,19 +279,21 @@ protected:
 
     plParallelIsect*            fParPlanes;
 
-    virtual void                IMakeIsect();
-    virtual plVolumeIsect*      IGetIsect() { return fParPlanes; }
+    void           IMakeIsect() override;
+    plVolumeIsect* IGetIsect() const override;
 
-    virtual void                IRefresh();
+    void                IRefresh() override;
 
 public:
-    plLimitedDirLightInfo();
-    virtual ~plLimitedDirLightInfo();
+    plLimitedDirLightInfo()
+        : fParPlanes(), fWidth(), fHeight(), fDepth()
+    { }
+    ~plLimitedDirLightInfo();
 
     CLASSNAME_REGISTER( plLimitedDirLightInfo );
     GETINTERFACE_ANY( plLimitedDirLightInfo, plDirectionalLightInfo );
 
-    virtual void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const;
+    void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const override;
 
     float GetWidth() const { return fWidth; }
     float GetHeight() const { return fHeight; }
@@ -298,11 +303,11 @@ public:
     void SetHeight(float h) { fHeight = h; }
     void SetDepth(float d) { fDepth = d; }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
+    plDrawableSpans*    CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo) override;
 };
 
 class plOmniLightInfo : public plLightInfo
@@ -316,10 +321,10 @@ protected:
 
     plSphereIsect*              fSphere;
 
-    virtual void                IMakeIsect();
-    virtual plVolumeIsect*      IGetIsect() { return fSphere; }
+    void           IMakeIsect() override;
+    plVolumeIsect* IGetIsect() const override;
 
-    virtual void                IRefresh();
+    void                IRefresh() override;
 
 
 public:
@@ -329,9 +334,9 @@ public:
     CLASSNAME_REGISTER( plOmniLightInfo );
     GETINTERFACE_ANY( plOmniLightInfo, plLightInfo );
 
-    virtual void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const;
+    void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const override;
 
-    virtual hsVector3 GetNegativeWorldDirection(const hsPoint3& pos) const;
+    hsVector3 GetNegativeWorldDirection(const hsPoint3& pos) const override;
 
     bool        IsAttenuated() const { return (fAttenLinear != 0)||(fAttenQuadratic != 0) || ( fAttenCutoff != 0 ); }
     float    GetRadius() const;
@@ -347,11 +352,11 @@ public:
     void        SetQuadraticAttenuation(float a) { fAttenQuadratic = a; SetDirty(true); }
     void        SetCutoffAttenuation( float a ) { fAttenCutoff = a; SetDirty( true ); }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
+    plDrawableSpans*    CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo) override;
 
 };
 
@@ -369,22 +374,27 @@ protected:
 
     plConeIsect*        fCone;
 
-    virtual void                IMakeIsect();
-    virtual plVolumeIsect*      IGetIsect() { return fCone; }
+    void                IMakeIsect() override;
+    plVolumeIsect*      IGetIsect() const override;
 
-    virtual void                IRefresh();
+    void                IRefresh() override;
 
 public:
-    plSpotLightInfo();
-    virtual ~plSpotLightInfo();
+    plSpotLightInfo()
+        : fFalloff(1.f),
+          fSpotInner(hsConstants::pi<float> * 0.125f),
+          fSpotOuter(hsConstants::pi<float> * 0.25f),
+          fCone(), fEffectiveFOV()
+    { }
+    ~plSpotLightInfo();
 
     CLASSNAME_REGISTER( plSpotLightInfo );
     GETINTERFACE_ANY( plSpotLightInfo, plOmniLightInfo );
 
-    virtual void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const;
+    void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const override;
 
     hsVector3 GetWorldDirection() const;
-    virtual hsVector3 GetNegativeWorldDirection(const hsPoint3& pos) const { return -GetWorldDirection(); }
+    hsVector3 GetNegativeWorldDirection(const hsPoint3& pos) const override { return -GetWorldDirection(); }
 
     void SetFalloff(float f) { fFalloff = f; SetDirty(true); }
     void SetSpotInner(float rads) { fSpotInner = rads; SetDirty(true); }
@@ -394,11 +404,11 @@ public:
     float GetSpotInner() const { return fSpotInner; }
     float GetSpotOuter() const { return fSpotOuter; }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
+    plDrawableSpans*    CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo) override;
 
 };
 

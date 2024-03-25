@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDistTree_inc
 #define plDistTree_inc
 
+#include <vector>
+
 class plDistNode
 {
 public:
@@ -58,7 +60,7 @@ public:
     union
     {
         void*       fPData;
-        uint32_t      fIData;
+        uintptr_t   fIData;
     };
 
     const Box3& GetBox() const { return fBox; }
@@ -71,14 +73,14 @@ class plDistTree
 {
 protected:
     
-    int32_t                           fRoot;
+    int32_t                 fRoot;
 
-    hsLargeArray<plDistNode>        fNodes;
+    std::vector<plDistNode> fNodes;
 
-    int32_t   IAddNodeRecur(int32_t iNode, const Box3& box, const Box3& fade, uint32_t iData);
+    int32_t   IAddNodeRecur(int32_t iNode, const Box3& box, const Box3& fade, uintptr_t iData);
 
-    int32_t   IMergeNodes(int32_t iNode, const Box3& box, const Box3& fade, uint32_t iData);
-    int32_t   INextNode(const Box3& box, const Box3& fade, uint32_t iData);
+    int32_t   IMergeNodes(int32_t iNode, const Box3& box, const Box3& fade, uintptr_t iData);
+    int32_t   INextNode(const Box3& box, const Box3& fade, uintptr_t iData);
 
     int32_t   IGetChild(const Box3& parent, const Box3& child) const;
 
@@ -98,8 +100,8 @@ public:
 
     void Reset();
 
-    void AddBoxPData(const Box3& box, const Box3& fade, void* pData=nil) { AddBoxIData(box, fade, uint32_t(pData)); }
-    void AddBoxIData(const Box3& box, const Box3& fade, uint32_t iData=0);
+    void AddBoxPData(const Box3& box, const Box3& fade, void* pData=nullptr) { AddBoxIData(box, fade, uintptr_t(pData)); }
+    void AddBoxIData(const Box3& box, const Box3& fade, uintptr_t iData=0);
     void AddBox(const Box3& box, const Box3& fade=NonFade()) { AddBoxIData(box, fade, 0); }
 
     BOOL BoxClear(const Box3& box, const Box3& fade) const;
@@ -111,7 +113,7 @@ public:
 
     void HarvestBox(const Box3& box, Tab<int32_t>& out) const;
 
-    const plDistNode& GetBox(int32_t i) const { return fNodes[i]; }
+    const plDistNode& GetBox(size_t i) const { return fNodes[i]; }
 };
 
 #endif // plDistTree_inc

@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #ifndef PLSIMDEFS_H
 #define PLSIMDEFS_H
-#pragma once
 
 namespace plSimDefs
 {
@@ -68,8 +67,6 @@ namespace plSimDefs
         kGroupLOSOnly,
         //kExcludeRegion setting up so only blocks avatars and only when not in seek mode
         kGroupExcludeRegion,
-        // A kinematic avatar only interacts with dynamics and detectors
-        kGroupAvatarKinematic,
         // Just for error checking
         kGroupMax
     };
@@ -94,7 +91,7 @@ namespace plSimDefs
         kProxyBounds,               // use alternate proxy geometry
         kExplicitBounds,            // use the primary geometry
         kNumBounds,                 // the number of bounds types
-        
+
         kBoundsMax      =   0xff    // force 8-bit
     };
     

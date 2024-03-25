@@ -48,32 +48,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIProgressCtrl_h
 #define _pfGUIProgressCtrl_h
 
+#include <string_theory/string>
+
 #include "pfGUIValueCtrl.h"
 
-class plMessage;
 class plAGMasterMod;
+class plMessage;
 
 class pfGUIProgressCtrl : public pfGUIValueCtrl
 {
     protected:
 
-        hsTArray<plKey> fAnimationKeys;
-        plString        fAnimName;
+        std::vector<plKey> fAnimationKeys;
+        ST::string      fAnimName;
 
                         // Computed once, once an anim is loaded that we can compute this with
         float           fAnimBegin, fAnimEnd;
         bool            fAnimTimesCalced;
         bool            fPlaySound;
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
-        bool            ICalcAnimTimes( void );
+        bool            ICalcAnimTimes();
 
-        const uint32_t  fStopSoundTimer;
+        const int32_t  fStopSoundTimer;
 
     public:
 
-        pfGUIProgressCtrl();
+        pfGUIProgressCtrl()
+            : fStopSoundTimer(99), fAnimTimesCalced(), fPlaySound(true),
+              fAnimBegin(), fAnimEnd() { };
 
         CLASSNAME_REGISTER( pfGUIProgressCtrl );
         GETINTERFACE_ANY( pfGUIProgressCtrl, pfGUIValueCtrl );
@@ -84,14 +88,14 @@ class pfGUIProgressCtrl : public pfGUIValueCtrl
             kReverseValues = kDerivedFlagsStart
         };
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, bool force = false );
+        void    UpdateBounds(hsMatrix44 *invXformMatrix = nullptr, bool force = false) override;
 
-        virtual void    SetCurrValue( float v );
+        void    SetCurrValue(float v) override;
         virtual void    AnimateToPercentage( float percent );
 
         enum SoundEvents
@@ -102,7 +106,7 @@ class pfGUIProgressCtrl : public pfGUIValueCtrl
         void DontPlaySounds() { fPlaySound = false; }
 
         // Export only
-        void    SetAnimationKeys( hsTArray<plKey> &keys, const plString &name );
+        void    SetAnimationKeys(const std::vector<plKey> &keys, const ST::string &name);
 };
 
 #endif // _pfGUIProgressCtrl_h

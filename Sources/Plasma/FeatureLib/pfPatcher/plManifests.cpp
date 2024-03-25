@@ -43,6 +43,8 @@ Mead, WA   99021
 #include "plManifests.h"
 #include "plFileSystem.h"
 
+#include <string_theory/string>
+
 // Helper that returns the appropriate string per build
 #ifdef PLASMA_EXTERNAL_RELEASE
 #   define MANIFEST(in, ex) ex
@@ -60,24 +62,25 @@ plFileName plManifest::PatcherExecutable()
     return MANIFEST("plUruLauncher.exe", "UruLauncher.exe");
 }
 
-plString plManifest::ClientManifest()
+ST::string plManifest::ClientManifest()
 {
     return MANIFEST("ThinInternal", "ThinExternal");
 }
 
-plString plManifest::ClientImageManifest()
+ST::string plManifest::ClientImageManifest()
 {
     return MANIFEST("Internal", "External");
 }
 
-plString plManifest::PatcherManifest()
+ST::string plManifest::PatcherManifest()
 {
     return MANIFEST("InternalPatcher", "ExternalPatcher");
 }
 
-std::vector<plString> plManifest::EssentialGameManifests()
+std::vector<ST::string> plManifest::EssentialGameManifests()
 {
-    std::vector<plString> mfs;
+    std::vector<ST::string> mfs;
+    mfs.reserve(7);
     mfs.push_back("CustomAvatars");
     mfs.push_back("GlobalAnimations");
     mfs.push_back("GlobalAvatars");

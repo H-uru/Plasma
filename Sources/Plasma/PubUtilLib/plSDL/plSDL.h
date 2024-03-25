@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include <list>
+#include <string_theory/format>
 
 #include "plSDLDescriptor.h"
 
@@ -56,9 +57,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plUnifiedTime/plUnifiedTime.h"
 
+class plClientUnifiedTime;
+class plNetApp;
+class plSDLMgr;
+
 namespace plSDL
 {
-    typedef std::list<plStateDescriptor*> DescriptorList;   
+    typedef std::list<plStateDescriptor*> DescriptorList;
     enum    GeneralPurpose
     {
         kLatestVersion  = -1,       // used when requesting the latest version of a state descriptor
@@ -81,17 +86,58 @@ namespace plSDL
 
     enum RWOptions
     {
-        kDirtyOnly              = 1<< 0,            // write option
-        kSkipNotificationInfo   = 1<< 1,            // read/write option
-        kBroadcast              = 1<< 2,            // send option
-        kWriteTimeStamps        = 1<< 3,            // write out time stamps    
-        kTimeStampOnRead        = 1<< 4,            // read: timestamp each var when it gets read. write: request that the reader timestamp the dirty vars.
-        kTimeStampOnWrite       = 1<< 5,            // read: n/a. write: timestamp each var when it gets written.
-        kKeepDirty              = 1<< 6,            // don't clear dirty flag on read
-        kDontWriteDirtyFlag     = 1<< 7,            // write option. don't write var dirty flag.
-        kMakeDirty              = 1<< 8,            // read/write: set dirty flag on var read/write. 
-        kDirtyNonDefaults       = 1<< 9,            // dirty the var if non default value.
-        kForceConvert           = 1<<10,            // always try to convert rec to latest on read
+        // General note: when writing nested SDL variables (plSDStateVariable),
+        // only the kDirtyOnly option applies recursively.
+        // All other write options are ignored when writing the nested records!
+
+        // When writing: only write variables marked dirty.
+        // Default is to write all used variables, dirty or not.
+        kDirtyOnly = 1 << 0,
+
+        // When reading: ignore any notification infos in blob and leave them empty in the variables in memory.
+        // When writing: don't write notification infos to the blob and don't set kHasNotificationInfo flags.
+        kSkipNotificationInfo = 1 << 1,
+
+        // Only applies to plStateDataRecord::PrepNetMsg.
+        // Create a message of type plNetMsgSDLStateBCast instead of plNetMsgSDLState.
+        kBroadcast = 1 << 2,
+
+        // When writing: write timestamps of variables that have one.
+        // Default is to not write any variable timestamps unless specifically requested.
+        // If plSDLMgr has kDisallowTimeStamping set, this flag causes a debug assert.
+        kWriteTimeStamps = 1 << 3,
+
+        // When reading: for variables that will be set as dirty (depending on other read options) and that don't have a timestamp,
+        // set their timestamp to the current time upon reading, even if the variables don't have kWantTimeStamp set.
+        // Ignored if plSDLMgr has kDisallowTimeStamping set.
+        // When writing: set kWantTimeStamp flag for all variables.
+        kTimeStampOnRead = 1 << 4,
+
+        // When writing: enable writing variable timestamps and set all variables' timestamps to the current time before writing them.
+        kTimeStampOnWrite = 1 << 5,
+
+        // When reading: update variables' dirty status based on kHasDirtyFlag.
+        // May be overridden by kMakeDirty and kDirtyNonDefaults.
+        kKeepDirty = 1 << 6,
+
+        // When writing: don't set kHasDirtyFlag based on variables' dirty status.
+        // kMakeDirty and kDirtyNonDefaults may still cause kHasDirtyFlag to be set.
+        kDontWriteDirtyFlag = 1 << 7,
+
+        // When reading: set all variables as dirty, regardless of whether they have kHasDirtyFlag set.
+        // Takes priority over kKeepDirty and kDirtyNonDefaults.
+        // When writing: set kHasDirtyFlag for all variables, regardless of their dirty status.
+        // Takes priority over kDontWriteDirtyFlag.
+        kMakeDirty = 1 << 8,
+
+        // When reading: for variables that don't have kSameAsDefault set, always set them as dirty, even if they don't have kHasDirtyFlag.
+        // Takes priority over kKeepDirty, but may be overridden by kMakeDirty.
+        // When writing: for variables whose values are different from their default, always set kHasDirtyFlag, even if they aren't dirty.
+        // Takes priority over kDontWriteDirtyFlag.
+        kDirtyNonDefaults = 1 << 9,
+
+        // When reading: if the blob uses the latest known version, perform an "update" anyway, as if it had an older version.
+        kForceConvert = 1 << 10,
     };
 
     enum BehaviorFlags
@@ -99,7 +145,7 @@ namespace plSDL
         kDisallowTimeStamping = 0x1,
     };
 
-    extern const plString kAgeSDLObjectName;
+    extern const ST::string kAgeSDLObjectName;
     void VariableLengthRead(hsStream* s, int size, int* val);
     void VariableLengthWrite(hsStream* s, int size, int val);
 };
@@ -107,13 +153,13 @@ namespace plSDL
 class plStateVarNotificationInfo
 {
 private:
-    plString fHintString;
+    ST::string fHintString;
 public:
-    void SetHintString(const plString& c) { fHintString=c;  }
-    plString GetHintString() const { return fHintString; }
+    void SetHintString(ST::string c) { fHintString = std::move(c); }
+    ST::string GetHintString() const { return fHintString; }
 
-    void Read(hsStream* s, uint32_t readOptions);
-    void Write(hsStream* s, uint32_t writeOptions) const;
+    void Read(hsStream* s);
+    void Write(hsStream* s) const;
 };
 
 //
@@ -137,8 +183,8 @@ public:
     plStateVariable() : fFlags(0) {}
     virtual ~plStateVariable() {}
 
-    plString GetName() const { return GetVarDescriptor()->GetName(); }
-    bool IsNamed(const char* n) const { return (n && !GetName().CompareI(n)); }
+    ST::string GetName() const { return GetVarDescriptor()->GetName(); }
+    bool IsNamed(const char* n) const { return (n && !GetName().compare_i(n)); }
     virtual int GetCount() const = 0;
 
     // conversion ops
@@ -183,17 +229,21 @@ private:
     static uint32_t fCurrentPlayerID;
 
     void IAddKey(plKey k);
-    int IRemoveKey(plKey k);
+    int IRemoveKey(const plKey& k);
 public:
-    plStateChangeNotifier();
+    plStateChangeNotifier() : fDelta(0.f) { }
     plStateChangeNotifier(float i, plKey k);
+    plStateChangeNotifier(const plStateChangeNotifier& copy) = default;
+    plStateChangeNotifier(plStateChangeNotifier&& move) = default;
 
-    void AddNotificationKey(plKey k) { IAddKey(k);  }
+    virtual ~plStateChangeNotifier() = default;
+
+    void AddNotificationKey(plKey k);
     void AddNotificationKeys(KeyList keys);
-    int RemoveNotificationKey(plKey k);         // returns number of keys left after removal
+    int RemoveNotificationKey(const plKey& k);         // returns number of keys left after removal
     int RemoveNotificationKeys(KeyList keys);   // returns number of keys left after removal
 
-    void SendNotificationMsg(const plSimpleStateVariable* srcVar, const plSimpleStateVariable* dstVar, const plString& sdlName);
+    void SendNotificationMsg(const plSimpleStateVariable* srcVar, const plSimpleStateVariable* dstVar, const ST::string& sdlName);
     
     bool GetValue(float* i) const;
     bool SetValue(float i);
@@ -201,15 +251,15 @@ public:
     static uint32_t GetCurrentPlayerID() { return fCurrentPlayerID;   }
     static void SetCurrentPlayerID(uint32_t p) { fCurrentPlayerID=p;  }
 
+    plStateChangeNotifier& operator=(const plStateChangeNotifier& copy) = default;
+    plStateChangeNotifier& operator=(plStateChangeNotifier&& move) = default;
     bool operator==(const plStateChangeNotifier &) const;
 };
 
 //
 // A (non-nested) variable descriptor and its data contents.
 //
-class plUoid;
-class plKey;
-class plClientUnifiedTime;
+
 class plSimpleStateVariable : public plStateVariable
 {
 protected:
@@ -249,8 +299,8 @@ protected:
     bool IConvertFromRGB8(plVarDescriptor::Type newType);
     bool IConvertFromRGBA8(plVarDescriptor::Type newType);
 
-    bool IReadData(hsStream* s, float timeConvert, int idx, uint32_t readOptions);    
-    bool IWriteData(hsStream* s, float timeConvert, int idx, uint32_t writeOptions) const;
+    bool IReadData(hsStream* s, float timeConvert, int idx);
+    bool IWriteData(hsStream* s, float timeConvert, int idx) const;
 
 public:
 
@@ -259,17 +309,17 @@ public:
     ~plSimpleStateVariable() { IDeAlloc(); }
     
     // conversion ops
-    plSimpleStateVariable* GetAsSimpleStateVar() { return this; }
-    plSDStateVariable* GetAsSDStateVar() { return nil; }
+    plSimpleStateVariable* GetAsSimpleStateVar() override { return this; }
+    plSDStateVariable* GetAsSDStateVar() override { return nullptr; }
     bool operator==(const plSimpleStateVariable &other) const;  // assumes matching var descriptors
 
-    void TimeStamp( const plUnifiedTime & ut=plUnifiedTime::GetCurrent() );
+    void TimeStamp(const plUnifiedTime & ut=plUnifiedTime::GetCurrent()) override;
     void CopyFrom(plVarDescriptor* v);
     void CopyData(const plSimpleStateVariable* other, uint32_t writeOptions=0);
-    bool SetFromString(const plString& value, int idx, bool timeStampNow);  // set value from string, type.  return false on err
-    plString GetAsString(int idx) const;
+    bool SetFromString(const ST::string& value, int idx, bool timeStampNow);  // set value from string, type.  return false on err
+    ST::string GetAsString(int idx) const;
     bool ConvertTo(plSimpleVarDescriptor* toVar, bool force=false);         // return false on err
-    void Alloc(int cnt=-1 /* -1 means don't change count */);               // alloc memory after setting type
+    void Alloc(int cnt=-1 /* -1 means don't change count */) override;      // alloc memory after setting type
     void Reset();
 
     // setters
@@ -288,7 +338,7 @@ public:
     bool Set(const char* v, int idx=0);                     // string
     bool Set(const plKey& v, int idx=0);
     bool Set(plCreatable*, int idx=0);                      // only SDL generated by the server is allowed to use this type.
-    void SetFromDefaults(bool timeStampNow);
+    void SetFromDefaults(bool timeStampNow) override;
     
     // getters
     bool Get(int* value, int idx=0) const;
@@ -300,29 +350,29 @@ public:
     bool Get(char value[], int idx=0) const;
     bool Get(plKey* value, int idx=0) const;
     bool Get(plCreatable** value, int idx=0) const;
-    const plUnifiedTime& GetTimeStamp() const { return fTimeStamp;  }
+    const plUnifiedTime& GetTimeStamp() const override { return fTimeStamp; }
 
     // Special backdoor so the KI Manager can get the key name without having a ResMgr
-    plString GetKeyName(int idx=0) const;
+    ST::string GetKeyName(int idx=0) const;
 
-    int GetCount() const { return fVar.GetCount(); }    // helper
-    plVarDescriptor* GetVarDescriptor() { return &fVar; }
+    int GetCount() const override { return fVar.GetCount(); }    // helper
+    plVarDescriptor* GetVarDescriptor() override { return &fVar; }
     plSimpleVarDescriptor* GetSimpleVarDescriptor() { return fVar.GetAsSimpleVarDescriptor(); }
-    const plVarDescriptor* GetVarDescriptor() const { return &fVar; }
+    const plVarDescriptor* GetVarDescriptor() const override { return &fVar; }
     const plSimpleVarDescriptor* GetSimpleVarDescriptor() const { return fVar.GetAsSimpleVarDescriptor(); }
 
     // State Change Notification
-    void AddStateChangeNotification(plStateChangeNotifier& n);
-    void RemoveStateChangeNotification(plKey notificationObj);      // remove all with this key 
-    void RemoveStateChangeNotification(plStateChangeNotifier n);    // remove ones which match
-    void NotifyStateChange(const plSimpleStateVariable* other, const plString& sdlName);        // send notification msg if necessary, internal use
+    void AddStateChangeNotification(plStateChangeNotifier n);
+    void RemoveStateChangeNotification(const plKey& notificationObj);      // remove all with this key 
+    void RemoveStateChangeNotification(const plStateChangeNotifier& n);    // remove ones which match
+    void NotifyStateChange(const plSimpleStateVariable* other, const ST::string& sdlName);      // send notification msg if necessary, internal use
 
-    void DumpToObjectDebugger(bool dirtyOnly, int level) const;
-    void DumpToStream(hsStream* stream, bool dirtyOnly, int level) const;
+    void DumpToObjectDebugger(bool dirtyOnly, int level) const override;
+    void DumpToStream(hsStream* stream, bool dirtyOnly, int level) const override;
 
     // IO
-    bool ReadData(hsStream* s, float timeConvert, uint32_t readOptions);  
-    bool WriteData(hsStream* s, float timeConvert, uint32_t writeOptions) const;
+    bool ReadData(hsStream* s, float timeConvert, uint32_t readOptions) override;
+    bool WriteData(hsStream* s, float timeConvert, uint32_t writeOptions) const override;
 };
 
 //
@@ -345,8 +395,8 @@ public:
     ~plSDStateVariable();   // delete all records
 
     // conversion ops
-    plSimpleStateVariable* GetAsSimpleStateVar() { return nil; }
-    plSDStateVariable* GetAsSDStateVar() { return this; }
+    plSimpleStateVariable* GetAsSimpleStateVar() override { return nullptr; }
+    plSDStateVariable* GetAsSDStateVar() override { return this; }
     bool operator==(const plSDStateVariable &other) const;  // assumes matching var descriptors
 
     void ConvertTo(plSDStateVariable* otherSDVar, bool force=false);
@@ -354,37 +404,37 @@ public:
     void UpdateFrom(plSDStateVariable* other, uint32_t writeOptions=0);
     void AddStateDataRecord(plStateDataRecord *sdr) { fDataRecList.push_back(sdr); SetDirty(true); SetUsed(true); }
     void InsertStateDataRecord(plStateDataRecord *sdr, int i) { fDataRecList[i] = sdr; SetDirty(true); SetUsed(true);}
-    void SetFromDefaults(bool timeStampNow);
-    void TimeStamp( const plUnifiedTime & ut=plUnifiedTime::GetCurrent() );
-    const plUnifiedTime& GetTimeStamp() const { static plUnifiedTime foo; return foo; }
+    void SetFromDefaults(bool timeStampNow) override;
+    void TimeStamp(const plUnifiedTime & ut=plUnifiedTime::GetCurrent()) override;
+    const plUnifiedTime& GetTimeStamp() const override { static plUnifiedTime foo; return foo; }
     
-    void Alloc(int cnt=-1 /* -1 means don't change count */);   // wipe and re-create
+    void Alloc(int cnt=-1 /* -1 means don't change count */) override;   // wipe and re-create
     void Alloc(plSDVarDescriptor* sdvd, int cnt=-1);            // wipe and re-create
     void Resize(int cnt);
     
-    bool IsDirty() const;
-    bool IsUsed() const;
+    bool IsDirty() const override;
+    bool IsUsed() const override;
 
     // getters
     plStateDataRecord* GetStateDataRecord(int i) { return fDataRecList[i]; }
     const plStateDataRecord* GetStateDataRecord(int i) const { return fDataRecList[i]; }
-    int GetCount() const { return fDataRecList.size(); }
+    int GetCount() const override { return fDataRecList.size(); }
     int GetUsedCount() const;
     int GetDirtyCount() const;
     void GetUsedDataRecords(ConstDataRecList*) const;
     void GetDirtyDataRecords(ConstDataRecList*) const;
-    plVarDescriptor* GetVarDescriptor() { return fVarDescriptor; }
+    plVarDescriptor* GetVarDescriptor() override { return fVarDescriptor; }
     plSDVarDescriptor* GetSDVarDescriptor() { return fVarDescriptor->GetAsSDVarDescriptor(); }
-    const plVarDescriptor* GetVarDescriptor() const { return fVarDescriptor; }
+    const plVarDescriptor* GetVarDescriptor() const override { return fVarDescriptor; }
     const plSDVarDescriptor* GetSDVarDescriptor() const { return fVarDescriptor->GetAsSDVarDescriptor(); }
     void FlagNewerState(const plSDStateVariable&, bool respectAlwaysNew);
     void FlagAlwaysNewState();
-    void DumpToObjectDebugger(bool dirtyOnly, int level) const;
-    void DumpToStream(hsStream* stream, bool dirtyOnly, int level) const;
+    void DumpToObjectDebugger(bool dirtyOnly, int level) const override;
+    void DumpToStream(hsStream* stream, bool dirtyOnly, int level) const override;
     
     // IO
-    bool ReadData(hsStream* s, float timeConvert, uint32_t readOptions);  
-    bool WriteData(hsStream* s, float timeConvert, uint32_t writeOptions) const;
+    bool ReadData(hsStream* s, float timeConvert, uint32_t readOptions) override;
+    bool WriteData(hsStream* s, float timeConvert, uint32_t writeOptions) const override;
 };
 
 //
@@ -411,14 +461,14 @@ protected:
     static const uint8_t kIOVersion;  // I/O Version
     
     void IDeleteVarsList(VarsList& vars);
-    void IInitDescriptor(const plString& name, int version);    // or plSDL::kLatestVersion
+    void IInitDescriptor(const ST::string& name, int version);    // or plSDL::kLatestVersion
     void IInitDescriptor(const plStateDescriptor* sd);
     
     void IReadHeader(hsStream* s);
     void IWriteHeader(hsStream* s) const;
     bool IConvertVar(plSimpleStateVariable* fromVar, plSimpleStateVariable* toVar, bool force);
 
-    plStateVariable* IFindVar(const VarsList& vars, const plString& name) const;
+    plStateVariable* IFindVar(const VarsList& vars, const ST::string& name) const;
     int IGetNumUsedVars(const VarsList& vars) const;
     int IGetUsedVars(const VarsList& varsOut, VarsList *varsIn) const;  // build a list of vars that have data
     bool IHasUsedVars(const VarsList& vars) const;
@@ -430,10 +480,10 @@ public:
     CLASSNAME_REGISTER( plStateDataRecord );
     GETINTERFACE_ANY( plStateDataRecord, plCreatable);
 
-    plStateDataRecord(const plString& sdName, int version=plSDL::kLatestVersion);
+    plStateDataRecord(const ST::string& sdName, int version=plSDL::kLatestVersion);
     plStateDataRecord(plStateDescriptor* sd);
     plStateDataRecord(const plStateDataRecord &other, uint32_t writeOptions=0 ):fFlags(0) { CopyFrom(other, writeOptions); }
-    plStateDataRecord() : fDescriptor(nil), fFlags(0) {}
+    plStateDataRecord() : fDescriptor(), fFlags() { }
     ~plStateDataRecord();
 
     bool ConvertTo(plStateDescriptor* other, bool force=false );
@@ -442,8 +492,8 @@ public:
     uint32_t GetFlags() const { return fFlags;    }
     void SetFlags(uint32_t f) { fFlags =f;    }
     
-    plSimpleStateVariable* FindVar(const plString& name) const { return (plSimpleStateVariable*)IFindVar(fVarsList, name); }
-    plSDStateVariable* FindSDVar(const plString& name) const { return (plSDStateVariable*)IFindVar(fSDVarsList, name); }
+    plSimpleStateVariable* FindVar(const ST::string& name) const { return (plSimpleStateVariable*)IFindVar(fVarsList, name); }
+    plSDStateVariable* FindSDVar(const ST::string& name) const { return (plSDStateVariable*)IFindVar(fSDVarsList, name); }
     
     plStateDataRecord& operator=(const plStateDataRecord& other) { CopyFrom(other); return *this; }
     void CopyFrom(const plStateDataRecord& other, uint32_t writeOptions=0);
@@ -479,7 +529,7 @@ public:
     bool HasDirtySDVars() const { return IHasDirtyVars(fSDVarsList); }
 
     const plStateDescriptor* GetDescriptor() const { return fDescriptor; }
-    void SetDescriptor(const plString& sdName, int version);
+    void SetDescriptor(const ST::string& sdName, int version);
     
     plNetMsgSDLState* PrepNetMsg(float timeConvert, uint32_t writeOptions) const; // create/prep a net msg with this data
     
@@ -498,14 +548,13 @@ public:
     bool Read(hsStream* s, float timeConvert, uint32_t readOptions=0);
     void Write(hsStream* s, float timeConvert, uint32_t writeOptions=0) const;
 
-    static bool ReadStreamHeader(hsStream* s, plString* name, int* version, plUoid* objUoid=nil);
-    void WriteStreamHeader(hsStream* s, plUoid* objUoid=nil) const;
+    static bool ReadStreamHeader(hsStream* s, ST::string* name, int* version, plUoid* objUoid=nullptr);
+    void WriteStreamHeader(hsStream* s, plUoid* objUoid=nullptr) const;
 };
 
 //
 // Simple SDL parser
 //
-class plSDLMgr;
 class plSDLParser
 {
 private:
@@ -516,11 +565,18 @@ private:
     bool IParseStateDesc(const plFileName& fileName, hsStream* stream, char token[],
                          plStateDescriptor*& curDesc) const;
 
-    void DebugMsg(const plString& msg) const;
+    void DebugMsg(const ST::string& msg) const;
 
-    hsDeprecated("plSDLParser::DebugMsg with format is deprecated -- use plFormat instead")
-    void DebugMsg(const char* fmt, ...) const;
-    void DebugMsgV(const char* fmt, va_list args) const;
+    void DebugMsg(const char* msg) const
+    {
+        DebugMsg(ST::string(msg));
+    }
+
+    template <typename... _Args>
+    void DebugMsg(const char* fmt, _Args... args) const
+    {
+        DebugMsg(ST::format(fmt, args...));
+    }
 
 public:
 
@@ -531,7 +587,6 @@ public:
 // Holds, loads and unloads all state descriptors from sdl files.
 // Singleton.
 //
-class plNetApp;
 class plSDLMgr
 {
     friend class plSDLParser;
@@ -547,9 +602,9 @@ public:
     ~plSDLMgr();
 
     static plSDLMgr* GetInstance();
-    plStateDescriptor* FindDescriptor(const plString& name, int version, const plSDL::DescriptorList * dl=nil) const;   // version or kLatestVersion
+    plStateDescriptor* FindDescriptor(const ST::string& name, int version, const plSDL::DescriptorList * dl=nullptr) const;   // version or kLatestVersion
     
-    const plSDL::DescriptorList * GetDescriptors( void ) const { return &fDescriptors;}
+    const plSDL::DescriptorList * GetDescriptors() const { return &fDescriptors;}
 
     void SetSDLDir(const plFileName& s) { fSDLDir=s; }
     plFileName GetSDLDir() const { return fSDLDir; }
@@ -564,8 +619,8 @@ public:
     bool AllowTimeStamping() const { return ! ( fBehaviorFlags&plSDL::kDisallowTimeStamping ); }
 
     // I/O - return # of bytes read/written
-    int Write(hsStream* s, const plSDL::DescriptorList* dl=nil);    // write descriptors to a stream
-    int Read(hsStream* s, plSDL::DescriptorList* dl=nil);       // read descriptors into provided list (use legacyList if nil)
+    int Write(hsStream* s, const plSDL::DescriptorList* dl=nullptr);    // write descriptors to a stream
+    int Read(hsStream* s, plSDL::DescriptorList* dl=nullptr);       // read descriptors into provided list (use legacyList if nil)
 };
 
 #endif  // PL_SDL_inc

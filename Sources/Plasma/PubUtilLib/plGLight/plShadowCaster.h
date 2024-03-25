@@ -43,9 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plShadowCaster_inc
 #define plShadowCaster_inc
 
+#include <vector>
+
 #include "pnModifier/plMultiModifier.h"
 #include "hsBounds.h"
-#include "hsTemplates.h"
 
 class plDrawableSpans;
 class plSpan;
@@ -93,7 +94,7 @@ protected:
 
     // Casting attributes calculated each frame.
     float            fMaxOpacity;
-    hsTArray<DrawSpan>  fSpans;
+    std::vector<DrawSpan> fSpans;
 
     friend class plShadowMaster;
 
@@ -110,15 +111,15 @@ public:
     CLASSNAME_REGISTER( plShadowCaster );
     GETINTERFACE_ANY( plShadowCaster, plMultiModifier );
     
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     float MaxOpacity() const { return fMaxOpacity; }
-    const hsTArray<DrawSpan>& Spans() const { return fSpans; }
+    const std::vector<DrawSpan>& Spans() const { return fSpans; }
 
     bool    GetSelfShadow() const { return 0 != (fCastFlags & kSelfShadow); }
     void    SetSelfShadow(bool on) { if(on) fCastFlags |= kSelfShadow; else fCastFlags &= ~kSelfShadow; }

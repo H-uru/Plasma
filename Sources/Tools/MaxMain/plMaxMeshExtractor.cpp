@@ -44,9 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "hsMatrix44.h"
 
+#include "MaxAPI.h"
 #include "plMaxNode.h"
-#include <dummy.h>
-#pragma hdrstop
 
 #include "plMaxMeshExtractor.h"
 
@@ -54,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static Mesh* ExtractMesh(INode* pNode, TriObject** ppDeleteMe)
 {
     Object *obj = pNode->EvalWorldState(0).obj;
-    Mesh *pRetMesh = nil;
+    Mesh *pRetMesh = nullptr;
 
     if( obj ) {
 
@@ -94,7 +93,7 @@ static void MeshMinMax(hsPoint3& min, hsPoint3& max, int numVerts, hsPoint3* pVe
 
 static bool MakeNormalMesh(plMaxNode *node, plMaxMeshExtractor::NeutralMesh& mesh, Matrix3* w2l)
 {
-    TriObject *pDeleteMe = nil;
+    TriObject *pDeleteMe = nullptr;
     Mesh *pMesh = ExtractMesh(node, &pDeleteMe);    // allocates *sometimes*; check pDeleteMe
 
     if (!pMesh)
@@ -124,9 +123,9 @@ static bool MakeNormalMesh(plMaxNode *node, plMaxMeshExtractor::NeutralMesh& mes
         Face* pFace = &pMesh->faces[i];
         uint16_t* pNFace = &mesh.fFaces[i * 3];
 
-        pNFace[0] = pFace->v[ parity ? 2 : 0 ]; // reverse winding if parity backwards
-        pNFace[1] = pFace->v[1];
-        pNFace[2] = pFace->v[ parity ? 0 : 2 ]; // ''
+        pNFace[0] = (uint16_t)pFace->v[ parity ? 2 : 0 ]; // reverse winding if parity backwards
+        pNFace[1] = (uint16_t)pFace->v[1];
+        pNFace[2] = (uint16_t)pFace->v[ parity ? 0 : 2 ]; // ''
     }
 
     if (pDeleteMe)
@@ -202,8 +201,8 @@ static void MakeDummyMesh(plMaxNode* node, plMaxMeshExtractor::NeutralMesh& mesh
 bool plMaxMeshExtractor::Extract(plMaxMeshExtractor::NeutralMesh& mesh, plMaxNode* node, bool makeAABB, plMaxNode* sOwningNode)
 {
     mesh.fNumVerts = mesh.fNumFaces = 0;
-    mesh.fVerts = nil;
-    mesh.fFaces = nil;
+    mesh.fVerts = nullptr;
+    mesh.fFaces = nullptr;
 
     // if an alternate node was supplied, get its scene object. otherwise don't...
     plMaxNode* masterNode = sOwningNode ? sOwningNode : node;
@@ -226,7 +225,7 @@ bool plMaxMeshExtractor::Extract(plMaxMeshExtractor::NeutralMesh& mesh, plMaxNod
     {
         // only get the max world-to-local transform if the node is moveable or instanced. otherwise verts stay global.
         Matrix3 w2l = masterNode->GetWorldToLocal();
-//      Matrix3 *localizer = nil;
+//      Matrix3 *localizer = nullptr;
 //      if (masterNode->IsMovable() || masterNode->GetForceLocal() || masterNode->GetInstanced())
 //          localizer = &w2l;
 

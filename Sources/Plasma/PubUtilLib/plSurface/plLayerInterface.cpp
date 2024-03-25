@@ -40,34 +40,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plLayerInterface.h"
-#include "plMessage/plLayRefMsg.h"
 #include "plLayer.h"
-#include "hsMatrix44.h"
+
+#include "HeadSpin.h"
+
 #include "hsGMatState.h"
+#include "hsMatrix44.h"
 #include "hsResMgr.h"
+
 #include "pnNetCommon/plSDLTypes.h"
 
+#include "plMessage/plLayRefMsg.h"
+
 plLayerInterface::plLayerInterface() 
-:   fUnderLay(nil),
-    fOverLay(nil),
-    fState(nil), 
-    fTransform(nil), 
-    fPreshadeColor(nil),
-    fRuntimeColor(nil),
-    fAmbientColor(nil),
-    fOpacity(nil),
-    fTexture(nil),
-    fUVWSrc(nil),
-    fLODBias(nil),
-    fSpecularColor(nil),
-    fSpecularPower(nil),
-    fOwnedChannels(0),
-    fPassThruChannels(0),
-    fVertexShader(nil),
-    fPixelShader(nil),
-    fBumpEnvXfm(nil)
+:   fUnderLay(),
+    fOverLay(),
+    fState(),
+    fTransform(),
+    fPreshadeColor(),
+    fRuntimeColor(),
+    fAmbientColor(),
+    fOpacity(),
+    fTexture(),
+    fUVWSrc(),
+    fLODBias(),
+    fSpecularColor(),
+    fSpecularPower(),
+    fOwnedChannels(),
+    fPassThruChannels(),
+    fVertexShader(),
+    fPixelShader(),
+    fBumpEnvXfm()
 {
 
 }
@@ -123,7 +127,7 @@ void plLayerInterface::ISetPassThru(uint32_t chans)
 // 5) Taking advantage of rules 1) and 2), it follows that the last
 //      layer to have become active on response to a message is also
 //      the last layer to have been active.
-// 6) So when a layer becomes active in it's MsgReceive(), it notifies
+// 6) So when a layer becomes active in its MsgReceive(), it notifies
 //      all channels above it that it now owns its channels, and they
 //      should just pass through those channel values.
 // Note that a layer may claim ownership of its channels but then lose
@@ -219,45 +223,45 @@ void plLayerInterface::IUnthread()
     if( fUnderLay )
     {
         if( !OwnChannel(kState) )
-            fState = nil;
+            fState = nullptr;
         if( !OwnChannel(kPreshadeColor) )
-            fPreshadeColor = nil;
+            fPreshadeColor = nullptr;
         if( !OwnChannel( kRuntimeColor ) )
-            fRuntimeColor = nil;
+            fRuntimeColor = nullptr;
         if( !OwnChannel(kAmbientColor) )
-            fAmbientColor = nil;
+            fAmbientColor = nullptr;
         if( !OwnChannel( kSpecularColor ) )
-            fSpecularColor = nil;
+            fSpecularColor = nullptr;
         if( !OwnChannel(kOpacity) )
-            fOpacity = nil;
+            fOpacity = nullptr;
         if( !OwnChannel(kTransform) )
-            fTransform = nil;
+            fTransform = nullptr;
         if( !OwnChannel(kTexture) )
-            fTexture = nil;
+            fTexture = nullptr;
 
         if( !OwnChannel(kUVWSrc) )
-            fUVWSrc = nil;
+            fUVWSrc = nullptr;
         if( !OwnChannel(kLODBias) )
-            fLODBias = nil;
+            fLODBias = nullptr;
         if( !OwnChannel(kSpecularPower) )
-            fSpecularPower = nil;
+            fSpecularPower = nullptr;
 
         if( !OwnChannel(kVertexShader) )
-            fVertexShader = nil;
+            fVertexShader = nullptr;
         if( !OwnChannel(kPixelShader) )
-            fPixelShader = nil;
+            fPixelShader = nullptr;
 
         if( !OwnChannel(kBumpEnvXfm) )
-            fBumpEnvXfm = nil;
+            fBumpEnvXfm = nullptr;
 
-        fUnderLay->fOverLay = nil;
-        fUnderLay = nil;
+        fUnderLay->fOverLay = nullptr;
+        fUnderLay = nullptr;
     }
 }
 
 // Detach:
 // If we are the one being detached, break our links to underlay
-//      and then return nil, since everything has just been detached
+//      and then return nullptr, since everything has just been detached
 //      from the stack.
 // If our underlay is the one being detached, we need to unthread from it
 //      and return ourselves.
@@ -268,7 +272,7 @@ void plLayerInterface::IUnthread()
 plLayerInterface* plLayerInterface::Detach(plLayerInterface* li)
 {
     if( li == this )
-        return nil;
+        return nullptr;
 
     if( li == fUnderLay )
     {

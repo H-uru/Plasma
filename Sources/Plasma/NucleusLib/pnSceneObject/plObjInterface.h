@@ -44,11 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plInterface_inc
 
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "pnMessage/plRefMsg.h"
 #include "plSceneObject.h"
 #include "hsStream.h"
 #include "pnNetCommon/plSynchedObject.h"
-#include "pnNetCommon/plSynchedValue.h"
 #include "hsBitVector.h"
 
 class hsResMgr;
@@ -76,15 +74,15 @@ protected:
 
     // SetSceneNode just called by owner. If we're an interface to external data,
     // we need to pass the change on. Otherwise, do nothing.
-    virtual void    ISetSceneNode(plKey node) {} 
+    virtual void    ISetSceneNode(const plKey& node) {} 
     plSceneObject*  IGetOwner() const { return fOwner; }
     virtual void    ISetOwner(plSceneObject* owner);
     void            ISetAllProperties(const hsBitVector& b);    
 
-    plDrawInterface* IGetOwnerDrawInterface() { return fOwner ? fOwner->GetVolatileDrawInterface() : nil; }
-    plSimulationInterface* IGetOwnerSimulationInterface() { return fOwner ? fOwner->GetVolatileSimulationInterface() : nil; }
-    plCoordinateInterface* IGetOwnerCoordinateInterface() { return fOwner ? fOwner->GetVolatileCoordinateInterface() : nil; }
-    plAudioInterface* IGetOwnerAudioInterface() { return fOwner ? fOwner->GetVolatileAudioInterface() : nil; }
+    plDrawInterface* IGetOwnerDrawInterface() { return fOwner ? fOwner->GetVolatileDrawInterface() : nullptr; }
+    plSimulationInterface* IGetOwnerSimulationInterface() { return fOwner ? fOwner->GetVolatileSimulationInterface() : nullptr; }
+    plCoordinateInterface* IGetOwnerCoordinateInterface() { return fOwner ? fOwner->GetVolatileCoordinateInterface() : nullptr; }
+    plAudioInterface* IGetOwnerAudioInterface() { return fOwner ? fOwner->GetVolatileAudioInterface() : nullptr; }
 public:
 
     plObjInterface();
@@ -93,12 +91,12 @@ public:
     CLASSNAME_REGISTER( plObjInterface );
     GETINTERFACE_ANY( plObjInterface, plSynchedObject );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     const plSceneObject* GetOwner() const { return IGetOwner(); }
-    plKey GetOwnerKey() const { return IGetOwner() ? IGetOwner()->GetKey() : nil; }
+    plKey GetOwnerKey() const { return IGetOwner() ? IGetOwner()->GetKey() : nullptr; }
     
-    virtual plKey GetSceneNode() const { return IGetOwner() ? IGetOwner()->GetSceneNode() : nil; } 
+    virtual plKey GetSceneNode() const { return IGetOwner() ? IGetOwner()->GetSceneNode() : nullptr; }
 
     // override SetProperty to pass the prop down to the pool objects 
     virtual void    SetProperty(int prop, bool on) { fProps.SetBit(prop, on); }
@@ -109,10 +107,10 @@ public:
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void    ReleaseData( void ) { }
+    virtual void    ReleaseData() { }
 };
 
 

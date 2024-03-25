@@ -39,11 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plSpawnPointInfo.h"
-#include "pnMessage/plMessage.h"
+
 #include "hsStream.h"
 #include "hsBitVector.h"
 
+#include <string_theory/format>
+
+#include "pnMessage/plMessage.h"
 
 const plSpawnPointInfo kDefaultSpawnPoint( kDefaultSpawnPtTitle, kDefaultSpawnPtName );
 
@@ -60,13 +64,9 @@ namespace SpawnPointInfoStreamFlags
 
 void plSpawnPointInfo::ReadOld( hsStream * s )
 {
-    s->LogSubStreamStart("push me");
-    s->LogSubStreamPushDesc("Title");
     plMsgStdStringHelper::Peek( fTitle, s );
-    s->LogSubStreamPushDesc("Name");
     plMsgStdStringHelper::Peek( fSpawnPt, s );
     fCameraStack = "";
-    s->LogSubStreamEnd();
 }
 
 void plSpawnPointInfo::Read( hsStream * s )
@@ -74,23 +74,18 @@ void plSpawnPointInfo::Read( hsStream * s )
     hsBitVector flags;
     flags.Read( s );
 
-    s->LogSubStreamStart("push me");
     if ( flags.IsBitSet( SpawnPointInfoStreamFlags::kHasTitle ) )
     {
-        s->LogSubStreamPushDesc("Title");
         plMsgStdStringHelper::Peek( fTitle, s );
     }
     if ( flags.IsBitSet( SpawnPointInfoStreamFlags::kHasName ) )
     {
-        s->LogSubStreamPushDesc("Name");
         plMsgStdStringHelper::Peek( fSpawnPt, s );
     }
     if ( flags.IsBitSet( SpawnPointInfoStreamFlags::kHasCameraStack ) )
     {
-        s->LogSubStreamPushDesc("CameraStack");
         plMsgStdStringHelper::Peek( fCameraStack, s );
     }
-    s->LogSubStreamEnd();
 }
 
 void plSpawnPointInfo::Write( hsStream * s ) const
@@ -120,7 +115,7 @@ void plSpawnPointInfo::Reset()
     (*this)=kDefaultSpawnPoint;
 }
 
-plString plSpawnPointInfo::AsString() const
+ST::string plSpawnPointInfo::AsString() const
 {
-    return plFormat("t:{},n:{},c:{}", fTitle, fSpawnPt, fCameraStack);
+    return ST::format("t:{},n:{},c:{}", fTitle, fSpawnPt, fCameraStack);
 }

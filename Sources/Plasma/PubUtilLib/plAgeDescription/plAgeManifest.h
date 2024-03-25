@@ -39,43 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-//////////////////////////////////////////////////////////////////////////////
-//                                                                          //
-//  plAgeManifest - Collection of version-specific info about an age, such  //
-//                  as the actual files constructing it, timestamps, and    //
-//                  release versions.                                       //
-//                                                                          //
-//////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plAgeManifest_h
 #define _plAgeManifest_h
 
-#include "HeadSpin.h"
-#include "hsTemplates.h"
-
-#include "plUnifiedTime/plUnifiedTime.h"
-#include "plFile/plInitFileReader.h"
-#include "pnEncryption/plChecksum.h"
-
-
-//// Small Container Classes for a Single File ///////////////////////////////
-
 class plManifestFile
 {
-protected:
-    plFileName      fName;
-    plFileName      fServerPath;
-    plMD5Checksum   fChecksum;
-    uint32_t        fSize;
-    uint32_t        fZippedSize;
-    uint32_t        fFlags;
-
-    bool            fMd5Checked;
-    bool            fIsLocalUpToDate;
-    bool            fLocalExists;
-
 public:
-    // fUser flags
     enum
     {
         // Sound files only
@@ -85,51 +55,6 @@ public:
         // Any file
         kFlagZipped                 = 1<<3,
     };
-
-    plManifestFile(const plFileName& name, const plFileName& serverPath, const plMD5Checksum& check,
-                   uint32_t size, uint32_t zippedSize, uint32_t flags, bool md5Now = true);
-    virtual ~plManifestFile();
-
-    const plFileName &GetName() const { return fName; }
-    const plFileName &GetServerPath() const { return fServerPath; }
-    const plMD5Checksum& GetChecksum() const { return fChecksum; }
-    uint32_t GetDiskSize() const { return fSize; }
-    uint32_t GetDownloadSize() const { return hsCheckBits(fFlags, kFlagZipped) ? fZippedSize : fSize; }
-    uint32_t GetFlags() const { return fFlags; }
-
-    void    DoMd5Check();
-    bool    IsLocalUpToDate();
-    bool    LocalExists();
-};
-
-//// Actual Manifest Class ///////////////////////////////////////////////////
-
-class plManifest
-{
-protected:
-    uint32_t fFormatVersion;
-    char* fAgeName;     // Mostly just for debugging
-
-    hsTArray<plManifestFile*> fFiles;
-    
-    void IReset();
-
-public:
-    static const char* fTimeFormat;       // Standard string for the printed version of our timestamps
-
-    void SetFormatVersion(uint32_t v) { fFormatVersion = v; }
-    void AddFile(plManifestFile* file);
-
-    plManifest();
-    virtual ~plManifest();
-
-    bool Read(const char* filename);
-    bool Read(hsStream* stream);
-
-    uint32_t GetFormatVersion() const { return fFormatVersion; }
-
-    uint32_t GetNumFiles() const { return fFiles.GetCount(); }
-    const plManifestFile& GetFile(uint32_t i) const { return *fFiles[i]; }
 };
 
 #endif //_plAgeManifest_h

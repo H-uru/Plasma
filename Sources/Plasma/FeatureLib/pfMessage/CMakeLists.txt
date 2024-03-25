@@ -1,10 +1,8 @@
-include_directories(../../CoreLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-include_directories(../../FeatureLib)
-
 set(pfMessage_SOURCES
+    pfBackdoorMsg.cpp
+    pfGameGUIMsg.cpp
+    pfGameScoreMsg.cpp
+    pfGUINotifyMsg.cpp
     pfKIMsg.cpp
     pfMarkerMsg.cpp
     pfMovieEventMsg.cpp
@@ -25,7 +23,17 @@ set(pfMessage_HEADERS
     plClothingMsg.h
 )
 
-add_library(pfMessage STATIC ${pfMessage_SOURCES} ${pfMessage_HEADERS})
+plasma_library(pfMessage SOURCES ${pfMessage_SOURCES} ${pfMessage_HEADERS})
+target_link_libraries(
+    pfMessage
+    PUBLIC
+        CoreLib
+        pnMessage
+        pnNetBase
+    PRIVATE
+        pnNucleusInc
+        pfGameScoreMgr
+)
 
 source_group("Source Files" FILES ${pfMessage_SOURCES})
 source_group("Header Files" FILES ${pfMessage_HEADERS})

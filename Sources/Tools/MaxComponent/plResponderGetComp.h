@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef plResponderGetComp_inc
+#define plResponderGetComp_inc
+
 #include <set>
 #include <vector>
 
@@ -85,8 +88,8 @@ protected:
     void IFindCompsRecur(plMaxNodeBase *node, NodeSet& nodes);
     void ILoadNodes(plMaxNodeBase *compNode, HWND hDlg);
 
-    static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-    BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    INT_PTR DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 };
 
 class plResponderCompNode
@@ -124,3 +127,5 @@ public:
 
     bool GetCompAndNode(plComponentBase*& comp, plMaxNodeBase*& node);
 };
+
+#endif

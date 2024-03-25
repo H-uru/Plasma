@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plSceneNode_inc
 
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "hsTemplates.h"
 #include <vector>
 
 
@@ -57,8 +56,8 @@ class plPipeline;
 class plNodeRefMsg;
 class plDispatchBase;
 class plSpaceTree;
-class plDrawSpanPair;
-class plDrawVisList;
+struct plDrawSpanPair;
+struct plDrawVisList;
 class plOccluder;
 class plPageTreeMgr;
 class plDrawableCriteria;
@@ -83,7 +82,7 @@ protected:
     std::vector<plPhysical*>               fSimulationPool;
     std::vector<plAudible*>                fAudioPool;
 
-    hsTArray<plOccluder*>                  fOccluders;
+    std::vector<plOccluder*>               fOccluders;
 
     std::vector<plLightInfo*>              fLightPool;
 
@@ -115,7 +114,7 @@ protected:
     bool IOnAdd(plNodeRefMsg* refMsg);
 
     // Export only: Clean up empty drawables
-    void    ICleanUp( void );
+    void    ICleanUp();
 
 public:
     plSceneNode();
@@ -124,21 +123,21 @@ public:
     CLASSNAME_REGISTER( plSceneNode );
     GETINTERFACE_ANY( plSceneNode, hsKeyedObject );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual void Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList);
-    virtual void CollectForRender(plPipeline* pipe, hsTArray<plDrawVisList>& levList, plVisMgr* visMgr);
+    virtual void Harvest(plVolumeIsect* isect, std::vector<plDrawVisList>& levList);
+    virtual void CollectForRender(plPipeline* pipe, std::vector<plDrawVisList>& levList, plVisMgr* visMgr);
 
     virtual void SubmitOccluders(plPageTreeMgr* pageMgr) const;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     int16_t GetDepth() { return fDepth; }
     int16_t IncDepth() { return ++fDepth; }
     int16_t DecDepth() { return --fDepth; }
 
-    void    Init( void );
+    void    Init();
 
     plSpaceTree*    GetSpaceTree();
 
@@ -146,7 +145,7 @@ public:
     virtual plDrawable  *GetMatchingDrawable( const plDrawableCriteria& crit );
 
     // Export only: Optimize all my stinkin' drawables
-    virtual void    OptimizeDrawables( void );
+    virtual void    OptimizeDrawables();
 
     void SetFilterGenericsOnly(bool b) { fFilterGenerics = b; }
 

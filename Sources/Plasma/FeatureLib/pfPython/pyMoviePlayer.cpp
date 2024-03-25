@@ -45,21 +45,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyMoviePlayer.h"
 
-#include "pyColor.h"
 #include "plMessage/plMovieMsg.h"
+
 #include "pfMessage/pfMovieEventMsg.h"
 
-pyMoviePlayer::pyMoviePlayer(const plString& movieName, pyKey& selfKey)
+#include "pyColor.h"
+#include "pyKey.h"
+
+pyMoviePlayer::pyMoviePlayer(const ST::string& movieName, pyKey& selfKey)
 {
     fMovieName = movieName;
     fSelfKey = selfKey.getKey();
     // make the movie
-    if (!fMovieName.IsEmpty())
+    if (!fMovieName.empty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kMake | plMovieMsg::kAddCallbacks);
         mov->SetSender(fSelfKey);
@@ -77,12 +77,12 @@ pyMoviePlayer::~pyMoviePlayer()
     Stop();
 }
 
-void pyMoviePlayer::MakeMovie(const plString& movieName, pyKey& selfKey)
+void pyMoviePlayer::MakeMovie(const ST::string& movieName, pyKey& selfKey)
 {
     Stop();
     fMovieName = movieName;
     fSelfKey = selfKey.getKey();
-    if (!fMovieName.IsEmpty())
+    if (!fMovieName.empty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kMake | plMovieMsg::kAddCallbacks);
         mov->SetSender(fSelfKey);
@@ -96,7 +96,7 @@ void pyMoviePlayer::MakeMovie(const plString& movieName, pyKey& selfKey)
 
 void pyMoviePlayer::SetCenter(float x, float y)
 {
-    if (!fMovieName.IsEmpty())
+    if (!fMovieName.empty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kMove);
         mov->SetSender(fSelfKey);
@@ -108,7 +108,7 @@ void pyMoviePlayer::SetCenter(float x, float y)
 
 void pyMoviePlayer::SetScale(float width, float height)
 {
-    if (!fMovieName.IsEmpty())
+    if (!fMovieName.empty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kScale);
         mov->SetSender(fSelfKey);
@@ -120,7 +120,7 @@ void pyMoviePlayer::SetScale(float width, float height)
 
 void pyMoviePlayer::SetColor(pyColor color)
 {
-    if (!fMovieName.IsEmpty())
+    if (!fMovieName.empty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kColor);
         mov->SetSender(fSelfKey);
@@ -131,7 +131,7 @@ void pyMoviePlayer::SetColor(pyColor color)
 
 void pyMoviePlayer::SetVolume(float volume)
 {
-    if (!fMovieName.IsEmpty())
+    if (!fMovieName.empty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kVolume);
         mov->SetSender(fSelfKey);
@@ -142,7 +142,7 @@ void pyMoviePlayer::SetVolume(float volume)
 
 void pyMoviePlayer::SetOpacity(float opacity)
 {
-    if (!fMovieName.IsEmpty())
+    if (!fMovieName.empty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kOpacity);
         mov->SetSender(fSelfKey);
@@ -154,7 +154,7 @@ void pyMoviePlayer::SetOpacity(float opacity)
 
 void pyMoviePlayer::Play()
 {
-    if (!fMovieName.IsEmpty())
+    if (!fMovieName.empty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kStart);
         mov->SetSender(fSelfKey);
@@ -164,7 +164,7 @@ void pyMoviePlayer::Play()
 
 void pyMoviePlayer::PlayPaused()
 {
-    if (!fMovieName.IsEmpty())
+    if (!fMovieName.empty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kStart | plMovieMsg::kPause);
         mov->SetSender(fSelfKey);
@@ -174,7 +174,7 @@ void pyMoviePlayer::PlayPaused()
 
 void pyMoviePlayer::Pause()
 {
-    if (!fMovieName.IsEmpty())
+    if (!fMovieName.empty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kPause);
         mov->SetSender(fSelfKey);
@@ -184,7 +184,7 @@ void pyMoviePlayer::Pause()
 
 void pyMoviePlayer::Resume()
 {
-    if (!fMovieName.IsEmpty())
+    if (!fMovieName.empty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kResume);
         mov->SetSender(fSelfKey);
@@ -194,7 +194,7 @@ void pyMoviePlayer::Resume()
 
 void pyMoviePlayer::Stop()
 {
-    if (!fMovieName.IsEmpty())
+    if (!fMovieName.empty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kStop);
         mov->SetSender(fSelfKey);

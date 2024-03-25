@@ -42,13 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_CLOTHINGMTL_H
 #define PL_CLOTHINGMTL_H
 
-#include "hsTemplates.h"
+#include <vector>
+
+#include <string_theory/string>
 
 class Bitmap;
 class plClothingItem;
 class plMaxNode;
 class plClothingElement;
-class plString;
 class Texmap;
 
 #define CLOTHING_MTL_CLASS_ID Class_ID(0x792c6de4, 0x1f952b65)
@@ -58,26 +59,27 @@ extern TCHAR *GetString(int id);
 class plClothingTileset
 {
 public:
-    char *fName;
-    hsTArray<plClothingElement *> fElements;
+    ST::string fName;
+    std::vector<plClothingElement *> fElements;
 
-    plClothingTileset();
-    ~plClothingTileset();
-
-    void SetName(char *name);
-    void AddElement(plClothingElement *element);
+    void SetName(ST::string name) { fName = std::move(name); }
+    void AddElement(plClothingElement* element) { fElements.emplace_back(element); }
 };
 
-class plClothingMtl : public Mtl
+class plClothingMtl : public plMaxMtl<Mtl>
 {
 protected:
     IParamBlock2    *fBasicPB;
     Interval        fIValid;
 
+    void IGetClassName(MSTR& s) const override;
+    MSTR IGetSubTexmapSlotName(int i) override;
+    MSTR ISubAnimName(int i) override { return _M(""); }
+
 public:
     IMtlParams *fIMtlParams;
 
-    static const char *LayerStrings[];
+    static const TCHAR* LayerStrings[];
     static const uint8_t LayerToPBIdx[];
 
     enum
@@ -127,90 +129,87 @@ public:
     static const UINT32 ButtonConstants[kMaxTiles];
     static const UINT32 TextConstants[kMaxTiles * 2];
 
-    hsTArray<plClothingTileset *> fTilesets;
-    hsTArray<plClothingElement *> fElements;
+    std::vector<plClothingTileset *> fTilesets;
+    std::vector<plClothingElement *> fElements;
     virtual void InitTilesets();
     virtual void ReleaseTilesets();
-    plClothingElement *FindElementByName(const plString &name) const;
+    plClothingElement *FindElementByName(const ST::string &name) const;
 
     int GetTilesetIndex() { return fBasicPB->GetInt(ParamID(kTileset)); }
     Texmap *GetTexmap(int index, int layer);
     Texmap *GetThumbnail() { return fBasicPB->GetTexmap(ParamID(kThumbnail)); }
-    const char *GetDescription() { return fBasicPB->GetStr(ParamID(kDescription)); }
-    const char *GetCustomText() { return fBasicPB->GetStr(ParamID(kCustomTextSpecs)); }
+    const MCHAR* GetDescription() { return fBasicPB->GetStr(ParamID(kDescription)); }
+    const MCHAR* GetCustomText() { return fBasicPB->GetStr(ParamID(kCustomTextSpecs)); }
     bool GetDefault() { return fBasicPB->GetInt(ParamID(kDefault)) != 0; }
     Color GetDefaultTint1() { return fBasicPB->GetColor(plClothingMtl::kDefaultTint1); }
     Color GetDefaultTint2() { return fBasicPB->GetColor(plClothingMtl::kDefaultTint2); }
-    const char *GetForcedAccessoryName() { return fBasicPB->GetStr(ParamID(kForcedAcc)); }
+    const MCHAR* GetForcedAccessoryName() { return fBasicPB->GetStr(ParamID(kForcedAcc)); }
 
     plClothingMtl(BOOL loading);
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     //From Animatable
-    Class_ID ClassID() { return CLOTHING_MTL_CLASS_ID; }        
-    SClass_ID SuperClassID() { return MATERIAL_CLASS_ID; }
-    void GetClassName(TSTR& s);
+    Class_ID ClassID() override { return CLOTHING_MTL_CLASS_ID; }
+    SClass_ID SuperClassID() override { return MATERIAL_CLASS_ID; }
 
-    ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
-    void Update(TimeValue t, Interval& valid);
-    Interval Validity(TimeValue t);
-    void Reset();
+    ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) override;
+    void Update(TimeValue t, Interval& valid) override;
+    Interval Validity(TimeValue t) override;
+    void Reset() override;
 
     void NotifyChanged();
 
-    BOOL SupportsMultiMapsInViewport() { return FALSE; }
-    void SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback &cb);
+    BOOL SupportsMultiMapsInViewport() override { return FALSE; }
+    void SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback &cb) override;
 
     // Shade and displacement calculation
-    void Shade(ShadeContext& sc);
+    void Shade(ShadeContext& sc) override;
     void ShadeWithBackground(ShadeContext &sc, Color background);
-    float EvalDisplacement(ShadeContext& sc); 
-    Interval DisplacementValidity(TimeValue t);     
+    float EvalDisplacement(ShadeContext& sc) override;
+    Interval DisplacementValidity(TimeValue t) override;
 
     // SubTexmap access methods
-    int NumSubTexmaps();
-    Texmap* GetSubTexmap(int i);
-    void SetSubTexmap(int i, Texmap *m);
-    TSTR GetSubTexmapSlotName(int i);
-    TSTR GetSubTexmapTVName(int i);
+    int NumSubTexmaps() override;
+    Texmap* GetSubTexmap(int i) override;
+    void SetSubTexmap(int i, Texmap *m) override;
+    MSTR GetSubTexmapTVName(int i);
     
-    BOOL SetDlgThing(ParamDlg* dlg);
+    BOOL SetDlgThing(ParamDlg* dlg) override;
 
     // Loading/Saving
-    IOResult Load(ILoad *iload);
-    IOResult Save(ISave *isave);
+    IOResult Load(ILoad *iload) override;
+    IOResult Save(ISave *isave) override;
 
-    RefTargetHandle Clone( RemapDir &remap );
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-        PartID& partID,  RefMessage message);
+    RefTargetHandle Clone(RemapDir &remap) override;
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+        PartID& partID, RefMessage message MAX_REF_PROPAGATE) override;
 
-    int NumSubs() { return 0; }
-    Animatable* SubAnim(int i) { return nil; } 
-    TSTR SubAnimName(int i) { return ""; }
+    int NumSubs() override { return 0; }
+    Animatable* SubAnim(int i) override { return nullptr; }
 
-    int NumRefs();
-    RefTargetHandle GetReference(int i);
-    void SetReference(int i, RefTargetHandle rtarg);
+    int NumRefs() override;
+    RefTargetHandle GetReference(int i) override;
+    void SetReference(int i, RefTargetHandle rtarg) override;
 
-    int NumParamBlocks();
-    IParamBlock2* GetParamBlock(int i);
-    IParamBlock2* GetParamBlockByID(BlockID id);
+    int NumParamBlocks() override;
+    IParamBlock2* GetParamBlock(int i) override;
+    IParamBlock2* GetParamBlockByID(BlockID id) override;
 
 
     // From MtlBase and Mtl
-    void SetAmbient(Color c, TimeValue t);      
-    void SetDiffuse(Color c, TimeValue t);      
-    void SetSpecular(Color c, TimeValue t);
-    void SetShininess(float v, TimeValue t);
-    Color GetAmbient(int mtlNum=0, BOOL backFace=FALSE);
-    Color GetDiffuse(int mtlNum=0, BOOL backFace=FALSE);
-    Color GetSpecular(int mtlNum=0, BOOL backFace=FALSE);
-    float GetXParency(int mtlNum=0, BOOL backFace=FALSE);
-    float GetShininess(int mtlNum=0, BOOL backFace=FALSE);      
-    float GetShinStr(int mtlNum=0, BOOL backFace=FALSE);
-    float WireSize(int mtlNum=0, BOOL backFace=FALSE);
+    void SetAmbient(Color c, TimeValue t) override;
+    void SetDiffuse(Color c, TimeValue t) override;
+    void SetSpecular(Color c, TimeValue t) override;
+    void SetShininess(float v, TimeValue t) override;
+    Color GetAmbient(int mtlNum=0, BOOL backFace=FALSE) override;
+    Color GetDiffuse(int mtlNum=0, BOOL backFace=FALSE) override;
+    Color GetSpecular(int mtlNum=0, BOOL backFace=FALSE) override;
+    float GetXParency(int mtlNum=0, BOOL backFace=FALSE) override;
+    float GetShininess(int mtlNum=0, BOOL backFace=FALSE) override;
+    float GetShinStr(int mtlNum=0, BOOL backFace=FALSE) override;
+    float WireSize(int mtlNum=0, BOOL backFace=FALSE) override;
 
-    ULONG   Requirements( int subMtlNum );
+    ULONG   Requirements(int subMtlNum) override;
 };
 
 #endif //PL_ClothingMTL_H

@@ -49,12 +49,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGUIRadioGroupCtrl_h
 
 #include "pfGUIValueCtrl.h"
-#include "hsTemplates.h"
 
-class plMessage;
-class pfGUICheckBoxCtrl;
 class pfGroupProc;
-
+class pfGUICheckBoxCtrl;
+class plMessage;
 
 class pfGUIRadioGroupCtrl : public pfGUIControlMod
 {
@@ -67,12 +65,12 @@ class pfGUIRadioGroupCtrl : public pfGUIControlMod
             kRefControl = kRefDerivedStart
         };
 
-        hsTArray<pfGUICheckBoxCtrl *>   fControls;
+        std::vector<pfGUICheckBoxCtrl *> fControls;
         pfGroupProc                     *fButtonProc;
 
         int32_t                           fValue, fDefaultValue;
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
     public:
 
@@ -87,22 +85,22 @@ class pfGUIRadioGroupCtrl : public pfGUIControlMod
             kAllowNoSelection = kDerivedFlagsStart
         };
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        int32_t   GetValue( void ) { return fValue; }
+        int32_t   GetValue() { return fValue; }
         void    SetValue( int32_t value );
 
-        virtual void    SetEnabled( bool e );
-        virtual void    SetInteresting( bool e );
-        virtual void    SetVisible( bool vis );
+        void    SetEnabled(bool e) override;
+        void    SetInteresting(bool e) override;
+        void    SetVisible(bool vis) override;
         virtual void    SetControlsFlag( int flag );
         virtual void    ClearControlsFlag( int flag );
 
         /// Export ONLY
-        void    ClearControlList( void );
+        void    ClearControlList();
         void    AddControl( pfGUICheckBoxCtrl *ctrl );
         void    SetDefaultValue( int32_t value ) { fDefaultValue = value; }
 };

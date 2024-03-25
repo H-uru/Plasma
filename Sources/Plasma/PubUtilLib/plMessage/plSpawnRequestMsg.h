@@ -57,18 +57,18 @@ public:
     plSpawnRequestMsg(const plKey &s, 
                     const plKey &r, 
                     const double* t){SetBCastFlag(plMessage::kBCastByExactType);}
-    ~plSpawnRequestMsg(){;}
+    ~plSpawnRequestMsg() { }
 
     CLASSNAME_REGISTER( plSpawnRequestMsg );
     GETINTERFACE_ANY( plSpawnRequestMsg, plMessage );
     
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
+    void Read(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgRead(stream, mgr);
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
+    void Write(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgWrite(stream, mgr);
     }

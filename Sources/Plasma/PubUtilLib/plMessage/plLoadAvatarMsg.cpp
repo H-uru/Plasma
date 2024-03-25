@@ -39,16 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef NO_AV_MSGS
-#ifndef SERVER
 
+#include "plLoadAvatarMsg.h"
+
+#include "hsBitVector.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
 
-#include "pnNetCommon/plNetApp.h"
-#pragma hdrstop
-
-#include "plLoadAvatarMsg.h"
 #include "plAvatar/plAvatarTasks.h"
 
 
@@ -66,7 +63,7 @@ plLoadAvatarMsg::plLoadAvatarMsg()
 
 // CTOR uoidToClone, requestorKey, userData, isPlayer, spawnPOint, initialTask
 plLoadAvatarMsg::plLoadAvatarMsg(const plUoid &uoidToClone, const plKey &requestorKey, uint32_t userData,
-                                 bool isPlayer, const plKey &spawnPoint, plAvTask *initialTask, const plString &userStr)
+                                 bool isPlayer, const plKey &spawnPoint, plAvTask *initialTask, const ST::string &userStr)
 : plLoadCloneMsg(uoidToClone, requestorKey, userData),
   fIsPlayer(isPlayer),
   fSpawnPoint(spawnPoint),
@@ -76,7 +73,7 @@ plLoadAvatarMsg::plLoadAvatarMsg(const plUoid &uoidToClone, const plKey &request
 }
 
 plLoadAvatarMsg::plLoadAvatarMsg(const plKey &existing, const plKey &requestor, uint32_t userData,
-                                 bool isPlayer, bool isLoading, const plString &userStr)
+                                 bool isPlayer, bool isLoading, const ST::string &userStr)
 : plLoadCloneMsg(existing, requestor, userData, isLoading),
   fIsPlayer(isPlayer),
   fSpawnPoint(nullptr),
@@ -155,6 +152,3 @@ void plLoadAvatarMsg::WriteVersion(hsStream* stream, hsResMgr* mgr)
     // kLoadAvatarMsgUserStr
     stream->WriteSafeString(fUserStr);
 }
-
-#endif // ndef SERVER
-#endif // ndef NO_AV_MSGS

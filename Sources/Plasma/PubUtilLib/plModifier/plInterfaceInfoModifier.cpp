@@ -40,9 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plInterfaceInfoModifier.h"
+
 #include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pnKeyedObject/plKey.h"
 
 
@@ -51,22 +53,23 @@ plInterfaceInfoModifier::plInterfaceInfoModifier()
 }
 plInterfaceInfoModifier::~plInterfaceInfoModifier()
 {
-    fKeyList.Reset();
+    fKeyList.clear();
 }
 
 
 void plInterfaceInfoModifier::Read(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Read(s, mgr);
-    int i = s->ReadLE32();
-    for (int x = 0; x < i; x++)
-        fKeyList.Append(mgr->ReadKey(s));
+    uint32_t count = s->ReadLE32();
+    fKeyList.reserve(count);
+    for (uint32_t i = 0; i < count; i++)
+        fKeyList.emplace_back(mgr->ReadKey(s));
 }
 
 void plInterfaceInfoModifier::Write(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Write(s, mgr);
-    s->WriteLE32(fKeyList.Count());
-    for (int i = 0; i < fKeyList.Count(); i++)
-        mgr->WriteKey(s, fKeyList[i]);
+    s->WriteLE32((uint32_t)fKeyList.size());
+    for (const plKey& key : fKeyList)
+        mgr->WriteKey(s, key);
 }

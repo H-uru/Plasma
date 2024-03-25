@@ -40,12 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pyStream.h"
+
+#include <string_theory/string>
+
 #include "plFileSystem.h"
 
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptStream, pyStream);
@@ -60,51 +61,29 @@ PYTHON_INIT_DEFINITION(ptStream, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptStream, open, args)
 {
-    PyObject* filenameObj;
-    PyObject* flagsObj;
-    if (!PyArg_ParseTuple(args, "OO", &filenameObj, &flagsObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "open expects two strings");
-        PYTHON_RETURN_ERROR;
-    }
-
     plFileName filename;
-    if (PyString_CheckEx(filenameObj))
+    ST::string flags;
+    if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_PlFileNameDecoder, &filename, PyUnicode_STStringConverter, &flags))
     {
-        filename = PyString_AsStringEx(filenameObj);
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "open expects two strings");
+        PyErr_SetString(PyExc_TypeError, "open expects a pathlike object or string, and a string");
         PYTHON_RETURN_ERROR;
     }
 
-    plString flags;
-    if (PyString_CheckEx(flagsObj))
-    {
-        flags = PyString_AsStringEx(flagsObj);
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "open expects two strings");
-        PYTHON_RETURN_ERROR;
-    }
-
-    PYTHON_RETURN_BOOL(self->fThis->Open(filename, flags.c_str()));
+    PYTHON_RETURN_BOOL(self->fThis->Open(filename, flags));
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptStream, readlines)
 {
-    std::vector<std::string> lines = self->fThis->ReadLines();
+    std::vector<ST::string> lines = self->fThis->ReadLines();
     PyObject* retVal = PyList_New(lines.size());
     for (int i = 0; i < lines.size(); i++)
-        PyList_SetItem(retVal, i, PyString_FromString(lines[i].c_str()));
+        PyList_SetItem(retVal, i, PyUnicode_FromSTString(lines[i]));
     return retVal;
 }
 
 PYTHON_METHOD_DEFINITION(ptStream, writelines, args)
 {
-    PyObject* stringList = NULL;
+    PyObject* stringList = nullptr;
     if (!PyArg_ParseTuple(args, "O", &stringList))
     {
         PyErr_SetString(PyExc_TypeError, "writelines expects a list of strings");
@@ -115,17 +94,17 @@ PYTHON_METHOD_DEFINITION(ptStream, writelines, args)
         PyErr_SetString(PyExc_TypeError, "writelines expects a list of strings");
         PYTHON_RETURN_ERROR;
     }
-    std::vector<std::string> strings;
-    int len = PyList_Size(stringList);
-    for (int i = 0; i < len; i++)
+    std::vector<ST::string> strings;
+    Py_ssize_t len = PyList_Size(stringList);
+    for (Py_ssize_t i = 0; i < len; i++)
     {
         PyObject* element = PyList_GetItem(stringList, i);
-        if (!PyString_Check(element))
+        if (!PyUnicode_Check(element))
         {
             PyErr_SetString(PyExc_TypeError, "writelines expects a list of strings");
             PYTHON_RETURN_ERROR;
         }
-        strings.push_back(PyString_AsString(element));
+        strings.emplace_back(PyUnicode_AsSTString(element));
     }
     PYTHON_RETURN_BOOL(self->fThis->WriteLines(strings));
 }

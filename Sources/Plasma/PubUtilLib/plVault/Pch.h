@@ -45,56 +45,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PCH_H
-#error "Header $/Plasma20/Sources/Plasma/PubUtilLib/plVault/Pch.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PCH_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PCH_H
 
+#include "pnNetProtocol/pnNetProtocol.h"
 
-// 'Old' system is full of compiler warnings at /W4, so just hide them
-#pragma warning(push, 0)
 #include "plVault.h"
-#pragma warning(pop)
+#include "plDniCoordinateInfo.h"
 
-
-#ifdef CLIENT
-
-// 'Old' system is full of compiler warnings at /W4, so just hide them
-#pragma warning(push, 0)
 #include <algorithm>
+#include <atomic>
 #include <memory>
 #include <sstream>
+#include <string_theory/string>
 #include <unordered_map>
 
-#include "hsStringTokenizer.h"
 #include "hsGeometry3.h"
-#include "plSDL/plSDL.h"
-#include "plUnifiedTime/plUnifiedTime.h"
+#include "hsTimer.h"
+
+#include "pnDispatch/plDispatch.h"
+
+#include "plGImage/plJPEG.h"
+#include "plGImage/plMipmap.h"
+#include "plGImage/plPNG.h"
+#include "plMessage/plVaultNotifyMsg.h"
+#include "plNetClientComm/plNetClientComm.h"
 #include "plNetCommon/plNetCommon.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetCommon/plSpawnPointInfo.h"
-#include "pnDispatch/plDispatch.h"
-#include "plDniCoordinateInfo.h"
-#include "plGImage/plMipmap.h"
-#include "plGImage/plPNG.h"
-#include "plGImage/plJPEG.h"
-#include "plMessage/plVaultNotifyMsg.h"
-#include "plNetClientComm/plNetClientComm.h"
+#include "plNetGameLib/plNetGameLib.h"
+#include "plSDL/plSDL.h"
 #include "plStatusLog/plStatusLog.h"
+#include "plUnifiedTime/plUnifiedTime.h"
 
 #define KI_CONSTANTS_ONLY
 #include "pfMessage/pfKIMsg.h"  // for KI level constants =(
 #undef KI_CONSTANTS_ONLY
-#pragma warning(pop)
 
-#include "plNetGameLib/plNetGameLib.h"
-
-#endif  // def CLIENT
-
-#include "Intern.h"
-
-#ifdef HS_BUILD_FOR_OSX
-#include <malloc/malloc.h>
-#else
-#include <malloc.h>
 #endif

@@ -45,12 +45,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-#include "plInputManager.h"
-
-REGISTER_CREATABLE(plInputManager);
-
 #include "plInputInterfaceMgr.h"
-
 REGISTER_CREATABLE(plInputInterfaceMgr);
+
+#include "plInputManager.h"
+REGISTER_CREATABLE(plInputManager);
 
 #endif // plInputCoreCreatable_inc

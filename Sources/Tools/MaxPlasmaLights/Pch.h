@@ -51,13 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Core Plasma
 #include "HeadSpin.h"
 
-// Windows
-#include "hsWindows.h"
-
-// Max SDK
-#include <max.h>
-#include <decomp.h>
-#include <hsv.h>
+// Max
+#include "MaxMain/MaxAPI.h"
 
 // Base MaxPlasmaLights stuff...
 #include "plRealTimeLightBase.h"

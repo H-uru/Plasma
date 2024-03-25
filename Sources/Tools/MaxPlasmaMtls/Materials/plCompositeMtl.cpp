@@ -40,47 +40,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "../resource.h"
 
-#include <iparamm2.h>
-#include <stdmat.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include "../resource.h"
 
 #include "plCompositeMtl.h"
 #include "plPassMtl.h"
 #include "plCompositeMtlDlg.h"
 
-class plCompositeClassDesc : public ClassDesc2
+class plCompositeClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return new plCompositeMtl(loading); }
-    const TCHAR*    ClassName()     { return GetString(IDS_COMP_MTL); }
-    SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
-    Class_ID        ClassID()       { return COMP_MTL_CLASS_ID; }
-    const TCHAR*    Category()      { return NULL; }
-    const TCHAR*    InternalName()  { return _T("PlasmaComposite"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading) override { return new plCompositeMtl(loading); }
+    const TCHAR*    ClassName() override    { return GetString(IDS_COMP_MTL); }
+    SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
+    Class_ID        ClassID() override      { return COMP_MTL_CLASS_ID; }
+    const TCHAR*    Category() override     { return nullptr; }
+    const TCHAR*    InternalName() override { return _T("PlasmaComposite"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plCompositeClassDesc plCompositeMtlDesc;
 ClassDesc2* GetCompMtlDesc() { return &plCompositeMtlDesc; }
 
 #include "plCompositeMtlPBDec.h"
 
-const char *plCompositeMtl::BlendStrings[] = // Make sure these match up in order with the Blend enum (in the header)
+const TCHAR* plCompositeMtl::BlendStrings[] = // Make sure these match up in order with the Blend enum (in the header)
 {
-    "Vertex Alpha",
-    "Inverse Vtx Alpha",
-    "Vertex Illum Red",
-    "Inv. Vtx Illum Red",
-    "Vertex Illum Green",
-    "Inv. Vtx Illum Green",
-    "Vertex Illum Blue",
-    "Inv. Vtx Illum Blue"
+    _T("Vertex Alpha"),
+    _T("Inverse Vtx Alpha"),
+    _T("Vertex Illum Red"),
+    _T("Inv. Vtx Illum Red"),
+    _T("Vertex Illum Green"),
+    _T("Inv. Vtx Illum Green"),
+    _T("Vertex Illum Blue"),
+    _T("Inv. Vtx Illum Blue")
 };
 
-plCompositeMtl::plCompositeMtl(BOOL loading) : fPassesPB(NULL)
+plCompositeMtl::plCompositeMtl(BOOL loading) : fPassesPB()
 {
     plCompositeMtlDesc.MakeAutoParamBlocks(this);
 
@@ -96,7 +94,7 @@ plCompositeMtl::plCompositeMtl(BOOL loading) : fPassesPB(NULL)
     }
 }
 
-void plCompositeMtl::GetClassName(TSTR& s)
+void plCompositeMtl::IGetClassName(MSTR& s) const
 {
     s = GetString(IDS_COMP_MTL);
 }
@@ -223,7 +221,7 @@ int plCompositeMtl::NumSubs()
     return NumSubMtls();
 }
 
-TSTR plCompositeMtl::SubAnimName(int i) 
+MSTR plCompositeMtl::ISubAnimName(int i)
 {
     return GetSubMtlSlotName(i);
 }
@@ -243,7 +241,7 @@ RefTargetHandle plCompositeMtl::GetReference(int i)
     if (i == kRefPasses)
         return fPassesPB;
 
-    return NULL;
+    return nullptr;
 }
 
 void plCompositeMtl::SetReference(int i, RefTargetHandle rtarg)
@@ -262,7 +260,7 @@ IParamBlock2 *plCompositeMtl::GetParamBlock(int i)
     if (i == kRefPasses)
         return fPassesPB;
 
-    return NULL;
+    return nullptr;
 }
 
 IParamBlock2 *plCompositeMtl::GetParamBlockByID(BlockID id)
@@ -270,11 +268,11 @@ IParamBlock2 *plCompositeMtl::GetParamBlockByID(BlockID id)
     if (fPassesPB->ID() == id)
         return fPassesPB;
 
-    return NULL;
+    return nullptr;
 }
 
-RefResult plCompositeMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-   PartID& partID, RefMessage message ) 
+RefResult plCompositeMtl::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+   PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -305,7 +303,7 @@ Mtl *plCompositeMtl::GetSubMtl(int i)
     if (i < NumSubMtls())
         return fPassesPB->GetMtl(kCompPasses, 0, i);
 
-    return NULL;
+    return nullptr;
 }
 
 void plCompositeMtl::SetSubMtl(int i, Mtl *m)
@@ -314,14 +312,14 @@ void plCompositeMtl::SetSubMtl(int i, Mtl *m)
         fPassesPB->SetValue(kCompPasses, 0, m, i);
 }
 
-TSTR plCompositeMtl::GetSubMtlSlotName(int i)
+MSTR plCompositeMtl::IGetSubMtlSlotName(int i)
 {
-    TSTR str;
-    str.printf("Pass %d", i+1);
+    MSTR str;
+    str.printf(_M("Pass %d"), i+1);
     return str;
 }
 
-TSTR plCompositeMtl::GetSubMtlTVName(int i)
+MSTR plCompositeMtl::GetSubMtlTVName(int i)
 {
     return GetSubMtlSlotName(i);
 }
@@ -441,7 +439,7 @@ void plCompositeMtl::Shade(ShadeContext& sc)
             continue;
 
         Mtl *mtl = GetSubMtl(i);
-        if (mtl == NULL || mtl->ClassID() != PASS_MTL_CLASS_ID)
+        if (mtl == nullptr || mtl->ClassID() != PASS_MTL_CLASS_ID)
             continue;
 
         float opacity;
@@ -528,28 +526,28 @@ void plCompositeMtl::SetOpacityVal(float *target, UVVert *alpha, UVVert *illum, 
 {
     if (method == kCompBlendVertexAlpha || method == kCompBlendInverseVtxAlpha)
     {
-        if (alpha == NULL)
+        if (alpha == nullptr)
             *target = 1.0f;
         else
             *target = alpha->x;
     }
     else if (method == kCompBlendVertexIllumRed || method == kCompBlendInverseVtxIllumRed)
     {
-        if (illum == NULL)
+        if (illum == nullptr)
             *target = 1.0f;
         else
             *target = illum->x;
     }
     else if (method == kCompBlendVertexIllumGreen || method == kCompBlendInverseVtxIllumGreen)
     {
-        if (illum == NULL)
+        if (illum == nullptr)
             *target = 1.0f;
         else
             *target = illum->y;
     }
     else if (method == kCompBlendVertexIllumBlue || method == kCompBlendInverseVtxIllumBlue)
     {
-        if (illum == NULL)
+        if (illum == nullptr)
             *target = 1.0f;
         else
             *target = illum->z;

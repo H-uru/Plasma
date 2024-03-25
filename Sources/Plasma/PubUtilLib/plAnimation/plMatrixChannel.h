@@ -81,15 +81,15 @@ public:
     virtual const hsAffineParts & AffineValue(double time, bool peek = false);
 
     // combine it (allocates combine object)
-    virtual plAGChannel * MakeCombine(plAGChannel * channelB);
+    plAGChannel * MakeCombine(plAGChannel * channelB) override;
 
     // blend it (allocates blend object)
-    virtual plAGChannel * MakeBlend(plAGChannel * channelB, plScalarChannel * channelBias, int blendPriority);
+    plAGChannel * MakeBlend(plAGChannel * channelB, plScalarChannel * channelBias, int blendPriority) override;
     
     // const eval at time zero
-    virtual plAGChannel * MakeZeroState();
+    plAGChannel * MakeZeroState() override;
     // make a timeScale instance
-    virtual plAGChannel * MakeTimeScale(plScalarChannel *timeSource);
+    plAGChannel * MakeTimeScale(plScalarChannel *timeSource) override;
 
     virtual plAGPinType GetPinType() { return kAGPinTransform; };
 
@@ -117,8 +117,8 @@ public:
     CLASSNAME_REGISTER( plMatrixConstant );
     GETINTERFACE_ANY( plMatrixConstant, plMatrixChannel );
 
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *s, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *s, hsResMgr *mgr) override;
 };
 
 ////////////////////
@@ -137,13 +137,13 @@ public:
     plMatrixTimeScale(plMatrixChannel *channel, plScalarChannel *timeSource);
     virtual ~plMatrixTimeScale();
 
-    virtual bool IsStoppedAt(double time);
-    virtual const hsMatrix44 & Value(double time, bool peek = false);
-    virtual const hsAffineParts & AffineValue(double time, bool peek = false);
+    bool IsStoppedAt(double time) override;
+    const hsMatrix44 & Value(double time, bool peek = false) override;
+    const hsAffineParts & AffineValue(double time, bool peek = false) override;
 
-    virtual plAGChannel * Detach(plAGChannel * channel);
+    plAGChannel * Detach(plAGChannel * channel) override;
 
-    virtual void Dump(int indent, bool optimized, double time);
+    void Dump(int indent, bool optimized, double time) override;
 
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plMatrixTimeScale );
@@ -170,7 +170,7 @@ public:
     plMatrixBlend(plMatrixChannel * channelA, plMatrixChannel * channelB, plScalarChannel * channelBias, int priority);
     virtual ~plMatrixBlend();
 
-    virtual plAGChannel * MakeBlend(plAGChannel *newChannel, plScalarChannel *channelBias, int blendPriority);
+    plAGChannel * MakeBlend(plAGChannel *newChannel, plScalarChannel *channelBias, int blendPriority) override;
 
     // you cannot blend on top of a channel that has higher priority than you do.
     virtual uint16_t GetPriority();
@@ -188,17 +188,17 @@ public:
     //virtual void SetBlend(float blend) { fBlend = blend; };
     //virtual float GetBlend() { return fBlend; };
 
-    virtual bool IsStoppedAt(double time);
+    bool IsStoppedAt(double time) override;
 
     // AG PROTOCOL
-    virtual const hsMatrix44 & Value(double time, bool peek = false);
-    virtual const hsAffineParts & AffineValue(double time, bool peek = false);
+    const hsMatrix44 & Value(double time, bool peek = false) override;
+    const hsAffineParts & AffineValue(double time, bool peek = false) override;
 
     // remove the specified channel from our graph
-    virtual plAGChannel * Detach(plAGChannel * channel);
-    virtual void Dump(int indent, bool optimized, double time);
+    plAGChannel * Detach(plAGChannel * channel) override;
+    void Dump(int indent, bool optimized, double time) override;
 
-    plAGChannel* Optimize(double time);
+    plAGChannel* Optimize(double time) override;
     
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plMatrixBlend );
@@ -221,14 +221,14 @@ public:
     virtual ~plMatrixControllerChannel();
 
     // AG PROTOCOL
-    virtual const hsAffineParts & AffineValue(double time, bool peek = false);
+    const hsAffineParts & AffineValue(double time, bool peek = false) override;
     virtual const hsAffineParts & AffineValue(double time, bool peek, plControllerCacheInfo *cache);    
-    virtual const hsMatrix44 & Value(double time, bool peek = false);
+    const hsMatrix44 & Value(double time, bool peek = false) override;
     virtual const hsMatrix44 & Value(double time, bool peek, plControllerCacheInfo *cache);
     
-    virtual plAGChannel * MakeCacheChannel(plAnimTimeConvert *atc);
+    plAGChannel * MakeCacheChannel(plAnimTimeConvert *atc) override;
 
-    virtual void Dump(int indent, bool optimized, double time);
+    void Dump(int indent, bool optimized, double time) override;
 
     // PLASMA PROTOCOL
     // rtti
@@ -236,8 +236,8 @@ public:
     GETINTERFACE_ANY( plMatrixControllerChannel, plMatrixChannel );
 
     // persistence
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *s, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *s, hsResMgr *mgr) override;
 };
 
 /////////////////////////////////
@@ -255,10 +255,10 @@ public:
     plMatrixControllerCacheChannel(plMatrixControllerChannel *channel, plControllerCacheInfo *cache);
     virtual ~plMatrixControllerCacheChannel();
     
-    virtual const hsMatrix44 & Value(double time, bool peek = false);
-    virtual const hsAffineParts & AffineValue(double time, bool peek = false);
+    const hsMatrix44 & Value(double time, bool peek = false) override;
+    const hsAffineParts & AffineValue(double time, bool peek = false) override;
     
-    virtual plAGChannel * Detach(plAGChannel * channel);
+    plAGChannel * Detach(plAGChannel * channel) override;
     
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plMatrixControllerCacheChannel );
@@ -295,7 +295,7 @@ public:
     virtual const hsAffineParts & AffineValue(double time);
 
     // remove the specified channel from our graph
-    virtual plAGChannel * Detach(plAGChannel * channel);
+    plAGChannel * Detach(plAGChannel * channel) override;
 
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plQuatPointCombine );
@@ -310,14 +310,14 @@ public:
 class plMatrixChannelApplicator : public plAGApplicator
 {
 protected:
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
 
 public:
     CLASSNAME_REGISTER( plMatrixChannelApplicator );
     GETINTERFACE_ANY( plMatrixChannelApplicator, plAGApplicator );
 
-    virtual bool CanCombine(plAGApplicator *app) { return false; }
-    virtual plAGPinType GetPinType() { return kAGPinTransform; }
+    bool CanCombine(plAGApplicator *app) override { return false; }
+    plAGPinType GetPinType() override { return kAGPinTransform; }
 };
 
 // PLMATRIXDELAYEDCORRECTIONAPPLICATOR
@@ -332,7 +332,7 @@ protected:
     double fDelayStart;     // Start time of the delayed correction
     
     // apply our animation * our correction to the node
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
 
 public:
     plMatrixDelayedCorrectionApplicator() : fDelayStart(-1000.f), fIgnoreNextCorrection(true) { fCorAP.Reset(); }
@@ -341,11 +341,11 @@ public:
     GETINTERFACE_ANY( plMatrixDelayedCorrectionApplicator, plMatrixChannelApplicator );
 
     void SetCorrection(hsMatrix44 &correction);
-    virtual bool AutoDelete() { return false; } // should we remove it when its input channel is gone?
+    bool AutoDelete() override { return false; } // should we remove it when its input channel is gone?
 
     // applicator arbitration...
-    virtual plAGPinType GetPinType() { return kAGPinTransform; }
-    virtual bool CanBlend(plAGApplicator *app);
+    plAGPinType GetPinType() override { return kAGPinTransform; }
+    bool CanBlend(plAGApplicator *app) override;
 
     bool fIgnoreNextCorrection;
     static const float fDelayLength; // static var for now.  
@@ -364,17 +364,17 @@ public:
     void Reset(double time);
 
     /** Should this applicator be automatically removed when its channel goes away? */
-    virtual bool AutoDelete() { return false; }
+    bool AutoDelete() override { return false; }
 
     // applicator arbitration
-    virtual plAGPinType GetPinType() { return kAGPinTransform; }
-    virtual bool CanBlend(plAGApplicator *app);
+    plAGPinType GetPinType() override { return kAGPinTransform; }
+    bool CanBlend(plAGApplicator *app) override;
 
     CLASSNAME_REGISTER(plMatrixDifferenceApp);
     GETINTERFACE_ANY(plMatrixDifferenceApp, plMatrixChannelApplicator);
 
 protected:
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
     hsMatrix44 fLastL2A;        // local to animation space
     hsMatrix44 fLastA2L;        // animation space to local
     bool fNew;                  // true if we haven't cached anything yet

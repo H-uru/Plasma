@@ -41,10 +41,10 @@ Mead, WA   99021
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plString.h"
 
-#include <max.h>
-#pragma hdrstop
+#include "MaxAPI.h"
+
+#include <iterator>
 
 /** \file This file contains a stub implementation for the ClassDescs left behind by
  *   Cyan's SceneViewer crap. This just keeps new versions of 3ds Max from crashing on
@@ -56,8 +56,11 @@ Mead, WA   99021
 #define MAXFILE_DATA_CHUNK  1001
 static const uint8_t kVersion = 1;
 
-class plMaxFileDataControl : public StdControl
+class plMaxFileDataControl : public plMaxAnimatable<StdControl>
 {
+protected:
+    void IGetClassName(MSTR& s) const override { s = _M("DEAD - SceneViewer"); }
+
 public:
     SYSTEMTIME fCodeBuildTime;
     char       fBranch[128];
@@ -65,41 +68,40 @@ public:
     plMaxFileDataControl()
     {
         memset(&fCodeBuildTime, 0, sizeof(SYSTEMTIME));
-        memset(&fBranch, 0, arrsize(fBranch));
+        memset(&fBranch, 0, std::size(fBranch));
     }
 
     // Animatable
-    virtual void EditTrackParams(TimeValue t, ParamDimensionBase *dim, TCHAR *pname, HWND hParent, IObjParam *ip, DWORD flags) { }
-    int TrackParamsType() { return TRACKPARAMS_WHOLE; }
-    virtual void DeleteThis() { delete this; }
+    int TrackParamsType() override { return TRACKPARAMS_WHOLE; }
+    void DeleteThis() override { delete this; }
 
     // ReferenceMaker
-    virtual RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message)
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                               PartID& partID, RefMessage message MAX_REF_PROPAGATE) override
     {
         return REF_DONTCARE;
     }
 
-    Class_ID ClassID() { return PLASMA_FILE_DATA_CID; }
-    SClass_ID SuperClassID() { return CTRL_FLOAT_CLASS_ID; }
-    void GetClassName(TSTR& s) { s = "DEAD - SceneViewer"; }
+    Class_ID ClassID() override { return PLASMA_FILE_DATA_CID; }
+    SClass_ID SuperClassID() override { return CTRL_FLOAT_CLASS_ID; }
 
     // Control methods
-    RefTargetHandle Clone(RemapDir& remap) { return new plMaxFileDataControl(); }
-    void Copy(Control* from) { }
-    virtual BOOL IsReplaceable() { return FALSE; }
+    RefTargetHandle Clone(RemapDir& remap) override { return new plMaxFileDataControl(); }
+    void Copy(Control* from) override { }
+    BOOL IsReplaceable() override { return FALSE; }
 
     // StdControl methods
-    void GetValueLocalTime(TimeValue t, void* val, Interval& valid, GetSetMethod method = CTRL_ABSOLUTE) { }
-    void SetValueLocalTime(TimeValue t, void* val, int commit, GetSetMethod method) { }
-    void Extrapolate(Interval range, TimeValue t, void* val, Interval& valid, int type) { }
-    void *CreateTempValue() { return nullptr; }
-    void DeleteTempValue(void *val) { }
-    void ApplyValue(void* val, void* delta) { }
-    void MultiplyValue(void* val, float m) { }
+    void GetValueLocalTime(TimeValue t, void* val, Interval& valid, GetSetMethod method = CTRL_ABSOLUTE) override { }
+    void SetValueLocalTime(TimeValue t, void* val, int commit, GetSetMethod method) override { }
+    void Extrapolate(Interval range, TimeValue t, void* val, Interval& valid, int type) override { }
+    void *CreateTempValue() override { return nullptr; }
+    void DeleteTempValue(void *val) override { }
+    void ApplyValue(void* val, void* delta) override { }
+    void MultiplyValue(void* val, float m) override { }
 
     // MyControl methods
-    IOResult Load(ILoad *iload);
-    IOResult Save(ISave *isave);
+    IOResult Load(ILoad *iload) override;
+    IOResult Save(ISave *isave) override;
 };
 
 IOResult plMaxFileDataControl::Load(ILoad *iload)
@@ -112,11 +114,11 @@ IOResult plMaxFileDataControl::Load(ILoad *iload)
         {
             uint8_t version = 0;
             res = iload->Read(&version, sizeof(uint8_t), &nb);
-            res = iload->Read(&fCodeBuildTime, sizeof(SYSTEMTIME), &nb);
+            res = READ_VOID_BUFFER(iload)(&fCodeBuildTime, sizeof(SYSTEMTIME), &nb);
 
             int branchLen = 0;
             iload->Read(&branchLen, sizeof(int), &nb);
-            iload->Read(&fBranch, branchLen, &nb);
+            READ_VOID_BUFFER(iload)(&fBranch, branchLen, &nb);
         }
 
         iload->CloseChunk();
@@ -133,25 +135,25 @@ IOResult plMaxFileDataControl::Save(ISave *isave)
     isave->BeginChunk(MAXFILE_DATA_CHUNK);
 
     isave->Write(&kVersion, sizeof(kVersion), &nb);
-    isave->Write(&fCodeBuildTime, sizeof(SYSTEMTIME), &nb);
+    WRITE_VOID_BUFFER(isave)(&fCodeBuildTime, sizeof(SYSTEMTIME), &nb);
 
     int branchLen = strlen(fBranch)+1;
     isave->Write(&branchLen, sizeof(int), &nb);
-    isave->Write(&fBranch, branchLen, &nb);
+    WRITE_VOID_BUFFER(isave)(&fBranch, branchLen, &nb);
 
     isave->EndChunk();
     return IO_OK;
 }
 
-class MaxFileDataClassDesc : public ClassDesc
+class MaxFileDataClassDesc : public plMaxClassDesc<ClassDesc>
 {
 public:
-    int             IsPublic()              { return FALSE; }
-    void*           Create(BOOL loading)    { return new plMaxFileDataControl; }
-    const TCHAR*    ClassName()             { return _T("MaxFileData"); }
-    SClass_ID       SuperClassID()          { return CTRL_FLOAT_CLASS_ID; }
-    Class_ID        ClassID()               { return PLASMA_FILE_DATA_CID; }
-    const TCHAR*    Category()              { return _T(""); }
+    int             IsPublic() override             { return FALSE; }
+    void*           Create(BOOL loading) override   { return new plMaxFileDataControl; }
+    const MCHAR*    ClassName() override            { return _M("MaxFileData"); }
+    SClass_ID       SuperClassID() override         { return CTRL_FLOAT_CLASS_ID; }
+    Class_ID        ClassID() override              { return PLASMA_FILE_DATA_CID; }
+    const MCHAR*    Category() override             { return _M(""); }
 };
 
 MaxFileDataClassDesc gMaxFileDataClassDesc;

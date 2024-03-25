@@ -54,7 +54,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plTextFont_h
 #define _plTextFont_h
 
-#include "hsTemplates.h"
+#include <string_theory/string>
+
 #include "hsGeometry3.h"
 
 //// plTextFont Class Definition //////////////////////////////////////////////
@@ -77,7 +78,7 @@ class plTextFont
             uint32_t      fColor;
             hsPoint3    fUV;
 
-            plFontVertex& operator=(const int zero)
+            plFontVertex& operator=(std::nullptr_t)
             {
                 fPoint.Set(0,0,0);
                 fColor = 0;
@@ -90,7 +91,7 @@ class plTextFont
         uint32_t  fMaxNumIndices;
         uint32_t  fTextureWidth, fTextureHeight;
 
-        char    fFace[ 128 ];
+        ST::string fFace;
         uint16_t  fSize;
         bool    fInitialized;
         uint16_t  fFontHeight;
@@ -100,26 +101,26 @@ class plTextFont
         plTextFont      *fNext;
         plTextFont      **fPrevPtr;
 
-        plDXCharInfo    fCharInfo[ 128 ];
+        plDXCharInfo fCharInfo[256];
 
 
-        virtual void    IInitObjects( void );
+        virtual void    IInitObjects();
         virtual void    ICreateTexture( uint16_t *data ) = 0;
-        virtual void    IInitStateBlocks( void ) = 0;
+        virtual void    IInitStateBlocks() = 0;
         virtual void    IDrawPrimitive( uint32_t count, plFontVertex *array ) = 0;
         virtual void    IDrawLines( uint32_t count, plFontVertex *array ) = 0;
         
-        uint16_t  *IInitFontTexture( void );
+        uint16_t  *IInitFontTexture();
 
-        void    IUnlink( void )
+        void    IUnlink()
         {
             hsAssert( fPrevPtr, "Font not in list" );
             if( fNext )
                 fNext->fPrevPtr = fPrevPtr;
             *fPrevPtr = fNext;
 
-            fNext = nil;
-            fPrevPtr = nil;
+            fNext = nullptr;
+            fPrevPtr = nullptr;
         }
 
     public:
@@ -127,19 +128,19 @@ class plTextFont
         plTextFont( plPipeline *pipe );
         virtual ~plTextFont();
 
-        void    Create( char *face, uint16_t size );
-        void    DrawString( const char *string, int x, int y, uint32_t hexColor, uint8_t style, uint32_t rightEdge = 0 );
+        void Create(ST::string face, uint16_t size);
+        void DrawString(const ST::string& string, int x, int y, uint32_t hexColor, uint8_t style, uint32_t rightEdge = 0);
         void    DrawRect( int left, int top, int right, int bottom, uint32_t hexColor );
         void    Draw3DBorder( int left, int top, int right, int bottom, uint32_t hexColor1, uint32_t hexColor2 );
-        uint32_t  CalcStringWidth( const char *string );
-        uint32_t  GetFontSize( void ) { return fSize; }
+        uint32_t CalcStringWidth(const ST::string& string);
+        uint32_t  GetFontSize() { return fSize; }
 
         uint16_t  GetFontHeight() { return fFontHeight; }
 
-        virtual void    DestroyObjects( void ) = 0;
-        virtual void    SaveStates( void ) = 0;
-        virtual void    RestoreStates( void ) = 0;
-        virtual void    FlushDraws( void ) = 0;
+        virtual void    DestroyObjects() = 0;
+        virtual void    SaveStates() = 0;
+        virtual void    RestoreStates() = 0;
+        virtual void    FlushDraws() = 0;
 
         void    Link( plTextFont **back )
         {

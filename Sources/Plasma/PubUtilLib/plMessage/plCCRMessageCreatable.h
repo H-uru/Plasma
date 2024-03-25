@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCCRMessageCreatable_inc
 #define plCCRMessageCreatable_inc
 
+#include "pnFactory/plCreator.h"
+
 //
 // CCR message creatables
 // Kept separately for selective server include
@@ -56,5 +58,3 @@ REGISTER_CREATABLE(plCCRBanLinkingMsg);
 REGISTER_CREATABLE(plCCRSilencePlayerMsg);
 
 #endif  // plCCRMessageCreatable_inc
-
- 

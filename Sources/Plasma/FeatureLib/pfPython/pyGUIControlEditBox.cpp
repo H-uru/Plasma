@@ -40,27 +40,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
+#include "pyGUIControlEditBox.h"
+
+#include <string_theory/string>
 
 #include "pfGameGUIMgr/pfGUIEditBoxMod.h"
 
-#include "pyGUIControlEditBox.h"
 #include "pyColor.h"
+#include "pyKey.h"
 
 pyGUIControlEditBox::pyGUIControlEditBox(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlEditBox::pyGUIControlEditBox(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlEditBox::pyGUIControlEditBox(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 
 
-bool pyGUIControlEditBox::IsGUIControlEditBox(pyKey& gckey)
+bool pyGUIControlEditBox::IsGUIControlEditBox(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUIEditBoxMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUIEditBoxMod::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }
@@ -76,8 +76,7 @@ void pyGUIControlEditBox::SetBufferSize( uint32_t size )
     }
 }
 
-
-std::string pyGUIControlEditBox::GetBuffer( void )
+ST::string pyGUIControlEditBox::GetBuffer()
 {
     if ( fGCkey )
     {
@@ -86,22 +85,10 @@ std::string pyGUIControlEditBox::GetBuffer( void )
         if ( pebmod )
             return pebmod->GetBuffer();
     }
-    return "";
+    return {};
 }
 
-std::wstring pyGUIControlEditBox::GetBufferW( void )
-{
-    if ( fGCkey )
-    {
-        // get the pointer to the modifier
-        pfGUIEditBoxMod* pebmod = pfGUIEditBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( pebmod )
-            return pebmod->GetBufferW();
-    }
-    return L"";
-}
-
-void pyGUIControlEditBox::ClearBuffer( void )
+void pyGUIControlEditBox::ClearBuffer()
 {
     if ( fGCkey )
     {
@@ -112,7 +99,7 @@ void pyGUIControlEditBox::ClearBuffer( void )
     }
 }
 
-void pyGUIControlEditBox::SetText( const char *str )
+void pyGUIControlEditBox::SetText( const ST::string& str )
 {
     if ( fGCkey )
     {
@@ -123,18 +110,7 @@ void pyGUIControlEditBox::SetText( const char *str )
     }
 }
 
-void pyGUIControlEditBox::SetTextW( const wchar_t *str )
-{
-    if ( fGCkey )
-    {
-        // get the pointer to the modifier
-        pfGUIEditBoxMod* pebmod = pfGUIEditBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( pebmod )
-            pebmod->SetText(str);
-    }
-}
-
-void pyGUIControlEditBox::SetCursorToHome(void)
+void pyGUIControlEditBox::SetCursorToHome()
 {
     if ( fGCkey )
     {
@@ -145,7 +121,7 @@ void pyGUIControlEditBox::SetCursorToHome(void)
     }
 }
 
-void pyGUIControlEditBox::SetCursorToEnd(void)
+void pyGUIControlEditBox::SetCursorToEnd()
 {
     if ( fGCkey )
     {

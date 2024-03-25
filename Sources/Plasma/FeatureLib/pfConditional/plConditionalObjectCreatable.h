@@ -45,56 +45,44 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-#include "plANDConditionalObject.h"
-
-REGISTER_CREATABLE( plANDConditionalObject );
-
-#include "plORConditionalObject.h"
-
-REGISTER_CREATABLE( plORConditionalObject );
-
-#include "plPickedConditionalObject.h"
-
-REGISTER_CREATABLE( plPickedConditionalObject );
-
 #include "plActivatorConditionalObject.h"
+REGISTER_CREATABLE(plActivatorActivatorConditionalObject);
+REGISTER_CREATABLE(plActivatorConditionalObject);
+REGISTER_CREATABLE(plVolActivatorConditionalObject);
 
-REGISTER_CREATABLE( plActivatorConditionalObject );
-REGISTER_CREATABLE( plActivatorActivatorConditionalObject );
-REGISTER_CREATABLE( plVolActivatorConditionalObject );
-
-#include "plKeyPressConditionalObject.h"
-
-REGISTER_CREATABLE( plKeyPressConditionalObject );
+#include "plANDConditionalObject.h"
+REGISTER_CREATABLE(plANDConditionalObject);
 
 #include "plAnimationEventConditionalObject.h"
-
-REGISTER_CREATABLE( plAnimationEventConditionalObject );
+REGISTER_CREATABLE(plAnimationEventConditionalObject);
 
 #include "plControlEventConditionalObject.h"
-
-REGISTER_CREATABLE( plControlEventConditionalObject );
-
-#include "plObjectInBoxConditionalObject.h"
-
-REGISTER_CREATABLE( plObjectInBoxConditionalObject );
-REGISTER_CREATABLE( plVolumeSensorConditionalObject );
-REGISTER_CREATABLE( plVolumeSensorConditionalObjectNoArbitration  );
-
-#include "plLocalPlayerInBoxConditionalObject.h"
-
-REGISTER_CREATABLE( plLocalPlayerInBoxConditionalObject );
-
-#include "plObjectIntersectPlaneConditionalObject.h"
-
-REGISTER_CREATABLE( plObjectIntersectPlaneConditionalObject );
-
-#include "plLocalPlayerIntersectPlaneConditionalObject.h"
-
-REGISTER_CREATABLE( plLocalPlayerIntersectPlaneConditionalObject );
+REGISTER_CREATABLE(plControlEventConditionalObject);
 
 #include "plFacingConditionalObject.h"
+REGISTER_CREATABLE(plFacingConditionalObject);
 
-REGISTER_CREATABLE( plFacingConditionalObject );
+#include "plKeyPressConditionalObject.h"
+REGISTER_CREATABLE(plKeyPressConditionalObject);
+
+#include "plLocalPlayerInBoxConditionalObject.h"
+REGISTER_CREATABLE(plLocalPlayerInBoxConditionalObject);
+
+#include "plLocalPlayerIntersectPlaneConditionalObject.h"
+REGISTER_CREATABLE(plLocalPlayerIntersectPlaneConditionalObject);
+
+#include "plObjectInBoxConditionalObject.h"
+REGISTER_CREATABLE(plObjectInBoxConditionalObject);
+REGISTER_CREATABLE(plVolumeSensorConditionalObject);
+REGISTER_CREATABLE(plVolumeSensorConditionalObjectNoArbitration);
+
+#include "plObjectIntersectPlaneConditionalObject.h"
+REGISTER_CREATABLE(plObjectIntersectPlaneConditionalObject);
+
+#include "plORConditionalObject.h"
+REGISTER_CREATABLE(plORConditionalObject);
+
+#include "plPickedConditionalObject.h"
+REGISTER_CREATABLE(plPickedConditionalObject);
 
 #endif // plConditionalObjectCreatable_inc

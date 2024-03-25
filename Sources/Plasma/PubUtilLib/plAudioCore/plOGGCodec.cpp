@@ -58,19 +58,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plOGGCodec.h"
 
 #include "hsTimer.h"
-#include "pnNetCommon/plNetApp.h"
 
 plOGGCodec::DecodeFormat    plOGGCodec::fDecodeFormat = plOGGCodec::k16bitSigned;
 uint8_t                       plOGGCodec::fDecodeFlags = 0;
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plOGGCodec::plOGGCodec( const plFileName &path, plAudioCore::ChannelSelect whichChan ) : fFileHandle( nil )
+plOGGCodec::plOGGCodec(const plFileName &path, plAudioCore::ChannelSelect whichChan) : fFileHandle()
 {
-    fOggFile = nil;
+    fOggFile = nullptr;
     IOpen( path, whichChan );
     fCurHeaderPos = 0;
-    fHeadBuf = nil;
+    fHeadBuf = nullptr;
 }
 
 void    plOGGCodec::BuildActualWaveHeader()
@@ -116,20 +115,18 @@ void    plOGGCodec::IOpen( const plFileName &path, plAudioCore::ChannelSelect wh
 {
     hsAssert( path.IsValid(), "Invalid path specified in plOGGCodec reader" );
 
-    // plNetClientApp::StaticDebugMsg("Ogg Open %s, t=%f, start", path, hsTimer::GetSeconds());
-
     fFilename = path;
     fWhichChannel = whichChan;
 
     /// Open the file as a plain binary stream
     fFileHandle = plFileSystem::Open(path, "rb");
-    if( fFileHandle != nil )
+    if (fFileHandle != nullptr)
     {
         /// Create the OGG data struct
         fOggFile = new OggVorbis_File;
 
         /// Open the OGG decompressor
-        if( ov_open( fFileHandle, fOggFile, NULL, 0 ) < 0 )
+        if (ov_open(fFileHandle, fOggFile, nullptr, 0) < 0)
         {
             IError( "Unable to open OGG source file" );
             return;
@@ -178,7 +175,6 @@ void    plOGGCodec::IOpen( const plFileName &path, plAudioCore::ChannelSelect wh
 
         SetPosition( 0 );
     }
-//  plNetClientApp::StaticDebugMsg("Ogg Open %s, t=%f, end", path, hsTimer::GetSeconds());
 }
 
 plOGGCodec::~plOGGCodec()
@@ -186,24 +182,23 @@ plOGGCodec::~plOGGCodec()
     Close();
 }
 
-void    plOGGCodec::Close( void )
+void    plOGGCodec::Close()
 {
-    // plNetClientApp::StaticDebugMsg("Ogg Close, t=%f, start", hsTimer::GetSeconds());
     free(fHeadBuf);
-    fHeadBuf = nil;
-    if( fOggFile != nil )
+    fHeadBuf = nullptr;
+    if (fOggFile != nullptr)
     {
         ov_clear( fOggFile );
         delete fOggFile;
-        fOggFile = nil;
+        fOggFile = nullptr;
+        fFileHandle = nullptr; // ov_clear closes this
     }
 
-    if( fFileHandle != nil )
+    if (fFileHandle != nullptr)
     {
         fclose( fFileHandle );
-        fFileHandle = nil;
+        fFileHandle = nullptr;
     }
-    // plNetClientApp::StaticDebugMsg("Ogg Close, t=%f, end", hsTimer::GetSeconds());
 }
 
 void    plOGGCodec::IError( const char *msg )
@@ -212,14 +207,14 @@ void    plOGGCodec::IError( const char *msg )
     Close();
 }
 
-plWAVHeader &plOGGCodec::GetHeader( void )
+plWAVHeader &plOGGCodec::GetHeader()
 {
     hsAssert( IsValid(), "GetHeader() called on an invalid OGG file" );
 
     return fFakeHeader;
 }
 
-float   plOGGCodec::GetLengthInSecs( void )
+float   plOGGCodec::GetLengthInSecs()
 {
     hsAssert( IsValid(), "GetLengthInSecs() called on an invalid OGG file" );
 
@@ -266,7 +261,6 @@ bool    plOGGCodec::SetPosition( uint32_t numBytes )
 bool    plOGGCodec::Read( uint32_t numBytes, void *buffer )
 {
     hsAssert( IsValid(), "GetHeader() called on an invalid OGG file" );
-//  plNetClientApp::StaticDebugMsg("Ogg Read, t=%f, start", hsTimer::GetSeconds());
 
     int bytesPerSample = ( fDecodeFormat == k16bitSigned ) ? 2 : 1;
     int isSigned = ( fDecodeFormat == k16bitSigned ) ? 1 : 0;
@@ -339,11 +333,10 @@ bool    plOGGCodec::Read( uint32_t numBytes, void *buffer )
         }
     }
 
-//  plNetClientApp::StaticDebugMsg("Ogg Read, t=%f, end", hsTimer::GetSeconds());
     return true;
 }
 
-uint32_t  plOGGCodec::NumBytesLeft( void )
+uint32_t  plOGGCodec::NumBytesLeft()
 {
     if(!IsValid())
     {

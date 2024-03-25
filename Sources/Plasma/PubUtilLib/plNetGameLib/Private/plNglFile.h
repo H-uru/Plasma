@@ -62,10 +62,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Connect
 //============================================================================
 void NetCliFileStartConnect (
-    const plString  fileAddrList[],
+    const ST::string  fileAddrList[],
     unsigned        fileAddrCount,
     bool            isPatcher = false
 );
+bool NetCliFileQueryConnected ();
 
 //============================================================================
 // Disconnect
@@ -91,10 +92,10 @@ void NetCliFileRegisterBuildIdUpdate (FNetCliFileBuildIdUpdateCallback callback)
 // Manifest
 //============================================================================
 struct NetCliFileManifestEntry {
-    wchar_t     clientName[MAX_PATH]; // path and file on client side (for comparison)
-    wchar_t     downloadName[MAX_PATH]; // path and file on server side (for download)
-    wchar_t     md5[32];
-    wchar_t     md5compressed[32]; // md5 for the compressed file
+    char16_t    clientName[kNetDefaultStringSize]; // path and file on client side (for comparison)
+    char16_t    downloadName[kNetDefaultStringSize]; // path and file on server side (for download)
+    char16_t    md5[32];
+    char16_t    md5compressed[32]; // md5 for the compressed file
     unsigned    fileSize;
     unsigned    zipSize;
     unsigned    flags;
@@ -102,14 +103,14 @@ struct NetCliFileManifestEntry {
 typedef void (*FNetCliFileManifestRequestCallback)(
     ENetError                       result,
     void *                          param,
-    const wchar_t                   group[],
+    const char16_t                  group[],
     const NetCliFileManifestEntry   manifest[],
     unsigned                        entryCount
 );
 void NetCliFileManifestRequest (
     FNetCliFileManifestRequestCallback  callback,
     void *                              param,
-    const wchar_t                       group[], // the group of files you want (empty or nil = all)
+    const char16_t                      group[], // the group of files you want (empty or nil = all)
     unsigned                            buildId = 0 // 0 = get latest, other = get particular build (servers only)
 );
 

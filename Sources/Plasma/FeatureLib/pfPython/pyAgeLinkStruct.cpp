@@ -40,10 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pyAgeLinkStruct.h"
+
+#include <string_theory/string>
+#include <utility>
+
 #include "pyAgeInfoStruct.h"
 #include "pySpawnPointInfo.h"
 
@@ -57,10 +58,6 @@ pyAgeLinkStruct::pyAgeLinkStruct()
 pyAgeLinkStruct::pyAgeLinkStruct( plAgeLinkStruct * link )
 {
     fAgeLink.CopyFrom( link );
-}
-
-pyAgeLinkStruct::~pyAgeLinkStruct()
-{
 }
 
 bool pyAgeLinkStruct::operator==(const pyAgeLinkStruct &other) const
@@ -80,14 +77,14 @@ void pyAgeLinkStruct::SetAgeInfo( pyAgeInfoStruct & info )
     fAgeLink.GetAgeInfo()->CopyFrom( info.GetAgeInfo() );
 }
 
-const char* pyAgeLinkStruct::GetParentAgeFilename()
+ST::string pyAgeLinkStruct::GetParentAgeFilename()
 {
     return fAgeLink.GetParentAgeFilename();
 }
 
-void pyAgeLinkStruct::SetParentAgeFilename( const char* parentname )
+void pyAgeLinkStruct::SetParentAgeFilename(ST::string parentname)
 {
-    fAgeLink.SetParentAgeFilename(parentname);
+    fAgeLink.SetParentAgeFilename(std::move(parentname));
 }
 
 void pyAgeLinkStruct::CopyFrom( const pyAgeLinkStruct & other )

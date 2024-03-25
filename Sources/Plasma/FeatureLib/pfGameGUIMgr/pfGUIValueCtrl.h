@@ -66,15 +66,15 @@ class pfGUIValueCtrl : public pfGUIControlMod
         CLASSNAME_REGISTER( pfGUIValueCtrl );
         GETINTERFACE_ANY( pfGUIValueCtrl, pfGUIControlMod );
 
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual float    GetCurrValue( void ) { return fValue; }
+        virtual float    GetCurrValue() { return fValue; }
         virtual void        SetCurrValue( float v );
 
-        virtual float    GetMin( void ) { return fMin; }
-        virtual float    GetMax( void ) { return fMax; }
-        virtual float    GetStep( void ) { return fStep; }
+        virtual float    GetMin() { return fMin; }
+        virtual float    GetMax() { return fMax; }
+        virtual float    GetStep() { return fStep; }
 
         virtual void    SetRange( float min, float max );
         virtual void    SetStep( float step ) { fStep = step; }

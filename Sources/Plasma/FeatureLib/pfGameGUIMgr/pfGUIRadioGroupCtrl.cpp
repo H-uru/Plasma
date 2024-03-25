@@ -45,16 +45,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIRadioGroupCtrl.h"
+
+#include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pfGameGUIMgr.h"
 #include "pfGUICheckBoxCtrl.h"
 #include "pfGUIControlHandlers.h"
 
 #include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
 
 //// Wee Little Control Proc for our buttons /////////////////////////////////
 
@@ -71,7 +73,7 @@ class pfGroupProc : public pfGUICtrlProcObject
             fParent = parent;
         }
 
-        virtual void    DoSomething( pfGUIControlMod *ctrl )
+        void    DoSomething(pfGUIControlMod *ctrl) override
         {
             int32_t   newIdx;
 
@@ -89,13 +91,13 @@ class pfGroupProc : public pfGUICtrlProcObject
                 return;
             }
 
-            for( newIdx = 0; newIdx < fParent->fControls.GetCount(); newIdx++ )
+            for (newIdx = 0; newIdx < (int32_t)fParent->fControls.size(); newIdx++)
             {
                 if( fParent->fControls[ newIdx ] == check )
                     break;
             }
 
-            if( newIdx == fParent->fControls.GetCount() )
+            if (newIdx == (int32_t)fParent->fControls.size())
                 newIdx = -1;
 
             if( newIdx != fParent->fValue )
@@ -123,6 +125,7 @@ class pfGroupProc : public pfGUICtrlProcObject
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 pfGUIRadioGroupCtrl::pfGUIRadioGroupCtrl()
+    : fValue(), fDefaultValue()
 {
     fButtonProc = new pfGroupProc( this );
     fButtonProc->IncRef();
@@ -147,7 +150,7 @@ bool    pfGUIRadioGroupCtrl::IEval( double secs, float del, uint32_t dirty )
 bool    pfGUIRadioGroupCtrl::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
-    if( refMsg != nil )
+    if (refMsg != nullptr)
     {
         if( refMsg->fType == kRefControl )
         {
@@ -160,7 +163,7 @@ bool    pfGUIRadioGroupCtrl::MsgReceive( plMessage *msg )
             }
             else
             {
-                fControls[ refMsg->fWhich ] = nil;
+                fControls[refMsg->fWhich] = nullptr;
             }
             return true;
         }
@@ -175,29 +178,24 @@ void    pfGUIRadioGroupCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Read(s, mgr);
 
-    uint32_t  i, count = s->ReadLE32();
-    fControls.SetCountAndZero( count );
+    uint32_t  count = s->ReadLE32();
+    fControls.assign(count, nullptr);
 
-    for( i = 0; i < count; i++ )
-    {
+    for (uint32_t i = 0; i < count; i++)
         mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefControl ), plRefFlags::kActiveRef );
-    }
 
     fValue = fDefaultValue = s->ReadLE16();
-    if( fValue != -1 && fControls[ fValue ] != nil )
+    if (fValue != -1 && fControls[fValue] != nullptr)
         fControls[ fValue ]->SetChecked( true );
 }
 
 void    pfGUIRadioGroupCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
-    uint32_t  i;
-
-
     pfGUIControlMod::Write( s, mgr );
 
-    s->WriteLE32( fControls.GetCount() );
-    for( i = 0; i < fControls.GetCount(); i++ )
-        mgr->WriteKey( s, fControls[ i ]->GetKey() );
+    s->WriteLE32((uint32_t)fControls.size());
+    for (pfGUICheckBoxCtrl* ctrl : fControls)
+        mgr->WriteKey(s, ctrl->GetKey());
 
     s->WriteLE16( (uint16_t)fDefaultValue );
 }
@@ -223,51 +221,46 @@ void    pfGUIRadioGroupCtrl::SetValue( int32_t value )
 
 void    pfGUIRadioGroupCtrl::SetEnabled( bool e )
 {
-    int i;
-    for( i = 0; i < fControls.GetCount(); i++ )
-        fControls[ i ]->SetEnabled(e);
+    for (pfGUICheckBoxCtrl* ctrl : fControls)
+        ctrl->SetEnabled(e);
 }
 
 void    pfGUIRadioGroupCtrl::SetInteresting( bool e )
 {
-    int i;
-    for( i = 0; i < fControls.GetCount(); i++ )
-        fControls[ i ]->SetInteresting(e);
+    for (pfGUICheckBoxCtrl* ctrl : fControls)
+        ctrl->SetInteresting(e);
 }
 
 void    pfGUIRadioGroupCtrl::SetVisible( bool vis )
 {
-    int i;
-    for( i = 0; i < fControls.GetCount(); i++ )
-        fControls[ i ]->SetVisible(vis);
+    for (pfGUICheckBoxCtrl* ctrl : fControls)
+        ctrl->SetVisible(vis);
 }
 
 void    pfGUIRadioGroupCtrl::SetControlsFlag( int flag )
 {
-    int i;
-    for( i = 0; i < fControls.GetCount(); i++ )
-        fControls[ i ]->SetFlag(flag);
+    for (pfGUICheckBoxCtrl* ctrl : fControls)
+        ctrl->SetFlag(flag);
 }
 
 
 void    pfGUIRadioGroupCtrl::ClearControlsFlag( int flag )
 {
-    int i;
-    for( i = 0; i < fControls.GetCount(); i++ )
-        fControls[ i ]->ClearFlag(flag);
+    for (pfGUICheckBoxCtrl* ctrl : fControls)
+        ctrl->ClearFlag(flag);
 }
 
 
 //// Export Functions ////////////////////////////////////////////////////////
 
-void    pfGUIRadioGroupCtrl::ClearControlList( void )
+void    pfGUIRadioGroupCtrl::ClearControlList()
 {
-    fControls.Reset();
+    fControls.clear();
     fValue = -1;
 }
 
 void    pfGUIRadioGroupCtrl::AddControl( pfGUICheckBoxCtrl *ctrl )
 {
-    fControls.Append( ctrl );
+    fControls.emplace_back(ctrl);
 }
 

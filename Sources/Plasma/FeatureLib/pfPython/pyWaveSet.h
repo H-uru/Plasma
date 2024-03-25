@@ -42,8 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyWaveSet_h
 #define pyWaveSet_h
 
-#include "pyGlueHelpers.h"
 #include "pnKeyedObject/plKey.h"
+
+#include "pyGlueDefinitions.h"
+#include "pyKey.h"
 
 class pyColor;
 class pyPoint3;
@@ -60,7 +62,7 @@ private:
     plKey fWaterKey;
 
 protected:
-    pyWaveSet(): fWaterKey(nil) {} // for python glue only, do NOT call
+    pyWaveSet() = default; // for python glue only, do NOT call
     pyWaveSet(plKey key);
     pyWaveSet(pyKey& key);
 
@@ -185,6 +187,13 @@ public:
 
     PyObject* GetEnvCenter() const; // returns pyPoint3
     float GetEnvRadius() const;
+
+    // ==============================================================================
+    // Buoy functions
+    // ==============================================================================
+
+    void AddBuoy(const pyKey& soKey) const;
+    void RemoveBuoy(const pyKey& soKey) const;
 };
 
 

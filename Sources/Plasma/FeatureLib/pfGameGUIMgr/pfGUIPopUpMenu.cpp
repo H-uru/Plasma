@@ -49,55 +49,51 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGameGUIMgr.h"
-#include "pfGUIPopUpMenu.h"
-#include "pfGUIMenuItem.h"
-#include "pfGUIButtonMod.h"
-#include "pfGUIDialogHandlers.h"
-#include "pfGUIDialogNotifyProc.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "plViewTransform.h"
+
+#include <string_theory/format>
+
 #include "pfGUIControlHandlers.h"
 #include "pfGUICtrlGenerator.h"
+#include "pfGUIDialogHandlers.h"
+#include "pfGUIDialogNotifyProc.h"
+#include "pfGUIMenuItem.h"
+#include "pfGUIPopUpMenu.h"
 
-#include "plgDispatch.h"
-#include "hsResMgr.h"
+#include "pnMessage/plClientMsg.h"
+#include "pnMessage/plIntRefMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
 
-#include "plSurface/hsGMaterial.h"
-#include "plSurface/plLayer.h"
 #include "plGImage/plDynamicTextMap.h"
 #include "plMessage/plLayRefMsg.h"
-
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plDrawInterface.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnMessage/plIntRefMsg.h"
-#include "pnMessage/plObjRefMsg.h"
-#include "pnMessage/plNodeRefMsg.h"
-
+#include "plPipeline/plDebugText.h"
 #include "plScene/plPostEffectMod.h"
 #include "plScene/plSceneNode.h"
-#include "pnMessage/plClientMsg.h"
-
-#include "plViewTransform.h"
-#include "plPipeline/plDebugText.h"
-
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayer.h"
 
 class pfPopUpKeyGenerator
 {
     public:
-        char        fPrefix[ 128 ];
-        uint32_t      fKeyCount;
+        ST::string  fPrefix;
+        uint32_t    fKeyCount;
         plLocation  fLoc;
 
-        pfPopUpKeyGenerator( const char *p, const plLocation &loc )
-        {
-            strcpy( fPrefix, p );
-            fLoc = loc;
-        }
+        pfPopUpKeyGenerator(ST::string p, const plLocation &loc)
+            : fPrefix(std::move(p)), fKeyCount(), fLoc(loc)
+        { }
 
         plKey   CreateKey( hsKeyedObject *ko )
         {
-            plString name = plFormat("{}-{}", fPrefix, fKeyCount++);
+            ST::string name = ST::format("{}-{}", fPrefix, fKeyCount++);
 
             return hsgResMgr::ResMgr()->NewKey( name, ko, fLoc );
         }
@@ -120,12 +116,12 @@ class pfGUIMenuItemProc : public pfGUICtrlProcObject
             fIndex = idx;
         }
 
-        virtual void    DoSomething( pfGUIControlMod *ctrl )
+        void    DoSomething(pfGUIControlMod *ctrl) override
         {
             fParent->IHandleMenuSomething( fIndex, ctrl );
         }
 
-        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event )
+        void    HandleExtendedEvent(pfGUIControlMod *ctrl, uint32_t event) override
         {
             fParent->IHandleMenuSomething( fIndex, ctrl, (int32_t)event );
         }
@@ -134,29 +130,19 @@ class pfGUIMenuItemProc : public pfGUICtrlProcObject
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 pfGUIPopUpMenu::pfGUIPopUpMenu()
+    : fNeedsRebuilding(), fParent(), fKeyGen(), fSubMenuOpen(-1),
+      fMargin(4), fSkin(), fWaitingForSkin(), fParentNode(),
+      fOriginX(), fOriginY(), fOriginAnchor(), fOriginContext(),
+      fAlignment(kAlignDownRight)
 {
-    fNeedsRebuilding = false;
-    fParent = nil;
-    fKeyGen = nil;
-    fSubMenuOpen = -1;
     SetFlag( kModalOutsideMenus );
-    fMargin = 4;
-    fSkin = nil;
-    fWaitingForSkin = false;
-
-    fParentNode = nil;
-    fOriginX = fOriginY = 0.f;
-    fOriginAnchor = nil;
-    fOriginContext = nil;
-
-    fAlignment = kAlignDownRight;
 }
 
 pfGUIPopUpMenu::~pfGUIPopUpMenu()
 {
-    SetSkin( nil );
+    SetSkin(nullptr);
 
-//  if( fParentNode != nil )
+//  if (fParentNode != nullptr)
 //      fParentNode->GetKey()->UnRefObject();
 
     ITearDownMenu();
@@ -170,7 +156,7 @@ pfGUIPopUpMenu::~pfGUIPopUpMenu()
 bool    pfGUIPopUpMenu::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *ref = plGenRefMsg::ConvertNoRef( msg );
-    if( ref != nil )
+    if (ref != nullptr)
     {
         if( ref->fType == kRefSkin )
         {
@@ -180,7 +166,7 @@ bool    pfGUIPopUpMenu::MsgReceive( plMessage *msg )
                 fWaitingForSkin = false;
             }
             else
-                fSkin = nil;
+                fSkin = nullptr;
 
             fNeedsRebuilding = true;
             if( IsVisible() )
@@ -196,7 +182,7 @@ bool    pfGUIPopUpMenu::MsgReceive( plMessage *msg )
             if( ref->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fMenuItems[ ref->fWhich ].fSubMenu = pfGUIPopUpMenu::ConvertNoRef( ref->GetRef() );
             else
-                fMenuItems[ ref->fWhich ].fSubMenu = nil;
+                fMenuItems[ref->fWhich].fSubMenu = nullptr;
             return true;
         }
         else if( ref->fType == kRefOriginAnchor )
@@ -204,7 +190,7 @@ bool    pfGUIPopUpMenu::MsgReceive( plMessage *msg )
             if( ref->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fOriginAnchor = plSceneObject::ConvertNoRef( ref->GetRef() );
             else
-                fOriginAnchor = nil;
+                fOriginAnchor = nullptr;
             return true;
         }
         else if( ref->fType == kRefOriginContext )
@@ -212,7 +198,7 @@ bool    pfGUIPopUpMenu::MsgReceive( plMessage *msg )
             if( ref->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fOriginContext = pfGUIDialogMod::ConvertNoRef( ref->GetRef() );
             else
-                fOriginContext = nil;
+                fOriginContext = nullptr;
             return true;
         }
         else if( ref->fType == kRefParentNode )
@@ -220,7 +206,7 @@ bool    pfGUIPopUpMenu::MsgReceive( plMessage *msg )
             if( ref->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fParentNode = plSceneNode::ConvertNoRef( ref->GetRef() );
             else
-                fParentNode = nil;
+                fParentNode = nullptr;
             return true;
         }
     }
@@ -241,15 +227,14 @@ void    pfGUIPopUpMenu::Read( hsStream *s, hsResMgr *mgr )
 
     fMargin = s->ReadLE16();
 
-    uint32_t i, count = s->ReadLE32();
-    fMenuItems.SetCountAndZero( count );
-    for( i = 0; i < count; i++ )
+    uint32_t count = s->ReadLE32();
+    fMenuItems.resize(count);
+    for (uint32_t i = 0; i < count; i++)
     {
-        char readTemp[ 256 ];
-        s->Read( sizeof( readTemp ), readTemp );
-        wchar_t *wReadTemp = hsStringToWString( readTemp );
-        fMenuItems[ i ].fName = wReadTemp;
-        delete [] wReadTemp;
+        char readTemp[257];
+        s->Read(sizeof(readTemp) - 1, readTemp);
+        readTemp[sizeof(readTemp) - 1] = '\0';
+        fMenuItems[ i ].fName = ST::string::from_latin_1(readTemp);
         
         fMenuItems[ i ].fHandler = pfGUICtrlProcWriteableObject::Read( s );
 
@@ -272,27 +257,25 @@ void    pfGUIPopUpMenu::Write( hsStream *s, hsResMgr *mgr )
 
     s->WriteLE16( fMargin );
 
-    s->WriteLE32( fMenuItems.GetCount() );
-    uint32_t i;
-    for( i = 0; i < fMenuItems.GetCount(); i++ )
+    s->WriteLE32((uint32_t)fMenuItems.size());
+    for (const pfMenuItem& item : fMenuItems)
     {
         char writeTemp[ 256 ];
-        char *sName = hsWStringToString( fMenuItems[ i ].fName.c_str() );
-        strncpy( writeTemp, sName, sizeof( writeTemp ) );
-        delete [] sName;
+        ST::char_buffer sName = item.fName.to_latin_1();
+        strncpy(writeTemp, sName.c_str(), sizeof(writeTemp));
         s->Write( sizeof( writeTemp ), writeTemp );
 
         // Write the handler out (if it's not a writeable, damn you)
-        pfGUICtrlProcWriteableObject::Write( (pfGUICtrlProcWriteableObject *)fMenuItems[ i ].fHandler, s );
+        pfGUICtrlProcWriteableObject::Write((pfGUICtrlProcWriteableObject *)item.fHandler, s);
 
-        mgr->WriteKey( s, fMenuItems[ i ].fSubMenu );
+        mgr->WriteKey(s, item.fSubMenu);
     }
 
     // Note: we force parentNode to nil here because we only use it when we dynamically
     // create nodes at runtime and need to unref and destroy them later. Since we're
     // reading from disk, we'll already have a sceneNode somewhere, so we don't need
     // this.
-    fParentNode = nil;
+    fParentNode = nullptr;
 
     mgr->WriteKey( s, fSkin );
     mgr->WriteKey( s, fOriginAnchor );
@@ -321,7 +304,7 @@ void    pfGUIPopUpMenu::SetEnabled( bool e )
     }
     else if( !e )
     {
-        if( fParent != nil )
+        if (fParent != nullptr)
             pfGUIPopUpMenu::ConvertNoRef( fParent )->fSubMenuOpen = -1;
 
         // Hide our submenus if we have any open
@@ -343,19 +326,19 @@ void    pfGUIPopUpMenu::Show( float x, float y )
     ISeekToOrigin();
 }
 
-void    pfGUIPopUpMenu::ISeekToOrigin( void )
+void    pfGUIPopUpMenu::ISeekToOrigin()
 {
 #if 0
     uint32_t i;
     float   x = 0.5f/*fOriginX*/, y = fOriginY;
 
-    for( i = 0; i < fControls.GetCount(); i++ )
+    for (pfGUIControlMod* ctrl : fControls)
     {
-        if( fControls[ i ] != nil )
+        if (ctrl != nullptr)
         {
-            fControls[ i ]->SetObjectCenter( x, y );
+            ctrl->SetObjectCenter( x, y );
 
-//          const hsBounds3 &bnds = fControls[ i ]->GetBounds();
+//          const hsBounds3 &bnds = ctrl->GetBounds();
             y += fMenuItems[ i ].fYOffsetToNext;//bnds.GetMaxs().fY - bnds.GetMins().fY;
 
 /*          hsMatrix44 p2l, l2p = GetTarget()->GetLocalToWorld();
@@ -390,7 +373,7 @@ void    pfGUIPopUpMenu::IHandleMenuSomething( uint32_t idx, pfGUIControlMod *ctr
             fSubMenuOpen = -1;
         }
 
-        if( extended == pfGUIMenuItem::kMouseHover && fMenuItems[ idx ].fSubMenu != nil )
+        if (extended == pfGUIMenuItem::kMouseHover && fMenuItems[idx].fSubMenu != nullptr)
         {
             // Open new submenu
             const hsBounds3 &bnds = ctrl->GetBounds();
@@ -400,17 +383,17 @@ void    pfGUIPopUpMenu::IHandleMenuSomething( uint32_t idx, pfGUIControlMod *ctr
     }
     else
     {
-        if( fMenuItems[ idx ].fHandler != nil )
+        if (fMenuItems[idx].fHandler != nullptr)
             fMenuItems[ idx ].fHandler->DoSomething( ctrl );
         
         // If item isn't a sub-menu, close this menu. Else add to list of menus to close
         // once the smallest submenu goes away
-        if( fMenuItems[ idx ].fSubMenu == nil )
+        if (fMenuItems[idx].fSubMenu == nullptr)
         {
             // Basically, we want to hide ourselves and as many up in the chain of command as
             // can be hidden
             pfGUIPopUpMenu *menu = this;
-            while( menu != nil && !menu->HasFlag( kStayOpenAfterClick ) )
+            while (menu != nullptr && !menu->HasFlag(kStayOpenAfterClick))
             {
                 menu->Hide();
                 menu = pfGUIPopUpMenu::ConvertNoRef( menu->fParent );
@@ -429,12 +412,9 @@ void    pfGUIPopUpMenu::IHandleMenuSomething( uint32_t idx, pfGUIControlMod *ctr
 //// IBuildMenu //////////////////////////////////////////////////////////////
 //  Given the list of menu items, builds our set of dynamic buttons
 
-bool    pfGUIPopUpMenu::IBuildMenu( void )
+bool    pfGUIPopUpMenu::IBuildMenu()
 {
-    int     i;
-
-
-    if( fWaitingForSkin && fSkin == nil )
+    if (fWaitingForSkin && fSkin == nullptr)
         return false;       // Still waiting to get our skin before building
 
     pfGUIColorScheme *scheme = new pfGUIColorScheme();
@@ -442,18 +422,18 @@ bool    pfGUIPopUpMenu::IBuildMenu( void )
     scheme->fBackColor.Set( 1, 1, 1, 1 );
 
     // If we don't have origin points, get them from translating our anchor
-    if( fOriginX == -1 || fOriginY == -1 && fOriginAnchor != nil )
+    if (fOriginX == -1 || fOriginY == -1 && fOriginAnchor != nullptr)
     {
         hsPoint3 scrnPt;
         const plDrawInterface *di = fOriginAnchor->GetDrawInterface();
-        if( di != nil )
+        if (di != nullptr)
         {
             scrnPt = di->GetLocalBounds().GetCenter();
             scrnPt = fOriginAnchor->GetLocalToWorld() * scrnPt;
         }
         else
             scrnPt = fOriginAnchor->GetLocalToWorld().GetTranslate();
-        if( fOriginContext != nil )
+        if (fOriginContext != nullptr)
             scrnPt = fOriginContext->WorldToScreenPoint( scrnPt );
         else
             scrnPt = WorldToScreenPoint( scrnPt );
@@ -466,7 +446,7 @@ bool    pfGUIPopUpMenu::IBuildMenu( void )
 
     float x = fOriginX, y = fOriginY;
     float width = 0.f, height = 0.f;
-    float topMargin = ( fSkin != nil ) ? fSkin->GetBorderMargin() : 0.f;
+    float topMargin = (fSkin != nullptr) ? fSkin->GetBorderMargin() : 0.f;
     
     // First step: loop through and calculate the size of our menu
     // The PROBLEM is that we can't do that unless we have a friggin surface on
@@ -474,27 +454,27 @@ bool    pfGUIPopUpMenu::IBuildMenu( void )
     // a whole new DTMap and use it to calculate some stuff
     plDynamicTextMap *scratch = new plDynamicTextMap( 8, 8, false );
     scratch->SetFont( scheme->fFontFace, scheme->fFontSize, scheme->fFontFlags, true );
-    for( i = 0; i < fMenuItems.GetCount(); i++ )
+    for (const pfMenuItem& item : fMenuItems)
     {
         uint16_t  thisW, thisH;
-        thisW = scratch->CalcStringWidth( fMenuItems[ i ].fName.c_str(), &thisH );
-        if( fMenuItems[ i ].fSubMenu != nil )
+        thisW = scratch->CalcStringWidth(item.fName, &thisH);
+        if (item.fSubMenu != nullptr)
         {
-            if( fSkin != nil )
+            if (fSkin != nullptr)
                 thisW += 4 + ( fSkin->GetElement( pfGUISkin::kSubMenuArrow ).fWidth << 1 );
             else
-                thisW += scratch->CalcStringWidth( " >>", nil );
+                thisW += scratch->CalcStringWidth(" >>", nullptr);
         }
         thisH += 2; // Give us at least one pixel on each side
 
         int margin = fMargin;
-        if( fSkin != nil )
+        if (fSkin != nullptr)
             margin = fSkin->GetBorderMargin() << 1;
 
         if( width < thisW + margin )
             width = (float)(thisW + margin);
 
-        if( fSkin != nil )
+        if (fSkin != nullptr)
             margin = fSkin->GetItemMargin() << 1;
 
         if( height < thisH + margin )
@@ -528,16 +508,24 @@ bool    pfGUIPopUpMenu::IBuildMenu( void )
 
     switch( fAlignment )
     {
-        case kAlignUpLeft: x -= width; y -= height * fMenuItems.GetCount(); break;
-        case kAlignUpRight: y -= height * fMenuItems.GetCount(); break;
-        case kAlignDownLeft: x -= width; break;
-        case kAlignDownRight: break;
+        case kAlignUpLeft:
+            x -= width;
+            y -= height * fMenuItems.size();
+            break;
+        case kAlignUpRight:
+            y -= height * fMenuItems.size();
+            break;
+        case kAlignDownLeft:
+            x -= width;
+            break;
+        case kAlignDownRight:
+            break;
     }
 
-    if( y + height * fMenuItems.GetCount() > 1.f )
+    if (y + height * fMenuItems.size() > 1.f)
     {
         // Make sure we don't go off the bottom
-        y = 1.f - height * fMenuItems.GetCount();
+        y = 1.f - height * fMenuItems.size();
     }
     // And the top (takes precedence)
     if( y < 0.f )
@@ -546,30 +534,32 @@ bool    pfGUIPopUpMenu::IBuildMenu( void )
     // Control positions are in the lower left corner, so increment Y by 1 control height first
     y += height;// + topMargin;
 
-    hsTArray<pfGUIPopUpMenu *>  buildList;
+    std::vector<pfGUIPopUpMenu *> buildList;
 
-    for( i = 0; i < fMenuItems.GetCount(); i++ )
+    for (size_t i = 0; i < fMenuItems.size(); i++)
     {
         hsGMaterial *mat = ICreateDynMaterial();
 
-        float thisMargin = ( i == 0 || i == fMenuItems.GetCount() - 1 ) ? topMargin : 0.f;
-        float thisOffset = ( i == fMenuItems.GetCount() - 1 ) ? topMargin : 0.f;
+        float thisMargin = (i == 0 || i == fMenuItems.size() - 1) ? topMargin : 0.f;
+        float thisOffset = (i == fMenuItems.size() - 1) ? topMargin : 0.f;
 
-        pfGUIMenuItem *button = pfGUIMenuItem::ConvertNoRef( pfGUICtrlGenerator::Instance().CreateRectButton( this, fMenuItems[ i ].fName.c_str(), x, y + thisOffset, width, height + thisMargin, mat, true ) );
-        if( button != nil )
+        pfGUIMenuItem *button = pfGUICtrlGenerator::Instance().CreateRectButton(this, x, y + thisOffset, width, height + thisMargin, mat);
+        if (button != nullptr)
         {
             button->SetColorScheme( scheme );
-            button->SetName( fMenuItems[ i ].fName.c_str() );
+            button->SetName(fMenuItems[i].fName);
             button->SetHandler( new pfGUIMenuItemProc( this, i ) );
             // make the tag ID the position in the menu list
             button->SetTagID(i);
             button->SetDynTextMap( mat->GetLayer( 0 ), plDynamicTextMap::ConvertNoRef( mat->GetLayer( 0 )->GetTexture() ) );
             button->SetFlag( pfGUIMenuItem::kReportHovers );
-            button->SetSkin( fSkin, ( i == 0 ) ? pfGUIMenuItem::kTop : ( i == fMenuItems.GetCount() - 1 ) ? pfGUIMenuItem::kBottom : pfGUIMenuItem::kMiddle );
-            if( fMenuItems[ i ].fSubMenu != nil )
+            button->SetSkin(fSkin, (i == 0) ? pfGUIMenuItem::kTop
+                                 : (i == fMenuItems.size() - 1) ? pfGUIMenuItem::kBottom
+                                 : pfGUIMenuItem::kMiddle);
+            if (fMenuItems[i].fSubMenu != nullptr)
             {
                 button->SetFlag( pfGUIMenuItem::kDrawSubMenuArrow );
-                buildList.Append( pfGUIPopUpMenu::ConvertNoRef( fMenuItems[ i ].fSubMenu ) );
+                buildList.emplace_back(pfGUIPopUpMenu::ConvertNoRef(fMenuItems[i].fSubMenu));
             }
         }
 
@@ -587,8 +577,8 @@ bool    pfGUIPopUpMenu::IBuildMenu( void )
     // Also, we need to bump the tag ID used, such as adding parent menuItem TagID * 100.. or something
 
     // Disabled because right now we can't move menus, which is required for this to work
-    for( i = 0; i < buildList.GetCount(); i++ )
-        buildList[ i ]->IBuildMenu();
+    for (pfGUIPopUpMenu* buildMenu : buildList)
+        buildMenu->IBuildMenu();
 #endif
 
     return true;
@@ -597,22 +587,19 @@ bool    pfGUIPopUpMenu::IBuildMenu( void )
 //// ITearDownMenu ///////////////////////////////////////////////////////////
 //  Destroys all of our dynamic controls representing the menu
 
-void    pfGUIPopUpMenu::ITearDownMenu( void )
+void    pfGUIPopUpMenu::ITearDownMenu()
 {
-    int     i;
-
-
-    for( i = 0; i < fControls.GetCount(); i++ )
+    for (pfGUIControlMod* ctrl : fControls)
     {
-        if( fControls[ i ] != nil )
+        if (ctrl != nullptr)
         {
             // It's not enough to release the key, we have to have the sceneNode release the key, too.
             // Easy enough to do by just setting it's sn to nil
-            if( fControls[ i ]->GetTarget() != nil )
-                fControls[ i ]->GetTarget()->SetSceneNode( nil );
+            if (ctrl->GetTarget() != nullptr)
+                ctrl->GetTarget()->SetSceneNode(nullptr);
 
             // Now release it from us
-            GetKey()->Release( fControls[ i ]->GetKey() );
+            GetKey()->Release(ctrl->GetKey());
         }
     }
 
@@ -635,32 +622,29 @@ bool        pfGUIPopUpMenu::HandleMouseEvent( pfGameGUIMgr::EventType event, flo
             // Now we pass the click to our parent. Why? Because it's possible that someone above us
             // will either a) also want to hide (cancel the entire menu selection) or b) select
             // another option
-            if( fParent != nil )
+            if (fParent != nullptr)
                 return fParent->HandleMouseEvent( event, mouseX, mouseY, modifiers );
         }
     }
 
-    return ( fParent != nil ) ? r : ( HasFlag( kModalOutsideMenus ) || ( fSubMenuOpen != -1 ) );
+    return (fParent != nullptr) ? r : (HasFlag(kModalOutsideMenus) || (fSubMenuOpen != -1));
 }
 
 //// ClearItems //////////////////////////////////////////////////////////////
 //  Clears the list of template items
 
-void    pfGUIPopUpMenu::ClearItems( void )
+void    pfGUIPopUpMenu::ClearItems()
 {
-    int     i;
-
-
-    for( i = 0; i < fMenuItems.GetCount(); i++ )
+    for (const pfMenuItem& item : fMenuItems)
     {
-        if( fMenuItems[ i ].fHandler != nil )
+        if (item.fHandler != nullptr)
         {
-            if( fMenuItems[ i ].fHandler->DecRef() )
-                delete fMenuItems[ i ].fHandler;
+            if (item.fHandler->DecRef())
+                delete item.fHandler;
         }
     }
 
-    fMenuItems.Reset();
+    fMenuItems.clear();
 
     fNeedsRebuilding = true;
 }
@@ -668,28 +652,18 @@ void    pfGUIPopUpMenu::ClearItems( void )
 //// AddItem /////////////////////////////////////////////////////////////////
 //  Append a new item to the list of things to build the menu from 
 
-void    pfGUIPopUpMenu::AddItem( const char *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu )
+void    pfGUIPopUpMenu::AddItem(ST::string name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu)
 {
-    wchar_t *wName = hsStringToWString(name);
-    AddItem(wName,handler,subMenu);
-    delete [] wName;
-}
+    pfMenuItem  &newItem = fMenuItems.emplace_back();
 
-void    pfGUIPopUpMenu::AddItem( const wchar_t *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu )
-{
-    pfMenuItem  newItem;
-
-
-    newItem.fName = name;
+    newItem.fName = std::move(name);
     newItem.fHandler = handler;
-    if( newItem.fHandler != nil )
+    if (newItem.fHandler != nullptr)
         newItem.fHandler->IncRef();
     newItem.fSubMenu = subMenu;
 
-    if( subMenu != nil )
+    if (subMenu != nullptr)
         subMenu->fParent = this;
-
-    fMenuItems.Append( newItem );
 
     fNeedsRebuilding = true;
 }
@@ -697,7 +671,7 @@ void    pfGUIPopUpMenu::AddItem( const wchar_t *name, pfGUICtrlProcObject *handl
 //// ICreateDynMaterial //////////////////////////////////////////////////////
 //  Creates the hsGMaterial tree for a single layer with a plDynamicTextMap.
 
-hsGMaterial *pfGUIPopUpMenu::ICreateDynMaterial( void )
+hsGMaterial *pfGUIPopUpMenu::ICreateDynMaterial()
 {
     hsColorRGBA     black, white;
 
@@ -732,7 +706,7 @@ hsGMaterial *pfGUIPopUpMenu::ICreateDynMaterial( void )
 
 #include "plGImage/plJPEG.h"
 
-pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent, float x, float y, const plLocation &destLoc )
+pfGUIPopUpMenu  *pfGUIPopUpMenu::Build(const ST::string& name, pfGUIDialogMod *parent, float x, float y, const plLocation &destLoc)
 {
     float           fovX, fovY;
     
@@ -746,15 +720,15 @@ pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent
     menu->fOriginY = y;
 
     // By default, share the same skin as the parent
-    if( parent != nil && ( (pfGUIPopUpMenu *)parent )->fSkin != nil )
+    if (parent != nullptr && ((pfGUIPopUpMenu *)parent)->fSkin != nullptr)
     {
         menu->fWaitingForSkin = true;
         hsgResMgr::ResMgr()->SendRef( ( (pfGUIPopUpMenu *)parent )->fSkin->GetKey(), new plGenRefMsg( menu->GetKey(), plRefMsg::kOnCreate, -1, pfGUIPopUpMenu::kRefSkin ), plRefFlags::kActiveRef );
     }
 
     // HACK for now: create us a temp skin to use
-/*  static pfGUISkin *skin = nil;
-    if( skin == nil )
+/*  static pfGUISkin *skin = nullptr;
+    if (skin == nullptr)
     {
         plLocation loc;
         loc.Set( 0x1425 );
@@ -777,8 +751,8 @@ pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent
     fovX = atan( scrnWidth / ( 2.f * 100.f ) ) * 2.f;
     fovY = fovX;// * 3.f / 4.f;
 
-    renderMod->SetFovX( fovX * 180.f / M_PI );
-    renderMod->SetFovY( fovY * 180.f / M_PI );
+    renderMod->SetFovX(hsRadiansToDegrees(fovX));
+    renderMod->SetFovY(hsRadiansToDegrees(fovY));
 
     // Create the sceneNode to go with it
     menu->fParentNode= new plSceneNode;
@@ -827,10 +801,10 @@ pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent
 void    pfGUIPopUpMenu::SetSkin( pfGUISkin *skin )
 {
     // Just a function wrapper for SendRef
-    if( fSkin != nil )
+    if (fSkin != nullptr)
         GetKey()->Release( fSkin->GetKey() );
 
-    if( skin != nil )
+    if (skin != nullptr)
     {
         hsgResMgr::ResMgr()->SendRef( skin->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefSkin ), plRefFlags::kActiveRef );
         fWaitingForSkin = true;
@@ -845,17 +819,17 @@ void    pfGUIPopUpMenu::SetSkin( pfGUISkin *skin )
 //////////////////////////////////////////////////////////////////////////////
 
 pfGUISkin::pfGUISkin()
+    : fTexture(), fItemMargin(), fBorderMargin()
 {
-    fTexture = nil;
     memset( fElements, 0, sizeof( pfSRect ) * kNumElements );
 }
 
-pfGUISkin::pfGUISkin( plMipmap *texture )
+pfGUISkin::pfGUISkin(plMipmap* texture)
+    : fTexture(texture), fItemMargin(), fBorderMargin()
 {
-    fTexture = texture;
-    if( fTexture != nil )
+    if (fTexture != nullptr)
     {
-        hsAssert( fTexture->GetKey() != nil, "Creating a GUI skin via a mipmap with no key!" );
+        hsAssert(fTexture->GetKey() != nullptr, "Creating a GUI skin via a mipmap with no key!");
         fTexture->GetKey()->RefObject();
     }
     memset( fElements, 0, sizeof( pfSRect ) * kNumElements );
@@ -863,18 +837,18 @@ pfGUISkin::pfGUISkin( plMipmap *texture )
 
 pfGUISkin::~pfGUISkin()
 {
-    SetTexture( nil );
+    SetTexture(nullptr);
 }
 
 void    pfGUISkin::SetTexture( plMipmap *tex )
 {
-    if( fTexture != nil && fTexture->GetKey() != nil )
+    if (fTexture != nullptr && fTexture->GetKey() != nullptr)
         fTexture->GetKey()->UnRefObject();
 
     fTexture = tex;
-    if( fTexture != nil )
+    if (fTexture != nullptr)
     {
-        hsAssert( fTexture->GetKey() != nil, "Creating a GUI skin via a mipmap with no key!" );
+        hsAssert(fTexture->GetKey() != nullptr, "Creating a GUI skin via a mipmap with no key!");
         fTexture->GetKey()->RefObject();
     }
 }
@@ -891,16 +865,15 @@ void    pfGUISkin::Read( hsStream *s, hsResMgr *mgr )
 {
     hsKeyedObject::Read( s, mgr );
 
-    s->ReadLE( &fItemMargin );
-    s->ReadLE( &fBorderMargin );
+    s->ReadLE16(&fItemMargin);
+    s->ReadLE16(&fBorderMargin);
 
-    uint32_t i, count;
-    s->ReadLE( &count );
+    uint32_t count = s->ReadLE32();
 
-    for( i = 0; i < count; i++ )
+    for (uint32_t i = 0; i < count; i++)
         fElements[ i ].Read( s );
 
-    for( ; i < kNumElements; i++ )
+    for (uint32_t i = count; i < kNumElements; i++)
         fElements[ i ].Empty();
 
     mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefMipmap ), plRefFlags::kActiveRef );
@@ -910,13 +883,12 @@ void    pfGUISkin::Write( hsStream *s, hsResMgr *mgr )
 {
     hsKeyedObject::Write( s, mgr );
 
-    s->WriteLE( fItemMargin );
-    s->WriteLE( fBorderMargin );
+    s->WriteLE16(fItemMargin);
+    s->WriteLE16(fBorderMargin);
 
-    uint32_t i = kNumElements;
-    s->WriteLE( i );
+    s->WriteLE32((uint32_t)kNumElements);
 
-    for( i = 0; i < kNumElements; i++ )
+    for (uint32_t i = 0; i < kNumElements; i++)
         fElements[ i ].Write( s );
 
     mgr->WriteKey( s, fTexture );
@@ -925,12 +897,12 @@ void    pfGUISkin::Write( hsStream *s, hsResMgr *mgr )
 bool    pfGUISkin::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *ref = plGenRefMsg::ConvertNoRef( msg );
-    if( ref != nil )
+    if (ref != nullptr)
     {
         if( ref->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
             fTexture = plMipmap::ConvertNoRef( ref->GetRef() );
         else
-            fTexture = nil;
+            fTexture = nullptr;
 
         return true;
     }
@@ -940,16 +912,16 @@ bool    pfGUISkin::MsgReceive( plMessage *msg )
 
 void    pfGUISkin::pfSRect::Read( hsStream *s )
 {
-    s->ReadLE( &fX );
-    s->ReadLE( &fY );
-    s->ReadLE( &fWidth );
-    s->ReadLE( &fHeight );
+    s->ReadLE16(&fX);
+    s->ReadLE16(&fY);
+    s->ReadLE16(&fWidth);
+    s->ReadLE16(&fHeight);
 }
 
 void    pfGUISkin::pfSRect::Write( hsStream *s )
 {
-    s->WriteLE( fX );
-    s->WriteLE( fY );
-    s->WriteLE( fWidth );
-    s->WriteLE( fHeight );
+    s->WriteLE16(fX);
+    s->WriteLE16(fY);
+    s->WriteLE16(fWidth);
+    s->WriteLE16(fHeight);
 }

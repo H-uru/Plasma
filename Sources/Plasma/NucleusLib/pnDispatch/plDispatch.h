@@ -45,24 +45,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <list>
 #include <mutex>
-#include "hsTemplates.h"
 #include "plgDispatch.h"
 #include "hsThread.h"
 #include "pnKeyedObject/hsKeyedObject.h"
-
-#pragma warning(disable: 4284)
 
 class hsResMgr;
 class plMessage;
 class plKey;
 
-class plTypeFilter
+struct plTypeFilter
 {
-public:
-    plTypeFilter() : fHClass(0) {}
+    plTypeFilter() : fHClass() { }
 
-    uint16_t              fHClass;
-    hsTArray<plKey>     fReceivers;
+    uint16_t            fHClass;
+    std::vector<plKey>  fReceivers;
 };
 
 class plMsgWrap;
@@ -83,19 +79,19 @@ protected:
     static plMsgWrap*               fMsgHead;
     static plMsgWrap*               fMsgTail;
     static bool                     fMsgActive;
-    static hsTArray<plMessage*>     fMsgWatch;
+    static std::vector<plMessage*>  fMsgWatch;
     static MsgRecieveCallback       fMsgRecieveCallback;
 
-    hsTArray<plTypeFilter*>         fRegisteredExactTypes;
+    std::vector<plTypeFilter*>      fRegisteredExactTypes;
     std::list<plMessage*>           fQueuedMsgList;
     std::mutex                      fQueuedMsgListMutex; // mutex for above
     bool                            fQueuedMsgOn;       // Turns on or off Queued Messages, Plugins need them off
 
     hsKeyedObject*                  IGetOwner() { return fOwner; }
-    plKey                           IGetOwnerKey() { return IGetOwner() ? IGetOwner()->GetKey() : nil; }
+    plKey                           IGetOwnerKey() { return IGetOwner() ? IGetOwner()->GetKey() : nullptr; }
     int                             IFindType(uint16_t hClass);
     int                             IFindSender(const plKey& sender);
-    bool                            IUnRegisterForExactType(int idx, const plKey& receiver);
+    bool                            IUnRegisterForExactType(uint16_t idx, const plKey& receiver);
 
     static plMsgWrap*               IInsertToQueue(plMsgWrap** back, plMsgWrap* isert);
     static plMsgWrap*               IDequeue(plMsgWrap** head, plMsgWrap** tail);
@@ -118,42 +114,51 @@ public:
     CLASSNAME_REGISTER( plDispatch );
     GETINTERFACE_ANY( plDispatch, plCreatable );
 
-    virtual void RegisterForType(uint16_t hClass, const plKey& receiver);
-    virtual void RegisterForExactType(uint16_t hClass, const plKey& receiver);
+    void RegisterForType(uint16_t hClass, const plKey& receiver) override;
+    void RegisterForExactType(uint16_t hClass, const plKey& receiver) override;
 
-    virtual void UnRegisterForType(uint16_t hClass, const plKey& receiver);
-    virtual void UnRegisterForExactType(uint16_t hClass, const plKey& receiver);
+    void UnRegisterForType(uint16_t hClass, const plKey& receiver) override;
+    void UnRegisterForExactType(uint16_t hClass, const plKey& receiver) override;
 
-    virtual void UnRegisterAll(const plKey& receiver);
+    void UnRegisterAll(const plKey& receiver) override;
 
-    virtual bool    MsgSend(plMessage* msg, bool async=false);
-    virtual void    MsgQueue(plMessage* msg);   // Used by other thread to Send Messages, they are handled as soon as Practicable
-    virtual void    MsgQueueProcess();
-    virtual void    MsgQueueOnOff(bool );     // Turn on or off Queued Messages, if off, uses MsgSend Immediately
+    bool MsgSend(plMessage* msg, bool async=false) override;
 
-    virtual bool    SetMsgBuffering(bool on); // On starts deferring msg delivery until buffering is set to off again.
+    // Used by other thread to Send Messages, they are handled as soon as
+    // Practicable
+    void MsgQueue(plMessage* msg) override;
+    void MsgQueueProcess() override;
 
-    virtual void    BeginShutdown();
+    // Turn on or off Queued Messages, if off, uses MsgSend Immediately (for
+    // plugins)
+    void MsgQueueOnOff(bool sw) override;
 
-    static void SetMsgRecieveCallback(MsgRecieveCallback callback) { fMsgRecieveCallback = callback; }
+    // On starts deferring msg delivery until buffering is set to off again.
+    bool SetMsgBuffering(bool on) override;
+
+    void BeginShutdown() override;
+
+    static void SetMsgRecieveCallback(MsgRecieveCallback callback) {
+        fMsgRecieveCallback = callback;
+    }
 };
+
 
 class plNullDispatch : public plDispatch
 {
 public:
 
-    virtual void RegisterForExactType(uint16_t hClass, const plKey& receiver) {}
-    virtual void RegisterForType(uint16_t hClass, const plKey& receiver) {}
+    void RegisterForExactType(uint16_t hClass, const plKey& receiver) override {}
+    void RegisterForType(uint16_t hClass, const plKey& receiver) override {}
 
-    virtual void UnRegisterForExactType(uint16_t hClass, const plKey& receiver) {}
-    virtual void UnRegisterForType(uint16_t hClass, const plKey& receiver) {}
+    void UnRegisterForExactType(uint16_t hClass, const plKey& receiver) override {}
+    void UnRegisterForType(uint16_t hClass, const plKey& receiver) override {}
 
+    bool MsgSend(plMessage* msg, bool async=false) override { return true; }
+    void MsgQueue(plMessage* msg) override {}
+    void MsgQueueProcess() override {}
 
-    virtual bool MsgSend(plMessage* msg) { return true; }
-    virtual void MsgQueue(plMessage* msg) {}
-    virtual void MsgQueueProcess() {}
-
-    virtual void BeginShutdown() {}
+    void BeginShutdown() override {}
 
 };
 

@@ -43,13 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInterestingModifier_inc
 #define plInterestingModifier_inc
 
-#include "pnModifier/plSingleModifier.h"
-#include "pnMessage/plMessage.h"
-#include "hsResMgr.h"
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
-#include "hsStream.h"
 
-class plInputEventMsg;
+#include "pnModifier/plSingleModifier.h"
 
 class plInterestingModifier : public plSingleModifier
 {
@@ -67,13 +64,13 @@ protected:
     static float fInterestRadius;
     static float fInterestWeight;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
     
 public:
-    plInterestingModifier(){ fType = kTypeInteresting;}
-    virtual ~plInterestingModifier(){;}
+    plInterestingModifier() : fType(kTypeInteresting), fView() { }
+    virtual ~plInterestingModifier() { }
     
-    virtual bool MsgReceive(plMessage* msg) {return false;}
+    bool MsgReceive(plMessage* msg) override { return false; }
 
     CLASSNAME_REGISTER( plInterestingModifier );
     GETINTERFACE_ANY( plInterestingModifier, plSingleModifier );
@@ -81,10 +78,10 @@ public:
     float GetInterestWeight() { return fInterestWeight; }
     float GetInterestRadius() { return fInterestRadius; }
 
-    void SetInterestWeight(float _InterestRadius) { fInterestWeight =_InterestRadius; }
-    void SetInterestRadius(float _InterestWeight) { fInterestRadius =_InterestWeight; }
+    void SetInterestWeight(float _InterestWeight) { fInterestWeight = _InterestWeight; }
+    void SetInterestRadius(float _InterestRadius) { fInterestRadius = _InterestRadius; }
     
-    virtual void AddTarget(plSceneObject* so);
+    void AddTarget(plSceneObject* so) override;
     
     void    SetType(uint8_t type) { fType = type; }
     uint8_t   GetType() { return fType; }

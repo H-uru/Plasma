@@ -41,11 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
 #include "plFileSystem.h"
 
-#include <max.h>
-#pragma hdrstop
+#include "MaxAPI.h"
 
 #include "plMaxCFGFile.h"
 #include "plFile/plBrowseFolder.h"
@@ -53,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plFileName plMaxConfig::GetPluginIni()
 {
     // Get the plugin CFG dir
-    return plFileName::Join(GetCOREInterface()->GetDir(APP_PLUGCFG_DIR), "PlasmaMAX2.ini");
+    return plFileName::Join(M2ST(GetCOREInterface()->GetDir(APP_PLUGCFG_DIR)), "PlasmaMAX2.ini");
 }
 
 plFileName plMaxConfig::GetClientPath(bool getNew, bool quiet)
@@ -64,17 +62,17 @@ plFileName plMaxConfig::GetClientPath(bool getNew, bool quiet)
     // Get the saved path
     wchar_t buffer[MAX_PATH];
     uint32_t len = GetPrivateProfileStringW(L"SceneViewer", L"Directory", L"", buffer, MAX_PATH,
-                                            plugDir.AsString().ToWchar());
-    plFileName plasmaPath = plString::FromWchar(buffer);
+                                            plugDir.WideString().data());
+    plFileName plasmaPath = ST::string::from_wchar(buffer);
 
     // If we didn't find a path, or we want a new one, ask the user for one
     if ((len == 0 || getNew) && !quiet)
     {
         // If the user selects one, save it
-        plasmaPath = plBrowseFolder::GetFolder(plasmaPath, "Specify your client folder");
+        plasmaPath = plBrowseFolder::GetFolder(plasmaPath, "Select your Plasma 2.0 client folder");
         if (plasmaPath.IsValid())
-            WritePrivateProfileStringW(L"SceneViewer", L"Directory", plasmaPath.AsString().ToWchar(),
-                                       plugDir.AsString().ToWchar());
+            WritePrivateProfileStringW(L"SceneViewer", L"Directory", plasmaPath.WideString().data(),
+                                       plugDir.WideString().data());
     }
 
     // Return the path if we got one
@@ -84,12 +82,13 @@ plFileName plMaxConfig::GetClientPath(bool getNew, bool quiet)
 void plMaxConfig::SetClientPath(const plFileName &path)
 {
     plFileName plugDir = GetPluginIni();
-    WritePrivateProfileStringW(L"SceneViewer", L"Directory", path.AsString().ToWchar(),
-                               plugDir.AsString().ToWchar());
+    WritePrivateProfileStringW(L"SceneViewer", L"Directory", path.WideString().data(),
+                               plugDir.WideString().data());
 }
 
 bool plMaxConfig::AssetManInterfaceDisabled()
 {
+#ifdef MAXASS_AVAILABLE
     static bool inited = false;
     static bool disabled = false;
 
@@ -100,9 +99,9 @@ bool plMaxConfig::AssetManInterfaceDisabled()
 
         plFileName plugDir = GetPluginIni();
         uint32_t len = GetPrivateProfileStringW(L"AssetMan", L"Disable", L"", configstr, MAX_PATH,
-                                                plugDir.AsString().ToWchar());
+                                                plugDir.WideString().data());
 
-        if (wcscmp(configstr, L"1") == 0 || wcsicmp(configstr, L"true") == 0)
+        if (wcscmp(configstr, L"1") == 0 || _wcsicmp(configstr, L"true") == 0)
             disabled = true;
         else
             disabled = false;
@@ -111,4 +110,7 @@ bool plMaxConfig::AssetManInterfaceDisabled()
     }
 
     return disabled;
+#else
+    return true;
+#endif
 }

@@ -40,12 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "../resource.h"
 
-#include <iparamm2.h>
-#include <stdmat.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include "../resource.h"
 
 #include "../plBMSampler.h"
 
@@ -53,39 +51,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLayerTexBitmapPB.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
 
-class plLayerTexClassDesc : public ClassDesc2
+class plLayerTexClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading = FALSE) { return new plLayerTex(); }
-    const TCHAR*    ClassName()     { return GetString(IDS_LAYER); }
-    SClass_ID       SuperClassID()  { return TEXMAP_CLASS_ID; }
-    Class_ID        ClassID()       { return LAYER_TEX_CLASS_ID; }
-    const TCHAR*    Category()      { return TEXMAP_CAT_2D; }
-    const TCHAR*    InternalName()  { return _T("PlasmaLayer"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading = FALSE) override { return new plLayerTex(); }
+    const TCHAR*    ClassName() override    { return GetString(IDS_LAYER); }
+    SClass_ID       SuperClassID() override { return TEXMAP_CLASS_ID; }
+    Class_ID        ClassID() override      { return LAYER_TEX_CLASS_ID; }
+    const TCHAR*    Category() override     { return TEXMAP_CAT_2D; }
+    const TCHAR*    InternalName() override { return _T("PlasmaLayer"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plLayerTexClassDesc plLayerTexDesc;
 ClassDesc2* GetLayerTexDesc() { return &plLayerTexDesc; }
 
-ParamDlg* plLayerTex::fUVGenDlg = NULL;
+ParamDlg* plLayerTex::fUVGenDlg = nullptr;
 
 // For initializing paramblock descriptor
 ParamBlockDesc2 *GetBitmapBlk();
 
 #include "plLayerTexBitmapPB.cpp"
 
-void    plLayerTex::GetClassName( TSTR &s )
+void plLayerTex::IGetClassName(MSTR& s) const
 {
     s = GetString( IDS_LAYER );
 }
 
 plLayerTex::plLayerTex() :
-    fBitmapPB(NULL),
-    fUVGen(NULL),
-    fTexHandle(NULL),
-    fTexTime(0),
-    fBM(NULL),
+    fBitmapPB(),
+    fUVGen(),
+    fTexHandle(),
+    fTexTime(),
+    fBM(),
     fIValid(NEVER)
 {
 #if 0
@@ -114,7 +112,7 @@ plLayerTex::~plLayerTex()
 void plLayerTex::Reset() 
 {
     GetLayerTexDesc()->Reset(this, TRUE);   // reset all pb2's
-    SetBitmap(NULL);
+    SetBitmap(nullptr);
 
     fIValid.SetEmpty();
 }
@@ -196,7 +194,7 @@ RefTargetHandle plLayerTex::GetReference(int i)
     {
         case kRefUVGen:     return fUVGen;
         case kRefBitmap:    return fBitmapPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
@@ -244,7 +242,7 @@ IParamBlock2* plLayerTex::GetParamBlockByID(BlockID id)
     if (fBitmapPB->ID() == id)
         return fBitmapPB;
     else
-        return NULL;
+        return nullptr;
 }
 
 //From ReferenceTarget 
@@ -270,22 +268,22 @@ Animatable* plLayerTex::SubAnim(int i)
     {
         case kRefUVGen:     return fUVGen;
         case kRefBitmap:    return fBitmapPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
-TSTR plLayerTex::SubAnimName(int i) 
+MSTR plLayerTex::ISubAnimName(int i)
 {
     switch (i)
     {
-        case kRefUVGen:     return "UVGen";
+        case kRefUVGen:     return _M("UVGen");
         case kRefBitmap:    return fBitmapPB->GetLocalName();
-        default: return "";
+        default: return _M("");
     }
 }
 
-RefResult plLayerTex::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-   PartID& partID, RefMessage message) 
+RefResult plLayerTex::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+   PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -300,7 +298,7 @@ RefResult plLayerTex::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarg
                 ParamID changingParam = fBitmapPB->LastNotifyParamID();
                 fBitmapPB->GetDesc()->InvalidateUI(changingParam);
 
-                if (changingParam != -1)
+                if (changingParam != -1 && MAX_REF_PROPAGATE_VALUE)
                     IChanged();
             }
         }
@@ -370,7 +368,7 @@ IOResult plLayerTex::Load(ILoad *iload)
 
 bool plLayerTex::HasAlpha()
 {
-   return (fBM != NULL && fBM->HasAlpha() != 0);
+   return (fBM != nullptr && fBM->HasAlpha() != 0);
 }
 
 Bitmap* plLayerTex::GetBitmap(TimeValue t)
@@ -493,7 +491,7 @@ void plLayerTex::IDiscardTexHandle()
     if (fTexHandle)
     {
         fTexHandle->DeleteThis();
-        fTexHandle = NULL;
+        fTexHandle = nullptr;
     }
 }
 
@@ -508,7 +506,7 @@ BITMAPINFO *plLayerTex::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, In
                         // FIXME
     fTexTime = 0;//CalcFrame(t);
 //  texValid = clipValid;
-    BITMAPINFO *bmi = NULL;
+    BITMAPINFO *bmi = nullptr;
     int xflags = 0;
 
     if (fBitmapPB->GetInt(kBmpApply))
@@ -619,7 +617,7 @@ BITMAPINFO *plLayerTex::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, In
     return bmi;
 }
 
-DWORD plLayerTex::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker) 
+DWORD_PTR plLayerTex::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
 {
     // FIXME: ignore validity for now
     if (fTexHandle && fIValid.InInterval(t))// && texTime == CalcFrame(t)) 
@@ -637,7 +635,7 @@ DWORD plLayerTex::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
     }
 }
 
-const char *plLayerTex::GetTextureName()
+const MCHAR* plLayerTex::GetTextureName()
 {
 //  if (fBitmapPB->GetInt(kBmpUseBitmap))
     {
@@ -646,7 +644,7 @@ const char *plLayerTex::GetTextureName()
             return pbbm->bi.Name();
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void plLayerTex::ISetPBBitmap(PBBitmap *pbbm, int index /* = 0 */)

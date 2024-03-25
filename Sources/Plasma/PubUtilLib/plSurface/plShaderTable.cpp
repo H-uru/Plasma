@@ -40,9 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plShaderTable.h"
-
 #include "plShader.h"
 
 using namespace plShaderID;
@@ -90,15 +88,6 @@ using namespace plShaderID;
 #include "vs_GrassShader.h"
 #include "ps_GrassShader.h"
 
-
-plShaderTableInst::plShaderTableInst()
-:   fFlags(0)
-{
-}
-
-plShaderTableInst::~plShaderTableInst()
-{
-}
 
 void plShaderTableInst::Register(const plShaderDecl* decl)
 {

@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plUoid.h"
 #include "pnNetCommon/plNetApp.h"
 
+#include <vector>
+
 class hsKeyedObject;
 class plStatusLog;
 class plNetObjectDebugger : public plNetObjectDebuggerBase
@@ -62,13 +64,14 @@ public:
 private:
     struct DebugObject
     {
-        std::string fObjName;
+        ST::string fObjName;
         plLocation fLoc;
         uint32_t fFlags;
-        bool StringMatches(const char* str) const;  // return true if string matches objName according to flags
+        bool StringMatches(const ST::string& str) const;  // return true if string matches objName according to flags
         bool ObjectMatches(const hsKeyedObject* obj);
-        bool ObjectMatches(const char* objName, const char* pageName);
-        DebugObject(const char* objName, plLocation& loc, uint32_t flags);
+        bool ObjectMatches(const ST::string& objName, const ST::string& pageName);
+        DebugObject(ST::string objName, plLocation& loc, uint32_t flags)
+            : fObjName(std::move(objName)), fLoc(loc), fFlags(flags) { }
     };
     typedef std::vector<DebugObject*> DebugObjectList;
     DebugObjectList fDebugObjects;
@@ -82,18 +85,18 @@ public:
 
     static plNetObjectDebugger* GetInstance();
 
-    bool GetDebugging() const { return fDebugging;  }
-    void SetDebugging(bool b) { fDebugging=b;   }
+    bool GetDebugging() const override { return fDebugging; }
+    void SetDebugging(bool b) override { fDebugging = b; }
 
     // object fxns
-    bool AddDebugObject(const char* objName, const char* pageName=nil);
-    bool RemoveDebugObject(const char* objName, const char* pageName=nil);
+    bool AddDebugObject(ST::string objName, const ST::string& pageName={});
+    bool RemoveDebugObject(const ST::string& objName, const ST::string& pageName={});
     void ClearAllDebugObjects();
     int GetNumDebugObjects() const { return fDebugObjects.size(); }
-    bool IsDebugObject(const hsKeyedObject* obj) const;
+    bool IsDebugObject(const hsKeyedObject* obj) const override;
 
-    void LogMsgIfMatch(const char* msg) const;      // write to status log if there's a string match
-    void LogMsg(const char* msg) const;
+    void LogMsgIfMatch(const ST::string& msg) const override;      // write to status log if there's a string match
+    void LogMsg(const ST::string& msg) const override;
 };
 
 #endif      // plNetObjectDebugger_inc

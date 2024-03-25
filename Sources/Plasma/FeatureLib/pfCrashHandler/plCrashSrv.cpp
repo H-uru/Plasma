@@ -44,20 +44,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCrash_Private.h"
 #include "plProduct.h"
 #include "plFileSystem.h"
+#include "plStackWalker.h"
+
+#include <string_theory/stdio>
 
 #ifdef HS_BUILD_FOR_WIN32
 
 #include <dbghelp.h>
 #include <shlobj.h>
 
-plCrashSrv::plCrashSrv(const char* file)
-    : fLink(nil), fLinkH(nil)
+plCrashSrv::plCrashSrv(const ST::string& file)
+    : fLink(), fLinkH()
 {
     // Init semas
     IInit(file);
 
     // Open the linked memory
-    fLinkH = OpenFileMappingA(FILE_MAP_ALL_ACCESS, FALSE, file);
+    fLinkH = OpenFileMappingW(FILE_MAP_ALL_ACCESS, FALSE, file.to_wchar().data());
     hsAssert(fLinkH, "Failed to open plCrashHandler mapping");
     if (!fLinkH)
         return;
@@ -69,52 +72,95 @@ plCrashSrv::plCrashSrv(const char* file)
 
 plCrashSrv::~plCrashSrv()
 {
-    if (fLink)
+    if (fLink) {
+        fLink->fSrvReady = false;
         UnmapViewOfFile((LPCVOID)fLink);
+    }
     if (fLinkH)
         CloseHandle(fLinkH);
 }
 
-void plCrashSrv::IHandleCrash()
+static inline bool IGetCrashedThreadContext(HANDLE process, const LPEXCEPTION_POINTERS ptrs, LPCONTEXT context)
+{
+    if (process == GetCurrentProcess()) {
+        memcpy(context, ptrs->ContextRecord, sizeof(CONTEXT));
+        return true;
+    }
+
+    EXCEPTION_POINTERS ex{};
+    SIZE_T nread;
+    BOOL result = ReadProcessMemory(process, ptrs, &ex, sizeof(ex), &nread);
+    if (result == FALSE || nread != sizeof(ex))
+        return false;
+
+    // Assumption: the crashing process and the crash handler process are using the same arch.
+    // So, in other words, don't mix a 32-bit plClient and 64-bit plCrashHandler.
+    // This assumption is also baked into plStackWalker, so meh.
+    result = ReadProcessMemory(process, ex.ContextRecord, context, sizeof(CONTEXT), &nread);
+    if (result == FALSE || nread != sizeof(CONTEXT))
+        return false;
+    return true;
+}
+
+std::vector<plStackEntry> plCrashSrv::IHandleCrash()
 {
     plFileName dumpPath = plFileName::Join(plFileSystem::GetLogPath(), "crash.dmp");
-    HANDLE file = CreateFileW(dumpPath.AsString().ToWchar(),
+    HANDLE file = CreateFileW(dumpPath.WideString().data(),
                               GENERIC_WRITE,
                               0,
-                              NULL,
+                              nullptr,
                               CREATE_ALWAYS,
                               FILE_ATTRIBUTE_NORMAL,
-                              NULL
+                              nullptr
     );
 
-    MINIDUMP_EXCEPTION_INFORMATION e;
+    MINIDUMP_EXCEPTION_INFORMATION e{};
     e.ClientPointers = TRUE;
     e.ExceptionPointers = fLink->fExceptionPtrs;
     e.ThreadId = fLink->fClientThreadID;
-    MiniDumpWriteDump(fLink->fClientProcess, fLink->fClientProcessID, file, MiniDumpNormal, &e, NULL, NULL);
+    MiniDumpWriteDump(fLink->fClientProcess, fLink->fClientProcessID, file, MiniDumpNormal, &e, nullptr, nullptr);
     CloseHandle(file);
+
+    CONTEXT context;
+    std::vector<plStackEntry> trace;
+    if (IGetCrashedThreadContext(fLink->fClientProcess, fLink->fExceptionPtrs, &context)) {
+        plStackWalker walker(fLink->fClientProcess, fLink->fClientThread, &context);
+        std::copy(walker.begin(), walker.cend(), std::back_inserter(trace));
+    } else {
+        ST::printf(stderr, "Unable to read the crashed thread's context. No stack trace will be available.");
+    }
+    return trace;
 }
 
 #else
 #   error "Implement plCrashSrv for this platform"
 #endif
 
-void plCrashSrv::HandleCrash()
+std::tuple<plCrashResult, std::vector<plStackEntry>> plCrashSrv::HandleCrash()
 {
     if (!fLink)
         FATAL("plCrashMemLink is nil!");
+    if (fLink->fVersion != CRASH_LINK_VERSION)
+        FATAL("plCrashMemLink version mismatch");
     fLink->fSrvReady = true; // mark us as ready to receive crashes
 
 #ifdef HS_BUILD_FOR_WIN32
     // In Win32 land we have to hackily handle the client process exiting, so we'll wait on both
     // the crashed semaphore and the client process...
     HANDLE hack[2] = { fLink->fClientProcess, fCrashed->GetHandle() };
-    DWORD result = WaitForMultipleObjects(arrsize(hack), hack, FALSE, INFINITE);
+    DWORD result = WaitForMultipleObjects(std::size(hack), hack, FALSE, INFINITE);
     hsAssert(result != WAIT_FAILED, "WaitForMultipleObjects failed");
 #else
     fCrashed->Wait();
 #endif
+
+    std::tuple<plCrashResult, std::vector<plStackEntry>> retval;
     if (fLink->fCrashed)
-        IHandleCrash();
+        retval = std::make_tuple(plCrashResult::kClientCrashed, IHandleCrash());
+    else
+        retval = std::make_tuple<plCrashResult, std::vector<plStackEntry>>(plCrashResult::kClientExited, {});
+
+    fLink->fSrvReady = false;
     fHandled->Signal(); // Tell CrashCli we handled it
+    return retval;
 }

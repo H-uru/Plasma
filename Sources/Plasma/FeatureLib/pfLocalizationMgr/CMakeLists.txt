@@ -1,9 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-
-include_directories(${EXPAT_INCLUDE_DIR})
-
 if(WIN32)
     add_definitions(-DWIN32)
 
@@ -24,7 +18,18 @@ set(pfLocalizationMgr_HEADERS
     pfLocalizedString.h
 )
 
-add_library(pfLocalizationMgr STATIC ${pfLocalizationMgr_SOURCES} ${pfLocalizationMgr_HEADERS})
+plasma_library(pfLocalizationMgr SOURCES ${pfLocalizationMgr_SOURCES} ${pfLocalizationMgr_HEADERS})
+
+target_link_libraries(
+    pfLocalizationMgr
+    PUBLIC
+        CoreLib
+    PRIVATE
+        plFile
+        plResMgr
+        plStatusLog
+        expat::expat
+)
 
 source_group("Source Files" FILES ${pfLocalizationMgr_SOURCES})
 source_group("Header Files" FILES ${pfLocalizationMgr_HEADERS})

@@ -42,8 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plCmdParser.h"
 
-#include <vector>
+#include "HeadSpin.h"
+
 #include <algorithm>
+#include <regex>
+#include <vector>
 
 #define  WHITESPACE     " \"\t\r\n\x1A"
 #define  FLAGS          "-/"
@@ -66,7 +69,7 @@ struct plCmdArgData
         uint32_t    uintVal;
     } val;
 
-    plString    buffer;
+    ST::string  buffer;
     size_t      nameChars;
     bool        isSpecified;
 };
@@ -80,27 +83,27 @@ struct plCmdTokenState {
 class plCmdParserImpl
 {
 protected:
-    plString                    fProgramName;
+    ST::string                  fProgramName;
     std::vector<plCmdArgData>   fArgArray;
-    std::vector<uint32_t>       fLookupArray;
-    std::vector<uint32_t>       fUnflaggedArray;
-    uint32_t                    fRequiredCount;
+    std::vector<size_t>         fLookupArray;
+    std::vector<size_t>         fUnflaggedArray;
+    size_t                      fRequiredCount;
     CmdError                    fError;
 
     void SetDefaultValue(plCmdArgData& arg);
-    bool ProcessValue(plCmdTokenState* state, size_t index, const plString& str);
-    bool TokenizeFlags(plCmdTokenState* state, const plString& str);
-    bool LookupFlagged(plString& name, size_t* lastIndex, bool force=false) const;
+    bool ProcessValue(plCmdTokenState* state, size_t index, const ST::string& str);
+    bool TokenizeFlags(plCmdTokenState* state, const ST::string& str);
+    bool LookupFlagged(ST::string& name, size_t* lastIndex, bool force=false) const;
 
 public:
     plCmdParserImpl(const plCmdArgDef* defs, size_t defCount);
 
-    bool Tokenize(plCmdTokenState* state, std::vector<plString>& strs);
-    const plCmdArgData* FindArgByName(const plString& name) const;
+    bool Tokenize(plCmdTokenState* state, std::vector<ST::string>& strs);
+    const plCmdArgData* FindArgByName(const ST::string& name) const;
     const plCmdArgData* FindArgById(size_t id) const;
     bool CheckAllRequiredArguments(plCmdTokenState* state);
 
-    const plString GetProgramName() const { return fProgramName; }
+    const ST::string GetProgramName() const { return fProgramName; }
 
     CmdError GetError() const { return fError; }
 };
@@ -126,13 +129,13 @@ plCmdParserImpl::plCmdParserImpl(const plCmdArgDef* defs, size_t defCount)
                                        kCmdArgMask);
 
         // Disallow names on unflagged arguments
-        ASSERT(flagged || !def.name.IsEmpty());
+        ASSERT(flagged || !def.name.empty());
 
         // Store the argument data
         plCmdArgData& arg = fArgArray[loop];
         arg.def           = def;
-        arg.buffer        = "";
-        arg.nameChars     = def.name.GetSize();
+        arg.buffer        = ST::string();
+        arg.nameChars     = def.name.size();
         arg.isSpecified   = false;
 
         SetDefaultValue(arg);
@@ -220,12 +223,12 @@ void plCmdParserImpl::SetDefaultValue(plCmdArgData& arg)
 }
 
 
-bool plCmdParserImpl::Tokenize(plCmdTokenState* state, std::vector<plString>& strs)
+bool plCmdParserImpl::Tokenize(plCmdTokenState* state, std::vector<ST::string>& strs)
 {
     bool result = true;
 
     for (auto it = strs.begin(); result && it != strs.end(); ++it) {
-        if (fProgramName.IsEmpty()) {
+        if (fProgramName.empty()) {
             fProgramName = *it;
             continue;
         }
@@ -239,7 +242,8 @@ bool plCmdParserImpl::Tokenize(plCmdTokenState* state, std::vector<plString>& st
         }
 
         // Identify and process flagged parameters
-        if ((*it).REMatch("[" FLAGS "].+") && TokenizeFlags(state, *it)) {
+        static const std::regex re_flags("[" FLAGS "].+");
+        if (std::regex_match(it->c_str(), re_flags) && TokenizeFlags(state, *it)) {
             continue;
         }
 
@@ -261,7 +265,7 @@ bool plCmdParserImpl::Tokenize(plCmdTokenState* state, std::vector<plString>& st
 }
 
 
-bool plCmdParserImpl::ProcessValue(plCmdTokenState* state, size_t index, const plString& str)
+bool plCmdParserImpl::ProcessValue(plCmdTokenState* state, size_t index, const ST::string& str)
 {
     plCmdArgData& arg = fArgArray[index];
     arg.isSpecified = true;
@@ -269,11 +273,11 @@ bool plCmdParserImpl::ProcessValue(plCmdTokenState* state, size_t index, const p
 
     switch (argType) {
     case kCmdTypeBool:
-        if (str.CompareI("true") == 0)
+        if (str.compare_i("true") == 0)
             arg.val.boolVal = true;
-        else if (str.CompareI("false") == 0)
+        else if (str.compare_i("false") == 0)
             arg.val.boolVal = false;
-        else if (str.IsEmpty())
+        else if (str.empty())
             arg.val.boolVal = hsCheckFlagBits(arg.def.flags,
                                               kCmdBoolSet,
                                               kCmdBoolMask);
@@ -282,11 +286,11 @@ bool plCmdParserImpl::ProcessValue(plCmdTokenState* state, size_t index, const p
         break;
 
     case kCmdTypeFloat:
-        arg.val.floatVal = str.ToFloat();
+        arg.val.floatVal = str.to_float();
         break;
 
     case kCmdTypeInt:
-        arg.val.intVal = str.ToInt();
+        arg.val.intVal = str.to_int();
         break;
 
     case kCmdTypeString:
@@ -295,7 +299,7 @@ bool plCmdParserImpl::ProcessValue(plCmdTokenState* state, size_t index, const p
         break;
 
     case kCmdTypeUint:
-        arg.val.uintVal = str.ToUInt(10);
+        arg.val.uintVal = str.to_uint(10);
         break;
 
     DEFAULT_FATAL(argType);
@@ -304,18 +308,20 @@ bool plCmdParserImpl::ProcessValue(plCmdTokenState* state, size_t index, const p
     return true;
 }
 
-bool plCmdParserImpl::TokenizeFlags(plCmdTokenState* state, const plString& str)
+bool plCmdParserImpl::TokenizeFlags(plCmdTokenState* state, const ST::string& str)
 {
     bool result = true;
-    std::vector<plString> tokens = str.Tokenize(ALL);
+    std::vector<ST::string> tokens = str.tokenize(WHITESPACE SEPARATORS);
 
     for (auto it = tokens.begin(); result && it != tokens.end(); ++it) {
         size_t lastIndex = size_t(-1);
-        plString buffer = *it;
+        ST::string buffer = *it;
 
-        if (buffer.IsEmpty()) {
+        if (buffer.empty()) {
             continue;
         }
+        
+        buffer = buffer.trim_left(FLAGS);
 
         while (result) {
             // Lookup the argument name
@@ -333,7 +339,8 @@ bool plCmdParserImpl::TokenizeFlags(plCmdTokenState* state, const plString& str)
         }
 
         // Check for an argument value provided using a separator
-        if (str.REMatch(".+[" SEPARATORS "].+") && !(*(++it)).IsEmpty()) {
+        static const std::regex re_separators(".+[" SEPARATORS "].+");
+        if (std::regex_match(str.c_str(), re_separators) && !(*(++it)).empty()) {
             result = ProcessValue(state, lastIndex, *it);
             break;
         }
@@ -344,14 +351,14 @@ bool plCmdParserImpl::TokenizeFlags(plCmdTokenState* state, const plString& str)
 
         // Process values for boolean arguments
         if (isBool) {
-            result = ProcessValue(state, lastIndex, plString::Null);
+            result = ProcessValue(state, lastIndex, ST::string());
             continue;
         }
 
         // Process values for non-boolean arguments
         else {
             // Check for an argument value immediately following the name
-            if (!buffer.IsEmpty()) {
+            if (!buffer.empty()) {
                 result = ProcessValue(state, lastIndex, buffer);
                 break;
             }
@@ -367,17 +374,17 @@ bool plCmdParserImpl::TokenizeFlags(plCmdTokenState* state, const plString& str)
     return result;
 }
 
-bool plCmdParserImpl::LookupFlagged(plString& name, size_t* lastIndex, bool force) const
+bool plCmdParserImpl::LookupFlagged(ST::string& name, size_t* lastIndex, bool force) const
 {
     size_t argCount  = fArgArray.size();
-    size_t chars     = name.GetSize();
+    size_t chars     = name.size();
     size_t bestIndex = size_t(-1);
     size_t bestChars = 0;
 
 
     size_t prevChars = 0;
     if (*lastIndex != size_t(-1)) {
-        prevChars = fArgArray[*lastIndex].def.name.GetSize();
+        prevChars = fArgArray[*lastIndex].def.name.size();
     }
 
     for (; prevChars != size_t(-1) && !bestChars; --prevChars) {
@@ -393,7 +400,7 @@ bool plCmdParserImpl::LookupFlagged(plString& name, size_t* lastIndex, bool forc
                 continue;
 
             // Ignore this arg if it wouldn't beat the previous best match
-            if (arg.def.name.GetSize() < bestChars + prevChars)
+            if (arg.def.name.size() < bestChars + prevChars)
                 continue;
 
             // Ignore this argument if it doesn't match the prefix
@@ -403,45 +410,45 @@ bool plCmdParserImpl::LookupFlagged(plString& name, size_t* lastIndex, bool forc
             if (prevChars) {
                 const plCmdArgData& prev = fArgArray[*lastIndex];
 
-                if (prevChars >= arg.def.name.GetSize())
+                if (prevChars >= arg.def.name.size())
                     continue;
 
                 if (caseSensitive &&
-                    arg.def.name.CompareN(prev.def.name, prevChars))
+                    arg.def.name.compare_n(prev.def.name, prevChars))
                     continue;
 
                 if (!caseSensitive &&
-                    arg.def.name.CompareNI(prev.def.name, prevChars))
+                    arg.def.name.compare_ni(prev.def.name, prevChars))
                     continue;
             }
 
             // Ignore this argument if it doesn't match the suffix
-            plString suffix = arg.def.name.Substr(prevChars);
-            if (caseSensitive && suffix.CompareN(name, std::min(name.GetSize(), suffix.GetSize())))
+            ST::string suffix = arg.def.name.substr(prevChars);
+            if (caseSensitive && suffix.compare_n(name, std::min(name.size(), suffix.size())))
                 continue;
 
-            if (!caseSensitive && suffix.CompareNI(name, std::min(name.GetSize(), suffix.GetSize())))
+            if (!caseSensitive && suffix.compare_ni(name, std::min(name.size(), suffix.size())))
                 continue;
 
             // Track the best match
             bestIndex = index;
-            bestChars = arg.def.name.GetSize() - prevChars;
+            bestChars = arg.def.name.size() - prevChars;
             if (bestChars == chars)
                 break;
         }
     }
 
     // Return the result
-    name        = name.Substr(bestChars);
+    name        = name.substr(bestChars);
     *lastIndex  = bestIndex;
     return bestChars != 0;
 }
 
-const plCmdArgData* plCmdParserImpl::FindArgByName(const plString& name) const
+const plCmdArgData* plCmdParserImpl::FindArgByName(const ST::string& name) const
 {
     // Search for an argument with this name
     size_t index = size_t(-1);
-    plString arg = name;
+    ST::string arg = name;
     if (!LookupFlagged(arg, &index, true)) {
         return nullptr;
     }
@@ -501,7 +508,7 @@ void plCmdParser::Initialize(const plCmdArgDef* defs, size_t defCount)
     fParser = new plCmdParserImpl(defs, defCount);
 }
 
-bool plCmdParser::Parse(const plString& cmdLine)
+bool plCmdParser::Parse(const ST::string& cmdLine)
 {
     // Process the command line
     plCmdTokenState state = {
@@ -509,7 +516,7 @@ bool plCmdParser::Parse(const plString& cmdLine)
         0           // unflagged index
     };
 
-    std::vector<plString> tokens = cmdLine.Tokenize(WHITESPACE);
+    std::vector<ST::string> tokens = cmdLine.tokenize(WHITESPACE);
 
     bool result = fParser->Tokenize(&state, tokens);
 
@@ -520,7 +527,7 @@ bool plCmdParser::Parse(const plString& cmdLine)
     return result;
 }
 
-bool plCmdParser::Parse(std::vector<plString>& argv)
+bool plCmdParser::Parse(std::vector<ST::string>& argv)
 {
     // Process the command line
     plCmdTokenState state = {
@@ -538,7 +545,7 @@ bool plCmdParser::Parse(std::vector<plString>& argv)
 }
 
 
-const plString plCmdParser::GetProgramName() const
+ST::string plCmdParser::GetProgramName() const
 {
     return fParser->GetProgramName();
 }
@@ -549,7 +556,7 @@ bool plCmdParser::GetBool(size_t id) const
     return fParser->FindArgById(id)->val.boolVal;
 }
 
-bool plCmdParser::GetBool(const plString& name) const
+bool plCmdParser::GetBool(const ST::string& name) const
 {
     return fParser->FindArgByName(name)->val.boolVal;
 }
@@ -559,7 +566,7 @@ float plCmdParser::GetFloat(size_t id) const
     return fParser->FindArgById(id)->val.floatVal;
 }
 
-float plCmdParser::GetFloat(const plString& name) const
+float plCmdParser::GetFloat(const ST::string& name) const
 {
     return fParser->FindArgByName(name)->val.floatVal;
 }
@@ -569,17 +576,17 @@ int32_t plCmdParser::GetInt(size_t id) const
     return fParser->FindArgById(id)->val.intVal;
 }
 
-int32_t plCmdParser::GetInt(const plString& name) const
+int32_t plCmdParser::GetInt(const ST::string& name) const
 {
     return fParser->FindArgByName(name)->val.intVal;
 }
 
-const plString plCmdParser::GetString(size_t id) const
+ST::string plCmdParser::GetString(size_t id) const
 {
     return fParser->FindArgById(id)->val.strVal;
 }
 
-const plString plCmdParser::GetString(const plString& name) const
+ST::string plCmdParser::GetString(const ST::string& name) const
 {
     return fParser->FindArgByName(name)->val.strVal;
 }
@@ -589,7 +596,7 @@ uint32_t plCmdParser::GetUint(size_t id) const
     return fParser->FindArgById(id)->val.uintVal;
 }
 
-uint32_t plCmdParser::GetUint(const plString& name) const
+uint32_t plCmdParser::GetUint(const ST::string& name) const
 {
     return fParser->FindArgByName(name)->val.uintVal;
 }
@@ -603,7 +610,7 @@ bool plCmdParser::IsSpecified(size_t id) const
     return false;
 }
 
-bool plCmdParser::IsSpecified(const plString& name) const
+bool plCmdParser::IsSpecified(const ST::string& name) const
 {
     if (const plCmdArgData* data = fParser->FindArgByName(name)) {
         return data->isSpecified;

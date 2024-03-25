@@ -42,7 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayerSDLModifier_inc
 #define plLayerSDLModifier_inc
 
-#include "plModifier/plAnimTimeConvertSDLModifier.h"
+#include "plAnimTimeConvertSDLModifier.h"
+
+#include "pnNetCommon/plSDLTypes.h"
 
 //
 // This modifier is responsible for sending and recving 
@@ -65,19 +67,19 @@ protected:
     //static char   kStrOpacity[];
     plLayerAnimation* fLayerAnimation;
 
-    void IPutCurrentStateIn(plStateDataRecord* dstState);
-    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState) override;
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
 public:
     CLASSNAME_REGISTER( plLayerSDLModifier);
     GETINTERFACE_ANY( plLayerSDLModifier, plAnimTimeConvertSDLModifier);
         
-    plLayerSDLModifier() : fLayerAnimation(nil) {}
-    
-    const char* GetSDLName() const { return kSDLLayer; }
-    
+    plLayerSDLModifier() : fLayerAnimation() { }
+
+    const char* GetSDLName() const override { return kSDLLayer; }
+
     plLayerAnimation* GetLayerAnimation() const { return fLayerAnimation; }
-    void SetLayerAnimation(plLayerAnimation* l) { fLayerAnimation=l; AddTarget(nil); }
-    plKey GetStateOwnerKey() const;
+    void SetLayerAnimation(plLayerAnimation* l) { fLayerAnimation = l; AddTarget(nullptr); }
+    plKey GetStateOwnerKey() const override;
 };
 
 #endif  // plLayerSDLModifier_inc

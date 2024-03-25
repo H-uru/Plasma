@@ -46,12 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "../resource.h"
 
-#include <iparamm2.h>
-#include <stdmat.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include "../resource.h"
 
 #include "plPassAnimDlgProc.h"
 
@@ -72,20 +70,20 @@ using namespace plPassBaseParamIDs;
 
 plPassAnimDlgProc::plPassAnimDlgProc()
 {
-    fCurrParamMap = nil;
+    fCurrParamMap = nullptr;
     fInitingNames = false;
 }
 
 plPassAnimDlgProc::~plPassAnimDlgProc()
 {
-    if( fCurrParamMap != nil )
+    if (fCurrParamMap != nullptr)
     {
         plPassMtlBase *mtl = (plPassMtlBase *)( fCurrParamMap->GetParamBlock()->GetOwner() );
         mtl->RegisterChangeCallback( this );
     }
 }
 
-plPassAnimDlgProc   &plPassAnimDlgProc::Get( void )
+plPassAnimDlgProc   &plPassAnimDlgProc::Get()
 {
     static plPassAnimDlgProc    instance;
     return instance;
@@ -94,7 +92,7 @@ plPassAnimDlgProc   &plPassAnimDlgProc::Get( void )
 void plPassAnimDlgProc::Update(TimeValue t, Interval& valid, IParamMap2* pmap)
 {
 /*  plAnimStealthNode *testStealth = (plAnimStealthNode *)pmap->GetParamBlock()->GetINode( (ParamID)kPBAnimTESTING );
-    if( testStealth != nil )
+    if (testStealth != nullptr)
     {
         IParamBlock2 *pb = testStealth->GetParamBlockByID( plAnimStealthNode::kBlockPB );
         if( pb && pb->GetMap() && pb->GetMap()->GetUserDlgProc() )
@@ -107,11 +105,11 @@ void plPassAnimDlgProc::Update(TimeValue t, Interval& valid, IParamMap2* pmap)
     plAnimComponentProc::SetBoxToAgeGlobal(GetDlgItem(hWnd, IDC_MTL_GLOBAL_NAME), pb->GetStr(ParamID(kPBAnimGlobalName)));  
 }
 
-BOOL plPassAnimDlgProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plPassAnimDlgProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if( fCurrParamMap != pMap )
     {
-        if( fCurrParamMap != nil )
+        if (fCurrParamMap != nullptr)
         {
             plPassMtlBase *mtl = (plPassMtlBase *)( fCurrParamMap->GetParamBlock()->GetOwner() );
             mtl->UnregisterChangeCallback( this );
@@ -119,7 +117,7 @@ BOOL plPassAnimDlgProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UINT m
 
         fCurrParamMap = pMap;
 
-        if( fCurrParamMap != nil )
+        if (fCurrParamMap != nullptr)
         {
             plPassMtlBase *mtl = (plPassMtlBase *)( fCurrParamMap->GetParamBlock()->GetOwner() );
             mtl->RegisterChangeCallback( this );
@@ -129,23 +127,23 @@ BOOL plPassAnimDlgProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UINT m
     IParamBlock2 *pb = pMap->GetParamBlock();
     plPassMtlBase *mtl = (plPassMtlBase*)pb->GetOwner();
     HWND gWnd = GetDlgItem(hWnd, IDC_MTL_GLOBAL_NAME);  
-    char buff[512];
+    TCHAR buff[512];
 
     switch (msg)
     {
         case WM_DESTROY:
-            if( fCurrParamMap != nil )
+            if (fCurrParamMap != nullptr)
             {
                 plPassMtlBase *mtl = (plPassMtlBase *)( fCurrParamMap->GetParamBlock()->GetOwner() );
                 mtl->RegisterChangeCallback( this );
-                fCurrParamMap = nil;
+                fCurrParamMap = nullptr;
             }
             break;
 
         case WM_INITDIALOG:
             {
                 fhWnd = hWnd;
-                fCurrStealth = nil;
+                fCurrStealth = nullptr;
                 IInitControls(mtl, pb);
 
                 plAnimComponentProc::FillAgeGlobalComboBox(gWnd, pb->GetStr(ParamID(kPBAnimGlobalName)));                           
@@ -179,7 +177,7 @@ BOOL plPassAnimDlgProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UINT m
             else if (HIWORD(wParam) == CBN_SELCHANGE && LOWORD(wParam) == IDC_MTL_GLOBAL_NAME)
             {
                 ComboBox_GetLBText(gWnd, ComboBox_GetCurSel(gWnd), buff);
-                pb->SetValue(ParamID(kPBAnimGlobalName), 0, _T(buff));
+                pb->SetValue(ParamID(kPBAnimGlobalName), 0, buff);
             }           
             else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_MTL_USE_GLOBAL)
             {
@@ -192,9 +190,9 @@ BOOL plPassAnimDlgProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UINT m
     return FALSE;
 }
 
-void    plPassAnimDlgProc::SegmentListChanged( void )
+void    plPassAnimDlgProc::SegmentListChanged()
 {
-    if( fCurrParamMap != nil )
+    if (fCurrParamMap != nullptr)
         ILoadNames( fCurrParamMap->GetParamBlock() );
 }
 
@@ -205,14 +203,14 @@ void    plPassAnimDlgProc::IUpdateSegmentSel( IParamMap2 *thisMap, bool clear )
     
     // Get current selection
     if( clear )
-        newStealth = nil;
+        newStealth = nullptr;
     else
     {
-        int sel = SendDlgItemMessage( fhWnd, IDC_NAMES, CB_GETCURSEL, 0, 0 );
+        int sel = (int)SendDlgItemMessage(fhWnd, IDC_NAMES, CB_GETCURSEL, 0, 0);
         if( sel == CB_ERR )
         {
             // Somehow we don't have a selection...fine, just destroy
-            newStealth = nil;
+            newStealth = nullptr;
         }
         else
         {
@@ -224,18 +222,18 @@ void    plPassAnimDlgProc::IUpdateSegmentSel( IParamMap2 *thisMap, bool clear )
     if( newStealth == fCurrStealth )
         return;
 
-    if( fCurrStealth != nil && newStealth != nil )
+    if (fCurrStealth != nullptr && newStealth != nullptr)
     {
         fCurrStealth->SwitchDlg( newStealth );
     }
     else
     {
         // Destroy the old
-        if( fCurrStealth != nil )
+        if (fCurrStealth != nullptr)
             fCurrStealth->ReleaseDlg();
 
         // Show the new
-        if( newStealth != nil )
+        if (newStealth != nullptr)
             IExposeStealthNode( newStealth, thisMap );
     }
 
@@ -292,9 +290,9 @@ void plPassAnimDlgProc::ILoadNames(IParamBlock2 *pb )
     for( i = 0; i < count; i++ )
     {
         plAnimStealthNode *stealth = mtl->IGetStealth( i, false );
-        if( stealth != nil )
+        if (stealth != nullptr)
         {
-            int idx = SendMessage( hAnims, CB_ADDSTRING, 0, (LPARAM)stealth->GetSegmentName().c_str() );
+            int idx = (int)SendMessage(hAnims, CB_ADDSTRING, 0, (LPARAM)ST2T(stealth->GetSegmentName()));
             SendMessage( hAnims, CB_SETITEMDATA, idx, (LPARAM)stealth );
         }
     }
@@ -310,8 +308,8 @@ void plPassAnimDlgProc::IEnableGlobal(HWND hWnd, bool enable)
     Edit_Enable(GetDlgItem(hWnd, IDC_MTL_GLOBAL_NAME), enable);
     ComboBox_Enable(GetDlgItem(hWnd, IDC_NAMES), !enable);
 
-    HWND stealthWnd = ( fCurrStealth != nil ) ? fCurrStealth->GetWinDlg() : nil;
-    if( stealthWnd != nil )
+    HWND stealthWnd = (fCurrStealth != nullptr) ? fCurrStealth->GetWinDlg() : nullptr;
+    if (stealthWnd != nullptr)
         EnableWindow( stealthWnd, !enable );
 }
 

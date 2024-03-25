@@ -49,8 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
 #include "hsRefCnt.h"
+
+#include "pyGlueDefinitions.h"
 
 struct RelVaultNode;
 
@@ -61,8 +62,8 @@ class pyVaultNodeRef
 
 protected:
     // should only be created from C++ side
-    pyVaultNodeRef(RelVaultNode * parent, RelVaultNode * child);
-    pyVaultNodeRef(int =0 );
+    pyVaultNodeRef(hsRef<RelVaultNode> parent, hsRef<RelVaultNode> child);
+    pyVaultNodeRef(std::nullptr_t = nullptr);
 
 public:
     hsRef<RelVaultNode> GetParentNode() const;
@@ -71,7 +72,7 @@ public:
     // required functions for PyObject interoperability
     PYTHON_EXPOSE_TYPE; // so we can subclass
     PYTHON_CLASS_NEW_FRIEND(ptVaultNodeRef);
-    static PyObject *New(RelVaultNode * parent, RelVaultNode * child);
+    static PyObject *New(hsRef<RelVaultNode> parent, hsRef<RelVaultNode> child);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultNodeRef object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultNodeRef); // converts a PyObject to a pyVaultNodeRef (throws error if not correct type)
 

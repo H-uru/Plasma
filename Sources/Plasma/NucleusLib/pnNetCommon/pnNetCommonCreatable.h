@@ -44,23 +44,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-#include "plSynchedObject.h"
-REGISTER_CREATABLE( plSynchedObject );
-
-#include "plNetApp.h"
-REGISTER_NONCREATABLE( plNetApp );
-REGISTER_NONCREATABLE( plNetClientApp );
-REGISTER_NONCREATABLE( plNetServerApp );
+#include "plCreatableUuid.h"
+REGISTER_CREATABLE(plCreatableUuid);
 
 #include "plGenericVar.h"
-REGISTER_CREATABLE( plCreatableGenericValue );
+REGISTER_CREATABLE(plCreatableGenericValue);
+
+#include "plNetApp.h"
+REGISTER_NONCREATABLE(plNetApp);
+REGISTER_NONCREATABLE(plNetClientApp);
+REGISTER_NONCREATABLE(plNetServerApp);
+
 #include "pnNetCommon.h"
-REGISTER_CREATABLE( plCreatableStream );
+REGISTER_CREATABLE(plCreatableStream);
 
-#include "plCreatableUuid.h"
-REGISTER_CREATABLE( plCreatableUuid );
-
+#include "plSynchedObject.h"
+REGISTER_CREATABLE(plSynchedObject);
 
 #endif // pnNetCommonCreatable_inc
-
-

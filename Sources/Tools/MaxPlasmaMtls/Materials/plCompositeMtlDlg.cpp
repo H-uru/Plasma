@@ -40,12 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "../resource.h"
 
-#include <iparamb2.h>
-#include <maxicon.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include "../resource.h"
 
 #include "plCompositeMtl.h"
 #include "plCompositeMtlDlg.h"
@@ -72,14 +70,14 @@ plCompositeMtlDlg::plCompositeMtlDlg(HWND hwMtlEdit, IMtlParams *imp, plComposit
     fDADMgr.Init(this);
 
     fhMtlEdit = hwMtlEdit;
-    fhRollup = NULL;
+    fhRollup = nullptr;
     fMtl = m;
     fPBlock = fMtl->GetParamBlockByID(plCompositeMtl::kBlkPasses);
     ip = imp;
     valid = FALSE;
 
     for (int i = 0; i < NSUBMTLS; i++)
-        fLayerBtns[i] = NULL;
+        fLayerBtns[i] = nullptr;
 
     curTime = imp->GetTime();
 
@@ -87,23 +85,23 @@ plCompositeMtlDlg::plCompositeMtlDlg(HWND hwMtlEdit, IMtlParams *imp, plComposit
         hInstance,
         MAKEINTRESOURCE(IDD_COMPOSITE),
         ForwardProc,
-        "Composite Parameters",
+        _M("Composite Parameters"),
         (LPARAM)this);
 }
 
 plCompositeMtlDlg::~plCompositeMtlDlg()
 {
-    fMtl->SetParamDlg(NULL);
+    fMtl->SetParamDlg(nullptr);
     for (int i = 0; i < NSUBMTLS; i++)
     {
         ReleaseICustButton(fLayerBtns[i]);
-        fLayerBtns[i] = NULL; 
+        fLayerBtns[i] = nullptr;
     }
 
-    SetWindowLong(fhRollup, GWL_USERDATA, NULL);
+    SetWindowLongPtr(fhRollup, GWLP_USERDATA, 0L);
     ip->DeleteRollupPage(fhRollup);
 
-    fhRollup = NULL;
+    fhRollup = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -117,7 +115,7 @@ void plCompositeMtlDlg::SetThing(ReferenceTarget *m)
 
     // Bad?
     if (fMtl) 
-        fMtl->SetParamDlg(NULL);
+        fMtl->SetParamDlg(nullptr);
     fMtl = (plCompositeMtl *)m;
     if (fMtl)
         fMtl->SetParamDlg(this);
@@ -160,18 +158,18 @@ int plCompositeMtlDlg::FindSubMtlFromHWND(HWND hwnd)
     return -1;
 }
 
-BOOL plCompositeMtlDlg::ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
+INT_PTR plCompositeMtlDlg::ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     plCompositeMtlDlg *theDlg;
     if (msg == WM_INITDIALOG)
     {
         theDlg = (plCompositeMtlDlg*)lParam;
         theDlg->fhRollup = hDlg;
-        SetWindowLong(hDlg, GWL_USERDATA, lParam);
+        SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
     }
     else
     {
-        if ((theDlg = (plCompositeMtlDlg *)GetWindowLong(hDlg, GWL_USERDATA)) == NULL)
+        if (theDlg = (plCompositeMtlDlg *)GetWindowLongPtr(hDlg, GWLP_USERDATA); theDlg == nullptr)
             return FALSE; 
     }
 
@@ -183,7 +181,7 @@ BOOL plCompositeMtlDlg::ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
 //----------------------------------------------------------------------------
 // Layer panel processor
 //----------------------------------------------------------------------------
-BOOL plCompositeMtlDlg::LayerPanelProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plCompositeMtlDlg::LayerPanelProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     int id = LOWORD(wParam);
     int code = HIWORD(wParam);
@@ -200,7 +198,7 @@ BOOL plCompositeMtlDlg::LayerPanelProc(HWND hDlg, UINT msg, WPARAM wParam, LPARA
 
                 if (i > 0) // the first material doesn't get one, nyah nyah!
                 {
-                    HWND cbox = NULL;
+                    HWND cbox = nullptr;
                     int j;
                     for (j = 0; j < plCompositeMtl::kCompNumBlendMethods; j++)
                     {
@@ -222,7 +220,7 @@ BOOL plCompositeMtlDlg::LayerPanelProc(HWND hDlg, UINT msg, WPARAM wParam, LPARA
         for (i = 0; i < NSUBMTLS; i++)
         {
             ReleaseICustButton(fLayerBtns[i]);
-            fLayerBtns[i] = NULL;
+            fLayerBtns[i] = nullptr;
         }
         break;
 
@@ -243,7 +241,7 @@ BOOL plCompositeMtlDlg::LayerPanelProc(HWND hDlg, UINT msg, WPARAM wParam, LPARA
                 }
                 if (id == kLayerID[i].blendID)
                 {
-                    fPBlock->SetValue(plCompositeMtl::kCompBlend, curTime, SendMessage(GetDlgItem(hDlg, id), CB_GETCURSEL, 0, 0), i - 1);
+                    fPBlock->SetValue(plCompositeMtl::kCompBlend, curTime, (int)SendMessage(GetDlgItem(hDlg, id), CB_GETCURSEL, 0, 0), i - 1);
                     return TRUE;
                 }
             }
@@ -262,12 +260,8 @@ void plCompositeMtlDlg::UpdateLayerDisplay()
     for (i = 0; i < NSUBMTLS; i++)
     {
         Mtl *m = fPBlock->GetMtl(plCompositeMtl::kCompPasses, curTime, i);
-        TSTR nm;
-        if (m) 
-            nm = m->GetName();
-        else 
-            nm = "None";
-        fLayerBtns[i]->SetText(nm.data());
+        const MCHAR* nm = m ? m->GetName().data() : _M("None");
+        fLayerBtns[i]->SetText(const_cast<MCHAR*>(nm));
         
         ShowWindow(GetDlgItem(fhRollup, kLayerID[i].layerID), SW_SHOW);
         ShowWindow(GetDlgItem(fhRollup, kLayerID[i].activeID), SW_SHOW);

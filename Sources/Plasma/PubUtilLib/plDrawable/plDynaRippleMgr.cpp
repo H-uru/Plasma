@@ -41,45 +41,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plDynaRippleMgr.h"
-#include "plDynaDecal.h"
-
-#include "plPrintShape.h"
+#include "plgDispatch.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+#include "hsTimer.h"
+#include "plTweak.h"
 
 #include "plCutter.h"
+#include "plDynaRippleMgr.h"
+#include "plDynaDecal.h"
+#include "plPrintShape.h"
 
-#include "plgDispatch.h"
+#include "pnEncryption/plRandom.h"
 
-#include "hsStream.h"
-#include "hsResMgr.h"
-#include "hsTimer.h"
-
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plMessage/plAvatarMsg.h"
 #include "plMessage/plDynaDecalEnableMsg.h"
 #include "plMessage/plRippleShapeMsg.h"
 
-#include "plMessage/plAvatarMsg.h"
-#include "plAvatar/plAvBrainHuman.h"
-#include "plAvatar/plArmatureMod.h"
-
-#include "pnEncryption/plRandom.h"
-static plRandom sRand;
-
-#include "plTweak.h"
-
-static const uint32_t kNumPrintIDs = 5;
-static const uint32_t kPrintIDs[kNumPrintIDs] =
+size_t plDynaRippleMgr::INewDecal()
 {
-    plAvBrainHuman::TrunkPrint,
-    plAvBrainHuman::LHandPrint,
-    plAvBrainHuman::RHandPrint,
-    plAvBrainHuman::LFootPrint,
-    plAvBrainHuman::RFootPrint
-};
-
-
-int plDynaRippleMgr::INewDecal()
-{
-    int idx = fDecals.GetCount();
+    size_t idx = fDecals.size();
 
 #if 1
     plDynaRipple* rip = new plDynaRipple();
@@ -89,12 +72,12 @@ int plDynaRippleMgr::INewDecal()
     rip->fC1V = fInitUVW.fY;
     rip->fC2V = (fInitUVW.fY - fFinalUVW.fY) / (fLifeSpan * fFinalUVW.fY);
 
-    fDecals.Append(rip);
+    fDecals.emplace_back(rip);
 #else
     plDynaWave* wave = new plDynaWave();
     static float kDefScrollRate = 0.1f;
     wave->fScrollRate = kDefScrollRate;
-    fDecals.Append(wave);
+    fDecals.emplace_back(wave);
 #endif
 
     return idx;
@@ -105,10 +88,13 @@ plDynaRippleMgr::plDynaRippleMgr()
     fInitUVW(1.f,1.f,1.f),
     fFinalUVW(1.f,1.f,1.f)
 {
-    fPartIDs.SetCount(kNumPrintIDs);
-    int i;
-    for( i = 0; i < kNumPrintIDs; i++ )
-        fPartIDs[i] = kPrintIDs[i];
+    fPartIDs = {
+        plAvBrainHuman::TrunkPrint,
+        plAvBrainHuman::LHandPrint,
+        plAvBrainHuman::RHandPrint,
+        plAvBrainHuman::LFootPrint,
+        plAvBrainHuman::RFootPrint
+    };
 }
 
 plDynaRippleMgr::~plDynaRippleMgr()
@@ -140,20 +126,19 @@ bool plDynaRippleMgr::MsgReceive(plMessage* msg)
     plArmatureUpdateMsg* armMsg = plArmatureUpdateMsg::ConvertNoRef(msg);
     if( armMsg && !armMsg->IsInvis())
     {
-        int i;
-        for( i = 0; i < fPartIDs.GetCount(); i++ )
+        for (uint32_t partID : fPartIDs)
         {
-            const plPrintShape* shape = IGetPrintShape(armMsg->fArmature, fPartIDs[i]);
+            const plPrintShape* shape = IGetPrintShape(armMsg->fArmature, partID);
             if( shape )
             {
                 plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
                 if( IRippleFromShape(shape, false) )
                 {
-                    INotifyActive(info, armMsg->fArmature->GetKey(), fPartIDs[i]);
+                    INotifyActive(info, armMsg->fArmature->GetKey(), partID);
                 }
                 else
                 {
-                    INotifyInactive(info, armMsg->fArmature->GetKey(), fPartIDs[i]);
+                    INotifyInactive(info, armMsg->fArmature->GetKey(), partID);
                 }
             }
         }
@@ -177,6 +162,8 @@ bool plDynaRippleMgr::MsgReceive(plMessage* msg)
 
 bool plDynaRippleMgr::IRippleFromShape(const plPrintShape* shape, bool force)
 {
+    static plRandom sRand;
+
     if( !shape )
         return false;
 
@@ -247,4 +234,3 @@ bool plDynaRippleMgr::IRippleFromShape(const plPrintShape* shape, bool force)
     }
     return retVal;
 }
-

@@ -68,44 +68,44 @@ class plRTOmniLight : public plRTLightBase
 {
     public:
 
-        Class_ID ClassID() { return RTOMNI_LIGHT_CLASSID; }     
-        SClass_ID SuperClassID() { return LIGHT_CLASS_ID; }
+        Class_ID ClassID() override { return RTOMNI_LIGHT_CLASSID; }
+        SClass_ID SuperClassID() override { return LIGHT_CLASS_ID; }
 
-        int CanConvertToType(Class_ID obtype) { return (obtype ==  RTOMNI_LIGHT_CLASSID ) ? 1 : 0; }
+        int CanConvertToType(Class_ID obtype) override { return (obtype ==  RTOMNI_LIGHT_CLASSID ) ? 1 : 0; }
         plRTOmniLight();
             
-        ObjLightDesc *CreateLightDesc(INode *n, BOOL forceShadowBuf= FALSE);
-        GenLight* NewLight(int type) {return new plRTOmniLight();} 
-        RefTargetHandle Clone(RemapDir &remap);
+        ObjLightDesc *CreateLightDesc(INode *n, BOOL forceShadowBuf= FALSE) override;
+        GenLight* NewLight(int type) override { return new plRTOmniLight(); }
+        RefTargetHandle Clone(RemapDir &remap) override;
 
-        virtual void            InitNodeName( TSTR &s ) { s = _T( "RTOmniLight" ); }
+        void            InitNodeName(TSTR &s) override { s = _T("RTOmniLight"); }
 
-        virtual int             DrawConeAndLine( TimeValue t, INode* inode, GraphicsWindow *gw, int drawing );
-        virtual void            DrawCone( TimeValue t, GraphicsWindow *gw, float dist );
-        virtual void            DrawArrows( TimeValue t, GraphicsWindow *gw, float dist );
-        virtual void            GetLocalBoundBox( TimeValue t, INode *node, ViewExp *vpt, Box3 &box );
+        int             DrawConeAndLine(TimeValue t, INode* inode, GraphicsWindow *gw, int drawing) override;
+        void            DrawCone(TimeValue t, GraphicsWindow *gw, float dist) override;
+        virtual void    DrawArrows(TimeValue t, GraphicsWindow *gw, float dist);
+        void            GetLocalBoundBox(TimeValue t, INode *node, ViewExp *vpt, Box3 &box) override;
 
     protected:
-        virtual void    IBuildMeshes( BOOL isNew );
-        virtual bool    IHasAttenuation( void ) { return true; }
+        void    IBuildMeshes(BOOL isNew) override;
+        bool    IHasAttenuation() override { return true; }
 };
 
-class plRTOmniLightDesc : public ClassDesc2 
+class plRTOmniLightDesc : public plMaxClassDesc<ClassDesc2>
 {
     public:
-    int             IsPublic()                      { return TRUE; }
-    void*           Create(BOOL loading)            { return new plRTOmniLight; }
-    const TCHAR*    ClassName()                     { return GetString(IDS_DB_OMNI); }
-    SClass_ID       SuperClassID()                  { return LIGHT_CLASS_ID; }
-    Class_ID        ClassID()                       { return RTOMNI_LIGHT_CLASSID; }
-    const TCHAR*    Category()                      { return _T("Plasma RunTime");}
-    const TCHAR*    InternalName()                  { return _T("plRTOmni"); }  // returns fixed parsable name (scripter-visible name)
-    HINSTANCE       HInstance()                     { return hInstance; }
+    int             IsPublic() override             { return TRUE; }
+    void*           Create(BOOL loading) override   { return new plRTOmniLight; }
+    const TCHAR*    ClassName() override            { return GetString(IDS_DB_OMNI); }
+    SClass_ID       SuperClassID() override         { return LIGHT_CLASS_ID; }
+    Class_ID        ClassID() override              { return RTOMNI_LIGHT_CLASSID; }
+    const TCHAR*    Category() override             { return _T("Plasma RunTime");}
+    const TCHAR*    InternalName() override         { return _T("plRTOmni"); }  // returns fixed parsable name (scripter-visible name)
+    HINSTANCE       HInstance() override            { return hInstance; }
 
 
     static plRTOmniLightDesc    fStaticDesc;
 
-    static ClassDesc2   *GetDesc( void )        { return &fStaticDesc; }
+    static ClassDesc2   *GetDesc()        { return &fStaticDesc; }
 };
 
 
@@ -121,45 +121,45 @@ class plRTSpotLight : public plRTLightBase
 
         plRTSpotLight();
 
-        Class_ID ClassID() { return RTSPOT_LIGHT_CLASSID; }     
-        SClass_ID SuperClassID() { return LIGHT_CLASS_ID; }
+        Class_ID ClassID() override { return RTSPOT_LIGHT_CLASSID; }
+        SClass_ID SuperClassID() override { return LIGHT_CLASS_ID; }
 
-        int CanConvertToType(Class_ID obtype) { return (obtype ==  RTSPOT_LIGHT_CLASSID ) ? 1 : 0; }
-        ObjLightDesc *CreateLightDesc(INode *n, BOOL forceShadowBuf= FALSE);
-        GenLight* NewLight(int type) {return new plRTSpotLight();}
-        RefTargetHandle Clone(RemapDir &remap);
+        int CanConvertToType(Class_ID obtype) override { return (obtype ==  RTSPOT_LIGHT_CLASSID ) ? 1 : 0; }
+        ObjLightDesc *CreateLightDesc(INode *n, BOOL forceShadowBuf= FALSE) override;
+        GenLight* NewLight(int type) override { return new plRTSpotLight(); }
+        RefTargetHandle Clone(RemapDir &remap) override;
         
-        virtual Texmap  *GetProjMap();
+        Texmap  *GetProjMap() override;
 
-        virtual BOOL    IsSpot( void )  { return TRUE; }
-        virtual int     GetProjector() { return fLightPB->GetInt( kUseProjectorBool, 0 ); }
+        BOOL    IsSpot() override { return TRUE; }
+        int     GetProjector() override { return fLightPB->GetInt(kUseProjectorBool, 0); }
 
-        virtual void            InitNodeName( TSTR &s ) { s = _T( "RTSpotLight" ); }
+        void    InitNodeName(TSTR &s) override { s = _T("RTSpotLight"); }
 
-        virtual int     DrawConeAndLine( TimeValue t, INode* inode, GraphicsWindow *gw, int drawing );
-        virtual void    DrawCone( TimeValue t, GraphicsWindow *gw, float dist );
-        virtual void    GetLocalBoundBox( TimeValue t, INode *node, ViewExp *vpt, Box3 &box );
+        int     DrawConeAndLine(TimeValue t, INode* inode, GraphicsWindow *gw, int drawing) override;
+        void    DrawCone(TimeValue t, GraphicsWindow *gw, float dist) override;
+        void    GetLocalBoundBox(TimeValue t, INode *node, ViewExp *vpt, Box3 &box) override;
 
     protected:
-        virtual void    IBuildMeshes( BOOL isNew );
-        virtual bool    IHasAttenuation( void ) { return true; }
+        void    IBuildMeshes(BOOL isNew) override;
+        bool    IHasAttenuation() override { return true; }
 };
 
-class plRTSpotLightDesc : public ClassDesc2 
+class plRTSpotLightDesc : public plMaxClassDesc<ClassDesc2>
 {
     public:
-    int             IsPublic()                      { return TRUE; }
-    void*           Create(BOOL loading = FALSE)    { return new plRTSpotLight; }
-    const TCHAR*    ClassName()                     { return GetString(IDS_DB_FREE_SPOT); }
-    SClass_ID       SuperClassID()                  { return LIGHT_CLASS_ID; }
-    Class_ID        ClassID()                       { return RTSPOT_LIGHT_CLASSID; }
-    const TCHAR*    Category()                      { return _T("Plasma RunTime"); }
-    const TCHAR*    InternalName()                  { return _T("RTSpot"); }    // returns fixed parsable name (scripter-visible name)
-    HINSTANCE       HInstance()                     { return hInstance; }
+    int             IsPublic() override             { return TRUE; }
+    void*           Create(BOOL loading = FALSE) override { return new plRTSpotLight; }
+    const TCHAR*    ClassName() override            { return GetString(IDS_DB_FREE_SPOT); }
+    SClass_ID       SuperClassID() override         { return LIGHT_CLASS_ID; }
+    Class_ID        ClassID() override              { return RTSPOT_LIGHT_CLASSID; }
+    const TCHAR*    Category() override             { return _T("Plasma RunTime"); }
+    const TCHAR*    InternalName() override         { return _T("RTSpot"); }    // returns fixed parsable name (scripter-visible name)
+    HINSTANCE       HInstance() override            { return hInstance; }
 
     static plRTSpotLightDesc    fStaticDesc;
 
-    static ClassDesc2   *GetDesc( void )        { return &fStaticDesc; }
+    static ClassDesc2   *GetDesc()        { return &fStaticDesc; }
 
 };
 
@@ -174,43 +174,43 @@ class plRTDirLight : public plRTLightBase
 
         plRTDirLight();
 
-        Class_ID ClassID() { return RTDIR_LIGHT_CLASSID; }      
-        SClass_ID SuperClassID() { return LIGHT_CLASS_ID; }
+        Class_ID ClassID() override { return RTDIR_LIGHT_CLASSID; }
+        SClass_ID SuperClassID() override { return LIGHT_CLASS_ID; }
 
-        ObjLightDesc *CreateLightDesc(INode *n, BOOL forceShadowBuf= FALSE);
-        GenLight* NewLight(int type) {return new plRTDirLight();}
-        RefTargetHandle Clone(RemapDir &remap);
+        ObjLightDesc *CreateLightDesc(INode *n, BOOL forceShadowBuf= FALSE) override;
+        GenLight* NewLight(int type) override { return new plRTDirLight(); }
+        RefTargetHandle Clone(RemapDir &remap) override;
 
-        int CanConvertToType(Class_ID obtype) { return (obtype ==  RTDIR_LIGHT_CLASSID ) ? 1 : 0; }
+        int CanConvertToType(Class_ID obtype) override { return (obtype ==  RTDIR_LIGHT_CLASSID) ? 1 : 0; }
 
-        virtual void    DrawCone(TimeValue t, GraphicsWindow *gw, float dist);
-        virtual void    GetLocalBoundBox( TimeValue t, INode *node, ViewExp *vpt, Box3 &box );
+        void    DrawCone(TimeValue t, GraphicsWindow *gw, float dist) override;
+        void    GetLocalBoundBox(TimeValue t, INode *node, ViewExp *vpt, Box3 &box) override;
 
-        virtual BOOL IsDir( void )  { return TRUE; }
+        BOOL IsDir() override { return TRUE; }
 
-        virtual void            InitNodeName( TSTR &s ) { s = _T( "RTDirLight" ); }
+        void    InitNodeName(TSTR &s) override { s = _T("RTDirLight"); }
 
     protected:
-        virtual void    IBuildMeshes( BOOL isNew );
+        void    IBuildMeshes(BOOL isNew) override;
 
         void    IBuildZArrow( float x, float y, float zDist, float arrowSize, Point3 *pts );
 };
 
-class plRTDirLightDesc : public ClassDesc2 
+class plRTDirLightDesc : public plMaxClassDesc<ClassDesc2>
 {
     public:
-    int             IsPublic()                      { return TRUE; }
-    void*           Create(BOOL loading)            { return new plRTDirLight; }
-    const TCHAR*    ClassName()                     { return GetString(IDS_DB_DIRECTIONAL); }
-    SClass_ID       SuperClassID()                  { return LIGHT_CLASS_ID; }
-    Class_ID        ClassID()                       { return RTDIR_LIGHT_CLASSID; }
-    const TCHAR*    Category()                      { return _T("Plasma RunTime");}
-    const TCHAR*    InternalName()                  { return _T("RTDir"); } // returns fixed parsable name (scripter-visible name)
-    HINSTANCE       HInstance()                     { return hInstance; }
+    int             IsPublic() override             { return TRUE; }
+    void*           Create(BOOL loading) override   { return new plRTDirLight; }
+    const TCHAR*    ClassName() override            { return GetString(IDS_DB_DIRECTIONAL); }
+    SClass_ID       SuperClassID() override         { return LIGHT_CLASS_ID; }
+    Class_ID        ClassID() override              { return RTDIR_LIGHT_CLASSID; }
+    const TCHAR*    Category() override             { return _T("Plasma RunTime");}
+    const TCHAR*    InternalName() override         { return _T("RTDir"); } // returns fixed parsable name (scripter-visible name)
+    HINSTANCE       HInstance() override            { return hInstance; }
 
     static plRTDirLightDesc     fStaticDesc;
 
-    static ClassDesc2   *GetDesc( void )        { return &fStaticDesc; }
+    static ClassDesc2   *GetDesc()        { return &fStaticDesc; }
 
 };
 

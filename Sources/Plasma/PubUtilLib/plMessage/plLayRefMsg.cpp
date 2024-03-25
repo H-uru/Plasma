@@ -42,20 +42,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsStream.h"
-#pragma hdrstop
 
 #include "plLayRefMsg.h"
 
 void plLayRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Read(stream, mgr);
-    stream->ReadLE(&fType);
-    stream->ReadLE(&fWhich);
+    stream->ReadByte(&fType);
+    stream->ReadByte(&fWhich);
 }
 
 void plLayRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Write(stream, mgr);
-    stream->WriteLE(fType);
-    stream->WriteLE(fWhich);
+    stream->WriteByte(fType);
+    stream->WriteByte(fWhich);
 }

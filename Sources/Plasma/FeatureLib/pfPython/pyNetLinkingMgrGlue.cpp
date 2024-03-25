@@ -40,14 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pyNetLinkingMgr.h"
-#include "pyEnum.h"
-#include "pyAgeLinkStruct.h"
+
+#include <string_theory/string>
 
 #include "plNetCommon/plNetCommon.h"
+
+#include "pyAgeLinkStruct.h"
+#include "pyEnum.h"
+#include "pyGlueHelpers.h"
 
 #ifndef BUILDING_PYPLASMA
 
@@ -81,12 +82,13 @@ PYTHON_METHOD_DEFINITION(ptNetLinkingMgr, setEnabled, args)
 
 PYTHON_METHOD_DEFINITION_WKEY(ptNetLinkingMgr, linkToAge, args, kwargs)
 {
-    char* kwlist[] = { "ageLink", "anim", "linkInSfx", "linkOutSfx", nullptr };
-    PyObject* ageLinkObj = NULL;
-    char* linkAnim = NULL;
+    const char* kwlist[] = { "ageLink", "anim", "linkInSfx", "linkOutSfx", nullptr };
+    PyObject* ageLinkObj = nullptr;
+    ST::string linkAnim;
     bool linkInSfx = true;
     bool linkOutSfx = true;
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|sbb", kwlist, &ageLinkObj, &linkAnim, &linkInSfx, &linkOutSfx))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|O&bb", const_cast<char **>(kwlist),
+                                     &ageLinkObj, PyUnicode_STStringConverter, &linkAnim, &linkInSfx, &linkOutSfx))
     {
         PyErr_SetString(PyExc_TypeError, "linkToAge expects a ptAgeLinkStruct and an optional link anim name");
         PYTHON_RETURN_ERROR;
@@ -119,7 +121,7 @@ PYTHON_METHOD_DEFINITION(ptNetLinkingMgr, linkPlayerHere, args)
 
 PYTHON_METHOD_DEFINITION(ptNetLinkingMgr, linkPlayerToAge, args)
 {
-    PyObject* ageLinkObj = NULL;
+    PyObject* ageLinkObj = nullptr;
     unsigned long pid;
     if (!PyArg_ParseTuple(args, "Ol", &ageLinkObj, &pid))
     {
@@ -196,12 +198,12 @@ void pyNetLinkingMgr::AddPlasmaClasses(PyObject *m)
 
 void pyNetLinkingMgr::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtLinkingRules);
-    PYTHON_ENUM_ELEMENT(PtLinkingRules, kBasicLink,     plNetCommon::LinkingRules::kBasicLink);
-    PYTHON_ENUM_ELEMENT(PtLinkingRules, kOriginalBook,  plNetCommon::LinkingRules::kOriginalBook);
-    PYTHON_ENUM_ELEMENT(PtLinkingRules, kSubAgeBook,    plNetCommon::LinkingRules::kSubAgeBook);
-    PYTHON_ENUM_ELEMENT(PtLinkingRules, kOwnedBook,     plNetCommon::LinkingRules::kOwnedBook);
-    PYTHON_ENUM_ELEMENT(PtLinkingRules, kVisitBook,     plNetCommon::LinkingRules::kVisitBook);
-    PYTHON_ENUM_ELEMENT(PtLinkingRules, kChildAgeBook,  plNetCommon::LinkingRules::kChildAgeBook);
-    PYTHON_ENUM_END(m, PtLinkingRules);
+    PYTHON_ENUM_START(PtLinkingRules)
+    PYTHON_ENUM_ELEMENT(PtLinkingRules, kBasicLink,     plNetCommon::LinkingRules::kBasicLink)
+    PYTHON_ENUM_ELEMENT(PtLinkingRules, kOriginalBook,  plNetCommon::LinkingRules::kOriginalBook)
+    PYTHON_ENUM_ELEMENT(PtLinkingRules, kSubAgeBook,    plNetCommon::LinkingRules::kSubAgeBook)
+    PYTHON_ENUM_ELEMENT(PtLinkingRules, kOwnedBook,     plNetCommon::LinkingRules::kOwnedBook)
+    PYTHON_ENUM_ELEMENT(PtLinkingRules, kVisitBook,     plNetCommon::LinkingRules::kVisitBook)
+    PYTHON_ENUM_ELEMENT(PtLinkingRules, kChildAgeBook,  plNetCommon::LinkingRules::kChildAgeBook)
+    PYTHON_ENUM_END(m, PtLinkingRules)
 }

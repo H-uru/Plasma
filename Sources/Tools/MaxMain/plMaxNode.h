@@ -43,10 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMaxNode_inc
 #define plMaxNode_inc
 
+#include <map>
+#include <vector>
+
 #include "plMaxNodeBase.h"
 #include <iparamb2.h>
-#include <map>
-#include "hsTemplates.h"
 
 class plAGAnim;
 class plAGMasterMod;
@@ -126,7 +127,7 @@ public:
     enum { kSetupProperties, kPreConvert, kConvert };
     bool DoComponents(int convertType, plErrorMsg *, plConvertSettings *);
 
-    plKey AddModifier(plModifier *pMod, const plString& name);
+    plKey AddModifier(plModifier *pMod, const ST::string& name);
 
     bool ConvertToOccluder            (plErrorMsg* pErrMsg, bool twoSided, bool isHole);
 
@@ -143,10 +144,10 @@ public:
     plAGModifier*   HasAGMod();
     plAGMasterMod*  GetAGMasterMod();
     plMaxNode*      GetBonesRoot(); // Returns the root of my bones hierarchy, if I have any bones, else nil.
-    void            GetBonesRootsRecur(hsTArray<plMaxNode*>& list);
+    void            GetBonesRootsRecur(std::vector<plMaxNode*>& list);
     plSceneObject*  MakeCharacterHierarchy(plErrorMsg *pErrMsg);
-    void            SetupBonesAliasesRecur(const char *rootName);
-    void            SetupBoneHierarchyPalette(plMaxBoneMap *bones = nil);
+    void            SetupBonesAliasesRecur(const ST::string& rootName);
+    void            SetupBoneHierarchyPalette(plMaxBoneMap *bones = nullptr);
 
     void SetDISceneNodeSpans( plDrawInterface *di, bool needBlending );
 
@@ -164,9 +165,9 @@ public:
     plLightMapComponent* GetLightMapComponent();
     // Starting at 0, returns an incrementing index for each maxNode. Useful for assigning
     // indices to sound objects attached to the node
-    uint32_t  GetNextSoundIdx( void );
+    uint32_t  GetNextSoundIdx();
 
-    bool    IsPhysical( void );
+    bool    IsPhysical();
 
     bool    CanMakeMesh( Object *obj, plErrorMsg *pErrMsg, plConvertSettings *settings );
     plDrawInterface* GetDrawInterface(); // Returns nil if there isn't a sceneobject and a drawinterface.
@@ -175,8 +176,8 @@ public:
     plPhysicalProps *GetPhysicalProps();
 
     // Little helper function. Calls FindKey() in the resManager using the location (page) of this node
-    plKey   FindPageKey( uint16_t classIdx, const plString &name );
-    const char *GetAgeName();
+    plKey   FindPageKey( uint16_t classIdx, const ST::string &name );
+    const MCHAR* GetAgeName();
 
     void CheckSynchOptions(plSynchedObject* so);
 
@@ -209,20 +210,20 @@ protected:
     plLightInfo*    IMakeLight(plErrorMsg *pErrMsg, plConvertSettings *settings);
 
     plSceneNode*    IGetDrawableSceneNode(plErrorMsg *pErrMsg);
-    void            IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArray, plDrawInterface *di,
+    void            IAssignSpansToDrawables(std::vector<plGeometrySpan *> &spanArray, plDrawInterface *di,
                                             plErrorMsg *pErrMsg, plConvertSettings *settings );
-    void            IAssignSpan( plDrawableSpans *drawable, hsTArray<plGeometrySpan *> &spanArray, uint32_t &index,
-                                 hsMatrix44 &l2w, hsMatrix44 &w2l,
-                                 plErrorMsg *pErrMsg, plConvertSettings *settings );
-    void            ISetupBones( plDrawableSpans *drawable, hsTArray<plGeometrySpan *> &spanArray,
-                                 hsMatrix44 &l2w, hsMatrix44 &w2l,
-                                 plErrorMsg *pErrMsg, plConvertSettings *settings );
+    void            IAssignSpan(plDrawableSpans *drawable, std::vector<plGeometrySpan *> &spanArray, uint32_t &index,
+                                hsMatrix44 &l2w, hsMatrix44 &w2l,
+                                plErrorMsg *pErrMsg, plConvertSettings *settings);
+    void            ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpan *> &spanArray,
+                                hsMatrix44 &l2w, hsMatrix44 &w2l,
+                                plErrorMsg *pErrMsg, plConvertSettings *settings);
     bool            IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings);
 
     void            IWipeBranchDrawable(bool b);
 
-    uint32_t          IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMaxNode *> &nodes, bool beMoreAccurate = false );
-    bool            IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray,
+    size_t          IBuildInstanceList(Object *obj, TimeValue t, std::vector<plMaxNode *> &nodes, bool beMoreAccurate = false);
+    bool            IMakeInstanceSpans(plMaxNode *node, std::vector<plGeometrySpan *> &spanArray,
                                        plErrorMsg *pErrMsg, plConvertSettings *settings );
     bool            IMaterialsMatch( plMaxNode *otherNode, bool beMoreAccurate );
 
@@ -244,7 +245,7 @@ public:
     uint8_t fNumBones;
     plMaxNodeBase *fOwner; // Make note of which node created us, so they can delete us.
 
-    plMaxBoneMap() : fNumBones(0), fOwner(nil) {}
+    plMaxBoneMap() : fNumBones(), fOwner() { }
 
     void AddBone(plMaxNodeBase *bone);
     uint8_t GetIndex(plMaxNodeBase *bone);

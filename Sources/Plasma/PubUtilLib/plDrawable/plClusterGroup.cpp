@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSpanTemplate.h"
 #include "plCluster.h"
 
+#include "pnMessage/plRefMsg.h"
 #include "pnMessage/plTimeMsg.h"
 
 #include "plScene/plVisMgr.h"
@@ -63,23 +64,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //STUB
 #include "plgDispatch.h"
-#include "plMessage/plAgeLoadedMsg.h"
 
 plClusterGroup::plClusterGroup()
-:   fSceneNode(nil),
-    fDrawable(nil),
-    fTemplate(nil),
-    fMaterial(nil),
-    fUnPacked(0)
+:   fTemplate(),
+    fMaterial(),
+    fUnPacked()
 {
     fVisSet.SetBit(plVisMgr::kNormal);
 }
 
 plClusterGroup::~plClusterGroup()
 {
-    int i;
-    for( i = 0; i < fClusters.GetCount(); i++ )
-        delete fClusters[i];
+    for (plCluster* cluster : fClusters)
+        delete cluster;
 
     delete fTemplate;
 }
@@ -89,7 +86,7 @@ plCluster* plClusterGroup::IAddCluster()
     plCluster* cluster = new plCluster;
     // Set the cluster's group.
     cluster->SetGroup(this);
-    fClusters.Append(cluster);
+    fClusters.emplace_back(cluster);
     return cluster;
 }
 
@@ -98,36 +95,34 @@ plCluster* plClusterGroup::IGetCluster(int i) const
     return fClusters[i]; 
 }
 
-const plCluster* plClusterGroup::GetCluster(int i) const
-{ 
-    return fClusters[i]; 
+const plCluster* plClusterGroup::GetCluster(size_t i) const
+{
+    return fClusters[i];
 }
 
 void plClusterGroup::Read(hsStream* stream, hsResMgr* mgr)
 {
     hsKeyedObject::Read(stream, mgr);
 
-    int i;
-
     fTemplate = new plSpanTemplate;
     fTemplate->Read(stream);
 
     mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefMaterial), plRefFlags::kActiveRef);
 
-    const int numClust = stream->ReadLE32();
-    fClusters.SetCount(numClust);
-    for( i = 0; i < numClust; i++ )
+    const uint32_t numClust = stream->ReadLE32();
+    fClusters.resize(numClust);
+    for (uint32_t i = 0; i < numClust; i++)
     {
         fClusters[i] = new plCluster;
         fClusters[i]->Read(stream, this);
     }
 
-    const int numRegions = stream->ReadLE32();
-    for( i = 0; i < numRegions; i++ )
+    const uint32_t numRegions = stream->ReadLE32();
+    for (uint32_t i = 0; i < numRegions; i++)
         mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefRegion), plRefFlags::kActiveRef);
 
-    const int numLights = stream->ReadLE32();
-    for( i = 0; i < numLights; i++ )
+    const uint32_t numLights = stream->ReadLE32();
+    for (uint32_t i = 0; i < numLights; i++)
         mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefLight), plRefFlags::kActiveRef);
 
     fLOD.Read(stream);
@@ -144,23 +139,21 @@ void plClusterGroup::Write(hsStream* stream, hsResMgr* mgr)
 {
     hsKeyedObject::Write(stream, mgr);
 
-    int i;
-
     fTemplate->Write(stream);
 
     mgr->WriteKey(stream, fMaterial);
 
-    stream->WriteLE32(fClusters.GetCount());
-    for( i = 0; i < fClusters.GetCount(); i++ )
-        fClusters[i]->Write(stream);
+    stream->WriteLE32((uint32_t)fClusters.size());
+    for (plCluster* cluster : fClusters)
+        cluster->Write(stream);
 
-    stream->WriteLE32(fRegions.GetCount());
-    for( i = 0; i < fRegions.GetCount(); i++ )
-        mgr->WriteKey(stream, fRegions[i]);
+    stream->WriteLE32((uint32_t)fRegions.size());
+    for (plVisRegion* region : fRegions)
+        mgr->WriteKey(stream, region);
 
-    stream->WriteLE32(fLights.GetCount());
-    for( i = 0; i < fLights.GetCount(); i++ )
-        mgr->WriteKey(stream, fLights[i]);
+    stream->WriteLE32((uint32_t)fLights.size());
+    for (plLightInfo* light : fLights)
+        mgr->WriteKey(stream, light);
 
     fLOD.Write(stream);
 
@@ -180,10 +173,9 @@ bool plClusterGroup::IAddVisRegion(plVisRegion* reg)
 {
     if( reg )
     {
-        int idx = fRegions.Find(reg);
-        if( idx == fRegions.kMissingIndex )
+        if (std::find(fRegions.cbegin(), fRegions.cend(), reg) == fRegions.cend())
         {
-            fRegions.Append(reg);
+            fRegions.emplace_back(reg);
             if( reg->GetProperty(plVisRegion::kIsNot) )
                 fVisNot.SetBit(reg->GetIndex());
             else
@@ -201,10 +193,10 @@ bool plClusterGroup::IRemoveVisRegion(plVisRegion* reg)
 {
     if( reg )
     {
-        int idx = fRegions.Find(reg);
-        if( fRegions.kMissingIndex != idx )
+        auto iter = std::find(fRegions.cbegin(), fRegions.cend(), reg);
+        if (iter != fRegions.cend())
         {
-            fRegions.Remove(idx);
+            fRegions.erase(iter);
             if( reg->GetProperty(plVisRegion::kIsNot) )
                 fVisNot.ClearBit(reg->GetIndex());
             else
@@ -216,20 +208,19 @@ bool plClusterGroup::IRemoveVisRegion(plVisRegion* reg)
 
 bool plClusterGroup::IAddLight(plLightInfo* li)
 {
-    int idx = fLights.Find(li);
-    if( fLights.kMissingIndex == idx )
+    if (std::find(fLights.cbegin(), fLights.cend(), li) == fLights.cend())
     {
-        fLights.Append(li);
+        fLights.emplace_back(li);
     }
     return true;
 }
 
 bool plClusterGroup::IRemoveLight(plLightInfo* li)
 {
-    int idx = fLights.Find(li);
-    if( fLights.kMissingIndex != idx )
+    auto iter = std::find(fLights.cbegin(), fLights.cend(), li);
+    if (iter != fLights.cend())
     {
-        fLights.Remove(idx);
+        fLights.erase(iter);
     }
     return true;
 }
@@ -251,11 +242,10 @@ bool plClusterGroup::IOnReceive(plGenRefMsg* ref)
 
 bool plClusterGroup::IOnRemove(plGenRefMsg* ref)
 {
-    int idx = -1;
     switch( ref->fType )
     {
     case kRefMaterial:
-        fMaterial = nil;
+        fMaterial = nullptr;
         return true;
     case kRefRegion:
         return IRemoveVisRegion(plVisRegion::ConvertNoRef(ref->GetRef()));
@@ -316,12 +306,11 @@ void plClusterGroup::SetVisible(bool visible)
     }
 }
 
-uint32_t plClusterGroup::NumInst() const
+size_t plClusterGroup::NumInst() const
 {
-    uint32_t numInst = 0;
-    int i;
-    for( i = 0; i < fClusters.GetCount(); i++ )
-        numInst += fClusters[i]->NumInsts();
+    size_t numInst = 0;
+    for (plCluster* cluster : fClusters)
+        numInst += cluster->NumInsts();
 
     return numInst;
 }
@@ -332,12 +321,12 @@ uint32_t plClusterGroup::NumInst() const
 
 void plLODDist::Read(hsStream* s)
 {
-    fMinDist = s->ReadLEScalar();
-    fMaxDist = s->ReadLEScalar();
+    fMinDist = s->ReadLEFloat();
+    fMaxDist = s->ReadLEFloat();
 }
 
 void plLODDist::Write(hsStream* s) const
 {
-    s->WriteLEScalar(fMinDist);
-    s->WriteLEScalar(fMaxDist);
+    s->WriteLEFloat(fMinDist);
+    s->WriteLEFloat(fMaxDist);
 }

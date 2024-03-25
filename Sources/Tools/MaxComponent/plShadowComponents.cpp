@@ -46,10 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "MaxMain/plMaxNode.h"
-#include "resource.h"
+#include "MaxMain/MaxAPI.h"
 
-#include <iparamm2.h>
-#pragma hdrstop
+#include "resource.h"
 
 #include "MaxExport/plExportProgressBar.h"
 
@@ -67,21 +66,21 @@ void DummyCodeIncludeFuncShadow()
 {
 }
 
-static uint16_t QualityBitToMask(int q) { return ~((1 << q) - 1); }
+static uint8_t QualityBitToMask(int q) { return ~((1 << q) - 1); }
 
 #define WM_ROLLOUT_OPEN WM_USER+1
 static const int kNumQualities = 4;
-static const char* kQualityStrings[kNumQualities] = {
-    "Low",
-    "Medium",
-    "High",
-    "Ultra"
+static const TCHAR* kQualityStrings[kNumQualities] = {
+    _T("Low"),
+    _T("Medium"),
+    _T("High"),
+    _T("Ultra")
 };
 
 template <class T> class plQualityProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -104,15 +103,15 @@ public:
             switch( LOWORD(wParam) )
             {
             case IDC_COMP_SHADOW_QUALITY:
-                map->GetParamBlock()->SetValue(T::kQuality, t, SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
+                map->GetParamBlock()->SetValue(T::kQuality, t, (int)SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
                 return TRUE;
             }
             break;
         }
 
-        return false;
+        return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 
 
@@ -141,56 +140,55 @@ ParamBlockDesc2 gShadowCastBk
     plShadowCastComponent::kSelfShadow, _T("SelfShadow"),   TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SHADOW_CAST_SELFSHADOW,
-        end,
+        p_end,
 
     plShadowCastComponent::kBlur,   _T("Blur"), TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SHADOW_CAST_BLUR,
         p_enable_ctrls,     1, plShadowCastComponent::kBlurScale,
-        end,
+        p_end,
 
     plShadowCastComponent::kBlurScale, _T("BlurScale"), TYPE_FLOAT,     0, 0,   
         p_default, 0.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SHADOW_CAST_BLURSCALE, IDC_COMP_SHADOW_CAST_BLURSCALE_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plShadowCastComponent::kAtten,  _T("Atten"),    TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SHADOW_CAST_ATTEN,
         p_enable_ctrls,     1, plShadowCastComponent::kAttenScale,
-        end,
+        p_end,
 
     plShadowCastComponent::kAttenScale, _T("AttenScale"), TYPE_FLOAT,   0, 0,   
         p_default, 100.0,
         p_range, 25.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SHADOW_CAST_ATTENSCALE, IDC_COMP_SHADOW_CAST_ATTENSCALE_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plShadowCastComponent::kBoost, _T("Boost"), TYPE_FLOAT,     0, 0,   
         p_default, 100.0,
         p_range, 0.0, 5000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SHADOW_CAST_BOOST, IDC_COMP_SHADOW_CAST_BOOST_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plShadowCastComponent::kQuality,    _T("Quality"),  TYPE_INT,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     plShadowCastComponent::kLimitRes,   _T("Limit"),    TYPE_INT,   0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SHADOW_CAST_LIMIT,
-        end,
+        p_end,
 
-    end
-
+    p_end
 );
 
 plShadowCastComponent::plShadowCastComponent()
-:   fCaster(nil)
+:   fCaster()
 {
     fClassDesc = &gShadowCastDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -227,7 +225,7 @@ bool plShadowCastComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 bool plShadowCastComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
-    fCaster = nil;
+    fCaster = nullptr;
     return true;
 }
 
@@ -252,8 +250,7 @@ bool plShadowCastComponent::AddShadowCastModifier(plSceneObject* so, plShadowCas
 {
     // First off, ensure that we NEVER NEVER NEVER have more than one shadowcaster on an object.
     // That would be BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD.
-    int i;
-    for( i = 0; i < so->GetNumModifiers(); i++ )
+    for (size_t i = 0; i < so->GetNumModifiers(); i++)
     {
         if( plShadowCaster::ConvertNoRef(so->GetModifier(i)) )
             return false;
@@ -276,15 +273,15 @@ ParamBlockDesc2 gShadowRcvBk
 (
     plComponent::kBlkComp, _T("ShadowRcv"), 0, &gShadowRcvDesc, P_AUTO_CONSTRUCT+P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_SHADOW_RCV, IDS_COMP_SHADOW_RCV,  0, 0, nil,
+    IDD_COMP_SHADOW_RCV, IDS_COMP_SHADOW_RCV,  0, 0, nullptr,
 
     plShadowRcvComponent::kForceRadio, _T("ForceShadow"),       TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 2,  IDC_RADIO_FORCE_ON,                 IDC_RADIO_FORCE_OFF,
         p_vals,                     plShadowRcvComponent::kForceOn, plShadowRcvComponent::kForceOff,
         p_default, plShadowRcvComponent::kForceOff,
-        end,
-    end
+        p_end,
 
+    p_end
 );
 
 plShadowRcvComponent::plShadowRcvComponent()
@@ -337,43 +334,42 @@ ParamBlockDesc2 gShadowLightBk
         p_range, 5.0, 50.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SHADOW_LIGHT_FALLOFF, IDC_COMP_SHADOW_LIGHT_FALLOFF_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plShadowLightComponent::kMaxDist, _T("MaxDist"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, 0.0, 500.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SHADOW_LIGHT_MAXDIST, IDC_COMP_SHADOW_LIGHT_MAXDIST_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plShadowLightComponent::kPower, _T("Power"), TYPE_FLOAT,    0, 0,   
         p_default, 100.0,
         p_range, 0.0, 200.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SHADOW_LIGHT_POWER, IDC_COMP_SHADOW_LIGHT_POWER_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plShadowLightComponent::kShadowOnly,    _T("ShadowOnly"),   TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SHADOW_LIGHT_SHADOWONLY,
-        end,
+        p_end,
 
     plShadowLightComponent::kObeyGroups,    _T("ObeyGroups"),   TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SHADOW_LIGHT_OBEYGROUPS,
-        end,
+        p_end,
 
     plShadowLightComponent::kSelfShadow,    _T("SelfShadow"),   TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SHADOW_LIGHT_SELFSHADOW,
-        end,
+        p_end,
 
     plShadowLightComponent::kQuality,   _T("Quality"),  TYPE_INT,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
-    end
-
+    p_end
 );
 
 plShadowLightComponent::plShadowLightComponent()

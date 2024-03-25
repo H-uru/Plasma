@@ -69,7 +69,7 @@ plAGModifier::plAGModifier()
 }
 
 // CTOR(name)
-plAGModifier::plAGModifier(const plString &name, bool autoApply)
+plAGModifier::plAGModifier(const ST::string &name, bool autoApply)
 : plSingleModifier(), fAutoApply(autoApply)
 {
     fChannelName = name;
@@ -87,7 +87,7 @@ plAGModifier::~plAGModifier()
 }
 
 // GETCHANNELNAME
-plString plAGModifier::GetChannelName() const
+ST::string plAGModifier::GetChannelName() const
 {
     return fChannelName;
 }
@@ -99,7 +99,7 @@ void plAGModifier::Enable(bool val)
 }
 
 // SETCHANNELNAME
-void plAGModifier::SetChannelName(const plString & name)
+void plAGModifier::SetChannelName(const ST::string & name)
 {
     fChannelName = name;
 }
@@ -146,7 +146,7 @@ plAGApplicator * plAGModifier::GetApplicator(plAGPinType pinType) const
         if(otherType == pinType)
             return app;
     }
-    return nil;
+    return nullptr;
 }
 
 // SETAPPLICATOR
@@ -177,7 +177,7 @@ void plAGModifier::SetApplicator(plAGApplicator *newApp)
 
             plAGChannel *extChannel = existingApp->GetChannel();
             newApp->SetChannel(extChannel);
-            existingApp->SetChannel(nil);
+            existingApp->SetChannel(nullptr);
             fApps[i] = newApp;
 
             delete existingApp;
@@ -214,7 +214,7 @@ plAGChannel * plAGModifier::MergeChannel(plAGApplicator *app,
                                          int priority)
 {
     int numApps = fApps.size();
-    plAGChannel * result = nil;
+    plAGChannel * result = nullptr;
 
     for (int i = 0; i < numApps; i++)
     {
@@ -293,9 +293,9 @@ const plModifier * FindModifierByClass(const plSceneObject *obj, int classID)
 {
     if(obj)
     {
-        int modCount = obj->GetNumModifiers();
+        size_t modCount = obj->GetNumModifiers();
 
-        for (int i = 0; i < modCount; i++)
+        for (size_t i = 0; i < modCount; i++)
         {
             const plModifier *mod = obj->GetModifier(i);
 
@@ -308,6 +308,6 @@ const plModifier * FindModifierByClass(const plSceneObject *obj, int classID)
             }
         }
     }
-    return nil;
+    return nullptr;
 }
 

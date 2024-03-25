@@ -88,10 +88,10 @@ class plCubicEnvironmap : public plBitmap
 
 
         // Get the total size in bytes
-        virtual uint32_t  GetTotalSize( void ) const;
+        uint32_t  GetTotalSize() const override;
 
-        virtual void    Read( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Read( s, mgr ); this->Read( s ); }
-        virtual void    Write( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Write( s, mgr ); this->Write( s ); }
+        void    Read(hsStream *s, hsResMgr *mgr) override { hsKeyedObject::Read(s, mgr); this->Read(s); }
+        void    Write(hsStream *s, hsResMgr *mgr) override { hsKeyedObject::Write(s, mgr); this->Write(s); }
 
         plMipmap    *GetFace( uint8_t face ) const { return fFaces[ face ]; }
 
@@ -105,8 +105,8 @@ class plCubicEnvironmap : public plBitmap
         plMipmap        *fFaces[ 6 ];
         bool            fInitialized;
 
-        virtual uint32_t  Read( hsStream *s );
-        virtual uint32_t  Write( hsStream *s );
+        uint32_t  Read(hsStream *s) override;
+        uint32_t  Write(hsStream *s) override;
 
 };
 

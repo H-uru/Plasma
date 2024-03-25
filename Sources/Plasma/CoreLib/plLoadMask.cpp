@@ -41,12 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#pragma hdrstop
 
 #include "plLoadMask.h"
-#include "hsStream.h"
-#include "hsTemplates.h"
 #include "plQuality.h"
+#include "hsStream.h"
 
 ///////////////////////////////////////////////////////////////////
 // Global settings first. Implemented here for convenience (mine).
@@ -83,8 +81,7 @@ uint8_t plLoadMask::fGlobalCapability = uint8_t(0);
 void plLoadMask::Read(hsStream* s)
 {
     // read as packed byte
-    uint8_t qc;
-    s->LogReadLE(&qc,"Quality|Capabilty");
+    uint8_t qc = s->ReadByte();
 
     fQuality[0] = (qc & 0xf0) >> 4;
     fQuality[1] = (qc & 0x0f);
@@ -98,7 +95,7 @@ void plLoadMask::Write(hsStream* s) const
 {
     // write packed into 1 byte
     uint8_t qc = (fQuality[0]<<4) | (fQuality[1] & 0xf);
-    s->WriteLE(qc);
+    s->WriteByte(qc);
 }
 
 uint32_t plLoadMask::ValidateReps(int num, const int quals[], const int caps[])

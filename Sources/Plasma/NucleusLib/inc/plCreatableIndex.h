@@ -84,7 +84,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plModifier),
     CLASS_INDEX(plSingleModifier),
     CLASS_INDEX(plSimpleModifier),
-    CLASS_INDEX(UNUSED_pfSecurePreloader),
+    CLASS_INDEX(pfConsole),
     CLASS_INDEX(UNUSED_plRandomTMModifier),
     CLASS_INDEX(plInterestingModifier),
     CLASS_INDEX(plDetectorModifier),
@@ -367,6 +367,8 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plDynamicCamMap),
     CLASS_INDEX(plRidingAnimatedPhysicalDetector),
     CLASS_INDEX(plVolumeSensorConditionalObjectNoArbitration),
+    CLASS_INDEX(plPXSubWorld),
+    CLASS_INDEX(pfConfirmationMgr),
 //---------------------------------------------------------
 // Keyed objects above this line, unkeyed (such as messages) below..
 //---------------------------------------------------------
@@ -459,7 +461,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plEnableMsg),
     CLASS_INDEX(plWarpMsg),
     CLASS_INDEX(plAttachMsg),
-    CLASS_INDEX(pfConsole),
+    CLASS_INDEX(DEAD_pfConsole),
     CLASS_INDEX(plRenderMsg),
     CLASS_INDEX(plAnimTimeConvert),
     CLASS_INDEX(plSoundMsg),
@@ -519,7 +521,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plNetServerMsgFindProcess),
     CLASS_INDEX(plNetServerMsgProcessFound),
     CLASS_INDEX(plNetMsgRoutingInfo),
-    CLASS_INDEX(plNetServerSessionInfo),
+    CLASS_INDEX(UNUSED_plNetServerSessionInfo),
     CLASS_INDEX(plSimulationMsg),
     CLASS_INDEX(plSimulationSynchMsg),
     CLASS_INDEX(plHKSimulationSynchMsg),
@@ -767,7 +769,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plNetClientCalibrateTask),
     CLASS_INDEX(plNetMsgDeletePlayer),
     CLASS_INDEX(plNetServerMsgVaultDeletePlayer),
-    CLASS_INDEX(plNetCoreStatsSummary),
+    CLASS_INDEX(UNUSED_plNetCoreStatsSummary),
     CLASS_INDEX(plCreatableGenericValue),
     CLASS_INDEX(plCreatableListHelper),
     CLASS_INDEX(plCreatableStream),
@@ -781,7 +783,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plResMgrHelperMsg),
     CLASS_INDEX(plNetCommAuthMsg),
     CLASS_INDEX(plNetCommFileListMsg),
-    CLASS_INDEX(plNetCommFileDownloadMsg),
+    CLASS_INDEX(UNUSED_plNetCommFileDownloadMsg),
     CLASS_INDEX(plNetCommLinkToAgeMsg),
     CLASS_INDEX(plNetCommPlayerListMsg),
     CLASS_INDEX(plNetCommActivePlayerMsg),
@@ -952,6 +954,14 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(pfGameScoreTransferMsg),
     CLASS_INDEX(pfGameScoreUpdateMsg),
     CLASS_INDEX(plLoadClothingMsg),
+    CLASS_INDEX(plNullPipeline),
+    CLASS_INDEX(plGLPipeline),
+    CLASS_INDEX(plSDLModifierStateMsg),
+    CLASS_INDEX(plConfirmationMsg),
+    CLASS_INDEX(plLocalizedConfirmationMsg),
+    CLASS_INDEX(plSubtitleMsg),
+    CLASS_INDEX(plDisplayScaleChangedMsg),
+    CLASS_INDEX(plMetalPipeline),
 CLASS_INDEX_LIST_END
 
 #endif // plCreatableIndex_inc

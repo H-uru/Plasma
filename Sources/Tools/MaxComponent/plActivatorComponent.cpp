@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plComponent.h"
 #include "plComponentReg.h"
-#pragma hdrstop
+#include "MaxMain/MaxCompat.h"
 
 void DummyCodeIncludeFuncActive() {}
 
@@ -52,7 +52,7 @@ class plActiveComponent : public plComponent
 {
 public:
     plActiveComponent();
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override { return true; }
 };
 
 OBSOLETE_CLASS_DESC(plActiveComponent, gActiveDesc, "Activator", "Activator", COMP_TYPE_LOGIC, ACTIVATOR_CID)
@@ -66,6 +66,6 @@ plActiveComponent::plActiveComponent()
 ParamBlockDesc2 gActiveBlock
 (
     plComponent::kBlkComp, _T("activeComp"), 0, &gActiveDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
-        
-    end
+
+    p_end
 );

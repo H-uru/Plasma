@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
-#pragma hdrstop
 
 #include "plLoadAgeMsg.h"
 
@@ -52,18 +51,16 @@ void plLoadAgeMsg::Read(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgRead(stream, mgr);   
 
     // read agename
-    uint8_t len;
-    stream->ReadLE(&len);
+    uint8_t len = stream->ReadByte();
     if (len)
     {
-        plStringBuffer<char> filename;
-        char* buffer = filename.CreateWritableBuffer(len);
-        stream->Read(len, buffer);
-        buffer[len] = 0;
+        ST::char_buffer filename;
+        filename.allocate(len);
+        stream->Read(len, filename.data());
         fAgeFilename = filename;
     }
     fUnload = stream->ReadBool();
-    stream->ReadLE(&fPlayerID);
+    stream->ReadLE32(&fPlayerID);
     fAgeGuid.Read(stream);
 }
 
@@ -72,14 +69,14 @@ void plLoadAgeMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgWrite(stream, mgr);  
 
     // write agename
-    uint8_t len = static_cast<uint8_t>(fAgeFilename.GetSize());
-    stream->WriteLE(len);
+    uint8_t len = static_cast<uint8_t>(fAgeFilename.size());
+    stream->WriteByte(len);
     if (len)
     {
         stream->Write(len, fAgeFilename.c_str());
     }
     stream->WriteBool(fUnload);
-    stream->WriteLE(fPlayerID);
+    stream->WriteLE32(fPlayerID);
     fAgeGuid.Write(stream);
 }
 
@@ -108,7 +105,7 @@ void plLoadAgeMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
         fUnload = s->ReadBool();
 
     if (contentFlags.IsBitSet(kLoadAgePlayerID))
-        s->ReadLE(&fPlayerID);
+        s->ReadLE32(&fPlayerID);
 
     if (contentFlags.IsBitSet(kLoadAgeAgeGuid))
         fAgeGuid.Read(s);
@@ -130,7 +127,7 @@ void plLoadAgeMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     // kLoadAgeUnload
     s->WriteBool(fUnload);
     // kLoadAgePlayerID
-    s->WriteLE(fPlayerID);
+    s->WriteLE32(fPlayerID);
     // kLoadAgeAgeGuid
     fAgeGuid.Write(s);
 }

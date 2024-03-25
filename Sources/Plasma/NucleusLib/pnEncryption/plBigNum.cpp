@@ -56,26 +56,26 @@ static inline void byteswap(size_t size, uint8_t* data)
 *
 ***/
 
-plBigNum::plBigNum () : m_context(nil)
+plBigNum::plBigNum () : m_context()
 {
-    BN_init(&m_number);
+    m_number = BN_new();
 }
 
-plBigNum::plBigNum(const plBigNum& a) : m_context(nil)
+plBigNum::plBigNum(const plBigNum& a) : m_context()
 {
-    BN_init(&m_number);
-    BN_copy(&m_number, &a.m_number);
+    m_number = BN_new();
+    BN_copy(m_number, a.m_number);
 }
 
-plBigNum::plBigNum(unsigned a) : m_context(nil)
+plBigNum::plBigNum(unsigned a) : m_context()
 {
-    BN_init(&m_number);
-    BN_set_word(&m_number, a);
+    m_number = BN_new();
+    BN_set_word(m_number, a);
 }
 
-plBigNum::plBigNum(unsigned bytes, const void* data, bool le) : m_context(nil)
+plBigNum::plBigNum(unsigned bytes, const void* data, bool le) : m_context()
 {
-    BN_init(&m_number);
+    m_number = BN_new();
     if (le)
         FromData_LE(bytes, data);
     else
@@ -86,7 +86,7 @@ plBigNum::~plBigNum ()
 {
     if (m_context)
         BN_CTX_free(m_context);
-    BN_free(&m_number);
+    BN_free(m_number);
 }
 
 int plBigNum::Compare(uint32_t a) const
@@ -95,12 +95,12 @@ int plBigNum::Compare(uint32_t a) const
     //  0 if (this == a)
     //  1 if (this >  a)
 
-    if (BN_is_word(&m_number, a))
+    if (BN_is_word(m_number, a))
         return 0;
 
     // This returns 0xFFFFFFFFL if the number is bigger than one uint16_t, so
     // it doesn't need any size check
-    if (BN_get_word(&m_number) < a)
+    if (BN_get_word(m_number) < a)
         return -1;
 
     // Not less or equal, must be greater
@@ -112,23 +112,23 @@ void plBigNum::FromData_LE(uint32_t bytes, const void* data)
     uint8_t* buffer = new uint8_t[bytes];
     memcpy(buffer, data, bytes);
     byteswap(bytes, buffer);
-    BN_bin2bn(buffer, bytes, &m_number);
+    BN_bin2bn(buffer, bytes, m_number);
     delete[] buffer;
 }
 
 uint8_t* plBigNum::GetData_BE(uint32_t* bytes) const
 {
-    *bytes = BN_num_bytes(&m_number);
+    *bytes = BN_num_bytes(m_number);
     uint8_t* data = new uint8_t[*bytes];
-    BN_bn2bin(&m_number, data);
+    BN_bn2bin(m_number, data);
     return data;
 }
 
 uint8_t* plBigNum::GetData_LE(uint32_t* bytes) const
 {
-    *bytes = BN_num_bytes(&m_number);
+    *bytes = BN_num_bytes(m_number);
     uint8_t* data = new uint8_t[*bytes];
-    BN_bn2bin(&m_number, data);
+    BN_bn2bin(m_number, data);
     byteswap(*bytes, data);
     return data;
 }
@@ -140,6 +140,6 @@ void plBigNum::Rand(uint32_t bits, plBigNum* seed)
     uint32_t seedbytes;
     uint8_t* seedData = seed->GetData_BE(&seedbytes);
     RAND_seed(seedData, seedbytes);
-    BN_rand(&m_number, bits, 0, 0);
+    BN_rand(m_number, bits, 0, 0);
     delete[] seedData;
 }

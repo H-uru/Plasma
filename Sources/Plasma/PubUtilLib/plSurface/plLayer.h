@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayer_inc
 #define plLayer_inc
 
-#include "hsTemplates.h"
 #include "plLayerInterface.h"
 
 class plLayer : public plLayerInterface
@@ -56,12 +55,12 @@ public:
     CLASSNAME_REGISTER( plLayer );
     GETINTERFACE_ANY( plLayer, plLayerInterface );
 
-    virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
+    uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore) override;
 
-    virtual void            Read(hsStream* s, hsResMgr* mgr);
-    virtual void            Write(hsStream* s, hsResMgr* mgr);
+    void            Read(hsStream* s, hsResMgr* mgr) override;
+    void            Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual bool            MsgReceive(plMessage* msg);
+    bool            MsgReceive(plMessage* msg) override;
 
     // Flat layer specifics
     plLayer& InitToDefault();

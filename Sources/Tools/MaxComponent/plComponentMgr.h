@@ -42,12 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_COMPONENTMGR_H
 #define PL_COMPONENTMGR_H
 
-#include "hsWindows.h"
-#include <vector>
+#include "MaxMain/MaxAPI.h"
 
-#include <iparamb2.h>
-#include <max.h>
-#include <utilapi.h>
+#include <vector>
 
 #define COMPONENT_MGR_CID Class_ID(0x5b870ba2, 0xb7b1da2)
 
@@ -71,10 +68,10 @@ public:
     static plComponentMgr &Inst();
 
     // Required Max functions
-    virtual void BeginEditParams(Interface *ip,IUtil *iu) {}
-    virtual void EndEditParams(Interface *ip,IUtil *iu) {}
-    virtual void SelectionSetChanged(Interface *ip,IUtil *iu) {}
-    virtual void DeleteThis() {}
+    void BeginEditParams(Interface *ip,IUtil *iu) override { }
+    void EndEditParams(Interface *ip,IUtil *iu) override { }
+    void SelectionSetChanged(Interface *ip,IUtil *iu) override { }
+    void DeleteThis() override { }
 
     virtual uint32_t Count();
     virtual ClassDesc *Get(uint32_t i);

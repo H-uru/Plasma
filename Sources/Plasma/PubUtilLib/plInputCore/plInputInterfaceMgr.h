@@ -52,9 +52,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plInputInterfaceMgr_h
 #define _plInputInterfaceMgr_h
 
-#include "pnModifier/plSingleModifier.h"
-#include "hsTemplates.h"
 #include "hsGeometry3.h"
+
+#include <string_theory/string>
+#include <utility>
+#include <vector>
+
+#include "pnModifier/plSingleModifier.h"
 #include "pnInputCore/plKeyMap.h"
 
 //// Class Definition ////////////////////////////////////////////////////////
@@ -77,14 +81,9 @@ class plInputInterfaceMgr : public plSingleModifier
 
         static plInputInterfaceMgr  *fInstance;
 
-        hsTArray<plInputInterface *>    fInterfaces;
-        hsTArray<plCtrlCmd *>           fMessageQueue;
-        hsTArray<plKey>                 fReceivers;
-
-#ifdef MCN_DISABLE_OLD_WITH_NEW_HACK
-        hsTArray<ControlEventCode>      fDisabledCodes;
-        hsTArray<uint32_t>                fDisabledKeys;
-#endif
+        std::vector<plInputInterface *> fInterfaces;
+        std::vector<plCtrlCmd *>        fMessageQueue;
+        std::vector<plKey>              fReceivers;
 
         bool        fClickEnabled;
         int32_t       fCurrentCursor;
@@ -95,7 +94,7 @@ class plInputInterfaceMgr : public plSingleModifier
         plDefaultKeyCatcher     *fDefaultCatcher;
 
         
-        virtual bool IEval( double secs, float del, uint32_t dirty );
+        bool IEval(double secs, float del, uint32_t dirty) override;
 
         void    IAddInterface( plInputInterface *iface );
         void    IRemoveInterface( plInputInterface *iface );
@@ -109,8 +108,6 @@ class plInputInterfaceMgr : public plSingleModifier
         plKeyMap    *IGetRoutedKeyMap( ControlEventCode code ); // Null for console commands
         void        IUnbind( const plKeyCombo &key );
 
-        const char  *IKeyComboToString( const plKeyCombo &combo );
-        
     public:
 
         plInputInterfaceMgr();
@@ -119,16 +116,16 @@ class plInputInterfaceMgr : public plSingleModifier
         CLASSNAME_REGISTER( plInputInterfaceMgr );
         GETINTERFACE_ANY( plInputInterfaceMgr, plSingleModifier );
 
-        virtual bool    MsgReceive( plMessage *msg );
-        virtual void    Read( hsStream* s, hsResMgr* mgr );
-        virtual void    Write( hsStream* s, hsResMgr* mgr );
+        bool    MsgReceive(plMessage *msg) override;
+        void    Read(hsStream* s, hsResMgr* mgr) override;
+        void    Write(hsStream* s, hsResMgr* mgr) override;
 
-        void    Init( void );
-        void    Shutdown( void );
+        void    Init();
+        void    Shutdown();
 
-        void        InitDefaultKeyMap( void );
-        void        WriteKeyMap( void );
-        void        RefreshInterfaceKeyMaps( void );
+        void        InitDefaultKeyMap();
+        void        WriteKeyMap();
+        void        RefreshInterfaceKeyMaps();
 
         void    SetCurrentFocus(plInputInterface *focus);
         void    ReleaseCurrentFocus(plInputInterface *focus);
@@ -141,14 +138,14 @@ class plInputInterfaceMgr : public plSingleModifier
         // Binding routers
         void    BindAction( const plKeyCombo &key, ControlEventCode code );
         void    BindAction( const plKeyCombo &key1, const plKeyCombo &key2, ControlEventCode code );
-        void    BindConsoleCmd( const plKeyCombo &key, const char *cmd, plKeyMap::BindPref pref = plKeyMap::kNoPreference );
+        void    BindConsoleCmd(const plKeyCombo &key, const ST::string& cmd, plKeyMap::BindPref pref = plKeyMap::kNoPreference);
 
         const plKeyBinding* FindBinding( ControlEventCode code );
-        const plKeyBinding* FindBindingByConsoleCmd( const char *cmd );
+        const plKeyBinding* FindBindingByConsoleCmd(const ST::string& cmd);
 
         void    ClearAllKeyMaps();
         void    ResetClickableState();
-        static plInputInterfaceMgr  *GetInstance( void ) { return fInstance; }
+        static plInputInterfaceMgr  *GetInstance() { return fInstance; }
 };
 
 //// plCtrlCmd ///////////////////////////////////////////////////////////////
@@ -157,15 +154,17 @@ class plInputInterfaceMgr : public plSingleModifier
 class plCtrlCmd
 {
     private:
-        char*               fCmd;
+        ST::string          fCmd;
         plInputInterface    *fSource;
 
     public:
-        plCtrlCmd( plInputInterface *source ) : fCmd(nil),fPct(1.0f), fSource(source) {;}
-        ~plCtrlCmd() { delete [] fCmd; }
+        plCtrlCmd(plInputInterface* source)
+            : fCmd(), fPct(1.f), fSource(source),
+              fControlCode(), fControlActivated(), fNetPropagateToPlayers()
+        { }
 
-        const char* GetCmdString()          { return fCmd; }
-        void SetCmdString(const char* cs)   { delete [] fCmd; fCmd=hsStrcpy(cs); }
+        ST::string GetCmdString() const { return fCmd; }
+        void SetCmdString(ST::string cs) { fCmd = std::move(cs); }
 
         ControlEventCode    fControlCode;
         bool                fControlActivated;
@@ -177,7 +176,7 @@ class plCtrlCmd
         void Read( hsStream* s, hsResMgr* mgr );
         void Write( hsStream* s, hsResMgr* mgr );
 
-        plInputInterface    *GetSource( void ) const { return fSource; }
+        plInputInterface    *GetSource() const { return fSource; }
 };
 
 //// Tiny Virtual Class For The Default Key Processor ////////////////////////

@@ -49,8 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // hsStringTable
 //
 
-hsStringTable::Node::Node(char c) : sib(0), kid(0), chr(c), data(0) {};
-hsStringTable::Node::~Node() { };
+hsStringTable::Node::Node(char c) : sib(), kid(), chr(c), data() { }
+hsStringTable::Node::~Node() { }
 void* hsStringTable::Node::GetData() { return data; }
 void hsStringTable::Node::SetData(void* v) { data = v; }
 
@@ -62,7 +62,7 @@ hsStringTable::~hsStringTable()
 void hsStringTable::Reset() 
 {
     RemoveNode(root.kid);
-    root.kid = nil;
+    root.kid = nullptr;
 }
 
 
@@ -71,7 +71,7 @@ void hsStringTable::Reset()
 //
 hsStringTable::Node* hsStringTable::Find(const char* str)
 {
-    return (str && *str) ? FindRecur(root.kid, str) : nil;
+    return (str && *str) ? FindRecur(root.kid, str) : nullptr;
 }
 
 //
@@ -81,7 +81,7 @@ hsStringTable::Node* hsStringTable::Find(const char* str)
 //
 hsStringTable::Node* hsStringTable::FindPartial(char* str, int32_t len) const
 {
-    return (str && *str) ? FindPartialRecur(root.kid, str, len) : nil;
+    return (str && *str) ? FindPartialRecur(root.kid, str, len) : nullptr;
 }
 
 //
@@ -99,7 +99,7 @@ void hsStringTable::Register(const char* str, void* data)
 
 //
 // Iterate through the tree and call the callback function on each child node
-// of the fromNode (or the root if fromNode is nil)
+// of the fromNode (or the root if fromNode is nullptr)
 //
 bool hsStringTable::Iterate(hsStringTableCallback* callback, Node* fromNode)
 {
@@ -113,8 +113,9 @@ bool hsStringTable::Iterate(hsStringTableCallback* callback, Node* fromNode)
 //
 hsStringTable::Node* hsStringTable::FindRecur(Node* root, const char* str, bool createIfNeeded)
 {
-    if (!root || !str) return nil;
-    if (tolower(root->chr)==tolower(*str)) 
+    if (!root || !str)
+        return nullptr;
+    if (tolower(static_cast<unsigned char>(root->chr)) == tolower(static_cast<unsigned char>(*str))) 
     {
         if (*(str+1)) 
         {
@@ -140,10 +141,10 @@ hsStringTable::Node* hsStringTable::FindPartialRecur(Node* root, char* str, int3
 {
     if (!root || !str) 
     {
-        return nil;
+        return nullptr;
     }
 
-    if (tolower(root->chr)==tolower(*str)) 
+    if (tolower(static_cast<unsigned char>(root->chr)) == tolower(static_cast<unsigned char>(*str))) 
     {
         if (len) 
         {

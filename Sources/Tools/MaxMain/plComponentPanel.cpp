@@ -41,6 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include "MaxAPI.h"
+
 #include "pnKeyedObject/plKey.h"
 
 #include "plMaxNode.h"
@@ -48,16 +50,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxComponent/plComponentMgr.h"
 #include "resource.h"
 
-#include <notify.h>
-#pragma hdrstop
-
 #include "plComponentPanel.h"
 #include "plComponentDlg.h"
 #include "plMaxAccelerators.h"
 
 extern TCHAR *GetString(int id);
 
-class ComponentUtilClassDesc : public ClassDesc
+class ComponentUtilClassDesc : public plMaxClassDesc<ClassDesc>
 {
 public:
     int             IsPublic()              { return TRUE; }
@@ -71,7 +70,7 @@ public:
 static ComponentUtilClassDesc theComponentUtilCD;
 ClassDesc* GetComponentUtilDesc() { return &theComponentUtilCD; }
 
-plComponentUtil::plComponentUtil() : fInterface(nil), fhPanel(nil), fCurComponent(nil), fLastComponent(nil)
+plComponentUtil::plComponentUtil() : fInterface(), fhPanel(), fCurComponent(), fLastComponent()
 {
 }
 
@@ -84,12 +83,12 @@ plComponentUtil& plComponentUtil::Instance()
 ////////////////////////////////////////////////////////////////////////////////
 // Proc for the currently selected object dialog
 //
-BOOL CALLBACK plComponentUtil::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK plComponentUtil::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     return Instance().DlgProc(hDlg, msg, wParam, lParam);
 }
 
-BOOL plComponentUtil::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plComponentUtil::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -140,10 +139,10 @@ BOOL plComponentUtil::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
                 case LVN_ENDLABELEDIT:
                     {
                         NMLVDISPINFO *di = (NMLVDISPINFO*)lParam;
-                        const char *name = di->item.pszText;
+                        const TCHAR* name = di->item.pszText;
 
                         // If the name was changed...
-                        if (name && *name != '\0')
+                        if (name && *name != _T('\0'))
                         {
                             // Update the name of the node
                             plComponentBase* comp = IGetListSelection();
@@ -154,14 +153,14 @@ BOOL plComponentUtil::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
                             if (width > ListView_GetColumnWidth(nmhdr->hwndFrom, 0))
                             {
                                 ListView_SetColumnWidth(nmhdr->hwndFrom, 0, width);
-                                InvalidateRect(nmhdr->hwndFrom, NULL, FALSE);
+                                InvalidateRect(nmhdr->hwndFrom, nullptr, FALSE);
                             }
 
                             // Update the name in the tree too
                             plComponentDlg::Instance().IUpdateNodeName((plMaxNode*)comp->GetINode());
 
                             // Return true to keep the changes
-                            SetWindowLong(hDlg, DWL_MSGRESULT, TRUE);
+                            SetWindowLongPtr(hDlg, DWLP_MSGRESULT, TRUE);
                         }
                         
                         plMaxAccelerators::Enable();
@@ -218,21 +217,27 @@ plComponentBase* plComponentUtil::IGetListSelection()
             return (plComponentBase*)item.lParam;
     }
 
-    return nil;
+    return nullptr;
 }
 
 void plComponentUtil::BeginEditParams(Interface *ip, IUtil *iu)
 {
     fInterface = ip;
     
-    fhPanel = fInterface->AddRollupPage(hInstance, MAKEINTRESOURCE(IDD_COMP_PANEL), ForwardDlgProc, "Components (Selected Obj)");
+    fhPanel = fInterface->AddRollupPage(hInstance, MAKEINTRESOURCE(IDD_COMP_PANEL), ForwardDlgProc, _M("Components (Selected Obj)"));
 
     // Add a column.  We don't use it (graphically), but it has to be there.
     HWND hList = GetDlgItem(fhPanel, IDC_COMPLIST);
     LVCOLUMN lvc;
     lvc.mask = LVCF_TEXT;
-    lvc.pszText = "Description";
+    lvc.pszText = _T("Description");
     ListView_InsertColumn(hList, 0, &lvc);
+
+#if MAX_VERSION_MAJOR >= 14 // Max 2012
+    ListView_SetBkColor(hList, GetColorManager()->GetColor(kWindow));
+    ListView_SetTextBkColor(hList, GetColorManager()->GetColor(kWindow));
+    ListView_SetTextColor(hList, GetColorManager()->GetColor(kText));
+#endif
 
     IUpdateRollups();
 }
@@ -242,9 +247,9 @@ void plComponentUtil::EndEditParams(Interface *ip, IUtil *iu)
     IDestroyRollups();
 
     GetCOREInterface()->DeleteRollupPage(fhPanel);
-    fhPanel = nil;
-    fCurComponent = nil;
-    fInterface = nil;
+    fhPanel = nullptr;
+    fCurComponent = nullptr;
+    fInterface = nullptr;
 }
 
 void plComponentUtil::SelectionSetChanged(Interface *ip, IUtil *iu)
@@ -267,7 +272,7 @@ void plComponentUtil::IUpdateRollups()
     int nodeCount = fInterface->GetSelNodeCount();
     if (nodeCount == 0)
     {
-        IAddRollups(nil);
+        IAddRollups(nullptr);
         return;
     }
 
@@ -293,7 +298,7 @@ void plComponentUtil::IUpdateRollups()
 
         LVITEM item = {0};
         item.mask = LVIF_TEXT | LVIF_PARAM;
-        item.pszText = sharedComps[i]->GetName();
+        item.pszText = const_cast<TCHAR*>(sharedComps[i]->GetName());
         item.iItem = ListView_GetItemCount(hList);
         item.lParam = (LPARAM)comp;
         ListView_InsertItem(hList, &item);
@@ -316,7 +321,7 @@ void plComponentUtil::IUpdateRollups()
         ListView_EnsureVisible(hList, idx, FALSE);
     }
     else
-        IAddRollups(nil);
+        IAddRollups(nullptr);
 }
 
 int plComponentUtil::IFindListItem(plComponentBase* comp)
@@ -352,8 +357,8 @@ void plComponentUtil::IAddRollups(plComponentBase* comp)
     }
 
     // Put the number of targets in the text box
-    char buf[12];
-    itoa(numTargs, buf, 10);
+    TCHAR buf[12];
+    _sntprintf(buf, std::size(buf), _T("%u"), numTargs);
     SetWindowText(GetDlgItem(fhPanel, IDC_NUM_TARGS), buf);
 
     // Enable the forward/back buttons if there are multiple targets
@@ -416,7 +421,7 @@ void plComponentUtil::INextTarget(bool forward)
             fInterface->SelectNode(fCurComponent->GetTarget(targIdx));
 
             fInterface->RedrawViews(fInterface->GetTime(), REDRAW_END);
-            theHold.Accept("Select");
+            theHold.Accept(_M("Select"));
 
             return;
         }
@@ -433,7 +438,7 @@ void plComponentUtil::IUpdateNodeName(plMaxNode *node)
     if (idx != -1)
     {
         HWND hList = GetDlgItem(fhPanel, IDC_COMPLIST);
-        ListView_SetItemText(hList, idx, 0, node->GetName());
+        ListView_SetItemText(hList, idx, 0, const_cast<TCHAR*>(node->GetName()));
         // Make sure the column is wide enough
         ListView_SetColumnWidth(hList, 0, LVSCW_AUTOSIZE);
     }
@@ -444,7 +449,7 @@ void plComponentUtil::IComponentPreDelete(plComponentBase* comp)
     if (fCurComponent == comp)
     {
         IDestroyRollups();
-        fCurComponent = nil;
+        fCurComponent = nullptr;
     }
 }
 
@@ -457,7 +462,7 @@ void IGetReferencesRecur(plMaxNode* node, INode* target, std::vector<plMaxNode*>
     plComponentBase* comp = node->ConvertToComponent();
     if (comp && comp->DoReferenceNode(target))
     {
-        const char* name = node->GetName();
+        auto name = node->GetName();
         nodes.push_back(node);
     }
 
@@ -467,7 +472,7 @@ void IGetReferencesRecur(plMaxNode* node, INode* target, std::vector<plMaxNode*>
     }
 }
 
-BOOL CALLBACK RefDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK RefDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -477,8 +482,8 @@ BOOL CALLBACK RefDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
             {
                 INode* node = GetCOREInterface()->GetSelNode(0);
 
-                char buf[256];
-                sprintf(buf, "%s is Ref'd By", node->GetName());
+                TCHAR buf[256];
+                _sntprintf(buf, std::size(buf), _T("%s is Ref'd By"), node->GetName());
                 SetWindowText(hDlg, buf);
 
                 std::vector<plMaxNode*> nodes;

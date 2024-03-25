@@ -39,39 +39,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
+
 #include "plParticleSystem.h"
+
+#include "plParticle.h"
+#include "plParticleEffect.h"
 #include "plParticleEmitter.h"
 #include "plParticleGenerator.h"
-#include "plParticleEffect.h"
-#include "plParticle.h"
 #include "plParticleSDLMod.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
 
+#include "plgDispatch.h"
+#include "plPipeline.h"
+#include "plProfile.h"
+#include "hsResMgr.h"
+#include "hsTimer.h"
+#include "plTweak.h"
+
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnNetCommon/plSDLTypes.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plDrawInterface.h"
 #include "pnSceneObject/plCoordinateInterface.h"
-#include "pnMessage/plTimeMsg.h"
-#include "plMessage/plRenderMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
-#include "plMessage/plParticleUpdateMsg.h"
-#include "plInterp/plController.h"
-#include "plSurface/hsGMaterial.h"
-#include "plPipeline.h"
-#include "hsTimer.h"
-#include "plProfile.h"
-#include "plTweak.h"
 
 #include "plDrawable/plParticleFiller.h"
+#include "plSurface/hsGMaterial.h"
+#include "plInterp/plController.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plParticleUpdateMsg.h"
+#include "plMessage/plRenderMsg.h"
 
 plProfile_CreateCounter("Num Particles", "Particles", NumParticles);
 
 const float plParticleSystem::GRAVITY_ACCEL_FEET_PER_SEC2 = 32.0f;
-
-plParticleSystem::plParticleSystem() : fParticleSDLMod(nil), fAttachedToAvatar(false)
-{
-}
 
 plParticleSystem::~plParticleSystem()
 {
@@ -93,7 +94,7 @@ void plParticleSystem::Init(uint32_t xTiles, uint32_t yTiles, uint32_t maxTotalP
                             plController *ambientCtl,   plController *diffuseCtl, plController *opacityCtl, 
                             plController *widthCtl, plController *heightCtl)
 {
-    fTarget = nil;
+    fTarget = nullptr;
     fLastTime = 0;
     fCurrTime = 0;
     SetGravity(1.0f);
@@ -104,9 +105,9 @@ void plParticleSystem::Init(uint32_t xTiles, uint32_t yTiles, uint32_t maxTotalP
     fNextEmitterToGo = 0;
     fMiscFlags = 0;
 
-    fForces.Reset();
-    fEffects.Reset();
-    fConstraints.Reset();
+    fForces.clear();
+    fEffects.clear();
+    fConstraints.clear();
 
     fXTiles = xTiles;
     fYTiles = yTiles;
@@ -116,7 +117,7 @@ void plParticleSystem::Init(uint32_t xTiles, uint32_t yTiles, uint32_t maxTotalP
     fEmitters = new plParticleEmitter *[fMaxEmitters];
     int i;
     for (i = 0; i < maxEmitters; i++)
-        fEmitters[i] = nil; 
+        fEmitters[i] = nullptr;
 
     fAmbientCtl = ambientCtl;
     fDiffuseCtl = diffuseCtl;
@@ -130,14 +131,14 @@ void plParticleSystem::IAddEffect(plParticleEffect *effect, uint32_t type)
     switch(type)
     {
     case kEffectForce:
-        fForces.Append(effect);
+        fForces.emplace_back(effect);
         break;
     case kEffectMisc:
     default:
-        fEffects.Append(effect);
+        fEffects.emplace_back(effect);
         break;
     case kEffectConstraint:
-        fConstraints.Append(effect);
+        fConstraints.emplace_back(effect);
         break;
     }
 }
@@ -145,9 +146,9 @@ void plParticleSystem::IAddEffect(plParticleEffect *effect, uint32_t type)
 plParticleEmitter* plParticleSystem::GetAvailEmitter()
 {
     if( !fNumValidEmitters ) // got to start with at least one.
-        return nil;
+        return nullptr;
 
-    float minTTL = 1.e33;
+    float minTTL = 1.e33f;
     int iMinTTL = -1;
     int i;
     for( i = 0; i < fNumValidEmitters; i++ )
@@ -167,8 +168,9 @@ plParticleEmitter* plParticleSystem::GetAvailEmitter()
             fEmitters[iMinTTL] = new plParticleEmitter();
             fEmitters[iMinTTL]->Clone(fEmitters[0], iMinTTL);
 
+            hsAssert(fMaxTotalParticlesLeft >= fEmitters[iMinTTL]->fMaxParticles,
+                     "Should have planned better");
             fMaxTotalParticlesLeft -= fEmitters[iMinTTL]->fMaxParticles;
-            hsAssert(fMaxTotalParticlesLeft >= 0, "Should have planned better");
 
             // Don't really use this. fEmitters[i]->GetSpanIndex() always == i.
             fNextEmitterToGo = (fNextEmitterToGo + 1) % fMaxEmitters; 
@@ -204,8 +206,6 @@ uint32_t plParticleSystem::AddEmitter(uint32_t maxParticles, plParticleGenerator
 
     if (maxParticles > fMaxTotalParticlesLeft)
         maxParticles = fMaxTotalParticlesLeft;
-    if (maxParticles < 0)
-        maxParticles = 0;
 
     fEmitters[currEmitter] = new plParticleEmitter();
     fEmitters[currEmitter]->Init(this, maxParticles, fNextEmitterToGo, emitterFlags, gen);
@@ -274,7 +274,7 @@ uint16_t plParticleSystem::StealParticlesFrom(plParticleSystem *victim, uint16_t
 
     if (victim)
     {
-        uint16_t numStolen = fEmitters[0]->StealParticlesFrom(victim->fNumValidEmitters > 0 ? victim->fEmitters[0] : nil, num);
+        uint16_t numStolen = fEmitters[0]->StealParticlesFrom(victim->fNumValidEmitters > 0 ? victim->fEmitters[0] : nullptr, num);
         GetTarget(0)->DirtySynchState(kSDLParticleSystem, 0);   
         victim->GetTarget(0)->DirtySynchState(kSDLParticleSystem, 0);   
         return numStolen;
@@ -285,25 +285,24 @@ uint16_t plParticleSystem::StealParticlesFrom(plParticleSystem *victim, uint16_t
 
 plParticleGenerator *plParticleSystem::GetExportedGenerator() const 
 { 
-    return (fNumValidEmitters > 0 ? fEmitters[0]->fGenerator : nil);
+    return (fNumValidEmitters > 0 ? fEmitters[0]->fGenerator : nullptr);
 }
 
 plParticleEffect *plParticleSystem::GetEffect(uint16_t type) const
 {
-    int i;
-    for (i = 0; i < fForces.GetCount(); i++)
-        if (fForces[i]->ClassIndex() == type)
-            return fForces[i];
+    for (plParticleEffect* forceEffect : fForces)
+        if (forceEffect->ClassIndex() == type)
+            return forceEffect;
 
-    for (i = 0; i < fEffects.GetCount(); i++)
-        if (fEffects[i]->ClassIndex() == type)
-            return fEffects[i];
+    for (plParticleEffect* effect : fEffects)
+        if (effect->ClassIndex() == type)
+            return effect;
 
-    for (i = 0; i < fConstraints.GetCount(); i++)
-        if (fConstraints[i]->ClassIndex() == type)
-            return fConstraints[i];
+    for (plParticleEffect* constraint : fConstraints)
+        if (constraint->ClassIndex() == type)
+            return constraint;
 
-    return nil;
+    return nullptr;
 }
 
 uint32_t plParticleSystem::GetNumValidParticles(bool immortalOnly /* = false */) const
@@ -405,7 +404,7 @@ plDrawInterface* plParticleSystem::ICheckDrawInterface()
 {
     plDrawInterface* di = IGetTargetDrawInterface(0);
     if( !di )
-        return nil;
+        return nullptr;
 
     if( di->GetDrawableMeshIndex(0) == uint32_t(-1) )
     {
@@ -506,7 +505,7 @@ bool plParticleSystem::MsgReceive(plMessage* msg)
             if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                 fTexture = mat;
             else
-                fTexture = nil;
+                fTexture = nullptr;
             return true;
         }
         if ((effect = plParticleEffect::ConvertNoRef(refMsg->GetRef())))
@@ -545,7 +544,7 @@ void plParticleSystem::UpdateGenerator(uint32_t paramID, float value)
 
 void plParticleSystem::AddTarget(plSceneObject *so)
 {
-    if (fTarget != nil)
+    if (fTarget != nullptr)
         RemoveTarget(fTarget);
 
     fTarget = so;
@@ -561,15 +560,15 @@ void plParticleSystem::AddTarget(plSceneObject *so)
 
 void plParticleSystem::RemoveTarget(plSceneObject *so)
 {
-    if (so == fTarget && so != nil)
+    if (so == fTarget && so != nullptr)
     {
         if (fParticleSDLMod)
         {
             so->RemoveModifier(fParticleSDLMod);
             delete fParticleSDLMod;
-            fParticleSDLMod = nil;
+            fParticleSDLMod = nullptr;
         }
-        fTarget = nil;
+        fTarget = nullptr;
     }
 }
 
@@ -593,13 +592,13 @@ void plParticleSystem::IPreSim()
     fPreSim = 0;
 }
 
-void plParticleSystem::IReadEffectsArray(hsTArray<plParticleEffect *> &effects, uint32_t type, hsStream *s, hsResMgr *mgr)
+void plParticleSystem::IReadEffectsArray(std::vector<plParticleEffect *> &effects, uint32_t type, hsStream *s, hsResMgr *mgr)
 {
     plGenRefMsg *msg;
-    effects.Reset();
+    effects.clear();
     uint32_t count = s->ReadLE32();
-    int i;
-    for (i = 0; i < count; i++)
+    effects.reserve(count);
+    for (uint32_t i = 0; i < count; i++)
     {
         msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, (int8_t)type);
         mgr->ReadKeyNotifyMe(s, msg, plRefFlags::kActiveRef);
@@ -626,14 +625,13 @@ void plParticleSystem::Read(hsStream *s, hsResMgr *mgr)
     uint32_t maxEmitters = s->ReadLE32();
     Init(xTiles, yTiles, maxTotal, maxEmitters, fAmbientCtl, fDiffuseCtl, fOpacityCtl, fWidthCtl, fHeightCtl);
 
-    fPreSim = s->ReadLEScalar();
+    fPreSim = s->ReadLEFloat();
     fAccel.Read(s);
-    fDrag = s->ReadLEScalar();
-    fWindMult = s->ReadLEScalar();
+    fDrag = s->ReadLEFloat();
+    fWindMult = s->ReadLEFloat();
 
     fNumValidEmitters = s->ReadLE32();
-    int i;
-    for (i = 0; i < fNumValidEmitters; i++)
+    for (uint32_t i = 0; i < fNumValidEmitters; i++)
     {
         fEmitters[i] = plParticleEmitter::ConvertNoRef(mgr->ReadCreatable(s));
         fEmitters[i]->ISetSystem(this);
@@ -643,12 +641,10 @@ void plParticleSystem::Read(hsStream *s, hsResMgr *mgr)
     IReadEffectsArray(fEffects, kEffectMisc, s, mgr);
     IReadEffectsArray(fConstraints, kEffectConstraint, s, mgr);
 
-    int count = s->ReadLE32();
-    fPermaLights.SetCount(count);
-    for( i = 0; i < count; i++ )
-    {
+    uint32_t count = s->ReadLE32();
+    fPermaLights.resize(count);
+    for (uint32_t i = 0; i < count; i++)
         fPermaLights[i] = mgr->ReadKey(s);
-    }
 }
 
 void plParticleSystem::Write(hsStream *s, hsResMgr *mgr)
@@ -671,10 +667,10 @@ void plParticleSystem::Write(hsStream *s, hsResMgr *mgr)
     s->WriteLE32(fMaxTotalParticles);
     s->WriteLE32(fMaxEmitters);
 
-    s->WriteLEScalar(fPreSim);
+    s->WriteLEFloat(fPreSim);
     fAccel.Write(s);
-    s->WriteLEScalar(fDrag);
-    s->WriteLEScalar(fWindMult);
+    s->WriteLEFloat(fDrag);
+    s->WriteLEFloat(fWindMult);
 
     s->WriteLE32(fNumValidEmitters);
     for (i = 0; i < fNumValidEmitters; i++)
@@ -682,26 +678,21 @@ void plParticleSystem::Write(hsStream *s, hsResMgr *mgr)
         mgr->WriteCreatable(s, fEmitters[i]);
     }
 
-    int count;
-    count = fForces.GetCount();
-    s->WriteLE32(count);
-    for (i = 0; i < count; i++)
-        mgr->WriteKey(s, fForces.Get(i));
+    s->WriteLE32((uint32_t)fForces.size());
+    for (plParticleEffect* forceEffect : fForces)
+        mgr->WriteKey(s, forceEffect);
 
-    count = fEffects.GetCount();
-    s->WriteLE32(count);
-    for (i = 0; i < count; i++)
-        mgr->WriteKey(s, fEffects.Get(i));
+    s->WriteLE32((uint32_t)fEffects.size());
+    for (plParticleEffect* effect : fEffects)
+        mgr->WriteKey(s, effect);
 
-    count = fConstraints.GetCount();
-    s->WriteLE32(count);
-    for (i = 0; i < count; i++)
-        mgr->WriteKey(s, fConstraints.Get(i));
+    s->WriteLE32((uint32_t)fConstraints.size());
+    for (plParticleEffect* constraint : fConstraints)
+        mgr->WriteKey(s, constraint);
 
-    count = fPermaLights.GetCount();
-    s->WriteLE32(count);
-    for( i = 0; i < count; i++ )
-        mgr->WriteKey(s, fPermaLights[i]);
+    s->WriteLE32((uint32_t)fPermaLights.size());
+    for (const plKey& key : fPermaLights)
+        mgr->WriteKey(s, key);
 }
 
 void plParticleSystem::SetAttachedToAvatar(bool attached)
@@ -713,5 +704,5 @@ void plParticleSystem::SetAttachedToAvatar(bool attached)
 
 void plParticleSystem::AddLight(plKey liKey)
 {
-    fPermaLights.Append(liKey);
+    fPermaLights.emplace_back(std::move(liKey));
 }

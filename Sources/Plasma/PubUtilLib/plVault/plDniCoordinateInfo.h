@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class hsStream;
 class hsResMgr;
-
+namespace ST { class string; }
 
 class plDniCoordinateInfo : public plCreatable
 {
@@ -67,19 +67,19 @@ public:
     CLASSNAME_REGISTER( plDniCoordinateInfo );
     GETINTERFACE_ANY( plDniCoordinateInfo, plCreatable );
 
-    int GetHSpans( void ) const { return fHSpans;}
+    int GetHSpans() const { return fHSpans;}
     void    SetHSpans( int v ) { fHSpans = v; }
-    int GetVSpans( void ) const { return fVSpans;}
+    int GetVSpans() const { return fVSpans;}
     void    SetVSpans( int v ) { fVSpans = v;}
-    int GetTorans( void ) const { return fTorans; }
+    int GetTorans() const { return fTorans; }
     void    SetTorans( int v ) { fTorans = v; }
 
     void    CopyFrom( const plDniCoordinateInfo * other );
-    void    Read( hsStream* s, hsResMgr* mgr );
-    void    Write( hsStream* s, hsResMgr* mgr );
+    void    Read(hsStream* s, hsResMgr* mgr) override;
+    void    Write(hsStream* s, hsResMgr* mgr) override;
 
     // debug
-    plString AsString( int level=0 ) const;
+    ST::string AsString( int level=0 ) const;
 };
 
 

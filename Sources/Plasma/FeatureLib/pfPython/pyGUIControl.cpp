@@ -40,20 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyGUIControl.h"
 
 #include "pfGameGUIMgr/pfGUIControlMod.h"
 #include "pfGameGUIMgr/pfGUIDialogMod.h"
 
-#include "pyGUIDialog.h"
 #include "pyColor.h"
 #include "pyGeometry3.h"
-
-#include "pyGUIControlCheckBox.h"
+#include "pyGlueHelpers.h"
+#include "pyGUIDialog.h"
+#include "pyKey.h"
 
 pyGUIControl::pyGUIControl(pyKey& gckey)
 {
@@ -62,7 +58,7 @@ pyGUIControl::pyGUIControl(pyKey& gckey)
 
 pyGUIControl::pyGUIControl(plKey objkey)
 {
-    fGCkey = objkey;
+    fGCkey = std::move(objkey);
 }
 
 pyGUIControl& pyGUIControl::operator=(const pyGUIControl& other)
@@ -85,9 +81,9 @@ pyGUIControl& pyGUIControl::Copy(const pyGUIControl& other)
 bool pyGUIControl::operator==(const pyGUIControl &gcobj) const
 {
     plKey theirs = ((pyGUIControl&)gcobj).getObjKey();
-    if ( fGCkey == nil && theirs == nil )
+    if (fGCkey == nullptr && theirs == nullptr)
         return true;
-    else if ( fGCkey != nil && theirs != nil )
+    else if (fGCkey != nullptr && theirs != nullptr)
         return (fGCkey->GetUoid()==theirs->GetUoid());
     else
         return false;
@@ -139,7 +135,7 @@ void pyGUIControl::SetEnabled( bool e )
     }
 }
 
-bool pyGUIControl::IsEnabled( void )
+bool pyGUIControl::IsEnabled()
 {
     if ( fGCkey )
     {
@@ -162,7 +158,7 @@ void pyGUIControl::SetFocused( bool e )
     }
 }
 
-bool pyGUIControl::IsFocused( void )
+bool pyGUIControl::IsFocused()
 {
     if ( fGCkey )
     {
@@ -185,7 +181,7 @@ void pyGUIControl::SetVisible( bool vis )
     }
 }
 
-bool pyGUIControl::IsVisible( void )
+bool pyGUIControl::IsVisible()
 {
     if ( fGCkey )
     {
@@ -197,7 +193,7 @@ bool pyGUIControl::IsVisible( void )
     return false;
 }
 
-bool pyGUIControl::IsInteresting( void )
+bool pyGUIControl::IsInteresting()
 {
     if ( fGCkey )
     {
@@ -220,7 +216,7 @@ void pyGUIControl::SetNotifyOnInteresting( bool state )
     }
 }
 
-void pyGUIControl::Refresh( void )
+void pyGUIControl::Refresh()
 {
     if ( fGCkey )
     {
@@ -252,12 +248,12 @@ PyObject* pyGUIControl::GetObjectCenter()
         if ( pbmod )
             return pyPoint3::New(pbmod->GetObjectCenter());
     }
-    return pyPoint3::New(hsPoint3(0,0,0));
+    return pyPoint3::New();
 }
 
 
 
-PyObject* pyGUIControl::GetOwnerDlg( void )
+PyObject* pyGUIControl::GetOwnerDlg()
 {
     if ( fGCkey )
     {

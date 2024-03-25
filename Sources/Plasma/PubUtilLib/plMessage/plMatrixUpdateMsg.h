@@ -54,13 +54,13 @@ public:
     plMatrixUpdateMsg(const plKey &s, 
                     const plKey &r, 
                     const double* t){SetBCastFlag(plMessage::kPropagateToModifiers);}
-    ~plMatrixUpdateMsg(){;}
+    ~plMatrixUpdateMsg() { }
 
     CLASSNAME_REGISTER( plMatrixUpdateMsg );
     GETINTERFACE_ANY( plMatrixUpdateMsg, plMessage );
 
-    void Read( hsStream* s, hsResMgr* mgr );
-    void Write( hsStream* s, hsResMgr* mgr );
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
 
     hsMatrix44  fMatrix;

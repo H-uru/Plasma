@@ -45,21 +45,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 plProxyDrawMsg::plProxyDrawMsg()
-:   plMessage(nil, nil, nil), 
-    fProxyFlags(0)
+:   plMessage(nullptr, nullptr, nullptr),
+    fProxyFlags()
 {
     SetBCastFlag(plMessage::kBCastByExactType);
 }
 
 plProxyDrawMsg::plProxyDrawMsg(uint16_t flags)
-:   plMessage(nil, nil, nil),
+:   plMessage(nullptr, nullptr, nullptr),
     fProxyFlags(flags)
 {
     SetBCastFlag(plMessage::kBCastByExactType);
 }
 
 plProxyDrawMsg::plProxyDrawMsg(plKey &rcv, uint16_t flags)
-:   plMessage(rcv, rcv, nil),
+:   plMessage(rcv, rcv, nullptr),
     fProxyFlags(flags)
 {
 }

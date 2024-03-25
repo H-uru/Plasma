@@ -55,16 +55,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGameGUIMgr_h
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
+
 #include "pnInputCore/plKeyDef.h"
+#include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/hsKeyedObject.h"
+
+#include <string_theory/string>
 #include <vector>
 
-class plPipeline;
-class plMessage;
+class pfGameUIInputInterface;
 class pfGUIDialogMod;
 class pfGUIControlMod;
-class pfGameUIInputInterface;
+class plMessage;
+class plPipeline;
 class plPostEffectMod;
 
 //// Tag Definitions /////////////////////////////////////////////////////////
@@ -79,8 +82,8 @@ class plPostEffectMod;
 class pfGUITag
 {
     public:
-        uint32_t  fID;
-        char    fName[ 128 ];
+        uint32_t   fID;
+        ST::string fName;
 };
 
 
@@ -90,13 +93,15 @@ class pfGUITag
 class pfDialogNameSetKey
 {
 private:
-    char    *fName;
-    plKey   fKey;
+    ST::string fName;
+    plKey      fKey;
+
 public:
-    pfDialogNameSetKey(const char *name, plKey key) { fName = hsStrcpy(name); fKey=key; }
-    ~pfDialogNameSetKey() { delete [] fName; }
-    const char *GetName() { return fName; }
-    plKey GetKey() { return fKey; }
+    pfDialogNameSetKey(ST::string name, plKey key)
+        : fName(std::move(name)), fKey(std::move(key)) { }
+
+    ST::string GetName() const { return fName; }
+    plKey GetKey() const { return fKey; }
 };
 
 //// Manager Class Definition ////////////////////////////////////////////////
@@ -134,12 +139,8 @@ class pfGameGUIMgr : public hsKeyedObject
 
     protected:
 
-        hsTArray<pfGUIDialogMod *>  fDialogs;
+        std::vector<pfGUIDialogMod *>  fDialogs;
         pfGUIDialogMod              *fActiveDialogs;
-
-        // These two lists help us manage when dialogs get told to load or unload versus when they actually *do*
-        hsTArray<pfDialogNameSetKey *>  fDlgsPendingLoad;
-        hsTArray<pfDialogNameSetKey *>  fDlgsPendingUnload;
 
         bool    fActivated;
         uint32_t  fActiveDlgCount;
@@ -156,11 +157,10 @@ class pfGameGUIMgr : public hsKeyedObject
         // This array shouldn't get more than one entry... but
         // it could be more....
         // LoadDialog adds an entry and MsgReceive removes it
-        hsTArray<pfDialogNameSetKey *>  fDialogToSetKeyOf;
+        std::vector<pfDialogNameSetKey *>  fDialogToSetKeyOf;
 
-        void    ILoadDialog( const char *name );
-        void    IShowDialog( const char *name );
-        void    IHideDialog( const char *name );
+        void    IShowDialog( const ST::string& name );
+        void    IHideDialog( const ST::string& name );
 
         void    IAddDlgToList( hsKeyedObject *obj );
         void    IRemoveDlgFromList( hsKeyedObject *obj );
@@ -171,9 +171,9 @@ class pfGameGUIMgr : public hsKeyedObject
         bool    IHandleKeyEvt( EventType event, plKeyDef key, uint8_t modifiers );
         bool    IHandleKeyPress( wchar_t key, uint8_t modifiers );
 
-        bool    IModalBlocking( void );
+        bool    IModalBlocking();
 
-        pfGUIDialogMod  *IGetTopModal( void ) const;
+        pfGUIDialogMod  *IGetTopModal() const;
 
     public:
 
@@ -191,23 +191,23 @@ class pfGameGUIMgr : public hsKeyedObject
 
         void        Draw( plPipeline *p );
 
-        bool        Init( void );
+        bool        Init();
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
 
-        void    LoadDialog( const char *name, plKey recvrKey=nil, const char *ageName = nil );  // AgeName = nil defaults to "GUI"
-        void    ShowDialog( const char *name ) { IShowDialog(name); }
-        void    HideDialog( const char *name ) { IHideDialog(name); }
-        void    UnloadDialog( const char *name );
+        void    LoadDialog(const ST::string& name, plKey recvrKey = {}, const ST::string& ageName = ST_LITERAL("GUI"));
+        void    ShowDialog( const ST::string& name ) { IShowDialog(name); }
+        void    HideDialog( const ST::string&  name ) { IHideDialog(name); }
+        void    UnloadDialog( const ST::string& name );
         void    UnloadDialog( pfGUIDialogMod *dlg );
 
         void    ShowDialog( pfGUIDialogMod *dlg, bool resetClickables=true );
         void    HideDialog( pfGUIDialogMod *dlg );
 
-        bool    IsDialogLoaded( const char *name );
-        pfGUIDialogMod *GetDialogFromString( const char *name );
+        bool    IsDialogLoaded( const ST::string& name );
+        pfGUIDialogMod *GetDialogFromString( const ST::string& name );
 
-        void    SetDialogToNotify(const char *name, plKey recvrKey);
+        void    SetDialogToNotify(const ST::string& name, plKey recvrKey);
         void    SetDialogToNotify(pfGUIDialogMod *dlg, plKey recvrKey);
 
         void    SetDefaultCursor(uint32_t defaultCursor) { fDefaultCursor = defaultCursor; }
@@ -215,22 +215,22 @@ class pfGameGUIMgr : public hsKeyedObject
         void    SetCursorOpacity(float opacity) { fCursorOpacity = opacity; }
         float    GetCursorOpacity() { return fCursorOpacity; }
 
-        pfGUIPopUpMenu  *FindPopUpMenu( const char *name );
+        pfGUIPopUpMenu  *FindPopUpMenu( const ST::string& name );
 
-        std::vector<plPostEffectMod*> GetDlgRenderMods( void ) const;
-        bool    IsModalBlocking( void ) {return IModalBlocking();}
+        std::vector<plPostEffectMod*> GetDlgRenderMods() const;
+        bool    IsModalBlocking() {return IModalBlocking();}
 
         // Tag ID stuff
         pfGUIDialogMod  *GetDialogFromTag( uint32_t tagID );
         pfGUIControlMod *GetControlFromTag( pfGUIDialogMod *dlg, uint32_t tagID );
 
-        static uint32_t       GetNumTags( void );
+        static uint32_t       GetNumTags();
         static pfGUITag     *GetTag( uint32_t tagIndex );
-        static uint32_t       GetHighestTag( void );
+        static uint32_t       GetHighestTag();
         void SetAspectRatio(float aspectratio);
         float GetAspectRatio() { return fAspectRatio; }
  
-        static pfGameGUIMgr *GetInstance( void ) { return fInstance; }
+        static pfGameGUIMgr *GetInstance() { return fInstance; }
 };
 
 #endif //_pfGameGUIMgr_h

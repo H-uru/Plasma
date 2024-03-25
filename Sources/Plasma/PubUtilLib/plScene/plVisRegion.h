@@ -84,16 +84,16 @@ public:
     CLASSNAME_REGISTER( plVisRegion );
     GETINTERFACE_ANY( plVisRegion, plObjInterface );
 
-    virtual int32_t   GetNumProperties() const { return 3; } // This is stupid.
+    int32_t   GetNumProperties() const override { return 3; } // This is stupid.
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     // Set transform doesn't do anything, because the regions themselves are
     // object interfaces, so they'll move when their sceneobjects move.
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override { }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     bool            Eval(const hsPoint3& pos) const;
 

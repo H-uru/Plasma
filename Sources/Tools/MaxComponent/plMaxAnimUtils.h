@@ -44,7 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <map>
 #include <vector>
-#include "plString.h"
+#include <string_theory/string>
+
+// Always include windows before tchar :(
+#include "hsWindows.h"
+#include <tchar.h>
 
 class plErrorMsg;
 class Animatable;
@@ -59,11 +63,11 @@ public:
     float   fStart;     // beginning of the segment in game time
     float   fEnd;       // end of the segment in game time
     float   fInitial;   // initial position of the animation (-1 for the start)
-    plString  fName;    // name of the segment: controls lifespan of the name
+    ST::string fName;   // name of the segment: controls lifespan of the name
     SegType fType;
     
     SegmentSpec();
-    SegmentSpec(float start, float end, const plString & name, SegType);
+    SegmentSpec(float start, float end, const ST::string & name, SegType);
     ~SegmentSpec();
 
     bool Contains(SegmentSpec *spec);
@@ -71,7 +75,7 @@ public:
 
 
 // a table mapping segment names to segment spec objects
-typedef std::map<plString, SegmentSpec*, plString::less_i> SegmentMap;
+typedef std::map<ST::string, SegmentSpec*, ST::less_i> SegmentMap;
 
 // You can pass in nil for pErrMsg for silent operation
 SegmentMap *GetAnimSegmentMap(Animatable *anim, plErrorMsg *pErrMsg);
@@ -80,10 +84,10 @@ void DeleteSegmentMap(SegmentMap *segMap);
 
 SegmentMap *GetSharedAnimSegmentMap(std::vector<Animatable*>& anims, plErrorMsg *pErrorMsg);
 
-bool GetSegMapAnimTime(const plString &animName, SegmentMap *segMap, SegmentSpec::SegType type, float& begin, float& end);
+bool GetSegMapAnimTime(const ST::string &animName, SegmentMap *segMap, SegmentSpec::SegType type, float& begin, float& end);
 
 // For internal use
-void GetSegment(const char *note, float time, SegmentMap *segMap, plErrorMsg *pErrMsg);
+void GetSegment(const TCHAR* note, float time, SegmentMap *segMap, plErrorMsg *pErrMsg);
 
 bool DoesHaveStopPoints(Animatable *anim);
 

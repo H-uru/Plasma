@@ -48,16 +48,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                   attached to a GUIControlDraggable
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
-#include "pyKey.h"
-
-#include "pyGlueHelpers.h"
-
+#include "pyGlueDefinitions.h"
 #include "pyGUIControl.h"
 
-class pyPoint3;
-
+class plKey;
+class pyKey;
 
 class pyGUIControlDraggable : public pyGUIControl
 {
@@ -79,7 +75,7 @@ public:
     static bool IsGUIControlDraggable(pyKey& gckey);
 
     void StopDragging( bool cancel );
-    PyObject* GetLastMousePt( void ); // returns pyPoint3
+    PyObject* GetLastMousePt(); // returns pyPoint3
 
 };
 

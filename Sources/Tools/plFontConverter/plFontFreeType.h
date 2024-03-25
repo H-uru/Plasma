@@ -59,9 +59,8 @@ class plFontFreeType : public plFont
             bool      fUseKerning;
             uint8_t   fBitDepth;
             uint32_t  fScreenRes;
-            uint32_t  fMaxCharLimit;
 
-            Options() : fSize(12), fUseKerning(false), fBitDepth(1), fScreenRes(96), fMaxCharLimit(255) { }
+            Options() : fSize(12), fUseKerning(false), fBitDepth(1), fScreenRes(96) { }
         };
 
         bool    ImportFreeType( const plFileName &fontPath, Options *options, plBDFConvertCallback *callback );

@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef plOneShotComponent_inc
+#define plOneShotComponent_inc
+
 class plComponentBase;
 class plKey;
 class plMaxNodeBase;
@@ -50,3 +53,5 @@ namespace OneShotComp
 {
     plKey GetOneShotKey(plComponentBase *oneShotComp, plMaxNodeBase *target);
 }
+
+#endif

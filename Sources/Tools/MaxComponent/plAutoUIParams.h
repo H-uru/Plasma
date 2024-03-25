@@ -40,8 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsTemplates.h"
-#include <vector>
+#ifndef plAutoUIParams_inc
+#define plAutoUIParams_inc
+
+#include <unordered_set>
+
+#include <string_theory/string>
+#include <tchar.h>
 
 class plKey;
 class plComponentBase;
@@ -50,14 +55,14 @@ class plAutoUIParam
 {
 protected:
     ParamID fID;
-    char *fName;
+    ST::string fName;
     HWND fhDlg;
     int fHeight;
 
     std::vector<HWND> fControlVec;
 
     ParamID fVisID;
-    std::vector<std::string> fVisStates;
+    std::unordered_set<ST::string> fVisStates;
 
 public:
     // Types returned by GetParamType
@@ -89,7 +94,7 @@ public:
         kTypeGrassComponent,
     };
 
-    plAutoUIParam(ParamID id, const char *name);
+    plAutoUIParam(ParamID id, ST::string name);
     virtual ~plAutoUIParam();
 
     int Create(HWND hDlg, IParamBlock2 *pb, int yOffset);
@@ -102,14 +107,14 @@ public:
     void Hide();
     int GetHeight();
 
-    void SetVisInfo(ParamID id, std::vector<std::string>* states);
-    bool CheckVisibility(ParamID id, std::string state);
+    void SetVisInfo(ParamID id, std::unordered_set<ST::string> states);
+    bool CheckVisibility(ParamID id, const ST::string& state);
 
     virtual int GetParamType();
     virtual bool GetBool(IParamBlock2 *pb);
     virtual float GetFloat(IParamBlock2 *pb);
     virtual int GetInt(IParamBlock2 *pb);
-    virtual const char* GetString(IParamBlock2 *pb);
+    virtual const MCHAR* GetString(IParamBlock2 *pb);
 
     virtual int GetCount(IParamBlock2 *pb);
     virtual plKey GetKey(IParamBlock2 *pb, int idx=0);
@@ -117,10 +122,10 @@ public:
 
 protected:
     int  ISizeControl(HWND hDlg, HWND hControl, int w, int h, int y, int x=3);
-    HWND ICreateControl(HWND hDlg, const char *className, const char *wndName=nil, DWORD style=0, DWORD exStyle=0);
+    HWND ICreateControl(HWND hDlg, const TCHAR* className, const TCHAR* wndName=nullptr, DWORD style=0, DWORD exStyle=0);
     void ISetControlFont(HWND hControl);
 
-    int IAddStaticText(HWND hDlg, int y, const char *text);
+    int IAddStaticText(HWND hDlg, int y, const TCHAR* text);
 };
 
 class plCheckBoxParam : public plAutoUIParam
@@ -129,12 +134,12 @@ protected:
     HWND fhCheck;
     
 public:
-    plCheckBoxParam(ParamID id, const char *name);
-    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset);
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    plCheckBoxParam(ParamID id, ST::string name);
+    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset) override;
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    bool GetBool(IParamBlock2 *pb);
+    int GetParamType() override;
+    bool GetBool(IParamBlock2 *pb) override;
 };
 
 class plSpinnerParam : public plAutoUIParam
@@ -144,15 +149,15 @@ protected:
     bool fIsFloat;  // True if this is a float spinner, false if it is an int
     
 public:
-    plSpinnerParam(ParamID id, const char *name, bool isFloat);
-    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset);
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    plSpinnerParam(ParamID id, ST::string name, bool isFloat);
+    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset) override;
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    float GetFloat(IParamBlock2 *pb);
-    int GetInt(IParamBlock2 *pb);
+    int GetParamType() override;
+    float GetFloat(IParamBlock2 *pb) override;
+    int GetInt(IParamBlock2 *pb) override;
 
-    void Show(int yOffset);
+    void Show(int yOffset) override;
 };
 
 class plEditParam : public plAutoUIParam
@@ -162,13 +167,13 @@ protected:
     int fLines;
     
 public:
-    plEditParam(ParamID id, const char *name, int lines);
-    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset);
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    plEditParam(ParamID id, ST::string name, int lines);
+    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset) override;
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    const char* GetString(IParamBlock2 *pb);
-    void Show(int yOffset);
+    int GetParamType() override;
+    const MCHAR* GetString(IParamBlock2 *pb) override;
+    void Show(int yOffset) override;
 };
 
 class plPickListParam : public plAutoUIParam
@@ -180,15 +185,15 @@ protected:
     std::vector<Class_ID> fCIDs;    
     
 public:
-    plPickListParam(ParamID id, const char *name, std::vector<Class_ID>* filter);
-    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset);
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    plPickListParam(ParamID id, ST::string name, std::vector<Class_ID>* filter);
+    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset) override;
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    int GetCount(IParamBlock2 *pb);
-    plKey GetKey(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    int GetCount(IParamBlock2 *pb) override;
+    plKey GetKey(IParamBlock2 *pb, int idx=0) override;
 
-    void Show(int yOffset);
+    void Show(int yOffset) override;
 
 protected:
     void IUpdateList(IParamBlock2 *pb);
@@ -203,73 +208,73 @@ protected:
     HWND fhRemove;
 
 public:
-    plPickButtonParam(ParamID id, const char *name, std::vector<Class_ID>* filter, bool canConvertToType);
+    plPickButtonParam(ParamID id, ST::string name, std::vector<Class_ID>* filter, bool canConvertToType);
 
-    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset);
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset) override;
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    int GetCount(IParamBlock2 *pb);
-    plKey GetKey(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    int GetCount(IParamBlock2 *pb) override;
+    plKey GetKey(IParamBlock2 *pb, int idx=0) override;
 
     void SetPickNode(INode *node, IParamBlock2 *pb);
 
-    void Show(int yOffset);
+    void Show(int yOffset) override;
 };
 
 class plPickComponentButtonParam : public plPickButtonParam
 {
 public:
-    plPickComponentButtonParam(ParamID id, const char *name, std::vector<Class_ID>* filter, bool canConvertToType);
+    plPickComponentButtonParam(ParamID id, ST::string name, std::vector<Class_ID>* filter, bool canConvertToType);
 
-    int GetParamType();
-    plComponentBase* GetComponent(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    plComponentBase* GetComponent(IParamBlock2 *pb, int idx=0) override;
 };
 
 class plPickComponentListParam : public plPickListParam
 {
 public:
-    plPickComponentListParam(ParamID id, const char *name, std::vector<Class_ID>* filter);
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    plPickComponentListParam(ParamID id, ST::string name, std::vector<Class_ID>* filter);
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0) override;
 };
 
 class plPickActivatorButtonParam : public plPickButtonParam
 {
 public:
-    plPickActivatorButtonParam(ParamID id, const char *name);
+    plPickActivatorButtonParam(ParamID id, ST::string name);
 
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0) override;
 };
 
 class plPickActivatorListParam : public plPickListParam
 {
 public:
-    plPickActivatorListParam(ParamID id, const char *name);
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    plPickActivatorListParam(ParamID id, ST::string name);
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0) override;
 };
 
 class plPickDynamicTextButtonParam : public plPickButtonParam
 {
 public:
-    plPickDynamicTextButtonParam(ParamID id, const char *name);
+    plPickDynamicTextButtonParam(ParamID id, ST::string name);
 
-    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset);
+    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset) override;
 
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    const char* GetString(IParamBlock2 *pb);
-    int GetCount(IParamBlock2 *pb);
-    plKey GetKey(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    const MCHAR* GetString(IParamBlock2 *pb) override;
+    int GetCount(IParamBlock2 *pb) override;
+    plKey GetKey(IParamBlock2 *pb, int idx=0) override;
 };
 
 class plPickSingleComponentButtonParam : public plPickButtonParam
@@ -278,111 +283,111 @@ protected:
     int         fMyType;
     Class_ID    fClassToPick;
 public:
-    plPickSingleComponentButtonParam(ParamID id, const char *name, int myType, Class_ID myClassToPick);
+    plPickSingleComponentButtonParam(ParamID id, ST::string name, int myType, Class_ID myClassToPick);
 
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0) override;
 };
 
 class plPickExcludeRegionButtonParam : public plPickButtonParam
 {
 public:
-    plPickExcludeRegionButtonParam(ParamID id, const char *name);
+    plPickExcludeRegionButtonParam(ParamID id, ST::string name);
 
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0) override;
 };
 
 class plPickWaterComponentButtonParam : public plPickButtonParam
 {
 public:
-    plPickWaterComponentButtonParam(ParamID id, const char *name);
+    plPickWaterComponentButtonParam(ParamID id, ST::string name);
 
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0) override;
 };
 
 class plPickSwimCurrentInterfaceButtonParam : public plPickButtonParam
 {
 public:
-    plPickSwimCurrentInterfaceButtonParam(ParamID id, const char *name);
+    plPickSwimCurrentInterfaceButtonParam(ParamID id, ST::string name);
 
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0) override;
 };
 
 class plPickClusterComponentButtonParam : public plPickButtonParam
 {
 public:
-    plPickClusterComponentButtonParam(ParamID id, const char *name);
+    plPickClusterComponentButtonParam(ParamID id, ST::string name);
 
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0) override;
 };
 
 class plPickAnimationButtonParam : public plPickButtonParam
 {
 public:
-    plPickAnimationButtonParam(ParamID id, const char *name);
+    plPickAnimationButtonParam(ParamID id, ST::string name);
 
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0) override;
 };
 
 class plPickBehaviorButtonParam : public plPickButtonParam
 {
 public:
-    plPickBehaviorButtonParam(ParamID id, const char *name);
+    plPickBehaviorButtonParam(ParamID id, ST::string name);
 
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0) override;
 };
 
 class plPickMaterialButtonParam : public plPickButtonParam
 {
 public:
-    plPickMaterialButtonParam(ParamID id, const char *name);
+    plPickMaterialButtonParam(ParamID id, ST::string name);
 
-    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset);
+    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset) override;
 
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    const char* GetString(IParamBlock2 *pb);
-    int GetCount(IParamBlock2 *pb);
-    plKey GetKey(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    const MCHAR* GetString(IParamBlock2 *pb) override;
+    int GetCount(IParamBlock2 *pb) override;
+    plKey GetKey(IParamBlock2 *pb, int idx=0) override;
 };
 
 class plPickMaterialAnimationButtonParam : public plPickButtonParam
 {
 protected:
-    hsTArray<plKey> fKeys; // FIXME: std::vector
+    std::vector<plKey> fKeys;
 
 public:
-    plPickMaterialAnimationButtonParam(ParamID id, const char *name);
+    plPickMaterialAnimationButtonParam(ParamID id, ST::string name);
 
-    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset);
+    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset) override;
 
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    const char* GetString(IParamBlock2 *pb);
-    int GetCount(IParamBlock2 *pb);
-    plKey GetKey(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    const MCHAR* GetString(IParamBlock2 *pb) override;
+    int GetCount(IParamBlock2 *pb) override;
+    plKey GetKey(IParamBlock2 *pb, int idx=0) override;
 
     void CreateKeyArray(IParamBlock2* pb);
     void DestroyKeyArray();
@@ -392,18 +397,18 @@ class plDropDownListParam : public plAutoUIParam
 {
 protected:
     HWND fhList;
-    std::vector<std::string> fOptions;  
+    std::vector<ST::string> fOptions;
     
 public:
-    plDropDownListParam(ParamID id, const char *name, std::vector<std::string>* options);
-    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset);
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    plDropDownListParam(ParamID id, ST::string name, std::vector<ST::string> options = {});
+    int CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset) override;
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    int GetCount(IParamBlock2 *pb);
-    const char* GetString(IParamBlock2 *pb);
+    int GetParamType() override;
+    int GetCount(IParamBlock2 *pb) override;
+    const MCHAR* GetString(IParamBlock2 *pb) override;
     
-    void Show(int yOffset);
+    void Show(int yOffset) override;
 
 protected:
     void IUpdateList(IParamBlock2 *pb);
@@ -412,10 +417,12 @@ protected:
 class plPickGrassComponentButtonParam : public plPickButtonParam
 {
 public:
-    plPickGrassComponentButtonParam(ParamID id, const char *name);
+    plPickGrassComponentButtonParam(ParamID id, ST::string name);
 
-    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb);
+    bool IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb) override;
 
-    int GetParamType();
-    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0);
+    int GetParamType() override;
+    plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0) override;
 };
+
+#endif

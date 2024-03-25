@@ -109,7 +109,7 @@ static const unsigned   kFileSrvBuildId = 0;
 struct Cli2File_ConnData {
     uint32_t       dataBytes;
     uint32_t       buildId;
-    unsigned    serverType;
+    uint32_t       serverType;
 };
 struct Cli2File_Connect {
     AsyncSocketConnectPacket    hdr;
@@ -141,7 +141,7 @@ struct Cli2File_BuildIdRequest : Cli2File_MsgHeader {
 // ManifestRequest
 struct Cli2File_ManifestRequest : Cli2File_MsgHeader {
     uint32_t       transId;
-    wchar_t       group[MAX_PATH];
+    char16_t       group[kNetDefaultStringSize];
     unsigned    buildId; // 0 = newest
 };
 struct Cli2File_ManifestEntryAck : Cli2File_MsgHeader {
@@ -152,7 +152,7 @@ struct Cli2File_ManifestEntryAck : Cli2File_MsgHeader {
 // FileDownloadRequest
 struct Cli2File_FileDownloadRequest : Cli2File_MsgHeader {
     uint32_t    transId;
-    wchar_t     filename[MAX_PATH];
+    char16_t    filename[kNetDefaultStringSize];
     unsigned    buildId; // 0 = newest
 };
 struct Cli2File_FileDownloadChunkAck : Cli2File_MsgHeader {
@@ -190,8 +190,8 @@ struct File2Cli_ManifestReply : Cli2File_MsgHeader {
     ENetError   result;
     uint32_t       readerId;
     uint32_t       numFiles;           // total number of files
-    uint32_t       wchar_tCount;         // size of the buffer
-    wchar_t       manifestData[1];    // manifestData[wchar_tCount], actually
+    uint32_t       wcharCount;         // size of the buffer
+    char16_t       manifestData[1];    // manifestData[wcharCount], actually
 };
 
 // FileDownloadReply

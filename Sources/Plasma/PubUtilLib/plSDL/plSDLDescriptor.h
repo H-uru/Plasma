@@ -50,14 +50,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plFileSystem.h"
 
+#include <string_theory/string>
+
+class plKey;
+class plSDVarDescriptor;
+class plSimpleVarDescriptor;
+class plStateDescriptor;
+class hsStream;
+
 //
 // Describes a variable in a state descriptor.
 // Every variable is actually a list, either fixed or variable length.
 // Abstract base class.
 //
-class hsStream;
-class plSimpleVarDescriptor;
-class plSDVarDescriptor;
 class plVarDescriptor
 {
 public:
@@ -98,13 +103,13 @@ public:
     };
 protected:
     static const uint8_t kVersion;      // for Read/Write format
-    plString    fDefault;               // set by .sdl
-    plString    fName;                  // set by .sdl
+    ST::string  fDefault;               // set by .sdl
+    ST::string  fName;                  // set by .sdl
     int         fCount;                 // set by .sdl
     Type        fType;                  // set by .sdl
-    plString    fTypeString;            // string version of fType
+    ST::string  fTypeString;            // string version of fType
     uint32_t    fFlags;
-    plString    fDisplayOptions;        // set by .sdl
+    ST::string  fDisplayOptions;        // set by .sdl
 public:
     plVarDescriptor() : fCount(1), fType(kNone), fFlags(0) { }
     virtual ~plVarDescriptor() { }
@@ -118,26 +123,26 @@ public:
     virtual const plSDVarDescriptor* GetAsSDVarDescriptor() const = 0;
 
     // getters
-    plString GetDefault()    const   { return fDefault; }
-    plString GetName()   const       { return fName; }
+    ST::string GetDefault()    const { return fDefault; }
+    ST::string GetName()   const     { return fName; }
     Type    GetType() const          { return fType; }
-    plString GetTypeString() const   { return fTypeString; }
+    ST::string GetTypeString() const { return fTypeString; }
     int     GetCount() const         { return fCount; }
     bool    IsInternal() const       { return (fFlags & kInternal) != 0; }
     bool    IsAlwaysNew() const      { return (fFlags & kAlwaysNew) != 0; }
     bool    IsVariableLength() const { return (fFlags & kVariableLength) != 0; }
-    plString GetDisplayOptions() const { return fDisplayOptions; }
+    ST::string GetDisplayOptions() const { return fDisplayOptions; }
     
     // setters
-    void    SetDefault(const plString& n)  { fDefault = n; }
-    void    SetName(const plString& n)  { fName = n; }
+    void    SetDefault(const ST::string& n)  { fDefault = n; }
+    void    SetName(const ST::string& n)  { fName = n; }
     void    SetCount(int c)             { fCount=c; }
-    virtual bool SetType(const plString& type);
+    virtual bool SetType(const ST::string& type);
     void    SetType(Type t)             { fType=t; }
     void    SetInternal(bool d)         { if (d) fFlags |= kInternal; else fFlags &= ~kInternal; }
     void    SetAlwaysNew(bool d)        { if (d) fFlags |= kAlwaysNew; else fFlags &= ~kAlwaysNew; }
     void    SetVariableLength(bool d)   { if (d) fFlags |= kVariableLength; else fFlags &= ~kVariableLength; }
-    void    SetDisplayOptions(const plString& s) { fDisplayOptions=s;   }
+    void    SetDisplayOptions(const ST::string& s) { fDisplayOptions=s;   }
 
     // IO
     virtual bool    Read(hsStream* s);  
@@ -157,13 +162,13 @@ public:
     plSimpleVarDescriptor();
     virtual ~plSimpleVarDescriptor() {  }
         
-    plSimpleVarDescriptor*  GetAsSimpleVarDescriptor() { return this; }
-    plSDVarDescriptor* GetAsSDVarDescriptor() { return nil; }
-    const plSimpleVarDescriptor*    GetAsSimpleVarDescriptor() const { return this; }
-    const plSDVarDescriptor* GetAsSDVarDescriptor() const { return nil; }
+    plSimpleVarDescriptor* GetAsSimpleVarDescriptor() override { return this; }
+    plSDVarDescriptor* GetAsSDVarDescriptor() override { return nullptr; }
+    const plSimpleVarDescriptor* GetAsSimpleVarDescriptor() const override { return this; }
+    const plSDVarDescriptor* GetAsSDVarDescriptor() const override { return nullptr; }
 
     void CopyFrom(const plSimpleVarDescriptor* v);
-    void CopyFrom(const plVarDescriptor* v) { plVarDescriptor::CopyFrom(v); }   // lame compiler
+    void CopyFrom(const plVarDescriptor* v) override { plVarDescriptor::CopyFrom(v); }   // lame compiler
 
     // getters
     int     GetSize() const;
@@ -172,30 +177,29 @@ public:
     int     GetAtomicCount() const      { return fAtomicCount; }    
     
     // setters
-    bool    SetType(const plString& type);
+    bool    SetType(const ST::string& type) override;
     void    SetType(Type t) { plVarDescriptor::SetType(t); }    // for lame compiler
     void    SetAtomicType(Type t) { fAtomicType=t; }    
 
     // IO
-    virtual bool    Read(hsStream* s);  
-    virtual void    Write(hsStream* s) const;
+    bool    Read(hsStream* s) override;
+    void    Write(hsStream* s) const override;
 };
 
 //
 // A var descriptor which references another state descriptor.
 //
-class plStateDescriptor;
 class plSDVarDescriptor : public plVarDescriptor
 {
 protected:
     plStateDescriptor* fStateDesc;      
 public:
-    plSDVarDescriptor(plStateDescriptor* sd=nil) : fStateDesc(sd) { }
+    plSDVarDescriptor(plStateDescriptor* sd=nullptr) : fStateDesc(sd) { }
 
-    plSimpleVarDescriptor*  GetAsSimpleVarDescriptor() { return nil; }
-    plSDVarDescriptor* GetAsSDVarDescriptor() { return this; }
-    const plSimpleVarDescriptor*    GetAsSimpleVarDescriptor() const { return nil; }
-    const plSDVarDescriptor* GetAsSDVarDescriptor() const { return this; }
+    plSimpleVarDescriptor* GetAsSimpleVarDescriptor() override { return nullptr; }
+    plSDVarDescriptor* GetAsSDVarDescriptor() override { return this; }
+    const plSimpleVarDescriptor* GetAsSimpleVarDescriptor() const override { return nullptr; }
+    const plSDVarDescriptor* GetAsSDVarDescriptor() const override { return this; }
 
     // getters
     plStateDescriptor* GetStateDescriptor() const { return fStateDesc; }
@@ -204,11 +208,11 @@ public:
     void SetStateDesc(plStateDescriptor* sd) { fStateDesc=sd; }
 
     void CopyFrom(const plSDVarDescriptor* v);
-    void CopyFrom(const plVarDescriptor* v) { plVarDescriptor::CopyFrom(v); }   // lame compiler
+    void CopyFrom(const plVarDescriptor* v) override { plVarDescriptor::CopyFrom(v); }   // lame compiler
 
     // IO
-    bool    Read(hsStream* s);  
-    void    Write(hsStream* s) const;
+    bool    Read(hsStream* s) override;
+    void    Write(hsStream* s) const override;
 };
 
 //
@@ -216,7 +220,6 @@ public:
 // There is one of these for each persistent object type.
 // These descriptors are defined in a user-created .sdl file.
 //
-class plKey;
 class plStateDescriptor
 {
 private:
@@ -224,7 +227,7 @@ private:
     typedef std::vector<plVarDescriptor*> VarsList; 
     VarsList fVarsList;
     int fVersion;
-    plString fName;
+    ST::string fName;
     plFileName fFilename;  // the filename this descriptor was read from
 
     void IDeInit();
@@ -233,7 +236,7 @@ public:
     ~plStateDescriptor(); 
 
     // getters
-    plString GetName() const { return fName; }
+    ST::string GetName() const { return fName; }
     int GetNumVars() const { return fVarsList.size(); }
     plVarDescriptor* GetVar(int i) const { return fVarsList[i]; }
     int GetVersion() const { return fVersion; }
@@ -241,11 +244,11 @@ public:
 
     // setters
     void SetVersion(int v) { fVersion=v; }
-    void SetName(const plString& n) { fName=n; }
+    void SetName(const ST::string& n) { fName=n; }
     void AddVar(plVarDescriptor* v) { fVarsList.push_back(v); }
     void SetFilename(const plFileName& n) { fFilename=n;}
 
-    plVarDescriptor* FindVar(const plString& name, int* idx=nil) const;
+    plVarDescriptor* FindVar(const ST::string& name, int* idx=nullptr) const;
 
     // IO
     bool Read(hsStream* s); 

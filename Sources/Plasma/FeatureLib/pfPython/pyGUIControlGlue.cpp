@@ -40,12 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyGUIControl.h"
+
 #include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControl, pyGUIControl);
@@ -55,7 +54,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControl)
 
 PYTHON_INIT_DEFINITION(ptGUIControl, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -195,7 +194,7 @@ PYTHON_BASIC_METHOD_DEFINITION(ptGUIControl, refresh, Refresh)
 
 PYTHON_METHOD_DEFINITION(ptGUIControl, setObjectCenter, args)
 {
-    PyObject* pointObj = NULL;
+    PyObject* pointObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &pointObj))
     {
         PyErr_SetString(PyExc_TypeError, "setObjectCenter expects a ptPoint3");
@@ -248,7 +247,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControl, getFontSize)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControl, getFontFlags)
 {
-    return PyInt_FromLong(self->fThis->GetFontFlags());
+    return PyLong_FromLong(self->fThis->GetFontFlags());
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControl, setFontFlags, args)
@@ -358,11 +357,12 @@ PYTHON_START_METHODS_TABLE(ptGUIControl)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-#define ptGUIControl_COMPARE        PYTHON_NO_COMPARE
 #define ptGUIControl_AS_NUMBER      PYTHON_NO_AS_NUMBER
 #define ptGUIControl_AS_SEQUENCE    PYTHON_NO_AS_SEQUENCE
 #define ptGUIControl_AS_MAPPING     PYTHON_NO_AS_MAPPING
 #define ptGUIControl_STR            PYTHON_NO_STR
+#define ptGUIControl_GETATTRO       PYTHON_NO_GETATTRO
+#define ptGUIControl_SETATTRO       PYTHON_NO_SETATTRO
 #define ptGUIControl_RICH_COMPARE   PYTHON_DEFAULT_RICH_COMPARE(ptGUIControl)
 #define ptGUIControl_GETSET         PYTHON_NO_GETSET
 #define ptGUIControl_BASE           PYTHON_NO_BASE
@@ -372,21 +372,21 @@ PYTHON_EXPOSE_TYPE_DEFINITION(ptGUIControl, pyGUIControl);
 // required functions for PyObject interoperability
 PyObject *pyGUIControl::New(pyKey& gckey)
 {
-    ptGUIControl *newObj = (ptGUIControl*)ptGUIControl_type.tp_new(&ptGUIControl_type, NULL, NULL);
+    ptGUIControl *newObj = (ptGUIControl*)ptGUIControl_type.tp_new(&ptGUIControl_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControl::New(plKey objkey)
 {
-    ptGUIControl *newObj = (ptGUIControl*)ptGUIControl_type.tp_new(&ptGUIControl_type, NULL, NULL);
-    newObj->fThis->fGCkey = objkey;
+    ptGUIControl *newObj = (ptGUIControl*)ptGUIControl_type.tp_new(&ptGUIControl_type, nullptr, nullptr);
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControl::New(const pyGUIControl& other)
 {
-    ptGUIControl *newObj = (ptGUIControl*)ptGUIControl_type.tp_new(&ptGUIControl_type, NULL, NULL);
+    ptGUIControl *newObj = (ptGUIControl*)ptGUIControl_type.tp_new(&ptGUIControl_type, nullptr, nullptr);
     newObj->fThis->fGCkey = other.fGCkey;
     return (PyObject*)newObj;
 }

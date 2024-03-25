@@ -70,8 +70,8 @@ public:
 
     virtual ~plRefMsg();
 
-    CLASSNAME_REGISTER( plRefMsg );
-    GETINTERFACE_ANY( plRefMsg, plMessage );
+    CLASSNAME_REGISTER(plRefMsg);
+    GETINTERFACE_ANY(plRefMsg, plMessage);
 
     plRefMsg&       SetRef(hsKeyedObject* ref);
     hsKeyedObject*  GetRef() { return fRef; }
@@ -79,11 +79,11 @@ public:
     plRefMsg&       SetOldRef(hsKeyedObject* oldRef);
     hsKeyedObject*  GetOldRef() { return fOldRef; }
 
-    plRefMsg&   SetContext(uint8_t c) { fContext = c; return *this; }
-    uint8_t       GetContext() { return fContext; }
+    plRefMsg& SetContext(uint8_t c) { fContext = c; return *this; }
+    uint8_t   GetContext() { return fContext; }
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 
@@ -102,8 +102,8 @@ public:
     int8_t    fType;
     int32_t   fWhich;
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plRefMsg_inc

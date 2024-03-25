@@ -49,8 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pyGlueDefinitions.h"
 #include "pyGUIControl.h"
-#include "pyGlueHelpers.h"
+
+class plKey;
+class pyKey;
 
 class pyGUIControlValue : public pyGUIControl
 {
@@ -70,15 +73,15 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static bool IsGUIControlValue(pyKey& gckey);
+    static bool IsGUIControlValue(const plKey& key);
 
-    virtual float    GetValue();
-    virtual void        SetValue( float v );
-    virtual float    GetMin( void );
-    virtual float    GetMax( void );
-    virtual float    GetStep( void );
-    virtual void        SetRange( float min, float max );
-    virtual void        SetStep( float step );
+    float GetValue();
+    void SetValue(float v);
+    float GetMin();
+    float GetMax();
+    float GetStep();
+    void SetRange(float min, float max);
+    void SetStep(float step);
 };
 
 class pyGUIControlKnob : public pyGUIControlValue

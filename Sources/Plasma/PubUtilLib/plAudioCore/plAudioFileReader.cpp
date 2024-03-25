@@ -52,9 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plAudioFileReader.h"
 #include "plAudioCore.h"
-//#include "hsTimer.h"
 
-#include "plUnifiedTime/plUnifiedTime.h"
 #include "plBufferedFileReader.h"
 #include "plCachedFileReader.h"
 #include "plFastWavReader.h"
@@ -65,11 +63,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plAudioFileReader* plAudioFileReader::CreateReader(const plFileName& path, plAudioCore::ChannelSelect whichChan, StreamType type)
 {
-    plString ext = path.GetFileExt();
+    ST::string ext = path.GetFileExt();
 
     if (type == kStreamWAV)
     {
-        bool isWav = (ext.CompareI("wav") == 0);
+        bool isWav = (ext.compare_i("wav") == 0);
         // We want to stream a wav off disk, but this is a compressed file.
         // Get the uncompressed path. Ignore the requested channel, since it 
         // will have already been split into two files if that is necessary.
@@ -95,7 +93,7 @@ plAudioFileReader* plAudioFileReader::CreateReader(const plFileName& path, plAud
     else if (type == kStreamNative)
         return new plOGGCodec(path, whichChan);
 
-    return nil;
+    return nullptr;
 }
 
 plAudioFileReader* plAudioFileReader::CreateWriter(const plFileName& path, plWAVHeader& header)

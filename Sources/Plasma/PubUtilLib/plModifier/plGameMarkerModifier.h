@@ -54,15 +54,17 @@ protected:
     uint16_t fPlaceSndIdx;
     uint16_t fHitSndIdx;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
-    plKey IFindCloneKey(plKey baseKey);
+    plKey IFindCloneKey(const plKey& baseKey);
     
     friend class pfMarkerInfo;
     friend class pfMarkerInfoOwned;
 
 public:
-    plGameMarkerModifier() {}
+    plGameMarkerModifier()
+        : fPlaceSndIdx(), fHitSndIdx()
+    { }
 
     CLASSNAME_REGISTER(plGameMarkerModifier);
     GETINTERFACE_ANY(plGameMarkerModifier, plSingleModifier);
@@ -70,20 +72,20 @@ public:
     void ExportInit(plKey greenKey, plKey redKey, plKey openKey, plKey bounceAnimKey,
                     uint16_t placeSndIdx, uint16_t hitSndIdx)
     {
-        fGreenAnimKey = greenKey;
-        fRedAnimKey = redKey;
-        fOpenAnimKey = openKey;
-        fBounceAnimKey = bounceAnimKey;
+        fGreenAnimKey = std::move(greenKey);
+        fRedAnimKey = std::move(redKey);
+        fOpenAnimKey = std::move(openKey);
+        fBounceAnimKey = std::move(bounceAnimKey);
         fPlaceSndIdx = placeSndIdx;
         fHitSndIdx = hitSndIdx;
     }
 
     void FixupAnimKeys();
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plGameMarkerModifier_h_inc

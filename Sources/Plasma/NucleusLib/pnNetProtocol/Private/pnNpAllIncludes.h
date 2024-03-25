@@ -80,36 +80,3 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #  include "Protocols/Cli2GateKeeper/pnNpCli2GateKeeper.h"
 # endif
 #endif // def USES_NETCLI
-
-
-#ifdef SERVER
-# ifdef USES_NETSRV
-// for SrvMsgHeader definition
-#  include "psUtils/psUtils.h"
-
-#  ifdef USES_PROTOCOL_SRV2VAULT
-#   include "Protocols/Srv2Vault/pnNpSrv2Vault.h"
-#  endif
-
-#  ifdef USES_PROTOCOL_SRV2DB
-#   include "Protocols/Srv2Db/pnNpSrv2Db.h"
-#  endif
-
-#  ifdef USES_PROTOCOL_SRV2MCP
-#   include "Protocols/Srv2Mcp/pnNpSrv2Mcp.h"
-#  endif
-
-#  ifdef USES_PROTOCOL_SRV2STATE
-#   include "Protocols/Srv2State/pnNpSrv2State.h"
-#  endif
-
-#  ifdef USES_PROTOCOL_SRV2SCORE
-#   include "Protocols/Srv2Score/pnNpSrv2Score.h"
-#  endif
-
-#  ifdef USES_PROTOCOL_SRV2LOG
-#   include "Protocols/Srv2Log/pnNpSrv2Log.h"
-#  endif
-
-# endif // def USES_NETSRV
-#endif // def SERVER

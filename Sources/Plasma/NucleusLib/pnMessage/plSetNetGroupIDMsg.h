@@ -54,8 +54,17 @@ public:
 
     plNetGroupId fId;
 
-    void Read(hsStream* stream, hsResMgr* mgr)  { plMessage::IMsgRead(stream, mgr);  fId.Read(stream); }
-    void Write(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgWrite(stream, mgr); fId.Write(stream); }
+    void Read(hsStream* stream, hsResMgr* mgr) override
+    {
+        plMessage::IMsgRead(stream, mgr);
+        fId.Read(stream);
+    }
+
+    void Write(hsStream* stream, hsResMgr* mgr) override
+    {
+        plMessage::IMsgWrite(stream, mgr);
+        fId.Write(stream);
+    }
 };
 
 #endif // plSetNetGroupIDMsg_h_inc

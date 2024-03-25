@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAnimEventModifier_h_inc
 
 #include "pnModifier/plSingleModifier.h"
-#include "hsTemplates.h"
 
 //
 // Detects an anim event (marker, begin, end) and sends out a notification.
@@ -51,10 +50,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAnimEventModifier : public plSingleModifier
 {
 protected:
-    hsTArray<plKey> fReceivers;// Keys to notify when the anim event happens
+    std::vector<plKey> fReceivers; // Keys to notify when the anim event happens
     plMessage* fCallback;       // The callback setup message we send when the anim loads
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
 
     void ISendNotify(bool triggered);
     bool fDisabled;
@@ -65,13 +64,13 @@ public:
     CLASSNAME_REGISTER(plAnimEventModifier);
     GETINTERFACE_ANY(plAnimEventModifier, plSingleModifier);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     // Export only
-    void SetReceivers(hsTArray<plKey>& receivers) { fReceivers = receivers; }
+    void SetReceivers(const std::vector<plKey>& receivers) { fReceivers = receivers; }
     void SetCallback(plMessage* callback) { fCallback = callback; }
 };
 

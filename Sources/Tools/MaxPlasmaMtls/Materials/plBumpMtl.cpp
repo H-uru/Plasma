@@ -41,14 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsWindows.h"
-#include "../resource.h"
 
-#include "MaxMain/MaxCompat.h"
-#include <iparamm2.h>
-#include <istdplug.h>
-#include <stdmat.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include "../resource.h"
 
 #include "../Shaders.h"
 
@@ -60,17 +56,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 extern HINSTANCE hInstance;
 
-class plBumpMtlClassDesc : public ClassDesc2
+class plBumpMtlClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return new plBumpMtl(loading); }
-    const TCHAR*    ClassName()     { return GetString(IDS_BUMP_MTL); }
-    SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
-    Class_ID        ClassID()       { return BUMP_MTL_CLASS_ID; }
-    const TCHAR*    Category()      { return NULL; }
-    const TCHAR*    InternalName()  { return _T("PlasmaMaterial"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading) override { return new plBumpMtl(loading); }
+    const MCHAR*    ClassName() override    { return GetString(IDS_BUMP_MTL); }
+    SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
+    Class_ID        ClassID() override      { return BUMP_MTL_CLASS_ID; }
+    const MCHAR*    Category() override     { return nullptr; }
+    const MCHAR*    InternalName() override { return _T("PlasmaMaterial"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plBumpMtlClassDesc plBumpMtlDesc;
 ClassDesc2* GetBumpMtlDesc() { return &plBumpMtlDesc; }
@@ -93,7 +89,7 @@ plBumpMtl::plBumpMtl(BOOL loading) : plPassMtlBase( loading )
         IVerifyStealthPresent(ENTIRE_ANIMATION_NAME);
 }
 
-void plBumpMtl::GetClassName(TSTR& s)
+void plBumpMtl::IGetClassName(MSTR& s) const
 {
     s = GetString(IDS_BUMP_MTL);
 }
@@ -126,7 +122,7 @@ Interval plBumpMtl::Validity(TimeValue t)
 //  fPBlock->GetValue(pb_spin,t,u,valid);
     return valid;
 #else // mf horse
-    const char* name = GetName();
+    auto name = GetName();
 
     // mf horse - Hacking in something like real validity checking
     // to get material animations working. No warranty, this is just
@@ -178,16 +174,16 @@ int plBumpMtl::NumSubs()
     return 3;
 }
 
-TSTR plBumpMtl::SubAnimName(int i) 
+MSTR plBumpMtl::ISubAnimName(int i)
 {
     switch (i)
     {
     case 0: return fBasicPB->GetLocalName();
     case 1: return fAnimPB->GetLocalName();
-    case 2: return "Base Layer";
+    case 2: return _M("Base Layer");
     }
 
-    return "";
+    return _M("");
 }
 
 Animatable* plBumpMtl::SubAnim(int i)
@@ -200,7 +196,7 @@ Animatable* plBumpMtl::SubAnim(int i)
         break;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 int plBumpMtl::NumParamBlocks()
@@ -220,12 +216,7 @@ IParamBlock2* plBumpMtl::GetParamBlockByID(BlockID id)
     else if (fAnimPB->ID() == id)
         return fAnimPB;
 
-    return NULL;
-}
-
-RefResult plBumpMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
-{
-    return plPassMtlBase::NotifyRefChanged( changeInt, hTarget, partID, message );
+    return nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -241,7 +232,7 @@ Texmap* plBumpMtl::GetSubTexmap(int i)
     if (i == 0)
         return fBasicPB->GetTexmap(kBumpBasLayer);
 
-    return NULL;
+    return nullptr;
 }
 
 void plBumpMtl::SetSubTexmap(int i, Texmap *m)
@@ -250,12 +241,12 @@ void plBumpMtl::SetSubTexmap(int i, Texmap *m)
         fBasicPB->SetValue(kBumpBasLayer, 0, m);
 }
 
-TSTR plBumpMtl::GetSubTexmapSlotName(int i)
+MSTR plBumpMtl::IGetSubTexmapSlotName(int i)
 {
     if (i == 0)
-        return "Base";
+        return _M("Base");
 
-    return "";
+    return _M("");
 }
 
 TSTR plBumpMtl::GetSubTexmapTVName(int i)
@@ -354,8 +345,8 @@ void plBumpMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback &
     Texmap *tx[2];
     int diffChan = stdIDToChannel[ ID_DI ];
     int opacChan = stdIDToChannel[ ID_OP ];
-    tx[0] = (*maps)[diffChan].IsActive()?(*maps)[diffChan].map:NULL;
-    tx[1] = (*maps)[opacChan].IsActive()?(*maps)[opacChan].map:NULL;
+    tx[0] = (*maps)[diffChan].IsActive() ? (*maps)[diffChan].map : nullptr;
+    tx[1] = (*maps)[opacChan].IsActive() ? (*maps)[opacChan].map : nullptr;
 #endif
 
     int nsupport = cb.NumberTexturesSupported();
@@ -365,13 +356,13 @@ void plBumpMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback &
     int nmaps=0;
     for (int i=0; i<NTEXHANDLES; i++) {
         if (tx[i]) nmaps ++;
-        bmi[i] = NULL;
+        bmi[i] = nullptr;
         }
     mtl->texture.SetCount(nmaps);
     if (nmaps==0) 
         return;
     for (i=0; i<nmaps; i++)
-        mtl->texture[i].textHandle = NULL;
+        mtl->texture[i].textHandle = nullptr;
     texHandleValid.SetInfinite();
     Interval  valid;
     BOOL needDecal = FALSE;
@@ -403,7 +394,7 @@ void plBumpMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback &
                 texHandleValid &= valid;
                 StuffAlpha(bmi[1], (*maps)[opacChan].amount, GetOpacity(t),ntx?whiteCol:pShader->GetDiffuseClr(t));
                 texHandle[ntx] = cb.MakeHandle(bmi[1]); 
-                bmi[1] = NULL; 
+                bmi[1] = nullptr;
                 mtl->texture[ntx].textHandle = texHandle[ntx]->GetHandle();
                 SetTexOps(mtl,ntx,TXOP_OPACITY);
                 useSubForTex[ntx] = opacChan;
@@ -421,7 +412,7 @@ void plBumpMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback &
                         StuffAlphaInto(bmi[1], bmi[0], (*maps)[opacChan].amount, GetOpacity(t));
                         op = TXOP_OPACITY;
                         free(bmi[1]);
-                        bmi[1] = NULL;
+                        bmi[1] = nullptr;
                         }
 //                  }
                 }
@@ -429,7 +420,7 @@ void plBumpMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback &
         }
     if (bmi[0]) {
         texHandle[0] = cb.MakeHandle(bmi[0]); 
-        bmi[0] = NULL; 
+        bmi[0] = nullptr;
         mtl->texture[0].textHandle = texHandle[0]->GetHandle();
         SetTexOps(mtl,0,op);
         }
@@ -445,11 +436,11 @@ void plBumpMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback &
 void plBumpMtl::GetInterpVtxValue(int channel, ShadeContext &sc, Point3 &val)
 {
     Mesh *mesh = sc.globContext->GetRenderInstance(sc.NodeID())->mesh;
-    if (mesh != nil)
+    if (mesh != nullptr)
     {
         Face *maxFace = &mesh->faces[ sc.FaceNumber() ];
         UVVert *map = mesh->mapVerts(channel);
-        if (map != nil)
+        if (map != nullptr)
         {
             Point3 p0 = map[maxFace->getVert( 0 )];
             Point3 p1 = map[maxFace->getVert( 1 )];
@@ -655,10 +646,10 @@ int     plBumpMtl::GetZInc() { return 0; }
 int     plBumpMtl::GetAlphaTestHigh() { return 0; }
 
 // Animation block
-const char*  plBumpMtl::GetAnimName() { return fAnimPB->GetStr(kPBAnimName); }
+const MCHAR* plBumpMtl::GetAnimName() { return fAnimPB->GetStr(kPBAnimName); }
 int          plBumpMtl::GetAutoStart() { return fAnimPB->GetInt(kPBAnimAutoStart); }
 int          plBumpMtl::GetLoop() { return fAnimPB->GetInt(kPBAnimLoop); }
-const char*  plBumpMtl::GetAnimLoopName() { return fAnimPB->GetStr(kPBAnimLoopName); }
+const MCHAR* plBumpMtl::GetAnimLoopName() { return fAnimPB->GetStr(kPBAnimLoopName); }
 
 // Basic block
 int     plBumpMtl::GetColorLock() { return 0; }
@@ -671,16 +662,16 @@ int     plBumpMtl::GetShine() { return 0; }
 Color   plBumpMtl::GetSpecularColor() { return Color(0,0,0); }
 int     plBumpMtl::GetDiffuseColorLock() { return 0; }
 Color   plBumpMtl::GetRuntimeColor() { return fBasicPB->GetColor(kBumpBasRunColor); }
-Control *plBumpMtl::GetPreshadeColorController() { return nil; }
-Control *plBumpMtl::GetAmbColorController() { return nil; }
-Control *plBumpMtl::GetOpacityController() { return nil; }
-Control *plBumpMtl::GetSpecularColorController() { return nil; }
+Control *plBumpMtl::GetPreshadeColorController() { return nullptr; }
+Control *plBumpMtl::GetAmbColorController() { return nullptr; }
+Control *plBumpMtl::GetOpacityController() { return nullptr; }
+Control *plBumpMtl::GetSpecularColorController() { return nullptr; }
 Control *plBumpMtl::GetRuntimeColorController() { return GetParamBlock2Controller(fBasicPB, ParamID(kBumpBasRunColor)); }
 
 // Layer block
 Texmap *plBumpMtl::GetBaseLayer() { return fBasicPB->GetTexmap(kBumpBasLayer); }
 int     plBumpMtl::GetTopLayerOn() { return 0; }
-Texmap *plBumpMtl::GetTopLayer() { return nil; }
+Texmap *plBumpMtl::GetTopLayer() { return nullptr; }
 int     plBumpMtl::GetLayerBlend() { return 0; }
 int     plBumpMtl::GetOutputAlpha() { return 0; }
 int     plBumpMtl::GetOutputBlend() { return fBasicPB->GetInt( kBumpBasSpecular ) ? plPassMtlBase::kBlendAdd : plPassMtlBase::kBlendAlpha; }

@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plSurface_SOURCES
     hsGMaterial.cpp
     plGrassShaderMod.cpp
@@ -10,7 +5,6 @@ set(plSurface_SOURCES
     plLayerAnimation.cpp
     plLayerDepth.cpp
     plLayerInterface.cpp
-    plLayerMultiply.cpp
     plLayerOr.cpp
     plLayerShadowBase.cpp
     plShader.cpp
@@ -24,7 +18,6 @@ set(plSurface_HEADERS
     plLayerAnimation.h
     plLayerDepth.h
     plLayerInterface.h
-    plLayerMultiply.h
     plLayerOr.h
     plLayerShadowBase.h
     plShader.h
@@ -74,7 +67,31 @@ set(plSurface_SHADERS
     vs_WaveRip7.h
 )
 
-add_library(plSurface STATIC ${plSurface_SOURCES} ${plSurface_HEADERS} ${plSurface_SHADERS})
+plasma_library(plSurface
+    SOURCES ${plSurface_SOURCES} ${plSurface_HEADERS} ${plSurface_SHADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
+
+target_link_libraries(plSurface
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        pnModifier
+        pnNetCommon
+        pnNucleusInc
+        plInterp
+    PRIVATE
+        pnMessage
+        plGImage
+        plInterp
+        plMessage
+        plModifier
+        plNetClient
+        plSDL
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${plSurface_SOURCES})
 source_group("Header Files" FILES ${plSurface_HEADERS})

@@ -105,7 +105,8 @@ class plBitmap : public hsKeyedObject
         {
             kUncompressed       = 0x0,
             kDirectXCompression = 0x1,
-            kJPEGCompression    = 0x2
+            kJPEGCompression    = 0x2,
+            kPNGCompression     = 0x3
         };
 
         struct DirectXInfo
@@ -157,21 +158,21 @@ class plBitmap : public hsKeyedObject
         GETINTERFACE_ANY( plBitmap, hsKeyedObject );
 
         // Get the total size in bytes
-        virtual uint32_t  GetTotalSize( void ) const = 0;
+        virtual uint32_t  GetTotalSize() const = 0;
 
         // Read and write
-        virtual void    Read( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Read( s, mgr ); this->Read( s ); }
-        virtual void    Write( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Write( s, mgr ); this->Write( s ); }
+        void    Read(hsStream *s, hsResMgr *mgr) override { hsKeyedObject::Read(s, mgr); this->Read(s); }
+        void    Write(hsStream *s, hsResMgr *mgr) override { hsKeyedObject::Write(s, mgr); this->Write(s); }
 
-        uint16_t          GetFlags( void ) const { return fFlags; }
+        uint16_t          GetFlags() const { return fFlags; }
         void            SetFlags( uint16_t flags ) { fFlags = flags; }
 
-        uint8_t           GetPixelSize( void ) const { return fPixelSize; }
+        uint8_t           GetPixelSize() const { return fPixelSize; }
 
-        bool            IsCompressed( void ) const { return ( fCompressionType == kDirectXCompression ); }
+        bool            IsCompressed() const { return ( fCompressionType == kDirectXCompression ); }
 
         virtual void            MakeDirty();
-        virtual hsGDeviceRef    *GetDeviceRef( void ) const { return fDeviceRef; }
+        virtual hsGDeviceRef    *GetDeviceRef() const { return fDeviceRef; }
         virtual void            SetDeviceRef( hsGDeviceRef *const devRef );
 
         static void     SetGlobalLevelChopCount( uint8_t count ) { fGlobalNumLevelsToChop = count; }

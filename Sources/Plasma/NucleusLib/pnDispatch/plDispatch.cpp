@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsResMgr.h"
 #include "plDispatch.h"
+#include "pnFactory/plFactory.h"
 #define PLMESSAGE_PRIVATE
 #include "pnMessage/plMessage.h"
 #include "pnKeyedObject/hsKeyedObject.h"
@@ -67,51 +68,54 @@ class plMsgWrap
 public:
     plMsgWrap**                     fBack;
     plMsgWrap*                      fNext;
-    hsTArray<plKey>                 fReceivers;
+    std::vector<plKey>              fReceivers;
 
     plMessage*                      fMsg;
 
-    plMsgWrap(plMessage* msg) : fMsg(msg) { hsRefCnt_SafeRef(msg); }
+    plMsgWrap(plMessage* msg)
+        : fMsg(msg), fNext(), fBack()
+    { hsRefCnt_SafeRef(msg); }
     virtual ~plMsgWrap() { hsRefCnt_SafeUnRef(fMsg); }
 
-    plMsgWrap&                      ClearReceivers() { fReceivers.SetCount(0); return *this; }
-    plMsgWrap&                      AddReceiver(const plKey& rcv) 
-                                    { 
-                                        hsAssert(rcv, "Trying to send mail to nil receiver");
-                                        fReceivers.Append(rcv); return *this;
-                                    }
-    const plKey&                    GetReceiver(int i) const { return fReceivers[i]; }
-    uint32_t                          GetNumReceivers() const { return fReceivers.GetCount(); }
+    plMsgWrap&      ClearReceivers() { fReceivers.clear(); return *this; }
+    plMsgWrap&      AddReceiver(plKey rcv)
+                    {
+                        hsAssert(rcv, "Trying to send mail to nil receiver");
+                        fReceivers.emplace_back(std::move(rcv));
+                        return *this;
+                    }
+    const plKey&    GetReceiver(size_t i) const { return fReceivers[i]; }
+    size_t          GetNumReceivers() const { return fReceivers.size(); }
 };
 
 int32_t                 plDispatch::fNumBufferReq = 0;
 bool                    plDispatch::fMsgActive = false;
-plMsgWrap*              plDispatch::fMsgCurrent = nil;
-plMsgWrap*              plDispatch::fMsgHead = nil;
-plMsgWrap*              plDispatch::fMsgTail = nil;
-hsTArray<plMessage*>    plDispatch::fMsgWatch;
-MsgRecieveCallback      plDispatch::fMsgRecieveCallback = nil;
+plMsgWrap*              plDispatch::fMsgCurrent = nullptr;
+plMsgWrap*              plDispatch::fMsgHead = nullptr;
+plMsgWrap*              plDispatch::fMsgTail = nullptr;
+std::vector<plMessage*> plDispatch::fMsgWatch;
+MsgRecieveCallback      plDispatch::fMsgRecieveCallback = nullptr;
 
 std::mutex              plDispatch::fMsgCurrentMutex; // mutex for fMsgCurrent
 std::mutex              plDispatch::fMsgDispatchLock; // mutex for IMsgDispatch
 
 
 plDispatch::plDispatch()
-: fOwner(nil), fFutureMsgQueue(nil), fQueuedMsgOn(true)
+: fOwner(), fFutureMsgQueue(), fQueuedMsgOn(true)
 {
 }
 
 plDispatch::~plDispatch()
 {
-    hsAssert(fRegisteredExactTypes.GetCount() == 0, "registered type after Dispatch shutdown");
+    hsAssert(fRegisteredExactTypes.empty(), "registered type after Dispatch shutdown");
     ITrashUndelivered();
 }
 
 void plDispatch::BeginShutdown()
 {
-    for (int i = 0; i < fRegisteredExactTypes.Count(); ++i)
-        delete fRegisteredExactTypes[i];
-    fRegisteredExactTypes.Reset();
+    for (plTypeFilter* type : fRegisteredExactTypes)
+        delete type;
+    fRegisteredExactTypes.clear();
     ITrashUndelivered();
 }
 
@@ -140,7 +144,7 @@ void plDispatch::ITrashUndelivered()
         }
 
         // reset static members which we just deleted - MOOSE
-        fMsgCurrent=fMsgHead=fMsgTail=nil;
+        fMsgCurrent = fMsgHead = fMsgTail = nullptr;
 
         fMsgActive = false;
     }
@@ -199,17 +203,17 @@ void plDispatch::ICheckDeferred(double secs)
 {
     while( fFutureMsgQueue && (fFutureMsgQueue->fMsg->fTimeStamp < secs) )
     {
-        plMsgWrap* send = IDequeue(&fFutureMsgQueue, nil);
+        plMsgWrap* send = IDequeue(&fFutureMsgQueue, nullptr);
         MsgSend(send->fMsg);
         delete send;
     }
 
-    int timeIdx = plTimeMsg::Index();
+    uint16_t timeIdx = plTimeMsg::Index();
     if( IGetOwner()
         && !fFutureMsgQueue 
         && 
             ( 
-                (timeIdx >= fRegisteredExactTypes.GetCount()) 
+                (timeIdx >= fRegisteredExactTypes.size())
                 || 
                 !fRegisteredExactTypes[plTimeMsg::Index()]
             )
@@ -228,11 +232,11 @@ bool plDispatch::IListeningForExactType(uint16_t hClass)
 void plDispatch::IMsgEnqueue(plMsgWrap* msgWrap, bool async)
 {
     {
-        std::lock_guard<std::mutex> lock(fMsgCurrentMutex);
+        hsLockGuard(fMsgCurrentMutex);
 
 #ifdef HS_DEBUGGING
         if (msgWrap->fMsg->HasBCastFlag(plMessage::kMsgWatch))
-            fMsgWatch.Append(msgWrap->fMsg);
+            fMsgWatch.emplace_back(msgWrap->fMsg);
 #endif // HS_DEBUGGING
 
         if (fMsgTail)
@@ -294,12 +298,12 @@ void plDispatch::IMsgDispatch()
         bool nonLocalMsg = msg && msg->HasBCastFlag(plMessage::kNetNonLocal);
 
 #ifdef HS_DEBUGGING
-        int watchIdx = fMsgWatch.Find(msg);
-        if( fMsgWatch.kMissingIndex != watchIdx )
+        auto watchIdx = std::find(fMsgWatch.cbegin(), fMsgWatch.cend(), msg);
+        if (fMsgWatch.cend() != watchIdx)
         {
-            fMsgWatch.Remove(watchIdx);
+            fMsgWatch.erase(watchIdx);
 #if HS_BUILD_FOR_WIN32
-            __asm { int 3 }
+            __debugbreak();
 #endif // HS_BUILD_FOR_WIN32
         }
 #endif // HS_DEBUGGING
@@ -308,11 +312,11 @@ void plDispatch::IMsgDispatch()
         if (plDispatchLogBase::IsLogging())
             startTicks = hsTimer::GetTicks();
 
-        int i, numReceivers=0;
-        for( i = 0; fMsgCurrent && i < fMsgCurrent->GetNumReceivers(); i++ )
+        int numReceivers=0;
+        for (size_t i = 0; fMsgCurrent && i < fMsgCurrent->GetNumReceivers(); i++)
         {
             const plKey& rcvKey = fMsgCurrent->GetReceiver(i);
-            plReceiver* rcv = rcvKey ? plReceiver::ConvertNoRef(rcvKey->ObjectIsLoaded()) : nil;
+            plReceiver* rcv = rcvKey ? plReceiver::ConvertNoRef(rcvKey->ObjectIsLoaded()) : nullptr;
             if( rcv )
             {
                 if (nonLocalMsg)
@@ -330,9 +334,9 @@ void plDispatch::IMsgDispatch()
                         if (plNetObjectDebuggerBase::GetInstance()->IsDebugObject(ko))
                         {
                             hsLogEntry(plNetObjectDebuggerBase::GetInstance()->LogMsg(
-                                plFormat("<RCV> object:{}, GameMessage {} st={.3f} rt={.3f}",
+                                ST::format("<RCV> object:{}, GameMessage {} st={.3f} rt={.3f}",
                                 ko->GetKeyName(), msg->ClassName(), hsTimer::GetSysSeconds(),
-                                hsTimer::GetSeconds()).c_str()));
+                                hsTimer::GetSeconds())));
                         }
                     }
                 }
@@ -341,7 +345,7 @@ void plDispatch::IMsgDispatch()
                 uint64_t rcvTicks = hsTimer::GetTicks();
 
                 // Object could be deleted by this message, so we need to log this stuff now
-                plString keyname = "(unknown)";
+                ST::string keyname = ST_LITERAL("(unknown)");
                 const char* className = "(unknown)";
                 uint32_t clonePlayerID = 0;
                 if (plDispatchLogBase::IsLoggingLong())
@@ -379,7 +383,7 @@ void plDispatch::IMsgDispatch()
 
                 numReceivers++;
 
-                if (fMsgRecieveCallback != nil)
+                if (fMsgRecieveCallback != nullptr)
                     fMsgRecieveCallback();
             }
         }
@@ -401,7 +405,7 @@ void plDispatch::IMsgDispatch()
 
         delete fMsgCurrent;
         // TEMP
-        fMsgCurrent = (class plMsgWrap *)0xdeadc0de;
+        fMsgCurrent = (class plMsgWrap *)(uintptr_t)0xdeadc0de;
     }
 
     fMsgActive = false;
@@ -413,10 +417,10 @@ void plDispatch::IMsgDispatch()
 bool plDispatch::IMsgNetPropagate(plMessage* msg)
 {
     {
-        std::lock_guard<std::mutex> lock(fMsgCurrentMutex);
+        hsLockGuard(fMsgCurrentMutex);
 
         // Make sure cascaded messages all have the same net flags
-        plNetClientApp::InheritNetMsgFlags(fMsgCurrent ? fMsgCurrent->fMsg : nil, msg, false);
+        plNetClientApp::InheritNetMsgFlags(fMsgCurrent ? fMsgCurrent->fMsg : nullptr, msg, false);
     }
 
     // Decide if msg should go out over the network.
@@ -432,8 +436,10 @@ bool plDispatch::IMsgNetPropagate(plMessage* msg)
     {
         // send it off...
         hsAssert(!msg->HasBCastFlag(plMessage::kNetStartCascade), "initial net cascade msg getting sent over the net again?");
-        if (plNetClientApp::GetInstance() && plNetClientApp::GetInstance()->ISendGameMessage(msg)>=0)
+        if (plNetClientApp::GetInstance()) {
+            plNetClientApp::GetInstance()->ISendGameMessage(msg);
             msg->SetBCastFlag(plMessage::kNetSent);
+        }
     }
 
     // Decide if msg should get sent locally
@@ -467,21 +473,19 @@ bool plDispatch::MsgSend(plMessage* msg, bool async)
     // broadcast
     if( msg->HasBCastFlag(plMessage::kBCastByExactType) | msg->HasBCastFlag(plMessage::kBCastByType) )
     {
-        int idx = msg->ClassIndex();
-        if( idx < fRegisteredExactTypes.GetCount() )
+        uint16_t idx = msg->ClassIndex();
+        if (idx < fRegisteredExactTypes.size())
         {
             plTypeFilter* filt = fRegisteredExactTypes[idx];
             if( filt )
             {
-                int j;
-                for( j = 0; j < filt->fReceivers.GetCount(); j++ )
-                {
-                    msgWrap->AddReceiver(filt->fReceivers[j]);
-                }
+                for (const plKey& rcvr : filt->fReceivers)
+                    msgWrap->AddReceiver(rcvr);
+
                 if( msg->HasBCastFlag(plMessage::kClearAfterBCast) )
                 {
                     delete filt;
-                    fRegisteredExactTypes[idx] = nil;
+                    fRegisteredExactTypes[idx] = nullptr;
                 }
             }
         }
@@ -504,7 +508,7 @@ void plDispatch::MsgQueue(plMessage* msg)
 {
     if (fQueuedMsgOn)
     {
-        std::lock_guard<std::mutex> lock(fQueuedMsgListMutex);
+        hsLockGuard(fQueuedMsgListMutex);
         hsAssert(msg,"Message missing");
         fQueuedMsgList.push_back(msg);
     }
@@ -521,7 +525,7 @@ void plDispatch::MsgQueueProcess()
     {
         plMessage * pMsg = nullptr;
         {
-            std::lock_guard<std::mutex> lock(fQueuedMsgListMutex);
+            hsLockGuard(fQueuedMsgListMutex);
             empty = fQueuedMsgList.empty();
             if (!empty)
             {
@@ -546,53 +550,51 @@ void plDispatch::RegisterForType(uint16_t hClass, const plKey& receiver)
 
 void plDispatch::RegisterForExactType(uint16_t hClass, const plKey& receiver)
 {
-    int idx = hClass;
-    fRegisteredExactTypes.ExpandAndZero(idx+1);
-    plTypeFilter* filt = fRegisteredExactTypes[idx];
+    if (hClass + 1 > fRegisteredExactTypes.size())
+        fRegisteredExactTypes.resize(hClass + 1);
+    plTypeFilter* filt = fRegisteredExactTypes[hClass];
     if( !filt )
     {
         filt = new plTypeFilter;
-        fRegisteredExactTypes[idx] = filt;
+        fRegisteredExactTypes[hClass] = filt;
         filt->fHClass = hClass;
     }
 
-    if( filt->fReceivers.kMissingIndex == filt->fReceivers.Find(receiver) )
-        filt->fReceivers.Append(receiver);
+    const auto iter = std::find(filt->fReceivers.begin(), filt->fReceivers.end(), receiver);
+    if (iter == filt->fReceivers.end())
+        filt->fReceivers.emplace_back(receiver);
 }
 
 void plDispatch::UnRegisterForType(uint16_t hClass, const plKey& receiver)
 {
-    int i;
-    for( i = 0; i < fRegisteredExactTypes.GetCount(); i++ )
+    for (size_t i = 0; i < fRegisteredExactTypes.size(); i++)
     {
-        if( plFactory::DerivesFrom(hClass, i) )
-            IUnRegisterForExactType(i , receiver);
+        if (plFactory::DerivesFrom(hClass, uint16_t(i)))
+            IUnRegisterForExactType(uint16_t(i), receiver);
     }
-
 }
 
-bool plDispatch::IUnRegisterForExactType(int idx, const plKey& receiver)
+bool plDispatch::IUnRegisterForExactType(uint16_t idx, const plKey& receiver)
 {
-    hsAssert(idx < fRegisteredExactTypes.GetCount(), "Out of range should be filtered before call to internal");
+    hsAssert(idx < fRegisteredExactTypes.size(), "Out of range should be filtered before call to internal");
     plTypeFilter* filt = fRegisteredExactTypes[idx];
     if (!filt)
         return false;
-    int j;
-    for( j = 0; j < filt->fReceivers.GetCount(); j++ )
+
+    for (size_t i = 0; i < filt->fReceivers.size(); i++)
     {
-        if( receiver == filt->fReceivers[j] )
+        if (receiver == filt->fReceivers[i])
         {
-            if( filt->fReceivers.GetCount() > 1 )
+            if (filt->fReceivers.size() > 1)
             {
-                if( j < filt->fReceivers.GetCount() - 1 )
-                    filt->fReceivers[j] = filt->fReceivers[filt->fReceivers.GetCount() - 1];
-                filt->fReceivers[filt->fReceivers.GetCount()-1] = nil;
-                filt->fReceivers.SetCount(filt->fReceivers.GetCount()-1);
+                if (i < filt->fReceivers.size() - 1)
+                    filt->fReceivers[i] = filt->fReceivers.back();
+                filt->fReceivers.pop_back();
             }
             else
             {
                 delete filt;
-                fRegisteredExactTypes[idx] = nil;
+                fRegisteredExactTypes[idx] = nullptr;
             }
 
             break;
@@ -603,26 +605,24 @@ bool plDispatch::IUnRegisterForExactType(int idx, const plKey& receiver)
 
 void plDispatch::UnRegisterAll(const plKey& receiver)
 {
-    int i;
-    for( i = 0; i < fRegisteredExactTypes.GetCount(); i++ )
+    for (size_t i = 0; i < fRegisteredExactTypes.size(); i++)
     {
         plTypeFilter* filt = fRegisteredExactTypes[i];
         if( filt )
         {
-            int idx = filt->fReceivers.Find(receiver);
-            if( idx != filt->fReceivers.kMissingIndex )
+            auto idx = std::find(filt->fReceivers.begin(), filt->fReceivers.end(), receiver);
+            if (idx != filt->fReceivers.end())
             {
-                if( filt->fReceivers.GetCount() > 1 )
+                if (filt->fReceivers.size() > 1)
                 {
-                    if( idx < filt->fReceivers.GetCount() - 1 )
-                        filt->fReceivers[idx] = filt->fReceivers[filt->fReceivers.GetCount() - 1];
-                    filt->fReceivers[filt->fReceivers.GetCount()-1] = nil;
-                    filt->fReceivers.SetCount(filt->fReceivers.GetCount()-1);
+                    if (idx < filt->fReceivers.end() - 1)
+                        *idx = filt->fReceivers.back();
+                    filt->fReceivers.pop_back();
                 }
                 else
                 {
                     delete filt;
-                    fRegisteredExactTypes[i] = nil;
+                    fRegisteredExactTypes[i] = nullptr;
                 }
             }
         }
@@ -631,13 +631,12 @@ void plDispatch::UnRegisterAll(const plKey& receiver)
 
 void plDispatch::UnRegisterForExactType(uint16_t hClass, const plKey& receiver)
 {
-    int idx = hClass;
-    if( idx >= fRegisteredExactTypes.GetCount() )
+    if (hClass >= fRegisteredExactTypes.size())
         return;
-    plTypeFilter* filt = fRegisteredExactTypes[idx];
+    plTypeFilter* filt = fRegisteredExactTypes[hClass];
     if( !filt )
         return;
 
-    IUnRegisterForExactType(idx, receiver);
+    IUnRegisterForExactType(hClass, receiver);
 }
 

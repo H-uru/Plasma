@@ -69,13 +69,11 @@ public:
                 const plKey &r,
                 const double* t) : plMessage(s, r, t) { SetBCastFlag(kNetPropagate | kBCastByType, true); }
 
-    ~plBulletMsg() {}
-    
     CLASSNAME_REGISTER( plBulletMsg );
     GETINTERFACE_ANY( plBulletMsg, plMessage );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     bool Shot() const { return fCmd == kShot; }
     bool Spray() const { return fCmd == kSpray; }

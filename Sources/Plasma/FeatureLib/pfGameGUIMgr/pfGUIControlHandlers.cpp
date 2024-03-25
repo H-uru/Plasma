@@ -45,27 +45,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIControlHandlers.h"
+
+#include "HeadSpin.h"
+
 #include "pfGUIControlMod.h"
 #include "pfGUIDialogMod.h"
 
 #include "plMessage/plConsoleMsg.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-
 
 //// Writeable Stuff /////////////////////////////////////////////////////////
 
 void    pfGUICtrlProcWriteableObject::Write( pfGUICtrlProcWriteableObject *obj, hsStream *s )
 {
-    if( obj != nil )
+    if (obj != nullptr)
     {
         s->WriteLE32( obj->fType );
         obj->IWrite( s );
     }
     else
-        s->WriteLE32( kNull );
+        s->WriteLE32((uint32_t)kNull);
 }
 
 pfGUICtrlProcWriteableObject *pfGUICtrlProcWriteableObject::Read( hsStream *s )
@@ -89,11 +88,11 @@ pfGUICtrlProcWriteableObject *pfGUICtrlProcWriteableObject::Read( hsStream *s )
             break;
 
         case kNull:
-            return nil;
+            return nullptr;
 
         default:
             hsAssert( false, "Invalid proc type in Read()" );
-            return nil;
+            return nullptr;
     }
 
     obj->IRead( s );
@@ -106,67 +105,41 @@ pfGUICtrlProcWriteableObject *pfGUICtrlProcWriteableObject::Read( hsStream *s )
 
 //// pfGUIConsoleCmdProc /////////////////////////////////////////////////////
 
-pfGUIConsoleCmdProc::pfGUIConsoleCmdProc() : pfGUICtrlProcWriteableObject( kConsoleCmd ) 
-{ 
-    fCommand = nil; 
-}
-
-pfGUIConsoleCmdProc::pfGUIConsoleCmdProc( const char *cmd )
-                : pfGUICtrlProcWriteableObject( kConsoleCmd ) 
+pfGUIConsoleCmdProc::pfGUIConsoleCmdProc(ST::string cmd)
+    : pfGUICtrlProcWriteableObject(kConsoleCmd), fCommand(std::move(cmd))
 {
-    fCommand = nil;
-    SetCommand( cmd );
-}
-
-pfGUIConsoleCmdProc::~pfGUIConsoleCmdProc()
-{
-    delete [] fCommand;
 }
 
 void    pfGUIConsoleCmdProc::IRead( hsStream *s )
 {
     int i = s->ReadLE32();
-    if( i > 0 )
-    {
-        fCommand = new char[ i + 1 ];
-        memset( fCommand, 0, i + 1 );
-        s->Read( i, fCommand );
+    if( i > 0 ) {
+        ST::char_buffer buf;
+        buf.allocate(i, '\0');
+        s->Read(i, buf.data());
+        fCommand = ST::string(buf);
+    } else {
+        fCommand.clear();
     }
-    else
-        fCommand = nil;
 }
 
-void    pfGUIConsoleCmdProc::IWrite( hsStream *s )
+void    pfGUIConsoleCmdProc::IWrite(hsStream* s)
 {
-    if( fCommand != nil )
-    {
-        s->WriteLE32( strlen( fCommand ) );
-        s->Write( strlen( fCommand ), fCommand );
+    if (!fCommand.empty()) {
+        uint32_t cmdLen = (uint32_t)fCommand.size();
+        s->WriteLE32(cmdLen);
+        s->Write(cmdLen, fCommand.c_str());
+    } else {
+        s->WriteLE32(0);
     }
-    else
-        s->WriteLE32( 0 );
 }
 
 void    pfGUIConsoleCmdProc::DoSomething( pfGUIControlMod *ctrl )
 {
-    if( fCommand != nil )
+    if (!fCommand.empty())
     {
         plConsoleMsg *cMsg = new plConsoleMsg( plConsoleMsg::kExecuteLine, fCommand );
-        plgDispatch::MsgSend( cMsg );
-    }
-}
-
-void    pfGUIConsoleCmdProc::SetCommand( const char *cmd )
-{
-    delete [] fCommand;
-
-    if( cmd == nil )
-        fCommand = nil;
-    else
-    {
-        fCommand = new char[ strlen( cmd ) + 1 ];
-        memset( fCommand, 0, strlen( cmd ) + 1 );
-        strcpy( fCommand, cmd );
+        cMsg->Send();
     }
 }
 

@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plTimeMsg_inc
 
 #include "plMessage.h"
-#include "hsStream.h"
 
 class plTimeMsg : public plMessage
 {
@@ -59,8 +58,8 @@ public:
                     const double* t, const float* del);
     ~plTimeMsg();
 
-    CLASSNAME_REGISTER( plTimeMsg );
-    GETINTERFACE_ANY( plTimeMsg, plMessage );
+    CLASSNAME_REGISTER(plTimeMsg);
+    GETINTERFACE_ANY(plTimeMsg, plMessage);
 
     plTimeMsg& SetSeconds(double s) { fSeconds = s; return *this; }
     plTimeMsg& SetDelSeconds(float d) { fDelSecs = d; return *this; }
@@ -69,19 +68,8 @@ public:
     float        DelSeconds() { return fDelSecs; }
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgRead(stream, mgr);
-        stream->ReadLE(&fSeconds);
-        stream->ReadLE(&fDelSecs);
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->WriteLE(fSeconds);
-        stream->WriteLE(fDelSecs);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 class plEvalMsg : public plTimeMsg
@@ -93,12 +81,17 @@ public:
                     const double* t, const float* del);
     ~plEvalMsg();
 
-    CLASSNAME_REGISTER( plEvalMsg );
-    GETINTERFACE_ANY( plEvalMsg, plTimeMsg );
+    CLASSNAME_REGISTER(plEvalMsg);
+    GETINTERFACE_ANY(plEvalMsg, plTimeMsg);
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr)  {   plTimeMsg::Read(stream, mgr);   }
-    void Write(hsStream* stream, hsResMgr* mgr) {   plTimeMsg::Write(stream, mgr);  }
+    void Read(hsStream* stream, hsResMgr* mgr) override {
+        plTimeMsg::Read(stream, mgr);
+    }
+
+    void Write(hsStream* stream, hsResMgr* mgr) override {
+        plTimeMsg::Write(stream, mgr);
+    }
 };
 
 class plTransformMsg : public plTimeMsg
@@ -110,12 +103,16 @@ public:
                     const double* t, const float* del);
     ~plTransformMsg();
 
-    CLASSNAME_REGISTER( plTransformMsg );
-    GETINTERFACE_ANY( plTransformMsg, plTimeMsg );
+    CLASSNAME_REGISTER(plTransformMsg);
+    GETINTERFACE_ANY(plTransformMsg, plTimeMsg);
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr)  {   plTimeMsg::Read(stream, mgr);   }
-    void Write(hsStream* stream, hsResMgr* mgr) {   plTimeMsg::Write(stream, mgr);  }
+    void Read(hsStream* stream, hsResMgr* mgr) override {
+        plTimeMsg::Read(stream, mgr);
+    }
+    void Write(hsStream* stream, hsResMgr* mgr) override {
+        plTimeMsg::Write(stream, mgr);
+    }
 };
 
 // Does the same thing as plTransformMsg, but as you might guess from the name, it's sent later.
@@ -126,9 +123,9 @@ class plDelayedTransformMsg : public plTransformMsg
 public:
     plDelayedTransformMsg() : plTransformMsg() {}
     plDelayedTransformMsg(const plKey &s, const plKey &r, const double* t, const float* del) : plTransformMsg(s, r, t, del) {}
-    
-    CLASSNAME_REGISTER( plDelayedTransformMsg );
-    GETINTERFACE_ANY( plDelayedTransformMsg, plTransformMsg );
+
+    CLASSNAME_REGISTER(plDelayedTransformMsg);
+    GETINTERFACE_ANY(plDelayedTransformMsg, plTransformMsg);
 };
 
 #endif // plTimeMsg_inc

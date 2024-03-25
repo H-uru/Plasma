@@ -41,11 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include "MaxAPI.h"
+
 #include <set>
 
 #include "MaxMain/plMaxNodeBase.h"
-#include <iparamb2.h>
-#pragma hdrstop
 
 #include "plMtlCollector.h"
 
@@ -148,13 +148,13 @@ static void GetTexmapPBs(Texmap* tex, PBSet& pbs)
         return;
 
     plPlasmaMAXLayer *plasma = plPlasmaMAXLayer::GetPlasmaMAXLayer( tex );
-    if( plasma != nil )
+    if (plasma != nullptr)
     {
         int i;
         for( i = 0; i < plasma->GetNumBitmaps(); i++ )
         {
             PBBitmap *pbbm = plasma->GetPBBitmap( i );
-            if( pbbm != nil )
+            if (pbbm != nullptr)
                 pbs.insert( pbbm );
         }
     }
@@ -196,7 +196,7 @@ static void GetNodeMtlsRecur(INode *node, MtlSet* mtls, TexSet* texmaps, uint32_
     }
 
     plGUIControlBase *gui = plGUIControlBase::GetGUIComp( node );
-    if( gui != nil )
+    if (gui != nullptr)
     {
         uint32_t i;
         for( i = 0; i < gui->GetNumMtls(); i++ )
@@ -206,7 +206,7 @@ static void GetNodeMtlsRecur(INode *node, MtlSet* mtls, TexSet* texmaps, uint32_
     {
         // Skins aren't controls
         plGUISkinComp *guiSkin = plGUISkinComp::GetGUIComp( node );
-        if( guiSkin != nil )
+        if (guiSkin != nullptr)
         {
             uint32_t i;
             for( i = 0; i < guiSkin->GetNumMtls(); i++ )
@@ -216,7 +216,7 @@ static void GetNodeMtlsRecur(INode *node, MtlSet* mtls, TexSet* texmaps, uint32_
         {
             // Um, other components
             plComponentBase *base = ( ( plMaxNodeBase *)node )->ConvertToComponent();
-            if( base != nil )
+            if (base != nullptr)
             {
                 if( base->ClassID() == IMAGE_LIB_CID )
                 {
@@ -267,7 +267,7 @@ void plMtlCollector::GetMtls(MtlSet* mtls, TexSet* texmaps, uint32_t flags)
 void plMtlCollector::GetMtlLayers(Mtl *mtl, LayerSet& layers)
 {
     TexSet tex;
-    GetMtlsRecur(mtl, nil, &tex, kPlasmaOnly);
+    GetMtlsRecur(mtl, nullptr, &tex, kPlasmaOnly);
 
     TexSet::iterator it = tex.begin();
     for (; it != tex.end(); it++)
@@ -279,7 +279,7 @@ void plMtlCollector::GetMtlLayers(Mtl *mtl, LayerSet& layers)
 void plMtlCollector::GetAllTextures(TexNameSet& texNames)
 {
     TexSet tex;
-    GetMtls(nil, &tex);
+    GetMtls(nullptr, &tex);
 
     PBSet pbs;
     TexSet::iterator it = tex.begin();

@@ -41,9 +41,12 @@ Mead, WA   99021
 *==LICENSE==*/
 
 #include "plClipboard.h"
+
+#include "HeadSpin.h"
 #include "hsWindows.h"
 
 #include <memory>
+#include <string_theory/string>
 
 plClipboard& plClipboard::GetInstance()
 {
@@ -60,57 +63,78 @@ bool plClipboard::IsTextInClipboard()
 #endif
 }
 
-plString plClipboard::GetClipboardText()
+ST::string plClipboard::GetClipboardText()
 {
     if (!IsTextInClipboard()) 
-        return plString::Null;
+        return ST::string();
 
 #ifdef HS_BUILD_FOR_WIN32
-    if (!::OpenClipboard(NULL))
-        return plString::Null;
+    if (!::OpenClipboard(nullptr))
+        return ST::string();
 
     HANDLE clipboardData = ::GetClipboardData(CF_UNICODETEXT);
     size_t size = ::GlobalSize(clipboardData) / sizeof(wchar_t);
     wchar_t* clipboardDataPtr = (wchar_t*)::GlobalLock(clipboardData);
 
-    plString result = plString::FromWchar(clipboardDataPtr, size);
+    // Per MSDN, with CF_UNICODETEXT: "A null character signals the end of the data."
+    // This null character is included in size. Be sure to NOT include it in the size
+    // we give to ST, or we will get a double null terminator.
+    ST::string result = ST::string::from_wchar(clipboardDataPtr, size - 1);
 
-    ::GlobalUnlock(clipboardData);	
+    ::GlobalUnlock(clipboardData);
     ::CloseClipboard();
 
     return result;
 #else
-    return plString::Null;
+    return ST::string();
 #endif	
 }
 
-void plClipboard::SetClipboardText(const plString& text)
+void plClipboard::SetClipboardText(const ST::string& text)
 {
-    if (text.IsEmpty())
+    if (text.empty())
         return;
+
 #ifdef HS_BUILD_FOR_WIN32
-    plStringBuffer<wchar_t> buf = text.ToWchar();
-    size_t len = buf.GetSize();
+    ST::wchar_buffer buf = text.to_wchar();
+    size_t len = buf.size();
 
-    if (len == 0) 
+    if (len == 0)
         return;
 
-    std::unique_ptr<void, HGLOBAL(WINAPI*)(HGLOBAL)> copy(::GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(wchar_t)), ::GlobalFree);
+    std::unique_ptr<void, HGLOBAL(WINAPI*)(HGLOBAL)> copy(GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(wchar_t)), GlobalFree);
     if (!copy)
         return;
 
-    if (!::OpenClipboard(NULL))
+    HWND hWnd = GetActiveWindow();
+    if (!OpenClipboard(hWnd))
         return;
 
-    ::EmptyClipboard();
+    wchar_t* target = reinterpret_cast<wchar_t*>(GlobalLock(copy.get()));
+    if (target == nullptr) {
+        hsAssert(0, ST::format("GlobalLock() failed:\n{}", hsCOMError(hsLastWin32Error, GetLastError())).c_str());
+        return;
+    }
+    memcpy(target, buf.data(), len * sizeof(wchar_t));
+    target[len] = L'\0';
+    GlobalUnlock(copy.get());
 
-    wchar_t* target = (wchar_t*)::GlobalLock(copy.get());
-    memcpy(target, buf.GetData(), (len + 1) * sizeof(wchar_t));
-    target[len] = '\0';
-    ::GlobalUnlock(copy.get());
+    // If someone else has non-text data on the clipboard, copying will silently
+    // fail if we don't explicitly clear the content. Worse, if we clear with
+    // a null window, then, per MSDN, the clipboard is owned by null, which causes
+    // SetClipboardData() to fail.
+    if (hWnd != nullptr) {
+        BOOL result = EmptyClipboard();
+        hsAssert(result, ST::format("EmptyClipboard() failed:\n{}", hsCOMError(hsLastWin32Error, GetLastError())).c_str());
+    }
 
-    ::SetClipboardData(CF_UNICODETEXT, copy.get());
-    ::CloseClipboard();
+    if (SetClipboardData(CF_UNICODETEXT, copy.get()) != nullptr) {
+        // copy is now owned by the clipboard, do not destroy it.
+        // if we don't release it, then subsequent copies will crash.
+        copy.release();
+    }
+
+    CloseClipboard();
 #endif
 }
 

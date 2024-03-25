@@ -1,13 +1,3 @@
-include_directories("../")
-include_directories("../../Plasma/CoreLib")
-include_directories("../../Plasma/FeatureLib")
-include_directories("../../Plasma/FeatureLib/inc")
-include_directories("../../Plasma/NucleusLib")
-include_directories("../../Plasma/NucleusLib/inc")
-include_directories("../../Plasma/PubUtilLib")
-include_directories("../../Plasma/PubUtilLib/inc")
-include_directories(${3dsm_INCLUDE_DIR})
-
 set(MaxPlasmaMtls_HEADERS
     plBMSampler.h
     plDetailCurveCtrl.h
@@ -114,16 +104,30 @@ set(MaxPlasmaMtls_SOURCES_Materials
     Materials/plPassMtlBase.cpp
 )
 
-use_precompiled_header(Pch.h Pch.cpp MaxPlasmaMtls_HEADERS MaxPlasmaMtls_SOURCES)
-add_library(MaxPlasmaMtls
-            STATIC
-            ${MaxPlasmaMtls_HEADERS}
+plasma_library(MaxPlasmaMtls
+    SOURCES ${MaxPlasmaMtls_HEADERS}
             ${MaxPlasmaMtls_HEADERS_Layers}
             ${MaxPlasmaMtls_HEADERS_Materials}
             ${MaxPlasmaMtls_RESOURCES}
             ${MaxPlasmaMtls_SOURCES}
             ${MaxPlasmaMtls_SOURCES_Layers}
             ${MaxPlasmaMtls_SOURCES_Materials}
+    PRECOMPILED_HEADERS Pch.h
+    NO_SANITIZE # The 3ds Max headers are full of clang diagnostic errors.
+)
+target_link_libraries(
+    MaxPlasmaMtls
+    PUBLIC
+        CoreLib
+        pnNucleusInc
+        plInterp
+    PRIVATE
+        pnKeyedObject
+        pnMessage
+        plAvatar
+        plSurface
+
+        3dsm
 )
 
 source_group("Header Files" FILES ${MaxPlasmaMtls_HEADERS})

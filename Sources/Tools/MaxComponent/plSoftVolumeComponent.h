@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plSoftVolumeComponent_h
 #define _plSoftVolumeComponent_h
 
+#include <vector>
+
 #include "pnKeyedObject/plUoid.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,13 +77,13 @@ protected:
     virtual plKey       ICreateSoftVolume() = 0;
 public:
 
-    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
-    bool PreConvert(plMaxNode* pNode, plErrorMsg* errMsg) { return true; }
-    bool Convert(plMaxNode *node, plErrorMsg *errMsg) { return true; }
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg) override;
+    bool PreConvert(plMaxNode* pNode, plErrorMsg* errMsg) override { return true; }
+    bool Convert(plMaxNode *node, plErrorMsg *errMsg) override { return true; }
 
     plKey GetSoftVolume(); 
 
-    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     static plSoftVolBaseComponent* GetSoftComponent(INode* node);
     static plSoftVolBaseComponent* GetSoftComponent(plComponentBase *comp);
@@ -103,8 +105,8 @@ protected:
 
 public:
     plSingleCompSelProc(ParamID nodeID, int dlgItem, TCHAR *title);
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    void DeleteThis() {}
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    void DeleteThis() override { }
 };
 
 class plVisRegionComponent : public plComponent
@@ -124,16 +126,16 @@ protected:
     void            ICheckVisRegion(const plLocation& loc);
 public:
     plVisRegionComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *errMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *errMsg) override;
 
-    static void CollectRegions(plMaxNode* node, hsTArray<plVisRegion*>& regions);
+    static void CollectRegions(plMaxNode* node, std::vector<plVisRegion*>& regions);
 };
 
 class plEffVisSetComponent : public plComponent
@@ -146,15 +148,15 @@ protected:
     plVisRegion*        fVisReg;
 public:
     plEffVisSetComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
-    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *errMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *errMsg) override;
     
     plVisRegion* GetVisRegion(plMaxNode* node);
     
     static plEffVisSetComponent* ConvertToEffVisSetComponent(plMaxNode* node);
-    static void CollectRegions(plMaxNode* node, hsTArray<plVisRegion*>& regions);
+    static void CollectRegions(plMaxNode* node, std::vector<plVisRegion*>& regions);
 };
 
 #endif //_plSoftVolumeComponent_h

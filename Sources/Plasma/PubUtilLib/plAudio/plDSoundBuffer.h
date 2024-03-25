@@ -51,8 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plDSoundBuffer_h
 
 #include <list>
-#include "hsTemplates.h"
 #include "plEAXEffects.h"
+
 #define STREAMING_BUFFERS 16
 #define STREAM_BUFFER_SIZE      4608*4
 
@@ -71,12 +71,12 @@ public:
     plDSoundBuffer( uint32_t size, plWAVHeader &bufferDesc, bool enable3D, bool looping, bool tryStatic = false, bool streaming = false );
     ~plDSoundBuffer();
 
-    void        Play( void );
-    void        Stop( void );
+    void        Play();
+    void        Stop();
     void        Rewind();
     void        Pause();
 
-    uint32_t      GetLengthInBytes( void ) const;
+    uint32_t      GetLengthInBytes() const;
     void        SetScalarVolume( float volume ); // Sets the volume, but on a range from 0 to 1
 
     unsigned    GetSource() { return source; }
@@ -91,10 +91,10 @@ public:
     void        SetMinDistance( int dist);
     void        SetMaxDistance( int dist );
 
-    bool        IsValid( void ) const { return fValid; }
-    bool        IsPlaying( void );
-    bool        IsLooping( void ) const { return fLooping; }
-    bool        IsEAXAccelerated( void ) const;
+    bool        IsValid() const { return fValid; }
+    bool        IsPlaying();
+    bool        IsLooping() const { return fLooping; }
+    bool        IsEAXAccelerated() const;
 
     bool        FillBuffer(void *data, unsigned bytes, plWAVHeader *header);
 
@@ -105,7 +105,7 @@ public:
     bool        StreamingFillBuffer(plAudioFileReader *stream);
 
     bool        SetupVoiceSource();
-    bool        VoiceFillBuffer(void *data, unsigned bytes, unsigned buferId);
+    bool        VoiceFillBuffer(const void *data, size_t bytes, unsigned buferId);
     void        UnQueueVoiceBuffers();
 
     
@@ -115,7 +115,7 @@ public:
 
     void            SetEAXSettings(  plEAXSourceSettings *settings, bool force = false );
     void            SetTimeOffsetBytes(unsigned bytes);
-    uint8_t           GetBlockAlign( void ) const;
+    uint8_t           GetBlockAlign() const;
     static uint32_t   GetNumBuffers() { return fNumBuffers; }
     float           GetDefaultMinDistance() { return fDefaultMinDistance; }
     bool            GetAvailableBufferId(unsigned *bufferId);
@@ -138,8 +138,7 @@ protected:
     bool                fValid, fLooping;
     uint32_t              fLockLength;
     void *              fLockPtr;
-    
-    hsTArray<uint32_t>    fPosNotifys;
+
     bool                fStreaming;
     plWAVHeader*        fBufferDesc;
     uint32_t              fBufferSize;
@@ -160,7 +159,7 @@ protected:
     float            fPrevVolume;
 
     void    IAllocate( uint32_t size, plWAVHeader &bufferDesc, bool enable3D, bool tryStatic );
-    void    IRelease( void );
+    void    IRelease();
     int     IGetALFormat(unsigned bitsPerSample, unsigned int numChannels);
 };
 

@@ -40,11 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyGUIControlClickMap.h"
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControlClickMap, pyGUIControlClickMap);
@@ -54,7 +53,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlClickMap)
 
 PYTHON_INIT_DEFINITION(ptGUIControlClickMap, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -99,15 +98,15 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlClickMap, pyGUIControl, "Params: ctrlKey\n
 // required functions for PyObject interoperability
 PyObject *pyGUIControlClickMap::New(pyKey& gckey)
 {
-    ptGUIControlClickMap *newObj = (ptGUIControlClickMap*)ptGUIControlClickMap_type.tp_new(&ptGUIControlClickMap_type, NULL, NULL);
+    ptGUIControlClickMap *newObj = (ptGUIControlClickMap*)ptGUIControlClickMap_type.tp_new(&ptGUIControlClickMap_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlClickMap::New(plKey objkey)
 {
-    ptGUIControlClickMap *newObj = (ptGUIControlClickMap*)ptGUIControlClickMap_type.tp_new(&ptGUIControlClickMap_type, NULL, NULL);
-    newObj->fThis->fGCkey = objkey;
+    ptGUIControlClickMap *newObj = (ptGUIControlClickMap*)ptGUIControlClickMap_type.tp_new(&ptGUIControlClickMap_type, nullptr, nullptr);
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

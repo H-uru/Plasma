@@ -39,20 +39,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
 #include "plAnimationEventConditionalObject.h"
-#include "pnInputCore/plKeyDef.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "plModifier/plSimpleModifier.h"
 #include "pnModifier/plLogicModBase.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
+
 #include "plMessage/plAnimCmdMsg.h"
 
-plAnimationEventConditionalObject::plAnimationEventConditionalObject(plKey pTargetModifier) :
-fTarget(pTargetModifier),
-fAction(kEventEnd)
-{
-}
 
 bool plAnimationEventConditionalObject::MsgReceive(plMessage* msg)
 {
@@ -78,8 +76,7 @@ void plAnimationEventConditionalObject::SetEvent(const CallbackEvent b, float ti
     pMsg->AddCallback( cb );
     hsRefCnt_SafeUnRef(cb);
     pMsg->SetCmd( plAnimCmdMsg::kAddCallbacks );
-    
-    plgDispatch::MsgSend( pMsg );
+    pMsg->Send();
 }
 
 void plAnimationEventConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
@@ -93,6 +90,6 @@ void plAnimationEventConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
     mgr->WriteKey(stream, fTarget);
-    stream->WriteLE32(fAction); 
+    stream->WriteLE32((uint32_t)fAction);
 }
     

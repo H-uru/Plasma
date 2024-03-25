@@ -50,9 +50,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
+
 #include "pnKeyedObject/plKey.h"
-#include "pfCamera/plVirtualCamNeu.h" 
+
+#include "pfCamera/plVirtualCamNeu.h"
+
+#include "pyGlueDefinitions.h"
+
+class pyKey;
 
 class cyCamera
 {
@@ -61,6 +66,7 @@ protected:
     plKey       fTheCam;
 
     cyCamera();
+
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptCamera);
@@ -75,13 +81,13 @@ public:
 
     // Save the current state of the virtual camera
     // NOTE: doesn't work by itself at the moment
-    virtual void Push(pyKey& newCamKey);
+    void Push(pyKey& newCamKey);
 
     // Restore the state of the virtual camera with a previously saved setting
-    virtual void Pop(pyKey& oldCamKey);
+    void Pop(pyKey& oldCamKey);
 
     // Send controlKey commands to the virtual camera (should be like a pass thru)
-    virtual void ControlKey(int32_t controlKey, bool activated);
+    void ControlKey(int32_t controlKey, bool activated);
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -92,29 +98,29 @@ public:
     //
     //  PURPOSE    : Transition to a new camera (position and settings)
     //
-    virtual void TransitionTo(pyKey& newCamKey, double time, bool save);
+    void TransitionTo(pyKey& newCamKey, double time, bool save);
     
-    virtual void SetEnableFirstPersonOverride(bool state) const;
-    virtual void EnableFirstPersonOverride() const { SetEnableFirstPersonOverride(true); }
-    virtual void DisableFirstPersonOverride() const { SetEnableFirstPersonOverride(false); }
+    void SetEnableFirstPersonOverride(bool state) const;
+    void EnableFirstPersonOverride() const { SetEnableFirstPersonOverride(true); }
+    void DisableFirstPersonOverride() const { SetEnableFirstPersonOverride(false); }
     
-    virtual void UndoFirstPerson();
+    void UndoFirstPerson();
 
-    virtual float GetFOV();
-    virtual void SetFOV(float fov, double t);
+    float GetFOV();
+    void SetFOV(float fov, double t);
 
-    virtual void SetSmootherCam(bool state);
-    virtual bool IsSmootherCam();
+    void SetSmootherCam(bool state);
+    bool IsSmootherCam();
 
-    virtual void SetWalkAndVerticalPan(bool state);
-    virtual bool IsWalkAndVerticalPan();
+    void SetWalkAndVerticalPan(bool state);
+    bool IsWalkAndVerticalPan();
 
-    virtual void SetStayInFirstPerson(bool state);
-    virtual bool IsStayInFirstPerson();
+    void SetStayInFirstPerson(bool state);
+    bool IsStayInFirstPerson();
 
-    virtual void SetAspectRatio(float aspectratio) { plVirtualCam1::SetAspectRatio(aspectratio); }
-    virtual float GetAspectRatio() const { return plVirtualCam1::GetAspectRatio(); }
-    virtual void RefreshFOV();
+    void SetAspectRatio(float aspectratio) { plVirtualCam1::SetAspectRatio(aspectratio); }
+    float GetAspectRatio() const { return plVirtualCam1::GetAspectRatio(); }
+    void RefreshFOV();
 };
 
 

@@ -70,46 +70,46 @@ static ParamBlockDesc2  RTProjDirLightBlk
     plRTLightBase::kLightOn,        _T("on"),   TYPE_BOOL,  0, IDS_RTLIGHT_ON,
         p_default, true,    
         p_ui, TYPE_SINGLECHEKBOX,   IDC_LIGHT_ON,
-        end,
+        p_end,
     
     plRTLightBase::kAffectDiffuse,      _T("AffectDiffuse"),    TYPE_BOOL,  0, IDS_RTLIGHT_ON,
         p_default, true,    
         p_ui, TYPE_SINGLECHEKBOX,   IDC_LIGHT_DIFFUSE,
-        end,
+        p_end,
     
     plRTLightBase::kAmbientOnlyStub,        _T("AmbientOnly"),  TYPE_BOOL,  0, IDS_RTLIGHT_ON,
         p_default, false,   
         p_ui, TYPE_SINGLECHEKBOX,   IDC_AMBIENT_ONLY_STUB,
-        end,
+        p_end,
     
     plRTLightBase::kCastShadows,    _T("CastShadows"),  TYPE_BOOL,  0, IDS_DS_CASTSHADOWSS,
 //      p_default, false,   
 //      p_ui, TYPE_SINGLECHEKBOX,   IDC_CAST_SHADOWS,
-        end,
+        p_end,
     
     plRTLightBase::kLightColor,     _T("LightColor"),   TYPE_RGBA,  P_ANIMATABLE, IDS_DS_LIGHTCOL,
         p_default, Color(255,255,255),
         p_ui, TYPE_COLORSWATCH,         IDC_LIGHT_COLOR,
-        end,
+        p_end,
 
     plRTLightBase::kSpec,           _T("AffectSpecular"),   TYPE_BOOL,  P_ANIMATABLE, IDS_DS_SPEC,
         p_default, false,
         p_ui, TYPE_SINGLECHEKBOX,   IDC_AFFECT_SPECULAR,
-        end,
+        p_end,
 
     plRTLightBase::kSpecularColorSwatch,_T("SpecularColor"),TYPE_RGBA,  P_ANIMATABLE, IDS_DS_SPECCOL,
         p_default, Color(255,255,255),
         p_ui, TYPE_COLORSWATCH,         IDC_LIGHT_COLOR_SPECULAR,
-        end,
+        p_end,
 
     plRTLightBase::kIntensity,      _T("IntensityEditSpinner"), TYPE_FLOAT, P_ANIMATABLE, IDS_DB_MULTIPLIER,    
         p_range, -250.0, 250.0,
         p_default, 1.0,
         p_ui, TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_LMULT,IDC_LMULTSPINNER, .05f,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -129,49 +129,49 @@ static ParamBlockDesc2  plRTProjParamBlock
         p_range, 0.0, 999999999.0,
         p_default, 200.0,
         p_ui, TYPE_SPINNER, EDITTYPE_POS_UNIVERSE,  IDC_WIDTH, IDC_WIDTHSPINNER, .05f,
-        end,
+        p_end,
 
     plRTProjDirLight::kHeight,      _T("Height"), TYPE_FLOAT,   P_ANIMATABLE, IDS_PROJHEIGHT,   
         p_range, 0.0, 999999999.0,
         p_default, 200.0,
         p_ui, TYPE_SPINNER, EDITTYPE_POS_UNIVERSE,
         IDC_HEIGHT, IDC_HEIGHTSPINNER, .05f,
-        end,
+        p_end,
 
     plRTProjDirLight::kRange,       _T("Range"), TYPE_FLOAT,    P_ANIMATABLE, IDS_PROJDEPTH,    
         p_range, 0.0, 999999999.0,
         p_default, 200.0,
         p_ui, TYPE_SPINNER, EDITTYPE_POS_UNIVERSE,
         IDC_DEPTH,  IDC_DEPTHSPINNER, .05f,
-        end,
+        p_end,
 
     // Old way--here for backwards compatability
     plRTProjDirLight::kProjMap, _T("ProjMapButton"),    TYPE_BITMAP,    P_SHORT_LABELS, IDS_DS_PROJMAP,
 //      p_ui, TYPE_BITMAPBUTTON,    IDC_PROJ_MAPNAME,
 //      p_accessor,     plRTProjPBAccessor::Instance(),
-        end,
+        p_end,
 
     // New way
     plRTProjDirLight::kTexmap,  _T("texmap"),   TYPE_TEXMAP,    0, 0,
-        end,
+        p_end,
         
     plRTLightBase::kProjTypeRadio, _T("ProjTypeRadio"),     TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_ILLUMINATE, IDC_ADD, IDC_MULT, IDC_MADD,
         p_vals,                     plRTLightBase::kIlluminate, plRTLightBase::kAdd, plRTLightBase::kMult, plRTLightBase::kMADD,
         p_default, plRTLightBase::kIlluminate,
-        end,
+        p_end,
 
     plRTLightBase::kProjNoCompress, _T("NoCompress"),       TYPE_BOOL,  0, IDS_DS_PROJ_PARAMS,
         p_default, false,
         p_ui, TYPE_SINGLECHEKBOX,   IDC_PROJ_NOCOMPRESS,
-        end,        
+        p_end,        
 
     plRTLightBase::kProjNoMip,  _T("NoMip"),        TYPE_BOOL,  0, IDS_DS_PROJ_PARAMS,
         p_default, false,
         p_ui, TYPE_SINGLECHEKBOX,   IDC_PROJ_NOMIP,
-        end,        
+        p_end,        
 
-    end
+    p_end
 );
 
 #endif //_plRTProjDirLightPBDec_h

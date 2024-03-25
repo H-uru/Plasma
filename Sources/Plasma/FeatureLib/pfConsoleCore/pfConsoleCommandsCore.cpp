@@ -47,30 +47,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfConsoleCmd.h"
 #include "pnNetBase/pnNetBase.h"
-#include "pfUtilBase64.h"
-#include "plString.h"
-
-#include <algorithm>
+#include <string_theory/codecs>
+#include <string_theory/format>
 
 //// DO NOT REMOVE!!!!
 //// This is here so Microsoft VC won't decide to "optimize" this file out
 PF_CONSOLE_FILE_DUMMY(Core)
 //// DO NOT REMOVE!!!!
-
-//
-// utility functions
-//
-//////////////////////////////////////////////////////////////////////////////
-void PrintStringF(void pfun(const char *),const char * fmt, ...)
-{
-    va_list args;
-
-    char buffy[512];
-    va_start(args, fmt);
-    vsnprintf(buffy, arrsize(buffy), fmt, args);
-    va_end(args);
-    pfun(buffy);
-}
 
 
 /*****************************************************************************
@@ -90,7 +73,7 @@ PF_CONSOLE_CMD(
     "string url",
     "Set the server's status URL"
 ) {
-    SetServerStatusUrl((char*)params[0]);
+    SetServerStatusUrl(params[0]);
 }
 
 //============================================================================
@@ -100,7 +83,7 @@ PF_CONSOLE_CMD(
     "string url",
     "Set the server's new user sign-up URL"
 ) {
-    SetServerSignupUrl((char*)params[0]);
+    SetServerSignupUrl(params[0]);
 }
 
 //============================================================================
@@ -110,7 +93,7 @@ PF_CONSOLE_CMD(
     "string name",
     "Set the displayable server name"
 ) {
-    SetServerDisplayName((char*)params[0]);
+    SetServerDisplayName(params[0]);
 }
 
 //============================================================================
@@ -135,7 +118,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the File Server address"
 ) {
-    SetFileSrvHostname((char*)params[0]);
+    SetFileSrvHostname(params[0]);
 }
 
 
@@ -150,7 +133,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the Auth Server address"
 ) {
-    SetAuthSrvHostname((char*)params[0]);
+    SetAuthSrvHostname(params[0]);
 }
 
 //============================================================================
@@ -160,15 +143,15 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Auth Server N key"
 ) {
-    int baseLength = strlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
-        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
-                     kNetDiffieHellmanKeyBits / 8);
+    const ST::string& base64key = params[0];
+    ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
+    if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
+        PrintString(ST::format("Invalid key: should be exactly {} bytes", kNetDiffieHellmanKeyBits / 8));
         return;
     }
 
-    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
-                 kNetDiffieHellmanKeyBits / 8, kAuthDhNData);
+    ST_ssize_t bytes = ST::base64_decode(base64key, kAuthDhNData, sizeof(kAuthDhNData));
+    ASSERT(bytes >= 0);
 }
 
 //============================================================================
@@ -178,15 +161,15 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Auth Server X key"
 ) {
-    int baseLength = strlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
-        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
-                     kNetDiffieHellmanKeyBits / 8);
+    const ST::string& base64key = params[0];
+    ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
+    if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
+        PrintString(ST::format("Invalid key: should be exactly {} bytes", kNetDiffieHellmanKeyBits / 8));
         return;
     }
 
-    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
-                 kNetDiffieHellmanKeyBits / 8, kAuthDhXData);
+    ST_ssize_t bytes = ST::base64_decode(base64key, kAuthDhXData, sizeof(kAuthDhXData));
+    ASSERT(bytes >= 0);
 }
 
 //============================================================================
@@ -211,15 +194,15 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Game Server N key"
 ) {
-    int baseLength = strlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
-        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
-                     kNetDiffieHellmanKeyBits / 8);
+    const ST::string& base64key = params[0];
+    ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
+    if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
+        PrintString(ST::format("Invalid key: should be exactly {} bytes", kNetDiffieHellmanKeyBits / 8));
         return;
     }
 
-    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
-                 kNetDiffieHellmanKeyBits / 8, kGameDhNData);
+    ST_ssize_t bytes = ST::base64_decode(base64key, kGameDhNData, sizeof(kGameDhNData));
+    ASSERT(bytes >= 0);
 }
 
 //============================================================================
@@ -229,15 +212,15 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Game Server X key"
 ) {
-    int baseLength = strlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
-        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
-                     kNetDiffieHellmanKeyBits / 8);
+    const ST::string& base64key = params[0];
+    ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
+    if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
+        PrintString(ST::format("Invalid key: should be exactly {} bytes", kNetDiffieHellmanKeyBits / 8));
         return;
     }
 
-    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
-                 kNetDiffieHellmanKeyBits / 8, kGameDhXData);
+    ST_ssize_t bytes = ST::base64_decode(base64key, kGameDhXData, sizeof(kGameDhXData));
+    ASSERT(bytes >= 0);
 }
 
 //============================================================================
@@ -262,7 +245,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the GateKeeper Server address"
 ) {
-    SetGateKeeperSrvHostname((char*)params[0]);
+    SetGateKeeperSrvHostname(params[0]);
 }
 
 //============================================================================
@@ -272,15 +255,15 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the GateKeeper Server N key"
 ) {
-    int baseLength = strlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
-        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
-                     kNetDiffieHellmanKeyBits / 8);
+    const ST::string& base64key = params[0];
+    ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
+    if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
+        PrintString(ST::format("Invalid key: should be exactly {} bytes", kNetDiffieHellmanKeyBits / 8));
         return;
     }
 
-    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
-                 kNetDiffieHellmanKeyBits / 8, kGateKeeperDhNData);
+    ST_ssize_t bytes = ST::base64_decode(base64key, kGateKeeperDhNData, sizeof(kGateKeeperDhNData));
+    ASSERT(bytes >= 0);
 }
 
 //============================================================================
@@ -290,15 +273,15 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the GateKeeper Server X key"
 ) {
-    int baseLength = strlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
-        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
-                     kNetDiffieHellmanKeyBits / 8);
+    const ST::string& base64key = params[0];
+    ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
+    if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
+        PrintString(ST::format("Invalid key: should be exactly {} bytes", kNetDiffieHellmanKeyBits / 8));
         return;
     }
 
-    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
-                 kNetDiffieHellmanKeyBits / 8, kGateKeeperDhXData);
+    ST_ssize_t bytes = ST::base64_decode(base64key, kGateKeeperDhXData, sizeof(kGateKeeperDhXData));
+    ASSERT(bytes >= 0);
 }
 
 //============================================================================

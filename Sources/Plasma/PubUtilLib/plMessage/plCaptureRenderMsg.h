@@ -50,8 +50,8 @@ class plMipmap;
 class plCaptureRenderMsg : public plMessage
 {
 public:
-    plCaptureRenderMsg() : plMessage(), fMipmap(nil) {}
-    plCaptureRenderMsg(const plKey &r, plMipmap* mipmap) : plMessage(nil, r, nil), fMipmap(mipmap) {}
+    plCaptureRenderMsg() : plMessage(), fMipmap() { }
+    plCaptureRenderMsg(const plKey &r, plMipmap* mipmap) : plMessage(nullptr, r, nullptr), fMipmap(mipmap) { }
 
     virtual ~plCaptureRenderMsg();
     
@@ -64,8 +64,8 @@ public:
     plMipmap* GetMipmap() const { return fMipmap; }
     plMipmap*       fMipmap;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Transient message"); }
-    virtual void Write(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Transient message"); }
+    void Read(hsStream* stream, hsResMgr* mgr) override { hsAssert(false, "Transient message"); }
+    void Write(hsStream* stream, hsResMgr* mgr) override { hsAssert(false, "Transient message"); }
 };
 
 #endif // plCaptureRenderMsg_inc

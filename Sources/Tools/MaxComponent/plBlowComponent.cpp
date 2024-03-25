@@ -46,11 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentReg.h"
 #include "MaxMain/plMaxNode.h"
 
-#include <dummy.h>
-#include <meshdlib.h>
+#include "MaxMain/MaxAPI.h"
 
 #include "resource.h"
-#pragma hdrstop
 
 
 #include "MaxMain/plPlasmaRefMsgs.h"
@@ -73,37 +71,37 @@ ParamBlockDesc2 gBlowBk
 (   
     plComponent::kBlkComp, _T("Blow"), 0, &gBlowCompDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_BLOW, IDS_COMP_BLOWS, 0, 0, nil,
+    IDD_COMP_BLOW, IDS_COMP_BLOWS, 0, 0, nullptr,
 
     plBlowComponent::kStrength, _T("Strength"), TYPE_FLOAT,     0, 0,   
         p_default, 100.0,
         p_range, 0.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_BLOW_STRENGTH, IDC_COMP_BLOW_STRENGTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plBlowComponent::kSpeed, _T("Speed"), TYPE_FLOAT,   0, 0,   
         p_default, 100.0,
         p_range, 0.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_BLOW_SPEED, IDC_COMP_BLOW_SPEED_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plBlowComponent::kFlutter, _T("Flutter"), TYPE_FLOAT,   0, 0,   
         p_default, 100.0,
         p_range, 0.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_BLOW_FLUTTER, IDC_COMP_BLOW_FLUTTER_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plBlowComponent::kConstancy, _T("Constancy"), TYPE_FLOAT,   0, 0,   
         p_default, 25.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_BLOW_CONSTANCY, IDC_COMP_BLOW_CONSTANCY_SPIN, 1.0,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 
@@ -161,30 +159,30 @@ ParamBlockDesc2 gFlexibilityBk
 (   // KLUDGE: not the defined block ID, but kept for backwards compat.
  plComponent::kBlkComp, _T("Flexibility"), 0, &gFlexibilityDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_FLEXIBILITY, IDS_COMP_FLEXIBILITYS, 0, 0, NULL,
+    IDD_COMP_FLEXIBILITY, IDS_COMP_FLEXIBILITYS, 0, 0, nullptr,
 
     plFlexibilityComponent::kFlexibility, _T("Flexibility"), TYPE_FLOAT,    0, 0,   
         p_default, 100.0,
         p_range, 0.f, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FLEX_FLEX, IDC_COMP_FLEX_FLEX_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plFlexibilityComponent::kInterRand, _T("InterRand"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, 0.f, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FLEX_INTER, IDC_COMP_FLEX_INTER_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plFlexibilityComponent::kIntraRand, _T("IntraRand"), TYPE_FLOAT,    0, 0,   
         p_default, 100.0,
         p_range, 0.f, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FLEX_INTRA, IDC_COMP_FLEX_INTRA_SPIN, 1.0,
-        end,    
+        p_end,    
     
-    end
+    p_end
 );
 
 plFlexibilityComponent::plFlexibilityComponent()

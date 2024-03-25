@@ -50,11 +50,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
 
-class pyColor;
+#include "pyGlueDefinitions.h"
+
 class plStatusLog;
-class plString;
+class pyColor;
+namespace ST { class string; }
 
 class pyStatusLog
 {
@@ -63,7 +64,7 @@ private:
     bool    fICreatedLog;
 
 protected:
-    pyStatusLog( plStatusLog* log=nil );
+    pyStatusLog(plStatusLog* log = nullptr);
 
 public:
     ~pyStatusLog();
@@ -78,12 +79,12 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    virtual bool Open(plString logName, uint32_t numLines, uint32_t flags);
-    virtual bool Write(plString text);
-    virtual bool WriteColor(plString text, pyColor& color);
-    virtual void Close();
+    bool Open(const ST::string &logName, uint32_t numLines, uint32_t flags);
+    bool Write(const ST::string &text);
+    bool WriteColor(const ST::string &text, pyColor& color);
+    void Close();
 
-    virtual bool IsOpen() { return (fLog != nil); }
+    bool IsOpen() { return (fLog != nullptr); }
 };
 
 

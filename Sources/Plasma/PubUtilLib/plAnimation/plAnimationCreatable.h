@@ -45,27 +45,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-
 #include "plAGAnim.h"
-
 REGISTER_CREATABLE(plAGAnim);
 REGISTER_CREATABLE(plATCAnim);
 REGISTER_CREATABLE(plEmoteAnim);
 REGISTER_CREATABLE(plAgeGlobalAnim);
 
-
-#include "plAGChannel.h"
-
-REGISTER_NONCREATABLE(plAGChannel);
-
-
 #include "plAGApplicator.h"
-
 REGISTER_NONCREATABLE(plAGApplicator);
 
+#include "plAGChannel.h"
+REGISTER_NONCREATABLE(plAGChannel);
+
+#include "plAGMasterMod.h"
+REGISTER_CREATABLE(plAGMasterMod);
+
+#include "plAGModifier.h"
+REGISTER_CREATABLE(plAGModifier);
 
 #include "plMatrixChannel.h"
-
 REGISTER_CREATABLE(plMatrixChannel);
 REGISTER_CREATABLE(plMatrixConstant);
 REGISTER_CREATABLE(plMatrixTimeScale);
@@ -77,9 +75,7 @@ REGISTER_CREATABLE(plMatrixChannelApplicator);
 REGISTER_CREATABLE(plMatrixDelayedCorrectionApplicator);
 REGISTER_CREATABLE(plMatrixDifferenceApp);
 
-
 #include "plPointChannel.h"
-
 REGISTER_CREATABLE(plPointChannel);
 REGISTER_CREATABLE(plPointConstant);
 REGISTER_CREATABLE(plPointBlend);
@@ -91,18 +87,14 @@ REGISTER_CREATABLE(plLightDiffuseApplicator);
 REGISTER_CREATABLE(plLightAmbientApplicator);
 REGISTER_CREATABLE(plLightSpecularApplicator);
 
-
 #include "plQuatChannel.h"
-
 REGISTER_CREATABLE(plQuatChannel);
 REGISTER_CREATABLE(plQuatConstant);
 REGISTER_CREATABLE(plQuatBlend);
 REGISTER_CREATABLE(plQuatTimeScale);
 REGISTER_CREATABLE(plQuatChannelApplicator);
 
-
 #include "plScalarChannel.h"
-
 REGISTER_CREATABLE(plScalarChannel);
 REGISTER_CREATABLE(plScalarConstant);
 REGISTER_CREATABLE(plScalarTimeScale);
@@ -118,15 +110,4 @@ REGISTER_CREATABLE(plOmniApplicator);
 REGISTER_CREATABLE(plOmniSqApplicator);
 REGISTER_CREATABLE(plOmniCutoffApplicator);
 
-
-#include "plAGModifier.h"
-
-REGISTER_CREATABLE(plAGModifier);
-
-
-#include "plAGMasterMod.h"
-
-REGISTER_CREATABLE(plAGMasterMod);
-
 #endif // plAnimationCreatable_inc
-

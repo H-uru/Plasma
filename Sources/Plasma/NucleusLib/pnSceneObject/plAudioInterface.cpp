@@ -61,7 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 plAudioInterface::plAudioInterface()
-: fAudible(nil), fAudibleInited( false )
+: fAudible(), fAudibleInited()
 {
     fRegisteredForASysMsg = false;
 }
@@ -83,7 +83,7 @@ plSound* plAudioInterface::GetSound(int i) const
 {
     if( fAudible )
         return fAudible->GetSound(i);
-    return nil;
+    return nullptr;
 }
 
 int plAudioInterface::GetSoundIndex(const char *keyname)
@@ -94,7 +94,7 @@ int plAudioInterface::GetSoundIndex(const char *keyname)
         return -1;
 }
 
-int plAudioInterface::GetNumSounds() const
+size_t plAudioInterface::GetNumSounds() const
 {
     if( fAudible )
         return fAudible->GetNumSounds();
@@ -108,7 +108,7 @@ void plAudioInterface::SetSoundFilename(int index, const char *filename, bool is
         fAudible->SetFilename(index, filename, isCompressed);
 }
 
-void plAudioInterface::ISetSceneNode(plKey key)
+void plAudioInterface::ISetSceneNode(const plKey& key)
 {
     if( fAudible )
     {
@@ -117,7 +117,7 @@ void plAudioInterface::ISetSceneNode(plKey key)
         {
             int isLocal = IsLocallyOwned();
 
-            plKey localKey = ( plNetClientApp::GetInstance() != nil ) ? plNetClientApp::GetInstance()->GetLocalPlayerKey() : nil;
+            plKey localKey = (plNetClientApp::GetInstance() != nullptr) ? plNetClientApp::GetInstance()->GetLocalPlayerKey() : nullptr;
             if( fOwner && fOwner->GetKey() == localKey )
                 isLocal = true;
             else
@@ -138,14 +138,14 @@ void plAudioInterface::ISetOwner(plSceneObject* owner)
         plgDispatch::Dispatch()->RegisterForExactType(plAudioSysMsg::Index(), GetKey());
         fRegisteredForASysMsg = true;
     }
-    else if( owner == nil && fRegisteredForASysMsg )
+    else if (owner == nullptr && fRegisteredForASysMsg)
     {
         plgDispatch::Dispatch()->UnRegisterForExactType(plAudioSysMsg::Index(), GetKey());
         fRegisteredForASysMsg = false;
     }
 
     if (fAudible)
-        fAudible->SetSceneObject(owner ? owner->GetKey() : nil);
+        fAudible->SetSceneObject(owner ? owner->GetKey() : nullptr);
 }
 
 
@@ -189,7 +189,7 @@ void plAudioInterface::ISetAudible(plAudible* aud)
 void plAudioInterface::IRemoveAudible(plAudible* aud)
 {
     hsAssert(aud == fAudible, "Removing Audible I don't have");
-    fAudible = nil;
+    fAudible = nullptr;
 }
 
 bool plAudioInterface::MsgReceive(plMessage* msg)
@@ -249,7 +249,7 @@ bool plAudioInterface::MsgReceive(plMessage* msg)
         if (pSoundMsg->Cmd( plSoundMsg::kGetNumSounds ) )
         {
             plSoundMsg* pReply = new plSoundMsg;
-            pReply->fIndex = fAudible->GetNumSounds();
+            pReply->fIndex = (int)fAudible->GetNumSounds();
             pReply->AddReceiver(pSoundMsg->GetSender());
             pReply->SetCmd( plSoundMsg::kGetNumSounds );
             plgDispatch::MsgSend(pReply);
@@ -350,7 +350,7 @@ bool plAudioInterface::MsgReceive(plMessage* msg)
 
     // proxyDrawMsg handling--just pass it on to the audible
     plProxyDrawMsg *pdMsg = plProxyDrawMsg::ConvertNoRef( msg );
-    if( pdMsg != nil )
+    if (pdMsg != nullptr)
     {
         if( fAudible )
             return fAudible->MsgReceive( pdMsg );
@@ -370,7 +370,7 @@ void plAudioInterface::ReleaseData()
         // to dump it. It will autodestruct after those two active refs are released, unless
         // someone else has a ref on it as well (in which case we don't want to be nuking it
         // anyway).
-        fAudible->SetSceneNode(nil);
+        fAudible->SetSceneNode(nullptr);
         // Audible key is gone already, I guess the audioInterface doesn't have a ref -Colin
 //      GetKey()->Release(fAudible->GetKey());
     }

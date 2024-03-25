@@ -39,234 +39,64 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/FeatureLib/pfGameMgr/pfGameMgr.h
-*   
-***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_FEATURELIB_PFGAMEMGR_PFGAMEMGR_H
-#define PLASMA20_SOURCES_PLASMA_FEATURELIB_PFGAMEMGR_PFGAMEMGR_H
+#ifndef _pfGameMgr_h_
+#define _pfGameMgr_h_
 
+#include "HeadSpin.h"
+#include "hsRefCnt.h"
 
-#include "pnUtils/pnUtils.h"
-#include "pnNetBase/pnNetBase.h"
-#include "pnAsyncCore/pnAsyncCore.h"
-#include "pnNetCli/pnNetCli.h"
-#include "plProduct.h"
-#include "plNetGameLib/plNetGameLib.h"
+#include <atomic>
+#include <map>
+#include <memory>
+#include <type_traits>
 
-#pragma warning(push, 0)
-// These includes produce lots of warnings on W4
-#include "pnMessage/plMessage.h"
-#include "pnKeyedObject/hsKeyedObject.h"
-#pragma warning(pop)
+#include "pfGameMgrTrans.h"
 
+class pfGameMgr
+{
+    std::atomic<uint32_t> fTransId;
+    std::map<uint32_t, std::unique_ptr<pfGameMgrTrans>> fTransactions;
+    std::map<uint32_t, hsRef<pfGameCli>> fGameClis;
 
-//============================================================================
-// Forward declarations
-//============================================================================
-class pfGameCli;
+    template<typename _MsgT>
+    void Recv(const _MsgT& msg) = delete;
 
+    static void RecvGameMgrMsg(struct GameMsgHeader* msg);
 
-//============================================================================
-// pfGameMgrMsg
-//-------------
-// Notifications received from SrvGameMgr are sent to pfGameMgr's receivers in
-// the form of a pfGameMgrMsg.
-//============================================================================
-class pfGameMgrMsg : public plMessage {
+protected:
+    friend class pfGameCli;
+
+    template<typename _TransT, typename... _ArgsT>
+    _TransT* CreateTransaction(_ArgsT&&... args)
+    {
+        uint32_t transId = fTransId++;
+        auto [transIt, happned] = fTransactions.try_emplace(
+            transId,
+            std::make_unique<_TransT>(std::forward<_ArgsT>(args)...)
+        );
+        transIt->second->fTransId = transId;
+        return (_TransT*)transIt->second.get();
+    }
+
+    template<typename _TransT, typename... _ArgsT>
+    void SendTransaction(_ArgsT&&... args)
+    {
+        static_assert(std::is_base_of_v<pfGameMgrTrans, _TransT>, "Transactions must be subclasses of pfGameMgrTrans");
+
+        _TransT* trans = CreateTransaction<_TransT>(std::forward<_ArgsT>(args)...);
+        trans->Send();
+    }
+
 public:
-    #pragma warning(push, 0)
-    // These macros produce warnings on W4
-    CLASSNAME_REGISTER(pfGameMgrMsg);
-    GETINTERFACE_ANY(pfGameMgrMsg, plMessage);
-    #pragma warning(pop)
+    pfGameMgr();
+    pfGameMgr(const pfGameMgr&) = delete;
+    pfGameMgr(pfGameMgr&&) = delete;
+    ~pfGameMgr();
 
-    void Read(hsStream *, hsResMgr *) { FATAL("not impl"); }
-    void Write(hsStream *, hsResMgr *) { FATAL("not impl"); }
-
-    pfGameMgrMsg () : netMsg(nil) { }
-    ~pfGameMgrMsg ();
-    
-    void Set (const GameMsgHeader & msg);
-    
-    GameMsgHeader * netMsg;
+public:
+    static pfGameMgr* GetInstance();
+    static void Shutdown();
 };
 
-
-//============================================================================
-// pfGameCliMsg
-//-------------
-// Notifications received by a pfGameCli are sent to its receiver in the form
-// of a pfGameCliMsg.
-//============================================================================
-class pfGameCliMsg : public plMessage {
-public:
-    #pragma warning(push, 0)
-    // These macros produce warnings on W4
-    CLASSNAME_REGISTER(pfGameCliMsg);
-    GETINTERFACE_ANY(pfGameCliMsg, plMessage);
-    #pragma warning(pop)
-
-    pfGameCliMsg () : gameCli(nil), netMsg(nil) { }
-    ~pfGameCliMsg ();
-
-    void Read(hsStream *, hsResMgr *) { FATAL("not impl"); }
-    void Write(hsStream *, hsResMgr *) { FATAL("not impl"); }
-
-    void Set (pfGameCli * cli, const GameMsgHeader & msg);
-    
-    pfGameCli *     gameCli;
-    GameMsgHeader * netMsg; 
-};
-
-
-//============================================================================
-// pfGameMgr singleton interface
-//------------------------------
-// pfGameMgr is the client-side proxy of the age server's SrvGameMgr. It sends
-// client requests to the SrvGameMgr for processing, and executes SrvGameMgr
-// commands locally to create pfGameCli objects, notify player of received
-// game invites, etc.
-//============================================================================
-class pfGameMgr {
-    friend struct IGameMgr;
-    struct IGameMgr * internal;
-
-    pfGameMgr ();
-    
-public:
-    static pfGameMgr * GetInstance ();
-
-    //========================================================================
-    // Receiver list
-    //--------------
-    // When notificatons are received from SrvGameMgr, they are dispatched
-    // as pfGameMgrMsgs to the receiver list maintained by these functions.
-    void AddReceiver (plKey receiver);
-    void RemoveReceiver (plKey receiver);
-    //========================================================================
-    
-    //========================================================================
-    // GameMgr properties
-    //-------------------
-    // Get a list of ids of games to which player is joined
-    void            GetGameIds (ARRAY(unsigned) * arr)              const;
-    // Return interface to the specified game   
-    pfGameCli *     GetGameCli (unsigned gameId)                    const;
-    // Get the name of a game by its typeid
-    const wchar_t*  GetGameNameByTypeId (const plUUID& gameTypeId)  const;
-    //========================================================================
-
-    //========================================================================
-    // pfGameCli creation
-    //-------------------
-    // Join an existing game
-    void JoinGame (
-        plKey           receiver,       // Receiver of pfGameCliMsgs for this game
-        unsigned        gameId          // id of the game to join
-    );
-    // Create a new game
-    void CreateGame (
-        plKey           receiver,       // Receiver of pfGameCliMsgs for this game
-        const plUUID&   gameTypeId,     // typeid of game to create
-        unsigned        createOptions,  // Game create options from pnGameMgr.h
-        unsigned        initBytes,      // Game-specific initialization data
-        const void *    initData
-    );
-    // Join or create the specified common game
-    void JoinCommonGame (
-        plKey           receiver,       // Receiver of pfGameCliMsgs for this game
-        const plUUID&   gameTypeId,     // typeid of common game to create/join
-        unsigned        gameNumber,     // "table number" of common game to create/join
-        // In case the common game needs to
-        // be created on the server, these
-        // are its creation parameters:
-        unsigned        initBytes,      // Game-specific initialization data
-        const void *    initData
-    );
-    //========================================================================
-
-    //========================================================================
-    // @@@: FUTURE WORK
-    //-----------------
-    // Fetch the list of games registered with SrvGameMgr's matchmaking service.
-    // void RequestPublishedGameList ();
-    //========================================================================
-};
-
-//============================================================================
-// pfGameCli interface
-//============================================================================
-class pfGameCli : public plCreatable {
-    friend struct IGameMgr;
-    friend struct IGameCli;
-    struct IGameCli * internal;
-
-    //========================================================================
-    // sub-classes must implement these
-    virtual void Recv           (GameMsgHeader * msg, void * param) = 0;
-    virtual void OnPlayerJoined (const Srv2Cli_Game_PlayerJoined & msg) = 0;
-    virtual void OnPlayerLeft   (const Srv2Cli_Game_PlayerLeft & msg) = 0;
-    virtual void OnInviteFailed (const Srv2Cli_Game_InviteFailed & msg) = 0;
-    virtual void OnOwnerChange  (const Srv2Cli_Game_OwnerChange & msg) = 0;
-    //========================================================================
-    
-public:
-    #pragma warning(push, 0)
-    // These macros produce warnings on W4
-    CLASSNAME_REGISTER(pfGameCli);
-    GETINTERFACE_ANY(pfGameCli, plCreatable);
-    #pragma warning(pop)
-    
-    pfGameCli (unsigned gameId, plKey receiver);
-    ~pfGameCli ();
-    
-    //========================================================================
-    // Game client properties
-    //-----------------------
-    unsigned         GetGameId ()        const;
-    const plUUID&    GetGameTypeId ()    const;
-    const wchar_t*   GetName ()          const;
-    plKey            GetReceiver ()      const;
-    unsigned         GetPlayerCount ()   const;
-    //========================================================================
-
-    //========================================================================
-    // Player invitation management
-    //-----------------------------
-    void InvitePlayer (unsigned playerId);
-    void UninvitePlayer (unsigned playerId);
-    //========================================================================
-
-    //========================================================================
-    // Game methods
-    //-------------
-    void LeaveGame ();
-    //========================================================================
-
-    //========================================================================
-    // @@@: FUTURE WORK
-    //-----------------
-    // "Publish" this game, adding it to the age's the matchmaking service.
-    // void PublishGame (const wchar_t desc[]);
-    // void UnpublishGame ();
-    //========================================================================
-};
-
-
-/*****************************************************************************
-*
-*   Games
-*
-***/
-
-#include "TicTacToe/pfGmTicTacToe.h"
-#include "Heek/pfGmHeek.h"
-#include "Marker/pfGmMarker.h"
-#include "BlueSpiral/pfGmBlueSpiral.h"
-#include "ClimbingWall/pfGmClimbingWall.h"
-#include "VarSync/pfGmVarSync.h"
-
-#endif // PLASMA20_SOURCES_PLASMA_FEATURELIB_PFGAMEMGR_PFGAMEMGR_H
+#endif

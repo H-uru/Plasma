@@ -1,0 +1,12 @@
+StartDateTime=0000000000
+DayLength=24.000000
+MaxCapacity=10
+LingerTime=180
+SequencePrefix=14
+ReleaseVersion=0
+Page=BaronCityOffice,0
+Page=BCOpaper01,1,1
+Page=BCOpaper02,2,1
+Page=BCOpaper03,4,1
+Page=BCOWrinkledPaper,5
+Page=tldnBCOGZMarkersVis,3,1

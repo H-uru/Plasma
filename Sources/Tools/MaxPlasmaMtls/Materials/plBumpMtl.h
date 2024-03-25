@@ -52,7 +52,11 @@ class plBumpMtl : public plPassMtlBase
 {
 protected:
 
-    virtual void        ICloneRefs( plPassMtlBase *target, RemapDir &remap );
+    void        ICloneRefs(plPassMtlBase *target, RemapDir &remap) override;
+
+    void IGetClassName(MSTR& s) const override;
+    MSTR IGetSubTexmapSlotName(int i) override;
+    MSTR ISubAnimName(int i) override;
 
 public:
 
@@ -68,52 +72,47 @@ public:
     };
 
     plBumpMtl(BOOL loading);
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     //From Animatable
-    Class_ID ClassID() { return BUMP_MTL_CLASS_ID; }        
-    SClass_ID SuperClassID() { return MATERIAL_CLASS_ID; }
-    void GetClassName(TSTR& s);
+    Class_ID ClassID() override { return BUMP_MTL_CLASS_ID; }
+    SClass_ID SuperClassID() override { return MATERIAL_CLASS_ID; }
 
-    ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
-    void Update(TimeValue t, Interval& valid);
-    Interval Validity(TimeValue t);
+    ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) override;
+    void Update(TimeValue t, Interval& valid) override;
+    Interval Validity(TimeValue t) override;
 
     void NotifyChanged();
 
-    BOOL SupportsMultiMapsInViewport() { return FALSE; }
-    void SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback &cb);
+    BOOL SupportsMultiMapsInViewport() override { return FALSE; }
+    void SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback &cb) override;
 
     // Shade and displacement calculation
     static void GetInterpVtxValue(int channel, ShadeContext &sc, Point3 &interpVal);
-    void Shade(ShadeContext& sc);
+    void Shade(ShadeContext& sc) override;
     void ShadeWithBackground(ShadeContext &sc, Color background, bool useVtxAlpha = true);
-    float EvalDisplacement(ShadeContext& sc); 
-    Interval DisplacementValidity(TimeValue t);     
+    float EvalDisplacement(ShadeContext& sc) override;
+    Interval DisplacementValidity(TimeValue t) override;
 
-    virtual RefTargetHandle GetReference( int i );
-    virtual void            SetReference( int i, RefTargetHandle rtarg );
+    RefTargetHandle GetReference(int i) override;
+    void            SetReference(int i, RefTargetHandle rtarg) override;
 
     // SubTexmap access methods
-    int NumSubTexmaps();
-    Texmap* GetSubTexmap(int i);
-    void SetSubTexmap(int i, Texmap *m);
-    TSTR GetSubTexmapSlotName(int i);
-    TSTR GetSubTexmapTVName(int i);
+    int NumSubTexmaps() override;
+    Texmap* GetSubTexmap(int i) override;
+    void SetSubTexmap(int i, Texmap *m) override;
+    MSTR GetSubTexmapTVName(int i);
     
-    BOOL SetDlgThing(ParamDlg* dlg);
+    BOOL SetDlgThing(ParamDlg* dlg) override;
 
-    RefTargetHandle Clone( RemapDir &remap );
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-        PartID& partID,  RefMessage message);
+    RefTargetHandle Clone(RemapDir &remap) override;
 
-    int NumSubs();
-    Animatable* SubAnim(int i); 
-    TSTR SubAnimName(int i);
+    int NumSubs() override;
+    Animatable* SubAnim(int i) override;
 
-    int NumParamBlocks();
-    IParamBlock2* GetParamBlock(int i);
-    IParamBlock2* GetParamBlockByID(BlockID id);
+    int NumParamBlocks() override;
+    IParamBlock2* GetParamBlock(int i) override;
+    IParamBlock2* GetParamBlockByID(BlockID id) override;
 
 
 //  void SetParamDlg(ParamDlg *dlg);
@@ -121,70 +120,70 @@ public:
 //  void SetNumSubTexmaps(int num);
 
     // From MtlBase and Mtl
-    void SetAmbient(Color c, TimeValue t);      
-    void SetDiffuse(Color c, TimeValue t);      
-    void SetSpecular(Color c, TimeValue t);
-    void SetShininess(float v, TimeValue t);
-    Color GetAmbient(int mtlNum=0, BOOL backFace=FALSE);
-    Color GetDiffuse(int mtlNum=0, BOOL backFace=FALSE);
-    Color GetSpecular(int mtlNum=0, BOOL backFace=FALSE);
-    float GetXParency(int mtlNum=0, BOOL backFace=FALSE);
-    float GetShininess(int mtlNum=0, BOOL backFace=FALSE);      
-    float GetShinStr(int mtlNum=0, BOOL backFace=FALSE);
-    float WireSize(int mtlNum=0, BOOL backFace=FALSE);
+    void SetAmbient(Color c, TimeValue t) override;
+    void SetDiffuse(Color c, TimeValue t) override;
+    void SetSpecular(Color c, TimeValue t) override;
+    void SetShininess(float v, TimeValue t) override;
+    Color GetAmbient(int mtlNum=0, BOOL backFace=FALSE) override;
+    Color GetDiffuse(int mtlNum=0, BOOL backFace=FALSE) override;
+    Color GetSpecular(int mtlNum=0, BOOL backFace=FALSE) override;
+    float GetXParency(int mtlNum=0, BOOL backFace=FALSE) override;
+    float GetShininess(int mtlNum=0, BOOL backFace=FALSE) override;
+    float GetShinStr(int mtlNum=0, BOOL backFace=FALSE) override;
+    float WireSize(int mtlNum=0, BOOL backFace=FALSE) override;
 
-    ULONG   Requirements( int subMtlNum );
+    ULONG   Requirements(int subMtlNum) override;
 
-    virtual bool    HasAlpha();
+    bool    HasAlpha() override;
     // Massive list of inherited accessor functions for ParamBlock data
 
     // Advanced Block
-    virtual int     GetBasicWire();
-    virtual int     GetMeshOutlines();
-    virtual int     GetTwoSided();
-    virtual int     GetSoftShadow();
-    virtual int     GetNoProj();
-    virtual int     GetVertexShade();
-    virtual int     GetNoShade();
-    virtual int     GetNoFog();
-    virtual int     GetWhite();
-    virtual int     GetZOnly();
-    virtual int     GetZClear();
-    virtual int     GetZNoRead();
-    virtual int     GetZNoWrite();
-    virtual int     GetZInc();
-    virtual int     GetAlphaTestHigh();
+    int     GetBasicWire() override;
+    int     GetMeshOutlines() override;
+    int     GetTwoSided() override;
+    int     GetSoftShadow() override;
+    int     GetNoProj() override;
+    int     GetVertexShade() override;
+    int     GetNoShade() override;
+    int     GetNoFog() override;
+    int     GetWhite() override;
+    int     GetZOnly() override;
+    int     GetZClear() override;
+    int     GetZNoRead() override;
+    int     GetZNoWrite() override;
+    int     GetZInc() override;
+    int     GetAlphaTestHigh() override;
 
     // Animation block
-    virtual const char *  GetAnimName();
-    virtual int           GetAutoStart();
-    virtual int           GetLoop();
-    virtual const char *  GetAnimLoopName();
+    const MCHAR*  GetAnimName() override;
+    int           GetAutoStart() override;
+    int           GetLoop() override;
+    const MCHAR*  GetAnimLoopName() override;
 
     // Basic block
-    virtual int     GetColorLock();
-    virtual Color   GetAmbColor();
-    virtual Color   GetColor();
-    virtual int     GetOpacity();
-    virtual int     GetEmissive();
-    virtual int     GetUseSpec();
-    virtual int     GetShine();
-    virtual Color   GetSpecularColor();
-    virtual Control *GetPreshadeColorController();
-    virtual Control *GetAmbColorController();
-    virtual Control *GetOpacityController();
-    virtual Control *GetSpecularColorController();
-    virtual int     GetDiffuseColorLock();
-    virtual Color   GetRuntimeColor();
-    virtual Control *GetRuntimeColorController();
+    int     GetColorLock() override;
+    Color   GetAmbColor() override;
+    Color   GetColor() override;
+    int     GetOpacity() override;
+    int     GetEmissive() override;
+    int     GetUseSpec() override;
+    int     GetShine() override;
+    Color   GetSpecularColor() override;
+    Control *GetPreshadeColorController() override;
+    Control *GetAmbColorController() override;
+    Control *GetOpacityController() override;
+    Control *GetSpecularColorController() override;
+    int     GetDiffuseColorLock() override;
+    Color   GetRuntimeColor() override;
+    Control *GetRuntimeColorController() override;
     
     // Layer block
-    virtual Texmap *GetBaseLayer();
-    virtual int     GetTopLayerOn();
-    virtual Texmap *GetTopLayer();
-    virtual int     GetLayerBlend();
-    virtual int     GetOutputAlpha();
-    virtual int     GetOutputBlend();
+    Texmap *GetBaseLayer() override;
+    int     GetTopLayerOn() override;
+    Texmap *GetTopLayer() override;
+    int     GetLayerBlend() override;
+    int     GetOutputAlpha() override;
+    int     GetOutputBlend() override;
 };
 
 #endif //PL_BUMPMTL_H

@@ -47,10 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 #include "MaxMain/plMaxNode.h"
-#include "resource.h"
+#include "MaxMain/MaxAPI.h"
 
-#include <iparamm2.h>
-#pragma hdrstop
+#include "resource.h"
 
 #include "plResponderMtl.h"
 #include "plResponderComponentPriv.h"
@@ -100,41 +99,41 @@ public:
     plResponderMtlProc();
 
 protected:
-    virtual void IOnInitDlg(HWND hWnd, IParamBlock2* pb);
-    virtual void ILoadUser(HWND hWnd, IParamBlock2* pb);
-    virtual bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID);
+    void IOnInitDlg(HWND hWnd, IParamBlock2* pb) override;
+    void ILoadUser(HWND hWnd, IParamBlock2* pb) override;
+    bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID) override;
 
-    virtual void IPickNode(IParamBlock2* pb);
+    void IPickNode(IParamBlock2* pb) override;
 
-    virtual void ISetNodeButtonText(HWND hWnd, IParamBlock2* pb);
+    void ISetNodeButtonText(HWND hWnd, IParamBlock2* pb) override;
 };
 static plResponderMtlProc gResponderMtlProc;
 
 ParamBlockDesc2 gResponderMtlBlock
 (
-    kResponderMtlBlk, _T("mtlCmd"), 0, NULL, P_AUTO_UI,
+    kResponderMtlBlk, _T("mtlCmd"), 0, nullptr, P_AUTO_UI,
 
     IDD_COMP_RESPOND_MTL, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderMtlProc,
 
     kMtlRef,    _T("mtl"),      TYPE_REFTARG,       0, 0,
-        end,
+        p_end,
 
     kMtlAnim,   _T("anim"),     TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     kMtlLoop,   _T("loop"),     TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     kMtlType,   _T("type"),     TYPE_INT,           0, 0,
-        end,
+        p_end,
 
     kMtlNode,   _T("node"),     TYPE_INODE,         0, 0,
-        end,
+        p_end,
 
     kMtlNodeType,   _T("nodeType"), TYPE_INT,   0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdMtl& plResponderCmdMtl::Instance()
@@ -186,54 +185,49 @@ int plResponderCmdMtl::NumTypes()
     return kNumTypes;
 }
 
-const char *plResponderCmdMtl::GetCategory(int idx)
-{
-    return "Material";
-}
-
-const char *plResponderCmdMtl::GetName(int idx)
+const TCHAR* plResponderCmdMtl::GetName(int idx)
 {
     int type = IndexToOldType(idx);
 
     switch (type)
     {
-    case kRespondPlayMat:   return "Play";
-    case kRespondStopMat:   return "Stop";
-    case kRespondToggleMat: return "Toggle";
-    case kRespondLoopMatOn: return "Set Looping On";
-    case kRespondLoopMatOff:return "Set Looping Off";
-    case kRespondSetForeMat:return "Set Forwards";
-    case kRespondSetBackMat:return "Set Backwards";
-    case kRespondRewindMat: return "Rewind";
+    case kRespondPlayMat:   return _T("Play");
+    case kRespondStopMat:   return _T("Stop");
+    case kRespondToggleMat: return _T("Toggle");
+    case kRespondLoopMatOn: return _T("Set Looping On");
+    case kRespondLoopMatOff:return _T("Set Looping Off");
+    case kRespondSetForeMat:return _T("Set Forwards");
+    case kRespondSetBackMat:return _T("Set Backwards");
+    case kRespondRewindMat: return _T("Rewind");
     }
 
-    return nil;
+    return nullptr;
 }
 
-static const char *GetShortName(int type)
+static const TCHAR* GetShortName(int type)
 {
     switch (type)
     {
-    case kRespondPlayMat:   return "Mat Play";
-    case kRespondStopMat:   return "Mat Stop";
-    case kRespondToggleMat: return "Mat Toggle";
-    case kRespondLoopMatOn: return "Mat Loop On";
-    case kRespondLoopMatOff:return "Mat Loop Off";
-    case kRespondSetForeMat:return "Mat Set Fore";
-    case kRespondSetBackMat:return "Mat Set Back";
-    case kRespondRewindMat: return "Mat Rewind";
+    case kRespondPlayMat:   return _T("Mat Play");
+    case kRespondStopMat:   return _T("Mat Stop");
+    case kRespondToggleMat: return _T("Mat Toggle");
+    case kRespondLoopMatOn: return _T("Mat Loop On");
+    case kRespondLoopMatOff:return _T("Mat Loop Off");
+    case kRespondSetForeMat:return _T("Mat Set Fore");
+    case kRespondSetBackMat:return _T("Mat Set Back");
+    case kRespondRewindMat: return _T("Mat Rewind");
     }
 
-    return nil;
+    return nullptr;
 }
-const char *plResponderCmdMtl::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdMtl::GetInstanceName(IParamBlock2 *pb)
 {
-    static char name[256];
+    static TCHAR name[256];
 
-    const char *shortName = GetShortName(pb->GetInt(kMtlType));
+    const TCHAR* shortName = GetShortName(pb->GetInt(kMtlType));
 
     Mtl *mtl = (Mtl*)pb->GetReferenceTarget(kMtlRef);
-    sprintf(name, "%s (%s)", shortName, mtl ? (const char *)mtl->GetName() : "none");
+    _sntprintf(name, std::size(name), _T("%s (%s)"), shortName, mtl ? mtl->GetName().data() : _T("none"));
 
     return name;
 }
@@ -243,7 +237,7 @@ IParamBlock2 *plResponderCmdMtl::CreatePB(int idx)
     int type = IndexToOldType(idx);
 
     // Create the paramblock and save it's type
-    IParamBlock2 *pb = CreateParameterBlock2(&gResponderMtlBlock, nil);
+    IParamBlock2 *pb = CreateParameterBlock2(&gResponderMtlBlock, nullptr);
     pb->SetValue(kMtlType, 0, type);
 
     return pb;
@@ -254,12 +248,12 @@ Mtl *plResponderCmdMtl::GetMtl(IParamBlock2 *pb)
     return (Mtl*)pb->GetReferenceTarget(kMtlRef);
 }
 
-plString plResponderCmdMtl::GetAnim(IParamBlock2 *pb)
+ST::string plResponderCmdMtl::GetAnim(IParamBlock2 *pb)
 {
-    return plString::FromUtf8(pb->GetStr(kMtlAnim));
+    return ST::string(pb->GetStr(kMtlAnim));
 }
 
-void ISearchLayerRecur(plLayerInterface *layer, const plString &segName, hsTArray<plKey>& keys)
+void ISearchLayerRecur(plLayerInterface *layer, const ST::string &segName, std::vector<plKey>& keys)
 {
     if (!layer)
         return;
@@ -267,26 +261,26 @@ void ISearchLayerRecur(plLayerInterface *layer, const plString &segName, hsTArra
     plLayerAnimation *animLayer = plLayerAnimation::ConvertNoRef(layer);
     if (animLayer)
     {
-        plString ID = animLayer->GetSegmentID();
-        if (!segName.Compare(ID))
+        ST::string ID = animLayer->GetSegmentID();
+        if (!segName.compare(ID))
         {
-            if( keys.kMissingIndex == keys.Find(animLayer->GetKey()) )
-                keys.Append(animLayer->GetKey());
+            const auto idx = std::find(keys.begin(), keys.end(), animLayer->GetKey());
+            if (idx == keys.end())
+                keys.emplace_back(animLayer->GetKey());
         }
     }
 
     ISearchLayerRecur(layer->GetAttached(), segName, keys);
 }
 
-int ISearchLayerRecur(hsGMaterial* mat, const plString &segName, hsTArray<plKey>& keys)
+size_t ISearchLayerRecur(hsGMaterial* mat, const ST::string &segName, std::vector<plKey>& keys)
 {
-    int i;
-    for( i = 0; i < mat->GetNumLayers(); i++ )
+    for (size_t i = 0; i < mat->GetNumLayers(); i++)
         ISearchLayerRecur(mat->GetLayer(i), segName, keys);
-    return keys.GetCount();
+    return keys.size();
 }
 
-int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString& segName, hsTArray<plKey>& keys)
+int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& segName, std::vector<plKey>& keys)
 {
     int retVal = 0;
 
@@ -302,16 +296,16 @@ int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString& segName, hsT
     }
     else
     {
-        hsTArray<hsGMaterial*> matList;
+        std::vector<hsGMaterial*> matList;
 
         if (node)
             hsMaterialConverter::Instance().GetMaterialArray(mtl, (plMaxNode*)node, matList);
         else
             hsMaterialConverter::Instance().CollectConvertedMaterials(mtl, matList);
 
-        for( i = 0; i < matList.GetCount(); i++ )
+        for (hsGMaterial* mat : matList)
         {
-            retVal += ISearchLayerRecur(matList[i], segName, keys);
+            retVal += ISearchLayerRecur(mat, segName, keys);
         }
     }
 
@@ -336,13 +330,11 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
     if (!maxMtl)
         throw "No material specified";
 
-    plString animName = plString::FromUtf8(pb->GetStr(kMtlAnim));
+    ST::string animName = M2ST(pb->GetStr(kMtlAnim));
     float begin=-1.f;
     float end = -1.f;
 
     SegmentMap *segMap = GetAnimSegmentMap(maxMtl, pErrMsg);
-
-    hsTArray<plKey> keys;
 
     if( segMap )
     {
@@ -355,20 +347,21 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
     else
         mtlNode = (plMaxNode*)pb->GetINode(kMtlNode);
 
+    std::vector<plKey> keys;
     GetMatAnimModKey(maxMtl, mtlNode, animName, keys);
 
-    plString loopName = plString::FromUtf8(pb->GetStr(kMtlLoop));
-    if (segMap && !loopName.IsNull())
+    ST::string loopName = M2ST(pb->GetStr(kMtlLoop));
+    if (segMap && !loopName.empty())
         GetSegMapAnimTime(loopName, segMap, SegmentSpec::kLoop, begin, end);
 
     DeleteSegmentMap(segMap);
 
-    if (!keys.GetCount())
+    if (keys.empty())
     {
         // We need the check here because "physicals only" export mode means that
         // most of the materials won't be there, so we should ignore this warning. -Colin
         if (plConvert::Instance().GetConvertSettings()->fPhysicalsOnly)
-            return nil;
+            return nullptr;
         else
             throw "Material animation key(s) not found";
     }
@@ -444,14 +437,14 @@ bool plResponderCmdMtl::IsWaitable(IParamBlock2 *pb)
 void plResponderCmdMtl::GetWaitPoints(IParamBlock2 *pb, WaitPoints& waitPoints)
 {
     Mtl *mtl = GetMtl(pb);
-    plString animName = GetAnim(pb);
+    ST::string animName = GetAnim(pb);
 
     if (mtl)
     {
-        plNotetrackAnim notetrackAnim(mtl, nil);
+        plNotetrackAnim notetrackAnim(mtl, nullptr);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
-        plString marker;
-        while (!(marker = info.GetNextMarkerName()).IsNull())
+        ST::string marker;
+        while (!(marker = info.GetNextMarkerName()).empty())
             waitPoints.push_back(marker);
     }
 }
@@ -468,13 +461,13 @@ void plResponderCmdMtl::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamB
     eventMsg->fEvent = kStop;
     eventMsg->fUser = waitInfo.callbackUser;
 
-    if (!waitInfo.point.IsNull())
+    if (!waitInfo.point.empty())
     {
         // FIXME COLIN - Error checking here?
         Mtl *mtl = GetMtl(pb);
-        plString animName = GetAnim(pb);
+        ST::string animName = GetAnim(pb);
 
-        plNotetrackAnim notetrackAnim(mtl, nil);
+        plNotetrackAnim notetrackAnim(mtl, nullptr);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
 
         eventMsg->fEvent = kTime;
@@ -517,7 +510,7 @@ void plResponderMtlProc::IOnInitDlg(HWND hWnd, IParamBlock2* pb)
         RECT itemRect, clientRect;
         GetWindowRect(GetDlgItem(hWnd, IDC_LOOP_TEXT), &itemRect);
         GetWindowRect(hWnd, &clientRect);
-        SetWindowPos(hWnd, NULL, 0, 0, clientRect.right-clientRect.left,
+        SetWindowPos(hWnd, nullptr, 0, 0, clientRect.right-clientRect.left,
             itemRect.top-clientRect.top, SWP_NOMOVE | SWP_NOZORDER);
     }
 }
@@ -526,12 +519,12 @@ void plResponderMtlProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
 {
     HWND hLoop = GetDlgItem(hWnd, IDC_LOOP_COMBO);
 
-    const char *savedName = pb->GetStr(kMtlLoop);
+    const MCHAR* savedName = pb->GetStr(kMtlLoop);
     if (!savedName)
-        savedName = "";
+        savedName = _M("");
 
     ComboBox_ResetContent(hLoop);
-    int sel = ComboBox_AddString(hLoop, ENTIRE_ANIMATION_NAME);
+    int sel = ComboBox_AddString(hLoop, _T(ENTIRE_ANIMATION_NAME));
     ComboBox_SetCurSel(hLoop, sel);
     
     // Get the NoteTrack animations off the selected material
@@ -544,15 +537,15 @@ void plResponderMtlProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
 
     ComboBox_Enable(hLoop, TRUE);
 
-    plNotetrackAnim anim(mtl, nil);
-    plString animName = plString::FromUtf8(pb->GetStr(kMtlAnim));
+    plNotetrackAnim anim(mtl, nullptr);
+    ST::string animName = ST::string(pb->GetStr(kMtlAnim));
     plAnimInfo info = anim.GetAnimInfo(animName);
 
-    plString loopName;
-    while (!(loopName = info.GetNextLoopName()).IsNull())
+    ST::string loopName;
+    while (!(loopName = info.GetNextLoopName()).empty())
     {
-        sel = ComboBox_AddString(hLoop, loopName.c_str());
-        if (!loopName.Compare(savedName))
+        sel = ComboBox_AddString(hLoop, ST2T(loopName));
+        if (!loopName.compare(savedName))
             ComboBox_SetCurSel(hLoop, sel);
     }
 }
@@ -567,12 +560,12 @@ bool plResponderMtlProc::IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int 
         if (idx != CB_ERR)
         {
             if (ComboBox_GetItemData(hCombo, idx) == 0)
-                pb->SetValue(kMtlLoop, 0, "");
+                pb->SetValue(kMtlLoop, 0, _M(""));
             else
             {
                 // Get the name of the animation and save it
-                char buf[256];
-                ComboBox_GetText(hCombo, buf, sizeof(buf));
+                TCHAR buf[256];
+                ComboBox_GetText(hCombo, buf, std::size(buf));
                 pb->SetValue(kMtlLoop, 0, buf);
             }
         }
@@ -586,15 +579,15 @@ bool plResponderMtlProc::IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int 
 
 #include "plPickNodeBase.h"
 
-static const char* kUserTypeAll = "(All)";
-static const char* kResponderNodeName = "(Responder Node)";
+static const TCHAR* kUserTypeAll = _T("(All)");
+static const TCHAR* kResponderNodeName = _T("(Responder Node)");
 
 class plPickRespMtlNode : public plPickMtlNode
 {
 protected:
     int fTypeID;
 
-    void IAddUserType(HWND hList)
+    void IAddUserType(HWND hList) override
     {
         int type = fPB->GetInt(fTypeID);
 
@@ -608,20 +601,17 @@ protected:
             ListBox_SetCurSel(hList, idx);
     }
 
-    void ISetUserType(plMaxNode* node, const char* userType)
+    void ISetUserType(plMaxNode* node, const TCHAR* userType) override
     {
-        if (strcmp(userType, kUserTypeAll) == 0)
-        {
-            ISetNodeValue(nil);
+        if (userType && _tcscmp(userType, kUserTypeAll) == 0) {
+            ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, kNodePB);
-        }
-        else if (strcmp(userType, kResponderNodeName) == 0)
-        {
-            ISetNodeValue(nil);
+        } else if (userType && _tcscmp(userType, kResponderNodeName) == 0) {
+            ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, kNodeResponder);
-        }
-        else
+        } else {
             fPB->SetValue(fTypeID, 0, kNodePB);
+        }
     }
 
 public:

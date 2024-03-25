@@ -49,14 +49,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "pnKeyedObject/plKey.h"
-#include "hsWindows.h"
-#include <windowsx.h>
-#include "../resource.h"
 
-#include "MaxMain/MaxCompat.h"
-#include <iparamm2.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include "pnKeyedObject/plKey.h"
+
+#include "../resource.h"
 
 #include "plAnimStealthNode.h"
 #include "plPassMtlBase.h"
@@ -70,17 +68,17 @@ extern HINSTANCE hInstance;
 
 //// Stealthy Class Desc /////////////////////////////////////////////////////
 
-class plStealthClassDesc : public ClassDesc2
+class plStealthClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
-    int             IsPublic()      { return FALSE; }
-    void*           Create(BOOL loading) { return new plAnimStealthNode(loading); }
-    const TCHAR*    ClassName()     { return GetString( IDS_STEALTH_NAME ); }
-    SClass_ID       SuperClassID()  { return HELPER_CLASS_ID; }
-    Class_ID        ClassID()       { return ANIMSTEALTH_CLASSID; }
-    const TCHAR*    Category()      { return NULL; }
-    const TCHAR*    InternalName()  { return _T("PlasmaAnimStealthInfo"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return FALSE; }
+    void*           Create(BOOL loading) override { return new plAnimStealthNode(loading); }
+    const TCHAR*    ClassName() override    { return GetString( IDS_STEALTH_NAME ); }
+    SClass_ID       SuperClassID() override { return HELPER_CLASS_ID; }
+    Class_ID        ClassID() override      { return ANIMSTEALTH_CLASSID; }
+    const TCHAR*    Category() override     { return nullptr; }
+    const TCHAR*    InternalName() override { return _T("PlasmaAnimStealthInfo"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plStealthClassDesc sStealthClassDesc;
 ClassDesc2* GetStealthClassDesc() { return &sStealthClassDesc; }
@@ -104,11 +102,11 @@ protected:
     HWND fhWnd;
 
 public:
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    virtual void DeleteThis() { IDeleteSegMap(); }
-    void SetThing(ReferenceTarget *m);
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    void DeleteThis() override { IDeleteSegMap(); }
+    void SetThing(ReferenceTarget *m) override;
 
-    virtual void Update( TimeValue t, Interval &valid, IParamMap2 *pmap );
+    void Update(TimeValue t, Interval &valid, IParamMap2 *pmap) override;
 
 protected:
     // Set all the controls to their stored value
@@ -119,7 +117,7 @@ protected:
 
     void ILoadLoops(IParamBlock2 *pb);
 
-    void ISetSel(HWND hCombo, const char *name);
+    void ISetSel(HWND hCombo, const MCHAR* name);
 };
 
 const char *kAnimNameNone = ENTIRE_ANIMATION_NAME;
@@ -139,82 +137,82 @@ static plEaseAccessor sEaseAccessor( plAnimStealthNode::kBlockPB, plAnimStealthN
 
 ParamBlockDesc2 plAnimStealthNode::sAnimStealthPB
 (
-    kBlockPB, _T( "animStealth" ), IDS_STEALTH_NAME, GetStealthClassDesc(),//NULL,
+    kBlockPB, _T("animStealth"), IDS_STEALTH_NAME, GetStealthClassDesc(),//nullptr,
                                         P_AUTO_CONSTRUCT + P_AUTO_UI, kRefParamBlock,
 
     // UI
     IDD_STEALTH_ANIM, IDS_STEALTH_NAME, 0, 0, &sStealthDlgProc,
 
     kPBName,            _T("animName"),     TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     kPBAutoStart,   _T("autoStart"),    TYPE_BOOL,          0, 0,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_AUTO_START,
         p_default,  FALSE,
-        end,
+        p_end,
 
     kPBLoop,        _T("loop"),         TYPE_BOOL,          0, 0,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_LOOP,
         p_default,  TRUE,
-        end,
+        p_end,
     kPBLoopName,    _T("loopName"),     TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     // Anim Ease
     kPBEaseInType,  _T("easeInType"),   TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 3, IDC_PASS_ANIM_EASE_IN_NONE, IDC_PASS_ANIM_EASE_IN_CONST_ACCEL, IDC_PASS_ANIM_EASE_IN_SPLINE,
         p_vals,     plAnimEaseTypes::kNoEase, plAnimEaseTypes::kConstAccel, plAnimEaseTypes::kSpline,
         p_default,  plAnimEaseTypes::kNoEase,
-        end,
+        p_end,
     kPBEaseInLength,    _T("easeInLength"), TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 99.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, IDC_PASS_ANIM_EASE_IN_TIME, IDC_PASS_ANIM_EASE_IN_TIME_SPIN, 1.0,
         p_accessor, &sEaseAccessor,
-        end,
+        p_end,
     kPBEaseInMin,       _T("easeInMin"),    TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 99.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, IDC_PASS_ANIM_EASE_IN_MIN, IDC_PASS_ANIM_EASE_IN_MIN_SPIN, 1.0,
         p_accessor, &sEaseAccessor,
-        end,
+        p_end,
     kPBEaseInMax,   _T("easeInMax"),    TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 99.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, IDC_PASS_ANIM_EASE_IN_MAX, IDC_PASS_ANIM_EASE_IN_MAX_SPIN, 1.0,
         p_accessor, &sEaseAccessor,
-        end,
+        p_end,
 
     kPBEaseOutType, _T("easeOutType"),  TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 3, IDC_PASS_ANIM_EASE_OUT_NONE, IDC_PASS_ANIM_EASE_OUT_CONST_ACCEL, IDC_PASS_ANIM_EASE_OUT_SPLINE,
         p_vals,     plAnimEaseTypes::kNoEase, plAnimEaseTypes::kConstAccel, plAnimEaseTypes::kSpline,
         p_default,  plAnimEaseTypes::kNoEase,
-        end,
+        p_end,
     kPBEaseOutLength,   _T("easeOutLength"),    TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 99.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, IDC_PASS_ANIM_EASE_OUT_TIME, IDC_PASS_ANIM_EASE_OUT_TIME_SPIN, 1.0,
         p_accessor, &sEaseAccessor,
-        end,
+        p_end,
     kPBEaseOutMin,      _T("easeOutMin"),   TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 99.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, IDC_PASS_ANIM_EASE_OUT_MIN, IDC_PASS_ANIM_EASE_OUT_MIN_SPIN, 1.0,
         p_accessor, &sEaseAccessor,
-        end,
+        p_end,
     kPBEaseOutMax,  _T("easeOutMax"),   TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 99.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, IDC_PASS_ANIM_EASE_OUT_MAX, IDC_PASS_ANIM_EASE_OUT_MAX_SPIN, 1.0,
         p_accessor, &sEaseAccessor,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
-plAnimStealthNode::plAnimStealthNode( BOOL loading ) : fClassDesc(nil), fParamBlock(nil), fParentMtl(nil)
+plAnimStealthNode::plAnimStealthNode(BOOL loading) : fClassDesc(), fParamBlock(), fParentMtl()
 {
-    fCachedSegMap = nil;
+    fCachedSegMap = nullptr;
     fClassDesc = &sStealthClassDesc;
     fClassDesc->MakeAutoParamBlocks( this );
 }
@@ -226,7 +224,7 @@ plAnimStealthNode::~plAnimStealthNode()
 
 CreateMouseCallBack *plAnimStealthNode::GetCreateMouseCallBack()
 {
-    return nil;
+    return nullptr;
 }
 
 void    plAnimStealthNode::SetParentMtl( plPassMtlBase *parent )
@@ -236,75 +234,74 @@ void    plAnimStealthNode::SetParentMtl( plPassMtlBase *parent )
 
 bool    plAnimStealthNode::CanConvertToStealth( INode *objNode )
 {
-    return ( ConvertToStealth( objNode ) != nil );
+    return (ConvertToStealth(objNode) != nullptr);
 }
 
 plAnimStealthNode   *plAnimStealthNode::ConvertToStealth( INode *objNode )
 {
-    if( objNode == nil )
-        return nil;
+    if (objNode == nullptr)
+        return nullptr;
 
     Object *obj = objNode->GetObjectRef();
-    if( obj == nil )
-        return nil;
+    if (obj == nullptr)
+        return nullptr;
 
     if( obj->CanConvertToType( ANIMSTEALTH_CLASSID ) )
         return (plAnimStealthNode *)obj;
 
-    return nil;
+    return nullptr;
 }
 
 
-plString plAnimStealthNode::GetSegmentName( void ) const
+ST::string plAnimStealthNode::GetSegmentName() const
 {
-    const char *str = fParamBlock->GetStr( (ParamID)kPBName );
-    if( str == nil || str[ 0 ] == 0 )
+    const MCHAR* str = fParamBlock->GetStr( (ParamID)kPBName );
+    if (str == nullptr || str[0] == 0)
         return ENTIRE_ANIMATION_NAME;
-    return plString::FromUtf8(str);
+    return M2ST(str);
 }
 
-void    plAnimStealthNode::SetSegment( const char *name )
+void    plAnimStealthNode::SetSegment( const ST::string& name )
 {
-    if( name == nil || strcmp(name, ENTIRE_ANIMATION_NAME) == 0 || name[ 0 ] == 0 )
-        fParamBlock->SetValue( (ParamID)kPBName, 0, "" );
+    if (name.empty() || name == ENTIRE_ANIMATION_NAME)
+        fParamBlock->SetValue((ParamID)kPBName, 0, _M(""));
     else
-        fParamBlock->SetValue( (ParamID)kPBName, 0, (char *)name );
+        fParamBlock->SetValue((ParamID)kPBName, 0, ST2M(name));
 }
 
-void    plAnimStealthNode::SetNodeName( const char *parentName )
+void    plAnimStealthNode::SetNodeName( const MCHAR* parentName )
 {
     INode *node = GetINode();
-    if( node != nil )
+    if (node != nullptr)
     {
-        char name[ 512 ], newName[ 512 ];
-        sprintf(name, "%s : %s", parentName, GetSegmentName().c_str());
+        ST::string name = ST::format("{} : {}", parentName, GetSegmentName());
+        ST::string newName;
 
-        if( GetCOREInterface()->GetINodeByName( name ) != nil )
+        if (GetCOREInterface()->GetINodeByName(ST2M(name)) != nullptr)
         {
             // For whatever reason, MakeNameUnique() doesn't ACTUALLY make a name unique!
             // So we just need to more or less do it ourselves...
             int i;
-            for( i = 1; i < 1024; i++ )
+            for (i = 1; i < 1024; i++)
             {
-                sprintf( newName, "%s(%d)", name, i );
-                if( GetCOREInterface()->GetINodeByName( newName ) == nil )
+                newName = ST::format("{}({d})", name, i);
+                if (GetCOREInterface()->GetINodeByName(ST2M(newName)) == nullptr)
                     break;
             }
-            if( i == 1024 )
+            if (i == 1024)
             {
                 // You've got to be kidding me...
-                char msg[ 2048 ];
-                sprintf( msg, "WARNING: For some reason, we cannot find a unique name for the node '%s'. This"
-                            " will most likely cause export problems. Exactly how many of these do we HAVE??",
-                            name );
-                hsMessageBox( msg, "WARNING!", hsMessageBoxNormal );
+                ST::string msg = ST::format(
+                    "WARNING: For some reason, we cannot find a unique name for the node '{}'. This"
+                    " will most likely cause export problems. Exactly how many of these do we HAVE??",
+                    name);
+                plMaxMessageBox(nullptr, ST2T(msg), _T("WARNING!"), MB_OK);
             }
-        }
-        else
-            strcpy( newName, name );
+        } else
+            newName = name;
 
 
-        node->SetName( newName );
+        node->SetName(const_cast<MCHAR*>(ST2M(newName)));
     }
 }
 
@@ -318,7 +315,7 @@ IParamBlock2 *plAnimStealthNode::GetParamBlock( int i )
     if( i == kRefParamBlock )
         return fParamBlock;
 
-    return nil;
+    return nullptr;
 }
 
 IParamBlock2 *plAnimStealthNode::GetParamBlockByID( BlockID id )
@@ -326,7 +323,7 @@ IParamBlock2 *plAnimStealthNode::GetParamBlockByID( BlockID id )
     if( fParamBlock && fParamBlock->ID() == id )
         return fParamBlock;
 
-    return nil;
+    return nullptr;
 }
 
 RefTargetHandle plAnimStealthNode::Clone(RemapDir &remap)
@@ -381,7 +378,7 @@ RefTargetHandle plAnimStealthNode::GetReference( int i )
     else if( i == kRefParentMtl )
         return fParentMtl;
 
-    return nil;
+    return nullptr;
 }
 
 void plAnimStealthNode::SetReference( int i, RefTargetHandle rtarg )
@@ -392,7 +389,7 @@ void plAnimStealthNode::SetReference( int i, RefTargetHandle rtarg )
         fParentMtl = (plPassMtlBase *)rtarg;
 }
 
-RefResult plAnimStealthNode::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message)
+RefResult plAnimStealthNode::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     return REF_SUCCEED;
 }
@@ -407,7 +404,7 @@ IOResult plAnimStealthNode::Load(ILoad* iload)
     return IO_OK;
 }
 
-plPassMtlBase   *plAnimStealthNode::GetParentMtl( void )
+plPassMtlBase   *plAnimStealthNode::GetParentMtl()
 {
     return fParentMtl;
 }
@@ -416,20 +413,20 @@ class plGetRefs : public DependentEnumProc
 {
     public:
 
-        hsTArray<ReferenceMaker *>  fList;
+        std::vector<ReferenceMaker *> fList;
 
         plGetRefs() { }
 
-        virtual int proc( ReferenceMaker *rmaker )
+        int proc(ReferenceMaker *rmaker) override
         {
-            fList.Append( rmaker );
+            fList.emplace_back(rmaker);
             return DEP_ENUM_CONTINUE;
         }
 };
 
-bool        plAnimStealthNode::IsParentUsedInScene( void )
+bool        plAnimStealthNode::IsParentUsedInScene()
 {
-    if( GetParentMtl() == nil )
+    if (GetParentMtl() == nullptr)
         return false;
 
     // There are two possibilities: either a node uses us and thus has a ref to us,
@@ -439,13 +436,13 @@ bool        plAnimStealthNode::IsParentUsedInScene( void )
     // so it's not *really* worth the effort...
     //// NOTE: the following doesn't seem to work, but keeping here in case it ever does. 
     //// What really actually finds something is the enum dependents loop below
-    const char *mtlName = GetParentMtl()->GetName();
+    const MCHAR* mtlName = GetParentMtl()->GetName();
 
     DependentIterator di(this);
     ReferenceMaker* item = di.Next();
-    while( item != nil )
+    while (item != nullptr)
     {
-        TSTR s;
+        MSTR s;
         item->GetClassName( s );
 
         if( item->SuperClassID() == BASENODE_CLASS_ID && !CanConvertToStealth( (INode *)( item ) ) )
@@ -458,7 +455,7 @@ bool        plAnimStealthNode::IsParentUsedInScene( void )
 
             DependentIterator sub(multisub);
             ReferenceMaker* item2 = sub.Next();
-            while( item2 != nil )
+            while (item2 != nullptr)
             {
                 if( item2->SuperClassID() == BASENODE_CLASS_ID )
                     return true;        // Horray, a node has a ref to us!
@@ -478,10 +475,8 @@ bool        plAnimStealthNode::IsParentUsedInScene( void )
     // Enum dependents
     plGetRefs callback;
     ENUMDEPENDENTS(GetParentMtl(), &callback);
-    for(int i = 0; i < callback.fList.GetCount(); i++ )
+    for (ReferenceMaker* maker : callback.fList)
     {
-        ReferenceMaker *maker = callback.fList[ i ];
-
         TSTR s;
         maker->GetClassName( s );
 
@@ -505,7 +500,7 @@ INode *plAnimStealthNode::GetINode()
         item = di.Next();
     }
 
-    return nil;
+    return nullptr;
 }
 
 void plStealthDlgProc::Update(TimeValue t, Interval& valid, IParamMap2* pmap)
@@ -530,7 +525,7 @@ void plStealthDlgProc::Update(TimeValue t, Interval& valid, IParamMap2* pmap)
 //  we can simply store the address of that proc the first time we subclass and
 //  use it for restoring every time thereafter (see the following DlgProc)
 
-static WNDPROC  sOldStealthDlgProc = nil;
+static WNDPROC  sOldStealthDlgProc = nullptr;
 
 static INT_PTR CALLBACK plStealthMouseOverrideProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
@@ -546,10 +541,10 @@ static INT_PTR CALLBACK plStealthMouseOverrideProc( HWND hWnd, UINT msg, WPARAM 
                 // rather, we want IMtlParams to do it just like it would if we could actually call
                 // CreateChildMParamMap2
                 IParamBlock2 *pb = map->GetParamBlock();
-                if( pb != nil )
+                if (pb != nullptr)
                 {
                     plAnimStealthNode *stealth = (plAnimStealthNode *)pb->GetOwner();
-                    if( stealth != nil )
+                    if (stealth != nullptr)
                     {
                         plPassMtlBase *mtl = (plPassMtlBase *)stealth->GetParentMtl();
                         mtl->fIMtlParams->RollupMouseMessage( hWnd, msg, wParam, lParam );
@@ -559,13 +554,13 @@ static INT_PTR CALLBACK plStealthMouseOverrideProc( HWND hWnd, UINT msg, WPARAM 
             }
     }
 
-    if( sOldStealthDlgProc != nil )
+    if (sOldStealthDlgProc != nullptr)
         return CallWindowProc( sOldStealthDlgProc, hWnd, msg, wParam, lParam );
     else
         return 0;
 }
 
-BOOL plStealthDlgProc::DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plStealthDlgProc::DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     IParamBlock2 *pb = map->GetParamBlock();
     plAnimStealthNode *stealth = (plAnimStealthNode *)pb->GetOwner();
@@ -578,7 +573,7 @@ BOOL plStealthDlgProc::DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg
             // Note that the first time, we grab the old proc so we can restore with that
             // one every time after, since they should always be the same proc
             WNDPROC old = (WNDPROC)SetWindowLongPtr( hWnd, DWLP_DLGPROC, (LONG_PTR)plStealthMouseOverrideProc );
-            if( sOldStealthDlgProc == nil )
+            if (sOldStealthDlgProc == nullptr)
                 sOldStealthDlgProc = old;
 
             fhWnd = hWnd;
@@ -602,17 +597,17 @@ BOOL plStealthDlgProc::DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg
         {
             // If a loop is selected, save it
             HWND hCombo = (HWND)lParam;
-            int sel = SendMessage( hCombo, CB_GETCURSEL, 0, 0 );
+            int sel = (int)SendMessage(hCombo, CB_GETCURSEL, 0, 0);
             if( sel != CB_ERR )
             {
                 if( SendMessage( hCombo, CB_GETITEMDATA, sel, 0 ) == kName )
                 {
-                    char buf[256];
+                    TCHAR buf[256];
                     SendMessage( hCombo, CB_GETLBTEXT, sel, (LPARAM)buf );
                     pb->SetValue( (ParamID)plAnimStealthNode::kPBLoopName, 0, buf );
                 }
                 else
-                    pb->SetValue( (ParamID)plAnimStealthNode::kPBLoopName, 0, "" );
+                    pb->SetValue( (ParamID)plAnimStealthNode::kPBLoopName, 0, _M("") );
             }
 
             return TRUE;
@@ -653,21 +648,21 @@ void plStealthDlgProc::IDeleteSegMap()
 {
     // If we have a segment map, delete the memory associated with it
     DeleteSegmentMap( fSegMap );
-    fSegMap = nil;
+    fSegMap = nullptr;
 }
 
-void plStealthDlgProc::ISetSel(HWND hCombo, const char *name)
+void plStealthDlgProc::ISetSel(HWND hCombo, const MCHAR* name)
 {
     // If there is a name, try and set that
-    if( name && strcmp( name, "" ) )
+    if( name && _tcscmp( name, _T("") ) )
     {
-        int idx = SendMessage( hCombo, CB_FINDSTRINGEXACT, -1, (LPARAM)name );
+        int idx = (int)SendMessage(hCombo, CB_FINDSTRINGEXACT, -1, (LPARAM)name);
         // If we can't find the saved name add a "not found" entry, so they know what it was
         if( idx == -1 )
         {
-            char buf[256];
-            sprintf( buf, "(not found) %s", name );
-            idx = SendMessage( hCombo, CB_ADDSTRING, 0, (LPARAM)buf );
+            TCHAR buf[256];
+            _sntprintf(buf, std::size(buf), _T("(not found) %s"), name );
+            idx = (int)SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)buf);
             SendMessage( hCombo, CB_SETITEMDATA, idx, kInvalid );
         }
 
@@ -676,7 +671,7 @@ void plStealthDlgProc::ISetSel(HWND hCombo, const char *name)
     // No name, set it to none
     else
     {
-        int count = SendMessage( hCombo, CB_GETCOUNT, 0, 0 );
+        int count = (int)SendMessage(hCombo, CB_GETCOUNT, 0, 0);
         for( int i = 0; i < count; i++ )
         {
             if( SendMessage( hCombo, CB_GETITEMDATA, i, 0 ) == kDefault )
@@ -689,16 +684,16 @@ void plStealthDlgProc::IInitControls( plAnimStealthNode *stealth, IParamBlock2 *
 {
     IDeleteSegMap();
 
-    if( stealth->GetParentMtl() != nil )
+    if (stealth->GetParentMtl() != nullptr)
     {
-        fSegMap = GetAnimSegmentMap( stealth->GetParentMtl(), nil );
+        fSegMap = GetAnimSegmentMap(stealth->GetParentMtl(), nullptr);
 
         ILoadLoops( pb );
     }
     else
     {
         // ?? What should we do?
-        fSegMap = nil;
+        fSegMap = nullptr;
         hsStatusMessage( "No parent material yet in plStealthDlgProc::IInitControls()...not good..." );
     }
 
@@ -712,11 +707,11 @@ void plStealthDlgProc::ILoadLoops(IParamBlock2 *pb)
     SendMessage( hLoops, CB_RESETCONTENT, 0, 0 );
 
     // Add the default option
-    int defIdx = SendMessage( hLoops, CB_ADDSTRING, 0, (LPARAM)ENTIRE_ANIMATION_NAME );
+    int defIdx = (int)SendMessage(hLoops, CB_ADDSTRING, 0, (LPARAM)_T(ENTIRE_ANIMATION_NAME));
     SendMessage( hLoops, CB_SETITEMDATA, defIdx, kDefault );
 
-    plString segName = plString::FromUtf8( pb->GetStr( (ParamID)plAnimStealthNode::kPBName ) );
-    if( segName.IsNull() || fSegMap == nil )
+    ST::string segName = M2ST( pb->GetStr( (ParamID)plAnimStealthNode::kPBName ) );
+    if (segName.empty() || fSegMap == nullptr)
     {
         // Default of "entire animation", no other loop options
         SendMessage( hLoops, CB_SETCURSEL, defIdx, 0 );
@@ -738,7 +733,7 @@ void plStealthDlgProc::ILoadLoops(IParamBlock2 *pb)
                     (spec->fEnd   == -1 || spec->fEnd   <= animSpec->fEnd) )
                 {
                     // Add the name
-                    int idx = SendMessage( hLoops, CB_ADDSTRING, 0, (LPARAM)spec->fName.c_str() );
+                    int idx = (int)SendMessage(hLoops, CB_ADDSTRING, 0, (LPARAM)ST2T(spec->fName));
                     SendMessage( hLoops, CB_SETITEMDATA, idx, kName );
                 }       
             }
@@ -760,11 +755,11 @@ void plAnimStealthNode::EndEditParams(IObjParam *ip, ULONG flags, Animatable *ne
 
 //// ReleaseDlg //////////////////////////////////////////////////////////////
 
-void    plAnimStealthNode::ReleaseDlg( void )
+void    plAnimStealthNode::ReleaseDlg()
 {
     IParamMap2 *map = fParamBlock->GetMap();
-    fParamBlock->SetMap( nil );
-    if( map != nil )
+    fParamBlock->SetMap(nullptr);
+    if (map != nullptr)
         DestroyChildCPParamMap2( map );
 }
 
@@ -776,7 +771,7 @@ void    plAnimStealthNode::SwitchDlg( plAnimStealthNode *toSwitchTo )
 {
     IParamMap2 *map = fParamBlock->GetMap();
 
-    fParamBlock->SetMap( nil );
+    fParamBlock->SetMap(nullptr);
     toSwitchTo->fParamBlock->SetMap( map );
 
     map->SetParamBlock( toSwitchTo->fParamBlock );
@@ -793,17 +788,17 @@ bool    plAnimStealthNode::CreateAndEmbedDlg( IParamMap2 *parentMap, IMtlParams 
 {
     IParamMap2 *map = CreateChildCPParamMap2( fParamBlock, GetCOREInterface(), hInstance,
                                             parentMap, MAKEINTRESOURCE( IDD_STEALTH_ANIM ),
-                                            nil, &sStealthDlgProc );
+                                            nullptr, &sStealthDlgProc);
     fParamBlock->SetMap( map );
 
-    if( frameCtrl != nil )
+    if (frameCtrl != nullptr)
     {
         HWND child = fParamBlock->GetMap()->GetHWnd();
         RECT childFrame, centerFrame;
 
         ::GetClientRect( child, &childFrame );
         ::GetWindowRect( frameCtrl, &centerFrame );
-        ::MapWindowPoints( nil, parentMap->GetHWnd(), (POINT *)&centerFrame, 2 );
+        ::MapWindowPoints(nullptr, parentMap->GetHWnd(), (POINT *)&centerFrame, 2);
 
         int frameWidth = centerFrame.right - centerFrame.left;
         int frameHeight = centerFrame.bottom - centerFrame.top;
@@ -813,7 +808,7 @@ bool    plAnimStealthNode::CreateAndEmbedDlg( IParamMap2 *parentMap, IMtlParams 
         ::OffsetRect( &childFrame, ( frameWidth - childWidth ) >> 1, ( frameHeight - childHeight ) >> 1 );      
         ::OffsetRect( &childFrame, centerFrame.left, centerFrame.top );     
 
-        ::SetWindowPos( child, nil, childFrame.left, childFrame.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER );
+        ::SetWindowPos(child, nullptr, childFrame.left, childFrame.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
     }
 
     return true;
@@ -822,13 +817,13 @@ bool    plAnimStealthNode::CreateAndEmbedDlg( IParamMap2 *parentMap, IMtlParams 
 //// GetWinDlg ///////////////////////////////////////////////////////////////
 //  Get the actual window handle of the currently active dialog displaying us
 
-HWND    plAnimStealthNode::GetWinDlg( void ) const
+HWND    plAnimStealthNode::GetWinDlg() const
 {
     IParamMap2 *map = fParamBlock->GetMap();
-    if( map != nil )
+    if (map != nullptr)
         return map->GetHWnd();
 
-    return nil;
+    return nullptr;
 }
 
 //// Picker Dialog for Restricted Animation Components //////////////////////////////////////////
@@ -838,34 +833,31 @@ class plPickAnimStealthNode : public plPickMtlNode
 protected:
     ParamID fTypeID;
 
-    void IAddUserType(HWND hList)
+    void IAddUserType(HWND hList) override
     {
         int type = fPB->GetInt(fTypeID);
 
-        int idx = ListBox_AddString( hList, kUseParamBlockNodeString );
+        int idx = ListBox_AddString( hList, _T(kUseParamBlockNodeString) );
         if (type == plAnimObjInterface::kUseParamBlockNode && !fPB->GetINode(fNodeParamID))
             ListBox_SetCurSel(hList, idx);
 
 
-        idx = ListBox_AddString( hList, kUseOwnerNodeString );
+        idx = ListBox_AddString( hList, _T(kUseOwnerNodeString) );
         if (type == plAnimObjInterface::kUseOwnerNode)
             ListBox_SetCurSel(hList, idx);
     }
 
-    void ISetUserType(plMaxNode* node, const char* userType)
+    void ISetUserType(plMaxNode* node, const TCHAR* userType) override
     {
-        if( strcmp( userType, kUseParamBlockNodeString ) == 0 )
-        {
-            ISetNodeValue(nil);
+        if (userType && _tcscmp(userType, _T(kUseParamBlockNodeString)) == 0) {
+            ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseParamBlockNode);
-        }
-        else if( strcmp(userType, kUseOwnerNodeString ) == 0 )
-        {
-            ISetNodeValue(nil);
+        } else if (userType && _tcscmp(userType, _T(kUseOwnerNodeString)) == 0) {
+            ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseOwnerNode);
-        }
-        else
+        } else {
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseParamBlockNode);
+        }
     }
 
 public:
@@ -883,32 +875,30 @@ void    plAnimStealthNode::PickTargetNode( IParamBlock2 *destPB, ParamID destPar
     pick.DoPick();
 }
 
-plString plAnimStealthNode::GetIfaceSegmentName( bool allowNil )
+ST::string plAnimStealthNode::GetIfaceSegmentName( bool allowNil )
 {
     // When sending messages to material animations, they're already addressed for the right
     // layer, no need for a segment name
-    return plString::Null;
+    return ST::string();
 }
 
 //// Parameter Access Functions //////////////////////////////////////////////
 
-#pragma warning( push ) 
-#pragma warning( disable:4800 ) // Forcing value to bool true or false (go figure, i'm even explicitly casting)
-bool    plAnimStealthNode::GetAutoStart( void ) const   { return (bool)fParamBlock->GetInt( (ParamID)kPBAutoStart ); }
+bool    plAnimStealthNode::GetAutoStart() const   { return (bool)fParamBlock->GetInt( (ParamID)kPBAutoStart ); }
 void    plAnimStealthNode::SetAutoStart( bool b )       { fParamBlock->SetValue( (ParamID)kPBAutoStart, 0, (int)b ); };
 
-bool        plAnimStealthNode::GetLoop( void ) const                    { return fParamBlock->GetInt( (ParamID)kPBLoop ); }
-plString    plAnimStealthNode::GetLoopName( void ) const                { return plString::FromUtf8( fParamBlock->GetStr( (ParamID)kPBLoopName ) ); }
-void        plAnimStealthNode::SetLoop( bool b, const plString &name )
+bool        plAnimStealthNode::GetLoop() const                    { return fParamBlock->GetInt( (ParamID)kPBLoop ); }
+ST::string  plAnimStealthNode::GetLoopName() const                { return M2ST( fParamBlock->GetStr( (ParamID)kPBLoopName ) ); }
+void        plAnimStealthNode::SetLoop( bool b, const ST::string &name )
 {
     fParamBlock->SetValue( (ParamID)kPBLoop, 0, (int)b );
-    fParamBlock->SetValue( (ParamID)kPBLoopName, 0, (char *)name.c_str() );
+    fParamBlock->SetValue( (ParamID)kPBLoopName, 0, ST2M(name) );
 }
 
-uint8_t       plAnimStealthNode::GetEaseInType( void ) const      { return (uint8_t)fParamBlock->GetInt( (ParamID)kPBEaseInType ); }
-float    plAnimStealthNode::GetEaseInLength( void ) const    { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseInLength ); }
-float    plAnimStealthNode::GetEaseInMin( void ) const       { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseInMin ); }
-float    plAnimStealthNode::GetEaseInMax( void ) const       { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseInMax ); }
+uint8_t       plAnimStealthNode::GetEaseInType() const      { return (uint8_t)fParamBlock->GetInt( (ParamID)kPBEaseInType ); }
+float    plAnimStealthNode::GetEaseInLength() const    { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseInLength ); }
+float    plAnimStealthNode::GetEaseInMin() const       { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseInMin ); }
+float    plAnimStealthNode::GetEaseInMax() const       { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseInMax ); }
 void        plAnimStealthNode::SetEaseIn( uint8_t type, float length, float min, float max )
 {
     fParamBlock->SetValue( (ParamID)kPBEaseInType, 0, (int)type );
@@ -917,10 +907,10 @@ void        plAnimStealthNode::SetEaseIn( uint8_t type, float length, float min,
     fParamBlock->SetValue( (ParamID)kPBEaseInMax, 0, (float)max );
 }
 
-uint8_t       plAnimStealthNode::GetEaseOutType( void ) const     { return (uint8_t)fParamBlock->GetInt( (ParamID)kPBEaseOutType ); }
-float    plAnimStealthNode::GetEaseOutLength( void ) const   { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseOutLength ); }
-float    plAnimStealthNode::GetEaseOutMin( void ) const      { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseOutMin ); }
-float    plAnimStealthNode::GetEaseOutMax( void ) const      { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseOutMax ); }
+uint8_t       plAnimStealthNode::GetEaseOutType() const     { return (uint8_t)fParamBlock->GetInt( (ParamID)kPBEaseOutType ); }
+float    plAnimStealthNode::GetEaseOutLength() const   { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseOutLength ); }
+float    plAnimStealthNode::GetEaseOutMin() const      { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseOutMin ); }
+float    plAnimStealthNode::GetEaseOutMax() const      { return (float)fParamBlock->GetFloat( (ParamID)kPBEaseOutMax ); }
 void        plAnimStealthNode::SetEaseOut( uint8_t type, float length, float min, float max )
 {
     fParamBlock->SetValue( (ParamID)kPBEaseOutType, 0, (int)type );
@@ -928,11 +918,10 @@ void        plAnimStealthNode::SetEaseOut( uint8_t type, float length, float min
     fParamBlock->SetValue( (ParamID)kPBEaseOutMin, 0, (float)min );
     fParamBlock->SetValue( (ParamID)kPBEaseOutMax, 0, (float)max );
 }
-#pragma warning( pop )  // Forcing value to bool true or false (go figure, i'm even explicitly casting)
 
 //// Parent Accessor Functions ///////////////////////////////////////////////
 
-plStealthNodeAccessor   &plStealthNodeAccessor::GetInstance( void )
+plStealthNodeAccessor   &plStealthNodeAccessor::GetInstance()
 {
     static plStealthNodeAccessor    instance;
     return instance;
@@ -940,7 +929,7 @@ plStealthNodeAccessor   &plStealthNodeAccessor::GetInstance( void )
 
 void    plStealthNodeAccessor::ISetParent( ReferenceTarget *target, plPassMtlBase *parent )
 {
-    if( target != nil && target->ClassID() == ANIMSTEALTH_CLASSID )
+    if (target != nullptr && target->ClassID() == ANIMSTEALTH_CLASSID)
     {
         ( (plAnimStealthNode *)target )->SetParentMtl( parent );
     }
@@ -980,7 +969,7 @@ void    plStealthNodeAccessor::Set( PB2Value &v, ReferenceMaker *owner, ParamID 
 
     // A stealth node paramBlock value just got set. First make sure we 
     // un-set the old stealth's parent
-    ISetParent( pb->GetReferenceTarget( id, tabIndex ), nil );
+    ISetParent(pb->GetReferenceTarget(id, tabIndex), nullptr);
         
     // So make sure that the stealth node that was just added gets its parent mtl set properly
     ISetParent( v.r, mtl );

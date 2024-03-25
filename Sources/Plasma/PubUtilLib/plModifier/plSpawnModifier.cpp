@@ -40,52 +40,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-//#include "HeadSpin.h"
-//#include "hsGeometry3.h"
-//#include "plgDispatch.h"
-//#include "pnSceneObject/plDrawInterface.h"
-//#include "pnSceneObject/plCoordinateInterface.h"
-//#include "hsBounds.h"
 #include "plSpawnModifier.h"
+
 #include "pnSceneObject/plSceneObject.h"
 #include "plAvatar/plAvatarMgr.h"
-//#include "pnMessage/plTimeMsg.h"
-//#include "pnKeyedObject/plKey.h"
-
-//#include "plMessage/plSpawnRequestMsg.h"
-//#include "plMessage/plSpawnModMsg.h"
-
-//bool plSpawnModifier::MsgReceive(plMessage* msg)
-//{
-//  plSpawnRequestMsg* pSpawnMsg = plSpawnRequestMsg::ConvertNoRef(msg);
-//  if (pSpawnMsg)
-//  {
-//      fTargets.GetCount();
-//      for (int i=0; i < GetNumTargets(); i++)
-//      {
-//          plSpawnModMsg* pMsg = new plSpawnModMsg;
-//          pMsg->AddReceiver( pSpawnMsg->GetSender() );
-//          //pMsg->fPos= GetTarget(i)->GetDrawInterface()->GetWorldBounds().GetCenter();
-//          pMsg->fPos= GetTarget(i)->GetCoordinateInterface()->GetLocalToWorld().GetTranslate();
-//          pMsg->fObj = GetTarget(i)->GetKey()->GetUoid();
-//          plgDispatch::MsgSend( pMsg );
-//      }
-//      return true;
-//  }
-//  return plMultiModifier::MsgReceive(msg);
-//}
 
 void plSpawnModifier::AddTarget(plSceneObject* so)
 {
     plMultiModifier::AddTarget(so);
     plAvatarMgr::GetInstance()->AddSpawnPoint(this);
-//  plgDispatch::Dispatch()->RegisterForExactType(plSpawnRequestMsg::Index(), GetKey());
 }
 
 void plSpawnModifier::RemoveTarget(plSceneObject* so)
 {
     plMultiModifier::RemoveTarget(so);
-    hsAssert(fTargets.GetCount() == 0, "Spawn modifier has multiple targets. Matt.");
+    hsAssert(fTargets.empty(), "Spawn modifier has multiple targets. Matt.");
 
     plAvatarMgr::GetInstance()->RemoveSpawnPoint(this);
 }

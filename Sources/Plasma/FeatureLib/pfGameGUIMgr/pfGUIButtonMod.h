@@ -48,22 +48,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIButtonMod_h
 #define _pfGUIButtonMod_h
 
+#include "HeadSpin.h"
+#include "hsGeometry3.h"
+
+#include <string_theory/string>
+
 #include "pfGUIControlMod.h"
 
-class plMessage;
-class plPostEffectMod;
 class plAGMasterMod;
 class pfGUIDraggableMod;
+class plKey;
+struct hsMatrix44;
+class plMessage;
+class plPostEffectMod;
 
 class pfGUIButtonMod : public pfGUIControlMod
 {
     protected:
 
-        hsTArray<plKey> fAnimationKeys;
-        plString        fAnimName;
+        std::vector<plKey> fAnimationKeys;
+        ST::string      fAnimName;
 
-        hsTArray<plKey> fMouseOverAnimKeys;
-        plString        fMouseOverAnimName;
+        std::vector<plKey> fMouseOverAnimKeys;
+        ST::string      fMouseOverAnimName;
 
         bool            fClicking;
         bool            fTriggering;
@@ -76,9 +83,9 @@ class pfGUIButtonMod : public pfGUIControlMod
 
         int32_t           fNotifyType;
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
-        virtual uint32_t      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
+        uint32_t      IGetDesiredCursor() const override;    // As specified in plInputInterface.h
 
     public:
 
@@ -88,18 +95,18 @@ class pfGUIButtonMod : public pfGUIControlMod
         GETINTERFACE_ANY( pfGUIButtonMod, pfGUIControlMod );
 
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    SetInteresting( bool i );
+        void    SetInteresting(bool i) override;
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
+        void    HandleMouseDown(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
 
-        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, bool force = false );
+        void    UpdateBounds(hsMatrix44 *invXformMatrix = nullptr, bool force = false) override;
 
         virtual void    SetNotifyType(int32_t kind);
         virtual int32_t   GetNotifyType();
@@ -125,12 +132,12 @@ class pfGUIButtonMod : public pfGUIControlMod
             kNotifyOnUpAndDown
         };
 
-        void    StartDragging( void );
+        void    StartDragging();
         void    StopDragging( bool cancel );
 
         // Export only
-        void    SetAnimationKeys( hsTArray<plKey> &keys, const plString &name );
-        void    SetMouseOverAnimKeys( hsTArray<plKey> &keys, const plString &name );
+        void    SetAnimationKeys(const std::vector<plKey> &keys, const ST::string &name);
+        void    SetMouseOverAnimKeys(const std::vector<plKey> &keys, const ST::string &name);
 };
 
 #endif // _pfGUIButtonMod_h

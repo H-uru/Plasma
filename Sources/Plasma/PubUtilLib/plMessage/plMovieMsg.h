@@ -43,10 +43,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMovieMsg_inc
 #define plMovieMsg_inc
 
+#include <vector>
+
+#include "hsColorRGBA.h"
+#include "hsPoint2.h"
+
 #include "pnMessage/plMessage.h"
 #include "pnKeyedObject/plFixedKey.h"
-#include "hsPoint2.h"
-#include "hsTemplates.h"
 
 class plMovieMsg : public plMessage
 {
@@ -85,15 +88,15 @@ protected:
 
     float       fVolume;
 
-    plString    fFileName;
+    ST::string  fFileName;
 
     uint16_t    fCmd;
 
-    hsTArray<plMessage*>    fCallbacks;
+    std::vector<plMessage*> fCallbacks;
 
 public:
-    plMovieMsg(const plString& name, uint16_t cmd)
-        : plMessage(nil, nil, nil) 
+    plMovieMsg(const ST::string& name, uint16_t cmd)
+        : plMessage(nullptr, nullptr, nullptr)
     { 
         fFileName = name;
         SetCmd(cmd).MakeDefault();
@@ -104,11 +107,11 @@ public:
         MakeDefault();
     }
 
-    virtual ~plMovieMsg() 
-    { 
-        for (int i = 0; i < fCallbacks.GetCount(); i++)
+    virtual ~plMovieMsg()
+    {
+        for (plMessage* callback : fCallbacks)
         {
-            hsRefCnt_SafeUnRef(fCallbacks[i]);
+            hsRefCnt_SafeUnRef(callback);
         }
     }
 
@@ -157,8 +160,8 @@ public:
 
     // Include the movie folder, e.g. "avi/movie.webm"
     // String is copied, not pointer copy.
-    plString GetFileName() const { return fFileName; }
-    plMovieMsg& SetFileName(const plString& name) { fFileName = name; return *this; }
+    ST::string GetFileName() const { return fFileName; }
+    plMovieMsg& SetFileName(const ST::string& name) { fFileName = name; return *this; }
 
     // Color is mostly useful for alpha fade up and down.
     const hsColorRGBA& GetColor() const { return fColor; }
@@ -185,12 +188,12 @@ public:
     float GetVolume() const { return fVolume; }
     plMovieMsg& SetVolume(float v) { fVolume = v; return *this; }
 
-    plMovieMsg& AddCallback(plMessage* msg) { hsRefCnt_SafeRef(msg); fCallbacks.Append(msg); return *this; }
-    uint32_t GetNumCallbacks() const { return fCallbacks.GetCount(); }
-    plMessage* GetCallback(int i) const { return fCallbacks[i]; }
+    plMovieMsg& AddCallback(plMessage* msg) { hsRefCnt_SafeRef(msg); fCallbacks.emplace_back(msg); return *this; }
+    size_t GetNumCallbacks() const { return fCallbacks.size(); }
+    plMessage* GetCallback(size_t i) const { return fCallbacks[i]; }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr) { hsAssert(false, "Not for I/O"); plMessage::IMsgRead(s, mgr); }
-    virtual void Write(hsStream* s, hsResMgr* mgr) { hsAssert(false, "Not for I/O"); plMessage::IMsgWrite(s, mgr); }
+    void Read(hsStream* s, hsResMgr* mgr) override { hsAssert(false, "Not for I/O"); plMessage::IMsgRead(s, mgr); }
+    void Write(hsStream* s, hsResMgr* mgr) override { hsAssert(false, "Not for I/O"); plMessage::IMsgWrite(s, mgr); }
 };
 
 #endif // plMovieMsg_inc

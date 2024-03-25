@@ -106,7 +106,7 @@ protected:
 
 public:
 
-    virtual bool        Age(double t, float ramp, float decay, float life);
+    bool        Age(double t, float ramp, float decay, float life) override;
 };
 
 // Expands radially from center
@@ -114,7 +114,7 @@ class plDynaRipple : public plDynaDecal
 {
 public:
 
-    virtual bool        Age(double t, float ramp, float decay, float life);
+    bool        Age(double t, float ramp, float decay, float life) override;
 
     float fC1U;
     float fC2U;
@@ -129,7 +129,7 @@ class plDynaWake : public plDynaDecal
 {
 public:
 
-    virtual bool        Age(double t, float ramp, float decay, float life);
+    bool        Age(double t, float ramp, float decay, float life) override;
 
     float fC1U;
     float fC2U;
@@ -144,7 +144,7 @@ class plDynaWave : public plDynaDecal
 {
 public:
 
-    virtual bool        Age(double t, float ramp, float decay, float life);
+    bool        Age(double t, float ramp, float decay, float life) override;
 
     float fScrollRate;
 };
@@ -155,7 +155,7 @@ class plDynaRippleVS : public plDynaRipple
 {
 public:
 
-    virtual bool        Age(double t, float ramp, float decay, float life);
+    bool        Age(double t, float ramp, float decay, float life) override;
 };
 
 #endif // plDynaDecal_inc

@@ -49,20 +49,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTemplates.h"
+#include <vector>
+
+#include "pyGlueDefinitions.h"
 #include "pyGUIControl.h"
-#include "pyGlueHelpers.h"
-#include <string>
-
-
-class pyColor;
-class pyImage;
 
 class pfGUIListTreeRoot;
+class plKey;
+class pyColor;
+class pyImage;
+class pyKey;
+namespace ST { class string; }
+
 class pyGUIControlListBox : public pyGUIControl
 {
 private:
-    hsTArray<pfGUIListTreeRoot *>   fBuildRoots;
+    std::vector<pfGUIListTreeRoot *>   fBuildRoots;
 
 protected:
     pyGUIControlListBox(): pyGUIControl() {} // for python glue, do NOT call
@@ -79,49 +81,45 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static bool IsGUIControlListBox(pyKey& gckey);
+    static bool IsGUIControlListBox(const plKey& key);
 
     // special case control for the listbox
     // ...this allows the listbox to be used without being selectable
-    virtual void    Clickable( void );
-    virtual void    Unclickable( void );
-    virtual int32_t   GetSelection( void );
-    virtual void    SetSelection( int32_t item );
-    virtual void    Refresh( void );
-    virtual void    SetElement( uint16_t idx, const plString& text );
-    virtual void    RemoveElement( uint16_t index );
-    virtual void    ClearAllElements( void );
-    virtual uint16_t  GetNumElements( void );
-    virtual plString  GetElement( uint16_t idx );
-    virtual int16_t   AddString( const plString &string );
-    virtual int16_t   AddImage( pyImage& image, bool respectAlpha );
-    virtual int16_t   AddImageInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha );
-    virtual int16_t   AddImageAndSwatchesInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha,
-                                                        pyColor &primary, pyColor &secondary );
-    virtual void    SetSwatchSize( uint32_t size );
-    virtual void    SetSwatchEdgeOffset( uint32_t size );
-    virtual void    SetStringJustify( uint16_t idx, uint32_t justify);
-    virtual int16_t   FindString( const plString &toCompareTo );
-    virtual int16_t   AddTextWColor( const char *str, pyColor& textcolor, uint32_t inheritalpha);
-    virtual int16_t   AddTextWColorW( std::wstring str, pyColor& textcolor, uint32_t inheritalpha);
-    virtual int16_t   AddTextWColorWSize( const char *str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize);
-    virtual int16_t   AddTextWColorWSizeW( std::wstring str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize);
-    virtual void    Add2TextWColor( const char *str1, pyColor& textcolor1,const char *str2, pyColor& textcolor2, uint32_t inheritalpha);
-    virtual void    Add2TextWColorW( std::wstring str1, pyColor& textcolor1, std::wstring str2, pyColor& textcolor2, uint32_t inheritalpha);
-    virtual int16_t   AddStringInBox( const plString &string, uint32_t min_width, uint32_t min_height );
-    virtual void    ScrollToBegin( void );
-    virtual void    ScrollToEnd( void );
-    virtual void    SetScrollPos( int32_t pos );
-    virtual int32_t   GetScrollPos( void );
-    virtual int32_t   GetScrollRange( void );
+    void Clickable();
+    void Unclickable();
+    int32_t GetSelection();
+    void SetSelection(int32_t item);
+    void SetElement(uint16_t idx, ST::string text);
+    void RemoveElement(uint16_t index);
+    void ClearAllElements();
+    uint16_t GetNumElements();
+    ST::string GetElement(uint16_t idx);
+    int16_t AddString(ST::string string);
+    int16_t AddImage(pyImage& image, bool respectAlpha);
+    int16_t AddImageInBox(pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha);
+    int16_t AddImageAndSwatchesInBox(pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha,
+                                     pyColor &primary, pyColor &secondary);
+    void SetSwatchSize(uint32_t size);
+    void SetSwatchEdgeOffset(uint32_t size);
+    void SetStringJustify(uint16_t idx, uint32_t justify);
+    int16_t FindString(ST::string toCompareTo);
+    int16_t AddTextWColorW(ST::string str, pyColor& textcolor, uint32_t inheritalpha);
+    int16_t AddTextWColorWSizeW(ST::string str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize);
+    void Add2TextWColorW(ST::string str1, pyColor& textcolor1, ST::string str2, pyColor& textcolor2, uint32_t inheritalpha);
+    int16_t AddStringInBox(ST::string string, uint32_t min_width, uint32_t min_height);
+    void ScrollToBegin();
+    void ScrollToEnd();
+    void SetScrollPos(int32_t pos);
+    int32_t GetScrollPos();
+    int32_t GetScrollRange();
 
-    virtual void    LockList( void );
-    virtual void    UnlockList( void );
+    void LockList();
+    void UnlockList();
 
     // To create tree branches, call AddBranch() with a name, then add elements as usual, including new sub-branches
     // via additional AddBranch() calls. Call CloseBranch() to stop writing elements to that branch.
-    void            AddBranch( const plString &name, bool initiallyOpen );
-    void            CloseBranch( void );
+    void            AddBranch( ST::string name, bool initiallyOpen );
+    void            CloseBranch();
 
     void            RemoveSelection( int32_t item );
     void            AddSelection( int32_t item );

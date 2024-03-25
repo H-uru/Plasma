@@ -118,9 +118,9 @@ bool plTelescopeInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 
 //// RestoreDefaultKeyMappings ///////////////////////////////////////////////
 
-void    plTelescopeInputInterface::RestoreDefaultKeyMappings( void )
+void    plTelescopeInputInterface::RestoreDefaultKeyMappings()
 {
-    if( fControlMap == nil )
+    if (fControlMap == nullptr)
         return;
 
     fControlMap->UnmapAllBindings();

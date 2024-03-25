@@ -50,12 +50,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "pnKeyedObject/plKey.h"
-#include "pyGlueHelpers.h"
 #include "pnKeyedObject/plUoid.h"
-#include <string>
+
+#include "pyGlueDefinitions.h"
 
 class pfGUIPopUpMenu;
 class pyColor;
+class pyKey;
+namespace ST { class string; }
 
 class pyGUIPopUpMenu
 {
@@ -69,19 +71,19 @@ protected:
     pyGUIPopUpMenu(plKey objkey);
     pyGUIPopUpMenu();
     // For creating new menus on the fly
-    pyGUIPopUpMenu( const char *name, float screenOriginX, float screenOriginY, const plLocation &destLoc = plLocation::kGlobalFixedLoc );
-    pyGUIPopUpMenu( const char *name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY );
+    pyGUIPopUpMenu(const ST::string& name, float screenOriginX, float screenOriginY, const plLocation &destLoc = plLocation::kGlobalFixedLoc);
+    pyGUIPopUpMenu(const ST::string& name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY);
 
 public:
-    virtual ~pyGUIPopUpMenu();
+    ~pyGUIPopUpMenu();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptGUIPopUpMenu);
     PYTHON_CLASS_NEW_DEFINITION;
     static PyObject *New(pyKey& gckey);
     static PyObject *New(plKey objkey);
-    static PyObject *New(const char *name, float screenOriginX, float screenOriginY, const plLocation &destLoc = plLocation::kGlobalFixedLoc);
-    static PyObject *New(const char *name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY);
+    static PyObject *New(const ST::string& name, float screenOriginX, float screenOriginY, const plLocation &destLoc = plLocation::kGlobalFixedLoc);
+    static PyObject *New(const ST::string& name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGUIPopUpMenu object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIPopUpMenu); // converts a PyObject to a pyGUIPopUpMenu (throws error if not correct type)
 
@@ -89,50 +91,47 @@ public:
 
     // these three are for the python glue only, do NOT call
     void setup(plKey objkey);
-    void setup(const char *name, float screenOriginX, float screenOriginY, const plLocation &destLoc = plLocation::kGlobalFixedLoc);
-    void setup(const char *name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY);
+    void setup(const ST::string& name, float screenOriginX, float screenOriginY, const plLocation &destLoc = plLocation::kGlobalFixedLoc);
+    void setup(const ST::string& name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY);
 
-    static bool IsGUIPopUpMenu(pyKey& gckey);
+    static bool IsGUIPopUpMenu(const plKey& key);
 
     // override the equals to operator
     bool operator==(const pyGUIPopUpMenu &gdobj) const;
     bool operator!=(const pyGUIPopUpMenu &gdobj) const { return !(gdobj == *this); }
 
     // getter and setters
-    virtual plKey getObjKey();
-    virtual PyObject* getObjPyKey(); // returns pyKey
+    plKey getObjKey();
+    PyObject* getObjPyKey(); // returns pyKey
 
     // interface functions
-    virtual uint32_t  GetTagID();
+    uint32_t GetTagID();
 
-    virtual void    SetEnabled( bool e );
-    virtual void    Enable() { SetEnabled(true); }
-    virtual void    Disable() { SetEnabled(false); }
-    virtual bool    IsEnabled( void );
-    virtual const char  *GetName( void );
-    virtual uint32_t     GetVersion(void);
+    void SetEnabled(bool e);
+    void Enable() { SetEnabled(true); }
+    void Disable() { SetEnabled(false); }
+    bool IsEnabled();
+    ST::string GetName() const;
+    uint32_t GetVersion();
 
-    virtual void        Show( void );
-    virtual void        Hide( void );
+    void Show();
+    void Hide();
 
     // get color schemes
-    virtual PyObject*   GetForeColor(); // returns pyColor
-    virtual PyObject*   GetSelColor(); // returns pyColor
-    virtual PyObject*   GetBackColor(); // returns pyColor
-    virtual PyObject*   GetBackSelColor(); // returns pyColor
+    PyObject* GetForeColor(); // returns pyColor
+    PyObject* GetSelColor(); // returns pyColor
+    PyObject* GetBackColor(); // returns pyColor
+    PyObject* GetBackSelColor(); // returns pyColor
     // set color scheme
-    virtual void        SetForeColor( float r, float g, float b, float a );
-    virtual void        SetSelColor( float r, float g, float b, float a );
-    virtual void        SetBackColor( float r, float g, float b, float a );
-    virtual void        SetBackSelColor( float r, float g, float b, float a );
+    void SetForeColor(float r, float g, float b, float a);
+    void SetSelColor(float r, float g, float b, float a);
+    void SetBackColor(float r, float g, float b, float a);
+    void SetBackSelColor(float r, float g, float b, float a);
 
     // Menu item functions
-    virtual void        AddConsoleCmdItem( const char *name, const char *consoleCmd );
-    virtual void        AddConsoleCmdItemW( std::wstring name, const char *consoleCmd );
-    virtual void        AddNotifyItem( const char *name );
-    virtual void        AddNotifyItemW( std::wstring name );
-    virtual void        AddSubMenuItem( const char *name, pyGUIPopUpMenu &subMenu );
-    virtual void        AddSubMenuItemW( std::wstring name, pyGUIPopUpMenu &subMenu );
+    void AddConsoleCmdItem(const ST::string& name, const ST::string& consoleCmd);
+    void AddNotifyItem(const ST::string& name);
+    void AddSubMenuItem(const ST::string& name, pyGUIPopUpMenu &subMenu);
 };
 
 #endif // _pyGUIPopUpMenu_h_

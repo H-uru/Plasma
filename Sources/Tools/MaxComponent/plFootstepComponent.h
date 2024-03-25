@@ -49,10 +49,10 @@ class plFootstepSoundComponent : public plComponent
 public:
     plFootstepSoundComponent();
 
-    virtual void DeleteThis() { delete this; }
-    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) { return true; }
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg); 
+    void DeleteThis() override { delete this; }
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override { return true; }
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override { return true; }
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum // ParamBlock indices
     {
@@ -69,9 +69,9 @@ class plFootstepSoundComponentProc : public ParamMap2UserDlgProc
 public:
     plFootstepSoundComponentProc() {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 
 #endif

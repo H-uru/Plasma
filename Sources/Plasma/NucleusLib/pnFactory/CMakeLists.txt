@@ -1,7 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-
 set(pnFactory_SOURCES
     plFactory.cpp
 )
@@ -12,8 +8,13 @@ set(pnFactory_HEADERS
     plFactory.h
 )
 
-add_library(pnFactory STATIC ${pnFactory_SOURCES} ${pnFactory_HEADERS})
-target_link_libraries(pnFactory CoreLib)
+plasma_library(pnFactory SOURCES ${pnFactory_SOURCES} ${pnFactory_HEADERS})
+target_link_libraries(
+    pnFactory
+    PUBLIC
+        CoreLib
+        pnNucleusInc
+)
 
 source_group("Source Files" FILES ${pnFactory_SOURCES})
 source_group("Header Files" FILES ${pnFactory_HEADERS})

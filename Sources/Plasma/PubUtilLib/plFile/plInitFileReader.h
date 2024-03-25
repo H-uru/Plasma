@@ -64,7 +64,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsStream.h"
-#include "hsTemplates.h"
+
+#include <memory>
+#include <vector>
 
 //// Base Section Class //////////////////////////////////////////////////////
 //  Define a derived version of this for each section of your init file.
@@ -74,7 +76,7 @@ class plInitSectionReader
     public:
 
         // Override this to define what [string] your section starts with
-        virtual const char  *GetSectionName( void ) const = 0;
+        virtual const char  *GetSectionName() const = 0;
 
         // Override this to parse each line in your section. Return false to abort parsing
         virtual bool        ParseLine( const char *line, uint32_t userData ) = 0;
@@ -87,7 +89,9 @@ class plInitSectionReader
 //  Half-way derived class for parsing lines by tokens rather than pure 
 //  strings.
 
-class hsStringTokenizer;
+template<typename CharT>
+class hsBasicStringTokenizer;
+using hsStringTokenizer = hsBasicStringTokenizer<char>;
 
 class plInitSectionTokenReader : public plInitSectionReader
 {
@@ -103,7 +107,7 @@ class plInitSectionTokenReader : public plInitSectionReader
         plInitSectionTokenReader( const char *separators = ",=\t" );
 
         // Overridden for you. Override IParseToken()
-        virtual bool        ParseLine( const char *line, uint32_t userData );
+        bool        ParseLine(const char *line, uint32_t userData) override;
 };
 
 //// Main Reader Class ///////////////////////////////////////////////////////
@@ -115,12 +119,12 @@ class plInitFileReader
     protected:
 
         hsStream            *fStream;
-        hsStream            *fOurStream;
+        std::unique_ptr<hsStream> fOurStream;
         char                *fCurrLine;
         uint32_t              fLineSize;
 
         plInitSectionReader             *fCurrSection;
-        hsTArray<plInitSectionReader *> fSections;
+        std::vector<plInitSectionReader *> fSections;
         plInitSectionReader* fUnhandledSection;
         
         void    IInitReaders( plInitSectionReader **readerArray );
@@ -142,9 +146,8 @@ class plInitFileReader
         bool    Open( const char *fileName );
         bool    Open( hsStream *stream );
         bool    Parse( uint32_t userData = 0 );
-        void    Close( void );
 
-        bool    IsOpen( void ) const { return fStream != nil; }
+        bool    IsOpen() const { return fStream != nullptr; }
 };
 
 #endif //_plInitFileReader_h

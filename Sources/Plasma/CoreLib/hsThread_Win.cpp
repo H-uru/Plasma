@@ -42,103 +42,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsWindows.h"
 #include <process.h>
-#pragma hdrstop
 
 #include "hsThread.h"
 #include "hsExceptions.h"
-#include "hsMemory.h"
 
-struct WinThreadParam
+void hsThread::SetThisThreadName(const ST::string& name)
 {
-    hsThread* fThread;
-    HANDLE    fQuitSemaH; // private member of hsThread
-
-    WinThreadParam(hsThread* t, HANDLE quit)
-        : fThread(t), fQuitSemaH(quit)
-    { }
-};
-
-static unsigned int __stdcall gEntryPointBT(void* param)
-{
-#ifdef USE_VLD
-    // Needs to be enabled for each thread except the WinMain
-    VLDEnable();
-#endif
-
-    WinThreadParam* wtp = (WinThreadParam*)param;
-    unsigned int result = wtp->fThread->Run();
-    ::ReleaseSemaphore(wtp->fQuitSemaH, 1, nil); // signal that we've quit
-    wtp->fThread->OnQuit();
-    delete wtp;
-    return result;
-}
-
-hsThread::hsThread(uint32_t stackSize) : fStackSize(stackSize), fQuit(false), fThreadH(nil), fQuitSemaH(nil)
-{
-}
-
-hsThread::~hsThread()
-{
-    this->Stop();
-}
-
-hsThread::ThreadId hsThread::GetMyThreadId()
-{
-    return GetCurrentThreadId();
-}
-
-void hsThread::Start()
-{
-    if (fThreadH == nil)
-    {
-        fQuitSemaH = ::CreateSemaphore(nil, 0, kPosInfinity32, nil);
-        if (fQuitSemaH == nil)
-            throw hsOSException(-1);
-        WinThreadParam* wtp = new WinThreadParam(this, fQuitSemaH);
-        fThreadH = (HANDLE)_beginthreadex(nil, fStackSize, gEntryPointBT, wtp, 0, (unsigned int*)&fThreadId);
-        if (fThreadH == nil)
-            throw hsOSException(-1);
+    // SetThreadDescription is only supported since Windows 10 v1607.
+    // There's an alternative solution that also works on older versions,
+    // but it's specific to Visual Studio and the "interface" is really gnarly.
+    // Because this is just a debugging help, that probably isn't worth the effort.
+    // https://learn.microsoft.com/en-us/visualstudio/debugger/how-to-set-a-thread-name-in-native-code?view=vs-2022#set-a-thread-name-by-throwing-an-exception
+    static plOptionalWinCall<HRESULT(HANDLE, PCWSTR)> SetThreadDescription(L"KernelBase", "SetThreadDescription");
+    
+    auto result = SetThreadDescription(GetCurrentThread(), name.to_wchar().c_str());
+    if (result) {
+        hsAssert(SUCCEEDED(*result), ST::format("Failed to set thread name: {}", hsCOMError(*result)).c_str());
     }
 }
 
-void hsThread::Stop()
+hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const ST::string& name)
 {
-    if (fThreadH != nil)
-    {   this->fQuit = true;
-
-        if (fQuitSemaH != nil)
-            ::WaitForSingleObject(fQuitSemaH, INFINITE);    // wait for the thread to quit
-
-        ::CloseHandle(fThreadH);
-        fThreadH = nil;
-        ::CloseHandle(fQuitSemaH);
-        fQuitSemaH = nil;
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-void* hsThread::Alloc(size_t size)
-{
-    return HSMemory::New(size);
-}
-
-void hsThread::Free(void* p)
-{
-    HSMemory::Delete(p);
-}
-
-void hsThread::ThreadYield()
-{
-    //  Don't know how to explicitly yield on WIN32
-}
-
-//////////////////////////////////////////////////////////////////////////////
-
-hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const char *name)
-{
-    fSemaH = ::CreateSemaphore(nil, initialValue, kPosInfinity32, name);
-    if (fSemaH == nil)
+    fSemaH = ::CreateSemaphoreW(nullptr, initialValue, std::numeric_limits<LONG>::max(), name.to_wchar().data());
+    if (fSemaH == nullptr)
         throw hsOSException(-1);
 }
 
@@ -149,7 +75,7 @@ hsGlobalSemaphore::~hsGlobalSemaphore()
 
 bool hsGlobalSemaphore::Wait(hsMilliseconds timeToWait)
 {
-    if (timeToWait == kPosInfinity32)
+    if (timeToWait == kWaitForever)
         timeToWait = INFINITE;
     
     DWORD result =::WaitForSingleObject(fSemaH, timeToWait);
@@ -164,12 +90,5 @@ bool hsGlobalSemaphore::Wait(hsMilliseconds timeToWait)
 
 void hsGlobalSemaphore::Signal()
 {
-    ::ReleaseSemaphore(fSemaH, 1, nil);
-}
-
-///////////////////////////////////////////////////////////////
-
-void hsSleep::Sleep(uint32_t millis)
-{
-    ::Sleep(millis);
+    ::ReleaseSemaphore(fSemaH, 1, nullptr);
 }

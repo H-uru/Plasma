@@ -40,23 +40,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#include "hsResMgr.h"
-#pragma hdrstop
-
 #include "pyImage.h"
-#include "pyGeometry3.h"
-#include "plGImage/plJPEG.h"
-#include "plGImage/plPNG.h"
+
+#include <string_theory/format>
+
+#include "hsResMgr.h"
+#include "plFileSystem.h"
+
 #include "pnKeyedObject/plUoid.h"
+
+#include "plGImage/plJPEG.h"
+#include "plGImage/plMipmap.h"
+#include "plGImage/plPNG.h"
+
+#include "pyColor.h"
+#include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 void pyImage::setKey(pyKey& mipmapKey) // only for python glue, do NOT call
 {
 #ifndef BUILDING_PYPLASMA
     if (fMipmap && fMipMapKey)
         fMipMapKey->UnRefObject();
-    fMipmap = nil;
+    fMipmap = nullptr;
 #endif
     fMipMapKey = mipmapKey.getKey();
 }
@@ -130,7 +137,7 @@ PyObject* pyImage::GetColorLoc(const pyColor &color)
                     float fX, fY;
                     fX = (float)x / (float)width;
                     fY = (float)y / (float)height;
-                    return pyPoint3::New(hsPoint3(fX, fY, 0));
+                    return pyPoint3::New(hsPoint3(fX, fY, 0.f));
                 }
                 double dist = pow((imgColor->getRed() - color.getRed()),2) + pow((imgColor->getGreen() - color.getGreen()),2) + pow((imgColor->getBlue() - color.getBlue()),2);
                 if (dist < minSqrDist)
@@ -189,10 +196,9 @@ void pyImage::SaveAsJPEG(const plFileName& fileName, uint8_t quality)
     plJPEG::Instance().WriteToFile(fileName, this->GetImage());
 }
 
-void pyImage::SaveAsPNG(const plFileName& fileName)
+void pyImage::SaveAsPNG(const plFileName& fileName, const std::multimap<ST::string, ST::string>& textFields)
 {
-
-    plPNG::Instance().WriteToFile(fileName, this->GetImage());
+    plPNG::Instance().WriteToFile(fileName, this->GetImage(), textFields);
 }
 
 PyObject* pyImage::LoadJPEGFromDisk(const plFileName& filename, uint16_t width, uint16_t height)
@@ -210,7 +216,7 @@ PyObject* pyImage::LoadJPEGFromDisk(const plFileName& filename, uint16_t width, 
         }
 
         // let's create a nice name for this thing based on the filename
-        plString name = plFormat("PtImageFromDisk_{}", filename);
+        ST::string name = ST::format("PtImageFromDisk_{}", filename);
 
         hsgResMgr::ResMgr()->NewKey(name, theMipmap, plLocation::kGlobalFixedLoc);
         
@@ -235,7 +241,7 @@ PyObject* pyImage::LoadPNGFromDisk(const plFileName& filename, uint16_t width, u
         }
 
         // let's create a nice name for this thing based on the filename
-        plString name = plFormat("PtImageFromDisk_{}", filename);
+        ST::string name = ST::format("PtImageFromDisk_{}", filename);
 
         hsgResMgr::ResMgr()->NewKey(name, theMipmap, plLocation::kGlobalFixedLoc);
 

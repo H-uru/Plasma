@@ -47,15 +47,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plCreatableUuid : public plUUID, public plCreatable {
 public:
-    CLASSNAME_REGISTER( plCreatableUuid );
-    GETINTERFACE_ANY( plCreatableUuid, plCreatable );
+    CLASSNAME_REGISTER(plCreatableUuid);
+    GETINTERFACE_ANY(plCreatableUuid, plCreatable);
 
     plCreatableUuid() { }
     plCreatableUuid(const plCreatableUuid& other) : plUUID(other) { }
     plCreatableUuid(const plUUID& other) : plUUID(other) { }
 
-    void    Read( hsStream * s, hsResMgr* ) { plUUID::Read(s); }
-    void    Write( hsStream * s, hsResMgr* ) { plUUID::Write(s); }
+    void Read(hsStream* s, hsResMgr*) override {
+        plUUID::Read(s);
+    }
+    void Write(hsStream* s, hsResMgr*) override {
+        plUUID::Write(s);
+    }
 };
 
 #endif //pnCreatableUUID_h_inc

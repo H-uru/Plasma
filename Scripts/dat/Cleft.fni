@@ -1,0 +1,10 @@
+#Avatar.SetSpawnOverride clftDesertLinkIn
+
+# yon pre-set
+#Graphics.Renderer.SetYon 100000
+Graphics.Renderer.SetYon 10000
+
+#Graphics.Renderer.Fog.SetDefLinear 0 0 0
+#Graphics.Renderer.SetClearColor 0 0 0
+
+

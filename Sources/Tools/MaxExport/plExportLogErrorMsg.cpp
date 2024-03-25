@@ -41,13 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "hsExceptions.h"
-#include "hsWindows.h"
-#include <commdlg.h>
 
-#include <max.h>
-#include <bmmlib.h>
-#include <guplib.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
 
 #include "plExportLogErrorMsg.h"
 
@@ -60,24 +55,23 @@ plExportLogErrorMsg::~plExportLogErrorMsg()
 {
     if ( fErrfile )
     {
-        fprintf(fErrfile, "\n%d total number of error!!!! ", fNumberErrors);
+        fErrfile->WriteString(ST::format("\n{d} total number of error!!!! ", fNumberErrors));
         if ( fNumberErrors > 10 )
             if ( fNumberErrors > 20 )
                 if ( fNumberErrors > 50 )
-                    fprintf(fErrfile, "(CRISIS CRISIS!)");
+                    fErrfile->WriteString("(CRISIS CRISIS!)");
                 else
-                    fprintf(fErrfile, "(which is a disaster!)");
+                    fErrfile->WriteString("(which is a disaster!)");
             else
-                fprintf(fErrfile, "(which is way too many!)");
-        fclose(fErrfile);
+                fErrfile->WriteString("(which is way too many!)");
     }
 #ifdef ERRORLOG_ALWAYS_WRITE_SOMETHING
     else
     {
-        fErrfile = fopen(fErrfile_name, "wt");
-        setbuf(fErrfile, nil);
-        fprintf(fErrfile, "No errors found! Good job.");
-        fclose(fErrfile);
+        fErrfile = std::make_shared<hsUNIXStream>();
+        fErrfile->Open(fErrfile_name, "wt");
+        setbuf(fErrfile->GetFILE(), nullptr);
+        fErrfile->WriteString("No errors found! Good job.");
     }
 #endif // ERRORLOG_ALWAYS_WRITE_SOMETHING
 }
@@ -104,7 +98,7 @@ bool plExportLogErrorMsg::CheckAndAsk()
 {
     if( GetBogus() )
     {
-        strncat(GetMsg(), " - File corruption possible!", 255);
+        GetMsg() += " - File corruption possible!";
         IWriteErrorFile(GetLabel(),GetMsg());
     }
     return GetBogus();
@@ -136,8 +130,8 @@ bool plExportLogErrorMsg::Check()
     if( GetBogus() )
     {
         // ... how many ways can you say something is bad?
-        strncat(GetMsg(), " !Output File Corrupt!", 255);
-        IWriteErrorFile(GetLabel(),GetMsg());
+        GetMsg() += " !Output File Corrupt!";
+        IWriteErrorFile(GetLabel(), GetMsg());
         IDebugThrow();
     }
 
@@ -151,8 +145,8 @@ void plExportLogErrorMsg::Quit()
 {
     if( GetBogus() )
     {
-        strncat(GetMsg(), " -- Quit! (must be real bad!)", 255);
-        IWriteErrorFile(GetLabel(),GetMsg());
+        GetMsg() += " -- Quit! (must be real bad!)";
+        IWriteErrorFile(GetLabel(), GetMsg());
         SetBogus(false);
         hsThrow( *this );
     }
@@ -161,20 +155,21 @@ void plExportLogErrorMsg::Quit()
 //
 // Write a string to the Error Log File, be sure its open before using
 //
-void plExportLogErrorMsg::IWriteErrorFile(const char* label, const char* msg)
+void plExportLogErrorMsg::IWriteErrorFile(const ST::string& label, const ST::string& msg)
 {
     //make sure that there is a filename 
-    if (fErrfile_name[0] != '\0')
+    if (fErrfile_name.IsValid())
     {
         // do we have it open, yet?
-        if ( !fErrfile )
+        if (!fErrfile)
         {
             // must be the first write... open the error file
-            fErrfile = fopen(fErrfile_name, "wt");
-            setbuf(fErrfile, nil);
+            fErrfile = std::make_shared<hsUNIXStream>();
+            fErrfile->Open(fErrfile_name, "wt");
+            setbuf(fErrfile->GetFILE(), nullptr);
             fNumberErrors = 0;
         }
-        fprintf(fErrfile, "%s: %s\n", label, msg);
+        fErrfile->WriteString(ST::format("{}: {}\n", label, msg));
         fNumberErrors++;    // oh, boy... another error to count
     }
 
@@ -184,9 +179,8 @@ void plExportLogErrorMsg::IWriteErrorFile(const char* label, const char* msg)
    if(exportServerGup)
    {
       exportServerGup->Control(-5);  // means next control will be error msg
-      char buf[1024];
-      sprintf(buf, "%s: %s", label, msg);
-      exportServerGup->Control((DWORD)buf);
+      ST::string buf = ST::format("{}: {}", label, msg);
+      exportServerGup->Control((DWORD)buf.c_str());
       exportServerGup->Control(-7); // signal that we're done sending this update sequence
    }   
 }

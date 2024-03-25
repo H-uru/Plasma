@@ -49,9 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "pnKeyedObject/plKey.h"
-#include "pyGlueHelpers.h"
+
+#include "pyGlueDefinitions.h"
 
 class pyColor;
+class pyKey;
 
 class pyGUISkin
 {
@@ -76,15 +78,15 @@ public:
 
     static bool IsGUISkin(pyKey& gckey);
 
-    void setKey(plKey key) {fGCkey = key;} // used by python glue, do NOT call
+    void setKey(plKey key) { fGCkey = std::move(key); } // used by python glue, do NOT call
 
     // override the equals to operator
     bool operator==(const pyGUISkin &gdobj) const;
     bool operator!=(const pyGUISkin &gdobj) const { return !(gdobj == *this); }
 
     // getter and setters
-    virtual plKey getObjKey();
-    virtual PyObject* getObjPyKey(); // returns pyKey
+    plKey getObjKey();
+    PyObject* getObjPyKey(); // returns pyKey
 
 };
 

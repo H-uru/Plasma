@@ -42,9 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plDynamicTextLayer.h"
 
-#include "iparamb2.h"
-#include "iparamm2.h"
-#include "stdmat.h"
+#include "MaxMain/MaxAPI.h"
 
 #include "../plBMSampler.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
@@ -58,7 +56,7 @@ class DTLBitmapDlgProc : public ParamMap2UserDlgProc
 {
 public:
     /// Called to update the controls of the dialog
-    virtual void    Update( TimeValue t, Interval &valid, IParamMap2 *map )
+    void    Update(TimeValue t, Interval &valid, IParamMap2 *map) override
     {
         IParamBlock2    *pblock;
         BitmapInfo      bi;
@@ -86,7 +84,7 @@ public:
     }
 
     /// Main message proc
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
 
         switch (msg)
@@ -131,7 +129,7 @@ public:
             else if( LOWORD( wParam ) == IDC_INITIMAGE )
             {
                 plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)map->GetParamBlock()->GetOwner();
-                if( layer == nil )
+                if (layer == nullptr)
                     return FALSE;
                 BOOL selectedNewBitmap = layer->HandleBitmapSelection();        
                 if( selectedNewBitmap )
@@ -141,7 +139,7 @@ public:
                     ICustButton *bmSelectBtn = GetICustButton( GetDlgItem( hWnd, IDC_INITIMAGE ) );
                     PBBitmap *pbbm = layer->GetPBBitmap();
                     
-                    bmSelectBtn->SetText( pbbm != nil ? (TCHAR *)pbbm->bi.Filename() : "");
+                    bmSelectBtn->SetText(pbbm != nullptr ? (TCHAR *)pbbm->bi.Filename() : _T(""));
                     
                     ReleaseICustButton( bmSelectBtn );                          
                 }
@@ -153,7 +151,7 @@ public:
 
         return FALSE;
     }
-    virtual void DeleteThis() {};
+    void DeleteThis() override { }
 
 protected:
     /// Clamp texture sizes to a power of 2
@@ -213,7 +211,7 @@ static DTLBitmapDlgProc gDTLBitmapDlgProc;
 class DTLPBAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if( !owner )
             return;
@@ -233,7 +231,7 @@ public:
                 break;
         }
     }
-    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid)
+    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid) override
     {
     }
 };
@@ -245,7 +243,7 @@ static DTLPBAccessor gDTLPBAccessor;
 
 static ParamBlockDesc2 gBitmapParamBlk
 (
-    plDynamicTextLayer::kBlkBitmap, _T("bitmap"),  0, GetDynamicTextLayerDesc(),//NULL,
+    plDynamicTextLayer::kBlkBitmap, _T("bitmap"),  0, GetDynamicTextLayerDesc(),//nullptr,
     P_AUTO_CONSTRUCT + P_AUTO_UI, plDynamicTextLayer::kRefBitmap,
 
     IDD_DYN_TEXT_LAYER, IDS_DYN_TEXT_LAYER_PROPS, 0, 0, &gDTLBitmapDlgProc,
@@ -253,47 +251,47 @@ static ParamBlockDesc2 gBitmapParamBlk
     // Texture Color/Alpha
     plDynamicTextLayer::kBmpDiscardColor,   _T("discardColor"), TYPE_BOOL,      0, 0,
 //      p_ui,           TYPE_SINGLECHEKBOX, IDC_BLEND_NO_COLOR,
-        end,
+        p_end,
     plDynamicTextLayer::kBmpInvertColor,    _T("invertColor"),  TYPE_BOOL,      0, 0,
 //      p_ui,           TYPE_SINGLECHEKBOX, IDC_BLEND_INV_COLOR,
-        end,
+        p_end,
     plDynamicTextLayer::kBmpDiscardAlpha,   _T("discardAlpha"), TYPE_BOOL,      0, 0,
 //      p_ui,           TYPE_SINGLECHEKBOX, IDC_DISCARD_ALPHA,
-        end,
+        p_end,
     plDynamicTextLayer::kBmpInvertAlpha,    _T("invertAlpha"),  TYPE_BOOL,      0, 0,
 //      p_ui,           TYPE_SINGLECHEKBOX, IDC_BLEND_INV_ALPHA,
-        end,
+        p_end,
     
     // Texture size
     plDynamicTextLayer::kBmpExportWidth,    _T("exportWidth"),  TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_EXPORTWIDTH, IDC_EXPORTWIDTH_SPINNER, SPIN_AUTOSCALE,
         p_range,        4, 2048,
         p_default,      512,
-        end,
+        p_end,
     plDynamicTextLayer::kBmpExportHeight,   _T("exportHeight"), TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_EXPORTHEIGHT, IDC_EXPORTHEIGHT_SPINNER, SPIN_AUTOSCALE,
         p_range,        4, 2048,
         p_default,      512,
-        end,
+        p_end,
     plDynamicTextLayer::kBmpExportLastWidth,    _T("lastExportWidth"),  TYPE_INT,       0, 0,
-        end,
+        p_end,
     plDynamicTextLayer::kBmpExportLastHeight,   _T("lastExportHeight"), TYPE_INT,       0, 0,
-        end,
+        p_end,
 
     plDynamicTextLayer::kBmpIncludeAlphaChannel,    _T("includeAlphaChannel"),  TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_DYNTEXT_ALPHA,
         p_default, FALSE,
-        end,
+        p_end,
         
     // Initial image
     plDynamicTextLayer::kBmpUseInitImage,   _T("useInitImage"), TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_USEINITIMAGE,
         p_enable_ctrls, 1, plDynamicTextLayer::kBmpInitBitmap, 
         p_accessor,     &gDTLPBAccessor,
-        end,
+        p_end,
     plDynamicTextLayer::kBmpInitBitmap, _T("initBitmap"),       TYPE_BITMAP,    P_SHORT_LABELS, 0,
         p_accessor,     &gDTLPBAccessor,
-        end,
+        p_end,
 
 /*      plGUIButtonComponent::kRefAnimate,  _T( "animate" ), TYPE_BOOL, 0, 0,
             p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_ANIMATE,
@@ -316,6 +314,6 @@ static ParamBlockDesc2 gBitmapParamBlk
     plDynamicTextLayer::kBmpRightMargin,
     plDynamicTextLayer::kBmpBottomMargin,
 */
-    end
+    p_end
 );
 

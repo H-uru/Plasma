@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMorphSequence_inc
 #define plMorphSequence_inc
 
+#include <vector>
+
 #include "pnModifier/plSingleModifier.h"
 #include "plMorphArray.h"
 
@@ -51,10 +53,9 @@ class plDrawInterface;
 class plSharedMesh;
 class plMorphSequenceSDLMod;
 
-class plMorphArrayWeights
+struct plMorphArrayWeights
 {
-public:
-    hsTArray<float> fDeltaWeights;
+    std::vector<float> fDeltaWeights;
 };
 
 class plSharedMeshInfo
@@ -66,12 +67,12 @@ public:
     };
 
     plSharedMesh*       fMesh;
-    hsTArray<int32_t>     fCurrIdx;
+    std::vector<int32_t> fCurrIdx;
     plDrawable*         fCurrDraw;
-    hsTArray<plMorphArrayWeights> fArrayWeights;
+    std::vector<plMorphArrayWeights> fArrayWeights;
     uint8_t               fFlags;
 
-    plSharedMeshInfo() : fMesh(nil), fCurrDraw(nil), fFlags(0) {}
+    plSharedMeshInfo() : fMesh(), fCurrDraw(), fFlags() { }
 };
 
 // Keyed storage class for morph arrays/deltas
@@ -79,22 +80,21 @@ public:
 class plMorphDataSet : public hsKeyedObject
 {
 public:
-    hsTArray<plMorphArray>  fMorphs;
+    std::vector<plMorphArray> fMorphs;
 
     CLASSNAME_REGISTER( plMorphDataSet );
     GETINTERFACE_ANY( plMorphDataSet, hsKeyedObject );
     
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);     
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 // A place to hold incoming state while we're still waiting for the
 // mesh and morph data to load.
-class plMorphState
+struct plMorphState
 {
-public:
     plKey fSharedMeshKey;
-    hsTArray<plMorphArrayWeights> fArrayWeights;
+    std::vector<plMorphArrayWeights> fArrayWeights;
 };
 
 class plMorphSequence : public plSingleModifier
@@ -111,41 +111,38 @@ protected:
     };
     uint32_t                      fMorphFlags;
 
-    hsTArray<plMorphArray>      fMorphs;
-
-    //int32_t                     fActiveMesh; // Doesn't appear to be used.
-    hsTArray<plSharedMeshInfo>  fSharedMeshes;
-    hsTArray<plMorphState>      fPendingStates;
+    std::vector<plMorphArray>   fMorphs;
+    std::vector<plSharedMeshInfo> fSharedMeshes;
+    std::vector<plMorphState>   fPendingStates;
     plMorphSequenceSDLMod*      fMorphSDLMod;
     int8_t                        fGlobalLayerRef;
 
     const plDrawInterface*      IGetDrawInterface() const;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
 
     void ISetHaveSnap(bool on) { if(on)fMorphFlags |= kHaveSnap; else fMorphFlags &= ~kHaveSnap; }
     void ISetDirty(bool on);
 
-    bool        IResetShared(int iShare);
-    void        IApplyShared(int iShare);
-    bool        IFindIndices(int iShare);
-    void        IReleaseIndices(int iShare);
+    bool        IResetShared(size_t iShare);
+    void        IApplyShared(size_t iShare);
+    bool        IFindIndices(size_t iShare);
+    void        IReleaseIndices(size_t iShare);
 
-    void        IRenormalize(hsTArray<plAccessSpan>& dst) const;
+    void        IRenormalize(std::vector<plAccessSpan>& dst) const;
 
     void        IResetShared();
     void        IReleaseIndices(); // Puts everyone inactive
     void        IFindIndices(); // Refresh Indicies
     void        IApplyShared(); // Apply whatever morphs are active
 
-    int32_t       IFindPendingStateIndex(plKey meshKey) const; // Do we have pending state for this mesh?
-    int32_t       IFindSharedMeshIndex(plKey meshKey) const; // What's this mesh's index in our array?
+    hsSsize_t   IFindPendingStateIndex(const plKey& meshKey) const; // Do we have pending state for this mesh?
+    hsSsize_t   IFindSharedMeshIndex(const plKey& meshKey) const; // What's this mesh's index in our array?
     bool        IIsUsingDrawable(plDrawable *draw); // Are we actively looking at spans in this drawable?
 
     // Internal functions for maintaining that all meshes share the same global weight(s) (fGlobalLayerRef)
     void        ISetAllSharedToGlobal();
-    void        ISetSingleSharedToGlobal(int idx);
-        
+    void        ISetSingleSharedToGlobal(size_t idx);
 
 public:
     plMorphSequence();
@@ -154,12 +151,12 @@ public:
     CLASSNAME_REGISTER( plMorphSequence );
     GETINTERFACE_ANY( plMorphSequence, plSingleModifier );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget(plSceneObject* so);
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr); 
+    void AddTarget(plSceneObject* so) override;
+    void RemoveTarget(plSceneObject* so) override;
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     void Init();
     void Activate();
@@ -167,14 +164,14 @@ public:
     void DeActivate();
 
     void Apply() const;
-    void Reset(const plDrawInterface* di=nil) const;
+    void Reset(const plDrawInterface* di=nullptr) const;
 
-    int GetNumLayers(plKey meshKey = nil) const; 
-    void AddLayer(const plMorphArray& ma) { fMorphs.Append(ma); }
+    size_t GetNumLayers(const plKey& meshKey = {}) const;
+    void AddLayer(const plMorphArray& ma) { fMorphs.emplace_back(ma); }
 
-    int GetNumDeltas(int iLay, plKey meshKey = nil) const;
-    float GetWeight(int iLay, int iDel, plKey meshKey = nil) const;
-    void SetWeight(int iLay, int iDel, float w, plKey meshKey = nil);
+    size_t GetNumDeltas(size_t iLay, const plKey& meshKey = {}) const;
+    float GetWeight(size_t iLay, size_t iDel, const plKey& meshKey = {}) const;
+    void SetWeight(size_t iLay, size_t iDel, float w, plKey meshKey = {});
 
     bool GetHaveSnap() const { return 0 != (fMorphFlags & kHaveSnap); }
     bool GetDirty() const { return 0 != (fMorphFlags & kDirty); }
@@ -183,7 +180,7 @@ public:
     void SetUseSharedMesh(bool on) { if(on)fMorphFlags |= kHaveShared; else fMorphFlags &= ~kHaveShared; }
     void AddSharedMesh(plSharedMesh* mesh);
     void RemoveSharedMesh(plSharedMesh* mesh);
-    static void FindMorphMods(const plSceneObject *so, hsTArray<const plMorphSequence*> &mods);
+    static void FindMorphMods(const plSceneObject *so, std::vector<const plMorphSequence*> &mods);
     plMorphSequenceSDLMod *GetSDLMod() const { return fMorphSDLMod; }
 };
 

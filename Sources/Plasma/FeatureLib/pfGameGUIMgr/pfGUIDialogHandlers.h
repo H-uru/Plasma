@@ -48,8 +48,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIDialogHandlers_h
 #define _pfGUIDialogHandlers_h
 
-#include "hsStream.h"
+#include "HeadSpin.h"
+
 #include "pfGUIControlHandlers.h"
+
+class pfGUIDialogMod;
 
 //// pfGUIDialogProc Definition //////////////////////////////////////////////
 //  This works very much like the control proc objects. The idea is, if you
@@ -60,8 +63,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  both your dialog and your control procs. (DoSomething() is overloaded here
 //  so that it's no longer pure virtual, so you can use it for only handling
 //  dialogs if you prefer).
-
-class pfGUIDialogMod;
 class pfGUIDialogProc : public pfGUICtrlProcObject
 {
     protected:
@@ -70,8 +71,8 @@ class pfGUIDialogProc : public pfGUICtrlProcObject
 
     public:
 
-        pfGUIDialogProc() { }
-        virtual ~pfGUIDialogProc() { ; }
+        pfGUIDialogProc() : fDialog() { }
+        virtual ~pfGUIDialogProc() { }
 
         // Called by the mgr--don't call yourself!
         void    SetDialog( pfGUIDialogMod *dlg ) { fDialog = dlg; }
@@ -86,28 +87,28 @@ class pfGUIDialogProc : public pfGUICtrlProcObject
 
         // Overloaded here so you don't have to unless you want to. Overload
         // it if you want to use this for a control handler as well.
-        virtual void    DoSomething( pfGUIControlMod *ctrl ) {;}
+        void    DoSomething(pfGUIControlMod *ctrl) override { }
 
         // Called on dialog init (i.e. first showing, before OnShow() is called), only ever called once
-        virtual void    OnInit( void ) { ; }
+        virtual void    OnInit() { }
 
         // Called before the dialog is shown, always after OnInit()
-        virtual void    OnShow( void ) { ; }
+        virtual void    OnShow() { }
 
         // Called before the dialog is hidden
-        virtual void    OnHide( void ) { ; }
+        virtual void    OnHide() { }
 
         // Called on the dialog's destructor, before it's unregistered with the game GUI manager
-        virtual void    OnDestroy( void ) { ; }
+        virtual void    OnDestroy() { }
 
         // Called when the dialog's focused control changes
-        virtual void    OnCtrlFocusChange( pfGUIControlMod *oldCtrl, pfGUIControlMod *newCtrl ) { ; }
+        virtual void    OnCtrlFocusChange( pfGUIControlMod *oldCtrl, pfGUIControlMod *newCtrl ) { }
 
         // Called when the key bound to a GUI event is pressed. Only called on the top modal dialog
-        virtual void    OnControlEvent( ControlEvt event ) { ; }
+        virtual void    OnControlEvent( ControlEvt event ) { }
 
         // Called when the GUI changes interesting state
-        virtual void    OnInterestingEvent( pfGUIControlMod *ctrl ) { ; }
+        virtual void    OnInterestingEvent( pfGUIControlMod *ctrl ) { }
 };
 
 #endif // _pfGUIDialogHandlers_h

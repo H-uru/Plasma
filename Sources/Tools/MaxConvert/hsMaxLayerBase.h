@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __HSMAXLAYERBASE_H
 #define __HSMAXLAYERBASE_H
 
+#include <maxtypes.h>
+
 #define HSMAX_LAYER_CLASS_ID 0x41990fe7
 
 const Class_ID hsMaxLayerClassID(HSMAX_LAYER_CLASS_ID, 0x72404998);
@@ -195,8 +197,8 @@ public:
     virtual int GetExplicitMipmapLevel(int i) const = 0;
 
     // KLUDGE - Had to do this to compile under MAX4 beta
-    virtual void fnReload() {};
-    virtual void fnViewImage() {};
+    void fnReload() override {}
+    void fnViewImage() override {}
 };
 
 #endif

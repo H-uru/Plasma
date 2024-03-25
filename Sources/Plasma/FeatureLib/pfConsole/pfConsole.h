@@ -56,16 +56,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfConsole_h
 
 #include "HeadSpin.h"
+
+#include <string_theory/string>
+
 #include "pnKeyedObject/hsKeyedObject.h"
 
-
+class pfConsoleEngine;
+class pfConsoleInputInterface;
+class plKeyEventMsg;
 class plPipeline;
 
 //// Class Definition ////////////////////////////////////////////////////////
-
-class pfConsoleEngine;
-class plKeyEventMsg;
-class pfConsoleInputInterface;
 
 class pfConsole : public hsKeyedObject 
 {
@@ -94,7 +95,7 @@ class pfConsole : public hsKeyedObject
         int32_t   fEffectCounter;
         float   fLastTime;
         uint32_t  fHelpTimer;
-        char    fLastHelpMsg[ kWorkingLineSize ];
+        ST::string fLastHelpMsg;
         uint8_t   fMode;      // 0 - invisible, 1 - single line, 2 - full
         bool    fInited, fHelpMode, fPythonMode, fPythonFirstTime, fFXEnabled;
         uint32_t  fPythonMultiLines;
@@ -102,7 +103,7 @@ class pfConsole : public hsKeyedObject
         uint32_t  fMsgTimeoutTimer;
 
         struct _fHistory {
-            char fData[ kNumHistoryItems ][ kMaxCharsWide ];
+            ST::string fData[kNumHistoryItems];
             uint32_t  fCursor, fRecallCursor;
         } fHistory[ kNumHistoryTypes ];
         char    *fDisplayBuffer;
@@ -113,24 +114,30 @@ class pfConsole : public hsKeyedObject
 
         pfConsoleEngine     *fEngine;
 
+        ST::string IGetWorkingLine();
+        void ISetWorkingLine(const ST::string& workingLine);
+        void IClearWorkingLine();
+
         void    IHandleKey( plKeyEventMsg *msg );
+        void    IHandleCharacter(const char c);
 
         static uint32_t       fConsoleTextColor;
         static pfConsole    *fTheConsole;
-        static void CDECL IAddLineCallback( const char *string );
+        static void IAddLineCallback(const ST::string& string);
 
         static plPipeline   *fPipeline;
 
         void    IAddLine( const char *string, short leftMargin = 0 );
-        void    IAddParagraph( const char *string, short margin = 0 );
-        void    IClear( void );
+        void    IAddParagraph(const ST::string& string, short margin = 0);
+        void    IClear();
 
         void    ISetMode( uint8_t mode );
         void    IEnableFX( bool e ) { fFXEnabled = e; }
-        bool    IFXEnabled( void ) { return fFXEnabled; }
+        bool    IFXEnabled() { return fFXEnabled; }
 
-        void    IPrintSomeHelp( void );
-        void    IUpdateTooltip( void );
+        void    IPrintSomeHelp();
+        void    IUpdateTooltip();
+        void    IExecuteWorkingLine();
 
     public:
 
@@ -142,25 +149,22 @@ class pfConsole : public hsKeyedObject
         
         static pfConsole * GetInstance ();
 
-        virtual bool    MsgReceive( plMessage *msg );
+        bool    MsgReceive(plMessage *msg) override;
     
         void    Init( pfConsoleEngine *engine );
         void    Draw( plPipeline *p );
 
-        static void AddLine( const char *string ) { fTheConsole->IAddParagraph( string ); }
-        static void AddLineF(const char * fmt, ...);
-        static void Clear( void ) { fTheConsole->IClear(); }
-        static void Hide( void ) { fTheConsole->ISetMode(kModeHidden); }
+        static void AddLine(const ST::string& string) { fTheConsole->IAddParagraph(string); }
+        static void Clear() { fTheConsole->IClear(); }
+        static void Hide() { fTheConsole->ISetMode(kModeHidden); }
 
         static void EnableEffects( bool enable ) { fTheConsole->IEnableFX( enable ); }
-        static bool AreEffectsEnabled( void ) { return fTheConsole->IFXEnabled(); }
+        static bool AreEffectsEnabled() { return fTheConsole->IFXEnabled(); }
         static void SetTextColor( uint32_t color ) { fConsoleTextColor = color; }
         static uint32_t GetTextColor() { return fConsoleTextColor; }
 
         static void         SetPipeline( plPipeline *pipe ) { fPipeline = pipe; }
-        static plPipeline   *GetPipeline( void ) { return fPipeline; }
-        
-        static void RunCommandAsync (const char cmd[]);
+        static plPipeline   *GetPipeline() { return fPipeline; }
 };
 
 #endif //_pfConsole_h

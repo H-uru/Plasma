@@ -42,14 +42,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRelevanceMgr_inc
 #define plRelevanceMgr_inc
 
+#include <vector>
+
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "hsGeometry3.h"
-#include "hsTemplates.h"
-#include "hsBitVector.h"
 
-
+class hsBitVector;
+struct hsPoint3;
 class plRelevanceRegion;
 class hsStream;
+
+namespace ST { class string; }
 
 class plRelevanceMgr : public hsKeyedObject
 {
@@ -62,7 +64,7 @@ public:
     static void DeInit();   
 
 protected:
-    hsTArray<plRelevanceRegion*> fRegions;  
+    std::vector<plRelevanceRegion*> fRegions;
     bool fEnabled;
 
     void IAddRegion(plRelevanceRegion *);
@@ -74,18 +76,18 @@ public:
     CLASSNAME_REGISTER( plRelevanceMgr );
     GETINTERFACE_ANY( plRelevanceMgr, hsKeyedObject );
     
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     bool GetEnabled() { return fEnabled; }
     void SetEnabled(bool val) { fEnabled = val; }
 
-    uint32_t GetIndex(const plString &regionName);
+    uint32_t GetIndex(const ST::string &regionName);
     void MarkRegion(uint32_t localIdx, uint32_t remoteIdx, bool doICare);
     void SetRegionVectors(const hsPoint3 &pos, hsBitVector &regionsImIn, hsBitVector &regionsICareAbout);
     uint32_t GetNumRegions() const; // includes the secret 0 region in its count
     void ParseCsvInput(hsStream *s);
 
-    plString GetRegionNames(hsBitVector regions);
+    ST::string GetRegionNames(const hsBitVector& regions);
 };
 
 #endif // plRelevanceMgr_inc

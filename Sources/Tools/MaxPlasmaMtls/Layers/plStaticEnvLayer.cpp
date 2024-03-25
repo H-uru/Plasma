@@ -40,29 +40,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "../resource.h"
 
-#include <iparamm2.h>
-#include <stdmat.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include "../resource.h"
 
 #include "plStaticEnvLayer.h"
 
 #include "../plBMSampler.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
 
-class plStaticEnvLayerClassDesc : public ClassDesc2
+class plStaticEnvLayerClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading = FALSE) { return new plStaticEnvLayer(); }
-    const TCHAR*    ClassName()     { return GetString(IDS_STATIC_ENVMAP_LAYER); }
-    SClass_ID       SuperClassID()  { return TEXMAP_CLASS_ID; }
-    Class_ID        ClassID()       { return STATIC_ENV_LAYER_CLASS_ID; }
-    const TCHAR*    Category()      { return TEXMAP_CAT_ENV; }
-    const TCHAR*    InternalName()  { return _T("PlasmaStaticEnvMapLayer"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading = FALSE) override { return new plStaticEnvLayer(); }
+    const TCHAR*    ClassName() override    { return GetString(IDS_STATIC_ENVMAP_LAYER); }
+    SClass_ID       SuperClassID() override { return TEXMAP_CLASS_ID; }
+    Class_ID        ClassID() override      { return STATIC_ENV_LAYER_CLASS_ID; }
+    const TCHAR*    Category() override     { return TEXMAP_CAT_ENV; }
+    const TCHAR*    InternalName() override { return _T("PlasmaStaticEnvMapLayer"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plStaticEnvLayerClassDesc plStaticEnvLayerDesc;
 ClassDesc2* GetStaticEnvLayerDesc() { return &plStaticEnvLayerDesc; }
@@ -70,17 +68,17 @@ ClassDesc2* GetStaticEnvLayerDesc() { return &plStaticEnvLayerDesc; }
 #include "plStaticEnvLayerBitmapPB.cpp"
 
 plStaticEnvLayer::plStaticEnvLayer() :
-    fBitmapPB(NULL),
-    fUVGen(NULL),
-    fTexHandle(NULL),
-    fTexTime(0),
+    fBitmapPB(),
+    fUVGen(),
+    fTexHandle(),
+    fTexTime(),
     fIValid(NEVER)
 {
     int i;
 
     for( i = 0; i < 6; i++ )
     {
-        fBitmaps[ i ] = NULL;
+        fBitmaps[i] = nullptr;
     }
 
     plStaticEnvLayerDesc.MakeAutoParamBlocks(this);
@@ -101,7 +99,7 @@ plStaticEnvLayer::~plStaticEnvLayer()
     IDiscardTexHandle();
 }
 
-void plStaticEnvLayer::GetClassName(TSTR& s)
+void plStaticEnvLayer::IGetClassName(MSTR& s) const
 {
     s = GetString(IDS_STATIC_ENVMAP_LAYER);
 }
@@ -112,7 +110,7 @@ void plStaticEnvLayer::Reset()
     GetStaticEnvLayerDesc()->Reset(this, TRUE); // reset all pb2's
     for( int i = 0; i < 6; i++ )
     {
-        SetBitmap( NULL, i );
+        SetBitmap(nullptr, i);
     }
 
     fIValid.SetEmpty();
@@ -181,7 +179,7 @@ RefTargetHandle plStaticEnvLayer::GetReference(int i)
     {
         case kRefUVGen:     return fUVGen;
         case kRefBitmap:    return fBitmapPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
@@ -216,7 +214,7 @@ IParamBlock2* plStaticEnvLayer::GetParamBlock(int i)
     switch (i)
     {
     case 0: return fBitmapPB;
-    default: return NULL;
+    default: return nullptr;
     }
 }
 
@@ -225,7 +223,7 @@ IParamBlock2* plStaticEnvLayer::GetParamBlockByID(BlockID id)
     if (fBitmapPB->ID() == id)
         return fBitmapPB;
     else
-        return NULL;
+        return nullptr;
 }
 
 //From ReferenceTarget 
@@ -251,22 +249,22 @@ Animatable* plStaticEnvLayer::SubAnim(int i)
     {
         case kRefUVGen:     return fUVGen;
         case kRefBitmap:    return fBitmapPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
-TSTR plStaticEnvLayer::SubAnimName(int i) 
+MSTR plStaticEnvLayer::ISubAnimName(int i)
 {
     switch (i)
     {
-        case kRefUVGen:     return "UVGen";
+        case kRefUVGen:     return _M("UVGen");
         case kRefBitmap:    return fBitmapPB->GetLocalName();
-        default: return "";
+        default: return _M("");
     }
 }
 
-RefResult plStaticEnvLayer::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-   PartID& partID, RefMessage message) 
+RefResult plStaticEnvLayer::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+   PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -281,7 +279,7 @@ RefResult plStaticEnvLayer::NotifyRefChanged(Interval changeInt, RefTargetHandle
                 ParamID changingParam = fBitmapPB->LastNotifyParamID();
                 fBitmapPB->GetDesc()->InvalidateUI(changingParam);
 
-                if (changingParam != -1)
+                if (changingParam != -1 && MAX_REF_PROPAGATE_VALUE)
                     IChanged();
             }
         }
@@ -363,7 +361,7 @@ AColor plStaticEnvLayer::EvalColor(ShadeContext& sc)
     Point3  v = sc.VectorTo( sc.Normal(), REF_OBJECT );
     float   wx,wy,wz;
     Color   rcol;
-    Bitmap  *refmap = NULL;
+    Bitmap  *refmap = nullptr;
     Point3  rv;
     Point2  uv;
     int     size;
@@ -411,7 +409,7 @@ AColor plStaticEnvLayer::EvalColor(ShadeContext& sc)
         }
     }
 
-    if( refmap == NULL )
+    if (refmap == nullptr)
         color.White();
     else
     {
@@ -485,7 +483,7 @@ void plStaticEnvLayer::IDiscardTexHandle()
     if (fTexHandle)
     {
         fTexHandle->DeleteThis();
-        fTexHandle = NULL;
+        fTexHandle = nullptr;
     }
 }
 
@@ -500,7 +498,7 @@ BITMAPINFO *plStaticEnvLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmak
                         // FIXME
     fTexTime = 0;//CalcFrame(t);
 //  texValid = clipValid;
-    BITMAPINFO *bmi = NULL;
+    BITMAPINFO *bmi = nullptr;
     int xflags = 0;
 
     if (fBitmapPB->GetInt(kBmpRGBOutput) == 1)
@@ -510,7 +508,7 @@ BITMAPINFO *plStaticEnvLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmak
     return bmi;
 }
 
-DWORD plStaticEnvLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker) 
+DWORD_PTR plStaticEnvLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
 {
     // FIXME: ignore validity for now
     if (fTexHandle && fIValid.InInterval(t))// && texTime == CalcFrame(t)) 
@@ -528,7 +526,7 @@ DWORD plStaticEnvLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
     }
 }
 
-const char *plStaticEnvLayer::GetTextureName( int which )
+const MCHAR* plStaticEnvLayer::GetTextureName( int which )
 {
 //  if (fBitmapPB->GetInt(kBmpUseBitmap))
     {
@@ -537,14 +535,14 @@ const char *plStaticEnvLayer::GetTextureName( int which )
             return pbbm->bi.Name();
     }
 
-    return NULL;
+    return nullptr;
 }
 
 //// Set/GetBaseFilename //////////////////////////////////////////////////////
 
-void    plStaticEnvLayer::SetBaseFilename( const TCHAR *name, TimeValue t )
+void    plStaticEnvLayer::SetBaseFilename( const MCHAR *name, TimeValue t )
 {
-    fBitmapPB->SetValue( kBmpBaseFilename, t, (TCHAR *)name );
+    fBitmapPB->SetValue( kBmpBaseFilename, t, const_cast<MCHAR*>(name) );
 }
 
 const TCHAR *plStaticEnvLayer::GetBaseFilename( TimeValue t )
@@ -561,24 +559,24 @@ Matrix3 plStaticEnvLayer::IGetViewTM( int i )
     switch( i ) 
     {
         case kTopFace:
-            m.RotateX( -M_PI );   
+            m.RotateX(-hsConstants::pi<float>);
             break;
         case kBottomFace:
             break;
         case kLeftFace:
-            m.RotateX( -.5f * M_PI ); 
-            m.RotateY( -.5f * M_PI );
+            m.RotateX(-hsConstants::half_pi<float>);
+            m.RotateY(-hsConstants::half_pi<float>);
             break;
         case kRightFace:
-            m.RotateX( -.5f * M_PI ); 
-            m.RotateY( +.5f * M_PI );
+            m.RotateX(-hsConstants::half_pi<float>);
+            m.RotateY(hsConstants::half_pi<float>);
             break;
         case kFrontFace:
-            m.RotateX( -.5f * M_PI ); 
-            m.RotateY( M_PI );
+            m.RotateX(-hsConstants::half_pi<float>);
+            m.RotateY(hsConstants::pi<float>);
             break;
         case kBackFace:
-            m.RotateX( -.5f * M_PI ); 
+            m.RotateX(-hsConstants::half_pi<float>);
             break;
     }
     return m;
@@ -586,7 +584,7 @@ Matrix3 plStaticEnvLayer::IGetViewTM( int i )
 
 //// IWriteBM /////////////////////////////////////////////////////////////////
 
-int plStaticEnvLayer::IWriteBM( BitmapInfo *bi, Bitmap *bm, TCHAR *name )
+int plStaticEnvLayer::IWriteBM( BitmapInfo *bi, Bitmap *bm, BMNAME_VALUE_TYPE name )
 {
     bi->SetName( name );
     if( bm->OpenOutput( bi ) == BMMRES_SUCCESS )
@@ -609,11 +607,13 @@ void    plStaticEnvLayer::RenderCubicMap( INode *node )
     int         res, size;
     BOOL        success = 0;
     TSTR        fname, fullname;
-    Bitmap      *bm = NULL;
+    Bitmap      *bm = nullptr;
     TSTR        path, filename, ext, thisFilename;
     BitmapInfo  biOutFile;
 
-    static TCHAR    suffixes[ 6 ][ 4 ] = { "_FR", "_BK", "_LF", "_RT", "_UP", "_DN" };
+    static TCHAR    suffixes[ 6 ][ 4 ] = {
+        _T("_FR"), _T("_BK"), _T("_LF"), _T("_RT"), _T("_UP"), _T("_DN")
+    };
 
 
     Interface *ip = GetCOREInterface();
@@ -652,7 +652,7 @@ void    plStaticEnvLayer::RenderCubicMap( INode *node )
     vp.projType = PROJ_PERSPECTIVE;
     vp.hither = .001f;
     vp.yon = 1.0e30f;
-    vp.fov = M_PI/2.0f;
+    vp.fov = hsConstants::half_pi<float>;
     if( fBitmapPB->GetInt( kBmpUseMAXAtmosphere ) )
     {
         vp.nearRange = 0;
@@ -675,7 +675,7 @@ void    plStaticEnvLayer::RenderCubicMap( INode *node )
         // Construct filename
         thisFilename.printf( _T( "%s\\%s%s%s" ), path, filename, suffixes[ i ], ext );
 
-        res = ip->CurRendererRenderFrame( ip->GetTime(), bm, NULL, 1.0f, &vp );
+        res = ip->CurRendererRenderFrame(ip->GetTime(), bm, nullptr, 1.0f, &vp);
         if( !res ) 
             goto fail;
 

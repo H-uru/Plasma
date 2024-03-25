@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
+#include <set>
 
 
 //// Listener Settings Class Definition ///////////////////////////////////////
@@ -75,22 +75,22 @@ class plEAXListener
 {   
 public:
     ~plEAXListener();
-    static plEAXListener    &GetInstance( void );
+    static plEAXListener    &GetInstance();
 
-    bool    Init( void );
-    void    Shutdown( void );
+    bool    Init();
+    void    Shutdown();
 
     bool SetGlobalEAXProperty(GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize );
     bool GetGlobalEAXProperty(GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize );
-    
-    void    ProcessMods( hsTArray<plEAXListenerMod *> &modArray );
-    void    ClearProcessCache( void );
+
+    void    ProcessMods(const std::set<plEAXListenerMod*>& modArray );
+    void    ClearProcessCache();
 
 protected:
     plEAXListener();
     void    IFail( bool major );
     void    IFail( const char *msg, bool major );
-    void    IRelease( void );
+    void    IRelease();
 
     void    IMuteProperties( EAXREVERBPROPERTIES *props, float percent );
 
@@ -119,12 +119,12 @@ public:
         void        Write( hsStream *s );
 
         void        SetOcclusion( int16_t occ, float lfRatio, float roomRatio, float directRatio );
-        int16_t       GetOcclusion( void ) const { return fOcclusion; }
-        float    GetOcclusionLFRatio( void ) const { return fOcclusionLFRatio; }
-        float    GetOcclusionRoomRatio( void ) const { return fOcclusionRoomRatio; }
-        float    GetOcclusionDirectRatio( void ) const { return fOcclusionDirectRatio; }
+        int16_t       GetOcclusion() const { return fOcclusion; }
+        float    GetOcclusionLFRatio() const { return fOcclusionLFRatio; }
+        float    GetOcclusionRoomRatio() const { return fOcclusionRoomRatio; }
+        float    GetOcclusionDirectRatio() const { return fOcclusionDirectRatio; }
 
-        void        Reset( void );
+        void        Reset();
 };
 
 //// Buffer Settings Class Definition /////////////////////////////////////////
@@ -141,32 +141,32 @@ class plEAXSourceSettings
         void    Write( hsStream *s );
 
         void    Enable( bool e );
-        bool    IsEnabled( void ) const { return fEnabled; }
+        bool    IsEnabled() const { return fEnabled; }
 
         void    SetRoomParams( int16_t room, int16_t roomHF, bool roomAuto, bool roomHFAuto );
-        int16_t   GetRoom( void ) const   { return fRoom; }
-        int16_t   GetRoomHF( void )  const  { return fRoomHF; }
-        bool    GetRoomAuto( void ) const   { return fRoomAuto; }
-        bool    GetRoomHFAuto( void ) const  { return fRoomHFAuto; }
+        int16_t   GetRoom() const   { return fRoom; }
+        int16_t   GetRoomHF()  const  { return fRoomHF; }
+        bool    GetRoomAuto() const   { return fRoomAuto; }
+        bool    GetRoomHFAuto() const  { return fRoomHFAuto; }
 
         void    SetOutsideVolHF( int16_t vol );
-        int16_t   GetOutsideVolHF( void ) const { return fOutsideVolHF; }
+        int16_t   GetOutsideVolHF() const { return fOutsideVolHF; }
 
         void        SetFactors( float airAbsorption, float roomRolloff, float doppler, float rolloff );
-        float    GetAirAbsorptionFactor( void ) const { return fAirAbsorptionFactor; }
-        float    GetRoomRolloffFactor( void ) const { return fRoomRolloffFactor; }
-        float    GetDopplerFactor( void ) const { return fDopplerFactor; }
-        float    GetRolloffFactor( void ) const { return fRolloffFactor; }
+        float    GetAirAbsorptionFactor() const { return fAirAbsorptionFactor; }
+        float    GetRoomRolloffFactor() const { return fRoomRolloffFactor; }
+        float    GetDopplerFactor() const { return fDopplerFactor; }
+        float    GetRolloffFactor() const { return fRolloffFactor; }
 
-        plEAXSourceSoftSettings &GetSoftStarts( void ) { return fSoftStarts; }
-        plEAXSourceSoftSettings &GetSoftEnds( void ) { return fSoftEnds; }
+        plEAXSourceSoftSettings &GetSoftStarts() { return fSoftStarts; }
+        plEAXSourceSoftSettings &GetSoftEnds() { return fSoftEnds; }
         
-        plEAXSourceSoftSettings &GetCurrSofts( void )  { return fCurrSoftValues; }
+        plEAXSourceSoftSettings &GetCurrSofts()  { return fCurrSoftValues; }
 
         void        SetOcclusionSoftValue( float value );
-        float    GetOcclusionSoftValue( void ) const { return fOcclusionSoftValue; }
+        float    GetOcclusionSoftValue() const { return fOcclusionSoftValue; }
 
-        void        ClearDirtyParams( void ) const { fDirtyParams = 0; }
+        void        ClearDirtyParams() const { fDirtyParams = 0; }
 
     protected:
         friend class plEAXSource;
@@ -205,8 +205,8 @@ public:
     virtual ~plEAXSource();
 
     void    Init( plDSoundBuffer *parent );
-    void    Release( void );
-    bool    IsValid( void ) const;
+    void    Release();
+    bool    IsValid() const;
     bool SetSourceEAXProperty(unsigned source, GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize);
     bool GetSourceEAXProperty(unsigned source, GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize);
     void    SetFrom(  plEAXSourceSettings *settings, unsigned source, bool force = false );

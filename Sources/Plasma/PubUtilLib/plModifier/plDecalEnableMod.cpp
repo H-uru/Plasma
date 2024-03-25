@@ -40,8 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-
-#include "HeadSpin.h"
 #include "plDecalEnableMod.h"
 #include "plMessage/plDynaDecalEnableMsg.h"
 #include "plMessage/plCollideMsg.h"
@@ -53,13 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsResMgr.h"
 
-plDecalEnableMod::plDecalEnableMod()
-{
-}
-
-plDecalEnableMod::~plDecalEnableMod()
-{
-}
 
 bool plDecalEnableMod::MsgReceive(plMessage* msg)
 {
@@ -76,10 +67,9 @@ bool plDecalEnableMod::MsgReceive(plMessage* msg)
 
         plKey armKey = arm->GetKey();
 
-        int i;
-        for( i = 0; i < fDecalMgrs.GetCount(); i++ )
+        for (const plKey& mgrKey : fDecalMgrs)
         {
-            plDynaDecalEnableMsg* ena = new plDynaDecalEnableMsg(fDecalMgrs[i], armKey, hsTimer::GetSysSeconds(), fWetLength, !coll->fEntering);
+            plDynaDecalEnableMsg* ena = new plDynaDecalEnableMsg(mgrKey, armKey, hsTimer::GetSysSeconds(), fWetLength, !coll->fEntering);
 
             ena->Send();
         }
@@ -93,24 +83,22 @@ void plDecalEnableMod::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Read(stream, mgr);
 
-    int n = stream->ReadLE32();
-    fDecalMgrs.SetCount(n);
-    int i;
-    for( i = 0; i < n; i++ )
+    uint32_t n = stream->ReadLE32();
+    fDecalMgrs.resize(n);
+    for (uint32_t i = 0; i < n; i++)
         fDecalMgrs[i] = mgr->ReadKey(stream);
 
-    fWetLength = stream->ReadLEScalar();
+    fWetLength = stream->ReadLEFloat();
 }
 
 void plDecalEnableMod::Write(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Write(stream, mgr);
 
-    stream->WriteLE32(fDecalMgrs.GetCount());
+    stream->WriteLE32((uint32_t)fDecalMgrs.size());
 
-    int i;
-    for( i = 0; i < fDecalMgrs.GetCount(); i++ )
-        mgr->WriteKey(stream, fDecalMgrs[i]);
+    for (const plKey& mgrKey : fDecalMgrs)
+        mgr->WriteKey(stream, mgrKey);
 
-    stream->WriteLEScalar(fWetLength);
+    stream->WriteLEFloat(fWetLength);
 }

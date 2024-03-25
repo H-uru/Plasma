@@ -49,15 +49,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper for Python to a plMipMap image
 //
 
-#include "pyGlueHelpers.h"
-#include <vector>
+#include <map>
 
 #include "pnKeyedObject/plKey.h"
-#include "pyColor.h"
 
 #ifndef BUILDING_PYPLASMA
 #   include "plGImage/plMipmap.h"
 #endif
+
+#include "pyGlueDefinitions.h"
+
+class plFileName;
+class pyColor;
+class pyKey;
+namespace ST { class string; }
 
 class pyImage
 {
@@ -69,18 +74,18 @@ protected:
 
     pyImage() // for python glue only, do NOT call
     {
-        fMipMapKey = nil;
+        fMipMapKey = nullptr;
 #ifndef BUILDING_PYPLASMA
-        fMipmap = nil;
+        fMipmap = nullptr;
 #endif
     } 
 
     // Constructor from C++
     pyImage(plKey mipmapKey)
     {
-        fMipMapKey = mipmapKey;
+        fMipMapKey = std::move(mipmapKey);
 #ifndef BUILDING_PYPLASMA
-        fMipmap = nil;
+        fMipmap = nullptr;
 #endif
     }
 
@@ -118,7 +123,7 @@ public:
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyImage); // converts a PyObject to a pyImage (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
-    static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
+    static void AddPlasmaMethods(PyObject* m);
 
     void setKey(pyKey& mipmapKey);
 
@@ -144,7 +149,7 @@ public:
     uint32_t GetWidth(); // returns the width of the image
     uint32_t GetHeight(); // returns the height of the image
     void SaveAsJPEG(const plFileName& fileName, uint8_t quality = 75);
-    void SaveAsPNG(const plFileName& fileName);
+    void SaveAsPNG(const plFileName& fileName, const std::multimap<ST::string, ST::string>& textFields = std::multimap<ST::string, ST::string>());
     static PyObject* LoadJPEGFromDisk(const plFileName& filename, uint16_t width, uint16_t height); // returns pyImage
     static PyObject* LoadPNGFromDisk(const plFileName& filename, uint16_t width, uint16_t height); // returns pyImage
 #endif

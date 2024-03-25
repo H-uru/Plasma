@@ -39,8 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsStream.h"
+
 #include "plSDL.h"
+
+#include "hsStream.h"
+
 #include "pnNetCommon/plNetApp.h"
 
 const uint8_t plStateDescriptor::kVersion=1;      // for Read/Write format
@@ -62,20 +65,20 @@ void plStateDescriptor::IDeInit()
     fVarsList.clear();
 }
 
-plVarDescriptor* plStateDescriptor::FindVar(const plString& name, int* idx) const
+plVarDescriptor* plStateDescriptor::FindVar(const ST::string& name, int* idx) const
 {
     VarsList::const_iterator it;
     for(it=fVarsList.begin(); it != fVarsList.end(); it++)
     {
-        if (!(*it)->GetName().CompareI(name))
+        if (!(*it)->GetName().compare_i(name))
         {
             if (idx)
-                *idx = it-fVarsList.begin();
+                *idx = (int)(it-fVarsList.begin());
             return *it;
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -84,11 +87,10 @@ plVarDescriptor* plStateDescriptor::FindVar(const plString& name, int* idx) cons
 // 
 bool plStateDescriptor::Read(hsStream* s)
 {
-    uint8_t rwVersion;
-    s->ReadLE(&rwVersion);
+    uint8_t rwVersion = s->ReadByte();
     if (rwVersion != kVersion)
     {
-        plNetApp::StaticWarningMsg("StateDescriptor Read/Write version mismatch, mine %d, read %d", kVersion, rwVersion);
+        plNetApp::StaticWarningMsg("StateDescriptor Read/Write version mismatch, mine {}, read {}", kVersion, rwVersion);
         return false;
     }
 
@@ -106,7 +108,7 @@ bool plStateDescriptor::Read(hsStream* s)
     for(i=0;i<numVars; i++)
     {
         uint8_t SDVar=s->ReadByte();      
-        plVarDescriptor* var = nil;
+        plVarDescriptor* var = nullptr;
         if (SDVar)
             var = new plSDVarDescriptor;
         else
@@ -124,22 +126,21 @@ bool plStateDescriptor::Read(hsStream* s)
 // 
 void plStateDescriptor::Write(hsStream* s) const
 {
-    s->WriteLE(kVersion);
+    s->WriteByte(kVersion);
     
     s->WriteSafeString(fName);
 
-    uint16_t version=fVersion;
-    s->WriteLE(version);
+    s->WriteLE16((uint16_t)fVersion);
 
-    uint16_t numVars=fVarsList.size();
-    s->WriteLE(numVars);
+    size_t numVars = fVarsList.size();
+    hsAssert(numVars < std::numeric_limits<uint16_t>::max(), "Too many variables");
+    s->WriteLE16(uint16_t(numVars));
 
     VarsList::const_iterator it;
-    for(it=fVarsList.begin(); it!=fVarsList.end(); it++)
-    {
-        uint8_t SDVar = ((*it)->GetAsSDVarDescriptor() != nil);
+    for (const plVarDescriptor* desc : fVarsList) {
+        auto SDVar = (uint8_t)(desc->GetAsSDVarDescriptor() != nullptr);
         s->WriteByte(SDVar);
-        (*it)->Write(s);
+        desc->Write(s);
     }
 }
 

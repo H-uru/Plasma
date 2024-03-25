@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plSpaceTreeMaker.h"
 #include "plMath/hsRadixSort.h"
-#include "plDrawable/plSpaceTree.h"
+#include "plSpaceTree.h"
 
  // for testing, get hsRand()
 #include "hsTimer.h"
@@ -123,28 +123,27 @@ plSpaceCullResult mySpaceCullFunction(const hsBounds3Ext& bnd)
 }
 #endif
 
-void plSpaceTreeMaker::ISortList(hsTArray<plSpacePrepNode*>& nodes, const hsVector3& axis)
+void plSpaceTreeMaker::ISortList(std::vector<plSpacePrepNode*>& nodes, const hsVector3& axis)
 {
     StartTimer(kSortList);
 
-    hsRadixSort::Elem*  list = fSortScratch;
+    hsRadixSort::Elem* list = fSortScratch;
     hsRadixSort::Elem* listTrav = list;
-    int32_t n = nodes.GetCount();
-    while( n-- )
+    size_t n = nodes.size();
+    while (n--)
     {
         listTrav->fKey.fFloat = axis.InnerProduct(nodes[n]->fWorldBounds.GetCenter());
-        listTrav->fBody = (void*)nodes[n];
+        listTrav->fBody = (intptr_t)nodes[n];
         listTrav->fNext = listTrav+1;
         listTrav++;
     }
-    list[nodes.GetCount()-1].fNext = nil;
+    list[nodes.size()-1].fNext = nullptr;
     uint32_t sortFlags = 0;
     hsRadixSort rad;
     hsRadixSort::Elem* sortedList = rad.Sort(list, sortFlags);
     listTrav = sortedList;
 
-    int i;
-    for( i = 0; i < nodes.GetCount(); i++ )
+    for (size_t i = 0; i < nodes.size(); i++)
     {
         nodes[i] = (plSpacePrepNode*)(listTrav->fBody);
         listTrav = listTrav->fNext;
@@ -155,40 +154,36 @@ void plSpaceTreeMaker::ISortList(hsTArray<plSpacePrepNode*>& nodes, const hsVect
     return;
 }
 
-void plSpaceTreeMaker::ISplitList(hsTArray<plSpacePrepNode*>& nodes, const hsVector3& axis, hsTArray<plSpacePrepNode*>& lower, hsTArray<plSpacePrepNode*>& upper)
+void plSpaceTreeMaker::ISplitList(std::vector<plSpacePrepNode*>& nodes, const hsVector3& axis,
+                                  std::vector<plSpacePrepNode*>& lower, std::vector<plSpacePrepNode*>& upper)
 {
 
     ISortList(nodes, axis);
 
-    int lowerCount = nodes.GetCount() / 2;
-    int upperCount = nodes.GetCount() - lowerCount;
-    lower.SetCount(lowerCount);
-    upper.SetCount(upperCount);
+    size_t lowerCount = nodes.size() / 2;
+    size_t upperCount = nodes.size() - lowerCount;
+    lower.resize(lowerCount);
+    upper.resize(upperCount);
 
-    int i;
-    for( i = 0; i < lowerCount; i++ )
-        lower[i] = nodes[i];
-    for( i = 0; i < upperCount; i++ )
-        upper[i] = nodes[i + lowerCount];
+    std::copy(nodes.begin(), nodes.begin() + lowerCount, lower.begin());
+    std::copy(nodes.begin() + lowerCount, nodes.end(), upper.begin());
 }
 
-hsBounds3Ext plSpaceTreeMaker::IFindDistToCenterAxis(hsTArray<plSpacePrepNode*>& nodes, float& length, hsVector3& axis)
+hsBounds3Ext plSpaceTreeMaker::IFindDistToCenterAxis(std::vector<plSpacePrepNode*>& nodes, float& length, hsVector3& axis)
 {
     hsBounds3Ext bnd;
     bnd.MakeEmpty();
 
-    hsAssert(nodes.GetCount() > 1, "Degenerate case");
+    hsAssert(nodes.size() > 1, "Degenerate case");
 
-    int i;
-    for( i = 0; i < nodes.GetCount(); i++ )
+    for (plSpacePrepNode* node : nodes)
     {
-        bnd.Union(&nodes[i]->fWorldBounds);
+        bnd.Union(&node->fWorldBounds);
     }
-    length = 0;
-    for( i = 0; i < nodes.GetCount(); i++ )
+    length = 0.f;
+    for (plSpacePrepNode* node : nodes)
     {
-        hsVector3 sep;
-        sep.Set(&bnd.GetCenter(), &nodes[i]->fWorldBounds.GetCenter());
+        hsVector3 sep(&bnd.GetCenter(), &node->fWorldBounds.GetCenter());
         float len = sep.MagnitudeSquared();
         if( len > length )
         {
@@ -205,22 +200,22 @@ hsBounds3Ext plSpaceTreeMaker::IFindDistToCenterAxis(hsTArray<plSpacePrepNode*>&
     return bnd;
 }
 
-plSpacePrepNode* plSpaceTreeMaker::IMakeFatTreeRecur(hsTArray<plSpacePrepNode*>& nodes)
+plSpacePrepNode* plSpaceTreeMaker::IMakeFatTreeRecur(std::vector<plSpacePrepNode*>& nodes)
 {
-    if( !nodes.GetCount() )
-        return nil;
+    if (nodes.empty())
+        return nullptr;
 
     StartTimer(kMakeFatTree);
 
     plSpacePrepNode* subRoot = new plSpacePrepNode;
     fTreeSize++;
 
-    if( nodes.GetCount() == 1 )
+    if (nodes.size() == 1)
     {
         *subRoot = *nodes[0];
 
-        subRoot->fChildren[0] = nil;
-        subRoot->fChildren[1] = nil;
+        subRoot->fChildren[0] = nullptr;
+        subRoot->fChildren[1] = nullptr;
 
         StopTimer(kMakeFatTree);
 
@@ -235,8 +230,8 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeFatTreeRecur(hsTArray<plSpacePrepNode*>&
     hsVector3 axis;
     hsBounds3Ext bnd = IFindDistToCenterAxis(nodes, length, axis);
 
-    hsTArray<plSpacePrepNode*> list0;
-    hsTArray<plSpacePrepNode*> list1;
+    std::vector<plSpacePrepNode*> list0;
+    std::vector<plSpacePrepNode*> list1;
     ISplitList(nodes, axis, list0, list1);
 
     subRoot->fChildren[0] = IMakeTreeRecur(list0);
@@ -249,14 +244,14 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeFatTreeRecur(hsTArray<plSpacePrepNode*>&
     return subRoot;
 }
 
-hsBounds3Ext plSpaceTreeMaker::IFindSplitAxis(hsTArray<plSpacePrepNode*>& nodes, float& length, hsVector3& axis)
+hsBounds3Ext plSpaceTreeMaker::IFindSplitAxis(std::vector<plSpacePrepNode*>& nodes, float& length, hsVector3& axis)
 {
     hsBounds3Ext bnd;
     bnd.MakeEmpty();
-    int i;
-    for( i = 0; i < nodes.GetCount(); i++ )
+
+    for (plSpacePrepNode* node : nodes)
     {
-        bnd.Union(&nodes[i]->fWorldBounds);
+        bnd.Union(&node->fWorldBounds);
     }
     float maxLen = bnd.GetMaxs()[0] - bnd.GetMins()[0];
     int maxAxis = 0;
@@ -290,21 +285,21 @@ hsBounds3Ext plSpaceTreeMaker::IFindSplitAxis(hsTArray<plSpacePrepNode*>& nodes,
     return bnd;
 }
 
-void plSpaceTreeMaker::IFindBigList(hsTArray<plSpacePrepNode*>& nodes, float length, const hsVector3& axis, hsTArray<plSpacePrepNode*>& giants, hsTArray<plSpacePrepNode*>& strimps)
+void plSpaceTreeMaker::IFindBigList(std::vector<plSpacePrepNode*>& nodes, float length, const hsVector3& axis,
+                                    std::vector<plSpacePrepNode*>& giants, std::vector<plSpacePrepNode*>& strimps)
 {
     const float kCutoffFrac = 0.5f;
 
-    giants.SetCount(0);
-    strimps.SetCount(0);
-    int i;
-    for( i = 0; i < nodes.GetCount(); i++ )
+    giants.clear();
+    strimps.clear();
+    for (plSpacePrepNode* node : nodes)
     {
         hsPoint2 depth;
-        nodes[i]->fWorldBounds.TestPlane(axis, depth);
+        node->fWorldBounds.TestPlane(axis, depth);
         if( depth.fY - depth.fX > length * kCutoffFrac )
-            giants.Append(nodes[i]);
+            giants.emplace_back(node);
         else
-            strimps.Append(nodes[i]);
+            strimps.emplace_back(node);
     }
 }
 
@@ -319,12 +314,12 @@ plSpacePrepNode* plSpaceTreeMaker::INewSubRoot(const hsBounds3Ext& bnd)
     return subRoot;
 }
 
-plSpacePrepNode* plSpaceTreeMaker::IMakeTreeRecur(hsTArray<plSpacePrepNode*>& nodes)
+plSpacePrepNode* plSpaceTreeMaker::IMakeTreeRecur(std::vector<plSpacePrepNode*>& nodes)
 {
-    if( !nodes.GetCount() )
-        return nil;
+    if (nodes.empty())
+        return nullptr;
 
-    if( nodes.GetCount() == 1 )
+    if (nodes.size() == 1)
     {
         return IMakeFatTreeRecur(nodes);
     }
@@ -337,20 +332,20 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeTreeRecur(hsTArray<plSpacePrepNode*>& no
     hsBounds3Ext bnd = IFindSplitAxis(nodes, length, axis);
 
     // Find everyone with bounds over half that size in the same dimension as list0.
-    hsTArray<plSpacePrepNode*> list0;
-    hsTArray<plSpacePrepNode*> list1;
+    std::vector<plSpacePrepNode*> list0;
+    std::vector<plSpacePrepNode*> list1;
     IFindBigList(nodes, length, axis, list0, list1);
 
-    plSpacePrepNode* subRoot = nil;
+    plSpacePrepNode* subRoot = nullptr;
 
     // If list0 not empty, put them in first child, recur on remainder,
-    if( list0.GetCount() && list1.GetCount() )
+    if (!list0.empty() && !list1.empty())
     {
         subRoot = INewSubRoot(bnd);
         subRoot->fChildren[0] = IMakeFatTreeRecur(list0); // too big
         subRoot->fChildren[1] = IMakeTreeRecur(list1); // remainder
     }
-    else if( list0.GetCount() )
+    else if (!list0.empty())
     {
         subRoot = IMakeFatTreeRecur(list0);
     }
@@ -372,20 +367,20 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeTreeRecur(hsTArray<plSpacePrepNode*>& no
 
 void plSpaceTreeMaker::IMakeTree()
 {
-    fSortScratch = new hsRadixSort::Elem[fLeaves.GetCount()];
+    fSortScratch = new hsRadixSort::Elem[fLeaves.size()];
 
     fPrepTree = IMakeTreeRecur(fLeaves);
 
     delete [] fSortScratch;
-    fSortScratch = nil;
+    fSortScratch = nullptr;
 }
 
 void plSpaceTreeMaker::Reset()
 {
-    fLeaves.Reset();
-    fPrepTree = nil;
+    fLeaves.clear();
+    fPrepTree = nullptr;
     fTreeSize = 0;
-    fSortScratch = nil;
+    fSortScratch = nullptr;
 }
 
 void plSpaceTreeMaker::IDeleteTreeRecur(plSpacePrepNode* node)
@@ -402,27 +397,26 @@ void plSpaceTreeMaker::IDeleteTreeRecur(plSpacePrepNode* node)
 void plSpaceTreeMaker::Cleanup()
 {
     IDeleteTreeRecur(fPrepTree);
-    fPrepTree = nil;
+    fPrepTree = nullptr;
 
-    int i;
-    for( i = 0; i < fLeaves.GetCount(); i++ )
-        delete fLeaves[i];
-    fLeaves.Reset();
+    for (plSpacePrepNode* node : fLeaves)
+        delete node;
+    fLeaves.clear();
     fDisabled.Reset();
 }
 
 int32_t plSpaceTreeMaker::AddLeaf(const hsBounds3Ext& worldBnd, bool disable)
 {
     plSpacePrepNode* leaf = new plSpacePrepNode;
-    fLeaves.Append(leaf);
-    leaf->fDataIndex = fLeaves.GetCount()-1;
-    leaf->fChildren[0] = nil;
-    leaf->fChildren[1] = nil;
+    fLeaves.emplace_back(leaf);
+    leaf->fDataIndex = (int16_t)fLeaves.size() - 1;
+    leaf->fChildren[0] = nullptr;
+    leaf->fChildren[1] = nullptr;
     
     leaf->fWorldBounds = worldBnd;
     if( leaf->fWorldBounds.GetType() != kBoundsNormal )
     {
-        static const hsPoint3 zero(0.f, 0.f, 0.f);
+        static const hsPoint3 zero;
         leaf->fWorldBounds.Reset(&zero);
     }
 
@@ -477,17 +471,17 @@ void plSpaceTreeMaker::TestTree()
 
     hsMatrix44 liX;
     hsMatrix44 invLiX;
-    liX.MakeTranslateMat(&hsVector3(0.5f, 0.5f, 0));
+    liX.MakeTranslateMat(&hsVector3(0.5f, 0.5f, 0.f));
     liX.GetInverse(&invLiX);
 
     plSphereIsect sphere;
     sphere.SetRadius(0.2);
     sphere.SetTransform(liX, invLiX);
     
-    tree->SetViewPos(*hsPoint3().Set(0,0,0));
+    tree->SetViewPos(*hsPoint3());
 
     plConeIsect cone;
-    cone.SetAngle(M_PI*0.25f);
+    cone.SetAngle(hsConstants::pi<float> * 0.25f);
     cone.SetTransform(liX, invLiX);
 
     StartTimer(kHarvestCone);
@@ -498,7 +492,7 @@ void plSpaceTreeMaker::TestTree()
     StopTimer(kHarvestCone);
 
     plConeIsect capped;
-    capped.SetAngle(M_PI*0.25f);
+    capped.SetAngle(hsConstants::pi<float> * 0.25f);
     capped.SetLength(0.5f);
     capped.SetTransform(liX, invLiX);
 
@@ -529,10 +523,10 @@ plSpaceTree* plSpaceTreeMaker::MakeTree()
 
     StartTimer(kMakeTreeAll);
 
-    if( !fLeaves.GetCount() )
+    if (fLeaves.empty())
         return IMakeEmptyTree();
 
-    if( fLeaves.GetCount() < 2 )
+    if (fLeaves.size() < 2)
         return IMakeDegenerateTree();
 
     IMakeTree();
@@ -550,8 +544,8 @@ plSpaceTree* plSpaceTreeMaker::IMakeEmptyTree()
 {
     plSpaceTree* tree = new plSpaceTree;
 
-    tree->fTree.SetCount(1);
-    hsPoint3 zero(0, 0, 0);
+    tree->fTree.resize(1);
+    hsPoint3 zero;
     tree->fTree[0].fWorldBounds.Reset(&zero);
     tree->fTree[0].fFlags = plSpaceTreeNode::kEmpty;
     tree->fRoot = 0;
@@ -566,7 +560,7 @@ plSpaceTree* plSpaceTreeMaker::IMakeDegenerateTree()
 {
     plSpaceTree* tree = new plSpaceTree;
     
-    tree->fTree.Push();
+    tree->fTree.resize(1);
 
     tree->fRoot = 0;
     tree->fTree[0].fWorldBounds = fLeaves[0]->fWorldBounds;
@@ -604,7 +598,7 @@ plSpaceTree* plSpaceTreeMaker::IMakeSpaceTree()
 
     plSpacePrepNode* head = fPrepTree;
 
-    tree->fTree.SetCount(fLeaves.GetCount());
+    tree->fTree.resize(fLeaves.size());
     
     IGatherLeavesRecur(head, tree);
     
@@ -612,12 +606,11 @@ plSpaceTree* plSpaceTreeMaker::IMakeSpaceTree()
     while( level > 0 )
         IMakeSpaceTreeRecur(head, tree, --level, 0);
 
-    tree->fRoot = tree->fTree.GetCount()-1;
+    tree->fRoot = (int16_t)tree->fTree.size() - 1;
     tree->fTree[tree->fRoot].fParent = plSpaceTree::kRootParent;
-    tree->fNumLeaves = fLeaves.GetCount();
+    tree->fNumLeaves = fLeaves.size();
 
-    int i;
-    for( i = 0; i < fLeaves.GetCount(); i++ )
+    for (size_t i = 0; i < fLeaves.size(); i++)
     {
         if( fDisabled.IsBitSet(i) )
             tree->SetLeafFlag(i, plSpaceTreeNode::kDisabled, true);
@@ -635,8 +628,8 @@ int16_t plSpaceTreeMaker::IMakeSpaceTreeRecur(plSpacePrepNode* sub, plSpaceTree*
 {
     if( currLevel == targetLevel )
     {
-        int16_t nodeIdx = tree->fTree.GetCount();
-        tree->fTree.Push();
+        int16_t nodeIdx = (int16_t)tree->fTree.size();
+        tree->fTree.emplace_back();
 
         tree->fTree[nodeIdx].fWorldBounds = sub->fWorldBounds;
 
@@ -713,8 +706,8 @@ void plSpaceTreeMaker::IMakeSpaceTreeRecur(plSpacePrepNode* sub, plSpaceTree* tr
 
     if( currLevel == targetLevel )
     {
-        int16_t nodeIdx = tree->fTree.GetCount();
-        tree->fTree.Push();
+        int16_t nodeIdx = (int16_t)tree->fTree.size();
+        tree->fTree.emplace_back();
 
         tree->fTree[nodeIdx].fWorldBounds = sub->fWorldBounds;
 

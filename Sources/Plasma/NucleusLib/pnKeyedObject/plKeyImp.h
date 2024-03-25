@@ -43,8 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plKeyImp_inc
 
 #include "plKey.h"
-#include "hsTemplates.h"
-#include "plUoid.h"  
+#include "plUoid.h"
 #include "hsBitVector.h"
 #include "plRefFlags.h"
 
@@ -61,12 +60,17 @@ public:
     plKeyImp(plUoid, uint32_t pos,uint32_t len);
     virtual ~plKeyImp();
 
-    virtual const plUoid&   GetUoid() const { return fUoid; }
-    virtual const plString& GetName() const;
+    static plKeyImp* GetFromKey(const plKey& key)
+    {
+        return static_cast<plKeyImp*>(&*key);
+    }
 
-    virtual hsKeyedObject*  GetObjectPtr();
-    virtual hsKeyedObject*  ObjectIsLoaded() const;
-    virtual hsKeyedObject*  VerifyLoaded();
+    const plUoid&           GetUoid() const override { return fUoid; }
+    ST::string              GetName() const override;
+
+    hsKeyedObject*  GetObjectPtr() override;
+    hsKeyedObject*  ObjectIsLoaded() const override;
+    hsKeyedObject*  VerifyLoaded() override;
 
     // called before writing to disk so that static keys can have faster lookups (int compare instead of string compare)
     void SetObjectID(uint32_t id) {fUoid.SetObjectID(id);}
@@ -89,15 +93,15 @@ public:
     // should only be active ref'ed by a non-keyed parent.  Essentially just bumps/decs
     // the active ref count to facilitate normal object creation/destruction
     //----------------------
-    virtual hsKeyedObject*  RefObject(plRefFlags::Type flags = plRefFlags::kActiveRef);
-    virtual void            UnRefObject(plRefFlags::Type flags = plRefFlags::kActiveRef);
+    hsKeyedObject*  RefObject(plRefFlags::Type flags = plRefFlags::kActiveRef) override;
+    void            UnRefObject(plRefFlags::Type flags = plRefFlags::kActiveRef) override;
 
     //----------------------
     // Release has two behaviors, depending on whether the ref is active or passive:
     // Active - Release decs the ActiveRefCnt. When it gets to zero, the object will be deleted.
     // Passive - Unregisters my interest in when the object is created or destroyed.
     //----------------------
-    virtual void Release(plKey targetKey);
+    void Release(plKey targetKey) override;
 
     void UnRegister();
     void SetUoid(const plUoid& uoid);
@@ -118,37 +122,35 @@ public:
     plKey   GetClone(uint32_t playerID, uint32_t cloneID) const;
     void    CopyForClone(const plKeyImp* p, uint32_t playerID, uint32_t cloneID);    // Copy the contents of p for cloning process
 
-    uint32_t  GetNumClones();
-    plKey   GetCloneByIdx(uint32_t idx);
-    plKey   GetCloneOwner() { return fCloneOwner; }
+    size_t  GetNumClones();
+    plKey   GetCloneByIdx(size_t idx);
+    plKey   GetCloneOwner() const { return fCloneOwner; }
 
     void NotifyCreated();
     void ISetupNotify(plRefMsg* msg, plRefFlags::Type flags); // Setup notifcations for reference, don't send anything.
 
     void        AddRef(plKeyImp* key) const;
-    uint16_t      GetNumRefs() const { return fRefs.GetCount(); }
-    plKeyImp*   GetRef(int i) const { return fRefs[i]; }
+    size_t      GetNumRefs() const { return fRefs.size(); }
+    plKeyImp*   GetRef(size_t i) const { return fRefs[i]; }
     void        RemoveRef(plKeyImp *key) const;
 
-    virtual uint16_t      GetActiveRefs() const           { return fNumActiveRefs; }
-    virtual uint16_t      GetNumNotifyCreated() const     { return fNotifyCreated.GetCount(); }
-    virtual plRefMsg*   GetNotifyCreated(int i) const   { return fNotifyCreated[i]; }
-    virtual const hsBitVector& GetActiveBits() const    { return fActiveRefs; }
+    uint16_t    GetActiveRefs() const override          { return fNumActiveRefs; }
+    size_t      GetNumNotifyCreated() const override    { return fNotifyCreated.size(); }
+    plRefMsg*   GetNotifyCreated(size_t i) const override { return fNotifyCreated[i]; }
+    const hsBitVector& GetActiveBits() const override   { return fActiveRefs; }
 
 protected:
     void        AddNotifyCreated(plRefMsg* msg, plRefFlags::Type flags);
     void        ClearNotifyCreated();
-    uint16_t      GetNumNotifyCreated() { return fNotifyCreated.GetCount(); }
-    plRefMsg*   GetNotifyCreated(int i) { return fNotifyCreated[i]; }
-    void        RemoveNotifyCreated(int i);
+    void        RemoveNotifyCreated(size_t i);
 
     uint16_t      IncActiveRefs() { return ++fNumActiveRefs; }
     uint16_t      DecActiveRefs() { return fNumActiveRefs ? --fNumActiveRefs : 0; }
 
-    bool    IsActiveRef(int i) const            { return fActiveRefs.IsBitSet(i) != 0; }
-    void    SetActiveRef(int i, bool on=true) { fActiveRefs.SetBit(i, on); }
-    bool    IsNotified(int i) const             { return fNotified.IsBitSet(i) != 0; }
-    void    SetNotified(int i, bool on=true)  { fNotified.SetBit(i, on); }
+    bool    IsActiveRef(size_t i) const          { return fActiveRefs.IsBitSet(i) != 0; }
+    void    SetActiveRef(size_t i, bool on=true) { fActiveRefs.SetBit(i, on); }
+    bool    IsNotified(size_t i) const           { return fNotified.IsBitSet(i) != 0; }
+    void    SetNotified(size_t i, bool on=true)  { fNotified.SetBit(i, on); }
 
     void SatisfyPending(plRefMsg* msg) const;
     void SatisfyPending() const;
@@ -167,14 +169,17 @@ protected:
     uint32_t fDataLen;    // Length in the Datafile
 
     // Following used by hsResMgr to notify on defered load or when a passive ref is destroyed.
-    uint16_t                      fNumActiveRefs; // num active refs on me
+    uint16_t                    fNumActiveRefs; // num active refs on me
     hsBitVector                 fActiveRefs;    // Which of notify created are active refs
     hsBitVector                 fNotified;      // which of notifycreated i've already notified.
-    hsTArray<plRefMsg*>         fNotifyCreated; // people to notify when I'm created or destroyed
-    mutable hsTArray<plKeyImp*> fRefs;          // refs I've made (to be released when I'm unregistered).
-    mutable int16_t               fPendingRefs;   // Outstanding requests I have out.
-    mutable hsTArray<plKeyImp*> fClones;        // clones of me
+    std::vector<plRefMsg*>      fNotifyCreated; // people to notify when I'm created or destroyed
+    mutable std::vector<plKeyImp*>  fRefs;      // refs I've made (to be released when I'm unregistered).
+    mutable int16_t             fPendingRefs;   // Outstanding requests I have out.
+    mutable std::vector<plKeyImp*>  fClones;    // clones of me
     mutable plKey               fCloneOwner;    // pointer for clones back to the owning key
+
+    friend class pfConsoleActiveRefPeeker;
+    friend class plPageOptimizer; // needs to update fStartPos
 };
 
 #endif // hsRegistry_inc

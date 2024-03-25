@@ -46,25 +46,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreatable.h"
 
 #include "plCameraBrain.h"
-
-REGISTER_CREATABLE( plCameraBrain1 );
-REGISTER_CREATABLE( plCameraBrain1_Drive );
-REGISTER_CREATABLE( plCameraBrain1_Avatar );
-REGISTER_CREATABLE( plCameraBrain1_FirstPerson);
-REGISTER_CREATABLE( plCameraBrain1_Fixed );
-REGISTER_CREATABLE( plCameraBrain1_Circle );
+REGISTER_CREATABLE(plCameraBrain1);
+REGISTER_CREATABLE(plCameraBrain1_Avatar);
+REGISTER_CREATABLE(plCameraBrain1_Circle);
+REGISTER_CREATABLE(plCameraBrain1_Drive);
+REGISTER_CREATABLE(plCameraBrain1_FirstPerson);
+REGISTER_CREATABLE(plCameraBrain1_Fixed);
 
 #include "plCameraModifier.h"
-
-REGISTER_CREATABLE( plCameraModifier1 );
+REGISTER_CREATABLE(plCameraModifier1);
 
 #include "plInterestingModifier.h"
-
-REGISTER_CREATABLE( plInterestingModifier );
+REGISTER_CREATABLE(plInterestingModifier);
 
 #include "plVirtualCamNeu.h"
-
-REGISTER_CREATABLE( plVirtualCam1 );
-
+REGISTER_CREATABLE(plVirtualCam1);
 
 #endif // pfCameraCreatable_inc

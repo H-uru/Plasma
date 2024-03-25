@@ -39,31 +39,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "plSwimRegion.h"
+
+#include "plArmatureMod.h"
+#include "plPhysicalControllerCore.h"
+
 #include <cmath>
 
 #include "hsGeometry3.h"
 #include "hsResMgr.h"
 
-#include "plPhysicalControllerCore.h"
-#include "plSwimRegion.h"
-#include "plArmatureMod.h"
+#include "pnMessage/plRefMsg.h"
 
 void plSwimRegionInterface::Read(hsStream* s, hsResMgr* mgr)
 {
     plObjInterface::Read(s, mgr);
 
-    fDownBuoyancy = s->ReadLEScalar();
-    fUpBuoyancy = s->ReadLEScalar();
-    fMaxUpwardVel = s->ReadLEScalar();
+    fDownBuoyancy = s->ReadLEFloat();
+    fUpBuoyancy = s->ReadLEFloat();
+    fMaxUpwardVel = s->ReadLEFloat();
 }
 
 void plSwimRegionInterface::Write(hsStream* s, hsResMgr* mgr)
 {
     plObjInterface::Write(s, mgr);
 
-    s->WriteLEScalar(fDownBuoyancy);
-    s->WriteLEScalar(fUpBuoyancy);
-    s->WriteLEScalar(fMaxUpwardVel);
+    s->WriteLEFloat(fDownBuoyancy);
+    s->WriteLEFloat(fUpBuoyancy);
+    s->WriteLEFloat(fMaxUpwardVel);
 }
 
 void plSwimRegionInterface::GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, float &angularResult, float elapsed)
@@ -75,8 +79,8 @@ void plSwimRegionInterface::GetCurrent(plPhysicalControllerCore *physical, hsVec
 /////////////////////////////////////////////////////////////////////////
 
 plSwimCircularCurrentRegion::plSwimCircularCurrentRegion() : 
-    fCurrentSO(nil), 
-    fRotation(0.f), 
+    fCurrentSO(),
+    fRotation(),
     fPullNearDistSq(1.f),
     fPullNearVel(0.f),
     fPullFarDistSq(1.f),
@@ -88,11 +92,11 @@ void plSwimCircularCurrentRegion::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSwimRegionInterface::Read(stream, mgr);
     
-    fRotation = stream->ReadLEScalar();
-    fPullNearDistSq = stream->ReadLEScalar();
-    fPullNearVel = stream->ReadLEScalar();
-    fPullFarDistSq = stream->ReadLEScalar();
-    fPullFarVel = stream->ReadLEScalar();
+    fRotation = stream->ReadLEFloat();
+    fPullNearDistSq = stream->ReadLEFloat();
+    fPullNearVel = stream->ReadLEFloat();
+    fPullFarDistSq = stream->ReadLEFloat();
+    fPullFarVel = stream->ReadLEFloat();
     mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // currentSO      
 }
 
@@ -100,11 +104,11 @@ void plSwimCircularCurrentRegion::Write(hsStream* stream, hsResMgr* mgr)
 {
     plSwimRegionInterface::Write(stream, mgr);
     
-    stream->WriteLEScalar(fRotation);
-    stream->WriteLEScalar(fPullNearDistSq);
-    stream->WriteLEScalar(fPullNearVel);
-    stream->WriteLEScalar(fPullFarDistSq);
-    stream->WriteLEScalar(fPullFarVel);
+    stream->WriteLEFloat(fRotation);
+    stream->WriteLEFloat(fPullNearDistSq);
+    stream->WriteLEFloat(fPullNearVel);
+    stream->WriteLEFloat(fPullFarDistSq);
+    stream->WriteLEFloat(fPullFarVel);
     mgr->WriteKey(stream, fCurrentSO);
 }
 
@@ -119,7 +123,7 @@ bool plSwimCircularCurrentRegion::MsgReceive(plMessage* msg)
             if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                 fCurrentSO = so;
             else if (refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove))
-                fCurrentSO = nil;
+                fCurrentSO = nullptr;
             
             return true;
         }
@@ -130,16 +134,14 @@ bool plSwimCircularCurrentRegion::MsgReceive(plMessage* msg)
 
 void plSwimCircularCurrentRegion::GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, float &angularResult, float elapsed)
 {
-    if (elapsed <= 0.f || fCurrentSO == nil || GetProperty(kDisable))
+    if (elapsed <= 0.f || fCurrentSO == nullptr || GetProperty(kDisable))
     {
         linearResult.Set(0.f, 0.f, 0.f);
         angularResult = 0.f;
         return;
     }
 
-    hsPoint3 center, pos;
-    hsScalarTriple xlate = fCurrentSO->GetLocalToWorld().GetTranslate();
-    center.Set(&xlate);
+    hsPoint3 center = fCurrentSO->GetLocalToWorld().GetTranslate();
 
     plKey worldKey = physical->GetSubworld();
     if (worldKey)
@@ -150,6 +152,7 @@ void plSwimCircularCurrentRegion::GetCurrent(plPhysicalControllerCore *physical,
 
     center.fZ = 0.f; // Just doing 2D
 
+    hsPoint3 pos;
     physical->GetPositionSim(pos);
     
     hsVector3 pos2Center(center.fX - pos.fX, center.fY - pos.fY, 0.f);
@@ -194,7 +197,7 @@ void plSwimCircularCurrentRegion::GetCurrent(plPhysicalControllerCore *physical,
 /////////////////////////////////////////////////////////////////////////////////////
 
 plSwimStraightCurrentRegion::plSwimStraightCurrentRegion() : 
-    fCurrentSO(nil), 
+    fCurrentSO(),
     fNearDist(1.f),
     fNearVel(0.f),
     fFarDist(1.f),
@@ -206,10 +209,10 @@ void plSwimStraightCurrentRegion::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSwimRegionInterface::Read(stream, mgr);
     
-    fNearDist = stream->ReadLEScalar();
-    fNearVel = stream->ReadLEScalar();
-    fFarDist = stream->ReadLEScalar();
-    fFarVel = stream->ReadLEScalar();
+    fNearDist = stream->ReadLEFloat();
+    fNearVel = stream->ReadLEFloat();
+    fFarDist = stream->ReadLEFloat();
+    fFarVel = stream->ReadLEFloat();
     mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // currentSO      
 }
 
@@ -217,10 +220,10 @@ void plSwimStraightCurrentRegion::Write(hsStream* stream, hsResMgr* mgr)
 {
     plSwimRegionInterface::Write(stream, mgr);
     
-    stream->WriteLEScalar(fNearDist);
-    stream->WriteLEScalar(fNearVel);
-    stream->WriteLEScalar(fFarDist);
-    stream->WriteLEScalar(fFarVel);
+    stream->WriteLEFloat(fNearDist);
+    stream->WriteLEFloat(fNearVel);
+    stream->WriteLEFloat(fFarDist);
+    stream->WriteLEFloat(fFarVel);
     mgr->WriteKey(stream, fCurrentSO);
 }
 
@@ -235,7 +238,7 @@ bool plSwimStraightCurrentRegion::MsgReceive(plMessage* msg)
             if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                 fCurrentSO = so;
             else if (refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove))
-                fCurrentSO = nil;
+                fCurrentSO = nullptr;
             
             return true;
         }
@@ -254,10 +257,9 @@ void plSwimStraightCurrentRegion::GetCurrent(plPhysicalControllerCore *physical,
         return;
     }
 
-    hsPoint3 center, pos;
+    hsPoint3 pos;
     hsVector3 current = fCurrentSO->GetLocalToWorld() * hsVector3(0.f, 1.f, 0.f);
-    hsScalarTriple xlate = fCurrentSO->GetLocalToWorld().GetTranslate();
-    center.Set(&xlate);
+    hsPoint3 center = fCurrentSO->GetLocalToWorld().GetTranslate();;
     physical->GetPositionSim(pos);
 
     plKey worldKey = physical->GetSubworld();

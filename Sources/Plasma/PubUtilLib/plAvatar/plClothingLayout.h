@@ -43,8 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLCLOTHINGLAYOUT_INC
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
-#include "plString.h"
+#include <string_theory/string>
+#include <vector>
 
 
 // This file is intended to be an independent section so that plClothingMtl and plAvatarClothing
@@ -71,62 +71,63 @@ public:
         kLayerSkinFirst = kLayerSkin,
         kLayerSkinLast = kLayerSkinBlend6,
     };
-    
-    plString fName;
+
+    ST::string fName;
     uint32_t fXPos;
     uint32_t fYPos;
     uint32_t fWidth;
     uint32_t fHeight;
 
-    plClothingElement(const plString &name, uint32_t xPos, uint32_t yPos, uint32_t width, uint32_t height)
+    plClothingElement(const ST::string &name, uint32_t xPos, uint32_t yPos, uint32_t width, uint32_t height)
         : fName(name), fXPos(xPos), fYPos(yPos), fWidth(width), fHeight(height) { }
 
-    static void GetElements(hsTArray<plClothingElement *> &out)
+    static void GetElements(std::vector<plClothingElement *> &out)
     {
-    /*
-        out.Append(new plClothingElement("shirt-chest", 768, 0, 256, 512));
-        out.Append(new plClothingElement("shirt-sleeve", 512, 192, 256, 128));
-        out.Append(new plClothingElement("face", 0, 0, 512, 512));
-        out.Append(new plClothingElement("eyeball", 64, 512, 64, 64));
-        out.Append(new plClothingElement("shoe-top", 0, 832, 128, 128));
-        out.Append(new plClothingElement("shoe-bottom", 0, 768, 128, 64));
-        out.Append(new plClothingElement("pants", 512, 512, 512, 512));
-        out.Append(new plClothingElement("hand-LOD", 64, 576, 64, 64));
-        out.Append(new plClothingElement("hand-square", 128, 512, 128, 128));
-        out.Append(new plClothingElement("hand-wide", 0, 640, 256, 128));
-        out.Append(new plClothingElement("playerbook", 512, 0, 256, 128));
-        out.Append(new plClothingElement("backpack", 512, 256, 256, 256));
-        out.Append(new plClothingElement("glasses-front", 256, 512, 256, 64));
-        out.Append(new plClothingElement("glasses-side", 256, 576, 256, 32));
-        out.Append(new plClothingElement("KI", 256, 640, 256, 128));
-    */  
-        out.Append(new plClothingElement("Chest", 768, 0, 256, 512));
-        out.Append(new plClothingElement("Arm", 512, 192, 256, 128));
-        out.Append(new plClothingElement("Face", 0, 256, 512, 256));
-        out.Append(new plClothingElement("Eye", 64, 704, 64, 64));
-        out.Append(new plClothingElement("Extra Hair", 256, 0, 256, 256));
-        out.Append(new plClothingElement("Hat", 0, 0, 256, 256));
-        out.Append(new plClothingElement("Foot", 0, 768, 256, 256));
-        out.Append(new plClothingElement("Legs", 512, 512, 512, 512));
-        out.Append(new plClothingElement("LOD", 64, 640, 64, 64));
-        out.Append(new plClothingElement("Finger", 128, 640, 128, 128));
-        out.Append(new plClothingElement("Palm", 0, 512, 256, 128));
-        out.Append(new plClothingElement("Player Book", 256, 512, 256, 128));
-        out.Append(new plClothingElement("Glasses", 384, 640, 128, 128));
-        out.Append(new plClothingElement("KI", 256, 640, 128, 128));        
-        
+        out.insert(out.end(), {
+            /*
+            new plClothingElement("shirt-chest", 768, 0, 256, 512),
+            new plClothingElement("shirt-sleeve", 512, 192, 256, 128),
+            new plClothingElement("face", 0, 0, 512, 512),
+            new plClothingElement("eyeball", 64, 512, 64, 64),
+            new plClothingElement("shoe-top", 0, 832, 128, 128),
+            new plClothingElement("shoe-bottom", 0, 768, 128, 64),
+            new plClothingElement("pants", 512, 512, 512, 512),
+            new plClothingElement("hand-LOD", 64, 576, 64, 64),
+            new plClothingElement("hand-square", 128, 512, 128, 128),
+            new plClothingElement("hand-wide", 0, 640, 256, 128),
+            new plClothingElement("playerbook", 512, 0, 256, 128),
+            new plClothingElement("backpack", 512, 256, 256, 256),
+            new plClothingElement("glasses-front", 256, 512, 256, 64),
+            new plClothingElement("glasses-side", 256, 576, 256, 32),
+            new plClothingElement("KI", 256, 640, 256, 128),
+            */
+            new plClothingElement("Chest", 768, 0, 256, 512),
+            new plClothingElement("Arm", 512, 192, 256, 128),
+            new plClothingElement("Face", 0, 256, 512, 256),
+            new plClothingElement("Eye", 64, 704, 64, 64),
+            new plClothingElement("Extra Hair", 256, 0, 256, 256),
+            new plClothingElement("Hat", 0, 0, 256, 256),
+            new plClothingElement("Foot", 0, 768, 256, 256),
+            new plClothingElement("Legs", 512, 512, 512, 512),
+            new plClothingElement("LOD", 64, 640, 64, 64),
+            new plClothingElement("Finger", 128, 640, 128, 128),
+            new plClothingElement("Palm", 0, 512, 256, 128),
+            new plClothingElement("Player Book", 256, 512, 256, 128),
+            new plClothingElement("Glasses", 384, 640, 128, 128),
+            new plClothingElement("KI", 256, 640, 128, 128),
+        });
     }
 };
 
 class plClothingLayout
 {
 public:
-    plClothingLayout(const plString &name, uint32_t origWidth)
+    plClothingLayout(const ST::string &name, uint32_t origWidth)
         : fName(name), fOrigWidth(origWidth) { }
 
-    plString fName;
+    ST::string fName;
     uint32_t fOrigWidth;
-    hsTArray<plClothingElement*> fElements;
+    std::vector<plClothingElement*> fElements;
 /*
     enum
     {

@@ -40,11 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyGUIPopUpMenu.h"
+
+#include <string_theory/string>
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIPopUpMenu, pyGUIPopUpMenu);
@@ -54,10 +55,10 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIPopUpMenu)
 
 PYTHON_INIT_DEFINITION(ptGUIPopUpMenu, args, keywords)
 {
-    PyObject* arg1 = NULL;
-    PyObject* arg2 = NULL;
-    PyObject* arg3 = NULL;
-    PyObject* arg4 = NULL;
+    PyObject* arg1 = nullptr;
+    PyObject* arg2 = nullptr;
+    PyObject* arg3 = nullptr;
+    PyObject* arg4 = nullptr;
     if (!PyArg_ParseTuple(args, "O|OOO", &arg1, &arg2, &arg3, &arg4))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects one of three argument lists:\n"
@@ -82,10 +83,10 @@ PYTHON_INIT_DEFINITION(ptGUIPopUpMenu, args, keywords)
         self->fThis->setup(key->getKey());
         PYTHON_RETURN_INIT_OK;
     }
-    else if (PyString_Check(arg1))
+    else if (PyUnicode_Check(arg1))
     {
         // arg list 2 or 3
-        char* name = PyString_AsString(arg1);
+        ST::string name = PyUnicode_AsSTString(arg1);
         if (PyFloat_Check(arg2))
         {
             // arg list 2
@@ -194,7 +195,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIPopUpMenu, isEnabled)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIPopUpMenu, getName)
 {
-    return PyString_FromString(self->fThis->GetName());
+    return PyUnicode_FromSTString(self->fThis->GetName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIPopUpMenu, getVersion)
@@ -275,34 +276,21 @@ PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, setBackSelectColor, args)
 
 PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addConsoleCmdItem, args)
 {
-    char* name;
-    char* consoleCmd;
-    if (!PyArg_ParseTuple(args, "ss", &name, &consoleCmd))
+    ST::string name;
+    ST::string consoleCmd;
+    if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_STStringConverter, &name, PyUnicode_STStringConverter, &consoleCmd))
     {
-        PyErr_SetString(PyExc_TypeError, "addConsoleCmdItem expects two strings");
+        PyErr_SetString(PyExc_TypeError, "addConsoleCmdItem expects a string and a string");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->AddConsoleCmdItem(name, consoleCmd);
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addConsoleCmdItemW, args)
-{
-    wchar_t* name;
-    char* consoleCmd;
-    if (!PyArg_ParseTuple(args, "us", &name, &consoleCmd))
-    {
-        PyErr_SetString(PyExc_TypeError, "addConsoleCmdItemW expects a unicode string and a string");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->AddConsoleCmdItemW(name, consoleCmd);
-    PYTHON_RETURN_NONE;
-}
-
 PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addNotifyItem, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "addNotifyItem expects a string");
         PYTHON_RETURN_ERROR;
@@ -311,23 +299,11 @@ PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addNotifyItem, args)
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addNotifyItemW, args)
-{
-    wchar_t* name;
-    if (!PyArg_ParseTuple(args, "u", &name))
-    {
-        PyErr_SetString(PyExc_TypeError, "addNotifyItemW expects a unicode string");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->AddNotifyItemW(name);
-    PYTHON_RETURN_NONE;
-}
-
 PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addSubMenuItem, args)
 {
-    char* name;
-    PyObject* subMenuObj = NULL;
-    if (!PyArg_ParseTuple(args, "sO", &name, &subMenuObj))
+    ST::string name;
+    PyObject* subMenuObj = nullptr;
+    if (!PyArg_ParseTuple(args, "O&O", PyUnicode_STStringConverter, &name, &subMenuObj))
     {
         PyErr_SetString(PyExc_TypeError, "addSubMenuItem expects a string and a ptGUIPopUpMenu");
         PYTHON_RETURN_ERROR;
@@ -339,25 +315,6 @@ PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addSubMenuItem, args)
     }
     pyGUIPopUpMenu* subMenu = pyGUIPopUpMenu::ConvertFrom(subMenuObj);
     self->fThis->AddSubMenuItem(name, *subMenu);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addSubMenuItemW, args)
-{
-    wchar_t* name;
-    PyObject* subMenuObj = NULL;
-    if (!PyArg_ParseTuple(args, "uO", &name, &subMenuObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "addSubMenuItemW expects a unicode string and a ptGUIPopUpMenu");
-        PYTHON_RETURN_ERROR;
-    }
-    if (!pyGUIPopUpMenu::Check(subMenuObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "addSubMenuItemW expects a unicode string and a ptGUIPopUpMenu");
-        PYTHON_RETURN_ERROR;
-    }
-    pyGUIPopUpMenu* subMenu = pyGUIPopUpMenu::ConvertFrom(subMenuObj);
-    self->fThis->AddSubMenuItemW(name, *subMenu);
     PYTHON_RETURN_NONE;
 }
 
@@ -380,19 +337,17 @@ PYTHON_START_METHODS_TABLE(ptGUIPopUpMenu)
     PYTHON_METHOD(ptGUIPopUpMenu, setBackColor, "Params: r,g,b,a\nSets the background color"),
     PYTHON_METHOD(ptGUIPopUpMenu, setBackSelectColor, "Params: r,g,b,a\nSets the selection background color"),
     PYTHON_METHOD(ptGUIPopUpMenu, addConsoleCmdItem, "Params: name,consoleCmd\nAdds a new item to the menu that fires a console command"),
-    PYTHON_METHOD(ptGUIPopUpMenu, addConsoleCmdItemW, "Params: name,consoleCmd\nUnicode version of addConsoleCmdItem"),
     PYTHON_METHOD(ptGUIPopUpMenu, addNotifyItem, "Params: name\nAdds a new item ot the mneu"),
-    PYTHON_METHOD(ptGUIPopUpMenu, addNotifyItemW, "Params: name\nUnicode version of addNotifyItem"),
     PYTHON_METHOD(ptGUIPopUpMenu, addSubMenuItem, "Params: name,subMenu\nAdds a submenu to this menu"),
-    PYTHON_METHOD(ptGUIPopUpMenu, addSubMenuItemW, "Params: name,subMenu\nUnicode version of addSubMenuItem"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-#define ptGUIPopUpMenu_COMPARE      PYTHON_NO_COMPARE
 #define ptGUIPopUpMenu_AS_NUMBER    PYTHON_NO_AS_NUMBER
 #define ptGUIPopUpMenu_AS_SEQUENCE  PYTHON_NO_AS_SEQUENCE
 #define ptGUIPopUpMenu_AS_MAPPING   PYTHON_NO_AS_MAPPING
 #define ptGUIPopUpMenu_STR          PYTHON_NO_STR
+#define ptGUIPopUpMenu_GETATTRO     PYTHON_NO_GETATTRO
+#define ptGUIPopUpMenu_SETATTRO     PYTHON_NO_SETATTRO
 #define ptGUIPopUpMenu_RICH_COMPARE PYTHON_DEFAULT_RICH_COMPARE(ptGUIPopUpMenu)
 #define ptGUIPopUpMenu_GETSET       PYTHON_NO_GETSET
 #define ptGUIPopUpMenu_BASE         PYTHON_NO_BASE
@@ -406,30 +361,30 @@ PYTHON_CLASS_NEW_IMPL(ptGUIPopUpMenu, pyGUIPopUpMenu)
 
 PyObject *pyGUIPopUpMenu::New(pyKey& gckey)
 {
-    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, NULL, NULL);
+    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
-    newObj->fThis->fBuiltMenu = nil;
+    newObj->fThis->fBuiltMenu = nullptr;
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIPopUpMenu::New(plKey objkey)
 {
-    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, NULL, NULL);
-    newObj->fThis->fGCkey = objkey;
-    newObj->fThis->fBuiltMenu = nil;
+    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, nullptr, nullptr);
+    newObj->fThis->fGCkey = std::move(objkey);
+    newObj->fThis->fBuiltMenu = nullptr;
     return (PyObject*)newObj;
 }
 
-PyObject *pyGUIPopUpMenu::New(const char *name, float screenOriginX, float screenOriginY, const plLocation &destLoc /* = plLocation::kGlobalFixedLoc */)
+PyObject *pyGUIPopUpMenu::New(const ST::string& name, float screenOriginX, float screenOriginY, const plLocation &destLoc /* = plLocation::kGlobalFixedLoc */)
 {
-    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, NULL, NULL);
+    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, nullptr, nullptr);
     newObj->fThis->setup(name, screenOriginX, screenOriginY, destLoc);
     return (PyObject*)newObj;
 }
 
-PyObject *pyGUIPopUpMenu::New(const char *name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY)
+PyObject *pyGUIPopUpMenu::New(const ST::string& name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY)
 {
-    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, NULL, NULL);
+    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, nullptr, nullptr);
     newObj->fThis->setup(name, parent, screenOriginX, screenOriginY);
     return (PyObject*)newObj;
 }

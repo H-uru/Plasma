@@ -40,10 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pySpawnPointInfo.h"
+
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptSpawnPointInfo, pySpawnPointInfo);
@@ -53,19 +52,19 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptSpawnPointInfo)
 
 PYTHON_INIT_DEFINITION(ptSpawnPointInfo, args, keywords)
 {
-    char* title = NULL;
-    char* spawnPt = NULL;
-    if (!PyArg_ParseTuple(args, "|ss", &title, &spawnPt))
+    ST::string title;
+    ST::string spawnPt;
+    if (!PyArg_ParseTuple(args, "|O&O&", PyUnicode_STStringConverter, &title, PyUnicode_STStringConverter, &spawnPt))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects two optional strings, or no parameters");
         PYTHON_RETURN_INIT_ERROR;
     }
-    if (!title && !spawnPt)
+    if (title.empty() && spawnPt.empty())
     {
         // default init
         PYTHON_RETURN_INIT_OK;
     }
-    else if (title && spawnPt)
+    else if (!title.empty() && !spawnPt.empty())
     {
         self->fThis->SetTitle(title);
         self->fThis->SetName(spawnPt);
@@ -78,13 +77,13 @@ PYTHON_INIT_DEFINITION(ptSpawnPointInfo, args, keywords)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfo, getTitle)
 {
-    return PyString_FromString(self->fThis->GetTitle().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetTitle());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setTitle, args)
 {
-    char* title;
-    if (!PyArg_ParseTuple(args, "s", &title))
+    ST::string title;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &title))
     {
         PyErr_SetString(PyExc_TypeError, "setTitle expects a string");
         PYTHON_RETURN_ERROR;
@@ -95,13 +94,13 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setTitle, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfo, getName)
 {
-    return PyString_FromString(self->fThis->GetName().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetName());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setName, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "setName expects a string");
         PYTHON_RETURN_ERROR;
@@ -112,13 +111,13 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfo, getCameraStack)
 {
-    return PyString_FromString(self->fThis->GetCameraStack().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetCameraStack());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setCameraStack, args)
 {
-    char* camStack;
-    if (!PyArg_ParseTuple(args, "s", &camStack))
+    ST::string camStack;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &camStack))
     {
         PyErr_SetString(PyExc_TypeError, "setCameraStack expects a string");
         PYTHON_RETURN_ERROR;
@@ -144,16 +143,16 @@ PYTHON_CLASS_NEW_IMPL(ptSpawnPointInfo, pySpawnPointInfo)
 
 PyObject *pySpawnPointInfo::New(const plSpawnPointInfo& info)
 {
-    ptSpawnPointInfo *newObj = (ptSpawnPointInfo*)ptSpawnPointInfo_type.tp_new(&ptSpawnPointInfo_type, NULL, NULL);
+    ptSpawnPointInfo *newObj = (ptSpawnPointInfo*)ptSpawnPointInfo_type.tp_new(&ptSpawnPointInfo_type, nullptr, nullptr);
     newObj->fThis->fInfo = info;
     return (PyObject*)newObj;
 }
 
-PyObject *pySpawnPointInfo::New(const char* title, const char* spawnPt)
+PyObject *pySpawnPointInfo::New(const ST::string& title, const ST::string& spawnPt)
 {
-    ptSpawnPointInfo *newObj = (ptSpawnPointInfo*)ptSpawnPointInfo_type.tp_new(&ptSpawnPointInfo_type, NULL, NULL);
-    newObj->fThis->fInfo.fTitle = title;
-    newObj->fThis->fInfo.fSpawnPt = spawnPt;
+    ptSpawnPointInfo *newObj = (ptSpawnPointInfo*)ptSpawnPointInfo_type.tp_new(&ptSpawnPointInfo_type, nullptr, nullptr);
+    newObj->fThis->fInfo.SetTitle(title);
+    newObj->fThis->fInfo.SetName(spawnPt);
     return (PyObject*)newObj;
 }
 
@@ -176,9 +175,11 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetDefaultSpawnPoint, "Returns the defa
     return pySpawnPointInfo::GetDefaultSpawnPoint();
 }
 
-void pySpawnPointInfo::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void pySpawnPointInfo::AddPlasmaMethods(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetDefaultSpawnPoint);
+    PYTHON_START_GLOBAL_METHOD_TABLE(ptSpawnPointInfo)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetDefaultSpawnPoint)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, ptSpawnPointInfo)
 }
 
 // glue functions
@@ -191,13 +192,13 @@ PYTHON_NO_INIT_DEFINITION(ptSpawnPointInfoRef)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfoRef, getTitle)
 {
-    return PyString_FromString(self->fThis->GetTitle().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetTitle());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setTitle, args)
 {
-    char* title;
-    if (!PyArg_ParseTuple(args, "s", &title))
+    ST::string title;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &title))
     {
         PyErr_SetString(PyExc_TypeError, "setTitle expects a string");
         PYTHON_RETURN_ERROR;
@@ -208,13 +209,13 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setTitle, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfoRef, getName)
 {
-    return PyString_FromString(self->fThis->GetName().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetName());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setName, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "setName expects a string");
         PYTHON_RETURN_ERROR;
@@ -225,13 +226,13 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfoRef, getCameraStack)
 {
-    return PyString_FromString(self->fThis->GetCameraStack().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetCameraStack());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setCameraStack, args)
 {
-    char* camStack;
-    if (!PyArg_ParseTuple(args, "s", &camStack))
+    ST::string camStack;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &camStack))
     {
         PyErr_SetString(PyExc_TypeError, "setCameraStack expects a string");
         PYTHON_RETURN_ERROR;
@@ -255,7 +256,7 @@ PLASMA_DEFAULT_TYPE(ptSpawnPointInfoRef, "Class to hold spawn point data");
 // required functions for PyObject interoperability
 PyObject *pySpawnPointInfoRef::New(plSpawnPointInfo& info)
 {
-    ptSpawnPointInfoRef *newObj = (ptSpawnPointInfoRef*)ptSpawnPointInfoRef_type.tp_new(&ptSpawnPointInfoRef_type, NULL, NULL);
+    ptSpawnPointInfoRef *newObj = (ptSpawnPointInfoRef*)ptSpawnPointInfoRef_type.tp_new(&ptSpawnPointInfoRef_type, nullptr, nullptr);
     newObj->fThis->fInfo = info;
     return (PyObject*)newObj;
 }

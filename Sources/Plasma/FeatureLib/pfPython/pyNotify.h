@@ -48,17 +48,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pnMessage/plNotifyMsg.h"
-#include "pyGlueHelpers.h"
+#include <vector>
 
+#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plNotifyMsg.h"
+
+#include "pyGlueDefinitions.h"
+
+class pyKey;
 class pyPoint3;
+namespace ST { class string; }
 
 class pyNotify
 {
 private:
     plKey           fSenderKey;     // the holder of the who (the modifier) we are
     // the list of receivers that want to be notified
-    hsTArray<plKey> fReceivers;
+    std::vector<plKey> fReceivers;
 
     bool            fNetPropagate;
     bool            fNetForce;
@@ -68,45 +74,43 @@ private:
 
 protected:
     pyNotify(); // only used by python glue, do NOT call
-    pyNotify(pyKey& selfkey);
+    pyNotify(const pyKey& selfkey);
 
 public:
-    ~pyNotify();
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptNotify);
-    static PyObject *New(pyKey& selfkey);
+    static PyObject *New(const pyKey& selfkey);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyNotify object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyNotify); // converts a PyObject to a pyNotify (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    void SetSender(pyKey& selfkey); // only used by python glue, do NOT call
+    void SetSender(const pyKey& selfkey); // only used by python glue, do NOT call
 
     // methods that will be exposed to Python
-    virtual void ClearReceivers();
-    virtual void AddReceiver(pyKey* key);
-    virtual void SetNetPropagate(bool propagate) { fNetPropagate = propagate; }
-    virtual void SetNetForce(bool state) { fNetForce = state; }
-    virtual void SetActivateState(float state);
-    virtual void SetType(int32_t type);
+    void ClearReceivers();
+    void AddReceiver(pyKey* key);
+    void SetNetPropagate(bool propagate) { fNetPropagate = propagate; }
+    void SetNetForce(bool state) { fNetForce = state; }
+    void SetActivateState(float state);
+    void SetType(int32_t type);
 
     // add event record helpers
-    virtual void AddCollisionEvent( bool enter, pyKey* other, pyKey* self );
-    virtual void AddPickEvent(bool enabled, pyKey* other, pyKey* self, pyPoint3 hitPoint);
-    virtual void AddControlKeyEvent( int32_t key, bool down );
-    virtual void AddVarNumber(const char* name, float number);
-    virtual void AddVarNumber(const char* name, int32_t number);
-    virtual void AddVarNull(const char* name);
-    virtual void AddVarKey(const char* name, pyKey* key);
-    virtual void AddFacingEvent( bool enabled, pyKey* other, pyKey* self, float dot);
-    virtual void AddContainerEvent( bool entering, pyKey* container, pyKey* contained);
-    virtual void AddActivateEvent( bool active, bool activate );
-    virtual void AddCallbackEvent( int32_t event );
-    virtual void AddResponderState(int32_t state);
+    void AddCollisionEvent(bool enter, pyKey* other, pyKey* self);
+    void AddPickEvent(bool enabled, pyKey* other, pyKey* self, pyPoint3 hitPoint);
+    void AddControlKeyEvent(int32_t key, bool down);
+    void AddVarNumber(const ST::string& name, float number);
+    void AddVarNumber(const ST::string& name, int32_t number);
+    void AddVarNull(const ST::string& name);
+    void AddVarKey(const ST::string& name, pyKey* key);
+    void AddFacingEvent(bool enabled, pyKey* other, pyKey* self, float dot);
+    void AddContainerEvent(bool entering, pyKey* container, pyKey* contained);
+    void AddActivateEvent(bool active, bool activate);
+    void AddCallbackEvent(int32_t event);
+    void AddResponderState(int32_t state);
 
-    virtual void Send();
+    void Send();
 
 };
 

@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plShadowSlave.h"
 #include "plPerspDirSlave.h"
 #include "plShadowCaster.h"
+
+#include "plIntersect/plVolumeIsect.h"
 #include "plMessage/plShadowCastMsg.h"
 
 #include "plLightInfo.h"
@@ -64,18 +66,14 @@ plDirectShadowMaster::plDirectShadowMaster()
 
 plDirectShadowMaster::~plDirectShadowMaster()
 {
-    fIsectPool.SetCount(fIsectPool.GetNumAlloc());
-    int i;
-    for( i = 0; i < fIsectPool.GetCount(); i++ )
-        delete fIsectPool[i];
 }
 
-plShadowSlave* plDirectShadowMaster::INewSlave(const plShadowCaster* caster)
+std::unique_ptr<plShadowSlave> plDirectShadowMaster::INewSlave(const plShadowCaster* caster)
 {
     if( caster->GetPerspective() )
-        return new plPerspDirSlave;
+        return std::make_unique<plPerspDirSlave>();
     
-    return new plDirectShadowSlave;
+    return std::make_unique<plDirectShadowSlave>();
 }
 
 plShadowSlave* plDirectShadowMaster::INextSlave(const plShadowCaster* caster)
@@ -83,33 +81,25 @@ plShadowSlave* plDirectShadowMaster::INextSlave(const plShadowCaster* caster)
     if( !caster->GetPerspective() )
         return plShadowMaster::INextSlave(caster);
 
-    int iSlave = fPerspSlavePool.GetCount();
-    fPerspSlavePool.ExpandAndZero(iSlave+1);
-    plShadowSlave* slave = fPerspSlavePool[iSlave];
-    if( !slave )
-    {
-        fPerspSlavePool[iSlave] = slave = INewSlave(caster);
-    }
-    return slave;
+    return fPerspSlavePool.next([this, caster] { return INewSlave(caster); }).get();
 }
 
 plShadowSlave* plDirectShadowMaster::IRecycleSlave(plShadowSlave* slave)
 {
-    if( fSlavePool.GetCount() && (fSlavePool[fSlavePool.GetCount()-1] == slave) )
-        fSlavePool.SetCount(fSlavePool.GetCount()-1);
-    else
-    if( fPerspSlavePool.GetCount() && (fPerspSlavePool[fPerspSlavePool.GetCount()-1] == slave) )
-        fPerspSlavePool.SetCount(fPerspSlavePool.GetCount()-1);
+    if (!fSlavePool.empty() && (fSlavePool.back().get() == slave))
+        fSlavePool.pop_back();
+    else if (!fPerspSlavePool.empty() && (fPerspSlavePool.back().get() == slave))
+        fPerspSlavePool.pop_back();
 
-    return nil;
+    return nullptr;
 }
 
 void plDirectShadowMaster::IBeginRender()
 {
     plShadowMaster::IBeginRender();
 
-    fPerspSlavePool.SetCount(0);
-    fIsectPool.SetCount(0);
+    fPerspSlavePool.clear();
+    fIsectPool.clear();
 }
 
 void plDirectShadowMaster::IComputeWorldToLight(const hsBounds3Ext& wBnd, plShadowSlave* slave) const
@@ -168,13 +158,7 @@ void plDirectShadowMaster::IComputeProjections(plShadowCastMsg* castMsg, plShado
 
 void plDirectShadowMaster::IComputeISect(const hsBounds3Ext& casterBnd, plShadowSlave* slave) const
 {
-    int iIsect = fIsectPool.GetCount();
-    fIsectPool.ExpandAndZero(iIsect+1);
-    if( !fIsectPool[iIsect] )
-    {
-        fIsectPool[iIsect] = new plBoundsIsect;
-    }
-    plBoundsIsect* isect = fIsectPool[iIsect];
+    plBoundsIsect* isect = fIsectPool.next([] { return new plBoundsIsect; }).get();
 
     const hsBounds3Ext& wBnd = slave->fWorldBounds;
 

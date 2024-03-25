@@ -43,21 +43,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __plAddDlgs_h__
 #define __plAddDlgs_h__
 
+#include <string_theory/format>
 #include <QDialog>
-#include "plFormat.h"
 
 class plAddElementDlg : public QDialog
 {
     Q_OBJECT
 
 public:
-    plAddElementDlg(const plString &parentPath, QWidget *parent = nullptr);
+    plAddElementDlg(const ST::string &parentPath, QWidget *parent = nullptr);
     virtual ~plAddElementDlg();
 
     bool DoPick(); // returns true if [Ok] clicked, false otherwise.
-    plString GetValue() const
+    ST::string GetValue() const
     {
-        return plFormat("{}.{}.{}", fAgeName, fSetName, fElementName);
+        return ST::format("{}.{}.{}", fAgeName, fSetName, fElementName);
     }
 
 private slots:
@@ -65,7 +65,7 @@ private slots:
 
 private:
     class Ui_AddElement *fUI;
-    plString fAgeName, fSetName, fElementName;
+    ST::string fAgeName, fSetName, fElementName;
     bool fBlockUpdates;
 };
 
@@ -74,17 +74,17 @@ class plAddLocalizationDlg : public QDialog
     Q_OBJECT
 
 public:
-    plAddLocalizationDlg(const plString &parentPath, QWidget *parent = nullptr);
+    plAddLocalizationDlg(const ST::string &parentPath, QWidget *parent = nullptr);
 
     bool DoPick(); // returns true if [Ok] clicked, false otherwise.
-    const plString &GetValue() const { return fLanguageName; }
+    ST::string GetValue() const { return fLanguageName; }
 
 private slots:
     void SelectLanguage(int which);
 
 private:
     class Ui_AddLocalization *fUI;
-    plString fAgeName, fSetName, fElementName, fLanguageName;
+    ST::string fAgeName, fSetName, fElementName, fLanguageName;
 };
 
 #endif

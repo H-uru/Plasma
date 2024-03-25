@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plIntersect_SOURCES
     plClosest.cpp
     plHardRegion.cpp
@@ -25,7 +20,19 @@ set(plIntersect_HEADERS
     plVolumeIsect.h
 )
 
-add_library(plIntersect STATIC ${plIntersect_SOURCES} ${plIntersect_HEADERS})
+plasma_library(plIntersect SOURCES ${plIntersect_SOURCES} ${plIntersect_HEADERS})
+
+target_link_libraries(plIntersect
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnKeyedObject
+        pnSceneObject
+    PRIVATE
+        pnNucleusInc
+        pnMessage
+        plMessage
+)
 
 source_group("Source Files" FILES ${plIntersect_SOURCES})
 source_group("Header Files" FILES ${plIntersect_HEADERS})

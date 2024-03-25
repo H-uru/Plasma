@@ -69,8 +69,8 @@ public:
     CLASSNAME_REGISTER( plDynaDecalEnableMsg );
     GETINTERFACE_ANY( plDynaDecalEnableMsg, plMessage );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // ArmKey undefined unless kArmature flag is set. You have to check.
     const plKey&            GetArmKey() const { return fKey; }

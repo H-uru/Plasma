@@ -41,17 +41,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "hsExceptions.h"
-#pragma hdrstop
+
+#include "MaxMain/MaxAPI.h"
 
 #include "plExportErrorMsg.h"
-
 
 bool plExportErrorMsg::Show()
 {
     // If bogus, and we have something to show, show it
-    if( GetBogus() && (GetMsg()[0] != 0 || GetLabel()[0] != 0))
+    if( GetBogus() && (!GetMsg().empty() || !GetLabel().empty()))
     {
-        hsMessageBox(GetMsg(), GetLabel(), hsMessageBoxNormal/*|hsMessageBoxIconError*/);
+        plMaxMessageBox(nullptr, ST2T(GetMsg()), ST2T(GetLabel()), MB_OK);
     }
     return GetBogus();
 }
@@ -59,7 +59,7 @@ bool plExportErrorMsg::Ask()
 {
     if( GetBogus() )
     {
-        return hsMBoxYes == hsMessageBox(GetMsg(), GetLabel(), hsMessageBoxYesNo/*|hsMessageBoxIconExclamation*/);
+        return plMaxMessageBox(nullptr, ST2T(GetMsg()), ST2T(GetLabel()), MB_YESNO) == IDYES;
     }
     return false;
 }
@@ -68,10 +68,10 @@ bool plExportErrorMsg::CheckAndAsk()
 {
     if( GetBogus() )
     {
-        strncat(GetMsg(), " - File corruption possible - ABORT?", 255);
+        GetMsg() += " - File corruption possible - ABORT?";
         if( Ask() )
         {
-            sprintf(GetMsg(), "!Abort at user response to error!");
+            GetMsg() = "!Abort at user response to error!";
             Check();
         }
     }
@@ -80,16 +80,16 @@ bool plExportErrorMsg::CheckAndAsk()
 
 bool plExportErrorMsg::CheckAskOrCancel()
 {
-    if( GetBogus() )
+    if (GetBogus())
     {
-        strncat(GetMsg(), " - ABORT? (Cancel to mute warnings)", 255);
-        int ret = hsMessageBox(GetMsg(), GetLabel(), hsMessageBoxYesNoCancel/*|hsMessageBoxIconExclamation*/);
-        if( hsMBoxYes == ret )
+        GetMsg() += " - ABORT? (Cancel to mute warnings)";
+        int ret = plMaxMessageBox(nullptr, ST2T(GetMsg()), ST2T(GetLabel()), MB_YESNOCANCEL);
+        if (ret == IDYES)
         {
-            sprintf(GetMsg(), "!Abort at user response to error!");
+            GetMsg() = "!Abort at user response to error!";
             Check();
         }
-        else if( hsMBoxCancel == ret )
+        else if (ret == IDCANCEL)
             return 1;
     }
     return false;
@@ -110,7 +110,7 @@ bool plExportErrorMsg::Check()
 {
     if( GetBogus() )
     {
-        strncat(GetMsg(), " !Output File Corrupt!", 255);
+        GetMsg() += " !Output File Corrupt!";
         IDebugThrow();
     }
 

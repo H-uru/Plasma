@@ -49,21 +49,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSpawnModifier : public plMultiModifier
 {
 protected:
-    virtual bool IEval(double secs, float del, uint32_t dirty) {return true;}
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
 public:
-    plSpawnModifier(){;}
+    plSpawnModifier() { }
 
     CLASSNAME_REGISTER( plSpawnModifier );
     GETINTERFACE_ANY( plSpawnModifier, plMultiModifier );
     
-    virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget(plSceneObject* so);
+    void AddTarget(plSceneObject* so) override;
+    void RemoveTarget(plSceneObject* so) override;
 
 //  bool MsgReceive(plMessage* msg);
 //
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 

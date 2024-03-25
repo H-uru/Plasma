@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plPhysicalComponents.h"
 #include <map>
-#include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
 
 class plMaxNode;
@@ -61,23 +60,22 @@ protected:
     typedef std::multimap<plMaxNode*, plKey> ReceiverKeys;
     typedef std::pair<plMaxNode*, plKey> ReceiverKey;
     ReceiverKeys fReceivers;
-//  hsTArray<plKey> fReceivers;
 
-    void IGetReceivers(plMaxNode* node, hsTArray<plKey>& receivers);
+    void IGetReceivers(plMaxNode* node, std::vector<plKey>& receivers);
 
 public:
     // Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg) override;
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     const LogicKeys& GetLogicKeys() { return fLogicModKeys; }
-    virtual plKey GetLogicKey(plMaxNode* node);
-    virtual void AddReceiverKey(plKey pKey, plMaxNode* node=nil);
+    plKey GetLogicKey(plMaxNode* node) override;
+    void AddReceiverKey(plKey pKey, plMaxNode* node=nullptr) override;
     virtual bool HasLogicOut() { return false; }
 
-    int CanConvertToType(Class_ID obtype)
+    int CanConvertToType(Class_ID obtype) override
     { return (obtype == ACTIVATOR_BASE_CID) ? 1 : plComponent::CanConvertToType(obtype); }
 };
 

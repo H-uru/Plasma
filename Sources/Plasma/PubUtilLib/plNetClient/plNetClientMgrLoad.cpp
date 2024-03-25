@@ -40,48 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#if 1   // for debugging
-#include "plCreatableIndex.h"   
-#include "plModifier/plResponderModifier.h"
-#include "plSurface/plLayerAnimation.h"
-#endif
-
-#include "hsStream.h"
 #include "plNetClientMgr.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-#include "hsTimer.h"
-
-#include "plNetMessage/plNetMessage.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plFixedKey.h"
-#include "pnKeyedObject/hsKeyedObject.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnModifier/plModifier.h"
-#include "pnMessage/plNodeRefMsg.h"
-#include "pnMessage/plClientMsg.h"
-#include "pnMessage/plNodeChangeMsg.h"
-#include "pnMessage/plPlayerPageMsg.h"
-
-#include "plScene/plSceneNode.h"
-#include "plScene/plRelevanceMgr.h"
-#include "plNetTransport/plNetTransportMember.h"
-#include "plResMgr/plKeyFinder.h"
-#include "plAgeDescription/plAgeDescription.h"
-#include "plAvatar/plArmatureMod.h"
-#include "plAvatar/plAvatarMgr.h"
-#include "plSDL/plSDL.h"
-
-/// TEMP HACK TO LOAD CONSOLE INIT FILES ON AGE LOAD
-#include "plMessage/plConsoleMsg.h"
-#include "plMessage/plLoadAvatarMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
-
-#include "plAgeLoader/plResPatcher.h"
-#include "plProgressMgr/plProgressMgr.h"
-#include "plResMgr/plRegistryHelpers.h"
-#include "plResMgr/plRegistryNode.h"
-#include "plResMgr/plResManager.h"
 
 #ifdef _MSC_VER
 #include <process.h>    // for getpid()
@@ -90,7 +49,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <unistd.h>
 #endif
 
-extern  bool    gDataServerLocal;
+#include "plgDispatch.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+#include "hsTimer.h"
+
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnMessage/plNodeChangeMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plPlayerPageMsg.h"
+
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plMessage/plLoadAvatarMsg.h"
 
 
 // Load Player object
@@ -113,7 +86,7 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
 
         if (cloneKey->ObjectIsLoaded())
         {
-            DebugMsg("ILoadClone: object %s is already loaded, ignoring", cloneKey->GetUoid().StringIze().c_str());
+            DebugMsg("ILoadClone: object {} is already loaded, ignoring", cloneKey->GetUoid().StringIze());
             return cloneKey;
         }
 
@@ -144,7 +117,7 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
     {
         if (!cloneKey->ObjectIsLoaded())
         {
-            DebugMsg("ILoadClone: object %s is already unloaded, ignoring", cloneKey->GetName().c_str());
+            DebugMsg("ILoadClone: object {} is already unloaded, ignoring", cloneKey->GetName());
             return cloneKey;
         }
 
@@ -160,7 +133,7 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
         GetKey()->Release(cloneKey);        // undo the active ref we took in ILoadClone
 
         // send message to scene object to remove him from the room
-        plNodeChangeMsg* nodeChange = new plNodeChangeMsg(GetKey(), cloneKey, nil);
+        plNodeChangeMsg* nodeChange = new plNodeChangeMsg(GetKey(), cloneKey, nullptr);
         plgDispatch::MsgSend(nodeChange);
     }
 
@@ -200,7 +173,7 @@ void plNetClientMgr::IPlayerChangeAge(bool exitAge, int32_t spawnPt)
     }
     else if (fLocalPlayerKey)
     {
-        ErrorMsg("Can't find avatarMod %s", fLocalPlayerKey->GetName().c_str());
+        ErrorMsg("Can't find avatarMod {}", fLocalPlayerKey->GetName());
     }
 }
 

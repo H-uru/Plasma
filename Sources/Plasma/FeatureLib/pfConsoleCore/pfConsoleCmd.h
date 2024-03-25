@@ -49,8 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfConsoleCmd_h
 
 #include "HeadSpin.h"
-#include "hsBiExpander.h"
+#include "plFileSystem.h"
 
+#include <string_theory/string>
+#include <utility>
+#include <vector>
 
 //// pfConsoleCmdGroup Class Definition //////////////////////////////////////
 
@@ -65,7 +68,7 @@ class pfConsoleCmdGroup
         static pfConsoleCmdGroup    *fBaseCmdGroup;
         static uint32_t               fBaseCmdGroupRef;
 
-        char    fName[ 128 ];
+        ST::string fName;
 
         pfConsoleCmdGroup   *fNext;
         pfConsoleCmdGroup   **fPrevPtr;
@@ -81,35 +84,36 @@ class pfConsoleCmdGroup
             kFindPartial = 0x01
         };
 
-        pfConsoleCmdGroup(const char *name, const char *parent );
+        pfConsoleCmdGroup(ST::string name, const ST::string& parent);
         ~pfConsoleCmdGroup();
 
         void    AddCommand( pfConsoleCmd *cmd );
         void    AddSubGroup( pfConsoleCmdGroup *group );
 
         void    Link( pfConsoleCmdGroup **prevPtr );
-        void    Unlink( void );
+        void    Unlink();
 
-        pfConsoleCmdGroup   *GetNext( void ) { return fNext; }
-        char                *GetName( void ) { return fName; }
-        pfConsoleCmdGroup   *GetParent( void ) { return fParentGroup; }
+        pfConsoleCmdGroup   *GetNext() { return fNext; }
+        ST::string GetName() { return fName; }
+        ST::string GetFullName();
+        pfConsoleCmdGroup   *GetParent() { return fParentGroup; }
 
-        static pfConsoleCmdGroup    *GetBaseGroup( void );
+        static pfConsoleCmdGroup    *GetBaseGroup();
 
-        pfConsoleCmd        *FindCommand( const char *name );
-        pfConsoleCmd        *FindCommandNoCase( const char *name, uint8_t flags = 0, pfConsoleCmd *start = nil );
-        pfConsoleCmd        *FindNestedPartialCommand( char *name, uint32_t *counter );
+        pfConsoleCmd* FindCommand(const ST::string& name);
+        pfConsoleCmd* FindCommandNoCase(const ST::string& name, uint8_t flags = 0, pfConsoleCmd* start = nullptr);
+        pfConsoleCmd* FindNestedPartialCommand(const ST::string& name, uint32_t* counter);
 
-        pfConsoleCmdGroup   *FindSubGroup( const char *name );
-        pfConsoleCmdGroup   *FindSubGroupNoCase( const char *name, uint8_t flags = 0, pfConsoleCmdGroup *start = nil );
+        pfConsoleCmdGroup* FindSubGroup(const ST::string& name);
+        pfConsoleCmdGroup* FindSubGroupNoCase(const ST::string& name, uint8_t flags = 0, pfConsoleCmdGroup* start = nullptr);
 
-        pfConsoleCmd        *GetFirstCommand( void ) { return fCommands; }
-        pfConsoleCmdGroup   *GetFirstSubGroup( void ) { return fSubGroups; }
+        pfConsoleCmd        *GetFirstCommand() { return fCommands; }
+        pfConsoleCmdGroup   *GetFirstSubGroup() { return fSubGroups; }
 
         int                 IterateCommands(pfConsoleCmdIterator*, int depth=0);
 
-        static pfConsoleCmdGroup    *FindSubGroupRecurse( const char *name );
-        static void                 DecBaseCmdGroupRef( void );
+        static pfConsoleCmdGroup* FindSubGroupRecurse(const ST::string& name);
+        static void                 DecBaseCmdGroupRef();
 };
 
 //// pfConsoleCmdParam Class Definition //////////////////////////////////////
@@ -120,22 +124,23 @@ class pfConsoleCmdParam
 
         uint8_t   fType;
 
-        typedef char* CharPtr;
-
         union
         {
             int     i;
             float   f;
             bool    b;
-            CharPtr s;
             char    c;
         } fValue;
+        // Supposedly it's *possible* to use a non-trivial class in a union,
+        // but it seems complex and hard to do correctly,
+        // so let's just put this in its own field.
+        ST::string fStringValue;
 
-        const int       &IToInt( void ) const;
-        const float     &IToFloat( void ) const;
-        const bool      &IToBool( void ) const;
-        const CharPtr   &IToString( void ) const;
-        const char      &IToChar( void ) const;
+        int IToInt() const;
+        float IToFloat() const;
+        bool IToBool() const;
+        const ST::string& IToString() const;
+        char IToChar() const;
 
     public:
 
@@ -153,42 +158,80 @@ class pfConsoleCmdParam
         operator int() const { return IToInt(); }
         operator float() const { return IToFloat(); }
         operator bool() const { return IToBool(); }
-        operator const CharPtr() const { return IToString(); }
+        operator const ST::string&() const { return IToString(); }
         operator char() const { return IToChar(); }
+        operator plFileName() const { return IToString(); }
 
-        uint8_t   GetType( void ) { return fType; }
+        uint8_t   GetType() { return fType; }
 
-        void    SetInt( int i )         { fValue.i = i; fType = kInt; }
-        void    SetFloat( float f )     { fValue.f = f; fType = kFloat; }
-        void    SetBool( bool b )   { fValue.b = b; fType = kBool; }
-        void    SetString( CharPtr s )  { fValue.s = s; fType = kString; }
-        void    SetChar( char c )       { fValue.c = c; fType = kChar; }
-        void    SetAny( CharPtr s )     { fValue.s = s; fType = kAny; }
-        void    SetNone( void )         { fType = kNone; }
+        void SetInt(int i)
+        {
+            fValue.i = i;
+            fStringValue.clear();
+            fType = kInt;
+        }
+
+        void SetFloat(float f)
+        {
+            fValue.f = f;
+            fStringValue.clear();
+            fType = kFloat;
+        }
+
+        void SetBool(bool b)
+        {
+            fValue.b = b;
+            fStringValue.clear();
+            fType = kBool;
+        }
+
+        void SetString(ST::string s)
+        {
+            fStringValue = std::move(s);
+            fType = kString;
+        }
+
+        void SetChar(char c)
+        {
+            fValue.c = c;
+            fStringValue.clear();
+            fType = kChar;
+        }
+
+        void SetAny(ST::string s)
+        {
+            fStringValue = std::move(s);
+            fType = kAny;
+        }
+
+        void SetNone()
+        {
+            fStringValue.clear();
+            fType = kNone;
+        }
 };
 
 //// pfConsoleCmd Class Definition ///////////////////////////////////////////
 
-typedef void (*pfConsoleCmdPtr)( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) );
+typedef void (*pfConsoleCmdPtr)(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&));
 
 class pfConsoleCmd
 {
     protected:
-        char            fName[ 128 ];
-        const char*     fHelpString;
+        ST::string fName;
+        ST::string fHelpString;
 
         pfConsoleCmdPtr fFunction;
-        bool            fLocalOnly;
 
         pfConsoleCmd    *fNext;
         pfConsoleCmd    **fPrevPtr;
 
         pfConsoleCmdGroup   *fParentGroup;
 
-        hsExpander<uint8_t>   fSignature;
-        hsExpander<char *>  fSigLabels;
+        std::vector<uint8_t> fSignature;
+        std::vector<ST::string> fSigLabels;
 
-        void    ICreateSignature(const char *paramList );
+        void ICreateSignature(const ST::string& paramList);
 
     public:
 
@@ -208,24 +251,25 @@ class pfConsoleCmd
         static char         fSigTypes[ kNumTypes ][ 8 ];
 
 
-        pfConsoleCmd(const char *group, const char *name, const char *paramList, const char *help, pfConsoleCmdPtr func, bool localOnly = false );
+        pfConsoleCmd(const ST::string& group, ST::string name, const ST::string& paramList, ST::string help, pfConsoleCmdPtr func);
         ~pfConsoleCmd();
 
-        void    Register(const char *group, const char *name );
+        void Register(const ST::string& group);
         void    Unregister();
-        void    Execute( int32_t numParams, pfConsoleCmdParam *params, void (*PrintFn)( const char * ) = nil );
+        void    Execute(int32_t numParams, pfConsoleCmdParam *params, void (*PrintFn)(const ST::string&) = nullptr);
 
         void    Link( pfConsoleCmd **prevPtr );
-        void    Unlink( void );
+        void    Unlink();
 
-        pfConsoleCmd    *GetNext( void ) { return fNext; }
-        char            *GetName( void ) { return fName; }
-        const char      *GetHelp( void ) { return fHelpString; }
-        const char      *GetSignature( void );
+        pfConsoleCmd    *GetNext() { return fNext; }
+        ST::string GetName() { return fName; }
+        ST::string GetFullName();
+        ST::string GetHelp() { return fHelpString; }
+        ST::string GetSignature();
 
-        pfConsoleCmdGroup   *GetParent( void ) { return fParentGroup; }
+        pfConsoleCmdGroup   *GetParent() { return fParentGroup; }
 
-        uint8_t           GetSigEntry( uint8_t i );
+        uint8_t GetSigEntry(size_t i);
 };
 
 
@@ -246,35 +290,27 @@ public:
 //        as a parameter
 //      - The start of the function itself, so that the {} after the macro
 //        define the body of that function.
-//
-//  PF_LOCAL_CONSOLE_CMD is identical, only it passes true for the localOnly flag.
-//  This isn't used currently and is here only for legacy.
 
 //  PF_CONSOLE_BASE_CMD doesn't belong to a group; it creates a global console function.
 
 
 #define PF_CONSOLE_BASE_CMD( name, p, help ) \
-    void    pfConsoleCmd_##name##_proc( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) ); \
-    pfConsoleCmd    conCmd_##name( nil, #name, p, help, pfConsoleCmd_##name##_proc ); \
-    void    pfConsoleCmd_##name##_proc( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) )
+    void pfConsoleCmd_##name##_proc(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&)); \
+    pfConsoleCmd conCmd_##name({}, ST_LITERAL(#name), ST_LITERAL(p), ST_LITERAL(help), pfConsoleCmd_##name##_proc); \
+    void pfConsoleCmd_##name##_proc(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&))
 
 #define PF_CONSOLE_CMD( grp, name, p, help ) \
-    void    pfConsoleCmd_##grp##_##name##_proc( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) ); \
-    pfConsoleCmd    conCmd_##grp##_##name( #grp, #name, p, help, pfConsoleCmd_##grp##_##name##_proc ); \
-    void    pfConsoleCmd_##grp##_##name##_proc( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) )
-
-#define PF_LOCAL_CONSOLE_CMD( grp, name, p, help ) \
-    void    pfConsoleCmd_##grp##_##name##_proc( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) ); \
-    pfConsoleCmd    conCmd_##grp##_##name( #grp, #name, p, help, pfConsoleCmd_##grp##_##name##_proc, true ); \
-    void    pfConsoleCmd_##grp##_##name##_proc( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) )
+    void pfConsoleCmd_##grp##_##name##_proc(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&)); \
+    pfConsoleCmd conCmd_##grp##_##name(ST_LITERAL(#grp), ST_LITERAL(#name), ST_LITERAL(p), ST_LITERAL(help), pfConsoleCmd_##grp##_##name##_proc); \
+    void pfConsoleCmd_##grp##_##name##_proc(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&))
 
 //// pfConsoleCmdGroup Creation Macro ////////////////////////////////////////
 
 #define PF_CONSOLE_GROUP( name ) \
-    pfConsoleCmdGroup   conGroup_##name( #name, nil );
+    pfConsoleCmdGroup conGroup_##name(ST_LITERAL(#name), {});
 
 #define PF_CONSOLE_SUBGROUP( parent, name ) \
-    pfConsoleCmdGroup   conGroup_##parent##_##name( #name, #parent );
+    pfConsoleCmdGroup conGroup_##parent##_##name(ST_LITERAL(#name), ST_LITERAL(#parent));
 
 
 //// Force the console sources to generate a linkable output /////////////////

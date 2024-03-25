@@ -46,9 +46,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsRefCnt.h"
 #include "plLoadMask.h"
 #include "plRefFlags.h"
-#include "pnKeyedObject/plKey.h"
+
+namespace ST { class string; }
 
 class hsStream;
+class plKey;
 class plKeyImp;
 class hsKeyedObject;
 class plRefMsg;
@@ -105,7 +107,7 @@ public:
     //---------------------------
     // Registry Modification Functions
     //---------------------------
-    virtual plKey NewKey(const plString& name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m = plLoadMask::kAlways)=0;
+    virtual plKey NewKey(const ST::string& name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m = plLoadMask::kAlways)=0;
     virtual plKey NewKey(plUoid& newUoid, hsKeyedObject* object)=0;
 
     virtual plDispatchBase* Dispatch()=0;
@@ -118,7 +120,7 @@ protected:
     friend class plKeyImp;
     friend class plArmatureMod; // Temp hack until a findkey/clone issue is fixed. -Bob
 
-    virtual plKey   ReRegister(const plString& nm, const plUoid& oid)=0;
+    virtual plKey   ReRegister(const ST::string& nm, const plUoid& oid)=0;
     virtual bool    ReadObject(plKeyImp* key)=0;  // plKeys call this when needed
 
     // Sets a key as used or unused in the registry.  When all keys in a page of a
@@ -142,6 +144,9 @@ private:
 
 public:
     static hsResMgr* ResMgr() { return (hsResMgr*)fResMgr; }
+
+    // External modifier use only
+    static void SetTheResMgr(hsResMgr* mgr) { fResMgr = mgr; }
 
     static plDispatchBase* Dispatch() { hsAssert(fResMgr, "No resmgr"); return fResMgr->Dispatch(); }
 

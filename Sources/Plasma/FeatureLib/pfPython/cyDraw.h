@@ -49,37 +49,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper to map draw functions to plasma2 message
 //
 
-#include "hsTemplates.h"
+#include <vector>
+
 #include "pnKeyedObject/plKey.h"
 
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 
 class cyDraw
 {
 protected:
     plKey           fSender;
-    hsTArray<plKey> fRecvr;
+    std::vector<plKey> fRecvr;
     bool            fNetForce;
 
-    cyDraw(plKey sender=nil,const plKey recvr=nil);
+    cyDraw(plKey sender = {}, plKey recvr = {});
+
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptDraw);
-    static PyObject *New(PyObject *sender = NULL, PyObject* recvr = NULL);
+    static PyObject *New(PyObject *sender = nullptr, PyObject* recvr = nullptr);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a cyDraw object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(cyDraw); // converts a PyObject to a cyDraw (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
 
     // setters
-    void SetSender(plKey &sender);
-    void AddRecvr(plKey &recvr);
+    void SetSender(plKey sender);
+    void AddRecvr(plKey recvr);
     void SetNetForce(bool state) { fNetForce = state; }
 
     // Enable draw
-    virtual void EnableT(bool state);
-    virtual void Enable() { EnableT(true); }
-    virtual void Disable() { EnableT(false); }
+    void EnableT(bool state);
+    void Enable() { EnableT(true); }
+    void Disable() { EnableT(false); }
 };
 
 #endif  // cyDraw_h

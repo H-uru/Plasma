@@ -40,6 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef plResponderLink_inc
+#define plResponderLink_inc
+
+#include "MaxMain/MaxAPI.h"
+
 #include "plResponderCmd.h"
 #include "pnKeyedObject/plKey.h"
 
@@ -52,117 +57,117 @@ class plResponderCmdLink : public plResponderCmd
 {
 public:
     static plResponderCmdLink& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes() { return 1; }
-    virtual const char *GetCategory(int idx) { return nil; }
-    virtual const char *GetName(int idx) { return "Link"; }
-    virtual const char *GetInstanceName(IParamBlock2 *pb);
+    int NumTypes() override { return 1; }
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("Link"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
-    virtual void SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb);
-    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    void SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb) override;
+    plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
 
 class plResponderCmdEnable : public plResponderCmd
 {
 public:
     static plResponderCmdEnable& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes() { return 1; }
-    virtual const char *GetCategory(int idx) { return "Enable/Disable"; }
-    virtual const char *GetName(int idx) { return "Responder"; }
-    virtual const char *GetInstanceName(IParamBlock2 *pb);
+    int NumTypes() override { return 1; }
+    const TCHAR* GetCategory(int idx) override { return _T("Enable/Disable"); }
+    const TCHAR* GetName(int idx) override { return _T("Responder"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
-    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
 
 class plResponderCmdPhysEnable : public plResponderCmd
 {
 public:
     static plResponderCmdPhysEnable& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes() { return 1; }
-    virtual const char *GetCategory(int idx) { return "Enable/Disable"; }
-    virtual const char *GetName(int idx) { return "Physical"; }
-    virtual const char *GetInstanceName(IParamBlock2 *pb);
+    int NumTypes() override { return 1; }
+    const TCHAR* GetCategory(int idx) override { return _T("Enable/Disable"); }
+    const TCHAR* GetName(int idx) override { return _T("Physical"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
-    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
 
 class plResponderCmdOneShot : public plResponderCmd
 {
 public:
     static plResponderCmdOneShot& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes() { return 1; }
-    virtual const char *GetCategory(int idx) { return nil; }
-    virtual const char *GetName(int idx) { return "One Shot"; }
-    virtual const char *GetInstanceName(IParamBlock2 *pb);
+    int NumTypes() override { return 1; }
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("One Shot"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
-    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 
-    virtual bool IsWaitable(IParamBlock2 *pb) { return true; }
-    virtual void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo);
+    bool IsWaitable(IParamBlock2 *pb) override { return true; }
+    void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo) override;
 };
 
 class plResponderCmdNotify : public plResponderCmd
 {
 public:
     static plResponderCmdNotify& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes() { return 1; }
-    virtual const char *GetCategory(int idx) { return nil; }
-    virtual const char *GetName(int idx) { return "Notify Triggerer"; }
-    virtual const char *GetInstanceName(IParamBlock2 *pb) { return GetName(0); }
+    int NumTypes() override { return 1; }
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("Notify Triggerer"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override { return GetName(0); }
 
-    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
 
 class plResponderCmdDetectorEnable : public plResponderCmd
 {
 public:
     static plResponderCmdDetectorEnable& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes() { return 1; }
-    virtual const char *GetCategory(int idx) { return "Enable/Disable"; }
-    virtual const char *GetName(int idx) { return "Detector"; }
-    virtual const char *GetInstanceName(IParamBlock2 *pb);
+    int NumTypes() override { return 1; }
+    const TCHAR* GetCategory(int idx) override { return _T("Enable/Disable"); }
+    const TCHAR* GetName(int idx) override { return _T("Detector"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
-    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
 
 class plResponderCmdXRegion : public plResponderCmd
 {
 public:
     static plResponderCmdXRegion& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes();
-    virtual const char *GetCategory(int idx);
-    virtual const char *GetName(int idx);
-    virtual const char *GetInstanceName(IParamBlock2 *pb);
+    int NumTypes() override;
+    const TCHAR* GetCategory(int idx) override;
+    const TCHAR* GetName(int idx) override;
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
-    virtual IParamBlock2 *CreatePB(int idx);
-    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    IParamBlock2 *CreatePB(int idx) override;
+    plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
 
 class plResponderCmdCamTransition : public plResponderCmd
 {
 public:
     static plResponderCmdCamTransition& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes() { return 1; }
-    virtual const char *GetCategory(int idx) { return nil; }
-    virtual const char *GetName(int idx) { return "Camera Transition"; }
-    virtual const char *GetInstanceName(IParamBlock2 *pb);
+    int NumTypes() override { return 1; }
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("Camera Transition"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
-    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
 
 class plResponderCmdCamForce : public plResponderCmd
@@ -171,87 +176,89 @@ public:
     enum { kForce3rd, kResume1st };
 
     static plResponderCmdCamForce& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes() { return 1; }
-    virtual const char *GetCategory(int idx) { return nil; }
-    virtual const char *GetName(int idx) { return "Camera Force 3rd"; }
-    virtual const char *GetInstanceName(IParamBlock2 *pb);
+    int NumTypes() override { return 1; }
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("Camera Force 3rd"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
-    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
 
 class plResponderCmdDelay : public plResponderCmd
 {
 public:
     static plResponderCmdDelay& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes() { return 1; }
-    virtual const char *GetCategory(int idx) { return nil; }
-    virtual const char *GetName(int idx) { return "Delay"; }
-    virtual const char *GetInstanceName(IParamBlock2 *pb);
+    int NumTypes() override { return 1; }
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("Delay"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
-    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 
-    virtual bool IsWaitable(IParamBlock2 *pb) { return true; }
-    virtual void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo);
+    bool IsWaitable(IParamBlock2 *pb) override { return true; }
+    void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo) override;
 };
 
 class plResponderCmdVisibility : public plResponderCmd
 {
 public:
     static plResponderCmdVisibility& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes();
-    virtual const char *GetCategory(int idx);
-    virtual const char *GetName(int idx);
-    virtual const char *GetInstanceName(IParamBlock2 *pb);
+    int NumTypes() override;
+    const TCHAR* GetCategory(int idx) override;
+    const TCHAR* GetName(int idx) override;
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
-    virtual IParamBlock2 *CreatePB(int idx);
-    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    IParamBlock2 *CreatePB(int idx) override;
+    plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
 
 class plResponderCmdSubWorld : public plResponderCmd
 {
 public:
     static plResponderCmdSubWorld& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes();
-    virtual const char *GetCategory(int idx);
-    virtual const char *GetName(int idx);
-    virtual const char *GetInstanceName(IParamBlock2 *pb);
+    int NumTypes() override;
+    const TCHAR* GetCategory(int idx) override;
+    const TCHAR* GetName(int idx) override;
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
-    virtual IParamBlock2 *CreatePB(int idx);
-    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    IParamBlock2 *CreatePB(int idx) override;
+    plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
 
 class plResponderCmdFootSurface : public plResponderCmd
 {
 public:
     static plResponderCmdFootSurface& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes() { return 1; }
-    virtual const char *GetCategory(int idx) { return nil; }
-    virtual const char *GetName(int idx) { return "Footstep Surface"; }
-    virtual const char *GetInstanceName(IParamBlock2 *pb);
+    int NumTypes() override { return 1; }
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("Footstep Surface"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
-    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
 
 class plResponderCmdMultistage : public plResponderCmd
 {
 public:
     static plResponderCmdMultistage& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes() { return 1; }
-    virtual const char *GetCategory(int idx) { return nil; }
-    virtual const char *GetName(int idx) { return "Trigger Multistage"; }
-    virtual const char *GetInstanceName(IParamBlock2 *pb);
+    int NumTypes() override { return 1; }
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("Trigger Multistage"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
-    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
+    plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
+
+#endif

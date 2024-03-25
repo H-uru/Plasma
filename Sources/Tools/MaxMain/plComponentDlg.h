@@ -73,18 +73,19 @@ public:
 protected:
     plComponentDlg();
 
-    static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-    BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    INT_PTR DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
     void IPositionControls(RECT *newRect, int edge);
     enum { kResizeX = 1, kResizeY = 2, kMoveX = 4, kMoveY = 8 };
     void IPositionControl(HWND hControl, int hDiff, int wDiff=0, int flags=kMoveY);
 
-    HTREEITEM IAddLeaf(HWND hTree, HTREEITEM hParent, const char *text, LPARAM lParam);
+    HTREEITEM IAddLeaf(HWND hTree, HTREEITEM hParent, const TCHAR* text, LPARAM lParam);
     // Search for an item in the tree by name, but only in the children of hParent
-    HTREEITEM IFindTreeItem(HWND hTree, const char *name, HTREEITEM hParent);
+    HTREEITEM IFindTreeItem(HWND hTree, const TCHAR* name, HTREEITEM hParent);
     HTREEITEM IAddComponent(HWND hTree, plMaxNode *node);
     void IAddComponentsRecur(HWND hTree, plMaxNode *node);
+    void ICreateComponentsTree();
     void ICreateMenu();
 
     bool IIsComponent(LPARAM lParam);

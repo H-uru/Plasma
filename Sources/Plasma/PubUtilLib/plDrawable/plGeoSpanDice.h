@@ -43,29 +43,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plGeoSpanDice_inc
 #define plGeoSpanDice_inc
 
+#include <vector>
+
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 
 class plGeometrySpan;
 
 class plGeoSpanDice
 {
-protected:
+private:
     uint32_t      fMinFaces;
     uint32_t      fMaxFaces;
     hsPoint3    fMaxSize;
 
     bool                INeedSplitting(plGeometrySpan* src) const;
     plGeometrySpan*     IAllocSpace(plGeometrySpan* src, int numVerts, int numTris) const;
-    plGeometrySpan*     IExtractTris(plGeometrySpan* src, hsTArray<uint32_t>& tris) const;
+    plGeometrySpan*     IExtractTris(plGeometrySpan* src, std::vector<uint32_t>& tris) const;
     int                 ISelectAxis(int exclAxis, plGeometrySpan* src) const;
-    bool                IHalf(plGeometrySpan* src, hsTArray<plGeometrySpan*>& out, int exclAxis=0) const;
+    bool                IHalf(plGeometrySpan* src, std::vector<plGeometrySpan*>& out, int exclAxis=0) const;
 
 public:
     plGeoSpanDice();
     virtual ~plGeoSpanDice();
 
-    bool                Dice(hsTArray<plGeometrySpan*>& spans) const;
+    bool Dice(std::vector<plGeometrySpan*>& spans) const;
 
     void SetMaxSize(const hsPoint3& size) { fMaxSize = size; }
     hsPoint3 GetMaxSize() const { return fMaxSize; }

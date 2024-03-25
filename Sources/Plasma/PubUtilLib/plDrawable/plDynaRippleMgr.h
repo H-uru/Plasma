@@ -55,7 +55,7 @@ protected:
 
     virtual bool        IRippleFromShape(const plPrintShape* shape, bool force=false);
 
-    virtual int         INewDecal();
+    size_t INewDecal() override;
 public:
     plDynaRippleMgr();
     virtual ~plDynaRippleMgr();
@@ -63,10 +63,10 @@ public:
     CLASSNAME_REGISTER( plDynaRippleMgr );
     GETINTERFACE_ANY( plDynaRippleMgr, plDynaDecalMgr );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     void SetUVWAnim(const hsVector3& init, const hsVector3& final) { fInitUVW = init; fFinalUVW = final; }
     const hsVector3& GetInitUVW() const { return fInitUVW; }

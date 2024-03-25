@@ -40,11 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyGUIControlCheckBox.h"
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControlCheckBox, pyGUIControlCheckBox);
@@ -54,7 +53,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlCheckBox)
 
 PYTHON_INIT_DEFINITION(ptGUIControlCheckBox, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -100,15 +99,15 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlCheckBox, pyGUIControl, "Params: ctrlKey\n
 // required functions for PyObject interoperability
 PyObject *pyGUIControlCheckBox::New(pyKey& gckey)
 {
-    ptGUIControlCheckBox *newObj = (ptGUIControlCheckBox*)ptGUIControlCheckBox_type.tp_new(&ptGUIControlCheckBox_type, NULL, NULL);
+    ptGUIControlCheckBox *newObj = (ptGUIControlCheckBox*)ptGUIControlCheckBox_type.tp_new(&ptGUIControlCheckBox_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlCheckBox::New(plKey objkey)
 {
-    ptGUIControlCheckBox *newObj = (ptGUIControlCheckBox*)ptGUIControlCheckBox_type.tp_new(&ptGUIControlCheckBox_type, NULL, NULL);
-    newObj->fThis->fGCkey = objkey;
+    ptGUIControlCheckBox *newObj = (ptGUIControlCheckBox*)ptGUIControlCheckBox_type.tp_new(&ptGUIControlCheckBox_type, nullptr, nullptr);
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

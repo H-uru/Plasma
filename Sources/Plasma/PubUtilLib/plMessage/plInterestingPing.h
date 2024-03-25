@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnMessage/plMessage.h"
 #include "hsGeometry3.h"
-#include "hsResMgr.h"
 
 class plInterestingModMsg : public plMessage
 {
@@ -55,7 +54,7 @@ public:
     plInterestingModMsg(const plKey &s, 
                     const plKey &r, 
                     const double* t){}
-    ~plInterestingModMsg(){;}
+    ~plInterestingModMsg() { }
 
     CLASSNAME_REGISTER( plInterestingModMsg );
     GETINTERFACE_ANY( plInterestingModMsg, plMessage );
@@ -68,25 +67,9 @@ public:
     uint8_t       fType;
 
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgRead(stream, mgr);
-        stream->ReadLE(&fWeight);
-        stream->ReadLE(&fRadius);
-        stream->ReadLE(&fSize);
-        fPos.Read(stream);
-        fObj = mgr->ReadKey(stream);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->WriteLE(fWeight);
-        stream->WriteLE(fRadius);
-        stream->WriteLE(fSize);
-        fPos.Write(stream);
-        mgr->WriteKey(stream, fObj);
-    }
 };
 
 class plInterestingPing : public plMessage
@@ -98,18 +81,18 @@ public:
     plInterestingPing(const plKey &s, 
                     const plKey &r, 
                     const double* t){SetBCastFlag(plMessage::kBCastByExactType);}
-    ~plInterestingPing(){;}
+    ~plInterestingPing() { }
 
     CLASSNAME_REGISTER( plInterestingPing );
     GETINTERFACE_ANY( plInterestingPing, plMessage );
     
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
+    void Read(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgRead(stream, mgr);
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
+    void Write(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgWrite(stream, mgr);
     }

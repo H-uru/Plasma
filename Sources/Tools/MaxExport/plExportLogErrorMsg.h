@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include "plErrorMsg.h"
+#include "plFileSystem.h"
+#include "hsStream.h"
 
 #if !HS_BUILD_FOR_WIN32
 #define PL_NULL_ERRMSG
@@ -56,47 +58,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifndef PL_NULL_ERRMSG
 
-#define ERROR_LOGFILE_NAME_LEN  512
 class plExportLogErrorMsg : public plErrorMsg {
 public:
-    plExportLogErrorMsg(const char* efile, const char* label, const char* msg) : plErrorMsg(label, msg)
-        { strncpy(fErrfile_name,efile,ERROR_LOGFILE_NAME_LEN-1); fErrfile=nil; }
-    plExportLogErrorMsg(const char* efile, bool bogus = false) : plErrorMsg(bogus)
-        { strncpy(fErrfile_name,efile,ERROR_LOGFILE_NAME_LEN-1); fErrfile=nil; }
-    plExportLogErrorMsg(const char* efile, bool bogus, const char* label, const char* msg) 
-        : plErrorMsg(bogus, label, msg)
-            { strncpy(fErrfile_name,efile,ERROR_LOGFILE_NAME_LEN-1); fErrfile=nil; }
-    plExportLogErrorMsg(const char* efile, bool bogus, const char* label, const char* format, const char* str) 
-        : plErrorMsg(bogus, label, format, str)
-            { strncpy(fErrfile_name,efile,ERROR_LOGFILE_NAME_LEN-1); fErrfile=nil; }
-    plExportLogErrorMsg(const char* efile, bool bogus, const char* label, const char* format, const char* str1, const char* str2) 
-        : plErrorMsg(bogus, label, format, str1, str2)
-            { strncpy(fErrfile_name,efile,ERROR_LOGFILE_NAME_LEN-1); fErrfile=nil; }
-    plExportLogErrorMsg(const char* efile, bool bogus, const char* label, const char* format, int n) 
-        : plErrorMsg(bogus, label, format, n)
-            { strncpy(fErrfile_name,efile,ERROR_LOGFILE_NAME_LEN-1); fErrfile=nil; }
-    plExportLogErrorMsg(const char* efile, bool bogus, const char* label, const char* format, int n, int m) 
-        : plErrorMsg(bogus, label, format, n, m)
-            { strncpy(fErrfile_name,efile,ERROR_LOGFILE_NAME_LEN-1); fErrfile=nil; }
-    plExportLogErrorMsg(const char* efile, bool bogus, const char* label, const char* format, float f) 
-        : plErrorMsg(bogus, label, format, f)
-            { strncpy(fErrfile_name,efile,ERROR_LOGFILE_NAME_LEN-1); fErrfile=nil; }
+    plExportLogErrorMsg() = default;
+
+    plExportLogErrorMsg(plFileName errFile, ST::string label, ST::string msg)
+        : plErrorMsg(std::move(label), std::move(msg)),
+          fErrfile_name(std::move(errFile)),
+          fNumberErrors()
+    { }
+
+    plExportLogErrorMsg(plFileName errFile, bool bogus = false, ST::string label = {}, ST::string msg = {})
+        : plErrorMsg(bogus, std::move(label), std::move(msg)),
+          fErrfile_name(std::move(errFile)),
+          fNumberErrors()
+    { }
+
     ~plExportLogErrorMsg();
 
-    virtual bool Ask(); // if b is true and user says yes to displayed query, return true, else false
-    virtual bool CheckAndAsk(); // if b is true and user says YES, throw self. only asks if b is true. returns true if b is true but user says no, else false
-    virtual bool CheckAskOrCancel(); // if b is true ( if YES, throw, else if NO return 0, else (CANCEL) return 1
-    virtual bool Show(); // if b is true, displays message, returns true
-    virtual bool Check(); // if b was true, throws self, else return false
-    virtual bool CheckAndShow(); // if b was true, shows message box then throws self, else return false
-    virtual void Quit(); // if b, quietly just throw with no message
+    bool Ask() override; // if b is true and user says yes to displayed query, return true, else false
+    bool CheckAndAsk() override; // if b is true and user says YES, throw self. only asks if b is true. returns true if b is true but user says no, else false
+    bool CheckAskOrCancel() override; // if b is true ( if YES, throw, else if NO return 0, else (CANCEL) return 1
+    bool Show() override; // if b is true, displays message, returns true
+    bool Check() override; // if b was true, throws self, else return false
+    bool CheckAndShow() override; // if b was true, shows message box then throws self, else return false
+    void Quit() override; // if b, quietly just throw with no message
 
 protected:
-    virtual void IWriteErrorFile(const char* label, const char* msg);
+    virtual void IWriteErrorFile(const ST::string& label, const ST::string& msg);
 private:
-    FILE    *fErrfile;          // the error file to write the nasties
-    char    fErrfile_name[ERROR_LOGFILE_NAME_LEN];  // the name of the error file
-    int32_t   fNumberErrors;
+    std::shared_ptr<hsUNIXStream> fErrfile;          // the error file to write the nasties
+    plFileName fErrfile_name;  // the name of the error file
+    int32_t fNumberErrors;
 
 private:
     void        IDebugThrow();
@@ -105,21 +98,15 @@ private:
 
 class plExportLogErrorMsg : public plErrorMsg {
 public:
-    plExportLogErrorMsg(const char* label, const char* msg) : plErrorMsg() { }
-    plExportLogErrorMsg(bool bogus = false) : plErrorMsg() { }
-    plExportLogErrorMsg(bool bogus, const char* label, const char* msg) 
-        : plErrorMsg() { }
-    plExportLogErrorMsg(bool bogus, const char* label, const char* format, const char* str) 
-        : plErrorMsg() { }
-    plExportLogErrorMsg(bool bogus, const char* label, const char* format, const char* str1, const char* str2) 
-        : plErrorMsg() { }
-    plExportLogErrorMsg(bool bogus, const char* label, const char* format, int n) 
-        : plErrorMsg() { }
-    plExportLogErrorMsg(bool bogus, const char* label, const char* format, int n, int m) 
-        : plErrorMsg() { }
-    plExportLogErrorMsg(bool bogus, const char* label, const char* format, float f) 
-        : plErrorMsg() { }
+    plExportErrorDbg(ST::string label = {}, ST::string msg = {})
+        : plErrorMsg()
+    { }
+
+    plExportErrorDbg(bool bogus, ST::string label, ST::string msg)
+        : plErrorMsg()
+    { }
 };
+
 #endif // PL_NULL_ERRMSG
 
 // Compile out error messages labeled debug
@@ -128,42 +115,38 @@ public:
 
 class plExportLogErrorDbg : public plExportLogErrorMsg {
 public:
-    plExportLogErrorDbg(const char* label, const char* msg) : plExportLogErrorMsg("") { }
-    plExportLogErrorDbg(bool bogus = false) : plExportLogErrorMsg("") { }
-    plExportLogErrorDbg(bool bogus, const char* label, const char* msg) : plExportLogErrorMsg("") { }
-    plExportLogErrorDbg(bool bogus, const char* label, const char* format, const char* str) : plExportLogErrorMsg("") { }
-    plExportLogErrorDbg(bool bogus, const char* label, const char* format, const char* str1, const char* str2) : plExportLogErrorMsg("") { }
-    plExportLogErrorDbg(bool bogus, const char* label, const char* format, int n) : plExportLogErrorMsg("") { }
-    plExportLogErrorDbg(bool bogus, const char* label, const char* format, int n, int m) : plExportLogErrorMsg("") { }
-    plExportLogErrorDbg(bool bogus, const char* label, const char* format, float f) : plExportLogErrorMsg("") { }
+    plExportLogErrorDbg(ST::string label = {}, ST::string msg = {})
+        : plExportLogErrorMsg()
+    { }
 
-    bool Ask() { return false; }
-    bool CheckAndAsk() { return false; }
-    bool CheckAskOrCancel();
-    bool Show() { return false; }
-    bool Check() { return false; }
-    bool CheckAndShow() { return false; }
-    void Quit() { }
+    plExportLogErrorDbg(bool bogus, ST::string label, ST::string msg)
+        : plExportLogErrorMsg()
+    { }
+
+    bool Ask() override { return false; }
+    bool CheckAndAsk() override { return false; }
+    bool CheckAskOrCancel() override;
+    bool Show() override { return false; }
+    bool Check() override { return false; }
+    bool CheckAndShow() override { return false; }
+    void Quit() override { }
 };
 
 #else // keep them as exactly the same as errormessage
 
-class plExportLogErrorDbg : public plExportLogErrorMsg {
-public:
-    plExportLogErrorDbg(const char* label, const char* msg) : plExportLogErrorMsg("",label, msg) { }
-    plExportLogErrorDbg(bool bogus = true) : plExportLogErrorMsg("",bogus) { }
-    plExportLogErrorDbg(bool bogus, const char* label, const char* msg) 
-        : plExportLogErrorMsg("",bogus, label, msg) { }
-    plExportLogErrorDbg(bool bogus, const char* label, const char* format, const char* str) 
-        : plExportLogErrorMsg("",bogus, label, format, str) { }
-    plExportLogErrorDbg(bool bogus, const char* label, const char* format, const char* str1, const char* str2) 
-        : plExportLogErrorMsg("",bogus, label, format, str1, str2) { }
-    plExportLogErrorDbg(bool bogus, const char* label, const char* format, int n) 
-        : plExportLogErrorMsg("",bogus, label, format, n) { }
-    plExportLogErrorDbg(bool bogus, const char* label, const char* format, int n, int m) 
-        : plExportLogErrorMsg("",bogus, label, format, n, m) { }
-    plExportLogErrorDbg(bool bogus, const char* label, const char* format, float f) 
-        : plExportLogErrorMsg("",bogus, label, format, f) { }
+class plExportLogErrorDbg : public plExportLogErrorMsg
+{
+    plExportLogErrorDbg(ST::string label, ST::string msg)
+        : plExportLogErrorMsg({}, std::move(label), std::move(msg))
+    { }
+
+    plExportLogErrorDbg(bool bogus = true)
+        : plExportLogErrorMsg({}, bogus)
+    { }
+
+    plExportLogErrorDbg(bool bogus = false, ST::string label = {}, ST::string msg = {})
+        : plExportLogErrorMsg({}, bogus, std::move(label), std::move(msg))
+    { }
 };
 
 #endif // keep them as exactly the same as errormessage

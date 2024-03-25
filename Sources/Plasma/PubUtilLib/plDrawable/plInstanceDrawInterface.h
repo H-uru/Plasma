@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInstanceDrawInterface_inc
 #define plInstanceDrawInterface_inc
 
+#include <vector>
+
 #include "pnSceneObject/plDrawInterface.h"
 
 class plDrawableSpans;
@@ -51,9 +53,9 @@ class plInstanceDrawInterface : public plDrawInterface
 {
 protected:
     plDrawableSpans *fDrawable;
-    hsTArray<plSharedMesh*> fMeshes;
+    std::vector<plSharedMesh*> fMeshes;
 
-    virtual void ICheckDrawableIndex(uint8_t which);
+    void ICheckDrawableIndex(size_t which) override;
 
 public:
     uint32_t fTargetID;
@@ -64,20 +66,20 @@ public:
     CLASSNAME_REGISTER( plInstanceDrawInterface );
     GETINTERFACE_ANY( plInstanceDrawInterface, plDrawInterface );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     void AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat, bool addToFront, int LOD, bool partialSort);
     void RemoveSharedMesh(plSharedMesh *mesh);
 
-    virtual void ReleaseData();
-    virtual void SetSharedMesh(uint8_t which, plSharedMesh *mesh);
-    virtual void IClearIndex(uint8_t which);
+    void ReleaseData() override;
+    virtual void SetSharedMesh(size_t which, plSharedMesh *mesh);
+    virtual void IClearIndex(size_t which);
     plDrawableSpans *GetInstanceDrawable() const { return fDrawable; }
 
-    int32_t GetSharedMeshIndex(const plSharedMesh *mesh) const;
+    hsSsize_t GetSharedMeshIndex(const plSharedMesh *mesh) const;
 };
 
 

@@ -47,18 +47,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
-#include "hsTemplates.h"
 #include "plgDispatch.h"
 #include "hsBitVector.h"
 #include <algorithm>
 #include <iterator>
 
 plMessage::plMessage()
-:   fSender(nil),
-    fBCastFlags(kLocalPropagate),
-    fTimeStamp(0),
-    fNetRcvrPlayerIDs(nil),
-    dispatchBreak(false)
+:   fBCastFlags(kLocalPropagate),
+    fTimeStamp(),
+    fNetRcvrPlayerIDs(),
+    dispatchBreak()
 {
 }
 
@@ -67,14 +65,11 @@ plMessage::plMessage(const plKey &s,
             const double* t)
 :   fSender(s),
     fBCastFlags(kLocalPropagate),
-    fNetRcvrPlayerIDs(nil),
-    dispatchBreak(false)
+    fNetRcvrPlayerIDs(),
+    dispatchBreak()
 {
-    if( r )
-    {
-        fReceivers.SetCount(1);
-        fReceivers[0] = r;
-    }
+    if (r)
+        fReceivers.emplace_back(r);
     fTimeStamp = t ? *t : hsTimer::GetSysSeconds();
 }
 
@@ -83,34 +78,32 @@ plMessage::~plMessage()
     delete fNetRcvrPlayerIDs;
 }
 
-plMessage&      plMessage::SetNumReceivers(int n) { fReceivers.SetCount(n); return *this; }
-uint32_t          plMessage::GetNumReceivers() const { return fReceivers.GetCount(); }
-const plKey&    plMessage::GetReceiver(int i) const { return fReceivers[i]; }
-plMessage&      plMessage::RemoveReceiver(int i) { fReceivers.Remove(i); return *this; }
+size_t          plMessage::GetNumReceivers() const { return fReceivers.size(); }
+const plKey&    plMessage::GetReceiver(size_t i) const { return fReceivers[i]; }
+plMessage&      plMessage::RemoveReceiver(size_t i) { fReceivers.erase(fReceivers.begin() + i); return *this; }
 
-plMessage&      plMessage::ClearReceivers() { fReceivers.SetCount(0); return *this; }
-plMessage&      plMessage::AddReceiver(const plKey &r) { fReceivers.Append(r); return *this; }
+plMessage&      plMessage::ClearReceivers() { fReceivers.clear(); return *this; }
+plMessage&      plMessage::AddReceiver(plKey r) { fReceivers.emplace_back(std::move(r)); return *this; }
 
-plMessage& plMessage::AddReceivers(const hsTArray<plKey>& rList)
+plMessage& plMessage::AddReceivers(const std::vector<plKey>& rList)
 {
-    int i;
-    for( i = 0; i < rList.GetCount(); i++ )
-        AddReceiver(rList[i]);
+    fReceivers.reserve(fReceivers.size() + rList.size());
+    fReceivers.insert(fReceivers.end(), rList.begin(), rList.end());
 
     return *this;
 }
 
-bool plMessage::Send(const plKey r, bool async)
+bool plMessage::Send(plKey r, bool async)
 {
-    if( r )
-        AddReceiver(r);
+    if (r)
+        AddReceiver(std::move(r));
     return plgDispatch::MsgSend(this,async);
 }
 
-bool plMessage::SendAndKeep(const plKey r, bool async)
+bool plMessage::SendAndKeep(plKey r, bool async)
 {
     Ref();
-    return Send(r, async);
+    return Send(std::move(r), async);
 }
 
 void plMessage::IMsgRead(hsStream* s, hsResMgr* mgr)
@@ -118,15 +111,13 @@ void plMessage::IMsgRead(hsStream* s, hsResMgr* mgr)
     plCreatable::Read(s, mgr);
 
     fSender = mgr->ReadKey(s);
-    int n;
-    s->LogReadLE(&n,"NumberOfReceivers"); 
-    fReceivers.SetCount(n);
-    int i;
-    for( i = 0; i < fReceivers.GetCount(); i++ )
+    uint32_t n = s->ReadLE32();
+    fReceivers.resize(n);
+    for (size_t i = 0; i < fReceivers.size(); i++)
         fReceivers[i] = mgr->ReadKey(s);
 
-    s->LogReadLE(&fTimeStamp,"TimeStamp");    // read as double
-    s->LogReadLE(&fBCastFlags, "BCastFlags");
+    s->ReadLEDouble(&fTimeStamp);
+    s->ReadLE32(&fBCastFlags);
 }
 
 void plMessage::IMsgWrite(hsStream* s, hsResMgr* mgr)
@@ -134,12 +125,11 @@ void plMessage::IMsgWrite(hsStream* s, hsResMgr* mgr)
     plCreatable::Write(s, mgr);
     
     mgr->WriteKey(s,fSender);
-    s->WriteLE32(fReceivers.GetCount());
-    int i;
-    for( i = 0; i < fReceivers.GetCount(); i++ )
-        mgr->WriteKey(s,fReceivers[i]);
+    s->WriteLE32((uint32_t)fReceivers.size());
+    for (const plKey& receiver : fReceivers)
+        mgr->WriteKey(s, receiver);
 
-    s->WriteLE(fTimeStamp);   // write as double
+    s->WriteLEDouble(fTimeStamp);
     s->WriteLE32(fBCastFlags);
 }
 
@@ -161,15 +151,14 @@ void plMessage::IMsgReadVersion(hsStream* s, hsResMgr* mgr)
 
     if (contentFlags.IsBitSet(kMsgReceivers))
     {
-        int n = s->ReadLE32();
-        fReceivers.SetCount(n);
-        int i;
-        for( i = 0; i < fReceivers.GetCount(); i++ )
+        uint32_t n = s->ReadLE32();
+        fReceivers.resize(n);
+        for (size_t i = 0; i < fReceivers.size(); i++)
             fReceivers[i] = mgr->ReadKey(s);
     }
 
     if (contentFlags.IsBitSet(kMsgTimeStamp))
-        s->ReadLE(&fTimeStamp);   // read as double
+        s->ReadLEDouble(&fTimeStamp);
 
     if (contentFlags.IsBitSet(kMsgBCastFlags))
         fBCastFlags = s->ReadLE32();
@@ -188,13 +177,12 @@ void plMessage::IMsgWriteVersion(hsStream* s, hsResMgr* mgr)
     mgr->WriteKey(s,fSender);
 
     // kMsgReceivers
-    s->WriteLE32(fReceivers.GetCount());
-    int i;
-    for( i = 0; i < fReceivers.GetCount(); i++ )
-        mgr->WriteKey(s,fReceivers[i]);
+    s->WriteLE32((uint32_t)fReceivers.size());
+    for (const plKey& receiver : fReceivers)
+        mgr->WriteKey(s, receiver);
 
     // kMsgTimeStamp
-    s->WriteLE(fTimeStamp);   // write as double
+    s->WriteLEDouble(fTimeStamp);
 
     // kMsgBCastFlags
     s->WriteLE32(fBCastFlags);
@@ -221,8 +209,8 @@ int plMsgStdStringHelper::Poke(const std::string & stringref, hsStream* stream, 
 {
     plMessage::plStrLen strlen;
     hsAssert( stringref.length()<0xFFFF, "buf too big for plMsgStdStringHelper" );
-    strlen = stringref.length();
-    stream->WriteLE(strlen);
+    strlen = (plMessage::plStrLen)stringref.length();
+    stream->WriteLE16(strlen);
     if (strlen)
         stream->Write(strlen,stringref.data());
     return stream->GetPosition();
@@ -231,7 +219,7 @@ int plMsgStdStringHelper::Poke(const std::string & stringref, hsStream* stream, 
 int plMsgStdStringHelper::PokeBig(const std::string & stringref, hsStream* stream, const uint32_t peekOptions)
 {
     uint32_t strlen = stringref.length();
-    stream->WriteLE(strlen);
+    stream->WriteLE32(strlen);
     if (strlen)
         stream->Write(strlen,stringref.data());
     return stream->GetPosition();
@@ -242,7 +230,7 @@ int plMsgStdStringHelper::Poke(const char * buf, uint32_t bufsz, hsStream* strea
     plMessage::plStrLen strlen;
     hsAssert( bufsz<0xFFFF, "buf too big for plMsgStdStringHelper" );
     strlen = (plMessage::plStrLen)bufsz;
-    stream->WriteLE(strlen);
+    stream->WriteLE16(strlen);
     if (strlen)
         stream->Write(strlen,buf);
     return stream->GetPosition();
@@ -250,19 +238,19 @@ int plMsgStdStringHelper::Poke(const char * buf, uint32_t bufsz, hsStream* strea
 
 int plMsgStdStringHelper::PokeBig(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions)
 {
-    stream->WriteLE(bufsz);
+    stream->WriteLE32(bufsz);
     if (bufsz)
         stream->Write(bufsz,buf);
     return stream->GetPosition();
 }
 
-int plMsgStdStringHelper::Poke(const plString & stringref, hsStream* stream, const uint32_t peekOptions)
+int plMsgStdStringHelper::Poke(const ST::string & stringref, hsStream* stream, const uint32_t peekOptions)
 {
     std::string temp = stringref.c_str();
     return Poke(temp, stream, peekOptions);
 }
 
-int plMsgStdStringHelper::PokeBig(const plString & stringref, hsStream* stream, const uint32_t peekOptions)
+int plMsgStdStringHelper::PokeBig(const ST::string & stringref, hsStream* stream, const uint32_t peekOptions)
 {
     std::string temp = stringref.c_str();
     return PokeBig(temp, stream, peekOptions);
@@ -272,60 +260,51 @@ int plMsgStdStringHelper::PokeBig(const plString & stringref, hsStream* stream, 
 int plMsgStdStringHelper::Peek(std::string  & stringref, hsStream* stream, const uint32_t peekOptions)
 {
     plMessage::plStrLen strlen;
-    stream->LogSubStreamStart("push this");
-    stream->LogReadLE(&strlen,"StrLen");
+    stream->ReadLE16(&strlen);
     stringref.erase();
     if (strlen <= stream->GetSizeLeft())
     {
         stringref.resize(strlen);
-        if (strlen){
-            stream->LogRead(strlen,(void*)stringref.data(),"StdString");
-            stream->LogStringString(plFormat("Value: {}", stringref).c_str());
-        }
+        if (strlen)
+            stream->Read(strlen, stringref.data());
     }
     else
     {
         hsAssert( false, "plMsgStdStringHelper::Peek: overflow peeking string." );
     }
-    stream->LogSubStreamEnd();
     return stream->GetPosition();
 }
 
 int plMsgStdStringHelper::PeekBig(std::string  & stringref, hsStream* stream, const uint32_t peekOptions)
 {
-    uint32_t bufsz;
-    stream->LogSubStreamStart("push this");
-    stream->LogReadLE(&bufsz,"Bufsz");
+    uint32_t bufsz = stream->ReadLE32();
     stringref.erase();
     if (bufsz <= stream->GetSizeLeft())
     {
         stringref.resize(bufsz);
-        if (bufsz){
-            stream->LogRead(bufsz,(void*)stringref.data(),"StdString");
-            stream->LogStringString(plFormat("Value: {}", stringref).c_str());
-        }
+        if (bufsz)
+            stream->Read(bufsz, stringref.data());
     }
     else
     {
         hsAssert( false, "plMsgStdStringHelper::PeekBig: overflow peeking string." );
     }
-    stream->LogSubStreamEnd();
     return stream->GetPosition();
 }
 
-int plMsgStdStringHelper::Peek(plString & stringref, hsStream* stream, const uint32_t peekOptions)
+int plMsgStdStringHelper::Peek(ST::string & stringref, hsStream* stream, const uint32_t peekOptions)
 {
     std::string temp;
     int pos = Peek(temp, stream, peekOptions);
-    stringref = plString::FromIso8859_1(temp.c_str(), temp.size());
+    stringref = ST::string::from_latin_1(temp.c_str(), temp.size());
     return pos;
 }
 
-int plMsgStdStringHelper::PeekBig(plString & stringref, hsStream* stream, const uint32_t peekOptions)
+int plMsgStdStringHelper::PeekBig(ST::string & stringref, hsStream* stream, const uint32_t peekOptions)
 {
     std::string temp;
     int pos = PeekBig(temp, stream, peekOptions);
-    stringref = plString::FromIso8859_1(temp.c_str(), temp.size());
+    stringref = ST::string::from_latin_1(temp.c_str(), temp.size());
     return pos;
 }
 
@@ -334,8 +313,8 @@ int plMsgStdStringHelper::PeekBig(plString & stringref, hsStream* stream, const 
 // STATIC
 int plMsgCStringHelper::Poke(const char * str, hsStream* stream, const uint32_t peekOptions)
 {
-    plMessage::plStrLen len = (str) ? strlen(str) : 0;
-    stream->WriteLE(len);
+    plMessage::plStrLen len = (str) ? (plMessage::plStrLen)strlen(str) : 0;
+    stream->WriteLE16(len);
     if (len)
         stream->Write(len,str);
     return stream->GetPosition();
@@ -345,36 +324,32 @@ int plMsgCStringHelper::Poke(const char * str, hsStream* stream, const uint32_t 
 int plMsgCStringHelper::Peek(char *& str, hsStream* stream, const uint32_t peekOptions)
 {
     plMessage::plStrLen strlen;
-    stream->LogSubStreamStart("push me");
-    stream->LogReadLE(&strlen,"StrLen");
+    stream->ReadLE16(&strlen);
     delete [] str;
-    str = nil;
+    str = nullptr;
     if (strlen <= stream->GetSizeLeft())
     {
         if (strlen)
         {
             str = new char[strlen+1];
+            if (strlen)
+                stream->Read(strlen, str);
             str[strlen] = '\0';
-            if (strlen) {
-                stream->LogRead(strlen,str,"CString");
-                stream->LogStringString(plFormat("Value: {}", str).c_str());
-            }
         }
     }
-    stream->LogSubStreamEnd();
     return stream->GetPosition();
 }
 
-int plMsgCStringHelper::Poke(const plString & str, hsStream* stream, const uint32_t peekOptions)
+int plMsgCStringHelper::Poke(const ST::string & str, hsStream* stream, const uint32_t peekOptions)
 {
     return Poke(str.c_str(), stream, peekOptions);
 }
 
-int plMsgCStringHelper::Peek(plString & str, hsStream* stream, const uint32_t peekOptions)
+int plMsgCStringHelper::Peek(ST::string & str, hsStream* stream, const uint32_t peekOptions)
 {
-    char * temp = nil;
+    char * temp = nullptr;
     int pos = Peek(temp, stream, peekOptions);
-    str = plString::FromIso8859_1(temp);
+    str = ST::string::from_latin_1(temp);
     delete [] temp;
     return pos;
 }
@@ -392,9 +367,7 @@ int plMsgCArrayHelper::Poke(const void * buf, uint32_t bufsz, hsStream* stream, 
 // STATIC
 int plMsgCArrayHelper::Peek(void * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions)
 {
-    stream->LogSubStreamStart("push me");
-    stream->LogRead(bufsz,buf,"CArray");
-    stream->LogSubStreamEnd();
+    stream->Read(bufsz, buf);
     return stream->GetPosition();
 }
 

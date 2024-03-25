@@ -145,16 +145,16 @@ protected:
 
 public:
     plWaterComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool DeInit(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool Convert(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool DeInit(plMaxNode* node, plErrorMsg* pErrMsg) override;
 
-    virtual int GetMinCap() { return plQuality::kPS_1_1; }
+    int GetMinCap() override { return plQuality::kPS_1_1; }
 
     // This works anytime.
     static float GetWaterHeight(INode* node); // node is component node.
@@ -165,7 +165,7 @@ public:
 
     // These just deal with old data with obsolete parameters.
     void        CheckForObsoleteParams();
-    IOResult    Load(ILoad* iLoad);
+    IOResult    Load(ILoad* iLoad) override;
 };
 
 class plShoreComponent : public plComponent
@@ -177,15 +177,15 @@ public:
 protected:
 public:
     plShoreComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool Convert(plMaxNode* node, plErrorMsg* pErrMsg) override;
 
-    virtual int GetMinCap() { return plQuality::kPS_1_1; }
+    int GetMinCap() override { return plQuality::kPS_1_1; }
 };
 
 class plWDecalComponent : public plComponent
@@ -198,15 +198,15 @@ public:
 protected:
 public:
     plWDecalComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool Convert(plMaxNode* node, plErrorMsg* pErrMsg) override;
 
-    virtual int GetMinCap() { return plQuality::kPS_1_1; }
+    int GetMinCap() override { return plQuality::kPS_1_1; }
 };
 
 class plEnvMapComponent : public plComponent
@@ -240,13 +240,13 @@ protected:
 
 public:
     plEnvMapComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool Convert(plMaxNode* node, plErrorMsg* pErrMsg) override;
 
     plDynamicEnvMap* GetEnvMap();
     plDynamicCamMap* GetCamMap();

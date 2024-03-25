@@ -41,13 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
-#include "hsWindows.h"
+#include <conio.h>
 
-#include <iparamb2.h>
-#include <max.h>
-#include <notetrck.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
 
 #include "plMaxAnimUtils.h"
 #include "MaxExport/plErrorMsg.h"
@@ -61,11 +57,11 @@ float TimeValueToGameTime(TimeValue t)
     return float(t)/float(TPS);
 }
 
-bool GetSegMapAnimTime(const plString &animName, SegmentMap *segMap, SegmentSpec::SegType type, float& begin, float& end)
+bool GetSegMapAnimTime(const ST::string &animName, SegmentMap *segMap, SegmentSpec::SegType type, float& begin, float& end)
 {
     if (segMap)
     {
-        if (!animName.IsNull() && segMap->find(animName) != segMap->end())
+        if (!animName.empty() && segMap->find(animName) != segMap->end())
         {
             SegmentSpec *spec = (*segMap)[animName];
             if (spec->fType == type)
@@ -85,11 +81,11 @@ bool GetSegMapAnimTime(const plString &animName, SegmentMap *segMap, SegmentSpec
 SegmentMap *GetSharedAnimSegmentMap(std::vector<Animatable*>& anims, plErrorMsg *pErrorMsg)
 {
     if (anims.empty())
-        return nil;
+        return nullptr;
 
     SegmentMap *segMap = GetAnimSegmentMap(anims[0], pErrorMsg);
     if (!segMap)
-        return nil;
+        return nullptr;
 
     int i;
     for (i = 1; i < anims.size(); i++)
@@ -99,13 +95,13 @@ SegmentMap *GetSharedAnimSegmentMap(std::vector<Animatable*>& anims, plErrorMsg 
         if (!curSegMap)
         {
             DeleteSegmentMap(segMap);
-            return nil;
+            return nullptr;
         }
 
         if (segMap->begin() == segMap->end())
         {
             DeleteSegmentMap(segMap);
-            return nil;
+            return nullptr;
         }
 
         SegmentMap::iterator it = segMap->begin();
@@ -127,7 +123,7 @@ SegmentMap *GetSharedAnimSegmentMap(std::vector<Animatable*>& anims, plErrorMsg 
     return segMap;
 }
 
-SegmentSpec::SegmentSpec(float start, float end, const plString & name, SegType type) :
+SegmentSpec::SegmentSpec(float start, float end, const ST::string & name, SegType type) :
     fStart(start), fEnd(end), fName(name), fType(type), fInitial(-1)
 {
 }
@@ -195,10 +191,10 @@ bool DoesHaveStopPoints(Animatable *anim)
 
         for (int j = 0; j < numKeys; j++)
         {
-            char buf[256];
-            strcpy(buf, track->keys[j]->note);
-            strlwr(buf);
-            if (strstr(buf, "@stoppoint"))
+            TCHAR buf[256];
+            _tcsncpy(buf, track->keys[j]->note, std::size(buf));
+            _tcslwr(buf);
+            if (_tcsstr(buf, _T("@stoppoint")))
                 return true;
         }
     }
@@ -206,47 +202,47 @@ bool DoesHaveStopPoints(Animatable *anim)
     return false;
 }
 
-void GetSegment(const char *note, float time, SegmentMap *segMap, plErrorMsg *pErrMsg)
+void GetSegment(const TCHAR* note, float time, SegmentMap *segMap, plErrorMsg *pErrMsg)
 {
-    char segName[256];
-    char segSuffix[256];
+    TCHAR segName[256];
+    TCHAR segSuffix[256];
 
-    int matchedFields = sscanf(note, " %[^@] @ %s ", segName, segSuffix);
+    int matchedFields = _stscanf(note, _T(" %[^@] @ %s "), segName, segSuffix);
 
-    plString name = segName;
-    plString suffix = segSuffix;
+    ST::string name = segName;
+    ST::string suffix = segSuffix;
 
     if (matchedFields == 2)
     {
         NoteType type = kNoteUnknown;
 
-        if (!stricmp(segSuffix, "start") ||
-            !stricmp(segSuffix, "begin"))
+        if (!_tcsicmp(segSuffix, _T("start")) ||
+            !_tcsicmp(segSuffix, _T("begin")))
             type = kNoteStartAnim;
-        else if (!stricmp(segSuffix, "end"))
+        else if (!_tcsicmp(segSuffix, _T("end")))
             type = kNoteEndAnim;
-        else if (!stricmp(segSuffix, "startloop") ||
-                !stricmp(segSuffix, "loopstart") ||
-                !stricmp(segSuffix, "beginloop") ||
-                !stricmp(segSuffix, "loopbegin"))
+        else if (!_tcsicmp(segSuffix, _T("startloop")) ||
+                !_tcsicmp(segSuffix, _T("loopstart")) ||
+                !_tcsicmp(segSuffix, _T("beginloop")) ||
+                !_tcsicmp(segSuffix, _T("loopbegin")))
             type = kNoteStartLoop;
-        else if (!stricmp(segSuffix, "endloop") ||
-                !stricmp(segSuffix, "loopend"))
+        else if (!_tcsicmp(segSuffix, _T("endloop")) ||
+                !_tcsicmp(segSuffix, _T("loopend")))
             type = kNoteEndLoop;
-        else if (!stricmp(segSuffix, "marker"))
+        else if (!_tcsicmp(segSuffix, _T("marker")))
             type = kNoteMarker;
-        else if (!stricmp(segSuffix, "stoppoint"))
+        else if (!_tcsicmp(segSuffix, _T("stoppoint")))
             type = kNoteStopPoint;
-        else if (!stricmp(segSuffix, "initial"))
+        else if (!_tcsicmp(segSuffix, _T("initial")))
             type = kNoteInitial;
-        else if (!stricmp(segSuffix, "suppress"))
+        else if (!_tcsicmp(segSuffix, _T("suppress")))
             type = kNoteSuppress;
 
         if (type == kNoteUnknown)
         {
             if (pErrMsg)
             {
-                pErrMsg->Set(true, "NoteTrack Anim Error", "Malformed segment note: %s", segName);
+                pErrMsg->Set(true, "NoteTrack Anim Error", ST::format("Malformed segment note: {}", segName));
                 pErrMsg->Show();
                 pErrMsg->Set();
             }
@@ -254,41 +250,41 @@ void GetSegment(const char *note, float time, SegmentMap *segMap, plErrorMsg *pE
         else
         {
             SegmentMap::iterator existing = segMap->find(name);
-            SegmentSpec *existingSpec = (existing != segMap->end()) ? (*existing).second : nil;
-            const char *kErrorTitle = "NoteTrack Anim Error";
+            SegmentSpec *existingSpec = (existing != segMap->end()) ? (*existing).second : nullptr;
+            const ST::string kErrorTitle = ST_LITERAL("NoteTrack Anim Error");
 
             if (existingSpec)
             {
                 // an existing spec, but we're processing a start note?
                 if (type == kNoteStartAnim && pErrMsg)
                 {
-                    pErrMsg->Set(true, kErrorTitle, "Got out of order start note.  No Start given for %s", segName).Show();
+                    pErrMsg->Set(true, kErrorTitle, ST::format("Got out of order start note.  No Start given for {}", segName)).Show();
                     pErrMsg->Set();
                 }
                 // existing spec, has an end, we're also processing an end?
                 else if (type == kNoteEndAnim && existingSpec->fEnd != -1 && pErrMsg)
                 {
-                    pErrMsg->Set(true, kErrorTitle, "Got two ends for the same segment %s", segName).Show();
+                    pErrMsg->Set(true, kErrorTitle, ST::format("Got two ends for the same segment {}", segName)).Show();
                     pErrMsg->Set();
                 }
                 else if (type == kNoteStartLoop && existingSpec->fStart != -1 && pErrMsg)
                 {
-                    pErrMsg->Set(true, kErrorTitle, "Got two loop starts for the same segment, %s", segName).Show();
+                    pErrMsg->Set(true, kErrorTitle, ST::format("Got two loop starts for the same segment, {}", segName)).Show();
                     pErrMsg->Set();
                 }
                 else if (type == kNoteEndLoop && existingSpec->fEnd != -1 && pErrMsg)
                 {
-                    pErrMsg->Set(true, kErrorTitle, "Got two loop ends for the same segment, %s", segName).Show();
+                    pErrMsg->Set(true, kErrorTitle, ST::format("Got two loop ends for the same segment, {}", segName)).Show();
                     pErrMsg->Set();
                 }
                 else if (type == kNoteMarker && pErrMsg)
                 {
-                    pErrMsg->Set(true, kErrorTitle, "Marker has the same name (%s) as another spec in its notetrack", segName).Show();
+                    pErrMsg->Set(true, kErrorTitle, ST::format("Marker has the same name ({}) as another spec in its notetrack", segName)).Show();
                     pErrMsg->Set();
                 }
                 else if (type == kNoteStopPoint && pErrMsg)
                 {
-                    pErrMsg->Set(true, kErrorTitle, "Stop point has the same name (%s) as another spec in its notetrack", segName).Show();
+                    pErrMsg->Set(true, kErrorTitle, ST::format("Stop point has the same name ({}) as another spec in its notetrack", segName)).Show();
                     pErrMsg->Set();
                 }
 
@@ -303,7 +299,7 @@ void GetSegment(const char *note, float time, SegmentMap *segMap, plErrorMsg *pE
             {
                 if (type == kNoteEndAnim && pErrMsg)
                 {
-                    pErrMsg->Set(true, kErrorTitle, "Got an end note without a corresponding start. Ignoring %s", segName).Show();
+                    pErrMsg->Set(true, kErrorTitle, ST::format("Got an end note without a corresponding start. Ignoring {}", segName)).Show();
                     pErrMsg->Set();
                 }
                 else
@@ -349,7 +345,7 @@ void GetSegment(const char *note, float time, SegmentMap *segMap, plErrorMsg *pE
 SegmentMap * GetAnimSegmentMap(Animatable *anim, plErrorMsg *pErrMsg)
 {
     if (!anim->HasNoteTracks())
-        return nil;
+        return nullptr;
     
     SegmentMap *segMap = new SegmentMap();
 
@@ -362,7 +358,7 @@ SegmentMap * GetAnimSegmentMap(Animatable *anim, plErrorMsg *pErrMsg)
 
         for (int j = 0; j < numKeys; j++)
         {
-            char *note = track->keys[j]->note;
+            auto note = track->keys[j]->note;
             float time = TimeValueToGameTime(track->keys[j]->time);
             GetSegment(note, time, segMap, pErrMsg);
         }
@@ -382,4 +378,3 @@ void DeleteSegmentMap(SegmentMap *segMap)
         delete segMap;
     }
 }
-

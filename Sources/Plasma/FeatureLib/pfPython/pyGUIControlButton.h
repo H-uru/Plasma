@@ -50,8 +50,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 #include "pyGUIControl.h"
+
+class plKey;
+class pyKey;
 
 class pyGUIControlButton : public pyGUIControl
 {
@@ -71,11 +74,11 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    static bool IsGUIControlButton(pyKey& gckey);
+    static bool IsGUIControlButton(const plKey& key);
     
-    virtual void    SetNotifyType(int32_t kind);
-    virtual int32_t   GetNotifyType();
-    virtual bool    IsButtonDown();
+    void SetNotifyType(int32_t kind);
+    int32_t GetNotifyType();
+    bool IsButtonDown();
 };
 
 #endif // _pyGUIControlButton_h_

@@ -45,22 +45,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUITextBoxMod.h"
-#include "pfGameGUIMgr.h"
 
-#include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
+#include "HeadSpin.h"
+#include "hsStream.h"
+
+#include <vector>
+
 #include "plAnimation/plAGModifier.h"
 #include "plGImage/plDynamicTextMap.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
+#include "plMessage/plAnimCmdMsg.h"
 #include "plResMgr/plLocalization.h"
 
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
-
-
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
@@ -68,13 +65,7 @@ pfGUITextBoxMod::pfGUITextBoxMod()
 {
 //  SetFlag( kWantsInterest );
     SetFlag( kIntangible );
-    fText = nil;
     fUseLocalizationPath = false;
-}
-
-pfGUITextBoxMod::~pfGUITextBoxMod()
-{
-    delete [] fText;
 }
 
 //// IEval ///////////////////////////////////////////////////////////////////
@@ -93,7 +84,7 @@ bool    pfGUITextBoxMod::MsgReceive( plMessage *msg )
 
 //// IPostSetUpDynTextMap ////////////////////////////////////////////////////
 
-void    pfGUITextBoxMod::IPostSetUpDynTextMap( void )
+void    pfGUITextBoxMod::IPostSetUpDynTextMap()
 {
     pfGUIColorScheme *scheme = GetColorScheme();
 
@@ -105,9 +96,9 @@ void    pfGUITextBoxMod::IPostSetUpDynTextMap( void )
 
 //// IUpdate /////////////////////////////////////////////////////////////////
 
-void    pfGUITextBoxMod::IUpdate( void )
+void    pfGUITextBoxMod::IUpdate()
 {
-    if( fDynTextMap == nil || !fDynTextMap->IsValid() )
+    if (fDynTextMap == nullptr || !fDynTextMap->IsValid())
         return;
 
     if( HasFlag( kCenterJustify ) )
@@ -119,31 +110,29 @@ void    pfGUITextBoxMod::IUpdate( void )
 
     fDynTextMap->ClearToColor( GetColorScheme()->fBackColor );
 
-    std::wstring drawStr;
-    if (fUseLocalizationPath && !fLocalizationPath.IsEmpty() && pfLocalizationMgr::InstanceValid())
-        drawStr = pfLocalizationMgr::Instance().GetString(fLocalizationPath).ToWchar().GetData();
-    else
-    {
-        if( fText != nil )
-        {
-            int lang = plLocalization::GetLanguage();
-            std::vector<std::wstring> translations = plLocalization::StringToLocal(fText);
-            if (translations[lang] == L"") // if the translations doesn't exist, draw English
-                drawStr = translations[0].c_str();
-            else
-                drawStr = translations[lang].c_str();
-        }
+    ST::string drawStr;
+    if (fUseLocalizationPath && !fLocalizationPath.empty() && pfLocalizationMgr::InstanceValid()) {
+        drawStr = pfLocalizationMgr::Instance().GetString(fLocalizationPath);
+    } else if (!fText.empty()) {
+        plLocalization::Language lang = plLocalization::GetLanguage();
+        std::vector<ST::string> translations = plLocalization::StringToLocal(fText);
+
+        // if the translations doesn't exist, draw English
+        if (translations[lang].empty())
+            drawStr = translations[plLocalization::kEnglish];
+        else
+            drawStr = translations[lang];
     }
 
     if (!drawStr.empty())
-        fDynTextMap->DrawWrappedString( 4, 4, drawStr.c_str(), fDynTextMap->GetVisibleWidth() - 8, fDynTextMap->GetVisibleHeight() - 8 );
+        fDynTextMap->DrawWrappedString(4, 4, drawStr, fDynTextMap->GetVisibleWidth() - 8, fDynTextMap->GetVisibleHeight() - 8);
 
     fDynTextMap->FlushToHost();
 }
 
 void pfGUITextBoxMod::PurgeDynaTextMapImage()
 {
-    if ( fDynTextMap != nil )
+    if (fDynTextMap != nullptr)
         fDynTextMap->PurgeImage();
 }
 
@@ -154,42 +143,34 @@ void    pfGUITextBoxMod::Read( hsStream *s, hsResMgr *mgr )
     pfGUIControlMod::Read(s, mgr);
 
     uint32_t len = s->ReadLE32();
-    if( len > 0 )
-    {
-        char *text = new char[ len + 1 ];
-        s->Read( len, text );
-        text[ len ] = 0;
+    if (len > 0) {
+        ST::char_buffer buf;
+        buf.allocate(len);
+        s->Read(len, buf.data());
 
-        fText = hsStringToWString(text);
-        delete [] text;
+        // In case there are some latin-1 strings in PRPs.
+        try {
+            fText = ST::string::from_utf8(buf);
+        } catch (const ST::unicode_error&) {
+            fText = ST::string::from_latin_1(buf);
+        }
     }
-    else
-        fText = nil;
 
     fUseLocalizationPath = s->ReadBool();
     if (fUseLocalizationPath)
-    {
         fLocalizationPath = s->ReadSafeWString();
-    }
 }
 
 void    pfGUITextBoxMod::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Write( s, mgr );
 
-    if( fText == nil )
-        s->WriteLE32( 0 );
-    else
-    {
-        char *text = hsWStringToString(fText);
-        s->WriteLE32( strlen( text ) );
-        s->Write( strlen( text ), text );
-        delete [] text;
-    }
+    s->WriteLE32((uint32_t)fText.size());
+    s->Write(fText.size(), fText.c_str());
 
     // Make sure we only write out to use localization path if the box is checked
     // and the path isn't empty
-    bool useLoc = fUseLocalizationPath && !fLocalizationPath.IsEmpty();
+    bool useLoc = fUseLocalizationPath && !fLocalizationPath.empty();
 
     s->WriteBool(useLoc);
     if (useLoc)
@@ -212,35 +193,10 @@ void    pfGUITextBoxMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 
 //// SetText /////////////////////////////////////////////////////////////////
 
-void    pfGUITextBoxMod::SetText( const char *text )
+void pfGUITextBoxMod::SetLocalizationPath(ST::string path)
 {
-    delete [] fText;
-    if (text)
-    {
-        fText = hsStringToWString(text);
-    }
-    else
-        fText = nil;
-    IUpdate();
-}
-
-void    pfGUITextBoxMod::SetText( const wchar_t *text )
-{
-    delete [] fText;
-    if (text)
-    {
-        fText = new wchar_t[wcslen(text)+1];
-        wcscpy(fText,text);
-    }
-    else
-        fText = nil;
-    IUpdate();
-}
-
-void pfGUITextBoxMod::SetLocalizationPath(const plString& path)
-{
-    if (!path.IsNull())
-        fLocalizationPath = path;
+    if (!path.empty())
+        fLocalizationPath = std::move(path);
 }
 
 void pfGUITextBoxMod::SetUseLocalizationPath(bool use)

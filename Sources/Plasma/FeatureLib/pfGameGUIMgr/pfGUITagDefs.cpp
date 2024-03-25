@@ -46,8 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "pfGameGUIMgr.h"
 #include "pfGUITagDefs.h"
+#include "pfGameGUIMgr.h"
+
+using namespace ST::literals;
 
 //// Tag List ////////////////////////////////////////////////////////////////
 //  Here's the actual list of tags. It's basically a list of konstants, but
@@ -63,36 +65,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Step 2: Add the string here
 
 pfGUITag    gGUITags[] = {
-    { kKIMainDialog, "KI Main Dialog" },
-    { kKITestEditBox, "KI Test Control" },
-    { kKIEntryDlg, "KI Entry Dlg" },
-    { kKICloseButton, "KI Close Dlg Button" },
-    { kKITestControl2, "KI Test Control 2" },
-    { kKIAddButton, "KI Add Button" },
-    { kKIEditButton, "KI Edit Button" },
-    { kKIRemoveButton, "KI Remove Button" },
-    { kKIYesNoDlg, "KI Yes/No Dialog" },
-    { kKIYesBtn, "KI Yes Button" },
-    { kKINoBtn, "KI No Button" },
-    { kKIStaticText, "KI Static Text" },
-    { kKITestControl3, "KI Test Control 3" },
-    { kKIMiniDialog, "KI Mini Dialog" },
-    { kPlayerBook, "PB Dialog" },
-    { kPBLinkToBtn, "PB Link To Button" },
-    { kPBSaveLinkBtn, "PB Save Link Button" },
-    { kPBSaveSlotRadio, "PB Save Slot Radio" },
-    { kPBSaveSlotPrev1, "PB Save Slot Preview 1" },
-    { kPBSaveSlotPrev2, "PB Save Slot Preview 2" },
-    { kPBSaveSlotPrev3, "PB Save Slot Preview 3" },
-    { kPBSaveSlotPrev4, "PB Save Slot Preview 4" },
-    { kPBSaveSlotPrev5, "PB Save Slot Preview 5" },
-    { kPBSaveSlotPrev6, "PB Save Slot Preview 6" },
-    { kKICurrPlayerText, "KI Current Player Label" },
-    { kKIPlayerList,    "KI Mini Friends List" },
-    { kKIChatModeBtn,   "KI Toggle Chat Mode Btn" },
-    { kBlackBarDlg,     "Black Bar Dialog" },
-    { kBlackBarKIButtons, "Black Bar KI Radio Group" },
-    { kKILogoutButton, "KI Logout Button" },
+    { kKIMainDialog, "KI Main Dialog"_st },
+    { kKITestEditBox, "KI Test Control"_st },
+    { kKIEntryDlg, "KI Entry Dlg"_st },
+    { kKICloseButton, "KI Close Dlg Button"_st },
+    { kKITestControl2, "KI Test Control 2"_st },
+    { kKIAddButton, "KI Add Button"_st },
+    { kKIEditButton, "KI Edit Button"_st },
+    { kKIRemoveButton, "KI Remove Button"_st },
+    { kKIYesNoDlg, "KI Yes/No Dialog"_st },
+    { kKIYesBtn, "KI Yes Button"_st },
+    { kKINoBtn, "KI No Button"_st },
+    { kKIStaticText, "KI Static Text"_st },
+    { kKITestControl3, "KI Test Control 3"_st },
+    { kKIMiniDialog, "KI Mini Dialog"_st },
+    { kPlayerBook, "PB Dialog"_st },
+    { kPBLinkToBtn, "PB Link To Button"_st },
+    { kPBSaveLinkBtn, "PB Save Link Button"_st },
+    { kPBSaveSlotRadio, "PB Save Slot Radio"_st },
+    { kPBSaveSlotPrev1, "PB Save Slot Preview 1"_st },
+    { kPBSaveSlotPrev2, "PB Save Slot Preview 2"_st },
+    { kPBSaveSlotPrev3, "PB Save Slot Preview 3"_st },
+    { kPBSaveSlotPrev4, "PB Save Slot Preview 4"_st },
+    { kPBSaveSlotPrev5, "PB Save Slot Preview 5"_st },
+    { kPBSaveSlotPrev6, "PB Save Slot Preview 6"_st },
+    { kKICurrPlayerText, "KI Current Player Label"_st },
+    { kKIPlayerList,    "KI Mini Friends List"_st },
+    { kKIChatModeBtn,   "KI Toggle Chat Mode Btn"_st },
+    { kBlackBarDlg,     "Black Bar Dialog"_st },
+    { kBlackBarKIButtons, "Black Bar KI Radio Group"_st },
+    { kKILogoutButton, "KI Logout Button"_st },
 
-    { 0, "" }       // Ending tag, MUST ALWAYS BE HERE
+    { 0, ""_st }       // Ending tag, MUST ALWAYS BE HERE
 };

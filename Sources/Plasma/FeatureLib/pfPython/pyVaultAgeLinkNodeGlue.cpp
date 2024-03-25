@@ -40,13 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pyVaultAgeLinkNode.h"
-#include "pySpawnPointInfo.h"
+
+#include <string_theory/string>
 
 #include "plVault/plVault.h"
+
+#include "pyGlueHelpers.h"
+#include "pySpawnPointInfo.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptVaultAgeLinkNode, pyVaultAgeLinkNode);
@@ -107,7 +108,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeLinkNode, getVolatile)
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeLinkNode, addSpawnPoint, args)
 {
-    PyObject* spawnPtObj = NULL;
+    PyObject* spawnPtObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &spawnPtObj))
     {
         PyErr_SetString(PyExc_TypeError, "addSpawnPoint expects a ptSpawnPointInfo or a ptSpawnPointInfoRef");
@@ -131,7 +132,7 @@ PYTHON_METHOD_DEFINITION(ptVaultAgeLinkNode, addSpawnPoint, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeLinkNode, removeSpawnPoint, args)
 {
-    PyObject* spawnPtObj = NULL;
+    PyObject* spawnPtObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &spawnPtObj))
     {
         PyErr_SetString(PyExc_TypeError, "removeSpawnPoint expects a ptSpawnPointInfo, a ptSpawnPointInfoRef, or a string");
@@ -149,10 +150,9 @@ PYTHON_METHOD_DEFINITION(ptVaultAgeLinkNode, removeSpawnPoint, args)
         self->fThis->RemoveSpawnPointRef(*spawnPt);
         PYTHON_RETURN_NONE;
     }
-    else if (PyString_Check(spawnPtObj))
+    else if (PyUnicode_Check(spawnPtObj))
     {
-        char* spawnPt = PyString_AsString(spawnPtObj);
-        self->fThis->RemoveSpawnPointByName(spawnPt);
+        self->fThis->RemoveSpawnPointByName(PyUnicode_AsSTString(spawnPtObj));
         PYTHON_RETURN_NONE;
     }
     PyErr_SetString(PyExc_TypeError, "removeSpawnPoint expects a ptSpawnPointInfo, a ptSpawnPointInfoRef, or a string");
@@ -161,8 +161,8 @@ PYTHON_METHOD_DEFINITION(ptVaultAgeLinkNode, removeSpawnPoint, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeLinkNode, hasSpawnPoint, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "hasSpawnPoint expects a string");
         PYTHON_RETURN_ERROR;
@@ -194,22 +194,10 @@ PYTHON_START_METHODS_TABLE(ptVaultAgeLinkNode)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-PLASMA_DEFAULT_TYPE_WBASE(ptVaultAgeLinkNode, pyVaultNode, "Params: n=0\nPlasma vault age link node");
+PLASMA_DEFAULT_TYPE_WBASE(ptVaultAgeLinkNode, pyVaultNode, "Plasma vault age link node");
 
 // required functions for PyObject interoperability
-PyObject *pyVaultAgeLinkNode::New(RelVaultNode* nfsNode)
-{
-    ptVaultAgeLinkNode *newObj = (ptVaultAgeLinkNode*)ptVaultAgeLinkNode_type.tp_new(&ptVaultAgeLinkNode_type, NULL, NULL);
-    newObj->fThis->fNode = nfsNode;
-    return (PyObject*)newObj;
-}
-
-PyObject *pyVaultAgeLinkNode::New(int n /* =0 */)
-{
-    ptVaultAgeLinkNode *newObj = (ptVaultAgeLinkNode*)ptVaultAgeLinkNode_type.tp_new(&ptVaultAgeLinkNode_type, NULL, NULL);
-    // oddly enough, nothing to do here
-    return (PyObject*)newObj;
-}
+PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultAgeLinkNode, pyVaultAgeLinkNode)
 
 PYTHON_CLASS_CHECK_IMPL(ptVaultAgeLinkNode, pyVaultAgeLinkNode)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptVaultAgeLinkNode, pyVaultAgeLinkNode)

@@ -43,6 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plShadowMaster_inc
 #define plShadowMaster_inc
 
+#include <memory>
+
+#include "hsPoolVector.h"
+
 #include "pnSceneObject/plObjInterface.h"
 
 class plShadowCaster;
@@ -55,7 +59,6 @@ class hsResMgr;
 class plMessage;
 class plLightInfo;
 class plShadowCastMsg;
-
 
 class plShadowMaster : public plObjInterface
 {
@@ -71,22 +74,23 @@ public:
 
 protected:
     // Global clamp on shadow map size and stuff
-    static uint32_t                   fGlobalMaxSize;
-    static float                 fGlobalMaxDist;
-    static float                 fGlobalVisParm;
+    static uint32_t             fGlobalMaxSize;
+    static float                fGlobalMaxDist;
+    static float                fGlobalVisParm;
+    static float                fGlobalMaxBlur;
 
     // Constant parameter(s) for this master.
-    float                        fAttenDist;
-    float                        fMaxDist;
-    float                        fMinDist;
+    float                       fAttenDist;
+    float                       fMaxDist;
+    float                       fMinDist;
 
-    uint32_t                          fMaxSize;
-    uint32_t                          fMinSize;
+    uint32_t                    fMaxSize;
+    uint32_t                    fMinSize;
 
-    float                        fPower;
+    float                       fPower;
 
     // Temp data used for one frame and recycled.
-    hsTArray<plShadowSlave*>        fSlavePool;
+    hsPoolVector<std::unique_ptr<plShadowSlave>> fSlavePool;
     plLightInfo*                    fLightInfo;
 
     // These are specific to the projection type (perspective or orthogonal), so have to
@@ -108,7 +112,7 @@ protected:
 
     virtual plShadowSlave* ICreateShadowSlave(plShadowCastMsg* castMsg, const hsBounds3Ext& casterBnd, float power);
 
-    virtual plShadowSlave* INewSlave(const plShadowCaster* caster) = 0;
+    virtual std::unique_ptr<plShadowSlave> INewSlave(const plShadowCaster* caster) = 0;
     virtual plShadowSlave* INextSlave(const plShadowCaster* caster);
 
     virtual plShadowSlave* IRecycleSlave(plShadowSlave* slave);
@@ -124,14 +128,14 @@ public:
     CLASSNAME_REGISTER( plShadowMaster );
     GETINTERFACE_ANY( plShadowMaster, plObjInterface );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override { }
 
-    int32_t       GetNumProperties() const { return kNumProps; }
+    int32_t GetNumProperties() const override { return kNumProps; }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // These are usually handled internally, activating on read and deactivating
     // on destruct. Made public in case they need to be manually handled, like
@@ -163,6 +167,9 @@ public:
 
     static void SetGlobalShadowQuality(float s);
     static float GetGlobalShadowQuality() { return fGlobalVisParm; }
+
+    static void SetGlobalMaxBlur(float s) { fGlobalMaxBlur = s; }
+    static float GetGlobalMaxBlur() { return fGlobalMaxBlur; }
 };
 
 

@@ -39,23 +39,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsWindows.h"
+
 #include "plNetClientRecorder.h"
+
+#include "plCreatableIndex.h"
+#include "plgDispatch.h"
+#include "hsResMgr.h"
 #include "hsStream.h"
 #include "hsTimer.h"
+#include "hsWindows.h"
 
-#include "plNetMessage/plNetMessage.h"
-#include "plCreatableIndex.h"
-#include "hsResMgr.h"
-#include "plgDispatch.h"
-#include "plSDL/plSDL.h"
-#include "pnNetCommon/plNetApp.h"
+#include "pnMessage/plNotifyMsg.h"
 
 #include "plMessage/plLinkToAgeMsg.h"
-#include "plMessage/plLoadAvatarMsg.h"
-#include "pnMessage/plNotifyMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
-
+#include "plNetMessage/plNetMessage.h"
 #include "plStatusLog/plStatusLog.h"
 
 plNetClientRecorder::plNetClientRecorder(TimeWrapper* timeWrapper) :
@@ -79,7 +76,7 @@ void plNetClientRecorder::IMakeFilename(const char* recName, char* path)
 {
     strcpy(path, "Recordings" PATH_SEPARATOR_STR);
 #if HS_BUILD_FOR_WIN32
-    CreateDirectory(path, NULL);
+    CreateDirectory(path, nullptr);
 #endif
 
     const char* lastDot = strrchr(recName, '.');
@@ -105,9 +102,9 @@ bool plNetClientRecorder::IsRecordableMsg(plNetMessage* msg) const
 
 plNetClientLoggingRecorder::plNetClientLoggingRecorder(TimeWrapper* timeWrapper) :
     plNetClientRecorder(timeWrapper),
-    fPlaybackTimeOffset(0),
-    fNextPlaybackTime(0),
-    fLog(nil),
+    fPlaybackTimeOffset(),
+    fNextPlaybackTime(),
+    fLog(),
     fBetweenAges(true)
 {
 }
@@ -115,7 +112,7 @@ plNetClientLoggingRecorder::plNetClientLoggingRecorder(TimeWrapper* timeWrapper)
 plNetClientLoggingRecorder::~plNetClientLoggingRecorder()
 {
     delete fLog;
-    fLog = nil;
+    fLog = nullptr;
 }
 
 bool plNetClientLoggingRecorder::IProcessRecordMsg(plNetMessage* msg, double secs)

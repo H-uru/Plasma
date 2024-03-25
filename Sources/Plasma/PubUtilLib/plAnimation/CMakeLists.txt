@@ -1,9 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plAnimation_SOURCES
     plAGAnim.cpp
     plAGAnimInstance.cpp
@@ -32,12 +26,29 @@ set(plAnimation_HEADERS
     plScalarChannel.h
 )
 
-add_library(plAnimation STATIC ${plAnimation_SOURCES} ${plAnimation_HEADERS})
-
-target_link_libraries(plAnimation pnModifier)
-target_link_libraries(plAnimation plInterp)
-target_link_libraries(plAnimation plSDL)
-target_link_libraries(plAnimation plTransform)
+plasma_library(plAnimation
+    SOURCES ${plAnimation_SOURCES} ${plAnimation_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
+target_link_libraries(
+    plAnimation
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnModifier
+        pnNetCommon
+        plTransform
+    PRIVATE
+        pnMessage
+        pnNucleusInc
+        pnSceneObject
+        plGLight
+        plInterp
+        plMessage
+        plModifier
+        plSDL
+)
 
 source_group("Source Files" FILES ${plAnimation_SOURCES})
 source_group("Header Files" FILES ${plAnimation_HEADERS})

@@ -48,14 +48,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimComponent.h"
 #include "plPhysicalComponents.h"
 #include "MaxMain/plMaxNode.h"
+#include "MaxMain/MaxAPI.h"
+
 #include "resource.h"
 
 #include <map>
-#include <notify.h>
 #include <set>
 #include <string>
 #include <vector>
-#pragma hdrstop
 
 #include "plPythonFileComponent.h"
 
@@ -77,10 +77,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plWaveSetBase.h"
 #include "plClusterComponent.h"
 #include "plDrawable/plClusterGroup.h"
-//#include "plHavok1/plHKPhysical.h"
 #include "plAvatar/plSwimRegion.h"
 #include "plSurface/plGrassShaderMod.h"
 #include "plGrassComponent.h"
+
+#include "plMessageBox/hsMessageBox.h"
 
 #include "pfPython/plPythonFileMod.h"
 #include "pfPython/plPythonParameter.h"
@@ -102,12 +103,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plCommonPythonLib : public plCommonObjLib
 {
     public:
-        virtual bool    IsInteresting( const plKey &objectKey )
+        bool    IsInteresting(const plKey &objectKey) override
         {
             if( objectKey->GetUoid().GetClassType() == plPythonFileMod::Index() )
                 return true;
             if( objectKey->GetUoid().GetClassType() == plSceneObject::Index() &&
-                objectKey->GetUoid().GetObjectName().Compare( plSDL::kAgeSDLObjectName ) == 0 )
+                objectKey->GetUoid().GetObjectName().compare( plSDL::kAgeSDLObjectName ) == 0 )
                 return true;
             return false;
         }
@@ -122,11 +123,11 @@ static void NotifyProc(void *param, NotifyInfo *info);
 // Notify us on file open so we can check for bad Python components
 void DummyCodeIncludePythonFileFunc()
 {
-    RegisterNotification(NotifyProc, nil, NOTIFY_FILE_POST_OPEN);
-    RegisterNotification(NotifyProc, nil, NOTIFY_FILE_PRE_SAVE);
-    RegisterNotification(NotifyProc, nil, NOTIFY_SYSTEM_POST_RESET);
-    RegisterNotification(NotifyProc, nil, NOTIFY_SYSTEM_POST_NEW);
-    RegisterNotification(NotifyProc, nil, NOTIFY_SYSTEM_SHUTDOWN2);
+    RegisterNotification(NotifyProc, nullptr, NOTIFY_FILE_POST_OPEN);
+    RegisterNotification(NotifyProc, nullptr, NOTIFY_FILE_PRE_SAVE);
+    RegisterNotification(NotifyProc, nullptr, NOTIFY_SYSTEM_POST_RESET);
+    RegisterNotification(NotifyProc, nullptr, NOTIFY_SYSTEM_POST_NEW);
+    RegisterNotification(NotifyProc, nullptr, NOTIFY_SYSTEM_SHUTDOWN2);
 }
 
 // Param block ID's
@@ -145,20 +146,20 @@ public:
 
     // When we're auto-exporting and can't pop up an error dialog, we cache our
     // errors here and blab about it at export time
-    static std::string fPythonError;
+    static M_STD_STRING fPythonError;
 
 protected:
     PythonKeys      fModKeys;
-    hsTArray<plKey> fOthersKeys;
+    std::vector<plKey> fOthersKeys;
 
 public:
     plPythonFileComponent();
 
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    virtual void AddReceiverKey(plKey key, plMaxNode* node=nil) { fOthersKeys.Append(key); }
+    void AddReceiverKey(plKey key, plMaxNode* node=nullptr) override { fOthersKeys.emplace_back(std::move(key)); }
 
     // Returns false if the Python file for this component wasn't loaded, and clears
     // the data in the PB to prevent Max from crashing.
@@ -171,14 +172,14 @@ public:
     };
     Validate ValidateFile();
 
-    const char* GetPythonName();
+    ST::string GetPythonName() const;
 
     virtual PythonKeys& GetKeys() { return fModKeys; }
 
-    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
-    { 
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override
+    {
         fModKeys.clear();
-        fOthersKeys.Reset();
+        fOthersKeys.clear();
 
         return plComponent::DeInit(node, pErrMsg);
     }
@@ -186,7 +187,7 @@ public:
 
 CLASS_DESC(plPythonFileComponent, gPythonFileComponentDesc, "Python File", "PythonFile", COMP_TYPE_LOGIC, PYTHON_FILE_CID);
 
-std::string plPythonFileComponent::fPythonError;
+M_STD_STRING plPythonFileComponent::fPythonError;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Called by the Python File manager
@@ -201,16 +202,15 @@ void PythonFile::AddAutoUIBlock(plAutoUIBlock *block)
     {
         if (gAutoUIBlocks[i]->GetBlockID() == block->GetBlockID())
         {
-            char buf[256];
-            sprintf(buf,
+            ST:: string msg = ST::format(
                 "Duplicate Python File ID\n\n"
-                "%s and %s use ID %d\n\n"
-                "%s will be ignored.",
+                "{} and {} use ID {d}\n\n"
+                "{} will be ignored.",
                 gAutoUIBlocks[i]->GetName(),
                 block->GetName(),
                 block->GetBlockID(),
                 block->GetName());
-            hsMessageBox(buf, "Warning", hsMBoxOk);
+            plMaxMessageBox(nullptr, ST2T(msg), _T("Warning"), MB_OK);
             return;
         }
     }
@@ -226,7 +226,7 @@ plComponentClassDesc *PythonFile::GetClassDesc()
 static plAutoUIBlock *FindAutoUI(IParamBlock2 *pb)
 {
     if (!pb)
-        return nil;
+        return nullptr;
 
     for (int i = 0; i < gAutoUIBlocks.size(); i++)
     {
@@ -234,7 +234,7 @@ static plAutoUIBlock *FindAutoUI(IParamBlock2 *pb)
             return gAutoUIBlocks[i];
     }
 
-    return nil;
+    return nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -252,7 +252,7 @@ bool plPythonFileComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg
     {
         pErrMsg->Set(true, "Python Error", fPythonError.c_str()).Show();
         pErrMsg->Set();
-        fPythonError = "";
+        fPythonError.clear();
     }
 
     fModKeys.clear();
@@ -279,45 +279,51 @@ bool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     {
         // Do we already have this guy?
         plPythonFileMod *existingOne = plPythonFileMod::ConvertNoRef( sCommonPythonLib.FindObject( plPythonFileMod::kGlobalNameKonstant ) );
-        if( existingOne != nil )
+        if (existingOne != nullptr)
         {
             // This component already exists, which can happen since it's in a common page. So we need
             // to nuke the key and its object so we can reuse it.
             modKey = existingOne->GetKey();
 
             // But first detach it from its target sceneObject
-            if( existingOne->GetTarget( 0 ) != nil )
+            if (existingOne->GetTarget(0) != nullptr)
                 existingOne->GetTarget( 0 )->GetKey()->Release( modKey );
 
             if( !sCommonPythonLib.RemoveObjectAndKey( modKey ) )
             {
-                pErrMsg->Set( true, "Python File Component Error", 
-                                    "The global Python File Component %s is attempting to export over an already "
-                                    "existing component of the same name, and the exporter is unable to delete the "
-                                    "old object to replace it. This would be a good time to call mcn for help.", GetINode()->GetName() ).Show(); 
+                pErrMsg->Set( true,
+                              "Python File Component Error",
+                              ST::format( "The global Python File Component {} is attempting to export over an already "
+                                          "existing component of the same name, and the exporter is unable to delete the "
+                                          "old object to replace it. This would be a good time to call mcn for help.",
+                                          GetINode()->GetName() )
+                              ).Show();
                 pErrMsg->Set( false );
             }
 
             // Pointer is invalid now anyways...
-            existingOne = nil;
+            existingOne = nullptr;
         }
 
         // Also make sure we have an age SDL object to attach to (currently only used for python, hence why it's safe here)
         obj = plSceneObject::ConvertNoRef( sCommonPythonLib.FindObject( plSDL::kAgeSDLObjectName ) );
-        if( obj != nil )
+        if (obj != nullptr)
         {
             plKey foo = obj->GetKey();
             if( !sCommonPythonLib.RemoveObjectAndKey( foo ) )
             {
-                pErrMsg->Set( true, "Python File Component Error", 
-                                    "The global Python File Component %s is attempting to export over an already "
-                                    "existing component of the same name, and the exporter is unable to delete the "
-                                    "old sceneObject to replace it. This would be a good time to call mcn for help.", GetINode()->GetName() ).Show(); 
+                pErrMsg->Set( true,
+                              "Python File Component Error",
+                              ST::format( "The global Python File Component {} is attempting to export over an already "
+                                          "existing component of the same name, and the exporter is unable to delete the "
+                                          "old sceneObject to replace it. This would be a good time to call mcn for help.",
+                                          GetINode()->GetName() )
+                              ).Show();
                 pErrMsg->Set( false );
             }
 
             // Pointer is invalid now anyways...
-            obj = nil;
+            obj = nullptr;
         }
 
         // Create us a new sceneObject to attach to
@@ -352,7 +358,7 @@ bool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 
                 // Guess we won't be using that modifier we new'd up there. Does that mean we should delete it? Sure.
                 delete mod;
-                mod = nil;
+                mod = nullptr;
             }
         }
         else    // else, nope... create a modifier for each object its attached to
@@ -420,13 +426,12 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plPythonFileMod *mod = plPythonFileMod::ConvertNoRef(modKey->GetObjectPtr());
 
     // add in all the receivers that want to be notified from the Python coded script
-    int j;
-    for (j = 0; j < fOthersKeys.Count(); j++)
+    for (const plKey& key : fOthersKeys)
     {
-        mod->AddToNotifyList(fOthersKeys[j]);
+        mod->AddToNotifyList(key);
     }
     // remove all the Keys we know about to be re-built on the next convert
-    fOthersKeys.Reset();
+    fOthersKeys.clear();
 
     // set the name of the source file
     mod->SetSourceFile(block->GetName());
@@ -469,7 +474,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 for (int i = 0; i < numKeys; i++)
                 {
                     plKey skey = param->GetKey(pb, i);
-                    if ( skey != nil )
+                    if (skey != nullptr)
                     {
                         pyParam.SetToSceneObject(skey, true);
                         // make sure that there really was a sceneobject
@@ -479,10 +484,14 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 }
                 if ( !found_atleast_one_good_one )
                 {
-                    char buf[512];
-                    sprintf(buf,"The sceneobject attribute (ID=%d) that was selected in %s PythonFile, somehow does not exist!?",
-                                pyParam.fID,this->GetINode()->GetName());
-                    pErrMsg->Set(true, "PythonFile Warning", buf).Show();
+                    pErrMsg->Set(
+                        true,
+                        "PythonFile Warning",
+                        ST::format(
+                            "The sceneobject attribute (ID={d}) that was selected in {} PythonFile, somehow does not exist!?",
+                            pyParam.fID, GetINode()->GetName()
+                        )
+                    ).Show();
                     pErrMsg->Set(false);
                 }
             }
@@ -500,7 +509,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         for (int j = 0; j < comp->NumTargets(); j++)
                         {
                             plKey responderKey = Responder::GetKey(comp, comp->GetTarget(j));
-                            if ( responderKey != nil )
+                            if (responderKey != nullptr)
                             {
                                 pyParam.SetToResponder(responderKey);
                                 mod->AddParameter(pyParam);
@@ -509,10 +518,14 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         }
                         if ( !found_atleast_one_good_one )
                         {
-                            char buf[512];
-                            sprintf(buf,"The responder attribute %s that was selected in %s PythonFile, somehow does not exist!?",
-                                        comp->GetINode()->GetName(),this->GetINode()->GetName());
-                            pErrMsg->Set(true, "PythonFile Warning", buf).Show();
+                            pErrMsg->Set(
+                                true,
+                                "PythonFile Warning",
+                                ST::format(
+                                    "The responder attribute {} that was selected in {} PythonFile, somehow does not exist!?",
+                                    comp->GetINode()->GetName(), GetINode()->GetName()
+                                )
+                            ).Show();
                             pErrMsg->Set(false);
                         }
                     }
@@ -596,12 +609,16 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                             plGUIDialogComponent *dialog_comp = (plGUIDialogComponent*)comp;
                             plKey dialogKey = dialog_comp->GetModifierKey();
                             pyParam.SetToGUIDialog(dialogKey);
-                            if ( pyParam.fObjectKey == nil )
+                            if (pyParam.fObjectKey == nullptr)
                             {
-                                char buf[512];
-                                sprintf(buf,"The GUIDialog attribute %s that was selected in %s PythonFile, somehow does not exist!?",
-                                            comp->GetINode()->GetName(),this->GetINode()->GetName());
-                                pErrMsg->Set(true, "PythonFile Warning", buf).Show();
+                                pErrMsg->Set(
+                                    true,
+                                    "PythonFile Warning",
+                                    ST::format(
+                                        "The GUIDialog attribute {} that was selected in {} PythonFile, somehow does not exist!?",
+                                        comp->GetINode()->GetName(), this->GetINode()->GetName()
+                                    )
+                                ).Show();
                                 pErrMsg->Set(false);
                             }
                             else
@@ -626,12 +643,16 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                             plGUIMenuComponent *guiComp = (plGUIMenuComponent*)comp;
                             plKey key = guiComp->GetConvertedMenuKey();
                             pyParam.SetToGUIPopUpMenu( key );
-                            if ( pyParam.fObjectKey == nil )
+                            if (pyParam.fObjectKey == nullptr)
                             {
-                                char buf[512];
-                                sprintf(buf,"The GUIPopUpMenu attribute %s that was selected in %s PythonFile, somehow does not exist!?",
-                                            comp->GetINode()->GetName(),this->GetINode()->GetName());
-                                pErrMsg->Set(true, "PythonFile Warning", buf).Show();
+                                pErrMsg->Set(
+                                    true,
+                                    "PythonFile Warning",
+                                    ST::format(
+                                        "The GUIPopUpMenu attribute {} that was selected in {} PythonFile, somehow does not exist!?",
+                                        comp->GetINode()->GetName(), this->GetINode()->GetName()
+                                    )
+                                ).Show();
                                 pErrMsg->Set(false);
                             }
                             else
@@ -656,12 +677,16 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                             plGUISkinComp *guiComp = (plGUISkinComp *)comp;
                             plKey key = guiComp->GetConvertedSkinKey();
                             pyParam.SetToGUISkin( key );
-                            if ( pyParam.fObjectKey == nil )
+                            if (pyParam.fObjectKey == nullptr)
                             {
-                                char buf[512];
-                                sprintf(buf,"The GUISkin attribute %s that was selected in %s PythonFile, somehow does not exist!?",
-                                            comp->GetINode()->GetName(),this->GetINode()->GetName());
-                                pErrMsg->Set(true, "PythonFile Warning", buf).Show();
+                                pErrMsg->Set(
+                                    true,
+                                    "PythonFile Warning",
+                                    ST::format(
+                                        "The GUISkin attribute {} that was selected in {} PythonFile, somehow does not exist!?",
+                                        comp->GetINode()->GetName(), GetINode()->GetName()
+                                    )
+                                ).Show();
                                 pErrMsg->Set(false);
                             }
                             else
@@ -685,7 +710,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         {
                             plExcludeRegionComponent *excomp = (plExcludeRegionComponent*)comp;
                             plKey exKey = excomp->GetKey((plMaxNode*)(comp->GetTarget(j)));
-                            if ( exKey != nil )
+                            if (exKey != nullptr)
                             {
                                 // only get one real target, just count the rest
                                 if ( number_of_real_targets_found == 0 )
@@ -699,15 +724,20 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         if ( number_of_real_targets_found != 1 )
                         {
                             // there is zero or more than one node attached to this exclude region
-                            char buf[512];
-                            if ( number_of_real_targets_found == 0 )
-                                sprintf(buf,"The ExcludeRegion %s that was selected as an attribute in %s PythonFile, has no scene nodes attached.",
-                                            comp->GetINode()->GetName(),this->GetINode()->GetName());
-                            else
-                                sprintf(buf,"The ExcludeRegion %s that was selected as an attribute in %s PythonFile, has more than one scene node attached (using first one found).",
-                                            comp->GetINode()->GetName(),this->GetINode()->GetName());
+                            ST::string msg;
+                            if (number_of_real_targets_found == 0) {
+                                msg = ST::format(
+                                    "The ExcludeRegion {} that was selected as an attribute in {} PythonFile has no scene nodes attached.",
+                                    comp->GetINode()->GetName(), this->GetINode()->GetName()
+                                );
+                            } else {
+                                msg = ST::format(
+                                    "The ExcludeRegion {} that was selected as an attribute in {} PythonFile has more than one scene node attached (using first one found).",
+                                    comp->GetINode()->GetName(), this->GetINode()->GetName()
+                                );
+                            }
 
-                            pErrMsg->Set(true, "PythonFile Warning", buf).Show();
+                            pErrMsg->Set(true, "PythonFile Warning", msg).Show();
                             pErrMsg->Set(false);
                         }
                     }
@@ -718,16 +748,16 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         case plAutoUIParam::kTypeWaterComponent:
             {
                 plComponentBase* comp = param->GetComponent(pb, 0);
-                plWaveSetBase* wsb = nil;
+                plWaveSetBase* wsb = nullptr;
 
                 if (comp)
                 {
                     wsb = plWaterComponent::GetWaveSet(comp->GetINode());
 
-                    if (wsb != nil)
+                    if (wsb != nullptr)
                     {
                         plKey waterKey = wsb->GetKey();
-                        if ( waterKey != nil )
+                        if (waterKey != nullptr)
                         {                           
                             pyParam.SetToWaterComponent(waterKey);
                             mod->AddParameter(pyParam);
@@ -740,13 +770,13 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         case plAutoUIParam::kTypeSwimCurrentInterface:
             {
                 plComponentBase* comp = param->GetComponent(pb, 0);
-                plSwimRegionInterface* sri = nil;
+                plSwimRegionInterface* sri = nullptr;
                 
                 if (comp && comp->ClassID() == PHYS_SWIMSURFACE_CID)
                 {
                     plSwim2DComponent* swimcomp = (plSwim2DComponent*)comp;
                     std::map<plMaxNode*, plSwimRegionInterface*>::const_iterator containsNode;
-                    plMaxNode* mnode = nil;
+                    plMaxNode* mnode = nullptr;
 
                     for (int i = 0; i < swimcomp->NumTargets(); i++)
                     {
@@ -759,10 +789,10 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         }
                     }
 
-                    if (sri != nil)
+                    if (sri != nullptr)
                     {
                         plKey swimKey = sri->GetKey();
-                        if ( swimKey != nil )
+                        if (swimKey != nullptr)
                         {                           
                             pyParam.SetToSwimCurrentInterface(swimKey);
                             mod->AddParameter(pyParam);
@@ -775,7 +805,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         case plAutoUIParam::kTypeClusterComponent:
             {
                 plComponentBase* comp = param->GetComponent(pb, 0);
-                plClusterGroup* clusterGroup = nil;
+                plClusterGroup* clusterGroup = nullptr;
 
                 if (comp && comp->ClassID() == CLUSTER_COMP_CID)
                 {
@@ -786,7 +816,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                     {
                         plClusterGroup* group = clusterComp->GetGroup(i);
                         plKey groupKey = group->GetKey();
-                        if (groupKey != nil)
+                        if (groupKey != nullptr)
                         {
                             pyParam.SetToClusterComponent(groupKey);
                             mod->AddParameter(pyParam);
@@ -806,8 +836,8 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                     {
                         plAnimComponentBase *animcomp = (plAnimComponentBase*)comp;
                         // save out the animation name first
-                        plString tempAnimName = animcomp->GetAnimName();
-                        if (tempAnimName.IsNull())
+                        ST::string tempAnimName = animcomp->GetAnimName();
+                        if (tempAnimName.empty())
                             pyParam.SetToAnimationName(ENTIRE_ANIMATION_NAME);
                         else
                             pyParam.SetToAnimationName(tempAnimName);
@@ -842,7 +872,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         for ( j=0; j<comp->NumTargets(); j++ )
                         {
                             plKey behKey = OneShotComp::GetOneShotKey(comp,(plMaxNode*)(comp->GetTarget(j)));
-                            if ( behKey != nil )
+                            if (behKey != nullptr)
                             {
                                 // only get one real target, just count the rest
                                 if ( number_of_real_targets_found == 0 )
@@ -861,7 +891,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         for ( j=0; j<comp->NumTargets(); j++ )
                         {
                             plKey behKey = MultiStageBeh::GetMultiStageBehKey(comp,(plMaxNode*)(comp->GetTarget(j)));
-                            if ( behKey != nil )
+                            if (behKey != nullptr)
                             {
                                 // only get one real target, just count the rest
                                 if ( number_of_real_targets_found == 0 )
@@ -876,15 +906,20 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                     if ( number_of_real_targets_found != 1 )
                     {
                         // there is zero or more than one node attached to this exclude region
-                        char buf[512];
-                        if ( number_of_real_targets_found == 0 )
-                            sprintf(buf,"The Behavior component %s that was selected as an attribute in %s PythonFile, has no scene nodes attached.",
-                                        comp->GetINode()->GetName(),this->GetINode()->GetName());
-                        else
-                            sprintf(buf,"The Behavior component %s that was selected as an attribute in %s PythonFile, has more than one scene node attached (using first one found).",
-                                        comp->GetINode()->GetName(),this->GetINode()->GetName());
+                        ST::string msg;
+                        if (number_of_real_targets_found == 0) {
+                            msg = ST::format(
+                                "The Behavior component {} that was selected as an attribute in {} PythonFile has no scene nodes attached.",
+                                comp->GetINode()->GetName(), this->GetINode()->GetName()
+                            );
+                        } else {
+                            msg = ST::format(
+                                "The Behavior component {} that was selected as an attribute in {} PythonFile has more than one scene node attached (using first one found).",
+                                comp->GetINode()->GetName(), this->GetINode()->GetName()
+                            );
+                        }
 
-                        pErrMsg->Set(true, "PythonFile Warning", buf).Show();
+                        pErrMsg->Set(true, "PythonFile Warning", msg).Show();
                         pErrMsg->Set(false);
                     }
 
@@ -937,16 +972,16 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         case plAutoUIParam::kTypeGrassComponent:
             {
                 plComponentBase* comp = param->GetComponent(pb, 0);
-                plGrassShaderMod* shader = nil;
+                plGrassShaderMod* shader = nullptr;
 
                 if (comp)
                 {
                     shader = plGrassComponent::GetShader(comp->GetINode());
 
-                    if (shader != nil)
+                    if (shader != nullptr)
                     {
                         plKey shaderKey = shader->GetKey();
-                        if ( shaderKey != nil )
+                        if (shaderKey != nullptr)
                         {                           
                             pyParam.SetToGrassShaderComponent(shaderKey);
                             mod->AddParameter(pyParam);
@@ -970,7 +1005,7 @@ plPythonFileComponent::Validate plPythonFileComponent::ValidateFile()
     if (!block || fCompPB->GetInt(kPythonVersion) > block->GetVersion())
     {
         // Bad type, clear out the PB so this won't blow up during a save
-        fCompPB->SetValue(kPythonFilePB, 0, (ReferenceTarget*)nil);
+        fCompPB->SetValue(kPythonFilePB, 0, (ReferenceTarget*)nullptr);
 
         if (!block)
             return kPythonNoFile;
@@ -988,7 +1023,7 @@ plPythonFileComponent::Validate plPythonFileComponent::ValidateFile()
     return kPythonOk;
 }
 
-const char* plPythonFileComponent::GetPythonName()
+ST::string plPythonFileComponent::GetPythonName() const
 {
     // Make sure the type is in the valid range
     IParamBlock2 *pb = (IParamBlock2*)fCompPB->GetReferenceTarget(kPythonFilePB);
@@ -996,7 +1031,7 @@ const char* plPythonFileComponent::GetPythonName()
     if (block)
         return block->GetName();
 
-    return "(unknown)";
+    return ST_LITERAL("(unknown)");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1008,7 +1043,7 @@ class plPythonError
 {
 public:
     plMaxNode* node;
-    const char* pythonName;
+    ST::string pythonName;
     plPythonFileComponent::Validate error;
 
     bool operator< (const plPythonError& rhs) const { return rhs.node < node; }
@@ -1023,7 +1058,7 @@ static void CheckPythonFileCompsRecur(plMaxNode *node, ErrorSet& badNodes)
     {
         plPythonFileComponent* pyComp = (plPythonFileComponent*)comp;
 
-        const char* pythonName = pyComp->GetPythonName();
+        auto pythonName = pyComp->GetPythonName();
 
         plPythonFileComponent::Validate valid = pyComp->ValidateFile();
         if (valid != plPythonFileComponent::kPythonOk)
@@ -1040,7 +1075,7 @@ static void CheckPythonFileCompsRecur(plMaxNode *node, ErrorSet& badNodes)
         CheckPythonFileCompsRecur((plMaxNode*)node->GetChildNode(i), badNodes);
 }
 
-static BOOL CALLBACK WarnDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK WarnDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (msg == WM_INITDIALOG)
     {
@@ -1048,11 +1083,11 @@ static BOOL CALLBACK WarnDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
 
         LVCOLUMN lvc;
         lvc.mask = LVCF_TEXT;
-        lvc.pszText = "Component";
+        lvc.pszText = _T("Component");
         ListView_InsertColumn(hList, 0, &lvc);
-        lvc.pszText = "Python File";
+        lvc.pszText = _T("Python File");
         ListView_InsertColumn(hList, 1, &lvc);
-        lvc.pszText = "Error";
+        lvc.pszText = _T("Error");
         ListView_InsertColumn(hList, 2, &lvc);
 
         ErrorSet *badNodes = (ErrorSet*)lParam;
@@ -1066,23 +1101,23 @@ static BOOL CALLBACK WarnDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
 
             LVITEM lvi;
             lvi.mask = LVIF_TEXT;
-            lvi.pszText = (char*)node->GetName();
+            lvi.pszText = const_cast<TCHAR*>(node->GetName());
             lvi.iItem = 0;
             lvi.iSubItem = 0;
             int idx = ListView_InsertItem(hList, &lvi);
 
-            ListView_SetItemText(hList, idx, 1, (char*)err.pythonName);
+            ListView_SetItemText(hList, idx, 1, ST2T(err.pythonName));
 
             switch (err.error)
             {
             case plPythonFileComponent::kPythonBadVer:
-                ListView_SetItemText(hList, idx, 2, "Old Version");
+                ListView_SetItemText(hList, idx, 2, _T("Old Version"));
                 break;
             case plPythonFileComponent::kPythonNoVer:
-                ListView_SetItemText(hList, idx, 2, "No Version");
+                ListView_SetItemText(hList, idx, 2, _T("No Version"));
                 break;
             case plPythonFileComponent::kPythonNoFile:
-                ListView_SetItemText(hList, idx, 2, "No File/Python Error");
+                ListView_SetItemText(hList, idx, 2, _T("No File/Python Error"));
                 break;
             }
         }
@@ -1112,30 +1147,28 @@ static void WriteBadPythonText(ErrorSet& badNodes)
     {
         const plPythonError err = *it;
 
-        const char* compName = err.node->GetName();
-        const char* pythonFile = err.pythonName;
-        const char* errorText = "";
+        M_STD_STRINGSTREAM ss;
+        ss << _M("Python component ") << err.node->GetName();
+        ss << _M(" (file ") << ST2M(err.pythonName);
+        ss << _M(") is bad. Reason: ");
         switch (err.error)
         {
         case plPythonFileComponent::kPythonBadVer:
-            errorText = "Old Version";
+            ss << _M("Old Version");
             break;
         case plPythonFileComponent::kPythonNoVer:
-            errorText = "No Version";
+            ss << _M("No Version");
             break;
         case plPythonFileComponent::kPythonNoFile:
-            errorText = "No File/Python Error";
+            ss << _M("No File/Python Error");
+            break;
+        default:
+            ss << _M("?UNKNOWN?");
             break;
         }
 
-        std::string& pythonError = plPythonFileComponent::fPythonError;
-        pythonError += "Python component ";
-        pythonError += compName;
-        pythonError += " (file ";
-        pythonError += pythonFile;
-        pythonError += ") is bad.  Reason: ";
-        pythonError += errorText;
-        pythonError += "\n";
+        ss << "\n";
+        plPythonFileComponent::fPythonError += ss.str();
     }
 }
 
@@ -1164,9 +1197,12 @@ static void NotifyProc(void *param, NotifyInfo *info)
     {
         if (gotBadPython)
         {
-            hsMessageBox("This file has bad Python components in it, you REALLY shouldn't save it.",
-                        "Python Component Warning",
-                        hsMBoxOk);
+            plMaxMessageBox(
+                nullptr,
+                _T("This file has bad Python components in it, you REALLY shouldn't save it."),
+                _T("Python Component Warning"),
+                MB_OK | MB_ICONSTOP
+            );
         }
     }
     else if (info->intcode == NOTIFY_SYSTEM_POST_RESET ||
@@ -1178,12 +1214,12 @@ static void NotifyProc(void *param, NotifyInfo *info)
     // descriptor, which Max may still try to use in between shutdown 1 and 2.
     else if (info->intcode == NOTIFY_SYSTEM_SHUTDOWN2)
     {
-        int count = gAutoUIBlocks.size();
-        for (int i = 0; i < count; i++)
-        {
-            delete gAutoUIBlocks[i];
+        // Debounce recursive shutdowns (they happen for some reason)
+        while (!gAutoUIBlocks.empty()) {
+            plAutoUIBlock* block = gAutoUIBlocks.back();
+            gAutoUIBlocks.pop_back();
+            delete block;
         }
-        gAutoUIBlocks.clear();
     }
 }
 
@@ -1195,9 +1231,9 @@ static void NotifyProc(void *param, NotifyInfo *info)
 class plPythonFileComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    plPythonFileComponentProc() : fAutoUI(nil) {}
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    void DeleteThis() { DestroyAutoUI(); }
+    plPythonFileComponentProc() : fAutoUI() { }
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    void DeleteThis() override { DestroyAutoUI(); }
 
 protected:
     plAutoUIBlock *fAutoUI;
@@ -1215,22 +1251,22 @@ ParamBlockDesc2 gPythonFileBlk
     IDD_COMP_PYTHON_FILE, IDS_COMP_PYTHON, 0, 0, &gPythonFileProc,
 
     kPythonFilePB,          _T("pb"),       TYPE_REFTARG,   0, 0,
-        end,
+        p_end,
 
     kPythonVersion,         _T("version"),  TYPE_INT,       0, 0,
-        end,
+        p_end,
 
     kPythonFileIsGlobal,    _T("isGlobal"), TYPE_BOOL, 0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_PYTHON_GLOBAL,
         p_default, FALSE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 #define WM_LOAD_AUTO_UI WM_APP+1
 
-BOOL plPythonFileComponentProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plPythonFileComponentProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -1241,7 +1277,7 @@ BOOL plPythonFileComponentProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd
             HWND hCombo = GetDlgItem(hWnd, IDC_PYTHON_FILE);
             ComboBox_ResetContent(hCombo);
 
-            SetDlgItemText(hWnd, IDC_VER_TEXT, "");
+            SetDlgItemText(hWnd, IDC_VER_TEXT, _T(""));
 
             IParamBlock2 *pythonPB = (IParamBlock2*)pb->GetReferenceTarget(kPythonFilePB);
             plAutoUIBlock *pythonBlock = FindAutoUI(pythonPB);
@@ -1250,9 +1286,9 @@ BOOL plPythonFileComponentProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd
             for (int i = 0; i < numPythonFiles; i++)
             {
                 plAutoUIBlock *block = gAutoUIBlocks[i];
-                const char *name = block->GetName();
+                auto name = block->GetName();
 
-                int idx = ComboBox_AddString(hCombo, name);
+                int idx = ComboBox_AddString(hCombo, ST2T(name));
                 ComboBox_SetItemData(hCombo, idx, i);
                 if (block == pythonBlock)
                 {
@@ -1287,7 +1323,7 @@ BOOL plPythonFileComponentProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd
             HWND hCombo = (HWND)lParam;
             int sel = ComboBox_GetCurSel(hCombo);
 
-            int type = ComboBox_GetItemData(hCombo, sel);
+            int type = (int)ComboBox_GetItemData(hCombo, sel);
 
             plAutoUIBlock *block = gAutoUIBlocks[type];
             IParamBlock2 *autoPB = block->CreatePB();
@@ -1323,6 +1359,6 @@ void plPythonFileComponentProc::DestroyAutoUI()
     if (fAutoUI)
     {
         fAutoUI->DestroyAutoRollup();
-        fAutoUI = nil;
+        fAutoUI = nullptr;
     }
 }

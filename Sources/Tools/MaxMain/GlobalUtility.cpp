@@ -41,15 +41,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+
+#include "MaxAPI.h"
+
 #include "hsResMgr.h"
 #include "plFileSystem.h"
 
 #include "MaxComponent/plComponentBase.h"
 #include "plMaxNode.h"
-
-#include <guplib.h>
-#include <notify.h>
-#pragma hdrstop
 
 #include "GlobalUtility.h"
 
@@ -76,20 +75,20 @@ extern HINSTANCE hInstance;
 
 static PlasmaMax gPlasmaMax;
 
-class PlasmaMaxClassDesc : public ClassDesc
+class PlasmaMaxClassDesc : public plMaxClassDesc<ClassDesc>
 {
 public:
-    int             IsPublic()              { return TRUE; }
-    void*           Create(BOOL loading)    { return &gPlasmaMax; }
-    const TCHAR*    ClassName()             { return _T("PlasmaMax"); }
-    SClass_ID       SuperClassID()          { return GUP_CLASS_ID; }
-    Class_ID        ClassID()               { return PLASMA_MAX_CLASSID; }
-    const TCHAR*    Category()              { return _T("");  }
+    int             IsPublic() override             { return TRUE; }
+    void*           Create(BOOL loading) override   { return &gPlasmaMax; }
+    const TCHAR*    ClassName() override            { return _T("PlasmaMax"); }
+    SClass_ID       SuperClassID() override         { return GUP_CLASS_ID; }
+    Class_ID        ClassID() override              { return PLASMA_MAX_CLASSID; }
+    const TCHAR*    Category() override             { return _T("");  }
 
     //  ************************* action table
     //  The following 2 lines are added for action tables and menu work
-    int NumActionTables() { return theActionTableMgr.NumActionTables(); }
-    ActionTable* GetActionTable(int i) { return theActionTableMgr.GetActionTable(i); }
+    int NumActionTables() override { return theActionTableMgr.NumActionTables(); }
+    ActionTable* GetActionTable(int i) override { return theActionTableMgr.GetActionTable(i); }
 };
 
 static PlasmaMaxClassDesc PlasmaMaxCD;
@@ -98,9 +97,9 @@ ClassDesc* GetGUPDesc() { return &PlasmaMaxCD; }
 //////////////////////////////////////////
 
 // This function is from the console.  This dummy version is here so that plNetLinkingMgr will build.
-plKey FindSceneObjectByName(const plString& name, const plString& ageName, char* statusStr, bool subString)
+plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, char* statusStr, bool subString)
 {
-    return nil;
+    return nullptr;
 }
 
 
@@ -113,7 +112,7 @@ PlasmaMax::PlasmaMax()
 
 void DoAllRecur(PMaxNodeFunc p, plMaxNode *node)
 {
-    (node->*p)(nil, nil);
+    (node->*p)(nullptr, nullptr);
     
     for (int i = 0; i < node->NumberOfChildren(); i++)
     {
@@ -139,13 +138,16 @@ static void NotifyProc(void *param, NotifyInfo *info)
     {
         int type;
         float scale;
-        GetMasterUnitInfo(&type, &scale);
+        GetSystemUnitInfo(&type, &scale);
         if (type != UNITS_FEET || scale != 1.f)
         {
-            hsMessageBoxWithOwner(GetCOREInterface()->GetMAXHWnd(),
-                "Please set your system units to 1 unit = 1 foot.\n\n"
-                "Customize -> Units Setup... -> System Unit Setup",
-                "Plasma Units Error", hsMessageBoxNormal);
+            plMaxMessageBox(
+                GetCOREInterface()->GetMAXHWnd(),
+                _T("Please set your system units to 1 unit = 1 foot.\n\n"
+                   "Customize -> Units Setup... -> System Unit Setup"),
+                _T("Plasma Units Error"),
+                MB_OK | MB_ICONEXCLAMATION
+            );
         }
         plExportDlg::Instance().StartAutoExport();
     }
@@ -207,11 +209,16 @@ DWORD PlasmaMax::Start()
 
     // Setup the localization mgr
     // Dirty hacks are because Cyan sucks...
-    plFileName pathTemp = plMaxConfig::GetClientPath(false, true);
-    if (!pathTemp.IsValid())
-    {
-        hsMessageBox("PlasmaMAX2.ini is missing or invalid.\nPlasmaMAX will be unavailable until this file is added.",
-                     "PlasmaMAX2 Error", hsMessageBoxNormal, hsMessageBoxIconExclamation);
+    plFileName pathTemp = plMaxConfig::GetClientPath();
+    if (!pathTemp.IsValid()) {
+        ST::string errmsg = ST::format(
+            "PlasmaMAX2.ini is missing or invalid.\nPlasmaMAX will be unavailable until this file is added at\n{}",
+            plMaxConfig::GetPluginIni()
+        );
+        plMaxMessageBox(
+            nullptr,
+            ST2T(errmsg),
+            _T("PlasmaMAX2 Error"), MB_OK | MB_ICONEXCLAMATION);
         return GUPRESULT_NOKEEP;
     }
 
@@ -229,8 +236,8 @@ DWORD PlasmaMax::Start()
     plComponentShow::Init();
     plCreateMenu();
 
-    RegisterNotification(NotifyProc, 0, NOTIFY_FILE_POST_OPEN);
-    RegisterNotification(NotifyProc, 0, NOTIFY_SYSTEM_STARTUP);
+    RegisterNotification(NotifyProc, nullptr, NOTIFY_FILE_POST_OPEN);
+    RegisterNotification(NotifyProc, nullptr, NOTIFY_SYSTEM_STARTUP);
 
     // Now we have to init like we're a real doggone client...
     plFileName clientPath = plFileName::Join(pathTemp, "dat");
@@ -245,7 +252,7 @@ DWORD PlasmaMax::Start()
 
 void PlasmaMax::Stop()
 {
-    UnRegisterNotification(NotifyProc, 0, NOTIFY_FILE_POST_OPEN);
+    UnRegisterNotification(NotifyProc, nullptr, NOTIFY_FILE_POST_OPEN);
 
     pfLocalizationMgr::Shutdown();
     plFontCache::GetInstance().UnRegisterAs(kFontCache_KEY);
@@ -273,12 +280,12 @@ void TextureSet(Texmap* texmap, int iBmp, uint64_t assetId)
     }
 }
 
-DWORD PlasmaMax::Control(DWORD parameter)
+DWORD_PTR PlasmaMax::Control(DWORD parameter)
 {
     if (parameter == kGetTextures)
     {
         TexSet texmaps;
-        plMtlCollector::GetMtls(nil, &texmaps);
+        plMtlCollector::GetMtls(nullptr, &texmaps);
 
         std::vector<TexInfo> texInfo;
 
@@ -299,8 +306,8 @@ DWORD PlasmaMax::Control(DWORD parameter)
                     // - Colin
     //              if (assetId.IsEmpty())
                     {
-                        char fileName[MAX_PATH];
-                        if (layer->GetBitmapFileName(fileName, sizeof(fileName), iBmp))
+                        TCHAR fileName[MAX_PATH];
+                        if (layer->GetBitmapFileName(fileName, std::size(fileName), iBmp))
                         {
                             int texIdx = texInfo.size();
                             texInfo.resize(texIdx+1);
@@ -317,14 +324,14 @@ DWORD PlasmaMax::Control(DWORD parameter)
         jvArray<TexInfo>* textures = new jvArray<TexInfo>(texInfo.size());
         for (int i = 0; i < texInfo.size(); i++)
             (*textures)[i] = texInfo[i];
-        return DWORD(textures);
+        return DWORD_PTR(textures);
 #else
         return 0;
 #endif
     }
     else if (parameter == kGetTextureSetFunc)
     {
-        return DWORD(&TextureSet);
+        return DWORD_PTR(&TextureSet);
     }
 
     return 0;

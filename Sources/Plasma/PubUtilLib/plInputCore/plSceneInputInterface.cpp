@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputManager.h"
 #include "plInputDevice.h"
 
-#include "plPhysical/plPickingDetector.h"
 #include "plMessage/plInputEventMsg.h"
 #include "plMessage/plLOSRequestMsg.h"
 #include "plMessage/plLOSHitMsg.h"
@@ -98,7 +97,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define SHARE_FACING_TOLERANCE -0.70f       // 45 degrees
 
-plSceneInputInterface *plSceneInputInterface::fInstance = nil;
+plSceneInputInterface *plSceneInputInterface::fInstance = nullptr;
 
 bool plSceneInputInterface::fShowLOS = false;
 
@@ -106,20 +105,22 @@ bool plSceneInputInterface::fShowLOS = false;
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 plSceneInputInterface::plSceneInputInterface()
+    : fPipe(), fCurrentCursor(), fButtonState(), fClickability(),
+      fCurrClickIsAvatar(), fLastClickIsAvatar(), fFadedLocalAvatar(),
+      fPendingLink(), fBookMode(), fOffereeID()
 {
-    fPipe = nil;
     fAgeInstanceGuid.Clear();
     fInstance = this;
-    SetEnabled( true );         // Always enabled
+    SetEnabled(true);         // Always enabled
 }
 
 plSceneInputInterface::~plSceneInputInterface()
 {
     ClearClickableMap();
-    fIgnoredAvatars.Reset();
-    fLocalIgnoredAvatars.Reset();
-    fGUIIgnoredAvatars.Reset();
-    fInstance = nil;
+    fIgnoredAvatars.clear();
+    fLocalIgnoredAvatars.clear();
+    fGUIIgnoredAvatars.clear();
+    fInstance = nullptr;
 }
 
 
@@ -130,21 +131,21 @@ void    plSceneInputInterface::Init( plInputInterfaceMgr *manager )
     plInputInterface::Init( manager );
 
     // To get the pipeline
-    fPipe = nil;
+    fPipe = nullptr;
     plgDispatch::Dispatch()->RegisterForExactType( plRenderMsg::Index(), fManager->GetKey() );
     plgDispatch::Dispatch()->RegisterForExactType( plInputIfaceMgrMsg::Index(), fManager->GetKey() );
     plgDispatch::Dispatch()->RegisterForExactType( plPlayerPageMsg::Index(), fManager->GetKey() );
 
-    fCurrentClickable = nil;
-    fCurrentClickableLogicMod = nil;
-    fLastClicked = nil;
+    fCurrentClickable = nullptr;
+    fCurrentClickableLogicMod = nullptr;
+    fLastClicked = nullptr;
     fButtonState = 0;
     fClickability = 1;      // Hack for clickable avatars, we need to always do the LOS check
     fLastClickIsAvatar = false;
     fCurrClickIsAvatar = false;
     fFadedLocalAvatar = false;
     fBookMode = kNotOffering;
-    fOffereeKey = nil;
+    fOffereeKey = nullptr;
     fPendingLink = false;
 
     // register for control messages
@@ -156,22 +157,19 @@ void    plSceneInputInterface::Init( plInputInterfaceMgr *manager )
 
 }
 
-void    plSceneInputInterface::Shutdown( void )
+void    plSceneInputInterface::Shutdown()
 {
-    if( fPipe == nil )
+    if (fPipe == nullptr)
         plgDispatch::Dispatch()->UnRegisterForExactType( plRenderMsg::Index(), fManager->GetKey() );
     else
-        fPipe = nil;
+        fPipe = nullptr;
 }
 
 void plSceneInputInterface::ClearClickableMap()
 {
-    for (int i = 0; i < fClickableMap.Count(); i++)
-    {
-        clickableTest* pTest = fClickableMap[i];
-        delete(pTest);
-    }
-    fClickableMap.SetCountAndZero(0);
+    for (clickableTest* pTest : fClickableMap)
+        delete pTest;
+    fClickableMap.clear();
 }
 
 //// IHalfFadeAvatar /////////////////////////////////////////////////////////
@@ -191,12 +189,12 @@ void plSceneInputInterface::IHalfFadeAvatar(bool out)
 
 void plSceneInputInterface::ResetClickableState()
 {
-    if( fLastClicked != nil )
-        ISetLastClicked( nil, hsPoint3(0,0,0) );
-    
+    if (fLastClicked != nullptr)
+        ISetLastClicked(nullptr, {});
+
     ClearClickableMap();
-    fCurrentClickable = nil;
-    fCurrentClickableLogicMod = nil;
+    fCurrentClickable = nullptr;
+    fCurrentClickableLogicMod = nullptr;
     fCurrentCursor = SetCurrentCursorID(kNullCursor);
     fCurrClickIsAvatar = false;
     
@@ -220,27 +218,19 @@ bool plSceneInputInterface::IEval( double secs, float del, uint32_t dirty )
 //  if (!fCurrClickIsAvatar)
 //      fCurrentCursor = SetCurrentCursorID(kNullCursor);
     // ping for possible cursor changes
-    int i;
-    for (i=0; i < fClickableMap.Count(); i++)
+    for (clickableTest* pTest : fClickableMap)
     {
         plFakeOutMsg *pMsg = new plFakeOutMsg;
         pMsg->SetSender( fManager->GetKey() );
-        pMsg->AddReceiver( fClickableMap[i]->key );
+        pMsg->AddReceiver(pTest->key);
         plgDispatch::MsgSend( pMsg );
     }
     // then see if we have any
-    bool change = false;
-    for (i=0; i < fClickableMap.Count(); i++)
-    {
-        if( fClickableMap[i]->val )
-        {
-            change = true;
-            break;
-        }
-    }
+    bool change = std::any_of(fClickableMap.cbegin(), fClickableMap.cend(),
+                              [](clickableTest* pTest) { return pTest->val; });
     if (change)
     {
-        if( fLastClicked != nil )
+        if (fLastClicked != nullptr)
             fCurrentCursor = SetCurrentCursorID(kCursorClicked);
         else
             fCurrentCursor = SetCurrentCursorID(kCursorPoised);
@@ -257,7 +247,6 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
     {
         if( pLOSMsg->fRequestID == ID_FIND_CLICKABLE )
         {
-            bool clearCursor = false;
             if (!fClickability)
                 return true;
             if( pLOSMsg->fObj )
@@ -269,13 +258,12 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                     if (fShowLOS)
                     {
                         if (pLOSMsg->fNoHit)
-                            DetectorLogSpecial("%s: LOS miss", pObj->GetKeyName().c_str());
+                            plDetectorLog::Special("{}: LOS miss", pObj->GetKeyName());
                         else
-                            DetectorLogSpecial("%s: LOS hit", pObj->GetKeyName().c_str());
+                            plDetectorLog::Special("{}: LOS hit", pObj->GetKeyName());
                     }
-                    int i;
-                    const plInterfaceInfoModifier* pMod = 0;
-                    for( i = 0; i < pObj->GetNumModifiers(); i++ )
+                    const plInterfaceInfoModifier* pMod = nullptr;
+                    for (size_t i = 0; i < pObj->GetNumModifiers(); i++)
                     {
                         if (fBookMode == kNotOffering) // when sharing a book we don't care about other clickables
                         {
@@ -293,8 +281,8 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                                     fCurrentClickable = pObj->GetKey();
                                     fCurrentClickableLogicMod = pLogicMod->GetKey();
                                     fCurrentClickPoint = pLOSMsg->fHitPoint;
-                                    for (int x = 0; x < pMod->GetNumReferencedKeys(); x++)
-                                        fClickableMap.Append( new clickableTest(pMod->GetReferencedKey(x)));
+                                    for (size_t x = 0; x < pMod->GetNumReferencedKeys(); x++)
+                                        fClickableMap.emplace_back(new clickableTest(pMod->GetReferencedKey(x)));
                                 }
                                 else
                                 {
@@ -318,8 +306,7 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                             bool amCCR = plNetClientMgr::GetInstance()->GetCCRLevel();
                             
                             // is this person a NPC or CCR?
-                            int mbrIdx=plNetClientMgr::GetInstance()->TransportMgr().FindMember(pObj->GetKey());
-                            plNetTransportMember* pMbr = plNetClientMgr::GetInstance()->TransportMgr().GetMember(mbrIdx);
+                            plNetTransportMember* pMbr = plNetClientMgr::GetInstance()->TransportMgr().GetMemberByKey(pObj->GetKey());
                             if (!pMbr) // whoops - it's a freakin' NPC !
                                 return true;
                             
@@ -342,7 +329,7 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                             {
                                 ClearClickableMap();
                                 fCurrentClickable = pObj->GetKey();
-                                fCurrentClickableLogicMod = nil;
+                                fCurrentClickableLogicMod = nullptr;
                                 fCurrClickIsAvatar = true;
                                 fCurrentCursor = SetCurrentCursorID(kCursorPoised);
                                 // not sure why we need to point on the avatar...
@@ -421,20 +408,19 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                                 }
                             }
                             // finally - make sure this guy is not in our ignore lists.
-                            int x;
-                            for (x = 0; x < fIgnoredAvatars.Count(); x++)
+                            for (const plKey& avatarKey : fIgnoredAvatars)
                             {
-                                if (fIgnoredAvatars[x] == pObj->GetKey())
-                                {   
+                                if (avatarKey == pObj->GetKey())
+                                {
                                     fCurrentCursor = SetCurrentCursorID(kCursorClickDisabled);
                                     plMouseDevice::AddNameToCursor(plNetClientMgr::GetInstance()->GetPlayerName(pObj->GetKey()));
                                     return true;
                                 }
                             }
-                            for (x = 0; x < fGUIIgnoredAvatars.Count(); x++)
+                            for (const plKey& avatarKey : fGUIIgnoredAvatars)
                             {
-                                if (fGUIIgnoredAvatars[x] == pObj->GetKey())
-                                {   
+                                if (avatarKey == pObj->GetKey())
+                                {
                                     fCurrentCursor = SetCurrentCursorID(kCursorClickDisabled);
                                     plMouseDevice::AddNameToCursor(plNetClientMgr::GetInstance()->GetPlayerName(pObj->GetKey()));
                                     return true;
@@ -443,7 +429,7 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                             
                             ClearClickableMap();
                             fCurrentClickable = pObj->GetKey();
-                            fCurrentClickableLogicMod = nil;
+                            fCurrentClickableLogicMod = nullptr;
                             fCurrClickIsAvatar = true;
                             fCurrentCursor = SetCurrentCursorID(kCursorPoised);
                             // not sure why we need to point on the avatar...
@@ -503,19 +489,19 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
     }
 
     plCursorChangeMsg   *fakeReplyMsg = plCursorChangeMsg::ConvertNoRef( msg );
-    if( fakeReplyMsg != nil )
+    if (fakeReplyMsg != nullptr)
     {
         bool deniedCurrent = false;
         plKey key = fakeReplyMsg->GetSender();
-        for (int i = 0; i < fClickableMap.Count(); i++)
+        for (clickableTest* pTest : fClickableMap)
         {
-            if (fClickableMap[i]->key == key)
+            if (pTest->key == key)
             {
                 if( fakeReplyMsg->fType == plCursorChangeMsg::kNullCursor )
                 {
                     // Means not clickable--gotta fix this someday
-                    fClickableMap[i]->val = false;
-                    if (fClickableMap[i]->key == fCurrentClickableLogicMod)
+                    pTest->val = false;
+                    if (pTest->key == fCurrentClickableLogicMod)
                     {
                         deniedCurrent = true;
                         break;
@@ -524,7 +510,7 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                 else
                 {
                     // And fix this...
-                    fClickableMap[i]->val = true;
+                    pTest->val = true;
                 }
             }
         }
@@ -534,7 +520,7 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
     }
 
     plRenderMsg *rMsg = plRenderMsg::ConvertNoRef( msg );
-    if( rMsg != nil )
+    if (rMsg != nullptr)
     {
         fPipe = rMsg->Pipeline();
         plgDispatch::Dispatch()->UnRegisterForExactType( plRenderMsg::Index(), fManager->GetKey() );
@@ -544,22 +530,22 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
     plNotifyMsg* pNMsg = plNotifyMsg::ConvertNoRef(msg);
     if (pNMsg)
     {
-        for(int x=0; x < pNMsg->GetEventCount();x++)
+        for(size_t x = 0; x < pNMsg->GetEventCount(); x++)
         {
-            proEventData* pED = pNMsg->GetEventRecord(0);
+            proEventData* pED = pNMsg->GetEventRecord(x);
             if ( pED->fEventType == proEventData::kMultiStage )
             {
                 proMultiStageEventData* pMS = (proMultiStageEventData*)pED;
                 if (pMS->fAvatar == fOffereeKey) // mojo has linked
                 {
                     // do something - they linked out but we are still in the multistage
-                    fOffereeKey = nil;
+                    fOffereeKey = nullptr;
                 }
                 else
                 if (pMS->fAvatar == plNetClientMgr::GetInstance()->GetLocalPlayerKey())
                 {
                     // do something else
-                    if (fBookMode = kNotOffering && fPendingLink == false) // we just linked out
+                    if (fBookMode == kNotOffering && fPendingLink == false) // we just linked out
                     {
                         // make me clickable again
                         ISendAvatarDisabledNotification(true);
@@ -584,23 +570,28 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
     {
         if (pPlayerMsg->fUnload)
         {
-            int x;
             // first, remove this avatar from my list of avatars I ingore for clickable griefing (when the 'ignore avatars' key is pressed)
-            for(x = 0; x < fLocalIgnoredAvatars.Count(); x++)
+            for (auto iter = fLocalIgnoredAvatars.cbegin(); iter != fLocalIgnoredAvatars.cend(); )
             {
-                if (fLocalIgnoredAvatars[x] == pPlayerMsg->fPlayer)
-                    fLocalIgnoredAvatars.RemoveItem(pPlayerMsg->fPlayer);
+                if (*iter == pPlayerMsg->fPlayer)
+                    iter = fLocalIgnoredAvatars.erase(iter);
+                else
+                    ++iter;
             }
             // now deal with avatars we are always ignoring because of their current activity
-            for(x = 0; x < fIgnoredAvatars.Count(); x++)
+            for (auto iter = fIgnoredAvatars.cbegin(); iter != fIgnoredAvatars.cend(); )
             {
-                if (fIgnoredAvatars[x] == pPlayerMsg->fPlayer)
-                    fIgnoredAvatars.RemoveItem(pPlayerMsg->fPlayer);
+                if (*iter == pPlayerMsg->fPlayer)
+                    iter = fIgnoredAvatars.erase(iter);
+                else
+                    ++iter;
             }
-            for(x = 0; x < fGUIIgnoredAvatars.Count(); x++)
+            for (auto iter = fGUIIgnoredAvatars.cbegin(); iter != fGUIIgnoredAvatars.cend(); )
             {
-                if (fGUIIgnoredAvatars[x] == pPlayerMsg->fPlayer)
-                    fGUIIgnoredAvatars.RemoveItem(pPlayerMsg->fPlayer);
+                if (*iter == pPlayerMsg->fPlayer)
+                    iter = fGUIIgnoredAvatars.erase(iter);
+                else
+                    ++iter;
             }
             if (fOffereeKey == pPlayerMsg->fPlayer)
             {
@@ -610,7 +601,7 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                     plKey avKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
                     ISendOfferNotification(avKey, 0, false);
                     //IManageIgnoredAvatars(fOffereeKey, false);
-                    fOffereeKey = nil;
+                    fOffereeKey = nullptr;
                     fBookMode = kNotOffering;
                     ISendAvatarDisabledNotification(true);
                 }
@@ -621,7 +612,7 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
             // add them to the list we keep of everyone here:
             // but DO NOT add the local avatar
             if (pPlayerMsg->fPlayer != plNetClientMgr::GetInstance()->GetLocalPlayerKey())
-                fLocalIgnoredAvatars.Append(pPlayerMsg->fPlayer);
+                fLocalIgnoredAvatars.emplace_back(pPlayerMsg->fPlayer);
             if (fBookMode != kNotOffering)
             {
                 // tell them to ignore us
@@ -647,12 +638,12 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                             
             }
             // tell them to ingore us if we are looking at a GUI
-            for(int x = 0; x < fGUIIgnoredAvatars.Count(); x++)
+            for (const auto& avatarKey : fGUIIgnoredAvatars)
             {
-                if (fGUIIgnoredAvatars[x] == plNetClientMgr::GetInstance()->GetLocalPlayerKey())
+                if (avatarKey == plNetClientMgr::GetInstance()->GetLocalPlayerKey())
                 {
                     plInputIfaceMgrMsg* pMsg3 = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kGUIDisableAvatarClickable);
-                    pMsg3->SetAvKey(fGUIIgnoredAvatars[x]);
+                    pMsg3->SetAvKey(avatarKey);
                     pMsg3->SetBCastFlag(plMessage::kNetPropagate);
                     pMsg3->SetBCastFlag(plMessage::kNetForce);
                     pMsg3->SetBCastFlag(plMessage::kLocalPropagate, false);
@@ -665,27 +656,29 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
     }
     
     plInputIfaceMgrMsg *mgrMsg = plInputIfaceMgrMsg::ConvertNoRef( msg );
-    if( mgrMsg != nil )
+    if (mgrMsg != nullptr)
     {
         if ( mgrMsg->GetCommand() == plInputIfaceMgrMsg::kDisableAvatarClickable )
         {
             // ignore if already in list or this is who WE are offering the book to...
             if (mgrMsg->GetAvKey() == fOffereeKey)
                 return true;
-            for(int x = 0; x < fIgnoredAvatars.Count(); x++)
+            for (const plKey& avatarKey : fIgnoredAvatars)
             {
-                if (fIgnoredAvatars[x] == mgrMsg->GetAvKey())
+                if (avatarKey == mgrMsg->GetAvKey())
                     return true;
             }
-            fIgnoredAvatars.Append(mgrMsg->GetAvKey());
+            fIgnoredAvatars.emplace_back(mgrMsg->GetAvKey());
         }
         else
         if ( mgrMsg->GetCommand() == plInputIfaceMgrMsg::kEnableAvatarClickable )
         {
-            for(int x = 0; x < fIgnoredAvatars.Count(); x++)
+            for (auto iter = fIgnoredAvatars.cbegin(); iter != fIgnoredAvatars.cend(); )
             {
-                if (fIgnoredAvatars[x] == mgrMsg->GetAvKey())
-                    fIgnoredAvatars.RemoveItem(mgrMsg->GetAvKey());
+                if (*iter == mgrMsg->GetAvKey())
+                    iter = fIgnoredAvatars.erase(iter);
+                else
+                    ++iter;
             }
         }
         else
@@ -694,20 +687,22 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
             // ignore if already in list or this is who WE are offering the book to...
             if (mgrMsg->GetAvKey() == fOffereeKey)
                 return true;
-            for(int x = 0; x < fGUIIgnoredAvatars.Count(); x++)
+            for (const plKey& avatarKey : fGUIIgnoredAvatars)
             {
-                if (fGUIIgnoredAvatars[x] == mgrMsg->GetAvKey())
+                if (avatarKey == mgrMsg->GetAvKey())
                     return true;
             }
-            fGUIIgnoredAvatars.Append(mgrMsg->GetAvKey());
+            fGUIIgnoredAvatars.emplace_back(mgrMsg->GetAvKey());
         }
         else
         if ( mgrMsg->GetCommand() == plInputIfaceMgrMsg::kGUIEnableAvatarClickable )
         {
-            for(int x = 0; x < fGUIIgnoredAvatars.Count(); x++)
+            for (auto iter = fGUIIgnoredAvatars.cbegin(); iter != fGUIIgnoredAvatars.cend(); )
             {
-                if (fGUIIgnoredAvatars[x] == mgrMsg->GetAvKey())
-                    fGUIIgnoredAvatars.RemoveItem(mgrMsg->GetAvKey());
+                if (*iter == mgrMsg->GetAvKey())
+                    iter = fGUIIgnoredAvatars.erase(iter);
+                else
+                    ++iter;
             }
         }
         else
@@ -725,7 +720,7 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
         else if ( mgrMsg->GetCommand() == plInputIfaceMgrMsg::kSetOfferBookMode )
         {
             fBookMode = kOfferBook;
-            fOffereeKey = nil;
+            fOffereeKey = nullptr;
             fBookKey = mgrMsg->GetSender();
             fOfferedAgeInstance = mgrMsg->GetAgeName();
             fOfferedAgeFile = mgrMsg->GetAgeFileName();
@@ -739,12 +734,12 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                 fPendingLink = true;
             }
             else
-            if (fOffereeKey != nil)
+            if (fOffereeKey != nullptr)
             {
                 // notify any offeree that the offer is rescinded
                 ISendOfferNotification(fOffereeKey, -999, true);
                 //IManageIgnoredAvatars(fOffereeKey, false);
-                fOffereeKey = nil;
+                fOffereeKey = nullptr;
             }
             // shut down offer book mode
             fBookMode = kNotOffering;
@@ -759,7 +754,7 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                 ISendOfferNotification(avKey, 0, false);
                 //IManageIgnoredAvatars(fOffereeKey, false);
                 fBookMode = kOfferBook;
-                fOffereeKey = nil;
+                fOffereeKey = nullptr;
             }
             else
             if (mgrMsg->GetSender() == plNetClientMgr::GetInstance()->GetLocalPlayerKey())
@@ -834,19 +829,18 @@ void plSceneInputInterface::ILinkOffereeToAge()
         // We must have an owned copy of the age before we can offer it, so make one now
         plUUID guid = plUUID::Generate();
         info.SetAgeInstanceGuid(&guid);
-        plString title, desc;
+        ST::string title, desc;
 
-        unsigned nameLen = plNetClientMgr::GetInstance()->GetPlayerName().GetSize();
-        if (plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 's'
-                || plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 'S') {
-            title = plFormat("{}'", plNetClientMgr::GetInstance()->GetPlayerName());
-            desc = plFormat("{}' {}", plNetClientMgr::GetInstance()->GetPlayerName(),
-                            link.GetAgeInfo()->GetAgeInstanceName());
+        ST::string playerName = plNetClientMgr::GetInstance()->GetPlayerName();
+        if (playerName.back() == 's' || playerName.back() == 'S') {
+            title = ST::format("{}'", playerName);
+            desc = ST::format("{}' {}", playerName,
+                              link.GetAgeInfo()->GetAgeInstanceName());
         }
         else {
-            title = plFormat("{}'s", plNetClientMgr::GetInstance()->GetPlayerName());
-            desc = plFormat("{}'s {}", plNetClientMgr::GetInstance()->GetPlayerName(),
-                            link.GetAgeInfo()->GetAgeInstanceName());
+            title = ST::format("{}'s", playerName);
+            desc = ST::format("{}'s {}", playerName,
+                              link.GetAgeInfo()->GetAgeInstanceName());
         }
 
         info.SetAgeUserDefinedName( title.c_str() );
@@ -862,7 +856,7 @@ void plSceneInputInterface::ILinkOffereeToAge()
         // We have the age in our AgesIOwnFolder. If its volatile, dump it for the new one.
         VaultAgeLinkNode linkAcc(linkNode);
         if (linkAcc.GetVolatile()) {
-            if (VaultUnregisterOwnedAgeAndWait(link.GetAgeInfo())) {
+            if (VaultUnregisterOwnedAge(link.GetAgeInfo())) {
                 plUUID guid = plUUID::Generate();
                 link.GetAgeInfo()->SetAgeInstanceGuid(&guid);
                 VaultRegisterOwnedAgeAndWait(&link);
@@ -870,7 +864,7 @@ void plSceneInputInterface::ILinkOffereeToAge()
         }
     }
 
-    if (!fSpawnPoint.IsEmpty()) {
+    if (!fSpawnPoint.empty()) {
         plSpawnPointInfo spawnPoint;
         spawnPoint.SetName(fSpawnPoint);
         link.SetSpawnPoint(spawnPoint);
@@ -879,12 +873,12 @@ void plSceneInputInterface::ILinkOffereeToAge()
             
     // We now own the age, offer it
 
-    if (fOfferedAgeFile.CompareI(kPersonalAgeFilename) == 0)
+    if (fOfferedAgeFile.compare_i(kPersonalAgeFilename) == 0)
         plNetLinkingMgr::GetInstance()->OfferLinkToPlayer(&link, fOffereeID, fManager->GetKey());
     else
         plNetLinkingMgr::GetInstance()->LinkPlayerToAge(&link, fOffereeID);
         
-    if (!fPendingLink && fOfferedAgeFile.CompareI(kPersonalAgeFilename) != 0)
+    if (!fPendingLink && fOfferedAgeFile.compare_i(kPersonalAgeFilename) != 0)
     {   
         // tell our local dialog to pop up again...
         plKey avKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
@@ -893,7 +887,7 @@ void plSceneInputInterface::ILinkOffereeToAge()
         //IManageIgnoredAvatars(fOffereeKey, false);
         
         fBookMode = kNotOffering;
-        fOffereeKey = nil;
+        fOffereeKey = nullptr;
         fPendingLink = false;
     }
     else // this is a yeesha book link, must wait for multistage callbacks
@@ -902,7 +896,7 @@ void plSceneInputInterface::ILinkOffereeToAge()
         fBookMode = kOfferLinkPending;
         fPendingLink = true;
 //          fBookMode = kNotOffering;
-//          fOffereeKey = nil;
+//          fOffereeKey = nullptr;
 //          fPendingLink = false;
 //          ISendAvatarDisabledNotification(true);
     }
@@ -917,7 +911,7 @@ void    plSceneInputInterface::ISetLastClicked( plKey obj, hsPoint3 hitPoint )
     if (fBookMode != kNotOffering)
         return;
     
-    if( fLastClicked != nil )
+    if (fLastClicked != nullptr)
     {
         // Send an "un-picked" message to it
         if( !fLastClickIsAvatar )
@@ -930,15 +924,15 @@ void    plSceneInputInterface::ISetLastClicked( plKey obj, hsPoint3 hitPoint )
         else
         {
             plRemoteAvatarInfoMsg *pMsg = new plRemoteAvatarInfoMsg;
-            pMsg->SetAvatarKey( nil );
+            pMsg->SetAvatarKey(nullptr);
             plgDispatch::MsgSend( pMsg );
         }
     }
 
-    fLastClicked = obj;
-    fLastClickIsAvatar = ( obj == nil ) ? false : fCurrClickIsAvatar;
+    fLastClickIsAvatar = (obj == nullptr) ? false : fCurrClickIsAvatar;
+    fLastClicked = std::move(obj);
 
-    if( fLastClicked != nil )
+    if (fLastClicked != nullptr)
     {
 #ifdef MATT_WAS_HERE
     // now we send pick messages to avatars as well...
@@ -982,9 +976,9 @@ bool plSceneInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
     {
         if (pControlEvent->GetControlCode() == B_CONTROL_IGNORE_AVATARS)
         {
-            for (int i = 0; i < fLocalIgnoredAvatars.Count(); i++)
+            for (const plKey& avatarKey : fLocalIgnoredAvatars)
             {
-                plSceneObject* pObj = plSceneObject::ConvertNoRef(fLocalIgnoredAvatars[i]->ObjectIsLoaded());
+                plSceneObject* pObj = plSceneObject::ConvertNoRef(avatarKey->ObjectIsLoaded());
                 if (!pObj)
                     continue;
 
@@ -1007,7 +1001,7 @@ bool plSceneInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
     }
 
     plMouseEventMsg *mouseMsg = plMouseEventMsg::ConvertNoRef( pMsg );
-    if( mouseMsg != nil )
+    if (mouseMsg != nullptr)
     {
         // you're suspended when in this mode...
         if (fBookMode == kOfferLinkPending || fBookMode == kOfferAccepted)
@@ -1015,7 +1009,7 @@ bool plSceneInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 
         if( mouseMsg->GetButton() == kLeftButtonDown )
         {
-            if( fCurrentClickable != nil && fLastClicked == nil && fCurrentCursor != kNullCursor )
+            if (fCurrentClickable != nullptr && fLastClicked == nullptr && fCurrentCursor != kNullCursor)
             {
                 fButtonState |= kLeftButtonDown;
                 ISetLastClicked( fCurrentClickable, fCurrentClickPoint );
@@ -1026,7 +1020,7 @@ bool plSceneInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
             if (fBookMode == kOfferBook)
             {
                 fBookMode = kNotOffering;
-                fOffereeKey = nil;
+                fOffereeKey = nullptr;
                 ISendAvatarDisabledNotification(true);
             }
         }
@@ -1051,20 +1045,20 @@ bool plSceneInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     ISendOfferNotification(avKey, 0, false);
                     //IManageIgnoredAvatars(fOffereeKey, false);
                     fBookMode = kOfferBook;
-                    fOffereeKey = nil;
+                    fOffereeKey = nullptr;
                 }   
                 else
                 if (fBookMode == kOfferBook)
                 {
                     fBookMode = kNotOffering;
-                    fOffereeKey = nil;
+                    fOffereeKey = nullptr;
                     ISendAvatarDisabledNotification(true);
                 }
             }
-            if( fLastClicked != nil )
+            if (fLastClicked != nullptr)
             {
                 fButtonState &= ~kLeftButtonDown;
-                ISetLastClicked( nil, hsPoint3(0,0,0) );
+                ISetLastClicked(nullptr, {});
                 
                 return true;
             }
@@ -1076,10 +1070,10 @@ bool plSceneInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 
 
 //// ISendOfferNotification ////////////////////////////////////////////////////////
-void plSceneInputInterface::IManageIgnoredAvatars(plKey& offeree, bool add)
+void plSceneInputInterface::IManageIgnoredAvatars(const plKey& offeree, bool add)
 {
     // tell everyone else to be able to / not to be able to select this avatar
-    plInputIfaceMgrMsg* pMsg = 0;
+    plInputIfaceMgrMsg* pMsg = nullptr;
     if (!add)
         pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableAvatarClickable);
     else
@@ -1091,7 +1085,7 @@ void plSceneInputInterface::IManageIgnoredAvatars(plKey& offeree, bool add)
     pMsg->Send();
 }   
 
-void plSceneInputInterface::ISendOfferNotification(plKey& offeree, int ID, bool net)
+void plSceneInputInterface::ISendOfferNotification(const plKey& offeree, int ID, bool net)
 {
     int offereeID = -1;
     if (offeree == plNetClientMgr::GetInstance()->GetLocalPlayerKey())
@@ -1100,24 +1094,14 @@ void plSceneInputInterface::ISendOfferNotification(plKey& offeree, int ID, bool 
     }
     else
     {
-        plNetTransportMember **members = nil;
-        plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted( members );
-        if( members != nil)
+        for (plNetTransportMember* mbr : plNetClientMgr::GetInstance()->TransportMgr().GetMemberList())
         {
-            for(int i = 0; i < plNetClientMgr::GetInstance()->TransportMgr().GetNumMembers(); i++ )
+            if (mbr != nullptr && mbr->GetAvatarKey() == offeree)
             {
-                plNetTransportMember *mbr = members[ i ];
-
-                if( mbr != nil && mbr->GetAvatarKey() == offeree)
-                {   
-                    offereeID = mbr->GetPlayerID();
-                    break;
-                }
+                offereeID = mbr->GetPlayerID();
+                break;
             }
         }
-
-        delete [] members;
-
     }
     plNotifyMsg* pMsg = new plNotifyMsg;
     pMsg->AddOfferBookEvent(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), ID, offereeID);
@@ -1140,7 +1124,7 @@ void plSceneInputInterface::ISendOfferNotification(plKey& offeree, int ID, bool 
 
 void plSceneInputInterface::ISendAvatarDisabledNotification(bool enabled)
 {
-    plInputIfaceMgrMsg* pMsg = 0;
+    plInputIfaceMgrMsg* pMsg = nullptr;
     if (enabled)
         pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableAvatarClickable);
     else
@@ -1158,7 +1142,7 @@ void plSceneInputInterface::ISendAvatarDisabledNotification(bool enabled)
 
 void    plSceneInputInterface::IRequestLOSCheck( float xPos, float yPos, int ID )
 {
-    if( fPipe == nil )
+    if (fPipe == nullptr)
         return;
     
 
@@ -1179,12 +1163,15 @@ void    plSceneInputInterface::IRequestLOSCheck( float xPos, float yPos, int ID 
     
     if(ID == ID_FIND_CLICKABLE) {
         pMsg = new plLOSRequestMsg( fManager->GetKey(), startPos, endPos, plSimDefs::kLOSDBUIItems, plLOSRequestMsg::kTestClosest );
+        pMsg->SetRequestName(ST_LITERAL("Scene Input Interface: Find Clickable"));
         pMsg->SetCullDB(plSimDefs::kLOSDBUIBlockers);
     } else if(ID == ID_FIND_WALKABLE_GROUND) {
         pMsg = new plLOSRequestMsg( fManager->GetKey(), startPos, endPos, plSimDefs::kLOSDBAvatarWalkable, plLOSRequestMsg::kTestClosest);
-    } else
+        pMsg->SetRequestName(ST_LITERAL("Scene Input Interface: Find Terrain"));
+    } else {
         pMsg = new plLOSRequestMsg( fManager->GetKey(), startPos, endPos, plSimDefs::kLOSDBLocalAvatar, plLOSRequestMsg::kTestClosest);
-    
+        pMsg->SetRequestName(ST_LITERAL("Scene Input Interface: Find Local Avatar"));
+    }
     pMsg->SetReportType( plLOSRequestMsg::kReportHitOrMiss );
 
     pMsg->SetRequestID( ID );
@@ -1197,9 +1184,9 @@ void    plSceneInputInterface::IRequestLOSCheck( float xPos, float yPos, int ID 
         
 //// IWorldPosMovedSinceLastLOSCheck /////////////////////////////////////////
 
-bool    plSceneInputInterface::IWorldPosMovedSinceLastLOSCheck( void )
+bool    plSceneInputInterface::IWorldPosMovedSinceLastLOSCheck()
 {
-    if( fPipe == nil )
+    if (fPipe == nullptr)
         return false;
 
     int32_t x=(int32_t) ( plMouseDevice::Instance()->GetCursorX() * fPipe->Width() );

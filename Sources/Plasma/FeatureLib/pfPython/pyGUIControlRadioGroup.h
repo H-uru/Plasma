@@ -48,12 +48,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                   attached to a GUIControlRadioGroup
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
-#include "pyKey.h"
+#include "pyGlueDefinitions.h"
 #include "pyGUIControl.h"
 
-#include "pyGlueHelpers.h"
+class plKey;
+class pyKey;
 
 class pyGUIControlRadioGroup :public pyGUIControl
 {
@@ -72,10 +72,10 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static bool IsGUIControlRadioGroup(pyKey& gckey);
+    static bool IsGUIControlRadioGroup(const plKey& gckey);
 
-    virtual int32_t   GetValue( void );
-    virtual void    SetValue( int32_t value );
+    int32_t GetValue();
+    void SetValue(int32_t value);
 
 };
 

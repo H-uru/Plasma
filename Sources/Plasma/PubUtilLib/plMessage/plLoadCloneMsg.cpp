@@ -39,32 +39,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef NO_AV_MSGS
-#ifndef SERVER
+
+#include "plLoadCloneMsg.h"
 
 #include "HeadSpin.h"
 #include "hsResMgr.h"
-#include "pnNetCommon/plNetApp.h"
-#pragma hdrstop
+#include "hsStream.h"
 
-#include "plLoadAvatarMsg.h"
+#include "pnNetCommon/plNetApp.h"
 
 // CTOR / default
 plLoadCloneMsg::plLoadCloneMsg()
-: fValidMsg(false),
-  fOriginatingPlayerID(0),
-  fTriggerMsg(nil)
+: fValidMsg(),
+  fOriginatingPlayerID(),
+  fTriggerMsg()
 {
     SetBCastFlag(plMessage::kNetPropagate);
 };
 
 // CTOR uoidToClone, requestorKey, userData, isLoading
 // this form is for creating new clones
-plLoadCloneMsg::plLoadCloneMsg(const plUoid &uoidToClone, const plKey &requestorKey, uint32_t userData)
-    : fRequestorKey(requestorKey),
+plLoadCloneMsg::plLoadCloneMsg(const plUoid &uoidToClone, plKey requestorKey, uint32_t userData)
+    : fRequestorKey(std::move(requestorKey)),
       fUserData(userData),
-      fValidMsg(false),
-      fTriggerMsg(nil),
+      fValidMsg(),
+      fTriggerMsg(),
       fIsLoading(true)      // this constructor form is only used for loading
 {
     SetBCastFlag(plMessage::kNetPropagate);
@@ -94,12 +93,12 @@ plLoadCloneMsg::plLoadCloneMsg(const plUoid &uoidToClone, const plKey &requestor
 
 // CTOR existing, requestor, userData, isLoading
 // this form is for unloading or other operations on existing clones
-plLoadCloneMsg::plLoadCloneMsg(const plKey &existing, const plKey &requestor, uint32_t userData, bool isLoading)
-: fCloneKey(existing),
-  fRequestorKey(requestor),
+plLoadCloneMsg::plLoadCloneMsg(plKey existing, plKey requestor, uint32_t userData, bool isLoading)
+: fCloneKey(std::move(existing)),
+  fRequestorKey(std::move(requestor)),
   fUserData(userData),
   fValidMsg(true),
-  fTriggerMsg(nil),
+  fTriggerMsg(),
   fIsLoading(isLoading)
 {
     if (plNetApp::GetInstance())
@@ -213,32 +212,27 @@ void plLoadCloneMsg::WriteVersion(hsStream* stream, hsResMgr* mgr)
     mgr->WriteCreatable(stream, fTriggerMsg);
 }
 
-// GETCLONEKEY
-plKey plLoadCloneMsg::GetCloneKey()
+plKey plLoadCloneMsg::GetCloneKey() const
 {
     return fCloneKey;
 }
 
-// GETREQUESTORKEY
-plKey plLoadCloneMsg::GetRequestorKey()
+plKey plLoadCloneMsg::GetRequestorKey() const
 {
     return fRequestorKey;
 }
 
-// ISVALIDMESSAGE
-bool plLoadCloneMsg::IsValidMessage()
+bool plLoadCloneMsg::IsValidMessage() const
 {
     return fValidMsg;
 }
 
-// GETUSERDATA
-uint32_t plLoadCloneMsg::GetUserData()
+uint32_t plLoadCloneMsg::GetUserData() const
 {
     return fUserData;
 }
 
-// GETORIGINATINGPLAYERID
-uint32_t plLoadCloneMsg::GetOriginatingPlayerID()
+uint32_t plLoadCloneMsg::GetOriginatingPlayerID() const
 {
     return fOriginatingPlayerID;
 }
@@ -248,24 +242,21 @@ void plLoadCloneMsg::SetOriginatingPlayerID(uint32_t playerId)
     fOriginatingPlayerID = playerId;
 }
 
-bool plLoadCloneMsg::GetIsLoading()
+bool plLoadCloneMsg::GetIsLoading() const
 {
     return fIsLoading;
 }
 
 void plLoadCloneMsg::SetTriggerMsg(plMessage *msg)
 {
-    if (fTriggerMsg != nil)
+    if (fTriggerMsg != nullptr)
         hsRefCnt_SafeUnRef(fTriggerMsg);
 
     hsRefCnt_SafeRef(msg);
     fTriggerMsg = msg;
 }
 
-plMessage *plLoadCloneMsg::GetTriggerMsg()
+plMessage *plLoadCloneMsg::GetTriggerMsg() const
 {
     return fTriggerMsg;
 }
-
-#endif // ndef SERVER
-#endif // ndef NO_AV_MSGS

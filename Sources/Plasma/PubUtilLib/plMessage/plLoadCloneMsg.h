@@ -39,16 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef NO_AV_MSGS
-#ifndef SERVER
 
 #ifndef plLoadCloneMsgMsg_INC
 #define plLoadCloneMsgMsg_INC
 
-
 #include "pnMessage/plMessage.h"
-// 
-#include "pnKeyedObject/plUoid.h"
+
+class plKey;
+class plUoid;
 
 /** \class plLoadCloneMsg
     Tell the net client manager to allocate a new object based on copying an
@@ -80,7 +78,7 @@ public:
         \param userData - Whatever you want. Will be propagated to the requestor after cloning.
                         
     */
-    plLoadCloneMsg(const plUoid &uoidToClone, const plKey &requestorKey, uint32_t userData);
+    plLoadCloneMsg(const plUoid &uoidToClone, plKey requestorKey, uint32_t userData);
 
     /** This constructor form is for when you want to send a clone message based on
         an existing cloned object. The two primary uses of this are:
@@ -92,7 +90,7 @@ public:
         \param userData - Whatever you want. Will be propagated to the requestor.
         \param isLoading - Are we loading or unloading?
         */
-    plLoadCloneMsg(const plKey &existing, const plKey &requestor, uint32_t userData, bool isLoading);
+    plLoadCloneMsg(plKey existing, plKey requestor, uint32_t userData, bool isLoading);
 
     virtual ~plLoadCloneMsg();
 
@@ -100,21 +98,21 @@ public:
     GETINTERFACE_ANY(plLoadCloneMsg, plMessage);
 
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    void ReadVersion(hsStream* stream, hsResMgr* mgr);
-    void WriteVersion(hsStream* stream, hsResMgr* mgr);
+    void ReadVersion(hsStream* stream, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* stream, hsResMgr* mgr) override;
     
-    plKey   GetCloneKey();
-    plKey   GetRequestorKey();
-    bool    IsValidMessage();
-    uint32_t  GetUserData();
-    uint32_t  GetOriginatingPlayerID();
+    plKey   GetCloneKey() const;
+    plKey   GetRequestorKey() const;
+    bool    IsValidMessage() const;
+    uint32_t  GetUserData() const;
+    uint32_t  GetOriginatingPlayerID() const;
     void    SetOriginatingPlayerID(uint32_t playerId);
-    bool    GetIsLoading();
+    bool    GetIsLoading() const;
     void    SetTriggerMsg(plMessage *msg);
-    plMessage *GetTriggerMsg();
+    plMessage *GetTriggerMsg() const;
 
 
 protected:
@@ -129,7 +127,3 @@ protected:
 };
 
 #endif
-
-
-#endif // ndef SERVER
-#endif // ndef NO_AV_MSGS

@@ -43,58 +43,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDetectorModifier_inc
 #define plDetectorModifier_inc
 
-#include "pnModifier/plSingleModifier.h"
-#include "pnMessage/plObjRefMsg.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
+
+#include "pnModifier/plSingleModifier.h"
 
 class plDetectorModifier : public plSingleModifier
 {
 protected:
-    virtual bool IEval(double secs, float del, uint32_t dirty){ return true; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
-    hsTArray<plKey>     fReceivers;
+    std::vector<plKey>  fReceivers;
     plModifier*         fRemoteMod;
     plKey               fProxyKey;
 
 public:
-    plDetectorModifier() : fRemoteMod(nil),fProxyKey(nil){;}
-    virtual ~plDetectorModifier(){;}
+    plDetectorModifier() : fRemoteMod() { }
+    virtual ~plDetectorModifier() { }
     
-//  virtual bool MsgReceive(plMessage* msg) = 0;
+//  bool MsgReceive(plMessage* msg) override = 0;
 
     CLASSNAME_REGISTER( plDetectorModifier );
     GETINTERFACE_ANY( plDetectorModifier, plSingleModifier );
-    void AddLogicObj(plKey pKey) { fReceivers.Append(pKey); }
+    void AddLogicObj(plKey pKey) { fReceivers.emplace_back(std::move(pKey)); }
     void SetRemote(plModifier* p) { fRemoteMod = p; }
     plModifier* RemoteMod() { return fRemoteMod; }
-    virtual void SetType(int8_t i) {;}
-    int GetNumReceivers() const { return fReceivers.Count(); }
-    plKey GetReceiver(int i) const { return fReceivers[i]; }
+    virtual void SetType(int8_t i) { }
+    size_t GetNumReceivers() const { return fReceivers.size(); }
+    plKey GetReceiver(size_t i) const { return fReceivers[i]; }
     void SetProxyKey(const plKey &k) { fProxyKey = k; }
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
-        plSingleModifier::Read(stream, mgr);
-        int n = stream->ReadLE32();
-        fReceivers.Reset();
-        for(int i = 0; i < n; i++ )
-        {   
-            fReceivers.Append(mgr->ReadKey(stream));
-        }
-        mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
-        fProxyKey = mgr->ReadKey(stream);
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
-        plSingleModifier::Write(stream, mgr);
-        stream->WriteLE32(fReceivers.GetCount());
-        for( int i = 0; i < fReceivers.GetCount(); i++ )
-            mgr->WriteKey(stream, fReceivers[i]);
-        
-        mgr->WriteKey(stream, fRemoteMod);
-        mgr->WriteKey(stream, fProxyKey);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 

@@ -1,37 +1,41 @@
-if(Vorbis_INCLUDE_DIR AND Vorbis_LIBRARY)
-    set(Vorbis_FIND_QUIETLY TRUE)
-endif()
+find_package(Vorbis CONFIG QUIET)
 
+if(NOT TARGET Vorbis::vorbis)
+    include(FindPackageHandleStandardArgs)
 
-find_path(Vorbis_INCLUDE_DIR vorbis/codec.h
-          /usr/local/include
-          /usr/include
-)
+    find_path(Vorbis_INCLUDE_DIR vorbis/codec.h
+            PATHS /usr/local/include /usr/include
+    )
 
-find_library(Vorbis_LIBRARY NAMES vorbis
-             PATHS /usr/local/lib /usr/lib
-)
+    find_library(Vorbis_LIBRARY
+                NAMES vorbis libvorbis libvorbis_static
+                PATHS /usr/local/lib /usr/lib
+    )
 
-find_library(VorbisFile_LIBRARY NAMES vorbisfile
-             PATHS /usr/local/lib /usr/lib
-)
+    find_library(VorbisFile_LIBRARY
+                NAMES vorbisfile libvorbisfile libvorbisfile_static
+                PATHS /usr/local/lib /usr/lib
+    )
 
-set(Vorbis_LIBRARIES
-    ${Vorbis_LIBRARY}
-    ${VorbisFile_LIBRARY}
-)
+    find_package_handle_standard_args(
+        Vorbis REQUIRED_VARS Vorbis_INCLUDE_DIR Vorbis_LIBRARY VorbisFile_LIBRARY
+    )
 
-
-if(Vorbis_INCLUDE_DIR AND Vorbis_LIBRARY AND VorbisFile_LIBRARY)
-    set(Vorbis_FOUND TRUE)
-endif()
-
-if (Vorbis_FOUND)
-    if(NOT Vorbis_FIND_QUIETLY)
-        message(STATUS "Found libvorbis: ${Vorbis_INCLUDE_DIR}")
+    if(Vorbis_FOUND AND NOT TARGET Vorbis::vorbis)
+        add_library(Vorbis::vorbis UNKNOWN IMPORTED)
+        set_target_properties(
+            Vorbis::vorbis PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES ${Vorbis_INCLUDE_DIR}
+            IMPORTED_LOCATION ${Vorbis_LIBRARY}
+        )
     endif()
-else()
-    if(Vorbis_FIND_REQUIRED)
-        message(FATAL_ERROR "Could not find libvorbis")
+
+    if(Vorbis_FOUND AND NOT TARGET Vorbis::vorbisfile)
+        add_library(Vorbis::vorbisfile UNKNOWN IMPORTED)
+        set_target_properties(
+            Vorbis::vorbisfile PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES ${Vorbis_INCLUDE_DIR}
+            IMPORTED_LOCATION ${VorbisFile_LIBRARY}
+        )
     endif()
 endif()

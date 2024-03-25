@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plSimpleModifier_inc
 
 #include "pnModifier/plModifier.h"
-#include "pnNetCommon/plSynchedValue.h"
 #include "plInterp/plAnimTimeConvert.h"
 
 class plSceneObject;
@@ -83,7 +82,7 @@ protected:
     virtual void            IBegin();
     virtual void            IEnd();
 
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
 
 public:
     plSimpleModifier();
@@ -92,15 +91,15 @@ public:
     CLASSNAME_REGISTER( plSimpleModifier );
     GETINTERFACE_ANY( plSimpleModifier, plModifier);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual int GetNumTargets() const { return fTarget ? 1 : 0; }
-    virtual plSceneObject* GetTarget(int w) const { /* hsAssert(w < GetNumTargets(), "Bad target"); */ return fTarget; }
-    virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget(plSceneObject* so);
+    size_t GetNumTargets() const override { return fTarget ? 1 : 0; }
+    plSceneObject* GetTarget(size_t w) const override { /* hsAssert(w < GetNumTargets(), "Bad target"); */ return fTarget; }
+    void AddTarget(plSceneObject* so) override;
+    void RemoveTarget(plSceneObject* so) override;
     virtual plAnimTimeConvert& GetTimeConvert() { return fTimeConvert;  }
 
 

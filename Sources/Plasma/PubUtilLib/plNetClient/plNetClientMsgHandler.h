@@ -70,8 +70,7 @@ public:
     plNetClientMsgHandler(plNetClientMgr * mgr);
     ~plNetClientMsgHandler();
 
-    int     ReceiveMsg(plNetMessage *& netMsg); 
-    int     PeekMsg(plNetMessage * netMsg); // return msgsize on success. -1 on error.
+    plNetMsgHandler::Status ReceiveMsg(plNetMessage* netMsg) override;
 
     MSG_HANDLER_DECL(plNetMsgTerminated)
     MSG_HANDLER_DECL(plNetMsgGroupOwner)

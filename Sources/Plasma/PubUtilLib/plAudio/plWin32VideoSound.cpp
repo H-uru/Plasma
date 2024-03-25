@@ -42,8 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plWin32VideoSound.h"
 
+#include <string_theory/format>
+
 #include "hsResMgr.h"
-#include "plFormat.h"
 #include "plDSoundBuffer.h"
 
 static int uniqueID = 0;
@@ -58,7 +59,7 @@ plWin32VideoSound::plWin32VideoSound(const plWAVHeader& header) : plWin32Sound()
     fDSoundBuffer = new plDSoundBuffer(0, fWAVHeader, false, false);
 
     uniqueID++;
-    hsgResMgr::ResMgr()->NewKey(plFormat("videosound#{}", uniqueID), this, plLocation::kGlobalFixedLoc);
+    hsgResMgr::ResMgr()->NewKey(ST::format("videosound#{}", uniqueID), this, plLocation::kGlobalFixedLoc);
 }
 
 plWin32VideoSound::~plWin32VideoSound()

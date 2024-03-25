@@ -82,17 +82,17 @@ public:
 
     plNoteTrackWatcher( plPassMtlBase *parentMtl );
     virtual ~plNoteTrackWatcher();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    Class_ID    ClassID()               { return NTWATCHER_CLASSID; }      
-    SClass_ID   SuperClassID()          { return REF_MAKER_CLASS_ID; }
+    Class_ID    ClassID() override      { return NTWATCHER_CLASSID; }
+    SClass_ID   SuperClassID() override { return REF_MAKER_CLASS_ID; }
     
-    int             NumRefs();
-    RefTargetHandle GetReference(int i);
-    void            SetReference(int i, RefTargetHandle rtarg);
-    RefResult       NotifyRefChanged(Interval changeInt,RefTargetHandle hTarget, PartID& partID, RefMessage message);
+    int             NumRefs() override;
+    RefTargetHandle GetReference(int i) override;
+    void            SetReference(int i, RefTargetHandle rtarg) override;
+    RefResult       NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message MAX_REF_PROPAGATE) override;
 
-    virtual BOOL    IsRealDependency( ReferenceTarget *rtarg );
+    BOOL            IsRealDependency(ReferenceTarget *rtarg) override;
 };
 
-#endif //_plNoteTrackWatcher_h 
+#endif //_plNoteTrackWatcher_h

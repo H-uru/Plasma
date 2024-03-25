@@ -46,24 +46,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsWindows.h"
 
-#define CRASH_NOTIFY_SUFFIX "CrashNotify"
-#define CRASH_HANDLE_SUFFIX "CrashHandled"
+#include <string_view>
+
+constexpr std::string_view CRASH_NOTIFY_SUFFIX = "CrashNotify";
+constexpr std::string_view CRASH_HANDLE_SUFFIX = "CrashHandled";
 
 #ifdef HS_BUILD_FOR_WIN32
 #   ifdef PLASMA_EXTERNAL_RELEASE
-#       define CRASH_HANDLER_EXE "UruCrashHandler.exe"
+        constexpr std::wstring_view CRASH_HANDLER_EXE = L"UruCrashHandler.exe";
 #   else
-#       define CRASH_HANDLER_EXE "plCrashHandler.exe"
+        constexpr std::wstring_view CRASH_HANDLER_EXE = L"plCrashHandler.exe";
 #   endif // PLASMA_EXTERNAL_RELEASE
 #endif // HS_BUILD_FOR_WIN32
 
+// Bump the version whenever you change the memory link structure below
+constexpr uint32_t CRASH_LINK_VERSION = 1;
+
 struct plCrashMemLink
 {
-    bool fCrashed;
-    bool fSrvReady;
+    uint32_t fVersion;
+    bool     fCrashed;
+    bool     fSrvReady;
 #ifdef HS_BUILD_FOR_WIN32
     HANDLE   fClientProcess;
     uint32_t fClientProcessID;
+    HANDLE   fClientThread;
     uint32_t fClientThreadID;
     PEXCEPTION_POINTERS fExceptionPtrs;
 #endif

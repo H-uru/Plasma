@@ -69,29 +69,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsStream.h"
 #include "hsStringTokenizer.h"
-#include "hsTemplates.h"
 #include "hsThread.h"
 #include "plTweak.h"
-#include "plFormat.h"
 
 // Windows
 #include "hsWindows.h"
-#include <commdlg.h>
 #include <shlwapi.h>
-#include <windowsx.h>
 
 // 3ds Max SDK
-// This stuff should ALWAYS come after hsWindows.h
-#include <max.h>
-#include <bmmlib.h>
-#include <CS/bipexp.h>
-#include <decomp.h>
-#include <dummy.h>
-#include <iparamm2.h>
-#include <meshdlib.h>
-#include <notetrck.h>
-#include <notify.h>
-#include <stdmat.h>
+#include "MaxMain/MaxAPI.h"
 
 // These MaxComponent headers will trigger a rebuild if they are changed
 // So it's probably best to precompile them anyway.
@@ -111,14 +97,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "resource.h"
 
+#include <string_theory/format>
+
 // Useful Stuff from MaxMain
 // Changing any of this would likely cause a rebuild, regardless of it being here.
 #include "MaxMain/MaxCompat.h"
 #include "MaxMain/plMaxNode.h"
 #include "MaxMain/plMaxNodeData.h"
-
-#if MAX_VERSION_MAJOR >= 13
-#   include <INamedSelectionSetManager.h>
-#endif
 
 #endif // _MaxComponent_Pch_inc_

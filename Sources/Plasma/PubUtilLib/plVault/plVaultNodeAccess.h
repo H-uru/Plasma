@@ -50,6 +50,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULTNODEACCESS_H
 
+#include "hsGeometry3.h"
+#include "hsRefCnt.h"
+
+#include "pnNetProtocol/pnNetProtocol.h"
+
+#include <string_theory/string>
+
 /*****************************************************************************
 *
 *   VaultNode field access strutures
@@ -60,17 +67,15 @@ class plAgeInfoStruct;
 class plAgeLinkStruct;
 struct plSpawnPointInfo;
 
-#ifdef CLIENT
 typedef std::vector<plSpawnPointInfo>   plSpawnPointVec;
-#endif
 
 //============================================================================
 // NetVaultNodeAccess
 //============================================================================
 struct NetVaultNodeAccess {
-    NetVaultNode *  base;
+    hsWeakRef<NetVaultNode> base;
 
-    NetVaultNodeAccess (NetVaultNode * node) : base(node) { }
+    NetVaultNodeAccess(hsWeakRef<NetVaultNode> node) : base(node) { }
 
 private:
     NetVaultNodeAccess (const NetVaultNodeAccess &) { }
@@ -82,13 +87,12 @@ private:
     void Set##name (type v) { base->Set##basename(v); }
 
 #define VNODE_BLOB(name, basename) \
-    const uint8_t * Get##name () const { return base->Get##basename(); } \
-    size_t Get##name##Length () const { return base->Get##basename##Length(); } \
+    const std::vector<uint8_t>& Get##name() const { return base->Get##basename(); } \
     void Set##name (const uint8_t data[], size_t length) { base->Set##basename(data, length); }
 
 #define VNODE_STRING(name, basename) \
-    plString Get##name () const { return base->Get##basename(); } \
-    void Set##name (const plString& v) { base->Set##basename(v); }
+    ST::string Get##name () const { return base->Get##basename(); } \
+    void Set##name (const ST::string& v) { base->Set##basename(v); }
 
 //============================================================================
 // VaultPlayerNode
@@ -102,7 +106,7 @@ struct VaultPlayerNode : NetVaultNodeAccess {
     VNODE_ACCESSOR(plUUID,          AccountUuid,        Uuid_1);
     VNODE_ACCESSOR(plUUID,          InviteUuid,         Uuid_2);
 
-    VaultPlayerNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
+    VaultPlayerNode(hsWeakRef<NetVaultNode> node) : NetVaultNodeAccess(node) { }
 };
 
 
@@ -117,7 +121,7 @@ struct VaultPlayerInfoNode : NetVaultNodeAccess {
     VNODE_ACCESSOR(int32_t,         Online,             Int32_1);       // whether or not player is online
     VNODE_ACCESSOR(int32_t,         CCRLevel,           Int32_2);
 
-    VaultPlayerInfoNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
+    VaultPlayerInfoNode(hsWeakRef<NetVaultNode> node) : NetVaultNodeAccess(node) { }
 };
 
 
@@ -128,7 +132,7 @@ struct VaultFolderNode : NetVaultNodeAccess {
     VNODE_ACCESSOR(int32_t,         FolderType,         Int32_1);
     VNODE_STRING  (                 FolderName,         String64_1);
 
-    VaultFolderNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
+    VaultFolderNode(hsWeakRef<NetVaultNode> node) : NetVaultNodeAccess(node) { }
 };
 
 
@@ -136,14 +140,14 @@ struct VaultFolderNode : NetVaultNodeAccess {
 // VaultPlayerInfoListNode
 //============================================================================
 struct VaultPlayerInfoListNode : VaultFolderNode {
-    VaultPlayerInfoListNode (NetVaultNode * node) : VaultFolderNode(node) { }
+    VaultPlayerInfoListNode(hsWeakRef<NetVaultNode> node) : VaultFolderNode(node) { }
 };
 
 //============================================================================
 // VaultAgeInfoListNode
 //============================================================================
 struct VaultAgeInfoListNode : VaultFolderNode {
-    VaultAgeInfoListNode (NetVaultNode * node) : VaultFolderNode(node) { }
+    VaultAgeInfoListNode(hsWeakRef<NetVaultNode> node) : VaultFolderNode(node) { }
 };
 
 //============================================================================
@@ -154,7 +158,7 @@ struct VaultChronicleNode : NetVaultNodeAccess {
     VNODE_STRING  (                 EntryName,          String64_1);
     VNODE_STRING  (                 EntryValue,         Text_1);
 
-    VaultChronicleNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
+    VaultChronicleNode(hsWeakRef<NetVaultNode> node) : NetVaultNodeAccess(node) { }
 };
 
 
@@ -166,13 +170,11 @@ struct VaultSDLNode : NetVaultNodeAccess {
     VNODE_ACCESSOR(int32_t,         SDLIdent,           Int32_1);
     VNODE_BLOB    (                 SDLData,            Blob_1);
 
-    VaultSDLNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
+    VaultSDLNode(hsWeakRef<NetVaultNode> node) : NetVaultNodeAccess(node) { }
 
-#ifdef CLIENT
     bool GetStateDataRecord (class plStateDataRecord * out, unsigned readOptions = 0);
     void SetStateDataRecord (const class plStateDataRecord * rec, unsigned writeOptions = 0);
-    void InitStateDataRecord (const plString& sdlRecName, unsigned writeOptions = 0);
-#endif // def CLIENT
+    void InitStateDataRecord (const ST::string& sdlRecName, unsigned writeOptions = 0);
 };
 
 //============================================================================
@@ -183,17 +185,15 @@ struct VaultAgeLinkNode : NetVaultNodeAccess {
     VNODE_ACCESSOR(int32_t,         Volatile,           Int32_2);
     VNODE_BLOB    (                 SpawnPoints,        Blob_1);
 
-    VaultAgeLinkNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
+    VaultAgeLinkNode(hsWeakRef<NetVaultNode> node) : NetVaultNodeAccess(node) { }
 
-#ifdef CLIENT
     bool CopyTo (plAgeLinkStruct * link);
     void AddSpawnPoint (const plSpawnPointInfo & point); // will only add if not there already.
-    void RemoveSpawnPoint (const plString & spawnPtName);
-    bool HasSpawnPoint (const plString & spawnPtName) const;
+    void RemoveSpawnPoint (const ST::string & spawnPtName);
+    bool HasSpawnPoint (const ST::string & spawnPtName) const;
     bool HasSpawnPoint (const plSpawnPointInfo & point) const;  // compares spawn name only, not title.
     void GetSpawnPoints (plSpawnPointVec * out) const;
     void SetSpawnPoints (const plSpawnPointVec & in);
-#endif
 };
 
 //============================================================================
@@ -206,24 +206,20 @@ struct VaultImageNode : NetVaultNodeAccess {
     VNODE_STRING  (                 ImageTitle,         String64_1);
     VNODE_BLOB    (                 ImageData,          Blob_1);
 
-    VaultImageNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
+    VaultImageNode(hsWeakRef<NetVaultNode> node) : NetVaultNodeAccess(node) { }
 
-#ifdef CLIENT
     void StuffImage (class plMipmap * src, int dstType=kJPEG);
     bool ExtractImage (class plMipmap ** dst);
-#endif
 };
 
 //============================================================================
 // VaultCliImageNode
 //============================================================================
-#ifdef CLIENT
 struct VaultCliImageNode : VaultImageNode {
     class plMipmap * fMipmap;
 
-    VaultCliImageNode (NetVaultNode * node) : VaultImageNode(node) { }
+    VaultCliImageNode(hsWeakRef<NetVaultNode> node) : VaultImageNode(node) { }
 };
-#endif // def CLIENT
 
 //============================================================================
 // VaultTextNoteNode
@@ -234,13 +230,11 @@ struct VaultTextNoteNode : NetVaultNodeAccess {
     VNODE_STRING  (                 NoteTitle,          String64_1);
     VNODE_STRING  (                 NoteText,           Text_1);
 
-    VaultTextNoteNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
+    VaultTextNoteNode(hsWeakRef<NetVaultNode> node) : NetVaultNodeAccess(node) { }
 
-#ifdef CLIENT
     // for kNoteType_Visit/UnVisit
     void SetVisitInfo (const plAgeInfoStruct & info);
     bool GetVisitInfo (plAgeInfoStruct * info);
-#endif
 };
 
 //============================================================================
@@ -251,7 +245,7 @@ struct VaultAgeNode : NetVaultNodeAccess {
     VNODE_ACCESSOR(plUUID,          ParentAgeInstanceGuid,  Uuid_2);
     VNODE_STRING  (                 AgeName,                String64_1);
 
-    VaultAgeNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
+    VaultAgeNode(hsWeakRef<NetVaultNode> node) : NetVaultNodeAccess(node) { }
 };
 
 //============================================================================
@@ -273,13 +267,11 @@ struct VaultAgeInfoNode : NetVaultNodeAccess {
     // WARNING: Do not set this. The age will not be set public this way. Use NetCliAuthSetAgePublic instead (changes this field's value in the process).
     VNODE_ACCESSOR(int32_t,         IsPublic,               Int32_2);
 
-    VaultAgeInfoNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
+    VaultAgeInfoNode(hsWeakRef<NetVaultNode> node) : NetVaultNodeAccess(node) { }
 
-#ifdef CLIENT
     const class plUnifiedTime * GetAgeTime () const;
     void CopyFrom (const plAgeInfoStruct * info);
     void CopyTo (plAgeInfoStruct * info) const;
-#endif // def CLIENT
 };
 
 //============================================================================
@@ -288,16 +280,34 @@ struct VaultAgeInfoNode : NetVaultNodeAccess {
 struct VaultSystemNode : NetVaultNodeAccess {
     VNODE_ACCESSOR(int32_t,         CCRStatus,          Int32_1);
 
-    VaultSystemNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
+    VaultSystemNode(hsWeakRef<NetVaultNode> node) : NetVaultNodeAccess(node) { }
 };
 
 
 //============================================================================
 // VaultMarkerGameNode
 //============================================================================
+struct VaultMarker {
+    uint32_t id;
+    ST::string age;
+    hsPoint3 pos;
+    ST::string description;
+
+    VaultMarker()
+        : id()
+    { }
+    VaultMarker(uint32_t id, ST::string age, const hsPoint3& pos, ST::string description)
+        : id(id), age(std::move(age)), pos(pos), description(std::move(description))
+    { }
+};
+
 struct VaultMarkerGameNode : NetVaultNodeAccess {
     VNODE_STRING  (                 GameName,           Text_1);
+    VNODE_STRING  (                 Reward,             Text_2);
     VNODE_ACCESSOR(plUUID,          GameGuid,           Uuid_1);
 
-    VaultMarkerGameNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
+    VaultMarkerGameNode(hsWeakRef<NetVaultNode> node) : NetVaultNodeAccess(node) { }
+
+    void GetMarkerData(std::vector<VaultMarker>& data) const;
+    void SetMarkerData(const std::vector<VaultMarker>& data);
 };

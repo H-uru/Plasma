@@ -39,24 +39,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "pfMarkerInfo.h"
 #include "pfMarkerMgr.h"
 
-#include "plModifier/plGameMarkerModifier.h"
+#include "hsResMgr.h"
 
-#include "plMessage/plLoadCloneMsg.h"
-#include "pnMessage/plWarpMsg.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "plMessage/plAnimCmdMsg.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnMessage/plClientMsg.h"
 #include "pnMessage/plEnableMsg.h"
 #include "pnMessage/plSoundMsg.h"
+#include "pnMessage/plWarpMsg.h"
 #include "pnSceneObject/plAudioInterface.h"
-
-// For Init
-#include "pnMessage/plClientMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 #include "pnSceneObject/plSceneObject.h"
-#include "plResMgr/plResManager.h"
+
+#include "plMessage/plAnimCmdMsg.h"
+#include "plMessage/plLoadCloneMsg.h"
+#include "plModifier/plGameMarkerModifier.h"
 #include "plResMgr/plKeyFinder.h"
+
 
 plUoid pfMarkerInfo::fMarkerUoid;
 
@@ -64,7 +66,7 @@ static const int kFreezeLen = 10;       // How long a marker is frozen after you
 
 void pfMarkerInfo::Init()
 {
-    plResManager* resMgr = (plResManager*)hsgResMgr::ResMgr();
+    hsResMgr* resMgr = hsgResMgr::ResMgr();
 
     // Force the client to keep the GlobalMarkers keys loaded, so we don't load them every time we clone
     plClientMsg* loadAgeKeysMsg = new plClientMsg(plClientMsg::kLoadAgeKeys);
@@ -83,10 +85,10 @@ void pfMarkerInfo::Init()
 }
 
 pfMarkerInfo::pfMarkerInfo(const hsPoint3& pos, bool isNew) :
-    fMod(nil),
+    fMod(),
     fPosition(pos),
     fType(kMarkerOpen),
-    fLastChange(0),
+    fLastChange(),
     fVisible(true),
     fIsNew(isNew),
     fSpawned(false)
@@ -120,7 +122,7 @@ void pfMarkerInfo::Spawn(MarkerType type)
 
 void pfMarkerInfo::InitSpawned(plKey markerKey)
 {
-    fKey = markerKey;
+    fKey = std::move(markerKey);
     fSpawned = true;
 
     plSceneObject* so = plSceneObject::ConvertNoRef(fKey->GetObjectPtr());
@@ -186,8 +188,8 @@ void pfMarkerInfo::Remove()
         cloneMsg->SetBCastFlag(plMessage::kNetPropagate, false);
         cloneMsg->Send();
 
-        fKey = nil;
-        fMod = nil;
+        fKey = nullptr;
+        fMod = nullptr;
     }
 }
 
@@ -223,7 +225,7 @@ void pfMarkerInfo::IPlayColor(bool play)
     if (fMod && fSpawned)
     {
         // Play the correct color anim
-        plKey key = nil;
+        plKey key;
         switch (fType)
         {
         case kMarkerOpen:

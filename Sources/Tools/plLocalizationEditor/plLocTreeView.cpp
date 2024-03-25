@@ -46,15 +46,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfLocalizationMgr/pfLocalizationDataMgr.h"
 
-void plLocTreeView::LoadData(const plString &selectionPath)
+void plLocTreeView::LoadData(const ST::string &selectionPath)
 {
-    plString targetAge, targetSet, targetElement, targetLang;
+    ST::string targetAge, targetSet, targetElement, targetLang;
     SplitLocalizationPath(selectionPath, targetAge, targetSet, targetElement, targetLang);
     bool ageMatched = false;
     bool setMatched = false;
     bool elementMatched = false;
 
-    std::vector<plString> ages = pfLocalizationDataMgr::Instance().GetAgeList();
+    std::vector<ST::string> ages = pfLocalizationDataMgr::Instance().GetAgeList();
     for (int curAge = 0; curAge < ages.size(); curAge++)
     {
         // add the age to the tree
@@ -70,10 +70,10 @@ void plLocTreeView::LoadData(const plString &selectionPath)
         else
             ageMatched = false;
 
-        std::vector<plString> sets = pfLocalizationDataMgr::Instance().GetSetList(ages[curAge]);
+        std::vector<ST::string> sets = pfLocalizationDataMgr::Instance().GetSetList(ages[curAge]);
         for (int curSet = 0; curSet < sets.size(); curSet++)
         {
-            std::vector<plString> elements = pfLocalizationDataMgr::Instance().GetElementList(ages[curAge], sets[curSet]);
+            std::vector<ST::string> elements = pfLocalizationDataMgr::Instance().GetElementList(ages[curAge], sets[curSet]);
 
             QTreeWidgetItem *setItem = new QTreeWidgetItem(ageItem, QStringList { sets[curSet].c_str() });
             setItem->setData(0, kLocPathRole, QString("%1.%2").arg(ages[curAge].c_str()).arg(sets[curSet].c_str()));
@@ -99,13 +99,13 @@ void plLocTreeView::LoadData(const plString &selectionPath)
                     scrollToItem(subItem);
                     elementMatched = true;
 
-                    if (targetLang.IsEmpty())
-                        targetLang = "English";
+                    if (targetLang.empty())
+                        targetLang = ST_LITERAL("English");
                 }
                 else
                     elementMatched = false;
 
-                std::vector<plString> languages = pfLocalizationDataMgr::Instance().GetLanguages(ages[curAge], sets[curSet], elements[curElement]);
+                std::vector<ST::string> languages = pfLocalizationDataMgr::Instance().GetLanguages(ages[curAge], sets[curSet], elements[curElement]);
                 for (int curLang = 0; curLang < languages.size(); curLang++)
                 {
                     QTreeWidgetItem *langItem = new QTreeWidgetItem(subItem, QStringList { languages[curLang].c_str() });
@@ -126,9 +126,9 @@ void plLocTreeView::LoadData(const plString &selectionPath)
     sortByColumn(0, Qt::AscendingOrder);
 }
 
-plString plLocTreeView::CurrentPath() const
+ST::string plLocTreeView::CurrentPath() const
 {
     return (currentItem() != nullptr)
-        ? plString(currentItem()->data(0, kLocPathRole).toString().toUtf8().constData())
-        : plString();
+        ? ST::string(currentItem()->data(0, kLocPathRole).toString().toUtf8().constData())
+        : ST::string();
 }

@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plActivePrintShape_inc
 #define plActivePrintShape_inc
 
+#include <vector>
+
 #include "plPrintShape.h"
 
 class plRippleShapeMsg;
@@ -50,7 +52,7 @@ class plRippleShapeMsg;
 class plActivePrintShape : public plPrintShape
 {
 protected:
-    hsTArray<plKey>         fDecalMgrs;
+    std::vector<plKey>      fDecalMgrs;
 
     plRippleShapeMsg*       fShapeMsg;
 
@@ -64,14 +66,13 @@ public:
     CLASSNAME_REGISTER( plActivePrintShape );
     GETINTERFACE_ANY( plActivePrintShape, plPrintShape );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     // Export construction
-    void        AddDecalKey(const plKey& k);
-    
+    void AddDecalKey(plKey k);
 };
 
 #endif // plActivePrintShape_inc

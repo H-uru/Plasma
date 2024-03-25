@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plFixedKey.h"
 #include "plLoadMask.h"
-#include "plFormat.h"
+#include <string_theory/formatter>
 
 class hsStream;
 
@@ -79,7 +79,7 @@ protected:
     uint32_t fSequenceNumber;
     uint16_t fFlags;
 
-    enum 
+    enum : uint32_t
     {
         kGlobalFixedLocIdx = 0,     // Fixed keys go here, think of as "global,fixed,keys"
         kSceneViewerLocIdx = 1,
@@ -130,7 +130,7 @@ public:
     bool operator<(const plLocation& loc ) const { return fSequenceNumber < loc.fSequenceNumber; }
 
     // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
-    plString StringIze() const;  // Format to displayable string.
+    ST::string StringIze() const;  // Format to displayable string.
 
     static plLocation MakeReserved(uint32_t number);
     static plLocation MakeNormal(uint32_t number);
@@ -144,20 +144,26 @@ public:
     static const plLocation kInvalidLoc;
 };
 
+inline ST_FORMAT_TYPE(const plLocation &)
+{
+    ST_FORMAT_FORWARD(value.StringIze());
+}
+
 //// plUoid //////////////////////////////////////////////////////////////////
 
 class plUoid
 {
 public:
     plUoid() { Invalidate(); }
-    plUoid(const plLocation& location, uint16_t classType, const plString& objectName, const plLoadMask& m=plLoadMask::kAlways);
+    plUoid(const plLocation& location, uint16_t classType, const ST::string& objectName, const plLoadMask& m=plLoadMask::kAlways);
     plUoid(plFixedKeyId fixedKey);
-    plUoid(const plUoid& src);
+    plUoid(const plUoid& copy) = default;
+    plUoid(plUoid&& move) = default;
     ~plUoid();
 
     const plLocation&   GetLocation() const { return fLocation; }
     uint16_t            GetClassType() const { return fClassType; }
-    const plString&     GetObjectName() const { return fObjectName; }
+    ST::string          GetObjectName() const { return fObjectName; }
     const plLoadMask&   GetLoadMask() const { return fLoadMask; }
 
     void Read(hsStream* s);
@@ -166,7 +172,8 @@ public:
     void Invalidate();
     bool IsValid() const;
 
-    plUoid& operator=(const plUoid& u);
+    plUoid& operator=(const plUoid& copy) = default;
+    plUoid& operator=(plUoid&& move) = default;
     bool  operator==(const plUoid& u) const;
     bool  operator!=(const plUoid& u) const { return !operator==(u); }
 
@@ -180,7 +187,7 @@ public:
     void SetObjectID(uint32_t id) { fObjectID = id; }
 
     // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
-    plString StringIze() const;  // Format to displayable string
+    ST::string StringIze() const;  // Format to displayable string
 
 protected:
     enum ContentsFlags  // for read/write functions
@@ -193,9 +200,14 @@ protected:
     uint32_t    fClonePlayerID; // The ID of the player who made this clone
     uint16_t    fCloneID;       // The ID of this clone (unique per client)
     uint16_t    fClassType;
-    plString    fObjectName;
+    ST::string  fObjectName;
     plLocation  fLocation;
     plLoadMask  fLoadMask;
 };
+
+inline ST_FORMAT_TYPE(const plUoid &)
+{
+    ST_FORMAT_FORWARD(value.StringIze());
+}
 
 #endif // plUoid_h_inc

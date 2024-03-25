@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#pragma hdrstop
 
 #include "plCaptureRenderMsg.h"
 #include "plGImage/plMipmap.h"

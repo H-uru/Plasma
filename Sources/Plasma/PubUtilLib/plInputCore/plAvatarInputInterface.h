@@ -49,9 +49,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAvatarInputInterface_inc
 
 #include "plInputInterface.h"
-#include "pnInputCore/plInputMap.h"
 
-#include "hsTemplates.h"
+#include <string_theory/string>
+
+#include "pnInputCore/plInputMap.h"
 
 #include "hsGeometry3.h"
 
@@ -82,7 +83,7 @@ class plAvatarInputMap
 
         plAvatarInputMap();
         virtual ~plAvatarInputMap();
-        virtual const char *GetName() = 0;
+        virtual ST::string GetName() = 0;
         virtual bool IsBasic() { return false; }
 
         plMouseMap      *fMouseMap;
@@ -94,7 +95,7 @@ class plSuspendedMovementMap : public plAvatarInputMap
 {
 public:
     plSuspendedMovementMap();
-    virtual const char *GetName() { return "Suspended Movement"; }
+    ST::string GetName() override { return ST_LITERAL("Suspended Movement"); }
 };
 
 // The above, plus movement
@@ -102,8 +103,8 @@ class plBasicControlMap : public plSuspendedMovementMap
 {
 public:
     plBasicControlMap();
-    virtual const char *GetName() { return "Basic"; }
-    virtual bool IsBasic() { return true; }
+    ST::string GetName() override { return ST_LITERAL("Basic"); }
+    bool IsBasic() override { return true; }
 
 };
 // The above, plus movement
@@ -111,28 +112,28 @@ class plBasicThirdPersonControlMap : public plBasicControlMap
 {
 public:
     plBasicThirdPersonControlMap();
-    virtual const char *GetName() { return "Basic Third Person"; }
+    ST::string GetName() override { return ST_LITERAL("Basic Third Person"); }
 };
 
 class plLadderControlMap : public plSuspendedMovementMap
 {
 public:
     plLadderControlMap();
-    virtual const char *GetName() { return "LadderClimb"; }
+    ST::string GetName() override { return ST_LITERAL("LadderClimb"); }
 };
 
 class plLadderMountMap : public plSuspendedMovementMap
 {
 public:
     plLadderMountMap();
-    virtual const char *GetName() { return "Ladder Mount"; }
+    ST::string GetName() override { return ST_LITERAL("Ladder Mount"); }
 };
 
 class plLadderDismountMap : public plSuspendedMovementMap
 {
 public:
     plLadderDismountMap();
-    virtual const char *GetName() { return "Ladder Dismount"; }
+    ST::string GetName() override { return ST_LITERAL("Ladder Dismount"); }
 };
 
 
@@ -140,7 +141,7 @@ class plBasicFirstPersonControlMap : public plBasicControlMap
 {
 public:
     plBasicFirstPersonControlMap();
-    virtual const char *GetName() { return "Basic First Person"; }
+    ST::string GetName() override { return ST_LITERAL("Basic First Person"); }
 };
 
 // Mouse walk mode
@@ -155,21 +156,21 @@ class pl3rdWalkForwardMap : public pl3rdWalkMap
 {
 public:
     pl3rdWalkForwardMap();
-    virtual const char *GetName() { return "Walking Forward"; }
+    ST::string GetName() override { return ST_LITERAL("Walking Forward"); }
 };
 
 class pl3rdWalkBackwardMap : public pl3rdWalkMap
 {
 public:
     pl3rdWalkBackwardMap();
-    virtual const char *GetName() { return "Walking Backward"; }
+    ST::string GetName() override { return ST_LITERAL("Walking Backward"); }
 };
 
 class pl3rdWalkBackwardLBMap : public pl3rdWalkMap
 {
 public:
     pl3rdWalkBackwardLBMap();
-    virtual const char *GetName() { return "Walking Backward (LB)"; }
+    ST::string GetName() override { return ST_LITERAL("Walking Backward (LB)"); }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -185,10 +186,10 @@ class plAvatarInputInterface : public plInputInterface
 
         static plAvatarInputInterface       *fInstance;
 
-        virtual bool    IHandleCtrlCmd( plCtrlCmd *cmd );
+        bool    IHandleCtrlCmd(plCtrlCmd *cmd) override;
 
         // Gets called once per IUpdate(), just like normal IEval()s
-        virtual bool IEval( double secs, float del, uint32_t dirty );
+        bool IEval(double secs, float del, uint32_t dirty) override;
 
         void    IDeactivateCommand(plMouseInfo *info);
         void    IChangeInputMaps(plAvatarInputMap *newMap);
@@ -227,22 +228,22 @@ class plAvatarInputInterface : public plInputInterface
         void CameraInThirdPerson(bool state);
     
         // Always return true, since the cursor should be representing how we control the avatar
-        virtual bool        HasInterestingCursorID( void ) const { return true; }
-        virtual uint32_t      GetPriorityLevel( void ) const { return kAvatarInputPriority; }
-        virtual uint32_t      GetCurrentCursorID( void ) const { return fCurrentCursor; }
-        virtual float    GetCurrentCursorOpacity( void ) const { return fCursorOpacity; }
-        const char*         GetInputMapName() { return fInputMap ? fInputMap->GetName() : ""; }
+        bool            HasInterestingCursorID() const override { return true; }
+        uint32_t        GetPriorityLevel() const override { return kAvatarInputPriority; }
+        uint32_t        GetCurrentCursorID() const override { return fCurrentCursor; }
+        float           GetCurrentCursorOpacity() const override { return fCursorOpacity; }
+        ST::string      GetInputMapName() { return fInputMap ? fInputMap->GetName() : ST::string(); }
 
-        virtual bool        InterpretInputEvent( plInputEventMsg *pMsg );
-        virtual void        MissedInputEvent( plInputEventMsg *pMsg );
+        bool        InterpretInputEvent(plInputEventMsg *pMsg) override;
+        void        MissedInputEvent(plInputEventMsg *pMsg) override;
 
-        virtual bool        MsgReceive( plMessage *msg );
+        bool        MsgReceive(plMessage *msg) override;
 
-        virtual void        Init( plInputInterfaceMgr *manager );
-        virtual void        Shutdown( void );
+        void        Init(plInputInterfaceMgr *manager) override;
+        void        Shutdown() override;
 
-        virtual void        RestoreDefaultKeyMappings( void );
-        virtual void        ClearKeyMap(); 
+        void        RestoreDefaultKeyMappings() override;
+        void        ClearKeyMap() override;
         
         // [dis/en]able mouse commands for avatar movement
         void SuspendMouseMovement();
@@ -260,7 +261,7 @@ class plAvatarInputInterface : public plInputInterface
 
         bool    IsEnterChatModeBound();
 
-        static plAvatarInputInterface   *GetInstance( void ) { return fInstance; }
+        static plAvatarInputInterface   *GetInstance() { return fInstance; }
 };
 
 

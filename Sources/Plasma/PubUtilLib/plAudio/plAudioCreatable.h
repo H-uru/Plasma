@@ -45,29 +45,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-#include "plAudioSystem.h"
-
-REGISTER_CREATABLE( plAudioSystem );
-
-#include "plSound.h"
-
-REGISTER_NONCREATABLE( plSound );
-REGISTER_CREATABLE( plSoundVolumeApplicator );
-
-#include "plWin32Sound.h"
-#include "plWin32StaticSound.h"
-#include "plWin32StreamingSound.h"
-#include "plWin32GroupedSound.h"
-
-REGISTER_NONCREATABLE( plWin32Sound );
-REGISTER_CREATABLE( plWin32StaticSound );
-REGISTER_CREATABLE( plWin32LinkSound );
-REGISTER_CREATABLE( plWin32StreamingSound );
-REGISTER_CREATABLE( plWin32GroupedSound );
+// Well, so much for "Private"
+#include "plAudioSystem_Private.h"
+REGISTER_CREATABLE(plAudioSystem);
 
 #include "plEAXListenerMod.h"
-REGISTER_CREATABLE( plEAXListenerMod );
+REGISTER_CREATABLE(plEAXListenerMod);
 
-#include "plAudioReaderCreatable.h"
+#include "plSound.h"
+REGISTER_NONCREATABLE(plSound);
+REGISTER_CREATABLE(plSoundVolumeApplicator);
+
+#include "plWin32Sound.h"
+REGISTER_NONCREATABLE(plWin32Sound);
+
+#include "plWin32GroupedSound.h"
+REGISTER_CREATABLE(plWin32GroupedSound);
+
+#include "plWin32StaticSound.h"
+REGISTER_CREATABLE(plWin32StaticSound);
+REGISTER_CREATABLE(plWin32LinkSound);
+
+#include "plWin32StreamingSound.h"
+REGISTER_CREATABLE(plWin32StreamingSound);
 
 #endif // plAudioCreatable_inc

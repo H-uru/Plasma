@@ -49,78 +49,79 @@ extern HINSTANCE hInstance;
 
 class plMultipassMtlDlg;
 
-class plMultipassMtl : public Mtl
+class plMultipassMtl : public plMaxMtl<Mtl>
 {
 protected:
     IParamBlock2    *fPassesPB;
     Interval        fIValid;
     plMultipassMtlDlg *fMtlDlg;
 
+    MSTR IGetSubMtlSlotName(int i) override;
+    void IGetClassName(MSTR& s) const override;
+    MSTR ISubAnimName(int i2) override;
+
 public:
     enum { kRefPasses };
     enum { kBlkPasses };
 
-    ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
-    void Update(TimeValue t, Interval& valid);
-    Interval Validity(TimeValue t);
-    void Reset();
+    ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) override;
+    void Update(TimeValue t, Interval& valid) override;
+    Interval Validity(TimeValue t) override;
+    void Reset() override;
 
     void NotifyChanged();
 
     // From MtlBase and Mtl
-    void SetAmbient(Color c, TimeValue t);      
-    void SetDiffuse(Color c, TimeValue t);      
-    void SetSpecular(Color c, TimeValue t);
-    void SetShininess(float v, TimeValue t);
-    Color GetAmbient(int mtlNum=0, BOOL backFace=FALSE);
-    Color GetDiffuse(int mtlNum=0, BOOL backFace=FALSE);
-    Color GetSpecular(int mtlNum=0, BOOL backFace=FALSE);
-    float GetXParency(int mtlNum=0, BOOL backFace=FALSE);
-    float GetShininess(int mtlNum=0, BOOL backFace=FALSE);      
-    float GetShinStr(int mtlNum=0, BOOL backFace=FALSE);
-    float WireSize(int mtlNum=0, BOOL backFace=FALSE);
+    void SetAmbient(Color c, TimeValue t) override;
+    void SetDiffuse(Color c, TimeValue t) override;
+    void SetSpecular(Color c, TimeValue t) override;
+    void SetShininess(float v, TimeValue t) override;
+    Color GetAmbient(int mtlNum=0, BOOL backFace=FALSE) override;
+    Color GetDiffuse(int mtlNum=0, BOOL backFace=FALSE) override;
+    Color GetSpecular(int mtlNum=0, BOOL backFace=FALSE) override;
+    float GetXParency(int mtlNum=0, BOOL backFace=FALSE) override;
+    float GetShininess(int mtlNum=0, BOOL backFace=FALSE) override;
+    float GetShinStr(int mtlNum=0, BOOL backFace=FALSE) override;
+    float WireSize(int mtlNum=0, BOOL backFace=FALSE) override;
 
     // Shade and displacement calculation
-    void Shade(ShadeContext& sc);
-    float EvalDisplacement(ShadeContext& sc); 
-    Interval DisplacementValidity(TimeValue t);     
+    void Shade(ShadeContext& sc) override;
+    float EvalDisplacement(ShadeContext& sc) override;
+    Interval DisplacementValidity(TimeValue t) override;
 
     // SubTexmap access methods
-    int NumSubMtls();
-    Mtl* GetSubMtl(int i);
-    void SetSubMtl(int i, Mtl *m);
-    TSTR GetSubMtlSlotName(int i);
-    TSTR GetSubMtlTVName(int i);
+    int NumSubMtls() override;
+    Mtl* GetSubMtl(int i) override;
+    void SetSubMtl(int i, Mtl *m) override;
+    MSTR GetSubMtlTVName(int i);
     
     BOOL SetDlgThing(ParamDlg* dlg);
     plMultipassMtl(BOOL loading);
 
     // Loading/Saving
-    IOResult Load(ILoad *iload);
-    IOResult Save(ISave *isave);
+    IOResult Load(ILoad *iload) override;
+    IOResult Save(ISave *isave) override;
 
     //From Animatable
-    Class_ID ClassID() { return MULTIMTL_CLASS_ID; }        
-    SClass_ID SuperClassID() { return MATERIAL_CLASS_ID; }
-    void GetClassName(TSTR& s);
+    Class_ID ClassID() override { return MULTIMTL_CLASS_ID; }
+    SClass_ID SuperClassID() override { return MATERIAL_CLASS_ID; }
 
-    RefTargetHandle Clone(RemapDir &remap);
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-        PartID& partID, RefMessage message);
+    RefTargetHandle Clone(RemapDir &remap) override;
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+        PartID& partID, RefMessage message MAX_REF_PROPAGATE) override;
 
-    int NumSubs();
-    Animatable* SubAnim(int i); 
-    TSTR SubAnimName(int i);
+    int NumSubs() override;
+    Animatable* SubAnim(int i) override;
 
-    int NumRefs();
-    RefTargetHandle GetReference(int i);
-    void SetReference(int i, RefTargetHandle rtarg);
+    int NumRefs() override;
+    RefTargetHandle GetReference(int i) override;
+    void SetReference(int i, RefTargetHandle rtarg) override;
 
-    int NumParamBlocks();
-    IParamBlock2* GetParamBlock(int i);
-    IParamBlock2* GetParamBlockByID(BlockID id);
+    int NumParamBlocks() override;
+    IParamBlock2* GetParamBlock(int i) override;
+    IParamBlock2* GetParamBlockByID(BlockID id) override;
 
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     void SetParamDlg(ParamDlg *dlg);
 

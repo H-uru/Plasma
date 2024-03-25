@@ -40,15 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyJournalBook.h"
-#include "pyEnum.h"
-#include "pyImage.h"
 
 #include "pfJournalBook/pfJournalBook.h"
+
+#include "pyEnum.h"
+#include "pyGlueHelpers.h"
+#include "pyImage.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptBook, pyJournalBook);
@@ -58,19 +57,20 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptBook)
 
 PYTHON_INIT_DEFINITION(ptBook, args, keywords)
 {
-    char* kwlist[] = {"esHTMLSource", "coverImage", "callbackKey", "guiName", NULL};
-    PyObject* sourceObj = NULL;
-    PyObject* coverObj = NULL;
-    PyObject* callbackObj = NULL;
-    char* guiName = NULL;
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O|OOs", kwlist, &sourceObj, &coverObj, &callbackObj, &guiName))
+    const char* kwlist[] = {"esHTMLSource", "coverImage", "callbackKey", "guiName", nullptr};
+    ST::string source;
+    PyObject* coverObj = nullptr;
+    PyObject* callbackObj = nullptr;
+    ST::string guiName;
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O&|OOO&", const_cast<char **>(kwlist),
+                                     PyUnicode_STStringConverter, &source, &coverObj, &callbackObj, PyUnicode_STStringConverter, &guiName))
     {
-        PyErr_SetString(PyExc_TypeError, "__init__ expects a string or unicode string, and optionally a ptImage, ptKey, and string");
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a string and optionally a ptImage, ptKey, and string");
         PYTHON_RETURN_INIT_ERROR;
     }
 
     // convert all the optional arguments
-    plKey coverKey = nil;
+    plKey coverKey;
     if (coverObj)
     {
         if (pyKey::Check(coverObj))
@@ -78,61 +78,34 @@ PYTHON_INIT_DEFINITION(ptBook, args, keywords)
             // this is really the callback key
             if (callbackObj) // callbackObj was already defined, can't have two keys
             {
-                PyErr_SetString(PyExc_TypeError, "__init__ expects a string or unicode string, and optionally a ptImage, ptKey, and string");
+                PyErr_SetString(PyExc_TypeError, "__init__ expects a string and optionally a ptImage, ptKey, and string");
                 PYTHON_RETURN_INIT_ERROR;
             }
             callbackObj = coverObj;
-            coverObj = nil;
+            coverObj = nullptr;
         }
         else if (!pyImage::Check(coverObj))
         {
-            PyErr_SetString(PyExc_TypeError, "__init__ expects a string or unicode string, and optionally a ptImage, ptKey, and string");
+            PyErr_SetString(PyExc_TypeError, "__init__ expects a string and optionally a ptImage, ptKey, and string");
             PYTHON_RETURN_INIT_ERROR;
         }
         else
             coverKey = pyImage::ConvertFrom(coverObj)->GetKey();
     }
 
-    plKey callbackKey = nil;
+    plKey callbackKey;
     if (callbackObj)
     {
         if (!pyKey::Check(callbackObj))
         {
-            PyErr_SetString(PyExc_TypeError, "__init__ expects a string or unicode string, and optionally a ptImage, ptKey, and string");
+            PyErr_SetString(PyExc_TypeError, "__init__ expects a string and optionally a ptImage, ptKey, and string");
             PYTHON_RETURN_INIT_ERROR;
         }
         callbackKey = pyKey::ConvertFrom(callbackObj)->getKey();
     }
 
-    plString guiNameStr;
-    if (guiName)
-        guiNameStr = plString::FromUtf8(guiName);
-
-    // convert the sourcecode object
-    if (PyUnicode_Check(sourceObj))
-    {
-        int len = PyUnicode_GetSize(sourceObj);
-        wchar_t* temp = new wchar_t[len + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)sourceObj, temp, len);
-        temp[len] = L'\0';
-
-        std::wstring source = temp;
-        delete [] temp;
-
-        self->fThis->MakeBook(source, coverKey, callbackKey, guiNameStr);
-        PYTHON_RETURN_INIT_OK;
-    }
-    else if (PyString_Check(sourceObj))
-    {
-        std::string source = PyString_AsString(sourceObj);
-
-        self->fThis->MakeBook(source, coverKey, callbackKey, guiNameStr);
-        PYTHON_RETURN_INIT_OK;
-    }
-
-    // source wasn't a string or unicode string
-    PyErr_SetString(PyExc_TypeError, "__init__ expects a string or unicode string, and optionally a ptImage, ptKey, and string");
-    PYTHON_RETURN_INIT_ERROR;
+    self->fThis->MakeBook(source, coverKey, callbackKey, guiName);
+    PYTHON_RETURN_INIT_OK;
 }
 
 PYTHON_METHOD_DEFINITION(ptBook, show, args)
@@ -222,13 +195,13 @@ PYTHON_METHOD_DEFINITION(ptBook, setPageMargin, args)
 
 PYTHON_METHOD_DEFINITION(ptBook, setGUI, args)
 {
-    char* guiName;
-    if (!PyArg_ParseTuple(args, "s", &guiName))
+    ST::string guiName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guiName))
     {
         PyErr_SetString(PyExc_TypeError, "setGUI expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetGUI(plString::FromUtf8(guiName));
+    self->fThis->SetGUI(guiName);
     PYTHON_RETURN_NONE;
 }
 
@@ -257,13 +230,13 @@ PYTHON_METHOD_DEFINITION(ptBook, setEditable, args)
 
 PYTHON_METHOD_DEFINITION(ptBook, getEditableText, args)
 {
-    return PyString_FromString(self->fThis->GetEditableText().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetEditableText());
 }
 
 PYTHON_METHOD_DEFINITION(ptBook, setEditableText, args)
 {
-    char* text;
-    if (!PyArg_ParseTuple(args, "s", &text))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
         PyErr_SetString(PyExc_TypeError, "setEditableText expects a string");
         PYTHON_RETURN_ERROR;
@@ -296,17 +269,10 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_DEFAULT_TYPE(ptBook, "Params: esHTMLSource,coverImage=None,callbackKey=None,guiName=''\nCreates a new book");
 
 // required functions for PyObject interoperability
-PyObject *pyJournalBook::New(std::string htmlSource, plKey coverImageKey /* = nil */, plKey callbackKey /* = nil */, plString guiName /* = "" */)
+PyObject *pyJournalBook::New(const ST::string& htmlSource, plKey coverImageKey /* = {} */, plKey callbackKey /* = {} */, const ST::string &guiName /* = "" */)
 {
-    ptBook *newObj = (ptBook*)ptBook_type.tp_new(&ptBook_type, NULL, NULL);
-    newObj->fThis->MakeBook(htmlSource, coverImageKey, callbackKey, guiName);
-    return (PyObject*)newObj;
-}
-
-PyObject *pyJournalBook::New(std::wstring htmlSource, plKey coverImageKey /* = nil */, plKey callbackKey /* = nil */, plString guiName /* = "" */)
-{
-    ptBook *newObj = (ptBook*)ptBook_type.tp_new(&ptBook_type, NULL, NULL);
-    newObj->fThis->MakeBook(htmlSource, coverImageKey, callbackKey, guiName);
+    ptBook *newObj = (ptBook*)ptBook_type.tp_new(&ptBook_type, nullptr, nullptr);
+    newObj->fThis->MakeBook(htmlSource, std::move(coverImageKey), std::move(callbackKey), guiName);
     return (PyObject*)newObj;
 }
 
@@ -326,46 +292,48 @@ void pyJournalBook::AddPlasmaClasses(PyObject *m)
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadBookGUI, args, "Params: guiName\nLoads the gui specified, a gui must be loaded before it can be used. If the gui is already loaded, doesn't do anything")
 {
-    char* guiName;
-    if (!PyArg_ParseTuple(args, "s", &guiName))
+    ST::string guiName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guiName))
     {
         PyErr_SetString(PyExc_TypeError, "PtLoadBookGUI expects a string");
         PYTHON_RETURN_ERROR;
     }
-    pyJournalBook::LoadGUI(plString::FromUtf8(guiName));
+    pyJournalBook::LoadGUI(guiName);
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtUnloadBookGUI, args, "Params: guiName\nUnloads the gui specified. If the gui isn't loaded, doesn't do anything")
 {
-    char* guiName;
-    if (!PyArg_ParseTuple(args, "s", &guiName))
+    ST::string guiName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guiName))
     {
         PyErr_SetString(PyExc_TypeError, "PtUnloadBookGUI expects a string");
         PYTHON_RETURN_ERROR;
     }
-    pyJournalBook::UnloadGUI(plString::FromUtf8(guiName));
+    pyJournalBook::UnloadGUI(guiName);
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtUnloadAllBookGUIs, pyJournalBook::UnloadAllGUIs, "Unloads all loaded guis except for the default one")
 
-void pyJournalBook::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void pyJournalBook::AddPlasmaMethods(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD(methods, PtLoadBookGUI);
-    PYTHON_GLOBAL_METHOD(methods, PtUnloadBookGUI);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtUnloadAllBookGUIs);
+    PYTHON_START_GLOBAL_METHOD_TABLE(ptJournalBook)
+        PYTHON_GLOBAL_METHOD(PtLoadBookGUI)
+        PYTHON_GLOBAL_METHOD(PtUnloadBookGUI)
+        PYTHON_BASIC_GLOBAL_METHOD(PtUnloadAllBookGUIs)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, ptJournalBook)
 }
 
 void pyJournalBook::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtBookEventTypes);
-    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyImageLink,         pfJournalBook::kNotifyImageLink);
-    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyShow,              pfJournalBook::kNotifyShow);
-    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyHide,              pfJournalBook::kNotifyHide);
-    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyNextPage,          pfJournalBook::kNotifyNextPage);
-    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyPreviousPage,      pfJournalBook::kNotifyPreviousPage);
-    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyCheckUnchecked,    pfJournalBook::kNotifyCheckUnchecked);
-    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyClose,             pfJournalBook::kNotifyClose);
-    PYTHON_ENUM_END(m, PtBookEventTypes);
+    PYTHON_ENUM_START(PtBookEventTypes)
+    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyImageLink,         pfJournalBook::kNotifyImageLink)
+    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyShow,              pfJournalBook::kNotifyShow)
+    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyHide,              pfJournalBook::kNotifyHide)
+    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyNextPage,          pfJournalBook::kNotifyNextPage)
+    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyPreviousPage,      pfJournalBook::kNotifyPreviousPage)
+    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyCheckUnchecked,    pfJournalBook::kNotifyCheckUnchecked)
+    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyClose,             pfJournalBook::kNotifyClose)
+    PYTHON_ENUM_END(m, PtBookEventTypes)
 }

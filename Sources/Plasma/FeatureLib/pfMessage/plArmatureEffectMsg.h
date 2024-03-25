@@ -55,8 +55,8 @@ public:
     GETINTERFACE_ANY( plArmatureEffectMsg, plEventCallbackMsg );
 
     // These aren't meant to go across the net, so no IO necessary.
-    void Read(hsStream* stream, hsResMgr* mgr) {}
-    void Write(hsStream* stream, hsResMgr* mgr) {}
+    void Read(hsStream* stream, hsResMgr* mgr) override { }
+    void Write(hsStream* stream, hsResMgr* mgr) override { }
 
     int8_t fTriggerIdx;
 };
@@ -70,8 +70,8 @@ public:
     CLASSNAME_REGISTER( plArmatureEffectStateMsg );
     GETINTERFACE_ANY( plArmatureEffectStateMsg, plMessage );    
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr); 
-    virtual void Write(hsStream* stream, hsResMgr* mgr); 
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     int8_t fSurface;
     bool fAddSurface;

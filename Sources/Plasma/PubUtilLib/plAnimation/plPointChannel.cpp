@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // CTOR
 plPointChannel::plPointChannel()
-: plAGChannel(), fResult(0, 0, 0)
+: plAGChannel()
 {
 }
 
@@ -82,7 +82,7 @@ void plPointChannel::Value(hsPoint3 &point, double time)
 // MAKECOMBINE
 plAGChannel * plPointChannel::MakeCombine(plAGChannel *channelA)
 {
-    return nil;
+    return nullptr;
 }
 
 // MAKEBLEND
@@ -153,7 +153,7 @@ void plPointConstant::Write(hsStream *stream, hsResMgr *mgr)
 // ctor ----------------------------
 // -----
 plPointTimeScale::plPointTimeScale()
-: fTimeSource(nil), fChannelIn(nil)
+: fTimeSource(), fChannelIn()
 {
 }
 
@@ -196,7 +196,7 @@ plAGChannel * plPointTimeScale::Detach(plAGChannel * channel)
     fChannelIn = plPointChannel::ConvertNoRef(fChannelIn->Detach(channel));
     
     if(!fChannelIn || channel == this)
-        result = nil;
+        result = nullptr;
     
     if(result != this)
         delete this;
@@ -234,9 +234,9 @@ plPointBlend::plPointBlend(plPointChannel *channelA, plPointChannel *channelB,
 // -----
 plPointBlend::~plPointBlend()
 {
-    fPointA = nil;
-    fPointB = nil;
-    fChannelBias = nil;
+    fPointA = nullptr;
+    fPointB = nullptr;
+    fChannelBias = nullptr;
 }
 
 // IsStoppedAt ------------------------------
@@ -292,7 +292,7 @@ plAGChannel * plPointBlend::Detach(plAGChannel *remove)
 
     if (remove == this)
     {
-        result = nil;
+        result = nullptr;
     } else  {
         // it's possible that the incoming channel could reside down *all* of our
         // branches (it's a graph, not a tree,) so we always pass down all limbs
@@ -313,7 +313,7 @@ plAGChannel * plPointBlend::Detach(plAGChannel *remove)
             else if(fPointB && !fPointA)
                 result = fPointB;
             else if(!fPointA && !fPointB)
-                result = nil;
+                result = nullptr;
             if(result != this)
             {
                 delete this;
@@ -329,7 +329,7 @@ plAGChannel * plPointBlend::Detach(plAGChannel *remove)
 
 // CTOR
 plPointControllerChannel::plPointControllerChannel()
-: fController(nil)
+: fController()
 {
 }
 
@@ -344,14 +344,14 @@ plPointControllerChannel::~plPointControllerChannel()
 {
     if(fController) {
         delete fController;
-        fController = nil;
+        fController = nullptr;
     }
 }
 
 // VALUE(time)
 const hsPoint3 & plPointControllerChannel::Value(double time)
 {
-    return Value(time, nil);
+    return Value(time, nullptr);
 }
 
 // VALUE(time)
@@ -391,8 +391,8 @@ void plPointControllerChannel::Read(hsStream *stream, hsResMgr *mgr)
 
 // CTOR
 plPointControllerCacheChannel::plPointControllerCacheChannel()
-: fControllerChannel(nil),
-  fCache(nil)
+: fControllerChannel(),
+  fCache()
 {
 }
 
@@ -407,7 +407,7 @@ plPointControllerCacheChannel::plPointControllerCacheChannel(plPointControllerCh
 plPointControllerCacheChannel::~plPointControllerCacheChannel()
 {
     delete fCache;
-    fControllerChannel = nil;
+    fControllerChannel = nullptr;
 }
 
 // VALUE(time)
@@ -421,7 +421,7 @@ plAGChannel * plPointControllerCacheChannel::Detach(plAGChannel * channel)
 {
     if(channel == this)
     {
-        return nil;
+        return nullptr;
     } else {
         plAGChannel *result = fControllerChannel->Detach(channel);
         

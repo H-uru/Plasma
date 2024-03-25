@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#pragma hdrstop
 
 #include "hsBounds.h"
 #include "hsStream.h"
@@ -52,16 +51,13 @@ const float plViewTransform::kMinHither = 0.25f;
 plViewTransform::plViewTransform()
 :   fFlags(kViewPortRelative),
     fWidth(0),
-    fHeight(0)
+    fHeight(0),
+    fViewPortX(0.f, 1.f, 1.f),
+    fViewPortY(0.f, 1.f, 1.f),
+    fMapMax(1.f, 1.f, 1.f)
 {
     fCameraToWorld.Reset();
     fWorldToCamera.Reset();
-
-    fViewPortX.Set(0,1.f,1.f);
-    fViewPortY.Set(0,1.f,1.f);
-
-    fMapMin.Set(0.f, 0.f, 0.f);
-    fMapMax.Set(1.f, 1.f, 1.f);
 }
 
 void plViewTransform::Reset()
@@ -81,11 +77,9 @@ void plViewTransform::ISetCameraToNDC() const
 
     if( GetOrthogonal() )
     {
-        hsPoint3    worldSizeInv;
-
-        worldSizeInv.fX = hsInvert( fMax.fX - fMin.fX ) * 2.f;
-        worldSizeInv.fY = hsInvert( fMax.fY - fMin.fY ) * 2.f;
-        worldSizeInv.fZ = hsInvert( fMax.fZ - fMin.fZ );
+        hsPoint3 worldSizeInv(hsInvert(fMax.fX - fMin.fX) * 2.f,
+                              hsInvert(fMax.fY - fMin.fY) * 2.f,
+                              hsInvert(fMax.fZ - fMin.fZ));
 
         fCameraToNDC.fMap[0][0] = worldSizeInv.fX;
         fCameraToNDC.fMap[0][3] = -fMin.fX * worldSizeInv.fX - 1.f;
@@ -127,14 +121,10 @@ hsScalarTriple plViewTransform::ScreenToNDC(const hsScalarTriple& scrP) const
 {
     hsPoint2 vpMin, vpMax;
     GetViewPort(vpMin, vpMax);
-    hsPoint3 ndc;
 
-    ndc.fX = (scrP.fX - vpMin.fX) / (vpMax.fX - vpMin.fX) * 2.f - 1.f;
-
-    ndc.fY = (vpMax.fY - scrP.fY) / (vpMax.fY - vpMin.fY) * 2.f - 1.f;
-
-    ndc.fZ = scrP.fZ;
-    
+    hsPoint3 ndc(((scrP.fX - vpMin.fX) / (vpMax.fX - vpMin.fX) * 2.f - 1.f),
+                 ((vpMax.fY - scrP.fY) / (vpMax.fY - vpMin.fY) * 2.f - 1.f),
+                 scrP.fZ);
     return ndc;
 }
 
@@ -143,27 +133,21 @@ hsScalarTriple plViewTransform::NDCToScreen(const hsScalarTriple& ndc) const
     hsPoint2 vpMin, vpMax;
     GetViewPort(vpMin, vpMax);
 
-    hsPoint3 scrP;
-    scrP.fX = (ndc.fX + 1.f) * 0.5f * (vpMax.fX - vpMin.fX) + vpMin.fX;
-    scrP.fY = (-ndc.fY + 1.f) * 0.5f * (vpMax.fY - vpMin.fY) + vpMin.fY;
-    scrP.fZ = ndc.fZ;
-
+    hsPoint3 scrP(((ndc.fX + 1.f) * 0.5f * (vpMax.fX - vpMin.fX) + vpMin.fX),
+                  ((-ndc.fY + 1.f) * 0.5f * (vpMax.fY - vpMin.fY) + vpMin.fY),
+                  ndc.fZ);
     return scrP;
 }
 
 hsScalarTriple plViewTransform::NDCToCamera(const hsScalarTriple& ndc) const
 {
-    hsPoint3 camP;
     float w = ndc.fZ;
 
     const hsMatrix44& c2NDC = GetCameraToNDC();
 
-    camP.fX = (ndc.fX - c2NDC.fMap[0][2]) * w / c2NDC.fMap[0][0];
-
-    camP.fY = (ndc.fY - c2NDC.fMap[1][2]) * w / c2NDC.fMap[1][1];
-
-    camP.fZ = ndc.fZ;
-
+    hsPoint3 camP(((ndc.fX - c2NDC.fMap[0][2]) * w / c2NDC.fMap[0][0]),
+                  ((ndc.fY - c2NDC.fMap[1][2]) * w / c2NDC.fMap[1][1]),
+                  ndc.fZ);
     return camP;
 }
 
@@ -215,11 +199,9 @@ hsScalarTriple plViewTransform::CameraToNDC(const hsScalarTriple& camP) const
 
 hsScalarTriple plViewTransform::NDCToMap(const hsScalarTriple& ndcP) const
 {
-    hsPoint3 map;
-    map.fX = fMapMin.fX + (ndcP.fX + 1.f) * 0.5f * (fMapMax.fX - fMapMin.fX);
-    map.fY = fMapMin.fY + (ndcP.fY + 1.f) * 0.5f * (fMapMax.fY - fMapMin.fY);
-    map.fZ = fMapMin.fZ + (ndcP.fZ + 1.f) * 0.5f * (fMapMax.fZ - fMapMin.fZ);
-
+    hsPoint3 map(fMapMin.fX + (ndcP.fX + 1.f) * 0.5f * (fMapMax.fX - fMapMin.fX),
+                 fMapMin.fY + (ndcP.fY + 1.f) * 0.5f * (fMapMax.fY - fMapMin.fY),
+                 fMapMin.fZ + (ndcP.fZ + 1.f) * 0.5f * (fMapMax.fZ - fMapMin.fZ));
     return map;
 }
 

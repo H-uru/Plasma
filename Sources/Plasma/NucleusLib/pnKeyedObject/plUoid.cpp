@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plUoid.h"
 #include "hsStream.h"
+#include <string_theory/format>
 
 
 //// plLocation //////////////////////////////////////////////////////////////
@@ -59,14 +60,14 @@ plLocation::plLocation(const plLocation& toCopyFrom)
 
 void plLocation::Read(hsStream* s)
 {
-    s->LogReadLE(&fSequenceNumber, "Location Sequence Number");
-    s->LogReadLE(&fFlags, "Location Flags");
+    s->ReadLE32(&fSequenceNumber);
+    s->ReadLE16(&fFlags);
 }
 
 void plLocation::Write(hsStream* s) const
 {
-    s->WriteLE(fSequenceNumber);
-    s->WriteLE(fFlags);
+    s->WriteLE32(fSequenceNumber);
+    s->WriteLE16(fFlags);
 }
 
 plLocation& plLocation::operator=(const plLocation& rhs)
@@ -112,14 +113,9 @@ bool plLocation::IsVirtual() const
 }
 
 // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
-plString plLocation::StringIze()  const // Format to displayable string
+ST::string plLocation::StringIze()  const // Format to displayable string
 {
-    return plFormat("S0x{x}F0x{x}", fSequenceNumber, fFlags);
-}
-
-PL_FORMAT_IMPL(const plLocation &)
-{
-    PL_FORMAT_FORWARD(value.StringIze());
+    return ST::format("S{#x}F{#x}", fSequenceNumber, fFlags);
 }
 
 plLocation plLocation::MakeReserved(uint32_t number)
@@ -134,7 +130,7 @@ plLocation plLocation::MakeNormal(uint32_t number)
 
 //// plUoid //////////////////////////////////////////////////////////////////
 
-plUoid::plUoid(const plLocation& location, uint16_t classType, const plString& objectName, const plLoadMask& m)
+plUoid::plUoid(const plLocation& location, uint16_t classType, const ST::string& objectName, const plLoadMask& m)
 {
     Invalidate();
 
@@ -145,12 +141,6 @@ plUoid::plUoid(const plLocation& location, uint16_t classType, const plString& o
     fClonePlayerID = 0;
 }
 
-plUoid::plUoid(const plUoid& src)
-{
-    Invalidate();
-    *this = src;
-}
-
 plUoid::~plUoid()
 {
     Invalidate();
@@ -158,7 +148,7 @@ plUoid::~plUoid()
 
 void plUoid::Read(hsStream* s)
 {
-    hsAssert(fObjectName.IsNull(), "Reading over an old uoid? You're just asking for trouble, aren't you?");
+    hsAssert(fObjectName.empty(), "Reading over an old uoid? You're just asking for trouble, aren't you?");
 
     // first read contents flags
     uint8_t contents = s->ReadByte();
@@ -171,18 +161,16 @@ void plUoid::Read(hsStream* s)
     else
         fLoadMask.SetAlways();
 
-    s->LogReadLE(&fClassType, "ClassType");
-    s->LogReadLE(&fObjectID, "ObjectID");
-    s->LogSubStreamPushDesc("ObjectName");
-    fObjectName = s->LogReadSafeString();
+    s->ReadLE16(&fClassType);
+    s->ReadLE32(&fObjectID);
+    fObjectName = s->ReadSafeString();
 
     // conditional cloneIDs read
     if (contents & kHasCloneIDs)
     {       
-        s->LogReadLE( &fCloneID ,"CloneID");
-        uint16_t dummy;
-        s->LogReadLE(&dummy, "dummy"); // To avoid breaking format
-        s->LogReadLE( &fClonePlayerID ,"ClonePlayerID");
+        s->ReadLE16(&fCloneID);
+        (void)s->ReadLE16(); // To avoid breaking format
+        s->ReadLE32(&fClonePlayerID);
     }
     else
     {
@@ -205,17 +193,16 @@ void plUoid::Write(hsStream* s) const
     if (contents & kHasLoadMask)
         fLoadMask.Write(s);
 
-    s->WriteLE( fClassType );
-    s->WriteLE( fObjectID );
+    s->WriteLE16(fClassType);
+    s->WriteLE32(fObjectID);
     s->WriteSafeString( fObjectName );
 
     // conditional cloneIDs write
     if (contents & kHasCloneIDs)
     {
-        s->WriteLE(fCloneID);
-        uint16_t dummy = 0;
-        s->WriteLE(dummy); // to avoid breaking format
-        s->WriteLE(fClonePlayerID);
+        s->WriteLE16(fCloneID);
+        s->WriteLE16(uint16_t(0)); // to avoid breaking format
+        s->WriteLE32(fClonePlayerID);
     }
 }
 
@@ -225,7 +212,7 @@ void plUoid::Invalidate()
     fCloneID = 0;
     fClonePlayerID = 0;
     fClassType = 0;
-    fObjectName = plString::Null;
+    fObjectName = ST::string();
     fLocation.Invalidate();
     fLoadMask = plLoadMask::kAlways;
 
@@ -233,7 +220,7 @@ void plUoid::Invalidate()
 
 bool plUoid::IsValid() const
 {
-    if (!fLocation.IsValid() || fObjectName.IsNull())
+    if (!fLocation.IsValid() || fObjectName.empty())
         return false;
 
     return true;
@@ -250,31 +237,14 @@ bool plUoid::operator==(const plUoid& u) const
             && fClonePlayerID == u.fClonePlayerID;
 }
 
-plUoid& plUoid::operator=(const plUoid& rhs)
-{
-    fObjectID = rhs.fObjectID;
-    fCloneID = rhs.fCloneID;
-    fClonePlayerID = rhs.fClonePlayerID;
-    fClassType = rhs.fClassType;
-    fObjectName = rhs.fObjectName;
-    fLocation = rhs.fLocation;
-    fLoadMask = rhs.fLoadMask;
-
-    return *this;
-}
-
 // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
-plString plUoid::StringIze() const // Format to displayable string
+ST::string plUoid::StringIze() const // Format to displayable string
 {
-    return plFormat("(0x{x}:0x{x}:{}:C:[{},{}])",
+    return ST::format("(S:{#x} F:{#x} I:{} N:{} C:[{},{}])",
         fLocation.GetSequenceNumber(),
         fLocation.GetFlags(),
+        GetObjectID(),
         fObjectName,
         GetClonePlayerID(),
         GetCloneID());
-}
-
-PL_FORMAT_IMPL(const plUoid &)
-{
-    PL_FORMAT_FORWARD(value.StringIze());
 }

@@ -40,17 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
+
+#include "MaxMain/MaxAPI.h"
 
 #include <algorithm>
 
-#include <iparamb2.h>
-#include <max.h>
-#include <notify.h>
-#include <utilapi.h>
-
 #include "resource.h"
-#pragma hdrstop
 
 #include "plAutoUIComp.h"
 
@@ -59,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plAutoUIComp::plAutoUIComp(plAutoUIClassDesc *cd)
 {
-    fDesc = new ParamBlockDesc2(plComponentBase::kBlkComp, "Auto", IDS_COMP_AUTO, cd, P_AUTO_CONSTRUCT, plComponentBase::kRefComp, end);
+    fDesc = new ParamBlockDesc2(plComponentBase::kBlkComp, _M("Auto"), IDS_COMP_AUTO, cd, P_AUTO_CONSTRUCT, plComponentBase::kRefComp, p_end);
     cd->autoComp = this;
 }
 

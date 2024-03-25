@@ -40,27 +40,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyKey.h"
-#pragma hdrstop
+#include "pyGUIControlCheckBox.h"
 
 #include "pfGameGUIMgr/pfGUICheckBoxCtrl.h"
 #include "pfGameGUIMgr/pfGUIDialogMod.h"
 
-#include "pyGUIControlCheckBox.h"
-#include "pyGUIDialog.h"
+#include "pyKey.h"
 
 pyGUIControlCheckBox::pyGUIControlCheckBox(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlCheckBox::pyGUIControlCheckBox(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlCheckBox::pyGUIControlCheckBox(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 
 
-bool pyGUIControlCheckBox::IsGUIControlCheckBox(pyKey& gckey)
+bool pyGUIControlCheckBox::IsGUIControlCheckBox(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUICheckBoxCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUICheckBoxCtrl::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }
@@ -78,7 +76,7 @@ void pyGUIControlCheckBox::SetChecked( bool checked )
 }
 
 
-bool pyGUIControlCheckBox::IsChecked( void )
+bool pyGUIControlCheckBox::IsChecked()
 {
     if ( fGCkey )
     {

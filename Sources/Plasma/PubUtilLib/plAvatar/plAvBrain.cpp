@@ -41,29 +41,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 // local
 #include "plAvBrain.h"
-#include "plAvBehaviors.h"
-#include "plArmatureMod.h"
-#include "plAvatarMgr.h"
-#include "plAvatarTasks.h"
 
-// global
-#include "hsGeometry3.h"
-#include "hsQuat.h"
+#include "plArmatureMod.h"
+#include "plAvatarTasks.h"
+#include "plAvBehaviors.h"
 
 // other
 #include "pnSceneObject/plSceneObject.h"
-#include "plPipeline/plDebugText.h"
 
-// messages
 #include "plMessage/plAvatarMsg.h"
+#include "plPipeline/plDebugText.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
 plArmatureBrain::plArmatureBrain() :
-    fCurTask(nil),
-    fArmature(nil),
-    fAvMod(nil)
+    fCurTask(),
+    fArmature(),
+    fAvMod()
 {
 }
 
@@ -137,8 +132,8 @@ void plArmatureBrain::Write(hsStream *stream, hsResMgr *mgr)
 
     // plAvBrainUser
     stream->WriteLE32(0);
-    stream->WriteLEScalar(0.f);
-    stream->WriteLEDouble(0.f);   
+    stream->WriteLEFloat(0.f);
+    stream->WriteLEDouble(0.0);
 }
 
 void plArmatureBrain::Read(hsStream *stream, hsResMgr *mgr)
@@ -146,14 +141,14 @@ void plArmatureBrain::Read(hsStream *stream, hsResMgr *mgr)
     plCreatable::Read(stream, mgr);
 
     // plAvBrain
-    stream->ReadLE32();
+    (void)stream->ReadLE32();
     if (stream->ReadBool()) 
-        mgr->ReadKey(stream);
+        (void)mgr->ReadKey(stream);
 
     // plAvBrainUser
-    stream->ReadLE32();
-    stream->ReadLEScalar();
-    stream->ReadLEDouble();
+    (void)stream->ReadLE32();
+    (void)stream->ReadLEFloat();
+    (void)stream->ReadLEDouble();
 }
 
 // MSGRECEIVE
@@ -175,7 +170,7 @@ void plArmatureBrain::IProcessTasks(double time, float elapsed)
         {
             fCurTask->Finish(plArmatureMod::ConvertNoRef(fArmature), this, time, elapsed);
             delete fCurTask;
-            fCurTask = nil;
+            fCurTask = nullptr;
         }
         
         // need a new task

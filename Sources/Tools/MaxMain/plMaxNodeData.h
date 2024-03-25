@@ -43,10 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMaxNodeData_inc
 #define plMaxNodeData_inc
 
+#include <vector>
+
 #include "hsBitVector.h"
 #include "plLoadMask.h"
 #include "plPhysicalProps.h"
-#include "hsTemplates.h"
 
 class hsGMesh;
 class plGeometrySpan;
@@ -149,7 +150,7 @@ public:
         fBitVector->SetBit(kDrawable); 
         fBitVector->SetBit(kPhysical); 
     }
-    void DeInit()                                       { delete fBitVector; fBitVector = nil; }
+    void DeInit()                                       { delete fBitVector; fBitVector = nullptr; }
 
     bool    CanBF(DatBit bitChoice)                 { return fBitVector->IsBitSet(bitChoice);   }
     void    SetBF(bool b, DatBit bitChoice)       { fBitVector->SetBit(bitChoice, b); }
@@ -160,31 +161,29 @@ class plMaxNodeData
 {
 public:
     plMaxNodeData() : 
-        fpKey(nil), 
-        fpSO(nil) , 
-        fDecalLevel(0),
-        fpMesh(nil), 
-        fpRoomKey(nil), 
-        fSoundIdxCounter( 0 ), 
-        fAvatarSO(nil), 
+        fpSO(),
+        fDecalLevel(),
+        fpMesh(),
+        fSoundIdxCounter(),
+        fAvatarSO(),
         fFade(Point3(0,0,0), Point3(0,0,0)),
-        fNormalChan(0),
-        fWaterHeight(0),
-        fGDMaxFaces(0), fGDMaxSize(0), fGDMinFaces(0),
-        fSwapMesh(nil),
+        fNormalChan(),
+        fWaterHeight(),
+        fGDMaxFaces(), fGDMaxSize(), fGDMinFaces(),
+        fSwapMesh(),
         fSwapTargetID((uint32_t)-1),
-        fCachedAlphaHackLayerCounts(nil),
-        fBoneMap(nil),
+        fCachedAlphaHackLayerCounts(),
+        fBoneMap(),
         fAnimCompression(1), // Should be plAnimCompressComp::kCompressionLow,
                              // but I don't want to include the entire header.
-        fKeyReduceThreshold(0.0002)
+        fKeyReduceThreshold(0.0002f)
     { }
     ~plMaxNodeData() 
     { 
-        fpKey = nil; 
-        fpRoomKey = nil;
+        fpKey = nullptr;
+        fpRoomKey = nullptr;
         fpSO = 0; 
-        fAvatarSO = nil; 
+        fAvatarSO = nullptr;
         delete fCachedAlphaHackLayerCounts; 
         MaxDatBF.DeInit();
     }
@@ -196,18 +195,18 @@ public:
         memset( &fpRoomKey, 0, sizeof( plKey ) ); 
         fRenderDependencies.Init(); 
         fBones.Init(); 
-        fCachedAlphaHackLayerCounts = nil; 
+        fCachedAlphaHackLayerCounts = nullptr;
         MaxDatBF.Init();
         return *this; 
     }
     // Ditto
-    void            DeInit( void ) 
+    void            DeInit()
     { 
-        fpKey = nil; 
-        fpRoomKey = nil;
-        fpSO = 0; fAvatarSO = nil; 
+        fpKey = nullptr;
+        fpRoomKey = nullptr;
+        fpSO = 0; fAvatarSO = nullptr;
         delete fCachedAlphaHackLayerCounts; 
-        fCachedAlphaHackLayerCounts = nil; 
+        fCachedAlphaHackLayerCounts = nullptr;
         MaxDatBF.DeInit();
     }
 
@@ -405,8 +404,8 @@ public:
 
     plPhysicalProps* GetPhysicalProps()                 { return &fPhysicalProps; }
 
-    hsTArray<int>   *GetAlphaHackLayersCache( void )                        { return fCachedAlphaHackLayerCounts; }
-    void            SetAlphaHackLayersCache( hsTArray<int> *cache )         { fCachedAlphaHackLayerCounts = cache; }
+    std::vector<int>* GetAlphaHackLayersCache()         { return fCachedAlphaHackLayerCounts; }
+    void            SetAlphaHackLayersCache(std::vector<int>* cache) { fCachedAlphaHackLayerCounts = cache; }
     bool            GetOverrideHighLevelSDL()           { return MaxDatBF.CanBF(MaxDatBF.kOverrideHighLevelSDL); }
     void            SetOverrideHighLevelSDL(bool b)   { MaxDatBF.SetBF(b, MaxDatBF.kOverrideHighLevelSDL); }
     uint8_t           GetAnimCompress()                   { return fAnimCompression; }
@@ -434,7 +433,7 @@ protected:
     plRenderLevel   fOpaqueLevel;
     plPhysicalProps fPhysicalProps;
     uint32_t          fSwapTargetID;
-    hsTArray<int>   *fCachedAlphaHackLayerCounts;
+    std::vector<int>* fCachedAlphaHackLayerCounts;
     plSharedMesh    *fSwapMesh;
     plMaxBoneMap    *fBoneMap;
     plLoadMask      fLoadMask;

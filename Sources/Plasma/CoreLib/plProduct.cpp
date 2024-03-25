@@ -40,40 +40,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#pragma hdrstop
-
 #include "plProduct.h"
-#include "plFormat.h"
 
-static_assert(PRODUCT_BUILD_ID > 0, "Build ID cannot be zero");
-static_assert(PRODUCT_BUILD_TYPE > 0, "Build Type cannot be zero");
-static_assert(PRODUCT_BRANCH_ID > 0, "Branch ID cannot be zero");
+#include "HeadSpin.h"
+
+#include <string_theory/format>
+#include <string_view>
+
+#include "hsBuildInfo.inl"
+
+static_assert(plProduct::PRODUCT_BUILD_ID > 0, "Build ID cannot be zero");
+static_assert(plProduct::PRODUCT_BUILD_TYPE > 0, "Build Type cannot be zero");
+static_assert(plProduct::PRODUCT_BRANCH_ID > 0, "Branch ID cannot be zero");
+static_assert(!plProduct::PRODUCT_UUID.empty(), "UUID should not be empty");
+
+ST::string plProduct::Rev() { return GIT_REV; }
+ST::string plProduct::Tag() { return GIT_TAG; }
+
+ST::string plProduct::BuildDate() { return VOLATILE_BUILD_DATE; }
+ST::string plProduct::BuildTime() { return VOLATILE_BUILD_TIME; }
 
 uint32_t plProduct::BuildId() { return PRODUCT_BUILD_ID; }
 uint32_t plProduct::BuildType() { return PRODUCT_BUILD_TYPE; }
 uint32_t plProduct::BranchId() { return PRODUCT_BRANCH_ID; }
 
-plString plProduct::CoreName()
-{
-    static plString _coreName = PRODUCT_CORE_NAME;
-    return _coreName;
-}
-
-plString plProduct::ShortName()
-{
-    static plString _shortName = PRODUCT_SHORT_NAME;
-    return _shortName;
-}
-
-plString plProduct::LongName()
-{
-    static plString _longName = PRODUCT_LONG_NAME;
-    return _longName;
-}
-
-const char *plProduct::UUID() { return PRODUCT_UUID; }
-
+ST::string plProduct::CoreName() { return PRODUCT_CORE_NAME; }
+ST::string plProduct::ShortName() { return PRODUCT_SHORT_NAME; }
+ST::string plProduct::LongName() { return PRODUCT_LONG_NAME; }
+const char *plProduct::UUID() { return PRODUCT_UUID.data(); }
 
 #ifdef PLASMA_EXTERNAL_RELEASE
 #   define RELEASE_ACCESS "External"
@@ -87,10 +81,10 @@ const char *plProduct::UUID() { return PRODUCT_UUID; }
 #   define RELEASE_TYPE "Release"
 #endif
 
-plString plProduct::ProductString()
+ST::string plProduct::ProductString()
 {
-    static plString _cache = plFormat(
-            "{}.{}.{} - " RELEASE_ACCESS "." RELEASE_TYPE,
-            CoreName(), BranchId(), BuildId());
+    static ST::string _cache = ST::format(
+            "{}.{}.{} - {} - " RELEASE_ACCESS "." RELEASE_TYPE,
+            CoreName(), BranchId(), BuildId(), Tag());
     return _cache;
 }

@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plPhysical_inc
 
 #include "pnNetCommon/plSynchedObject.h"
-#include "hsTemplates.h"
 
 struct hsMatrix44;
 struct hsPoint3;
@@ -78,13 +77,12 @@ public:
     virtual plKey GetSceneNode() const = 0;
 
     virtual bool GetLinearVelocitySim(hsVector3& vel) const = 0;
-    virtual void SetLinearVelocitySim(const hsVector3& vel) = 0;
+    virtual void SetLinearVelocitySim(const hsVector3& vel, bool wakeup=true) = 0;
     virtual void ClearLinearVelocity() = 0;
 
     virtual bool GetAngularVelocitySim(hsVector3& vel) const = 0;
-    virtual void SetAngularVelocitySim(const hsVector3& vel) = 0;
+    virtual void SetAngularVelocitySim(const hsVector3& vel, bool wakeup=true) = 0;
 
-    virtual void SetHitForce(const hsVector3& force, const hsPoint3& pos)=0;
     /** Standard plasma transform interface, in global coordinates by convention.
     If you send in the same matrix that the physical last sent out in its correction message,
     it will be ignored as an "echo" -- UNLESS you set force to true, in which case the transform
@@ -96,6 +94,7 @@ public:
 
     // From plSimDefs::Group
     virtual int GetGroup() const = 0;
+    virtual void SetGroup(int group) = 0;
 
     // Flags in plSimDefs::plLOSDB
     virtual void      AddLOSDB(uint16_t flag) = 0;
@@ -121,12 +120,12 @@ public:
     virtual void GetSyncState(hsPoint3& pos, hsQuat& rot, hsVector3& linV, hsVector3& angV) = 0;
     virtual void SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsVector3* angV) = 0;
 
-    virtual float GetMass() = 0;
-    // I wish I could think of a better way to do this, but this is how it's
-    // going to be for now.
-    virtual void ExcludeRegionHack(bool cleared) = 0;
+    /** Resets the physical to its default state. */
+    virtual void ResetSyncState() = 0;
 
-    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo) = 0;
+    virtual float GetMass() = 0;
+
+    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo) = 0;
 };
 
 #endif // plPhysical_inc

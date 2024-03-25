@@ -40,18 +40,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
+#include "pyWaveSet.h"
+
+#include "plDrawable/plWaveSet7.h"
 
 #include "pyColor.h"
 #include "pyGeometry3.h"
-#include "pyWaveSet.h"
-#include "plDrawable/plWaveSet7.h"
+#include "pyGlueHelpers.h"
 
 pyWaveSet::pyWaveSet(plKey key)
 {
-    fWaterKey = key;
+    fWaterKey = std::move(key);
 }
 
 pyWaveSet::pyWaveSet(pyKey& key)
@@ -952,3 +951,27 @@ float pyWaveSet::GetEnvRadius() const
 }
 
 // --------------------------------------------------------------------------------
+
+void pyWaveSet::AddBuoy(const pyKey& soKey) const
+{
+    if (fWaterKey)
+    {
+        plWaveSet7* waveset = plWaveSet7::ConvertNoRef(fWaterKey->ObjectIsLoaded());
+        if (waveset)
+        {
+            return waveset->AddBuoy(soKey.getKey());
+        }
+    }
+}
+
+void pyWaveSet::RemoveBuoy(const pyKey& soKey) const
+{
+    if (fWaterKey)
+    {
+        plWaveSet7* waveset = plWaveSet7::ConvertNoRef(fWaterKey->ObjectIsLoaded());
+        if (waveset)
+        {
+            return waveset->RemoveBuoy(soKey.getKey());
+        }
+    }
+}

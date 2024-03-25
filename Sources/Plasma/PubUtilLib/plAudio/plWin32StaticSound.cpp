@@ -54,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plAudioSysMsg.h"
 #include "plMessage/plLinkToAgeMsg.h"
 #include "plMessage/plAvatarMsg.h"
+#include "pnNetCommon/plNetApp.h"
 
 #include "plPipeline/plPlates.h"
 #include "plStatusLog/plStatusLog.h"
@@ -61,10 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plProfile_Extern(MemSounds);
 plProfile_CreateAsynchTimer( "Static Shove Time", "Sound", StaticSndShoveTime );
 plProfile_CreateAsynchTimer( "Static Swizzle Time", "Sound", StaticSwizzleTime );
-
-plWin32StaticSound::plWin32StaticSound()
-{
-}
 
 plWin32StaticSound::~plWin32StaticSound()
 {
@@ -115,8 +112,8 @@ bool plWin32StaticSound::LoadSound( bool is3D )
 
         if( retVal == plSoundBuffer::kError )
         {
-            plString str = plFormat("Unable to open .wav file {}", fDataBufferKey ? fDataBufferKey->GetName() : "nil");
-            IPrintDbgMessage( str.c_str(), true );
+            ST::string str = ST::format("Unable to open .wav file {}", fDataBufferKey ? fDataBufferKey->GetName() : "nil");
+            IPrintDbgMessage(str, true);
             fFailed = true;
             return false;
         }
@@ -152,14 +149,14 @@ bool plWin32StaticSound::LoadSound( bool is3D )
         fDSoundBuffer = new plDSoundBuffer( bufferSize, header, is3D, IsPropertySet( kPropLooping ), tryStatic );
         if( !fDSoundBuffer->IsValid() )
         {
-            plString str = plFormat("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
-                                    " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
-                                    GetFileName());
-            IPrintDbgMessage(str.c_str(), true);
+            ST::string str = ST::format("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
+                                        " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
+                                        GetFileName());
+            IPrintDbgMessage(str, true);
             fFailed = true;
 
             delete fDSoundBuffer;
-            fDSoundBuffer = nil;
+            fDSoundBuffer = nullptr;
 
             return false;
         }
@@ -169,8 +166,8 @@ bool plWin32StaticSound::LoadSound( bool is3D )
         if(!fDSoundBuffer->FillBuffer(buffer->GetData(), buffer->GetDataLength(), &header))
         {
             delete fDSoundBuffer;
-            fDSoundBuffer = nil;
-            plStatusLog::AddLineS("audio.log", "Could not play static sound, no voices left %s", GetKeyName().c_str());
+            fDSoundBuffer = nullptr;
+            plStatusLog::AddLineSF("audio.log", "Could not play static sound, no voices left {}", GetKeyName());
             return false;
         }
 
@@ -208,7 +205,7 @@ void plWin32StaticSound::Update()
     }
 }
 
-void plWin32StaticSound::IDerivedActuallyPlay( void )
+void plWin32StaticSound::IDerivedActuallyPlay()
 {
     // Ensure there's a stop notify for us
     if( !fReallyPlaying )
@@ -229,7 +226,7 @@ void plWin32StaticSound::IDerivedActuallyPlay( void )
     }
 
     plSoundEvent    *event = IFindEvent( plSoundEvent::kStart );
-    if( event != nil )
+    if (event != nullptr)
         event->SendCallbacks();
 }
 
@@ -299,7 +296,7 @@ void plWin32LinkSound::Write(hsStream* s, hsResMgr* mgr)
 bool plWin32LinkSound::MsgReceive( plMessage* pMsg )
 {
     plLinkEffectBCMsg *msg = plLinkEffectBCMsg::ConvertNoRef( pMsg );
-    if( msg != nil && !msg->HasLinkFlag(plLinkEffectBCMsg::kMute))
+    if (msg != nullptr && !msg->HasLinkFlag(plLinkEffectBCMsg::kMute))
     {
         if (msg->fLinkKey->GetUoid().GetClonePlayerID() == GetKey()->GetUoid().GetClonePlayerID())
         {
@@ -314,7 +311,7 @@ bool plWin32LinkSound::MsgReceive( plMessage* pMsg )
     }
 
     plPseudoLinkEffectMsg *psmsg = plPseudoLinkEffectMsg::ConvertNoRef( pMsg );
-    if( psmsg != nil)
+    if (psmsg != nullptr)
     {
         if (psmsg->fAvatarKey->GetUoid().GetClonePlayerID() == GetKey()->GetUoid().GetClonePlayerID())
         {
@@ -334,7 +331,7 @@ bool plWin32LinkSound::MsgReceive( plMessage* pMsg )
         if (sMsg->GetSender()->GetUoid().GetClonePlayerID() == GetKey()->GetUoid().GetClonePlayerID())
         {
             SetProperty(kPropFullyDisabled, (sMsg->fMode == plAvatarStealthModeMsg::kStealthCloaked));
-            plNetApp::StaticDebugMsg("plWin32LinkSound: rcvd avatarStealth msg, cloaked=%d", sMsg->fMode == plAvatarStealthModeMsg::kStealthCloaked);           
+            plNetApp::StaticDebugMsg("plWin32LinkSound: rcvd avatarStealth msg, cloaked={}", sMsg->fMode == plAvatarStealthModeMsg::kStealthCloaked);
         }
         return true;
     }

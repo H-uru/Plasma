@@ -77,10 +77,10 @@ protected:
 
 
 public:
-    PassBasicDlgProc() : hLockButtons(NULL) {}
+    PassBasicDlgProc() : hLockButtons() { }
     ~PassBasicDlgProc() { if (hLockButtons) ImageList_Destroy(hLockButtons); }
 
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IParamBlock2 *pb = map->GetParamBlock();
 
@@ -96,13 +96,13 @@ public:
         return FALSE;
     }
 
-    virtual void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static PassBasicDlgProc gPassBasicDlgProc;
 
 static ParamBlockDesc2 gPassBasicPB
 (
-    plPassMtl::kBlkBasic, _T("basic"), IDS_PASS_BASIC, GetPassMtlDesc(),//NULL,
+    plPassMtl::kBlkBasic, _T("basic"), IDS_PASS_BASIC, GetPassMtlDesc(),//nullptr,
     P_AUTO_CONSTRUCT + P_AUTO_UI, plPassMtl::kRefBasic,
 
     // UI
@@ -112,60 +112,60 @@ static ParamBlockDesc2 gPassBasicPB
     kPassBasColorLock,  _T("colorLock"),    TYPE_BOOL,          0, 0,
         p_ui,           TYPE_CHECKBUTTON, IDC_LOCK_AD,
         p_accessor,     &basicAccessor,
-        end,
+        p_end,
     kPassBasColorAmb,   _T("ambColor"),     TYPE_RGBA,          P_ANIMATABLE, IDS_BASIC_AMB,
         p_ui,           TYPE_COLORSWATCH, IDC_LAYER_COLOR_AMB,
         p_accessor,     &basicAccessor,
-        end,
+        p_end,
     kPassBasColor,      _T("color"),        TYPE_RGBA,          P_ANIMATABLE, IDS_BASIC_COLOR,
         p_ui,           TYPE_COLORSWATCH, IDC_LAYER_COLOR,
         p_default,      Color(1,1,1),
         p_accessor,     &basicAccessor,
-        end,
+        p_end,
 
     kPassBasRunColor,       _T("runtimeColor"),     TYPE_RGBA,          P_ANIMATABLE, IDS_BASIC_RUNCOLOR,
         p_ui,           TYPE_COLORSWATCH, IDC_LAYER_RUNCOLOR,
         p_default,      Color(-1,-1,-1),
         p_accessor,     &basicAccessor,
-        end,
+        p_end,
     kPassBasDiffuseLock,    _T("diffuseLock"),  TYPE_BOOL,          0, 0,
         p_ui,           TYPE_CHECKBUTTON, IDC_LOCK_COLORS,
         p_accessor,     &basicAccessor,
         p_default,      TRUE,
-        end,
+        p_end,
 
     // Opacity
     kPassBasOpacity,    _T("opacity"),      TYPE_INT,           P_ANIMATABLE, IDS_BASIC_OPAC,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_TR_EDIT, IDC_TR_SPIN, 0.4,
         p_range,        0, 100,
         p_default,      100,
-        end,
+        p_end,
 
     kPassBasEmissive,   _T("emissive"),     TYPE_BOOL,          0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_LAYER_EMISSIVE_CB,
-        end,
+        p_end,
 
     // Specularity
     kPassBasUseSpec,    _T("useSpec"),      TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_SHADE_SPECULAR,
         p_enable_ctrls, 2, kPassBasShine, kPassBasSpecColor,
-        end,
+        p_end,
     kPassBasShine,      _T("shine"),        TYPE_INT,       0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_SH_EDIT, IDC_SH_SPIN, 0.4,
         p_range,        0, 100,
-        end,
+        p_end,
     kPassBasSpecColor,  _T("specularColor"),        TYPE_RGBA,          P_ANIMATABLE, IDS_BASIC_SPECCOLOR,
         p_ui,           TYPE_COLORSWATCH, IDC_LAYER_SPECCOLOR,
         p_default,      Color(0,0,0),
-        end,
+        p_end,
 
     // OBSOLETE--here so we can upgrade it to color if necessary
     kPassBasShineStr,   _T("shineStr"),     TYPE_INT,       0, 0,
         p_range,        -1, 100,
         p_default,      -1,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 ParamBlockDesc2 *GetPassBasicPB() { return &gPassBasicPB; }
 
@@ -176,7 +176,7 @@ class PassBasicPBAccessor : public PBAccessor
 public:
     PassBasicPBAccessor() : fColorLocked( false ) {}
 
-    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         plPassMtl* mtl = (plPassMtl*)owner;
         IParamBlock2 *pb = mtl->GetParamBlockByID(plPassMtl::kBlkBasic);
@@ -200,7 +200,7 @@ public:
             break;
         }
     }
-    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid)
+    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid) override
     {
     }
 

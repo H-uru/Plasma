@@ -41,16 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
+
+#include "MaxAPI.h"
 
 #include "resource.h"
 #include <set>
-
-#include <bmmlib.h>
-#include <IMtlEdit.h>
-#include <max.h>
-#include <pbbitmap.h>
-#pragma hdrstop
 
 #include "plTextureSearch.h"
 
@@ -65,7 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     static jvUniqueId gAssetID;
 #endif
 
-plTextureSearch::plTextureSearch() : fDlg(NULL)
+plTextureSearch::plTextureSearch() : fDlg()
 {
 #ifdef MAXASS_AVAILABLE
     gAssetID.SetEmpty();
@@ -91,13 +86,13 @@ void plTextureSearch::Toggle()
         HWND hList = GetDlgItem(fDlg, IDC_TEXTURE_LIST);
         LVCOLUMN lvc;
         lvc.mask = LVCF_TEXT;
-        lvc.pszText = "Material";
+        lvc.pszText = _T("Material");
         ListView_InsertColumn(hList, 0, &lvc);
 
-        lvc.pszText = "Layer";
+        lvc.pszText = _T("Layer");
         ListView_InsertColumn(hList, 1, &lvc);
 
-        lvc.pszText = "Texture";
+        lvc.pszText = _T("Texture");
         ListView_InsertColumn(hList, 2, &lvc);
 
         IUpdateTextures(kUpdateLoadList);
@@ -108,17 +103,17 @@ void plTextureSearch::Toggle()
     else
     {
         DestroyWindow(fDlg);
-        fDlg = NULL;
+        fDlg = nullptr;
     }
 }
 
 
-BOOL plTextureSearch::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plTextureSearch::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     return Instance().DlgProc(hDlg, msg, wParam, lParam);
 }
 
-BOOL plTextureSearch::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plTextureSearch::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -145,7 +140,7 @@ BOOL plTextureSearch::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
             }
             else if (id == IDC_REPLACE_ALL_BUTTON)
             {
-                if (hsMessageBox("Are you sure?", "Confirmation", hsMessageBoxYesNo) == hsMBoxYes)
+                if (plMaxMessageBox(nullptr, _T("Are you sure?"), _T("Confirmation"), MB_YESNO | MB_ICONQUESTION) == IDYES)
                 {
                     IUpdateTextures(kUpdateReplace);
                 }
@@ -153,7 +148,7 @@ BOOL plTextureSearch::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
             }
             else if (id == IDC_SET_ALL_BUTTON)
             {
-                if (hsMessageBox("Are you sure?", "Confirmation", hsMessageBoxYesNo) == hsMBoxYes)
+                if (plMaxMessageBox(nullptr, _T("Are you sure?"), _T("Confirmation"), MB_YESNO | MB_ICONQUESTION) == IDYES)
                 {
                     IUpdateTextures(kUpdateSetSize);
                 }
@@ -197,7 +192,7 @@ BOOL plTextureSearch::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 
                     // Make sure the material is still in the scene (paranoid check)
                     MtlSet mtls;
-                    plMtlCollector::GetMtls(&mtls, nil, plMtlCollector::kPlasmaOnly | plMtlCollector::kNoMultiMtl);
+                    plMtlCollector::GetMtls(&mtls, nullptr, plMtlCollector::kPlasmaOnly | plMtlCollector::kNoMultiMtl);
                     if (mtls.find(mtl) != mtls.end())
                     {
                         // Put the material in the current slot of the material editor
@@ -226,11 +221,11 @@ static int FloorPow2(int value)
 void plTextureSearch::IUpdateTextures(plTextureSearch::Update update)
 {
     MtlSet mtls;
-    plMtlCollector::GetMtls(&mtls, nil, plMtlCollector::kPlasmaOnly | plMtlCollector::kNoMultiMtl);
+    plMtlCollector::GetMtls(&mtls, nullptr, plMtlCollector::kPlasmaOnly | plMtlCollector::kNoMultiMtl);
 
-    char searchStr[256];
-    GetDlgItemText(fDlg, IDC_FIND_EDIT, searchStr, sizeof(searchStr));
-    strlwr(searchStr);
+    TCHAR searchStr[256];
+    GetDlgItemText(fDlg, IDC_FIND_EDIT, searchStr, std::size(searchStr));
+    _tcslwr(searchStr);
 
     HWND hList = GetDlgItem(fDlg, IDC_TEXTURE_LIST);
     ListView_DeleteAllItems(hList);
@@ -243,7 +238,7 @@ void plTextureSearch::IUpdateTextures(plTextureSearch::Update update)
     if (update == kUpdateSetSize)
     {
         int sel = ComboBox_GetCurSel(hCombo);
-        uint32_t data = ComboBox_GetItemData(hCombo, sel);
+        uint32_t data = (uint32_t)ComboBox_GetItemData(hCombo, sel);
         sizeX = LOWORD(data);
         sizeY = HIWORD(data);
     }
@@ -268,27 +263,28 @@ void plTextureSearch::IUpdateTextures(plTextureSearch::Update update)
                 PBBitmap *pbbm = layer->GetPBBitmap(i);
                 if (pbbm)
                 {
-                    const char *name = pbbm->bi.Filename();
-                    if (name && *name != '\0')
+                    const TCHAR* name = pbbm->bi.Filename();
+                    if (name && *name != _M('\0'))
                     {
-                        char buf[256];
-                        strncpy(buf, name, sizeof(buf));
-                        strlwr(buf);
+                        TCHAR buf[256];
+                        _tcsncpy(buf, name, std::size(buf));
+                        _tcslwr(buf);
+
 
                         // If we don't have a search string, or we do and it was
                         // found in the texture name, add the texture to the list.
-                        if (searchStr[0] == '\0' || strstr(buf, searchStr))
+                        if (searchStr[0] == _T('\0') || _tcsstr(buf, searchStr))
                         {
                             if (update == kUpdateLoadList)
                             {
                                 LVITEM item = {0};
                                 item.mask = LVIF_TEXT | LVIF_PARAM;
-                                item.pszText = mtl->GetName();
+                                item.pszText = const_cast<TCHAR*>(mtl->GetName().data());
                                 item.lParam = (LPARAM)mtl;  // A little dangerous, since the user could delete this
                                 int idx = ListView_InsertItem(hList, &item);
 
-                                ListView_SetItemText(hList, idx, 1, layer->GetName());
-                                ListView_SetItemText(hList, idx, 2, (char*)name);
+                                ListView_SetItemText(hList, idx, 1, const_cast<TCHAR*>(layer->GetName().data()));
+                                ListView_SetItemText(hList, idx, 2, const_cast<TCHAR*>(name));
 
                                 // If size is uninitialized or the same as the last, keep size
                                 if ((sizeX == -1 && sizeY == -1) || (sizeX == pbbm->bi.Width() && sizeY == pbbm->bi.Height()))
@@ -334,12 +330,9 @@ void plTextureSearch::IUpdateTextures(plTextureSearch::Update update)
             sizeX = FloorPow2(sizeX);
             sizeY = FloorPow2(sizeY);
 
-            char buf[256];
-
             while (sizeX >= 4 && sizeY >= 4)
             {
-                sprintf(buf, "%d x %d", sizeX, sizeY);
-                int idx = ComboBox_AddString(hCombo, buf);
+                int idx = ComboBox_AddString(hCombo, ST2T(ST::format("{} x {}", sizeX, sizeY)));
                 ComboBox_SetItemData(hCombo, idx, MAKELPARAM(sizeX, sizeY));
 
                 sizeX >>= 1;
@@ -369,7 +362,7 @@ void plTextureSearch::IUpdateTextures(plTextureSearch::Update update)
 
 void plTextureSearch::IPickReplaceTexture()
 {
-    fFileName[0] = '\0';
+    fFileName[0] = _T('\0');
 
     // if we have the assetman plug-in, then try to use it, unless shift is held down
 #ifdef MAXASS_AVAILABLE
@@ -383,22 +376,22 @@ void plTextureSearch::IPickReplaceTexture()
         gAssetID.SetEmpty();
 #endif
         BitmapInfo bi;
-        TheManager->SelectFileInput(&bi, GetCOREInterface()->GetMAXHWnd(), _T("Select Bitmap Image File"));
-        strcpy(fFileName, bi.Filename());
+        TheManager->SelectFileInput(&bi, GetCOREInterface()->GetMAXHWnd(), _M("Select Bitmap Image File"));
+        _tcsncpy(fFileName, bi.Filename(), std::size(fFileName));
 #ifdef MAXASS_AVAILABLE
     }
 #endif
 
     if (fFileName[0] == '\0')
     {
-        SetDlgItemText(fDlg, IDC_REPLACE_BUTTON, "(none)");
+        SetDlgItemText(fDlg, IDC_REPLACE_BUTTON, _T("(none)"));
         EnableWindow(GetDlgItem(fDlg, IDC_REPLACE_ALL_BUTTON), FALSE);
     }
     else
     {
-        char fname[_MAX_FNAME+_MAX_EXT], ext[_MAX_EXT];
-        _splitpath(fFileName, NULL, NULL, fname, ext);
-        strcat(fname, ext);
+        TCHAR fname[_MAX_FNAME+_MAX_EXT], ext[_MAX_EXT];
+        _tsplitpath_s(fFileName, nullptr, 0, nullptr, 0, fname, std::size(fname), ext, std::size(ext));
+        _tcscat(fname, ext);
 
         SetDlgItemText(fDlg, IDC_REPLACE_BUTTON, fname);
         EnableWindow(GetDlgItem(fDlg, IDC_REPLACE_ALL_BUTTON), TRUE);

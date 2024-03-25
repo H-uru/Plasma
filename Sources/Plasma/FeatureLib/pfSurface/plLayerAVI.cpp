@@ -40,19 +40,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plLayerAVI.h"
+
 #if HS_BUILD_FOR_WIN32
 #   include "hsWindows.h"
 #   include <vfw.h>
 #endif // HS_BUILD_FOR_WIN32
 
-#include "plLayerAVI.h"
 #include "plGImage/plMipmap.h"
 
 #if HS_BUILD_FOR_WIN32
 class plAVIFileInfo
 {
 public:
-    plAVIFileInfo() : fAVIStream(nil), fGetFrame(0) {}
+    plAVIFileInfo() : fAVIStream(), fGetFrame(), fAVIStreamInfo() { }
     IAVIStream*                 fAVIStream;
     AVISTREAMINFO               fAVIStreamInfo;
     PGETFRAME                   fGetFrame;      // Where in the stream to get the next frame
@@ -86,19 +87,19 @@ bool plLayerAVI::IInit()
 {
 #if HS_BUILD_FOR_WIN32
     int ret = AVIStreamOpenFromFileW( &fAVIInfo->fAVIStream,
-                                fMovieName.AsString().ToWchar(),
+                                fMovieName.WideString().data(),
                                 streamtypeVIDEO,
                                 0,
                                 OF_READ,
-                                NULL);
+                                nullptr);
 
     if (ret)
         return ISetFault("Error opening AVI");
 
-    if( !(fAVIInfo->fGetFrame = AVIStreamGetFrameOpen(fAVIInfo->fAVIStream, NULL)) )
+    if (fAVIInfo->fGetFrame = AVIStreamGetFrameOpen(fAVIInfo->fAVIStream, nullptr); !fAVIInfo->fGetFrame)
         return ISetFault("Error positioning AVI");
 
-    if( AVIStreamInfo(fAVIInfo->fAVIStream, &fAVIInfo->fAVIStreamInfo, sizeof(AVISTREAMINFO)) )
+    if (FAILED(AVIStreamInfo(fAVIInfo->fAVIStream, &fAVIInfo->fAVIStreamInfo, sizeof(AVISTREAMINFO))))
         return ISetFault("Error getting AVI info");
 
     BITMAPINFO* bmi;
@@ -155,7 +156,7 @@ bool plLayerAVI::IGetCurrentFrame()
 #if HS_BUILD_FOR_WIN32
 static bool ICopySourceToTexture16(BITMAPINFO* bmi, plMipmap* b)
 {
-    hsAssert( b != nil, "nil mipmap passed to ICopySourceToTexture16()" );
+    hsAssert(b != nullptr, "nil mipmap passed to ICopySourceToTexture16()");
 
     uint16_t* pSrc = (uint16_t*)( bmi->bmiHeader.biSize + (BYTE*)bmi );
 
@@ -191,7 +192,7 @@ static bool ICopySourceToTexture16(BITMAPINFO* bmi, plMipmap* b)
 
 static bool ICopySourceToTexture24(BITMAPINFO* bmi, plMipmap* b)
 {
-    hsAssert( b != nil, "nil mipmap passed to ICopySourceToTexture24()" );
+    hsAssert(b != nullptr, "nil mipmap passed to ICopySourceToTexture24()");
 
     unsigned char* pSrc = (unsigned char*)( bmi->bmiHeader.biSize + (BYTE*)bmi );
 
@@ -229,12 +230,12 @@ bool plLayerAVI::ICloseMovie()
 #if HS_BUILD_FOR_WIN32
     if( fAVIInfo->fGetFrame )
         AVIStreamGetFrameClose(fAVIInfo->fGetFrame);
-    fAVIInfo->fGetFrame = 0;
+    fAVIInfo->fGetFrame = nullptr;
 
     if( fAVIInfo->fAVIStream )
         AVIStreamRelease(fAVIInfo->fAVIStream);
 
-    fAVIInfo->fAVIStream = nil;
+    fAVIInfo->fAVIStream = nullptr;
 #endif
 
     return false;

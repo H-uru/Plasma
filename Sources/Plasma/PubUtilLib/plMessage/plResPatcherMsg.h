@@ -42,17 +42,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _PLMESSAGE_PLRESPATCHERMSG_H
 #define _PLMESSAGE_PLRESPATCHERMSG_H
 
-#include "plString.h"
 #include "pnMessage/plMessage.h"
 
 // This message is sent when plResPatcher has completed its async operation
 class plResPatcherMsg : public plMessage {
     bool  fSuccess;
-    plString fError;
+    ST::string fError;
 
 public:
     plResPatcherMsg() : fSuccess(true) { SetBCastFlag(kBCastByExactType); }
-    plResPatcherMsg(bool success, const plString& error) : fSuccess(success), fError(error)
+    plResPatcherMsg(bool success, const ST::string& error) : fSuccess(success), fError(error)
     {
         SetBCastFlag(kBCastByExactType);
     }
@@ -60,10 +59,10 @@ public:
     CLASSNAME_REGISTER(plResPatcherMsg);
     GETINTERFACE_ANY(plResPatcherMsg, plMessage);
 
-    void Read (hsStream *, hsResMgr *) { FATAL("What the hell are you doing?"); }
-    void Write (hsStream *, hsResMgr *) { FATAL("What the hell are you doing?"); }
+    void Read (hsStream *, hsResMgr *) override { FATAL("What the hell are you doing?"); }
+    void Write (hsStream *, hsResMgr *) override { FATAL("What the hell are you doing?"); }
 
-    plString GetError() const { return fError; }
+    ST::string GetError() const { return fError; }
     bool Success() const { return fSuccess; }
 };
 

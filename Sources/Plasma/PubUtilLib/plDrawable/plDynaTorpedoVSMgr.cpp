@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plRefMsg.h"
 
 plDynaTorpedoVSMgr::plDynaTorpedoVSMgr()
-:   fWaveSetBase(nil)
+:   fWaveSetBase()
 {
 }
 
@@ -64,9 +64,9 @@ plDynaTorpedoVSMgr::~plDynaTorpedoVSMgr()
 {
 }
 
-int plDynaTorpedoVSMgr::INewDecal()
+size_t plDynaTorpedoVSMgr::INewDecal()
 {
-    int idx = fDecals.GetCount();
+    size_t idx = fDecals.size();
 
     plDynaRippleVS* rip = new plDynaRippleVS();
     rip->fC1U = fInitUVW.fX;
@@ -75,7 +75,7 @@ int plDynaTorpedoVSMgr::INewDecal()
     rip->fC1V = fInitUVW.fY;
     rip->fC2V = (fInitUVW.fY - fFinalUVW.fY) / (fLifeSpan * fFinalUVW.fY);
 
-    fDecals.Append(rip);
+    fDecals.emplace_back(rip);
 
     return idx;
 }
@@ -137,7 +137,7 @@ bool plDynaTorpedoVSMgr::MsgReceive(plMessage* msg)
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fWaveSetBase = plWaveSetBase::ConvertNoRef(refMsg->GetRef());
             else
-                fWaveSetBase = nil;
+                fWaveSetBase = nullptr;
             return true;
         }
     }

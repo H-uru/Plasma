@@ -41,12 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
+#include "plFileSystem.h"
+
+#include "MaxAPI.h"
 
 #include <set>
-
-#include <max.h>
-#pragma hdrstop
 
 #include "plResCollector.h"
 #include "plMtlCollector.h"
@@ -57,49 +56,42 @@ void plResCollector::Collect()
     Interface *ip = GetCOREInterface();
 
     // Get the directory to copy files to
-    char path[MAX_PATH];
+    MCHAR pathBuf[MAX_PATH]{};
     ip->ChooseDirectory(ip->GetMAXHWnd(),
-                        "Choose a folder to copy the resources to",
-                        path,
-                        NULL);
-    if (!strcmp(path, ""))
+                        _M("Choose a folder to copy the resources to"),
+                        pathBuf,
+                        nullptr);
+    if (*pathBuf == _M('\0'))
         return;
 
+    ST::string path = M2ST(pathBuf);
+
     // Make sure the directory ends with a slash
-    if (path[strlen(path)-1] != '\\' && path[strlen(path)-1] != '/')
-        strcat(path, "\\");
+    if (path.back() != '\\' && path.back() != '/')
+        path += '\\';
 
     // Make a list of all the textures
     TexNameSet texNames;
     plMtlCollector::GetAllTextures(texNames);
 
     plExportProgressBar bar;
-    bar.Start("Copy Files", texNames.size()+1);
+    bar.Start(_M("Copy Files"), texNames.size()+1);
 
     // Copy each texture to the output directory
-    TexNameSet::iterator it = texNames.begin();
-    for (; it != texNames.end(); it++)
-    {
-        plString texName = *it;
+    for (const auto& texName : texNames) {
+        plFileName texPath(texName);
 
-        char outpath[MAX_PATH], name[_MAX_FNAME+_MAX_EXT], ext[_MAX_EXT];
-        _splitpath(texName.c_str(), NULL, NULL, name, ext);
-        strcat(name, ext);
-
-        if (bar.Update(name))
+        if (bar.Update(ST2M(texPath.GetFileNameNoExt())))
             return;
 
-        strcpy(outpath, path);
-        strcat(outpath, name);
-
-        CopyFile(texName.c_str(), outpath, TRUE);
+        plFileSystem::Copy(texPath, plFileName::Join(path, texPath.GetFileName()));
     }
 
     // Get the filename to save to
-    TSTR& maxFile = ip->GetCurFileName();
-    TSTR& filePath =  ip->GetCurFilePath();
+    auto& maxFile = ip->GetCurFileName();
+    auto& filePath =  ip->GetCurFilePath();
 
-    if (!strcmp(maxFile, ""))
+    if (maxFile.isNull())
         return;
 
     if (bar.Update(maxFile))
@@ -110,6 +102,5 @@ void plResCollector::Collect()
         ip->SaveToFile(filePath);
 
     // Copy the max file to the output directory
-    strcat(path, maxFile);
-    CopyFile(filePath, path, TRUE);
+    plFileSystem::Copy(M2ST(filePath), plFileName::Join(path, M2ST(maxFile)));
 }

@@ -39,9 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef NO_AV_MSGS
-#ifndef SERVER
-
 
 #ifndef plAvCoopMsg_inc
 #define plAvCoopMsg_inc
@@ -100,7 +97,7 @@ public:
     // constructors
     plAvCoopMsg();
     plAvCoopMsg(Command cmd, uint32_t id, uint16_t serial);
-    plAvCoopMsg(plKey sender, plCoopCoordinator *coordinateur);
+    plAvCoopMsg(const plKey& sender, plCoopCoordinator *coordinateur);
     ~plAvCoopMsg();
 
     // rtti
@@ -108,8 +105,8 @@ public:
     GETINTERFACE_ANY( plAvCoopMsg, plMessage);
 
     // i/o
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
     /////////////////////////////////////////////////////////////////////////////////////
     //
@@ -126,6 +123,3 @@ public:
 };
 
 #endif
-
-#endif // ndef SERVER
-#endif // ndef NO_AV_MSGS

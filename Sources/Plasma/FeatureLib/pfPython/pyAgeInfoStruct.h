@@ -42,9 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyAgeInfoStruct_h_inc
 #define pyAgeInfoStruct_h_inc
 
+#include <string_theory/string>
+
 #include "plNetCommon/plNetServerSessionInfo.h"
 
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -52,25 +54,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-class pyVaultAgeInfoNode;
 class pyAgeInfoStructRef;
-class plString;
 
 
 class pyAgeInfoStruct
 {
 private:
     plAgeInfoStruct fAgeInfo;
-    mutable plString fAgeInstanceGuidStr;    // for getting Age Instance GUID
-    mutable plString fDisplayName;           // used by GetDisplayName()
+    mutable ST::string fAgeInstanceGuidStr;    // for getting Age Instance GUID
+    mutable ST::string fDisplayName;           // used by GetDisplayName()
 
 protected:
     pyAgeInfoStruct();
     pyAgeInfoStruct(plAgeInfoStruct * info);
 
 public:
-    ~pyAgeInfoStruct();
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptAgeInfoStruct);
     PYTHON_CLASS_NEW_DEFINITION;
@@ -84,24 +82,23 @@ public:
     bool operator!=(const pyAgeInfoStruct &other) const { return !(other==*this); }
     plAgeInfoStruct * GetAgeInfo() { return &fAgeInfo; }
     const plAgeInfoStruct * GetAgeInfo() const { return &fAgeInfo; }
-    static void PythonModDef();
     void    CopyFrom( const pyAgeInfoStruct & other );
     void    CopyFromRef( const pyAgeInfoStructRef & other );
-    plString GetAgeFilename() const;
-    void    SetAgeFilename( const plString & v );
-    plString GetAgeInstanceName() const;
-    void    SetAgeInstanceName( const plString & v );
-    plString GetAgeUserDefinedName() const;
-    void    SetAgeUserDefinedName( const plString & v );
-    plString GetAgeDescription() const;
-    void    SetAgeDescription( const plString & v );
-    const char * GetAgeInstanceGuid() const;
-    void    SetAgeInstanceGuid( const char * guid );
+    ST::string GetAgeFilename() const;
+    void    SetAgeFilename( const ST::string & v );
+    ST::string GetAgeInstanceName() const;
+    void    SetAgeInstanceName( const ST::string & v );
+    ST::string GetAgeUserDefinedName() const;
+    void    SetAgeUserDefinedName( const ST::string & v );
+    ST::string GetAgeDescription() const;
+    void    SetAgeDescription( const ST::string & v );
+    ST::string GetAgeInstanceGuid() const;
+    void    SetAgeInstanceGuid(const ST::string& guid);
     int32_t   GetAgeSequenceNumber() const;
     void    SetAgeSequenceNumber( int32_t v );
     int32_t   GetAgeLanguage() const;
     void    SetAgeLanguage( int32_t v );
-    plString GetDisplayName() const;
+    ST::string GetDisplayName() const;
 };
 
 class pyAgeInfoStructRef
@@ -110,16 +107,14 @@ private:
     static plAgeInfoStruct fDefaultAgeInfo; // created so a default constructor could be made for python. Do NOT use
 
     plAgeInfoStruct & fAgeInfo;
-    mutable plString fAgeInstanceGuidStr;   // for getting Age Instance GUID
-    mutable plString fDisplayName;          // used by GetDisplayName()
+    mutable ST::string fAgeInstanceGuidStr;   // for getting Age Instance GUID
+    mutable ST::string fDisplayName;          // used by GetDisplayName()
 
 protected:
     pyAgeInfoStructRef(): fAgeInfo( fDefaultAgeInfo ) {} // only here for the python glue... do NOT call directly
     pyAgeInfoStructRef(plAgeInfoStruct & info): fAgeInfo( info ){}
 
 public:
-    ~pyAgeInfoStructRef() {}
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptAgeInfoStructRef);
     static PyObject *New(plAgeInfoStruct &info);
@@ -132,17 +127,17 @@ public:
     const plAgeInfoStruct * GetAgeInfo() const { return &fAgeInfo; }
     void    CopyFrom( const pyAgeInfoStruct & other );
     void    CopyFromRef( const pyAgeInfoStructRef & other );
-    plString GetAgeFilename() const;
-    void    SetAgeFilename( const plString & v );
-    plString GetAgeInstanceName() const;
-    void    SetAgeInstanceName( const plString & v );
-    plString GetAgeUserDefinedName() const;
-    void    SetAgeUserDefinedName( const plString & v );
-    const char * GetAgeInstanceGuid() const;
-    void    SetAgeInstanceGuid( const char * guid );
+    ST::string GetAgeFilename() const;
+    void    SetAgeFilename( const ST::string & v );
+    ST::string GetAgeInstanceName() const;
+    void    SetAgeInstanceName( const ST::string & v );
+    ST::string GetAgeUserDefinedName() const;
+    void    SetAgeUserDefinedName( const ST::string & v );
+    ST::string GetAgeInstanceGuid() const;
+    void    SetAgeInstanceGuid(const ST::string& guid);
     int32_t   GetAgeSequenceNumber() const;
     void    SetAgeSequenceNumber( int32_t v );
-    plString GetDisplayName() const;
+    ST::string GetDisplayName() const;
 };
 
 #endif // pyAgeInfoStruct_h_inc

@@ -40,34 +40,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plViewFaceModifier.h"
+
+#include "HeadSpin.h"
 #include "plgDispatch.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
 #include "hsFastMath.h"
 #include "plPipeline.h"
+#include "plProfile.h"
 
-#include "plMessage/plRenderMsg.h"
-#include "plMessage/plListenerMsg.h"
-#include "plMessage/plAvatarMsg.h"
-#include "plAvatar/plAvBrainHuman.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plListenerMsg.h"
+#include "plMessage/plRenderMsg.h"
+
+plProfile_CreateTimer("ViewFacing", "RenderSetup", ViewFace);
 
 plViewFaceModifier::plViewFaceModifier()
-:   fFacePoint(0,0,0),
-    fLastDirY(0,1.f,0),
-    fScale(1.f,1.f,1.f),
-    fOffset(0,0,0)
+    : fLastDirY(0.f, 1.f, 0.f),
+      fScale(1.f, 1.f, 1.f),
+      fFaceObj()
 {
     fOrigLocalToParent.Reset();
     fOrigParentToLocal.Reset();
 
     SetFlag(kFaceCam); // default
-}
-
-plViewFaceModifier::~plViewFaceModifier()
-{
 }
 
 void plViewFaceModifier::SetOrigTransform(const hsMatrix44& l2p, const hsMatrix44& p2l)
@@ -162,9 +163,9 @@ bool plViewFaceModifier::IFacePoint(plPipeline* pipe, const hsPoint3& at)
         return false;
     len = -hsFastMath::InvSqrtAppr(len);
     
-    hsVector3 dirX, dirY, dirZ;
-    dirZ.Set(localAt.fX * len, localAt.fY * len, localAt.fZ * len);
-    
+    hsVector3 dirX, dirY;
+    hsVector3 dirZ(localAt.fX * len, localAt.fY * len, localAt.fZ * len);
+
     if( HasFlag(kPivotFace) )
     {
         dirY.Set(0.f, 0.f, 1.f);
@@ -266,11 +267,6 @@ bool plViewFaceModifier::IFacePoint(plPipeline* pipe, const hsPoint3& at)
 
     return true;
 }
-
-
-
-#include "plProfile.h"
-plProfile_CreateTimer("ViewFacing", "RenderSetup", ViewFace);
 
 bool plViewFaceModifier::MsgReceive(plMessage* msg)
 {
@@ -383,17 +379,17 @@ void plViewFaceModifier::IOnRemove(plGenRefMsg* refMsg)
     switch(refMsg->fType)
     {
     case kRefFaceObj:
-        fFaceObj = nil;
+        fFaceObj = nullptr;
         break;
     }
 }
 
-void plViewFaceModifier::ISetObject(plKey soKey)
+void plViewFaceModifier::ISetObject(const plKey& soKey)
 {
     hsgResMgr::ResMgr()->SendRef(soKey, new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFaceObj), plRefFlags::kPassiveRef);
 }
 
-void plViewFaceModifier::SetFollowMode(FollowMode m, plKey soKey)
+void plViewFaceModifier::SetFollowMode(FollowMode m, const plKey& soKey)
 {
     ClearFlag(kFaceCam);
     ClearFlag(kFaceList);

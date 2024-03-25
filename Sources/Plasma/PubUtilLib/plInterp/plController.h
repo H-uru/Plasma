@@ -42,11 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef HSCONTROLLER_inc
 #define HSCONTROLLER_inc
 
+#include <vector>
+
 #include "HeadSpin.h"
 #include "pnFactory/plCreatable.h"
 #include "hsColorRGBA.h"
 #include "hsKeys.h"
-#include "hsTemplates.h"
 
 class hsResMgr;
 
@@ -98,18 +99,18 @@ public:
     CLASSNAME_REGISTER( plController );
     GETINTERFACE_ANY( plController, plCreatable );
 
-    virtual void Interp(float time, float* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(float time, hsScaleValue* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(float time, hsMatrix33* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(float time, hsMatrix44* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(float time, hsAffineParts* parts, plControllerCacheInfo *cache = nil) const {}
+    virtual void Interp(float time, float* result, plControllerCacheInfo *cache = nullptr) const {}
+    virtual void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nullptr) const {}
+    virtual void Interp(float time, hsScaleValue* result, plControllerCacheInfo *cache = nullptr) const {}
+    virtual void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nullptr) const {}
+    virtual void Interp(float time, hsMatrix33* result, plControllerCacheInfo *cache = nullptr) const {}
+    virtual void Interp(float time, hsMatrix44* result, plControllerCacheInfo *cache = nullptr) const {}
+    virtual void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nullptr) const {}
+    virtual void Interp(float time, hsAffineParts* parts, plControllerCacheInfo *cache = nullptr) const {}
 
-    virtual plControllerCacheInfo* CreateCache() const { return nil; } // Caller must handle deleting the pointer.
+    virtual plControllerCacheInfo* CreateCache() const { return nullptr; } // Caller must handle deleting the pointer.
     virtual float GetLength() const = 0;
-    virtual void GetKeyTimes(hsTArray<float> &keyTimes) const = 0;
+    virtual void GetKeyTimes(std::vector<float> &keyTimes) const = 0;
     virtual bool AllKeysMatch() const = 0;
 
     // Checks each of our subcontrollers (if we have any) and deletes any that
@@ -132,22 +133,22 @@ protected:
     mutable uint32_t fLastKeyIdx;
 
 public:
-    plLeafController() : fType(hsKeyFrame::kUnknownKeyFrame), fKeys(nil), fNumKeys(0), fLastKeyIdx(0) {}
+    plLeafController() : fType(hsKeyFrame::kUnknownKeyFrame), fKeys(), fNumKeys(), fLastKeyIdx() { }
     virtual ~plLeafController();
 
     CLASSNAME_REGISTER( plLeafController );
     GETINTERFACE_ANY( plLeafController, plController );
 
-    void Interp(float time, float* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsScaleValue* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsMatrix33* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsMatrix44* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const;
+    void Interp(float time, float* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsScaleValue* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsMatrix33* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsMatrix44* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nullptr) const override;
 
-    virtual plControllerCacheInfo* CreateCache() const;
-    float GetLength() const;
+    plControllerCacheInfo* CreateCache() const override;
+    float GetLength() const override;
     uint32_t GetStride() const;
 
     hsPoint3Key *GetPoint3Key(uint32_t i) const;
@@ -166,14 +167,14 @@ public:
     uint8_t GetType() const { return fType; }
     uint32_t GetNumKeys() const { return fNumKeys; }
     void *GetKeyBuffer() const { return fKeys; }
-    void GetKeyTimes(hsTArray<float> &keyTimes) const;
+    void GetKeyTimes(std::vector<float> &keyTimes) const override;
     void AllocKeys(uint32_t n, uint8_t type);
     void QuickScalarController(int numKeys, float* times, float* values, uint32_t valueStrides);
-    bool AllKeysMatch() const;
-    bool PurgeRedundantSubcontrollers();
+    bool AllKeysMatch() const override;
+    bool PurgeRedundantSubcontrollers() override;
 
-    void Read(hsStream* s, hsResMgr* mgr);
-    void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 
@@ -196,12 +197,12 @@ public:
     CLASSNAME_REGISTER( plCompoundController );
     GETINTERFACE_ANY( plCompoundController, plController );
 
-    void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsAffineParts* parts, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const;
+    void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsAffineParts* parts, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nullptr) const override;
 
-    plControllerCacheInfo* CreateCache() const;
+    plControllerCacheInfo* CreateCache() const override;
     plController *GetXController() const { return fXController; }
     plController *GetYController() const { return fYController; }
     plController *GetZController() const { return fZController; }
@@ -209,10 +210,10 @@ public:
     plController *GetRotController() const { return fYController; }
     plController *GetScaleController() const { return fZController; }
     plController *GetController(int32_t i) const;
-    float GetLength() const;
-    void GetKeyTimes(hsTArray<float> &keyTimes) const;
-    bool AllKeysMatch() const;
-    bool PurgeRedundantSubcontrollers();
+    float GetLength() const override;
+    void GetKeyTimes(std::vector<float> &keyTimes) const override;
+    bool AllKeysMatch() const override;
+    bool PurgeRedundantSubcontrollers() override;
 
     void SetXController(plController *c) { delete fXController; fXController = c; }
     void SetYController(plController *c) { delete fYController; fYController = c; }
@@ -222,8 +223,8 @@ public:
     void SetScaleController(plController *c) { delete fZController; fZController = c; }
     void SetController(int32_t i, plController* c);
 
-    void Read(hsStream* s, hsResMgr* mgr);
-    void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 #endif

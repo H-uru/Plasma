@@ -61,26 +61,26 @@ class plPipeline;
 class plDTProgressMgr : public plProgressMgr
 {
     protected:
-        int32_t     fCurrentImage;
+        uint32_t    fCurrentImage;
         float       fLastDraw;
         plPlate*    fActivePlate;
         plPlate*    fStaticTextPlate;
         StaticText  fShowingStaticText;
 
-        void    Activate();
-        void    Deactivate();
+        void    Activate() override;
+        void    Deactivate() override;
 
         bool    IDrawTheStupidThing( plPipeline *p, plOperationProgress *prog, 
-                                     uint16_t x, uint16_t y, uint16_t width, uint16_t height );
+                                     uint16_t x, uint16_t y, uint16_t width, uint16_t height, float scale );
 
     public:
 
         plDTProgressMgr();
         ~plDTProgressMgr();
 
-        virtual void    Draw( plPipeline *p );
+        void    Draw(plPipeline *p) override;
 
-        static void     DeclareThyself( void );
+        static void     DeclareThyself();
 };
 
 

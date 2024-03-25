@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plComponent.h"
 #include "plComponentReg.h"
-#pragma hdrstop
 
 void DummyCodeIncludeFuncPhysConst()
 {
@@ -121,7 +120,7 @@ public:
     converts.
     */
 
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         plComponentBase *comp = (plComponentBase*)owner;
         comp->NotifyDependents(FOREVER, PART_ALL, REFMSG_USER_COMP_REF_CHANGED);
@@ -215,10 +214,10 @@ public:
             \sa DeleteThis(), plPhysicalCoreComponent(), Convert(), GetParamVals(), MaybeMakeLocal() and FixUpPhysical()
         */
 
-        bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
-        bool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg) { return true;}
+        bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg) override;
+        bool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg) override { return true;}
 
-        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 //
@@ -237,7 +236,7 @@ ParamBlockDesc2 gPhysHingeConstraintBk
     plComponent::kBlkComp, _T("Hinge Constraint"), 0, &gPhysHingeConstDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Roll out
-    IDD_COMP_PHYS_HINGE_CONSTRAINT, IDS_COMP_PHYS_HINGE_CONSTRAINTS, 0, 0, NULL,//&gPhysCoreComponentProc,
+    IDD_COMP_PHYS_HINGE_CONSTRAINT, IDS_COMP_PHYS_HINGE_CONSTRAINTS, 0, 0, nullptr,//&gPhysCoreComponentProc,
     
     // params
 
@@ -445,13 +444,12 @@ bool plPhysHingeConstraintComponent::Convert(plMaxNode *node, plErrorMsg *pErrMs
 
         //Grab the pivot point from the child translate
         hsPoint3 PP = node->GetLocalToWorld44().GetTranslate();
-        hsVector3 PPVector;
-        PPVector.Set(PP.fX, PP.fY, PP.fZ);
+        hsVector3 PPVector(PP.fX, PP.fY, PP.fZ);
         HMod->SetPP(PPVector);
 
 
 
-        plKey ParentKey  = nil;
+        plKey ParentKey;
         if(fCompPB->GetINode(kParent) && fCompPB->GetInt(kUseParentBool))
             if(((plMaxNode*)fCompPB->GetINode(kParent))->CanConvert())
             {
@@ -537,9 +535,9 @@ public:
     void SetDefaultTau();
     void ValidateSections();
 
-    bool SetupProperties(plMaxNode* node, plErrorMsg* errMsg);
-    bool PreConvert(plMaxNode* node, plErrorMsg* errMsg);
-    bool Convert(plMaxNode* node, plErrorMsg* errMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* errMsg) override;
+    bool PreConvert(plMaxNode* node, plErrorMsg* errMsg) override;
+    bool Convert(plMaxNode* node, plErrorMsg* errMsg) override;
 };
 
 class plBridgeProc : public ParamMap2UserDlgProc
@@ -549,8 +547,8 @@ protected:
     void IMoveListSel(bool up, IParamBlock2* pb, HWND hDlg);
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    void DeleteThis() {}
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    void DeleteThis() override { }
 };
 static plBridgeProc gBridgeComponentProc;
 
@@ -680,7 +678,7 @@ bool plPhysBridgeComponent::PreConvert(plMaxNode* node, plErrorMsg* errMsg)
 
 bool plPhysBridgeComponent::Convert(plMaxNode* node, plErrorMsg* errMsg)
 {
-    plMaxNode* parent = nil;
+    plMaxNode* parent = nullptr;
 
     // Find the parent for this section
     int count = fCompPB->Count(kSections);
@@ -707,8 +705,7 @@ bool plPhysBridgeComponent::Convert(plMaxNode* node, plErrorMsg* errMsg)
 
     // Grab the pivot point from the child translate
     hsPoint3 pivot = node->GetLocalToWorld44().GetTranslate();
-    hsVector3 pivotVec;
-    pivotVec.Set(pivot.fX, pivot.fY, pivot.fZ);
+    hsVector3 pivotVec(pivot.fX, pivot.fY, pivot.fZ);
     mod->SetPP(pivotVec);
 
     // Cut'n'Paste
@@ -873,10 +870,10 @@ public:
             \sa DeleteThis(), plPhysicalCoreComponent(), Convert(), GetParamVals(), MaybeMakeLocal() and FixUpPhysical()
         */
 
-        bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
-        bool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg) { return true;}
+        bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg) override;
+        bool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg) override { return true;}
 
-        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
 };
 
@@ -905,7 +902,7 @@ ParamBlockDesc2 gPhysSSConstraintBk
     plComponent::kBlkComp, _T("Strong Spring Constraint"), 0, &gPhysStrongSpringConstDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Roll out
-    IDD_COMP_PHYS_SS_CONSTRAINT, IDS_COMP_PHYS_SS_CONSTRAINTS, 0, 0, NULL,//&gPhysCoreComponentProc,
+    IDD_COMP_PHYS_SS_CONSTRAINT, IDS_COMP_PHYS_SS_CONSTRAINTS, 0, 0, nullptr,//&gPhysCoreComponentProc,
     
     // params
 
@@ -1056,7 +1053,7 @@ bool plStrongSpringConstraintComponent::Convert(plMaxNode *node, plErrorMsg *pEr
 
         Object *obj = fCompPB->GetINode(kParent)->EvalWorldState(0/*hsConverterUtils::Instance().GetTime(GetInterface())*/).obj;
 
-        plKey ParentKey  = nil;
+        plKey ParentKey;
         if(fCompPB->GetINode(kParent))
             if(((plMaxNode*)fCompPB->GetINode(kParent))->CanConvert() && (obj->ClassID() == Class_ID(DUMMY_CLASS_ID,0) || obj->SuperClassID() == GEOMOBJECT_CLASS_ID ))
             {

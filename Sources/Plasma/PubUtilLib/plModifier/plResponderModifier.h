@@ -43,38 +43,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plResponderModifier_inc
 
 #include <map>
-#include "pnModifier/plSingleModifier.h"
+#include <vector>
+
+#include "hsBitVector.h"
+#include "pnKeyedObject/plKey.h"
 #include "pnMessage/plMessage.h"
+#include "pnModifier/plSingleModifier.h"
 
-
-class plNotifyMsg;
 class plAnimCmdMsg;
+class plNotifyMsg;
 class plResponderSDLModifier;
+
 class plResponderModifier : public plSingleModifier
 {
     friend class plResponderSDLModifier;
 protected:
     typedef std::map<int8_t,int8_t> WaitToCmd;
 
-    class plResponderCmd
+    struct plResponderCmd
     {
-    public:
-        plResponderCmd() : fMsg(nil), fWaitOn(-1) {}
+        plResponderCmd() : fMsg(), fWaitOn(-1) { }
         plResponderCmd(plMessage *msg, int8_t waitOn) : fMsg(msg), fWaitOn(waitOn) {}
 
         plMessage *fMsg;
         int8_t fWaitOn;       // Index into fCompletedEvents of who we're waiting on
     };
-    class plResponderState
+    struct plResponderState
     {
-    public:
-        hsTArray<plResponderCmd> fCmds;
+        std::vector<plResponderCmd> fCmds;
         int8_t fNumCallbacks;         // So we know how far to search into the bitvector to find out when we're done
         int8_t fSwitchToState;        // State to switch to when all commands complete
         WaitToCmd fWaitToCmd;
     };
 
-    hsTArray<plResponderState> fStates;
+    std::vector<plResponderState> fStates;
 
     int8_t fCurState;                 // The current state (first index for fCommandList)
     int8_t fCurCommand;               // The command we are currently waiting to send (or -1 if we're not sending)
@@ -103,7 +105,7 @@ protected:
 
     int8_t ICmdFromWait(int8_t waitIdx);
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
     static bool fDebugAnimBox;  // Draws a box on screen when an animation is started
     static void IDebugAnimBox(bool start);
@@ -124,16 +126,20 @@ protected:
     friend class plResponderWait;
 
 public:
-    plResponderModifier();
+    plResponderModifier()
+        : fCurState(), fCurCommand(-1), fNetRequest(),
+          fEnabled(true), fEnter(), fGotFirstLoad(),
+          fResponderSDLMod(), fNotifyMsgFlags(), fFlags() 
+    { }
     ~plResponderModifier();
 
     CLASSNAME_REGISTER( plResponderModifier );
     GETINTERFACE_ANY( plResponderModifier, plSingleModifier );
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     const plResponderSDLModifier* GetSDLModifier() const { return fResponderSDLMod; }
 
@@ -164,8 +170,8 @@ public:
     GETINTERFACE_ANY(plResponderEnableMsg, plMessage);
 
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plResponderModifier_inc

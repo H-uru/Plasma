@@ -40,15 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyCluster.h"
+
 #include "plDrawable/plClusterGroup.h"
+
+#include "pyKey.h"
 
 pyCluster::pyCluster(plKey key)
 {
-    fClusterKey = key;
+    fClusterKey = std::move(key);
 }
 
 pyCluster::pyCluster(pyKey& key)

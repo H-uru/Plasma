@@ -47,9 +47,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pfLocalizedString.h"
+
 #include "HeadSpin.h"
 
-#include "pfLocalizedString.h"
+#include <algorithm>
+#include <regex>
+#include <string_theory/string_stream>
 
 
 //////////////////////////////////////////////////////////////////////
@@ -58,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Constructors ////////////////////////////////////////////////////
 
-pfLocalizedString::pfLocalizedString(const plString & plainText)
+pfLocalizedString::pfLocalizedString(const ST::string & plainText)
     : fNumArguments(0)
 {
     IConvertFromPlainText(plainText);
@@ -66,37 +70,37 @@ pfLocalizedString::pfLocalizedString(const plString & plainText)
 
 //// IParameterize ///////////////////////////////////////////////////
 
-void pfLocalizedString::IParameterize(const plString & inString)
+void pfLocalizedString::IParameterize(const ST::string & inString)
 {
     textBlock curTextBlock;
     fNumArguments = 0;      // Reset the argument count.
     fText.clear();          // Reset the text blocks.
 
-    plString remainder = inString;
-    plStringStream newText;
+    ST::string remainder = inString;
+    ST::string_stream newText;
     int curParameter = 0;
-    int nextToken = -1;
+    ST_ssize_t nextToken = -1;
 
-    while (!remainder.IsEmpty())
+    while (!remainder.empty())
     {
         // Check if we have any params.
-        nextToken = remainder.Find("%");
+        nextToken = remainder.find('%');
         if (nextToken != -1)
         {
             // Check it's not escaped.
-            if ((nextToken == 0) || ((nextToken > 0) && (remainder.CharAt(nextToken-1) != '\\')))
+            if ((nextToken == 0) || ((nextToken > 0) && (remainder[nextToken-1] != '\\')))
             {
                 // Check if it has an end (ignoring any terminators we need to cross a space to find).
-                int endToken = remainder.Substr(nextToken).Find("s");
-                if ((endToken != -1) && (remainder.Substr(nextToken, endToken).Find(" ") == -1))
+                ST_ssize_t endToken = remainder.substr(nextToken).find('s');
+                if ((endToken != -1) && !remainder.substr(nextToken, endToken).contains(' '))
                 {
                     // Store existing block if it contains anything.
-                    newText << remainder.Substr(0, nextToken);
-                    curTextBlock.fText = newText.GetString().Replace("\\\\", "\\");
-                    if (!curTextBlock.fText.IsEmpty())
+                    newText << remainder.substr(0, nextToken);
+                    curTextBlock.fText = newText.to_string().replace("\\\\", "\\");
+                    if (!curTextBlock.fText.empty())
                     {
                         fText.push_back(curTextBlock);
-                        newText.Truncate();
+                        newText.truncate();
                     }
 
                     if (endToken == nextToken + 1)
@@ -111,7 +115,7 @@ void pfLocalizedString::IParameterize(const plString & inString)
                     {
                         // Store indexed param block.
                         curTextBlock.fIsParam = true;
-                        curTextBlock.fParamIndex = remainder.Substr(nextToken + 1, endToken - 1).ToInt(10) - 1; // args start at 1
+                        curTextBlock.fParamIndex = remainder.substr(nextToken + 1, endToken - 1).to_int(10) - 1; // args start at 1
                         curTextBlock.fText = "";
                         fText.push_back(curTextBlock);
                     }
@@ -120,7 +124,7 @@ void pfLocalizedString::IParameterize(const plString & inString)
                     fNumArguments++;
 
                     // Continue, using the remaining string.
-                    remainder = remainder.Substr(nextToken + endToken + 1);
+                    remainder = remainder.substr(nextToken + endToken + 1);
                 }
                 else
                 {
@@ -128,14 +132,14 @@ void pfLocalizedString::IParameterize(const plString & inString)
                     // For now, let's just pretend it was escaped;
                     // This way they'll show up visibly in-game and will be reported.
                     newText << "%";
-                    remainder = remainder.Substr(nextToken + 1);
+                    remainder = remainder.substr(nextToken + 1);
                 }
             }
             else
             {
                 // Copy the text up to the escape character, skip it, and continue.
-                newText << remainder.Substr(0, nextToken - 1) << '%';
-                remainder = remainder.Substr(nextToken + 1);
+                newText << remainder.substr(0, nextToken - 1) << '%';
+                remainder = remainder.substr(nextToken + 1);
             }
         }
         else
@@ -143,11 +147,11 @@ void pfLocalizedString::IParameterize(const plString & inString)
             // We're done.  Copy the remaining text and finish.
             newText << remainder;
             remainder = "";
-            curTextBlock.fText = newText.GetString().Replace("\\\\", "\\");
-            if (!curTextBlock.fText.IsEmpty())
+            curTextBlock.fText = newText.to_string().replace("\\\\", "\\");
+            if (!curTextBlock.fText.empty())
             {
                 fText.push_back(curTextBlock);
-                newText.Truncate();
+                newText.truncate();
             }
         }
     }
@@ -155,7 +159,7 @@ void pfLocalizedString::IParameterize(const plString & inString)
 
 //// IConvertFromPlainText ///////////////////////////////////////////
 
-void pfLocalizedString::IConvertFromPlainText(const plString & plainText)
+void pfLocalizedString::IConvertFromPlainText(const ST::string & plainText)
 {
     fPlainTextRep = plainText;
     IParameterize(fPlainTextRep);
@@ -167,7 +171,7 @@ void pfLocalizedString::IConvertFromPlainText(const plString & plainText)
 
 void pfLocalizedString::IUpdatePlainText()
 {
-    plStringStream ss;
+    ST::string_stream ss;
 
     for (std::vector<textBlock>::size_type curIndex = 0; curIndex < fText.size(); curIndex++)
     {
@@ -176,20 +180,20 @@ void pfLocalizedString::IUpdatePlainText()
         if (curTextBlock.fIsParam)
         {
             // Fill in parameter value.
-            ss << "%%" << curTextBlock.fParamIndex + 1 << "s";
+            ss << "%" << curTextBlock.fParamIndex + 1 << "s";
         }
         else
         {
             // Escape special characters.
-            ss << curTextBlock.fText.Replace("\\","\\\\").Replace("%","\\%");
+            ss << curTextBlock.fText.replace("\\","\\\\").replace("%","\\%");
         }
     }
-    fPlainTextRep = ss.GetString();
+    fPlainTextRep = ss.to_string();
 }
 
 //// IConvertFromXML /////////////////////////////////////////////////
 
-void pfLocalizedString::IConvertFromXML(const plString & xml)
+void pfLocalizedString::IConvertFromXML(const ST::string & xml)
 {
     IParameterize(xml);
 
@@ -201,62 +205,75 @@ void pfLocalizedString::IConvertFromXML(const plString & xml)
 
 void pfLocalizedString::IUpdateXML()
 {
-    plStringStream ss;
-    for (std::vector<plString>::size_type curIndex = 0; curIndex < fText.size(); curIndex++)
-    {
-        textBlock curTextBlock = fText[curIndex];
-
-        if (curTextBlock.fIsParam)
-        {
-            // Fill in parameter value.
-            ss << "%%" << curTextBlock.fParamIndex + 1 << "s";
+    // If we find anything that looks like an esHTML tag (eg <p>, <pb>, etc.) then we want
+    // to use CDATA. Since the text is small an contiguous, we will assume that it occurs
+    // in the same block. If not, and nothing else trips us... Whatever.
+    bool wantCData = std::any_of(
+        fText.cbegin(), fText.cend(),
+        [](const textBlock& block) {
+            static const std::regex regex("<.+>");
+            return std::regex_search(block.fText.cbegin(), block.fText.cend(), regex);
         }
-        else
-        {
+    );
+
+    ST::string_stream ss;
+    if (wantCData)
+        ss << "<![CDATA[";
+
+    for (const auto& curTextBlock : fText) {
+        if (curTextBlock.fIsParam) {
+            // Fill in parameter value.
+            ss << "%" << curTextBlock.fParamIndex + 1 << "s";
+        } else if (!wantCData) {
             // Encode XML entities.
-            ss << curTextBlock.fText.Replace("%", "\\%").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+            ss << curTextBlock.fText.replace("%", "\\%").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+        } else {
+            ss << curTextBlock.fText.replace("%", "\\%");
         }
     }
-    fXMLRep = ss.GetString();
+
+    if (wantCData)
+        ss << "]]>";
+    fXMLRep = ss.to_string();
 }
 
 //// FromXML /////////////////////////////////////////////////////////
 
-void pfLocalizedString::FromXML(const plString & xml)
+void pfLocalizedString::FromXML(const ST::string & xml)
 {
     IConvertFromXML(xml);
 }
 
 //// Operators ///////////////////////////////////////////////////////
 
-bool pfLocalizedString::operator<(pfLocalizedString &obj)
+bool pfLocalizedString::operator<(pfLocalizedString &obj) const
 {
-    return (fPlainTextRep.Compare(obj.fPlainTextRep) < 0);
+    return (fPlainTextRep.compare(obj.fPlainTextRep) < 0);
 }
 
-bool pfLocalizedString::operator>(pfLocalizedString &obj)
+bool pfLocalizedString::operator>(pfLocalizedString &obj) const
 {
-    return (fPlainTextRep.Compare(obj.fPlainTextRep) > 0);
+    return (fPlainTextRep.compare(obj.fPlainTextRep) > 0);
 }
 
-bool pfLocalizedString::operator==(pfLocalizedString &obj)
+bool pfLocalizedString::operator==(pfLocalizedString &obj) const
 {
-    return (fPlainTextRep.Compare(obj.fPlainTextRep) == 0);
+    return (fPlainTextRep.compare(obj.fPlainTextRep) == 0);
 }
 
-bool pfLocalizedString::operator<=(pfLocalizedString &obj)
+bool pfLocalizedString::operator<=(pfLocalizedString &obj) const
 {
-    return (fPlainTextRep.Compare(obj.fPlainTextRep) <= 0);
+    return (fPlainTextRep.compare(obj.fPlainTextRep) <= 0);
 }
 
-bool pfLocalizedString::operator>=(pfLocalizedString &obj)
+bool pfLocalizedString::operator>=(pfLocalizedString &obj) const
 {
-    return (fPlainTextRep.Compare(obj.fPlainTextRep) >= 0);
+    return (fPlainTextRep.compare(obj.fPlainTextRep) >= 0);
 }
 
-bool pfLocalizedString::operator!=(pfLocalizedString &obj)
+bool pfLocalizedString::operator!=(pfLocalizedString &obj) const
 {
-    return (fPlainTextRep.Compare(obj.fPlainTextRep) != 0);
+    return (fPlainTextRep.compare(obj.fPlainTextRep) != 0);
 }
 
 pfLocalizedString pfLocalizedString::operator+(pfLocalizedString &obj)
@@ -273,16 +290,16 @@ pfLocalizedString &pfLocalizedString::operator+=(pfLocalizedString &obj)
     return *this;
 }
 
-pfLocalizedString &pfLocalizedString::operator=(const plString & plainText)
+pfLocalizedString &pfLocalizedString::operator=(const ST::string & plainText)
 {
     IConvertFromPlainText(plainText);
     return *this;
 }
 
-plString pfLocalizedString::operator%(const std::vector<plString> & arguments)
+ST::string pfLocalizedString::operator%(const std::vector<ST::string> & arguments) const
 {
-    plStringStream ss;
-    for (std::vector<plString>::size_type curIndex = 0; curIndex < fText.size(); curIndex++)
+    ST::string_stream ss;
+    for (std::vector<ST::string>::size_type curIndex = 0; curIndex < fText.size(); curIndex++)
     {
         if (fText[curIndex].fIsParam)
         {
@@ -293,5 +310,5 @@ plString pfLocalizedString::operator%(const std::vector<plString> & arguments)
         else
             ss << fText[curIndex].fText;
     }
-    return ss.GetString();
+    return ss.to_string();
 }

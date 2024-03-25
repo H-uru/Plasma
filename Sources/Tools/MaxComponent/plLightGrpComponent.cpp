@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentReg.h"
 #include "MaxMain/plMaxNode.h"
 #include "resource.h"
-#pragma hdrstop
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 
@@ -58,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plDrawableSpans.h"
 #include "pnSceneObject/plDrawInterface.h"
 #include "MaxPlasmaLights/plRealTimeLightBase.h"
+#include "pnMessage/plRefMsg.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -83,23 +83,22 @@ ParamBlockDesc2 gLightGrpBk
 (
     plComponent::kBlkComp, _T("LightGroup"), 0, &gLightGrpDesc, P_AUTO_CONSTRUCT+P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_LIGHTINC, IDS_COMP_LIGHTINCS,  0, 0, nil,
+    IDD_COMP_LIGHTINC, IDS_COMP_LIGHTINCS,  0, 0, nullptr,
 
     kIncludeChars,  _T("Include characters"), TYPE_BOOL,        0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_LIGHTINC_CHARS,
-        end,
+        p_end,
 
     kAffectedLightSel, _T("AffectedLightChoice"),   TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     kTest, _T("TestBox"), TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_LIGHTINC_FILTER,
-        end,
+        p_end,
 
-    end
-
+    p_end
 );
 
 plLightGrpComponent::plLightGrpComponent()
@@ -116,14 +115,14 @@ public:
 
     plLightGrpPostLoadCallback(plLightGrpComponent* lg) : fLightGrp(lg) {}
 
-    void proc(ILoad *iload) 
+    void proc(ILoad *iload) override
     {
         IParamBlock2* compPB = fLightGrp->GetParamBlock(plComponentBase::kBlkComp);
         INode* light = compPB->GetINode(kAffectedLightSel);
         if( light )
         {
             fLightGrp->AddTarget((plMaxNodeBase*)light);
-            compPB->SetValue(kAffectedLightSel, TimeValue(0), (INode*)nil);
+            compPB->SetValue(kAffectedLightSel, TimeValue(0), (INode*)nullptr);
         }
         delete this;
     }
@@ -138,23 +137,21 @@ IOResult plLightGrpComponent::Load(ILoad* iLoad)
 
 bool plLightGrpComponent::IAddLightsToSpans(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
-    int i;
-    for( i = 0; i < fLightInfos.GetCount(); i++ )
+    for (plLightInfo* lightInfo : fLightInfos)
     {
-        if( !fLightInfos[i] )
+        if (!lightInfo)
             continue;
 
         const plDrawInterface* di = pNode->GetSceneObject()->GetDrawInterface();
 
-        int iDraw;
-        for( iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++ )
+        for (size_t iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++)
         {
             plDrawableSpans* drawable = plDrawableSpans::ConvertNoRef(di->GetDrawable(iDraw));
             if( drawable )
             {
                 uint32_t diIndex = di->GetDrawableMeshIndex(iDraw);
 
-                ISendItOff(fLightInfos[i], drawable, diIndex);
+                ISendItOff(lightInfo, drawable, diIndex);
             }
         }
     }
@@ -165,7 +162,7 @@ bool plLightGrpComponent::ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawa
 {
     plDISpanIndex spans = drawable->GetDISpans(diIndex);
 
-    if( spans.fFlags & plDISpanIndex::kMatrixOnly )
+    if (spans.IsMatrixOnly())
         return false;
 
     if( !fCompPB->GetInt(kTest) )
@@ -181,8 +178,7 @@ bool plLightGrpComponent::ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawa
         liInfo->GetAffectedForced(drawable->GetSpaceTree(), litSpans, false);
 
         uint8_t liMsgType = liInfo->GetProjection() ? plDrawable::kMsgPermaProj : plDrawable::kMsgPermaLight;
-        int i;
-        for( i = 0; i < spans.GetCount(); i++ )
+        for (size_t i = 0; i < spans.GetCount(); i++)
         {
             if( litSpans.IsBitSet(spans[i]) )
             {
@@ -197,13 +193,11 @@ bool plLightGrpComponent::ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawa
 
 bool plLightGrpComponent::IGetLightInfos()
 {
-    if( !fLightInfos.GetCount() )
+    if (fLightInfos.empty())
     {
         // Already checked that lightnodes are cool. just get the light interfaces.
-        int i;
-        for( i = 0; i < fLightNodes.GetCount(); i++ )
+        for (plMaxNode* lightNode : fLightNodes)
         {
-            plMaxNode* lightNode = fLightNodes[i];
             plSceneObject* lightSO = lightNode->GetSceneObject();
             if( !lightSO )
                 continue;
@@ -215,13 +209,13 @@ bool plLightGrpComponent::IGetLightInfos()
             liInfo->SetProperty(plLightInfo::kLPHasIncludes, true);
             if( fCompPB->GetInt(kIncludeChars) )
                 liInfo->SetProperty(plLightInfo::kLPIncludesChars, true);
-            fLightInfos.Append(liInfo);
+            fLightInfos.emplace_back(liInfo);
         }
     }
-    return fValid = (fLightInfos.GetCount() > 0);
+    return fValid = !fLightInfos.empty();
 }
 
-const hsTArray<plLightInfo*>& plLightGrpComponent::GetLightInfos()
+const std::vector<plLightInfo*>& plLightGrpComponent::GetLightInfos()
 {
     IGetLightInfos();
     return fLightInfos;
@@ -236,12 +230,12 @@ plLightGrpComponent* plLightGrpComponent::GetComp(plMaxNode* node)
         if( comp && comp->ClassID() == LIGHTGRP_COMP_CID )
             return (plLightGrpComponent*)comp;
     }
-    return nil;
+    return nullptr;
 }
 
 bool plLightGrpComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
     if( !fValid )
         return true;
 
@@ -266,8 +260,8 @@ bool plLightGrpComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 bool plLightGrpComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     fValid = false;
-    fLightInfos.Reset();
-    fLightNodes.Reset();
+    fLightInfos.clear();
+    fLightNodes.clear();
 
     int i;
     for( i = 0; i < NumTargets(); i++ )
@@ -286,13 +280,13 @@ bool plLightGrpComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg
                     || (cid == RTDIR_LIGHT_CLASSID)
                     || (cid == RTPDIR_LIGHT_CLASSID) )
                 {
-                    fLightNodes.Append((plMaxNode*)liNode);
+                    fLightNodes.emplace_back((plMaxNode*)liNode);
                 }
             }
         }
 
     }
-    if( !fLightNodes.GetCount() )
+    if (fLightNodes.empty())
         return true;
 
     fValid = true;

@@ -48,26 +48,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUICheckBoxCtrl_h
 #define _pfGUICheckBoxCtrl_h
 
+#include "HeadSpin.h"
+
+#include <string_theory/string>
+
 #include "pfGUIControlMod.h"
 
-class plMessage;
-class plPostEffectMod;
 class plAGMasterMod;
+class plKey;
+struct hsMatrix44;
+class plMessage;
+struct hsPoint3;
+class plPostEffectMod;
 
 class pfGUICheckBoxCtrl : public pfGUIControlMod
 {
     protected:
 
-        hsTArray<plKey> fAnimationKeys;
-        plString        fAnimName;
+        std::vector<plKey> fAnimationKeys;
+        ST::string      fAnimName;
         bool            fClicking;
 
         bool            fChecked;
         bool            fPlaySound;
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
-        virtual uint32_t      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
+        uint32_t      IGetDesiredCursor() const override;    // As specified in plInputInterface.h
 
     public:
 
@@ -77,23 +84,23 @@ class pfGUICheckBoxCtrl : public pfGUIControlMod
         GETINTERFACE_ANY( pfGUICheckBoxCtrl, pfGUIControlMod );
 
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
+        void    HandleMouseDown(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
 
-        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, bool force = false );
+        void    UpdateBounds(hsMatrix44 *invXformMatrix = nullptr, bool force = false) override;
 
         void        SetChecked( bool checked, bool immediate = false );
-        bool        IsChecked( void ) { return fChecked; }
+        bool        IsChecked() { return fChecked; }
 
         void DontPlaySounds() { fPlaySound = false; } // should the checkbox play sounds?
         
-        const hsTArray<plKey>   &GetAnimationKeys( void ) const { return fAnimationKeys; }
-        plString                GetAnimationName( void ) const { return fAnimName; }
+        const std::vector<plKey> &GetAnimationKeys() const { return fAnimationKeys; }
+        ST::string              GetAnimationName() const { return fAnimName; }
 
         enum SoundEvents
         {
@@ -104,7 +111,7 @@ class pfGUICheckBoxCtrl : public pfGUIControlMod
         };
 
         // Export only
-        void    SetAnimationKeys( hsTArray<plKey> &keys, const plString &name );
+        void    SetAnimationKeys(const std::vector<plKey> &keys, const ST::string &name);
 };
 
 #endif // _pfGUICheckBoxCtrl_h

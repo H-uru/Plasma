@@ -1,12 +1,3 @@
-include_directories("../../Apps")
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib/inc")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib/inc")
-include_directories("../../PubUtilLib")
-
 set(plPageOptimizer_SOURCES
     main.cpp
     plAllCreatables.cpp
@@ -17,15 +8,23 @@ set(plPageOptimizer_HEADERS
     plPageOptimizer.h
 )
 
-add_executable(plPageOptimizer ${plPageOptimizer_SOURCES})
-
-target_link_libraries(plPageOptimizer CoreLib)
-target_link_libraries(plPageOptimizer plResMgr)
-target_link_libraries(plPageOptimizer pnUUID)
-
-if(USE_VLD)
-    target_link_libraries(plPageOptimizer ${VLD_LIBRARY})
-endif()
+plasma_executable(plPageOptimizer TOOL
+    SOURCES ${plPageOptimizer_SOURCES} ${plPageOptimizer_HEADERS}
+)
+target_link_libraries(
+    plPageOptimizer
+    PRIVATE
+        CoreLib
+        pnDispatch
+        pnFactory
+        pnKeyedObject
+        pnMessage
+        pnModifier
+        pnNetCommon
+        pnNucleusInc
+        plMessage
+        plResMgr
+)
 
 source_group("Source Files" FILES ${plPageOptimizer_SOURCES})
 source_group("Header Files" FILES ${plPageOptimizer_HEADERS})

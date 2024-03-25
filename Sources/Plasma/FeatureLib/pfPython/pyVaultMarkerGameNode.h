@@ -48,42 +48,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
-
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 #include "pyVaultNode.h"
 
-class plString;
-struct RelVaultNode;
+#include <vector>
+
 class plUUID;
+struct VaultMarker;
+namespace ST { class string; }
 
 class pyVaultMarkerGameNode : public pyVaultNode
 {
 protected:
-    // should only be created from C++ side
-    pyVaultMarkerGameNode(RelVaultNode* vaultNode);
-
     //create from the Python side
-    pyVaultMarkerGameNode(int n=0);
+    pyVaultMarkerGameNode();
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultMarkerGameNode);
-    static PyObject *New(RelVaultNode* vaultNode);
-    static PyObject *New(int n=0);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultMarkerGameNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultMarkerGameNode); // converts a PyObject to a pyVaultMarkerGameNode (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
 
-//==================================================================
-// class RelVaultNode : public plVaultNode
-//
-    plString        GetGameName () const;
-    void            SetGameName (const plString& name);
+    ST::string      GetGameGuid() const;
+    ST::string      GetGameName () const;
+    void            SetGameGuid(const ST::string& guid);
+    void            SetGameName (const ST::string& name);
 
-    plUUID          GetGameGuid() const;
-    void            SetGameGuid (const char v[]);
+    ST::string GetReward() const;
+    void SetReward(const ST::string& value);
+
+    /** Returns a tuple of tuples */
+    PyObject*       GetMarkers() const;
+    void            SetMarkers(const std::vector<VaultMarker>& markers);
 };
 
 #endif // _pyVaultMarkerGameNode_h_

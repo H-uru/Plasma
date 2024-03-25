@@ -40,45 +40,43 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "../resource.h"
 
-#include <iparamm2.h>
-#include <stdmat.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include "../resource.h"
 
 #include "plDynamicTextLayer.h"
 
 #include "../plBMSampler.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
 
-class plDynamicTextLayerClassDesc : public ClassDesc2
+class plDynamicTextLayerClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading = FALSE) { return new plDynamicTextLayer(); }
-    const TCHAR*    ClassName()     { return GetString(IDS_DYN_TEXT_LAYER); }
-    SClass_ID       SuperClassID()  { return TEXMAP_CLASS_ID; }
-    Class_ID        ClassID()       { return DYN_TEXT_LAYER_CLASS_ID; }
-    const TCHAR*    Category()      { return TEXMAP_CAT_2D; }
-    const TCHAR*    InternalName()  { return _T("PlasmaDynamicTextLayer"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override      { return TRUE; }
+    void*           Create(BOOL loading = FALSE) override { return new plDynamicTextLayer(); }
+    const TCHAR*    ClassName() override     { return GetString(IDS_DYN_TEXT_LAYER); }
+    SClass_ID       SuperClassID() override  { return TEXMAP_CLASS_ID; }
+    Class_ID        ClassID() override       { return DYN_TEXT_LAYER_CLASS_ID; }
+    const TCHAR*    Category() override      { return TEXMAP_CAT_2D; }
+    const TCHAR*    InternalName() override  { return _T("PlasmaDynamicTextLayer"); }
+    HINSTANCE       HInstance() override     { return hInstance; }
 };
 static plDynamicTextLayerClassDesc plDynamicTextLayerDesc;
 ClassDesc2* GetDynamicTextLayerDesc() { return &plDynamicTextLayerDesc; }
 
 #include "plDynamicTextLayerBitmapPB.cpp"
 
-ParamDlg* plDynamicTextLayer::fUVGenDlg = NULL;
+ParamDlg* plDynamicTextLayer::fUVGenDlg = nullptr;
 
 plDynamicTextLayer::plDynamicTextLayer() :
-    fBitmapPB(NULL),
-    fUVGen(NULL),
-    fTexHandle(NULL),
+    fBitmapPB(),
+    fUVGen(),
+    fTexHandle(),
     fTexTime(0),
     fIValid(NEVER)
 {
-    fInitBitmap = NULL;
+    fInitBitmap = nullptr;
 
     plDynamicTextLayerDesc.MakeAutoParamBlocks(this);
     ReplaceReference(kRefUVGen, GetNewDefaultUVGen());  
@@ -92,7 +90,7 @@ plDynamicTextLayer::~plDynamicTextLayer()
     IDiscardTexHandle();
 }
 
-void plDynamicTextLayer::GetClassName(TSTR& s)
+void plDynamicTextLayer::IGetClassName(MSTR& s) const
 {
     s = GetString(IDS_DYN_TEXT_LAYER);
 }
@@ -174,7 +172,7 @@ RefTargetHandle plDynamicTextLayer::GetReference(int i)
     {
         case kRefUVGen:     return fUVGen;
         case kRefBitmap:    return fBitmapPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
@@ -209,7 +207,7 @@ IParamBlock2* plDynamicTextLayer::GetParamBlock(int i)
     switch (i)
     {
     case 0: return fBitmapPB;
-    default: return NULL;
+    default: return nullptr;
     }
 }
 
@@ -218,7 +216,7 @@ IParamBlock2* plDynamicTextLayer::GetParamBlockByID(BlockID id)
     if (fBitmapPB->ID() == id)
         return fBitmapPB;
     else
-        return NULL;
+        return nullptr;
 }
 
 //From ReferenceTarget 
@@ -244,22 +242,22 @@ Animatable* plDynamicTextLayer::SubAnim(int i)
     {
         case kRefUVGen:     return fUVGen;
         case kRefBitmap:    return fBitmapPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
-TSTR plDynamicTextLayer::SubAnimName(int i) 
+MSTR plDynamicTextLayer::ISubAnimName(int i)
 {
     switch (i)
     {
-        case kRefUVGen:     return "UVGen";
+        case kRefUVGen:     return _M("UVGen");
         case kRefBitmap:    return fBitmapPB->GetLocalName();
-        default: return "";
+        default: return _M("");
     }
 }
 
-RefResult plDynamicTextLayer::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-   PartID& partID, RefMessage message) 
+RefResult plDynamicTextLayer::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+   PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -274,7 +272,7 @@ RefResult plDynamicTextLayer::NotifyRefChanged(Interval changeInt, RefTargetHand
                 ParamID changingParam = fBitmapPB->LastNotifyParamID();
                 fBitmapPB->GetDesc()->InvalidateUI(changingParam);
 
-                if (changingParam != -1)
+                if (changingParam != -1 && MAX_REF_PROPAGATE_VALUE)
                     IChanged();
             }
         }
@@ -406,7 +404,7 @@ void plDynamicTextLayer::IDiscardTexHandle()
     if (fTexHandle)
     {
         fTexHandle->DeleteThis();
-        fTexHandle = NULL;
+        fTexHandle = nullptr;
     }
 }
 
@@ -421,7 +419,7 @@ BITMAPINFO *plDynamicTextLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thm
                         // FIXME
     fTexTime = 0;//CalcFrame(t);
 //  texValid = clipValid;
-    BITMAPINFO *bmi = NULL;
+    BITMAPINFO *bmi = nullptr;
     int xflags = 0;
 
     // Create a bitmap to write into via Windows
@@ -435,8 +433,8 @@ BITMAPINFO *plDynamicTextLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thm
     tempBMI.bmiHeader.biBitCount = 32;
 
     DWORD       *bitmapBits;
-    HDC winDC = CreateCompatibleDC( nil );
-    HBITMAP bitmap = CreateDIBSection( winDC, &tempBMI, DIB_RGB_COLORS, (void **)&bitmapBits, nil, 0 );
+    HDC winDC = CreateCompatibleDC(nullptr);
+    HBITMAP bitmap = CreateDIBSection(winDC, &tempBMI, DIB_RGB_COLORS, (void **)&bitmapBits, nullptr, 0);
 
     HBITMAP old = (HBITMAP)SelectObject( winDC, bitmap );
 
@@ -454,29 +452,29 @@ BITMAPINFO *plDynamicTextLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thm
     // Background letters
     int nHeight = -MulDiv( 72, GetDeviceCaps( winDC, LOGPIXELSY ), 72 );
     HFONT winFont = CreateFont( nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
-                        CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, "Times New Roman" );
-    if( winFont != nil )
+                        CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, _T("Times New Roman") );
+    if (winFont != nullptr)
     {
         HFONT origFont = (HFONT)SelectObject( winDC, winFont );
         SetTextColor( winDC, RGB( 32, 32, 32 ) );
-        char str2[] = "ABCDEFG";
-        ::TextOut( winDC, 0, 0, str2, strlen( str2 ) );
+        TCHAR str2[] = _T("ABCDEFG");
+        ::TextOut( winDC, 0, 0, str2, std::size( str2 ) );
         SelectObject( winDC, origFont );
         DeleteObject( winFont );
     }
 
     nHeight = -MulDiv( 8, GetDeviceCaps( winDC, LOGPIXELSY ), 72 );
     winFont = CreateFont( nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
-                        CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, "Arial" );
-    if( winFont != nil )
+                        CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, _T("Arial") );
+    if (winFont != nullptr)
     {
         HFONT origFont = (HFONT)SelectObject( winDC, winFont );
 
         SetTextColor( winDC, RGB( 255, 255, 255 ) );
-        char str[] = "Dynamic Text";
-        ::TextOut( winDC, 0, 0, str, strlen( str ) );
-        char str3[] = "This is 8 point Arial";
-        ::TextOut( winDC, 0, 12, str3, strlen( str3 ) );
+        TCHAR str[] = _T("Dynamic Text");
+        ::TextOut( winDC, 0, 0, str, std::size( str ) );
+        TCHAR str3[] = _T("This is 8 point Arial");
+        ::TextOut( winDC, 0, 12, str3, std::size( str3 ) );
 
         SelectObject( winDC, origFont );
         DeleteObject( winFont );
@@ -504,10 +502,10 @@ BITMAPINFO *plDynamicTextLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thm
 
             if( color == RGB( 0, 0, 0 ) )
             {
-                if( fBitmapPB->GetInt( kBmpUseInitImage ) && fInitBitmap != nil )
+                if (fBitmapPB->GetInt(kBmpUseInitImage) && fInitBitmap != nullptr)
                     fInitBitmap->GetLinearPixels( x, y, 1, p64 );
                 else
-                    p64->r = p64->g = p64->b = 0.f;
+                    p64->r = p64->g = p64->b = 0;
             }
             else
             {
@@ -531,7 +529,7 @@ BITMAPINFO *plDynamicTextLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thm
     return bmi;
 }
 
-DWORD plDynamicTextLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker) 
+DWORD_PTR plDynamicTextLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
 {
     // FIXME: ignore validity for now
     if (fTexHandle && fIValid.InInterval(t))// && texTime == CalcFrame(t)) 
@@ -549,12 +547,12 @@ DWORD plDynamicTextLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmake
     }
 }
 
-const char *plDynamicTextLayer::GetTextureName( int which )
+const MCHAR* plDynamicTextLayer::GetTextureName( int which )
 {
     PBBitmap *pbbm = fBitmapPB->GetBitmap( kBmpInitBitmap );
     if( pbbm )
         return pbbm->bi.Name();
-    return NULL;
+    return nullptr;
 }
 
 void plDynamicTextLayer::ISetPBBitmap(PBBitmap *pbbm, int index /* = 0 */)

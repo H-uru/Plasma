@@ -42,38 +42,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPXPhysical_h_inc
 #define plPXPhysical_h_inc
 
-#include "plPhysical.h" 
-#include "hsMatrix44.h"
-#include "plPhysical/plSimDefs.h"
+#include <memory>
+
 #include "hsBitVector.h"
+#include "hsGeometry3.h"
+#include "hsMatrix44.h"
+#include "plPhysical.h"
+#include "hsQuat.h"
 
+#include "pnKeyedObject/plKey.h"
 
-class NxActor;
-class NxConvexMesh;
-class NxTriangleMesh;
+#include "plPhysical/plSimDefs.h"
 
+class plDrawableSpans;
+class plGenRefMsg;
+class hsGMaterial;
+class plLOSHit;
+class plMessage;
+class plPhysicalProxy;
+struct hsPlane3;
 struct hsPoint3;
 class hsQuat;
-class plPhysicalProxy;
-class plDrawableSpans;
-class hsGMaterial;
-struct hsPlane3;
-
-class plMessage;
-class plLOSHit;
-class plSimulationMsg;
-class plSDLModifier;
+class hsRAMStream;
 class plPhysicalSndGroup;
-class plGenRefMsg;
 class plSceneObject;
-class hsVectorStream;
-class NxCapsule;
+class plSDLModifier;
+class plSimulationMsg;
+
+namespace physx
+{
+    class PxBoxGeometry;
+    class PxConvexMesh;
+    class PxRigidActor;
+    class PxSphereGeometry;
+    class PxTriangleMesh;
+};
 
 class PhysRecipe
 {
 public:
-    PhysRecipe();
-
     float mass;
     float friction;
     float restitution;
@@ -84,11 +91,12 @@ public:
     plKey sceneNode;
     plKey worldKey;
 
-    // The local to subworld matrix (or local to world if worldKey is nil)
-    hsMatrix44 l2s;
+    // The local to subworld transform (or local to world if worldKey is nil)
+    hsPoint3 l2sP;
+    hsQuat l2sQ;
 
-    NxConvexMesh* convexMesh;
-    NxTriangleMesh* triMesh;
+    physx::PxConvexMesh* convexMesh;
+    physx::PxTriangleMesh* triMesh;
 
     // For spheres only
     float radius;
@@ -98,14 +106,64 @@ public:
     hsPoint3 bDimensions;
     hsPoint3 bOffset;
 
-    // For export time only.  The original data used to create the mesh
-    hsVectorStream* meshStream;
+    std::unique_ptr<hsRAMStream> meshStream;
+
+    PhysRecipe();
+    ~PhysRecipe();
 };
 
 class plPXPhysical : public plPhysical
 {
+protected:
+    void InitProxy();
+    void IMoveProxy(const hsMatrix44& l2w);
+
+    void InitSDL();
+    void InitRefs() const;
+
+public:
+    /**
+     * Returns if this physical is a kinematic rigid body.
+     * \remarks Kinematic rigid bodies are bodies that are movable in the simulation
+     *          but will ignore external forces such as gravity and collision.
+     *          Manually applying forces, impulses, etc. has no meaning on these bodies.
+     */
+    bool IsKinematic() const;
+
+    /**
+     * Returns if this physical is a dynamic rigid body.
+     * \remarks Dynamic rigid bodies are bodies that are movable in the simulation
+     *          and can respond to external forces such as gravity and collision.
+     */
+    bool IsDynamic() const;
+
+    /**
+     * Returns if this physical is a static actor.
+     * \remarks Static actors are fixed in the simulation and should not be moved--doing so incurs
+     *          a performance penalty.
+     */
+    bool IsStatic() const;
+
+protected:
+    /**
+     * Returns if this physical represents a trigger shape.
+     */
+    bool IsTrigger() const;
+
+    /**
+     * Sets the actor to be either a trigger or simulation shape.
+     */
+    void IUpdateShapeFlags();
+
+    void ISyncFilterData();
+
+protected:
+    void ISanityCheckGeometry(physx::PxBoxGeometry& geometry) const;
+    void ISanityCheckGeometry(physx::PxSphereGeometry& geometry) const;
+
 public:
     friend class plSimulationMgr;
+    friend class plPXSimulation;
 
     enum PhysRefType
     {
@@ -114,83 +172,102 @@ public:
     };
 
     plPXPhysical();
-    virtual ~plPXPhysical();
+    ~plPXPhysical() override;
 
     CLASSNAME_REGISTER(plPXPhysical);
     GETINTERFACE_ANY(plPXPhysical, plPhysical);
 
     // Export time and internal use only
-    bool Init(PhysRecipe& recipe);
+    bool InitActor();
+    physx::PxConvexMesh* ICookHull(hsStream* s);
+    physx::PxTriangleMesh* ICookTriMesh(hsStream* s);
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     //
     // From plPhysical
     //
-    virtual plPhysical& SetProperty(int prop, bool b);
-    virtual bool GetProperty(int prop) const { return fProps.IsBitSet(prop) != 0; }
+    plPhysical& SetProperty(int prop, bool b) override;
+    bool GetProperty(int prop) const override { return fProps.IsBitSet(prop) != 0; }
 
-    virtual void SetObjectKey(plKey key) { fObjectKey = key; }
-    virtual plKey GetObjectKey() const { return fObjectKey; }
+    void SetObjectKey(plKey key) override { fObjectKey = key; }
+    plKey GetObjectKey() const override { return fObjectKey; }
 
-    virtual void SetSceneNode(plKey node);
-    virtual plKey GetSceneNode() const;
+    void SetSceneNode(plKey node) override;
+    plKey GetSceneNode() const override { return fSceneNode; }
 
-    virtual bool GetLinearVelocitySim(hsVector3& vel) const;
-    virtual void SetLinearVelocitySim(const hsVector3& vel);
-    virtual void ClearLinearVelocity();
+    bool GetLinearVelocitySim(hsVector3& vel) const override;
+    void SetLinearVelocitySim(const hsVector3& vel, bool wakeup=true) override;
+    void ClearLinearVelocity() override;
 
-    virtual bool GetAngularVelocitySim(hsVector3& vel) const;
-    virtual void SetAngularVelocitySim(const hsVector3& vel);
+    bool GetAngularVelocitySim(hsVector3& vel) const override;
+    void SetAngularVelocitySim(const hsVector3& vel, bool wakeup=true) override;
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, bool force=false);
-    virtual void GetTransform(hsMatrix44& l2w, hsMatrix44& w2l);
+    void SetImpulseSim(const hsVector3& imp, bool wakeup=true);
+    void SetDampingSim(float factor);
 
-    virtual int GetGroup() const { return fGroup; }
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, bool force=false) override;
+    void GetTransform(hsMatrix44& l2w, hsMatrix44& w2l) override;
 
-    virtual void    AddLOSDB(uint16_t flag) { hsSetBits(fLOSDBs, flag); }
-    virtual void    RemoveLOSDB(uint16_t flag) { hsClearBits(fLOSDBs, flag); }
-    virtual uint16_t  GetAllLOSDBs() { return fLOSDBs; }
-    virtual bool    IsInLOSDB(uint16_t flag) { return hsCheckBits(fLOSDBs, flag); }
+    int GetGroup() const override { return fGroup; }
+    void SetGroup(int group) override
+    {
+        fGroup = (plSimDefs::Group)group;
+        IUpdateShapeFlags();
+        ISyncFilterData();
+        if (fActor)
+            InitProxy();
+    }
 
-    virtual plKey GetWorldKey() const { return fWorldKey; }
+    void AddLOSDB(uint16_t flag) override
+    {
+        hsSetBits(fLOSDBs, flag);
+        ISyncFilterData();
+    }
 
-    virtual plPhysicalSndGroup* GetSoundGroup() const { return fSndGroup; }
+    void RemoveLOSDB(uint16_t flag) override
+    {
+        hsClearBits(fLOSDBs, flag);
+        ISyncFilterData();
+    }
 
-    virtual void GetPositionSim(hsPoint3& pos) const { IGetPositionSim(pos); }
+    uint16_t GetAllLOSDBs() override { return fLOSDBs; }
+    bool IsInLOSDB(uint16_t flag) override { return hsCheckBits(fLOSDBs, flag); }
 
-    virtual void SendNewLocation(bool synchTransform = false, bool isSynchUpdate = false);
+    plKey GetWorldKey() const override { return fWorldKey; }
 
-    virtual void SetHitForce(const hsVector3& force, const hsPoint3& pos) { fWeWereHit=true; fHitForce = force; fHitPos = pos; }
-    virtual void ApplyHitForce();
-    virtual void ResetHitForce() { fWeWereHit=false; fHitForce.Set(0,0,0); fHitPos.Set(0,0,0); }
+    plPhysicalSndGroup* GetSoundGroup() const override { return fSndGroup; }
 
-    virtual void GetSyncState(hsPoint3& pos, hsQuat& rot, hsVector3& linV, hsVector3& angV);
-    virtual void SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsVector3* angV);
+    void GetPositionSim(hsPoint3& pos) const override
+    {
+        hsQuat junk;
+        IGetPoseSim(pos, junk);
+    }
 
-    virtual void ExcludeRegionHack(bool cleared);
+    void SendNewLocation(bool synchTransform = false, bool isSynchUpdate = false) override;
 
-    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
+    void GetSyncState(hsPoint3& pos, hsQuat& rot, hsVector3& linV, hsVector3& angV) override;
+    void SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsVector3* angV) override;
+    void ResetSyncState() override;
 
-    bool DoReportOn(plSimDefs::Group group) const { return hsCheckBits(fReportsOn, 1<<group); }
+    plDrawableSpans* CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo) override;
 
-    // Returns true if this object is *really* dynamic.  We can have physicals
-    // that are in the dynamic group but are actually animated or something.
-    // This weeds those out.
-    bool IsDynamic() const;
-    
-    //Hack to check if there is an overlap with the avatar controller
-    bool OverlapWithController(const class plPXPhysicalControllerCore* controller);
+    float GetMass() override { return fRecipe.mass; }
 
-    virtual float GetMass() {return fMass;}
+    PhysRecipe& GetRecipe() { return fRecipe; }
+    const PhysRecipe& GetRecipe() const { return fRecipe; }
+    void DirtyRecipe();
+
 protected:
-    void IGetPositionSim(hsPoint3& pos) const;
-    void IGetRotationSim(hsQuat& rot) const;
-    void ISetPositionSim(const hsPoint3& pos);
-    void ISetRotationSim(const hsQuat& rot);
+    void IUpdateSubworld();
+    void DestroyActor();
+    bool CanSynchPosition(bool isSynchUpdate) const;
+
+    void IGetPoseSim(hsPoint3& pos, hsQuat& rot) const;
+    void ISetPoseSim(const hsPoint3* pos, const hsQuat* rot, bool wakeup=true);
 
     /** Handle messages about our references. */
     bool HandleRefMsg(plGenRefMsg * refM);
@@ -201,7 +278,7 @@ protected:
         bounceOff and vice-versa
         */
     // Set overlapText to get a string naming all the overlapping physicals (that you must delete)
-    bool CheckValidPosition(char** overlapText=nil);
+    bool CheckValidPosition(char** overlapText=nullptr);
 
     /////////////////////////////////////////////////////////////
     //
@@ -210,7 +287,7 @@ protected:
     /////////////////////////////////////////////////////////////
 
     /** Remember that we need to do a synch soon. */
-    bool DirtySynchState(const plString& SDLStateName, uint32_t synchFlags);
+    bool DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags) override;
 
     double GetLastSyncTime() { return fLastSyncTime; }
 
@@ -222,15 +299,16 @@ protected:
     // Enable/disable collisions and dynamic movement
     void IEnable(bool enable);
 
-    NxActor* fActor;
+
+    physx::PxRigidActor* fActor;
     plKey fWorldKey;    // either a subworld or nil
 
-    plSimDefs::Bounds fBoundsType;
+    PhysRecipe fRecipe;
+    plSimDefs::Bounds fBounds;
     plSimDefs::Group fGroup;
     uint32_t fReportsOn;          // bit vector for groups we report interactions with
     uint16_t fLOSDBs;             // Which LOS databases we get put into
     hsBitVector fProps;         // plSimulationInterface::plSimulationProperties kept here
-    float   fMass;
 
     plKey fObjectKey;           // the key to our scene object
     plKey fSceneNode;           // the room we're in
@@ -246,11 +324,7 @@ protected:
 
     plPhysicalSndGroup* fSndGroup;
 
-    bool        fWeWereHit;
-    hsVector3   fHitForce;
-    hsPoint3    fHitPos;
-
-    plPhysicalProxy* fProxyGen;             // visual proxy for debugging
+    std::unique_ptr<plPhysicalProxy> fProxyGen;             // visual proxy for debugging
 
     static int  fNumberAnimatedPhysicals;
     static int  fNumberAnimatedActivators;

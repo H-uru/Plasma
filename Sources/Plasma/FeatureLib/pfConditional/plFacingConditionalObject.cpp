@@ -39,17 +39,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
 #include "plFacingConditionalObject.h"
-#include "plgDispatch.h"
-#include "pnModifier/plLogicModBase.h"
-#include "plMessage/plActivatorMsg.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
+
 #include "pnKeyedObject/plKey.h"
-#include "pnMessage/plNotifyMsg.h"
 #include "pnMessage/plFakeOutMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "pnModifier/plLogicModBase.h"
 #include "pnNetCommon/plNetApp.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plMessage/plActivatorMsg.h"
 
 plFacingConditionalObject::plFacingConditionalObject() :
 fTolerance(-1.0f),
@@ -67,14 +68,14 @@ bool plFacingConditionalObject::MsgReceive(plMessage* msg)
 void plFacingConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
-    stream->WriteLE(fTolerance);
+    stream->WriteLEFloat(fTolerance);
     stream->WriteBool(fDirectional);
 }
 
 void plFacingConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Read(stream, mgr);
-    stream->ReadLE(&fTolerance);
+    stream->ReadLEFloat(&fTolerance);
     fDirectional = stream->ReadBool();
 }
 

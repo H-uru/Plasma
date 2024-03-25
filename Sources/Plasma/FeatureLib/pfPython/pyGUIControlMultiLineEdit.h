@@ -49,10 +49,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pyGlueDefinitions.h"
 #include "pyGUIControl.h"
-#include "pyGlueHelpers.h"
 
+#include <tuple>
+
+class plKey;
 class pyColor;
+class pyKey;
+namespace ST { class string; }
 
 class pyGUIControlMultiLineEdit : public pyGUIControl
 {
@@ -72,50 +77,52 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    static bool IsGUIControlMultiLineEdit(pyKey& gckey);
+    static bool IsGUIControlMultiLineEdit(const plKey& key);
 
-    virtual void    Clickable( void );
-    virtual void    Unclickable( void );
-    virtual void    SetScrollPosition( int32_t topLine );
-    virtual int32_t GetScrollPosition();
-    virtual bool    IsAtEnd();
-    virtual void    MoveCursor( int32_t dir );
-    virtual void    ClearBuffer( void );
-    virtual void    SetText( const char *asciiText );
-    virtual void    SetTextW( const wchar_t *asciiText );
-    virtual const char* GetText( void );        // returns a python string object
-    virtual const wchar_t* GetTextW( void );
-    virtual void    SetEncodedBuffer( PyObject* buffer_object );
-    virtual void    SetEncodedBufferW( PyObject* buffer_object );
-    virtual const char* GetEncodedBuffer();
-    virtual const wchar_t* GetEncodedBufferW();
-    virtual uint32_t  GetBufferSize();
-    
-    virtual void    SetBufferLimit(int32_t limit);
-    virtual int32_t   GetBufferLimit();
+    void Clickable();
+    void Unclickable();
+    void SetScrollPosition(int32_t topLine);
+    int32_t GetScrollPosition();
+    bool IsAtEnd();
+    void MoveCursor(int32_t dir);
+    int32_t GetCursor() const;
+    void ClearBuffer();
+    void SetText(const ST::string& text);
+    ST::string GetText();
+    void SetEncodedBuffer(PyObject* buffer_object);
+    ST::string GetEncodedBuffer();
+    size_t GetBufferSize() const;
 
-    virtual void    InsertChar( char c );
-    virtual void    InsertCharW( wchar_t c );
-    virtual void    InsertString( const char *string );
-    virtual void    InsertStringW( const wchar_t *string );
-    virtual void    InsertColor( pyColor& color );
-    virtual void    InsertStyle( uint8_t fontStyle );
-    virtual void    DeleteChar( void );
+    void SetBufferLimit(int32_t limit);
+    int32_t GetBufferLimit();
+    int16_t GetCurrentLink() const;
 
-    virtual void    Lock( void );
-    virtual void    Unlock( void );
-    virtual bool    IsLocked( void );
+    void InsertChar(wchar_t c);
+    void InsertString(const ST::string& string);
+    void InsertColor(pyColor& color);
+    void InsertStyle(uint8_t fontStyle);
+    void InsertLink(int16_t linkId);
+    void ClearLink();
+    void DeleteChar();
 
-    virtual void    EnableScrollControl();
-    virtual void    DisableScrollControl();
+    void Lock();
+    void Unlock();
+    bool IsLocked();
 
-    virtual void    DeleteLinesFromTop( int lines );
+    void EnableScrollControl();
+    void DisableScrollControl();
 
-    virtual uint32_t  GetFontSize() const;
-    virtual void    SetFontSize( uint32_t fontsize );
+    void DeleteLinesFromTop(int lines);
+
+    uint32_t  GetFontSize() const override;
+    void    SetFontSize(uint32_t fontsize) override;
 
     void BeginUpdate();
     void EndUpdate(bool redraw);
+    bool IsUpdating() const;
+
+    std::tuple<int, int, int, int> GetMargins() const;
+    void SetMargins(int top, int left, int bottom, int right);
 };
 
 #endif // _pyGUIControlMultiLineEdit_h_

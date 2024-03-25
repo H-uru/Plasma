@@ -47,20 +47,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_ANIM_STAGE_INC
 #define PL_ANIM_STAGE_INC
 
-#include <vector>
 #include "hsMatrix44.h"
-#include "pnFactory/plCreatable.h"
-#include "plString.h"
 
-class plMessage;
+#include <vector>
+
+#include "pnFactory/plCreatable.h"
+
 class plAGAnimInstance;
-class plArmatureMod;
-class plArmatureMod;
-class hsStream;
-class hsResMgr;
 class plArmatureBrain;
+class plArmatureMod;
 class plDebugText;
+class plMessage;
 class plMultistageBehMod;
+class hsResMgr;
+class hsStream;
 
 // PLANIMSTAGE
 // In a multi-stage behavior, each stage is specified in one of these classes
@@ -159,7 +159,7 @@ public:
                         animation attempts to reposition the avatar by having a
                         channel attached to the avatar's handle.
     */
-    plAnimStage(const plString &animName,
+    plAnimStage(const ST::string &animName,
                 uint8_t notify,
                 ForwardType forward,
                 BackType backward,
@@ -173,7 +173,7 @@ public:
         will be played after this one, depending on which direction the stage is
         moving.
     */
-    plAnimStage(const plString &animName,
+    plAnimStage(const ST::string &animName,
                 uint8_t notify,
                 ForwardType forward,
                 BackType back,
@@ -190,7 +190,7 @@ public:
         \param animName The name of the animation controlled by this stage.
         \param notify Flags for when to send notify messages
         */
-    plAnimStage(const plString &animName, uint8_t notify);
+    plAnimStage(const ST::string &animName, uint8_t notify);
     virtual ~plAnimStage();
     const plAnimStage& operator=(const plAnimStage& src);
 
@@ -201,7 +201,7 @@ public:
     bool MoveRelative(double worldTime, float delta, float &overage, plArmatureMod *avMod);
 
     /** The name of the animation associated with this stage. */
-    plString GetAnimName() const { return fAnimName; }
+    ST::string GetAnimName() const { return fAnimName; }
 
     ForwardType GetForwardType();
     void SetForwardType(ForwardType t);
@@ -234,8 +234,8 @@ public:
     void DumpDebug(bool active, int &x, int &y, int lineHeight, plDebugText &debugTxt);
 
     // STANDARD PLASMA PROTOCOL
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
     virtual void SaveAux(hsStream *stream, hsResMgr *mgr);
     virtual void LoadAux(hsStream *stream, hsResMgr *mgr, double time);
@@ -255,7 +255,7 @@ protected:
 
     bool ISendNotify(uint32_t notifyMask, uint32_t notifyType, plArmatureMod *armature, plArmatureBrain *brain);
 
-    plString fAnimName;         // the name of our animation
+    ST::string fAnimName;       // the name of our animation
     uint8_t fNotify;            // flags for which events will cause notification events
     int fLoops;                 // how many times will this animation loop (after initial playthrough?)
 

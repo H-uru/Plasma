@@ -46,9 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentBase.h"
 #include "MaxMain/plMaxNodeBase.h"
 #include "resource.h"
-#pragma hdrstop
 
 #include "plResponderGetComp.h"
+#include "MaxMain/MaxAPI.h"
 #include "MaxMain/plMaxAccelerators.h"
 
 plResponderGetComp& plResponderGetComp::Instance()
@@ -66,7 +66,7 @@ bool plResponderGetComp::GetComp(IParamBlock2 *pb, int nodeID, int compID, Class
 
     plMaxAccelerators::Disable();
 
-    int ret = DialogBox(hInstance,
+    INT_PTR ret = DialogBox(hInstance,
                         MAKEINTRESOURCE(IDD_COMP_RESPOND_ANIMPICK),
                         GetCOREInterface()->GetMAXHWnd(),
                         ForwardDlgProc);
@@ -83,7 +83,7 @@ plComponentBase *plResponderGetComp::GetSavedComp(IParamBlock2 *pb, int nodeID, 
     plMaxNodeBase *comp = (plMaxNodeBase*)pb->GetReferenceTarget(compID);
 
     if (!node || (convertTime && !node->CanConvert()) || !comp)
-        return nil;
+        return nullptr;
 
     int numComps = node->NumAttachedComponents();
     for (int i = 0; i < numComps; i++)
@@ -93,7 +93,7 @@ plComponentBase *plResponderGetComp::GetSavedComp(IParamBlock2 *pb, int nodeID, 
             return thisComp;
     }
 
-    return nil;
+    return nullptr;
 }
 void plResponderGetComp::IFindCompsRecur(plMaxNodeBase *node, NodeSet& nodes)
 {
@@ -117,7 +117,7 @@ void plResponderGetComp::ILoadNodes(plMaxNodeBase *compNode, HWND hDlg)
     HWND hNodes = GetDlgItem(hDlg, IDC_OBJ_LIST);
     ListBox_ResetContent(hNodes);
 
-    plComponentBase *comp = compNode ? compNode->ConvertToComponent() : nil;
+    plComponentBase *comp = compNode ? compNode->ConvertToComponent() : nullptr;
     if (!comp)
         return;
 
@@ -137,12 +137,12 @@ void plResponderGetComp::ILoadNodes(plMaxNodeBase *compNode, HWND hDlg)
     }
 }
 
-BOOL CALLBACK plResponderGetComp::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK plResponderGetComp::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     return Instance().DlgProc(hDlg, msg, wParam, lParam);
 }
 
-BOOL plResponderGetComp::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plResponderGetComp::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -179,14 +179,14 @@ BOOL plResponderGetComp::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
             // Get the selected node
             HWND hNode = GetDlgItem(hDlg, IDC_OBJ_LIST);
             int idx = ListBox_GetCurSel(hNode);
-            plMaxNodeBase *node = nil;
+            plMaxNodeBase *node = nullptr;
             if (idx != LB_ERR)
                 node = (plMaxNodeBase*)ListBox_GetItemData(hNode, idx);
 
             // Get the selected component
             HWND hComp = GetDlgItem(hDlg, IDC_COMP_LIST);
             idx = ListBox_GetCurSel(hComp);
-            plMaxNodeBase *comp = nil;
+            plMaxNodeBase *comp = nullptr;
             if (idx != LB_ERR)
                 comp = (plMaxNodeBase*)ListBox_GetItemData(hComp, idx);
 
@@ -257,7 +257,7 @@ void plResponderCompNode::InitDlg(HWND hWnd)
 bool plResponderCompNode::IValidate()
 {
     plMaxNodeBase *savedComp = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
-    plComponentBase *comp = savedComp ? savedComp->ConvertToComponent() : nil;
+    plComponentBase *comp = savedComp ? savedComp->ConvertToComponent() : nullptr;
     plMaxNodeBase *node = (plMaxNodeBase*)fPB->GetReferenceTarget(fNodeID);
     if (comp && node)
     {
@@ -274,8 +274,8 @@ bool plResponderCompNode::IValidate()
 
             if (!foundCID)
             {
-                fPB->SetValue(fCompID, 0, (INode*)nil);
-                fPB->SetValue(fNodeID, 0, (INode*)nil);
+                fPB->SetValue(fCompID, 0, (INode*)nullptr);
+                fPB->SetValue(fNodeID, 0, (INode*)nullptr);
                 return false;
             }
         }
@@ -284,7 +284,7 @@ bool plResponderCompNode::IValidate()
         if (comp->IsTarget(node))
             return true;
         else
-            fPB->SetValue(fNodeID, 0, (INode*)nil);
+            fPB->SetValue(fNodeID, 0, (INode*)nullptr);
     }
 
     return false;
@@ -301,7 +301,7 @@ void plResponderCompNode::CompButtonPress(HWND hWnd)
 void plResponderCompNode::NodeButtonPress(HWND hWnd)
 {
     plMaxNodeBase *node = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
-    plComponentBase *comp = node ? node->ConvertToComponent() : nil;
+    plComponentBase *comp = node ? node->ConvertToComponent() : nullptr;
     if (comp)
         plPick::CompTargets(fPB, fNodeID, comp);
 
@@ -317,7 +317,7 @@ void plResponderCompNode::IUpdateCompButton(HWND hWnd)
     if (savedComp)
         SetWindowText(hComp, savedComp->GetName());
     else
-        SetWindowText(hComp, "(none)");
+        SetWindowText(hComp, _T("(none)"));
 }
 
 void plResponderCompNode::IUpdateNodeButton(HWND hWnd)
@@ -326,11 +326,11 @@ void plResponderCompNode::IUpdateNodeButton(HWND hWnd)
 
     // If there is no component, disable the node button
     plMaxNodeBase *node = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
-    plComponentBase *comp = node ? node->ConvertToComponent() : nil;
+    plComponentBase *comp = node ? node->ConvertToComponent() : nullptr;
     if (!comp)
     {
         EnableWindow(hNode, FALSE);
-        SetWindowText(hNode, "(none)");
+        SetWindowText(hNode, _T("(none)"));
         return;
     }
     EnableWindow(hNode, TRUE);
@@ -339,20 +339,20 @@ void plResponderCompNode::IUpdateNodeButton(HWND hWnd)
     if (objNode && comp->IsTarget(objNode))
         SetWindowText(hNode, objNode->GetName());
     else
-        SetWindowText(hNode, "(none)");
+        SetWindowText(hNode, _T("(none)"));
 }
 
 bool plResponderCompNode::GetCompAndNode(plComponentBase*& comp, plMaxNodeBase*& node)
 {
     if (!IValidate())
     {
-        comp = nil;
-        node = nil;
+        comp = nullptr;
+        node = nullptr;
         return false;
     }
 
     plMaxNodeBase *savedComp = (plMaxNodeBase*)fPB->GetReferenceTarget(fCompID);
-    comp = savedComp ? savedComp->ConvertToComponent() : nil;
+    comp = savedComp ? savedComp->ConvertToComponent() : nullptr;
     node = (plMaxNodeBase*)fPB->GetReferenceTarget(fNodeID);
 
     return true;

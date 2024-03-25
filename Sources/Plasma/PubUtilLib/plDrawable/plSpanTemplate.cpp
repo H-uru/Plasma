@@ -48,16 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 
 
-
-plSpanTemplate::plSpanTemplate()
-:   fNumVerts(0),
-    fFormat(0),
-    fData(nil),
-    fNumTris(0),
-    fIndices(nil)
-{
-}
-
 uint32_t plSpanTemplate::CalcStride() 
 {
     fStride = 0;
@@ -102,8 +92,8 @@ void plSpanTemplate::DeAlloc()
     fNumVerts = 0;
     fFormat = 0;
 
-    fData = nil;
-    fIndices = nil;
+    fData = nullptr;
+    fIndices = nullptr;
 }
 
 void plSpanTemplate::Read(hsStream* stream)
@@ -148,6 +138,6 @@ void plSpanTemplateB::DeAllocColors()
     delete [] fMultColors;
     delete [] fAddColors;
 
-    fMultColors = nil;
-    fAddColors = nil;
+    fMultColors = nullptr;
+    fAddColors = nullptr;
 }

@@ -46,7 +46,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plCrashBase.h"
 
+#include "pfCrashHandler/plStackWalker.h" // IWYU
+
+#include <tuple>
+#include <vector>
+
 struct plCrashMemLink;
+
+enum class plCrashResult
+{
+    /** The crash client exited normally. */
+    kClientExited,
+
+    /** The crash client exited by crashing. */
+    kClientCrashed,
+};
 
 class plCrashSrv : public plCrashBase
 {
@@ -56,13 +70,20 @@ class plCrashSrv : public plCrashBase
     HANDLE fLinkH;
 #endif
 
-    void IHandleCrash();
+    std::vector<plStackEntry> IHandleCrash();
 
 public:
-    plCrashSrv(const char* file);
+    plCrashSrv(const ST::string& file);
     ~plCrashSrv();
 
-    void HandleCrash();
+    /**
+     * Wait for a client crash and handle it.
+     * This will wait on the client to exit. If the client exits, a platform
+     * dependent crash dump will be written to the log directory and a stack
+     * trace will be generated, if supported.
+     */
+    [[nodiscard]]
+    std::tuple<plCrashResult, std::vector<plStackEntry>> HandleCrash();
 };
 
 #endif // _pfCrashSrv_h_

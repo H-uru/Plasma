@@ -42,8 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_NET_CLIENT_inc
 #define PL_NET_CLIENT_inc
 
-#include "HeadSpin.h"
 #include <list>
+#include <string>
+#include <vector>
+
+#include <string_theory/string>
 
 #include "plNetClientGroup.h"
 #include "plNetVoiceList.h"
@@ -53,11 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetCommon/plNetApp.h"
 
 #include "plNetTransport/plNetTransport.h"
-#include "pnEncryption/plChecksum.h"
-#include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetClientComm/plNetClientComm.h"
 #include "plUnifiedTime/plUnifiedTime.h"
-#pragma warning(disable: 4284)
 
 ////////////////////////////////////////////////////////////////////
 
@@ -69,7 +69,6 @@ class plSynchedObject;
 struct DistSqInfo;
 class plStatusLog;
 class plOperationProgress;
-class plIDataServer;
 class plPlate;
 class plLoadCloneMsg;
 class plPlayerPageMsg;
@@ -82,25 +81,11 @@ class plCCRPetitionMsg;
 class plNetMsgPagingRoom;
 
 
-struct plNetClientCommMsgHandler : plNetClientComm::MsgHandler {
-    int HandleMessage( plNetMessage* msg ); 
-};
-
 class plNetClientMgr : public plNetClientApp
 {
 private:
     typedef std::vector<plKey> plKeyVec;
 public:
-
-    enum NetChannels
-    {
-        kNetChanDefault,
-        kNetChanVoice,
-        kNetChanListenListUpdate,
-        kNetChanDirectedMsg,
-        kNetNumChannels
-    };
-
     enum DirectedSendFlags
     {
         kInterAgeMsg = 0x1
@@ -162,9 +147,8 @@ private:
     std::string         fSPDesiredPlayerName;   // SP: the player we want to load from vault.
     
     // server info
-    double              fServerTimeOffset;      // diff between our unified time and server's unified time
-    uint32_t              fTimeSamples;
-    double              fLastTimeUpdate;
+    plUnifiedTime       fLastServerTime;       // Last received time update from the server
+    double              fLastLocalTime;        // Last monotonic time (in seconds) when the above update was received
 
     uint8_t               fJoinOrder;         // returned by the server
     
@@ -203,16 +187,16 @@ private:
     void IShowAvatars();
     void IShowRelevanceRegions();
     
-    int ISendDirtyState(double secs);
-    int ISendMembersListRequest();
-    int ISendRoomsReset();
+    void ISendDirtyState(double secs);
+    void ISendMembersListRequest();
+    void ISendRoomsReset();
     void ISendCCRPetition(plCCRPetitionMsg* petMsg);    
     void ISendCameraReset(bool bEnteringAge);
     
     bool IUpdateListenList(double secs);
     void IHandleNetVoiceListMsg(plNetVoiceListMsg* msg);
     bool IApplyNewListenList(std::vector<DistSqInfo>& newListenList, bool forceSynch);
-    int IPrepMsg(plNetMessage* msg);
+    void IPrepMsg(plNetMessage* msg);
     void IPlayerChangeAge(bool exiting, int32_t spawnPt);   
     
     void IAddCloneRoom();
@@ -234,10 +218,10 @@ private:
 
     void    IDumpOSVersionInfo() const;
 
-    int ISendGameMessage(plMessage* msg);
+    void ISendGameMessage(plMessage* msg) override;
     void IDisableNet ();
 
-    void ICreateStatusLog() const HS_OVERRIDE;
+    void ICreateStatusLog() const override;
 
 public:
     plNetClientMgr();
@@ -248,24 +232,24 @@ public:
 
     static plNetClientMgr* GetInstance() { return plNetClientMgr::ConvertNoRef(fInstance); }
 
-    bool MsgReceive(plMessage* msg);
-    void Shutdown();
-    int  Init();
+    bool MsgReceive(plMessage* msg) override;
+    void Shutdown() override;
+    void Init();
 
-    void QueueDisableNet (bool showDlg, const char msg[]);
+    void QueueDisableNet(bool showDlg, const char msg[]) override;
 
-    int SendMsg(plNetMessage* msg);
-    int Update(double secs);
-    int IsLocallyOwned(const plSynchedObject* obj) const;   // returns yes/no/maybe
-    int IsLocallyOwned(const plUoid&) const;        // for special cases, like sceneNodes. returns yes/no/maybe 
+    void SendMsg(plNetMessage* msg) override;
+    void Update(double secs) override;
+    int IsLocallyOwned(const plSynchedObject* obj) const override;   // returns yes/no/maybe
+    int IsLocallyOwned(const plUoid&) const override;        // for special cases, like sceneNodes. returns yes/no/maybe
     plNetGroupId GetEffectiveNetGroup(const plSynchedObject*& obj) const;
-    plNetGroupId SelectNetGroup(plSynchedObject* objIn, plKey groupKey);
+    plNetGroupId SelectNetGroup(plSynchedObject* objIn, const plKey& groupKey) override;
 
     void SendLocalPlayerAvatarCustomizations();
     void SendApplyAvatarCustomizationsMsg(const plKey msgReceiver, bool netPropagate=true, bool localPropagate=true);
 
     // plLoggable
-    bool Log(const plString& str) const HS_OVERRIDE;
+    bool Log(const ST::string& str) const override;
 
     // setters
     void SetIniAuthServer(const char * value)  { fIniAuthServer=value;}
@@ -281,18 +265,15 @@ public:
     void SetPingServer(uint8_t serverType) { fPingServerType = serverType; }
     
     // getters
-    uint32_t            GetPlayerID( void ) const;
-    plString            GetPlayerName( const plKey avKey=nil ) const;
-    plString            GetPlayerNameById (unsigned playerId) const;
-    unsigned            GetPlayerIdByName(const plString & name) const;
+    uint32_t            GetPlayerID() const override;
+    ST::string          GetPlayerName(const plKey avKey={}) const override;
+    ST::string          GetPlayerNameById (unsigned playerId) const;
+    unsigned            GetPlayerIdByName(const ST::string & name) const;
 
-    uint8_t GetJoinOrder()              const { return fJoinOrder; }    // only valid at join time
+    uint8_t GetJoinOrder()     const override { return fJoinOrder; }    // only valid at join time
 
-    plKey GetLocalPlayerKey()           const { return fLocalPlayerKey; }
-    plSynchedObject* GetLocalPlayer(bool forceLoad=false) const;
-    
-    bool IsPeerToPeer()               const { return false; }
-    bool IsConnected()                const { return true; }
+    plKey GetLocalPlayerKey()  const override { return fLocalPlayerKey; }
+    plSynchedObject* GetLocalPlayer(bool forceLoad=false) const override;
 
     void IncNumInitialSDLStates();
     void ResetNumInitialSDLStates() { fNumInitialSDLStates=0; }
@@ -311,14 +292,14 @@ public:
     const plKeyVec& NPCKeys() const { return fNPCKeys; }
     plSynchedObject* GetNPC(uint32_t i) const;
     void AddNPCKey(const plKey& npc);
-    bool IsNPCKey(const plKey& npc, int* idx=nil) const;
+    bool IsNPCKey(const plKey& npc, int* idx=nullptr) const;
     
     // remote players
     const plKeyVec& RemotePlayerKeys() const { return fRemotePlayerKeys;  }
     plSynchedObject* GetRemotePlayer(int i) const;
     void AddRemotePlayerKey(plKey p);
-    bool IsRemotePlayerKey(const plKey p, int* idx=nil);
-    bool IsAPlayerKey(const plKey pKey) { return (pKey==GetLocalPlayerKey() || IsRemotePlayerKey(pKey));    }
+    bool IsRemotePlayerKey(const plKey& p, int* idx=nullptr) override;
+    bool IsAPlayerKey(const plKey& pKey) { return (pKey==GetLocalPlayerKey() || IsRemotePlayerKey(pKey));    }
 
     void SetConsoleOutput( bool b ) { SetFlagsBit(kConsoleOutput, b); }
     bool GetConsoleOutput() const { return GetFlagsBit(kConsoleOutput); }
@@ -340,13 +321,13 @@ public:
     const plNetTransport& TransportMgr() const { return fTransport; }
     plNetTransport& TransportMgr() { return fTransport; }
     
-    bool ObjectInLocalAge(const plSynchedObject* obj) const;
+    bool ObjectInLocalAge(const plSynchedObject* obj) const override;
     
     // time converters
     plUnifiedTime GetServerTime() const;
-    const char* GetServerLogTimeAsString(plString& ts) const;
+    const char* GetServerLogTimeAsString(ST::string& ts) const override;
     double GetCurrentAgeElapsedSeconds() const;
-    float GetCurrentAgeTimeOfDayPercent() const;
+    float GetCurrentAgeTimeOfDayPercent() const override;
 
     bool RecordMsgs(const char* recType, const char* recName);
     bool PlaybackMsgs(const char* recName);
@@ -358,9 +339,9 @@ public:
 
     void AddPendingLoad(PendingLoad *pl);
     const plKey& GetAgeSDLObjectKey() const { return fAgeSDLObjectKey; }
-    plUoid GetAgeSDLObjectUoid(const plString& ageName) const;
+    plUoid GetAgeSDLObjectUoid(const ST::string& ageName) const override;
     plNetClientComm& GetNetClientComm()  { return fNetClientComm; }
-    plString GetNextAgeFilename() const;
+    ST::string GetNextAgeFilename() const;
     void SetOverrideAgeTimeOfDayPercent(float f) { fOverrideAgeTimeOfDayPercent=f;  }
 
     void AddPendingPagingRoomMsg( plNetMsgPagingRoom * msg );
@@ -374,25 +355,19 @@ public:
     void BeginTask();
     void EndTask();
 
-    bool DebugMsgV(const char* fmt, va_list args) const;
-    bool ErrorMsgV(const char* fmt, va_list args) const; 
-    bool WarningMsgV(const char* fmt, va_list args) const; 
-    bool AppMsgV(const char* fmt, va_list args) const;
-
     bool IsObjectOwner();
     void SetObjectOwner(bool own);
 
     void StoreSDLState(const plStateDataRecord* sdRec, const plUoid& uoid, uint32_t sendFlags, uint32_t writeOptions);
 
     void UpdateServerTimeOffset(plNetMessage* msg);
-    void ResetServerTimeOffset(bool delayed=false);
+    void ResetServerTimeOffset();
 
 private:
     plNetClientComm             fNetClientComm;
-    plNetClientCommMsgHandler   fNetClientCommMsgHandler;
-    
-    int IInitNetClientComm();
-    int IDeInitNetClientComm();
+
+    void IInitNetClientComm();
+    void IDeInitNetClientComm();
     void INetClientCommOpStarted(uint32_t context);
     void INetClientCommOpComplete(uint32_t context, int resultCode);
 
@@ -401,14 +376,7 @@ private:
     friend class plNetDniInfoSource;
     friend class plNetTalkList;
     friend class plNetClientMsgHandler;
-    friend struct plNetClientCommMsgHandler;
 };
-
-#define plCheckNetMgrResult_VoidReturn(r,s)     if (hsFailed(r)) { ErrorMsg(s); hsAssert(false,s); return; }
-// returns int
-#define plCheckNetMgrResult_ValReturn(r,s)      if (hsFailed(r)) { ErrorMsg(s); hsAssert(false,s); return r; }
-// returns bool
-#define plCheckNetMgrResult_BoolReturn(r,s)     if (hsFailed(r)) { ErrorMsg(s); hsAssert(false,s); return false; }
 
 #endif  // PL_NET_CLIENT_inc
 

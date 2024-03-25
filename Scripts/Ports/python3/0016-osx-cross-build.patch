@@ -1,0 +1,33 @@
+diff --git a/configure b/configure
+index 56a3d5c..b7814d4 100755
+--- a/configure
++++ b/configure
+@@ -3349,12 +3349,18 @@ then
+ 	*-*-vxworks*)
+ 	    ac_sys_system=VxWorks
+ 	    ;;
++	*-apple-darwin)
++	    ac_sys_system=Darwin
++	    ;;
+ 	*)
+ 		# for now, limit cross builds to known configurations
+ 		MACHDEP="unknown"
+ 		as_fn_error $? "cross build not supported for $host" "$LINENO" 5
+ 	esac
+ 	ac_sys_release=
++	if test "$ac_sys_system" = "Darwin"; then
++		ac_sys_release=`uname -r` # assume same release on x64 and arm64
++	fi
+     else
+ 	ac_sys_system=`uname -s`
+ 	if test "$ac_sys_system" = "AIX" \
+@@ -3399,6 +3405,9 @@ if test "$cross_compiling" = yes; then
+ 	*-*-vxworks*)
+ 		_host_cpu=$host_cpu
+ 		;;
++	*-apple-darwin)
++		_host_cpu=$host_cpu
++		;;
+ 	*)
+ 		# for now, limit cross builds to known configurations
+ 		MACHDEP="unknown"

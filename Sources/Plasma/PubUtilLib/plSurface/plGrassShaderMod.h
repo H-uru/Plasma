@@ -44,8 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnModifier/plModifier.h"
 
-class plSceneObject;
 class hsGMaterial;
+class plSceneObject;
 class plShader;
 
 class plGrassWave
@@ -67,21 +67,21 @@ public:
 class plGrassShaderMod : public plModifier
 {
 public:
-    plGrassShaderMod() : fTarget(nil), fMaterial(nil), fVShader(nil), fPShader(nil) {}
+    plGrassShaderMod() : fTarget(), fMaterial(), fVShader(), fPShader() { }
     ~plGrassShaderMod();
 
     void ResetWaves();
     void RefreshWaves();
 
-    virtual int GetNumTargets() const { return fTarget ? 1 : 0; }
-    virtual plSceneObject* GetTarget(int w) const { return fTarget; }
-    virtual void AddTarget(plSceneObject *object);
-    virtual void RemoveTarget(plSceneObject *object);
+    size_t GetNumTargets() const override { return fTarget ? 1 : 0; }
+    plSceneObject* GetTarget(size_t w) const override { return fTarget; }
+    void AddTarget(plSceneObject *object) override;
+    void RemoveTarget(plSceneObject *object) override;
 
-    virtual bool MsgReceive(plMessage *msg);
+    bool MsgReceive(plMessage *msg) override;
 
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *stream, hsResMgr *mgr) override;
 
     CLASSNAME_REGISTER( plGrassShaderMod );
     GETINTERFACE_ANY( plGrassShaderMod, plModifier );
@@ -99,7 +99,7 @@ public:
     plGrassWave fWaves[kNumWaves];
 
 protected:
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
     virtual void IApplyDynamic() {};    // dummy function required by base class
     void ISetupShaders();
     void IRefreshWaves(plShader *vShader);

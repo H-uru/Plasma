@@ -44,7 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plgDispatch.h"
 
-#include "plAgeLoader/plAgeLoader.h"
+#include <string_theory/format>
+
+#include "plAgeLoader.h"
 #include "plFile/plEncryptedStream.h"
 #include "plFile/plStreamSource.h"
 #include "plFile/plSecureStream.h"
@@ -54,7 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plResManager.h"
 
 extern bool gDataServerLocal;
-bool gSkipPreload = false;
+bool gPythonLocal = false;
+bool gSDLLocal = false;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -74,19 +77,19 @@ void plResPatcher::Shutdown()
 
 /////////////////////////////////////////////////////////////////////////////
 
-void plResPatcher::OnCompletion(ENetError result, const plString& status)
+void plResPatcher::OnCompletion(ENetError result, const ST::string& status)
 {
-    plString error = plString::Null;
+    ST::string error;
     if (IS_NET_ERROR(result))
-        error = plFormat("Update Failed: {}\n{}", NetErrorAsString(result), status);
+        error = ST::format("Update Failed: {}\n{}", NetErrorAsString(result), status);
     plgDispatch::Dispatch()->MsgQueue(new plResPatcherMsg(IS_NET_SUCCESS(result), error));
 }
 
 void plResPatcher::OnFileDownloadBegin(const plFileName& file)
 {
-    fProgress->SetTitle(plFormat("Downloading {}...", file.GetFileName()));
+    fProgress->SetTitle(ST::format("Downloading {}...", file.GetFileName()));
 
-    if (file.GetFileExt().CompareI("prp") == 0) {
+    if (file.GetFileExt().compare_i("prp") == 0) {
         plResManager* mgr = static_cast<plResManager*>(hsgResMgr::ResMgr());
         if (mgr)
             mgr->RemoveSinglePage(file);
@@ -95,7 +98,7 @@ void plResPatcher::OnFileDownloadBegin(const plFileName& file)
 
 void plResPatcher::OnFileDownloaded(const plFileName& file)
 {
-    if (file.GetFileExt().CompareI("prp") == 0) {
+    if (file.GetFileExt().compare_i("prp") == 0) {
         plResManager* mgr = static_cast<plResManager*>(hsgResMgr::ResMgr());
         if (mgr)
             mgr->AddSinglePage(file);
@@ -104,27 +107,26 @@ void plResPatcher::OnFileDownloaded(const plFileName& file)
 
 bool plResPatcher::OnGameCodeDiscovered(const plFileName& file, hsStream* stream)
 {
-    plSecureStream* ss = new plSecureStream(false, plStreamSource::GetInstance()->GetEncryptionKey());
+    auto ss = std::make_unique<plSecureStream>(false, plStreamSource::GetInstance()->GetEncryptionKey());
     if (ss->Open(stream)) {
-        plStreamSource::GetInstance()->InsertFile(file, ss);
+        plStreamSource::GetInstance()->InsertFile(file, std::move(ss));
 
         // SecureStream will hold a decrypted buffer...
-        stream->Close();
         delete stream;
     } else
-        plStreamSource::GetInstance()->InsertFile(file, stream);
+        plStreamSource::GetInstance()->InsertFile(file, std::unique_ptr<hsStream>(stream));
 
     return true; // ASSume success for now...
 }
 
-void plResPatcher::OnProgressTick(uint64_t dl, uint64_t total, const plString& msg)
+void plResPatcher::OnProgressTick(uint64_t dl, uint64_t total, const ST::string& msg)
 {
     if (dl && total) {
-        fProgress->SetLength(total);
-        fProgress->SetHowMuch(dl);
+        fProgress->SetLength(float(total));
+        fProgress->SetHowMuch(float(dl));
     }
 
-    plString status = plFormat("{} / {}",
+    ST::string status = ST::format("{} / {}",
         plFileSystem::ConvertFileSize(dl),
         plFileSystem::ConvertFileSize(total)
     );
@@ -142,9 +144,13 @@ pfPatcher* plResPatcher::CreatePatcher()
     patcher->OnProgressTick(std::bind(&plResPatcher::OnProgressTick, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
     // sneaky hax: do the old SecurePreloader thing.... except here
-    if (!fRequestedGameCode && !gSkipPreload) {
+    if (!fRequestedGameCode && (!gPythonLocal || !gSDLLocal)) {
         patcher->OnGameCodeDiscovery(std::bind(&plResPatcher::OnGameCodeDiscovered, this, std::placeholders::_1, std::placeholders::_2));
-        patcher->RequestGameCode();
+
+        // There is a very special case for local data, and that is the SDL. The SDL is a contract that we have with the
+        // server. If the client and server have different ideas about what the SDL is, then we're really up poop creek.
+        // So, we *always* ask for the server's SDL unless we really, really, really don't want it.
+        patcher->RequestGameCode(!gPythonLocal, !gSDLLocal);
         fRequestedGameCode = true;
     }
 
@@ -167,27 +173,21 @@ plResPatcher::~plResPatcher()
     delete fProgress;
 }
 
-void plResPatcher::Update(const std::vector<plString>& manifests)
+void plResPatcher::Update(const std::vector<ST::string>& manifests)
 {
-    if (gDataServerLocal)
-        plgDispatch::Dispatch()->MsgSend(new plResPatcherMsg());
-     else {
-        InitProgress();
-        pfPatcher* patcher = CreatePatcher();
+    InitProgress();
+    pfPatcher* patcher = CreatePatcher();
+    if (!gDataServerLocal)
         patcher->RequestManifest(manifests);
-        patcher->Start(); // whoosh... off it goes
-    }
+    patcher->Start(); // whoosh... off it goes
 }
 
-void plResPatcher::Update(const plString& manifest)
+void plResPatcher::Update(const ST::string& manifest)
 {
-    if (gDataServerLocal)
-        plgDispatch::Dispatch()->MsgSend(new plResPatcherMsg());
-    else {
-        InitProgress();
-        pfPatcher* patcher = CreatePatcher();
+    InitProgress();
+    pfPatcher* patcher = CreatePatcher();
+    if (!gDataServerLocal)
         patcher->RequestManifest(manifest);
-        patcher->Start(); // whoosh... off it goes
-    }
+    patcher->Start(); // whoosh... off it goes
 }
 

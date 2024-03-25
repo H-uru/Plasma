@@ -44,6 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../../AssetMan/PublicInterface/AssManBaseTypes.h"
 #endif
 
+#include "MaxMain/MaxAPI.h"
+
+
 class plClothingEditBox
 {
 protected:
@@ -55,19 +58,19 @@ protected:
     void IGetText(IParamBlock2 *pb, HWND hCtrl)
     {
         // Get the previous value
-        const char *oldVal = pb->GetStr(fPBEditID);
+        const MCHAR* oldVal = pb->GetStr(fPBEditID);
         if (!oldVal)
-            oldVal = "";
+            oldVal = _M("");
 
         // Get the text from the edit and store it in the paramblock
         int len = GetWindowTextLength(hCtrl)+1;
         if (len > 1)
         {
-            char *buf = new char[len];
+            TCHAR* buf = new TCHAR[len];
             GetWindowText(hCtrl, buf, len);
 
             // If the old value is different from the current one, update
-            if (strcmp(oldVal, buf))
+            if (_tcscmp(oldVal, buf))
                 pb->SetValue(fPBEditID, 0, buf);
 
             delete [] buf;
@@ -75,8 +78,8 @@ protected:
         else
         {
             // If the old value wasn't empty, update
-            if (*oldVal != '\0')
-                pb->SetValue(fPBEditID, 0, "");
+            if (*oldVal != _M('\0'))
+                pb->SetValue(fPBEditID, 0, _M(""));
         }
     }
 
@@ -85,8 +88,8 @@ public:
 
     void UpdateText(IParamBlock2 *pb, HWND hWnd)
     {
-        const char *str = pb->GetStr(fPBEditID);
-        SetDlgItemText(hWnd, fCtrlID, (str != nil ? str : ""));
+        const MCHAR* str = pb->GetStr(fPBEditID);
+        SetDlgItemText(hWnd, fCtrlID, (str != nullptr ? str : _T("")));
     }
 
     BOOL ProcessMsg(IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -151,29 +154,28 @@ public:
         IParamBlock2 *pb = pmap->GetParamBlock();
 
         plClothingMtl *mtl = (plClothingMtl *)pb->GetOwner();
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         plPlasmaMAXLayer *layer;
         PBBitmap *pbbm;
         ICustButton *bmSelectBtn;
-        char buff[256];
+        TCHAR buff[256];
 
         // Setup the tiles
-        int i, j;
         int layerSet = pb->GetInt(ParamID(plClothingMtl::kLayer));
         int layerIdx = plClothingMtl::LayerToPBIdx[layerSet];
-        for (j = 0; j < plClothingMtl::kMaxTiles; j++)
+        for (int j = 0; j < plClothingMtl::kMaxTiles; j++)
         {
             layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(layerIdx), 0, j);
-            pbbm = (layer == nil ? nil : layer->GetPBBitmap());
+            pbbm = (layer == nullptr ? nullptr : layer->GetPBBitmap());
 
             bmSelectBtn = GetICustButton(GetDlgItem(hWnd, plClothingMtl::ButtonConstants[j]));
-            bmSelectBtn->SetText(pbbm ? (TCHAR*)pbbm->bi.Filename() : "(none)");
+            bmSelectBtn->SetText(pbbm ? (MCHAR*)pbbm->bi.Filename() : _M("(none)"));
             ReleaseICustButton(bmSelectBtn);
         }
 
         // And the thumbnail...
         layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(plClothingMtl::kThumbnail));
-        if (layer == nil)
+        if (layer == nullptr)
         {
             layer = new plLayerTex;
             pb->SetValue(ParamID(plClothingMtl::kThumbnail), 0, layer);
@@ -190,21 +192,21 @@ public:
         ComboBox_SetCurSel(GetDlgItem(hWnd, IDC_CLOTHING_TILESET), setIdx);
         ComboBox_SetCurSel(GetDlgItem(hWnd, IDC_CLOTHING_LAYER), pb->GetInt(ParamID(plClothingMtl::kLayer)));
         mtl->InitTilesets();
-        plClothingTileset *tileset = mtl->fTilesets.Get(setIdx);
-        for (i = 0; i < tileset->fElements.GetCount(); i++)
+        plClothingTileset *tileset = mtl->fTilesets[setIdx];
+        for (size_t i = 0; i < tileset->fElements.size(); i++)
         {
-            plClothingElement *element = tileset->fElements.Get(i);
+            plClothingElement *element = tileset->fElements[i];
             SendMessage(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i]), 
-                        WM_SETTEXT, NULL, (LPARAM)element->fName.c_str());
-            snprintf(buff, arrsize(buff), "(%d, %d)", element->fWidth, element->fHeight);
+                        WM_SETTEXT, 0, (LPARAM)ST2T(element->fName));
+            _sntprintf(buff, std::size(buff), _T("(%d, %d)"), element->fWidth, element->fHeight);
             SendMessage(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i + 1]), 
-                        WM_SETTEXT, NULL, (LPARAM)buff);
+                        WM_SETTEXT, 0, (LPARAM)buff);
             
             ShowWindow(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i]), SW_SHOW); 
             ShowWindow(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i + 1]), SW_SHOW); 
             ShowWindow(GetDlgItem(hWnd, plClothingMtl::ButtonConstants[i]), SW_SHOW);   
         }
-        for (i = tileset->fElements.GetCount(); i < plClothingMtl::kMaxTiles; i++)
+        for (size_t i = tileset->fElements.size(); i < plClothingMtl::kMaxTiles; i++)
         {
             ShowWindow(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i]), SW_HIDE); 
             ShowWindow(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i + 1]), SW_HIDE); 
@@ -215,9 +217,9 @@ public:
         fCustomText.UpdateText(pb, hWnd);
     }
 
-    virtual void Update(TimeValue t, Interval& valid, IParamMap2* pmap) { UpdateDisplay(pmap); }
+    void Update(TimeValue t, Interval& valid, IParamMap2* pmap) override { UpdateDisplay(pmap); }
 
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         // Check if it is for our edit box
         if (fCustomText.ProcessMsg(map, hWnd, msg, wParam, lParam))
@@ -228,7 +230,7 @@ public:
 
         IParamBlock2 *pb = map->GetParamBlock();
         plClothingMtl *mtl = (plClothingMtl *)pb->GetOwner();
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         plPlasmaMAXLayer *layer;
         PBBitmap *pbbm;
         ICustButton *bmSelectBtn;
@@ -237,16 +239,15 @@ public:
         switch (msg)
         {
         case WM_INITDIALOG:
-            int j;
             mtl->InitTilesets();
             cbox = GetDlgItem(hWnd, IDC_CLOTHING_TILESET);
-            for (j = 0; j < mtl->fTilesets.GetCount(); j++)
-                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)mtl->fTilesets.Get(j)->fName);
+            for (plClothingTileset* set : mtl->fTilesets)
+                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)ST2T(set->fName));
 
             mtl->ReleaseTilesets();
 
             cbox = GetDlgItem(hWnd, IDC_CLOTHING_LAYER);
-            for (j = 0; j < plClothingElement::kLayerMax; j++)
+            for (int j = 0; j < plClothingElement::kLayerMax; j++)
                 ComboBox_AddString(cbox, plClothingMtl::LayerStrings[j]);
 
             return TRUE;
@@ -254,7 +255,7 @@ public:
         case WM_COMMAND:
             if (id == IDC_CLOTHING_TILESET)
             {
-                int setIdx = SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
+                int setIdx = (int)SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
                 pb->SetValue(plClothingMtl::kTileset, t, setIdx);
                 return TRUE;
             }
@@ -269,18 +270,18 @@ public:
             if (id == IDC_CLOTHING_THUMBNAIL)
             {
                 layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(plClothingMtl::kThumbnail));
-                if (layer == nil)
+                if (layer == nullptr)
                     return FALSE;
 
                 BitmapInfo bi;
-                bi.SetName(layer->GetPBBitmap() == nil ? "" : layer->GetPBBitmap()->bi.Name());
+                bi.SetName(layer->GetPBBitmap() == nullptr ? _M("") : layer->GetPBBitmap()->bi.Name());
 
                 BOOL selectedNewBitmap = layer->HandleBitmapSelection();
                 if (selectedNewBitmap)
                 {
                     pbbm = layer->GetPBBitmap();
                     bmSelectBtn = GetICustButton(GetDlgItem(hWnd, IDC_CLOTHING_THUMBNAIL));
-                    bmSelectBtn->SetText(pbbm != nil ? (TCHAR*)pbbm->bi.Filename() : "(none)");
+                    bmSelectBtn->SetText(pbbm != nullptr ? (MCHAR*)pbbm->bi.Filename() : _M("(none)"));
                     ReleaseICustButton(bmSelectBtn);
                 }
                 return TRUE;
@@ -295,7 +296,7 @@ public:
             if (buttonIdx != -1)
             {
                 layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(layerIdx), 0, buttonIdx);
-                if (layer == nil)
+                if (layer == nullptr)
                 { // First time we've set a layer on this spot
                     layer = new plLayerTex;
                     pb->SetValue(ParamID(layerIdx), 0, layer, buttonIdx);
@@ -307,7 +308,7 @@ public:
 #endif
 
                 BitmapInfo bi;
-                bi.SetName(layer->GetPBBitmap() == nil ? "" : layer->GetPBBitmap()->bi.Name());
+                bi.SetName(layer->GetPBBitmap() == nullptr ? _M("") : layer->GetPBBitmap()->bi.Name());
 
                 BOOL selectedNewBitmap = layer->HandleBitmapSelection();
                 if (selectedNewBitmap)
@@ -316,26 +317,36 @@ public:
                     bool choiceOk = true;
 
                     pbbm = layer->GetPBBitmap();
-                    if (pbbm != nil)
+                    if (pbbm != nullptr)
                     {
                         mtl->InitTilesets();
 
-                        plClothingTileset *tileset = mtl->fTilesets.Get(pb->GetInt(plClothingMtl::kTileset));
-                        plClothingElement *element = tileset->fElements.Get(buttonIdx);
+                        plClothingTileset *tileset = mtl->fTilesets[pb->GetInt(plClothingMtl::kTileset)];
+                        plClothingElement *element = tileset->fElements[buttonIdx];
                         float targRatio = (float)element->fWidth / (float)element->fHeight;
                         float ratio = (float)pbbm->bi.Width() / (float)pbbm->bi.Height();
 
                         if (targRatio != ratio)
                         {
                             choiceOk = false;
-                            hsMessageBox("That image's width/height ratio does not match the one for this tile. "
-                                         "Restoring the old selection.", "Invalid image", hsMessageBoxNormal);
+                            plMaxMessageBox(
+                                nullptr,
+                                _T("That image's width/height ratio does not match the one for this tile. "
+                                   "Restoring the old selection."),
+                                _T("Invalid image"),
+                                MB_OK | MB_ICONWARNING
+                            );
                         }
                         else if (pbbm->bi.Width() < element->fWidth)
                         {
                             choiceOk = false;
-                            hsMessageBox("The chosen image is too small for that tile slot. "
-                                         "Restoring the old selection.", "Invalid image", hsMessageBoxNormal);
+                            plMaxMessageBox(
+                                nullptr,
+                                _T("The chosen image is too small for that tile slot. "
+                                   "Restoring the old selection."),
+                                _T("Invalid image"),
+                                MB_OK | MB_ICONWARNING
+                            );
                         }
 
                         mtl->ReleaseTilesets();
@@ -350,7 +361,7 @@ public:
                     else
                     {
                         bmSelectBtn = GetICustButton(GetDlgItem(hWnd, plClothingMtl::ButtonConstants[buttonIdx]));
-                        bmSelectBtn->SetText(pbbm != nil ? (TCHAR*)pbbm->bi.Filename() : "(none)");
+                        bmSelectBtn->SetText(pbbm != nullptr ? (MCHAR*)pbbm->bi.Filename() : _M("(none)"));
                         ReleaseICustButton(bmSelectBtn);
                     }
                 }
@@ -361,7 +372,7 @@ public:
         return FALSE;
     }
 
-    virtual void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static ClothingBasicDlgProc gClothingBasicDlgProc;
 
@@ -375,70 +386,70 @@ static ParamBlockDesc2 gClothingMtlPB
 
     plClothingMtl::kTileset,    _T("tileset"),  TYPE_INT, 0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     plClothingMtl::kTexmap,     _T("texmap"),   TYPE_TEXMAP_TAB, plClothingMtl::kMaxTiles,      0, 0,
-        end,
+        p_end,
 
     plClothingMtl::kDescription,    _T("ItemDescription"),  TYPE_STRING,    0, 0,
         p_ui,   TYPE_EDITBOX, IDC_CLOTHING_DESCRIPTION,
-        end,
+        p_end,
 
     plClothingMtl::kThumbnail,  _T("Thumbnail"),    TYPE_TEXMAP, 0, 0,
-        end,
+        p_end,
 
     plClothingMtl::kLayer,  _T("Layer"),        TYPE_INT, 0, 0,
         p_default, plClothingElement::kLayerTint1,
-        end,
+        p_end,
 
     plClothingMtl::kTexmapSkin, _T("SkinLayer"),    TYPE_TEXMAP_TAB, plClothingMtl::kMaxTiles, 0, 0,
-        end,
+        p_end,
 
     plClothingMtl::kTexmap2, _T("TintLayer2"),  TYPE_TEXMAP_TAB, plClothingMtl::kMaxTiles, 0, 0,
-        end,
+        p_end,
         
     plClothingMtl::kDefault, _T("Default"), TYPE_BOOL, 0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_CLOTHING_DEFAULT,
         p_default, 0,
-        end,
+        p_end,
 
     plClothingMtl::kCustomTextSpecs, _T("TextSpecs"), TYPE_STRING, 0, 0,
-        end,
+        p_end,
 
     plClothingMtl::kTexmapBase, _T("BaseLayer"), TYPE_TEXMAP_TAB, plClothingMtl::kMaxTiles, 0, 0,
-        end, 
+        p_end, 
         
     plClothingMtl::kTexmapSkinBlend1, _T("SkinBlend(1)"), TYPE_TEXMAP_TAB, plClothingMtl::kMaxTiles, 0, 0,
-        end,
+        p_end,
 
     plClothingMtl::kTexmapSkinBlend2, _T("SkinBlend(2)"), TYPE_TEXMAP_TAB, plClothingMtl::kMaxTiles, 0, 0,
-        end,
+        p_end,
 
     plClothingMtl::kTexmapSkinBlend3, _T("SkinBlend(3)"), TYPE_TEXMAP_TAB, plClothingMtl::kMaxTiles, 0, 0,
-        end,
+        p_end,
 
     plClothingMtl::kTexmapSkinBlend4, _T("SkinBlend(4)"), TYPE_TEXMAP_TAB, plClothingMtl::kMaxTiles, 0, 0,
-        end,
+        p_end,
 
     plClothingMtl::kTexmapSkinBlend5, _T("SkinBlend(5)"), TYPE_TEXMAP_TAB, plClothingMtl::kMaxTiles, 0, 0,
-        end,
+        p_end,
 
     plClothingMtl::kTexmapSkinBlend6, _T("SkinBlend(6)"), TYPE_TEXMAP_TAB, plClothingMtl::kMaxTiles, 0, 0,
-        end,
+        p_end,
 
     plClothingMtl::kDefaultTint1,   _T("DefaultTint1"), TYPE_RGBA,  0, 0,
         p_ui, TYPE_COLORSWATCH, IDC_CLOTHING_TINT1,
         p_default,      Color(1,1,1),       
-        end,
+        p_end,
 
     plClothingMtl::kDefaultTint2,   _T("DefaultTint2"), TYPE_RGBA,  0, 0,
         p_ui, TYPE_COLORSWATCH, IDC_CLOTHING_TINT2,
         p_default,      Color(1,1,1),       
-        end,
+        p_end,
 
     plClothingMtl::kForcedAcc,  _T("ForcedAcc"), TYPE_STRING, 0, 0,
         p_ui, TYPE_EDITBOX, IDC_CLOTHING_FORCED_ACC,
-        end,
+        p_end,
         
-    end
+    p_end
 );

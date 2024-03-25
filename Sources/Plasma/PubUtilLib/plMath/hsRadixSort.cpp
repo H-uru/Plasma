@@ -41,13 +41,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsMemory.h"
 #include "hsRadixSort.h"
 
-hsRadixSort::hsRadixSort()
+hsRadixSort::hsRadixSort() : fList()
 {
-    HSMemory::Clear(fHeads, 256*sizeof(Elem*));
-    HSMemory::Clear(fTails, 256*sizeof(Elem*));
+    for (size_t i = 0; i < 256; i++) {
+        fHeads[i] = nullptr;
+        fTails[i] = nullptr;
+    }
 }
 
 void hsRadixSort::ILink(Elem*& head, Elem*& tail, int i)
@@ -60,7 +61,7 @@ void hsRadixSort::ILink(Elem*& head, Elem*& tail, int i)
             tail->fNext = fHeads[i];
         tail = fTails[i];
     }
-    fHeads[i] = fTails[i] = nil;
+    fHeads[i] = fTails[i] = nullptr;
 }
 
 void hsRadixSort::ISlot(Elem* in, int i)
@@ -69,14 +70,14 @@ void hsRadixSort::ISlot(Elem* in, int i)
         fHeads[i] = in;
     else
         fTails[i]->fNext = in;
-    in->fNext = nil;
+    in->fNext = nullptr;
     fTails[i] = in;
 }
 
 void hsRadixSort::ICollapse()
 {
-    Elem* head = nil;
-    Elem* tail = nil;
+    Elem* head = nullptr;
+    Elem* tail = nullptr;
 
     int i;
     for( i = 0; i < 256; i++ )
@@ -87,8 +88,8 @@ void hsRadixSort::ICollapse()
 
 void hsRadixSort::IUnPackSignedInt()
 {
-    Elem* head = nil;
-    Elem* tail = nil;
+    Elem* head = nullptr;
+    Elem* tail = nullptr;
 
     int i;
     for( i = 128; i < 256; i++ )
@@ -102,8 +103,8 @@ void hsRadixSort::IUnPackSignedInt()
 
 void hsRadixSort::IUnPackFloat()
 {
-    Elem* head = nil;
-    Elem* tail = nil;
+    Elem* head = nullptr;
+    Elem* tail = nullptr;
 
     int i;
     for( i = 128; i < 256; i++ )
@@ -125,7 +126,7 @@ void hsRadixSort::IReverse()
         return;
 
     Elem* p = fList->fNext;
-    fList->fNext = nil;
+    fList->fNext = nullptr;
     while( p )
     {
         Elem* n = p->fNext;

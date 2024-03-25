@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_PNNETCLI_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_PNNETCLI_H
 
+#include <functional>
+
 #include "pnEncryption/plBigNum.h"
 
 /*****************************************************************************
@@ -78,7 +80,7 @@ How to create a message sender/receiver:
     struct PlayerJoin {
         uint32_t   messageId;
         uint32_t   playerId;
-        wchar_t   name[kPlayerNameMaxLength];
+        char16_t   name[kPlayerNameMaxLength];
         uint8_t    data[kPlayerDataMaxLength];
         uint32_t   vaultDataLen;
         uint8_t    vaultData[1];   // vaultData[vaultDataLen], actually
@@ -101,7 +103,7 @@ How to create a message sender/receiver:
     static const NetMsgField kFieldPlayerId     = NET_MSG_FIELD_DWORD();
     static const NetMsgField kFieldObjectPos    = NET_MSG_FIELD_FLOAT_ARRAY(3);
     static const NetMsgField kFieldPlayerName   = NET_MSG_FIELD_STRING(kPlayerNameMaxLength);
-    static const NetMsgField kFieldPlayerData   = NET_MSG_FIELD_PTR(kPlayerDataMaxLength);
+    static const NetMsgField kFieldPlayerData   = NET_MSG_FIELD_DATA(kPlayerDataMaxLength);
     static const NetMsgField kFieldVaultDataLen = NET_MSG_FIELD_VAR_COUNT(kVaultDataMaxLength);
     static const NetMsgField kFieldVaultData    = NET_MSG_FIELD_VAR_PTR();
     static const NetMsgField kFieldPingTimeMs   = NET_MSG_FIELD_DWORD();
@@ -130,41 +132,20 @@ How to create a message sender/receiver:
 
 5. Register message description blocks
 
-// for server:
-    static const NetMsgInitSend s_srvSend[] = {
-        { s_moveObject  },
-        { s_playerJoin  },
-        { s_ping        },
-    };
-
-    static const NetMsgInitRecv s_srvRecv[] = {
-        { s_pingReply,  RecvMsgPingReply    },
-    };
-
-    s_srvConn = NetMsgProtocolRegister(
-        kNetProtocolCliToGame,
-        true,
-        s_srvSend, arrsize(s_srvSend),
-        s_srvRecv, arrsize(s_srvRecv)
-    );
-
-
-// for client:
-    static const NetMsgInitSend s_cliSend[] = {
+    static const NetMsgInitSend s_send[] = {
         { s_pingReply },
     };
 
-    static const NetMsgInitRecv s_cliRecv[] = {
+    static const NetMsgInitRecv s_recv[] = {
         { s_moveObject, RecvMsgMoveObject   },
         { s_playerJoin, RecvMsgPlayerJoin   },
         { s_ping,       RecvMsgPing         },
     };
 
-    s_cliConn = NetMsgProtocolRegister(
+    s_channel = NetMsgChannelCreate(
         kNetProtocolCliToGame,
-        false,
-        s_cliSend, arrsize(s_cliSend),
-        s_cliRecv, arrsize(s_cliRecv)
+        s_send, std::size(s_send),
+        s_recv, std::size(s_recv)
     );
 
 
@@ -176,7 +157,7 @@ How to create a message sender/receiver:
             obj->id,
             3, (uintptr_t) &obj->pos,
         };
-        NetCliSend(client, msgMoveObject, arrsize(msgMoveObject));
+        NetCliSend(client, msgMoveObject, std::size(msgMoveObject));
     }
 
     static void SendPlayerJoin (NetCli client, const Player * player) {
@@ -187,7 +168,7 @@ How to create a message sender/receiver:
             player->vault->Count(),
             player->vault->Ptr()
         };
-        NetCliSend(client, msgPlayerJoin, arrsize(msgPlayerJoin));
+        NetCliSend(client, msgPlayerJoin, std::size(msgPlayerJoin));
     };
 
     static void SendPing (NetCli player) {
@@ -195,7 +176,7 @@ How to create a message sender/receiver:
             kMsgPing,
             hsTimer::GetMilliSeconds<uint32_t>(),
         };
-        NetCliSend(player, msgPing, arrsize(msgPing));
+        NetCliSend(player, msgPing, std::size(msgPing));
     }
 
 
@@ -208,7 +189,7 @@ How to create a message sender/receiver:
             kMsgPingReply,
             ping->pingTimeMs,
         };
-        MsgConnSend(from, msgPingReply, arrsize(msgPingReply));
+        MsgConnSend(from, msgPingReply, std::size(msgPingReply));
     }
 
 *
@@ -230,20 +211,11 @@ How to create a message sender/receiver:
 ***/
 
 enum ENetMsgFieldType {
-    // Compressable fields
     kNetMsgFieldInteger,
-    kNetMsgFieldReal,
     kNetMsgFieldString,             // variable length unicode string
     kNetMsgFieldData,               // data with length <= sizeof(uint32_t)
-    kNetMsgFieldPtr,                // pointer to fixed length data
     kNetMsgFieldVarPtr,             // pointer to variable length data
-
-    // Non-compressible fields (images, sounds, encrypted data, etc)
-    kNetMsgFieldRawData,            // data with length <= sizeof(uint32_t)
-    kNetMsgFieldRawPtr,             // pointer to fixed length data
-    kNetMsgFieldRawVarPtr,          // pointer to variable length data
-
-    kNetMsgFieldVarCount,           // count for kNetMsgFieldVarPtr and kNetMsgFieldRawVarPtr
+    kNetMsgFieldVarCount,           // count for kNetMsgFieldVarPtr
 
     kNumNetMsgFieldTypes
 };
@@ -262,9 +234,8 @@ struct NetMsg {
     unsigned            count;
 };
 
-// Opaque types
+// Opaque type
 struct NetCli;
-struct NetCliQueue;
 
 
 /*****************************************************************************
@@ -273,35 +244,20 @@ struct NetCliQueue;
 *
 ***/
 
-#define NET_MSG(msgId, msgFields)               { #msgId, msgId, msgFields, arrsize(msgFields) }
+#define NET_MSG(msgId, msgFields)               { #msgId, msgId, msgFields, (unsigned)std::size(msgFields) }
 
-#define NET_MSG_FIELD(type, count, size)        { type, count, size }
+#define NET_MSG_FIELD_BYTE()                    { kNetMsgFieldInteger, 0, sizeof(uint8_t) }
+#define NET_MSG_FIELD_WORD()                    { kNetMsgFieldInteger, 0, sizeof(uint16_t) }
+#define NET_MSG_FIELD_DWORD()                   { kNetMsgFieldInteger, 0, sizeof(uint32_t) }
 
-#define NET_MSG_FIELD_BYTE()                    NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(uint8_t))
-#define NET_MSG_FIELD_WORD()                    NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(uint16_t))
-#define NET_MSG_FIELD_DWORD()                   NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(uint32_t))
-#define NET_MSG_FIELD_QWORD()                   NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(uint64_t))
-#define NET_MSG_FIELD_FLOAT()                   NET_MSG_FIELD(kNetMsgFieldReal, 0, sizeof(float))
-#define NET_MSG_FIELD_DOUBLE()                  NET_MSG_FIELD(kNetMsgFieldReal, 0, sizeof(double))
+#define NET_MSG_FIELD_BYTE_ARRAY(maxCount)      { kNetMsgFieldInteger, maxCount, sizeof(uint8_t) }
+#define NET_MSG_FIELD_WORD_ARRAY(maxCount)      { kNetMsgFieldInteger, maxCount, sizeof(uint16_t) }
+#define NET_MSG_FIELD_DWORD_ARRAY(maxCount)     { kNetMsgFieldInteger, maxCount, sizeof(uint32_t) }
 
-#define NET_MSG_FIELD_BYTE_ARRAY(maxCount)      NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(uint8_t))
-#define NET_MSG_FIELD_WORD_ARRAY(maxCount)      NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(uint16_t))
-#define NET_MSG_FIELD_DWORD_ARRAY(maxCount)     NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(uint32_t))
-#define NET_MSG_FIELD_QWORD_ARRAY(maxCount)     NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(uint64_t))
-#define NET_MSG_FIELD_FLOAT_ARRAY(maxCount)     NET_MSG_FIELD(kNetMsgFieldReal, maxCount, sizeof(float))
-#define NET_MSG_FIELD_DOUBLE_ARRAY(maxCount)    NET_MSG_FIELD(kNetMsgFieldReal, maxCount, sizeof(double))
-
-#define NET_MSG_FIELD_STRING(maxLength)         NET_MSG_FIELD(kNetMsgFieldString, maxLength, sizeof(wchar_t))
-
-#define NET_MSG_FIELD_DATA(maxBytes)            NET_MSG_FIELD(kNetMsgFieldData,     maxBytes, 1)
-#define NET_MSG_FIELD_PTR(maxBytes)             NET_MSG_FIELD(kNetMsgFieldPtr,      maxBytes, 1)
-#define NET_MSG_FIELD_RAW_DATA(maxBytes)        NET_MSG_FIELD(kNetMsgFieldRawData,  maxBytes, 1)
-#define NET_MSG_FIELD_RAW_PTR(maxBytes)         NET_MSG_FIELD(kNetMsgFieldRawPtr,   maxBytes, 1)
-
-#define NET_MSG_FIELD_VAR_PTR()                 NET_MSG_FIELD(kNetMsgFieldVarPtr,    0, 0)
-#define NET_MSG_FIELD_RAW_VAR_PTR()             NET_MSG_FIELD(kNetMsgFieldRawVarPtr, 0, 0)
-
-#define NET_MSG_FIELD_VAR_COUNT(elemSize, maxCount) NET_MSG_FIELD(kNetMsgFieldVarCount, maxCount, elemSize)
+#define NET_MSG_FIELD_STRING(maxLength)         { kNetMsgFieldString, maxLength, sizeof(char16_t) }
+#define NET_MSG_FIELD_DATA(maxBytes)            { kNetMsgFieldData, maxBytes, 1 }
+#define NET_MSG_FIELD_VAR_PTR()                 { kNetMsgFieldVarPtr, 0, 0 }
+#define NET_MSG_FIELD_VAR_COUNT(elemSize, maxCount) { kNetMsgFieldVarCount, maxCount, elemSize }
 
 
 /*****************************************************************************
@@ -309,6 +265,10 @@ struct NetCliQueue;
 *   Message channels
 *
 ***/
+
+// Opaque type
+namespace pnNetCli { struct NetMsgChannel; }
+using pnNetCli::NetMsgChannel;
 
 struct NetMsgInitSend {
     const NetMsg  *msg;
@@ -318,45 +278,20 @@ struct NetMsgInitRecv {
     bool (* recv)(const uint8_t msg[], unsigned bytes, void * param);
 };
 
-void NetMsgProtocolRegister (
+NetMsgChannel* NetMsgChannelCreate(
     uint32_t                protocol,       // from pnNetBase/pnNbProtocol.h
-    bool                    server,
     const NetMsgInitSend    sendMsgs[],     // messages this program can send
     uint32_t                sendMsgCount,
     const NetMsgInitRecv    recvMsgs[],     // messages this program can receive
     uint32_t                recvMsgCount,
     // Diffie-Hellman keys
     uint32_t                dh_g,
-    const plBigNum&         dh_xa,          // client: dh_x     server: dh_a
+    const plBigNum&         dh_x,
     const plBigNum&         dh_n
 );
 
-void NetMsgProtocolDestroy (
-    uint32_t                protocol,
-    bool                    server
-);
-
-
-/*****************************************************************************
-*
-*   NetCliQueue
-*
-***/
-
-NetCliQueue * NetCliQueueCreate (
-    unsigned        flushTimeMs
-);
-
-void NetCliQueueDestroy (
-    NetCliQueue *   queue
-);
-
-void NetCliQueueFlush (
-    NetCliQueue *   queue
-);
-
-float NetCliQueueQueryFlush (
-    NetCliQueue *   queue
+void NetMsgChannelDelete(
+    NetMsgChannel* channel
 );
 
 
@@ -366,47 +301,22 @@ float NetCliQueueQueryFlush (
 *
 ***/
 
-typedef bool (* FNetCliEncrypt) (
-    ENetError       error,
-    void *          encryptParam
-);
+// Manual forward declaration to avoid publicly including all of pnAsyncCore :(
+typedef struct AsyncSocketStruct* AsyncSocket;
+
+typedef std::function<bool(ENetError /* error */)> FNetCliEncrypt;
 
 NetCli * NetCliConnectAccept (
     AsyncSocket         sock,
-    unsigned            protocol,
+    NetMsgChannel*      channel,
     bool                unbuffered,
     FNetCliEncrypt      encryptFcn,
     unsigned            seedBytes,      // optional
-    const uint8_t          seedData[],     // optional
-    void *              encryptParam    // optional
+    const uint8_t       seedData[]      // optional
 );
-
-#ifdef SERVER
-NetCli * NetCliListenAccept (
-    AsyncSocket         sock,
-    unsigned            protocol,
-    bool                unbuffered,
-    FNetCliEncrypt      encryptFcn,
-    unsigned            seedBytes,      // optional
-    const uint8_t          seedData[],     // optional
-    void *              encryptParam    // optional
-);
-#endif
-
-#ifdef SERVER
-void NetCliListenReject (
-    AsyncSocket     sock,
-    ENetError       error
-);
-#endif
 
 void NetCliClearSocket (
     NetCli *        cli
-);
-
-void NetCliSetQueue (
-    NetCli *        cli,
-    NetCliQueue *   queue
 );
 
 void NetCliDisconnect (

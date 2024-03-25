@@ -48,9 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
-#include "pyGlueHelpers.h"
-#include <vector>
+#include "pyGlueDefinitions.h"
 
 class pyDrawControl
 {
@@ -58,8 +56,7 @@ protected:
     pyDrawControl() {};
 
 public:
-    static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
-    //static void AddPlasmaConstantsClasses(PyObject* m);
+    static void AddPlasmaMethods(PyObject* m);
 
     // static python functions
     static void SetGamma2(float gamma);

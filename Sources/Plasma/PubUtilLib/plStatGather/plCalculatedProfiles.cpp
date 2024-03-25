@@ -39,10 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "plCalculatedProfiles.h"
 #include "plProfile.h"
 #include "plProfileManager.h"
-#include "plNetClient/plNetClientMgr.h"
+
 #include "hsTimer.h"
+
 #include "plPipeline/plPlates.h"
 
 #ifdef HS_FIND_MEM_LEAKS
@@ -65,8 +68,8 @@ plProfile_CreateCounter("Polys Per Material", "General", PolysPerMat);
 void CalculateProfiles()
 {
     // KLUDGE - do timing that overlaps the beginframe / endframe (where timing is normally reset)
-    static uint32_t lastTicks = plProfileManager::GetTime();
-    uint32_t curTicks = plProfileManager::GetTime();
+    static uint64_t lastTicks = plProfileManager::GetTime();
+    uint64_t curTicks = plProfileManager::GetTime();
     gVarRFPS.Set(curTicks - lastTicks);
     lastTicks = curTicks;
 
@@ -82,18 +85,18 @@ void CalculateProfiles()
     #endif
 }
 
-static plGraphPlate* fFPSPlate = nil;
+static plGraphPlate* fFPSPlate = nullptr;
 
-static int ICreateStdPlate(plGraphPlate** graph)
+static bool ICreateStdPlate(plGraphPlate** graph)
 {
     if (plPlateManager::InstanceValid())
     {
         plPlateManager::Instance().CreateGraphPlate(graph);
         (*graph)->SetSize(0.25, 0.25);
         (*graph)->SetDataRange(0, 100, 100);
-        return hsOK;
+        return true;
     }
-    return hsFail;
+    return false;
 }
 
 void CreateStandardGraphs(const char* groupName, bool create)
@@ -102,16 +105,16 @@ void CreateStandardGraphs(const char* groupName, bool create)
     {
         if (create)
         {
-            if (ICreateStdPlate(&fFPSPlate) == hsOK)
+            if (ICreateStdPlate(&fFPSPlate))
             {
-                fFPSPlate->SetTitle("mSecs");       
-                fFPSPlate->SetLabelText("Tot", "Draw", "Upd");
+                fFPSPlate->SetTitle(ST_LITERAL("mSecs"));
+                fFPSPlate->SetLabelText({ST_LITERAL("Tot"), ST_LITERAL("Draw"), ST_LITERAL("Upd")});
             }
         }
         else
         {
             plPlateManager::Instance().DestroyPlate(fFPSPlate);
-            fFPSPlate = nil;
+            fFPSPlate = nullptr;
         }
     }
 }
@@ -129,9 +132,9 @@ void UpdateStandardGraphs(float xPos, float yPos)
     if (fFPSPlate)
     {
         fFPSPlate->AddData(
-            gVarRFPS.GetValue(),
-            plProfile_GetValue(DrawTime),
-            plProfile_GetValue(UpdateTime));
+            (int32_t)gVarRFPS.GetValue(),
+            (int32_t)plProfile_GetValue(DrawTime),
+            (int32_t)plProfile_GetValue(UpdateTime));
         PositionPlate(fFPSPlate);
     }
 }

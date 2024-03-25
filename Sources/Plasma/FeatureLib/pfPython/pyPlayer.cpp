@@ -40,22 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyPlayer.h"
 
+#include "pyKey.h"
+
 pyPlayer::pyPlayer() // only used by python glue, do NOT call
+    : fPlayerID(), fDistSq(-1), fIsCCR(), fIsServer()
 {
-    fAvatarKey = nil;
-    fPlayerName = plString::Null;
-    fPlayerID = 0;
-    fDistSq = -1;
-    fIsCCR = false;
-    fIsServer = false;
 }
 
-pyPlayer::pyPlayer(pyKey& avKey, const plString& pname, uint32_t pid, float distsq)
+pyPlayer::pyPlayer(pyKey& avKey, const ST::string& pname, uint32_t pid, float distsq)
 {
     fAvatarKey = avKey.getKey();
     fPlayerName = pname;
@@ -65,9 +59,9 @@ pyPlayer::pyPlayer(pyKey& avKey, const plString& pname, uint32_t pid, float dist
     fIsServer = false;
 }
 
-pyPlayer::pyPlayer(plKey avKey, const plString& pname, uint32_t pid, float distsq)
+pyPlayer::pyPlayer(plKey avKey, const ST::string& pname, uint32_t pid, float distsq)
 {
-    fAvatarKey = avKey;
+    fAvatarKey = std::move(avKey);
     fPlayerName = pname;
     fPlayerID = pid;
     fDistSq = distsq;
@@ -76,19 +70,14 @@ pyPlayer::pyPlayer(plKey avKey, const plString& pname, uint32_t pid, float dists
 }
 
 // another way to create a player with just a name and number
-pyPlayer::pyPlayer(const plString& pname, uint32_t pid)
+pyPlayer::pyPlayer(const ST::string& pname, uint32_t pid)
+    : fPlayerName(pname), fPlayerID(pid), fDistSq(-1), fIsCCR(), fIsServer()
 {
-    fAvatarKey = nil;
-    fPlayerName = pname;
-    fPlayerID = pid;
-    fDistSq = -1;
-    fIsCCR = false;
-    fIsServer = false;
 }
 
-void pyPlayer::Init(plKey avKey, const plString& pname, uint32_t pid, float distsq) // used by python glue, do NOT call
+void pyPlayer::Init(plKey avKey, const ST::string& pname, uint32_t pid, float distsq) // used by python glue, do NOT call
 {
-    fAvatarKey = avKey;
+    fAvatarKey = std::move(avKey);
     fPlayerName = pname;
     fPlayerID = pid;
     fDistSq = distsq;

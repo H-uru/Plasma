@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <set>
 #include <map>
 #include <vector>
-#include <string>
 #include "plFileSystem.h"
 
 class plRegistryPageNode;
@@ -59,7 +58,7 @@ class plDispatch;
 
 // plProgressProc is a proc called every time an object loads, to keep a progress bar for
 // loading ages up-to-date.
-typedef void(*plProgressProc)(plKey key);
+typedef void(*plProgressProc)(const plKey& key);
 
 class plResManager : public hsResMgr
 {
@@ -78,66 +77,66 @@ public:
     //---------------------------
     //  Load and Unload
     //---------------------------
-    virtual void        Load  (const plKey& objKey);        // places on list to be loaded
-    virtual bool        Unload(const plKey& objKey);        // Unregisters (deletes) an object, Return true if successful
-    virtual plKey       CloneKey(const plKey& objKey);
+    void        Load  (const plKey& objKey) override;        // places on list to be loaded
+    bool        Unload(const plKey& objKey) override;        // Unregisters (deletes) an object, Return true if successful
+    plKey       CloneKey(const plKey& objKey) override;
 
     //---------------------------
     //  Finding Functions
     //---------------------------
     plKey               FindOriginalKey(const plUoid&);
-    virtual plKey       FindKey(const plUoid&); // Same as above, but will check the uoid for clones
-    const plLocation&   FindLocation(const plString& age, const plString& page) const;
-    // Use nil for any strings you don't need
-    void                GetLocationStrings(const plLocation& loc, plString* ageBuffer, plString* pageBuffer) const;
+    plKey               FindKey(const plUoid&) override; // Same as above, but will check the uoid for clones
+    const plLocation&   FindLocation(const ST::string& age, const ST::string& page) const;
+    // Use nullptr for any strings you don't need
+    void                GetLocationStrings(const plLocation& loc, ST::string* ageBuffer, ST::string* pageBuffer) const;
 
     //---------------------------
     //  Establish reference linkage 
     //---------------------------
-    virtual bool   AddViaNotify(const plKey& key, plRefMsg* msg, plRefFlags::Type flags);
-    virtual bool   AddViaNotify(plRefMsg* msg, plRefFlags::Type flags); // msg->fRef->GetKey() == sentKey
+    bool   AddViaNotify(const plKey& key, plRefMsg* msg, plRefFlags::Type flags) override;
+    bool   AddViaNotify(plRefMsg* msg, plRefFlags::Type flags) override; // msg->fRef->GetKey() == sentKey
 
-    virtual bool   SendRef(const plKey& key, plRefMsg* refMsg, plRefFlags::Type flags);
-    virtual bool   SendRef(hsKeyedObject* ko, plRefMsg* refMsg, plRefFlags::Type flags);
+    bool   SendRef(const plKey& key, plRefMsg* refMsg, plRefFlags::Type flags) override;
+    bool   SendRef(hsKeyedObject* ko, plRefMsg* refMsg, plRefFlags::Type flags) override;
 
     //---------------------------
     //  Reding and Writing keys
     //---------------------------
     // Read a Key in, and Notify me when the Object is loaded
-    virtual plKey ReadKeyNotifyMe(hsStream* stream, plRefMsg* retMsg, plRefFlags::Type flags); 
+    plKey ReadKeyNotifyMe(hsStream* stream, plRefMsg* retMsg, plRefFlags::Type flags) override;
     // Just read the Key data in and find a match in the registry and return it.
-    virtual plKey ReadKey(hsStream* stream); 
+    plKey ReadKey(hsStream* stream) override;
 
     // For convenience you can write a key using the KeyedObject or the Key...same result
-    virtual void WriteKey(hsStream* s, hsKeyedObject* obj); 
-    virtual void WriteKey(hsStream* s, const plKey& key); 
+    void WriteKey(hsStream* s, hsKeyedObject* obj) override;
+    void WriteKey(hsStream* s, const plKey& key) override;
 
     //---------------------------
     //  Reding and Writing Objects directly
     //---------------------------
-    virtual plCreatable*    ReadCreatable(hsStream* s);
-    virtual void            WriteCreatable(hsStream* s, plCreatable* cre);
+    plCreatable*    ReadCreatable(hsStream* s) override;
+    void            WriteCreatable(hsStream* s, plCreatable* cre) override;
 
-    virtual plCreatable*    ReadCreatableVersion(hsStream* s);
-    virtual void            WriteCreatableVersion(hsStream* s, plCreatable* cre);
+    plCreatable*    ReadCreatableVersion(hsStream* s) override;
+    void            WriteCreatableVersion(hsStream* s, plCreatable* cre) override;
 
     //---------------------------
     // Registry Modification Functions
     //---------------------------
-    virtual plKey NewKey(const plString& name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m = plLoadMask::kAlways);
-    virtual plKey NewKey(plUoid& newUoid, hsKeyedObject* object);
+    plKey NewKey(const ST::string& name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m = plLoadMask::kAlways) override;
+    plKey NewKey(plUoid& newUoid, hsKeyedObject* object) override;
 
-    virtual plDispatchBase* Dispatch();
+    plDispatchBase* Dispatch() override;
 
     virtual void SetProgressBarProc(plProgressProc proc);
 
     //---------------------------
     //  Load optimizations
     //---------------------------
-    void LoadAgeKeys(const plString& age);
-    void DropAgeKeys(const plString& age);
+    void LoadAgeKeys(const ST::string& age);
+    void DropAgeKeys(const ST::string& age);
     void PageInRoom(const plLocation& page, uint16_t objClassToRef, plRefMsg* refMsg);
-    void PageInAge(const plString& age);
+    void PageInAge(const ST::string& age);
 
     // Usually, a page file is kept open during load because the first keyed object
     // read causes all the other objects to be read before it returns.  In some
@@ -146,7 +145,7 @@ public:
     void KeepPageOpen(const plLocation& page, bool keepOpen);
 
     // We're on the way down, act accordingly.
-    virtual void BeginShutdown();
+    void BeginShutdown() override;
 
     // Determines whether the time to read each object is dumped to a log
     void LogReadTimes(bool logReadTimes);
@@ -156,7 +155,7 @@ public:
     // Single page version
     bool IterateKeys(plRegistryKeyIterator* iterator, const plLocation& pageToRestrictTo);
     // Iterate through loaded pages
-    bool IteratePages(plRegistryPageIterator* iterator, const plString& ageToRestrictTo = "");
+    bool IteratePages(plRegistryPageIterator* iterator, const ST::string& ageToRestrictTo = {});
     // Iterate through ALL pages, loaded or not
     bool IterateAllPages(plRegistryPageIterator* iterator);
 
@@ -165,7 +164,7 @@ public:
     void UnloadPageObjects(plRegistryPageNode* pageNode, uint16_t classIndexHint);
     void DumpUnusedKeys(plRegistryPageNode* page) const;
     plRegistryPageNode* FindPage(const plLocation& location) const;
-    plRegistryPageNode* FindPage(const plString& age, const plString& page) const;
+    plRegistryPageNode* FindPage(const ST::string& age, const ST::string& page) const;
 
     // Runs through all the pages and verifies that the data versions are good
     bool VerifyPages();
@@ -175,19 +174,19 @@ protected:
     friend class plKeyImp;
     friend class plResManagerHelper;
 
-    virtual plKey   ReRegister(const plString& nm, const plUoid& uoid);
-    virtual bool    ReadObject(plKeyImp* key); // plKeys call this when needed
+    plKey   ReRegister(const ST::string& nm, const plUoid& uoid) override;
+    bool    ReadObject(plKeyImp* key) override; // plKeys call this when needed
     virtual bool    IReadObject(plKeyImp* pKey, hsStream *stream);  
 
     plCreatable*    IReadCreatable(hsStream* s) const;
     plKey           ICloneKey(const plUoid& objUoid, uint32_t playerID, uint32_t cloneID);
 
-    virtual void    IKeyReffed(plKeyImp* key);
-    virtual void    IKeyUnreffed(plKeyImp* key);
+    void    IKeyReffed(plKeyImp* key) override;
+    void    IKeyUnreffed(plKeyImp* key) override;
 
-    virtual bool    IReset();
-    virtual bool    IInit();
-    virtual void    IShutdown();
+    bool    IReset() override;
+    bool    IInit() override;
+    void    IShutdown() override;
 
     void    IPageOutSceneNodes(bool forceAll);
     void    IDropAllAgeKeys();
@@ -196,8 +195,8 @@ protected:
 
     void IUnloadPageKeys(plRegistryPageNode* pageNode, bool dontClear = false);
 
-    bool IDeleteBadPages(hsTArray<plRegistryPageNode*>& invalidPages, bool conflictingSeqNums);
-    bool IWarnNewerPages(hsTArray<plRegistryPageNode*>& newerPages);
+    bool IDeleteBadPages(std::vector<plRegistryPageNode*>& invalidPages, bool conflictingSeqNums);
+    bool IWarnNewerPages(std::vector<plRegistryPageNode*>& newerPages);
 
     void ILockPages();
     void IUnlockPages();
@@ -207,7 +206,7 @@ protected:
     // Adds a key to the registry. Assumes uoid already set
     void AddKey(plKeyImp* key);
 
-    plRegistryPageNode* CreatePage(const plLocation& location, const plString& age, const plString& page);
+    plRegistryPageNode* CreatePage(const plLocation& location, const ST::string& age, const ST::string& page);
 
     bool          fInited;
 
@@ -223,7 +222,7 @@ protected:
     uint32_t fCurClonePlayerID;
     uint32_t fCloningCounter; // Next clone ID to use.
 
-    typedef std::map<plString, plResAgeHolder*>   HeldAgeKeyMap;
+    typedef std::map<ST::string, plResAgeHolder*>   HeldAgeKeyMap;
     HeldAgeKeyMap   fHeldAgeKeys;
     plProgressProc  fProgressProc;
 
@@ -236,8 +235,9 @@ protected:
 
     typedef std::set<plRegistryPageNode*> PageSet;
     typedef std::map<plLocation, plRegistryPageNode*> PageMap;
-    PageMap fAllPages;      // All the pages, loaded or not
-    PageSet fLoadedPages;   // Just the loaded pages
+    PageMap fAllPages;         // All the pages, loaded or not
+    PageSet fLoadedPages;      // Just the loaded pages
+    PageSet fConflictingPages; // Pages whose sequence numbers conflict
 
     mutable plRegistryPageNode* fLastFoundPage;
 };

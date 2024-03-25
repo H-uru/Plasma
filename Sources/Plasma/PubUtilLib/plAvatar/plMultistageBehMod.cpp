@@ -44,26 +44,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMultistageBehMod.h"
 
 // local
-#include "plAvBrainGeneric.h"
 #include "plAnimStage.h"
 #include "plArmatureMod.h"
+#include "plAvatarMgr.h"
+#include "plAvBrainGeneric.h"
 
 // global
 #include "hsResMgr.h"
 
 //other
-#include "plMessage/plAvatarMsg.h"
-#include "plMessage/plMultistageMsg.h"
 #include "pnMessage/plNotifyMsg.h"
 #include "pnSceneObject/plSceneObject.h"
+
 #include "plInputCore/plAvatarInputInterface.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plMultistageMsg.h"
 
-#ifdef DEBUG_MULTISTAGE
-#include "plAvatarMgr.h"
-#include "plStatusLog/plStatusLog.h"
-#endif
-
-plMultistageBehMod::plMultistageBehMod() : fStages(nil), fFreezePhys(false), fSmartSeek(false), fReverseFBControlsOnRelease(false), fNetProp(true), fNetForce(false)
+plMultistageBehMod::plMultistageBehMod()
+    : fStages(), fFreezePhys(), fSmartSeek(), fReverseFBControlsOnRelease(),
+      fNetProp(true), fNetForce()
 {
 }
 
@@ -114,7 +113,7 @@ void plMultistageBehMod::IDeleteStageVec()
         }
 
         delete fStages;
-        fStages = nil;
+        fStages = nullptr;
     }
 }
 
@@ -126,7 +125,7 @@ bool plMultistageBehMod::MsgReceive(plMessage* msg)
         hsAssert(fStages, "Trying to trigger multistage, but no stages are present.");
         if(fStages)
         {
-            plKey avKey = notifyMsg->GetAvatarKey();
+            const plKey& avKey = notifyMsg->GetAvatarKey();
             hsAssert(avKey, "Avatar key missing trying to trigger multistage.");
             if(avKey)
             {
@@ -145,7 +144,7 @@ bool plMultistageBehMod::MsgReceive(plMessage* msg)
                         plAnimStage* stage = new plAnimStage;
                         *stage = *((*fStages)[i]);
                         stages->push_back(stage);
-                        if (stage->GetAnimName().Find("adder") >= 0)
+                        if (stage->GetAnimName().contains("adder"))
                             ladder = true;
                     }
 
@@ -154,20 +153,20 @@ bool plMultistageBehMod::MsgReceive(plMessage* msg)
 
                     if(avMod)
                     {
-                        plKey sender = notifyMsg->GetSender();
-                        plKey avModKey = avMod->GetKey();
-                        plKey seekKey = GetTarget()->GetKey();      // our seek point
-                        
+                        const plKey& sender = notifyMsg->GetSender();
+                        const plKey& avModKey = avMod->GetKey();
+                        const plKey& seekKey = GetTarget()->GetKey();      // our seek point
+
 #ifdef DEBUG_MULTISTAGE
                         char sbuf[256];
                         sprintf(sbuf,"plMultistageModMsg - starting multistage from %s",sender->GetName().c_str());
                         plAvatarMgr::GetInstance()->GetLog()->AddLine(sbuf);
 #endif
-                        plAvSeekMsg *seeker = new plAvSeekMsg(nil, avModKey, seekKey, 1.0f, fSmartSeek);
+                        plAvSeekMsg *seeker = new plAvSeekMsg(nullptr, avModKey, seekKey, 1.0f, fSmartSeek);
                         seeker->Send();
 
                         // these (currently unused) callbacks are for the brain itself, not any of the stages
-                        plMessage *exitCallback = nil, *enterCallback = nil;
+                        plMessage *exitCallback = nullptr, *enterCallback = nullptr;
                         uint32_t exitFlags = plAvBrainGeneric::kExitNormal;
 
                         plAvBrainGeneric *brain = new plAvBrainGeneric(stages, exitCallback, enterCallback, sender, exitFlags, 

@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "hsColorRGBA.h"
-#include "hsTemplates.h"
 
 class plDrawableSpans;
 class hsGMaterial;
@@ -94,10 +93,10 @@ protected:
 
     uint32_t                      fProxyMsgType;
 
-    hsTArray<uint32_t>            fProxyIndex;
+    std::vector<uint32_t>       fProxyIndex;
 
     // These must be implemented by the specific type, so we know what to draw.
-    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo=nil) = 0; // called by IGenerate
+    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo=nullptr) = 0; // called by IGenerate
     virtual plKey               IGetNode() const = 0;
 
     // Derived type should set fProxyMsgType as one of plProxyDrawMsg::types
@@ -124,7 +123,7 @@ public:
 
     virtual void                Init(const hsKeyedObject* owner);
 
-    virtual bool                MsgReceive(plMessage* msg);
+    bool                MsgReceive(plMessage* msg) override;
 
 };
 

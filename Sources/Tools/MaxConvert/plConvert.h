@@ -43,26 +43,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plConvert_inc
 #define plConvert_inc
 
+#include <vector>
+
 class plErrorMsg;
 class plKey;
+class plLightMapGen;
 class plLocation;
 class plMaxNode;
 class plMessage;
-class plLightMapGen;
 class hsVertexShader;
 
 class plConvertSettings
 {
 public:
-    plConvertSettings() : fSceneViewer(false), fReconvert(false), fDoPreshade(true), fDoLightMap(true),
-        fLightMapGen(nil), fVertexShader(nil), fPhysicalsOnly(false), fExportPage(nil) {}
+    plConvertSettings() : fSceneViewer(), fReconvert(), fDoPreshade(true), fDoLightMap(true),
+        fLightMapGen(), fVertexShader(), fPhysicalsOnly(), fExportPage() { }
 
     bool fSceneViewer;  // Are we converting this for the SceneViewer?
     bool fReconvert;    // Don't need to set, will be done internally by plConvert
     bool fDoPreshade;   // Doesn't do preshading if false (flat shades)
     bool fDoLightMap;   // Reuses available old lightmaps if false, else always generates fresh.
     bool fPhysicalsOnly;// Only solid physicals get meshes
-    const char* fExportPage;    // If this isn't nil, only export objects in this page
+    const TCHAR* fExportPage;    // If this isn't nil, only export objects in this page
 
     plLightMapGen*      fLightMapGen;
     hsVertexShader*     fVertexShader;
@@ -75,7 +77,7 @@ protected:
     plErrorMsg*         fpErrorMsg;
     Interface*          fInterface;
     plConvertSettings*  fSettings;
-    hsTArray<plMessage*>    fMsgQueue;
+    std::vector<plMessage*> fMsgQueue;
 
     plConvert();
     bool                IMakeSceneObject(INode* node);
@@ -104,7 +106,7 @@ public:
     void   DeInit();
 
     bool Convert();
-    bool Convert(hsTArray<plMaxNode*>& nodes);    // Convert a set of nodes (for SceneViewer update)
+    bool Convert(std::vector<plMaxNode*>& nodes);    // Convert a set of nodes (for SceneViewer update)
     
     plMaxNode* GetRootNode();
     void SendEnvironmentMessage(plMaxNode* pNode, plMaxNode* efxRegion, plMessage* msg, bool ignorePhysicals = false); // iterates through scene to find nodes contained by the efxRegion
@@ -117,8 +119,8 @@ public:
     // Search for nodes with the same name.  Returns true if any are found and stops the export
     bool IFindDuplicateNames();
     // IFindDuplicateNames helper functions
-    const char *ISearchNames(INode *node, INode *root);
-    int ICountNameOccurances(INode *node, const char *name);
+    const MCHAR* ISearchNames(INode *node, INode *root);
+    int ICountNameOccurances(INode *node, const MCHAR* name);
     // Does any pre-export generation necessary for distributors, then cleans up after export.
     BOOL IAutoClusterRecur(INode* node);
     BOOL IAutoUnClusterRecur(INode* node);

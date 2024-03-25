@@ -40,15 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyGameScore.h"
-#include "pfGameScoreMgr/pfGameScoreMgr.h"
+
+#include <string_theory/string>
+
 #include "plVault/plVault.h"
 
+#include "pfGameScoreMgr/pfGameScoreMgr.h"
+
+#include "pyKey.h"
+
 pyGameScore::pyGameScore() 
-    : fScore(nil)
+    : fScore()
 { }
 
 pyGameScore::pyGameScore(pfGameScore * score) 
@@ -83,11 +86,11 @@ int32_t pyGameScore::GetPoints() const
     return 0;
 }
 
-plString pyGameScore::GetGameName() const
+ST::string pyGameScore::GetGameName() const
 {
     if (fScore)
         return fScore->GetGameName();
-    return plString::Null;
+    return ST::string();
 }
 
 void pyGameScore::AddPoints(int32_t numPoints, pyKey& rcvr)
@@ -101,7 +104,7 @@ void pyGameScore::Delete()
     if (fScore)
     {
         fScore->Delete();
-        fScore = nil;
+        fScore = nullptr;
     }
 }
 
@@ -123,7 +126,7 @@ void pyGameScore::SetPoints(int32_t numPoints, pyKey& rcvr)
         fScore->SetPoints(numPoints, rcvr.getKey());
 }
 
-void pyGameScore::CreateAgeScore(const plString& name, uint32_t type, int32_t points, pyKey& rcvr)
+void pyGameScore::CreateAgeScore(const ST::string& name, uint32_t type, int32_t points, pyKey& rcvr)
 {
     if (hsRef<RelVaultNode> ageInfo = VaultGetAgeInfoNode())
     {
@@ -133,12 +136,12 @@ void pyGameScore::CreateAgeScore(const plString& name, uint32_t type, int32_t po
         hsAssert(false, "Age has no vault... Need to rewrite score python script?");
 }
 
-void pyGameScore::CreateGlobalScore(const plString& name, uint32_t type, int32_t points, pyKey& rcvr)
+void pyGameScore::CreateGlobalScore(const ST::string& name, uint32_t type, int32_t points, pyKey& rcvr)
 {
     pfGameScore::Create(0, name, type, points, rcvr.getKey());
 }
 
-void pyGameScore::CreatePlayerScore(const plString& name, uint32_t type, int32_t points, pyKey& rcvr)
+void pyGameScore::CreatePlayerScore(const ST::string& name, uint32_t type, int32_t points, pyKey& rcvr)
 {
     if (hsRef<RelVaultNode> node = VaultGetPlayerInfoNode())
     {
@@ -148,12 +151,12 @@ void pyGameScore::CreatePlayerScore(const plString& name, uint32_t type, int32_t
         hsAssert(false, "No PlayerInfo node... Need to rewrite python script?");
 }
 
-void pyGameScore::CreateScore(uint32_t ownerId, const plString& name, uint32_t type, int32_t points, pyKey& rcvr)
+void pyGameScore::CreateScore(uint32_t ownerId, const ST::string& name, uint32_t type, int32_t points, pyKey& rcvr)
 {
     pfGameScore::Create(ownerId, name, type, points, rcvr.getKey());
 }
 
-void pyGameScore::FindAgeScores(const plString& name, pyKey& rcvr)
+void pyGameScore::FindAgeScores(const ST::string& name, pyKey& rcvr)
 {
     if (hsRef<RelVaultNode> ageInfo = VaultGetAgeInfoNode())
     {
@@ -163,12 +166,12 @@ void pyGameScore::FindAgeScores(const plString& name, pyKey& rcvr)
         hsAssert(false, "Age has no vault... Need to rewrite score python script?");
 }
 
-void pyGameScore::FindGlobalScores(const plString& name, pyKey& rcvr)
+void pyGameScore::FindGlobalScores(const ST::string& name, pyKey& rcvr)
 {
     pfGameScore::Find(0, name, rcvr.getKey());
 }
 
-void pyGameScore::FindPlayerScores(const plString& name, pyKey& rcvr)
+void pyGameScore::FindPlayerScores(const ST::string& name, pyKey& rcvr)
 {
     if (hsRef<RelVaultNode> node = VaultGetPlayerInfoNode())
     {
@@ -179,12 +182,12 @@ void pyGameScore::FindPlayerScores(const plString& name, pyKey& rcvr)
         hsAssert(false, "No PlayerInfo node.. Need to rewrite python script?");
 }
 
-void pyGameScore::FindScores(uint32_t ownerId, const plString& name, pyKey& rcvr)
+void pyGameScore::FindScores(uint32_t ownerId, const ST::string& name, pyKey& rcvr)
 {
     pfGameScore::Find(ownerId, name, rcvr.getKey());
 }
 
-void pyGameScore::FindAgeHighScores(const plString& name, uint32_t maxScores, pyKey& rcvr)
+void pyGameScore::FindAgeHighScores(const ST::string& name, uint32_t maxScores, pyKey& rcvr)
 {
     if (hsRef<RelVaultNode> ageInfo = VaultGetAgeInfoNode()) {
         pfGameScore::FindHighScores(ageInfo->GetNodeId(), maxScores, name, rcvr.getKey());
@@ -193,7 +196,7 @@ void pyGameScore::FindAgeHighScores(const plString& name, uint32_t maxScores, py
         hsAssert(false, "Age has no vault... Need to rewrite score python script?");
 }
 
-void pyGameScore::FindGlobalHighScores(const plString& name, uint32_t maxScores, pyKey& rcvr)
+void pyGameScore::FindGlobalHighScores(const ST::string& name, uint32_t maxScores, pyKey& rcvr)
 {
     pfGameScore::FindHighScores(0, maxScores, name, rcvr.getKey());
 }

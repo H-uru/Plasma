@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plInputIfaceMgrMsg_h
 
 #include "HeadSpin.h"
-#include "hsStream.h"
 #include "pnMessage/plMessage.h"
 #include "pnUUID/pnUUID.h"
 
@@ -61,9 +60,9 @@ class plInputIfaceMgrMsg : public plMessage
         uint8_t   fCommand;
         plInputInterface    *fInterface;
         uint32_t  fPageID;
-        plString  ageName;
-        plString  ageFileName;
-        plString  spawnPoint;
+        ST::string  ageName;
+        ST::string  ageFileName;
+        ST::string  spawnPoint;
         plUUID ageInstanceGuid;
         plKey fAvKey;
     public:
@@ -87,24 +86,24 @@ class plInputIfaceMgrMsg : public plMessage
             kSetShareAgeInstanceGuid,
         };
 
-        plInputIfaceMgrMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); fInterface = nil; fAvKey = nil; }
-        plInputIfaceMgrMsg( plKey &receiver, uint8_t command ) : plMessage( nil, nil, nil ) { AddReceiver( receiver ); fCommand = command; fInterface = nil; fAvKey = nil; }
-        plInputIfaceMgrMsg( uint8_t command ) : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); fCommand = command; fInterface = nil; fAvKey = nil; }
-        plInputIfaceMgrMsg( uint8_t command, uint32_t pageID ) : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); fCommand = command; fPageID = pageID; fInterface = nil; fAvKey = nil; }
+        plInputIfaceMgrMsg() : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); fInterface = nullptr; fAvKey = nullptr; }
+        plInputIfaceMgrMsg(plKey &receiver, uint8_t command) : plMessage(nullptr, nullptr, nullptr) { AddReceiver(receiver); fCommand = command; fInterface = nullptr; fAvKey = nullptr; }
+        plInputIfaceMgrMsg(uint8_t command) : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); fCommand = command; fInterface = nullptr; fAvKey = nullptr; }
+        plInputIfaceMgrMsg(uint8_t command, uint32_t pageID) : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); fCommand = command; fPageID = pageID; fInterface = nullptr; fAvKey = nullptr; }
         ~plInputIfaceMgrMsg();
 
         CLASSNAME_REGISTER( plInputIfaceMgrMsg );
         GETINTERFACE_ANY( plInputIfaceMgrMsg, plMessage );
 
-        virtual void Read(hsStream* s, hsResMgr* mgr);
-        virtual void Write(hsStream* s, hsResMgr* mgr);
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        void              SetAgeName(const plString& s) { ageName = s; }
-        plString          GetAgeName() const { return ageName; }
-        void              SetAgeFileName(const plString& s) { ageFileName = s; }
-        plString          GetAgeFileName() const { return ageFileName; }
-        void              SetSpawnPoint(const plString& s) { spawnPoint = s; }
-        plString          GetSpawnPoint() const { return spawnPoint; }
+        void              SetAgeName(const ST::string& s) { ageName = s; }
+        ST::string        GetAgeName() const { return ageName; }
+        void              SetAgeFileName(const ST::string& s) { ageFileName = s; }
+        ST::string        GetAgeFileName() const { return ageFileName; }
+        void              SetSpawnPoint(const ST::string& s) { spawnPoint = s; }
+        ST::string        GetSpawnPoint() const { return spawnPoint; }
         void              SetAgeInstanceGuid(const plUUID& guid) { ageInstanceGuid = guid; }
         const plUUID&     GetAgeInstanceGuid() const { return ageInstanceGuid; }
         uint8_t           GetCommand() const { return fCommand; }

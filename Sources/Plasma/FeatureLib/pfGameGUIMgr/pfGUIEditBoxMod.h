@@ -48,22 +48,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIEditBoxMod_h
 #define _pfGUIEditBoxMod_h
 
+#include "HeadSpin.h"
+
+#include <string_theory/char_buffer>
+#include <string_theory/string>
+
 #include "pfGUIControlMod.h"
+
 #include "pnInputCore/plKeyDef.h"
 
-#include "plInputCore/plInputDevice.h"
-
-class plMessage;
 class hsGMaterial;
-class plTextGenerator;
-
+class plMessage;
 
 class pfGUIEditBoxMod : public pfGUIControlMod
 {
     protected:
 
-        wchar_t         *fBuffer;
-        uint32_t          fBufferSize, fCursorPos;
+        ST::wchar_buffer fBuffer;
+        uint32_t        fCursorPos;
         int32_t           fScrollPos;
         bool            fEscapedFlag;
         bool            fFirstHalfExitKeyPushed;
@@ -73,10 +75,10 @@ class pfGUIEditBoxMod : public pfGUIControlMod
         plKeyDef        fSavedKey;
         uint8_t           fSavedModifiers;
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
-        virtual void    IPostSetUpDynTextMap( void );
-        virtual void    IUpdate( void );
+        void    IPostSetUpDynTextMap() override;
+        void    IUpdate() override;
 
     public:
         enum
@@ -86,44 +88,41 @@ class pfGUIEditBoxMod : public pfGUIControlMod
         };
 
         pfGUIEditBoxMod();
-        virtual ~pfGUIEditBoxMod();
 
         CLASSNAME_REGISTER( pfGUIEditBoxMod );
         GETINTERFACE_ANY( pfGUIEditBoxMod, pfGUIControlMod );
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
+        void    HandleMouseDown(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
 
-        virtual bool    HandleKeyPress( wchar_t key, uint8_t modifiers );
-        virtual bool    HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
+        bool    HandleKeyPress(wchar_t key, uint8_t modifiers) override;
+        bool    HandleKeyEvent(pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers) override;
 
-        virtual void    PurgeDynaTextMapImage();
+        void    PurgeDynaTextMapImage() override;
 
         void    SetBufferSize( uint32_t size );
 
-        std::string GetBuffer( void );
-        std::wstring    GetBufferW( void ) { return fBuffer; }
-        void        ClearBuffer( void );
-        void        SetText( const char *str );
-        void        SetText( const wchar_t *str );
+        ST::string  GetBuffer() const { return ST::string::from_wchar(fBuffer.c_str(), ST_AUTO_SIZE); }
+        void        ClearBuffer();
+        void        SetText( const ST::string& str );
 
-        void        SetCursorToHome( void );
-        void        SetCursorToEnd( void );
+        void        SetCursorToHome();
+        void        SetCursorToEnd();
 
-        bool        WasEscaped( void ) { bool e = fEscapedFlag; fEscapedFlag = false; return e; }
+        bool        WasEscaped() { bool e = fEscapedFlag; fEscapedFlag = false; return e; }
 
         void        SetSpecialCaptureKeyMode(bool state) { fSpecialCaptureKeyEventMode = state; }
         uint32_t      GetLastKeyCaptured() { return (uint32_t)fSavedKey; }
         uint8_t       GetLastModifiersCaptured() { return fSavedModifiers; }
         void        SetLastKeyCapture(uint32_t key, uint8_t modifiers);
 
-        void        SetChatMode(bool state) { plKeyboardDevice::IgnoreCapsLock(state); }
+        void        SetChatMode(bool state);
 
         // Extended event types
         enum ExtendedEvents

@@ -56,20 +56,18 @@ protected:
     hsVector3       fVel;
 
 public:
-    plListenerMsg() : plMessage(nil, nil, nil),
-                        fPos(0,0,0),
-                        fDir(0,1.f,0),
-                        fUp(0,0,1.f),
-                        fVel(0,0,0)
-            { SetBCastFlag(kBCastByExactType); }
+    plListenerMsg()
+        : plMessage(nullptr, nullptr, nullptr),
+          fDir(0.f ,1.f, 0.f), fUp(0.f, 0.f, 1.f)
+    {
+        SetBCastFlag(kBCastByExactType);
+    }
 
-    ~plListenerMsg() {}
-    
     CLASSNAME_REGISTER( plListenerMsg );
     GETINTERFACE_ANY( plListenerMsg, plMessage );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     const hsPoint3&     SetPosition(const hsPoint3& pos) { return fPos = pos; }
     const hsVector3&    SetDirection(const hsVector3& dir) { return fDir = dir; }
@@ -102,20 +100,20 @@ public:
         kListener   = kPosition | kVelocity | kFacing
     };
 
-    plSetListenerMsg() : plMessage( nil, nil, nil ) { fType = 0; fBinding = false; }
+    plSetListenerMsg() : plMessage(nullptr, nullptr, nullptr) { fType = 0; fBinding = false; }
     plSetListenerMsg( uint8_t type, const plKey &srcKey, bool binding );
 
     CLASSNAME_REGISTER( plSetListenerMsg );
     GETINTERFACE_ANY( plSetListenerMsg, plMessage );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     void    Set( const plKey &key, uint8_t type, bool binding );
 
-    plKey       &GetSrcKey( void ) { return fSrcKey; }
-    uint8_t       GetType( void ) const { return fType; }
-    bool        IsBinding( void ) const { return fBinding; }
+    plKey       &GetSrcKey() { return fSrcKey; }
+    uint8_t       GetType() const { return fType; }
+    bool        IsBinding() const { return fBinding; }
 };
 
 #endif // plListenerMsg_inc

@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plNetTransport_SOURCES
     plNetTransport.cpp
     plNetTransportMember.cpp
@@ -13,7 +8,17 @@ set(plNetTransport_HEADERS
     plNetTransportMember.h
 )
 
-add_library(plNetTransport STATIC ${plNetTransport_SOURCES} ${plNetTransport_HEADERS})
+plasma_library(plNetTransport SOURCES ${plNetTransport_SOURCES} ${plNetTransport_HEADERS})
+target_link_libraries(
+    plNetTransport
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        plNetCommon
+    PRIVATE
+        plNetClient
+        plNetMessage
+)
 
 source_group("Source Files" FILES ${plNetTransport_SOURCES})
 source_group("Header Files" FILES ${plNetTransport_HEADERS})

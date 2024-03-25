@@ -40,27 +40,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyKey.h"
-#pragma hdrstop
-
-#include "pfGameGUIMgr/pfGUIValueCtrl.h"
-#include "pfGameGUIMgr/pfGUIKnobCtrl.h"
-#include "pfGameGUIMgr/pfGUIUpDownPairMod.h"
-#include "pfGameGUIMgr/pfGUIProgressCtrl.h"
-
 #include "pyGUIControlValue.h"
+
+#include "pfGameGUIMgr/pfGUIKnobCtrl.h"
+#include "pfGameGUIMgr/pfGUIProgressCtrl.h"
+#include "pfGameGUIMgr/pfGUIUpDownPairMod.h"
+#include "pfGameGUIMgr/pfGUIValueCtrl.h"
+
+#include "pyKey.h"
 
 pyGUIControlValue::pyGUIControlValue(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlValue::pyGUIControlValue(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlValue::pyGUIControlValue(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 
-bool pyGUIControlValue::IsGUIControlValue(pyKey& gckey)
+bool pyGUIControlValue::IsGUIControlValue(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUIValueCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUIValueCtrl::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }
@@ -89,7 +88,7 @@ void pyGUIControlValue::SetValue( float v )
     }
 }
 
-float pyGUIControlValue::GetMin( void )
+float pyGUIControlValue::GetMin()
 {
     if ( fGCkey )
     {
@@ -101,7 +100,7 @@ float pyGUIControlValue::GetMin( void )
     return 0.0;
 }
 
-float pyGUIControlValue::GetMax( void )
+float pyGUIControlValue::GetMax()
 {
     if ( fGCkey )
     {
@@ -113,7 +112,7 @@ float pyGUIControlValue::GetMax( void )
     return 0.0;
 }
 
-float pyGUIControlValue::GetStep( void )
+float pyGUIControlValue::GetStep()
 {
     if ( fGCkey )
     {
@@ -157,7 +156,7 @@ pyGUIControlKnob::pyGUIControlKnob(pyKey& gckey) : pyGUIControlValue(gckey)
 {
 }
 
-pyGUIControlKnob::pyGUIControlKnob(plKey objkey) : pyGUIControlValue(objkey)
+pyGUIControlKnob::pyGUIControlKnob(plKey objkey) : pyGUIControlValue(std::move(objkey))
 {
 }
 
@@ -177,7 +176,7 @@ pyGUIControlUpDownPair::pyGUIControlUpDownPair(pyKey& gckey) : pyGUIControlValue
 {
 }
 
-pyGUIControlUpDownPair::pyGUIControlUpDownPair(plKey objkey) : pyGUIControlValue(objkey)
+pyGUIControlUpDownPair::pyGUIControlUpDownPair(plKey objkey) : pyGUIControlValue(std::move(objkey))
 {
 }
 
@@ -197,7 +196,7 @@ pyGUIControlProgress::pyGUIControlProgress(pyKey& gckey) : pyGUIControlValue(gck
 {
 }
 
-pyGUIControlProgress::pyGUIControlProgress(plKey objkey) : pyGUIControlValue(objkey)
+pyGUIControlProgress::pyGUIControlProgress(plKey objkey) : pyGUIControlValue(std::move(objkey))
 {
 }
 

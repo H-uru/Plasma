@@ -77,30 +77,30 @@ public:
     CLASSNAME_REGISTER( plLODMipmap );
     GETINTERFACE_ANY( plLODMipmap, plMipmap );
 
-    virtual bool MsgReceive(plMessage *msg);
+    bool MsgReceive(plMessage *msg) override;
 
     void            SetLOD(int lod);
     int             GetLOD() const { return fLOD; }
 
-    virtual hsGDeviceRef*   GetDeviceRef() const;
-    virtual void            SetDeviceRef( hsGDeviceRef *const devRef );
+    hsGDeviceRef*   GetDeviceRef() const override;
+    void            SetDeviceRef(hsGDeviceRef *const devRef) override;
 
-    virtual void    Reset();
+    void    Reset() override;
 
-    virtual void    Read(hsStream *s, hsResMgr *mgr);
-    virtual void    Write(hsStream *s, hsResMgr *mgr);
+    void    Read(hsStream *s, hsResMgr *mgr) override;
+    void    Write(hsStream *s, hsResMgr *mgr) override;
 
-    virtual plMipmap*   Clone() const { return fBase->Clone(); }
-    virtual void        CopyFrom(const plMipmap *source);
+    plMipmap*   Clone() const override { return fBase->Clone(); }
+    void        CopyFrom(const plMipmap *source) override;
 
-    virtual void    Composite(plMipmap *source, uint16_t x, uint16_t y, CompositeOptions *options = nil);
+    void    Composite(plMipmap *source, uint16_t x, uint16_t y, CompositeOptions *options = nullptr) override;
 
-    virtual void    ScaleNicely(uint32_t *destPtr, uint16_t destWidth, uint16_t destHeight,
-                            uint16_t destStride, plMipmap::ScaleFilter filter) const;
+    void    ScaleNicely(uint32_t *destPtr, uint16_t destWidth, uint16_t destHeight,
+                        uint16_t destStride, plMipmap::ScaleFilter filter) const override;
 
-    virtual bool    ResizeNicely(uint16_t newWidth, uint16_t newHeight, plMipmap::ScaleFilter filter);
+    bool    ResizeNicely(uint16_t newWidth, uint16_t newHeight, plMipmap::ScaleFilter filter) override;
 
-    virtual void    SetCurrLevel(uint8_t level);
+    void    SetCurrLevel(uint8_t level) override;
 
     const plMipmap* GetBase() const { return fBase; }
 };

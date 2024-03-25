@@ -1,26 +1,21 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib")
-include_directories("../../NucleusLib/inc")
-
-set(pnGameMgr_GAMES
-    BlueSpiral/pnGmBlueSpiral.h
-    ClimbingWall/pnGmClimbingWall.h
-    Heek/pnGmHeek.h
-    Marker/pnGmMarker.h
-    TicTacToe/pnGmTicTacToe.h
-    VarSync/pnGmVarSync.h
-)
-
-set(pnGameMgr_SOURCES
-    Intern.h
-    Pch.h
+set(pnGameMgr_HEADERS
     pnGameMgr.h
-
-    # Needs at least one C++ file to show up in VS solution
-    pnGameMgr.cpp
+    pnGameMgrConst.h
+    pnGmBlueSpiral.h
+    pnGmHeek.h
+    pnGmHeekConst.h
+    pnGmMarker.h
+    pnGmMarkerConst.h
+    pnGmVarSync.h
 )
 
-add_library(pnGameMgr STATIC ${pnGameMgr_SOURCES} ${pnGameMgr_GAMES})
+plasma_library(pnGameMgr OBJECT SOURCES ${pnGameMgr_HEADERS})
+target_link_libraries(
+    pnGameMgr
+    INTERFACE
+        CoreLib
+        pnUUID
+)
 
-source_group("Games" FILES ${pnGameMgr_GAMES})
-source_group("" FILES ${pnGameMgr_SOURCES})
+# This is needed because there are no .cpp files in the library.
+set_target_properties(pnGameMgr PROPERTIES LINKER_LANGUAGE CXX)

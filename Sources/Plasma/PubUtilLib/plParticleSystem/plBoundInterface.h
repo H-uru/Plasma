@@ -69,13 +69,13 @@ public:
     CLASSNAME_REGISTER( plBoundInterface );
     GETINTERFACE_ANY( plBoundInterface, plObjInterface );
     
-    virtual int32_t GetNumProperties() const { return kNumProps; }
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    int32_t GetNumProperties() const override { return kNumProps; }
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void ReleaseData();
+    void ReleaseData() override;
 };
 
 

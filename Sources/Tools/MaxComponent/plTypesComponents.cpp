@@ -41,6 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include "hsWindows.h"
+
 #include "plgDispatch.h"
 #include "hsGeometry3.h"
 #include "hsResMgr.h"
@@ -50,12 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimComponent.h"
 #include "plAudioComponents.h"
 #include "MaxMain/plMaxNode.h"
+#include "MaxMain/MaxAPI.h"
+
 #include "resource.h"
-
-#include <iparamm2.h>
-#include <windowsx.h>
-#pragma hdrstop
-
 
 #include "pnSceneObject/plSceneObject.h"
 
@@ -86,10 +85,10 @@ class plStartingPointComponent : public plComponent
 {
 public:
     plStartingPointComponent();
-    void DeleteThis() { delete this; }
-    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    void DeleteThis() override { delete this; }
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
     //bool IsValidNodeType(plMaxNode *pNode);
 };
 
@@ -101,7 +100,7 @@ ParamBlockDesc2 gStartPtBk
 (
     1, _T(""), 0, &gStartPtDesc, P_AUTO_CONSTRUCT, 0,
 
-    end
+    p_end
 );
 
 plStartingPointComponent::plStartingPointComponent()
@@ -143,9 +142,9 @@ protected:
 public:
     plVehicleComponent();
 
-    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 CLASS_DESC(plVehicleComponent, gVehicleDesc, "(ex)Vehicle", "Vehicle", COMP_TYPE_MISC, Class_ID(0x75903e2, 0x50ac210b))
@@ -170,11 +169,11 @@ protected:
     void IUpdateButtonText(HWND hWnd, IParamBlock2 *pb)
     {
         INode *node = pb->GetINode(kVehicleDriveDet);
-        SetWindowText(GetDlgItem(hWnd, IDC_DRIVE), node ? node->GetName() : "(none)");
+        SetWindowText(GetDlgItem(hWnd, IDC_DRIVE), node ? node->GetName() : _M("(none)"));
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -198,7 +197,7 @@ public:
 
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plVehicleComponentProc gVehicleComponentProc;
 
@@ -210,41 +209,41 @@ ParamBlockDesc2 gVehicleBlock
 
     kVehicleChassis,    _T("chassis"),      TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_CHASSIS,
-        end,
+        p_end,
 
     kVehicleWheelFR,    _T("wheelFR"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_FR_WHEEL,
-        end,
+        p_end,
     kVehicleWheelFL,    _T("wheelFL"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_FL_WHEEL,
-        end,
+        p_end,
     kVehicleWheelRR,    _T("wheelRR"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_RR_WHEEL,
-        end,
+        p_end,
     kVehicleWheelRL,    _T("wheelRL"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_RL_WHEEL,
-        end,
+        p_end,
 
     kVehicleHardpointFR,    _T("hardpointFR"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_FR_HARDPOINT,
-        end,
+        p_end,
     kVehicleHardpointFL,    _T("hardpointFL"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_FL_HARDPOINT,
-        end,
+        p_end,
     kVehicleHardpointRR,    _T("hardpointRR"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_RR_HARDPOINT,
-        end,
+        p_end,
     kVehicleHardpointRL,    _T("hardpointRL"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_RL_HARDPOINT,
-        end,
+        p_end,
 
     kVehicleDriveDet,   _T("driveDet"), TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
-plVehicleComponent::plVehicleComponent() : fMod(nil)
+plVehicleComponent::plVehicleComponent() : fMod()
 {
     fClassDesc = &gVehicleDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -340,7 +339,7 @@ bool plVehicleComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     plKey modKey = pNode->AddModifier(fMod, IGetUniqueName(pNode));
 
     plMaxNode* detectorNode = (plMaxNode*)fCompPB->GetINode(kVehicleDriveDet);
-    plComponentBase* comp = detectorNode ? detectorNode->ConvertToComponent() : nil;
+    plComponentBase* comp = detectorNode ? detectorNode->ConvertToComponent() : nullptr;
     if (comp)
         comp->AddReceiverKey(modKey);
 
@@ -427,10 +426,10 @@ class plMaintainersMarkerComponent : public plComponent
 {
 public:
     plMaintainersMarkerComponent();
-    void DeleteThis() { delete this; }
-    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    void DeleteThis() override { delete this; }
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 //Max desc stuff necessary.
@@ -441,13 +440,13 @@ ParamBlockDesc2 gMaintainersBk
 (
     
     1, _T("maintainersMarker"), 0, &gMaintainersDesc, P_AUTO_CONSTRUCT  + P_AUTO_UI, plComponent::kRefComp,
-    IDD_COMP_MAINTAINERS_MARKER, IDS_COMP_MAINTAINERS_MARKER, 0, 0, NULL,
+    IDD_COMP_MAINTAINERS_MARKER, IDS_COMP_MAINTAINERS_MARKER, 0, 0, nullptr,
 
     kCalibrated, _T("Calibrated"),      TYPE_INT,       0, 0,
         p_ui, TYPE_RADIO, 3,    IDC_RADIO_BROKEN, IDC_RADIO_REPAIRED, IDC_RADIO_CALIBRATED,
         p_vals, plMaintainersMarkerModifier::kBroken, plMaintainersMarkerModifier::kRepaired, plMaintainersMarkerModifier::kCalibrated,
-        end,
-    end
+        p_end,
+    p_end
 );
 
 plMaintainersMarkerComponent::plMaintainersMarkerComponent()
@@ -494,9 +493,9 @@ protected:
 
 public:
     plGameMarkerComponent();
-    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 CLASS_DESC(plGameMarkerComponent, gGameMarkerDesc, "Game Marker",  "GameMarker", COMP_TYPE_TYPE, Class_ID(0x4a15029a, 0x350f7258))
@@ -521,8 +520,8 @@ class plGameMarkerComponentProc : public ParamMap2UserDlgProc
 protected:
     void IComboChanged(HWND hWnd, IParamBlock2 *pb, int id)
     {
-        char buf[256];
-        GetDlgItemText(hWnd, id, buf, sizeof(buf));
+        TCHAR buf[256];
+        GetDlgItemText(hWnd, id, buf, std::size(buf));
         int paramID = 0;
         switch (id)
         {
@@ -536,15 +535,15 @@ protected:
 
     void ILoadCombo(HWND hWnd, int ctrlID, int paramID, IParamBlock2* pb, plNotetrackAnim& anim)
     {
-        const char* savedName = pb->GetStr(paramID);
+        const MCHAR* savedName = pb->GetStr(paramID);
         HWND hCombo = GetDlgItem(hWnd, ctrlID);
         ComboBox_ResetContent(hCombo);
 
-        plString animName;
-        while (!(animName = anim.GetNextAnimName()).IsNull())
+        ST::string animName;
+        while (!(animName = anim.GetNextAnimName()).empty())
         {
-            int sel = ComboBox_AddString(hCombo, animName.c_str());
-            if (animName.Compare(savedName) == 0)
+            int sel = ComboBox_AddString(hCombo, ST2T(animName));
+            if (animName.compare(savedName) == 0)
                 ComboBox_SetCurSel(hCombo, sel);
         }
     }
@@ -557,7 +556,7 @@ protected:
         {
             SetDlgItemText(hWnd, IDC_MTL_BUTTON, mtl->GetName());
 
-            plNotetrackAnim anim(mtl, nil);
+            plNotetrackAnim anim(mtl, nullptr);
             ILoadCombo(hWnd, IDC_ANIM_RED_COMBO, kMarkerRedAnim, pb, anim);
             ILoadCombo(hWnd, IDC_ANIM_GREEN_COMBO, kMarkerGreenAnim, pb, anim);
             ILoadCombo(hWnd, IDC_ANIM_OPEN_COMBO, kMarkerOpenAnim, pb, anim);
@@ -566,26 +565,26 @@ protected:
         if (pb->GetINode(kMarkerMtlNode))
             SetDlgItemText(hWnd, IDC_MTL_NODE_BUTTON, pb->GetINode(kMarkerMtlNode)->GetName());
         else
-            SetDlgItemText(hWnd, IDC_MTL_NODE_BUTTON, "(none)");
+            SetDlgItemText(hWnd, IDC_MTL_NODE_BUTTON, _T("(none)"));
 
         if (pb->GetINode(kMarkerBounceNode))
             SetDlgItemText(hWnd, IDC_BOUNCE_BUTTON, pb->GetINode(kMarkerBounceNode)->GetName());
         else
-            SetDlgItemText(hWnd, IDC_BOUNCE_BUTTON, "(none)");
+            SetDlgItemText(hWnd, IDC_BOUNCE_BUTTON, _T("(none)"));
 
         if (pb->GetINode(kMarkerSndPlace))
             SetDlgItemText(hWnd, IDC_PLACE_BUTTON, pb->GetINode(kMarkerSndPlace)->GetName());
         else
-            SetDlgItemText(hWnd, IDC_PLACE_BUTTON, "(none)");
+            SetDlgItemText(hWnd, IDC_PLACE_BUTTON, _T("(none)"));
 
         if (pb->GetINode(kMarkerSndHit))
             SetDlgItemText(hWnd, IDC_HIT_BUTTON, pb->GetINode(kMarkerSndHit)->GetName());
         else
-            SetDlgItemText(hWnd, IDC_HIT_BUTTON, "(none)");
+            SetDlgItemText(hWnd, IDC_HIT_BUTTON, _T("(none)"));
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -641,7 +640,7 @@ public:
 
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plGameMarkerComponentProc gGameMarkerComponentProc;
 
@@ -652,33 +651,33 @@ ParamBlockDesc2 gGameMarkerBlk
 
     kMarkerPhys,    _T("physical"),     TYPE_INODE,     0, 0,
         p_ui,       TYPE_PICKNODEBUTTON, IDC_MARKER_PHYS,
-        end,
+        p_end,
 
     kMarkerMtl,     _T("mtl"),          TYPE_MTL,       0, 0,
-        end,
+        p_end,
 
     kMarkerGreenAnim,   _T("green"),    TYPE_STRING,    0, 0,
-        end,
+        p_end,
     kMarkerRedAnim,     _T("red"),      TYPE_STRING,    0, 0,
-        end,
+        p_end,
     kMarkerOpenAnim,    _T("open"),     TYPE_STRING,    0, 0,
-        end,
+        p_end,
 
     kMarkerBounceNode,  _T("bounceNode"), TYPE_INODE, 0, 0,
-        end,
+        p_end,
     kMarkerBounceComp,  _T("bounceComp"), TYPE_INODE, 0, 0,
-        end,
+        p_end,
 
     kMarkerMtlNode,     _T("mtlNode"),  TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     kMarkerSndPlace,    _T("sndPlace"), TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     kMarkerSndHit,      _T("sndHit"),   TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plGameMarkerComponent::plGameMarkerComponent()
@@ -716,10 +715,10 @@ plKey plGameMarkerComponent::IGetMtlAnimKey(int paramID, plMaxNode* node)
 {
     Mtl* mtl = fCompPB->GetMtl(kMarkerMtl);
     plMaxNode* mtlNode  = (plMaxNode*)fCompPB->GetINode(kMarkerMtlNode);
-    hsTArray<plKey> keys;
-    plString anim = plString::FromUtf8(fCompPB->GetStr(paramID));
+    std::vector<plKey> keys;
+    ST::string anim(fCompPB->GetStr(paramID));
     GetMatAnimModKey(mtl, mtlNode, anim, keys);
-    hsAssert(keys.Count() == 1, "Wrong number of keys");
+    hsAssert(keys.size() == 1, "Wrong number of keys");
     return keys[0];
 }
 
@@ -733,7 +732,7 @@ plKey plGameMarkerComponent::IGetAnimKey(int nodeID, int compID)
         return comp->GetModKey(animNode);
     }
 
-    return nil;
+    return nullptr;
 }
 
 bool plGameMarkerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
@@ -771,14 +770,14 @@ class plCameraComponent : public plComponent
 {
 public:
     plCameraComponent();
-    void DeleteThis() { delete this; }
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    void DeleteThis() override { delete this; }
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
     bool IsValidNodeType(plMaxNode *pNode);
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
 };
 
@@ -799,20 +798,20 @@ ParamBlockDesc2 gCameraBk
 (   
     1, _T("camera"), 0, &gCameraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CAMERA, IDS_COMP_CAMERAS,  0, 0, NULL,
+    IDD_COMP_CAMERA, IDS_COMP_CAMERAS,  0, 0, nullptr,
 
     // params
     kCamera,    _T("Animation"),        TYPE_INT,       0, 0,
         p_default, 0,
         p_ui,       TYPE_RADIO, 2, /*IDC_RADIO_DEFAULT,*/ IDC_RADIO_FIXEDCAM, IDC_RADIO_FIXEDPANCAM,
-        end,
+        p_end,
     //kCamera,  _T("CamType"),      TYPE_INT,       0, 0,
     /// p_ui,       TYPE_RADIO, 2, IDC_RADIO_FIXEDCAM, IDC_RADIO_FIXEDPANCAM,
     //  end,
 
 
 
-    end
+    p_end
 );
 
 plCameraComponent::plCameraComponent()

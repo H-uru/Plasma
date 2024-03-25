@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_COMPOSITE_MTL_PB_H
 #define PL_COMPOSITE_MTL_PB_H
 
+#include <tchar.h>
+
 enum
 {
     kCompPasses,
@@ -66,16 +68,16 @@ enum BlendMethod // These should match up in order with the blend strings
     kCompNumBlendMethods
 };  
 
-static char *BlendStrings[] = // Make sure these match up in order with the Blend enum
+static TCHAR* BlendStrings[] = // Make sure these match up in order with the Blend enum
 {
-    "Vertex Alpha",
-    "Inverse Vtx Alpha",
-    "Vertex Illum Red",
-    "Inv. Vtx Illum Red",
-    "Vertex Illum Green",
-    "Inv. Vtx Illum Green",
-    "Vertex Illum Blue",
-    "Inv. Vtx Illum Blue"
+    _T("Vertex Alpha"),
+    _T("Inverse Vtx Alpha"),
+    _T("Vertex Illum Red"),
+    _T("Inv. Vtx Illum Red"),
+    _T("Vertex Illum Green"),
+    _T("Inv. Vtx Illum Green"),
+    _T("Vertex Illum Blue"),
+    _T("Inv. Vtx Illum Blue")
 };
 
 #endif //PL_COMPOSITE_MTL_PB_H

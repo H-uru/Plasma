@@ -88,7 +88,7 @@ protected:
 
     public:
         bool fUsedThisFrame;
-        LapInfo(const char* name) { fName = name; fDisplayFlags = kDisplayTime; }
+        LapInfo(const char* name) : fUsedThisFrame() { fName = name; fDisplayFlags = kDisplayTime; }
         bool operator<(const LapInfo& rhs) const { return fLastAvg < rhs.fLastAvg; }
 
         void BeginTiming(uint64_t value) { fValue -= value; }

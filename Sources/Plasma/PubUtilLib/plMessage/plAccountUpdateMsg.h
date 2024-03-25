@@ -67,8 +67,8 @@ public:
     CLASSNAME_REGISTER(plAccountUpdateMsg);
     GETINTERFACE_ANY(plAccountUpdateMsg, plMessage);
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     uint32_t    GetUpdateType() const { return fUpdateType; }
     void        SetUpdateType(uint32_t type) { fUpdateType = type; }

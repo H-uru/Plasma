@@ -80,14 +80,14 @@ plCubicEnvironmap::~plCubicEnvironmap()
 //// GetTotalSize /////////////////////////////////////////////////////////////
 //  Get the total size in bytes
 
-uint32_t  plCubicEnvironmap::GetTotalSize( void ) const
+uint32_t  plCubicEnvironmap::GetTotalSize() const
 {
     uint32_t  size, i;
 
 
     for( size = 0, i = 0; i < 6; i++ )
     {
-        hsAssert( fFaces[ i ] != nil, "Nil face in GetTotalSize()" );
+        hsAssert(fFaces[i] != nullptr, "Nil face in GetTotalSize()");
         size += fFaces[ i ]->GetTotalSize();
     }
 
@@ -128,8 +128,8 @@ uint32_t  plCubicEnvironmap::Write( hsStream *s )
 void    plCubicEnvironmap::CopyToFace( plMipmap *mip, uint8_t face )
 {
     hsAssert( face < 6, "Invalid face index in CopyToFace()" );
-    hsAssert( fFaces[ face ] != nil, "nil face in CopyToFace()" );
-    hsAssert( mip != nil, "nil source in CopyToFace()" );
+    hsAssert(fFaces[face] != nullptr, "nil face in CopyToFace()");
+    hsAssert(mip != nullptr, "nil source in CopyToFace()");
 
 
     if( !fInitialized )

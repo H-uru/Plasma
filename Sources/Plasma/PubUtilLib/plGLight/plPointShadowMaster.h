@@ -43,8 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPointShadowMaster_inc
 #define plPointShadowMaster_inc
 
-#include "plShadowMaster.h"
+#include <memory>
+
 #include "hsGeometry3.h"
+#include "hsPoolVector.h"
+
+#include "plShadowMaster.h"
 
 class plBoundsIsect;
 
@@ -53,16 +57,16 @@ class plPointShadowMaster : public plShadowMaster
 protected:
     mutable hsVector3                   fLastUp;
 
-    mutable hsTArray<plBoundsIsect*>    fIsectPool;
+    mutable hsPoolVector<std::unique_ptr<plBoundsIsect>> fIsectPool;
 
-    virtual void IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
-    virtual void IComputeProjections(plShadowCastMsg* castMsg, plShadowSlave* slave) const;
-    virtual void IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
-    virtual void IComputeBounds(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
+    void IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const override;
+    void IComputeProjections(plShadowCastMsg* castMsg, plShadowSlave* slave) const override;
+    void IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* slave) const override;
+    void IComputeBounds(const hsBounds3Ext& bnd, plShadowSlave* slave) const override;
 
-    virtual plShadowSlave* INewSlave(const plShadowCaster* caster);
+    std::unique_ptr<plShadowSlave> INewSlave(const plShadowCaster* caster) override;
 
-    virtual void IBeginRender();
+    void IBeginRender() override;
 
 public:
     plPointShadowMaster();

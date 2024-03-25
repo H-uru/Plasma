@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/plUoid.h"
 #include "pnKeyedObject/plFixedKey.h"
-#pragma hdrstop
 
 #include "plListenerMsg.h"
 
@@ -69,7 +68,8 @@ void plListenerMsg::Write(hsStream* s, hsResMgr* mgr)
 }
 
 
-plSetListenerMsg::plSetListenerMsg( uint8_t type, const plKey &srcKey, bool binding ) : plMessage( nil, nil, nil ) 
+plSetListenerMsg::plSetListenerMsg(uint8_t type, const plKey &srcKey, bool binding)
+    : plMessage(nullptr, nullptr, nullptr)
 {
     plUoid uoid( kListenerMod_KEY );
     plKey pLKey = hsgResMgr::ResMgr()->FindKey( uoid );

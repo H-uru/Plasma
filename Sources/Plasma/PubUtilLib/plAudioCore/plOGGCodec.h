@@ -74,22 +74,22 @@ public:
         kFastSeeking = 0x01
     };
     
-    virtual plWAVHeader &GetHeader( void );
+    plWAVHeader &GetHeader() override;
 
-    virtual void    Close( void );
+    void    Close() override;
 
-    virtual uint32_t  GetDataSize( void ) { return fDataSize / fChannelAdjust; }
-    virtual float   GetLengthInSecs( void );
+    uint32_t  GetDataSize() override { return fDataSize / fChannelAdjust; }
+    float   GetLengthInSecs() override;
 
-    virtual bool    SetPosition( uint32_t numBytes );
-    virtual bool    Read( uint32_t numBytes, void *buffer );
-    virtual uint32_t  NumBytesLeft( void );
+    bool    SetPosition(uint32_t numBytes) override;
+    bool    Read(uint32_t numBytes, void *buffer) override;
+    uint32_t  NumBytesLeft() override;
 
-    virtual bool    IsValid( void ) { return ( fOggFile != nil ) ? true : false; }
+    bool    IsValid() override { return (fOggFile != nullptr); }
 
     static void     SetDecodeFormat( DecodeFormat f ) { fDecodeFormat = f; }
     static void     SetDecodeFlag( uint8_t flag, bool on ) { if( on ) fDecodeFlags |= flag; else fDecodeFlags &= ~flag; }
-    static uint8_t  GetDecodeFlags( void ) { return fDecodeFlags; }
+    static uint8_t  GetDecodeFlags() { return fDecodeFlags; }
     void            ResetWaveHeaderRef() { fCurHeaderPos = 0; }
     void            BuildActualWaveHeader();
     bool            ReadFromHeader(int numBytes, void *data); // read from Actual wave header

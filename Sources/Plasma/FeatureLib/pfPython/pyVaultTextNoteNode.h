@@ -49,50 +49,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
+
+#include "pyGlueDefinitions.h"
 #include "pyVaultNode.h"
 
-class plString;
-struct RelVaultNode;
-class pyVaultAgeLinkNode;
+namespace ST { class string; }
 
 class pyVaultTextNoteNode : public pyVaultNode
 {
 protected:
-    // should only be created from C++ side
-    pyVaultTextNoteNode(RelVaultNode* nfsNode);
-
     //create from the Python side
     pyVaultTextNoteNode();
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultTextNoteNode);
-    PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject *New(RelVaultNode* nfsNode);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultTextNoteNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultTextNoteNode); // converts a PyObject to a pyVaultTextNoteNode (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
 
-
-//==================================================================
-// class RelVaultNode : public plVaultNode
-//
-    void Note_SetTitle( const char * text );
-    void Note_SetTitleW( const wchar_t * text );
-    plString Note_GetTitle() const;
-    void Note_SetText( const char * text );
-    void Note_SetTextW( const wchar_t * text );
-    plString Note_GetText() const;
+    void Note_SetTitle(const ST::string& text);
+    ST::string Note_GetTitle() const;
+    void Note_SetText(const ST::string& text);
+    ST::string Note_GetText() const;
     void Note_SetType( int32_t type );
-    int32_t Note_GetType( void );
+    int32_t Note_GetType();
 
     void Note_SetSubType( int32_t type );
-    int32_t Note_GetSubType( void );
+    int32_t Note_GetSubType();
 
     PyObject * GetDeviceInbox() const; // returns pyVaultFolderNode
-    void SetDeviceInbox( const char * devName, PyObject * cb=nil, uint32_t cbContext=0 );
+    void SetDeviceInbox(const ST::string& devName, PyObject * cb=nullptr, uint32_t cbContext=0);
 };
 
 #endif // _pyVaultTextNoteNode_h_

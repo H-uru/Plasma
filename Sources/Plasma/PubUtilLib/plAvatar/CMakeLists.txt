@@ -1,11 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
-include_directories(${OPENAL_INCLUDE_DIR})
-
 set(plAvatar_SOURCES
     plAnimStage.cpp
     plArmatureEffects.cpp
@@ -75,9 +67,54 @@ set(plAvatar_HEADERS
     plSwimRegion.h
 )
 
-add_library(plAvatar STATIC ${plAvatar_SOURCES} ${plAvatar_HEADERS})
+plasma_library(plAvatar
+    SOURCES ${plAvatar_SOURCES} ${plAvatar_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
+target_link_libraries(
+    plAvatar
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnKeyedObject
+        pnModifier
+        pnNetCommon
+        pnNucleusInc
+        pnSceneObject
+        pnTimer
+        plAnimation
+        plMessage
+        plModifier
+        plPhysical
+    PRIVATE
+        pnEncryption
+        pnMessage
+        plAudio
+        plDrawable
+        plGImage
+        plInputCore
+        plInterp
+        plMessage
+        plMessageBox
+        plNetClient
+        plNetCommon
+        plNetMessage
+        plNetTransport
+        plParticleSystem
+        plPipeline
+        plResMgr
+        plScene
+        plSDL
+        plStatusLog
+        plSurface
+        plVault
+        pfAudio # :(
+        pfCamera # :(
+        pfMessage # :(
+)
 
-target_link_libraries(plAvatar plAnimation)
+target_include_directories(plAvatar PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 
 source_group("Source Files" FILES ${plAvatar_SOURCES})
 source_group("Header Files" FILES ${plAvatar_HEADERS})

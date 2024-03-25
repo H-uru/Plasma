@@ -43,42 +43,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetCommonHelpers_h_inc
 
 #include "HeadSpin.h"
-#include <map>
 
-#include "hsTimer.h"
-#include "pnNetCommon/pnNetCommon.h"
-#include "pnNetCommon/plNetApp.h"
+#include <map>
+#include <string>
+#include <vector>
+
 #include "pnFactory/plCreatable.h"
 
-////////////////////////////////////////////////////////////////////
-
-#ifndef SERVER
-class plNetCoreStatsSummary : public plCreatable
-{
-    static const uint8_t StreamVersion;
-    float fULBitsPS;
-    float fDLBitsPS;
-    float fULPeakBitsPS;
-    float fDLPeakBitsPS;
-    float fULPeakPktsPS;
-    float fDLPeakPktsPS;
-    uint32_t fDLDroppedPackets;
-public:
-    plNetCoreStatsSummary();
-    CLASSNAME_REGISTER( plNetCoreStatsSummary );
-    GETINTERFACE_ANY( plNetCoreStatsSummary, plCreatable );
-    void Read(hsStream* s, hsResMgr* mgr=nil);
-    void Write(hsStream* s, hsResMgr* mgr=nil);
-    float GetULBitsPS() const { return fULBitsPS; }
-    float GetDLBitsPS() const { return fDLBitsPS; }
-    float GetULPeakBitsPS() const { return fULPeakBitsPS; }
-    float GetDLPeakBitsPS() const { return fDLPeakBitsPS; }
-    float GetULPeakPktsPS() const { return fULPeakPktsPS; }
-    float GetDLPeakPktsPS() const { return fDLPeakPktsPS; }
-    uint32_t GetDLDroppedPackets() const { return fDLDroppedPackets; }
-};
-#endif // SERVER
-
+namespace ST { class string; }
 
 ////////////////////////////////////////////////////////////////////
 
@@ -105,8 +77,8 @@ public:
     CLASSNAME_REGISTER( plCreatableListHelper );
     GETINTERFACE_ANY( plCreatableListHelper, plCreatable );
 
-    void    Read( hsStream* s, hsResMgr* mgr );
-    void    Write( hsStream* s, hsResMgr* mgr );
+    void    Read(hsStream* s, hsResMgr* mgr) override;
+    void    Write(hsStream* s, hsResMgr* mgr) override;
     void    Clear() { IClearItems();    }
     void    CopyFrom( const plCreatableListHelper * other, bool manageItems );
 
@@ -121,11 +93,11 @@ public:
     plCreatable* GetItem( uint16_t id, bool unManageItem=false ) const;
     void    RemoveItem( uint16_t id, bool unManageItem=false );
     bool    ItemExists( uint16_t id ) const;
-    int     GetNumItems() const { return fItems.size();}
+    size_t  GetNumItems() const { return fItems.size();}
     // helpers for typed arguments
     void    AddString( uint16_t id, const char * value );
     void    AddString( uint16_t id, std::string & value );
-    plString  GetString( uint16_t id );
+    ST::string  GetString( uint16_t id );
     void    AddInt( uint16_t id, int32_t value );
     int32_t   GetInt( uint16_t id );
     void    AddDouble( uint16_t id, double value );
@@ -133,49 +105,5 @@ public:
     void    GetItemsAsVec( std::vector<plCreatable*>& out );
     void    GetItems( std::map<uint16_t,plCreatable*>& out );
 };
-
-/////////////////////////////////////////////////////////////////////
-struct plOperationTimer
-{
-    bool    fRunning;
-    double  fStartTime;
-    double  fEndTime;
-    std::string fComment;
-    std::string fSpacer;
-    bool    fPrintAtStart;
-    std::string fTag;
-    plOperationTimer( const char * tag="", bool printAtStart=false )
-        : fRunning( false )
-        , fTag( tag )
-        , fStartTime( 0.0 )
-        , fEndTime( 0.0 )
-        , fPrintAtStart( printAtStart )
-    {}
-    ~plOperationTimer() { Stop(); }
-    void Start( const char * comment, int level=0 )
-    {
-        fSpacer = std::string( level, '\t' );
-        Stop();
-        fRunning = true;
-        fComment = comment;
-        fStartTime = hsTimer::GetSeconds();
-        if ( fPrintAtStart )
-        {
-            hsLogEntry( plNetApp::StaticDebugMsg( "%s%s Timing: %s",
-            fSpacer.c_str(), fTag.c_str(), fComment.c_str() ) );
-        }
-    }
-    void Stop()
-    {
-        if ( !fRunning )
-            return;
-        fRunning = false;
-        fEndTime = hsTimer::GetSeconds()-fStartTime;
-        hsLogEntry( plNetApp::StaticDebugMsg( "%s%s Timed: %f secs: %s",
-            fSpacer.c_str(), fTag.c_str(), fEndTime, fComment.c_str() ) );
-    }
-    double GetTime() const { return fEndTime;}
-};
-
 
 #endif // plNetCommonHelpers_h_inc

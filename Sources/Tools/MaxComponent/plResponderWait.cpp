@@ -40,12 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
 
-#include "MaxMain/MaxCompat.h"
-#include <iparamm2.h>
+#include "MaxMain/MaxAPI.h"
+
 #include "resource.h"
-#pragma hdrstop
 
 #include "plResponderWait.h"
 #include "plResponderComponentPriv.h"
@@ -66,8 +64,8 @@ protected:
 public:
     void Init(IParamBlock2 *curStatePB, int curCmd, HWND hList) { fStatePB = curStatePB; fCurCmd = curCmd; fhList = hList; }
 
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-    virtual void DeleteThis() {}
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    void DeleteThis() override { }
 
 protected:
     void LoadWho(bool setDefault=false);
@@ -88,28 +86,28 @@ enum
 
 ParamBlockDesc2 gResponderWaitBlock
 (
-    kResponderWaitBlk, _T("waitCmd"), 0, NULL, P_AUTO_UI,
+    kResponderWaitBlk, _T("waitCmd"), 0, nullptr, P_AUTO_UI,
 
     IDD_COMP_RESPOND_WAIT, IDS_COMP_WAIT, 0, 0, &gResponderWaitProc,
 
     kWaitWhoOld,    _T("whoOld"),       TYPE_INT_TAB, 0,        0, 0,
-        end,
+        p_end,
 
     kWaitPointOld,  _T("pointOld"), TYPE_STRING_TAB, 0,     0, 0,
-        end,
+        p_end,
 
     kWaitMe,    _T("me"),       TYPE_BOOL,              0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_WAIT_ON_ME_CHECK,
-        end,
+        p_end,
 
     kWaitWho, _T("who"),        TYPE_INT,               0, 0,
         p_default,  -1,
-        end,
+        p_end,
 
     kWaitPoint, _T("point"),    TYPE_STRING,            0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 void ResponderWait::SetDesc(ClassDesc2 *desc) { gResponderWaitBlock.SetClassDesc(desc); }
 
@@ -124,15 +122,15 @@ void ResponderWait::FixupWaitBlock(IParamBlock2 *waitPB)
 
     if (waitPB->Count(kWaitPointOld) > 0)
     {
-        MCHAR* point = (MCHAR*)waitPB->GetStr(kWaitPointOld, 0, 0);
-        waitPB->SetValue(kWaitPoint, 0, _T(point));
+        auto point = waitPB->GetStr(kWaitPointOld, 0, 0);
+        waitPB->SetValue(kWaitPoint, 0, point);
         waitPB->Delete(kWaitPointOld, 0, 1);
     }
 }
 
 IParamBlock2 *ResponderWait::CreatePB()
 {
-    return CreateParameterBlock2(&gResponderWaitBlock, nil);
+    return CreateParameterBlock2(&gResponderWaitBlock, nullptr);
 }
 
 bool ResponderWait::GetWaitOnMe(IParamBlock2* waitPB)
@@ -145,12 +143,12 @@ int ResponderWait::GetWaitingOn(IParamBlock2* waitPB)
     return waitPB->GetInt(kWaitWho);
 }
 
-plString ResponderWait::GetWaitPoint(IParamBlock2* waitPB)
+ST::string ResponderWait::GetWaitPoint(IParamBlock2* waitPB)
 {
-    const char* point = waitPB->GetStr(kWaitPoint);
+    auto point = waitPB->GetStr(kWaitPoint);
     if (point && *point == '\0')
-        return plString::Null;
-    return plString::FromUtf8(point);
+        return ST::string();
+    return M2ST(point);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -165,7 +163,7 @@ IParamBlock2 *plResponderWaitProc::GetCmdParams(int cmdIdx)
     return (IParamBlock2*)fStatePB->GetReferenceTarget(kStateCmdParams, 0, cmdIdx);
 }
 
-BOOL plResponderWaitProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plResponderWaitProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -190,8 +188,8 @@ BOOL plResponderWaitProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT m
             if (wParam == IDC_MARKER_EDIT)
             {
                 ICustEdit *edit = GetICustEdit((HWND)lParam);
-                char buf[256];
-                edit->GetText(buf, sizeof(buf));
+                MCHAR buf[256];
+                edit->GetText(buf, std::size(buf));
                 fWaitPB->SetValue(kWaitPoint, 0, buf);
 
                 return TRUE;
@@ -209,7 +207,7 @@ BOOL plResponderWaitProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT m
                 if (!checked)
                 {
                     fWaitPB->SetValue(kWaitWho, 0, -1);
-                    fWaitPB->SetValue(kWaitPoint, 0, "");
+                    fWaitPB->SetValue(kWaitPoint, 0, _M(""));
 
                     LoadPoint();
 
@@ -229,7 +227,7 @@ BOOL plResponderWaitProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT m
             {
                 HWND hWho = (HWND)lParam;
                 int who = ComboBox_GetCurSel(hWho);
-                int idx = ComboBox_GetItemData(hWho, who);
+                int idx = (int)ComboBox_GetItemData(hWho, who);
                 fWaitPB->SetValue(kWaitWho, 0, idx);
 
                 LoadPoint();
@@ -237,7 +235,7 @@ BOOL plResponderWaitProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT m
             }
             else if (id == IDC_RADIO_FINISH && code == BN_CLICKED)
             {
-                fWaitPB->SetValue(kWaitPoint, 0, "");
+                fWaitPB->SetValue(kWaitPoint, 0, _M(""));
                 LoadPoint();
                 return TRUE;
             }
@@ -251,8 +249,8 @@ BOOL plResponderWaitProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT m
                 HWND hPoint = (HWND)lParam;
                 if (ComboBox_GetCurSel(hPoint) != CB_ERR)
                 {
-                    char buf[256];
-                    ComboBox_GetText(hPoint, buf, sizeof(buf));
+                    TCHAR buf[256];
+                    ComboBox_GetText(hPoint, buf, std::size(buf));
                     fWaitPB->SetValue(kWaitPoint, 0, buf);
                 }
                 return TRUE;
@@ -300,7 +298,7 @@ void plResponderWaitProc::LoadWho(bool setDefault)
     if (setDefault && numFound > 0)
     {
         HWND hWho = GetDlgItem(fhDlg, IDC_WAIT_WHO);
-        int idx = ComboBox_GetItemData(hWho, numFound-1);
+        int idx = (int)ComboBox_GetItemData(hWho, numFound-1);
         fWaitPB->SetValue(kWaitWho, 0, idx);
 
         ComboBox_SetCurSel(hWho, numFound-1);
@@ -315,9 +313,9 @@ void plResponderWaitProc::LoadWho(bool setDefault)
 void plResponderWaitProc::LoadPoint(bool force)
 {
     int who = fWaitPB->GetInt(kWaitWho);
-    const char *point = fWaitPB->GetStr(kWaitPoint);
-    if (point && *point == '\0')
-        point = nil;
+    const MCHAR* point = fWaitPB->GetStr(kWaitPoint);
+    if (point && *point == _M('\0'))
+        point = nullptr;
 
     CheckRadioButton(fhDlg, IDC_RADIO_FINISH, IDC_RADIO_POINT, point || force ? IDC_RADIO_POINT : IDC_RADIO_FINISH);
 
@@ -325,7 +323,7 @@ void plResponderWaitProc::LoadPoint(bool force)
     EnableWindow(GetDlgItem(fhDlg, IDC_RADIO_FINISH), enableAll);
     EnableWindow(GetDlgItem(fhDlg, IDC_RADIO_POINT), enableAll);
 
-    BOOL enablePoint = ((point != nil) || force) && enableAll;
+    BOOL enablePoint = ((point != nullptr) || force) && enableAll;
     EnableWindow(GetDlgItem(fhDlg, IDC_WAIT_POINT), enablePoint);
     ComboBox_ResetContent(GetDlgItem(fhDlg, IDC_WAIT_POINT));
 
@@ -342,7 +340,7 @@ void plResponderWaitProc::LoadPoint(bool force)
             HWND hEdit = GetDlgItem(fhDlg, IDC_MARKER_EDIT);
             ShowWindow(hEdit, SW_SHOW);
             ICustEdit *custEdit = GetICustEdit(hEdit);
-            custEdit->SetText(point ? (char*)point : "");
+            custEdit->SetText(point ? point : _M(""));
         }
         else
         {
@@ -366,9 +364,9 @@ void plResponderWaitProc::LoadPoint(bool force)
             {
                 for (int i = 0; i < waitPoints.size(); i++)
                 {
-                    const char *marker = waitPoints[i].c_str();
-                    int idx = ComboBox_AddString(hCombo, marker);
-                    if (point && !strcmp(point, marker))
+                    const ST::string& marker = waitPoints[i];
+                    int idx = ComboBox_AddString(hCombo, ST2T(marker));
+                    if (point && marker == point)
                         ComboBox_SetCurSel(hCombo, idx);
                 }
             }
@@ -461,11 +459,14 @@ bool ResponderWait::ValidateCmdMove(IParamBlock2 *state, int oldIdx, int newIdx)
 
             if (pb->GetInt(kWaitWho) == oldIdx)
             {
-                int ret = hsMessageBox("You are moving this command ahead of another command that waits on it.\nAre you sure you want to do that?", "Warning", hsMessageBoxYesNo);
-                if (ret == hsMBoxYes)
-                    return true;
-                else
-                    return false;
+                int ret = plMaxMessageBox(
+                    nullptr,
+                    _T("You are moving this command ahead of another command that waits on it."
+                       "\nAre you sure you want to do that?"),
+                    _T("Warning"),
+                    MB_YESNO | MB_ICONWARNING
+                );
+                return ret == IDYES;
             }
         }
     }
@@ -478,11 +479,14 @@ bool ResponderWait::ValidateCmdMove(IParamBlock2 *state, int oldIdx, int newIdx)
         int who = pb->GetInt(kWaitWho);
         if (who >= newIdx && who < oldIdx)
         {
-            int ret = hsMessageBox("You are moving this command behind another command that it is waiting on.\nAre you sure you want to do that?", "Warning", hsMessageBoxYesNo);
-            if (ret == hsMBoxYes)
-                return true;
-            else
-                return false;
+            int ret = plMaxMessageBox(
+                nullptr,
+                _T("You are moving this command behind another command that it is waiting on.\n"
+                   "Are you sure you want to do that?"),
+                _T("Warning"),
+                MB_YESNO | MB_ICONWARNING
+            );
+            return ret == IDYES;
         }
     }
 

@@ -48,18 +48,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUICheckBoxCtrl.h"
-#include "pfGameGUIMgr.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
 
 #include "plInputCore/plInputInterface.h"
-#include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
-#include "plAnimation/plAGModifier.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
@@ -91,10 +87,11 @@ void    pfGUICheckBoxCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Read(s, mgr);
 
-    fAnimationKeys.Reset();
-    uint32_t i, count = s->ReadLE32();
-    for( i = 0; i < count; i++ )
-        fAnimationKeys.Append( mgr->ReadKey( s ) );
+    fAnimationKeys.clear();
+    uint32_t count = s->ReadLE32();
+    fAnimationKeys.reserve(count);
+    for (uint32_t i = 0; i < count; i++)
+        fAnimationKeys.emplace_back(mgr->ReadKey(s));
 
     fAnimName = s->ReadSafeString();
     fChecked = s->ReadBool();
@@ -104,10 +101,9 @@ void    pfGUICheckBoxCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Write( s, mgr );
 
-    uint32_t i, count = fAnimationKeys.GetCount();
-    s->WriteLE32( count );
-    for( i = 0; i < count; i++ )
-        mgr->WriteKey( s, fAnimationKeys[ i ] );
+    s->WriteLE32((uint32_t)fAnimationKeys.size());
+    for (const plKey &key : fAnimationKeys)
+        mgr->WriteKey(s, key);
 
     s->WriteSafeString( fAnimName );
     s->WriteBool( fChecked );
@@ -118,7 +114,7 @@ void    pfGUICheckBoxCtrl::Write( hsStream *s, hsResMgr *mgr )
 void    pfGUICheckBoxCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 {
     pfGUIControlMod::UpdateBounds( invXformMatrix, force );
-    if( fAnimationKeys.GetCount() > 0 )
+    if (!fAnimationKeys.empty())
         fBoundsValid = false;
 }
 
@@ -154,7 +150,7 @@ void    pfGUICheckBoxCtrl::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 void    pfGUICheckBoxCtrl::SetChecked( bool checked, bool immediate /*= false*/ )
 {
     fChecked = checked;
-    if( fAnimationKeys.GetCount() > 0 )
+    if (!fAnimationKeys.empty())
     {
         plAnimCmdMsg *msg = new plAnimCmdMsg();
         if( fChecked )
@@ -187,11 +183,11 @@ void    pfGUICheckBoxCtrl::SetChecked( bool checked, bool immediate /*= false*/ 
         }
         msg->SetAnimName( fAnimName );
         msg->AddReceivers( fAnimationKeys );
-        plgDispatch::MsgSend( msg );
+        msg->Send();
     }
 }
 
-void    pfGUICheckBoxCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const plString &name )
+void    pfGUICheckBoxCtrl::SetAnimationKeys(const std::vector<plKey> &keys, const ST::string &name)
 {
     fAnimationKeys = keys;
     fAnimName = name;
@@ -199,7 +195,7 @@ void    pfGUICheckBoxCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const plStri
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-uint32_t      pfGUICheckBoxCtrl::IGetDesiredCursor( void ) const
+uint32_t      pfGUICheckBoxCtrl::IGetDesiredCursor() const
 {
     if( fClicking )
         return plInputInterface::kCursorClicked;

@@ -42,27 +42,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPickLocalizationDlg_h
 #define plPickLocalizationDlg_h
 
-#include <string>
+#include <string_theory/string>
 
 class plPickLocalizationDlg
 {
-    static BOOL CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
     bool IInitDlg(HWND hDlg);
     void IUpdateValue(HWND hDlg);
     void IUpdateOkBtn(HWND hDlg);
     bool IValidatePath(); // returns true if the current path is a valid subtitle path
-    HTREEITEM IAddVar(std::string name, std::string match, HTREEITEM hParent);
-    void IAddLocalizations(std::string ageName, std::string setName, std::string itemName);
+    HTREEITEM IAddVar(const ST::string& name, const ST::string& match, HTREEITEM hParent);
+    void IAddLocalizations(const ST::string& ageName, const ST::string& setName, const ST::string& itemName);
 
-    std::string fPath;
+    ST::string fPath;
     HWND fTree;
 
 public:
-    plPickLocalizationDlg(const char *path): fPath(path?path:""), fTree(nil) {}
+    plPickLocalizationDlg(ST::string path): fPath(std::move(path)), fTree() { }
 
     bool DoPick(); // returns true if [Ok] clicked, false otherwise.
-    const char *GetValue() const {return fPath.c_str();}
+    ST::string GetValue() const { return fPath; }
 };
 
 #endif // plPickLocalizationDlg_h

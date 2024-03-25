@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../PubUtilLib")
-
 set(pnKeyedObject_HEADERS
     hsKeyedObject.h
     plFixedKey.h
@@ -23,8 +18,21 @@ set(pnKeyedObject_SOURCES
     plUoid.cpp
 )
 
-add_library(pnKeyedObject STATIC ${pnKeyedObject_HEADERS} ${pnKeyedObject_SOURCES})
-target_link_libraries(pnKeyedObject CoreLib pnMessage)
+plasma_library(pnKeyedObject
+    SOURCES ${pnKeyedObject_HEADERS} ${pnKeyedObject_SOURCES}
+    PRECOMPILED_HEADERS Pch.h
+)
+target_link_libraries(
+    pnKeyedObject
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnNucleusInc
+    PRIVATE
+        pnDispatch
+        pnMessage
+        pnNetCommon
+)
 
 source_group("Header Files" FILES ${pnKeyedObject_HEADERS})
 source_group("Source Files" FILES ${pnKeyedObject_SOURCES})

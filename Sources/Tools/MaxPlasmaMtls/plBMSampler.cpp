@@ -40,13 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include <commdlg.h>
 
-#include <bmmlib.h>
-#include <max.h>
-#include <iparamb2.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include <cmath>
 
 #include "Layers/plPlasmaMAXLayer.h"
 #include "plBMSampler.h"
@@ -66,7 +63,7 @@ plBMSampler::plBMSampler(plPlasmaMAXLayer *layer, Bitmap *bm) : fBM(bm), fInitia
         clipy = int(fData.fClipV*fbmh);
         fclipw = fData.fClipW*fbmw;
         fcliph = fData.fClipH*fbmh;
-        cliph = fcliph;
+        cliph = int(fcliph);
 
         fInitialized = true;
     }
@@ -105,8 +102,8 @@ AColor plBMSampler::Sample(ShadeContext& sc, float u,float v)
     BMM_Color_64 c;
     int x,y;
     float fu,fv, intpart;
-    fu = modf(u, &intpart);
-    fv = 1.0f - modf(v, &intpart);
+    fu = std::modf(u, &intpart);
+    fv = 1.0f - std::modf(v, &intpart);
     if (fData.fEnableCrop)
     {
         if (fData.fCropPlacement)
@@ -156,8 +153,8 @@ AColor plBMSampler::SampleFilter(ShadeContext& sc, float u,float v, float du, fl
 
     BMM_Color_64 c;
     float fu, fv, intpart;
-    fu = modf(u, &intpart);
-    fv = 1.0f - modf(v, &intpart);
+    fu = std::modf(u, &intpart);
+    fv = 1.0f - std::modf(v, &intpart);
     if (fData.fEnableCrop)
     {
         if (fData.fCropPlacement)

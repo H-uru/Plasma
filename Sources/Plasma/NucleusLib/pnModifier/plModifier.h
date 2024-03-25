@@ -60,12 +60,12 @@ class plModifier : public plSynchedObject
 {
 protected:
 
-    plDrawInterface*            IGetTargetDrawInterface(int iTarg) const;
-    plSimulationInterface*      IGetTargetSimulationInterface(int iTarg) const;
-    plCoordinateInterface*      IGetTargetCoordinateInterface(int iTarg) const;
-    plAudioInterface*           IGetTargetAudioInterface(int iTarg) const;
-    plObjInterface*             IGetTargetGenericInterface(int iTarg, uint32_t classIdx) const;
-    plModifier*                 IGetTargetModifier(int iTarg, int iMod) const;
+    plDrawInterface*            IGetTargetDrawInterface(size_t iTarg) const;
+    plSimulationInterface*      IGetTargetSimulationInterface(size_t iTarg) const;
+    plCoordinateInterface*      IGetTargetCoordinateInterface(size_t iTarg) const;
+    plAudioInterface*           IGetTargetAudioInterface(size_t iTarg) const;
+    plObjInterface*             IGetTargetGenericInterface(size_t iTarg, uint32_t classIdx) const;
+    plModifier*                 IGetTargetModifier(size_t iTarg, size_t iMod) const;
 
     virtual bool IEval(double secs, float del, uint32_t dirty) = 0; // called only by owner object's Eval()
 
@@ -78,10 +78,10 @@ public:
     CLASSNAME_REGISTER( plModifier );
     GETINTERFACE_ANY( plModifier, plSynchedObject );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual int GetNumTargets() const = 0;
-    virtual plSceneObject* GetTarget(int iTarg) const = 0;
+    virtual size_t GetNumTargets() const = 0;
+    virtual plSceneObject* GetTarget(size_t iTarg) const = 0;
     virtual void AddTarget(plSceneObject* so) = 0;
     virtual void RemoveTarget(plSceneObject* so) = 0; 
 

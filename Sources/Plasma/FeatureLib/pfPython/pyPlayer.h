@@ -49,33 +49,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper for Python to the player data
 //
 
-#include "pyGlueHelpers.h"
+#include <string_theory/string>
+
 #include "pnKeyedObject/plKey.h"
-#include "plString.h"
+
+#include "pyGlueDefinitions.h"
+
+class pyKey;
 
 class pyPlayer
 {
 protected:
     plKey           fAvatarKey;
-    plString        fPlayerName;
+    ST::string      fPlayerName;
     uint32_t        fPlayerID;
     float           fDistSq;            // from local player, temp
     bool            fIsCCR;
     bool            fIsServer;
 
     pyPlayer(); // only used by python glue, do NOT call
-    pyPlayer(pyKey& avKey, const plString& pname, uint32_t pid, float distsq);
-    pyPlayer(plKey avKey, const plString& pname, uint32_t pid, float distsq);
+    pyPlayer(pyKey& avKey, const ST::string& pname, uint32_t pid, float distsq);
+    pyPlayer(plKey avKey, const ST::string& pname, uint32_t pid, float distsq);
     // another way to create a player with just a name and number
-    pyPlayer(const plString& pname, uint32_t pid);
+    pyPlayer(const ST::string& pname, uint32_t pid);
 public:
-    void Init(plKey avKey, const plString& pname, uint32_t pid, float distsq); // used by python glue, do NOT call
+    void Init(plKey avKey, const ST::string& pname, uint32_t pid, float distsq); // used by python glue, do NOT call
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptPlayer);
-    static PyObject *New(pyKey& avKey, const plString& pname, uint32_t pid, float distsq);
-    static PyObject *New(plKey avKey, const plString& pname, uint32_t pid, float distsq);
-    static PyObject *New(const plString& pname, uint32_t pid);
+    static PyObject *New(pyKey& avKey, const ST::string& pname, uint32_t pid, float distsq);
+    static PyObject *New(plKey avKey, const ST::string& pname, uint32_t pid, float distsq);
+    static PyObject *New(const ST::string& pname, uint32_t pid);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyPlayer object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyPlayer); // converts a PyObject to a pyPlayer (throws error if not correct type)
 
@@ -96,7 +100,7 @@ public:
     plKey GetKey() const { return fAvatarKey; }
 
     // for python access
-    plString GetPlayerName() const { return fPlayerName; }
+    ST::string GetPlayerName() const { return fPlayerName; }
     uint32_t GetPlayerID() const  { return fPlayerID; }
 
     float GetDistSq() const { return fDistSq; }

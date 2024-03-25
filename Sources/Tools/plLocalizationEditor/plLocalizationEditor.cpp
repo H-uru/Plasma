@@ -39,26 +39,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "pnAllCreatables.h"
-#include "plResMgr/plResMgrCreatable.h"
 
 // These are so that we don't have to link in stuff we don't have to
 #include "plMessage/plResMgrHelperMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
 REGISTER_CREATABLE(plResMgrHelperMsg);
-REGISTER_CREATABLE(plAgeLoadedMsg);
-REGISTER_CREATABLE(plAgeLoaded2Msg);
-REGISTER_CREATABLE(plAgeBeginLoadingMsg);
-REGISTER_CREATABLE(plInitialAgeStateLoadedMsg);
 
 #include "plResMgr/plResManager.h"
+#include "plResMgr/plResMgrCreatable.h"
 
 #include <QApplication>
+
 #include "plEditDlg.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    app.setOrganizationName("Cyan Worlds");
     app.setApplicationName("plLocalizationEditor");
     app.setWindowIcon(QIcon(":/icon1.ico"));
 

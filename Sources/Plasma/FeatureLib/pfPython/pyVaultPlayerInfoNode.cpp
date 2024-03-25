@@ -45,24 +45,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#pragma hdrstop
 
 #include "pyVaultPlayerInfoNode.h"
-#include "plVault/plVault.h"
-#include "pnUUID/pnUUID.h"
-#ifndef BUILDING_PYPLASMA
-#   include "pyVault.h"
-#endif
 
-// should only be created from C++ side
-pyVaultPlayerInfoNode::pyVaultPlayerInfoNode(RelVaultNode* nfsNode)
-: pyVaultNode(nfsNode)
-{
-}
+#include <string_theory/string>
+
+#include "pnUUID/pnUUID.h"
+
+#include "plVault/plVault.h"
 
 //create from the Python side
 pyVaultPlayerInfoNode::pyVaultPlayerInfoNode()
-: pyVaultNode(new RelVaultNode)
+    : pyVaultNode()
 {
     fNode->SetNodeType(plVault::kNodeType_PlayerInfo);
 }
@@ -80,7 +74,7 @@ void pyVaultPlayerInfoNode::Player_SetPlayerID( uint32_t plyrid )
     playerInfo.SetPlayerId(plyrid);
 }
 
-uint32_t pyVaultPlayerInfoNode::Player_GetPlayerID( void )
+uint32_t pyVaultPlayerInfoNode::Player_GetPlayerID()
 {
     if (!fNode)
         return 0;
@@ -89,7 +83,7 @@ uint32_t pyVaultPlayerInfoNode::Player_GetPlayerID( void )
     return playerInfo.GetPlayerId();
 }
 
-void pyVaultPlayerInfoNode::Player_SetPlayerName(const plString& name)
+void pyVaultPlayerInfoNode::Player_SetPlayerName(const ST::string& name)
 {
     if (fNode) {
         VaultPlayerInfoNode playerInfo(fNode);
@@ -97,17 +91,17 @@ void pyVaultPlayerInfoNode::Player_SetPlayerName(const plString& name)
     }
 }
 
-plString pyVaultPlayerInfoNode::Player_GetPlayerName() const
+ST::string pyVaultPlayerInfoNode::Player_GetPlayerName() const
 {
     if (fNode) {
         VaultPlayerInfoNode playerInfo(fNode);
         return playerInfo.GetPlayerName();
     }
-    return "";
+    return ST::string();
 }
 
 // age the player is currently in, if any.
-void pyVaultPlayerInfoNode::Player_SetAgeInstanceName(const plString& name)
+void pyVaultPlayerInfoNode::Player_SetAgeInstanceName(const ST::string& name)
 {
     if (fNode) {
         VaultPlayerInfoNode playerInfo(fNode);
@@ -115,16 +109,16 @@ void pyVaultPlayerInfoNode::Player_SetAgeInstanceName(const plString& name)
     }
 }
 
-plString pyVaultPlayerInfoNode::Player_GetAgeInstanceName() const
+ST::string pyVaultPlayerInfoNode::Player_GetAgeInstanceName() const
 {
     if (fNode) {
         VaultPlayerInfoNode playerInfo(fNode);
         return playerInfo.GetAgeInstName();
     }
-    return "";
+    return ST::string();
 }
 
-void pyVaultPlayerInfoNode::Player_SetAgeGuid( const char * guidtext)
+void pyVaultPlayerInfoNode::Player_SetAgeGuid(const ST::string& guidtext)
 {
     if (!fNode)
         return;
@@ -134,7 +128,7 @@ void pyVaultPlayerInfoNode::Player_SetAgeGuid( const char * guidtext)
     playerInfo.SetAgeInstUuid(ageInstId);
 }
 
-plUUID pyVaultPlayerInfoNode::Player_GetAgeGuid(void) const
+plUUID pyVaultPlayerInfoNode::Player_GetAgeGuid() const
 {
     if (fNode) {
         VaultPlayerInfoNode playerInfo(fNode);
@@ -153,7 +147,7 @@ void pyVaultPlayerInfoNode::Player_SetOnline( bool b )
     playerInfo.SetOnline(b);
 }
 
-bool pyVaultPlayerInfoNode::Player_IsOnline( void )
+bool pyVaultPlayerInfoNode::Player_IsOnline()
 {
     if (!fNode)
         return false;
@@ -162,7 +156,7 @@ bool pyVaultPlayerInfoNode::Player_IsOnline( void )
     return playerInfo.GetOnline();
 }
 
-int pyVaultPlayerInfoNode::Player_GetCCRLevel( void )
+int pyVaultPlayerInfoNode::Player_GetCCRLevel()
 {
     if (!fNode)
         return 0;

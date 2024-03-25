@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define USES_PROTOCOL_CLI2AUTH
 #include "../../../Pch.h"
-#pragma hdrstop
 
 
 namespace Cli2Auth {
@@ -107,8 +106,8 @@ static const NetMsgField kAcctCreateFromKeyRequestFields[] = {
 static const NetMsgField kPlayerCreateRequestFields[] = {
     kNetMsgFieldTransId,                            // transId
     NET_MSG_FIELD_STRING(kMaxPlayerNameLength),     // playerName
-    NET_MSG_FIELD_STRING(MAX_PATH),                 // avatarShape
-    NET_MSG_FIELD_STRING(MAX_PATH),                 // friendInvite
+    NET_MSG_FIELD_STRING(kNetDefaultStringSize),    // avatarShape
+    NET_MSG_FIELD_STRING(kNetDefaultStringSize),    // friendInvite
 };
 
 static const NetMsgField kPlayerDeleteRequestFields[] = {
@@ -150,14 +149,14 @@ static const NetMsgField kAcctActivateRequestFields[] = {
 };
 
 static const NetMsgField kFileListRequestFields[] = {
-    kNetMsgFieldTransId,                // transId
-    NET_MSG_FIELD_STRING(MAX_PATH),     // directory
-    NET_MSG_FIELD_STRING(MAX_EXT),      // ext
+    kNetMsgFieldTransId,                                // transId
+    NET_MSG_FIELD_STRING(kNetDefaultStringSize),       // directory
+    NET_MSG_FIELD_STRING(MAX_EXT),                      // ext
 };
 
 static const NetMsgField kFileDownloadRequestFields[] = {
-    kNetMsgFieldTransId,                // transId
-    NET_MSG_FIELD_STRING(MAX_PATH),     // filename
+    kNetMsgFieldTransId,                            // transId
+    NET_MSG_FIELD_STRING(kNetDefaultStringSize),    // filename
 };
 
 static const NetMsgField kFileDownloadChunkAckFields[] = {
@@ -202,15 +201,15 @@ static const NetMsgField kVaultNodeFetchFields[] = {
 };
 
 static const NetMsgField kVaultInitAgeRequestFields[] = {
-    kNetMsgFieldTransId,                        // transId
-    kNetMsgFieldUuid,                           // ageInstId
-    kNetMsgFieldUuid,                           // parentAgeInstId
-    NET_MSG_FIELD_STRING(MAX_PATH),             // ageFilename
-    NET_MSG_FIELD_STRING(MAX_PATH),             // ageInstName
-    NET_MSG_FIELD_STRING(MAX_PATH),             // ageUserName
-    NET_MSG_FIELD_STRING(1024),                 // ageDesc
-    NET_MSG_FIELD_DWORD(),                      // ageSequenceNumber
-    NET_MSG_FIELD_DWORD(),                      // ageLanguage
+    kNetMsgFieldTransId,                            // transId
+    kNetMsgFieldUuid,                               // ageInstId
+    kNetMsgFieldUuid,                               // parentAgeInstId
+    NET_MSG_FIELD_STRING(kNetDefaultStringSize),    // ageFilename
+    NET_MSG_FIELD_STRING(kNetDefaultStringSize),    // ageInstName
+    NET_MSG_FIELD_STRING(kNetDefaultStringSize),    // ageUserName
+    NET_MSG_FIELD_STRING(1024),                     // ageDesc
+    NET_MSG_FIELD_DWORD(),                          // ageSequenceNumber
+    NET_MSG_FIELD_DWORD(),                          // ageLanguage
 };
 
 static const NetMsgField kVaultNodeFindFields[] = {
@@ -251,11 +250,11 @@ static const NetMsgField kClientSetCCRLevelFields[] = {
 };
 
 static const NetMsgField kLogPythonTracebackFields[] = {
-    NET_MSG_FIELD_STRING(1024),                 // traceback text
+    NET_MSG_FIELD_STRING(kMaxTracebackLength), // traceback text
 };
 
 static const NetMsgField kLogStackDumpFields[] = {
-    NET_MSG_FIELD_STRING(1024),                 // stackdump text
+    NET_MSG_FIELD_STRING(kMaxTracebackLength), // stackdump text
 };
 
 static const NetMsgField kLogClientDebuggerConnectFields[] = {
@@ -461,7 +460,7 @@ static const NetMsgField kAcctActivateReplyFields[] = {
 static const NetMsgField kFileListReplyFields[] = {
     kNetMsgFieldTransId,                                    // transId
     kNetMsgFieldENetError,                                  // result
-    NET_MSG_FIELD_VAR_COUNT(sizeof(wchar_t), 1024 * 1024),    // wchar_tCount
+    NET_MSG_FIELD_VAR_COUNT(sizeof(char16_t), 1024 * 1024), // wcharCount
     NET_MSG_FIELD_VAR_PTR(),                                // fileData
 };
 
@@ -632,6 +631,11 @@ static const NetMsgField kScoreGetHighScoresReplyFields[] = {
     NET_MSG_FIELD_VAR_PTR(),                                // scoreBuffer
 };
 
+static const NetMsgField kServerCapsFields[] = {
+    NET_MSG_FIELD_VAR_COUNT(1, 1024 * 1024),                // capsBytes
+    NET_MSG_FIELD_VAR_PTR(),                                // capsBuffer
+};
+
 } using namespace Cli2Auth;
 
 
@@ -736,3 +740,4 @@ const NetMsg kNetMsg_Auth2Cli_ScoreTransferPointsReply  = NET_MSG(kAuth2Cli_Scor
 const NetMsg kNetMsg_Auth2Cli_ScoreSetPointsReply       = NET_MSG(kAuth2Cli_ScoreSetPointsReply,        kScoreSetPointsReplyFields);
 const NetMsg kNetMsg_Auth2Cli_ScoreGetRanksReply        = NET_MSG(kAuth2Cli_ScoreGetRanksReply,         kScoreGetRanksReplyFields);
 const NetMsg kNetMsg_Auth2Cli_ScoreGetHighScoresReply   = NET_MSG(kAuth2Cli_ScoreGetHighScoresReply,    kScoreGetHighScoresReplyFields);
+const NetMsg kNetMsg_Auth2Cli_ServerCaps                = NET_MSG(kAuth2Cli_ServerCaps,                 kServerCapsFields);

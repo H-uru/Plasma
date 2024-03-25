@@ -44,8 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsGeometry3.h"
 #include "hsBounds.h"
-#include "pnNetCommon/plSynchedValue.h"
 #include "hsColorRGBA.h"
+
+#include "plEffectTargetInfo.h"
+
+#include "pnFactory/plCreatable.h"
 
 class hsBounds3Ext;
 class plParticleSystem;
@@ -54,8 +57,6 @@ class plParticleExt;
 class plParticleGenerator;
 class plSimpleParticleGenerator;
 class hsResMgr;
-
-#include "plEffectTargetInfo.h"
 
 // This just holds a bunch of parameters for an emission location. A particle system can have several of these
 
@@ -68,7 +69,7 @@ public:
     plParticleEmitter();
     ~plParticleEmitter();
     void Init(plParticleSystem *system, uint32_t maxParticles, uint32_t spanIndex, uint32_t miscFlags,
-              plParticleGenerator *gen = nil);
+              plParticleGenerator *gen = nullptr);
     void Clone(plParticleEmitter* src, uint32_t spanIndex);
 
     plParticleCore *GetParticleArray() const { return fParticleCores; }
@@ -99,8 +100,8 @@ public:
     CLASSNAME_REGISTER( plParticleEmitter );
     GETINTERFACE_ANY( plParticleEmitter, plCreatable);
 
-    virtual void Read(hsStream* s, hsResMgr *mgr); 
-    virtual void Write(hsStream* s, hsResMgr *mgr);
+    void Read(hsStream* s, hsResMgr *mgr) override;
+    void Write(hsStream* s, hsResMgr *mgr) override;
 
     enum // Miscellaneous flags
     {

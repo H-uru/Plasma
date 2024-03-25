@@ -44,10 +44,9 @@ Mead, WA   99021
 #include "plGImage/plFont.h"
 #include "plGImage/plMipmap.h"
 
+#include <memory>
 #include <QPainter>
 #include <QPicture>
-
-#include <memory>
 
 void plFontPreview::Update(plFont *font, const QString &text)
 {
@@ -63,7 +62,7 @@ void plFontPreview::Update(plFont *font, const QString &text)
         return;
     }
 
-    plString testString = text.toUtf8().constData();
+    ST::string testString = text.toUtf8().constData();
 
     // Create us a mipmap to render onto, render onto it, then copy that to our DC
     plMipmap *mip = new plMipmap(width(), height(), plMipmap::kARGB32Config, 1);
@@ -73,8 +72,7 @@ void plFontPreview::Update(plFont *font, const QString &text)
     fFont->SetRenderFlag(plFont::kRenderClip, true);
     fFont->SetRenderClipRect(0, 0, (int16_t)width(), (int16_t)height());
     uint16_t w, h, a, lastX, lastY;
-    uint32_t firstCC;
-    fFont->CalcStringExtents(testString, w, h, a, firstCC, lastX, lastY);
+    fFont->CalcStringExtents(testString, w, h, a, lastX, lastY);
 
     int cY = ((height() - h) >> 1) + a;
 
@@ -92,10 +90,6 @@ void plFontPreview::Update(plFont *font, const QString &text)
         for (x = 0; x < width(); x++) {
             uint32_t color = *mip->GetAddr32(x, y);
 
-            if (color != 0xffffffff && color != 0xff000000)
-            {
-                int q = 0;
-            }
             // One pixel at a time?  Surely we can do better...
             // But for now this is a pure port
             fPreview.setPixel(x, y, color | 0xff000000);

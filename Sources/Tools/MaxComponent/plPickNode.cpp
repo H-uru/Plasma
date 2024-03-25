@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysicalComponents.h"
 
 #include <iparamm2.h>
-#pragma hdrstop
 
 #include "plPickNode.h"
 
@@ -73,15 +72,15 @@ protected:
 public:
     plPickNodeMax(IParamBlock2 *pb, int nodeListID, std::vector<Class_ID>* cids, bool single, bool canConvertToType);
 
-    virtual TCHAR *dialogTitle();
-    virtual TCHAR *buttonText() { return "OK"; }
+    GETDLGTEXT_RETURN_TYPE dialogTitle() override;
+    GETDLGTEXT_RETURN_TYPE buttonText() override { return _T("OK"); }
 
-    virtual int filter(INode *node);
+    int filter(INode *node) override;
 
-    virtual void proc(INodeTab &nodeTab);
+    void proc(INodeTab &nodeTab) override;
     
-    virtual BOOL showHiddenAndFrozen() { return TRUE; }
-    virtual BOOL singleSelect() { return fSingle; }
+    BOOL showHiddenAndFrozen() override { return TRUE; }
+    BOOL singleSelect() override { return fSingle; }
 
     void SetRefKludge(bool on) { fRefKludge = on; }
 
@@ -101,15 +100,15 @@ bool plPickNodeMax::CanConvertToType(Object *obj)
 }
 
 plPickNodeMax::plPickNodeMax(IParamBlock2 *pb, int nodeListID, std::vector<Class_ID>* cids, bool single, bool canConvertToType) :
-  fPB(pb), fNodeListID(nodeListID), fSingle(single), fCanConvertToType(canConvertToType), fRefKludge(false), fComp(nil), fMtl(nil)
+  fPB(pb), fNodeListID(nodeListID), fSingle(single), fCanConvertToType(canConvertToType), fRefKludge(), fComp(), fMtl()
 {
     if (cids)
         fCIDs = *cids; 
 }
 
-TCHAR *plPickNodeMax::dialogTitle()
+GETDLGTEXT_RETURN_TYPE plPickNodeMax::dialogTitle()
 {
-    return fSingle ? "Select Node" : "Select Nodes";
+    return fSingle ? _M("Select Node") : _M("Select Nodes");
 }
 
 int plPickNodeMax::filter(INode *node)

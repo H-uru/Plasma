@@ -44,7 +44,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plResMgrHelperMsg_h
 
 #include "HeadSpin.h"
+
 #include "pnMessage/plMessage.h"
+
+#include "plResMgr/plResManagerHelper.h"
 
 class plResManagerHelper;
 class plResPageKeyRefList;
@@ -69,23 +72,23 @@ public:
         kDisableDebugScreen
     };
 
-    plResMgrHelperMsg( uint8_t command = 0 ) : plMessage(nil, nil, nil), fKeyList( nil ) { fCommand = command; }
+    plResMgrHelperMsg(uint8_t command = 0) : plMessage(nullptr, nullptr, nullptr), fKeyList() { fCommand = command; }
     ~plResMgrHelperMsg() { delete fKeyList; }
 
     CLASSNAME_REGISTER( plResMgrHelperMsg );
     GETINTERFACE_ANY( plResMgrHelperMsg, plMessage );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr) 
+    void Read(hsStream* s, hsResMgr* mgr) override
     { 
         hsAssert( false, "This should never get read" );
     }
     
-    virtual void Write(hsStream* s, hsResMgr* mgr) 
+    void Write(hsStream* s, hsResMgr* mgr) override
     { 
         hsAssert( false, "This should never get written" );
     }
 
-    uint8_t   GetCommand( void ) const { return fCommand; }
+    uint8_t   GetCommand() const { return fCommand; }
 };
 
 #endif // _plResMgrHelperMsg_h

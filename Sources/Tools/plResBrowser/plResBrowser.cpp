@@ -41,33 +41,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "plResBrowser.h"
-#include "ui_ResBrowser.h"
+#include "res/ui_ResBrowser.h"
 
 #if HS_BUILD_FOR_WIN32
 #   include "plWinRegistryTools.h"
 #endif
 
 #include "pnAllCreatables.h"
+
+#include "pnFactory/plFactory.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKeyImp.h"
+#include "pnKeyedObject/plUoid.h"
+
+#include "plResMgr/plPageInfo.h"
+#include "plResMgr/plRegistryHelpers.h"
+#include "plResMgr/plRegistryNode.h"
 #include "plResMgr/plResMgrCreatable.h"
 #include "plResMgr/plResManager.h"
 #include "plResMgr/plResMgrSettings.h"
 #include "plMessage/plResMgrHelperMsg.h"
-REGISTER_CREATABLE(plResMgrHelperMsg);
 
-#include "plResMgr/plRegistryHelpers.h"
-#include "plResMgr/plRegistryNode.h"
-#include "plResMgr/plPageInfo.h"
-#include "pnKeyedObject/plUoid.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plKeyImp.h"
-
+#include <functional>
 #include <QApplication>
 #include <QDialog>
-#include <QMessageBox>
-#include <QFileDialog>
 #include <QDragEnterEvent>
+#include <QFileDialog>
+#include <QMessageBox>
 #include <QMimeData>
-#include <functional>
+
+REGISTER_CREATABLE(plResMgrHelperMsg);
 
 static void IAboutDialog(QWidget *parent)
 {
@@ -83,7 +86,7 @@ Who needs log files?)"), &dlg);
     ok->setDefault(true);
 
     QHBoxLayout *layout = new QHBoxLayout(&dlg);
-    layout->setMargin(8);
+    layout->setContentsMargins(8, 8, 8, 8);
     layout->setSpacing(10);
     layout->addWidget(image);
     layout->addWidget(text);
@@ -233,13 +236,13 @@ void plResBrowser::SaveSelectedObject()
 
     if (!fileName.isEmpty())
     {
-        plKeyImp *keyImp = static_cast<plKeyImp *>(itemKey);
+        plKeyImp* keyImp = plKeyImp::GetFromKey(itemKey);
 
         if (keyImp->GetDataLen() <= 0)
             return;
 
         plResManager *resMgr = static_cast<plResManager *>(hsgResMgr::ResMgr());
-        plRegistryPageNode *pageNode = resMgr->FindPage(keyImp->GetUoid().GetLocation());
+        plRegistryPageNode* pageNode = resMgr->FindPage(itemKey->GetUoid().GetLocation());
 
         hsStream *stream = pageNode->OpenStream();
         if (!stream)
@@ -251,6 +254,7 @@ void plResBrowser::SaveSelectedObject()
             stream->SetPosition(keyImp->GetStartPos());
             stream->Read(keyImp->GetDataLen(), buffer);
         }
+        pageNode->CloseStream();
 
         if (!buffer)
             return;
@@ -258,7 +262,6 @@ void plResBrowser::SaveSelectedObject()
         hsUNIXStream outStream;
         outStream.Open(fileName.toUtf8().constData(), "wb");
         outStream.Write(keyImp->GetDataLen(), buffer);
-        outStream.Close();
 
         delete[] buffer;
     }
@@ -315,7 +318,7 @@ void plResBrowser::UpdateInfoPage()
             fUI->fObjectClass->setText(QString("%1 (%2)").arg(cname ? cname : "<unknown>")
                                        .arg(key->GetUoid().GetClassType()));
 
-            plKeyImp *imp = static_cast<plKeyImp *>(key);
+            plKeyImp* imp = plKeyImp::GetFromKey(key);
             if (showAsHex)
                 fUI->fStartPos->setText(QString("0x%1").arg(imp->GetStartPos(), 0, 16));
             else

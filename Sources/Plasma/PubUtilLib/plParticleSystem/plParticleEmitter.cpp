@@ -39,37 +39,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
 
-#include "hsResMgr.h"
-#include "pnMessage/plRefMsg.h"
-#include "plMessage/plParticleUpdateMsg.h"
-#include "plParticleGenerator.h"
 #include "plParticleEmitter.h"
-#include "plParticleSystem.h"
+
 #include "plParticle.h"
 #include "plParticleEffect.h"
+#include "plParticleGenerator.h"
+#include "plParticleSystem.h"
+
 #include "hsColorRGBA.h"
+#include "hsFastMath.h"
+#include "plProfile.h"
+#include "hsResMgr.h"
+
+#include "pnMessage/plRefMsg.h"
+
 #include "plInterp/plController.h"
+#include "plMessage/plParticleUpdateMsg.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"
-#include "plProfile.h"
-#include "hsFastMath.h"
+
+
 
 plProfile_CreateTimer("Update", "Particles", ParticleUpdate);
 plProfile_CreateTimer("Generate", "Particles", ParticleGenerate);
 
 plParticleEmitter::plParticleEmitter()
+    : fParticleCores(), fParticleExts(), fGenerator(),
+      fTimeToLive(), fSystem(), fSpanIndex(), fNumValidParticles(),
+      fMaxParticles(), fTargetInfo(), fColor(), fMiscFlags()
 {
-    fParticleCores = nil;
-    fParticleExts = nil;
-    fGenerator = nil;
     fLocalToWorld.Reset();
-    fTimeToLive = 0;
 }
 
 void plParticleEmitter::Init(plParticleSystem *system, uint32_t maxParticles, uint32_t spanIndex, uint32_t miscFlags,
-                             plParticleGenerator *gen /* = nil */)
+                             plParticleGenerator *gen /* = nullptr */)
 {
     IClear();
     fSystem = system;
@@ -119,12 +123,12 @@ plParticleEmitter::~plParticleEmitter()
 void plParticleEmitter::IClear()
 {
     delete [] fParticleCores;
-    fParticleCores = nil;
+    fParticleCores = nullptr;
     delete [] fParticleExts;
-    fParticleExts = nil;
+    fParticleExts = nullptr;
     if( !(fMiscFlags & kBorrowedGenerator) )
         delete fGenerator;
-    fGenerator = nil;
+    fGenerator = nullptr;
 }
 
 void plParticleEmitter::ISetupParticleMem()
@@ -254,7 +258,7 @@ void plParticleEmitter::KillParticles(float num, float timeToDie, uint8_t flags)
 
 void plParticleEmitter::UpdateGenerator(uint32_t paramID, float paramValue)
 {
-    if (fGenerator != nil)
+    if (fGenerator != nullptr)
         fGenerator->UpdateParam(paramID, paramValue);
 }
 
@@ -297,7 +301,7 @@ bool plParticleEmitter::IUpdate(float delta)
         plProfile_EndTiming(ParticleUpdate);
     }
 
-    if (fGenerator == nil && fNumValidParticles <= 0)
+    if (fGenerator == nullptr && fNumValidParticles <= 0)
         return false; // no generator, no particles, let the system decide if this emitter is done
     else
         return true;
@@ -305,11 +309,8 @@ bool plParticleEmitter::IUpdate(float delta)
 
 void plParticleEmitter::IUpdateParticles(float delta)
 {
-
-    int i, j;
-
     // Have to remove particles before adding new ones, or we can run out of room.
-    for (i = 0; i < fNumValidParticles; i++)
+    for (uint32_t i = 0; i < fNumValidParticles; i++)
     {
         fParticleExts[i].fLife -= delta;
         if (fParticleExts[i].fLife <= 0 && !(fParticleExts[i].fMiscFlags & plParticleExt::kImmortal))
@@ -322,13 +323,13 @@ void plParticleEmitter::IUpdateParticles(float delta)
 
     fTargetInfo.fFirstNewParticle = fNumValidParticles;
     
-    if ((fGenerator != nil) && (fTimeToLive >= 0))
+    if ((fGenerator != nullptr) && (fTimeToLive >= 0))
     {
         plProfile_BeginLap(ParticleGenerate, fSystem->GetKeyName().c_str());
         if (!fGenerator->AddAutoParticles(this, delta))
         {
             delete fGenerator;
-            fGenerator = nil;
+            fGenerator = nullptr;
         }
         if( (fTimeToLive > 0) && ((fTimeToLive -= delta) <= 0) )
             fTimeToLive = -1.f;
@@ -337,7 +338,7 @@ void plParticleEmitter::IUpdateParticles(float delta)
 
     fTargetInfo.fContext = fSystem->fContext;
     fTargetInfo.fNumValidParticles = fNumValidParticles;
-    const hsVector3 up(0, 0, 1.0f);
+    const hsVector3 up(0.f, 0.f, 1.0f);
     hsVector3 currDirection;
     hsPoint3 *currPos;
     hsVector3 *currVelocity;
@@ -348,29 +349,29 @@ void plParticleEmitter::IUpdateParticles(float delta)
 
     // Allow effects a chance to cache any upfront calculations
     // that will apply to all particles.
-    for (j = 0; j < fSystem->fForces.GetCount(); j++)
+    for (plParticleEffect* forceEffect : fSystem->fForces)
     {
-        fSystem->fForces[j]->PrepareEffect(fTargetInfo);
+        forceEffect->PrepareEffect(fTargetInfo);
     }
-    for (j = 0; j < fSystem->fEffects.GetCount(); j++)
+    for (plParticleEffect* effect : fSystem->fEffects)
     {
-        fSystem->fEffects[j]->PrepareEffect(fTargetInfo);
+        effect->PrepareEffect(fTargetInfo);
     }
-    for (j = 0; j < fSystem->fConstraints.GetCount(); j++) 
+    for (plParticleEffect* constraint : fSystem->fConstraints)
     {
-        fSystem->fConstraints[j]->PrepareEffect(fTargetInfo);
+        constraint->PrepareEffect(fTargetInfo);
     }
 
-    for (i = 0; i < fNumValidParticles; i++)
+    for (uint32_t i = 0; i < fNumValidParticles; i++)
     {
         if (!( fParticleExts[i].fMiscFlags & plParticleExt::kImmortal ))
         {           
             float percent = (1.0f - fParticleExts[i].fLife / fParticleExts[i].fStartLife);
             colorCtl = (fMiscFlags & kMatIsEmissive ? fSystem->fAmbientCtl : fSystem->fDiffuseCtl);
-            if (colorCtl != nil)
+            if (colorCtl != nullptr)
                 colorCtl->Interp(colorCtl->GetLength() * percent, &color);
 
-            if (fSystem->fOpacityCtl != nil)
+            if (fSystem->fOpacityCtl != nullptr)
             {
                 fSystem->fOpacityCtl->Interp(fSystem->fOpacityCtl->GetLength() * percent, &alpha);
                 alpha /= 100.0f;
@@ -380,13 +381,13 @@ void plParticleEmitter::IUpdateParticles(float delta)
                     alpha = 1.f;
             }
 
-            if (fSystem->fWidthCtl != nil)
+            if (fSystem->fWidthCtl != nullptr)
             {
                 fSystem->fWidthCtl->Interp(fSystem->fWidthCtl->GetLength() * percent,
                                            &fParticleCores[i].fHSize);
                 fParticleCores[i].fHSize *= fParticleExts[i].fScale;
             }
-            if (fSystem->fHeightCtl != nil)
+            if (fSystem->fHeightCtl != nullptr)
             {
                 fSystem->fHeightCtl->Interp(fSystem->fHeightCtl->GetLength() * percent,
                                             &fParticleCores[i].fVSize);
@@ -396,9 +397,9 @@ void plParticleEmitter::IUpdateParticles(float delta)
             fParticleCores[i].fColor = CreateHexColor(color.fX, color.fY, color.fZ, alpha);                     
         }
 
-        for (j = 0; j < fSystem->fForces.GetCount(); j++)
+        for (plParticleEffect* forceEffect : fSystem->fForces)
         {
-            fSystem->fForces[j]->ApplyEffect(fTargetInfo, i);
+            forceEffect->ApplyEffect(fTargetInfo, i);
         }
         
         currPos = (hsPoint3 *)(fTargetInfo.fPos + i * fTargetInfo.fPosStride);
@@ -418,7 +419,7 @@ void plParticleEmitter::IUpdateParticles(float delta)
         else if( fParticleExts[i].fRadsPerSec != 0 )
         {
             float sinX, cosX;
-            hsFastMath::SinCos(fParticleExts[i].fLife * fParticleExts[i].fRadsPerSec * 2.f * M_PI, sinX, cosX);
+            hsFastMath::SinCos(fParticleExts[i].fLife * fParticleExts[i].fRadsPerSec * hsConstants::two_pi<float>, sinX, cosX);
             fParticleCores[i].fOrientation.Set(sinX, -cosX, 0);
         }
 
@@ -439,17 +440,17 @@ void plParticleEmitter::IUpdateParticles(float delta)
 
         *currVelocity += *currAccel * delta;
 
-        for (j = 0; j < fSystem->fEffects.GetCount(); j++)
+        for (plParticleEffect* effect : fSystem->fEffects)
         {
-            fSystem->fEffects[j]->ApplyEffect(fTargetInfo, i);
+            effect->ApplyEffect(fTargetInfo, i);
         }
 
         // We may need to do more than one iteration through the constraints. It's a trade-off
         // between accurracy and speed (what's new?) but I'm going to go with just one
         // for now until we decide things don't "look right"
-        for (j = 0; j < fSystem->fConstraints.GetCount(); j++) 
+        for (plParticleEffect* constraint : fSystem->fConstraints)
         {
-            if( fSystem->fConstraints[j]->ApplyEffect(fTargetInfo, i) )
+            if (constraint->ApplyEffect(fTargetInfo, i))
             {
                 IRemoveParticle(i);
                 i--; // so that we hit this index again on the next iteration
@@ -461,17 +462,17 @@ void plParticleEmitter::IUpdateParticles(float delta)
     }
 
     // Notify the effects that they are done for now.
-    for (j = 0; j < fSystem->fForces.GetCount(); j++)
+    for (plParticleEffect* forceEffect : fSystem->fForces)
     {
-        fSystem->fForces[j]->EndEffect(fTargetInfo);
+        forceEffect->EndEffect(fTargetInfo);
     }
-    for (j = 0; j < fSystem->fEffects.GetCount(); j++)
+    for (plParticleEffect* effect : fSystem->fEffects)
     {
-        fSystem->fEffects[j]->EndEffect(fTargetInfo);
+        effect->EndEffect(fTargetInfo);
     }
-    for (j = 0; j < fSystem->fConstraints.GetCount(); j++) 
+    for (plParticleEffect* constraint : fSystem->fConstraints)
     {
-        fSystem->fConstraints[j]->EndEffect(fTargetInfo);
+        constraint->EndEffect(fTargetInfo);
     }
 }
 

@@ -49,24 +49,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
 
-class plKey;
-class plDniCoordinateInfo;
-
-class pyVaultNode;
-class pyVaultAgeLinkNode;
-class pyVaultFolderNode;
-class pyVaultPlayerInfoListNode;
-class pyVaultAgeInfoListNode;
-class pyVaultAgeInfoNode;
-class pyVaultChronicleNode;
-class pyVaultTextNoteNode;
+#include "pyGlueDefinitions.h"
 
 class pyAgeInfoStruct;
 class pyAgeLinkStruct;
-
 class pySDLStateDataRecord;
+class pyVaultAgeInfoNode;
+class pyVaultNode;
+namespace ST { class string; }
 
 class pyVault
 {
@@ -128,11 +119,8 @@ public:
     PyObject* GetVisitAgeLink( const pyAgeInfoStruct & info ); // returns pyVaultAgeLinkNode
     ///////////////
     // Chronicle
-    PyObject* FindChronicleEntry( const char * entryName ); // returns pyVaultChronicleNode
-    void AddChronicleEntry( const char * name, uint32_t type, const char * value );
-    ///////////////
-    // publishing
-    void    SendToDevice( pyVaultNode& node, const char * deviceName );
+    PyObject* FindChronicleEntry(const ST::string& entryName); // returns pyVaultChronicleNode
+    void AddChronicleEntry(const ST::string& name, uint32_t type, const ST::string& value);
     ///////////////
     // yeesha pages, etc.
     PyObject* GetPsnlAgeSDL() const; // returns pySDLStateDataRecord
@@ -155,17 +143,17 @@ public:
     ///////////////
     // Registser the given age as owned by player.
     void RegisterOwnedAge( const pyAgeLinkStruct & link );
-    void UnRegisterOwnedAge( const char * ageFilename );
+    void UnRegisterOwnedAge(const ST::string& ageFilename);
     // Register the given age as visitable by player
     void RegisterVisitAge( const pyAgeLinkStruct & link );
-    void UnRegisterVisitAge( const char * guid );
+    void UnRegisterVisitAge(const ST::string& guid);
     // Register a nexus station
-    void RegisterMTStation( const plString& stationName, const plString& mtSpawnPt );
+    void RegisterMTStation( const ST::string& stationName, const ST::string& mtSpawnPt );
 
     ///////////////
     // Invite player to visit an age.
     void InvitePlayerToAge( const pyAgeLinkStruct & link, uint32_t playerID );
-    void UnInvitePlayerToAge( const char * guid, uint32_t playerID );
+    void UnInvitePlayerToAge(const ST::string& guid, uint32_t playerID);
     // Offer link to player
     void OfferLinkToPlayer( const pyAgeLinkStruct & link, uint32_t playerID );
 
@@ -177,7 +165,7 @@ public:
     // set an age's public status, also works for non-owners
     bool SetAgePublic( const pyVaultAgeInfoNode * ageInfoNode, bool makePublic );
 
-    PyObject* GetGlobalInbox( void ); // returns pyVaultFolderNode
+    PyObject* GetGlobalInbox(); // returns pyVaultFolderNode
 
     // find matching node
     PyObject* FindNode( pyVaultNode* templateNode ) const; // returns pyVaultNode

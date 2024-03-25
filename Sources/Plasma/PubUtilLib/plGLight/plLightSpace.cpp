@@ -56,7 +56,7 @@ bool plLightSpace::MsgReceive(plMessage* msg)
     {
         // HACK - CollideMsg doesn't have sufficient info yet. Need at least object
         // which is entering and leaving, and whether it is entering or leaving.
-        plKey otherKey = nil;
+        plKey otherKey;
         bool enter = true; 
         uint8_t ctx = enter ? plRefMsg::kOnRequest : plRefMsg::kOnRemove;
         plLightRefMsg* liMsg = new plLightRefMsg(GetKey(), otherKey, IGetLightInfo(), ctx);
@@ -69,7 +69,7 @@ bool plLightSpace::MsgReceive(plMessage* msg)
         if( liMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
             fLightInfo = liMsg->GetRef();
         else if( liMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-            fLightInfo = nil;
+            fLightInfo = nullptr;
 
         return true;
     }
@@ -80,7 +80,7 @@ void plLightSpace::Read(hsStream* s, hsResMgr* mgr)
 {
     plMultiModifier::Read(s, mgr);
 
-    mgr->ReadKeyNotifyMe(s, new plLightRefMsg(nil, GetKey(), nil, plRefMsg::kOnCreate), plRefFlags::kPassiveRef);
+    mgr->ReadKeyNotifyMe(s, new plLightRefMsg(nullptr, GetKey(), nullptr, plRefMsg::kOnCreate), plRefFlags::kPassiveRef);
 }
 
 void plLightSpace::Write(hsStream* s, hsResMgr* mgr)

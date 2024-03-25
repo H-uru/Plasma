@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plRandomCommandMod_inc
 
 #include "pnModifier/plSingleModifier.h"
-#include "hsTemplates.h"
 
 class plRandomCommandMod : public plSingleModifier
 {
@@ -66,15 +65,15 @@ protected:
 
     // These are only lightly synched, the only synched state is whether
     // they are currently active.
-    uint8_t                           fState;
+    uint8_t             fState;
 
-    hsBitVector                     fExcluded;
-    int8_t                            fCurrent;
-    uint8_t                           fMode; // static, if it becomes dynamic, move to SynchedValue
-    hsTArray<double>                fEndTimes;
+    hsBitVector         fExcluded;
+    int8_t              fCurrent;
+    uint8_t             fMode; // static, if it becomes dynamic, move to SynchedValue
+    std::vector<double> fEndTimes;
 
-    float                        fMinDelay;
-    float                        fMaxDelay;
+    float               fMinDelay;
+    float               fMaxDelay;
     
     void            IStart();
     virtual void    IStop();
@@ -94,7 +93,7 @@ protected:
     virtual void        IPlayNext() = 0;
 
     // We only act in response to messages.
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
 
 public:
     plRandomCommandMod();
@@ -103,10 +102,10 @@ public:
     CLASSNAME_REGISTER( plRandomCommandMod );
     GETINTERFACE_ANY( plRandomCommandMod, plSingleModifier );
 
-    virtual bool MsgReceive(plMessage* pMsg);
+    bool MsgReceive(plMessage* pMsg) override;
     
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     // Export only
     void    SetMode(uint8_t m) { fMode = m; }

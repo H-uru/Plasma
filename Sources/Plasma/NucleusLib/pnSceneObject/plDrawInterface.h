@@ -67,17 +67,18 @@ public:
     };
 
 protected:
-    hsTArray<plDrawable*>       fDrawables;
-    hsTArray<uint32_t>            fDrawableIndices;
+    // TODO: Maybe these should be stored as a tuple or struct...
+    std::vector<plDrawable*>    fDrawables;
+    std::vector<uint32_t>       fDrawableIndices;
 
-    hsTArray<hsKeyedObject*>    fRegions;
+    std::vector<hsKeyedObject*> fRegions;
 
-    void ISetVisRegions(int iDraw);
+    void ISetVisRegions(size_t iDraw);
     void ISetVisRegion(hsKeyedObject* ref, bool on);
-    void ISetDrawable(uint8_t which, plDrawable* dr);
+    void ISetDrawable(size_t which, plDrawable* dr);
     void IRemoveDrawable(plDrawable* dr);
-    void ISetSceneNode(plKey newNode);
-    virtual void ICheckDrawableIndex(uint8_t which);
+    void ISetSceneNode(const plKey& newNode) override;
+    virtual void ICheckDrawableIndex(size_t which);
 
     friend class plSceneObject;
 
@@ -88,36 +89,37 @@ public:
     CLASSNAME_REGISTER( plDrawInterface );
     GETINTERFACE_ANY( plDrawInterface, plObjInterface );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    void        SetProperty(int prop, bool on);
-    int32_t       GetNumProperties() const { return kNumProps; }
+    void        SetProperty(int prop, bool on) override;
+    int32_t       GetNumProperties() const override { return kNumProps; }
 
     // Transform settable only, if you want it get it from the coordinate interface.
-    void        SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void        SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
     // Bounds are gettable only, they are computed on the drawable.
     const hsBounds3Ext GetLocalBounds() const;
     const hsBounds3Ext GetWorldBounds() const;
     const hsBounds3Ext GetMaxWorldBounds() const;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void    ReleaseData( void );
+    void    ReleaseData() override;
 
     /// Funky particle system functions
-    void    SetUpForParticleSystem( uint32_t maxNumEmitters, uint32_t maxNumParticles, hsGMaterial *material, hsTArray<plKey>& lights );
-    void    ResetParticleSystem( void );
+    void    SetUpForParticleSystem(uint32_t maxNumEmitters, uint32_t maxNumParticles,
+                                   hsGMaterial *material, const std::vector<plKey>& lights);
+    void    ResetParticleSystem();
     void    AssignEmitterToParticleSystem( plParticleEmitter *emitter );
 
     /// EXPORT-ONLY
-    void    SetDrawable(uint8_t which, plDrawable* dr);
-    plDrawable* GetDrawable( uint8_t which ) const { return which < fDrawables.GetCount() ? fDrawables[which] : nil; }
-    uint32_t  GetNumDrawables() const { return fDrawables.GetCount(); }
+    void    SetDrawable(size_t which, plDrawable* dr);
+    plDrawable* GetDrawable(size_t which) const { return which < fDrawables.size() ? fDrawables[which] : nullptr; }
+    size_t  GetNumDrawables() const { return fDrawables.size(); }
     // Sets the triMesh index to be used when referring to our spans in the drawable
-    void    SetDrawableMeshIndex( uint8_t which, uint32_t index );
-    uint32_t  GetDrawableMeshIndex( uint8_t which ) const { return which < fDrawableIndices.GetCount() ? fDrawableIndices[which] : uint32_t(-1); }
+    void    SetDrawableMeshIndex(size_t which, size_t index);
+    uint32_t  GetDrawableMeshIndex(size_t which) const { return which < fDrawableIndices.size() ? fDrawableIndices[which] : uint32_t(-1); }
 };
 
 

@@ -62,6 +62,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plPlasmaMAXLayer_h
 #define _plPlasmaMAXLayer_h
 
+#include "MaxMain/MaxAPI.h"
+
 //// Derived Type Class IDs ///////////////////////////////////////////////////
 //  If you create a new Plasma layer type, add a define for the class ID here 
 //  and also add the ID to the list in plPlasmaMAXLayer.cpp.
@@ -75,8 +77,6 @@ const Class_ID MAX_CAMERA_LAYER_CLASS_ID( 0xfaf5ec7, 0x13d90d3f );
 
 //// Class Definition /////////////////////////////////////////////////////////
 
-class Bitmap;
-class PBBitmap;
 class plBitmapData;
 class BitmapInfo;
 class plBMSamplerData;
@@ -88,10 +88,9 @@ class plLayerInterface;
 class plLayerTargetContainer;
 class plLocation;
 class plMaxNode;
-class Texmap;
 class jvUniqueId;
 
-class plPlasmaMAXLayer : public Texmap
+class plPlasmaMAXLayer : public plMaxMtlBase<Texmap>
 {
     friend class plLayerConverter;
 
@@ -103,14 +102,14 @@ class plPlasmaMAXLayer : public Texmap
 
 
         void    IAddConversionTarget( plLayerInterface *target );
-        void    IClearConversionTargets( void );
+        void    IClearConversionTargets();
 
     public:
 
         plPlasmaMAXLayer();
         virtual ~plPlasmaMAXLayer();
 
-        void    DeleteThis() { delete this; }       
+        void    DeleteThis() override { delete this; }
 
 
         // Static that checks the classID of the given texMap and, if it's a valid Plasma MAX Layer, returns a pointer to such
@@ -118,7 +117,7 @@ class plPlasmaMAXLayer : public Texmap
 
         // Some layers must be unique for each node they're applied to (i.e. can't be shared among nodes).
         // This returns true if the layer must be unique.
-        virtual bool MustBeUnique( void ) { return false; }
+        virtual bool MustBeUnique() { return false; }
 
         // These let the material make an informed decision on what to do with
         // the color and alpha values coming out of an EvalColor call. Something
@@ -130,7 +129,7 @@ class plPlasmaMAXLayer : public Texmap
 
 
         // Return the number of conversion targets (only valid after the MakeMesh pass)
-        int     GetNumConversionTargets( void );
+        int     GetNumConversionTargets();
 
         // Get an indexed conversion target
         plLayerInterface    *GetConversionTarget( int index );
@@ -145,13 +144,13 @@ class plPlasmaMAXLayer : public Texmap
         // Pure virtual accessors for the various bitmap related elements
         virtual Bitmap *GetMaxBitmap(int index = 0) = 0;
         virtual PBBitmap *GetPBBitmap( int index = 0 ) = 0;
-        virtual int     GetNumBitmaps( void ) = 0;
+        virtual int     GetNumBitmaps() = 0;
 
         // Makes sure the textures are the latest versions (including getting
         // the latest version from AssetMan)
         void RefreshBitmaps();
 
-        bool    GetBitmapFileName( char *destFilename, int maxLength, int index = 0 );
+        bool    GetBitmapFileName( TCHAR* destFilename, int maxLength, int index = 0 );
 
         // Virtual function called by plBMSampler to get various things while sampling the layer's image
         virtual bool    GetSamplerInfo( plBMSamplerData *samplerData ) { return false; }

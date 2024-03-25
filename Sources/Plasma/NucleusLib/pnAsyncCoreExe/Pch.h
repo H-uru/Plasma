@@ -50,20 +50,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PCH_H
 
-#include "pnUtils/pnUtils.h"
-#include "plProduct.h"
-#include "pnNetBase/pnNetBase.h"
-#include "pnAsyncCore/pnAsyncCore.h"
-#include "hsThread.h"
+// The asio headers want _WIN32_WINNT defined,
+// otherwise they show a warning and define it themselves.
+// To ensure that our definition is visible to asio, include hsWindows.h first.
+#include "hsWindows.h"
+
+#include <asio/executor_work_guard.hpp>
+#include <asio/io_context.hpp>
+#include <asio/ip/tcp.hpp>
+#include <asio/steady_timer.hpp>
+#include <asio/write.hpp>
+#include <functional>
+#include <list>
+#include <memory>
+#include <mutex>
+#include <thread>
 
 #include "Private/pnAceInt.h"
-#include "Private/Nt/pnAceNt.h"
-#include "Private/Unix/pnAceUx.h"
+#include "hsThread.h"
+#include "hsTimer.h"
+#include "plProduct.h"
+#include "pnAsyncCore/pnAsyncCore.h"
+#include "pnNetBase/pnNetBase.h"
 
-#include <process.h>
-
-#ifdef HS_BUILD_FOR_OSX
-#include <malloc/malloc.h>
-#else
-#include <malloc.h>
+#ifdef USE_VLD
+#include <vld.h>
 #endif

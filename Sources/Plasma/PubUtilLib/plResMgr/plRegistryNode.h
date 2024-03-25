@@ -43,16 +43,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plRegistryNode_h_inc
 
 #include "HeadSpin.h"
-#include "hsStream.h"
+#include "plFileSystem.h"
 #include "plPageInfo.h"
 
 #include <map>
+#include <memory>
 
-class plRegistryKeyList;
 class hsStream;
+class plRegistryKeyList;
 class plKeyImp;
 class plRegistryKeyIterator;
-class plString;
 
 enum PageCond
 {
@@ -80,12 +80,12 @@ protected:
     plFileName  fPath;          // Path to the page file
     plPageInfo  fPageInfo;      // Info about this page
 
-    hsBufferedStream fStream;   // Stream for reading/writing our page
+    std::unique_ptr<hsStream> fStream; // Stream for reading/writing our page
     uint8_t fOpenRequests;        // How many handles there are to fStream (or
                                 // zero if it's closed)
     bool fIsNewPage;          // True if this page is new (not read off disk)
 
-    plRegistryPageNode() {}
+    plRegistryPageNode();
 
     plRegistryKeyList* IGetKeyList(uint16_t classType) const;
     PageCond IVerify();
@@ -95,8 +95,8 @@ public:
     plRegistryPageNode(const plFileName& path);
 
     // For creating a new page.
-    plRegistryPageNode(const plLocation& location, const plString& age,
-                       const plString& page, const plFileName& dataPath);
+    plRegistryPageNode(const plLocation& location, const ST::string& age,
+                       const ST::string& page, const plFileName& dataPath);
     ~plRegistryPageNode();
 
     bool IsValid() const { return fValid == kPageOk; }
@@ -119,7 +119,7 @@ public:
     void UnloadKeys();  // Frees all our keys
 
     // Find a key by type and name
-    plKeyImp* FindKey(uint16_t classType, const plString& name) const;
+    plKeyImp* FindKey(uint16_t classType, const ST::string& name) const;
     // Find a key by direct uoid lookup (or fallback to name lookup if that doesn't work)
     plKeyImp* FindKey(const plUoid& uoid) const;
     
@@ -138,6 +138,10 @@ public:
     // returned, make sure to call CloseStream when you're done using it.
     hsStream*   OpenStream();
     void        CloseStream();
+
+    // Export time only.  Before we write to disk, assign all the loaded keys
+    // sequential object IDs that they can use to do fast lookups at load time.
+    void PrepForWrite();
 
     // Takes care of everything involved in writing this page to disk
     void Write();

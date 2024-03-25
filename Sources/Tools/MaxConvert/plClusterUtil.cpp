@@ -48,14 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "MaxComponent/plComponent.h"
 
-#include <algorithm>
-#include <commdlg.h>
-#include <stdmat.h>
-#include <bmmlib.h>
-#include <iparamm2.h>
-#include <meshdlib.h>
-#include <vector>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
 
 #include "MaxMain/plMaxNode.h"
 #include "MaxComponent/plLightGrpComponent.h"
@@ -87,13 +80,13 @@ plConst(int) kDefMaxFaces(1000);
 plConst(float) kDefMinSize(50.f);
 
 plClusterUtil::plClusterUtil()
-:   fGroup(nil),
-    fTemplNode(nil),
-    fTemplate(nil),
+:   fGroup(),
+    fTemplNode(),
+    fTemplate(),
     fMinFaces(kDefMinFaces),
     fMaxFaces(kDefMaxFaces),
     fMinSize(kDefMinSize),
-    fIdx(0)
+    fIdx()
 {
 }
 
@@ -101,11 +94,11 @@ plClusterUtil::~plClusterUtil()
 {
 }
 
-plClusterGroup* plClusterUtil::CreateGroup(plMaxNode* templNode, const char* name)
+plClusterGroup* plClusterUtil::CreateGroup(plMaxNode* templNode, const ST::string& name)
 {
     plClusterGroup* retVal = new plClusterGroup;
     
-    plString buff = plFormat("{}_{}_{}", name, templNode->GetName(), fIdx++);
+    ST::string buff = ST::format("{}_{}_{}", name, templNode->GetName(), fIdx++);
     hsgResMgr::ResMgr()->NewKey(buff, retVal, templNode->GetLocation(), templNode->GetLoadMask());
 
     plKey sceneNode = templNode->GetRoomKey();
@@ -148,12 +141,9 @@ void plClusterUtil::ISetupGroupFromTemplate(plMaxNode* templ)
     plLightGrpComponent* liGrp = plLightGrpComponent::GetComp(templ);
     if( liGrp )
     {
-        const hsTArray<plLightInfo*>& lights = liGrp->GetLightInfos();
-        int i;
-        for( i = 0; i < lights.GetCount(); i++ )
-        {
-            fGroup->ISendToSelf(plClusterGroup::kRefLight, lights[i]);
-        }
+        const std::vector<plLightInfo*>& lights = liGrp->GetLightInfos();
+        for (plLightInfo* light : lights)
+            fGroup->ISendToSelf(plClusterGroup::kRefLight, light);
     }
     if( templ->HasFade() )
     {
@@ -176,17 +166,11 @@ void plClusterUtil::ISetupGroupFromTemplate(plMaxNode* templ)
             fGroup->fLOD.Set(minDist, maxDist);
         }
     }
-    hsTArray<plVisRegion*> regions;
+    std::vector<plVisRegion*> regions;
     plVisRegionComponent::CollectRegions(templ, regions);
     plEffVisSetComponent::CollectRegions(templ, regions);
-    if( regions.GetCount() )
-    {
-        int i;
-        for( i = 0; i < regions.GetCount(); i++ )
-        {
-            fGroup->ISendToSelf(plClusterGroup::kRefRegion, regions[i]);
-        }
-    }
+    for (plVisRegion* region : regions)
+        fGroup->ISendToSelf(plClusterGroup::kRefRegion, region);
 }
 
 class sortData
@@ -350,7 +334,7 @@ void plClusterUtil::IAddTemplates(plMaxNode* templNode, plSpanTemplTab& templs)
     // But, here we go descending cheerully into hell.
     // At least with this interface we can bail and do it right later without to much
     // bloodshed.
-    hsTArray<plGeometrySpan*> spanArray;
+    std::vector<plGeometrySpan*> spanArray;
     if( !plMeshConverter::Instance().CreateSpans(templNode, spanArray, false) )
         return;
 
@@ -364,14 +348,13 @@ void plClusterUtil::IAddTemplates(plMaxNode* templNode, plSpanTemplTab& templs)
     plLightMapGen::Instance().Close();
     hsVertexShader::Instance().Close();
 
-    int i;
-    for( i = 0; i < spanArray.GetCount(); i++ )
+    for (plGeometrySpan* span : spanArray)
     {
-        plSpanTemplateB* templ = IAddTemplate(templNode, spanArray[i]);
+        plSpanTemplateB* templ = IAddTemplate(templNode, span);
         templs.Append(1, &templ);
-        templ->fMaterial = spanArray[i]->fMaterial;
+        templ->fMaterial = span->fMaterial;
 
-        delete spanArray[i];
+        delete span;
     }
 }
 
@@ -580,7 +563,7 @@ plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColor
     else if( hasAlpha )
         code |= plSpanEncoding::kColA8;
 
-    plConst(float) kPosQuantum(0.5 / 12.f); // 1/2 inch.
+    plConst(float) kPosQuantum(0.5f / 12.f); // 1/2 inch.
     float maxLen = sqrt(maxLenSq);
     if( maxLen > kPosQuantum )
     {
@@ -696,8 +679,8 @@ void plClusterUtil::IAddInstsToCluster(plCluster* cluster, plSpanTemplateB* temp
         span->SetLocalToWorld(plMaxNodeBase::Matrix3ToMatrix44(insts[i]));
 
         span->Encode(cluster->GetEncoding(), templ->NumVerts(),
-            delPos[i] ? delPos[i]->Addr(0) : nil,
-            colors[i] ? colors[i]->Addr(0) : nil);
+            delPos[i] ? delPos[i]->Addr(0) : nullptr,
+            colors[i] ? colors[i]->Addr(0) : nullptr);
 
         cluster->IAddInst(span);
     }
@@ -714,8 +697,8 @@ void plClusterUtil::IAllocPosAndColor(plSpanTemplateB* templ, const plL2WTab& in
     int i;
     for( i = 0; i < insts.Count(); i++ )
     {
-        delPos[i] = nil;
-        colors[i] = nil;
+        delPos[i] = nullptr;
+        colors[i] = nullptr;
     }
 }
 
@@ -733,8 +716,8 @@ void plClusterUtil::IDelPosAndColor(plSpanTemplateB* templ,
                                     plPoint3TabTab& delPos, plColorTabTab& colors)
 {
 
-    bool doDef = def != nil;
-    bool doCol = shade != nil;
+    bool doDef = def != nullptr;
+    bool doCol = shade != nullptr;
     // For each inst
     int i;
     for( i = 0; i < insts.Count(); i++ )

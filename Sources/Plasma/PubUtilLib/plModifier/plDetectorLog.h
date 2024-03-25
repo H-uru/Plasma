@@ -42,10 +42,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDetectorLog_h_inc
 #define plDetectorLog_h_inc
 
-void DetectorLog(const char* format, ...);
-void DetectorLogSpecial(const char* format, ...);
-void DetectorLogRed(const char* format, ...);
-void DetectorLogYellow(const char* format, ...);
-void DetectorDoLogfile();
+#include "plStatusLog/plStatusLog.h"
+
+class plDetectorLog
+{
+    static plStatusLog* fLog;
+
+public:
+    static void Output();
+
+    template<typename... _Args>
+    static void Log(const char* format, _Args&&... args)
+    {
+        if (fLog)
+            fLog->AddLineF(format, std::forward<_Args>(args)...);
+    }
+
+    template<typename... _Args>
+    static void Special(const char* format, _Args&&... args)
+    {
+        if (fLog)
+            fLog->AddLineF(plStatusLog::kGreen, format, std::forward<_Args>(args)...);
+    }
+
+    template<typename... _Args>
+    static void Red(const char* format, _Args&&... args)
+    {
+        if (fLog)
+            fLog->AddLineF(plStatusLog::kRed, format, std::forward<_Args>(args)...);
+    }
+
+    template<typename... _Args>
+    static void Yellow(const char* format, _Args&&... args)
+    {
+        if (fLog)
+            fLog->AddLineF(plStatusLog::kYellow, format, std::forward<_Args>(args)...);
+    }
+};
 
 #endif // plDetectorLog_h_inc

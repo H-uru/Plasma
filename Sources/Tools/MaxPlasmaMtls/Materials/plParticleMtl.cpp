@@ -40,12 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "../resource.h"
 
-#include <iparamm2.h>
-#include <stdmat.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include "../resource.h"
 
 #include "plParticleMtl.h"
 #include "../Shaders.h"
@@ -58,17 +56,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 extern HINSTANCE hInstance;
 
-class plParticleMtlClassDesc : public ClassDesc2
+class plParticleMtlClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return new plParticleMtl(loading); }
-    const TCHAR*    ClassName()     { return GetString(IDS_PARTICLE_MTL); }
-    SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
-    Class_ID        ClassID()       { return PARTICLE_MTL_CLASS_ID; }
-    const TCHAR*    Category()      { return NULL; }
-    const TCHAR*    InternalName()  { return _T("ParticleMaterial"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading) override { return new plParticleMtl(loading); }
+    const TCHAR*    ClassName() override    { return GetString(IDS_PARTICLE_MTL); }
+    SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
+    Class_ID        ClassID() override      { return PARTICLE_MTL_CLASS_ID; }
+    const TCHAR*    Category() override     { return nullptr; }
+    const TCHAR*    InternalName() override { return _T("ParticleMaterial"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plParticleMtlClassDesc plParticleMtlDesc;
 ClassDesc2* GetParticleMtlDesc() { return &plParticleMtlDesc; }
@@ -87,7 +85,7 @@ const char *plParticleMtl::NormalStrings[] = // Make sure these match up in orde
     "Emissive"
 };
 
-plParticleMtl::plParticleMtl(BOOL loading) : fBasicPB(NULL)//, fBM(NULL), fUVGen(NULL)
+plParticleMtl::plParticleMtl(BOOL loading) : fBasicPB()//, fBM(), fUVGen()
 {
 #if 0 // This wasn't working on load
     // Initialize the paramblock descriptors only once
@@ -112,7 +110,7 @@ plParticleMtl::plParticleMtl(BOOL loading) : fBasicPB(NULL)//, fBM(NULL), fUVGen
     //fUVGen = GetNewDefaultUVGen();
 }
 
-void plParticleMtl::GetClassName(TSTR& s)
+void plParticleMtl::IGetClassName(MSTR& s) const
 {
     s = GetString(IDS_PARTICLE_MTL);
 }
@@ -150,7 +148,7 @@ Interval plParticleMtl::Validity(TimeValue t)
 //  fPBlock->GetValue(pb_spin,t,u,valid);
     return valid;
 #else // mf horse
-    const char* name = GetName();
+    auto name = GetName();
 
     // mf horse - Hacking in something like real validity checking
     // to get material animations working. No warranty, this is just
@@ -171,15 +169,15 @@ int plParticleMtl::NumSubs()
     return 2;
 }
 
-TSTR plParticleMtl::SubAnimName(int i) 
+MSTR plParticleMtl::ISubAnimName(int i)
 {
     switch (i)
     {
     case 0: return fBasicPB->GetLocalName();
-    case 1: return "Texmap";
+    case 1: return _M("Texmap");
     }
 
-    return "";
+    return _M("");
 }
 
 Animatable* plParticleMtl::SubAnim(int i)
@@ -190,7 +188,7 @@ Animatable* plParticleMtl::SubAnim(int i)
     case 1: return fBasicPB->GetTexmap(kTexmap);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 int plParticleMtl::NumRefs()
@@ -205,7 +203,7 @@ RefTargetHandle plParticleMtl::GetReference(int i)
     case kRefBasic:  return fBasicPB;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void plParticleMtl::SetReference(int i, RefTargetHandle rtarg)
@@ -229,10 +227,11 @@ IParamBlock2* plParticleMtl::GetParamBlockByID(BlockID id)
     if (fBasicPB->ID() == id)
         return fBasicPB;
 
-    return NULL;
+    return nullptr;
 }
 
-RefResult plParticleMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
+RefResult plParticleMtl::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                          PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -250,7 +249,8 @@ RefResult plParticleMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hT
                 
                 // And let the SceneWatcher know that the material on some of it's
                 // referenced objects changed.
-                NotifyDependents(FOREVER, PART_ALL, REFMSG_USER_MAT);
+                if (MAX_REF_PROPAGATE_VALUE)
+                    NotifyDependents(FOREVER, PART_ALL, REFMSG_USER_MAT);
             }
             break;
     }
@@ -271,7 +271,7 @@ Texmap* plParticleMtl::GetSubTexmap(int i)
     if (i == 0)
         return fBasicPB->GetTexmap(kTexmap);
 
-    return NULL;
+    return nullptr;
 }
 
 void plParticleMtl::SetSubTexmap(int i, Texmap *m)
@@ -280,12 +280,12 @@ void plParticleMtl::SetSubTexmap(int i, Texmap *m)
         fBasicPB->SetValue(kTexmap, 0, m);
 }
 
-TSTR plParticleMtl::GetSubTexmapSlotName(int i)
+MSTR plParticleMtl::IGetSubTexmapSlotName(int i)
 {
     if (i == 0)
-        return "Texmap";
+        return _M("Texmap");
 
-    return "";
+    return _M("");
 }
 
 TSTR plParticleMtl::GetSubTexmapTVName(int i)
@@ -409,8 +409,8 @@ void plParticleMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallba
     Texmap *tx[2];
     int diffChan = stdIDToChannel[ ID_DI ];
     int opacChan = stdIDToChannel[ ID_OP ];
-    tx[0] = (*maps)[diffChan].IsActive()?(*maps)[diffChan].map:NULL;
-    tx[1] = (*maps)[opacChan].IsActive()?(*maps)[opacChan].map:NULL;
+    tx[0] = (*maps)[diffChan].IsActive() ? (*maps)[diffChan].map : nullptr;
+    tx[1] = (*maps)[opacChan].IsActive() ? (*maps)[opacChan].map : nullptr;
 #endif
 
     int nsupport = cb.NumberTexturesSupported();
@@ -420,13 +420,13 @@ void plParticleMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallba
     int nmaps=0;
     for (int i=0; i<NTEXHANDLES; i++) {
         if (tx[i]) nmaps ++;
-        bmi[i] = NULL;
+        bmi[i] = nullptr;
         }
     mtl->texture.SetCount(nmaps);
     if (nmaps==0) 
         return;
     for (i=0; i<nmaps; i++)
-        mtl->texture[i].textHandle = NULL;
+        mtl->texture[i].textHandle = nullptr;
     texHandleValid.SetInfinite();
     Interval  valid;
     BOOL needDecal = FALSE;
@@ -458,7 +458,7 @@ void plParticleMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallba
                 texHandleValid &= valid;
                 StuffAlpha(bmi[1], (*maps)[opacChan].amount, GetOpacity(t),ntx?whiteCol:pShader->GetDiffuseClr(t));
                 texHandle[ntx] = cb.MakeHandle(bmi[1]); 
-                bmi[1] = NULL; 
+                bmi[1] = nullptr;
                 mtl->texture[ntx].textHandle = texHandle[ntx]->GetHandle();
                 SetTexOps(mtl,ntx,TXOP_OPACITY);
                 useSubForTex[ntx] = opacChan;
@@ -476,7 +476,7 @@ void plParticleMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallba
                         StuffAlphaInto(bmi[1], bmi[0], (*maps)[opacChan].amount, GetOpacity(t));
                         op = TXOP_OPACITY;
                         free(bmi[1]);
-                        bmi[1] = NULL;
+                        bmi[1] = nullptr;
                         }
 //                  }
                 }
@@ -484,7 +484,7 @@ void plParticleMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallba
         }
     if (bmi[0]) {
         texHandle[0] = cb.MakeHandle(bmi[0]); 
-        bmi[0] = NULL; 
+        bmi[0] = nullptr;
         mtl->texture[0].textHandle = texHandle[0]->GetHandle();
         SetTexOps(mtl,0,op);
         }

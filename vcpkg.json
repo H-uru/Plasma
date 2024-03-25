@@ -1,0 +1,62 @@
+{
+    "name": "plasma",
+    "version-string": "2.0.70.2",
+    "description": "Cyan Worlds' Plasma game engine",
+    "dependencies": [
+      "asio",
+      "curl",
+      "expat",
+      {
+        "name": "fontconfig",
+        "platform": "!(osx | windows)"
+      },
+      "freetype",
+      "libepoxy",
+      "libjpeg-turbo",
+      "libogg",
+      "libpng",
+      "libvorbis",
+      "libvpx",
+      "libwebm",
+      "openal-soft",
+      "openssl",
+      "opus",
+      "physx",
+      {
+        "name": "python3",
+        "features": [
+          "deprecated-win7-support"
+        ]
+      },
+      "speex",
+      "string-theory",
+      {
+        "name": "libuuid",
+        "platform": "linux"
+      },
+      "zlib"
+    ],
+    "overrides": [
+      {
+        "name": "physx",
+        "version": "4.1.2#6",
+        "$comment": "Upstream vcpkg updated to PhysX 5, which drops support for several target platforms. Stick with 4.1.2 for now."
+      }
+    ],
+    "features": {
+      "cairosvg": {
+        "description": "Installs a functional cairosvg Python module for the resource.dat generator.",
+        "dependencies": [
+          {
+            "name": "python3-cairosvg",
+            "host": true
+          }
+        ]
+      }
+    },
+    "builtin-baseline": "53bef8994c541b6561884a8395ea35715ece75db",
+    "vcpkg-configuration": {
+      "overlay-ports": ["./Scripts/Ports"],
+      "overlay-triplets": ["./Scripts/Triplets"]
+    }
+}

@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLightMapGen_inc
 #define plLightMapGen_inc
 
+#include <vector>
+
 class plMaxLightContext;
 class plRenderGlobalContext;
 class plLayerInterface;
@@ -95,13 +97,13 @@ protected:
 #endif // MF_NEW_RGC
     RendParams*                 fRP;
     
-    hsTArray<plLightMapInfo>    fAllLights;
-    hsTArray<plLightMapInfo*>   fActiveLights;
+    std::vector<plLightMapInfo> fAllLights;
+    std::vector<plLightMapInfo*> fActiveLights;
 
-    mutable hsTArray<plLayerInterface*> fCreatedLayers;
-    mutable hsTArray<plMipmap*>         fPreppedMipmaps;
+    mutable std::vector<plLayerInterface*> fCreatedLayers;
+    mutable std::vector<plMipmap*>         fPreppedMipmaps;
 
-    mutable hsTArray<plBitmap*> fNewMaps;   // Mipmaps created this session (not loaded from disk)
+    mutable std::vector<plBitmap*> fNewMaps;   // Mipmaps created this session (not loaded from disk)
 
     std::vector<plLightMapComponent*> fSharedComponents; // HACK so we can get rid of key refs before deleting bitmaps
 
@@ -119,7 +121,7 @@ protected:
     bool        IReleaseAllLights();
 
     int         IPowerOfTwo(int sz) const;
-    bool        ISelectBitmapDimension(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, hsTArray<plGeometrySpan *> &spans);
+    bool        ISelectBitmapDimension(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, std::vector<plGeometrySpan *> &spans);
     bool        ICompressLightMaps();
     
     bool        IsFresh(plBitmap* map) const;
@@ -135,10 +137,10 @@ protected:
     bool        IShadeVerts(plMaxLightContext& ctx, const Color& amb, const hsPoint3 pt[3], const hsVector3 norm[3], const hsPoint3 uv[3], plMipmap* bitmap);
     bool        IShadeFace(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, plGeometrySpan& span, int iFace, plMipmap* bitmap);
     bool        IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, plGeometrySpan& spans);
-    bool        IShadeGeometrySpans(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, hsTArray<plGeometrySpan *> &spans);
+    bool        IShadeGeometrySpans(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, std::vector<plGeometrySpan *> &spans);
 
     bool        IWantsMaps(plMaxNode* node);
-    bool        IValidateUVWSrc(hsTArray<plGeometrySpan *> &spans) const;
+    bool        IValidateUVWSrc(std::vector<plGeometrySpan *> &spans) const;
 
 public:
     plLightMapGen();
@@ -170,7 +172,7 @@ public:
     // a light (or any other node) while the shader is Open. For your
     // own safety and the safety of your fellow passengers, don't
     // return control to the user until the system is Closed.
-    bool        MakeMaps(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, hsTArray<plGeometrySpan *>& spans, plErrorMsg *pErrMsg, plConvertSettings *settings);
+    bool        MakeMaps(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, std::vector<plGeometrySpan *>& spans, plErrorMsg *pErrMsg, plConvertSettings *settings);
 
     Color       ShadowPoint(plMaxLightContext& ctx);
     Color       ShadePoint(plMaxLightContext& ctx); // ctx already contains pos & norm

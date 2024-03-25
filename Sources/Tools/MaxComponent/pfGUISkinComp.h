@@ -52,20 +52,20 @@ class plGUISkinComp : public plComponent
 {
 public:
     plGUISkinComp();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    plLayerTex  *GetSkinBitmap( void );
+    plLayerTex  *GetSkinBitmap();
 
-    virtual uint32_t  GetNumMtls( void ) const;
+    virtual uint32_t  GetNumMtls() const;
     virtual Texmap  *GetMtl( uint32_t idx );
 
     enum
@@ -89,8 +89,8 @@ public:
         kRefBorderMargin
     };
 
-    pfGUISkin   *GetConvertedSkin( void ) const { return fConvertedSkin; }
-    plKey       GetConvertedSkinKey( void ) const;
+    pfGUISkin   *GetConvertedSkin() const { return fConvertedSkin; }
+    plKey       GetConvertedSkinKey() const;
 
     // Given an INode, gives you a pointer to the GUI component if it actually is one, nil otherwise
     static plGUISkinComp        *GetGUIComp( INode *node );
@@ -120,19 +120,19 @@ class pfGUISkinEditProc
 
         bool            fDragging;
         uint8_t           fDragType;
-        int             fDragTimer;
+        UINT_PTR        fDragTimer;
         int             fDragOffsetX, fDragOffsetY;
         HCURSOR         fOrigCursor;
 
         pfGUISkin::pfSRect  fBackups[ pfGUISkin::kNumElements ];
 
 
-        void    IRefreshDblBuffer( void );
-        void    IRefreshImageBuffer( void );
-        void    IInitDblBuffer( void );
-        void    IKillDblBuffer( void );
+        void    IRefreshDblBuffer();
+        void    IRefreshImageBuffer();
+        void    IInitDblBuffer();
+        void    IKillDblBuffer();
 
-        void    ISetScrollRanges( void );
+        void    ISetScrollRanges();
 
         enum
         {

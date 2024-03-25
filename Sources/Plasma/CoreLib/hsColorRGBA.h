@@ -110,17 +110,17 @@ struct hsColorRGBA {
 
 inline void hsColorRGBA::Read(hsStream *s)
 {
-    r = s->ReadLEScalar();
-    g = s->ReadLEScalar();
-    b = s->ReadLEScalar();
-    a = s->ReadLEScalar();
+    r = s->ReadLEFloat();
+    g = s->ReadLEFloat();
+    b = s->ReadLEFloat();
+    a = s->ReadLEFloat();
 }
 inline void hsColorRGBA::Write(hsStream *s) const
 {
-    s->WriteLEScalar(r);
-    s->WriteLEScalar(g);
-    s->WriteLEScalar(b);
-    s->WriteLEScalar(a);
+    s->WriteLEFloat(r);
+    s->WriteLEFloat(g);
+    s->WriteLEFloat(b);
+    s->WriteLEFloat(a);
 }
 
 inline hsColorRGBA& hsColorRGBA::FromARGB32(uint32_t c)

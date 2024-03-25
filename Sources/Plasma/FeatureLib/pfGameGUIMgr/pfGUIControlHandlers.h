@@ -48,7 +48,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIControlHandlers_h
 #define _pfGUIControlHandlers_h
 
-#include "hsStream.h"
+#include "HeadSpin.h"
+
+#include <string_theory/string>
+
+class pfGUIControlMod;
+class hsStream;
 
 //// pfGUICtrlProcObject Definition //////////////////////////////////////////
 //  Any control which "does something" (buttons, edit boxes on Enter/Return, 
@@ -76,7 +81,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //  Dialogs will use a similar functionality, but with more functions available.
 
-class pfGUIControlMod;
 class pfGUICtrlProcObject
 {
     protected:
@@ -86,17 +90,17 @@ class pfGUICtrlProcObject
     public:
 
         pfGUICtrlProcObject() { fRefCnt = 0; }
-        virtual ~pfGUICtrlProcObject() { ; }
+        virtual ~pfGUICtrlProcObject() { }
 
         virtual void    DoSomething( pfGUIControlMod *ctrl ) = 0;
 
-        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event ) { ; }
+        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event ) { }
 
-        virtual void    UserCallback( uint32_t userValue ) { ; }
+        virtual void    UserCallback( uint32_t userValue ) { }
 
         // ONLY THE GUI SYSTEM SHOULD CALL THESE
-        void    IncRef( void ) { fRefCnt++; }
-        bool    DecRef( void ) { fRefCnt--; return ( fRefCnt > 0 ) ? false : true; }
+        void    IncRef() { fRefCnt++; }
+        bool    DecRef() { fRefCnt--; return ( fRefCnt > 0 ) ? false : true; }
 };
 
 //// pfGUICtrlProcWriteableObject ////////////////////////////////////////////
@@ -126,10 +130,10 @@ class pfGUICtrlProcWriteableObject : public pfGUICtrlProcObject
         };
 
         pfGUICtrlProcWriteableObject() { fType = kNull; }
-        pfGUICtrlProcWriteableObject( uint32_t type ) : fType( type ) { ; }
-        virtual ~pfGUICtrlProcWriteableObject() { ; }
+        pfGUICtrlProcWriteableObject( uint32_t type ) : fType( type ) { }
+        virtual ~pfGUICtrlProcWriteableObject() { }
 
-        virtual void    DoSomething( pfGUIControlMod *ctrl ) = 0;
+        void    DoSomething(pfGUIControlMod *ctrl) override = 0;
 
         static void Write( pfGUICtrlProcWriteableObject *obj, hsStream *s );
 
@@ -143,20 +147,18 @@ class pfGUIConsoleCmdProc : public pfGUICtrlProcWriteableObject
 {
     protected:
 
-        char            *fCommand;
+        ST::string fCommand;
 
-        virtual void    IRead( hsStream *s );
-        virtual void    IWrite( hsStream *s );
+        void    IRead(hsStream *s) override;
+        void    IWrite(hsStream *s) override;
     
     public:
 
-        pfGUIConsoleCmdProc();
-        pfGUIConsoleCmdProc( const char *cmd );
-        virtual ~pfGUIConsoleCmdProc();
+        pfGUIConsoleCmdProc(ST::string cmd = {});
 
-        virtual void    DoSomething( pfGUIControlMod *ctrl );
+        void    DoSomething(pfGUIControlMod *ctrl) override;
 
-        void            SetCommand( const char *cmd );
+        void    SetCommand(ST::string cmd) { fCommand = std::move(cmd); }
 };
 
 //// pfGUIPythonScriptProc ///////////////////////////////////////////////////
@@ -165,15 +167,15 @@ class pfGUIPythonScriptProc : public pfGUICtrlProcWriteableObject
 {
     protected:
 
-        virtual void    IRead( hsStream *s );
-        virtual void    IWrite( hsStream *s );
+        void    IRead(hsStream *s) override;
+        void    IWrite(hsStream *s) override;
     
     public:
 
         pfGUIPythonScriptProc();
         virtual ~pfGUIPythonScriptProc();
 
-        virtual void    DoSomething( pfGUIControlMod *ctrl );
+        void    DoSomething(pfGUIControlMod *ctrl) override;
 };
 
 //// Simple Runtime Ones /////////////////////////////////////////////////////
@@ -182,15 +184,15 @@ class pfGUICloseDlgProc : public pfGUICtrlProcWriteableObject
 {
     protected:
 
-        virtual void    IRead( hsStream *s ) {}
-        virtual void    IWrite( hsStream *s ) {}
+        void    IRead(hsStream *s) override { }
+        void    IWrite(hsStream *s) override { }
 
     public:
 
         pfGUICloseDlgProc() : pfGUICtrlProcWriteableObject( kCloseDlg ) {}
         virtual ~pfGUICloseDlgProc() {}
 
-        virtual void    DoSomething( pfGUIControlMod *ctrl );
+        void    DoSomething(pfGUIControlMod *ctrl) override;
 };
 
 #endif // _pfGUIControlHandlers_h

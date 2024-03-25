@@ -56,12 +56,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGUIDynDisplayCtrl_h
 
 #include "pfGUIControlMod.h"
-#include "hsTemplates.h"
 
-class plMessage;
+class hsGMaterial;
 class plDynamicTextMap;
 class plLayerInterface;
-class hsGMaterial;
+class plMessage;
 
 class pfGUIDynDisplayCtrl : public pfGUIControlMod
 {
@@ -74,12 +73,12 @@ class pfGUIDynDisplayCtrl : public pfGUIControlMod
             kRefMaterial
         };
 
-        hsTArray<plDynamicTextMap *>    fTextMaps;
-        hsTArray<plLayerInterface *>    fLayers;
+        std::vector<plDynamicTextMap *> fTextMaps;
+        std::vector<plLayerInterface *> fLayers;
 
-        hsTArray<hsGMaterial *>         fMaterials;
+        std::vector<hsGMaterial *>      fMaterials;
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
     public:
 
@@ -90,19 +89,19 @@ class pfGUIDynDisplayCtrl : public pfGUIControlMod
         GETINTERFACE_ANY( pfGUIDynDisplayCtrl, pfGUIControlMod );
 
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        uint32_t              GetNumMaps( void ) const { return fTextMaps.GetCount(); }
-        plDynamicTextMap    *GetMap( uint32_t i ) const { return fTextMaps[ i ]; }
+        size_t              GetNumMaps() const { return fTextMaps.size(); }
+        plDynamicTextMap    *GetMap(size_t i) const { return fTextMaps[i]; }
 
-        uint32_t              GetNumLayers( void ) const { return fLayers.GetCount(); }
-        plLayerInterface    *GetLayer( uint32_t i ) const { return fLayers[ i ]; }
+        size_t              GetNumLayers() const { return fLayers.size(); }
+        plLayerInterface    *GetLayer(size_t i) const { return fLayers[i]; }
 
-        uint32_t              GetNumMaterials( void ) const { return fMaterials.GetCount(); }
-        hsGMaterial         *GetMaterial( uint32_t i ) const { return fMaterials[ i ]; }
+        size_t              GetNumMaterials() const { return fMaterials.size(); }
+        hsGMaterial         *GetMaterial(size_t i) const { return fMaterials[i]; }
 
         // Export only
         void    AddMap( plDynamicTextMap *map );

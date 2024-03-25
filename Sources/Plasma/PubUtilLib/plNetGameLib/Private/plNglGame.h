@@ -104,7 +104,6 @@ void NetCliGamePropagateBuffer (
 //============================================================================
 // GameMgrMsg
 //============================================================================
-struct GameMsgHeader;
-typedef void (*FNetCliGameRecvGameMgrMsgHandler)(GameMsgHeader * msg);
-void NetCliGameSetRecvGameMgrMsgHandler (FNetCliGameRecvGameMgrMsgHandler handler);
-void NetCliGameSendGameMgrMsg (GameMsgHeader * msg);
+typedef void (*FNetCliGameRecvGameMgrMsgHandler)(struct GameMsgHeader* msg);
+void NetCliGameSetRecvGameMgrMsgHandler(FNetCliGameRecvGameMgrMsgHandler handler);
+void NetCliGameSendGameMgrMsg(const struct GameMsgHeader* msg);

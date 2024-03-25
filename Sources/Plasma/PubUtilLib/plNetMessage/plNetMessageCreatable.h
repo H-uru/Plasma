@@ -50,44 +50,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // NON CREATABLES
 REGISTER_NONCREATABLE(plNetMessage);
 REGISTER_NONCREATABLE(plNetMsgObject);
-REGISTER_NONCREATABLE(plNetMsgStream);
 REGISTER_NONCREATABLE(plNetMsgRoomsList);
-REGISTER_NONCREATABLE(plNetMsgStreamedObject);
 REGISTER_NONCREATABLE(plNetMsgSharedState);
+REGISTER_NONCREATABLE(plNetMsgStream);
+REGISTER_NONCREATABLE(plNetMsgStreamedObject);
 
 // HELPERS
-REGISTER_CREATABLE(plNetMsgStreamHelper);
-REGISTER_CREATABLE(plNetMsgObjectHelper);
-REGISTER_CREATABLE(plNetMsgObjectListHelper);
+REGISTER_CREATABLE(plNetMsgCreatableHelper);
 REGISTER_CREATABLE(plNetMsgMemberInfoHelper);
 REGISTER_CREATABLE(plNetMsgMemberListHelper);
-REGISTER_CREATABLE(plNetMsgStreamableHelper);
+REGISTER_CREATABLE(plNetMsgObjectHelper);
+REGISTER_CREATABLE(plNetMsgObjectListHelper);
 REGISTER_CREATABLE(plNetMsgReceiversListHelper);
-REGISTER_CREATABLE(plNetMsgCreatableHelper);
+REGISTER_CREATABLE(plNetMsgStreamHelper);
+REGISTER_CREATABLE(plNetMsgStreamableHelper);
 
 // CLIENT MSGS
-REGISTER_CREATABLE(plNetMsgGameStateRequest);
-REGISTER_CREATABLE(plNetMsgSDLState);
-REGISTER_CREATABLE(plNetMsgSDLStateBCast);
-REGISTER_CREATABLE(plNetMsgLoadClone);
-REGISTER_CREATABLE(plNetMsgPlayerPage);
 REGISTER_CREATABLE(plNetMsgGameMessage);
 REGISTER_CREATABLE(plNetMsgGameMessageDirected);
-REGISTER_CREATABLE(plNetMsgPagingRoom);
-REGISTER_CREATABLE(plNetMsgGroupOwner);
-REGISTER_CREATABLE(plNetMsgVoice);
-REGISTER_CREATABLE(plNetMsgTestAndSet);
+REGISTER_CREATABLE(plNetMsgGameStateRequest);
 REGISTER_CREATABLE(plNetMsgGetSharedState);
-REGISTER_CREATABLE(plNetMsgObjStateRequest);
-REGISTER_CREATABLE(plNetMsgObjectUpdateFilter);
-REGISTER_CREATABLE(plNetMsgMembersListReq );
-REGISTER_CREATABLE(plNetMsgMembersList );
-REGISTER_CREATABLE(plNetMsgServerToClient);
-REGISTER_CREATABLE(plNetMsgMemberUpdate );
-REGISTER_CREATABLE(plNetMsgListenListUpdate);
-
+REGISTER_CREATABLE(plNetMsgGroupOwner);
 REGISTER_CREATABLE(plNetMsgInitialAgeStateSent);
+REGISTER_CREATABLE(plNetMsgListenListUpdate);
+REGISTER_CREATABLE(plNetMsgLoadClone);
+REGISTER_CREATABLE(plNetMsgMembersList);
+REGISTER_CREATABLE(plNetMsgMembersListReq);
+REGISTER_CREATABLE(plNetMsgMemberUpdate);
+REGISTER_CREATABLE(plNetMsgObjectUpdateFilter);
+REGISTER_CREATABLE(plNetMsgObjStateRequest);
+REGISTER_CREATABLE(plNetMsgPagingRoom);
+REGISTER_CREATABLE(plNetMsgPlayerPage);
 REGISTER_CREATABLE(plNetMsgRelevanceRegions);
-
+REGISTER_CREATABLE(plNetMsgSDLState);
+REGISTER_CREATABLE(plNetMsgSDLStateBCast);
+REGISTER_CREATABLE(plNetMsgServerToClient);
+REGISTER_CREATABLE(plNetMsgTestAndSet);
+REGISTER_CREATABLE(plNetMsgVoice);
 
 #endif  // plNetMsgCreatable_h

@@ -44,7 +44,7 @@ class plTextureSearch
 {
 protected:
     HWND fDlg;
-    char fFileName[MAX_PATH];
+    TCHAR fFileName[MAX_PATH];
 
     plTextureSearch();
 
@@ -57,6 +57,6 @@ protected:
     void IUpdateTextures(Update update);
     void IPickReplaceTexture();
 
-    static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-    BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    INT_PTR DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 };

@@ -39,6 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef ComponentDummies_inc
+#define ComponentDummies_inc
+
 void DummyCodeIncludeFunc();            //Anim Comp
 void DummyCodeIncludeFuncActive();      //Activator Comp
 void DummyCodeIncludeFuncResponder();   //Responder Comp
@@ -91,3 +95,5 @@ void DummyCodeIncludFuncNPCSpawn();  // npc spawners
 void DummyCodeIncludeFuncClimbTrigger();
 void DummyCodeIncludeFuncObjectFlocker();
 void DummyCodeIncludeFuncGrassShader();
+
+#endif

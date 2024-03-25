@@ -40,26 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#pragma hdrstop
-
-#include "hsGeometry3.h"
 #include "hsFastMath.h"
-
-const float hsFastMath::kSqrtTwo = sqrt(2.f);
-const float hsFastMath::kInvSqrtTwo = hsInvert(hsFastMath::kSqrtTwo);
-const float hsFastMath::kTwoPI = M_PI * 2.f;
 
 hsPoint2 statCosSinTable[9] = // must match length in inline
 {
     { 1.f, 0.f },
-    { hsFastMath::kInvSqrtTwo, hsFastMath::kInvSqrtTwo },
+    { hsConstants::inv_sqrt2<float>, hsConstants::inv_sqrt2<float> },
     { 0.f, 1.f },
-    { -hsFastMath::kInvSqrtTwo, hsFastMath::kInvSqrtTwo },
+    { -hsConstants::inv_sqrt2<float>, hsConstants::inv_sqrt2<float> },
     { -1.f, 0.f },
-    { -hsFastMath::kInvSqrtTwo, -hsFastMath::kInvSqrtTwo },
+    { -hsConstants::inv_sqrt2<float>, -hsConstants::inv_sqrt2<float> },
     { 0.f, -1.f },
-    { hsFastMath::kInvSqrtTwo, -hsFastMath::kInvSqrtTwo },
+    { hsConstants::inv_sqrt2<float>, -hsConstants::inv_sqrt2<float> },
     { 1.f, 0.f }
 };
 

@@ -40,13 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyGeometry3.h"
-#include "pyKey.h"
-#pragma hdrstop
+#include "pyWaveSet.h"
 
 #include "pyColor.h"
-#include "pyWaveSet.h"
+#include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptWaveSet, pyWaveSet);
@@ -56,7 +54,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptWaveSet)
 
 PYTHON_INIT_DEFINITION(ptWaveSet, args, keywords)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -99,7 +97,7 @@ PYTHON_METHOD_NOARGS(ptWaveSet, get##funcSuffix, "Returns the attribute's value"
 #define WAVESET_OBJ_DEF(funcSuffix, pyObjType, cObjType) \
 PYTHON_METHOD_DEFINITION(ptWaveSet, set##funcSuffix, args) \
 { \
-    PyObject* sObj = NULL; \
+    PyObject* sObj = nullptr; \
     float secs = 0; \
     if (!PyArg_ParseTuple(args, "O|f", &sObj, &secs)) \
     { \
@@ -169,6 +167,42 @@ WAVESET_FLOAT_DEF(SpecularMute)
 WAVESET_OBJ_DEF(EnvCenter, ptPoint3, pyPoint3)
 WAVESET_FLOAT_DEF(EnvRadius)
 
+PYTHON_METHOD_DEFINITION(ptWaveSet, addBuoy, args)
+{
+    PyObject *soKeyObject = nullptr;
+    if (!PyArg_ParseTuple(args, "O", &soKeyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "addBuoy expects a ptKey");
+        PYTHON_RETURN_ERROR;
+    }
+    if (!pyKey::Check(soKeyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "addBuoy expects a ptKey");
+        PYTHON_RETURN_ERROR;
+    }
+    pyKey *soKey = pyKey::ConvertFrom(soKeyObject);
+    self->fThis->AddBuoy(*soKey);
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_METHOD_DEFINITION(ptWaveSet, removeBuoy, args)
+{
+    PyObject *soKeyObject = nullptr;
+    if (!PyArg_ParseTuple(args, "O", &soKeyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "removeBuoy expects a ptKey");
+        PYTHON_RETURN_ERROR;
+    }
+    if (!pyKey::Check(soKeyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "removeBuoy expects a ptKey");
+        PYTHON_RETURN_ERROR;
+    }
+    pyKey *soKey = pyKey::ConvertFrom(soKeyObject);
+    self->fThis->RemoveBuoy(*soKey);
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_START_METHODS_TABLE(ptWaveSet)
     WAVESET_FLOAT(GeoMaxLength),
     WAVESET_FLOAT(GeoMinLength),
@@ -211,6 +245,9 @@ PYTHON_START_METHODS_TABLE(ptWaveSet)
 
     WAVESET_OBJ(EnvCenter),
     WAVESET_FLOAT(EnvRadius),
+
+    PYTHON_METHOD(ptWaveSet, addBuoy, "Params: soKey\nAdds the specified object as a buoy"),
+    PYTHON_METHOD(ptWaveSet, removeBuoy, "Params: soKey\nRemoves the specified object as a buoy"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -219,14 +256,14 @@ PLASMA_DEFAULT_TYPE(ptWaveSet, "Params:key\nCreates a new ptWaveSet");
 // required functions for PyObject interoperability
 PyObject *pyWaveSet::New(plKey key)
 {
-    ptWaveSet *newObj = (ptWaveSet*)ptWaveSet_type.tp_new(&ptWaveSet_type, NULL, NULL);
-    newObj->fThis->fWaterKey = key;
+    ptWaveSet *newObj = (ptWaveSet*)ptWaveSet_type.tp_new(&ptWaveSet_type, nullptr, nullptr);
+    newObj->fThis->fWaterKey = std::move(key);
     return (PyObject*)newObj;
 }
 
 PyObject *pyWaveSet::New(pyKey &key)
 {
-    ptWaveSet *newObj = (ptWaveSet*)ptWaveSet_type.tp_new(&ptWaveSet_type, NULL, NULL);
+    ptWaveSet *newObj = (ptWaveSet*)ptWaveSet_type.tp_new(&ptWaveSet_type, nullptr, nullptr);
     newObj->fThis->fWaterKey = key.getKey();
     return (PyObject*)newObj;
 }

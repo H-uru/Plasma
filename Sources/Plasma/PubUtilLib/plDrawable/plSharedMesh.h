@@ -42,15 +42,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLSHAREDMESH_INC
 #define PLSHAREDMESH_INC
 
+#include <vector>
+
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnMessage/plMessage.h"
 
-class plGeometrySpan;
 class plDrawableSpans;
+class plGeometrySpan;
+class plMorphDataSet;
 class plSceneObject;
 class hsStream;
 class hsResMgr;
-class plMorphDataSet;
 
 class plSharedMesh : public hsKeyedObject
 {
@@ -62,24 +64,20 @@ public:
                                     // the same morph mod.
     };
 
-    hsTArray<plGeometrySpan *>fSpans;
-    hsTArray<const plSceneObject *> fActiveInstances;
+    std::vector<plGeometrySpan *> fSpans;
     plMorphDataSet *fMorphSet;
     uint8_t fFlags;
     
     plSharedMesh();
     ~plSharedMesh();
-    
-    void CreateInstance(plSceneObject *so, uint8_t boneIndex);
-    void RemoveInstance(plSceneObject *so);
-    
+
     CLASSNAME_REGISTER( plSharedMesh );
     GETINTERFACE_ANY( plSharedMesh, hsKeyedObject );
     
-    virtual bool MsgReceive(plMessage* msg);  
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr); 
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 class plSharedMeshBCMsg : public plMessage
@@ -95,8 +93,8 @@ public:
     CLASSNAME_REGISTER( plSharedMeshBCMsg );
     GETINTERFACE_ANY( plSharedMeshBCMsg, plMessage );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr) {}
-    virtual void Write(hsStream* s, hsResMgr* mgr) {}       
+    void Read(hsStream* s, hsResMgr* mgr) override { }
+    void Write(hsStream* s, hsResMgr* mgr) override { }
 };
 
 

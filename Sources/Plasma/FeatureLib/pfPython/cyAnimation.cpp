@@ -46,74 +46,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper to map animation functions to plasma2 message
 //
 
-#include <Python.h>
-#include "plgDispatch.h"
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "cyAnimation.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "pnMessage/plEventCallbackMsg.h"
 
+#include "plgDispatch.h"
+
+#include "plMessage/plAnimCmdMsg.h"
+
+#include "pyKey.h"
 
 cyAnimation::cyAnimation()
+    : fAnimName(), fNetForce()
 {
-    fSender = nil;
-    fAnimName = nil;
-    fNetForce = false;
 }
 
-cyAnimation::cyAnimation(pyKey& sender)
+cyAnimation::cyAnimation(const pyKey& sender)
+    : fAnimName(), fNetForce()
 {
     SetSender(sender);
-    fAnimName = nil;
-    fNetForce = false;
 }
-
-// copy constructor
-cyAnimation::cyAnimation(const cyAnimation& anim)
-{
-    fSender = anim.fSender;
-    fRecvr = anim.fRecvr;
-    // here is why we needed the copy constructor
-    fAnimName = hsStrcpy(anim.fAnimName);       // make our own copy of this string
-    fNetForce = anim.fNetForce;
-}
-
-// clean up on the way out
-cyAnimation::~cyAnimation()
-{
-    if (fAnimName != nil )
-    {
-        delete [] fAnimName;
-        fAnimName = nil;
-    }
-}
-
 
 // setters
-void cyAnimation::SetSender(pyKey& sender)
+void cyAnimation::SetSender(const pyKey& sender)
 {
     fSender = sender.getKey();
 }
 
-void cyAnimation::AddRecvr(pyKey& recvr)
+void cyAnimation::AddRecvr(const pyKey& recvr)
 {
-    fRecvr.Append(recvr.getKey());
+    fRecvr.emplace_back(recvr.getKey());
 }
 
 PyObject* cyAnimation::GetFirstRecvr()
 {
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
         return pyKey::New(fRecvr[0]);
-    return nil;
-}
-
-void cyAnimation::SetAnimName(const char* name)
-{
-    if ( fAnimName != nil )
-        delete [] fAnimName;
-    fAnimName = hsStrcpy(name);
+    return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -126,7 +93,7 @@ void cyAnimation::SetAnimName(const char* name)
 void cyAnimation::Play()
 {
     // must have a receiver!
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plAnimCmdMsg* pMsg = new plAnimCmdMsg;
@@ -141,13 +108,11 @@ void cyAnimation::Play()
             pMsg->SetSender(fSender);
 
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
+
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
 
         // NOTE: The animation modifier will set the animation back to the starting point automatically
@@ -169,7 +134,7 @@ void cyAnimation::Play()
 void cyAnimation::Stop()
 {
     // must have a receiver!
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plAnimCmdMsg* pMsg = new plAnimCmdMsg;
@@ -184,13 +149,11 @@ void cyAnimation::Stop()
             pMsg->SetSender(fSender);
 
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
+
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kStop);
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
@@ -207,7 +170,7 @@ void cyAnimation::Stop()
 void cyAnimation::Resume()
 {
     // must have a receiver!
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plAnimCmdMsg* pMsg = new plAnimCmdMsg;
@@ -222,13 +185,11 @@ void cyAnimation::Resume()
             pMsg->SetSender(fSender);
 
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
+
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kContinue);
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
@@ -259,7 +220,7 @@ void cyAnimation::PlayRange(float start, float end)
 void cyAnimation::PlayToTime(float time)
 {
     // must have a receiver!
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plAnimCmdMsg* pMsg = new plAnimCmdMsg;
@@ -274,13 +235,11 @@ void cyAnimation::PlayToTime(float time)
             pMsg->SetSender(fSender);
 
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
+
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kPlayToTime);
         pMsg->fTime = time;
@@ -298,7 +257,7 @@ void cyAnimation::PlayToTime(float time)
 void cyAnimation::PlayToPercentage(float zeroToOne)
 {
     // must have a receiver!
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plAnimCmdMsg* pMsg = new plAnimCmdMsg;
@@ -313,13 +272,11 @@ void cyAnimation::PlayToPercentage(float zeroToOne)
             pMsg->SetSender(fSender);
         
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
+
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kPlayToPercentage);
         pMsg->fTime = zeroToOne;
@@ -338,7 +295,7 @@ void cyAnimation::PlayToPercentage(float zeroToOne)
 void cyAnimation::SkipToTime(float time)
 {
     // must have a receiver!
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plAnimCmdMsg* pMsg = new plAnimCmdMsg;
@@ -353,13 +310,11 @@ void cyAnimation::SkipToTime(float time)
             pMsg->SetSender(fSender);
 
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
+
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kGoToTime);
         pMsg->fTime = time;
@@ -377,7 +332,7 @@ void cyAnimation::SkipToTime(float time)
 void cyAnimation::Looped(bool looped)
 {
     // must have a receiver!
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plAnimCmdMsg* pMsg = new plAnimCmdMsg;
@@ -392,13 +347,11 @@ void cyAnimation::Looped(bool looped)
             pMsg->SetSender(fSender);
 
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
+
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         if ( looped )
             pMsg->SetCmd(plAnimCmdMsg::kSetLooping);
@@ -418,7 +371,7 @@ void cyAnimation::Looped(bool looped)
 void cyAnimation::Backwards(bool backwards)
 {
     // must have a receiver!
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plAnimCmdMsg* pMsg = new plAnimCmdMsg;
@@ -433,13 +386,11 @@ void cyAnimation::Backwards(bool backwards)
             pMsg->SetSender(fSender);
 
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
+
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         if ( backwards )
             pMsg->SetCmd(plAnimCmdMsg::kSetBackwards);
@@ -459,7 +410,7 @@ void cyAnimation::Backwards(bool backwards)
 void cyAnimation::SetLoopStart(float start)
 {
     // must have a receiver!
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plAnimCmdMsg* pMsg = new plAnimCmdMsg;
@@ -474,13 +425,11 @@ void cyAnimation::SetLoopStart(float start)
             pMsg->SetSender(fSender);
 
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
+
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kSetLoopBegin);
         pMsg->fLoopBegin = start;
@@ -491,7 +440,7 @@ void cyAnimation::SetLoopStart(float start)
 void cyAnimation::SetLoopEnd(float end)
 {
     // must have a receiver!
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plAnimCmdMsg* pMsg = new plAnimCmdMsg;
@@ -506,13 +455,11 @@ void cyAnimation::SetLoopEnd(float end)
             pMsg->SetSender(fSender);
 
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
+
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kSetLoopEnd);
         pMsg->fLoopEnd = end;
@@ -533,7 +480,7 @@ void cyAnimation::SetLoopEnd(float end)
 void cyAnimation::Speed(float speed)
 {
     // must have a receiver!
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plAnimCmdMsg* pMsg = new plAnimCmdMsg;
@@ -548,13 +495,11 @@ void cyAnimation::Speed(float speed)
             pMsg->SetSender(fSender);
 
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
+
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kSetSpeed);
         pMsg->fSpeed = speed;
@@ -566,7 +511,7 @@ void cyAnimation::Speed(float speed)
 void cyAnimation::IRunOneCmd(int cmd)
 {
     // must have a receiver!
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plAnimCmdMsg* pMsg = new plAnimCmdMsg;
@@ -580,13 +525,11 @@ void cyAnimation::IRunOneCmd(int cmd)
         if ( fSender )
             pMsg->SetSender(fSender);
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
+
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(cmd);
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes

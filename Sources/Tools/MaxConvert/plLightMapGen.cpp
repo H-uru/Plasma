@@ -42,15 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsFastMath.h"
-#include "hsTemplates.h"
-#include "hsWindows.h"
+
+#include "MaxMain/MaxAPI.h"
 
 #include "MaxComponent/plComponent.h"
-
-#include <dummy.h>
-#include <notify.h>
-#include <vector>
-#pragma hdrstop
 
 #include "plLightMapGen.h"
 #include "plGImage/plMipmap.h"
@@ -148,11 +143,11 @@ plLightMapGen::plLightMapGen()
     fScale(1.f),
     fUVWSrc(-1),
     fMapRange(-1.f),
-    fInterface(nil),
-    fRenderer(nil),
+    fInterface(),
+    fRenderer(),
     fRecalcLightMaps(true),
-    fRGC(nil),
-    fRP(nil)
+    fRGC(),
+    fRP()
 {
     fWidth = kDefaultSize;
     fHeight = kDefaultSize;
@@ -195,12 +190,12 @@ bool plLightMapGen::Open(Interface* ip, TimeValue t, bool forceRegen)
         vp.yon = 30.f;
         vp.distance = 1.f;
         vp.zoom = 1.f;
-        vp.fov = M_PI / 4.f;
+        vp.fov = hsConstants::pi<float> / 4.f;
         vp.nearRange = 1.f;
         vp.farRange = 30.f;
 
         fRenderer->Open(fInterface->GetRootNode(), 
-            nil,
+            nullptr,
             &vp,
             *fRP, 
             fInterface->GetMAXHWnd());
@@ -248,17 +243,17 @@ bool plLightMapGen::Open(Interface* ip, TimeValue t, bool forceRegen)
 
 #endif // MF_NEW_RGC
 
-        fPreppedMipmaps.SetCount(0);
-        fCreatedLayers.SetCount(0);
-        fNewMaps.SetCount(0);
+        fPreppedMipmaps.clear();
+        fCreatedLayers.clear();
+        fNewMaps.clear();
 
-        fAllLights.SetCount(0);
-        fActiveLights.SetCount(0);
+        fAllLights.clear();
+        fActiveLights.clear();
         IFindLightsRecur((plMaxNode*)fInterface->GetRootNode());
     }
     fRecalcLightMaps = forceRegen;
 
-    return fAllLights.GetCount() > 0;
+    return !fAllLights.empty();
 }
 
 bool plLightMapGen::Close()
@@ -269,7 +264,7 @@ bool plLightMapGen::Close()
     for (int i = 0; i < fSharedComponents.size(); i++)
     {
         if (fSharedComponents[i]->GetLightMapKey()) // if it has a key
-            fSharedComponents[i]->SetLightMapKey(nil); // nil it out
+            fSharedComponents[i]->SetLightMapKey(nullptr); // nil it out
     }
     fSharedComponents.clear();
 
@@ -280,20 +275,20 @@ bool plLightMapGen::Close()
 #else // MF_NEW_RGC
     if( fRenderer )
         fRenderer->Close(fInterface->GetMAXHWnd());
-    fRenderer = nil;
+    fRenderer = nullptr;
 #endif // MF_NEW_RGC
-    fRGC = nil;
+    fRGC = nullptr;
     delete fRP;
-    fRP = nil;
+    fRP = nullptr;
 
-    fPreppedMipmaps.SetCount(0);
-    fCreatedLayers.SetCount(0);
-    fNewMaps.SetCount(0);
+    fPreppedMipmaps.clear();
+    fCreatedLayers.clear();
+    fNewMaps.clear();
 
     IReleaseActiveLights();
     IReleaseAllLights();
 
-    fInterface = nil;
+    fInterface = nullptr;
 
     return true;
 }
@@ -334,18 +329,13 @@ void DumpMipmap(plMipmap* mipmap, const char* prefix)
             dump.WriteString("\n");
         }
     }
-
-    dump.Close();
 }
 #endif // MIPMAP_LOG
 
 bool plLightMapGen::ICompressLightMaps()
 {
-    int i;
-    for( i = 0; i < fPreppedMipmaps.GetCount(); i++ )
+    for (plMipmap* orig : fPreppedMipmaps)
     {
-        plMipmap* orig = fPreppedMipmaps[i];
-
         if( orig )
         {
             const float kFilterSigma = 1.0f;
@@ -362,42 +352,17 @@ bool plLightMapGen::ICompressLightMaps()
                 DumpMipmap(orig, orig->GetKeyName());
 #endif // MIPMAP_LOG
 
-                plMipmap *compressed = 
-                    hsCodecManager::Instance().CreateCompressedMipmap(plMipmap::kDirectXCompression, orig);
-
-                if( compressed )
-                {
-                    const plLocation &textureLoc = plPluginResManager::ResMgr()->GetCommonPage(orig->GetKey()->GetUoid().GetLocation(),
-                                                                                    plAgeDescription::kTextures );
-                    plString name = plFormat("{}_DX", orig->GetKey()->GetName());
-
-                    plKey compKey = hsgResMgr::ResMgr()->FindKey(plUoid(textureLoc, plMipmap::Index(), name));
-                    if( compKey )
-                        plBitmapCreator::Instance().DeleteExportedBitmap(compKey);
-
-                    hsgResMgr::ResMgr()->NewKey( name, compressed, textureLoc );
-
-                    int j;
-                    for( j = 0; j < fCreatedLayers.GetCount(); j++ )
-                    {
-                        if( orig == fCreatedLayers[j]->GetTexture() )
-                        {
-                            fCreatedLayers[j]->GetKey()->Release(orig->GetKey());
-                            hsgResMgr::ResMgr()->AddViaNotify(compressed->GetKey(), new plLayRefMsg(fCreatedLayers[j]->GetKey(), plRefMsg::kOnReplace, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
-                        }
-                    }
-
-                    plBitmapCreator::Instance().DeleteExportedBitmap(orig->GetKey());
-                }
+                // Use lossless compression on LightMaps.  We don't want ugly, muddy edges.
+                orig->fCompressionType = plMipmap::kPNGCompression;
             }
         }
     }
     return true;
 }
 
-bool plLightMapGen::MakeMaps(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, hsTArray<plGeometrySpan *> &spans, plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plLightMapGen::MakeMaps(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, std::vector<plGeometrySpan *> &spans, plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
 
     plLightMapComponent* lmapComp = node->GetLightMapComponent();
     if( !lmapComp )
@@ -451,20 +416,17 @@ bool plLightMapGen::MakeMaps(plMaxNode* node, const hsMatrix44& l2w, const hsMat
 
 // The next couple of functions don't do anything interesting except
 // get us down to the face level where we can work.
-bool plLightMapGen::IShadeGeometrySpans(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, hsTArray<plGeometrySpan *> &spans)
+bool plLightMapGen::IShadeGeometrySpans(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, std::vector<plGeometrySpan *> &spans)
 {
     bool retVal = false;
-    int i;
-    for( i = 0; i < spans.GetCount(); i++ )
-    {
-        retVal |= IShadeSpan(node, l2w, w2l, *spans[i]);
-    }
+    for (plGeometrySpan* span : spans)
+        retVal |= IShadeSpan(node, l2w, w2l, *span);
     return retVal;
 }
 
 bool plLightMapGen::IsFresh(plBitmap* map) const
 {
-    return fRecalcLightMaps || fNewMaps.Find(map) != fNewMaps.kMissingIndex;
+    return fRecalcLightMaps || std::find(fNewMaps.cbegin(), fNewMaps.cend(), map) != fNewMaps.cend();
 }
 
 bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, plGeometrySpan& span)
@@ -475,8 +437,6 @@ bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsM
     // This next check should never happen, since we've created the layer ourselves.
     if( !lay || !lay->GetTexture() )//|| !lay->GetTexture()->GetBitmap() )
         return false;
-
-    int i;
 
     if( !(span.fProps & plGeometrySpan::kDiffuseFoldedIn) )
     {
@@ -493,7 +453,7 @@ bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsM
             // emissive layer (since emissive layers ignore lightmapping).
             // If we are using kLiteMaterial, we still need to copy from InitColor to Stuff,
             // just don't do the modulate.
-            for( i = 0; i < span.fMaterial->GetNumLayers(); i++ )
+            for (size_t i = 0; i < span.fMaterial->GetNumLayers(); i++)
             {
                 if( span.fMaterial->GetLayer(i)->GetBlendFlags() & hsGMatState::kBlendAlpha )
                 {
@@ -501,7 +461,7 @@ bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsM
                     break;
                 }
             }
-            for( i = 0; i < span.fMaterial->GetNumLayers(); i++ )
+            for (size_t i = 0; i < span.fMaterial->GetNumLayers(); i++)
             {
                 if( !(span.fMaterial->GetLayer(i)->GetShadeFlags() & hsGMatState::kShadeEmissive) )
                 {
@@ -510,7 +470,7 @@ bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsM
                 }
             }
         }
-        for( i = 0; i < span.fNumVerts; i++ )
+        for (uint32_t i = 0; i < span.fNumVerts; i++)
         {
             hsColorRGBA multColor, addColor;
             span.ExtractInitColor( i, &multColor, &addColor);
@@ -524,17 +484,13 @@ bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsM
         }
         if( span.fInstanceRefs )
         {
-            int j;
-            for( j = 0; j < span.fInstanceRefs->GetCount(); j++ )
-            {
-                plGeometrySpan* inst = (*span.fInstanceRefs)[j];
+            for (plGeometrySpan* inst : *span.fInstanceRefs)
                 inst->fProps |= plGeometrySpan::kDiffuseFoldedIn;
-            }
         }
     }
     else
     {
-        for( i = 0; i < span.fNumVerts; i++ )
+        for (uint32_t i = 0; i < span.fNumVerts; i++)
         {
             hsColorRGBA multColor, addColor;
             span.ExtractInitColor( i, &multColor, &addColor);
@@ -552,8 +508,8 @@ bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsM
     plMipmap* accum = IMakeAccumBitmap(lay);
 
     bool retVal = false;
-    int nFaces = span.fNumIndices / 3;
-    for( i = 0; i < nFaces; i++ )
+    uint32_t nFaces = span.fNumIndices / 3;
+    for (uint32_t i = 0; i < nFaces; i++)
     {
         retVal |= IShadeFace(node, l2w, w2l, span, i, accum);
     }
@@ -566,14 +522,14 @@ bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsM
 plMipmap* plLightMapGen::IMakeAccumBitmap(plLayerInterface* lay) const
 {
     plMipmap* dst = plMipmap::ConvertNoRef( lay->GetTexture() );//->GetBitmap();
-    hsAssert( dst != nil, "nil mipmap in IMakeAccumBitmap()" );
+    hsAssert(dst != nullptr, "nil mipmap in IMakeAccumBitmap()");
 
     int width = dst->GetWidth();
     int height = dst->GetHeight();
 
     // Temporary mipmap here, so we don't have to worry about using plBitmapCreator
     plMipmap* bitmap = new plMipmap( width, height, plMipmap::kRGB32Config, 1 );
-    HSMemory::Clear(bitmap->GetImage(), bitmap->GetHeight() * bitmap->GetRowBytes() );
+    memset(bitmap->GetImage(), 0, bitmap->GetHeight() * bitmap->GetRowBytes());
 
     return bitmap;
 }
@@ -581,7 +537,7 @@ plMipmap* plLightMapGen::IMakeAccumBitmap(plLayerInterface* lay) const
 bool plLightMapGen::IAddToLightMap(plLayerInterface* lay, plMipmap* src) const
 {
     plMipmap* dst = plMipmap::ConvertNoRef( lay->GetTexture() );//->GetBitmap();
-    hsAssert( dst != nil, "nil mipmap in IAddToLightMap()" );
+    hsAssert(dst != nullptr, "nil mipmap in IAddToLightMap()");
 
     src->SetCurrLevel( 0 );
     dst->SetCurrLevel( 0 );
@@ -703,8 +659,7 @@ bool plLightMapGen::IShadeVerts(plMaxLightContext& ctx, const Color& amb, const 
     int height = bitmap->GetHeight();
     bitmap->SetCurrLevel( 0 );
 
-    hsTArray<LMGScanlineData> scanline;
-    scanline.SetCount(height);
+    std::vector<LMGScanlineData> scanline(height);
 
     int lowestV = height;
     int highestV = 0;
@@ -800,24 +755,24 @@ bool plLightMapGen::IShadeVerts(plMaxLightContext& ctx, const Color& amb, const 
 
 bool plLightMapGen::IGetLight(INode* node)
 {
-    if( node->UserPropExists("RunTimeLight") )
+    if( node->UserPropExists(_M("RunTimeLight")) )
         return false;
 
     Object *obj = node->EvalWorldState(fTime).obj;
 
     if (obj && (obj->SuperClassID() == SClass_ID(LIGHT_CLASS_ID))) 
     {
-        plLightMapInfo* liInfo = fAllLights.Push();
+        plLightMapInfo& liInfo = fAllLights.emplace_back();
 
         LightObject* liObj = (LightObject*)obj;
 
-        liInfo->fResetShadowType = 0;
-        liInfo->fResetMapRange = -1.f;
-        liInfo->fMapRange = -1.f;
+        liInfo.fResetShadowType = 0;
+        liInfo.fResetMapRange = -1.f;
+        liInfo.fMapRange = -1.f;
 
-        liInfo->fLiNode = node;
-        liInfo->fObjLiDesc = nil;
-        liInfo->fNewRender = true;
+        liInfo.fLiNode = node;
+        liInfo.fObjLiDesc = nullptr;
+        liInfo.fNewRender = true;
 
         return true;
     }
@@ -834,7 +789,7 @@ bool plLightMapGen::Update(TimeValue t)
         fRGC->Update(t);
 #endif // MF_NEW_RGC
 
-    return fAllLights.GetCount() != 0;
+    return !fAllLights.empty();
 }
 
 bool plLightMapGen::IFindLightsRecur(INode* node)
@@ -845,12 +800,12 @@ bool plLightMapGen::IFindLightsRecur(INode* node)
     for( i = 0; i < node->NumberOfChildren(); i++ )
         IFindLightsRecur(node->GetChildNode(i));
 
-    return fAllLights.GetCount() > 0;
+    return !fAllLights.empty();
 }
 
 bool plLightMapGen::InitNode(INode* node, bool softShadow)
 {
-    fActiveLights.SetCount(0);
+    fActiveLights.clear();
 
     plMaxNode* maxNode = (plMaxNode*)node;
     if( !maxNode->CanConvert() )
@@ -865,7 +820,7 @@ bool plLightMapGen::InitNode(INode* node, bool softShadow)
 
     IFindActiveLights((plMaxNode*)node);
     
-    return fActiveLights.GetCount() > 0;
+    return !fActiveLights.empty();
 }
 
 bool plLightMapGen::DeInitNode()
@@ -972,7 +927,7 @@ bool plLightMapGen::ISpotAffectsNode(plLightMapInfo* liInfo, LightObject* liObj,
     liObj->EvalLightState(TimeValue(0), FOREVER, &ls);
 
     float coneRad[2];
-    coneRad[0] = (float)(ls.fallsize * M_PI / 180.f);
+    coneRad[0] = hsDegreesToRadians(ls.fallsize);
     coneRad[1] = coneRad[0];
     if( ls.shape == RECT_LIGHT )
         coneRad[1] /= ls.aspect;
@@ -1040,8 +995,8 @@ bool plLightMapGen::IOmniAffectsNode(plLightMapInfo* liInfo, LightObject* liObj,
 
 bool plLightMapGen::ILightAffectsNode(plLightMapInfo* liInfo, LightObject* liObj, INode* node)
 {
-    const char* liName = liInfo->fLiNode->GetName();
-    const char* nodeName = node->GetName();
+    auto liName = liInfo->fLiNode->GetName();
+    auto nodeName = node->GetName();
 
     LightState ls;
     liObj->EvalLightState(TimeValue(0), FOREVER, &ls);
@@ -1077,8 +1032,8 @@ bool plLightMapGen::ILightAffectsNode(plLightMapInfo* liInfo, LightObject* liObj
 
 bool plLightMapGen::IPrepLight(plLightMapInfo* liInfo, INode* node)
 {
-    const char* liName = liInfo->fLiNode->GetName();
-    const char* nodeName = node->GetName();
+    auto liName = liInfo->fLiNode->GetName();
+    auto nodeName = node->GetName();
 
     INode* liNode = liInfo->fLiNode;
     LightObject* liObj = (LightObject*)liNode->EvalWorldState(fTime).obj;
@@ -1133,7 +1088,7 @@ bool plLightMapGen::IPrepLight(plLightMapInfo* liInfo, INode* node)
 
             liInfo->fObjLiDesc = objLiDesc;
             
-            fActiveLights.Append(liInfo);
+            fActiveLights.emplace_back(liInfo);
         }
     }
 
@@ -1142,49 +1097,47 @@ bool plLightMapGen::IPrepLight(plLightMapInfo* liInfo, INode* node)
 
 bool plLightMapGen::IFindActiveLights(plMaxNode* node)
 {
-    fActiveLights.SetCount(0);
-    int i;
-    for( i = 0; i < fAllLights.GetCount(); i++ )
+    fActiveLights.clear();
+    for (plLightMapInfo& light : fAllLights)
     {
-        IPrepLight(&fAllLights[i], node);
+        IPrepLight(&light, node);
     }
 
-    return fActiveLights.GetCount() > 0;
+    return !fActiveLights.empty();
 }
 
 bool plLightMapGen::IReleaseAllLights()
 {
-    int i;
-    for( i = 0; i < fAllLights.GetCount(); i++ )
+    for (plLightMapInfo& light : fAllLights)
     {
-        if( fAllLights[i].fResetMapRange > 0 )
+        if (light.fResetMapRange > 0)
         {
-            LightObject* liObj = (LightObject*)fAllLights[i].fLiNode->EvalWorldState(fTime).obj;
-            liObj->SetMapRange(fTime, fAllLights[i].fResetMapRange);
+            LightObject* liObj = (LightObject*)light.fLiNode->EvalWorldState(fTime).obj;
+            liObj->SetMapRange(fTime, light.fResetMapRange);
 
         }
 #ifdef MF_NO_RAY_SHADOW
         // Fix the shadow method back.
-        if( fAllLights[i].fResetShadowType > 0 )
+        if (light.fResetShadowType > 0)
         {
-            LightObject* liObj = (LightObject*)fAllLights[i].fLiNode->EvalWorldState(fTime).obj;
-            liObj->SetShadowType(fAllLights[i].fResetShadowType);
+            LightObject* liObj = (LightObject*)light.fLiNode->EvalWorldState(fTime).obj;
+            liObj->SetShadowType(light.fResetShadowType);
         }
 #endif // MF_NO_RAY_SHADOW
 
-        if( fAllLights[i].fObjLiDesc )
-            fAllLights[i].fObjLiDesc->DeleteThis();
+        if (light.fObjLiDesc)
+            light.fObjLiDesc->DeleteThis();
 
-        fAllLights[i].fObjLiDesc = nil;
+        light.fObjLiDesc = nullptr;
     }
-    fAllLights.SetCount(0);
+    fAllLights.clear();
     
     return true;
 }
 
 bool plLightMapGen::IReleaseActiveLights()
 {
-    fActiveLights.SetCount(0);
+    fActiveLights.clear();
 
     return true;
 }
@@ -1194,15 +1147,14 @@ bool plLightMapGen::IWantsMaps(plMaxNode* node)
     if( !(node->CanConvert() && node->GetDrawable()) )
         return false;
 
-    return nil != node->GetLightMapComponent();
+    return nullptr != node->GetLightMapComponent();
 }
 
-bool plLightMapGen::IValidateUVWSrc(hsTArray<plGeometrySpan *>& spans) const
+bool plLightMapGen::IValidateUVWSrc(std::vector<plGeometrySpan *>& spans) const
 {
-    int i;
-    for( i = 0; i < spans.GetCount(); i++ )
+    for (plGeometrySpan* span : spans)
     {
-        int numUVWs = spans[i]->GetNumUVs();
+        int numUVWs = span->GetNumUVs();
         if( IGetUVWSrc() >= numUVWs )
             return false;
     }
@@ -1225,8 +1177,8 @@ plLayerInterface* plLightMapGen::IGetLightMapLayer(plMaxNode* node, plGeometrySp
     plMipmap* mip = plMipmap::ConvertNoRef(lay->GetTexture());
     hsAssert(mip, "This should have been a mipmap we created ourselves.");
     if( !mip )
-        return nil;
-    if( fPreppedMipmaps.Find(mip) == fPreppedMipmaps.kMissingIndex )
+        return nullptr;
+    if (std::find(fPreppedMipmaps.cbegin(), fPreppedMipmaps.cend(), mip) == fPreppedMipmaps.cend())
     {
         if( IsFresh(mip) )
         {
@@ -1235,11 +1187,11 @@ plLayerInterface* plLightMapGen::IGetLightMapLayer(plMaxNode* node, plGeometrySp
             IInitBitmapColor(mip, initColor);
         }
 
-        fPreppedMipmaps.Append(mip);
+        fPreppedMipmaps.emplace_back(mip);
     }
-    if( fCreatedLayers.Find(lay) == fCreatedLayers.kMissingIndex )
+    if (std::find(fCreatedLayers.cbegin(), fCreatedLayers.cend(), lay) == fCreatedLayers.cend())
     {
-        fCreatedLayers.Append(lay);
+        fCreatedLayers.emplace_back(lay);
     }
     return lay;
 }
@@ -1248,21 +1200,20 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
 {
     hsGMaterial* mat = span.fMaterial;
 
-    int i;
-    for( i = 0; i < mat->GetNumPiggyBacks(); i++ )
+    for (size_t i = 0; i < mat->GetNumPiggyBacks(); i++)
     {
         if( mat->GetPiggyBack(i)->GetMiscFlags() & hsGMatState::kMiscLightMap )
             return mat->GetPiggyBack(i);
     }
 
-    plString newMatName = plFormat("{}_{}_LIGHTMAPGEN", mat->GetKey()->GetName(), node->GetName());
+    ST::string newMatName = ST::format("{}_{}_LIGHTMAPGEN", mat->GetKey()->GetName(), node->GetName());
     plLocation nodeLoc = node->GetLocation();
 
     plKey matKey = hsgResMgr::ResMgr()->FindKey(plUoid(nodeLoc, hsGMaterial::Index(), newMatName));
     if( matKey )
     {
         mat = hsGMaterial::ConvertNoRef(matKey->ObjectIsLoaded());
-        for( i = 0; i < mat->GetNumPiggyBacks(); i++ )
+        for (size_t i = 0; i < mat->GetNumPiggyBacks(); i++)
         {
             if( mat->GetPiggyBack(i)->GetMiscFlags() & hsGMatState::kMiscLightMap )
             {
@@ -1272,7 +1223,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
         }
         hsAssert(false, "Something not a light map material registered with our name?");
     }
-    hsGMaterial* objMat = nil;
+    hsGMaterial* objMat = nullptr;
     
     bool sharemaps = node->GetLightMapComponent()->GetShared();
     if( sharemaps )
@@ -1284,7 +1235,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
         objMat = new hsGMaterial;
         hsgResMgr::ResMgr()->NewKey(newMatName, objMat, nodeLoc);
 
-        for( i = 0; i < mat->GetNumLayers(); i++ )
+        for (size_t i = 0; i < mat->GetNumLayers(); i++)
             hsgResMgr::ResMgr()->AddViaNotify(mat->GetLayer(i)->GetKey(), new plMatRefMsg(objMat->GetKey(), plRefMsg::kOnCreate, -1, plMatRefMsg::kLayer), plRefFlags::kActiveRef);
     }
 
@@ -1293,7 +1244,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
     // Make sure layer (and mip) name are unique across pages by putting the page name in
     const plPageInfo* pageInfo = plKeyFinder::Instance().GetLocationInfo(node->GetLocation());
 
-    plString layName = plFormat("{}_{}_LIGHTMAPGEN", pageInfo->GetPage(), node->GetName());
+    ST::string layName = ST::format("{}_{}_LIGHTMAPGEN", pageInfo->GetPage(), node->GetName());
     
     plKey layKey = node->FindPageKey(plLayer::Index(), layName);
 
@@ -1310,7 +1261,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
         }
         else
         {
-            plString mipmapName = plFormat("{}_mip", layName);
+            ST::string mipmapName = ST::format("{}_mip", layName);
 
             // Deleted the NOTE here because it was incorrect in every meaningful sense of the word. - mf
 
@@ -1320,7 +1271,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
 
             if( !mipKey && !fRecalcLightMaps )
             {
-                plString compressedName = plFormat("{}_DX", mipmapName);
+                ST::string compressedName = ST::format("{}_DX", mipmapName);
 
                 plKey compKey = hsgResMgr::ResMgr()->FindKey(plUoid(textureLoc, plMipmap::Index(), compressedName));
 
@@ -1338,7 +1289,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
                         // make sure the lightmap component isn't holding a key,
                         // it will get assigned one a few lines later anyway
                         if (node->GetLightMapComponent()->GetLightMapKey())
-                            node->GetLightMapComponent()->SetLightMapKey(nil);
+                            node->GetLightMapComponent()->SetLightMapKey(nullptr);
 
                         plBitmapCreator::Instance().DeleteExportedBitmap(mipKey);
                     }
@@ -1349,7 +1300,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
             {
                 plMipmap* bitmap = plBitmapCreator::Instance().CreateBlankMipmap(w, h, plMipmap::kRGB32Config, 1, mipmapName, nodeLoc);
                 mipKey = bitmap->GetKey();
-                fNewMaps.Append(bitmap);
+                fNewMaps.emplace_back(bitmap);
 
                 if( !node->GetLightMapComponent()->GetCompress() )
                     bitmap->SetFlags(bitmap->GetFlags() | plMipmap::kForceNonCompressed);
@@ -1393,15 +1344,14 @@ Color plLightMapGen::ShadowPoint(plMaxLightContext& ctx)
 
     Color accum;
     accum.Black();
-    int i;
-    for( i = 0; i < fActiveLights.GetCount(); i++ )
+    for (plLightMapInfo* light : fActiveLights)
     {
-        const char* dbgLiName = fActiveLights[i]->fLiNode->GetName();
+        auto dbgLiName = light->fLiNode->GetName();
 
         Color color;
         Point3 liDir;
         float dot_nl, diffuseCoef;
-        BOOL hit = fActiveLights[i]->fObjLiDesc->Illuminate(ctx, ctx.Normal(), color, liDir, dot_nl, diffuseCoef);
+        BOOL hit = light->fObjLiDesc->Illuminate(ctx, ctx.Normal(), color, liDir, dot_nl, diffuseCoef);
         if( hit )
         {
             accum += color;
@@ -1417,13 +1367,12 @@ Color plLightMapGen::ShadePoint(plMaxLightContext& ctx)
 
     Color accum;
     accum.Black();
-    int i;
-    for( i = 0; i < fActiveLights.GetCount(); i++ )
+    for (plLightMapInfo* light : fActiveLights)
     {
         Color color;
         Point3 liDir;
         float dot_nl, diffuseCoef;
-        BOOL hit = fActiveLights[i]->fObjLiDesc->Illuminate(ctx, ctx.Normal(), color, liDir, dot_nl, diffuseCoef);
+        BOOL hit = light->fObjLiDesc->Illuminate(ctx, ctx.Normal(), color, liDir, dot_nl, diffuseCoef);
         if( hit )
         {
             accum += color * diffuseCoef;
@@ -1465,18 +1414,15 @@ uint32_t plLightMapGen::IShadePoint(plMaxLightContext& ctx, const Color& amb, co
     return retVal;
 }
 
-bool plLightMapGen::ISelectBitmapDimension(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, hsTArray<plGeometrySpan *>& spans)
+bool plLightMapGen::ISelectBitmapDimension(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, std::vector<plGeometrySpan *>& spans)
 {
     float duDr = 0;
     float dvDr = 0;
 
     float totFaces = 0;
 
-    int i;
-    for( i = 0; i < spans.GetCount(); i++ )
+    for (plGeometrySpan* span : spans)
     {
-        plGeometrySpan *span = spans[i];
-
         int nFaces = span->fNumIndices / 3;
         int j;
         for( j = 0; j < nFaces; j++ )
@@ -1582,7 +1528,7 @@ bool plLightMapGen::ISelectBitmapDimension(plMaxNode* node, const hsMatrix44& l2
     {
         fWidth = kMinSize;
     }
-    fWidth *= fScale;
+    fWidth = int(fWidth * fScale);
     fWidth = IPowerOfTwo(fWidth);
     
     if( dvDr > 0 )
@@ -1598,7 +1544,7 @@ bool plLightMapGen::ISelectBitmapDimension(plMaxNode* node, const hsMatrix44& l2
     {
         fHeight = kMinSize;
     }
-    fHeight *= fScale;
+    fHeight = int(fHeight * fScale);
     fHeight = IPowerOfTwo(fHeight);
 
     if( fHeight / fWidth > kMaxAspect )

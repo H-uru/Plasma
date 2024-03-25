@@ -40,14 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "../resource.h"
 
-#include "MaxMain/MaxCompat.h"
-#include <iparamm2.h>
-#include <istdplug.h>
-#include <stdmat.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include "../resource.h"
 
 #include "plDecalMtl.h"
 
@@ -65,17 +61,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 extern HINSTANCE hInstance;
 
-class plDecalMtlClassDesc : public ClassDesc2
+class plDecalMtlClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return new plDecalMtl(loading); }
-    const TCHAR*    ClassName()     { return GetString(IDS_DECAL_MTL); }
-    SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
-    Class_ID        ClassID()       { return DECAL_MTL_CLASS_ID; }
-    const TCHAR*    Category()      { return NULL; }
-    const TCHAR*    InternalName()  { return _T("PlasmaMaterial"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading) override { return new plDecalMtl(loading); }
+    const MCHAR*    ClassName() override    { return GetString(IDS_DECAL_MTL); }
+    SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
+    Class_ID        ClassID() override      { return DECAL_MTL_CLASS_ID; }
+    const MCHAR*    Category() override     { return nullptr; }
+    const MCHAR*    InternalName() override { return _T("PlasmaMaterial"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plDecalMtlClassDesc plDecalMtlDesc;
 ClassDesc2* GetDecalMtlDesc() { return &plDecalMtlDesc; }
@@ -102,7 +98,7 @@ plDecalMtl::plDecalMtl(BOOL loading) : plPassMtlBase( loading )
         IVerifyStealthPresent(ENTIRE_ANIMATION_NAME);
 }
 
-void plDecalMtl::GetClassName(TSTR& s)
+void plDecalMtl::IGetClassName(MSTR& s) const
 {
     s = GetString(IDS_DECAL_MTL);
 }
@@ -135,7 +131,7 @@ Interval plDecalMtl::Validity(TimeValue t)
 //  fPBlock->GetValue(pb_spin,t,u,valid);
     return valid;
 #else // mf horse
-    const char* name = GetName();
+    auto name = GetName();
 
     // mf horse - Hacking in something like real validity checking
     // to get material animations working. No warranty, this is just
@@ -197,7 +193,7 @@ int plDecalMtl::NumSubs()
     return 6;
 }
 
-TSTR plDecalMtl::SubAnimName(int i) 
+MSTR plDecalMtl::ISubAnimName(int i)
 {
     switch (i)
     {
@@ -205,11 +201,11 @@ TSTR plDecalMtl::SubAnimName(int i)
     case 1: return fAdvPB->GetLocalName();
     case 2: return fLayersPB->GetLocalName();
     case 3: return fAnimPB->GetLocalName();
-    case 4: return "Base Layer";
-    case 5: return "Top Layer";
+    case 4: return _M("Base Layer");
+    case 5: return _M("Top Layer");
     }
 
-    return "";
+    return _M("");
 }
 
 Animatable* plDecalMtl::SubAnim(int i)
@@ -227,7 +223,7 @@ Animatable* plDecalMtl::SubAnim(int i)
         break;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 int plDecalMtl::NumParamBlocks()
@@ -251,12 +247,7 @@ IParamBlock2* plDecalMtl::GetParamBlockByID(BlockID id)
     else if (fAnimPB->ID() == id)
         return fAnimPB;
 
-    return NULL;
-}
-
-RefResult plDecalMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
-{
-    return plPassMtlBase::NotifyRefChanged( changeInt, hTarget, partID, message );
+    return nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -274,7 +265,7 @@ Texmap* plDecalMtl::GetSubTexmap(int i)
    else if (i == 1)
       return fLayersPB->GetTexmap(kDecalLayTop);
    
-   return NULL;
+   return nullptr;
 }
 
 void plDecalMtl::SetSubTexmap(int i, Texmap *m)
@@ -285,19 +276,19 @@ void plDecalMtl::SetSubTexmap(int i, Texmap *m)
       fLayersPB->SetValue(kDecalLayTop, 0, m);
 }
 
-TSTR plDecalMtl::GetSubTexmapSlotName(int i)
+MSTR plDecalMtl::IGetSubTexmapSlotName(int i)
 {
    if (i == 0)
-      return "Base";
+      return _M("Base");
    else if (i == 1)
-      return "Top";
+      return _M("Top");
    
-   return "";
+   return _M("");
 }
 
-TSTR plDecalMtl::GetSubTexmapTVName(int i)
+MSTR plDecalMtl::GetSubTexmapTVName(int i)
 {
-   return GetSubTexmapSlotName(i);
+    return GetSubTexmapSlotName(i);
 }
 
 int plDecalMtl::SubTexmapOn(int i)
@@ -430,8 +421,8 @@ void plDecalMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback 
     Texmap *tx[2];
     int diffChan = stdIDToChannel[ ID_DI ];
     int opacChan = stdIDToChannel[ ID_OP ];
-    tx[0] = (*maps)[diffChan].IsActive()?(*maps)[diffChan].map:NULL;
-    tx[1] = (*maps)[opacChan].IsActive()?(*maps)[opacChan].map:NULL;
+    tx[0] = (*maps)[diffChan].IsActive() ? (*maps)[diffChan].map : nullptr;
+    tx[1] = (*maps)[opacChan].IsActive() ? (*maps)[opacChan].map : nullptr;
 #endif
 
     int nsupport = cb.NumberTexturesSupported();
@@ -441,13 +432,13 @@ void plDecalMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback 
     int nmaps=0;
     for (int i=0; i<NTEXHANDLES; i++) {
         if (tx[i]) nmaps ++;
-        bmi[i] = NULL;
+        bmi[i] = nullptr;
         }
     mtl->texture.SetCount(nmaps);
     if (nmaps==0) 
         return;
     for (i=0; i<nmaps; i++)
-        mtl->texture[i].textHandle = NULL;
+        mtl->texture[i].textHandle = nullptr;
     texHandleValid.SetInfinite();
     Interval  valid;
     BOOL needDecal = FALSE;
@@ -479,7 +470,7 @@ void plDecalMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback 
                 texHandleValid &= valid;
                 StuffAlpha(bmi[1], (*maps)[opacChan].amount, GetOpacity(t),ntx?whiteCol:pShader->GetDiffuseClr(t));
                 texHandle[ntx] = cb.MakeHandle(bmi[1]); 
-                bmi[1] = NULL; 
+                bmi[1] = nullptr;
                 mtl->texture[ntx].textHandle = texHandle[ntx]->GetHandle();
                 SetTexOps(mtl,ntx,TXOP_OPACITY);
                 useSubForTex[ntx] = opacChan;
@@ -497,7 +488,7 @@ void plDecalMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback 
                         StuffAlphaInto(bmi[1], bmi[0], (*maps)[opacChan].amount, GetOpacity(t));
                         op = TXOP_OPACITY;
                         free(bmi[1]);
-                        bmi[1] = NULL;
+                        bmi[1] = nullptr;
                         }
 //                  }
                 }
@@ -505,7 +496,7 @@ void plDecalMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback 
         }
     if (bmi[0]) {
         texHandle[0] = cb.MakeHandle(bmi[0]); 
-        bmi[0] = NULL; 
+        bmi[0] = nullptr;
         mtl->texture[0].textHandle = texHandle[0]->GetHandle();
         SetTexOps(mtl,0,op);
         }
@@ -770,10 +761,10 @@ int     plDecalMtl::GetZInc() { return fAdvPB->GetInt(kPBAdvZInc); }
 int     plDecalMtl::GetAlphaTestHigh() { return fAdvPB->GetInt(kPBAdvAlphaTestHigh); }
 
 // Animation block
-const char *  plDecalMtl::GetAnimName() { return fAnimPB->GetStr(kPBAnimName); }
+const MCHAR* plDecalMtl::GetAnimName() { return fAnimPB->GetStr(kPBAnimName); }
 int     plDecalMtl::GetAutoStart() { return fAnimPB->GetInt(kPBAnimAutoStart); }
 int     plDecalMtl::GetLoop() { return fAnimPB->GetInt(kPBAnimLoop); }
-const char *  plDecalMtl::GetAnimLoopName() { return fAnimPB->GetStr(kPBAnimLoopName); }
+const MCHAR* plDecalMtl::GetAnimLoopName() { return fAnimPB->GetStr(kPBAnimLoopName); }
 int     plDecalMtl::GetEaseInType() { return fAnimPB->GetInt(kPBAnimEaseInType); }
 float   plDecalMtl::GetEaseInNormLength() { return fAnimPB->GetFloat(kPBAnimEaseInLength); }
 float   plDecalMtl::GetEaseInMinLength() { return fAnimPB->GetFloat(kPBAnimEaseInMin); }
@@ -783,7 +774,7 @@ float   plDecalMtl::GetEaseOutNormLength() { return fAnimPB->GetFloat(kPBAnimEas
 float   plDecalMtl::GetEaseOutMinLength() { return fAnimPB->GetFloat(kPBAnimEaseOutMin); }
 float   plDecalMtl::GetEaseOutMaxLength() { return fAnimPB->GetFloat(kPBAnimEaseOutMax); }
 int     plDecalMtl::GetUseGlobal() { return fAnimPB->GetInt(ParamID(kPBAnimUseGlobal)); }
-const char *  plDecalMtl::GetGlobalVarName() { return fAnimPB->GetStr(ParamID(kPBAnimGlobalName)); }  
+const MCHAR* plDecalMtl::GetGlobalVarName() { return fAnimPB->GetStr(ParamID(kPBAnimGlobalName)); }
 
 // Basic block
 int     plDecalMtl::GetColorLock() { return fBasicPB->GetInt(kDecalBasColorLock); }

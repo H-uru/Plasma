@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLightGrpComponent_inc
 #define plLightGrpComponent_inc
 
+#include <vector>
+
 const Class_ID LIGHTGRP_COMP_CID(0x42d57a80, 0xd3a3745);
 
 class plMaxNode;
@@ -56,8 +58,8 @@ class plLightGrpComponent : public plComponent
 private:
     bool            fValid;
 
-    hsTArray<plMaxNode*>        fLightNodes;
-    hsTArray<plLightInfo*>      fLightInfos;
+    std::vector<plMaxNode*>     fLightNodes;
+    std::vector<plLightInfo*>   fLightInfos;
 
     bool        IAddLightsToSpans(plMaxNode* pNode, plErrorMsg* pErrMsg);
     bool        ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawable, uint32_t diIndex);
@@ -66,13 +68,13 @@ private:
 public:
     plLightGrpComponent();
 
-    bool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    bool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    const hsTArray<plLightInfo*>& GetLightInfos();
+    const std::vector<plLightInfo*>& GetLightInfos();
 
-    IOResult Load(ILoad* iload);
+    IOResult Load(ILoad* iload) override;
 
     static plLightGrpComponent* GetComp(plMaxNode* node);
 };

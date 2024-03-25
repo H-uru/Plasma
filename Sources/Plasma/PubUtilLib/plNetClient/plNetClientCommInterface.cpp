@@ -39,46 +39,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTimer.h"
+
 #include "plNetClientMgr.h"
-#include "plNetLinkingMgr.h"
-
-#include "plNetClientRecorder/plNetClientRecorder.h"
-#include "plNetMessage/plNetMessage.h"
-
-#include "plgDispatch.h"
 
 //
 // Code for interfacing with plNetClientComm library, which in turn
 // handles most client-server communication
 //
 
-
-int plNetClientCommMsgHandler::HandleMessage( plNetMessage* msg ) 
-{
-    plNetClientMgr* nc=plNetClientMgr::GetInstance();
-    int ret = nc->fMsgHandler.ReceiveMsg(msg);
-
-    return ret;
-}
-
-int plNetClientMgr::IInitNetClientComm()
+void plNetClientMgr::IInitNetClientComm()
 {
     NetCommActivatePostInitErrorHandler();
+    NetCommActivateMsgDispatchers();
 
     ASSERT(!GetFlagsBit(kNetClientCommInited));
-    fNetClientComm.SetDefaultHandler(&fNetClientCommMsgHandler);
+    fNetClientComm.SetMsgHandler(&fMsgHandler);
 
     SetFlagsBit(kNetClientCommInited);
-    
-    return hsOK;
 }
 
 //
 // Cleanup netClientComm related stuff
 //
-int plNetClientMgr::IDeInitNetClientComm()
+void plNetClientMgr::IDeInitNetClientComm()
 {
+    fNetClientComm.SetMsgHandler(nullptr);
     SetFlagsBit(kNetClientCommInited, false);
-    return hsOK;
 }

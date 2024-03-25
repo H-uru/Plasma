@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetApp.h"
 #include "pnMessage/plMessage.h"
 
-plNetApp* plNetApp::fInstance = nil;
-plNetObjectDebuggerBase* plNetObjectDebuggerBase::fInstance=nil;
+plNetApp* plNetApp::fInstance = nullptr;
+plNetObjectDebuggerBase* plNetObjectDebuggerBase::fInstance = nullptr;
 
 //
 // STATIC
@@ -59,7 +59,7 @@ void plNetApp::SetInstance(plNetApp* app)
 }
 
 
-bool plNetApp::StaticErrorMsg(const plString& msg)
+bool plNetApp::StaticErrorMsg(const ST::string& msg)
 {
     if (!GetInstance()) {
         return true;
@@ -68,7 +68,7 @@ bool plNetApp::StaticErrorMsg(const plString& msg)
     return GetInstance()->ErrorMsg(msg);
 }
 
-bool plNetApp::StaticWarningMsg(const plString& msg)
+bool plNetApp::StaticWarningMsg(const ST::string& msg)
 {
     if (!GetInstance()) {
         return true;
@@ -77,7 +77,7 @@ bool plNetApp::StaticWarningMsg(const plString& msg)
     return GetInstance()->WarningMsg(msg);
 }
 
-bool plNetApp::StaticAppMsg(const plString& msg)
+bool plNetApp::StaticAppMsg(const ST::string& msg)
 {
     if (!GetInstance()) {
         return true;
@@ -86,42 +86,13 @@ bool plNetApp::StaticAppMsg(const plString& msg)
     return GetInstance()->AppMsg(msg);
 }
 
-bool plNetApp::StaticDebugMsg(const plString& msg)
+bool plNetApp::StaticDebugMsg(const ST::string& msg)
 {
     if (!GetInstance()) {
         return true;
     }
 
     return GetInstance()->DebugMsg(msg);
-}
-
-
-bool plNetApp::StaticErrorMsg(const char* fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    return StaticErrorMsg(plString::IFormat(fmt, args));
-}
-
-bool plNetApp::StaticDebugMsg(const char* fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    return StaticDebugMsg(plString::IFormat(fmt, args));
-}
-
-bool plNetApp::StaticWarningMsg(const char* fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    return StaticWarningMsg(plString::IFormat(fmt, args));
-}
-
-bool plNetApp::StaticAppMsg(const char* fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    return StaticAppMsg(plString::IFormat(fmt, args));
 }
 
 

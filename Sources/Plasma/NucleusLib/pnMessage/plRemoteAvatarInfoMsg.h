@@ -46,11 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // this message is to fake out a gadget to see if it would potentially trigger...
 //
-#include "pnMessage/plMessage.h"
-
-class hsStream;
-class hsResMgr;
-class plKey;
+#include "plMessage.h"
 
 class plRemoteAvatarInfoMsg : public plMessage
 {
@@ -58,29 +54,20 @@ protected:
 
     plKey fAvatar;
 public:
-    plRemoteAvatarInfoMsg() : fAvatar(nil){SetBCastFlag(plMessage::kBCastByExactType);}
+    plRemoteAvatarInfoMsg() { SetBCastFlag(plMessage::kBCastByExactType); }
     plRemoteAvatarInfoMsg(const plKey &s, 
                     const plKey &r, 
-                    const double* t) : fAvatar(nil){SetBCastFlag(plMessage::kBCastByExactType);}
-    
-    CLASSNAME_REGISTER( plRemoteAvatarInfoMsg );
-    GETINTERFACE_ANY( plRemoteAvatarInfoMsg, plMessage );
-    
-    void SetAvatarKey(plKey p) { fAvatar = p; }
-    plKey GetAvatarKey() { return fAvatar; }
-        
-    // IO
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgRead(stream, mgr);
-        fAvatar = mgr->ReadKey(stream);
-    }
+                    const double* t) { SetBCastFlag(plMessage::kBCastByExactType); }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        mgr->WriteKey(stream, fAvatar);
-    }
+    CLASSNAME_REGISTER(plRemoteAvatarInfoMsg);
+    GETINTERFACE_ANY(plRemoteAvatarInfoMsg, plMessage);
+
+    void SetAvatarKey(plKey p) { fAvatar = std::move(p); }
+    plKey GetAvatarKey() const { return fAvatar; }
+
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plRemoteAvatarInfoMsg_inc

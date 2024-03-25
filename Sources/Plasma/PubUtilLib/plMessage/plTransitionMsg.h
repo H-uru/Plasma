@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plTransitionMsg_inc
 
 #include "HeadSpin.h"
-#include "hsStream.h"
 #include "pnMessage/plMessageWithCallbacks.h"
 
 class plTransitionMsg : public plMessageWithCallbacks
@@ -63,9 +62,9 @@ public:
         kFadeOutNoSound
     };
 
-    plTransitionMsg() : plMessageWithCallbacks(nil, nil, nil), fEffect( 0 ) { SetBCastFlag(kBCastByExactType);  }
+    plTransitionMsg() : plMessageWithCallbacks(nullptr, nullptr, nullptr), fEffect() { SetBCastFlag(kBCastByExactType); }
     plTransitionMsg( uint32_t type, float lengthInSecs, bool holdUntilNext = false ) : 
-                plMessageWithCallbacks(nil, nil, nil), fEffect( type ), fLengthInSecs( lengthInSecs ), fHoldUntilNext( holdUntilNext )
+                plMessageWithCallbacks(nullptr, nullptr, nullptr), fEffect(type), fLengthInSecs(lengthInSecs), fHoldUntilNext(holdUntilNext)
                 { SetBCastFlag( kBCastByExactType );  }
     
     ~plTransitionMsg();
@@ -73,25 +72,12 @@ public:
     CLASSNAME_REGISTER( plTransitionMsg );
     GETINTERFACE_ANY( plTransitionMsg, plMessageWithCallbacks );
 
-    uint32_t GetEffect( void ) const { return fEffect; }
-    float    GetLengthInSecs( void ) const { return fLengthInSecs; }
-    bool     GetHoldState( void ) const { return fHoldUntilNext; }
+    uint32_t GetEffect() const { return fEffect; }
+    float    GetLengthInSecs() const { return fLengthInSecs; }
+    bool     GetHoldState() const { return fHoldUntilNext; }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr) 
-    { 
-        plMessageWithCallbacks::Read(s, mgr); 
-        s->ReadLE(&fEffect);
-        s->ReadLE(&fLengthInSecs);
-        fHoldUntilNext = s->ReadBOOL();
-    }
-    
-    virtual void Write(hsStream* s, hsResMgr* mgr) 
-    { 
-        plMessageWithCallbacks::Write(s, mgr); 
-        s->WriteLE(fEffect);
-        s->WriteLE(fLengthInSecs);
-        s->WriteBOOL(fHoldUntilNext);
-    }
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 #endif // plTransitionMsg_inc

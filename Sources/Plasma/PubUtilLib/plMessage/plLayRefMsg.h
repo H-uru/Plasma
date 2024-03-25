@@ -45,9 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnMessage/plRefMsg.h"
 
-class hsStream;
-class hsResMgr;
-
 class plLayRefMsg : public plRefMsg
 {
 public:
@@ -68,8 +65,8 @@ public:
     int8_t        fWhich;
 
     // IO - not really applicable to ref msgs, but anyway
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plLayRefMsg_inc

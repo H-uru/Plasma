@@ -40,12 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "cyParticleSys.h"
 
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptParticle, cyParticleSys);
@@ -120,16 +118,14 @@ PLASMA_DEFAULT_TYPE(ptParticle, "Plasma particle system class");
 // required functions for PyObject interoperability
 PyObject *cyParticleSys::New(PyObject *sender, PyObject *recvr)
 {
-    ptParticle *newObj = (ptParticle*)ptParticle_type.tp_new(&ptParticle_type, NULL, NULL);
-    if (sender != NULL)
+    ptParticle *newObj = (ptParticle*)ptParticle_type.tp_new(&ptParticle_type, nullptr, nullptr);
+    if (sender != nullptr)
     {
-        plKey senderKey = pyKey::ConvertFrom(sender)->getKey();
-        newObj->fThis->SetSender(senderKey);
+        newObj->fThis->SetSender(pyKey::ConvertFrom(sender)->getKey());
     }
-    if (recvr != NULL)
+    if (recvr != nullptr)
     {
-        plKey recvrKey = pyKey::ConvertFrom(recvr)->getKey();
-        newObj->fThis->AddRecvr(recvrKey);
+        newObj->fThis->AddRecvr(pyKey::ConvertFrom(recvr)->getKey());
     }
     newObj->fThis->SetNetForce(false);
     return (PyObject*)newObj;

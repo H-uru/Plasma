@@ -40,30 +40,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plgDispatch.h"
-#pragma hdrstop
-
 #include "cyParticleSys.h"
+
+#include "plgDispatch.h"
+
 #include "pnMessage/plMessage.h"
+
 #include "plMessage/plParticleUpdateMsg.h"
 
 cyParticleSys::cyParticleSys(plKey sender, plKey recvr)
 {
-    SetSender(sender);
-    AddRecvr(recvr);
+    SetSender(std::move(sender));
+    AddRecvr(std::move(recvr));
     fNetForce = false;
 }
 
 // setters
-void cyParticleSys::SetSender(plKey &sender)
+void cyParticleSys::SetSender(plKey sender)
 {
-    fSender = sender;
+    fSender = std::move(sender);
 }
 
-void cyParticleSys::AddRecvr(plKey &recvr)
+void cyParticleSys::AddRecvr(plKey recvr)
 {
-    if ( recvr != nil )
-        fRecvr.Append(recvr);
+    if (recvr != nullptr)
+        fRecvr.emplace_back(std::move(recvr));
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -75,7 +76,7 @@ void cyParticleSys::AddRecvr(plKey &recvr)
 //
 void cyParticleSys::ISendParticleSysMsg(uint32_t param, float value)
 {
-    plParticleUpdateMsg* pMsg = new plParticleUpdateMsg(fSender, nil, nil, param, value);
+    plParticleUpdateMsg* pMsg = new plParticleUpdateMsg(fSender, nullptr, nullptr, param, value);
     // check if this needs to be network forced to all clients
     if (fNetForce )
     {
@@ -85,11 +86,9 @@ void cyParticleSys::ISendParticleSysMsg(uint32_t param, float value)
     }
     pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
     // add all our receivers to the message receiver list
-    int i;
-    for ( i=0; i<fRecvr.Count(); i++ )
-    {
-        pMsg->AddReceiver(fRecvr[i]);
-    }
+    for (const plKey& rcKey : fRecvr)
+        pMsg->AddReceiver(rcKey);
+
     plgDispatch::MsgSend(pMsg);
 }
 

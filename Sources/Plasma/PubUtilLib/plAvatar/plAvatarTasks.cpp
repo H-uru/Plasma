@@ -39,7 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
 
 // singular
 #include "plAvatarTasks.h"
@@ -48,34 +47,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plArmatureMod.h"
 #include "plSeekPointMod.h"
 #include "plAvBrainHuman.h"
-#include "plAnimation/plAGAnim.h"
-#include "plAnimation/plAGAnimInstance.h"
-#include "plAnimation/plAGModifier.h"
-#include "plAnimation/plMatrixChannel.h"
 #include "plPhysicalControllerCore.h"
 #include "plAvatarMgr.h"
 
 // global
-
+#include "HeadSpin.h"
+#include "plgDispatch.h"
 
 // other
-#include "plgDispatch.h"
-#include "plMessage/plAvatarMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "plMessage/plOneShotCallbacks.h"
-#include "plMessage/plConsoleMsg.h"
 #include "pnKeyedObject/plKey.h"
+#include "pnMessage/plCameraMsg.h"
 #include "pnSceneObject/plCoordinateInterface.h"
-#include "plPipeline/plDebugText.h"
+
+#include "plAnimation/plAGAnim.h"
+#include "plAnimation/plAGAnimInstance.h"
+#include "plAnimation/plAGModifier.h"
+#include "plAnimation/plMatrixChannel.h"
 #include "plInputCore/plInputInterfaceMgr.h"
+#include "plInterp/plAnimTimeConvert.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plConsoleMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "plMessage/plOneShotCallbacks.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetCommon/plNetCommon.h"
-#include "plMessage/plLinkToAgeMsg.h"
+#include "plPipeline/plDebugText.h"
+
 #include "pfMessage/pfKIMsg.h"
 
 // for console hack
 bool plAvOneShotTask::fForce3rdPerson = true;
-#include "pnMessage/plCameraMsg.h"
 
 /////////////
 //
@@ -109,7 +111,7 @@ void plAvTask::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time
 // DUMPDEBUG
 void plAvTask::DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt)
 {
-    debugTxt.DrawString(x, y, "<anonymous task>");
+    debugTxt.DrawString(x, y, ST_LITERAL("<anonymous task>"));
     y += lineHeight;
 }
 
@@ -157,38 +159,38 @@ void plAvTask::IUndoLimitPlayersInput(plArmatureMod *avatar)
 
 // CTOR default
 plAvSeekTask::plAvSeekTask()
-: fAlign(kAlignHandle),
-  fDuration(0.25),
-  fTarget(nil),
-  fAnimInstance(nil),
-  fTargetTime(0),
-  fPhysicalAtStart(false),
-  fCleanup(false)
+    : fAlign(kAlignHandle),
+      fDuration(0.25f),
+      fTarget(),
+      fAnimInstance(),
+      fTargetTime(),
+      fPhysicalAtStart(),
+      fCleanup()
 {
 }
 
 // CTOR target, align, animName
-plAvSeekTask::plAvSeekTask(plKey target, plAvAlignment align, const plString& animName)
-: fAnimName(animName),
-  fAlign(align),
-  fDuration(0.25),
-  fTarget(target),
-  fAnimInstance(nil),
-  fTargetTime(0),
-  fPhysicalAtStart(false),
-  fCleanup(false)
+plAvSeekTask::plAvSeekTask(plKey target, plAvAlignment align, ST::string animName)
+    : fAnimName(std::move(animName)),
+      fAlign(align),
+      fDuration(0.25f),
+      fTarget(std::move(target)),
+      fAnimInstance(),
+      fTargetTime(),
+      fPhysicalAtStart(),
+      fCleanup()
 {
 }
 
 // CTOR target
 plAvSeekTask::plAvSeekTask(plKey target)
-: fAlign(kAlignHandle),
-  fDuration(0.25),
-  fTarget(target),
-  fAnimInstance(nil),
-  fTargetTime(0),
-  fPhysicalAtStart(false),
-  fCleanup(false)
+    : fAlign(kAlignHandle),
+      fDuration(0.25f),
+      fTarget(std::move(target)),
+      fAnimInstance(),
+      fTargetTime(),
+      fPhysicalAtStart(),
+      fCleanup()
 {
 }
 
@@ -230,7 +232,7 @@ bool plAvSeekTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double t
     
     plSceneObject* seekTarget = plSceneObject::ConvertNoRef(fTarget->ObjectIsLoaded());
     hsMatrix44 targetL2W = seekTarget->GetLocalToWorld();
-    const plCoordinateInterface* subworldCI = nil;
+    const plCoordinateInterface* subworldCI = nullptr;
     if (avatar->GetController())
         subworldCI = avatar->GetController()->GetSubworldCI();
     if (subworldCI)
@@ -247,7 +249,7 @@ bool plAvSeekTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double t
             {
                 hsMatrix44 adjustment;
                 plAGAnim *anim = avatar->FindCustomAnim(fAnimName);
-                GetStartToEndTransform(anim, nil, &adjustment, "Handle");   // actually getting end-to-start
+                GetStartToEndTransform(anim, nullptr, &adjustment, "Handle");   // actually getting end-to-start
                 targetL2W = targetL2W * adjustment;
             }
             break;
@@ -320,7 +322,7 @@ bool plAvSeekTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double
 
 void plAvSeekTask::LeaveAge(plArmatureMod *avatar)
 {
-    fTarget = nil;
+    fTarget = nullptr;
     fCleanup = true;
 }
 
@@ -332,19 +334,19 @@ void plAvSeekTask::LeaveAge(plArmatureMod *avatar)
 
 // CTOR default
 plAvAnimTask::plAvAnimTask()
-: fInitialBlend(0.0f),
-  fTargetBlend(0.0f),
-  fFadeSpeed(0.0f),
-  fSetTime(0.0f),
-  fStart(false),
-  fLoop(false),
-  fAttach(false),
-  fAnimInstance(nil)
+: fInitialBlend(),
+  fTargetBlend(),
+  fFadeSpeed(),
+  fSetTime(),
+  fStart(),
+  fLoop(),
+  fAttach(),
+  fAnimInstance()
 {
 }
 
 // CTOR animName, initialBlend, targetBlend, fadeSpeed, start, loop, attach
-plAvAnimTask::plAvAnimTask(const plString &animName,
+plAvAnimTask::plAvAnimTask(const ST::string &animName,
                            float initialBlend,
                            float targetBlend,
                            float fadeSpeed,
@@ -360,21 +362,21 @@ plAvAnimTask::plAvAnimTask(const plString &animName,
   fStart(start),
   fLoop(loop),
   fAttach(attach),
-  fAnimInstance(nil)
+  fAnimInstance()
 {
 }
 
 // CTOR animName, fadeSpeed, attach
-plAvAnimTask::plAvAnimTask(const plString &animName, float fadeSpeed, bool attach)
+plAvAnimTask::plAvAnimTask(const ST::string &animName, float fadeSpeed, bool attach)
 : fAnimName(animName),
-  fInitialBlend(0.0f),
-  fTargetBlend(0.0f),
+  fInitialBlend(),
+  fTargetBlend(),
   fFadeSpeed(fadeSpeed),
-  fSetTime(0.0f),
-  fStart(false),
-  fLoop(false),
+  fSetTime(),
+  fStart(),
+  fLoop(),
   fAttach(attach),
-  fAnimInstance(nil)
+  fAnimInstance()
 {
 }
 
@@ -466,10 +468,10 @@ void plAvAnimTask::LeaveAge(plArmatureMod *avatar)
 void plAvAnimTask::Read(hsStream *stream, hsResMgr *mgr)
 {
     fAnimName = stream->ReadSafeString();
-    fInitialBlend = stream->ReadLEScalar();
-    fTargetBlend = stream->ReadLEScalar();
-    fFadeSpeed = stream->ReadLEScalar();
-    fSetTime = stream->ReadLEScalar();
+    fInitialBlend = stream->ReadLEFloat();
+    fTargetBlend = stream->ReadLEFloat();
+    fFadeSpeed = stream->ReadLEFloat();
+    fSetTime = stream->ReadLEFloat();
     fStart = stream->ReadBool();
     fLoop = stream->ReadBool();
     fAttach = stream->ReadBool();
@@ -479,10 +481,10 @@ void plAvAnimTask::Read(hsStream *stream, hsResMgr *mgr)
 void plAvAnimTask::Write(hsStream *stream, hsResMgr *mgr)
 {
     stream->WriteSafeString(fAnimName);
-    stream->WriteLEScalar(fInitialBlend);
-    stream->WriteLEScalar(fTargetBlend);
-    stream->WriteLEScalar(fFadeSpeed);
-    stream->WriteLEScalar(fSetTime);
+    stream->WriteLEFloat(fInitialBlend);
+    stream->WriteLEFloat(fTargetBlend);
+    stream->WriteLEFloat(fFadeSpeed);
+    stream->WriteLEFloat(fSetTime);
     stream->WriteBool(fStart);
     stream->WriteBool(fLoop);
     stream->WriteBool(fAttach);
@@ -501,13 +503,13 @@ void plAvOneShotTask::InitDefaults()
     fDisableLooping = false;
     fDisablePhysics = true;
     fMoveHandle = false;
-    fAnimInstance = nil;
+    fAnimInstance = nullptr;
     fDrivable = false;
     fReversible = false;
     fEnablePhysicsAtEnd = false;
     fDetachAnimation = false;
     fIgnore = false;
-    fCallbacks = nil;
+    fCallbacks = nullptr;
     fWaitFrames = 0;
 }
 
@@ -521,7 +523,7 @@ plAvOneShotTask::plAvOneShotTask()
 // this construct is typically used when you want to create a one-shot task as part of a sequence
 // of tasks
 // it's different than the message-based constructor in that fDetachAnimation and fMoveHandle default to false
-plAvOneShotTask::plAvOneShotTask(const plString &animName, bool drivable, bool reversible, plOneShotCallbacks *callbacks)
+plAvOneShotTask::plAvOneShotTask(const ST::string &animName, bool drivable, bool reversible, plOneShotCallbacks *callbacks)
 {
     InitDefaults();
 
@@ -589,7 +591,7 @@ bool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, doubl
             fAnimInstance->AttachCallbacks(fCallbacks);
             // ok, we're done with it, release it back to the river
             hsRefCnt_SafeUnRef(fCallbacks);
-            fCallbacks = nil;
+            fCallbacks = nullptr;
         }
 
         fAnimInstance->SetBlend(1.0f);
@@ -622,7 +624,7 @@ bool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, doubl
             plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
         }
 
-        fMoveHandle = (fAnimInstance->GetAnimation()->GetChannel("Handle") != nil);
+        fMoveHandle = (fAnimInstance->GetAnimation()->GetChannel("Handle") != nullptr);
         if(fMoveHandle)
         {
             plMatrixDifferenceApp *differ = avatar->GetRootAnimator();
@@ -636,7 +638,7 @@ bool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, doubl
     }
     else
     {
-        plString buf = plFormat("Oneshot: Can't find animation <{}>; all bets are off.", fAnimName);
+        ST::string buf = ST::format("Oneshot: Can't find animation <{}>; all bets are off.", fAnimName);
         hsAssert(false, buf.c_str());
         result = true;
     }
@@ -674,7 +676,7 @@ bool plAvOneShotTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, dou
                         // 
                         // It's only debugging code anyway to help the artist check that
                         // their oneshot doesn't end while penetrating geometry.
-                        char *overlaps = nil;
+                        char *overlaps = nullptr;
                         if (avatar->GetPhysical())
                             avatar->GetPhysical()->CheckValidPosition(&overlaps);
                         if (overlaps)
@@ -728,7 +730,7 @@ void plAvOneShotTask::LeaveAge(plArmatureMod *avatar)
     fIgnore = true;
 }
 
-void plAvOneShotTask::SetAnimName(const plString &name)
+void plAvOneShotTask::SetAnimName(const ST::string &name)
 {
     fAnimName = name;
 }
@@ -757,7 +759,7 @@ bool plAvOneShotLinkTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, d
     bool result = plAvOneShotTask::Start(avatar, brain, time, elapsed);
     fStartTime = time;
 
-    if (fAnimInstance && !fMarkerName.IsNull())
+    if (fAnimInstance && !fMarkerName.empty())
     {
         const plATCAnim *anim = plATCAnim::ConvertNoRef(fAnimInstance->GetAnimation());
         if (anim)
@@ -803,7 +805,7 @@ void plAvOneShotLinkTask::Read(hsStream *stream, hsResMgr *mgr)
     fMarkerName = stream->ReadSafeString();
 }
 
-void plAvOneShotLinkTask::SetMarkerName(const plString &name)
+void plAvOneShotLinkTask::SetMarkerName(const ST::string &name)
 {
     fMarkerName = name;
 }

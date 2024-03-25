@@ -40,26 +40,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
+#include "pyGUIControlMultiLineEdit.h"
+
+#include <string_theory/string>
 
 #include "pfGameGUIMgr/pfGUIMultiLineEditCtrl.h"
 
-#include "pyGUIControlMultiLineEdit.h"
 #include "pyColor.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 pyGUIControlMultiLineEdit::pyGUIControlMultiLineEdit(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlMultiLineEdit::pyGUIControlMultiLineEdit(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlMultiLineEdit::pyGUIControlMultiLineEdit(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 
-bool pyGUIControlMultiLineEdit::IsGUIControlMultiLineEdit(pyKey& gckey)
+bool pyGUIControlMultiLineEdit::IsGUIControlMultiLineEdit(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUIMultiLineEditCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUIMultiLineEditCtrl::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }
@@ -115,8 +116,20 @@ void pyGUIControlMultiLineEdit::MoveCursor( int32_t dir)
     }
 }
 
+int32_t pyGUIControlMultiLineEdit::GetCursor() const
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+            return pbmod->GetCursor();
+    }
 
-void pyGUIControlMultiLineEdit::ClearBuffer( void )
+    return -1;
+}
+
+void pyGUIControlMultiLineEdit::ClearBuffer()
 {
     if ( fGCkey )
     {
@@ -129,7 +142,7 @@ void pyGUIControlMultiLineEdit::ClearBuffer( void )
     }
 }
 
-void pyGUIControlMultiLineEdit::SetText( const char *asciiText )
+void pyGUIControlMultiLineEdit::SetText( const ST::string& text )
 {
     if ( fGCkey )
     {
@@ -137,12 +150,12 @@ void pyGUIControlMultiLineEdit::SetText( const char *asciiText )
         pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pbmod )
         {
-            pbmod->SetBuffer(asciiText);
+            pbmod->SetBuffer(text);
         }
     }
 }
 
-void pyGUIControlMultiLineEdit::SetTextW( const wchar_t *asciiText )
+ST::string pyGUIControlMultiLineEdit::GetText()
 {
     if ( fGCkey )
     {
@@ -150,50 +163,12 @@ void pyGUIControlMultiLineEdit::SetTextW( const wchar_t *asciiText )
         pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pbmod )
         {
-            pbmod->SetBuffer(asciiText);
+            return pbmod->GetNonCodedBuffer();
         }
     }
+    return {};
 }
 
-const char* pyGUIControlMultiLineEdit::GetText( void )
-{
-    // up to the caller to free the string... but when?
-    if ( fGCkey )
-    {
-        // get the pointer to the modifier
-        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( pbmod )
-        {
-            const char* text = pbmod->GetNonCodedBuffer();
-            // convert string to a PyObject (which also copies the string)
-            return text;
-        }
-    }
-    // return None on error
-    return nil;
-}
-
-const wchar_t* pyGUIControlMultiLineEdit::GetTextW( void )
-{
-    // up to the caller to free the string... but when?
-    if ( fGCkey )
-    {
-        // get the pointer to the modifier
-        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( pbmod )
-        {
-            const wchar_t* text = pbmod->GetNonCodedBufferW();
-            // convert string to a PyObject (which also copies the string)
-            return text;
-        }
-    }
-    // return None on error
-    return nil;
-}
-
-//
-// set the encoded buffer - encoded with style and color
-//
 void pyGUIControlMultiLineEdit::SetEncodedBuffer( PyObject* buffer_object )
 {
     if ( fGCkey )
@@ -203,54 +178,20 @@ void pyGUIControlMultiLineEdit::SetEncodedBuffer( PyObject* buffer_object )
         if ( pbmod )
         {
             // something to do here... later
-            uint8_t* daBuffer = nil;
-            Py_ssize_t length;
-            PyObject_AsReadBuffer( buffer_object, (const void**)&daBuffer, &length);
-            if ( daBuffer != nil )
+            Py_buffer view;
+            PyObject_GetBuffer(buffer_object, &view, PyBUF_SIMPLE);
+            const wchar_t* daBuffer = (const wchar_t*)view.buf;
+            Py_ssize_t length = view.len;
+            PyBuffer_Release(&view);
+
+            if (daBuffer != nullptr)
             {
                 // don't alter the user's buffer... but into a copy of our own
-                uint8_t* altBuffer = new uint8_t[length];
-// =====> temp>> change 0xFEs back into '\0's
-                int i;
-                for ( i=0 ; i<length ; i++ )
-                {
-                    if ( daBuffer[i] == 254 )
-                        altBuffer[i] = 0;       // change into a 0xFE
-                    else
-                        altBuffer[i] = daBuffer[i];
-                }
-// =====> temp>> change 0xFEs back into '\0's
-                pbmod->SetBuffer( altBuffer, length );
-                delete [] altBuffer;
-
-                pbmod->SetCursorToLoc(0);
-                pbmod->SetScrollPosition(0);
-            }
-        }
-    }
-}
-
-void pyGUIControlMultiLineEdit::SetEncodedBufferW( PyObject* buffer_object )
-{
-    if ( fGCkey )
-    {
-        // get the pointer to the modifier
-        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( pbmod )
-        {
-            // something to do here... later
-            uint16_t* daBuffer = nil;
-            Py_ssize_t length;
-            PyObject_AsReadBuffer( buffer_object, (const void**)&daBuffer, &length);
-            if ( daBuffer != nil )
-            {
-                // don't alter the user's buffer... but into a copy of our own
-                uint16_t* altBuffer = new uint16_t[length];
+                wchar_t* altBuffer = new wchar_t[length];
                 // =====> temp>> change 0xFFFEs back into '\0's
-                int i;
-                for ( i=0 ; i<length ; i++ )
+                for (Py_ssize_t i = 0; i < length; i++)
                 {
-                    if ( daBuffer[i] == 0xFFFE )
+                    if (daBuffer[i] == L'\xfffe')
                         altBuffer[i] = 0;       // change into a 0
                     else
                         altBuffer[i] = daBuffer[i];
@@ -266,7 +207,7 @@ void pyGUIControlMultiLineEdit::SetEncodedBufferW( PyObject* buffer_object )
     }
 }
 
-const char* pyGUIControlMultiLineEdit::GetEncodedBuffer()
+ST::string pyGUIControlMultiLineEdit::GetEncodedBuffer()
 {
     if ( fGCkey )
     {
@@ -274,71 +215,23 @@ const char* pyGUIControlMultiLineEdit::GetEncodedBuffer()
         pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pbmod )
         {
-            uint32_t length;
-            uint8_t* daBuffer = pbmod->GetCodedBuffer( length );
-            if ( daBuffer )
+            ST::wchar_buffer buffer = pbmod->GetCodedBuffer();
+            // =====> temp>> to get rid of '\0's (change into 0xFFFEs)
+            for (size_t i = 0; i < buffer.size(); i++)
             {
-                uint8_t* altBuffer = new uint8_t[length+1];
-// =====> temp>> to get rid of '\0's (change into 0xFEs)
-                int i;
-                for ( i=0 ; i<length ; i++ )
-                {
-                    if ( daBuffer[i] == 0 )
-                        altBuffer[i] = 254;     // change into a 0xFE
-                    else
-                        altBuffer[i] = daBuffer[i];
-                }
-                // add '\0' top end of string
-                altBuffer[length] = 0;
-// =====> temp>> to get rid of '\0's (change into 0xFEs)
-                delete [] daBuffer;
-                // May have to use a string object instead of a buffer
-                // (String makes its own copy of the string)
-                return (const char*)altBuffer;
+                if ( buffer[i] == 0 )
+                    buffer[i] = L'\xfffe';      // change into a 0xFFFE
             }
+            // =====> temp>> to get rid of '\0's (change into 0xFEs)
+            // May have to use a string object instead of a buffer
+            // (String makes its own copy of the string)
+            return buffer;
         }
     }
-    // return None on error
-    return nil;
+    return {};
 }
 
-const wchar_t* pyGUIControlMultiLineEdit::GetEncodedBufferW()
-{
-    if ( fGCkey )
-    {
-        // get the pointer to the modifier
-        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( pbmod )
-        {
-            uint32_t length;
-            uint16_t* daBuffer = pbmod->GetCodedBufferW( length );
-            if ( daBuffer )
-            {
-                uint16_t* altBuffer = new uint16_t[length+1];
-                // =====> temp>> to get rid of '\0's (change into 0xFFFEs)
-                int i;
-                for ( i=0 ; i<length ; i++ )
-                {
-                    if ( daBuffer[i] == 0 )
-                        altBuffer[i] = 0xFFFE;      // change into a 0xFFFE
-                    else
-                        altBuffer[i] = daBuffer[i];
-                }
-                // add '\0' top end of string
-                altBuffer[length] = 0;
-                delete [] daBuffer;
-                // =====> temp>> to get rid of '\0's (change into 0xFEs)
-                // May have to use a string object instead of a buffer
-                // (String makes its own copy of the string)
-                return (const wchar_t*)altBuffer;
-            }
-        }
-    }
-    // return None on error
-    return nil;
-}
-
-uint32_t  pyGUIControlMultiLineEdit::GetBufferSize()
+size_t pyGUIControlMultiLineEdit::GetBufferSize() const
 {
     if ( fGCkey )
     {
@@ -353,8 +246,7 @@ uint32_t  pyGUIControlMultiLineEdit::GetBufferSize()
 }
 
 
-
-void pyGUIControlMultiLineEdit::InsertChar( char c )
+void pyGUIControlMultiLineEdit::InsertChar( wchar_t c )
 {
     if ( fGCkey )
     {
@@ -367,33 +259,7 @@ void pyGUIControlMultiLineEdit::InsertChar( char c )
     }
 }
 
-void pyGUIControlMultiLineEdit::InsertCharW( wchar_t c )
-{
-    if ( fGCkey )
-    {
-        // get the pointer to the modifier
-        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( pbmod )
-        {
-            pbmod->InsertChar(c);
-        }
-    }
-}
-
-void pyGUIControlMultiLineEdit::InsertString( const char *string )
-{
-    if ( fGCkey )
-    {
-        // get the pointer to the modifier
-        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( pbmod )
-        {
-            pbmod->InsertString(string);
-        }
-    }
-}
-
-void pyGUIControlMultiLineEdit::InsertStringW( const wchar_t *string )
+void pyGUIControlMultiLineEdit::InsertString( const ST::string& string )
 {
     if ( fGCkey )
     {
@@ -433,7 +299,33 @@ void pyGUIControlMultiLineEdit::InsertStyle( uint8_t fontStyle )
     }
 }
 
-void pyGUIControlMultiLineEdit::DeleteChar( void )
+void pyGUIControlMultiLineEdit::InsertLink(int16_t linkId)
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+        {
+            pbmod->InsertLink(linkId);
+        }
+    }
+}
+
+void pyGUIControlMultiLineEdit::ClearLink()
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+        {
+            pbmod->ClearLink();
+        }
+    }
+}
+
+void pyGUIControlMultiLineEdit::DeleteChar()
 {
     if ( fGCkey )
     {
@@ -446,7 +338,7 @@ void pyGUIControlMultiLineEdit::DeleteChar( void )
     }
 }
 
-void pyGUIControlMultiLineEdit::Lock( void )
+void pyGUIControlMultiLineEdit::Lock()
 {
     if ( fGCkey )
     {
@@ -457,7 +349,7 @@ void pyGUIControlMultiLineEdit::Lock( void )
     }
 }
 
-void pyGUIControlMultiLineEdit::Unlock( void )
+void pyGUIControlMultiLineEdit::Unlock()
 {
     if ( fGCkey )
     {
@@ -468,7 +360,7 @@ void pyGUIControlMultiLineEdit::Unlock( void )
     }
 }
 
-bool pyGUIControlMultiLineEdit::IsLocked( void )
+bool pyGUIControlMultiLineEdit::IsLocked()
 {
     if ( fGCkey )
     {
@@ -481,7 +373,7 @@ bool pyGUIControlMultiLineEdit::IsLocked( void )
     return false;
 }
 
-void pyGUIControlMultiLineEdit::Clickable( void )
+void pyGUIControlMultiLineEdit::Clickable()
 {
     if ( fGCkey )
     {
@@ -492,7 +384,7 @@ void pyGUIControlMultiLineEdit::Clickable( void )
     }
 }
 
-void pyGUIControlMultiLineEdit::Unclickable( void )
+void pyGUIControlMultiLineEdit::Unclickable()
 {
     if ( fGCkey )
     {
@@ -524,6 +416,18 @@ int32_t pyGUIControlMultiLineEdit::GetBufferLimit()
             return pbmod->GetBufferLimit();
     }
     return 0;
+}
+
+int16_t pyGUIControlMultiLineEdit::GetCurrentLink() const
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+            return pbmod->GetCurrentLink();
+    }
+    return -1;
 }
 
 void pyGUIControlMultiLineEdit::EnableScrollControl()
@@ -597,5 +501,36 @@ void pyGUIControlMultiLineEdit::EndUpdate(bool redraw)
         pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if (pbmod)
             pbmod->EndUpdate(redraw);
+    }
+}
+
+bool pyGUIControlMultiLineEdit::IsUpdating() const
+{
+    if (fGCkey) {
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+            return pbmod->IsUpdating();
+    }
+
+    return false;
+}
+
+std::tuple<int, int, int, int> pyGUIControlMultiLineEdit::GetMargins() const
+{
+    if (fGCkey) {
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+            return pbmod->GetMargins();
+    }
+
+    return std::make_tuple(0, 0, 0, 0);
+}
+
+void pyGUIControlMultiLineEdit::SetMargins(int top, int left, int bottom, int right)
+{
+    if (fGCkey) {
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+            pbmod->SetMargins(top, left, bottom, right);
     }
 }

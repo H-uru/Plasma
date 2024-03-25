@@ -67,13 +67,12 @@ void plMultiModifier::Write(hsStream* s, hsResMgr* mgr)
 
 void plMultiModifier::RemoveTarget(plSceneObject* so)
 {
-    for (int i=0; i< fTargets.Count(); i++)
+    for (auto iter = fTargets.cbegin(); iter != fTargets.cend(); ++iter)
     {
-        if (fTargets[i] == so)
+        if (*iter == so)
         {
-            fTargets.Remove(i);
+            fTargets.erase(iter);
             return;
         }
     }
 }
-

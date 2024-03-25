@@ -44,9 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGameScoreMsg_h_
 
 #include "HeadSpin.h"
-#include "pfGameScoreMgr/pfGameScoreMgr.h"
+
 #include "pnMessage/plMessage.h"
 #include "pnNetBase/pnNetBase.h"
+
+#include <string_theory/string>
 #include <vector>
 
 class pfGameScore;
@@ -56,42 +58,39 @@ class pfGameScoreMsg : public plMessage
     ENetError fResult;
 
 public:
-    pfGameScoreMsg() { }
-    pfGameScoreMsg(ENetError result)
-        : fResult(result)
-    { }
+    pfGameScoreMsg() : fResult() { }
+    pfGameScoreMsg(ENetError result) : fResult(result) { }
 
     CLASSNAME_REGISTER(pfGameScoreMsg);
     GETINTERFACE_ANY(pfGameScoreMsg, plMessage);
 
     ENetError GetResult() const { return fResult; }
 
-    virtual void Read(hsStream*, hsResMgr*)  { FATAL("wtf are you doing???"); }
-    virtual void Write(hsStream*, hsResMgr*) { FATAL("wtf are you doing???"); }
+    void Read(hsStream*, hsResMgr*) override { FATAL("wtf are you doing???"); }
+    void Write(hsStream*, hsResMgr*) override { FATAL("wtf are you doing???"); }
 };
 
 class pfGameScoreListMsg : public pfGameScoreMsg
 {
     std::vector<pfGameScore*> fScores;
     uint32_t fOwnerId;
-    plString fName;
+    ST::string fName;
 
 public:
-    pfGameScoreListMsg() { }
-    pfGameScoreListMsg(ENetError result, std::vector<pfGameScore*> vec, uint32_t ownerId, plString name)
-        : fScores(vec), pfGameScoreMsg(result), fOwnerId(ownerId), fName(name)
+    pfGameScoreListMsg() : fOwnerId() { }
+    pfGameScoreListMsg(ENetError result, uint32_t ownerId, const ST::string& name)
+        : pfGameScoreMsg(result), fOwnerId(ownerId), fName(name)
+    { }
+    pfGameScoreListMsg(ENetError result, std::vector<pfGameScore*> vec, uint32_t ownerId, ST::string name)
+        : fScores(std::move(vec)), pfGameScoreMsg(result), fOwnerId(ownerId), fName(std::move(name))
     { }
 
-    ~pfGameScoreListMsg()
-    {
-        for (std::vector<pfGameScore*>::iterator it = fScores.begin(); it != fScores.end(); ++it)
-            (*it)->UnRef();
-    }
+    ~pfGameScoreListMsg();
 
     CLASSNAME_REGISTER(pfGameScoreListMsg);
     GETINTERFACE_ANY(pfGameScoreListMsg, pfGameScoreMsg);
 
-    plString GetName() const { return fName; }
+    ST::string GetName() const { return fName; }
     uint32_t GetOwnerID() const { return fOwnerId; }
     size_t GetNumScores() const { return fScores.size(); }
     pfGameScore* GetScore(size_t idx) const { return fScores.at(idx); }
@@ -103,22 +102,10 @@ class pfGameScoreTransferMsg : public pfGameScoreMsg
     pfGameScore* fDestination;
 
 public:
-    pfGameScoreTransferMsg() { }
-    pfGameScoreTransferMsg(ENetError result, pfGameScore* to, pfGameScore* from, int32_t points)
-        : fSource(from), fDestination(to), pfGameScoreMsg(result)
-    {
-        if (result == kNetSuccess)
-        {
-            from->fValue -= points;
-            to->fValue   += points;
-        }
-    }
+    pfGameScoreTransferMsg() : fSource(), fDestination() { }
+    pfGameScoreTransferMsg(ENetError result, pfGameScore* to, pfGameScore* from, int32_t points);
 
-    ~pfGameScoreTransferMsg()
-    {
-        fSource->UnRef();
-        fDestination->UnRef();
-    }
+    ~pfGameScoreTransferMsg();
 
     CLASSNAME_REGISTER(pfGameScoreTransferMsg);
     GETINTERFACE_ANY(pfGameScoreTransferMsg, pfGameScoreMsg);
@@ -132,18 +119,10 @@ class pfGameScoreUpdateMsg : public pfGameScoreMsg
     pfGameScore* fScore;
 
 public:
-    pfGameScoreUpdateMsg() { }
-    pfGameScoreUpdateMsg(ENetError result, pfGameScore* s, int32_t points)
-        : fScore(s), pfGameScoreMsg(result)
-    {
-        if (result == kNetSuccess)
-            s->fValue = points;
-    }
+    pfGameScoreUpdateMsg() : fScore() { }
+    pfGameScoreUpdateMsg(ENetError result, pfGameScore* s, int32_t points);
 
-    ~pfGameScoreUpdateMsg()
-    {
-        fScore->UnRef();
-    }
+    ~pfGameScoreUpdateMsg();
 
     CLASSNAME_REGISTER(pfGameScoreUpdateMsg);
     GETINTERFACE_ANY(pfGameScoreUpdateMsg, pfGameScoreMsg);

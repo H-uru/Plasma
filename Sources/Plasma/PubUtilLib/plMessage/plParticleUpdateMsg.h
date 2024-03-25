@@ -43,8 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plParticleUpdateMsg_inc
 
 #include "pnMessage/plMessage.h"
-#include "hsResMgr.h"
-#include "hsStream.h"
 #include "hsBitVector.h"
 
 //////////////////////////////////////////////////////////////////////////////
@@ -55,7 +53,7 @@ class plParticleUpdateMsg : public plMessage
 {
 public:
     plParticleUpdateMsg()
-        : plMessage(nil, nil, nil) {}
+        : plMessage(nullptr, nullptr, nullptr) { }
     plParticleUpdateMsg(const plKey &s, const plKey &r, const double* t, uint32_t paramID, float paramValue )
         : plMessage(s, r, t) { fParamID = paramID; fParamValue = paramValue; }
     virtual ~plParticleUpdateMsg() {}
@@ -92,21 +90,8 @@ public:
     float GetParamValue() { return fParamValue; }
 
     // IO
-    virtual void Read(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgRead(stream, mgr);
-
-        fParamID = stream->ReadLE32();
-        stream->ReadLE(&fParamValue);
-    }
-
-    virtual void Write(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgWrite(stream, mgr);
-
-        stream->WriteLE32(fParamID);
-        stream->WriteLE(fParamValue);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -120,31 +105,20 @@ public:
     plKey   fSysSOKey; // sceneObject of the system we're snagging particles from
     uint16_t  fNumToTransfer; // number of particles to transfer
     
-    plParticleTransferMsg() : plMessage(nil, nil, nil), fSysSOKey(nil), fNumToTransfer(0) {}
+    plParticleTransferMsg() : plMessage(nullptr, nullptr, nullptr), fNumToTransfer() { }
     plParticleTransferMsg(const plKey &s, const plKey &r, const double* t, plKey sysSOKey, uint16_t numParticles )
-        : plMessage(s, r, t) { fSysSOKey = sysSOKey; fNumToTransfer = numParticles; }
-    virtual ~plParticleTransferMsg() {} 
+        : plMessage(s, r, t),
+          fSysSOKey(std::move(sysSOKey)),
+          fNumToTransfer(numParticles)
+    { }
+
 
     CLASSNAME_REGISTER( plParticleTransferMsg );
     GETINTERFACE_ANY( plParticleTransferMsg, plMessage );
 
     // IO
-    virtual void Read(hsStream *stream, hsResMgr *mgr)
-    {
-        plMessage::IMsgRead(stream, mgr);
-        
-        fSysSOKey = mgr->ReadKey(stream);
-        fNumToTransfer = stream->ReadLE16();
-    }
-    
-    virtual void Write(hsStream *stream, hsResMgr *mgr)
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        
-        mgr->WriteKey(stream, fSysSOKey);
-        stream->WriteLE16(fNumToTransfer);
-    }
-    
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 
@@ -165,7 +139,7 @@ public:
         kParticleKillPercentage = 0x2,      // Tells us to interpret "fNumToKill" as a 0-1 percentage.
     };
 
-    plParticleKillMsg() : plMessage(nil, nil, nil), fNumToKill(0.f), fTimeLeft(0.f), fFlags(kParticleKillImmortalOnly) {}
+    plParticleKillMsg() : plMessage(nullptr, nullptr, nullptr), fNumToKill(), fTimeLeft(), fFlags(kParticleKillImmortalOnly) { }
     plParticleKillMsg(const plKey &s, const plKey &r, const double* t, float numToKill, float timeLeft, uint8_t flags = kParticleKillImmortalOnly )
         : plMessage(s, r, t) { fNumToKill = numToKill; fTimeLeft = timeLeft; fFlags = flags; }
     virtual ~plParticleKillMsg() {} 
@@ -173,21 +147,9 @@ public:
     CLASSNAME_REGISTER( plParticleKillMsg );
     GETINTERFACE_ANY( plParticleKillMsg, plMessage );
 
-    // Local only 
-    virtual void Read(hsStream *stream, hsResMgr *mgr) 
-    {
-        plMessage::IMsgRead(stream,mgr);
-        fNumToKill = stream->ReadLEScalar();
-        fTimeLeft = stream->ReadLEScalar();
-        stream->ReadLE(&fFlags);
-    }
-    virtual void Write(hsStream *stream, hsResMgr *mgr)
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->WriteLEScalar(fNumToKill);
-        stream->WriteLEScalar(fTimeLeft);
-        stream->WriteLE(fFlags);
-    }
+    // Local only
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -204,7 +166,7 @@ public:
         kFlockCmdSetDissentPoint,
     };
 
-    plParticleFlockMsg() : plMessage(nil, nil, nil), fCmd(0), fX(0.f), fY(0.f), fZ(0.f) {}
+    plParticleFlockMsg() : plMessage(nullptr, nullptr, nullptr), fCmd(), fX(), fY(), fZ() { }
     plParticleFlockMsg(const plKey &s, const plKey &r, const double* t, uint8_t cmd, float x, float y, float z)
         : plMessage(s, r, t), fCmd(cmd), fX(x), fY(y), fZ(z) {}
     virtual ~plParticleFlockMsg() {}
@@ -213,8 +175,8 @@ public:
     GETINTERFACE_ANY( plParticleFlockMsg, plMessage );
 
     // Local only 
-    virtual void Read(hsStream *stream, hsResMgr *mgr) {}
-    virtual void Write(hsStream *stream, hsResMgr *mgr) {}
+    void Read(hsStream *stream, hsResMgr *mgr) override { }
+    void Write(hsStream *stream, hsResMgr *mgr) override { }
 };  
     
 

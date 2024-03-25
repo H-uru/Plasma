@@ -40,30 +40,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
+#include "pyGUIControlRadioGroup.h"
 
 #include "pfGameGUIMgr/pfGUIRadioGroupCtrl.h"
 
-#include "pyGUIControlRadioGroup.h"
+#include "pyKey.h"
 
 pyGUIControlRadioGroup::pyGUIControlRadioGroup(pyKey& gckey) :pyGUIControl(gckey)
 {
 }
 
-pyGUIControlRadioGroup::pyGUIControlRadioGroup(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlRadioGroup::pyGUIControlRadioGroup(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 
-bool pyGUIControlRadioGroup::IsGUIControlRadioGroup(pyKey& gckey)
+bool pyGUIControlRadioGroup::IsGUIControlRadioGroup(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUIRadioGroupCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUIRadioGroupCtrl::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }
 
-int32_t pyGUIControlRadioGroup::GetValue( void )
+int32_t pyGUIControlRadioGroup::GetValue()
 {
     if ( fGCkey )
     {

@@ -44,13 +44,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plMessage_inc
 
 #include <string>
+#include <vector>
+
 #include "pnFactory/plCreatable.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsTemplates.h"
 
 class plKey;
 class hsStream;
-class plString;
 
 // Base class for messages only has enough info to route it
 // and send it over the wire (Read/Write).
@@ -81,19 +81,20 @@ public:
         kCCRSendToAllPlayers    = 0x10000,  // CCRs can send a plMessage to all online players.
         kNetCreatedRemotely     = 0x20000,  // kNetSent and kNetNonLocal are inherited by child messages sent off while processing a net-propped
                                             // parent. This flag ONLY gets sent on the actual message that went across the wire.
-                
     };
+
 private:
     bool dispatchBreak;
 
     friend class plDispatch;
     friend class plDispatchLog;
 
-protected:
+private:
     plKey                   fSender;
-    hsTArray<plKey>         fReceivers;
+    std::vector<plKey>      fReceivers;
     double                  fTimeStamp;
 
+protected:
     uint32_t                  fBCastFlags;
     std::vector<uint32_t>*    fNetRcvrPlayerIDs;
 
@@ -110,30 +111,29 @@ public:
                 const double* t);
 
     virtual ~plMessage();
-    
-    CLASSNAME_REGISTER( plMessage );
-    GETINTERFACE_ANY( plMessage, plCreatable );
+
+    CLASSNAME_REGISTER(plMessage);
+    GETINTERFACE_ANY(plMessage, plCreatable);
 
     // These must be implemented by all derived message classes (hence pure).
     // Derived classes should call the base-class default read/write implementation, 
     // so the derived Read() should call plMessage::IMsgRead().
-    virtual void Read(hsStream* stream, hsResMgr* mgr) = 0;
-    virtual void Write(hsStream* stream, hsResMgr* mgr) = 0;
+    void Read(hsStream* stream, hsResMgr* mgr) override = 0;
+    void Write(hsStream* stream, hsResMgr* mgr) override = 0;
 
-    const plKey             GetSender() const { return fSender; }
-    plMessage&              SetSender(const plKey &s) { fSender = s; return *this; }
+    const plKey GetSender() const { return fSender; }
+    plMessage&  SetSender(plKey s) { fSender = std::move(s); return *this; }
 
-    plMessage&              SetNumReceivers(int n);
-    uint32_t                  GetNumReceivers() const ;
-    const plKey&            GetReceiver(int i) const;
-    plMessage&              RemoveReceiver(int i);
+    size_t       GetNumReceivers() const;
+    const plKey& GetReceiver(size_t i) const;
+    plMessage&   RemoveReceiver(size_t i);
 
-    plMessage&              ClearReceivers();
-    plMessage&              AddReceiver(const plKey &r);
-    plMessage&              AddReceivers(const hsTArray<plKey>& rList);
+    plMessage& ClearReceivers();
+    plMessage& AddReceiver(plKey r);
+    plMessage& AddReceivers(const std::vector<plKey>& rList);
 
-    bool                    Send(const plKey r=nil, bool async=false); // Message will self-destruct after send.
-    bool                    SendAndKeep(const plKey r=nil, bool async=false); // Message won't self-destruct after send.
+    bool Send(plKey r=nullptr, bool async=false); // Message will self-destruct after send.
+    bool SendAndKeep(plKey r=nullptr, bool async=false); // Message won't self-destruct after send.
 
     double GetTimeStamp() const { return fTimeStamp; }
     plMessage& SetTimeStamp(double t) { fTimeStamp = t; return *this; }
@@ -157,7 +157,7 @@ public:
 
 /////////////////////////////////////////////////////////////////
 // Helpers for reading/writing these types:
-//      plString
+//      ST::string
 //      std::string
 //      c strings (char *)
 //      c arrays (type [])
@@ -172,12 +172,12 @@ struct plMsgStdStringHelper
     static int PokeBig(const std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
     static int Poke(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
     static int PokeBig(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
-    static int Poke(const plString & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int PokeBig(const plString & stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int Poke(const ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int PokeBig(const ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
     static int Peek(std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
     static int PeekBig(std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int Peek(plString & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int PeekBig(plString & stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int Peek(ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int PeekBig(ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
 };
 
 /////////////////////////////////////////////////////////////////
@@ -189,8 +189,8 @@ struct plMsgCStringHelper
     // deletes str and reallocates. you must delete [] str;
     static int Peek(char *& str, hsStream* stream, const uint32_t peekOptions=0);
 
-    static int Poke(const plString & str, hsStream* stream, const uint32_t peekOptions=0);
-    static int Peek(plString & str, hsStream* stream, const uint32_t peekOptions=0);
+    static int Poke(const ST::string & str, hsStream* stream, const uint32_t peekOptions=0);
+    static int Peek(ST::string & str, hsStream* stream, const uint32_t peekOptions=0);
 };
 
 /////////////////////////////////////////////////////////////////

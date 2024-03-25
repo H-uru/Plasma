@@ -39,13 +39,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plRelevanceMgr.h"
 #include "plRelevanceRegion.h"
-#include "plIntersect/plRegionBase.h"
+
 #include "hsStream.h"
 #include "hsStringTokenizer.h"
 
-plRelevanceMgr* plRelevanceMgr::fInstance = nil;
+#include <tuple>
+
+#include "pnMessage/plRefMsg.h"
+
+#include "plIntersect/plRegionBase.h"
+
+plRelevanceMgr* plRelevanceMgr::fInstance = nullptr;
 
 plRelevanceMgr::plRelevanceMgr() : fEnabled(true)
 {
@@ -62,34 +69,33 @@ void plRelevanceMgr::DeInit()
     if (fInstance)
     {
         fInstance->UnRegisterAs(kRelevanceMgr_KEY);
-        fInstance = nil;
+        fInstance = nullptr;
     }
 }
 
 void plRelevanceMgr::IAddRegion(plRelevanceRegion *region)
 {
-    int i;
-    int dstIdx = fRegions.GetCount();
-    for (i = 0; i < fRegions.GetCount(); i++)
+    size_t dstIdx = fRegions.size();
+    for (size_t i = 0; i < fRegions.size(); i++)
     {
-        if (fRegions[i] == nil)
+        if (fRegions[i] == nullptr)
         {
             dstIdx = i;
             break;
         }
     }
     
-    if (dstIdx == fRegions.GetCount())
-        fRegions.Append(region);
+    if (dstIdx == fRegions.size())
+        fRegions.emplace_back(region);
     else
-        fRegions[i] = region;
+        fRegions[dstIdx] = region;
 
     region->SetMgrIndex(dstIdx + 1);
 }
 
 void plRelevanceMgr::IRemoveRegion(plRelevanceRegion *region)
 {
-    fRegions[region->fMgrIdx - 1] = nil;
+    fRegions[region->fMgrIdx - 1] = nullptr;
 }
 
 void plRelevanceMgr::SetRegionVectors(const hsPoint3 &pos, hsBitVector &regionsImIn, hsBitVector &regionsICareAbout)
@@ -100,8 +106,7 @@ void plRelevanceMgr::SetRegionVectors(const hsPoint3 &pos, hsBitVector &regionsI
 
     bool inAnyRegion = false;
 
-    int i;
-    for (i = 0; i < fRegions.GetCount(); i++)
+    for (size_t i = 0; i < fRegions.size(); i++)
     { 
         if (fRegions[i] && fRegions[i]->fRegion->IsInside(pos))
         {
@@ -115,19 +120,18 @@ void plRelevanceMgr::SetRegionVectors(const hsPoint3 &pos, hsBitVector &regionsI
     if (!inAnyRegion)
     {
         regionsImIn.SetBit(0, true);
-        regionsICareAbout.Set(fRegions.GetCount());
+        regionsICareAbout.Set(fRegions.size());
     }
 }
     
 uint32_t plRelevanceMgr::GetNumRegions() const
 {
-    int i;
+    uint32_t count = (uint32_t)fRegions.size();
+    while (count > 0 && fRegions[count - 1] == nullptr)
+        count--;
 
-    for (i = fRegions.GetCount(); i > 0 && fRegions[i - 1] == nil; i--);
-
-    return i + 1; // Add 1 for the special zero-region
+    return count + 1; // Add 1 for the special zero-region
 }
-        
 
 bool plRelevanceMgr::MsgReceive(plMessage* msg)
 {
@@ -149,16 +153,15 @@ bool plRelevanceMgr::MsgReceive(plMessage* msg)
     return hsKeyedObject::MsgReceive(msg);
 }
 
-uint32_t plRelevanceMgr::GetIndex(const plString &regionName)
+uint32_t plRelevanceMgr::GetIndex(const ST::string &regionName)
 {
-    int i;
-    for (i = 0; i < fRegions.GetCount(); i++)
+    for (size_t i = 0; i < fRegions.size(); i++)
     {
-        if (fRegions[i] && !regionName.Compare(fRegions[i]->GetKeyName(), plString::kCaseInsensitive))
-            return i + 1;
+        if (fRegions[i] && regionName.compare_i(fRegions[i]->GetKeyName()) == 0)
+            return uint32_t(i + 1);
     }
 
-    return -1;
+    return uint32_t(-1);
 }
 
 void plRelevanceMgr::MarkRegion(uint32_t localIdx, uint32_t remoteIdx, bool doICare)
@@ -166,22 +169,11 @@ void plRelevanceMgr::MarkRegion(uint32_t localIdx, uint32_t remoteIdx, bool doIC
     if (localIdx == (uint32_t)-1 || remoteIdx == (uint32_t)-1)
         return;
 
-    if (localIdx - 1 >= fRegions.GetCount() || remoteIdx - 1 >= fRegions.GetCount() || fRegions[localIdx - 1] == nil)
+    if (localIdx - 1 >= fRegions.size() || remoteIdx - 1 >= fRegions.size() || fRegions[localIdx - 1] == nullptr)
         return;
 
     fRegions[localIdx - 1]->fRegionsICareAbout.SetBit(remoteIdx, doICare);
 }
-
-// tiny class for the function below
-class plRegionInfo
-{
-public:
-    char *fName;
-    int fIndex;
-    
-    plRegionInfo() : fName(nil), fIndex(-1) {}
-    ~plRegionInfo() { delete [] fName; }
-};
 
 /*
 *   This function expects a CSV file representing the matrix
@@ -200,7 +192,7 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
 {
     const int kBufSize = 512;
     char buff[kBufSize];
-    hsTArray<plRegionInfo*> regions;    
+    std::vector<uint32_t> regions;
     hsStringTokenizer toke; 
     bool firstLine = true;
     
@@ -216,13 +208,10 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
             
             while (toke.Next(buff, kBufSize))
             {
-                if (strcmp(buff, "") == 0)
+                ST::string name = ST::string::from_utf8(buff);
+                if (name.empty())
                     continue; // ignore the initial blank one
-
-                plRegionInfo *info = new plRegionInfo;
-                regions.Append(info);
-                info->fName = hsStrcpy(buff);
-                info->fIndex = GetIndex(buff);
+                regions.emplace_back(GetIndex(name));
             }
         }
         else // parsing actual settings.
@@ -231,41 +220,37 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
             if (!toke.Next(buff, kBufSize))
                 continue;
             
-            int rowIndex = GetIndex(buff);
-            int column = 0;
-            while (toke.Next(buff, kBufSize) && column < regions.GetCount())
+            uint32_t rowIndex = GetIndex(buff);
+            size_t column = 0;
+            while (toke.Next(buff, kBufSize) && column < regions.size())
             {
                 int value = atoi(buff);
-                MarkRegion(rowIndex, regions[column]->fIndex, value != 0);
+                MarkRegion(rowIndex, regions[column], value != 0);
 
                 column++;
             }
         }
     }
-
-    int i;
-    for (i = regions.GetCount() - 1; i >= 0; i--)
-        delete regions[i];
 }
 
-plString plRelevanceMgr::GetRegionNames(hsBitVector regions)
+ST::string plRelevanceMgr::GetRegionNames(const hsBitVector& regions)
 {
-    plString retVal;
+    ST::string retVal;
     if (regions.IsBitSet(0))
-        retVal = "-Nowhere (0)-";
+        retVal = ST_LITERAL("-Nowhere (0)-");
 
-    for (int i = 0; i < fRegions.GetCount(); ++i)
+    for (size_t i = 0; i < fRegions.size(); ++i)
     {
         if (regions.IsBitSet(i + 1))
         {
-            if (!retVal.IsEmpty())
+            if (!retVal.empty())
                 retVal += ", ";
             if (fRegions[i])
                 retVal += fRegions[i]->GetKeyName();
         }
     }
 
-    if (retVal.IsEmpty())
-        retVal = "<NONE>";
+    if (retVal.empty())
+        retVal = ST_LITERAL("<NONE>");
     return retVal;
 }

@@ -57,12 +57,12 @@ public:
 protected:
     plWaveSetBase*      fWaveSetBase;
 
-    virtual int         INewDecal();
+    size_t              INewDecal() override;
 
     virtual bool        ICheckRTMat();
 
     plRipVSConsts       IGetRippleConsts() const;
-    virtual bool        IHandleShot(plBulletMsg* bull);
+    bool                IHandleShot(plBulletMsg* bull) override;
 public:
     plDynaTorpedoVSMgr();
     virtual ~plDynaTorpedoVSMgr();
@@ -70,10 +70,10 @@ public:
     CLASSNAME_REGISTER( plDynaTorpedoVSMgr );
     GETINTERFACE_ANY( plDynaTorpedoVSMgr, plDynaTorpedoMgr );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 

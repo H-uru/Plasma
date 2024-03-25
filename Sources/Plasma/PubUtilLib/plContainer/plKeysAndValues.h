@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 
-#pragma warning(disable:4284)
+namespace ST { class string; }
 
 enum KAddValueMode
 {
@@ -63,9 +63,9 @@ enum KAddValueMode
 class plKeysAndValues : public hsStreamable
 {
 public:    
-    typedef std::list<plString>
+    typedef std::list<ST::string>
         Values;
-    typedef std::map<plString, Values, plString::less_i>
+    typedef std::map<ST::string, Values, ST::less_i>
         Keys;
 
 private:
@@ -80,36 +80,36 @@ public:
     plKeysAndValues & operator =(const plKeysAndValues & src);
     // clear
     void Clear();
-    void RemoveKey(const plString & key);
+    void RemoveKey(const ST::string & key);
     // query
-    bool HasKey(const plString & key) const;
-    bool KeyHasValue(const plString & key, const plString & value);
-    bool KeyHasValue(const plString & key, int value);
-    bool KeyHasValue(const plString & key, double value);
+    bool HasKey(const ST::string & key) const;
+    bool KeyHasValue(const ST::string & key, const ST::string & value);
+    bool KeyHasValue(const ST::string & key, int value);
+    bool KeyHasValue(const ST::string & key, double value);
     // add
-    bool AddValue(const plString & key, const plString & value, KAddValueMode mode=kAlwaysAdd);
-    bool AddValue(const plString & key, int value, KAddValueMode mode=kAlwaysAdd);
-    bool AddValue(const plString & key, double value, KAddValueMode mode=kAlwaysAdd);
-    bool AddValues(const plString & key, const std::vector<plString> & values, KAddValueMode mode=kAlwaysAdd);
+    bool AddValue(const ST::string & key, const ST::string & value, KAddValueMode mode=kAlwaysAdd);
+    bool AddValue(const ST::string & key, int value, KAddValueMode mode=kAlwaysAdd);
+    bool AddValue(const ST::string & key, double value, KAddValueMode mode=kAlwaysAdd);
+    bool AddValues(const ST::string & key, const std::vector<ST::string> & values, KAddValueMode mode=kAlwaysAdd);
     // set (clear and add)
-    bool SetValue(const plString & key, const plString & value);
-    bool SetValue(const plString & key, int value);
-    bool SetValue(const plString & key, double value);
+    bool SetValue(const ST::string & key, const ST::string & value);
+    bool SetValue(const ST::string & key, int value);
+    bool SetValue(const ST::string & key, double value);
     // get single value
-    plString GetValue(const plString & key, const plString & defval="", bool * outFound=nil) const;
-    uint32_t GetValue(const plString & key, uint32_t defval, bool * outFound=nil) const;
-    int GetValue(const plString & key, int defval, bool * outFound=nil) const;
-    double GetValue(const plString & key, double defval, bool * outFound=nil) const;
-    std::vector<plString> GetAllValues(const plString & key);
+    ST::string GetValue(const ST::string & key, const ST::string & defval={}, bool * outFound=nullptr) const;
+    uint32_t GetValue(const ST::string & key, uint32_t defval, bool * outFound=nullptr) const;
+    int GetValue(const ST::string & key, int defval, bool * outFound=nullptr) const;
+    double GetValue(const ST::string & key, double defval, bool * outFound=nullptr) const;
+    std::vector<ST::string> GetAllValues(const ST::string & key);
     // key iterator
     bool GetKeyIterators(Keys::const_iterator & iter, Keys::const_iterator & end) const;
     // value iterator (use for getting all values for key)
-    bool GetValueIterators(const plString & key, Values::const_iterator & iter, Values::const_iterator & end) const;
+    bool GetValueIterators(const ST::string & key, Values::const_iterator & iter, Values::const_iterator & end) const;
     // streamable
-    void Read(hsStream * s);
-    void Write(hsStream * s);
+    void Read(hsStream * s) override;
+    void Write(hsStream * s) override;
     // TODO:
-    uint32_t GetStreamSize() { return 0;}
+    uint32_t GetStreamSize() override { return 0;}
 };
 
 

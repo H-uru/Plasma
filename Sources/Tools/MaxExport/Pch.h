@@ -60,16 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptions.h"
 #include "hsStream.h"
 
-// Windows
-#include "hsWindows.h"
-#include <commdlg.h>
-
-// 3ds Max SDK
-// This stuff should ALWAYS come after hsWindows.h
-#include <max.h>
-#include <bmmlib.h>
-#include <guplib.h>
-#include <iparamb2.h>
-#include <notify.h>
+// Max
+#include "MaxMain/MaxAPI.h"
 
 #endif // _MaxExport_Pch_inc_

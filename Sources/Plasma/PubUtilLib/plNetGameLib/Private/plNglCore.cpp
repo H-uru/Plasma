@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
-#pragma hdrstop
 
 
 namespace Ngl {
@@ -66,7 +65,7 @@ struct ReportNetErrorTrans : NetNotifyTrans {
         ENetError       errError
     );
 
-    void Post ();
+    void Post() override;
 };
 
 
@@ -76,7 +75,7 @@ struct ReportNetErrorTrans : NetNotifyTrans {
 *
 ***/
 
-static FNetClientErrorProc  s_errorProc;
+static NetClientErrorFunc   s_errorFunc;
 static std::atomic<long>    s_initCount;
 
 
@@ -114,8 +113,8 @@ ReportNetErrorTrans::ReportNetErrorTrans (
 
 //============================================================================
 void ReportNetErrorTrans::Post () {
-    if (s_errorProc)
-        s_errorProc(m_errProtocol, m_errError);
+    if (s_errorFunc)
+        s_errorFunc(m_errProtocol, m_errError);
 }
 
 
@@ -161,7 +160,7 @@ void NetClientCancelAllTrans () {
 void NetClientDestroy (bool wait) {
 
     if (1 == s_initCount.fetch_sub(1)) {
-        s_errorProc = nil;
+        s_errorFunc = nullptr;
 
         GateKeeperDestroy(false);
         FileDestroy(false);
@@ -195,6 +194,6 @@ void NetClientPingEnable (bool enable) {
 }
 
 //============================================================================
-void NetClientSetErrorHandler (FNetClientErrorProc errorProc) {
-    s_errorProc = errorProc;
+void NetClientSetErrorHandler(NetClientErrorFunc errorFunc) {
+    s_errorFunc = std::move(errorFunc);
 }

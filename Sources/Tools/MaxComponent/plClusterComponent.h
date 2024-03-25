@@ -124,7 +124,7 @@ protected:
 
 public:
     plClusterComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     void    Clear();
     BOOL    Cluster(plErrorMsg* pErrMsg);
@@ -135,12 +135,12 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     int             GetNumGroups() { if (fSetupDone) return fClusterGroups.size(); return 0; }
-    plClusterGroup *GetGroup(int index) { if (fSetupDone) return fClusterGroups[index]; return nil; }
+    plClusterGroup *GetGroup(int index) { if (fSetupDone) return fClusterGroups[index]; return nullptr; }
 
 };
 

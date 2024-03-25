@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../PubUtilLib")
-
 set(pfAnimation_SOURCES
     pfObjectFlocker.cpp
     plAnimDebugList.cpp
@@ -30,7 +25,30 @@ set(pfAnimation_HEADERS
     plViewFaceModifier.h
 )
 
-add_library(pfAnimation STATIC ${pfAnimation_SOURCES} ${pfAnimation_HEADERS})
+plasma_library(pfAnimation SOURCES ${pfAnimation_SOURCES} ${pfAnimation_HEADERS})
+target_link_libraries(
+    pfAnimation
+    PUBLIC
+        CoreLib
+        pnEncryption
+        pnKeyedObject
+        pnModifier
+        pnSceneObject
+    PRIVATE
+        pnMessage
+        pnNetCommon
+        pnNucleusInc
+        plAnimation
+        plAvatar
+        plGLight
+        plInterp
+        plMessage
+        plPipeline
+        plResMgr
+        plSurface
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${pfAnimation_SOURCES})
 source_group("Header Files" FILES ${pfAnimation_HEADERS})

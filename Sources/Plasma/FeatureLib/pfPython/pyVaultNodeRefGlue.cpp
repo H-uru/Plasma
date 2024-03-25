@@ -40,12 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pyVaultNodeRef.h"
 
 #include "plVault/plVault.h"
+
+#include "pyGlueHelpers.h"
 
 // glue functions
 // glue functions
@@ -110,23 +109,24 @@ PYTHON_START_METHODS_TABLE(ptVaultNodeRef)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-#define ptVaultNodeRef_COMPARE          PYTHON_NO_COMPARE
 #define ptVaultNodeRef_AS_NUMBER        PYTHON_NO_AS_NUMBER
 #define ptVaultNodeRef_AS_SEQUENCE      PYTHON_NO_AS_SEQUENCE
 #define ptVaultNodeRef_AS_MAPPING       PYTHON_NO_AS_MAPPING
 #define ptVaultNodeRef_RICH_COMPARE     PYTHON_NO_RICH_COMPARE
 #define ptVaultNodeRef_STR              PYTHON_NO_STR
+#define ptVaultNodeRef_GETATTRO         PYTHON_NO_GETATTRO
+#define ptVaultNodeRef_SETATTRO         PYTHON_NO_SETATTRO
 #define ptVaultNodeRef_GETSET           PYTHON_NO_GETSET
 #define ptVaultNodeRef_BASE             PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptVaultNodeRef, "Vault node relationship pseudo class");
 PYTHON_EXPOSE_TYPE_DEFINITION(ptVaultNodeRef, pyVaultNodeRef);
 
 // required functions for PyObject interoperability
-PyObject *pyVaultNodeRef::New(RelVaultNode * parent, RelVaultNode * child)
+PyObject *pyVaultNodeRef::New(hsRef<RelVaultNode> parent, hsRef<RelVaultNode> child)
 {
-    ptVaultNodeRef *newObj = (ptVaultNodeRef*)ptVaultNodeRef_type.tp_new(&ptVaultNodeRef_type, NULL, NULL);
-    newObj->fThis->fParent = parent;
-    newObj->fThis->fChild = child;
+    ptVaultNodeRef *newObj = (ptVaultNodeRef*)ptVaultNodeRef_type.tp_new(&ptVaultNodeRef_type, nullptr, nullptr);
+    newObj->fThis->fParent = std::move(parent);
+    newObj->fThis->fChild = std::move(child);
     return (PyObject*)newObj;
 }
 

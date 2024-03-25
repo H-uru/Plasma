@@ -121,7 +121,10 @@ protected:
 
     friend class plClusterUtil;
 public:
-    plSpanTemplate();
+    plSpanTemplate()
+        : fNumVerts(), fNumTris(), fFormat(), fStride(),
+          fData(), fIndices()
+    { }
     virtual ~plSpanTemplate() { DeAlloc(); }
 
     const uint8_t*    VertData() const { return fData; }
@@ -207,7 +210,7 @@ public:
                 + j * sizeof(hsPoint3);
         }
         hsAssert(false, "Unrecognized vertex channel");
-        return nil;
+        return nullptr;
     }
 
     bool ValidateInput(Channel chan, int i, int j) const
@@ -257,7 +260,7 @@ class plSpanTemplateB : public plSpanTemplate
     hsColorRGBA*    fAddColors;
 
 public:
-    plSpanTemplateB(INode* src) : plSpanTemplate(), fSrc(src), fMaterial(nil) {}
+    plSpanTemplateB(INode* src) : plSpanTemplate(), fSrc(src), fMaterial() { }
     virtual ~plSpanTemplateB() { DeAllocColors(); }
 
     void ComputeBounds();

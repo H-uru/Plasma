@@ -41,39 +41,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
 //                                                                          //
-//  pfGUIProgressCtrl Definition                                                //
+//  pfGUIProgressCtrl Definition                                            //
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIProgressCtrl.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+#include "plTimerCallbackManager.h"
+
 #include "pfGameGUIMgr.h"
 #include "pfGUIDialogMod.h"
 
+#include "plAnimation/plAGAnimInstance.h"
+#include "plAnimation/plAGMasterMod.h"
 #include "plInputCore/plInputInterface.h"
-#include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
+#include "plInterp/plAnimTimeConvert.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plTimerCallbackMsg.h"
-// #include "plAnimation/plAGModifier.h"
-#include "plAnimation/plAGMasterMod.h"
-#include "plAnimation/plAGAnimInstance.h"
 #include "plSurface/plLayerAnimation.h"
-
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnTimer/plTimerCallbackManager.h"
-
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-
-//// Constructor/Destructor //////////////////////////////////////////////////
-
-pfGUIProgressCtrl::pfGUIProgressCtrl() : fStopSoundTimer(99)
-{
-    fAnimTimesCalced = false;
-    fPlaySound = true;
-}
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
@@ -104,10 +92,11 @@ void    pfGUIProgressCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIValueCtrl::Read(s, mgr);
 
-    fAnimationKeys.Reset();
-    uint32_t i, count = s->ReadLE32();
-    for( i = 0; i < count; i++ )
-        fAnimationKeys.Append( mgr->ReadKey( s ) );
+    fAnimationKeys.clear();
+    uint32_t count = s->ReadLE32();
+    fAnimationKeys.reserve(count);
+    for (uint32_t i = 0; i < count; i++)
+        fAnimationKeys.emplace_back(mgr->ReadKey(s));
     fAnimName = s->ReadSafeString();
 
     fAnimTimesCalced = false;
@@ -117,10 +106,9 @@ void    pfGUIProgressCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIValueCtrl::Write( s, mgr );
 
-    uint32_t i, count = fAnimationKeys.GetCount();
-    s->WriteLE32( count );
-    for( i = 0; i < count; i++ )
-        mgr->WriteKey( s, fAnimationKeys[ i ] );
+    s->WriteLE32((uint32_t)fAnimationKeys.size());
+    for (const plKey& key : fAnimationKeys)
+        mgr->WriteKey(s, key);
     s->WriteSafeString( fAnimName );
 }
 
@@ -129,13 +117,13 @@ void    pfGUIProgressCtrl::Write( hsStream *s, hsResMgr *mgr )
 void    pfGUIProgressCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 {
     pfGUIValueCtrl::UpdateBounds( invXformMatrix, force );
-    if( fAnimationKeys.GetCount() > 0 )
+    if (!fAnimationKeys.empty())
         fBoundsValid = false;
 }
 
 //// SetAnimationKeys ////////////////////////////////////////////////////////
 
-void    pfGUIProgressCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const plString &name )
+void    pfGUIProgressCtrl::SetAnimationKeys(const std::vector<plKey> &keys, const ST::string &name)
 {
     fAnimationKeys = keys;
     fAnimName = name;
@@ -145,19 +133,19 @@ void    pfGUIProgressCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const plStri
 //  Loops through and computes the max begin and end for our animations. If
 //  none of them are loaded and we're not already calced, returns false.
 
-bool    pfGUIProgressCtrl::ICalcAnimTimes( void )
+bool    pfGUIProgressCtrl::ICalcAnimTimes()
 {
     if( fAnimTimesCalced )
         return true;
 
-    float tBegin = 1e30, tEnd = -1e30;
+    float tBegin = 1e30f, tEnd = -1e30f;
     bool     foundOne = false;
 
-    for( int i = 0; i < fAnimationKeys.GetCount(); i++ )
+    for (const plKey &animKey : fAnimationKeys)
     {
         // Handle AGMasterMods
-        plAGMasterMod *mod = plAGMasterMod::ConvertNoRef( fAnimationKeys[ i ]->ObjectIsLoaded() );
-        if( mod != nil )
+        plAGMasterMod *mod = plAGMasterMod::ConvertNoRef(animKey->ObjectIsLoaded());
+        if (mod != nullptr)
         {
             for( int j = 0; j < mod->GetNumAnimations(); j++ )
             {
@@ -171,8 +159,8 @@ bool    pfGUIProgressCtrl::ICalcAnimTimes( void )
             foundOne = true;
         }
         // Handle layer animations
-        plLayerAnimation *layer = plLayerAnimation::ConvertNoRef( fAnimationKeys[ i ]->ObjectIsLoaded() );
-        if( layer != nil )
+        plLayerAnimation *layer = plLayerAnimation::ConvertNoRef(animKey->ObjectIsLoaded());
+        if (layer != nullptr)
         {
             float begin = layer->GetTimeConvert().GetBegin();
             float end = layer->GetTimeConvert().GetEnd();
@@ -206,7 +194,7 @@ void    pfGUIProgressCtrl::SetCurrValue( float v )
 //  if( old == (int)fValue )
 //      return;
 
-    if( fAnimationKeys.GetCount() > 0 )
+    if (!fAnimationKeys.empty())
     {
         ICalcAnimTimes();
 
@@ -223,7 +211,7 @@ void    pfGUIProgressCtrl::SetCurrValue( float v )
         msg->SetAnimName( fAnimName );
         msg->fTime = newTime;
         msg->AddReceivers( fAnimationKeys );
-        plgDispatch::MsgSend( msg );
+        msg->Send();
     }
 }
 
@@ -234,14 +222,14 @@ void pfGUIProgressCtrl::AnimateToPercentage( float percent )
     {
         pfGUIValueCtrl::SetCurrValue( (fMax - fMin) * percent + fMin );
 
-        if( fAnimationKeys.GetCount() > 0 )
+        if (!fAnimationKeys.empty())
         {
             plAnimCmdMsg *msg = new plAnimCmdMsg();
             msg->SetCmd( plAnimCmdMsg::kPlayToPercentage ); 
             msg->SetAnimName( fAnimName );
             msg->fTime = percent;
             msg->AddReceivers( fAnimationKeys );
-            plgDispatch::MsgSend( msg );
+            msg->Send();
 
             if (fPlaySound)
             {

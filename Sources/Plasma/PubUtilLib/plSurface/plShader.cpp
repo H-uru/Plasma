@@ -40,32 +40,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-
-#include "HeadSpin.h"
 #include "plShader.h"
 #include "plShaderTable.h"
 
-#include "hsStream.h"
-#include "hsMatrix44.h"
+#include "HeadSpin.h"
 #include "hsColorRGBA.h"
 #include "hsGDeviceRef.h"
-
+#include "hsMatrix44.h"
+#include "hsStream.h"
 
 // Little shader const helper
 void plShaderConst::Read(hsStream* s)
 {
-    fX = s->ReadLEScalar();
-    fY = s->ReadLEScalar();
-    fZ = s->ReadLEScalar();
-    fW = s->ReadLEScalar();
+    fX = s->ReadLEFloat();
+    fY = s->ReadLEFloat();
+    fZ = s->ReadLEFloat();
+    fW = s->ReadLEFloat();
 }
 
-void plShaderConst::Write(hsStream* s)
+void plShaderConst::Write(hsStream* s) const
 {
-    s->WriteLEScalar(fX);
-    s->WriteLEScalar(fY);
-    s->WriteLEScalar(fZ);
-    s->WriteLEScalar(fW);
+    s->WriteLEFloat(fX);
+    s->WriteLEFloat(fY);
+    s->WriteLEFloat(fZ);
+    s->WriteLEFloat(fW);
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -73,11 +71,11 @@ void plShaderConst::Write(hsStream* s)
 //////////////////////////////////////////////////////////////////////////////////
 
 plShader::plShader()
-:   fFlags(0),
-    fDeviceRef(nil),
-    fInput(0),
-    fOutput(0),
-    fDecl(0)
+:   fFlags(),
+    fDeviceRef(),
+    fInput(),
+    fOutput(),
+    fDecl()
 {
 }
 
@@ -92,7 +90,7 @@ void plShader::SetDeviceRef(hsGDeviceRef* ref) const
 }
 
 
-void plShader::SetMatrix(int i, const plFloat44& xfm)
+void plShader::SetMatrix(size_t i, const plFloat44& xfm)
 {
     // Stuff in the transpose
     SetVector(i+0, xfm.m[0][0], xfm.m[1][0], xfm.m[2][0], xfm.m[3][0]);
@@ -101,7 +99,7 @@ void plShader::SetMatrix(int i, const plFloat44& xfm)
     SetVector(i+3, xfm.m[0][3], xfm.m[1][3], xfm.m[2][3], xfm.m[3][3]);
 }
 
-void plShader::SetMatrix3(int i, const plFloat44& xfm)
+void plShader::SetMatrix3(size_t i, const plFloat44& xfm)
 {
     // Stuff in the transpose
     SetVector(i+0, xfm.m[0][0], xfm.m[1][0], xfm.m[2][0], xfm.m[3][0]);
@@ -109,7 +107,7 @@ void plShader::SetMatrix3(int i, const plFloat44& xfm)
     SetVector(i+2, xfm.m[0][2], xfm.m[1][2], xfm.m[2][2], xfm.m[3][2]);
 }
 
-void plShader::SetMatrix44(int i, const hsMatrix44& xfm)
+void plShader::SetMatrix44(size_t i, const hsMatrix44& xfm)
 {
     // hsMatrix44 is already transpose of the rest of the world
     SetVector(i+0, xfm.fMap[0][0], xfm.fMap[0][1], xfm.fMap[0][2], xfm.fMap[0][3]);
@@ -118,7 +116,7 @@ void plShader::SetMatrix44(int i, const hsMatrix44& xfm)
     SetVector(i+3, xfm.fMap[3][0], xfm.fMap[3][1], xfm.fMap[3][2], xfm.fMap[3][3]);
 }
 
-void plShader::SetMatrix34(int i, const hsMatrix44& xfm)
+void plShader::SetMatrix34(size_t i, const hsMatrix44& xfm)
 {
     // hsMatrix44 is already transpose of the rest of the world
     SetVector(i+0, xfm.fMap[0][0], xfm.fMap[0][1], xfm.fMap[0][2], xfm.fMap[0][3]);
@@ -126,48 +124,48 @@ void plShader::SetMatrix34(int i, const hsMatrix44& xfm)
     SetVector(i+2, xfm.fMap[2][0], xfm.fMap[2][1], xfm.fMap[2][2], xfm.fMap[2][3]);
 }
 
-void plShader::SetMatrix24(int i, const hsMatrix44& xfm)
+void plShader::SetMatrix24(size_t i, const hsMatrix44& xfm)
 {
     // hsMatrix44 is already transpose of the rest of the world
     SetVector(i+0, xfm.fMap[0][0], xfm.fMap[0][1], xfm.fMap[0][2], xfm.fMap[0][3]);
     SetVector(i+1, xfm.fMap[1][0], xfm.fMap[1][1], xfm.fMap[1][2], xfm.fMap[1][3]);
 }
 
-void plShader::SetColor(int i, const hsColorRGBA& col)
+void plShader::SetColor(size_t i, const hsColorRGBA& col)
 {
     SetVector(i, col.r, col.g, col.b, col.a);
 }
 
-void plShader::SetVector(int i, const hsScalarTriple& vec)
+void plShader::SetVector(size_t i, const hsScalarTriple& vec)
 {
     /* Doesn't touch .fW */
-    fConsts[i].fX = vec.fX;
-    fConsts[i].fY = vec.fY;
-    fConsts[i].fZ = vec.fZ;
+    fConsts[i].fX = std::clamp(vec.fX, -FLT_MAX, FLT_MAX);
+    fConsts[i].fY = std::clamp(vec.fY, -FLT_MAX, FLT_MAX);
+    fConsts[i].fZ = std::clamp(vec.fZ, -FLT_MAX, FLT_MAX);
 }
 
-void plShader::SetVector(int i, float x, float y, float z, float w)
+void plShader::SetVector(size_t i, float x, float y, float z, float w)
 {
-    fConsts[i].x = x;
-    fConsts[i].y = y;
-    fConsts[i].z = z;
-    fConsts[i].w = w;
+    fConsts[i].x = std::clamp(x, -FLT_MAX, FLT_MAX);
+    fConsts[i].y = std::clamp(y, -FLT_MAX, FLT_MAX);
+    fConsts[i].z = std::clamp(z, -FLT_MAX, FLT_MAX);
+    fConsts[i].w = std::clamp(w, -FLT_MAX, FLT_MAX);
 }
 
-void plShader::SetFloat(int i, int chan, float v)
+void plShader::SetFloat(size_t i, int chan, float v)
 {
     fConsts[i].fArray[chan] = v;
 }
 
-void plShader::SetFloat4(int i, const float* const f)
+void plShader::SetFloat4(size_t i, const float* const f)
 {
-    fConsts[i].fX = f[0];
-    fConsts[i].fY = f[1];
-    fConsts[i].fZ = f[2];
-    fConsts[i].fW = f[3];
+    fConsts[i].fX = std::clamp(f[0], -FLT_MAX, FLT_MAX);
+    fConsts[i].fY = std::clamp(f[1], -FLT_MAX, FLT_MAX);
+    fConsts[i].fZ = std::clamp(f[2], -FLT_MAX, FLT_MAX);
+    fConsts[i].fW = std::clamp(f[3], -FLT_MAX, FLT_MAX);
 }
 
-plFloat44 plShader::GetMatrix(int i) const
+plFloat44 plShader::GetMatrix(size_t i) const
 {
     // untranspose
     plFloat44 xfm;
@@ -181,7 +179,7 @@ plFloat44 plShader::GetMatrix(int i) const
     return xfm;
 }
 
-plFloat44 plShader::GetMatrix3(int i) const
+plFloat44 plShader::GetMatrix3(size_t i) const
 {
     // untranspose
     plFloat44 xfm;
@@ -197,7 +195,7 @@ plFloat44 plShader::GetMatrix3(int i) const
     return xfm;
 }
 
-hsMatrix44 plShader::GetMatrix44(int i) const
+hsMatrix44 plShader::GetMatrix44(size_t i) const
 {
     hsMatrix44 xfm;
     xfm.NotIdentity();
@@ -212,7 +210,7 @@ hsMatrix44 plShader::GetMatrix44(int i) const
     return xfm;
 }
 
-hsMatrix44 plShader::GetMatrix34(int i) const
+hsMatrix44 plShader::GetMatrix34(size_t i) const
 {
     hsMatrix44 xfm;
     xfm.NotIdentity();
@@ -229,7 +227,7 @@ hsMatrix44 plShader::GetMatrix34(int i) const
     return xfm;
 }
 
-hsMatrix44 plShader::GetMatrix24(int i) const
+hsMatrix44 plShader::GetMatrix24(size_t i) const
 {
     hsMatrix44 xfm;
     xfm.NotIdentity();
@@ -247,22 +245,22 @@ hsMatrix44 plShader::GetMatrix24(int i) const
     return xfm;
 }
 
-hsColorRGBA plShader::GetColor(int i) const
+hsColorRGBA plShader::GetColor(size_t i) const
 {
     return hsColorRGBA().Set(fConsts[i].r, fConsts[i].g, fConsts[i].b, fConsts[i].a);
 }
 
-hsPoint3 plShader::GetPosition(int i) const
+hsPoint3 plShader::GetPosition(size_t i) const
 {
     return hsPoint3(fConsts[i].fX, fConsts[i].fY, fConsts[i].fZ);
 }
 
-hsVector3 plShader::GetVector(int i) const
+hsVector3 plShader::GetVector(size_t i) const
 {
     return hsVector3(fConsts[i].fX, fConsts[i].fY, fConsts[i].fZ);
 }
 
-void plShader::GetVector(int i, float& x, float& y, float& z, float& w) const
+void plShader::GetVector(size_t i, float& x, float& y, float& z, float& w) const
 {
     x = fConsts[i].x;
     y = fConsts[i].y;
@@ -270,12 +268,12 @@ void plShader::GetVector(int i, float& x, float& y, float& z, float& w) const
     w = fConsts[i].w;
 }
 
-float plShader::GetFloat(int i, int chan) const
+float plShader::GetFloat(size_t i, int chan) const
 {
     return fConsts[i].fArray[chan];
 }
 
-const float* plShader::GetFloat4(int i) const
+const float* plShader::GetFloat4(size_t i) const
 {
     return fConsts[i].fArray;
 }
@@ -287,9 +285,8 @@ void plShader::Read(hsStream* s, hsResMgr* mgr)
     hsKeyedObject::Read(s, mgr);
 
     uint32_t n = s->ReadLE32();
-    fConsts.SetCount(n);
-    int i;
-    for( i = 0; i < n; i++ )
+    fConsts.resize(n);
+    for (uint32_t i = 0; i < n; i++)
         fConsts[i].Read(s);
 
     plShaderID::ID id = plShaderID::ID(s->ReadLE32());
@@ -303,12 +300,11 @@ void plShader::Write(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Write(s, mgr);
 
-    s->WriteLE32(fConsts.GetCount());
-    int i;
-    for( i = 0; i < fConsts.GetCount(); i++ )
-        fConsts[i].Write(s);
+    s->WriteLE32((uint32_t)fConsts.size());
+    for (const plShaderConst& konst : fConsts)
+        konst.Write(s);
 
-    s->WriteLE32(fDecl->GetID());
+    s->WriteLE32((uint32_t)fDecl->GetID());
 
     s->WriteByte(fInput);
     s->WriteByte(fOutput);
@@ -324,13 +320,7 @@ void plShader::SetDecl(plShaderID::ID id)
     SetDecl(plShaderTable::Decl(id));
 }
 
-void plShader::SetNumPipeConsts(int n)
+void plShader::SetNumPipeConsts(size_t n)
 {
-    int nOld = fPipeConsts.GetCount();
-    if( n > nOld )
-    {
-        // This will copy forward any existing entries.
-        fPipeConsts.Expand(n);
-    }
-    fPipeConsts.SetCount(n);
+    fPipeConsts.resize(n);
 }

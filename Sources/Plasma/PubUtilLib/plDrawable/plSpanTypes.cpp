@@ -68,8 +68,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void    plSpan::Read( hsStream *stream )
 {
-    fSubType = (uint16_t)(stream->ReadLE32());
-    fFogEnvironment = nil;
+    fSubType = stream->ReadLE32();
+    fFogEnvironment = nullptr;
 
     fMaterialIdx = stream->ReadLE32();
     fLocalToWorld.Read( stream );
@@ -78,21 +78,21 @@ void    plSpan::Read( hsStream *stream )
     fLocalBounds.Read( stream );
     fWorldBounds.Read( stream );
 
-    fNumMatrices = (uint8_t)(stream->ReadLE32());
+    fNumMatrices = stream->ReadLE32();
     fBaseMatrix = stream->ReadLE32();
 
     fLocalUVWChans = stream->ReadLE16();
     fMaxBoneIdx = stream->ReadLE16();
     fPenBoneIdx = stream->ReadLE16();
 
-    fMinDist = stream->ReadLEScalar();
-    fMaxDist = stream->ReadLEScalar();
+    fMinDist = stream->ReadLEFloat();
+    fMaxDist = stream->ReadLEFloat();
 
     if( fProps & kWaterHeight )
-        fWaterHeight = stream->ReadLEScalar();
+        fWaterHeight = stream->ReadLEFloat();
 
 #ifdef HS_DEBUGGING
-    fOwnerKey = nil;
+    fOwnerKey = nullptr;
 #endif
 }
 
@@ -102,7 +102,7 @@ void    plSpan::Write( hsStream *stream )
 {
     stream->WriteLE32(fSubType);
 
-    stream->WriteLE32( fMaterialIdx );
+    stream->WriteLE32((int32_t)fMaterialIdx);
 
     fLocalToWorld.Write( stream );
     fWorldToLocal.Write( stream );
@@ -117,27 +117,27 @@ void    plSpan::Write( hsStream *stream )
     stream->WriteLE16( fMaxBoneIdx );
     stream->WriteLE16( fPenBoneIdx );
 
-    stream->WriteLEScalar( fMinDist );
-    stream->WriteLEScalar( fMaxDist );
+    stream->WriteLEFloat(fMinDist);
+    stream->WriteLEFloat(fMaxDist);
 
     if( fProps & kWaterHeight )
-        stream->WriteLEScalar(fWaterHeight);
+        stream->WriteLEFloat(fWaterHeight);
 }
 
 void plSpan::RemoveAuxSpan(plAuxSpan* aux)
 {
-    int i = fAuxSpans.Find(aux);
-    int newCount = fAuxSpans.GetCount()-1;
-    if( i < newCount )
+    auto iter = std::find(fAuxSpans.begin(), fAuxSpans.end(), aux);
+    if (iter != fAuxSpans.end())
     {
-        fAuxSpans[i] = fAuxSpans[fAuxSpans.GetCount()-1];
+        // This is safe even if iter and back() reference the same element
+        *iter = fAuxSpans.back();
     }
-    fAuxSpans.SetCount(newCount);
+    fAuxSpans.pop_back();
 }
 
 void plSpan::AddAuxSpan(plAuxSpan* aux)
 {
-    fAuxSpans.Append(aux);
+    fAuxSpans.emplace_back(aux);
 }
 
 // AddPermaLight ////////////////////////////////////////////////////////////////
@@ -148,23 +148,23 @@ void plSpan::AddPermaLight(plLightInfo* li, bool proj)
 {
     if( li )
     {
-        hsTArray<plLightInfo*>& lights = proj ? fPermaProjs : fPermaLights;
-        int idx = lights.Find(li);
-        if( lights.kMissingIndex == idx )
-            lights.Append(li);
-        if( lights.GetCount() )
+        std::vector<plLightInfo*>& lights = proj ? fPermaProjs : fPermaLights;
+        auto iter = std::find(lights.cbegin(), lights.cend(), li);
+        if (iter == lights.cend())
+            lights.emplace_back(li);
+        if (!lights.empty())
             fProps |= proj ? kPropHasPermaProjs : kPropHasPermaLights;
     }
 }
 
 void plSpan::RemovePermaLight(plLightInfo* li, bool proj)
 {
-    hsTArray<plLightInfo*>& lights = proj ? fPermaProjs : fPermaLights;
-    int idx = lights.Find(li);
-    if( lights.kMissingIndex != idx )
+    std::vector<plLightInfo*>& lights = proj ? fPermaProjs : fPermaLights;
+    auto iter = std::find(lights.cbegin(), lights.cend(), li);
+    if (iter != lights.cend())
     {
-        lights.Remove(idx);
-        if( !lights.GetCount() )
+        lights.erase(iter);
+        if (lights.empty())
             fProps &= ~(proj ? kPropHasPermaProjs : kPropHasPermaLights);
     }
 }
@@ -174,48 +174,47 @@ void plSpan::RemovePermaLight(plLightInfo* li, bool proj)
 
 void    plSpan::AddLight( plLightInfo *li, float strength, float scale, bool proj ) const
 {
-    hsTArray<plLightInfo*>& lights = proj ? fProjectors : fLights;
-    hsTArray<float>& strengths = proj ? fProjStrengths : fLightStrengths;
-    hsTArray<float>& scales = proj ? fProjScales : fLightScales;
+    std::vector<plLightInfo*>& lights = proj ? fProjectors : fLights;
+    std::vector<float>& strengths = proj ? fProjStrengths : fLightStrengths;
+    std::vector<float>& scales = proj ? fProjScales : fLightScales;
 
-    int         i;
+    size_t i;
 
-    for( i = 0; i < lights.GetCount(); i++ )
+    for (i = 0; i < lights.size(); i++)
     {
         if( strengths[ i ] < strength )
             break;
     }
-    lights.Insert(i, li);
-    strengths.Insert(i, strength);
-    scales.Insert(i, float(uint32_t(scale * 127.9f)) / 127.f);
+    lights.insert(lights.begin() + i, li);
+    strengths.insert(strengths.begin() + i, strength);
+    scales.insert(scales.begin() + i, float(uint32_t(scale * 127.9f)) / 127.f);
 }
 
 void    plSpan::ClearLights() const 
 { 
-    fLights.SetCount(0); 
-    fLightStrengths.SetCount(0); 
-    fLightScales.SetCount(0);
-    fProjectors.SetCount(0); 
-    fProjStrengths.SetCount(0); 
-    fProjScales.SetCount(0);
+    fLights.clear();
+    fLightStrengths.clear();
+    fLightScales.clear();
+    fProjectors.clear();
+    fProjStrengths.clear();
+    fProjScales.clear();
 
-    int i;
-    for( i = 0; i < fPermaLights.GetCount(); i++ )
+    for (plLightInfo* permaLight : fPermaLights)
     {
-        if( !(fPermaLights[i]->IsIdle() || fPermaLights[i]->GetProperty(plLightInfo::kLPShadowOnly)) )
+        if (!(permaLight->IsIdle() || permaLight->GetProperty(plLightInfo::kLPShadowOnly)))
         {
-            fLights.Append(fPermaLights[i]);
-            fLightStrengths.Append(2.f);
-            fLightScales.Append(1.f);
+            fLights.emplace_back(permaLight);
+            fLightStrengths.emplace_back(2.f);
+            fLightScales.emplace_back(1.f);
         }
     }
-    for( i = 0; i < fPermaProjs.GetCount(); i++ )
+    for (plLightInfo* permaProj : fPermaProjs)
     {
-        if( !(fPermaProjs[i]->IsIdle() || fPermaProjs[i]->GetProperty(plLightInfo::kLPShadowOnly)) )
+        if (!(permaProj->IsIdle() || permaProj->GetProperty(plLightInfo::kLPShadowOnly)))
         {
-            fProjectors.Append(fPermaProjs[i]);
-            fProjStrengths.Append(2.f);
-            fProjScales.Append(1.f);
+            fProjectors.emplace_back(permaProj);
+            fProjStrengths.emplace_back(2.f);
+            fProjScales.emplace_back(1.f);
         }
     }
 
@@ -257,23 +256,23 @@ bool    plSpan::CanMergeInto( plSpan *other )
         return false;
     }
 
-    if( fLights.GetCount() != other->fLights.GetCount() )
+    if (fLights.size() != other->fLights.size())
         return false;
-    if( fProjectors.GetCount() != other->fProjectors.GetCount() )
+    if (fProjectors.size() != other->fProjectors.size())
         return false;
 
-    if( fLights.GetCount() )
+    if (!fLights.empty())
     {
-        if( !HSMemory::EqualBlocks(fLights.AcquireArray(), other->fLights.AcquireArray(), fLights.GetCount() * sizeof(plLightInfo*)) )
+        if (fLights != other->fLights)
             return false;
-        if( !HSMemory::EqualBlocks(fLightScales.AcquireArray(), other->fLightScales.AcquireArray(), fLights.GetCount() * sizeof(float)) )
+        if (fLightScales != other->fLightScales)
             return false;
     }
-    if( fProjectors.GetCount() )
+    if (!fProjectors.empty())
     {
-        if( !HSMemory::EqualBlocks(fProjectors.AcquireArray(), other->fProjectors.AcquireArray(), fProjectors.GetCount() * sizeof(plLightInfo*)) )
+        if (fProjectors != other->fProjectors)
             return false;
-        if( !HSMemory::EqualBlocks(fProjScales.AcquireArray(), other->fProjScales.AcquireArray(), fProjectors.GetCount() * sizeof(float)) )
+        if (fProjScales != other->fProjScales)
             return false;
     }
 
@@ -290,9 +289,8 @@ bool    plSpan::CanMergeInto( plSpan *other )
 
 void    plSpan::MergeInto( plSpan *other )
 {
-    int i;
-    for( i = 0; i < GetNumAuxSpans(); i++ )
-        other->fAuxSpans.Append(GetAuxSpan(i));
+    for (size_t i = 0; i < GetNumAuxSpans(); i++)
+        other->fAuxSpans.emplace_back(GetAuxSpan(i));
 }
 
 //// Constructor & Destructor ////////////////////////////////////////////////
@@ -301,11 +299,11 @@ plSpan::plSpan()
 {
     fTypeMask = kSpan;
     fSubType = plDrawable::kSubNormal;
-    fMaterialIdx = (uint32_t)-1;
-    fFogEnvironment = nil;
+    fMaterialIdx = -1;
+    fFogEnvironment = nullptr;
     fProps = 0;
 
-    fSnapShot = nil;
+    fSnapShot = nullptr;
 
     ClearLights();
     fVisSet.SetBit(0);
@@ -321,7 +319,7 @@ plSpan::plSpan()
     fWaterHeight = 0;
 
 #ifdef HS_DEBUGGING
-    fOwnerKey = nil;
+    fOwnerKey = nullptr;
 #endif
 }
 
@@ -333,9 +331,8 @@ void plSpan::Destroy()
         delete fSnapShot;
     }
 
-    int i;
-    for( i = 0; i < fAuxSpans.GetCount(); i++ )
-        fAuxSpans[i]->fDrawable = nil;
+    for (plAuxSpan* auxSpan : fAuxSpans)
+        auxSpan->fDrawable = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -437,7 +434,7 @@ void    plIcicle::Read( hsStream *stream )
             fSortData[ i ].Read( stream );
     }
     else
-        fSortData = nil;
+        fSortData = nullptr;
 }
 
 //// Write ///////////////////////////////////////////////////////////////////
@@ -461,11 +458,11 @@ void    plIcicle::Write( hsStream *stream )
 
 //// Destroy /////////////////////////////////////////////////////////////////
 
-void    plIcicle::Destroy( void )
+void    plIcicle::Destroy()
 {
     plSpan::Destroy();
     delete [] fSortData;
-    fSortData = nil;
+    fSortData = nullptr;
 }
 
 //// CanMergeInto ////////////////////////////////////////////////////////////
@@ -509,7 +506,7 @@ plIcicle::plIcicle()
 {
     fTypeMask |= kIcicleSpan;
 
-    fSortData = nil;
+    fSortData = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -524,7 +521,7 @@ plParticleSpan::plParticleSpan() : plIcicle()
 
     fProps |= kPropProjAsVtx;
 
-    fSource = nil;
+    fSource = nullptr;
     fSortCount = 0;
 }
 
@@ -544,11 +541,11 @@ void    plParticleSpan::MergeInto( plSpan *other )
 
 //// Destroy /////////////////////////////////////////////////////////////////
 
-void    plParticleSpan::Destroy( void )
+void    plParticleSpan::Destroy()
 {
     plIcicle::Destroy();
-    fSource = nil;
-    if( fParentSet != nil )
+    fSource = nullptr;
+    if (fParentSet != nullptr)
     {
         fParentSet->fRefCount--;
         if( fParentSet->fRefCount == 0 )

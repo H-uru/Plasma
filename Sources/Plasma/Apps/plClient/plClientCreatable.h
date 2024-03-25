@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreator.h"
 
 #include "plClient.h"
-
-REGISTER_NONCREATABLE( plClient );
+REGISTER_NONCREATABLE(plClient);
 
 #endif // plClientCreatable

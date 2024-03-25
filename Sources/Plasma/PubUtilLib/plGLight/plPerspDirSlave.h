@@ -54,9 +54,9 @@ protected:
 
 public:
 
-    virtual void Init();
+    void Init() override;
 
-    virtual bool        SetupViewTransform(plPipeline* pipe);
+    bool        SetupViewTransform(plPipeline* pipe) override;
 };
 
 

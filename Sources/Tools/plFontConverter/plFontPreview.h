@@ -54,9 +54,9 @@ public:
     void Update(plFont *font, const QString &text);
 
 protected:
-    virtual void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent *event) override;
 
-    virtual void resizeEvent(QResizeEvent *event)
+    void resizeEvent(QResizeEvent *event) override
     {
         QFrame::resizeEvent(event);
         Update(fFont, fText);

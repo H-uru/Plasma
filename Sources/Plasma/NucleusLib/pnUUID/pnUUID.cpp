@@ -56,19 +56,26 @@ plUUID::plUUID(const char* s)
     FromString(s);
 }
 
-plUUID::plUUID(const plString& s)
+plUUID::plUUID(const ST::string& s)
 {
     FromString(s.c_str());
 }
 
-plUUID::plUUID(const plUUID& other)
+void plUUID::CopyFrom(const plUUID* v)
 {
-    CopyFrom(&other);
+    if (!v)
+        Clear();
+    else
+        *this = *v;
+}
+
+void plUUID::CopyFrom(const plUUID& v)
+{
+    *this = v;
 }
 
 void plUUID::Read(hsStream* s)
 {
-    s->LogSubStreamPushDesc("plUUID");
     s->Read(sizeof(fData), (void*)fData);
 }
 
@@ -77,14 +84,9 @@ void plUUID::Write(hsStream* s)
     s->Write(sizeof(fData), (const void*)fData);
 }
 
-plString plUUID::AsString() const
+ST::string plUUID::AsString() const
 {
-    plString str;
+    ST::string str;
     ToString(str);
     return str;
-}
-
-PL_FORMAT_IMPL(const plUUID &)
-{
-    PL_FORMAT_FORWARD(value.AsString());
 }

@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #ifndef plAvBrainClimb_Include
 #define plAvBrainClimb_Include
-#pragma once
 
 /////////////////////////////////////////////////////////////////
 //
@@ -96,19 +95,19 @@ public:
     plAvBrainClimb(Mode initialMode);
     virtual ~plAvBrainClimb();
 
-    virtual void Activate(plArmatureModBase *avMod);
-    virtual void Deactivate();
-    virtual bool Apply(double timeNow, float elapsed);
+    void Activate(plArmatureModBase *avMod) override;
+    void Deactivate() override;
+    bool Apply(double timeNow, float elapsed) override;
 
     virtual void SaveToSDL(plStateDataRecord *sdl);
     virtual void LoadFromSDL(const plStateDataRecord *sdl);
 
-    void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt);
+    void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt) override;
     static const char *WorldDirStr(plClimbMsg::Direction dir);
     static const char *ModeStr(Mode mode);
 
     // plasma protocol
-    virtual bool MsgReceive(plMessage *msg);
+    bool MsgReceive(plMessage *msg) override;
 
     CLASSNAME_REGISTER( plAvBrainClimb );
     GETINTERFACE_ANY( plAvBrainClimb, plArmatureBrain);

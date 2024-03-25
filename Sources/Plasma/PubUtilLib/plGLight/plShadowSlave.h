@@ -131,12 +131,12 @@ public:
 
 class plDirectShadowSlave : public plShadowSlave
 {
-    virtual bool        SetupViewTransform(plPipeline* pipe) { return ISetupOrthoViewTransform(); }
+    bool        SetupViewTransform(plPipeline* pipe) override { return ISetupOrthoViewTransform(); }
 };
 
 class plPointShadowSlave : public plShadowSlave
 {
-    virtual bool        SetupViewTransform(plPipeline* pipe) { return ISetupPerspViewTransform(); }
+    bool        SetupViewTransform(plPipeline* pipe) override { return ISetupPerspViewTransform(); }
 };
 
 #endif // plShadowSlave_inc

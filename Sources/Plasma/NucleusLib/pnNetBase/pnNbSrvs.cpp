@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "pnNbSrvs.h"
-#include "plString.h"
+#include <string_theory/string>
 
 /*****************************************************************************
 *
@@ -49,9 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-static plString s_authAddrs[] = { "" };
-static plString s_fileAddrs[] = { "" };
-static plString s_gateKeeperAddrs[] = { "" };
+static ST::string s_authAddrs[] = { ST::string() };
+static ST::string s_fileAddrs[] = { ST::string() };
+static ST::string s_gateKeeperAddrs[] = { ST::string() };
 
 static unsigned s_clientPort = 14617;
 
@@ -65,39 +65,39 @@ static unsigned s_clientPort = 14617;
 //============================================================================
 // Auth
 //============================================================================
-unsigned GetAuthSrvHostnames (const plString*& addrs) {
+unsigned GetAuthSrvHostnames (const ST::string*& addrs) {
     addrs = s_authAddrs;
-    return arrsize(s_authAddrs);
+    return std::size(s_authAddrs);
 }
 
 //============================================================================
-void SetAuthSrvHostname (const plString& addr) {
+void SetAuthSrvHostname (const ST::string& addr) {
     s_authAddrs[0] = addr;
 }
 
 //============================================================================
 // File
 //============================================================================
-unsigned GetFileSrvHostnames (const plString*& addrs) {
+unsigned GetFileSrvHostnames (const ST::string*& addrs) {
     addrs = s_fileAddrs;
-    return arrsize(s_fileAddrs);
+    return std::size(s_fileAddrs);
 }
 
 //============================================================================
-void SetFileSrvHostname (const plString& addr) {
+void SetFileSrvHostname (const ST::string& addr) {
     s_fileAddrs[0] = addr;
 }
 
 //============================================================================
 // GateKeeper
 //============================================================================
-unsigned GetGateKeeperSrvHostnames (const plString*& addrs) {
+unsigned GetGateKeeperSrvHostnames (const ST::string*& addrs) {
     addrs = s_gateKeeperAddrs;
-    return arrsize(s_gateKeeperAddrs);
+    return std::size(s_gateKeeperAddrs);
 }
 
 //============================================================================
-void SetGateKeeperSrvHostname (const plString& addr) {
+void SetGateKeeperSrvHostname (const ST::string& addr) {
     s_gateKeeperAddrs[0] = addr;
 }
 
@@ -117,36 +117,36 @@ void SetClientPort(unsigned port) {
 //============================================================================
 // User-visible Server
 //============================================================================
-static plString s_serverStatusUrl;
-static plString s_serverSignupUrl;
-static plString s_serverName;
+static ST::string s_serverStatusUrl;
+static ST::string s_serverSignupUrl;
+static ST::string s_serverName;
 
 //============================================================================
-plString GetServerStatusUrl () {
+ST::string GetServerStatusUrl () {
     return s_serverStatusUrl;
 }
 
 //============================================================================
-void SetServerStatusUrl (const plString& url) {
+void SetServerStatusUrl (const ST::string& url) {
     s_serverStatusUrl = url;
 }
 
 //============================================================================
-plString GetServerSignupUrl () {
+ST::string GetServerSignupUrl () {
     return s_serverSignupUrl;
 }
 
 //============================================================================
-void SetServerSignupUrl (const plString& url) {
+void SetServerSignupUrl (const ST::string& url) {
     s_serverSignupUrl = url;
 }
 
 //============================================================================
-plString GetServerDisplayName () {
+ST::string GetServerDisplayName () {
     return s_serverName;
 }
 
 //============================================================================
-void SetServerDisplayName (const plString& name) {
+void SetServerDisplayName (const ST::string& name) {
     s_serverName = name;
 }

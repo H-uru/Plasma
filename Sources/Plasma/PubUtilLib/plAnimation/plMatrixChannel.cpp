@@ -130,7 +130,7 @@ void plMatrixChannel::Value(hsMatrix44 &matrix, double time, bool peek)
 // ------------
 plAGChannel * plMatrixChannel::MakeCombine(plAGChannel *other)
 {
-    return nil;
+    return nullptr;
 }
 
 // MakeBlend ---------------------------------------------------
@@ -231,7 +231,7 @@ void plMatrixConstant::Read(hsStream *stream, hsResMgr *mgr)
 // ctor ------------------------------
 // -----
 plMatrixTimeScale::plMatrixTimeScale()
-: plMatrixChannel(), fTimeSource(nil), fChannelIn(nil)
+: plMatrixChannel(), fTimeSource(), fChannelIn()
 {
 }
 
@@ -285,7 +285,7 @@ plAGChannel * plMatrixTimeScale::Detach(plAGChannel * detach)
     // If you delete a timescale, it is not replaced with its upstream node;
     // it's just gone.
     if(!fChannelIn || detach == this)
-        result = nil;
+        result = nullptr;
 
     if(result != this)
         delete this;
@@ -343,9 +343,9 @@ plMatrixBlend::plMatrixBlend(plMatrixChannel * channelA, plMatrixChannel * chann
 // -----
 plMatrixBlend::~plMatrixBlend()
 {
-    fChannelA = nil;
-    fChannelB = nil;
-    fChannelBias = nil;
+    fChannelA = nullptr;
+    fChannelB = nullptr;
+    fChannelBias = nullptr;
 }
 
 // MakeBlend --------------------------------------------------
@@ -443,7 +443,7 @@ plAGChannel * plMatrixBlend::Detach(plAGChannel *remove)
     else if(fChannelB && !fChannelA)
         result = fChannelB;
     else if(!fChannelA && !fChannelB)
-        result = nil;
+        result = nullptr;
 
     if(result != this)
         delete this;
@@ -495,7 +495,7 @@ void plMatrixBlend::Dump(int indent, bool optimized, double time)
 // ctor ----------------------------------------------
 // -----
 plMatrixControllerChannel::plMatrixControllerChannel()
-: plMatrixChannel(), fController(nil)
+: plMatrixChannel(), fController()
 {
 }
 
@@ -514,7 +514,7 @@ plMatrixControllerChannel::~plMatrixControllerChannel()
 {
     if(fController) {
         delete fController;
-        fController = nil;
+        fController = nullptr;
     }
 }
 
@@ -522,7 +522,7 @@ plMatrixControllerChannel::~plMatrixControllerChannel()
 // ------
 const hsMatrix44 & plMatrixControllerChannel::Value(double time, bool peek)
 {
-    return Value(time, peek, nil);
+    return Value(time, peek, nullptr);
 }
 
 // Value ------------------------------------------------------------------
@@ -544,7 +544,7 @@ const hsMatrix44 & plMatrixControllerChannel::Value(double time, bool peek,
 // ------------
 const hsAffineParts & plMatrixControllerChannel::AffineValue(double time, bool peek)
 {
-    return AffineValue(time, peek, nil);
+    return AffineValue(time, peek, nullptr);
 }
 
 // AffineValue ---------------------------------------------------------------------
@@ -606,7 +606,7 @@ void plMatrixControllerChannel::Read(hsStream *stream, hsResMgr *mgr)
 
 // CTOR
 plMatrixControllerCacheChannel::plMatrixControllerCacheChannel()
-: plMatrixChannel(), fControllerChannel(nil), fCache(nil)
+: plMatrixChannel(), fControllerChannel(), fCache()
 {
 }
 
@@ -620,7 +620,7 @@ plMatrixControllerCacheChannel::plMatrixControllerCacheChannel(plMatrixControlle
 plMatrixControllerCacheChannel::~plMatrixControllerCacheChannel()
 {
     delete fCache;
-    fControllerChannel = nil;
+    fControllerChannel = nullptr;
 }
 
 // VALUE(time)
@@ -646,7 +646,7 @@ plAGChannel * plMatrixControllerCacheChannel::Detach(plAGChannel * detach)
         result = fControllerChannel;
 
     if(!fControllerChannel)
-        result = nil;
+        result = nullptr;
 
     if(result != this)
         delete this;
@@ -660,7 +660,7 @@ plAGChannel * plMatrixControllerCacheChannel::Detach(plAGChannel * detach)
 
 // CTOR
 plQuatPointCombine::plQuatPointCombine()
-: fQuatChannel(nil), fPointChannel(nil)
+: fQuatChannel(), fPointChannel()
 {
 }
 
@@ -676,11 +676,11 @@ plQuatPointCombine::~plQuatPointCombine()
 {
     if(fQuatChannel) {
     //XXX   delete fQuatChannel;
-        fQuatChannel = nil;
+        fQuatChannel = nullptr;
     }
     if(fPointChannel) {
     //XXX   delete fPointChannel;
-        fPointChannel = nil;
+        fPointChannel = nullptr;
     }
 }
 
@@ -880,32 +880,6 @@ bool plMatrixDifferenceApp::CanBlend(plAGApplicator *app)
     return false;
 }
 
-// *** move this somewhere real
-bool CompareMatrices2(const hsMatrix44 &matA, const hsMatrix44 &matB, float tolerance)
-{
-    bool c00 = fabs(matA.fMap[0][0] - matB.fMap[0][0]) < tolerance;
-    bool c01 = fabs(matA.fMap[0][1] - matB.fMap[0][1]) < tolerance;
-    bool c02 = fabs(matA.fMap[0][2] - matB.fMap[0][2]) < tolerance;
-    bool c03 = fabs(matA.fMap[0][3] - matB.fMap[0][3]) < tolerance;
-
-    bool c10 = fabs(matA.fMap[1][0] - matB.fMap[1][0]) < tolerance;
-    bool c11 = fabs(matA.fMap[1][1] - matB.fMap[1][1]) < tolerance;
-    bool c12 = fabs(matA.fMap[1][2] - matB.fMap[1][2]) < tolerance;
-    bool c13 = fabs(matA.fMap[1][3] - matB.fMap[1][3]) < tolerance;
-
-    bool c20 = fabs(matA.fMap[2][0] - matB.fMap[2][0]) < tolerance;
-    bool c21 = fabs(matA.fMap[2][1] - matB.fMap[2][1]) < tolerance;
-    bool c22 = fabs(matA.fMap[2][2] - matB.fMap[2][2]) < tolerance;
-    bool c23 = fabs(matA.fMap[2][3] - matB.fMap[2][3]) < tolerance;
-
-    bool c30 = fabs(matA.fMap[3][0] - matB.fMap[3][0]) < tolerance;
-    bool c31 = fabs(matA.fMap[3][1] - matB.fMap[3][1]) < tolerance;
-    bool c32 = fabs(matA.fMap[3][2] - matB.fMap[3][2]) < tolerance;
-    bool c33 = fabs(matA.fMap[3][3] - matB.fMap[3][3]) < tolerance;
-
-    return c00 && c01 && c02 && c03 && c10 && c11 && c12 && c13 && c20 && c21 && c22 && c23 && c30 && c31 && c32 && c33;
-}
-
 // IAPPLY
 void plMatrixDifferenceApp::IApply(const plAGModifier *mod, double time)
 {
@@ -928,7 +902,7 @@ void plMatrixDifferenceApp::IApply(const plAGModifier *mod, double time)
 
         fNew = false;
     } else {
-        if( ! CompareMatrices2(fLastA2L, A2L, .0001f) && ! CompareMatrices2(fLastL2A, L2A, .0001f))
+        if( !fLastA2L.Compare(A2L, .0001f) && !fLastL2A.Compare(L2A, .0001f))
         {
             plCoordinateInterface *CI = IGetCI(mod);
 
@@ -973,7 +947,7 @@ public:
     void SetTarget(hsPoint3 &worldPoint);
 
 private:
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
     void ISolve();
     // The other bone involved in the IK solution
     plIK2Applicator *fOtherBone;

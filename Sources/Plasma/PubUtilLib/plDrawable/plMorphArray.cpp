@@ -53,7 +53,7 @@ plMorphArray::~plMorphArray()
 
 
 // MorphArray - Apply
-void plMorphArray::Apply(hsTArray<plAccessSpan>& dst, hsTArray<float>* weights /* = nil */) const
+void plMorphArray::Apply(std::vector<plAccessSpan>& dst, std::vector<float>* weights /* = nullptr */) const
 {
     // Have our choice of cache thrashing here
     // We can for each delta/for each vert
@@ -63,38 +63,35 @@ void plMorphArray::Apply(hsTArray<plAccessSpan>& dst, hsTArray<float>* weights /
     // that a delta with a weight of zero can just bag it with one if.
     //
     // For each delta
-    int i;
-    for( i = 0; i < fDeltas.GetCount(); i++ )
+    for (size_t i = 0; i < fDeltas.size(); i++)
     {
         // delta->Apply
-        fDeltas[i].Apply(dst, (weights ? weights->Get(i) : -1.f));
+        fDeltas[i].Apply(dst, (weights ? (*weights)[i] : -1.f));
     }
 }
 
 void plMorphArray::Read(hsStream* s, hsResMgr* mgr)
 {
-    int n = s->ReadLE32();
-    fDeltas.SetCount(n);
-    int i;
-    for( i = 0; i < n; i++ )
-        fDeltas[i].Read(s, mgr);
+    uint32_t n = s->ReadLE32();
+    fDeltas.resize(n);
+    for (plMorphDelta& delta : fDeltas)
+        delta.Read(s, mgr);
 }
 
 void plMorphArray::Write(hsStream* s, hsResMgr* mgr)
 {
-    s->WriteLE32(fDeltas.GetCount());
+    s->WriteLE32((uint32_t)fDeltas.size());
 
-    int i;
-    for( i = 0; i < fDeltas.GetCount(); i++ )
-        fDeltas[i].Write(s, mgr);
+    for (plMorphDelta& delta : fDeltas)
+        delta.Write(s, mgr);
 }
 
 void plMorphArray::Reset()
 {
-    fDeltas.Reset();
+    fDeltas.clear();
 }
 
 void plMorphArray::AddDelta(const plMorphDelta& delta)
 {
-    fDeltas.Append(delta);
+    fDeltas.emplace_back(delta);
 }

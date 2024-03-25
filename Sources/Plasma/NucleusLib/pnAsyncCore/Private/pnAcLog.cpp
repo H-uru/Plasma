@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "../Pch.h"
 #include "plStatusLog/plStatusLog.h"
-#pragma hdrstop
 
 /*****************************************************************************
 *
@@ -56,44 +55,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 //===========================================================================
-void CDECL LogMsg (ELogSeverity severity, const char *format, ...) {
-    ASSERT(format);
-
-    va_list args;
-    va_start(args, format);
-    LogMsgV(severity, format, args);
-    va_end(args);
+void LogMsg(ELogSeverity severity, const char* line) {
+    ASSERT(line);
+    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", line);
 }
 
 //===========================================================================
-void CDECL LogMsg (ELogSeverity severity, const wchar_t *format, ...) {
-    ASSERT(format);
-
-    va_list args;
-    va_start(args, format);
-    LogMsgV(severity, format, args);
-    va_end(args);
-}
-
-//===========================================================================
-void LogMsgV (ELogSeverity severity, const char *format, va_list args) {
-    ASSERT(format);
-
-    char msg[1024];
-    StrPrintfV(msg, arrsize(msg), format, args);
-
-    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", msg);
-}
-
-//===========================================================================
-void LogMsgV (ELogSeverity severity, const wchar_t *format, va_list args) {
-    ASSERT(format);
-    ASSERT(args);
-
-    wchar_t msg[1024];
-    StrPrintfV(msg, arrsize(msg), format, args);
-
-    char* to_log = hsWStringToString(msg);
-    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", to_log);
-    delete[] to_log;
+void LogMsg(ELogSeverity severity, const ST::string& line) {
+    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", line);
 }

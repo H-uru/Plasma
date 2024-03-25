@@ -108,7 +108,6 @@ plMipmap* plBumpMapGen::QikBumpMap(plMipmap* dst, const plMipmap* origSrc, uint3
 
     const int width = src->GetWidth();
     const int height = src->GetHeight();
-    const int stride = src->GetRowBytes(); // Should be width * 4;
 
     const uint32_t alphaOr = flags & kScaleHgtByAlpha ? 0 : 0xff;
 
@@ -206,8 +205,6 @@ plMipmap* plBumpMapGen::QikNormalMap(plMipmap* dst, const plMipmap* src, uint32_
     if( flags & kBubbleTest )
     {
         int8_t* pDst = (int8_t*)dst->GetAddr32(0, 0);
-
-        int32_t nZ = int32_t(smooth * 255.99f);
 
         int i;
         int j;

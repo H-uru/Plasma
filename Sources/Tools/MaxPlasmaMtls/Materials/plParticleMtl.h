@@ -48,11 +48,15 @@ class Bitmap;
 
 extern TCHAR *GetString(int id);
 
-class plParticleMtl : public Mtl
+class plParticleMtl : public plMaxMtl<Mtl>
 {
 protected:
     IParamBlock2    *fBasicPB;
     Interval        fIValid;
+
+    void IGetClassName(MSTR& s) const override;
+    MSTR IGetSubTexmapSlotName(int i) override;
+    MSTR ISubAnimName(int i) override;
 
 public:
     IMtlParams *fIMtlParams;
@@ -110,57 +114,54 @@ public:
     static const char *NormalStrings[];
 
     plParticleMtl(BOOL loading);
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     //From Animatable
-    Class_ID ClassID() { return PARTICLE_MTL_CLASS_ID; }        
-    SClass_ID SuperClassID() { return MATERIAL_CLASS_ID; }
-    void GetClassName(TSTR& s);
+    Class_ID ClassID() override { return PARTICLE_MTL_CLASS_ID; }
+    SClass_ID SuperClassID() override { return MATERIAL_CLASS_ID; }
 
-    ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
-    void Update(TimeValue t, Interval& valid);
-    Interval Validity(TimeValue t);
-    void Reset();
+    ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) override;
+    void Update(TimeValue t, Interval& valid) override;
+    Interval Validity(TimeValue t) override;
+    void Reset() override;
 
     void NotifyChanged();
 
-    BOOL SupportsMultiMapsInViewport() { return FALSE; }
-    void SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback &cb);
+    BOOL SupportsMultiMapsInViewport() override { return FALSE; }
+    void SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback &cb) override;
 
     // Shade and displacement calculation
-    void Shade(ShadeContext& sc);
+    void Shade(ShadeContext& sc) override;
     void ShadeWithBackground(ShadeContext &sc, Color background);
-    float EvalDisplacement(ShadeContext& sc); 
-    Interval DisplacementValidity(TimeValue t);     
+    float EvalDisplacement(ShadeContext& sc) override;
+    Interval DisplacementValidity(TimeValue t) override;
 
     // SubTexmap access methods
-    int NumSubTexmaps();
-    Texmap* GetSubTexmap(int i);
-    void SetSubTexmap(int i, Texmap *m);
-    TSTR GetSubTexmapSlotName(int i);
-    TSTR GetSubTexmapTVName(int i);
+    int NumSubTexmaps() override;
+    Texmap* GetSubTexmap(int i) override;
+    void SetSubTexmap(int i, Texmap *m) override;
+    MSTR GetSubTexmapTVName(int i);
     
-    BOOL SetDlgThing(ParamDlg* dlg);
+    BOOL SetDlgThing(ParamDlg* dlg) override;
 
     // Loading/Saving
-    IOResult Load(ILoad *iload);
-    IOResult Save(ISave *isave);
+    IOResult Load(ILoad *iload) override;
+    IOResult Save(ISave *isave) override;
 
-    RefTargetHandle Clone( RemapDir &remap );
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-        PartID& partID,  RefMessage message);
+    RefTargetHandle Clone(RemapDir &remap) override;
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+        PartID& partID,  RefMessage message MAX_REF_PROPAGATE) override;
 
-    int NumSubs();
-    Animatable* SubAnim(int i); 
-    TSTR SubAnimName(int i);
+    int NumSubs() override;
+    Animatable* SubAnim(int i) override;
 
-    int NumRefs();
-    RefTargetHandle GetReference(int i);
-    void SetReference(int i, RefTargetHandle rtarg);
+    int NumRefs() override;
+    RefTargetHandle GetReference(int i) override;
+    void SetReference(int i, RefTargetHandle rtarg) override;
 
-    int NumParamBlocks();
-    IParamBlock2* GetParamBlock(int i);
-    IParamBlock2* GetParamBlockByID(BlockID id);
+    int NumParamBlocks() override;
+    IParamBlock2* GetParamBlock(int i) override;
+    IParamBlock2* GetParamBlockByID(BlockID id) override;
 
 
 //  void SetParamDlg(ParamDlg *dlg);
@@ -174,19 +175,19 @@ public:
     Control *GetHeightController();
 
     // From MtlBase and Mtl
-    void SetAmbient(Color c, TimeValue t);      
-    void SetDiffuse(Color c, TimeValue t);      
-    void SetSpecular(Color c, TimeValue t);
-    void SetShininess(float v, TimeValue t);
-    Color GetAmbient(int mtlNum=0, BOOL backFace=FALSE);
-    Color GetDiffuse(int mtlNum=0, BOOL backFace=FALSE);
-    Color GetSpecular(int mtlNum=0, BOOL backFace=FALSE);
-    float GetXParency(int mtlNum=0, BOOL backFace=FALSE);
-    float GetShininess(int mtlNum=0, BOOL backFace=FALSE);      
-    float GetShinStr(int mtlNum=0, BOOL backFace=FALSE);
-    float WireSize(int mtlNum=0, BOOL backFace=FALSE);
+    void SetAmbient(Color c, TimeValue t) override;
+    void SetDiffuse(Color c, TimeValue t) override;
+    void SetSpecular(Color c, TimeValue t) override;
+    void SetShininess(float v, TimeValue t) override;
+    Color GetAmbient(int mtlNum=0, BOOL backFace=FALSE) override;
+    Color GetDiffuse(int mtlNum=0, BOOL backFace=FALSE) override;
+    Color GetSpecular(int mtlNum=0, BOOL backFace=FALSE) override;
+    float GetXParency(int mtlNum=0, BOOL backFace=FALSE) override;
+    float GetShininess(int mtlNum=0, BOOL backFace=FALSE) override;
+    float GetShinStr(int mtlNum=0, BOOL backFace=FALSE) override;
+    float WireSize(int mtlNum=0, BOOL backFace=FALSE) override;
 
-    ULONG   Requirements( int subMtlNum );
+    ULONG   Requirements(int subMtlNum) override;
 };
 
 #endif //PL_PARTICLEMTL_H

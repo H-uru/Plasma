@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plLayerOr_h
 #define _plLayerOr_h
 
-#include "plLayerInterface.h"
 #include "hsGMatState.h"
+
+#include "plLayerInterface.h"
 
 class plLayerOr : public plLayerInterface
 {
@@ -54,7 +55,6 @@ class plLayerOr : public plLayerInterface
 
     public:
         plLayerOr();
-        virtual ~plLayerOr();
 
         CLASSNAME_REGISTER( plLayerOr );
         GETINTERFACE_ANY( plLayerOr, plLayerInterface );
@@ -66,9 +66,9 @@ class plLayerOr : public plLayerInterface
         void    SetMiscFlags( uint32_t f )    { fOringState.fMiscFlags = f; }
         void    SetState( const hsGMatState& state );
 
-        virtual plLayerInterface*   Attach(plLayerInterface* prev);
+        plLayerInterface*   Attach(plLayerInterface* prev) override;
 
-        virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
+        uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore) override;
 };
 
 #endif //_plLayerOr_h

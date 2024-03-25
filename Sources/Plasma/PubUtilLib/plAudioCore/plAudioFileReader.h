@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plAudioFileReader_h
 
 #include "plAudioCore.h"
-#include "hsTemplates.h"
 
 //// Class Definition ////////////////////////////////////////////////////////
 
@@ -62,7 +61,7 @@ class plAudioFileReader
 {
 public:
     virtual ~plAudioFileReader() {}
-    virtual plWAVHeader &GetHeader( void ) = 0;
+    virtual plWAVHeader &GetHeader() = 0;
 
     enum StreamType
     {
@@ -72,19 +71,19 @@ public:
     };
 
     virtual void    Open(){}
-    virtual void    Close( void ) = 0;
+    virtual void    Close() = 0;
 
-    virtual uint32_t  GetDataSize( void ) = 0;
-    virtual float   GetLengthInSecs( void ) = 0;
+    virtual uint32_t  GetDataSize() = 0;
+    virtual float   GetLengthInSecs() = 0;
 
     virtual bool    SetPosition( uint32_t numBytes ) = 0;
     virtual bool    Read( uint32_t numBytes, void *buffer ) = 0;
-    virtual uint32_t  NumBytesLeft( void ) = 0;
+    virtual uint32_t  NumBytesLeft() = 0;
 
     virtual bool    OpenForWriting( const plFileName& path, plWAVHeader &header ) { return false; }
     virtual uint32_t  Write( uint32_t bytes, void *buffer ) { return 0; }
 
-    virtual bool    IsValid( void ) = 0;
+    virtual bool    IsValid() = 0;
 
     static plAudioFileReader* CreateReader(const plFileName& path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll, StreamType type = kStreamWAV);
     static plAudioFileReader* CreateWriter(const plFileName& path, plWAVHeader& header);

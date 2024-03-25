@@ -47,14 +47,13 @@ class plErrorMsg;
 class plKey;
 class plMaxNode;
 class INodeTab;
-template<class T> class hsTArray;
 
 #define NAV_LADDER_CID Class_ID(0x6b010148, 0x47cc7464)
 
 class plAvLadderComponent : public plComponent
 {
 public:
-    typedef hsTArray<plKey> LadderModKeys;
+    typedef std::vector<plKey> LadderModKeys;
 
 protected:
     LadderModKeys fKeys;
@@ -62,15 +61,15 @@ protected:
 public:
     plAvLadderComponent();
 
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     // Call after PreConvert
     const LadderModKeys& GetLadderModKeys() { return fKeys; }
 
-    virtual void CollectNonDrawables(INodeTab& nonDrawables);
+    void CollectNonDrawables(INodeTab& nonDrawables) override;
 };
 
 #endif // plAvLadderComponent_h_inc

@@ -40,8 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-
-#include "HeadSpin.h"
 #include "plImageLibMod.h"
 
 #include "plGImage/plBitmap.h"
@@ -62,18 +60,18 @@ plImageLibMod::~plImageLibMod()
 bool plImageLibMod::MsgReceive(plMessage* msg)
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
-    if( refMsg != nil )
+    if (refMsg != nullptr)
     {
         if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
         {
-            if( fImages.GetCount() <= refMsg->fWhich )
-                fImages.ExpandAndZero( refMsg->fWhich + 1 );
+            if ((hsSsize_t)fImages.size() <= refMsg->fWhich)
+                fImages.resize(refMsg->fWhich + 1);
 
             fImages[ refMsg->fWhich ] = plBitmap::ConvertNoRef( refMsg->GetRef() );
         }
         else if( refMsg->GetContext() & ( plRefMsg::kOnRemove | plRefMsg::kOnDestroy ) )
         {
-            fImages[ refMsg->fWhich ] = nil;
+            fImages[refMsg->fWhich] = nullptr;
         }
         return true;
     }
@@ -85,9 +83,9 @@ void plImageLibMod::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Read(stream, mgr);
 
-    uint32_t i, count = stream->ReadLE32();
-    fImages.SetCountAndZero( count );
-    for( i = 0; i < count; i++ )
+    uint32_t count = stream->ReadLE32();
+    fImages.assign(count, nullptr);
+    for (uint32_t i = 0; i < count; i++)
         mgr->ReadKeyNotifyMe( stream, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefImage ), plRefFlags::kActiveRef );
 }
 
@@ -95,8 +93,7 @@ void plImageLibMod::Write(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Write(stream, mgr);
 
-    stream->WriteLE32( fImages.GetCount() );
-    uint32_t i;
-    for( i = 0; i < fImages.GetCount(); i++ )
-        mgr->WriteKey( stream, fImages[ i ]->GetKey() );
+    stream->WriteLE32((uint32_t)fImages.size());
+    for (plBitmap* image : fImages)
+        mgr->WriteKey(stream, image->GetKey());
 }

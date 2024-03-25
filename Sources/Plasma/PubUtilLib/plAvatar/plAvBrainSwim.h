@@ -43,8 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_AV_BRAIN_SWIM_H
 
 #include "plAvBrain.h"
-#include "hsTemplates.h"
-#include "pnKeyedObject/plKey.h"
 
 class plArmatureMod;
 class plAntiGravAction;
@@ -61,16 +59,17 @@ public:
     CLASSNAME_REGISTER( plAvBrainSwim );
     GETINTERFACE_ANY( plAvBrainSwim, plArmatureBrain );
 
-    virtual void Activate(plArmatureModBase *avMod);
-    bool Apply(double time, float elapsed);
-    virtual void Deactivate();
-    virtual void Suspend();
-    virtual void Resume();
-    virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt);
-    bool MsgReceive(plMessage *msg);
+    void Activate(plArmatureModBase *avMod) override;
+    bool Apply(double time, float elapsed) override;
+    void Deactivate() override;
+    void Suspend() override;
+    void Resume() override;
+    void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt) override;
+    bool MsgReceive(plMessage *msg) override;
     bool IsWalking();
     bool IsWading();
     bool IsSwimming();
+    bool IsMovingForward() const;
     float GetSurfaceDistance() { return fSurfaceDistance; }
 
     plSwimStrategy *fSwimStrategy;

@@ -69,17 +69,17 @@ public:
     ~plMultipassMtlDlg();
 
     // Functions inherited from ParamDLg:
-    Class_ID ClassID()                  { return MULTIMTL_CLASS_ID;  }
-    void SetThing(ReferenceTarget *m);
-    ReferenceTarget* GetThing()         { return (ReferenceTarget*)fMtl; }
-    void SetTime(TimeValue t);
-    void ReloadDialog();
-    void ActivateDlg(BOOL onOff);
-    void DeleteThis()                   { delete this;  }   
-    int FindSubMtlFromHWND(HWND hw);
+    Class_ID ClassID() override { return MULTIMTL_CLASS_ID;  }
+    void SetThing(ReferenceTarget *m) override;
+    ReferenceTarget* GetThing() override { return (ReferenceTarget*)fMtl; }
+    void SetTime(TimeValue t) override;
+    void ReloadDialog() override;
+    void ActivateDlg(BOOL onOff) override;
+    void DeleteThis() override { delete this; }
+    int FindSubMtlFromHWND(HWND hw) override;
 
-    static BOOL CALLBACK ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-    BOOL LayerPanelProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    INT_PTR LayerPanelProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
     void UpdateLayerDisplay();
     void LoadDialog();

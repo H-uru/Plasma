@@ -42,8 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pySpawnPointInfo_h_inc
 #define pySpawnPointInfo_h_inc
 
+#include <string_theory/string>
+
 #include "plNetCommon/plSpawnPointInfo.h"
-#include "pyGlueHelpers.h"
+
+#include "pyGlueDefinitions.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -56,7 +59,7 @@ class pySpawnPointInfo
 protected:
     pySpawnPointInfo();
     pySpawnPointInfo( const plSpawnPointInfo & info ): fInfo( info ) {}
-    pySpawnPointInfo( const char * title, const char * spawnPt );
+    pySpawnPointInfo(const ST::string& title, const ST::string& spawnPt);
 
 public:
     plSpawnPointInfo    fInfo;
@@ -65,20 +68,20 @@ public:
     PYTHON_CLASS_NEW_FRIEND(ptSpawnPointInfo);
     PYTHON_CLASS_NEW_DEFINITION;
     static PyObject *New(const plSpawnPointInfo& info);
-    static PyObject *New(const char* title, const char* spawnPt);
+    static PyObject *New(const ST::string& title, const ST::string& spawnPt);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a ptSpawnPointInfo object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySpawnPointInfo); // converts a PyObject to a pySpawnPointInfo (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
-    static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
+    static void AddPlasmaMethods(PyObject* m);
 
     plSpawnPointInfo & SpawnPoint() { return fInfo; }
-    void    SetTitle( const char * v ) { fInfo.SetTitle( v ); }
-    plString GetTitle() const { return fInfo.GetTitle(); }
-    void    SetName( const char * v ) { fInfo.SetName( v ); }
-    plString GetName() const { return fInfo.GetName(); }
-    void    SetCameraStack(const char * v ) { fInfo.SetCameraStack( v ); }
-    plString GetCameraStack() const { return fInfo.GetCameraStack(); }
+    void    SetTitle(const ST::string& v) { fInfo.SetTitle(v); }
+    ST::string GetTitle() const { return fInfo.GetTitle(); }
+    void    SetName(const ST::string& v) { fInfo.SetName(v); }
+    ST::string GetName() const { return fInfo.GetName(); }
+    void    SetCameraStack(const ST::string& v) { fInfo.SetCameraStack(v); }
+    ST::string GetCameraStack() const { return fInfo.GetCameraStack(); }
 
     static PyObject* GetDefaultSpawnPoint();
 };
@@ -104,12 +107,12 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     plSpawnPointInfo & SpawnPoint() { return fInfo; }
-    void    SetTitle( const char * v ) { fInfo.SetTitle( v ); }
-    plString GetTitle() const { return fInfo.GetTitle(); }
-    void    SetName( const char * v ) { fInfo.SetName( v ); }
-    plString GetName() const { return fInfo.GetName(); }
-    void    SetCameraStack(const char * v ) { fInfo.SetCameraStack( v ); }
-    plString GetCameraStack() const { return fInfo.GetCameraStack(); }
+    void    SetTitle(const ST::string& v) { fInfo.SetTitle(v); }
+    ST::string GetTitle() const { return fInfo.GetTitle(); }
+    void    SetName(const ST::string& v) { fInfo.SetName(v); }
+    ST::string GetName() const { return fInfo.GetName(); }
+    void    SetCameraStack(const ST::string& v) { fInfo.SetCameraStack(v); }
+    ST::string GetCameraStack() const { return fInfo.GetCameraStack(); }
 };
 
 #endif // pySpawnPointInfo_h_inc

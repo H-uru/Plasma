@@ -59,9 +59,9 @@ protected:
 
     virtual hsVector3   IGetDirection(const plDynaDecalInfo& info, const hsPoint3& pos) const;
 
-    virtual bool        IRippleFromShape(const plPrintShape* shape, bool force=false);
+    bool        IRippleFromShape(const plPrintShape* shape, bool force=false) override;
 
-    virtual int         INewDecal();
+    size_t      INewDecal() override;
 public:
     plDynaWakeMgr();
     virtual ~plDynaWakeMgr();
@@ -69,8 +69,8 @@ public:
     CLASSNAME_REGISTER( plDynaWakeMgr );
     GETINTERFACE_ANY( plDynaWakeMgr, plDynaRippleMgr );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     void            SetAnimPath(plAnimPath* a);
     plAnimPath*     GetAnimPath() const { return fAnimPath; }

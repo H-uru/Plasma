@@ -43,15 +43,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLogicModifier_inc
 #define plLogicModifier_inc
 
+#include <vector>
+
 #include "pnModifier/plLogicModBase.h"
+
+class plConditionalObject;
 
 class plLogicModifier : public plLogicModBase
 {
 protected:
+    std::vector<plConditionalObject*> fConditionList;
 
-    hsTArray<plConditionalObject*>  fConditionList;
+    void PreTrigger(bool netRequest) override;
+    void UpdateSharedState(bool triggered) const override;
 
-    virtual void PreTrigger(bool netRequest);
 public:
     plLogicModifier();
     ~plLogicModifier();
@@ -59,17 +64,18 @@ public:
     CLASSNAME_REGISTER( plLogicModifier );
     GETINTERFACE_ANY( plLogicModifier, plLogicModBase );
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     
-    virtual void RequestTrigger(bool netRequest=false);
-    virtual bool VerifyConditions(plMessage* msg);
+    void RequestTrigger(bool netRequest=false) override;
+    bool VerifyConditions(plMessage* msg) override;
     void AddCondition(plConditionalObject* c);
-    virtual void Reset(bool bCounterReset);
+    void Reset(bool bCounterReset) override;
 
     void VolumeIgnoreExtraEnters(bool ignore = true); // hack for garrison
+    void VolumeNoArbitration(bool noArbitration = true);
 
     int fMyCursor;
 };

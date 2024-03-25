@@ -61,7 +61,7 @@ public:
     CLASSNAME_REGISTER( plWaveSetBase );
     GETINTERFACE_ANY( plWaveSetBase, plMultiModifier );
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
 
     int32_t       GetNumProperties() const { return 0; }
 
@@ -70,8 +70,8 @@ public:
     virtual hsVector3   GetWindDir() const = 0;
 
 
-    void            AddShore(plKey soKey);
-    void            AddDecal(plKey key);
+    void            AddShore(const plKey& soKey);
+    void            AddDecal(const plKey& key);
 
 };
 

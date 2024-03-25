@@ -45,19 +45,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PCH_H
-#error "Header $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Pch.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PCH_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PCH_H
 
-#include "pnUtils/pnUtils.h"
-#include "pnEncryption/plBigNum.h"
-#include "pnNetBase/pnNetBase.h"
-#include "pnAsyncCore/pnAsyncCore.h"
-#include "pnNetCli/pnNetCli.h"
+#include <atomic>
+#include <type_traits>
+
+#include "hsBitVector.h"
 #include "plProduct.h"
 #include "hsThread.h"
 #include "hsTimer.h"
+
+#include "pnAsyncCore/pnAsyncCore.h"
+#include "pnGameMgr/pnGameMgr.h"
+#include "pnEncryption/plBigNum.h"
+#include "pnNetBase/pnNetBase.h"
+#include "pnNetCli/pnNetCli.h"
 
 #define USES_PROTOCOL_CLI2AUTH
 #define USES_PROTOCOL_CLI2GAME
@@ -69,8 +72,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Private/plNglAllIncludes.h"
 #include "Intern.h"
 
-#ifdef HS_BUILD_FOR_OSX
-#include <malloc/malloc.h>
-#else
-#include <malloc.h>
 #endif

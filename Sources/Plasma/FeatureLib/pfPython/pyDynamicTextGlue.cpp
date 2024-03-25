@@ -40,15 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyDynamicText.h"
-#include "pyEnum.h"
-#include "pyColor.h"
-#include "pyImage.h"
+
+#include <string_theory/string>
+#include <utility>
+
 #include "plGImage/plDynamicTextMap.h"
+
+#include "pyColor.h"
+#include "pyEnum.h"
+#include "pyGlueHelpers.h"
+#include "pyImage.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptDynamicMap, pyDynamicText);
@@ -58,7 +61,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptDynamicMap)
 
 PYTHON_INIT_DEFINITION(ptDynamicMap, args, keywords)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "|O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects an optional ptKey");
@@ -78,7 +81,7 @@ PYTHON_INIT_DEFINITION(ptDynamicMap, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptDynamicMap, sender, args)
 {
-    PyObject* senderObj = NULL;
+    PyObject* senderObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &senderObj))
     {
         PyErr_SetString(PyExc_TypeError, "sender expects a ptKey");
@@ -98,7 +101,7 @@ PYTHON_BASIC_METHOD_DEFINITION(ptDynamicMap, clearKeys, ClearReceivers)
 
 PYTHON_METHOD_DEFINITION(ptDynamicMap, addKey, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "addKey expects a ptKey");
@@ -140,7 +143,7 @@ PYTHON_METHOD_DEFINITION(ptDynamicMap, netForce, args)
 
 PYTHON_METHOD_DEFINITION(ptDynamicMap, clearToColor, args)
 {
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "clearToColor expects a ptColor");
@@ -161,7 +164,7 @@ PYTHON_BASIC_METHOD_DEFINITION(ptDynamicMap, purgeImage, PurgeImage)
 
 PYTHON_METHOD_DEFINITION(ptDynamicMap, setTextColor, args)
 {
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     char blockRGB = 0;
     if (!PyArg_ParseTuple(args, "O|b", &colorObj, &blockRGB))
     {
@@ -180,21 +183,21 @@ PYTHON_METHOD_DEFINITION(ptDynamicMap, setTextColor, args)
 
 PYTHON_METHOD_DEFINITION(ptDynamicMap, setFont, args)
 {
-    char* faceName;
+    ST::string faceName;
     short fontSize;
-    if (!PyArg_ParseTuple(args, "sh", &faceName, &fontSize))
+    if (!PyArg_ParseTuple(args, "O&h", PyUnicode_STStringConverter, &faceName, &fontSize))
     {
         PyErr_SetString(PyExc_TypeError, "setFont expects a string and a short int");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetFont(faceName, fontSize);
+    self->fThis->SetFont(std::move(faceName), fontSize);
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION(ptDynamicMap, fillRect, args)
 {
     unsigned short left, top, right, bottom;
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     if (!PyArg_ParseTuple(args, "hhhhO", &left, &top, &right, &bottom, &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "fillRect expects four unsigned short ints and a ptColor");
@@ -213,7 +216,7 @@ PYTHON_METHOD_DEFINITION(ptDynamicMap, fillRect, args)
 PYTHON_METHOD_DEFINITION(ptDynamicMap, frameRect, args)
 {
     unsigned short left, top, right, bottom;
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     if (!PyArg_ParseTuple(args, "hhhhO", &left, &top, &right, &bottom, &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "frameRect expects four unsigned short ints and a ptColor");
@@ -260,8 +263,8 @@ PYTHON_BASIC_METHOD_DEFINITION(ptDynamicMap, unsetWrapping, UnsetWrapping)
 PYTHON_METHOD_DEFINITION(ptDynamicMap, drawText, args)
 {
     short x, y;
-    char* text = nullptr;
-    if (!PyArg_ParseTuple(args, "hhet", &x, &y, "utf8", &text))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "hhO&", &x, &y, PyUnicode_STStringConverter, &text))
     {
         PyErr_SetString(PyExc_TypeError, "drawText expects two short ints and a string");
         PYTHON_RETURN_ERROR;
@@ -273,7 +276,7 @@ PYTHON_METHOD_DEFINITION(ptDynamicMap, drawText, args)
 PYTHON_METHOD_DEFINITION(ptDynamicMap, drawImage, args)
 {
     short x, y;
-    PyObject* imageObj = NULL;
+    PyObject* imageObj = nullptr;
     char respectAlpha;
     if (!PyArg_ParseTuple(args, "hhOb", &x, &y, &imageObj, &respectAlpha))
     {
@@ -293,7 +296,7 @@ PYTHON_METHOD_DEFINITION(ptDynamicMap, drawImage, args)
 PYTHON_METHOD_DEFINITION(ptDynamicMap, drawImageClipped, args)
 {
     unsigned short x, y;
-    PyObject* imageObj = NULL;
+    PyObject* imageObj = nullptr;
     unsigned short cx, cy, cw, ch;
     char respectAlpha;
     if (!PyArg_ParseTuple(args, "hhOhhhhb", &x, &y, &imageObj, &cx, &cy, &cw, &ch, &respectAlpha))
@@ -313,18 +316,18 @@ PYTHON_METHOD_DEFINITION(ptDynamicMap, drawImageClipped, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDynamicMap, getWidth)
 {
-    return PyInt_FromLong(self->fThis->GetWidth());
+    return PyLong_FromLong(self->fThis->GetWidth());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDynamicMap, getHeight)
 {
-    return PyInt_FromLong(self->fThis->GetHeight());
+    return PyLong_FromLong(self->fThis->GetHeight());
 }
 
 PYTHON_METHOD_DEFINITION(ptDynamicMap, calcTextExtents, args)
 {
-    char* text = nullptr;
-    if (!PyArg_ParseTuple(args, "et", "utf8", &text))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
         PyErr_SetString(PyExc_TypeError, "calcTextExtents expects a string");
         PYTHON_RETURN_ERROR;
@@ -333,8 +336,8 @@ PYTHON_METHOD_DEFINITION(ptDynamicMap, calcTextExtents, args)
     uint16_t height, width;
     self->fThis->CalcTextExtents(text, width, height);
     PyObject* retVal = PyTuple_New(2);
-    PyTuple_SetItem(retVal, 0, PyInt_FromLong(width));
-    PyTuple_SetItem(retVal, 1, PyInt_FromLong(height));
+    PyTuple_SetItem(retVal, 0, PyLong_FromLong(width));
+    PyTuple_SetItem(retVal, 1, PyLong_FromLong(height));
     return retVal;
 }
 
@@ -420,17 +423,17 @@ PLASMA_DEFAULT_TYPE(ptDynamicMap, "Params: key=None\nCreates a ptDynamicMap obje
 // required functions for PyObject interoperability
 PYTHON_CLASS_NEW_IMPL(ptDynamicMap, pyDynamicText)
 
-PyObject *pyDynamicText::New(pyKey& key)
+PyObject *pyDynamicText::New(const pyKey& key)
 {
-    ptDynamicMap *newObj = (ptDynamicMap*)ptDynamicMap_type.tp_new(&ptDynamicMap_type, NULL, NULL);
-    newObj->fThis->fReceivers.Append(key.getKey());
+    ptDynamicMap *newObj = (ptDynamicMap*)ptDynamicMap_type.tp_new(&ptDynamicMap_type, nullptr, nullptr);
+    newObj->fThis->fReceivers.emplace_back(key.getKey());
     return (PyObject*)newObj;
 }
 
 PyObject *pyDynamicText::New(plKey key)
 {
-    ptDynamicMap *newObj = (ptDynamicMap*)ptDynamicMap_type.tp_new(&ptDynamicMap_type, NULL, NULL);
-    newObj->fThis->fReceivers.Append(key);
+    ptDynamicMap *newObj = (ptDynamicMap*)ptDynamicMap_type.tp_new(&ptDynamicMap_type, nullptr, nullptr);
+    newObj->fThis->fReceivers.emplace_back(std::move(key));
     return (PyObject*)newObj;
 }
 
@@ -450,15 +453,15 @@ void pyDynamicText::AddPlasmaClasses(PyObject *m)
 
 void pyDynamicText::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtJustify);
-    PYTHON_ENUM_ELEMENT(PtJustify, kCenter, plDynamicTextMap::kCenter);
-    PYTHON_ENUM_ELEMENT(PtJustify, kLeftJustify, plDynamicTextMap::kLeftJustify);
-    PYTHON_ENUM_ELEMENT(PtJustify, kRightJustify, plDynamicTextMap::kRightJustify);
-    PYTHON_ENUM_END(m, PtJustify);
+    PYTHON_ENUM_START(PtJustify)
+    PYTHON_ENUM_ELEMENT(PtJustify, kCenter, plDynamicTextMap::kCenter)
+    PYTHON_ENUM_ELEMENT(PtJustify, kLeftJustify, plDynamicTextMap::kLeftJustify)
+    PYTHON_ENUM_ELEMENT(PtJustify, kRightJustify, plDynamicTextMap::kRightJustify)
+    PYTHON_ENUM_END(m, PtJustify)
 
-    PYTHON_ENUM_START(PtFontFlags);
-    PYTHON_ENUM_ELEMENT(PtFontFlags, kFontBold, plDynamicTextMap::kFontBold);
-    PYTHON_ENUM_ELEMENT(PtFontFlags, kFontItalic, plDynamicTextMap::kFontItalic);
-    PYTHON_ENUM_ELEMENT(PtFontFlags, kFontShadowed, plDynamicTextMap::kFontShadowed);
-    PYTHON_ENUM_END(m, PtFontFlags);
+    PYTHON_ENUM_START(PtFontFlags)
+    PYTHON_ENUM_ELEMENT(PtFontFlags, kFontBold, plDynamicTextMap::kFontBold)
+    PYTHON_ENUM_ELEMENT(PtFontFlags, kFontItalic, plDynamicTextMap::kFontItalic)
+    PYTHON_ENUM_ELEMENT(PtFontFlags, kFontShadowed, plDynamicTextMap::kFontShadowed)
+    PYTHON_ENUM_END(m, PtFontFlags)
 }

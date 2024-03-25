@@ -46,10 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "MaxMain/plMaxNode.h"
-#include "resource.h"
+#include "MaxMain/MaxAPI.h"
 
-#include <iparamm2.h>
-#pragma hdrstop
+#include "resource.h"
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 #include "MaxExport/plExportProgressBar.h"
@@ -77,9 +76,9 @@ ParamBlockDesc2 gXImposterBk
 (   
     plComponent::kBlkComp, _T("X-Form"), 0, &gXImposterDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_XFORM, IDS_COMP_XFORMS, 0, 0, NULL,
+    IDD_COMP_XFORM, IDS_COMP_XFORMS, 0, 0, nullptr,
 
-    end
+    p_end
 );
 
 plXImposterComp::plXImposterComp()
@@ -102,13 +101,13 @@ class plForceCTTComp : public plComponent
 {
 public:
     plForceCTTComp();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { return true; }
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override { return true; }
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override { return true; }
 };
 
 //Max desc stuff necessary below.
@@ -118,9 +117,9 @@ ParamBlockDesc2 gForceCTTBk
 (   
     plComponent::kBlkComp, _T("ForceCTT"), 0, &gForceCTTDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_FORCE_CTT, IDS_COMP_FORCE_CTT, 0, 0, NULL,
+    IDD_COMP_FORCE_CTT, IDS_COMP_FORCE_CTT, 0, 0, nullptr,
 
-    end
+    p_end
 );
 
 plForceCTTComp::plForceCTTComp()
@@ -152,13 +151,13 @@ public:
     };
 public:
     plFilterInheritComp();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool Convert(plMaxNode* node, plErrorMsg* pErrMsg) override;
 
     bool    SetMaxInherit();
     bool    SetMaxInherit(plMaxNodeBase* targ);
@@ -167,9 +166,9 @@ public:
 
     bool    Bail(plMaxNode* node, const char* msg, plErrorMsg* pErrMsg);
 
-    virtual void AddTarget(plMaxNodeBase *target);
-    virtual void DeleteTarget(plMaxNodeBase *target);
-    virtual void DeleteAllTargets();
+    void AddTarget(plMaxNodeBase *target) override;
+    void DeleteTarget(plMaxNodeBase *target) override;
+    void DeleteAllTargets() override;
 };
 
 class FilterInheritCompDlgProc : public ParamMap2UserDlgProc
@@ -197,7 +196,7 @@ public:
     FilterInheritCompDlgProc() {}
     ~FilterInheritCompDlgProc() {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -210,7 +209,7 @@ public:
         }
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static FilterInheritCompDlgProc gFilterInheritCompDlgProc;
 
@@ -227,24 +226,24 @@ ParamBlockDesc2 gFilterInheritBk
     plFilterInheritComp::kActive,   _T("Active"),   TYPE_BOOL,      0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_FILTER_ACTIVE,
-        end,
+        p_end,
 
     plFilterInheritComp::kNoX,  _T("NoX"),  TYPE_BOOL,      0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_FILTER_NOX,
-        end,
+        p_end,
 
     plFilterInheritComp::kNoY,  _T("NoY"),  TYPE_BOOL,      0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_FILTER_NOY,
-        end,
+        p_end,
 
     plFilterInheritComp::kNoZ,  _T("NoZ"),  TYPE_BOOL,      0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_FILTER_NOZ,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plFilterInheritComp::plFilterInheritComp()

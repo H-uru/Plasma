@@ -40,8 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plLayerDepth.h"
+
+#include "HeadSpin.h"
+
 
 plLayerDepth::plLayerDepth()
 {
@@ -54,7 +56,7 @@ plLayerDepth::plLayerDepth()
     SetAmbientColor(hsColorRGBA().Set(0.1f, 0.1f, 0.1f, 1.f));
     SetOpacity(1.f);
 
-    *fTexture = nil;
+    *fTexture = nullptr;
 
 }
 

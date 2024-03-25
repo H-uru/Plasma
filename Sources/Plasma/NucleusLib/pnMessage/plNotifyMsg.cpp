@@ -51,11 +51,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNotifyMsg.h"
 
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pnNetCommon/plNetApp.h"
 
 plNotifyMsg::plNotifyMsg(const plKey &s, const plKey &r)
 {
-    fSender = s;
+    SetSender(s);
     AddReceiver(r);
     IInit();
 }
@@ -236,22 +239,17 @@ void plNotifyMsg::AddCollisionEvent( bool enter, const plKey &other, const plKey
     if ( onlyOneCollision )
     {
         // remove records that are like the one being added
-        int num_recs = fEvents.GetCount();
-        if ( num_recs > 0 )
+        for (auto iter = fEvents.begin(); iter != fEvents.end(); ++iter)
         {
-            int i;
-            for ( i=0; i<num_recs; i++ )
+            // see if its the same type
+            proEventData* pEDTest = *iter;
+            if ( pEDTest->fEventType == proEventData::kCollision )
             {
-                // see if its the same type 
-                proEventData* pEDTest = fEvents.Get(i);
-                if ( pEDTest->fEventType == proEventData::kCollision )
-                {
-                    // remove it
-                    delete fEvents[i];
-                    fEvents.Remove(i);
-                    // then jump out.. the count is no longer good and anyway there should only be one of the same type
-                    break;
-                }
+                // remove it
+                delete pEDTest;
+                fEvents.erase(iter);
+                // then jump out.. the count is no longer good and anyway there should only be one of the same type
+                break;
             }
         }
     }
@@ -261,7 +259,7 @@ void plNotifyMsg::AddCollisionEvent( bool enter, const plKey &other, const plKey
     pED->fEnter = enter;
     pED->fHitter = other;
     pED->fHittee = self;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -273,29 +271,24 @@ void plNotifyMsg::AddCollisionEvent( bool enter, const plKey &other, const plKey
 void plNotifyMsg::AddCallbackEvent( int32_t event )
 {
     // remove records that are like the one being added
-    int num_recs = fEvents.GetCount();
-    if ( num_recs > 0 )
+    for (auto iter = fEvents.begin(); iter != fEvents.end(); ++iter)
     {
-        int i;
-        for ( i=0; i<num_recs; i++ )
+        // see if its the same type
+        proEventData* pEDTest = *iter;
+        if ( pEDTest->fEventType == proEventData::kCallback )
         {
-            // see if its the same type 
-            proEventData* pEDTest = fEvents.Get(i);
-            if ( pEDTest->fEventType == proEventData::kCallback )
-            {
-                // remove it
-                delete fEvents[i];
-                fEvents.Remove(i);
-                // then jump out.. the count is no longer good and anyway there should only be one of the same type
-                break;
-            }
+            // remove it
+            delete pEDTest;
+            fEvents.erase(iter);
+            // then jump out.. the count is no longer good and anyway there should only be one of the same type
+            break;
         }
     }
 
     // create the collision event record
     proCallbackEventData* pED = new proCallbackEventData;
     pED->fEventType = event;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 
@@ -308,29 +301,24 @@ void plNotifyMsg::AddCallbackEvent( int32_t event )
 void plNotifyMsg::AddResponderStateEvent( int32_t state )
 {
     // remove records that are like the one being added
-    int num_recs = fEvents.GetCount();
-    if ( num_recs > 0 )
+    for (auto iter = fEvents.begin(); iter != fEvents.end(); ++iter)
     {
-        int i;
-        for ( i=0; i<num_recs; i++ )
+        // see if its the same type
+        proEventData* pEDTest = *iter;
+        if ( pEDTest->fEventType == proEventData::kResponderState )
         {
-            // see if its the same type 
-            proEventData* pEDTest = fEvents.Get(i);
-            if ( pEDTest->fEventType == proEventData::kResponderState )
-            {
-                // remove it
-                delete fEvents[i];
-                fEvents.Remove(i);
-                // then jump out.. the count is no longer good and anyway there should only be one of the same type
-                break;
-            }
+            // remove it
+            delete pEDTest;
+            fEvents.erase(iter);
+            // then jump out.. the count is no longer good and anyway there should only be one of the same type
+            break;
         }
     }
 
     // create the collision event record
     proResponderStateEventData* pED = new proResponderStateEventData;
     pED->fState = state;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 
@@ -349,7 +337,7 @@ void plNotifyMsg::AddMultiStageEvent( int32_t stage, int32_t event, const plKey&
     pED->fStage = stage;
     pED->fEvent = event;
     pED->fAvatar = avatar;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 void plNotifyMsg::AddCoopEvent(uint32_t id, uint16_t serial)
@@ -357,7 +345,7 @@ void plNotifyMsg::AddCoopEvent(uint32_t id, uint16_t serial)
     proCoopEventData *pED = new proCoopEventData;
     pED->fID = id;
     pED->fSerial = serial;
-    fEvents.Append(pED);
+    fEvents.emplace_back(pED);
 }
 
 void plNotifyMsg::AddSpawnedEvent (const plKey &spawner, const plKey &spawnee)
@@ -365,7 +353,7 @@ void plNotifyMsg::AddSpawnedEvent (const plKey &spawner, const plKey &spawnee)
     proSpawnedEventData* pED = new proSpawnedEventData();
     pED->fSpawner = spawner;
     pED->fSpawnee = spawnee;
-    fEvents.Append(pED);
+    fEvents.emplace_back(pED);
 }
 
 
@@ -383,22 +371,17 @@ void plNotifyMsg::AddSpawnedEvent (const plKey &spawner, const plKey &spawnee)
 void plNotifyMsg::AddActivateEvent( bool activate )
 {
     // remove records that are like the one being added
-    int num_recs = fEvents.GetCount();
-    if ( num_recs > 0 )
+    for (auto iter = fEvents.begin(); iter != fEvents.end(); ++iter)
     {
-        int i;
-        for ( i=0; i<num_recs; i++ )
+        // see if its the same type
+        proEventData* pEDTest = *iter;
+        if ( pEDTest->fEventType == proEventData::kActivate )
         {
-            // see if its the same type 
-            proEventData* pEDTest = fEvents.Get(i);
-            if ( pEDTest->fEventType == proEventData::kActivate )
-            {
-                // remove it
-                delete fEvents[i];
-                fEvents.Remove(i);
-                // then jump out.. the count is no longer good and anyway there should only be one of the same type
-                break;
-            }
+            // remove it
+            delete pEDTest;
+            fEvents.erase(iter);
+            // then jump out.. the count is no longer good and anyway there should only be one of the same type
+            break;
         }
     }
 
@@ -406,7 +389,7 @@ void plNotifyMsg::AddActivateEvent( bool activate )
     proActivateEventData* pED = new proActivateEventData;
     pED->fActive = true;
     pED->fActivate = activate;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -423,24 +406,18 @@ void plNotifyMsg::AddActivateEvent( bool activate )
 //
 void plNotifyMsg::AddPickEvent( const plKey &other, const plKey& self, bool enabled, hsPoint3 hitPoint )
 {
-
     // remove records that are like the one being added
-    int num_recs = fEvents.GetCount();
-    if ( num_recs > 0 )
+    for (auto iter = fEvents.begin(); iter != fEvents.end(); ++iter)
     {
-        int i;
-        for ( i=0; i<num_recs; i++ )
+        // see if its the same type
+        proEventData* pEDTest = *iter;
+        if ( pEDTest->fEventType == proEventData::kPicked )
         {
-            // see if its the same type 
-            proEventData* pEDTest = fEvents.Get(i);
-            if ( pEDTest->fEventType == proEventData::kPicked )
-            {
-                // remove it
-                delete fEvents[i];
-                fEvents.Remove(i);
-                // then jump out.. the count is no longer good and anyway there should only be one of the same type
-                break;
-            }
+            // remove it
+            delete pEDTest;
+            fEvents.erase(iter);
+            // then jump out.. the count is no longer good and anyway there should only be one of the same type
+            break;
         }
     }
 
@@ -451,7 +428,7 @@ void plNotifyMsg::AddPickEvent( const plKey &other, const plKey& self, bool enab
     pED->fEnabled = enabled;
     pED->fHitPoint = hitPoint;
 
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -468,24 +445,17 @@ void plNotifyMsg::AddPickEvent( const plKey &other, const plKey& self, bool enab
 //
 void plNotifyMsg::AddContainerEvent( const plKey &container, const plKey &contained, bool entering )
 {
-
-    // remove records that are like the one being added
-    int num_recs = fEvents.GetCount();
-    if ( num_recs > 0 )
+    for (auto iter = fEvents.begin(); iter != fEvents.end(); ++iter)
     {
-        int i;
-        for ( i=0; i<num_recs; i++ )
+        // see if its the same type
+        proEventData* pEDTest = *iter;
+        if ( pEDTest->fEventType == proEventData::kContained )
         {
-            // see if its the same type 
-            proEventData* pEDTest = fEvents.Get(i);
-            if ( pEDTest->fEventType == proEventData::kContained )
-            {
-                // remove it
-                delete fEvents[i];
-                fEvents.Remove(i);
-                // then jump out.. the count is no longer good and anyway there should only be one of the same type
-                break;
-            }
+            // remove it
+            delete pEDTest;
+            fEvents.erase(iter);
+            // then jump out.. the count is no longer good and anyway there should only be one of the same type
+            break;
         }
     }
 
@@ -494,7 +464,7 @@ void plNotifyMsg::AddContainerEvent( const plKey &container, const plKey &contai
     pED->fContained = contained;
     pED->fContainer = container;
     pED->fEntering = entering;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 
@@ -514,24 +484,17 @@ void plNotifyMsg::AddContainerEvent( const plKey &container, const plKey &contai
 //
 void plNotifyMsg::AddFacingEvent( const plKey &other, const plKey &self, float dot, bool enabled )
 {
-
-    // remove records that are like the one being added
-    int num_recs = fEvents.GetCount();
-    if ( num_recs > 0 )
+    for (auto iter = fEvents.begin(); iter != fEvents.end(); ++iter)
     {
-        int i;
-        for ( i=0; i<num_recs; i++ )
+        // see if its the same type
+        proEventData* pEDTest = *iter;
+        if ( pEDTest->fEventType == proEventData::kFacing )
         {
-            // see if its the same type 
-            proEventData* pEDTest = fEvents.Get(i);
-            if ( pEDTest->fEventType == proEventData::kFacing )
-            {
-                // remove it
-                delete fEvents[i];
-                fEvents.Remove(i);
-                // then jump out.. the count is no longer good and anyway there should only be one of the same type
-                break;
-            }
+            // remove it
+            delete pEDTest;
+            fEvents.erase(iter);
+            // then jump out.. the count is no longer good and anyway there should only be one of the same type
+            break;
         }
     }
 
@@ -541,7 +504,7 @@ void plNotifyMsg::AddFacingEvent( const plKey &other, const plKey &self, float d
     pED->fFacee = self;
     pED->dot = dot;
     pED->enabled = enabled;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -558,23 +521,17 @@ void plNotifyMsg::AddFacingEvent( const plKey &other, const plKey &self, float d
 //
 void plNotifyMsg::AddControlKeyEvent( int32_t key, bool down )
 {
-    // remove records that are like the one being added
-    int num_recs = fEvents.GetCount();
-    if ( num_recs > 0 )
+    for (auto iter = fEvents.begin(); iter != fEvents.end(); ++iter)
     {
-        int i;
-        for ( i=0; i<num_recs; i++ )
+        // see if its the same type
+        proEventData* pEDTest = *iter;
+        if ( pEDTest->fEventType == proEventData::kControlKey )
         {
-            // see if its the same type 
-            proEventData* pEDTest = fEvents.Get(i);
-            if ( pEDTest->fEventType == proEventData::kControlKey )
-            {
-                // remove it
-                delete fEvents[i];
-                fEvents.Remove(i);
-                // then jump out.. the count is no longer good and anyway there should only be one of the same type
-                break;
-            }
+            // remove it
+            delete pEDTest;
+            fEvents.erase(iter);
+            // then jump out.. the count is no longer good and anyway there should only be one of the same type
+            break;
         }
     }
 
@@ -582,7 +539,7 @@ void plNotifyMsg::AddControlKeyEvent( int32_t key, bool down )
     proControlKeyEventData* pED = new proControlKeyEventData;
     pED->fControlKey = key;
     pED->fDown = down;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -593,14 +550,14 @@ void plNotifyMsg::AddControlKeyEvent( int32_t key, bool down )
 //
 //  PURPOSE    : Add a variable event record to this notify message
 //
-void plNotifyMsg::AddVariableEvent(const plString& name, float number)
+void plNotifyMsg::AddVariableEvent(const ST::string& name, float number)
 {
     // create the control key event record
     proVariableEventData* pED = new proVariableEventData;
     pED->fName = name;
     pED->fDataType = proEventData::kFloat;
     pED->fNumber.f = number;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -611,14 +568,14 @@ void plNotifyMsg::AddVariableEvent(const plString& name, float number)
 //
 //  PURPOSE    : Add a variable event record to this notify message
 //
-void plNotifyMsg::AddVariableEvent(const plString& name, int32_t number)
+void plNotifyMsg::AddVariableEvent(const ST::string& name, int32_t number)
 {
     // create the control key event record
     proVariableEventData* pED = new proVariableEventData;
     pED->fName = name;
     pED->fDataType = proEventData::kInt;
     pED->fNumber.i = number;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -628,13 +585,13 @@ void plNotifyMsg::AddVariableEvent(const plString& name, int32_t number)
 //
 //  PURPOSE    : Add a variable event record to this notify message
 //
-void plNotifyMsg::AddVariableEvent(const plString& name)
+void plNotifyMsg::AddVariableEvent(const ST::string& name)
 {
     // create the control key event record
     proVariableEventData* pED = new proVariableEventData;
     pED->fName = name;
     pED->fDataType = proEventData::kNull;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -645,14 +602,14 @@ void plNotifyMsg::AddVariableEvent(const plString& name)
 //
 //  PURPOSE    : Add a variable event record to this notify message
 //
-void plNotifyMsg::AddVariableEvent(const plString& name, const plKey &key)
+void plNotifyMsg::AddVariableEvent(const ST::string& name, const plKey &key)
 {
     // create the control key event record
     proVariableEventData* pED = new proVariableEventData;
     pED->fName = name;
     pED->fDataType = proEventData::kKey;
     pED->fKey = key;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 
@@ -671,23 +628,17 @@ void plNotifyMsg::AddVariableEvent(const plString& name, const plKey &key)
 //
 void plNotifyMsg::AddClickDragEvent( const plKey& dragger, const plKey& dragee, float animPos )
 {
-    // remove records that are like the one being added
-    int num_recs = fEvents.GetCount();
-    if ( num_recs > 0 )
+    for (auto iter = fEvents.begin(); iter != fEvents.end(); ++iter)
     {
-        int i;
-        for ( i=0; i<num_recs; i++ )
+        // see if its the same type
+        proEventData* pEDTest = *iter;
+        if ( pEDTest->fEventType == proEventData::kClickDrag )
         {
-            // see if its the same type 
-            proEventData* pEDTest = fEvents.Get(i);
-            if ( pEDTest->fEventType == proEventData::kClickDrag )
-            {
-                // remove it
-                delete fEvents[i];
-                fEvents.Remove(i);
-                // then jump out.. the count is no longer good and anyway there should only be one of the same type
-                break;
-            }
+            // remove it
+            delete pEDTest;
+            fEvents.erase(iter);
+            // then jump out.. the count is no longer good and anyway there should only be one of the same type
+            break;
         }
     }
 
@@ -696,7 +647,7 @@ void plNotifyMsg::AddClickDragEvent( const plKey& dragger, const plKey& dragee, 
     pED->picked = dragee;
     pED->picker = dragger;
     pED->animPos = animPos;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 
@@ -714,23 +665,17 @@ void plNotifyMsg::AddClickDragEvent( const plKey& dragger, const plKey& dragee, 
 //
 void plNotifyMsg::AddOfferBookEvent(const plKey& offerer, int targetAge, int offeree)
 {
-    // remove records that are like the one being added
-    int num_recs = fEvents.GetCount();
-    if ( num_recs > 0 )
+    for (auto iter = fEvents.begin(); iter != fEvents.end(); ++iter)
     {
-        int i;
-        for ( i=0; i<num_recs; i++ )
+        // see if its the same type
+        proEventData* pEDTest = *iter;
+        if ( pEDTest->fEventType == proEventData::kOfferLinkingBook )
         {
-            // see if its the same type 
-            proEventData* pEDTest = fEvents.Get(i);
-            if ( pEDTest->fEventType == proEventData::kOfferLinkingBook )
-            {
-                // remove it
-                delete fEvents[i];
-                fEvents.Remove(i);
-                // then jump out.. the count is no longer good and anyway there should only be one of the same type
-                break;
-            }
+            // remove it
+            delete pEDTest;
+            fEvents.erase(iter);
+            // then jump out.. the count is no longer good and anyway there should only be one of the same type
+            break;
         }
     }
 
@@ -739,7 +684,7 @@ void plNotifyMsg::AddOfferBookEvent(const plKey& offerer, int targetAge, int off
     pED->offerer = offerer;
     pED->targetAge = targetAge;
     pED->offeree = offeree;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -756,23 +701,17 @@ void plNotifyMsg::AddOfferBookEvent(const plKey& offerer, int targetAge, int off
 //
 void plNotifyMsg::AddBookEvent( uint32_t event, uint32_t linkID /*=0*/)
 {
-    // remove records that are like the one being added
-    int num_recs = fEvents.GetCount();
-    if ( num_recs > 0 )
+    for (auto iter = fEvents.begin(); iter != fEvents.end(); ++iter)
     {
-        int i;
-        for ( i=0; i<num_recs; i++ )
+        // see if its the same type
+        proEventData* pEDTest = *iter;
+        if ( pEDTest->fEventType == proEventData::kBook )
         {
-            // see if its the same type 
-            proEventData* pEDTest = fEvents.Get(i);
-            if ( pEDTest->fEventType == proEventData::kBook )
-            {
-                // remove it
-                delete fEvents[i];
-                fEvents.Remove(i);
-                // then jump out.. the count is no longer good and anyway there should only be one of the same type
-                break;
-            }
+            // remove it
+            delete pEDTest;
+            fEvents.erase(iter);
+            // then jump out.. the count is no longer good and anyway there should only be one of the same type
+            break;
         }
     }
 
@@ -780,7 +719,7 @@ void plNotifyMsg::AddBookEvent( uint32_t event, uint32_t linkID /*=0*/)
     proBookEventData* pED = new proBookEventData;
     pED->fEvent = event;
     pED->fLinkID = linkID;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -796,30 +735,24 @@ void plNotifyMsg::AddBookEvent( uint32_t event, uint32_t linkID /*=0*/)
 //
 void plNotifyMsg::AddHitClimbingBlockerEvent(const plKey &blocker)
 {
-    // remove records that are like the one being added
-    int num_recs = fEvents.GetCount();
-    if ( num_recs > 0 )
+    for (auto iter = fEvents.begin(); iter != fEvents.end(); ++iter)
     {
-        int i;
-        for ( i=0; i<num_recs; i++ )
+        // see if its the same type
+        proEventData* pEDTest = *iter;
+        if ( pEDTest->fEventType == proEventData::kClimbingBlockerHit )
         {
-            // see if its the same type 
-            proEventData* pEDTest = fEvents.Get(i);
-            if ( pEDTest->fEventType == proEventData::kClimbingBlockerHit )
-            {
-                // remove it
-                delete fEvents[i];
-                fEvents.Remove(i);
-                // then jump out.. the count is no longer good and anyway there should only be one of the same type
-                break;
-            }
+            // remove it
+            delete pEDTest;
+            fEvents.erase(iter);
+            // then jump out.. the count is no longer good and anyway there should only be one of the same type
+            break;
         }
     }
 
     // create the control key event record
     proClimbingBlockerHitEventData* pED = new proClimbingBlockerHitEventData;
     pED->fBlockerKey = blocker;
-    fEvents.Append(pED);    // then add it to the list of event records
+    fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
 
@@ -837,17 +770,14 @@ proEventData* plNotifyMsg::FindEventRecord( int32_t eventtype )
     if ( eventtype >= 0 && eventtype < proEventData::kNone )
     {
         // loop thru the event records looking for what they want
-        int num_recs = fEvents.GetCount();
-        int i;
-        for ( i=0; i<num_recs; i++ )
+        for (proEventData* pEDTest : fEvents)
         {
             // see if its the same type 
-            proEventData* pEDTest = fEvents.Get(i);
             if ( pEDTest->fEventType == eventtype )
                 return pEDTest;
         }
     }
-    return nil;
+    return nullptr;
 }
 
 
@@ -862,10 +792,9 @@ proEventData* plNotifyMsg::FindEventRecord( int32_t eventtype )
 void plNotifyMsg::ClearEvents()
 {
     // clean up fEvent records
-    int i;
-    for( i = 0; i < fEvents.GetCount(); i++ )
-        delete fEvents[i];
-    fEvents.Reset();
+    for (proEventData* pED : fEvents)
+        delete pED;
+    fEvents.clear();
 }
 
 
@@ -882,20 +811,13 @@ void plNotifyMsg::Read(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgRead(stream, mgr);
     // read in the static data
     fType = stream->ReadLE32();
-    stream->ReadLE(&fState);
+    stream->ReadLEFloat(&fState);
     fID = stream->ReadLE32();
     // read in the variable part of the message
-    int32_t numberEDs = stream->ReadLE32();
-    fEvents.SetCountAndZero(numberEDs);
-    if ( numberEDs > 0 )
-    {
-        int i;
-        for ( i=0 ; i < numberEDs ; i++ )
-        {
-            proEventData* pED = proEventData::Read( stream, mgr );
-            fEvents[i] = pED;
-        }
-    }
+    uint32_t numberEDs = stream->ReadLE32();
+    fEvents.resize(numberEDs);
+    for (uint32_t i = 0; i < numberEDs; i++)
+        fEvents[i] = proEventData::Read(stream, mgr);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -911,21 +833,13 @@ void plNotifyMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgWrite(stream, mgr);
     // write static data
     stream->WriteLE32(fType);
-    stream->WriteLE(fState);
+    stream->WriteLEFloat(fState);
     stream->WriteLE32(fID);
     // then write the variable data
-    int32_t numberEDs = fEvents.Count();
-    stream->WriteLE32(numberEDs);
-    if ( numberEDs > 0 )
-    {
-        // write out each record
-        int i;
-        for ( i=0 ; i < numberEDs; i++ )
-        {
-            fEvents[i]->Write(stream,mgr);
-        }
-    }
-
+    stream->WriteLE32((uint32_t)fEvents.size());
+    // write out each record
+    for (proEventData* pED : fEvents)
+        pED->Write(stream,mgr);
 }
 
 enum NotifyMsgFlags
@@ -947,7 +861,7 @@ void plNotifyMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
         fType = s->ReadLE32();
 
     if (contentFlags.IsBitSet(kNotifyMsgState))
-        s->ReadLE(&fState);
+        s->ReadLEFloat(&fState);
 
     if (contentFlags.IsBitSet(kNotifyMsgID))
         fID = s->ReadLE32();
@@ -955,16 +869,10 @@ void plNotifyMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kNotifyMsgEDs))
     {
         // read in the variable part of the message
-        int32_t numberEDs = s->ReadLE32();
-        fEvents.SetCountAndZero(numberEDs);
-        if (numberEDs > 0)
-        {
-            for (int i = 0; i < numberEDs ; i++)
-            {
-                proEventData* pED = proEventData::ReadVersion(s, mgr);
-                fEvents[i] = pED;
-            }
-        }
+        uint32_t numberEDs = s->ReadLE32();
+        fEvents.resize(numberEDs);
+        for (uint32_t i = 0; i < numberEDs ; i++)
+            fEvents[i] = proEventData::ReadVersion(s, mgr);
     }
 
     plKey avKey = GetAvatarKey();
@@ -990,31 +898,23 @@ void plNotifyMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     s->WriteLE32(fType);
 
     // kNotifyMsgState
-    s->WriteLE(fState);
+    s->WriteLEFloat(fState);
 
     // kNotifyMsgID
     s->WriteLE32(fID);
 
     // kNotifyMsgEDs
-    int32_t numberEDs = fEvents.Count();
-    s->WriteLE32(numberEDs);
-    if (numberEDs > 0)
-    {
-        // write out each record
-        for (int i = 0; i < numberEDs; i++)
-        {
-            fEvents[i]->WriteVersion(s, mgr);
-        }
-    }
+    s->WriteLE32((uint32_t)fEvents.size());
+    // write out each record
+    for (proEventData* pED : fEvents)
+        pED->WriteVersion(s, mgr);
 }
 
 
 plKey plNotifyMsg::GetAvatarKey()
 {
-    for (int i = 0; i < fEvents.GetCount(); i++)
+    for (proEventData *event : fEvents)
     {
-        proEventData *event = fEvents[i];
-
         switch (event->fEventType)
         {
         case proEventData::kCollision:
@@ -1031,7 +931,7 @@ plKey plNotifyMsg::GetAvatarKey()
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -1060,7 +960,7 @@ proEventData* proEventData::ICreateEventDataType(int32_t type)
     case kClimbingBlockerHit: return new proClimbingBlockerHitEventData;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// proEventData::Read /////////////////////////////////////////////////////
@@ -1073,7 +973,7 @@ proEventData* proEventData::Read( hsStream *stream, hsResMgr *mgr )
 
     proEventData* data = ICreateEventDataType(evtType);
 
-    if (data != nil)
+    if (data != nullptr)
         data->IRead(stream, mgr);
 
     return data;
@@ -1101,13 +1001,13 @@ proEventData* proEventData::ReadVersion(hsStream* s, hsResMgr* mgr)
 
         proEventData* data = ICreateEventDataType(evtType);
 
-        if (data != nil)
+        if (data != nullptr)
             data->IReadVersion(s, mgr);
 
         return data;
     }
 
-    return nil;
+    return nullptr;
 }
 
 void proEventData::WriteVersion(hsStream* s, hsResMgr* mgr)
@@ -1315,25 +1215,25 @@ void proControlKeyEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
 
 void proVariableEventData::IInit()
 {
-    fName = plString::Null;
+    fName = ST::string();
 }
 
 void proVariableEventData::IDestruct()
 {
-    fName = plString::Null;
+    fName = ST::string();
 }
 
 void proVariableEventData::IReadNumber(hsStream * stream) {
     switch (fDataType)
     {
     case kFloat:
-        fNumber.f = stream->ReadLEScalar();
+        fNumber.f = stream->ReadLEFloat();
         break;
     case kInt:
         fNumber.i = stream->ReadLE32();
         break;
     default: 
-        stream->ReadLE32(); //ignore
+        (void)stream->ReadLE32(); //ignore
         break;
     }
 }
@@ -1342,7 +1242,7 @@ void proVariableEventData::IWriteNumber(hsStream * stream) {
     switch (fDataType)
     {
     case kFloat:
-        stream->WriteLEScalar(fNumber.f);
+        stream->WriteLEFloat(fNumber.f);
         break;
     case kInt:
         stream->WriteLE32(fNumber.i);
@@ -1415,7 +1315,7 @@ void proFacingEventData::IRead(hsStream* stream, hsResMgr* mgr)
 {
     fFacer = mgr->ReadKey(stream);
     fFacee = mgr->ReadKey(stream);
-    dot = stream->ReadLEScalar();
+    dot = stream->ReadLEFloat();
     enabled = stream->ReadBool();
 }
 
@@ -1423,7 +1323,7 @@ void proFacingEventData::IWrite(hsStream* stream, hsResMgr* mgr)
 {
     mgr->WriteKey(stream, fFacer);
     mgr->WriteKey(stream, fFacee);
-    stream->WriteLEScalar(dot);
+    stream->WriteLEFloat(dot);
     stream->WriteBool(enabled);
 }
 
@@ -1445,7 +1345,7 @@ void proFacingEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kProFacingFacee))
         fFacee = mgr->ReadKey(s);
     if (contentFlags.IsBitSet(kProFacingDot))
-        dot = s->ReadLEScalar();
+        dot = s->ReadLEFloat();
     if (contentFlags.IsBitSet(kProFacingEnabled))
         enabled = s->ReadBool();
 }
@@ -1464,7 +1364,7 @@ void proFacingEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
     // kProFacingFacee  
     mgr->WriteKey(s, fFacee);
     // kProFacingDot    
-    s->WriteLEScalar(dot);
+    s->WriteLEFloat(dot);
     // kProFacingEnabled
     s->WriteBool(enabled);
 }

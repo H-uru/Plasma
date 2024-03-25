@@ -43,7 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plParticleGenerator_inc
 
 #include "hsGeometry3.h"
-#include "pnNetCommon/plSynchedValue.h"
+
+#include "pnFactory/plCreatable.h"
+
 class plParticleEmitter;
 class plScalarController;
 
@@ -65,13 +67,19 @@ public:
 
     static void ComputeDirection(float pitch, float yaw, hsVector3 &direction);
     static void ComputePitchYaw(float &pitch, float &yaw, const hsVector3 &dir);
-    static inline float GetRandomVar() { return 2.0f * rand() / RAND_MAX - 1; } // returns a num between +/- 1.0
+    static inline float GetRandomVar() { return 2.0f * rand() / float(RAND_MAX) - 1.0f; } // returns a num between +/- 1.0
 };
 
 class plSimpleParticleGenerator : public plParticleGenerator
 {
 public:
-    plSimpleParticleGenerator();
+    plSimpleParticleGenerator()
+        : fParticlesPerSecond(), fNumSources(), fInitPos(), fInitPitch(),
+          fInitYaw(), fAngleRange(), fVelMin(), fVelMax(), fXSize(), fYSize(),
+          fScaleMin(), fScaleMax(), fGenLife(), fPartLifeMin(), fPartLifeMax(),
+          fPartInvMassMin(), fPartInvMassRange(), fPartRadsPerSecRange(), fParticleSum(),
+          fMiscFlags()
+    { }
     ~plSimpleParticleGenerator();
     void Init(float genLife, float partLifeMin, float partLifeMax, float particlesPerSecond, 
               uint32_t numSources, hsPoint3 *pos, float *initPitch, float *initYaw, float angleRange,
@@ -82,11 +90,11 @@ public:
     CLASSNAME_REGISTER( plSimpleParticleGenerator );
     GETINTERFACE_ANY( plSimpleParticleGenerator, plParticleGenerator);
     
-    virtual bool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced);
-    virtual void UpdateParam(uint32_t paramID, float paramValue);
+    bool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced) override;
+    void UpdateParam(uint32_t paramID, float paramValue) override;
 
-    virtual void Read(hsStream* s, hsResMgr *mgr); 
-    virtual void Write(hsStream* s, hsResMgr *mgr);
+    void Read(hsStream* s, hsResMgr *mgr) override;
+    void Write(hsStream* s, hsResMgr *mgr) override;
 
 protected:
     float fParticlesPerSecond;
@@ -123,7 +131,10 @@ class plOneTimeParticleGenerator : public plParticleGenerator
 {
 public:
 
-    plOneTimeParticleGenerator();
+    plOneTimeParticleGenerator()
+        : fCount(), fPosition(), fDirection(), fXSize(), fYSize(),
+          fScaleMin(), fScaleMax(), fPartRadsPerSecRange()
+    { }
     ~plOneTimeParticleGenerator();
     void Init(float count, hsPoint3 *pointArray, hsVector3 *dirArray, 
               float xSize, float ySize, float scaleMin, float scaleMax, float radsPerSec);
@@ -131,11 +142,11 @@ public:
     CLASSNAME_REGISTER( plOneTimeParticleGenerator );
     GETINTERFACE_ANY( plOneTimeParticleGenerator, plParticleGenerator);
 
-    virtual bool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced = 0);
-    virtual void UpdateParam(uint32_t paramID, float paramValue) {}
+    bool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced = 0) override;
+    void UpdateParam(uint32_t paramID, float paramValue) override { }
 
-    virtual void Read(hsStream* s, hsResMgr *mgr); 
-    virtual void Write(hsStream* s, hsResMgr *mgr);
+    void Read(hsStream* s, hsResMgr *mgr) override;
+    void Write(hsStream* s, hsResMgr *mgr) override;
 
 protected:
     float fCount;

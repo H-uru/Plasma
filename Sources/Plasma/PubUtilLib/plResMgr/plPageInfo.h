@@ -49,11 +49,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "pnKeyedObject/plUoid.h"
+
+#include <string_theory/string>
 #include <vector>
 
 class hsStream;
 class plLocation;
-class plString;
 
 class plPageInfo
 {
@@ -63,14 +64,14 @@ public:
 
 protected:
     plLocation  fLocation;
-    plString    fAge;
-    plString    fPage;
+    ST::string  fAge;
+    ST::string  fPage;
     uint16_t    fMajorVersion;
     ClassVerVec fClassVersions;
     uint32_t    fChecksum;
     uint32_t    fDataStart, fIndexStart;
 
-    void        IInit( void );
+    void        IInit();
     void        ISetFrom( const plPageInfo &src );
 
 public:
@@ -80,8 +81,8 @@ public:
     plPageInfo( const plPageInfo &src );
     virtual ~plPageInfo();
 
-    const plString& GetAge() const  { return fAge; }
-    const plString& GetPage() const { return fPage; }
+    const ST::string& GetAge() const  { return fAge; }
+    const ST::string& GetPage() const { return fPage; }
 
     plPageInfo &operator=( const plPageInfo &src );
 
@@ -89,7 +90,7 @@ public:
     void                AddClassVersion(uint16_t classIdx, uint16_t version);
     const ClassVerVec&  GetClassVersions() const { return fClassVersions; }
 
-    void SetStrings(const plString& age, const plString& page);
+    void SetStrings(const ST::string& age, const ST::string& page);
 
     void                SetLocation(const plLocation& loc);
     const plLocation&   GetLocation() const { return fLocation; }
@@ -98,17 +99,17 @@ public:
     void    SetMajorVersion(uint16_t major) { fMajorVersion = major; }
 
     void    SetChecksum( uint32_t c ) { fChecksum = c; }
-    uint32_t  GetChecksum( void ) const { return fChecksum; }
+    uint32_t  GetChecksum() const { return fChecksum; }
 
     void    Read( hsStream *s );
     void    Write( hsStream *s );
 
-    bool    IsValid( void ) const;
+    bool    IsValid() const;
 
-    uint32_t  GetDataStart( void ) const { return fDataStart; }
+    uint32_t  GetDataStart() const { return fDataStart; }
     void    SetDataStart( uint32_t s ) { fDataStart = s; }
 
-    uint32_t  GetIndexStart( void ) const { return fIndexStart; }
+    uint32_t  GetIndexStart() const { return fIndexStart; }
     void    SetIndexStart( uint32_t s ) { fIndexStart = s; }
 };
 #endif // _plPageInfo_h

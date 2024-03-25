@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSoftVolumeTypes_inc
 #define plSoftVolumeTypes_inc
 
+#include <vector>
+
 #include "plSoftVolume.h"
-#include "hsTemplates.h"
 
 class plVolumeIsect;
 
@@ -55,7 +56,7 @@ protected:
     float                    fSoftDist;
 
 private:
-    virtual float            IGetStrength(const hsPoint3& pos) const;
+    float            IGetStrength(const hsPoint3& pos) const override;
 
 public:
     plSoftVolumeSimple();
@@ -64,10 +65,10 @@ public:
     CLASSNAME_REGISTER( plSoftVolumeSimple );
     GETINTERFACE_ANY( plSoftVolumeSimple, plSoftVolume );
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // Now Simple specifics
     plVolumeIsect* GetVolume() const { return fVolume; }
@@ -81,7 +82,7 @@ public:
 class plSoftVolumeComplex : public plSoftVolume
 {
 protected:
-    hsTArray<plSoftVolume*>         fSubVolumes;
+    std::vector<plSoftVolume*> fSubVolumes;
 
 public:
     plSoftVolumeComplex();
@@ -91,27 +92,27 @@ public:
     GETINTERFACE_ANY( plSoftVolumeComplex, plSoftVolume );
 
     // Don't propagate the settransform to our children, they move independently
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override { }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void        UpdateListenerPosition(const hsPoint3& p);
+    void        UpdateListenerPosition(const hsPoint3& p) override;
 
     // Now Complex specifics
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    uint16_t          GetNumSubs() const { return fSubVolumes.GetCount(); }
-    const plSoftVolume* GetSub(int i) const { return fSubVolumes[i]; }
+    size_t GetNumSubs() const { return fSubVolumes.size(); }
+    const plSoftVolume* GetSub(size_t i) const { return fSubVolumes[i]; }
 };
 
 class plSoftVolumeUnion : public plSoftVolumeComplex
 {
 protected:
-    virtual float            IUpdateListenerStrength() const;
+    float            IUpdateListenerStrength() const override;
 
 private:
-    virtual float            IGetStrength(const hsPoint3& pos) const;
+    float            IGetStrength(const hsPoint3& pos) const override;
 
 public:
     plSoftVolumeUnion();
@@ -125,10 +126,10 @@ public:
 class plSoftVolumeIntersect : public plSoftVolumeComplex
 {
 protected:
-    virtual float            IUpdateListenerStrength() const;
+    float            IUpdateListenerStrength() const override;
 
 private:
-    virtual float            IGetStrength(const hsPoint3& pos) const;
+    float            IGetStrength(const hsPoint3& pos) const override;
 
 public:
     plSoftVolumeIntersect();
@@ -142,10 +143,10 @@ public:
 class plSoftVolumeInvert : public plSoftVolumeComplex
 {
 protected:
-    virtual float            IUpdateListenerStrength() const;
+    float            IUpdateListenerStrength() const override;
 
 private:
-    virtual float            IGetStrength(const hsPoint3& pos) const;
+    float            IGetStrength(const hsPoint3& pos) const override;
 
 public:
     plSoftVolumeInvert();

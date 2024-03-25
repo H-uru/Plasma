@@ -41,22 +41,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plPageOptimizer.h"
 
+#include "hsStream.h"
+
+#include "pnFactory/plFactory.h"
+#include "pnKeyedObject/plKeyImp.h"
 #include "pnKeyedObject/plUoid.h"
+
 #include "plResMgr/plResManager.h"
 #include "plResMgr/plRegistryHelpers.h"
 #include "plResMgr/plKeyFinder.h"
 #include "plResMgr/plRegistryNode.h"
 
-#include "pnFactory/plFactory.h"
-#include "pnKeyedObject/plKeyImp.h"
 
-#include "hsStream.h"
-
-plPageOptimizer* plPageOptimizer::fInstance = nil;
+plPageOptimizer* plPageOptimizer::fInstance = nullptr;
 
 plPageOptimizer::plPageOptimizer(const plFileName& pagePath) :
     fOptimized(true),
-    fPageNode(nil),
+    fPageNode(),
     fPagePath(pagePath)
 {
     fInstance = this;
@@ -73,7 +74,7 @@ void plPageOptimizer::IFindLoc()
     public:
         plLocation fLoc;
 
-        virtual bool EatPage(plRegistryPageNode* keyNode)
+        bool EatPage(plRegistryPageNode* keyNode) override
         {
             fLoc = keyNode->GetPageInfo().GetLocation();
             return true;
@@ -108,7 +109,7 @@ void plPageOptimizer::Optimize()
         public:
             KeyVec& fKeys;
             plVecKeyCollector(KeyVec& keys) : fKeys(keys) {}
-            virtual bool EatKey(const plKey& key) { fKeys.push_back(key); return true; }
+            bool EatKey(const plKey& key) override { fKeys.push_back(key); return true; }
         };
         plVecKeyCollector keyIt(fAllKeys);
         fResMgr->IterateKeys(&keyIt);
@@ -122,7 +123,7 @@ void plPageOptimizer::Optimize()
         // Unload everything
         snKey->RefObject();
         snKey->UnRefObject();
-        snKey = nil;
+        snKey = nullptr;
     }
     else
     {
@@ -158,9 +159,9 @@ void plPageOptimizer::Optimize()
     }
 }
 
-void plPageOptimizer::KeyedObjectProc(plKey key)
+void plPageOptimizer::KeyedObjectProc(const plKey& key)
 {
-    plString keyName = key->GetName();
+    ST::string keyName = key->GetName();
     const char* className = plFactory::GetNameOfClass(key->GetUoid().GetClassType());
 
     // For now, ignore any key that isn't in the location we're looking at.  That means stuff like textures.
@@ -182,15 +183,9 @@ void plPageOptimizer::KeyedObjectProc(plKey key)
     }
 }
 
-void plPageOptimizer::IWriteKeyData(hsStream* oldPage, hsStream* newPage, plKey key)
+void plPageOptimizer::IWriteKeyData(hsStream* oldPage, hsStream* newPage, plKey& key)
 {
-    class plUpdateKeyImp : public plKeyImp
-    {
-    public:
-        void SetStartPos(uint32_t startPos) { fStartPos = startPos; }
-    };
-
-    plUpdateKeyImp* keyImp = (plUpdateKeyImp*)(plKeyImp*)key;
+    plKeyImp* keyImp = plKeyImp::GetFromKey(key);
     uint32_t startPos = keyImp->GetStartPos();
     uint32_t len = keyImp->GetDataLen();
 
@@ -205,7 +200,7 @@ void plPageOptimizer::IWriteKeyData(hsStream* oldPage, hsStream* newPage, plKey 
     if (newStartPos != startPos)
         fOptimized = false;
 
-    keyImp->SetStartPos(newStartPos);
+    keyImp->fStartPos = newStartPos;
     newPage->Write(len, &fBuf[0]);
 }
 
@@ -240,7 +235,6 @@ void plPageOptimizer::IRewritePage()
                 IWriteKeyData(&oldPage, &newPage, fAllKeys[i]);
         }
 
-        uint32_t newKeyStart = newPage.GetPosition();
         uint32_t oldKeyStart = pageInfo.GetIndexStart();
         oldPage.SetPosition(oldKeyStart);
 
@@ -267,7 +261,7 @@ void plPageOptimizer::IRewritePage()
                 uint32_t dataLen = oldPage.ReadLE32();
 
                 // Get the new start pos
-                plKeyImp* key = (plKeyImp*)fResMgr->FindKey(uoid);
+                const plKeyImp* key = plKeyImp::GetFromKey(fResMgr->FindKey(uoid));
                 startPos = key->GetStartPos();
 
                 uoid.Write(&newPage);
@@ -275,8 +269,5 @@ void plPageOptimizer::IRewritePage()
                 newPage.WriteLE32(dataLen);
             }
         }
-
-        newPage.Close();
-        oldPage.Close();
     }
 }

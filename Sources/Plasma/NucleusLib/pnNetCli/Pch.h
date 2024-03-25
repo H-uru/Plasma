@@ -51,16 +51,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_PCH_H
 
 
-#include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnAsyncCore/pnAsyncCore.h"
 #include "pnEncryption/plBigNum.h"
 
 #include "pnNetCli.h"
 #include "Intern.h"
-
-#ifdef HS_BUILD_FOR_OSX
-#include <malloc/malloc.h>
-#else
-#include <malloc.h>
-#endif

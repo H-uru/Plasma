@@ -76,7 +76,7 @@ protected:
 
     friend class plSceneObject;
 
-    virtual void ISetSceneNode(plKey newNode);
+    void ISetSceneNode(const plKey& newNode) override;
 
 public:
     plSimulationInterface();
@@ -85,14 +85,14 @@ public:
     CLASSNAME_REGISTER( plSimulationInterface );
     GETINTERFACE_ANY( plSimulationInterface, plObjInterface );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
     
-    void    SetProperty(int prop, bool on);
-    int32_t   GetNumProperties() const { return kNumProps; }
+    void    SetProperty(int prop, bool on) override;
+    int32_t   GetNumProperties() const override { return kNumProps; }
 
     // Transform settable only, if you want it get it from the coordinate interface.
-    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
     // Bounds are gettable only, they are computed on the physical.
     const hsBounds3Ext GetLocalBounds();
@@ -100,11 +100,11 @@ public:
     const hsBounds3Ext GetMaxWorldBounds();
     void ClearLinearVelocity();
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     // Export only.
     void SetPhysical(plPhysical* phys);
-    void ReleaseData();
+    void ReleaseData() override;
 
     plPhysical* GetPhysical() const;
 };

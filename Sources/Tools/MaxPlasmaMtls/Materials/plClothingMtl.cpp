@@ -41,13 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include <windowsx.h>
-#include "../resource.h"
 
-#include <iparamm2.h>
-#include <stdmat.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include "../resource.h"
 
 #include "plClothingMtl.h"
 
@@ -61,17 +58,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 extern HINSTANCE hInstance;
 
-class plClothingMtlClassDesc : public ClassDesc2
+class plClothingMtlClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return new plClothingMtl(loading); }
-    const TCHAR*    ClassName()     { return GetString(IDS_CLOTHING_MTL); }
-    SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
-    Class_ID        ClassID()       { return CLOTHING_MTL_CLASS_ID; }
-    const TCHAR*    Category()      { return NULL; }
-    const TCHAR*    InternalName()  { return _T("ClothingMaterial"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override      { return TRUE; }
+    void*           Create(BOOL loading) override { return new plClothingMtl(loading); }
+    const TCHAR*    ClassName() override     { return GetString(IDS_CLOTHING_MTL); }
+    SClass_ID       SuperClassID() override  { return MATERIAL_CLASS_ID; }
+    Class_ID        ClassID() override       { return CLOTHING_MTL_CLASS_ID; }
+    const TCHAR*    Category() override      { return nullptr; }
+    const TCHAR*    InternalName() override  { return _T("ClothingMaterial"); }
+    HINSTANCE       HInstance() override     { return hInstance; }
 };
 static plClothingMtlClassDesc plClothingMtlDesc;
 ClassDesc2* GetClothingMtlDesc() { return &plClothingMtlDesc; }
@@ -100,18 +97,18 @@ const UINT32 plClothingMtl::TextConstants[] =
     IDC_CLOTHING_TILE4_SIZE
 };
 
-const char *plClothingMtl::LayerStrings[] = 
+const TCHAR* plClothingMtl::LayerStrings[] =
 {
-    "Base",
-    "Skin",
-    "Skin Blend (1)",
-    "Skin Blend (2)",
-    "Skin Blend (3)",
-    "Skin Blend (4)",
-    "Skin Blend (5)",
-    "Skin Blend (6)",
-    "Tint 1",
-    "Tint 2"
+    _T("Base"),
+    _T("Skin"),
+    _T("Skin Blend (1)"),
+    _T("Skin Blend (2)"),
+    _T("Skin Blend (3)"),
+    _T("Skin Blend (4)"),
+    _T("Skin Blend (5)"),
+    _T("Skin Blend (6)"),
+    _T("Tint 1"),
+    _T("Tint 2")
 };
 
 const uint8_t plClothingMtl::LayerToPBIdx[] =
@@ -128,7 +125,7 @@ const uint8_t plClothingMtl::LayerToPBIdx[] =
     kTexmap2
 };
 
-plClothingMtl::plClothingMtl(BOOL loading) : fBasicPB(NULL)
+plClothingMtl::plClothingMtl(BOOL loading) : fBasicPB()
 {
     plClothingMtlDesc.MakeAutoParamBlocks(this);
 
@@ -142,7 +139,7 @@ plClothingMtl::plClothingMtl(BOOL loading) : fBasicPB(NULL)
     fBasicPB->SetValue(ParamID(kThumbnail), 0, new plLayerTex);
 }
 
-void plClothingMtl::GetClassName(TSTR& s)
+void plClothingMtl::IGetClassName(MSTR& s) const
 {
     s = GetString(IDS_CLOTHING_MTL);
 }
@@ -205,7 +202,7 @@ Animatable* plClothingMtl::SubAnim(int i)
     case 1: return fBasicPB->GetTexmap(kTexmap);
     }
 
-    return NULL;
+    return nullptr;
 }
 */
 
@@ -221,7 +218,7 @@ RefTargetHandle plClothingMtl::GetReference(int i)
     case kRefBasic:  return fBasicPB;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void plClothingMtl::SetReference(int i, RefTargetHandle rtarg)
@@ -245,10 +242,11 @@ IParamBlock2* plClothingMtl::GetParamBlockByID(BlockID id)
     if (fBasicPB->ID() == id)
         return fBasicPB;
 
-    return NULL;
+    return nullptr;
 }
 
-RefResult plClothingMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
+RefResult plClothingMtl::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                          PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -266,7 +264,8 @@ RefResult plClothingMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hT
                 
                 // And let the SceneWatcher know that the material on some of it's
                 // referenced objects changed.
-                NotifyDependents(FOREVER, PART_ALL, REFMSG_USER_MAT);
+                if (MAX_REF_PROPAGATE_VALUE)
+                    NotifyDependents(FOREVER, PART_ALL, REFMSG_USER_MAT);
             }
             break;
     }
@@ -289,7 +288,7 @@ Texmap* plClothingMtl::GetSubTexmap(int i)
     if (i == plClothingElement::kLayerMax * kMaxTiles)
         return fBasicPB->GetTexmap(ParamID(kThumbnail));
 
-    return NULL;
+    return nullptr;
 }
 
 void plClothingMtl::SetSubTexmap(int i, Texmap *m)
@@ -300,17 +299,17 @@ void plClothingMtl::SetSubTexmap(int i, Texmap *m)
         fBasicPB->SetValue(kThumbnail, 0, m);
 }
 
-TSTR plClothingMtl::GetSubTexmapSlotName(int i)
+MSTR plClothingMtl::IGetSubTexmapSlotName(int i)
 {
     if (i >= 0 && i < plClothingElement::kLayerMax * kMaxTiles)
-        return "Texmap";
+        return _M("Texmap");
     if (i == plClothingElement::kLayerMax * kMaxTiles)
-        return "Thumbnail";
+        return _M("Thumbnail");
 
-    return "";
+    return _M("");
 }
 
-TSTR plClothingMtl::GetSubTexmapTVName(int i)
+MSTR plClothingMtl::GetSubTexmapTVName(int i)
 {
     return GetSubTexmapSlotName(i);
 }
@@ -565,22 +564,21 @@ Interval plClothingMtl::DisplacementValidity(TimeValue t)
     return iv;  
 }
 
-plClothingElement *plClothingMtl::FindElementByName(const plString &name) const
+plClothingElement *plClothingMtl::FindElementByName(const ST::string &name) const
 {
-    int i;
-    for (i = 0; i < fElements.GetCount(); i++)
+    for (plClothingElement* element : fElements)
     {
-        if (fElements.Get(i)->fName == name)
-            return fElements.Get(i);
+        if (element->fName == name)
+            return element;
     }
-    return nil; 
+    return nullptr;
 }
 
 void plClothingMtl::InitTilesets()
 {
-    hsAssert(fElements.GetCount() == 0, "Tilesets already initialized");
-    fElements.Reset();
-    fTilesets.SetCountAndZero(plClothingLayout::kMaxTileset);
+    hsAssert(fElements.empty(), "Tilesets already initialized");
+    fElements.clear();
+    fTilesets.assign(plClothingLayout::kMaxTileset, nullptr);
 
     plClothingElement::GetElements(fElements);
 /*
@@ -696,31 +694,12 @@ void plClothingMtl::InitTilesets()
 
 void plClothingMtl::ReleaseTilesets()
 {
-    while (fElements.GetCount() > 0)
-        delete fElements.Pop();
-    while (fTilesets.GetCount() > 0)
-        delete fTilesets.Pop();
+    while (!fElements.empty()) {
+        delete fElements.back();
+        fElements.pop_back();
+    }
+    while (!fTilesets.empty()) {
+        delete fTilesets.back();
+        fTilesets.pop_back();
+    }
 }
-
-/////////////////////////////////////////////////////////////////////////////////
-
-plClothingTileset::plClothingTileset() : fName(nil) 
-{
-    fElements.Reset();
-}
-
-plClothingTileset::~plClothingTileset()
-{
-    delete [] fName;
-}
-
-void plClothingTileset::AddElement(plClothingElement *element)
-{
-    fElements.Append(element);  
-}
-
-void plClothingTileset::SetName(char *name)
-{
-    delete fName; fName = hsStrcpy(name);
-}
-

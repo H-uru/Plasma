@@ -48,30 +48,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUITextBoxMod_h
 #define _pfGUITextBoxMod_h
 
+#include <string_theory/string>
+
 #include "pfGUIControlMod.h"
 
-class plMessage;
 class hsGMaterial;
-class plTextGenerator;
+class plMessage;
 
 class pfGUITextBoxMod : public pfGUIControlMod
 {
     protected:
 
-        wchar_t         *fText;
-        plString        fLocalizationPath;
+        ST::string      fText;
+        ST::string      fLocalizationPath;
         bool            fUseLocalizationPath;
 
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
-        virtual void    IUpdate( void );
-        virtual void    IPostSetUpDynTextMap( void );
+        void    IUpdate() override;
+        void    IPostSetUpDynTextMap() override;
 
     public:
 
         pfGUITextBoxMod();
-        virtual ~pfGUITextBoxMod();
 
         CLASSNAME_REGISTER( pfGUITextBoxMod );
         GETINTERFACE_ANY( pfGUITextBoxMod, pfGUIControlMod );
@@ -82,24 +82,27 @@ class pfGUITextBoxMod : public pfGUIControlMod
             kRightJustify
         };
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
+        void    HandleMouseDown(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
 
-        virtual void    PurgeDynaTextMapImage();
+        void    PurgeDynaTextMapImage() override;
 
-        virtual const wchar_t*  GetText() { return fText; }
+        ST::string  GetText() const { return fText; }
 
         // Export only
-        void    SetText( const char *text );
-        void    SetText( const wchar_t *text );
+        void    SetText(ST::string text)
+        {
+            fText = std::move(text);
+            IUpdate();
+        }
 
-        void    SetLocalizationPath(const plString& path);
+        void    SetLocalizationPath(ST::string path);
         void    SetUseLocalizationPath(bool use);
 };
 

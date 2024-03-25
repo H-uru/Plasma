@@ -39,14 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef NO_AV_MSGS
 
 #ifndef plAvatarMsg_inc
 #define plAvatarMsg_inc
 
+#include <string_theory/string>
 #include "hsBitVector.h"
-#include "plAvatar/plArmatureMod.h"
 #include "pnMessage/plEventCallbackMsg.h"
+#include "plAvatar/plAvDefs.h"
 
 class plSceneObject;
 class hsStream;
@@ -54,6 +54,7 @@ class hsResMgr;
 class plAvTask;
 class plKey;
 class plArmatureMod;
+class plArmatureModBase;
 class plArmatureBrain;
 
 /** \Class plAvatarMsg
@@ -65,15 +66,15 @@ public:
     // tors
     plAvatarMsg() : plMessage() { }
     plAvatarMsg(const plKey &sender, const plKey &receiver)
-        : plMessage(sender, receiver, nil) { }
+        : plMessage(sender, receiver, nullptr) { }
 
 
     // plasma protocol
     CLASSNAME_REGISTER( plAvatarMsg );
     GETINTERFACE_ANY( plAvatarMsg, plMessage );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr) { plMessage::IMsgRead(stream, mgr); }
-    virtual void Write(hsStream *stream, hsResMgr *mgr) { plMessage::IMsgWrite(stream, mgr); }
+    void Read(hsStream *stream, hsResMgr *mgr) override { plMessage::IMsgRead(stream, mgr); }
+    void Write(hsStream *stream, hsResMgr *mgr) override { plMessage::IMsgWrite(stream, mgr); }
 };
 
 
@@ -104,8 +105,8 @@ public:
     CLASSNAME_REGISTER( plArmatureUpdateMsg );
     GETINTERFACE_ANY( plArmatureUpdateMsg, plAvatarMsg );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
     plArmatureMod * fArmature;  // the armature that sent this message
                                 // valid during the message's lifetime
@@ -131,8 +132,8 @@ public:
     CLASSNAME_REGISTER(plAvatarSetTypeMsg);
     GETINTERFACE_ANY(plAvatarSetTypeMsg, plAvatarMsg);
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
     
 private:
     bool fIsPlayer;
@@ -158,8 +159,8 @@ public:
     CLASSNAME_REGISTER( plAvTaskMsg );
     GETINTERFACE_ANY( plAvTaskMsg, plAvatarMsg );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 private:
     plAvTask *fTask;
 };
@@ -189,9 +190,9 @@ public:
     
     // tors
     plAvSeekMsg();
-    plAvSeekMsg(const plKey& sender, const plKey& receiver, const plKey &seekKey, float duration, bool smartSeek,
-                plAvAlignment align = kAlignHandle, const plString& animName = "", bool noSeek = false, 
-                uint8_t flags = kSeekFlagForce3rdPersonOnStart, plKey finishKey = nil);
+    plAvSeekMsg(const plKey& sender, const plKey& receiver, plKey seekKey, float duration, bool smartSeek,
+                plAvAlignment align = kAlignHandle, const ST::string& animName = {}, bool noSeek = false,
+                uint8_t flags = kSeekFlagForce3rdPersonOnStart, plKey finishKey = {});
     
     // plasma protocol
     CLASSNAME_REGISTER( plAvSeekMsg );
@@ -203,8 +204,8 @@ public:
     bool RotationOnly();
     plKey GetFinishCallbackKey() { return fFinishKey; }
     
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
     
     // public members
     plKey fSeekPoint;           // the key to the seekpoint we are going to find
@@ -213,7 +214,7 @@ public:
     float fDuration;            // take this much time to do the move (only if smartSeek is false)
     bool fSmartSeek;          // seek by walking rather than floating
     bool fNoSeek;
-    plString fAnimName;
+    ST::string fAnimName;
     plAvAlignment fAlignType;
     uint8_t fFlags;
     plKey fFinishKey;
@@ -232,8 +233,8 @@ public:
     CLASSNAME_REGISTER( plAvTaskSeekDoneMsg );
     GETINTERFACE_ANY( plAvTaskSeekDoneMsg, plAvatarMsg );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);    
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 class plOneShotCallbacks;
@@ -249,14 +250,14 @@ public:
     virtual ~plAvOneShotMsg();
     plAvOneShotMsg(const plKey &sender, const plKey& receiver,
                    const plKey& seekKey, float duration, bool fSmartSeek,
-                   const plString &animName, bool drivable, bool reversible);
+                   const ST::string &animName, bool drivable, bool reversible);
 
     // plasma protocol
     CLASSNAME_REGISTER( plAvOneShotMsg );
     GETINTERFACE_ANY( plAvOneShotMsg, plAvSeekMsg );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
     // public members
     bool fDrivable;               // are we animated by time or by mouse movement?
@@ -318,19 +319,19 @@ public:
         \param stage Which stage are we setting the loop count for?
         \param newLoopCount The loop count we are setting on the stage
     */
-    plAvBrainGenericMsg(plKey sender, plKey receiver,
-                                             Type type, int stage, int newLoopCount);
+    plAvBrainGenericMsg(const plKey& sender, const plKey& receiver,
+                        Type type, int stage, int newLoopCount);
     // plasma protocol
     CLASSNAME_REGISTER( plAvBrainGenericMsg );
     GETINTERFACE_ANY( plAvBrainGenericMsg, plAvatarMsg );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
     
     // WriteVersion writes the current version of this creatable and ReadVersion will read in
     // any previous version.
-    virtual void ReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 ///////////////////
@@ -339,7 +340,6 @@ public:
 //
 ///////////////////
 
-#ifndef SERVER
 class plAvPushBrainMsg : public plAvTaskMsg
 {
 public:
@@ -350,8 +350,8 @@ public:
     CLASSNAME_REGISTER( plAvPushBrainMsg );
     GETINTERFACE_ANY( plAvPushBrainMsg, plAvTaskMsg);
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
     plArmatureBrain *fBrain;
 };
@@ -373,8 +373,6 @@ public:
     GETINTERFACE_ANY( plAvPopBrainMsg, plAvTaskMsg);
 };
 
-#endif // SERVER
-
 
 // For entering/exiting "stealth mode"
 class plAvatarStealthModeMsg : public plAvatarMsg
@@ -395,8 +393,8 @@ public:
     CLASSNAME_REGISTER(plAvatarStealthModeMsg);
     GETINTERFACE_ANY(plAvatarStealthModeMsg, plAvatarMsg);
     
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 class plAvatarBehaviorNotifyMsg : public plMessage
@@ -411,23 +409,23 @@ public:
     GETINTERFACE_ANY( plAvatarBehaviorNotifyMsg, plMessage );
     
     // Local Only
-    virtual void Read(hsStream *stream, hsResMgr *mgr) {}
-    virtual void Write(hsStream *stream, hsResMgr *mgr) {}
+    void Read(hsStream *stream, hsResMgr *mgr) override { }
+    void Write(hsStream *stream, hsResMgr *mgr) override { }
 };
 
 class plAvatarOpacityCallbackMsg : public plEventCallbackMsg
 {
 public:
     plAvatarOpacityCallbackMsg() : plEventCallbackMsg() {}
-    plAvatarOpacityCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
+    plAvatarOpacityCallbackMsg(const plKey& receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
                                plEventCallbackMsg(receiver, e, idx, t, repeats, user) {}
     
     CLASSNAME_REGISTER( plAvatarOpacityCallbackMsg );
     GETINTERFACE_ANY( plAvatarOpacityCallbackMsg, plEventCallbackMsg );
     
     // These aren't meant to go across the net, so no IO necessary.
-    void Read(hsStream* stream, hsResMgr* mgr) {}
-    void Write(hsStream* stream, hsResMgr* mgr) {}  
+    void Read(hsStream* stream, hsResMgr* mgr) override { }
+    void Write(hsStream* stream, hsResMgr* mgr) override { }
 };
 
 class plAvatarSpawnNotifyMsg : public plMessage
@@ -435,30 +433,29 @@ class plAvatarSpawnNotifyMsg : public plMessage
 public:
     plArmatureMod *fAvMod;
 
-    plAvatarSpawnNotifyMsg() : fAvMod(nil) {}
+    plAvatarSpawnNotifyMsg() : fAvMod() { }
 
     CLASSNAME_REGISTER( plAvatarSpawnNotifyMsg );
     GETINTERFACE_ANY( plAvatarSpawnNotifyMsg, plMessage );
 
     // Local Only
-    virtual void Read(hsStream *stream, hsResMgr *mgr) {}
-    virtual void Write(hsStream *stream, hsResMgr *mgr) {}
+    void Read(hsStream *stream, hsResMgr *mgr) override { }
+    void Write(hsStream *stream, hsResMgr *mgr) override { }
 };
 
 class plAvatarPhysicsEnableCallbackMsg : public plEventCallbackMsg
 {
 public:
     plAvatarPhysicsEnableCallbackMsg() : plEventCallbackMsg() {}
-    plAvatarPhysicsEnableCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
+    plAvatarPhysicsEnableCallbackMsg(const plKey& receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
                                      plEventCallbackMsg(receiver, e, idx, t, repeats, user) {}
     
     CLASSNAME_REGISTER( plAvatarPhysicsEnableCallbackMsg );
     GETINTERFACE_ANY( plAvatarPhysicsEnableCallbackMsg, plEventCallbackMsg );
     
     // These aren't meant to go across the net, so no IO necessary.
-    void Read(hsStream* stream, hsResMgr* mgr) {}
-    void Write(hsStream* stream, hsResMgr* mgr) {}  
+    void Read(hsStream* stream, hsResMgr* mgr) override { }
+    void Write(hsStream* stream, hsResMgr* mgr) override { }
 };
 
 #endif // plAvatarMsg_inc
-#endif // ndef NO_AV_MSGS

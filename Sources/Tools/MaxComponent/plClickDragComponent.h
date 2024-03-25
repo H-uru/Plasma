@@ -56,16 +56,16 @@ public:
 
     // Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool DeInit(plMaxNode *node, plErrorMsg* pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool DeInit(plMaxNode *node, plErrorMsg* pErrMsg) override;
 
     virtual plKey GetAxisKey(plMaxNode* node);
     const LogicKeys& GetAxisKeys();
 
-    virtual void CollectNonDrawables(INodeTab& nonDrawables);
+    void CollectNonDrawables(INodeTab& nonDrawables) override;
 
 };
 

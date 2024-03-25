@@ -40,12 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "cyAnimation.h"
 
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptAnimation, cyAnimation);
@@ -55,13 +53,13 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptAnimation)
 
 PYTHON_INIT_DEFINITION(ptAnimation, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "|O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects an optional ptKey");
         PYTHON_RETURN_INIT_ERROR;
     }
-    if (keyObject == NULL) // no parameter was passed
+    if (keyObject == nullptr) // no parameter was passed
         PYTHON_RETURN_INIT_OK; // nothing to init
 
     if (!pyKey::Check(keyObject))
@@ -78,7 +76,7 @@ PYTHON_INIT_DEFINITION(ptAnimation, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptAnimation, sender, args)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "sender requires a ptKey argument");
@@ -97,7 +95,7 @@ PYTHON_METHOD_DEFINITION(ptAnimation, sender, args)
 
 PYTHON_METHOD_DEFINITION(ptAnimation, addKey, args)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "addKey requires a ptKey argument");
@@ -128,8 +126,8 @@ PYTHON_METHOD_DEFINITION(ptAnimation, netForce, args)
 
 PYTHON_METHOD_DEFINITION(ptAnimation, setAnimName, args)
 {
-    char *name = NULL;
-    if (!PyArg_ParseTuple(args, "s", &name)) // name points at the internal buffer SO DON'T DELETE IT
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "setAnimName requires a string argument");
         PYTHON_RETURN_ERROR;
@@ -260,7 +258,7 @@ PYTHON_BASIC_METHOD_DEFINITION(ptAnimation, incrementBackward, IncrementBackward
 PYTHON_METHOD_DEFINITION_NOARGS(ptAnimation, getFirstKey)
 {
     PyObject *key = self->fThis->GetFirstRecvr();
-    if (key == NULL)
+    if (key == nullptr)
         PYTHON_RETURN_NONE;
     return key;
 }
@@ -304,20 +302,19 @@ PYTHON_CLASS_NEW_IMPL(ptAnimation, cyAnimation)
 
 PyObject *cyAnimation::New(PyObject *sender)
 {
-    ptAnimation *newObj = (ptAnimation*)ptAnimation_type.tp_new(&ptAnimation_type, NULL, NULL);
+    ptAnimation *newObj = (ptAnimation*)ptAnimation_type.tp_new(&ptAnimation_type, nullptr, nullptr);
     pyKey *key = pyKey::ConvertFrom(sender);
     newObj->fThis->SetSender(*key);
-    newObj->fThis->fAnimName = nil;
     newObj->fThis->fNetForce = false;
     return (PyObject*)newObj;
 }
 
 PyObject *cyAnimation::New(cyAnimation &obj)
 {
-    ptAnimation *newObj = (ptAnimation*)ptAnimation_type.tp_new(&ptAnimation_type, NULL, NULL);
+    ptAnimation *newObj = (ptAnimation*)ptAnimation_type.tp_new(&ptAnimation_type, nullptr, nullptr);
     newObj->fThis->fSender = obj.fSender;
     newObj->fThis->fRecvr = obj.fRecvr;
-    newObj->fThis->fAnimName = hsStrcpy(obj.fAnimName);
+    newObj->fThis->fAnimName = obj.fAnimName;
     newObj->fThis->fNetForce = obj.fNetForce;
     return (PyObject*)newObj;
 }

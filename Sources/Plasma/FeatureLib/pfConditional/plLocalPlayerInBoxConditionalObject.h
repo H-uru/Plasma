@@ -43,9 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLocalPlayerInBoxConditionalObject_inc
 #define plLocalPlayerInBoxConditionalObject_inc
 
+#include "pnKeyedObject/plKey.h"
 #include "pnModifier/plConditionalObject.h"
-
-class plKey;
 
 class plLocalPlayerInBoxConditionalObject : public plConditionalObject
 {
@@ -56,17 +55,17 @@ protected:
 public:
     
     plLocalPlayerInBoxConditionalObject();
-    ~plLocalPlayerInBoxConditionalObject(){;}
+    ~plLocalPlayerInBoxConditionalObject() { }
     
     CLASSNAME_REGISTER( plLocalPlayerInBoxConditionalObject );
     GETINTERFACE_ANY( plLocalPlayerInBoxConditionalObject, plConditionalObject );
     
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    void SetBox(plKey pKey) { fBox = pKey; }
+    void SetBox(plKey pKey) { fBox = std::move(pKey); }
     
-    void Evaluate(){;}
-    void Reset() { SetSatisfied(false); }
+    void Evaluate() override { }
+    void Reset() override { SetSatisfied(false); }
 
 };
 

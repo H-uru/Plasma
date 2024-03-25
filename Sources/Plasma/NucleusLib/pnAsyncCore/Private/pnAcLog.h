@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACLOG_H
 
+#include <string_theory/format>
 
 /****************************************************************************
 *
@@ -76,7 +77,11 @@ enum ELogSeverity {
     kNumLogSeverity
 };
 
-void LogMsg  (ELogSeverity severity, const char *format, ...);
-void LogMsg  (ELogSeverity severity, const wchar_t *format, ...);
-void LogMsgV (ELogSeverity severity, const char *format, va_list args);
-void LogMsgV (ELogSeverity severity, const wchar_t *format, va_list args);
+void LogMsg(ELogSeverity severity, const char* line);
+void LogMsg(ELogSeverity severity, const ST::string& line);
+
+template<typename... _Args>
+inline void LogMsg(ELogSeverity severity, const char* format, _Args&&... args)
+{
+    LogMsg(severity, ST::format(format, std::forward<_Args>(args)...));
+}

@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../PubUtilLib")
-
 set(pnSceneObject_HEADERS
     plAudioInterface.h
     plCoordinateInterface.h
@@ -22,8 +17,19 @@ set(pnSceneObject_SOURCES
     plSimulationInterface.cpp
 )
 
-add_library(pnSceneObject STATIC ${pnSceneObject_HEADERS} ${pnSceneObject_SOURCES})
-target_link_libraries(pnSceneObject CoreLib pnKeyedObject pnNetCommon)
+plasma_library(pnSceneObject SOURCES ${pnSceneObject_HEADERS} ${pnSceneObject_SOURCES})
+target_link_libraries(
+    pnSceneObject
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnKeyedObject
+        pnNetCommon
+    PRIVATE
+        pnMessage
+        pnNetCommon
+        pnNucleusInc
+)
 
 source_group("Header Files" FILES ${pnSceneObject_HEADERS})
 source_group("Source Files" FILES ${pnSceneObject_SOURCES})

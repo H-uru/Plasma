@@ -49,9 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plLinkToAgeMsg.h"
 
 class plMessage;
-class plVaultNotifyMsg;
 struct plNCAgeJoiner;
 struct plNCAgeLeaver;
+class plVaultNotifyMsg;
+
+namespace ST { class string; }
 
 class plNetLinkingMgr
 {
@@ -75,7 +77,9 @@ class plNetLinkingMgr
     static void ExecNextOp ();
 
 
-    plNetLinkingMgr();
+    plNetLinkingMgr()
+        : fLinkingEnabled(true), fLinkedIn(), fDeferredLink()
+    { }
     plNetLinkingMgr(const plNetLinkingMgr &) { }
     ~plNetLinkingMgr();
 
@@ -103,8 +107,8 @@ class plNetLinkingMgr
         kLinkDeferred,
     };
 
-    uint8_t IPreProcessLink( void );
-    void IPostProcessLink( void );
+    uint8_t IPreProcessLink();
+    void IPostProcessLink();
     bool IProcessLinkingMgrMsg( plLinkingMgrMsg * msg );
     bool IProcessLinkToAgeMsg( plLinkToAgeMsg * msg );
     void IDoLink(plLinkToAgeMsg* link);
@@ -118,7 +122,7 @@ public:
     bool MsgReceive( plMessage *msg );    // TODO: Make this a hsKeyedObject so we can really handle messages.
     void Update();
 
-    bool IsEnabled( void ) const { return fLinkingEnabled;}
+    bool IsEnabled() const { return fLinkingEnabled;}
     void SetEnabled( bool b );
     
     bool LinkedIn () const { return  fLinkedIn &&  fLinkingEnabled; }
@@ -126,7 +130,7 @@ public:
 
     // Link to an age.
     void LinkToAge( plAgeLinkStruct * link, bool linkInSfx=true, bool linkOutSfx=true, uint32_t playerID=kInvalidPlayerID );
-    void LinkToAge( plAgeLinkStruct * link, const char* linkAnim, bool linkInSfx=true, bool linkOutSfx=true, uint32_t playerID=kInvalidPlayerID );
+    void LinkToAge( plAgeLinkStruct * link, const ST::string& linkAnim, bool linkInSfx=true, bool linkOutSfx=true, uint32_t playerID=kInvalidPlayerID );
 
     // Link to my last age.
     void LinkToPrevAge( uint32_t playerID=kInvalidPlayerID );
@@ -150,7 +154,7 @@ public:
     void LinkToPlayersAge( uint32_t playerID );
 
     // Offer a link to player.
-    void OfferLinkToPlayer( const plAgeLinkStruct * info, uint32_t playerID, plKey replyKey );
+    void OfferLinkToPlayer( const plAgeLinkStruct * info, uint32_t playerID, const plKey& replyKey );
     void OfferLinkToPlayer( const plAgeInfoStruct * info, uint32_t playerID );
     void OfferLinkToPlayer( const plAgeLinkStruct * info, uint32_t playerID );
 
@@ -161,13 +165,8 @@ public:
     plAgeLinkStruct * GetAgeLink() { return &fAgeLink; }
     plAgeLinkStruct * GetPrevAgeLink() { return &fPrevAgeLink; }
 
-    // lobby info
-    void SetLobbyAddr( const char * ipaddr ) { fLobbyInfo.SetServerAddr( ipaddr );}
-    void SetLobbyPort( int port ) { fLobbyInfo.SetServerPort( port );}
-    const plNetServerSessionInfo * GetLobbyServerInfo( void ) const { return &fLobbyInfo;}
-
     // helpers
-    static plString GetProperAgeName( const plString & ageName );    // attempt to fix wrong case age name.
+    static ST::string GetProperAgeName( const ST::string & ageName );    // attempt to fix wrong case age name.
 
 private:
     bool                fLinkingEnabled;
@@ -178,9 +177,6 @@ private:
 
     // The age we just left.
     plAgeLinkStruct     fPrevAgeLink;
-
-    // The lobby we want to talk to.
-    plNetServerSessionInfo  fLobbyInfo;
 };
 
 

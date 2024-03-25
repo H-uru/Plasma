@@ -42,12 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUINotifyMsg_h_
 #define _pfGUINotifyMsg_h_
 
-#include "pnMessage/plMessage.h"
-#include "hsResMgr.h"
-#include "pnModifier/plSingleModifier.h"
 #include "HeadSpin.h"
 
-
+#include "pnMessage/plMessage.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -62,13 +59,12 @@ class pfGUINotifyMsg : public plMessage
 {
 protected:
     plKey       fControlKey;        // who start this mess
-    uint32_t      fEvent;             // what was the event that happened
+    uint32_t    fEvent;             // what was the event that happened
 
 public:
-    pfGUINotifyMsg() : plMessage() {}
-    pfGUINotifyMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t) : plMessage(s, r, t) {}
+    pfGUINotifyMsg() : plMessage(), fEvent() { }
+    pfGUINotifyMsg(const plKey &s, const plKey &r, const double* t)
+        : plMessage(s, r, t), fEvent() { }
     ~pfGUINotifyMsg() {}
 
     CLASSNAME_REGISTER( pfGUINotifyMsg );
@@ -77,7 +73,7 @@ public:
     enum GUIEventType
     {
         kShowHide = 1,      // show or hide change
-        kAction,            // button clicked, ListBox click on item, EditBox hit enter
+        kAction,            // button clicked, ListBox click on item, EditBox hit enter, MultiLineEdit hit link
         kValueChanged,      // value changed in control
         kDialogLoaded,      // the dialog is now loaded and ready for action
         kFocusChange,       // when one of its controls loses focus to another
@@ -103,6 +99,9 @@ public:
 //    kSpecialAction    - tab key hit (for autocompletion on Python side)
 //    kMessageHistoryUp - up key hit
 //    kMessageHistoryDown - down key hit
+// kMultiLineEdit
+//    kAction           - clicked a link
+//    kValueChanged     - the content or position of the control changed
 // kUpDownPair
 //    kValueChanged     - the value of the pair has been changed
 // kKnob
@@ -118,9 +117,9 @@ public:
 // kTextBox
 // kDragBar
 
-    void SetEvent( plKey &key, uint32_t event)
+    void SetEvent(plKey key, uint32_t event)
     {
-        fControlKey = key;
+        fControlKey = std::move(key);
         fEvent = event;
     }
 
@@ -128,19 +127,8 @@ public:
     uint32_t GetEvent() { return fEvent; }
 
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgRead(stream, mgr);
-        fControlKey = mgr->ReadKey(stream);
-        fEvent = stream->ReadLE32();
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        mgr->WriteKey(stream, fControlKey);
-        stream->WriteLE32(fEvent);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 

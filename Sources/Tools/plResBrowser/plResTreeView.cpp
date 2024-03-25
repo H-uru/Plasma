@@ -39,19 +39,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
 
 #include "plResTreeView.h"
-#include "ui_FindDialog.h"
+#include "res/ui_FindDialog.h"
+
+#include "HeadSpin.h"
+
+#include "pnFactory/plFactory.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKeyImp.h"
+#include "pnKeyedObject/plUoid.h"
 
 #include "plResMgr/plResManager.h"
 #include "plResMgr/plRegistryHelpers.h"
 #include "plResMgr/plRegistryNode.h"
 #include "plResMgr/plPageInfo.h"
-#include "pnKeyedObject/plUoid.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plKeyImp.h"
-#include "pnFactory/plFactory.h"
 
 #include <QDialog>
 #include <QLayout>
@@ -93,12 +95,13 @@ protected:
 
 public:
     plResDlgLoader(plResTreeView *tree, bool filter)
-        : fFilter(filter), fTree(tree)
+        : fFilter(filter), fTree(tree), fCurrItem(), fCurrTypeItem(),
+          fCurrType(), fCurrPage()
     {
         static_cast<plResManager *>(hsgResMgr::ResMgr())->IterateAllPages(this);
     }
 
-    virtual bool EatPage(plRegistryPageNode *page)
+    bool EatPage(plRegistryPageNode *page) override
     {
         fCurrPage = page;
         const plPageInfo &info = page->GetPageInfo();
@@ -111,7 +114,7 @@ public:
         return true;
     }
 
-    virtual bool EatKey(const plKey &key)
+    bool EatKey(const plKey &key) override
     {
         if (fCurrType != key->GetUoid().GetClassType())
         {
@@ -178,7 +181,7 @@ void plResTreeView::IFindNextObject()
         plKey key = fFoundItem->type() == plResTreeViewItem::Type
                   ? static_cast<plResTreeViewItem *>(fFoundItem)->GetKey()
                   : nullptr;
-        if (key && key->GetUoid().GetObjectName().Find(fSearchString, plString::kCaseInsensitive) >= 0)
+        if (key && key->GetUoid().GetObjectName().contains(fSearchString, ST::case_insensitive))
         {
             /// FOUND
             setCurrentItem(fFoundItem);

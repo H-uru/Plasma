@@ -42,12 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPageOptimizer_h_inc
 #define plPageOptimizer_h_inc
 
-#include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plUoid.h"
 #include "plFileSystem.h"
 #include <vector>
 #include <set>
 
+class plKey;
 class plRegistryPageNode;
 class plResManager;
 
@@ -72,9 +72,9 @@ protected:
     plResManager* fResMgr;
 
     static plPageOptimizer* fInstance;
-    static void KeyedObjectProc(plKey key);
+    static void KeyedObjectProc(const plKey& key);
 
-    void IWriteKeyData(hsStream* oldPage, hsStream* newPage, plKey key);
+    void IWriteKeyData(hsStream* oldPage, hsStream* newPage, plKey& key);
     void IFindLoc();
     void IRewritePage();
 

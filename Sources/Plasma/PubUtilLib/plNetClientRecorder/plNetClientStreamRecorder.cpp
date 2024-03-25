@@ -39,27 +39,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plNetClientRecorder.h"
-#include "hsStream.h"
-#include "plNetMessage/plNetMessage.h"
+
 #include "plCreatableIndex.h"
-#include "hsResMgr.h"
 #include "plgDispatch.h"
-#include "plSDL/plSDL.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
+#include "pnFactory/plFactory.h"
+#include "pnMessage/plNotifyMsg.h"
 #include "pnNetCommon/plNetApp.h"
 
+#include "plMessage/plAgeLoadedMsg.h"
 #include "plMessage/plLinkToAgeMsg.h"
 #include "plMessage/plLoadAvatarMsg.h"
-#include "plMessage/plLinkToAgeMsg.h"
-#include "pnMessage/plNotifyMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
-
+#include "plNetMessage/plNetMessage.h"
+#include "plSDL/plSDL.h"
 #include "plStatusLog/plStatusLog.h"
 
 plNetClientStreamRecorder::plNetClientStreamRecorder(TimeWrapper* timeWrapper) :
     plNetClientLoggingRecorder(timeWrapper),
-    fRecordStream(nil),
-    fResMgr(nil)
+    fRecordStream(),
+    fResMgr()
 {
     if (fLog)
         delete fLog;
@@ -68,13 +70,7 @@ plNetClientStreamRecorder::plNetClientStreamRecorder(TimeWrapper* timeWrapper) :
 
 
 plNetClientStreamRecorder::~plNetClientStreamRecorder()
-{
-    if (fRecordStream)
-    {
-        fRecordStream->Close();
-        delete fRecordStream;
-    }
-}
+{}
 
 hsResMgr* plNetClientStreamRecorder::GetResMgr()
 {
@@ -98,22 +94,21 @@ bool plNetClientStreamRecorder::BeginRecording(const char* recName)
 {
     if (!fRecordStream)
     {
-        fRecordStream = new hsUNIXStream;
         char path[256];
         IMakeFilename(recName, path);
 
-        if (!fRecordStream->Open(path, "wb"))
-        {
-            delete fRecordStream;
+        auto newStream = std::make_unique<hsUNIXStream>();
+        if (!newStream->Open(path, "wb")) {
             return false;
         }
+        fRecordStream = std::move(newStream);
 
         hsBitVector contentFlags;
         contentFlags.SetBit(kNetClientRecSDLDesc);
-        contentFlags.Write(fRecordStream);
+        contentFlags.Write(fRecordStream.get());
 
         // kNetClientRecSDLDesc
-        plSDLMgr::GetInstance()->Write(fRecordStream);
+        plSDLMgr::GetInstance()->Write(fRecordStream.get());
 
         return true;
     }
@@ -125,26 +120,22 @@ bool plNetClientStreamRecorder::BeginPlayback(const char* recName)
 {
     if (!fRecordStream)
     {
-        fRecordStream = new hsUNIXStream;
         char path[256];
         IMakeFilename(recName, path);
 
-        if (fRecordStream->Open(path, "rb"))
-        {
+        auto newStream = std::make_unique<hsUNIXStream>();
+        if (newStream->Open(path, "rb")) {
+            fRecordStream = std::move(newStream);
             hsBitVector contentFlags;
-            contentFlags.Read(fRecordStream);
+            contentFlags.Read(fRecordStream.get());
 
             if (contentFlags.IsBitSet(kNetClientRecSDLDesc))
-                plSDLMgr::GetInstance()->Read(fRecordStream);
+                plSDLMgr::GetInstance()->Read(fRecordStream.get());
 
             fPlaybackTimeOffset = GetTime();
             fNextPlaybackTime = fRecordStream->ReadLEDouble();
             fBetweenAges = false;
-        }
-        else
-        {
-            delete fRecordStream;
-            fRecordStream = nil;
+        } else {
             return false;
         }
 
@@ -162,7 +153,7 @@ void plNetClientStreamRecorder::RecordMsg(plNetMessage* msg, double secs)
     if (IProcessRecordMsg(msg,secs))
     {
         fRecordStream->WriteLEDouble(secs - fPlaybackTimeOffset);
-        GetResMgr()->WriteCreatableVersion(fRecordStream, msg);
+        GetResMgr()->WriteCreatableVersion(fRecordStream.get(), msg);
 
         ILogMsg(msg);
     }
@@ -170,7 +161,7 @@ void plNetClientStreamRecorder::RecordMsg(plNetMessage* msg, double secs)
 
 void plNetClientStreamRecorder::RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg)
 {
-    fLog->AddLineF("Age %s", ageLoadedMsg->fLoaded ? "Loaded" : "Unloaded");
+    fLog->AddLineF("Age {}", ageLoadedMsg->fLoaded ? "Loaded" : "Unloaded");
 
     if (ageLoadedMsg->fLoaded)
     {
@@ -185,13 +176,13 @@ void plNetClientStreamRecorder::RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg)
 
 bool plNetClientStreamRecorder::IsQueueEmpty()
 {
-    return (fRecordStream == nil);
+    return (fRecordStream == nullptr);
 }
 
 
 plNetMessage* plNetClientStreamRecorder::GetNextMessage()
 {
-    plNetMessage* msg = nil;
+    plNetMessage* msg = nullptr;
     while (!fBetweenAges && (msg = IGetNextMessage()))
     {
         if (IIsValidMsg(msg))
@@ -200,16 +191,16 @@ plNetMessage* plNetClientStreamRecorder::GetNextMessage()
             hsRefCnt_SafeUnRef(msg);
     }
 
-    return nil;
+    return nullptr;
 }
 
 plNetMessage* plNetClientStreamRecorder::IGetNextMessage()
 {
-    plNetMessage* msg = nil;
+    plNetMessage* msg = nullptr;
 
     if (!IsQueueEmpty() && GetNextMessageTimeDelta() <= 0 )
     {
-        msg = plNetMessage::ConvertNoRef(GetResMgr()->ReadCreatableVersion(fRecordStream));
+        msg = plNetMessage::ConvertNoRef(GetResMgr()->ReadCreatableVersion(fRecordStream.get()));
         // msg->SetPeeked(true);
 
         // Fix the flags on game messages, so we won't get an assert later
@@ -237,9 +228,7 @@ plNetMessage* plNetClientStreamRecorder::IGetNextMessage()
         // If this was the last message, stop playing back
         if (fRecordStream->AtEnd())
         {
-            fRecordStream->Close();
-            delete fRecordStream;
-            fRecordStream = nil;
+            fRecordStream.reset();
         }
     }
     
@@ -298,13 +287,13 @@ void plNetClientStreamRecorder::ILogMsg(plNetMessage* msg, const char* preText)
     if (msg->ClassIndex() == CLASS_INDEX_SCOPED(plNetMsgGameMessage))
     {
         plNetMsgGameMessage* gameMsg = plNetMsgGameMessage::ConvertNoRef(msg);
-        fLog->AddLineF("%s%s(%s)", preText, msg->ClassName(), plFactory::GetNameOfClass(gameMsg->StreamInfo()->GetStreamType()));
+        fLog->AddLineF("{}{}({})", preText, msg->ClassName(), plFactory::GetNameOfClass(gameMsg->StreamInfo()->GetStreamType()));
 
         if (gameMsg->StreamInfo()->GetStreamType() == CLASS_INDEX_SCOPED(plNotifyMsg))
         {
             plNotifyMsg* notifyMsg = plNotifyMsg::ConvertNoRef(gameMsg->GetContainedMsg(GetResMgr()));
-            int numEvents = notifyMsg->GetEventCount();
-            for (int i = 0; i < numEvents; i++)
+            size_t numEvents = notifyMsg->GetEventCount();
+            for (size_t i = 0; i < numEvents; i++)
             {
                 const char* eventName = "";
 
@@ -325,7 +314,7 @@ void plNetClientStreamRecorder::ILogMsg(plNetMessage* msg, const char* preText)
                 case proEventData::kClickDrag:      eventName = "ClickDrag";        break;
                 }
 
-                fLog->AddLineF("\t%s", eventName);
+                fLog->AddLineF("\t{}", eventName);
             }
 
             hsRefCnt_SafeUnRef(notifyMsg);
@@ -333,12 +322,12 @@ void plNetClientStreamRecorder::ILogMsg(plNetMessage* msg, const char* preText)
     }
     else if (plNetMsgSDLState* sdlMsg = plNetMsgSDLState::ConvertNoRef(msg))
     {
-        hsReadOnlyStream stream(sdlMsg->StreamInfo()->GetStreamLen(), sdlMsg->StreamInfo()->GetStreamBuf());        
-        plString descName;
+        hsReadOnlyStream stream(sdlMsg->StreamInfo()->GetStreamLen(), sdlMsg->StreamInfo()->GetStreamBuf());
+        ST::string descName;
         int ver;
         if (plStateDataRecord::ReadStreamHeader(&stream, &descName, &ver))
         {
-            fLog->AddLineF("%s%s(%s)", preText, msg->ClassName(), descName.c_str());
+            fLog->AddLineF("{}{}({})", preText, msg->ClassName(), descName);
 
             int i;
 
@@ -348,19 +337,19 @@ void plNetClientStreamRecorder::ILogMsg(plNetMessage* msg, const char* preText)
             sdRec.GetDirtyVars(&vars);
             for (i = 0; i < vars.size(); i++)
             {
-                fLog->AddLineF("\t%s", vars[i]->GetVarDescriptor()->GetName().c_str());
+                fLog->AddLineF("\t{}", vars[i]->GetVarDescriptor()->GetName());
             }
 
             plStateDataRecord::SDVarsList sdVars;
             sdRec.GetDirtySDVars(&sdVars);
             for (i = 0; i < sdVars.size(); i++)
             {
-                fLog->AddLineF("\t%s", sdVars[i]->GetSDVarDescriptor()->GetName().c_str());
+                fLog->AddLineF("\t{}", sdVars[i]->GetSDVarDescriptor()->GetName());
             }
         }
     }
     else
-        fLog->AddLineF("%s%s", preText, msg->ClassName());
+        fLog->AddLineF("{}{}", preText, msg->ClassName());
 }
 
 

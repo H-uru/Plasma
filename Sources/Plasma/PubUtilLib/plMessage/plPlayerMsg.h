@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // Player message class
 //
-#include "../pnMessage/plMessage.h"
+#include "pnMessage/plMessage.h"
 #include "hsBitVector.h"
 #include "hsGeometry3.h"
 
@@ -62,7 +62,7 @@ public:
     plPlayerMsg(const plKey &s, 
                     const plKey &r, 
                     const double* t){ SetBCastFlag(plMessage::kBCastByExactType);    }
-    ~plPlayerMsg(){;}
+    ~plPlayerMsg() { }
 
     CLASSNAME_REGISTER( plPlayerMsg );
     GETINTERFACE_ANY( plPlayerMsg, plMessage ); 

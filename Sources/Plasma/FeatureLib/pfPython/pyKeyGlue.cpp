@@ -40,13 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
 #include "pyKey.h"
-#pragma hdrstop
 
-#ifndef BUILDING_PYPLASMA
-#   include "pySceneObject.h"
-#endif
+#include <string_theory/string>
+
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptKey, pyKey);
@@ -104,7 +102,7 @@ PYTHON_METHOD_DEFINITION(ptKey, netForce, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptKey, getName)
 {
-    return PyString_FromString(self->fThis->getName());
+    return PyUnicode_FromSTString(self->fThis->getName());
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptKey, enable, Enable)
@@ -147,11 +145,12 @@ PYTHON_START_METHODS_TABLE(ptKey)
 PYTHON_END_METHODS_TABLE;
 
 // type structure definition
-#define ptKey_COMPARE       PYTHON_NO_COMPARE
 #define ptKey_AS_NUMBER     PYTHON_NO_AS_NUMBER
 #define ptKey_AS_SEQUENCE   PYTHON_NO_AS_SEQUENCE
 #define ptKey_AS_MAPPING    PYTHON_NO_AS_MAPPING
 #define ptKey_STR           PYTHON_NO_STR
+#define ptKey_GETATTRO      PYTHON_NO_GETATTRO
+#define ptKey_SETATTRO      PYTHON_NO_SETATTRO
 #define ptKey_RICH_COMPARE  PYTHON_DEFAULT_RICH_COMPARE(ptKey)
 #define ptKey_GETSET        PYTHON_NO_GETSET
 #define ptKey_BASE          PYTHON_NO_BASE
@@ -162,10 +161,10 @@ PYTHON_CLASS_NEW_IMPL(ptKey, pyKey)
 
 PyObject *pyKey::New(plKey key)
 {
-    ptKey *newObj = (ptKey*)ptKey_type.tp_new(&ptKey_type, NULL, NULL);
-    newObj->fThis->fKey = key;
+    ptKey *newObj = (ptKey*)ptKey_type.tp_new(&ptKey_type, nullptr, nullptr);
+    newObj->fThis->fKey = std::move(key);
 #ifndef BUILDING_PYPLASMA
-    newObj->fThis->fPyFileMod = nil;
+    newObj->fThis->fPyFileMod = nullptr;
     newObj->fThis->fNetForce = false;
 #endif
     return (PyObject*)newObj;
@@ -173,10 +172,10 @@ PyObject *pyKey::New(plKey key)
 
 PyObject *pyKey::New(pyKey *key)
 {
-    ptKey *newObj = (ptKey*)ptKey_type.tp_new(&ptKey_type, NULL, NULL);
+    ptKey *newObj = (ptKey*)ptKey_type.tp_new(&ptKey_type, nullptr, nullptr);
     newObj->fThis->fKey = key->getKey();
 #ifndef BUILDING_PYPLASMA
-    newObj->fThis->fPyFileMod = nil;
+    newObj->fThis->fPyFileMod = nullptr;
     newObj->fThis->fNetForce = false;
 #endif
     return (PyObject*)newObj;
@@ -184,8 +183,8 @@ PyObject *pyKey::New(pyKey *key)
 #ifndef BUILDING_PYPLASMA
 PyObject *pyKey::New(plKey key, plPythonFileMod* pymod)
 {
-    ptKey *newObj = (ptKey*)ptKey_type.tp_new(&ptKey_type, NULL, NULL);
-    newObj->fThis->fKey = key;
+    ptKey *newObj = (ptKey*)ptKey_type.tp_new(&ptKey_type, nullptr, nullptr);
+    newObj->fThis->fKey = std::move(key);
     newObj->fThis->fPyFileMod = pymod;
     newObj->fThis->fNetForce = false;
     return (PyObject*)newObj;
@@ -193,7 +192,7 @@ PyObject *pyKey::New(plKey key, plPythonFileMod* pymod)
 
 PyObject *pyKey::New(pyKey *key, plPythonFileMod* pymod)
 {
-    ptKey *newObj = (ptKey*)ptKey_type.tp_new(&ptKey_type, NULL, NULL);
+    ptKey *newObj = (ptKey*)ptKey_type.tp_new(&ptKey_type, nullptr, nullptr);
     newObj->fThis->fKey = key->getKey();
     newObj->fThis->fPyFileMod = pymod;
     newObj->fThis->fNetForce = false;

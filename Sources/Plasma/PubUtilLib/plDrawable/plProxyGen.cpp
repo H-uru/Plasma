@@ -40,13 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <vector>
+#include <string_theory/format>
+
 #include "HeadSpin.h"
 #include "plProxyGen.h"
 
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayer.h"
-#include "plDrawable/plDrawableSpans.h"
-#include "plDrawable/plDrawableGenerator.h"
+#include "plDrawableSpans.h"
+#include "plDrawableGenerator.h"
 #include "pnMessage/plProxyDrawMsg.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plRefMsg.h"
@@ -54,14 +57,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 
-static hsTArray<plDrawableSpans*>   fProxyDrawables;
-static hsTArray<hsGMaterial*>   fProxyMaterials;
-static uint32_t                   fProxyKeyCounter = 0;
+static std::vector<plDrawableSpans*>    fProxyDrawables;
+static std::vector<hsGMaterial*>        fProxyMaterials;
+static uint32_t                         fProxyKeyCounter = 0;
 
 plProxyGen::plProxyGen(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac)
-:   fProxyMsgType(0),
-    fProxyDraw(nil),
-    fProxyMat(nil)
+:   fProxyMsgType(),
+    fProxyDraw(),
+    fProxyMat()
 {
     fAmbient = amb;
     fColor = dif;
@@ -80,18 +83,18 @@ void plProxyGen::Init(const hsKeyedObject* owner)
 {
     if( !GetKey() )
     {
-        plString buff;
+        ST::string buff;
         plLocation loc;
         if( owner->GetKey() )
         {
-            buff = plFormat("{}_ProxyGen_{}_{}", owner->GetKey()->GetName(),
-                            owner->GetKey()->GetUoid().GetClonePlayerID(),
-                            fProxyKeyCounter++);
+            buff = ST::format("{}_ProxyGen_{}_{}", owner->GetKey()->GetName(),
+                              owner->GetKey()->GetUoid().GetClonePlayerID(),
+                              fProxyKeyCounter++);
             loc = owner->GetKey()->GetUoid().GetLocation();
         }
         else
         {
-            buff = plFormat("ProxyGen{}", fProxyKeyCounter++);
+            buff = ST::format("ProxyGen{}", fProxyKeyCounter++);
             loc = plLocation::kGlobalFixedLoc;
         }
 
@@ -128,10 +131,8 @@ uint32_t plProxyGen::IGetProxyIndex() const
     plKey sceneNode = IGetNode();
     uint32_t drawType = IGetDrawableType();
 
-    int firstNil = -1;
-    int firstMatch = -1;
-    int i;
-    for( i = 0; i < fProxyDrawables.GetCount(); i++ )
+    hsSsize_t firstNil = -1;
+    for (size_t i = 0; i < fProxyDrawables.size(); i++)
     {
         if( fProxyDrawables[i] )
         {
@@ -145,10 +146,11 @@ uint32_t plProxyGen::IGetProxyIndex() const
             firstNil = i;
     }
     if( firstNil < 0 )
-        firstNil = fProxyDrawables.GetCount();
-    fProxyDrawables.ExpandAndZero(firstNil+1);
+        firstNil = fProxyDrawables.size();
+    if (firstNil >= fProxyDrawables.size())
+        fProxyDrawables.resize(firstNil + 1);
 
-    return firstNil;
+    return (uint32_t)firstNil;
 }
 
 hsGMaterial* plProxyGen::IMakeProxyMaterial() const
@@ -159,9 +161,9 @@ hsGMaterial* plProxyGen::IMakeProxyMaterial() const
 
     hsGMaterial* retVal = new hsGMaterial();
 
-    plString buff;
-    if( !GetKeyName().IsNull() )
-        buff = plFormat("{}_Material", GetKeyName());
+    ST::string buff;
+    if( !GetKeyName().empty() )
+        buff = ST::format("{}_Material", GetKeyName());
     else
         buff = "ProxyMaterial";
     hsgResMgr::ResMgr()->NewKey( buff, retVal, GetKey() ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
@@ -183,9 +185,8 @@ hsGMaterial* plProxyGen::IMakeProxyMaterial() const
 
 hsGMaterial* plProxyGen::IFindProxyMaterial() const
 {
-    for (int i = 0; i < fProxyMaterials.GetCount(); i++)
+    for (hsGMaterial* mat : fProxyMaterials)
     {
-        hsGMaterial* mat = fProxyMaterials[i];
         if (!mat)
             continue;
 
@@ -197,7 +198,7 @@ hsGMaterial* plProxyGen::IFindProxyMaterial() const
             return mat;
     }
 
-    return nil;
+    return nullptr;
 }
 
 hsGMaterial* plProxyGen::IGetProxyMaterial() const
@@ -213,7 +214,7 @@ hsGMaterial* plProxyGen::IGetProxyMaterial() const
 
     // Have to make a new one
     mat = IMakeProxyMaterial();
-    fProxyMaterials.Append(mat);
+    fProxyMaterials.emplace_back(mat);
     return mat;
 }
 
@@ -227,16 +228,14 @@ void plProxyGen::IGenerateProxy()
     hsGMaterial* mat = IGetProxyMaterial();
     hsAssert(mat, "Failed to create proxy material");
 
-    bool onCreate = !fProxyDrawables[idx];
-
-    fProxyIndex.SetCount(0);
+    fProxyIndex.clear();
     fProxyDrawables[idx] = ICreateProxy(mat, fProxyIndex, fProxyDrawables[idx]);
 
     if( fProxyDrawables[idx] && !fProxyDrawables[idx]->GetKey() )
     {
-        plString buff;
-        if( !GetKeyName().IsNull() )
-            buff = plFormat("{}_ProxyDrawable", GetKeyName());
+        ST::string buff;
+        if( !GetKeyName().empty() )
+            buff = ST::format("{}_ProxyDrawable", GetKeyName());
         else
             buff = "ProxyDrawable";
 
@@ -275,7 +274,7 @@ void plProxyGen::IRemoveProxy(uint32_t idx) const
 {
     if( fProxyDrawables[idx] )
     {
-        fProxyDrawables[idx]->SetSceneNode(nil);
+        fProxyDrawables[idx]->SetSceneNode(nullptr);
     }
 }
 
@@ -285,17 +284,17 @@ void plProxyGen::IDestroyProxy()
     if( fProxyDraw )
     {
         if( fProxyDraw->GetSceneNode() )
-            fProxyDraw->SetSceneNode(nil);
+            fProxyDraw->SetSceneNode(nullptr);
         GetKey()->Release(fProxyDraw->GetKey());
-        fProxyDraw = nil;
+        fProxyDraw = nullptr;
     }
     if( fProxyMat )
     {
         GetKey()->Release(fProxyMat->GetKey());
-        fProxyMat = nil;
+        fProxyMat = nullptr;
     }
-    fProxyDrawables.Reset();
-    fProxyMaterials.Reset();
+    fProxyDrawables.clear();
+    fProxyMaterials.clear();
 }
 
 bool plProxyGen::MsgReceive(plMessage* msg)
@@ -305,17 +304,17 @@ bool plProxyGen::MsgReceive(plMessage* msg)
     {
         if( pDraw->GetProxyFlags() & plProxyDrawMsg::kCreate )
         {
-            if( fProxyDraw == nil )
+            if (fProxyDraw == nullptr)
                 IGenerateProxy();
         }
         else if( pDraw->GetProxyFlags() & plProxyDrawMsg::kDestroy )
         {
-            if( fProxyDraw != nil )
+            if (fProxyDraw != nullptr)
                 IDestroyProxy();
         }
         else if( pDraw->GetProxyFlags() & plProxyDrawMsg::kToggle )
         {
-            if( fProxyDraw == nil )
+            if (fProxyDraw == nullptr)
                 IGenerateProxy();
             else
                 IDestroyProxy();
@@ -327,8 +326,8 @@ bool plProxyGen::MsgReceive(plMessage* msg)
     {
         if( nodeRef->GetContext() & (plRefMsg::kOnDestroy | plRefMsg::kOnRemove) )
         {
-            if( nodeRef->fWhich < fProxyDrawables.GetCount() )
-                fProxyDrawables[nodeRef->fWhich] = nil;
+            if (nodeRef->fWhich < (hsSsize_t)fProxyDrawables.size())
+                fProxyDrawables[nodeRef->fWhich] = nullptr;
         }
         return true;
     }
@@ -337,8 +336,8 @@ bool plProxyGen::MsgReceive(plMessage* msg)
     {
         if( genMsg->GetContext() & (plRefMsg::kOnDestroy | plRefMsg::kOnRemove) )
         {
-            if( genMsg->fWhich < fProxyMaterials.GetCount() )
-                fProxyMaterials[genMsg->fWhich] = nil;
+            if (genMsg->fWhich < (hsSsize_t)fProxyMaterials.size())
+                fProxyMaterials[genMsg->fWhich] = nullptr;
         }
         return true;
     }
@@ -352,9 +351,8 @@ void plProxyGen::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
     uint32_t idx = IGetProxyIndex();
     if( fProxyDrawables[idx] )
     {
-        int i;
-        for( i = 0; i < fProxyIndex.GetCount(); i++ )
-            fProxyDrawables[idx]->SetTransform(fProxyIndex[i], l2w, w2l);
+        for (uint32_t proxyIndex : fProxyIndex)
+            fProxyDrawables[idx]->SetTransform(proxyIndex, l2w, w2l);
     }
 }
 
@@ -363,8 +361,7 @@ void plProxyGen::SetDisable(bool on)
     uint32_t idx = IGetProxyIndex();
     if( fProxyDrawables[idx] )
     {
-        int i;
-        for( i = 0; i < fProxyIndex.GetCount(); i++ )
-            fProxyDrawables[idx]->SetNativeProperty(fProxyIndex[i], plDrawable::kPropNoDraw, on);
+        for (uint32_t proxyIndex : fProxyIndex)
+            fProxyDrawables[idx]->SetNativeProperty(proxyIndex, plDrawable::kPropNoDraw, on);
     }
 }

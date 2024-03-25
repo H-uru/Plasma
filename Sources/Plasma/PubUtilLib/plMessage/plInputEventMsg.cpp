@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 #include "pnKeyedObject/plKey.h"
 #include "hsResMgr.h"
-#pragma hdrstop
+#include "hsStream.h"
 
 #include "plInputEventMsg.h"
 
@@ -70,14 +70,14 @@ void plInputEventMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
     
-    stream->ReadLE(&fEvent);
+    stream->ReadLE32(&fEvent);
 }
 
 void plInputEventMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
     
-    stream->WriteLE(fEvent);
+    stream->WriteLE32(fEvent);
 }
 
 enum InputEventMsgFlags
@@ -93,7 +93,7 @@ void plInputEventMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kInputEventMsgEvent))
-        s->ReadLE(&fEvent);
+        s->ReadLE32(&fEvent);
 }
 
 void plInputEventMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
@@ -105,13 +105,12 @@ void plInputEventMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kInputEventMsgEvent
-    s->WriteLE(fEvent);
+    s->WriteLE32(fEvent);
 }
 
 plControlEventMsg::plControlEventMsg() : 
-    fCmd(nil)
+    fCmd()
 {
-    fTurnToPt.Set(0,0,0);
     fControlPct = 1.0f;
     SetBCastFlag(plMessage::kPropagateToModifiers);
     SetBCastFlag(plMessage::kBCastByType, false);
@@ -120,25 +119,19 @@ plControlEventMsg::plControlEventMsg() :
 plControlEventMsg::plControlEventMsg(const plKey &s, 
             const plKey &r, 
             const double* t) :
-    fCmd(nil)
+    fCmd()
 {
-    fTurnToPt.Set(0,0,0);
     fControlPct = 1.0f;
     SetBCastFlag(plMessage::kBCastByType, false);
     SetBCastFlag(plMessage::kPropagateToModifiers);
 }
 
-plControlEventMsg::~plControlEventMsg()
-{   
-    delete [] fCmd;
-}
-
 void plControlEventMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plInputEventMsg::Read(stream, mgr);
-    stream->ReadLE((int32_t*)&fControlCode);
+    fControlCode = (ControlEventCode)stream->ReadLE32();
     fControlActivated = stream->ReadBOOL();
-    stream->ReadLE(&fControlPct);
+    stream->ReadLEFloat(&fControlPct);
     fTurnToPt.Read(stream);
 
     // read cmd/string
@@ -148,9 +141,9 @@ void plControlEventMsg::Read(hsStream* stream, hsResMgr* mgr)
 void plControlEventMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plInputEventMsg::Write(stream, mgr);
-    stream->WriteLE((int32_t)fControlCode);
+    stream->WriteLE32((int32_t)fControlCode);
     stream->WriteBOOL(fControlActivated);
-    stream->WriteLE(fControlPct);
+    stream->WriteLEFloat(fControlPct);
     fTurnToPt.Write(stream);
     
     // write cmd/string
@@ -174,13 +167,13 @@ void plControlEventMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kControlEventMsgCode))
-        s->ReadLE((int32_t*)&fControlCode);
+        fControlCode = (ControlEventCode)s->ReadLE32();
 
     if (contentFlags.IsBitSet(kControlEventMsgActivated))
         fControlActivated = s->ReadBOOL();
 
     if (contentFlags.IsBitSet(kControlEventMsgPct))
-        s->ReadLE(&fControlPct);
+        s->ReadLEFloat(&fControlPct);
 
     if (contentFlags.IsBitSet(kControlEventMsgTurnToPt))
         fTurnToPt.Read(s);
@@ -203,13 +196,13 @@ void plControlEventMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kControlEventMsgCode,    
-    s->WriteLE((int32_t)fControlCode);
+    s->WriteLE32((int32_t)fControlCode);
 
     // kControlEventMsgActivated,
     s->WriteBOOL(fControlActivated);
 
     // kControlEventMsgPct,
-    s->WriteLE(fControlPct);
+    s->WriteLEFloat(fControlPct);
 
     // kControlEventMsgTurnToPt,
     fTurnToPt.Write(s);
@@ -232,6 +225,27 @@ plKeyEventMsg::~plKeyEventMsg()
 {
 }
 
+void plKeyEventMsg::Read(hsStream* stream, hsResMgr* mgr)
+{
+    plInputEventMsg::Read(stream, mgr);
+    fKeyCode = (plKeyDef)stream->ReadLE32();
+    fKeyDown = stream->ReadBOOL();
+    fCapsLockKeyDown = stream->ReadBOOL();
+    fShiftKeyDown = stream->ReadBOOL();
+    fCtrlKeyDown = stream->ReadBOOL();
+    fRepeat = stream->ReadBOOL();
+}
+
+void plKeyEventMsg::Write(hsStream* stream, hsResMgr* mgr)
+{
+    plInputEventMsg::Write(stream, mgr);
+    stream->WriteLE32((int32_t)fKeyCode);
+    stream->WriteBOOL(fKeyDown);
+    stream->WriteBOOL(fCapsLockKeyDown);
+    stream->WriteBOOL(fShiftKeyDown);
+    stream->WriteBOOL(fCtrlKeyDown);
+    stream->WriteBOOL(fRepeat);
+}
 
 plDebugKeyEventMsg::plDebugKeyEventMsg()
 {
@@ -247,6 +261,65 @@ plDebugKeyEventMsg::~plDebugKeyEventMsg()
 {
 }
 
+void plDebugKeyEventMsg::Read(hsStream* stream, hsResMgr* mgr)
+{
+    plInputEventMsg::Read(stream, mgr);
+    fKeyCode = (ControlEventCode)stream->ReadLE32();
+    fKeyDown = stream->ReadBOOL();
+    fCapsLockKeyDown = stream->ReadBOOL();
+    fShiftKeyDown = stream->ReadBOOL();
+    fCtrlKeyDown = stream->ReadBOOL();
+}
+
+void plDebugKeyEventMsg::Write(hsStream* stream, hsResMgr* mgr)
+{
+    plInputEventMsg::Write(stream, mgr);
+    stream->WriteLE32((int32_t)fKeyCode);
+    stream->WriteBOOL(fKeyDown);
+    stream->WriteBOOL(fCapsLockKeyDown);
+    stream->WriteBOOL(fShiftKeyDown);
+    stream->WriteBOOL(fCtrlKeyDown);
+}
+
+void plIMouseXEventMsg::Read(hsStream* stream, hsResMgr* mgr)
+{
+    plInputEventMsg::Read(stream, mgr);
+    stream->ReadLEFloat(&fX);
+    stream->ReadLE32(&fWx);
+}
+
+void plIMouseXEventMsg::Write(hsStream* stream, hsResMgr* mgr)
+{
+    plInputEventMsg::Write(stream, mgr);
+    stream->WriteLEFloat(fX);
+    stream->WriteLE32(fWx);
+}
+
+void plIMouseYEventMsg::Read(hsStream* stream, hsResMgr* mgr)
+{
+    plInputEventMsg::Read(stream, mgr);
+    stream->ReadLEFloat(&fY);
+    stream->ReadLE32(&fWy);
+}
+
+void plIMouseYEventMsg::Write(hsStream* stream, hsResMgr* mgr)
+{
+    plInputEventMsg::Write(stream, mgr);
+    stream->WriteLEFloat(fY);
+    stream->WriteLE32(fWy);
+}
+
+void plIMouseBEventMsg::Read(hsStream* stream, hsResMgr* mgr)
+{
+    plInputEventMsg::Read(stream, mgr);
+    stream->ReadLE16(&fButton);
+}
+
+void plIMouseBEventMsg::Write(hsStream* stream, hsResMgr* mgr)
+{
+    plInputEventMsg::Write(stream, mgr);
+    stream->WriteLE16(fButton);
+}
 
 plMouseEventMsg::plMouseEventMsg() : fXPos(0.0f),fYPos(0.0f),fDX(0.0f),fDY(0.0f),fButton(0)
 {
@@ -260,6 +333,28 @@ plMouseEventMsg::plMouseEventMsg(const plKey &s,
 
 plMouseEventMsg::~plMouseEventMsg()
 {
+}
+
+void plMouseEventMsg::Read(hsStream* stream, hsResMgr* mgr)
+{
+    plInputEventMsg::Read(stream, mgr);
+    stream->ReadLEFloat(&fXPos);
+    stream->ReadLEFloat(&fYPos);
+    stream->ReadLEFloat(&fDX);
+    stream->ReadLEFloat(&fDY);
+    stream->ReadLE16(&fButton);
+    stream->ReadLEFloat(&fWheelDelta);
+}
+
+void plMouseEventMsg::Write(hsStream* stream, hsResMgr* mgr)
+{
+    plInputEventMsg::Write(stream, mgr);
+    stream->WriteLEFloat(fXPos);
+    stream->WriteLEFloat(fYPos);
+    stream->WriteLEFloat(fDX);
+    stream->WriteLEFloat(fDY);
+    stream->WriteLE16(fButton);
+    stream->WriteLEFloat(fWheelDelta);
 }
 
 /////////////////////////////////////////////////////////////////////////////

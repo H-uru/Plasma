@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plSDL_SOURCES
     plSDLMgr.cpp
     plSDLParser.cpp
@@ -32,7 +27,24 @@ set(plSDL_SDLFILES
     SDL/xregion.sdl
 )
 
-add_library(plSDL STATIC ${plSDL_SOURCES} ${plSDL_HEADERS} ${plSDL_SDLFILES})
+plasma_library(plSDL
+    SOURCES ${plSDL_SOURCES} ${plSDL_HEADERS} ${plSDL_SDLFILES}
+    PRECOMPILED_HEADERS Pch.h
+)
+target_link_libraries(plSDL
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnKeyedObject
+        plUnifiedTime
+    PRIVATE
+        pnMessage
+        pnNetCommon
+        pnNucleusInc
+        plFile
+        plNetMessage
+        plResMgr
+)
 
 source_group("Source Files" FILES ${plSDL_SOURCES})
 source_group("Header Files" FILES ${plSDL_HEADERS})

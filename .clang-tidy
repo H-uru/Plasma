@@ -1,0 +1,15 @@
+Checks: >-
+  -*,
+  bugprone-bool-pointer-implicit-conversion,
+  bugprone-inaccurate-erase,
+  bugprone-unused-raii,
+  bugprone-use-after-move,
+  modernize-use-nullptr,
+  modernize-use-override,
+  performance-move-const-arg,
+  performance-unnecessary-copy-initialization,
+  performance-unnecessary-value-param
+CheckOptions:
+    - key: modernize-use-override.IgnoreDestructors
+      value: '1'
+HeaderFilterRegex: 'Sources[\\|\/].*'

@@ -40,11 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pyVaultAgeInfoListNode.h"
+
 #include "plVault/plVault.h"
+
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptVaultAgeInfoListNode, pyVaultAgeInfoListNode);
@@ -105,22 +105,10 @@ PYTHON_START_METHODS_TABLE(ptVaultAgeInfoListNode)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-PLASMA_DEFAULT_TYPE_WBASE(ptVaultAgeInfoListNode, pyVaultFolderNode, "Params: n=0\nPlasma vault age info list node");
+PLASMA_DEFAULT_TYPE_WBASE(ptVaultAgeInfoListNode, pyVaultFolderNode, "Plasma vault age info list node");
 
 // required functions for PyObject interoperability
-PyObject *pyVaultAgeInfoListNode::New(RelVaultNode* nfsNode)
-{
-    ptVaultAgeInfoListNode *newObj = (ptVaultAgeInfoListNode*)ptVaultAgeInfoListNode_type.tp_new(&ptVaultAgeInfoListNode_type, NULL, NULL);
-    newObj->fThis->fNode = nfsNode;
-    return (PyObject*)newObj;
-}
-
-PyObject *pyVaultAgeInfoListNode::New(int n /* =0 */)
-{
-    ptVaultAgeInfoListNode *newObj = (ptVaultAgeInfoListNode*)ptVaultAgeInfoListNode_type.tp_new(&ptVaultAgeInfoListNode_type, NULL, NULL);
-    // oddly enough, nothing to do here
-    return (PyObject*)newObj;
-}
+PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultAgeInfoListNode, pyVaultAgeInfoListNode);
 
 PYTHON_CLASS_CHECK_IMPL(ptVaultAgeInfoListNode, pyVaultAgeInfoListNode)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptVaultAgeInfoListNode, pyVaultAgeInfoListNode)

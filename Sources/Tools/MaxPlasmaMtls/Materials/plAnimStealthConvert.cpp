@@ -46,11 +46,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
+
+#include "MaxMain/MaxAPI.h"
+
 #include "../resource.h"
 
 #include "MaxMain/plMaxNode.h"
-#include <iparamm2.h>
-#pragma hdrstop
 
 #include "plAnimStealthNode.h"
 #include "plPassMtlBase.h"
@@ -64,7 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Helpers /////////////////////////////////////////////////////////////////
 
-static void ISearchLayerRecur( plLayerInterface *layer, const plString &segName, hsTArray<plKey>& keys )
+static void ISearchLayerRecur(plLayerInterface *layer, const ST::string &segName, std::vector<plKey>& keys)
 {
     if( !layer )
         return;
@@ -72,27 +73,27 @@ static void ISearchLayerRecur( plLayerInterface *layer, const plString &segName,
     plLayerAnimation *animLayer = plLayerAnimation::ConvertNoRef(layer);
     if (animLayer)
     {
-        plString ID = animLayer->GetSegmentID();
-        if (!ID.Compare(segName))
+        ST::string ID = animLayer->GetSegmentID();
+        if (!ID.compare(segName))
         {
-            if( keys.kMissingIndex == keys.Find(animLayer->GetKey()) )
-                keys.Append(animLayer->GetKey());
+            const auto idx = std::find(keys.begin(), keys.end(), animLayer->GetKey());
+            if (idx == keys.end())
+                keys.emplace_back(animLayer->GetKey());
         }
     }
 
     ISearchLayerRecur(layer->GetAttached(), segName, keys);
 }
 
-static int ISearchLayerRecur(hsGMaterial* mat, const plString &segName, hsTArray<plKey>& keys)
+static size_t ISearchLayerRecur(hsGMaterial* mat, const ST::string &segName, std::vector<plKey>& keys)
 {
-    plString name = ( segName.Compare( ENTIRE_ANIMATION_NAME ) == 0 ) ? "" : segName;
-    int i;
-    for( i = 0; i < mat->GetNumLayers(); i++ )
+    ST::string name = ( segName.compare( ENTIRE_ANIMATION_NAME ) == 0 ) ? ST::string() : segName;
+    for (size_t i = 0; i < mat->GetNumLayers(); i++)
         ISearchLayerRecur(mat->GetLayer(i), name, keys);
-    return keys.GetCount();
+    return keys.size();
 }
 
-static int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString& segName, hsTArray<plKey>& keys)
+static int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& segName, std::vector<plKey>& keys)
 {
     int retVal = 0;
 
@@ -108,28 +109,28 @@ static int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString& segNa
     }
     else
     {
-        hsTArray<hsGMaterial*> matList;
+        std::vector<hsGMaterial*> matList;
 
         if (node)
             hsMaterialConverter::Instance().GetMaterialArray(mtl, (plMaxNode*)node, matList);
         else
             hsMaterialConverter::Instance().CollectConvertedMaterials(mtl, matList);
 
-        for( i = 0; i < matList.GetCount(); i++ )
+        for (hsGMaterial* mat : matList)
         {
-            retVal += ISearchLayerRecur(matList[i], segName, keys);
+            retVal += ISearchLayerRecur(mat, segName, keys);
         }
     }
 
     return retVal;
 }
 
-SegmentSpec *plAnimStealthNode::IGetSegmentSpec( void ) const
+SegmentSpec *plAnimStealthNode::IGetSegmentSpec() const
 {
-    if( fCachedSegMap != nil )
+    if (fCachedSegMap != nullptr)
     {
-        plString name = GetSegmentName();
-        if( !name.IsNull() )
+        ST::string name = GetSegmentName();
+        if( !name.empty() )
         {
             SegmentMap::iterator i = fCachedSegMap->find( name );
             if( i != fCachedSegMap->end() )
@@ -139,23 +140,23 @@ SegmentSpec *plAnimStealthNode::IGetSegmentSpec( void ) const
             }
         }
     }
-    return nil;
+    return nullptr;
 }
 
 
-float    plAnimStealthNode::GetSegStart( void ) const
+float    plAnimStealthNode::GetSegStart() const
 {
     SegmentSpec *spec = IGetSegmentSpec();
-    if( spec != nil )
+    if (spec != nullptr)
         return spec->fStart;
 
     return 0.f;
 }
 
-float    plAnimStealthNode::GetSegEnd( void ) const
+float    plAnimStealthNode::GetSegEnd() const
 {
     SegmentSpec *spec = IGetSegmentSpec();
-    if( spec != nil )
+    if (spec != nullptr)
         return spec->fEnd;
 
     return 0.f;
@@ -166,14 +167,14 @@ void    plAnimStealthNode::GetLoopPoints( float &start, float &end ) const
     start = GetSegStart();
     end = GetSegEnd();
 
-    plString loopName = GetLoopName();
-    if( !loopName.IsEmpty() && fCachedSegMap != nil )
+    ST::string loopName = GetLoopName();
+    if (!loopName.empty() && fCachedSegMap != nullptr)
         GetSegMapAnimTime( loopName, fCachedSegMap, SegmentSpec::kLoop, start, end );
 }
 
-void    plAnimStealthNode::GetAllStopPoints( hsTArray<float> &out )
+void    plAnimStealthNode::GetAllStopPoints(std::vector<float> &out)
 {
-    if( fCachedSegMap == nil )
+    if (fCachedSegMap == nullptr)
         return;
 
     for (SegmentMap::iterator it = fCachedSegMap->begin(); it != fCachedSegMap->end(); it++)
@@ -181,7 +182,7 @@ void    plAnimStealthNode::GetAllStopPoints( hsTArray<float> &out )
         SegmentSpec *spec = it->second;
         if( spec->fType == SegmentSpec::kStopPoint )
         {
-            out.Append( spec->fStart );
+            out.emplace_back(spec->fStart);
         }
     }
 }
@@ -192,8 +193,8 @@ void    plAnimStealthNode::GetAllStopPoints( hsTArray<float> &out )
 
 void    plAnimStealthNode::StuffToTimeConvert( plAnimTimeConvert &convert, float maxLength )
 {
-    plString segName = GetSegmentName();
-    bool isEntire = ( segName.IsNull() || segName.Compare( ENTIRE_ANIMATION_NAME ) == 0 ) ? true : false;
+    ST::string segName = GetSegmentName();
+    bool isEntire = ( segName.empty() || segName.compare( ENTIRE_ANIMATION_NAME ) == 0 );
 
     if( isEntire )
     {
@@ -203,8 +204,8 @@ void    plAnimStealthNode::StuffToTimeConvert( plAnimTimeConvert &convert, float
     else
     {
         SegmentSpec *spec = IGetSegmentSpec();
-        convert.SetBegin( ( spec != nil ) ? spec->fStart : 0.f );
-        convert.SetEnd( ( spec != nil ) ? spec->fEnd : 0.f );
+        convert.SetBegin((spec != nullptr) ? spec->fStart : 0.f);
+        convert.SetEnd((spec != nullptr) ? spec->fEnd : 0.f);
     }
 
     // Even if we're not looping, set the loop points. (A responder
@@ -241,14 +242,19 @@ void    plAnimStealthNode::StuffToTimeConvert( plAnimTimeConvert &convert, float
 
 //// plAnimObjInterface Functions ////////////////////////////////////////////
 
-bool    plAnimStealthNode::GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys )
+bool    plAnimStealthNode::GetKeyList(INode *restrictedNode, std::vector<plKey> &outKeys)
 {
     if( !fPreppedForConvert )
     {
-        hsMessageBox( "This messages is to warn you that mcn screwed up in his attempt to create "
-        "a SetupProperties() pass for materials in this scene. You should probably let him know as soon as "
-        "possible, and also make a copy of this exact scene so that he can test with it and figure out what "
-        "is going wrong. Thank you.", "Mathew is Stupid Error", hsMessageBoxNormal );
+        plMaxMessageBox(
+            nullptr,
+            _T("This messages is to warn you that mcn screwed up in his attempt to create "
+               "a SetupProperties() pass for materials in this scene. You should probably "
+               "make a copy of this exact scene and hand it over to a H'uru developer. Maybe "
+               "they can figure out what is going wrong. Thank you."),
+            _T("Mathew is Stupid Error"),
+            MB_OK | MB_ICONERROR
+        );
     }
 
     GetMatAnimModKey( GetParentMtl(), (plMaxNode *)restrictedNode, GetSegmentName(), outKeys );
@@ -261,9 +267,9 @@ bool    plAnimStealthNode::SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg
 {
     fPreppedForConvert = true;
     plPassMtlBase *parent = GetParentMtl();
-    if( parent != nil && fCachedSegMap == nil )
+    if (parent != nullptr && fCachedSegMap == nullptr)
     {
-        fCachedSegMap = GetAnimSegmentMap( parent, nil );
+        fCachedSegMap = GetAnimSegmentMap(parent, nullptr);
     }
     return true;
 }
@@ -273,9 +279,9 @@ bool    plAnimStealthNode::SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg
 bool    plAnimStealthNode::ConvertDeInit( plMaxNode *node, plErrorMsg *pErrMsg )
 {
     fPreppedForConvert = false;
-    if( fCachedSegMap != nil )
+    if (fCachedSegMap != nullptr)
         DeleteSegmentMap( fCachedSegMap );
-    fCachedSegMap = nil;
+    fCachedSegMap = nullptr;
 
     return true;
 }

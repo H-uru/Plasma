@@ -43,17 +43,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMorphArray_inc
 #define plMorphArray_inc
 
+#include <vector>
+
 #include "plMorphDelta.h"
 
 class plMorphArray
 {
 protected:
-    hsTArray<plMorphDelta>      fDeltas;
+    std::vector<plMorphDelta> fDeltas;
+
 public:
     plMorphArray();
     virtual ~plMorphArray();
 
-    void Apply(hsTArray<plAccessSpan>& dst, hsTArray<float>* weights = nil) const;
+    void Apply(std::vector<plAccessSpan>& dst, std::vector<float>* weights = nullptr) const;
 
     void Read(hsStream* s, hsResMgr* mgr);
     void Write(hsStream* s, hsResMgr* mgr); 
@@ -61,9 +64,9 @@ public:
     void Reset();
     void AddDelta(const plMorphDelta& delta);
 
-    int GetNumDeltas() const { return fDeltas.GetCount(); }
-    float GetWeight(int iDel) { return fDeltas[iDel].GetWeight(); }
-    void SetWeight(int iDel, float w) { if( iDel < fDeltas.GetCount() )fDeltas[iDel].SetWeight(w); }
+    size_t GetNumDeltas() const { return fDeltas.size(); }
+    float GetWeight(size_t iDel) const { return fDeltas[iDel].GetWeight(); }
+    void SetWeight(size_t iDel, float w) { if (iDel < fDeltas.size()) fDeltas[iDel].SetWeight(w); }
 };
 
 #endif // plMorphArray_inc

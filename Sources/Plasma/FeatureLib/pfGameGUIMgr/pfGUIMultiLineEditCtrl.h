@@ -48,17 +48,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIMultiLineEditCtrl_h
 #define _pfGUIMultiLineEditCtrl_h
 
+#include "hsBounds.h"
+
+#include <string_theory/char_buffer>
+#include <string_theory/string>
+#include <tuple>
+#include <vector>
+
 #include "pfGUIControlMod.h"
-#include "hsTemplates.h"
 
 #include "plInputCore/plInputDevice.h"
 
-class plMessage;
 class hsGMaterial;
-class plTextGenerator;
-class pfMLScrollProc;
 class pfGUIValueCtrl;
-
+class plMessage;
+class pfMLScrollProc;
 struct plUndoAction;
 
 class pfGUIMultiLineEditProc
@@ -94,28 +98,24 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         };
 
     protected:
-
-        mutable hsTArray<wchar_t>   fBuffer;        // Because AcquireArray() isn't const
-
-        hsTArray<int32_t> fLineStarts;
-        uint16_t          fLineHeight, fCurrCursorX, fCurrCursorY;
-        int32_t           fCursorPos, fLastCursorLine;
+        std::vector<wchar_t> fBuffer;
+        std::vector<int32_t> fLineStarts;
+        uint16_t        fLineHeight, fCurrCursorX, fCurrCursorY;
+        int32_t         fCursorPos, fLastCursorLine;
+        int16_t         fClickedLinkId, fCurrLinkId;
         bool            fReadyToRender;
         hsBounds3Ext    fLastP2PArea;
-        int8_t            fLockCount;
-        uint8_t           fCalcedFontSize;    // The font size that we calced our line height at
+        int8_t          fLockCount;
+        uint8_t         fCalcedFontSize;    // The font size that we calced our line height at
 
-        uint8_t           fLastKeyModifiers;
+        uint8_t         fLastKeyModifiers;
         wchar_t         fLastKeyPressed;
 
-        static wchar_t  fColorCodeChar, fStyleCodeChar;
-        static uint32_t   fColorCodeSize, fStyleCodeSize;
+        bool    IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
-        virtual bool    IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
-
-        virtual void    IPostSetUpDynTextMap( void );
-        virtual void    IUpdate( void );
-        void            IUpdate( int32_t startLine, int32_t endLine );
+        void    IPostSetUpDynTextMap() override;
+        void    IUpdate() override;
+        void    IUpdate(int32_t startLine, int32_t endLine);
 
         friend class pfMLScrollProc;
 
@@ -130,7 +130,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         pfGUIMultiLineEditProc *fEventProc; // where we send events to
 
-        plString    fFontFace;
+        ST::string  fFontFace;
         hsColorRGBA fFontColor;
         uint8_t     fFontSize;
         uint8_t     fFontStyle;
@@ -152,10 +152,10 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         int32_t   IRecalcLineStarts( int32_t startingLine, bool force, bool dontUpdate = false );
         void    IRecalcFromCursor( bool forceUpdate = false );
         int32_t   IFindCursorLine( int32_t cursorPos = -1 ) const;
-        bool    IStoreLineStart( uint32_t line, int32_t start );
+        bool    IStoreLineStart(int32_t line, int32_t start);
         void    IOffsetLineStarts( uint32_t position, int32_t offset, bool offsetSelectionEnd = false );
         int32_t   IPointToPosition( int16_t x, int16_t y, bool searchOutsideBounds = false );
-        int32_t   ICalcNumVisibleLines( void ) const;
+        int32_t   ICalcNumVisibleLines() const;
 
         void    IReadColorCode( int32_t &pos, hsColorRGBA &color ) const;
         void    IReadStyleCode( int32_t &pos, uint8_t &fontStyle ) const;
@@ -170,20 +170,25 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         void    IActuallyInsertColor( int32_t pos, hsColorRGBA &color );
         void    IActuallyInsertStyle( int32_t pos, uint8_t style );
+        void    IActuallyInsertLink(int32_t pos, int16_t linkId);
 
-        void    IUpdateScrollRange( void );
+        void    IUpdateScrollRange();
 
-        wchar_t *ICopyRange( int32_t start, int32_t end ) const;
+        ST::wchar_buffer ICopyRange( int32_t start, int32_t end ) const;
 
         int32_t   ICharPosToBufferPos( int32_t charPos ) const;
 
         void    IUpdateBuffer();
         void    IUpdateLineStarts();
         void    ISetGlobalBuffer();
-        void    ISetLineStarts(hsTArray<int32_t> lineStarts);
+        void    ISetLineStarts(const std::vector<int32_t> &lineStarts);
 
         void    IHitEndOfControlList(int32_t cursorPos);
         void    IHitBeginningOfControlList(int32_t cursorPos);
+
+        bool    IHandleMouse(hsPoint3& mousePt);
+        int16_t IFindLink(int32_t cursorPos, uint8_t modifiers) const;
+        uint32_t IGetDesiredCursor() const override;
 
     public:
 
@@ -198,60 +203,69 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         CLASSNAME_REGISTER( pfGUIMultiLineEditCtrl );
         GETINTERFACE_ANY( pfGUIMultiLineEditCtrl, pfGUIControlMod );
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
+        bool    FocusOnMouseDown(const hsPoint3& mousePt, uint8_t modifiers) const override;
+        void    HandleMouseDown(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseHover(hsPoint3& mousePt, uint8_t modifiers) override;
 
-        virtual bool    HandleKeyPress( wchar_t key, uint8_t modifiers );
-        virtual bool    HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
+        bool    HandleKeyPress(wchar_t key, uint8_t modifiers) override;
+        bool    HandleKeyEvent(pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers) override;
 
-        virtual void    PurgeDynaTextMapImage();
+        void    PurgeDynaTextMapImage() override;
 
-        virtual void    UpdateColorScheme() { fFontFlagsSet = 0; pfGUIControlMod::UpdateColorScheme(); }
+        void    UpdateColorScheme() override { fFontFlagsSet = 0; pfGUIControlMod::UpdateColorScheme(); }
 
         // Extended event types
         enum ExtendedEvents
         {
             kValueChanging,
             kScrollPosChanged,
-            kKeyPressedEvent
+            kKeyPressedEvent,
+            kLinkClicked,
         };
 
         void    SetScrollPosition( int32_t topLine );
         int32_t GetScrollPosition();
         void    MoveCursor( Direction dir );
+        int32_t GetCursor() const { return fCursorPos; }
 
-        void    InsertChar( char c );
         void    InsertChar( wchar_t c);
-        void    InsertString( const char *string );
-        void    InsertString( const wchar_t *string );
+        void    InsertString( const ST::string& string );
+
         void    InsertColor( hsColorRGBA &color );
         void    InsertStyle( uint8_t fontStyle );
-        void    DeleteChar( void );
-        void    ClearBuffer( void );
-        void    SetBuffer( const char *asciiText );
-        void    SetBuffer( const wchar_t *asciiText );
-        void    SetBuffer( const uint8_t *codedText, uint32_t length );
-        void    SetBuffer( const uint16_t *codedText, uint32_t length );
-        char    *GetNonCodedBuffer( void ) const;
-        wchar_t *GetNonCodedBufferW( void ) const;
-        uint8_t   *GetCodedBuffer( uint32_t &length ) const;
-        uint16_t  *GetCodedBufferW( uint32_t &length ) const;
-        uint32_t  GetBufferSize();
+
+        /** Inserts a clickable hyperlink at the current cursor position. */
+        void    InsertLink(int16_t linkId);
+
+        /** Clears any active hyperlink at the current cursor position. */
+        void    ClearLink() { InsertLink(-1); }
+
+        void    DeleteChar();
+        void    ClearBuffer();
+        void    SetBuffer(const ST::string& text);
+        void    SetBuffer(const wchar_t *codedText, size_t length);
+        ST::wchar_buffer GetNonCodedBuffer() const;
+        ST::wchar_buffer GetCodedBuffer() const;
+        size_t  GetBufferSize() const { return fBuffer.size() - 1; }
 
         void    SetBufferLimit(int32_t limit) { fBufferLimit = limit; }
         int32_t   GetBufferLimit() { return fBufferLimit; }
 
-        void    GetThisKeyPressed( char &key, uint8_t &modifiers ) const { key = (char)fLastKeyPressed; modifiers = fLastKeyModifiers; }
+        /** Get the link the mouse is currently over. */
+        int16_t GetCurrentLink() const { return fCurrLinkId; }
 
-        void    Lock( void );
-        void    Unlock( void );
-        bool    IsLocked( void ) const { return ( fLockCount > 0 ) ? true : false; }
+        void    GetThisKeyPressed( wchar_t &key, uint8_t &modifiers ) const { key = fLastKeyPressed; modifiers = fLastKeyModifiers; }
+
+        void    Lock();
+        void    Unlock();
+        bool    IsLocked() const { return ( fLockCount > 0 ) ? true : false; }
         
         void    SetScrollEnable( bool state );
 
@@ -272,9 +286,18 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         void    SetMargins(int top, int left, int bottom, int right);
 
+        /**
+         * Returns the margins of the GUIMultiLineEdit control
+         * \return A tuple of [top, left, bottom, right] margin.
+         */
+        std::tuple<int, int, int, int> GetMargins() const
+        {
+            return std::make_tuple(fTopMargin, fLeftMargin, fBottomMargin, fRightMargin);
+        }
+
         uint8_t   GetFontSize() {return fFontSize;} // because we're too cool to use the color scheme crap
 
-        void    SetFontFace(const plString &fontFace);
+        void    SetFontFace(const ST::string &fontFace);
         void    SetFontColor(hsColorRGBA fontColor) {fFontColor = fontColor; fFontFlagsSet |= kFontColorSet;}
         void    SetFontSize(uint8_t fontSize);
         void    SetFontStyle(uint8_t fontStyle) {fFontStyle = fontStyle; fFontFlagsSet |= kFontStyleSet;}
@@ -294,6 +317,8 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
             if (redraw)
                 IUpdate();
         }
+
+        bool IsUpdating() const { return !fCanUpdate; }
 };
 
 #endif // _pfGUIMultiLineEditCtrl_h

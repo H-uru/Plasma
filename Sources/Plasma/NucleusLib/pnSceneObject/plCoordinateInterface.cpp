@@ -54,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plgDispatch.h"
 #include "pnKeyedObject/plKey.h"
+#include "hsMatrixMath.h"
 #include "hsStream.h"
 
 #include "plProfile.h"
@@ -62,7 +63,7 @@ uint8_t plCoordinateInterface::fTransformPhase = plCoordinateInterface::kTransfo
 bool plCoordinateInterface::fDelayedTransformsEnabled = true;
 
 plCoordinateInterface::plCoordinateInterface()
-: fParent(nil),
+: fParent(),
   fReason(kReasonUnknown)
 {
     fLocalToParent.Reset();
@@ -78,18 +79,16 @@ plCoordinateInterface::~plCoordinateInterface()
 {
     if( fParent )
         fParent->IRemoveChild(IGetOwner());
-    int i;
-    for( i = fChildren.GetCount()-1; i >= 0; i-- )
+    for (hsSsize_t i = fChildren.size() - 1; i >= 0; i--)
         IRemoveChild(i);
 }
 
-void plCoordinateInterface::ISetSceneNode(plKey newNode)
+void plCoordinateInterface::ISetSceneNode(const plKey& newNode)
 {
-    int i;
-    for( i = 0; i < fChildren.GetCount(); i++ )
+    for (plSceneObject* child : fChildren)
     {
-        if( fChildren[i] )
-            fChildren[i]->SetSceneNode(newNode);
+        if (child)
+            child->SetSceneNode(newNode);
     }
 }
 
@@ -113,39 +112,40 @@ void plCoordinateInterface::ISetParent(plCoordinateInterface* par)
     fReason |= kReasonUnknown;
 }
 
-plCoordinateInterface* plCoordinateInterface::GetChild(int i) const 
+plCoordinateInterface* plCoordinateInterface::GetChild(size_t i) const
 { 
-    return fChildren[i] ? fChildren[i]->GetVolatileCoordinateInterface() : nil; 
+    return fChildren[i] ? fChildren[i]->GetVolatileCoordinateInterface() : nullptr;
 }
 
-void plCoordinateInterface::IRemoveChild(int i)
+void plCoordinateInterface::IRemoveChild(size_t i)
 {
     if( fChildren[i] )
     {
         plCoordinateInterface* childCI = fChildren[i]->GetVolatileCoordinateInterface();
         if( childCI )
-            childCI->ISetParent(nil);
+            childCI->ISetParent(nullptr);
     }
-    fChildren.Remove(i);
+    fChildren.erase(fChildren.begin() + i);
 }
 
 void plCoordinateInterface::IRemoveChild(plSceneObject* child)
 {
-    int idx = fChildren.Find(child);
-    if( idx != fChildren.kMissingIndex )
-        IRemoveChild(idx);
+    auto idx = std::find(fChildren.begin(), fChildren.end(), child);
+    if (idx != fChildren.end())
+        IRemoveChild(std::distance(fChildren.begin(), idx));
 }
 
-void plCoordinateInterface::ISetChild(plSceneObject* child, int which)
+void plCoordinateInterface::ISetChild(plSceneObject* child, hsSsize_t which)
 {
     hsAssert(child, "Setting a nil child");
     plCoordinateInterface* childCI = child->GetVolatileCoordinateInterface();
     hsAssert(childCI, "Child with no coordinate interface");
     childCI->ISetParent(this);
 
-    if( which < 0 )
-        which = fChildren.GetCount();
-    fChildren.ExpandAndZero(which+1);
+    if (which < 0)
+        which = (hsSsize_t)fChildren.size();
+    if (size_t(which + 1) > fChildren.size())
+        fChildren.resize(which + 1);
     fChildren[which] = child;
 
     // If we can't delay our transform update, neither can any of our parents.
@@ -236,11 +236,10 @@ void plCoordinateInterface::IDetachChild(plSceneObject* child, uint8_t flags)
  */
 void plCoordinateInterface::IUpdateDelayProp()
 {
-    int i;
     if (!GetProperty(kCanEverDelayTransform))
         return;
 
-    for (i = 0; i < GetNumChildren(); i++)
+    for (size_t i = 0; i < GetNumChildren(); i++)
     {
         // If we still have a child that needs the delay...     
         if (!GetChild(i)->GetProperty(kDelayedTransformEval))
@@ -380,67 +379,6 @@ plProfile_CreateTimer("   CIRecalcT", "Object", CIRecalcT);
 plProfile_CreateTimer("   CIDirtyT", "Object", CIDirtyT);
 plProfile_CreateTimer("   CISetT", "Object", CISetT);
 
-static inline hsMatrix44 IMatrixMul34(const hsMatrix44& lhs, const hsMatrix44& rhs)
-{
-    hsMatrix44 ret;
-    ret.NotIdentity();
-    ret.fMap[3][0] = ret.fMap[3][1] = ret.fMap[3][2] = 0;
-    ret.fMap[3][3] = 1.f;
-
-    ret.fMap[0][0] = lhs.fMap[0][0] * rhs.fMap[0][0]
-        + lhs.fMap[0][1] * rhs.fMap[1][0]
-        + lhs.fMap[0][2] * rhs.fMap[2][0];
-
-    ret.fMap[0][1] = lhs.fMap[0][0] * rhs.fMap[0][1]
-        + lhs.fMap[0][1] * rhs.fMap[1][1]
-        + lhs.fMap[0][2] * rhs.fMap[2][1];
-
-    ret.fMap[0][2] = lhs.fMap[0][0] * rhs.fMap[0][2]
-        + lhs.fMap[0][1] * rhs.fMap[1][2]
-        + lhs.fMap[0][2] * rhs.fMap[2][2];
-
-    ret.fMap[0][3] = lhs.fMap[0][0] * rhs.fMap[0][3]
-        + lhs.fMap[0][1] * rhs.fMap[1][3]
-        + lhs.fMap[0][2] * rhs.fMap[2][3]
-        + lhs.fMap[0][3];
-
-    ret.fMap[1][0] = lhs.fMap[1][0] * rhs.fMap[0][0]
-        + lhs.fMap[1][1] * rhs.fMap[1][0]
-        + lhs.fMap[1][2] * rhs.fMap[2][0];
-
-    ret.fMap[1][1] = lhs.fMap[1][0] * rhs.fMap[0][1]
-        + lhs.fMap[1][1] * rhs.fMap[1][1]
-        + lhs.fMap[1][2] * rhs.fMap[2][1];
-
-    ret.fMap[1][2] = lhs.fMap[1][0] * rhs.fMap[0][2]
-        + lhs.fMap[1][1] * rhs.fMap[1][2]
-        + lhs.fMap[1][2] * rhs.fMap[2][2];
-
-    ret.fMap[1][3] = lhs.fMap[1][0] * rhs.fMap[0][3]
-        + lhs.fMap[1][1] * rhs.fMap[1][3]
-        + lhs.fMap[1][2] * rhs.fMap[2][3]
-        + lhs.fMap[1][3];
-
-    ret.fMap[2][0] = lhs.fMap[2][0] * rhs.fMap[0][0]
-        + lhs.fMap[2][1] * rhs.fMap[1][0]
-        + lhs.fMap[2][2] * rhs.fMap[2][0];
-
-    ret.fMap[2][1] = lhs.fMap[2][0] * rhs.fMap[0][1]
-        + lhs.fMap[2][1] * rhs.fMap[1][1]
-        + lhs.fMap[2][2] * rhs.fMap[2][1];
-
-    ret.fMap[2][2] = lhs.fMap[2][0] * rhs.fMap[0][2]
-        + lhs.fMap[2][1] * rhs.fMap[1][2]
-        + lhs.fMap[2][2] * rhs.fMap[2][2];
-
-    ret.fMap[2][3] = lhs.fMap[2][0] * rhs.fMap[0][3]
-        + lhs.fMap[2][1] * rhs.fMap[1][3]
-        + lhs.fMap[2][2] * rhs.fMap[2][3]
-        + lhs.fMap[2][3];
-
-    return ret;
-}
-
 void plCoordinateInterface::IRecalcTransforms()
 {
     plProfile_IncCount(CIRecalc, 1);
@@ -493,11 +431,10 @@ void plCoordinateInterface::ITransformChanged(bool force, uint16_t reasons, bool
     plProfile_EndTiming(CITransT);
     if (process)
     {
-        int i;
-        for( i = 0; i < fChildren.GetCount(); i++ )
+        for (plSceneObject* child : fChildren)
         {
-            if( fChildren[i] && fChildren[i]->GetVolatileCoordinateInterface() )
-                fChildren[i]->GetVolatileCoordinateInterface()->ITransformChanged(force, propagateReasons, checkForDelay);
+            if (child && child->GetVolatileCoordinateInterface())
+                child->GetVolatileCoordinateInterface()->ITransformChanged(force, propagateReasons, checkForDelay);
         }
     }
     else if (force)
@@ -521,7 +458,7 @@ void plCoordinateInterface::FlushTransform(bool fromRoot)
         ITransformChanged(false, 0, false);
 }
 
-void plCoordinateInterface::ISetNetGroupRecur(plNetGroupId netGroup)
+void plCoordinateInterface::ISetNetGroupRecur(const plNetGroupId& netGroup)
 {
     if( !IGetOwner() )
         return;
@@ -531,8 +468,7 @@ void plCoordinateInterface::ISetNetGroupRecur(plNetGroupId netGroup)
 
     IGetOwner()->plSynchedObject::SetNetGroup(netGroup);
 
-    int i;
-    for( i = 0; i < GetNumChildren(); i++ )
+    for (size_t i = 0; i < GetNumChildren(); i++)
     {
         if( GetChild(i) )
         {
@@ -571,11 +507,9 @@ void plCoordinateInterface::Write(hsStream* stream, hsResMgr* mgr)
     fLocalToWorld.Write(stream);
     fWorldToLocal.Write(stream);
 
-    stream->WriteLE32(fChildren.GetCount());
-    int i;
-    for( i = 0; i < fChildren.GetCount(); i++ )
-        mgr->WriteKey(stream, fChildren[i]);
-
+    stream->WriteLE32((uint32_t)fChildren.size());
+    for (plSceneObject* child : fChildren)
+        mgr->WriteKey(stream, child);
 }
 
 bool plCoordinateInterface::MsgReceive(plMessage* msg)
@@ -602,7 +536,7 @@ bool plCoordinateInterface::MsgReceive(plMessage* msg)
         case plIntRefMsg::kChildObject:
         case plIntRefMsg::kChild:
             {
-                plSceneObject* co = nil;
+                plSceneObject* co = nullptr;
                 if( intRefMsg->fType == plIntRefMsg::kChildObject )
                 {
                     co = plSceneObject::ConvertNoRef(intRefMsg->GetRef());
@@ -610,7 +544,7 @@ bool plCoordinateInterface::MsgReceive(plMessage* msg)
                 else
                 {
                     plCoordinateInterface* ci = plCoordinateInterface::ConvertNoRef(intRefMsg->GetRef());
-                    co = ci ? ci->IGetOwner() : nil;
+                    co = ci ? ci->IGetOwner() : nullptr;
                 }
                 if( intRefMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnReplace) )
                 {

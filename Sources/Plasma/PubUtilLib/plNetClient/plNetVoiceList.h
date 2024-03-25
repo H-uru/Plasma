@@ -44,22 +44,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <vector>
+
+class plNetClientMgr;
+class plNetTransportMember;
+
 //
 // a simple class used by the net client code to hold listenLists and talkLists
 // for voice filtering.
 //
-class plNetTransportMember;
 class plNetVoiceList
 {
 protected:
-    typedef std::vector<plNetTransportMember*> VoiceListType;   
+    typedef std::vector<plNetTransportMember*> VoiceListType;
 protected:
-    VoiceListType fMembers; 
+    VoiceListType fMembers;
 
-public: 
-    plNetVoiceList() {}
-    virtual ~plNetVoiceList() {}
-    
+public:
+    plNetVoiceList() = default;
+    virtual ~plNetVoiceList() = default;
+
     int GetNumMembers() const { return fMembers.size(); }
     plNetTransportMember* GetMember(int i) const { return fMembers[i];  }
     virtual void AddMember(plNetTransportMember* e) = 0;
@@ -78,20 +82,19 @@ private:
     double fLastUpdateTime;
     int fNumUpdates;
 public:
-    plNetListenList() : fNumUpdates(0) {}
-    ~plNetListenList() {}
+    plNetListenList() : fNumUpdates(), fLastUpdateTime() { }
 
     static float kUpdateInterval;
     static int kMaxListenListSize;
     static float kMaxListenDistSq;
     
-    void SetLastUpdateTime(double t) { fLastUpdateTime=t; fNumUpdates++;    }
-    double GetLastUpdateTime() { return fLastUpdateTime;    }
+    void SetLastUpdateTime(double t) { fLastUpdateTime = t; fNumUpdates++; }
+    double GetLastUpdateTime() { return fLastUpdateTime; }
 
     bool CheckForceSynch() { if (fNumUpdates>10) { fNumUpdates=0; return true;} return false; }
 
-    virtual void AddMember(plNetTransportMember* e);
-    virtual void RemoveMember(plNetTransportMember* e);
+    void AddMember(plNetTransportMember* e) override;
+    void RemoveMember(plNetTransportMember* e) override;
 
 };
 
@@ -99,24 +102,11 @@ public:
 // Specialized version for talk list
 // a list of other players I am talking to
 //
-class plNetClientMgr;
 class plNetTalkList : public plNetVoiceList
 {
-private:
-    enum
-    {
-        kDirty  = 0x1
-    };
-    uint32_t fFlags;
 public:
-    plNetTalkList() : fFlags(0) {}
-    ~plNetTalkList() {}
-
-    void UpdateTransportGroup(plNetClientMgr* nc);
-
-    void AddMember(plNetTransportMember* e);
-    void RemoveMember(plNetTransportMember* e);
-    void Clear();
+    void AddMember(plNetTransportMember* e) override;
+    void RemoveMember(plNetTransportMember* e) override;
 };
 
 #endif  // plNetVoiceList_h

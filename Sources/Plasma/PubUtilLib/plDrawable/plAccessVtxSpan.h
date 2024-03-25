@@ -124,7 +124,7 @@ public:
     bool                HasSpecular() const { return HasChannel(kSpecular); }
     bool                HasUVWs() const { return HasChannel(kUVW); }
     bool                    HasUVWs(int n) { return HasChannel(kUVW) && (n <= fNumUVWsPerVert); }
-    int             NumUVWs() const { return fNumUVWsPerVert; }
+    uint16_t            NumUVWs() const { return fNumUVWsPerVert; }
 
     //////////////////////////////////
     // ACCESSOR SECTION
@@ -189,14 +189,14 @@ public:
     plAccessVtxSpan&    SpecularStream(void* p, uint16_t stride, int32_t offset) { return SetStream(p, stride, offset, kSpecular); }
     plAccessVtxSpan&    WeightStream(void* p, uint16_t stride, int32_t offset) { return SetStream(p, stride, offset, kWeight); }
     plAccessVtxSpan&    WgtIndexStream(void* p, uint16_t stride, int32_t offset) { return SetStream(p, stride, offset, kWgtIndex); }
-    plAccessVtxSpan&    SetNumWeights(int n) { if( !(fNumWeights = n) ) SetStream(nil, 0, 0, kWeight).SetStream(nil, 0, 0, kWgtIndex); return *this; }
+    plAccessVtxSpan&    SetNumWeights(int n) { if (!(fNumWeights = n)) SetStream(nullptr, 0, 0, kWeight).SetStream(nullptr, 0, 0, kWgtIndex); return *this; }
     // Note on UVW access setup, you don't actually "have" to set the number of uvws per vertex,
     // but one way or another you'll need to know to access the uvws. If you're going to be setting
     // up the AccessSpan and passing it off for processing, you definitely better set it. But the
     // accessor and iterators don't ever use it.
     // Note that this means the UVWStream stride is from uvw[0][0] to uvw[1][0] in bytes.
     plAccessVtxSpan&    UVWStream(void* p, uint16_t stride, int32_t offset) { return SetStream(p, stride, offset, kUVW); }
-    plAccessVtxSpan&    SetNumUVWs(int n) { if( !(fNumUVWsPerVert = n) )SetStream(nil, 0, 0, kUVW); return *this; }
+    plAccessVtxSpan&    SetNumUVWs(int n) { if (!(fNumUVWsPerVert = n)) SetStream(nullptr, 0, 0, kUVW); return *this; }
     //////////////////////////////////
 
     // Cache away any device stuff that needed to be opened (locked) to get this data, so
@@ -210,7 +210,7 @@ inline void plAccessVtxSpan::ClearVerts()
     int i;
     for( i = 0; i < kNumValidChans; i++ )
     {
-        fChannels[i] = nil;
+        fChannels[i] = nullptr;
         fStrides[i] = 0;
     }
     fNumVerts = 0;
@@ -227,17 +227,17 @@ private:
         uint8_t*    fValueByte;
     };
     uint8_t*                    fValueEnd;
-    plAccessVtxSpan*            fAccess;
+    const plAccessVtxSpan*      fAccess;
     plAccessVtxSpan::Channel    fChan;
 
     void                        ISetEnd() { fValueEnd = fAccess->fChannels[fChan] + fAccess->fNumVerts * fAccess->fStrides[fChan]; }
 
 public:
-    plAccIterator(plAccessVtxSpan* acc, plAccessVtxSpan::Channel chan) { Set(acc, chan); }
+    plAccIterator(const plAccessVtxSpan* acc, plAccessVtxSpan::Channel chan) { Set(acc, chan); }
     plAccIterator(const plAccIterator& accIt) { *this = accIt; }
-    plAccIterator() : fValueByte(nil), fValueEnd(nil), fAccess(nil), fChan(plAccessVtxSpan::kInvalid) {}
+    plAccIterator() : fValueByte(), fValueEnd(), fAccess(), fChan(plAccessVtxSpan::kInvalid) { }
 
-    void Set(plAccessVtxSpan* acc, plAccessVtxSpan::Channel chan) { fAccess = acc; fChan = chan; ISetEnd(); }
+    void Set(const plAccessVtxSpan* acc, plAccessVtxSpan::Channel chan) { fAccess = acc; fChan = chan; ISetEnd(); }
 
     T*          Value() const { return fValue; }
 
@@ -255,12 +255,12 @@ protected:
     plAccIterator<hsPoint3>     fPosition;
 
 public:
-    plAccPositionIterator(plAccessVtxSpan* acc) 
+    plAccPositionIterator(const plAccessVtxSpan* acc)
         :   fPosition(acc, plAccessVtxSpan::kPosition) {}
 
     plAccPositionIterator() {}
 
-    plAccPositionIterator& Set(plAccessVtxSpan* acc) 
+    plAccPositionIterator& Set(const plAccessVtxSpan* acc)
     { 
         fPosition.Set(acc, plAccessVtxSpan::kPosition); 
         return *this; 

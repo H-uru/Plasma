@@ -60,7 +60,7 @@ char plAnimTimeConvertSDLModifier::AnimTimeConvertVarNames::kStrLastStateChange[
 void plAnimTimeConvertSDLModifier::IPutATC(plStateDataRecord* atcStateDataRec, plAnimTimeConvert* animTimeConvert)
 {
     plATCState *lastState = animTimeConvert->fStates.front();
-    atcStateDataRec->FindVar(AnimTimeConvertVarNames::kStrFlags)->Set(animTimeConvert->fFlags);     
+    atcStateDataRec->FindVar(AnimTimeConvertVarNames::kStrFlags)->Set((int)animTimeConvert->fFlags);
     atcStateDataRec->FindVar(AnimTimeConvertVarNames::kStrLastStateAnimTime)->Set(lastState->fStartAnimTime);       
     atcStateDataRec->FindVar(AnimTimeConvertVarNames::kStrLoopEnd)->Set(animTimeConvert->fLoopEnd);     
     atcStateDataRec->FindVar(AnimTimeConvertVarNames::kStrLoopBegin)->Set(animTimeConvert->fLoopBegin);     

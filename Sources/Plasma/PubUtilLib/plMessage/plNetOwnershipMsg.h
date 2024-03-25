@@ -65,12 +65,12 @@ public:
     plNetMsgGroupOwner::GroupInfo GetGroupInfo(int i) const { return fGroups[i]; }
     
     // setters
-    void AddGroupInfo(plNetMsgGroupOwner::GroupInfo gi) { fGroups.push_back(gi); }
+    void AddGroupInfo(plNetMsgGroupOwner::GroupInfo gi) { fGroups.emplace_back(std::move(gi)); }
     void ClearGroupInfo() { fGroups.clear(); }
     
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr) {    hsAssert(false, "NA: localOnly msg"); }
-    void Write(hsStream* stream, hsResMgr* mgr) {   hsAssert(false, "NA: localOnly msg"); }
+    void Read(hsStream* stream, hsResMgr* mgr) override { hsAssert(false, "NA: localOnly msg"); }
+    void Write(hsStream* stream, hsResMgr* mgr) override { hsAssert(false, "NA: localOnly msg"); }
 };
 
 #endif      // plNetOwnershipMsg

@@ -48,7 +48,7 @@ plKey plComponentTools::AddModifier(plMaxNodeBase *node, plModifier *mod)
     return fAddModFunc(node, mod);
 }
 
-plKey plComponentTools::GetNewKey(const plString &name, plModifier *mod, plLocation loc)
+plKey plComponentTools::GetNewKey(const ST::string &name, plModifier *mod, plLocation loc)
 {
     return fNewKey(name, mod, loc);
 }
@@ -68,17 +68,17 @@ plKey plComponentTools::GetAnimCompLightModKey(plComponentBase *comp, plMaxNodeB
     return fAnimLightKey(comp, node);
 }
 */
-plString plComponentTools::GetAnimCompAnimName(plComponentBase *comp)
+ST::string plComponentTools::GetAnimCompAnimName(plComponentBase *comp)
 {
     return fAnimName(comp);
 }
 
-int plComponentTools::GetMaterialAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString &segName, hsTArray<plKey>& keys)
+int plComponentTools::GetMaterialAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string &segName, std::vector<plKey>& keys)
 {
     return fMatMod(mtl, node, segName, keys);
 }
 
-int plComponentTools::GetSoundNameAndIndex(plComponentBase* comp, plMaxNodeBase* node, const char*& name)
+int plComponentTools::GetSoundNameAndIndex(plComponentBase* comp, plMaxNodeBase* node, const MCHAR*& name)
 {
     return fSndNameAndIdx(comp, node, name);
 }

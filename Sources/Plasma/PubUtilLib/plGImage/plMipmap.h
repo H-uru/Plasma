@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plMipmap_h
 
 #include "plBitmap.h"
-#include "plString.h"
 
 #ifdef HS_DEBUGGING
     #define ASSERT_PIXELSIZE(bitmap, pixelsize)     hsAssert((bitmap)->fPixelSize == (pixelsize), "pixelSize mismatch")
@@ -71,15 +70,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #define ASSERT_UNCOMPRESSED()               
 #endif
 
+#ifdef MEMORY_LEAK_TRACER
+    #include <string_theory/string>
+#endif
+
 //// Class Definition /////////////////////////////////////////////////////////
 
 class plBitmapCreator;
-class plTextGenerator;
 
 class plMipmap : public plBitmap
 {
     friend class plBitmapCreator;
-    friend class plTextGenerator;
 
     public:
         //// Public Flags ////
@@ -107,10 +108,10 @@ class plMipmap : public plBitmap
         virtual void    Reset();
 
         // Get the total size in bytes
-        virtual uint32_t  GetTotalSize() const;
+        uint32_t  GetTotalSize() const override;
 
-        virtual void    Read( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Read( s, mgr ); this->Read( s ); }
-        virtual void    Write( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Write( s, mgr ); this->Write( s ); }
+        void    Read(hsStream *s, hsResMgr *mgr) override { hsKeyedObject::Read(s, mgr); this->Read(s); }
+        void    Write(hsStream *s, hsResMgr *mgr) override { hsKeyedObject::Write(s, mgr); this->Write(s); }
 
         virtual uint8_t   GetNumLevels() const { return fNumLevels; }
         virtual uint32_t  GetLevelSize( uint8_t level );        // 0 is the largest
@@ -125,7 +126,7 @@ class plMipmap : public plBitmap
 
         void            *GetImage() const { return fImage; }
         void            SetImagePtr( void *ptr ) { fImage = ptr; }
-        uint8_t           *GetLevelPtr( uint8_t level, uint32_t *width = nil, uint32_t *height = nil, uint32_t *rowBytes = nil );
+        uint8_t           *GetLevelPtr(uint8_t level, uint32_t *width = nullptr, uint32_t *height = nullptr, uint32_t *rowBytes = nullptr);
 
         // Sets the current level pointer for use with GetAddr*
         virtual void    SetCurrLevel(uint8_t level);
@@ -276,7 +277,7 @@ class plMipmap : public plBitmap
         };
 
         // Compositing function. Take a (smaller) mipmap and composite it onto this one at the given location. Nil options means use default
-        virtual void    Composite( plMipmap *source, uint16_t x, uint16_t y, CompositeOptions *options = nil );
+        virtual void    Composite(plMipmap *source, uint16_t x, uint16_t y, CompositeOptions *options = nullptr);
 
         // Scaling function
         enum ScaleFilter
@@ -311,6 +312,8 @@ class plMipmap : public plBitmap
         void    IWriteRLEImage( hsStream *stream, plMipmap *mipmap );
         void    IReadJPEGImage( hsStream *stream );
         void    IWriteJPEGImage( hsStream *stream );
+        void    IReadPNGImage( hsStream *stream );
+        void    IWritePNGImage( hsStream *stream );
         void    IBuildLevelSizes();
 
         void    IColorLevel( uint8_t level, const uint8_t *colorMask );
@@ -324,8 +327,8 @@ class plMipmap : public plBitmap
         void        ISetCurrLevelUBorder( uint32_t color );
         void        ISetCurrLevelVBorder( uint32_t color );
 
-        virtual uint32_t  Read( hsStream *s );
-        virtual uint32_t  Write( hsStream *s );
+        uint32_t  Read(hsStream *s) override;
+        uint32_t  Write(hsStream *s) override;
 
         friend class plCubicEnvironmap;
 
@@ -339,7 +342,7 @@ class plMipmap : public plBitmap
                 plRecord    *fNext;
                 plRecord    **fBackPtr;
 
-                plString    fKeyName;
+                ST::string  fKeyName;
                 void        *fImage;
                 uint32_t    fWidth, fHeight, fRowBytes;
                 uint8_t     fNumLevels;
@@ -363,7 +366,7 @@ class plMipmap : public plBitmap
                 {
                     fBackPtr = backPtr;
                     fNext = *backPtr;
-                    if( fNext != nil )
+                    if (fNext != nullptr)
                         fNext->fBackPtr = &fNext;
                     *backPtr = this;
                 }
@@ -371,7 +374,7 @@ class plMipmap : public plBitmap
                 void    Unlink()
                 {
                     *fBackPtr = fNext;
-                    if( fNext != nil )
+                    if (fNext != nullptr)
                         fNext->fBackPtr = fBackPtr;
                 }
         };

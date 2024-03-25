@@ -49,10 +49,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsResMgr.h"
+
 #include "plPhysicalSndGroup.h"
-#include "plAudio/plSound.h"
+
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pnMessage/plRefMsg.h"
+
 #include "plMessage/plAnimCmdMsg.h"
 
 
@@ -72,12 +76,12 @@ plPhysicalSndGroup::~plPhysicalSndGroup()
 
 bool plPhysicalSndGroup::HasSlideSound(uint32_t against)
 {
-    return against < fSlideSounds.GetCount();
+    return against < fSlideSounds.size();
 }
 
 bool plPhysicalSndGroup::HasImpactSound(uint32_t against)
 {
-    return against < fImpactSounds.GetCount();
+    return against < fImpactSounds.size();
 }
 
 bool    plPhysicalSndGroup::MsgReceive( plMessage *pMsg )
@@ -89,62 +93,56 @@ void plPhysicalSndGroup::Read( hsStream *s, hsResMgr *mgr )
 {
     hsKeyedObject::Read( s, mgr );
 
-    s->ReadLE( &fGroup );
+    s->ReadLE32(&fGroup);
 
-    uint32_t i, count = s->ReadLE32();
-    fImpactSounds.Reset();
+    uint32_t count = s->ReadLE32();
+    fImpactSounds.clear();
+    fImpactSounds.reserve(count);
 
-    for( i = 0; i < count; i++ )
-        fImpactSounds.Append( mgr->ReadKey( s ) );
+    for (uint32_t i = 0; i < count; i++)
+        fImpactSounds.emplace_back(mgr->ReadKey(s));
 
     count = s->ReadLE32();
-    fSlideSounds.Reset();
-    for( i = 0; i < count; i++ )
-        fSlideSounds.Append( mgr->ReadKey( s ) );
-
+    fSlideSounds.clear();
+    fSlideSounds.reserve(count);
+    for (uint32_t i = 0; i < count; i++)
+        fSlideSounds.emplace_back(mgr->ReadKey(s));
 }
 
 void plPhysicalSndGroup::Write( hsStream *s, hsResMgr *mgr )
 {
     hsKeyedObject::Write( s, mgr );
 
-    s->WriteLE( fGroup );
+    s->WriteLE32(fGroup);
 
-    uint32_t i;
-    s->WriteLE32( fImpactSounds.GetCount() );
-    for( i = 0; i < fImpactSounds.GetCount(); i++ )
-        mgr->WriteKey( s, fImpactSounds[ i ] );
+    s->WriteLE32((uint32_t)fImpactSounds.size());
+    for (const plKey& key : fImpactSounds)
+        mgr->WriteKey(s, key);
 
-    s->WriteLE32( fSlideSounds.GetCount() );
-    for( i = 0; i < fSlideSounds.GetCount(); i++ )
-        mgr->WriteKey( s, fSlideSounds[ i ] );
+    s->WriteLE32((uint32_t)fSlideSounds.size());
+    for (const plKey& key : fSlideSounds)
+        mgr->WriteKey(s, key);
 }
 
 void    plPhysicalSndGroup::AddImpactSound( uint32_t against, plKey receiver )
 {
-    if( fImpactSounds.GetCount() <= against )
-    {
-        fImpactSounds.Expand( against + 1 );
-        fImpactSounds.SetCount( against + 1 );
-    }
+    if (fImpactSounds.size() <= against)
+        fImpactSounds.resize(against + 1);
 
-    fImpactSounds[ against ] = receiver;
+    fImpactSounds[against] = std::move(receiver);
 }
 
 void    plPhysicalSndGroup::AddSlideSound( uint32_t against, plKey receiver )
 {
-    if( fSlideSounds.GetCount() <= against )
-    {
-        fSlideSounds.Expand( against + 1 );
-        fSlideSounds.SetCount( against + 1 );
-    }
+    if (fSlideSounds.size() <= against)
+        fSlideSounds.resize(against + 1);
 
-    fSlideSounds[ against ] = receiver;
+    fSlideSounds[against] = std::move(receiver);
 }
 
 void plPhysicalSndGroup::PlaySlideSound(uint32_t against)
 {
-    if(against >= fSlideSounds.Count())
+    if (against >= fSlideSounds.size())
         return;
     plAnimCmdMsg* animMsg = new plAnimCmdMsg;
     animMsg->SetCmd(plAnimCmdMsg::kContinue);
@@ -154,7 +152,7 @@ void plPhysicalSndGroup::PlaySlideSound(uint32_t against)
 
 void plPhysicalSndGroup::StopSlideSound(uint32_t against)
 {
-    if(against >= fSlideSounds.Count())
+    if (against >= fSlideSounds.size())
         return;
     plAnimCmdMsg *animMsg = new plAnimCmdMsg;
     animMsg->SetCmd(plAnimCmdMsg::kStop);
@@ -164,7 +162,7 @@ void plPhysicalSndGroup::StopSlideSound(uint32_t against)
 
 void plPhysicalSndGroup::PlayImpactSound(uint32_t against)
 {
-    if(against >= fImpactSounds.Count())
+    if (against >= fImpactSounds.size())
         return;
     plAnimCmdMsg* animMsg = new plAnimCmdMsg;
     animMsg->SetCmd(plAnimCmdMsg::kContinue);
@@ -173,11 +171,10 @@ void plPhysicalSndGroup::PlayImpactSound(uint32_t against)
 
 void plPhysicalSndGroup::SetSlideSoundVolume(uint32_t against, float volume)
 {
-    if(against >= fSlideSounds.Count())
+    if (against >= fSlideSounds.size())
         return;
     plAnimCmdMsg* animMsg = new plAnimCmdMsg;
     animMsg->SetCmd(plAnimCmdMsg::kSetSpeed);
     animMsg->fSpeed = volume;
     animMsg->Send(fSlideSounds[against]);
-
 }

@@ -39,31 +39,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plSynchedObject.h"
-#include "plSynchedValue.h"
+
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "plNetApp.h"
 #include "plNetGroup.h"
-#include "hsResMgr.h"
-#include "pnSceneObject/plSceneObject.h"
+
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plSDLModifierMsg.h"
 #include "pnMessage/plSetNetGroupIDMsg.h"
 
+#ifdef USE_DIRTY_NOTIFIERS
 #include <algorithm>
+#endif
 
 // statics
-plSynchedObject* plSynchedObject::fStaticSynchedObj=nil;
+plSynchedObject* plSynchedObject::fStaticSynchedObj = nullptr;
 std::vector<plSynchedObject::StateDefn> plSynchedObject::fDirtyStates;
 std::vector<bool> plSynchedObject::fSynchStateStack;
 
 plSynchedObject::plSynchedObject() : 
     fSynchFlags(0),
-#ifdef USE_SYNCHED_VALUES
-    fSynchedValueAddrOffsets(nil),
-    fNumSynchedValues(0),
-    fSynchedValueFriends(nil),
-    fNumSynchedValueFriends(0),
-#endif
     fNetGroup(plNetGroup::kNetGroupUnknown)
 { 
     fStaticSynchedObj=this; 
@@ -71,10 +70,6 @@ plSynchedObject::plSynchedObject() :
 
 plSynchedObject::~plSynchedObject()
 {
-#ifdef USE_SYNCHED_VALUES
-    delete [] fSynchedValueAddrOffsets;
-    delete [] fSynchedValueFriends;
-#endif
 }
 
 bool plSynchedObject::MsgReceive(plMessage* msg)
@@ -89,108 +84,10 @@ bool plSynchedObject::MsgReceive(plMessage* msg)
     return hsKeyedObject::MsgReceive(msg);
 }
 
-#ifdef USE_SYNCHED_VALUES
-plSynchedValueBase* plSynchedObject::GetSynchedValue(int i) const
-{ 
-    if (i<fNumSynchedValues)
-        return IGetSynchedValue((NumSynchedValuesType)i);
-    return IGetSynchedValueFriend((NumSynchedValuesType)(i-fNumSynchedValues));
-}
-
-// realloc and add 
-void plSynchedObject::IAppendSynchedValueAddrOffset(AddrOffsetType synchedValueAddrOffset)
-{
-    // copy to new larger array
-    AddrOffsetType* tmp = new AddrOffsetType[fNumSynchedValues+1];
-    int32_t i;
-    for(i=0;i<fNumSynchedValues;i++)
-        tmp[i] = fSynchedValueAddrOffsets[i];
-
-    // delete old one
-    delete [] fSynchedValueAddrOffsets;
-
-    // point to new array and append value
-    fSynchedValueAddrOffsets=tmp;
-    tmp[fNumSynchedValues++]=synchedValueAddrOffset;
-}
-
-void plSynchedObject::IAppendSynchedValueFriend(plSynchedValueBase* v)
-{
-    // copy to new larger array
-    plSynchedValueBase** tmp = new plSynchedValueBase*[fNumSynchedValueFriends+1];
-    int32_t i;
-    for(i=0;i<fNumSynchedValueFriends;i++)
-        tmp[i] = fSynchedValueFriends[i];
-
-    // delete old one
-    delete [] fSynchedValueFriends;
-
-    // point to new array and append value
-    fSynchedValueFriends=tmp;
-    tmp[fNumSynchedValueFriends++]=v;
-}
-
-// adds synchedValue and returns index
-uint8_t plSynchedObject::RegisterSynchedValue(plSynchedValueBase* v) 
-{ 
-    int32_t addrOff = ((int32_t)v - (int32_t)this)>>2;    
-    hsAssert(abs(addrOff) < (uint32_t)(1<<(sizeof(AddrOffsetType)<<3)), "address offset overflow");
-    IAppendSynchedValueAddrOffset((AddrOffsetType)addrOff); 
-    int32_t idx = fNumSynchedValues-1; 
-    hsAssert(idx<256, "index too big");
-    return (uint8_t)idx;
-}
-
-bool plSynchedObject::RemoveSynchedValue(plSynchedValueBase* v) 
-{
-    int i;
-    for(i=0;i<GetNumSynchedValues(); i++)
-        if (GetSynchedValue(i)==v)
-            break;
-    
-    // couldn't find it
-    if (i==GetNumSynchedValues())
-        return false;
-
-    int idx=i;
-    if (idx<fNumSynchedValues)
-    {
-        AddrOffsetType* tmp = new AddrOffsetType[fNumSynchedValues-1];      
-        for(i=0;i<idx;i++)
-            tmp[i] = fSynchedValueAddrOffsets[i];
-        for(i=idx+1;i<fNumSynchedValues;i++)
-            tmp[i-1] = fSynchedValueAddrOffsets[i];
-        delete [] fSynchedValueAddrOffsets;
-        fSynchedValueAddrOffsets=tmp;       
-        fNumSynchedValues--;
-    }
-    else
-    {
-        idx -= fNumSynchedValues;
-        plSynchedValueBase** tmp = new plSynchedValueBase*[fNumSynchedValueFriends-1];      
-        for(i=0;i<idx;i++)
-            tmp[i] = fSynchedValueFriends[i];
-        for(i=idx+1;i<fNumSynchedValueFriends;i++)
-            tmp[i-1] = fSynchedValueFriends[i];
-        delete [] fSynchedValueFriends;
-        fSynchedValueFriends=tmp;       
-        fNumSynchedValueFriends--;
-    }
-
-    return true;
-}
-
-// adds synchedValueFriend
-void plSynchedObject::RegisterSynchedValueFriend(plSynchedValueBase* v) 
-{ 
-    IAppendSynchedValueFriend(v);
-}
-#endif
-
 //
 // send sdl state msg immediately
 //
-void plSynchedObject::SendSDLStateMsg(const plString& SDLStateName, uint32_t synchFlags /*SendSDLStateFlags*/)
+void plSynchedObject::SendSDLStateMsg(const ST::string& SDLStateName, uint32_t synchFlags /*SendSDLStateFlags*/)
 {
     plSDLModifierMsg* sdlMsg = new plSDLModifierMsg(SDLStateName,
         (synchFlags & kBCastToClients) ? plSDLModifierMsg::kSendToServerAndClients : plSDLModifierMsg::kSendToServer /* action */);
@@ -203,14 +100,14 @@ void plSynchedObject::SendSDLStateMsg(const plString& SDLStateName, uint32_t syn
 // Tell an object to send an sdl state update.
 // The request will get queued (returns true)
 //
-bool plSynchedObject::DirtySynchState(const plString& SDLStateName, uint32_t synchFlags /*SendSDLStateFlags*/)
+bool plSynchedObject::DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags /*SendSDLStateFlags*/)
 {
     if (!IOKToDirty(SDLStateName))
     {
 #if 0
         if (plNetClientApp::GetInstance())
-            plNetClientApp::GetInstance()->DebugMsg(plFormat("NotOKToDirty - Not queueing SDL state, obj {}, sdl {}",
-                    GetKeyName(), SDLStateName));
+            plNetClientApp::GetInstance()->DebugMsg("NotOKToDirty - Not queueing SDL state, obj {}, sdl {}",
+                    GetKeyName(), SDLStateName);
 #endif
         return false;
     }
@@ -219,8 +116,8 @@ bool plSynchedObject::DirtySynchState(const plString& SDLStateName, uint32_t syn
     {
 #if 0
         if (plNetClientApp::GetInstance())
-            plNetClientApp::GetInstance()->DebugMsg(plFormat("LocalOnly Object - Not queueing SDL msg, obj {}, sdl {}",
-                    GetKeyName(), SDLStateName));
+            plNetClientApp::GetInstance()->DebugMsg("LocalOnly Object - Not queueing SDL msg, obj {}, sdl {}",
+                    GetKeyName(), SDLStateName);
 #endif
         return false;
     }
@@ -235,8 +132,8 @@ bool plSynchedObject::DirtySynchState(const plString& SDLStateName, uint32_t syn
         else
         {
             if (plNetClientApp::GetInstance())
-                plNetClientApp::GetInstance()->DebugMsg(plFormat("Queueing SDL state with 'maybe' ownership, obj {}, sdl {}",
-                    GetKeyName(), SDLStateName));
+                plNetClientApp::GetInstance()->DebugMsg("Queueing SDL state with 'maybe' ownership, obj {}, sdl {}",
+                    GetKeyName(), SDLStateName);
         }
     }
     
@@ -256,13 +153,13 @@ bool plSynchedObject::DirtySynchState(const plString& SDLStateName, uint32_t syn
 // add state defn if not already there.
 // if there adjust flags if necessary
 //
-void plSynchedObject::IAddDirtyState(plKey objKey, const plString& sdlName, uint32_t sendFlags)
+void plSynchedObject::IAddDirtyState(plKey objKey, const ST::string& sdlName, uint32_t sendFlags)
 {
     bool found=false;
     std::vector<StateDefn>::iterator it=fDirtyStates.begin();
     for( ; it != fDirtyStates.end(); it++)
     {
-        if (it->fObjKey == objKey && it->fSDLName.CompareI(sdlName) == 0)
+        if (it->fObjKey == objKey && it->fSDLName.compare_i(sdlName) == 0)
         {
             if (sendFlags & kForceFullSend)
                 (*it).fSendFlags |= kForceFullSend;
@@ -275,14 +172,13 @@ void plSynchedObject::IAddDirtyState(plKey objKey, const plString& sdlName, uint
 
     if (!found)
     {
-        StateDefn state(objKey, sendFlags, sdlName);
-        fDirtyStates.push_back(state);
+        fDirtyStates.emplace_back(std::move(objKey), sendFlags, sdlName);
     }   
     else
     {
 #if 0
-        plNetClientApp::GetInstance()->DebugMsg(plFormat("Not queueing diplicate request for SDL state, obj {}, sdl {}",
-                    objKey->GetName(), sdlName));
+        plNetClientApp::GetInstance()->DebugMsg("Not queueing diplicate request for SDL state, obj {}, sdl {}",
+                    objKey->GetName(), sdlName);
 #endif
     }
 }
@@ -290,12 +186,12 @@ void plSynchedObject::IAddDirtyState(plKey objKey, const plString& sdlName, uint
 //
 // STATIC
 //
-void plSynchedObject::IRemoveDirtyState(plKey objKey, const plString& sdlName)
+void plSynchedObject::IRemoveDirtyState(const plKey& objKey, const ST::string& sdlName)
 { 
     std::vector<StateDefn>::iterator it=fDirtyStates.begin();
     for( ; it != fDirtyStates.end(); it++)
     {
-        if (it->fObjKey == objKey && it->fSDLName.CompareI(sdlName) == 0)
+        if (it->fObjKey == objKey && it->fSDLName.compare_i(sdlName) == 0)
         {
             fDirtyStates.erase(it);
             break;
@@ -306,11 +202,11 @@ void plSynchedObject::IRemoveDirtyState(plKey objKey, const plString& sdlName)
 void plSynchedObject::SetNetGroupConstant(plNetGroupId netGroup)
 {
    ClearSynchFlagsBit(kHasConstantNetGroup);
-   SetNetGroup(netGroup);   // may recurse
+   SetNetGroup(std::move(netGroup));   // may recurse
    SetSynchFlagsBit(kHasConstantNetGroup);
 }
 
-plNetGroupId plSynchedObject::SelectNetGroup(plKey rmKey)
+plNetGroupId plSynchedObject::SelectNetGroup(const plKey& rmKey)
 {
     return plNetClientApp::GetInstance() ? 
       plNetClientApp::GetInstance()->SelectNetGroup(this, rmKey) : plNetGroup::kNetGroupUnknown;
@@ -333,16 +229,14 @@ void    plSynchedObject::Read(hsStream* stream, hsResMgr* mgr)
     hsKeyedObject::Read(stream, mgr);
     fNetGroup = GetKey()->GetUoid().GetLocation();
 
-    stream->ReadLE(&fSynchFlags);
+    stream->ReadLE32(&fSynchFlags);
     if (fSynchFlags & kExcludePersistentState)
     {
-        int16_t num;
-        stream->ReadLE(&num);
+        uint16_t num = stream->ReadLE16();
         fSDLExcludeList.clear();
-        int i;
-        for(i=0;i<num;i++)
+        for (uint16_t i = 0; i < num; i++)
         {
-            plString s;
+            ST::string s;
             plMsgStdStringHelper::Peek(s, stream);
             fSDLExcludeList.push_back(s);
         }
@@ -350,13 +244,11 @@ void    plSynchedObject::Read(hsStream* stream, hsResMgr* mgr)
 
     if (fSynchFlags & kHasVolatileState)
     {
-        int16_t num;
-        stream->ReadLE(&num);
+        uint16_t num = stream->ReadLE16();
         fSDLVolatileList.clear();
-        int i;
-        for(i=0;i<num;i++)
+        for (uint16_t i = 0; i < num; i++)
         {
-            plString s;
+            ST::string s;
             plMsgStdStringHelper::Peek(s, stream);
             fSDLVolatileList.push_back(s);
         }
@@ -366,12 +258,11 @@ void    plSynchedObject::Read(hsStream* stream, hsResMgr* mgr)
 void    plSynchedObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     hsKeyedObject::Write(stream, mgr);
-    stream->WriteLE(fSynchFlags);
+    stream->WriteLE32(fSynchFlags);
 
     if (fSynchFlags & kExcludePersistentState)
     {
-        int16_t num=fSDLExcludeList.size();
-        stream->WriteLE(num);
+        stream->WriteLE16((uint16_t)fSDLExcludeList.size());
 
         SDLStateList::iterator it=fSDLExcludeList.begin();
         for(; it != fSDLExcludeList.end(); it++)
@@ -382,8 +273,7 @@ void    plSynchedObject::Write(hsStream* stream, hsResMgr* mgr)
 
     if (fSynchFlags & kHasVolatileState)
     {
-        int16_t num=fSDLVolatileList.size();
-        stream->WriteLE(num);
+        stream->WriteLE16((uint16_t)fSDLVolatileList.size());
 
         SDLStateList::iterator it=fSDLVolatileList.begin();
         for(; it != fSDLVolatileList.end(); it++)
@@ -449,7 +339,7 @@ void plSynchedObject::CallDirtyNotifiers() {}
 //
 // return true if it's ok to dirty this object
 //
-bool plSynchedObject::IOKToDirty(const plString& SDLStateName) const
+bool plSynchedObject::IOKToDirty(const ST::string& SDLStateName) const
 {   
     // is synching disabled?
     bool synchDisabled = (GetSynchDisabled()!=0);
@@ -471,7 +361,7 @@ bool plSynchedObject::IOKToDirty(const plString& SDLStateName) const
 //
 // return true if this object should send his SDL msg (for persistence or synch) over the net
 //
-bool plSynchedObject::IOKToNetwork(const plString& sdlName, uint32_t* synchFlags) const
+bool plSynchedObject::IOKToNetwork(const ST::string& sdlName, uint32_t* synchFlags) const
 {
     // determine destination
     bool dstServerOnly=false, dstClientsOnly=false, dstClientsAndServer=false;  
@@ -523,14 +413,14 @@ bool plSynchedObject::IOKToNetwork(const plString& sdlName, uint32_t* synchFlags
     return false;
 }
  
-plSynchedObject::SDLStateList::const_iterator plSynchedObject::IFindInSDLStateList(const SDLStateList& list, const plString& sdlName) const
+plSynchedObject::SDLStateList::const_iterator plSynchedObject::IFindInSDLStateList(const SDLStateList& list, const ST::string& sdlName) const
 {
-    if (sdlName.IsEmpty())
+    if (sdlName.empty())
         return list.end();  // false
 
     SDLStateList::const_iterator it = list.begin();
     for(; it != list.end(); it++)
-        if (it->CompareI(sdlName) == 0)
+        if (it->compare_i(sdlName) == 0)
             return it;
 
     return it;  // .end(), false
@@ -540,9 +430,9 @@ plSynchedObject::SDLStateList::const_iterator plSynchedObject::IFindInSDLStateLi
 // EXCLUDE LIST
 ///////////////////////////
 
-void plSynchedObject::AddToSDLExcludeList(const plString& sdlName)
+void plSynchedObject::AddToSDLExcludeList(const ST::string& sdlName)
 {
-    if (!sdlName.IsEmpty())
+    if (!sdlName.empty())
     {
         if (IFindInSDLStateList(fSDLExcludeList, sdlName)==fSDLExcludeList.end())
         {
@@ -552,7 +442,7 @@ void plSynchedObject::AddToSDLExcludeList(const plString& sdlName)
     }
 }
 
-void plSynchedObject::RemoveFromSDLExcludeList(const plString& sdlName)
+void plSynchedObject::RemoveFromSDLExcludeList(const ST::string& sdlName)
 {
     SDLStateList::const_iterator it=IFindInSDLStateList(fSDLExcludeList, sdlName);
     if (it != fSDLExcludeList.end())
@@ -563,7 +453,7 @@ void plSynchedObject::RemoveFromSDLExcludeList(const plString& sdlName)
     }
 }
 
-bool plSynchedObject::IsInSDLExcludeList(const plString& sdlName) const
+bool plSynchedObject::IsInSDLExcludeList(const ST::string& sdlName) const
 {
     if ((fSynchFlags & kExcludeAllPersistentState) != 0)
         return true;
@@ -579,9 +469,9 @@ bool plSynchedObject::IsInSDLExcludeList(const plString& sdlName) const
 // VOLATILE LIST
 ///////////////////////////
 
-void plSynchedObject::AddToSDLVolatileList(const plString& sdlName)
+void plSynchedObject::AddToSDLVolatileList(const ST::string& sdlName)
 {
-    if (!sdlName.IsEmpty())
+    if (!sdlName.empty())
     {
         if (IFindInSDLStateList(fSDLVolatileList,sdlName)==fSDLVolatileList.end())
         {
@@ -591,7 +481,7 @@ void plSynchedObject::AddToSDLVolatileList(const plString& sdlName)
     }
 }
 
-void plSynchedObject::RemoveFromSDLVolatileList(const plString& sdlName)
+void plSynchedObject::RemoveFromSDLVolatileList(const ST::string& sdlName)
 {
     SDLStateList::const_iterator it=IFindInSDLStateList(fSDLVolatileList,sdlName);
     if (it != fSDLVolatileList.end())
@@ -602,7 +492,7 @@ void plSynchedObject::RemoveFromSDLVolatileList(const plString& sdlName)
     }
 }
 
-bool plSynchedObject::IsInSDLVolatileList(const plString& sdlName) const
+bool plSynchedObject::IsInSDLVolatileList(const ST::string& sdlName) const
 {
     if ((fSynchFlags & kAllStateIsVolatile) != 0)
         return true;

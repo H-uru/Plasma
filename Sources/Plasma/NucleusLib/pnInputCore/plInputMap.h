@@ -39,29 +39,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-// plInputDevice.h
+// plInputMap.h
 
 #ifndef PL_INPUT_MAP_H
 #define PL_INPUT_MAP_H
 
 #include "HeadSpin.h"
 #include "plControlDefinition.h"
-#include "hsTemplates.h"
+
+#include <map>
+#include <vector>
+
+namespace ST { class string; }
 
 class plInputMap
 {
 public:
-    static CommandConvert   fCmdConvert[];
-    static ControlEventCode ConvertCharToControlCode(const char* c);
-    static const char       *ConvertControlCodeToString( ControlEventCode code );
+    static const std::map<ControlEventCode, ST::string> fCmdConvert;
+    static ControlEventCode ConvertCharToControlCode(const ST::string& c);
+    static ST::string ConvertControlCodeToString(ControlEventCode code);
 };
 
 class plMouseMap : public plInputMap
 {
 public:
     ~plMouseMap();
-    hsTArray<plMouseInfo*> fMap;
-    int AddMapping(plMouseInfo* pNfo);
+    std::vector<plMouseInfo*> fMap;
+    hsSsize_t AddMapping(plMouseInfo* pNfo);
 };
 
 #endif // PL_INPUT_DEVICE_H

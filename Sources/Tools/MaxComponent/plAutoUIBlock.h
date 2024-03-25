@@ -39,6 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef plAutoUIBlock_inc
+#define plAutoUIBlock_inc
+
 #include "plAutoUIBase.h"
 
 class plComponentClassDesc;
@@ -50,7 +54,7 @@ protected:
     bool fIsMultiModifier;
 
 public:
-    plAutoUIBlock(plComponentClassDesc *cd, int blockID, const char *name, int version);
+    plAutoUIBlock(plComponentClassDesc *cd, int blockID, ST::string name, int version);
 
     void SetMultiModifierFlag(bool flag) { fIsMultiModifier=flag; }
     int NumParams();
@@ -64,3 +68,5 @@ public:
 
     bool IsMultiModifier() { return fIsMultiModifier; }
 };
+
+#endif

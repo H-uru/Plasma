@@ -40,35 +40,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plPostEffectMod.h"
+
+#include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "plDrawable.h"
+#include "plPipeline.h"
+#include "plProfile.h"
+#include "hsResMgr.h"
+
 #include "plPageTreeMgr.h"
 #include "plSceneNode.h"
 #include "plRenderRequest.h"
 
-#include "plPipeline/plRenderTarget.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnSceneObject/plSceneObject.h"
 
 #include "plMessage/plRenderRequestMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plRenderMsg.h"
+#include "plPipeline/plRenderTarget.h"
 
-#include "pnMessage/plRefMsg.h"
-
-#include "pnSceneObject/plSceneObject.h"
-#include "plDrawable.h"
-#include "plPipeline.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-
+plProfile_CreateTimer("PostEffect", "RenderSetup", PostEffect);
 
 plPostEffectMod::plPostEffectMod()
 :   fHither(1.f),
     fYon(100.f),
-    fFovX(M_PI * 0.25f),
-    fFovY(M_PI * 0.25f * 0.75f),
-    fPageMgr(nil),
-    fRenderTarget(nil),
-    fRenderRequest(nil)
+    fFovX(hsConstants::pi<float> * 0.25f),
+    fFovY(hsConstants::pi<float> * 0.25f * 0.75f),
+    fPageMgr(),
+    fRenderTarget(),
+    fRenderRequest()
 {
     fDefaultW2C = hsMatrix44::IdentityMatrix();
     fDefaultC2W = hsMatrix44::IdentityMatrix();
@@ -83,16 +85,6 @@ plPostEffectMod::~plPostEffectMod()
 
 void plPostEffectMod::ISetupRenderRequest()
 {
-    uint32_t rtFlags = 0;
-
-    // If we go to rendering to sub-window, we'll want to explicitly set width and height
-    uint32_t width = 0;
-    uint32_t height = 0;
-
-    uint32_t colorDepth = 0;
-    uint32_t zDepth = 0;
-    uint32_t stencilDepth = 0;
-
     fRenderRequest = new plRenderRequest;
     uint32_t renderState = plPipeline::kRenderNormal
         | plPipeline::kRenderNoProjection
@@ -115,7 +107,7 @@ void plPostEffectMod::ISetupRenderRequest()
 
     IUpdateRenderRequest();
 }
-void        plPostEffectMod::EnableLightsOnRenderRequest( void )
+void        plPostEffectMod::EnableLightsOnRenderRequest()
 {
     fRenderRequest->SetRenderState( fRenderRequest->GetRenderState() & ~plPipeline::kRenderNoLights );
 }
@@ -123,11 +115,11 @@ void        plPostEffectMod::EnableLightsOnRenderRequest( void )
 void plPostEffectMod::IDestroyRenderRequest()
 {
     delete fRenderTarget;
-    fRenderTarget = nil;
+    fRenderTarget = nullptr;
     delete fRenderRequest;
-    fRenderRequest = nil;
+    fRenderRequest = nullptr;
     delete fPageMgr;
-    fPageMgr = nil;
+    fPageMgr = nullptr;
 }
 
 void plPostEffectMod::IRegisterForRenderMsg(bool on)
@@ -218,8 +210,6 @@ void    plPostEffectMod::GetDefaultWorldToCamera( hsMatrix44 &w2c, hsMatrix44 &c
 void plPostEffectMod::ISubmitRequest()
 {
     hsAssert(fState.IsBitSet(kEnabled), "Submitting request when not active");
-    // No target is now valid...
-//  hsAssert(GetTarget(), "Submitting request without target loaded");
 
     IUpdateRenderRequest();
 
@@ -236,9 +226,6 @@ void plPostEffectMod::IRemoveFromPageMgr(plSceneNode* node)
 {
     fPageMgr->RemoveNode(node);
 }
-
-#include "plProfile.h"
-plProfile_CreateTimer("PostEffect", "RenderSetup", PostEffect);
 
 bool plPostEffectMod::MsgReceive(plMessage* msg)
 {
@@ -300,10 +287,10 @@ void plPostEffectMod::Read(hsStream* s, hsResMgr* mgr)
     ISetEnable(true);
 #endif // FORCE ENABLE ON LOAD - ONLY FOR DEBUGGING
     
-    fHither = s->ReadLEScalar();
-    fYon = s->ReadLEScalar();
-    fFovX = s->ReadLEScalar();
-    fFovY = s->ReadLEScalar();
+    fHither = s->ReadLEFloat();
+    fYon = s->ReadLEFloat();
+    fFovX = s->ReadLEFloat();
+    fFovY = s->ReadLEFloat();
 
     fNodeKey = mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kNodeRef), plRefFlags::kPassiveRef);
 
@@ -319,10 +306,10 @@ void plPostEffectMod::Write(hsStream* s, hsResMgr* mgr)
 
     fState.Write(s);
     
-    s->WriteLEScalar(fHither);
-    s->WriteLEScalar(fYon);
-    s->WriteLEScalar(fFovX);
-    s->WriteLEScalar(fFovY);
+    s->WriteLEFloat(fHither);
+    s->WriteLEFloat(fYon);
+    s->WriteLEFloat(fFovX);
+    s->WriteLEFloat(fFovY);
 
     mgr->WriteKey(s, fNodeKey);
 

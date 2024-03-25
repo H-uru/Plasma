@@ -44,22 +44,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetCommon/plNetMsgScreener.h"
 
+class plArmatureBrain;
+class plAvTask;
+
 //
 // Client-side version
 //
 class plNetClientMsgScreener : public plNetMsgScreener
 {
 protected:
-    void ICreateStatusLog() const;
-    const char* IGetSenderName(const plNetGameMember* gm) const { return "local";   }
-    plString IGetAgeName() const;
-    bool IIsLocalAvatarKey(plKey key, const plNetGameMember* gm) const;
-    bool IIsLocalArmatureModKey(plKey key, const plNetGameMember* gm) const;
-    bool IIsSenderCCR(const plNetGameMember* gm=nil) const;
-    bool IAmClient() const { return true; }
-    bool IScreenIncoming(const plMessage* msg) const;
-public:
+    void ICreateStatusLog() const override;
+    const char* IGetSenderName(const plNetGameMember* gm) const override { return "local"; }
+    ST::string IGetAgeName() const override;
+    bool IIsLocalAvatarKey(const plKey& key, const plNetGameMember* gm) const override;
+    bool IIsLocalArmatureModKey(const plKey& key, const plNetGameMember* gm) const override;
+    bool IIsSenderCCR(const plNetGameMember* gm=nullptr) const override;
+    bool IAmClient() const override { return true; }
 
+    static bool IScreenIncomingBrain(const plArmatureBrain* brain);
+    static bool IScreenIncomingTask(const plAvTask* task);
+    static bool IScreenIncoming(const plMessage* msg);
+
+public:
     plNetClientMsgScreener();
     
     bool AllowOutgoingMessage(const plMessage* msg) const;

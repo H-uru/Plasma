@@ -40,23 +40,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyGUIControlButton.h"
+
 #include "pfGameGUIMgr/pfGUIButtonMod.h"
+
+#include "pyKey.h"
 
 pyGUIControlButton::pyGUIControlButton(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlButton::pyGUIControlButton(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlButton::pyGUIControlButton(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 
-bool pyGUIControlButton::IsGUIControlButton(pyKey& gckey)
+bool pyGUIControlButton::IsGUIControlButton(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUIButtonMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUIButtonMod::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }

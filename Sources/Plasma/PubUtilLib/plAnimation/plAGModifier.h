@@ -47,19 +47,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLAGMODIFIER_H
 #define PLAGMODIFIER_H
 
-#include "HeadSpin.h"                            // need for plSingleModifier
+#include "HeadSpin.h"                           // need for plSingleModifier
+#include "plAGApplicator.h"
+#include "plAGDefs.h"
 #include "pnModifier/plSingleModifier.h"        // inherited
-
-// local
-#include "plScalarChannel.h"
 
 class plSceneObject;
 
 class plAGAnimInstance;
 class plAGAnim;
+class plAGChannel;
 class plAvatarAnim;
 class plAnimCmdMsg;
 class plOneShotCallbacks;
+class plScalarChannel;
 
 ///////////////
 //
@@ -85,19 +86,19 @@ public:
         incoming channels with this modifier. You may also supply an
         autoApply parameter, which indicates whether this modifier
         should apply itself every frame, or only when explicitly asked to. */
-    plAGModifier(const plString &name, bool autoApply = true);
+    plAGModifier(const ST::string &name, bool autoApply = true);
 
     /** It's a destructor. Destroys the name passed into the constructor,
         and a bunch of other stuff you don't need to know anything about. */
     virtual ~plAGModifier();
 
     /** Get the name of the channel controlled by this modifier. */
-    plString GetChannelName() const;
+    ST::string GetChannelName() const;
     /** Change the channel name of the modifier. Will delete the previous
         name. Will NOT remove any channels that are already attached, so 
         you could wind up with a modifier named "Fred" and a bunch of
         channels attached to it that were intended for "Lamont." */
-    void SetChannelName(const plString & name);
+    void SetChannelName(const ST::string & name);
 
     /** Attach a new applicator to our modifier. Will arbitrate with existing
         modifiers if necessary, based on pin type. May destruct existing applicators. */
@@ -124,8 +125,8 @@ public:
     void Enable(bool val);
 
     // PERSISTENCE
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plAGModifier );
@@ -135,12 +136,12 @@ protected:
     typedef std::vector<plAGApplicator*> plAppTable;
     plAppTable fApps;           // the applicators (with respective channels) that we're applying to our scene object
 
-    plString fChannelName;      // name used for matching animation channels to this modifier
+    ST::string fChannelName;    // name used for matching animation channels to this modifier
     bool     fAutoApply;        // evaluate animation automatically during IEval call
     bool     fEnabled;          // if not enabled, we don't eval any of our anims
 
     // APPLYING THE ANIMATION
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
 
     virtual bool IHandleCmd(plAnimCmdMsg* modMsg) { return false; } // only plAGMasterMod should handle these
     virtual void IApplyDynamic() {};    // dummy function required by base class

@@ -48,20 +48,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <vector>
+
+#include "pnKeyedObject/plKey.h"
+
+#include "pyGlueDefinitions.h"
+
 class plDynamicTextMsg;
 class pyColor;
 class pyImage;
-
-#include "pyGlueHelpers.h"
-#include "pnKeyedObject/plKey.h"
-#include "hsTemplates.h"
+class pyKey;
+namespace ST { class string; }
 
 class pyDynamicText
 {
 private:
     plKey           fSenderKey;     // the holder of the who (the modifier) we are
     // the list of receivers that want to be notified
-    hsTArray<plKey> fReceivers;
+    std::vector<plKey> fReceivers;
 
     bool            fNetPropagate;
     bool            fNetForce;
@@ -79,18 +83,17 @@ private:
     uint16_t          fWrapHeight;
 
     plDynamicTextMsg* ICreateDTMsg();
-    void IInit();
 
 protected:
     pyDynamicText();
-    pyDynamicText(pyKey& key);
+    pyDynamicText(const pyKey& key);
     pyDynamicText(plKey key);
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptDynamicMap);
     PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject* New(pyKey& key);
+    static PyObject* New(const pyKey& key);
     static PyObject* New(plKey key);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyDynamicText object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyDynamicText); // converts a PyObject to a pyDynamicText (throws error if not correct type)
@@ -100,9 +103,9 @@ public:
 
 // methods that will be exposed to Python
     // message stuff
-    void SetSender(pyKey& selfKey);
+    void SetSender(const pyKey& selfKey);
     void ClearReceivers();
-    void AddReceiver(pyKey& key);
+    void AddReceiver(const pyKey& key);
     void SetNetPropagate(bool propagate);
     void SetNetForce(bool force);
 
@@ -111,14 +114,14 @@ public:
     void Flush();
     void SetTextColor(pyColor& color );
     void SetTextColor2(pyColor& color, bool blockRGB );
-    void SetFont(const char *facename, int16_t size );
+    void SetFont(ST::string facename, int16_t size);
     void FillRect(uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, pyColor& color );
     void FrameRect(uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, pyColor& color );
     void SetClipping(uint16_t clipLeft, uint16_t clipTop, uint16_t clipRight, uint16_t clipBottom);
     void UnsetClipping();
     void SetWrapping(uint16_t wrapWidth, uint16_t wrapHeight);
     void UnsetWrapping();
-    void DrawText(int16_t x, int16_t y, const plString& text);
+    void DrawText(int16_t x, int16_t y, const ST::string& text);
     void DrawImage(uint16_t x, uint16_t y, pyImage& image, bool respectAlpha);
     void DrawImageClipped(uint16_t x, uint16_t y, pyImage& image, uint16_t cx, uint16_t cy,
                           uint16_t cw, uint16_t ch, bool respectAlpha);
@@ -127,7 +130,7 @@ public:
     // Actually return the visible width and height, since that's what you want to be drawing to
     uint16_t  GetWidth();
     uint16_t  GetHeight();
-    void      CalcTextExtents(const plString& text, uint16_t& width, uint16_t& height);
+    void      CalcTextExtents(const ST::string& text, uint16_t& width, uint16_t& height);
 
     void      SetJustify(uint8_t justify);
     void      SetLineSpacing(int16_t spacing);

@@ -1,200 +1,274 @@
-include_directories("../../Apps")
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib/inc")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib/inc")
-include_directories("../../PubUtilLib")
-
-include_directories(${OPENAL_INCLUDE_DIR})
-include_directories(${OPENSSL_INCLUDE_DIR})
-include_directories(${PYTHON_INCLUDE_DIR})
-include_directories(${CURL_INCLUDE_DIR})
-
-if(MOVIE_AVAILABLE)
-    include_directories(${VPX_INCLUDE_DIR})
-    include_directories(${Opus_INCLUDE_DIR})
-endif()
-
-# Test for Python Interpreter, which will be used for extra build scripts if available
-find_package(PythonInterp)
-set_package_properties(PythonInterp PROPERTIES
-    URL "http://www.python.org"
-    DESCRIPTION "Python Scripting language interpreter"
-    TYPE OPTIONAL
-    PURPOSE "Used to (re-)build some client resource files"
+set(external_SCRIPTS
+    external/create_resource_dat.py
+    external/makeres.py
+    external/render_svg.py
+    external/scalergba.py
 )
 
-if(PYTHONINTERP_FOUND)
-    include(FindPythonModule)
-    # Test for Python modules needed to build resource.dat
-    find_python_module(rsvg)
-    find_python_module(Image)
-    if((DEFINED PY_RSVG) AND (DEFINED PY_IMAGE))
-        set(CAN_BUILD_RESOURCE_DAT ON)
-    endif((DEFINED PY_RSVG) AND (DEFINED PY_IMAGE))
-endif(PYTHONINTERP_FOUND)
+set(external_SOURCES
+    external/Cursor_Base.svg
+    external/Linking_Book.svg
+    external/Loading_Text_rasterfont.svg
+    external/Voice_Chat.svg
+)
+find_program(
+    PNGCRUSH_EXECUTABLE pngcrush
+    DOC "Path to pngcrush"
+)
+
+# Can we generate the resource.dat file?
+python_test_modules(
+    MODULES cairosvg PIL
+    REQUIREMENTS_FILE "${CMAKE_CURRENT_SOURCE_DIR}/external/requirements.txt"
+)
+
+cmake_dependent_option(PLASMA_BUILD_RESOURCE_DAT "Do we want to build resource.dat?" ON "cairosvg_FOUND AND PIL_FOUND" OFF)
+cmake_dependent_option(RESOURCE_OPTIMIZE "Optimize the images in resource.dat" ON "PLASMA_BUILD_RESOURCE_DAT AND PNGCRUSH_EXECUTABLE" OFF)
+cmake_dependent_option(RESOURCE_BRUTE "Allow pngcrush brute-force optimization" OFF "PLASMA_BUILD_RESOURCE_DAT AND PNGCRUSH_EXECUTABLE" OFF)
+
+if(PLASMA_BUILD_RESOURCE_DAT)
+    set(external_DAT "${CMAKE_CURRENT_BINARY_DIR}/resource.dat")
+    if(RESOURCE_OPTIMIZE)
+        list(APPEND OPTIMIZE_ARGUMENT --pngcrush "${PNGCRUSH_EXECUTABLE}")
+    endif()
+    if(RESOURCE_BRUTE)
+        list(APPEND OPTIMIZE_ARGUMENT "--brute")
+    endif()
+
+    add_custom_command(
+        OUTPUT ${external_DAT}
+        COMMAND "${Python3_EXECUTABLE}"
+                "${CMAKE_CURRENT_SOURCE_DIR}/external/makeres.py"
+                --render --package
+                ${OPTIMIZE_ARGUMENT}
+                -i "${CMAKE_CURRENT_SOURCE_DIR}/external"
+                -w "${CMAKE_CURRENT_BINARY_DIR}"
+                -o "${CMAKE_CURRENT_BINARY_DIR}"
+        DEPENDS ${external_SCRIPTS} ${external_SOURCES}
+    )
+
+    install(
+        FILES "${external_DAT}"
+        DESTINATION client
+    )
+endif()
 
 set(plClient_HEADERS
     plClient.h
     plClientCreatable.h
-    #plClientKey.h
+    plClientLoader.h
     plClientUpdateFormat.h
-    #plPluginClient.h
 )
 
 set(plClient_SOURCES
     pfAllCreatables.cpp
     plAllCreatables.cpp
     plClient.cpp
-    #plClientKey.cpp
-    #plPluginClient.cpp
+    plClientLoader.cpp
     pnAllCreatables.cpp
-    winmain.cpp
-)
-
-set(plClient_TEXT
-    ../../../../Docs/ReleaseNotes/ReleaseNotes.txt
 )
 
 set(plClient_RESOURCES
-    res/plClient.rc
-    res/resource.h
-    res/banner.bmp
-    res/cnsl1.bin
-    res/Dirt.ICO
-    res/headspin.ico
 )
 
-add_executable(plClient WIN32 ${plClient_SOURCES} ${plClient_HEADERS}
-                              ${plClient_TEXT} ${plClient_RESOURCES})
+set(plClient_TEXT
+    ${Plasma_SOURCE_DIR}/Docs/ReleaseNotes/ReleaseNotes.txt
+)
 
-if(CAN_BUILD_RESOURCE_DAT AND PLASMA_BUILD_RESOURCE_DAT)
-    add_subdirectory(external)
-    add_dependencies(plClient externalResources)
+if(WIN32)
+    list(APPEND plClient_SOURCES
+        win32/plClient_Win.cpp
+        win32/winmain.cpp
+    )
+    list(APPEND plClient_RESOURCES
+        win32/res/plClient.exe.manifest
+        win32/res/plClient.rc
+        win32/res/resource.h
+        win32/res/banner.bmp
+        win32/res/cnsl1.bin
+        win32/res/Dirt.ICO
+        win32/res/headspin.ico
+    )
+elseif(APPLE)
+    list(APPEND plClient_SOURCES
+        Mac-Cocoa/main.mm
+        Mac-Cocoa/NSString+StringTheory.mm
+        Mac-Cocoa/PLSKeyboardEventMonitor.mm
+        Mac-Cocoa/PLSView.mm
+        Mac-Cocoa/PLSLoginWindowController.mm
+        Mac-Cocoa/PLSPatcherWindowController.mm
+        Mac-Cocoa/PLSPatcher.mm
+        Mac-Cocoa/PLSServerStatus.mm
+    )
+    list(APPEND plClient_HEADERS
+        Mac-Cocoa/NSString+StringTheory.h
+        Mac-Cocoa/PLSKeyboardEventMonitor.h
+        Mac-Cocoa/PLSView.h
+        Mac-Cocoa/PLSLoginWindowController.h
+        Mac-Cocoa/PLSPatcherWindowController.h
+        Mac-Cocoa/PLSPatcher.h
+        Mac-Cocoa/PLSServerStatus.h
+    )
+    list(APPEND plClient_RESOURCES
+        Mac-Cocoa/banner.png
+        Mac-Cocoa/banner@2x.png
+        Mac-Cocoa/MainMenu.xib
+        Mac-Cocoa/PLSLoginWindowController.xib
+        Mac-Cocoa/PLSPatcherWindowController.xib
+    )
+else()
+    list(APPEND plClient_SOURCES
+        main.cpp
+    )
 endif()
+
+plasma_executable(plClient CLIENT INSTALL_PDB
+    SOURCES
+        ${plClient_SOURCES} ${plClient_HEADERS}
+        ${plClient_TEXT} ${plClient_RESOURCES}
+)
+
+if(APPLE)
+    # We need to filter out the XIB files so the source XML files don't get bundled
+    set(plClient_XCODE_RESOURCES ${plClient_RESOURCES})
+    list(FILTER plClient_XCODE_RESOURCES EXCLUDE REGEX "\\.x(ib|cassets)$")
+
+    set_target_properties(plClient PROPERTIES
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Mac-Cocoa/Info.plist.in"
+        # Hard coding the app name here intentionally.
+        # Should prevent macOS from tripping over secured resources being
+        # accessed from two different apps. In theory - plClient is just
+        # the debug version of UruExplorer. It also prevents invalid characters.
+        # GUI identifier should follow the format of a reverse domain string.
+        # https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFBundles/AccessingaBundlesContents/AccessingaBundlesContents.html
+        MACOSX_BUNDLE_GUI_IDENTIFIER org.Huru.UruExplorer
+        MACOSX_BUNDLE_BUNDLE_VERSION "0.1"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
+        RESOURCE "${plClient_XCODE_RESOURCES}"
+        XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME AppIcon
+        XCODE_ATTRIBUTE_MTL_FAST_MATH "YES"
+        XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=Debug] "INCLUDE_SOURCE"
+        XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=RelWithDebInfo] "INCLUDE_SOURCE"
+        XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=Debug] "YES"
+        XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=RelWithDebInfo] "YES"
+        XCODE_ATTRIBUTE_MTL_HEADER_SEARCH_PATHS "${Plasma_SOURCE_DIR}/Sources/Plasma/NucleusLib/inc/"
+        XCODE_ATTRIBUTE_INSTALL_PATH "/Applications"
+        XCODE_ATTRIBUTE_SKIP_INSTALL "NO"
+        XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${CMAKE_CURRENT_SOURCE_DIR}/Mac-Cocoa/plClient.entitlements"
+        XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME "YES"
+        XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC "YES"
+        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER org.Huru.UruExplorer
+    )
+    target_compile_options(plClient PRIVATE -fobjc-arc)
+    target_sources(plClient PRIVATE Mac-Cocoa/Assets.xcassets)
+    set_source_files_properties(Mac-Cocoa/Assets.xcassets ${RESOURCES} PROPERTIES
+         MACOSX_PACKAGE_LOCATION Resources
+    )
+    install(
+        TARGETS plClient
+        DESTINATION client
+    )
+
+    if(PLASMA_APPLE_DEVELOPMENT_TEAM_ID)
+            set_target_properties(plClient PROPERTIES
+                XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Apple Development"
+                XCODE_ATTRIBUTE_DEVELOPMENT_TEAM ${PLASMA_APPLE_DEVELOPMENT_TEAM_ID}
+            )
+    endif()
+endif()
+
+if(PLASMA_BUILD_RESOURCE_DAT)
+    target_sources(plClient PRIVATE ${external_SCRIPTS} ${external_SOURCES} ${external_DAT})
+endif()
+
+target_link_libraries(
+    plClient
+    PRIVATE
+        CoreLib
+
+        # For the "all creatables"
+        pnNucleusInc
+        plPubUtilInc
+        pfFeatureInc
+
+        # Everything else used in this target.
+        pnDispatch
+        pnFactory
+        pnKeyedObject
+        pnMessage
+        pnSceneObject
+        plAgeLoader
+        plAnimation
+        plAudio
+        plAvatar
+        plClientResMgr
+        plDrawable
+        plFile
+        plGImage
+        plGLight
+        plInputCore
+        plMessage
+        plMessageBox
+        plModifier
+        plNetClient
+        plNetCommon
+        plNetGameLib
+        plPhysX
+        plPipeline
+        plProgressMgr
+        plResMgr
+        plScene
+        plSDL
+        plStatGather
+        plStatusLog
+        plUnifiedTime
+        pfAnimation
+        pfAudio
+        pfCharacter
+        pfConsole
+        pfConsoleCore
+        $<$<PLATFORM_ID:Windows>:pfCrashHandler>
+        pfGameGUIMgr
+        pfJournalBook
+        pfLocalizationMgr
+        pfMoviePlayer
+        pfPasswordStore
+        pfPatcher
+        pfPython
+        $<$<BOOL:${PLASMA_PIPELINE_DX}>:pfDXPipeline>
+        $<$<BOOL:${PLASMA_PIPELINE_GL}>:pfGLPipeline>
+        $<$<BOOL:${PLASMA_PIPELINE_METAL}>:pfMetalPipeline>
+        $<$<BOOL:${PLASMA_PIPELINE_METAL}>:pfMetalPipelineShaders>
+        CURL::libcurl
+        "$<$<PLATFORM_ID:Darwin>:-framework Cocoa>"
+        "$<$<PLATFORM_ID:Darwin>:-framework QuartzCore>"
+)
+target_include_directories(plClient PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 
 if(PLASMA_EXTERNAL_RELEASE)
     set_target_properties(plClient PROPERTIES OUTPUT_NAME "UruExplorer")
 endif(PLASMA_EXTERNAL_RELEASE)
-target_link_libraries(plClient CoreLib)
-target_link_libraries(plClient pfAnimation)
-target_link_libraries(plClient pfAudio)
-target_link_libraries(plClient pfCamera)
-target_link_libraries(plClient pfCCR)
-target_link_libraries(plClient pfCharacter)
-target_link_libraries(plClient pfConditional)
-target_link_libraries(plClient pfConsole)
-target_link_libraries(plClient pfConsoleCore)
-target_link_libraries(plClient pfCrashHandler)
-target_link_libraries(plClient pfGameGUIMgr)
-target_link_libraries(plClient pfGameMgr)
-target_link_libraries(plClient pfGameScoreMgr)
-target_link_libraries(plClient pfJournalBook)
-target_link_libraries(plClient pfLocalizationMgr)
-target_link_libraries(plClient pfMessage)
-target_link_libraries(plClient pfMoviePlayer)
-target_link_libraries(plClient pfPasswordStore)
-target_link_libraries(plClient pfPython)
-target_link_libraries(plClient pfSurface)
-target_link_libraries(plClient plAgeDescription)
-target_link_libraries(plClient plAgeLoader)
-target_link_libraries(plClient plAnimation)
-target_link_libraries(plClient plAudible)
-target_link_libraries(plClient plAudio)
-target_link_libraries(plClient plAudioCore)
-target_link_libraries(plClient plAvatar)
-target_link_libraries(plClient plClientResMgr)
-target_link_libraries(plClient plClipboard)
-#target_link_libraries(plClient plClientKey)
-target_link_libraries(plClient plCompression)
-target_link_libraries(plClient plContainer)
-target_link_libraries(plClient plDrawable)
-target_link_libraries(plClient plFile)
-target_link_libraries(plClient plGImage)
-target_link_libraries(plClient plGLight)
-target_link_libraries(plClient plInputCore)
-target_link_libraries(plClient plInterp)
-target_link_libraries(plClient plIntersect)
-target_link_libraries(plClient plMath)
-target_link_libraries(plClient plMessage)
-target_link_libraries(plClient plModifier)
-target_link_libraries(plClient plNetClient)
-target_link_libraries(plClient plNetClientComm)
-target_link_libraries(plClient plNetClientRecorder)
-target_link_libraries(plClient plNetCommon)
-target_link_libraries(plClient plNetGameLib)
-target_link_libraries(plClient plNetMessage)
-target_link_libraries(plClient plNetTransport)
-target_link_libraries(plClient plParticleSystem)
-target_link_libraries(plClient plPhysical)
-target_link_libraries(plClient plPhysX)
-target_link_libraries(plClient plPipeline)
-target_link_libraries(plClient plProgressMgr)
-target_link_libraries(plClient plResMgr)
-target_link_libraries(plClient plScene)
-target_link_libraries(plClient plSDL)
-target_link_libraries(plClient plSockets)
-target_link_libraries(plClient plStatGather)
-target_link_libraries(plClient plStatusLog)
-target_link_libraries(plClient plStreamLogger)
-target_link_libraries(plClient plSurface)
-target_link_libraries(plClient plTransform)
-target_link_libraries(plClient plUnifiedTime)
-target_link_libraries(plClient plVault)
-target_link_libraries(plClient pnAsyncCore)
-target_link_libraries(plClient pnAsyncCoreExe)
-target_link_libraries(plClient pnDispatch)
-target_link_libraries(plClient pnEncryption)
-target_link_libraries(plClient pnFactory)
-target_link_libraries(plClient pnGameMgr)
-target_link_libraries(plClient pnInputCore)
-target_link_libraries(plClient pnKeyedObject)
-target_link_libraries(plClient pnMessage)
-target_link_libraries(plClient pnModifier)
-target_link_libraries(plClient pnNetBase)
-target_link_libraries(plClient pnNetCli)
-target_link_libraries(plClient pnNetCommon)
-target_link_libraries(plClient pnNetProtocol)
-target_link_libraries(plClient pnNucleusInc)
-target_link_libraries(plClient pnSceneObject)
-target_link_libraries(plClient pnTimer)
-target_link_libraries(plClient pnUtils)
-target_link_libraries(plClient pnUUID)
 
-target_link_libraries(plClient ${PYTHON_LIBRARIES})
-target_link_libraries(plClient ${OPENAL_LIBRARY})
-target_link_libraries(plClient ${OPENSSL_LIBRARIES})
-target_link_libraries(plClient ${EXPAT_LIBRARY})
-target_link_libraries(plClient ${JPEG_LIBRARY})
-target_link_libraries(plClient ${PNG_LIBRARY})
-target_link_libraries(plClient ${Speex_LIBRARY})
-target_link_libraries(plClient ${PHYSX_LIBRARIES})
-target_link_libraries(plClient ${Ogg_LIBRARIES})
-target_link_libraries(plClient ${Vorbis_LIBRARIES})
-target_link_libraries(plClient ${DirectX_LIBRARIES})
-target_link_libraries(plClient ${CURL_LIBRARY})
-
-if(USE_VLD)
-    target_link_libraries(plClient ${VLD_LIBRARY})
+if(APPLE)
+    # CMake will attempt to strip rpaths, thus preventing fixup_bundle from finding libraries.
+    # Not sure why - turning that off.
+    set_target_properties(plClient PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+    install(
+        CODE
+        [[
+            include("BundleUtilities")
+            fixup_bundle("${CMAKE_INSTALL_PREFIX}/client/$<TARGET_FILE_NAME:plClient>.app" "" "${searchDirs}" IGNORE_ITEM Python)
+            execute_process(COMMAND "codesign" "--remove-signature" "--deep" "-f" "${CMAKE_INSTALL_PREFIX}/client/$<TARGET_FILE_NAME:plClient>.app")
+        ]]
+        DESTINATION client
+    )
 endif()
 
-if(MOVIE_AVAILABLE)
-    target_link_libraries(plClient ${VPX_LIBRARY})
-    target_link_libraries(plClient ${Opus_LIBRARIES})
+if(PLASMA_BUILD_RESOURCE_DAT)
+    source_group("Client Resource Scripts" FILES ${external_SCRIPTS})
+    source_group("Client Resource Images" FILES ${external_SOURCES})
 endif()
-
-if (WIN32)
-    target_link_libraries(plClient rpcrt4)
-    target_link_libraries(plClient version)
-    target_link_libraries(plClient vfw32)
-    target_link_libraries(plClient ws2_32)
-    target_link_libraries(plClient winmm)
-    target_link_libraries(plClient strmiids)
-endif(WIN32)
-
 source_group("Source Files" FILES ${plClient_SOURCES})
 source_group("Header Files" FILES ${plClient_HEADERS})
 source_group("Text" FILES ${plClient_TEXT})
-source_group("Resource Files" FILES ${plClient_RESOURCES})
+source_group("Resources" FILES ${plClient_RESOURCES})

@@ -159,13 +159,13 @@ public:
         kGroup,
     };
 
-    virtual void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    int CanConvertToType(Class_ID obtype)
+    int CanConvertToType(Class_ID obtype) override
     { return (obtype == PHYSICS_BASE_CID) ? 1 : plComponent::CanConvertToType(obtype); }
 
 protected:
@@ -179,9 +179,9 @@ class plSwim2DComponent : public plPhysicCoreComponent
 {
 public:
     plSwim2DComponent();
-    bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
-    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     std::map<plMaxNode*, plSwimRegionInterface*> fSwimRegions;
     

@@ -47,12 +47,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <memory>
 #include <vector>
 
-#include "plString.h"
 #include "pnNetBase/pnNbError.h"
 
 class plFileName;
 class plStatusLog;
 class hsStream;
+
+namespace ST { class string; }
 
 /** Plasma File Patcher
  *  This is used to patch the client with one or many manifests at once. It assumes that
@@ -68,7 +69,7 @@ public:
 
 public:
     /** Represents a function that takes the status and an optional message on completion. */
-    typedef std::function<void(ENetError, const plString&)> CompletionFunc;
+    typedef std::function<void(ENetError, const ST::string&)> CompletionFunc;
 
     /** Represents a function that takes (const plFileName&) and approves it. */
     typedef std::function<bool(const plFileName&)> FileDesiredFunc;
@@ -82,7 +83,7 @@ public:
     typedef std::function<bool(const plFileName&, hsStream*)> GameCodeDiscoverFunc;
 
     /** Represents a function that takes (bytesDLed, totalBytes, statsStr) as a progress indicator. */
-    typedef std::function<void(uint64_t, uint64_t, const plString&)> ProgressTickFunc;
+    typedef std::function<void(uint64_t, uint64_t, const ST::string&)> ProgressTickFunc;
 
     pfPatcher();
     ~pfPatcher();
@@ -130,9 +131,9 @@ public:
     /** This is called when the current application has been updated. */
     void OnSelfPatch(FileDownloadFunc cb);
 
-    void RequestGameCode();
-    void RequestManifest(const plString& mfs);
-    void RequestManifest(const std::vector<plString>& mfs);
+    void RequestGameCode(bool python = true, bool sdl = true);
+    void RequestManifest(const ST::string& mfs);
+    void RequestManifest(const std::vector<ST::string>& mfs);
 
     /** Start patching the requested manifests. Please note that after calling this, you should
      *  discard your pointer to this object as it will memory-manage itself.

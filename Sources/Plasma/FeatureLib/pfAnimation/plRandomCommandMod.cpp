@@ -40,16 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <cmath>
-
-#include "HeadSpin.h"
 #include "plRandomCommandMod.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "pnMessage/plEventCallbackMsg.h"
-#include "plgDispatch.h"
+
 #include "hsTimer.h"
 
+#include <cstdlib>
+
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plEventCallbackMsg.h"
+
+#include "plMessage/plAnimCmdMsg.h"
 
 static const float kRandNormalize = 1.f / 32767.f;
 
@@ -107,8 +107,7 @@ int plRandomCommandMod::IExcludeSelections(int ncmds)
     }
     double currTime = hsTimer::GetSysSeconds();
     fExcluded.Clear();
-    int i;
-    for( i = 0; i < fEndTimes.GetCount(); i++ )
+    for (size_t i = 0; i < fEndTimes.size(); i++)
     {
         if( fEndTimes[i] > currTime )
         {
@@ -272,8 +271,8 @@ void plRandomCommandMod::Read(hsStream* s, hsResMgr* mgr)
     fMode = s->ReadByte();
     fState = s->ReadByte();
 
-    fMinDelay = s->ReadLEScalar();
-    fMaxDelay = s->ReadLEScalar();
+    fMinDelay = s->ReadLEFloat();
+    fMaxDelay = s->ReadLEFloat();
 
     IReset();
 }
@@ -285,8 +284,8 @@ void plRandomCommandMod::Write(hsStream* s, hsResMgr* mgr)
     s->WriteByte(fMode);
     s->WriteByte(fState);
 
-    s->WriteLEScalar(fMinDelay);
-    s->WriteLEScalar(fMaxDelay);
+    s->WriteLEFloat(fMinDelay);
+    s->WriteLEFloat(fMaxDelay);
 }
 
 void plRandomCommandMod::IRetry(float secs)
@@ -295,7 +294,7 @@ void plRandomCommandMod::IRetry(float secs)
 
     double t = hsTimer::GetSysSeconds() + secs;
 
-    plAnimCmdMsg* msg = new plAnimCmdMsg(nil, GetKey(), &t);
+    plAnimCmdMsg* msg = new plAnimCmdMsg(nullptr, GetKey(), &t);
     msg->SetCmd(plAnimCmdMsg::kContinue);
-    plgDispatch::MsgSend(msg);
+    msg->Send();
 }

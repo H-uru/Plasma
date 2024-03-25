@@ -39,57 +39,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-
-#include "HeadSpin.h"
-#include "hsStream.h"
 #include "plNetCommonHelpers.h"
-#include "pnNetCommon/plGenericVar.h"
-#include "plCompression/plZlibCompress.h"
+
+#include "hsStream.h"
+
 #include <algorithm>
 #include <iterator>
+#include <string_theory/string>
 
+#include "pnFactory/plFactory.h"
+#include "pnNetCommon/plGenericVar.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnNetCommon/pnNetCommon.h"
 
-////////////////////////////////////////////////////////////////////
-#ifndef SERVER
-const uint8_t plNetCoreStatsSummary::StreamVersion = 1;
-
-plNetCoreStatsSummary::plNetCoreStatsSummary()
-:fULBitsPS(0),
-fDLBitsPS(0),
-fULPeakBitsPS(0),
-fDLPeakBitsPS(0),
-fULPeakPktsPS(0),
-fDLPeakPktsPS(0),
-fDLDroppedPackets(0)
-{
-}
-
-void plNetCoreStatsSummary::Read(hsStream* s, hsResMgr*)
-{
-    uint8_t streamVer;
-    s->ReadLE(&streamVer);
-    hsAssert(streamVer==StreamVersion,"plNetCoreStatsSummary invalid stream version.");
-    s->ReadLE(&fULBitsPS);
-    s->ReadLE(&fDLBitsPS);
-    s->ReadLE(&fULPeakBitsPS);
-    s->ReadLE(&fDLPeakBitsPS);
-    s->ReadLE(&fULPeakPktsPS);
-    s->ReadLE(&fDLPeakPktsPS);
-    s->ReadLE(&fDLDroppedPackets);
-}
-
-void plNetCoreStatsSummary::Write(hsStream* s, hsResMgr*)
-{
-    s->WriteLE(StreamVersion);
-    s->WriteLE(fULBitsPS);
-    s->WriteLE(fDLBitsPS);
-    s->WriteLE(fULPeakBitsPS);
-    s->WriteLE(fDLPeakBitsPS);
-    s->WriteLE(fULPeakPktsPS);
-    s->WriteLE(fDLPeakPktsPS);
-    s->WriteLE(fDLDroppedPackets);
-}
-#endif // SERVER
+#include "plCompression/plZlibCompress.h"
 
 ////////////////////////////////////////////////////////////////////
 
@@ -164,7 +127,7 @@ plCreatable * plCreatableListHelper::GetItem( uint16_t id, bool unManageItem/*=f
         }
         return it->second;
     }
-    return nil;
+    return nullptr;
 }
 
 bool plCreatableListHelper::ItemExists( uint16_t id ) const
@@ -198,11 +161,12 @@ void plCreatableListHelper::AddDouble( uint16_t id, double value )
     AddItem( id, V, true );
 }
 
-plString plCreatableListHelper::GetString( uint16_t id )
+ST::string plCreatableListHelper::GetString( uint16_t id )
 {
     plCreatableGenericValue * V = plCreatableGenericValue::ConvertNoRef( GetItem( id ) );
-    if ( !V ) return plString::Null;
-    return (plString)V->Value();
+    if (!V)
+        return ST::string();
+    return (ST::string)V->Value();
 }
 
 int32_t plCreatableListHelper::GetInt( uint16_t id )
@@ -223,49 +187,40 @@ void plCreatableListHelper::Read( hsStream* s, hsResMgr* mgr )
 {
     IClearItems();
 
-    s->LogSubStreamStart("CreatableListHelper");
-
-    s->LogReadLE( &fFlags, "Flags" );
+    s->ReadByte(&fFlags);
 
     fFlags &= ~kWritten;
 
-    uint32_t bufSz;
-    s->LogReadLE( &bufSz, "BufSz" );
+    uint32_t bufSz = s->ReadLE32();
     std::string buf;
     buf.resize( bufSz );
 
     if ( fFlags&kCompressed )
     {
-        uint32_t zBufSz;
-        s->LogReadLE( &zBufSz, "Compressed BufSz" );
+        uint32_t zBufSz = s->ReadLE32();
         std::string zBuf;
         zBuf.resize( zBufSz );
-        s->LogSubStreamPushDesc("Compressed Data");
         s->Read( zBufSz, (void*)zBuf.data() );
         plZlibCompress compressor;
-        uint32_t tmp;
+        uint32_t tmp = bufSz;
         bool ans = compressor.Uncompress( (uint8_t*)buf.data(), &tmp, (uint8_t*)zBuf.data(), zBufSz );
         hsAssert( ans!=0, "plCreatableListHelper: Failed to uncompress buffer." );
         hsAssert( tmp==bufSz, "compression size mismatch" );
         fFlags&=~kCompressed;
-        hsLogEntry( plNetApp::StaticDebugMsg( "plCreatableListHelper: uncompressed from %lu to %lu", zBufSz, bufSz ) );
+        hsLogEntry( plNetApp::StaticDebugMsg( "plCreatableListHelper: uncompressed from {} to {}", zBufSz, bufSz ) );
     }
     else
     {
-        s->LogSubStreamPushDesc("Uncompressed Data");
         s->Read( bufSz, (void*)buf.data() );
     }
 
     hsReadOnlyStream ram( bufSz, (void*)buf.data() );
 
-    uint16_t nItems;
-    ram.ReadLE( &nItems );
-    for ( int i=0; i<nItems; i++ )
+    uint16_t nItems = ram.ReadLE16();
+    for (uint16_t i = 0; i < nItems; i++)
     {
-        uint16_t id;
-        uint16_t classIdx;
-        ram.ReadLE( &id );
-        ram.ReadLE( &classIdx );
+        uint16_t id = ram.ReadLE16();
+        uint16_t classIdx = ram.ReadLE16();
         plCreatable * object = plFactory::Create( classIdx );
         hsAssert( object,"plCreatableListHelper: Failed to create plCreatable object (invalid class index?)" );
         if ( object )
@@ -283,15 +238,15 @@ void plCreatableListHelper::Write( hsStream* s, hsResMgr* mgr )
     {
         // write items to ram stream
         hsRAMStream ram;
-        uint16_t nItems = fItems.size();
-        ram.WriteLE( nItems );
-        for ( std::map<uint16_t,plCreatable*>::iterator ii=fItems.begin(); ii!=fItems.end(); ++ii )
-        {
-            uint16_t id = ii->first;
-            plCreatable * item = ii->second;
+        size_t nItems = fItems.size();
+        hsAssert(nItems < std::numeric_limits<uint16_t>::max(), "Too many items");
+        ram.WriteLE16(uint16_t(nItems));
+        for (const auto& ii : fItems) {
+            uint16_t id = ii.first;
+            plCreatable* item = ii.second;
             uint16_t classIdx = item->ClassIndex();
-            ram.WriteLE( id );
-            ram.WriteLE( classIdx );
+            ram.WriteLE16(id);
+            ram.WriteLE16(classIdx);
             item->Write( &ram, mgr );
         }
 
@@ -317,19 +272,19 @@ void plCreatableListHelper::Write( hsStream* s, hsResMgr* mgr )
                 zBuf.resize( zBufSz );
                 buf = zBuf;
                 fFlags |= kCompressed;
-                hsLogEntry( plNetApp::StaticDebugMsg( "plCreatableListHelper: compressed from %lu to %lu", bufSz, zBufSz ) );
+                hsLogEntry( plNetApp::StaticDebugMsg( "plCreatableListHelper: compressed from {} to {}", bufSz, zBufSz ) );
             }
         }
 
-        ram.Truncate();
+        ram.Reset();
 
-        ram.WriteLE( fFlags );
-        ram.WriteLE( bufSz );
+        ram.WriteByte(fFlags);
+        ram.WriteLE32(bufSz);
 
         if ( fFlags&kCompressed )
         {
             uint32_t zBufSz = buf.size();
-            ram.WriteLE( zBufSz );
+            ram.WriteLE32(zBufSz);
         }
 
         ram.Write( buf.size(), buf.data() );

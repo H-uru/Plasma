@@ -64,13 +64,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //----------------------------
 
 #include "HeadSpin.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plUoid.h"
-#include <string>
+#include <vector>
 
-class plLocation;
-class plRegistryPageNode;
+#include "pnKeyedObject/plUoid.h"
+
+class plKey;
 class plPageInfo;
+class plRegistryPageNode;
+
+namespace ST { class string; }
 
 class plKeyFinder
 {
@@ -88,31 +90,31 @@ public:
     static plKeyFinder& Instance();
 
     // These are Stupid search because they just do string searchs on the objects.
-    plKey StupidSearch(const plString & age, const plString & rm, const char *className, const plString &obName, bool subString=false);
-    plKey StupidSearch(const plString & age, const plString & rm, uint16_t objType, const plString &obName, bool subString=false);
+    plKey StupidSearch(const ST::string & age, const ST::string & rm, const char *className, const ST::string &obName, bool subString=false);
+    plKey StupidSearch(const ST::string & age, const ST::string & rm, uint16_t objType, const ST::string &obName, bool subString=false);
 
     eErrCodes   GetLastErrorCode() { return fLastError; }
     const char* GetLastErrorString(); // For Console display
 
-    void ReallyStupidResponderSearch(const plString& name, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
-    void ReallyStupidActivatorSearch(const plString& name, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
+    void ReallyStupidResponderSearch(const ST::string& name, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
+    void ReallyStupidActivatorSearch(const ST::string& name, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
 
-    void ReallyStupidSubstringSearch(const plString& name, uint16_t objType, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
+    void ReallyStupidSubstringSearch(const ST::string& name, uint16_t objType, std::vector<plKey>& foundKeys, const plLocation& hintLocation = plLocation::kInvalidLoc);
 
-    void GetActivatorNames(std::vector<plString>& names);
-    void GetResponderNames(std::vector<plString>& names);
+    void GetActivatorNames(std::vector<ST::string>& names);
+    void GetResponderNames(std::vector<ST::string>& names);
 
-    plKey FindSceneNodeKey(const plString& pageOrFullLocName) const;
-    plKey FindSceneNodeKey(const plString& ageName, const plString& pageName) const;
+    plKey FindSceneNodeKey(const ST::string& pageOrFullLocName) const;
+    plKey FindSceneNodeKey(const ST::string& ageName, const ST::string& pageName) const;
     plKey FindSceneNodeKey(const plLocation& location) const;
 
-    const plLocation& FindLocation(const plString& age, const plString& page) const;
+    const plLocation& FindLocation(const ST::string& age, const ST::string& page) const;
     const plPageInfo* GetLocationInfo(const plLocation& loc) const;
 
 protected:
-    plKeyFinder() {}
+    plKeyFinder() : fLastError(kOk) { }
 
-    void IGetNames(std::vector<plString>& names, const plString& name, int index);
+    void IGetNames(std::vector<ST::string>& names, const ST::string& name, int index);
     plKey IFindSceneNodeKey(plRegistryPageNode* page) const;
 
     eErrCodes fLastError;

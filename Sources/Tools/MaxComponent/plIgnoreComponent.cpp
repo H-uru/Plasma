@@ -46,10 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentReg.h"
 #include "plMiscComponents.h"
 #include "MaxMain/plMaxNode.h"
-#include "resource.h"
+#include "MaxMain/MaxAPI.h"
 
-#include <iparamm2.h>
-#pragma hdrstop
+#include "resource.h"
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 
@@ -79,10 +78,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    virtual void CollectNonDrawables(INodeTab& nonDrawables);
+    void CollectNonDrawables(INodeTab& nonDrawables) override;
 };
 
 //Max desc stuff necessary below.
@@ -97,14 +96,14 @@ ParamBlockDesc2 gIgnoreBk
 (
     plComponent::kBlkComp, _T("Ignore"), 0, &gIgnoreDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_IGNORE, IDS_COMP_IGNORES, 0, 0, NULL,
+    IDD_COMP_IGNORE, IDS_COMP_IGNORES, 0, 0, nullptr,
 
     kIgnoreMeCheckBx,  _T("Ignore"), TYPE_BOOL,         0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_IGNORE_CKBX,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plIgnoreComponent::plIgnoreComponent()
@@ -161,17 +160,17 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) { return true; }
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override { return true; }
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) { return true; }
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override { return true; }
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override { return true; }
 };
 
 
 class plIgnoreLiteProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -201,9 +200,9 @@ public:
             break;
         }
 
-        return false;
+        return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plIgnoreLiteProc gIgnoreLiteProc;
 
@@ -220,9 +219,9 @@ ParamBlockDesc2 gIgnoreLiteBk
     plIgnoreLiteComponent::kSelectedOnly,  _T("SelectedOnly"), TYPE_BOOL,       0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_IGNORELITE_SELECTED,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plIgnoreLiteComponent::plIgnoreLiteComponent()
@@ -280,8 +279,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 //Max desc stuff necessary below.
@@ -291,9 +290,9 @@ ParamBlockDesc2 gBarneyBk
 (
  plComponent::kBlkComp, _T("Barney"), 0, &gBarneyDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_BARNEY, IDS_COMP_BARNEYS, 0, 0, NULL,
+    IDD_COMP_BARNEY, IDS_COMP_BARNEYS, 0, 0, nullptr,
 
-    end
+    p_end
 );
 
 plBarneyComponent::plBarneyComponent()
@@ -338,12 +337,12 @@ public:
 public:
     plNoShowComponent();
 
-    virtual void CollectNonDrawables(INodeTab& nonDrawables);
+    void CollectNonDrawables(INodeTab& nonDrawables) override;
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 const Class_ID COMP_NOSHOW_CID(0x41cb2b85, 0x615932c6);
@@ -355,24 +354,24 @@ ParamBlockDesc2 gNoShowBk
 (
     plComponent::kBlkComp, _T("NoShow"), 0, &gNoShowDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_NOSHOW, IDS_COMP_NOSHOW, 0, 0, NULL,
+    IDD_COMP_NOSHOW, IDS_COMP_NOSHOW, 0, 0, nullptr,
 
     plNoShowComponent::kShowable,  _T("Showable"), TYPE_BOOL,       0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_NOSHOW_SHOWABLE,
-        end,
+        p_end,
 
     plNoShowComponent::kAffectDraw,  _T("AffectDraw"), TYPE_BOOL,       0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_NOSHOW_AFFECTDRAW,
-        end,
+        p_end,
 
     plNoShowComponent::kAffectPhys,  _T("AffectPhys"), TYPE_BOOL,       0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_NOSHOW_AFFECTPHYS,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plNoShowComponent::plNoShowComponent()
@@ -406,7 +405,7 @@ bool plNoShowComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     {
         if( fCompPB->GetInt(kAffectDraw) )
         {
-            plEnableMsg* eMsg = new plEnableMsg(nil, plEnableMsg::kDisable, plEnableMsg::kDrawable);
+            plEnableMsg* eMsg = new plEnableMsg(nullptr, plEnableMsg::kDisable, plEnableMsg::kDrawable);
             eMsg->AddReceiver(obj->GetKey());
             eMsg->Send();
         }

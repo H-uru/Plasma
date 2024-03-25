@@ -40,36 +40,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "../resource.h"
 
-#include <iparamm2.h>
-#include <stdmat.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include "../resource.h"
 
 #include "plMultipassMtl.h"
 #include "plPassMtl.h"
 #include "plMultipassMtlPB.h"
 #include "plMultipassMtlDlg.h"
 
-class plMultipassClassDesc : public ClassDesc2
+class plMultipassClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return new plMultipassMtl(loading); }
-    const TCHAR*    ClassName()     { return GetString(IDS_MULTI_MTL); }
-    SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
-    Class_ID        ClassID()       { return MULTIMTL_CLASS_ID; }
-    const TCHAR*    Category()      { return NULL; }
-    const TCHAR*    InternalName()  { return _T("PlasmaMultipass"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading) override { return new plMultipassMtl(loading); }
+    const MCHAR*    ClassName() override    { return GetString(IDS_MULTI_MTL); }
+    SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
+    Class_ID        ClassID() override      { return MULTIMTL_CLASS_ID; }
+    const MCHAR*    Category() override     { return nullptr; }
+    const MCHAR*    InternalName() override { return _T("PlasmaMultipass"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plMultipassClassDesc plMultipassMtlDesc;
 ClassDesc2* GetMultiMtlDesc() { return &plMultipassMtlDesc; }
 
 #include "plMultipassMtlPB.cpp"
 
-plMultipassMtl::plMultipassMtl(BOOL loading) : fPassesPB(NULL)
+plMultipassMtl::plMultipassMtl(BOOL loading) : fPassesPB()
 {
     plMultipassMtlDesc.MakeAutoParamBlocks(this);
 
@@ -79,7 +77,7 @@ plMultipassMtl::plMultipassMtl(BOOL loading) : fPassesPB(NULL)
     SetNumSubMtls(1);
 }
 
-void plMultipassMtl::GetClassName(TSTR& s)
+void plMultipassMtl::IGetClassName(MSTR& s) const
 {
     s = GetString(IDS_MULTI_MTL);
 }
@@ -136,7 +134,7 @@ int plMultipassMtl::NumSubs()
     return NumSubMtls();
 }
 
-TSTR plMultipassMtl::SubAnimName(int i) 
+MSTR plMultipassMtl::ISubAnimName(int i)
 {
     return GetSubMtlSlotName(i);
 }
@@ -156,7 +154,7 @@ RefTargetHandle plMultipassMtl::GetReference(int i)
     if (i == kRefPasses)
         return fPassesPB;
 
-    return NULL;
+    return nullptr;
 }
 
 void plMultipassMtl::SetReference(int i, RefTargetHandle rtarg)
@@ -175,7 +173,7 @@ IParamBlock2 *plMultipassMtl::GetParamBlock(int i)
     if (i == kRefPasses)
         return fPassesPB;
 
-    return NULL;
+    return nullptr;
 }
 
 IParamBlock2 *plMultipassMtl::GetParamBlockByID(BlockID id)
@@ -183,11 +181,11 @@ IParamBlock2 *plMultipassMtl::GetParamBlockByID(BlockID id)
     if (fPassesPB->ID() == id)
         return fPassesPB;
 
-    return NULL;
+    return nullptr;
 }
 
-RefResult plMultipassMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-   PartID& partID, RefMessage message ) 
+RefResult plMultipassMtl::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+   PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -217,7 +215,7 @@ Mtl *plMultipassMtl::GetSubMtl(int i)
     if (i < NumSubMtls())
         return fPassesPB->GetMtl(kMultPasses, 0, i);
 
-    return NULL;
+    return nullptr;
 }
 
 void plMultipassMtl::SetSubMtl(int i, Mtl *m)
@@ -226,14 +224,14 @@ void plMultipassMtl::SetSubMtl(int i, Mtl *m)
         fPassesPB->SetValue(kMultPasses, 0, m, i);
 }
 
-TSTR plMultipassMtl::GetSubMtlSlotName(int i)
+MSTR plMultipassMtl::IGetSubMtlSlotName(int i)
 {
-    TSTR str;
-    str.printf("Pass %d", i+1);
+    MSTR str;
+    str.printf(_M("Pass %d"), i+1);
     return str;
 }
 
-TSTR plMultipassMtl::GetSubMtlTVName(int i)
+MSTR plMultipassMtl::GetSubMtlTVName(int i)
 {
     return GetSubMtlSlotName(i);
 }

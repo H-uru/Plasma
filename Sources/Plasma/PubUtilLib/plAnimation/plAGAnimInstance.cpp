@@ -59,6 +59,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"        // just when debugging for GetSysSeconds
 
 // other
+#include "pnFactory/plFactory.h"
+#include "plInterp/plAnimTimeConvert.h"
 #include "pnNetCommon/plSDLTypes.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plOneShotCallbacks.h"
@@ -80,8 +82,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 #ifdef TRACK_AG_ALLOCS
-plString gGlobalAnimName;
-plString gGlobalChannelName;
+ST::string gGlobalAnimName;
+ST::string gGlobalChannelName;
 #endif // TRACK_AG_ALLOCS
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -95,14 +97,13 @@ plString gGlobalChannelName;
 plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
                                    float blend, uint16_t blendPriority, bool cache,
                                    bool useAmplitude)
-: fAnimation(anim),
-  fMaster(master),
-  fBlend(blend),
-  fAmplitude(useAmplitude ? 1.0f : -1.0f)
+    : fAnimation(anim), fMaster(master), fAmplitude(useAmplitude ? 1.0f : -1.0f),
+      FadeType(), fFadeDetach(), fFadeAmpGoal(), fFadeAmpRate(),
+      fBlend(blend), fFadeBlendGoal(), fFadeBlendRate(),
+      fTimeConvert()
 {
     int i;
-    fTimeConvert = nil;
-    plScalarChannel *timeChan = nil;
+    plScalarChannel *timeChan = nullptr;
 #ifdef TRACK_AG_ALLOCS
     gGlobalAnimName = anim->GetName();      // for debug tracking...
 #endif // TRACK_AG_ALLOCS
@@ -134,7 +135,7 @@ plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
     {
         plAGApplicator * app = fAnimation->GetApplicator(i);
         plAGChannel * inChannel = app->GetChannel();
-        plString channelName = app->GetChannelName();
+        ST::string channelName = app->GetChannelName();
         plAGModifier * channelMod = master->GetChannelMod(channelName);
         
         if(channelMod) {
@@ -175,7 +176,7 @@ plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
     fFadeBlend = fFadeAmp = false;
 
 #ifdef TRACK_AG_ALLOCS
-    gGlobalAnimName = "";
+    gGlobalAnimName = ST::string();
 #endif // TRACK_AG_ALLOCS
 }
 
@@ -212,7 +213,7 @@ void plAGAnimInstance::IInitAnimTimeConvert(plAnimTimeConvert* atc, plATCAnim* a
 
     for (size_t i = 0; i < anim->NumStopPoints(); i++)
     {
-        atc->GetStopPoints().Append(anim->GetStopPoint(i));
+        atc->GetStopPoints().emplace_back(anim->GetStopPoint(i));
     }
 
     atc->SetBegin(anim->GetStart());
@@ -258,7 +259,7 @@ void plAGAnimInstance::IInitAnimTimeConvert(plAnimTimeConvert* atc, plATCAnim* a
 void plAGAnimInstance::SearchForGlobals()
 {
     const plAgeGlobalAnim *ageAnim = plAgeGlobalAnim::ConvertNoRef(fAnimation);
-    if (ageAnim != nil && fSDLChannels.size() > 0)
+    if (ageAnim != nullptr && fSDLChannels.size() > 0)
     {
         extern const plSDLModifier *ExternFindAgeSDL();
         const plSDLModifier *sdlMod = ExternFindAgeSDL();
@@ -276,7 +277,7 @@ void plAGAnimInstance::SearchForGlobals()
     }
 }
 
-void plAGAnimInstance::IRegisterDetach(const plString &channelName, plAGChannel *channel)
+void plAGAnimInstance::IRegisterDetach(const ST::string &channelName, plAGChannel *channel)
 {
     plDetachMap::value_type newPair(channelName, channel);
     fManualDetachChannels.insert(newPair);
@@ -320,7 +321,7 @@ void plAGAnimInstance::DetachChannels()
 
     while(i != fManualDetachChannels.end())
     {
-        plString channelName = (*i).first;
+        ST::string channelName = (*i).first;
         plAGModifier *channelMod = fMaster->GetChannelMod(channelName, true);
 
         if(channelMod)
@@ -347,6 +348,12 @@ void plAGAnimInstance::DetachChannels()
     hsStatusMessageF("\nFinished DETACHING anim <%s>", GetName().c_str());
     fMaster->DumpAniGraph("bone_pelvis", false, hsTimer::GetSysSeconds());
 #endif
+}
+
+void plAGAnimInstance::SetSpeed(float speed)
+{
+    if (fTimeConvert)
+        fTimeConvert->SetSpeed(speed);
 }
 
 // SetBlend ---------------------------------------
@@ -393,12 +400,12 @@ float plAGAnimInstance::GetAmplitude()
 
 // GetName -----------------------------
 // --------
-plString plAGAnimInstance::GetName()
+ST::string plAGAnimInstance::GetName()
 {
     if(fAnimation)
         return fAnimation->GetName();
     else
-        return plString::Null;
+        return ST::string();
 }
 
 // SetLoop ----------------------------------
@@ -460,6 +467,11 @@ void plAGAnimInstance::Stop()
         fTimeConvert->Stop();
 }
 
+double plAGAnimInstance::WorldToAnimTime(double foo)
+{
+    return (fTimeConvert ? fTimeConvert->WorldToAnimTimeNoUpdate(foo) : 0.0);
+}
+
 // AttachCallbacks --------------------------------------------------
 // ----------------
 void plAGAnimInstance::AttachCallbacks(plOneShotCallbacks *callbacks)
@@ -479,7 +491,7 @@ void plAGAnimInstance::AttachCallbacks(plOneShotCallbacks *callbacks)
             eventMsg->fRepeats = 0;
             eventMsg->fUser = cb.fUser;
 
-            if (!cb.fMarker.IsNull())
+            if (!cb.fMarker.empty())
             {
                 float marker = anim->GetMarker(cb.fMarker);
                 hsAssert(marker != -1, "Bad marker name");

@@ -41,18 +41,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
 #include "hsResMgr.h"
 
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "plMiscComponents.h"
 #include "MaxMain/plMaxNode.h"
-#include "resource.h"
+#include "MaxMain/MaxAPI.h"
 
-#include <dummy.h>
-#include <iparamm2.h>
-#pragma hdrstop
+#include "resource.h"
 
 #include "plSoftVolumeComponent.h"
 
@@ -86,14 +83,14 @@ protected:
     TCHAR           fTitle[ 128 ];
 
 public:
-    plVolumeHitCallback(INode* owner, IParamBlock2 *pb, ParamID nodeListID, TCHAR *title = nil, BOOL singleSel=false );
+    plVolumeHitCallback(INode* owner, IParamBlock2 *pb, ParamID nodeListID, TCHAR *title = nullptr, BOOL singleSel=false);
 
-    virtual TCHAR *dialogTitle() { return fTitle; }
-    virtual TCHAR *buttonText() { return "OK"; }
-    virtual int filter(INode *node);
-    virtual void proc(INodeTab &nodeTab);
-    virtual BOOL showHiddenAndFrozen() { return TRUE; }
-    virtual BOOL singleSelect() { return fSingleSel; }
+    GETDLGTEXT_RETURN_TYPE dialogTitle() override { return fTitle; }
+    GETDLGTEXT_RETURN_TYPE buttonText() override { return _M("OK"); }
+    int filter(INode *node) override;
+    void proc(INodeTab &nodeTab) override;
+    BOOL showHiddenAndFrozen() override { return TRUE; }
+    BOOL singleSelect() override { return fSingleSel; }
 };
 
 plVolumeHitCallback::plVolumeHitCallback(INode* owner, IParamBlock2 *pb, ParamID nodeListID, TCHAR *title, BOOL singleSel)
@@ -102,7 +99,7 @@ plVolumeHitCallback::plVolumeHitCallback(INode* owner, IParamBlock2 *pb, ParamID
     fNodeListID(nodeListID),
     fSingleSel(singleSel)
 {
-    strcpy( fTitle, title );
+    _tcsncpy(fTitle, title, std::size(fTitle));
 }
 
 int plVolumeHitCallback::filter(INode *node)
@@ -150,7 +147,7 @@ void plVolumeHitCallback::proc(INodeTab &nodeTab)
         if( nodeTab.Count() )
             fPB->SetValue(fNodeListID, TimeValue(0), nodeTab[0]);
         else
-            fPB->SetValue(fNodeListID, TimeValue(0), (INode*)nil);
+            fPB->SetValue(fNodeListID, TimeValue(0), (INode*)nullptr);
     }
     else
         fPB->Append(fNodeListID, nodeTab.Count(), &nodeTab[0]);
@@ -162,10 +159,10 @@ void plVolumeHitCallback::proc(INodeTab &nodeTab)
 
 plSingleCompSelProc::plSingleCompSelProc(ParamID nodeID, int dlgItem, TCHAR *title) : fNodeID(nodeID), fDlgItem(dlgItem) 
 {
-    strcpy( fTitle, title );
+    _tcsncpy(fTitle, title, std::size(fTitle));
 }
 
-BOOL plSingleCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plSingleCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -173,10 +170,10 @@ BOOL plSingleCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, 
         {
             IParamBlock2 *pb = paramMap->GetParamBlock();
             INode* node = pb->GetINode(fNodeID);
-            TSTR newName(node ? node->GetName() : "Pick");
+            const TCHAR* newName = node ? node->GetName() : _T("Pick");
             ::SetWindowText(::GetDlgItem(hWnd, fDlgItem), newName);
         }
-        return true;
+        return TRUE;
 
     case WM_COMMAND:
         if( (HIWORD(wParam) == BN_CLICKED) && (LOWORD(wParam) == fDlgItem) )
@@ -186,18 +183,18 @@ BOOL plSingleCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, 
             plVolumeHitCallback hitCB((INode*)pb->GetOwner(), pb, fNodeID, fTitle, true );
             GetCOREInterface()->DoHitByNameDialog(&hitCB);
             INode* node = pb->GetINode(fNodeID);
-            TSTR newName(node ? node->GetName() : "Pick");
+            const TCHAR* newName = node ? node->GetName() : _T("Pick");
             ::SetWindowText(::GetDlgItem(hWnd, fDlgItem), newName);
             paramMap->Invalidate(fNodeID);
             ShowWindow(hWnd, SW_HIDE);
             ShowWindow(hWnd, SW_SHOW);
 
-            return false;
+            return FALSE;
         }
-        return true;
+        return TRUE;
     }
 
-    return false;
+    return FALSE;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -208,7 +205,7 @@ BOOL plSingleCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, 
 
 bool plSoftVolBaseComponent::SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg) 
 { 
-    fSoftKey = nil; 
+    fSoftKey = nullptr;
     fValid = false; 
     return true; 
 }
@@ -222,19 +219,19 @@ plKey plSoftVolBaseComponent::GetSoftVolume()
 
 plSoftVolBaseComponent* plSoftVolBaseComponent::GetSoftComponent(INode* node)
 {
-    if( node == nil )
-        return nil;
+    if (node == nullptr)
+        return nullptr;
 
     plComponentBase *comp = ((plMaxNodeBase*)node)->ConvertToComponent();
-    if( comp == nil )
-        return nil;
+    if (comp == nullptr)
+        return nullptr;
 
     return GetSoftComponent( comp );
 }
 
 plSoftVolBaseComponent* plSoftVolBaseComponent::GetSoftComponent(plComponentBase *comp)
 {
-    if( comp != nil && 
+    if (comp != nullptr &&
            (comp->ClassID() == SOFTVOLUME_CID)
         || (comp->ClassID() == SOFTVOLUME_UNION_CID)
         || (comp->ClassID() == SOFTVOLUME_ISECT_CID)
@@ -242,7 +239,7 @@ plSoftVolBaseComponent* plSoftVolBaseComponent::GetSoftComponent(plComponentBase
     {
         return (plSoftVolBaseComponent*)comp;
     }
-    return nil;
+    return nullptr;
 }
 
 void plSoftVolBaseComponent::IAddSubVolume(plKey masterKey, plKey subKey)
@@ -260,7 +257,7 @@ plKey plSoftVolBaseComponent::ISetVolumeKey(plSoftVolume* vol)
             break;
     }
     hsAssert(i < NumTargets(), "We're not attached to anything?");
-    plKey key = hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(GetINode()->GetName()), vol, GetTarget(i)->GetLocation());
+    plKey key = hsgResMgr::ResMgr()->NewKey(M2ST(GetINode()->GetName()), vol, GetTarget(i)->GetLocation());
 
     return key;
 }
@@ -268,7 +265,7 @@ plKey plSoftVolBaseComponent::ISetVolumeKey(plSoftVolume* vol)
 plKey plSoftVolBaseComponent::IInvertVolume(plKey subKey)
 {
     if( !subKey )
-        return nil;
+        return nullptr;
 
     plSoftVolumeInvert* invert = new plSoftVolumeInvert;
     plKey invertKey = ISetVolumeKey(invert);
@@ -280,7 +277,7 @@ plKey plSoftVolBaseComponent::IInvertVolume(plKey subKey)
 
 bool plSoftVolBaseComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    fSoftKey = nil;
+    fSoftKey = nullptr;
     return true;
 }
 
@@ -302,7 +299,7 @@ public:
 private:
 
     plKey               ISetFromIsect(plMaxNodeBase* pNode, plVolumeIsect* isect);
-    plKey               ICreateSoftVolume();
+    plKey               ICreateSoftVolume() override;
     plKey               ICreateFromNode(plMaxNodeBase* pNode);
     plKey               ICreateFromDummyObject(plMaxNodeBase* pNode, Object* obj);
     plKey               ICreateFromTriObject(plMaxNodeBase* pNode, Object* obj);
@@ -311,11 +308,11 @@ protected:
     void                ICreateVolume();
 public:
     plSoftVolComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg) override;
 
-    virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
+    void CollectNonDrawables(INodeTab& nonDrawables) override { AddTargetsToList(nonDrawables); }
 };
 
 //
@@ -326,7 +323,7 @@ public:
 class plSoftVolObjAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
     }
 };
@@ -336,22 +333,22 @@ plSoftVolObjAccessor gSoftVolObjAccessor;
 class plSoftVolComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
         case WM_INITDIALOG:
             {
                     IParamBlock2 *pb = map->GetParamBlock();
-                    map->SetTooltip(plSoftVolComponent::kSoftDistance, TRUE, "Distance effect fades in and out." );
+                    map->SetTooltip(plSoftVolComponent::kSoftDistance, TRUE, _M("Distance effect fades in and out."));
             }
-            return true;
+            return TRUE;
 
         }
 
-        return false;
+        return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plSoftVolComponentProc gSoftVolProc;
 
@@ -372,30 +369,29 @@ ParamBlockDesc2 gSoftVolBk
         p_range, 0.0, 500.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SOFTVOL_SOFT, IDC_COMP_SOFTVOL_SOFT_SPIN, 1.0,
-        end,
+        p_end,
 
     plSoftVolComponent::kPartialEnabled,  _T("EnablePartial"), TYPE_BOOL,       0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SOFTVOL_ENABLEPARTIAL,
         p_enable_ctrls,     2, plSoftVolComponent::kInsidePower, plSoftVolComponent::kOutsidePower,
-        end,
+        p_end,
 
     plSoftVolComponent::kInsidePower,       _T("PowerInside"),      TYPE_FLOAT,     0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SOFTVOL_INSIDE, IDC_COMP_SOFTVOL_INSIDE_SPIN, 1.0,
-        end,
+        p_end,
 
     plSoftVolComponent::kOutsidePower,      _T("PowerOutside"),     TYPE_FLOAT,     0, 0,   
         p_default, 0.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SOFTVOL_OUTSIDE, IDC_COMP_SOFTVOL_OUTSIDE_SPIN, 1.0,
-        end,
+        p_end,
 
-    end
-
+    p_end
 );
 
 plSoftVolComponent::plSoftVolComponent()
@@ -449,10 +445,10 @@ bool plSoftVolComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
 plKey plSoftVolComponent::ICreateSoftVolume()
 {
     if( !fValid )
-        return nil;
+        return nullptr;
 
     if( !NumTargets() )
-        return nil;
+        return nullptr;
 
     if( NumTargets() < 2 )
     {
@@ -474,8 +470,8 @@ plKey plSoftVolComponent::ICreateSoftVolume()
     if( !compound->GetNumSubs() )
     {
         delete compound;
-        compound = nil;
-        fSoftKey = nil;
+        compound = nullptr;
+        fSoftKey = nullptr;
     }
 
     return fSoftKey;
@@ -484,13 +480,13 @@ plKey plSoftVolComponent::ICreateSoftVolume()
 plKey plSoftVolComponent::ICreateFromNode(plMaxNodeBase* pNode)
 {
     if( !pNode )
-        return nil;
+        return nullptr;
 
     if( !fValid )
-        return nil;
+        return nullptr;
 
     if( !pNode->GetSceneObject() )
-        return nil;
+        return nullptr;
 
     // Go ahead and make it here, so it'll be available for aggregaters in the Convert pass
     Object *obj = pNode->EvalWorldState(TimeValue(0)).obj;
@@ -504,7 +500,7 @@ plKey plSoftVolComponent::ICreateFromNode(plMaxNodeBase* pNode)
         return ICreateFromTriObject(pNode, obj);
     }
 
-    return nil;
+    return nullptr;
 }
 
 plKey plSoftVolComponent::ICreateFromDummyObject(plMaxNodeBase* pNode, Object* obj)
@@ -615,13 +611,13 @@ public:
     };
 protected:
 
-    plKey               ICreateSoftVolume();
+    plKey               ICreateSoftVolume() override;
 
 public:
     plSoftVolUnionComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg) override;
 };
 
 // When one of our parameters that is a ref changes, send out the component ref
@@ -631,7 +627,7 @@ public:
 class plSoftVolUnionAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (id == plSoftVolUnionComponent::kSubVolumes)
         {
@@ -646,22 +642,22 @@ plSoftVolUnionAccessor gSoftVolUnionAccessor;
 class plSoftVolUnionComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
         case WM_INITDIALOG:
             {
                     IParamBlock2 *pb = map->GetParamBlock();
-                    map->SetTooltip(plSoftVolUnionComponent::kSubVolumes, TRUE, "Select sub-volumes to combine into larger." );
+                    map->SetTooltip(plSoftVolUnionComponent::kSubVolumes, TRUE, _M("Select sub-volumes to combine into larger."));
             }
-            return true;
+            return TRUE;
 
         case WM_COMMAND:
             if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_ADD_VOLUME)
             {
                 // Adding a volume.  Set it and refresh the UI to show it in our list.
-                plVolumeHitCallback hitCB((INode*)map->GetParamBlock()->GetOwner(), map->GetParamBlock(), plSoftVolUnionComponent::kSubVolumes, "Select sub-volumes");
+                plVolumeHitCallback hitCB((INode*)map->GetParamBlock()->GetOwner(), map->GetParamBlock(), plSoftVolUnionComponent::kSubVolumes, _T("Select sub-volumes"));
                 GetCOREInterface()->DoHitByNameDialog(&hitCB);
                 map->Invalidate(plSoftVolUnionComponent::kSubVolumes);
                 return TRUE;
@@ -669,9 +665,9 @@ public:
             break;
         }
 
-        return false;
+        return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plSoftVolUnionComponentProc gSoftVolUnionProc;
 
@@ -691,30 +687,29 @@ ParamBlockDesc2 gSoftVolUnionBk
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
         p_classID,      SOFTVOLUME_BASE_CID,
         p_accessor,     &gSoftVolUnionAccessor,
-        end,
+        p_end,
 
     plSoftVolUnionComponent::kPartialEnabled,  _T("EnablePartial"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SOFTUNION_ENABLEPARTIAL,
         p_enable_ctrls,     2, plSoftVolUnionComponent::kInsidePower, plSoftVolUnionComponent::kOutsidePower,
-        end,
+        p_end,
 
     plSoftVolUnionComponent::kInsidePower,      _T("PowerInside"),      TYPE_FLOAT,     0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SOFTUNION_INSIDE, IDC_COMP_SOFTUNION_INSIDE_SPIN, 1.0,
-        end,
+        p_end,
 
     plSoftVolComponent::kOutsidePower,      _T("PowerOutside"),     TYPE_FLOAT,     0, 0,   
         p_default, 0.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SOFTUNION_OUTSIDE, IDC_COMP_SOFTUNION_OUTSIDE_SPIN, 1.0,
-        end,
+        p_end,
 
-    end
-
+    p_end
 );
 
 plSoftVolUnionComponent::plSoftVolUnionComponent()
@@ -732,7 +727,7 @@ plKey plSoftVolUnionComponent::ICreateSoftVolume()
 {
     int numSubs = fCompPB->Count(kSubVolumes);
     if( numSubs < 0 )
-        return nil;
+        return nullptr;
 
     if( numSubs < 2 )
         return fSoftKey = plSoftVolBaseComponent::GetSoftComponent(fCompPB->GetINode(kSubVolumes, 0, 0))->GetSoftVolume();
@@ -776,13 +771,13 @@ public:
     };
 protected:
 
-    plKey               ICreateSoftVolume();
+    plKey               ICreateSoftVolume() override;
 
 public:
     plSoftVolIsectComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg) override;
 };
 
 // When one of our parameters that is a ref changes, send out the component ref
@@ -792,7 +787,7 @@ public:
 class plSoftVolIsectAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (id == plSoftVolIsectComponent::kSubVolumes)
         {
@@ -807,22 +802,22 @@ plSoftVolIsectAccessor gSoftVolIsectAccessor;
 class plSoftVolIsectComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
         case WM_INITDIALOG:
             {
                     IParamBlock2 *pb = map->GetParamBlock();
-                    map->SetTooltip(plSoftVolIsectComponent::kSubVolumes, TRUE, "Select sub-volumes to combine into larger." );
+                    map->SetTooltip(plSoftVolIsectComponent::kSubVolumes, TRUE, _M("Select sub-volumes to combine into larger."));
             }
-            return true;
+            return TRUE;
 
         case WM_COMMAND:
             if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_ADD_VOLUME)
             {
                 // Adding a volume.  Set it and refresh the UI to show it in our list.
-                plVolumeHitCallback hitCB((INode*)map->GetParamBlock()->GetOwner(), map->GetParamBlock(), plSoftVolIsectComponent::kSubVolumes, "Select sub-volumes");
+                plVolumeHitCallback hitCB((INode*)map->GetParamBlock()->GetOwner(), map->GetParamBlock(), plSoftVolIsectComponent::kSubVolumes, _T("Select sub-volumes"));
                 GetCOREInterface()->DoHitByNameDialog(&hitCB);
                 map->Invalidate(plSoftVolIsectComponent::kSubVolumes);
                 return TRUE;
@@ -830,9 +825,9 @@ public:
             break;
         }
 
-        return false;
+        return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plSoftVolIsectComponentProc gSoftVolIsectProc;
 
@@ -852,30 +847,29 @@ ParamBlockDesc2 gSoftVolIsectBk
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
         p_classID,      SOFTVOLUME_BASE_CID,
         p_accessor,     &gSoftVolIsectAccessor,
-        end,
+        p_end,
 
     plSoftVolIsectComponent::kPartialEnabled,  _T("EnablePartial"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SOFTISECT_ENABLEPARTIAL,
         p_enable_ctrls,     2, plSoftVolIsectComponent::kInsidePower, plSoftVolIsectComponent::kOutsidePower,
-        end,
+        p_end,
 
     plSoftVolIsectComponent::kInsidePower,      _T("PowerInside"),      TYPE_FLOAT,     0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SOFTISECT_INSIDE, IDC_COMP_SOFTISECT_INSIDE_SPIN, 1.0,
-        end,
+        p_end,
 
     plSoftVolIsectComponent::kOutsidePower,     _T("PowerOutside"),     TYPE_FLOAT,     0, 0,   
         p_default, 0.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SOFTISECT_OUTSIDE, IDC_COMP_SOFTISECT_OUTSIDE_SPIN, 1.0,
-        end,
+        p_end,
 
-    end
-
+    p_end
 );
 
 plSoftVolIsectComponent::plSoftVolIsectComponent()
@@ -893,7 +887,7 @@ plKey plSoftVolIsectComponent::ICreateSoftVolume()
 {
     int numSubs = fCompPB->Count(kSubVolumes);
     if( numSubs < 0 )
-        return nil;
+        return nullptr;
 
     if( numSubs < 2 )
         return fSoftKey = plSoftVolBaseComponent::GetSoftComponent(fCompPB->GetINode(kSubVolumes, 0, 0))->GetSoftVolume();
@@ -933,13 +927,13 @@ public:
     };
 protected:
 
-    plKey               ICreateSoftVolume();
+    plKey               ICreateSoftVolume() override;
 
 public:
     plSoftVolNegateComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg) override;
 };
 
 // When one of our parameters that is a ref changes, send out the component ref
@@ -949,7 +943,7 @@ public:
 class plSoftVolNegateAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (id == plSoftVolNegateComponent::kSubVolume)
         {
@@ -961,7 +955,7 @@ public:
 plSoftVolNegateAccessor gSoftVolNegateAccessor;
 
 
-static plSingleCompSelProc gSoftVolNegateSingleSel(plSoftVolNegateComponent::kSubVolume, IDC_COMP_SOFTVOLUME_NEGATE_CHOOSE_SUB, "Select sub-volumes");
+static plSingleCompSelProc gSoftVolNegateSingleSel(plSoftVolNegateComponent::kSubVolume, IDC_COMP_SOFTVOLUME_NEGATE_CHOOSE_SUB, _T("Select sub-volumes"));
 
 
 
@@ -978,31 +972,29 @@ ParamBlockDesc2 gSoftVolNegateBk
     plSoftVolNegateComponent::kSubVolume, _T("SubRegion"),  TYPE_INODE,     0, 0,
         p_prompt, IDS_COMP_SOFTVOLUME_NEGATE,
         p_accessor, &gSoftVolNegateAccessor,
-        end,
+        p_end,
 
     plSoftVolNegateComponent::kPartialEnabled,  _T("EnablePartial"), TYPE_BOOL,         0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SOFTNEGATE_ENABLEPARTIAL,
         p_enable_ctrls,     2, plSoftVolComponent::kInsidePower, plSoftVolComponent::kOutsidePower,
-        end,
+        p_end,
 
     plSoftVolNegateComponent::kInsidePower,     _T("PowerInside"),      TYPE_FLOAT,     0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SOFTNEGATE_INSIDE, IDC_COMP_SOFTNEGATE_INSIDE_SPIN, 1.0,
-        end,
+        p_end,
 
     plSoftVolNegateComponent::kOutsidePower,        _T("PowerOutside"),     TYPE_FLOAT,     0, 0,   
         p_default, 0.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SOFTNEGATE_OUTSIDE, IDC_COMP_SOFTNEGATE_OUTSIDE_SPIN, 1.0,
-        end,
+        p_end,
 
-
-    end
-
+    p_end
 );
 
 plSoftVolNegateComponent::plSoftVolNegateComponent()
@@ -1019,7 +1011,7 @@ bool plSoftVolNegateComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *er
 plKey plSoftVolNegateComponent::ICreateSoftVolume()
 {
     if( NumTargets() < 1 )
-        return nil;
+        return nullptr;
 
     INode* subNode = fCompPB->GetINode(kSubVolume);
     if( subNode )
@@ -1041,7 +1033,7 @@ plKey plSoftVolNegateComponent::ICreateSoftVolume()
             return fSoftKey;
         }
     }
-    return nil;
+    return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1059,14 +1051,14 @@ public:
     };
 public:
     plLightRegionComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *errMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *errMsg) override;
 };
 
 // When one of our parameters that is a ref changes, send out the component ref
@@ -1076,7 +1068,7 @@ public:
 class plLightRegionAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (id == plLightRegionComponent::kSoftVolume)
         {
@@ -1088,7 +1080,7 @@ public:
 plLightRegionAccessor gLightRegionAccessor;
 
 
-static plSingleCompSelProc gLightRegionSingleSel(plLightRegionComponent::kSoftVolume, IDC_COMP_LIGHTREGION_CHOOSE_VOLUME, "Select soft region for light");
+static plSingleCompSelProc gLightRegionSingleSel(plLightRegionComponent::kSoftVolume, IDC_COMP_LIGHTREGION_CHOOSE_VOLUME, _T("Select soft region for light"));
 
 
 //Max desc stuff necessary below.
@@ -1103,8 +1095,8 @@ ParamBlockDesc2 gLightRegionBk
 
     plLightRegionComponent::kSoftVolume, _T("Region"),  TYPE_INODE,     0, 0,
         p_accessor,     &gLightRegionAccessor,
-        end,
-    end
+        p_end,
+    p_end
 );
 
 plLightRegionComponent::plLightRegionComponent()
@@ -1168,7 +1160,7 @@ public:
         :   plSingleCompSelProc(nodeID, dlgItem, title)
     {
     }
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -1237,7 +1229,7 @@ public:
     }
 };
 
-static plVisRegionSingleSel gVisRegionSingleSel(plVisRegionComponent::kSoftVolume, IDC_COMP_VISREGION_CHOOSE_VOLUME, "Select region for visibility");
+static plVisRegionSingleSel gVisRegionSingleSel(plVisRegionComponent::kSoftVolume, IDC_COMP_VISREGION_CHOOSE_VOLUME, _T("Select region for visibility"));
 
 
 //Max desc stuff necessary below.
@@ -1251,35 +1243,35 @@ ParamBlockDesc2 gVisRegionBk
     IDD_COMP_VISREGION, IDS_COMP_VISREGION, 0, 0, &gVisRegionSingleSel,
 
     plVisRegionComponent::kSoftVolume, _T("Region"),    TYPE_INODE,     0, 0,
-        p_accessor,     nil,
-        end,
+        p_accessor,     nullptr,
+        p_end,
 
     plVisRegionComponent::kAffectDraw,  _T("AffectDraw"), TYPE_BOOL,        0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_VISREGION_DRAW,
-        end,
+        p_end,
 
     plVisRegionComponent::kAffectLight,  _T("AffectLight"), TYPE_BOOL,      0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_VISREGION_LIGHT,
-        end,
+        p_end,
 
     plVisRegionComponent::kAffectOcc,  _T("AffectOcc"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_VISREGION_OCC,
-        end,
+        p_end,
 
     plVisRegionComponent::kExcludes,  _T("Excludes"), TYPE_BOOL,        0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_VISREGION_NOT,
-        end,
+        p_end,
 
     plVisRegionComponent::kDisableNormal,   _T("DisableNormal"), TYPE_BOOL,         0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_VISREGION_DIS,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plVisRegionComponent::plVisRegionComponent()
@@ -1304,7 +1296,7 @@ void plVisRegionComponent::ICheckVisRegion(const plLocation& loc)
             return;
 
         fVisReg = new plVisRegion;
-        plKey key = hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(GetINode()->GetName()), fVisReg, loc);
+        plKey key = hsgResMgr::ResMgr()->NewKey(M2ST(GetINode()->GetName()), fVisReg, loc);
 
 
         bool excludes = fCompPB->GetInt(kExcludes);
@@ -1321,7 +1313,7 @@ void plVisRegionComponent::ICheckVisRegion(const plLocation& loc)
 
 bool plVisRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
 {
-    const char* dbgNodeName = node->GetName();
+    const MCHAR* dbgNodeName = node->GetName();
     plSceneObject* obj = node->GetSceneObject();
     if( !obj )
         return true;
@@ -1332,9 +1324,9 @@ bool plVisRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
     bool affectOcc = disableNormal ? true : fCompPB->GetInt(kAffectOcc);
     bool affectLight = disableNormal ? true : fCompPB->GetInt(kAffectLight);
 
-    const plDrawInterface* di = affectDraw ? obj->GetDrawInterface() : nil;
-    plOccluder* occ = affectOcc ? (plOccluder*)obj->GetGenericInterface(plOccluder::Index()) : nil;
-    plLightInfo* li = affectLight ? (plLightInfo*)obj->GetGenericInterface(plLightInfo::Index()) : nil;
+    const plDrawInterface* di = affectDraw ? obj->GetDrawInterface() : nullptr;
+    plOccluder* occ = affectOcc ? (plOccluder*)obj->GetGenericInterface(plOccluder::Index()) : nullptr;
+    plLightInfo* li = affectLight ? (plLightInfo*)obj->GetGenericInterface(plLightInfo::Index()) : nullptr;
     if( !(disableNormal || di || occ || li) )
         return true;
 
@@ -1365,7 +1357,7 @@ bool plVisRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
 
 bool plVisRegionComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
-    fVisReg = nil;
+    fVisReg = nullptr;
 
     return true;
 }
@@ -1378,7 +1370,7 @@ bool plVisRegionComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg
     return true;
 }
 
-void plVisRegionComponent::CollectRegions(plMaxNode* node, hsTArray<plVisRegion*>& regions)
+void plVisRegionComponent::CollectRegions(plMaxNode* node, std::vector<plVisRegion*>& regions)
 {
     int i;
     for( i = 0; i < node->NumAttachedComponents(); i++ )
@@ -1391,7 +1383,7 @@ void plVisRegionComponent::CollectRegions(plMaxNode* node, hsTArray<plVisRegion*
             {
                 regComp->ICheckVisRegion(node->GetLocation());
                 if( regComp->fVisReg )
-                    regions.Append(regComp->fVisReg);
+                    regions.emplace_back(regComp->fVisReg);
             }
         }
     }
@@ -1416,14 +1408,14 @@ protected:
 
 public:
     plRelevanceRegionComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *errMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *errMsg) override;
 };
 
 
-static plSingleCompSelProc gRelevanceRegionSingleSel(plRelevanceRegionComponent::kSoftVolume, IDC_COMP_RELREGION_CHOOSE_VOLUME, "Select region");
+static plSingleCompSelProc gRelevanceRegionSingleSel(plRelevanceRegionComponent::kSoftVolume, IDC_COMP_RELREGION_CHOOSE_VOLUME, _T("Select region"));
 
 
 //Max desc stuff necessary below.
@@ -1437,10 +1429,10 @@ ParamBlockDesc2 gRelevanceRegionBk
     IDD_COMP_RELREGION, IDS_COMP_RELREGION, 0, 0, &gRelevanceRegionSingleSel,
 
     plRelevanceRegionComponent::kSoftVolume, _T("Region"),  TYPE_INODE,     0, 0,
-        p_accessor,     nil,
-        end,
+        p_accessor,     nullptr,
+        p_end,
         
-    end
+    p_end
 );
 
 plRelevanceRegionComponent::plRelevanceRegionComponent()
@@ -1451,7 +1443,7 @@ plRelevanceRegionComponent::plRelevanceRegionComponent()
 
 bool plRelevanceRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
 {
-    const char* dbgNodeName = node->GetName();
+    const MCHAR* dbgNodeName = node->GetName();
     plSceneObject* obj = node->GetSceneObject();
     if( !obj )
         return true;
@@ -1470,7 +1462,7 @@ bool plRelevanceRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
             return true;
 
         fRegion = new plRelevanceRegion;
-        plKey key = hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(GetINode()->GetName()), fRegion, node->GetLocation());
+        plKey key = hsgResMgr::ResMgr()->NewKey(M2ST(GetINode()->GetName()), fRegion, node->GetLocation());
 
         plGenRefMsg* refMsg = new plGenRefMsg(fRegion->GetKey(), plRefMsg::kOnCreate, 0, 0);
         hsgResMgr::ResMgr()->SendRef(softKey, refMsg, plRefFlags::kActiveRef);
@@ -1483,7 +1475,7 @@ bool plRelevanceRegionComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
 
 bool plRelevanceRegionComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
-    fRegion = nil;
+    fRegion = nullptr;
 
     return true;
 }
@@ -1504,14 +1496,14 @@ ParamBlockDesc2 gEffVisSetBk
 (   // KLUDGE: not the defined block ID, but kept for backwards compat.
  plComponent::kBlkComp, _T("EffVisSet"), 0, &gEffVisSetDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_EFFVISSET, IDS_COMP_EFFVISSET, 0, 0, NULL,
+    IDD_COMP_EFFVISSET, IDS_COMP_EFFVISSET, 0, 0, nullptr,
 
     plEffVisSetComponent::kHideNormal,  _T("HideNormal"), TYPE_BOOL,        0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_EFFVISSET_HIDENORMAL,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plEffVisSetComponent::plEffVisSetComponent()
@@ -1522,7 +1514,7 @@ plEffVisSetComponent::plEffVisSetComponent()
 
 bool plEffVisSetComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
 {
-    const char* dbgNodeName = node->GetName();
+    const MCHAR* dbgNodeName = node->GetName();
     plSceneObject* obj = node->GetSceneObject();
     if( !obj )
         return true;
@@ -1556,7 +1548,7 @@ bool plEffVisSetComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
 // of properties on the MaxNode, as it's still indeterminant.
 bool plEffVisSetComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
-    fVisReg = nil;
+    fVisReg = nullptr;
 
     return true;
 }
@@ -1566,7 +1558,7 @@ plVisRegion* plEffVisSetComponent::GetVisRegion(plMaxNode* node)
     if( !fVisReg )
     {
         fVisReg = new plVisRegion;
-        plKey key = hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(GetINode()->GetName()), fVisReg, node->GetLocation());
+        plKey key = hsgResMgr::ResMgr()->NewKey(M2ST(GetINode()->GetName()), fVisReg, node->GetLocation());
 
         fVisReg->SetProperty(plVisRegion::kIsNot, false);
         fVisReg->SetProperty(plVisRegion::kReplaceNormal, fCompPB->GetInt(kHideNormal));
@@ -1580,7 +1572,7 @@ plVisRegion* plEffVisSetComponent::GetVisRegion(plMaxNode* node)
 plEffVisSetComponent* plEffVisSetComponent::ConvertToEffVisSetComponent(plMaxNode* node)
 {
     if( !node )
-        return nil;
+        return nullptr;
 
     plComponentBase *comp = node->ConvertToComponent();
 
@@ -1592,10 +1584,10 @@ plEffVisSetComponent* plEffVisSetComponent::ConvertToEffVisSetComponent(plMaxNod
             return (plEffVisSetComponent*)comp;
         }
     }
-    return nil;
+    return nullptr;
 }
 
-void plEffVisSetComponent::CollectRegions(plMaxNode* node, hsTArray<plVisRegion*>& regions)
+void plEffVisSetComponent::CollectRegions(plMaxNode* node, std::vector<plVisRegion*>& regions)
 {
     int i;
     for( i = 0; i < node->NumAttachedComponents(); i++ )
@@ -1607,9 +1599,8 @@ void plEffVisSetComponent::CollectRegions(plMaxNode* node, hsTArray<plVisRegion*
             if( regComp )
             {
                 if( regComp->fVisReg )
-                    regions.Append(regComp->fVisReg);
+                    regions.emplace_back(regComp->fVisReg);
             }
         }
     }
 }
-

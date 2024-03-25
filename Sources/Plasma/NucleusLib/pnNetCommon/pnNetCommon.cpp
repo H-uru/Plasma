@@ -41,60 +41,61 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include <string>
 #include "pnNetCommon.h"
-#include "hsWindows.h"
 
-#if HS_BUILD_FOR_UNIX
+#if defined(HS_BUILD_FOR_UNIX)
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <netdb.h>
-# include <cstring>  // for memcpy
-#elif !defined(HS_BUILD_FOR_WIN32)
+#elif defined(HS_BUILD_FOR_WIN32)
+#include "hsWindows.h"
+#include <ws2tcpip.h>
+#else
 #error "Not implemented for this platform"
 #endif
 
 namespace pnNetCommon
 {
 
-#ifndef SERVER
-
 // NOTE: On Win32, WSAStartup() must be called before GetTextAddr() will work.
-plString GetTextAddr(uint32_t binAddr)
+ST::string GetTextAddr(uint32_t binAddr)
 {
     in_addr in;
-    memcpy(&in, &binAddr, sizeof(binAddr));
-    return plString::FromUtf8(inet_ntoa(in));
+    in.s_addr = binAddr;
+
+    char text_addr[INET_ADDRSTRLEN];
+    return ST::string::from_utf8(inet_ntop(AF_INET, &in, text_addr, sizeof(text_addr)));
 }
 
 // NOTE: On Win32, WSAStartup() must be called before GetBinAddr() will work.
-uint32_t GetBinAddr(const plString& textAddr)
+uint32_t GetBinAddr(const ST::string& textAddr)
 {
     uint32_t addr = 0;
-    if (textAddr.IsEmpty())
+    if (textAddr.empty())
         return addr;
 
-    addr = inet_addr(textAddr.c_str());
-    if(addr == INADDR_NONE)
-    {
-        struct addrinfo* ai = nil;
-        struct addrinfo hints;
-        memset(&hints, 0, sizeof(struct addrinfo));
+    in_addr in;
+    int result = inet_pton(AF_INET, textAddr.c_str(), &in);
+    hsAssert(result >= 0, "inet_pton failed");
+    if (result) {
+        addr = in.s_addr;
+    } else {
+        struct addrinfo* ai = nullptr;
+        struct addrinfo hints = {};
         hints.ai_family = PF_INET;
         hints.ai_flags  = AI_CANONNAME;
-        if (getaddrinfo(textAddr.c_str(), nil, &hints, &ai) != 0)
+        if (getaddrinfo(textAddr.c_str(), nullptr, &hints, &ai) != 0)
         {
             hsAssert(false, "getaddrinfo failed");
             return addr;
         }
 
-        memcpy(&addr, (void*)(&(((sockaddr_in*)(ai->ai_addr))->sin_addr)), sizeof(addr));
+        addr = reinterpret_cast<sockaddr_in *>(ai->ai_addr)->sin_addr.s_addr;
         freeaddrinfo(ai);
     }
 
     return addr;
 }
-
-#endif
 
 } // pnNetCommon namespace
 
@@ -107,7 +108,7 @@ void plCreatableStream::Write( hsStream* stream, hsResMgr* mgr )
     fStream.Rewind();
 
     uint32_t len = fStream.GetEOF();
-    stream->WriteLE( len );
+    stream->WriteLE32(len);
 
     uint8_t* buf = new uint8_t[len];
     fStream.Read(len, (void*)buf);
@@ -121,12 +122,11 @@ void plCreatableStream::Read( hsStream* stream, hsResMgr* mgr )
 {
     fStream.Rewind();
 
-    uint32_t len;
-    stream->LogReadLE( &len,"CreatableStream Len");
+    uint32_t len = stream->ReadLE32();
 
     uint8_t* buf = new uint8_t[len];
-    stream->LogRead(len, (void*)buf, "CreatableStream Data");
-    fStream.Write(len, (const void*)buf);
+    stream->Read(len, buf);
+    fStream.Write(len, buf);
 
     fStream.Rewind();
     delete[] buf;

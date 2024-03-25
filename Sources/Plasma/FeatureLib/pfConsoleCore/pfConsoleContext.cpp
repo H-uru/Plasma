@@ -45,70 +45,61 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
-#include "plString.h"
 #include "pfConsoleContext.h"
 
+#include <string_theory/string>
+#include <utility>
 
 //// Static Root Context /////////////////////////////////////////////////////
 
-pfConsoleContext    pfConsoleContext::fRootContext( "global" );
+pfConsoleContext    pfConsoleContext::fRootContext(ST_LITERAL("global"));
 
-pfConsoleContext    &pfConsoleContext::GetRootContext( void )
+pfConsoleContext    &pfConsoleContext::GetRootContext()
 {
     return fRootContext;
 }
 
-//// Constructor/Destructor //////////////////////////////////////////////////
+//// Constructor /////////////////////////////////////////////////////////////
 
-pfConsoleContext::pfConsoleContext( const char *name )
+pfConsoleContext::pfConsoleContext(ST::string name)
 {
-    fName = ( name != nil ) ? hsStrcpy( name ) : nil;
+    fName = std::move(name);
     fAddWhenNotFound = true;
-}
-
-pfConsoleContext::~pfConsoleContext()
-{
-    Clear();
-    delete [] fName;
 }
 
 //// Clear ///////////////////////////////////////////////////////////////////
 
-void    pfConsoleContext::Clear( void )
+void    pfConsoleContext::Clear()
 {
-    int32_t       idx;
-
-
-    for( idx = fVarValues.GetCount() - 1; idx >= 0; idx-- )
-        RemoveVar( idx );
+    fVarNames.clear();
+    fVarValues.clear();
 }
 
 //// Getters /////////////////////////////////////////////////////////////////
 
-uint32_t  pfConsoleContext::GetNumVars( void ) const
+size_t pfConsoleContext::GetNumVars() const
 {
-    hsAssert( fVarValues.GetCount() == fVarNames.GetCount(), "Mismatch in console var context arrays" );
-    return fVarValues.GetCount();
+    hsAssert(fVarValues.size() == fVarNames.size(), "Mismatch in console var context arrays");
+    return fVarValues.size();
 }
 
-const char          *pfConsoleContext::GetVarName( uint32_t idx ) const
+ST::string pfConsoleContext::GetVarName(size_t idx) const
 {
-    hsAssert( fVarValues.GetCount() == fVarNames.GetCount(), "Mismatch in console var context arrays" );
+    hsAssert(fVarValues.size() == fVarNames.size(), "Mismatch in console var context arrays");
 
-    if( idx >= fVarNames.GetCount() )
+    if (idx >= fVarNames.size())
     {
         hsAssert( false, "GetVarName() index out of range for console context" );
-        return nil;
+        return {};
     }
 
     return fVarNames[ idx ];
 }
 
-pfConsoleCmdParam   &pfConsoleContext::GetVarValue( uint32_t idx ) const
+const pfConsoleCmdParam &pfConsoleContext::GetVarValue(size_t idx) const
 {
-    hsAssert( fVarValues.GetCount() == fVarNames.GetCount(), "Mismatch in console var context arrays" );
-    hsAssert( idx < fVarValues.GetCount(), "GetVarValue() index out of range for console context" );
+    hsAssert(fVarValues.size() == fVarNames.size(), "Mismatch in console var context arrays");
+    hsAssert(idx < fVarValues.size(), "GetVarValue() index out of range for console context");
 
     return fVarValues[ idx ];
 }
@@ -116,18 +107,15 @@ pfConsoleCmdParam   &pfConsoleContext::GetVarValue( uint32_t idx ) const
 
 //// FindVar /////////////////////////////////////////////////////////////////
 
-int32_t   pfConsoleContext::FindVar( const char *name ) const
+hsSsize_t pfConsoleContext::FindVar(const ST::string& name) const
 {
-    uint32_t      idx;
+    hsAssert(fVarValues.size() == fVarNames.size(), "Mismatch in console var context arrays");
 
-
-    hsAssert( fVarValues.GetCount() == fVarNames.GetCount(), "Mismatch in console var context arrays" );
-
-    for( idx = 0; idx < fVarNames.GetCount(); idx++ )
+    for (size_t idx = 0; idx < fVarNames.size(); idx++)
     {
-        if( stricmp( name, fVarNames[ idx ] ) == 0 )
+        if (name.compare_i(fVarNames[idx]) == 0)
         {
-            return (int32_t)idx;
+            return hsSsize_t(idx);
         }
     }
 
@@ -136,112 +124,94 @@ int32_t   pfConsoleContext::FindVar( const char *name ) const
 
 //// RemoveVar ///////////////////////////////////////////////////////////////
 
-void    pfConsoleContext::RemoveVar( uint32_t idx )
+void    pfConsoleContext::RemoveVar(size_t idx)
 {
-    hsAssert( fVarValues.GetCount() == fVarNames.GetCount(), "Mismatch in console var context arrays" );
+    hsAssert(fVarValues.size() == fVarNames.size(), "Mismatch in console var context arrays");
 
-    if( idx >= fVarValues.GetCount() )
+    if (idx >= fVarValues.size())
     {
         hsAssert( false, "RemoveVar() index out of range for console context" );
         return;
     }
 
-    delete [] fVarNames[ idx ];
-    if( fVarValues[ idx ].GetType() == pfConsoleCmdParam::kString )
-        // Necessary because the params won't delete the data themselves
-        delete [] ( (char *)fVarValues[ idx ] );
-
-    fVarNames.Remove( idx );
-    fVarValues.Remove( idx );
+    fVarNames.erase(fVarNames.begin() + idx);
+    fVarValues.erase(fVarValues.begin() + idx);
 }
 
 //// AddVar Variants /////////////////////////////////////////////////////////
 
-void    pfConsoleContext::IAddVar( const char *name, const pfConsoleCmdParam &value )
+void pfConsoleContext::IAddVar(ST::string name, const pfConsoleCmdParam& value)
 {
-    fVarNames.Append( hsStrcpy( name ) );
-    fVarValues.Append( value );
-    
-    // Remember, params won't know any better, since by default they don't own a copy of their string
-    uint32_t idx = fVarValues.GetCount() - 1;
-    if( fVarValues[ idx ].GetType() == pfConsoleCmdParam::kString )
-        fVarValues[ idx ].SetString( hsStrcpy( fVarValues[ idx ] ) );
+    fVarNames.emplace_back(std::move(name));
+    fVarValues.emplace_back(value);
 }
 
-void    pfConsoleContext::AddVar( const char *name, const pfConsoleCmdParam &value )
+void pfConsoleContext::AddVar(ST::string name, const pfConsoleCmdParam& value)
 {
-    int32_t idx = FindVar( name );
+    hsSsize_t idx = FindVar(name);
     if( idx != -1 )
     {
         hsAssert( false, "AddVar() failed because variable already in console context" );
         return;
     }
 
-    IAddVar( name, value );
+    IAddVar(std::move(name), value);
 }
 
-void    pfConsoleContext::AddVar( const char *name, int value )
+void pfConsoleContext::AddVar(ST::string name, int value)
 {
     pfConsoleCmdParam   param;
     param.SetInt( value );
-    AddVar( name, param );
+    AddVar(std::move(name), param);
 }
 
-void    pfConsoleContext::AddVar( const char *name, float value )
+void pfConsoleContext::AddVar(ST::string name, float value)
 {
     pfConsoleCmdParam   param;
     param.SetFloat( value );
-    AddVar( name, param );
+    AddVar(std::move(name), param);
 }
 
-void    pfConsoleContext::AddVar( const char *name, const char *value )
+void pfConsoleContext::AddVar(ST::string name, ST::string value)
 {
     pfConsoleCmdParam   param;
-    param.SetString( (char *)value );   // It's ok, we'll be copying it soon 'nuf
-    AddVar( name, param );
+    param.SetString(std::move(value));
+    AddVar(std::move(name), param);
 }
 
-void    pfConsoleContext::AddVar( const char *name, char value )
+void pfConsoleContext::AddVar(ST::string name, char value)
 {
     pfConsoleCmdParam   param;
     param.SetChar( value );
-    AddVar( name, param );
+    AddVar(std::move(name), param);
 }
 
-void    pfConsoleContext::AddVar( const char *name, bool value )
+void pfConsoleContext::AddVar(ST::string name, bool value)
 {
     pfConsoleCmdParam   param;
     param.SetBool( value );
-    AddVar( name, param );
+    AddVar(std::move(name), param);
 }
 
 //// SetVar Variants /////////////////////////////////////////////////////////
 
-bool    pfConsoleContext::SetVar( uint32_t idx, const pfConsoleCmdParam &value )
+bool    pfConsoleContext::SetVar(size_t idx, const pfConsoleCmdParam &value)
 {
-    hsAssert( fVarValues.GetCount() == fVarNames.GetCount(), "Mismatch in console var context arrays" );
-    if( idx >= fVarValues.GetCount() )
+    hsAssert(fVarValues.size() == fVarNames.size(), "Mismatch in console var context arrays");
+    if (idx >= fVarValues.size())
     {
         hsAssert( false, "SetVar() index out of range for console context" );
         return false;
     }
 
-    if( fVarValues[ idx ].GetType() == pfConsoleCmdParam::kString )
-    {
-        // Remember, params won't know any better, since by default they don't own a copy of their string
-        delete [] ( (char *)fVarValues[ idx ] );
-    }
-
     fVarValues[ idx ] = value;
-    if( fVarValues[ idx ].GetType() == pfConsoleCmdParam::kString )
-        fVarValues[ idx ].SetString( hsStrcpy( fVarValues[ idx ] ) );
 
     return true;
 }
 
-bool    pfConsoleContext::SetVar( const char *name, const pfConsoleCmdParam &value )
+bool pfConsoleContext::SetVar(const ST::string& name, const pfConsoleCmdParam& value)
 {
-    int32_t idx = FindVar( name );
+    hsSsize_t idx = FindVar(name);
     if( idx == -1 )
     {
         if( fAddWhenNotFound )
@@ -253,38 +223,38 @@ bool    pfConsoleContext::SetVar( const char *name, const pfConsoleCmdParam &val
         return false;
     }
 
-    return SetVar( idx, value );
+    return SetVar((size_t)idx, value);
 }
 
-bool    pfConsoleContext::SetVar( const char *name, int value )
+bool pfConsoleContext::SetVar(const ST::string& name, int value)
 {
     pfConsoleCmdParam   param;
     param.SetInt( value );
     return SetVar( name, param );
 }
 
-bool    pfConsoleContext::SetVar( const char *name, float value )
+bool pfConsoleContext::SetVar(const ST::string& name, float value)
 {
     pfConsoleCmdParam   param;
     param.SetFloat( value );
     return SetVar( name, param );
 }
 
-bool    pfConsoleContext::SetVar( const char *name, const char *value )
+bool pfConsoleContext::SetVar(const ST::string& name, ST::string value)
 {
     pfConsoleCmdParam   param;
-    param.SetString( (char *)value );   // Don't worry, we'll be copying it soon 'nuf
+    param.SetString(std::move(value));
     return SetVar( name, param );
 }
 
-bool    pfConsoleContext::SetVar( const char *name, char value )
+bool pfConsoleContext::SetVar(const ST::string& name, char value)
 {
     pfConsoleCmdParam   param;
     param.SetChar( value );
     return SetVar( name, param );
 }
 
-bool    pfConsoleContext::SetVar( const char *name, bool value )
+bool pfConsoleContext::SetVar(const ST::string& name, bool value)
 {
     pfConsoleCmdParam   param;
     param.SetBool( value );

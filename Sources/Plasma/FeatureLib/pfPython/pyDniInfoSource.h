@@ -43,11 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define pyDniInfoSource_h_inc
 
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
 
-class pyDniCoordinates;
-class plString;
+#include "pyGlueDefinitions.h"
+
 class plUUID;
+class pyDniCoordinates;
+namespace ST { class string; }
 
 class pyDniInfoSource
 {
@@ -55,8 +56,6 @@ protected:
     pyDniInfoSource() { }
 
 public:
-    ~pyDniInfoSource() { }
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptDniInfoSource);
     PYTHON_CLASS_NEW_DEFINITION;
@@ -66,13 +65,13 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     // current coords of the player in current age as a pyDniCoordinates
-    PyObject* GetAgeCoords( void ); // returns pyDniCoordinates
+    PyObject* GetAgeCoords(); // returns pyDniCoordinates
     // current time in current age (tbd)
-    uint32_t          GetAgeTime( void ) const;
+    uint32_t          GetAgeTime() const;
     // name of current age
-    plString    GetAgeName() const;
+    ST::string    GetAgeName() const;
     // unique identifier for this age instance
-    plUUID          GetAgeGuid(void) const;
+    plUUID          GetAgeGuid() const;
 };
 
 

@@ -40,14 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-
 #include "plAxisAnimModifier.h"
+
 #include "hsResMgr.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnKeyedObject/plKey.h"
-#include "plNetMessage/plNetMsgHelpers.h"
 #include "pnMessage/plNotifyMsg.h"
+#include "pnMessage/plRefMsg.h"
 #include "pnMessage/plTimeMsg.h"
 #include "pnMessage/plCmdIfaceModMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
@@ -69,7 +68,7 @@ class plAxisInputInterface : public plInputInterface
 
         plAxisAnimModifier  *fOwner;
 
-        virtual ControlEventCode    *IGetOwnedCodeList( void ) const
+        virtual ControlEventCode    *IGetOwnedCodeList() const
         {
             static ControlEventCode codes[] = { END_CONTROLS };
             return codes;
@@ -79,8 +78,8 @@ class plAxisInputInterface : public plInputInterface
 
         plAxisInputInterface( plAxisAnimModifier *owner ) { fOwner = owner; SetEnabled( true ); }
 
-        virtual uint32_t  GetPriorityLevel( void ) const { return kSceneInteractionPriority + 10; }
-        virtual bool    InterpretInputEvent( plInputEventMsg *pMsg )
+        uint32_t  GetPriorityLevel() const override { return kSceneInteractionPriority + 10; }
+        bool    InterpretInputEvent(plInputEventMsg *pMsg) override
         {
             plMouseEventMsg* pMMsg = plMouseEventMsg::ConvertNoRef( pMsg );
             if (pMMsg )
@@ -99,18 +98,16 @@ class plAxisInputInterface : public plInputInterface
             return false;
         }
 
-        virtual uint32_t  GetCurrentCursorID( void ) const { return kCursorGrab; }
-        virtual bool    HasInterestingCursorID( void ) const { return true; }
+        uint32_t  GetCurrentCursorID() const override { return kCursorGrab; }
+        bool    HasInterestingCursorID() const override { return true; }
 };
 
 plAxisAnimModifier::plAxisAnimModifier() : 
-fXAnim(nil), 
-fYAnim(nil), 
-fActive(false), 
-fXPos(0.0f), 
-fYPos(0.0f), 
-fIface(0), 
-fAllOrNothing(false)
+fActive(),
+fXPos(),
+fYPos(),
+fIface(),
+fAllOrNothing()
 {
     fNotify = new plNotifyMsg;
     fInputIface = new plAxisInputInterface( this );
@@ -161,7 +158,7 @@ bool plAxisAnimModifier::MsgReceive(plMessage* msg)
     plNotifyMsg* pNMsg = plNotifyMsg::ConvertNoRef(msg);
     if (pNMsg)
     {
-        for (int i = 0; i < pNMsg->GetEventCount(); i++)
+        for (size_t i = 0; i < pNMsg->GetEventCount(); i++)
         {
             if (pNMsg->GetEventRecord(i)->fEventType == proEventData::kActivate)
             {
@@ -347,13 +344,13 @@ bool plAxisAnimModifier::MsgReceive(plMessage* msg)
         if (pRefMsg->GetContext() == plRefMsg::kOnDestroy )
         {
             if (pRefMsg->fType == kTypeX)
-                fXAnim = nil;
+                fXAnim = nullptr;
             else 
             if (pRefMsg->fType == kTypeY)
-                fYAnim = nil;
+                fYAnim = nullptr;
             else 
             if (pRefMsg->fType == kTypeLogic)
-                fNotificationKey = nil;
+                fNotificationKey = nullptr;
         }
         return true;    
     }

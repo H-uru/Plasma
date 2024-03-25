@@ -48,27 +48,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // singular
 #include "plCoopCoordinator.h"
 
+#include "plTimerCallbackManager.h"
+
 // local
-#include "plAvBrainCoop.h"
+#include "plArmatureMod.h"
 #include "plAvatarMgr.h"
+#include "plAvBrainCoop.h"
 #include "plAvTaskBrain.h"
 #include "plAvTaskSeek.h"
 
-// global
-
-
 // other
-#include "plMessage/plAvCoopMsg.h"
-#include "plMessage/plAvatarMsg.h"
-#include "plMessage/plInputIfaceMgrMsg.h"
 #include "pnMessage/plNotifyMsg.h"
 #include "pnNetCommon/plNetApp.h"
-#include "plNetClient/plNetClientMgr.h"
-#include "plPhysical.h"
-#include "pnTimer/plTimerCallbackManager.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plAvCoopMsg.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
 #include "plMessage/plTimerCallbackMsg.h"
 
-const unsigned kAbortTimer = 1;
+const int kAbortTimer = 1;
 const float kAbortTimerDuration = 15; // 15 seconds
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -78,15 +77,15 @@ const float kAbortTimerDuration = 15; // 15 seconds
 /////////////////////////////////////////////////////////////////////////////////////////
 
 plCoopCoordinator::plCoopCoordinator()
-: fHostBrain(nil),
-  fGuestBrain(nil),
-  fInitiatorID(0),
-  fInitiatorSerial(0),
-  fHostOfferStage(0),
-  fGuestAcceptStage(0),
-  fGuestAcceptMsg(nil),
-  fAutoStartGuest(nil),
-  fGuestAccepted(false)
+: fHostBrain(),
+  fGuestBrain(),
+  fInitiatorID(),
+  fInitiatorSerial(),
+  fHostOfferStage(),
+  fGuestAcceptStage(),
+  fGuestAcceptMsg(),
+  fAutoStartGuest(),
+  fGuestAccepted()
 {
 }
 
@@ -94,12 +93,12 @@ plCoopCoordinator::plCoopCoordinator()
 // ------------------
 plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
                                      plAvBrainCoop *hostBrain, plAvBrainCoop *guestBrain,
-                                     const plString &synchBone,
+                                     const ST::string &synchBone,
                                      uint32_t hostOfferStage, uint32_t guestAcceptStage,
                                      plMessage *guestAcceptMsg,
                                      bool autoStartGuest)
-: fHostKey(host),
-  fGuestKey(guest),
+: fHostKey(std::move(host)),
+  fGuestKey(std::move(guest)),
   fHostBrain(hostBrain),
   fGuestBrain(guestBrain),
   fInitiatorID(hostBrain->GetInitiatorID()),
@@ -116,19 +115,19 @@ plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
 
     serial = serial % 999;
 
-    plString newName = plFormat("{}{}{3}\x000", host->GetName(), guest->GetName(), serial++);
+    ST::string newName = ST::format("{}{}{3}\x000", fHostKey->GetName(), fGuestKey->GetName(), serial++);
     
-    plKey newKey = hsgResMgr::ResMgr()->NewKey(newName, this, host->GetUoid().GetLocation());
+    plKey newKey = hsgResMgr::ResMgr()->NewKey(newName, this, fHostKey->GetUoid().GetLocation());
 
     plKey avMgrKey = plAvatarMgr::GetInstance()->GetKey();
 
-    guestBrain->SetRecipient(avMgrKey);
-    hostBrain->SetRecipient(avMgrKey);
+    fGuestBrain->SetRecipient(avMgrKey);
+    fHostBrain->SetRecipient(avMgrKey);
     // disable our clickability here if we are the guest
-    if (plNetClientMgr::GetInstance()->GetLocalPlayerKey() == guest)
+    if (plNetClientApp::GetInstance()->GetLocalPlayerKey() == fGuestKey)
     {
         plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kGUIDisableAvatarClickable);
-        pMsg->SetAvKey(guest);
+        pMsg->SetAvKey(fGuestKey);
         pMsg->SetBCastFlag(plMessage::kNetPropagate);
         pMsg->SetBCastFlag(plMessage::kNetForce);
         pMsg->Send();
@@ -191,7 +190,7 @@ bool plCoopCoordinator::MsgReceive(plMessage *msg)
                         fGuestAcceptMsg->Send();
                     }
                     // kill the message (along with being active)
-                    fGuestAcceptMsg = nil;
+                    fGuestAcceptMsg = nullptr;
                     fGuestLinked = true;
                     IAdvanceParticipant(true);  // advance the host
 //                  IAdvanceParticipant(false); // advance the guest
@@ -223,7 +222,7 @@ bool plCoopCoordinator::MsgReceive(plMessage *msg)
             case plAvCoopMsg::kGuestSeekAbort:
                 // if they aborted then just advance the host
                 // kill the message (along with being active)
-                fGuestAcceptMsg = nil;
+                fGuestAcceptMsg = nullptr;
                 fGuestLinked = true;
                 IAdvanceParticipant(true);  // advance the host
                 break;
@@ -298,10 +297,10 @@ void plCoopCoordinator::IStartHost()
     plArmatureMod *hostAv = plAvatarMgr::FindAvatar(fHostKey);
     if (guestAv && hostAv)
     {
-        plAvSeekMsg *msg = new plAvSeekMsg(nil, hostAv->GetKey(), nil, 1.f, true);
+        plAvSeekMsg *msg = new plAvSeekMsg(nullptr, hostAv->GetKey(), nullptr, 1.f, true);
         hsClearBits(msg->fFlags, plAvSeekMsg::kSeekFlagForce3rdPersonOnStart);
-        guestAv->GetPositionAndRotationSim(&msg->fTargetLookAt, nil);
-        hostAv->GetPositionAndRotationSim(&msg->fTargetPos, nil);
+        guestAv->GetPositionAndRotationSim(&msg->fTargetLookAt, nullptr);
+        hostAv->GetPositionAndRotationSim(&msg->fTargetPos, nullptr);
         msg->Send();
     }   
 
@@ -343,7 +342,7 @@ void plCoopCoordinator::IContinueGuest()
     plAvTaskMsg *brainM = new plAvTaskMsg(GetKey(), fGuestKey, brainT);
     brainM->SetBCastFlag(plMessage::kPropagateToModifiers);
     brainM->Send();
-    fGuestBrain = nil;          // the armature will destroy the brain when done.
+    fGuestBrain = nullptr;          // the armature will destroy the brain when done.
 }
 
 // IContinueHost ----------------------
@@ -353,7 +352,7 @@ void plCoopCoordinator::IAdvanceParticipant(bool host)
     DebugMsg("COOP: IAdvanceParticipant(%d)", host ? 1 : 0);
     plKey &who = host ? fHostKey : fGuestKey;
 
-    plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg(nil, who,
+    plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg(nullptr, who,
         plAvBrainGenericMsg::kNextStage, 0, false, 0.0,
         false, false, 0.0);
 
@@ -374,7 +373,7 @@ void plCoopCoordinator::IStartTimeout()
 // --------------
 void plCoopCoordinator::ITimeout()
 {
-    fGuestAcceptMsg = nil;
+    fGuestAcceptMsg = nullptr;
     IAdvanceParticipant(true); // advance the host
 }
 
@@ -394,7 +393,7 @@ void plCoopCoordinator::Read(hsStream *stream, hsResMgr *mgr)
     if(stream->ReadBool())
         fGuestAcceptMsg = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
     else
-        fGuestAcceptMsg = nil;
+        fGuestAcceptMsg = nullptr;
 
     fSynchBone = stream->ReadSafeString();
     fAutoStartGuest = stream->ReadBool();
@@ -416,7 +415,7 @@ void plCoopCoordinator::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteByte((uint8_t)fHostOfferStage);
     stream->WriteByte((uint8_t)fGuestAcceptStage);
 
-    stream->WriteBool(fGuestAcceptMsg != nil);
+    stream->WriteBool(fGuestAcceptMsg != nullptr);
     if(fGuestAcceptMsg)
         mgr->WriteCreatable(stream, fGuestAcceptMsg);
 

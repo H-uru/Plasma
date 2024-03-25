@@ -84,29 +84,29 @@ public:
         \param loop Make the animation loop?
         \param attach Are we attaching or detaching the animation?
     */
-    plAvAnimTask(const plString &animName, float initialBlend, float targetBlend, float fadeSpeed,
+    plAvAnimTask(const ST::string &animName, float initialBlend, float targetBlend, float fadeSpeed,
                  float setTime, bool start, bool loop, bool attach);
 
     /** Canonical constructor form form for detaching
         \param animName The name of the animation we're detaching
         \param fadeSpeed How fast to fade it out. */
-    plAvAnimTask(const plString &animName, float fadeSpeed, bool attach = false);
+    plAvAnimTask(const ST::string &animName, float fadeSpeed, bool attach = false);
 
     // task protocol
-    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual void LeaveAge(plArmatureMod *avatar);
+    bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
+    bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
+    void LeaveAge(plArmatureMod *avatar) override;
 
     // plasma protocol
     CLASSNAME_REGISTER( plAvAnimTask );
     GETINTERFACE_ANY( plAvAnimTask, plAvTask );
 
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *stream, hsResMgr *mgr) override;
 
 protected:
     // public members
-    plString fAnimName;                 // the animation we're operating on
+    ST::string fAnimName;               // the animation we're operating on
     float fInitialBlend;                // the blend to establish (attaching only)
     float fTargetBlend;                 // the blend to achieve eventually (attaching only)
     float fFadeSpeed;                   // how fast to achieve the blend
@@ -132,12 +132,12 @@ public:
     plAvSeekTask(plKey target);
     /** Constructor form for calculated seek points: uses aligment type and (optionally) animation
         The animation is used if we're trying to align some future pose with a seek target. */
-    plAvSeekTask(plKey target, plAvAlignment alignType, const plString& animName);
+    plAvSeekTask(plKey target, plAvAlignment alignType, ST::string animName);
 
     // task protocol
-    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual void LeaveAge(plArmatureMod *avatar);
+    bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
+    bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
+    void LeaveAge(plArmatureMod *avatar) override;
     
     // plasma protocol
     CLASSNAME_REGISTER( plAvSeekTask );
@@ -146,7 +146,7 @@ public:
     // *** implement reader and writer if needed for network propagation
 protected:
     // -- specification members --
-    plString                    fAnimName;          // the animation we're using, if any;
+    ST::string                  fAnimName;          // the animation we're using, if any;
     plAvAlignment               fAlign;             // how to line up with the seek point
     double                      fDuration;          // the time we want the task to take
     plKey                       fTarget;            // the thing we're seeking towards
@@ -182,7 +182,7 @@ public:
         \param reversable Unused. Allows the oneshot to be backed up by keyboard input
         \param callbacks A vector of callback messages to be sent at specific times during the animation
         */
-    plAvOneShotTask(const plString &animName, bool drivable, bool reversible, plOneShotCallbacks *callbacks);
+    plAvOneShotTask(const ST::string &animName, bool drivable, bool reversible, plOneShotCallbacks *callbacks);
     /** Construct from a oneshot message.
         \param msg The message to copy our parameters from
         \param brain The brain to attach the task to.
@@ -191,11 +191,11 @@ public:
     virtual ~plAvOneShotTask();
 
     // task protocol
-    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual void LeaveAge(plArmatureMod *avatar);
+    bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
+    bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
+    void LeaveAge(plArmatureMod *avatar) override;
     
-    void SetAnimName(const plString &name);
+    void SetAnimName(const ST::string &name);
     
     static bool fForce3rdPerson;
 
@@ -209,7 +209,7 @@ public:
     
     // *** implement reader and writer if needed for network propagation
 protected:
-    plString fAnimName;                 // the name of the one-shot animation we want to use
+    ST::string fAnimName;             // the name of the one-shot animation we want to use
     bool fMoveHandle;                 // move the handle after the oneshot's done playing?
     plAGAnimInstance *fAnimInstance;    // the animation instance (available only after it starts playing)
     bool fDrivable;                   // the user can control the animation with the mouse
@@ -244,21 +244,21 @@ public:
     virtual ~plAvOneShotLinkTask();
 
     // task protocol
-    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);   
+    bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
+    bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
 
     CLASSNAME_REGISTER( plAvOneShotLinkTask );
     GETINTERFACE_ANY( plAvOneShotLinkTask, plAvOneShotTask );   
 
     // only read/writes enough to send an unstarted task across the net. Not intended for
     // use with a running task.
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *stream, hsResMgr *mgr); 
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *stream, hsResMgr *mgr) override;
 
-    void SetMarkerName(const plString &name);
+    void SetMarkerName(const ST::string &name);
         
 protected:
-    plString fMarkerName;
+    ST::string fMarkerName;
     double fStartTime;
     float fMarkerTime;
     bool fLinkFired;

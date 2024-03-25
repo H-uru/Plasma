@@ -42,15 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSDLModifierMsg_INC
 #define plSDLModifierMsg_INC
 
-#include "pnMessage/plMessage.h"
-
+#include "plMessage.h"
+#include <string_theory/string>
 
 //
 // A msg sent to an SDL modifier to tell it send or recv state.
 //
-class hsStream;
-class hsResMgr;
-class plStateDataRecord;
 class plSDLModifierMsg : public plMessage
 {
 public:
@@ -63,19 +60,16 @@ public:
     };
 
 protected:
-    plString fSDLName;              // the state descriptor name (ie. "physical")
+    ST::string fSDLName;            // the state descriptor name (ie. "physical")
     Action fAction;
-    plStateDataRecord* fState;      // for recving state
-    bool fManageStateMem;           // delete fState?
     uint32_t fPlayerID;
     uint32_t fFlags;
 
 public:
-    plSDLModifierMsg(const plString& sdlName="", Action a=kActionNone);
-    ~plSDLModifierMsg();
+    plSDLModifierMsg(const ST::string& sdlName={}, Action a=kActionNone);
 
-    CLASSNAME_REGISTER( plSDLModifierMsg );
-    GETINTERFACE_ANY( plSDLModifierMsg, plMessage );
+    CLASSNAME_REGISTER(plSDLModifierMsg);
+    GETINTERFACE_ANY(plSDLModifierMsg, plMessage);
 
     uint32_t GetFlags() const { return fFlags; }
     void SetFlags(uint32_t f) { fFlags = f; }
@@ -83,18 +77,19 @@ public:
     Action GetAction() const { return fAction; }
     void SetAction(Action t) { fAction=t; }
 
-    plStateDataRecord* GetState(bool unManageState=false) { if ( unManageState ) fManageStateMem=false; return fState; }
-    void SetState(plStateDataRecord* s, bool manageState) { fState=s; fManageStateMem=manageState; }
+    ST::string GetSDLName() const { return fSDLName; }
+    void SetSDLName(const ST::string& s) { fSDLName=s; }
 
-    plString GetSDLName() const { return fSDLName; }
-    void SetSDLName(const plString& s) { fSDLName=s; }
-        
     uint32_t GetPlayerID() const { return fPlayerID;  }
     void SetPlayerID(uint32_t p) { fPlayerID=p;   }
-    
-    // IO 
-    void Read(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "local only msg"); }
-    void Write(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "local only msg"); }
+
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) override {
+        hsAssert(false, "local only msg");
+    }
+    void Write(hsStream* stream, hsResMgr* mgr) override {
+        hsAssert(false, "local only msg");
+    }
 };
 
 #endif  // plSDLModifierMsg_INC

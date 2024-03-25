@@ -45,18 +45,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIUpDownPairMod.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pfGameGUIMgr.h"
 #include "pfGUIButtonMod.h"
 #include "pfGUIControlHandlers.h"
 
 #include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "plAnimation/plAGModifier.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
 
 //// Wee Little Control Proc for our buttons /////////////////////////////////
 
@@ -79,7 +78,7 @@ class pfUpDownBtnProc : public pfGUICtrlProcObject
         void    SetUp( pfGUIButtonMod *up ) { fUp = up; }
         void    SetDown( pfGUIButtonMod *down ) { fDown = down; }
 
-        virtual void    DoSomething( pfGUIControlMod *ctrl )
+        void    DoSomething(pfGUIControlMod *ctrl) override
         {
             if( (pfGUIButtonMod *)ctrl == fUp )
             {
@@ -101,12 +100,11 @@ class pfUpDownBtnProc : public pfGUICtrlProcObject
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 pfGUIUpDownPairMod::pfGUIUpDownPairMod()
+    : fUpControl(), fDownControl()
 {
-    fUpControl = nil;
-    fDownControl = nil;
     fValue = fMin = fMax = fStep = 0.f;
 
-    fButtonProc = new pfUpDownBtnProc( nil, nil, this );
+    fButtonProc = new pfUpDownBtnProc(nullptr, nullptr, this);
     fButtonProc->IncRef();
     SetFlag( kIntangible );
 }
@@ -124,7 +122,7 @@ bool    pfGUIUpDownPairMod::IEval( double secs, float del, uint32_t dirty )
     return pfGUIValueCtrl::IEval( secs, del, dirty );
 }
 
-void    pfGUIUpDownPairMod::IUpdate( void )
+void    pfGUIUpDownPairMod::IUpdate()
 {
     if (fEnabled)
     {
@@ -150,7 +148,7 @@ void    pfGUIUpDownPairMod::IUpdate( void )
     }
 }
 
-void    pfGUIUpDownPairMod::Update( void )
+void    pfGUIUpDownPairMod::Update()
 {
     IUpdate();
 }
@@ -160,7 +158,7 @@ void    pfGUIUpDownPairMod::Update( void )
 bool    pfGUIUpDownPairMod::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
-    if( refMsg != nil )
+    if (refMsg != nullptr)
     {
         if( refMsg->fType == kRefUpControl )
         {
@@ -172,8 +170,8 @@ bool    pfGUIUpDownPairMod::MsgReceive( plMessage *msg )
             }
             else
             {
-                fUpControl = nil;
-                fButtonProc->SetUp( nil );
+                fUpControl = nullptr;
+                fButtonProc->SetUp(nullptr);
             }
             return true;
         }
@@ -187,8 +185,8 @@ bool    pfGUIUpDownPairMod::MsgReceive( plMessage *msg )
             }
             else
             {
-                fDownControl = nil;
-                fButtonProc->SetDown( nil );
+                fDownControl = nullptr;
+                fButtonProc->SetDown(nullptr);
             }
             return true;
         }
@@ -203,14 +201,14 @@ void    pfGUIUpDownPairMod::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIValueCtrl::Read(s, mgr);
 
-    fUpControl = nil;
-    fDownControl = nil;
+    fUpControl = nullptr;
+    fDownControl = nullptr;
     mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefUpControl ), plRefFlags::kActiveRef );
     mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDownControl ), plRefFlags::kActiveRef );
 
-    s->ReadLE( &fMin );
-    s->ReadLE( &fMax );
-    s->ReadLE( &fStep );
+    s->ReadLEFloat(&fMin);
+    s->ReadLEFloat(&fMax);
+    s->ReadLEFloat(&fStep);
 
     fValue = fMin;
 }
@@ -222,9 +220,9 @@ void    pfGUIUpDownPairMod::Write( hsStream *s, hsResMgr *mgr )
     mgr->WriteKey( s, fUpControl->GetKey() );
     mgr->WriteKey( s, fDownControl->GetKey() );
 
-    s->WriteLE( fMin );
-    s->WriteLE( fMax );
-    s->WriteLE( fStep );
+    s->WriteLEFloat(fMin);
+    s->WriteLEFloat(fMax);
+    s->WriteLEFloat(fStep);
 }
 
 

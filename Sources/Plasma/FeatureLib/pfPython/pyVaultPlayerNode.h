@@ -48,35 +48,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
+
+#include "pyGlueDefinitions.h"
 #include "pyVaultNode.h"
 
 class pyAgeInfoStruct;
-class plString;
-struct RelVaultNode;
+namespace ST { class string; }
 
 class pyVaultPlayerNode : public pyVaultNode
 {
 protected:
-    // should only be created from C++ side
-    pyVaultPlayerNode(RelVaultNode *nfsNode);
-
     //create from the Python side
     pyVaultPlayerNode();
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultPlayerNode);
-    PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject *New(RelVaultNode *nfsNode);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultPlayerNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultPlayerNode); // converts a PyObject to a pyVaultPlayerNode (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
 
-//==================================================================
-// class plVaultPlayerInfoNode : public plVaultNode
-//
     PyObject *GetInbox(); // returns pyVaultFolderNode
     PyObject *GetPlayerInfo(); // returns pyVaultPlayerInfoNode
     PyObject *GetAvatarOutfitFolder(); // returns pyVaultFolderNode
@@ -93,18 +86,18 @@ public:
     PyObject *GetLinkToCity(); // returns pyVaultAgeLinkNode
 
     PyObject *GetOwnedAgeLink(const pyAgeInfoStruct *info); // returns pyVaultAgeLinkNode
-    void RemoveOwnedAgeLink(const char* guid);
+    void RemoveOwnedAgeLink(const ST::string& guid);
 
     PyObject *GetVisitAgeLink(const pyAgeInfoStruct *info); // returns pyVaultAgeLinkNode
-    void RemoveVisitAgeLink(const char* guid);
+    void RemoveVisitAgeLink(const ST::string& guid);
 
-    PyObject *FindChronicleEntry(const char *entryName); // returns pyVaultChronicleNode
+    PyObject *FindChronicleEntry(const ST::string& entryName); // returns pyVaultChronicleNode
 
-    void SetPlayerName(const char *value);
-    plString GetPlayerName() const;
+    void SetPlayerName(const ST::string& value);
+    ST::string GetPlayerName() const;
 
-    void SetAvatarShapeName(const char *value);
-    plString GetAvatarShapeName() const;
+    void SetAvatarShapeName(const ST::string& value);
+    ST::string GetAvatarShapeName() const;
 
     void SetDisabled(bool value);
     bool IsDisabled();

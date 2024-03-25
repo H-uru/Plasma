@@ -66,35 +66,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLoadMask.h"
 #include "hsMatrix44.h"
 #include "plRenderLevel.h"
-#include "hsSTLStream.h"
 #include "hsStream.h"
 #include "hsStringTokenizer.h"
-#include "hsTemplates.h"
 #include "plFileSystem.h"
 
-// Windows
-#include "hsWindows.h"
-#include <CommDlg.h>
-#include <comutil.h>
-#include <direct.h>
-
-// Misc Max SDK
-#include <max.h>
-#include <bmmlib.h>
-#include <CustAttrib.h>
-#include <ICustAttribContainer.h>
-#include <custcont.h>
-#include <guplib.h>
-#include <iMenuMan.h>
-#include <IMtlEdit.h>
-#include <iparamb2.h> // above ISkin.h for Max 7
-#include <ISkin.h>
-#include <istdplug.h>
-#include <maxversion.h>
-#include <mnmath.h>
-#include <modstack.h>
-#include <notify.h>
-#include <pbbitmap.h>
+// Max
+#include "MaxAPI.h"
 
 // PlasmaMax Stuff included everywhere
 // Some of these files may pull in Max SDK headers, so put this below hsWindows.h!

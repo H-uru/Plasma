@@ -45,10 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsBitVector.h"
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "pnMessage/plRefMsg.h"
 #include "pnNetCommon/plSynchedObject.h"
-#include "pnNetCommon/plSynchedValue.h"
-#include "pnModifier/plModifier.h"
 #include "hsStream.h"
 
 class plObjInterface;
@@ -62,6 +59,7 @@ class hsResMgr;
 class plMessage;
 class plDispatchBase;
 struct hsMatrix44;
+class plModifier;
 
 // The following two aren't dragging the Conversion side into the runtime.
 // They are just to let the converter do things we don't want done at runtime.
@@ -70,15 +68,13 @@ class plMaxNode;
 class plMaxNodeBase;
 
 class plSceneObject : public plSynchedObject {
-    friend class plSynchedValueBase;
-private:
     plDrawInterface*            GetVolatileDrawInterface() { return fDrawInterface; }
     plSimulationInterface*      GetVolatileSimulationInterface() { return fSimulationInterface; }
     plCoordinateInterface*      GetVolatileCoordinateInterface() { return fCoordinateInterface; }
     plAudioInterface*           GetVolatileAudioInterface() { return fAudioInterface; }
     plObjInterface*             GetVolatileGenericInterface(uint16_t classIdx) const;
 
-    plModifier*                 GetVolatileModifier(int i) { return fModifiers[i]; }
+    plModifier*                 GetVolatileModifier(size_t i) { return fModifiers[i]; }
 
     plKey                       fSceneNode;
 
@@ -96,9 +92,9 @@ protected:
     plCoordinateInterface*      fCoordinateInterface;
     plAudioInterface*           fAudioInterface;
 
-    hsTArray<plModifier*>       fModifiers;
+    std::vector<plModifier*>    fModifiers;
 
-    hsTArray<plObjInterface*> fGenerics;
+    std::vector<plObjInterface*> fGenerics;
 
     void                    ISetDrawInterface(plDrawInterface* di);
     void                    ISetSimulationInterface(plSimulationInterface* si);
@@ -111,13 +107,13 @@ protected:
     void                    IPropagateToGenerics(plMessage* msg);
     void                    IPropagateToGenerics(const hsBitVector& types, plMessage* msg);
 
-    void                    IAddModifier(plModifier* mo, int i);
+    void                    IAddModifier(plModifier* mo, hsSsize_t i);
     void                    IRemoveModifier(plModifier* mo);
     bool                    IPropagateToModifiers(plMessage* msg);
 
     void                    ISetInterface(plObjInterface* iface);
     void                    IRemoveInterface(plObjInterface* iface);
-    void                    IRemoveInterface(int16_t idx, plObjInterface* iface=nil);
+    void                    IRemoveInterface(int16_t idx, plObjInterface* iface=nullptr);
 
     void                    ISetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
@@ -129,33 +125,33 @@ public:
     CLASSNAME_REGISTER( plSceneObject );
     GETINTERFACE_ANY( plSceneObject, plSynchedObject );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     virtual const plDrawInterface*              GetDrawInterface() const { return fDrawInterface; }
     virtual const plSimulationInterface*        GetSimulationInterface() const { return fSimulationInterface; }
     virtual const plCoordinateInterface*        GetCoordinateInterface() const { return fCoordinateInterface; }
     virtual const plAudioInterface*             GetAudioInterface() const { return fAudioInterface; }
 
-    int                     GetNumGenerics() const { return fGenerics.GetCount(); }
-    const plObjInterface*   GetGeneric(int i) const { return fGenerics[i]; }
+    size_t                  GetNumGenerics() const { return fGenerics.size(); }
+    const plObjInterface*   GetGeneric(size_t i) const { return fGenerics[i]; }
 
     plObjInterface*         GetGenericInterface(uint16_t classIdx) const { return GetVolatileGenericInterface(classIdx); }
 
-    int                     GetNumModifiers() const { return fModifiers.GetCount(); }
-    const plModifier*       GetModifier(int i) const { return fModifiers[i]; }
+    size_t                  GetNumModifiers() const { return fModifiers.size(); }
+    const plModifier*       GetModifier(size_t i) const { return fModifiers[i]; }
     const plModifier*       GetModifierByType(uint16_t classIdx) const;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     virtual bool Eval(double secs, float del);
 
-    void                    SetSceneNode(plKey newNode);
+    void                    SetSceneNode(const plKey& newNode);
     plKey                   GetSceneNode() const;
 
     // Network only strange function. Do not emulate or generalize this functionality.
-    virtual void SetNetGroup(plNetGroupId netGroup);
+    void SetNetGroup(plNetGroupId netGroup) override;
 
-    virtual void    ReleaseData( void );
+    virtual void    ReleaseData();
 
     // Force an immediate re-sync of the transforms in the hierarchy this object belongs to,
     // as opposed to waiting for the plTransformMsg to resync.
@@ -166,7 +162,7 @@ public:
     hsMatrix44 GetLocalToParent() const;
     hsMatrix44 GetParentToLocal() const;
 
-    virtual bool IsFinal();  // "is ready to process Loads"  
+    bool IsFinal() override;  // "is ready to process Loads"
 
     // Export only
     virtual void SetDrawInterface(plDrawInterface* di);

@@ -48,39 +48,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 #include "pyVaultNode.h"
 
-struct RelVaultNode;
 class pySDLStateDataRecord;
-
+namespace ST { class string; }
 
 class pyVaultSDLNode : public pyVaultNode
 {
 protected:
-    // should only be created from C++ side
-    pyVaultSDLNode(RelVaultNode* nfsNode);
-
     //create from the Python side
     pyVaultSDLNode();
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultSDLNode);
-    PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject *New(RelVaultNode* nfsNode);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultSDLNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultSDLNode); // converts a PyObject to a pyVaultSDLNode (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
 
-//==================================================================
-// class RelVaultNode : public plVaultNode
-//
     int     GetIdent() const;
     void    SetIdent( int v );
-    void InitStateDataRecord( const char* agename, int flags);
+    void InitStateDataRecord(const ST::string& agename, int flags);
 
     PyObject * GetStateDataRecord() const; // returns pySDLStateDataRecord
     void SetStateDataRecord( const pySDLStateDataRecord & rec, int writeOptions=0 );

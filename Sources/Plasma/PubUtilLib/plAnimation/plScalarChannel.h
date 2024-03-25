@@ -77,24 +77,23 @@ protected:
     float fResult;
 
 public:
-    plScalarChannel();
-    virtual ~plScalarChannel();
+    plScalarChannel() : plAGChannel(), fResult() { }
 
     // AG PROTOCOL
     virtual const float & Value(double time, bool peek = false);
     virtual void Value(float &result, double time, bool peek = false);
 
     // combine it (allocates combine object)
-    virtual plAGChannel * MakeCombine(plAGChannel * channelB);
+    plAGChannel * MakeCombine(plAGChannel * channelB) override;
 
     // blend it (allocates blend object)
-    virtual plAGChannel * MakeBlend(plAGChannel * channelB, plScalarChannel * channelBias, int blendPriority);
+    plAGChannel * MakeBlend(plAGChannel * channelB, plScalarChannel * channelBias, int blendPriority) override;
 
     // const eval at time zero
-    virtual plAGChannel * MakeZeroState();
+    plAGChannel * MakeZeroState() override;
     
     // make a timeScale instance
-    virtual plAGChannel * MakeTimeScale(plScalarChannel *timeSource);
+    plAGChannel * MakeTimeScale(plScalarChannel *timeSource) override;
 
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plScalarChannel );
@@ -119,8 +118,8 @@ public:
     CLASSNAME_REGISTER( plScalarConstant );
     GETINTERFACE_ANY( plScalarConstant, plScalarChannel );
 
-    void Read(hsStream *stream, hsResMgr *mgr);
-    void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 
@@ -140,9 +139,9 @@ public:
     plScalarTimeScale(plScalarChannel *channel, plScalarChannel *timeSource);
     virtual ~plScalarTimeScale();
 
-    virtual bool IsStoppedAt(double time);
-    virtual const float & Value(double time, bool peek = false);
-    virtual plAGChannel * Detach(plAGChannel * channel);
+    bool IsStoppedAt(double time) override;
+    const float & Value(double time, bool peek = false) override;
+    plAGChannel * Detach(plAGChannel * channel) override;
 
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plScalarTimeScale );
@@ -176,13 +175,13 @@ public:
     const plScalarChannel * GetChannelBias() const { return fChannelBias; }
     void SetChannelBias(plScalarChannel * channel) { fChannelBias = channel; }
 
-    virtual bool IsStoppedAt(double time);
+    bool IsStoppedAt(double time) override;
 
     // AG PROTOCOL
-    virtual const float & Value(double time, bool peek = false);
+    const float & Value(double time, bool peek = false) override;
     
     // remove the specified channel from our graph
-    virtual plAGChannel * Detach(plAGChannel * channel);
+    plAGChannel * Detach(plAGChannel * channel) override;
     
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plScalarBlend );
@@ -205,10 +204,10 @@ public:
     virtual ~plScalarControllerChannel();
     
     // AG PROTOCOL
-    virtual const float & Value(double time, bool peek = false);
+    const float & Value(double time, bool peek = false) override;
     virtual const float & Value(double time, bool peek, plControllerCacheInfo *cache);
     
-    virtual plAGChannel *MakeCacheChannel(plAnimTimeConvert *atc);
+    plAGChannel *MakeCacheChannel(plAnimTimeConvert *atc) override;
         
     // PLASMA PROTOCOL
     // rtti
@@ -216,8 +215,8 @@ public:
     GETINTERFACE_ANY( plScalarControllerChannel, plScalarChannel );
     
     // persistence
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *s, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *s, hsResMgr *mgr) override;
 };
 
 /////////////////////////////////
@@ -235,9 +234,9 @@ public:
     plScalarControllerCacheChannel(plScalarControllerChannel *channel, plControllerCacheInfo *cache);
     virtual ~plScalarControllerCacheChannel();
     
-    virtual const float & Value(double time, bool peek = false);
+    const float & Value(double time, bool peek = false) override;
     
-    virtual plAGChannel * Detach(plAGChannel * channel);
+    plAGChannel * Detach(plAGChannel * channel) override;
     
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plScalarControllerCacheChannel );
@@ -260,8 +259,8 @@ public:
     plATCChannel(plAnimTimeConvert *convert);
     virtual ~plATCChannel();
 
-    virtual bool IsStoppedAt(double time);
-    virtual const float & Value(double time, bool peek = false);
+    bool IsStoppedAt(double time) override;
+    const float & Value(double time, bool peek = false) override;
 
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plATCChannel );
@@ -283,8 +282,8 @@ public:
     plScalarSDLChannel(float length);
     virtual ~plScalarSDLChannel();
 
-    virtual bool IsStoppedAt(double time);
-    virtual const float & Value(double time, bool peek = false);
+    bool IsStoppedAt(double time) override;
+    const float & Value(double time, bool peek = false) override;
 
     void SetVar(plSimpleStateVariable *var) { fVar = var; }
 
@@ -301,7 +300,7 @@ public:
 class plScalarChannelApplicator : public plAGApplicator
 {
 protected:
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
 
 public:
     CLASSNAME_REGISTER( plScalarChannelApplicator );
@@ -311,7 +310,7 @@ public:
 class plSpotInnerApplicator : public plAGApplicator
 {
 protected:
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
 
 public:
     CLASSNAME_REGISTER( plSpotInnerApplicator );
@@ -321,7 +320,7 @@ public:
 class plSpotOuterApplicator : public plAGApplicator
 {
 protected:
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
 
 public:
     CLASSNAME_REGISTER( plSpotOuterApplicator );
@@ -331,7 +330,7 @@ public:
 class plOmniApplicator : public plAGApplicator
 {
 protected:
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
 
 public:
     CLASSNAME_REGISTER( plOmniApplicator );
@@ -341,7 +340,7 @@ public:
 class plOmniSqApplicator : public plAGApplicator
 {
 protected:
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
 
 public:
     CLASSNAME_REGISTER( plOmniSqApplicator );
@@ -351,7 +350,7 @@ public:
 class plOmniCutoffApplicator : public plAGApplicator
 {
 protected:
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
 
 public:
     CLASSNAME_REGISTER( plOmniCutoffApplicator );

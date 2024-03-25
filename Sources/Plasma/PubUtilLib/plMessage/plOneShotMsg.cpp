@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#pragma hdrstop
 
 #include "plOneShotMsg.h"
 #include "plOneShotCallbacks.h"
@@ -53,7 +52,7 @@ plOneShotMsg::plOneShotMsg()
 plOneShotMsg::~plOneShotMsg()
 {
     hsRefCnt_SafeUnRef(fCallbacks);
-    fCallbacks = nil;
+    fCallbacks = nullptr;
 }
 
 void plOneShotMsg::Read(hsStream* stream, hsResMgr* mgr)

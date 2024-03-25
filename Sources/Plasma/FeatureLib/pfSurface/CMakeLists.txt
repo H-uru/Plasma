@@ -1,13 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-
-if(WIN32)
-    include_directories(${DirectX_INCLUDE_DIR})
-    add_definitions(-DWIN32)
-endif(WIN32)
-
 set(pfSurface_SOURCES
     plDistOpacityMod.cpp
     plFadeOpacityLay.cpp
@@ -27,7 +17,29 @@ set(pfSurface_HEADERS
     plLayerMovie.h
 )
 
-add_library(pfSurface STATIC ${pfSurface_SOURCES} ${pfSurface_HEADERS})
+plasma_library(pfSurface
+    SOURCES ${pfSurface_SOURCES} ${pfSurface_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
+target_link_libraries(
+    pfSurface
+    PUBLIC
+        CoreLib
+        pnModifier
+        plSurface
+    PRIVATE
+        pnNucleusInc
+        pnSceneObject
+        plAvatar
+        plDrawable
+        plGImage
+        plMessage
+        plScene
+        $<$<PLATFORM_ID:Windows>:vfw32>
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${pfSurface_SOURCES})
 source_group("Header Files" FILES ${pfSurface_HEADERS})

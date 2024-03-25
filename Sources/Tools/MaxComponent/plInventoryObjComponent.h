@@ -42,6 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInventoryObjComponent_inc
 #define plInventoryObjComponent_inc
 
+#include <map>
+#include <vector>
+
 #include "plClickableComponent.h"
 
 class plErrorMsg;
@@ -81,7 +84,7 @@ public:
     typedef std::map<plMaxNode*, plKey> LogicKeys;
 protected:
     
-    hsTArray<plKey> fReceivers;
+    std::vector<plKey> fReceivers;
     LogicKeys fLogicModKeys;
 
 public:
@@ -109,13 +112,13 @@ public:
         \sa DeleteThis(), plPhysicalCoreComponent(), Convert(), GetParamVals(), MaybeMakeLocal() and FixUpPhysical()
     */
 
-    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    virtual void AddReceiverKey(plKey key, plMaxNode* node=nil);
-    virtual plKey GetLogicKey(plMaxNode* node);
+    void AddReceiverKey(plKey key, plMaxNode* node=nullptr) override;
+    plKey GetLogicKey(plMaxNode* node) override;
     const LogicKeys& GetLogicKeys();
 
 };

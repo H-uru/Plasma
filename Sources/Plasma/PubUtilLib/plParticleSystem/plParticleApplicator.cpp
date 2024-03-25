@@ -39,28 +39,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "plParticleApplicator.h"
+
 #include "plParticleSystem.h"
 #include "plParticleGenerator.h"
-#include "plParticleApplicator.h"
+
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plAnimation/plScalarChannel.h"
 #include "plAnimation/plAGModifier.h"
 #include "plMessage/plParticleUpdateMsg.h"
-#include "pnSceneObject/plSceneObject.h"
 
-#define PI 3.14159
 
 plParticleGenerator *plParticleApplicator::IGetParticleGen(plSceneObject *so)
 {
-    uint32_t numMods = so->GetNumModifiers();
-    int i;
-    for (i = 0; i < numMods; i++)
+    size_t numMods = so->GetNumModifiers();
+    for (size_t i = 0; i < numMods; i++)
     {
         const plParticleSystem *result = plParticleSystem::ConvertNoRef(so->GetModifier(i));
-        if (result != nil)
+        if (result != nullptr)
             return result->GetExportedGenerator();
     }
 
-    return nil;
+    return nullptr;
 }
 
 void plParticleLifeMinApplicator::IApply(const plAGModifier *mod, double time)
@@ -88,7 +90,7 @@ void plParticleAngleApplicator::IApply(const plAGModifier *mod, double time)
 {
     plScalarChannel *chan = plScalarChannel::ConvertNoRef(fChannel);
     IGetParticleGen(mod->GetTarget(0))->UpdateParam(plParticleUpdateMsg::kParamInitPitchRange,
-                                                    (float)(chan->Value(time) * PI / 180.f));
+                                                    hsDegreesToRadians(chan->Value(time)));
 }
 
 void plParticleVelMinApplicator::IApply(const plAGModifier *mod, double time)
@@ -118,18 +120,3 @@ void plParticleScaleMaxApplicator::IApply(const plAGModifier *mod, double time)
     IGetParticleGen(mod->GetTarget(0))->UpdateParam(plParticleUpdateMsg::kParamScaleMax,
                                                     chan->Value(time) / 100.f);
 }
-
-void plParticleGravityApplicator::IApply(const plAGModifier *mod, double time)
-{
-    plScalarChannel *chan = plScalarChannel::ConvertNoRef(fChannel);
-//  IGetParticleGen(mod->GetTarget(0))->UpdateParam(plParticleUpdateMsg::kParamParticlesPerSecond,
-//                                                  chan->Value(time));
-}
-
-void plParticleDragApplicator::IApply(const plAGModifier *mod, double time)
-{
-    plScalarChannel *chan = plScalarChannel::ConvertNoRef(fChannel);
-//  IGetParticleGen(mod->GetTarget(0))->UpdateParam(plParticleUpdateMsg::kParamParticlesPerSecond,
-//                                                  chan->Value(time));
-}
-

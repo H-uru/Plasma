@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfLocalizedString_h
 
 #include "HeadSpin.h"
-#include "plString.h"
+#include <string_theory/string>
 #include <vector>
 
 //// pfLocalizedString Class Definition //////////////////////////////
@@ -66,50 +66,50 @@ protected:
     struct textBlock
     {
         bool        fIsParam; // if true, then this is a parameter, not a string
-        plString    fText;
+        ST::string  fText;
         uint8_t     fParamIndex;
 
         textBlock() : fIsParam(false), fParamIndex(0) {}
     };
 
     std::vector<textBlock>    fText;   // the individual text elements that make up this string
-    plString fXMLRep;        // the XML representation of this string
-    plString fPlainTextRep;  // the plain text representation of this string
-    uint16_t fNumArguments;  // number of arguments this string has
+    ST::string fXMLRep;         // the XML representation of this string
+    ST::string fPlainTextRep;   // the plain text representation of this string
+    uint16_t fNumArguments;     // number of arguments this string has
 
-    void IParameterize(const plString & inString);
-    void IConvertFromPlainText(const plString & plainText);
+    void IParameterize(const ST::string & inString);
+    void IConvertFromPlainText(const ST::string & plainText);
     void IUpdatePlainText(); // from the internal representation
-    void IConvertFromXML(const plString & xml);
+    void IConvertFromXML(const ST::string & xml);
     void IUpdateXML(); // from the internal representation
 public:
     pfLocalizedString() : fNumArguments(0) {}
-    pfLocalizedString(const plString & plainText);
-    virtual ~pfLocalizedString() {}
+    pfLocalizedString(const ST::string & plainText);
 
     // To translate to and from xml format (where <, > and other signs can't be used)
-    void FromXML(const plString & xml);
-    plString ToXML() {return fXMLRep;}
+    void FromXML(const ST::string & xml);
+    ST::string ToXML() const { return fXMLRep; }
 
-    uint16_t GetArgumentCount() {return fNumArguments;}
+    uint16_t GetArgumentCount() const { return fNumArguments; }
 
     // Various operators, they all work pretty much the same as the standard string or wstring operators
     // but note that the all work on the plain text representation (not the XML representation)
-    bool operator<(pfLocalizedString &obj);
-    bool operator>(pfLocalizedString &obj);
-    bool operator==(pfLocalizedString &obj);
-    bool operator<=(pfLocalizedString &obj);
-    bool operator>=(pfLocalizedString &obj);
-    bool operator!=(pfLocalizedString &obj);
+    bool operator<(pfLocalizedString &obj) const;
+    bool operator>(pfLocalizedString &obj) const;
+    bool operator==(pfLocalizedString &obj) const;
+    bool operator<=(pfLocalizedString &obj) const;
+    bool operator>=(pfLocalizedString &obj) const;
+    bool operator!=(pfLocalizedString &obj) const;
 
-    operator plString() {return fPlainTextRep;}
+    operator ST::string() const { return fPlainTextRep; }
+    operator bool() const { return !fPlainTextRep.empty(); }
 
     pfLocalizedString operator+(pfLocalizedString &obj);
     pfLocalizedString &operator+=(pfLocalizedString &obj);
-    pfLocalizedString &operator=(const plString & plainText);
+    pfLocalizedString &operator=(const ST::string & plainText);
 
     // Specialized operator for replacing text with arguments
-    plString operator%(const std::vector<plString> & arguments);
+    ST::string operator%(const std::vector<ST::string> & arguments) const;
 };
 
 #endif

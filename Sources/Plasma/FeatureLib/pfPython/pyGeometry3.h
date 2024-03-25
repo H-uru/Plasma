@@ -50,12 +50,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsGeometry3.h"
 
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 
 class pyPoint3
 {
 protected:
-    pyPoint3() : fPoint(0,0,0) {}
+    pyPoint3() {}
     pyPoint3(float x, float y, float z) : fPoint(x,y,z) {}
     pyPoint3(const hsPoint3& pt) : fPoint(pt) {}
 
@@ -92,7 +92,7 @@ public:
 class pyVector3
 {
 protected:
-    pyVector3() : fVector(0,0,0) {}
+    pyVector3() {}
     pyVector3(float x, float y, float z) : fVector(x,y,z) {}
     pyVector3(const hsVector3& v) : fVector(v) {}
 

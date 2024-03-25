@@ -45,9 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plDrawable/plProxyGen.h"
 
-class plOccluder;
 class plDrawableSpans;
 class hsGMaterial;
+class plOccluder;
 
 class plOccluderProxy : public plProxyGen
 {
@@ -55,8 +55,8 @@ protected:
     plOccluder*         fOwner;
 
 
-    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo=nil);
-    virtual plKey               IGetNode() const;
+    plDrawableSpans*    ICreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo=nullptr) override;
+    plKey               IGetNode() const override;
 public:
     plOccluderProxy();
     virtual ~plOccluderProxy();

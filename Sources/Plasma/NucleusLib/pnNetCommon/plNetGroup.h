@@ -42,9 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetGroup_h
 #define plNetGroup_h
 
-#include <string>
 #include "pnKeyedObject/plUoid.h"
-#include "hsStream.h"
+
+#include <string_theory/string>
+
+class hsStream;
 
 class plNetGroupId
 {
@@ -57,28 +59,28 @@ private:
    
    plLocation fId;
    uint8_t fFlags;
-   plString  fDesc;      // description of room
+   ST::string fDesc;     // description of room
 
 public:
 
    plNetGroupId() : fFlags(0) {}
    plNetGroupId(const plLocation& id, const uint8_t flags) : fId(id), fFlags(flags) {  }
    plNetGroupId(const plLocation& id) : fId(id), fFlags(0) {  }
-   
+
    bool IsConstant() { return (fFlags & kNetGroupConstant) != 0; }
    void SetConstant(bool constantGroup) { fFlags &= constantGroup ? kNetGroupConstant : 0; }
    
    plLocation& Room() { return fId; }
-   const char* GetDesc() const { return fDesc.c_str();   }
-   void SetDesc(const char* c) { fDesc = c; }
-   
+   ST::string GetDesc() const { return fDesc; }
+   void SetDesc(const ST::string& c) { fDesc = c; }
+
    bool operator==(const plNetGroupId& netGroup) const { return fId == netGroup.fId; }
    bool operator!=(const plNetGroupId& netGroup) const { return fId != netGroup.fId; }
    bool operator<(const plNetGroupId& netGroup) const { return fId < netGroup.fId; }
-   
+
    // read and write to hsStream
-   void Write(hsStream *s) const { fId.Write(s); s->WriteLE(fFlags); }
-   void Read(hsStream *s) { fId.Read(s); s->LogReadLE(&fFlags,"GroupId Flags"); }
+   void Write(hsStream* s) const;
+   void Read(hsStream* s);
 };
 
 namespace plNetGroup

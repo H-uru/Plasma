@@ -43,16 +43,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plOccluder_inc
 #define plOccluder_inc
 
-#include "pnSceneObject/plObjInterface.h"
-#include "hsTemplates.h"
-#include "hsMatrix44.h"
-#include "plCullPoly.h"
+#include <vector>
+
 #include "hsBounds.h"
 #include "hsBitVector.h"
+#include "hsMatrix44.h"
 
-class plOccluderProxy;
+#include "pnSceneObject/plObjInterface.h"
+
+class plCullPoly;
 class plDrawableSpans;
 class hsGMaterial;
+class plOccluderProxy;
 class plVisRegion;
 
 class plOccluder : public plObjInterface
@@ -67,12 +69,12 @@ public:
         kRefVisRegion
     };
 protected:
-    hsTArray<plCullPoly>        fPolys;
+    std::vector<plCullPoly>     fPolys;
 
     plOccluderProxy*            fProxyGen;
 
     hsBitVector                 fVisSet;
-    hsTArray<plVisRegion*>      fVisRegions;
+    std::vector<plVisRegion*>   fVisRegions;
     hsBitVector                 fVisNot;
 
     float                    fPriority;
@@ -83,9 +85,9 @@ protected:
     virtual float            IComputeSurfaceArea();
     virtual void                IComputeBounds();
 
-    virtual hsTArray<plCullPoly>& IGetLocalPolyList() { return fPolys; }
+    virtual std::vector<plCullPoly>& IGetLocalPolyList() { return fPolys; }
 
-    virtual void    ISetSceneNode(plKey node);
+    void    ISetSceneNode(const plKey& node) override;
 
     void            IAddVisRegion(plVisRegion* reg);
     void            IRemoveVisRegion(plVisRegion* reg);
@@ -97,7 +99,7 @@ public:
     CLASSNAME_REGISTER( plOccluder );
     GETINTERFACE_ANY( plOccluder, plObjInterface);
 
-    virtual bool        MsgReceive(plMessage* msg);
+    bool        MsgReceive(plMessage* msg) override;
 
     virtual float GetPriority() const { return fPriority; }
 
@@ -106,27 +108,27 @@ public:
 
     virtual const hsBounds3Ext& GetWorldBounds() const { return fWorldBounds; }
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
     virtual const hsMatrix44& GetLocalToWorld() const;
     virtual const hsMatrix44& GetWorldToLocal() const;
 
-    virtual void SetPolyList(const hsTArray<plCullPoly>& list);
-    virtual const hsTArray<plCullPoly>& GetWorldPolyList() const { return fPolys; }
-    virtual const hsTArray<plCullPoly>& GetLocalPolyList() const { return fPolys; }
+    virtual void SetPolyList(const std::vector<plCullPoly>& list);
+    virtual const std::vector<plCullPoly>& GetWorldPolyList() const { return fPolys; }
+    virtual const std::vector<plCullPoly>& GetLocalPolyList() const { return fPolys; }
 
-    virtual int32_t   GetNumProperties() const { return kNumProps; }
+    int32_t   GetNumProperties() const override { return kNumProps; }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
+    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo);
 
     // Export only function to initialize.
     virtual void ComputeFromPolys();
 
     // These two should only be called internally and on export/convert
-    virtual plKey GetSceneNode() const { return fSceneNode; }
+    plKey GetSceneNode() const override { return fSceneNode; }
 };
 
 class plMobileOccluder : public plOccluder
@@ -137,11 +139,11 @@ protected:
 
     hsBounds3Ext            fLocalBounds;
 
-    hsTArray<plCullPoly>    fOrigPolys;
+    std::vector<plCullPoly> fOrigPolys;
 
-    virtual void            IComputeBounds();
+    void            IComputeBounds() override;
 
-    virtual hsTArray<plCullPoly>& IGetLocalPolyList() { return fOrigPolys; }
+    std::vector<plCullPoly>& IGetLocalPolyList() override { return fOrigPolys; }
 
 public:
 
@@ -151,19 +153,19 @@ public:
     CLASSNAME_REGISTER( plMobileOccluder );
     GETINTERFACE_ANY( plMobileOccluder, plOccluder );
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
-    virtual const hsMatrix44& GetLocalToWorld() const { return fLocalToWorld; }
-    virtual const hsMatrix44& GetWorldToLocal() const { return fWorldToLocal; }
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
+    const hsMatrix44& GetLocalToWorld() const override { return fLocalToWorld; }
+    const hsMatrix44& GetWorldToLocal() const override { return fWorldToLocal; }
 
-    virtual void SetPolyList(const hsTArray<plCullPoly>& list);
+    void SetPolyList(const std::vector<plCullPoly>& list) override;
 
-    virtual const hsTArray<plCullPoly>& GetLocalPolyList() const { return fOrigPolys; }
+    const std::vector<plCullPoly>& GetLocalPolyList() const override { return fOrigPolys; }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     // Export only function to initialize.
-    virtual void ComputeFromPolys();
+    void ComputeFromPolys() override;
 };
 
 #endif // plOccluder_inc

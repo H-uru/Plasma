@@ -47,6 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputDevice.h"
 #include "plInputManager.h"
 #include "plAvatarInputInterface.h"
+
+#include <utility>
+#include "plMessage/plDisplayScaleChangedMsg.h"
+
 #include "plMessage/plInputEventMsg.h"
 #include "pnMessage/plTimeMsg.h"
 
@@ -64,7 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define BASE_WIDTH 1024
 #define BASE_HEIGHT 768
 
-plKeyboardDevice* plKeyboardDevice::fInstance = nil;
+plKeyboardDevice* plKeyboardDevice::fInstance = nullptr;
 bool plKeyboardDevice::fKeyboardState[256];
 bool plKeyboardDevice::fIgnoreCapsLock = false;
 
@@ -162,11 +166,10 @@ void plKeyboardDevice::Shutdown()
 {
 }
 
-void plKeyboardDevice::HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c)
+void plKeyboardDevice::HandleKeyEvent(plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c)
 {
     // update the internal keyboard state
-    unsigned int keyCode = (unsigned int)key;
-    if (key < 256)
+    if (key < 256 && key > 0)
         fKeyboardState[key] = bKeyDown;
 
     if (key == KEY_SHIFT)
@@ -181,7 +184,9 @@ void plKeyboardDevice::HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDo
     {
         if (!bKeyRepeat)
         {
+#ifdef HS_BUILD_FOR_WIN32
             fCapsLockLock = (GetKeyState(KEY_CAPSLOCK) & 1) == 1;
+#endif
             plAvatarInputInterface::GetInstance()->ForceAlwaysRun(fCapsLockLock);
         }
     }
@@ -198,12 +203,12 @@ void plKeyboardDevice::HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDo
     plgDispatch::MsgSend( pMsg );
 }
 
-void plKeyboardDevice::HandleWindowActivate(bool bActive, HWND hWnd)
+void plKeyboardDevice::HandleWindowActivate(bool bActive, hsWindowHndl hWnd)
 {
     if (bActive)
     {
         // Refresh the caps lock state
-        HandleKeyEvent(KEYDOWN, KEY_CAPSLOCK, nil, false);
+        HandleKeyEvent(KEY_CAPSLOCK, false, false);
     }
     else
     {
@@ -226,37 +231,25 @@ bool plMouseDevice::bCursorOverride = false;
 bool plMouseDevice::bInverted = false;
 float plMouseDevice::fWidth = BASE_WIDTH;
 float plMouseDevice::fHeight = BASE_HEIGHT;
-plMouseDevice* plMouseDevice::fInstance = 0;
+float plMouseDevice::fScale = 1.0f;
+plMouseDevice* plMouseDevice::fInstance = nullptr;
 
 plMouseDevice::plMouseDevice()
+    : fXPos(), fYPos(), fOpacity(1.f), fButtonState(),
+      fCursor(), fCursorID(ST_LITERAL(CURSOR_UP)),
+      fXMsg(), fYMsg(), fB2Msg(),
+      fLeftBMsg(), fMiddleBMsg(), fRightBMsg(),
+      fWXPos(), fWYPos()
 {
-    fXPos = 0;
-    fYPos = 0;
-    fCursorID = CURSOR_UP;
-    fButtonState = 0;
-    fOpacity = 1.f;
-
-    fCursor = nil;
     CreateCursor( fCursorID );
     plMouseDevice::fInstance = this;
-    fXMsg = nil;
-    fYMsg = nil;
-    fB2Msg = nil;
-
-    fLeftBMsg[0] = nil;
-    fLeftBMsg[1] = nil;
-    fRightBMsg[0] = nil;
-    fRightBMsg[1] = nil;
-    fMiddleBMsg[0] = nil;
-    fMiddleBMsg[1] = nil;
-    
 }
 
 plMouseDevice::~plMouseDevice()
 {
     plPlateManager::Instance().DestroyPlate( fCursor );
-    fCursor = nil;
-    plMouseDevice::fInstance = nil;
+    fCursor = nullptr;
+    plMouseDevice::fInstance = nullptr;
 }
 void plMouseDevice::SetDisplayResolution(float Width, float Height)
 {
@@ -265,9 +258,15 @@ void plMouseDevice::SetDisplayResolution(float Width, float Height)
     IUpdateCursorSize();
 }
 
-void    plMouseDevice::CreateCursor( char* cursor )
+void plMouseDevice::SetDisplayScale(float Scale)
 {
-    if( fCursor == nil )
+    fScale = Scale;
+    IUpdateCursorSize();
+}
+
+void    plMouseDevice::CreateCursor(const ST::string& cursor)
+{
+    if (fCursor == nullptr)
     {
         plPlateManager::Instance().CreatePlate( &fCursor );
         fCursor->CreateFromResource(cursor);
@@ -279,7 +278,7 @@ void    plMouseDevice::CreateCursor( char* cursor )
     fCursor->SetPosition( 0, 0, 0 );
     IUpdateCursorSize();
 
-    fCursor->SetVisible( true );
+    fCursor->SetVisible(!bCursorHidden);
     fCursor->SetOpacity( fOpacity );
 }
 
@@ -288,16 +287,16 @@ void plMouseDevice::IUpdateCursorSize()
     if(fCursor)
     {
         // set the size of the cursor based on resolution.
-        fCursor->SetSize( 2*fCursor->GetMipmap()->GetWidth()/fWidth, 2*fCursor->GetMipmap()->GetHeight()/fHeight );
+        fCursor->SetSize( fScale * 2*fCursor->GetMipmap()->GetWidth()/fWidth, fScale * 2*fCursor->GetMipmap()->GetHeight()/fHeight );
     }
 }
 
-void plMouseDevice::AddNameToCursor(const plString& name)
+void plMouseDevice::AddNameToCursor(const ST::string& name)
 {
-    if (fInstance && !name.IsNull())
+    if (fInstance && !name.empty())
     {
         plDebugText     &txt = plDebugText::Instance();
-        txt.DrawString(fInstance->fWXPos + 12 ,fInstance->fWYPos - 7,name.c_str());
+        txt.DrawString(fInstance->fWXPos + 12 * fScale, fInstance->fWYPos - txt.GetFontHeight() / 2,name);
     }
 }
 void plMouseDevice::AddCCRToCursor()
@@ -305,7 +304,7 @@ void plMouseDevice::AddCCRToCursor()
     if (fInstance)
     {
         plDebugText     &txt = plDebugText::Instance();
-        txt.DrawString(fInstance->fWXPos + 12, fInstance->fWYPos - 17, "CCR");
+        txt.DrawString(fInstance->fWXPos + 12 * fScale, fInstance->fWYPos - 17, ST_LITERAL("CCR"));
     }
 }
 void plMouseDevice::AddIDNumToCursor(uint32_t idNum)
@@ -313,9 +312,7 @@ void plMouseDevice::AddIDNumToCursor(uint32_t idNum)
     if (fInstance && idNum)
     {
         plDebugText     &txt = plDebugText::Instance();
-        char str[256];
-        sprintf(str, "%d",idNum);
-        txt.DrawString(fInstance->fWXPos + 12 ,fInstance->fWYPos + 3,str);
+        txt.DrawString(fInstance->fWXPos + 12 * fScale,fInstance->fWYPos + 3, ST::string::from_uint(idNum));
     }
 }
         
@@ -323,30 +320,22 @@ void plMouseDevice::AddIDNumToCursor(uint32_t idNum)
 void plMouseDevice::SetCursorX(float x)
 {
     /// Set the cursor position
-    if( fCursor == nil  && !plMouseDevice::bCursorHidden)
+    if (fCursor == nullptr && !plMouseDevice::bCursorHidden)
         CreateCursor( fCursorID );
     
     if (fCursor)
         fCursor->SetPosition( ( x * 2.0f ) - 1.0f, 
                           ( fYPos * 2.0f ) - 1.0f );
-
-//  plDebugText     &txt = plDebugText::Instance();
-//  txt.DrawString(fWXPos + 20,fWYPos - 5,"test");
-
 }
 void plMouseDevice::SetCursorY(float y)
 {
     /// Set the cursor position
-    if( fCursor == nil && !plMouseDevice::bCursorHidden)
+    if (fCursor == nullptr && !plMouseDevice::bCursorHidden)
         CreateCursor( fCursorID );
     
     if (fCursor)
         fCursor->SetPosition( ( fXPos * 2.0f ) - 1.0f, 
                           ( y * 2.0f ) - 1.0f );
-
-//  plDebugText     &txt = plDebugText::Instance();
-//  txt.DrawString(fWXPos + 20,fWYPos - 10,"test");
-
 }
 
 
@@ -377,33 +366,36 @@ void plMouseDevice::ShowCursor(bool override)
     }
 }
 
-void plMouseDevice::NewCursor(char* cursor)
+void plMouseDevice::NewCursor(ST::string cursor)
 {
-    fInstance->fCursorID = cursor;
-    fInstance->CreateCursor(cursor);
+    fInstance->fCursorID = std::move(cursor);
+    fInstance->CreateCursor(fInstance->fCursorID);
     fInstance->SetCursorX(fInstance->GetCursorX());
     fInstance->SetCursorY(fInstance->GetCursorY());
-    
-    if (!plMouseDevice::bCursorHidden)
-        fInstance->fCursor->SetVisible( true );
 }
 
 void    plMouseDevice::SetCursorOpacity( float opacity )
 {
     fInstance->fOpacity = opacity;
-    if( fInstance->fCursor != nil )
+    if (fInstance->fCursor != nullptr)
         fInstance->fCursor->SetOpacity( opacity );
 }
 
 bool plMouseDevice::MsgReceive(plMessage* msg)
-{   
+{
+    plDisplayScaleChangedMsg* pDSChangedMsg = plDisplayScaleChangedMsg::ConvertNoRef(msg);
+    if (pDSChangedMsg) {
+        SetDisplayScale(pDSChangedMsg->GetScale());
+        return true;
+    }
+
     plEvalMsg* pEMsg = plEvalMsg::ConvertNoRef(msg);
     if (pEMsg)
     {
         if (fXMsg)
         {
             plgDispatch::MsgSend(fXMsg);
-            fXMsg = nil;
+            fXMsg = nullptr;
         }
         else
         {
@@ -418,7 +410,7 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
         if (fYMsg)
         {
             plgDispatch::MsgSend(fYMsg);
-            fYMsg = nil;
+            fYMsg = nullptr;
         }
         else
         {
@@ -433,33 +425,33 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
         if( fB2Msg )
         {
             fB2Msg->Send();
-            fB2Msg = nil;
+            fB2Msg = nullptr;
         }
 
         // look for mouse button events in the queues to be sent now
         // ...Left mouse button
-        if ( fLeftBMsg[0] != nil)
+        if (fLeftBMsg[0] != nullptr)
         {
             fLeftBMsg[0]->Send();
             // slide queue elements over... get 'em on the next eval
             fLeftBMsg[0] = fLeftBMsg[1];
-            fLeftBMsg[1] = nil;
+            fLeftBMsg[1] = nullptr;
         }
         // ...Right mouse button
-        if ( fRightBMsg[0] != nil)
+        if (fRightBMsg[0] != nullptr)
         {
             fRightBMsg[0]->Send();
             // slide queue elements over... get 'em on the next eval
             fRightBMsg[0] = fRightBMsg[1];
-            fRightBMsg[1] = nil;
+            fRightBMsg[1] = nullptr;
         }
         // ...middle mouse button
-        if ( fMiddleBMsg[0] != nil)
+        if (fMiddleBMsg[0] != nullptr)
         {
             fMiddleBMsg[0]->Send();
             // slide queue elements over... get 'em on the next eval
             fMiddleBMsg[0] = fMiddleBMsg[1];
-            fMiddleBMsg[1] = nil;
+            fMiddleBMsg[1] = nullptr;
         }
     
     }
@@ -490,15 +482,15 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
         fXMsg = pMsg;
         
         if (pXMsg->fX == 999)
-            fXPos += 0.01;
+            fXPos += 0.01f;
         else
         if (pXMsg->fX == -999)
-            fXPos -= 0.01;
+            fXPos -= 0.01f;
         else
             fXPos = pXMsg->fX;
 
         SetCursorX(fXPos);
-        fWXPos = pXMsg->fWx;
+        fWXPos = pXMsg->fWx * fScale;
         return true;
     }
 
@@ -528,14 +520,14 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
         fYMsg = pMsg;
         
         if (pYMsg->fY == 999)
-            fYPos += 0.01;
+            fYPos += 0.01f;
         else
         if (pYMsg->fY == -999)
-            fYPos -= 0.01;
+            fYPos -= 0.01f;
         else
             fYPos = pYMsg->fY;
 
-        fWYPos = pYMsg->fWy;
+        fWYPos = pYMsg->fWy * fScale;
         SetCursorY(fYPos);
         
         return true;
@@ -612,7 +604,7 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
             pMsg2->SetDY(0);
             pMsg2->SetButton( kRightButtonDblClk );
 
-            if( fB2Msg != nil )
+            if (fB2Msg != nullptr)
                 delete fB2Msg;
             fB2Msg = pMsg2;
 
@@ -630,7 +622,7 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
             pMsg2->SetDY(0);
             pMsg2->SetButton( kLeftButtonDblClk );
 
-            if( fB2Msg != nil )
+            if (fB2Msg != nullptr)
                 delete fB2Msg;
             fB2Msg = pMsg2;
 
@@ -652,12 +644,12 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
         if ( pMsg->GetButton() == kLeftButtonDown || pMsg->GetButton() == kLeftButtonUp )
         {
             // see if the queue is just empty
-            if ( fLeftBMsg[0] == nil)
+            if (fLeftBMsg[0] == nullptr)
             {
                 // nothing to think about... goes in first slot
                 fLeftBMsg[0] = pMsg;
             }
-            else if (fLeftBMsg[1] == nil)
+            else if (fLeftBMsg[1] == nullptr)
             {
                 // nothing to think about... goes in second slot
                 fLeftBMsg[1] = pMsg;
@@ -672,7 +664,7 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
                 {
                     delete pMsg;
                     delete fLeftBMsg[1];
-                    fLeftBMsg[1] = nil;
+                    fLeftBMsg[1] = nullptr;
                 }
                 // ... otherwise ignore this event
                 else
@@ -684,12 +676,12 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
         else if ( pMsg->GetButton() == kRightButtonDown || pMsg->GetButton() == kRightButtonUp )
         {
             // see if the queue is just empty
-            if ( fRightBMsg[0] == nil)
+            if (fRightBMsg[0] == nullptr)
             {
                 // nothing to think about... goes in first slot
                 fRightBMsg[0] = pMsg;
             }
-            else if (fRightBMsg[1] == nil)
+            else if (fRightBMsg[1] == nullptr)
             {
                 // nothing to think about... goes in second slot
                 fRightBMsg[1] = pMsg;
@@ -704,7 +696,7 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
                 {
                     delete pMsg;
                     delete fRightBMsg[1];
-                    fRightBMsg[1] = nil;
+                    fRightBMsg[1] = nullptr;
                 }
                 // ... otherwise ignore this event
                 else
@@ -716,12 +708,12 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
         else if ( pMsg->GetButton() == kMiddleButtonDown || pMsg->GetButton() == kMiddleButtonUp )
         {
             // see if the queue is just empty
-            if ( fMiddleBMsg[0] == nil)
+            if (fMiddleBMsg[0] == nullptr)
             {
                 // nothing to think about... goes in first slot
                 fMiddleBMsg[0] = pMsg;
             }
-            else if (fMiddleBMsg[1] == nil)
+            else if (fMiddleBMsg[1] == nullptr)
             {
                 // nothing to think about... goes in second slot
                 fMiddleBMsg[1] = pMsg;
@@ -736,7 +728,7 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
                 {
                     delete pMsg;
                     delete fMiddleBMsg[1];
-                    fMiddleBMsg[1] = nil;
+                    fMiddleBMsg[1] = nullptr;
                 }
                 // ... otherwise ignore this event
                 else

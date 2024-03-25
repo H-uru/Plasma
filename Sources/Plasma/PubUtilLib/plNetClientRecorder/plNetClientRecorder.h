@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <memory>
+
 class hsStream;
 class plNetMessage;
 class plStatusLog;
@@ -81,7 +83,7 @@ public:
     // Playback functions
     double GetTime();
     virtual bool IsQueueEmpty() { hsAssert(false,"plNetClientRecording: Playback not supported"); return true; }
-    virtual plNetMessage* GetNextMessage() { hsAssert(false,"plNetClientRecording: Playback not supported"); return nil; }
+    virtual plNetMessage* GetNextMessage() { hsAssert(false, "plNetClientRecording: Playback not supported"); return nullptr; }
     virtual double GetNextMessageTimeDelta() { hsAssert(false,"plNetClientRecording: Playback not supported"); return 0; }
 };
 
@@ -103,8 +105,8 @@ public:
     plNetClientLoggingRecorder(TimeWrapper* timeWrapper);
     ~plNetClientLoggingRecorder();
 
-    void RecordLinkMsg(plLinkToAgeMsg* linkMsg, double secs);
-    virtual void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg) = 0;
+    void RecordLinkMsg(plLinkToAgeMsg* linkMsg, double secs) override;
+    void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg) override = 0;
 
 };
 
@@ -114,48 +116,48 @@ public:
 class plNetClientStreamRecorder : public plNetClientLoggingRecorder
 {
 protected:
-    hsStream* fRecordStream;
+    std::unique_ptr<hsStream> fRecordStream;
 
     hsResMgr* fResMgr;
 
     plNetMessage* IGetNextMessage();
     virtual bool IIsValidMsg(plNetMessage* msg);
 
-    void ILogMsg(plNetMessage* msg, const char* preText="");
+    void ILogMsg(plNetMessage* msg, const char* preText="") override;
 
 public:
-    plNetClientStreamRecorder(TimeWrapper* timeWrapper = nil);
+    plNetClientStreamRecorder(TimeWrapper* timeWrapper = nullptr);
     ~plNetClientStreamRecorder();
 
-    bool BeginRecording(const char* recName);
-    bool BeginPlayback(const char* recName);
+    bool BeginRecording(const char* recName) override;
+    bool BeginPlayback(const char* recName) override;
 
     // Recording functions
-    void RecordMsg(plNetMessage* msg, double secs);
-    void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg);
+    void RecordMsg(plNetMessage* msg, double secs) override;
+    void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg) override;
 
     // Playback functions
     void SetResMgr(hsResMgr* resmgr) { fResMgr = resmgr; }
     hsResMgr* GetResMgr();
-    bool IsQueueEmpty();
-    plNetMessage* GetNextMessage();
-    double GetNextMessageTimeDelta();
+    bool IsQueueEmpty() override;
+    plNetMessage* GetNextMessage() override;
+    double GetNextMessageTimeDelta() override;
 };
 
 class plNetClientStatsRecorder : public plNetClientLoggingRecorder
 {
 protected:
-    void ILogMsg(plNetMessage* msg, const char* preText="");
+    void ILogMsg(plNetMessage* msg, const char* preText="") override;
 
 public:
-    plNetClientStatsRecorder(TimeWrapper* timeWrapper = nil);
+    plNetClientStatsRecorder(TimeWrapper* timeWrapper = nullptr);
     ~plNetClientStatsRecorder();
 
-    bool BeginRecording(const char* recName);
+    bool BeginRecording(const char* recName) override;
 
     // Recording functions
-    void RecordMsg(plNetMessage* msg, double secs);
-    void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg) { };
+    void RecordMsg(plNetMessage* msg, double secs) override;
+    void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg) override { }
 };
 
 class plNetClientStreamAndStatsRecorder : public plNetClientRecorder
@@ -166,29 +168,29 @@ protected:
 
 public:
     plNetClientStreamAndStatsRecorder(plNetClientStreamRecorder* streamrec, plNetClientStatsRecorder* statrec) :
-      plNetClientRecorder(nil),fStreamRecorder(streamrec), fStatsRecorder(statrec) {}
+      plNetClientRecorder(nullptr), fStreamRecorder(streamrec), fStatsRecorder(statrec) { }
       ~plNetClientStreamAndStatsRecorder() { delete fStreamRecorder; delete fStatsRecorder; }
 
-    bool BeginRecording(const char* recName) { return fStreamRecorder->BeginRecording(recName) && fStatsRecorder->BeginRecording(recName); }
-    bool BeginPlayback(const char* recName) { return fStreamRecorder->BeginPlayback(recName); }
+    bool BeginRecording(const char* recName) override { return fStreamRecorder->BeginRecording(recName) && fStatsRecorder->BeginRecording(recName); }
+    bool BeginPlayback(const char* recName) override { return fStreamRecorder->BeginPlayback(recName); }
     
     // Recording functions
-    bool IsRecordableMsg(plNetMessage* msg) const { return fStreamRecorder->IsRecordableMsg(msg) || fStatsRecorder->IsRecordableMsg(msg); }
-    void RecordMsg(plNetMessage* msg, double secs) { fStreamRecorder->RecordMsg(msg,secs); fStatsRecorder->RecordMsg(msg,secs); }
-    void RecordLinkMsg(plLinkToAgeMsg* linkMsg, double secs) { fStreamRecorder->RecordLinkMsg(linkMsg,secs); fStatsRecorder->RecordLinkMsg(linkMsg,secs); }
-    void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg) { fStreamRecorder->RecordAgeLoadedMsg(ageLoadedMsg); fStatsRecorder->RecordAgeLoadedMsg(ageLoadedMsg); }
+    bool IsRecordableMsg(plNetMessage* msg) const override { return fStreamRecorder->IsRecordableMsg(msg) || fStatsRecorder->IsRecordableMsg(msg); }
+    void RecordMsg(plNetMessage* msg, double secs) override { fStreamRecorder->RecordMsg(msg,secs); fStatsRecorder->RecordMsg(msg,secs); }
+    void RecordLinkMsg(plLinkToAgeMsg* linkMsg, double secs) override { fStreamRecorder->RecordLinkMsg(linkMsg,secs); fStatsRecorder->RecordLinkMsg(linkMsg,secs); }
+    void RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg) override { fStreamRecorder->RecordAgeLoadedMsg(ageLoadedMsg); fStatsRecorder->RecordAgeLoadedMsg(ageLoadedMsg); }
 
     // Playback functions
-    bool IsQueueEmpty() { return fStreamRecorder->IsQueueEmpty(); }
-    plNetMessage* GetNextMessage() { return fStreamRecorder->GetNextMessage(); }
-    double GetNextMessageTimeDelta() { return fStreamRecorder->GetNextMessageTimeDelta(); }
+    bool IsQueueEmpty() override { return fStreamRecorder->IsQueueEmpty(); }
+    plNetMessage* GetNextMessage() override { return fStreamRecorder->GetNextMessage(); }
+    double GetNextMessageTimeDelta() override { return fStreamRecorder->GetNextMessageTimeDelta(); }
 };
 
 class plNetClientStressStreamRecorder : public plNetClientStreamRecorder
 {
 public:
-    plNetClientStressStreamRecorder(TimeWrapper* timeWrapper = nil) : plNetClientStreamRecorder(timeWrapper) {}
-    bool IsRecordableMsg(plNetMessage* msg) const;
+    plNetClientStressStreamRecorder(TimeWrapper* timeWrapper = nullptr) : plNetClientStreamRecorder(timeWrapper) {}
+    bool IsRecordableMsg(plNetMessage* msg) const override;
 };
 
 #endif // plNetClientRecorder_h_inc

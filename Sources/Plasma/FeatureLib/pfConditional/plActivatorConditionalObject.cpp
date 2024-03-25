@@ -39,13 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
+
 #include "plActivatorConditionalObject.h"
-#include "plPhysical/plDetectorModifier.h"
+
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pnModifier/plLogicModBase.h"
-#include "plMessage/plActivatorMsg.h"
 #include "pnMessage/plNotifyMsg.h"
 
+#include "plMessage/plActivatorMsg.h"
 
 plActivatorConditionalObject::plActivatorConditionalObject()
 {
@@ -60,9 +64,9 @@ bool plActivatorConditionalObject::MsgReceive(plMessage* msg)
         if (pDetectorMsg->fTriggerType == plActivatorMsg::kVolumeEnter || pDetectorMsg->fTriggerType == plActivatorMsg::kVolumeExit)
             return plConditionalObject::MsgReceive(msg);
 
-        for (int i = 0; i < fActivators.Count(); i++)
+        for (const plKey& activator : fActivators)
         {
-            if (pDetectorMsg && pDetectorMsg->GetSender() == fActivators[i])
+            if (pDetectorMsg && pDetectorMsg->GetSender() == activator)
             {
                 if (pDetectorMsg->fTriggerType == plActivatorMsg::kUnPickedTrigger ||
                     pDetectorMsg->fTriggerType == plActivatorMsg::kExitUnTrigger   ||
@@ -144,22 +148,24 @@ bool plActivatorConditionalObject::MsgReceive(plMessage* msg)
 void plActivatorConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Read(stream, mgr);
-    fActivators.Reset();
-    int n = stream->ReadLE32();
-    for (int i = 0; i < n; i++)
-        fActivators.Append(mgr->ReadKey(stream));
+    fActivators.clear();
+    uint32_t n = stream->ReadLE32();
+    fActivators.reserve(n);
+    for (uint32_t i = 0; i < n; i++)
+        fActivators.emplace_back(mgr->ReadKey(stream));
 }
+
 void plActivatorConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
-    stream->WriteLE32(fActivators.Count());
-    for (int i = 0; i < fActivators.Count(); i++)
-        mgr->WriteKey(stream, fActivators[i]);
+    stream->WriteLE32((uint32_t)fActivators.size());
+    for (const plKey& activator : fActivators)
+        mgr->WriteKey(stream, activator);
 }
 
 void plActivatorConditionalObject::SetActivatorKey(plKey k)
 {
-    fActivators.Append(k);
+    fActivators.emplace_back(std::move(k));
 }
 
 //
@@ -195,7 +201,7 @@ bool plVolActivatorConditionalObject::MsgReceive(plMessage* msg)
     plActivatorMsg* pDetectorMsg = plActivatorMsg::ConvertNoRef(msg);
     if (pDetectorMsg)
     {
-        for (int i = 0; i < fActivators.Count(); i++)
+        for (size_t i = 0; i < fActivators.size(); i++)
         {
             if (!fLogicMod->VerifyConditions( pDetectorMsg ))
                 return false;

@@ -53,6 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plRenderTarget_h
 #define _plRenderTarget_h
 
+#include <string_theory/string>
+
 #include "plPipeResReq.h"
 
 #include "plGImage/plBitmap.h"
@@ -91,10 +93,10 @@ class plRenderTarget : public plBitmap
 
         plCubicRenderTarget* fParent;
 
-        virtual void SetKey(plKey k);
+        void SetKey(plKey k) override;
 
-        virtual uint32_t  Read( hsStream *s );
-        virtual uint32_t  Write( hsStream *s );
+        uint32_t  Read(hsStream *s) override;
+        uint32_t  Write(hsStream *s) override;
     public:
 
         CLASSNAME_REGISTER( plRenderTarget );
@@ -119,7 +121,7 @@ class plRenderTarget : public plBitmap
             fStencilDepth = ( stencilDepth != 0xff ) ? stencilDepth : 0;
 
             fFlags = flags;
-            fParent = nil;
+            fParent = nullptr;
 
             hsAssert( fFlags & (kIsTexture|kIsOffscreen), "Cannot perform this on an on-screen RenderTarget" );
             fApplyTexQuality = false;
@@ -139,7 +141,7 @@ class plRenderTarget : public plBitmap
             fStencilDepth = ( stencilDepth != 0xff ) ? stencilDepth : 0;
 
             fFlags = flags;
-            fParent = nil;
+            fParent = nullptr;
 
             hsAssert( !( fFlags & (kIsTexture|kIsOffscreen) ), "Cannot perform this on an offscreen RenderTarget" );
             fApplyTexQuality = false;
@@ -169,30 +171,31 @@ class plRenderTarget : public plBitmap
             fViewport.fProportional.fBottom = bottom;
         }
 
-        uint16_t  GetWidth( void ) const { return fWidth; }
-        uint16_t  GetHeight( void ) const { return fHeight; }
-        uint8_t   GetZDepth( void ) { return fZDepth; }
-        uint8_t   GetStencilDepth( void ) { return fStencilDepth; }
+        uint16_t  GetWidth() const { return fWidth; }
+        uint16_t  GetHeight() const { return fHeight; }
+        uint8_t   GetZDepth() { return fZDepth; }
+        uint8_t   GetStencilDepth() { return fStencilDepth; }
 
-        uint16_t      GetVPLeft( void )   { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fLeft; }
-        uint16_t      GetVPTop( void )    { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fTop; }
-        uint16_t      GetVPRight( void )  { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fRight; }
-        uint16_t      GetVPBottom( void ) { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fBottom; }
+        uint16_t      GetVPLeft()   { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fLeft; }
+        uint16_t      GetVPTop()    { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fTop; }
+        uint16_t      GetVPRight()  { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fRight; }
+        uint16_t      GetVPBottom() { ASSERT_ABSOLUTE; return fViewport.fAbsolute.fBottom; }
 
-        float    GetVPLeftProp( void )   { ASSERT_PROPORTIONAL; return fViewport.fProportional.fLeft; }
-        float    GetVPTopProp( void )    { ASSERT_PROPORTIONAL; return fViewport.fProportional.fTop; }
-        float    GetVPRightProp( void )  { ASSERT_PROPORTIONAL; return fViewport.fProportional.fRight; }
-        float    GetVPBottomProp( void ) { ASSERT_PROPORTIONAL; return fViewport.fProportional.fBottom; }
+        float    GetVPLeftProp()   { ASSERT_PROPORTIONAL; return fViewport.fProportional.fLeft; }
+        float    GetVPTopProp()    { ASSERT_PROPORTIONAL; return fViewport.fProportional.fTop; }
+        float    GetVPRightProp()  { ASSERT_PROPORTIONAL; return fViewport.fProportional.fRight; }
+        float    GetVPBottomProp() { ASSERT_PROPORTIONAL; return fViewport.fProportional.fBottom; }
 
-        bool        ViewIsProportional( void ) const { return fProportionalViewport; }
+        bool        ViewIsProportional() const { return fProportionalViewport; }
 
-        plCubicRenderTarget *GetParent( void ) const { return fParent; }
+        plCubicRenderTarget *GetParent() const { return fParent; }
 
-        virtual uint32_t  GetTotalSize( void ) const { return fWidth * fHeight * ( fPixelSize >> 3 ); }
+        uint32_t  GetTotalSize() const override { return fWidth * fHeight * ( fPixelSize >> 3 ); }
 
-        virtual bool MsgReceive(plMessage* msg);
+        bool MsgReceive(plMessage* msg) override;
 
-        virtual void SetVisRegionName(char *name){} // override to set vis region names for anyone who cares
+        // override to set vis region names for anyone who cares
+        virtual void SetVisRegionName(ST::string name) { } // NOLINT(performance-unnecessary-value-param)
 };
 
 

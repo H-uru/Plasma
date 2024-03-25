@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsResMgr.h"
 #include "hsStream.h"
-#pragma hdrstop
 
 #include "plLOSHitMsg.h"
 
@@ -53,8 +52,8 @@ void plLOSHitMsg::Read(hsStream* stream, hsResMgr* mgr)
     fObj = mgr->ReadKey(stream);
     fHitPoint.Read(stream);
     fNoHit = stream->ReadBool();
-    stream->ReadLE(&fRequestID);
-    stream->ReadLE(&fHitFlags);
+    stream->ReadLE32(&fRequestID);
+    stream->ReadLE32(&fHitFlags);
 }
 
 void plLOSHitMsg::Write(hsStream* stream, hsResMgr* mgr)
@@ -64,6 +63,6 @@ void plLOSHitMsg::Write(hsStream* stream, hsResMgr* mgr)
     mgr->WriteKey(stream, fObj);
     fHitPoint.Write(stream);
     stream->WriteBool(fNoHit);
-    stream->WriteLE(fRequestID);
-    stream->WriteLE(fHitFlags);
+    stream->WriteLE32(fRequestID);
+    stream->WriteLE32(fHitFlags);
 }

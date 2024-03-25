@@ -41,34 +41,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plDynaPuddleMgr.h"
-
-#include "plPrintShape.h"
-
 #include "plgDispatch.h"
-
-#include "hsStream.h"
 #include "hsResMgr.h"
+#include "hsStream.h"
 
-#include "plMessage/plAvatarFootMsg.h"
+#include "plDynaPuddleMgr.h"
+#include "plPrintShape.h"
 
 #include "plAvatar/plAvBrainHuman.h"
 #include "plAvatar/plArmatureMod.h"
-
-static const uint32_t kNumPrintIDs = 2;
-static const uint32_t kPrintIDs[kNumPrintIDs] =
-{
-    plAvBrainHuman::RFootPrint,
-    plAvBrainHuman::LFootPrint
-};
-
+#include "plMessage/plAvatarFootMsg.h"
 
 plDynaPuddleMgr::plDynaPuddleMgr()
 {
-    fPartIDs.SetCount(kNumPrintIDs);
-    int i;
-    for( i = 0; i < kNumPrintIDs; i++ )
-        fPartIDs[i] = kPrintIDs[i];
+    fPartIDs = {
+        plAvBrainHuman::RFootPrint,
+        plAvBrainHuman::LFootPrint
+    };
 }
 
 plDynaPuddleMgr::~plDynaPuddleMgr()
@@ -87,21 +76,20 @@ bool plDynaPuddleMgr::MsgReceive(plMessage* msg)
     plAvatarFootMsg* footMsg = plAvatarFootMsg::ConvertNoRef(msg);
     if( footMsg )
     {
-        int i;
-        for( i = 0; i < fPartIDs.GetCount(); i++ )
+        for (uint32_t partID : fPartIDs)
         {
             plArmatureMod* armMod = footMsg->GetArmature();
-            const plPrintShape* shape = IGetPrintShape(armMod, fPartIDs[i]);
+            const plPrintShape* shape = IGetPrintShape(armMod, partID);
             if( shape )
             {
                 plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
                 if( IRippleFromShape(shape, true) )
                 {
-                    INotifyActive(info, armMod->GetKey(), fPartIDs[i]);
+                    INotifyActive(info, armMod->GetKey(), partID);
                 }
                 else
                 {
-                    INotifyInactive(info, armMod->GetKey(), fPartIDs[i]);
+                    INotifyInactive(info, armMod->GetKey(), partID);
                 }
             }
         }
@@ -110,4 +98,3 @@ bool plDynaPuddleMgr::MsgReceive(plMessage* msg)
 
     return plDynaRippleMgr::MsgReceive(msg);
 }
-

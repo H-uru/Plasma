@@ -75,24 +75,24 @@ void    plTGAWriter::WriteMipmap( const char *fileName, plMipmap *mipmap )
     stream.Open( fileName, "wb" );
 
     /// Write header
-    stream.WriteByte( 0 );  // Size of ID field
-    stream.WriteByte( 0 );  // Map type
-    stream.WriteByte( 2 );  // Type 2 image - Unmapped RGB
+    stream.WriteByte(uint8_t(0));  // Size of ID field
+    stream.WriteByte(uint8_t(0));  // Map type
+    stream.WriteByte(uint8_t(2));  // Type 2 image - Unmapped RGB
 
-    stream.WriteByte( 0 );  // Color map spec
-    stream.WriteByte( 0 );  // Color map spec
-    stream.WriteByte( 0 );  // Color map spec
-    stream.WriteByte( 0 );  // Color map spec
-    stream.WriteByte( 0 );  // Color map spec
+    stream.WriteByte(uint8_t(0));  // Color map spec
+    stream.WriteByte(uint8_t(0));  // Color map spec
+    stream.WriteByte(uint8_t(0));  // Color map spec
+    stream.WriteByte(uint8_t(0));  // Color map spec
+    stream.WriteByte(uint8_t(0));  // Color map spec
 
-    stream.WriteLE16( 0 );    // xOrigin
-    stream.WriteLE16( 0 );    // yOrigin
+    stream.WriteLE16(uint16_t(0));    // xOrigin
+    stream.WriteLE16(uint16_t(0));    // yOrigin
 
     stream.WriteLE16( (uint16_t)mipmap->GetWidth() );
     stream.WriteLE16( (uint16_t)mipmap->GetHeight() );
 
-    stream.WriteByte( 24 );
-    stream.WriteByte( 0 );
+    stream.WriteByte(uint8_t(24));
+    stream.WriteByte(uint8_t(0));
 
     /// Write image data (gotta do inversed, stupid TGAs...)
     for( y = mipmap->GetHeight() - 1; y >= 0; y-- )
@@ -105,8 +105,5 @@ void    plTGAWriter::WriteMipmap( const char *fileName, plMipmap *mipmap )
             stream.WriteByte( pixel.r );
         }
     }
-
-    /// All done!
-    stream.Close();
 }
 

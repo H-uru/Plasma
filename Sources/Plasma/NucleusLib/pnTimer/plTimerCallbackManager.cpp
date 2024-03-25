@@ -42,6 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plTimerCallbackManager.h"
+
+#include <algorithm>
+
 #include "pnMessage/plTimeMsg.h"
 #include "plgDispatch.h"
 #include "pnKeyedObject/plFixedKey.h"
@@ -53,28 +56,29 @@ plTimerCallbackManager::plTimerCallbackManager()
 
 plTimerCallbackManager::~plTimerCallbackManager()
 {
-    while (fCallbacks.GetCount() > 0)
-        delete fCallbacks.Pop();
+    while (!fCallbacks.empty())
+    {
+        delete fCallbacks.back();
+        fCallbacks.pop_back();
+    }
 }
 
 bool plTimerCallbackManager::MsgReceive(plMessage* msg)
 {
     plTimeMsg* pTimeMsg = plTimeMsg::ConvertNoRef(msg);
-    int i = fCallbacks.Count();
-    if (pTimeMsg )
+    if (pTimeMsg)
     {
-        if(i)
+        if (!fCallbacks.empty())
         {
-            i--;
-            if (pTimeMsg->GetTimeStamp() >= fCallbacks[i]->fTime)
+            if (pTimeMsg->GetTimeStamp() >= fCallbacks.back()->fTime)
             {
-                plgDispatch::MsgSend( fCallbacks[i]->fMsg );
+                plgDispatch::MsgSend(fCallbacks.back()->fMsg);
 
                 // Set it nil so the TimerCallback destructor doesn't unRef it
-                fCallbacks[i]->fMsg = nil; 
+                fCallbacks.back()->fMsg = nullptr;
 
-                delete(fCallbacks[i]);
-                fCallbacks.SetCount(i);
+                delete fCallbacks.back();
+                fCallbacks.pop_back();
             }
         }
         return true;
@@ -85,33 +89,22 @@ bool plTimerCallbackManager::MsgReceive(plMessage* msg)
 plTimerCallback* plTimerCallbackManager::NewTimer(float time, plMessage* pMsg)
 {
     plTimerCallback* t = new plTimerCallback( hsTimer::GetSysSeconds() + time, pMsg );
-    fCallbacks.Append(t); 
+    fCallbacks.emplace_back(t);
     // sort them
-    for (int i = 0; i < fCallbacks.Count(); i++)
-    {
-        for (int j = i + 1; j < fCallbacks.Count(); j++)
-        {
-#if 0
-            float a = fCallbacks[i]->fTime;
-            float b = fCallbacks[j]->fTime;
-#endif
-            if (fCallbacks[i]->fTime < fCallbacks[j]->fTime)
-            {
-                plTimerCallback* pTemp = fCallbacks[i];
-                fCallbacks[i] = fCallbacks[j];
-                fCallbacks[j] = pTemp;
-            }
-        }
-    }
+    std::sort(fCallbacks.begin(), fCallbacks.end(),
+              [](plTimerCallback* first, plTimerCallback* second) {
+                  return first->fTime > second->fTime;
+              });
     return t;
 }
 
 bool plTimerCallbackManager::CancelCallback(plTimerCallback* pTimer)
 {
-    for (int i = 0; i < fCallbacks.Count(); i++)
+    for (auto iter = fCallbacks.cbegin(); iter != fCallbacks.cend(); ++iter)
     {
-        if (fCallbacks[i] == pTimer)
-        {   fCallbacks.Remove(i);
+        if (*iter == pTimer)
+        {
+            fCallbacks.erase(iter);
             return true;
         }
     }
@@ -122,16 +115,16 @@ bool plTimerCallbackManager::CancelCallbacksToKey(const plKey& key)
 {
     bool removed = false;
 
-    for (int i = fCallbacks.Count() - 1; i >= 0 ; i--)
+    for (hsSsize_t i = fCallbacks.size() - 1; i >= 0; --i)
     {
-        for (int j = 0; j < fCallbacks[i]->fMsg->GetNumReceivers(); j++)
+        for (size_t j = 0; j < fCallbacks[i]->fMsg->GetNumReceivers(); j++)
         {
             const plKey rKey = fCallbacks[i]->fMsg->GetReceiver(j);
             
             if (rKey == key)
             {
                 delete fCallbacks[i];
-                fCallbacks.Remove(i);
+                fCallbacks.erase(fCallbacks.begin() + i);
                 removed = true;
                 break;
             }
@@ -160,7 +153,7 @@ plTimerCallback::~plTimerCallback()
 {
     if (fMsg)
         hsRefCnt_SafeUnRef(fMsg);
-    fMsg = nil;
+    fMsg = nullptr;
 }
 
 void plTimerCallback::Read(hsStream* stream, hsResMgr* mgr)
@@ -171,7 +164,7 @@ void plTimerCallback::Write(hsStream* stream, hsResMgr* mgr)
 }
 
 
-plTimerCallbackManager* plgTimerCallbackMgr::fMgr = nil;
+plTimerCallbackManager* plgTimerCallbackMgr::fMgr = nullptr;
 
 void plgTimerCallbackMgr::Init()
 {

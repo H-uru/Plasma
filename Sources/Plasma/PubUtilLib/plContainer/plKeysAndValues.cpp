@@ -65,37 +65,37 @@ void plKeysAndValues::Clear()
     fKeys.clear();
 }
 
-void plKeysAndValues::RemoveKey(const plString & key)
+void plKeysAndValues::RemoveKey(const ST::string & key)
 {
     fKeys.erase(key);
 }
 
-bool plKeysAndValues::HasKey(const plString & key) const
+bool plKeysAndValues::HasKey(const ST::string & key) const
 {
     return (fKeys.find(key) != fKeys.end());
 }
 
-bool plKeysAndValues::KeyHasValue(const plString & key, const plString & value)
+bool plKeysAndValues::KeyHasValue(const ST::string & key, const ST::string & value)
 {
     Keys::const_iterator ki = fKeys.find(key);
     if (ki==fKeys.end())
         return false;
     return std::find_if(ki->second.begin(), ki->second.end(),
-               [&value](const plString &v) { return v.CompareI(value) == 0; }
+               [&value](const ST::string &v) { return v.compare_i(value) == 0; }
            ) != ki->second.end();
 }
 
-bool plKeysAndValues::KeyHasValue(const plString & key, int value)
+bool plKeysAndValues::KeyHasValue(const ST::string & key, int value)
 {
-    return KeyHasValue(key, plFormat("{}", value));
+    return KeyHasValue(key, ST::string::from_int(value));
 }
 
-bool plKeysAndValues::KeyHasValue(const plString & key, double value)
+bool plKeysAndValues::KeyHasValue(const ST::string & key, double value)
 {
-    return KeyHasValue(key, plFormat("{f}", value));
+    return KeyHasValue(key, ST::string::from_double(value, 'f'));
 }
 
-bool plKeysAndValues::AddValue(const plString & key, const plString & value, KAddValueMode mode)
+bool plKeysAndValues::AddValue(const ST::string & key, const ST::string & value, KAddValueMode mode)
 {
     switch (mode)
     {
@@ -114,40 +114,40 @@ bool plKeysAndValues::AddValue(const plString & key, const plString & value, KAd
     return true;
 }
 
-bool plKeysAndValues::AddValue(const plString & key, int value, KAddValueMode mode)
+bool plKeysAndValues::AddValue(const ST::string & key, int value, KAddValueMode mode)
 {
-    return AddValue(key, plFormat("{}", value), mode);
+    return AddValue(key, ST::string::from_int(value), mode);
 }
 
-bool plKeysAndValues::AddValue(const plString & key, double value, KAddValueMode mode)
+bool plKeysAndValues::AddValue(const ST::string & key, double value, KAddValueMode mode)
 {
-    return AddValue(key, plFormat("{f}", value), mode);
+    return AddValue(key, ST::string::from_double(value, 'f'), mode);
 }
 
-bool plKeysAndValues::AddValues(const plString & key, const std::vector<plString> & values, KAddValueMode mode)
+bool plKeysAndValues::AddValues(const ST::string & key, const std::vector<ST::string> & values, KAddValueMode mode)
 {
     for (int i=0; i<values.size(); i++)
         AddValue(key,values[i],mode);
     return true;
 }
 
-bool plKeysAndValues::SetValue(const plString & key, const plString & value)
+bool plKeysAndValues::SetValue(const ST::string & key, const ST::string & value)
 {
     fKeys[key].clear();
     return AddValue(key,value);
 }
 
-bool plKeysAndValues::SetValue(const plString & key, int value)
+bool plKeysAndValues::SetValue(const ST::string & key, int value)
 {
-    return SetValue(key, plFormat("{}", value));
+    return SetValue(key, ST::string::from_int(value));
 }
 
-bool plKeysAndValues::SetValue(const plString & key, double value)
+bool plKeysAndValues::SetValue(const ST::string & key, double value)
 {
-    return SetValue(key, plFormat("{f}", value));
+    return SetValue(key, ST::string::from_double(value, 'f'));
 }
 
-plString plKeysAndValues::GetValue(const plString & key, const plString & defval, bool * outFound) const
+ST::string plKeysAndValues::GetValue(const ST::string & key, const ST::string & defval, bool * outFound) const
 {
     Keys::const_iterator ki = fKeys.find(key);
     if (outFound)
@@ -158,24 +158,24 @@ plString plKeysAndValues::GetValue(const plString & key, const plString & defval
     return defval;
 }
 
-uint32_t plKeysAndValues::GetValue(const plString & key, uint32_t defval, bool * outFound) const
+uint32_t plKeysAndValues::GetValue(const ST::string & key, uint32_t defval, bool * outFound) const
 {
-    return GetValue(key, plFormat("{}", defval), outFound).ToUInt();
+    return GetValue(key, ST::string::from_uint(defval), outFound).to_uint();
 }
 
-int plKeysAndValues::GetValue(const plString & key, int defval, bool * outFound) const
+int plKeysAndValues::GetValue(const ST::string & key, int defval, bool * outFound) const
 {
-    return GetValue(key, plFormat("{}", defval), outFound).ToInt();
+    return GetValue(key, ST::string::from_int(defval), outFound).to_int();
 }
 
-double plKeysAndValues::GetValue(const plString & key, double defval, bool * outFound) const
+double plKeysAndValues::GetValue(const ST::string & key, double defval, bool * outFound) const
 {
-    return GetValue(key, plFormat("{f}", defval), outFound).ToDouble();
+    return GetValue(key, ST::string::from_double(defval, 'f'), outFound).to_double();
 }
 
-std::vector<plString> plKeysAndValues::GetAllValues(const plString & key)
+std::vector<ST::string> plKeysAndValues::GetAllValues(const ST::string & key)
 {
-    std::vector<plString> result;
+    std::vector<ST::string> result;
     if (HasKey(key))
         for (Values::const_iterator vi=fKeys[key].begin(); vi!=fKeys[key].end(); ++vi)
             result.push_back(*vi);
@@ -189,7 +189,7 @@ bool plKeysAndValues::GetKeyIterators(Keys::const_iterator & iter, Keys::const_i
     return true;
 }
 
-bool plKeysAndValues::GetValueIterators(const plString & key, Values::const_iterator & iter, Values::const_iterator & end) const
+bool plKeysAndValues::GetValueIterators(const ST::string & key, Values::const_iterator & iter, Values::const_iterator & end) const
 {
     Keys::const_iterator ki = fKeys.find(key);
     if(ki != fKeys.end())
@@ -203,25 +203,20 @@ bool plKeysAndValues::GetValueIterators(const plString & key, Values::const_iter
 
 void plKeysAndValues::Read(hsStream * s)
 {
-    uint16_t nkeys;
-    s->ReadLE(&nkeys);
+    uint16_t nkeys = s->ReadLE16();
     for (int ki=0; ki<nkeys; ki++)
     {
-        uint16_t strlen;
-        s->ReadLE(&strlen);
-        plStringBuffer<char> key;
-        char* kdata = key.CreateWritableBuffer(strlen);
-        s->Read(strlen,(void*)kdata);
-        kdata[strlen] = 0;
-        uint16_t nvalues;
-        s->ReadLE(&nvalues);
+        uint16_t strlen = s->ReadLE16();
+        ST::char_buffer key;
+        key.allocate(strlen);
+        s->Read(strlen, key.data());
+        uint16_t nvalues = s->ReadLE16();
         for (int vi=0; vi<nvalues; vi++)
         {
-            s->ReadLE(&strlen);
-            plStringBuffer<char> value;
-            char* vdata = value.CreateWritableBuffer(strlen);
-            s->Read(strlen,(void*)vdata);
-            vdata[strlen] = 0;
+            strlen = s->ReadLE16();
+            ST::char_buffer value;
+            value.allocate(strlen);
+            s->Read(strlen, value.data());
             // for now, only single value for key on stream is allowed.
             SetValue(key,value);
         }
@@ -231,25 +226,25 @@ void plKeysAndValues::Read(hsStream * s)
 void plKeysAndValues::Write(hsStream * s)
 {
     // write nkeys
-    s->WriteLE((uint16_t)fKeys.size());
+    s->WriteLE16((uint16_t)fKeys.size());
     // iterate through keys
     Keys::const_iterator ki,ke;
     GetKeyIterators(ki,ke);
     for (;ki!=ke;++ki)
     {
         // write key string
-        s->WriteLE((uint16_t)ki->first.GetSize());
-        s->Write(ki->first.GetSize(),ki->first.c_str());
+        s->WriteLE16((uint16_t)ki->first.size());
+        s->Write(ki->first.size(),ki->first.c_str());
         // write nvalues for this key
-        s->WriteLE((uint16_t)ki->second.size());
+        s->WriteLE16((uint16_t)ki->second.size());
         // iterate through values for this key
         Values::const_iterator vi,ve;
         GetValueIterators(ki->first,vi,ve);
         for (;vi!=ve;++vi)
         {
             // write value string
-            s->WriteLE((uint16_t)vi->GetSize());
-            s->Write(vi->GetSize(),vi->c_str());
+            s->WriteLE16((uint16_t)vi->size());
+            s->Write(vi->size(),vi->c_str());
         }
     }
 }

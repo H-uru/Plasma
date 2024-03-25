@@ -45,17 +45,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIDraggableMod.h"
-#include "pfGameGUIMgr.h"
 
-#include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "plAnimation/plAGModifier.h"
+#include "HeadSpin.h"
+#include "hsGeometry3.h"
+
 #include "plInputCore/plInputInterface.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
 
 
 //// Constructor/Destructor //////////////////////////////////////////////////
@@ -152,7 +147,7 @@ void    pfGUIDraggableMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-uint32_t      pfGUIDraggableMod::IGetDesiredCursor( void ) const
+uint32_t      pfGUIDraggableMod::IGetDesiredCursor() const
 {
     // if we are anchored, then no cursors that say we can move
     if( fDragging )

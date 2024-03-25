@@ -49,17 +49,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
-#include "pyVaultNode.h"
-#include "plNetCommon/plNetServerSessionInfo.h" // for plAgeLinkStruct
-#include <string>
 
-class pyVaultAgeInfoNode;
-struct RelVaultNode;
-class pyAgeLinkStruct;
+#include "plNetCommon/plNetServerSessionInfo.h" // for plAgeLinkStruct
+
+#include "pyGlueDefinitions.h"
+#include "pyVaultNode.h"
+
 class pySpawnPointInfo;
 class pySpawnPointInfoRef;
-
+namespace ST { class string; }
 
 class pyVaultAgeLinkNode : public pyVaultNode
 {
@@ -67,25 +65,18 @@ private:
     mutable plAgeLinkStruct     fAgeLinkStruct; // for use with AsAgeLinkStruct()
 
 protected:
-    // should only be created from C++ side
-    pyVaultAgeLinkNode(RelVaultNode* nfsNode);
-
     //create from the Python side
-    pyVaultAgeLinkNode(int n=0);
+    pyVaultAgeLinkNode();
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultAgeLinkNode);
-    static PyObject *New(RelVaultNode* nfsNode);
-    static PyObject *New(int n=0);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultAgeLinkNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultAgeLinkNode); // converts a PyObject to a pyVaultAgeLinkNode (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
 
-//==================================================================
-// class RelVaultNode : public plVaultNode
-//
     PyObject*   GetAgeInfo() const; // returns pyVaultAgeInfoNode
     // locked on psnl age bookshelf
     void    SetLocked( bool v );
@@ -98,8 +89,8 @@ public:
     void    AddSpawnPointRef( pySpawnPointInfoRef & point );    // will only add if not there already.
     void    RemoveSpawnPoint( pySpawnPointInfo & point );
     void    RemoveSpawnPointRef( pySpawnPointInfoRef & point );
-    void    RemoveSpawnPointByName( const plString & spawnPtName );
-    bool    HasSpawnPoint( const plString & spawnPtName ) const;
+    void    RemoveSpawnPointByName( const ST::string & spawnPtName );
+    bool    HasSpawnPoint( const ST::string & spawnPtName ) const;
     PyObject * GetSpawnPoints() const;  // returns list of pySpawnPointInfo
 
     PyObject * AsAgeLinkStruct() const; // returns pyAgeLinkStruct

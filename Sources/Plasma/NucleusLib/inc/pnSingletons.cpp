@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plPipeResReq.h"
 
-hsResMgr* hsgResMgr::fResMgr = nil;
+hsResMgr* hsgResMgr::fResMgr = nullptr;
 
 plDispatchBase* plgDispatch::Dispatch()
 {
@@ -68,7 +68,7 @@ void hsgResMgr::Shutdown()
         {
             fResMgr->IShutdown();
             hsRefCnt_SafeUnRef(fResMgr); 
-            fResMgr = nil; 
+            fResMgr = nullptr;
         }
         else
         {

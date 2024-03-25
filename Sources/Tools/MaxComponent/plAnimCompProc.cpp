@@ -44,9 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentBase.h"
 #include "MaxMain/plMaxNode.h"
 
-#include <iparamm2.h>
+#include "MaxMain/MaxAPI.h"
+
 #include <set>
-#pragma hdrstop
 
 #include "plAnimCompProc.h"
 
@@ -66,7 +66,7 @@ plAnimCompProc::plAnimCompProc() :
 {
 }
 
-BOOL plAnimCompProc::DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plAnimCompProc::DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -137,7 +137,7 @@ void plAnimCompProc::IUpdateNodeButton(HWND hWnd, IParamBlock2* pb)
     plComponentBase* comp = IGetComp(pb);
     if (!comp)
     {
-        SetWindowText(hButton, "(none)");
+        SetWindowText(hButton, _T("(none)"));
         EnableWindow(hButton, FALSE);
         return;
     }
@@ -146,7 +146,7 @@ void plAnimCompProc::IUpdateNodeButton(HWND hWnd, IParamBlock2* pb)
     if (comp->ClassID() == ANIM_GROUP_COMP_CID)
     {
         IClearNode(pb);
-        SetWindowText(hButton, "(none)");
+        SetWindowText(hButton, _T("(none)"));
         EnableWindow(hButton, FALSE);
         return;
     }
@@ -158,7 +158,7 @@ void plAnimCompProc::IUpdateNodeButton(HWND hWnd, IParamBlock2* pb)
     if (comp->IsTarget((plMaxNodeBase*)node))
         SetWindowText(hButton, node->GetName());
     else
-        SetWindowText(hButton, "(none)");
+        SetWindowText(hButton, _T("(none)"));
 }
 
 void plAnimCompProc::IUpdateCompButton(HWND hWnd, IParamBlock2* pb)
@@ -169,12 +169,12 @@ void plAnimCompProc::IUpdateCompButton(HWND hWnd, IParamBlock2* pb)
     if (comp)
         SetWindowText(hAnim, comp->GetINode()->GetName());
     else
-        SetWindowText(hAnim, "(none)");
+        SetWindowText(hAnim, _T("(none)"));
 }
 
 plComponentBase* plAnimCompProc::IGetComp(IParamBlock2* pb)
 {
-    plMaxNode* node = nil;
+    plMaxNode* node = nullptr;
     if (pb->GetParameterType(fCompParamID) == TYPE_REFTARG)
         node = (plMaxNode*)pb->GetReferenceTarget(fCompParamID);
     else
@@ -183,7 +183,7 @@ plComponentBase* plAnimCompProc::IGetComp(IParamBlock2* pb)
     if (node)
         return node->ConvertToComponent();
 
-    return nil;
+    return nullptr;
 }
 
 plMaxNode* plAnimCompProc::IGetNode(IParamBlock2* pb)
@@ -197,9 +197,9 @@ plMaxNode* plAnimCompProc::IGetNode(IParamBlock2* pb)
 void plAnimCompProc::IClearNode(IParamBlock2* pb)
 {
     if (pb->GetParameterType(fNodeParamID) == TYPE_REFTARG)
-        pb->SetValue(fNodeParamID, 0, (ReferenceTarget*)nil);
+        pb->SetValue(fNodeParamID, 0, (ReferenceTarget*)nullptr);
     else
-        pb->SetValue(fNodeParamID, 0, (INode*)nil);
+        pb->SetValue(fNodeParamID, 0, (INode*)nullptr);
 }
 
 bool plAnimCompProc::GetCompAndNode(IParamBlock2* pb, plComponentBase*& comp, plMaxNode*& node)
@@ -232,7 +232,7 @@ plMtlAnimProc::plMtlAnimProc() :
 {
 }
 
-BOOL plMtlAnimProc::DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plMtlAnimProc::DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -287,10 +287,10 @@ void plMtlAnimProc::IUpdateMtlButton(HWND hWnd, IParamBlock2* pb)
     if (savedMtl)
         SetWindowText(hMtl, savedMtl->GetName());
     else
-        SetWindowText(hMtl, "(none)");
+        SetWindowText(hMtl, _T("(none)"));
 
     // Enable the node button if a material is selected
-    EnableWindow(GetDlgItem(hWnd, fNodeButtonID), (savedMtl != nil));
+    EnableWindow(GetDlgItem(hWnd, fNodeButtonID), (savedMtl != nullptr));
 
     // Update the dependencies of this
     IUpdateNodeButton(hWnd, pb);
@@ -309,23 +309,23 @@ void plMtlAnimProc::ILoadAnimCombo(HWND hWnd, IParamBlock2* pb)
     HWND hAnim = GetDlgItem(hWnd, fAnimComboID);
 
     ComboBox_ResetContent(hAnim);
-    int sel = ComboBox_AddString(hAnim, ENTIRE_ANIMATION_NAME);
+    int sel = ComboBox_AddString(hAnim, _T(ENTIRE_ANIMATION_NAME));
     ComboBox_SetCurSel(hAnim, sel);
     
-    const char* savedName = pb->GetStr(fAnimParamID);
+    auto savedName = pb->GetStr(fAnimParamID);
     if (!savedName)
-        savedName = "";
+        savedName = _T("");
 
     Mtl* mtl = IGetMtl(pb);
     if (mtl)
     {
-        plNotetrackAnim anim(mtl, nil);
-        plString animName;
-        while (!(animName = anim.GetNextAnimName()).IsNull())
+        plNotetrackAnim anim(mtl, nullptr);
+        ST::string animName;
+        while (!(animName = anim.GetNextAnimName()).empty())
         {
-            int idx = ComboBox_AddString(hAnim, animName.c_str());
+            int idx = ComboBox_AddString(hAnim, ST2T(animName));
             ComboBox_SetItemData(hAnim, idx, 1);
-            if (!animName.Compare(savedName))
+            if (!animName.compare(savedName))
                 ComboBox_SetCurSel(hAnim, idx);
         }
 
@@ -345,7 +345,7 @@ void plMtlAnimProc::IMtlButtonPress(HWND hWnd, IParamBlock2* pb)
                                                     plMtlCollector::kPlasmaOnly);
 
     // Save the mtl in the pb and update the interface
-    if (pickedMtl != nil)
+    if (pickedMtl != nullptr)
     {
         if (pb->GetParameterType(fMtlParamID) == TYPE_REFTARG)
             pb->SetValue(fMtlParamID, 0, (ReferenceTarget*)pickedMtl);
@@ -357,7 +357,7 @@ void plMtlAnimProc::IMtlButtonPress(HWND hWnd, IParamBlock2* pb)
     // Make sure the current node has the selected material on it (clear it otherwise)
     INode* node = pb->GetINode(fNodeParamID);
     if (!pickedMtl || !node || node->GetMtl() != pickedMtl)
-        pb->SetValue(fNodeParamID, 0, (INode*)nil);
+        pb->SetValue(fNodeParamID, 0, (INode*)nullptr);
 
     IUpdateMtlButton(hWnd, pb);
 }
@@ -377,12 +377,12 @@ void plMtlAnimProc::IAnimComboChanged(HWND hWnd, IParamBlock2* pb)
     if (idx != CB_ERR)
     {
         if (ComboBox_GetItemData(hCombo, idx) == 0)
-            pb->SetValue(fAnimParamID, 0, "");
+            pb->SetValue(fAnimParamID, 0, _M(""));
         else
         {
             // Get the name of the animation and save it
-            char buf[256];
-            ComboBox_GetText(hCombo, buf, sizeof(buf));
+            TCHAR buf[256];
+            ComboBox_GetText(hCombo, buf, std::size(buf));
             pb->SetValue(fAnimParamID, 0, buf);
         }
     }
@@ -399,22 +399,22 @@ Mtl* plMtlAnimProc::IGetMtl(IParamBlock2* pb)
         return pb->GetMtl(fMtlParamID);
 }
 
-static const char* kUserTypeAll = "(All)";
+static const TCHAR* kUserTypeAll = _T("(All)");
 
 class plPickAllMtlNode : public plPickMtlNode
 {
 protected:
-    void IAddUserType(HWND hList)
+    void IAddUserType(HWND hList) override
     {
         int idx = ListBox_AddString(hList, kUserTypeAll);
         if (!fPB->GetINode(fNodeParamID))
             ListBox_SetCurSel(hList, idx);
     }
 
-    void ISetUserType(plMaxNode* node, const char* userType)
+    void ISetUserType(plMaxNode* node, const TCHAR* userType) override
     {
-        if (strcmp(userType, kUserTypeAll) == 0)
-            ISetNodeValue(nil);
+        if (userType && _tcscmp(userType, kUserTypeAll) == 0)
+            ISetNodeValue(nullptr);
     }
 
 public:

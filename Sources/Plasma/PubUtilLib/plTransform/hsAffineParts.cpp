@@ -39,12 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
 #include "hsAffineParts.h"
-#include "plInterp/hsInterp.h"
+
+#include "HeadSpin.h"
+#include "plProfile.h"
 #include "hsStream.h"
 
-#include "plProfile.h"
+#include "plInterp/hsInterp.h"
 
 #define PL_OPTIMIZE_COMPOSE
 
@@ -85,14 +87,6 @@ inline void QuatTo3VectorsTranspose(const hsQuat& q, hsVector3* const v)
 hsAffineParts::hsAffineParts(gemAffineParts *ap)
 {
     AP_SET((*this), (*ap));
-}
-
-//
-//
-//
-hsAffineParts::hsAffineParts()
-{
-
 }
 
 //
@@ -151,8 +145,7 @@ void hsAffineParts::ComposeMatrix(hsMatrix44 *out) const
     hsMatrix44 F;
     if (fF==-1.0)
     {
-        hsVector3 s;
-        s.Set(-1,-1,-1);
+        hsVector3 s(-1.f, -1.f, -1.f);
         F.MakeScaleMat(&s);
     }
     else

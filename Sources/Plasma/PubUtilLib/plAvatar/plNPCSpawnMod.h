@@ -47,7 +47,7 @@ class plNPCSpawnMod : public plSingleModifier
 {
 public:
     plNPCSpawnMod();
-    plNPCSpawnMod(const plString &modelName, const plString &accountName, bool autoSpawn);
+    plNPCSpawnMod(const ST::string &modelName, const ST::string &accountName, bool autoSpawn);
     ~plNPCSpawnMod();
 
     bool Trigger();
@@ -57,19 +57,19 @@ public:
     CLASSNAME_REGISTER( plNPCSpawnMod );
     GETINTERFACE_ANY( plNPCSpawnMod, plSingleModifier );
     
-    virtual void AddTarget(plSceneObject* so);
-//  bool MsgReceive(plMessage* msg);
+    void AddTarget(plSceneObject* so) override;
+//  bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
 protected:
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
     void ISendNotify(plKey &avatarKey);     // send our notification message
 
 private:
-    plString fModelName;
-    plString fAccountName;
+    ST::string fModelName;
+    ST::string fAccountName;
     bool fAutoSpawn;            // spawn immediately on loading
     plKey fSpawnedKey;          // if we want to be able to spawn many things, we should make this a vector
     plNotifyMsg *fNotify;       // notify message that we send when we spawn.

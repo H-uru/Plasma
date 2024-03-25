@@ -1,0 +1,82 @@
+name: Publish Build Artifacts
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [master]
+
+jobs:
+  check-publishing-enabled:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    outputs:
+      SHOULD_PUBLISH: ${{ steps.check.outputs.SHOULD_PUBLISH }}
+    steps:
+      - name: Check if publishing is enabled
+        id: check
+        run: echo "SHOULD_PUBLISH=${{ env.PUBLISH_ENABLED != ''}}" >> $GITHUB_OUTPUT
+        env:
+          PUBLISH_ENABLED: ${{ vars.ENABLE_PRERELEASE_ARTIFACT_PUBLISHING }}
+
+  publish-artifacts:
+    runs-on: ubuntu-latest
+    needs: [check-publishing-enabled]
+    if: needs.check-publishing-enabled.outputs.SHOULD_PUBLISH == 'true'
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: |
+          mkdir artifacts
+          echo "updated_on=$(/bin/date -u '+%Y-%m-%d %H:%M')" >> $GITHUB_ENV
+
+      - name: Download Build Artifacts
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('node:fs');
+            const allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: context.payload.workflow_run.id,
+            });
+            await Promise.all(allArtifacts.data.artifacts.map(async function(art) {
+              if (art.name.match(/-debug/)) return; // Skip debug artifacts
+              const download = await github.rest.actions.downloadArtifact({
+                 owner: context.repo.owner,
+                 repo: context.repo.repo,
+                 artifact_id: art.id,
+                 archive_format: 'zip',
+              });
+              fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/artifacts/${art.name}.zip`, Buffer.from(download.data));
+            }));
+
+      - name: Get release body text
+        id: read_release
+        shell: bash
+        run: |
+          r=$(cat .github/PRERELEASE_NOTES.md)
+          r="${r//'%'/'%25'}"   # Multiline escape sequences for %
+          r="${r//$'\n'/'%0A'}" # Multiline escape sequences for '\n'
+          r="${r//$'\r'/'%0D'}" # Multiline escape sequences for '\r'
+          r="${r//@@COMMIT_SHA@@/$GITHUB_SHA}"
+          echo "RELEASE_BODY=$r" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+
+      - name: Update Release
+        id: release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          prerelease: true
+          overwrite: true
+          tag: last-successful
+          release_name: "Last successful build (unstable)"
+          file_glob: true
+          file: artifacts/*.zip
+          body: |
+            ${{ steps.read_release.outputs.RELEASE_BODY }}

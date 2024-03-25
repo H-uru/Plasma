@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <string>
 
+#include "MaxCompat.h"
+
 class BitmapManager;
 class ClassDesc;
 class GUP;
@@ -59,7 +61,7 @@ struct TexInfo
 {
     Texmap* texmap;
     int iBmp;
-    std::string texName;
+    M_STD_STRING texName;
 };
 
 class PlasmaMax : public GUP
@@ -71,6 +73,7 @@ public:
     // GUP Methods
     DWORD Start();
     void Stop();
+    void DeleteThis() override { }
 
     enum ControlVals
     {
@@ -79,7 +82,7 @@ public:
         // Pass this to Control and get back a pointer to the TextureSetFunc
         kGetTextureSetFunc,
     };
-    DWORD Control(DWORD parameter);
+    DWORD_PTR Control(DWORD parameter) override;
 };
 
 #endif

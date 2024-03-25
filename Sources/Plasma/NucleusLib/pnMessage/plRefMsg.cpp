@@ -40,21 +40,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plRefMsg.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
 #include "hsStream.h"
 
-#include "hsResMgr.h"
-#include "pnKeyedObject/plKey.h"
+#include "plIntRefMsg.h"
+#include "plObjRefMsg.h"
+
 #include "pnKeyedObject/hsKeyedObject.h"
 
 plRefMsg::plRefMsg()
-: fRef(nil), fOldRef(nil), fContext(0)
+: fRef(), fOldRef(), fContext()
 {
 }
 
 plRefMsg::plRefMsg(const plKey &r, uint8_t c)
-: plMessage(nil, r, nil), fRef(nil), fOldRef(nil), fContext(c)
+: plMessage(nullptr, r, nullptr), fRef(), fOldRef(), fContext(c)
 {
     if( !fContext )
         fContext = kOnCreate;
@@ -81,35 +84,65 @@ plRefMsg& plRefMsg::SetOldRef(hsKeyedObject* oldRef)
 void plRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
-    stream->ReadLE(&fContext);
+    stream->ReadByte(&fContext);
 
     plKey key;
     key = mgr->ReadKey(stream);
-    fRef = (key ? key->GetObjectPtr() : nil);
+    fRef = (key ? key->GetObjectPtr() : nullptr);
     key = mgr->ReadKey(stream);
-    fOldRef = (key ? key->GetObjectPtr() : nil);
+    fOldRef = (key ? key->GetObjectPtr() : nullptr);
 }
 
 void plRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
-    stream->WriteLE(fContext);
+    stream->WriteByte(fContext);
 
-    mgr->WriteKey(stream, (fRef ? fRef->GetKey() : nil));
-    mgr->WriteKey(stream, (fOldRef ? fOldRef->GetKey() : nil));
+    mgr->WriteKey(stream, (fRef ? fRef->GetKey() : nullptr));
+    mgr->WriteKey(stream, (fOldRef ? fOldRef->GetKey() : nullptr));
 }
 
 
 void plGenRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Read(stream, mgr);
-    stream->ReadLE(&fType);
+    stream->ReadByte(&fType);
     fWhich = stream->ReadLE32();
 }
 
 void plGenRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Write(stream, mgr);
-    stream->WriteLE(fType);
+    stream->WriteByte(fType);
     stream->WriteLE32(fWhich);
+}
+
+void plIntRefMsg::Read(hsStream* stream, hsResMgr* mgr)
+{
+    plRefMsg::Read(stream, mgr);
+    stream->ReadByte(&fType);
+    stream->ReadLE16(&fWhich);
+    stream->ReadByte(&fIdx);
+}
+
+void plIntRefMsg::Write(hsStream* stream, hsResMgr* mgr)
+{
+    plRefMsg::Write(stream, mgr);
+    stream->WriteByte(fType);
+    stream->WriteLE16(fWhich);
+    stream->WriteByte(fIdx);
+}
+
+void plObjRefMsg::Read(hsStream* stream, hsResMgr* mgr)
+{
+    plRefMsg::Read(stream, mgr);
+    stream->ReadByte(&fType);
+    stream->ReadByte(&fWhich);
+}
+
+void plObjRefMsg::Write(hsStream* stream, hsResMgr* mgr)
+{
+    plRefMsg::Write(stream, mgr);
+    stream->WriteByte(fType);
+    stream->WriteByte(fWhich);
 }

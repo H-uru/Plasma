@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plUnifiedTime_SOURCES
     plClientUnifiedTime.cpp
     plTimeSpan.cpp
@@ -15,9 +10,14 @@ set(plUnifiedTime_HEADERS
     plUnifiedTime.h
 )
 
-add_library(plUnifiedTime STATIC ${plUnifiedTime_SOURCES} ${plUnifiedTime_HEADERS})
-
-target_link_libraries(plUnifiedTime CoreLib)
+plasma_library(plUnifiedTime SOURCES ${plUnifiedTime_SOURCES} ${plUnifiedTime_HEADERS})
+target_link_libraries(
+    plUnifiedTime
+    PUBLIC
+        CoreLib
+    PRIVATE
+        pnNucleusInc
+)
 
 source_group("Source Files" FILES ${plUnifiedTime_SOURCES})
 source_group("Header Files" FILES ${plUnifiedTime_HEADERS})

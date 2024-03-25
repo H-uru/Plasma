@@ -42,10 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plParticleSystem_inc
 #define plParticleSystem_inc
 
-#include "hsTemplates.h"
+#include <vector>
+
 #include "hsGeometry3.h"
 #include "pnModifier/plModifier.h"
-#include "pnNetCommon/plSynchedValue.h"
 #include "hsColorRGBA.h"
 #include "hsMatrix44.h"
 #include "plEffectTargetInfo.h"
@@ -96,12 +96,12 @@ protected:
                                     // reserved for particles added explicitly (to keep all the bookkeeping
                                     // in the hands of plParticleEmitter).
     
-    hsTArray<plParticleEffect *> fForces;       // Global forces (wind/gravity/etc) that affect accelleration.
-    hsTArray<plParticleEffect *> fEffects;      // Any other non-constraint effects.
-    hsTArray<plParticleEffect *> fConstraints;  // Rigid body, collision, connectivity, etc.
+    std::vector<plParticleEffect *> fForces;       // Global forces (wind/gravity/etc) that affect acceleration.
+    std::vector<plParticleEffect *> fEffects;      // Any other non-constraint effects.
+    std::vector<plParticleEffect *> fConstraints;  // Rigid body, collision, connectivity, etc.
     plParticleContext   fContext; // Rendering context passed to forces/effects/constraints.
 
-    hsTArray<plKey>     fPermaLights; // Runtime lights assigned to this system. Currently don't support projected lights on particles.
+    std::vector<plKey>  fPermaLights; // Runtime lights assigned to this system. Currently don't support projected lights on particles.
 
     // Material related animations, mapped over the course of a particle's life
     plController *fAmbientCtl;
@@ -113,15 +113,22 @@ protected:
     plParticleSDLMod *fParticleSDLMod;
 
     bool IShouldUpdate(plPipeline* pipe) const;
-    virtual bool IEval(double secs, float del, uint32_t dirty); // required by plModifier
+    bool IEval(double secs, float del, uint32_t dirty) override; // required by plModifier
     void IHandleRenderMsg(plPipeline* pipe);
     plDrawInterface* ICheckDrawInterface();
     void IAddEffect(plParticleEffect *effect, uint32_t type);
-    void IReadEffectsArray(hsTArray<plParticleEffect *> &effects, uint32_t type, hsStream *s, hsResMgr *mgr);
+    void IReadEffectsArray(std::vector<plParticleEffect *> &effects, uint32_t type, hsStream *s, hsResMgr *mgr);
     void IPreSim();
 
 public:
-    plParticleSystem();
+    plParticleSystem()
+        : fParticleSDLMod(), fAttachedToAvatar(), fTarget(), fTexture(),
+          fXTiles(), fYTiles(), fCurrTime(), fLastTime(), fPreSim(), fDrag(),
+          fWindMult(), fMaxTotalParticles(), fMaxTotalParticlesLeft(),
+          fNumValidEmitters(), fMaxEmitters(), fNextEmitterToGo(), fEmitters(),
+          fContext(), fAmbientCtl(), fDiffuseCtl(), fOpacityCtl(),
+          fWidthCtl(), fHeightCtl(), fMiscFlags()      
+    { }
     virtual ~plParticleSystem();
     void Init(uint32_t xTiles, uint32_t yTiles, uint32_t maxTotalParticles, uint32_t numEmitters, 
               plController *ambientCtl, plController *diffuseCtl, plController *opacityCtl, 
@@ -182,14 +189,14 @@ public:
     
     plParticleSDLMod* GetSDLMod() {return fParticleSDLMod;}
     // Functions related to/required by plModifier
-    virtual int GetNumTargets() const { return fTarget ? 1 : 0; }
-    virtual plSceneObject* GetTarget(int w) const { hsAssert(w < 1, "Bad target"); return fTarget; }
-    virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget(plSceneObject* so);
+    size_t GetNumTargets() const override { return fTarget ? 1 : 0; }
+    plSceneObject* GetTarget(size_t w) const override { hsAssert(w < 1, "Bad target"); return fTarget; }
+    void AddTarget(plSceneObject* so) override;
+    void RemoveTarget(plSceneObject* so) override;
     
-    virtual void Read(hsStream* s, hsResMgr* mgr); 
-    virtual void Write(hsStream* s, hsResMgr* mgr);
-    virtual bool MsgReceive(plMessage* msg);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
+    bool MsgReceive(plMessage* msg) override;
     
     void SetAttachedToAvatar(bool attached);
     

@@ -43,36 +43,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plZlibStream_h_inc
 
 #include "hsStream.h"
-#include <string>
+
+#include <memory>
 
 //
 // This is for reading a .gz file from a buffer, and writing the uncompressed data to a file.
 // Call open with the name of the uncompressed file, then call write with the compressed data.
 //
-class plZlibStream : public hsStream
+class plZlibStream : public hsFileSystemStream
 {
 protected:
-    hsStream* fOutput;
+    std::unique_ptr<hsStream> fOutput;
     void* fZStream;
+    bool fErrorOccurred;
     bool fDecompressedOk;
-
-    enum Validate { kNeedMoreData, kInvalidHeader, kValidHeader };
-    Validate fHeader;
-    std::vector<uint8_t> fHeaderCache;
 
     // needed for rewind function
     plFileName fFilename;
     const char* fMode;
 
-    int IValidateGzHeader(uint32_t byteCount, const void* buffer);
+    void Close();
 
 public:
-    plZlibStream();
+    plZlibStream() : fOutput(), fZStream(), fErrorOccurred(), fDecompressedOk(), fMode() { }
+    plZlibStream(const plZlibStream& other) = delete;
+    plZlibStream(plZlibStream&& other) = delete;
     virtual ~plZlibStream();
 
-    virtual bool     Open(const plFileName& filename, const char* mode);
-    virtual bool     Close();
-    virtual uint32_t Write(uint32_t byteCount, const void* buffer);
+    const plZlibStream& operator=(const plZlibStream& other) = delete;
+    plZlibStream& operator=(plZlibStream&& other) = delete;
+
+    bool     Open(const plFileName& filename, const char* mode) override;
+    uint32_t Write(uint32_t byteCount, const void* buffer) override;
 
     // Since most functions don't check the return value from Write, you can
     // call this after you've passed in all your data to determine if it
@@ -80,12 +82,13 @@ public:
     bool DecompressedOk() { return fDecompressedOk; }
 
     // You can't use these
-    virtual bool     AtEnd();
-    virtual uint32_t Read(uint32_t byteCount, void* buffer);
-    virtual void     Skip(uint32_t deltaByteCount);
-    virtual void     Rewind();
-    virtual void     FastFwd();
-    virtual uint32_t GetEOF();
+    bool     AtEnd() override;
+    uint32_t Read(uint32_t byteCount, void* buffer) override;
+    void     Skip(uint32_t deltaByteCount) override;
+    void     Rewind() override;
+    void     FastFwd() override;
+    void Truncate() override;
+    uint32_t GetEOF() override;
 };
 
 #endif // plZlibStream_h_inc

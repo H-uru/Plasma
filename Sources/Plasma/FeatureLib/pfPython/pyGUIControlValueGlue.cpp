@@ -40,11 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyGUIControlValue.h"
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControlValue, pyGUIControlValue);
@@ -54,7 +53,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlValue)
 
 PYTHON_INIT_DEFINITION(ptGUIControlValue, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -146,15 +145,15 @@ PYTHON_EXPOSE_TYPE_DEFINITION(ptGUIControlValue, pyGUIControlValue);
 // required functions for PyObject interoperability
 PyObject *pyGUIControlValue::New(pyKey& gckey)
 {
-    ptGUIControlValue *newObj = (ptGUIControlValue*)ptGUIControlValue_type.tp_new(&ptGUIControlValue_type, NULL, NULL);
+    ptGUIControlValue *newObj = (ptGUIControlValue*)ptGUIControlValue_type.tp_new(&ptGUIControlValue_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlValue::New(plKey objkey)
 {
-    ptGUIControlValue *newObj = (ptGUIControlValue*)ptGUIControlValue_type.tp_new(&ptGUIControlValue_type, NULL, NULL);
-    newObj->fThis->fGCkey = objkey;
+    ptGUIControlValue *newObj = (ptGUIControlValue*)ptGUIControlValue_type.tp_new(&ptGUIControlValue_type, nullptr, nullptr);
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 
@@ -182,7 +181,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlKnob)
 
 PYTHON_INIT_DEFINITION(ptGUIControlKnob, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -209,15 +208,15 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlKnob, pyGUIControlValue, "Params: ctrlKey\
 // required functions for PyObject interoperability
 PyObject *pyGUIControlKnob::New(pyKey& gckey)
 {
-    ptGUIControlKnob *newObj = (ptGUIControlKnob*)ptGUIControlKnob_type.tp_new(&ptGUIControlKnob_type, NULL, NULL);
+    ptGUIControlKnob *newObj = (ptGUIControlKnob*)ptGUIControlKnob_type.tp_new(&ptGUIControlKnob_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlKnob::New(plKey objkey)
 {
-    ptGUIControlKnob *newObj = (ptGUIControlKnob*)ptGUIControlKnob_type.tp_new(&ptGUIControlKnob_type, NULL, NULL);
-    newObj->fThis->fGCkey = objkey;
+    ptGUIControlKnob *newObj = (ptGUIControlKnob*)ptGUIControlKnob_type.tp_new(&ptGUIControlKnob_type, nullptr, nullptr);
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 
@@ -245,7 +244,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlUpDownPair)
 
 PYTHON_INIT_DEFINITION(ptGUIControlUpDownPair, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -272,15 +271,15 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlUpDownPair, pyGUIControlValue, "Params: ct
 // required functions for PyObject interoperability
 PyObject *pyGUIControlUpDownPair::New(pyKey& gckey)
 {
-    ptGUIControlUpDownPair *newObj = (ptGUIControlUpDownPair*)ptGUIControlUpDownPair_type.tp_new(&ptGUIControlUpDownPair_type, NULL, NULL);
+    ptGUIControlUpDownPair *newObj = (ptGUIControlUpDownPair*)ptGUIControlUpDownPair_type.tp_new(&ptGUIControlUpDownPair_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlUpDownPair::New(plKey objkey)
 {
-    ptGUIControlUpDownPair *newObj = (ptGUIControlUpDownPair*)ptGUIControlUpDownPair_type.tp_new(&ptGUIControlUpDownPair_type, NULL, NULL);
-    newObj->fThis->fGCkey = objkey;
+    ptGUIControlUpDownPair *newObj = (ptGUIControlUpDownPair*)ptGUIControlUpDownPair_type.tp_new(&ptGUIControlUpDownPair_type, nullptr, nullptr);
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 
@@ -308,7 +307,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlProgress)
 
 PYTHON_INIT_DEFINITION(ptGUIControlProgress, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -348,15 +347,15 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlProgress, pyGUIControlValue, "Params: ctrl
 // required functions for PyObject interoperability
 PyObject *pyGUIControlProgress::New(pyKey& gckey)
 {
-    ptGUIControlProgress *newObj = (ptGUIControlProgress*)ptGUIControlProgress_type.tp_new(&ptGUIControlProgress_type, NULL, NULL);
+    ptGUIControlProgress *newObj = (ptGUIControlProgress*)ptGUIControlProgress_type.tp_new(&ptGUIControlProgress_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlProgress::New(plKey objkey)
 {
-    ptGUIControlProgress *newObj = (ptGUIControlProgress*)ptGUIControlProgress_type.tp_new(&ptGUIControlProgress_type, NULL, NULL);
-    newObj->fThis->fGCkey = objkey;
+    ptGUIControlProgress *newObj = (ptGUIControlProgress*)ptGUIControlProgress_type.tp_new(&ptGUIControlProgress_type, nullptr, nullptr);
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

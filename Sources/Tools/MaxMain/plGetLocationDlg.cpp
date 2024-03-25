@@ -41,20 +41,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include "MaxAPI.h"
+
 #include "pnKeyedObject/plKey.h"
-#include "hsWindows.h"
+#include "plMessageBox/hsMessageBox.h"
 
 #include "plMaxNode.h"
 #include "MaxComponent/plComponent.h"
 #include "resource.h"
-#pragma hdrstop
 
 #include "plGetLocationDlg.h"
 
 #include "MaxComponent/plMiscComponents.h"
 #include "MaxExport/plErrorMsg.h"
 
-plGetLocationDlg::plGetLocationDlg() : fNode(nil), fErrMsg(nil), fDefaultLocation(nil)
+plGetLocationDlg::plGetLocationDlg() : fNode(), fErrMsg(), fDefaultLocation()
 {
 }
 
@@ -72,9 +73,13 @@ bool plGetLocationDlg::GetLocation(plMaxNode *node, plErrorMsg *errMsg)
     // If an XRef doesn't have a location, tell the user and stop the export
     if (node->IsXRef())
     {
-        char buf[256];
-        sprintf(buf, "XRef object \"%s\" does not have a location", node->GetName());
-        fErrMsg->Set(true, "Convert Error", buf).Show();
+        fErrMsg->Set(
+            true, "Convert Error",
+            ST::format(
+                "XRef object \"{}\" does not have a location",
+                node->GetName()
+            )
+        ).Show();
         return false;
     }
 
@@ -88,12 +93,14 @@ bool plGetLocationDlg::GetLocation(plMaxNode *node, plErrorMsg *errMsg)
     // If we're not showing prompts, just fail if there isn't a location
     if (hsMessageBox_SuppressPrompts)
     {
-        fErrMsg->Set(true, "Convert Error", "Object %s doesn't have a location component", node->GetName());
+        fErrMsg->Set(true, "Convert Error",
+            ST::format("Object {} doesn't have a location component", M2ST(node->GetName()))
+        );
         fErrMsg->Show();
         return false;
     }
 
-    int ret = DialogBox(hInstance,
+    INT_PTR ret = DialogBox(hInstance,
                         MAKEINTRESOURCE(IDD_GET_LOCATION),
                         GetCOREInterface()->GetMAXHWnd(),
                         ForwardDlgProc);
@@ -103,7 +110,7 @@ bool plGetLocationDlg::GetLocation(plMaxNode *node, plErrorMsg *errMsg)
 
 void plGetLocationDlg::ResetDefaultLocation()
 {
-    fDefaultLocation = nil;
+    fDefaultLocation = nullptr;
 }
 
 void plGetLocationDlg::IListRooms(plMaxNode *node, HWND hList)
@@ -112,7 +119,7 @@ void plGetLocationDlg::IListRooms(plMaxNode *node, HWND hList)
     plComponentBase *comp = node->ConvertToComponent();
     if(comp && (comp->ClassID() == ROOM_CID || comp->ClassID() == PAGEINFO_CID))
     {
-        int idx = SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)node->GetName());
+        int idx = (int)SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)node->GetName());
         SendMessage(hList, LB_SETITEMDATA, idx, (LPARAM)node);
     }
 
@@ -123,7 +130,7 @@ void plGetLocationDlg::IListRooms(plMaxNode *node, HWND hList)
 
 void plGetLocationDlg::IAddSelection(HWND hList, bool setDefault)
 {
-    int sel = SendMessage(hList, LB_GETCURSEL, 0, 0);
+    int sel = (int)SendMessage(hList, LB_GETCURSEL, 0, 0);
     if (sel != LB_ERR)
     {
         // Get the node and component for the selected room component
@@ -141,7 +148,7 @@ void plGetLocationDlg::ISetLocation(plMaxNode *locNode)
 
     // Add the roomless node to the target list and run the convert pass that gives it a room
     comp->AddTarget(fNode);         // Might want to fix this...
-    comp->SetupProperties(fNode, nil);
+    comp->SetupProperties(fNode, nullptr);
 }
 
 INT_PTR plGetLocationDlg::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -160,8 +167,8 @@ INT_PTR plGetLocationDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPa
             IListRooms((plMaxNode*)GetCOREInterface()->GetRootNode(), hList);
 
             // Set the prompt text
-            char buf[256];
-            sprintf(buf, "The object \"%s\" does not have a location. Either pick a location and press OK, or press Cancel to stop the convert.", fNode->GetName());
+            TCHAR buf[256];
+            _sntprintf(buf, std::size(buf), _T("The object \"%s\" does not have a location. Either pick a location and press OK, or press Cancel to stop the convert."), fNode->GetName());
             SetDlgItemText(hDlg, IDC_PROMPT, buf);
 
             // No room components found.  Tell user to create one and cancel convert.

@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plRealTimeLights.h"
-#pragma hdrstop
 
 #include "MaxPlasmaMtls/Layers/plLayerTex.h"
 #include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
@@ -75,12 +74,12 @@ const char* DecayLevel[] = {
                             "None",
                             "Inverse",
                             "Inverse Square",
-                            NULL
+                            nullptr
                             };
 
 const char* ShadowState[] = {
                             "Shadow Map",
-                            NULL
+                            nullptr
                             };
 
 
@@ -108,7 +107,7 @@ protected:
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IParamBlock2 *pb = map->GetParamBlock();
         plRTLightBase *gl = (plRTLightBase *) pb->GetOwner();
@@ -124,7 +123,7 @@ public:
                     //  map->SetValue(plRTSpotLight::kProjMapTexButton, t, 
                         //gl->SetProjMap(
                         map->Invalidate(plRTSpotLight::kProjMapTexButton);
-                    return false;
+                    return FALSE;
                 }
                 else if( LOWORD( wParam ) == IDC_LHOTSIZE || LOWORD( wParam ) == IDC_LFALLOFF )
                 {
@@ -141,7 +140,7 @@ public:
 
         return plBaseLightProc::DlgProc( t, map, hWnd, msg, wParam, lParam );;
     }
-    void DeleteThis() {};
+    void DeleteThis() override { }
 };
 static LightDlgProc gLiteDlgProc;
 
@@ -170,7 +169,7 @@ BaseObjLight::BaseObjLight(INode *n) : ObjLightDesc(n)
 {
     ObjectState os = n->EvalWorldState(TimeValue(0));
     assert(os.obj->SuperClassID()==LIGHT_CLASS_ID);
-    gl = (os.obj->GetInterface(I_MAXSCRIPTPLUGIN) != NULL) ? (plRTLightBase*)os.obj->GetReference(0) : (plRTLightBase*)os.obj;  // JBW 4/7/99
+    gl = (os.obj->GetInterface(I_MAXSCRIPTPLUGIN) != nullptr) ? (plRTLightBase*)os.obj->GetReference(0) : (plRTLightBase*)os.obj;  // JBW 4/7/99
 }   
 
 static Color blackCol(0,0,0);
@@ -202,7 +201,7 @@ int BaseObjLight::Update(TimeValue t, const RendContext& rc, RenderGlobalContext
 OmniLight::OmniLight(INode *inode, BOOL forceShadowBuf ) : BaseObjLight(inode){
 
     //projector = /*doShadows =  shadowRay =*/  FALSE; 
-    //projMap = NULL;
+    //projMap = nullptr;
     needMultiple = FALSE;
 
 }
@@ -235,12 +234,12 @@ static Point3 MapToDir(Point3 p, int k) {
 static void GetMatrixForDir(Matrix3 &origm, Matrix3 &tm, int k ) {
     tm = origm;
     switch(k) {
-        case 0: tm.PreRotateY(-HALFPI); break;  // Map 0: +X axis   
-        case 1: tm.PreRotateY( HALFPI); break;  // Map 1: -X axis   
-        case 2: tm.PreRotateX( HALFPI); break;  // Map 2: +Y axis   
-        case 3: tm.PreRotateX(-HALFPI); break;  // Map 3: -Y axis   
-        case 4: tm.PreRotateY(   PI  ); break;  // Map 4: +Z axis   
-        case 5:                         break;  // Map 5: -Z axis   
+        case 0: tm.PreRotateY(-hsConstants::half_pi<float>); break;  // Map 0: +X axis
+        case 1: tm.PreRotateY( hsConstants::half_pi<float>); break;  // Map 1: -X axis
+        case 2: tm.PreRotateX( hsConstants::half_pi<float>); break;  // Map 2: +Y axis
+        case 3: tm.PreRotateX(-hsConstants::half_pi<float>); break;  // Map 3: -Y axis
+        case 4: tm.PreRotateY( hsConstants::pi<float>);      break;  // Map 4: +Z axis
+        case 5:                                              break;  // Map 5: -Z axis
         }
     }
 
@@ -257,7 +256,7 @@ int OmniLight::Update(TimeValue t, const RendContext & rc,
     ObjectState os = inode->EvalWorldState(t);
     LightObject* lob = (LightObject *)os.obj;       
     assert(os.obj->SuperClassID()==LIGHT_CLASS_ID);
-    plRTOmniLight* gl = (lob->GetInterface(I_MAXSCRIPTPLUGIN) != NULL) ? (plRTOmniLight*)lob->GetReference(0) : (plRTOmniLight*)lob;  // JBW 4/7/99
+    plRTOmniLight* gl = (lob->GetInterface(I_MAXSCRIPTPLUGIN) != nullptr) ? (plRTOmniLight*)lob->GetReference(0) : (plRTOmniLight*)lob;  // JBW 4/7/99
 
     decayType = gl->GetDecayType(); 
     decayRadius = gl->GetDecayRadius(t);
@@ -289,7 +288,7 @@ int OmniLight::Update(TimeValue t, const RendContext & rc,
 
 SpotLight::SpotLight(INode *inode, BOOL forceShadowBuf ):BaseObjLight(inode) 
 {
-    projMap = NULL;
+    projMap = nullptr;
 }
 
 int SpotLight::Update(TimeValue t, const RendContext &rc, RenderGlobalContext *rgc, BOOL shadows, BOOL shadowGeomChanged)
@@ -309,7 +308,7 @@ int SpotLight::Update(TimeValue t, const RendContext &rc, RenderGlobalContext *r
     ObjectState os = inode->EvalWorldState(t);
     LightObject* lob = (LightObject *)os.obj;       
     assert(os.obj->SuperClassID()==LIGHT_CLASS_ID);
-    plRTLightBase* gl = (lob->GetInterface(I_MAXSCRIPTPLUGIN) != NULL) ? (plRTLightBase*)lob->GetReference(0) : (plRTLightBase*)lob;  // JBW 4/7/99
+    plRTLightBase* gl = (lob->GetInterface(I_MAXSCRIPTPLUGIN) != nullptr) ? (plRTLightBase*)lob->GetReference(0) : (plRTLightBase*)lob;  // JBW 4/7/99
 
     decayType = gl->GetDecayType(); 
     decayRadius = gl->GetDecayRadius(t);
@@ -359,7 +358,7 @@ BOOL SpotLight::IsFacingLight(Point3 &dir)
 
 DirLight::DirLight(INode *inode, BOOL forceShadowBuf ) : BaseObjLight(inode)
 {
-    projMap = NULL;
+    projMap = nullptr;
 }
 
 int DirLight::Update(TimeValue t, const RendContext &rc, 
@@ -376,7 +375,7 @@ int DirLight::Update(TimeValue t, const RendContext &rc,
     ObjectState os = inode->EvalWorldState(t);
     LightObject* lob = (LightObject *)os.obj;       
     assert(os.obj->SuperClassID()==LIGHT_CLASS_ID);
-    plRTDirLight* gl = (lob->GetInterface(I_MAXSCRIPTPLUGIN) != NULL) ? (plRTDirLight*)lob->GetReference(0) : (plRTDirLight*)lob;  // JBW 4/7/99
+    plRTDirLight* gl = (lob->GetInterface(I_MAXSCRIPTPLUGIN) != nullptr) ? (plRTDirLight*)lob->GetReference(0) : (plRTDirLight*)lob;  // JBW 4/7/99
 
     //projector =  gl->GetProjector();
 
@@ -413,15 +412,15 @@ int DirLight::UpdateViewDepParams(const Matrix3& worldToCam) {
 
 plRTOmniLight::plRTOmniLight()
 {
-    fIP = NULL; 
-    fLightPB = NULL; 
+    fIP = nullptr;
+    fLightPB = nullptr;
     fClassDesc = plRTOmniLightDesc::GetDesc();
     fClassDesc->MakeAutoParamBlocks(this);
 
     fLightPB->SetValue(kLightColor, 0,  Color(255,255,255));
     SetHSVColor(0, Point3(255, 255, 255));
     
-    fTex = NULL;
+    fTex = nullptr;
 
     meshBuilt = 0; 
     
@@ -498,9 +497,9 @@ void    plRTOmniLight::DrawCone( TimeValue t, GraphicsWindow *gw, float dist )
     /// Draw sphere-thingy
     GetAttenPoints( t, dist, pts );
 
-    gw->polyline( NUM_CIRC_PTS, pts,                    nil, nil, true, nil );
-    gw->polyline( NUM_CIRC_PTS, pts + NUM_CIRC_PTS,     nil, nil, true, nil );
-    gw->polyline( NUM_CIRC_PTS, pts + 2 * NUM_CIRC_PTS, nil, nil, true, nil );
+    gw->polyline( NUM_CIRC_PTS, pts,                    nullptr, nullptr, true, nullptr);
+    gw->polyline( NUM_CIRC_PTS, pts + NUM_CIRC_PTS,     nullptr, nullptr, true, nullptr);
+    gw->polyline( NUM_CIRC_PTS, pts + 2 * NUM_CIRC_PTS, nullptr, nullptr, true, nullptr);
 }
 
 
@@ -588,15 +587,15 @@ void    plRTOmniLight::GetLocalBoundBox( TimeValue t, INode *node, ViewExp *vpt,
 
 plRTSpotLight::plRTSpotLight()
 {
-    fIP = NULL; 
-    fLightPB = NULL; 
+    fIP = nullptr;
+    fLightPB = nullptr;
     fClassDesc = plRTSpotLightDesc::GetDesc();
     fClassDesc->MakeAutoParamBlocks(this);
 
     fLightPB->SetValue(kLightColor, 0,  Color(255,255,255));
     SetHSVColor(0, Point3(255, 255, 255));
     
-    fTex = NULL;
+    fTex = nullptr;
     meshBuilt = 0; 
     
     IBuildMeshes(true);
@@ -620,7 +619,7 @@ RefTargetHandle plRTSpotLight::Clone(RemapDir &remap)
 Texmap  *plRTSpotLight::GetProjMap()
 {
     if( !fLightPB->GetInt( kUseProjectorBool ) )
-        return nil;
+        return nullptr;
 
     Interval valid = Interval(0,0); 
     if( !GetTex() )
@@ -634,7 +633,7 @@ Texmap  *plRTSpotLight::GetProjMap()
 
     if( GetTex() )
     {
-        const char* dbgTexName = GetTex()->GetName();
+        auto dbgTexName = GetTex()->GetName();
 
         IParamBlock2 *bitmapPB = fTex->GetParamBlockByID(plLayerTex::kBlkBitmap);
         hsAssert(bitmapPB, "LayerTex with no param block");
@@ -709,7 +708,7 @@ void    plRTSpotLight::DrawCone( TimeValue t, GraphicsWindow *gw, float dist )
     /// Draw hotspot cone
     gw->setColor( LINE_COLOR, GetUIColor( COLOR_HOTSPOT ) );
     GetConePoints( t, -1.0f, GetHotspot( t ), dist, pts );
-    gw->polyline( NUM_CIRC_PTS, pts, nil, nil, true, nil );
+    gw->polyline(NUM_CIRC_PTS, pts, nullptr, nullptr, true, nullptr);
 
     if( GetUseAtten() )
     {
@@ -717,7 +716,7 @@ void    plRTSpotLight::DrawCone( TimeValue t, GraphicsWindow *gw, float dist )
         for( i = 0; i < NUM_CIRC_PTS; i += SEG_INDEX )
         {
             u[ 1 ] = pts[ i ];
-            gw->polyline( 2, u, nil, nil, true, nil );
+            gw->polyline(2, u, nullptr, nullptr, true, nullptr);
         }
     }
     else
@@ -734,7 +733,7 @@ void    plRTSpotLight::DrawCone( TimeValue t, GraphicsWindow *gw, float dist )
     {
         gw->setColor( LINE_COLOR, GetUIColor( COLOR_FALLOFF ) );
         GetConePoints( t, -1.0f, GetFallsize( t ), dist, pts );
-        gw->polyline( NUM_CIRC_PTS, pts, nil, nil, true, nil );
+        gw->polyline(NUM_CIRC_PTS, pts, nullptr, nullptr, true, nullptr);
 
         if( GetUseAtten() )
         {
@@ -742,7 +741,7 @@ void    plRTSpotLight::DrawCone( TimeValue t, GraphicsWindow *gw, float dist )
             for( i = 0; i < NUM_CIRC_PTS; i += SEG_INDEX )
             {
                 u[ 1 ] = pts[ i ];
-                gw->polyline( 2, u, nil, nil, true, nil );
+                gw->polyline(2, u, nullptr, nullptr, true, nullptr);
             }
         }
         else
@@ -794,15 +793,15 @@ void    plRTSpotLight::GetLocalBoundBox( TimeValue t, INode *node, ViewExp *vpt,
 
 plRTDirLight::plRTDirLight()
 {
-    fIP = NULL; 
-    fLightPB = NULL; 
+    fIP = nullptr;
+    fLightPB = nullptr;
     fClassDesc = plRTDirLightDesc::GetDesc();
     fClassDesc->MakeAutoParamBlocks(this);
 
     fLightPB->SetValue(kLightColor, 0,  Color(255,255,255));
     SetHSVColor(0, Point3(255, 255, 255));
     
-    fTex = NULL;
+    fTex = nullptr;
     meshBuilt = 0; 
     
     IBuildMeshes(true);
@@ -857,7 +856,7 @@ void    plRTDirLight::DrawCone( TimeValue t, GraphicsWindow *gw, float dist )
             {
                 d = dist * ( 5 - r ) / 5;
                 IBuildZArrow( i * spacing, j * spacing, -d, -10.f, arrow );
-                gw->polyline( 6, arrow, nil, nil, true, nil );
+                gw->polyline(6, arrow, nullptr, nullptr, true, nullptr);
             }
         }
     }

@@ -49,12 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pyGlueDefinitions.h"
 #include "pyGUIControl.h"
-#include "pyGlueHelpers.h"
 
-class pyDynamicText;
-class pyKey;
 class plKey;
+class pyKey;
 
 class pyGUIControlDynamicText : public pyGUIControl
 {
@@ -73,11 +72,11 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static bool IsGUIControlDynamicText(pyKey& gckey);
+    static bool IsGUIControlDynamicText(const plKey& key);
 
     //specific interface functions
-    virtual uint32_t  GetNumMaps();
-    virtual PyObject* GetMap(uint32_t i); // returns pyDynamicText
+    uint32_t GetNumMaps();
+    PyObject* GetMap(uint32_t i); // returns pyDynamicText
 };
 
 #endif // _pyGUIControlButton_h_

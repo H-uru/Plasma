@@ -40,16 +40,18 @@ Mead, WA   99021
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plClientLauncher.h"
+
+#include "HeadSpin.h"
+#include "plCmdParser.h"
 #include "plFileSystem.h"
 #include "plProduct.h"
 #include "hsThread.h"
 #include "hsTimer.h"
-#include "plCmdParser.h"
 
-#include "pnUtils/pnUtils.h"
 #include "pnAsyncCore/pnAsyncCore.h"
+
+#include "plMessageBox/hsMessageBox.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plStatusLog/plStatusLog.h"
 
@@ -62,31 +64,30 @@ PF_CONSOLE_LINK_FILE(Core)
 #include <algorithm>
 #include <curl/curl.h>
 #include <deque>
+#include <thread>
+#include <chrono>
 
 plClientLauncher::ErrorFunc s_errorProc = nullptr; // don't even ask, cause I'm not happy about this.
 
 const int kNetTransTimeout = 5 * 60 * 1000;        // 5m
 const int kShardStatusUpdateTime = 5;              // 5s
 const int kAsyncCoreShutdownTime = 2 * 1000;       // 2s
-const int kNetCoreUpdateSleepTime = 10;            // 10ms
+const std::chrono::milliseconds kNetCoreUpdateSleepTime(10);    // 10ms
 
 // ===================================================
 
 class plShardStatus : public hsThread
 {
     double        fLastUpdate;
-    volatile bool fRunning;
     hsEvent       fUpdateEvent;
     char          fCurlError[CURL_ERROR_SIZE];
 
 public:
     plClientLauncher::StatusFunc fShardFunc;
 
-    plShardStatus() :
-        fRunning(true), fLastUpdate(0)
-    { }
+    plShardStatus() : fLastUpdate() { }
 
-    virtual hsError Run();
+    void Run() override;
     void Shutdown();
     void Update();
 };
@@ -95,47 +96,47 @@ static size_t ICurlCallback(void* buffer, size_t size, size_t nmemb, void* threa
 {
     static char status[256];
 
-    strncpy(status, (const char *)buffer, std::min<size_t>(size * nmemb, arrsize(status)));
-    status[arrsize(status) - 1] = 0;
+    size_t count = std::min<size_t>(size * nmemb, std::size(status) - 1);
+    memcpy(status, buffer, count);
+    status[count] = 0;
     static_cast<plShardStatus*>(thread)->fShardFunc(status);
     return size * nmemb;
 }
 
-hsError plShardStatus::Run()
+void plShardStatus::Run()
 {
-    {
-        plString url = GetServerStatusUrl();
+    SetThisThreadName(ST_LITERAL("plShardStatus"));
 
-        // initialize CURL
-        std::unique_ptr<CURL, std::function<void(CURL*)>> curl(curl_easy_init(), curl_easy_cleanup);
-        curl_easy_setopt(curl.get(), CURLOPT_ERRORBUFFER, fCurlError);
-        curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "UruClient/1.0");
-        curl_easy_setopt(curl.get(), CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, this);
-        curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, ICurlCallback);
+    ST::string url = GetServerStatusUrl();
 
-        // we want to go ahead and run once
-        fUpdateEvent.Signal();
+    // initialize CURL
+    std::unique_ptr<CURL, decltype(&curl_easy_cleanup)> curl(curl_easy_init(), curl_easy_cleanup);
+    curl_easy_setopt(curl.get(), CURLOPT_ERRORBUFFER, fCurlError);
+    curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "UruClient/1.0");
+    curl_easy_setopt(curl.get(), CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl.get(), CURLOPT_FOLLOWLOCATION, 1);
+    curl_easy_setopt(curl.get(), CURLOPT_MAXREDIRS, 5);
+    curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, this);
+    curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, ICurlCallback);
 
-        // loop until we die!
-        do
-        {
-            fUpdateEvent.Wait();
-            if (!fRunning)
-                break;
+    // we want to go ahead and run once
+    fUpdateEvent.Signal();
 
-            if (!url.IsEmpty() && curl_easy_perform(curl.get()))
-                fShardFunc(fCurlError);
-            fLastUpdate = hsTimer::GetSysSeconds();
-        } while (fRunning);
-    }
+    // loop until we die!
+    do {
+        fUpdateEvent.Wait();
+        if (GetQuit())
+            break;
 
-    return hsOK;
+        if (!url.empty() && curl_easy_perform(curl.get()))
+            fShardFunc(fCurlError);
+        fLastUpdate = hsTimer::GetSysSeconds();
+    } while (!GetQuit());
 }
 
 void plShardStatus::Shutdown()
 {
-    fRunning = false;
+    SetQuit(true);;
     fUpdateEvent.Signal();
 }
 
@@ -158,7 +159,7 @@ public:
     std::deque<plFileName> fRedistQueue;
 
     plRedistUpdater()
-        : fSuccess(true)
+        : fParent(), fSuccess(true)
     { }
 
     ~plRedistUpdater()
@@ -172,28 +173,29 @@ public:
         );
     }
 
-    virtual void OnQuit()
+    void OnQuit() override
     {
         // If we succeeded, then we should launch the game client...
         if (fSuccess)
             fParent->LaunchClient();
     }
 
-    virtual hsError Run()
+    void Run() override
     {
+        SetThisThreadName(ST_LITERAL("plRedistUpdater"));
+
         while (!fRedistQueue.empty()) {
             if (fInstallProc(fRedistQueue.back()))
                 fRedistQueue.pop_back();
             else {
                 s_errorProc(kNetErrInternalError, fRedistQueue.back().AsString());
                 fSuccess = false;
-                return hsFail;
+                return;
             }
         }
-        return hsOK;
     }
 
-    virtual void Start()
+    void Start() override
     {
         if (fRedistQueue.empty())
             OnQuit();
@@ -210,23 +212,24 @@ plClientLauncher::plClientLauncher() :
     fPatcherFactory(nullptr),
     fClientExecutable(plManifest::ClientExecutable()),
     fStatusThread(new plShardStatus()),
-    fInstallerThread(new plRedistUpdater())
+    fInstallerThread(new plRedistUpdater()),
+    fNetCoreState(kNetCoreInactive)
 {
-    pfPatcher::GetLog()->AddLine(plProduct::ProductString().c_str());
+    pfPatcher::GetLog()->AddLine(plProduct::ProductString());
 }
 
 plClientLauncher::~plClientLauncher() { }
 
 // ===================================================
 
-plString plClientLauncher::GetAppArgs() const
+ST::string plClientLauncher::GetAppArgs() const
 {
     // If -Repair was specified, there are no args for the next call...
     if (hsCheckBits(fFlags, kRepairGame)) {
-        return "";
+        return ST::string();
     }
 
-    plStringStream ss;
+    ST::string_stream ss;
     ss << "-ServerIni=";
     ss << fServerIni.AsString();
 
@@ -237,11 +240,13 @@ plString plClientLauncher::GetAppArgs() const
         ss << " -PatchOnly";
     if (hsCheckBits(fFlags, kSkipLoginDialog))
         ss << " -SkipLoginDialog";
+    if (hsCheckBits(fFlags, kSkipIntroMovies))
+        ss << " -SkipIntroMovies";
 
-    return ss.GetString();
+    return ss.to_string();
 }
 
-void plClientLauncher::IOnPatchComplete(ENetError result, const plString& msg)
+void plClientLauncher::IOnPatchComplete(ENetError result, const ST::string& msg)
 {
     if (IS_NET_SUCCESS(result)) {
         // a couple of options
@@ -265,8 +270,20 @@ bool plClientLauncher::IApproveDownload(const plFileName& file)
 {
     // So, for a repair, what we want to do is quite simple.
     // That is: download everything that is NOT in the root directory.
-    plFileName path = file.StripFileName();
-    return !path.AsString().IsEmpty();
+    if (hsCheckBits(fFlags, kGameDataOnly)) {
+        plFileName path = file.StripFileName();
+        return path.IsValid();
+    }
+
+    // If we have successfully self-patched, don't accept any manifest
+    // entries matching the patcher, in case the patcher appears in the
+    // client manifests...
+    if (hsCheckBits(fFlags, kHaveSelfPatched)) {
+        return file.AsString().compare_i(plManifest::PatcherExecutable().AsString()) != 0;
+    }
+
+    // Passes a sniff test!
+    return true;
 }
 
 void plClientLauncher::LaunchClient() const
@@ -288,12 +305,9 @@ void plClientLauncher::PatchClient()
 
     pfPatcher* patcher = fPatcherFactory();
     patcher->OnCompletion(std::bind(&plClientLauncher::IOnPatchComplete, this, std::placeholders::_1, std::placeholders::_2));
+    patcher->OnFileDownloadDesired(std::bind(&plClientLauncher::IApproveDownload, this, std::placeholders::_1));
     patcher->OnSelfPatch([&](const plFileName& file) { fClientExecutable = file; });
     patcher->OnRedistUpdate([&](const plFileName& file) { fInstallerThread->fRedistQueue.push_back(file); });
-
-    // If this is a repair, we need to approve the downloads...
-    if (hsCheckBits(fFlags, kGameDataOnly))
-        patcher->OnFileDownloadDesired(std::bind(&plClientLauncher::IApproveDownload, this, std::placeholders::_1));
 
     // Let's get 'er done.
     if (hsCheckBits(fFlags, kHaveSelfPatched)) {
@@ -306,23 +320,23 @@ void plClientLauncher::PatchClient()
     patcher->Start();
 }
 
-bool plClientLauncher::CompleteSelfPatch(std::function<void(void)> waitProc) const
+bool plClientLauncher::CompleteSelfPatch(const std::function<void()>& waitProc) const
 {
     if (hsCheckBits(fFlags, kHaveSelfPatched))
         return false;
 
-    plString myExe = plFileSystem::GetCurrentAppPath().GetFileName();
-    if (myExe.CompareI(plManifest::PatcherExecutable().AsString()) != 0) {
+    ST::string myExe = plFileSystem::GetCurrentAppPath().GetFileName();
+    if (myExe.compare_i(plManifest::PatcherExecutable().AsString()) != 0) {
         waitProc();
 
         // so now we need to unlink the old patcher, and move ME into that fool's place...
         // then we can continue on our merry way!
         if (!plFileSystem::Unlink(plManifest::PatcherExecutable())) {
-            hsMessageBox("Failed to delete old patcher executable!", "Error", hsMessageBoxNormal, hsMessageBoxIconError);
+            hsMessageBox(ST_LITERAL("Failed to delete old patcher executable!"), ST_LITERAL("Error"), hsMessageBoxNormal, hsMessageBoxIconError);
             return true;
         }
         if (!plFileSystem::Move(plFileSystem::GetCurrentAppPath(), plManifest::PatcherExecutable())) {
-            hsMessageBox("Failed to move patcher executable!", "Error", hsMessageBoxNormal, hsMessageBoxIconError);
+            hsMessageBox(ST_LITERAL("Failed to move patcher executable!"), ST_LITERAL("Error"), hsMessageBoxNormal, hsMessageBoxIconError);
             return true;
         }
 
@@ -335,14 +349,14 @@ bool plClientLauncher::CompleteSelfPatch(std::function<void(void)> waitProc) con
 
 // ===================================================
 
-static void IGotFileServIPs(ENetError result, void* param, const plString& addr)
+static void IGotFileServIPs(ENetError result, void* param, const ST::string& addr)
 {
     plClientLauncher* launcher = static_cast<plClientLauncher*>(param);
     NetCliGateKeeperDisconnect();
 
     if (IS_NET_SUCCESS(result)) {
         // bah... why do I even bother
-        plString eapSucks[] = { addr };
+        ST::string eapSucks[] = { addr };
         NetCliFileStartConnect(eapSucks, 1, true);
 
         // Who knows if we will actually connect. So let's start updating.
@@ -354,7 +368,7 @@ static void IGotFileServIPs(ENetError result, void* param, const plString& addr)
 static void IEapSucksErrorProc(ENetProtocol protocol, ENetError error)
 {
     if (s_errorProc) {
-        plString msg = plFormat("Protocol: {}", NetProtocolToString(protocol));
+        ST::string msg = ST::format("Protocol: {}", NetProtocolToString(protocol));
         s_errorProc(error, msg);
     }
 }
@@ -373,31 +387,38 @@ void plClientLauncher::InitializeNetCore()
     NetClientSetTransTimeoutMs(kNetTransTimeout);
 
     // Gotta grab the filesrvs from the gate
-    const plString* addrs;
+    const ST::string* addrs;
     uint32_t num = GetGateKeeperSrvHostnames(addrs);
 
     NetCliGateKeeperStartConnect(addrs, num);
     NetCliGateKeeperFileSrvIpAddressRequest(IGotFileServIPs, this, true);
+
+    // Windows is getting a little unreliable about reporting its own state, so we keep
+    // track of whether or not we are active now.
+    fNetCoreState = kNetCoreActive;
 }
 
 // ===================================================
 
-void plClientLauncher::PumpNetCore() const
+bool plClientLauncher::PumpNetCore() const
 {
     // this ain't net core, but it needs to be pumped :(
     hsTimer::IncSysSeconds();
 
-    // pump eap
-    NetClientUpdate();
+    if (fNetCoreState == kNetCoreActive) {
+        // pump eap
+        NetClientUpdate();
 
-    // pump shard status
-    fStatusThread->Update();
+        // pump shard status
+        fStatusThread->Update();
+    }
 
     // don't nom all the CPU... kthx
-    hsSleep::Sleep(kNetCoreUpdateSleepTime);
+    std::this_thread::sleep_for(kNetCoreUpdateSleepTime);
+    return fNetCoreState != kNetCoreShutdown;
 }
 
-void plClientLauncher::ShutdownNetCore() const
+void plClientLauncher::ShutdownNetCore()
 {
     // shutdown shard status
     fStatusThread->Shutdown();
@@ -413,6 +434,9 @@ void plClientLauncher::ShutdownNetCore() const
 
     // shutdown eap (part deux)
     AsyncCoreDestroy(kAsyncCoreShutdownTime);
+
+    // Denote shutdown
+    fNetCoreState = kNetCoreShutdown;
 }
 
 // ===================================================
@@ -432,23 +456,24 @@ void plClientLauncher::ParseArguments()
         fFlags |= flag;
 
     enum { kArgServerIni, kArgNoSelfPatch, kArgImage, kArgRepairGame, kArgPatchOnly,
-           kArgSkipLoginDialog };
+           kArgSkipLoginDialog, kArgSkipIntroMovies };
     const plCmdArgDef cmdLineArgs[] = {
         { kCmdArgFlagged | kCmdTypeString, "ServerIni", kArgServerIni },
         { kCmdArgFlagged | kCmdTypeBool, "NoSelfPatch", kArgNoSelfPatch },
         { kCmdArgFlagged | kCmdTypeBool, "Image", kArgImage },
         { kCmdArgFlagged | kCmdTypeBool, "Repair", kArgRepairGame },
         { kCmdArgFlagged | kCmdTypeBool, "PatchOnly", kArgPatchOnly },
-        { kCmdArgFlagged | kCmdTypeBool, "SkipLoginDialog", kArgSkipLoginDialog }
+        { kCmdArgFlagged | kCmdTypeBool, "SkipLoginDialog", kArgSkipLoginDialog },
+        { kCmdArgFlagged | kCmdTypeBool, "SkipIntroMovies", kArgSkipIntroMovies }
     };
 
-    std::vector<plString> args;
+    std::vector<ST::string> args;
     args.reserve(__argc);
     for (size_t i = 0; i < __argc; i++) {
-        args.push_back(plString::FromUtf8(__argv[i]));
+        args.push_back(ST::string::from_utf8(__argv[i]));
     }
 
-    plCmdParser cmdParser(cmdLineArgs, arrsize(cmdLineArgs));
+    plCmdParser cmdParser(cmdLineArgs, std::size(cmdLineArgs));
     cmdParser.Parse(args);
 
     // cache 'em
@@ -459,10 +484,11 @@ void plClientLauncher::ParseArguments()
     APPLY_FLAG(kArgRepairGame, kRepairGame);
     APPLY_FLAG(kArgPatchOnly, kPatchOnly);
     APPLY_FLAG(kArgSkipLoginDialog, kSkipLoginDialog);
+    APPLY_FLAG(kArgSkipIntroMovies, kSkipIntroMovies);
 
     // last chance setup
     if (hsCheckBits(fFlags, kPatchOnly))
-        fClientExecutable = "";
+        fClientExecutable = plFileName();
     else if (hsCheckBits(fFlags, kRepairGame))
         fClientExecutable = plManifest::PatcherExecutable();
 
@@ -471,15 +497,15 @@ void plClientLauncher::ParseArguments()
 
 void plClientLauncher::SetErrorProc(ErrorFunc proc)
 {
-    s_errorProc = proc;
+    s_errorProc = std::move(proc);
 }
 
 void plClientLauncher::SetInstallerProc(InstallRedistFunc proc)
 {
-    fInstallerThread->fInstallProc = proc;
+    fInstallerThread->fInstallProc = std::move(proc);
 }
 
 void plClientLauncher::SetShardProc(StatusFunc proc)
 {
-    fStatusThread->fShardFunc = proc;
+    fStatusThread->fShardFunc = std::move(proc);
 }

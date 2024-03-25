@@ -1,9 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plNetCommon_SOURCES
     plClientGuid.cpp
     plNetCommon.cpp
@@ -18,7 +12,6 @@ set(plNetCommon_SOURCES
 set(plNetCommon_HEADERS
     plClientGuid.h
     plNetCommon.h
-    plNetCommonConstants.h
     plNetCommonCreatable.h
     plNetCommonHelpers.h
     plNetMember.h
@@ -29,7 +22,31 @@ set(plNetCommon_HEADERS
     plSpawnPointInfo.h
 )
 
-add_library(plNetCommon STATIC ${plNetCommon_SOURCES} ${plNetCommon_HEADERS})
+plasma_library(plNetCommon
+    SOURCES ${plNetCommon_SOURCES} ${plNetCommon_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
+
+target_include_directories(plNetCommon PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
+target_link_libraries(plNetCommon
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnKeyedObject
+        pnNetCommon
+        pnNetProtocol
+        pnUUID
+    PRIVATE
+        pnMessage
+        pnNucleusInc
+        plCompression
+        plMessage
+        plNetClientComm
+        plResMgr
+        plStatusLog
+        pfMessage # pfKIMsg in plNetMsgScreener
+)
 
 source_group("Source Files" FILES ${plNetCommon_SOURCES})
 source_group("Header Files" FILES ${plNetCommon_HEADERS})

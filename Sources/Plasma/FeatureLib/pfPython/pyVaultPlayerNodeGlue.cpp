@@ -40,12 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pyVaultPlayerNode.h"
-#include "pyAgeInfoStruct.h"
+
+#include <string_theory/string>
+
 #include "plVault/plVault.h"
+
+#include "pyAgeInfoStruct.h"
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptVaultPlayerNode, pyVaultPlayerNode);
@@ -125,7 +127,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultPlayerNode, getLinkToCity)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, getOwnedAgeLink, args)
 {
-    PyObject* infoObj = NULL;
+    PyObject* infoObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &infoObj))
     {
         PyErr_SetString(PyExc_TypeError, "getOwnedAgeLink expects a ptAgeInfoStruct");
@@ -142,8 +144,8 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, getOwnedAgeLink, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, removeOwnedAgeLink, args)
 {
-    char* guid;
-    if (!PyArg_ParseTuple(args, "s", &guid))
+    ST::string guid;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guid))
     {
         PyErr_SetString(PyExc_TypeError, "removeOwnedAgeLink expects a string");
         PYTHON_RETURN_ERROR;
@@ -154,7 +156,7 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, removeOwnedAgeLink, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, getVisitAgeLink, args)
 {
-    PyObject* infoObj = NULL;
+    PyObject* infoObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &infoObj))
     {
         PyErr_SetString(PyExc_TypeError, "getVisitAgeLink expects a ptAgeInfoStruct");
@@ -171,8 +173,8 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, getVisitAgeLink, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, removeVisitAgeLink, args)
 {
-    char* guid;
-    if (!PyArg_ParseTuple(args, "s", &guid))
+    ST::string guid;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guid))
     {
         PyErr_SetString(PyExc_TypeError, "removeVisitAgeLink expects a string");
         PYTHON_RETURN_ERROR;
@@ -183,8 +185,8 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, removeVisitAgeLink, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, findChronicleEntry, args)
 {
-    char* entryName;
-    if (!PyArg_ParseTuple(args, "s", &entryName))
+    ST::string entryName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &entryName))
     {
         PyErr_SetString(PyExc_TypeError, "findChronicleEntry expects a string");
         PYTHON_RETURN_ERROR;
@@ -194,8 +196,8 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, findChronicleEntry, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, setPlayerName, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "setPlayerName expects a string");
         PYTHON_RETURN_ERROR;
@@ -206,13 +208,13 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, setPlayerName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultPlayerNode, getPlayerName)
 {
-    return PyString_FromString(self->fThis->GetPlayerName().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetPlayerName());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, setAvatarShapeName, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "setAvatarShapeName expects a string");
         PYTHON_RETURN_ERROR;
@@ -223,7 +225,7 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, setAvatarShapeName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultPlayerNode, getAvatarShapeName)
 {
-    return PyString_FromString(self->fThis->GetAvatarShapeName().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetAvatarShapeName());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, setDisabled, args)
@@ -316,14 +318,7 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_DEFAULT_TYPE_WBASE(ptVaultPlayerNode, pyVaultNode, "Plasma vault player node");
 
 // required functions for PyObject interoperability
-PYTHON_CLASS_NEW_IMPL(ptVaultPlayerNode, pyVaultPlayerNode)
-
-PyObject *pyVaultPlayerNode::New(RelVaultNode* nfsNode)
-{
-    ptVaultPlayerNode *newObj = (ptVaultPlayerNode*)ptVaultPlayerNode_type.tp_new(&ptVaultPlayerNode_type, NULL, NULL);
-    newObj->fThis->fNode = nfsNode;
-    return (PyObject*)newObj;
-}
+PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultPlayerNode, pyVaultPlayerNode)
 
 PYTHON_CLASS_CHECK_IMPL(ptVaultPlayerNode, pyVaultPlayerNode)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptVaultPlayerNode, pyVaultPlayerNode)

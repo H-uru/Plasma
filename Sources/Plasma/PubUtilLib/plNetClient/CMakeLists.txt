@@ -1,9 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plNetClient_SOURCES
     plLinkEffectsMgr.cpp
     plNetCliAgeJoiner.cpp
@@ -35,7 +29,55 @@ set(plNetClient_HEADERS
     plNetVoiceList.h
 )
 
-add_library(plNetClient STATIC ${plNetClient_SOURCES} ${plNetClient_HEADERS})
+plasma_library(plNetClient
+    SOURCES ${plNetClient_SOURCES} ${plNetClient_HEADERS}
+    PRECOMPILED_HEADERS Pch.h
+    UNITY_BUILD
+)
+
+target_include_directories(plNetClient PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
+target_link_libraries(plNetClient
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        pnNetCommon
+        plMessage # plNetLinkingMgr
+        plNetClientComm
+        plNetCommon
+        plNetTransport
+        plUnifiedTime
+    PRIVATE
+        pnDispatch
+        pnMessage
+        pnModifier
+        pnNucleusInc
+        pnSceneObject
+        pnUtils
+        plAgeDescription
+        plAgeLoader
+        plAnimation
+        plAvatar
+        plContainer
+        plDrawable
+        plMessage
+        plMessageBox
+        plModifier
+        plNetClientRecorder
+        plNetGameLib
+        plNetMessage
+        plParticleSystem
+        plPipeline
+        plProgressMgr
+        plResMgr
+        plScene
+        plSDL
+        plStatusLog
+        plSurface
+        plVault
+        pfMessage # For pfKIMsg
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${plNetClient_SOURCES})
 source_group("Header Files" FILES ${plNetClient_HEADERS})

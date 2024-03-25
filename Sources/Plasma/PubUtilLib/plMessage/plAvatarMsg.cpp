@@ -39,19 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef NO_AV_MSGS
 
 #include "hsResMgr.h"
-#pragma hdrstop
 
 #include "plAvatarMsg.h"
 
 #include "plMessage/plOneShotCallbacks.h"
 #include "pnSceneObject/plSceneObject.h"
 
-#ifndef SERVER
-#   include "plAvatar/plAvBrain.h"
-#endif
+
+#include "plAvatar/plAvBrain.h"
 
 
 //////////////////////
@@ -69,7 +66,7 @@ plArmatureUpdateMsg::plArmatureUpdateMsg()
 plArmatureUpdateMsg::plArmatureUpdateMsg(const plKey &sender,
                                          bool isLocal, bool isPlayerControlled,
                                          plArmatureMod *armature)
-: plAvatarMsg(sender, nil),
+: plAvatarMsg(sender, nullptr),
   fIsLocal(isLocal),
   fIsPlayerControlled(isPlayerControlled),
   fArmature(armature),
@@ -125,12 +122,12 @@ void plAvatarSetTypeMsg::Write(hsStream *stream, hsResMgr *mgr)
 //////////////
 
 plAvTaskMsg::plAvTaskMsg()
-: plAvatarMsg(), fTask(nil)
+: plAvatarMsg(), fTask()
 {
 }
 
 plAvTaskMsg::plAvTaskMsg(const plKey &sender, const plKey &receiver)
-: plAvatarMsg(sender, receiver), fTask(nil)
+: plAvatarMsg(sender, receiver), fTask()
 {
 }
 
@@ -185,11 +182,11 @@ plAvSeekMsg::plAvSeekMsg()
 
 // CTOR(sender, receiver, seekKey, time)
 plAvSeekMsg::plAvSeekMsg(const plKey& sender, const plKey& receiver,
-                         const plKey &seekKey, float duration, bool smartSeek,
-                         plAvAlignment alignType, const plString& animName, bool noSeek, 
+                         plKey seekKey, float duration, bool smartSeek,
+                         plAvAlignment alignType, const ST::string& animName, bool noSeek,
                          uint8_t flags, plKey finishKey)
 : plAvTaskMsg(sender, receiver),
-  fSeekPoint(seekKey),
+  fSeekPoint(std::move(seekKey)),
   fTargetPos(0, 0, 0),
   fTargetLookAt(0, 0, 0),
   fDuration(duration),
@@ -198,7 +195,7 @@ plAvSeekMsg::plAvSeekMsg(const plKey& sender, const plKey& receiver,
   fAlignType(alignType),
   fNoSeek(noSeek),
   fFlags(flags),
-  fFinishKey(finishKey),
+  fFinishKey(std::move(finishKey)),
   fFinishMsg(nullptr)
 {
 }
@@ -235,7 +232,7 @@ void plAvSeekMsg::Read(hsStream *stream, hsResMgr *mgr)
         fTargetLookAt.Read(stream);
     }
 
-    fDuration = stream->ReadLEScalar();
+    fDuration = stream->ReadLEFloat();
     fSmartSeek = stream->ReadBool();
     fAnimName = stream->ReadSafeString();
     fAlignType = static_cast<plAvAlignment>(stream->ReadLE16());
@@ -256,7 +253,7 @@ void plAvSeekMsg::Write(hsStream *stream, hsResMgr *mgr)
         fTargetLookAt.Write(stream);
     }
 
-    stream->WriteLEScalar(fDuration);
+    stream->WriteLEFloat(fDuration);
     stream->WriteBool(fSmartSeek);
     stream->WriteSafeString(fAnimName);
     stream->WriteLE16(static_cast<uint16_t>(fAlignType));
@@ -289,16 +286,16 @@ void plAvTaskSeekDoneMsg::Write(hsStream *stream, hsResMgr *mgr)
 
 // CTOR()
 plAvOneShotMsg::plAvOneShotMsg()
-: plAvSeekMsg(), fDrivable(false), fReversible(false), fCallbacks(nil)
+: plAvSeekMsg(), fDrivable(false), fReversible(false), fCallbacks()
 {
 }
 
 // CTOR(sender, receiver, seekKey, time)
 plAvOneShotMsg::plAvOneShotMsg(const plKey &sender, const plKey& receiver,
                          const plKey& seekKey, float duration, bool smartSeek,
-                         const plString &animName, bool drivable, bool reversible)
+                         const ST::string &animName, bool drivable, bool reversible)
 : plAvSeekMsg(sender, receiver, seekKey, duration, smartSeek, kAlignHandle, animName),
-  fDrivable(drivable), fReversible(reversible), fCallbacks(nil)
+  fDrivable(drivable), fReversible(reversible), fCallbacks()
 {
 }
 
@@ -306,7 +303,7 @@ plAvOneShotMsg::plAvOneShotMsg(const plKey &sender, const plKey& receiver,
 plAvOneShotMsg::~plAvOneShotMsg()
 {
     hsRefCnt_SafeUnRef(fCallbacks);
-    fCallbacks = nil;
+    fCallbacks = nullptr;
 }
 
 // READ
@@ -377,7 +374,7 @@ plAvBrainGenericMsg::plAvBrainGenericMsg(const plKey& sender, const plKey &recei
 {
 }
 
-plAvBrainGenericMsg::plAvBrainGenericMsg(plKey sender, plKey receiver,
+plAvBrainGenericMsg::plAvBrainGenericMsg(const plKey& sender, const plKey& receiver,
                                          Type type, int stage, int newLoopCount)
 : plAvatarMsg(sender, receiver),
   fType(type),
@@ -395,13 +392,13 @@ plAvBrainGenericMsg::plAvBrainGenericMsg(plKey sender, plKey receiver,
 void plAvBrainGenericMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
     plAvatarMsg::Write(stream, mgr);
-    stream->WriteLE32(fType);
+    stream->WriteLE32((uint32_t)fType);
     stream->WriteLE32(fWhichStage);
     stream->WriteBool(fSetTime);
-    stream->WriteLEScalar(fNewTime);
+    stream->WriteLEFloat(fNewTime);
     stream->WriteBool(fSetDirection);
     stream->WriteBool(fNewDirection);
-    stream->WriteLEScalar(fTransitionTime);
+    stream->WriteLEFloat(fTransitionTime);
 }
 
 void plAvBrainGenericMsg::Read(hsStream *stream, hsResMgr *mgr)
@@ -410,10 +407,10 @@ void plAvBrainGenericMsg::Read(hsStream *stream, hsResMgr *mgr)
     fType = static_cast<plAvBrainGenericMsg::Type>(stream->ReadLE32());
     fWhichStage = stream->ReadLE32();
     fSetTime = stream->ReadBool();
-    fNewTime = stream->ReadLEScalar();
+    fNewTime = stream->ReadLEFloat();
     fSetDirection = stream->ReadBool();
     fNewDirection = stream->ReadBool();
-    fTransitionTime = stream->ReadLEScalar();
+    fTransitionTime = stream->ReadLEFloat();
 }
 
 enum AvBrainGenericFlags
@@ -442,19 +439,19 @@ void plAvBrainGenericMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kAvBrainGenericType
-    s->WriteLE32(fType);
+    s->WriteLE32((uint32_t)fType);
     // kAvBrainGenericWhich 
     s->WriteLE32(fWhichStage);
     // kAvBrainGenericSetTime   
     s->WriteBool(fSetTime);
     // kAvBrainGenericNewTime   
-    s->WriteLEScalar(fNewTime);
+    s->WriteLEFloat(fNewTime);
     // kAvBrainGenericSetDir    
     s->WriteBool(fSetDirection);
     // kAvBrainGenericNewDir    
     s->WriteBool(fNewDirection);
     // kAvBrainGenericTransTime 
-    s->WriteLEScalar(fTransitionTime);
+    s->WriteLEFloat(fTransitionTime);
 }
 
 void plAvBrainGenericMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
@@ -471,13 +468,13 @@ void plAvBrainGenericMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kAvBrainGenericSetTime))
         fSetTime = s->ReadBool();
     if (contentFlags.IsBitSet(kAvBrainGenericNewTime))
-        fNewTime = s->ReadLEScalar();
+        fNewTime = s->ReadLEFloat();
     if (contentFlags.IsBitSet(kAvBrainGenericSetDir))
         fSetDirection = s->ReadBool();
     if (contentFlags.IsBitSet(kAvBrainGenericNewDir))
         fNewDirection = s->ReadBool();
     if (contentFlags.IsBitSet(kAvBrainGenericTransTime))
-        fTransitionTime = s->ReadLEScalar();
+        fTransitionTime = s->ReadLEFloat();
 }
 
 ///////////////////
@@ -486,11 +483,9 @@ void plAvBrainGenericMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
 //
 ///////////////////
 
-#ifndef SERVER
-
 // default ctor
 plAvPushBrainMsg::plAvPushBrainMsg()
-: fBrain(nil)
+: fBrain()
 {
 }
 
@@ -517,8 +512,6 @@ void plAvPushBrainMsg::Write(hsStream *stream, hsResMgr *mgr)
     mgr->WriteCreatable(stream, fBrain);
 }
 
-#endif // SERVER
-
 
 
 ///////////////////////////
@@ -543,6 +536,3 @@ void plAvatarStealthModeMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
     hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
 }
-
-
-#endif // ndef NO_AV_MSGS

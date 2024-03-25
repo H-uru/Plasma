@@ -42,8 +42,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef OBJECT_FLOCKER_H
 #define OBJECT_FLOCKER_H
 
+#include "hsGeometry3.h"
+
+#include "pnKeyedObject/plKey.h"
 #include "pnModifier/plSingleModifier.h"
+
 #include <algorithm>
+#include <vector>
 
 class hsStream;
 class hsResMgr;
@@ -96,10 +101,10 @@ public:
         }
 
         // call this when your position changes
-        void UpdateWithNewPosition(const hsPoint3 &newPosition) {fPosition = newPosition;}
+        void UpdateWithNewPosition(const hsPoint3 &newPosition) override { fPosition = newPosition; }
 
         // find all close-by objects (determined by center and radius)
-        void FindNeighbors(const hsPoint3 &center, const float radius, std::vector<T> & results)
+        void FindNeighbors(const hsPoint3 &center, const float radius, std::vector<T> & results) override
         {
             // take the slow way, loop and check every one
             const float radiusSquared = radius * radius;
@@ -121,7 +126,7 @@ private:
 
 public:
     // constructor
-    pfBasicProximityDatabase(void) {}
+    pfBasicProximityDatabase() {}
 
     // destructor
     virtual ~pfBasicProximityDatabase() {}
@@ -130,7 +135,7 @@ public:
     tokenType *MakeToken(T parentObject) {return new tokenType(parentObject, fGroup);}
 
     // return the number of tokens currently in the database
-    int Size(void) {return fGroup.size();}
+    int Size() {return fGroup.size();}
 };
 
 // A basic vehicle class that handles accelleration, braking, and turning
@@ -258,8 +263,10 @@ private:
     float       fSpeed; // in meters/sec
     bool        fHasLastPos; // does the last position make sense?
 public:
-    pfBoidGoal();
-    ~pfBoidGoal() {}
+    pfBoidGoal()
+        : fSpeed(0), fHasLastPos()
+    { }
+    virtual ~pfBoidGoal() = default;
 
     void Update(plSceneObject *goal, float deltaTime);
 
@@ -317,9 +324,9 @@ private:
 public:
     pfObjectFlocker *fFlockerPtr;
 
-    pfBoid(pfProximityDatabase &pd, pfObjectFlocker *flocker, plKey &key);
-    pfBoid(pfProximityDatabase &pd, pfObjectFlocker *flocker, plKey &key, hsPoint3 &pos);
-    pfBoid(pfProximityDatabase &pd, pfObjectFlocker *flocker, plKey &key, hsPoint3 &pos, float speed, hsVector3 &forward, hsVector3 &side, hsVector3 &up);
+    pfBoid(pfProximityDatabase &pd, pfObjectFlocker *flocker, plKey key);
+    pfBoid(pfProximityDatabase &pd, pfObjectFlocker *flocker, plKey key, const hsPoint3 &pos);
+    pfBoid(pfProximityDatabase &pd, pfObjectFlocker *flocker, plKey key, const hsPoint3 &pos, float speed, const hsVector3 &forward, const hsVector3 &side, const hsVector3 &up);
     virtual ~pfBoid();
 
     // Get/set functions
@@ -343,7 +350,7 @@ public:
     plKey &GetKey() {return fObjKey;}
 
     // We're redirecting this to the "banking" function
-    virtual void RegenerateLocalSpace(const hsVector3 &newVelocity, const float elapsedTime);
+    void RegenerateLocalSpace(const hsVector3 &newVelocity, const float elapsedTime) override;
 };
 
 class pfFlock
@@ -403,14 +410,14 @@ public:
     CLASSNAME_REGISTER( pfObjectFlocker );
     GETINTERFACE_ANY( pfObjectFlocker, plSingleModifier );
 
-    virtual void SetTarget(plSceneObject* so);
-    virtual bool MsgReceive(plMessage* msg);
+    void SetTarget(plSceneObject* so) override;
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     void SetNumBoids(uint8_t val);
-    void SetBoidKey(plKey key) { fBoidKey = key; }
+    void SetBoidKey(plKey key) { fBoidKey = std::move(key); }
 
     float GoalWeight() const {return fFlock.GoalWeight();}
     void SetGoalWeight(float goalWeight) {fFlock.SetGoalWeight(goalWeight);}
@@ -440,16 +447,16 @@ public:
     void SetUseTargetRotation(bool val) {fUseTargetRotation = val;}
 
 protected:
-    const static int fFileVersion; // so we don't have to update the global version number when we change
+    constexpr static uint8_t fFileVersion = 1; // so we don't have to update the global version number when we change
 
     pfFlock fFlock;
-    int fNumBoids;
+    uint8_t fNumBoids;
     plKey fBoidKey;
 
     bool fUseTargetRotation;
     bool fRandomizeAnimationStart;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
 };
 
 #endif

@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plReplaceGeometryMsg_inc
 
 #include "pnMessage/plMessage.h"
+#include "pnMessage/plRefMsg.h"
 
 class plSharedMesh;
 class hsGMaterial;
@@ -55,15 +56,15 @@ public:
     hsGMaterial *fMaterial;
     uint32_t fFlags;
     
-    plReplaceGeometryMsg() : fMesh(nil), fMaterial(nil), fFlags(0) {}
+    plReplaceGeometryMsg() : fMesh(), fMaterial(), fFlags() { }
     ~plReplaceGeometryMsg() {}
 
     CLASSNAME_REGISTER( plReplaceGeometryMsg );
     GETINTERFACE_ANY( plReplaceGeometryMsg, plMessage );    
 
     // No R/W, these shouldn't be sent over the wire
-    virtual void Read(hsStream* stream, hsResMgr* mgr) {}
-    virtual void Write(hsStream* stream, hsResMgr* mgr) {}
+    void Read(hsStream* stream, hsResMgr* mgr) override { }
+    void Write(hsStream* stream, hsResMgr* mgr) override { }
 
     // flags
     enum
@@ -79,7 +80,7 @@ class plSwapSpansRefMsg : public plGenRefMsg
 public:
     plDrawableSpans *fSpans;
 
-    plSwapSpansRefMsg() : plGenRefMsg(), fSpans(nil) {}
+    plSwapSpansRefMsg() : plGenRefMsg(), fSpans() { }
     plSwapSpansRefMsg(const plKey &r, uint8_t c, int which, int type) : plGenRefMsg(r, c, which, type) {}
     ~plSwapSpansRefMsg() {}
 

@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plStatGather_SOURCES
     plAutoProfile.cpp
     plCalculatedProfiles.cpp
@@ -16,7 +11,27 @@ set(plStatGather_HEADERS
     plStatGatherCreatable.h
 )
 
-add_library(plStatGather STATIC ${plStatGather_SOURCES} ${plStatGather_HEADERS})
+plasma_library(plStatGather SOURCES ${plStatGather_SOURCES} ${plStatGather_HEADERS})
+target_link_libraries(
+    plStatGather
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+    PRIVATE
+        pnMessage
+        pnNucleusInc
+        plAvatar
+        plGImage
+        plMessage
+        plModifier
+        plNetClient
+        plPipeline
+        plStatusLog
+        plUnifiedTime
+        plVault
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${plStatGather_SOURCES})
 source_group("Header Files" FILES ${plStatGather_HEADERS})

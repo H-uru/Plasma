@@ -40,34 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#pragma hdrstop
-
-#include "hsStream.h"
 #include "hsBitVector.h"
-#include "hsTemplates.h"
 
-hsBitVector::hsBitVector(int b, ...)
-:   fBitVectors(nil),
-    fNumBitVectors(0)
-{
-    va_list vl;
-
-    va_start( vl, b );
-
-    do {
-        SetBit( b, true );
-    } while( (b = va_arg( vl, int )) >= 0 );
-
-    va_end( vl );
-}
-
-hsBitVector::hsBitVector(const hsTArray<int16_t>& src)
-:   fBitVectors(nil),
-    fNumBitVectors(0)
-{
-    FromList(src);
-}
+#include "HeadSpin.h"
+#include "hsStream.h"
 
 void hsBitVector::IGrow(uint32_t newNumBitVectors)
 {
@@ -115,46 +91,32 @@ void hsBitVector::Read(hsStream* s)
 {
     Reset();
 
-    s->LogReadLE(&fNumBitVectors,"NumBitVectors");
+    s->ReadLE32(&fNumBitVectors);
     if( fNumBitVectors )
     {
         delete [] fBitVectors;
         fBitVectors = new uint32_t[fNumBitVectors];
-        int i;
-        for( i = 0; i < fNumBitVectors; i++ )
-            s->LogReadLE(&fBitVectors[i],"BitVector");
+        s->ReadLE32(fNumBitVectors, fBitVectors);
     }
 }
 
 void hsBitVector::Write(hsStream* s) const
 {
     s->WriteLE32(fNumBitVectors);
-
-    int i;
-    for( i = 0; i < fNumBitVectors; i++ )
-        s->WriteLE32(fBitVectors[i]);
+    s->WriteLE32(fNumBitVectors, fBitVectors);
 }
 
-hsTArray<int16_t>& hsBitVector::Enumerate(hsTArray<int16_t>& dst) const
+std::vector<int16_t>& hsBitVector::Enumerate(std::vector<int16_t>& dst) const
 {
-    dst.SetCount(0);
+    dst.clear();
     hsBitIterator iter(*this);
     int i = iter.Begin();
     while( i >= 0 )
     {
-        dst.Append(i);
+        dst.emplace_back(i);
         i = iter.Advance();
     }
     return dst;
-}
-
-hsBitVector& hsBitVector::FromList(const hsTArray<int16_t>& src)
-{
-    Clear();
-    int i;
-    for( i = 0; i < src.GetCount(); i++ )
-        SetBit(src[i]);
-    return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -198,15 +160,15 @@ int hsBitIterator::Begin()
 {
     fCurrent = -1;
     fCurrVec = -1;
-    int i;
+    unsigned int i;
     for( i = 0; i < fBits.fNumBitVectors; i++ )
     {
         if( fBits.fBitVectors[i] )
         {
-            int j;
+            unsigned int j;
             for( j = 0; j < 32; j++ )
             {
-                if( fBits.fBitVectors[i] & (1 << j) )
+                if (fBits.fBitVectors[i] & (1u << j))
                 {
                     fCurrVec = i;
                     fCurrBit = j;

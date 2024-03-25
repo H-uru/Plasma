@@ -43,8 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_CHECKSUM_H
 
 #include "HeadSpin.h"
-#include <openssl/md5.h>
-#include <openssl/sha.h>
+#include "plSha0.h"
+#include <openssl/evp.h>
+
+#define MD5_DIGEST_LENGTH 16
+#define SHA_DIGEST_LENGTH 20
 
 class plChecksum
 {
@@ -65,16 +68,17 @@ class plFileName;
 class plMD5Checksum
 {
     protected:
-        bool    fValid;
-        MD5_CTX fContext;
-        uint8_t fChecksum[MD5_DIGEST_LENGTH];
+        bool        fValid;
+        EVP_MD_CTX* fContext;
+        uint8_t     fChecksum[MD5_DIGEST_LENGTH];
 
     public:
-        plMD5Checksum(size_t size, uint8_t* buffer);
+        plMD5Checksum(size_t size, const uint8_t* buffer);
         plMD5Checksum();
         plMD5Checksum(const plMD5Checksum& rhs);
         plMD5Checksum(const plFileName& fileName);
         plMD5Checksum(hsStream* stream);
+        ~plMD5Checksum() { Clear(); }
 
         bool IsValid() const { return fValid; }
         void Clear();
@@ -109,16 +113,18 @@ typedef uint8_t ShaDigest[SHA_DIGEST_LENGTH];
 class plSHAChecksum
 {
     protected:
-        bool      fValid;
-        SHA_CTX   fContext;
-        ShaDigest fChecksum;
+        bool        fValid;
+        EVP_MD_CTX* fOpenSSLContext;
+        plSha0      fPlasmaContext;
+        ShaDigest   fChecksum;
 
     public:
-        plSHAChecksum(size_t size, uint8_t* buffer);
+        plSHAChecksum(size_t size, const uint8_t* buffer);
         plSHAChecksum();
         plSHAChecksum(const plSHAChecksum& rhs);
         plSHAChecksum(const plFileName& fileName);
         plSHAChecksum(hsStream* stream);
+        ~plSHAChecksum() { Clear(); }
 
         bool IsValid() const { return fValid; }
         void Clear();
@@ -148,9 +154,9 @@ class plSHAChecksum
 class plSHA1Checksum
 {
     protected:
-        bool      fValid;
-        SHA_CTX   fContext;
-        ShaDigest fChecksum;
+        bool        fValid;
+        EVP_MD_CTX* fContext;
+        ShaDigest   fChecksum;
 
     public:
         plSHA1Checksum(size_t size, const uint8_t* buffer);
@@ -158,6 +164,7 @@ class plSHA1Checksum
         plSHA1Checksum(const plSHA1Checksum& rhs);
         plSHA1Checksum(const plFileName& fileName);
         plSHA1Checksum(hsStream* stream);
+        ~plSHA1Checksum() { Clear(); }
 
         bool IsValid() const { return fValid; }
         void Clear();

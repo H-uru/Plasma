@@ -43,17 +43,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plStereizer_inc
 #define plStereizer_inc
 
-#include "pnModifier/plSingleModifier.h"
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
-
-class plListenerMsg;
-class plMessage;
+#include "pnModifier/plSingleModifier.h"
 
 class plCoordinateInterface;
-
-class hsStream;
+class plListenerMsg;
+class plMessage;
 class hsResMgr;
+class hsStream;
 
 class plStereizer : public plSingleModifier
 {
@@ -82,7 +80,7 @@ protected:
     hsVector3       fListDirection;
     hsVector3       fListUp;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
 
     hsPoint3    IGetLocalizedPos(const hsVector3& posToList, float distToList) const;
     hsPoint3    IGetAmbientPos() const;
@@ -95,16 +93,19 @@ protected:
     void        ISetHasMaster(bool on) { if(on)SetFlag(kHasMaster); else ClearFlag(kHasMaster); }
 
 public:
-    plStereizer();
-    virtual ~plStereizer();
+    plStereizer()
+        : fListDirection(0.f, 1.f, 0.f), fListUp(0.f, 0.f, 1.f),
+          fAmbientDist(), fTransition(), fMaxSepDist(), fMinSepDist(), fTanAng()
+    { }
+    ~plStereizer();
 
     CLASSNAME_REGISTER( plStereizer );
     GETINTERFACE_ANY( plStereizer, plSingleModifier );
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     bool    Stereize();
     void    SetFromListenerMsg(const plListenerMsg* listMsg);

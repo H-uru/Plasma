@@ -40,19 +40,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plLayerOr.h"
 
+#include "HeadSpin.h"
+
 plLayerOr::plLayerOr()
+    : fDirty()
 {
     fState = new hsGMatState;
     fState->Reset();
 
     fOwnedChannels = kState;
-}
-
-plLayerOr::~plLayerOr()
-{
 }
 
 void    plLayerOr::SetState( const hsGMatState& state )

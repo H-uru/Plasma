@@ -49,11 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pyGlueHelpers.h"
 #include "pnKeyedObject/plKey.h"
 
-class pyGUIDialog;
-class pyColor;
+#include "pyGlueDefinitions.h"
+
+class pyKey;
 class pyPoint3;
 
 class pyGUIControl
@@ -61,17 +61,19 @@ class pyGUIControl
 protected:
     plKey                   fGCkey;
     
-    pyGUIControl(): fGCkey(nil) {} // only used by python glue, do NOT call
+    pyGUIControl() = default; // only used by python glue, do NOT call
     pyGUIControl(pyKey& gckey);
     pyGUIControl(plKey objkey);
     // copy constructor
     pyGUIControl(const pyGUIControl& other);
 
 public:
+    virtual ~pyGUIControl() = default;
+
     pyGUIControl& operator=(const pyGUIControl& other);
     pyGUIControl& Copy(const pyGUIControl& other);
 
-    void setKey(plKey key) {fGCkey = key;} // only used by python glue, do NOT call
+    void setKey(plKey key) {fGCkey = std::move(key);} // only used by python glue, do NOT call
 
     // required functions for PyObject interoperability
     PYTHON_EXPOSE_TYPE; // so we can subclass
@@ -89,44 +91,44 @@ public:
     bool operator!=(const pyGUIControl &gcobj) const { return !(gcobj == *this);  }
 
     // getter and setters
-    virtual plKey getObjKey();
-    virtual PyObject* getObjPyKey(); // returns pyKey
+    plKey getObjKey();
+    PyObject* getObjPyKey(); // returns pyKey
 
     // interface functions
-    virtual uint32_t  GetTagID();
-    virtual void    SetEnabled( bool e );
-    virtual void    Enable() { SetEnabled(true); }
-    virtual void    Disable() { SetEnabled(false); }
-    virtual bool    IsEnabled( void );
-    virtual void    SetFocused( bool e );
-    virtual void    Focus() { SetFocused(true); }
-    virtual void    UnFocus() { SetFocused(false); }
-    virtual bool    IsFocused( void );
-    virtual void    SetVisible( bool vis );
-    virtual void    Show() { SetVisible(true); }
-    virtual void    Hide() { SetVisible(false); }
-    virtual bool    IsVisible( void );
-    virtual bool    IsInteresting( void );
-    virtual void    SetNotifyOnInteresting( bool state );
-    virtual void    Refresh( void );
-    virtual void    SetObjectCenter( pyPoint3& pt);
-    virtual PyObject* GetObjectCenter(); // returns pyPoint3
-    virtual PyObject* GetOwnerDlg( void ); // returns pyGUIDialog
+    uint32_t GetTagID();
+    void SetEnabled(bool e);
+    void Enable() { SetEnabled(true); }
+    void Disable() { SetEnabled(false); }
+    bool IsEnabled();
+    void SetFocused(bool e);
+    void Focus() { SetFocused(true); }
+    void UnFocus() { SetFocused(false); }
+    bool IsFocused();
+    void SetVisible(bool vis);
+    void Show() { SetVisible(true); }
+    void Hide() { SetVisible(false); }
+    bool IsVisible();
+    bool IsInteresting();
+    void SetNotifyOnInteresting(bool state);
+    void Refresh();
+    void SetObjectCenter(pyPoint3& pt);
+    PyObject* GetObjectCenter(); // returns pyPoint3
+    PyObject* GetOwnerDlg(); // returns pyGUIDialog
 
     // get color schemes
-    virtual PyObject*   GetForeColor() const; // returns pyColor
-    virtual PyObject*   GetSelColor() const; // returns pyColor
-    virtual PyObject*   GetBackColor() const; // returns pyColor
-    virtual PyObject*   GetBackSelColor() const; // returns pyColor
+    PyObject* GetForeColor() const; // returns pyColor
+    PyObject* GetSelColor() const; // returns pyColor
+    PyObject* GetBackColor() const; // returns pyColor
+    PyObject* GetBackSelColor() const; // returns pyColor
     virtual uint32_t    GetFontSize() const;
-    virtual uint8_t     GetFontFlags() const;
+    uint8_t GetFontFlags() const;
     // set color scheme
-    virtual void        SetForeColor( float r, float g, float b, float a );
-    virtual void        SetSelColor( float r, float g, float b, float a );
-    virtual void        SetBackColor( float r, float g, float b, float a );
-    virtual void        SetBackSelColor( float r, float g, float b, float a );
+    void SetForeColor(float r, float g, float b, float a);
+    void SetSelColor(float r, float g, float b, float a);
+    void SetBackColor(float r, float g, float b, float a);
+    void SetBackSelColor(float r, float g, float b, float a);
     virtual void        SetFontSize(uint32_t fontsize);
-    virtual void        SetFontFlags(uint8_t fontflags);
+    void SetFontFlags(uint8_t fontflags);
 
 };
 

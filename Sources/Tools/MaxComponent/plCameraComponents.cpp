@@ -52,12 +52,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plMaxNode.h"
 #include "MaxMain/plMaxNodeData.h"
 
-#include <iparamm2.h>
+#include "MaxMain/MaxAPI.h"
+
 #include <string>
 #include <vector>
 
 #include "resource.h"
-#pragma hdrstop
 
 #include "pnSceneObject/plSceneObject.h"        //  Ibid
 #include "pnSceneObject/plCoordinateInterface.h"
@@ -167,31 +167,31 @@ ParamBlockDesc2 gLimitPaneraBk
 (   
     1, _T("camera"), 0, &gLimitPaneraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CAMERAPAN, IDS_COMP_ALLOW_PAN,  0, 0, NULL,
+    IDD_COMP_CAMERAPAN, IDS_COMP_ALLOW_PAN,  0, 0, nullptr,
 
     kLimitPanX, _T("Limit X"),      TYPE_BOOL,              0, 0,
     p_ui,               TYPE_SINGLECHEKBOX, IDC_X_AXIS,
-    end,
+    p_end,
 
     kLimitPanZ, _T("Limit Z"),      TYPE_BOOL,              0, 0,
     p_ui,               TYPE_SINGLECHEKBOX, IDC_Z_AXIS,
-    end,
+    p_end,
 
     kPanXDeg,   _T("X degrees"), TYPE_FLOAT,    P_ANIMATABLE,   0,
     p_range, 0.0f, 180.0f,
     p_default, 90.0f,
     p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
     IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
-    end,
+    p_end,
 
     kPanZDeg,   _T("Z degrees"), TYPE_FLOAT,    P_ANIMATABLE,   0,
     p_range, 0.0f, 180.0f,
     p_default, 90.0f,
     p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
     IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
-    end,
+    p_end,
 
-    end
+    p_end
 );
 
 plLimitPanComponent::plLimitPanComponent()
@@ -249,30 +249,30 @@ ParamBlockDesc2 gCameraZoomeraBk
 (   
     1, _T("camera"), 0, &gCameraZoomeraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CAMERAZOOM, IDS_COMP_CAMERAZOOM,  0, 0, NULL,
+    IDD_COMP_CAMERAZOOM, IDS_COMP_CAMERAZOOM,  0, 0, nullptr,
 
     kZoomMaxDeg,    _T("max degrees"), TYPE_FLOAT,  P_ANIMATABLE,   0,
     p_range, 0.0f, 180.0f,
     p_default, 120.0f,
     p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
     IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
-    end,
+    p_end,
 
     kZoomMinDeg,    _T("min degrees"), TYPE_FLOAT,  P_ANIMATABLE,   0,
     p_range, 0.0f, 180.0f,
     p_default, 35.0f,
     p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
     IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
-    end,
+    p_end,
 
     kZoomRate,  _T("degrees per sec"), TYPE_FLOAT,  P_ANIMATABLE,   0,
     p_range, 0.0f, 180.0f,
     p_default, 90.0f,
     p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
     IDC_CAMERACMD_OFFSETY2, IDC_CAMERACMD_SPIN_OFFSETY2, SPIN_AUTOSCALE,
-    end,
+    p_end,
 
-    end
+    p_end
 );
 
 plCameraZoomComponent::plCameraZoomComponent()
@@ -334,7 +334,7 @@ enum
     kTransDecel,
     kTransPOADecel,
     kTransVelocity, 
-    kTrans,
+    kTrans_DEAD, // Seems to be unused and conflicts with another enum value in the Max SDK
     kIgnoreTrans,
     kTransPOAVelocity,
 };
@@ -344,78 +344,78 @@ ParamBlockDesc2 gTransOverrideeraBk
 (   
     1, _T("camera"), 0, &gTransOverrideeraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CAMERA_TRANS, IDS_COMP_CAMERATRANS,  0, 0, NULL,
+    IDD_COMP_CAMERA_TRANS, IDS_COMP_CAMERATRANS,  0, 0, nullptr,
     
     kTransitionTo, _T("transitionto"),  TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CAMERARGN_PICKSTATE_BASE,
         p_sclassID,  CAMERA_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
 
     kCutTrans,  _T("cut"),      TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_CHECK1,
-        end,
+        p_end,
 
     kTrackTrans,    _T("track"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_CHECK2,
         p_enable_ctrls, 3, kTransVelocity, kTransAccel, kTransDecel,
-        end,
+        p_end,
 
     kCutPOA,    _T("cutPOA"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_CHECK3,
-        end,
+        p_end,
 
     kTrackPOA,  _T("trackPOA"),     TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_CHECK4,
         p_enable_ctrls, 3, kTransPOASpeed, kTransPOAAccel, kTransPOADecel,
-        end,
+        p_end,
 
     kTransVelocity, _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -200.0f, 200.0f,
         p_default, 100.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL, IDC_CAMERA_VEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kTransAccel,    _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -200.0f, 200.0f,
         p_default, 100.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL, IDC_CAMERA_ACCEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kTransDecel,    _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -200.0f, 200.0f,
         p_default, 100.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL, IDC_CAMERA_DECEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kTransPOAVelocity,  _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -200.0f, 200.0f,
         p_default, 100.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL2, IDC_CAMERA_VEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kTransPOAAccel, _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -200.0f, 200.0f,
         p_default, 100.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL2, IDC_CAMERA_ACCEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kTransPOADecel, _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -200.0f, 200.0f,
         p_default, 100.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL2, IDC_CAMERA_DECEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kIgnoreTrans,   _T("ignore"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_CHECK_IGNORE,
-        end,
-    end
+        p_end,
+    p_end
 );
 
 plTransOverrideComponent::plTransOverrideComponent()
@@ -438,11 +438,11 @@ bool plTransOverrideComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     // see if there is a camera specified
     INode* pCamNode = fCompPB->GetINode(kTransitionTo);
             
-    PreTrans* pTrans = nil;
+    PreTrans* pTrans = nullptr;
     if (pCamNode)
         pTrans = new PreTrans(((plMaxNode*)pCamNode)->GetSceneObject());
     else
-        pTrans = new PreTrans(nil);
+        pTrans = new PreTrans(nullptr);
 
     if (fCompPB->GetInt(kIgnoreTrans))
     {
@@ -528,7 +528,7 @@ ParamBlockDesc2 gPOAAvatareraBk
 (   
     1, _T("camera"), 0, &gPOAAvatareraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_AVATAR_POA, IDS_AVATARPOA, 0, 0, NULL,
+    IDD_COMP_AVATAR_POA, IDS_AVATARPOA, 0, 0, nullptr,
 
 
     kAvPOAOffX, _T("PX Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
@@ -536,28 +536,27 @@ ParamBlockDesc2 gPOAAvatareraBk
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX5, IDC_CAMERACMD_SPIN_OFFSETX5, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAvPOAOffY, _T("PY Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY4, IDC_CAMERACMD_SPIN_OFFSETY4, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAvPOAOffZ, _T("PZ Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 3.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ2, IDC_CAMERACMD_SPIN_OFFSETZ2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAvPOAWorldspace,   _T("POAworldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_POA_WORLDSPACE,
-        end,
-
-        
-    end
+        p_end,
+  
+    p_end
 );
 
 plPOAAvatarComponent::plPOAAvatarComponent()
@@ -594,40 +593,40 @@ ParamBlockDesc2 gPOAObjecteraBk
 (   
     1, _T("camera"), 0, &gPOAObjecteraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_OBJECT_POA, IDS_COMP_OBJECTPOA,  0, 0, NULL,
+    IDD_COMP_OBJECT_POA, IDS_COMP_OBJECTPOA,  0, 0, nullptr,
         
     kPOAObject, _T("objectPOA"),    TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CLICK_PROXY,
         p_sclassID,  GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
     
     kPOAObjOffsetX, _T("X Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kPOAObjOffsetY, _T("Y Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kPOAObjOffsetZ, _T("Z Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ, IDC_CAMERACMD_SPIN_OFFSETZ, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kPOAObjWorldspace,  _T("POAworldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_OBJECTPOA_WORLDSPACE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plPOAObjectComponent::plPOAObjectComponent()
@@ -661,7 +660,7 @@ plKey plPOAObjectComponent::GetObjectKey()
 {
     if (fCompPB->GetINode(kPOAObject))
         return ((plMaxNode*)(fCompPB->GetINode(kPOAObject)))->GetSceneObject()->GetKey();
-    return nil;
+    return nullptr;
 }
 
 //
@@ -696,8 +695,7 @@ ParamBlockDesc2 gMakeDefaultCameraBk
 (   
     1, _T("camera"), 0, &gMakeDefaultCameraDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 
-        
-    end
+    p_end
 );
 
 plMakeDefaultCamComponent::plMakeDefaultCamComponent()
@@ -740,7 +738,7 @@ bool plCameraBaseComponent::SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMs
     fModKeys.clear();
     bool ValidNode = IsValidNodeType(pNode);
     if(!ValidNode){
-        if(pErrMsg->Set(true, "Invalid Camera Object", "The camera %s is not a 'Max Target Camera type'.  This camera will be disabled..\nKill the export?",((INode*)pNode)->GetName()).Ask())
+        if(pErrMsg->Set(true, "Invalid Camera Object", ST::format("The camera {} is not a 'Max Target Camera type'.  This camera will be disabled..\nKill the export?",((INode*)pNode)->GetName())).Ask())
                 pErrMsg->Set(true, "", "");
         else
                 pErrMsg->Set(false); // Don't want to abort
@@ -782,19 +780,19 @@ bool plCameraBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 PreTrans *trans = it->second;
                 // convert the pre transition to a camera transition (get the camera modifier key that we are going to)
                 plSceneObject* pObj = trans->fTransTo;
-                const plCameraModifier1* pCamMod = nil;
+                const plCameraModifier1* pCamMod = nullptr;
                 if (pObj)
                 {
-                    for (int i = 0; i < pObj->GetNumModifiers(); i++)
+                    for (size_t i = 0; i < pObj->GetNumModifiers(); i++)
                     {
                         pCamMod = plCameraModifier1::ConvertNoRef(pObj->GetModifier(i));
                         if (pCamMod)
                             break;
                     }
                 }
-                CamTrans* camTrans = nil;
+                CamTrans* camTrans = nullptr;
                 if (!pCamMod)
-                    camTrans = new CamTrans(nil);
+                    camTrans = new CamTrans(nullptr);
                 else
                     camTrans = new CamTrans(pCamMod->GetKey());
 
@@ -820,7 +818,7 @@ bool plCameraBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 plCameraModifier1* plCameraBaseComponent::ICreateCameraModifier(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
 
-    GenCamera* theCam = nil;
+    GenCamera* theCam = nullptr;
     Object* obj = pNode->EvalWorldState(hsConverterUtils::Instance().GetTime(pNode->GetInterface())).obj;
     TimeValue Now = hsConverterUtils::Instance().GetTime(pNode->GetInterface());
 
@@ -828,7 +826,7 @@ plCameraModifier1* plCameraBaseComponent::ICreateCameraModifier(plMaxNode* pNode
         theCam = (GenCamera *) obj->ConvertToType(Now, Class_ID(LOOKAT_CAM_CLASS_ID, 0));
     else
     {
-        return nil;
+        return nullptr;
     }
 
     pNode->SetDrawable(false);
@@ -844,14 +842,8 @@ plCameraModifier1* plCameraBaseComponent::ICreateCameraModifier(plMaxNode* pNode
 
     
     obj = pNode->EvalWorldState(hsConverterUtils::Instance().GetTime(pNode->GetInterface())).obj;
-    
-    hsVector3 pt;   
-    
-    float FOVvalue= 0.0;            //Currently in Radians
-    // radians
-    FOVvalue = theCam->GetFOV(Now);
-    // convert
-    FOVvalue = FOVvalue*(180/3.141592);
+
+    float FOVvalue = hsRadiansToDegrees(theCam->GetFOV(Now));
     int FOVType = theCam->GetFOVType();
     float wDeg, hDeg;
     switch(FOVType)
@@ -879,7 +871,7 @@ plCameraModifier1* plCameraBaseComponent::ICreateCameraModifier(plMaxNode* pNode
 
 void plCameraBaseComponent::ISetLimitPan(plMaxNode* pNode, plCameraBrain1* pBrain)
 {
-    plComponentBase* LimitPanComp = 0;
+    plComponentBase* LimitPanComp = nullptr;
 
     for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
@@ -908,7 +900,7 @@ void plCameraBaseComponent::ISetLimitPan(plMaxNode* pNode, plCameraBrain1* pBrai
 
 void plCameraBaseComponent::ISetLimitZoom(plMaxNode* pNode, plCameraBrain1* pBrain)
 {
-    plComponentBase* LimitZoomComp = 0;
+    plComponentBase* LimitZoomComp = nullptr;
 
     for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
@@ -923,13 +915,13 @@ void plCameraBaseComponent::ISetLimitZoom(plMaxNode* pNode, plCameraBrain1* pBra
         float max = pBlk->GetFloat(kZoomMaxDeg);
         float min = pBlk->GetFloat(kZoomMinDeg);
         float rate = pBlk->GetFloat(kZoomRate);
-        pBrain->SetZoomParams(max / 1.33333333, min / 1.33333333, rate);
+        pBrain->SetZoomParams(max / 1.33333333f, min / 1.33333333f, rate);
     }
 }
 
 void plCameraBaseComponent::ISetIgnoreSubworld(plMaxNode* pNode, plCameraBrain1* pBrain)
 {
-    plComponentBase* subComp = 0;
+    plComponentBase* subComp = nullptr;
 
     for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
@@ -973,20 +965,24 @@ bool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, pl
     // do we want a special POA for this brain
     bool bResult = false;
     bool bAvPOA = false;
-    plComponentBase* POAComp = 0;
+    plComponentBase* POAComp = nullptr;
     bool bPOAObject = false;
-    plComponentBase* objPOAComp = 0;
+    plComponentBase* objPOAComp = nullptr;
 
     for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
         plComponentBase *comp = pNode->GetAttachedComponent(x);
         if (comp->ClassID() == OBJECT_POA_CID)
         {   
-            if (objPOAComp != 0 || POAComp != 0)
+            if (objPOAComp != nullptr || POAComp != nullptr)
             {
-                pErrMsg->Set(true, "Export Error - Cameras",
-                "Object %s : Cameras must have one and only one POA component!\n",
-                pNode->GetName()).Show();
+                pErrMsg->Set(
+                    true, "Export Error - Cameras",
+                    ST::format(
+                        "Object {} : Cameras must have one and only one POA component!\n",
+                        pNode->GetName()
+                    )
+                ).Show();
                 pErrMsg->Set(false);
                 return false;
             }
@@ -995,11 +991,15 @@ bool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, pl
         }
         if (comp->ClassID() == AVATAR_POA_CID)
         {
-            if (objPOAComp != 0 || POAComp != 0)
+            if (objPOAComp != nullptr || POAComp != nullptr)
             {
-                pErrMsg->Set(true, "Export Error - Cameras",
-                "Object %s : Cameras must have one and only one POA component!\n",
-                pNode->GetName()).Show();
+                pErrMsg->Set(
+                    true, "Export Error - Cameras",
+                    ST::format(
+                        "Object {} : Cameras must have one and only one POA component!\n",
+                        pNode->GetName()
+                    )
+                ).Show();
                 pErrMsg->Set(false);
                 return false;
             }
@@ -1022,10 +1022,9 @@ bool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, pl
                 pBrain->SetFlags(plCameraBrain1::kCutPOA);
                 pBrain->SetFlags(plCameraBrain1::kCutPos);
             }
-            hsVector3 pt;
-            pt.fX = pBlk->GetFloat(kPOAObjOffsetX);
-            pt.fY = pBlk->GetFloat(kPOAObjOffsetY);
-            pt.fZ = pBlk->GetFloat(kPOAObjOffsetZ);
+            hsVector3 pt(pBlk->GetFloat(kPOAObjOffsetX),
+                         pBlk->GetFloat(kPOAObjOffsetY),
+                         pBlk->GetFloat(kPOAObjOffsetZ));
             pBrain->SetPOAOffset(pt);
             if (pBlk->GetInt(kPOAObjWorldspace))
                 pBrain->SetFlags(plCameraBrain1::kWorldspacePOA);
@@ -1033,9 +1032,13 @@ bool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, pl
         }
         else
         {
-            pErrMsg->Set(true, "Export Error - Cameras",
-            "Object POA component of camera %s has no object specified!\n",
-            pNode->GetName()).Show();
+            pErrMsg->Set(
+                true, "Export Error - Cameras",
+                ST::format(
+                    "Object POA component of camera {} has no object specified!\n",
+                pNode->GetName()
+                )
+            ).Show();
             pErrMsg->Set(false);
             return false;
         }
@@ -1048,10 +1051,9 @@ bool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, pl
         if (!pBlk)
             return false;
 
-        hsVector3 pt;
-        pt.fX = pBlk->GetFloat(kAvPOAOffX);
-        pt.fY = pBlk->GetFloat(kAvPOAOffY);
-        pt.fZ = pBlk->GetFloat(kAvPOAOffZ);
+        hsVector3 pt(pBlk->GetFloat(kAvPOAOffX),
+                     pBlk->GetFloat(kAvPOAOffY),
+                     pBlk->GetFloat(kAvPOAOffZ));
         if (pBlk->GetInt(kAvPOAWorldspace))
             pBrain->SetFlags(plCameraBrain1::kWorldspacePOA);
         pBrain->SetPOAOffset(pt);
@@ -1087,7 +1089,7 @@ ParamBlockDesc2 gCamera1Bk
 (   
     1, _T("camera"), 0, &gCamera1Desc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 
-    end
+    p_end
 );
 
 
@@ -1154,7 +1156,7 @@ ParamBlockDesc2 gCameraIgnoreSubBk
 (   
     1, _T("camera"), 0, &gCameraIgnoreSubDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 
-    end
+    p_end
 );
 
 
@@ -1217,121 +1219,122 @@ ParamBlockDesc2 gAutoCameraBk
 (   
     1, _T("camera"), 0, &gAutoCameraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_AUTOCAM, IDS_COMP_AUTOCAM,  0, 0, NULL,
+    IDD_COMP_AUTOCAM, IDS_COMP_AUTOCAM,  0, 0, nullptr,
         
     kAutoCamOffX,   _T("X Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoCamOffY,   _T("Y Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 10.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoCamOffZ,   _T("Z Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 3.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ, IDC_CAMERACMD_SPIN_OFFSETZ, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoPOAOffX,   _T("PX Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX5, IDC_CAMERACMD_SPIN_OFFSETX5, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoPOAOffY,   _T("PY Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY4, IDC_CAMERACMD_SPIN_OFFSETY4, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoPOAOffZ,   _T("PZ Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 3.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ2, IDC_CAMERACMD_SPIN_OFFSETZ2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoCamLOS,    _T("maintainLOS"),      TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_LOS,
-        end,
+        p_end,
 
     kAutoCamCut,    _T("cutPos"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_LOS2,
-        end,
+        p_end,
 
     kAutoCamCutPOA, _T("cutPOA"),       TYPE_BOOL,              0, 0,
         p_default, 1,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_LOS3,
-        end,
+        p_end,
 
     kAutoCamPosWorldspace,  _T("PosWorldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_POS_WORLDSPACE,
-        end,
+        p_end,
 
     kAutoCamPOAWorldspace,  _T("POAworldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_POA_WORLDSPACE,
-        end,
+        p_end,
 
     kAutoCamVelocity,   _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL, IDC_CAMERA_VEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kAutoCamAccel,  _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL, IDC_CAMERA_ACCEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoCamDecel,  _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL, IDC_CAMERA_DECEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoCamPOASpeed,   _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL2, IDC_CAMERA_VEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kAutoCamPOAAccel,   _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL2, IDC_CAMERA_ACCEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoCamPOADecel,   _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL2, IDC_CAMERA_DECEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoCamVerticalInFall, _T("vertical"),     TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_VERTICAL,
-        end,
+        p_end,
 
     kAutoCamFastRun,    _T("runspeedup"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_RUN,
-        end,
-end
+        p_end,
+
+    p_end
 );
 
 plAutoCamComponent::plAutoCamComponent()
@@ -1354,8 +1357,7 @@ bool plAutoCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     plGenRefMsg* pMsg = new plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
     pMsg->SetRef( (hsKeyedObject*)pBrain );
     plConvert::Instance().AddMessageToQueue(pMsg);
-    hsVector3 pt;
-    pt.Set(fCompPB->GetFloat(kAutoCamOffX),fCompPB->GetFloat(kAutoCamOffY),fCompPB->GetFloat(kAutoCamOffZ));
+    hsVector3 pt(fCompPB->GetFloat(kAutoCamOffX),fCompPB->GetFloat(kAutoCamOffY),fCompPB->GetFloat(kAutoCamOffZ));
     pBrain->SetOffset(pt);
     pt.Set(fCompPB->GetFloat(kAutoPOAOffX),fCompPB->GetFloat(kAutoPOAOffY),fCompPB->GetFloat(kAutoPOAOffZ));
     pBrain->SetPOAOffset(pt);
@@ -1441,58 +1443,58 @@ ParamBlockDesc2 gFPCameraBk
 (   
     1, _T("camera"), 0, &gFPCameraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_FIRSTPERSON_CAM, IDS_COMP_FIRST_PERSONCAM,  0, 0, NULL,
+    IDD_COMP_FIRSTPERSON_CAM, IDS_COMP_FIRST_PERSONCAM,  0, 0, nullptr,
         
     kFPCamOffX, _T("X Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFPCamOffY, _T("Y Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 1.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFPCamOffZ, _T("Z Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 6.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ, IDC_CAMERACMD_SPIN_OFFSETZ, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFPCamPOAOffX,  _T("PX Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX5, IDC_CAMERACMD_SPIN_OFFSETX5, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFPCamPOAOffY,  _T("PY Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY4, IDC_CAMERACMD_SPIN_OFFSETY4, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFPCamPOAOffZ,  _T("PZ Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 6.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ2, IDC_CAMERACMD_SPIN_OFFSETZ2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFpCamPOAWorldspace,    _T("POAworldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_POA_WORLDSPACE,
-        end,
+        p_end,
 
     kFpCamPosWorldspace,    _T("Posworldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_POS_WORLDSPACE,
-        end,
-    end
+        p_end,
+    p_end
 );
 
 plFPCamComponent::plFPCamComponent()
@@ -1517,8 +1519,7 @@ bool plFPCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     pMsg2->SetRef( (hsKeyedObject*)pBrain );
     plConvert::Instance().AddMessageToQueue(pMsg2);
 
-    hsVector3 pt;
-    pt.Set(fCompPB->GetFloat(kFPCamOffX),fCompPB->GetFloat(kFPCamOffY),fCompPB->GetFloat(kFPCamOffZ));
+    hsVector3 pt(fCompPB->GetFloat(kFPCamOffX),fCompPB->GetFloat(kFPCamOffY),fCompPB->GetFloat(kFPCamOffZ));
     pBrain->SetOffset(pt);
     pt.Set(fCompPB->GetFloat(kFPCamPOAOffX),fCompPB->GetFloat(kFPCamPOAOffY),fCompPB->GetFloat(kFPCamPOAOffZ));
     pBrain->SetPOAOffset(pt);
@@ -1584,62 +1585,61 @@ ParamBlockDesc2 gRailCameraBk
 
     kRailCamObj, _T("PathObjectChoice"),    TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_LINE_CHOOSE_PATH,
-        end,
+        p_end,
 
     kRailFarthest,  _T("farthest"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_CHECK1,
-        end,
+        p_end,
 
     kRailVelocity,  _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 5.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL, IDC_CAMERA_VEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kRailAccel, _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 5.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL, IDC_CAMERA_ACCEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kRailDecel, _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 5.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL, IDC_CAMERA_DECEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kRailPOASpeed,  _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL2, IDC_CAMERA_VEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kRailPOAAccel,  _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL2, IDC_CAMERA_ACCEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kRailPOADecel,  _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL2, IDC_CAMERA_DECEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
-    end
-
+    p_end
 );
 
 plRailCameraComponent::plRailCameraComponent()
-:   fValid(false),
-    fLineMod(nil)
+:   fValid(),
+    fLineMod()
 {
     fClassDesc = &gRailCameraDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -1656,7 +1656,13 @@ bool plRailCameraComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg)
     plMaxNode* pathNode = (plMaxNode*)fCompPB->GetINode(kRailCamObj);
     if(!pathNode)
     {
-        pErrMsg->Set(true, "Path Node Failure", "Path Node %s was set to be Ignored or empty. Path Component ignored.", ((INode*)pathNode)->GetName()).Show();
+        pErrMsg->Set(
+            true, "Path Node Failure",
+            ST::format(
+                "Path Node {} was set to be Ignored or empty. Path Component ignored.",
+                ((INode*)pathNode)->GetName()
+            )
+        ).Show();
         pErrMsg->Set(false);
         return false;
     }
@@ -1670,7 +1676,13 @@ bool plRailCameraComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg)
     {
         delete tmc;
 
-        pErrMsg->Set(true, pNode->GetName(), "Rail Camera Path Node %s has no suitable animation. Rail Camera ignored", pathNode->GetName()).Show();
+        pErrMsg->Set(
+            true, M2ST(pNode->GetName()),
+            ST::format(
+                "Rail Camera Path Node {} has no suitable animation. Rail Camera ignored",
+                pathNode->GetName()
+            )
+        ).Show();
         pErrMsg->Set(false);
         return false;
     }
@@ -1725,7 +1737,7 @@ bool plRailCameraComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrM
         return false;
 
     fValid = false;
-    fLineMod = nil;
+    fLineMod = nullptr;
 
     if( !fCompPB->GetINode(kRailCamObj) )
     {
@@ -1799,7 +1811,13 @@ bool plRailCameraComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
     plMaxNode* pathNode = (plMaxNode*)fCompPB->GetINode(kRailCamObj);
     if( !pathNode )
     {
-        pErrMsg->Set(true, "Invald Rail Camera", "Rail Camera component on  %s. has no path object selected. This component will not be exported.\n", ((INode*)pNode)->GetName()).Show();
+        pErrMsg->Set(
+            true, "Invald Rail Camera",
+            ST::format(
+                "Rail Camera component on {}. has no path object selected. This component will not be exported.\n",
+                ((INode*)pNode)->GetName()
+            )
+        ).Show();
         pErrMsg->Set(false);
         return false;
     }
@@ -1861,39 +1879,37 @@ ParamBlockDesc2 gCircleCameraBk
     kCircleFarthest,  _T("farthest"), TYPE_BOOL,        0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_CHECK1,
-        end,
+        p_end,
 
     kCircleSpeed,   _T("Lag Scale"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, 0.1f, 1.0f,
         p_default, 0.1f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX3, IDC_CAMERACMD_SPIN_OFFSETX3, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kCirclePOAVelocity, _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL, IDC_CAMERA_VEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kCirclePOAAccel,    _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL, IDC_CAMERA_ACCEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kCirclePOADecel,    _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL, IDC_CAMERA_DECEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
-
-    end
-
+    p_end
 );
 
 plCircleCameraComponent::plCircleCameraComponent()
@@ -1957,7 +1973,7 @@ bool plCircleCameraComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
     point2.fY = ReturnVal.y;    
     point2.fZ = ReturnVal.z;    
     
-    hsVector3 vec(point - point2);
+    hsVector3 vec(&point, &point2);
     pBrain->SetRadius(vec.Magnitude());
     pBrain->SetCenter(&point);
 
@@ -2000,13 +2016,13 @@ public:
 
 
     plCameraDetectorComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg); 
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
+    void CollectNonDrawables(INodeTab& nonDrawables) override { AddTargetsToList(nonDrawables); }
 };
 
 
@@ -2022,18 +2038,16 @@ ParamBlockDesc2 gCameraRegionBlock
 (
     plComponent::kBlkComp, _T("cameraRegion"), 0, &gCameraDetectorDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CAMERARGN, IDS_CAMERARGN, 0, 0, NULL,
+    IDD_COMP_CAMERARGN, IDS_CAMERARGN, 0, 0, nullptr,
 
 
     kCameraTarget, _T("CameraTarget"),  TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CAMERARGN_PICKSTATE_BASE,
         p_sclassID,  CAMERA_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
 
-
-
-    end
+    p_end
 );
 
 
@@ -2110,7 +2124,13 @@ bool plCameraDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
         else
         {
-            pErrMsg->Set(true, "Improper Cam Region Selection", "Cam Choice %s was set to be Ignored. No Camera selected.", ((INode*)pCamNode)->GetName());
+            pErrMsg->Set(
+                true, "Improper Cam Region Selection",
+                ST::format(
+                    "Cam Choice {} was set to be Ignored. No Camera selected.",
+                    ((INode*)pCamNode)->GetName()
+                )
+            );
             pErrMsg->Set(false);
             return false;
         }
@@ -2118,7 +2138,13 @@ bool plCameraDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     }
     else
     {
-        pErrMsg->Set(true, "Camera Region", "Camera Region %s has no camera assigned to it.", ((INode*)node)->GetName()).Show();
+        pErrMsg->Set(
+            true, "Camera Region",
+            ST::format(
+                "Camera Region {} has no camera assigned to it.",
+                ((INode*)node)->GetName()
+            )
+        ).Show();
         pErrMsg->Set(false);
         return false;
     }
@@ -2179,113 +2205,113 @@ ParamBlockDesc2 gFollowCameraBk
 (   
     1, _T("camera"), 0, &gFollowCameraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_OBJECT_FOLLOWCAM, IDS_COMP_OBJECT_FOLLOWCAM,  0, 0, NULL,
+    IDD_COMP_OBJECT_FOLLOWCAM, IDS_COMP_OBJECT_FOLLOWCAM,  0, 0, nullptr,
         
     kFollowCamOffX, _T("X Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowCamOffY, _T("Y Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 10.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowCamOffZ, _T("Z Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 3.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ, IDC_CAMERACMD_SPIN_OFFSETZ, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowPOAOffX, _T("PX Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX5, IDC_CAMERACMD_SPIN_OFFSETX5, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowPOAOffY, _T("PY Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY4, IDC_CAMERACMD_SPIN_OFFSETY4, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowPOAOffZ, _T("PZ Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 3.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ2, IDC_CAMERACMD_SPIN_OFFSETZ2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowCamLOS,  _T("maintainLOS"),      TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_LOS,
-        end,
+        p_end,
 
     kFollowCamCut,  _T("cutPos"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_LOS2,
-        end,
+        p_end,
 
     kFollowCamCutPOA,   _T("cutPOA"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_LOS3,
-        end,
+        p_end,
 
     kFollowCamPosWorldspace,    _T("PosWorldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_POS_WORLDSPACE,
-        end,
+        p_end,
 
     kFollowCamPOAWorldspace,    _T("POAworldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_POA_WORLDSPACE,
-        end,
+        p_end,
 
     kFollowCamVelocity, _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL, IDC_CAMERA_VEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kFollowCamAccel,    _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL, IDC_CAMERA_ACCEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowCamDecel,    _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL, IDC_CAMERA_DECEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowCamPOASpeed, _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL2, IDC_CAMERA_VEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kFollowCamPOAAccel, _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL2, IDC_CAMERA_ACCEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowCamPOADecel, _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL2, IDC_CAMERA_DECEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plFollowCamComponent::plFollowCamComponent()
@@ -2308,8 +2334,7 @@ bool plFollowCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     plGenRefMsg* pMsg = new plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
     pMsg->SetRef( (hsKeyedObject*)pBrain );
     plConvert::Instance().AddMessageToQueue(pMsg);
-    hsVector3 pt;
-    pt.Set(fCompPB->GetFloat(kFollowCamOffX),fCompPB->GetFloat(kFollowCamOffY),fCompPB->GetFloat(kFollowCamOffZ));
+    hsVector3 pt(fCompPB->GetFloat(kFollowCamOffX),fCompPB->GetFloat(kFollowCamOffY),fCompPB->GetFloat(kFollowCamOffZ));
     pBrain->SetOffset(pt);
     pt.Set(fCompPB->GetFloat(kFollowPOAOffX),fCompPB->GetFloat(kFollowPOAOffY),fCompPB->GetFloat(kFollowPOAOffZ));
     pBrain->SetPOAOffset(pt);
@@ -2332,7 +2357,7 @@ bool plFollowCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 
     if (!ISetPOA(pNode, pBrain, pErrMsg))
     {
-        if(pErrMsg->Set(true, "Invalid Object Follow Camera", "The camera %s does NOT have an Object POA to go with its Object Follow Cam Component.  This camera will be disabled..\nKill the export?",((INode*)pNode)->GetName()).Ask())
+        if(pErrMsg->Set(true, "Invalid Object Follow Camera", ST::format("The camera {} does NOT have an Object POA to go with its Object Follow Cam Component.  This camera will be disabled..\nKill the export?",((INode*)pNode)->GetName())).Ask())
                 pErrMsg->Set(true, "", "");
         else
                 pErrMsg->Set(false); // Don't want to abort
@@ -2385,24 +2410,24 @@ ParamBlockDesc2 gAnimcamCmdBlock
 (
     plComponent::kBlkComp, _T("animCamCmd"), 0, &gAnimcamCmdDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_ANIMCAM_COMMANDS, IDS_COMP_ANIM_CAM_CMD, 0, 0, NULL,
+    IDD_COMP_ANIMCAM_COMMANDS, IDS_COMP_ANIM_CAM_CMD, 0, 0, nullptr,
 
     kAnimateOnPush, _T("animOnPush"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_BEGINONPUSH,
-        end,
+        p_end,
 
     kStopOnPop, _T("stopOnPop"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_STOPONPOP,
-        end,
+        p_end,
 
     kResetOnPop,    _T("resetOnPop"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_RESETONPOP,
-        end,
+        p_end,
 
     kIgnoreFOV, _T("ignoreFOV"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_IGNOREFOV,
-        end,
-    end
+        p_end,
+    p_end
 );
 
 
@@ -2422,10 +2447,10 @@ bool plCameraAnimCmdComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 bool plCameraAnimCmdComponent::Convert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     plSceneObject* pObj = pNode->GetSceneObject();
-    const plCameraModifier1* pCamMod = nil;
+    const plCameraModifier1* pCamMod = nullptr;
     if (pObj)
     {
-        for (int i = 0; i < pObj->GetNumModifiers(); i++)
+        for (size_t i = 0; i < pObj->GetNumModifiers(); i++)
         {
             pCamMod = plCameraModifier1::ConvertNoRef(pObj->GetModifier(i));
             if (pCamMod)
@@ -2451,10 +2476,10 @@ public:
 
     // Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
 };
 OBSOLETE_CLASS_DESC(plCameraCmdComponent, gCameraCmdDesc, "(ex)Camera Command Region",  "CameraCmdRegion", COMP_TYPE_MISC, CAMERACMD_CID)
@@ -2472,12 +2497,12 @@ enum
 class plCameraCmdComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
-        return false;
+        return FALSE;
     }
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 
 protected:
     void IEnableControls(IParamMap2 *map, int type)
@@ -2508,42 +2533,40 @@ ParamBlockDesc2 gCameraCmdBlock
 
     kCommand,       _T("Command"),      TYPE_INT,               0, 0,
         p_default, kCommandSetFixedCam,
-        end,
+        p_end,
         
     kOffsetX,   _T("X Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, 0.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kOffsetY,   _T("Y Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, 0.0f, 50.0f,
         p_default, 10.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kOffsetZ,   _T("Z Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, 0.0f, 50.0f,
         p_default, 3.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ, IDC_CAMERACMD_SPIN_OFFSETZ, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kCustomBoundListStuff, _T("FixedCamera"),   TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CAMERACMD_PICKSTATE_BASE,
         p_sclassID,  CAMERA_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
 
     kSmooth,    _T("useCut"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_CAMERACMD_CUT,
-        end,
+        p_end,
 
-
-
-    end
+    p_end
 );
 
 plCameraCmdComponent::plCameraCmdComponent()

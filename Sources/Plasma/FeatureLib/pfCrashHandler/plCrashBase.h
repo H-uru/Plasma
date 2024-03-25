@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsThread.h"
 
+namespace ST { class string; }
+
 class plCrashBase
 {
 protected:
@@ -52,7 +54,7 @@ protected:
     hsGlobalSemaphore* fHandled;
 
     ~plCrashBase();
-    void IInit(const char* file);
+    void IInit(const ST::string& file);
 };
 
 #endif // _pfCrashBase_h_

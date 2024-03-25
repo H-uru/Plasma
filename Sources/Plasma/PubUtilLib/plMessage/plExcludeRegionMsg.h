@@ -44,8 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnMessage/plMessage.h"
 
-class hsStream;
-
 class plExcludeRegionMsg : public plMessage
 {
 public:
@@ -72,20 +70,10 @@ public:
     uint8_t GetCmd() const { return fCmd; }
 
     uint32_t fSynchFlags;
-    // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgRead(stream, mgr);
-        fCmd = stream->ReadByte();
-        fSynchFlags = stream->ReadLE32();
-    }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->WriteByte(fCmd);
-        stream->WriteLE32(fSynchFlags);
-    }
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plExcludeRegionMsg_inc

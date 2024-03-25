@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plMaxNode.h"
 
 #include <set>
-#pragma hdrstop
 
 #include "plPickMaterialMap.h"
 
@@ -68,11 +67,12 @@ protected:
     };
 
 public:
-    hsError Run()
+    void Run() override
     {
+        SetThisThreadName(ST_LITERAL("hsHackWinFindThread"));
         while (1)
         {
-            HWND hMtlDlg = FindWindow(NULL, "Material/Map Browser");
+            HWND hMtlDlg = FindWindow(nullptr, _T("Material/Map Browser"));
             if (hMtlDlg && IsWindowVisible(GetDlgItem(hMtlDlg, kOK)))
             {
                 SendMessage(GetDlgItem(hMtlDlg, kScene), BM_CLICK, 0, 0);
@@ -80,7 +80,7 @@ public:
                 EnableWindow(GetDlgItem(hMtlDlg, kMtlEditor), FALSE);
                 EnableWindow(GetDlgItem(hMtlDlg, kActiveSlot), FALSE);
                 EnableWindow(GetDlgItem(hMtlDlg, kNew), FALSE);
-                return 1;
+                return;
             }
         }
     }
@@ -129,7 +129,7 @@ static bool GetPickedMtl(HWND hDlg, Mtl** mtl)
     return false;
 }
 
-static BOOL CALLBACK PickMtlProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK PickMtlProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     static plPickMaterialInfo* info;
 
@@ -138,7 +138,7 @@ static BOOL CALLBACK PickMtlProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
         info = (plPickMaterialInfo*)lParam;
 
         MtlSet mtls;
-        plMtlCollector::GetMtls(&mtls, nil, info->fFlags);
+        plMtlCollector::GetMtls(&mtls, nullptr, info->fFlags);
         
         HWND hList = GetDlgItem(hDlg, IDC_MTL_LIST);
 
@@ -181,11 +181,11 @@ static BOOL CALLBACK PickMtlProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
 Mtl *plPickMaterialMap::PickMaterial(unsigned int flags)
 {
     plPickMaterialInfo info;
-    info.fMtl = NULL;
+    info.fMtl = nullptr;
     info.fFlags = flags;
 
-    //Mtl *mtl = NULL;
-    int ret = DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PICK_MTL), GetCOREInterface()->GetMAXHWnd(), PickMtlProc, (LPARAM)&info);
+    //Mtl *mtl = nullptr;
+    INT_PTR ret = DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PICK_MTL), GetCOREInterface()->GetMAXHWnd(), PickMtlProc, (LPARAM)&info);
 
     if (ret == 1)
     {
@@ -194,6 +194,6 @@ Mtl *plPickMaterialMap::PickMaterial(unsigned int flags)
         return info.fMtl;
     }
 
-    return nil;
+    return nullptr;
 }
 

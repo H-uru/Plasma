@@ -52,11 +52,11 @@ Mead, WA   99021
 class plClientLauncher
 {
 public:
-    typedef std::function<class pfPatcher*(void)> CreatePatcherFunc;
-    typedef std::function<void(ENetError, const plString&)> ErrorFunc;
+    typedef std::function<class pfPatcher*()> CreatePatcherFunc;
+    typedef std::function<void(ENetError, const ST::string&)> ErrorFunc;
     typedef std::function<bool(const plFileName&)> InstallRedistFunc;
-    typedef std::function<void(const plFileName&, const plString&)> LaunchClientFunc;
-    typedef std::function<void(const plString&)> StatusFunc;
+    typedef std::function<void(const plFileName&, const ST::string&)> LaunchClientFunc;
+    typedef std::function<void(const ST::string&)> StatusFunc;
 
 private:
     enum Flags
@@ -66,12 +66,21 @@ private:
         kGameDataOnly = 1<<2,
         kPatchOnly = 1<<3,
         kSkipLoginDialog = 1<<4,
+        kSkipIntroMovies = 1<<5,
 
         kRepairGame = kHaveSelfPatched | kClientImage | kGameDataOnly,
     };
 
-    uint32_t   fFlags;
-    plFileName fServerIni;
+    enum NetCoreState
+    {
+        kNetCoreInactive,
+        kNetCoreActive,
+        kNetCoreShutdown,
+    };
+
+    uint32_t    fFlags;
+    plFileName  fServerIni;
+    NetCoreState fNetCoreState;
 
     plFileName fClientExecutable;
 
@@ -82,9 +91,9 @@ private:
     LaunchClientFunc  fLaunchClientFunc;
     StatusFunc        fStatusFunc;
 
-    plString GetAppArgs() const;
+    ST::string GetAppArgs() const;
 
-    void IOnPatchComplete(ENetError result, const plString& msg);
+    void IOnPatchComplete(ENetError result, const ST::string& msg);
     bool IApproveDownload(const plFileName& file);
 
 public:
@@ -107,7 +116,7 @@ public:
      *  here, then we need to relaunch ourselves so that the game client will look like what the server expects.
      *  \returns True if a self-patch was completed. False if not.
      */
-    bool CompleteSelfPatch(std::function<void(void)> waitProc) const;
+    bool CompleteSelfPatch(const std::function<void()>& waitProc) const;
 
     /** Start eap's weird network subsystem and the shard status pinger.
      *  \remarks Please note that this will also enqueue the first patch.
@@ -119,12 +128,12 @@ public:
      *  So be certain that you've thought that through!
      *  \remarks This method will cause the thread to sleep so that we don't hog the CPU.
      */
-    void PumpNetCore() const;
+    bool PumpNetCore() const;
 
     /** Shutdown eap's netcore and purge any other crap that needs to happen while the app is
      *  visible. In other words, tear down evil threaded crap.
      */
-    void ShutdownNetCore() const;
+    void ShutdownNetCore();
 
     /** Load the server configuration file. Note that you MUST parse the command
      *  arguments before calling this function!
@@ -145,12 +154,12 @@ public:
     void SetInstallerProc(InstallRedistFunc proc);
 
     /** Set a patcher factory. */
-    void SetPatcherFactory(CreatePatcherFunc factory) { fPatcherFactory = factory; }
+    void SetPatcherFactory(CreatePatcherFunc factory) { fPatcherFactory = std::move(factory); }
 
     /** Set a callback that launches an arbitrary executable.
      *  \remarks This will be called from an arbitrary thread.
      */
-    void SetLaunchClientProc(LaunchClientFunc proc) { fLaunchClientFunc = proc; }
+    void SetLaunchClientProc(LaunchClientFunc proc) { fLaunchClientFunc = std::move(proc); }
 
     /** Set a callback that displays the shard status.
      *  \remarks This will be called from a worker thread.
@@ -161,7 +170,7 @@ public:
      *  \remarks This will be called from the network thread. Note that any time
      *  this is called, you should consider it a state reset (so undo your progress bars).
      */
-    void SetStatusProc(StatusFunc proc) { fStatusFunc = proc; }
+    void SetStatusProc(StatusFunc proc) { fStatusFunc = std::move(proc); }
 };
 
 #endif // _plClientLauncher_inc_

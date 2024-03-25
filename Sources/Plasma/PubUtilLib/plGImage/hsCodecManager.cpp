@@ -43,10 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMipmap.h"
 #include "hsDXTSoftwareCodec.h"
 
-#if HS_BUILD_FOR_WIN32
-#include "hsDXTDirectXCodec.h"
-#endif
-
 hsCodecManager& hsCodecManager::Instance()
 {
     static hsCodecManager the_instance;
@@ -56,10 +52,6 @@ hsCodecManager& hsCodecManager::Instance()
     {
         initialized = true;
         hsDXTSoftwareCodec::Init();
-
-#if HS_BUILD_FOR_WIN32
-        hsDXTDirectXCodec::Init();
-#endif
     }
 
     return the_instance;
@@ -71,18 +63,16 @@ hsCodecManager::hsCodecManager()
 
 plMipmap *hsCodecManager::CreateCompressedMipmap(uint32_t compressionFormat, plMipmap *uncompressed)
 {
-    int32_t i, j;
-    for (i = 0; i < fCodecTable.Count(); i++)
+    for (const hsCodecList& codecList : fCodecTable)
     {
-        if (fCodecTable[i].fCompressionFormat == compressionFormat)
+        if (codecList.fCompressionFormat == compressionFormat)
         {
-            for (j = 0; j < fCodecTable[i].fCodecList.Count(); j++)
+            for (const hsCodecEntry& entry : codecList.fCodecList)
             {
-                hsAssert(fCodecTable[i].fCodecList[j].fCodec != 0, 
+                hsAssert(entry.fCodec != nullptr,
                     "Nil codec in hsCodecManager::CreateCompressedMipmap.");
 
-                plMipmap *bm = 
-                    fCodecTable[i].fCodecList[j].fCodec->CreateCompressedMipmap(uncompressed);
+                plMipmap *bm = entry.fCodec->CreateCompressedMipmap(uncompressed);
 
                 if (bm)
                 {
@@ -90,27 +80,25 @@ plMipmap *hsCodecManager::CreateCompressedMipmap(uint32_t compressionFormat, plM
                 }
             }
             
-            return nil;
+            return nullptr;
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 plMipmap *hsCodecManager::CreateUncompressedMipmap(plMipmap *compressed, uint8_t bitDepth)
 {
-    int32_t i, j;
-    for (i = 0; i < fCodecTable.Count(); i++)
+    for (const hsCodecList& codecList : fCodecTable)
     {
-        if( fCodecTable[i].fCompressionFormat == compressed->fCompressionType )
+        if (codecList.fCompressionFormat == compressed->fCompressionType)
         {
-            for (j = 0; j < fCodecTable[i].fCodecList.Count(); j++)
+            for (const hsCodecEntry& entry : codecList.fCodecList)
             {
-                hsAssert(fCodecTable[i].fCodecList[j].fCodec != 0, 
+                hsAssert(entry.fCodec != nullptr,
                     "Nil codec in hsCodecManager::CreateUncompressedMipmap.");
 
-                plMipmap *bm = 
-                    fCodecTable[i].fCodecList[j].fCodec->CreateUncompressedMipmap(compressed, bitDepth);
+                plMipmap *bm = entry.fCodec->CreateUncompressedMipmap(compressed, bitDepth);
 
                 if (bm)
                 {
@@ -118,28 +106,25 @@ plMipmap *hsCodecManager::CreateUncompressedMipmap(plMipmap *compressed, uint8_t
                 }
             }
             
-            return nil;
+            return nullptr;
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 bool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask )
 {
-    int32_t i, j;
-
-
-    for( i = 0; i < fCodecTable.Count(); i++ )
+    for (const hsCodecList& codecList : fCodecTable)
     {
-        if( fCodecTable[ i ].fCompressionFormat == bMap->fCompressionType )
+        if (codecList.fCompressionFormat == bMap->fCompressionType)
         {
-            for( j = 0; j < fCodecTable[ i ].fCodecList.Count(); j++ )
+            for (const hsCodecEntry& entry : codecList.fCodecList)
             {
-                hsAssert( fCodecTable[ i ].fCodecList[ j ].fCodec != 0, 
-                    "Nil codec in hsCodecManager::CreateUncompressedMipmap." );
+                hsAssert(entry.fCodec != nullptr,
+                    "Nil codec in hsCodecManager::CreateUncompressedMipmap.");
 
-                if( fCodecTable[ i ].fCodecList[ j ].fCodec->ColorizeCompMipmap( bMap, colorMask ) )
+                if (entry.fCodec->ColorizeCompMipmap(bMap, colorMask))
                     return true;
             }
             return false;
@@ -150,28 +135,22 @@ bool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMas
 
 bool hsCodecManager::Register(hsCodec *codec, uint32_t compressionFormat, float priority)
 {
-    int32_t i, j;
-    for (i = 0; i < fCodecTable.Count(); i++)
+    for (hsCodecList& codecList : fCodecTable)
     {
-        if (fCodecTable[i].fCompressionFormat == compressionFormat)
+        if (codecList.fCompressionFormat == compressionFormat)
         {
-            j = 0;
-            while ((j < fCodecTable[i].fCodecList.Count()) &&
-                fCodecTable[i].fCodecList[j].fPriority > priority)
-                ++j;
+            auto iter = codecList.fCodecList.cbegin();
+            while ((iter != codecList.fCodecList.cend()) && iter->fPriority > priority)
+                ++iter;
 
-            hsCodecEntry tempCodecEntry(priority, codec);
-            fCodecTable[i].fCodecList.InsertAtIndex(j, tempCodecEntry);
+            codecList.fCodecList.emplace(iter, priority, codec);
 
             return true;
         }
     }
 
-    hsCodecList tempCodecList(compressionFormat);
-    fCodecTable.Append(tempCodecList);
-
-    hsCodecEntry tempCodecEntry(priority, codec);
-    fCodecTable[fCodecTable.Count() - 1].fCodecList.Append(tempCodecEntry);
+    fCodecTable.emplace_back(compressionFormat);
+    fCodecTable.back().fCodecList.emplace_back(priority, codec);
 
     return true;
 }

@@ -46,10 +46,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
+
+#include "pnUtils/pnUtStr.h"
 #include "pnUUID/pnUUID.h"
-#pragma hdrstop
 
-
+#include <string>
 
 namespace pnNpCommon {
 
@@ -106,80 +107,30 @@ inline void IReadString (T ** buf, uint8_t ** buffer, unsigned * bufsz) {
 
 //============================================================================
 template <typename T>
-inline void IWriteValue (const T & value, ARRAY(uint8_t) * buffer) {
-    T * ptr = (T *) buffer->New(sizeof(T));
-    *ptr = value;
+inline void IWriteValue (const T & value, std::vector<uint8_t> * buffer) {
+    static_assert(std::is_trivially_copyable_v<T>,
+                  "IWriteValue can only be used on trivially copyable types");
+    const size_t endPos = buffer->size();
+    buffer->resize(endPos + sizeof(T));
+    memcpy(buffer->data() + endPos, &value, sizeof(T));
 }
 
 //============================================================================
 template <typename T>
-inline void IWriteArray (const T buf[], unsigned elems, ARRAY(uint8_t) * buffer) {
+inline void IWriteArray (const T buf[], unsigned elems, std::vector<uint8_t> * buffer) {
+    static_assert(std::is_trivially_copyable_v<T>,
+                  "IWriteArray can only be used on trivially copyable types");
     unsigned bytes = elems * sizeof(T);
     IWriteValue(bytes, buffer);
-    T * dst = (T *) buffer->New(bytes);
-    memcpy(dst, buf, bytes);
+    const size_t endPos = buffer->size();
+    buffer->resize(endPos + bytes);
+    memcpy(buffer->data() + endPos, buf, bytes);
 }
 
 //============================================================================
 template <typename T>
-inline void IWriteString (const T str[], ARRAY(uint8_t) * buffer) {
-    IWriteArray(str, StrLen(str) + 1, buffer);
-}
-
-//============================================================================
-template <typename T>
-inline bool ICompareValue (const T & lhs, const T & rhs) {
-    return lhs == rhs;
-}
-
-//============================================================================
-template <typename T>
-inline bool ICompareString (const T lhs[], const T rhs[]) {
-    if (!lhs && !rhs)
-        return true;
-    if (!lhs || !rhs)
-        return false;
-    return 0 == StrCmp(lhs, rhs);
-}
-
-//============================================================================
-template <typename T>
-inline bool ICompareStringI (const T lhs[], const T rhs[]) {
-    if (!lhs && !rhs)
-        return true;
-    if (!lhs || !rhs)
-        return false;
-    return 0 == StrCmpI(lhs, rhs);
-}
-
-//============================================================================
-static inline bool ICompareArray (const uint8_t lhs[], const uint8_t rhs[]) {
-    return false;
-}
-
-//============================================================================
-template <typename T>
-inline void ICopyValue (T * plhs, const T & rhs) {
-    *plhs = rhs;
-}
-
-//============================================================================
-template <typename T>
-inline void ICopyString (T ** plhs, const T rhs[]) {
-    free(*plhs);
-    if (rhs)
-        *plhs = StrDup(rhs);
-    else
-        *plhs = StrDup("");
-}
-
-//============================================================================
-static inline void ICopyString (wchar_t ** plhs, const wchar_t rhs[]) {
-    free(*plhs);
-    if (rhs)
-        *plhs = StrDup(rhs);
-    else
-        *plhs = StrDup(L"");
+inline void IWriteString (const T str[], std::vector<uint8_t> * buffer) {
+    IWriteArray(str, std::char_traits<T>::length(str) + 1, buffer);
 }
 
 
@@ -198,7 +149,7 @@ unsigned NetGameScore::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** 
     uint8_t * buffer = const_cast<uint8_t *>(inbuffer);
     uint8_t * start = buffer;
 
-    wchar_t* tempstr = nil;
+    char16_t* tempstr = nullptr;
 
     IReadValue(&scoreId, &buffer, &bufsz);
     IReadValue(&ownerId, &buffer, &bufsz);
@@ -207,28 +158,28 @@ unsigned NetGameScore::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** 
     IReadValue(&value, &buffer, &bufsz);
     IReadString(&tempstr, &buffer, &bufsz);
 
-    gameName = plString::FromWchar(tempstr);
+    gameName = ST::string::from_utf16(tempstr);
     free(tempstr);
 
     if (end)
         *end = buffer;
 
-    return buffer - start;
+    return (unsigned)(buffer - start);
 }
 
 //============================================================================
-unsigned NetGameScore::Write(ARRAY(uint8_t) * buffer) const {
+unsigned NetGameScore::Write(std::vector<uint8_t> * buffer) const {
 
-    unsigned pos = buffer->Count();
+    const size_t pos = buffer->size();
 
     IWriteValue(scoreId, buffer);
     IWriteValue(ownerId, buffer);
     IWriteValue(createdTime, buffer);
     IWriteValue(gameType, buffer);
     IWriteValue(value, buffer);
-    IWriteString(gameName.ToWchar().GetData(), buffer);
+    IWriteString(gameName.to_wchar().data(), buffer);
 
-    return buffer->Count() - pos;
+    return buffer->size() - pos;
 }
 
 //============================================================================
@@ -253,38 +204,38 @@ unsigned NetGameRank::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** e
     uint8_t * buffer = const_cast<uint8_t *>(inbuffer);
     uint8_t * start = buffer;
 
-    wchar_t* tempstr = nil;
+    char16_t* tempstr = nullptr;
 
     IReadValue(&rank, &buffer, &bufsz);
     IReadValue(&score, &buffer, &bufsz);
     IReadString(&tempstr, &buffer, &bufsz);
 
-    StrCopy(name, tempstr, arrsize(name));
+    StrCopy(name, tempstr, std::size(name));
     free(tempstr);
 
     if (end)
         *end = buffer;
 
-    return buffer - start;
+    return (unsigned)(buffer - start);
 }
 
 //============================================================================
-unsigned NetGameRank::Write(ARRAY(uint8_t) * buffer) const {
+unsigned NetGameRank::Write(std::vector<uint8_t> * buffer) const {
 
-    unsigned pos = buffer->Count();
+    const size_t pos = buffer->size();
 
     IWriteValue(rank, buffer);
     IWriteValue(score, buffer);
     IWriteString(name, buffer);
 
-    return buffer->Count() - pos;
+    return buffer->size() - pos;
 }
 
 //============================================================================
 void NetGameRank::CopyFrom(const NetGameRank & fromRank) {
     rank        = fromRank.rank;
     score       = fromRank.score;
-    StrCopy(name, fromRank.name, arrsize(name));
+    StrCopy(name, fromRank.name, std::size(name));
 }
 
 /*****************************************************************************
@@ -292,52 +243,6 @@ void NetGameRank::CopyFrom(const NetGameRank & fromRank) {
 *   NetVaultNode
 *
 ***/
-
-//============================================================================
-NetVaultNode::Blob::Blob(const Blob& rhs)
-{
-    buffer = new uint8_t[rhs.size];
-    size = rhs.size;
-    memcpy(buffer, rhs.buffer, rhs.size);
-}
-
-//============================================================================
-NetVaultNode::Blob::Blob(Blob&& rhs)
-{
-    size = rhs.size;
-    buffer = rhs.buffer;
-    rhs.size = 0;
-    rhs.buffer = nullptr;
-}
-
-//============================================================================
-void NetVaultNode::Blob::operator=(const Blob& rhs)
-{
-    if (size != rhs.size) {
-        delete[] buffer;
-        buffer = new uint8_t[rhs.size];
-        size = rhs.size;
-    }
-    memcpy(buffer, rhs.buffer, rhs.size);
-}
-
-//============================================================================
-void NetVaultNode::Blob::operator=(Blob&& rhs)
-{
-    delete[] buffer;
-    size = rhs.size;
-    buffer = rhs.buffer;
-    rhs.size = 0;
-    rhs.buffer = nullptr;
-}
-
-//============================================================================
-bool NetVaultNode::Blob::operator==(const Blob& rhs) const
-{
-    if (size == rhs.size)
-        return memcmp(buffer, rhs.buffer, size) == 0;
-    return false;
-}
 
 //============================================================================
 void NetVaultNode::Clear()
@@ -357,9 +262,9 @@ inline void IZero(T& dest)
 }
 
 template<>
-inline void IZero<plString>(plString& dest)
+inline void IZero<ST::string>(ST::string& dest)
 {
-    dest = "";
+    dest = ST::string();
 }
 
 template<>
@@ -369,11 +274,9 @@ inline void IZero<plUUID>(plUUID& dest)
 }
 
 template<>
-inline void IZero<NetVaultNode::Blob>(NetVaultNode::Blob& blob)
+inline void IZero<std::vector<uint8_t>>(std::vector<uint8_t>& blob)
 {
-    delete[] blob.buffer;
-    blob.buffer = nullptr;
-    blob.size = 0;
+    blob.clear();
 }
 
 void NetVaultNode::CopyFrom(const NetVaultNode* node)
@@ -441,7 +344,7 @@ bool NetVaultNode::Matches(const NetVaultNode* rhs) const
             return false;
 
 #define COMPARE(field) if (k##field == bit && f##field != rhs->f##field) return false;
-#define COMPARE_ISTRING(field) if (k##field == bit && f##field.CompareI(rhs->f##field) != 0) return false;
+#define COMPARE_ISTRING(field) if (k##field == bit && f##field.compare_i(rhs->f##field) != 0) return false;
     COMPARE(NodeId);
     COMPARE(CreateTime);
     COMPARE(ModifyTime);
@@ -484,46 +387,64 @@ bool NetVaultNode::Matches(const NetVaultNode* rhs) const
 
 //============================================================================
 template<typename T>
-inline void IRead(const uint8_t*& buf, T& dest)
+inline bool IRead(const uint8_t*& buf, size_t& bufsz, T& dest)
 {
+    if (bufsz < sizeof(T)) {
+        return false;
+    }
     const T* ptr = reinterpret_cast<const T*>(buf);
     dest = *ptr;
     buf += sizeof(T);
+    bufsz -= sizeof(T);
+    return true;
 }
 
 template<>
-inline void IRead<plString>(const uint8_t*& buf, plString& dest)
+inline bool IRead<ST::string>(const uint8_t*& buf, size_t& bufsz, ST::string& dest)
 {
-    uint32_t size = *(reinterpret_cast<const uint32_t*>(buf));
-    uint32_t nChars = (size / sizeof(uint16_t)) - 1;
-    buf += sizeof(uint32_t);
+    uint32_t size;
+    if (
+        !IRead(buf, bufsz, size) || bufsz < size
+        // Ensure even byte count
+        || size % sizeof(char16_t) != 0
+        // String must contain at least one character (the terminator)
+        || size < sizeof(char16_t)
+    ) {
+        return false;
+    }
+    uint32_t nChars = (size / sizeof(char16_t)) - 1;
 
-    plStringBuffer<uint16_t> str;
-    uint16_t* theStrBuffer = str.CreateWritableBuffer(nChars);
-    memcpy(theStrBuffer, buf, size);
-    theStrBuffer[nChars] = 0;
-    dest = plString::FromUtf16(str);
+    ST::utf16_buffer str;
+    str.allocate(nChars);
+    memcpy(str.data(), buf, nChars * sizeof(char16_t));
+    dest = ST::string::from_utf16(str);
     buf += size;
+    bufsz -= size;
+    return true;
 }
 
 template<>
-inline void IRead<NetVaultNode::Blob>(const uint8_t*& buf, NetVaultNode::Blob& blob)
+inline bool IRead<std::vector<uint8_t>>(const uint8_t*& buf, size_t& bufsz, std::vector<uint8_t>& blob)
 {
-    blob.size = *(reinterpret_cast<const uint32_t*>(buf));
-    buf += sizeof(uint32_t);
+    uint32_t size;
+    if (!IRead(buf, bufsz, size) || bufsz < size) {
+        return false;
+    }
 
-    delete[] blob.buffer;
-    blob.buffer = new uint8_t[blob.size];
-    memcpy(blob.buffer, buf, blob.size);
-    buf += blob.size;
+    blob.resize(size);
+    memcpy(blob.data(), buf, size);
+    buf += size;
+    bufsz -= size;
+    return true;
 }
 
-void NetVaultNode::Read(const uint8_t* buf, size_t size)
+bool NetVaultNode::Read(const uint8_t* buf, size_t bufsz)
 {
-    fUsedFields= *(reinterpret_cast<const uint64_t*>(buf));
-    buf += sizeof(uint64_t);
+    if (!IRead(buf, bufsz, fUsedFields)) {
+        return false;
+    }
 
-#define READ(field) if (fUsedFields & k##field) IRead(buf, f##field);
+#define READ(field) if (fUsedFields & k##field) if (!IRead(buf, bufsz, f##field)) {fDirtyFields = 0; return false;}
     READ(NodeId);
     READ(CreateTime);
     READ(ModifyTime);
@@ -559,39 +480,46 @@ void NetVaultNode::Read(const uint8_t* buf, size_t size)
 #undef READ
 
     fDirtyFields = 0;
+    return bufsz == 0;
 }
 
 //============================================================================
 template<typename T>
-inline void IWrite(ARRAY(uint8_t)* buffer, const T& value)
+inline void IWrite(std::vector<uint8_t>* buffer, const T& value)
 {
-    uint8_t* ptr = buffer->New(sizeof(T));
-    memcpy(ptr, &value, sizeof(T));
+    static_assert(std::is_trivially_copyable_v<T>,
+                  "IWrite can only be used on trivially copyable types");
+    const size_t oldSize = buffer->size();
+    buffer->resize(oldSize + sizeof(T));
+    memcpy(buffer->data() + oldSize, &value, sizeof(T));
 }
 
 template<>
-inline void IWrite<plString>(ARRAY(uint8_t)* buffer, const plString& value)
+inline void IWrite<ST::string>(std::vector<uint8_t>* buffer, const ST::string& value)
 {
-    plStringBuffer<uint16_t> utf16 = value.ToUtf16();
-    uint32_t strsz = (utf16.GetSize() + 1) * 2;
+    ST::utf16_buffer utf16 = value.to_utf16();
+    uint32_t strsz = (utf16.size() + 1) * sizeof(char16_t);
     IWrite(buffer, strsz);
 
-    uint8_t* ptr = buffer->New(strsz);
-    memcpy(ptr, utf16.GetData(), strsz);
+    const size_t oldSize = buffer->size();
+    buffer->resize(oldSize + strsz);
+    memcpy(buffer->data() + oldSize, utf16.data(), strsz);
 }
 
 template<>
-inline void IWrite<NetVaultNode::Blob>(ARRAY(uint8_t)* buffer, const NetVaultNode::Blob& blob)
+inline void IWrite<std::vector<uint8_t>>(std::vector<uint8_t>* buffer,
+                                         const std::vector<uint8_t>& blob)
 {
-    IWrite(buffer, static_cast<uint32_t>(blob.size));
+    IWrite(buffer, static_cast<uint32_t>(blob.size()));
 
-    if (blob.size > 0) {
-        uint8_t* ptr = buffer->New(blob.size);
-        memcpy(ptr, blob.buffer, blob.size);
+    if (!blob.empty()) {
+        const size_t oldSize = buffer->size();
+        buffer->resize(oldSize + blob.size());
+        memcpy(buffer->data() + oldSize, blob.data(), blob.size());
     }
 }
 
-void NetVaultNode::Write(ARRAY(uint8_t)* buf, uint32_t ioFlags)
+void NetVaultNode::Write(std::vector<uint8_t>* buf, uint32_t ioFlags)
 {
     uint64_t flags = fUsedFields;
     if (ioFlags & kDirtyNodeType)
@@ -642,12 +570,11 @@ void NetVaultNode::Write(ARRAY(uint8_t)* buf, uint32_t ioFlags)
 }
 
 //============================================================================
-void NetVaultNode::ISetVaultBlob(uint64_t bits, NetVaultNode::Blob& blob, const uint8_t* buf, size_t size)
+void NetVaultNode::ISetVaultBlob(uint64_t bits, std::vector<uint8_t>& blob,
+                                 const uint8_t* buf, size_t size)
 {
-    delete[] blob.buffer;
-    blob.buffer = new uint8_t[size];
-    blob.size = size;
-    memcpy(blob.buffer, buf, size);
+    blob.resize(size);
+    memcpy(blob.data(), buf, size);
 
     fUsedFields |= bits;
     fDirtyFields |= bits;

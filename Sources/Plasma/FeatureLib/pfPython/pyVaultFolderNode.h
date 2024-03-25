@@ -48,40 +48,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 #include "pyVaultNode.h"
 
-class plString;
-struct RelVaultNode;
+namespace ST { class string; }
 
 class pyVaultFolderNode : public pyVaultNode
 {
 protected:
-    // should only be created from C++ side
-    pyVaultFolderNode(RelVaultNode* nfsNode);
-
     //create from the Python side
-    pyVaultFolderNode(int n=0);
+    pyVaultFolderNode();
 
 public:
-    ~pyVaultFolderNode();
-
     // required functions for PyObject interoperability
     PYTHON_EXPOSE_TYPE; // so we can subclass
     PYTHON_CLASS_NEW_FRIEND(ptVaultFolderNode);
-    static PyObject *New(RelVaultNode* nfsNode);
-    static PyObject *New(int n=0);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultFolderNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultFolderNode); // converts a PyObject to a pyVaultFolderNode (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
 
-    virtual void    Folder_SetType( int type );
-    virtual int     Folder_GetType( void );
-    void    Folder_SetName(const char* name);
-    void    Folder_SetNameW(const wchar_t* name);
-    plString Folder_GetName() const;
+    void Folder_SetType(int type);
+    int Folder_GetType();
+    void    Folder_SetName(const ST::string& name);
+    ST::string Folder_GetName() const;
 
 
 

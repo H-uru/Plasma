@@ -44,18 +44,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plRefFlags.h"
-#include "plString.h"
 
 class hsKeyedObject;
 class plRefMsg;
 class plUoid;
 class hsBitVector;
+namespace ST { class string; }
 
 //// plKey ///////////////////////////////////////////////////////////////////
 //  Pointer to a plKeyData struct, which is a handle to a keyedObject
 
 class plKeyData;
-class plKeyImp;
 
 class plKey 
 {
@@ -64,18 +63,31 @@ public:
     plKey() : fKeyData(nullptr) { }
     plKey(std::nullptr_t) : fKeyData(nullptr) { }
     plKey(const plKey& rhs);
+    plKey(plKey&& rhs) noexcept : fKeyData(rhs.fKeyData) { rhs.fKeyData = nullptr; }
     ~plKey();
     plKey& operator=(const plKey& rhs);
+    plKey& operator=(std::nullptr_t);
+
+    plKey& operator=(plKey&& rhs)
+    {
+        std::swap(fKeyData, rhs.fKeyData);
+        return *this;
+    }
 
     bool operator==(const plKey& rhs) const { return fKeyData == rhs.fKeyData; }
     bool operator==(const plKeyData* rhs) const { return fKeyData == rhs; }
     bool operator!=(const plKey& rhs) const { return !(*this == rhs); }
     bool operator!=(const plKeyData* rhs) const { return !(*this == rhs); }
+    // Ordering operators for stdlib containers, etc. that rely on < (std::less) by default
+    bool operator<(const plKey& rhs) const { return fKeyData < rhs.fKeyData; }
+    bool operator>(const plKey& rhs) const { return fKeyData > rhs.fKeyData; }
+    bool operator<=(const plKey& rhs) const { return fKeyData <= rhs.fKeyData; }
+    bool operator>=(const plKey& rhs) const { return fKeyData >= rhs.fKeyData; }
 
     plKeyData* operator->() const;
     plKeyData& operator*() const;
 
-    operator plKeyImp*() const { return (plKeyImp*)fKeyData; }
+    operator bool() const { return fKeyData != nullptr; }
 
     static plKey Make(plKeyData* data) { return plKey(data); }
 
@@ -85,7 +97,7 @@ protected:
     void IIncRef();
     void IDecRef();
 
-    // Internal constructor, extra param is to distinguish it from the void* constructor
+    // Internal constructor
     plKey(plKeyData* data);
 };
 
@@ -97,7 +109,7 @@ class plKeyData
 {
 public:
     virtual const plUoid&   GetUoid() const=0;
-    virtual const plString& GetName() const=0;
+    virtual ST::string      GetName() const=0;
 
     virtual hsKeyedObject*  GetObjectPtr()=0;
     virtual hsKeyedObject*  ObjectIsLoaded() const=0;
@@ -120,20 +132,14 @@ public:
 
     virtual uint16_t      GetActiveRefs() const = 0;
 
-    virtual uint16_t      GetNumNotifyCreated() const = 0;
-    virtual plRefMsg*   GetNotifyCreated(int i) const = 0;
+    virtual size_t      GetNumNotifyCreated() const = 0;
+    virtual plRefMsg*   GetNotifyCreated(size_t i) const = 0;
     virtual const hsBitVector& GetActiveBits() const = 0;
 
 protected:
     // Protected so only the registry can create it
     plKeyData();
     virtual ~plKeyData();
-
-#ifdef HS_DEBUGGING
-    // Debugging info fields
-    plString    fIDName;
-    const char* fClassType;
-#endif
 
     //// RefCount Stuff //////////////////////////////////////////////////////////
     //  The refcounts on plKeyData/plKeyImps are zero-based. When you first create

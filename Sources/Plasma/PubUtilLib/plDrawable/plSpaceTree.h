@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSpaceTree_inc
 #define plSpaceTree_inc
 
-#include "hsTemplates.h"
+#include <vector>
+
 #include "hsBounds.h"
 #include "pnFactory/plCreatable.h"
 #include "hsBitVector.h"
@@ -98,11 +99,11 @@ public:
         kRootParent = -1
     };
 private:
-    hsTArray<plSpaceTreeNode>       fTree;
+    std::vector<plSpaceTreeNode>    fTree;
     const hsBitVector*              fCache;
 
+    int32_t                           fNumLeaves;
     int16_t                           fRoot;
-    int16_t                           fNumLeaves;
 
     uint16_t                          fHarvestFlags;
 
@@ -112,16 +113,16 @@ private:
 
     void        IRefreshRecur(int16_t which);
     
-    void        IHarvestAndCullLeaves(const plSpaceTreeNode& subRoot, hsTArray<int16_t>& list) const;
-    void        IHarvestLeaves(const plSpaceTreeNode& subRoot, hsTArray<int16_t>& list) const;
+    void        IHarvestAndCullLeaves(const plSpaceTreeNode& subRoot, std::vector<int16_t>& list) const;
+    void        IHarvestLeaves(const plSpaceTreeNode& subRoot, std::vector<int16_t>& list) const;
     
     void        IHarvestAndCullLeaves(const plSpaceTreeNode& subRoot, hsBitVector& totList, hsBitVector& list) const;
     void        IHarvestLeaves(const plSpaceTreeNode& subRoot, hsBitVector& totList, hsBitVector& list) const;
 
-    void        IHarvestLevel(int16_t subRoot, int level, int currLevel, hsTArray<int16_t>& list) const;
+    void        IHarvestLevel(int16_t subRoot, int level, int currLevel, std::vector<int16_t>& list) const;
 
-    void        IHarvestAndCullEnabledLeaves(int16_t subRoot, const hsBitVector& cache, hsTArray<int16_t>& list) const;
-    void        IHarvestEnabledLeaves(int16_t subRoot, const hsBitVector& cache, hsTArray<int16_t>& list) const;
+    void        IHarvestAndCullEnabledLeaves(int16_t subRoot, const hsBitVector& cache, std::vector<int16_t>& list) const;
+    void        IHarvestEnabledLeaves(int16_t subRoot, const hsBitVector& cache, std::vector<int16_t>& list) const;
     void        IHarvestEnabledLeaves(int16_t subIdx, const hsBitVector& cache, hsBitVector& totList, hsBitVector& list) const;
 
     void        IEnableLeaf(int16_t idx, hsBitVector& cache) const;
@@ -147,16 +148,14 @@ public:
     void HarvestLeaves(int16_t subRoot, hsBitVector& list) const;
     void HarvestLeaves(int16_t subRoot, hsBitVector& totList, hsBitVector& list) const;
 
-    void HarvestLeaves(hsTArray<int16_t>& list) const;
-    void HarvestLeaves(plVolumeIsect* cullFunc, hsTArray<int16_t>& list) const;
-    void HarvestLeaves(int16_t subRoot, hsTArray<int16_t>& list) const;
+    void HarvestLeaves(std::vector<int16_t>& list) const;
+    void HarvestLeaves(plVolumeIsect* cullFunc, std::vector<int16_t>& list) const;
+    void HarvestLeaves(int16_t subRoot, std::vector<int16_t>& list) const;
 
     void EnableLeaf(int16_t idx, hsBitVector& cache) const;
-    void EnableLeaves(const hsTArray<int16_t>& list, hsBitVector& cache) const;
-    void HarvestEnabledLeaves(plVolumeIsect* cullFunc, const hsBitVector& cache, hsTArray<int16_t>& list) const;
+    void EnableLeaves(const std::vector<int16_t>& list, hsBitVector& cache) const;
+    void HarvestEnabledLeaves(plVolumeIsect* cullFunc, const hsBitVector& cache, std::vector<int16_t>& list) const;
     void SetCache(const hsBitVector* cache) { fCache = cache; }
-
-    void BitVectorToList(hsTArray<int16_t>& list, const hsBitVector& bitVec) const;
 
     void SetHarvestFlags(plHarvestFlags f) { fHarvestFlags = f; }
     uint16_t GetHarvestFlags() const { return fHarvestFlags; }
@@ -178,12 +177,12 @@ public:
     bool IsDirty() const { return 0 != (GetNode(GetRoot()).fFlags & plSpaceTreeNode::kDirty); }
     void MakeDirty() { fTree[GetRoot()].fFlags |= plSpaceTreeNode::kDirty; }
 
-    int16_t GetNumLeaves() const { return fNumLeaves; }
+    int32_t GetNumLeaves() const { return fNumLeaves; }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
-    void HarvestLevel(int level, hsTArray<int16_t>& list) const;
+    void HarvestLevel(int level, std::vector<int16_t>& list) const;
 
     friend class plSpaceTreeMaker;
 };

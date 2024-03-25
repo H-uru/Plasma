@@ -40,39 +40,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plLineFollowMod.h"
 #include "plStereizer.h"
-#include "plInterp/plAnimPath.h"
-#include "hsResMgr.h"
-#include "pnMessage/plRefMsg.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnSceneObject/plDrawInterface.h"
-#include "plgDispatch.h"
-#include "plMessage/plListenerMsg.h"
-#include "plMessage/plRenderMsg.h"
-#include "pnMessage/plTimeMsg.h"
+
 #include "hsBounds.h"
-#include "plPipeline.h"
 #include "hsFastMath.h"
-#include "pnMessage/plPlayerPageMsg.h"
-#include "pnNetCommon/plNetApp.h"
-#include "plNetClient/plNetClientMgr.h"
+#include "plgDispatch.h"
+#include "plPipeline.h"
+#include "plProfile.h"
+#include "hsResMgr.h"
 #include "hsTimer.h"
 
-plLineFollowMod::plLineFollowMod()
-:   fPath(nil),
-    fPathParent(nil),
-    fRefObj(nil),
-    fFollowMode(kFollowListener),
-    fFollowFlags(kNone),
-    fOffset(0),
-    fOffsetClamp(0),
-    fSpeedClamp(0)
-{
-    fSearchPos.Set(0,0,0);
-}
+#include "pnMessage/plPlayerPageMsg.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plInterp/plAnimPath.h"
+#include "plMessage/plListenerMsg.h"
+#include "plMessage/plRenderMsg.h"
+
+plProfile_CreateTimer("LineFollow", "RenderSetup", LineFollow);
 
 plLineFollowMod::~plLineFollowMod()
 {
@@ -172,7 +163,7 @@ void plLineFollowMod::Read(hsStream* stream, hsResMgr* mgr)
 
     if( fFollowFlags & kOffset )
     {
-        fOffset = stream->ReadLEScalar();
+        fOffset = stream->ReadLEFloat();
     }
     if( fFollowFlags & kOffsetAng )
     {
@@ -180,11 +171,11 @@ void plLineFollowMod::Read(hsStream* stream, hsResMgr* mgr)
     }
     if( fFollowFlags & kOffsetClamp )
     {
-        fOffsetClamp = stream->ReadLEScalar();
+        fOffsetClamp = stream->ReadLEFloat();
     }
     if( fFollowFlags & kSpeedClamp )
     {
-        fSpeedClamp = stream->ReadLEScalar();
+        fSpeedClamp = stream->ReadLEFloat();
     }
 }
 
@@ -198,25 +189,20 @@ void plLineFollowMod::Write(hsStream* stream, hsResMgr* mgr)
 
     mgr->WriteKey(stream, fRefObj); 
 
-    stream->WriteLE32(fStereizers.GetCount());
-    int i;
-    for( i = 0; i < fStereizers.GetCount(); i++ )
-        mgr->WriteKey(stream, fStereizers[i]->GetKey());
+    stream->WriteLE32((uint32_t)fStereizers.size());
+    for (plStereizer* ster : fStereizers)
+        mgr->WriteKey(stream, ster->GetKey());
 
     uint32_t f = uint32_t(fFollowMode) | (uint32_t(fFollowFlags) << 16);
     stream->WriteLE32(f);
 
     if( fFollowFlags & kOffset )
-        stream->WriteLEScalar(fOffset);
+        stream->WriteLEFloat(fOffset);
     if( fFollowFlags & kOffsetClamp )
-        stream->WriteLEScalar(fOffsetClamp);
+        stream->WriteLEFloat(fOffsetClamp);
     if( fFollowFlags & kSpeedClamp )
-        stream->WriteLEScalar(fSpeedClamp);
+        stream->WriteLEFloat(fSpeedClamp);
 }
-
-
-#include "plProfile.h"
-plProfile_CreateTimer("LineFollow", "RenderSetup", LineFollow);
 
 bool plLineFollowMod::MsgReceive(plMessage* msg)
 {
@@ -233,23 +219,23 @@ bool plLineFollowMod::MsgReceive(plMessage* msg)
             else if( kRefStereizer == refMsg->fType )
             {
                 plStereizer* ster = plStereizer::ConvertNoRef(refMsg->GetRef());
-                int idx = fStereizers.Find(ster);
-                if( idx == fStereizers.kMissingIndex )
-                    fStereizers.Append(ster);
+                auto idx = std::find(fStereizers.cbegin(), fStereizers.cend(), ster);
+                if (idx == fStereizers.cend())
+                    fStereizers.emplace_back(ster);
             }
         }
         else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
         {
             if( kRefParent == refMsg->fType )
-                fPathParent = nil;
+                fPathParent = nullptr;
             else if( kRefObject == refMsg->fType )
-                fRefObj = nil;
+                fRefObj = nullptr;
             else if( kRefStereizer == refMsg->fType )
             {
                 plStereizer* ster = (plStereizer*)(refMsg->GetRef());
-                int idx = fStereizers.Find(ster);
-                if( idx != fStereizers.kMissingIndex )
-                    fStereizers.Remove(idx);
+                auto idx = std::find(fStereizers.cbegin(), fStereizers.cend(), ster);
+                if (idx != fStereizers.end())
+                    fStereizers.erase(idx);
             }
         }
         return true;
@@ -277,7 +263,7 @@ bool plLineFollowMod::MsgReceive(plMessage* msg)
     plPlayerPageMsg* pPMsg = plPlayerPageMsg::ConvertNoRef(msg);
     if (pPMsg)
     {
-        if (pPMsg->fPlayer == plNetClientMgr::GetInstance()->GetLocalPlayerKey() && !pPMsg->fUnload)
+        if (pPMsg->fPlayer == plNetClientApp::GetInstance()->GetLocalPlayerKey() && !pPMsg->fUnload)
         {
             fRefObj = (plSceneObject*)pPMsg->fPlayer->GetObjectPtr();
         }
@@ -353,8 +339,7 @@ bool plLineFollowMod::IEval(double secs, float del, uint32_t dirty)
     if( fFollowFlags & kOffset )
         IOffsetTargetTransform(tgtXfm);
 
-    int i;
-    for( i = 0; i < GetNumTargets(); i++ )
+    for (size_t i = 0; i < GetNumTargets(); i++)
     {
         ISetTargetTransform(i, tgtXfm);
     }
@@ -369,8 +354,7 @@ bool plLineFollowMod::IOffsetTargetTransform(hsMatrix44& tgtXfm)
     float t2sLen = tgt2src.Magnitude();
     hsFastMath::NormalizeAppr(tgt2src);
 
-    hsVector3 out;
-    out.Set(-tgt2src.fY, tgt2src.fX, 0); // (0,0,1) X (tgt2src)
+    hsVector3 out(-tgt2src.fY, tgt2src.fX, 0.f); // (0,0,1) X (tgt2src)
 
     if( fFollowFlags & kOffsetAng )
     {
@@ -389,12 +373,11 @@ bool plLineFollowMod::IOffsetTargetTransform(hsMatrix44& tgtXfm)
         out *= fOffset;
     }
     else
-        out.Set(0,0,0);
+        out.Set(0.f, 0.f, 0.f);
 
     if( fFollowFlags & kForceToLine )
     {
-        hsPoint3 newSearch = tgtPos;
-        newSearch += out;
+        hsPoint3 newSearch = tgtPos + out;
         IGetTargetTransform(newSearch, tgtXfm);
     }
     else
@@ -541,7 +524,7 @@ hsMatrix44 plLineFollowMod::ISpeedClamp(plCoordinateInterface* ci, const hsMatri
     return unclTgtXfm;
 }
 
-void plLineFollowMod::ISetTargetTransform(int iTarg, const hsMatrix44& unclTgtXfm)
+void plLineFollowMod::ISetTargetTransform(size_t iTarg, const hsMatrix44& unclTgtXfm)
 {
     plCoordinateInterface* ci = IGetTargetCoordinateInterface(iTarg);
     if( ci )
@@ -579,13 +562,12 @@ void plLineFollowMod::ISetTargetTransform(int iTarg, const hsMatrix44& unclTgtXf
             ci->SetTransform(l2w, w2l);
         }
         hsPoint3 newPos = tgtXfm.GetTranslate();
-        int i;
-        for( i = 0; i < fStereizers.GetCount(); i++ )
+        for (plStereizer* ster : fStereizers)
         {
-            if( fStereizers[i] )
+            if (ster)
             {
-                fStereizers[i]->SetWorldInitPos(newPos);
-                fStereizers[i]->Stereize();
+                ster->SetWorldInitPos(newPos);
+                ster->Stereize();
             }
         }
     }
@@ -593,11 +575,10 @@ void plLineFollowMod::ISetTargetTransform(int iTarg, const hsMatrix44& unclTgtXf
 
 void plLineFollowMod::ISetupStereizers(const plListenerMsg* listMsg)
 {
-    int i;
-    for( i = 0; i < fStereizers.GetCount(); i++ )
+    for (plStereizer* ster : fStereizers)
     {
-        if( fStereizers[i] )
-            fStereizers[i]->SetFromListenerMsg(listMsg);
+        if (ster)
+            ster->SetFromListenerMsg(listMsg);
     }
 }
 

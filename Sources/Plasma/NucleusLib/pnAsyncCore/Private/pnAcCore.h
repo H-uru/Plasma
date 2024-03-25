@@ -74,40 +74,15 @@ enum EAsyncPerfCounter {
     kAsyncPerfSocketBytesWaitQueued,
     kAsyncPerfSocketConnAttemptsOutCurr,
     kAsyncPerfSocketConnAttemptsOutTotal,
-    kAsyncPerfSocketConnAttemptsInCurr,
-    kAsyncPerfSocketConnAttemptsInTotal,
     kAsyncPerfSocketDisconnectBacklog,
-    kAsyncPerfSocketDisconnectInvalidConnType,
     kAsyncPerfNameLookupAttemptsCurr,
     kAsyncPerfNameLookupAttemptsTotal,
-
-    // Files
-    kAsyncPerfFilesCurr,
-    kAsyncPerfFilesTotal,
-    kAsyncPerfFileBytesReadQueued,
-    kAsyncPerfFileBytesWriteQueued,
 
     // Threads
     kAsyncPerfThreadsCurr,
     kAsyncPerfThreadsTotal,
 
-    // Thread tasks
-    kAsyncPerfThreadTaskListCount,
-    kAsyncPerfThreadTaskThreadsDesired,
-    kAsyncPerfThreadTaskThreadsRunning,
-    kAsyncPerfThreadTaskThreadsActive,
-    
     kNumAsyncPerfCounters
 };
 
 long AsyncPerfGetCounter (unsigned id);
-
-
-/*****************************************************************************
-*
-*   Misc functions
-*
-***/
-
-void AsyncSignalShutdown ();
-void AsyncWaitForShutdown ();

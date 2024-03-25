@@ -42,15 +42,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFileSystem.h"
 
+#include "MaxMain/MaxCompat.h"
+
 class BitmapInfo;
 class Bitmap;
 class plBitmap;
 class plErrorMsg;
 class plKey;
 class plLocation;
-class plMipmap;
 class hsMaxLayerBase;
-
+class plMipmap;
 
 class plBitmapData
 {
@@ -71,10 +72,10 @@ public:
     float sig;
     bool    isStaticCubicEnvMap;
     bool    invertAlpha;
-    const char  *faceNames[ 6 ];
+    const MCHAR  *faceNames[ 6 ];
     uint32_t  maxDimension;
     uint8_t   clampFlags;
-    bool    useJPEG;
+    bool    usePNG;
 
     plBitmapData()
     {
@@ -85,10 +86,10 @@ public:
         sig = 0;
         isStaticCubicEnvMap = false;
         invertAlpha = false;
-        faceNames[ 0 ] = faceNames[ 1 ] = faceNames[ 2 ] = faceNames[ 3 ] = faceNames[ 4 ] = faceNames[ 5 ] = nil;
+        faceNames[0] = faceNames[1] = faceNames[2] = faceNames[3] = faceNames[4] = faceNames[5] = nullptr;
         maxDimension = 0;
         clampFlags = 0;
-        useJPEG = false;
+        usePNG = false;
     }
 };
 
@@ -100,11 +101,11 @@ class plBitmapCreator
         static plBitmapCreator  &Instance();
 
         plBitmap    *CreateTexture( plBitmapData *bd, const plLocation &loc, int clipID = -1 );
-        plMipmap    *CreateBlankMipmap( uint32_t width, uint32_t height, unsigned config, uint8_t numLevels, const plString &keyName, const plLocation &keyLocation );
+        plMipmap    *CreateBlankMipmap( uint32_t width, uint32_t height, unsigned config, uint8_t numLevels, const ST::string &keyName, const plLocation &keyLocation );
 
         void    Init( bool save, plErrorMsg *msg );
-        void    DeInit( void );
-        void    CleanUpMaps( void );
+        void    DeInit();
+        void    CleanUpMaps();
 
         ~plBitmapCreator();
 

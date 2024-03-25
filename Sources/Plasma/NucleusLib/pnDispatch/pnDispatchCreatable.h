@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreatable.h"
 
 #include "plDispatch.h"
-
-REGISTER_CREATABLE( plDispatch );
+REGISTER_CREATABLE(plDispatch);
 
 #endif // pnDispatchCreatable_inc

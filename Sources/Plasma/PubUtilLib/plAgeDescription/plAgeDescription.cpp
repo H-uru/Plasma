@@ -45,23 +45,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFile/plInitFileReader.h"
 #include "plFile/plEncryptedStream.h"
+#include "pnKeyedObject/plUoid.h"
 #include "hsStringTokenizer.h"
 
 #include <functional>
 #include <algorithm>
 #include <cmath>
-
+#include <string_theory/format>
 
 const uint32_t    plAgePage::kInvalidSeqSuffix = (uint32_t)-1;
 
-plAgePage::plAgePage( const plString &name, uint32_t seqSuffix, uint8_t flags )
+plAgePage::plAgePage( const ST::string &name, uint32_t seqSuffix, uint8_t flags )
 {
     fName = name;
     fSeqSuffix = seqSuffix;
     fFlags = flags;
 }
 
-plAgePage::plAgePage( const plString &stringFrom )
+plAgePage::plAgePage( const ST::string &stringFrom )
 {
     SetFromString( stringFrom );
 }
@@ -98,10 +99,10 @@ void plAgePage::SetFlags(uint8_t f, bool on)
 }
 
 // now preservs original string
-bool plAgePage::SetFromString( const plString &stringIn )
+bool plAgePage::SetFromString( const ST::string &stringIn )
 {
     // Parse. Format is going to be "pageName[,seqSuffix[,flags]]"
-    std::vector<plString> toks = stringIn.Tokenize(", \n");
+    std::vector<ST::string> toks = stringIn.tokenize(", \n");
     if (toks.size() == 0)
         return false;
 
@@ -110,19 +111,19 @@ bool plAgePage::SetFromString( const plString &stringIn )
     fFlags = 0;
 
     if (toks.size() > 1)
-        fSeqSuffix = toks[1].ToUInt();
+        fSeqSuffix = toks[1].to_uint();
     if (toks.size() > 2)
-        fFlags = toks[2].ToUInt();
+        fFlags = toks[2].to_uint();
 
     return true;
 }
 
-plString plAgePage::GetAsString( void ) const
+ST::string plAgePage::GetAsString() const
 {
     if (fFlags)
-        return plFormat("{},{},{}", fName, fSeqSuffix, fFlags);
+        return ST::format("{},{},{}", fName, fSeqSuffix, fFlags);
 
-    return plFormat("{},{}", fName, fSeqSuffix);
+    return ST::format("{},{}", fName, fSeqSuffix);
 }
 
 
@@ -165,13 +166,11 @@ bool plAgeDescription::ReadFromFile( const plFileName &fileNameToReadFrom )
 {
     IInit();
 
-    hsStream* stream = plEncryptedStream::OpenEncryptedFile(fileNameToReadFrom);
+    std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFile(fileNameToReadFrom);
     if( !stream )
         return false;
 
-    Read( stream );
-    stream->Close();
-    delete stream;
+    Read(stream.get());
 
     SetAgeNameFromPath( fileNameToReadFrom );
     return true;
@@ -188,7 +187,7 @@ void plAgeDescription::SetAgeNameFromPath( const plFileName &path )
     fName = path.GetFileNameNoExt();
 }
 
-void plAgeDescription::IInit( void )
+void plAgeDescription::IInit()
 {
     fName = "";
     fDayLength = 24.0f;
@@ -203,61 +202,61 @@ void plAgeDescription::IInit( void )
 
 void plAgeDescription::ClearPageList()
 {
-    fPages.Reset();
+    fPages.clear();
 }
 
-void    plAgeDescription::AppendPage( const plString &name, int seqSuffix, uint8_t flags )
+void    plAgeDescription::AppendPage( const ST::string &name, int seqSuffix, uint8_t flags )
 {
-    fPages.Append( plAgePage( name, ( seqSuffix == -1 ) ? fPages.GetCount() : (uint32_t)seqSuffix, flags ) );
+    fPages.emplace_back(name, (seqSuffix == -1) ? fPages.size() : (uint32_t)seqSuffix, flags);
 }
 
-void    plAgeDescription::SeekFirstPage( void )
+void    plAgeDescription::SeekFirstPage()
 {
     fPageIterator = 0;
 }
 
-plAgePage   *plAgeDescription::GetNextPage( void )
+plAgePage   *plAgeDescription::GetNextPage()
 {
-    plAgePage   *ret = nil;
+    plAgePage   *ret = nullptr;
 
 
-    if( fPageIterator >= 0 && fPageIterator < fPages.GetCount() )
+    if (fPageIterator >= 0 && (size_t)fPageIterator < fPages.size())
     {
         ret = &fPages[ fPageIterator++ ];
-        if( fPageIterator >= fPages.GetCount() )
+        if ((size_t)fPageIterator >= fPages.size())
             fPageIterator = -1;
     }
 
     return ret;
 }
 
-void plAgeDescription::RemovePage( const plString &page )
+void plAgeDescription::RemovePage( const ST::string &page )
 {
-    for (int i = 0; i < fPages.GetCount(); i++)
+    for (auto iter = fPages.begin(); iter != fPages.end(); ++iter)
     {
-        if (page == fPages[i].GetName())
+        if (page == iter->GetName())
         {
-            fPages.Remove(i);
+            fPages.erase(iter);
             return;
         }
     }
 }
 
-plAgePage *plAgeDescription::FindPage( const plString &name ) const
+const plAgePage *plAgeDescription::FindPage(const ST::string &name) const
 {
-    for (int i = 0; i < fPages.GetCount(); i++)
+    for (const plAgePage& page : fPages)
     {
-        if (name == fPages[i].GetName())
-            return &fPages[i];
+        if (name == page.GetName())
+            return &page;
     }
 
-    return nil;
+    return nullptr;
 }
 
-plLocation  plAgeDescription::CalcPageLocation( const plString &page ) const
+plLocation  plAgeDescription::CalcPageLocation( const ST::string &page ) const
 {
-    plAgePage *ap = FindPage( page );
-    if( ap != nil )
+    const plAgePage *ap = FindPage(page);
+    if (ap != nullptr)
     {
         // Combine our sequence # together
         int32_t combined;
@@ -280,7 +279,7 @@ plLocation  plAgeDescription::CalcPageLocation( const plString &page ) const
         else
         {
             plLocation ret = plLocation::MakeNormal( combined );
-            if (!page.CompareI("builtin"))
+            if (!page.compare_i("builtin"))
                 ret.SetFlags(plLocation::kBuiltIn);
             return ret;
         }
@@ -323,12 +322,8 @@ void plAgeDescription::Write(hsStream* stream) const
     stream->WriteString( buf );
 
     // Write out the pages
-    int i;
-    for( i = 0; i < fPages.GetCount(); i++ )
-    {
-        sprintf(buf, "Page=%s\n", fPages[ i ].GetAsString().c_str() );
-        stream->WriteString(buf);
-    }
+    for (const plAgePage& page : fPages)
+        stream->WriteString(ST::format("Page={}\n", page.GetAsString()));
 }
 
 // Somewhat of an overkill, but I created it, so I better use it.
@@ -336,7 +331,7 @@ void plAgeDescription::Write(hsStream* stream) const
 // we only have one section, we can safely use ourselves as the section reader.
 // Later I might just add section readers with function pointers to avoid this need entirely
 
-const char  *plAgeDescription::GetSectionName( void ) const
+const char  *plAgeDescription::GetSectionName() const
 {
     return "AgeInfo";
 }
@@ -347,7 +342,7 @@ bool        plAgeDescription::IParseToken( const char *token, hsStringTokenizer 
 
     if( !stricmp( token, "StartDateTime" ) )
     {
-        if( ( tok = tokenizer->next() ) != nil )
+        if ((tok = tokenizer->next()) != nullptr)
         {
             char buf[11];
             strncpy(buf, tok, 10); buf[10] = '\0';
@@ -356,33 +351,33 @@ bool        plAgeDescription::IParseToken( const char *token, hsStringTokenizer 
     }
     else if (!stricmp(token, "DayLength"))
     {
-        if( ( tok = tokenizer->next() ) != nil )
+        if ((tok = tokenizer->next()) != nullptr)
             fDayLength = (float)atof(tok);
     }
     else if (!stricmp(token, "Page"))
     {
-        fPages.Append( plAgePage( tokenizer->GetRestOfString() ) );
-        if( fPages[ fPages.GetCount() - 1 ].GetSeqSuffix() == plAgePage::kInvalidSeqSuffix )
-            fPages[ fPages.GetCount() - 1 ].SetSeqSuffix( fPages.GetCount() );
+        fPages.emplace_back(tokenizer->GetRestOfString());
+        if (fPages.back().GetSeqSuffix() == plAgePage::kInvalidSeqSuffix)
+            fPages.back().SetSeqSuffix(fPages.size());
     }
     else if (!stricmp(token, "MaxCapacity"))
     {
-        if( ( tok = tokenizer->next() ) != nil )
+        if ((tok = tokenizer->next()) != nullptr)
             fMaxCapacity = atoi(tok);
     }
     else if (!stricmp(token, "LingerTime"))
     {
-        if( ( tok = tokenizer->next() ) != nil )
+        if ((tok = tokenizer->next()) != nullptr)
             fLingerTime = atoi(tok);
     }
     else if( !stricmp(token, "SequencePrefix"))
     {
-        if( ( tok = tokenizer->next() ) != nil )
+        if ((tok = tokenizer->next()) != nullptr)
             fSeqPrefix = atoi(tok);
     }
     else if( !stricmp(token, "ReleaseVersion"))
     {
-        if( ( tok = tokenizer->next() ) != nil )
+        if ((tok = tokenizer->next()) != nullptr)
             fReleaseVersion = atoi(tok);
     }
 
@@ -394,7 +389,7 @@ bool        plAgeDescription::IParseToken( const char *token, hsStringTokenizer 
 //
 void plAgeDescription::Read(hsStream* stream)
 {
-    plInitSectionReader *sections[] = { (plInitSectionReader *)this, nil };
+    plInitSectionReader *sections[] = { (plInitSectionReader *)this, nullptr };
 
     plInitFileReader    reader( stream, sections );
 
@@ -405,7 +400,6 @@ void plAgeDescription::Read(hsStream* stream)
     }
     
     reader.Parse();
-    reader.Close();
 }
 
 //
@@ -468,25 +462,23 @@ const char *plAgeDescription::GetCommonPage( int pageType )
     return fCommonPages[ pageType ];
 }
 
-void    plAgeDescription::AppendCommonPages( void )
+void    plAgeDescription::AppendCommonPages()
 {
-    uint32_t startSuffix = 0xffff, i;
+    uint32_t startSuffix = 0xffff;
 
 
     if( IsGlobalAge() )
         return;
 
-    for( i = 0; i < kNumCommonPages; i++ )
-        fPages.Append( plAgePage( fCommonPages[ i ], startSuffix - i, 0 ) );
+    for (uint32_t i = 0; i < kNumCommonPages; i++)
+        fPages.emplace_back(fCommonPages[i], startSuffix - i, 0);
 }
 
 void    plAgeDescription::CopyFrom(const plAgeDescription& other)
 {
     IDeInit();
     fName = other.GetAgeName();
-    int i;
-    for(i=0;i<other.fPages.GetCount(); i++)
-        fPages.Append( other.fPages[ i ] );
+    fPages = other.fPages;
 
     fStart = other.fStart;
     fDayLength = other.fDayLength;
@@ -499,10 +491,9 @@ void    plAgeDescription::CopyFrom(const plAgeDescription& other)
 
 bool plAgeDescription::FindLocation(const plLocation& loc) const
 {
-    int i;
-    for( i = 0; i < fPages.GetCount(); i++ )
+    for (const plAgePage& page : fPages)
     {
-        plLocation pageLoc = CalcPageLocation(fPages[i].GetName());
+        plLocation pageLoc = CalcPageLocation(page.GetName());
         if (pageLoc == loc)
             return true;
     }

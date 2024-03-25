@@ -50,32 +50,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "plCubicRenderTargetModifier.h"
 #include "plCubicRenderTarget.h"
-#include "plgDispatch.h"
-#include "plPipeline.h"
-#include "plDrawable.h"
-#include "hsBounds.h"
 
-#include "plScene/plRenderRequest.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnSceneObject/plDrawInterface.h"
-#include "pnMessage/plTimeMsg.h"
-#include "plMessage/plRenderRequestMsg.h"
+#include "hsBounds.h"
+#include "plgDispatch.h"
+#include "plDrawable.h"
+#include "plPipeline.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
+
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plMessage/plRenderRequestMsg.h"
+#include "plScene/plRenderRequest.h"
+
 
 
 //// Constructor & Destructor /////////////////////////////////////////////////
 
 plCubicRenderTargetModifier::plCubicRenderTargetModifier()
 {
-    fTarget = nil;
-    fCubic = nil;
+    fTarget = nullptr;
+    fCubic = nullptr;
 
-    fRequests[ 0 ] = fRequests[ 1 ] = fRequests[ 2 ] = fRequests[ 3 ] = fRequests[ 4 ] = fRequests[ 5 ] = nil;
+    fRequests[0] = fRequests[1] = fRequests[2] = fRequests[3] = fRequests[4] = fRequests[5] = nullptr;
 }
 
 plCubicRenderTargetModifier::~plCubicRenderTargetModifier()
@@ -96,7 +99,7 @@ void    plCubicRenderTargetModifier::ICreateRenderRequest( int face )
     hsColorRGBA     c;
     
     
-    if( rr == nil )
+    if (rr == nullptr)
         rr = fRequests[ face ] = new plRenderRequest;
 
     uint32_t renderState 
@@ -118,7 +121,7 @@ void    plCubicRenderTargetModifier::ICreateRenderRequest( int face )
     rr->SetClearColor( c );
     rr->SetClearDepth( 1.f );
 
-    rr->SetClearDrawable( nil );
+    rr->SetClearDrawable(nullptr);
     rr->SetRenderTarget( fCubic->GetFace( face ) );
 }
 
@@ -131,12 +134,12 @@ bool    plCubicRenderTargetModifier::IEval( double secs, float del, uint32_t dir
     plRenderRequestMsg  *msg;
 
 
-    if( fCubic == nil || fTarget == nil )
+    if (fCubic == nullptr || fTarget == nullptr)
         return true;
 
     /// Get center point for RT
     plCoordinateInterface   *ci = IGetTargetCoordinateInterface( 0 );
-    if( ci == nil )
+    if (ci == nullptr)
     {
         plDrawInterface *di = IGetTargetDrawInterface( 0 );
         center = di->GetWorldBounds().GetCenter();
@@ -150,11 +153,11 @@ bool    plCubicRenderTargetModifier::IEval( double secs, float del, uint32_t dir
     /// Submit render requests!
     for (int i = 0; i < 6; i++)
     {
-        if( fRequests[ i ] != nil )
+        if (fRequests[i] != nullptr)
         {
             fRequests[ i ]->SetCameraTransform(fCubic->GetWorldToCamera(i), fCubic->GetCameraToWorld(i));
 
-            msg = new plRenderRequestMsg( nil, fRequests[ i ] );
+            msg = new plRenderRequestMsg(nullptr, fRequests[i]);
             plgDispatch::MsgSend( msg );
         }
     }
@@ -218,7 +221,7 @@ bool    plCubicRenderTargetModifier::MsgReceive( plMessage* msg )
 
 void    plCubicRenderTargetModifier::AddTarget( plSceneObject *so )
 {
-    if( fTarget != nil )
+    if (fTarget != nullptr)
         RemoveTarget( fTarget );
 
     fTarget = so;
@@ -229,7 +232,7 @@ void    plCubicRenderTargetModifier::AddTarget( plSceneObject *so )
 
 void    plCubicRenderTargetModifier::RemoveTarget( plSceneObject *so )
 {
-    fTarget = nil;
+    fTarget = nullptr;
 }
 
 //// Read /////////////////////////////////////////////////////////////////////

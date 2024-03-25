@@ -39,36 +39,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
 #include "plNetMsgScreener.h"
 #include "plCreatableIndex.h"
 
+#include "pnFactory/plFactory.h"
 #include "pnNetCommon/plNetApp.h"
-#include "pnMessage/plNotifyMsg.h"
-#include "pnMessage/plEnableMsg.h"
-#include "pnMessage/plSetNetGroupIDMsg.h"
-#include "pnInputCore/plControlEventCodes.h"
+#include "pnKeyedObject/plKey.h"
 
-#include "plMessage/plCCRMsg.h"
-#include "plMessage/plLinkToAgeMsg.h"
-#include "plMessage/plAvatarMsg.h"
-#include "plMessage/plInputIfaceMgrMsg.h"
-#include "plMessage/plInputEventMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
-#include "plMessage/plBulletMsg.h"
-#include "plMessage/plAvCoopMsg.h"
-#include "plMessage/plParticleUpdateMsg.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
 
-#include "pfMessage/pfKIMsg.h"      
-#include "pfMessage/plClothingMsg.h"    
+#include "pfMessage/pfKIMsg.h"
 
 //
 // say why the msg got rejected
 //
 void plNetMsgScreener::IRejectLogMsg(int16_t classIndex, const char* desc, const plNetGameMember* gm) const
 {
-    DebugMsg("Message %s was rejected, reason:%s, age:%s, client:%s", 
-        plFactory::GetNameOfClass(classIndex), desc, IGetAgeName().c_str(), IGetSenderName(gm));
+    DebugMsg("Message {} was rejected, reason:{}, age:{}, client:{}",
+        plFactory::GetNameOfClass(classIndex), desc, IGetAgeName(), IGetSenderName(gm));
 }
 
 //
@@ -76,11 +67,11 @@ void plNetMsgScreener::IRejectLogMsg(int16_t classIndex, const char* desc, const
 //
 void plNetMsgScreener::IRejectLogMsg(const plMessage* msg, const char* desc, const plNetGameMember* gm) const
 {
-    const char* senderName = msg->GetSender() ? msg->GetSender()->GetUoid().GetObjectName().c_str() : "?";
-    const char* rcvrName = msg->GetNumReceivers() && msg->GetReceiver(0) ? msg->GetReceiver(0)->GetUoid().GetObjectName().c_str() : "?";
+    ST::string senderName = msg->GetSender() ? msg->GetSender()->GetUoid().GetObjectName() : ST_LITERAL("?");
+    ST::string rcvrName = msg->GetNumReceivers() && msg->GetReceiver(0) ? msg->GetReceiver(0)->GetUoid().GetObjectName() : ST_LITERAL("?");
 
-    DebugMsg("Message %s was rejected, reason:%s, age:%s, client:%s, msgSndr:%s, msgRcvr:%s", 
-        msg->ClassName(), desc, IGetAgeName().c_str(), IGetSenderName(gm),
+    DebugMsg("Message {} was rejected, reason:{}, age:{}, client:{}, msgSndr:{}, msgRcvr:{}",
+        msg->ClassName(), desc, IGetAgeName(), IGetSenderName(gm),
         senderName, rcvrName);
 }
 

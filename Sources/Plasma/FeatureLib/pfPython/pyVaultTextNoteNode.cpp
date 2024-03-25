@@ -45,26 +45,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pyVaultTextNoteNode.h"
-#include "pyVaultAgeLinkNode.h"
-#include "pyVaultFolderNode.h"
-#include "plVault/plVault.h"
-#ifndef BUILDING_PYPLASMA
-#   include "pyVault.h"
-#endif
 
-// should only be created from C++ side
-pyVaultTextNoteNode::pyVaultTextNoteNode(RelVaultNode* nfsNode)
-: pyVaultNode(nfsNode)
-{
-}
+#include <string_theory/string>
+
+#include "pnNetBase/pnNbError.h"
+
+#include "plVault/plVault.h"
+
+#include "pyGlueHelpers.h"
 
 //create from the Python side
 pyVaultTextNoteNode::pyVaultTextNoteNode()
-: pyVaultNode(new RelVaultNode)
+    : pyVaultNode()
 {
     fNode->SetNodeType(plVault::kNodeType_TextNote);
 }
@@ -73,56 +66,40 @@ pyVaultTextNoteNode::pyVaultTextNoteNode()
 //==================================================================
 // class RelVaultNode : public plVaultNode
 //
-void pyVaultTextNoteNode::Note_SetTitle( const char * text )
-{
-    if (fNode) {
-        VaultTextNoteNode textNote(fNode);
-        textNote.SetNoteTitle(text);
-    }
-}
-
-void pyVaultTextNoteNode::Note_SetTitleW( const wchar_t * text )
+void pyVaultTextNoteNode::Note_SetTitle(const ST::string& text)
 {
     if (!fNode)
         return;
 
     VaultTextNoteNode textNote(fNode);
-    textNote.SetNoteTitle(plString::FromWchar(text));
+    textNote.SetNoteTitle(text);
 }
 
-plString pyVaultTextNoteNode::Note_GetTitle() const
+ST::string pyVaultTextNoteNode::Note_GetTitle() const
 {
     if (fNode) {
         VaultTextNoteNode note(fNode);
         return note.GetNoteTitle();
     }
-    return "";
+    return ST::string();
 }
 
-void pyVaultTextNoteNode::Note_SetText(const char * text)
-{
-    if (fNode) {
-        VaultTextNoteNode textNote(fNode);
-        textNote.SetNoteText(text);
-    }
-}
-
-void pyVaultTextNoteNode::Note_SetTextW( const wchar_t * text )
+void pyVaultTextNoteNode::Note_SetText(const ST::string& text)
 {
     if (!fNode)
         return;
 
     VaultTextNoteNode textNote(fNode);
-    textNote.SetNoteText(plString::FromWchar(text));
+    textNote.SetNoteText(text);
 }
 
-plString pyVaultTextNoteNode::Note_GetText() const
+ST::string pyVaultTextNoteNode::Note_GetText() const
 {
     if (fNode) {
         VaultTextNoteNode note(fNode);
         return note.GetNoteText();
     }
-    return "";
+    return ST::string();
 }
 
 void pyVaultTextNoteNode::Note_SetType( int32_t type )
@@ -134,7 +111,7 @@ void pyVaultTextNoteNode::Note_SetType( int32_t type )
     textNote.SetNoteType(type);
 }
 
-int32_t pyVaultTextNoteNode::Note_GetType( void )
+int32_t pyVaultTextNoteNode::Note_GetType()
 {
     if (!fNode)
         return 0;
@@ -152,7 +129,7 @@ void pyVaultTextNoteNode::Note_SetSubType( int32_t type )
     textNote.SetNoteSubType(type);
 }
 
-int32_t pyVaultTextNoteNode::Note_GetSubType( void )
+int32_t pyVaultTextNoteNode::Note_GetSubType()
 {
     if (!fNode)
         return 0;
@@ -170,7 +147,14 @@ PyObject * pyVaultTextNoteNode::GetDeviceInbox() const
         PYTHON_RETURN_NONE;
 }
 
-void pyVaultTextNoteNode::SetDeviceInbox( const char * devName, PyObject * cbObject, uint32_t cbContext )
+static void _SetDeviceInboxCallback(ENetError result, hsRef<RelVaultNode> inbox, void* param)
+{
+    auto cb = static_cast<pyVaultNode::pyVaultNodeOperationCallback*>(param);
+    cb->SetNode(std::move(inbox));
+    cb->VaultOperationComplete(result);
+}
+
+void pyVaultTextNoteNode::SetDeviceInbox(const ST::string& devName, PyObject * cbObject, uint32_t cbContext)
 {
     if (!fNode)
         return;
@@ -178,8 +162,5 @@ void pyVaultTextNoteNode::SetDeviceInbox( const char * devName, PyObject * cbObj
     pyVaultNode::pyVaultNodeOperationCallback * cb = new pyVaultNode::pyVaultNodeOperationCallback( cbObject );
     cb->VaultOperationStarted( cbContext );
 
-    if (hsRef<RelVaultNode> rvn = VaultAgeSetDeviceInboxAndWait(devName, DEFAULT_DEVICE_INBOX))
-        cb->SetNode(rvn);
-
-    cb->VaultOperationComplete( cbContext, cb->GetNode() ? hsOK : hsFail ); // cbHolder deletes itself here.
+    VaultAgeSetDeviceInbox(devName, DEFAULT_DEVICE_INBOX, _SetDeviceInboxCallback, cb);
 }

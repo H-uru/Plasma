@@ -39,56 +39,56 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "PythonInterface.h"
 
 #include "hsStream.h"
+#include "plCmdParser.h"
 
 #include <vector>
 #include <string>
 #include <algorithm>
-
-#if HS_BUILD_FOR_WIN32
-#    include "hsWindows.h"
-#    include <direct.h>
-
-#    define getcwd _getcwd
-#    define chdir _chdir
-
-#    ifndef MAXPATHLEN
-#        define MAXPATHLEN MAX_PATH
-#    endif
-#elif HS_BUILD_FOR_UNIX
-#    include <unistd.h>
-#    include <sys/param.h>
-#endif
+#include <string_theory/stdio>
+#include <unordered_set>
 
 static const char* kPackFileName = "python.pak";
 static const char* kModuleFile = "__init__.py";
+
+/** Directories that should not generate their own .pak file. */
+static const std::unordered_set<ST::string, ST::hash_i, ST::equal_i> s_ignoreSubdirs{
+    ST_LITERAL("plasma"),
+    ST_LITERAL("system"),
+    ST_LITERAL("__pycache__"),
+};
+
 #if HS_BUILD_FOR_WIN32
-    static const char* kGlueFile = ".\\plasma\\glue.py";
+    #define NULL_DEVICE "NUL:"
 #else
-    static const char* kGlueFile = "./plasma/glue.py";
+    #define NULL_DEVICE "/dev/null"
 #endif
-static char* glueFile = (char*)kGlueFile;
+
+FILE* out = stdout;
 
 void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStream *s)
 {
     hsUNIXStream pyStream, glueStream;
     plFileName filePath;
-    ssize_t filestart = fileName.AsString().FindLast('.');
+    ST_ssize_t filestart = fileName.AsString().find_last('.');
+    plFileName glueFile = plFileName::Join("plasma", "glue.py");
+
     if (filestart >= 0)
-        filePath = fileName.AsString().Substr(filestart+1);
+        filePath = fileName.AsString().substr(filestart+1);
     else
         filePath = fileName;
     filePath = plFileName::Join(path, filePath + ".py");
 
     if (!pyStream.Open(filePath) || !glueStream.Open(glueFile))
     {
-        plPrintf("Unable to open path {}, ", filePath);
+        ST::printf(stderr, "Unable to open path {}, ", filePath);
         return;
     }
 
-    plPrintf("==Packing {}, ", fileName);
+    ST::printf(out, "== Packing {}, ", fileName);
 
     pyStream.FastFwd();
     uint32_t pyFileSize = pyStream.GetPosition();
@@ -123,29 +123,30 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
     }
 
     // import the module first, to make packages work correctly
-    PyImport_ImportModule(fileName.AsString().c_str());
+    PyObject* fModule = PyImport_ImportModule(fileName.AsString().c_str());
+    if (!fModule)
+        ST::printf(stderr, "......import failed ");
+
     PyObject* pythonCode = PythonInterface::CompileString(code, fileName);
     if (pythonCode)
     {
-        // we need to find out if this is PythonFile module
-        // create a module name... with the '.' as an X
-        // and create a python file name that is without the ".py"
-        PyObject* fModule = PythonInterface::CreateModule(fileName.AsString().c_str());
         // run the code
         if (PythonInterface::RunPYC(pythonCode, fModule) )
         {
-    // set the name of the file (in the global dictionary of the module)
+            // set the name of the file (in the global dictionary of the module)
             PyObject* dict = PyModule_GetDict(fModule);
-            PyObject* pfilename = PyString_FromString(fileName.AsString().c_str());
+            PyObject* pfilename = PyUnicode_FromString(fileName.AsString().c_str());
             PyDict_SetItemString(dict, "glue_name", pfilename);
-    // next we need to:
-    //  - create instance of class
+            Py_DECREF(pfilename);
+
+            // next we need to:
+            //  - create instance of class
             PyObject* getID = PythonInterface::GetModuleItem("glue_getBlockID",fModule);
             bool foundID = false;
-            if ( getID!=nil && PyCallable_Check(getID) )
+            if (getID != nullptr && PyCallable_Check(getID))
             {
-                PyObject* id = PyObject_CallFunction(getID,nil);
-                if ( id && PyInt_Check(id) )
+                PyObject* id = _PyObject_Vectorcall(getID, nullptr, 0, nullptr);
+                if ( id && PyLong_Check(id) )
                     foundID = true;
             }
             if ( foundID == false )     // then there was an error or no ID or somethin'
@@ -168,62 +169,43 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
                 }
                 pythonCode = PythonInterface::CompileString(code, fileName);
                 hsAssert(pythonCode,"Not sure why this didn't compile the second time???");
-                fputs("an import file ", stdout);
+                ST::printf(out, "an import file ");
             }
             else
-                fputs("a PythonFile modifier(tm) ", stdout);
+                ST::printf(out, "a PythonFile modifier(tm) ");
         }
         else
         {
-            fputs("......blast! Error during run-code!\n", stdout);
-
-            char* errmsg;
-            int chars_read = PythonInterface::getOutputAndReset(&errmsg);
-            if (chars_read > 0)
-            {
-                plPrintf("{}\n", errmsg);
-            }
+            ST::printf(stderr, "......blast! Error during run-code in {}!\n", fileName);
+            PyErr_Print();
         }
     }
 
     // make sure that we have code to save
     if (pythonCode)
     {
-        int32_t size;
+        Py_ssize_t size;
         char* pycode;
         PythonInterface::DumpObject(pythonCode,&pycode,&size);
 
-        fputc('\n', stdout);
-        // print any message after each module
-        char* errmsg;
-        int chars_read = PythonInterface::getOutputAndReset(&errmsg);
-        if (chars_read > 0)
-        {
-            plPrintf("{}\n", errmsg);
-        }
-        s->WriteLE32(size);
-        s->Write(size, pycode);
+        ST::printf(out, "\n");
+
+        s->WriteLE32((int32_t)size);
+        s->Write((uint32_t)size, pycode);
+        delete[] pycode;
     }
     else
     {
-        fputs("......blast! Compile error!\n", stdout);
+        ST::printf(stderr, "......blast! Compile error in {}!\n", fileName);
         s->WriteLE32(0);
 
         PyErr_Print();
         PyErr_Clear();
-
-        char* errmsg;
-        int chars_read = PythonInterface::getOutputAndReset(&errmsg);
-        if (chars_read > 0)
-        {
-            plPrintf("{}\n", errmsg);
-        }
     }
 
     delete [] code;
-
-    pyStream.Close();
-    glueStream.Close();
+    Py_XDECREF(pythonCode);
+    Py_XDECREF(fModule);
 }
 
 void FindFiles(std::vector<plFileName> &filenames, std::vector<plFileName> &pathnames, const plFileName& path)
@@ -238,101 +220,24 @@ void FindFiles(std::vector<plFileName> &filenames, std::vector<plFileName> &path
     }
 }
 
-std::string ToLowerCase(std::string str)
-{
-    std::string retVal = "";
-    for (int i=0; i<str.length(); i++)
-    {
-        if ((str[i]>='A')&&(str[i]<='Z'))
-            retVal += (char)tolower(str[i]);
-        else
-            retVal += str[i];
-    }
-    return retVal;
-}
-
 void FindSubDirs(std::vector<plFileName> &dirnames, const plFileName &path)
 {
     std::vector<plFileName> subdirs = plFileSystem::ListSubdirs(path);
     for (auto iter = subdirs.begin(); iter != subdirs.end(); ++iter) {
-        plString name = iter->GetFileName();
-        if (name.CompareI("system") != 0 && name.CompareI("plasma") != 0)
+        ST::string name = iter->GetFileName();
+        if (s_ignoreSubdirs.find(name) == s_ignoreSubdirs.end())
             dirnames.push_back(name);
     }
 }
 
-// adds or removes the ending slash in a path as necessary
-std::string AdjustEndingSlash(std::string path, bool endingSlash = false)
-{
-#if HS_BUILD_FOR_WIN32
-    char slash = '\\';
-#else
-    char slash = '/';
-#endif
-
-    std::string retVal = path;
-    bool endSlashExists = false;
-    char temp = path[path.length()-1];
-    if (temp == slash)
-        endSlashExists = true;
-
-    if (endingSlash)
-    {
-        if (!endSlashExists)
-            retVal += slash;
-    }
-    else
-    {
-        if (endSlashExists)
-        {
-            std::string temp = "";
-            for (int i=0; i<retVal.length()-1; i++)
-                temp += retVal[i];
-            retVal = temp;
-        }
-    }
-    return retVal;
-}
-
-// appends partialPath onto the end of fullPath, inserting or removing slashes as necesssary
-std::string ConcatDirs(std::string fullPath, std::string partialPath)
-{
-#if HS_BUILD_FOR_WIN32
-    char slash = '\\';
-#else
-    char slash = '/';
-#endif
-
-    bool fullSlash = false, partialSlash = false;
-    char temp = fullPath[fullPath.length()-1];
-    if (temp == slash)
-        fullSlash = true;
-    temp = partialPath[0];
-    if (temp == slash)
-        partialSlash = true;
-
-    std::string retVal = "";
-    if (!fullSlash)
-        retVal = fullPath + slash;
-    if (partialSlash)
-    {
-        std::string temp = "";
-        for (int i=1; i<partialPath.length(); i++)
-            temp += partialPath[i];
-        partialPath = temp;
-    }
-    retVal += partialPath;
-    return retVal;
-}
-
-void FindPackages(std::vector<plFileName>& fileNames, std::vector<plFileName>& pathNames, const plFileName& path, const plString& parent_package="")
+void FindPackages(std::vector<plFileName>& fileNames, std::vector<plFileName>& pathNames, const plFileName& path, const ST::string& parent_package={})
 {
     std::vector<plFileName> packages;
     FindSubDirs(packages, path);
     for (int i = 0; i < packages.size(); i++)
     {
-        plString packageName;
-        if (!parent_package.IsEmpty())
+        ST::string packageName;
+        if (!parent_package.empty())
             packageName = parent_package + ".";
         packageName += packages[i].AsString();
         std::vector<plFileName> packageFileNames;
@@ -353,16 +258,16 @@ void FindPackages(std::vector<plFileName>& fileNames, std::vector<plFileName>& p
 
 void PackDirectory(const plFileName& dir, const plFileName& rootPath, const plFileName& pakName, std::vector<plFileName>& extraDirs, bool packSysAndPlasma = false)
 {
-    plPrintf("\nCreating {} using the contents of {}\n", pakName, dir);
-    plPrintf("Changing working directory to {}\n", rootPath);
+    ST::printf(out, "\nCreating {} using the contents of {}\n", pakName, dir);
+    ST::printf(out, "Changing working directory to {}\n", rootPath);
     if (!plFileSystem::SetCWD(rootPath))
     {
-        plPrintf("ERROR: Directory change to {} failed for some reason\n", rootPath);
-        fputs("Unable to continue with the packing of this directory, aborting...\n", stdout);
+        ST::printf(stderr, "ERROR: Directory change to {} failed for some reason\n", rootPath);
+        ST::printf(stderr, "Unable to continue with the packing of this directory, aborting...\n");
         return;
     }
     else
-        plPrintf("Directory changed to {}\n", rootPath);
+        ST::printf(out, "Directory changed to {}\n", rootPath);
 
     std::vector<plFileName> fileNames;
     std::vector<plFileName> pathNames;
@@ -371,7 +276,7 @@ void PackDirectory(const plFileName& dir, const plFileName& rootPath, const plFi
     FindPackages(fileNames, pathNames, dir);
     if (packSysAndPlasma)
     {
-        fputs("Adding the system and plasma directories to this pack file\n", stdout);
+        ST::printf(out, "\nAdding the system and plasma directories to this pack file...\n");
         plFileName tempPath;
         tempPath = plFileName::Join(dir, "system");
         FindFiles(fileNames, pathNames, tempPath);
@@ -383,109 +288,112 @@ void PackDirectory(const plFileName& dir, const plFileName& rootPath, const plFi
 
 
     // ok, we know how many files we're gonna pack, so make a fake index (we'll fill in later)
-    hsUNIXStream s;
-    if (!s.Open(pakName, "wb"))
-        return;
-
-    s.WriteLE32(fileNames.size());
-
-    int i;
-    for (i = 0; i < fileNames.size(); i++)
     {
-        s.WriteSafeString(fileNames[i].AsString());
-        s.WriteLE32(0);
+        hsUNIXStream s;
+        if (!s.Open(pakName, "wb"))
+            return;
+
+        s.WriteLE32((uint32_t)fileNames.size());
+        for (const plFileName& fn : fileNames)
+        {
+            s.WriteSafeString(fn.AsString());
+            s.WriteLE32(0);
+        }
+
+        PythonInterface::initPython(rootPath, extraDirs, out, stderr);
+    
+        std::vector<uint32_t> filePositions(fileNames.size());
+
+        for (size_t i = 0; i < fileNames.size(); i++)
+        {
+            // strip '.py' from the file name
+            plFileName properFileName = fileNames[i].StripFileExt();
+            uint32_t initialPos = s.GetPosition();
+            WritePythonFile(properFileName, pathNames[i], &s);
+    
+            filePositions[i] = initialPos;
+        }
+
+        s.SetPosition(sizeof(uint32_t));
+        for (size_t i = 0; i < fileNames.size(); i++)
+        {
+            s.WriteSafeString(fileNames[i].AsString());
+            s.WriteLE32(filePositions[i]);
+        }
     }
 
-    PythonInterface::initPython(rootPath);
-    for (i = 0; i < extraDirs.size(); i++)
-        PythonInterface::addPythonPath(plFileName::Join(rootPath, extraDirs[i]));
-
-    // set to maximum optimization (includes removing __doc__ strings)
-    Py_OptimizeFlag = 2;
-
-    std::vector<uint32_t> filePositions;
-    filePositions.resize(fileNames.size());
-
-    for (i = 0; i < fileNames.size(); i++)
-    {
-        // strip '.py' from the file name
-        plFileName properFileName = fileNames[i].StripFileExt();
-        uint32_t initialPos = s.GetPosition();
-        WritePythonFile(properFileName, pathNames[i], &s);
-        uint32_t endPos = s.GetPosition();
-
-        filePositions[i] = initialPos;
-    }
-
-    s.SetPosition(sizeof(uint32_t));
-    for (i = 0; i < fileNames.size(); i++)
-    {
-        s.WriteSafeString(fileNames[i].AsString());
-        s.WriteLE32(filePositions[i]);
-    }
-
-    s.Close();
+    ST::printf(out, "\nPython Package written to {}\n", pakName);
 
     PythonInterface::finiPython();
 }
 
 void PrintUsage()
 {
-    fputs("Usage:\n", stdout);
-    fputs("plPythonPack [directory to pack...]\n", stdout);
-    fputs("NOTE: the directory to pack must have full system and plasma dirs and\n", stdout);
-    fputs("      must be a relative path to the current working directory\n", stdout);
+    ST::printf("The Python Pack Utility\n");
+    ST::printf("Usage:\n");
+    ST::printf("plPythonPack [options] <directory to pack...>\n");
+    ST::printf("NOTE: the directory to pack must have full system and plasma dirs.\n");
+    ST::printf("\nAvailable options:\n");
+    ST::printf("\t-q\tQuiet  - Only print errors\n");
+    ST::printf("\t-h\tHelp   - Print this help\n");
 }
 
 int main(int argc, char *argv[])
 {
-    fputs("The Python Pack Utility\n", stdout);
+    // Parse arguments
+    ST::string packDir = ".";
 
-    plFileName baseWorkingDir = plFileSystem::GetCWD();
+    enum { kArgPath, kArgQuiet, kArgHelp1, kArgHelp2 };
+    const plCmdArgDef cmdLineArgs[] = {
+        { kCmdArgOptional | kCmdTypeString, "path",  kArgPath},
+        { kCmdArgFlagged  | kCmdTypeBool,   "quiet", kArgQuiet},
+        { kCmdArgFlagged  | kCmdTypeBool,   "help",  kArgHelp1},
+        { kCmdArgFlagged  | kCmdTypeBool,   "?",     kArgHelp2},
+    };
 
-    // are they asking for usage?
-    if (argc == 2)
-    {
-        std::string temp = argv[1];
-        temp = ToLowerCase(temp);
-        if ((temp == "?") || (temp == "-?") || (temp == "/?") || (temp == "-help") || (temp == "/help")
-            || (temp == "-h") || (temp == "/h"))
-        {
+    std::vector<ST::string> args;
+    args.reserve(argc);
+    for (size_t i = 0; i < argc; i++) {
+        args.emplace_back(ST::string::from_utf8(argv[i]));
+    }
+
+    plCmdParser cmdParser(cmdLineArgs, std::size(cmdLineArgs));
+    if (cmdParser.Parse(args)) {
+        if (cmdParser.GetBool(kArgHelp1) || cmdParser.GetBool(kArgHelp2)) {
             PrintUsage();
-            return -1;
+            return 0;
         }
+
+        if (cmdParser.GetBool(kArgQuiet))
+            out = fopen(NULL_DEVICE, "w");
+
+        if (cmdParser.IsSpecified(kArgPath))
+            packDir = cmdParser.GetString(kArgPath);
+    } else {
+        ST::printf(stderr, "An error occurred while parsing the provided arguments.\n");
+        ST::printf(stderr, "Use the --help option to display usage information.\n");
+        return 1;
     }
-    // wrong number of args, print usage
-    if (argc > 2)
-    {
-        PrintUsage();
-        return -1;
-    }
+
+    ST::printf(out, "The Python Pack Utility\n");
 
     std::vector<plFileName> dirNames;
-    plFileName rootPath;
 
-    if (argc == 1)
-    {
-        FindSubDirs(dirNames, "");
-        rootPath = baseWorkingDir;
-    }
-    else
-    {
-        plFileName path = argv[1];
-        FindSubDirs(dirNames, argv[1]);
-        rootPath = plFileName::Join(baseWorkingDir, path);
-    }
+    FindSubDirs(dirNames, packDir);
+    plFileName rootPath(packDir);
+    rootPath = rootPath.AbsolutePath();
 
     PackDirectory(rootPath, rootPath, plFileName::Join(rootPath, kPackFileName), dirNames, true);
-    for (auto it = dirNames.begin(); it != dirNames.end(); ++it)
-    {
+    for (auto it = dirNames.begin(); it != dirNames.end(); ++it) {
         // Make sure this subdirectory is not just a python module. Those are packed into the
         // main python root package...
         plFileName dir = plFileName::Join(rootPath, *it);
         if (plFileSystem::ListDir(dir, kModuleFile).empty())
             PackDirectory(*it, rootPath, plFileName::Join(rootPath, *it + ".pak"), dirNames);
     }
+
+    if (out && out != stdout)
+        fclose(out);
 
     return 0;
 }

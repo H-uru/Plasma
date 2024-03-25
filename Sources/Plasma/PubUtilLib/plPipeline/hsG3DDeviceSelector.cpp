@@ -90,8 +90,8 @@ void hsG3DDeviceMode::Clear()
     fWidth = 0;
     fHeight = 0;
     fDepth = 0;
-    fZStencilDepths.Reset();
-    fFSAATypes.Reset();
+    fZStencilDepths.clear();
+    fFSAATypes.clear();
 }
 
 hsG3DDeviceRecord::hsG3DDeviceRecord()
@@ -142,11 +142,7 @@ hsG3DDeviceRecord& hsG3DDeviceRecord::operator=(const hsG3DDeviceRecord& src)
     fFogExpApproxStart = src.fFogExpApproxStart;
     fFogExp2ApproxStart = src.fFogExp2ApproxStart;
     fFogEndBias = src.fFogEndBias;
-
-    fModes.SetCount(src.fModes.GetCount());
-    int i;
-    for( i = 0; i < fModes.GetCount(); i++ )
-        fModes[i] = src.fModes[i];
+    fModes = src.fModes;
 
     fFogKnees[ 0 ] = src.fFogKnees[ 0 ];
     fFogKnees[ 1 ] = src.fFogKnees[ 1 ];
@@ -177,45 +173,42 @@ const char* hsG3DDeviceRecord::GetG3DDeviceTypeName() const
 
 void hsG3DDeviceRecord::RemoveDiscarded()
 {
-    int i;
-    for( i = 0; i < fModes.GetCount(); )
+    for (auto iter = fModes.begin(); iter != fModes.end(); )
     {
-        if( fModes[i].GetDiscarded() )
+        if (iter->GetDiscarded())
         {
-            fModes[i].Clear();
-            fModes.Remove(i);
+            iter->Clear();
+            iter = fModes.erase(iter);
         }
         else
-            i++;
+            ++iter;
     }
-    if( !fModes.GetCount() )
+    if (fModes.empty())
         SetDiscarded(true);
 }
 
 void hsG3DDeviceRecord::ClearModes()
 {
-    int i;
-    for( i = 0; i < fModes.GetCount(); i++ )
-        fModes[i].Clear();
-    fModes.Reset();
+    for (hsG3DDeviceMode& mode : fModes)
+        mode.Clear();
+    fModes.clear();
 }
 
 void hsG3DDeviceRecord::Clear()
 {
     fFlags = kNone;
 
-    fG3DDriverDesc = plString::Null;
-    fG3DDriverName = plString::Null;
-    fG3DDriverVersion = plString::Null;
-    fG3DDeviceDesc = plString::Null;
+    fG3DDriverDesc = ST::string();
+    fG3DDriverName = ST::string();
+    fG3DDriverVersion = ST::string();
+    fG3DDeviceDesc = ST::string();
 
     fCaps.Clear();
     fLayersAtOnce = 0;
 
-    int i;
-    for( i = 0; i < fModes.GetCount(); i++ )
-        fModes[i].Clear();
-    fModes.Reset();
+    for (hsG3DDeviceMode& mode : fModes)
+        mode.Clear();
+    fModes.clear();
 
     fZBiasRating = 0;
     fLODBiasRating = 0;
@@ -250,6 +243,8 @@ hsG3DDeviceModeRecord& hsG3DDeviceModeRecord::operator=(const hsG3DDeviceModeRec
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
 
+std::list<hsG3DDeviceSelector::DeviceEnumerator> hsG3DDeviceSelector::sEnumerators;
+
 hsG3DDeviceSelector::~hsG3DDeviceSelector()
 {
     IClear();
@@ -257,67 +252,66 @@ hsG3DDeviceSelector::~hsG3DDeviceSelector()
 
 void hsG3DDeviceSelector::IRemoveDiscarded()
 {
-    int i;
-    for( i = 0; i < fRecords.GetCount(); )
+    for (auto iter = fRecords.begin(); iter != fRecords.end(); )
     {
-        fRecords[i].RemoveDiscarded();
+        iter->RemoveDiscarded();
 
-        if( fRecords[i].GetDiscarded() )
+        if (iter->GetDiscarded())
         {
-            fRecords[i].Clear();
-            fRecords.Remove(i);
+            iter->Clear();
+            iter = fRecords.erase(iter);
         }
         else
-            i++;
+        {
+            ++iter;
+        }
     }
 }
 
 void hsG3DDeviceSelector::IClear()
 {
-    int i;
-    for( i = 0; i < fRecords.GetCount(); i++ )
-        fRecords[i].Clear();
-    fRecords.Reset();
+    for (hsG3DDeviceRecord& record : fRecords)
+        record.Clear();
+    fRecords.clear();
 }
 
 void hsG3DDeviceSelector::RemoveUnusableDevModes(bool bTough)
 {
-    for (int i = 0; i < fRecords.GetCount(); i++)
+    for (hsG3DDeviceRecord& record : fRecords)
     {
         //
         // Remove modes
         //
-        hsTArray<hsG3DDeviceMode>& modes = fRecords[i].GetModes();
-        for (int j = 0; j < modes.GetCount(); j++)
+        for (hsG3DDeviceMode& devMode : record.GetModes())
         {
             // Remove windowed modes
-            if ((modes[j].GetWidth() == 0) &&
-                (modes[j].GetHeight() == 0) &&
-                (modes[j].GetColorDepth() == 0))
+            if ((devMode.GetWidth() == 0) &&
+                (devMode.GetHeight() == 0) &&
+                (devMode.GetColorDepth() == 0))
             {
-                modes[j].SetDiscarded(true);
+                devMode.SetDiscarded(true);
             }
             // If tough, remove modes less than 640x480
-            else if (bTough && ((modes[j].GetWidth() < 640) || (modes[j].GetHeight() < 480)))
+            else if (bTough && ((devMode.GetWidth() < 640) || (devMode.GetHeight() < 480)))
             {
-                modes[j].SetDiscarded(true);
+                devMode.SetDiscarded(true);
             }
         }
 
         //
         // Remove devices
         //
-        if (fRecords[i].GetG3DDeviceType() == hsG3DDeviceSelector::kDevTypeUnknown)
+        if (record.GetG3DDeviceType() == hsG3DDeviceSelector::kDevTypeUnknown)
         {
-            fRecords[i].SetDiscarded(true);
+            record.SetDiscarded(true);
         }
-        else if (fRecords[i].GetG3DDeviceType() == hsG3DDeviceSelector::kDevTypeDirect3D)
+        else if (record.GetG3DDeviceType() == hsG3DDeviceSelector::kDevTypeDirect3D)
         {
             // Remove software Direct3D devices
-            if ((fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DHALDev) &&
-                (fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DTnLHalDev))
+            if ((record.GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DHALDev) &&
+                (record.GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DTnLHalDev))
             {
-                fRecords[i].SetDiscarded(true);
+                record.SetDiscarded(true);
             }
         }
     }
@@ -337,7 +331,7 @@ uint32_t  hsG3DDeviceSelector::IAdjustDirectXMemory( uint32_t cardMem )
     HDC         deskDC;
     int         width, height, bpp, total;
 
-    deskDC = GetDC( nil );
+    deskDC = GetDC(nullptr);
     width = GetDeviceCaps( deskDC, HORZRES );
     height = GetDeviceCaps( deskDC, VERTRES );
     bpp = GetDeviceCaps( deskDC, BITSPIXEL );
@@ -352,120 +346,105 @@ uint32_t  hsG3DDeviceSelector::IAdjustDirectXMemory( uint32_t cardMem )
 #endif
 }
 
-void hsG3DDeviceSelector::Enumerate(hsWinRef winRef)
+void hsG3DDeviceSelector::Enumerate(hsWindowHndl winRef)
 {
     IClear();
 
-#ifdef HS_BUILD_FOR_WIN32
-    /// 9.6.2000 - Create the class to use as our temporary window class
-    WNDCLASS    tempClass;
-
-    strcpy( fTempWinClass, "DSTestClass" );
-    memset( &tempClass, 0, sizeof( tempClass ) );
-    tempClass.lpfnWndProc = DefWindowProc;
-    tempClass.hInstance = GetModuleHandle( nil );
-    tempClass.hbrBackground = (HBRUSH)GetStockObject( BLACK_BRUSH );
-    tempClass.lpszClassName = fTempWinClass;
-    uint16_t ret = RegisterClass(&tempClass);
-    hsAssert(ret, "Cannot create temporary window class to test for device modes" );
-#endif
-
+#ifdef PLASMA_PIPELINE_DX
     ITryDirect3DTnL(winRef);
-
-#ifdef HS_BUILD_FOR_WIN32
-    /// Get rid of the class
-    UnregisterClass( fTempWinClass, GetModuleHandle( nil ) );
 #endif
+
+    for (const auto& enumerator : sEnumerators) {
+        enumerator(fRecords);
+    }
 }
 
-bool hsG3DDeviceSelector::GetDefault (hsG3DDeviceModeRecord *dmr)
+bool hsG3DDeviceSelector::GetRequested(hsG3DDeviceModeRecord *dmr, uint32_t devType)
 {
-    int32_t iTnL, iD3D, iOpenGL, device, mode, i;
-    device = iTnL = iD3D = iOpenGL = mode = -1;
+    bool force = false;
+#ifndef PLASMA_EXTERNAL_RELEASE
+    force = plPipeline::fInitialPipeParams.ForceSecondMonitor;
+#endif // PLASMA_EXTERNAL_RELEASE
 
-    if (device == -1)
+    hsG3DDeviceRecord* iTnL = nullptr;
+    hsG3DDeviceRecord* iD3D = nullptr;
+    hsG3DDeviceRecord* iMetal = nullptr;
+    hsG3DDeviceRecord* iOpenGL = nullptr;
+    hsG3DDeviceRecord* device = nullptr;
+
+    // Get an index for any 3D devices
+    for (hsG3DDeviceRecord& record : fRecords)
     {
-        // Get an index for any 3D devices
-        for (i = 0; i < fRecords.GetCount(); i++)
+        if (devType != kDevTypeUnknown && record.GetG3DDeviceType() != devType)
+            continue;
+
+        switch (record.GetG3DDeviceType())
         {
-            switch (fRecords[i].GetG3DDeviceType())
+        case kDevTypeDirect3D:
+            if (record.GetG3DHALorHEL() == kHHD3DTnLHalDev)
             {
-            case kDevTypeDirect3D:
-                if (fRecords[i].GetG3DHALorHEL() == kHHD3DTnLHalDev)
-                {
-                    if (iTnL == -1 
-#ifndef PLASMA_EXTERNAL_RELEASE
-                        || plPipeline::fInitialPipeParams.ForceSecondMonitor
-#endif // PLASMA_EXTERNAL_RELEASE
-                        )
-                    {
-                        iTnL = i;
-                    }
-                }
-                else if (fRecords[i].GetG3DHALorHEL() == kHHD3DHALDev)
-                {
-                    if (iD3D == -1
-#ifndef PLASMA_EXTERNAL_RELEASE
-                        || plPipeline::fInitialPipeParams.ForceSecondMonitor
-#endif // PLASMA_EXTERNAL_RELEASE
-                        )
-                    {
-                        iD3D = i;
-                    }
-                }
-                break;
-
-            case kDevTypeOpenGL:
-                if (iOpenGL == -1 
-#ifndef PLASMA_EXTERNAL_RELEASE                 
-                    || plPipeline::fInitialPipeParams.ForceSecondMonitor
-#endif // PLASMA_EXTERNAL_RELEASE                   
-                    )
-                {
-                    iOpenGL = i;
-                }
-                break;
+                if (iTnL == nullptr || force)
+                    iTnL = &record;
             }
-        }
+            else if (record.GetG3DHALorHEL() == kHHD3DHALDev)
+            {
+                if (iD3D == nullptr || force)
+                    iD3D = &record;
+            }
+            break;
 
-        // Pick a default device (Priority D3D T&L, D3D HAL, OpenGL)
-        if (iTnL != -1)
-            device = iTnL;
-        else if (iD3D != -1)
-            device = iD3D;
-        else if (iOpenGL != -1)
-            device = iOpenGL;
-        else
-            return false;
+        case kDevTypeOpenGL:
+            if (iOpenGL == nullptr || force)
+                iOpenGL = &record;
+            break;
+                
+        case kDevTypeMetal:
+            if (iMetal == nullptr || force)
+                iMetal = &record;
+            break;
+        }
     }
+
+    // Pick a default device (Priority D3D T&L, D3D HAL, Metal, OpenGL)
+    if (iTnL != nullptr)
+        device = iTnL;
+    else if (iD3D != nullptr)
+        device = iD3D;
+    else if (iMetal != nullptr)
+        device = iMetal;
+    else if (iOpenGL != nullptr)
+        device = iOpenGL;
+    else
+        return false;
 
     //
     // Try and find the default mode
     //
-    hsTArray<hsG3DDeviceMode>& modes = fRecords[device].GetModes();
+    std::vector<hsG3DDeviceMode>& modes = device->GetModes();
 
     // If there are no modes (for some insane reason), fail
-    if (modes.GetCount() == 0)
+    if (modes.empty())
         return false;
 
-    for (i = 0; i < modes.GetCount(); i++)
+    const hsG3DDeviceMode* mode = nullptr;
+    for (const hsG3DDeviceMode& devMode : modes)
     {
-        if ((modes[i].GetWidth()    == kDefaultWidth) &&
-            (modes[i].GetHeight()   == kDefaultHeight) &&
-            (modes[i].GetNumZStencilDepths() > 0))
+        if ((devMode.GetWidth()    == kDefaultWidth) &&
+            (devMode.GetHeight()   == kDefaultHeight) &&
+            (devMode.GetNumZStencilDepths() > 0))
         {
             // Don't be too picky about the depth, use what's available if the
             // default isn't found.
-            if (mode == -1 || modes[mode].GetColorDepth() != kDefaultDepth)
-                mode = i;
+            if (mode == nullptr || mode->GetColorDepth() != kDefaultDepth)
+                mode = &devMode;
         }
     }
     // Default mode not found, what kind of card is this?!
     // Regardless, just use the first mode since this isn't a fatal error.
-    if (mode == -1)
-        mode = 0;
+    if (mode == nullptr)
+        mode = &modes.front();
 
-    *dmr = hsG3DDeviceModeRecord(fRecords[device], modes[mode]);
+    *dmr = hsG3DDeviceModeRecord(*device, *mode);
 
     return true;
 }
@@ -522,9 +501,9 @@ namespace
         float    fFogExp2KneeVal;
     } FogTweakTable;
 
-    FogTweakTable   dsDefaultFogVals =  { 0,    0,      254.0 / 255.0,  0.5f, 0.15f, 0.5f, 0.15f };
-    FogTweakTable   dsi810FogVals =     { 0,    0,      254.0 / 255.0,  0.6f, 0.15f, 0.4f, 0.15f };
-    FogTweakTable   dsRadeonFogVals =   { 0,    0,      254.0 / 255.0,  0.7f, 0.15f, 0.5f, 0.2f };
+    FogTweakTable   dsDefaultFogVals =  { 0,    0,      254.f / 255.f,  0.5f, 0.15f, 0.5f, 0.15f };
+    FogTweakTable   dsi810FogVals =     { 0,    0,      254.f / 255.f,  0.6f, 0.15f, 0.4f, 0.15f };
+    FogTweakTable   dsRadeonFogVals =   { 0,    0,      254.f / 255.f,  0.7f, 0.15f, 0.5f, 0.2f };
 
 
     typedef struct {
@@ -577,10 +556,10 @@ namespace
 //  Checks this DirectX device against all our known types and fudges our caps 
 //  flags and bias values, etc, accordingly
 
-#ifdef HS_SELECT_DIRECT3D
+#ifdef PLASMA_PIPELINE_DX
 void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
-                                                    D3DEnum_DriverInfo *driverInfo,
-                                                    D3DEnum_DeviceInfo *deviceInfo )
+                                                    D3DEnum_DisplayInfo *driverInfo,
+                                                    D3DEnum_RendererInfo *deviceInfo )
 {
     uint32_t    vendorID, deviceID;
     char        *szDriver, *szDesc;
@@ -601,12 +580,12 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
     }
 
     /// So capitalization won't matter in our tests
-    plString desc = plString::FromIso8859_1(szDesc).ToLower();
+    ST::string desc = ST::string::from_latin_1(szDesc).to_lower();
 
     /// Detect ATI Radeon chipset
     // We will probably need to differentiate between different Radeons at some point in 
     // the future, but not now.
-    ssize_t radeon = desc.Find("radeon");
+    ST_ssize_t radeon = desc.find("radeon");
     if (stricmp(szDriver, "ati2dvag.dll") == 0 || radeon >= 0)
     {
         int series = 0;
@@ -642,13 +621,13 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
     /// Detect Intel i810 chipset
     else if( deviceID == 0x00007125 &&
                 ( stricmp( szDriver, "i81xdd.dll" ) == 0 
-                  || ( desc.Find("intel") >= 0 && desc.Find("810") >= 0 ) ) )
+                  || ( desc.find("intel") >= 0 && desc.find("810") >= 0 ) ) )
     {
         hsStatusMessage( "== Using fudge factors for an Intel i810 chipset ==\n" );
         ISetFudgeFactors( kIntelI810Chipset, record );
     }
     /// Detect for a GeForc FX card. We only need to nerf the really low end one.
-    else if( desc.Find("nvidia") >= 0 && desc.Find("geforce fx 5200") >= 0 )
+    else if( desc.find("nvidia") >= 0 && desc.find("geforce fx 5200") >= 0 )
     {
         hsStatusMessage( "== Using fudge factors for an NVidia GeForceFX-based chipset ==\n" );
         ISetFudgeFactors( kNVidiaGeForceFXChipset, record );
@@ -681,14 +660,14 @@ void    hsG3DDeviceSelector::ISetFudgeFactors( uint8_t chipsetID, hsG3DDeviceRec
             /// Found it!
 
             // Flags to force set
-            if( dsCFTable[ i ].fFlagsToSet != nil )
+            if (dsCFTable[i].fFlagsToSet != nullptr)
             {
                 for( j = 0; j < dsCFTable[ i ].fFlagsToSet[ 0 ]; j++ )
                     record.SetCap( dsCFTable[ i ].fFlagsToSet[ j + 1 ] );
             }
 
             // Flags to force clear
-            if( dsCFTable[ i ].fFlagsToClear != nil )
+            if (dsCFTable[i].fFlagsToClear != nullptr)
             {
                 for( j = 0; j < dsCFTable[ i ].fFlagsToClear[ 0 ]; j++ )
                     record.SetCap( dsCFTable[ i ].fFlagsToClear[ j + 1 ], false );
@@ -714,9 +693,8 @@ void    hsG3DDeviceSelector::ISetFudgeFactors( uint8_t chipsetID, hsG3DDeviceRec
 
             if( record.GetCap(kCapsNoAA) )
             {
-                int j;
-                for( j = 0; j < record.GetModes().GetCount(); j++ )
-                    record.GetModes()[j].ClearFSAATypes();
+                for (hsG3DDeviceMode& devMode : record.GetModes())
+                    devMode.ClearFSAATypes();
             }
 
             return;

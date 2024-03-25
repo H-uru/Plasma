@@ -42,26 +42,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLAVBRAINHUMAN_INC
 #define PLAVBRAINHUMAN_INC
 
-#define HI_RES_MOVEMENT
-
 #include "plAvBrainGeneric.h"
 #include "plAvBehaviors.h"
 #include "plAnimation/plAGAnim.h"
 
-#pragma warning(disable: 4284)
 #include <deque>
-#include "hsTemplates.h"
 
-class plMatrixChannel;
-class plMatrixMultiplyApplicator;
 class plAGAnimInstance;
+class plAGModifier;
+class plArmatureUpdateMsg;
 class plAvTask;
 class plAvTaskMsg;
 class plAvBrainHuman;
-class plWalkingStrategy;
-class plArmatureUpdateMsg;
 class plClimbMsg;
 class plControlEventMsg;
+class plMatrixChannel;
+class plMatrixMultiplyApplicator;
+class plWalkingStrategy;
+namespace ST { class string; }
 
 class plAvBrainHuman : public plArmatureBrain
 {
@@ -72,13 +70,13 @@ public:
     CLASSNAME_REGISTER( plAvBrainHuman );
     GETINTERFACE_ANY( plAvBrainHuman, plArmatureBrain );
 
-    virtual bool Apply(double timeNow, float elapsed);
-    virtual void Activate(plArmatureModBase *avMod);
-    virtual void Deactivate();
-    virtual void Suspend();
-    virtual void Resume();
-    virtual void Spawn(double timeNow);
-    virtual bool LeaveAge();
+    bool Apply(double timeNow, float elapsed) override;
+    void Activate(plArmatureModBase *avMod) override;
+    void Deactivate() override;
+    void Suspend() override;
+    void Resume() override;
+    void Spawn(double timeNow) override;
+    bool LeaveAge() override;
 
     bool IsActor() const {return fIsActor;}
     void IsActor(bool isActor) {fIsActor = isActor;}
@@ -94,10 +92,10 @@ public:
 
     bool IsBehaviorPlaying(int behavior); // returns whether the specified behavior is playing at all (see list of behaviors below)
 
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual bool MsgReceive(plMessage *msg);
-    virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    bool MsgReceive(plMessage *msg) override;
+    void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt) override;
 
     // Hardwired Identifiers for all the canonical bones.
     enum HumanBoneID {
@@ -170,7 +168,7 @@ protected:
     plAGAnim *FindCustomAnim(const char *baseName);
     virtual bool IHandleControlMsg(plControlEventMsg *ctrlMsg);
     virtual bool IHandleClimbMsg(plClimbMsg *msg);
-    virtual bool IHandleTaskMsg(plAvTaskMsg *msg);
+    bool IHandleTaskMsg(plAvTaskMsg *msg) override;
     virtual bool IInitAnimations();
     virtual void IInitBoneMap();
     float IGetTurnStrength(double timeNow);
@@ -242,8 +240,8 @@ public:
     uint32_t GetType() const { return fType; }
 
 protected:
-    virtual void IStart();
-    virtual void IStop();
+    void IStart() override;
+    void IStop() override;
 
     plArmatureMod *fAvMod;
     plAvBrainHuman *fHuBrain;
@@ -258,49 +256,49 @@ protected:
 
 class Idle : public plHBehavior
 {
-    virtual void IStart();
+    void IStart() override;
 };
 
 class Run : public plHBehavior
 {
 public:
-    virtual bool PreCondition(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
 };
 
 class Walk : public plHBehavior
 {
 public:
-    virtual bool PreCondition(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
 };
 
 class WalkBack : public plHBehavior
 {
 public:
-    virtual bool PreCondition(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
 };
 
 class StepLeft : public plHBehavior
 {
 public:
-    virtual bool PreCondition(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
 };
 
 class StepRight : public plHBehavior
 {
 public:
-    virtual bool PreCondition(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
 };
 
 class StandingTurnLeft : public plHBehavior
 {
 public:
-    virtual bool PreCondition(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
 };
 
 class StandingTurnRight : public plHBehavior
 {
 public:
-    virtual bool PreCondition(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
 };
 
 class MovingTurn : public plHBehavior
@@ -308,27 +306,27 @@ class MovingTurn : public plHBehavior
 public:
 
 protected:
-    void IStart();
+    void IStart() override;
 };
 
 class MovingTurnLeft : public MovingTurn
 {
 public:
-    virtual bool PreCondition(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
 };
 
 class MovingTurnRight : public MovingTurn
 {
 public:
-    virtual bool PreCondition(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
 };
 
 class Jump : public plHBehavior
 {
 protected:
     bool fReleased;
-    virtual void IStart();
-    virtual void IStop();
+    void IStart() override;
+    void IStop() override;
     
 public:
     Jump() : plHBehavior(), fReleased(true) {}
@@ -337,29 +335,29 @@ public:
 class StandingJump : public Jump
 {
 public:
-    virtual bool PreCondition(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
 };
 
 class WalkingJump : public Jump
 {
 public:
-    virtual bool PreCondition(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
 };
 
 class RunningJump : public Jump
 {
 public:
-    virtual bool PreCondition(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
 };
 
 class GroundImpact : public plHBehavior
 {
 public:
     GroundImpact();
-    virtual bool PreCondition(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
 
 private:
-    virtual void IStop();
+    void IStop() override;
     float fDuration;
 };
 
@@ -367,43 +365,43 @@ class RunningImpact : public plHBehavior
 {
 public:
     RunningImpact();
-    virtual bool PreCondition(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
 
 private:
-    virtual void IStop();
+    void IStop() override;
     float fDuration;
 };
 
 class Fall : public plHBehavior
 {
 public:
-    virtual bool PreCondition(double time, float elapsed);
-    virtual void Process(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
+    void Process(double time, float elapsed) override;
 };
 
 class Push : public plHBehavior
 {
 public:
-    virtual void Process(double time, float elapsed);
+    void Process(double time, float elapsed) override;
 };
 
 //class PushIdle : public Push
 //{
 //public:
-//  virtual bool PreCondition(double time, float elapsed);
+//  bool PreCondition(double time, float elapsed) override;
 //};
 
 class PushWalk : public Push
 {
 public:
-    virtual bool PreCondition(double time, float elapsed);
+    bool PreCondition(double time, float elapsed) override;
 };
 
-bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const char *idleAnim,
-                          const char *exitAnim, bool netPropagate, bool autoExit, plAGAnim::BodyUsage bodyUsage,
+bool PushSimpleMultiStage(plArmatureMod *avatar, const ST::string& enterAnim, const ST::string& idleAnim,
+                          const ST::string& exitAnim, bool netPropagate, bool autoExit, plAGAnim::BodyUsage bodyUsage,
                           plAvBrainGeneric::BrainType type = plAvBrainGeneric::kGeneric);
-bool PushRepeatEmote(plArmatureMod* avatar, const plString& anim);
-bool AvatarEmote(plArmatureMod *avatar, const char *emoteName);
+bool PushRepeatEmote(plArmatureMod* avatar, const ST::string& anim);
+bool AvatarEmote(plArmatureMod *avatar, const ST::string& emoteName);
 
 
 #endif // PLAVBRAINHUMAN_INC

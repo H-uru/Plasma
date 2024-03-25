@@ -43,8 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plNotifyMsg_h_
 
 #include "plMessage.h"
-#include "hsResMgr.h"
-#include "pnModifier/plSingleModifier.h"
+
+#include <string_theory/string>
 
 #include "hsGeometry3.h"
 
@@ -125,7 +125,15 @@ protected:
 };
 
 // The following macro makes it easy (or easier) to define new event data types
-#define proEventType(type) class pro##type##EventData : public proEventData { public: pro##type##EventData() : proEventData( k##type ) {IInit();} virtual ~pro##type##EventData(){IDestruct();}
+#define proEventType(type)                                                  \
+    class pro##type##EventData : public proEventData {                      \
+    public:                                                                 \
+        pro##type##EventData() : proEventData(k##type) {                    \
+            IInit();                                                        \
+        }                                                                   \
+        virtual ~pro##type##EventData() {                                   \
+            IDestruct();                                                    \
+        }
 
 proEventType(Collision)
     bool    fEnter;     // entering? (false is exit)
@@ -133,11 +141,11 @@ proEventType(Collision)
     plKey   fHittee;    // collision hittee (probably us)
 
 protected:
-    virtual void IRead(hsStream* stream, hsResMgr* mgr);
-    virtual void IWrite(hsStream* stream, hsResMgr* mgr);
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void IReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void IWriteVersion(hsStream* s, hsResMgr* mgr);
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 proEventType(Picked)
@@ -147,11 +155,11 @@ proEventType(Picked)
     hsPoint3 fHitPoint; // where on the picked object that it was picked on
 
 protected:
-    virtual void IRead(hsStream* stream, hsResMgr* mgr);
-    virtual void IWrite(hsStream* stream, hsResMgr* mgr);
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void IReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void IWriteVersion(hsStream* s, hsResMgr* mgr);
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 proEventType(Spawned)
@@ -159,11 +167,11 @@ proEventType(Spawned)
     plKey   fSpawnee;   // what was spawned (typically a scene object with an armature mod)
 
 protected:
-    virtual void IRead(hsStream* stream, hsResMgr* mgr);
-    virtual void IWrite(hsStream* stream, hsResMgr* mgr);
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void IReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void IWriteVersion(hsStream* s, hsResMgr* mgr);
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 proEventType(ControlKey)
@@ -171,16 +179,16 @@ proEventType(ControlKey)
     bool    fDown;          // was the key going down (false if going up)
 
 protected:
-    virtual void IRead(hsStream* stream, hsResMgr* mgr);
-    virtual void IWrite(hsStream* stream, hsResMgr* mgr);
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void IReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void IWriteVersion(hsStream* s, hsResMgr* mgr);
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 proEventType(Variable)
-    plString  fName;          // name of variable
-    int32_t   fDataType;      // type of data
+    ST::string  fName;          // name of variable
+    int32_t     fDataType;      // type of data
 
     // Can't be a union, sadly, but it isn't that much of a waste of space...
     plKey       fKey;       // if its a plKey (pointer to something)
@@ -191,13 +199,13 @@ proEventType(Variable)
     } fNumber;
 
 protected:
-    virtual void IInit();
-    virtual void IDestruct();
-    virtual void IRead(hsStream* stream, hsResMgr* mgr);
-    virtual void IWrite(hsStream* stream, hsResMgr* mgr);
+    void IInit() override;
+    void IDestruct() override;
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void IReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void IWriteVersion(hsStream* s, hsResMgr* mgr);
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 
     virtual void IReadNumber(hsStream * stream);
     virtual void IWriteNumber(hsStream * stream);
@@ -210,11 +218,11 @@ proEventType(Facing)
     bool        enabled; // Now meets facing requirement (true) or no longer meets requirement (false)
 
 protected:
-    virtual void IRead(hsStream* stream, hsResMgr* mgr);
-    virtual void IWrite(hsStream* stream, hsResMgr* mgr);
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void IReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void IWriteVersion(hsStream* s, hsResMgr* mgr);
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 proEventType(Contained)
@@ -223,11 +231,11 @@ proEventType(Contained)
     bool    fEntering;  // entering volume (true) or exiting (false)
 
 protected:
-    virtual void IRead(hsStream* stream, hsResMgr* mgr);
-    virtual void IWrite(hsStream* stream, hsResMgr* mgr);
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void IReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void IWriteVersion(hsStream* s, hsResMgr* mgr);
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 proEventType(Activate)
@@ -235,57 +243,57 @@ proEventType(Activate)
     bool fActivate;   // the data
 
 protected:
-    virtual void IRead(hsStream* stream, hsResMgr* mgr);
-    virtual void IWrite(hsStream* stream, hsResMgr* mgr);
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void IReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void IWriteVersion(hsStream* s, hsResMgr* mgr);
-};      
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
+};
 
 proEventType(Callback)
     int32_t   fEventType;  // enumerated in plEventCallbackMsg.h
 
 protected:
-    virtual void IRead(hsStream* stream, hsResMgr* mgr);
-    virtual void IWrite(hsStream* stream, hsResMgr* mgr);
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void IReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void IWriteVersion(hsStream* s, hsResMgr* mgr);
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 proEventType(ResponderState)
     int32_t   fState;     // what state the responder should be switched to before triggering
 
 protected:
-    virtual void IRead(hsStream* stream, hsResMgr* mgr);
-    virtual void IWrite(hsStream* stream, hsResMgr* mgr);
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void IReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void IWriteVersion(hsStream* s, hsResMgr* mgr);
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 proEventType(MultiStage)
-    int32_t   fStage; 
+    int32_t   fStage;
     int32_t   fEvent;
     plKey   fAvatar;    // who was running the stage
 
 protected:
-    virtual void IRead(hsStream* stream, hsResMgr* mgr);
-    virtual void IWrite(hsStream* stream, hsResMgr* mgr);
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void IReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void IWriteVersion(hsStream* s, hsResMgr* mgr);
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 proEventType(Coop)
     uint32_t  fID;        // player ID of the initiator
     uint16_t  fSerial;    // serial number for the initiator
 protected:
-    virtual void IRead(hsStream* stream, hsResMgr* mgr);
-    virtual void IWrite(hsStream* stream, hsResMgr* mgr);
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void IReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void IWriteVersion(hsStream* s, hsResMgr* mgr);
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 
@@ -300,33 +308,33 @@ proEventType(OfferLinkingBook)
     int targetAge; // the age the book is for - taken from konstant list of age buttons in xLinkingBookPopupGUI.py
     int offeree; // who we are offering the book to
 protected:
-    virtual void IRead(hsStream* stream, hsResMgr* mgr);
-    virtual void IWrite(hsStream* stream, hsResMgr* mgr);
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void IReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void IWriteVersion(hsStream* s, hsResMgr* mgr);
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 proEventType(Book)
     uint32_t  fEvent;     // The type of event. See pfJournalBook.h for enumsu
     uint32_t  fLinkID;    // The link ID of the image clicked, if an image link event, otherwise unused
 protected:
-    virtual void IRead(hsStream* stream, hsResMgr* mgr);
-    virtual void IWrite(hsStream* stream, hsResMgr* mgr);
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void IReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void IWriteVersion(hsStream* s, hsResMgr* mgr);
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 proEventType(ClimbingBlockerHit)
     plKey   fBlockerKey;    // collision hittee (probably us)
 
 protected:
-    virtual void IRead(hsStream* stream, hsResMgr* mgr);
-    virtual void IWrite(hsStream* stream, hsResMgr* mgr);
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void IReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void IWriteVersion(hsStream* s, hsResMgr* mgr);
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 
@@ -346,11 +354,11 @@ protected:
 
 public:
     plNotifyMsg() { IInit(); }
-    plNotifyMsg(const plKey &s, const plKey &r);
+    plNotifyMsg(const plKey& s, const plKey& r);
     ~plNotifyMsg();
 
-    CLASSNAME_REGISTER( plNotifyMsg );
-    GETINTERFACE_ANY( plNotifyMsg, plMessage );
+    CLASSNAME_REGISTER(plNotifyMsg);
+    GETINTERFACE_ANY(plNotifyMsg, plMessage);
 
     // data area
     enum notificationType
@@ -365,7 +373,7 @@ public:
     int32_t       fType;              // what type of notification
     float    fState;             // state of the notifier 0.0=false, 1.0=true
     int32_t       fID;                // special ID mostly for responder State transitions
-    hsTArray<proEventData*> fEvents;// list of events with data
+    std::vector<proEventData*> fEvents; // list of events with data
 
     void SetType(notificationType type) { fType = type; }
     void SetState(float state) { fState = state; }
@@ -378,10 +386,10 @@ public:
     void AddCollisionEvent( bool enter, const plKey &other, const plKey &self, bool onlyOneCollision=true );
     void AddPickEvent( const plKey &other, const plKey& self, bool enabled, hsPoint3 hitPoint );
     void AddControlKeyEvent( int32_t key, bool down );
-    void AddVariableEvent( const plString& name, float number );
-    void AddVariableEvent( const plString& name, int32_t number );
-    void AddVariableEvent( const plString& name );
-    void AddVariableEvent( const plString& name, const plKey &key );
+    void AddVariableEvent( const ST::string& name, float number );
+    void AddVariableEvent( const ST::string& name, int32_t number );
+    void AddVariableEvent( const ST::string& name );
+    void AddVariableEvent( const ST::string& name, const plKey &key );
     void AddFacingEvent( const plKey &other, const plKey &self, float dot, bool enabled);
     void AddContainerEvent( const plKey &container, const plKey &contained, bool entering);
     void AddActivateEvent( bool activate );
@@ -395,19 +403,19 @@ public:
     void AddBookEvent( uint32_t event, uint32_t linkID = 0 );
     void AddHitClimbingBlockerEvent(const plKey &blocker);
     proEventData* FindEventRecord( int32_t eventtype );
-    int32_t GetEventCount() { return fEvents.Count(); }
-    proEventData* GetEventRecord(int32_t i) { return fEvents[i]; }
+    size_t GetEventCount() { return fEvents.size(); }
+    proEventData* GetEventRecord(size_t i) { return fEvents[i]; }
     void ClearEvents();
 
     // Searches the event records for an event triggered by an avatar, and returns that key
     plKey GetAvatarKey();
 
-    // IO 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
-    
-    void ReadVersion(hsStream* s, hsResMgr* mgr);
-    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
+
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 

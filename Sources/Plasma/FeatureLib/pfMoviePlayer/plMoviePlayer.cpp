@@ -42,7 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMoviePlayer.h"
 
-#ifdef MOVIE_AVAILABLE
+#ifdef USE_WEBM
+#   include <mkvparser/mkvreader.h>
+#   include <mkvparser/mkvparser.h>
+
 #   define VPX_CODEC_DISABLE_COMPAT 1
 #   include <vpx/vpx_decoder.h>
 #   include <vpx/vp8dx.h>
@@ -53,19 +56,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define WEBM_CODECID_OPUS "A_OPUS"
 #endif
 
+#include "hsConfig.h"
+#include "hsGDeviceRef.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
+
+#include "pnKeyedObject/plUoid.h"
+
 #include "plAudio/plWin32VideoSound.h"
 #include "plGImage/plMipmap.h"
-#include "pnKeyedObject/plUoid.h"
-#include "hsGDeviceRef.h"
+#include "plMessage/plMovieMsg.h"
 #include "plPipeline/plPlates.h"
 #include "plResMgr/plLocalization.h"
 #include "plStatusLog/plStatusLog.h"
 
 #include "plPlanarImage.h"
-#include "webm/mkvreader.hpp"
-#include "webm/mkvparser.hpp"
 
 #define SAFE_OP(x, err) \
 { \
@@ -81,11 +86,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class VPX
 {
-    VPX() { }
 
-#ifdef MOVIE_AVAILABLE
+#ifdef USE_WEBM
 public:
     vpx_codec_ctx_t codec;
+
+    VPX() : codec() { }
 
     ~VPX()
     {
@@ -117,6 +123,8 @@ public:
         // if this proves false, move decoder function into IProcessVideoFrame
         return vpx_codec_get_frame(&codec, &iter);
     }
+#else
+    VPX() { }
 #endif
 };
 
@@ -136,6 +144,7 @@ public:
 
     bool GetFrames(mkvparser::MkvReader* reader, int64_t movieTimeNs, std::vector<blkbuf_t>& frames)
     {
+#ifdef USE_WEBM
         // If we have no block yet, grab the first one
         if (!fCurrentBlock)
             fStatus = fTrack->GetFirst(fCurrentBlock);
@@ -159,6 +168,7 @@ public:
                 return true;
             }
         }
+#endif
 
         return false; // No more blocks... We're done!
     }
@@ -167,14 +177,17 @@ public:
 // =====================================================
 
 plMoviePlayer::plMoviePlayer()
-    : fPlate(nullptr),
-      fTexture(nullptr),
-      fReader(nullptr),
-      fMovieTime(0),
-      fLastFrameTime(0),
-      fPosition(hsPoint2()),
-      fPlaying(false),
-      fPaused(false)
+    : fPlate(),
+      fTexture(),
+#ifdef USE_WEBM
+      fReader(),
+      fLastImg(),
+#endif
+      fMovieTime(),
+      fLastFrameTime(),
+      fPosition(),
+      fPlaying(),
+      fPaused()
 {
     fScale.Set(1.0f, 1.0f);
 }
@@ -184,7 +197,7 @@ plMoviePlayer::~plMoviePlayer()
     if (fPlate)
         // The plPlate owns the Mipmap Texture, so it destroys it for us
         plPlateManager::Instance().DestroyPlate(fPlate);
-#ifdef MOVIE_AVAILABLE
+#ifdef USE_WEBM
     if (fReader) {
         fReader->Close();
         delete fReader;
@@ -194,9 +207,9 @@ plMoviePlayer::~plMoviePlayer()
 
 bool plMoviePlayer::IOpenMovie()
 {
-#ifdef MOVIE_AVAILABLE
+#ifdef USE_WEBM
     if (!plFileInfo(fMoviePath).Exists()) {
-        hsAssert(false, "Tried to play a movie that doesn't exist");
+        plStatusLog::AddLineSF("movie.log", "{}: Tried to play a movie that doesn't exist.", fMoviePath);
         return false;
     }
 
@@ -240,12 +253,14 @@ bool plMoviePlayer::IOpenMovie()
 
 bool plMoviePlayer::ILoadAudio()
 {
-#ifdef MOVIE_AVAILABLE
+#ifdef USE_WEBM
     // Fetch audio track information
+    if (!fAudioTrack)
+        return false;
     const mkvparser::AudioTrack* audio = static_cast<const mkvparser::AudioTrack*>(fAudioTrack->GetTrack());
     plWAVHeader header;
     header.fFormatTag = plWAVHeader::kPCMFormatTag;
-    header.fNumChannels = audio->GetChannels();
+    header.fNumChannels = (uint16_t)audio->GetChannels();
     header.fBitsPerSample = audio->GetBitDepth() == 8 ? 8 : 16;
     header.fNumSamplesPerSec = 48000; // OPUS specs say we shall always decode at 48kHz
     header.fBlockAlign = header.fNumChannels * header.fBitsPerSample / 8;
@@ -253,12 +268,12 @@ bool plMoviePlayer::ILoadAudio()
     fAudioSound.reset(new plWin32VideoSound(header));
 
     // Initialize Opus
-    if (strncmp(audio->GetCodecId(), WEBM_CODECID_OPUS, arrsize(WEBM_CODECID_OPUS)) != 0) {
-        plStatusLog::AddLineS("movie.log", "%s: Not an Opus audio track!", fMoviePath.AsString().c_str());
+    if (strncmp(audio->GetCodecId(), WEBM_CODECID_OPUS, std::size(WEBM_CODECID_OPUS)) != 0) {
+        plStatusLog::AddLineSF("movie.log", "{}: Not an Opus audio track!", fMoviePath);
         return false;
     }
     int error;
-    OpusDecoder* opus = opus_decoder_create(48000, audio->GetChannels(), &error);
+    OpusDecoder* opus = opus_decoder_create(48000, (int)audio->GetChannels(), &error);
     if (error != OPUS_OK)
         hsAssert(false, "Error occured initalizing opus");
 
@@ -267,9 +282,9 @@ bool plMoviePlayer::ILoadAudio()
     fAudioTrack->GetFrames(fReader, fSegment->GetDuration(), frames);
     static const int maxFrameSize = 5760; // for max packet duration at 48kHz
     std::vector<int16_t> decoded;
-    decoded.reserve(frames.size() * audio->GetChannels() * maxFrameSize);
+    decoded.reserve(frames.size() * (size_t)audio->GetChannels() * maxFrameSize);
 
-    int16_t* frameData = new int16_t[maxFrameSize * audio->GetChannels()];
+    int16_t* frameData = new int16_t[maxFrameSize * (size_t)audio->GetChannels()];
     for (const auto& frame : frames) {
         const std::unique_ptr<uint8_t>& buf = std::get<0>(frame);
         int32_t size = std::get<1>(frame);
@@ -292,15 +307,17 @@ bool plMoviePlayer::ILoadAudio()
 
 bool plMoviePlayer::ICheckLanguage(const mkvparser::Track* track)
 {
+#ifdef USE_WEBM
     auto codes = plLocalization::GetLanguageCodes(plLocalization::GetLanguage());
     if (codes.find(track->GetLanguage()) != codes.end())
         return true;
+#endif
     return false;
 }
 
 void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
 {
-#ifdef MOVIE_AVAILABLE
+#ifdef USE_WEBM
     vpx_image_t* img = nullptr;
 
     // We have to decode all the frames, but we only want to display the most recent one to the user.
@@ -311,13 +328,21 @@ void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
     }
 
     if (img) {
+        if (fLastImg) {
+            vpx_img_free(fLastImg);
+        }
+        fLastImg = img;
+    }
+    
+    // We need to refill the buffer if there is a new image or a new buffer
+    if (img || (!fTexture->GetDeviceRef() && fLastImg)) {
         // According to VideoLAN[1], I420 is the most common image format in videos. I am inclined to believe this as our
         // attemps to convert the common Uru videos use I420 image data. So, as a shortcut, we will only implement that format.
         // If for some reason we need other formats, please, be my guest!
         // [1] = http://wiki.videolan.org/YUV#YUV_4:2:0_.28I420.2FJ420.2FYV12.29
-        switch (img->fmt) {
+        switch (fLastImg->fmt) {
         case VPX_IMG_FMT_I420:
-            plPlanarImage::Yuv420ToRgba(img->d_w, img->d_h, img->stride, img->planes, reinterpret_cast<uint8_t*>(fTexture->GetImage()));
+            plPlanarImage::Yuv420ToRgba(fLastImg->d_w, fLastImg->d_h, fLastImg->stride, fLastImg->planes, reinterpret_cast<uint8_t*>(fTexture->GetImage()));
             break;
 
         DEFAULT_FATAL("image format");
@@ -336,34 +361,21 @@ bool plMoviePlayer::Start()
     if (fPlaying)
         return false;
 
-#ifdef MOVIE_AVAILABLE
+#ifdef USE_WEBM
     if (!IOpenMovie())
         return false;
     hsAssert(fVideoTrack, "nil video track -- expect bad things to happen!");
 
     // Initialize VPX
     const mkvparser::VideoTrack* video = static_cast<const mkvparser::VideoTrack*>(fVideoTrack->GetTrack());
-    if (strncmp(video->GetCodecId(), WEBM_CODECID_VP9, arrsize(WEBM_CODECID_VP9)) != 0) {
-        plStatusLog::AddLineS("movie.log", "%s: Not a VP9 video track!", fMoviePath.AsString().c_str());
+    if (strncmp(video->GetCodecId(), WEBM_CODECID_VP9, std::size(WEBM_CODECID_VP9)) != 0) {
+        plStatusLog::AddLineSF("movie.log", "{}: Not a VP9 video track!", fMoviePath);
         return false;
     }
     if (VPX* vpx = VPX::Create())
         fVpx.reset(vpx);
     else
         return false;
-
-    // Need to figure out scaling based on pipe size.
-    plPlateManager& plateMgr = plPlateManager::Instance();
-    float plateWidth = video->GetWidth() * fScale.fX;
-    float plateHeight = video->GetHeight() * fScale.fY;
-    if (plateWidth > plateMgr.GetPipeWidth() || plateHeight > plateMgr.GetPipeHeight()) {
-        float scale = std::min(plateMgr.GetPipeWidth() / plateWidth, plateMgr.GetPipeHeight() / plateHeight);
-        plateWidth *= scale;
-        plateHeight *= scale;
-    }
-    plateMgr.CreatePlate(&fPlate, fPosition.fX, fPosition.fY, 0, 0);
-    plateMgr.SetPlatePixelSize(fPlate, plateWidth, plateHeight);
-    fTexture = fPlate->CreateMaterial(static_cast<uint32_t>(video->GetWidth()), static_cast<uint32_t>(video->GetHeight()), false);
 
     // Decode the audio track and load it into a sound buffer
     if (!ILoadAudio())
@@ -379,6 +391,22 @@ bool plMoviePlayer::Start()
 #endif // MOVIE_AVAILABLE
 }
 
+void plMoviePlayer::IInitPlate(uint32_t width, uint32_t height)
+{
+    // Need to figure out scaling based on pipe size.
+    plPlateManager& plateMgr = plPlateManager::Instance();
+    float plateWidth = width * fScale.fX;
+    float plateHeight = height * fScale.fY;
+    if (plateWidth > plateMgr.GetPipeWidth() || plateHeight > plateMgr.GetPipeHeight()) {
+        float scale = std::min(plateMgr.GetPipeWidth() / plateWidth, plateMgr.GetPipeHeight() / plateHeight);
+        plateWidth *= scale;
+        plateHeight *= scale;
+    }
+    plateMgr.CreatePlate(&fPlate, fPosition.fX, fPosition.fY, 0, 0);
+    plateMgr.SetPlatePixelSize(fPlate, (uint32_t)plateWidth, (uint32_t)plateHeight);
+    fTexture = fPlate->CreateMaterial(width, height, false);
+}
+
 bool plMoviePlayer::NextFrame()
 {
     if (!fPlaying)
@@ -391,7 +419,7 @@ bool plMoviePlayer::NextFrame()
     if (fPaused)
         return true;
 
-#ifdef MOVIE_AVAILABLE
+#ifdef USE_WEBM
     // Get our current timecode
     fMovieTime += frameTimeDelta;
 
@@ -399,6 +427,13 @@ bool plMoviePlayer::NextFrame()
     if (!fVideoTrack || !fVideoTrack->GetFrames(fReader, fMovieTime * 1000000, video)) {
         Stop();
         return false;
+    }
+
+    // If the pipeline's device was invalidated, the plate will be invalid. Recreate now.
+    if (!fPlate) {
+        const mkvparser::VideoTrack* vt = static_cast<const mkvparser::VideoTrack*>(fVideoTrack->GetTrack());
+        IInitPlate(static_cast<uint32_t>(vt->GetWidth()), static_cast<uint32_t>(vt->GetHeight()));
+        hsAssert(fPlate, "failed to init plMoviePlayer plate -- bad things will happen!");
     }
 
     // Show our mess
@@ -409,6 +444,12 @@ bool plMoviePlayer::NextFrame()
 #else
     return false;
 #endif // MOVIE_AVAILABLE
+}
+
+void plMoviePlayer::AddCallback(plMessage* msg)
+{
+    hsRefCnt_SafeRef(msg);
+    fCallbacks.push_back(msg);
 }
 
 bool plMoviePlayer::Pause(bool on)
@@ -428,6 +469,12 @@ bool plMoviePlayer::Stop()
         fAudioSound->Stop();
     if (fPlate)
         fPlate->SetVisible(false);
+#ifdef USE_WEBM
+    if (fLastImg) {
+        vpx_img_free(fLastImg);
+        fLastImg = nullptr;
+    }
+#endif
 
     for (auto cb : fCallbacks)
         cb->Send();

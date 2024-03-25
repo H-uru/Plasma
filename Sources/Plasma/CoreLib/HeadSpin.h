@@ -43,15 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define HeadSpinHDefined
 
 // Ensure these get set consistently regardless of what module includes it
-#include "hsCompilerSpecific.h"
-
-#if defined(_DEBUG)
-#   define HS_DEBUGGING
-#endif
+#include "hsConfig.h"
 
 //======================================
 // Some standard includes
 //======================================
+#include <cfloat>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
@@ -59,22 +56,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cctype>
 #include <cstdarg>
 #include <cstdint>
+#include <type_traits>
 
 //======================================
 // Winblows Hacks
 //======================================
 #ifdef HS_BUILD_FOR_WIN32
-    // 4244: Conversion
-    // 4305: Truncation
-    // 4503: 'identifier' : decorated name length exceeded, name was truncated
-    // 4018: signed/unsigned mismatch
-    // 4786: 255 character debug limit
-    // 4284: STL template defined operator-> for a class it doesn't make sense for (int, etc)
-    // 4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-#   ifdef _MSC_VER
-#      pragma warning( disable : 4305 4503 4018 4786 4284 4800)
-#   endif // _MSC_VER
-
     // Kind of nasty looking forward declarations, but this is Win32.... it'll never change!
     // If you want to argue: would you rather pull in the entire Windows.h? Windows 8 makes it
     // even more bloated than before!
@@ -86,6 +73,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     typedef HINSTANCE HMODULE;
     typedef long HRESULT;
     typedef void* HANDLE;
+#elif HS_BUILD_FOR_MACOS
+    typedef void* hsWindowHndl;
+    typedef void* hsWindowInst;
 #else
     typedef int32_t* hsWindowHndl;
     typedef int32_t* hsWindowInst;
@@ -102,53 +92,52 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define CDECL
 #endif
 
-#define kPosInfinity32      (0x7fffffff)
-#define kNegInfinity32      (0x80000000)
+// Based on std::numbers from C++20
+namespace hsConstants
+{
+    template <typename T>
+    inline constexpr T pi =
+        std::enable_if_t<std::is_floating_point_v<T>, T>(3.141592653589793238462643383279502884L);
 
-#ifndef M_PI
-#   define M_PI       3.14159265358979323846
-#endif
+    template <typename T>
+    inline constexpr T half_pi = pi<T> / T(2.0);
 
-#ifndef nil
-#   define nil (nullptr)
-#endif
+    template <typename T>
+    inline constexpr T two_pi = pi<T> * T(2.0);
 
-typedef int32_t   hsError;
+    template <typename T>
+    inline constexpr T sqrt2 =
+        std::enable_if_t<std::is_floating_point_v<T>, T>(1.414213562373095048801688724209698079L);
 
-#define hsOK                0
-#define hsFail              -1
-#define hsFailed(r)         ((hsError)(r)<hsOK)
-#define hsSucceeded(r)      ((hsError)(r)>=hsOK)
+    template <typename T>
+    inline constexpr T inv_sqrt2 = T(1.0) / hsConstants::sqrt2<T>;
+}
 
-#if defined(HAVE_GCC_DEPRECATED_ATTR)
-#   define hsDeprecated(message) __attribute__((deprecated(message)))
-#elif defined(HAVE_CXX14_DEPRECATED_ATTR)
-#   define hsDeprecated(message) [[deprecated(message)]]
-#elif defined(_MSC_VER)
-#   define hsDeprecated(message) __declspec(deprecated(message))
-#else
-#   define hsDeprecated(message)
-#endif
+// Indirection required for joining preprocessor macros together
+#define _hsMacroJoin_(lhs, rhs) lhs ## rhs
+#define hsMacroJoin(lhs, rhs)   _hsMacroJoin_(lhs, rhs)
 
-#ifdef HAVE_OVERRIDE
-#   define HS_OVERRIDE  override
-#   define HS_FINAL     final
-#else
-#   define HS_OVERRIDE
-#   define HS_FINAL
-#endif
+// Macro to string-ize its arguments
+#define hsStringize(exp) #exp
 
-#ifdef HAVE_NOEXCEPT
-#   define HS_NOEXCEPT          noexcept
-#   define HS_NOEXCEPT_IF(cond) noexcept(cond)
-#else
-#   define HS_NOEXCEPT          throw()
-#   define HS_NOEXCEPT_IF(cond)
-#endif
+// Declare a file-unique identifier without caring what its full name is
+#define hsUniqueIdentifier(prefix) hsMacroJoin(prefix, __LINE__)
+
+// Why can't this just be part of the standard already?
+using hsSsize_t = std::make_signed<size_t>::type;
 
 //======================================
 // Endian swap funcitions
 //======================================
+#ifdef _MSC_VER
+    #define hsSwapEndian16(val) _byteswap_ushort(val)
+    #define hsSwapEndian32(val) _byteswap_ulong(val)
+    #define hsSwapEndian64(val) _byteswap_uint64(val)
+#elif defined(__llvm__) || (defined(__GNUC__) && ((__GNUC__ * 100) + __GNUC_MINOR__) >= 408)
+    #define hsSwapEndian16(val) __builtin_bswap16(val)
+    #define hsSwapEndian32(val) __builtin_bswap32(val)
+    #define hsSwapEndian64(val) __builtin_bswap64(val)
+#else
 inline uint16_t hsSwapEndian16(uint16_t value)
 {
     return (value >> 8) | (value << 8);
@@ -171,6 +160,8 @@ inline uint64_t hsSwapEndian64(uint64_t value)
             ((value & 0x00ff000000000000) >> 40) |
             ((value)                      >> 56);
 }
+#endif
+
 inline float hsSwapEndianFloat(float fvalue)
 {
     union {
@@ -194,18 +185,7 @@ inline double hsSwapEndianDouble(double dvalue)
     return value.f;
 }
 
-#if LITTLE_ENDIAN
-    #define hsToBE16(n)         hsSwapEndian16(n)
-    #define hsToBE32(n)         hsSwapEndian32(n)
-    #define hsToBE64(n)         hsSwapEndian64(n)
-    #define hsToBEFloat(n)      hsSwapEndianFloat(n)
-    #define hsToBEDouble(n)     hsSwapEndianDouble(n)
-    #define hsToLE16(n)         (n)
-    #define hsToLE32(n)         (n)
-    #define hsToLE64(n)         (n)
-    #define hsToLEFloat(n)      (n)
-    #define hsToLEDouble(n)     (n)
-#else
+#ifdef HS_BIG_ENDIAN
     #define hsToBE16(n)         (n)
     #define hsToBE32(n)         (n)
     #define hsToBE64(n)         (n)
@@ -216,16 +196,32 @@ inline double hsSwapEndianDouble(double dvalue)
     #define hsToLE64(n)         hsSwapEndian64(n)
     #define hsToLEFloat(n)      hsSwapEndianFloat(n)
     #define hsToLEDouble(n)     hsSwapEndianDouble(n)
+#else
+    #define hsToBE16(n)         hsSwapEndian16(n)
+    #define hsToBE32(n)         hsSwapEndian32(n)
+    #define hsToBE64(n)         hsSwapEndian64(n)
+    #define hsToBEFloat(n)      hsSwapEndianFloat(n)
+    #define hsToBEDouble(n)     hsSwapEndianDouble(n)
+    #define hsToLE16(n)         (n)
+    #define hsToLE32(n)         (n)
+    #define hsToLE64(n)         (n)
+    #define hsToLEFloat(n)      (n)
+    #define hsToLEDouble(n)     (n)
 #endif
 
-//===========================================================================
-// Define a NOOP (null) statement
-//===========================================================================
-#ifdef _MSC_VER
-# define  NULL_STMT  __noop
-#else
-# define  NULL_STMT  ((void)0)
-#endif
+// Generic versions for use in templates
+template <typename T> inline T hsToLE(T value) = delete;
+template <> inline char hsToLE(char value) { return value; }
+template <> inline signed char hsToLE(signed char value) { return value; }
+template <> inline unsigned char hsToLE(unsigned char value) { return value; }
+template <> inline int16_t hsToLE(int16_t value) { return (int16_t)hsToLE16((uint16_t)value); }
+template <> inline uint16_t hsToLE(uint16_t value) { return hsToLE16(value); }
+template <> inline int32_t hsToLE(int32_t value) { return (int32_t)hsToLE32((uint32_t)value); }
+template <> inline uint32_t hsToLE(uint32_t value) { return hsToLE32(value); }
+template <> inline int64_t hsToLE(int64_t value) { return (int64_t)hsToLE64((uint64_t)value); }
+template <> inline uint64_t hsToLE(uint64_t value) { return hsToLE64(value); }
+template <> inline float hsToLE(float value) { return hsToLEFloat(value); }
+template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
 
 
 /****************************************************************************
@@ -246,43 +242,24 @@ inline double hsSwapEndianDouble(double dvalue)
 
 /****************************************************************************
 *
-*   arrsize
-*   arrsize returns the number of elements in an array variable
-*
-*   Example:
-*
-*   StrPrintf(buffer, arrsize(buffer), "%u", value);
-*
-***/
-#ifdef HAVE_CONSTEXPR
-    template <typename _T, size_t _Sz>
-    constexpr size_t arrsize(_T(&)[_Sz]) { return _Sz; }
-#else
-#   define  arrsize(a)  (sizeof(a) / sizeof((a)[0]))
-#endif
-
-
-/****************************************************************************
-*
 *   IS_POW2
 *
 ***/
 #define IS_POW2(val) (!((val) & ((val) - 1)))
 
 #ifdef PLASMA_EXTERNAL_RELEASE
-#   define hsStatusMessage(x)                  NULL_STMT
-#   define hsStatusMessageF(x, ...)            NULL_STMT
+#   define hsStatusMessage(x)                  ((void)0)
+#   define hsStatusMessageF(x, ...)            ((void)0)
 #else
     void    hsStatusMessage(const char* message);
     void    hsStatusMessageF(const char * fmt, ...);
 #endif // PLASMA_EXTERNAL_RELEASE
 
 char*   hsStrcpy(char* dstOrNil, const char* src);
-void    hsStrLower(char *s);
 
 inline char* hsStrcpy(const char* src)
 {
-    return hsStrcpy(nil, src);
+    return hsStrcpy(nullptr, src);
 }
 
 inline char *hsStrncpy(char *strDest, const char *strSource, size_t count)
@@ -292,40 +269,15 @@ inline char *hsStrncpy(char *strDest, const char *strSource, size_t count)
     return temp;
 }
 
-wchar_t *hsStringToWString( const char *str );
-char    *hsWStringToString( const wchar_t *str );
-
-enum {              // Kind of MessageBox...passed to hsMessageBox
-    hsMessageBoxAbortRetyIgnore,
-    hsMessageBoxNormal,             // Just Ok
-    hsMessageBoxOkCancel,
-    hsMessageBoxRetryCancel,
-    hsMessageBoxYesNo,
-    hsMessageBoxYesNoCancel,
-};
-
-enum {
-    hsMessageBoxIconError,
-    hsMessageBoxIconQuestion,
-    hsMessageBoxIconExclamation,
-    hsMessageBoxIconAsterisk,
-};
-
-enum {          // RETURN VALUES FROM hsMessageBox
-    hsMBoxOk = 1,       // OK button was selected. 
-    hsMBoxCancel,   // Cancel button was selected. 
-    hsMBoxAbort,    // Abort button was selected. 
-    hsMBoxRetry,    // Retry button was selected. 
-    hsMBoxIgnore,   // Ignore button was selected. 
-    hsMBoxYes,      // Yes button was selected. 
-    hsMBoxNo        // No button was selected. 
-};
-
-extern bool hsMessageBox_SuppressPrompts;
-int hsMessageBox(const char* message, const char* caption, int kind, int icon=hsMessageBoxIconAsterisk);
-int hsMessageBox(const wchar_t* message, const wchar_t* caption, int kind, int icon=hsMessageBoxIconAsterisk);
-int hsMessageBoxWithOwner(hsWindowHndl owner, const char* message, const char* caption, int kind, int icon=hsMessageBoxIconAsterisk);
-int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wchar_t* caption, int kind, int icon=hsMessageBoxIconAsterisk);
+// Use "correct" non-standard string functions based on the
+// selected compiler / library
+#if HS_BUILD_FOR_WIN32
+#    define stricmp     _stricmp
+#    define strnicmp    _strnicmp
+#else
+#    define stricmp     strcasecmp
+#    define strnicmp    strncasecmp
+#endif
 
 // flag testing / clearing
 #define hsCheckBits(f,c) ((f & c)==c)
@@ -338,44 +290,20 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wcha
 
 #if HS_BUILD_FOR_WIN32
      // This is for Windows
-#    define hsVsnprintf     _vsnprintf
-#    define hsVsnwprintf    _vsnwprintf
-#    define hsSnprintf      _snprintf
-#    define hsSnwprintf     _snwprintf
-
-#    define snprintf        _snprintf
-#    define snwprintf       _snwprintf
-#    define swprintf        _snwprintf
-
 #    ifndef fileno
 #        define fileno(__F)       _fileno(__F)
 #    endif
-
-#   define hsWFopen(name, mode)     _wfopen(name, mode)
 #else
      // This is for Unix, Linux, OSX, etc.
-#    define hsVsnprintf     vsnprintf
-#    define hsVsnwprintf    vswprintf
-#    define hsSnprintf      snprintf
-#    define hsSnwprintf     swprintf
-
-#   define hsWFopen(name, mode)     fopen(hsWStringToString(name), hsWStringToString(mode))
-
 #   include <limits.h>
 #   define MAX_PATH PATH_MAX
 #endif
 #define MAX_EXT     (256)
 
 // Useful floating point utilities
-inline float hsDegreesToRadians(float deg) { return float(deg * (M_PI / 180)); }
-inline float hsRadiansToDegrees(float rad) { return float(rad * (180 / M_PI)); }
-#define hsInvert(a) (1 / (a))
-
-#ifdef _MSC_VER
-#   define ALIGN(n) __declspec(align(n))
-#else
-#   define ALIGN(n) __atribute__(aligned(n))
-#endif
+constexpr float hsDegreesToRadians(float deg) { return deg * (hsConstants::pi<float> / 180.f); }
+constexpr float hsRadiansToDegrees(float rad) { return rad * (180.f / hsConstants::pi<float>); }
+constexpr float hsInvert(float a) { return 1.f / a; }
 
 /************************ Debug/Error Macros **************************/
 
@@ -388,6 +316,10 @@ extern hsDebugMessageProc gHSStatusProc;
 hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc);
 
 void ErrorEnableGui (bool enabled);
+
+#ifndef HS_DEBUGGING
+[[noreturn]]
+#endif
 void ErrorAssert (int line, const char* file, const char* fmt, ...);
 
 bool DebugIsDebuggerPresent();
@@ -399,34 +331,68 @@ void DebugMsg(const char* fmt, ...);
     
     void    hsDebugMessage(const char* message, long refcon);
     #define hsDebugCode(code)                   code
-    #define hsIfDebugMessage(expr, msg, ref)    (void)( ((expr) != 0) || (hsDebugMessage(msg, ref), 0) )
-    #define hsAssert(expr, ...)                 (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, __VA_ARGS__), 0) )
-    #define ASSERT(expr)                        (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, #expr), 0) )
-    #define ASSERTMSG(expr, ...)                (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, __VA_ARGS__), 0) )
+    #define hsIfDebugMessage(expr, msg, ref)    (void)( (!!(expr)) || (hsDebugMessage(msg, ref), 0) )
+    #define hsAssert(expr, ...)                 (void)( (!!(expr)) || (ErrorAssert(__LINE__, __FILE__, __VA_ARGS__), 0) )
+    #define ASSERT(expr)                        (void)( (!!(expr)) || (ErrorAssert(__LINE__, __FILE__, #expr), 0) )
+    #define ASSERTMSG(expr, ...)                (void)( (!!(expr)) || (ErrorAssert(__LINE__, __FILE__, __VA_ARGS__), 0) )
     #define FATAL(...)                          ErrorAssert(__LINE__, __FILE__, __VA_ARGS__)
     #define DEBUG_MSG                           DebugMsg
     #define DEBUG_BREAK_IF_DEBUGGER_PRESENT     DebugBreakIfDebuggerPresent
     
 #else   /* Not debugging */
 
-    #define hsDebugMessage(message, refcon)     NULL_STMT
+    #define hsDebugMessage(message, refcon)     ((void)0)
     #define hsDebugCode(code)                   /* empty */
-    #define hsIfDebugMessage(expr, msg, ref)    NULL_STMT
-    #define hsAssert(expr, ...)                 NULL_STMT
-    #define ASSERT(expr)                        NULL_STMT
-    #define ASSERTMSG(expr, ...)                NULL_STMT
-    #define FATAL(...)                          NULL_STMT
+    #define hsIfDebugMessage(expr, msg, ref)    ((void)0)
+    #define hsAssert(expr, ...)                 ((void)0)
+    #define ASSERT(expr)                        ((void)0)
+    #define ASSERTMSG(expr, ...)                ((void)0)
+    #define FATAL(...)                          ((void)0)
     #define DEBUG_MSG                           (void)
-    #define DEBUG_MSGV                          NULL_STMT
-    #define DEBUG_BREAK_IF_DEBUGGER_PRESENT     NULL_STMT
+    #define DEBUG_BREAK_IF_DEBUGGER_PRESENT()   ((void)0)
 
 #endif  // HS_DEBUGGING
 
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 #define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); __assume(0); break;
+#elif defined(__GNUC__) || defined(__clang__)
+#define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); __builtin_unreachable(); break;
 #else
 #define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); break;
+#endif
+
+#if defined(__clang__) || defined(__GNUC__)
+#   define _COMPILER_WARNING_NAME(warning) "-W" warning
+
+    /* Condition is either 1 (true) or 0 (false, do nothing). */
+#   define IGNORE_WARNINGS_BEGIN_IMPL_1(warning) \
+        _Pragma(hsStringize(GCC diagnostic ignored warning))
+#   define IGNORE_WARNINGS_BEGIN_IMPL_0(warning)
+
+#   define IGNORE_WARNINGS_BEGIN_COND(cond, warning) \
+        _Pragma("GCC diagnostic push") \
+        hsMacroJoin(IGNORE_WARNINGS_BEGIN_IMPL_, cond)(warning)
+
+#   if defined(__has_warning)
+#       define IGNORE_WARNINGS_BEGIN_IMPL(warning) \
+            IGNORE_WARNINGS_BEGIN_COND(__has_warning(warning), warning)
+#       define IGNORE_WARNINGS_END \
+            _Pragma("GCC diagnostic pop")
+#   else
+        /* Suppress -Wpragmas to dodge warnings about attempts to suppress unrecognized warnings. */
+#       define IGNORE_WARNINGS_BEGIN_IMPL(warning) \
+            IGNORE_WARNINGS_BEGIN_COND(1, "-Wpragmas") \
+            IGNORE_WARNINGS_BEGIN_COND(1, warning)
+#       define IGNORE_WARNINGS_END \
+            _Pragma("GCC diagnostic pop") \
+            _Pragma("GCC diagnostic pop")
+#   endif
+
+#   define IGNORE_WARNINGS_BEGIN(warning) IGNORE_WARNINGS_BEGIN_IMPL(_COMPILER_WARNING_NAME(warning))
+#else
+#   define IGNORE_WARNINGS_BEGIN(warning)
+#   define IGNORE_WARNINGS_END
 #endif
 
 #endif

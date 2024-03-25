@@ -40,43 +40,44 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plLightModifier.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "plGLight/plLightInfo.h"
 #include "plInterp/plController.h"
-
-#include "hsStream.h"
-#include "hsResMgr.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Basic light
 plLightModifier::plLightModifier()
-:   fLight(nil),
-    fColorCtl(nil),
-    fAmbientCtl(nil),
-    fSpecularCtl(nil)
+:   fLight(),
+    fColorCtl(),
+    fAmbientCtl(),
+    fSpecularCtl()
 {
 }
 
 plLightModifier::~plLightModifier()
 {
     delete fColorCtl;
-    fColorCtl = nil;
+    fColorCtl = nullptr;
     delete fAmbientCtl;
-    fAmbientCtl = nil;
+    fAmbientCtl = nullptr;
     delete fSpecularCtl;
-    fSpecularCtl = nil;
+    fSpecularCtl = nullptr;
 }
 
 void plLightModifier::IClearCtls()
 {
     delete fColorCtl;
-    fColorCtl = nil;
+    fColorCtl = nullptr;
     delete fAmbientCtl;
-    fAmbientCtl = nil;
+    fAmbientCtl = nullptr;
     delete fSpecularCtl;
-    fSpecularCtl = nil;
+    fSpecularCtl = nullptr;
 }
 
 void plLightModifier::AddTarget(plSceneObject* so)
@@ -85,13 +86,13 @@ void plLightModifier::AddTarget(plSceneObject* so)
     if( so )
         fLight = plLightInfo::ConvertNoRef(so->GetGenericInterface(plLightInfo::Index()));
     else
-        fLight = nil;
+        fLight = nullptr;
 }
 
 void plLightModifier::RemoveTarget(plSceneObject* so)
 {
     if (so == fTarget)
-        fLight = nil;
+        fLight = nullptr;
     plSimpleModifier::RemoveTarget(so);
 }
 
@@ -116,7 +117,7 @@ void plLightModifier::Write(hsStream* s, hsResMgr* mgr)
 void plLightModifier::IApplyDynamic()
 {
     hsColorRGBA col;
-    if( fLight != nil )
+    if (fLight != nullptr)
     {
         if( fColorCtl )
         {
@@ -164,15 +165,15 @@ float plLightModifier::MaxAnimLength(float len) const
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Omni Lights
 plOmniModifier::plOmniModifier()
-:   fOmni(nil),
-    fAttenCtl(nil)
+:   fOmni(),
+    fAttenCtl()
 {
 }
 
 plOmniModifier::~plOmniModifier()
 {
     delete fAttenCtl;
-    fAttenCtl = nil;
+    fAttenCtl = nullptr;
 }
 
 void plOmniModifier::AddTarget(plSceneObject* so)
@@ -181,14 +182,14 @@ void plOmniModifier::AddTarget(plSceneObject* so)
     if( fLight )
         fOmni = plOmniLightInfo::ConvertNoRef(fLight);
     else
-        fOmni = nil;
+        fOmni = nullptr;
 }
 
 void plOmniModifier::RemoveTarget(plSceneObject* so)
 {
     plLightModifier::RemoveTarget(so);
     if( !fLight )
-        fOmni = nil;
+        fOmni = nullptr;
 }
 
 void plOmniModifier::IClearCtls()
@@ -196,7 +197,7 @@ void plOmniModifier::IClearCtls()
     plLightModifier::IClearCtls();
 
     delete fAttenCtl;
-    fAttenCtl = nil;
+    fAttenCtl = nullptr;
 }
 
 void plOmniModifier::Read(hsStream* s, hsResMgr* mgr)
@@ -242,18 +243,18 @@ float plOmniModifier::MaxAnimLength(float len) const
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Spot Lights
 plSpotModifier::plSpotModifier()
-:   fSpot(nil),
-    fInnerCtl(nil),
-    fOuterCtl(nil)
+:   fSpot(),
+    fInnerCtl(),
+    fOuterCtl()
 {
 }
 
 plSpotModifier::~plSpotModifier()
 {
     delete fInnerCtl;
-    fInnerCtl = nil;
+    fInnerCtl = nullptr;
     delete fOuterCtl;
-    fOuterCtl = nil;
+    fOuterCtl = nullptr;
 }
 
 void plSpotModifier::AddTarget(plSceneObject* so)
@@ -262,14 +263,14 @@ void plSpotModifier::AddTarget(plSceneObject* so)
     if( fLight )
         fSpot = plSpotLightInfo::ConvertNoRef(fLight);
     else
-        fSpot = nil;
+        fSpot = nullptr;
 }
 
 void plSpotModifier::RemoveTarget(plSceneObject* so)
 {
     plOmniModifier::RemoveTarget(so);
     if( !fLight )
-        fSpot = nil;
+        fSpot = nullptr;
 }
 
 void plSpotModifier::IClearCtls()
@@ -277,9 +278,9 @@ void plSpotModifier::IClearCtls()
     plOmniModifier::IClearCtls();
 
     delete fInnerCtl;
-    fInnerCtl = nil;
+    fInnerCtl = nullptr;
     delete fOuterCtl;
-    fOuterCtl = nil;
+    fOuterCtl = nullptr;
 }
 
 void plSpotModifier::Read(hsStream* s, hsResMgr* mgr)
@@ -330,21 +331,21 @@ float plSpotModifier::MaxAnimLength(float len) const
 ////////////////////////////////////////////////////////////////////////////////////////////
 // LtdDir Lights
 plLtdDirModifier::plLtdDirModifier()
-:   fLtdDir(nil),
-    fWidthCtl(nil),
-    fHeightCtl(nil),
-    fDepthCtl(nil)
+:   fLtdDir(),
+    fWidthCtl(),
+    fHeightCtl(),
+    fDepthCtl()
 {
 }
 
 plLtdDirModifier::~plLtdDirModifier()
 {
     delete fWidthCtl;
-    fWidthCtl = nil;
+    fWidthCtl = nullptr;
     delete fHeightCtl;
-    fHeightCtl = nil;
+    fHeightCtl = nullptr;
     delete fDepthCtl;
-    fDepthCtl = nil;
+    fDepthCtl = nullptr;
 }
 
 void plLtdDirModifier::AddTarget(plSceneObject* so)
@@ -353,14 +354,14 @@ void plLtdDirModifier::AddTarget(plSceneObject* so)
     if( fLight )
         fLtdDir = plLimitedDirLightInfo::ConvertNoRef(fLight);
     else
-        fLtdDir = nil;
+        fLtdDir = nullptr;
 }
 
 void plLtdDirModifier::RemoveTarget(plSceneObject* so)
 {
     plLightModifier::RemoveTarget(so);
     if( !fLight )
-        fLtdDir = nil;
+        fLtdDir = nullptr;
 }
 
 void plLtdDirModifier::IClearCtls()
@@ -368,11 +369,11 @@ void plLtdDirModifier::IClearCtls()
     plLightModifier::IClearCtls();
 
     delete fWidthCtl;
-    fWidthCtl = nil;
+    fWidthCtl = nullptr;
     delete fHeightCtl;
-    fHeightCtl = nil;
+    fHeightCtl = nullptr;
     delete fDepthCtl;
-    fDepthCtl = nil;
+    fDepthCtl = nullptr;
 }
 
 void plLtdDirModifier::Read(hsStream* s, hsResMgr* mgr)

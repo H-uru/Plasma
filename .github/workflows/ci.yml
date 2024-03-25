@@ -1,0 +1,324 @@
+name: CI
+on: [push, pull_request]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  # HACK to enable/disable the max CI based on presence/absence of secret. See also:
+  # https://github.com/actions/runner/issues/1138
+  max-secrets:
+    runs-on: ubuntu-latest
+    name: Check for Max SDK
+    outputs:
+      HAS_MACHINE_USER_TOKEN: ${{ steps.check.outputs.MACHINE_USER_TOKEN }}
+    steps:
+      - name: Check for Secret
+        id: check
+        run: echo "MACHINE_USER_TOKEN=${{ env.MACHINE_USER_TOKEN != ''}}" >> $GITHUB_OUTPUT
+        env:
+          MACHINE_USER_TOKEN: ${{ secrets.MACHINE_USER_REPO_READ }}
+
+  windows:
+    runs-on: windows-2019
+    name: ${{ matrix.platform.str }}-${{ matrix.cfg.str }}
+    needs: ["max-secrets"]
+    strategy:
+      matrix:
+        platform:
+          - { generator: Visual Studio 16 2019, max-version: 7, arch: Win32, qt-arch: win32_msvc2019, qt-version: 5.15.2,  str: windows-x86 }
+          - { generator: Visual Studio 16 2019, max-version: 2022, arch: x64, qt-arch: win64_msvc2019_64, qt-version: 5.15.2,  str: windows-x64 }
+        cfg:
+          - { external: OFF, type: RelWithPDB, str: internal-release }
+          - { external: OFF, type: Debug, str: internal-debug }
+          - { external: ON, type: RelWithPDB, str: external-release }
+
+    steps:
+      - name: Checkout Plasma
+        uses: actions/checkout@v4
+
+      - name: Checkout MaxSDK
+        continue-on-error: true
+        if: needs.max-secrets.outputs.HAS_MACHINE_USER_TOKEN == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: H-uruMachineUser/3dsMaxSDK
+          token: ${{ secrets.MACHINE_USER_REPO_READ }}
+          path: maxsdk
+
+      - name: Install Qt
+        continue-on-error: true
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: ${{ matrix.platform.qt-version }}
+          arch: ${{ matrix.platform.qt-arch }}
+          dir: ${{ github.workspace }}/qt
+
+      - name: Setup NuGet
+        run: |
+          nuget sources add `
+              -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" `
+              -storepasswordincleartext `
+              -name "GitHub" `
+              -username "${{ github.repository_owner }}" `
+              -password "${{ secrets.GITHUB_TOKEN }}"
+
+          nuget setapikey `
+              "${{ secrets.GITHUB_TOKEN }}" `
+              -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+
+      - name: Configure
+        run: |
+          cmake `
+            -G "${{ matrix.platform.generator }}" -A "${{ matrix.platform.arch }}" `
+            -DPLASMA_BUILD_MAX_PLUGIN=ON `
+            -DPLASMA_BUILD_TESTS=ON `
+            -DPLASMA_BUILD_TOOLS=ON `
+            -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} `
+            -D3dsm_PATH="${{ github.workspace }}/maxsdk/${{ matrix.platform.max-version }}" `
+            -DVCPKG_INSTALL_OPTIONS=--clean-after-build `
+            -S . -B build
+        env:
+          VCPKG_BINARY_SOURCES: "clear;nuget,GitHub,readwrite"
+
+      - name: Build
+        run: |
+          cmake --build build --config "${{ matrix.cfg.type }}" -j 4
+
+      - name: Install
+        run: |
+          cmake --build build --target INSTALL --config "${{ matrix.cfg.type }}" -j 4
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
+          path: build/install
+
+      - name: Test
+        run: |
+          cmake --build build --target check --config "${{ matrix.cfg.type }}" -j 4
+
+  max:
+    # Can only run if we have a token for our super seekrit Max SDK repo. Sad.
+    needs: ["max-secrets"]
+    if: github.event_name == 'push' && needs.max-secrets.outputs.HAS_MACHINE_USER_TOKEN == 'true'
+
+    runs-on: windows-2019
+    name: maxplugin-${{ matrix.cfg.str }}-${{ matrix.cfg.sdk-version }}
+    strategy:
+      matrix:
+        cfg:
+          # Max 7 and 2022 are tested in the x86 and x64 windows build jobs, respectively.
+          - { sdk-version: 2008, generator: Visual Studio 16 2019, arch: Win32, str: windows-x86 }
+          - { sdk-version: 2012, generator: Visual Studio 16 2019, arch: Win32, str: windows-x86 }
+          - { sdk-version: 2013, generator: Visual Studio 16 2019, arch: x64, str: windows-x64 }
+          - { sdk-version: 2017, generator: Visual Studio 16 2019, arch: x64, str: windows-x64 }
+          - { sdk-version: 2019, generator: Visual Studio 16 2019, arch: x64, str: windows-x64 }
+          - { sdk-version: 2020, generator: Visual Studio 16 2019, arch: x64, str: windows-x64 }
+          - { sdk-version: 2023, generator: Visual Studio 16 2019, arch: x64, str: windows-x64 }
+          - { sdk-version: 2024, generator: Visual Studio 16 2019, arch: x64, str: windows-x64 }
+
+    steps:
+      - name: Checkout Plasma
+        uses: actions/checkout@v4
+
+      - name: Checkout MaxSDK
+        uses: actions/checkout@v4
+        with:
+          repository: H-uruMachineUser/3dsMaxSDK
+          token: ${{ secrets.MACHINE_USER_REPO_READ }}
+          path: maxsdk
+
+      - name: Setup NuGet
+        run: |
+          nuget sources add `
+              -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" `
+              -storepasswordincleartext `
+              -name "GitHub" `
+              -username "${{ github.repository_owner }}" `
+              -password "${{ secrets.GITHUB_TOKEN }}"
+
+          nuget setapikey `
+              "${{ secrets.GITHUB_TOKEN }}" `
+              -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+
+      - name: Configure
+        run: |
+          cmake `
+            -G "${{ matrix.cfg.generator }}" -A "${{ matrix.cfg.arch }}" `
+            -DPLASMA_BUILD_CLIENT=OFF `
+            -DPLASMA_BUILD_MAX_PLUGIN=REQUIRED `
+            -DPLASMA_BUILD_LAUNCHER=OFF `
+            -DPLASMA_BUILD_TESTS=OFF `
+            -DPLASMA_BUILD_TOOLS=OFF `
+            -D3dsm_PATH="${{ github.workspace }}/maxsdk/${{ matrix.cfg.sdk-version }}" `
+            -DVCPKG_INSTALL_OPTIONS=--clean-after-build `
+            -S . -B build
+        env:
+          VCPKG_BINARY_SOURCES: "clear;nuget,GitHub,readwrite"
+
+      - name: Build
+        run: |
+          cmake --build build --target INSTALL --config Release -j 4
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: plasma-${{ matrix.cfg.str }}-max-${{ matrix.cfg.sdk-version }}
+          path: build/install
+
+  linux:
+    runs-on: ubuntu-latest
+    name: ${{ matrix.platform.str }}-${{ matrix.cfg.str }}
+    strategy:
+      matrix:
+        platform:
+          - { str: linux-x64 }
+        cfg:
+          - { external: OFF, type: RelWithDebInfo, str: internal-release }
+          - { external: OFF, type: Debug, str: internal-debug }
+          - { external: ON, type: RelWithDebInfo, str: external-release }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+              autoconf \
+              cmake \
+              libcairo2 \
+              libsecret-1-dev \
+              libtool \
+              nasm \
+              ninja-build \
+              qtbase5-dev
+
+      - name: Setup NuGet
+        run: |
+          nuget sources add \
+              -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+              -storepasswordincleartext \
+              -name "GitHub" \
+              -username "${{ github.repository_owner }}" \
+              -password "${{ secrets.GITHUB_TOKEN }}"
+
+          nuget setapikey \
+              "${{ secrets.GITHUB_TOKEN }}" \
+              -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+
+      - name: Configure
+        run: |
+          cmake \
+            -G Ninja \
+            -DUSE_VCPKG=ON \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cfg.type }} \
+            -DPLASMA_BUILD_TESTS=ON \
+            -DPLASMA_BUILD_TOOLS=ON \
+            -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} \
+            -DVCPKG_INSTALL_OPTIONS=--clean-after-build \
+            -S . -B build
+        env:
+          VCPKG_BINARY_SOURCES: "clear;nuget,GitHub,readwrite"
+
+      - name: Build
+        run: |
+          cmake --build build -j 2
+
+      - name: Test
+        run: |
+          cmake --build build --target check -j 4
+
+      - name: Install
+        run: |
+          cmake --build build --target install -j 4
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
+          path: build/install
+
+
+  macos:
+    runs-on: ${{ matrix.platform.runner }}
+    name: ${{ matrix.platform.str }}-${{ matrix.cfg.str }}
+    strategy:
+      matrix:
+        platform:
+          - { str: macos-arm64, arch: arm64, runner: "macos-14" }
+          - { str: macos-x64, arch: x86_64, runner: "macos-latest" }
+        cfg:
+          - { external: OFF, type: RelWithDebInfo, str: internal-release }
+          - { external: OFF, type: Debug, str: internal-debug }
+          - { external: ON, type: RelWithDebInfo, str: external-release }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          brew install \
+              qt@5 \
+              autoconf \
+              automake \
+              libtool \
+              nasm
+
+      # Workaround for missing distutils on macOS: https://github.com/actions/runner/issues/2958
+      - name: Install setuptools
+        run: sudo -H pip3 install setuptools
+
+      - name: Setup NuGet
+        run: |
+          nuget sources add \
+              -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+              -storepasswordincleartext \
+              -name "GitHub" \
+              -username "${{ github.repository_owner }}" \
+              -password "${{ secrets.GITHUB_TOKEN }}"
+
+          nuget setapikey \
+              "${{ secrets.GITHUB_TOKEN }}" \
+              -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+
+      - name: Configure
+        run: |
+          cmake \
+            -G Xcode \
+            -DUSE_VCPKG=ON \
+            -DCMAKE_OSX_ARCHITECTURES=${{ matrix.platform.arch }} \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=10.14 \
+            -DCMAKE_FIND_FRAMEWORK=LAST \
+            -DPLASMA_BUILD_TESTS=ON \
+            -DPLASMA_BUILD_TOOLS=ON \
+            -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} \
+            -DQt5_ROOT=$(brew --prefix qt@5) \
+            -DVCPKG_INSTALL_OPTIONS=--clean-after-build \
+            -S . -B build
+        env:
+          VCPKG_BINARY_SOURCES: "clear;nuget,GitHub,readwrite"
+
+      - name: Build
+        run: |
+          cmake --build build --config "${{ matrix.cfg.type }}" -j 2
+
+      - name: Test
+        if: matrix.platform.arch == 'x86_64'
+        run: |
+          cmake --build build --target check --config "${{ matrix.cfg.type }}" -j 2
+
+      - name: Install
+        run: |
+          cmake --build build --target install --config "${{ matrix.cfg.type }}" -j 2
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
+          path: build/install

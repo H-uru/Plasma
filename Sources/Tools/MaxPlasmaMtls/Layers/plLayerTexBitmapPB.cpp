@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLayerTexBitmapPB.h"
 #include "../plDetailCurveCtrl.h"
 
+#include "MaxMain/MaxCompat.h"
+
 #if 1
 class BMTexPBAccessor;
 extern BMTexPBAccessor bmtex_accessor;
@@ -75,7 +77,7 @@ class BitmapDlgProc : public ParamMap2UserDlgProc
 public:
     /// Called to update the controls of the dialog
     /// Note: we're bad that we use a static here, but 
-    virtual void    Update( TimeValue t, Interval &valid, IParamMap2 *map )
+    void    Update(TimeValue t, Interval &valid, IParamMap2 *map) override
     {
         ICustButton     *bmSelectBtn;
         IParamBlock2    *pblock;
@@ -124,7 +126,7 @@ public:
         HWND dlg = map->GetHWnd();
         
         plDetailCurveCtrl *ctrl = GET_DETAIL_CURVE_CTRL( dlg, IDC_DETAIL_CURVE_CTRL );
-        if( ctrl == NULL )
+        if (ctrl == nullptr)
         {
             // The control hasn't been created, so create it already!
             HWND                basis;
@@ -140,7 +142,7 @@ public:
         
         EnableWindow( GetDlgItem( dlg, IDC_DETAIL_CURVE_CTRL ), (BOOL)pblock->GetInt( kBmpUseDetail, t ) );
         
-        if( ctrl != NULL )
+        if (ctrl != nullptr)
         {
             ctrl->SetStartPoint( (float)pblock->GetInt( kBmpDetailStartSize, t ) / 100.f,
                 (float)pblock->GetInt( kBmpDetailStartOpac, t ) / 100.f );
@@ -149,15 +151,15 @@ public:
         }
         
     }
-    
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         static ICustButton* bmSelectBtn;
         
         switch (msg)
         {
         case WM_INITDIALOG:
-            fLastBMap = NULL;
+            fLastBMap = nullptr;
             fSettingDetailValues = false;
             break;
             
@@ -199,7 +201,7 @@ public:
                 map->UpdateUI( t );
                 fSettingDetailValues = false;
             }
-            return 0;
+            return FALSE;
             
         case WM_COMMAND:
             if( HIWORD( wParam ) == EN_CHANGE && LOWORD( wParam ) == IDC_EXPORTWIDTH )
@@ -219,7 +221,7 @@ public:
                     
                     BMCropper *cropper = new BMCropper(pblock);
                     
-                    pbbm->bm->Display("Specify Cropping/Placement", BMM_CN, FALSE, TRUE, cropper);
+                    pbbm->bm->Display(_M("Specify Cropping/Placement"), BMM_CN, FALSE, TRUE, cropper);
                 }
                 //              bm->DeleteThis();
                 return TRUE;
@@ -243,7 +245,7 @@ public:
             else if (LOWORD(wParam) == IDC_LAYER_NAME)
             {
                 plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)map->GetParamBlock()->GetOwner();
-                if (layer == nil)
+                if (layer == nullptr)
                     return FALSE;
                 BOOL selectedNewBitmap = layer->HandleBitmapSelection();
                 
@@ -258,10 +260,10 @@ public:
                     
                     bmSelectBtn = GetICustButton(GetDlgItem(hWnd,IDC_LAYER_NAME));
                     PBBitmap *pbbm = layer->GetPBBitmap();
-                    bmSelectBtn->SetText(pbbm != nil ? (TCHAR*)pbbm->bi.Filename() : "");
+                    bmSelectBtn->SetText(pbbm != nullptr ? (TCHAR*)pbbm->bi.Filename() : _T(""));
                     ReleaseICustButton(bmSelectBtn);
                     
-                    if (pbbm != nil)
+                    if (pbbm != nullptr)
                     {
                         // Init values for clamping spinners to powers of 2
                         int width = IFloorPow2( pbbm->bi.Width() );
@@ -299,13 +301,13 @@ public:
         
         return FALSE;
     }
-    virtual void DeleteThis() {};
+    void DeleteThis() override { }
     
     void    ISetDetailCurveNumLevels( IParamMap2 *map, TimeValue t )
     {
         /// Set the level count on the detail control
         plDetailCurveCtrl *ctrl = GET_DETAIL_CURVE_CTRL( map->GetHWnd(), IDC_DETAIL_CURVE_CTRL );
-        if( ctrl != NULL )
+        if (ctrl != nullptr)
         {
             IParamBlock2 *pblock = map->GetParamBlock();
             int w = pblock->GetInt( kBmpExportWidth, t );
@@ -361,7 +363,7 @@ public:
         // And clamp aspect ratio
         PBBitmap        *pbbm = pblock->GetBitmap( kBmpBitmap, t );
         
-        if( pbbm != NULL )
+        if (pbbm != nullptr)
         {
             int realWidth = pbbm->bi.Width();
             int realHeight = pbbm->bi.Height();
@@ -373,7 +375,7 @@ public:
                 aspect = (float)realWidth / (float)realHeight;
             
             int value = newVal;
-            value *= aspect;
+            value = int(value * aspect);
             
             if( value < 4 )
             {
@@ -381,7 +383,7 @@ public:
                 value = 4;
                 pblock->SetValue( otherNew, t, value );
                 pblock->SetValue( otherOld, t, value );
-                value = value / aspect;
+                value = int(value / aspect);
                 pblock->SetValue( clampNew, t, value );
                 pblock->SetValue( clampOld, t, value );
             }
@@ -410,7 +412,7 @@ static BitmapDlgProc gBitmapDlgProc;
 
 static ParamBlockDesc2 gBitmapParamBlk
 (
-    plLayerTex::kBlkBitmap, _T("bitmap"),  0, GetLayerTexDesc(),//NULL,
+    plLayerTex::kBlkBitmap, _T("bitmap"),  0, GetLayerTexDesc(),//nullptr,
     P_AUTO_CONSTRUCT + P_AUTO_UI, plLayerTex::kRefBitmap,
 
     IDD_LAYER_TEX, IDS_LAYER_TEX, 0, 0, &gBitmapDlgProc,
@@ -419,94 +421,94 @@ static ParamBlockDesc2 gBitmapParamBlk
     kBmpUseBitmap,      _T("useBitmap"),    TYPE_BOOL,      0, 0,
         p_default,      TRUE,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_USE_BITMAP,
-        end,
+        p_end,
     kBmpBitmap,         _T("bitmap"),       TYPE_BITMAP,    P_SHORT_LABELS, 0,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
 
     // Crop/Place
     kBmpApply,          _T("apply"),    TYPE_BOOL,      0, 0,
         p_default,      FALSE,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_BM_CLIP,
-        end,
+        p_end,
     kBmpCropPlace,      _T("cropPlace"), TYPE_INT,      0, 0,
         p_default,      0,
         p_range,        0,  1,
         p_ui,           TYPE_RADIO, 2,  IDC_BM_CROP,IDC_BM_PLACE,
-        end,
+        p_end,
     kBmpClipU,          _T("clipU"),    TYPE_FLOAT,     P_ANIMATABLE, IDS_BITMAP_CLIPU,
         p_default,      0.0,
         p_range,        0.0, 1.0,
         p_ui,           TYPE_SPINNER, EDITTYPE_FLOAT, IDC_CLIP_X, IDC_CLIP_XSPIN, 0.001f,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     kBmpClipV,          _T("clipV"),    TYPE_FLOAT,     P_ANIMATABLE, IDS_BITMAP_CLIPV,
         p_default,      0.0,
         p_range,        0.0, 1.0,
         p_ui,           TYPE_SPINNER, EDITTYPE_FLOAT, IDC_CLIP_Y, IDC_CLIP_YSPIN, 0.001f,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     kBmpClipW,          _T("clipW"),    TYPE_FLOAT,     P_ANIMATABLE, IDS_BITMAP_CLIPW,
         p_default,      1.0,
         p_range,        0.0, 1.0,
         p_ui,           TYPE_SPINNER, EDITTYPE_FLOAT, IDC_CLIP_W, IDC_CLIP_WSPIN, 0.001f,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     kBmpClipH,          _T("clipH"),    TYPE_FLOAT,     P_ANIMATABLE, IDS_BITMAP_CLIPH,
         p_default,      1.0,
         p_range,        0.0, 1.0,
         p_ui,           TYPE_SPINNER, EDITTYPE_FLOAT, IDC_CLIP_H, IDC_CLIP_HSPIN, 0.001f,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
 
     // Texture Color/Alpha
     kBmpDiscardColor,   _T("discardColor"), TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_BLEND_NO_COLOR,
-        end,
+        p_end,
     kBmpInvertColor,    _T("invertColor"),  TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_BLEND_INV_COLOR,
-        end,
+        p_end,
     kBmpDiscardAlpha,   _T("discardAlpha"), TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_DISCARD_ALPHA,
-        end,
+        p_end,
     kBmpInvertAlpha,    _T("invertAlpha"),  TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_BLEND_INV_ALPHA,
-        end,
+        p_end,
 
     // Texture Quality
     kBmpNonCompressed,  _T("nonCompressed"),TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_FORCE_NONCOMPRESSED,
-        end,
+        p_end,
     kBmpScaling,        _T("scaling"),      TYPE_INT,       0, 0,
         p_ui,           TYPE_RADIO, 3, IDC_SCALE_ALL, IDC_SCALE_HALF, IDC_SCALE_NONE,
-        end,
+        p_end,
 
     // Max Only
     kBmpMonoOutput,     _T("monoOutput"),   TYPE_INT,       0, 0,
         p_ui,           TYPE_RADIO, 2, IDC_HSMAX_LAYER_RGBOUT, IDC_HSMAX_LAYER_ALPHAOUT,
-        end,
+        p_end,
     kBmpRGBOutput,      _T("rgbOutput"),    TYPE_INT,       0, 0,
         p_ui,           TYPE_RADIO, 2, IDC_HSMAX_LAYER_RGBOUT2, IDC_HSMAX_LAYER_ALPHAOUT2,
-        end,
+        p_end,
 
     // Mipmap
     kBmpNoFilter,       _T("noFilter"), TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_NO_FILTERING,
-        end,
+        p_end,
     kBmpMipBlur,        _T("mipBlur"),      TYPE_FLOAT,     0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_FLOAT, IDC_MIPBLUR_EDIT, IDC_MIPBLUR_SPIN, 0.4,
         p_range,        0.01f, 100.0f,
         p_default,      1.0,
-        end,
+        p_end,
     kBmpMipBias,        _T("mipBias"),      TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_USE_MIPBIAS,
         p_enable_ctrls, 1, kBmpMipBiasAmt,
-        end,
+        p_end,
     kBmpMipBiasAmt,     _T("mipBiasAmt"),   TYPE_FLOAT,     0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_FLOAT, IDC_MIPBIAS_EDIT, IDC_MIPBIAS_SPIN, 0.7,
         p_range,        -100.0, 100.0,
         p_default,      1.0,
-        end,
+        p_end,
 
     // Detail
     kBmpUseDetail,      _T("useDetail"),    TYPE_BOOL,      0, 0,
@@ -514,66 +516,67 @@ static ParamBlockDesc2 gBitmapParamBlk
         p_default,      FALSE,
         p_enable_ctrls, 4, kBmpDetailStartSize, kBmpDetailStopSize, kBmpDetailStartOpac, kBmpDetailStopOpac,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
 
     kBmpDetailStartSize,_T("dropOffStart"), TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_DETAIL_START_SIZE_EDIT, IDC_DETAIL_START_SIZE_SPIN, 0.4,
         p_range,        0, 100,
         p_default,      0,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     kBmpDetailStopSize, _T("dropOffStop"),  TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_DETAIL_STOP_SIZE_EDIT, IDC_DETAIL_STOP_SIZE_SPIN, 0.4,
         p_range,        0, 100,
         p_default,      100,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     kBmpDetailStartOpac,    _T("detailMax"),    TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_DETAIL_START_OPAC_EDIT, IDC_DETAIL_START_OPAC_SPIN, 0.4,
         p_range,        0, 100,
         p_default,      100,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     kBmpDetailStopOpac, _T("detailMin"),    TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_DETAIL_STOP_OPAC_EDIT, IDC_DETAIL_STOP_OPAC_SPIN, 0.4,
         p_range,        0, 100,
         p_default,      0,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
 
     kBmpExportWidth,    _T("exportWidth"),  TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_EXPORTWIDTH, IDC_EXPORTWIDTH_SPINNER, SPIN_AUTOSCALE,
         p_range,        4, 2048,
         p_default,      512,
-        end,
+        p_end,
     kBmpExportHeight,   _T("exportHeight"), TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_EXPORTHEIGHT, IDC_EXPORTHEIGHT_SPINNER, SPIN_AUTOSCALE,
         p_range,        4, 2048,
         p_default,      512,
-        end,
+        p_end,
     kBmpExportLastWidth,    _T("lastExportWidth"),  TYPE_INT,       0, 0,
-        end,
+        p_end,
     kBmpExportLastHeight,   _T("lastExportHeight"), TYPE_INT,       0, 0,
-        end,
+        p_end,
 
     // Keep a sysmem copy at runtime (for image examination/manipulation).
     kBmpNoDiscard,      _T("noDiscard"),    TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_NO_DISCARD,
         p_default,      FALSE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 ParamBlockDesc2 *GetBitmapBlk() { return &gBitmapParamBlk; }
 
 class BMTexPBAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
       plLayerTex* layer = (plLayerTex*)owner;
 
-      if(layer == NULL) return;
+      if (layer == nullptr)
+          return;
       
       IParamBlock2 *pb = layer->GetParamBlockByID(plLayerTex::kBlkBitmap);
 
@@ -651,14 +654,14 @@ public:
             case kBmpDetailStopSize:
             case kBmpDetailStartOpac:
             case kBmpDetailStopOpac:
-                if( pb != NULL )
+                if (pb != nullptr)
                 {
                     if( IIsProcSettingDetailValues( pb ) )
                         break;  // Ignore, since we're the ones setting 'em
 
                     HWND dlg = pb->GetMap()->GetHWnd();
                     plDetailCurveCtrl *ctrl = GET_DETAIL_CURVE_CTRL( dlg, IDC_DETAIL_CURVE_CTRL );
-                    if( ctrl != NULL )
+                    if (ctrl != nullptr)
                     {
                         if( id == kBmpDetailStartSize || id == kBmpDetailStartOpac )
                             ctrl->SetStartPoint( (float)pb->GetInt( kBmpDetailStartSize, t ) / 100.f,
@@ -686,7 +689,7 @@ public:
                 break;
 
             case kBmpUseDetail:
-                if( pb != NULL )
+                if (pb != nullptr)
                 {
                     HWND dlg = pb->GetMap()->GetHWnd();
                     EnableWindow( GetDlgItem( dlg, IDC_DETAIL_CURVE_CTRL ), (BOOL)val.i );
@@ -694,7 +697,7 @@ public:
                 break;
         }
     }
-    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid)
+    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid) override
     {
     }
 
@@ -755,7 +758,7 @@ void BMCropper::OnClose()
 bool    BMTexPBAccessor::IIsProcSettingDetailValues( IParamBlock2 *pb )
 {
     BitmapDlgProc *proc = (BitmapDlgProc *)pb->GetMap()->GetUserDlgProc();
-    if( proc != NULL )
+    if (proc != nullptr)
         return proc->fSettingDetailValues;
 
     return false;

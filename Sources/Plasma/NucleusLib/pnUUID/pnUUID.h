@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define pnUUID_h_inc
 
 #include "HeadSpin.h"
-#include "plFormat.h"
+#include <string_theory/formatter>
 
 class hsStream;
 
@@ -63,8 +63,10 @@ public:
 
     plUUID();
     plUUID(const char* s);
-    plUUID(const plString& s);
-    plUUID(const plUUID& other);
+    plUUID(const ST::string& s);
+    plUUID(const plUUID&) = default;
+
+    plUUID& operator=(const plUUID&) = default;
 
     void     Clear();
     bool     IsNull() const;
@@ -74,8 +76,8 @@ public:
     int      CompareTo(const plUUID* v) const;
     bool     IsEqualTo(const plUUID* v) const;
     bool     FromString(const char* str);
-    bool     ToString(plString& out) const;
-    plString AsString() const;
+    bool     ToString(ST::string& out) const;
+    ST::string AsString() const;
     void     Read(hsStream* s);
     void     Write(hsStream* s);
 
@@ -91,9 +93,14 @@ public:
     bool operator<(const plUUID& other) const {
         return CompareTo(&other) == -1;
     }
-    operator plString (void) const { return AsString(); }
+    operator ST::string () const { return AsString(); }
 
     static plUUID Generate();
 };
+
+inline ST_FORMAT_TYPE(const plUUID &)
+{
+    ST_FORMAT_FORWARD(value.AsString());
+}
 
 #endif // pnUUID_h_inc

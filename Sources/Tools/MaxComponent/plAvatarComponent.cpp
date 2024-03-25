@@ -43,9 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
-#include "hsStringTokenizer.h"
 
-#include "plComponentProcBase.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "plAudioComponents.h"
@@ -53,8 +51,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plMaxNode.h"
 
 #include "resource.h"
-#include <windowsx.h>
-#pragma hdrstop
+
+#include "MaxMain/MaxAPI.h"
+#include "MaxMain/hsMStringTokenizer.h"
 
 #include "plAvatarComponent.h"
 #include "plMaxAnimUtils.h"
@@ -88,8 +87,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudio/plWin32StaticSound.h"
 #include "plAudioCore/plSoundBuffer.h"
 
-#include "MaxMain/plPlasmaRefMsgs.h"         
+#include "MaxMain/plPlasmaRefMsgs.h"
 
+#include "plAnimation/plAGModifier.h"
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvBrainHuman.h"
 #include "plAvatar/plAvBrainCritter.h"
@@ -163,7 +163,7 @@ bool plArmatureComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 //      restitution = 0.5f;
 //      friction = 0.1f;
 //  }
-    plMaxNode *animRoot = nil;
+    plMaxNode *animRoot = nullptr;
 
     if(ClassID() == AVATAR_CLASS_ID)
         animRoot = (plMaxNode *)fCompPB->GetINode(plAvatarComponent::kRootNode);
@@ -172,7 +172,7 @@ bool plArmatureComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 
     if(animRoot)
     {
-        const char *nodeName = animRoot->GetName();
+        auto nodeName = animRoot->GetName();
         animRoot->SetDrawable(false);       // make sure our root bone is invisible
     }
 
@@ -247,11 +247,14 @@ bool plArmatureComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
     IAttachModifiers(node, pErrMsg);
     ISetupClothes(node, fArmMod, pErrMsg);
 
-    // ArmatureEffects
-    plArmatureEffectsMgr *effects = new plArmatureEffectsMgr();
-    hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), effects, node->GetLocation());
-    plGenRefMsg *msg = new plGenRefMsg(fArmMod->GetKey(), plRefMsg::kOnCreate, -1, -1);
-    hsgResMgr::ResMgr()->AddViaNotify(effects->GetKey(), msg, plRefFlags::kActiveRef); // Attach effects
+    // Attach footstep sounds if we didn't leave the field blank
+    if (!fArmMod->GetBodyFootstepSoundPage().empty()) {
+        // ArmatureEffects
+        plArmatureEffectsMgr* effects = new plArmatureEffectsMgr();
+        hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), effects, node->GetLocation());
+        plGenRefMsg* msg = new plGenRefMsg(fArmMod->GetKey(), plRefMsg::kOnCreate, -1, -1);
+        hsgResMgr::ResMgr()->AddViaNotify(effects->GetKey(), msg, plRefFlags::kActiveRef); // Attach effects
+    }
 
     plSceneObject *obj = node->GetSceneObject();
     node->MakeCharacterHierarchy(pErrMsg);
@@ -287,7 +290,7 @@ bool plArmatureComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
 
 bool plArmatureComponent::IVerifyUsedNode(INode* thisNode, plErrorMsg* pErrMsg, bool IsHull)
 {
-    if(thisNode != NULL)
+    if (thisNode != nullptr)
     {
         if(((plMaxNode*)thisNode)->CanConvert())
         {
@@ -296,7 +299,7 @@ bool plArmatureComponent::IVerifyUsedNode(INode* thisNode, plErrorMsg* pErrMsg, 
 
         }else
         {
-            pErrMsg->Set(true, "Ignored Node Selection", "The object that Node Ptr %s refs was set to be Ignored. Avatar Component failure.", thisNode->GetName());             
+            pErrMsg->Set(true, "Ignored Node Selection", ST::format("The object that Node Ptr {} refs was set to be Ignored. Avatar Component failure.", thisNode->GetName()));
             pErrMsg->Set(false);
             return false;
         }
@@ -364,84 +367,84 @@ ParamBlockDesc2 gPAvatarBk
 //      p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_PROXY_PICKB,
 //      p_sclassID, GEOMOBJECT_CLASS_ID,
 //      p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
 
     plAvatarComponent::kFriction,   _T("Friction"), TYPE_FLOAT, 0, 0,
         p_ui,   kArmMain, TYPE_SPINNER, EDITTYPE_POS_FLOAT,
         IDC_COMP_AVATAR_FRICTION_EDIT, IDC_COMP_AVATAR_FRICTION_SPIN, 0.1f,
         p_default, 0.9f,
-        end,
+        p_end,
 
     plAvatarComponent::kRootNode, _T("RootNode"),   TYPE_INODE,     0, 0,
         p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_ROOT_PICKB,
         p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
     
     plAvatarComponent::kMeshNode, _T("MeshNode"),   TYPE_INODE,     0, 0,
         p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_MESH_PICKB,
         //p_sclassID,   GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
         
     plAvatarComponent::kClothingGroup,  _T("ClothingGroup"),    TYPE_INT,   0, 0,
         p_default, plClothingMgr::kClothingBaseMale,
-        end,
+        p_end,
 
     plArmatureComponent::kBounceGroups, _T("bounceGroups"), TYPE_INT,   0,0,
         p_default,  plPhysicsGroups_DEAD::kCreatures |
                     plPhysicsGroups_DEAD::kStaticSimulated |
                     plPhysicsGroups_DEAD::kDynamicSimulated |
                     plPhysicsGroups_DEAD::kAnimated,
-        end,
+        p_end,
 
     plArmatureComponent::kReportGroups, _T("reportGroups"), TYPE_INT,   0,0,
-        end,
+        p_end,
 
     plAvatarComponent::kBrainType, _T("Brain"), TYPE_INT, 0, 0,
         p_default, plAvatarComponent::kBrainHuman,
-        end,
+        p_end,
         
     plAvatarComponent::kSkeleton, _T("Skeleton"),   TYPE_INT, 0, 0,
         p_default, plArmatureMod::kBoneBaseMale,
-        end,
+        p_end,
 
     plAvatarComponent::kPhysicsProxyTorso_DEAD, _T("ProxyTorso"),   TYPE_INODE,     0, 0,
 //      p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_PROXY_PICKT,
 //      p_sclassID, GEOMOBJECT_CLASS_ID,
 //      p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
  
     plAvatarComponent::kPhysicsProxyHead_DEAD, _T("ProxyHead"), TYPE_INODE,     0, 0,
 //      p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_PROXY_PICKH,
 //      p_sclassID, GEOMOBJECT_CLASS_ID,
 //      p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
 
     plAvatarComponent::kPhysicsHeight,  _T("physHeight"), TYPE_FLOAT,   0,  0,
         p_range, 0.1f, 50.0f,
         p_default, 5.f,
         p_ui,   kArmMain, TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_PHYS_HEIGHT_EDIT, IDC_PHYS_HEIGHT_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plAvatarComponent::kPhysicsWidth,   _T("physWidth"), TYPE_FLOAT,    0,  0,
         p_range, 0.1f, 50.0f,
         p_default, 2.5f,
         p_ui,   kArmMain, TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_PHYS_WIDTH_EDIT, IDC_PHYS_WIDTH_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plAvatarComponent::kBodyFootstepSoundPage,  _T("bodyFootstepPage"), TYPE_STRING,    0,  0,
-        p_default, "Audio",
+        p_default, _T("Audio"),
         p_ui,   kArmMain, TYPE_EDITBOX, IDC_BODYFOOTSTEPPAGE_EDIT,
-        end,
+        p_end,
 
     plAvatarComponent::kAnimationPrefix,_T("animationPrefix"), TYPE_STRING, 0,  0,
-        p_default, "Male",
+        p_default, _T("Male"),
         p_ui,   kArmMain, TYPE_EDITBOX, IDC_ANIMATIONPREFIX_EDIT,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plAvatarComponent::plAvatarComponent()
@@ -453,7 +456,7 @@ plAvatarComponent::plAvatarComponent()
 
 void plAvatarComponent::IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plString name = node->GetKey()->GetName();
+    ST::string name = node->GetKey()->GetName();
 
     plMaxNode *meshNode = (plMaxNode *)fCompPB->GetINode(plAvatarComponent::kMeshNode);
     plKey meshKey = meshNode->GetSceneObject()->GetKey();
@@ -474,9 +477,14 @@ void plAvatarComponent::IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg)
     else
         avMod->PushBrain(new plAvBrainHuman(skeletonType == plArmatureMod::kBoneBaseActor));
 
-    avMod->SetBodyAgeName(node->GetAgeName());
-    avMod->SetBodyFootstepSoundPage(fCompPB->GetStr(ParamID(kBodyFootstepSoundPage)));
-    avMod->SetAnimationPrefix(plString::FromUtf8(fCompPB->GetStr(ParamID(kAnimationPrefix))));
+    ST::string footstepPage = M2ST(fCompPB->GetStr(ParamID(kBodyFootstepSoundPage)));
+    if (!footstepPage.empty() && footstepPage.compare_ni("Audio", 5) != 0)
+        avMod->SetBodyAgeName(node->GetAgeName()); // Custom footstep sounds
+    else
+        avMod->SetBodyAgeName("GlobalAvatars"); // Fallback to the Global ones
+
+    avMod->SetBodyFootstepSoundPage(footstepPage);
+    avMod->SetAnimationPrefix(M2ST(fCompPB->GetStr(ParamID(kAnimationPrefix))));
 
     //AddLinkSound(node, node->GetSceneObject()->GetKey(), pErrMsg );
 
@@ -491,29 +499,34 @@ void plAvatarComponent::IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg)
 void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMaterial *mat, plErrorMsg *pErrMsg)
 {
     plGenRefMsg *msg;
-    plString keyName;
-    TSTR sdata;
-    hsStringTokenizer toker;
+    ST::string keyName;
+    MSTR sdata;
+    hsMStringTokenizer toker;
 
-    if (mod == nil)
+    if (mod == nullptr)
     {
         hsAssert(false, "Adding clothes to a nil armatureMod.");
         return;
     }
 
+    if (group == plClothingMgr::kClothingBaseNoOptions) {
+        // We don't need a clothing outfit for avatars with no clothing options
+        return;
+    }
+
     plClothingBase *base = new plClothingBase();
-    if (node->GetUserPropString("layout", sdata))
+    if (node->GetUserPropString(_M("layout"), sdata))
     {
-        toker.Reset(sdata, hsConverterUtils::fTagSeps);
-        base->SetLayoutName(toker.next());
+        toker.Reset(sdata.data(), hsConverterUtils::fTagSeps);
+        base->SetLayoutName(M2ST(toker.next()));
     }
     else 
         base->SetLayoutName("BasicHuman");
-    keyName = plFormat("{}_ClothingBase", node->GetName());
+    keyName = ST::format("{}_ClothingBase", node->GetName());
     hsgResMgr::ResMgr()->NewKey(keyName, base, node->GetLocation());
     plClothingOutfit *outfit = new plClothingOutfit();
     outfit->fGroup = group;
-    keyName = plFormat("{}_outfit", mod->GetKey()->GetName());
+    keyName = ST::format("{}_outfit", mod->GetKey()->GetName());
     hsgResMgr::ResMgr()->NewKey(keyName, outfit, node->GetLocation());
     
     msg = new plGenRefMsg(outfit->GetKey(), plRefMsg::kOnCreate, -1, -1);
@@ -522,16 +535,16 @@ void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMateria
     hsgResMgr::ResMgr()->AddViaNotify(outfit->GetKey(), msg, plRefFlags::kActiveRef); // Attach outfit
     
     
-    plMipmap *baseTex = nil;
-    plLayerInterface *li = nil;
+    plMipmap *baseTex = nullptr;
+    plLayerInterface *li = nullptr;
 
-    if (mat != nil)
+    if (mat != nullptr)
     {
         li = mat->GetLayer(0)->BottomOfStack();
         baseTex = plMipmap::ConvertNoRef(li->GetTexture());
         hsAssert(li->GetTexture() == baseTex, "Base texture mismatch on avatar construction?");
     }
-    if (mat != nil && baseTex != nil)
+    if (mat != nullptr && baseTex != nullptr)
     {
         // Let's fix up these bitmap flags. Normally, they are set on convert based on
         // the contents of the bitmap. But here our contents are subject to change at runtime.
@@ -563,7 +576,7 @@ void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMateria
 
 void plAvatarComponent::ISetupClothes(plMaxNode *node, plArmatureMod *mod, plErrorMsg *pErrMsg)
 {
-    AddClothingToMod(node, mod, fCompPB->GetInt(kClothingGroup), nil, pErrMsg);
+    AddClothingToMod(node, mod, fCompPB->GetInt(kClothingGroup), nullptr, pErrMsg);
 }
 
 bool plAvatarComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -599,14 +612,13 @@ public:
     AvatarCompDlgProc() {}
     ~AvatarCompDlgProc() {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int id = LOWORD(wParam);
         int code = HIWORD(wParam);
 
         IParamBlock2 *pb = map->GetParamBlock();
-        HWND cbox = NULL;
-        char* buffer = NULL;
+        HWND cbox = nullptr;
 
         int selection;
         switch (msg)
@@ -616,7 +628,7 @@ public:
             for (j = 0; j < plClothingMgr::kMaxGroup; j++)
             {
                 cbox = GetDlgItem(hWnd, IDC_COMP_AVATAR_CLOTHING_GROUP);
-                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)plClothingMgr::GroupStrings[j]);
+                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)ST2T(plClothingMgr::GroupStrings[j]));
             }
             selection = pb->GetInt(ParamID(plAvatarComponent::kClothingGroup));
             SendMessage(cbox, CB_SETCURSEL, selection, 0);
@@ -624,7 +636,7 @@ public:
             for (j = 0; j < plArmatureMod::kMaxBoneBase; j++)
             {
                 cbox = GetDlgItem(hWnd, IDC_COMP_AVATAR_SKELETON);
-                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)plArmatureMod::BoneStrings[j]);
+                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)ST2T(plArmatureMod::BoneStrings[j]));
             }
             selection = pb->GetInt(ParamID(plAvatarComponent::kSkeleton));
             SendMessage(cbox, CB_SETCURSEL, selection, 0);
@@ -634,13 +646,13 @@ public:
         case WM_COMMAND:  
             if (id == IDC_COMP_AVATAR_CLOTHING_GROUP)
             {
-                selection = SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
+                selection = (int)SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
                 pb->SetValue(plAvatarComponent::kClothingGroup, t, selection);
                 return TRUE;
             }
             if (id == IDC_COMP_AVATAR_SKELETON)
             {
-                selection = SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
+                selection = (int)SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
                 pb->SetValue(plAvatarComponent::kSkeleton, t, selection);
                 return TRUE;
             }
@@ -649,7 +661,7 @@ public:
         }   
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static AvatarCompDlgProc gAvatarCompDlgProc;
 
@@ -660,8 +672,8 @@ class plCompoundCtrlComponent : public plComponent
 {
 public:
     plCompoundCtrlComponent();
-    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode* node,plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode* node,plErrorMsg *pErrMsg) override;
 };
 
 CLASS_DESC(plCompoundCtrlComponent, gCompoundCtrlCompDesc, "Compound Controller", "CompoundCtrl", COMP_TYPE_AVATAR, Class_ID(0x3f2a790f, 0x30354673))
@@ -682,10 +694,10 @@ bool plCompoundCtrlComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrM
 
 bool plCompoundCtrlComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
 {
-    plString name = node->GetKey()->GetName();
+    ST::string name = node->GetKey()->GetName();
 
     node->MakeCharacterHierarchy(pErrMsg);
-    node->SetupBonesAliasesRecur(name.c_str());
+    node->SetupBonesAliasesRecur(name);
 
 
     // create and register the player modifier
@@ -708,7 +720,7 @@ protected:
     HWND fMstrDlg;
 
 public:
-    plLODAvatarComponentProc() : fComp(nil), fPB(nil) {}
+    plLODAvatarComponentProc() : fComp(), fPB() { }
 
     void UpdateBoneDisplay(IParamMap2 *pm)
     {
@@ -724,7 +736,7 @@ public:
         while (startIdx < endIdx)
         {
             INode *curNode = pb->GetINode(ParamID(plLODAvatarComponent::kBoneList), 0, startIdx);
-            if (curNode == nil)
+            if (curNode == nullptr)
             {
                 fComp->RemoveBone(startIdx);
                 endIdx--;
@@ -735,12 +747,12 @@ public:
         }
     }
 
-    virtual void Update(TimeValue t, Interval& valid, IParamMap2* pmap) { UpdateBoneDisplay(pmap); }
+    void Update(TimeValue t, Interval& valid, IParamMap2* pmap) override { UpdateBoneDisplay(pmap); }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int selection;
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         HWND hList = GetDlgItem(hWnd, IDC_COMP_LOD_AVATAR_BONELIST);
 
         switch (msg)
@@ -756,7 +768,6 @@ public:
                 fPB = map->GetParamBlock();
                 fComp = (plLODAvatarComponent*) fPB->GetOwner();
 
-                VCharArray Nilptr;
                 ILoadComboBox(LODCombo, fComp->fLODLevels);
                 SendMessage(LODCombo, CB_SETCURSEL, LodBeginState,  0); // select the right one
 
@@ -764,7 +775,7 @@ public:
                 for (i = 0; i < plClothingMgr::kMaxGroup; i++)
                 {
                     cbox = GetDlgItem(hWnd, IDC_COMP_AVATAR_CLOTHING_GROUP);
-                    SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)plClothingMgr::GroupStrings[i]);
+                    SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)ST2T(plClothingMgr::GroupStrings[i]));
                 }
                 selection = fPB->GetInt(ParamID(plLODAvatarComponent::kClothingGroup));
                 SendMessage(cbox, CB_SETCURSEL, selection, 0);
@@ -772,28 +783,28 @@ public:
                 for (i = 0; i < plArmatureMod::kMaxBoneBase; i++)
                 {
                     cbox = GetDlgItem(hWnd, IDC_COMP_AVATAR_SKELETON);
-                    SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)plArmatureMod::BoneStrings[i]);
+                    SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)ST2T(plArmatureMod::BoneStrings[i]));
                 }
                 selection = fPB->GetInt(ParamID(plLODAvatarComponent::kSkeleton));
                 SendMessage(cbox, CB_SETCURSEL, selection, 0);
 
                 Mtl *mat = fPB->GetMtl(plLODAvatarComponent::kMaterial);
-                Button_SetText(GetDlgItem(hWnd, IDC_COMP_LOD_AVATAR_MTL), (mat ? mat->GetName() : "(none)"));
+                Button_SetText(GetDlgItem(hWnd, IDC_COMP_LOD_AVATAR_MTL), (mat ? mat->GetName() : _T("(none)")));
 
                 UpdateBoneDisplay(map);
-                return true;
+                return TRUE;
             }
 
         case WM_COMMAND:
             if (LOWORD(wParam) == IDC_COMP_AVATAR_CLOTHING_GROUP)
             {
-                selection = SendMessage(GetDlgItem(hWnd, IDC_COMP_AVATAR_CLOTHING_GROUP), CB_GETCURSEL, 0, 0);
+                selection = (int)SendMessage(GetDlgItem(hWnd, IDC_COMP_AVATAR_CLOTHING_GROUP), CB_GETCURSEL, 0, 0);
                 fPB->SetValue(ParamID(plLODAvatarComponent::kClothingGroup), t, selection);
                 return TRUE;
             }
             else if (LOWORD(wParam) == IDC_COMP_AVATAR_SKELETON)
             {
-                selection = SendMessage(GetDlgItem(hWnd, IDC_COMP_AVATAR_SKELETON), CB_GETCURSEL, 0, 0);
+                selection = (int)SendMessage(GetDlgItem(hWnd, IDC_COMP_AVATAR_SKELETON), CB_GETCURSEL, 0, 0);
                 fPB->SetValue(ParamID(plLODAvatarComponent::kSkeleton), t, selection);
                 return TRUE;
             }
@@ -812,7 +823,7 @@ public:
                 // Remove the currently selected material
                 else if (LOWORD(wParam) == IDC_COMP_LOD_AVATAR_BONE_REMOVE)
                 {
-                    int curSel = SendMessage(hList, LB_GETCURSEL, 0, 0);
+                    int curSel = (int)SendMessage(hList, LB_GETCURSEL, 0, 0);
                     if (curSel >= 0)
                         fComp->RemoveBone(curSel);
 
@@ -822,7 +833,7 @@ public:
                 {
                     Mtl *pickedMtl = plPickMaterialMap::PickMaterial(plMtlCollector::kPlasmaOnly);
                     fPB->SetValue(plLODAvatarComponent::kMaterial, 0, pickedMtl);
-                    Button_SetText(GetDlgItem(hWnd, IDC_COMP_LOD_AVATAR_MTL), (pickedMtl ? pickedMtl->GetName() : "(none)"));
+                    Button_SetText(GetDlgItem(hWnd, IDC_COMP_LOD_AVATAR_MTL), (pickedMtl ? pickedMtl->GetName() : _T("(none)")));
 
                     return TRUE;
                 }
@@ -836,14 +847,14 @@ public:
                     
                 if(LOWORD(wParam) == IDC_COMP_LOD_AVATAR_STATE && HIWORD(wParam) == CBN_SELCHANGE)
                 {
-                    int idx = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+                    int idx = (int)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
                     fPB->SetValue(plLODAvatarComponent::kLODState, 0, idx);
                     
                     if(fPB->GetINode(plLODAvatarComponent::kMeshNodeTab, t, idx))
                         fPB->SetValue(plLODAvatarComponent::kMeshNodeAddBtn, t, fPB->GetINode(plLODAvatarComponent::kMeshNodeTab,t, idx));
                     else
                         fPB->Reset(plLODAvatarComponent::kMeshNodeAddBtn);
-                    return true;
+                    return TRUE;
                 }
             }
 
@@ -856,14 +867,14 @@ public:
                 if(fPB->GetINode(plLODAvatarComponent::kMeshNodeAddBtn,t))
                     fPB->SetValue(plLODAvatarComponent::kMeshNodeTab, t, fPB->GetINode(plLODAvatarComponent::kMeshNodeAddBtn,t), LodBeginState);
 
-                return false;
+                return FALSE;
             }
         }
             
-        return false;
+        return FALSE;
     }
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 
 
@@ -892,7 +903,7 @@ public:
     converts.
     */
 
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (id == plLODAvatarComponent::kMeshNodeAddBtn)
         {
@@ -931,128 +942,130 @@ ParamBlockDesc2 gPLODAvatarBk
 //      p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_PROXY_PICKB,
 //      p_sclassID, GEOMOBJECT_CLASS_ID,
 //      p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
 
     plLODAvatarComponent::kFriction,    _T("Friction"), TYPE_FLOAT, 0, 0,
         p_ui,   kArmMain, TYPE_SPINNER, EDITTYPE_POS_FLOAT,
         IDC_COMP_AVATAR_FRICTION_EDIT, IDC_COMP_AVATAR_FRICTION_SPIN, 0.1f,
         p_default, 0.9f,
-        end,
+        p_end,
 
     plLODAvatarComponent::kLODState, _T("LODState"),        TYPE_INT,   0, 0,
         p_range, 1, plLODAvatarComponent::kMaxNumLODLevels,
-        end,
+        p_end,
 
     plLODAvatarComponent::kMeshNodeTab, _T("MeshObject"),   TYPE_INODE_TAB, plLODAvatarComponent::kMaxNumLODLevels,     0, 0,
         p_accessor,     &gLODAvatarAccessor,
-        end,
+        p_end,
 
     plLODAvatarComponent::kRootNodeAddBtn, _T("RtNodePicker"),  TYPE_INODE,     0, 0,
         p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_LOD_AVATAR_ROOT_PICKB,
         p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
 
     plLODAvatarComponent::kMeshNodeAddBtn, _T("MshNodePicker"), TYPE_INODE,     0, 0,
         p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_LOD_AVATAR_MESH_PICKB,
         //p_sclassID,   GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
 
     plLODAvatarComponent::kClothingGroup,   _T("ClothingGroup"),    TYPE_INT,   0, 0,
         p_default, plClothingMgr::kClothingBaseMale,
-        end,
+        p_end,
 
     plArmatureComponent::kBounceGroups, _T("bounceGroups"), TYPE_INT,   0,0,
         p_default,  plPhysicsGroups_DEAD::kCreatures |
                     plPhysicsGroups_DEAD::kStaticSimulated |
                     plPhysicsGroups_DEAD::kDynamicSimulated |
                     plPhysicsGroups_DEAD::kAnimated,
-        end,
+        p_end,
 
     plArmatureComponent::kReportGroups, _T("reportGroups"), TYPE_INT,   0,0,
-        end,
+        p_end,
 
     plLODAvatarComponent::kBrainType, _T("Brain"), TYPE_INT, 0, 0,
         p_default, plLODAvatarComponent::kBrainHuman,
-        end,
+        p_end,
         
     plLODAvatarComponent::kGroupIdx,    _T("GroupIndex"),   TYPE_INT,   0, 0,
         p_default, 0,
         p_range, 0, plLODAvatarComponent::kMaxNumLODLevels - 1,
         p_ui, kArmMain, TYPE_SPINNER,   EDITTYPE_INT,
         IDC_COMP_LOD_AVATAR_GROUP, IDC_COMP_LOD_AVATAR_GROUP_SPIN, 1.f,
-        end,
+        p_end,
 
     plLODAvatarComponent::kBoneList, _T("Bones"), TYPE_INODE_TAB, 0,    0, 0,
-        end,
+        p_end,
 
     plLODAvatarComponent::kGroupTotals, _T("Totals"), TYPE_INT_TAB, plLODAvatarComponent::kMaxNumLODLevels, 0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     plLODAvatarComponent::kLastPick, _T("LastPick"), TYPE_INODE,    0, 0, // Temp storage space for the bone picker
-        end,
+        p_end,
 
     plLODAvatarComponent::kSkeleton, _T("Skeleton"),    TYPE_INT, 0, 0,
         p_default, plArmatureMod::kBoneBaseMale,
-        end,
+        p_end,
 
     plLODAvatarComponent::kMaterial, _T("Material"),    TYPE_MTL, 0, 0,
-        end,
+        p_end,
 
     plLODAvatarComponent::kPhysicsProxyTorso_DEAD, _T("ProxyTorso"),    TYPE_INODE,     0, 0,
 //      p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_PROXY_PICKT,
 //      p_sclassID, GEOMOBJECT_CLASS_ID,
 //      p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
 // 
     plLODAvatarComponent::kPhysicsProxyHead_DEAD, _T("ProxyHead"),  TYPE_INODE,     0, 0,
 //      p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_PROXY_PICKH,
 //      p_sclassID, GEOMOBJECT_CLASS_ID,
 //      p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
 
     plLODAvatarComponent::kPhysicsHeight,   _T("physHeight"), TYPE_FLOAT,   0,  0,
         p_range, 0.1f, 50.0f,
         p_default, 5.f,
         p_ui,   kArmMain, TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_PHYS_HEIGHT_EDIT, IDC_PHYS_HEIGHT_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plLODAvatarComponent::kPhysicsWidth,    _T("physWidth"), TYPE_FLOAT,    0,  0,
         p_range, 0.1f, 50.0f,
         p_default, 2.5f,
         p_ui,   kArmMain, TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_PHYS_WIDTH_EDIT, IDC_PHYS_WIDTH_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plLODAvatarComponent::kBodyFootstepSoundPage,   _T("bodyFootstepPage"), TYPE_STRING,    0,  0,
-        p_default, "Audio",
+        p_default, _T("Audio"),
         p_ui,   kArmMain, TYPE_EDITBOX, IDC_BODYFOOTSTEPPAGE_EDIT,
-        end,
+        p_end,
 
     plLODAvatarComponent::kAnimationPrefix,_T("animationPrefix"), TYPE_STRING,  0,  0,
-        p_default, "Male",
+        p_default, _T("Male"),
         p_ui,   kArmMain, TYPE_EDITBOX, IDC_ANIMATIONPREFIX_EDIT,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
-plLODAvatarComponent::plLODAvatarComponent() : fMaterial(nil)
+plLODAvatarComponent::plLODAvatarComponent() : fMaterial()
 {
     fClassDesc = &gLODAvatarCompDesc;
     fClassDesc->MakeAutoParamBlocks(this);
 
-    fLODLevels.push_back("High");
-    fLODLevels.push_back("Medium");
-    fLODLevels.push_back("Low");
+    fLODLevels = {
+        _M("High"),
+        _M("Medium"),
+        _M("Low"),
+    };
 
 }
 
 void plLODAvatarComponent::IAttachModifiers(    plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plString avatarName = node->GetKey()->GetName();
+    ST::string avatarName = node->GetKey()->GetName();
     plMaxNode *animRoot = (plMaxNode *)fCompPB->GetINode(plLODAvatarComponent::kRootNodeAddBtn);
     plKey animRootKey = animRoot->GetSceneObject()->GetKey();
     plArmatureLODMod* avMod = new plArmatureLODMod(avatarName);
@@ -1066,7 +1079,7 @@ void plLODAvatarComponent::IAttachModifiers(    plMaxNode *node, plErrorMsg *pEr
 
     avMod->SetBodyAgeName(node->GetAgeName());
     avMod->SetBodyFootstepSoundPage(fCompPB->GetStr(ParamID(kBodyFootstepSoundPage)));
-    avMod->SetAnimationPrefix(plString::FromUtf8(fCompPB->GetStr(ParamID(kAnimationPrefix))));
+    avMod->SetAnimationPrefix(M2ST(fCompPB->GetStr(ParamID(kAnimationPrefix))));
 
     int iLODCount = fCompPB->Count(plLODAvatarComponent::kMeshNodeTab);
     for (int i = 0; i < iLODCount; i++)
@@ -1116,12 +1129,12 @@ bool plLODAvatarComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 { 
     bool result = plArmatureComponent::PreConvert(node, pErrMsg); 
 
-    hsTArray<hsGMaterial*> mats;
+    std::vector<hsGMaterial*> mats;
     Mtl *mtl = fCompPB->GetMtl(kMaterial);
     if (mtl)
     {
         hsMaterialConverter::Instance().GetMaterialArray(mtl, node, mats);
-        fMaterial = (mats.GetCount() > 0 ? mats[0] : nil);
+        fMaterial = (!mats.empty() ? mats[0] : nullptr);
     }
     return result;
 }
@@ -1145,7 +1158,7 @@ bool plLODAvatarComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
             if (compNode)
             {
                 plAGModifier *agMod = compNode->HasAGMod();
-                keyVec->push_back(agMod ? agMod->GetKey() : nil);
+                keyVec->push_back(agMod ? agMod->GetKey() : nullptr);
             }
         }
         plArmatureLODMod::ConvertNoRef(fArmMod)->AppendBoneVec(keyVec);
@@ -1232,5 +1245,4 @@ void plLODAvatarComponent::RemoveBone(int index)
     fCompPB->Delete(ParamID(kBoneList), boneIdx, 1);
     fCompPB->SetValue(ParamID(kGroupTotals), 0, fCompPB->GetInt(ParamID(kGroupTotals), 0, group) - 1, group);
 }
-
 

@@ -42,9 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plParticleSDLMod.h"
 #include "plParticleSystem.h"
 
+#include "pnKeyedObject/plKey.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "plSDL/plSDL.h"
-#include "pnKeyedObject/plKey.h"
 
 // static vars
 char plParticleSDLMod::kStrNumParticles[]="numParticles";
@@ -54,8 +54,6 @@ void plParticleSDLMod::IPutCurrentStateIn(plStateDataRecord* dstState)
     plSceneObject* sobj=GetTarget();
     if (!sobj)
         return;
-
-    uint32_t flags = sobj->GetKey()->GetUoid().GetLocation().GetFlags();
 
     const plParticleSystem *sys = plParticleSystem::ConvertNoRef(sobj->GetModifierByType(plParticleSystem::Index()));
     if (!sys)

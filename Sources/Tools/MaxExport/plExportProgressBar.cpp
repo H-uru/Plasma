@@ -40,13 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include <commdlg.h>
 
-#include <max.h>
-#include <bmmlib.h>
-#include <guplib.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
 
 #include "plExportProgressBar.h"
 
@@ -69,13 +64,13 @@ plExportProgressBar::~plExportProgressBar()
    fInterface->ProgressEnd();
 }
 
-void plExportProgressBar::Start(char *name, uint32_t steps)
+void plExportProgressBar::Start(MCHAR* name, uint32_t steps)
 {
     fTotalSteps = steps;
     fCurStep = 0;
 
     fInterface->ProgressEnd();
-    fInterface->ProgressStart(name, TRUE, ProgressDummyFunc, nil);
+    fInterface->ProgressStart(name, TRUE, ProgressDummyFunc, nullptr);
    
    GUP* exportServerGup = OpenGupPlugIn(Class_ID(470000004,99));
    if(exportServerGup && name)
@@ -85,7 +80,7 @@ void plExportProgressBar::Start(char *name, uint32_t steps)
    }   
 }
 
-bool plExportProgressBar::Update(char *name, uint32_t inc)
+bool plExportProgressBar::Update(MAX14_CONST MCHAR* name, uint32_t inc)
 {
     fCurStep += inc;
 
@@ -108,7 +103,7 @@ bool plExportProgressBar::Update(char *name, uint32_t inc)
 
     if (fInterface->GetCancel()) 
     {
-        int retval = MessageBox(fInterface->GetMAXHWnd(), _T("Really Cancel?"),
+        int retval = plMaxMessageBox(fInterface->GetMAXHWnd(), _T("Really Cancel?"),
             _T("Question"), MB_ICONQUESTION | MB_YESNO);
         if (retval == IDYES)
         {

@@ -40,14 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plClothingSDLModifier.h"
+
+#include "plArmatureMod.h"
 #include "plAvatarClothing.h"
 #include "plClothingLayout.h"
-#include "plArmatureMod.h"
 
-#include "pnSceneObject/plSceneObject.h"
-#include "pnMessage/plSDLModifierMsg.h"
-#include "plSDL/plSDL.h"
 #include "pnKeyedObject/plKeyImp.h"
+#include "pnMessage/plSDLModifierMsg.h"
+#include "pnNetCommon/plSDLTypes.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plSDL/plSDL.h"
+
 
 // static vars
 char plClothingSDLModifier::kStrItem[]="item";
@@ -65,7 +69,7 @@ char plClothingSDLModifier::kStrLinkInAnim[] = "linkInAnim";
 // init latest data
 //
 plClothingSDLModifier::plClothingSDLModifier() :
-    fClothingOutfit(nil)
+    fClothingOutfit()
 {
 }
 
@@ -77,10 +81,9 @@ plClothingOutfit* plClothingSDLModifier::GetClothingOutfit()
     if (fClothingOutfit)
         return fClothingOutfit;
 
-    int i;
     plSceneObject* target = GetTarget();
     hsAssert(target, "plClothingSDLModifier: nil target");
-    for (i=0;i<target->GetNumModifiers();i++)
+    for (size_t i = 0; i < target->GetNumModifiers(); i++)
     {
         const plArmatureMod* am = plArmatureMod::ConvertNoRef(target->GetModifier(i));
         if (am)
@@ -109,28 +112,27 @@ void plClothingSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
     plClothingOutfit* clothing = GetClothingOutfit();
     hsAssert(clothing, "nil clothingOutfit");
     
-    hsTArray<plStateDataRecord*> SDRs;
-    hsTArray<plClothingItem*> items=clothing->GetItemList();
-    hsTArray<plClothingItemOptions*> options=clothing->GetOptionList();
+    std::vector<plStateDataRecord*> SDRs;
+    const std::vector<plClothingItem*>& items = clothing->GetItemList();
+    const std::vector<plClothingItemOptions*>& options = clothing->GetOptionList();
     
     plSDStateVariable* clothesStateDesc = dstState->FindSDVar(kStrWardrobe);    // find clothes list
-    int itemCount=items.GetCount();
-    int optionsCount = options.GetCount();
+    size_t itemCount = items.size();
+    size_t optionsCount = options.size();
     hsAssert(optionsCount==itemCount, "number of items should match number of options according to clothing.sdl"); 
     
     if (clothesStateDesc->GetCount() != itemCount)
         clothesStateDesc->Alloc(itemCount);     // set appropriate list size
 
-    int lowerCount = (itemCount <= optionsCount ? itemCount : optionsCount);
-    int i;
-    for(i = 0; i < lowerCount; i++)
+    size_t lowerCount = std::min(itemCount, optionsCount);
+    for (size_t i = 0; i < lowerCount; i++)
     {
         plClosetItem closetItem;
         closetItem.fItem = items[i];
         closetItem.fOptions = *options[i];
 
         PutSingleItemIntoSDR(&closetItem, clothesStateDesc->GetStateDataRecord(i));
-        SDRs.Append(clothesStateDesc->GetStateDataRecord(i));
+        SDRs.emplace_back(clothesStateDesc->GetStateDataRecord(i));
     }
 
     // skin tint
@@ -145,10 +147,10 @@ void plClothingSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
     int numBlends = plClothingElement::kLayerSkinLast - plClothingElement::kLayerSkinFirst;
     if (faceBlends->GetCount() != numBlends)
         faceBlends->Alloc(numBlends);
-    for(i = 0; i < numBlends; i++)
+    for (int i = 0; i < numBlends; i++)
         faceBlends->Set((uint8_t)(clothing->fSkinBlends[i] * 255), i);
 
-    SDRs.Append(appearanceStateDesc->GetStateDataRecord(0));
+    SDRs.emplace_back(appearanceStateDesc->GetStateDataRecord(0));
 
     // This logically belongs in the avatar.sdl file, but clothing.sdl is already broadcast to
     // other players when you join an age, and I don't want to broadcast all of avatar.sdl for
@@ -158,7 +160,7 @@ void plClothingSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
         var->Set(clothing->fAvatar->fLinkInAnimKey);    
 }
 
-void plClothingSDLModifier::PutSingleItemIntoSDR(plClosetItem *item, plStateDataRecord *sdr)
+void plClothingSDLModifier::PutSingleItemIntoSDR(const plClosetItem *item, plStateDataRecord *sdr)
 {
     plKey key = item->fItem->GetKey();
     sdr->FindVar(kStrItem)->Set(key);           
@@ -187,7 +189,7 @@ void plClothingSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcSta
     hsAssert(sobj, "plClothingSDLModifier, nil target");
 
     plClothingOutfit* clothing = GetClothingOutfit();
-    if( clothing == nil )
+    if (clothing == nullptr)
     {
         hsAssert(clothing, "nil clothingOutfit");
         return;
@@ -223,9 +225,9 @@ void plClothingSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcSta
         var->Get(&clothing->fAvatar->fLinkInAnimKey);   
 }
 
-void plClothingSDLModifier::HandleSingleSDR(const plStateDataRecord *sdr, plClothingOutfit *clothing /* = nil */, plClosetItem *closetItem /* = nil */)
+void plClothingSDLModifier::HandleSingleSDR(const plStateDataRecord *sdr, plClothingOutfit *clothing /* = nullptr */, plClosetItem *closetItem /* = nullptr */)
 {
-    if (sdr == nil)
+    if (sdr == nullptr)
         return;
 
     int i;
@@ -235,12 +237,12 @@ void plClothingSDLModifier::HandleSingleSDR(const plStateDataRecord *sdr, plClot
     {
         // get item from clothesItem
         plSimpleStateVariable* itemVar = sdr->FindVar(kStrItem);
-        plClothingItem* clothingItem = nil; // clothing->GetItemList()[i];
+        plClothingItem* clothingItem = nullptr; // clothing->GetItemList()[i];
         if (itemVar->IsUsed())
         {
             plKey key;
             itemVar->Get(&key);
-            clothingItem = plClothingItem::ConvertNoRef(key ? key->GetObjectPtr() : nil);
+            clothingItem = plClothingItem::ConvertNoRef(key ? key->GetObjectPtr() : nullptr);
             if (clothingItem)
             {
                 if (clothing)
@@ -312,14 +314,14 @@ void plClothingSDLModifier::HandleSingleSDR(const plStateDataRecord *sdr, plClot
 // FINDARMATUREMOD
 const plClothingSDLModifier *plClothingSDLModifier::FindClothingSDLModifier(const plSceneObject *obj)
 {
-    int count = obj->GetNumModifiers();
+    size_t count = obj->GetNumModifiers();
 
-    for (int i = 0; i < count; i++)
+    for (size_t i = 0; i < count; i++)
     {
         const plModifier *mod = obj->GetModifier(i);
         const plClothingSDLModifier *sdlMod = plClothingSDLModifier::ConvertNoRef(mod);
         if(sdlMod)
             return sdlMod;
     }
-    return nil;
+    return nullptr;
 }

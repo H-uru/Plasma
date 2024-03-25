@@ -46,18 +46,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentMgr.h"
 #include "plComponentReg.h"
-#pragma hdrstop
 
 /////////
-class ComponentMgrClassDesc : public ClassDesc
+class ComponentMgrClassDesc : public plMaxClassDesc<ClassDesc>
 {
 public:
-    int             IsPublic()              { return FALSE; }
-    void*           Create(BOOL loading)    { return &plComponentMgr::Inst(); }
-    const TCHAR*    ClassName()             { return _T("Component Mgr"); }
-    SClass_ID       SuperClassID()          { return UTILITY_CLASS_ID; }
-    Class_ID        ClassID()               { return COMPONENT_MGR_CID; }
-    const TCHAR*    Category()              { return _T(""); }
+    int             IsPublic() override             { return FALSE; }
+    void*           Create(BOOL loading) override   { return &plComponentMgr::Inst(); }
+    const TCHAR*    ClassName() override            { return _T("Component Mgr"); }
+    SClass_ID       SuperClassID() override         { return UTILITY_CLASS_ID; }
+    Class_ID        ClassID() override              { return COMPONENT_MGR_CID; }
+    const TCHAR*    Category() override             { return _T(""); }
 };
 
 static ComponentMgrClassDesc theComponentMgrCD;
@@ -83,7 +82,7 @@ ClassDesc *plComponentMgr::Get(uint32_t i)
     else
     {
         hsAssert(0, "Component index out of range");
-        return nil;
+        return nullptr;
     }
 }
 
@@ -119,17 +118,17 @@ void plComponentMgr::Register(ClassDesc *desc)
 
 int IDescCompare(ClassDesc *desc1, ClassDesc *desc2)
 {
-    const char *cat1 = desc1->Category() ? desc1->Category() : "";
-    const char *cat2 = desc2->Category() ? desc2->Category() : "";
-    int cmp = strcmp(cat1, cat2);
-    
+    const ST::string cat1 = M2ST(desc1->Category());
+    const ST::string cat2 = M2ST(desc2->Category());
+    int cmp = cat1.compare(cat2);
+
     // Only compare name if categories are the same
     if (cmp == 0)
     {
-        const char *name1 = desc1->ClassName() ? desc1->ClassName() : "";
-        const char *name2 = desc2->ClassName() ? desc2->ClassName() : "";
+        const ST::string name1 = M2ST(desc1->ClassName());
+        const ST::string name2 = M2ST(desc2->ClassName());
 
-        return strcmp(name1, name2);
+        return name1.compare(name2);
     }
 
     return cmp;

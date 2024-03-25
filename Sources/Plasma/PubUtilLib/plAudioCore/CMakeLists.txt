@@ -1,16 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
-include_directories(${Ogg_INCLUDE_DIR})
-include_directories(${Vorbis_INCLUDE_DIR})
-# We only need DirectX if we're building the Max plugin
-# TODO: Check if we actually need this at all
-if(3dsm_BUILD_PLUGIN)
-    include_directories(${DirectX_INCLUDE_DIR})
-endif(3dsm_BUILD_PLUGIN)
-
 set(plAudioCore_SOURCES
     plAudioFileReader.cpp
     plBufferedFileReader.cpp
@@ -19,6 +6,7 @@ set(plAudioCore_SOURCES
     plOGGCodec.cpp
     plSoundBuffer.cpp
     plSoundDeswizzler.cpp
+    plSrtFileReader.cpp
     plWavFile.cpp
 )
 
@@ -32,12 +20,28 @@ set(plAudioCore_HEADERS
     plOGGCodec.h
     plSoundBuffer.h
     plSoundDeswizzler.h
+    plSrtFileReader.h
     plWavFile.h
 )
 
-add_library(plAudioCore STATIC ${plAudioCore_SOURCES} ${plAudioCore_HEADERS})
-target_link_libraries(plAudioCore ${Ogg_LIBRARIES})
-target_link_libraries(plAudioCore ${Vorbis_LIBRARIES})
+plasma_library(plAudioCore SOURCES ${plAudioCore_SOURCES} ${plAudioCore_HEADERS})
+target_link_libraries(
+    plAudioCore
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+    PRIVATE
+        pnMessage
+        pnNucleusInc
+
+        $<$<PLATFORM_ID:Windows>:${DirectX_LIBRARIES}>
+        Ogg::ogg
+        Vorbis::vorbis
+        Vorbis::vorbisfile
+        $<$<PLATFORM_ID:Windows>:winmm>
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${plAudioCore_SOURCES})
 source_group("Header Files" FILES ${plAudioCore_HEADERS})

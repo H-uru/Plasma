@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
-#pragma hdrstop
 
 #include "plLinkToAgeMsg.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
@@ -152,7 +151,7 @@ void plLinkingMgrMsg::Read( hsStream* stream, hsResMgr* mgr )
     contentFlags.Read( stream );
 
     if ( contentFlags.IsBitSet( kLinkingMgrCmd ) )
-        stream->ReadLE( &fLinkingMgrCmd );
+        stream->ReadByte(&fLinkingMgrCmd);
     if ( contentFlags.IsBitSet( kLinkingMgrArgs ) )
         fArgs.Read( stream, mgr );
 }
@@ -166,7 +165,7 @@ void plLinkingMgrMsg::Write( hsStream* stream, hsResMgr* mgr )
     contentFlags.SetBit( kLinkingMgrArgs );
     contentFlags.Write( stream );
 
-    stream->WriteLE( fLinkingMgrCmd );
+    stream->WriteByte(fLinkingMgrCmd);
     fArgs.Write( stream, mgr );
 }
 
@@ -306,7 +305,7 @@ void plLinkEffectsTriggerPrepMsg::SetTrigger(plLinkEffectsTriggerMsg *msg)
 //
 // plLinkEffectBCMsg
 
-plLinkEffectBCMsg::plLinkEffectBCMsg() : fLinkKey(nil), fLinkFlags(0) { SetBCastFlag(plMessage::kBCastByExactType); }
+plLinkEffectBCMsg::plLinkEffectBCMsg() : fLinkFlags() { SetBCastFlag(plMessage::kBCastByExactType); }
 
 void plLinkEffectBCMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
@@ -341,7 +340,7 @@ bool plLinkEffectBCMsg::HasLinkFlag(uint32_t flag)
 //
 // plLinkEffectPrepBCMsg
 
-plLinkEffectPrepBCMsg::plLinkEffectPrepBCMsg() : fLinkKey(nil), fLeavingAge(false) { SetBCastFlag(plMessage::kBCastByExactType); }
+plLinkEffectPrepBCMsg::plLinkEffectPrepBCMsg() : fLeavingAge() { SetBCastFlag(plMessage::kBCastByExactType); }
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -365,7 +364,7 @@ void plLinkCallbackMsg::Write(hsStream* stream, hsResMgr* mgr)
 ////
 //// plPseudoLinkEffectMsg
 
-plPseudoLinkEffectMsg::plPseudoLinkEffectMsg() : fLinkObjKey(nil), fAvatarKey(nil)
+plPseudoLinkEffectMsg::plPseudoLinkEffectMsg()
 {
     SetBCastFlag(plMessage::kNetPropagate | plMessage::kBCastByExactType);
 }
@@ -397,7 +396,7 @@ plPseudoLinkAnimTriggerMsg::plPseudoLinkAnimTriggerMsg() : fForward(false)
 plPseudoLinkAnimTriggerMsg::plPseudoLinkAnimTriggerMsg(bool forward, plKey avatarKey)
 {
     fForward = forward;
-    fAvatarKey = avatarKey;
+    fAvatarKey = std::move(avatarKey);
     SetBCastFlag(plMessage::kBCastByExactType);
 }
 

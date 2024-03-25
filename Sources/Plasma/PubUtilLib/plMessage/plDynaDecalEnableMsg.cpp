@@ -43,24 +43,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
-#pragma hdrstop
 
 #include "plDynaDecalEnableMsg.h"
 
 
 plDynaDecalEnableMsg::plDynaDecalEnableMsg()
-:   plMessage(nil, nil, nil),
-    fKey(nil),
-    fFlags(0),
-    fConTime(0),
+:   plMessage(nullptr, nullptr, nullptr),
+    fFlags(),
+    fConTime(),
     fID(uint32_t(-1))
 {
 }
 
 plDynaDecalEnableMsg::plDynaDecalEnableMsg(const plKey& r, const plKey& a, double t, float w, bool end, uint32_t id, bool isArm)
-:   plMessage(nil, r, nil),
+:   plMessage(nullptr, r, nullptr),
     fKey(a),
-    fFlags(0),
+    fFlags(),
     fConTime(t),
     fWetLength(w),
     fID(id)

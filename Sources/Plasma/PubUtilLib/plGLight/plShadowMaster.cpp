@@ -66,6 +66,7 @@ uint32_t plShadowMaster::fGlobalMaxSize = 512;
 float plShadowMaster::fGlobalMaxDist = 160.f; // PERSPTEST
 // float plShadowMaster::fGlobalMaxDist = 100000.f; // PERSPTEST
 float plShadowMaster::fGlobalVisParm = 1.f;
+float plShadowMaster::fGlobalMaxBlur = -1.f;
 
 void plShadowMaster::SetGlobalShadowQuality(float s) 
 { 
@@ -87,10 +88,11 @@ void plShadowMaster::SetGlobalMaxSize(uint32_t s)
         int i;
         for( i = 31; i >= 0; i-- )
         {
-            if( (1 << i) & s )
+            if ((1u << i) & s)
                 break;
         }
-        s = 1 << i;
+        hsAssert(i >= 0, "Invalid non-POT shadow size");
+        s = 1u << i;
     }
 
     if( s > kMaxMaxGlobalSize )
@@ -108,33 +110,28 @@ plShadowMaster::plShadowMaster()
     fMaxSize(256),
     fMinSize(256),
     fPower(1.f),
-    fLightInfo(nil)
+    fLightInfo()
 {
 }
 
 plShadowMaster::~plShadowMaster()
 {
     Deactivate();
-
-    fSlavePool.SetCount(fSlavePool.GetNumAlloc());
-    int i;
-    for( i = 0; i < fSlavePool.GetCount(); i++ )
-        delete fSlavePool[i];
 }
 
 void plShadowMaster::Read(hsStream* stream, hsResMgr* mgr)
 {
     plObjInterface::Read(stream, mgr);
 
-    fAttenDist = stream->ReadLEScalar();
+    fAttenDist = stream->ReadLEFloat();
 
-    fMaxDist = stream->ReadLEScalar();
-    fMinDist = stream->ReadLEScalar();
+    fMaxDist = stream->ReadLEFloat();
+    fMinDist = stream->ReadLEFloat();
 
     fMaxSize = stream->ReadLE32();
     fMinSize = stream->ReadLE32();
 
-    fPower = stream->ReadLEScalar();
+    fPower = stream->ReadLEFloat();
 
     Activate();
 }
@@ -143,15 +140,15 @@ void plShadowMaster::Write(hsStream* stream, hsResMgr* mgr)
 {
     plObjInterface::Write(stream, mgr);
 
-    stream->WriteLEScalar(fAttenDist);
+    stream->WriteLEFloat(fAttenDist);
 
-    stream->WriteLEScalar(fMaxDist);
-    stream->WriteLEScalar(fMinDist);
+    stream->WriteLEFloat(fMaxDist);
+    stream->WriteLEFloat(fMinDist);
 
     stream->WriteLE32(fMaxSize);
     stream->WriteLE32(fMinSize);
 
-    stream->WriteLEScalar(fPower);
+    stream->WriteLEFloat(fPower);
 }
 
 void plShadowMaster::Activate() const
@@ -198,7 +195,7 @@ bool plShadowMaster::MsgReceive(plMessage* msg)
 
 void plShadowMaster::IBeginRender()
 {
-    fSlavePool.SetCount(0);
+    fSlavePool.clear();
     if( ISetLightInfo() ) 
         fLightInfo->ClearSlaveBits();
 }
@@ -221,7 +218,7 @@ bool plShadowMaster::IOnCastMsg(plShadowCastMsg* castMsg)
 
     plShadowCaster* caster = castMsg->Caster();
 
-    if( !caster->Spans().GetCount() )
+    if (caster->Spans().empty())
         return false;
 
     hsBounds3Ext casterBnd;
@@ -277,7 +274,7 @@ bool plShadowMaster::IOnCastMsg(plShadowCastMsg* castMsg)
 
 plLightInfo* plShadowMaster::ISetLightInfo()
 {
-    fLightInfo = nil;
+    fLightInfo = nullptr;
     plSceneObject* owner = IGetOwner();
     if( owner )
     {
@@ -289,12 +286,10 @@ plLightInfo* plShadowMaster::ISetLightInfo()
 void plShadowMaster::IComputeCasterBounds(const plShadowCaster* caster, hsBounds3Ext& casterBnd)
 {
     casterBnd.MakeEmpty();
-    const hsTArray<plShadowCastSpan>& castSpans = caster->Spans();
-    int i;
-    for( i = 0; i < castSpans.GetCount(); i++ )
+    for (const plShadowCastSpan& castSpan : caster->Spans())
     {
-        plDrawableSpans* dr = castSpans[i].fDraw;
-        uint32_t index = castSpans[i].fIndex;
+        plDrawableSpans* dr = castSpan.fDraw;
+        uint32_t index = castSpan.fIndex;
 
         // Right now, the generic world bounds seems close enough, even when skinned.
         // It gets a little off on the lower LODs, but, hey, they're the lower LODs.
@@ -308,14 +303,7 @@ void plShadowMaster::IComputeCasterBounds(const plShadowCaster* caster, hsBounds
 
 plShadowSlave* plShadowMaster::INextSlave(const plShadowCaster* caster)
 {
-    int iSlave = fSlavePool.GetCount();
-    fSlavePool.ExpandAndZero(iSlave+1);
-    plShadowSlave* slave = fSlavePool[iSlave];
-    if( !slave )
-    {
-        fSlavePool[iSlave] = slave = INewSlave(caster);
-    }
-    return slave;
+    return fSlavePool.next([this, caster] { return INewSlave(caster); }).get();
 }
 
 plShadowSlave* plShadowMaster::ICreateShadowSlave(plShadowCastMsg* castMsg, const hsBounds3Ext& casterBnd, float power)
@@ -359,8 +347,8 @@ plShadowSlave* plShadowMaster::ICreateShadowSlave(plShadowCastMsg* castMsg, cons
 
 plShadowSlave* plShadowMaster::IRecycleSlave(plShadowSlave* slave)
 {
-    fSlavePool.SetCount(fSlavePool.GetCount()-1);
-    return nil;
+    fSlavePool.pop_back();
+    return nullptr;
 }
 
 plShadowSlave* plShadowMaster::ILastChanceToBail(plShadowCastMsg* castMsg, plShadowSlave* slave)
@@ -419,7 +407,7 @@ plShadowSlave* plShadowMaster::ILastChanceToBail(plShadowCastMsg* castMsg, plSha
     dist /= maxDist - minDist;
     dist = 1.f - dist;
 
-    // If it's totally faded out, recycle the slave and return nil;
+    // If it's totally faded out, recycle the slave and return nullptr;
     if( dist <= 0 )
         return IRecycleSlave(slave);
 
@@ -525,8 +513,8 @@ void plShadowMaster::IComputeLUT(plShadowCastMsg* castMsg, plShadowSlave* slave)
     // least 0.5f/256.f to compensate for quantization.
 
     plConst(float) kSelfBias = 2.f / 256.f;
-    plConst(float) kOtherBias = -0.5 / 256.f;
 #if 0 // MF_NOSELF
+    plConst(float) kOtherBias = -0.5 / 256.f;
     lightToLut.fMap[0][3] += slave->HasFlag(plShadowSlave::kSelfShadow) ? kSelfBias : kOtherBias;
 #else // MF_NOSELF
     lightToLut.fMap[0][3] += kSelfBias;
@@ -550,757 +538,3 @@ void plShadowMaster::IComputeLUT(plShadowCastMsg* castMsg, plShadowSlave* slave)
     slave->fCastLUT = hack;
 #endif // MF_HACK_SKIPLUT
 }
-
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-// SOURCE CODE ENDS HERE!!!!
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-// Some notes from when I was working this out, in case I ever need to figure
-// out what I was thinking when I set this up.
-#if 0 // Notes
-
-
-
-MasterShadow
-
-On RenderMsg
-    
-    Harvest all shadow casters within influence from CullTree
-
-    Assign Shadow (shadow == plLightInfo) to each shadow caster
-
-        Ideally, we want a shadow caster to be a conceptual object
-        (like one Avatar), rather than individual spans. Shadow Group ID?
-
-    Each shadow renders it's caster into rendertarget, with:
-
-        ClearAlpha to 255 (alphatest will neutralize any texels not written to with shadowcaster)
-        ClearColor to 0 - then a blur will bleed black in, darkening edges, making for softer effect
-            around edge of image, which means a softer shadow.
-            
-
-        Camera Matrix is from=lightPos, at=casterCenter, up=lightUp
-
-        ViewTransform = framed around casterBnd
-
-        color = (camZ - nearPointOfCasterBound) / (lightYon - nearPointOfCasterBnd)
-        alpha = color
-
-    Add all active shadows to pipeline lights (or just enable them)
-
-    During render, if a shadow is affecting the current object, as a final pass:
-
-        T0 = texture from shadow renders caster (UV = projection of pos by shadow Xform
-        
-        T1 = LUT on vtxPos (same LUT as for color and alpha above).
-
-        Color = T1 - T0
-        Alpha = T1 - T0
-
-        Texture blend is Subtract (color and alpha)
-
-        FB AlphaTest = Greater
-        FB Blend = Mult
-
-    Gives a linear falloff of shadow intensity from nearPointOfCasterBnd to lightYon
-
-    Can be softened (just blur T0)
-
-
-    Big problem? On a two TMU system, we're screwed on alpha textures.
-
-    On a 3 (or greater) TMU system, we could:
-
-        // Select first texture
-        Stage0
-            Color/Alpha
-            Arg1 = T0
-            Op = SelectArg1
-
-        // Subtract first texture from second (T1 - T0)
-        Stage1
-            Color/Alpha
-            Arg1 = T1
-            Arg2 = Current
-            Op  = Subtract
-
-        // Add the complement of the orig texture's alpha to the color, so where the texture
-        // is transparent, we add 255 and neutralize the shadow, where texture is opaque we
-        // add 0 and process normally, and stuff in between.
-        Stage2
-            Color
-            Arg1 = Current
-            Arg2 = origTex | D3DTA_COMPLEMENT | D3DTA_ALPHAREPLICATE;
-            Op = Add
-
-                
-
-        Stage0  = T0
-        Stage1  = T1
-        Stage2  = Original texture
-
-        ColorOp0_1  = Subtract (T0 - T1, inverse of above)
-        ColorOp1_2  = Select Current
-
-        AlphaOp0_1  = Subtract (T0 - T1, inverse of above)
-        AlphaOp1_2  = Multiply (OrigTex.a * (T0 - T1))
-
-
-    Okay, time for the bonus round:
-
-        We have 4 cases;
-
-            a) 4 TMU system, base layer opaque
-            b) 4 TMU system, base layer has alpha (god help us on base layer has add)
-            c) 2 TMU system, base layer opaque
-            d) 2 TMU system, base layer has alpha
-
-        If the base layer is opaque, we can do Stage0 and Stage1 as above, whether
-            we have 2 or 4 TMU's at our disposal
-        If the base layer has alpha, and we have 4 TMU's, we can do the above
-        If the base layer has alpha and we have 2 TMU's, we skip it (early out in Apply)
-
-        So, we have the following set up (from above):
-
-            Stage0 = T0
-            Stage1 = T1, subtract
-            [Stage2 = origTex, add] - only if 4 TMU and origTex has alpha
-
-        In any case, we can add one more stage as long as it's just diffuse (we are
-            out of textures on 2 TMU system). So we use the diffuse to modulate the
-            effect as follows
-
-            Stage3
-                ColorArg1 = Diffuse
-                ColorArg2 = current | D3DTA_COMPLEMENT
-                ColorOp = Modulate
-
-                AlphaOp = Disable
-
-            The Diffuse contains the value by which to scale the effect, e.g. by SoftRegion
-                or artist input.
-
-            Now the alpha coming out is still fine (make sure you set up the alphatest),
-                but the color the inverse of what we want. That's okay, our framebuffer
-                blend now becomes
-
-                SrcBlend = ZERO
-                DstBlend = INVSRCCOLOR
-
-                That means we need to be sure to set the fog color to black
-
-    And that's that. Uh-huh.
-
-
-Shadow Plan 9
-
-classes:
-
-class plShadowCaster : public plMultiModifier
-{
-protected:
-    class plDrawSpan
-    {
-    public:
-        plDrawableSpans*    fDraw;
-        plSpan*             fSpan;
-        uint32_t              fIndex;
-    };
-
-    hsTArray<plDrawSpan> fSpans;
-
-    hsBounds3Ext        fTotalWorldBounds;
-    float            fMaxOpacity;
-
-
-    On RenderMsg
-    {
-        // Don't really like having to gather these guys up every frame,
-        // but with the avatar customization, it's all pretty volatile,
-        // subject to infrequent change, but change without warning.
-        // The number of actual targets (and hence shadow casting spans)
-        // for any ShadowCasterModifier should always be on the order of
-        // 10, so chances are we can get away with this. If not, we can
-        // figure some way of caching, like a broadcast message warning us
-        // that an avatar customization event has occurred.
-        ICollectSpans();
-
-        // Max opacity used to fade out shadows during link
-
-        //find max opacity of all spans
-        //clear shadowBits of all spans
-        float fMaxOpacity = 0.f;
-        int i;
-        for( i = 0; i < fSpans.GetCount(); i++ )
-        {
-            plLayer* baseLay = fSpans[i].fDraw->GetSubMaterial(fSpans[i].fSpan->fMaterialIdx)->GetLayer(0);
-            if( baseLay->GetOpacity() > maxOpacity )
-                fMaxOpacity = baseLay->GetOpacity();
-
-            fSpans[i].fSpan->ClearShadowBits();
-        }
-
-
-        if( fMaxOpacity > 0 )
-        {
-            Broadcast ShadowCastMsg containing
-                this (ShadowCaster)
-        }
-    }
-
-    void ICollectAllSpans()
-    {
-        fSpans.SetCount(0);
-        int i;
-        for( i = 0; i < GetNumTargets(); i++ )
-        {
-            plSceneObject* so = GetTarget(i);
-            // Nil target? Shouldn't happen.
-            if( so )
-            {
-                plDrawInterface* di = so->GetDrawInterface();
-                // Nil di- either it hasn't loaded yet, or we've been applied to something that isn't visible (oops).
-                if( di )
-                {
-                    int j;
-                    for( j = 0; j < di->GetNumDrawables(); j++ )
-                    {
-                        plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
-                        // Nil dr - it hasn't loaded yet.
-                        if( dr )
-                        {
-                            plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(j));
-                            if( !diIndex.IsMatrixOnly() )
-                            {
-                                int k;
-                                for( k = 0; k < diIndex.GetCount(); k++ )
-                                {
-                                    fSpans.Append(dr, dr->GetSpan(diIndex[k]), diIndex[k]);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-public:
-    plShadowCaster();
-    virtual ~plShadowCaster();
-
-    CLASSNAME_REGISTER( plShadowCaster );
-    GETINTERFACE_ANY( plShadowCaster, plMultiModifier );
-    
-    virtual bool IEval(double secs, float del, uint32_t dirty) {}
-
-    virtual bool MsgReceive(plMessage* msg);
-
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
-}
-
-class plShadowMaster
-{
-protected:
-    hsTArray<plShadowSlave*>        fSlavePool;
-
-    plVolumeIsect*                  fIsect;
-
-    float                        fAttenDist;
-
-    plSoftVolume*                   fSoftVolume;
-
-    virtual void IComputeWidthAndHeight(const hsBounds3Ext& bnd, plShadowSlave* slave) const = 0;
-    virtual void IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const = 0;
-    virtual void IComputeProjections(const hsBounds3Ext& bnd, plShadowSlave* slave) const = 0;
-    virtual void IComputeLUT(const hsBounds3Ext& bnd, plShadowSlave* slave) const = 0;
-    virtual void IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* slave) const = 0;
-    virtual void IComputeBounds(const hsBounds3Ext& bnd, plShadowSlave* slave) const = 0;
-
-    // Override if you want to attenuate (e.g. dist for omni, cone angle for spot).
-    // But make sure you factor in base class power.
-    virtual float IComputePower(const plShadowCaster* caster);
-
-public:
-    plVolumeIsect* GetIsect() const { return fIsect; }
-
-    bool CanSee(const hsBounds3Ext& bnd)
-    {
-        switch( fType )
-        {
-        case kSpot:
-            return GetIsect().Test(bnd) != kVolumeCulled;
-        case kDirectional:
-            return true;
-        case kLtdDirection:
-            return GetIsect().Test(bnd) != kVolumeCulled;
-        case kOmni:
-            return GetIsect().Test(bnd) != kVolumeCulled;
-        default:
-            return false;
-        }
-    }
-
-    virtual void CreateShadowSlave(const hsBounds3Ext& bnd, float power)
-    {
-        int iSlave = fSlavePool.GetCount();
-        fSlavePool.ExpandAndZero(iSlave+1);
-        plShadowSlave* slave = fSlavePool[iSlave];
-        if( !slave )
-        {
-            fSlavePool[iSlave] = slave = new plShadowSlave;
-            fISectPool[iSlave] = INewISect();
-        }
-
-        slave.SetIndex(iSlave); // To be used in not shadowing our own casters
-
-        slave->fPower = power;
-
-        IComputeWidthAndHeight(bnd, slave);
-
-        IComputeWorldToLight(bnd, slave);
-
-        IComputeProjections(bnd, slave);
-
-        IComputeLUT(bnd, slave);
-
-        IComputeISect(bnd, slave, iSlave);
-
-        IComputeBounds(bnd, slave);
-    }
-};
-
-// compute ShadowSlave power influenced by SoftRegion and ShadowCaster.fMaxOpacity;
-float plShadowMaster::ComputePower(const plShadowCaster* caster)
-{
-    float power = caster->fMaxOpacity;
-    if( fSoftVolume )
-    {
-        power *= fSoftVolume->GetStrength(caster->fTotalWorldBounds.GetCenter());
-    }
-    return power;
-}
-
-class OmniShadowMaster : public plShadowMaster
-{
-protected:
-    hsTArray<plVolumeIsect*>        fIsectPool;
-
-    virtual void IComputeWidthAndHeight(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
-    virtual void IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
-    virtual void IComputeProjections(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
-    virtual void IComputeLUT(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
-    virtual void IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
-    virtual void IComputeBounds(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
-};
-
-void plOmniShadowMaster::IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const
-{
-    hsPoint3 from = fPosition;
-    hsPoint3 at = bnd.GetCenter();
-    hsVector3 up = fLastUp;
-    if( (up % (at - from)).MagnitudeSqaured() < kMinMag )
-    {
-        up.Set(0, 1.f, 0);
-        if( (up % (at - from)).MagnitudeSqaured() < kMinMag )
-        {
-            up.Set(0, 0, 1.f);
-        }
-        fLastUp = up;
-    }
-    slave->fWorldToLight.MakeCamera(&from, &at, &up);
-}
-
-void plOmniShadowMaster::IComputeProjections(const hsBounds3Ext& wBnd, plShadowSlave* slave) const
-{
-    hsBounds3Ext bnd = wBnd;
-    bnd.Transform(slave->fWorldToLight);
-
-    float minZ = bnd.GetMins().fZ;
-    float maxZ = bnd.GetCenter().fZ + fAttenDist;
-
-    if( minZ < kMinMinZ )
-        minZ = kMinMinZ;
-
-    float cotX, cotY;
-    if( -bnd.GetMins().fX > bnd.GetMaxs().fX )
-    {
-        hsAssert(bnd.GetMins().fX < 0, "Empty shadow caster bounds?");
-        cotX = -minZ / bnd.GetMins().fX;
-    }
-    else
-    {
-        hsAssert(bnd.GetMaxs().fX > 0, "Empty shadow caster bounds?");
-        cotX = minZ / bnd.GetMaxs().fX;
-    }
-
-    if( -bnd.GetMins().fY > bnd.GetMaxs().fY )
-    {
-        hsAssert(bnd.GetMins().fY < 0, "Empty shadow caster bounds?");
-        cotY = -minZ / bnd.GetMins().fY;
-    }
-    else
-    {
-        hsAssert(bnd.GetMaxs().fY > 0, "Empty shadow caster bounds?");
-        cotY = minZ / bnd.GetMaxs().fY;
-    }
-
-
-    hsMatrix44 proj;
-    proj.Reset();
-    proj.NotIdentity();
-
-    // First the LightToTexture, which uses the above pretty much as is.
-    // Note the remapping to range [0.5..width-0.5] etc. Also, the perspective
-    // divide is by the 3rd output (not the fourth), so we make the 3rd
-    // output be W (instead of Z).
-    proj.fMap[0][0] = cotX * 0.5f;
-    proj.fMap[0][3] = 0.5f * (1.f + 1.f/slave->fWidth);
-    proj.fMap[1][1] = -cotY * 0.5f;
-    proj.fMap[1][3] = 0.5f * (1.f + 1.f/slave->fHeight);
-#if 0 // This computes correct Z, but we really just want W in 3rd component.
-    proj.fMap[2][2] = maxZ / (maxZ - minZ);
-    proj.fMap[2][3] = minZ * maxZ / (maxZ - minZ);
-#else
-    proj.fMap[2][2] = 1.f;
-    proj.fMap[2][3] = 0;
-#endif
-    proj.fMap[3][3] = 0;
-    proj.fMap[3][2] = 1.f;
-
-    slave->fLightToTexture = proj;
-    slave->fCameraToTexture = slave->fLightToTexture * slave->fWorldToLight * pipe->GetCameraToWorld();
-
-    // Now the LightToNDC. This one's a little trickier, because we want to compensate for
-    // having brought in the viewport to keep our border constant, so we can clamp the 
-    // projected texture and not have the edges smear off to infinity.
-    cotX -= cotX / (slave->fWidth * 0.5f);
-    cotY -= cotY / (slave->fHeight * 0.5f);
-
-    proj.fMap[0][0] = cotX;
-    proj.fMap[0][3] = 0.f;
-    proj.fMap[1][1] = cotY;
-    proj.fMap[1][3] = 0.f;
-    proj.fMap[2][2] = maxZ / (maxZ - minZ);
-    proj.fMap[2][3] = minZ * maxZ / (maxZ - minZ);
-    proj.fMap[3][3] = 0;
-    proj.fMap[3][2] = 1.f;
-
-    slave->fLightToNDC = proj;
-}
-
-class plShadowSlave
-{
-public:
-
-    hsMatrix44          fWorldToLight;
-    hsMatrix44          fLightToNDC;
-    hsMatrix44          fLightToTexture;
-    hsMatrix44          fCastLUT;
-    hsMatrix44          fRcvLUT;
-
-    float            fPower;
-
-    plVolumeIsect*      fISect;
-
-    uint32_t              fWidth;
-    uint32_t              fHeight;
-};
-
-BeginScene (on EvalMsg?)
-{
-    ShadowMasters ClearShadowSlaves(); // fSlavePool.SetCount(0); fISectPool.SetCount(0);
-}
-
-EndScene
-{
-    pipeline->ClearShadowSlaves();
-}
-
-Harvest
-{
-    ShadowMasters wait for ShadowCastMsg broadcast
-
-    On ShadowCastMsg
-
-        if( !ShadowMaster.CanSee(ShadowCaster.fTotalWorldBounds) )
-            forget it;
-
-        float power = ComputePower(ShadowCaster);
-
-        if( power == 0 )
-            forget it;
-
-        // Create ShadowSlave focused on ShadowCaster
-        // ShadowSlave extent just enough to cover ShadowCaster (including nearplane)
-        CreateShadowSlave(ShadowCaster.fTotalWorldBounds, power);
-
-        // !!!IMPORTANT
-        // ShadowMaster contains 2 values for yon.
-        // First value applies to ShadowMaster. Any ShadowCaster beyond this distance
-        //      won't cast a shadow
-        // Second value applies to ShadowSlaves. This is the distance beyond the ShadowCaster
-        //      (NOT FROM SHADOW SOURCE) over which the shadow attenuates to zero
-        // The effective yon for the ShadowSlave is ShadowSlaveYon + DistanceToFarthestPointOnShadowCasterBound
-        //      That's the distance used for culling ShadowReceivers
-        // The ShadowSlaveYon is used directly in the 
-
-        if ShadowSlave extent not visible to current camera
-            forget it;
-
-        ShadowSlave.Generate
-
-        Submit to pipeline
-
-    endOnMsg
-
-    endfor
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
-Pipeline functions
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-// Puts the slave in a list valid for this frame only. The list will
-// be preprocessed at BeginRender. See IPreprocessShadows.
-void SubmitShadowSlave(plShadowSlave* slave);
-
-// rendering all the associated spans into
-// a rendertarget of the correct size
-
-// We have a (possibly empty) list of shadows submitted for this frame.
-// At BeginRender, we need to accomplish:
-//  Find render targets for each shadow request of the requested size.
-//  Render the associated spans into the render targets. Something like the following:
-void IPreprocessShadows()
-{
-
-    SetupShadowCastTextureStages - see below
-
-    for each shadowCaster.fSpans
-    {
-        render shadowcaster.fSpans[i] to rendertarget
-
-        shadowCaster.fSpans[i]->SetShadowBit(shadowCaster.fIndex); //index set in CreateShadowSlave
-    }
-
-    Blur rendertarget (optional);
-
-    // Must ensure we have an alpha border of 255 (for clamping the effect)
-    //SetBorderTo255(); we don't have to do this if we can set the viewport
-    // to leave a border and compensate the fov so LightToNDC and LightToTexture match up.
-}
-
-// After doing the usual render for a span (all passes), we call the following.
-// If the span accepts shadows, this will loop over all the shadows active this
-// frame, and apply the ones that intersect this spans bounds. See below for details.
-void IRenderSpanShadows();
-
-// At EndRender(), we need to clear our list of shadow slaves. They are only valid for one frame.
-void IClearShadowSlaves();
-
-// We don't have the depth resolution to even think about self shadowing, so we just don't
-// let a slave shadow any of the spans that were rendered into it.
-bool AcceptsShadow(plSpan* span, plShadowSlave* slave)
-{
-    return !span->IsShadowBitSet(slave->fIndex);
-}
-
-// Want artists to be able to just disable shadows for spans where they'll either
-// look goofy, or won't contribute.
-// Also, if we have less than 3 simultaneous textures, we want to skip anything with
-// an alpha'd base layer, unless it's been overriden.
-bool ReceivesShadows(plSpan* span, hsGMaterial* mat)
-{
-    if( span.fProps & plSpan::kPropNoShadow )
-        return false;
-
-    if( span.Props & plSpan::kPropForceShadow )
-        return true;
-
-    if( (fMaxLayersAtOnce < 3) && (mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha) )
-        return false;
-
-    return true;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-SetBorderTo255()
-{
-    Set FB blend to Add;
-
-    render a texture the same size as the render target to the render target
-    as a single quad. Texture has black as color, 0 as alpha except the border
-    which is black with alpha=255.
-}
-
-Apply
-{
-    render all passes of span
-
-    if( ShadowSlaveListNotEmpty() )
-        RenderSpanShadows
-}
-
-RenderSpanShadows
-{
-    bool first = true;
-    if receivesShadows(span)
-    {
-        for each ShadowSlave
-        {
-
-            if AcceptsShadow(span, ShadowSlave) && (ShadowSlave->fIsect->Test(span.fBounds) != kVolumeCulled)
-            {
-                if( first )
-                {
-                    SetupShadowRcvTextureStages();
-                    first = false;
-                }
-
-                SetupShadowSlaveTextures()
-
-                render span
-
-            }
-        }
-    }
-}
-
-SetupShadowSlaveTextures()
-{
-    // See below
-}
-
-TRANSFORMS
-==========
-
-Summary -
-    ShadowSlave.W2Light - world space to space of shadow slave
-    ShadowSlave.Light2W - unused
-
-    ShadowSlave.LightToNDC - normal projection matrix, maps to 
-        [-1,1], [-1,1], [0,1] (after divide)
-        AND
-        has fov decreased slightly to compensate for the viewport being
-            brought down to preserve the border
-
-    ShadowSlave.LightToTexture - like LightToNDC, but maps to
-        [0.5 / width, 1 - 0.5/width], [0.5/height, 1 - 0.5/height, [0,1]
-        fov NOT brought down for border
-
-    ShadowSlave.CameraToTexture = ShadowSlave.LightToTexture * ShadowSlave.W2Light * pipe->GetCameraToWorld();
-
-    ShadowSlave.CasterLUTXfm - see below
-
-    ShadowSlave.ViewPort = {1, 1, width-2, height-2, 0, 1}
-
-To Compensate FOV for border
-{
-    if( perspective ) // spots and omnis
-    {
-        delX = fovX / (txtWidth/2);
-        delY = fovY / (txtHeight/2);
-        fovX -= delX;
-        fovY -= delY;
-    }
-    else // directional
-    {
-        delX = width / (txtWidth/2);
-        delY = height / (txtHeight/2);
-
-        minX += delX;
-        minY += delY;
-        maxX -= delX;
-        maxY -= delY;
-    }
-}
-
-To Render ShadowCaster
-{
-    render transform to ShadowSlave.W2Light * ShadowCaster.L2W
-
-    projection transform to ShadowSlave.LightToNDC
-
-    viewPort to ShadowSlave.ViewPort
-
-    Stage0 -
-        UVWSrc = CameraSpacePos
-
-        UVWXfm = ShadowSlave.CasterLUTXfm * ShadowSlave.W2L * CameraToWorld
-
-        Texture = U_LUT
-
-    Stage1 -
-        Disable
-}
-
-ShadowSlave.LUTXfm
-{
-    // Map 0 => (closest = CasterBnd.Closest), 1 => (CasterBnd.Closest + FalloffDist = farthest)
-    0.0, 0.0, 1/(farthest - closest), -closest / (farthest - closest),
-    0.0, 0.0, 0.0, 0.0,
-    0.0, 0.0, 0.0, 0.0,
-    0.0, 0.0, 0.0, 0.0,
-
-    // FOR CASTER ONLY
-    // Can put bias here if needed (probably) by adding small NEGATIVE
-    // bias to ShadowSlave.LUTXfm.fMap[0][3]. Bias magnitude would probably be at
-    // least 0.5f/256.f to compensate for quantization.
-}
-
-To Project onto Shadow Receiver // SetupShadowSlaveTexture
-{
-    render transform = current;
-    project transform = current;
-    viewport = current;
-
-    Stage0 - 
-        UVWSrc = CameraSpacePos
-
-        UVWXfm = ShadowSlave.LightToTexture * ShadowSlave.W2L * CameraToWorld
-
-        Texture = ShadowMap
-
-    Stage1 -
-        UVWSrc = CameraSpacePos
-
-        UVWXfm = ShadowSlave.RcvLUTXfm * ShadowSlave.W2L * CameraToWorld
-
-        Texture = U_LUT
-
-    [ // Optional for when have > 2 TMUs AND base texture is alpha
-    Stage2 -
-        Process base texture normally normally
-    ]
-    Stage2/3
-        No texture - setup as in ShadowNotes.h
-}
-
-ShadowSlave.Offset
-{
-    Offset =
-    {
-        0.5, 0.0, 0.0, 0.5 + 0.5 * ShadowSlave.Width,
-        0.0, 0.5, 0.0, 0.5 + 0.5 * ShadowSlave.Height,
-        0.0, 0.0, 1.0, 0.0,
-        0.0, 0.0, 0.0, 1.0
-    }
-}
-
-#endif // Notes

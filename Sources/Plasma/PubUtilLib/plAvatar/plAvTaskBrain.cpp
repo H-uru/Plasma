@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // CTOR default
 plAvTaskBrain::plAvTaskBrain()
-: fBrain(nil)
+: fBrain()
 {
 }
 
@@ -82,7 +82,7 @@ bool plAvTaskBrain::Start(plArmatureMod *avatar, plArmatureBrain *brain, double 
     else
         avatar->PopBrain();
 
-    fBrain = nil; // We've passed it on the the avatar, set our pointer to nil so we don't destroy it
+    fBrain = nullptr; // We've passed it on the the avatar, set our pointer to nullptr so we don't destroy it
     
     return true;
 }
@@ -96,11 +96,10 @@ void plAvTaskBrain::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double
 // ----------
 void plAvTaskBrain::DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt)
 {
-    if(fBrain)
-    {
-        debugTxt.DrawString(x, y, "Brain task -- Push New Brain.");
+    if (fBrain) {
+        debugTxt.DrawString(x, y, ST_LITERAL("Brain task -- Push New Brain."));
     } else {
-        debugTxt.DrawString(x, y, "Brain task -- Pop Current Brain.");
+        debugTxt.DrawString(x, y, ST_LITERAL("Brain task -- Pop Current Brain."));
     }
     y += lineHeight;
 }
@@ -108,7 +107,7 @@ void plAvTaskBrain::DumpDebug(const char *name, int &x, int&y, int lineHeight, p
 
 // GetBrain ------------------------
 // ---------
-plArmatureBrain *plAvTaskBrain::GetBrain()
+plArmatureBrain* plAvTaskBrain::GetBrain() const
 {
     return fBrain;
 }

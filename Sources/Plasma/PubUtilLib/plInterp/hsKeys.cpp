@@ -94,13 +94,13 @@ bool hsBezPoint3Key::CompareValue(hsBezPoint3Key *key)
 void hsScalarKey::Read(hsStream *stream)
 {
     fFrame = stream->ReadLE16();
-    fValue = stream->ReadLEScalar();
+    fValue = stream->ReadLEFloat();
 }
 
 void hsScalarKey::Write(hsStream *stream)
 {
     stream->WriteLE16(fFrame);
-    stream->WriteLEScalar(fValue);
+    stream->WriteLEFloat(fValue);
 }
 
 bool hsScalarKey::CompareValue(hsScalarKey *key)
@@ -111,17 +111,17 @@ bool hsScalarKey::CompareValue(hsScalarKey *key)
 void hsBezScalarKey::Read(hsStream *stream)
 {
     fFrame = stream->ReadLE16();
-    fInTan  = stream->ReadLEScalar();
-    fOutTan = stream->ReadLEScalar();
-    fValue  = stream->ReadLEScalar();
+    fInTan  = stream->ReadLEFloat();
+    fOutTan = stream->ReadLEFloat();
+    fValue  = stream->ReadLEFloat();
 }
 
 void hsBezScalarKey::Write(hsStream *stream)
 {
     stream->WriteLE16(fFrame);
-    stream->WriteLEScalar(fInTan);
-    stream->WriteLEScalar(fOutTan);
-    stream->WriteLEScalar(fValue);
+    stream->WriteLEFloat(fInTan);
+    stream->WriteLEFloat(fOutTan);
+    stream->WriteLEFloat(fValue);
 }
 
 bool hsBezScalarKey::CompareValue(hsBezScalarKey *key)
@@ -150,7 +150,7 @@ bool hsQuatKey::CompareValue(hsQuatKey *key)
 
 //////////////////////////////////////////////////////////////////////////////
 
-const float hsCompressedQuatKey32::kOneOverRootTwo = 0.70710678;
+const float hsCompressedQuatKey32::kOneOverRootTwo = 0.70710678f;
 const float hsCompressedQuatKey32::k10BitScaleRange = 1023 / (2 * kOneOverRootTwo);
 
 void hsCompressedQuatKey32::Read(hsStream *stream)
@@ -290,7 +290,7 @@ void hsCompressedQuatKey32::GetQuat(hsQuat &q)
 
 /////////////////////////////////////////////////////////////////////////////
 
-const float hsCompressedQuatKey64::kOneOverRootTwo = 0.70710678;
+const float hsCompressedQuatKey64::kOneOverRootTwo = 0.70710678f;
 const float hsCompressedQuatKey64::k20BitScaleRange = 1048575 / (2 * kOneOverRootTwo);
 const float hsCompressedQuatKey64::k21BitScaleRange = 2097151 / (2 * kOneOverRootTwo);
 
@@ -534,7 +534,7 @@ void hsMatrix33Key::Read(hsStream *stream)
     int32_t i,j;
     for(i=0;i<3;i++)
         for(j=0;j<3;j++)
-            fValue.fMap[j][i] = stream->ReadLEScalar();
+            fValue.fMap[j][i] = stream->ReadLEFloat();
 }
 
 void hsMatrix33Key::Write(hsStream *stream)
@@ -543,7 +543,7 @@ void hsMatrix33Key::Write(hsStream *stream)
     int32_t i,j;
     for(i=0;i<3;i++)
         for(j=0;j<3;j++)
-            stream->WriteLEScalar(fValue.fMap[j][i]);
+            stream->WriteLEFloat(fValue.fMap[j][i]);
 }
 
 bool hsMatrix33Key::CompareValue(hsMatrix33Key *key)

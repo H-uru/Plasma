@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimEaseTypes.h"
 #include "plAnimTimeConvert.h"
 
+#include "hsStream.h"
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 plATCEaseCurve *plATCEaseCurve::CreateEaseCurve(uint8_t type, float minLength, float maxLength, float length, 
@@ -54,7 +56,7 @@ plATCEaseCurve *plATCEaseCurve::CreateEaseCurve(uint8_t type, float minLength, f
     if (type == plAnimEaseTypes::kSpline)
         return new plSplineEaseCurve(minLength, maxLength, length, startSpeed, goalSpeed);
 
-    return nil;
+    return nullptr;
 }
 
 void plATCEaseCurve::RecalcToSpeed(float startSpeed, float goalSpeed, bool preserveRate /* = false */)
@@ -121,11 +123,11 @@ void plATCEaseCurve::Read(hsStream *s, hsResMgr *mgr)
 {
     plCreatable::Read(s, mgr);
 
-    fMinLength = s->ReadLEScalar();
-    fMaxLength = s->ReadLEScalar();
-    fNormLength = fLength = s->ReadLEScalar();
-    fStartSpeed = s->ReadLEScalar();
-    fSpeed = s->ReadLEScalar();
+    fMinLength = s->ReadLEFloat();
+    fMaxLength = s->ReadLEFloat();
+    fNormLength = fLength = s->ReadLEFloat();
+    fStartSpeed = s->ReadLEFloat();
+    fSpeed = s->ReadLEFloat();
     fBeginWorldTime = s->ReadLEDouble();
 }
 
@@ -133,11 +135,11 @@ void plATCEaseCurve::Write(hsStream *s, hsResMgr *mgr)
 {
     plCreatable::Write(s, mgr);
 
-    s->WriteLEScalar(fMinLength);
-    s->WriteLEScalar(fMaxLength);
-    s->WriteLEScalar(fNormLength);
-    s->WriteLEScalar(fStartSpeed);
-    s->WriteLEScalar(fSpeed);
+    s->WriteLEFloat(fMinLength);
+    s->WriteLEFloat(fMaxLength);
+    s->WriteLEFloat(fNormLength);
+    s->WriteLEFloat(fStartSpeed);
+    s->WriteLEFloat(fSpeed);
     s->WriteLEDouble(fBeginWorldTime);
 }
 
@@ -303,14 +305,13 @@ float plSplineEaseCurve::TimeGivenVelocity(float velocity) const
     if (D >= 0) 
     {   
         // 3 roots, find the one in the range [0, 1]
-        const float pi = 3.14159;
-        double theta = acos(R / sqrt(Q3));
+        double theta = (float)acos(double(R / sqrt(Q3)));
         double sqrtQ = sqrt(Q);
 
-        root = (float)(-2 * sqrtQ * cos((theta + 4 * pi) / 3) - c / 3); // Middle root, most likely to match
+        root = (float)(-2 * sqrtQ * cos((theta + 4 * hsConstants::pi<float>) / 3) - c / 3); // Middle root, most likely to match
         if (root < 0.f || root > 1.f)
         {
-            root = (float)(-2 * sqrtQ * cos((theta + 2 * pi) / 3) - c / 3); // Lower root
+            root = (float)(-2 * sqrtQ * cos((theta + 2 * hsConstants::pi<float>) / 3) - c / 3); // Lower root
             if (root < 0.f || root > 1.f)
             {
                 root = (float)(-2 * sqrtQ * cos(theta / 3) - c / 3); // Upper root
@@ -347,19 +348,13 @@ void plSplineEaseCurve::Read(hsStream *s, hsResMgr *mgr)
 {
     plATCEaseCurve::Read(s, mgr);
 
-    fCoef[0] = s->ReadLEScalar();
-    fCoef[1] = s->ReadLEScalar();
-    fCoef[2] = s->ReadLEScalar();
-    fCoef[3] = s->ReadLEScalar();
+    s->ReadLEFloat(std::size(fCoef), fCoef);
 }
 
 void plSplineEaseCurve::Write(hsStream *s, hsResMgr *mgr)
 {
     plATCEaseCurve::Write(s, mgr);
 
-    s->WriteLEScalar(fCoef[0]);
-    s->WriteLEScalar(fCoef[1]);
-    s->WriteLEScalar(fCoef[2]);
-    s->WriteLEScalar(fCoef[3]);
+    s->WriteLEFloat(std::size(fCoef), fCoef);
 }
 

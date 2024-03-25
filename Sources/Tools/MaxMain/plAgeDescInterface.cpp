@@ -41,13 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "hsStream.h"
-#include "hsTemplates.h"
-#include "hsWindows.h"
 
-#include <max.h>
+#include "MaxAPI.h"
 
 #include "resource.h"
-#pragma hdrstop
 
 #include "plAgeDescInterface.h"
 
@@ -77,7 +74,7 @@ public:
     jvUniqueId fAssetID;
 #endif
     plFileName  fPath;
-    plString    fAgeName;
+    ST::string  fAgeName;
 
     enum Types
     {
@@ -103,8 +100,8 @@ public:
 
 //// Static Tree Helpers //////////////////////////////////////////////////////
 
-static HTREEITEM    SAddTreeItem( HWND hTree, HTREEITEM hParent, const char *label, int userData );
-static int  SGetTreeData( HWND tree, HTREEITEM item );
+static HTREEITEM    SAddTreeItem( HWND hTree, HTREEITEM hParent, const TCHAR* label, int userData );
+static LPARAM  SGetTreeData(HWND tree, HTREEITEM item);
 
 static void     RemovePageItem( HWND listBox, int item )
 {
@@ -115,7 +112,7 @@ static void     RemovePageItem( HWND listBox, int item )
 
 //// Dummy Dialog Proc ////////////////////////////////////////////////////////
 
-BOOL CALLBACK DumbDialogProc( HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR CALLBACK DumbDialogProc( HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam )
 {
     switch( msg )
     {
@@ -129,11 +126,11 @@ BOOL CALLBACK DumbDialogProc( HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 
 //// Constructor/Destructor ///////////////////////////////////////////////////
 
-plAgeDescInterface::plAgeDescInterface() : fhDlg(nil), fDirty(false), fSpin(nil), fCurAge(-1)
+plAgeDescInterface::plAgeDescInterface() : fhDlg(), fDirty(), fSpin(), fCurAge(-1)
 {
     fCurrAgeCheckedOut = false;
-    fBoldFont = nil;
-    fAssetManIface = nil;
+    fBoldFont = nullptr;
+    fAssetManIface = nullptr;
 
     // Make sure the date/time picker controls we need are initialized
     INITCOMMONCONTROLSEX icc;
@@ -148,11 +145,11 @@ plAgeDescInterface::~plAgeDescInterface()
 
     DeleteObject( fBoldFont );
     DeleteObject( fHiliteBrush );
-    fBoldFont = nil;
+    fBoldFont = nullptr;
 
 #ifdef MAXASS_AVAILABLE
     delete fAssetManIface;
-    fAssetManIface = nil;
+    fAssetManIface = nullptr;
 #endif
 }
 
@@ -176,12 +173,12 @@ void plAgeDescInterface::Open()
     }
 }
 
-BOOL CALLBACK plAgeDescInterface::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK plAgeDescInterface::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     return Instance().DlgProc(hDlg, msg, wParam, lParam);
 }
 
-BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -189,23 +186,23 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
         fhDlg = hDlg;
 
 #ifdef MAXASS_AVAILABLE
-        if( fAssetManIface == nil )
+        if (fAssetManIface == nullptr && !plMaxConfig::AssetManInterfaceDisabled())
             fAssetManIface = new MaxAssBranchAccess();
 #endif
 
         // Make our bold font by getting the normal font and bolding
-        if( fBoldFont == nil )
+        if (fBoldFont == nullptr)
         {
             HFONT origFont = (HFONT)SendMessage( hDlg, WM_GETFONT, 0, 0 );
-            LOGFONT origInfo, newInfo;
-            GetObject( origFont, sizeof( origInfo ), &origInfo );
+            LOGFONTA origInfo, newInfo;
+            GetObjectA( origFont, sizeof( origInfo ), &origInfo );
             memcpy( &newInfo, &origInfo, sizeof( newInfo ) );
             newInfo.lfWeight = FW_BOLD;
 
-            fBoldFont = CreateFontIndirect( &newInfo );
+            fBoldFont = CreateFontIndirectA( &newInfo );
         }
 
-        if( fHiliteBrush == nil )
+        if (fHiliteBrush == nullptr)
             fHiliteBrush = CreateSolidBrush( RGB( 255, 0, 0 ) );
 
         IInitControls();
@@ -215,7 +212,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
     case WM_DESTROY:
 #ifdef MAXASS_AVAILABLE
         delete fAssetManIface;
-        fAssetManIface = nil;
+        fAssetManIface = nullptr;
 #endif
         return TRUE;
 
@@ -232,7 +229,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
 
     case WM_CLOSE:
         ::SendMessage( fhDlg, WM_COMMAND, IDOK, 0 );
-        return true;
+        return TRUE;
 
     case WM_COMMAND:
         switch (LOWORD(wParam))
@@ -241,14 +238,12 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
         case IDCANCEL:
             if( IMakeSureCheckedIn() )
             {
-#ifdef MAXASS_AVAILABLE
                 IUpdateCurAge();
-#endif
                 DestroyWindow(fhDlg);
-                fhDlg = nil;
+                fhDlg = nullptr;
                 fDirty = false;
                 fCurAge = -1;
-                fSpin = nil;
+                fSpin = nullptr;
             }
             return TRUE;
 
@@ -334,7 +329,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
             // Ask the user to make sure they really want to do this
             if( GetAsyncKeyState( VK_SHIFT ) & (~1) )
             {
-                if( MessageBox( hDlg, "Are you sure you wish to reassign the sequence prefix for this age?", "WARNING", MB_YESNO | MB_ICONEXCLAMATION ) == IDYES )
+                if( plMaxMessageBox( hDlg, _T("Are you sure you wish to reassign the sequence prefix for this age?"), _T("WARNING"), MB_YESNO | MB_ICONEXCLAMATION ) == IDYES )
                 {
                     int32_t prefix = (int32_t)IGetNextFreeSequencePrefix( IsDlgButtonChecked( hDlg, IDC_RSVDCHECK ) );
                     fSeqPrefixSpin->SetValue( ( prefix >= 0 ) ? prefix : -prefix, false );
@@ -343,9 +338,9 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
             }
             else
             {
-                if( MessageBox( hDlg, "Editing the registry data for an age can be extremely dangerous and "
+                if( plMaxMessageBox( hDlg, _T("Editing the registry data for an age can be extremely dangerous and "
                                     "can cause instabilities and crashes, particularly with multiplayer. "
-                                    "Are you sure you want to do this?", "WARNING", MB_YESNO | MB_ICONEXCLAMATION ) == IDYES )
+                                    "Are you sure you want to do this?"), _T("WARNING"), MB_YESNO | MB_ICONEXCLAMATION ) == IDYES )
                 {
                     // Enable the controls
                     EnableWindow( GetDlgItem( hDlg, IDC_RSVDCHECK ), TRUE );
@@ -362,13 +357,14 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
         case IDC_BRANCHCOMBO:
             if( HIWORD( wParam ) == CBN_SELCHANGE )
             {
-                int idx = SendDlgItemMessage( hDlg, IDC_BRANCHCOMBO, CB_GETCURSEL, 0, 0 );
+                int idx = (int)SendDlgItemMessage( hDlg, IDC_BRANCHCOMBO, CB_GETCURSEL, 0, 0 );
                 if( idx != CB_ERR )
                 {
-                    int id = SendDlgItemMessage( hDlg, IDC_BRANCHCOMBO, CB_GETITEMDATA, idx, 0 );
+                    int id = (int)SendDlgItemMessage( hDlg, IDC_BRANCHCOMBO, CB_GETITEMDATA, idx, 0 );
 
 #ifdef MAXASS_AVAILABLE
-                    fAssetManIface->SetCurrBranch( id );
+                    if (fAssetManIface)
+                        fAssetManIface->SetCurrBranch(id);
 #endif
                     IFillAgeTree();
                 }
@@ -433,14 +429,14 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
                     if( treeNotify->nmcd.dwDrawStage == CDDS_PREPAINT )
                     {
                         // Sent at the start of redraw, lets us request more specific notifys
-                        SetWindowLong( hDlg, DWL_MSGRESULT, CDRF_NOTIFYITEMDRAW );
+                        SetWindowLongPtr(hDlg, DWLP_MSGRESULT, CDRF_NOTIFYITEMDRAW);
                         return TRUE;
                     }
                     else if( treeNotify->nmcd.dwDrawStage == CDDS_ITEMPREPAINT )
                     {
                         // Prepaint on an item. We get to change item font and color here
-                        int idx = SGetTreeData( hdr->hwndFrom, (HTREEITEM)treeNotify->nmcd.dwItemSpec );
-/*                      if( item == nil || item->fType != plAgeFile::kBranch )
+                        LPARAM idx = SGetTreeData(hdr->hwndFrom, (HTREEITEM)treeNotify->nmcd.dwItemSpec);
+/*                      if (item == nullptr || item->fType != plAgeFile::kBranch)
                         {
                             // Default drawing, with default font and such
                             SetWindowLong( hDlg, DWL_MSGRESULT, CDRF_DODEFAULT );
@@ -457,12 +453,12 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
                         if (idx == -1)
                         {
                             // Set a bold font for the branch headers
-                            if( fBoldFont != nil )
+                            if (fBoldFont != nullptr)
                                 SelectObject( treeNotify->nmcd.hdc, fBoldFont );
                         }
 
                         // Let Windows know we changed the font
-                        SetWindowLong( hDlg, DWL_MSGRESULT, CDRF_NEWFONT );
+                        SetWindowLongPtr(hDlg, DWLP_MSGRESULT, CDRF_NEWFONT);
                         return TRUE;
                     }
                     else
@@ -471,7 +467,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
                 }
                 else if( hdr->code == TVN_SELCHANGING )
                 {
-                    SetWindowLong( hDlg, DWL_MSGRESULT, !IMakeSureCheckedIn() );
+                    SetWindowLongPtr(hDlg, DWLP_MSGRESULT, !IMakeSureCheckedIn());
                     return TRUE;
                 }
                 else if( hdr->code == TVN_SELCHANGED )
@@ -534,13 +530,13 @@ void plAgeDescInterface::ICheckedPageFlag(int ctrlID)
     }
 }
 
-void    plAgeDescInterface::ICheckOutCurrentAge( void )
+void    plAgeDescInterface::ICheckOutCurrentAge()
 {
 #ifdef MAXASS_AVAILABLE
     hsAssert( !fCurrAgeCheckedOut, "Trying to re-check out an age!" );
 
     plAgeFile *currAge = IGetCurrentAge();
-    if( currAge == nil )
+    if (currAge == nullptr)
     {
         hsAssert( false, "How are you checking out an age if none is selected?" );
         return;
@@ -553,7 +549,12 @@ void    plAgeDescInterface::ICheckOutCurrentAge( void )
     bool checkOutSuccess = (*fAssetManIface)->CheckOutAsset( currAge->fAssetID, fCheckedOutPath, sizeof( fCheckedOutPath ) );
     if( !checkOutSuccess )
     {
-        hsMessageBox( "Unable to check out age file from AssetMan. Most likely somebody already has it checked out.", "Error", hsMessageBoxNormal );
+        plMaxMessageBox(
+            nullptr,
+            _T("Unable to check out age file from AssetMan. Most likely somebody already has it checked out."),
+            _T("Error"),
+            MB_OK | MB_ICONERROR
+        );
         return;
     }
 #endif
@@ -566,13 +567,13 @@ void    plAgeDescInterface::ICheckOutCurrentAge( void )
     IEnableControls( true );
 }
 
-void    plAgeDescInterface::ICheckInCurrentAge( void )
+void    plAgeDescInterface::ICheckInCurrentAge()
 {
 #ifdef MAXASS_AVAILABLE
     hsAssert( fCurrAgeCheckedOut, "Trying to check in an age when none is checked out!" );
 
     plAgeFile *currAge = IGetCurrentAge();
-    if( currAge == nil )
+    if (currAge == nullptr)
     {
         hsAssert( false, "How are you checking in an age if none is selected?" );
         return;
@@ -590,13 +591,13 @@ void    plAgeDescInterface::ICheckInCurrentAge( void )
     IEnableControls( true );
 }
 
-void    plAgeDescInterface::IUndoCheckOutCurrentAge( void )
+void    plAgeDescInterface::IUndoCheckOutCurrentAge()
 {
 #ifdef MAXASS_AVAILABLE
     hsAssert( fCurrAgeCheckedOut, "Trying to undo check out an age when none is checked out!" );
 
     plAgeFile *currAge = IGetCurrentAge();
-    if( currAge == nil )
+    if (currAge == nullptr)
     {
         hsAssert( false, "How are you undoing a checkout if no age is selected?" );
         return;
@@ -614,20 +615,19 @@ void    plAgeDescInterface::IUndoCheckOutCurrentAge( void )
     IEnableControls( true );
 }
 
-void    plAgeDescInterface::IInvalidateCheckOutIndicator( void )
+void    plAgeDescInterface::IInvalidateCheckOutIndicator()
 {
     RECT    r;
     HWND    dummy = GetDlgItem( fhDlg, IDC_AGEDESC );
     GetClientRect( dummy, &r );
     MapWindowPoints( dummy, fhDlg, (POINT *)&r, 2 );
 
-    RedrawWindow( fhDlg, &r, nil, RDW_INVALIDATE | RDW_ERASE );
+    RedrawWindow(fhDlg, &r, nullptr, RDW_INVALIDATE | RDW_ERASE);
 }
 
-bool    plAgeDescInterface::IMakeSureCheckedIn( void )
+bool    plAgeDescInterface::IMakeSureCheckedIn()
 {
-#ifdef MAXASS_AVAILABLE
-    int result;
+    INT_PTR result;
     plAgeFile* currAge = IGetCurrentAge();
     if (!currAge)
         return true;
@@ -663,26 +663,25 @@ bool    plAgeDescInterface::IMakeSureCheckedIn( void )
         }
         else if( result == IDYES )
         {
-            ISaveCurAge( currAge->fPath.c_str() );
+            ISaveCurAge(currAge->fPath);
         }
         else
         {
             // Reload the non-saved version
-            ILoadAge( currAge->fPath.c_str() );
+            ILoadAge(currAge->fPath);
         }
         IEnableControls( true );
     }
-#endif
 
     return true;
 }
 
-void    plAgeDescInterface::IUpdateCurAge( void )
+void    plAgeDescInterface::IUpdateCurAge()
 {
     // Get the current age selection
     plAgeFile   *currAge = IGetCurrentAge();
 
-    if (currAge == nil)
+    if (currAge == nullptr)
     {
         ISetControlDefaults();
         IEnableControls( false );
@@ -692,13 +691,18 @@ void    plAgeDescInterface::IUpdateCurAge( void )
     IEnableControls( true );
 
 #ifdef MAXASS_AVAILABLE
-    if( currAge->fType == plAgeFile::kAssetFile )
+    if (currAge->fType == plAgeFile::kAssetFile && fAssetManIface)
     {
         // Gotta get the latest version from assetMan before loading
         char                localFilename[ MAX_PATH ];
         if( !(*fAssetManIface)->GetLatestVersionFile( currAge->fAssetID, localFilename, sizeof( localFilename ) ) )
         {
-            hsMessageBox( "Unable to get latest version of age asset from AssetMan. Things are about to get very funky...", "ERROR", hsMessageBoxNormal );
+            plMaxMessageBox(
+                nullptr,
+                _T("Unable to get latest version of age asset from AssetMan. Things are about to get very funky..."),
+                _T("Error"),
+                MB_OK | MB_ICONERROR
+            );
         }
         else
         {
@@ -716,20 +720,23 @@ static const int kDefaultCapacity = 10;
 void plAgeDescInterface::IInitControls()
 {
 #ifdef MAXASS_AVAILABLE
-    // Fill the branch combo box
-    SendDlgItemMessage( fhDlg, IDC_BRANCHCOMBO, CB_RESETCONTENT, 0, 0 );
-    const jvTypeArray &branches = (*fAssetManIface)->GetBranches();
-    int i, curr = 0;
-    for( i = 0; i < branches.Size(); i++ )
-    {
-        int idx = SendDlgItemMessage( fhDlg, IDC_BRANCHCOMBO, CB_ADDSTRING, 0, (LPARAM)(const char *)( branches[ i ].Name ) );
-        SendDlgItemMessage( fhDlg, IDC_BRANCHCOMBO, CB_SETITEMDATA, idx, (LPARAM)branches[ i ].Id );
+    if (fAssetManIface) {
+        // Fill the branch combo box
+        SendDlgItemMessage(fhDlg, IDC_BRANCHCOMBO, CB_RESETCONTENT, 0, 0);
+        const jvTypeArray& branches = (*fAssetManIface)->GetBranches();
+        int i, curr = 0;
+        for (i = 0; i < branches.Size(); i++)
+        {
+            int idx = SendDlgItemMessage(fhDlg, IDC_BRANCHCOMBO, CB_ADDSTRING, 0, (LPARAM)(const TCHAR*)(branches[i].Name));
+            SendDlgItemMessage(fhDlg, IDC_BRANCHCOMBO, CB_SETITEMDATA, idx, (LPARAM)branches[i].Id);
 
-        if( branches[ i ].Id == fAssetManIface->GetCurrBranch() )
-            curr = i;
-    }
-    SendDlgItemMessage( fhDlg, IDC_BRANCHCOMBO, CB_SETCURSEL, curr, 0 );
-
+            if (branches[i].Id == fAssetManIface->GetCurrBranch())
+                curr = i;
+        }
+        SendDlgItemMessage(fhDlg, IDC_BRANCHCOMBO, CB_SETCURSEL, curr, 0);
+    } else // Intentional fallthrough
+#endif
+    EnableWindow(GetDlgItem(fhDlg, IDC_BRANCHCOMBO), false);
 
     fSpin = SetupFloatSpinner(fhDlg, IDC_DAYLEN_SPINNER, IDC_DAYLEN_EDIT, 1.f, 100.f, 24.f);
     fCapSpin = SetupIntSpinner(fhDlg, IDC_CAP_SPINNER, IDC_CAP_EDIT, 1, 250, kDefaultCapacity);
@@ -737,6 +744,11 @@ void plAgeDescInterface::IInitControls()
 
     SendDlgItemMessage( fhDlg, IDC_AGELIST_STATIC, WM_SETFONT, (WPARAM)fBoldFont, MAKELPARAM( TRUE, 0 ) );
     SendDlgItemMessage( fhDlg, IDC_AGEDESC, WM_SETFONT, (WPARAM)fBoldFont, MAKELPARAM( TRUE, 0 ) );
+
+#if MAX_VERSION_MAJOR >= 14 // Max 2012
+    HWND ageTree = GetDlgItem(fhDlg, IDC_AGE_LIST);
+    TreeView_SetBkColor(ageTree, GetColorManager()->GetColor(kWindow));
+    TreeView_SetTextColor(ageTree, GetColorManager()->GetColor(kText));
 #endif
 
     ISetControlDefaults();
@@ -760,12 +772,11 @@ void plAgeDescInterface::ISetControlDefaults()
 
     CheckDlgButton( fhDlg, IDC_ADM_DONTLOAD, FALSE );
 
-    int i;
     HWND ctrl = GetDlgItem( fhDlg, IDC_PAGE_LIST );
-    for( i = SendMessage( ctrl, LB_GETCOUNT, 0, 0 ) - 1; i >= 0; i-- )
+    for (int i = (int)SendMessage(ctrl, LB_GETCOUNT, 0, 0) - 1; i >= 0; i--)
         RemovePageItem( ctrl, i );
 
-    SetDlgItemText( fhDlg, IDC_AGEDESC, "Age Description" );
+    SetDlgItemText( fhDlg, IDC_AGEDESC, _T("Age Description") );
 }
 
 void plAgeDescInterface::IEnableControls(bool enable)
@@ -773,9 +784,9 @@ void plAgeDescInterface::IEnableControls(bool enable)
     bool checkedOut = true;
 
     plAgeFile *currAge = IGetCurrentAge();
-    if( currAge != nil && currAge->fType == plAgeFile::kAssetFile )
+    if (currAge != nullptr && currAge->fType == plAgeFile::kAssetFile)
         checkedOut = fCurrAgeCheckedOut && enable;
-    else if( currAge != nil && currAge->fType == plAgeFile::kLocalFile )
+    else if (currAge != nullptr && currAge->fType == plAgeFile::kLocalFile)
         checkedOut = enable;
     else
         checkedOut = false;
@@ -793,7 +804,7 @@ void plAgeDescInterface::IEnableControls(bool enable)
     fSpin->Enable(checkedOut );
     fCapSpin->Enable(checkedOut );
 
-    if( currAge != nil && currAge->fType == plAgeFile::kAssetFile )
+    if (currAge != nullptr && currAge->fType == plAgeFile::kAssetFile)
     {
         EnableWindow( GetDlgItem( fhDlg, IDC_AGE_CHECKIN ), checkedOut );
         EnableWindow( GetDlgItem( fhDlg, IDC_AGE_UNDOCHECKOUT ), checkedOut );
@@ -860,14 +871,14 @@ void plAgeDescInterface::IGetAgeFiles(std::vector<plAgeFile*>& ageFiles)
     // Add AssetMan ages, if available (since we're static, go thru the main MaxAss interface)
     // Hoikas (many years later) does not believe the above comment...
     MaxAssInterface *assetMan = GetMaxAssInterface();
-    if( assetMan!= nil )
+    if (assetMan != nullptr && !plMaxConfig::AssetManInterfaceDisabled()
     {
-        hsTArray<jvUniqueId> doneAssets;
+        std::vector<jvUniqueId> doneAssets;
 
         jvArray<jvUniqueId>* assets = assetMan->GetAssetsByType(MaxAssInterface::kTypeAge);
         for (int i = 0; i < assets->Size(); i++)
         {
-            if( doneAssets.Find( (*assets)[ i ] ) == doneAssets.kMissingIndex )
+            if (std::find(doneAssets.cbegin(), doneAssets.cend(), (*assets)[i]) == doneAssets.cend())
             {
                 char agePath[MAX_PATH];
                 if (assetMan->GetLatestVersionFile((*assets)[i], agePath, sizeof(agePath)))
@@ -884,7 +895,7 @@ void plAgeDescInterface::IGetAgeFiles(std::vector<plAgeFile*>& ageFiles)
                     else
                         ageFiles.push_back(age);
 
-                    doneAssets.Append( (*assets)[ i ] );
+                    doneAssets.emplace_back((*assets)[i]);
                 }
             }
         }
@@ -900,16 +911,17 @@ void plAgeDescInterface::IClearAgeFiles(std::vector<plAgeFile*>& ageFiles)
     ageFiles.clear();
 }
 
-hsTArray<plFileName> plAgeDescInterface::BuildAgeFileList()
+std::vector<plFileName> plAgeDescInterface::BuildAgeFileList()
 {
     std::vector<plAgeFile*> tempAgeFiles;
     IGetAgeFiles(tempAgeFiles);
 
-    hsTArray<plFileName> ageList;
-    for (int i = 0; i < tempAgeFiles.size(); i++)
+    std::vector<plFileName> ageList;
+    ageList.reserve(tempAgeFiles.size());
+    for (plAgeFile* ageFile : tempAgeFiles)
     {
-        ageList.Push(tempAgeFiles[i]->fPath);
-        delete tempAgeFiles[ i ];
+        ageList.emplace_back(ageFile->fPath);
+        delete ageFile;
     }
 
     return ageList;
@@ -918,21 +930,19 @@ hsTArray<plFileName> plAgeDescInterface::BuildAgeFileList()
 //// IFillAgeTree /////////////////////////////////////////////////////////////
 //  Refreshes/inits the tree view of all ages we have to work with. If
 //  specified, will also get the latest version of the .age files from assetMan.
-void plAgeDescInterface::IFillAgeTree( void )
+void plAgeDescInterface::IFillAgeTree()
 {
     HWND ageTree = GetDlgItem( fhDlg, IDC_AGE_LIST );
 
     // Clear the tree first and add our two root headers
     TreeView_DeleteAllItems(ageTree);
 
-#ifdef MAXASS_AVAILABLE
-    if( fAssetManIface != nil )
-        fAssetManBranch = SAddTreeItem(ageTree, nil, "AssetMan Ages", -1);
+    if (fAssetManIface != nullptr)
+        fAssetManBranch = SAddTreeItem(ageTree, nullptr, _T("AssetMan Ages"), -1);
     else
-        fAssetManBranch = nil;
-#endif
+        fAssetManBranch = nullptr;
 
-    fLocalBranch = SAddTreeItem(ageTree, nil, "Local Ages", -1);
+    fLocalBranch = SAddTreeItem(ageTree, nullptr, _T("Local Ages"), -1);
 
     IGetAgeFiles(fAgeFiles);
 
@@ -941,7 +951,7 @@ void plAgeDescInterface::IFillAgeTree( void )
     {
         SAddTreeItem(ageTree,
                     (fAgeFiles[i]->fType == plAgeFile::kAssetFile) ? fAssetManBranch : fLocalBranch,
-                    fAgeFiles[i]->fAgeName.c_str(),
+                    ST2T(fAgeFiles[i]->fAgeName),
                     i);
     }
 
@@ -949,22 +959,22 @@ void plAgeDescInterface::IFillAgeTree( void )
     IUpdateCurAge();
 }
 
-BOOL CALLBACK NewAgeDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK NewAgeDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    static plString *name = nil;
+    static ST::string *name = nullptr;
 
     switch (msg)
     {
     case WM_INITDIALOG:
-        name = reinterpret_cast<plString *>(lParam);
-        SetWindowText(hDlg, name->c_str());
+        name = reinterpret_cast<ST::string *>(lParam);
+        SetWindowTextW(hDlg, name->to_wchar().data());
         return TRUE;
 
     case WM_COMMAND:
         if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDOK)
         {
-            char buffer[_MAX_FNAME];
-            if (GetDlgItemText(hDlg, IDC_AGE_NAME, buffer, _MAX_FNAME) > 0) {
+            wchar_t buffer[_MAX_FNAME];
+            if (GetDlgItemTextW(hDlg, IDC_AGE_NAME, buffer, _MAX_FNAME) > 0) {
                 EndDialog(hDlg, 1);
                 *name = buffer;
             } else {
@@ -982,19 +992,19 @@ BOOL CALLBACK NewAgeDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-BOOL CALLBACK NewSeqNumberProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK NewSeqNumberProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    static char msg1[] = "This age currently does not have a sequence number assigned to it. All ages "
-                         "must have a unique sequence number for multiplayer to work. Unassigned ages "
-                         "will get a temporary random number at export time, but will result in undefined "
-                         "(but probably bad) behavior during multiplayer games. In general, you should "
-                         "always assign a sequence number to an age unless you have a very specific and "
-                         "good reason not to.";
-    static char msg2[] = "The ADManager can find and assign a new, unique sequence number to this age for "
-                         "you. You can choose to assign a normal or a global/reserved number. Normal ages "
-                         "are ones for gameplay (that you can link to, walk around in, etc.), while "
-                         "global/reserved ages are typically for storing data (such as avatars, GUI dialogs, etc.)";
-    char    msg3[ 512 ];
+    static TCHAR msg1[] = _T("This age currently does not have a sequence number assigned to it. All ages "
+                             "must have a unique sequence number for multiplayer to work. Unassigned ages "
+                             "will get a temporary random number at export time, but will result in undefined "
+                             "(but probably bad) behavior during multiplayer games. In general, you should "
+                             "always assign a sequence number to an age unless you have a very specific and "
+                             "good reason not to.");
+    static TCHAR msg2[] = _T("The ADManager can find and assign a new, unique sequence number to this age for "
+                             "you. You can choose to assign a normal or a global/reserved number. Normal ages "
+                             "are ones for gameplay (that you can link to, walk around in, etc.), while "
+                             "global/reserved ages are typically for storing data (such as avatars, GUI dialogs, etc.)");
+    TCHAR        msg3[ 512 ];
 
 
     switch (msg)
@@ -1002,7 +1012,7 @@ BOOL CALLBACK NewSeqNumberProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam
     case WM_INITDIALOG:
         SetDlgItemText( hDlg, IDC_INFOMSG, msg1 );
         SetDlgItemText( hDlg, IDC_ADMMSG, msg2 );
-        sprintf( msg3, "Age: %s", (const char *)lParam );
+        _sntprintf( msg3, std::size(msg3), _T("Age: %s"), (const TCHAR *)lParam );
         SetDlgItemText( hDlg, IDC_AGEMSG, msg3 );
         return TRUE;
 
@@ -1022,26 +1032,19 @@ void plAgeDescInterface::INewAge()
     VARIANT assetId;
     VariantInit(&assetId);
 
-#ifdef MAXASS_AVAILABLE
     bool makeAsset = true;
-    if( hsMessageBox( "Do you wish to store your new age in AssetMan?", "Make source-controlled?", hsMessageBoxYesNo ) == hsMBoxNo )
+    if (!fAssetManIface || plMaxMessageBox(nullptr, _T("Do you wish to store your new age in AssetMan?"), _T("Make source-controlled?"), MB_YESNO | MB_ICONQUESTION ) == IDNO)
         makeAsset = false;
-#endif
 
     plFileName newAssetFilename;
-#ifdef MAXASS_AVAILABLE
-    if (!fAssetManIface)
-        makeAsset = false;
-#endif
-
     newAssetFilename = IGetLocalAgePath();
     if (!newAssetFilename.IsValid())
         return;
 
-    plString name = "New Age Name";
+    ST::string name = ST_LITERAL("New Age Name");
 
     // Get the name of the new age from the user
-    int ret = DialogBoxParam(hInstance,
+    INT_PTR ret = DialogBoxParam(hInstance,
                MAKEINTRESOURCE(IDD_AGE_NAME),
                GetCOREInterface()->GetMAXHWnd(),
                NewAgeDlgProc,
@@ -1051,14 +1054,14 @@ void plAgeDescInterface::INewAge()
 
     newAssetFilename = plFileName::Join(newAssetFilename, name + ".age");
 
-#ifdef MAXASS_AVAILABLE
-    if( !makeAsset )
+    if (!makeAsset)
         fForceSeqNumLocal = true;
     ISetControlDefaults();
     ISaveCurAge(newAssetFilename, true);    // Check sequence # while we're at it
     fForceSeqNumLocal = false;
 
-    if( makeAsset )
+#ifdef MAXASS_AVAILABLE
+    if (makeAsset)
         (*fAssetManIface)->AddNewAsset(newAssetFilename.AsString().c_str());
 #endif
 
@@ -1068,10 +1071,10 @@ void plAgeDescInterface::INewAge()
 
 void plAgeDescInterface::INewPage()
 {
-    plString name = "New Page Name";
+    ST::string name = ST_LITERAL("New Page Name");
 
     // Get the name of the new age from the user
-    int ret = DialogBoxParam(hInstance,
+    INT_PTR ret = DialogBoxParam(hInstance,
                             MAKEINTRESOURCE(IDD_AGE_NAME),
                             GetCOREInterface()->GetMAXHWnd(),
                             NewAgeDlgProc,
@@ -1085,14 +1088,14 @@ void plAgeDescInterface::INewPage()
     int count = ListBox_GetCount(hPages);
     for (int i = 0; i < count; i++)
     {
-        char pageName[256];
+        TCHAR pageName[256];
         ListBox_GetText(hPages, i, pageName);
-        if (!name.CompareI(pageName))
+        if (!name.compare_i(T2ST(pageName)))
             return;
     }
 
     // Add the new page and select it
-    int idx = ListBox_AddString(hPages, name.c_str());
+    int idx = ListBox_AddString(hPages, ST2T(name));
 
     // Choose a new sequence suffix for it
     plAgePage *newPage = new plAgePage( name, IGetFreePageSeqSuffix( hPages ), 0 );
@@ -1111,7 +1114,7 @@ uint32_t  plAgeDescInterface::IGetFreePageSeqSuffix( HWND pageCombo )
         for( i = 0; i < count; i++ )
         {
             plAgePage *page = (plAgePage *)ListBox_GetItemData( pageCombo, i );
-            if( page != nil && page->GetSeqSuffix() == searchSeq )
+            if (page != nullptr && page->GetSeqSuffix() == searchSeq)
             {
                 searchSeq++;
                 break;
@@ -1128,7 +1131,12 @@ void plAgeDescInterface::ISaveCurAge( const plFileName &path, bool checkSeqNum )
     hsUNIXStream s;
     if( !s.Open( path, "wt" ) )
     {
-        hsMessageBox("Unable to open the Age Description file for writing. Updates not saved.", "Error", hsMessageBoxNormal);
+        plMaxMessageBox(
+            nullptr,
+            _T("Unable to open the Age Description file for writing. Updates not saved."),
+            _T("Error"),
+            MB_OK | MB_ICONERROR
+        );
         return;
     }
 
@@ -1166,16 +1174,15 @@ void plAgeDescInterface::ISaveCurAge( const plFileName &path, bool checkSeqNum )
     {
         for (int i = 0; i < count; i++)
         {
-            char pageName[256];
+            TCHAR pageName[256];
             ListBox_GetText(hPages, i, pageName);
             plAgePage *page = (plAgePage *)ListBox_GetItemData( hPages, i );
-            aged.AppendPage( pageName, page->GetSeqSuffix(), page->GetFlags() );
+            aged.AppendPage( M2ST(pageName), page->GetSeqSuffix(), page->GetFlags() );
         }
     }
 
     // write it all out
     aged.Write(&s);
-    s.Close();
 }
 
 //// ICheckSequenceNumber /////////////////////////////////////////////////////
@@ -1187,9 +1194,9 @@ void    plAgeDescInterface::ICheckSequenceNumber( plAgeDescription &aged )
     if( aged.GetSequencePrefix() == 0 ) // Default of uninitialized
     {
         // Ask about the sequence #
-        int ret = DialogBoxParam( hInstance, MAKEINTRESOURCE( IDD_AGE_SEQNUM ),
+        INT_PTR ret = DialogBoxParam( hInstance, MAKEINTRESOURCE( IDD_AGE_SEQNUM ),
                                     GetCOREInterface()->GetMAXHWnd(),
-                                    NewSeqNumberProc, (LPARAM)aged.GetAgeName().c_str() );
+                                    NewSeqNumberProc, (LPARAM)ST2T(aged.GetAgeName()) );
         if( ret == IDYES )
         {
             aged.SetSequencePrefix( IGetNextFreeSequencePrefix( false ) );
@@ -1213,15 +1220,14 @@ void plAgeDescInterface::ILoadAge( const plFileName &path, bool checkSeqNum )
     plAgeDescription aged( path );
 
     // Get the name of the age
-    plString ageName = path.GetFileNameNoExt();
+    ST::string ageName = path.GetFileNameNoExt();
 
     // Check the sequence prefix #
     if( checkSeqNum )
         ICheckSequenceNumber( aged );
 
-    char str[ _MAX_FNAME + 30 ];
-    sprintf( str, "Description for %s", ageName.c_str() );
-    SetDlgItemText( fhDlg, IDC_AGEDESC, str );
+    ST::string str = ST::format("Description for {}", ageName);
+    SetDlgItemTextW( fhDlg, IDC_AGEDESC, str.to_wchar().data() );
 
     // Set up the Dlgs
     SYSTEMTIME st;
@@ -1277,9 +1283,9 @@ void plAgeDescInterface::ILoadAge( const plFileName &path, bool checkSeqNum )
     plAgePage *page;
 
     HWND hPage = GetDlgItem(fhDlg, IDC_PAGE_LIST);
-    while( ( page = aged.GetNextPage() ) != nil )
+    while ((page = aged.GetNextPage()) != nullptr)
     {
-        int idx = ListBox_AddString( hPage, page->GetName().c_str() );
+        int idx = ListBox_AddString( hPage, ST2T(page->GetName()) );
         ListBox_SetItemData( hPage, idx, (LPARAM)new plAgePage( *page ) );
     }
 }
@@ -1287,10 +1293,8 @@ void plAgeDescInterface::ILoadAge( const plFileName &path, bool checkSeqNum )
 uint32_t  plAgeDescInterface::IGetNextFreeSequencePrefix( bool getReservedPrefix )
 {
     int32_t               searchSeq = getReservedPrefix ? -1 : 1;
-    hsTArray<char *>    ageList;
-    int                 i;
 
-    hsTArray<plAgeDescription>  ages;
+    std::vector<plAgeDescription> ages;
 
 
     if( fForceSeqNumLocal )
@@ -1298,24 +1302,24 @@ uint32_t  plAgeDescInterface::IGetNextFreeSequencePrefix( bool getReservedPrefix
 
     IGetAgeFiles(fAgeFiles);
 
-    ages.SetCount( fAgeFiles.size() );
-    for( i = 0; i < fAgeFiles.size(); i++ )
+    ages.resize(fAgeFiles.size());
+    for (size_t i = 0; i < fAgeFiles.size(); i++)
     {
         hsUNIXStream stream;
         if( stream.Open( fAgeFiles[ i ]->fPath, "rt" ) )
         {
             ages[ i ].Read( &stream );
-            stream.Close();
         }
     }
 
+    decltype(ages.cbegin()) ageIter;
     do
     {
         if( getReservedPrefix )
         {
-            for( i = 0; i < ages.GetCount(); i++ )
+            for (ageIter = ages.cbegin(); ageIter != ages.cend(); ++ageIter)
             {
-                if( ages[ i ].GetSequencePrefix() == searchSeq )
+                if (ageIter->GetSequencePrefix() == searchSeq)
                 {
                     searchSeq--;
                     break;
@@ -1324,30 +1328,30 @@ uint32_t  plAgeDescInterface::IGetNextFreeSequencePrefix( bool getReservedPrefix
         }
         else
         {
-            for( i = 0; i < ages.GetCount(); i++ )
+            for (ageIter = ages.cbegin(); ageIter != ages.cend(); ++ageIter)
             {
-                if( ages[ i ].GetSequencePrefix() == searchSeq )
+                if (ageIter->GetSequencePrefix() == searchSeq)
                 {
                     searchSeq++;
                     break;
                 }
             }
         }
-    } while( i < ages.GetCount() );
+    } while (ageIter != ages.cend());
 
     return searchSeq;
 }
 
-plAgeFile* plAgeDescInterface::IGetCurrentAge( void )
+plAgeFile* plAgeDescInterface::IGetCurrentAge()
 {
     HWND    ageTree = GetDlgItem( fhDlg, IDC_AGE_LIST );
     fCurrAgeItem = TreeView_GetSelection( ageTree );
-    if( fCurrAgeItem == nil )
-        return nil;
+    if (fCurrAgeItem == nullptr)
+        return nullptr;
 
-    int idx = SGetTreeData( ageTree, fCurrAgeItem );
+    LPARAM idx = SGetTreeData(ageTree, fCurrAgeItem);
     if (idx == -1)
-        return nil;
+        return nullptr;
 
     return fAgeFiles[idx];
 }
@@ -1355,12 +1359,12 @@ plAgeFile* plAgeDescInterface::IGetCurrentAge( void )
 //// SAddTreeItem /////////////////////////////////////////////////////////////
 //  Static helper function for adding an item to a treeView
 
-static HTREEITEM SAddTreeItem( HWND hTree, HTREEITEM hParent, const char *label, int userData )
+static HTREEITEM SAddTreeItem( HWND hTree, HTREEITEM hParent, const TCHAR* label, int userData )
 {
     TVITEM tvi = {0};
     tvi.mask       = TVIF_TEXT | TVIF_PARAM;
-    tvi.pszText    = (char *)label;
-    tvi.cchTextMax = strlen( label );  
+    tvi.pszText    = const_cast<TCHAR*>(label);
+    tvi.cchTextMax = _tcslen(label);
     tvi.lParam     = (LPARAM)userData;
     if( userData == -1 )
     {
@@ -1368,7 +1372,7 @@ static HTREEITEM SAddTreeItem( HWND hTree, HTREEITEM hParent, const char *label,
         tvi.state = tvi.stateMask = TVIS_BOLD | TVIS_EXPANDED;
     }
 
-    TVINSERTSTRUCT tvins = {0};
+    TVINSERTSTRUCT tvins = {};
     tvins.item         = tvi;
     tvins.hParent      = hParent;
     tvins.hInsertAfter = TVI_LAST;
@@ -1379,7 +1383,7 @@ static HTREEITEM SAddTreeItem( HWND hTree, HTREEITEM hParent, const char *label,
 //// SGetTreeData /////////////////////////////////////////////////////////////
 //  Gets the tree data for the given item
 
-int SGetTreeData( HWND tree, HTREEITEM item )
+LPARAM SGetTreeData( HWND tree, HTREEITEM item )
 {
     TVITEM  itemInfo;
     itemInfo.mask = TVIF_PARAM | TVIF_HANDLE;

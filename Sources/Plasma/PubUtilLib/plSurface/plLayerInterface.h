@@ -43,15 +43,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayerInterface_inc
 #define plLayerInterface_inc
 
-#include "pnNetCommon/plSynchedValue.h"
-#include "pnNetCommon/plSynchedObject.h"
 #include "hsGMatState.h"
 
-struct hsMatrix44;
-struct hsColorRGBA;
+#include "pnNetCommon/plSynchedObject.h"
+
 class plBitmap;
-class plMessage;
+struct hsColorRGBA;
 class hsGMatState;
+struct hsMatrix44;
+class plMessage;
 class plShader;
 
 class plLayerInterface : public plSynchedObject
@@ -210,10 +210,10 @@ public:
 
     bool                    OwnChannel(uint32_t which) const { return 0 != (fOwnedChannels & which); }
 
-    virtual void            Read(hsStream* s, hsResMgr* mgr);
-    virtual void            Write(hsStream* s, hsResMgr* mgr);
+    void            Read(hsStream* s, hsResMgr* mgr) override;
+    void            Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual bool            MsgReceive(plMessage* msg);
+    bool            MsgReceive(plMessage* msg) override;
 
 };
 

@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plCmdParser_h_
 #define _plCmdParser_h_
 
-#include "plString.h"
+#include <string_theory/string>
 
 enum CmdArg
 {
@@ -90,7 +90,7 @@ enum CmdError
 struct plCmdArgDef
 {
     uint32_t        flags;
-    plString        name;   // must be compile-time constant
+    ST::string      name;   // must be compile-time constant
     size_t          id;
 };
 
@@ -107,28 +107,28 @@ public:
     plCmdParser(const plCmdArgDef* defs, size_t defCount);
     virtual ~plCmdParser();
 
-    bool            Parse(const plString& cmdLine);
-    bool            Parse(std::vector<plString>& argv);
+    bool            Parse(const ST::string& cmdLine);
+    bool            Parse(std::vector<ST::string>& argv);
 
-    const plString  GetProgramName() const;
+    ST::string      GetProgramName() const;
 
     bool            GetBool(size_t id) const;
-    bool            GetBool(const plString& name) const;
+    bool            GetBool(const ST::string& name) const;
 
     float           GetFloat(size_t id) const;
-    float           GetFloat(const plString& name) const;
+    float           GetFloat(const ST::string& name) const;
 
     int32_t         GetInt(size_t id) const;
-    int32_t         GetInt(const plString& name) const;
+    int32_t         GetInt(const ST::string& name) const;
 
-    const plString  GetString(size_t id) const;
-    const plString  GetString(const plString& name) const;
+    ST::string      GetString(size_t id) const;
+    ST::string      GetString(const ST::string& name) const;
 
     uint32_t        GetUint(size_t id) const;
-    uint32_t        GetUint(const plString& name) const;
+    uint32_t        GetUint(const ST::string& name) const;
 
     bool            IsSpecified(size_t id) const;
-    bool            IsSpecified(const plString& name) const;
+    bool            IsSpecified(const ST::string& name) const;
 
     CmdError        GetError() const;
 };

@@ -40,19 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "cyAccountManagement.h"
-#include "pyGlueHelpers.h"
-#include "pyEnum.h"
+
+#include <string_theory/string>
 
 #include "plMessage/plAccountUpdateMsg.h"
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtIsSubscriptionActive, "Returns true if the current player is a paying subscriber")
-{
-    PYTHON_RETURN_BOOL(cyAccountManagement::IsSubscriptionActive());
-}
+#include "pyEnum.h"
+#include "pyGlueHelpers.h"
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAccountPlayerList, "Returns list of players associated with the current account")
 {
@@ -61,107 +56,22 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAccountPlayerList, "Returns list of 
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAccountName, "Returns the account name for the current account")
 {
-    return PyUnicode_FromPlString(cyAccountManagement::GetAccountName());
+    return PyUnicode_FromSTString(cyAccountManagement::GetAccountName());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtCreatePlayer, args, "Params: playerName, avatarShape, invitation\nCreates a new player")
 {
-    char* playerName;
-    char* avatarShape;
-    char* invitation;
-    if (!PyArg_ParseTuple(args, "ssz", &playerName, &avatarShape, &invitation))
-    {
+    ST::string playerName;
+    ST::string avatarShape;
+    ST::string invitation;
+    if (!PyArg_ParseTuple(args, "O&O&O&", PyUnicode_STStringConverter, &playerName,
+                          PyUnicode_STStringConverter, &avatarShape,
+                          PyUnicode_STStringConverter, &invitation)) {
         PyErr_SetString(PyExc_TypeError, "PtCreatePlayer expects three strings");
         PYTHON_RETURN_ERROR;
     }
 
     cyAccountManagement::CreatePlayer(playerName, avatarShape, invitation);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_GLOBAL_METHOD_DEFINITION(PtCreatePlayerW, args, "Params: playerName, avatarShape, invitation\nUnicode version of PtCreatePlayer")
-{
-    PyObject* playerNameObj;
-    PyObject* avatarShapeObj;
-    PyObject* invitationObj;
-    if (!PyArg_ParseTuple(args, "OOO", &playerNameObj, &avatarShapeObj, &invitationObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtCreatePlayerW expects three unicode strings");
-        PYTHON_RETURN_ERROR;
-    }
-
-    std::wstring playerName, avatarShape, invitation;
-
-    if (PyUnicode_Check(playerNameObj))
-    {
-        int strLen = PyUnicode_GetSize(playerNameObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)playerNameObj, text, strLen);
-        text[strLen] = L'\0';
-        playerName = text;
-        delete [] text;
-    }
-    else if (PyString_Check(playerNameObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(playerNameObj);
-        wchar_t* temp = hsStringToWString(text);
-        playerName = temp;
-        delete [] temp;
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "PtCreatePlayerW expects three unicode strings");
-        PYTHON_RETURN_ERROR;
-    }
-
-    if (PyUnicode_Check(avatarShapeObj))
-    {
-        int strLen = PyUnicode_GetSize(avatarShapeObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)avatarShapeObj, text, strLen);
-        text[strLen] = L'\0';
-        avatarShape = text;
-        delete [] text;
-    }
-    else if (PyString_Check(avatarShapeObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(avatarShapeObj);
-        wchar_t* temp = hsStringToWString(text);
-        avatarShape = temp;
-        delete [] temp;
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "PtCreatePlayerW expects three unicode strings");
-        PYTHON_RETURN_ERROR;
-    }
-
-    if (PyUnicode_Check(invitationObj))
-    {
-        int strLen = PyUnicode_GetSize(invitationObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)invitationObj, text, strLen);
-        text[strLen] = L'\0';
-        invitation = text;
-        delete [] text;
-    }
-    else if (PyString_Check(invitationObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(invitationObj);
-        wchar_t* temp = hsStringToWString(text);
-        invitation = temp;
-        delete [] temp;
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "PtCreatePlayerW expects three unicode strings");
-        PYTHON_RETURN_ERROR;
-    }
-
-    cyAccountManagement::CreatePlayerW(playerName.c_str(), avatarShape.c_str(), invitation.c_str());
     PYTHON_RETURN_NONE;
 }
 
@@ -196,24 +106,10 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtIsActivePlayerSet, "Returns whether or 
     PYTHON_RETURN_BOOL(cyAccountManagement::IsActivePlayerSet());
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtUpgradeVisitorToExplorer, args, "Params: playerInt\nUpgrades the player to explorer status")
-{
-    unsigned playerInt = 0;
-    if (!PyArg_ParseTuple(args, "I", &playerInt))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtUpgradeVisitorToExplorer expects a unsigned int");
-        PYTHON_RETURN_ERROR;
-    }
-
-    cyAccountManagement::UpgradeVisitorToExplorer(playerInt);
-    PYTHON_RETURN_NONE;
-}
-
 PYTHON_GLOBAL_METHOD_DEFINITION(PtChangePassword, args, "Params: password\nChanges the current account's password")
 {
-    char* password = nil;
-    if (!PyArg_ParseTuple(args, "s", &password))
-    {
+    ST::string password;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &password)) {
         PyErr_SetString(PyExc_TypeError, "PtChangePassword expects a string");
         PYTHON_RETURN_ERROR;
     }
@@ -222,27 +118,26 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtChangePassword, args, "Params: password\nChang
     PYTHON_RETURN_NONE;
 }
 
-void cyAccountManagement::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void cyAccountManagement::AddPlasmaMethods(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtIsSubscriptionActive);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetAccountPlayerList);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetAccountName);
-    PYTHON_GLOBAL_METHOD(methods, PtCreatePlayer);
-    PYTHON_GLOBAL_METHOD(methods, PtCreatePlayerW);
-    PYTHON_GLOBAL_METHOD(methods, PtDeletePlayer);
-    PYTHON_GLOBAL_METHOD(methods, PtSetActivePlayer);
-    PYTHON_GLOBAL_METHOD(methods, PtIsActivePlayerSet);
-    PYTHON_GLOBAL_METHOD(methods, PtUpgradeVisitorToExplorer);
-    PYTHON_GLOBAL_METHOD(methods, PtChangePassword);
+    PYTHON_START_GLOBAL_METHOD_TABLE(ptAccountManagement)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetAccountPlayerList)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetAccountName)
+        PYTHON_GLOBAL_METHOD(PtCreatePlayer)
+        PYTHON_GLOBAL_METHOD(PtDeletePlayer)
+        PYTHON_GLOBAL_METHOD(PtSetActivePlayer)
+        PYTHON_GLOBAL_METHOD(PtIsActivePlayerSet)
+        PYTHON_GLOBAL_METHOD(PtChangePassword)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, ptAccountManagement)
 }
 
 void cyAccountManagement::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtAccountUpdateType);
-    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kCreatePlayer,     plAccountUpdateMsg::kCreatePlayer);
-    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kDeletePlayer,     plAccountUpdateMsg::kDeletePlayer);
-    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kUpgradePlayer,    plAccountUpdateMsg::kUpgradePlayer);
-    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kActivePlayer,     plAccountUpdateMsg::kActivePlayer);
-    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kChangePassword,   plAccountUpdateMsg::kChangePassword);
-    PYTHON_ENUM_END(m, PtAccountUpdateType);
+    PYTHON_ENUM_START(PtAccountUpdateType)
+    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kCreatePlayer,     plAccountUpdateMsg::kCreatePlayer)
+    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kDeletePlayer,     plAccountUpdateMsg::kDeletePlayer)
+    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kUpgradePlayer,    plAccountUpdateMsg::kUpgradePlayer)
+    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kActivePlayer,     plAccountUpdateMsg::kActivePlayer)
+    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kChangePassword,   plAccountUpdateMsg::kChangePassword)
+    PYTHON_ENUM_END(m, PtAccountUpdateType)
 }

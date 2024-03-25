@@ -1,20 +1,8 @@
-include_directories("../")
-include_directories("../../Plasma/CoreLib")
-include_directories("../../Plasma/FeatureLib")
-include_directories("../../Plasma/FeatureLib/inc")
-include_directories("../../Plasma/NucleusLib")
-include_directories("../../Plasma/NucleusLib/inc")
-include_directories("../../Plasma/PubUtilLib")
-include_directories("../../Plasma/PubUtilLib/inc")
-include_directories(${3dsm_INCLUDE_DIR})
-include_directories(${OPENAL_INCLUDE_DIR})
-include_directories(${PHYSX_INCLUDE_DIRS})
-include_directories(${PYTHON_INCLUDE_DIR})
-
 set(MaxMain_HEADERS
     GlobalUtility.h
+    hsMStringTokenizer.h
     main.def
-    MaxAllocDll.h
+    MaxAPI.h
     MaxCompat.h
     plActionTableMgr.h
     plAgeDescInterface.h
@@ -33,7 +21,6 @@ set(MaxMain_HEADERS
     plMtlCollector.h
     plNodeLock.h
     plPhysicalProps.h
-    plPhysXCooking.h
     plPlasmaRefMsgs.h
     plPluginResManager.h
     plPythonMgr.h
@@ -46,14 +33,15 @@ set(MaxMain_HEADERS
 
 set(MaxMain_RESOURCES
     resource.h
+    veroverrides.h
     SimpleExport.rc
+    PlasmaMax.gup.manifest
 )
 
 set(MaxMain_SOURCES
     GlobalUtility.cpp
     indexes.cpp
     main.cpp
-    MaxAllocDll.cpp
     plActionTableMgr.cpp
     plAgeDescInterface.cpp
     plCommonObjLib.cpp
@@ -71,7 +59,6 @@ set(MaxMain_SOURCES
     plMtlCollector.cpp
     plNodeLock.cpp
     plPhysicalProps.cpp
-    plPhysXCooking.cpp
     plPluginResManager.cpp
     plPythonMgr.cpp
     plResCollector.cpp
@@ -81,126 +68,71 @@ set(MaxMain_SOURCES
     plTextureSearch.cpp
 )
 
-SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Plasma_BINARY_DIR}/bin)
-use_precompiled_header(Pch.h Pch.cpp MaxMain_HEADERS MaxMain_SOURCES)
-add_library(MaxMain SHARED ${MaxMain_HEADERS} ${MaxMain_RESOURCES} ${MaxMain_SOURCES})
+plasma_library(MaxMain SHARED
+    SOURCES ${MaxMain_HEADERS} ${MaxMain_RESOURCES} ${MaxMain_SOURCES}
+    PRECOMPILED_HEADERS Pch.h
+    NO_SANITIZE # The 3ds Max headers are full of clang diagnostic errors.
+)
+target_link_libraries(
+    MaxMain
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        pnNucleusInc
+        plResMgr
+    PRIVATE
+        pnFactory
+        pnMessage
+        pnModifier
+        pnNetCommon
+        pnSceneObject
+        plAgeDescription
+        plDrawable
+        plFile
+        plGImage
+        plInterp
+        plMessage
+        plMessageBox
+        plModifier
+        plParticleSystem
+        plPhysical
+        plPhysX
+        plPipeline
+        plPubUtilInc
+        plResMgr
+        plScene
+        plSDL
+        pfAnimation
+        pfAudio
+        pfCamera
+        pfCharacter
+        pfConditional
+        pfGameMgr
+        pfGameGUIMgr
+        pfJournalBook
+        pfLocalizationMgr
+        pfMessage
+        pfPython
+        pfSurface
+
+        MaxComponent
+        MaxConvert
+        MaxExport
+        MaxPlasmaLights
+        MaxPlasmaMtls
+
+        3dsm
+        Comctl32
+        Python3::Python
+)
+
 set_target_properties(MaxMain PROPERTIES OUTPUT_NAME "PlasmaMax")
 set_target_properties(MaxMain PROPERTIES SUFFIX ".gup")
 
-target_link_libraries(MaxMain MaxComponent)
-target_link_libraries(MaxMain MaxConvert)
-target_link_libraries(MaxMain MaxExport)
-target_link_libraries(MaxMain MaxPlasmaMtls)
-target_link_libraries(MaxMain ${3dsm_LIBRARIES})
-
-target_link_libraries(MaxMain ${EXPAT_LIBRARY})
-target_link_libraries(MaxMain ${DirectX_LIBRARIES})
-target_link_libraries(MaxMain ${JPEG_LIBRARY})
-target_link_libraries(MaxMain ${PNG_LIBRARY})
-target_link_libraries(MaxMain ${Ogg_LIBRARIES})
-target_link_libraries(MaxMain ${OPENAL_LIBRARY})
-target_link_libraries(MaxMain ${OPENSSL_LIBRARIES})
-target_link_libraries(MaxMain ${PHYSX_LIBRARIES})
-target_link_libraries(MaxMain ${PYTHON_LIBRARIES})
-target_link_libraries(MaxMain ${Speex_LIBRARY})
-target_link_libraries(MaxMain ${Vorbis_LIBRARIES})
-
-# Carbon copy from plClient
-# TODO: Maybe see if some of these can be removed?
-target_link_libraries(MaxMain CoreLib)
-target_link_libraries(MaxMain pfAnimation)
-target_link_libraries(MaxMain pfAudio)
-target_link_libraries(MaxMain pfCamera)
-target_link_libraries(MaxMain pfCCR)
-target_link_libraries(MaxMain pfCharacter)
-target_link_libraries(MaxMain pfConditional)
-target_link_libraries(MaxMain pfConsole)
-target_link_libraries(MaxMain pfGameGUIMgr)
-target_link_libraries(MaxMain pfGameMgr)
-target_link_libraries(MaxMain pfGameScoreMgr)
-target_link_libraries(MaxMain pfJournalBook)
-target_link_libraries(MaxMain pfLocalizationMgr)
-target_link_libraries(MaxMain pfMessage)
-target_link_libraries(MaxMain pfPython)
-target_link_libraries(MaxMain pfSurface)
-target_link_libraries(MaxMain plAgeDescription)
-target_link_libraries(MaxMain plAgeLoader)
-target_link_libraries(MaxMain plAnimation)
-target_link_libraries(MaxMain plAudible)
-target_link_libraries(MaxMain plAudio)
-target_link_libraries(MaxMain plAudioCore)
-target_link_libraries(MaxMain plAvatar)
-target_link_libraries(MaxMain plClientResMgr)
-target_link_libraries(MaxMain plCompression)
-target_link_libraries(MaxMain plContainer)
-target_link_libraries(MaxMain plClientResMgr)
-target_link_libraries(MaxMain plClipboard)
-target_link_libraries(MaxMain plDrawable)
-target_link_libraries(MaxMain plFile)
-target_link_libraries(MaxMain plGImage)
-target_link_libraries(MaxMain plGLight)
-target_link_libraries(MaxMain plInputCore)
-target_link_libraries(MaxMain plInterp)
-target_link_libraries(MaxMain plIntersect)
-target_link_libraries(MaxMain plMath)
-target_link_libraries(MaxMain plMessage)
-target_link_libraries(MaxMain plModifier)
-target_link_libraries(MaxMain plNetClient)
-target_link_libraries(MaxMain plNetClientComm)
-target_link_libraries(MaxMain plNetClientRecorder)
-target_link_libraries(MaxMain plNetCommon)
-target_link_libraries(MaxMain plNetGameLib)
-target_link_libraries(MaxMain plNetMessage)
-target_link_libraries(MaxMain plNetTransport)
-target_link_libraries(MaxMain plParticleSystem)
-target_link_libraries(MaxMain plPhysical)
-target_link_libraries(MaxMain plPhysX)
-target_link_libraries(MaxMain plPipeline)
-target_link_libraries(MaxMain plProgressMgr)
-target_link_libraries(MaxMain plResMgr)
-target_link_libraries(MaxMain plScene)
-target_link_libraries(MaxMain plSDL)
-target_link_libraries(MaxMain plSockets)
-target_link_libraries(MaxMain plStatGather)
-target_link_libraries(MaxMain plStatusLog)
-target_link_libraries(MaxMain plStreamLogger)
-target_link_libraries(MaxMain plSurface)
-target_link_libraries(MaxMain plTransform)
-target_link_libraries(MaxMain plUnifiedTime)
-target_link_libraries(MaxMain plVault)
-target_link_libraries(MaxMain pnAsyncCore)
-target_link_libraries(MaxMain pnAsyncCoreExe)
-target_link_libraries(MaxMain pnDispatch)
-target_link_libraries(MaxMain pnEncryption)
-target_link_libraries(MaxMain pnFactory)
-target_link_libraries(MaxMain pnGameMgr)
-target_link_libraries(MaxMain pnInputCore)
-target_link_libraries(MaxMain pnKeyedObject)
-target_link_libraries(MaxMain pnMessage)
-target_link_libraries(MaxMain pnModifier)
-target_link_libraries(MaxMain pnNetBase)
-target_link_libraries(MaxMain pnNetCli)
-target_link_libraries(MaxMain pnNetCommon)
-target_link_libraries(MaxMain pnNetProtocol)
-target_link_libraries(MaxMain pnNucleusInc)
-target_link_libraries(MaxMain pnSceneObject)
-target_link_libraries(MaxMain pnTimer)
-target_link_libraries(MaxMain pnUtils)
-target_link_libraries(MaxMain pnUUID)
-
-if (WIN32)
-    target_link_libraries(MaxMain comctl32)
-    target_link_libraries(MaxMain rpcrt4)
-    target_link_libraries(MaxMain shlwapi)
-    target_link_libraries(MaxMain strmiids)
-    target_link_libraries(MaxMain vfw32)
-    target_link_libraries(MaxMain ws2_32)
-    target_link_libraries(MaxMain winmm)
-endif(WIN32)
-
-if(USE_VLD)
-    target_link_libraries(MaxMain ${VLD_LIBRARY})
-endif()
+install(
+    TARGETS MaxMain
+    DESTINATION "3dsmax${3dsm_DISPLAY_VERSION}"
+)
 
 source_group("Header Files" FILES ${MaxMain_HEADERS})
 source_group("Resource Files" FILES ${MaxMain_RESOURCES})

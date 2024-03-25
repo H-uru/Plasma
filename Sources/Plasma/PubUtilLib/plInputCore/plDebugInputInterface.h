@@ -60,7 +60,7 @@ class plDebugInputInterface : public plInputInterface
 {
     protected:
 
-        virtual bool IEval( double secs, float del, uint32_t dirty );
+        bool IEval(double secs, float del, uint32_t dirty) override;
         bool CursorInBox(plMouseEventMsg* pMsg, hsPoint4 box);
 
         plMouseMap  fMouseMap;
@@ -75,19 +75,19 @@ class plDebugInputInterface : public plInputInterface
         virtual ~plDebugInputInterface();
 
         // Always return false, 
-        virtual bool    HasInterestingCursorID( void ) const { return false; }
-        virtual uint32_t  GetPriorityLevel( void ) const { return kDebugCmdPrioity; }
-        virtual void    RestoreDefaultKeyMappings( void );
-        virtual uint32_t  GetCurrentCursorID( void ) const { return 0; }
+        bool    HasInterestingCursorID() const override { return false; }
+        uint32_t  GetPriorityLevel() const override { return kDebugCmdPrioity; }
+        void    RestoreDefaultKeyMappings() override;
+        uint32_t  GetCurrentCursorID() const override { return 0; }
 
-        virtual bool    InterpretInputEvent( plInputEventMsg *pMsg );
+        bool    InterpretInputEvent(plInputEventMsg *pMsg) override;
 
-        virtual bool    MsgReceive( plMessage *msg );
+        bool    MsgReceive(plMessage *msg) override;
 
-        virtual void    Init( plInputInterfaceMgr *manager );
-        virtual void    Shutdown( void );
+        void    Init(plInputInterfaceMgr *manager) override;
+        void    Shutdown() override;
 
-        static plDebugInputInterface    *GetInstance( void ) { return fInstance; }
+        static plDebugInputInterface    *GetInstance() { return fInstance; }
 };
 
 

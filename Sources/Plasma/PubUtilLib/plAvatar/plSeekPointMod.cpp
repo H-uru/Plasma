@@ -41,31 +41,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plSeekPointMod.h"
 
-// local
-#include "plAvatarMgr.h"
+#include "hsStream.h"
 
 // CTOR()
 plSeekPointMod::plSeekPointMod()
-: fName(nil), plMultiModifier()
+: fName(), plMultiModifier()
 {
     // this constructor is called from the loader. 
 }
 
 // CTOR(char *)
-plSeekPointMod::plSeekPointMod(char * name)
-: fName(name),  plMultiModifier()
+plSeekPointMod::plSeekPointMod(ST::string name)
+: fName(std::move(name)),  plMultiModifier()
 {
     // this constructor is called from the converter. it adds the seek point to the
     // registry immediately because it has the name already
-}
-
-// DTOR()
-plSeekPointMod::~plSeekPointMod()
-{
-    if(fName) {
-        delete[] fName;
-        fName = nil;
-    }
 }
 
 // MSGRECEIVE
@@ -79,7 +69,6 @@ bool plSeekPointMod::MsgReceive(plMessage* msg)
 void plSeekPointMod::AddTarget(plSceneObject* so)
 {
     plMultiModifier::AddTarget(so);
-//  plAvatarMgr::GetInstance()->AddSeekPoint(this);
 }
 
 void plSeekPointMod::Read(hsStream *stream, hsResMgr *mgr)
@@ -90,9 +79,9 @@ void plSeekPointMod::Read(hsStream *stream, hsResMgr *mgr)
     int length = stream->ReadLE32();
     if(length > 0)
     {
-        fName = new char[length + 1];
-        stream->Read(length, fName);
-        fName[length] = 0;
+        ST::char_buffer buf(length, 0);
+        stream->Read(length, buf.data());
+        fName = ST::string(buf);
     }
 
 }
@@ -101,11 +90,11 @@ void plSeekPointMod::Write(hsStream *stream, hsResMgr *mgr)
 {
     plMultiModifier::Write(stream, mgr);
 
-    int length = strlen(fName);
+    uint32_t length = (uint32_t)fName.size();
     stream->WriteLE32(length);
     if (length > 0)
     {
-        stream->Write(length, fName);
+        stream->Write(length, fName.c_str());
     }
 
 }

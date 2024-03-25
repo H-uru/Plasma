@@ -43,16 +43,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPostEffectMod_inc
 #define plPostEffectMod_inc
 
+#include "hsBitVector.h"
+#include "hsMatrix44.h"
+
 #include "pnModifier/plSingleModifier.h"
 
-#include "hsMatrix44.h"
-#include "hsBitVector.h"
 
-class plSceneNode;
-class plPageTreeMgr;
 class plMessage;
-class plRenderTarget;
+class plPageTreeMgr;
 class plRenderRequest;
+class plRenderTarget;
+class plSceneNode;
 class plViewTransform;
 
 class plPostEffectMod : public plSingleModifier
@@ -84,7 +85,7 @@ protected:
     hsMatrix44              fDefaultW2C, fDefaultC2W;
 
 
-    virtual bool IEval(double secs, float del, uint32_t dirty); // called only by owner object's Eval()
+    bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
     void            ISetupRenderRequest();
     void            IDestroyRenderRequest();
@@ -107,15 +108,15 @@ public:
     GETINTERFACE_ANY( plPostEffectMod, plSingleModifier );
 
 
-    virtual bool    MsgReceive(plMessage* pMsg);
+    bool    MsgReceive(plMessage* pMsg) override;
     
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     void        GetDefaultWorldToCamera( hsMatrix44 &w2c, hsMatrix44 &c2w );
 
     // Export only
-    void        SetNodeKey(plKey key) { fNodeKey = key; }
+    void        SetNodeKey(plKey key) { fNodeKey = std::move(key); }
     plKey       GetNodeKey() const { return fNodeKey; }
 
     void        SetHither(float h) { fHither = h; }
@@ -136,7 +137,7 @@ public:
     void        SetWorldToCamera( hsMatrix44 &w2c, hsMatrix44 &c2w );
 
     // Very bad
-    void        EnableLightsOnRenderRequest( void );
+    void        EnableLightsOnRenderRequest();
 };
 
 #endif // plPostEffectMod_inc

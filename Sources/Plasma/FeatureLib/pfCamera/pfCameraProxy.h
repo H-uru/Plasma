@@ -43,10 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCameraProxy_inc
 #define plCameraProxy_inc
 
+#include "HeadSpin.h"
+
 #include "plDrawable/plProxyGen.h"
 
-class plVirtualCam1;
 class plSceneNode;
+class plVirtualCam1;
 
 class plCameraProxy : public plProxyGen
 {
@@ -54,8 +56,8 @@ protected:
     plVirtualCam1*          fOwner;
 
 
-    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo=nil);
-    virtual plKey               IGetNode() const;
+    plDrawableSpans*    ICreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo=nullptr) override;
+    plKey               IGetNode() const override;
 public:
     plCameraProxy();
     virtual ~plCameraProxy();

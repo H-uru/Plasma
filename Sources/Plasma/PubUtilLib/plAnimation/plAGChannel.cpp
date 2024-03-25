@@ -43,13 +43,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAGChannel.h"
 
 // local
+#include "plAGAnimInstance.h"
 #include "plAGModifier.h"
 
 // global
 #include "HeadSpin.h"
 #include "hsResMgr.h"
-
-#include "plAGAnimInstance.h"
+#include "hsStream.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -77,13 +77,13 @@ plAGChannel::~plAGChannel()
 // MAKECOMBINE
 plAGChannel * plAGChannel::MakeCombine(plAGChannel *channelA)
 {
-    return nil;
+    return nullptr;
 }
 
 // MAKEBLEND
 plAGChannel * plAGChannel::MakeBlend(plAGChannel *channelA, plScalarChannel *blend, int blendPriority)
 {
-    return nil;
+    return nullptr;
 }
 
 // DETACH
@@ -93,7 +93,7 @@ plAGChannel * plAGChannel::Detach(plAGChannel *channel)
 {
     if (this == channel)
     {
-        return nil;
+        return nullptr;
     } else {
         return this;
     }

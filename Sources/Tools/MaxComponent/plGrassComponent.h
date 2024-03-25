@@ -51,10 +51,10 @@ protected:
 public:
 
     plGrassComponent();
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool DeInit(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual void DeleteThis() { delete this; }
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool DeInit(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    void DeleteThis() override { delete this; }
 
     // These only work after PreConvert pass
     static plGrassShaderMod* GetShader(INode* node); // Node is the component node

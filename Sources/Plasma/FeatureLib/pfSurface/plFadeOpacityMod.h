@@ -44,12 +44,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plFadeOpacityMod_inc
 
 #include "hsGeometry3.h"
-#include "pnModifier/plSingleModifier.h"
-#include "hsTemplates.h"
 
+#include "pnModifier/plSingleModifier.h"
+
+class plFadeOpacityLay;
 class plPipeline;
 class plRenderMsg;
-class plFadeOpacityLay;
 
 class plFadeOpacityMod : public plSingleModifier
 {
@@ -85,7 +85,7 @@ protected:
     hsPoint3        fLastEye;
 
     // The target layers
-    hsTArray<plFadeOpacityLay*> fFadeLays;
+    std::vector<plFadeOpacityLay*> fFadeLays;
 
     // A global to turn the whole thing off for debug/perf
     static bool     fLOSCheckDisabled;
@@ -101,23 +101,22 @@ protected:
     void        ISetup(plSceneObject* so);
 
     // We only act in response to messages.
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
 
 public:
     plFadeOpacityMod();
-    virtual ~plFadeOpacityMod();
 
     CLASSNAME_REGISTER( plFadeOpacityMod );
     GETINTERFACE_ANY( plFadeOpacityMod, plSingleModifier );
 
-    virtual void            SetKey(plKey k);
+    void            SetKey(plKey k) override;
 
-    virtual bool            MsgReceive(plMessage* msg);
+    bool            MsgReceive(plMessage* msg) override;
 
-    virtual void            Read(hsStream* s, hsResMgr* mgr);
-    virtual void            Write(hsStream* s, hsResMgr* mgr);
+    void            Read(hsStream* s, hsResMgr* mgr) override;
+    void            Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual void            SetTarget(plSceneObject* so);
+    void            SetTarget(plSceneObject* so) override;
 
     void FadeUp();
     void FadeDown();

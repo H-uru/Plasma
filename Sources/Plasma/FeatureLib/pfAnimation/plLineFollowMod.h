@@ -43,14 +43,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLineFollowMod_inc
 #define plLineFollowMod_inc
 
-#include "pnModifier/plMultiModifier.h"
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
 
+#include "pnModifier/plMultiModifier.h"
+
 class plAnimPath;
+class plListenerMsg;
 class plSceneObject;
 class plStereizer;
-class plListenerMsg;
 
 class plLineFollowMod : public plMultiModifier
 {
@@ -90,17 +91,17 @@ protected:
 
     mutable hsPoint3    fSearchPos;
 
-    hsTArray<plStereizer*>      fStereizers;
+    std::vector<plStereizer*> fStereizers;
 
     float            fTanOffset;
     float            fOffset;
     float            fOffsetClamp;
     float            fSpeedClamp;
 
-    virtual bool        IEval(double secs, float del, uint32_t dirty);
+    bool        IEval(double secs, float del, uint32_t dirty) override;
     
     virtual bool        IGetSearchPos();
-    virtual void        ISetTargetTransform(int iTarg, const hsMatrix44& tgtXfm);
+    virtual void        ISetTargetTransform(size_t iTarg, const hsMatrix44& tgtXfm);
     virtual void        ISetPathTransform();
 
     virtual bool        IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm);
@@ -116,14 +117,19 @@ protected:
 
 public:
 
-    plLineFollowMod();
+    plLineFollowMod()
+        : fPath(), fPathParent(), fRefObj(),
+          fFollowMode(kFollowListener), fFollowFlags(kNone),
+          fOffset(), fOffsetClamp(), fTanOffset(),
+          fSpeedClamp()
+    { }
     ~plLineFollowMod();
 
     CLASSNAME_REGISTER( plLineFollowMod );
     GETINTERFACE_ANY( plLineFollowMod, plMultiModifier );
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // Export time stuff
     void                SetPath(plAnimPath* path);
@@ -153,10 +159,10 @@ public:
     void                SetSpeedClamp(float feetPerSec);
     float               GetSpeedClamp() const { return fSpeedClamp; }
 
-    bool                MsgReceive(plMessage* msg);
+    bool                MsgReceive(plMessage* msg) override;
 
-    virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget(plSceneObject* so); 
+    void AddTarget(plSceneObject* so) override;
+    void RemoveTarget(plSceneObject* so) override;
 
     void        AddStereizer(const plKey& sterKey);
     void        RemoveStereizer(const plKey& sterKey);
@@ -179,8 +185,8 @@ public:
 
 protected:
     
-    virtual void        ISetTargetTransform(int iTarg, const hsMatrix44& tgtXfm) {fDesiredMatrix = tgtXfm;}
-    virtual bool        IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm);
+    void        ISetTargetTransform(size_t iTarg, const hsMatrix44& tgtXfm) override { fDesiredMatrix = tgtXfm; }
+    bool        IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm) override;
     
     hsMatrix44  fDesiredMatrix;
     float       fCurrentTime;

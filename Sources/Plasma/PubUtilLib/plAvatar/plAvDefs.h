@@ -71,8 +71,8 @@ enum plAvAlignment {
     kAlignEnsure16 = 0xffff
 };
 
-const hsVector3 kAvatarUp(0,0,1);
-const hsVector3 kAvatarForward(0,-1,0);
-const hsVector3 kAvatarRight(-1,0,0);
+const hsVector3 kAvatarUp(0.f, 0.f, 1.f);
+const hsVector3 kAvatarForward(0.f, -1.f, 0.f);
+const hsVector3 kAvatarRight(-1.f, 0.f, 0.f);
 
 #endif

@@ -403,7 +403,7 @@ void hsInterp::GetBoundaryKeyFrames(float time, uint32_t numKeys, void *keys, ui
                                     hsKeyFrame **kF1, hsKeyFrame **kF2, uint32_t *lastKeyIdx, float *p, bool forwards)
 {
     hsAssert(numKeys>1, "Must have more than 1 keyframe");
-    int k1, k2;
+    int k1 = 0, k2 = 0;
     float frame = time * MAX_FRAMES_PER_SEC;
 
     // boundary case, past end
@@ -498,12 +498,6 @@ void hsInterp::GetBoundaryKeyFrames(float time, uint32_t numKeys, void *keys, ui
 
 ret:
 ;
-
-#if 0
-    char str[128];
-    sprintf(str, "k1=%d, k2=%d, p=%f\n", k1, k2, *p);
-    OutputDebugString(str);
-#endif
     *lastKeyIdx = k1;
 }
 

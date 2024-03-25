@@ -40,39 +40,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include <cmath>
-
-#include "hsTimer.h"
 #include "plLayerAnimation.h"
-#include "pnKeyedObject/plKey.h"
 
-#include "plInterp/plController.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "plMessage/plLinkToAgeMsg.h"
-#include "pnMessage/plSDLModifierMsg.h"
-#include "plModifier/plLayerSDLModifier.h"
-#include "pnMessage/plCameraMsg.h"
-#include "plNetClient/plLinkEffectsMgr.h"
+#include "HeadSpin.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
-#include "plModifier/plSDLModifier.h"
-#include "plSDL/plSDL.h"
-#include "pnMessage/plSDLNotificationMsg.h"
-#include "plMessage/plAvatarMsg.h"
+#include "hsTimer.h"
 
-plLayerAnimationBase::plLayerAnimationBase()
-: 
-    fPreshadeColorCtl(nil), 
-    fRuntimeColorCtl(nil),
-    fAmbientColorCtl(nil), 
-    fSpecularColorCtl(nil),
-    fOpacityCtl(nil), 
-    fTransformCtl(nil),
-    fEvalTime(-1.0),
-    fCurrentTime(-1.f)
-{
-}
+#include <cmath>
+
+#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pnMessage/plSDLModifierMsg.h"
+#include "pnMessage/plSDLNotificationMsg.h"
+#include "pnNetCommon/plSDLTypes.h"
+
+#include "plInterp/plController.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "plModifier/plLayerSDLModifier.h"
+#include "plModifier/plSDLModifier.h"
+#include "plNetClient/plLinkEffectsMgr.h"
+#include "plSDL/plSDL.h"
+
 
 plLayerAnimationBase::~plLayerAnimationBase()
 {
@@ -305,7 +296,7 @@ float plLayerAnimationBase::IMakeUniformLength()
 plLayerAnimation::plLayerAnimation()
 :
     plLayerAnimationBase(),
-    fLayerSDLMod(nil)
+    fLayerSDLMod()
 {
     fTimeConvert.SetOwner(this);
 }
@@ -420,12 +411,11 @@ void plLayerAnimation::DefaultAnimation()
 ///////////////////////////////////////////////////////////////////////////////////////
 
 plLayerLinkAnimation::plLayerLinkAnimation() : 
-    fLinkKey(nil), 
     fLeavingAge(true),
     fEnabled(true), 
-    fFadeFlags(0), 
-    fLastFadeFlag(0),
-    fFadeFlagsDirty(false) 
+    fFadeFlags(),
+    fLastFadeFlag(),
+    fFadeFlagsDirty()
 { 
     fIFaceCallback = new plEventCallbackMsg();
     fIFaceCallback->fEvent = kTime;
@@ -559,7 +549,7 @@ void plLayerLinkAnimation::SetFadeFlag(uint8_t flag, bool val)
 bool plLayerLinkAnimation::MsgReceive( plMessage* pMsg )
 {
     plLinkEffectPrepBCMsg *bcpMsg = plLinkEffectPrepBCMsg::ConvertNoRef(pMsg);
-    if (bcpMsg != nil)
+    if (bcpMsg != nullptr)
     {
         if (bcpMsg->fLinkKey != fLinkKey || bcpMsg->fLeavingAge)
             return true;
@@ -570,7 +560,7 @@ bool plLayerLinkAnimation::MsgReceive( plMessage* pMsg )
         
         
     plLinkEffectBCMsg *msg = plLinkEffectBCMsg::ConvertNoRef(pMsg);
-    if (msg != nil)
+    if (msg != nullptr)
     {
         if (msg->fLinkKey == fLinkKey)
         {
@@ -674,7 +664,7 @@ bool plLayerLinkAnimation::MsgReceive( plMessage* pMsg )
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-plLayerSDLAnimation::plLayerSDLAnimation() : plLayerAnimationBase(), fVar(nil) {}
+plLayerSDLAnimation::plLayerSDLAnimation() : plLayerAnimationBase(), fVar() { }
 
 uint32_t plLayerSDLAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore)
 {
@@ -686,7 +676,7 @@ uint32_t plLayerSDLAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore
 
         if (fEvalTime < 0)
         {
-            if (!fVarName.IsEmpty())
+            if (!fVarName.empty())
             {
                 extern const plSDLModifier *ExternFindAgeSDL();
                 const plSDLModifier *sdlMod = ExternFindAgeSDL();

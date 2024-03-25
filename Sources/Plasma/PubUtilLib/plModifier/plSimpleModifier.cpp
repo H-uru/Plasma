@@ -40,21 +40,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include "plSimpleModifier.h"
-#include "plgDispatch.h"
 
+#include "plSimpleModifier.h"
+
+#include "plgDispatch.h"
 #include "hsStream.h"
-#include "pnSceneObject/plSceneObject.h"
+#include "hsTimer.h"
+
 #include "pnMessage/plTimeMsg.h"
 #include "pnMessage/plRefMsg.h"
-#include "hsTimer.h"
-// #include "pfConditional/plAnimationEventConditionalObject.h"
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plMessage/plAnimCmdMsg.h"
 
+
 plSimpleModifier::plSimpleModifier()
-: 
-    fTarget(nil)
+    : fTarget(), fLastTime(), fCurrentTime()
 {
     fTimeConvert.SetOwner(this);
 }
@@ -92,7 +93,7 @@ void plSimpleModifier::AddTarget(plSceneObject* o)
 void plSimpleModifier::RemoveTarget(plSceneObject* o)
 {
     hsAssert(o == fTarget, "Removing target I don't have");
-    fTarget = nil;
+    fTarget = nullptr;
 }
 
 void plSimpleModifier::IBegin()

@@ -43,15 +43,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAuxSpan_inc
 #define plAuxSpan_inc
 
+#include <vector>
 
-#include "hsTemplates.h"
-#include "plSpanTypes.h"
 #include "plGBufferGroup.h"
 
+class plDecalVtxFormat;
 class plDrawableSpans;
 class hsGMaterial;
-class plGBufferGroup;
-class plDecalVtxFormat;
 
 class plAuxSpan
 {
@@ -72,8 +70,8 @@ public:
     hsGMaterial*                fMaterial;
     uint32_t                      fFlags;
 
-    hsTArray<hsPoint3>          fOrigPos;
-    hsTArray<hsPoint3>          fOrigUVW;
+    std::vector<hsPoint3>       fOrigPos;
+    std::vector<hsPoint3>       fOrigUVW;
 
     plGBufferGroup* fGroup;     // Which buffer group, i.e. which vertex format
 

@@ -41,7 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "pnMessage/plSimulationMsg.h"
 #include "hsGeometry3.h"
-class plAngularVelocityMsg :  public plSimulationMsg 
+
+class plAngularVelocityMsg :  public plSimulationMsg
 {
 public:
     // pass-through constructors

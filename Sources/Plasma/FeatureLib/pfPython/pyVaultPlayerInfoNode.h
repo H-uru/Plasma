@@ -48,50 +48,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pyGlueDefinitions.h"
 #include "pyVaultNode.h"
-#include "pyGlueHelpers.h"
 
 class plUUID;
+namespace ST { class string; }
 
 class pyVaultPlayerInfoNode : public pyVaultNode
 {
 protected:
-    // should only be created from C++ side
-    pyVaultPlayerInfoNode(RelVaultNode * node);
-
     //create from the Python side
     pyVaultPlayerInfoNode();
 
 public:
-    ~pyVaultPlayerInfoNode() { }
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultPlayerInfoNode);
-    PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject *New(RelVaultNode * node);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultPlayerInfoNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultPlayerInfoNode); // converts a PyObject to a pyVaultPlayerInfoNode (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
 
-//==================================================================
-// class plVaultPlayerInfoNode : public plVaultNode
-//
     void    Player_SetPlayerID( uint32_t plyrid );
-    uint32_t  Player_GetPlayerID( void );
-    void    Player_SetPlayerName(const plString& name);
-    plString Player_GetPlayerName() const;
+    uint32_t  Player_GetPlayerID();
+    void    Player_SetPlayerName(const ST::string& name);
+    ST::string Player_GetPlayerName() const;
 
     // age the player is currently in, if any.
-    void    Player_SetAgeInstanceName(const plString& name);
-    plString Player_GetAgeInstanceName() const;
-    void    Player_SetAgeGuid( const char * guidtext);
-    plUUID  Player_GetAgeGuid(void) const;
+    void    Player_SetAgeInstanceName(const ST::string& name);
+    ST::string Player_GetAgeInstanceName() const;
+    void    Player_SetAgeGuid(const ST::string& guidtext);
+    plUUID  Player_GetAgeGuid() const;
     // online status
     void    Player_SetOnline( bool b );
-    bool  Player_IsOnline( void );
+    bool  Player_IsOnline();
 
-    int     Player_GetCCRLevel( void );
+    int     Player_GetCCRLevel();
 };
 
 #endif // _pyVaultPlayerInfoNode_h_

@@ -42,6 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCCRMsg_h
 #define plCCRMsg_h
 
+#include <string_theory/string>
+#include <utility>
+
 #include "pnMessage/plMessage.h"
 #include "plNetCommon/plNetCommon.h"
 
@@ -64,29 +67,29 @@ class plCCRPetitionMsg : public plCCRMessage
 {
 private:
     uint8_t fPetitionType;
-    std::string fNote;
-    std::string fTitle;
+    ST::string fNote;
+    ST::string fTitle;
 public:
-    plCCRPetitionMsg() : fPetitionType(plNetCommon::PetitionTypes::kGeneralHelp) { fBCastFlags |= kBCastByType; }
+    plCCRPetitionMsg();
     ~plCCRPetitionMsg() {}
 
     CLASSNAME_REGISTER( plCCRPetitionMsg);
     GETINTERFACE_ANY( plCCRPetitionMsg, plCCRMessage ); 
 
     // petition text
-    void SetNote(const char* n) { fNote=n;  }
-    const char* GetNote() const { return fNote.c_str(); }
+    void SetNote(ST::string note) { fNote = std::move(note); }
+    ST::string GetNote() const { return fNote; }
 
     // title
-    void SetTitle(const char* n) { fTitle=n;    }
-    const char* GetTitle() const { return fTitle.c_str();   }
+    void SetTitle(ST::string title) { fTitle = std::move(title); }
+    ST::string GetTitle() const { return fTitle; }
 
     // petition type
     void SetType(const uint8_t t) { fPetitionType=t;  }
     uint8_t GetType() const { return fPetitionType;   }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 //
@@ -104,8 +107,8 @@ public:
     CLASSNAME_REGISTER( plCCRInvisibleMsg);
     GETINTERFACE_ANY( plCCRInvisibleMsg, plCCRMessage );    
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 //
@@ -122,7 +125,7 @@ public:
         kEndCommunication,
         kReturnChatMsg
     };
-    std::string fString;
+    ST::string fString;
     Type fType;
     uint32_t fCCRPlayerID;
 
@@ -133,8 +136,8 @@ public:
     GETINTERFACE_ANY( plCCRCommunicationMsg, plCCRMessage );    
 
     // getters and setters
-    void SetMessage(const char* n) { fString=n; }
-    const char* GetMessage() const { return fString.c_str();    }
+    void SetMessageText(ST::string message) { fString = std::move(message); }
+    ST::string GetMessageText() const { return fString; }
 
     void SetType(Type t) { fType=t; }
     Type GetType() const { return fType; }
@@ -142,8 +145,8 @@ public:
     void SetCCRPlayerID(uint32_t t) { fCCRPlayerID=t; }
     uint32_t GetCCRPlayerID() const { return fCCRPlayerID; }
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 //
@@ -160,8 +163,8 @@ public:
     CLASSNAME_REGISTER( plCCRBanLinkingMsg);
     GETINTERFACE_ANY( plCCRBanLinkingMsg, plCCRMessage );   
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 //
@@ -178,8 +181,8 @@ public:
     CLASSNAME_REGISTER( plCCRSilencePlayerMsg);
     GETINTERFACE_ANY( plCCRSilencePlayerMsg, plCCRMessage );    
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif  // plCCRMsg_h

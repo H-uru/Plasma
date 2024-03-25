@@ -40,21 +40,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <algorithm>
 #include <cmath>
+#include <cstdarg>
 #include <cstddef>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
+#include <cwchar>
 #include <functional>
 #include <limits.h>
 #include <memory>
-#include <stdarg.h>
-#include <stdint.h>
-#include <wchar.h>
+#include <string_view>
+#include <type_traits>
+#include <vector>
 
 #include "HeadSpin.h"
 #include "hsWindows.h"
+#include "hsDarwin.h"
+
+#include <string_theory/formatter>
+#include <string_theory/string>
 
 #include <sys/stat.h>
 #include <sys/types.h>

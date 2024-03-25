@@ -44,9 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plCondRefMsg_inc
 
 #include "pnMessage/plRefMsg.h"
-#include "hsStream.h"
-
-class hsResMgr;
 
 class plCondRefMsg : public plRefMsg
 {
@@ -63,17 +60,8 @@ public:
     int8_t                    fWhich;
 
     // IO - not really applicable to ref msgs, but anyway
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
-        plRefMsg::Read(stream, mgr);
-        stream->ReadLE(&fWhich);
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
-        plRefMsg::Write(stream, mgr);
-        stream->WriteLE(fWhich);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plCondRefMsg_inc

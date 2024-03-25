@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plInterp_SOURCES
     hsInterp.cpp
     hsKeys.cpp
@@ -25,11 +20,25 @@ set(plInterp_HEADERS
     plModulator.h
 )
 
-add_library(plInterp STATIC ${plInterp_SOURCES} ${plInterp_HEADERS})
+plasma_library(plInterp
+    SOURCES ${plInterp_SOURCES} ${plInterp_HEADERS}
+    PRECOMPILED_HEADERS Pch.h
+)
 
-target_link_libraries(plInterp pnFactory)
-target_link_libraries(plInterp pnNetCommon)
-target_link_libraries(plInterp plTransform)
+target_link_libraries(plInterp
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnNetCommon
+        plIntersect
+        plTransform
+    PRIVATE
+        pnMessage
+        pnNetCommon
+        pnNucleusInc
+        plIntersect
+        plMessage
+)
 
 source_group("Source Files" FILES ${plInterp_SOURCES})
 source_group("Header Files" FILES ${plInterp_HEADERS})

@@ -54,7 +54,7 @@ public:
     
     uint32_t          fNumTris;
 
-    void            ClearTris() { fTris = nil; fNumTris = 0; }
+    void            ClearTris() { fTris = nullptr; fNumTris = 0; }
 
     uint32_t          TriCount() const { return fNumTris; }
 
@@ -69,12 +69,12 @@ protected:
     uint16_t*                 fCurrIdx;
     uint16_t*                 fEndIdx;
 
-    plAccessTriSpan*        fAccess;
+    const plAccessTriSpan*    fAccess;
 public:
-    plAccTriIterator() { Set(nil); }
-    plAccTriIterator(plAccessTriSpan* acc) { Set(acc); }
+    plAccTriIterator() { Set(nullptr); }
+    plAccTriIterator(const plAccessTriSpan* acc) { Set(acc); }
 
-    void            Set(plAccessTriSpan* acc) { fAccess = acc; fCurrIdx = nil; }
+    void            Set(const plAccessTriSpan* acc) { fAccess = acc; fCurrIdx = nullptr; }
 
     void            Begin();
     void            Advance();

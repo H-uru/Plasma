@@ -52,42 +52,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-
-#include "HeadSpin.h"
 #include "plTransitionMgr.h"
-#include "plPlates.h"
 
-#include "plGImage/plMipmap.h"
-#include "plSurface/plLayer.h"
-#include "plSurface/hsGMaterial.h"
-#include "plMessage/plLayRefMsg.h"
-#include "pnMessage/plRefMsg.h"
-#include "plMessage/plTransitionMsg.h"
-#include "pnMessage/plTimeMsg.h"
-#include "pnMessage/plEventCallbackMsg.h"
-#include "plMessage/plLinkToAgeMsg.h"
+
 #include "plgDispatch.h"
 #include "hsGDeviceRef.h"
+#include "plPlates.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
 
-#include "plAudio/plAudioSystem.h"
-#include "pnNetCommon/plNetApp.h"
-#include "plNetClient/plLinkEffectsMgr.h"
+#include "pnMessage/plEventCallbackMsg.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plTimeMsg.h"
 #include "pnNetCommon/plNetApp.h"
 
+#include "plAudio/plAudioSystem.h"
+#include "plGImage/plMipmap.h"
+#include "plMessage/plLayRefMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "plMessage/plTransitionMsg.h"
+#include "plNetClient/plLinkEffectsMgr.h"
+#include "plSurface/plLayer.h"
+#include "plSurface/hsGMaterial.h"
 #include "plStatusLog/plStatusLog.h"
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 plTransitionMgr::plTransitionMgr()
 {
-    fEffectPlate = nil;
+    fEffectPlate = nullptr;
     fCurrentEffect = kIdle;
     fPlaying = false;
 }
 
-void    plTransitionMgr::Init( void )
+void    plTransitionMgr::Init()
 {
     ICreatePlate();
     plgDispatch::Dispatch()->RegisterForExactType( plTransitionMsg::Index(), GetKey() );
@@ -96,13 +94,10 @@ void    plTransitionMgr::Init( void )
 
 plTransitionMgr::~plTransitionMgr()
 {
-    int     i;
+    for (plEventCallbackMsg* callback : fCallbacks)
+        hsRefCnt_SafeUnRef(callback);
 
-
-    for( i = 0; i < fCallbacks.GetCount(); i++ )
-        hsRefCnt_SafeUnRef( fCallbacks[ i ] );
-
-    if( fEffectPlate != nil )
+    if (fEffectPlate != nullptr)
         plPlateManager::Instance().DestroyPlate( fEffectPlate );
 
     if( fRegisteredForTime )
@@ -114,15 +109,15 @@ plTransitionMgr::~plTransitionMgr()
 
 //// ICreatePlate ////////////////////////////////////////////////////////////
 
-void    plTransitionMgr::ICreatePlate( void )
+void    plTransitionMgr::ICreatePlate()
 {
     int     x, y;
 
 
-    fEffectPlate = nil;
+    fEffectPlate = nullptr;
 
     // +0.01 to deal with the half-pixel antialiasing stuff
-    plPlateManager::Instance().CreatePlate( &fEffectPlate, 0, 0, 2.01, 2.01 );
+    plPlateManager::Instance().CreatePlate(&fEffectPlate, 0, 0, 2.01f, 2.01f);
     fEffectPlate->SetDepth(2);
 
     // hack for now--create a black layer that we will animate the opacity on
@@ -164,12 +159,12 @@ void    plTransitionMgr::IStartFadeOut( float lengthInSecs, uint8_t effect )
         fRegisteredForTime = true;
     }
 
-    if( fEffectPlate == nil )
+    if (fEffectPlate == nullptr)
         ICreatePlate();
     fEffectPlate->SetVisible( true );
 
     plLayer *layer = (plLayer *)fEffectPlate->GetMaterial()->GetLayer( 0 );
-    if( layer != nil )
+    if (layer != nullptr)
     {
         layer->SetOpacity( fCurrOpacity );
     }
@@ -190,12 +185,12 @@ void    plTransitionMgr::IStartFadeIn( float lengthInSecs, uint8_t effect )
     plgDispatch::Dispatch()->RegisterForExactType( plTimeMsg::Index(), GetKey() );
     fRegisteredForTime = true;
 
-    if( fEffectPlate == nil )
+    if (fEffectPlate == nullptr)
         ICreatePlate();
     fEffectPlate->SetVisible( true );
 
     plLayer *layer = (plLayer *)fEffectPlate->GetMaterial()->GetLayer( 0 );
-    if( layer != nil )
+    if (layer != nullptr)
     {
         layer->SetOpacity( fCurrOpacity );
     }
@@ -205,21 +200,19 @@ void    plTransitionMgr::IStartFadeIn( float lengthInSecs, uint8_t effect )
 
 void    plTransitionMgr::IStop( bool aboutToStartAgain /*= false*/ )
 {
-    int     i;
-
     plgDispatch::Dispatch()->UnRegisterForExactType( plTimeMsg::Index(), GetKey() );
     fRegisteredForTime = false;
 
     if( fPlaying )
     {
-        if( !fHoldAtEnd && fEffectPlate != nil && !aboutToStartAgain )
+        if (!fHoldAtEnd && fEffectPlate != nullptr && !aboutToStartAgain)
             fEffectPlate->SetVisible( false );
 
         // finish the opacity to the end opacity
-        if( fEffectPlate != nil )
+        if (fEffectPlate != nullptr)
         {
             plLayer *layer = (plLayer *)fEffectPlate->GetMaterial()->GetLayer( 0 );
-            if( layer != nil )
+            if (layer != nullptr)
             {
                 layer->SetOpacity( (fCurrentEffect == kFadeIn || fCurrentEffect == kTransitionFadeIn) ? 0.f : 1.f );
             }
@@ -231,12 +224,12 @@ void    plTransitionMgr::IStop( bool aboutToStartAgain /*= false*/ )
                 plgAudioSys::SetGlobalFadeVolume( (fCurrentEffect == kFadeIn || fCurrentEffect == kTransitionFadeIn) ? 1.f : 0.f );
         }
 
-        for( i = 0; i < fCallbacks.GetCount(); i++ )
+        for (plEventCallbackMsg* callback : fCallbacks)
         {
-            fCallbacks[ i ]->SetSender( GetKey() );
-            plgDispatch::MsgSend( fCallbacks[ i ] );
+            callback->SetSender(GetKey());
+            plgDispatch::MsgSend(callback);
         }
-        fCallbacks.Reset();
+        fCallbacks.clear();
 
         fPlaying = false;
     }
@@ -246,11 +239,8 @@ void    plTransitionMgr::IStop( bool aboutToStartAgain /*= false*/ )
 
 bool    plTransitionMgr::MsgReceive( plMessage* msg )
 {
-    int         i;
-
-
     plTimeMsg   *time = plTimeMsg::ConvertNoRef( msg );
-    if( time != nil )
+    if (time != nullptr)
     {
         if( !fPlaying )
             return false;
@@ -276,11 +266,11 @@ bool    plTransitionMgr::MsgReceive( plMessage* msg )
         {
             // Grab the layer so we can set the opacity
             fCurrOpacity += (float)(fOpacDelta * ( time->DSeconds() - fLastTime ));//*/time->DelSeconds();
-            if( fEffectPlate == nil )
+            if (fEffectPlate == nullptr)
                 ICreatePlate();
 
             plLayer *layer = (plLayer *)fEffectPlate->GetMaterial()->GetLayer( 0 );
-            if( layer != nil )
+            if (layer != nullptr)
             {
                 layer->SetOpacity( fCurrOpacity );
             }
@@ -297,16 +287,16 @@ bool    plTransitionMgr::MsgReceive( plMessage* msg )
     }
     
     plTransitionMsg *effect = plTransitionMsg::ConvertNoRef( msg );
-    if( effect != nil )
+    if (effect != nullptr)
     {
         if( fRegisteredForTime )
             IStop( true );
 
-        for( i = 0; i < effect->GetNumCallbacks(); i++ )
+        for (size_t i = 0; i < effect->GetNumCallbacks(); i++)
         {
             plEventCallbackMsg *pMsg = effect->GetEventCallback( i );
             hsRefCnt_SafeRef( pMsg );
-            fCallbacks.Append( pMsg );
+            fCallbacks.emplace_back(pMsg);
         }
         
         fHoldAtEnd = effect->GetHoldState();
@@ -317,11 +307,13 @@ bool    plTransitionMgr::MsgReceive( plMessage* msg )
         {
         case plTransitionMsg::kFadeInNoSound:
             fNoSoundFade = true;
+            // fall through
         case plTransitionMsg::kFadeIn:
             IStartFadeIn( effect->GetLengthInSecs(), kTransitionFadeIn );
             break;
         case plTransitionMsg::kFadeOutNoSound:
             fNoSoundFade = true;
+            // fall through
         case plTransitionMsg::kFadeOut:
             IStartFadeOut( effect->GetLengthInSecs(), kTransitionFadeOut );
             break;
@@ -331,12 +323,12 @@ bool    plTransitionMgr::MsgReceive( plMessage* msg )
     }
 
     plLinkEffectBCMsg *link = plLinkEffectBCMsg::ConvertNoRef( msg );
-    if( link != nil )
+    if (link != nullptr)
     {
         const float kScreenFadeTime = 3.f; // seconds
 
         // Go ahead and auto-trigger based on link FX messages
-        if( plNetClientApp::GetInstance() != nil && link->fLinkKey == plNetClientApp::GetInstance()->GetLocalPlayerKey() )
+        if (plNetClientApp::GetInstance() != nullptr && link->fLinkKey == plNetClientApp::GetInstance()->GetLocalPlayerKey())
         {
             if( fRegisteredForTime )
                 IStop( true );
@@ -359,11 +351,11 @@ bool    plTransitionMgr::MsgReceive( plMessage* msg )
             if (link->HasLinkFlag(plLinkEffectBCMsg::kSendCallback))
             {
                 plLinkEffectsMgr *mgr;
-                if( ( mgr = plLinkEffectsMgr::ConvertNoRef( link->GetSender()->ObjectIsLoaded() ) ) != nil )
+                if (mgr = plLinkEffectsMgr::ConvertNoRef(link->GetSender()->ObjectIsLoaded()); mgr != nullptr)
                 {
                     plEventCallbackMsg *cback = plEventCallbackMsg::ConvertNoRef( mgr->WaitForEffect( link->fLinkKey ) );
 //                  hsRefCnt_SafeRef( cback ); // mgr has given us ownership, his ref is now ours. No need for another. -mf-
-                    fCallbacks.Append( cback );
+                    fCallbacks.emplace_back(cback);
                 }
             }
         }

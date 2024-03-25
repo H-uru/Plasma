@@ -40,11 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include "pyMatrix44.h"
 
 #include "pyGeometry3.h"
-#include "pyMatrix44.h"
-#pragma hdrstop
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptMatrix44, pyMatrix44);
@@ -64,7 +63,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptMatrix44, copy)
 
 PYTHON_METHOD_DEFINITION(ptMatrix44, translate, args)
 {
-    PyObject *vectorObj = NULL;
+    PyObject *vectorObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &vectorObj))
     {
         PyErr_SetString(PyExc_TypeError, "translate expects a ptVector3");
@@ -83,7 +82,7 @@ PYTHON_METHOD_DEFINITION(ptMatrix44, translate, args)
 
 PYTHON_METHOD_DEFINITION(ptMatrix44, scale, args)
 {
-    PyObject *vectorObj = NULL;
+    PyObject *vectorObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &vectorObj))
     {
         PyErr_SetString(PyExc_TypeError, "scale expects a ptVector3");
@@ -117,7 +116,7 @@ PYTHON_BASIC_METHOD_DEFINITION(ptMatrix44, reset, Reset)
 
 PYTHON_METHOD_DEFINITION(ptMatrix44, makeTranslateMat, args)
 {
-    PyObject *vectorObj = NULL;
+    PyObject *vectorObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &vectorObj))
     {
         PyErr_SetString(PyExc_TypeError, "makeTranslateMat expects a ptVector3");
@@ -136,7 +135,7 @@ PYTHON_METHOD_DEFINITION(ptMatrix44, makeTranslateMat, args)
 
 PYTHON_METHOD_DEFINITION(ptMatrix44, makeScaleMat, args)
 {
-    PyObject *vectorObj = NULL;
+    PyObject *vectorObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &vectorObj))
     {
         PyErr_SetString(PyExc_TypeError, "makeScaleMat expects a ptVector3");
@@ -168,9 +167,9 @@ PYTHON_METHOD_DEFINITION(ptMatrix44, makeRotateMat, args)
 
 PYTHON_METHOD_DEFINITION(ptMatrix44, make, args)
 {
-    PyObject *fromPtObj = NULL;
-    PyObject *atPtObj = NULL;
-    PyObject *upVecObj = NULL;
+    PyObject *fromPtObj = nullptr;
+    PyObject *atPtObj = nullptr;
+    PyObject *upVecObj = nullptr;
     if (!PyArg_ParseTuple(args, "OOO", &fromPtObj, &atPtObj, &upVecObj))
     {
         PyErr_SetString(PyExc_TypeError, "make expects two ptPoint3 objects and a ptVector3");
@@ -191,9 +190,9 @@ PYTHON_METHOD_DEFINITION(ptMatrix44, make, args)
 
 PYTHON_METHOD_DEFINITION(ptMatrix44, makeUpPreserving, args)
 {
-    PyObject *fromPtObj = NULL;
-    PyObject *atPtObj = NULL;
-    PyObject *upVecObj = NULL;
+    PyObject *fromPtObj = nullptr;
+    PyObject *atPtObj = nullptr;
+    PyObject *upVecObj = nullptr;
     if (!PyArg_ParseTuple(args, "OOO", &fromPtObj, &atPtObj, &upVecObj))
     {
         PyErr_SetString(PyExc_TypeError, "makeUpPreserving expects two ptPoint3 objects and a ptVector3");
@@ -224,7 +223,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptMatrix44, getDeterminant)
 
 PYTHON_METHOD_DEFINITION(ptMatrix44, getInverse, args)
 {
-    PyObject *inverseObj = NULL;
+    PyObject *inverseObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &inverseObj))
     {
         PyErr_SetString(PyExc_TypeError, "getInverse expects a ptMatrix44");
@@ -240,7 +239,7 @@ PYTHON_METHOD_DEFINITION(ptMatrix44, getInverse, args)
 
 PYTHON_METHOD_DEFINITION(ptMatrix44, getTranspose, args)
 {
-    PyObject *transposeObj = NULL;
+    PyObject *transposeObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &transposeObj))
     {
         PyErr_SetString(PyExc_TypeError, "getTranspose expects a ptMatrix44");
@@ -256,7 +255,7 @@ PYTHON_METHOD_DEFINITION(ptMatrix44, getTranspose, args)
 
 PYTHON_METHOD_DEFINITION(ptMatrix44, getAdjoint, args)
 {
-    PyObject *adjointObj = NULL;
+    PyObject *adjointObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &adjointObj))
     {
         PyErr_SetString(PyExc_TypeError, "getAdjoint expects a ptMatrix44");
@@ -272,7 +271,7 @@ PYTHON_METHOD_DEFINITION(ptMatrix44, getAdjoint, args)
 
 PYTHON_METHOD_DEFINITION(ptMatrix44, getTranslate, args)
 {
-    PyObject *translateObj = NULL;
+    PyObject *translateObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &translateObj))
     {
         PyErr_SetString(PyExc_TypeError, "translateObj expects a ptVector3");
@@ -391,19 +390,20 @@ PyObject *ptMatrix44_mul(PyObject *v, PyObject *w)
 
 // we support some of the number methods
 PYTHON_START_AS_NUMBER_TABLE(ptMatrix44)
-    0,                          /*nb_add*/
-    0,                          /*nb_subtract*/
+    nullptr,                    /*nb_add*/
+    nullptr,                    /*nb_subtract*/
     (binaryfunc)ptMatrix44_mul, /*nb_multiply*/
-    0                           /*nb_divide*/
+    nullptr                     /*nb_divide*/
     /* the rest can be null */
 PYTHON_END_AS_NUMBER_TABLE;
 
 // Type structure definition
-#define ptMatrix44_COMPARE          PYTHON_NO_COMPARE
 #define ptMatrix44_AS_NUMBER        PYTHON_DEFAULT_AS_NUMBER(ptMatrix44)
 #define ptMatrix44_AS_SEQUENCE      PYTHON_NO_AS_SEQUENCE
 #define ptMatrix44_AS_MAPPING       PYTHON_NO_AS_MAPPING
 #define ptMatrix44_STR              PYTHON_NO_STR
+#define ptMatrix44_GETATTRO         PYTHON_NO_GETATTRO
+#define ptMatrix44_SETATTRO         PYTHON_NO_SETATTRO
 #define ptMatrix44_RICH_COMPARE     PYTHON_NO_RICH_COMPARE
 #define ptMatrix44_GETSET           PYTHON_NO_GETSET
 #define ptMatrix44_BASE             PYTHON_NO_BASE
@@ -414,7 +414,7 @@ PYTHON_CLASS_NEW_IMPL(ptMatrix44, pyMatrix44)
 
 PyObject *pyMatrix44::New(const hsMatrix44 &obj)
 {
-    ptMatrix44 *newObj = (ptMatrix44*)ptMatrix44_type.tp_new(&ptMatrix44_type, NULL, NULL);
+    ptMatrix44 *newObj = (ptMatrix44*)ptMatrix44_type.tp_new(&ptMatrix44_type, nullptr, nullptr);
     newObj->fThis->fMatrix = obj;
     return (PyObject*)newObj;
 }

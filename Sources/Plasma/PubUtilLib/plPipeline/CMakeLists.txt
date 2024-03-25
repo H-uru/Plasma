@@ -1,15 +1,6 @@
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
-if(WIN32)
-    include_directories(${DirectX_INCLUDE_DIR})
-endif(WIN32)
-
 set(plPipeline_SOURCES
     hsG3DDeviceSelector.cpp
+    pl3DPipeline.cpp
     plCaptureRender.cpp
     plCubicRenderTargetModifier.cpp
     plCullTree.cpp
@@ -17,29 +8,18 @@ set(plPipeline_SOURCES
     plDTProgressMgr.cpp
     plDynamicEnvMap.cpp
     plFogEnvironment.cpp
+    plPipelineViewSettings.cpp
     plPlates.cpp
     plRenderTarget.cpp
     plStatusLogDrawer.cpp
     plTextFont.cpp
-    plTextGenerator.cpp
     plTransitionMgr.cpp
 )
 
-set(plDXPipeline_SOURCES
-    DX/hsGDirect3D.cpp
-    DX/plDXDeviceRefs.cpp
-    DX/plDXEnumerate.cpp
-    DX/plDXPipeline.cpp
-    DX/plDXPixelShader.cpp
-    DX/plDXShader.cpp
-    DX/plDXTextFont.cpp
-    DX/plDXVertexShader.cpp
-)
-
 set(plPipeline_HEADERS
-    hsFogControl.h
     hsG3DDeviceSelector.h
     hsWinRef.h
+    pl3DPipeline.h
     plCaptureRender.h
     plCubicRenderTarget.h
     plCubicRenderTargetModifier.h
@@ -50,44 +30,56 @@ set(plPipeline_HEADERS
     plDTProgressMgr.h
     plDynamicEnvMap.h
     plFogEnvironment.h
+    plNullPipeline.h
     plPipelineCreatable.h
-    plPipelineCreate.h
+    plPipelineViewSettings.h
     plPlates.h
     plRenderTarget.h
     plStatusLogDrawer.h
     plStencil.h
     plTextFont.h
-    plTextGenerator.h
     plTransitionMgr.h
 )
 
-set(plDXPipeline_HEADERS
-    DX/hsGDirect3D.h
-    DX/plDXBufferRefs.h
-    DX/plDXDeviceRef.h
-    DX/plDXEnumerate.h
-    DX/plDXLightRef.h
-    DX/plDXPipeline.h
-    DX/plDXPixelShader.h
-    DX/plDXRenderTargetRef.h
-    DX/plDXSettings.h
-    DX/plDXShader.h
-    DX/plDXTextFont.h
-    DX/plDXTextureRef.h
-    DX/plDXVertexShader.h
+plasma_library(plPipeline
+    SOURCES ${plPipeline_SOURCES} ${plPipeline_HEADERS}
+    PRECOMPILED_HEADERS Pch.h
+)
+target_link_libraries(plPipeline
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        pnModifier
+        pnNucleusInc
+        plGImage
+        plProgressMgr
+        plScene
+        plStatusLog
+    PRIVATE
+        pnMessage
+        pnNetCommon
+        pnSceneObject
+        plAudio
+        plAvatar
+        plClientResMgr
+        plDrawable
+        plGLight
+        plIntersect
+        plMessage
+        plNetClient
+        plResMgr
+        plSurface
+        pfCamera # plCaptureRender, plDynamicEnvMap, plDXPipeline
+        pfGameGUIMgr # plCaptureRender
+        $<$<PLATFORM_ID:Windows>:plWinDpi>
+        freetype
+        "$<$<PLATFORM_ID:Darwin>:-framework CoreText>"
+        $<$<AND:$<NOT:$<PLATFORM_ID:Windows>>,$<NOT:$<PLATFORM_ID:Darwin>>>:Fontconfig::Fontconfig>
+    INTERFACE
+        pnFactory
 )
 
-if(WIN32)
-    add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plDXPipeline_SOURCES} ${plPipeline_HEADERS} ${plDXPipeline_HEADERS})
-    target_link_libraries(plPipeline ${DirectX_LIBRARIES})
-else()
-    add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plPipeline_HEADERS})
-endif()
+target_include_directories(plPipeline PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 
 source_group("Source Files" FILES ${plPipeline_SOURCES})
 source_group("Header Files" FILES ${plPipeline_HEADERS})
-
-if(WIN32)
-    source_group("DX\\Source Files" FILES ${plDXPipeline_SOURCES})
-    source_group("DX\\Header Files" FILES ${plDXPipeline_HEADERS})
-endif()

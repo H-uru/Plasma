@@ -49,10 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 #include "pyGUIControl.h"
 
-class pyPoint3;
+class plKey;
+class pyKey;
 
 class pyGUIControlClickMap : public pyGUIControl
 {
@@ -71,11 +72,11 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static bool IsGUIControlClickMap(pyKey& gckey);
+    static bool IsGUIControlClickMap(const plKey& key);
 
-    PyObject* GetLastMousePt( void ); // returns pyPoint3
-    PyObject* GetLastMouseUpPt( void ); // returns pyPoint3
-    PyObject* GetLastMouseDragPt( void ); // returns pyPoint3
+    PyObject* GetLastMousePt(); // returns pyPoint3
+    PyObject* GetLastMouseUpPt(); // returns pyPoint3
+    PyObject* GetLastMouseDragPt(); // returns pyPoint3
 
 };
 

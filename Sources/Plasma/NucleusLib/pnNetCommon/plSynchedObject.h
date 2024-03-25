@@ -91,16 +91,16 @@ public:
     {
         plKey     fObjKey;
         uint32_t  fSendFlags;
-        plString  fSDLName;
+        ST::string  fSDLName;
 
         plSynchedObject* GetObject() const { return plSynchedObject::ConvertNoRef(fObjKey->ObjectIsLoaded()); }
-        StateDefn() : fObjKey(nil),fSendFlags(0) {}
-        StateDefn(plKey k, uint32_t f, const plString& sdlName)
-            : fObjKey(k), fSendFlags(f), fSDLName(sdlName) { }
+        StateDefn() : fSendFlags() { }
+        StateDefn(plKey k, uint32_t f, ST::string sdlName)
+            : fObjKey(std::move(k)), fSendFlags(f), fSDLName(std::move(sdlName)) { }
     };
 
 private:
-    typedef std::vector<plString> SDLStateList;
+    typedef std::vector<ST::string> SDLStateList;
     SDLStateList fSDLExcludeList;
     SDLStateList fSDLVolatileList;
     uint32_t fSynchFlags;
@@ -111,21 +111,21 @@ private:
     static plSynchedObject* fStaticSynchedObj;      // static which temporarily holds address of each object's synchMgr
     static std::vector<StateDefn>   fDirtyStates;
 
-    static void IRemoveDirtyState(plKey o, const plString& sdlName);
-    static void IAddDirtyState(plKey o, const plString& sdlName, uint32_t sendFlags);
-    bool IOKToDirty(const plString& SDLStateName) const;
-    SDLStateList::const_iterator IFindInSDLStateList(const SDLStateList& list, const plString& sdlName) const;
+    static void IRemoveDirtyState(const plKey& o, const ST::string& sdlName);
+    static void IAddDirtyState(plKey o, const ST::string& sdlName, uint32_t sendFlags);
+    bool IOKToDirty(const ST::string& SDLStateName) const;
+    SDLStateList::const_iterator IFindInSDLStateList(const SDLStateList& list, const ST::string& sdlName) const;
 protected:
-    bool IOKToNetwork(const plString& sdlName, uint32_t* synchFlags) const;
+    bool IOKToNetwork(const ST::string& sdlName, uint32_t* synchFlags) const;
 public:
     plSynchedObject();
     virtual ~plSynchedObject();
 
-    CLASSNAME_REGISTER( plSynchedObject );
-    GETINTERFACE_ANY( plSynchedObject, hsKeyedObject);
+    CLASSNAME_REGISTER(plSynchedObject);
+    GETINTERFACE_ANY(plSynchedObject, hsKeyedObject);
 
-    virtual bool MsgReceive(plMessage* msg);
-    
+    bool MsgReceive(plMessage* msg) override;
+
     // getters
     int GetSynchFlags() const { return fSynchFlags; }
     plNetGroupId GetNetGroup() const { return fNetGroup; };
@@ -134,11 +134,11 @@ public:
     // setters
     void SetSynchFlagsBit(uint32_t f) { fSynchFlags |= f; }
     virtual void SetNetGroupConstant(plNetGroupId netGroup);
-    virtual void SetNetGroup(plNetGroupId netGroup) { fNetGroup = netGroup; }   
-    plNetGroupId SelectNetGroup(plKey groupKey);
+    virtual void SetNetGroup(plNetGroupId netGroup) { fNetGroup = std::move(netGroup); }
+    plNetGroupId SelectNetGroup(const plKey& groupKey);
 
-    virtual bool DirtySynchState(const plString& sdlName, uint32_t sendFlags);
-    void SendSDLStateMsg(const plString& SDLStateName, uint32_t synchFlags);  // don't use, only for net code
+    virtual bool DirtySynchState(const ST::string& sdlName, uint32_t sendFlags);
+    void SendSDLStateMsg(const ST::string& SDLStateName, uint32_t synchFlags);  // don't use, only for net code
 
     void ClearSynchFlagsBit(uint32_t f) { fSynchFlags &= ~f; }
 
@@ -147,19 +147,19 @@ public:
     static void PushSynchDisabled(bool b) { fSynchStateStack.push_back(b); }
     static bool PopSynchDisabled();
     static plSynchedObject* GetStaticSynchedObject() { return fStaticSynchedObj; }
-    static int32_t GetNumDirtyStates() { return fDirtyStates.size(); }
-    static plSynchedObject::StateDefn* GetDirtyState(int32_t i) { return &fDirtyStates[i]; }
+    static size_t GetNumDirtyStates() { return fDirtyStates.size(); }
+    static plSynchedObject::StateDefn* GetDirtyState(size_t i) { return &fDirtyStates[i]; }
     static void ClearDirtyState(std::vector<StateDefn>& carryOver) { fDirtyStates=carryOver; } 
 
     // IO 
 //  void SendCreationMsg(double secs);
 //  void SendDestructionMsg(double secs) ;
 
-    virtual void    Read(hsStream* s, hsResMgr* mgr);
-    virtual void    Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     int IsLocallyOwned() const;     // returns yes/no/maybe
-    
+
     // disable net synching only
     bool IsNetSynched() const { return (fSynchFlags & kDontSynchGameMessages)==0; }
     void SetNetSynched(bool b) { if (!b) fSynchFlags |= kDontSynchGameMessages; else fSynchFlags &= ~kDontSynchGameMessages;    }
@@ -169,52 +169,14 @@ public:
     void SetLocalOnly(bool b) { if (b) fSynchFlags |= kLocalOnly; else fSynchFlags &= ~kLocalOnly;  }
 
     // disable particular types of persistence
-    void AddToSDLExcludeList(const plString&);
-    void RemoveFromSDLExcludeList(const plString&);
-    bool IsInSDLExcludeList(const plString&) const;
+    void AddToSDLExcludeList(const ST::string&);
+    void RemoveFromSDLExcludeList(const ST::string&);
+    bool IsInSDLExcludeList(const ST::string&) const;
 
     // make volatile particular types of state
-    void AddToSDLVolatileList(const plString&);
-    void RemoveFromSDLVolatileList(const plString&);
-    bool IsInSDLVolatileList(const plString&) const;
-
-    //
-    // synched value stuff, currently unused
-    // current size is 16 + numValue bytes*2 + numFriends*4 bytes
-    //
-#ifdef USE_SYNCHED_VALUES
-public:
-    typedef uint16_t AddrOffsetType;
-    typedef uint8_t NumSynchedValuesType;
-    typedef uint16_t FlagsType;
-    friend class plSynchedValueBase;
-
-private:
-    AddrOffsetType* fSynchedValueAddrOffsets;   // represent uint32_ts offsets
-    NumSynchedValuesType fNumSynchedValues;
-
-    // array of friends
-    plSynchedValueBase** fSynchedValueFriends;  
-    NumSynchedValuesType fNumSynchedValueFriends;
-
-    // dirty callback notifiers
-    std::vector<plDirtyNotifier*> fDirtyNotifiers;
-
-    void IAppendSynchedValueAddrOffset(AddrOffsetType synchedValueAddrOffset);
-    void IAppendSynchedValueFriend(plSynchedValueBase* v);
-    plSynchedValueBase* IGetSynchedValue(NumSynchedValuesType i) const
-        { return (plSynchedValueBase*)((int32_t)this + (fSynchedValueAddrOffsets[i]<<2)); }
-    plSynchedValueBase* IGetSynchedValueFriend(NumSynchedValuesType i) const
-        { return fSynchedValueFriends[i]; }
-
-public:
-    int32_t GetNumSynchedValues() const { return fNumSynchedValues+fNumSynchedValueFriends; }
-    plSynchedValueBase* GetSynchedValue(int i) const;
-
-    uint8_t RegisterSynchedValue(plSynchedValueBase* v); 
-    bool RemoveSynchedValue(plSynchedValueBase* v);       // handles SVFriends too
-    void RegisterSynchedValueFriend(plSynchedValueBase* v); 
-#endif
+    void AddToSDLVolatileList(const ST::string&);
+    void RemoveFromSDLVolatileList(const ST::string&);
+    bool IsInSDLVolatileList(const ST::string&) const;
 
 #ifdef USE_DIRTY_NOTIFIERS
     // dirty CB notifiers
@@ -245,7 +207,7 @@ protected:
     plKey fSynchedObjKey;
     void* fUserData;
 public: 
-    plDirtyNotifier() : fSynchedObjKey(nil),fUserData(nil) {}
+    plDirtyNotifier() : fUserData() { }
     virtual ~plDirtyNotifier()
     {
         if (fSynchedObjKey)
@@ -265,22 +227,6 @@ public:
     // override
     virtual void Callback() = 0;
 };
-#endif
-
-//
-// MACROS
-//
-
-#ifdef USE_SYNCHED_VALUES
-#define SYNCHED_VALUE(type)             plSynchedValue<type>    
-#define SYNCHED_TARRAY(type)            plSynchedTArray<type>   
-#define SYNCHED_VALUE_FRIEND(type)      plSynchedValueFriend<type>  
-#define SYNCHED_TARRAY_FRIEND(type)     plSynchedTArrayFriend<type> 
-#else
-#define SYNCHED_VALUE(type)             type
-#define SYNCHED_TARRAY(type)            hsTArray<type>
-#define SYNCHED_VALUE_FRIEND(type)      type
-#define SYNCHED_TARRAY_FRIEND(type)     hsTArray<type>
 #endif
 
 #endif  // PLSYNCHOBJ_inc

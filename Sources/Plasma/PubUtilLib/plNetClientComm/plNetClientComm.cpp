@@ -47,42 +47,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetClientComm.h"
 
-#include "pnAsyncCore/pnAsyncCore.h"
-#include "plProduct.h"
-#include "pnNetCli/pnNetCli.h"
-#include "plNetGameLib/plNetGameLib.h"
-#include "pnEncryption/plChallengeHash.h"
+#include <chrono>
+#include <string_view>
+#include <thread>
 
+#include "HeadSpin.h"
+#include "plProduct.h"
+#include "hsResMgr.h"
+
+#include "pnAsyncCore/pnAsyncCore.h"
+#include "pnEncryption/plChallengeHash.h"
+#include "pnFactory/plFactory.h"
+#include "pnNetBase/pnNbConst.h"
+#include "pnNetCli/pnNetCli.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnUtils/pnUtStr.h"
+
+#include "plFile/plStreamSource.h"
+#include "plMessage/plAccountUpdateMsg.h"
 #include "plMessage/plNetCommMsgs.h"
 #include "plMessage/plNetClientMgrMsg.h"
-#include "plNetMessage/plNetMessage.h"
 #include "plNetCommon/plNetCommon.h"
+#include "plNetCommon/plNetMsgHandler.h"
+#include "plNetGameLib/plNetGameLib.h"
+#include "plNetMessage/plNetMessage.h"
 #include "plVault/plVault.h"
-#include "plMessage/plAccountUpdateMsg.h"
-#include "plNetClient/plNetClientMgr.h"
-#include "plFile/plStreamSource.h"
 
 #include "pfMessage/pfKIMsg.h"
 
-#include "hsResMgr.h"
-
-#ifdef HS_BUILD_FOR_OSX
-#include <malloc/malloc.h>
-#else
-#include <malloc.h>
-#endif
+using namespace std::literals::string_view_literals;
 
 extern  bool    gDataServerLocal;
-
-/*****************************************************************************
-*
-*   Exported data
-*
-***/
-
-const unsigned          kNetCommAllMsgClasses   = (unsigned)-1;
-FNetCommMsgHandler *    kNetCommAllMsgHandlers  = (FNetCommMsgHandler*)-1;
-const void *            kNetCommAllUserStates   = (void*)-1;
 
 struct NetCommParam {
     void *                          param;
@@ -115,42 +110,19 @@ static bool                 s_loginComplete = false;
 static bool                 s_hasAuthSrvIpAddress = false;
 static bool                 s_hasFileSrvIpAddress = false;
 static ENetError            s_authResult = kNetErrAuthenticationFailed;
-static plString             s_authSrvAddr;
-static plString             s_fileSrvAddr;
+static ST::string           s_authSrvAddr;
+static ST::string           s_fileSrvAddr;
 
-static plString            s_iniAccountUsername;
+static ST::string          s_iniAccountUsername;
 static ShaDigest           s_namePassHash;
-static wchar_t             s_iniAuthToken[kMaxPublisherAuthKeyLength];
-static wchar_t             s_iniOS[kMaxGTOSIdLength];
-static plString            s_iniStartupAgeName = "StartUp";
+static char16_t            s_iniAuthToken[kMaxPublisherAuthKeyLength];
+static char16_t            s_iniOS[kMaxGTOSIdLength];
+static ST::string          s_iniStartupAgeName = ST_LITERAL("StartUp");
 static plUUID              s_iniStartupAgeInstId;
 static unsigned            s_iniStartupPlayerId = 0;
 static bool                s_netError = false;
 
-
-struct NetCommMsgHandler : THashKeyVal<unsigned> {
-    HASHLINK(NetCommMsgHandler) link;
-    FNetCommMsgHandler  *       proc;
-    void *                      state;
-
-    NetCommMsgHandler (
-        unsigned             msgId,
-        FNetCommMsgHandler * proc,
-        void *               state
-    ) : THashKeyVal<unsigned>(msgId)
-    ,   proc(proc)
-    ,   state(state)
-    { }
-};
-
-static HASHTABLEDECL(
-    NetCommMsgHandler,
-    THashKeyVal<unsigned>,
-    link
-) s_handlers;
-
-static NetCommMsgHandler    s_defaultHandler(0, nil, nil);
-static NetCommMsgHandler    s_preHandler(0, nil, nil);
+static plNetMsgHandler* s_msgHandler = nullptr;
 
 
 //============================================================================
@@ -161,31 +133,27 @@ static void INetErrorCallback (
     NetClientDestroy(false);
     
     plNetClientMgrMsg * msg = new plNetClientMgrMsg(plNetClientMgrMsg::kCmdDisableNet,
-                                                    true, nil);
+                                                    true, nullptr);
     msg->AddReceiver(plNetClientApp::GetInstance()->GetKey());
 
     switch (error)
     {
     case kNetErrKickedByCCR:
-        StrPrintf(
-            msg->str,
-            arrsize(msg->str),
-            "You have been kicked by a CCR."
-        );
+        strncpy(msg->str, "You have been kicked by a CCR.", std::size(msg->str));
         break;
 
     default:
         // Until we get some real error handling, this'll ensure no errors
         // fall thru the cracks and we hang forever wondering what's up.
-        StrPrintf(
+        snprintf(
             // buf
             msg->str,
-            arrsize(msg->str),
+            std::size(msg->str),
             // fmt
             "Network error %u, %S.\n"
             "protocol: %S\n"
             ,// values
-            error,
+            static_cast<unsigned>(error),
             NetErrorToString(error),
             NetProtocolToString(protocol)
         );
@@ -211,17 +179,18 @@ static void INetBufferCallback (
     const uint8_t      buffer[]
 ) {
     if (!plFactory::IsValidClassIndex(type)) {
-        LogMsg(kLogError, "NetComm: received junk propagated buffer");
+        plNetApp::StaticErrorMsg("NetComm: received junk propagated buffer");
         return;
     }
     plNetMessage * msg = plNetMessage::ConvertNoRef(plFactory::Create(type));
     if (!msg) {
-        LogMsg(kLogError, "NetComm: could not convert plNetMessage to class %u", type);
+        plNetApp::StaticErrorMsg("NetComm: could not convert plNetMessage to class {}", type);
         return;
     }
 
-    if (!msg->PeekBuffer((const char *)buffer, bytes)) {
-        LogMsg(kLogError, "NetComm: plNetMessage %u failed to peek buffer", type);
+    hsReadOnlyStream stream(bytes, buffer);
+    if (!msg->PeekBuffer(&stream)) {
+        plNetApp::StaticErrorMsg("NetComm: plNetMessage %u failed to peek buffer", type);
         return;
     }
 
@@ -270,7 +239,7 @@ static void PlayerInitCallback (
     void *      param
 ) {
     if (IS_NET_ERROR(result) && (result != kNetErrVaultNodeNotFound)) {
-        s_player = nil;
+        s_player = nullptr;
     }
     else {
         // Ensure the city link has the required spawn points
@@ -305,19 +274,19 @@ static void INetCliAuthSetPlayerRequestCallback (
         PlayerInitCallback(result, param);
     }
     else if (IS_NET_ERROR(result) && (result != kNetErrVaultNodeNotFound)) {
-        s_player = nil;
+        s_player = nullptr;
         PlayerInitCallback(result, param);
     }
     else {
         s_needAvatarLoad = true;
 
-        VaultDownload(
+        VaultDownloadNoCallbacks(
             "SetActivePlayer",
             s_player->playerInt,
             PlayerInitCallback,
             param,
-            nil,
-            nil
+            nullptr,
+            nullptr
         );
     }
 }
@@ -328,7 +297,7 @@ static void LoginPlayerInitCallback (
     void *                      param
 ) {
     if (IS_NET_ERROR(result) && (result != kNetErrVaultNodeNotFound))
-        s_player = nil;
+        s_player = nullptr;
     else
         VaultProcessPlayerInbox();
 
@@ -359,7 +328,7 @@ static void INetCliAuthLoginSetPlayerRequestCallback (
     void *          param
 ) {
     if (IS_NET_ERROR(result) && (result != kNetErrVaultNodeNotFound)) {
-        s_player = nil;
+        s_player = nullptr;
         
         plNetCommAuthMsg * msg  = new plNetCommAuthMsg;
         msg->result             = result;
@@ -367,13 +336,13 @@ static void INetCliAuthLoginSetPlayerRequestCallback (
         msg->Send();
     }
     else {
-        VaultDownload(
+        VaultDownloadNoCallbacks(
             "SetActivePlayer",
             s_player->playerInt,
             LoginPlayerInitCallback,
             param,
-            nil,
-            nil
+            nullptr,
+            nullptr
         );
     }
 }
@@ -390,11 +359,11 @@ static void INetCliAuthLoginRequestCallback (
 ) {
     s_authResult = result;
 
-    s_player = nil;
+    s_player = nullptr;
     s_players.clear();
     
-    bool wantsStartUpAge = (s_startupAge.ageDatasetName.IsEmpty() ||
-                            s_startupAge.ageDatasetName.CompareI("StartUp") == 0);
+    bool wantsStartUpAge = (s_startupAge.ageDatasetName.empty() ||
+                            s_startupAge.ageDatasetName.compare_i("StartUp") == 0);
 
     s_loginComplete = true;
 
@@ -404,7 +373,7 @@ static void INetCliAuthLoginRequestCallback (
         s_account.billingType   = billingType;
         s_players.resize(playerCount);
         for (unsigned i = 0; i < playerCount; ++i) {
-            LogMsg(kLogDebug, L"Player %u: %S explorer: %u", playerInfoArr[i].playerInt, playerInfoArr[i].playerName.c_str(), playerInfoArr[i].explorer);
+            plNetApp::StaticDebugMsg("Player {}: {} explorer: {}", playerInfoArr[i].playerInt, playerInfoArr[i].playerName, playerInfoArr[i].explorer);
             s_players[i].playerInt         = playerInfoArr[i].playerInt;
             s_players[i].explorer          = playerInfoArr[i].explorer;
             s_players[i].playerName        = playerInfoArr[i].playerName;
@@ -442,10 +411,10 @@ static void INetCliAuthCreatePlayerRequestCallback (
     const NetCliAuthPlayerInfo &    playerInfo
 ) {
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, L"Create player failed: %s", NetErrorToString(result));
+        plNetApp::StaticErrorMsg("Create player failed: {}", NetErrorToString(result));
     }
     else {
-        LogMsg(kLogDebug, L"Created player %S: %u", playerInfo.playerName.c_str(), playerInfo.playerInt);
+        plNetApp::StaticDebugMsg("Created player {}: {}", playerInfo.playerName, playerInfo.playerInt);
 
         unsigned currPlayer = s_player ? s_player->playerInt : 0;
         s_players.emplace_back(playerInfo.playerInt, playerInfo.playerName,
@@ -474,10 +443,10 @@ static void INetCliAuthDeletePlayerCallback (
     uint32_t playerInt = (uint32_t)((uintptr_t)param);
 
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, L"Delete player failed: %d %s", playerInt, NetErrorToString(result));
+        plNetApp::StaticErrorMsg("Delete player failed: {} {}", playerInt, NetErrorToString(result));
     }
     else {
-        LogMsg(kLogDebug, L"Player deleted: %d", playerInt);
+        plNetApp::StaticDebugMsg("Player deleted: {}", playerInt);
 
         uint32_t currPlayer = s_player ? s_player->playerInt : 0;
 
@@ -509,10 +478,10 @@ static void INetCliAuthChangePasswordCallback (
     void *          param
 ) {
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, L"Change password failed: %s", NetErrorToString(result));
+        plNetApp::StaticErrorMsg("Change password failed: {}", NetErrorToString(result));
     }
     else {
-        LogMsg(kLogDebug, L"Password changed!");
+        plNetApp::StaticDebugMsg("Password changed!");
     }
 
     plAccountUpdateMsg* updateMsg = new plAccountUpdateMsg(plAccountUpdateMsg::kChangePassword);
@@ -526,7 +495,7 @@ static void INetCliAuthChangePasswordCallback (
 static void INetCliAuthGetPublicAgeListCallback (
     ENetError                   result,
     void *                      param,
-    const ARRAY(NetAgeInfo) &   ages
+    std::vector<NetAgeInfo>     ages
 ) {
     NetCommParam * cp = (NetCommParam *) param;
     
@@ -534,24 +503,10 @@ static void INetCliAuthGetPublicAgeListCallback (
     msg->result     = result;
     msg->param      = cp->param;
     msg->ptype      = cp->type;
-    msg->ages.Set(ages.Ptr(), ages.Count());
+    msg->ages       = std::move(ages);
     msg->Send();
     
     delete cp;
-}
-
-//============================================================================
-static void INetAuthFileListRequestCallback (
-    ENetError                   result,
-    void *                      param,
-    const NetCliAuthFileInfo    infoArr[],
-    unsigned                    infoCount
-) {
-    plNetCommFileListMsg * msg = new plNetCommFileListMsg;
-    msg->result = result;
-    msg->param  = param;
-    msg->fileInfoArr.Set(infoArr, infoCount);
-    msg->Send();
 }
 
 //============================================================================
@@ -578,14 +533,13 @@ static void INetCliAuthAgeRequestCallback (
         s_age.ageInstId = ageInstId;
         s_age.ageVaultId = ageVaultId;
 
-        plString gameAddrStr = gameAddr.GetHostString();
-        plString ageInstIdStr = ageInstId.AsString();
+        ST::string gameAddrStr = gameAddr.GetHostString();
+        ST::string ageInstIdStr = ageInstId.AsString();
 
-        LogMsg(
-            kLogPerf,
-            L"Connecting to game server %S, ageInstId %S",
-            gameAddrStr.c_str(),
-            ageInstIdStr.c_str()
+        plNetApp::StaticDebugMsg(
+            "Connecting to game server {}, ageInstId {}",
+            gameAddrStr,
+            ageInstIdStr
         );
 
         NetCliGameDisconnect();
@@ -614,10 +568,10 @@ static void INetCliAuthUpgradeVisitorRequestCallback (
     uint32_t playerInt = (uint32_t)((uintptr_t)param);
 
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, L"Upgrade visitor failed: %d %s", playerInt, NetErrorToString(result));
+        plNetApp::StaticErrorMsg("Upgrade visitor failed: {} {}", playerInt, NetErrorToString(result));
     }
     else {
-        LogMsg(kLogDebug, L"Upgrade visitor succeeded: %d", playerInt);
+        plNetApp::StaticDebugMsg("Upgrade visitor succeeded: {}", playerInt);
 
         for (NetCommPlayer& player : s_players) {
             if (player.playerInt == playerInt) {
@@ -648,7 +602,7 @@ static void INetCliAuthSendFriendInviteCallback (
 static void AuthSrvIpAddressCallback (
     ENetError       result,
     void *          param,
-    const plString& addr
+    const ST::string& addr
 ) {
     s_authSrvAddr = addr;
     s_hasAuthSrvIpAddress = true;
@@ -658,7 +612,7 @@ static void AuthSrvIpAddressCallback (
 static void FileSrvIpAddressCallback (
     ENetError       result,
     void *          param,
-    const plString& addr
+    const ST::string& addr
 ) {
     s_fileSrvAddr = addr;
     s_hasFileSrvIpAddress = true;
@@ -703,7 +657,7 @@ void NetCommSetIniPlayerId(unsigned playerId) {
 }
 
 //============================================================================
-void NetCommSetIniStartUpAge(const plString& ageName) {
+void NetCommSetIniStartUpAge(const ST::string& ageName) {
     s_iniStartupAgeName = ageName;
 }
 
@@ -728,8 +682,8 @@ void NetCommSetAvatarLoaded (bool loaded /* = true */) {
 }
 
 //============================================================================
-void NetCommChangeMyPassword (const plString& password) {
-    NetCliAuthAccountChangePasswordRequest(s_account.accountName, password, INetCliAuthChangePasswordCallback, nil);
+void NetCommChangeMyPassword (const ST::string& password) {
+    NetCliAuthAccountChangePasswordRequest(s_account.accountName, password, INetCliAuthChangePasswordCallback, nullptr);
 }
 
 //============================================================================
@@ -737,35 +691,22 @@ void NetCommStartup () {
     s_shutdown = false;
 
     AsyncCoreInitialize();
-    LogMsg(kLogPerf, "Client: %s", plProduct::ProductString().c_str());
+    plNetApp::StaticDebugMsg("Client: {}", plProduct::ProductString());
 
     NetClientInitialize();
     NetClientSetErrorHandler(IPreInitNetErrorCallback);
-    NetCliGameSetRecvBufferHandler(INetBufferCallback);
-//    NetCliAuthSetRecvBufferHandler(INetBufferCallback);
-    NetCliAuthSetNotifyNewBuildHandler(INotifyNewBuildCallback);
-    NetCliAuthSetConnectCallback(INotifyAuthConnectedCallback);
 
     // Set startup age info
-    memset(&s_startupAge, 0, sizeof(s_startupAge));
     s_startupAge.ageDatasetName = s_iniStartupAgeName;
 
     s_startupAge.ageInstId = s_iniStartupAgeInstId;
-    StrCopy(s_startupAge.spawnPtName, "LinkInPointDefault", arrsize(s_startupAge.spawnPtName));
+    StrCopy(s_startupAge.spawnPtName, "LinkInPointDefault", std::size(s_startupAge.spawnPtName));
 }
 
 //============================================================================
 void NetCommShutdown () {
     s_shutdown = true;
 
-    NetCommSetDefaultMsgHandler(nil, nil);
-    NetCommSetMsgPreHandler(nil, nil);
-    NetCommRemoveMsgHandler(
-        kNetCommAllMsgClasses,
-        kNetCommAllMsgHandlers,
-        kNetCommAllUserStates
-    );
-    
     NetCliGameDisconnect();
     NetCliAuthDisconnect();
     if (!gDataServerLocal)
@@ -780,20 +721,24 @@ void NetCommEnableNet (
     bool            enabled,
     bool            wait
 ) {
-    if (enabled) {
+    if (enabled)
         NetClientInitialize();
-        NetClientSetErrorHandler(INetErrorCallback);
-        NetCliGameSetRecvBufferHandler(INetBufferCallback);
-//      NetCliAuthSetRecvBufferHandler(INetBufferCallback);
-    }
-    else {
+    else
         NetClientDestroy(wait);
-    }
 }
 
 //============================================================================
 void NetCommActivatePostInitErrorHandler () {
     NetClientSetErrorHandler(INetErrorCallback);
+}
+
+//============================================================================
+void NetCommActivateMsgDispatchers() {
+    NetClientSetErrorHandler(INetErrorCallback);
+    NetCliGameSetRecvBufferHandler(INetBufferCallback);
+//  NetCliAuthSetRecvBufferHandler(INetBufferCallback);
+    NetCliAuthSetNotifyNewBuildHandler(INotifyNewBuildCallback);
+    NetCliAuthSetConnectCallback(INotifyAuthConnectedCallback);
 }
 
 //============================================================================
@@ -809,12 +754,12 @@ void NetCommUpdate () {
 //============================================================================
 void NetCommConnect () {
 
-    const plString* addrs;
+    const ST::string* addrs;
     unsigned count;
     bool connectedToKeeper = false;
 
     // if a console override was specified for a authserv, connect directly to the authserver rather than going through the gatekeeper
-    if((count = GetAuthSrvHostnames(addrs)) && !addrs[0].IsEmpty())
+    if((count = GetAuthSrvHostnames(addrs)) && !addrs[0].empty())
     {
         NetCliAuthStartConnect(addrs, count);
     }
@@ -825,14 +770,14 @@ void NetCommConnect () {
         connectedToKeeper = true;
 
         // request an auth server ip address
-        NetCliGateKeeperAuthSrvIpAddressRequest(AuthSrvIpAddressCallback, nil);
+        NetCliGateKeeperAuthSrvIpAddressRequest(AuthSrvIpAddressCallback, nullptr);
 
         while(!s_hasAuthSrvIpAddress && !s_netError) {
             NetClientUpdate();
-            AsyncSleep(10);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
             
-        const plString authSrv[] = {
+        const ST::string authSrv[] = {
             s_authSrvAddr
         };
         NetCliAuthStartConnect(authSrv, 1);
@@ -841,7 +786,7 @@ void NetCommConnect () {
     if (!gDataServerLocal) {
 
         // if a console override was specified for a filesrv, connect directly to the fileserver rather than going through the gatekeeper
-        if((count = GetFileSrvHostnames(addrs)) && !addrs[0].IsEmpty())
+        if((count = GetFileSrvHostnames(addrs)) && !addrs[0].empty())
         {
             NetCliFileStartConnect(addrs, count);
         }
@@ -854,14 +799,14 @@ void NetCommConnect () {
             }
 
             // request a file server ip address
-            NetCliGateKeeperFileSrvIpAddressRequest(FileSrvIpAddressCallback, nil, false);
+            NetCliGateKeeperFileSrvIpAddressRequest(FileSrvIpAddressCallback, nullptr, false);
 
             while(!s_hasFileSrvIpAddress && !s_netError) {
                 NetClientUpdate();
-                AsyncSleep(10);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
             
-            const plString fileSrv[] = {
+            const ST::string fileSrv[] = {
                 s_fileSrvAddr
             };
             NetCliFileStartConnect(fileSrv, 1);
@@ -887,130 +832,28 @@ void NetCommSendMsg (
 ) {
     msg->SetPlayerID(NetCommGetPlayer()->playerInt);
 
-    unsigned msgSize = msg->GetPackSize();
-    uint8_t * buf = (uint8_t *)malloc(msgSize);
-    msg->PokeBuffer((char *)buf, msgSize);
+    hsRAMStream stream;
+    msg->PokeBuffer(&stream);
 
-    switch (msg->GetNetProtocol()) {
-        case kNetProtocolCli2Auth:
-            NetCliAuthPropagateBuffer(
-                msg->ClassIndex(),
-                msgSize,
-                buf
-            );
-        break;
-
-        case kNetProtocolCli2Game:
-            NetCliGamePropagateBuffer(
-                msg->ClassIndex(),
-                msgSize,
-                buf
-            );
-        break;
-
-        DEFAULT_FATAL(msg->GetNetProtocol());
-    }
-
-    free(buf);
+    NetCliGamePropagateBuffer(
+        msg->ClassIndex(),
+        stream.GetEOF(),
+        static_cast<const uint8_t *>(stream.GetData())
+    );
 }
 
 //============================================================================
 void NetCommRecvMsg (
     plNetMessage * msg
 ) {
-    for (;;) {
-        if (s_preHandler.proc && kOK_MsgConsumed == s_preHandler.proc(msg, s_preHandler.state))
-            break;
-
-        unsigned msgClassIdx = msg->ClassIndex();
-        NetCommMsgHandler * handler = s_handlers.Find(msgClassIdx);
-
-        if (!handler && s_defaultHandler.proc) {
-            s_defaultHandler.proc(msg, s_defaultHandler.state);
-            break;
-        }        
-        while (handler) {
-            if (kOK_MsgConsumed == handler->proc(msg, handler->state))
-                break;
-            handler = s_handlers.FindNext(msgClassIdx, handler);
-        }
-        break;
+    if (s_msgHandler != nullptr) {
+        s_msgHandler->ReceiveMsg(msg);
     }
-}
-
-//============================================================================
-void NetCommAddMsgHandlerForType (
-    unsigned                msgClassIdx,
-    FNetCommMsgHandler *    proc,
-    void *                  state
-) {
-    for (unsigned i = 0; i < plFactory::GetNumClasses(); ++i) {
-        if (plFactory::DerivesFrom(msgClassIdx, i))
-            NetCommAddMsgHandlerForExactType(i, proc, state);
-    }
-}
-
-//============================================================================
-void NetCommAddMsgHandlerForExactType (
-    unsigned                msgClassIdx,
-    FNetCommMsgHandler *    proc,
-    void *                  state
-) {
-    ASSERT(msgClassIdx != kNetCommAllMsgClasses);
-    ASSERT(proc && proc != kNetCommAllMsgHandlers);
-    ASSERT(!state || (state && state != kNetCommAllUserStates));
-
-    NetCommRemoveMsgHandler(msgClassIdx, proc, state);
-    NetCommMsgHandler * handler = new NetCommMsgHandler(msgClassIdx, proc, state);
-
-    s_handlers.Add(handler);
-}
-
-//============================================================================
-void NetCommRemoveMsgHandler (
-    unsigned                msgClassIdx,
-    FNetCommMsgHandler *    proc,
-    const void *            state
-) {
-    NetCommMsgHandler * next, * handler = s_handlers.Head();
-    for (; handler; handler = next) {
-        next = handler->link.Next();
-        if (handler->GetValue() != msgClassIdx)
-            if (msgClassIdx != kNetCommAllMsgClasses)
-                continue;
-        if (handler->proc != proc)
-            if (proc != kNetCommAllMsgHandlers)
-                continue;
-        if (handler->state != state)
-            if (state != kNetCommAllUserStates)
-                continue;
-
-        // We found a matching handler, delete it
-        delete handler;        
-    }
-}
-
-//============================================================================
-void NetCommSetDefaultMsgHandler (
-    FNetCommMsgHandler *    proc,
-    void *                  state
-) {
-    s_defaultHandler.proc  = proc;
-    s_defaultHandler.state = state;
-}
-
-//============================================================================
-void NetCommSetMsgPreHandler (
-    FNetCommMsgHandler *    proc,
-    void *                  state
-) {
-    s_preHandler.proc  = proc;
-    s_preHandler.state = state;
 }
 
 //============================================================================
 void NetCommSetAccountUsernamePassword (
-    const plString&       username,
+    const ST::string&   username,
     const ShaDigest &   namePassHash
 ) {
     s_iniAccountUsername = username;
@@ -1019,13 +862,13 @@ void NetCommSetAccountUsernamePassword (
 
 //============================================================================
 void NetCommSetAuthTokenAndOS (
-    wchar_t               authToken[],
-    wchar_t               os[]
+    const char16_t*       authToken,
+    const char16_t*       os
 ) {
     if (authToken)
-        StrCopy(s_iniAuthToken, authToken, arrsize(s_iniAuthToken));
+        StrCopy(s_iniAuthToken, authToken, std::size(s_iniAuthToken));
     if (os)
-        StrCopy(s_iniOS, os, arrsize(s_iniOS));
+        StrCopy(s_iniOS, os, std::size(s_iniOS));
 }
 
 //============================================================================
@@ -1048,7 +891,7 @@ void NetCommAuthenticate (
         s_iniAuthToken,
         s_iniOS,
         INetCliAuthLoginRequestCallback,
-        nil
+        nullptr
     );
 }
 
@@ -1059,10 +902,10 @@ void NetCommLinkToAge (     // --> plNetCommLinkToAgeMsg
 ) {
     s_age = age;
 
-    if (plNetClientMgr::GetInstance()->GetFlagsBit(plNetClientApp::kLinkingToOfflineAge)) {
+    if (plNetClientApp::GetInstance()->GetFlagsBit(plNetClientApp::kLinkingToOfflineAge)) {
         plNetCommLinkToAgeMsg * msg = new plNetCommLinkToAgeMsg;
         msg->result     = kNetSuccess;
-        msg->param      = nil;
+        msg->param      = nullptr;
         msg->Send();
 
         return;
@@ -1088,14 +931,14 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
             VaultPlayerInfoNode pInfo(rvn);
             pInfo.SetAgeInstUuid(kNilUuid);
             pInfo.SetOnline(false);
-            NetCliAuthVaultNodeSave(rvn, nil, nil);
+            NetCliAuthVaultNodeSave(rvn.Get(), nullptr, nullptr);
         }
 
         VaultCull(s_player->playerInt);
     }
 
     if (desiredPlayerInt == 0)
-        s_player = nil;
+        s_player = nullptr;
     else {
         for (NetCommPlayer& player : s_players) {
             if (player.playerInt == desiredPlayerInt) {
@@ -1116,9 +959,9 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
 
 //============================================================================
 void NetCommCreatePlayer (  // --> plNetCommCreatePlayerMsg
-    const plString&         playerName,
-    const plString&         avatarShape,
-    const plString&         friendInvite,
+    const ST::string&       playerName,
+    const ST::string&       avatarShape,
+    const ST::string&       friendInvite,
     unsigned                createFlags,
     void *                  param
 ) {
@@ -1142,13 +985,13 @@ void NetCommDeletePlayer (  // --> plNetCommDeletePlayerMsg
     NetCliAuthPlayerDeleteRequest(
         playerInt,
         INetCliAuthDeletePlayerCallback,
-        (void*)playerInt
+        (void*)(uintptr_t)playerInt
     );
 }
 
 //============================================================================
 void NetCommGetPublicAgeList (//-> plNetCommPublicAgeListMsg
-    const plString&                 ageName,
+    const ST::string&               ageName,
     void *                          param,
     plNetCommReplyMsg::EParamType   ptype
 ) {
@@ -1175,68 +1018,6 @@ void NetCommSetAgePublic (  // --> no msg
 }
 
 //============================================================================
-void NetCommCreatePublicAge (// --> plNetCommPublicAgeMsg
-    const char              ageName[],
-    const plUUID&           ageInstId,
-    void *                  param
-) {
-}
-
-//============================================================================
-void NetCommRemovePublicAge(// --> plNetCommPublicAgeMsg
-    const plUUID&           ageInstId,
-    void *                  param
-) {
-}
-
-//============================================================================
-void NetCommRegisterOwnedAge (
-    const NetCommAge &      age,
-    const char              ageInstDesc[],
-    unsigned                playerInt,
-    void *                  param
-) {
-}
-
-//============================================================================
-void NetCommUnregisterOwnedAge (
-    const char              ageName[],
-    unsigned                playerInt,
-    void *                  param
-) {
-}
-
-//============================================================================
-void NetCommRegisterVisitAge (
-    const NetCommAge &      age,
-    const char              ageInstDesc[],
-    unsigned                playerInt,
-    void *                  param
-) {
-}
-
-//============================================================================
-void NetCommUnregisterVisitAge (
-    const plUUID&           ageInstId,
-    unsigned                playerInt,
-    void *                  param
-) {
-}
-
-//============================================================================
-void NetCommConnectPlayerVault (
-    void *                  param
-) {
-}
-
-//============================================================================
-void NetCommConnectAgeVault (
-    const plUUID&           ageInstId,
-    void *                  param
-) {
-}
-
-//============================================================================
 void NetCommUpgradeVisitorToExplorer (
     unsigned                playerInt,
     void *                  param
@@ -1244,7 +1025,7 @@ void NetCommUpgradeVisitorToExplorer (
     NetCliAuthUpgradeVisitorRequest(
         playerInt,
         INetCliAuthUpgradeVisitorRequestCallback,
-        (void*)playerInt
+        (void*)(uintptr_t)playerInt
     );
 }
 
@@ -1262,71 +1043,64 @@ void NetCommSetCCRLevel (
 
 //============================================================================
 void NetCommSendFriendInvite (
-    const plString& emailAddress,
-    const plString& toName,
-    const plUUID&   inviteUuid
+    const ST::string& emailAddress,
+    const ST::string& toName,
+    const plUUID&     inviteUuid
 ) {
     NetCliAuthSendFriendInvite(
         emailAddress,
         toName,
         inviteUuid,
         INetCliAuthSendFriendInviteCallback,
-        nil
+        nullptr
     );
+}
+
+static constexpr std::u16string_view kTracebackTruncatedMarker = u"[...]"sv;
+// Maximum length of a traceback chunk to still leave room for the truncation marker.
+// Like kMaxTracebackLength, includes one char16_t extra for the zero terminator.
+static constexpr unsigned int kTracebackChunkLength = kMaxTracebackLength - std::size(kTracebackTruncatedMarker);
+
+typedef void LogErrorFunc(const char16_t* errorText);
+
+template<LogErrorFunc logErrorFunc>
+static void NetCommLogChunkedError(const ST::string& errorText)
+{
+    ST::utf16_buffer wdata = errorText.to_utf16();
+    if (wdata.size() < kMaxTracebackLength - 1) {
+        logErrorFunc(wdata.data());
+    } else {
+        // The traceback is too long for a single message,
+        // so split it up into multiple small messages
+        // and add a truncation marker at the end of every message but the last.
+        auto pos = wdata.begin();
+        for (; wdata.end() - pos >= kMaxTracebackLength - 1; pos += kTracebackChunkLength - 1) {
+            ST::utf16_buffer chunk = ST::utf16_buffer(pos, kMaxTracebackLength - 1);
+            kTracebackTruncatedMarker.copy(&chunk[kTracebackChunkLength - 1], kTracebackTruncatedMarker.size());
+            logErrorFunc(chunk.data());
+        }
+        logErrorFunc(pos);
+    }
+}
+
+void NetCommLogPythonTraceback(const ST::string& traceback)
+{
+    NetCommLogChunkedError<NetCliAuthLogPythonTraceback>(traceback);
+}
+
+void NetCommLogStackDump(const ST::string& stackDump)
+{
+    NetCommLogChunkedError<NetCliAuthLogStackDump>(stackDump);
 }
 
 
 /*****************************************************************************
 *
-*   Msg handler interface - compatibility layer with legacy code
+*   Msg handler interface
 *
 ***/
 
-
-////////////////////////////////////////////////////////////////////
-
-// plNetClientComm ----------------------------------------------
-plNetClientComm::plNetClientComm()
+void plNetClientComm::SetMsgHandler(plNetMsgHandler* msgHandler)
 {
-}
-
-// ~plNetClientComm ----------------------------------------------
-plNetClientComm::~plNetClientComm()
-{
-    NetCommSetMsgPreHandler(nil, nil);
-}
-
-// AddMsgHandlerForType ----------------------------------------------
-void plNetClientComm::AddMsgHandlerForType( uint16_t msgClassIdx, MsgHandler* handler )
-{
-    int i;
-    for( i = 0; i < plFactory::GetNumClasses(); i++ )
-    {
-        if ( plFactory::DerivesFrom( msgClassIdx, i ) )
-            AddMsgHandlerForExactType( i, handler );
-    }
-}
-
-// AddMsgHandlerForExactType ----------------------------------------------
-void plNetClientComm::AddMsgHandlerForExactType( uint16_t msgClassIdx, MsgHandler* handler )
-{
-    NetCommAddMsgHandlerForExactType(msgClassIdx, MsgHandler::StaticMsgHandler, handler);
-}
-
-// RemoveMsgHandler ----------------------------------------------
-bool plNetClientComm::RemoveMsgHandler( MsgHandler* handler )
-{
-    NetCommRemoveMsgHandler(kNetCommAllMsgClasses, kNetCommAllMsgHandlers, handler);
-    return true;
-}
-
-// SetDefaultHandler ----------------------------------------------
-void plNetClientComm::SetDefaultHandler( MsgHandler* handler) {
-    NetCommSetDefaultMsgHandler(MsgHandler::StaticMsgHandler, handler);
-}
-
-// MsgHandler::StaticMsgHandler ----------------------------------------------
-int plNetClientComm::MsgHandler::StaticMsgHandler (plNetMessage * msg, void * userState) {
-    plNetClientComm::MsgHandler * handler = (plNetClientComm::MsgHandler *) userState;
-    return handler->HandleMessage(msg);
+    s_msgHandler = msgHandler;
 }

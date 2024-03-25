@@ -41,29 +41,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-#include "HeadSpin.h"
-
 #include "plDistOpacityMod.h"
 
-#include "plFadeOpacityLay.h"
-#include "plSurface/hsGMaterial.h"
+#include "HeadSpin.h"
+#include "plPipeline.h"
+#include "plgDispatch.h"
+#include "hsQuat.h"
+#include "hsResMgr.h"
 
+#include "plFadeOpacityLay.h"
+
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plAvatar/plArmatureMod.h"
 #include "plDrawable/plAccessGeometry.h"
 #include "plDrawable/plAccessSpan.h"
-
-#include "plMessage/plMatRefMsg.h"
-
-// If we're tracking the camera
-#include "plMessage/plRenderMsg.h"
-#include "plPipeline.h"
-
-// If we're tracking the avater
 #include "plMessage/plAvatarMsg.h"
-#include "plAvatar/plArmatureMod.h"
-
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-#include "hsQuat.h"
+#include "plMessage/plMatRefMsg.h"
+#include "plMessage/plRenderMsg.h"
+#include "plSurface/hsGMaterial.h"
 
 plDistOpacityMod::plDistOpacityMod()
 :   fSetup(false)
@@ -72,8 +68,6 @@ plDistOpacityMod::plDistOpacityMod()
     fDists[kNearOpaq] = 0;
     fDists[kFarOpaq] = 0;
     fDists[kFarTrans] = 0;
-
-    fRefPos.Set(0, 0, 0);
 }
 
 plDistOpacityMod::~plDistOpacityMod()
@@ -131,11 +125,8 @@ void plDistOpacityMod::ISetOpacity()
 
     float opacity = ICalcOpacity(GetTarget()->GetLocalToWorld().GetTranslate(), fRefPos);
 
-    const int num = fFadeLays.GetCount();
-    int i;
-    for( i = 0; i < num; i++ )
-        fFadeLays[i]->SetOpacity(opacity);  
-
+    for (plFadeOpacityLay* lay : fFadeLays)
+        lay->SetOpacity(opacity);
 }
 
 bool plDistOpacityMod::MsgReceive(plMessage* msg)
@@ -143,7 +134,7 @@ bool plDistOpacityMod::MsgReceive(plMessage* msg)
     plArmatureUpdateMsg* arm = plArmatureUpdateMsg::ConvertNoRef(msg);
     if( arm && arm->IsLocal() )
     {
-        arm->fArmature->GetPositionAndRotationSim(&fRefPos, nil);
+        arm->fArmature->GetPositionAndRotationSim(&fRefPos, nullptr);
 
         return true;
     }
@@ -168,9 +159,9 @@ bool plDistOpacityMod::MsgReceive(plMessage* msg)
             if( ref->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
             {
                 plFadeOpacityLay* lay = plFadeOpacityLay::ConvertNoRef(ref->GetRef());
-                int idx = fFadeLays.Find(lay);
-                if( idx != fFadeLays.kMissingIndex )
-                    fFadeLays.Remove(idx);
+                auto idx = std::find(fFadeLays.cbegin(), fFadeLays.cend(), lay);
+                if (idx != fFadeLays.end())
+                    fFadeLays.erase(idx);
             }
             break;
         };
@@ -184,9 +175,7 @@ void plDistOpacityMod::Read(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Read(s, mgr);
 
-    int i;
-    for( i = 0; i < kNumDists; i++ )
-        fDists[i] = s->ReadLEScalar();
+    s->ReadLEFloat(kNumDists, fDists);
 
     ICheckDists();
 
@@ -197,9 +186,7 @@ void plDistOpacityMod::Write(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Write(s, mgr);
 
-    int i;
-    for( i = 0; i < kNumDists; i++ )
-        s->WriteLEScalar(fDists[i]);
+    s->WriteLEFloat(kNumDists, fDists);
 }
 
 void plDistOpacityMod::SetTarget(plSceneObject* so)
@@ -225,17 +212,11 @@ void plDistOpacityMod::SetNearDist(float transparent, float opaque)
     ICheckDists();
 }
 
-class MatLayer
-{
-public:
-    hsGMaterial*        fMat;
-    plLayerInterface*   fLay;
-};
-
+using MatLayer = std::tuple<hsGMaterial*, plLayerInterface*>;
 
 void plDistOpacityMod::ISetup()
 {
-    fFadeLays.Reset();
+    fFadeLays.clear();
 
     plSceneObject* so = GetTarget();
     if( !so )
@@ -245,9 +226,9 @@ void plDistOpacityMod::ISetup()
     if( !di )
         return;
 
-    hsTArray<MatLayer> todo;
+    std::vector<MatLayer> todo;
 
-    hsTArray<plAccessSpan> src;
+    std::vector<plAccessSpan> src;
     plAccessGeometry::Instance()->OpenRO(di, src, false);
 
     // We are guaranteed that each Max object will be given a unique
@@ -257,39 +238,31 @@ void plDistOpacityMod::ISetup()
     // making sure we don't include any layer more than once (strip repeats).
     // This would be grossly inefficient if the numbers involved weren't all
     // very small. So an n^2 search isn't bad if n <= 2.
-    int i;
-    for( i = 0; i < src.GetCount(); i++ )
+    for (const plAccessSpan& span : src)
     {
-        hsGMaterial* mat = src[i].GetMaterial();
+        hsGMaterial* mat = span.GetMaterial();
 
-        int j;
-        for( j = 0; j < mat->GetNumLayers(); j++ )
+        for (size_t j = 0; j < mat->GetNumLayers(); j++)
         {
             plLayerInterface* lay = mat->GetLayer(j);
             if( !j || !(lay->GetZFlags() & hsGMatState::kZNoZWrite) || (lay->GetMiscFlags() & hsGMatState::kMiscRestartPassHere) )
             {
-                int k;
-                for( k = 0; k < todo.GetCount(); k++ )
-                {
-                    if( lay == todo[k].fLay )
-                        break;
-                }
-                if( k == todo.GetCount() )
-                {
-                    MatLayer* push = todo.Push();
-                    push->fMat = mat;
-                    push->fLay = lay;
-                }
+                auto it = std::find_if(todo.cbegin(), todo.cend(),
+                                       [lay](const MatLayer& matLayer) {
+                                           return lay == std::get<1>(matLayer);
+                                       });
+                if (it == todo.end())
+                    todo.emplace_back(mat, lay);
             }
         }
     }
 
     plAccessGeometry::Instance()->Close(src);
 
-    for( i = 0; i < todo.GetCount(); i++ )
+    for (size_t i = 0; i < todo.size(); ++i)
     {
-        hsGMaterial* mat = todo[i].fMat;
-        plLayerInterface* lay = todo[i].fLay;
+        // We need i below...
+        const auto [mat, lay] = todo[i];
 
         plFadeOpacityLay* fade = new plFadeOpacityLay;
 
@@ -298,7 +271,7 @@ void plDistOpacityMod::ISetup()
         fade->AttachViaNotify(lay);
 
         // We should add a ref or something here if we're going to hold on to this (even though we created and "own" it).
-        fFadeLays.Append(fade);
+        fFadeLays.emplace_back(fade);
 
         plMatRefMsg* msg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnReplace, i, plMatRefMsg::kLayer);
         msg->SetOldRef(lay);

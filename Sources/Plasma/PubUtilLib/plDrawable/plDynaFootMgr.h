@@ -52,7 +52,7 @@ class plDynaFootMgr : public plDynaDecalMgr
 protected:
     virtual bool        IPrintFromShape(const plPrintShape* shape, bool flip);
 
-    virtual int         INewDecal();
+    size_t INewDecal() override;
 public:
     plDynaFootMgr();
     virtual ~plDynaFootMgr();
@@ -60,10 +60,10 @@ public:
     CLASSNAME_REGISTER( plDynaFootMgr );
     GETINTERFACE_ANY( plDynaFootMgr, plDynaDecalMgr );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
 };
 

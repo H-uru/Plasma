@@ -45,18 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIClickMapCtrl.h"
-#include "pfGameGUIMgr.h"
-#include "pfGUIDialogMod.h"
 
 #include "plInputCore/plInputInterface.h"
-#include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
@@ -136,7 +127,7 @@ void    pfGUIClickMapCtrl::HandleMouseHover( hsPoint3 &mousePt, uint8_t modifier
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-uint32_t      pfGUIClickMapCtrl::IGetDesiredCursor( void ) const
+uint32_t      pfGUIClickMapCtrl::IGetDesiredCursor() const
 {
     if( fCustomCursor != -1 )
         return (uint32_t)fCustomCursor;

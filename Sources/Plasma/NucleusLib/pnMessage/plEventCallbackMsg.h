@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plEventCallbackMsg_inc
 #define plEventCallbackMsg_inc
 
-#include "hsStream.h"
 #include "plMessage.h"
 
 enum CallbackEvent
@@ -72,40 +71,24 @@ public:
     int16_t         fRepeats;   // -1 for infinite repeats, 0 for one call, no repeats
     int16_t         fUser;      // User defined data, useful for keeping track of multiple callbacks
 
-    plEventCallbackMsg() : fEventTime(0.0f), fEvent((CallbackEvent)0), fRepeats(-1), fUser(0), fIndex(0) {;}
+    plEventCallbackMsg() : fEventTime(0.0f), fEvent((CallbackEvent)0), fRepeats(-1), fUser(0), fIndex(0) { }
     plEventCallbackMsg (const plKey &s, 
                     const plKey &r, 
                     const double* t) : 
                         plMessage(s, r, t),
-                        fEventTime(0.0f), fEvent((CallbackEvent)0), fRepeats(-1), fUser(0), fIndex(0) {;}
+                        fEventTime(0.0f), fEvent((CallbackEvent)0), fRepeats(-1), fUser(0), fIndex(0) { }
 
     plEventCallbackMsg(const plKey &receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
-                        plMessage(nil, receiver, nil), fEvent(e), fIndex(idx), fEventTime(t), fRepeats(repeats), fUser(user) {}
+                        plMessage(nullptr, receiver, nullptr), fEvent(e), fIndex(idx), fEventTime(t), fRepeats(repeats), fUser(user) { }
 
-    ~plEventCallbackMsg(){;}
+    ~plEventCallbackMsg() { }
 
-    CLASSNAME_REGISTER( plEventCallbackMsg );
-    GETINTERFACE_ANY( plEventCallbackMsg, plMessage );
+    CLASSNAME_REGISTER(plEventCallbackMsg);
+    GETINTERFACE_ANY(plEventCallbackMsg, plMessage);
 
-    // IO 
-    virtual void Read(hsStream* stream, hsResMgr* mgr) 
-    {
-        plMessage::IMsgRead(stream, mgr);   
-        fEventTime = stream->ReadLEFloat();
-        fEvent = (CallbackEvent)stream->ReadLE16();
-        fIndex = stream->ReadLE16();
-        fRepeats = stream->ReadLE16();
-        fUser = stream->ReadLE16();
-    }
-    virtual void Write(hsStream* stream, hsResMgr* mgr) 
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->WriteLEFloat(fEventTime);
-        stream->WriteLE16((int16_t)fEvent);
-        stream->WriteLE16(fIndex);
-        stream->WriteLE16(fRepeats);
-        stream->WriteLE16(fUser);
-    }
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 // For when you want to send callbacks, but someone other than the sender/receiver
@@ -130,14 +113,11 @@ public:
             fMsg->SendAndKeep();
     }
 
-    plEventCallbackInterceptMsg() : plEventCallbackMsg(), fMsg(nil) {}
-    ~plEventCallbackInterceptMsg() { hsRefCnt_SafeUnRef(fMsg); fMsg = nil; }
+    plEventCallbackInterceptMsg() : plEventCallbackMsg(), fMsg() { }
+    ~plEventCallbackInterceptMsg() { hsRefCnt_SafeUnRef(fMsg); fMsg = nullptr; }
 
-    CLASSNAME_REGISTER( plEventCallbackInterceptMsg );
-    GETINTERFACE_ANY( plEventCallbackInterceptMsg, plEventCallbackMsg );
-
-    virtual void Read(hsStream *stream, hsResMgr *mgr) { plEventCallbackMsg::Read(stream, mgr); }
-    virtual void Write(hsStream *stream, hsResMgr *mgr) { plEventCallbackMsg::Write(stream, mgr); }
+    CLASSNAME_REGISTER(plEventCallbackInterceptMsg);
+    GETINTERFACE_ANY(plEventCallbackInterceptMsg, plEventCallbackMsg);
 };
 
 

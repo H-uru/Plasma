@@ -40,26 +40,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plRegistryKeyList.h"
+#include "plRegistryHelpers.h"
+
 #include <algorithm>
+#include <string_theory/string>
 
 #include "HeadSpin.h"
 #include "hsStream.h"
 
 #include "pnKeyedObject/plKeyImp.h"
-#include "plRegistryHelpers.h"
-#include "plRegistryKeyList.h"
+
+#include "plStatusLog/plStatusLog.h"
+
 
 plRegistryKeyList::~plRegistryKeyList()
 {
-    std::for_each(fKeys.begin(), fKeys.end(),
-        [] (plKeyImp* key) { if (key && !key->ObjectIsLoaded()) delete key; }
-    );
+    for (auto& key : fKeys) {
+        if (key && !key->ObjectIsLoaded()) {
+            plKeyImp* temp = key;
+            key = nullptr;
+            delete temp;
+        }
+    }
 }
 
-plKeyImp* plRegistryKeyList::FindKey(const plString& keyName) const
+plKeyImp* plRegistryKeyList::FindKey(const ST::string& keyName) const
 {
     auto it = std::find_if(fKeys.begin(), fKeys.end(),
-        [&] (plKeyImp* key) { return key->GetName().CompareI(keyName) == 0; }
+        [&] (plKeyImp* key) { return key && key->GetName().compare_i(keyName) == 0; }
     );
     if (it != fKeys.end())
         return *it;
@@ -78,18 +87,20 @@ plKeyImp* plRegistryKeyList::FindKey(const plUoid& uoid) const
     // Direct lookup
     if (objectID <= fKeys.size())
     {
-#ifdef PLASMA_EXTERNAL_RELEASE
-        return fKeys[objectID-1];
-#else
-        // If this is an internal release, our objectIDs might not match
-        // because of local data. Verify that we have the right key by
-        // name, and if it's wrong, do the slower find-by-name.
-        plKeyImp *keyImp = fKeys[objectID-1];
-        if (!keyImp || keyImp->GetName().CompareI(uoid.GetObjectName()) != 0)
-            return FindKey(uoid.GetObjectName());
-        else
-            return keyImp;
-#endif // PLASMA_EXTERNAL_RELEASE
+        plKeyImp* keyImp = fKeys[objectID - 1];
+#ifndef PLASMA_EXTERNAL_RELEASE
+        if (!keyImp)
+            plStatusLog::AddLineSF("resources.log", "FindKey: NULL KeyImp for Uoid {}", uoid);
+        if (keyImp && keyImp->GetName().compare_i(uoid.GetObjectName()) != 0) {
+            plStatusLog::AddLineSF(
+                "resources.log",
+                "FindKey: Uoid objID mismatch\n\tRequested: {}\n\tGot: {}",
+                uoid,
+                keyImp->GetUoid()
+            );
+        }
+#endif
+        return keyImp;
     }
 
     // If we got here it probably means we just deleted all our keys of the matching type
@@ -190,6 +201,16 @@ bool plRegistryKeyList::SetKeyUnused(plKeyImp* key, LoadStatus& loadStatusChange
     return foundKey != nullptr;
 }
 
+void plRegistryKeyList::PrepForWrite()
+{
+    uint32_t objectID = 1;
+    for (plKeyImp* key : fKeys) {
+        if (key->ObjectIsLoaded()) {
+            key->SetObjectID(objectID++);
+        }
+    }
+}
+
 void plRegistryKeyList::Read(hsStream* s)
 {
     uint32_t keyListLen = s->ReadLE32();
@@ -201,7 +222,7 @@ void plRegistryKeyList::Read(hsStream* s)
 
     // deprecated flags. used to indicate alphabetically sorted keys for some "optimization"
     // that really appeared to do nothing. no loss.
-    s->ReadByte();
+    (void)s->ReadByte();
 
     uint32_t numKeys = s->ReadLE32();
     fKeys.reserve((numKeys * 3) / 2);
@@ -224,7 +245,7 @@ void plRegistryKeyList::Write(hsStream* s)
     // Save space for the length of our data
     uint32_t beginPos = s->GetPosition();
     s->WriteLE32(0);
-    s->WriteByte(0); // Deprecated flags
+    s->WriteByte(uint8_t(0)); // Deprecated flags
 
     // We only write out keys with data. Fill this value in later...
     uint32_t countPos = s->GetPosition();
@@ -245,7 +266,8 @@ void plRegistryKeyList::Write(hsStream* s)
     // Rewind and write out data size and key count
     uint32_t endPos = s->GetPosition();
     s->SetPosition(beginPos);
-    s->WriteLE32(endPos-beginPos-sizeof(uint32_t));
+    uint32_t objSize = endPos - beginPos - sizeof(uint32_t);
+    s->WriteLE32(objSize);
     s->SetPosition(countPos);
     s->WriteLE32(keyCount);
     s->SetPosition(endPos);

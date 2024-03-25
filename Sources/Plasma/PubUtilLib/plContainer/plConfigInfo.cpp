@@ -45,10 +45,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <fstream>
 #include <algorithm>
 #include <sstream>
+#include <string_theory/string_stream>
 
-const plString& plConfigInfo::GlobalSection()
+const ST::string& plConfigInfo::GlobalSection()
 {
-    static plString section("global");
+    static ST::string section = ST_LITERAL("global");
     return section;
 }
 
@@ -72,24 +73,24 @@ void plConfigInfo::Clear()
     fSections.clear();
 }
 
-void plConfigInfo::RemoveSection(const plString & section)
+void plConfigInfo::RemoveSection(const ST::string & section)
 {
     fSections.erase(section);
 }
 
-void plConfigInfo::RemoveKey(const plString & section, const plString & key)
+void plConfigInfo::RemoveKey(const ST::string & section, const ST::string & key)
 {
     Sections::iterator si = fSections.find(section);
     if (si != fSections.end())
         fSections[section].RemoveKey(key);
 }
 
-bool plConfigInfo::HasSection(const plString & section) const
+bool plConfigInfo::HasSection(const ST::string & section) const
 {
     return fSections.find(section)!=fSections.end();
 }
 
-bool plConfigInfo::HasKey(const plString & section, const plString & key)
+bool plConfigInfo::HasKey(const ST::string & section, const ST::string & key)
 {
     Sections::iterator si = fSections.find(section);
     if (si == fSections.end())
@@ -97,7 +98,7 @@ bool plConfigInfo::HasKey(const plString & section, const plString & key)
     return (si->second.HasKey(key));
 }
 
-bool plConfigInfo::HasKeyAny(const plString & key)
+bool plConfigInfo::HasKeyAny(const ST::string & key)
 {
     for (Sections::iterator si=fSections.begin(); si!=fSections.end(); ++si)
     {
@@ -107,12 +108,12 @@ bool plConfigInfo::HasKeyAny(const plString & key)
     return false;
 }
 
-bool plConfigInfo::HasKeyIn(const plString & key, const char * section1, ...)
+bool plConfigInfo::HasKeyIn(const ST::string & key, const char * section1, ...)
 {
     const char * section = section1;
     va_list va;
     va_start(va,section1);
-    std::vector<plString> sections;
+    std::vector<ST::string> sections;
     while (section)
     {
         sections.push_back( section );
@@ -122,7 +123,7 @@ bool plConfigInfo::HasKeyIn(const plString & key, const char * section1, ...)
     return HasKeyIn( key, sections );
 }
 
-bool plConfigInfo::HasKeyIn(const plString & key, const std::vector<plString> & sections )
+bool plConfigInfo::HasKeyIn(const ST::string & key, const std::vector<ST::string> & sections )
 {
     for ( int i=0; i<sections.size(); i++ )
     {
@@ -135,7 +136,7 @@ bool plConfigInfo::HasKeyIn(const plString & key, const std::vector<plString> & 
     return false;
 }
 
-bool plConfigInfo::KeyHasValue(const plString & section, const plString & key, const plString & value)
+bool plConfigInfo::KeyHasValue(const ST::string & section, const ST::string & key, const ST::string & value)
 {
     Sections::iterator si = fSections.find(section);
     if (si == fSections.end())
@@ -143,7 +144,7 @@ bool plConfigInfo::KeyHasValue(const plString & section, const plString & key, c
     return si->second.KeyHasValue(key,value);
 }
 
-bool plConfigInfo::KeyHasValue(const plString & section, const plString & key, int value)
+bool plConfigInfo::KeyHasValue(const ST::string & section, const ST::string & key, int value)
 {
     Sections::iterator si = fSections.find(section);
     if (si == fSections.end())
@@ -151,7 +152,7 @@ bool plConfigInfo::KeyHasValue(const plString & section, const plString & key, i
     return si->second.KeyHasValue(key,value);
 }
 
-bool plConfigInfo::KeyHasValue(const plString & section, const plString & key, double value)
+bool plConfigInfo::KeyHasValue(const ST::string & section, const ST::string & key, double value)
 {
     Sections::iterator si = fSections.find(section);
     if (si == fSections.end())
@@ -159,27 +160,27 @@ bool plConfigInfo::KeyHasValue(const plString & section, const plString & key, d
     return si->second.KeyHasValue(key,value);
 }
 
-bool plConfigInfo::AddValue(const plString & section, const plString & key, const plString & value, KAddValueMode mode)
+bool plConfigInfo::AddValue(const ST::string & section, const ST::string & key, const ST::string & value, KAddValueMode mode)
 {
     return fSections[section].AddValue(key,value,mode);
 }
 
-bool plConfigInfo::AddValue(const plString & section, const plString & key, int value, KAddValueMode mode)
+bool plConfigInfo::AddValue(const ST::string & section, const ST::string & key, int value, KAddValueMode mode)
 {
     return fSections[section].AddValue(key,value,mode);
 }
 
-bool plConfigInfo::AddValue(const plString & section, const plString & key, double value, KAddValueMode mode)
+bool plConfigInfo::AddValue(const ST::string & section, const ST::string & key, double value, KAddValueMode mode)
 {
     return fSections[section].AddValue(key,value,mode);
 }
 
-bool plConfigInfo::AddValues(const plString & section, const plString & key, const std::vector<plString> & values, KAddValueMode mode)
+bool plConfigInfo::AddValues(const ST::string & section, const ST::string & key, const std::vector<ST::string> & values, KAddValueMode mode)
 {
     return fSections[section].AddValues(key,values);
 }
 
-plKeysAndValues plConfigInfo::GetSection(const plString & section, bool & found)
+plKeysAndValues plConfigInfo::GetSection(const ST::string & section, bool & found)
 {
     found = HasSection(section);
     if (found)
@@ -188,39 +189,39 @@ plKeysAndValues plConfigInfo::GetSection(const plString & section, bool & found)
         return plKeysAndValues(); // empty
 }
 
-std::vector<plString> plConfigInfo::GetSectionNames()
+std::vector<ST::string> plConfigInfo::GetSectionNames()
 {
-    std::vector<plString> results;
+    std::vector<ST::string> results;
     for (Sections::const_iterator ii=fSections.begin(); ii!=fSections.end(); ++ii)
         results.push_back(ii->first);
     return results;
 }
 
-plString plConfigInfo::GetValue(const plString & section, const plString & key, const plString & defval, bool * outFound) const
+ST::string plConfigInfo::GetValue(const ST::string & section, const ST::string & key, const ST::string & defval, bool * outFound) const
 {
     return fSections[section].GetValue(key,defval,outFound);
 }
 
-int plConfigInfo::GetValue(const plString & section, const plString & key, int defval, bool * outFound) const
+int plConfigInfo::GetValue(const ST::string & section, const ST::string & key, int defval, bool * outFound) const
 {
     return fSections[section].GetValue(key,defval,outFound);
 }
 
-double plConfigInfo::GetValue(const plString & section, const plString & key, double defval, bool * outFound) const
+double plConfigInfo::GetValue(const ST::string & section, const ST::string & key, double defval, bool * outFound) const
 {
     return fSections[section].GetValue(key,defval,outFound);
 }
 
-std::vector<plString> plConfigInfo::GetAllValues(const plString & section, const plString & key) const
+std::vector<ST::string> plConfigInfo::GetAllValues(const ST::string & section, const ST::string & key) const
 {
     Sections::iterator si = fSections.find(section);
     if (si != fSections.end())
         return si->second.GetAllValues(key);
-    return std::vector<plString>();
+    return std::vector<ST::string>();
 }
 
 
-plString plConfigInfo::GetValueAny(const plString & key, const plString & defval, bool * outFound) const
+ST::string plConfigInfo::GetValueAny(const ST::string & key, const ST::string & defval, bool * outFound) const
 {
     if (outFound) *outFound=false;
     for (Sections::iterator si=fSections.begin(); si!=fSections.end(); ++si)
@@ -229,7 +230,7 @@ plString plConfigInfo::GetValueAny(const plString & key, const plString & defval
     return defval;
 }
 
-int plConfigInfo::GetValueAny(const plString & key, int defval, bool * outFound) const
+int plConfigInfo::GetValueAny(const ST::string & key, int defval, bool * outFound) const
 {
     if (outFound) *outFound=false;
     for (Sections::iterator si=fSections.begin(); si!=fSections.end(); ++si)
@@ -238,7 +239,7 @@ int plConfigInfo::GetValueAny(const plString & key, int defval, bool * outFound)
     return defval;
 }
 
-double plConfigInfo::GetValueAny(const plString & key, double defval, bool * outFound) const
+double plConfigInfo::GetValueAny(const ST::string & key, double defval, bool * outFound) const
 {
     if (outFound) *outFound=false;
     for (Sections::iterator si=fSections.begin(); si!=fSections.end(); ++si)
@@ -247,16 +248,16 @@ double plConfigInfo::GetValueAny(const plString & key, double defval, bool * out
     return defval;
 }
 
-std::vector<plString> plConfigInfo::GetAllValuesAny(const plString & key) const
+std::vector<ST::string> plConfigInfo::GetAllValuesAny(const ST::string & key) const
 {
     for (Sections::iterator si=fSections.begin(); si!=fSections.end(); ++si)
         if (si->second.HasKey(key))
             return si->second.GetAllValues(key);
-    return std::vector<plString>();
+    return std::vector<ST::string>();
 }
 
 
-plString plConfigInfo::GetValueIn(const plString & key, const plString & defval, bool * outFound, const char * section1, ...) const
+ST::string plConfigInfo::GetValueIn(const ST::string & key, const ST::string & defval, bool * outFound, const char * section1, ...) const
 {
     if (outFound) *outFound=false;
     const char * section = section1;
@@ -267,8 +268,10 @@ plString plConfigInfo::GetValueIn(const plString & key, const plString & defval,
         if (HasSection(section))
         {
             plKeysAndValues & kv = fSections[section];
-            if (kv.HasKey(key))
+            if (kv.HasKey(key)) {
+                va_end(sections);
                 return kv.GetValue(key,defval,outFound);
+            }
         }
         section = va_arg(sections,const char *);
     }
@@ -276,7 +279,7 @@ plString plConfigInfo::GetValueIn(const plString & key, const plString & defval,
     return defval;
 }
 
-plString plConfigInfo::GetValueIn(const plString & key, const plString & defval, bool * outFound, const std::vector<plString> & sections ) const
+ST::string plConfigInfo::GetValueIn(const ST::string & key, const ST::string & defval, bool * outFound, const std::vector<ST::string> & sections ) const
 {
     if (outFound) *outFound=false;
     for ( int i=0; i<sections.size(); i++ )
@@ -291,7 +294,7 @@ plString plConfigInfo::GetValueIn(const plString & key, const plString & defval,
     return defval;
 }
 
-int plConfigInfo::GetValueIn(const plString & key, int defval, bool * outFound, const char * section1, ...) const
+int plConfigInfo::GetValueIn(const ST::string & key, int defval, bool * outFound, const char * section1, ...) const
 {
     if (outFound) *outFound=false;
     const char * section = section1;
@@ -302,8 +305,10 @@ int plConfigInfo::GetValueIn(const plString & key, int defval, bool * outFound, 
         if (HasSection(section))
         {
             plKeysAndValues & kv = fSections[section];
-            if (kv.HasKey(key))
+            if (kv.HasKey(key)) {
+                va_end(sections);
                 return kv.GetValue(key,defval,outFound);
+            }
         }
         section = va_arg(sections,const char *);
     }
@@ -311,7 +316,7 @@ int plConfigInfo::GetValueIn(const plString & key, int defval, bool * outFound, 
     return defval;
 }
 
-int plConfigInfo::GetValueIn(const plString & key, int defval, bool * outFound, const std::vector<plString> & sections ) const
+int plConfigInfo::GetValueIn(const ST::string & key, int defval, bool * outFound, const std::vector<ST::string> & sections ) const
 {
     if (outFound) *outFound=false;
     for ( int i=0; i<sections.size(); i++ )
@@ -326,7 +331,7 @@ int plConfigInfo::GetValueIn(const plString & key, int defval, bool * outFound, 
     return defval;
 }
 
-double plConfigInfo::GetValueIn(const plString & key, double defval, bool * outFound, const char * section1, ...) const
+double plConfigInfo::GetValueIn(const ST::string & key, double defval, bool * outFound, const char * section1, ...) const
 {
     if (outFound) *outFound=false;
     const char * section = section1;
@@ -337,8 +342,10 @@ double plConfigInfo::GetValueIn(const plString & key, double defval, bool * outF
         if (HasSection(section))
         {
             plKeysAndValues & kv = fSections[section];
-            if (kv.HasKey(key))
+            if (kv.HasKey(key)) {
+                va_end(sections);
                 return kv.GetValue(key,defval,outFound);
+            }
         }
         section = va_arg(sections,const char *);
     }
@@ -346,7 +353,7 @@ double plConfigInfo::GetValueIn(const plString & key, double defval, bool * outF
     return defval;
 }
 
-double plConfigInfo::GetValueIn(const plString & key, double defval, bool * outFound, const std::vector<plString> & sections ) const
+double plConfigInfo::GetValueIn(const ST::string & key, double defval, bool * outFound, const std::vector<ST::string> & sections ) const
 {
     if (outFound) *outFound=false;
     for ( int i=0; i<sections.size(); i++ )
@@ -361,12 +368,12 @@ double plConfigInfo::GetValueIn(const plString & key, double defval, bool * outF
     return defval;
 }
 
-std::vector<plString> plConfigInfo::GetAllValuesIn(const plString & key, const char * section1, ...)
+std::vector<ST::string> plConfigInfo::GetAllValuesIn(const ST::string & key, const char * section1, ...)
 {
     const char * section = section1;
     va_list sections;
     va_start(sections,section1);
-    std::vector<plString> result;
+    std::vector<ST::string> result;
     while (section)
     {
         if (HasSection(section))
@@ -374,7 +381,7 @@ std::vector<plString> plConfigInfo::GetAllValuesIn(const plString & key, const c
             plKeysAndValues & kv = fSections[section];
             if (kv.HasKey(key))
             {
-                std::vector<plString> values = kv.GetAllValues(key);
+                std::vector<ST::string> values = kv.GetAllValues(key);
                 result.insert(result.end(),values.begin(),values.end());
             }
         }
@@ -391,7 +398,7 @@ bool plConfigInfo::GetSectionIterators(Sections::const_iterator & iter, Sections
     return true;
 }
 
-bool plConfigInfo::GetKeyIterators(const plString & section, Keys::const_iterator & iter, Keys::const_iterator & end) const
+bool plConfigInfo::GetKeyIterators(const ST::string & section, Keys::const_iterator & iter, Keys::const_iterator & end) const
 {
     Sections::const_iterator si = fSections.find(section);
     if (si==fSections.end())
@@ -399,7 +406,7 @@ bool plConfigInfo::GetKeyIterators(const plString & section, Keys::const_iterato
     return fSections[section].GetKeyIterators(iter, end);
 }
 
-bool plConfigInfo::GetValueIterators(const plString & section, const plString & key, Values::const_iterator & iter, Values::const_iterator & end) const
+bool plConfigInfo::GetValueIterators(const ST::string & section, const ST::string & key, Values::const_iterator & iter, Values::const_iterator & end) const
 {
     Sections::const_iterator si = fSections.find(section);
     if (si==fSections.end())
@@ -420,62 +427,62 @@ bool plConfigInfo::WriteTo(plConfigSource * src)
 
 ////////////////////////////////////////////////
 
-void plConfigSource::SplitAt(plString & key, plString & value, char splitter, plString & in)
+void plConfigSource::SplitAt(ST::string & key, ST::string & value, char splitter, const ST::string & in)
 {
-    if (in.IsEmpty())
+    if (in.empty())
         return;
     
-    int t = in.Find(splitter);
+    ST_ssize_t t = in.find(splitter);
     if (t < 0)
     {
         key = in;
         return;
     }
     
-    key = in.Left(t);
-    value = in.Substr(t+1,in.GetSize()-t-1);
+    key = in.left(t);
+    value = in.substr(t+1,in.size()-t-1);
 }
 
 
-bool plConfigSource::ReadString(const plString & in)
+bool plConfigSource::ReadString(const ST::string & in)
 {
-    plString work = in.Trim();
+    ST::string work = in.trim();
     
     // comment
-    if (work.CharAt(0) == '#')
+    if (work.front() == '#')
         return true;
     
     // comment
-    if (work.CharAt(0) == ';')
+    if (work.front() == ';')
         return true;
     
     // section
-    if (work.CharAt(0) == '[')
+    if (work.front() == '[')
     {
-        int close = work.Find("]");
+        ST_ssize_t close = work.find(']');
         if (close < 0)
             return false;
-        fCurrSection = work.Substr(1, close-1);
+        fCurrSection = work.substr(1, close-1);
         fEffectiveSection = fCurrSection;
         return true;
     }
 
     // key=value
-    plString key, value;
+    ST::string key, value;
     SplitAt(key, value, '=', work);
 
     // dot notation makes section change for this key=value only.
-    int t = key.Find('.');
-    if (t>0 && t<key.GetSize()-1)
+    ST_ssize_t t = key.find('.');
+    if (t>0 && t<key.size()-1)
     {
-        fEffectiveSection = key.Left(t);
-        key = key.Substr(t+1);
+        fEffectiveSection = key.left(t);
+        key = key.substr(t+1);
     }
 
     bool ret=ReadPair(key, value);
     fEffectiveSection = fCurrSection;
 
-    if(ret && key.Compare("LoadIni") == 0)
+    if(ret && key.compare("LoadIni") == 0)
     {
         ret = ReadSubSource( value.c_str() );
     }
@@ -483,14 +490,14 @@ bool plConfigSource::ReadString(const plString & in)
     return ret;
 }
 
-bool plConfigSource::ReadPair(plString & key, plString & value)
+bool plConfigSource::ReadPair(ST::string & key, ST::string & value)
 {
     hsAssert(fConfigInfo, "plConfigSource::ProcessPair: fConfigInfo not set.");
 
-    key = key.Trim();
-    value = value.Trim().Trim("\"'");
+    key = key.trim();
+    value = value.trim(" \t\r\n\"'");
     
-    if (key.IsEmpty())
+    if (key.empty())
         return true;
     
     return fConfigInfo->AddValue(fEffectiveSection, key, value, fAddMode);
@@ -499,7 +506,7 @@ bool plConfigSource::ReadPair(plString & key, plString & value)
 
 bool plConfigSource::ReadList(char ** l)
 {
-    while(*l != NULL)
+    while (*l != nullptr)
     {
         ReadString(*l);
         l++;
@@ -577,7 +584,7 @@ bool plEnvConfigSource::ReadInto(plConfigInfo & configInfo, KAddValueMode mode)
     if (!plConfigSource::ReadInto(configInfo, mode))
         return false;
     
-    if (fEnvp != NULL)
+    if (fEnvp != nullptr)
     {
         fCurrSection = fMySection;
         fEffectiveSection = fCurrSection;
@@ -603,7 +610,7 @@ bool plIniConfigSource::ReadInto(plConfigInfo & configInfo, KAddValueMode mode)
     fCurrSection = plConfigInfo::GlobalSection();
     fEffectiveSection = fCurrSection;
     
-    if(fFileName.GetSize() < 2)
+    if(fFileName.size() < 2)
         return false;
     
     
@@ -746,7 +753,7 @@ bool plIniStreamConfigSource::WriteOutOf(plConfigInfo & configInfo)
 
 /////////////////////////////////////////////////
 
-plIniSectionConfigSource::plIniSectionConfigSource(const char * iniFileName, std::vector<plString> & sections)
+plIniSectionConfigSource::plIniSectionConfigSource(const char * iniFileName, std::vector<ST::string> & sections)
 :   plIniConfigSource(iniFileName)
 {
     for (int i=0; i<sections.size(); i++)
@@ -754,25 +761,25 @@ plIniSectionConfigSource::plIniSectionConfigSource(const char * iniFileName, std
 }
 
 
-bool plIniSectionConfigSource::ReadPair(plString & key, plString & value)
+bool plIniSectionConfigSource::ReadPair(ST::string & key, ST::string & value)
 {
     hsAssert(fConfigInfo, "plConfigSource::ProcessPair: fConfigInfo not set.");
 
     // the current section must be in list of sections.
     Sections::iterator ii = std::find_if(fSections.begin(), fSections.end(),
-        [this](const plString &v) { return v.CompareI(fCurrSection) == 0; }
+        [this](const ST::string &v) { return v.compare_i(fCurrSection) == 0; }
     );
 
     if (ii==fSections.end())
         return true;
 
-    key = key.Trim();
-    value = value.Trim().Trim("\"'");
+    key = key.trim();
+    value = value.trim(" \t\r\n\"'");
     
-    if (key.IsEmpty())
+    if (key.empty())
         return true;
 
-    if (key.CompareI("section") == 0)
+    if (key.compare_i("section") == 0)
         fSections.push_back(value);
     
     return fConfigInfo->AddValue(fEffectiveSection, key, value, fAddMode);
@@ -793,20 +800,20 @@ plIniNoSectionsConfigSource::plIniNoSectionsConfigSource(const char * filename)
     fEffectiveSection = fCurrSection = "";
 }
 
-bool plIniNoSectionsConfigSource::ReadString(const plString & in)
+bool plIniNoSectionsConfigSource::ReadString(const ST::string & in)
 {
-    plString work = in.Trim();
+    ST::string work = in.trim();
     
     // ignore comments
-    if (work.CharAt(0)=='#' || work.CharAt(0)==';')
+    if (work.front() == '#' || work.front() == ';')
         return true;
     
     // ignore sections
-    if (work.CharAt(0) == '[')
+    if (work.front() == '[')
         return true;
 
     // parse key value
-    plString key, value;
+    ST::string key, value;
     SplitAt(key, value, '=', work);
 
     return ReadPair(key, value);
@@ -817,7 +824,7 @@ bool plIniNoSectionsConfigSource::ReadInto(plConfigInfo & configInfo, KAddValueM
     if (!plConfigSource::ReadInto(configInfo, mode))
         return false;
     
-    if (fFileName.GetSize() < 2)
+    if (fFileName.size() < 2)
         return false;
     
     std::ifstream    file;
@@ -927,7 +934,7 @@ void plConfigValueBase::ConfigRead(plConfigInfo * opts)
 {
     if (fReadEvaluate())
     {
-        plString value;
+        ST::string value;
         bool found;
         value = opts->GetValue(GetConfigGroup(),GetConfigName(),"",&found);
         if (found)
@@ -943,12 +950,12 @@ void plConfigValueBase::ConfigWrite(plConfigInfo * opts)
     }
 }
 
-void plConfigValueBase::SetValue(const plString & value)
+void plConfigValueBase::SetValue(const ST::string & value)
 {
     ISetValue(fSetModify(value));
 }
 
-plString plConfigValueBase::GetValue() const
+ST::string plConfigValueBase::GetValue() const
 {
     return fGetModify(IGetValue());
 }
@@ -1054,28 +1061,29 @@ void plConfigAggregateValue::AddItems(
     if (item7) AddItem(item7);
 }
 
-void plConfigAggregateValue::ISetValue(const plString & value)
+void plConfigAggregateValue::ISetValue(const ST::string & value)
 {
-    plString work = value.Trim();
-    int p=0,i=0;
+    ST::string work = value.trim();
+    ST_ssize_t p=0;
+    int i=0;
     do
     {
-        p = work.Find(" ");
-        fItems[i]->SetValue(work.Left(p));
-        work = work.Substr(p).TrimLeft();
+        p = work.find(" ");
+        fItems[i]->SetValue(work.left(p));
+        work = work.substr(p).trim_left();
         i++;
     } while (i<fItems.size() && p>=0);
 }
 
-plString plConfigAggregateValue::IGetValue() const
+ST::string plConfigAggregateValue::IGetValue() const
 {
-    plStringStream value;
+    ST::string_stream value;
     for (int i=0; i<fItems.size(); i++)
     {
         value << fItems[i]->GetValue();
         value << ' ';
     }
-    return value.GetString().Trim();
+    return value.to_string().trim();
 }
 
 void plConfigAggregateValue::AddItem(plConfigValueBase * item)
@@ -1085,10 +1093,10 @@ void plConfigAggregateValue::AddItem(plConfigValueBase * item)
 
 ////////////////////////////////////////////////////////////////////
 
-plWWWAuthenticateConfigSource::plWWWAuthenticateConfigSource(const plString& auth)
+plWWWAuthenticateConfigSource::plWWWAuthenticateConfigSource(const ST::string& auth)
 :   fAuth(auth)
 {
-    fEffectiveSection = fCurrSection = "";
+    fEffectiveSection = fCurrSection = ST::string();
 }
 
 bool plWWWAuthenticateConfigSource::ReadInto(plConfigInfo & configInfo, KAddValueMode mode)
@@ -1101,20 +1109,20 @@ bool plWWWAuthenticateConfigSource::ReadInto(plConfigInfo & configInfo, KAddValu
     
     unsigned int i = 0;
 
-    while (i < fAuth.GetSize())
+    while (i < fAuth.size())
     {
         bool inQuote = false;
         unsigned int begin = i,end;
-        while (i < fAuth.GetSize()
-            && ((fAuth.CharAt(i) != ',' && !inQuote) || inQuote))
+        while (i < fAuth.size()
+            && ((fAuth[i] != ',' && !inQuote) || inQuote))
         {
-                if (fAuth.CharAt(i) == '"')
+                if (fAuth[i] == '"')
                     inQuote = ! inQuote;
                 i++;
         }
         end = i;
 
-        plString buf = fAuth.Substr(begin, end-begin);
+        ST::string buf = fAuth.substr(begin, end-begin);
         if (!ReadString(buf))
         {
             // TODO log warning here

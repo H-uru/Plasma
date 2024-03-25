@@ -40,18 +40,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plRenderRequestMsg.h"
+
 #include "HeadSpin.h"
 #include "hsResMgr.h"
 
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnKeyedObject/plUoid.h"
-#pragma hdrstop
-
-#include "plRenderRequestMsg.h"
 
 
-plRenderRequestMsg::plRenderRequestMsg(plKey sender, plRenderRequestBase* req)
-:   plMessage(sender, nil, nil),
+plRenderRequestMsg::plRenderRequestMsg(const plKey& sender, plRenderRequestBase* req)
+:   plMessage(sender, nullptr, nullptr),
     fReq(req)
 {
     plUoid oid( kClient_KEY );      // from plFixedKey.h
@@ -77,7 +76,7 @@ void plRenderRequestMsg::Read(hsStream* s, hsResMgr* mgr)
     hsAssert(false, "Transmission/read/write of render requests not currently supported");
     plMessage::IMsgRead(s, mgr);
 
-    fReq = nil;
+    fReq = nullptr;
 }
 
 void plRenderRequestMsg::Write(hsStream* s, hsResMgr* mgr)
@@ -91,8 +90,8 @@ plRenderRequestAck::plRenderRequestAck()
     hsAssert(false, "Improper usage, use argumented constructor");
 }
 
-plRenderRequestAck::plRenderRequestAck(plKey r, uint32_t userData)
-:   plMessage(nil, r, nil),
+plRenderRequestAck::plRenderRequestAck(const plKey& r, uint32_t userData)
+:   plMessage(nullptr, r, nullptr),
     fUserData(userData)
 {
 }

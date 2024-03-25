@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plFilterCoordInterface_inc
 #define plFilterCoordInterface_inc
 
+#include "hsMatrix44.h"
+
 #include "pnSceneObject/plCoordinateInterface.h"
 
 class plFilterCoordInterface : public plCoordinateInterface
@@ -61,7 +63,7 @@ protected:
     uint32_t              fFilterMask;
     hsMatrix44          fRefParentLocalToWorld;
 
-    virtual void IRecalcTransforms(); 
+    void IRecalcTransforms() override;
 public:
     plFilterCoordInterface();
     ~plFilterCoordInterface();
@@ -69,8 +71,8 @@ public:
     CLASSNAME_REGISTER( plFilterCoordInterface );
     GETINTERFACE_ANY( plFilterCoordInterface, plCoordinateInterface );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 
     void SetFilterMask(uint32_t f) { fFilterMask = f; }

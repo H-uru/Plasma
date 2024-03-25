@@ -45,31 +45,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pyVaultNodeRef.h"
+
+#include "plVault/plVault.h"
+
+#include "pyGlueHelpers.h"
 #include "pyVaultNode.h"
 #include "pyVaultPlayerInfoNode.h"
-#include "plVault/plVault.h"
-#ifndef BUILDING_PYPLASMA
-#   include "pyVault.h"
-#endif
-
 
 //////////////////////////////////////////////////////////////////////
 
 
 // should only be created from C++ side
-pyVaultNodeRef::pyVaultNodeRef(RelVaultNode * parent, RelVaultNode * child)
-: fParent(parent)
-, fChild(child)
-{
-}
+pyVaultNodeRef::pyVaultNodeRef(hsRef<RelVaultNode> parent, hsRef<RelVaultNode> child)
+    : fParent(std::move(parent)), fChild(std::move(child))
+{ }
 
-pyVaultNodeRef::pyVaultNodeRef(int)
-{
-}
+pyVaultNodeRef::pyVaultNodeRef(std::nullptr_t)
+{ }
 
 hsRef<RelVaultNode> pyVaultNodeRef::GetParentNode() const
 {
@@ -84,12 +77,12 @@ hsRef<RelVaultNode> pyVaultNodeRef::GetChildNode() const
 
 ///////////////////////////////////////////////////////////////////////////
 
-PyObject* pyVaultNodeRef::GetParent ( void )
+PyObject* pyVaultNodeRef::GetParent ()
 {
     return pyVaultNode::New(fParent);
 }
 
-PyObject* pyVaultNodeRef::GetChild( void )
+PyObject* pyVaultNodeRef::GetChild()
 {
     return pyVaultNode::New(fChild);
 }
@@ -118,23 +111,23 @@ unsigned pyVaultNodeRef::GetSaverID () {
 
 PyObject * pyVaultNodeRef::GetSaver () {
     if (!fParent || !fChild)
-        return 0;
+        return nullptr;
 
     hsRef<RelVaultNode> saver;
     if (hsRef<RelVaultNode> child = VaultGetNode(fChild->GetNodeId())) {
         if (unsigned saverId = child->GetRefOwnerId(fParent->GetNodeId())) {
             // Find the player info node representing the saver
-            hsRef<NetVaultNode> templateNode = new NetVaultNode;
-            templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
-            VaultPlayerInfoNode access(templateNode);
+            NetVaultNode templateNode;
+            templateNode.SetNodeType(plVault::kNodeType_PlayerInfo);
+            VaultPlayerInfoNode access(&templateNode);
             access.SetPlayerId(saverId);
-            saver = VaultGetNode(templateNode);
+            saver = VaultGetNode(&templateNode);
 
             if (!saver) {
-                ARRAY(unsigned) nodeIds;
-                VaultFindNodesAndWait(templateNode, &nodeIds);
-                if (nodeIds.Count() > 0) {
-                    VaultFetchNodesAndWait(nodeIds.Ptr(), nodeIds.Count());
+                std::vector<unsigned> nodeIds;
+                VaultFindNodesAndWait(&templateNode, &nodeIds);
+                if (!nodeIds.empty()) {
+                    VaultFetchNodesAndWait(nodeIds.data(), nodeIds.size());
                     saver = VaultGetNode(nodeIds[0]);
                 }
             }

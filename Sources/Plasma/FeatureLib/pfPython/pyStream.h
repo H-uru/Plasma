@@ -48,26 +48,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-
-#include "HeadSpin.h"
-#include "pyGlueHelpers.h"
-#include <string>
+#include <memory>
 #include <vector>
 
-class hsStream;
+#include "HeadSpin.h"
+#include "hsStream.h"
+
+#include "pyGlueDefinitions.h"
+
 class plFileName;
+namespace ST { class string; }
 
 class pyStream
 {
 private:
-    hsStream*   fStream;
+    std::unique_ptr<hsStream> fStream;
 
 protected:
     pyStream();
 
 public:
-    ~pyStream();
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptStream);
     PYTHON_CLASS_NEW_DEFINITION;
@@ -76,12 +76,12 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    virtual bool Open(const plFileName& fileName, const char* flags);
-    virtual std::vector<std::string> ReadLines();
-    virtual bool WriteLines(const std::vector<std::string> & lines);
-    virtual void Close();
+    bool Open(const plFileName& fileName, const ST::string& flags);
+    std::vector<ST::string> ReadLines();
+    bool WriteLines(const std::vector<ST::string> & lines);
+    void Close();
 
-    virtual bool IsOpen() { return (fStream != nil); }
+    bool IsOpen() { return (fStream != nullptr); }
 };
 
 

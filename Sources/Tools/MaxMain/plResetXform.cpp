@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "MaxMain/plMaxNode.h"
 #include "MaxComponent/plComponent.h"
-#pragma hdrstop
 
 #include "plResetXform.h"
 
@@ -71,7 +70,7 @@ void plResetXform::ResetSelectedRecur(INode* node) const
 
 void plResetXform::IResetNode(INode* node) const
 {
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
 
     BOOL deleteIt = false;
     TriObject* oldObj = IGetTriObject(node, deleteIt);
@@ -132,15 +131,15 @@ TriObject* plResetXform::IGetTriObject(INode* node, BOOL& deleteIt) const
 {
     Object *obj = node->EvalWorldState(TimeValue(0)).obj;
     if( !obj )
-        return NULL;
+        return nullptr;
 
     if( !obj->CanConvertToType( triObjectClassID ) )
-        return NULL;
+        return nullptr;
 
     // Convert to triMesh object
     TriObject   *meshObj = (TriObject*)obj->ConvertToType(TimeValue(0), triObjectClassID);
     if( !meshObj )
-        return NULL;
+        return nullptr;
 
     deleteIt = meshObj != obj;
 
@@ -175,11 +174,7 @@ void plSelectNonRenderables::SelectNonRenderables() const
 
     theHold.Begin();
 
-
-    TSTR undostr; 
-    undostr.printf("SelNonRend");
-
     GetCOREInterface()->SelectNodeTab(unhidden, true, true);
 
-    theHold.Accept(undostr);
+    theHold.Accept(_M("SelNonRend"));
 }

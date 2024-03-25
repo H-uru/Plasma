@@ -40,14 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "plString.h"
-#pragma hdrstop
+#include "pyStatusLog.h"
+
+#include <string_theory/string>
+
+#include "plStatusLog/plStatusLog.h"
 
 #include "pyColor.h"
 #include "pyEnum.h"
-#include "plStatusLog/plStatusLog.h"
-#include "pyStatusLog.h"
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptStatusLog, pyStatusLog);
@@ -62,31 +63,21 @@ PYTHON_INIT_DEFINITION(ptStatusLog, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptStatusLog, open, args)
 {
-    PyObject* logName;
+    ST::string logName;
     unsigned long numLines, flags;
-    if (!PyArg_ParseTuple(args, "Oll", &logName, &numLines, &flags))
+    if (!PyArg_ParseTuple(args, "O&ll", PyUnicode_STStringConverter, &logName, &numLines, &flags))
     {
         PyErr_SetString(PyExc_TypeError, "open expects a string and two unsigned longs");
         PYTHON_RETURN_ERROR;
     }
-    if (!PyString_CheckEx(logName))
-    {
-        PyErr_SetString(PyExc_TypeError, "open expects a string and two unsigned longs");
-        PYTHON_RETURN_ERROR;
-    }
-    PYTHON_RETURN_BOOL(self->fThis->Open(PyString_AsStringEx(logName), numLines, flags));
+    PYTHON_RETURN_BOOL(self->fThis->Open(logName, numLines, flags));
 }
 
 PYTHON_METHOD_DEFINITION(ptStatusLog, write, args)
 {
-    PyObject* text;
-    PyObject* colorObj = NULL;
-    if (!PyArg_ParseTuple(args, "O|O", &text, &colorObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "write expects a string and an optional ptColor");
-        PYTHON_RETURN_ERROR;
-    }
-    if (!PyString_CheckEx(text))
+    ST::string text;
+    PyObject* colorObj = nullptr;
+    if (!PyArg_ParseTuple(args, "O&|O", PyUnicode_STStringConverter, &text, &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "write expects a string and an optional ptColor");
         PYTHON_RETURN_ERROR;
@@ -99,9 +90,9 @@ PYTHON_METHOD_DEFINITION(ptStatusLog, write, args)
             PYTHON_RETURN_ERROR;
         }
         pyColor* color = pyColor::ConvertFrom(colorObj);
-        PYTHON_RETURN_BOOL(self->fThis->WriteColor(PyString_AsStringEx(text), *color));
+        PYTHON_RETURN_BOOL(self->fThis->WriteColor(text, *color));
     }
-    PYTHON_RETURN_BOOL(self->fThis->Write(PyString_AsStringEx(text)));
+    PYTHON_RETURN_BOOL(self->fThis->Write(text));
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptStatusLog, close, Close);
@@ -130,7 +121,7 @@ PYTHON_CLASS_NEW_IMPL(ptStatusLog, pyStatusLog)
 
 PyObject *pyStatusLog::New(plStatusLog* log)
 {
-    ptStatusLog *newObj = (ptStatusLog*)ptStatusLog_type.tp_new(&ptStatusLog_type, NULL, NULL);
+    ptStatusLog *newObj = (ptStatusLog*)ptStatusLog_type.tp_new(&ptStatusLog_type, nullptr, nullptr);
     newObj->fThis->fLog = log;
     newObj->fThis->fICreatedLog = false;
     return (PyObject*)newObj;
@@ -152,16 +143,16 @@ void pyStatusLog::AddPlasmaClasses(PyObject *m)
 
 void pyStatusLog::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtStatusLogFlags);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kFilledBackground,    plStatusLog::kFilledBackground);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kAppendToLast,        plStatusLog::kAppendToLast);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kDontWriteFile,       plStatusLog::kDontWriteFile);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kDeleteForMe,         plStatusLog::kDeleteForMe);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kAlignToTop,          plStatusLog::kAlignToTop);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kDebugOutput,         plStatusLog::kDebugOutput);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kTimestamp,           plStatusLog::kTimestamp);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kStdout,              plStatusLog::kStdout);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kTimeInSeconds,       plStatusLog::kTimeInSeconds);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kTimeAsDouble,        plStatusLog::kTimeAsDouble);
-    PYTHON_ENUM_END(m, PtStatusLogFlags);
+    PYTHON_ENUM_START(PtStatusLogFlags)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kFilledBackground,    plStatusLog::kFilledBackground)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kAppendToLast,        plStatusLog::kAppendToLast)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kDontWriteFile,       plStatusLog::kDontWriteFile)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kDeleteForMe,         plStatusLog::kDeleteForMe)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kAlignToTop,          plStatusLog::kAlignToTop)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kDebugOutput,         plStatusLog::kDebugOutput)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kTimestamp,           plStatusLog::kTimestamp)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kStdout,              plStatusLog::kStdout)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kTimeInSeconds,       plStatusLog::kTimeInSeconds)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kTimeAsDouble,        plStatusLog::kTimeAsDouble)
+    PYTHON_ENUM_END(m, PtStatusLogFlags)
 }

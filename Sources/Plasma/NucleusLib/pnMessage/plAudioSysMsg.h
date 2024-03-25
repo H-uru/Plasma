@@ -44,8 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAudioSysMsg_inc
 
 #include "plMessage.h"
-#include "hsStream.h"
-#include "hsResMgr.h"
 
 class plKey;
 
@@ -72,38 +70,27 @@ public:
     };
 
 
-    plAudioSysMsg() : pObj(nil){SetBCastFlag(plMessage::kBCastByExactType);}
-    plAudioSysMsg(const plKey &s) : pObj(nil){SetBCastFlag(plMessage::kBCastByExactType);SetSender(s);}  
-    plAudioSysMsg(int i) : pObj(nil){fAudFlag = i; SetBCastFlag(plMessage::kBCastByExactType );}  
+    plAudioSysMsg() { SetBCastFlag(plMessage::kBCastByExactType); }
+    plAudioSysMsg(const plKey &s) { SetBCastFlag(plMessage::kBCastByExactType);SetSender(s); }
+    plAudioSysMsg(int i) { fAudFlag = i; SetBCastFlag(plMessage::kBCastByExactType); }
     plAudioSysMsg(const plKey &s, 
                     const plKey &r, 
-                    const double* t) : pObj(nil){SetBCastFlag(plMessage::kBCastByExactType);}
-    ~plAudioSysMsg(){;}
+                    const double* t) { SetBCastFlag(plMessage::kBCastByExactType); }
+    ~plAudioSysMsg() { }
 
-    CLASSNAME_REGISTER( plAudioSysMsg );
-    GETINTERFACE_ANY( plAudioSysMsg, plMessage );
+    CLASSNAME_REGISTER(plAudioSysMsg);
+    GETINTERFACE_ANY(plAudioSysMsg, plMessage);
     
-    int GetAudFlag() { return fAudFlag; }
-    plKey GetSceneObject() { return pObj; }
-    void SetSceneObject(plKey &k) { pObj = k; }
+    int GetAudFlag() const { return fAudFlag; }
+    plKey GetSceneObject() const { return pObj; }
+    void SetSceneObject(plKey k) { pObj = std::move(k); }
 
     bool    GetBoolFlag() { return fBoolFlag; }
     void    SetBoolFlag( bool b ) { fBoolFlag = b; }
 
-    // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgRead(stream, mgr);
-        stream->WriteLE(fAudFlag);
-        mgr->WriteKey(stream, pObj);
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->ReadLE(&fAudFlag);
-        pObj = mgr->ReadKey(stream);
-    }
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plAudioSysMsg

@@ -165,10 +165,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
+
 #include <map>
 #include <string>
+#include <string_theory/string>
 
-#include "hsTemplates.h"
 #include "hsColorRGBA.h"
 
 #include "pnKeyedObject/hsKeyedObject.h"
@@ -212,16 +213,25 @@ public:
         kTurnFrontPage,
         kTurnBackPage
     };
-    
-    pfBookData(const plString &guiName = plString::Null);
-    virtual ~pfBookData();
+
+    pfBookData(const ST::string& guiName = {})
+        : fCurrBook(), fDialog(), fCoverButton(), fTurnPageButton(),
+        fLeftPageMap(), fRightPageMap(), fCoverLayer(), fCoverMaterial(),
+        fLeftCorner(), fRightCorner(), fWidthCtrl(), fHeightCtrl(),
+        fRightEditCtrl(), fLeftEditCtrl(), fTurnFrontEditCtrl(), fTurnBackEditCtrl(),
+        fDefaultCover(), fCurrentlyOpen(), fStartedOpen(),
+        fResetSFXFlag(), fSFXUpdateFlip(), fCurrentlyTurning(), fEditable(),
+        fCurrSFXPages(kNoSides), fBaseSFXTime(), fAdjustCursorTo(-1), fPageMaterials(),
+        fGUIName(!guiName.empty() ? guiName : ST_LITERAL("BkBook"))
+    { }
+    virtual ~pfBookData() { RegisterForSFX(kNoSides); }
 
     void LoadGUI(); // need this seperate because the plKey isn't setup until the constructor is done
 
     CLASSNAME_REGISTER(pfBookData);
     GETINTERFACE_ANY(pfBookData, hsKeyedObject);
 
-    virtual bool MsgReceive(plMessage *pMsg);
+    bool MsgReceive(plMessage *pMsg) override;
 
     pfGUIDialogMod *Dialog() const {return fDialog;}
     pfGUICheckBoxCtrl *CoverButton() const {return fCoverButton;}
@@ -230,7 +240,7 @@ public:
     pfGUIClickMapCtrl *RightPageMap() const {return fRightPageMap;}
     plLayerInterface *CoverLayer() const {return fCoverLayer;}
     hsGMaterial *CoverMaterial() const {return fCoverMaterial;}
-    hsGMaterial *PageMaterial(int index) const {if ((index<0)||(index>3)) return nil; else return fPageMaterials[index];}
+    hsGMaterial *PageMaterial(int index) const { if ((index < 0) || (index > 3)) return nullptr; else return fPageMaterials[index]; }
     pfGUIButtonMod *LeftCorner() const {return fLeftCorner;}
     pfGUIButtonMod *RightCorner() const {return fRightCorner;}
     pfGUIProgressCtrl *WidthCtrl() const {return fWidthCtrl;}
@@ -286,7 +296,7 @@ protected:
         kRefDefaultCover
     };
 
-    plString            fGUIName;
+    ST::string          fGUIName;
 
     // The pointer to our dialog
     pfGUIDialogMod      *fDialog;
@@ -364,8 +374,7 @@ class pfJournalBook : public hsKeyedObject
         // The constructor takes in the esHTML source for the journal, along with
         // the name of the mipmap to use as the cover of the book. The callback
         // key is the keyed object to send event messages to (see <img> tag).
-        pfJournalBook( const char *esHTMLSource, plKey coverImageKey = nil, plKey callbackKey = nil, const plLocation &hintLoc = plLocation::kGlobalFixedLoc, const plString &guiName = plString::Null );
-        pfJournalBook( const wchar_t *esHTMLSource, plKey coverImageKey = nil, plKey callbackKey = nil, const plLocation &hintLoc = plLocation::kGlobalFixedLoc, const plString &guiName = plString::Null );
+        pfJournalBook(ST::string esHTMLSource, plKey coverImageKey = {}, plKey callbackKey = {}, const plLocation &hintLoc = plLocation::kGlobalFixedLoc, const ST::string &guiName = {});
 
         virtual ~pfJournalBook();
 
@@ -373,24 +382,24 @@ class pfJournalBook : public hsKeyedObject
         GETINTERFACE_ANY( pfJournalBook, hsKeyedObject );
 
         // Our required virtual
-        virtual bool    MsgReceive( plMessage *pMsg );
+        bool    MsgReceive(plMessage *pMsg) override;
 
         // Init the singleton, for client startup
-        static void SingletonInit( void );
+        static void SingletonInit();
         
         // Shutdown the singleton
-        static void SingletonShutdown( void );
+        static void SingletonShutdown();
         
         // loads a gui
-        static void LoadGUI( const plString &guiName );
+        static void LoadGUI( const ST::string &guiName );
 
         // unloads a gui if we don't need it any more and want to free up memory
-        static void UnloadGUI( const plString &guiName );
+        static void UnloadGUI( const ST::string &guiName );
 
         // unloads all GUIs except for the default
         static void UnloadAllGUIs();
 
-        void    SetGUI( const plString &guiName );
+        void    SetGUI( const ST::string &guiName );
 
         // Shows the book, optionally starting open or closed
         void    Show( bool startOpened = false );
@@ -402,34 +411,34 @@ class pfJournalBook : public hsKeyedObject
 
 
         // Book handles hiding itself once someone clicks away. 
-        void    Hide( void );
+        void    Hide();
 
         // Opens the book, optionally to the given page
         void    Open( uint32_t startingPage = 0 );
 
         // Closes the book.
-        void    Close( void );
+        void    Close();
 
         // Advances forward one page
-        void    NextPage( void );
+        void    NextPage();
 
         // Same, only back
-        void    PreviousPage( void );
+        void    PreviousPage();
 
         // For completeness...
         void    GoToPage( uint32_t pageNumber );
 
         // See below. Just forces a full calc of the cached info
-        void    ForceCacheCalculations( void );
+        void    ForceCacheCalculations();
 
         // Closes the book, then calls Hide() once it's done closing
-        void    CloseAndHide( void );
+        void    CloseAndHide();
 
         // Sets the book size scaling. 1,1 would be full size, 0,0 is the smallest size possible
         void    SetBookSize( float width, float height );
 
         // What page are we on?
-        uint32_t  GetCurrentPage( void ) const { return fCurrentPage; }
+        uint32_t  GetCurrentPage() const { return fCurrentPage; }
 
         // Set the margin (defaults to 16 pixels)
         void    SetPageMargin( uint32_t margin ) { fPageTMargin = fPageLMargin = fPageBMargin = fPageRMargin = margin; }
@@ -444,11 +453,11 @@ class pfJournalBook : public hsKeyedObject
         void    SetEditable( bool editable=true );
 
         // returns the text contained by the edit controls
-        std::string GetEditableText();
+        ST::string GetEditableText();
 
-        void    SetEditableText(std::string text);
-        
-    protected:
+        void    SetEditableText(const ST::string& text);
+
+    private:
 
         struct loadedMovie
         {
@@ -460,12 +469,12 @@ class pfJournalBook : public hsKeyedObject
         friend class pfBookData;
 
         // Our compiled esHTML source
-        std::wstring                fUncompiledSource;
+        ST::string                  fUncompiledSource;
         plLocation                  fDefLoc;
-        hsTArray<pfEsHTMLChunk *>   fHTMLSource;
-        hsTArray<pfEsHTMLChunk *>   fCoverDecals; // stored in a separate location so we can draw them all immediately
+        std::vector<pfEsHTMLChunk *> fHTMLSource;
+        std::vector<pfEsHTMLChunk *> fCoverDecals; // stored in a separate location so we can draw them all immediately
 
-        hsTArray<loadedMovie *> fLoadedMovies;
+        std::vector<loadedMovie *> fLoadedMovies;
 
         // The key of the mipmap to use as the cover image
         plKey   fCoverMipKey;
@@ -478,7 +487,7 @@ class pfJournalBook : public hsKeyedObject
         bool    fCoverFromHTML;
         // Cached array of page starts in the esHTML source. Generated as we flip through
         // the book, so that going backwards can be done efficiently.
-        hsTArray<uint32_t>    fPageStarts;
+        std::vector<uint32_t> fPageStarts;
 
         // is the book done showing and ready for more page calculations
         bool    fAreWeShowing;
@@ -505,10 +514,10 @@ class pfJournalBook : public hsKeyedObject
         plKey   fPageTurnAnimKey;
 
         // Current list of linkable image chunks we have visible on the screen, for quick hit testing
-        hsTArray<pfEsHTMLChunk *>   fVisibleLinks;
+        std::vector<pfEsHTMLChunk *> fVisibleLinks;
 
-        static std::map<plString,pfBookData*> fBookGUIs;
-        plString fCurBookGUI;
+        static std::map<ST::string,pfBookData*> fBookGUIs;
+        ST::string fCurBookGUI;
 
         enum Refs
         {
@@ -516,16 +525,16 @@ class pfJournalBook : public hsKeyedObject
         };
 
         // Compiles the given string of esHTML source into our compiled chunk list
-        bool    ICompileSource( const wchar_t *source, const plLocation &hintLoc );
+        bool    ICompileSource( const ST::string& source, const plLocation &hintLoc );
 
         // Frees our source array
-        void    IFreeSource( void );
+        void    IFreeSource();
 
         // Compile helpers
-        uint8_t   IGetTagType( const wchar_t *string );
-        bool    IGetNextOption( const wchar_t *&string, wchar_t *name, wchar_t *option );
+        uint8_t   IGetTagType( const char *string, const char *end );
+        bool    IGetNextOption( const char *&string, const char *end, ST::string& name, ST::string& option );
 
-        plKey   IGetMipmapKey( const wchar_t *name, const plLocation &loc );
+        plKey   IGetMipmapKey( const ST::string& name, const plLocation &loc );
 
         // Renders one (1) page into the given DTMap
         void    IRenderPage( uint32_t page, uint32_t whichDTMap, bool suppressRendering = false );
@@ -535,14 +544,14 @@ class pfJournalBook : public hsKeyedObject
 
         // Starting at the given chunk, works backwards to determine the full set of current
         // font properties at that point, or assigns defaults if none were specified
-        void    IFindFontProps( uint32_t chunkIdx, plString &face, uint8_t &size, uint8_t &flags, hsColorRGBA &color, int16_t &spacing );
+        void    IFindFontProps( uint32_t chunkIdx, ST::string &face, uint8_t &size, uint8_t &flags, hsColorRGBA &color, int16_t &spacing );
 
         // Find the last paragraph chunk and thus the last par alignment settings
-        uint8_t   IFindLastAlignment( void ) const;
+        uint8_t   IFindLastAlignment() const;
 
         // Handle clicks on either side of the book
-        void    IHandleLeftSideClick( void );
-        void    IHandleRightSideClick( void );
+        void    IHandleLeftSideClick();
+        void    IHandleRightSideClick();
 
         // Just sends out a notify to our currently set receiver key
         void    ISendNotify( uint32_t type, uint32_t linkID = 0 );
@@ -554,7 +563,7 @@ class pfJournalBook : public hsKeyedObject
         void    IFinishShow( bool startOpened );
 
         // Find the current moused link, if any
-        int32_t   IFindCurrVisibleLink( bool rightNotLeft, bool hoverNotUp );
+        hsSsize_t IFindCurrVisibleLink(bool rightNotLeft, bool hoverNotUp);
 
         // Ensures that all the page starts are calced up to the given page (but not including it)
         void    IRecalcPageStarts( uint32_t upToPage );
@@ -579,7 +588,7 @@ class pfJournalBook : public hsKeyedObject
         // Cover functions
         plLayerInterface    *IMakeBaseLayer(plMipmap *image);
         plLayerInterface    *IMakeDecalLayer(pfEsHTMLChunk *decalChunk, plMipmap *decal, plMipmap *baseMipmap);
-        void    ISetDecalLayers(hsGMaterial *material,hsTArray<plLayerInterface*> layers);
+        void    ISetDecalLayers(hsGMaterial *material, const std::vector<plLayerInterface*> &layers);
 };
 
 

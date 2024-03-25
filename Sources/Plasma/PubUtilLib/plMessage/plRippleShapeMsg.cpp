@@ -40,20 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include "hsResMgr.h"
-#include "hsStream.h"
-#pragma hdrstop
-
 #include "plRippleShapeMsg.h"
 
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 plRippleShapeMsg::plRippleShapeMsg()
-:   fShape(nil)
+:   fShape()
 {
 }
 
 plRippleShapeMsg::plRippleShapeMsg(const plKey& r, const plPrintShape* shape)
-:   plMessage(nil, r, nil),
+:   plMessage(nullptr, r, nullptr),
     fShape(shape)
 {
 }

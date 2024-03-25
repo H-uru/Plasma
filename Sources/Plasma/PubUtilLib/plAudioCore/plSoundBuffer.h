@@ -57,12 +57,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudioFileReader.h"
 #include "hsThread.h"
 #include "plFileSystem.h"
+
 #include <mutex>
+#include <vector>
 
 //// Class Definition ////////////////////////////////////////////////////////
 
 class plUnifiedTime;
 class plAudioFileReader;
+class plSrtFileReader;
 class plSoundBuffer : public hsKeyedObject
 {
 public:
@@ -91,16 +94,16 @@ public:
 
     void            RoundDataPos( uint32_t &pos );
 
-    virtual void    Read( hsStream *s, hsResMgr *mgr );
-    virtual void    Write( hsStream *s, hsResMgr *mgr );
+    void    Read(hsStream *s, hsResMgr *mgr) override;
+    void    Write(hsStream *s, hsResMgr *mgr) override;
 
-    plWAVHeader &GetHeader( void )              { return fHeader; }
-    uint32_t    GetDataLength( void ) const     { return fDataLength; }
+    plWAVHeader &GetHeader()              { return fHeader; }
+    uint32_t    GetDataLength() const     { return fDataLength; }
     void        SetDataLength(unsigned length)  { fDataLength = length; } 
-    void       *GetData( void ) const           { return fData; }
-    plFileName  GetFileName( void ) const       { return fFileName; }
-    bool        IsValid( void ) const           { return fValid; }
-    float       GetDataLengthInSecs( void ) const;
+    void       *GetData() const           { return fData; }
+    plFileName  GetFileName() const       { return fFileName; }
+    bool        IsValid() const           { return fValid; }
+    float       GetDataLengthInSecs() const;
 
     void                SetFileName( const plFileName &name );
     bool                HasFlag( uint32_t flag ) { return ( fFlags & flag ) ? true : false; }
@@ -110,7 +113,7 @@ public:
     ELoadReturnVal      AsyncLoad( plAudioFileReader::StreamType type, unsigned length = 0 );   
     void                UnLoad( );
 
-    plAudioCore::ChannelSelect  GetReaderSelect( void ) const;
+    plAudioCore::ChannelSelect  GetReaderSelect() const;
 
     
     static void         Init();
@@ -118,6 +121,8 @@ public:
     plAudioFileReader * GetAudioReader();   // transfers ownership to caller
     void                SetAudioReader(plAudioFileReader *reader);
     void                SetLoaded(bool loaded);
+    plSrtFileReader*    GetSrtReader() const { return fSrtReader; }  // does not transfer ownership
+    void                SetSrtReader(plSrtFileReader* reader);
 
     plAudioFileReader::StreamType   GetAudioReaderType() { return fStreamType; }
     unsigned                        GetAsyncLoadLength() { return fAsyncLoadLength ? fAsyncLoadLength : fDataLength; }
@@ -132,10 +137,8 @@ protected:
     // plSoundBuffers can be two ways--they can either have a filename and no
     // data, in which case they reference a file in the sfx folder, or they
     // can store the data directly
-    
-    void            IInitBuffer();
 
-    bool            IGrabHeaderInfo( void );
+    bool            IGrabHeaderInfo();
     void            IAddBuffers( void *base, void *toAdd, uint32_t lengthInBytes, uint8_t bitsPerSample );
     plFileName      IGetFullPath();
 
@@ -149,6 +152,7 @@ protected:
     bool            fError;
     
     plAudioFileReader * fReader;
+    plSrtFileReader*    fSrtReader;
     uint8_t *           fData;
     plWAVHeader         fHeader;
     uint32_t            fDataLength;
@@ -163,20 +167,22 @@ protected:
 class plSoundPreloader : public hsThread
 {
 protected:
-    hsTArray<plSoundBuffer*> fBuffers;
+    std::vector<plSoundBuffer*> fBuffers;
     hsEvent fEvent;
     bool fRunning;
     std::mutex fCritSect;
 
 public:
-    virtual hsError Run();
+    void Run() override;
 
-    virtual void Start() {
+    void Start() override
+    {
         fRunning = true;
         hsThread::Start();
     }
 
-    virtual void Stop() {
+    void Stop() override
+    {
         fRunning = false;
         fEvent.Signal();
         hsThread::Stop();
@@ -184,10 +190,11 @@ public:
 
     bool IsRunning() const { return fRunning; }
 
-    void AddBuffer(plSoundBuffer* buffer) {
+    void AddBuffer(plSoundBuffer* buffer)
+    {
         {
-            std::lock_guard<std::mutex> lock(fCritSect);
-            fBuffers.Push(buffer);
+            hsLockGuard(fCritSect);
+            fBuffers.emplace_back(buffer);
         }
 
         fEvent.Signal();

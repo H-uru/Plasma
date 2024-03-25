@@ -39,12 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plVersion.h"
+
+#include "plCreatableIndex.h"
+
 #include "pnFactory/plFactory.h"
+
 #include <vector>
 #include <cstring>
 
-#include "plCreatableIndex.h"
 #define ChangedCreatable(ver, creatable) if (minorVersion == ver) creatables.push_back(CLASS_INDEX_SCOPED(creatable));
 
 //

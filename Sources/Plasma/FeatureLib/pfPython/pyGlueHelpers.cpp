@@ -40,36 +40,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include <string_theory/string>
+
+#include "plFileSystem.h"
+
 #include "pyGlueHelpers.h"
-#include "plString.h"
-#pragma hdrstop
 
-plString PyString_AsStringEx(PyObject* obj) 
+ST::string PyUnicode_AsSTString(PyObject* obj)
 {
-    if (PyString_Check(obj))
-        return plString::FromUtf8(PyString_AsString(obj));
-
     if (PyUnicode_Check(obj)) {
-#if (Py_UNICODE_SIZE == 2)
-        return plString::FromUtf16(reinterpret_cast<const uint16_t *>(PyUnicode_AsUnicode(obj)));
-#elif (Py_UNICODE_SIZE == 4)
-        return plString::FromUtf32(reinterpret_cast<const plUniChar *>(PyUnicode_AsUnicode(obj)));
-#else
-#       error "Py_UNICODE is an unexpected size"
-#endif
+        Py_ssize_t size;
+        const char* str = PyUnicode_AsUTF8AndSize(obj, &size);
+        if (str)
+            return ST::string::from_utf8(str, size, ST::assume_valid);
     }
 
-    return plString::Null;
+    return ST::string();
 }
 
-bool PyString_CheckEx(PyObject* obj)
+int PyUnicode_STStringConverter(PyObject* obj, void* str)
 {
-    return (PyString_Check(obj) || PyUnicode_Check(obj));
+    if (PyUnicode_Check(obj)) {
+        *reinterpret_cast<ST::string*>(str) = PyUnicode_AsSTString(obj);
+        return 1;
+    }
+    return 0;
 }
 
-PyObject* PyUnicode_FromPlString(const plString& str)
+int PyUnicode_PlFileNameDecoder(PyObject* obj, void* fn)
 {
-    plStringBuffer<wchar_t> buf = str.ToWchar();
-    return PyUnicode_FromWideChar(buf.GetData(), buf.GetSize());
+    if (PyUnicode_Check(obj)) {
+        *reinterpret_cast<plFileName*>(fn) = PyUnicode_AsSTString(obj);
+        return 1;
+    }
+
+    PyObject* fsConvert;
+    if (PyUnicode_FSDecoder(obj, &fsConvert)) {
+        *reinterpret_cast<plFileName*>(fn) = PyUnicode_AsSTString(fsConvert);
+        Py_DECREF(fsConvert);
+        return 1;
+    }
+    return 0;
 }

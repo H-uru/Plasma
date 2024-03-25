@@ -42,39 +42,43 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLinkEffectsMgr_inc
 #define plLinkEffectsMgr_inc
 
+#include <vector>
+
 #include "pnKeyedObject/hsKeyedObject.h"
 
+class plKey;
 class plLinkEffectsTriggerMsg;
+class plMessage;
 class plPseudoLinkEffectMsg;
 
 class plLinkEffectsMgr : public hsKeyedObject
 {
 protected:
     // Collection of links in progress (in or out)
-    hsTArray<plLinkEffectsTriggerMsg *> fLinks;
+    std::vector<plLinkEffectsTriggerMsg *> fLinks;
 
     // Players we know exist, but aren't ready to link yet
-    hsTArray<plLinkEffectsTriggerMsg *> fWaitlist; 
+    std::vector<plLinkEffectsTriggerMsg *> fWaitlist;
 
     // Queue of delayed messages from people linking in that 
     // we haven't received yet but are no longer necessary, 
     // because we either received the trigger from them, or
     // they're no longer in the age.
-    hsTArray<plLinkEffectsTriggerMsg *> fDeadlist;
+    std::vector<plLinkEffectsTriggerMsg *> fDeadlist;
     
     // queue of pseudo link messages
-    hsTArray<plPseudoLinkEffectMsg *> fPseudolist;
+    std::vector<plPseudoLinkEffectMsg *> fPseudolist;
 
-    plLinkEffectsTriggerMsg *IFindLinkTriggerMsg(plKey avatarKey);
+    plLinkEffectsTriggerMsg *IFindLinkTriggerMsg(const plKey& avatarKey);
     void IAddLink(plLinkEffectsTriggerMsg *msg);
     void IAddWait(plLinkEffectsTriggerMsg *msg);
     void IAddDead(plLinkEffectsTriggerMsg *msg);
-    void IAddPsuedo(plPseudoLinkEffectMsg *msg);
-    void IRemovePseudo(plKey avatarKey);
-    plPseudoLinkEffectMsg* IFindPseudo(plKey avatarKey);
+    void IAddPseudo(plPseudoLinkEffectMsg *msg);
+    void IRemovePseudo(const plKey& avatarKey);
+    plPseudoLinkEffectMsg* IFindPseudo(const plKey& avatarKey);
 
     bool IHuntWaitlist(plLinkEffectsTriggerMsg *msg);
-    bool IHuntWaitlist(plKey linkKey);
+    bool IHuntWaitlist(const plKey& linkKey);
     bool IHuntDeadlist(plLinkEffectsTriggerMsg *msg);
     void ISendAllReadyCallbacks();
     
@@ -91,7 +95,7 @@ public:
     
     plMessage *WaitForEffect(plKey linkKey);
 
-    virtual bool MsgReceive(plMessage *msg);
+    bool MsgReceive(plMessage *msg) override;
 };
 
 #endif // plLinkEffectsMgr_inc

@@ -41,17 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "plgDispatch.h"
-#include "hsWindows.h"
 #include "plFileSystem.h"
 
-#include <Python.h>
-#include <string>
-#include <vector>
+#include "MaxAPI.h"
 
-#include <iparamb2.h>
-#include <max.h>
-#include <direct.h>
-#pragma hdrstop
+#include <Python.h>
 
 #include "plPythonMgr.h"
 #include "plMaxCFGFile.h"
@@ -59,7 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxComponent/plAutoUIBlock.h"
 #include "MaxComponent/plPythonFileComponent.h"
 #include "MaxComponent/plResponderComponent.h"
+
 #include "pfPython/cyPythonInterface.h"
+#include "pfPython/plPythonCallable.h"
 
 plPythonMgr::plPythonMgr()
 {
@@ -80,14 +76,14 @@ static char* kGetVersion = "glue_getVersion";
 static char* kIsMultiModifier = "glue_isMultiModifier";
 static char* kGetVisInfo = "glue_getVisInfo";
 
-bool ICallVoidFunc(PyObject *dict, char *funcName, PyObject*& val)
+bool ICallVoidFunc(PyObject *dict, const char *funcName, PyObject*& val)
 {
-    PyObject *func = PyDict_GetItemString(dict, (char*)funcName);
+    PyObject *func = PyDict_GetItemString(dict, funcName);
     if (func )
     {
         if (PyCallable_Check(func))
         {
-            val = PyObject_CallFunction(func, NULL);
+            val = plPython::CallObject(func).Release();
             if (val)
             {
                 // there might have been some message printed, so get it out to the log file
@@ -106,14 +102,14 @@ bool ICallVoidFunc(PyObject *dict, char *funcName, PyObject*& val)
     return false;
 }
 
-bool ICallIntFunc(PyObject *dict, char *funcName, int& val)
+bool ICallIntFunc(PyObject *dict, const char *funcName, int& val)
 {
     PyObject *obj;
     if (ICallVoidFunc(dict, funcName, obj))
     {
-        if (PyInt_Check(obj))
+        if (PyLong_Check(obj))
         {
-            val = PyInt_AsLong(obj);
+            val = PyLong_AsLong(obj);
             Py_DECREF(obj);
             return true;
         }
@@ -121,17 +117,37 @@ bool ICallIntFunc(PyObject *dict, char *funcName, int& val)
     return false;
 }
 
-bool ICallStrFunc(PyObject *dict, char *funcName, char*& val)
+bool ICallStrFunc(PyObject *dict, const char *funcName, char*& val)
 {
     PyObject *obj;
     if (ICallVoidFunc(dict, funcName, obj))
     {
-        if (PyString_Check(obj))
+        if (PyUnicode_Check(obj))
         {
-            val = hsStrcpy(PyString_AsString(obj));
+            val = hsStrcpy(PyUnicode_AsUTF8(obj));
             Py_DECREF(obj);
             return true;
         }
+    }
+
+    return false;
+}
+
+bool ICallStrFunc(PyObject* dict, const char* funcName, wchar_t*& val)
+{
+    PyObject* obj;
+    if (ICallVoidFunc(dict, funcName, obj)) {
+        if (PyUnicode_Check(obj)) {
+            Py_ssize_t size;
+            wchar_t* pyUtf16Str = PyUnicode_AsWideCharString(obj, &size);
+            val = new wchar_t[size + 1];
+            wcsncpy(val, pyUtf16Str, size + 1);
+            PyMem_Free(pyUtf16Str);
+            Py_DECREF(obj);
+            return true;
+        }
+
+        Py_XDECREF(obj);
     }
 
     return false;
@@ -170,9 +186,9 @@ enum ParamTypes
 bool IGetTupleInt(PyObject *tuple, int pos, int& val)
 {
     PyObject *param = PyTuple_GetItem(tuple, pos);
-    if (param && PyInt_Check(param))
+    if (param && PyLong_Check(param))
     {
-        val = PyInt_AsLong(param);
+        val = PyLong_AsLong(param);
         return true;
     }
 
@@ -191,52 +207,67 @@ bool IGetTupleFloat(PyObject *tuple, int pos, float& val)
     return false;
 }
 
-bool IGetTupleString(PyObject *tuple, int pos, char*& val)
+bool IGetTupleString(PyObject* tuple, int pos, const char*& val)
 {
-    PyObject *param = PyTuple_GetItem(tuple, pos);
-    if (param && PyString_Check(param))
+    PyObject* param = PyTuple_GetItem(tuple, pos);
+    if (param && PyUnicode_Check(param))
     {
-        val = PyString_AsString(param);
+        val = PyUnicode_AsUTF8(param);
         return true;
     }
 
     return false;
 }
 
-void IExtractVisInfo(PyObject* tuple, int* id, std::vector<std::string>* vec)
+bool IGetTupleString(PyObject *tuple, int pos, ST::string& val)
+{
+    PyObject *param = PyTuple_GetItem(tuple, pos);
+    if (param && PyUnicode_Check(param))
+    {
+        Py_ssize_t size;
+        const char* str = PyUnicode_AsUTF8AndSize(param, &size);
+        val = ST::string::from_utf8(str, size);
+        return true;
+    }
+
+    return false;
+}
+
+void IExtractVisInfo(PyObject* tuple, int* id, std::unordered_set<ST::string>& vec)
 {
     PyObject* vid = PyTuple_GetItem(tuple, 0);
     PyObject* vstates = PyTuple_GetItem(tuple, 1);
 
-    if (vid && PyInt_Check(vid))
+    if (vid && PyLong_Check(vid))
     {
-        *id = PyInt_AsLong(vid);
+        *id = PyLong_AsLong(vid);
     }
 
-    if (vstates && PyList_Check(vstates))
+    if (vstates && PySequence_Check(vstates))
     {
         PyObject* element;
-        int lsize = PyList_Size(vstates);
+        Py_ssize_t lsize = PySequence_Size(vstates);
 
-        for (int i = 0; i < lsize; i++)
+        for (Py_ssize_t i = 0; i < lsize; i++)
         {
-            element = PyList_GetItem(vstates, i);
-            if (element && PyString_Check(element))
+            element = PySequence_GetItem(vstates, i);
+            if (element && PyUnicode_Check(element))
             {
-                std::string str = PyString_AsString(element);
-                vec->push_back(str);
+                Py_ssize_t strSz;
+                const char* str = PyUnicode_AsUTF8AndSize(element, &strSz);
+                vec.emplace(ST::string::from_utf8(str, strSz));
             }
         }
     }
 }
 
-bool plPythonMgr::IQueryPythonFile(const char *fileName)
+bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
 {
-    PyObject *module = PyImport_ImportModule(fileName);
+    PyObject *module = PyImport_ImportModule(fileName.c_str());
     if (module)
     {
         // attach the glue python code to the end
-        if ( !PythonInterface::RunString("execfile('.\\python\\plasma\\glue.py')", module) )
+        if (!PythonInterface::RunString("with open('.\\python\\plasma\\glue.py') as f: glue = f.read()\nexec(glue)", module))
         {
             // display any output (NOTE: this would be disabled in production)
             // get the messages
@@ -246,7 +277,7 @@ bool plPythonMgr::IQueryPythonFile(const char *fileName)
         // Get the dictionary for this module
         PyObject *dict = PyModule_GetDict(module);
         // set the name of the file for the glue.py code to find
-        PyObject* pfilename = PyString_FromString(fileName);
+        PyObject* pfilename = PyUnicode_FromStringAndSize(fileName.c_str(), fileName.size());
         PyDict_SetItemString(dict, "glue_name", pfilename);
 
         // Get the block ID
@@ -258,7 +289,7 @@ bool plPythonMgr::IQueryPythonFile(const char *fileName)
         }
 
         // Get the class name
-        char *className = nil;
+        MCHAR* className = nullptr;
         if (!ICallStrFunc(dict, kGetClassName, className))
         {
             Py_DECREF(module);
@@ -301,18 +332,17 @@ bool plPythonMgr::IQueryPythonFile(const char *fileName)
 
             for (int i = numParams-1; i >= 0; i--)
             {
-                PyObject *ret = PyObject_CallFunction(getParamFunc, "l", i);
+                PyObject* ret = plPython::CallObject(getParamFunc, i).Release();
                 
-                PyObject *visinfo = nil;
                 int ddlParamID = -1;
-                std::vector<std::string> vec;
+                std::unordered_set<ST::string> vec;
 
                 if (PyCallable_Check(getVisInfoFunc))
                 {
-                    visinfo = PyObject_CallFunction(getVisInfoFunc, "l", i);
-                    if (visinfo && PyTuple_Check(visinfo))
+                    pyObjectRef visinfo = plPython::CallObject(getVisInfoFunc, i);
+                    if (visinfo && PyTuple_Check(visinfo.Get()))
                     {
-                        IExtractVisInfo(visinfo, &ddlParamID, &vec);
+                        IExtractVisInfo(visinfo.Get(), &ddlParamID, vec);
                     }
                 }
 
@@ -321,7 +351,7 @@ bool plPythonMgr::IQueryPythonFile(const char *fileName)
                     if (PyTuple_Check(ret))
                     {
                         int paramID = -1;
-                        char *paramName = nil;
+                        ST::string paramName;
                         int paramType = kTypeUndefined;
 
                         // Get the param ID, name, and type
@@ -333,93 +363,93 @@ bool plPythonMgr::IQueryPythonFile(const char *fileName)
                             switch (paramType)
                             {
                             case kTypeInt:
-                                IAddInt(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddInt(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeFloat:
-                                IAddFloat(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddFloat(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeString:
-                                IAddString(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddString(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeBool:
-                                IAddBool(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddBool(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeSceneObj:
-                                IAddSceneObj(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddSceneObj(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeSceneObjList:
-                                IAddSceneObjList(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddSceneObjList(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeActivator:
-                                IAddActivator(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddActivator(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeActivatorList:
-                                IAddActivatorList(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddActivatorList(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeResponder:
-                                IAddResponder(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddResponder(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeResponderList:
-                                IAddResponderList(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddResponderList(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeDynamicText:
-                                IAddDynamicText(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddDynamicText(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeGUIDialog:
-                                IAddGUIDialog(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddGUIDialog(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeExcludeRegion:
-                                IAddExcludeRegion(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddExcludeRegion(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeAnimation:
-                                IAddAnimation(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddAnimation(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeAvatarBehavior:
-                                IAddBehavior(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddBehavior(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeMaterial:
-                                IAddMaterial(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddMaterial(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeGUIPopUpMenu:
-                                IAddGUIPopUpMenu(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddGUIPopUpMenu(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
 
                             case kTypeGUISkin:
-                                IAddGUISkin(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddGUISkin(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
                             case kTypeWaterComponent:
-                                IAddWaterComponent(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddWaterComponent(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
                             case kTypeSwimCurrentInterface:
-                                IAddSwimCurrentInterface(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddSwimCurrentInterface(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
                             case kTypeDropDownList:
-                                IAddDropDownList(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddDropDownList(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
                             case kTypeClusterComponent:
-                                IAddClusterComponent(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddClusterComponent(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
                             case kTypeMaterialAnimation:
-                                IAddMaterialAnimation(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddMaterialAnimation(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
                             case kTypeGrassComponent:
-                                IAddGrassComponent(autoUI, ret, paramName, paramID, ddlParamID, &vec);
+                                IAddGrassComponent(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
                             }
                         }
@@ -448,15 +478,15 @@ bool plPythonMgr::IQueryPythonFile(const char *fileName)
     return false;
 }
 
-void plPythonMgr::IAddBool(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddBool(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
     int def = 0;
     IGetTupleInt(tuple, 3, def);
 
-    autoUI->AddCheckBox(id, nil, paramName, vid, vstates, def);
+    autoUI->AddCheckBox(id, {}, paramName, vid, std::move(vstates), def);
 }
 
-void plPythonMgr::IAddInt(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddInt(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
     int def=0, min=0, max=100;
 
@@ -469,12 +499,12 @@ void plPythonMgr::IAddInt(plAutoUIBlock *autoUI, PyObject *tuple, char *paramNam
         IGetTupleInt(range, 1, max);
     }
 
-    autoUI->AddIntSpinner(id, nil, paramName, vid, vstates, def, min, max);
+    autoUI->AddIntSpinner(id, {}, paramName, vid, std::move(vstates), def, min, max);
 }
 
-void plPythonMgr::IAddFloat(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddFloat(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    float def=0, min=0, max=1;
+    float def=0.f, min=0.f, max=1.f;
 
     IGetTupleFloat(tuple, 3, def);
 
@@ -485,116 +515,113 @@ void plPythonMgr::IAddFloat(plAutoUIBlock *autoUI, PyObject *tuple, char *paramN
         IGetTupleFloat(range, 1, max);
     }
 
-    autoUI->AddFloatSpinner(id, nil, paramName, vid, vstates, def, min, max);
+    autoUI->AddFloatSpinner(id, {}, paramName, vid, std::move(vstates), def, min, max);
 }
 
-void plPythonMgr::IAddString(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddString(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    char *def = nil;
+    const char *def = nullptr;
     IGetTupleString(tuple, 3, def);
 
-    autoUI->AddEditBox(id, nil, paramName, vid, vstates, def);
+    autoUI->AddEditBox(id, {}, paramName, vid, std::move(vstates), def);
 }
 
-void plPythonMgr::IAddSceneObj(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddSceneObj(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickNodeButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickNodeButton(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddSceneObjList(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddSceneObjList(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickNodeList(id, nil, paramName, vid, vstates);
+    autoUI->AddPickNodeList(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddActivator(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddActivator(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickActivatorButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickActivatorButton(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddActivatorList(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddActivatorList(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickActivatorList(id, nil, paramName, vid, vstates);
+    autoUI->AddPickActivatorList(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddDynamicText(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddDynamicText(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickDynamicTextButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickDynamicTextButton(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddGUIDialog(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddGUIDialog(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickGUIDialogButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickGUIDialogButton(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddExcludeRegion(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddExcludeRegion(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickExcludeRegionButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickExcludeRegionButton(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddWaterComponent(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddWaterComponent(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickWaterComponentButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickWaterComponentButton(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddSwimCurrentInterface(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddSwimCurrentInterface(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickSwimCurrentInterfaceButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickSwimCurrentInterfaceButton(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddClusterComponent(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddClusterComponent(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickClusterComponentButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickClusterComponentButton(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddAnimation(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddAnimation(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickAnimationButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickAnimationButton(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddBehavior(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddBehavior(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickBehaviorButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickBehaviorButton(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddMaterial(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddMaterial(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickMaterialButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickMaterialButton(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddGUIPopUpMenu(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddGUIPopUpMenu(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickGUIPopUpMenuButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickGUIPopUpMenuButton(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddGUISkin(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddGUISkin(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickGUISkinButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickGUISkinButton(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddResponder(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddResponder(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    std::vector<Class_ID> cids;
-    cids.push_back(RESPONDER_CID);
+    std::vector<Class_ID> cids{ RESPONDER_CID };
+    autoUI->AddPickComponentButton(id, {}, paramName, vid, std::move(vstates), &cids, true);
+}
+
+void plPythonMgr::IAddResponderList(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
+{
+    std::vector<Class_ID> cids{ RESPONDER_CID };
     
-    autoUI->AddPickComponentButton(id, nil, paramName, vid, vstates, &cids, true);
+    autoUI->AddPickComponentList(id, {}, paramName, vid, std::move(vstates), &cids);
 }
 
-void plPythonMgr::IAddResponderList(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddMaterialAnimation(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    std::vector<Class_ID> cids;
-    cids.push_back(RESPONDER_CID);
-    
-    autoUI->AddPickComponentList(id, nil, paramName, vid, vstates, &cids);
+    autoUI->AddPickMaterialAnimationButton(id, {}, paramName, vid, std::move(vstates));
 }
 
-void plPythonMgr::IAddMaterialAnimation(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddGrassComponent(plAutoUIBlock *autoUI, PyObject *objTuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
-    autoUI->AddPickMaterialAnimationButton(id, nil, paramName, vid, vstates);
-}
-
-void plPythonMgr::IAddGrassComponent(plAutoUIBlock *autoUI, PyObject *objTuple, std::string paramName, int id, int vid, std::vector<std::string>* vstates)
-{
-    autoUI->AddPickGrassComponentButton(id, nil, paramName.c_str(), vid, vstates);
+    autoUI->AddPickGrassComponentButton(id, {}, paramName, vid, std::move(vstates));
 }
 
 void plPythonMgr::LoadPythonFiles()
@@ -615,9 +642,9 @@ void plPythonMgr::LoadPythonFiles()
         for (auto iter = pys.begin(); iter != pys.end(); ++iter)
         {
             // Get the filename without the ".py" (module name)
-            plString fileName = iter->GetFileNameNoExt();
+            ST::string fileName = iter->GetFileNameNoExt();
 
-            IQueryPythonFile(fileName.c_str());
+            IQueryPythonFile(fileName);
         }
 
         PythonInterface::finiPython();
@@ -626,22 +653,17 @@ void plPythonMgr::LoadPythonFiles()
     }
 }
 
-void plPythonMgr::IAddDropDownList(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates)
+void plPythonMgr::IAddDropDownList(plAutoUIBlock *autoUI, PyObject *tuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
     PyObject *options = PyTuple_GetItem(tuple, 3);
     if (options && PyTuple_Check(options))
     {
-        int size = PyTuple_Size(options);
-        char* opt = nil;
-        std::vector<std::string> optionsVec;
+        Py_ssize_t size = PyTuple_Size(options);
+        std::vector<ST::string> optionsVec(size);
 
         for (int i = 0; i < size; i++)
-        {
-            IGetTupleString(options, i, opt);
-            std::string str = opt;
-            optionsVec.push_back(str);
-        }
+            IGetTupleString(options, i, optionsVec[i]);
 
-        autoUI->AddDropDownList(id, nil, paramName, vid, vstates, &optionsVec);
+        autoUI->AddDropDownList(id, {}, paramName, vid, std::move(vstates), std::move(optionsVec));
     }
 }

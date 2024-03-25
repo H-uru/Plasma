@@ -40,29 +40,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "../resource.h"
 
-#include <iparamm2.h>
-#include <stdmat.h>
-#pragma hdrstop
+#include "MaxMain/MaxAPI.h"
+
+#include "../resource.h"
 
 #include "plAngleAttenLayer.h"
 
 #include "../plBMSampler.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
 
-class plAngleAttenLayerClassDesc : public ClassDesc2
+class plAngleAttenLayerClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading = FALSE) { return new plAngleAttenLayer(); }
-    const TCHAR*    ClassName()     { return GetString(IDS_ANGLE_ATTEN_LAYER); }
-    SClass_ID       SuperClassID()  { return TEXMAP_CLASS_ID; }
-    Class_ID        ClassID()       { return ANGLE_ATTEN_LAYER_CLASS_ID; }
-    const TCHAR*    Category()      { return TEXMAP_CAT_COLMOD; }
-    const TCHAR*    InternalName()  { return _T("PlasmaAngleAttenLayer"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading = FALSE) override { return new plAngleAttenLayer(); }
+    const TCHAR*    ClassName() override    { return GetString(IDS_ANGLE_ATTEN_LAYER); }
+    SClass_ID       SuperClassID() override { return TEXMAP_CLASS_ID; }
+    Class_ID        ClassID() override      { return ANGLE_ATTEN_LAYER_CLASS_ID; }
+    const TCHAR*    Category() override     { return TEXMAP_CAT_COLMOD; }
+    const TCHAR*    InternalName() override { return _T("PlasmaAngleAttenLayer"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plAngleAttenLayerClassDesc plAngleAttenLayerDesc;
 ClassDesc2* GetAngleAttenLayerDesc() { return &plAngleAttenLayerDesc; }
@@ -78,64 +76,64 @@ static const float kDefOpaque1 = 0.f;
 
 static ParamBlockDesc2 gAngleAttenParamBlk
 (
-    plAngleAttenLayer::kBlkAngles, _T("angles"),  0, GetAngleAttenLayerDesc(),//NULL,
+    plAngleAttenLayer::kBlkAngles, _T("angles"),  0, GetAngleAttenLayerDesc(),//nullptr,
     P_AUTO_CONSTRUCT + P_AUTO_UI, plAngleAttenLayer::kRefAngles,
 
-    IDD_ANGLE_ATTEN_LAYER, IDS_ANGLE_ATTEN_LAYER_PROPS, 0, 0, nil,
+    IDD_ANGLE_ATTEN_LAYER, IDS_ANGLE_ATTEN_LAYER_PROPS, 0, 0, nullptr,
 
     // Texture size
     plAngleAttenLayer::kTranspAngle0,   _T("transp0"),  TYPE_FLOAT, 0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_TRANSP_ANGLE_0, IDC_TRANSP_ANGLE_0_SPIN, SPIN_AUTOSCALE,
         p_range,        0.0, 180.0,
         p_default,      kDefTransp0,
-        end,
+        p_end,
 
     plAngleAttenLayer::kOpaqueAngle0,   _T("opaque0"),  TYPE_FLOAT, 0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_OPAQUE_ANGLE_0, IDC_OPAQUE_ANGLE_0_SPIN, SPIN_AUTOSCALE,
         p_range,        0.0, 180.0,
         p_default,      kDefOpaque0,
-        end,
+        p_end,
 
     plAngleAttenLayer::kDoubleFade, _T("doubleFade"),   TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_DOUBLE_FADE,
         p_enable_ctrls,     2, plAngleAttenLayer::kOpaqueAngle1, plAngleAttenLayer::kTranspAngle1,
         p_default,      false,
-        end,
+        p_end,
 
     plAngleAttenLayer::kOpaqueAngle1,   _T("opaque1"),  TYPE_FLOAT, 0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_OPAQUE_ANGLE_1, IDC_OPAQUE_ANGLE_1_SPIN, SPIN_AUTOSCALE,
         p_range,        0.0, 180.0,
         p_default,      kDefTransp1,
-        end,
+        p_end,
 
     plAngleAttenLayer::kTranspAngle1,   _T("transp1"),  TYPE_FLOAT, 0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_TRANSP_ANGLE_1, IDC_TRANSP_ANGLE_1_SPIN, SPIN_AUTOSCALE,
         p_range,        0.0, 180.0,
         p_default,      kDefOpaque1,
-        end,
+        p_end,
 
     plAngleAttenLayer::kReflect,    _T("reflect"),  TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_REFLECT,
         p_default,      false,
-        end,
+        p_end,
 
     plAngleAttenLayer::kLoClamp,    _T("loClamp"),  TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_LO_CLAMP, IDC_LO_CLAMP_SPIN, SPIN_AUTOSCALE,
         p_range,        0, 100,
         p_default,      0,
-        end,
+        p_end,
 
     plAngleAttenLayer::kHiClamp,    _T("hiClamp"),  TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_HI_CLAMP, IDC_HI_CLAMP_SPIN, SPIN_AUTOSCALE,
         p_range,        0, 100,
         p_default,      100,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plAngleAttenLayer::plAngleAttenLayer() :
-    fParmsPB(NULL),
+    fParmsPB(),
     fIValid(NEVER),
     fCosTransp0(0),
     fCosOpaque0(0),
@@ -150,7 +148,7 @@ plAngleAttenLayer::~plAngleAttenLayer()
 {
 }
 
-void plAngleAttenLayer::GetClassName(TSTR& s)
+void plAngleAttenLayer::IGetClassName(MSTR& s) const
 {
     s = GetString(IDS_ANGLE_ATTEN_LAYER);
 }
@@ -206,7 +204,7 @@ RefTargetHandle plAngleAttenLayer::GetReference(int i)
     switch (i)
     {
         case kRefAngles:        return fParmsPB;
-        default:                return NULL;
+        default:                return nullptr;
     }
 }
 
@@ -232,7 +230,7 @@ IParamBlock2* plAngleAttenLayer::GetParamBlock(int i)
     switch (i)
     {
     case 0: return fParmsPB;
-    default: return NULL;
+    default: return nullptr;
     }
 }
 
@@ -241,7 +239,7 @@ IParamBlock2* plAngleAttenLayer::GetParamBlockByID(BlockID id)
     if (fParmsPB->ID() == id)
         return fParmsPB;
     else
-        return NULL;
+        return nullptr;
 }
 
 //From ReferenceTarget 
@@ -265,21 +263,21 @@ Animatable* plAngleAttenLayer::SubAnim(int i)
     switch (i)
     {
         case kRefAngles:        return fParmsPB;
-        default: return NULL;
+        default:                return nullptr;
     }
 }
 
-TSTR plAngleAttenLayer::SubAnimName(int i) 
+MSTR plAngleAttenLayer::ISubAnimName(int i)
 {
     switch (i)
     {
-        case kRefAngles:        return "Angles";
-        default: return "";
+        case kRefAngles:        return _M("Angles");
+        default: return _M("");
     }
 }
 
-RefResult plAngleAttenLayer::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-   PartID& partID, RefMessage message) 
+RefResult plAngleAttenLayer::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+   PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -294,7 +292,7 @@ RefResult plAngleAttenLayer::NotifyRefChanged(Interval changeInt, RefTargetHandl
                 ParamID changingParam = fParmsPB->LastNotifyParamID();
                 fParmsPB->GetDesc()->InvalidateUI(changingParam);
 
-                if (changingParam != -1)
+                if (changingParam != -1 && MAX_REF_PROPAGATE_VALUE)
                     IChanged();
             }
         }
@@ -454,18 +452,18 @@ void plAngleAttenLayer::ActivateTexDisplay(BOOL onoff)
 
 BITMAPINFO *plAngleAttenLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono, BOOL forceW, BOOL forceH)
 {
-    return nil;
+    return nullptr;
                         // FIXME
 }
 
-DWORD plAngleAttenLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker) 
+DWORD_PTR plAngleAttenLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
 {
     return 0;
 }
 
 const char *plAngleAttenLayer::GetTextureName( int which )
 {
-    return NULL;
+    return nullptr;
 }
 
 int plAngleAttenLayer::GetLoClamp()

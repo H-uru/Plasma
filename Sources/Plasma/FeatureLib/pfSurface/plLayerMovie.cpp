@@ -40,11 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plLayerMovie.h"
-#include "hsStream.h"
-#include "hsResMgr.h"
+
+#include "HeadSpin.h"
 #include "hsGDeviceRef.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
+#include <string_theory/format>
 
 #include "plMessage/plAnimCmdMsg.h"
 #include "plGImage/plMipmap.h"
@@ -57,9 +60,7 @@ plLayerMovie::plLayerMovie()
 {
     fOwnedChannels |= kTexture;
     fTexture = new plBitmap*;
-    *fTexture = nil;
-    
-//  fTimeConvert.SetOwner(this);
+    *fTexture = nullptr;
 }
 
 plLayerMovie::~plLayerMovie()
@@ -111,7 +112,7 @@ bool plLayerMovie::ISetupBitmap()
         memset(b->GetImage(), 0x10, b->GetHeight() * b->GetRowBytes() );
         b->SetFlags( b->GetFlags() | plMipmap::kDontThrowAwayImage );
 
-        plString name = plFormat("{}_BMap", fMovieName);
+        ST::string name = ST::format("{}_BMap", fMovieName);
         hsgResMgr::ResMgr()->NewKey( name, b, plLocation::kGlobalFixedLoc );
 
         *fTexture = (plBitmap *)b;
@@ -182,11 +183,10 @@ void plLayerMovie::Read(hsStream* s, hsResMgr* mgr)
     int len = s->ReadLE32();
     if( len )
     {
-        plStringBuffer<char> movieName;
-        char *buf = movieName.CreateWritableBuffer(len);
-        s->Read(len, buf);
-        buf[len] = 0;
-        fMovieName = plString(movieName);
+        ST::char_buffer movieName;
+        movieName.allocate(len);
+        s->Read(len, movieName.data());
+        fMovieName = ST::string(movieName);
     }
     else
     {
@@ -199,7 +199,7 @@ void plLayerMovie::Write(hsStream* s, hsResMgr* mgr)
 {
     plLayerAnimation::Write(s, mgr);
 
-    s->WriteLE32(fMovieName.GetSize());
+    s->WriteLE32((uint32_t)fMovieName.GetSize());
     s->Write(fMovieName.GetSize(), fMovieName.AsString().c_str());
 }
 

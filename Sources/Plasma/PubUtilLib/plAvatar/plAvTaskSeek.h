@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #ifndef PLAVTASKSEEK_INC
 #define PLAVTASKSEEK_INC
-#pragma once
 
 #include "plAvatarTasks.h"
 #include "hsQuat.h"
@@ -73,30 +72,30 @@ public:
     };
 
     plAvTaskSeek();
-    plAvTaskSeek(plKey target);
+    plAvTaskSeek(const plKey& target);
     plAvTaskSeek(plAvSeekMsg *msg);
-    plAvTaskSeek(plKey target, plAvAlignment align, const plString& animName, bool moving);
+    plAvTaskSeek(const plKey& target, plAvAlignment align, ST::string animName, bool moving);
 
-    void SetTarget(plKey target);
+    void SetTarget(const plKey& target);
     void SetTarget(hsPoint3 &pos, hsPoint3 &lookAt);
 
     /** Initiate the task; make sure we're running on the right type of brain, save off
         user input state, and turn off any other running behaviors.*/
-    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
 
     /** Progress towards the goal using a combination of walking and cheating-via-sliding.
         Returns true if we're still working on it; false if we're done. */
     
-    virtual bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
 
     /** Restore user input state, etc. */
-    virtual void Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    void Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
     
     /** clear our target, and when we try to eval, we'll just finish */
-    virtual void LeaveAge(plArmatureMod *avatar);
+    void LeaveAge(plArmatureMod *avatar) override;
 
     /** Spew "useful" information to the game screen. Used when Avatar.Debug is active. */
-    virtual void DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt);
+    void DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt) override;
 
     void DumpToAvatarLog(plArmatureMod *avatar);
         
@@ -153,7 +152,7 @@ protected:
     // for example, you can say "find a good start point so that you can play this animation
     // and have your handle wind up here" i.e: aligntype = "kAlignHandleAnimEnd"
     plAvAlignment   fAlign;     // how to line up with the seek point
-    plString fAnimName;                     // an (optional) anim to use to line up our target
+    ST::string fAnimName;                   // an (optional) anim to use to line up our target
                                             // so you can say "seek to a place where your hand
                                             // will be here after you play animation foo"
     plMessage* fFinishMsg;
@@ -166,6 +165,8 @@ protected:
     // little back-and-forth loop.
     bool fPosGoalHit;
     bool fRotGoalHit;
+
+    bool fSweepTestHit;
 
     bool fStillPositioning;               // haven't yet reached the final position
     bool fStillRotating;                  // haven't yet reached the final orientation

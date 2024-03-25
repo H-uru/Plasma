@@ -48,8 +48,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIDragBarCtrl_h
 #define _pfGUIDragBarCtrl_h
 
+#include "hsGeometry3.h"
+
 #include "pfGUIControlMod.h"
 
+struct hsMatrix44;
 class plMessage;
 
 class pfGUIDragBarCtrl : public pfGUIControlMod
@@ -60,9 +63,9 @@ class pfGUIDragBarCtrl : public pfGUIControlMod
         bool        fDragging;
         bool        fAnchored;
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
-        virtual uint32_t      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
+        uint32_t      IGetDesiredCursor() const override;    // As specified in plInputInterface.h
 
     public:
 
@@ -73,19 +76,19 @@ class pfGUIDragBarCtrl : public pfGUIControlMod
         GETINTERFACE_ANY( pfGUIDragBarCtrl, pfGUIControlMod );
 
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
+        void    HandleMouseDown(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
 
         virtual void    SetAnchored( bool anchored ) { fAnchored = anchored; }
-        virtual bool    IsAnchored(void) { return fAnchored; }
+        virtual bool    IsAnchored() { return fAnchored; }
 
-        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, bool force = false );
+        void    UpdateBounds(hsMatrix44 *invXformMatrix = nullptr, bool force = false) override;
 
         // Export only
 };

@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCullTree_inc
 #define plCullTree_inc
 
+#include <vector>
+
 #include "hsBounds.h"
 #include "hsGeometry3.h"
 #include "hsBitVector.h"
@@ -66,17 +68,17 @@ class plCullTree : public plCuller
 protected:
 
     // Visualization stuff, to be nuked from production version.
-    mutable bool                            fCapturePolys;
-    mutable hsTArray<hsPoint3>              fVisVerts;
-    mutable hsTArray<hsVector3>             fVisNorms;
-    mutable hsTArray<hsColorRGBA>           fVisColors;
-    mutable hsTArray<uint16_t>                fVisTris;
-    mutable float                        fVisYon;
+    mutable bool                        fCapturePolys;
+    mutable std::vector<hsPoint3>       fVisVerts;
+    mutable std::vector<hsVector3>      fVisNorms;
+    mutable std::vector<hsColorRGBA>    fVisColors;
+    mutable std::vector<uint16_t>       fVisTris;
+    mutable float                       fVisYon;
 
-    mutable hsTArray<plCullPoly>        fScratchPolys;
-    mutable hsLargeArray<int16_t>     fScratchClear;
-    mutable hsLargeArray<int16_t>     fScratchSplit;
-    mutable hsLargeArray<int16_t>     fScratchCulled;
+    mutable std::vector<plCullPoly> fScratchPolys;
+    mutable std::vector<int16_t>    fScratchClear;
+    mutable std::vector<int16_t>    fScratchSplit;
+    mutable std::vector<int16_t>    fScratchCulled;
     mutable hsBitVector             fScratchBitVec;
     mutable hsBitVector             fScratchTotVec;
 
@@ -88,12 +90,9 @@ protected:
     hsPoint3                        fViewPos;
 
     int16_t                           fRoot;
-    mutable hsTArray<plCullNode>    fNodeList; // Scratch list we make the tree from.
+    mutable std::vector<plCullNode> fNodeList; // Scratch list we make the tree from.
     plCullNode*                     IGetRoot() const { return IGetNode(fRoot); }
-    plCullNode*                     IGetNode(int16_t i) const { return i >= 0 ? &fNodeList[i] : nil; }
-
-    void                ITestNode(const plSpaceTree* space, int16_t who, hsTArray<int16_t>& outList) const; // Appends to outlist
-    void                ITestList(const plSpaceTree* space, const hsTArray<int16_t>& inList, hsTArray<int16_t>& outList) const;
+    plCullNode*                     IGetNode(int16_t i) const { return i >= 0 ? &fNodeList[i] : nullptr; }
 
     int16_t               IAddPolyRecur(const plCullPoly& poly, int16_t iNode);
     int16_t               IMakeHoleSubTree(const plCullPoly& poly) const;
@@ -101,10 +100,10 @@ protected:
     int16_t               IMakePolyNode(const plCullPoly& poly, int i0, int i1) const;
 
     // Some scratch areas for the nodes use when building the tree etc.
-    hsTArray<plCullPoly>&           ScratchPolys() const { return fScratchPolys; }
-    hsLargeArray<int16_t>&            ScratchClear() const { return fScratchClear; }
-    hsLargeArray<int16_t>&            ScratchSplit() const { return fScratchSplit; }
-    hsLargeArray<int16_t>&            ScratchCulled() const { return fScratchCulled; }
+    std::vector<plCullPoly>&        ScratchPolys() const { return fScratchPolys; }
+    std::vector<int16_t>&           ScratchClear() const { return fScratchClear; }
+    std::vector<int16_t>&           ScratchSplit() const { return fScratchSplit; }
+    std::vector<int16_t>&           ScratchCulled() const { return fScratchCulled; }
     hsBitVector&                    ScratchBitVec() const { return fScratchBitVec; }
     hsBitVector&                    ScratchTotVec() const { return fScratchTotVec; }
 
@@ -121,9 +120,9 @@ public:
     void                    SetViewPos(const hsPoint3& pos);
     void                    AddPoly(const plCullPoly& poly);
 
-    uint32_t                  GetNumNodes() const { return fNodeList.GetCount(); }
+    size_t                  GetNumNodes() const { return fNodeList.size(); }
 
-    virtual void            Harvest(const plSpaceTree* space, hsTArray<int16_t>& outList) const;
+    void                    Harvest(const plSpaceTree* space, std::vector<int16_t>& outList) const override;
     virtual bool            BoundsVisible(const hsBounds3Ext& bnd) const;
     virtual bool            SphereVisible(const hsPoint3& center, float rad) const;
 
@@ -131,10 +130,10 @@ public:
     void                    SetVisualizationYon(float y) const { fVisYon = y; }
     void                    BeginCapturePolys() const { fCapturePolys = true; }
     void                    EndCapturePolys() const { fCapturePolys = false; }
-    hsTArray<hsPoint3>&     GetCaptureVerts() const { return fVisVerts; }
-    hsTArray<hsVector3>&    GetCaptureNorms() const { return fVisNorms; }
-    hsTArray<hsColorRGBA>&  GetCaptureColors() const { return fVisColors; }
-    hsTArray<uint16_t>&       GetCaptureTris() const { return fVisTris; }
+    std::vector<hsPoint3>&  GetCaptureVerts() const { return fVisVerts; }
+    std::vector<hsVector3>& GetCaptureNorms() const { return fVisNorms; }
+    std::vector<hsColorRGBA>& GetCaptureColors() const { return fVisColors; }
+    std::vector<uint16_t>&  GetCaptureTris() const { return fVisTris; }
     void                    ReleaseCapture() const;
 };
 
@@ -175,28 +174,28 @@ protected:
     plCullNode::plCullStatus    ITestSphereRecur(const hsPoint3& center, float rad) const;
 
     // Using the nodes
-    plCullNode::plCullStatus    ITestNode(const plSpaceTree* space, int16_t who, hsLargeArray<int16_t>& clear, hsLargeArray<int16_t>& split, hsLargeArray<int16_t>& culled) const;
+    plCullNode::plCullStatus    ITestNode(const plSpaceTree* space, int16_t who, std::vector<int16_t>& clear, std::vector<int16_t>& split, std::vector<int16_t>& culled) const;
     void                        ITestNode(const plSpaceTree* space, int16_t who, hsBitVector& totList, hsBitVector& outList) const;
-    void                        IHarvest(const plSpaceTree* space, hsTArray<int16_t>& outList) const;
+    void                        IHarvest(const plSpaceTree* space, std::vector<int16_t>& outList) const;
 
     // Constructing the tree
     float                    IInterpVert(const hsPoint3& p0, const hsPoint3& p1, hsPoint3& out) const;
     plCullNode::plCullStatus    ISplitPoly(const plCullPoly& poly, plCullPoly*& innerPoly, plCullPoly*& outerPoly) const;
     void                        IMarkClipped(const plCullPoly& poly, const hsBitVector& onVerts) const;
-    void                        ITakeHalfPoly(const plCullPoly& scrPoly, 
-                                   const hsTArray<int>& vtxIdx, 
-                                   const hsBitVector& onVerts, 
+    void                        ITakeHalfPoly(const plCullPoly& scrPoly,
+                                   const std::vector<size_t>& vtxIdx,
+                                   const hsBitVector& onVerts,
                                    plCullPoly& outPoly) const;
-    void                        IBreakPoly(const plCullPoly& poly, const hsTArray<float>& depths,
+    void                        IBreakPoly(const plCullPoly& poly, const std::vector<float>& depths,
                                     hsBitVector& inVerts,
                                     hsBitVector& outVerts,
                                     hsBitVector& onVerts,
                                     plCullPoly& srcPoly) const;
 
-    hsTArray<plCullPoly>&           ScratchPolys() const { return fTree->ScratchPolys(); }
-    hsLargeArray<int16_t>&            ScratchClear() const { return fTree->ScratchClear(); }
-    hsLargeArray<int16_t>&            ScratchSplit() const { return fTree->ScratchSplit(); }
-    hsLargeArray<int16_t>&            ScratchCulled() const { return fTree->ScratchCulled(); }
+    std::vector<plCullPoly>&        ScratchPolys() const { return fTree->ScratchPolys(); }
+    std::vector<int16_t>&           ScratchClear() const { return fTree->ScratchClear(); }
+    std::vector<int16_t>&           ScratchSplit() const { return fTree->ScratchSplit(); }
+    std::vector<int16_t>&           ScratchCulled() const { return fTree->ScratchCulled(); }
     hsBitVector&                    ScratchBitVec() const { return fTree->ScratchBitVec(); }
     hsBitVector&                    ScratchTotVec() const { return fTree->ScratchTotVec(); }
 

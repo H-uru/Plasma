@@ -66,15 +66,15 @@ public:
     // can this channel combine with the given channel?
     virtual bool CanCombine(plAGChannel * channelB);
     // combine it (allocates combine object)
-    virtual plAGChannel * MakeCombine(plAGChannel * channelB);
+    plAGChannel * MakeCombine(plAGChannel * channelB) override;
 
     // const eval at time zero
-    virtual plAGChannel * MakeZeroState();
+    plAGChannel * MakeZeroState() override;
     // make a timeScale instance
-    virtual plAGChannel * MakeTimeScale(plScalarChannel *timeSource);
+    plAGChannel * MakeTimeScale(plScalarChannel *timeSource) override;
 
     // blend it (allocates blend object)
-    virtual plAGChannel * MakeBlend(plAGChannel * channelB, plScalarChannel * channelBias, int blendPriority);
+    plAGChannel * MakeBlend(plAGChannel * channelB, plScalarChannel * channelBias, int blendPriority) override;
 
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plQuatChannel );
@@ -97,8 +97,8 @@ public:
     CLASSNAME_REGISTER( plQuatConstant );
     GETINTERFACE_ANY( plQuatConstant, plQuatChannel );
 
-    void Read(hsStream *stream, hsResMgr *mgr);
-    void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 ////////////////////
@@ -117,10 +117,10 @@ public:
     plQuatTimeScale(plQuatChannel *channel, plScalarChannel *timeSource);
     virtual ~plQuatTimeScale();
 
-    virtual bool IsStoppedAt(double time);
-    virtual const hsQuat & Value(double time);
+    bool IsStoppedAt(double time) override;
+    const hsQuat & Value(double time) override;
 
-    virtual plAGChannel * Detach(plAGChannel * channel);
+    plAGChannel * Detach(plAGChannel * channel) override;
 
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plQuatTimeScale );
@@ -149,13 +149,13 @@ public:
 
     //float GetBlend() const { return fBlend; }
     //void SetBlend(float the_blend) { fBlend = the_blend; }
-    virtual bool IsStoppedAt(double time);
+    bool IsStoppedAt(double time) override;
 
     // AG PROTOCOL
-    virtual const hsQuat &Value(double time);
+    const hsQuat &Value(double time) override;
 
     // remove the specified channel from our graph
-    virtual plAGChannel * Detach(plAGChannel * channel);
+    plAGChannel * Detach(plAGChannel * channel) override;
 
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plQuatBlend );
@@ -176,7 +176,7 @@ protected:
 class plQuatChannelApplicator : public plAGApplicator
 {
 protected:
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
 
 public:
     CLASSNAME_REGISTER( plQuatChannelApplicator );

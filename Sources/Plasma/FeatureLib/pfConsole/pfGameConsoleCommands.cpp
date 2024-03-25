@@ -68,25 +68,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define LIMIT_CONSOLE_COMMANDS 1
 #endif
 
-
-#include "pfConsoleCore/pfConsoleCmd.h"
-#include "pfConsole.h"
-
 #include "plgDispatch.h"
 #include "plPipeline.h"
-#include "hsResMgr.h"
+
+#include "pfConsole.h"
+
+#include "pnKeyedObject/plFixedKey.h"
 
 #include "plAvatar/plAnimStage.h"
 #include "plAvatar/plAvBrainGeneric.h"
 #include "plAvatar/plAvBrainHuman.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plGImage/plMipmap.h"
-#include "pfGameGUIMgr/pfGUICtrlGenerator.h"
-#include "pnKeyedObject/plFixedKey.h"
 #include "plMessage/plAvatarMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
 #include "plPipeline/plCaptureRender.h"
 
+#include "pfConsoleCore/pfConsoleCmd.h"
+#include "pfMessage/pfGameGUIMsg.h"
+#include "pfMessage/pfKIMsg.h"
 
 #define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
 
@@ -94,21 +93,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// This is here so Microsoft VC won't decide to "optimize" this file out
 PF_CONSOLE_FILE_DUMMY(Game)
 //// DO NOT REMOVE!!!!
-
-//// plDoesFileExist //////////////////////////////////////////////////////////
-//  Utility function to determine whether the given file exists
-
-static bool     plDoesFileExist( const char *path )
-{
-    hsUNIXStream    stream;
-
-
-    if( !stream.Open( path, "rb" ) )
-        return false;
-
-    stream.Close();
-    return true;
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //// Game Group Commands /////////////////////////////////////////////////////
@@ -136,7 +120,7 @@ PF_CONSOLE_CMD( Game, LoadDialog, "string dlgName", "Loads the given GUI dialog 
     if( mgrKey )
     {
         pfGameGUIMsg    *msg = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kLoadDialog );
-        msg->SetString( (const char *)params[ 0 ] );
+        msg->SetString(params[0]);
         plgDispatch::MsgSend( msg );
     }
 }
@@ -148,8 +132,8 @@ PF_CONSOLE_CMD( Game, LoadLocalDialog, "string ageName, string dlgName", "Loads 
     if( mgrKey )
     {
         pfGameGUIMsg    *msg = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kLoadDialog );
-        msg->SetString( (const char *)params[ 1 ] );
-        msg->SetAge( (const char *)params[ 0 ] );
+        msg->SetString(params[1]);
+        msg->SetAge(params[0]);
         plgDispatch::MsgSend( msg );
     }
 }
@@ -161,7 +145,7 @@ PF_CONSOLE_CMD( Game, ShowDialog, "string dlgName", "Shows the given GUI dialog"
     if( mgrKey )
     {
         pfGameGUIMsg    *msg = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kShowDialog );
-        msg->SetString( (const char *)params[ 0 ] );
+        msg->SetString(params[0]);
         plgDispatch::MsgSend( msg );
     }
 }
@@ -173,7 +157,7 @@ PF_CONSOLE_CMD( Game, HideDialog, "string dlgName", "Hides the given GUI dialog"
     if( mgrKey )
     {
         pfGameGUIMsg    *msg = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kHideDialog );
-        msg->SetString( (const char *)params[ 0 ] );
+        msg->SetString(params[0]);
         plgDispatch::MsgSend( msg );
     }
 }
@@ -187,59 +171,16 @@ PF_CONSOLE_CMD( Game, SwitchDialog, "string olddlgName, string newdlgName", "Hid
     if( mgrKey )
     {
         pfGameGUIMsg    *msg = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kHideDialog );
-        msg->SetString( (const char *)params[ 0 ] );
+        msg->SetString(params[0]);
         plgDispatch::MsgSend( msg );
 
         pfGameGUIMsg    *msg2 = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kShowDialog );
-        msg2->SetString( (const char *)params[ 1 ] );
+        msg2->SetString(params[1]);
         plgDispatch::MsgSend( msg2 );
     }
 }
 
-PF_CONSOLE_SUBGROUP( Game, GUI )
-
-#include "pfGameGUIMgr/pfGUICtrlGenerator.h"
-
-static hsColorRGBA  sDynCtrlColor = hsColorRGBA().Set( 1, 1, 1, 1 ), sDynCtrlTextColor = hsColorRGBA().Set( 0, 0, 0, 1 );
-
-PF_CONSOLE_CMD( Game_GUI, SetDynamicCtrlColor, "float bgRed, float bgGreen, float bgBlue, float textRed, float textGreen, float textBlue", "" )
-{
-    sDynCtrlColor.Set( params[ 0 ], params[ 1 ], params[ 2 ], 1.f );
-    sDynCtrlTextColor.Set( params[ 3 ], params[ 4 ], params[ 5 ], 1.f );
-}
-
-
-PF_CONSOLE_CMD( Game_GUI, CreateRectButton, "string title, float x, float y, float width, float height, string command", "" )
-{
-    pfGUICtrlGenerator::Instance().GenerateRectButton( params[ 0 ], params[ 1 ], params[ 2 ],
-                                            params[ 3 ], params[ 4 ], 
-                                            params[ 5 ], 
-                                            sDynCtrlColor, sDynCtrlTextColor );
-}
-
-PF_CONSOLE_CMD( Game_GUI, CreateRoundButton, "float x, float y, float radius, string command", "" )
-{
-    pfGUICtrlGenerator::Instance().GenerateSphereButton( params[ 0 ], params[ 1 ], params[ 2 ], 
-                                            params[ 3 ], 
-                                            sDynCtrlColor );
-}
-
-PF_CONSOLE_CMD( Game_GUI, CreateDragBar, "float x, float y, float width, float height", "")
-{
-    pfGUICtrlGenerator::Instance().GenerateDragBar( params[ 0 ], params[ 1 ], params[ 2 ], params[ 3 ], sDynCtrlColor );
-}
-
-PF_CONSOLE_CMD( Game_GUI, CreateDialog, "string name", "" )
-{
-    pfGUICtrlGenerator::Instance().GenerateDialog( params[ 0 ] );
-}
-
-
 #endif
-
-
-//#include "../pfKI/pfKI.h"
-#include "pfMessage/pfKIMsg.h"
 
 PF_CONSOLE_CMD( Game, EnterChatMode, "", "Enters in-game chat mode" )
 {
@@ -351,7 +292,6 @@ PF_CONSOLE_CMD( Game, KICreateMarkerFolder, "", "Create marker folder in current
 
 PF_CONSOLE_CMD( Game, SetChatFadeDelay, "float delayInSecs", "Sets the time in seconds before the chat text disappears" )
 {
-//  pfKI::GetInstance()->SetChatFadeDelay( params[ 0 ] );
     pfKIMsg* msg = new pfKIMsg(pfKIMsg::kSetChatFadeDelay);
     msg->SetDelay( params[0] );
     plgDispatch::MsgSend( msg );
@@ -370,7 +310,7 @@ PF_CONSOLE_CMD( Game, LimitAvatarLOD, "int newLOD", "Zero is (always) highest de
 
 PF_CONSOLE_SUBGROUP( Game, Emote)       // Game.Emote.Shakefist
 
-void Emote(const char *emotion, float fadeIn = 2.0, float fadeOut = 2.0)
+void Emote(const ST::string& emotion, float fadeIn = 2.0, float fadeOut = 2.0)
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
     AvatarEmote(avatar, emotion);
@@ -378,52 +318,45 @@ void Emote(const char *emotion, float fadeIn = 2.0, float fadeOut = 2.0)
 
 PF_CONSOLE_CMD( Game_Emote, Wave, "", "")
 {
-    Emote("Wave", 4.0, 1.0);
+    Emote(ST_LITERAL("Wave"), 4.0, 1.0);
 }
 
 PF_CONSOLE_CMD( Game_Emote, Sneeze, "", "")
 {
-    Emote("Sneeze");
+    Emote(ST_LITERAL("Sneeze"));
 }
 
 PF_CONSOLE_CMD( Game_Emote, Dance, "", "")
 {
-    Emote("Dance");
+    Emote(ST_LITERAL("Dance"));
 }
 
 PF_CONSOLE_CMD( Game_Emote, Laugh, "", "")
 {
-    Emote("Laugh");
+    Emote(ST_LITERAL("Laugh"));
 }
 
 PF_CONSOLE_CMD( Game_Emote, Clap, "", "")
 {
-    Emote("Clap", 4.0, 3.0);
+    Emote(ST_LITERAL("Clap"), 4.0, 3.0);
 }
 
 PF_CONSOLE_CMD( Game_Emote, Talk, "", "")
 {
-    Emote("Talk");
+    Emote(ST_LITERAL("Talk"));
 }
 
 PF_CONSOLE_CMD( Game_Emote, Sit, "", "")
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
-    PushSimpleMultiStage(avatar, "SitDownGround", "SitIdleGround", "SitStandGround", true, true, plAGAnim::kBodyLower, plAvBrainGeneric::kSitOnGround);
+    PushSimpleMultiStage(avatar, ST_LITERAL("SitDownGround"), ST_LITERAL("SitIdleGround"), ST_LITERAL("SitStandGround"), true, true, plAGAnim::kBodyLower, plAvBrainGeneric::kSitOnGround);
 }
 
+#ifndef PLASMA_EXTERNAL_RELEASE
 PF_CONSOLE_CMD( Game, SetLocalClientAsAdmin, "bool enable", "Makes chat messages from this client appear as admin messages" )
 {
-//  pfKI::GetInstance()->SetTextChatAdminMode( (bool)params[ 0 ] );
     pfKIMsg* msg = new pfKIMsg(pfKIMsg::kSetTextChatAdminMode);
     msg->SetFlags( params[0] ? pfKIMsg::kAdminMsg : 0 );
     plgDispatch::MsgSend( msg );
 }
-
-#include "pfConditional/plObjectInBoxConditionalObject.h"
-
-PF_CONSOLE_CMD( Game, BreakVolumeSensors, "bool break", "reverts to old broken volume sensor logic" )
-{
-    bool b =  params[ 0 ];
-    plVolumeSensorConditionalObject::makeBriceHappyVar = !b;
-}
+#endif

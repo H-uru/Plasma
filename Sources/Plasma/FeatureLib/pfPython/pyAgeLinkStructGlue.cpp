@@ -40,11 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pyAgeLinkStruct.h"
+
+#include <string_theory/string>
+#include <utility>
+
 #include "pyAgeInfoStruct.h"
+#include "pyGlueHelpers.h"
 #include "pySpawnPointInfo.h"
 
 // glue functions
@@ -93,7 +95,7 @@ PYTHON_RICH_COMPARE_DEFINITION(ptAgeLinkStruct, obj1, obj2, compareType)
 
 PYTHON_METHOD_DEFINITION(ptAgeLinkStruct, copyFrom, args)
 {
-    PyObject* linkStructObj = NULL;
+    PyObject* linkStructObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &linkStructObj))
     {
         PyErr_SetString(PyExc_TypeError, "copyFrom expects a ptAgeLinkStruct or ptAgeLinkStructRef");
@@ -122,7 +124,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAgeLinkStruct, getAgeInfo)
 
 PYTHON_METHOD_DEFINITION(ptAgeLinkStruct, setAgeInfo, args)
 {
-    PyObject* ageInfoObj = NULL;
+    PyObject* ageInfoObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &ageInfoObj))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeInfo expects a ptAgeInfoStruct");
@@ -140,24 +142,24 @@ PYTHON_METHOD_DEFINITION(ptAgeLinkStruct, setAgeInfo, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeLinkStruct, getParentAgeFilename)
 {
-    return PyString_FromString(self->fThis->GetParentAgeFilename());
+    return PyUnicode_FromSTString(self->fThis->GetParentAgeFilename());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeLinkStruct, setParentAgeFilename, args)
 {
-    char* filename;
-    if (!PyArg_ParseTuple(args, "s", &filename))
+    ST::string filename;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &filename))
     {
         PyErr_SetString(PyExc_TypeError, "setParentAgeFilename expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetParentAgeFilename(filename);
+    self->fThis->SetParentAgeFilename(std::move(filename));
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeLinkStruct, getLinkingRules)
 {
-    return PyInt_FromLong(self->fThis->GetLinkingRules());
+    return PyLong_FromLong(self->fThis->GetLinkingRules());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeLinkStruct, setLinkingRules, args)
@@ -179,7 +181,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAgeLinkStruct, getSpawnPoint)
 
 PYTHON_METHOD_DEFINITION(ptAgeLinkStruct, setSpawnPoint, args)
 {
-    PyObject* spawnPtInfoObj = NULL;
+    PyObject* spawnPtInfoObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &spawnPtInfoObj))
     {
         PyErr_SetString(PyExc_TypeError, "setSpawnPoint expects a ptSpawnPointInfo or a ptSpawnPointInfoRef");
@@ -214,11 +216,12 @@ PYTHON_START_METHODS_TABLE(ptAgeLinkStruct)
 PYTHON_END_METHODS_TABLE;
 
 // type structure definition
-#define ptAgeLinkStruct_COMPARE         PYTHON_NO_COMPARE
 #define ptAgeLinkStruct_AS_NUMBER       PYTHON_NO_AS_NUMBER
 #define ptAgeLinkStruct_AS_SEQUENCE     PYTHON_NO_AS_SEQUENCE
 #define ptAgeLinkStruct_AS_MAPPING      PYTHON_NO_AS_MAPPING
 #define ptAgeLinkStruct_STR             PYTHON_NO_STR
+#define ptAgeLinkStruct_GETATTRO        PYTHON_NO_GETATTRO
+#define ptAgeLinkStruct_SETATTRO        PYTHON_NO_SETATTRO
 #define ptAgeLinkStruct_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptAgeLinkStruct)
 #define ptAgeLinkStruct_GETSET          PYTHON_NO_GETSET
 #define ptAgeLinkStruct_BASE            PYTHON_NO_BASE
@@ -229,7 +232,7 @@ PYTHON_CLASS_NEW_IMPL(ptAgeLinkStruct, pyAgeLinkStruct)
 
 PyObject *pyAgeLinkStruct::New(plAgeLinkStruct *link)
 {
-    ptAgeLinkStruct *newObj = (ptAgeLinkStruct*)ptAgeLinkStruct_type.tp_new(&ptAgeLinkStruct_type, NULL, NULL);
+    ptAgeLinkStruct *newObj = (ptAgeLinkStruct*)ptAgeLinkStruct_type.tp_new(&ptAgeLinkStruct_type, nullptr, nullptr);
     newObj->fThis->fAgeLink.CopyFrom(link);
     return (PyObject*)newObj;
 }
@@ -258,7 +261,7 @@ PYTHON_NO_INIT_DEFINITION(ptAgeLinkStructRef)
 
 PYTHON_METHOD_DEFINITION(ptAgeLinkStructRef, copyFrom, args)
 {
-    PyObject* linkStructObj = NULL;
+    PyObject* linkStructObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &linkStructObj))
     {
         PyErr_SetString(PyExc_TypeError, "copyFrom expects a ptAgeLinkStruct or ptAgeLinkStructRef");
@@ -287,7 +290,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAgeLinkStructRef, getAgeInfo)
 
 PYTHON_METHOD_DEFINITION(ptAgeLinkStructRef, setAgeInfo, args)
 {
-    PyObject* ageInfoObj = NULL;
+    PyObject* ageInfoObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &ageInfoObj))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeInfo expects a ptAgeInfoStruct");
@@ -305,7 +308,7 @@ PYTHON_METHOD_DEFINITION(ptAgeLinkStructRef, setAgeInfo, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeLinkStructRef, getLinkingRules)
 {
-    return PyInt_FromLong(self->fThis->GetLinkingRules());
+    return PyLong_FromLong(self->fThis->GetLinkingRules());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeLinkStructRef, setLinkingRules, args)
@@ -327,7 +330,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAgeLinkStructRef, getSpawnPoint)
 
 PYTHON_METHOD_DEFINITION(ptAgeLinkStructRef, setSpawnPoint, args)
 {
-    PyObject* spawnPtInfoObj = NULL;
+    PyObject* spawnPtInfoObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &spawnPtInfoObj))
     {
         PyErr_SetString(PyExc_TypeError, "setSpawnPoint expects a ptSpawnPointInfo or a ptSpawnPointInfoRef");
@@ -365,7 +368,7 @@ PLASMA_DEFAULT_TYPE(ptAgeLinkStructRef, "Class to hold the data of the AgeLink s
 // required functions for PyObject interoperability
 PyObject *pyAgeLinkStructRef::New(plAgeLinkStruct &link)
 {
-    ptAgeLinkStructRef *newObj = (ptAgeLinkStructRef*)ptAgeLinkStructRef_type.tp_new(&ptAgeLinkStructRef_type, NULL, NULL);
+    ptAgeLinkStructRef *newObj = (ptAgeLinkStructRef*)ptAgeLinkStructRef_type.tp_new(&ptAgeLinkStructRef_type, nullptr, nullptr);
     newObj->fThis->fAgeLink.CopyFrom(&link);
     return (PyObject*)newObj;
 }

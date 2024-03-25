@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plScene_SOURCES
     plCullPoly.cpp
     plOccluder.cpp
@@ -32,7 +27,33 @@ set(plScene_HEADERS
     plVisRegion.h
 )
 
-add_library(plScene STATIC ${plScene_SOURCES} ${plScene_HEADERS})
+plasma_library(plScene
+    SOURCES ${plScene_SOURCES} ${plScene_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADER Pch.h
+)
+target_link_libraries(
+    plScene
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        pnModifier
+        pnSceneObject
+        plDrawable
+        plMessage
+    PRIVATE
+        pnMessage
+        pnNucleusInc
+        pnSceneObject
+        plDrawable
+        plGLight
+        plIntersect
+        plMath
+        plPipeline
+        plSurface
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${plScene_SOURCES})
 source_group("Header Files" FILES ${plScene_HEADERS})

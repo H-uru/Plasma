@@ -44,6 +44,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cstring>
 
+struct _InitOpenSSL
+{
+    _InitOpenSSL()
+    {
+        // This ensures algorithms used by the EVP APIs are available,
+        // regardless of the entry point to this code.
+        OpenSSL_add_all_algorithms();
+    }
+
+    ~_InitOpenSSL()
+    {
+        EVP_cleanup();
+    }
+
+} s_initOpenSSL;
 
 static uint8_t IHexCharToInt(char c)
 {
@@ -104,39 +119,43 @@ plChecksum::plChecksum(unsigned int bufsize, const char* buffer)
 
 //============================================================================
 
-plMD5Checksum::plMD5Checksum(size_t size, uint8_t* buffer)
+plMD5Checksum::plMD5Checksum(size_t size, const uint8_t* buffer)
+    : fValid(), fContext()
 {
-    fValid = false;
     Start();
     AddTo(size, buffer);
     Finish();
 }
 
 plMD5Checksum::plMD5Checksum()
+    : fValid(), fContext()
 {
-    Clear();
+    memset(fChecksum, 0, sizeof(fChecksum));
 }
 
 plMD5Checksum::plMD5Checksum(const plMD5Checksum& rhs)
+    : fValid(rhs.fValid), fContext()
 {
-    memset(&fContext, 0, sizeof(fContext));
     memcpy(fChecksum, rhs.fChecksum, sizeof(fChecksum));
-    fValid = rhs.fValid;
 }
 
 plMD5Checksum::plMD5Checksum(const plFileName& fileName)
+    : fValid(), fContext()
 {
     CalcFromFile(fileName);
 }
 
 plMD5Checksum::plMD5Checksum(hsStream* stream)
+    : fValid(), fContext()
 {
     CalcFromStream(stream);
 }
 
 void plMD5Checksum::Clear()
 {
-    memset(&fContext, 0, sizeof(fContext));
+    if (fContext)
+        EVP_MD_CTX_destroy(fContext);
+    fContext = nullptr;
     memset(fChecksum, 0, sizeof(fChecksum));
     fValid = false;
 }
@@ -149,7 +168,6 @@ void plMD5Checksum::CalcFromFile(const plFileName& fileName)
     if (s.Open(fileName))
     {
         CalcFromStream(&s);
-        s.Close();
     }
 }
 
@@ -171,20 +189,30 @@ void plMD5Checksum::CalcFromStream(hsStream* stream)
 
 void plMD5Checksum::Start()
 {
-    MD5_Init(&fContext);
+    const EVP_MD* md = EVP_get_digestbyname("md5");
+    hsAssert(md, "This OpenSSL has no support for MD5");
+
+    size_t out_size = EVP_MD_size(md);
+    hsAssert(out_size == sizeof(fChecksum), "Incorrect output size for MD5");
+
+    fContext = EVP_MD_CTX_create();
+    EVP_DigestInit_ex(fContext, md, nullptr);
     fValid = false;
 }
 
 void plMD5Checksum::AddTo(size_t size, const uint8_t* buffer)
 {
-    MD5_Update(&fContext, buffer, size);
+    EVP_DigestUpdate(fContext, buffer, size);
 }
 
 void plMD5Checksum::Finish()
 {
-    MD5_Final(fChecksum, &fContext);
+    unsigned int out_size;
+    EVP_DigestFinal_ex(fContext, fChecksum, &out_size);
     fValid = true;
-    memset(&fContext, 0, sizeof(fContext));
+    if (fContext)
+        EVP_MD_CTX_destroy(fContext);
+    fContext = nullptr;
 }
 
 const char* plMD5Checksum::GetAsHexString() const
@@ -232,40 +260,43 @@ bool plMD5Checksum::operator==(const plMD5Checksum& rhs) const
 }
 
 //============================================================================
-
-plSHAChecksum::plSHAChecksum(size_t size, uint8_t* buffer)
+plSHAChecksum::plSHAChecksum(size_t size, const uint8_t* buffer)
+    : fValid(), fOpenSSLContext()
 {
-    fValid = false;
     Start();
     AddTo(size, buffer);
     Finish();
 }
 
 plSHAChecksum::plSHAChecksum()
+    : fValid(), fOpenSSLContext()
 {
-    Clear();
+    memset(fChecksum, 0, sizeof(fChecksum));
 }
 
 plSHAChecksum::plSHAChecksum(const plSHAChecksum& rhs)
+    : fValid(rhs.fValid), fOpenSSLContext()
 {
-    memset(&fContext, 0, sizeof(fContext));
     memcpy(fChecksum, rhs.fChecksum, sizeof(fChecksum));
-    fValid = rhs.fValid;
 }
 
 plSHAChecksum::plSHAChecksum(const plFileName& fileName)
+    : fValid(), fOpenSSLContext()
 {
     CalcFromFile(fileName);
 }
 
 plSHAChecksum::plSHAChecksum(hsStream* stream)
+    : fValid(), fOpenSSLContext()
 {
     CalcFromStream(stream);
 }
 
 void plSHAChecksum::Clear()
 {
-    memset(&fContext, 0, sizeof(fContext));
+    if (fOpenSSLContext)
+        EVP_MD_CTX_destroy(fOpenSSLContext);
+    fOpenSSLContext = nullptr;
     memset(fChecksum, 0, sizeof(fChecksum));
     fValid = false;
 }
@@ -278,7 +309,6 @@ void plSHAChecksum::CalcFromFile(const plFileName& fileName)
     if (s.Open(fileName))
     {
         CalcFromStream(&s);
-        s.Close();
     }
 }
 
@@ -302,20 +332,40 @@ void plSHAChecksum::CalcFromStream(hsStream* stream)
 
 void plSHAChecksum::Start()
 {
-    SHA_Init(&fContext);
+    const EVP_MD* md = EVP_get_digestbyname("sha");
+    if (md) {
+        size_t out_size = EVP_MD_size(md);
+        hsAssert(out_size == sizeof(fChecksum), "Incorrect output size for SHA0");
+
+        fOpenSSLContext = EVP_MD_CTX_create();
+        EVP_DigestInit_ex(fOpenSSLContext, md, nullptr);
+    } else {
+        fOpenSSLContext = nullptr;
+        fPlasmaContext.Start();
+    }
     fValid = false;
 }
 
 void plSHAChecksum::AddTo(size_t size, const uint8_t* buffer)
 {
-    SHA_Update(&fContext, buffer, size);
+    if (fOpenSSLContext)
+        EVP_DigestUpdate(fOpenSSLContext, buffer, size);
+    else
+        fPlasmaContext.AddTo(size, buffer);
 }
 
 void plSHAChecksum::Finish()
 {
-    SHA_Final(fChecksum, &fContext);
+    if (fOpenSSLContext) {
+        unsigned int out_size;
+        EVP_DigestFinal_ex(fOpenSSLContext, fChecksum, &out_size);
+        if (fOpenSSLContext)
+            EVP_MD_CTX_destroy(fOpenSSLContext);
+        fOpenSSLContext = nullptr;
+    } else {
+        fPlasmaContext.Finish(fChecksum);
+    }
     fValid = true;
-    memset(&fContext, 0, sizeof(fContext));
 }
 
 const char* plSHAChecksum::GetAsHexString() const
@@ -363,40 +413,44 @@ bool plSHAChecksum::operator==(const plSHAChecksum& rhs) const
 //============================================================================
 
 plSHA1Checksum::plSHA1Checksum(size_t size, const uint8_t* buffer)
+    : fValid(), fContext()
 {
-    fValid = false;
     Start();
     AddTo(size, buffer);
     Finish();
 }
 
 plSHA1Checksum::plSHA1Checksum()
+    : fValid(), fContext()
 {
-    Clear();
+    memset(fChecksum, 0, sizeof(fChecksum));
 }
 
 plSHA1Checksum::plSHA1Checksum(const plSHA1Checksum& rhs)
+    : fValid(rhs.fValid), fContext()
 {
-    memset(&fContext, 0, sizeof(fContext));
     memcpy(fChecksum, rhs.fChecksum, sizeof(fChecksum));
-    fValid = rhs.fValid;
 }
 
 plSHA1Checksum::plSHA1Checksum(const plFileName& fileName)
+    : fValid(), fContext()
 {
     CalcFromFile(fileName);
 }
 
 plSHA1Checksum::plSHA1Checksum(hsStream* stream)
+    : fValid(), fContext()
 {
     CalcFromStream(stream);
 }
 
 void plSHA1Checksum::Clear()
 {
+    if (fContext)
+        EVP_MD_CTX_destroy(fContext);
+    fContext = nullptr;
     memset(fChecksum, 0, sizeof(fChecksum));
     fValid = false;
-    memset(&fContext, 0, sizeof(fContext));
 }
 
 void plSHA1Checksum::CalcFromFile(const plFileName& fileName)
@@ -407,7 +461,6 @@ void plSHA1Checksum::CalcFromFile(const plFileName& fileName)
     if (s.Open(fileName))
     {
         CalcFromStream(&s);
-        s.Close();
     }
 }
 
@@ -431,20 +484,30 @@ void plSHA1Checksum::CalcFromStream(hsStream* stream)
 
 void plSHA1Checksum::Start()
 {
-    SHA1_Init(&fContext);
+    const EVP_MD* md = EVP_get_digestbyname("sha1");
+    hsAssert(md, "This OpenSSL has no support for SHA1");
+
+    size_t out_size = EVP_MD_size(md);
+    hsAssert(out_size == sizeof(fChecksum), "Incorrect output size for SHA1");
+
+    fContext = EVP_MD_CTX_create();
+    EVP_DigestInit_ex(fContext, md, nullptr);
     fValid = false;
 }
 
 void plSHA1Checksum::AddTo(size_t size, const uint8_t* buffer)
 {
-    SHA1_Update(&fContext, buffer, size);
+    EVP_DigestUpdate(fContext, buffer, size);
 }
 
 void plSHA1Checksum::Finish()
 {
-    SHA1_Final(fChecksum, &fContext);
+    unsigned int out_size;
+    EVP_DigestFinal_ex(fContext, fChecksum, &out_size);
     fValid = true;
-    memset(&fContext, 0, sizeof(fContext));
+    if (fContext)
+        EVP_MD_CTX_destroy(fContext);
+    fContext = nullptr;
 }
 
 const char* plSHA1Checksum::GetAsHexString() const

@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMiscComponents_inc
 #define plMiscComponents_inc
 
+#include <tchar.h>
+
 #include "plComponent.h"
-#include <notify.h>
 
 #define ROOM_CID Class_ID(0x70a1570d, 0x472f5647)
 #define PAGEINFO_CID Class_ID(0x54ee40f1, 0x4de45acc)
@@ -57,16 +58,18 @@ class plFileName;
 class plAgeDescription;
 class plComponentBase;
 
-const char* LocCompGetPage(plComponentBase* comp);
+namespace ST { class string; }
+
+const MCHAR* LocCompGetPage(plComponentBase* comp);
 
 namespace plPageInfoUtils
 {
     plFileName  GetAgeFolder();
-    int32_t     GetSeqNumFromAgeDesc( const char *ageName, const char *pageName );
+    int32_t     GetSeqNumFromAgeDesc( const ST::string& ageName, const ST::string& pageName );
     int32_t     CombineSeqNum( int prefix, int suffix );
     int32_t     GetCommonSeqNumFromNormal( int32_t normalSeqNumber, int whichCommonPage );
 
-    plAgeDescription    *GetAgeDesc( const plString &ageName );
+    plAgeDescription    *GetAgeDesc( const ST::string &ageName );
 };
 
 // PageInfo component definition, here so other components can get to the static function(s)
@@ -75,9 +78,9 @@ class plPageInfoComponent : public plComponent
 protected:
     bool        fSeqNumValidated;
     bool        fItinerant;
-    static char fCurrExportedAge[ 256 ];
+    static TCHAR fCurrExportedAge[ 256 ];
 
-    void    IVerifyLatestAgeAsset( const plString &ageName, const plFileName &localPath, plErrorMsg *errMsg );
+    void    IVerifyLatestAgeAsset( const ST::string &ageName, const plFileName &localPath, plErrorMsg *errMsg );
     void    IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg );
     
 public:
@@ -85,10 +88,10 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
-    const char *GetAgeName();
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    const MCHAR* GetAgeName();
     bool GetItinerant() {return fItinerant; }
     
     enum
@@ -101,7 +104,7 @@ public:
         kItinerant
     };
 
-    static char *GetCurrExportAgeName() { return (char *)&fCurrExportedAge; }
+    static TCHAR* GetCurrExportAgeName() { return (TCHAR*)&fCurrExportedAge; }
     static void NotifyProc(void *param, NotifyInfo *info);  
 };
 
@@ -114,8 +117,8 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum ParamIDs
     {
@@ -123,7 +126,7 @@ public:
         kCompressImage,
     };
 
-    int         GetNumBitmaps( void ) const;
+    int         GetNumBitmaps() const;
     plLayerTex  *GetBitmap( int idx );
     int         AppendBitmap( plLayerTex *tex );
     void        RemoveBitmap( int idx );

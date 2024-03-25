@@ -52,18 +52,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIPopUpMenu_h
 #define _pfGUIPopUpMenu_h
 
-
-#include "pfGUIDialogMod.h"
 #include "hsBounds.h"
 
-class plMessage;
-class pfGUIButtonMod;
-class pfPopUpKeyGenerator;
-class pfGUICtrlProcObject;
+#include <string_theory/string>
+
+#include "pfGUIDialogMod.h"
+
 class hsGMaterial;
-class plSceneNode;
+class pfGUIButtonMod;
+class pfGUICtrlProcObject;
 class pfGUIMenuItemProc;
 class pfGUISkin;
+class plMessage;
+class plMipmap;
+class pfPopUpKeyGenerator;
+class plSceneNode;
 
 class pfGUIPopUpMenu : public pfGUIDialogMod
 {
@@ -90,20 +93,20 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
         {
             // Simple wrapper class that tells us how to build our menu
             public:
-                std::wstring        fName;
+                ST::string          fName;
                 pfGUICtrlProcObject *fHandler;
                 pfGUIPopUpMenu      *fSubMenu;
                 float               fYOffsetToNext;     // Filled in by IBuildMenu()
 
-                pfMenuItem& operator=(const int zero) { fName = L""; fHandler = nil; fSubMenu = nil; fYOffsetToNext = 0; return *this; }
+                pfMenuItem() : fHandler(), fSubMenu(), fYOffsetToNext() { }
         };
 
         // Array of info to rebuild our menu from. Note that this is ONLY used when rebuilding
         bool                    fNeedsRebuilding, fWaitingForSkin;
-        float                fOriginX, fOriginY;
-        uint16_t                  fMargin;
-        hsTArray<pfMenuItem>    fMenuItems;
-        int32_t                   fSubMenuOpen;
+        float                   fOriginX, fOriginY;
+        uint16_t                fMargin;
+        std::vector<pfMenuItem> fMenuItems;
+        int32_t                 fSubMenuOpen;
 
         pfGUISkin               *fSkin;
 
@@ -113,14 +116,14 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
         Alignment               fAlignment;
 
 
-        bool        IBuildMenu( void );
-        void        ITearDownMenu( void );
+        bool        IBuildMenu();
+        void        ITearDownMenu();
 
-        hsGMaterial *ICreateDynMaterial( void );
+        hsGMaterial *ICreateDynMaterial();
 
         void        IHandleMenuSomething( uint32_t idx, pfGUIControlMod *ctrl, int32_t extended = -1 );
 
-        void        ISeekToOrigin( void );
+        void        ISeekToOrigin();
 
     public:
 
@@ -147,29 +150,27 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
             kRefParentNode
         };
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    SetEnabled( bool e );
-        virtual bool    HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY, uint8_t modifiers );
+        void    SetEnabled(bool e) override;
+        bool    HandleMouseEvent(pfGameGUIMgr::EventType event, float mouseX, float mouseY, uint8_t modifiers) override;
 
         void            Show( float x, float y );
 
         void    SetOriginAnchor( plSceneObject *anchor, pfGUIDialogMod *context );
         void    SetAlignment( Alignment a ) { fAlignment = a; }
-        void    ClearItems( void );
-        void    AddItem( const char *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu = nil );
-        void    AddItem( const wchar_t *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu = nil );
+        void    ClearItems();
+        void    AddItem(ST::string name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu = nullptr);
         void    SetSkin( pfGUISkin *skin );
 
-        static pfGUIPopUpMenu   *Build( const char *name, pfGUIDialogMod *parent, float x, float y, const plLocation &destLoc = plLocation::kGlobalFixedLoc );
+        static pfGUIPopUpMenu   *Build(const ST::string& name, pfGUIDialogMod *parent, float x, float y, const plLocation &destLoc = plLocation::kGlobalFixedLoc);
 
 };
 
 // Skin definition. Here for now 'cause only the menus use it, but might move it later
-class plMipmap;
 class pfGUISkin : public hsKeyedObject
 {
     public:
@@ -197,7 +198,7 @@ class pfGUISkin : public hsKeyedObject
             public:
                 uint16_t  fX, fY, fWidth, fHeight;
 
-                void    Empty( void ) { fX = fY = fWidth = fHeight = 0; }
+                void    Empty() { fX = fY = fWidth = fHeight = 0; }
                 void    Read( hsStream *s );
                 void    Write( hsStream *s );
         };
@@ -222,11 +223,11 @@ class pfGUISkin : public hsKeyedObject
             kRefMipmap
         };
 
-        virtual void    Read( hsStream *s, hsResMgr *mgr );
-        virtual void    Write( hsStream *s, hsResMgr *mgr );
-        virtual bool    MsgReceive( plMessage *msg );
+        void    Read(hsStream *s, hsResMgr *mgr) override;
+        void    Write(hsStream *s, hsResMgr *mgr) override;
+        bool    MsgReceive(plMessage *msg) override;
 
-        plMipmap        *GetTexture( void ) const { return fTexture; }
+        plMipmap        *GetTexture() const { return fTexture; }
         void            SetTexture( plMipmap *tex );
 
         const pfSRect   &GetElement( uint32_t idx ) const { return fElements[ idx ]; }
@@ -234,8 +235,8 @@ class pfGUISkin : public hsKeyedObject
         void            SetElement( uint32_t idx, uint16_t x, uint16_t y, uint16_t w, uint16_t h );
 
         void            SetMargins( uint16_t item, uint16_t border ) { fItemMargin = item; fBorderMargin = border; }
-        uint16_t          GetItemMargin( void ) const { return fItemMargin; }
-        uint16_t          GetBorderMargin( void ) const { return fBorderMargin; }
+        uint16_t          GetItemMargin() const { return fItemMargin; }
+        uint16_t          GetBorderMargin() const { return fBorderMargin; }
 };
 
 #endif // _pfGUIPopUpMenu_h

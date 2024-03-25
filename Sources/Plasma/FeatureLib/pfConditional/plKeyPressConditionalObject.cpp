@@ -39,13 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
 #include "plKeyPressConditionalObject.h"
-#include "plPhysical/plDetectorModifier.h"
+
+#include "hsStream.h"
+
 #include "pnModifier/plLogicModBase.h"
+
 #include "plMessage/plInputEventMsg.h"
 
 plKeyPressConditionalObject::plKeyPressConditionalObject()
+    : fKeyEvent()
 {
     SetFlag(kLocalElement);     // since it relies on user input    
 }

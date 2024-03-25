@@ -43,8 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plObjectInBoxConditionalObject_inc
 #define plObjectInBoxConditionalObject_inc
 
+#include "HeadSpin.h"
+#include <set>
+
+#include "pnKeyedObject/plKey.h"
 #include "pnModifier/plConditionalObject.h"
-#include "hsTemplates.h"
+
 
 class plKey;
 
@@ -52,23 +56,23 @@ class plObjectInBoxConditionalObject : public plConditionalObject
 {
 protected:
 
-    hsTArray<plKey>     fInside;
+    std::vector<plKey>  fInside;
     plKey               fCurrentTrigger;
 
 public:
     
     plObjectInBoxConditionalObject();
-    ~plObjectInBoxConditionalObject(){;}
+    ~plObjectInBoxConditionalObject() { }
     
     CLASSNAME_REGISTER( plObjectInBoxConditionalObject );
     GETINTERFACE_ANY( plObjectInBoxConditionalObject, plConditionalObject );
     
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    void Evaluate(){;}
-    void Reset() { SetSatisfied(false); }
-    virtual bool Satisfied() { return true; }
-    virtual bool Verify(plMessage* msg);
+    void Evaluate() override { }
+    void Reset() override { SetSatisfied(false); }
+    bool Satisfied() override { return true; }
+    bool Verify(plMessage* msg) override;
 
 };
 
@@ -76,56 +80,61 @@ class plVolumeSensorConditionalObject : public plConditionalObject
 {
 
 protected:
-
-    hsTArray<plKey> fInside;
+    std::set<plKey>     fInside;
     int                 fTrigNum;
     int                 fType;
     bool                fFirst;
     bool                fTriggered;
-    bool                fIgnoreExtraEnters;
+
+    plKey               fHittee;
+    uint32_t            fFlags;
+
+    enum
+    {
+        /** */
+        kIgnoreExtraEnters = (1<<0),
+        kNoServerArbitration = (1<<1),
+    };
+
+    bool IIsLocal(const plKey& key) const;
+
 public:
-
-    static bool makeBriceHappyVar;
-
-
     enum
     {
         kTypeEnter  = 1,
         kTypeExit,
     };
-    plVolumeSensorConditionalObject();
-    ~plVolumeSensorConditionalObject(){;}
-    
-    CLASSNAME_REGISTER( plVolumeSensorConditionalObject );
-    GETINTERFACE_ANY( plVolumeSensorConditionalObject, plConditionalObject );
-    
-    virtual bool MsgReceive(plMessage* msg);
 
-    void Evaluate(){;}
-    void Reset() { SetSatisfied(false); }
-    virtual bool Satisfied();
-    void    SetType(int i) { fType = i; }
+    plVolumeSensorConditionalObject();
+    ~plVolumeSensorConditionalObject() { }
+
+    CLASSNAME_REGISTER(plVolumeSensorConditionalObject);
+    GETINTERFACE_ANY(plVolumeSensorConditionalObject, plConditionalObject);
+
+    bool MsgReceive(plMessage* msg) override;
+
+    void Evaluate() override { }
+    void Reset() override { SetSatisfied(false); }
+    bool Satisfied() override;
+    void SetType(int i) { fType = i; }
 
     void SetTrigNum(int i) { fTrigNum = i; }
     void SetFirst(bool b) { fFirst = b; }
 
-    void IgnoreExtraEnters(bool ignore = true) {fIgnoreExtraEnters = ignore;}
+    void IgnoreExtraEnters(bool ignore = true);
+    void NoServerArbitration(bool noArbitration = true);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr); 
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 };
 class plVolumeSensorConditionalObjectNoArbitration : public plVolumeSensorConditionalObject
 {
 public:
-    plVolumeSensorConditionalObjectNoArbitration ():plVolumeSensorConditionalObject(){;}
-    ~plVolumeSensorConditionalObjectNoArbitration (){;}
-    CLASSNAME_REGISTER( plVolumeSensorConditionalObjectNoArbitration );
-    GETINTERFACE_ANY( plVolumeSensorConditionalObjectNoArbitration, plConditionalObject );
-    virtual bool MsgReceive(plMessage* msg);
-    virtual void Read(hsStream* stream, hsResMgr* mgr); 
-protected:
-    plKey fHittee;
+    CLASSNAME_REGISTER(plVolumeSensorConditionalObjectNoArbitration);
+    GETINTERFACE_ANY( plVolumeSensorConditionalObjectNoArbitration, plVolumeSensorConditionalObject);
+
+    void Read(hsStream* stream, hsResMgr* mgr) override;
 };
 
 

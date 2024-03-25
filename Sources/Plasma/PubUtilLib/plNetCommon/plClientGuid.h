@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pnFactory/plCreatable.h"
 #include "pnUUID/pnUUID.h"
+#include <string_theory/string>
 
 class plClientGuid : public plCreatable
 {
@@ -54,11 +55,11 @@ class plClientGuid : public plCreatable
     uint8_t   fCCRLevel;
     bool      fProtectedLogin;
     uint8_t   fBuildType;     // see plNetCommon.h
-    plString  fPlayerName;
+    ST::string  fPlayerName;
     uint32_t  fSrcAddr;
     uint16_t  fSrcPort;
     bool      fReserved;
-    plString  fClientKey;
+    ST::string  fClientKey;
 
 public:
     enum Flags // 16 bits.
@@ -79,8 +80,8 @@ public:
     CLASSNAME_REGISTER( plClientGuid );
     GETINTERFACE_ANY( plClientGuid, plCreatable );
 
-    plString AsString() const;
-    plString AsLogString() const;
+    ST::string AsString() const;
+    ST::string AsLogString() const;
     void    Clear();
     void    CopyFrom(const plClientGuid * other);
     void    UpdateFrom(const plClientGuid * other);
@@ -88,12 +89,12 @@ public:
     bool    IsFlagSet( uint16_t flag ) const { return (fFlags&flag)!=0; }
     bool    IsFullyQualified() const { return HasAccountUUID()&&HasPlayerID();}
 
-    void    Read(hsStream * s, hsResMgr* =nil);
-    void    Write(hsStream * s, hsResMgr* =nil);
+    void    Read(hsStream * s, hsResMgr* = nullptr) override;
+    void    Write(hsStream * s, hsResMgr* = nullptr) override;
 
     bool    HasAccountUUID() const { return (fFlags&kAccountUUID&&!fAccountUUID.IsNull())?true:false;}
     bool    HasPlayerID() const { return (fFlags&kPlayerID&&fPlayerID>0)?true:false;}
-    bool    HasPlayerName() const { return (fFlags&kPlayerName&&!fPlayerName.IsEmpty())?true:false; }
+    bool    HasPlayerName() const { return (fFlags&kPlayerName&&!fPlayerName.empty()); }
     bool    HasCCRLevel() const { return (fFlags&kCCRLevel)?true:false;}
     bool    HasProtectedLogin() const { return (fFlags&kProtectedLogin)?true:false;}
     bool    HasBuildType() const { return (fFlags&kBuildType)?true:false;}
@@ -104,7 +105,7 @@ public:
     
     const plUUID * GetAccountUUID() const { return &fAccountUUID;}
     uint32_t  GetPlayerID() const { return fPlayerID;}
-    const plString & GetPlayerName() const { return fPlayerName; }
+    ST::string GetPlayerName() const { return fPlayerName; }
     uint8_t   GetCCRLevel() const { return fCCRLevel; }
     bool    GetProtectedLogin() const { return ( fProtectedLogin!=0 ); }
     uint8_t   GetFlags() const { return (uint8_t)fFlags;}
@@ -113,12 +114,12 @@ public:
     const char * GetSrcAddrStr() const;
     uint16_t  GetSrcPort() const { return fSrcPort; }
     bool    IsReserved() const { return fReserved!=0; }
-    const plString& GetClientKey() const { return fClientKey; }
+    ST::string GetClientKey() const { return fClientKey; }
 
     void    SetAccountUUID(const plUUID * v);
     void    SetAccountUUID(const plUUID & v);
     void    SetPlayerID(uint32_t v);
-    void    SetPlayerName( const plString & v );
+    void    SetPlayerName( const ST::string & v );
     void    SetCCRLevel(uint8_t v);
     void    SetProtectedLogin(bool v);
     void    SetBuildType(uint8_t v);
@@ -126,7 +127,7 @@ public:
     void    SetSrcAddrFromStr( const char * s );
     void    SetSrcPort( uint16_t v );
     void    SetReserved( bool v );
-    void    SetClientKey( const plString& key );
+    void    SetClientKey( const ST::string& key );
     // When a client hasn't selected a player yet,
     // we need to uniquely identify them in the lobby server.
     // We do this by stuffing a temp value into the fPlayerID

@@ -49,33 +49,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper to for Particle System
 //
 
-#include "hsTemplates.h"
+#include <vector>
+
 #include "pnKeyedObject/plKey.h"
-#include "pyGlueHelpers.h"
+
+#include "pyGlueDefinitions.h"
 
 class cyParticleSys
 {
 protected:
     plKey           fSender;
-    hsTArray<plKey> fRecvr;
+    std::vector<plKey> fRecvr;
     bool            fNetForce;
 
     void    ISendParticleSysMsg(uint32_t param, float value);
 
-    cyParticleSys(const plKey sender=nil,const plKey recvr=nil);
+    cyParticleSys(plKey sender = {}, plKey recvr = {});
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptParticle);
-    static PyObject *New(PyObject *sender = nil, PyObject *recvr = nil);
+    static PyObject *New(PyObject *sender = nullptr, PyObject *recvr = nullptr);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a cyParticleSys object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(cyParticleSys); // converts a PyObject to a cyParticleSys (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
 
     // setters
-    void    SetSender(plKey &sender);
-    void    AddRecvr(plKey &recvr);
+    void    SetSender(plKey sender);
+    void    AddRecvr(plKey recvr);
     void    SetNetForce(bool state) { fNetForce = state; }
 
     void    SetParticlesPerSecond(float value);

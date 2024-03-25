@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pnKeyedObject/plKey.h"
 #include "hsStream.h"
-#pragma hdrstop
 
 #include "plTextureExportLog.h"
 #include "plGImage/plCubicEnvironmap.h"
@@ -63,24 +62,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plTextureExportLog::plTextureExportLog( const char *fileName )
+plTextureExportLog::plTextureExportLog( plFileName fileName )
+    : fFileName(std::move(fileName)), fNodeList()
 {
-    fFileName = hsStrcpy( fileName );
-    fNodeList = nil;
 }
 
 plTextureExportLog::~plTextureExportLog()
 {
     plBMapNode  *node;
 
-
-    if( fFileName != nil )
-    {
-        Write();
-        delete [] fFileName;
-    }
-
-    while( fNodeList != nil )
+    while (fNodeList != nullptr)
     {
         node = fNodeList->fNextNode;
         delete fNodeList;
@@ -99,7 +90,7 @@ void    plTextureExportLog::IAddBMapNode( uint32_t rank, plBitmap *bMap )
     node->fRank = rank;
 
 
-    for( nodeHdl = &fNodeList; *nodeHdl != nil; )
+    for (nodeHdl = &fNodeList; *nodeHdl != nullptr; )
     {
         if( (*nodeHdl)->fRank < rank )
             break;
@@ -117,26 +108,26 @@ void    plTextureExportLog::AddTexture( plBitmap *texture )
     IAddBMapNode( texture->GetTotalSize(), texture );
 }
 
-void    plTextureExportLog::Write( void )
+void    plTextureExportLog::Write()
 {
     plBMapNode      *node;
-    hsUNIXStream    *stream = new hsUNIXStream;
+    hsUNIXStream stream;
     char            str[ 128 ];
     uint32_t          size;
 
 
-    stream->Open( fFileName, "wt" );
-    stream->WriteString( "------------------------------------------------------------\n" );
-    stream->WriteString( "- Texture Export Data Log                                  -\n" );
-    stream->WriteString( "------------------------------------------------------------\n" );
-    stream->WriteString( "\n" );
+    stream.Open(fFileName, "wt");
+    stream.WriteString("------------------------------------------------------------\n");
+    stream.WriteString("- Texture Export Data Log                                  -\n");
+    stream.WriteString("------------------------------------------------------------\n");
+    stream.WriteString("\n");
     IWriteTabbedString( stream, "Name", 4 );
     IWriteTabbedString( stream, "Size", 3 );
     IWriteTabbedString( stream, "Type", 4 );
-    stream->WriteString( "\n" );
-    stream->WriteString( "------------------------------------------------------------\n" );
+    stream.WriteString("\n");
+    stream.WriteString("------------------------------------------------------------\n");
 
-    for( node = fNodeList; node != nil; node = node->fNextNode )
+    for (node = fNodeList; node != nullptr; node = node->fNextNode)
     {
         plMipmap            *mip = plMipmap::ConvertNoRef( node->fBitmap );
         plDynamicTextMap    *dynText = plDynamicTextMap::ConvertNoRef( node->fBitmap );
@@ -145,7 +136,7 @@ void    plTextureExportLog::Write( void )
         plRenderTarget*     rend = plRenderTarget::ConvertNoRef( node->fBitmap );
 
         // Name
-        IWriteTabbedString( stream, node->fBitmap->GetKeyName().c_str(), dynText != nil ? 8 : 4 );
+        IWriteTabbedString(stream, node->fBitmap->GetKeyName().c_str(), dynText != nullptr ? 8 : 4);
 
         // Size, formatted
         size = node->fBitmap->GetTotalSize();
@@ -165,7 +156,7 @@ void    plTextureExportLog::Write( void )
             IWriteTabbedString( stream, str, 2 ); 
         }
 
-        if( dynText != nil )
+        if (dynText != nullptr)
         {
             IWriteTabbedString( stream, "Dynamic text map", 3 );
 
@@ -182,7 +173,7 @@ void    plTextureExportLog::Write( void )
                                             ? "JPEG"
                                             : "Uncompressed", 2 );
         }
-        else if( cubic != nil )
+        else if (cubic != nullptr)
         {
             IWriteTabbedString( stream, "Cubic EnvironMap", 3 );
 
@@ -198,7 +189,7 @@ void    plTextureExportLog::Write( void )
                                             ? "JPEG"
                                             : "Uncompressed", 2 );
         }
-        else if( mip != nil )
+        else if (mip != nullptr)
         {
             IWriteTabbedString( stream, "Mipmap", 3 );
 
@@ -238,24 +229,20 @@ void    plTextureExportLog::Write( void )
         {
             IWriteTabbedString( stream, "Unknown", 3 );
         }
-        stream->WriteString( "\n" );
+        stream.WriteString("\n");
     }
 
-    stream->Close();
-    delete stream;
-
     // HACK: Prevent the destructor from writing out now
-    delete [] fFileName;
-    fFileName = nil;
+    fFileName = plFileName();
 }
 
-void    plTextureExportLog::IWriteTabbedString( hsStream *stream, const char *string, int8_t numTabs )
+void plTextureExportLog::IWriteTabbedString(hsStream& stream, const char *string, int numTabs)
 {
     static char tabs[ 64 ];
     int         i;
 
 
-    stream->WriteString( string );
+    stream.WriteString(string);
 
     // Assumes 8 spaces per tab
     numTabs -= strlen( string ) / 8;
@@ -266,5 +253,5 @@ void    plTextureExportLog::IWriteTabbedString( hsStream *stream, const char *st
         tabs[ i ] = '\t';
     tabs[ i ] = 0;
 
-    stream->WriteString( tabs );
+    stream.WriteString(tabs);
 }

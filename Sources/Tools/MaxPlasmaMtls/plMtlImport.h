@@ -46,7 +46,7 @@ class ClassDesc2;
 
 namespace plPlasmaMtlImport
 {
-    int         GetNumMtlDescs( void );
+    int         GetNumMtlDescs();
     ClassDesc2  *GetMtlDesc( int i );
 };
 

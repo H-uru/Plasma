@@ -42,24 +42,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cstdint>
 
-class plString;
+namespace ST { class string; }
 
-// Note:  These are all implemented in plProduct.cpp, so that only CoreLib
-//        has to get the product product ID compiler flags passed in.
+// Note:  These are all implemented in plProduct.cpp, so that only one file
+//        has to include the product definitions.
 namespace plProduct
 {
+    /** \returns The commit SHA of the build. */
+    ST::string Rev();
+
+    /** \returns The name of the tag matching this commit, or the SHA if none. */
+    ST::string Tag();
+
+    /** \returns The date of this build. */
+    ST::string BuildDate();
+
+    /** \returns The time of this build. */
+    ST::string BuildTime();
+
     uint32_t BuildId();
     uint32_t BuildType();
     uint32_t BranchId();
 
-    plString CoreName();
-    plString ShortName();
-    plString LongName();
+    ST::string CoreName();
+    ST::string ShortName();
+    ST::string LongName();
 
     const char *UUID();
 
-    /** Returns: "<ProductCoreName>.<BranchId>.<BuildId> - <External|Internal>.<Debug|Release>"
-     *  Example: "Uru.3.204 - External.Release"
+    /** Returns: "<ProductCoreName>.<BranchId>.<BuildId> - <GitTag> - <External|Internal>.<Debug|Release>"
+     *  Example: "Uru.3.204 - v3.204 - External.Release"
      */
-    plString ProductString();
+    ST::string ProductString();
 }

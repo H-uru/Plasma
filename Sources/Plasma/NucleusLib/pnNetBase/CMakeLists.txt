@@ -1,6 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib")
-
 set(pnNetBase_HEADERS
     pnNbConst.h
     pnNbError.h
@@ -17,7 +14,12 @@ set(pnNetBase_SOURCES
     pnNbSrvs.cpp
 )
 
-add_library(pnNetBase STATIC ${pnNetBase_HEADERS} ${pnNetBase_SOURCES})
+plasma_library(pnNetBase SOURCES ${pnNetBase_HEADERS} ${pnNetBase_SOURCES})
+target_link_libraries(
+    pnNetBase
+    PUBLIC
+        CoreLib
+)
 
 source_group("Header Files" FILES ${pnNetBase_HEADERS})
 source_group("Source Files" FILES ${pnNetBase_SOURCES})

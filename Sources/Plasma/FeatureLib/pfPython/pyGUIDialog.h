@@ -49,10 +49,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pyGlueHelpers.h"
 #include <vector>
 
+#include "pnKeyedObject/plKey.h"
+
+#include "pyGlueDefinitions.h"
+
 class pyColor;
+class pyKey;
+namespace ST { class string; }
 
 class pyGUIDialog
 {
@@ -65,7 +70,6 @@ protected:
     pyGUIDialog();
 
 public:
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptGUIDialog);
     PYTHON_CLASS_NEW_DEFINITION;
@@ -75,11 +79,11 @@ public:
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIDialog); // converts a PyObject to a pyGUIDialog (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
-    static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
+    static void AddPlasmaMethods(PyObject* m);
 
-    static bool IsGUIDialog(pyKey& gckey);
+    static bool IsGUIDialog(const plKey& key);
 
-    void setKey(plKey key) {fGCkey = key;} // used by python glue, do NOT call
+    void setKey(plKey key) { fGCkey = std::move(key); } // used by python glue, do NOT call
 
     enum            // these enums are used in Python so they have to match PlasmaTypes.py
     {
@@ -98,8 +102,10 @@ public:
         kMultiLineEdit=13,
         kPopUpMenu=14,
         kClickMap=15,
+        kProgress=16,
     };
-    static uint32_t WhatControlType(pyKey& gckey);
+    static PyObject* ConvertControl(const plKey& key);
+    static uint32_t WhatControlType(const plKey& key);
     static void GUICursorOff();
     static void GUICursorOn();
     static void GUICursorDimmed();
@@ -109,43 +115,45 @@ public:
     bool operator!=(const pyGUIDialog &gdobj) const { return !(gdobj == *this);   }
 
     // getter and setters
-    virtual plKey getObjKey();
-    virtual PyObject* getObjPyKey(); // returns pyKey
+    plKey getObjKey();
+    PyObject* getObjPyKey(); // returns pyKey
 
     // interface functions
-    virtual uint32_t  GetTagID();
+    uint32_t GetTagID();
 
-    virtual void    SetEnabled( bool e );
-    virtual void    Enable() { SetEnabled(true); }
-    virtual void    Disable() { SetEnabled(false); }
-    virtual bool        IsEnabled( void );
-    virtual const char  *GetName( void );
-    virtual uint32_t      GetVersion(void);
+    void SetEnabled(bool e);
+    void Enable() { SetEnabled(true); }
+    void Disable() { SetEnabled(false); }
+    bool IsEnabled();
+    ST::string GetName() const;
+    uint32_t GetVersion();
 
-    virtual uint32_t      GetNumControls( void );
-    virtual PyObject*   GetControl( uint32_t idx ); // returns pyKey
-    virtual void        SetFocus( pyKey& gcKey );
-    virtual void        NoFocus( );
-    virtual void        Show( void );
-    virtual void        ShowNoReset( void );
-    virtual void        Hide( void );
-    virtual PyObject*   GetControlFromTag( uint32_t tagID );  // returns pyKey
+    size_t GetNumControls();
+    PyObject* GetControl(uint32_t idx); // returns pyKey
+    PyObject* GetControlMod(uint32_t idx) const;
+    void SetFocus(pyKey& gcKey);
+    void NoFocus();
+    void Show();
+    void ShowNoReset();
+    void Hide();
+    PyObject* GetControlFromTag(uint32_t tagID); // returns pyKey
+    PyObject* GetControlModFromTag(uint32_t tagID) const;
 
     // get color schemes
-    virtual PyObject*   GetForeColor(); // returns pyColor
-    virtual PyObject*   GetSelColor(); // returns pyColor
-    virtual PyObject*   GetBackColor(); // returns pyColor
-    virtual PyObject*   GetBackSelColor(); // returns pyColor
-    virtual uint32_t      GetFontSize();
+    PyObject* GetForeColor(); // returns pyColor
+    PyObject* GetSelColor(); // returns pyColor
+    PyObject* GetBackColor(); // returns pyColor
+    PyObject* GetBackSelColor(); // returns pyColor
+    uint32_t GetFontSize();
     // set color scheme
-    virtual void        SetForeColor( float r, float g, float b, float a );
-    virtual void        SetSelColor( float r, float g, float b, float a );
-    virtual void        SetBackColor( float r, float g, float b, float a );
-    virtual void        SetBackSelColor( float r, float g, float b, float a );
-    virtual void        SetFontSize(uint32_t fontsize);
+    void SetForeColor(float r, float g, float b, float a);
+    void SetSelColor(float r, float g, float b, float a);
+    void SetBackColor(float r, float g, float b, float a);
+    void SetBackSelColor(float r, float g, float b, float a);
+    void SetFontSize(uint32_t fontsize);
 
-    virtual void        UpdateAllBounds( void );
-    virtual void        RefreshAllControls( void );
+    void UpdateAllBounds();
+    void RefreshAllControls();
 };
 
 #endif // _pyGUIDialog_h_

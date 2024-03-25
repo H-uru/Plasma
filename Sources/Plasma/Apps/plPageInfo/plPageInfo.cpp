@@ -40,24 +40,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plProduct.h"
+#include "hsStream.h"
 #include "hsTimer.h"
-#include "plResMgr/plResManager.h"
-#include "plResMgr/plResMgrSettings.h"
+
+#include <memory>
+#include <string_theory/format>
+
+#include "pnFactory/plFactory.h"
+#include "pnKeyedObject/plKeyImp.h"
 
 #include "plAgeDescription/plAgeManifest.h"
-
+#include "plAudioCore/plSoundBuffer.h"
 #include "plResMgr/plRegistryHelpers.h"
 #include "plResMgr/plRegistryNode.h"
-
-#include "plAudioCore/plSoundBuffer.h"
-#include "hsStream.h"
-
-#include "plProduct.h"
+#include "plResMgr/plResManager.h"
+#include "plResMgr/plResMgrSettings.h"
 
 
 //// Globals /////////////////////////////////////////////////////////////////
 
-plResManager* gResMgr = nil;
+plResManager* gResMgr = nullptr;
 
 bool DumpStats(const plFileName& patchDir);
 bool DumpSounds();
@@ -70,7 +73,7 @@ void PrintVersion()
 
 //// PrintHelp ///////////////////////////////////////////////////////////////
 
-int PrintHelp( void )
+int PrintHelp()
 {
     puts("");
     PrintVersion();
@@ -148,7 +151,7 @@ public:
     plSoundBufferCollector(std::set<plKey>& keyArray)
                 : plKeyCollector(keyArray) {}
 
-    bool EatPage(plRegistryPageNode* page)
+    bool EatPage(plRegistryPageNode* page) override
     {
         page->LoadKeys();
         return page->IterateKeys(this, plSoundBuffer::Index());
@@ -178,7 +181,7 @@ bool DumpSounds()
             {
                 uint32_t flags = 0;
 
-                if (filename.GetFileExt().CompareI("wav") != 0)
+                if (filename.GetFileExt().compare_i("wav") != 0)
                 {
                     if (buffer->HasFlag(plSoundBuffer::kOnlyLeftChannel) ||
                         buffer->HasFlag(plSoundBuffer::kOnlyRightChannel))
@@ -206,47 +209,46 @@ bool DumpSounds()
 
 //////////////////////////////////////////////////////////////////////////
 
-#include "../pnKeyedObject/plKeyImp.h"
-
 class plStatDumpIterator : public plRegistryPageIterator, public plRegistryKeyIterator
 {
 protected:
     plFileName fOutputDir;
-    hsUNIXStream fStream;
+    std::unique_ptr<hsFileSystemStream> fStream;
 
 public:
     plStatDumpIterator(const plFileName& outputDir) : fOutputDir(outputDir) {}
 
-    bool EatKey(const plKey& key)
+    bool EatKey(const plKey& key) override
     {
-        plKeyImp* imp = (plKey)key;
+        const plKeyImp* imp = plKeyImp::GetFromKey(key);
 
-        fStream.WriteString(imp->GetName());
-        fStream.WriteString(",");
+        fStream->WriteString(key->GetName());
+        fStream->WriteString(",");
 
-        fStream.WriteString(plFactory::GetNameOfClass(imp->GetUoid().GetClassType()));
-        fStream.WriteString(",");
+        fStream->WriteString(plFactory::GetNameOfClass(key->GetUoid().GetClassType()));
+        fStream->WriteString(",");
 
         char buf[30];
         sprintf(buf, "%u", imp->GetDataLen());
-        fStream.WriteString(buf);
-        fStream.WriteString("\n");
+        fStream->WriteString(buf);
+        fStream->WriteString("\n");
 
         return true;
     }
 
-    bool EatPage(plRegistryPageNode* page)
+    bool EatPage(plRegistryPageNode* page) override
     {
         const plPageInfo& info = page->GetPageInfo();
 
         plFileName fileName = plFileName::Join(fOutputDir,
-                plFormat("{}_{}.csv", info.GetAge(), info.GetPage()));
-        fStream.Open(fileName, "wt");
+                ST::format("{}_{}.csv", info.GetAge(), info.GetPage()));
+        fStream = std::make_unique<hsUNIXStream>();
+        fStream->Open(fileName, "wt");
 
         page->LoadKeys();
         page->IterateKeys(this);
 
-        fStream.Close();
+        fStream.reset();
 
         return true;
     }

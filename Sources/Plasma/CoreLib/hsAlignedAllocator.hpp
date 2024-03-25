@@ -45,14 +45,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include <stdexcept>
+#include <limits>
 #include <new>
-
-template<class T, size_t ALIGNMENT=16>
 
 /**
  * An aligned allocator for storing SIMD ready values in STL containers
  * \remarks Based on https://gist.github.com/donny-dont/1471329
  */
+template<class T, size_t ALIGNMENT=16>
 class hsAlignedAllocator
 {
     hsAlignedAllocator& operator=(const hsAlignedAllocator&) { }
@@ -72,28 +72,28 @@ public:
     typedef size_t size_type;
     typedef ptrdiff_t difference_type;
 
-    hsAlignedAllocator() { }
-    hsAlignedAllocator(const hsAlignedAllocator&) { }
-    template <typename U> hsAlignedAllocator(const hsAlignedAllocator<U, ALIGNMENT>&) { }
+    typedef std::true_type propagate_on_container_move_assignment;
+    typedef std::true_type is_always_equal;
+
+    constexpr hsAlignedAllocator() noexcept { }
+    constexpr hsAlignedAllocator(const hsAlignedAllocator&) noexcept { }
+
+    template <typename U>
+    constexpr hsAlignedAllocator(const hsAlignedAllocator<U, ALIGNMENT>&) noexcept { }
+
     ~hsAlignedAllocator() { }
 
-    pointer address(reference r) const { return &r; }
-    const_pointer address(const_reference r) const { return &r; }
+    pointer address(reference r) const noexcept { return &r; }
+    const_pointer address(const_reference r) const noexcept { return &r; }
 
     pointer allocate(size_type size, const_pointer hint=nullptr)
     {
         if (size == 0)
             return nullptr;
         if (size > max_size())
-            throw std::length_error("integer overflow");
+            throw std::bad_array_new_length();
 
-#ifdef HS_BUILD_FOR_WIN32
-        void* ptr = _aligned_malloc(size * sizeof(value_type), ALIGNMENT);
-#else
-        void* ptr = nullptr;
-        posix_memalign(&ptr, ALIGNMENT, size * sizeof(value_type));
-#endif // HS_BUILD_FOR_WIN32
-
+        void* ptr = ::operator new(size * sizeof(value_type), std::align_val_t{ALIGNMENT});
         if (!ptr)
             throw std::bad_alloc();
         return static_cast<pointer>(ptr);
@@ -108,24 +108,21 @@ public:
 
     void deallocate(pointer ptr, size_type size)
     {
-#ifdef HS_BUILD_FOR_WIN32
-        _aligned_free(ptr);
-#else
-        free(ptr);
-#endif // HS_BUILD_FOR_WIN32
+        (void)size;
+        ::operator delete(reinterpret_cast<void *>(ptr), std::align_val_t{ALIGNMENT});
     }
 
-    void destroy(T* const p) const
+    void destroy(T* const p) const noexcept(noexcept(p->~T()))
     {
         p->~T();
     }
 
-    size_type max_size() const
+    constexpr size_type max_size() const noexcept
     {
-        return static_cast<size_t>(-1) / sizeof(value_type);
+        return std::numeric_limits<size_type>::max() / sizeof(value_type);
     }
 
-    bool operator==(const hsAlignedAllocator& other) const { return true; }
+    constexpr bool operator==(const hsAlignedAllocator& other) const noexcept { return true; }
 };
 
 #endif // _HS_ALIGNED_ALLOCATOR_H

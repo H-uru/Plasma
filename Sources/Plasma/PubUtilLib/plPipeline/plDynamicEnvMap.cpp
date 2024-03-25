@@ -40,77 +40,74 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plDynamicEnvMap.h"
 
-#include "plPipeline.h"
-#include "plPipeDebugFlags.h"
 #include "plDrawable.h"
 #include "plgDispatch.h"
+#include "plPipeline.h"
+#include "plPipeDebugFlags.h"
 #include "hsResMgr.h"
-
 #include "hsTimer.h"
 #include "hsStream.h"
 
-#include "plMessage/plRenderRequestMsg.h"
-#include "plMessage/plDynamicEnvMapMsg.h"
-#include "pfCamera/plCameraModifier.h"
-#include "pfCamera/plVirtualCamNeu.h"
-#include "plMessage/plRenderMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
-#include "plMessage/plLayRefMsg.h"
 #include "pnMessage/plPipeResMakeMsg.h"
 #include "pnMessage/plRefMsg.h"
 
-#include "plScene/plVisRegion.h"
-#include "plScene/plVisMgr.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plDynamicEnvMapMsg.h"
+#include "plMessage/plLayRefMsg.h"
+#include "plMessage/plRenderRequestMsg.h"
+#include "plMessage/plRenderMsg.h"
 #include "plResMgr/plKeyFinder.h"
+#include "plScene/plVisMgr.h"
+#include "plScene/plVisRegion.h"
 #include "plSurface/plLayer.h"
 
+#include "pfCamera/plCameraModifier.h"
+#include "pfCamera/plVirtualCamNeu.h"
+
 plDynamicEnvMap::plDynamicEnvMap()
-:   fPos(0,0,0),
-    fHither(0.3f),
-    fYon(1000.f),
-    fFogStart(1000.f),
-    fRefreshRate(0.f),
-    fLastRefresh(0.0),
-    fLastRender(0),
-    fOutStanding(0),
-    fIncCharacters(false),
-    fRootNode(nil)
+    : fHither(0.3f),
+      fYon(1000.f),
+      fFogStart(1000.f),
+      fRefreshRate(),
+      fLastRefresh(),
+      fLastRender(),
+      fOutStanding(),
+      fIncCharacters(),
+      fRootNode()
 {
-    fColor.Set(0,0,0,1.f);
+    fColor.Set(0.f, 0.f, 0.f, 1.f);
     int i;
     for( i = 0; i < 6; i++ )
-        fReqMsgs[i] = new plRenderRequestMsg(nil, &fReqs[i]);;
+        fReqMsgs[i] = new plRenderRequestMsg(nullptr, &fReqs[i]);
 
     SetPosition(fPos);
 }
 
 plDynamicEnvMap::plDynamicEnvMap(uint16_t width, uint16_t height, uint8_t bitDepth, uint8_t zDepth, uint8_t sDepth)
-:   fPos(0,0,0),
-    fHither(0.3f),
-    fYon(0.f), // yon < hither means ignore and use current settings
-    fFogStart(-1.f), // - fog start means use current settings
-    fRefreshRate(0.f),
-    fLastRefresh(0.0),
-    fLastRender(0),
-    fOutStanding(0),
-    fIncCharacters(false),
-    fRootNode(nil),
-    plCubicRenderTarget(plRenderTarget::kIsTexture, width, height, bitDepth, zDepth, sDepth)
+    : fHither(0.3f),
+      fYon(), // yon < hither means ignore and use current settings
+      fFogStart(-1.f), // - fog start means use current settings
+      fRefreshRate(),
+      fLastRefresh(),
+      fLastRender(),
+      fOutStanding(),
+      fIncCharacters(),
+      fRootNode(),
+      plCubicRenderTarget(plRenderTarget::kIsTexture, width, height, bitDepth, zDepth, sDepth)
 {
-    fColor.Set(0,0,0,1.f);
+    fColor.Set(0.f, 0.f, 0.f, 1.f);
     int i;
     for( i = 0; i < 6; i++ )
-        fReqMsgs[i] = new plRenderRequestMsg(nil, &fReqs[i]);;
+        fReqMsgs[i] = new plRenderRequestMsg(nullptr, &fReqs[i]);
 
     SetPosition(fPos);
 }
 
 plDynamicEnvMap::~plDynamicEnvMap()
 {
-    SetDeviceRef(nil);
+    SetDeviceRef(nullptr);
 
     int i;
     for( i = 0; i < 6; i++ )
@@ -143,7 +140,7 @@ hsPoint3 plDynamicEnvMap::GetPosition() const
 
 void plDynamicEnvMap::SetPosition(const hsPoint3& pos)
 {
-    hsAssert(fRootNode == nil, "Trying to override a cube map's root node.");
+    hsAssert(fRootNode == nullptr, "Trying to override a cube map's root node.");
     fPos = pos;
     SetCameraMatrix(fPos);
 }
@@ -207,7 +204,7 @@ void plDynamicEnvMap::ISetupRenderRequests()
         fReqs[i].SetClearColor(fColor);
         fReqs[i].SetClearDepth(1.f);
 
-        fReqs[i].SetClearDrawable(nil);
+        fReqs[i].SetClearDrawable(nullptr);
         fReqs[i].SetRenderTarget(GetFace(i));
 
         fReqs[i].SetCameraTransform(GetWorldToCamera(i), GetCameraToWorld(i));
@@ -362,10 +359,10 @@ bool plDynamicEnvMap::IOnRefMsg(plGenRefMsg* refMsg)
         if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
         {
             plVisRegion* reg = plVisRegion::ConvertNoRef(refMsg->GetRef());
-            int idx = fVisRegions.Find(reg);
-            if( reg && (fVisRegions.kMissingIndex == idx) )
+            auto iter = std::find(fVisRegions.cbegin(), fVisRegions.cend(), reg);
+            if (reg && (iter == fVisRegions.cend()))
             {
-                fVisRegions.Append(reg);
+                fVisRegions.emplace_back(reg);
                 fVisSet.SetBit(reg->GetIndex());
             }
             ISetupRenderRequests();
@@ -374,10 +371,10 @@ bool plDynamicEnvMap::IOnRefMsg(plGenRefMsg* refMsg)
         else
         {
             plVisRegion* reg = plVisRegion::ConvertNoRef(refMsg->GetRef());
-            int idx = fVisRegions.Find(reg);
-            if( reg && (fVisRegions.kMissingIndex != idx) )
+            auto iter = std::find(fVisRegions.cbegin(), fVisRegions.cend(), reg);
+            if (reg && (iter != fVisRegions.cend()))
             {
-                fVisRegions.Remove(idx);
+                fVisRegions.erase(iter);
                 fVisSet.ClearBit(reg->GetIndex());
             }
             ISetupRenderRequests();
@@ -390,7 +387,7 @@ bool plDynamicEnvMap::IOnRefMsg(plGenRefMsg* refMsg)
         if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
             fRootNode = so;
         else
-            fRootNode = nil;
+            fRootNode = nullptr;
         return true;
     }
 
@@ -418,18 +415,18 @@ void plDynamicEnvMap::Read(hsStream* s, hsResMgr* mgr)
     uint32_t sz = plCubicRenderTarget::Read(s);
 
     fPos.Read(s);
-    fHither = s->ReadLEScalar();
-    fYon = s->ReadLEScalar();
-    fFogStart = s->ReadLEScalar();
+    fHither = s->ReadLEFloat();
+    fYon = s->ReadLEFloat();
+    fFogStart = s->ReadLEFloat();
     fColor.Read(s);
 
-    fRefreshRate = s->ReadLEScalar();
+    fRefreshRate = s->ReadLEFloat();
 
     SetPosition(fPos);
 
     sz += sizeof(fPos) + sizeof(fHither) + sizeof(fYon) + sizeof(fFogStart) + sizeof(fColor) + sizeof(fRefreshRate);
 
-    fIncCharacters = s->ReadByte();
+    fIncCharacters = s->ReadBool();
     SetIncludeCharacters(fIncCharacters);
     int nVis = s->ReadLE32();
     int i;
@@ -456,26 +453,23 @@ void plDynamicEnvMap::Write(hsStream* s, hsResMgr* mgr)
     uint32_t sz = plCubicRenderTarget::Write(s);
 
     fPos.Write(s);
-    s->WriteLEScalar(fHither);
-    s->WriteLEScalar(fYon);
-    s->WriteLEScalar(fFogStart);
+    s->WriteLEFloat(fHither);
+    s->WriteLEFloat(fYon);
+    s->WriteLEFloat(fFogStart);
     fColor.Write(s);
 
-    s->WriteLEScalar(fRefreshRate);
+    s->WriteLEFloat(fRefreshRate);
 
     sz += sizeof(fPos) + sizeof(fHither) + sizeof(fYon) + sizeof(fFogStart) + sizeof(fColor) + sizeof(fRefreshRate);
 
-    s->WriteByte(fIncCharacters);
-    s->WriteLE32(fVisRegions.GetCount());
-    int i;
-    for( i = 0; i < fVisRegions.GetCount(); i++ )
-        mgr->WriteKey(s, fVisRegions[i]);
+    s->WriteBool(fIncCharacters);
+    s->WriteLE32((uint32_t)fVisRegions.size());
+    for (plVisRegion* region : fVisRegions)
+        mgr->WriteKey(s, region);
 
-    s->WriteLE32(fVisRegionNames.Count());
-    for( i = 0; i < fVisRegionNames.Count(); i++)
-    {
-        s->WriteSafeString(fVisRegionNames[i]);
-    }
+    s->WriteLE32((uint32_t)fVisRegionNames.size());
+    for (const ST::string& name : fVisRegionNames)
+        s->WriteSafeString(name);
 
     mgr->WriteKey(s, fRootNode);
 }
@@ -488,33 +482,33 @@ plDynamicCamMap::plDynamicCamMap() :
 fHither(0.3f),
 fYon(500.f),
 fFogStart(1000.f),
-fRefreshRate(0.f),
-fLastRefresh(0.0),
-fOutStanding(0),
-fCamera(nil),
-fRootNode(nil),
-fIncCharacters(false),
-fDisableTexture(nil)
+fRefreshRate(),
+fLastRefresh(),
+fOutStanding(),
+fCamera(),
+fRootNode(),
+fIncCharacters(),
+fDisableTexture()
 {
     fColor.Set(0,0,0,1.f);
-    fReqMsg = new plRenderRequestMsg(nil, &fReq);
+    fReqMsg = new plRenderRequestMsg(nullptr, &fReq);
 }
 
 plDynamicCamMap::plDynamicCamMap(uint16_t width, uint16_t height, uint8_t bitDepth, uint8_t zDepth, uint8_t sDepth) :
 fHither(0.3f),
 fYon(-1.f),
 fFogStart(-1.f),
-fRefreshRate(0.f),
-fLastRefresh(0.0),
-fOutStanding(0),
-fCamera(nil),
-fRootNode(nil),
-fIncCharacters(false),
-fDisableTexture(nil),
+fRefreshRate(),
+fLastRefresh(),
+fOutStanding(),
+fCamera(),
+fRootNode(),
+fIncCharacters(),
+fDisableTexture(),
 plRenderTarget(plRenderTarget::kIsTexture, width, height, bitDepth, zDepth, sDepth)
 {
     fColor.Set(0,0,0,1.f);
-    fReqMsg = new plRenderRequestMsg(nil, &fReq);
+    fReqMsg = new plRenderRequestMsg(nullptr, &fReq);
 }
 
 plDynamicCamMap::~plDynamicCamMap()
@@ -524,7 +518,7 @@ plDynamicCamMap::~plDynamicCamMap()
     plgDispatch::Dispatch()->UnRegisterForExactType(plAgeLoadedMsg::Index(), GetKey());
     plgDispatch::Dispatch()->UnRegisterForExactType(plRenderMsg::Index(), GetKey());
 
-    SetDeviceRef(nil);
+    SetDeviceRef(nullptr);
 
     delete fReqMsg;
 }
@@ -580,7 +574,7 @@ void plDynamicCamMap::ISetupRenderRequest(plPipeline *pipe)
 
     fReq.SetClearColor(fColor);
     fReq.SetClearDepth(1.f);
-    fReq.SetClearDrawable(nil);
+    fReq.SetClearDrawable(nullptr);
     fReq.SetRenderTarget(this);
     fReq.SetVisForce(fVisSet);
     fReq.SetIgnoreOccluders(true);
@@ -624,8 +618,6 @@ void plDynamicCamMap::ISubmitRenderRequest(plPipeline *pipe)
 
 void plDynamicCamMap::ICheckForRefresh(double t, plPipeline *pipe)
 {
-    int i;
-
     bool useRefl = (fFlags & kReflectionMask) == kReflectionMask;
     if (!fCamera)
     {
@@ -636,8 +628,8 @@ void plDynamicCamMap::ICheckForRefresh(double t, plPipeline *pipe)
     // So no one's using us, eh? Hitting this condition is likely a bug, 
     // but an assert every frame would be annoying. We'll notice when
     // the render target never updates.
-    if (fTargetNodes.GetCount() == 0)
-        return; 
+    if (fTargetNodes.empty())
+        return;
 
     // If dynamic planar reflections are disabled and we're using our substitute
     // texture, don't update. Otherwise, this particular reflection is forced to
@@ -646,9 +638,9 @@ void plDynamicCamMap::ICheckForRefresh(double t, plPipeline *pipe)
         return;
 
     bool inView = false;
-    for (i = 0; i < fTargetNodes.GetCount(); i++)
+    for (plSceneObject* node : fTargetNodes)
     {
-        if (pipe->TestVisibleWorld(fTargetNodes[i]))
+        if (pipe->TestVisibleWorld(node))
         {
             inView = true;
             break;
@@ -746,20 +738,19 @@ void plDynamicCamMap::IPrepTextureLayers()
 {
     if (fDisableTexture)
     {
-        int i;
-        for (i = 0; i < fMatLayers.GetCount(); i++)
+        for (plLayer* layer : fMatLayers)
         {
             if ((fFlags & kReflectionMask) == kReflectionMask)
             {
-                fMatLayers[i]->SetUVWSrc(plLayerInterface::kUVWPosition);
-                fMatLayers[i]->SetMiscFlags(hsGMatState::kMiscCam2Screen | hsGMatState::kMiscPerspProjection);
-                hsgResMgr::ResMgr()->SendRef(GetKey(), new plLayRefMsg(fMatLayers[i]->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+                layer->SetUVWSrc(plLayerInterface::kUVWPosition);
+                layer->SetMiscFlags(hsGMatState::kMiscCam2Screen | hsGMatState::kMiscPerspProjection);
+                hsgResMgr::ResMgr()->SendRef(GetKey(), new plLayRefMsg(layer->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
             }
             else
             {
-                fMatLayers[i]->SetUVWSrc(0);
-                fMatLayers[i]->SetMiscFlags(0);
-                hsgResMgr::ResMgr()->SendRef(fDisableTexture->GetKey(), new plLayRefMsg(fMatLayers[i]->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+                layer->SetUVWSrc(0);
+                layer->SetMiscFlags(0);
+                hsgResMgr::ResMgr()->SendRef(fDisableTexture->GetKey(), new plLayRefMsg(layer->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
             }
         }
     }
@@ -776,15 +767,15 @@ bool plDynamicCamMap::IOnRefMsg(plRefMsg* refMsg)
             plVisRegion* reg = plVisRegion::ConvertNoRef(refMsg->GetRef());
             if (reg)
             {
-                int idx = fVisRegions.Find(reg);
-                if ((refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace)) && fVisRegions.kMissingIndex == idx)
+                auto iter = std::find(fVisRegions.cbegin(), fVisRegions.cend(), reg);
+                if ((refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace)) && iter == fVisRegions.cend())
                 {
-                    fVisRegions.Append(reg);
+                    fVisRegions.emplace_back(reg);
                     fVisSet.SetBit(reg->GetIndex());
                 }
-                else if (!(refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace)) && fVisRegions.kMissingIndex != idx)
+                else if (!(refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace)) && iter != fVisRegions.cend())
                 {
-                    fVisRegions.Remove(idx);
+                    fVisRegions.erase(iter);
                     fVisSet.ClearBit(reg->GetIndex());
                 }
                 return true;
@@ -798,7 +789,7 @@ bool plDynamicCamMap::IOnRefMsg(plRefMsg* refMsg)
                 if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                     fCamera = cam;
                 else 
-                    fCamera = nil;
+                    fCamera = nullptr;
 
                 return true;
             }
@@ -811,7 +802,7 @@ bool plDynamicCamMap::IOnRefMsg(plRefMsg* refMsg)
                 if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                     fRootNode = so;
                 else 
-                    fRootNode = nil;
+                    fRootNode = nullptr;
 
                 return true;
             }
@@ -821,14 +812,16 @@ bool plDynamicCamMap::IOnRefMsg(plRefMsg* refMsg)
             plSceneObject *so = plSceneObject::ConvertNoRef(refMsg->GetRef());
             if (so)
             {
+                auto iter = std::find(fTargetNodes.cbegin(), fTargetNodes.cend(), so);
                 if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                 {
-                    if (fTargetNodes.Find(so) == fTargetNodes.kMissingIndex)
-                        fTargetNodes.Append(so);
+                    if (iter == fTargetNodes.cend())
+                        fTargetNodes.emplace_back(so);
                 }
                 else 
                 {
-                    fTargetNodes.RemoveItem(so);
+                    if (iter != fTargetNodes.cend())
+                        fTargetNodes.erase(iter);
                 }
 
                 return true;
@@ -842,7 +835,7 @@ bool plDynamicCamMap::IOnRefMsg(plRefMsg* refMsg)
                 if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                     fDisableTexture = bitmap;
                 else
-                    fDisableTexture = nil;
+                    fDisableTexture = nullptr;
 
                 return true;
             }
@@ -852,14 +845,16 @@ bool plDynamicCamMap::IOnRefMsg(plRefMsg* refMsg)
             plLayer *lay = plLayer::ConvertNoRef(refMsg->GetRef());
             if (lay)
             {
+                auto iter = std::find(fMatLayers.cbegin(), fMatLayers.cend(), lay);
                 if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                 {
-                    if (fMatLayers.Find(lay) == fMatLayers.kMissingIndex)
-                        fMatLayers.Append(lay);
+                    if (iter == fMatLayers.cend())
+                        fMatLayers.emplace_back(lay);
                 }
                 else
                 {
-                    fMatLayers.RemoveItem(lay);
+                    if (iter != fMatLayers.cend())
+                        fMatLayers.erase(iter);
                 }
 
                 return true;
@@ -905,12 +900,12 @@ void plDynamicCamMap::Read(hsStream* s, hsResMgr* mgr)
     hsKeyedObject::Read(s, mgr);
     plRenderTarget::Read(s);
 
-    fHither = s->ReadLEScalar();
-    fYon = s->ReadLEScalar();
-    fFogStart = s->ReadLEScalar();
+    fHither = s->ReadLEFloat();
+    fYon = s->ReadLEFloat();
+    fFogStart = s->ReadLEFloat();
     fColor.Read(s);
 
-    fRefreshRate = s->ReadLEScalar();
+    fRefreshRate = s->ReadLEFloat();
     fIncCharacters = s->ReadBool();
     SetIncludeCharacters(fIncCharacters);
     mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefCamera), plRefFlags::kPassiveRef);
@@ -949,36 +944,33 @@ void plDynamicCamMap::Write(hsStream* s, hsResMgr* mgr)
     hsKeyedObject::Write(s, mgr);
     plRenderTarget::Write(s);
 
-    s->WriteLEScalar(fHither);
-    s->WriteLEScalar(fYon);
-    s->WriteLEScalar(fFogStart);
+    s->WriteLEFloat(fHither);
+    s->WriteLEFloat(fYon);
+    s->WriteLEFloat(fFogStart);
     fColor.Write(s);
 
-    s->WriteLEScalar(fRefreshRate);
-    s->WriteByte(fIncCharacters);
-    mgr->WriteKey(s, (fCamera ? fCamera->GetKey() : nil));
-    mgr->WriteKey(s, (fRootNode ? fRootNode->GetKey() : nil));
+    s->WriteLEFloat(fRefreshRate);
+    s->WriteBool(fIncCharacters);
+    mgr->WriteKey(s, (fCamera ? fCamera->GetKey() : nullptr));
+    mgr->WriteKey(s, (fRootNode ? fRootNode->GetKey() : nullptr));
 
-    s->WriteByte(fTargetNodes.GetCount());
-    int i;
-    for (i = 0; i < fTargetNodes.GetCount(); i++)
-        mgr->WriteKey(s, fTargetNodes[i]);
+    hsAssert(fTargetNodes.size() < std::numeric_limits<uint8_t>::max(), "Too many target nodes");
+    s->WriteByte((uint8_t)fTargetNodes.size());
+    for (plSceneObject* node : fTargetNodes)
+        mgr->WriteKey(s, node);
 
-    s->WriteLE32(fVisRegions.GetCount());
-    for( i = 0; i < fVisRegions.GetCount(); i++ )
-        mgr->WriteKey(s, fVisRegions[i]);
+    s->WriteLE32((uint32_t)fVisRegions.size());
+    for (plVisRegion* region : fVisRegions)
+        mgr->WriteKey(s, region);
 
-    s->WriteLE32(fVisRegionNames.Count());
-    for( i = 0; i < fVisRegionNames.Count(); i++)
-    {
-        s->WriteSafeString(fVisRegionNames[i]);
-    }
+    s->WriteLE32((uint32_t)fVisRegionNames.size());
+    for (const ST::string& name : fVisRegionNames)
+        s->WriteSafeString(name);
 
-    mgr->WriteKey(s, fDisableTexture ? fDisableTexture->GetKey() : nil);
-    
-    s->WriteByte(fMatLayers.GetCount());
-    for (i = 0; i < fMatLayers.GetCount(); i++)
-    {
-        mgr->WriteKey(s, fMatLayers[i]->GetKey());
-    }
+    mgr->WriteKey(s, fDisableTexture ? fDisableTexture->GetKey() : nullptr);
+
+    hsAssert(fMatLayers.size() < std::numeric_limits<uint8_t>::max(), "Too many mat layers");
+    s->WriteByte((uint8_t)fMatLayers.size());
+    for (plLayer* layer : fMatLayers)
+        mgr->WriteKey(s, layer->GetKey());
 }

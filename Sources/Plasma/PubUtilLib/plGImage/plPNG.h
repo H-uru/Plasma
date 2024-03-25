@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plPNG_h
 #define _plPNG_h
 
+#include <map>
 
 //// Class Definition /////////////////////////////////////////////////////////
 
@@ -53,17 +54,18 @@ class plPNG {
 protected:
 
     plMipmap* IRead(hsStream* inStream);
-    bool IWrite(plMipmap* source, hsStream* outStream);
+    bool IWrite(plMipmap* source, hsStream* outStream, const std::multimap<ST::string, ST::string>& textFields = std::multimap<ST::string, ST::string>());
 
 public:
 
     plMipmap* ReadFromStream(hsStream* inStream) { return IRead(inStream); }
     plMipmap* ReadFromFile(const plFileName& fileName);
 
-    bool WriteToStream(hsStream* outStream, plMipmap* sourceData) { return IWrite(sourceData, outStream); }
-    bool WriteToFile(const plFileName& fileName, plMipmap* sourceData);
+    bool WriteToStream(hsStream* outStream, plMipmap* sourceData,
+        const std::multimap<ST::string, ST::string>& textFields = std::multimap<ST::string, ST::string>()) { return IWrite(sourceData, outStream, textFields); }
+    bool WriteToFile(const plFileName& fileName, plMipmap* sourceData, const std::multimap<ST::string, ST::string>& textFields = std::multimap<ST::string, ST::string>());
 
-    static plPNG& Instance(void);
+    static plPNG& Instance();
 };
 
 #endif // _plPNG_h

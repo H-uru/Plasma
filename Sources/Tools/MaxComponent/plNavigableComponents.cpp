@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plgDispatch.h"
-#include "hsTemplates.h"
 
 #include "plActivatorBaseComponent.h"
 #include "plComponent.h"
@@ -51,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysicalComponents.h"
 #include "MaxMain/plMaxNode.h"
 #include "resource.h"
-#pragma hdrstop
 
 #include "plNavigableComponents.h"
 #include "MaxMain/plPhysicalProps.h"
@@ -93,7 +91,7 @@ public:
         kTwoFeet,
     };
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -101,9 +99,9 @@ public:
             {
                 HWND hLadder = GetDlgItem(hWnd,IDC_COMP_NAV_LADDER_COMBO);
 
-                ComboBox_AddString(hLadder, "Big");
-                ComboBox_AddString(hLadder, "4 feet");
-                ComboBox_AddString(hLadder, "2 feet");
+                ComboBox_AddString(hLadder, _T("Big"));
+                ComboBox_AddString(hLadder, _T("4 feet"));
+                ComboBox_AddString(hLadder, _T("2 feet"));
 
                 int type = map->GetParamBlock()->GetInt(kTypeCombo);
                 ComboBox_SetCurSel(hLadder, type);
@@ -136,7 +134,7 @@ public:
         return FALSE;
     }
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plAvLadderComponentProc gAvLadderComponentProc;
 
@@ -147,37 +145,37 @@ ParamBlockDesc2 gAvLadderComponentBlock
     IDD_COMP_NAV_LADDER, IDS_COMP_NAV_LADDERS, 0, 0, &gAvLadderComponentProc,
 
     kTypeCombo, _T("Ladder Type"), TYPE_INT, 0,0,
-        end,
+        p_end,
 
     kDirectionBool, _T("Climbing Direction"),       TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 2,  IDC_RADIO_UP,   IDC_RADIO_DOWN,
         p_vals,                     true,           false,
-        end,
+        p_end,
 
     kLoopsInt,  _T("BigLadderNumLoop"), TYPE_INT, 0, 0, 
         p_default, 0,
         p_range, 0, 500,
         p_ui,   TYPE_SPINNER,   EDITTYPE_INT,
         IDC_COMP_NAV_LADDER_LOOPS_EDIT, IDC_COMP_NAV_LADDER_LOOPS_SPIN, 0.4,
-        end,
+        p_end,
 
     kTriggerNode, _T("Trigger Node"),   TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_NAV_TRIGGER,
         //p_sclassID,   GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
         //p_accessor, &gPhysCoreAccessor,
-        end,
+        p_end,
 
     kLadderNode, _T("ladder"),          TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_NAV_LADDER,
-        end,
+        p_end,
 
     kEnabled,   _T("enabled"),      TYPE_BOOL,      0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_ENABLED,
         p_default, TRUE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plAvLadderComponent::plAvLadderComponent()
@@ -201,7 +199,7 @@ void plAvLadderComponent::CollectNonDrawables(INodeTab& nonDrawables)
 
 bool plAvLadderComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    fKeys.Reset();
+    fKeys.clear();
 
     //
     // Create an invisible blocker for the ladder shape, so the avatar won't fall over the side
@@ -221,9 +219,11 @@ bool plAvLadderComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
     else
     {
         pErrMsg->Set(true,
-                    "Ladder Warning",
-                    "Ladder component %s doesn't have the ladder node set",
-                    GetINode()->GetName()).Show();
+                     "Ladder Warning",
+                     ST::format(
+                         "Ladder component {} doesn't have the ladder node set",
+                         GetINode()->GetName())
+                     ).Show();
         pErrMsg->Set(false);
         return false;
     }
@@ -273,8 +273,7 @@ bool plAvLadderComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     bool enabled = (fCompPB->GetInt(kEnabled) != 0);
 
     plAvLadderMod* ladMod = new plAvLadderMod(goingUp, ladderType, loops, enabled, ladderView);
-    plKey modKey = node->AddModifier(ladMod, IGetUniqueName(node));
-    fKeys.Append(modKey);
+    fKeys.emplace_back(node->AddModifier(ladMod, IGetUniqueName(node)));
 
     return true;
 }
@@ -286,6 +285,6 @@ bool plAvLadderComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 bool plAvLadderComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    fKeys.Reset();
+    fKeys.clear();
     return true;
 }

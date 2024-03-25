@@ -40,19 +40,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plAvatarSDLModifier.h"
-#include "plArmatureMod.h"
 
-#include "plAvatar/plArmatureMod.h"
-#include "plAvatar/plAvBrainGeneric.h"
-#include "plAvatar/plAvBrainClimb.h"
-#include "plAvatar/plAvBrainDrive.h"
-#include "plAvatar/plAnimStage.h"
-#include "plAvatar/plPhysicalControllerCore.h"
-#include "pnSceneObject/plSceneObject.h"
+#include "plArmatureMod.h"
+#include "plAvBrainGeneric.h"
+#include "plAvBrainClimb.h"
+#include "plAvBrainDrive.h"
+#include "plAnimStage.h"
+#include "plPhysicalControllerCore.h"
+
 #include "pnMessage/plSDLModifierMsg.h"
-#include "plSDL/plSDL.h"
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plNetClient/plNetClientMgr.h"
-#include "pnAsyncCore/pnAsyncCore.h"
+#include "plSDL/plSDL.h"
 
 // static vars
 char    plAvatarPhysicalSDLModifier::kStrPosition[] = "position";
@@ -176,11 +176,11 @@ void plAvatarSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcState
             // and rebuild them from the incoming synch state
             // This is acceptable because we should only receive this state when
             // we're loading another player for the first time after entering an age.
-            int brainCount = avMod->GetBrainCount();
-            if(brainCount > 1)
+            size_t brainCount = avMod->GetBrainCount();
+            if (brainCount > 1)
             {
                 // remove all non-default brains
-                for(int i = 0; i < brainCount - 1; i++)
+                for (size_t i = 0; i < brainCount - 1; i++)
                 {
                     plArmatureBrain* current = avMod->GetCurrentBrain();
                     avMod->PopBrain();
@@ -245,10 +245,10 @@ void plAvatarSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
         IPutBaseAvatarStateIn(avMod, dstState);
         // create a brainUnion nested record
         plSDStateVariable* brainUnionArray = dstState->FindSDVar(plAvatarSDLModifier::kStrBrainStack);
-        int nBrains = avMod->GetBrainCount();
-        brainUnionArray->Resize(nBrains - 1);       // we skip the base brain
+        size_t nBrains = avMod->GetBrainCount();
+        brainUnionArray->Resize((int)nBrains - 1);       // we skip the base brain
         
-        for (int i = 1; i < nBrains; i++)
+        for (size_t i = 1; i < nBrains; i++)
         {
             plStateDataRecord *brainUnion = brainUnionArray->GetStateDataRecord(i - 1);
 
@@ -406,7 +406,7 @@ bool plAvatarSDLModifier::ISetGenericBrainFrom(plArmatureMod *avMod, const plSta
         for (i = 0; i < numStages; i++)
         {
             plAnimStage *s = (*stages)[i];
-            (*stages)[i] = nil;
+            (*stages)[i] = nullptr;
             delete s;
         }
         delete stages;
@@ -415,7 +415,7 @@ bool plAvatarSDLModifier::ISetGenericBrainFrom(plArmatureMod *avMod, const plSta
 
     plAvBrainGeneric *newBrain =
         new plAvBrainGeneric(stages,
-                             nil, nil,
+                             nullptr, nullptr,
                              callbackRcvr,
                              exitFlags,
                              fadeIn,
@@ -460,24 +460,24 @@ plAnimStage * plAvatarSDLModifier::IGetStageFrom(plArmatureMod *avMod, const plS
     srcState->FindVar(StandardStageVarNames::kStrName)->Get(name);
     plAGAnim *anim = avMod->FindCustomAnim(name);
     if (!anim)
-        return nil;
+        return nullptr;
 
     int fwd, bwd, adv, reg;
     srcState->FindVar(StandardStageVarNames::kStrForward)->Get(&fwd);
     if (fwd >= plAnimStage::kForwardMax)
-        return nil;
+        return nullptr;
 
     srcState->FindVar(StandardStageVarNames::kStrBackward)->Get(&bwd);
     if (bwd >= plAnimStage::kBackMax)
-        return nil;
+        return nullptr;
     
     srcState->FindVar(StandardStageVarNames::kStrStageAdvance)->Get(&adv);
     if (adv >= plAnimStage::kAdvanceMax)
-        return nil;
+        return nullptr;
 
     srcState->FindVar(StandardStageVarNames::kStrStageRegress)->Get(&reg);
     if (reg >= plAnimStage::kRegressMax)
-        return nil;
+        return nullptr;
     
     int numLoops;
     srcState->FindVar(StandardStageVarNames::kStrNumLoops)->Get(&numLoops);
@@ -488,7 +488,7 @@ plAnimStage * plAvatarSDLModifier::IGetStageFrom(plArmatureMod *avMod, const plS
     int curLoop;
     srcState->FindVar(StandardStageVarNames::kStrCurrentLoop)->Get(&curLoop);
     if (curLoop > numLoops && numLoops > 0) // numLoops == -1 means infinite looping
-        return nil;
+        return nullptr;
     
     bool isAttached;
     srcState->FindVar(StandardStageVarNames::kStrIsAttached)->Get(&isAttached);
@@ -546,7 +546,7 @@ bool plAvatarSDLModifier::IPutStageIn(plArmatureMod *avMod, plAnimStage *stage, 
 void plAvatarSDLModifier::IPutBaseAvatarStateIn(plArmatureMod *avMod, plStateDataRecord* dstState)
 {
     if (avMod->GetStealthLevel() > 0)
-        LogMsg(kLogDebug, "plAvatarSDLModifier::IPutBaseAvatarStateIn - Stealth level being set greater than zero");
+        plNetClientMgr::StaticDebugMsg("plAvatarSDLModifier::IPutBaseAvatarStateIn - Stealth level being set greater than zero");
     dstState->FindVar(kStrInvisibilityLevel)->Set(avMod->GetStealthLevel());
 }
 
@@ -560,7 +560,7 @@ void plAvatarSDLModifier::ISetBaseAvatarStateFrom(plArmatureMod *avMod, const pl
         srcState->FindVar(kStrInvisibilityLevel)->Get(&invisLevel);
 
         if (invisLevel > 0)
-            LogMsg(kLogDebug, "plAvatarSDLModifier::ISetBaseAvatarStateFrom - Stealth level greater than zero");
+            plNetClientMgr::StaticDebugMsg("plAvatarSDLModifier::ISetBaseAvatarStateFrom - Stealth level greater than zero");
         plNetClientMgr::GetInstance()->MakeCCRInvisible(avMod->GetTarget(0)->GetKey(), invisLevel);
     }
 }

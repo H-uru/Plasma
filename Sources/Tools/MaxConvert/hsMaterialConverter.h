@@ -42,7 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __HSMATERIALCONVERTER_H
 #define __HSMATERIALCONVERTER_H
 
+#include <vector>
+
 #include "HeadSpin.h"
+#include "MaxMain/MaxCompat.h"
 #include <maxtypes.h>
 
 class hsStream;
@@ -59,7 +62,6 @@ class hsGAnimLayer;
 class plBitmap;
 class plMipmap;
 class plErrorMsg;
-class plString;
 class plLocation;
 
 class Animatable;
@@ -85,6 +87,8 @@ class plClothingItem;
 class plClothingMtl;
 class hsBitVector;
 
+namespace ST { class string; }
+
 class plExportMaterialData
 {
 public:
@@ -98,7 +102,7 @@ private:
     hsMaterialConverter();
 
 public:
-    ~hsMaterialConverter();
+    ~hsMaterialConverter() noexcept(false);
     static hsMaterialConverter& Instance();
 
     void Init(bool save, plErrorMsg *msg);
@@ -120,8 +124,8 @@ public:
     static bool HasAnimatedTextures(Texmap* texMap);
     static bool HasAnimatedMaterial(plMaxNode* node);
     static bool IsAnimatedMaterial(Mtl* mtl);
-    static bool HasMaterialDiffuseOrOpacityAnimation(plMaxNode* node, Mtl* mtl=nil);
-    static bool HasEmissiveLayer(plMaxNode* node, Mtl* mtl=nil);
+    static bool HasMaterialDiffuseOrOpacityAnimation(plMaxNode* node, Mtl* mtl=nullptr);
+    static bool HasEmissiveLayer(plMaxNode* node, Mtl* mtl=nullptr);
     static bool IsWaterLayer(plMaxNode* node, Texmap* texMap);
     static bool IsFireLayer(plMaxNode* node, Texmap* texMap);
     static bool IsAVILayer(Texmap*  texMap);
@@ -133,7 +137,7 @@ public:
     static Mtl* GetBaseMtl(Mtl* mtl);
     static Mtl* GetBaseMtl(plMaxNode* node);
     static int GetCoordMapping(StdUVGen *uvgen);
-    static void GetNodesByMaterial(Mtl *mtl, hsTArray<plMaxNode*> &out);
+    static void GetNodesByMaterial(Mtl *mtl, std::vector<plMaxNode*> &out);
 
     static uint32_t     VertexChannelsRequestMask(plMaxNode* node, int iSubMtl, Mtl* mtl);
     static uint32_t     VertexChannelsRequiredMask(plMaxNode* node, int iSubMtl);
@@ -156,7 +160,7 @@ public:
     static Mtl* FindSubMtlByName(TSTR& name, Animatable* anim);
     Mtl* FindSceneMtlByName(TSTR& name);
 
-    hsTArray<plExportMaterialData> *CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint32_t multiIndex);
+    std::vector<plExportMaterialData> *CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint32_t multiIndex);
 
     // true if last material creation changed MAX time, invalidating current mesh
     bool ChangedTimes() { return fChangedTimes; }
@@ -165,9 +169,9 @@ public:
 
     bool ClearDoneMaterials(plMaxNode* node);
 
-    int GetMaterialArray(Mtl *mtl, plMaxNode* node, hsTArray<hsGMaterial*>& out, uint32_t multiIndex = 0 );
-    int GetMaterialArray(Mtl *mtl, hsTArray<hsGMaterial*>& out, uint32_t multiIndex = 0);
-    void CollectConvertedMaterials(Mtl *mtl, hsTArray<hsGMaterial *> &out);
+    size_t GetMaterialArray(Mtl *mtl, plMaxNode* node, std::vector<hsGMaterial*>& out, uint32_t multiIndex = 0);
+    size_t GetMaterialArray(Mtl *mtl, std::vector<hsGMaterial*>& out, uint32_t multiIndex = 0);
+    void CollectConvertedMaterials(Mtl *mtl, std::vector<hsGMaterial *> &out);
 
     plClothingItem *GenerateClothingItem(plClothingMtl *mtl, const plLocation &loc);
     hsGMaterial*    AlphaHackVersion(plMaxNode* node, Mtl* mtl, int subIndex); // used by DynamicDecals
@@ -223,8 +227,8 @@ enum {
     // All this to catch duplicate mats with same name.  Sigh.
     struct DoneMaterialData
     {
-        DoneMaterialData() : fHsMaterial(nil), fMaxMaterial(nil), fNode(nil), 
-            fSubMultiMat(false), fOwnedCopy(false) { }
+        DoneMaterialData() : fHsMaterial(), fMaxMaterial(), fNode(),
+            fSubMultiMat(), fOwnedCopy() { }
 
         hsGMaterial         *fHsMaterial;
         Mtl                 *fMaxMaterial;
@@ -262,21 +266,21 @@ private:
     void IInsertSingleBlendLayer(plMipmap *texture, hsGMaterial *mat, plMaxNode *node, 
                                  int layerIdx, int UVChan);
 
-    hsGMaterial *ICreateMaterial(Mtl *mtl, plMaxNode *node, const plString &name, int subIndex, int numUVChannels, bool makeAlphaLayer);
-    hsGMaterial *IProcessMaterial(Mtl *mtl, plMaxNode *node, const plString &name, int UVChan, int subMtlFlags = 0);
+    hsGMaterial *ICreateMaterial(Mtl *mtl, plMaxNode *node, const ST::string &name, int subIndex, int numUVChannels, bool makeAlphaLayer);
+    hsGMaterial *IProcessMaterial(Mtl *mtl, plMaxNode *node, const ST::string &name, int UVChan, int subMtlFlags = 0);
 
     // ... calls one of:
-    hsGMaterial *IProcessMultipassMtl(Mtl *mtl, plMaxNode *node, const plString &name, int UVChan);
-    hsGMaterial *IProcessCompositeMtl(Mtl *mtl, plMaxNode *node, const plString &name, int UVChan, int subMtlFlags);
-    hsGMaterial *IProcessParticleMtl(Mtl *mtl, plMaxNode *node, const plString &name);
-    bool IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hsGMaterial *mat, const plString& namePrefix);
+    hsGMaterial *IProcessMultipassMtl(Mtl *mtl, plMaxNode *node, const ST::string &name, int UVChan);
+    hsGMaterial *IProcessCompositeMtl(Mtl *mtl, plMaxNode *node, const ST::string &name, int UVChan, int subMtlFlags);
+    hsGMaterial *IProcessParticleMtl(Mtl *mtl, plMaxNode *node, const ST::string &name);
+    bool IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hsGMaterial *mat, const ST::string& namePrefix);
 
     hsGMaterial* IInsertDoneMaterial(Mtl *mtl, hsGMaterial *hMat, plMaxNode *node, bool isMultiMat, 
                              bool forceCopy, bool runtimeLit, uint32_t subMtlFlags, int numUVChannels, bool makeAlphaLayer);
 
     void        IInsertBumpLayers(plMaxNode* node, hsGMaterial* mat, int bumpLayerIdx);
     void        IInsertBumpLayers(plMaxNode* node, hsGMaterial* mat);
-    plLayer*    IMakeBumpLayer(plMaxNode* node, const plString& nameBase, hsGMaterial* mat, uint32_t miscFlag);
+    plLayer*    IMakeBumpLayer(plMaxNode* node, const ST::string& nameBase, hsGMaterial* mat, uint32_t miscFlag);
     plMipmap*   IGetBumpLutTexture(plMaxNode* node);
 
     bool        IHasSubMtl(Mtl* base, Mtl* sub);
@@ -335,26 +339,26 @@ private:
     int32_t             fSubIndex;
     bool                fChangedTimes;
 
-    char                *fNodeName;
+    MAX14_CONST MCHAR*  fNodeName;
     uint32_t            fWarned;
 
 
     DoneMaterialData            fLastMaterial;
-    hsTArray<DoneMaterialData>  fDoneMaterials;
+    std::vector<DoneMaterialData> fDoneMaterials;
 
     bool IsMatchingDoneMaterial(DoneMaterialData *dmd, 
                                   Mtl *mtl, bool isMultiMat, uint32_t subMtlFlags, bool forceCopy, bool runtimeLit,
                                   plMaxNode *node, int numUVChannels, bool makeAlphaLayer);
 
-    void        ISortDoneMaterials(hsTArray<DoneMaterialData*>& doneMats);
+    void        ISortDoneMaterials(std::vector<DoneMaterialData*>& doneMats);
     bool        IEquivalent(DoneMaterialData* one, DoneMaterialData* two);
     void        IPrintDoneMat(hsStream* stream, const char* prefix, DoneMaterialData* doneMat);
-    void        IPrintDoneMaterials(const char* path, hsTArray<DoneMaterialData*>& doneMats);
+    void        IPrintDoneMaterials(const char* path, const std::vector<DoneMaterialData*>& doneMats);
     void        IGenMaterialReport(const char* path);
 
 public:
     // Apologies all around, but I need this list for dumping some export warnings. mf
-    const hsTArray<struct DoneMaterialData>& DoneMaterials() { return fDoneMaterials; }
+    const std::vector<struct DoneMaterialData>& DoneMaterials() { return fDoneMaterials; }
 
     //bool               CheckValidityOfSDLVarAnim(plPassMtlBase *mtl, char *varName, plMaxNode *node);
 };

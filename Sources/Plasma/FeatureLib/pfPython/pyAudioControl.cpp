@@ -45,18 +45,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#pragma hdrstop
 
 #include "pyAudioControl.h"
 
 #include "plAudio/plAudioSystem.h"
 #include "plAudio/plVoiceChat.h"
-#include "plAudio/plWinMicLevel.h"
-
-#include "plAudio/plAudioCaps.h"
 
 // Sets the master volume of a given audio channel
-void pyAudioControl::SetSoundFXVolume( float volume )
+void pyAudioControl::SetSoundFXVolume(float volume)
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kSoundFX;
@@ -70,7 +66,7 @@ void pyAudioControl::SetSoundFXVolume( float volume )
     plgAudioSys::SetChannelVolume( chan, volume );
 }
 
-void pyAudioControl::SetMusicVolume( float volume )
+void pyAudioControl::SetMusicVolume(float volume)
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kBgndMusic;
@@ -84,7 +80,7 @@ void pyAudioControl::SetMusicVolume( float volume )
     plgAudioSys::SetChannelVolume( chan, volume );
 }
 
-void pyAudioControl::SetVoiceVolume( float volume )
+void pyAudioControl::SetVoiceVolume(float volume)
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kVoice;
@@ -98,7 +94,7 @@ void pyAudioControl::SetVoiceVolume( float volume )
     plgAudioSys::SetChannelVolume( chan, volume );
 }
 
-void pyAudioControl::SetAmbienceVolume( float volume )
+void pyAudioControl::SetAmbienceVolume(float volume)
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kAmbience;
@@ -112,7 +108,7 @@ void pyAudioControl::SetAmbienceVolume( float volume )
     plgAudioSys::SetChannelVolume( chan, volume );
 }
 
-void pyAudioControl::SetGUIVolume( float volume )
+void pyAudioControl::SetGUIVolume(float volume)
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kGUI;
@@ -126,7 +122,7 @@ void pyAudioControl::SetGUIVolume( float volume )
     plgAudioSys::SetChannelVolume( chan, volume );
 }
 
-void pyAudioControl::SetNPCVoiceVolume( float volume )
+void pyAudioControl::SetNPCVoiceVolume(float volume)
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kNPCVoice;
@@ -140,42 +136,42 @@ void pyAudioControl::SetNPCVoiceVolume( float volume )
     plgAudioSys::SetChannelVolume( chan, volume );
 }
 
-float pyAudioControl::GetSoundFXVolume()
+float pyAudioControl::GetSoundFXVolume() const
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kSoundFX;
     return plgAudioSys::GetChannelVolume(chan);
 }
 
-float pyAudioControl::GetMusicVolume()
+float pyAudioControl::GetMusicVolume() const
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kBgndMusic;
     return plgAudioSys::GetChannelVolume(chan);
 }
 
-float pyAudioControl::GetVoiceVolume()
+float pyAudioControl::GetVoiceVolume() const
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kVoice;
     return plgAudioSys::GetChannelVolume(chan);
 }
 
-float pyAudioControl::GetAmbienceVolume()
+float pyAudioControl::GetAmbienceVolume() const
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kAmbience;
     return plgAudioSys::GetChannelVolume(chan);
 }
 
-float pyAudioControl::GetGUIVolume()
+float pyAudioControl::GetGUIVolume() const
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kGUI;
     return plgAudioSys::GetChannelVolume(chan);
 }
 
-float pyAudioControl::GetNPCVoiceVolume()
+float pyAudioControl::GetNPCVoiceVolume() const
 {
     plgAudioSys::ASChannel  chan;
     chan = plgAudioSys::kNPCVoice;
@@ -194,14 +190,14 @@ void pyAudioControl::Disable()
     plgAudioSys::Activate(false);
 }
 
-bool pyAudioControl::IsEnabled()
+bool pyAudioControl::IsEnabled() const
 {
     return plgAudioSys::Active();
 }
 
 
 // Enable or disable load-on-demand for sounds
-void pyAudioControl::SetLoadOnDemand( bool state )
+void pyAudioControl::SetLoadOnDemand(bool state)
 {
     plSound::SetLoadOnDemand(state);
 }
@@ -209,36 +205,28 @@ void pyAudioControl::SetLoadOnDemand( bool state )
 
 // Enables or disables two-stage LOD, where sounds can be loaded into RAM but not into sound buffers.
 // ...Less of a performance hit, harder on memory.
-void pyAudioControl::SetTwoStageLOD( bool state )
+void pyAudioControl::SetTwoStageLOD(bool state)
 {
     // For two-stage LOD, we want to disable LoadFromDiskOnDemand, so that we'll load into RAM at startup but not
     // into sound buffers until demanded to do so. Enabling LoadFromDiskOnDemand basically conserves as much memory
     // as possible
-    plSound::SetLoadFromDiskOnDemand( !state );
+    plSound::SetLoadFromDiskOnDemand(!state);
 }
-
-
-// Enable audio hardware acceleration
-void pyAudioControl::UseHardwareAcceleration( bool state )
-{
-    plgAudioSys::SetUseHardware(state);
-}
-
-bool pyAudioControl::IsHardwareAccelerated()
-{
-    return plgAudioSys::Hardware();
-}
-
 
 // Enable EAX sound acceleration (requires hardware acceleration)
-void pyAudioControl::UseEAXAcceleration( bool state )
+void pyAudioControl::UseEAXAcceleration(bool state)
 {
     plgAudioSys::EnableEAX(state);
 }
 
-bool pyAudioControl::IsUsingEAXAcceleration()
+bool pyAudioControl::IsUsingEAXAcceleration() const
 {
     return plgAudioSys::UsingEAX();
+}
+
+bool pyAudioControl::IsEAXSupported() const
+{
+    return plgAudioSys::IsEAXSupported();
 }
 
 
@@ -253,77 +241,58 @@ void pyAudioControl::UnmuteAll()
     plgAudioSys::SetMuted(false);
 }
 
-bool pyAudioControl::IsMuted()
+bool pyAudioControl::IsMuted() const
 {
     return plgAudioSys::IsMuted();
 }
 
-bool pyAudioControl::SupportEAX(const char *deviceName)
+// Enable or disable displaying speech subtitles
+void pyAudioControl::EnableSubtitles()
 {
-    return plgAudioSys::SupportsEAX(deviceName);
+    plgAudioSys::SetEnableSubtitles(true);
+}
+
+void pyAudioControl::DisableSubtitles()
+{
+    plgAudioSys::SetEnableSubtitles(false);
+}
+
+bool pyAudioControl::AreSubtitlesEnabled() const
+{
+    return plgAudioSys::AreSubtitlesEnabled();
 }
 
 
 //------------------------
 // Voice Settings
 
-// Sets the microphone volume, in the range of 0 to 1
-bool pyAudioControl::CanSetMicLevel()
+bool pyAudioControl::CanSetMicLevel() const
 {
-    return plWinMicLevel::CanSetLevel();
+    return plgAudioSys::CanChangeCaptureVolume();
 }
 
-void pyAudioControl::SetMicLevel( float level )
+void pyAudioControl::SetMicLevel(float level)
 {
-    // make sure the volume is within range
-    if( level > 1.f )
-        level = 1.f;
-    else if( level < 0.f )
-        level = 0.f;
-    if( CanSetMicLevel() )
-        plWinMicLevel::SetLevel( level );
+    plgAudioSys::SetCaptureVolume(level);
 }
 
-float pyAudioControl::GetMicLevel()
+float pyAudioControl::GetMicLevel() const
 {
-    return plWinMicLevel::GetLevel();
+    return plgAudioSys::GetCaptureVolume();
 }
 
 
 // turn voice recording on or off
-void pyAudioControl::EnableVoiceRecording( bool state )
+void pyAudioControl::EnableVoiceRecording(bool state)
 {
     plVoiceRecorder::EnableRecording(state);
 }
 
-bool pyAudioControl::IsVoiceRecordingEnabled()
+bool pyAudioControl::IsVoiceRecordingEnabled() const
 {
     return plVoiceRecorder::RecordingEnabled();
 }
 
-
-// turn voice compression on and off
-void pyAudioControl::EnableVoiceCompression( bool state )
-{
-}
-
-bool pyAudioControl::IsVoiceCompressionEnabled()
-{
-    return true;
-}
-
-
-// turn voice-over-net on and off
-void pyAudioControl::EnableVoiceNetBroadcast( bool state )
-{
-    //plWinRecorder::EnableNetVoice(state);
-}
-
-bool pyAudioControl::IsVoiceNetBroadcastEnabled()
-{
-    
-    return true;
-}
 
 void pyAudioControl::EnableVoiceChat(bool enable)
 {
@@ -344,30 +313,18 @@ void pyAudioControl::HideIcons()
 
 
 // turn push-to-talk on or off
-void pyAudioControl::PushToTalk( bool state )
+void pyAudioControl::PushToTalk(bool state)
 {
     plVoiceRecorder::EnablePushToTalk(state);
 }
 
 // Set the squelch level
-void pyAudioControl::SquelchLevel( float level )
+void pyAudioControl::SquelchLevel(float level)
 {
     plVoiceRecorder::SetSquelch(level);
 }
 
-
-// Adjust voice packet frame size
-void pyAudioControl::RecordFrame( int32_t size )
-{
-}
-
-
-// Set the sample rate for recording
-void pyAudioControl::RecordSampleRate( int32_t sample_rate )
-{
-}
-
-uint8_t pyAudioControl::GetPriorityCutoff( void )
+uint8_t pyAudioControl::GetPriorityCutoff() const
 {
     return plgAudioSys::GetPriorityCutoff();
 }
@@ -377,75 +334,37 @@ void pyAudioControl::SetPriorityCutoff( uint8_t cut )
     plgAudioSys::SetPriorityCutoff( cut );
 }
 
-void pyAudioControl::SetAudioSystemMode(int mode)
+void pyAudioControl::SetPlaybackDevice(const ST::string& device, bool restart)
 {
-    switch (mode)
-    {
-    case plgAudioSys::kDisabled:
-        plgAudioSys::SetAudioMode(plgAudioSys::kDisabled);
-        break;
-    case plgAudioSys::kSoftware:
-        plgAudioSys::SetAudioMode(plgAudioSys::kSoftware);
-        break;
-    case plgAudioSys::kHardware:
-        plgAudioSys::SetAudioMode(plgAudioSys::kHardware);
-        break;
-    case plgAudioSys::kHardwarePlusEAX:
-        plgAudioSys::SetAudioMode(plgAudioSys::kHardwarePlusEAX);
-        break;
-    default:
-        break;
-    }
+    plgAudioSys::SetPlaybackDevice(device, restart);
 }
 
-int pyAudioControl::GetAudioSystemMode()
+ST::string pyAudioControl::GetPlaybackDevice() const
 {
-    return plgAudioSys::GetAudioMode();
+    return plgAudioSys::GetPlaybackDevice();
 }
 
-int pyAudioControl::GetHighestAudioMode()
+std::vector<ST::string> pyAudioControl::GetPlaybackDevices() const
 {
-    int highestMode = plgAudioSys::kDisabled;
-    plAudioCaps caps = plAudioCapsDetector::Detect();
-
-    if ( caps.IsEAXAvailable() )
-    {
-        highestMode = plgAudioSys::kHardwarePlusEAX;
-    }
-    else
-    {
-        if ( 1 )        // This is taken care of in the audio system
-        {
-            highestMode = plgAudioSys::kHardware;
-        }
-        else
-        {
-            if ( caps.IsAvailable() )
-            {
-                highestMode = plgAudioSys::kSoftware;
-            }
-        }
-    }
-
-    return highestMode;
+    return plgAudioSys::GetPlaybackDevices();
 }
 
-int pyAudioControl::GetNumAudioDevices()
+ST::string pyAudioControl::GetFriendlyDeviceName(const ST::string& deviceName) const
 {
-    return plgAudioSys::GetNumAudioDevices();
+    return plgAudioSys::GetFriendlyDeviceName(deviceName);
 }
 
-const char *pyAudioControl::GetAudioDeviceName(int index)
+void pyAudioControl::SetCaptureDevice(const ST::string& device)
 {
-    return plgAudioSys::GetAudioDeviceName(index);
+    plgAudioSys::SetCaptureDevice(device);
 }
 
-void pyAudioControl::SetDeviceName(const char *device, bool restart)
+ST::string pyAudioControl::GetCaptureDevice() const
 {
-    plgAudioSys::SetDeviceName(device, restart);
+    return plgAudioSys::GetCaptureDevice();
 }
 
-const char * pyAudioControl::GetDeviceName()
+std::vector<ST::string> pyAudioControl::GetCaptureDevices() const
 {
-    return plgAudioSys::GetDeviceName();
+    return plgAudioSys::GetCaptureDevices();
 }

@@ -1,0 +1,47 @@
+diff --git a/setup.py b/setup.py
+index 3d3a5f3..f4d0f62 100644
+--- a/setup.py
++++ b/setup.py
+@@ -164,6 +164,8 @@ def sysroot_paths(make_vars, subdirs):
+         var = sysconfig.get_config_var(var_name)
+         if var is not None:
+             m = re.search(r'--sysroot=([^"]\S*|"[^"]+")', var)
++            if m is None:  # try osx sysroot
++                m = re.search(r'-isysroot ([^"]\S*|"[^"]+")', var)
+             if m is not None:
+                 sysroot = m.group(1).strip('"')
+                 for subdir in subdirs:
+@@ -826,6 +828,7 @@ def configure_compiler(self):
+         # directories (i.e. '.' and 'Include') must be first.  See issue
+         # 10520.
+         if not CROSS_COMPILING:
++          if False:  # restore via CFLAGS/LDFLAGS if desired
+             add_dir_to_list(self.compiler.library_dirs, '/usr/local/lib')
+             add_dir_to_list(self.compiler.include_dirs, '/usr/local/include')
+         # only change this for cross builds for 3.3, issues on Mageia
+@@ -835,7 +838,7 @@ def configure_compiler(self):
+         self.add_ldflags_cppflags()
+ 
+     def init_inc_lib_dirs(self):
+-        if (not CROSS_COMPILING and
++        if (True and  # put vcpkg dirs first
+                 os.path.normpath(sys.base_prefix) != '/usr' and
+                 not sysconfig.get_config_var('PYTHONFRAMEWORK')):
+             # OSX note: Don't add LIBDIR and INCLUDEDIR to building a framework
+@@ -877,7 +880,7 @@ def init_inc_lib_dirs(self):
+         if HOST_PLATFORM == 'hp-ux11':
+             self.lib_dirs += ['/usr/lib/hpux64', '/usr/lib/hpux32']
+ 
+-        if MACOS:
++        if True:
+             # This should work on any unixy platform ;-)
+             # If the user has bothered specifying additional -I and -L flags
+             # in OPT and LDFLAGS we might as well use them here.
+@@ -1598,6 +1601,7 @@ def detect_sqlite(self):
+ 
+         if sqlite_incdir:
+             sqlite_dirs_to_check = [
++                os.path.join(sqlite_incdir, os.path.relpath(sysconfig.get_config_var('LIBDIR'), sysconfig.get_config_var('INCLUDEDIR'))),
+                 os.path.join(sqlite_incdir, '..', 'lib64'),
+                 os.path.join(sqlite_incdir, '..', 'lib'),
+                 os.path.join(sqlite_incdir, '..', '..', 'lib64'),

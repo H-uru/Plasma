@@ -40,11 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
-
 #include "pyGUIControlDynamicText.h"
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControlDynamicText, pyGUIControlDynamicText);
@@ -54,7 +53,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlDynamicText)
 
 PYTHON_INIT_DEFINITION(ptGUIControlDynamicText, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -100,15 +99,15 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlDynamicText, pyGUIControl, "Params: ctrlKe
 // required functions for PyObject interoperability
 PyObject *pyGUIControlDynamicText::New(pyKey& gckey)
 {
-    ptGUIControlDynamicText *newObj = (ptGUIControlDynamicText*)ptGUIControlDynamicText_type.tp_new(&ptGUIControlDynamicText_type, NULL, NULL);
+    ptGUIControlDynamicText *newObj = (ptGUIControlDynamicText*)ptGUIControlDynamicText_type.tp_new(&ptGUIControlDynamicText_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlDynamicText::New(plKey objkey)
 {
-    ptGUIControlDynamicText *newObj = (ptGUIControlDynamicText*)ptGUIControlDynamicText_type.tp_new(&ptGUIControlDynamicText_type, NULL, NULL);
-    newObj->fThis->fGCkey = objkey;
+    ptGUIControlDynamicText *newObj = (ptGUIControlDynamicText*)ptGUIControlDynamicText_type.tp_new(&ptGUIControlDynamicText_type, nullptr, nullptr);
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

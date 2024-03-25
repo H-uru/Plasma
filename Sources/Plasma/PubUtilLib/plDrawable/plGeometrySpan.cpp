@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 hsBitVector     plGeometrySpan::fInstanceGroupIDFlags;
 uint32_t          plGeometrySpan::fHighestReadInstanceGroup = 0;
 
-hsTArray<hsTArray<plGeometrySpan *> *>  plGeometrySpan::fInstanceGroups;
+std::vector<std::vector<plGeometrySpan *> *> plGeometrySpan::fInstanceGroups;
 
 
 //// Constructor and Destructor //////////////////////////////////////////////
@@ -83,30 +83,30 @@ plGeometrySpan::~plGeometrySpan()
     ClearBuffers();
 }
 
-void    plGeometrySpan::IClearMembers( void )
+void    plGeometrySpan::IClearMembers()
 {
-    fVertexData = nil; 
-    fIndexData = nil; 
-    fMaterial = nil; 
+    fVertexData = nullptr;
+    fIndexData = nullptr;
+    fMaterial = nullptr;
     fNumVerts = fNumIndices = 0; 
     fBaseMatrix = fNumMatrices = 0;
     fLocalUVWChans = 0;
     fMaxBoneIdx = 0;
     fPenBoneIdx = 0;
     fCreating = false;
-    fFogEnviron = nil;
+    fFogEnviron = nullptr;
     fProps = 0;
 
     fMinDist = fMaxDist = -1.f;
 
     fWaterHeight = 0;
 
-    fMultColor = nil;
-    fAddColor = nil;
+    fMultColor = nullptr;
+    fAddColor = nullptr;
 
-    fDiffuseRGBA = nil;
-    fSpecularRGBA = nil;
-    fInstanceRefs = nil;
+    fDiffuseRGBA = nullptr;
+    fSpecularRGBA = nullptr;
+    fInstanceRefs = nullptr;
     fInstanceGroupID = kNoGroupID;
     fSpanRefIndex = (uint32_t)-1;
 
@@ -115,12 +115,12 @@ void    plGeometrySpan::IClearMembers( void )
 
     fDecalLevel = 0;
 
-    fMaxOwner = plString::Null;
+    fMaxOwner = ST::string();
 }
 
 //// ClearBuffers ////////////////////////////////////////////////////////////
 
-void    plGeometrySpan::ClearBuffers( void )
+void    plGeometrySpan::ClearBuffers()
 {
     // If UserOwned, the actual buffer data belongs to someone else (like a BufferGroup).
     // Just erase our knowledge of it and move on.
@@ -135,9 +135,9 @@ void    plGeometrySpan::ClearBuffers( void )
 
     // If we have an instanceRefs array, remove ourselves from
     // the array. If we are the last in the array, remove the array itself
-    if( fInstanceRefs != nil )
+    if (fInstanceRefs != nullptr)
     {
-        if( fInstanceRefs->GetCount() == 1 )
+        if (fInstanceRefs->size() == 1)
         {
             delete fInstanceRefs;
 
@@ -146,32 +146,32 @@ void    plGeometrySpan::ClearBuffers( void )
         }
         else
         {
-            int idx = fInstanceRefs->Find( this );
-            hsAssert( idx != fInstanceRefs->kMissingIndex, "Invalid instance ref data in plGeometrySpan::ClearBuffers()" );
+            auto iter = std::find(fInstanceRefs->cbegin(), fInstanceRefs->cend(), this);
+            hsAssert(iter != fInstanceRefs->cend(), "Invalid instance ref data in plGeometrySpan::ClearBuffers()");
 
-            fInstanceRefs->Remove( idx );
+            fInstanceRefs->erase(iter);
             removeData = false; // Don't remove data until we're the last one
         }
-        fInstanceRefs = nil;
+        fInstanceRefs = nullptr;
         fInstanceGroupID = kNoGroupID;
     }
 
     if( removeData )
     {
         delete [] fVertexData;
-        fVertexData = nil;
+        fVertexData = nullptr;
 
         delete [] fMultColor;
         delete [] fAddColor;
-        fMultColor = nil;
-        fAddColor = nil;
+        fMultColor = nullptr;
+        fAddColor = nullptr;
     }
 
     delete [] fIndexData;
     delete [] fDiffuseRGBA;
     delete [] fSpecularRGBA;
-    fIndexData = nil;
-    fDiffuseRGBA = fSpecularRGBA = nil;
+    fIndexData = nullptr;
+    fDiffuseRGBA = fSpecularRGBA = nullptr;
 }
 
 //// MakeInstanceOf //////////////////////////////////////////////////////////
@@ -181,26 +181,25 @@ void    plGeometrySpan::ClearBuffers( void )
 
 void    plGeometrySpan::MakeInstanceOf( const plGeometrySpan *instance )
 {
-    hsTArray<plGeometrySpan *> *array;
-
+    std::vector<plGeometrySpan *> *array;
 
     ClearBuffers();
 
     /// Adjust the instanceRefs array
     array = instance->fInstanceRefs;
-    if( array == nil )
+    if (array == nullptr)
     {
         // Go find a new groupID
         instance->fInstanceGroupID = IAllocateNewGroupID();
 
-        instance->fInstanceRefs = array = new hsTArray<plGeometrySpan *>;
+        instance->fInstanceRefs = array = new std::vector<plGeometrySpan *>;
         // Go figure, it won't append the const version to the array...this is a cheat,
         // but then, so is making fInstanceRefs mutable :)
-        array->Append( (plGeometrySpan *)instance );
+        array->emplace_back((plGeometrySpan *)instance);
     }
 
     fInstanceGroupID = instance->fInstanceGroupID;
-    array->Append( this );
+    array->emplace_back(this);
     fInstanceRefs = array;
 
     /// Copy over the data
@@ -218,7 +217,7 @@ void plGeometrySpan::IUnShareData()
     {
         uint8_t* oldVtxData = fVertexData;
 
-        uint32_t size = GetVertexSize( fFormat );
+        size_t size = GetVertexSize( fFormat );
 
         fVertexData = new uint8_t[ size * fNumVerts ];
         memcpy( fVertexData, oldVtxData, size * fNumVerts );
@@ -244,14 +243,14 @@ void plGeometrySpan::IUnShareData()
 void plGeometrySpan::BreakInstance()
 {
     hsAssert(fInstanceRefs, "Breaking instancing when I'm not instanced");
-    int idx = fInstanceRefs->Find(this);
-    hsAssert(idx != fInstanceRefs->kMissingIndex, "I'm not in my own instance refs list");
-    fInstanceRefs->Remove(idx);
-    hsAssert(fInstanceRefs->GetCount(), "Don't BreakInstance if I'm the last one, use UnInstance instead");
+    auto iter = std::find(fInstanceRefs->cbegin(), fInstanceRefs->cend(), this);
+    hsAssert(iter != fInstanceRefs->cend(), "I'm not in my own instance refs list");
+    fInstanceRefs->erase(iter);
+    hsAssert(!fInstanceRefs->empty(), "Don't BreakInstance if I'm the last one, use UnInstance instead");
 
     fInstanceGroupID = IAllocateNewGroupID();
-    fInstanceRefs = new hsTArray<plGeometrySpan*>;
-    fInstanceRefs->Append(this);
+    fInstanceRefs = new std::vector<plGeometrySpan*>;
+    fInstanceRefs->emplace_back(this);
 
     IUnShareData();
 
@@ -261,13 +260,13 @@ void plGeometrySpan::BreakInstance()
 void plGeometrySpan::ChangeInstance(plGeometrySpan* newInstance)
 {
     hsAssert(fInstanceRefs, "Changing instancing when I'm not instanced");
-    int idx = fInstanceRefs->Find(this);
-    hsAssert(idx != fInstanceRefs->kMissingIndex, "I'm not in my own instance refs list");
-    fInstanceRefs->Remove(idx);
+    auto iter = std::find(fInstanceRefs->cbegin(), fInstanceRefs->cend(), this);
+    hsAssert(iter != fInstanceRefs->cend(), "I'm not in my own instance refs list");
+    fInstanceRefs->erase(iter);
 
     fInstanceGroupID = newInstance->fInstanceGroupID;
     fInstanceRefs = newInstance->fInstanceRefs;
-    fInstanceRefs->Append(this);
+    fInstanceRefs->emplace_back(this);
 
     fVertexData = newInstance->fVertexData;
     fMultColor = newInstance->fMultColor;
@@ -280,13 +279,13 @@ void plGeometrySpan::UnInstance()
 {
     hsAssert(fInstanceRefs, "UnInstancing a non-instance");
 
-    int idx = fInstanceRefs->Find(this);
-    hsAssert(idx != fInstanceRefs->kMissingIndex, "I'm not in my own instance refs list");
-    fInstanceRefs->Remove(idx);
+    auto iter = std::find(fInstanceRefs->cbegin(), fInstanceRefs->cend(), this);
+    hsAssert(iter != fInstanceRefs->cend(), "I'm not in my own instance refs list");
+    fInstanceRefs->erase(iter);
 
     // If we're the last one, we just take ownership of the shared data,
     // else we make our own copy of it.
-    if( !fInstanceRefs->GetCount() )
+    if (fInstanceRefs->empty())
     {
         delete fInstanceRefs;
     }
@@ -294,7 +293,7 @@ void plGeometrySpan::UnInstance()
     {
         IUnShareData();
     }
-    fInstanceRefs = nil;
+    fInstanceRefs = nullptr;
     fInstanceGroupID = kNoGroupID;
     fProps &= ~plGeometrySpan::kInstanced;
 }
@@ -303,7 +302,7 @@ void plGeometrySpan::UnInstance()
 //  Static function that allocates a new groupID by finding an empty slot in
 //  the bitVector, then marking it as used and returning that bit #
 
-uint32_t  plGeometrySpan::IAllocateNewGroupID( void )
+uint32_t  plGeometrySpan::IAllocateNewGroupID()
 {
     uint32_t          id;
 
@@ -329,34 +328,33 @@ void    plGeometrySpan::IClearGroupID( uint32_t groupID )
 //// IGetInstanceGroup ///////////////////////////////////////////////////////
 //  This does the whole hash table thing lookup during read. If:
 //  - The group ID does not yet exist:
-//      - Allocates a new hsTArray, puts it into the hash table if expectedCount > 1,
+//      - Allocates a new vector, puts it into the hash table if expectedCount > 1,
 //        sets the groupID flag, and returns a pointer to the array.
 //  - The group ID does exist:
 //      - If the array count is less than expectedCount - 1, returns the array
-//      - else sets the hash entry to nil and returns the array. 
+//      - else sets the hash entry to nullptr and returns the array.
 //  Since we want to clear the hash table as soon as possible, but don't want
 //  to search the entire hash table every time to make sure its empty, we
 //  keep an ID of the highest element in the hash table that's set; every time
 //  we remove an entry, we decrement this ID until we hit a used pointer again;
 //  if we don't find one, we reset the array.
 
-hsTArray<plGeometrySpan *>  *plGeometrySpan::IGetInstanceGroup( uint32_t groupID, uint32_t expectedCount )
+std::vector<plGeometrySpan *> *plGeometrySpan::IGetInstanceGroup(uint32_t groupID, uint32_t expectedCount)
 {
-    hsTArray<plGeometrySpan *>  *array;
-
+    std::vector<plGeometrySpan *> *array;
 
     groupID--;      // Make it our array index
 
-    if( fInstanceGroups.GetCount() <= groupID || fInstanceGroups[ groupID ] == nil )
+    if (fInstanceGroups.size() <= groupID || fInstanceGroups[groupID] == nullptr)
     {
-        // Not yet in the list--make a new hsTArray
-        array = new hsTArray<plGeometrySpan *>;
+        // Not yet in the list--make a new vector
+        array = new std::vector<plGeometrySpan *>;
         fInstanceGroupIDFlags.SetBit( groupID, true );
         
         if( expectedCount > 1 )
         {
-            if( fInstanceGroups.GetCount() <= groupID )
-                fInstanceGroups.ExpandAndZero( groupID + 1 );
+            if (fInstanceGroups.size() <= groupID)
+                fInstanceGroups.resize(groupID + 1);
 
             fInstanceGroups[ groupID ] = array;
             if( fHighestReadInstanceGroup < groupID + 1 )
@@ -369,17 +367,17 @@ hsTArray<plGeometrySpan *>  *plGeometrySpan::IGetInstanceGroup( uint32_t groupID
     {
         // In the list...get it, but are we done with it?
         array = fInstanceGroups[ groupID ];
-        if( expectedCount == array->GetCount() + 1 )    // I.E. next Append() will make it ==
+        if (expectedCount == array->size() + 1)    // I.E. next Append() will make it ==
         {
             // Done with it, remove from hash table
-            fInstanceGroups[ groupID ] = nil;
+            fInstanceGroups[groupID] = nullptr;
             
             // Find new fHighestReadInstanceGroup
-            for( ; fHighestReadInstanceGroup > 0 && fInstanceGroups[ fHighestReadInstanceGroup - 1 ] == nil; 
+            for (; fHighestReadInstanceGroup > 0 && fInstanceGroups[fHighestReadInstanceGroup - 1] == nullptr;
                    fHighestReadInstanceGroup-- );
 
             if( fHighestReadInstanceGroup == 0 )
-                fInstanceGroups.Reset();
+                fInstanceGroups.clear();
         }
 
         // Either way, return the array
@@ -414,13 +412,13 @@ void    plGeometrySpan::IDuplicateUniqueData( const plGeometrySpan *source )
     fNumIndices = source->fNumIndices;
     fDecalLevel = source->fDecalLevel;
 
-    if( source->fIndexData != nil )
+    if (source->fIndexData != nullptr)
     {
         fIndexData = new uint16_t[ fNumIndices ];
         memcpy( fIndexData, source->fIndexData, sizeof( uint16_t ) * fNumIndices );
     }
     else
-        fIndexData = nil;
+        fIndexData = nullptr;
 
     if( source->fDiffuseRGBA )
     {
@@ -428,7 +426,7 @@ void    plGeometrySpan::IDuplicateUniqueData( const plGeometrySpan *source )
         memcpy( fDiffuseRGBA, source->fDiffuseRGBA, sizeof( uint32_t ) * fNumVerts );
     }
     else 
-        fDiffuseRGBA = nil;
+        fDiffuseRGBA = nullptr;
 
     if( source->fSpecularRGBA )
     {
@@ -436,7 +434,7 @@ void    plGeometrySpan::IDuplicateUniqueData( const plGeometrySpan *source )
         memcpy( fSpecularRGBA, source->fSpecularRGBA, sizeof( uint32_t ) * fNumVerts );
     }
     else 
-        fSpecularRGBA = nil;
+        fSpecularRGBA = nullptr;
 
     fLocalToOBB = source->fLocalToOBB;
     fOBBToLocal = source->fOBBToLocal;
@@ -447,26 +445,23 @@ void    plGeometrySpan::IDuplicateUniqueData( const plGeometrySpan *source )
 
 void    plGeometrySpan::CopyFrom( const plGeometrySpan *source )
 {
-    uint32_t      size;
-
-
     // Just to make sure
     ClearBuffers();
 
     IDuplicateUniqueData( source );
 
-    fInstanceRefs = nil;
+    fInstanceRefs = nullptr;
     fInstanceGroupID = kNoGroupID;
 
-    if( source->fVertexData != nil )
+    if (source->fVertexData != nullptr)
     {
-        size = GetVertexSize( fFormat );
+        size_t size = GetVertexSize( fFormat );
 
         fVertexData = new uint8_t[ size * fNumVerts ];
         memcpy( fVertexData, source->fVertexData, size * fNumVerts );
     }
     else
-        fVertexData = nil;
+        fVertexData = nullptr;
 
     if( source->fMultColor )
     {
@@ -475,7 +470,7 @@ void    plGeometrySpan::CopyFrom( const plGeometrySpan *source )
     }
     else
     {
-        fMultColor = nil;
+        fMultColor = nullptr;
     }
 
     if( source->fAddColor )
@@ -485,7 +480,7 @@ void    plGeometrySpan::CopyFrom( const plGeometrySpan *source )
     }
     else
     {
-        fAddColor = nil;
+        fAddColor = nullptr;
     }
 }
 
@@ -521,8 +516,8 @@ void    plGeometrySpan::Read( hsStream *stream )
     fMaxBoneIdx = stream->ReadLE16();
     fPenBoneIdx = stream->ReadLE16();
 
-    fMinDist = stream->ReadLEScalar();
-    fMaxDist = stream->ReadLEScalar();
+    fMinDist = stream->ReadLEFloat();
+    fMaxDist = stream->ReadLEFloat();
 
     fFormat = stream->ReadByte();
     fProps = stream->ReadLE32();
@@ -531,13 +526,13 @@ void    plGeometrySpan::Read( hsStream *stream )
 
     // FIXME MAJOR VERSION
     // remove these two lines. No more patches.
-    stream->ReadLE32();
-    stream->ReadByte();
+    (void)stream->ReadLE32();
+    (void)stream->ReadByte();
 
     fDecalLevel = stream->ReadLE32();
 
     if( fProps & kWaterHeight )
-        fWaterHeight = stream->ReadLEScalar();
+        fWaterHeight = stream->ReadLEFloat();
 
     if( fNumVerts > 0 )
     {
@@ -561,11 +556,11 @@ void    plGeometrySpan::Read( hsStream *stream )
     }
     else
     {
-        fVertexData = nil;
-        fMultColor = nil;
-        fAddColor = nil;
-        fDiffuseRGBA = nil;
-        fSpecularRGBA = nil;
+        fVertexData = nullptr;
+        fMultColor = nullptr;
+        fAddColor = nullptr;
+        fDiffuseRGBA = nullptr;
+        fSpecularRGBA = nullptr;
     }
 
     if( fNumIndices > 0 )
@@ -574,7 +569,7 @@ void    plGeometrySpan::Read( hsStream *stream )
         stream->ReadLE16( fNumIndices, fIndexData );
     }
     else
-        fIndexData = nil;
+        fIndexData = nullptr;
 
     // Read the group ID, then look up our instanceRef array from it
     fInstanceGroupID = stream->ReadLE32();
@@ -583,8 +578,8 @@ void    plGeometrySpan::Read( hsStream *stream )
         uint32_t  count = stream->ReadLE32();
 
         fInstanceRefs = IGetInstanceGroup( fInstanceGroupID, count );
-        fInstanceRefs->Append( this );
-        hsAssert( fInstanceRefs != nil, "Cannot locate fInstanceRefs on plGeometrySpan::Read()" );
+        fInstanceRefs->emplace_back(this);
+        hsAssert(fInstanceRefs != nullptr, "Cannot locate fInstanceRefs on plGeometrySpan::Read()");
     }
 }
 
@@ -613,8 +608,8 @@ void    plGeometrySpan::Write( hsStream *stream )
     stream->WriteLE16(fMaxBoneIdx);
     stream->WriteLE16((uint16_t)fPenBoneIdx);
 
-    stream->WriteLEScalar(fMinDist);
-    stream->WriteLEScalar(fMaxDist);
+    stream->WriteLEFloat(fMinDist);
+    stream->WriteLEFloat(fMaxDist);
 
     stream->WriteByte( fFormat );
     stream->WriteLE32( fProps );
@@ -624,12 +619,12 @@ void    plGeometrySpan::Write( hsStream *stream )
     // FIXME MAJOR VERSION
     // Remove these two lines.
     stream->WriteLE32(0);
-    stream->WriteByte(0);
+    stream->WriteByte(uint8_t(0));
 
     stream->WriteLE32( fDecalLevel );
 
     if( fProps & kWaterHeight )
-        stream->WriteLEScalar(fWaterHeight);
+        stream->WriteLEFloat(fWaterHeight);
 
     if( fNumVerts > 0 )
     {
@@ -654,10 +649,10 @@ void    plGeometrySpan::Write( hsStream *stream )
     // Write the groupID as well as the count for instanceRefs. This way
     stream->WriteLE32( fInstanceGroupID );
     if( fInstanceGroupID != kNoGroupID )
-        stream->WriteLE32( fInstanceRefs->GetCount() );
+        stream->WriteLE32((uint32_t)fInstanceRefs->size());
     else
     {
-        hsAssert( fInstanceRefs == nil, "Nil instanceRefs array but no group ID, non sequitur" );
+        hsAssert(fInstanceRefs == nullptr, "Nil instanceRefs array but no group ID, non sequitur");
     }
 }
 
@@ -710,31 +705,31 @@ uint16_t  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, hsCol
 {
     AddVertex( position, normal, 0, 0, uvPtrArray, weight1, weight2, weight3, indices );
 
-    int idx = fVertAccum.GetCount() - 1;
+    size_t idx = fVertAccum.size() - 1;
 
     TempVertex& vert = fVertAccum[idx];
     vert.fMultColor = multColor;
     vert.fAddColor = addColor;
     
 
-    return idx;
+    return uint16_t(idx);
 }
 
 uint16_t  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, uint32_t hexColor, uint32_t specularColor, 
                                     hsPoint3 **uvPtrArray, float weight1, float weight2, float weight3, uint32_t indices )
 {
     TempVertex      vert;
-    int             i, numWeights;
+    int             i;
 
 
     hsAssert( fCreating, "Calling AddVertex() on a non-creating plGeometrySpan!" );
 
     // UV channels
-    if( uvPtrArray != nil )
+    if (uvPtrArray != nullptr)
     {
         for( i = 0; i < kMaxNumUVChannels; i++ )
         {
-            if( uvPtrArray[ i ] == nil )
+            if (uvPtrArray[i] == nullptr)
                 break;
             vert.fUVs[ i ] = *(uvPtrArray[ i ]);
         }
@@ -746,26 +741,22 @@ uint16_t  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, uint3
     switch( fFormat & kSkinWeightMask )
     {
     case kSkin3Weights:
-        numWeights = 3;
         vert.fWeights[ 0 ] = weight1;
         vert.fWeights[ 1 ] = weight2;
         vert.fWeights[ 2 ] = weight3;
         vert.fIndices = indices;
         break;
     case kSkin2Weights:
-        numWeights = 2;
         vert.fWeights[ 0 ] = weight1;
         vert.fWeights[ 1 ] = weight2;
         vert.fIndices = indices;
         break;
     case kSkin1Weight:
-        numWeights = 1;
         vert.fWeights[ 0 ] = weight1;
         vert.fIndices = indices;
         break;
     default:
     case kSkinNoWeights:
-        numWeights = 0;
         break;
     }
 
@@ -776,8 +767,8 @@ uint16_t  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, uint3
     vert.fMultColor.Set( 1.f, 1.f, 1.f, 1.f );
     vert.fAddColor.Set( 0, 0, 0, 1.f );
 
-    fVertAccum.Append( vert );
-    return fVertAccum.GetCount() - 1;
+    fVertAccum.emplace_back(vert);
+    return uint16_t(fVertAccum.size() - 1);
 }
 
 //// AddIndex Variations //////////////////////////////////////////////////////
@@ -786,35 +777,29 @@ void    plGeometrySpan::AddIndex( uint16_t index )
 {
     hsAssert( fCreating, "Calling AddIndex() on a non-creating plGeometrySpan!" );
 
-    fIndexAccum.Append( index );
+    fIndexAccum.emplace_back(index);
 }
 
 void    plGeometrySpan::AddTriIndices( uint16_t index1, uint16_t index2, uint16_t index3 )
 {
     hsAssert( fCreating, "Calling AddTriIndices() on a non-creating plGeometrySpan!" );
 
-    fIndexAccum.Append( index1 );
-    fIndexAccum.Append( index2 );
-    fIndexAccum.Append( index3 );
+    fIndexAccum.emplace_back(index1);
+    fIndexAccum.emplace_back(index2);
+    fIndexAccum.emplace_back(index3);
 }
 
 //// AddTriangle //////////////////////////////////////////////////////////////
 
 void    plGeometrySpan::AddTriangle( hsPoint3 *vert1, hsPoint3 *vert2, hsPoint3 *vert3, uint32_t color )
 {
-    hsVector3       twoTo1, twoTo3, normal;
-    hsPoint3        normalPt;
-
-
     hsAssert( fCreating, "Calling AddTriangle() on a non-creating plGeometrySpan!" );
 
-    twoTo1.Set( vert1, vert2 );
-    twoTo3.Set( vert3, vert2 );
+    hsVector3 twoTo1(vert1, vert2);
+    hsVector3 twoTo3(vert3, vert2);
 
-    normal = twoTo1 % twoTo3;
-    normalPt.fX = normal.fX;
-    normalPt.fY = normal.fY;
-    normalPt.fZ = normal.fZ;
+    hsVector3 normal = twoTo1 % twoTo3;
+    hsPoint3 normalPt(normal);
 
     AddIndex( AddVertex( vert1, &normalPt, color, 0 ) );
     AddIndex( AddVertex( vert2, &normalPt, color, 0 ) );
@@ -827,19 +812,16 @@ void    plGeometrySpan::AddVertexArray( uint32_t count, hsPoint3 *positions, hsV
 {
     hsAssert( fCreating, "Calling AddTriIndices() on a non-creating plGeometrySpan!" );
 
-
-    uint32_t      i, dest;
-
     // This test actually does work, even if it's bad form...
     hsAssert( GetNumUVs() == uvwsPerVtx, "Calling wrong AddVertex() for plGeometrySpan format" );
 
 
-    dest = fVertAccum.GetCount();
-    fVertAccum.SetCount( dest + count );
-    for( i = 0; i < count; i++, dest++ )
+    size_t dest = fVertAccum.size();
+    fVertAccum.resize(dest + count);
+    for (uint32_t i = 0; i < count; i++, dest++)
     {
         fVertAccum[ dest ].fPosition = positions[ i ];
-        if( normals != nil )
+        if (normals != nullptr)
         {
             // Stupid hsPoint3...I COULD change it, but why?
             fVertAccum[ dest ].fNormal.fX = normals[ i ].fX;
@@ -849,7 +831,7 @@ void    plGeometrySpan::AddVertexArray( uint32_t count, hsPoint3 *positions, hsV
         else
             fVertAccum[ dest ].fNormal.Set( 0, 0, 0 );
 
-        if( colors != nil )
+        if (colors != nullptr)
             fVertAccum[ dest ].fColor = colors[ i ];
         else
             fVertAccum[ dest ].fColor = 0xffffffff;
@@ -870,19 +852,15 @@ void    plGeometrySpan::AddIndexArray( uint32_t count, uint16_t *indices )
 {
     hsAssert( fCreating, "Calling AddTriIndices() on a non-creating plGeometrySpan!" );
 
-
-    uint32_t      i, dest;
-
-
-    dest = fIndexAccum.GetCount();
-    fIndexAccum.SetCount( dest + count );
-    for( i = 0; i < count; i++, dest++ )
+    size_t dest = fIndexAccum.size();
+    fIndexAccum.resize(dest + count);
+    for (uint32_t i = 0; i < count; i++, dest++)
         fIndexAccum[ dest ] = indices[ i ];
 }
 
 //// EndCreate ////////////////////////////////////////////////////////////////
 
-void    plGeometrySpan::EndCreate( void )
+void    plGeometrySpan::EndCreate()
 {
     hsBounds3Ext    bounds;
     uint32_t          i, size;
@@ -892,17 +870,17 @@ void    plGeometrySpan::EndCreate( void )
     hsAssert( fCreating, "Calling EndCreate() on a non-creating plGeometrySpan!" );
 
     /// If we're empty, just clean up and return
-    if( fVertAccum.GetCount() <= 0 )
+    if (fVertAccum.empty())
     {
         delete [] fVertexData;
-        fVertexData = nil;
+        fVertexData = nullptr;
         fNumVerts = 0;
 
         delete [] fIndexData;
-        fIndexData = nil;
+        fIndexData = nullptr;
         fNumIndices = 0;
-        fVertAccum.Reset();
-        fIndexAccum.Reset();
+        fVertAccum.clear();
+        fIndexAccum.clear();
 
         fCreating = false;
         return;
@@ -912,12 +890,12 @@ void    plGeometrySpan::EndCreate( void )
     bounds.MakeEmpty();
     size = GetVertexSize( fFormat );
 
-    if( fVertexData == nil || fNumVerts < fVertAccum.GetCount() )
+    if (fVertexData == nullptr || fNumVerts < fVertAccum.size())
     {
-        if( fVertexData != nil )
+        if (fVertexData != nullptr)
             delete [] fVertexData;
 
-        fNumVerts = fVertAccum.GetCount();
+        fNumVerts = fVertAccum.size();
         fVertexData = new uint8_t[ size * fNumVerts ];
 
         delete [] fMultColor;
@@ -932,7 +910,7 @@ void    plGeometrySpan::EndCreate( void )
         fSpecularRGBA = new uint32_t[ fNumVerts ];
     }
     else
-        fNumVerts = fVertAccum.GetCount();
+        fNumVerts = fVertAccum.size();
 
     for( i = 0, tempPtr = fVertexData; i < fNumVerts; i++ )
     {
@@ -988,29 +966,29 @@ void    plGeometrySpan::EndCreate( void )
     fWorldBounds.Transform(&fLocalToWorld);
 
     /// Convert indices
-    if( fIndexAccum.GetCount() == 0 )       // Allowed for patches
+    if (fIndexAccum.empty())       // Allowed for patches
     {
         delete [] fIndexData;
-        fIndexData = nil;
+        fIndexData = nullptr;
         fNumIndices = 0;
     }
-    else if( fIndexData == nil || fNumIndices < fIndexAccum.GetCount() )
+    else if (fIndexData == nullptr || fNumIndices < fIndexAccum.size())
     {
-        if( fIndexData != nil )
+        if (fIndexData != nullptr)
             delete [] fIndexData;
 
-        fNumIndices = fIndexAccum.GetCount();
+        fNumIndices = fIndexAccum.size();
         fIndexData = new uint16_t[ fNumIndices ];
     }
     else
-        fNumIndices = fIndexAccum.GetCount();
+        fNumIndices = fIndexAccum.size();
 
     for( i = 0; i < fNumIndices; i++ )
         fIndexData[ i ] = fIndexAccum[ i ];
 
     /// Cleanup
-    fVertAccum.Reset();
-    fIndexAccum.Reset();
+    fVertAccum.clear();
+    fIndexAccum.clear();
     fCreating = false;
 }
 
@@ -1055,7 +1033,7 @@ void    plGeometrySpan::ExtractVertex( uint32_t index, hsPoint3 *pos, hsVector3 
     color->g = ( ( hex >>  8 ) & 0xff ) / 255.0f;
     color->b = ( ( hex >>  0 ) & 0xff ) / 255.0f;
 
-    if( specColor != nil )
+    if (specColor != nullptr)
     {
         specColor->a = ( ( spec >> 24 ) & 0xff ) / 255.0f;
         specColor->r = ( ( spec >> 16 ) & 0xff ) / 255.0f;
@@ -1089,7 +1067,7 @@ void    plGeometrySpan::ExtractVertex( uint32_t index, hsPoint3 *pos, hsVector3 
 
     /// Diffuse color
     *color = fDiffuseRGBA[ index ];
-    if( specColor != nil )
+    if (specColor != nullptr)
         *specColor = fSpecularRGBA[ index ];
 }
 
@@ -1198,7 +1176,7 @@ void    plGeometrySpan::StuffVertex( uint32_t index, hsColorRGBA *color, hsColor
     
     fDiffuseRGBA[ index ] = ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b );
 
-    if( specColor != nil )
+    if (specColor != nullptr)
     {
         a = (uint8_t)( specColor->a >= 1 ? 255 : specColor->a <= 0 ? 0 : specColor->a * 255.0 );
         r = (uint8_t)( specColor->r >= 1 ? 255 : specColor->r <= 0 ? 0 : specColor->r * 255.0 );

@@ -49,11 +49,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "plProgressMgr.h"
+
 #include "hsTimer.h"
 
+#include "plClientResMgr/plClientResMgr.h"
 #include "plPipeline/plPlates.h"
+
+#include <regex>
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -62,13 +65,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plProgressMgr* plProgressMgr::fManager = nullptr;
 
-#define LOADING_RES_COUNT   32
+std::vector<ST::string> plProgressMgr::fImageRotation;
 
-plString plProgressMgr::fImageRotation[LOADING_RES_COUNT];
-
-const plString plProgressMgr::fStaticTextIDs[] = {
-    "xLoading_Linking_Text.png",
-    "xLoading_Updating_Text.png"
+const ST::string plProgressMgr::fStaticTextIDs[] = {
+    ST_LITERAL("xLoading_Linking_Text.png"),
+    ST_LITERAL("xLoading_Updating_Text.png")
 };
 
 //// Constructor & Destructor ////////////////////////////////////////////////
@@ -80,9 +81,13 @@ plProgressMgr::plProgressMgr()
     fCallbackProc = nullptr;
     fCurrentStaticText = kNone;
 
-    // Fill array with pre-computed loading frame IDs
-    for (int i=0; i < LOADING_RES_COUNT; i++)
-        fImageRotation[i] = plFormat("xLoading_Linking.{_003}.png", i);
+    // Find linking-animation frame IDs and store the sorted list
+    std::regex re("xLoading_Linking\\.[0-9]+?\\.png");
+    for (const auto& name : plClientResMgr::Instance().getResourceNames()) {
+        if (std::regex_match(name.begin(), name.end(), re))
+            fImageRotation.push_back(name);
+    }
+    std::sort(fImageRotation.begin(), fImageRotation.end());
 }
 
 plProgressMgr::~plProgressMgr()
@@ -106,7 +111,7 @@ plOperationProgress* plProgressMgr::RegisterOverallOperation(float length, const
 
 plOperationProgress* plProgressMgr::IRegisterOperation(float length, const char *title, StaticText staticTextType, bool isRetry, bool isOverall, bool alwaysDrawText)
 {
-    if (fOperations == nil)
+    if (fOperations == nullptr)
     {
         fCurrentStaticText = staticTextType;
         Activate();
@@ -137,7 +142,7 @@ plOperationProgress* plProgressMgr::IRegisterOperation(float length, const char 
 
 void plProgressMgr::IUnregisterOperation(plOperationProgress* op)
 {
-    plOperationProgress* last = nil;
+    plOperationProgress* last = nullptr;
     plOperationProgress* cur = fOperations;
 
     while (cur)
@@ -159,7 +164,7 @@ void plProgressMgr::IUnregisterOperation(plOperationProgress* op)
         cur = cur->fNext;
     }
 
-    if (fOperations == nil)
+    if (fOperations == nullptr)
     {
         fCurrentStaticText = kNone;
         Deactivate();
@@ -193,7 +198,7 @@ void plProgressMgr::IUpdateCallbackProc(plOperationProgress* progress)
 
     // Update everyone who wants to know about progress
     IDerivedCallbackProc(progress);
-    if (fCallbackProc != nil)
+    if (fCallbackProc != nullptr)
         fCallbackProc(progress);
 
     IUpdateFlags(progress);
@@ -217,20 +222,20 @@ plProgressMgrCallbackProc plProgressMgr::SetCallbackProc( plProgressMgrCallbackP
 
 //// CancelAllOps ////////////////////////////////////////////////////////////
 
-void    plProgressMgr::CancelAllOps( void )
+void    plProgressMgr::CancelAllOps()
 {
     plOperationProgress *op;
 
 
-    for( op = fOperations; op != nil; op = op->GetNext() )
+    for (op = fOperations; op != nullptr; op = op->GetNext())
         op->SetCancelFlag( true );
 
     fCurrentStaticText = kNone;
 }
 
-const plString plProgressMgr::GetLoadingFrameID(int index)
+const ST::string plProgressMgr::GetLoadingFrameID(uint32_t index)
 {
-    if (index < LOADING_RES_COUNT)
+    if (index < fImageRotation.size())
         return fImageRotation[index];
     else
         return fImageRotation[0];
@@ -238,10 +243,10 @@ const plString plProgressMgr::GetLoadingFrameID(int index)
 
 uint32_t plProgressMgr::NumLoadingFrames() const
 {
-    return LOADING_RES_COUNT;
+    return fImageRotation.size();
 }
 
-const plString plProgressMgr::GetStaticTextID(StaticText staticTextType)
+const ST::string plProgressMgr::GetStaticTextID(StaticText staticTextType)
 {
     return fStaticTextIDs[staticTextType];
 }
@@ -253,15 +258,15 @@ const plString plProgressMgr::GetStaticTextID(StaticText staticTextType)
 
 plOperationProgress::plOperationProgress( float length ) :
     fMax(length),
-    fValue(0),
-    fNext(nil),
-    fBack(nil),
-    fContext(0),
+    fValue(),
+    fNext(),
+    fBack(),
+    fContext(),
     fFlags(kInitUpdate),
     fStartTime(hsTimer::GetSeconds()),
-    fElapsedSecs(0),
-    fRemainingSecs(0),
-    fAmtPerSec(0.f)
+    fElapsedSecs(),
+    fRemainingSecs(),
+    fAmtPerSec()
 {
 }
 

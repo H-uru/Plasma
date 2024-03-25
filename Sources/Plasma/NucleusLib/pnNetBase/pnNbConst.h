@@ -53,6 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Network constants
 //============================================================================
 const unsigned kMaxTcpPacketSize                = 1460;
+const unsigned kNetDefaultStringSize            = 260;
 
 //============================================================================
 // Crypto constants
@@ -80,6 +81,7 @@ const unsigned kMaxPublisherAuthKeyLength       = 64;
 const unsigned kMaxGTOSIdLength                 = 8;
 const unsigned kMaxGameScoreNameLength          = 64;
 const unsigned kMaxEmailAddressLength           = 64;
+const unsigned kMaxTracebackLength              = 1024;
 
 /*****************************************************************************
 *
@@ -140,5 +142,22 @@ enum EScoreTimePeriods {
     kScoreTimePeriodMonth,
     kScoreTimePeriodDay
 };
+
+/*****************************************************************************
+*
+*   Server Capabilities
+*
+***/
+
+enum EServerCaps {
+    kCapsScoreLeaderBoards = 0,
+    kCapsGameMgrBlueSpiral,
+    kCapsGameMgrClimbingWall,
+    kCapsGameMgrHeek,
+    kCapsGameMgrMarker,
+    kCapsGameMgrTTT,
+    kCapsGameMgrVarSync,
+};
+
 
 #endif //pnNbConst_inc

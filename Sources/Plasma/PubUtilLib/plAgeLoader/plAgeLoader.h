@@ -44,14 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include "pnUtils/pnUtils.h"
-#include "pnNetBase/pnNetBase.h"
-#include "pnKeyedObject/hsKeyedObject.h"
-#include "pnKeyedObject/plKey.h"
+#include <memory>
 
+#include "pnKeyedObject/hsKeyedObject.h"
 #include "plAgeDescription/plAgeDescription.h"
 
-#include "pnUUID/pnUUID.h"
 
 //
 // A singleton class which manages loading and unloading ages and operations associated with that
@@ -86,9 +83,9 @@ private:
     plKeyVec    fPendingPageOuts;   // keys of rooms which are currently being paged out.
     plAgeDescription    fCurAgeDescription;
     plStateDataRecord* fInitialAgeState;
-    plString fAgeName;
+    ST::string fAgeName;
 
-    bool ILoadAge(const plString& ageName);
+    bool ILoadAge(const ST::string& ageName);
     bool IUnloadAge();
     void ISetInitialAgeState(plStateDataRecord* s);     // sent from server with joinAck
     const plStateDataRecord* IGetInitialAgeState() const { return fInitialAgeState; }
@@ -102,14 +99,14 @@ public:
 
     static plAgeLoader* GetInstance();
     static void SetInstance(plAgeLoader* inst);
-    static hsStream* GetAgeDescFileStream(const plString& ageName);
+    static std::unique_ptr<hsStream> GetAgeDescFileStream(const ST::string& ageName);
 
     void Init();
     void Shutdown();
-    bool MsgReceive(plMessage* msg);
-    bool LoadAge(const plString& ageName);
+    bool MsgReceive(plMessage* msg) override;
+    bool LoadAge(const ST::string& ageName);
     bool UnloadAge()                              { return IUnloadAge(); }
-    void UpdateAge(const plString& ageName);
+    void UpdateAge(const ST::string& ageName);
     void NotifyAgeLoaded( bool loaded );
 
     const plKeyVec& PendingPageOuts() const { return fPendingPageOuts; }
@@ -118,18 +115,18 @@ public:
     const plFileNameVec& PendingAgeFniFiles() const { return fPendingAgeFniFiles; }
 
     void AddPendingPageInRoomKey(plKey r);
-    bool RemovePendingPageInRoomKey(plKey r);
-    bool IsPendingPageInRoomKey(plKey p, int* idx=nil);
+    bool RemovePendingPageInRoomKey(const plKey& r);
+    bool IsPendingPageInRoomKey(const plKey& p, int* idx=nullptr);
 
     void ExecPendingAgeFniFiles();
     void ExecPendingAgeCsvFiles();
 
     // Fun debugging exclude commands (to prevent certain pages from loading)
-    void    ClearPageExcludeList( void );
-    void    AddExcludedPage( const plString& pageName, const plString& ageName = "" );
-    bool    IsPageExcluded( const plAgePage *page, const plString& ageName = "" );
+    void    ClearPageExcludeList();
+    void    AddExcludedPage(const ST::string& pageName, const ST::string& ageName = {});
+    bool    IsPageExcluded(const plAgePage *page, const ST::string& ageName = {});
 
-    const plAgeDescription  &GetCurrAgeDesc( void ) const { return fCurAgeDescription; }
+    const plAgeDescription  &GetCurrAgeDesc() const { return fCurAgeDescription; }
 
     // paging
     void FinishedPagingInRoom(plKey* rmKey, int numRms);    // call when finished paging in/out a room      

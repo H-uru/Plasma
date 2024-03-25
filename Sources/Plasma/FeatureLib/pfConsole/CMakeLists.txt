@@ -1,15 +1,6 @@
-include_directories(../../CoreLib)
-include_directories(../../FeatureLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-
-include_directories(${OPENAL_INCLUDE_DIR})
-include_directories(${PYTHON_INCLUDE_DIR})
-
 set(pfConsole_SOURCES
+    pfAudioConsoleCommands.cpp
     pfAvatarConsoleCommands.cpp
-    pfCCRConsoleCommands.cpp
     pfConsole.cpp
     pfConsoleCommands.cpp
     pfConsoleCommandsNet.cpp
@@ -25,7 +16,63 @@ set(pfConsole_HEADERS
     pfDispatchLog.h
 )
 
-add_library(pfConsole STATIC ${pfConsole_SOURCES} ${pfConsole_HEADERS})
+plasma_library(pfConsole
+    SOURCES ${pfConsole_SOURCES} ${pfConsole_HEADERS}
+    PRECOMPILED_HEADERS Pch.h
+)
+target_link_libraries(
+    pfConsole
+    PUBLIC
+        CoreLib
+        pnDispatch
+        pnKeyedObject
+        pfConsoleCore
+    PRIVATE
+        pnInputCore
+        pnMessage
+        pnNetCommon
+        pnNucleusInc
+        pnSceneObject
+        pnUUID
+        plAgeDescription
+        plAgeLoader
+        plAnimation
+        plAudio
+        plAvatar
+        plClipboard
+        plDrawable
+        plGImage
+        plGLight
+        plInputCore
+        plNetClient
+        plNetCommon
+        plNetGameLib
+        plNetMessage
+        plMessage
+        plMessageBox
+        plModifier
+        plParticleSystem
+        plPhysical
+        plPhysX
+        plPipeline
+        pfPython
+        plResMgr
+        plScene
+        plSDL
+        plStatGather
+        plStatusLog
+        plSurface
+        plUnifiedTime
+        plVault
+        pfAudio
+        pfAnimation
+        pfCamera
+        pfMessage
+        pfPython
+        pfSurface
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${pfConsole_SOURCES})
 source_group("Header Files" FILES ${pfConsole_HEADERS})

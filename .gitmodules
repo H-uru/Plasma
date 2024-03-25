@@ -1,0 +1,9 @@
+[submodule "gtest"]
+	path = Sources/Tests/gtest
+	url = https://github.com/google/googletest.git
+	branch = release-1.11.0
+	shallow = true
+
+[submodule "vcpkg"]
+	path = vcpkg
+	url = https://github.com/microsoft/vcpkg.git

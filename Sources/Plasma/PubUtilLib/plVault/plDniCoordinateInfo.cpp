@@ -46,10 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "Pch.h"
-#pragma hdrstop
 
 
-#ifdef CLIENT
 ///////////////////////////////////////////////////////////////////
 
 const uint8_t plDniCoordinateInfo::StreamVersion = 1;
@@ -66,34 +64,32 @@ void plDniCoordinateInfo::CopyFrom( const plDniCoordinateInfo * other )
 {
     hsRAMStream stream;
     plCreatable * otherNonConst = const_cast<plDniCoordinateInfo*>( other );    // because plCreatable Write isn't const, but should be.
-    otherNonConst->Write( &stream, nil );
+    otherNonConst->Write(&stream, nullptr);
     stream.Rewind();
-    Read( &stream, nil );
+    Read(&stream, nullptr);
 }
 
 void plDniCoordinateInfo::Read( hsStream* s, hsResMgr* mgr )
 {
-    uint8_t streamVer;
-    s->ReadLE( &streamVer );
+    uint8_t streamVer = s->ReadByte();
     if ( streamVer==StreamVersion )
     {
-        s->ReadLE( &fHSpans );
-        s->ReadLE( &fVSpans );
-        s->ReadLE( &fTorans );
+        s->ReadLE32(&fHSpans);
+        s->ReadLE32(&fVSpans);
+        s->ReadLE32(&fTorans);
     }
 }
 
 void plDniCoordinateInfo::Write( hsStream* s, hsResMgr* mgr )
 {
-    s->WriteLE( StreamVersion );
-    s->WriteLE( fHSpans );
-    s->WriteLE( fVSpans );
-    s->WriteLE( fTorans );
+    s->WriteByte(StreamVersion);
+    s->WriteLE32(fHSpans);
+    s->WriteLE32(fVSpans);
+    s->WriteLE32(fTorans);
 }
 
-plString plDniCoordinateInfo::AsString( int level ) const
+ST::string plDniCoordinateInfo::AsString( int level ) const
 {
-    plString space = plString::Fill( level, ' ' );
-    return plFormat("{}DniCoords[{},{},{}]", space, fHSpans, fVSpans, fTorans);
+    ST::string space = ST::string::fill( level, ' ' );
+    return ST::format("{}DniCoords[{},{},{}]", space, fHSpans, fVSpans, fTorans);
 }
-#endif // def CLIENT

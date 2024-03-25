@@ -57,29 +57,28 @@ plGeoSpanDice::~plGeoSpanDice()
 {
 }
 
-bool plGeoSpanDice::Dice(hsTArray<plGeometrySpan*>& spans) const
+bool plGeoSpanDice::Dice(std::vector<plGeometrySpan*>& spans) const
 {
-    int startingCount = spans.GetCount();
+    size_t startingCount = spans.size();
 
-    hsTArray<plGeometrySpan*> out;
-    hsTArray<plGeometrySpan*> next;
+    std::vector<plGeometrySpan*> out;
+    std::vector<plGeometrySpan*> next;
 
-    while(spans.GetCount())
+    while (!spans.empty())
     {
-        int i;
-        for( i = 0; i < spans.GetCount(); i++ )
+        for (plGeometrySpan* span : spans)
         {
-            if( !IHalf(spans[i], next) )
+            if (!IHalf(span, next))
             {
-                out.Append(spans[i]);
+                out.emplace_back(span);
             }
         }
-        spans.Swap(next);
-        next.SetCount(0);
+        spans.swap(next);
+        next.clear();
     }
-    spans.Swap(out);
+    spans.swap(out);
 
-    return spans.GetCount() != startingCount;
+    return spans.size() != startingCount;
 }
 
 bool plGeoSpanDice::INeedSplitting(plGeometrySpan* src) const
@@ -111,7 +110,7 @@ bool plGeoSpanDice::INeedSplitting(plGeometrySpan* src) const
     return false;
 }
 
-bool plGeoSpanDice::IHalf(plGeometrySpan* src, hsTArray<plGeometrySpan*>& out, int exclAxis) const
+bool plGeoSpanDice::IHalf(plGeometrySpan* src, std::vector<plGeometrySpan*>& out, int exclAxis) const
 {
     if( !INeedSplitting(src) )
         return false;
@@ -123,8 +122,8 @@ bool plGeoSpanDice::IHalf(plGeometrySpan* src, hsTArray<plGeometrySpan*>& out, i
 
     float midPoint = src->fLocalBounds.GetCenter()[iAxis];
 
-    hsTArray<uint32_t>        loTris;
-    hsTArray<uint32_t>        hiTris;
+    std::vector<uint32_t>     loTris;
+    std::vector<uint32_t>     hiTris;
 
     uint16_t* indexData = src->fIndexData;
 
@@ -143,16 +142,16 @@ bool plGeoSpanDice::IHalf(plGeometrySpan* src, hsTArray<plGeometrySpan*>& out, i
             &&(pos1[iAxis] >= midPoint)
             &&(pos2[iAxis] >= midPoint) )
         {
-            hiTris.Append(i);
+            hiTris.emplace_back(i);
         }
         else
         {
-            loTris.Append(i);
+            loTris.emplace_back(i);
         }
     }
 
     // This axis isn't working out, try another.
-    if( !hiTris.GetCount() || !loTris.GetCount() )
+    if (hiTris.empty() || loTris.empty())
         return IHalf(src, out, exclAxis | (1 << iAxis));
 
 
@@ -161,8 +160,8 @@ bool plGeoSpanDice::IHalf(plGeometrySpan* src, hsTArray<plGeometrySpan*>& out, i
 
     delete src;
 
-    out.Append(loDst);
-    out.Append(hiDst);
+    out.emplace_back(loDst);
+    out.emplace_back(hiDst);
 
     return true;
 }
@@ -189,57 +188,53 @@ int plGeoSpanDice::ISelectAxis(int exclAxis, plGeometrySpan* src) const
     return iAxis;
 }
 
-plGeometrySpan* plGeoSpanDice::IExtractTris(plGeometrySpan* src, hsTArray<uint32_t>& tris) const
+plGeometrySpan* plGeoSpanDice::IExtractTris(plGeometrySpan* src, std::vector<uint32_t>& tris) const
 {
     // First off, find out how many and which vers we're talking here.
     // Easiest way is while we're building the LUTs we'll want later anyway.
-    hsTArray<int16_t> fwdLUT;
-    fwdLUT.SetCount(src->fNumVerts);
-    memset(fwdLUT.AcquireArray(), -1, src->fNumVerts * sizeof(*fwdLUT.AcquireArray()));
+    std::vector<int16_t> fwdLUT(src->fNumVerts, -1);
 
-    hsTArray<uint16_t>    bckLUT;
-    bckLUT.SetCount(0);
+    std::vector<uint16_t> bckLUT;
 
-    int i;
-    for( i = 0; i < tris.GetCount(); i++ )
+    for (uint32_t tri : tris)
     {
-        uint16_t* idx = src->fIndexData + tris[i] * 3;
+        uint16_t* idx = src->fIndexData + tri * 3;
         
         if( fwdLUT[*idx] < 0 )
         {
-            fwdLUT[*idx] = bckLUT.GetCount();
-            bckLUT.Append(*idx);
+            fwdLUT[*idx] = (int16_t)bckLUT.size();
+            bckLUT.emplace_back(*idx);
         }
 
         idx++;
 
         if( fwdLUT[*idx] < 0 )
         {
-            fwdLUT[*idx] = bckLUT.GetCount();
-            bckLUT.Append(*idx);
+            fwdLUT[*idx] = (int16_t)bckLUT.size();
+            bckLUT.emplace_back(*idx);
         }
 
         idx++;
 
         if( fwdLUT[*idx] < 0 )
         {
-            fwdLUT[*idx] = bckLUT.GetCount();
-            bckLUT.Append(*idx);
+            fwdLUT[*idx] = (int16_t)bckLUT.size();
+            bckLUT.emplace_back(*idx);
         }
     }
 
-    int numVerts = bckLUT.GetCount();
-    int numTris = tris.GetCount();
+    int numVerts = (int)bckLUT.size();
+    int numTris = (int)tris.size();
 
     plGeometrySpan* dst = IAllocSpace(src, numVerts, numTris);
 
     // Okay, set the index data.
     uint16_t* idxTrav = dst->fIndexData;
-    for( i = 0; i < tris.GetCount(); i++ )
+    for (uint32_t tri : tris)
     {
-        *idxTrav++ = fwdLUT[src->fIndexData[ tris[i] * 3 + 0] ];
-        *idxTrav++ = fwdLUT[src->fIndexData[ tris[i] * 3 + 1] ];
-        *idxTrav++ = fwdLUT[src->fIndexData[ tris[i] * 3 + 2] ];
+        *idxTrav++ = fwdLUT[src->fIndexData[tri * 3 + 0]];
+        *idxTrav++ = fwdLUT[src->fIndexData[tri * 3 + 1]];
+        *idxTrav++ = fwdLUT[src->fIndexData[tri * 3 + 2]];
     }
 
     // Copy over the basic vertex data
@@ -249,7 +244,7 @@ plGeometrySpan* plGeoSpanDice::IExtractTris(plGeometrySpan* src, hsTArray<uint32
     hsBounds3Ext localBnd;
     localBnd.MakeEmpty();
     uint8_t* vtxTrav = dst->fVertexData;
-    for( i = 0; i < numVerts; i++ )
+    for (int i = 0; i < numVerts; i++)
     {
         memcpy(vtxTrav, src->fVertexData + bckLUT[i] * stride, stride);     
 
@@ -266,28 +261,28 @@ plGeometrySpan* plGeoSpanDice::IExtractTris(plGeometrySpan* src, hsTArray<uint32
     // Now the rest of this optional garbage.
     if( src->fMultColor )
     {
-        for( i = 0; i < numVerts; i++ )
+        for (int i = 0; i < numVerts; i++)
         {
             dst->fMultColor[i] = src->fMultColor[bckLUT[i]];
         }
     }
     if( src->fAddColor )
     {
-        for( i = 0; i < numVerts; i++ )
+        for (int i = 0; i < numVerts; i++)
         {
             dst->fAddColor[i] = src->fAddColor[bckLUT[i]];
         }
     }
     if( src->fDiffuseRGBA )
     {
-        for( i = 0; i < numVerts; i++ )
+        for (int i = 0; i < numVerts; i++)
         {
             dst->fDiffuseRGBA[i] = src->fDiffuseRGBA[bckLUT[i]];
         }
     }
     if( src->fSpecularRGBA )
     {
-        for( i = 0; i < numVerts; i++ )
+        for (int i = 0; i < numVerts; i++)
         {
             dst->fSpecularRGBA[i] = src->fSpecularRGBA[bckLUT[i]];
         }

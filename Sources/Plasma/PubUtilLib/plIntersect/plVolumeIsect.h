@@ -45,8 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
-#include "hsTemplates.h"
 #include "hsBounds.h"
+#include <vector>
 
 #include "pnFactory/plCreatable.h"
 
@@ -70,8 +70,8 @@ public:
     virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const = 0;    
     virtual float            Test(const hsPoint3& pos) const = 0;
 
-    virtual void Read(hsStream* s, hsResMgr* mgr) = 0;
-    virtual void Write(hsStream* s, hsResMgr* mgr) = 0;
+    void Read(hsStream* s, hsResMgr* mgr) override = 0;
+    void Write(hsStream* s, hsResMgr* mgr) override = 0;
 };
 
 class plSphereIsect : public plVolumeIsect
@@ -79,12 +79,11 @@ class plSphereIsect : public plVolumeIsect
 protected:
     hsPoint3            fCenter;
     hsPoint3            fWorldCenter;
-    float            fRadius;
+    float               fRadius;
     hsPoint3            fMins;
     hsPoint3            fMaxs;
 public:
     plSphereIsect();
-    virtual ~plSphereIsect();
 
     CLASSNAME_REGISTER( plSphereIsect );
     GETINTERFACE_ANY( plSphereIsect, plVolumeIsect );
@@ -94,13 +93,13 @@ public:
 
     float GetRadius() const { return fRadius; }
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
-    virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;    
-    virtual float            Test(const hsPoint3& pos) const; // return 0 if point inside, else "distance" from pos to volume
+    plVolumeCullResult  Test(const hsBounds3Ext& bnd) const override;
+    float            Test(const hsPoint3& pos) const override; // return 0 if point inside, else "distance" from pos to volume
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 class plConeIsect : public plVolumeIsect
@@ -124,7 +123,6 @@ protected:
 public:
 
     plConeIsect();
-    virtual ~plConeIsect();
 
     CLASSNAME_REGISTER( plConeIsect );
     GETINTERFACE_ANY( plConeIsect, plVolumeIsect );
@@ -135,13 +133,13 @@ public:
     float GetLength() const { return fCapped ? fLength : 0; }
     float GetAngle() const { return fRadAngle; }
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
-    virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;
-    virtual float            Test(const hsPoint3& pos) const;
+    plVolumeCullResult  Test(const hsBounds3Ext& bnd) const override;
+    float            Test(const hsPoint3& pos) const override;
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 class plCylinderIsect : public plVolumeIsect
@@ -160,8 +158,7 @@ protected:
     void ISetupCyl(const hsPoint3& wTop, const hsPoint3& wBot, float radius);
 
 public:
-    plCylinderIsect();
-    virtual ~plCylinderIsect();
+    plCylinderIsect() : fRadius(), fLength(), fMin(), fMax() { }
 
     CLASSNAME_REGISTER( plCylinderIsect );
     GETINTERFACE_ANY( plCylinderIsect, plVolumeIsect );
@@ -169,57 +166,54 @@ public:
     void SetCylinder(const hsPoint3& lTop, const hsPoint3& lBot, float radius);
     void SetCylinder(const hsPoint3& lBot, const hsVector3& axis, float radius);
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
-    virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;
-    virtual float            Test(const hsPoint3& pos) const;
+    plVolumeCullResult  Test(const hsBounds3Ext& bnd) const override;
+    float            Test(const hsPoint3& pos) const override;
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 class plParallelIsect : public plVolumeIsect
 {
 protected:
-    class ParPlane
+    struct ParPlane
     {
-    public:
         hsVector3           fNorm;
-        float            fMin;
-        float            fMax;
+        float               fMin;
+        float               fMax;
 
         hsPoint3            fPosOne;
         hsPoint3            fPosTwo;
     };
-    hsTArray<ParPlane>      fPlanes;
+    std::vector<ParPlane> fPlanes;
 
 public:
-    plParallelIsect();
-    virtual ~plParallelIsect();
+    plParallelIsect() { }
 
     CLASSNAME_REGISTER( plParallelIsect );
     GETINTERFACE_ANY( plParallelIsect, plVolumeIsect );
 
-    void SetNumPlanes(int n); // each plane is really two parallel planes
-    uint16_t GetNumPlanes() const { return fPlanes.GetCount(); }
+    void SetNumPlanes(size_t n); // each plane is really two parallel planes
+    size_t GetNumPlanes() const { return fPlanes.size(); }
 
-    void SetPlane(int which, const hsPoint3& locPosOne, const hsPoint3& locPosTwo);
+    void SetPlane(size_t which, const hsPoint3& locPosOne, const hsPoint3& locPosTwo);
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
-    virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;
-    virtual float            Test(const hsPoint3& pos) const;
+    plVolumeCullResult  Test(const hsBounds3Ext& bnd) const override;
+    float            Test(const hsPoint3& pos) const override;
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 class plConvexIsect : public plVolumeIsect
 {
 protected:
-    class SinglePlane
+    struct SinglePlane
     {
-    public:
         hsVector3       fNorm;
         float        fDist;
         hsPoint3        fPos;
@@ -227,28 +221,26 @@ protected:
         hsVector3       fWorldNorm;
         float        fWorldDist;
     };
-
-    hsTArray<SinglePlane>   fPlanes;
+    std::vector<SinglePlane>   fPlanes;
 
 public:
-    plConvexIsect();
-    virtual ~plConvexIsect();
+    plConvexIsect() { }
 
     CLASSNAME_REGISTER( plConvexIsect );
     GETINTERFACE_ANY( plConvexIsect, plVolumeIsect );
 
-    void ClearPlanes() { fPlanes.SetCount(0); }
+    void ClearPlanes() { fPlanes.clear(); }
     void AddPlaneUnchecked(const hsVector3& n, float dist); // no validation here
     void AddPlane(const hsVector3& n, const hsPoint3& p);
-    uint16_t GetNumPlanes() const { return fPlanes.GetCount(); }
+    size_t GetNumPlanes() const { return fPlanes.size(); }
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
-    virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;
-    virtual float            Test(const hsPoint3& pos) const;
+    plVolumeCullResult  Test(const hsBounds3Ext& bnd) const override;
+    float            Test(const hsPoint3& pos) const override;
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 class plBoundsIsect : public plVolumeIsect
@@ -257,68 +249,62 @@ protected:
     hsBounds3Ext        fLocalBounds;
     hsBounds3Ext        fWorldBounds;
 public:
-    plBoundsIsect();
-    virtual ~plBoundsIsect();
+    plBoundsIsect() { }
 
     CLASSNAME_REGISTER( plBoundsIsect );
     GETINTERFACE_ANY( plBoundsIsect, plVolumeIsect );
 
     void SetBounds(const hsBounds3Ext& bnd);
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
-    virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;
-    virtual float            Test(const hsPoint3& pos) const;
+    plVolumeCullResult  Test(const hsBounds3Ext& bnd) const override;
+    float            Test(const hsPoint3& pos) const override;
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 class plComplexIsect : public plVolumeIsect
 {
 protected:
-    hsTArray<plVolumeIsect*>        fVolumes;
+    std::vector<plVolumeIsect*> fVolumes;
 
 public:
-    plComplexIsect();
     virtual ~plComplexIsect();
 
     CLASSNAME_REGISTER( plComplexIsect );
     GETINTERFACE_ANY( plComplexIsect, plVolumeIsect );
 
     void AddVolume(plVolumeIsect* v); // Will capture pointer
-    uint16_t GetNumVolumes() const { return fVolumes.GetCount(); }
+    size_t GetNumVolumes() const { return fVolumes.size(); }
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 class plUnionIsect : public plComplexIsect
 {
 public:
-    plUnionIsect();
-    ~plUnionIsect();
 
     CLASSNAME_REGISTER( plUnionIsect );
     GETINTERFACE_ANY( plUnionIsect, plComplexIsect );
 
-    virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;
-    virtual float            Test(const hsPoint3& pos) const;
+    plVolumeCullResult  Test(const hsBounds3Ext& bnd) const override;
+    float            Test(const hsPoint3& pos) const override;
 };
 
 class plIntersectionIsect : public plComplexIsect
 {
 public:
-    plIntersectionIsect();
-    ~plIntersectionIsect();
 
     CLASSNAME_REGISTER( plIntersectionIsect );
     GETINTERFACE_ANY( plIntersectionIsect, plComplexIsect );
 
-    virtual plVolumeCullResult  Test(const hsBounds3Ext& bnd) const;
-    virtual float            Test(const hsPoint3& pos) const;
+    plVolumeCullResult  Test(const hsBounds3Ext& bnd) const override;
+    float            Test(const hsPoint3& pos) const override;
 };
 
 #endif // plVolumeIsect_inc

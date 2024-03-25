@@ -40,14 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plBlower.h"
+
+#include "HeadSpin.h"
 #include "plgDispatch.h"
 #include "hsFastMath.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnMessage/plTimeMsg.h"
 #include "hsTimer.h"
+
+#include "pnMessage/plTimeMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
 
 plRandom plBlower::fRandom;
 
@@ -70,16 +72,8 @@ plBlower::plBlower()
     fMaxOffsetDist(kInitialMaxOffDist),
     fAccumTime(0)
 {
-    fRestPos.Set(0,0,0);
-    fLocalRestPos.Set(0,0,0);
-    fCurrDel.Set(0,0,0);
-
     fDirection.Set(fRandom.RandMinusOneToOne(), fRandom.RandMinusOneToOne(), 0);
     hsFastMath::NormalizeAppr(fDirection);
-}
-
-plBlower::~plBlower()
-{
 }
 
 void plBlower::IBlow(double secs, float delSecs)
@@ -96,15 +90,14 @@ void plBlower::IBlow(double secs, float delSecs)
     float t = (fAccumTime += delSecs);
 
     float strength = 0;
-    int i;
-    for( i = 0; i < fOscillators.GetCount(); i++ )
+    for (const Oscillator& osc : fOscillators)
     {
         float c, s;
-        t *= fOscillators[i].fFrequency * fMasterFrequency;
-        t += fOscillators[i].fPhase;
+        t *= osc.fFrequency * fMasterFrequency;
+        t += osc.fPhase;
         hsFastMath::SinCosAppr(t, s, c);
         c += fBias;
-        strength += c * fOscillators[i].fPower;
+        strength += c * osc.fPower;
     }
     strength *= fMasterPower;
 
@@ -137,8 +130,7 @@ void plBlower::IBlow(double secs, float delSecs)
     const float kOffsetDistDecay = 0.999f;
     fMaxOffsetDist *= kOffsetDistDecay;
 
-    hsVector3 accel = force;
-    accel += fSpringKonst * hsVector3(&fLocalRestPos, &localPos);
+    hsVector3 accel = force + (fSpringKonst * hsVector3(&fLocalRestPos, &localPos));
 
     hsVector3 del = accel * (delSecs * delSecs);
 
@@ -194,32 +186,31 @@ void plBlower::Read(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Read(s, mgr);
 
-    fMasterPower = s->ReadLEScalar();
-    fDirectRate = s->ReadLEScalar();
-    fImpulseRate = s->ReadLEScalar();
-    fSpringKonst = s->ReadLEScalar();
+    fMasterPower = s->ReadLEFloat();
+    fDirectRate = s->ReadLEFloat();
+    fImpulseRate = s->ReadLEFloat();
+    fSpringKonst = s->ReadLEFloat();
 }
 
 void plBlower::Write(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Write(s, mgr);
 
-    s->WriteLEScalar(fMasterPower);
-    s->WriteLEScalar(fDirectRate);
-    s->WriteLEScalar(fImpulseRate);
-    s->WriteLEScalar(fSpringKonst);
+    s->WriteLEFloat(fMasterPower);
+    s->WriteLEFloat(fDirectRate);
+    s->WriteLEFloat(fImpulseRate);
+    s->WriteLEFloat(fSpringKonst);
 }
 
 void plBlower::IInitOscillators()
 {
     const float kBasePower = 5.f;
-    fOscillators.SetCount(5);
-    int i;
-    for( i = 0; i < fOscillators.GetCount(); i++ )
+    fOscillators.resize(5);
+    for (size_t i = 0; i < fOscillators.size(); i++)
     {
         float fi = float(i+1);
-        fOscillators[i].fFrequency = fi / M_PI * fRandom.RandRangeF(0.75f, 1.25f);
-//      fOscillators[i].fFrequency = 1.f / M_PI * fRandom.RandRangeF(0.5f, 1.5f);
+        fOscillators[i].fFrequency = fi / hsConstants::pi<float> * fRandom.RandRangeF(0.75f, 1.25f);
+//      fOscillators[i].fFrequency = 1.f / hsConstants::pi<float> * fRandom.RandRangeF(0.5f, 1.5f);
         fOscillators[i].fPhase = fRandom.RandZeroToOne();
         fOscillators[i].fPower = kBasePower * fRandom.RandRangeF(0.75f, 1.25f);
     }

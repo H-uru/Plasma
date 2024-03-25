@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSpawnPointInfo_h_inc
 #define plSpawnPointInfo_h_inc
 
-#include "plString.h"
+#include <string_theory/string>
 
 ///////////////////////////////////////////////////////////////////
 
@@ -55,24 +55,27 @@ class hsStream;
 
 struct plSpawnPointInfo
 {
-    plString fTitle;         // friendly title for GUIs
-    plString fSpawnPt;       // name of spawn point in dataset
-    plString fCameraStack;
+    ST::string fTitle;         // friendly title for GUIs
+    ST::string fSpawnPt;       // name of spawn point in dataset
+    ST::string fCameraStack;
     plSpawnPointInfo(){}
-    plSpawnPointInfo( const plSpawnPointInfo & other ) { (*this)=other; }
-    plSpawnPointInfo( const plString & title, const plString & spawnPt )
+    plSpawnPointInfo(const plSpawnPointInfo & other) = default;
+    plSpawnPointInfo(plSpawnPointInfo&& other) = default;
+    plSpawnPointInfo( const ST::string & title, const ST::string & spawnPt )
         : fTitle( title ), fSpawnPt( spawnPt ) {}
-    plString GetTitle() const { return fTitle; }
-    void    SetTitle( const plString & v ) { fTitle=v; }
-    plString GetName() const { return fSpawnPt; }
-    void    SetName( const plString & v ) { fSpawnPt = v; }
-    plString GetCameraStack() const { return fCameraStack; }
-    void    SetCameraStack( const plString & v ) { fCameraStack=v; }
+    plSpawnPointInfo& operator=(const plSpawnPointInfo&) = default;
+    plSpawnPointInfo& operator=(plSpawnPointInfo&&) = default;
+    ST::string GetTitle() const { return fTitle; }
+    void    SetTitle( const ST::string & v ) { fTitle=v; }
+    ST::string GetName() const { return fSpawnPt; }
+    void    SetName( const ST::string & v ) { fSpawnPt = v; }
+    ST::string GetCameraStack() const { return fCameraStack; }
+    void    SetCameraStack( const ST::string & v ) { fCameraStack=v; }
     void    Reset();
     void    Read( hsStream * s );
     void    ReadOld( hsStream * s );
     void    Write( hsStream * s ) const;
-    plString AsString() const;
+    ST::string AsString() const;
 };
 typedef std::vector<plSpawnPointInfo>   plSpawnPointVec;
 

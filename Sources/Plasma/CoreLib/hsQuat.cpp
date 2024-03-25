@@ -40,13 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#pragma hdrstop
-
 #include "hsQuat.h"
+
+#include "HeadSpin.h"
+#include "hsFastMath.h"
+#include "hsGeometry3.h"
 #include "hsMatrix44.h"
 #include "hsStream.h"
-#include "hsFastMath.h"
+
 
 //
 // Quaternion class.
@@ -58,7 +59,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 hsQuat::hsQuat(float rad, const hsVector3* axis)
 {
-    // hsAssert(rad >= -M_PI && rad <= M_PI, "Quat: Angle should be between -PI and PI");
+    // hsAssert(rad >= -hsConstants::pi<float> && rad <= hsConstants::pi<float>,
+    //          "Quat: Angle should be between -PI and PI");
 
     fW = cos(rad*0.5f);
 
@@ -317,7 +319,7 @@ void hsQuat::SetFromSlerp(const hsQuat &a, const hsQuat &b, float alpha, int spi
     {               /* normal case */
 //      hsAssert((cos_t >= -1) && (cos_t <= 1), "Invalid acos argument");
         theta   = acos(cos_t);
-        phi     = theta + spin * M_PI;
+        phi     = theta + spin * hsConstants::pi<float>;
         sin_t   = sin(theta);
         hsAssert(sin_t != 0.0, "Invalid sin value in quat slerp");
         beta    = sin(theta - alpha*phi) / sin_t;

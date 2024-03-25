@@ -51,9 +51,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 
 // other
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plMessage/plAvatarMsg.h"
-#include "plMessage/plOneShotMsg.h"
 #include "plMessage/plOneShotCallbacks.h"
+#include "plMessage/plOneShotMsg.h"
 
 // CTOR()
 plOneShotMod::plOneShotMod()
@@ -67,7 +69,7 @@ plOneShotMod::plOneShotMod()
 }
 
 // CTOR(char *)
-plOneShotMod::plOneShotMod(const plString &animName,
+plOneShotMod::plOneShotMod(const ST::string &animName,
                            bool drivable,
                            bool reversable,
                            float seekDuration,
@@ -83,7 +85,7 @@ plOneShotMod::plOneShotMod(const plString &animName,
 }
 
 // INIT
-void plOneShotMod::Init(const plString &animName,
+void plOneShotMod::Init(const ST::string &animName,
                         bool drivable,
                         bool reversable,
                         float seekDuration,
@@ -120,7 +122,7 @@ bool plOneShotMod::MsgReceive(plMessage* msg)
 
                 if(avMod)
                 {
-                    plString animName = avMod->MakeAnimationName(fAnimName);
+                    ST::string animName = avMod->MakeAnimationName(fAnimName);
 
                     plAvOneShotMsg *avOSmsg = new plAvOneShotMsg(myKey, oneShotMsg->fPlayerKey, objKey,
                                                                  fSeekDuration, (bool)fSmartSeek, animName, fDrivable,
@@ -155,7 +157,7 @@ void plOneShotMod::Read(hsStream *stream, hsResMgr *mgr)
 
     // read in the name of the animation itself
     fAnimName = stream->ReadSafeString();
-    fSeekDuration = stream->ReadLEScalar();
+    fSeekDuration = stream->ReadLEFloat();
     fDrivable = stream->ReadBool();
     fReversable = stream->ReadBool();
     fSmartSeek = (float)stream->ReadBool();
@@ -167,7 +169,7 @@ void plOneShotMod::Write(hsStream *stream, hsResMgr *mgr)
     plMultiModifier::Write(stream, mgr);
 
     stream->WriteSafeString(fAnimName);
-    stream->WriteLEScalar(fSeekDuration);
+    stream->WriteLEFloat(fSeekDuration);
     stream->WriteBool(fDrivable);
     stream->WriteBool(fReversable);
     stream->WriteBool((bool)fSmartSeek);

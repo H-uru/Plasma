@@ -58,9 +58,9 @@ protected:
 public:
     plAnimEventComponent();
 
-    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool Convert(plMaxNode* node, plErrorMsg* pErrMsg) override;
 };
 
 class plMtlEventComponent : public plActivatorBaseComponent
@@ -71,9 +71,9 @@ protected:
 public:
     plMtlEventComponent();
 
-    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool Convert(plMaxNode* node, plErrorMsg* pErrMsg) override;
 };
 
 #endif // plAnimEventComponent_inc

@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-template <class T> class hsTArray;
 class hsStream;
 
 class plLoadMask

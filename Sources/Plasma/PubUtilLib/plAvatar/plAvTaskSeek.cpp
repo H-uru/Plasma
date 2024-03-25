@@ -46,27 +46,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#include <cmath>
-
 // singular
 #include "plAvTaskSeek.h"
 
+#include "hsTimer.h"
+#include "plgDispatch.h"
+
+#include <cmath>
+
 // local
-#include "plAvBrainHuman.h"
-#include "plAnimation/plAGAnim.h"
 #include "plArmatureMod.h"
 #include "plAvatarMgr.h"
+#include "plAvBrainHuman.h"
 #include "plPhysicalControllerCore.h"
 
 // other
-#include "plMessage/plAvatarMsg.h"
-#include "pnMessage/plCameraMsg.h"
 #include "pnInputCore/plControlEventCodes.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+
+#include "plAnimation/plAGAnim.h"
+#include "plMessage/plAvatarMsg.h"
 #include "plPipeline/plDebugText.h"
 #include "plStatusLog/plStatusLog.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "hsTimer.h"
-#include "plgDispatch.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -107,6 +109,7 @@ void plAvTaskSeek::IInitDefaults()
     fAnimName = "";
     fPosGoalHit = false;
     fRotGoalHit = false;
+    fSweepTestHit = false;
     fStillPositioning = true;
     fStillRotating = true;
     fShuffleRange = kDefaultShuffleRange;
@@ -164,7 +167,7 @@ plAvTaskSeek::plAvTaskSeek(plAvSeekMsg *msg)
 
 // plAvTaskSeek ------------------------
 // -------------
-plAvTaskSeek::plAvTaskSeek(plKey target)
+plAvTaskSeek::plAvTaskSeek(const plKey& target)
 {
     IInitDefaults();
 
@@ -173,35 +176,31 @@ plAvTaskSeek::plAvTaskSeek(plKey target)
 
 // plAvTaskSeek -------------------------------------------------------------------------------------------
 // -------------
-plAvTaskSeek::plAvTaskSeek(plKey target, plAvAlignment align, const plString& animName, bool moving)
+plAvTaskSeek::plAvTaskSeek(const plKey& target, plAvAlignment align, ST::string animName, bool moving)
 {
     IInitDefaults();
 
     fMovingTarget = moving;
     fAlign = align;
-    fAnimName = animName;
+    fAnimName = std::move(animName);
 
     SetTarget(target);
 }
 
-void plAvTaskSeek::SetTarget(plKey target)
+void plAvTaskSeek::SetTarget(const plKey& target)
 {
     hsAssert(target, "Bad key to seek task");
     if(target)
-    {
         fSeekObject = plSceneObject::ConvertNoRef(target->ObjectIsLoaded());
-    }
     else
-    {
-        fSeekObject = nil;
-    }
+        fSeekObject = nullptr;
 }
-    
+
 void plAvTaskSeek::SetTarget(hsPoint3 &pos, hsPoint3 &lookAt)
 {
     fSeekPos = pos;
     hsVector3 up(0.f, 0.f, 1.f);
-    float angle = atan2(lookAt.fY - pos.fY, lookAt.fX - pos.fX) + M_PI / 2;
+    float angle = std::atan2(lookAt.fY - pos.fY, lookAt.fX - pos.fX) + hsConstants::half_pi<float>;
     fSeekRot.SetAngleAxis(angle, up);
 }
 
@@ -312,7 +311,7 @@ void plAvTaskSeek::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double 
 
 void plAvTaskSeek::LeaveAge(plArmatureMod *avatar)
 {
-    fSeekObject = nil;
+    fSeekObject = nullptr;
     fState = kSeekAbort;
 }
 
@@ -381,6 +380,27 @@ bool plAvTaskSeek::IMoveTowardsGoal(plArmatureMod *avatar, plAvBrainHuman *brain
         // We just set the pos/rot, so we know these are hit.
         fPosGoalHit = true;
         fRotGoalHit = true;
+    } else if (fRotGoalHit && fDistance <= .5f) {
+        // Once we get really close to the goal, we need to check carefully
+        // to see if any static will block us from completing the seek.
+        // This is usually due to the seek point being too close to the object we
+        // want to interact with. If so, just give up and warp into place.
+        constexpr plSimDefs::Group groupsTest = (plSimDefs::Group)((1 << plSimDefs::kGroupAvatarBlocker) |
+                                                                   (1 << plSimDefs::kGroupStatic));
+        hsPoint3 seekGoalTest(fSeekPos.fX, fSeekPos.fY, fSeekPos.fZ + .1f);
+        hsPoint3 avatarTest(fPosition.fX, fPosition.fY, fPosition.fZ + .1f);
+        auto hit = avatar->GetController()->SweepSingle(avatarTest, seekGoalTest, groupsTest);
+        if (hit) {
+            if (!fSweepTestHit) {
+                plStatusLog::AddLineSF("Avatar.log",
+                                       "Warping avatar to position due to SMART SEEK sweep hit '{}'",
+                                       hit->PhysHit->GetName());
+                fSweepTestHit = true;
+            }
+            avatar->SetPositionAndRotationSim(&fSeekPos, nullptr);
+            IAnalyze(avatar); // Recalcs fPosition, fDistance, etc.
+            fPosGoalHit = true;
+        }
     }
 
     if (!(fDistance > fShuffleRange))
@@ -457,7 +477,7 @@ bool plAvTaskSeek::ITryFinish(plArmatureMod *avatar, plAvBrainHuman *brain, doub
 
     newRotation.Normalize();
     if (hsCheckBits(fFlags, kSeekFlagRotationOnly))
-        avatar->SetPositionAndRotationSim(nil, &newRotation);
+        avatar->SetPositionAndRotationSim(nullptr, &newRotation);
     else
         avatar->SetPositionAndRotationSim(&newPosition, &newRotation);
 
@@ -514,12 +534,12 @@ bool plAvTaskSeek::IFinishRotation(hsQuat &newRotation,
 bool plAvTaskSeek::IUpdateObjective(plArmatureMod *avatar)
 {
     // This is an entirely valid case. It just means our goal is fixed.
-    if (fSeekObject == nil)
+    if (fSeekObject == nullptr)
         return true;
 
     // goal here is to express the target matrix in the avatar's PHYSICAL space
     hsMatrix44 targL2W = fSeekObject->GetLocalToWorld();
-    const plCoordinateInterface* subworldCI = nil;
+    const plCoordinateInterface* subworldCI = nullptr;
     if (avatar->GetController())
         subworldCI = avatar->GetController()->GetSubworldCI();
     if (subworldCI)
@@ -542,7 +562,7 @@ bool plAvTaskSeek::IUpdateObjective(plArmatureMod *avatar)
                 plAGAnim *anim = avatar->FindCustomAnim(fAnimName);
                 // don't need to do this every frame; the animation doesn't change.
                 // *** cache the adjustment;
-                GetStartToEndTransform(anim, nil, &adjustment, "Handle");   // actually getting end-to-start
+                GetStartToEndTransform(anim, nullptr, &adjustment, "Handle");   // actually getting end-to-start
                 // ... but we do still need to multiply by the (potentially changed) target
                 targL2W = targL2W * adjustment;
             }
@@ -563,17 +583,17 @@ bool plAvTaskSeek::IUpdateObjective(plArmatureMod *avatar)
 // ----------
 void plAvTaskSeek::DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt)
 {
-    debugTxt.DrawString(x, y, plFormat("duration: {.2f} pos: ({.3f}, {.3f}, {.3f}) goalPos: ({.3f}, {.3f}, {.3f}) ",
+    debugTxt.DrawString(x, y, ST::format("duration: {.2f} pos: ({.3f}, {.3f}, {.3f}) goalPos: ({.3f}, {.3f}, {.3f}) ",
             hsTimer::GetSysSeconds() - fStartTime,
             fPosition.fX, fPosition.fY, fPosition.fZ, fSeekPos.fX, fSeekPos.fY, fSeekPos.fZ));
     y += lineHeight;
 
-    debugTxt.DrawString(x, y, plFormat("positioning: {} rotating {} goalVec: ({.3f}, {.3f}, {.3f}) dist: {.3f} angFwd: {.3f} angRt: {.3f}",
+    debugTxt.DrawString(x, y, ST::format("positioning: {} rotating {} goalVec: ({.3f}, {.3f}, {.3f}) dist: {.3f} angFwd: {.3f} angRt: {.3f}",
             fStillPositioning, fStillRotating, fGoalVec.fX, fGoalVec.fY, fGoalVec.fZ,
             fDistance, fAngForward, fAngRight));
     y += lineHeight;
 
-    debugTxt.DrawString(x, y, plFormat(" distFwd: {.3f} distRt: {.3f} shufRange: {.3f} sidAngle: {.3f} sidRange: {.3f}, fMinWalk: {.3f}",
+    debugTxt.DrawString(x, y, ST::format(" distFwd: {.3f} distRt: {.3f} shufRange: {.3f} sidAngle: {.3f} sidRange: {.3f}, fMinWalk: {.3f}",
             fDistForward, fDistRight, fShuffleRange, fMaxSidleAngle, fMaxSidleRange, fMinFwdAngle));
     y += lineHeight;
 }
@@ -581,19 +601,19 @@ void plAvTaskSeek::DumpDebug(const char *name, int &x, int&y, int lineHeight, pl
 void plAvTaskSeek::DumpToAvatarLog(plArmatureMod *avatar)
 {
     plStatusLog *log = plAvatarMgr::GetInstance()->GetLog();
-    log->AddLine(avatar->GetMoveKeyString().c_str());
+    log->AddLine(avatar->GetMoveKeyString());
 
-    log->AddLine(plFormat("    duration: {.2f} pos: ({.3f}, {.3f}, {.3f}) goalPos: ({.3f}, {.3f}, {.3f}) ",
+    log->AddLine(ST::format("    duration: {.2f} pos: ({.3f}, {.3f}, {.3f}) goalPos: ({.3f}, {.3f}, {.3f}) ",
             hsTimer::GetSysSeconds() - fStartTime,
             fPosition.fX, fPosition.fY, fPosition.fZ,
             fSeekPos.fX, fSeekPos.fY, fSeekPos.fZ).c_str());
 
-    log->AddLine(plFormat("    positioning: {} rotating {} goalVec: ({.3f}, {.3f}, {.3f}) dist: {.3f} angFwd: {.3f} angRt: {.3f}",
+    log->AddLine(ST::format("    positioning: {} rotating {} goalVec: ({.3f}, {.3f}, {.3f}) dist: {.3f} angFwd: {.3f} angRt: {.3f}",
             fStillPositioning, fStillRotating,
             fGoalVec.fX, fGoalVec.fY, fGoalVec.fZ,
             fDistance, fAngForward, fAngRight).c_str());
 
-    log->AddLine(plFormat("    distFwd: {.3f} distRt: {.3f} shufRange: {.3f} sidAngle: {.3f} sidRange: {.3f}, fMinWalk: {.3f}",
+    log->AddLine(ST::format("    distFwd: {.3f} distRt: {.3f} shufRange: {.3f} sidAngle: {.3f} sidRange: {.3f}, fMinWalk: {.3f}",
             fDistForward, fDistRight, fShuffleRange,
             fMaxSidleAngle, fMaxSidleRange, fMinFwdAngle).c_str());
 }
@@ -621,7 +641,7 @@ float QuatAngleDiff(const hsQuat &a, const hsQuat &b)
     } 
 
     // Calling acos on 1.0 is returning an undefined value. Need to check for it.
-    float epsilon = 0.00001;
+    float epsilon = 0.00001f;
     if (fabs(cos_t - 1.f) < epsilon)
         return 0;
 

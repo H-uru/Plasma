@@ -78,7 +78,7 @@ protected:
     void            IncRef() { fRefCnt++; }
     void            DecRef() { Release(); }
 
-    plAccessSnapShot() : fRefCnt(0), fData(nil) { Clear(); }
+    plAccessSnapShot() : fRefCnt(), fData() { Clear(); }
 
     friend class plAccessGeometry;
 };

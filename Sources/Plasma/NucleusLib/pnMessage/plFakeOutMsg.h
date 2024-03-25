@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // this message is to fake out a gadget to see if it would potentially trigger...
 //
-#include "pnMessage/plMessage.h"
+#include "plMessage.h"
 #include "hsBitVector.h"
 
 class hsStream;
@@ -57,34 +57,37 @@ class plFakeOutMsg : public plMessage
 protected:
 
 public:
-    plFakeOutMsg(){SetBCastFlag(plMessage::kPropagateToModifiers);}
-    plFakeOutMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t){SetBCastFlag(plMessage::kPropagateToModifiers);}
-    
-    CLASSNAME_REGISTER( plFakeOutMsg );
-    GETINTERFACE_ANY( plFakeOutMsg, plMessage );
+    plFakeOutMsg() {
+        SetBCastFlag(plMessage::kPropagateToModifiers);
+    }
 
-    enum 
+    plFakeOutMsg(const plKey& s, const plKey& r, const double* t) {
+        SetBCastFlag(plMessage::kPropagateToModifiers);
+    }
+
+    CLASSNAME_REGISTER(plFakeOutMsg);
+    GETINTERFACE_ANY(plFakeOutMsg, plMessage);
+
+    enum
     {
         kNumCmds = 0,
     };
 
-    hsBitVector     fCmd;
+    hsBitVector fCmd;
 
     bool Cmd(int n) const { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd() { fCmd.Clear(); }
     void ClearCmd(int n) { fCmd.ClearBit(n); }
-    
+
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr)
+    void Read(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgRead(stream, mgr);
         fCmd.Read(stream);
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
+    void Write(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgWrite(stream, mgr);
         fCmd.Write(stream);

@@ -43,11 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plWaveSet7_inc
 #define plWaveSet7_inc
 
+#include <vector>
 
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 #include "pnEncryption/plRandom.h"
 #include "hsBounds.h"
+#include "plStatusLog/plStatusLog.h"
 
 #include "plFixedWaterState7.h"
 
@@ -107,7 +108,8 @@ public:
     };
     // Flags, also in a bitvector, so far unused in the multimodifier
     enum {
-        kHasRefObject           = 16
+        kHasRefObject           = 16,
+        kHasBuoys               = 17
     };
     enum {
         kNumWaves       = 4
@@ -209,14 +211,14 @@ protected:
 
     plKey               fSceneNode;
 
-    hsTArray<plDynaDecalMgr*>       fDecalMgrs;
+    std::vector<plDynaDecalMgr*>    fDecalMgrs;
 
-    hsTArray<plSceneObject*>        fBuoys; 
-    hsTArray<plSceneObject*>        fShores;
-    hsTArray<plSceneObject*>        fDecals;
+    std::vector<plSceneObject*>     fBuoys;
+    std::vector<plSceneObject*>     fShores;
+    std::vector<plSceneObject*>     fDecals;
     plSceneObject*                  fRefObj;
 
-    hsTArray<hsBounds3Ext>          fTargBnds;
+    std::vector<hsBounds3Ext>       fTargBnds;
 
     plLayer*                        fBiasLayer[2];
     plLayer*                        fBumpLayers[kNumTexWaves];
@@ -301,22 +303,6 @@ protected:
     };
 
     GraphState                      fGraphState[kGraphShorePasses];
-
-    class WaveK
-    {
-    public:
-        // fK is the number of times the sine wave repeats across the texture. Must be an integer
-        // fS/fK is the base X component of the direction of the wave, with Y = 1.f - X. Note that X^2 + Y^2 != 1.
-        // fD allows the wave to get more off the Y direction 
-        // So the X component will be Int(fS + fD*dispersion) / fK, because it must be an integer ratio to
-        // preserve tiling. Also, (fS + fD) must be <= fK (for the Y normalization).
-        // See the notes.
-        float   fS;
-        float   fK;
-        float   fD;
-    };
-
-    WaveK           fWaveKs[kNumTexWaves];
 
     class TexWaveDesc
     {
@@ -438,11 +424,11 @@ protected:
     void                ISetupDecal(hsGMaterial* mat);
     void                ICheckDecalEnvLayers(hsGMaterial* mat);
 
-    void                IAddGraphPShader(hsGMaterial* mat, int iPass);
-    void                IAddGraphVShader(hsGMaterial* mat, int iPass);
-    void                IUpdateGraphShader(float dt, int iPass);
-    void                IInitGraph(int iPass);
-    void                IShuffleDownGraphs(int iPass);
+    void                IAddGraphPShader(hsGMaterial* mat, size_t iPass);
+    void                IAddGraphVShader(hsGMaterial* mat, size_t iPass);
+    void                IUpdateGraphShader(float dt, size_t iPass);
+    void                IInitGraph(size_t iPass);
+    void                IShuffleDownGraphs(size_t iPass);
 
     // type is either plLayRefMsg::kVertexShader or plLayRefMsg::kPixelShader.
     void                IAddShaderToLayers(hsGMaterial* mat, int iFirst, int iLast, uint8_t type, plShader* shader);
@@ -478,11 +464,27 @@ protected:
     void                IUpdateDecVShader(int t, plPipeline* pipe);
     void                IUpdateDecVShaders(plPipeline* pipe, const hsMatrix44& l2w, const hsMatrix44& w2l);
 
-    virtual int IShoreRef() const { return kRefShore; }
-    virtual int IDecalRef() const { return kRefDecal; }
+    int IShoreRef() const override { return kRefShore; }
+    int IDecalRef() const override { return kRefDecal; }
 
-    inline void LogF(const char *format, ...) const;
-    inline void LogF(uint32_t color, const char *format, ...) const;
+    template<typename... _Args>
+    void Log(const char *format, _Args&&... args) const
+    {
+#ifndef PLASMA_EXTERNAL_RELEASE
+        if (fStatusLog)
+            fStatusLog->AddLineF(format, std::forward<_Args>(args)...);
+#endif
+    }
+
+    template<typename... _Args>
+    void Log(uint32_t color, const char *format, _Args&&... args) const
+    {
+#ifndef PLASMA_EXTERNAL_RELEASE
+        if (fStatusLog)
+            fStatusLog->AddLineF(color, format, std::forward<_Args>(args)...);
+#endif
+    }
+
     inline void IRestartLog() const;
     inline void GraphLen(float len) const;
     inline void IRestartGraph() const;
@@ -494,14 +496,14 @@ public:
     CLASSNAME_REGISTER( plWaveSet7 );
     GETINTERFACE_ANY( plWaveSet7, plWaveSetBase );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
 
     int32_t       GetNumProperties() const { return kNumProps; }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     float            EvalPoint(hsPoint3& pos, hsVector3& norm);
 
@@ -589,7 +591,7 @@ public:
 
     float GetRippleScale() const { return fState.fRippleScale; }
 
-    hsVector3 GetWindDir() const { return fState.fWindDir; }
+    hsVector3 GetWindDir() const override { return fState.fWindDir; }
 
     float GetSpecularNoise() const { hsVector3 spec = fState.fSpecVec; return spec[plFixedWaterState7::kNoise]; }
     float GetSpecularStart() const { hsVector3 spec = fState.fSpecVec; return spec[plFixedWaterState7::kSpecStart]; }
@@ -626,18 +628,18 @@ public:
 
     void        SetRefObject(plSceneObject* refObj);
 
-    void            SetSceneNode(const plKey& key);
+    void            SetSceneNode(plKey key);
     plKey           GetSceneNode() const { return fSceneNode; }
 
-    void            AddDynaDecalMgr(plKey& key);
-    void            RemoveDynaDecalMgr(plKey& key);
+    void            AddDynaDecalMgr(const plKey& key);
+    void            RemoveDynaDecalMgr(const plKey& key);
 
-    void            AddBuoy(plKey soKey);
-    void            RemoveBuoy(plKey soKey);
+    void            AddBuoy(const plKey& soKey);
+    void            RemoveBuoy(const plKey& soKey);
 
-    virtual bool            SetupRippleMat(hsGMaterial* mat, const plRipVSConsts& ripConsts);
+    bool            SetupRippleMat(hsGMaterial* mat, const plRipVSConsts& ripConsts) override;
 
-    virtual float        GetHeight() const { return State().fWaterHeight; }
+    float        GetHeight() const override { return State().fWaterHeight; }
 
     const plFixedWaterState7::WaveState& GeoState() const { return State().fGeoState; }
     const plFixedWaterState7::WaveState& TexState() const { return State().fTexState; }
@@ -649,10 +651,10 @@ public:
 
     void StopLog();
     void StartLog();
-    bool Logging() const { return fStatusLog != nil; }
+    bool Logging() const { return fStatusLog != nullptr; }
     void StartGraph();
     void StopGraph();
-    bool Graphing() const { return fStatusGraph != nil; }
+    bool Graphing() const { return fStatusGraph != nullptr; }
 };
 
 #endif // plWaveSet7_inc

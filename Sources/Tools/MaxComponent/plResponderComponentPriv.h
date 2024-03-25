@@ -45,6 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  * Private header for the responder component.  Anyone else should include plResponderComponent.h
  */
 
+#ifndef plResponderComponentPriv_inc
+#define plResponderComponentPriv_inc
+
 #include "plResponderComponent.h"
 #include "plComponent.h"
 #include "pnKeyedObject/plKey.h"
@@ -61,16 +64,16 @@ public:
 
     plResponderComponent();
 
-    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool PreConvert(plMaxNode *node,plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node,plErrorMsg *pErrMsg);
-    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode *node,plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node,plErrorMsg *pErrMsg) override;
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     // All classes derived from plResponderComponent can be picked from the activator component,
     // because they can convert to the responder type.
-    int CanConvertToType(Class_ID obtype) { return (obtype == RESPONDER_CID) ? 1 : plComponent::CanConvertToType(obtype); }
+    int CanConvertToType(Class_ID obtype) override { return (obtype == RESPONDER_CID) ? 1 : plComponent::CanConvertToType(obtype); }
 
-    RefTargetHandle Clone(RemapDir &remap);
+    RefTargetHandle Clone(RemapDir &remap) override;
     
 protected:
     // Old responders won't have their tables set up correctly.  Call this to fix them
@@ -138,3 +141,5 @@ enum
     kResponderCameraForceBlk,
     kResponderSubWorldBlk,
 };
+
+#endif

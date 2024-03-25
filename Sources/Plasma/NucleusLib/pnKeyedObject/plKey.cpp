@@ -65,7 +65,7 @@ static const char* keyNameToLookFor = "AgeSDLHook";
 static const uint16_t CLASS_TO_TRACK = CLASS_INDEX_SCOPED(plSceneObject);
 static const int kCloneID = 0;
 static const int kClonePlayerID = 0;
-static plKeyData* lastData = nil;
+static plKeyData* lastData = nullptr;
 static const int kLocSeq = -1;
 
 class keyDataFriend : public plKeyData
@@ -169,7 +169,7 @@ plKey &plKey::operator=( const plKey &rhs )
         if( IsTracked(rhs.fKeyData) )
         {
             char msg[ 512 ];
-            if (fKeyData == nil)
+            if (fKeyData == nullptr)
                 sprintf( msg, "=: Key %s %s is being assigned to a nil key",
                          keyNameToLookFor, CloneString(rhs.fKeyData) );
             else
@@ -182,7 +182,7 @@ plKey &plKey::operator=( const plKey &rhs )
         if( IsTracked(fKeyData) )
         {
             char msg[ 512 ];
-            if (fKeyData == nil)
+            if (fKeyData == nullptr)
                 sprintf( msg, "=: Nil key is being assigned to %s %s",
                          keyNameToLookFor, CloneString(fKeyData) );
             else
@@ -200,6 +200,24 @@ plKey &plKey::operator=( const plKey &rhs )
         fKeyData = rhs.fKeyData;
         IIncRef();
     }
+
+    return *this;
+}
+
+plKey &plKey::operator=(std::nullptr_t)
+{
+#if TRACK_REFS  // FOR DEBUGGING ONLY
+    if (IsTracked(fKeyData))
+    {
+        char msg[512];
+        sprintf(msg, "D: Key %s %s is being nilified", keyNameToLookFor, CloneString(fKeyData));
+        //hsAssert(false, msg);
+        hsStatusMessageF(msg);
+    }
+#endif
+
+    IDecRef();
+    fKeyData = nullptr;
 
     return *this;
 }

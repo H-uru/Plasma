@@ -41,10 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
-#include "hsWindows.h"
-#include <Max.h>
-#pragma hdrstop
+
+#include "MaxMain/MaxAPI.h"
 
 #include "MaxMain/plMaxNode.h"
 #include "plRenderGlobalContext.h"
@@ -69,10 +67,10 @@ plRenderGlobalContext::plRenderGlobalContext(Interface* ip, TimeValue t)
     farRange = 10000.f;
     devAspect = 1.f;          // PIXEL aspect ratio of device pixel H/W
     frameDur = 1.f;
-    envMap = nil;
+    envMap = nullptr;
     globalLightLevel.White();
-    atmos = nil;
-    pToneOp = nil;  // The tone operator, may be NULL
+    atmos = nullptr;
+    pToneOp = nullptr;  // The tone operator, may be NULL
     time = t;
     wireMode = false;       // wire frame render mode?
     wire_thick = 1.f;   // global wire thickness
@@ -91,10 +89,9 @@ plRenderGlobalContext::plRenderGlobalContext(Interface* ip, TimeValue t)
 
 plRenderGlobalContext::~plRenderGlobalContext()
 {
-    int i;
-    for( i = 0; i < fInstList.GetCount(); i++ )
+    for (plRenderInstance& inst : fInstList)
     {
-        fInstList[i].Cleanup();
+        inst.Cleanup();
     }
 }
 
@@ -102,33 +99,36 @@ void plRenderGlobalContext::Update(TimeValue t)
 {
     time = t;
 
-    int i;
-    for( i = 0; i < fInstList.GetCount(); i++ )
-        fInstList[i].Update(time);
+    for (plRenderInstance& inst : fInstList)
+        inst.Update(time);
 }
 
 void plRenderGlobalContext::MakeRenderInstances(plMaxNode* root, TimeValue t)
 {
     time = t;
-    int i;
-    for( i = 0; i < root->NumberOfChildren(); i++ )
+    for (int i = 0; i < root->NumberOfChildren(); i++)
         IMakeRenderInstances((plMaxNode*)root->GetChildNode(i), t, false);
 
-    for( i = 0; i < fInstList.GetCount() - 1; i++ )
-        fInstList[i].SetNext(&fInstList[i+1]);
+    for (size_t i = 1; i < fInstList.size(); i++)
+        fInstList[i - 1].SetNext(&fInstList[i]);
+}
+
+int plRenderGlobalContext::NumRenderInstances()
+{
+    return (int)fInstList.size();
 }
 
 RenderInstance* plRenderGlobalContext::GetRenderInstance(int i)
 {
-    if (fInstList.GetCount() > i)
+    if ((int)fInstList.size() > i)
         return &fInstList[i];
     else
-        return nil;
+        return nullptr;
 }
 
 void plRenderGlobalContext::IMakeRenderInstances(plMaxNode* node, TimeValue t, bool isBarney)
 {
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
     if( !isBarney )
         isBarney = node->GetIsBarney();
 
@@ -137,12 +137,12 @@ void plRenderGlobalContext::IMakeRenderInstances(plMaxNode* node, TimeValue t, b
     if( !doMe )
         return;
 
-    int idx = fInstList.GetCount();
+    int idx = (int)fInstList.size();
 
-    plRenderInstance* inst = fInstList.Push();
+    plRenderInstance& inst = fInstList.emplace_back();
     
-    if( !inst->GetFromNode(node, t, idx) )
-        fInstList.Pop();
+    if (!inst.GetFromNode(node, t, idx))
+        fInstList.pop_back();
 
     int i;
     for( i = 0; i < node->NumberOfChildren(); i++ )
@@ -184,7 +184,7 @@ void plRenderGlobalContext::IntersectRay(RenderInstance *inst, Ray& origRay, ISe
         Mtl* mtl = inst->GetINode()->GetMtl();
         thisHit.matreq = mtl ? mtl->Requirements(thisHit.mtlNum) : 0;
 
-        thisHit.next = nil;
+        thisHit.next = nullptr;
 
         if( thisHit.matreq & (MTLREQ_TRANSP | MTLREQ_ADDITIVE_TRANSP) )
         {
@@ -211,10 +211,9 @@ BOOL plRenderGlobalContext::IntersectWorld(Ray &ray, int skipID, ISect &hit, ISe
 {
     hit.t = -1.f;
     xplist.Init();
-    int i;
-    for( i = 0; i < fInstList.GetCount(); i++ )
+    for (size_t i = 0; i < fInstList.size(); i++)
     {
-        if( skipID != i )
+        if (skipID != (int)i)
         {
             ISect thisHit;
             hit.t = -1.f;

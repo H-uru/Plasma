@@ -41,9 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include <max.h>
-#pragma hdrstop
+
+#include "MaxMain/MaxAPI.h"
 
 #include "Shaders.h"
 
@@ -109,7 +108,7 @@ void PhongShader::Illum(ShadeContext &sc, SIllumParams &ip) {
     
     for (int i=0; i<sc.nLights; i++) {
         l = sc.Light(i);
-        register float NL, diffCoef;
+        float NL, diffCoef;
         Point3 L;
         if (l->Illuminate(sc,ip.N,lightCol,L,NL,diffCoef)) {
             // diffuse
@@ -148,7 +147,7 @@ void hsMaxShader::Illum(ShadeContext &sc, SIllumParams &ip) {
     
     for (int i=0; i<sc.nLights; i++) {
         l = sc.Light(i);
-        register float NL, diffCoef;
+        float NL, diffCoef;
         Point3 L;
         if (l->Illuminate(sc,ip.N,lightCol,L,NL,diffCoef)) {
             // diffuse
@@ -182,7 +181,7 @@ void BlinnShader::Illum(ShadeContext &sc, SIllumParams &ip) {
     double ph_exp = double(ip.ph_exp)*4.0; // This is to make the hilite compatible with normal phong
     for (int i=0; i<sc.nLights; i++) {
         l = sc.Light(i);
-        register float NL, diffCoef;
+        float NL, diffCoef;
         Point3 L;
         if (l->Illuminate(sc,ip.N,lightCol,L,NL,diffCoef)) {
             // diffuse
@@ -235,7 +234,7 @@ void MetalShader::Illum(ShadeContext &sc, SIllumParams &ip) {
     
     for (int i=0; i<sc.nLights; i++) {
         l = sc.Light(i);
-        register float NL, diffCoef;
+        float NL, diffCoef;
         Point3 L;
         
         if (!l->Illuminate(sc,ip.N,lightCol,L,NL,diffCoef)) 
@@ -278,7 +277,7 @@ void MetalShader::Illum(ShadeContext &sc, SIllumParams &ip) {
                 
                 // Beckman distribution  (from Cook-Torrance paper)
                 sec2 = 1.0f/(NH*NH);  // 1/sqr(cos) 
-                float D = (.5f/PI)*sec2*sec2*m2inv*(float)exp((1.0f-sec2)*m2inv);                   
+                float D = (.5f/hsConstants::pi<float>)*sec2*sec2*m2inv*(float)exp((1.0f-sec2)*m2inv);
                 if (G>1.0f) G = 1.0f;
                 float Rs = ip.sh_str*D*G/(NV+.05f); 
                 ip.specIllum += fcol*Rs*lightCol;
@@ -297,8 +296,8 @@ void MetalShader::SetShininess(float shininess, float shineStr) {
 }
 
 float MetalShader::EvalHilite(float x) {
-    float c = (float)cos(x*PI);
+    float c = (float)cos(x*hsConstants::pi<float>);
     float sec2 = 1.0f/(c*c);      /* 1/sqr(cos) */
-    return fshin_str*(.5f/PI)*sec2*sec2*fm2inv*(float)exp((1.0f-sec2)*fm2inv);                      
+    return fshin_str*(.5f/hsConstants::pi<float>)*sec2*sec2*fm2inv*(float)exp((1.0f-sec2)*fm2inv);
 }
 

@@ -46,25 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "Pch.h"
-#pragma hdrstop
 
-
-/*****************************************************************************
-*
-*   Private data
-*
-***/
-
-
-
-/*****************************************************************************
-*
-*   Internal functions
-*
-***/
-
-//===========================================================================
-static unsigned CALLBACK CreateThreadProc (LPVOID param) {
+static void CreateThreadProc(AsyncThreadRef thread)
+{
+    hsThread::SetThisThreadName(ST_LITERAL("NoNameAceThread"));
 
 #ifdef USE_VLD
     VLDEnable();
@@ -73,19 +58,13 @@ static unsigned CALLBACK CreateThreadProc (LPVOID param) {
     PerfAddCounter(kAsyncPerfThreadsTotal, 1);
     PerfAddCounter(kAsyncPerfThreadsCurr, 1);
 
-    // Initialize thread
-    AsyncThread * thread = (AsyncThread *) param;
-
     // Call thread procedure
-    unsigned result = thread->proc(thread);
-
-    // Cleanup thread
-    delete thread;
+    thread.impl->proc();
 
     PerfSubCounter(kAsyncPerfThreadsCurr, 1);
-    return result;
-}
 
+    thread.impl->completion.unlock();
+}
 
 /*****************************************************************************
 *
@@ -94,48 +73,51 @@ static unsigned CALLBACK CreateThreadProc (LPVOID param) {
 ***/
 
 //============================================================================
-void ThreadDestroy (unsigned exitThreadWaitMs) {
-
-    unsigned bailAt = TimeGetMs() + exitThreadWaitMs;
-    while (AsyncPerfGetCounter(kAsyncPerfThreadsCurr) && signed(bailAt - TimeGetMs()) > 0)
-        AsyncSleep(10);
+void ThreadDestroy(unsigned exitThreadWaitMs)
+{
+    unsigned bailAt = hsTimer::GetMilliSeconds<unsigned>() + exitThreadWaitMs;
+    while (AsyncPerfGetCounter(kAsyncPerfThreadsCurr) && hsTimer::GetMilliSeconds<unsigned>() < bailAt) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
 }
 
+//============================================================================
+AsyncThreadRef AsyncThreadCreate(std::function<void()> threadProc)
+{
+    AsyncThreadRef ref;
+    ref.impl = std::make_shared<AsyncThread>();
+    ref.impl->proc = std::move(threadProc);
+    ref.impl->workTimeMs = kAsyncTimeInfinite;
 
-/*****************************************************************************
-*
-*   Public exports
-*
-***/
+    ref.impl->completion.lock();
 
-//===========================================================================
-void * AsyncThreadCreate (
-    FAsyncThreadProc    threadProc,
-    void *              argument,
-    const wchar_t         name[]
-) {
-    AsyncThread * thread    = new AsyncThread;
-    thread->proc            = threadProc;
-    thread->handle          = nil;
-    thread->argument        = argument;
-    thread->workTimeMs      = kAsyncTimeInfinite;
-    StrCopy(thread->name, name, arrsize(thread->name));
-    
-    // Create thread suspended
-    unsigned threadId;
-    HANDLE handle = (HANDLE) _beginthreadex(
-        (LPSECURITY_ATTRIBUTES) 0,
-        0,          // stack size
-        CreateThreadProc,
-        thread,     // argument
-        0,          // initFlag
-        &threadId
-    );
-    if (!handle) {
-        LogMsg(kLogFatal, "%s (%u)", __FILE__, GetLastError());
-        ErrorAssert(__LINE__, __FILE__, "_beginthreadex failed");
+    ref.impl->handle = std::thread(&CreateThreadProc, ref);
+    return ref;
+}
+
+void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs)
+{
+    bool threadFinished = ref.impl->completion.try_lock_for(std::chrono::milliseconds(timeoutMs));
+    if (threadFinished) {
+        //thread is finished, safe to join with no deadlock risk
+        ref.impl->completion.unlock();
+        ref.impl->handle.join();
+    } else {
+        LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
+        ref.impl->handle.detach();
     }
+}
 
-    thread->handle = handle;
-    return handle;
+std::thread& AsyncThreadRef::thread() const
+{
+    return impl->handle;
+}
+
+bool AsyncThreadRef::joinable() const
+{
+    if (!impl) {
+        return false;
+    } else {
+        return impl->handle.joinable();
+    }
 }

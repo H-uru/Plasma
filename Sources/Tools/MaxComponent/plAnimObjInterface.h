@@ -50,8 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plAnimObjInterface_h
 #define _plAnimObjInterface_h
 
-#include "hsTemplates.h"
-#include "plString.h"
+#include <tchar.h>
+#include <vector>
 
 class plKey;
 
@@ -62,7 +62,7 @@ class plAnimObjInterface
         // If the following function returns true, then it makes sense to restrict
         // the animation conversion to a specific node (i.e. PickTargetNode() makes
         // sense)
-        virtual bool    IsNodeRestricted( void ) = 0;
+        virtual bool    IsNodeRestricted() = 0;
 
         // Allows the user to pick an INode that this animation is applied to
         // (ex. as a material or as a component) and stores it in the given ID
@@ -78,14 +78,14 @@ class plAnimObjInterface
         };
 
         // Given the optional INode to restrict to, return the list of keys to send messages to for conversion
-        virtual bool    GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys ) = 0;
+        virtual bool    GetKeyList(INode *restrictedNode, std::vector<plKey> &outKeys) = 0;
 
         // Return the name of the segment/animation that this interface references. Pass "false" to get the 
         // ENTIRE_ANIMATION_NAME string for entire animations, "true" for nil.
-        virtual plString    GetIfaceSegmentName( bool allowNil ) = 0;
+        virtual ST::string  GetIfaceSegmentName( bool allowNil ) = 0;
 
         // This animation would require (depending on the node restriction) a separate material (i.e. material anim)
-        virtual bool        MightRequireSeparateMaterial( void ) { return false; }
+        virtual bool        MightRequireSeparateMaterial() { return false; }
 };
 
 // Strings for above NodeTypes enums

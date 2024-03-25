@@ -40,27 +40,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include <algorithm>
-
 #include "plPageTreeMgr.h"
-#include "plDrawable/plSpaceTreeMaker.h"
-#include "plDrawable/plSpaceTree.h"
-#include "plDrawable.h"
-#include "plScene/plSceneNode.h"
-#include "plPipeline.h"
-#include "plMath/hsRadixSort.h"
-#include "plCullPoly.h"
-#include "plOccluder.h"
-#include "hsFastMath.h"
-#include "plProfile.h"
-#include "plVisMgr.h"
 
+#include "HeadSpin.h"
+#include "hsFastMath.h"
+#include "plDrawable.h"
+#include "plPipeline.h"
+#include "plProfile.h"
 #include "plTweak.h"
 
-static hsTArray<hsRadixSortElem> scratchList;
+#include <algorithm>
 
-bool plPageTreeMgr::fDisableVisMgr = 0;
+#include "plCullPoly.h"
+#include "plOccluder.h"
+#include "plSceneNode.h"
+#include "plVisMgr.h"
+
+#include "plDrawable/plSpaceTreeMaker.h"
+#include "plDrawable/plSpaceTree.h"
+#include "plMath/hsRadixSort.h"
+
+static std::vector<hsRadixSortElem> scratchList;
+
+bool plPageTreeMgr::fDisableVisMgr = false;
 
 plProfile_CreateTimer("Object Sort", "Draw", DrawObjSort);
 plProfile_CreateCounter("Objects Sorted", "Draw", DrawObjSorted);
@@ -71,7 +73,7 @@ plProfile_CreateCounter("Occluder Polys Processed", "Draw", DrawOccPolyProc);
 plProfile_CreateTimer("Occluder Poly Sort", "Draw", DrawOccPolySort);
 
 plPageTreeMgr::plPageTreeMgr()
-:   fSpaceTree(nil)
+:   fSpaceTree()
 {
     fVisMgr = plGlobalVisMgr::Instance();
 }
@@ -109,26 +111,25 @@ void plPageTreeMgr::Reset()
 void plPageTreeMgr::ITrashSpaceTree()
 {
     delete fSpaceTree;
-    fSpaceTree = nil;
+    fSpaceTree = nullptr;
 }
 
-bool plPageTreeMgr::Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList)
+bool plPageTreeMgr::Harvest(plVolumeIsect* isect, std::vector<plDrawVisList>& levList)
 {
-    levList.SetCount(0);
+    levList.clear();
     if( !(GetSpaceTree() || IBuildSpaceTree()) )
         return false;
 
-    static hsTArray<int16_t> list;
+    static std::vector<int16_t> list;
 
     GetSpaceTree()->HarvestLeaves(isect, list);
 
-    int i;
-    for( i = 0; i < list.GetCount(); i++ )
+    for (int16_t idx : list)
     {
-        fNodes[list[i]]->Harvest(isect, levList);
+        fNodes[idx]->Harvest(isect, levList);
     }
 
-    return levList.GetCount() > 0;
+    return !levList.empty();
 }
 
 #include "plProfile.h"
@@ -141,12 +142,12 @@ int plPageTreeMgr::Render(plPipeline* pipe)
     if( !(GetSpaceTree() || IBuildSpaceTree()) )
         return 0;
 
-    static hsTArray<int16_t> list;
-    list.SetCount(0);
+    static std::vector<int16_t> list;
+    list.clear();
 
     plProfile_BeginTiming(RenderScene);
 
-    plVisMgr* visMgr = fDisableVisMgr ? nil : fVisMgr;
+    plVisMgr* visMgr = fDisableVisMgr ? nullptr : fVisMgr;
 
     if( visMgr )
     {
@@ -163,12 +164,11 @@ int plPageTreeMgr::Render(plPipeline* pipe)
     IGetOcclusion(pipe, list);
     pipe->HarvestVisible(GetSpaceTree(), list);
 
-    static hsTArray<plDrawVisList> levList;
-    levList.SetCount(0);
-    int i;
-    for( i = 0; i < list.GetCount(); i++ )
+    static std::vector<plDrawVisList> levList;
+    levList.clear();
+    for (int16_t idx : list)
     {
-        fNodes[list[i]]->CollectForRender(pipe, levList, visMgr);
+        fNodes[idx]->CollectForRender(pipe, levList, visMgr);
     }
     
     int numDrawn = IRenderVisList(pipe, levList);
@@ -183,21 +183,21 @@ int plPageTreeMgr::Render(plPipeline* pipe)
 
 }
 
-int plPageTreeMgr::IRenderVisList(plPipeline* pipe, hsTArray<plDrawVisList>& levList)
+size_t plPageTreeMgr::IRenderVisList(plPipeline* pipe, std::vector<plDrawVisList>& levList)
 {
     // Sort levList into sortedDrawList, which is just a list
     // of drawable/visList pairs in ascending render priority order.
     // visLists are just lists of span indices, but only of the
     // spans which are visible (on screen and non-occluded and non-disabled).
-    static hsTArray<plDrawVisList> sortedDrawList;
+    static std::vector<plDrawVisList> sortedDrawList;
     if( !ISortByLevel(pipe, levList, sortedDrawList) )
     {
         return 0;
     }
 
-    int numDrawn = 0;
+    size_t numDrawn = 0;
 
-    plVisMgr* visMgr = fDisableVisMgr ? nil : fVisMgr;
+    plVisMgr* visMgr = fDisableVisMgr ? nullptr : fVisMgr;
 
     // Going through the list in order, if we hit a drawable which doesn't need
     // its spans sorted, we can just draw it.
@@ -207,8 +207,7 @@ int plPageTreeMgr::IRenderVisList(plPipeline* pipe, hsTArray<plDrawVisList>& lev
     // span sorting, we sort its spans with the spans of the next N drawables in
     // the sorted list which have the same render priority and which also want their
     // spans sorted.
-    int i;
-    for( i = 0; i < sortedDrawList.GetCount(); i++ )
+    for (size_t i = 0; i < sortedDrawList.size(); i++)
     {
         plDrawable* p = sortedDrawList[i].fDrawable;
 
@@ -227,7 +226,7 @@ int plPageTreeMgr::IRenderVisList(plPipeline* pipe, hsTArray<plDrawVisList>& lev
 
             pipe->Render(sortedDrawList[i].fDrawable, sortedDrawList[i].fVisList);
 
-            numDrawn += sortedDrawList[i].fVisList.GetCount();
+            numDrawn += sortedDrawList[i].fVisList.size();
 
         }
 
@@ -237,35 +236,34 @@ int plPageTreeMgr::IRenderVisList(plPipeline* pipe, hsTArray<plDrawVisList>& lev
     return numDrawn;
 }
 
-bool plPageTreeMgr::ISortByLevel(plPipeline* pipe, hsTArray<plDrawVisList>& drawList, hsTArray<plDrawVisList>& sortedDrawList)
+bool plPageTreeMgr::ISortByLevel(plPipeline* pipe, std::vector<plDrawVisList>& drawList, std::vector<plDrawVisList>& sortedDrawList)
 {
-    sortedDrawList.SetCount(0);
+    sortedDrawList.clear();
 
-    if( !drawList.GetCount() )
+    if (drawList.empty())
         return false;
 
-    scratchList.SetCount(drawList.GetCount());
+    scratchList.resize(drawList.size());
 
-    hsRadixSort::Elem* listTrav = nil;
-    int i;
-    for( i = 0; i < drawList.GetCount(); i++ )
+    hsRadixSort::Elem* listTrav = nullptr;
+    for (size_t i = 0; i < drawList.size(); i++)
     {
         listTrav = &scratchList[i];
-        listTrav->fBody = (void*)&drawList[i];
+        listTrav->fBody = (intptr_t)&drawList[i];
         listTrav->fNext = listTrav+1;
         listTrav->fKey.fULong = drawList[i].fDrawable->GetRenderLevel().Level();
     }
-    listTrav->fNext = nil;
+    listTrav->fNext = nullptr;
 
     hsRadixSort rad;
-    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.AcquireArray(), hsRadixSort::kUnsigned);
+    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.data(), hsRadixSort::kUnsigned);
 
     listTrav = sortedList;
 
     while( listTrav )
     {
         plDrawVisList& drawVis = *(plDrawVisList*)listTrav->fBody;
-        sortedDrawList.Append(drawVis);
+        sortedDrawList.emplace_back(drawVis);
         
         listTrav = listTrav->fNext;
     }
@@ -276,14 +274,12 @@ bool plPageTreeMgr::ISortByLevel(plPipeline* pipe, hsTArray<plDrawVisList>& draw
 // Render from iDrawStart in drawVis list all drawables with the sort by spans property, well, sorting
 // by spans.
 // Returns the index of the last one drawn.
-int plPageTreeMgr::IPrepForRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList>& drawVis, int& iDrawStart)
+size_t plPageTreeMgr::IPrepForRenderSortingSpans(plPipeline* pipe, std::vector<plDrawVisList>& drawVis, size_t& iDrawStart)
 {
     uint32_t renderLevel = drawVis[iDrawStart].fDrawable->GetRenderLevel().Level();
 
-    int i;
-
-    static hsTArray<plDrawVisList*> drawables;
-    static hsTArray<plDrawSpanPair> pairs;
+    static std::vector<plDrawVisList*> drawables;
+    static std::vector<plDrawSpanPair> pairs;
 
     // Given the input drawVisList (list of drawable/visList pairs), we make two new
     // lists. The list "drawables" is just the excerpted sub-list from drawVis starting
@@ -294,80 +290,69 @@ int plPageTreeMgr::IPrepForRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawV
     // So pairs[i] resolves into 
     // drawables[pairs[i].fDrawable].fDrawable->GetSpan(pairs[i].fSpan)
 
-    drawables.Append(&drawVis[iDrawStart]);
-    for( i = 0; i < drawVis[iDrawStart].fVisList.GetCount(); i++ )
-    {
-        plDrawSpanPair* pair = pairs.Push();
-        pair->fDrawable = 0;
-        pair->fSpan = drawVis[iDrawStart].fVisList[i];
-    }
+    drawables.emplace_back(&drawVis[iDrawStart]);
+    for (int16_t idx : drawVis[iDrawStart].fVisList)
+        pairs.emplace_back(0, idx);
 
-    int iDraw;
-    for( iDraw = iDrawStart+1; 
-        (iDraw < drawVis.GetCount())
-        && (drawVis[iDraw].fDrawable->GetRenderLevel().Level() == renderLevel)
-        && drawVis[iDraw].fDrawable->GetNativeProperty(plDrawable::kPropSortSpans);
-        iDraw++ )
+    size_t iDraw;
+    for (iDraw = iDrawStart + 1;
+            (iDraw < drawVis.size())
+                && (drawVis[iDraw].fDrawable->GetRenderLevel().Level() == renderLevel)
+                && drawVis[iDraw].fDrawable->GetNativeProperty(plDrawable::kPropSortSpans);
+            iDraw++)
     {
-        plDrawable* drawable = drawVis[iDraw].fDrawable;
-        hsTArray<int16_t>& visList = drawVis[iDraw].fVisList;
-        for( i = 0; i < visList.GetCount(); i++ )
-        {
-            plDrawSpanPair* pair = pairs.Push();
-            pair->fDrawable = drawables.GetCount();
-            pair->fSpan = visList[i];
-        }
-        drawables.Append(&drawVis[iDraw]);
+        for (int16_t idx : drawVis[iDraw].fVisList)
+            pairs.emplace_back((uint16_t)drawables.size(), idx);
+        drawables.emplace_back(&drawVis[iDraw]);
     }
 
     // Now that we have them in a more convenient format, sort them and render.
     IRenderSortingSpans(pipe, drawables, pairs);
 
-    int numDrawn = pairs.GetCount();
+    size_t numDrawn = pairs.size();
 
-    drawables.SetCount(0);
-    pairs.SetCount(0);
+    drawables.clear();
+    pairs.clear();
 
     iDrawStart = iDraw - 1;
 
     return numDrawn;
 }
 
-bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList*>& drawList, hsTArray<plDrawSpanPair>& pairs)
+bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, std::vector<plDrawVisList*>& drawList, std::vector<plDrawSpanPair>& pairs)
 {
 
-    if( !pairs.GetCount() )
+    if (pairs.empty())
         return false;
 
     hsPoint3 viewPos = pipe->GetViewPositionWorld();
 
     plProfile_BeginTiming(DrawObjSort);
-    plProfile_IncCount(DrawObjSorted, pairs.GetCount());
+    plProfile_IncCount(DrawObjSorted, pairs.size());
 
     hsRadixSort::Elem* listTrav;
-    scratchList.SetCount(pairs.GetCount());
+    scratchList.resize(pairs.size());
 
     // First, sort on distance to the camera (squared).
-    listTrav = nil;
+    listTrav = nullptr;
     int iSort = 0;
-    int i;
-    for( i = 0; i < pairs.GetCount(); i++ )
+    for (const plDrawSpanPair& pair : pairs)
     {
-        plDrawable* drawable = drawList[pairs[i].fDrawable]->fDrawable;
+        plDrawable* drawable = drawList[pair.fDrawable]->fDrawable;
 
         listTrav = &scratchList[iSort++];
-        listTrav->fBody = (void*)&pairs[i];
+        listTrav->fBody = (intptr_t)&pair;
         listTrav->fNext = listTrav + 1;
 
         if( drawable->GetNativeProperty(plDrawable::kPropSortAsOne) )
         {
             const hsBounds3Ext& bnd = drawable->GetSpaceTree()->GetNode(drawable->GetSpaceTree()->GetRoot()).fWorldBounds;
             plConst(float) kDistFudge(1.e-1f);
-            listTrav->fKey.fFloat = -(bnd.GetCenter() - viewPos).MagnitudeSquared() + float(pairs[i].fSpan) * kDistFudge;
+            listTrav->fKey.fFloat = -(bnd.GetCenter() - viewPos).MagnitudeSquared() + float(pair.fSpan) * kDistFudge;
         }
         else
         {
-            const hsBounds3Ext& bnd = drawable->GetSpaceTree()->GetNode(pairs[i].fSpan).fWorldBounds;
+            const hsBounds3Ext& bnd = drawable->GetSpaceTree()->GetNode(pair.fSpan).fWorldBounds;
             listTrav->fKey.fFloat = -(bnd.GetCenter() - viewPos).MagnitudeSquared();
         }
     }
@@ -376,17 +361,17 @@ bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList
         plProfile_EndTiming(DrawObjSort);
         return false;
     }
-    listTrav->fNext = nil;
+    listTrav->fNext = nullptr;
 
     hsRadixSort rad;
-    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.AcquireArray(), 0);
+    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.data(), 0);
 
     plProfile_EndTiming(DrawObjSort);
 
-    static hsTArray<int16_t> visList;
-    visList.SetCount(0);
+    static std::vector<int16_t> visList;
+    visList.clear();
 
-    plVisMgr* visMgr = fDisableVisMgr ? nil : fVisMgr;
+    plVisMgr* visMgr = fDisableVisMgr ? nullptr : fVisMgr;
 
     // Call PrepForRender on each of these bad boys. We only want to call
     // PrepForRender once on each drawable, no matter how many times we're
@@ -399,18 +384,18 @@ bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList
     // isn't appropriate for rendering (because it doesn't let us switch back and forth 
     // from a drawable, but it's right for the PrepForRenderCall (which does things like
     // face sorting).
-    for( i = 0; i < drawList.GetCount(); i++ )
-        drawList[i]->fVisList.SetCount(0);
+    for (plDrawVisList* dvList : drawList)
+        dvList->fVisList.clear();
     listTrav = sortedList;
     while( listTrav )
     {
         plDrawSpanPair& curPair = *(plDrawSpanPair*)listTrav->fBody;
-        drawList[curPair.fDrawable]->fVisList.Append(curPair.fSpan);
+        drawList[curPair.fDrawable]->fVisList.emplace_back(curPair.fSpan);
         listTrav = listTrav->fNext;
     }
-    for( i = 0; i < drawList.GetCount(); i++ )
+    for (plDrawVisList* dvList : drawList)
     {
-        pipe->PrepForRender(drawList[i]->fDrawable, drawList[i]->fVisList, visMgr);
+        pipe->PrepForRender(dvList->fDrawable, dvList->fVisList, visMgr);
     }
 
     // We'd like to call Render once on a drawable for each contiguous
@@ -425,7 +410,7 @@ bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList
     listTrav = sortedList;
     plDrawSpanPair& curPair = *(plDrawSpanPair*)listTrav->fBody;
     int curDraw = curPair.fDrawable;
-    visList.Append(curPair.fSpan);
+    visList.emplace_back(curPair.fSpan);
     listTrav = listTrav->fNext;
 
     while( listTrav )
@@ -435,12 +420,12 @@ bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList
         {
             pipe->Render(drawList[curDraw]->fDrawable, visList);
             curDraw = curPair.fDrawable;
-            visList.SetCount(0);
-            visList.Append(curPair.fSpan);
+            visList.clear();
+            visList.emplace_back(curPair.fSpan);
         }
         else
         {
-            visList.Append(curPair.fSpan);
+            visList.emplace_back(curPair.fSpan);
         }
         listTrav = listTrav->fNext;
     }
@@ -451,10 +436,10 @@ bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList
     int curDraw = curPair.fDrawable;
     listTrav = listTrav->fNext;
 
-    static hsTArray<uint32_t> numDrawn;
-    numDrawn.SetCountAndZero(drawList.GetCount());
+    static std::vector<uint32_t> numDrawn;
+    numDrawn.assign(drawList.size(), 0);
 
-    visList.Append(drawList[curDraw]->fVisList[numDrawn[curDraw]++]);
+    visList.emplace_back(drawList[curDraw]->fVisList[numDrawn[curDraw]++]);
 
     while( listTrav )
     {
@@ -463,9 +448,9 @@ bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList
         {
             pipe->Render(drawList[curDraw]->fDrawable, visList);
             curDraw = curPair.fDrawable;
-            visList.SetCount(0);
+            visList.clear();
         }
-        visList.Append(drawList[curDraw]->fVisList[numDrawn[curDraw]++]);
+        visList.emplace_back(drawList[curDraw]->fVisList[numDrawn[curDraw]++]);
         listTrav = listTrav->fNext;
     }
     pipe->Render(drawList[curDraw]->fDrawable, visList);
@@ -490,16 +475,15 @@ bool plPageTreeMgr::IBuildSpaceTree()
 
 bool plPageTreeMgr::IRefreshTree(plPipeline* pipe)
 {
-    for (size_t i = 0; i < fNodes.size(); ++i)
-    {
+    hsAssert(fNodes.size() < std::numeric_limits<uint16_t>::max(), "Too many nodes");
+    for (uint16_t i = 0; i < uint16_t(fNodes.size()); ++i) {
         plSceneNode* node = fNodes[i];
-        if (node->GetSpaceTree()->IsDirty())
-        {
+        if (node->GetSpaceTree()->IsDirty()) {
             node->GetSpaceTree()->Refresh();
 
             GetSpaceTree()->MoveLeaf(i, node->GetSpaceTree()->GetWorldBounds());
 
-            if (!node->GetSpaceTree()->IsEmpty() && fSpaceTree->HasLeafFlag(i, plSpaceTreeNode::kDisabled) )
+            if (!node->GetSpaceTree()->IsEmpty() && fSpaceTree->HasLeafFlag(i, plSpaceTreeNode::kDisabled))
                 fSpaceTree->SetLeafFlag(i, plSpaceTreeNode::kDisabled, false);
         }
     }
@@ -511,45 +495,39 @@ bool plPageTreeMgr::IRefreshTree(plPipeline* pipe)
     return true;
 }
 
-void plPageTreeMgr::AddOccluderList(const hsTArray<plOccluder*> occList)
+void plPageTreeMgr::AddOccluderList(const std::vector<plOccluder*>& occList)
 {
-    int iStart = fOccluders.GetCount();
-    fOccluders.Expand(iStart + occList.GetCount());
-    fOccluders.SetCount(iStart + occList.GetCount());
+    size_t iStart = fOccluders.size();
+    fOccluders.resize(iStart + occList.size());
 
-    plVisMgr* visMgr = fDisableVisMgr ? nil : fVisMgr;
+    plVisMgr* visMgr = fDisableVisMgr ? nullptr : fVisMgr;
 
     if( visMgr )
     {
         const hsBitVector& visSet = visMgr->GetVisSet();
         const hsBitVector& visNot = visMgr->GetVisNot();
-        int i;
-        for( i = 0; i < occList.GetCount(); i++ )
+        for (plOccluder* occluder : occList)
         {
-            if( occList[i] && !occList[i]->InVisNot(visNot) && occList[i]->InVisSet(visSet) )
-                fOccluders[iStart++] = occList[i];
+            if (occluder && !occluder->InVisNot(visNot) && occluder->InVisSet(visSet))
+                fOccluders[iStart++] = occluder;
         }
     }
     else
     {
-        int i;
-        for( i = 0; i < occList.GetCount(); i++ )
+        for (plOccluder* occluder : occList)
         {
-            if( occList[i] )
-                fOccluders[iStart++] = occList[i];
+            if (occluder)
+                fOccluders[iStart++] = occluder;
         }
     }
-    fOccluders.SetCount(iStart);
-
+    fOccluders.resize(iStart);
 }
 
-void plPageTreeMgr::IAddCullPolyList(const hsTArray<plCullPoly>& polyList)
+void plPageTreeMgr::IAddCullPolyList(const std::vector<plCullPoly>& polyList)
 {
-    int iStart = fCullPolys.GetCount();
-    fCullPolys.Expand(iStart + polyList.GetCount());
-    fCullPolys.SetCount(iStart + polyList.GetCount());
-    int i;
-    for( i = 0; i < polyList.GetCount(); i++ )
+    size_t iStart = fCullPolys.size();
+    fCullPolys.resize(iStart + polyList.size());
+    for (size_t i = 0; i < polyList.size(); i++)
     {
         fCullPolys[i + iStart] = &polyList[i];
     }
@@ -557,54 +535,53 @@ void plPageTreeMgr::IAddCullPolyList(const hsTArray<plCullPoly>& polyList)
 
 void plPageTreeMgr::ISortCullPolys(plPipeline* pipe)
 {
-    fSortedCullPolys.SetCount(0);
-    if( !fCullPolys.GetCount() )
+    fSortedCullPolys.clear();
+    if (fCullPolys.empty())
         return;
 
-    const int kMaxCullPolys = 300;
-    int numSubmit = 0;
+    constexpr size_t kMaxCullPolys = 300;
+    size_t numSubmit = 0;
 
     hsPoint3 viewPos = pipe->GetViewPositionWorld();
 
     hsRadixSort::Elem* listTrav;
-    scratchList.SetCount(fCullPolys.GetCount());
-    int i;
-    for( i = 0; i < fCullPolys.GetCount(); i++ )
+    scratchList.resize(fCullPolys.size());
+    for (const plCullPoly* poly : fCullPolys)
     {
-        bool backFace = fCullPolys[i]->fNorm.InnerProduct(viewPos) + fCullPolys[i]->fDist <= 0;
+        bool backFace = poly->fNorm.InnerProduct(viewPos) + poly->fDist <= 0;
         if( backFace )
         {
-            if( !fCullPolys[i]->IsHole() && !fCullPolys[i]->IsTwoSided() )
+            if (!poly->IsHole() && !poly->IsTwoSided())
                 continue;
         }
         else
         {
-            if( fCullPolys[i]->IsHole() )
+            if (poly->IsHole())
                 continue;
         }
 
         listTrav = &scratchList[numSubmit];
-        listTrav->fBody = (void*)fCullPolys[i];
+        listTrav->fBody = (intptr_t)poly;
         listTrav->fNext = listTrav + 1;
-        listTrav->fKey.fFloat = (fCullPolys[i]->GetCenter() - viewPos).MagnitudeSquared();
+        listTrav->fKey.fFloat = (poly->GetCenter() - viewPos).MagnitudeSquared();
 
         numSubmit++;
     }
     if( !numSubmit )
         return;
 
-    listTrav->fNext = nil;
+    listTrav->fNext = nullptr;
 
     hsRadixSort rad;
-    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.AcquireArray(), 0);
+    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.data(), 0);
     listTrav = sortedList;
 
     if( numSubmit > kMaxCullPolys )
         numSubmit = kMaxCullPolys;
 
-    fSortedCullPolys.SetCount(numSubmit);
+    fSortedCullPolys.resize(numSubmit);
 
-    for( i = 0; i < numSubmit; i++ )
+    for (size_t i = 0; i < numSubmit; i++)
     {
         fSortedCullPolys[i] = (const plCullPoly*)listTrav->fBody;
         listTrav = listTrav->fNext;
@@ -613,28 +590,27 @@ void plPageTreeMgr::ISortCullPolys(plPipeline* pipe)
 
 bool plPageTreeMgr::IGetCullPolys(plPipeline* pipe)
 {
-    if( !fOccluders.GetCount() )
+    if (fOccluders.empty())
         return false;
 
     plProfile_BeginTiming(DrawOccSort);
 
-    hsRadixSort::Elem* listTrav = nil;
-    scratchList.SetCount(fOccluders.GetCount());
+    hsRadixSort::Elem* listTrav = nullptr;
+    scratchList.resize(fOccluders.size());
 
     hsPoint3 viewPos = pipe->GetViewPositionWorld();
 
     // cull test the occluders submitted
-    int numSubmit = 0;
-    int i;
-    for( i = 0; i < fOccluders.GetCount(); i++ )
+    uint32_t numSubmit = 0;
+    for (const plOccluder* occluder : fOccluders)
     {
-        if( pipe->TestVisibleWorld(fOccluders[i]->GetWorldBounds()) )
+        if( pipe->TestVisibleWorld(occluder->GetWorldBounds()) )
         {
-            float invDist = -hsFastMath::InvSqrtAppr((viewPos - fOccluders[i]->GetWorldBounds().GetCenter()).MagnitudeSquared());
+            float invDist = -hsFastMath::InvSqrtAppr((viewPos - occluder->GetWorldBounds().GetCenter()).MagnitudeSquared());
             listTrav = &scratchList[numSubmit++];
-            listTrav->fBody = (void*)fOccluders[i];
+            listTrav->fBody = (intptr_t)occluder;
             listTrav->fNext = listTrav+1;
-            listTrav->fKey.fFloat = fOccluders[i]->GetPriority() * invDist;
+            listTrav->fKey.fFloat = occluder->GetPriority() * invDist;
         }
     }
     if( !listTrav )
@@ -643,22 +619,22 @@ bool plPageTreeMgr::IGetCullPolys(plPipeline* pipe)
         return false;
     }
 
-    listTrav->fNext = nil;
+    listTrav->fNext = nullptr;
 
 
     // Sort the occluders by priority
     hsRadixSort rad;
-    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.AcquireArray(), 0);
+    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.data(), 0);
     listTrav = sortedList;
 
-    const uint32_t kMaxOccluders = 1000;
-    if( numSubmit > kMaxOccluders )
+    constexpr uint32_t kMaxOccluders = 1000;
+    if (numSubmit > kMaxOccluders)
         numSubmit = kMaxOccluders;
 
     plProfile_IncCount(DrawOccUsed, numSubmit);
 
     // Take the polys from the first N of them
-    for( i = 0; i < numSubmit; i++ )
+    for (uint32_t i = 0; i < numSubmit; i++)
     {
         plOccluder* occ = (plOccluder*)listTrav->fBody;
         IAddCullPolyList(occ->GetWorldPolyList());
@@ -668,15 +644,15 @@ bool plPageTreeMgr::IGetCullPolys(plPipeline* pipe)
 
     plProfile_EndTiming(DrawOccSort);
 
-    return fCullPolys.GetCount() > 0;
+    return !fCullPolys.empty();
 }
 
-bool plPageTreeMgr::IGetOcclusion(plPipeline* pipe, hsTArray<int16_t>& list)
+bool plPageTreeMgr::IGetOcclusion(plPipeline* pipe, std::vector<int16_t>& list)
 {
     plProfile_BeginTiming(DrawOccBuild);
 
-    fCullPolys.SetCount(0);
-    fOccluders.SetCount(0);
+    fCullPolys.clear();
+    fOccluders.clear();
     for (plSceneNode* node : fNodes)
         node->SubmitOccluders(this);
 
@@ -686,22 +662,22 @@ bool plPageTreeMgr::IGetOcclusion(plPipeline* pipe, hsTArray<int16_t>& list)
         return false;
     }
 
-    plProfile_IncCount(DrawOccPolyProc, fCullPolys.GetCount());
+    plProfile_IncCount(DrawOccPolyProc, fCullPolys.size());
 
     plProfile_BeginTiming(DrawOccPolySort);
     ISortCullPolys(pipe);
     plProfile_EndTiming(DrawOccPolySort);
 
-    if( fSortedCullPolys.GetCount() )
+    if (!fSortedCullPolys.empty())
         pipe->SubmitOccluders(fSortedCullPolys);
 
     plProfile_EndTiming(DrawOccBuild);
 
-    return fSortedCullPolys.GetCount() > 0;
+    return !fSortedCullPolys.empty();
 }
 
 void plPageTreeMgr::IResetOcclusion(plPipeline* pipe)
 {
-    fCullPolys.SetCount(0);
-    fSortedCullPolys.SetCount(0);
+    fCullPolys.clear();
+    fSortedCullPolys.clear();
 }

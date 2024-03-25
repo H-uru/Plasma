@@ -71,9 +71,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScene/plVisRegion.h"
 #include "plScene/plVisMgr.h"
 
-// heinous
-#include "plNetClient/plNetClientMgr.h"
 #include "pnMessage/plEnableMsg.h"
+
 static float kMaxYon = 1000.f;
 static float kMinHither = 1.f;
 
@@ -82,11 +81,9 @@ static float kMinHither = 1.f;
 #include "plDrawable/plDrawableGenerator.h"
 
 plLightInfo::plLightInfo()
-:   fSceneNode(nil),
-    fDeviceRef(nil),
-    fVolFlags(0),
-    fProjection(nil),
-    fSoftVolume(nil)
+    : fSceneNode(), fDeviceRef(), fProjection(), fSoftVolume(),
+      fVolFlags(), fNextDevPtr(), fPrevDevPtr(), fProxyGen(new plLightProxy),
+      fRegisteredForRenderMsg(), fAmbient(), fDiffuse(), fSpecular(), fMaxStrength()
 {
     fLightToWorld.Reset();
     fWorldToLight.Reset();
@@ -99,20 +96,14 @@ plLightInfo::plLightInfo()
 
     fWorldToProj.Reset();
 
-    fNextDevPtr = nil;
-    fPrevDevPtr = nil;
-
-    fProxyGen = new plLightProxy;
     fProxyGen->Init(this);
-
-    fRegisteredForRenderMsg = false;
 
     fVisSet.SetBit(plVisMgr::kNormal);
 }
 
 plLightInfo::~plLightInfo()
 {
-    if( fNextDevPtr != nil || fPrevDevPtr != nil )
+    if (fNextDevPtr != nullptr || fPrevDevPtr != nullptr)
         Unlink();
 
     hsRefCnt_SafeUnRef( fDeviceRef );
@@ -181,6 +172,13 @@ void plLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, 
     return;     
 }
 
+bool plLightInfo::AffectsBound(const hsBounds3Ext& bnd)
+{
+    if (plVolumeIsect* isect = IGetIsect(); isect)
+        return isect->Test(bnd) != kVolumeCulled;
+    return true;
+}
+
 void plLightInfo::GetAffectedForced(const plSpaceTree* space, hsBitVector& list, bool charac)
 {
     Refresh();
@@ -215,7 +213,7 @@ void plLightInfo::GetAffected(const plSpaceTree* space, hsBitVector& list, bool 
     }
 }
 
-const hsTArray<int16_t>& plLightInfo::GetAffected(plSpaceTree* space, const hsTArray<int16_t>& visList, hsTArray<int16_t>& litList, bool charac)
+const std::vector<int16_t>& plLightInfo::GetAffected(plSpaceTree* space, const std::vector<int16_t>& visList, std::vector<int16_t>& litList, bool charac)
 {
     Refresh();
 
@@ -240,7 +238,7 @@ const hsTArray<int16_t>& plLightInfo::GetAffected(plSpaceTree* space, const hsTA
         }
     }
 
-    litList.SetCount(0);
+    litList.clear();
     return litList;
 }
 
@@ -283,7 +281,7 @@ void plLightInfo::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
     if( IGetIsect() )
         IGetIsect()->SetTransform(fLightToWorld, fWorldToLight);
 
-    if( fDeviceRef != nil )
+    if (fDeviceRef != nullptr)
         fDeviceRef->SetDirty( true );
 
     fProxyGen->SetTransform(fLightToWorld, fWorldToLight);
@@ -335,10 +333,9 @@ void plLightInfo::IAddVisRegion(plVisRegion* reg)
 {
     if( reg )
     {
-        int idx = fVisRegions.Find(reg);
-        if( fVisRegions.kMissingIndex == idx )
+        if (std::find(fVisRegions.cbegin(), fVisRegions.cend(), reg) == fVisRegions.cend())
         {
-            fVisRegions.Append(reg);
+            fVisRegions.emplace_back(reg);
             if( reg->GetProperty(plVisRegion::kIsNot) )
                 fVisNot.SetBit(reg->GetIndex());
             else
@@ -355,10 +352,10 @@ void plLightInfo::IRemoveVisRegion(plVisRegion* reg)
 {
     if( reg )
     {
-        int idx = fVisRegions.Find(reg);
-        if( fVisRegions.kMissingIndex != idx )
+        auto iter = std::find(fVisRegions.cbegin(), fVisRegions.cend(), reg);
+        if (iter != fVisRegions.cend())
         {
-            fVisRegions.Remove(idx);
+            fVisRegions.erase(iter);
             if( reg->GetProperty(plVisRegion::kIsNot) )
                 fVisNot.ClearBit(reg->GetIndex());
             else
@@ -395,7 +392,7 @@ bool plLightInfo::MsgReceive(plMessage* msg)
             case kProjection:
                 fProjection = plLayerInterface::ConvertNoRef(refMsg->GetRef());
                 {
-                    if( GetKey() && !GetKey()->GetName().CompareN("RTPatternLight", strlen("RTPatternLight")) )
+                    if( GetKey() && GetKey()->GetName().starts_with("RTPatternLight") )
                         SetProperty(kLPForceProj, true);
                 }
                 break;
@@ -412,10 +409,10 @@ bool plLightInfo::MsgReceive(plMessage* msg)
             switch( refMsg->fType )
             {
             case kProjection:
-                fProjection = nil;
+                fProjection = nullptr;
                 break;
             case kSoftVolume:
-                fSoftVolume = nil;
+                fSoftVolume = nullptr;
                 break;
             case kVisRegion:
                 IRemoveVisRegion(plVisRegion::ConvertNoRef(refMsg->GetRef()));
@@ -452,7 +449,7 @@ bool plLightInfo::MsgReceive(plMessage* msg)
 void plLightInfo::Read(hsStream* s, hsResMgr* mgr)
 {
     hsRefCnt_SafeUnRef( fDeviceRef );
-    fDeviceRef = nil;
+    fDeviceRef = nullptr;
 
     plObjInterface::Read(s, mgr);
 
@@ -477,10 +474,9 @@ void plLightInfo::Read(hsStream* s, hsResMgr* mgr)
     plKey nodeKey = mgr->ReadKey(s);
     ISetSceneNode(nodeKey);
 
-    int n = s->ReadLE32();
-    fVisRegions.SetCountAndZero(n);
-    int i;
-    for( i = 0; i < n; i++ )
+    uint32_t n = s->ReadLE32();
+    fVisRegions.reserve(n);
+    for (uint32_t i = 0; i < n; i++)
         mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kVisRegion), plRefFlags::kActiveRef);
 
     SetDirty(true);
@@ -506,14 +502,13 @@ void plLightInfo::Write(hsStream* s, hsResMgr* mgr)
 
     mgr->WriteKey(s, fSceneNode);
 
-    s->WriteLE32(fVisRegions.GetCount());
-    int i;
-    for( i = 0; i < fVisRegions.GetCount(); i++ )
-        mgr->WriteKey(s, fVisRegions[i]);
+    s->WriteLE32((uint32_t)fVisRegions.size());
+    for (plVisRegion* region : fVisRegions)
+        mgr->WriteKey(s, region);
 }
 
 // These two should only be called by the SceneObject
-void plLightInfo::ISetSceneNode(plKey node)
+void plLightInfo::ISetSceneNode(const plKey& node)
 {
     if( node != fSceneNode )
     {
@@ -529,7 +524,7 @@ void plLightInfo::ISetSceneNode(plKey node)
     }
     fSceneNode = node;
 
-    if( fSceneNode != nil )
+    if (fSceneNode != nullptr)
     {
         if( !fRegisteredForRenderMsg )
         {
@@ -553,20 +548,20 @@ plKey plLightInfo::GetSceneNode() const
 
 //// Link & Unlink ///////////////////////////////////////////////////////
 
-void    plLightInfo::Unlink( void )
+void    plLightInfo::Unlink()
 {
     hsAssert( fPrevDevPtr, "Light info not in list" );
     if( fNextDevPtr )
         fNextDevPtr->fPrevDevPtr = fPrevDevPtr;
     *fPrevDevPtr = fNextDevPtr;
 
-    fNextDevPtr = nil;
-    fPrevDevPtr = nil;
+    fNextDevPtr = nullptr;
+    fPrevDevPtr = nullptr;
 }
 
 void    plLightInfo::Link( plLightInfo **back )
 {
-    hsAssert( fNextDevPtr == nil && fPrevDevPtr == nil, "Trying to link a lightInfo that's already linked" );
+    hsAssert(fNextDevPtr == nullptr && fPrevDevPtr == nullptr, "Trying to link a lightInfo that's already linked");
 
     fNextDevPtr = *back;
     if( *back )
@@ -615,10 +610,6 @@ hsVector3 plDirectionalLightInfo::GetWorldDirection() const
 
 //////////////////////////////////////////////////////////////////////////
 // Limited Directional
-plLimitedDirLightInfo::plLimitedDirLightInfo()
-:   fParPlanes(nil)
-{
-}
 
 plLimitedDirLightInfo::~plLimitedDirLightInfo()
 {
@@ -668,18 +659,18 @@ void plLimitedDirLightInfo::Read(hsStream* s, hsResMgr* mgr)
 {
     plDirectionalLightInfo::Read(s, mgr);
 
-    fWidth = s->ReadLEScalar();
-    fHeight = s->ReadLEScalar();
-    fDepth = s->ReadLEScalar();
+    fWidth = s->ReadLEFloat();
+    fHeight = s->ReadLEFloat();
+    fDepth = s->ReadLEFloat();
 }
 
 void plLimitedDirLightInfo::Write(hsStream* s, hsResMgr* mgr)
 {
     plDirectionalLightInfo::Write(s, mgr);
 
-    s->WriteLEScalar(fWidth);
-    s->WriteLEScalar(fHeight);
-    s->WriteLEScalar(fDepth);
+    s->WriteLEFloat(fWidth);
+    s->WriteLEFloat(fHeight);
+    s->WriteLEFloat(fDepth);
 }
 
 void plLimitedDirLightInfo::IMakeIsect()
@@ -708,11 +699,16 @@ void plLimitedDirLightInfo::IMakeIsect()
     fParPlanes->SetTransform(fLightToWorld, fWorldToLight);
 }
 
+plVolumeIsect* plLimitedDirLightInfo::IGetIsect() const
+{
+    return fParPlanes;
+}
+
 //// ICreateProxy //////////////////////////////////////////////////////
 //  Creates a new box drawable for showing the light's
 //  influence.
 
-plDrawableSpans* plLimitedDirLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plLimitedDirLightInfo::CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
 {
     hsPoint3 corner;
     corner.Set(-fWidth*0.5f, -fHeight*0.5f, -fDepth);
@@ -725,7 +721,7 @@ plDrawableSpans* plLimitedDirLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<u
                                                             mat, 
                                                             fLightToWorld, 
                                                             true,
-                                                            nil,
+                                                            nullptr,
                                                             &idx, 
                                                             addTo );
 
@@ -737,11 +733,11 @@ plDrawableSpans* plLimitedDirLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<u
 //////////////////////////////////////////////////////////////////////////
 // Omni
 plOmniLightInfo::plOmniLightInfo()
-:   fAttenConst(0),
+:   fAttenConst(),
     fAttenLinear(1.f),
-    fAttenQuadratic(0),
-    fAttenCutoff(0),
-    fSphere(nil)
+    fAttenQuadratic(),
+    fAttenCutoff(),
+    fSphere()
 {
 }
 
@@ -754,6 +750,11 @@ void plOmniLightInfo::IMakeIsect()
 {
     fSphere = new plSphereIsect;
     fSphere->SetTransform(fLightToWorld, fWorldToLight);
+}
+
+plVolumeIsect* plOmniLightInfo::IGetIsect() const
+{
+    return fSphere;
 }
 
 void plOmniLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const
@@ -828,7 +829,7 @@ void plOmniLightInfo::IRefresh()
     else
     {
         delete fSphere;
-        fSphere = nil;
+        fSphere = nullptr;
     }
 }
 
@@ -843,20 +844,20 @@ void plOmniLightInfo::Read(hsStream* s, hsResMgr* mgr)
 {
     plLightInfo::Read(s, mgr);
 
-    fAttenConst = s->ReadLEScalar();
-    fAttenLinear = s->ReadLEScalar();
-    fAttenQuadratic = s->ReadLEScalar();
-    fAttenCutoff = s->ReadLEScalar();
+    fAttenConst = s->ReadLEFloat();
+    fAttenLinear = s->ReadLEFloat();
+    fAttenQuadratic = s->ReadLEFloat();
+    fAttenCutoff = s->ReadLEFloat();
 }
 
 void plOmniLightInfo::Write(hsStream* s, hsResMgr* mgr)
 {
     plLightInfo::Write(s, mgr);
 
-    s->WriteLEScalar(fAttenConst);
-    s->WriteLEScalar(fAttenLinear);
-    s->WriteLEScalar(fAttenQuadratic);
-    s->WriteLEScalar( fAttenCutoff );
+    s->WriteLEFloat(fAttenConst);
+    s->WriteLEFloat(fAttenLinear);
+    s->WriteLEFloat(fAttenQuadratic);
+    s->WriteLEFloat(fAttenCutoff);
 }
 
 
@@ -864,7 +865,7 @@ void plOmniLightInfo::Write(hsStream* s, hsResMgr* mgr)
 //  Creates a new sphere drawable for showing the omnilight's
 //  sphere (haha) of influence.
 
-plDrawableSpans* plOmniLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plOmniLightInfo::CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
 {
     float   rad = GetRadius();
     if( rad == 0 )
@@ -875,7 +876,7 @@ plDrawableSpans* plOmniLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_
                                                         mat, 
                                                         fLightToWorld, 
                                                         true,
-                                                        nil,
+                                                        nullptr,
                                                         &idx,
                                                         addTo);
 
@@ -885,13 +886,6 @@ plDrawableSpans* plOmniLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_
 
 //////////////////////////////////////////////////////////////////////////
 // Spot
-plSpotLightInfo::plSpotLightInfo()
-:   fFalloff(1.f),
-    fSpotInner(M_PI * 0.125f),
-    fSpotOuter(M_PI * 0.25f),
-    fCone(nil)
-{
-}
 
 plSpotLightInfo::~plSpotLightInfo()
 {
@@ -904,10 +898,9 @@ void plSpotLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& streng
 
     // Volume - Want to base this on the closest point on the bounds, instead of just the center.
     const hsPoint3& pos = bnd.GetCenter();
-    
-    hsVector3 del;
+
     hsPoint3 wpos = GetWorldPosition();
-    del.Set(&pos, &wpos);
+    hsVector3 del(&pos, &wpos);
     float invDist = del.MagnitudeSquared();
     invDist = hsFastMath::InvSqrtAppr(invDist);
 
@@ -927,6 +920,11 @@ void plSpotLightInfo::IMakeIsect()
 {
     fCone = new plConeIsect;
     fCone->SetTransform(fLightToWorld, fWorldToLight);
+}
+
+plVolumeIsect* plSpotLightInfo::IGetIsect() const
+{
+    return fCone;
 }
 
 void plSpotLightInfo::IRefresh()
@@ -976,18 +974,18 @@ void plSpotLightInfo::Read(hsStream* s, hsResMgr* mgr)
 {
     plOmniLightInfo::Read(s, mgr);
 
-    fFalloff = s->ReadLEScalar();
-    fSpotInner = s->ReadLEScalar();
-    fSpotOuter = s->ReadLEScalar();
+    fFalloff = s->ReadLEFloat();
+    fSpotInner = s->ReadLEFloat();
+    fSpotOuter = s->ReadLEFloat();
 }
 
 void plSpotLightInfo::Write(hsStream* s, hsResMgr* mgr)
 {
     plOmniLightInfo::Write(s, mgr);
 
-    s->WriteLEScalar(fFalloff);
-    s->WriteLEScalar(fSpotInner);
-    s->WriteLEScalar(fSpotOuter);
+    s->WriteLEFloat(fFalloff);
+    s->WriteLEFloat(fSpotInner);
+    s->WriteLEFloat(fSpotOuter);
 }
 
 
@@ -1000,7 +998,7 @@ hsVector3 plSpotLightInfo::GetWorldDirection() const
 //  Generates a new drawable for showing the spotlight's
 //  sphere of influence.
 
-plDrawableSpans* plSpotLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plSpotLightInfo::CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
 {
     float   rad = GetRadius();
     float   x, y;
@@ -1015,9 +1013,8 @@ plDrawableSpans* plSpotLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_
                                                         mat, 
                                                         fLightToWorld, 
                                                         true,
-                                                        nil,
+                                                        nullptr,
                                                         &idx,
                                                         addTo);
     return draw;
 }
-

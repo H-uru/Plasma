@@ -43,11 +43,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCreator_inc
 #define plCreator_inc
 
+#include <type_traits>
+
 #include "plClassIndexMacros.h"
 #include "plCreatableIndex.h"
 #include "plFactory.h"
 
 class plCreatable;
+class hsKeyedObject;
 
 class plCreator
 {
@@ -63,34 +66,72 @@ public:
     virtual const char*   ClassName() const = 0;
     virtual bool          HasBaseClass(uint16_t hBase) = 0;
 
-    friend class plFactory;
+    template<typename _CreatableT, uint16_t _CreatableIDX>
+    static constexpr bool VerifyKeyedIndex()
+    {
+        if constexpr (_CreatableIDX < KEYED_OBJ_DELINEATOR)
+            return std::is_base_of_v<hsKeyedObject, _CreatableT>;
+        return true;
+    }
+
+    template<typename _CreatableT, uint16_t _CreatableIDX>
+    static constexpr bool VerifyNonKeyedIndex()
+    {
+        if constexpr (_CreatableIDX >= KEYED_OBJ_DELINEATOR)
+            return !(std::is_base_of_v<hsKeyedObject, _CreatableT>);
+        return true;
+    }
 };
+
+#define VERIFY_CREATABLE(plClassName)                                                         \
+                                                                                              \
+static_assert(plCreator::VerifyKeyedIndex<plClassName, CLASS_INDEX_SCOPED(plClassName)>(),    \
+              #plClassName " is in the KeyedObject section of plCreatableIndex but "          \
+              "does not derive from hsKeyedObject.");                                         \
+                                                                                              \
+static_assert(plCreator::VerifyNonKeyedIndex<plClassName, CLASS_INDEX_SCOPED(plClassName)>(), \
+              #plClassName " is in the non-KeyedObject section of plCreatableIndex but "      \
+              "derives from hsKeyedObject.")                                                  //
+
+
+#define VERIFY_EXTERNAL_CREATABLE(plClassName)                                               \
+                                                                                              \
+static_assert(plCreator::VerifyKeyedIndex<plClassName, EXTERN_CLASS_INDEX_SCOPED(plClassName)>(),    \
+              #plClassName " is in the KeyedObject section of plCreatableIndex but "          \
+              "does not derive from hsKeyedObject.");                                         \
+                                                                                              \
+static_assert(plCreator::VerifyNonKeyedIndex<plClassName, EXTERN_CLASS_INDEX_SCOPED(plClassName)>(), \
+              #plClassName " is in the non-KeyedObject section of plCreatableIndex but "      \
+              "derives from hsKeyedObject.")                                                  //
+
 
 #define REGISTER_CREATABLE( plClassName )                                           \
                                                                                     \
+VERIFY_CREATABLE(plClassName);                                                      \
 class plClassName##__Creator : public plCreator                                     \
 {                                                                                   \
 public:                                                                             \
     plClassName##__Creator()                                                        \
     {                                                                               \
-        plFactory::Register( CLASS_INDEX_SCOPED(plClassName), this);                \
-        plClassName::SetClassIndex(ClassIndex());                                   \
+        plFactory::Register(CLASS_INDEX_SCOPED(plClassName), this);                 \
     }                                                                               \
     virtual ~plClassName##__Creator()                                               \
     {                                                                               \
         plFactory::UnRegister(CLASS_INDEX_SCOPED(plClassName), this);               \
     }                                                                               \
                                                                                     \
-    virtual bool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
+    bool HasBaseClass(uint16_t hBase) override { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
-    virtual uint16_t ClassIndex() { return CLASS_INDEX_SCOPED(plClassName); }         \
-    virtual const char* ClassName() const { return #plClassName; }                  \
+    uint16_t ClassIndex() override { return CLASS_INDEX_SCOPED(plClassName); }      \
+    const char* ClassName() const override { return #plClassName; }                 \
                                                                                     \
-    virtual plCreatable* Create() const { return new plClassName; }         \
+    plCreatable* Create() const override { return new plClassName; }                \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-uint16_t plClassName::plClassName##ClassIndex = 0;                                    //
+const uint16_t plClassName::plClassName##ClassIndex = CLASS_INDEX_SCOPED(plClassName);  \
+VERIFY_CREATABLE(plClassName)                                                       //
+
 
 #define REGISTER_NONCREATABLE( plClassName )                                        \
                                                                                     \
@@ -99,24 +140,25 @@ class plClassName##__Creator : public plCreator                                 
 public:                                                                             \
     plClassName##__Creator()                                                        \
     {                                                                               \
-        plFactory::Register( CLASS_INDEX_SCOPED(plClassName), this);                \
-        plClassName::SetClassIndex(ClassIndex());                                   \
+        plFactory::Register(CLASS_INDEX_SCOPED(plClassName), this);                 \
     }                                                                               \
     virtual ~plClassName##__Creator()                                               \
     {                                                                               \
         plFactory::UnRegister(CLASS_INDEX_SCOPED(plClassName), this);               \
     }                                                                               \
                                                                                     \
-    virtual bool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
+    bool HasBaseClass(uint16_t hBase) override { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
-    virtual uint16_t ClassIndex() { return CLASS_INDEX_SCOPED(plClassName); }         \
-    virtual const char* ClassName() const { return #plClassName; }                  \
+    uint16_t ClassIndex() override { return CLASS_INDEX_SCOPED(plClassName); }      \
+    const char* ClassName() const override { return #plClassName; }                 \
                                                                                     \
-    virtual plCreatable*        Create() const { return nil; }                      \
+    plCreatable*        Create() const override { return nullptr; }                 \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-uint16_t plClassName::plClassName##ClassIndex = 0;                                    //
+const uint16_t plClassName::plClassName##ClassIndex = CLASS_INDEX_SCOPED(plClassName);  \
+VERIFY_CREATABLE(plClassName)                                                       //
+
 
 #define DECLARE_EXTERNAL_CREATABLE( plClassName )                                   \
                                                                                     \
@@ -132,30 +174,33 @@ public:                                                                         
     }                                                                               \
     void Register()                                                                 \
     {                                                                               \
-        plFactory::Register( EXTERN_CLASS_INDEX_SCOPED(plClassName), this);         \
-        plClassName::SetClassIndex(ClassIndex());                                   \
+        plFactory::Register(EXTERN_CLASS_INDEX_SCOPED(plClassName), this);          \
     }                                                                               \
     void UnRegister()                                                               \
     {                                                                               \
         plFactory::UnRegister(EXTERN_CLASS_INDEX_SCOPED(plClassName), this);        \
     }                                                                               \
                                                                                     \
-    virtual bool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
+    bool HasBaseClass(uint16_t hBase) override { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
-    virtual uint16_t ClassIndex() { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
-    virtual const char* ClassName() const { return #plClassName; }                  \
+    uint16_t ClassIndex() override { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
+    const char* ClassName() const override { return #plClassName; }                 \
                                                                                     \
-    virtual plCreatable* Create() const { return new plClassName; }         \
+    plCreatable* Create() const override { return new plClassName; }                \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-uint16_t plClassName::plClassName##ClassIndex = 0;                                    //
+const uint16_t plClassName::plClassName##ClassIndex = EXTERN_CLASS_INDEX_SCOPED(plClassName);  \
+VERIFY_EXTERNAL_CREATABLE(plClassName)                                              //
+
 
 #define REGISTER_EXTERNAL_CREATABLE(plClassName)                                    \
-static##plClassName##__Creator.Register();                                          //
+static##plClassName##__Creator.Register()                                           //
+
 
 #define UNREGISTER_EXTERNAL_CREATABLE(plClassName)                                  \
-plFactory::UnRegister(EXTERN_CLASS_INDEX_SCOPED(plClassName), &static##plClassName##__Creator);
+plFactory::UnRegister(EXTERN_CLASS_INDEX_SCOPED(plClassName), &static##plClassName##__Creator)
+
 
 #define REGISTER_EXTERNAL_NONCREATABLE( plClassName )                               \
                                                                                     \
@@ -164,24 +209,24 @@ class plClassName##__Creator : public plCreator                                 
 public:                                                                             \
     plClassName##__Creator()                                                        \
     {                                                                               \
-        plFactory::Register( EXTERN_CLASS_INDEX_SCOPED(plClassName), this);         \
-        plClassName::SetClassIndex(ClassIndex());                                   \
+        plFactory::Register(EXTERN_CLASS_INDEX_SCOPED(plClassName), this);          \
     }                                                                               \
     virtual ~plClassName##__Creator()                                               \
     {                                                                               \
         plFactory::UnRegister(EXTERN_CLASS_INDEX_SCOPED(plClassName), this);        \
     }                                                                               \
                                                                                     \
-    virtual bool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
+    bool HasBaseClass(uint16_t hBase) override { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
-    virtual uint16_t ClassIndex() { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
-    virtual const char* ClassName() const { return #plClassName; }                  \
+    uint16_t ClassIndex() override { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
+    const char* ClassName() const override { return #plClassName; }                 \
                                                                                     \
-    virtual plCreatable*        Create() const { return nil; }                      \
+    plCreatable*        Create() const override { return nullptr; }                 \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-uint16_t plClassName::plClassName##ClassIndex = 0;                                    //
+const uint16_t plClassName::plClassName##ClassIndex = EXTERN_CLASS_INDEX_SCOPED(plClassName);  \
+VERIFY_EXTERNAL_CREATABLE(plClassName)                                              //
 
 
 #endif // plCreator_inc

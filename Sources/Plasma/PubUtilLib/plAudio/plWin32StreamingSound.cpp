@@ -70,18 +70,11 @@ plProfile_CreateAsynchTimer( "Stream Shove Time", "Sound", StreamSndShoveTime );
 plProfile_CreateAsynchTimer( "Stream Swizzle Time", "Sound", StreamSwizzleTime );
 plProfile_Extern( SoundLoadTime );
 
-plWin32StreamingSound::plWin32StreamingSound() :
-fDataStream(nil),
-fBlankBufferFillCounter(0),
-fDeswizzler(nil),
-fStreamType(kNoStream),
-fLastStreamingUpdate(0),
-fStopping(false),
-fPlayWhenStopped(false),
-fStartPos(0)
-{
-    fBufferLengthInSecs = plgAudioSys::GetStreamingBufferSize();
-}
+plWin32StreamingSound::plWin32StreamingSound()
+    : fDataStream(), fBlankBufferFillCounter(), fDeswizzler(), fStreamType(kNoStream),
+      fLastStreamingUpdate(), fStopping(), fPlayWhenStopped(), fStartPos(),
+      fTimeAtBufferStart(), fIsCompressed(), fBufferLengthInSecs(plgAudioSys::GetStreamingBufferSize())
+{ }
 
 plWin32StreamingSound::~plWin32StreamingSound()
 {
@@ -115,7 +108,7 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
         return plSoundBuffer::kPending;
     bool sfxPath = fNewFilename.IsValid() ? false : true;
 
-    if (fDataStream != nil && !fNewFilename.IsValid())
+    if (fDataStream != nullptr && !fNewFilename.IsValid())
         return plSoundBuffer::kSuccess;     // Already loaded
 
     if(!ILoadDataBuffer())
@@ -169,7 +162,6 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
         }
         
         fSrcFilename = buffer->GetFileName();
-        bool streamCompressed = (buffer->HasFlag(plSoundBuffer::kStreamCompressed) != 0);
 
         delete fDataStream;
         fDataStream = buffer->GetAudioReader();
@@ -186,25 +178,25 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
             fDataStream = plAudioFileReader::CreateReader(strPath, select,type);
         }
 
-        if( fDataStream == nil || !fDataStream->IsValid() )
+        if (fDataStream == nullptr || !fDataStream->IsValid())
         {
             delete fDataStream;
-            fDataStream = nil;
+            fDataStream = nullptr;
             return plSoundBuffer::kError;
         }
 
-        IPrintDbgMessage(plFormat("   Readied file {} for streaming", fSrcFilename).c_str());
+        IPrintDbgMessage(ST::format("   Readied file {} for streaming", fSrcFilename));
 
         // dont free sound data until we have a chance to use it in load sound
 
         return fDataStream ? plSoundBuffer::kSuccess : plSoundBuffer::kError;
     }
 
-    plStatusLog::AddLineS("audio.log", "EnsureLoadable failed for streaming sound %d", fDataBufferKey->GetName().c_str());
+    plStatusLog::AddLineSF("audio.log", "EnsureLoadable failed for streaming sound {}", fDataBufferKey->GetName());
     return plSoundBuffer::kError;
 }
 
-void plWin32StreamingSound::IFreeBuffers( void )
+void plWin32StreamingSound::IFreeBuffers()
 {
     plWin32Sound::IFreeBuffers();
     if( fLoadFromDiskOnDemand && !IsPropertySet( kPropLoadOnlyOnCall ) )
@@ -215,7 +207,7 @@ void plWin32StreamingSound::IFreeBuffers( void )
             // we are deleting the stream, we must release the sound data.
             FreeSoundData();
             delete fDataStream;
-            fDataStream = nil;
+            fDataStream = nullptr;
         }
         fSrcFilename = "";
     }
@@ -249,9 +241,9 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
 
     if( retVal == plSoundBuffer::kError )
     {
-        plString str = plFormat("Unable to open streaming source {}",
-                                fDataBufferKey->GetName());
-        IPrintDbgMessage( str.c_str(), true );
+        ST::string str = ST::format("Unable to open streaming source {}",
+                                    fDataBufferKey->GetName());
+        IPrintDbgMessage(str, true);
         fFailed = true;
         return false;
     }
@@ -284,15 +276,15 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
     {
         fDataStream->Close();
         delete fDataStream;
-        fDataStream = nil;
+        fDataStream = nullptr;
 
         delete fDSoundBuffer;
-        fDSoundBuffer = nil;
+        fDSoundBuffer = nullptr;
 
-        plString str = plFormat("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
-                                " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
-                                GetFileName());
-        IPrintDbgMessage(str.c_str(), true);
+        ST::string str = ST::format("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
+                                    " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
+                                    GetFileName());
+        IPrintDbgMessage(str, true);
         fFailed = true;
         return false;
     }
@@ -310,7 +302,7 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
         if(fStartPos && fStartPos <= fDataStream->NumBytesLeft())
         {
             fDataStream->SetPosition(fStartPos);
-            plStatusLog::AddLineS("syncaudio.log", "startpos %d", fStartPos);
+            plStatusLog::AddLineSF("syncaudio.log", "startpos {}", fStartPos);
         }
 
         // if we get here we are not starting from the beginning of the sound. We still have an audio loaded and need to pick up where we left off
@@ -332,11 +324,11 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
     {
         fDataStream->Close();
         delete fDataStream;
-        fDataStream = nil;
+        fDataStream = nullptr;
         delete fDSoundBuffer;
-        fDSoundBuffer = nil;
+        fDSoundBuffer = nullptr;
 
-        plStatusLog::AddLineS("audio.log", "Could not play streaming sound, no voices left %s", GetKeyName().c_str());
+        plStatusLog::AddLineSF("audio.log", "Could not play streaming sound, no voices left {}", GetKeyName());
         return false;
     }
     FreeSoundData();
@@ -344,11 +336,11 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
     IRefreshEAXSettings( true );
 
     // Debug info
-    plString dbg = plFormat("   Streaming {}.", fSrcFilename);
-    IPrintDbgMessage(dbg.c_str());
+    ST::string dbg = ST::format("   Streaming {}.", fSrcFilename);
+    IPrintDbgMessage(dbg);
 
-    plStatusLog::AddLineS( "audioTimes.log", 0xffffffff, "Streaming %4.2f secs of %s",
-                           fDataStream->GetLengthInSecs(), GetKey()->GetUoid().GetObjectName().c_str() );
+    plStatusLog::AddLineSF("audioTimes.log", 0xffffffff, "Streaming {4.2f} secs of {}",
+                           fDataStream->GetLengthInSecs(), GetKey()->GetUoid().GetObjectName() );
 
     // Get pertinent info
     SetLength( (float)fDataStream->GetLengthInSecs() );
@@ -360,7 +352,7 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
                                              (uint8_t)(fDataStream->GetHeader().fNumChannels), 
                                              header.fBitsPerSample / 8 );
     else
-        fDeswizzler = nil;
+        fDeswizzler = nullptr;
 
     // LEAVE THE WAV FILE OPEN! (We *are* streaming, after all :)
     return true;
@@ -391,7 +383,7 @@ void plWin32StreamingSound::IStreamUpdate()
 
         if(!fDSoundBuffer->StreamingFillBuffer(fDataStream))
         {
-            plStatusLog::AddLineS("audio.log", "%s Streaming buffer fill failed", GetKeyName().c_str());
+            plStatusLog::AddLineSF("audio.log", "{} Streaming buffer fill failed", GetKeyName());
         }
     }
     plProfile_EndTiming( StreamSndShoveTime );
@@ -403,7 +395,7 @@ void plWin32StreamingSound::Update()
     IStreamUpdate();
 }
 
-void plWin32StreamingSound::IDerivedActuallyPlay( void )
+void plWin32StreamingSound::IDerivedActuallyPlay()
 {
     fStopping = false;
     if( !fReallyPlaying )
@@ -431,7 +423,7 @@ void plWin32StreamingSound::IDerivedActuallyPlay( void )
 
     /// Send start callbacks
     plSoundEvent    *event = IFindEvent( plSoundEvent::kStart );
-    if( event != nil )
+    if (event != nullptr)
         event->SendCallbacks();
 }
 
@@ -448,21 +440,24 @@ void plWin32StreamingSound::IActuallyStop()
 
 unsigned plWin32StreamingSound::GetByteOffset()
 {
-    if(fDataStream && fDSoundBuffer)
-    {   
+    if (fDataStream && fDSoundBuffer)
+    {
+        uint32_t totalSize = fDataStream->GetDataSize();
+        uint32_t bytesRemaining = fDataStream->NumBytesLeft();
         unsigned bytesQueued = fDSoundBuffer->BuffersQueued() * STREAM_BUFFER_SIZE;
         unsigned offset = fDSoundBuffer->GetByteOffset();
-        long byteoffset = ((fDataStream->GetDataSize() - fDataStream->NumBytesLeft()) - bytesQueued) + offset;
-        
-        return byteoffset < 0 ? fDataStream->GetDataSize() - std::abs(byteoffset) : byteoffset;
+        long byteoffset = ((totalSize - bytesRemaining) - bytesQueued) + offset;
+
+        return byteoffset < 0 ? totalSize - std::abs(byteoffset) : byteoffset;
     }
+
     return 0;
 }
 
 float plWin32StreamingSound::GetActualTimeSec()
 {
-    if(fDataStream && fDSoundBuffer)
-        return fDSoundBuffer->bytePosToMSecs(fDataStream->NumBytesLeft()) / 1000.0f;
+    if (fDataStream && fDSoundBuffer)
+        return fDSoundBuffer->bytePosToMSecs(this->GetByteOffset()) / 1000.0f;
     return 0.0f;
 }
 

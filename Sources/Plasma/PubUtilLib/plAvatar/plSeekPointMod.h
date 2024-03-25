@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLSEEKPOINTMOD_INC
 
 #include "pnModifier/plMultiModifier.h"
-#include "pnMessage/plMessage.h"
 
 // PLSEEKPOINTMOD
 // This modifier is something the avatar knows how to go to. (you know, seek)
@@ -52,27 +51,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSeekPointMod : public plMultiModifier
 {
 protected:
-    virtual bool IEval(double secs, float del, uint32_t dirty) {return true;}
-    char * fName;                                       // public because you can't change it
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
+    ST::string fName;
 
 public:
 
     plSeekPointMod();
-    plSeekPointMod(char *name);
-    virtual ~plSeekPointMod();
+    plSeekPointMod(ST::string name);
 
-    const char * GetName() { return fName; };
-    void SetName(char * name) { fName = name; };
+    const char * GetName() { return fName.c_str(); };
+    void SetName(ST::string name) { fName = std::move(name); };
 
     CLASSNAME_REGISTER( plSeekPointMod );
     GETINTERFACE_ANY( plSeekPointMod, plMultiModifier );
     
-    virtual void AddTarget(plSceneObject* so);
+    void AddTarget(plSceneObject* so) override;
 
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 #endif

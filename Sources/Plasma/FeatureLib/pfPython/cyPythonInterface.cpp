@@ -47,15 +47,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //       only be one instance of this interface. 
 //
 
+#include <functional>
+#include <string_theory/string>
+#include <string_theory/string_stream>
+
 #include <Python.h>
 #include <marshal.h>
 #include "pyGeometry3.h"
 #include "pyKey.h"
 #include "pyMatrix44.h"
-#pragma hdrstop
+#include "pyObjectRef.h"
 
+// CPython specific init stuff
+#include <cpython/initconfig.h>
+#include <pylifecycle.h>
+
+#include "plPythonCallable.h"
 #include "cyPythonInterface.h"
-#include "plPythonPack.h"
 
 #include "pyEnum.h"
 #include "cyDraw.h"
@@ -75,6 +83,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "cyInputInterface.h"
 #include "pySDL.h"
 #include "cyAccountManagement.h"
+
+// GameMgr
+#include "pyGameCli.h"
+#include "pyGameMgr.h"
+#include "pyGmBlueSpiral.h"
+#include "pyGmMarker.h"
 
 // GUIDialog and its controls
 #include "pyGUIDialog.h"
@@ -96,8 +110,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPythonSDLModifier.h"
 
 // For printing to the log
+#include "plNetClientComm/plNetClientComm.h"
 #include "plStatusLog/plStatusLog.h"
-#include "plNetGameLib/plNetGameLib.h"
 
 // vault
 #include "pyVaultNode.h"
@@ -131,9 +145,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // audio setting stuff
 #include "pyAudioControl.h"
 
-//CCR stufff
-#include "pyCCRMgr.h"
-
 // spawn point def
 #include "pySpawnPointInfo.h"
 
@@ -160,43 +171,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyCritterBrain.h"
 
-// Game manager stuff
-#include "Games/pyGameMgrMsg.h"
-#include "Games/pyGameCliMsg.h"
-#include "Games/pyGameCli.h"
-#include "Games/TicTacToe/pyTTTMsg.h"
-#include "Games/TicTacToe/pyTTTGame.h"
-#include "Games/Heek/pyHeekMsg.h"
-#include "Games/Heek/pyHeekGame.h"
-#include "Games/Marker/pyMarkerMsg.h"
-#include "Games/Marker/pyMarkerGame.h"
-#include "Games/BlueSpiral/pyBlueSpiralMsg.h"
-#include "Games/BlueSpiral/pyBlueSpiralGame.h"
-#include "Games/ClimbingWall/pyClimbingWallMsg.h"
-#include "Games/ClimbingWall/pyClimbingWallGame.h"
-#include "Games/VarSync/pyVarSyncMsg.h"
-#include "Games/VarSync/pyVarSyncGame.h"
-
 int32_t PythonInterface::initialized = 0;                 // only need to initialize all of Python once
 bool    PythonInterface::FirstTimeInit = true;           // start with "this is the first time"
 bool    PythonInterface::IsInShutdown = false;           // whether we are _really_ in shutdown mode
 
-PyMethodDef* PythonInterface::plasmaMethods = nil;      // the Plasma module's methods
-PyObject* PythonInterface::plasmaMod = nil;             // pointer to the Plasma module
-PyObject* PythonInterface::plasmaConstantsMod = nil;    // pointer to the PlasmaConstants module
-PyObject* PythonInterface::plasmaNetConstantsMod = nil; // pointer to the PlasmaNetConstants module
-PyObject* PythonInterface::plasmaVaultConstantsMod = nil; // pointer to the PlasmaVaultConstants module
-PyMethodDef* PythonInterface::plasmaGameMethods = nil;  // the PlasmaGame module's methods
-PyObject* PythonInterface::plasmaGameMod = nil;         // python object that holds the PlasmaGame module
-PyObject* PythonInterface::plasmaGameConstantsMod = nil; // python object that holds the PlasmaGameConstants module
-PyObject* PythonInterface::stdOut = nil;                // python object of the stdout file
-PyObject* PythonInterface::stdErr = nil;                // python object of the err file
+PyObject* PythonInterface::stdOut = nullptr;            // python object of the stdout file
+PyObject* PythonInterface::stdErr = nullptr;            // python object of the err file
 
 bool      PythonInterface::debug_initialized = false;   // has the debug been initialized yet?
-PyObject* PythonInterface::dbgMod = nil;                // display module for stdout and stderr
-PyObject* PythonInterface::dbgOut = nil;
-PyObject* PythonInterface::dbgSlice = nil;              // time slice function for the debug window
-plStatusLog* PythonInterface::dbgLog = nil;             // output logfile
+PyObject* PythonInterface::dbgMod = nullptr;            // display module for stdout and stderr
+PyObject* PythonInterface::dbgOut = nullptr;
+PyObject* PythonInterface::dbgSlice = nullptr;          // time slice function for the debug window
+plStatusLog* PythonInterface::dbgLog = nullptr;         // output logfile
 
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
 bool PythonInterface::usePythonDebugger = false;
@@ -204,11 +190,10 @@ plCyDebServer PythonInterface::debugServer;
 bool PythonInterface::requestedExit = false;
 #endif
 
-// stupid Windows.h  and who started including that!
-#undef DrawText
-
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
 // Special includes for debugging
+#include <string>
+#include <vector>
 #include <frameobject.h>
 
 /////////////////////////////////////////////////////////////////////////////
@@ -245,12 +230,12 @@ std::string DebuggerCallback::IParseCurrentException()
 {
     std::string error = "";
 
-    if (PyErr_Occurred() == NULL)
+    if (PyErr_Occurred() == nullptr)
         return error; // no error occurred
 
-    PyObject* errType = NULL;
-    PyObject* errVal = NULL;
-    PyObject* errTraceback = NULL;
+    PyObject* errType = nullptr;
+    PyObject* errVal = nullptr;
+    PyObject* errTraceback = nullptr;
     PyErr_Fetch(&errType, &errVal, &errTraceback); // clears the error flag
     PyErr_NormalizeException(&errType, &errVal, &errTraceback);
 
@@ -258,16 +243,16 @@ std::string DebuggerCallback::IParseCurrentException()
     {
         // we know how to parse out information from syntax errors
         PyObject* message;
-        char* filename = NULL;
+        char* filename = nullptr;
         int lineNumber = 0;
         int offset = 0;
-        char* text = NULL;
+        char* text = nullptr;
 
         if (PyTuple_Check(errVal))
         {
             // nested tuple, parse out the error information
             PyArg_Parse(errVal, "(O(ziiz))", &message, &filename, &lineNumber, &offset, &text);
-            error += PyString_AsString(message);
+            error += PyUnicode_AsUTF8(message);
             if (text)
                 error += text;
         }
@@ -277,13 +262,13 @@ std::string DebuggerCallback::IParseCurrentException()
             PyObject* v;
             if ((v = PyObject_GetAttrString(errVal, "msg")))
             {
-                error += PyString_AsString(v);
+                error += PyUnicode_AsUTF8(v);
                 Py_DECREF(v);
             }
             if ((v == PyObject_GetAttrString(errVal, "text")))
             {
                 if (v != Py_None)
-                    error += PyString_AsString(v);
+                    error += PyUnicode_AsUTF8(v);
                 Py_DECREF(v);
             }
         }
@@ -294,7 +279,7 @@ std::string DebuggerCallback::IParseCurrentException()
         PyClassObject* exc = (PyClassObject*)errType;
         PyObject* className = exc->cl_name;
         if (className)
-            error += PyString_AsString(className);
+            error += PyUnicode_AsUTF8(className);
     }
     else
         error = "Unknown Error";
@@ -375,9 +360,9 @@ std::vector<std::string> DebuggerCallback::GenerateCallstack()
     PyFrameObject* curFrame = fFrame;
     while (curFrame)
     {
-        std::string filename = PyString_AsString(curFrame->f_code->co_filename);
+        std::string filename = PyUnicode_AsUTF8(curFrame->f_code->co_filename);
         int lineNumber = PyCode_Addr2Line(curFrame->f_code, curFrame->f_lasti); // python uses base-1 numbering, we use base-0, but for display we want base-1
-        std::string functionName = PyString_AsString(curFrame->f_code->co_name);
+        std::string functionName = PyUnicode_AsUTF8(curFrame->f_code->co_name);
 
         functionName += "(";
         if (curFrame->f_code->co_argcount)
@@ -390,7 +375,7 @@ std::vector<std::string> DebuggerCallback::GenerateCallstack()
                 PyObject* argName = PyTuple_GetItem(curFrame->f_code->co_varnames, curArg);
                 if (argName)
                 {
-                    std::string arg = PyString_AsString(argName);
+                    std::string arg = PyUnicode_AsUTF8(argName);
                     if (arg == "self")
                         continue; // skip self, for readability
 
@@ -403,7 +388,7 @@ std::vector<std::string> DebuggerCallback::GenerateCallstack()
                         if (val)
                         {
                             functionName += "=";
-                            functionName += PyString_AsString(PyObject_Str(val));
+                            functionName += PyUnicode_AsUTF8(PyObject_Str(val));
                         }
                     }
                 }
@@ -441,16 +426,16 @@ std::vector<std::pair<std::string, std::string> > DebuggerCallback::GenerateGlob
                 if (PyObject_Compare((PyObject*)&PyCFunction_Type, PyObject_Type(value)) == 0)
                     continue;
 
-                std::string keyStr = PyString_AsString(PyObject_Str(key));
-                if (keyStr == "__builtins__")
+                std::string keyStr = PyUnicode_AsUTF8(PyObject_Str(key));
+                if (keyStr == "builtins")
                     continue; // skip builtins
 
-                bool addQuotes = (PyString_Check(value) || PyUnicode_Check(value));
+                bool addQuotes = PyUnicode_Check(value);
 
                 std::string valueStr = "";
                 if (addQuotes)
                     valueStr += "\"";
-                valueStr += PyString_AsString(PyObject_Str(value));
+                valueStr += PyUnicode_AsUTF8(PyObject_Str(value));
                 if (addQuotes)
                     valueStr += "\"";
 
@@ -483,16 +468,16 @@ std::vector<std::pair<std::string, std::string> > DebuggerCallback::GenerateLoca
                 if (PyObject_Compare((PyObject*)&PyType_Type, PyObject_Type(value)) == 0)
                     continue;
 
-                std::string keyStr = PyString_AsString(PyObject_Str(key));
-                if (keyStr == "__builtins__")
+                std::string keyStr = PyUnicode_AsUTF8(PyObject_Str(key));
+                if (keyStr == "builtins")
                     continue; // skip builtins
 
-                bool addQuotes = (PyString_Check(value) || PyUnicode_Check(value));
+                bool addQuotes = PyUnicode_Check(value);
 
                 std::string valueStr = "";
                 if (addQuotes)
                     valueStr += "\"";
-                valueStr += PyString_AsString(PyObject_Str(value));
+                valueStr += PyUnicode_AsUTF8(PyObject_Str(value));
                 if (addQuotes)
                     valueStr += "\"";
 
@@ -515,7 +500,7 @@ std::string DebuggerCallback::EvaluateVariable(const std::string& varName)
             // convert the result to something readable
             PyObject* reprObj = PyObject_Repr(evalResult);
             if (reprObj)
-                retVal = PyString_AsString(reprObj);
+                retVal = PyUnicode_AsUTF8(reprObj);
             else
                 retVal = "<REPR FAIL>";
             Py_XDECREF(reprObj);
@@ -552,7 +537,7 @@ static int PythonTraceCallback(PyObject*, PyFrameObject* frame, int what, PyObje
 
     // update the callback class' stored values
     debServerCallback.SetFrame(frame);
-    debServerCallback.SetExceptionInfo(NULL);
+    debServerCallback.SetExceptionInfo(nullptr);
 
     // translate the python what value to the debugger what value
     plCyDebServer::TraceWhat debuggerWhat;
@@ -580,7 +565,7 @@ static int PythonTraceCallback(PyObject*, PyFrameObject* frame, int what, PyObje
         return 0; // pretty much ignore if they pass us a bad value
     }
 
-    std::string filename = PyString_AsString(frame->f_code->co_filename);
+    std::string filename = PyUnicode_AsUTF8(frame->f_code->co_filename);
     int line = PyCode_Addr2Line(frame->f_code, frame->f_lasti) - 1; // python uses base-1 numbering, we use base-0
 
     // now handle the trace call
@@ -596,7 +581,7 @@ static int PythonTraceCallback(PyObject*, PyFrameObject* frame, int what, PyObje
 class pyOutputRedirector
 {
 private:
-    std::string fData;
+    ST::string_stream fData;
     static bool fTypeCreated;
 
 protected:
@@ -609,23 +594,23 @@ public:
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyOutputRedirector object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyOutputRedirector); // converts a PyObject to a pyOutputRedirector (throws error if not correct type)
 
-    void Write(std::string data) {fData += data;}
-    void Write(std::wstring data)
+    void Write(const ST::string& data) {fData << data;}
+
+    void Flush()
     {
-        char* strData = hsWStringToString(data.c_str());
-        Write(strData);
-        delete [] strData;
+        // Currently a no-op - the actual printing happens externally
+        // and is not controlled by the Python side.
     }
 
     // accessor functions for the PyObject*
 
     // returns the current data stored
-    static std::string GetData(PyObject *redirector)
+    static ST::string GetData(PyObject *redirector)
     {
         if (!pyOutputRedirector::Check(redirector))
-            return ""; // it's not a redirector object
+            return {}; // it's not a redirector object
         pyOutputRedirector *obj = pyOutputRedirector::ConvertFrom(redirector);
-        return obj->fData;
+        return obj->fData.to_string();
     }
 
     // clears the internal buffer out
@@ -634,7 +619,7 @@ public:
         if (!pyOutputRedirector::Check(redirector))
             return; // it's not a redirector object
         pyOutputRedirector *obj = pyOutputRedirector::ConvertFrom(redirector);
-        obj->fData = "";
+        obj->fData.erase(SIZE_MAX);
     }
 };
 
@@ -653,34 +638,25 @@ PYTHON_INIT_DEFINITION(ptOutputRedirector, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptOutputRedirector, write, args)
 {
-    PyObject* textObj;
-    if (!PyArg_ParseTuple(args, "O", &textObj))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
-        PyErr_SetString(PyExc_TypeError, "write expects a string or unicode string");
+        PyErr_SetString(PyExc_TypeError, "write expects a string");
         PYTHON_RETURN_ERROR;
     }
-    if (PyUnicode_Check(textObj))
-    {
-        int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)textObj, text, strLen);
-        text[strLen] = L'\0';
-        self->fThis->Write(text);
-        delete [] text;
-        PYTHON_RETURN_NONE;
-    }
-    else if (PyString_Check(textObj))
-    {
-        char* text = PyString_AsString(textObj);
-        self->fThis->Write(text);
-        PYTHON_RETURN_NONE;
-    }
-    PyErr_SetString(PyExc_TypeError, "write expects a string or unicode string");
-    PYTHON_RETURN_ERROR;
+    self->fThis->Write(text);
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_METHOD_DEFINITION_NOARGS(ptOutputRedirector, flush)
+{
+    self->fThis->Flush();
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_START_METHODS_TABLE(ptOutputRedirector)
     PYTHON_METHOD(ptOutputRedirector, write, "Adds text to the output object"),
+    PYTHON_METHOD(ptOutputRedirector, flush, "Flushes the output (currently a no-op)"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -692,10 +668,10 @@ PyObject *pyOutputRedirector::New()
     if (!fTypeCreated)
     {
         if (PyType_Ready(&ptOutputRedirector_type) < 0)
-            return NULL;
+            return nullptr;
         fTypeCreated = true;
     }
-    ptOutputRedirector *newObj = (ptOutputRedirector*)ptOutputRedirector_type.tp_new(&ptOutputRedirector_type, NULL, NULL);
+    ptOutputRedirector *newObj = (ptOutputRedirector*)ptOutputRedirector_type.tp_new(&ptOutputRedirector_type, nullptr, nullptr);
     return (PyObject*)newObj;
 }
 
@@ -711,7 +687,7 @@ class pyErrorRedirector
 private:
     static bool fTypeCreated;
 
-    std::string fData;
+    ST::string_stream fData;
     bool        fLog;
 
 protected:
@@ -729,7 +705,7 @@ public:
         fLog = log;
     }
 
-    void Write(std::string data)
+    void Write(const ST::string& data)
     {
         PyObject* stdOut = PythonInterface::GetStdOut();
 
@@ -740,14 +716,7 @@ public:
         }
 
         if (fLog)
-            fData += data;
-    }
-
-    void Write(std::wstring data)
-    {
-        char* strData = hsWStringToString(data.c_str());
-        Write(strData);
-        delete [] strData;
+            fData << data;
     }
 
     void ExceptHook(PyObject* except, PyObject* val, PyObject* tb)
@@ -755,12 +724,21 @@ public:
         PyErr_Display(except, val, tb);
 
         // Send to the log server
-        wchar_t* wdata = hsStringToWString(fData.c_str());
-        NetCliAuthLogPythonTraceback(wdata);
-        delete [] wdata;
+        NetCommLogPythonTraceback(fData.to_string());
 
         if (fLog)
-            fData.clear();
+            fData.erase(SIZE_MAX);
+    }
+
+    void Flush()
+    {
+        PyObject* stdOut = PythonInterface::GetStdOut();
+
+        if (stdOut && pyOutputRedirector::Check(stdOut))
+        {
+            pyOutputRedirector *obj = pyOutputRedirector::ConvertFrom(stdOut);
+            obj->Flush();
+        }
     }
 };
 
@@ -779,30 +757,14 @@ PYTHON_INIT_DEFINITION(ptErrorRedirector, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptErrorRedirector, write, args)
 {
-    PyObject* textObj;
-    if (!PyArg_ParseTuple(args, "O", &textObj))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
-        PyErr_SetString(PyExc_TypeError, "write expects a string or unicode string");
+        PyErr_SetString(PyExc_TypeError, "write expects a string");
         PYTHON_RETURN_ERROR;
     }
-    if (PyUnicode_Check(textObj))
-    {
-        int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)textObj, text, strLen);
-        text[strLen] = L'\0';
-        self->fThis->Write(text);
-        delete [] text;
-        PYTHON_RETURN_NONE;
-    }
-    else if (PyString_Check(textObj))
-    {
-        char* text = PyString_AsString(textObj);
-        self->fThis->Write(text);
-        PYTHON_RETURN_NONE;
-    }
-    PyErr_SetString(PyExc_TypeError, "write expects a string or unicode string");
-    PYTHON_RETURN_ERROR;
+    self->fThis->Write(text);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION(ptErrorRedirector, excepthook, args)
@@ -816,9 +778,16 @@ PYTHON_METHOD_DEFINITION(ptErrorRedirector, excepthook, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptErrorRedirector, flush)
+{
+    self->fThis->Flush();
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_START_METHODS_TABLE(ptErrorRedirector)
     PYTHON_METHOD(ptErrorRedirector, write, "Adds text to the output object"),
     PYTHON_METHOD(ptErrorRedirector, excepthook, "Handles exceptions"),
+    PYTHON_METHOD(ptErrorRedirector, flush, "Flushes the output (currently a no-op)"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -830,201 +799,15 @@ PyObject *pyErrorRedirector::New()
     if (!fTypeCreated)
     {
         if (PyType_Ready(&ptErrorRedirector_type) < 0)
-            return NULL;
+            return nullptr;
         fTypeCreated = true;
     }
-    ptErrorRedirector *newObj = (ptErrorRedirector*)ptErrorRedirector_type.tp_new(&ptErrorRedirector_type, NULL, NULL);
+    ptErrorRedirector *newObj = (ptErrorRedirector*)ptErrorRedirector_type.tp_new(&ptErrorRedirector_type, nullptr, nullptr);
     return (PyObject*)newObj;
 }
 
 PYTHON_CLASS_CHECK_IMPL(ptErrorRedirector, pyErrorRedirector)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptErrorRedirector, pyErrorRedirector)
-
-/////////////////////////////////////////////////////////////////////////////
-// PEP 302 Import Hook
-/////////////////////////////////////////////////////////////////////////////
-#ifndef BUILDING_PYPLASMA
-struct ptImportHook
-{
-    PyObject_HEAD
-};
-
-// First three functions are just so I can be lazy
-// and use the already existing macros to do my dirty
-// work. I'm seriously lazy.
-
-static PyObject* ptImportHook_new(PyTypeObject* type, PyObject* args, PyObject*)
-{
-    ptImportHook* self = (ptImportHook*)type->tp_alloc(type, 0);
-    return (PyObject*)self;
-}
-
-PYTHON_NO_INIT_DEFINITION(ptImportHook)
-
-static void ptImportHook_dealloc(ptImportHook *self)
-{
-    self->ob_type->tp_free((PyObject*)self);
-}
-
-PYTHON_METHOD_DEFINITION(ptImportHook, find_module, args)
-{
-    char* module_name;
-    PyObject* module_path;
-
-    if (!PyArg_ParseTuple(args, "s|O", &module_name, &module_path))
-    {
-        PyErr_SetString(PyExc_TypeError, "find_module expects string, string");
-        PYTHON_RETURN_ERROR;
-    }
-
-    // If this is set, we can't do it.
-    if (PyString_Check(module_path))
-        PYTHON_RETURN_NONE;
-
-    std::string package_module_name = module_name;
-    package_module_name += ".__init__";
-    if (PythonPack::IsItPythonPacked(module_name))
-    {
-        Py_INCREF(self);
-        return (PyObject*)self;
-    } else if (PythonPack::IsItPythonPacked(package_module_name.c_str()))
-    {
-        Py_INCREF(self);
-        return (PyObject*)self;
-    }
-    else
-        PYTHON_RETURN_NONE;
-}
-
-PyObject *ptImportHook_load_module_detail(ptImportHook *self, char* module_name, char* packed_name, bool isPackage, bool& found)
-{
-    // We want to check sys.modules for the module first
-    // If it's not in there, we have to load the module
-    // and add it to the sys.modules dict for future reference,
-    // otherwise reload() will not work properly.
-    PyObject* result = nil;
-    PyObject* modules = PyImport_GetModuleDict();
-    hsAssert(PyDict_Check(modules), "sys.modules is not a dict");
-
-    result = PyDict_GetItemString(modules, module_name);
-    if (result)
-    {
-        if (!PyModule_Check(result))
-        {
-            hsAssert(false, "PEP 302 hook found module in sys.modules, but it isn't a module! O.o");
-            result = nil;
-            PyErr_SetString(PyExc_TypeError, "module in sys.modules isn't a module");
-        }
-    }
-    else
-    {
-        if (PyObject* pyc = PythonPack::OpenPythonPacked(packed_name))
-        {
-            result = PyImport_AddModule(module_name);
-            if(!result)
-                return nil;
-            PyObject* d = PyModule_GetDict(result);
-            PyDict_SetItemString(d, "__builtins__", PyEval_GetBuiltins());
-            PyObject *file = PyString_FromString(packed_name);
-            PyModule_AddObject(result, "__file__", file);
-            PyDict_SetItemString(d, "__loader__", (PyObject*)self);
-            if(isPackage) {
-                PyObject *path = PyString_FromString(module_name);
-                PyObject *l = PyList_New(1);
-                PyList_SetItem(l, 0, path);
-                PyDict_SetItemString(d, "__path__", l);
-                Py_DECREF(l);
-            }
-            PyObject* v = PyEval_EvalCode((PyCodeObject *)pyc, d, d);
-            if(!v) 
-            {
-                PyDict_DelItemString(modules, module_name);
-                return nil;
-            }
-            Py_INCREF(result);
-        }
-        else {
-            found = false;
-            PyErr_SetString(PyExc_ImportError, "module not found in python.pak");
-        }
-    }
-
-    return result;
-}
-
-PYTHON_METHOD_DEFINITION(ptImportHook, load_module, args)
-{
-    char* module_name;
-    if (!PyArg_ParseTuple(args, "s", &module_name))
-    {
-        PyErr_SetString(PyExc_TypeError, "load_module expects string");
-        PYTHON_RETURN_ERROR;
-    }
-    bool found = true;
-    PyObject *result = ptImportHook_load_module_detail(self, module_name, module_name, false, found);
-    if (!found)
-    {
-        PyErr_Clear();
-        std::string package_module_name = module_name;
-        package_module_name += ".__init__";
-        result = ptImportHook_load_module_detail(self, module_name, (char*)package_module_name.c_str(), true, found);
-    }
-    return result;
-}
-
-PYTHON_START_METHODS_TABLE(ptImportHook)
-    PYTHON_METHOD(ptImportHook, find_module, "Params: module_name,package_path\nChecks to see if a given module exists (NOTE: package_path is not used!)"),
-    PYTHON_METHOD(ptImportHook, load_module, "Params: module_name \\nReturns the module given by module_name, if it exists in python.pak"),
-PYTHON_END_METHODS_TABLE;
-
-PYTHON_TYPE_START(ptImportHook)
-    0,
-    "Plasma.ptImportHook",
-    sizeof(ptImportHook),                       /* tp_basicsize */
-    0,                                          /* tp_itemsize */
-    (destructor)ptImportHook_dealloc,           /* tp_dealloc */
-    0,                                          /* tp_print */
-    0,                                          /* tp_getattr */
-    0,                                          /* tp_setattr */
-    0,                                          /* tp_compare */
-    0,                                          /* tp_repr */
-    0,                                          /* tp_as_number */
-    0,                                          /* tp_as_sequence */
-    0,                                          /* tp_as_mapping */
-    0,                                          /* tp_hash */
-    0,                                          /* tp_call */
-    0,                                          /* tp_str */
-    0,                                          /* tp_getattro */
-    0,                                          /* tp_setattro */
-    0,                                          /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,   /* tp_flags */
-    "PEP 302 Import Hook",                      /* tp_doc */
-    0,                                          /* tp_traverse */
-    0,                                          /* tp_clear */
-    0,                                          /* tp_richcompare */
-    0,                                          /* tp_weaklistoffset */
-    0,                                          /* tp_iter */
-    0,                                          /* tp_iternext */
-    PYTHON_DEFAULT_METHODS_TABLE(ptImportHook), /* tp_methods */
-    0,                                          /* tp_members */
-    0,                                          /* tp_getset */
-    0,                                          /* tp_base */
-    0,                                          /* tp_dict */
-    0,                                          /* tp_descr_get */
-    0,                                          /* tp_descr_set */
-    0,                                          /* tp_dictoffset */
-    PYTHON_DEFAULT_INIT(ptImportHook),          /* tp_init */
-    0,                                          /* tp_alloc */
-    ptImportHook_new                            /* tp_new */
-PYTHON_TYPE_END;
-
-void ptImportHook_AddPlasmaClasses(PyObject* m)
-{
-    PYTHON_CLASS_IMPORT_START(m);
-    PYTHON_CLASS_IMPORT(m, ptImportHook);
-    PYTHON_CLASS_IMPORT_END(m);
-}
-#endif // BUILDING_PYPLASMA
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1033,318 +816,178 @@ void ptImportHook_AddPlasmaClasses(PyObject* m)
 //
 //  PURPOSE    : Initialize the Python dll
 //
+
+static void IInitBuiltinModule(const char* modName, const char* docstring, plStatusLog* dbgLog,
+                               const std::function<void(PyObject*)>& classFunc=nullptr,
+                               const std::function<void(PyObject*)>& methodFunc=nullptr)
+{
+    // Steals a reference from the modules dict--not a memory leak!
+    PyObject* m = PyImport_AddModule(modName);
+    if (!m) {
+        dbgLog->AddLineF("Could not create the '{}' module.", modName);
+        return;
+    }
+
+    if (PyModule_SetDocString(m, docstring) != 0) {
+        dbgLog->AddLineF("Error setting the docstring for the '{}' module.", modName);
+        return;
+    }
+
+    if (methodFunc) {
+        methodFunc(m);
+        if (PyErr_Occurred()) {
+            dbgLog->AddLineF("Python error while adding methods to {}:", modName);
+            PythonInterface::getOutputAndReset();
+            return;
+        }
+    }
+
+    if (classFunc) {
+        classFunc(m);
+        if (PyErr_Occurred()) {
+            dbgLog->AddLineF("Python error while adding classes to {}:", modName);
+            PythonInterface::getOutputAndReset();
+        }
+    }
+}
+
+template<typename _ConfigT, PyStatus(*_FuncT)(const _ConfigT*), void(*_ClearT)(_ConfigT*) = nullptr>
+static bool ICheckedInit(_ConfigT& config, plStatusLog* dbgLog, const char* errmsg)
+{
+    PyStatus status = _FuncT(&config);
+    if (PyStatus_Exception(status)) {
+        dbgLog->AddLineF(plStatusLog::kRed, "Python {} {}!", PY_VERSION, errmsg);
+        if (status.func)
+            dbgLog->AddLineF(plStatusLog::kRed, "{}: {}", status.func, status.err_msg);
+        else
+            dbgLog->AddLine(plStatusLog::kRed, status.err_msg);
+
+        // Dammit GCC (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94554)
+        typedef void (*ClearT_Type)(_ConfigT*);
+        using ClearT_Null = std::integral_constant<ClearT_Type, nullptr>;
+        using ClearT_Param = std::integral_constant<ClearT_Type, _ClearT>;
+        if constexpr (!std::is_same_v<ClearT_Null, ClearT_Param>)
+            _ClearT(&config);
+        return false;
+    }
+    return true;
+}
+
 void PythonInterface::initPython()
 {
     // if haven't been initialized then do it
-    if ( FirstTimeInit && Py_IsInitialized() == 0 )
-    {
-        FirstTimeInit = false;
-        // initialize the Python stuff
-        // let Python do some initialization...
-        Py_SetProgramName("plasma");
-        Py_NoSiteFlag = 1;
-        Py_IgnoreEnvironmentFlag = 1;
-        Py_Initialize();
+    if (!FirstTimeInit || Py_IsInitialized())
+        return;
 
-#if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
-        if (usePythonDebugger)
-        {
-            debugServer.SetCallbackClass(&debServerCallback);
-            debugServer.Init();
-            PyEval_SetTrace((Py_tracefunc)PythonTraceCallback, NULL);
-        }
+    if (!dbgLog) {
+        dbgLog = plStatusLogMgr::GetInstance().CreateStatusLog(30, "Python.log", 
+                                                               plStatusLog::kFilledBackground |
+                                                               plStatusLog::kAlignToTop |
+                                                               plStatusLog::kTimestamp);
+    }
+
+    FirstTimeInit = false;
+
+    // In Python 2, we could rely on a single PEP 302 hook class installed into sys.path_hooks to
+    // handle importing modules from python.pak -- this could be initialized after Python. In Python 3,
+    // however, the initialization process imports the encodings module and dies if it is not available.
+    // This module is written in Python code and found in python.pak, but the python.pak import machinery
+    // is not available. If you have Python 3.(whatever) installed locally and are using a DLL, it
+    // works. If you violate either of those cases, plClient silently exits (if you're not watching
+    // stderr). To fix this, will use the provisional core/main init split introduced in Python 3.8
+    // and described in PEPs 432 and 587 to init the "core" (much like _freeze_importlib) and install
+    // our PEP 451 import machinery. Then, we'll do the whole main init thingo.
+    PyPreConfig preConfig;
+    PyPreConfig_InitIsolatedConfig(&preConfig);
+    if (!ICheckedInit<PyPreConfig, Py_PreInitialize>(preConfig, dbgLog, "Pre-init failed!"))
+        return;
+
+    PyConfig config;
+    PyConfig_InitIsolatedConfig(&config);
+    config.site_import = 0;
+    PyConfig_SetString(&config, &config.program_name, L"plasma");
+    config._init_main = 0;
+
+    // Allow importing from the local python directory if and only if this is an internal client.
+#ifndef PLASMA_EXTERNAL_RELEASE
+    PyWideStringList_Append(&config.module_search_paths, L"./python");
+    PyWideStringList_Append(&config.module_search_paths, L"./python/plasma");
+    PyWideStringList_Append(&config.module_search_paths, L"./python/system");
+    PyWideStringList_Append(&config.module_search_paths, L"./python/system/lib-dynload");
+    config.module_search_paths_set = 1;
 #endif
 
-        if (!dbgLog)
-        {
-            dbgLog = plStatusLogMgr::GetInstance().CreateStatusLog( 30, "Python.log", 
-                plStatusLog::kFilledBackground | plStatusLog::kAlignToTop | plStatusLog::kTimestamp );
-        }
+    if (!ICheckedInit<PyConfig, Py_InitializeFromConfig, PyConfig_Clear>(config, dbgLog, "Core init failed!"))
+        return;
 
-        // create the output redirector for the stdout and stderr file
-        stdOut = pyOutputRedirector::New();
-        stdErr = pyErrorRedirector::New();
+    // We now have enough Python to insert our PEP 451 import machinery.
+    initPyPackHook();
 
-        // if we need the builtins then find the builtin module
-        PyObject* sysmod = PyImport_ImportModule("sys");
-        // then add the builtin dictionary to our module's dictionary
-        // get the sys's dictionary to find the stdout and stderr
-        PyObject* sys_dict = PyModule_GetDict(sysmod);
-        Py_INCREF(sys_dict);
-        if (stdOut != nil)
-        {
-            if (PyDict_SetItemString(sys_dict,"stdout", stdOut))
-                dbgLog->AddLine("Could not redirect stdout, Python output may not appear in the log\n");
-        }
-        else
-            dbgLog->AddLine("Could not create python redirector, Python output will not appear in the log\n");
-        
-        if (stdErr != nil)
-        {
-            if (!PyDict_SetItemString(sys_dict,"stderr", stdErr))
-            {
-                bool dontLog = false;
+    // Now, init the interpreter.
+    config._init_main = 1;
+    if (!ICheckedInit<PyConfig, Py_InitializeFromConfig, PyConfig_Clear>(config, dbgLog, "Main init failed!"))
+        return;
 
-                // Find the excepthook
-                PyObject* stdErrExceptHook = PyObject_GetAttrString(stdErr, "excepthook");
-                if (stdErrExceptHook)
-                {
-                    if (!PyCallable_Check(stdErrExceptHook) || PyDict_SetItemString(sys_dict,"excepthook", stdErrExceptHook))
-                    {
-                        dbgLog->AddLine("Could not redirect excepthook, Python error output will not get to the log server\n");
-                        dontLog = true;
-                    }
-                    Py_DECREF(stdErrExceptHook);
-                }
-                else
-                {
-                    dbgLog->AddLine("Could not find stdErr excepthook, Python error output will not get to the log server\n");
+    // Initialize built-in Plasma modules. For some reason, when using the append-inittab thingy,
+    // we get complaints about these modules being leaked :(
+    IInitBuiltinModule("Plasma", "Plasma 2.0 Game Library", dbgLog, AddPlasmaClasses, AddPlasmaMethods);
+    IInitBuiltinModule("PlasmaConstants", "Plasma 2.0 Constants", dbgLog, AddPlasmaConstantsClasses);
+    IInitBuiltinModule("PlasmaGame", "Plasma 2.0 GameMgr Library", dbgLog, AddPlasmaGameClasses);
+    IInitBuiltinModule("PlasmaGameConstants", "Plasma 2.0 Game Constants", dbgLog, AddPlasmaGameConstantsClasses);
+    IInitBuiltinModule("PlasmaNetConstants", "Plasma 2.0 Net Constants", dbgLog, AddPlasmaNetConstantsClasses);
+    IInitBuiltinModule("PlasmaVaultConstants", "Plasma 2.0 Vault Constants", dbgLog, AddPlasmaVaultConstantsClasses);
+
+    // Woo, we now have a functional Python 3 interpreter...
+    dbgLog->AddLineF("Python {} interpreter is now alive!", PY_VERSION);
+
+#if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
+    if (usePythonDebugger)
+    {
+        debugServer.SetCallbackClass(&debServerCallback);
+        debugServer.Init();
+        PyEval_SetTrace((Py_tracefunc)PythonTraceCallback, nullptr);
+    }
+#endif
+
+    // create the output redirector for the stdout and stderr file
+    stdOut = pyOutputRedirector::New();
+    stdErr = pyErrorRedirector::New();
+
+    if (stdOut) {
+        if (PySys_SetObject("stdout", stdOut) != 0)
+            dbgLog->AddLine(plStatusLog::kRed,  "Could not redirect stdout, Python output may not appear in the log");
+    } else {
+        dbgLog->AddLine(plStatusLog::kRed, "Could not create python redirector, Python output will not appear in the log");
+    }
+
+    if (stdErr) {
+        if (PySys_SetObject("stderr", stdErr) == 0) {
+            bool dontLog = false;
+
+            // Find the excepthook
+            pyObjectRef stdErrExceptHook = PyObject_GetAttrString(stdErr, "excepthook");
+            if (stdErrExceptHook) {
+                if (!PyCallable_Check(stdErrExceptHook.Get()) || PySys_SetObject("excepthook", stdErrExceptHook.Get()) != 0) {
+                    dbgLog->AddLine(plStatusLog::kRed, "Could not redirect excepthook, Python error output will not get to the log server");
                     dontLog = true;
                 }
-
-                if (dontLog)
-                {
-                    if (pyErrorRedirector::Check(stdErr))
-                    {
-                        pyErrorRedirector* redir = pyErrorRedirector::ConvertFrom(stdErr);
-                        redir->SetLogging(false);
-                    }
-                }
+            } else {
+                dbgLog->AddLine(plStatusLog::kRed, "Could not find stdErr excepthook, Python error output will not get to the log server");
+                dontLog = true;
             }
-            else
-            {
-                dbgLog->AddLine("Could not redirect stderr, Python error output may not appear in the log or on the log server\n");
+
+            if (dontLog && pyErrorRedirector::Check(stdErr)) {
+                pyErrorRedirector* redir = pyErrorRedirector::ConvertFrom(stdErr);
+                redir->SetLogging(false);
             }
+        } else {
+            dbgLog->AddLine(plStatusLog::kRed, "Could not redirect stderr, Python error output may not appear in the log or on the log server");
         }
-        else
-        {
-            dbgLog->AddLine("Could not create python redirector, Python error output will not appear in the log\n");
-        }
-
-        // NOTE: we will reset the path to not include paths
-        // that Python may have found in the registry
-        PyObject* path_list = PyList_New(3);
-        if (PyList_SetItem(path_list, 0, PyString_FromString(".\\python")))
-        {
-            Py_DECREF(sys_dict);
-            Py_DECREF(path_list);
-            dbgLog->AddLine("Error while creating python path:\n");
-            getOutputAndReset();
-            return;
-        }
-        // make sure that our plasma libraries are gotten before the system ones
-        if (PyList_SetItem(path_list, 1, PyString_FromString(".\\python\\plasma")))
-        {
-            Py_DECREF(sys_dict);
-            Py_DECREF(path_list);
-            dbgLog->AddLine("Error while creating python path:\n");
-            getOutputAndReset();
-            return;
-        }
-        if (PyList_SetItem(path_list, 2, PyString_FromString(".\\python\\system")))
-        {
-            Py_DECREF(sys_dict);
-            Py_DECREF(path_list);
-            dbgLog->AddLine("Error while creating python path:\n");
-            getOutputAndReset();
-            return;
-        }
-
-        // set the path to be this one
-        if (PyDict_SetItemString(sys_dict,"path",path_list))
-        {
-            Py_DECREF(sys_dict);
-            Py_DECREF(path_list);
-            dbgLog->AddLine("Error while setting python path:\n");
-            getOutputAndReset();
-            return;
-        }
-
-        Py_DECREF(path_list);
-
-        std::vector<PyMethodDef> methods; // this is temporary, for easy addition of new methods
-        AddPlasmaMethods(methods);
-
-        // now copy the data to our real method definition structure
-        plasmaMethods = new PyMethodDef[methods.size() + 1];
-        for (int curMethod = 0; curMethod < methods.size(); curMethod++)
-            plasmaMethods[curMethod] = methods[curMethod];
-        PyMethodDef terminator = {NULL};
-        plasmaMethods[methods.size()] = terminator; // add the terminator
-
-        // now set up the module with the method data
-        plasmaMod = Py_InitModule("Plasma", plasmaMethods);
-        if (plasmaMod == NULL)
-        {
-            dbgLog->AddLine("Could not setup the Plasma module\n");
-            return;
-        }
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while setting up Plasma:\n");
-            getOutputAndReset();
-        }
-        Py_INCREF(plasmaMod); // make sure python doesn't get rid of it
-
-        AddPlasmaClasses(); // now add the classes to the module
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while adding classes to Plasma:\n");
-            std::string error;
-            getOutputAndReset(&error);
-        }
-
-#ifndef BUILDING_PYPLASMA
-        // Begin PEP 302 Import Hook stuff
-        // We need to create a ptImportHook object
-        ptImportHook* hook = PyObject_New(ptImportHook, &ptImportHook_type);
-        PyObject* metapath = PyDict_GetItemString(sys_dict, "meta_path");
-        Py_INCREF(metapath);
-
-        // Since PEP 302 is insane, let's be sure things are the way
-        // that we expect them to be. Silent failures != cool.
-        hsAssert(metapath != nil, "PEP 302: sys.__dict__['meta_path'] missing!");
-        hsAssert(PyList_Check(metapath), "PEP 302: sys.__dict__['meta_path'] is not a list!");
-
-        // Now that we have meta_path, add our hook to the list
-        PyList_Append(metapath, (PyObject*)hook);
-        Py_DECREF(metapath);
-        // And we're done!
-#endif // BUILDING_PYPLASMA
-
-        Py_DECREF(sys_dict);
-
-        // initialize the PlasmaConstants module
-        PyMethodDef noMethods = {NULL};
-        plasmaConstantsMod = Py_InitModule("PlasmaConstants", &noMethods); // it has no methods, just values
-        if (plasmaConstantsMod == NULL)
-        {
-            dbgLog->AddLine("Could not setup the PlasmaConstants module\n");
-            return;
-        }
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while setting up PlasmaConstants:\n");
-            std::string error;
-            getOutputAndReset(&error);
-        }
-        Py_INCREF(plasmaConstantsMod);
-
-        AddPlasmaConstantsClasses();
-
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while adding classes to PlasmaConstants:\n");
-            std::string error;
-            getOutputAndReset(&error);
-        }
-
-        // initialize the PlasmaNetConstants module
-        plasmaNetConstantsMod = Py_InitModule("PlasmaNetConstants", &noMethods); // it has no methods, just values
-        if (plasmaNetConstantsMod == NULL)
-        {
-            dbgLog->AddLine("Could not setup the PlasmaNetConstants module\n");
-            return;
-        }
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while setting up PlasmaNetConstants:\n");
-            std::string error;
-            getOutputAndReset(&error);
-        }
-        Py_INCREF(plasmaNetConstantsMod);
-
-        AddPlasmaNetConstantsClasses();
-
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while adding classes to PlasmaNetConstants:\n");
-            std::string error;
-            getOutputAndReset(&error);
-        }
-
-        // initialize the PlasmaVaultConstants module
-        plasmaVaultConstantsMod = Py_InitModule("PlasmaVaultConstants", &noMethods); // it has no methods, just values
-        if (plasmaVaultConstantsMod == NULL)
-        {
-            dbgLog->AddLine("Could not setup the PlasmaVaultConstants module\n");
-            return;
-        }
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while setting up PlasmaVaultConstants:\n");
-            std::string error;
-            getOutputAndReset(&error);
-        }
-        Py_INCREF(plasmaVaultConstantsMod);
-
-        AddPlasmaVaultConstantsClasses();
-
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while adding classes to PlasmaVaultConstants:\n");
-            std::string error;
-            getOutputAndReset(&error);
-        }
-
-        // setup the global methods for the PlasmaGame module
-        methods.clear();
-        AddPlasmaGameMethods(methods);
-
-        // now copy the data to our real method definition structure
-        plasmaGameMethods = new PyMethodDef[methods.size() + 1];
-        for (int curMethod = 0; curMethod < methods.size(); curMethod++)
-            plasmaGameMethods[curMethod] = methods[curMethod];
-        plasmaGameMethods[methods.size()] = terminator; // add the terminator
-
-        // initialize the PlasmaGame module
-        plasmaGameMod = Py_InitModule("PlasmaGame", plasmaGameMethods);
-        if (plasmaGameMod == NULL)
-        {
-            dbgLog->AddLine("Could not setup the PlasmaGame module\n");
-            return;
-        }
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while setting up PlasmaGame:\n");
-            std::string error;
-            getOutputAndReset(&error);
-        }
-        Py_INCREF(plasmaGameMod);
-
-        AddPlasmaGameClasses();
-
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while adding classes to PlasmaGame:\n");
-            std::string error;
-            getOutputAndReset(&error);
-        }
-
-        // initialize the PlasmaGameConstants module
-        plasmaGameConstantsMod = Py_InitModule("PlasmaGameConstants", &noMethods); // it has no methods, just values
-        if (plasmaGameConstantsMod == NULL)
-        {
-            dbgLog->AddLine("Could not setup the PlasmaGameConstants module\n");
-            return;
-        }
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while setting up PlasmaGameConstants:\n");
-            std::string error;
-            getOutputAndReset(&error);
-        }
-        Py_INCREF(plasmaGameConstantsMod);
-
-        AddPlasmaGameConstantsClasses();
-
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while adding classes to PlasmaGameConstants:\n");
-            std::string error;
-            getOutputAndReset(&error);
-        }
+    } else {
+        dbgLog->AddLine(plStatusLog::kRed, "Could not create python redirector, Python error output will not appear in the log");
     }
+
+    PyConfig_Clear(&config);
     initialized++;
 }
 
@@ -1362,7 +1005,7 @@ void PythonInterface::initDebugInterface()
         // bring up the debug window
         dbgMod = PyImport_ImportModule("cydebug");
         // was there a debug module?
-        if ( dbgMod != nil )
+        if (dbgMod != nullptr)
         {
             PyObject *dict;
             // get the dictionary for this module
@@ -1381,18 +1024,21 @@ void PythonInterface::initDebugInterface()
 //
 //  PURPOSE    : Add global methods to the Plasma module
 //
-void PythonInterface::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void PythonInterface::AddPlasmaMethods(PyObject* m)
 {
-    cyMisc::AddPlasmaMethods(methods);
-    cyAvatar::AddPlasmaMethods(methods);
-    cyAccountManagement::AddPlasmaMethods(methods);
+    cyMisc::AddPlasmaMethods(m);
+    cyMisc::AddPlasmaMethods2(m);
+    cyMisc::AddPlasmaMethods3(m);
+    cyMisc::AddPlasmaMethods4(m);
+    cyAvatar::AddPlasmaMethods(m);
+    cyAccountManagement::AddPlasmaMethods(m);
 
-    pyDrawControl::AddPlasmaMethods(methods);
-    pyGUIDialog::AddPlasmaMethods(methods);
-    pyImage::AddPlasmaMethods(methods);
-    pyJournalBook::AddPlasmaMethods(methods);
-    pySDLModifier::AddPlasmaMethods(methods);
-    pySpawnPointInfo::AddPlasmaMethods(methods);
+    pyDrawControl::AddPlasmaMethods(m);
+    pyGUIDialog::AddPlasmaMethods(m);
+    pyImage::AddPlasmaMethods(m);
+    pyJournalBook::AddPlasmaMethods(m);
+    pySDLModifier::AddPlasmaMethods(m);
+    pySpawnPointInfo::AddPlasmaMethods(m);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1402,7 +1048,7 @@ void PythonInterface::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
 //
 //  PURPOSE    : Add classes to the Plasma module
 //
-void PythonInterface::AddPlasmaClasses()
+void PythonInterface::AddPlasmaClasses(PyObject* plasmaMod)
 {
     pyKey::AddPlasmaClasses(plasmaMod);
     pySceneObject::AddPlasmaClasses(plasmaMod);
@@ -1505,9 +1151,6 @@ void PythonInterface::AddPlasmaClasses()
     pyGameScoreListMsg::AddPlasmaClasses(plasmaMod);
     pyGameScoreTransferMsg::AddPlasmaClasses(plasmaMod);
     pyGameScoreUpdateMsg::AddPlasmaClasses(plasmaMod);
-
-    // Stupid thing
-    ptImportHook_AddPlasmaClasses(plasmaMod);
 }
 
 
@@ -1518,7 +1161,7 @@ void PythonInterface::AddPlasmaClasses()
 //
 //  PURPOSE    : Initialize the PlasmaConstants module
 //
-void PythonInterface::AddPlasmaConstantsClasses()
+void PythonInterface::AddPlasmaConstantsClasses(PyObject* plasmaConstantsMod)
 {
     pyEnum::AddPlasmaConstantsClasses(plasmaConstantsMod);
 
@@ -1545,6 +1188,32 @@ void PythonInterface::AddPlasmaConstantsClasses()
     //pyVault::AddPlasmaConstantsClasses(plasmaConstantsMod);
 }
 
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : AddPlasmaGameClasses
+//  PARAMETERS : none
+//
+//  PURPOSE    : Initialize the PlasmaGame module
+//
+void PythonInterface::AddPlasmaGameClasses(PyObject* plasmaGameMod)
+{
+    pyGameCli::AddPlasmaGameClasses(plasmaGameMod);
+    pyGmBlueSpiral::AddPlasmaGameClasses(plasmaGameMod);
+    pyGmMarker::AddPlasmaGameClasses(plasmaGameMod);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : AddPlasmaGameConstantsClasses
+//  PARAMETERS : none
+//
+//  PURPOSE    : Initialize the PlasmaGameConstants module
+//
+void PythonInterface::AddPlasmaGameConstantsClasses(PyObject* plasmaGameConstantsMod)
+{
+    pyGameMgr::AddPlasmaGameConstantsClasses(plasmaGameConstantsMod);
+    pyGmMarker::AddPlasmaGameConstantsClasses(plasmaGameConstantsMod);
+}
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1553,7 +1222,7 @@ void PythonInterface::AddPlasmaConstantsClasses()
 //
 //  PURPOSE    : Initialize the PlasmaNetConstants module
 //
-void PythonInterface::AddPlasmaNetConstantsClasses()
+void PythonInterface::AddPlasmaNetConstantsClasses(PyObject* plasmaNetConstantsMod)
 {
     pyNetLinkingMgr::AddPlasmaConstantsClasses(plasmaNetConstantsMod);
 }
@@ -1566,168 +1235,9 @@ void PythonInterface::AddPlasmaNetConstantsClasses()
 //
 //  PURPOSE    : Initialize the PlasmaVaultConstants module
 //
-void PythonInterface::AddPlasmaVaultConstantsClasses()
+void PythonInterface::AddPlasmaVaultConstantsClasses(PyObject* plasmaVaultConstantsMod)
 {
     pyVault::AddPlasmaConstantsClasses(plasmaVaultConstantsMod);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//  Function   : AddPlasmaGameMethods
-//  PARAMETERS : none
-//
-//  PURPOSE    : Add global methods to the PlasmaGame module
-//
-void PythonInterface::AddPlasmaGameMethods(std::vector<PyMethodDef> &methods)
-{
-    // General
-    pyGameCli::AddPlasmaMethods(methods);
-
-    // TicTacToe game
-    pyTTTGame::AddPlasmaMethods(methods);
-
-    // Heek game
-    pyHeekGame::AddPlasmaMethods(methods);
-
-    // Marker game
-    pyMarkerGame::AddPlasmaMethods(methods);
-
-    // Blue Spiral game
-    pyBlueSpiralGame::AddPlasmaMethods(methods);
-
-    // Climbing Wall game
-    pyClimbingWallGame::AddPlasmaMethods(methods);
-
-    // Variable Sync game
-    pyVarSyncGame::AddPlasmaMethods(methods);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//  Function   : AddPlasmaGameClasses
-//  PARAMETERS : none
-//
-//  PURPOSE    : Initialize the PlasmaGame module
-//
-void PythonInterface::AddPlasmaGameClasses()
-{
-    // General
-    pyGameMgrMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameMgrInviteReceivedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameMgrInviteRevokedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameCliMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameCliPlayerJoinedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameCliPlayerLeftMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameCliInviteFailedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameCliOwnerChangeMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameCli::AddPlasmaClasses(plasmaGameMod);
-
-    // TicTacToe game
-    pyTTTMsg::AddPlasmaClasses(plasmaGameMod);
-    pyTTTGameStartedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyTTTGameOverMsg::AddPlasmaClasses(plasmaGameMod);
-    pyTTTMoveMadeMsg::AddPlasmaClasses(plasmaGameMod);
-    pyTTTGame::AddPlasmaClasses(plasmaGameMod);
-
-    // Heek game
-    pyHeekMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekPlayGameMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekGoodbyeMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekWelcomeMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekDropMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekSetupMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekLightStateMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekInterfaceStateMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekCountdownStateMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekWinLoseMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekGameWinMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekPointUpdateMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekGame::AddPlasmaClasses(plasmaGameMod);
-
-    // Marker game
-    pyMarkerMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerTemplateCreatedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerTeamAssignedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGameTypeMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGameStartedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGamePausedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGameResetMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGameOverMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGameNameChangedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerTimeLimitChangedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGameDeletedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerMarkerAddedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerMarkerDeletedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerMarkerNameChangedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerMarkerCapturedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGame::AddPlasmaClasses(plasmaGameMod);
-
-    // Blue Spiral game
-    pyBlueSpiralMsg::AddPlasmaClasses(plasmaGameMod);
-    pyBlueSpiralClothOrderMsg::AddPlasmaClasses(plasmaGameMod);
-    pyBlueSpiralSuccessfulHitMsg::AddPlasmaClasses(plasmaGameMod);
-    pyBlueSpiralGameWonMsg::AddPlasmaClasses(plasmaGameMod);
-    pyBlueSpiralGameOverMsg::AddPlasmaClasses(plasmaGameMod);
-    pyBlueSpiralGameStartedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyBlueSpiralGame::AddPlasmaClasses(plasmaGameMod);
-
-    // Climbing Wall game
-    pyClimbingWallMsg::AddPlasmaClasses(plasmaGameMod);
-    pyClimbingWallNumBlockersChangedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyClimbingWallReadyMsg::AddPlasmaClasses(plasmaGameMod);
-    pyClimbingWallBlockersChangedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyClimbingWallPlayerEnteredMsg::AddPlasmaClasses(plasmaGameMod);
-    pyClimbingWallSuitMachineLockedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyClimbingWallGameOverMsg::AddPlasmaClasses(plasmaGameMod);
-    pyClimbingWallGame::AddPlasmaClasses(plasmaGameMod);
-
-    // Variable Sync game
-    pyVarSyncMsg::AddPlasmaClasses(plasmaGameMod);
-    pyVarSyncStringVarChangedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyVarSyncNumericVarChangedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyVarSyncAllVarsSentMsg::AddPlasmaClasses(plasmaGameMod);
-    pyVarSyncStringVarCreatedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyVarSyncNumericVarCreatedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyVarSyncGame::AddPlasmaClasses(plasmaGameMod);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//  Function   : AddPlasmaGameConstantsClasses
-//  PARAMETERS : none
-//
-//  PURPOSE    : Initialize the PlasmaGameConstants module
-//
-void PythonInterface::AddPlasmaGameConstantsClasses()
-{
-    // General
-    pyGameMgrMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyGameCliMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyGameCliInviteFailedMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-
-    // TicTacToe game
-    pyTTTMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyTTTGame::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-
-    // Heek game
-    pyHeekMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyHeekLightStateMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyHeekCountdownStateMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyHeekGame::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-
-    // Marker game
-    pyMarkerMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyMarkerGame::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-
-    // Blue Spiral game
-    pyBlueSpiralMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-
-    // Climbing Wall game
-    pyClimbingWallMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyClimbingWallGame::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-
-    // Variable Sync game
-    pyVarSyncMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1747,81 +1257,15 @@ void PythonInterface::finiPython()
         if (usePythonDebugger)
             debugServer.Disconnect();
 #endif
-        // remove debug module if used
-        if ( dbgMod )
-        {
-            Py_DECREF(dbgMod);
-            dbgMod = nil;
-        }
-
-        if ( stdOut )
-        {
-            Py_DECREF(stdOut);
-            stdOut = nil;
-        }
-
-        if ( stdErr )
-        {
-            Py_DECREF(stdErr);
-            stdErr = nil;
-        }
-
-        if ( plasmaMod )
-        {
-            Py_DECREF(plasmaMod);   // get rid of our reference
-            plasmaMod = nil;
-        }
-
-        if ( plasmaConstantsMod )
-        {
-            Py_DECREF(plasmaConstantsMod);
-            plasmaConstantsMod = nil;
-        }
-
-        if ( plasmaNetConstantsMod )
-        {
-            Py_DECREF(plasmaNetConstantsMod);
-            plasmaNetConstantsMod = nil;
-        }
-
-        if ( plasmaVaultConstantsMod )
-        {
-            Py_DECREF(plasmaVaultConstantsMod);
-            plasmaVaultConstantsMod = nil;
-        }
-
-        if ( plasmaGameMod )
-        {
-            Py_DECREF(plasmaGameMod);
-            plasmaGameMod = nil;
-        }
-
-        if ( plasmaGameConstantsMod )
-        {
-            Py_DECREF(plasmaGameConstantsMod);
-            plasmaGameConstantsMod = nil;
-        }
-
         // let Python clean up after itself
-        Py_Finalize();
-
-        if (plasmaMethods)
-        {
-            delete [] plasmaMethods;
-            plasmaMethods = nil;
-        }
-
-        if (plasmaGameMethods)
-        {
-            delete [] plasmaGameMethods;
-            plasmaGameMethods = nil;
-        }
+        if (Py_FinalizeEx() != 0)
+            dbgLog->AddLine("Hmm... Errors during Python shutdown.");
 
         // close done the log file, if we created one
-        if ( dbgLog != nil )
+        if (dbgLog != nullptr)
         {
             delete dbgLog;
-            dbgLog = nil;
+            dbgLog = nullptr;
         }
 
         initialized = 0;
@@ -1838,19 +1282,17 @@ void PythonInterface::finiPython()
 void PythonInterface::debugTimeSlice()
 {
     // check to see if the debug python module is loaded
-    if ( dbgSlice != nil )
+    if (dbgSlice != nullptr)
     {
         // then send it the new text
-        PyObject* retVal = PyObject_CallFunction(dbgSlice,nil);
-        if ( retVal == nil )
-        {
+        pyObjectRef retVal = plPython::CallObject(dbgSlice);
+        if (!retVal) {
             // for some reason this function didn't, remember that and not call it again
-            dbgSlice = nil;
+            dbgSlice = nullptr;
             // if there was an error make sure that the stderr gets flushed so it can be seen
             PyErr_Print();      // make sure the error is printed
             PyErr_Clear();      // clear the error
         }
-        Py_XDECREF(retVal);
     }
 }
 
@@ -1870,7 +1312,7 @@ PyObject* PythonInterface::GetStdErr()
 {
     return stdErr;
 }
-    
+
 /////////////////////////////////////////////////////////////////////////////
 //
 //  Function   : getOutputAndReset
@@ -1878,13 +1320,12 @@ PyObject* PythonInterface::GetStdErr()
 //
 //  PURPOSE    : get the Output to the error file to be displayed
 //
-int PythonInterface::getOutputAndReset(std::string *output)
+ST::string PythonInterface::getOutputAndReset()
 {
-    if (stdOut != nil)
+    if (stdOut != nullptr)
     {
-        std::string strVal = pyOutputRedirector::GetData(stdOut);
-        int size = strVal.length();
-        dbgLog->AddLine(strVal.c_str());
+        ST::string strVal = pyOutputRedirector::GetData(stdOut);
+        dbgLog->AddLine(strVal);
 
         // reset the file back to zero
         pyOutputRedirector::ClearData(stdOut);
@@ -1896,34 +1337,30 @@ int PythonInterface::getOutputAndReset(std::string *output)
 #endif
 
         // check to see if the debug python module is loaded
-        if ( dbgOut != nil )
+        if (dbgOut != nullptr)
         {
             // then send it the new text
-            PyObject* retVal = PyObject_CallFunction(dbgOut,"s",strVal.c_str());
-            if ( retVal == nil )
-            {
+            pyObjectRef retVal = plPython::CallObject(dbgOut, strVal);
+            if (!retVal) {
                 // for some reason this function didn't, remember that and not call it again
-                dbgOut = nil;
+                dbgOut = nullptr;
                 // if there was an error make sure that the stderr gets flushed so it can be seen
                 PyErr_Print();      // make sure the error is printed
                 PyErr_Clear();      // clear the error
             }
-            Py_XDECREF(retVal);
         }
 
-        if (output)
-            (*output) = strVal;
-        return size;
+        return strVal;
     }
-    return 0;
+    return {};
 }
 
-void PythonInterface::WriteToLog(const char* text)
+void PythonInterface::WriteToLog(const ST::string& text)
 {
     dbgLog->AddLine(text);
 }
 
-void PythonInterface::WriteToStdErr(const char* text)
+void PythonInterface::WriteToStdErr(const ST::string& text)
 {
     PyObject* stdErr = PythonInterface::GetStdErr();
     if (stdErr && pyErrorRedirector::Check(stdErr))
@@ -1935,10 +1372,10 @@ void PythonInterface::WriteToStdErr(const char* text)
 
 PyObject* PythonInterface::ImportModule(const char* module) 
 {
-    PyObject* result = nil;
-    PyObject* name = PyString_FromString(module);
+    PyObject* result = nullptr;
+    PyObject* name = PyUnicode_FromString(module);
 
-    if (name != nil) 
+    if (name != nullptr)
     {
         result = PyImport_Import(name);
         Py_DECREF(name);
@@ -1956,15 +1393,14 @@ PyObject* PythonInterface::ImportModule(const char* module)
 //
 PyObject* PythonInterface::FindModule(const char* module)
 {
-    PyObject *m;
     // first we must get rid of any old modules of the same name, we'll replace it
     PyObject *modules = PyImport_GetModuleDict();
-    if ((m = PyDict_GetItemString(modules, module)) != NULL && PyModule_Check(m))
+    if (PyObject* m = PyDict_GetItemString(modules, module); m && PyModule_Check(m))
         // just return what we found
         return m;
 
     // couldn't find the module, return None (sorta)
-    return nil;
+    return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1976,12 +1412,11 @@ PyObject* PythonInterface::FindModule(const char* module)
 //
 //  Returns    : True if unique , otherwise returns False
 //
-bool PythonInterface::IsModuleNameUnique(char* module)
+bool PythonInterface::IsModuleNameUnique(const ST::string& module)
 {
-    PyObject *m;
     // first we must get rid of any old modules of the same name, we'll replace it
     PyObject *modules = PyImport_GetModuleDict();
-    if ((m = PyDict_GetItemString(modules, module)) != NULL && PyModule_Check(m))
+    if (PyObject* m = PyDict_GetItemString(modules, module.c_str()); m && PyModule_Check(m))
     {
         return false;
     }
@@ -2000,47 +1435,32 @@ PyObject* PythonInterface::CreateModule(const char* module)
     PyObject *m, *d;
     // first we must get rid of any old modules of the same name, we'll replace it
     PyObject *modules = PyImport_GetModuleDict();
-    if ((m = PyDict_GetItemString(modules, module)) != NULL && PyModule_Check(m))
+    if (m = PyDict_GetItemString(modules, module); m && PyModule_Check(m))
     {
         // clear it
-        hsAssert(false, plFormat("ERROR! Creating a python module of the same name - {}", module).c_str());
+        hsAssert(false, ST::format("ERROR! Creating a python module of the same name - {}", module).c_str());
         _PyModule_Clear(m);
     }
 
     // create the module
     m = PyImport_AddModule(module);
-    if (m == NULL)
-        return nil;
+    if (m == nullptr)
+        return nullptr;
     d = PyModule_GetDict(m);
     // add in the built-ins
     // first make sure that we don't already have the builtins
-    if (PyDict_GetItemString(d, "__builtins__") == NULL)
+    if (PyDict_GetItemString(d, "__builtins__") == nullptr)
     {
         // if we need the builtins then find the builtin module
-        PyObject *bimod = PyImport_ImportModule("__builtin__");
+        PyObject *bimod = PyImport_ImportModule("builtins");
         // then add the builtin dicitionary to our module's dictionary
-        if (bimod == NULL || PyDict_SetItemString(d, "__builtins__", bimod) != 0)
-            return nil;
+        if (bimod == nullptr || PyDict_SetItemString(d, "__builtins__", bimod) != 0) {
+            getOutputAndReset();
+            return nullptr;
+        }
         Py_DECREF(bimod);
     }
     return m;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//  Function   : GetPlasmaItem
-//  PARAMETERS : item    - what item in the plasma module to get
-//
-//  PURPOSE    : get an item (probably a function) from the Plasma module
-//
-PyObject* PythonInterface::GetPlasmaItem(char* item)
-{
-    if ( plasmaMod )
-    {
-        PyObject* d = PyModule_GetDict(plasmaMod);
-        return PyDict_GetItemString(d, item);
-    }
-    return nil;
 }
 
 
@@ -2051,7 +1471,7 @@ PyObject* PythonInterface::GetPlasmaItem(char* item)
 //
 //  PURPOSE    : get an item (probably a function) from a specific module
 //
-PyObject* PythonInterface::GetModuleItem(char* item, PyObject* module)
+PyObject* PythonInterface::GetModuleItem(const char* item, PyObject* module)
 {
     if ( module )
     {
@@ -2059,7 +1479,7 @@ PyObject* PythonInterface::GetModuleItem(char* item, PyObject* module)
         return PyDict_GetItemString(d, item);
     }
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -2077,17 +1497,17 @@ void PythonInterface::CheckModuleForFunctions(PyObject* module, char** funcNames
     dict = PyModule_GetDict(module);
     // start looking for the functions
     int i=0;
-    while ( funcNames[i] != nil )
+    while (funcNames[i] != nullptr)
     {
         PyObject* func = PyDict_GetItemString(dict, funcNames[i]);
-        if ( func != NULL && PyCallable_Check(func)>0 )
+        if (func != nullptr && PyCallable_Check(func) > 0)
         {
             // if it is defined then mark the funcTable
             funcTable[i] = func;
         }
         else    // else we couldn't find the funtion
         {
-            funcTable[i] = nil;
+            funcTable[i] = nullptr;
         }
         i++;
     }
@@ -2099,25 +1519,20 @@ void PythonInterface::CheckModuleForFunctions(PyObject* module, char** funcNames
 //  PARAMETERS : instance    - instance of a class to check
 //
 //  PURPOSE    : checks to see if a specific function is defined in this instance of a class
-//             : and will fill out the funcTable with object instances of where the funciton is
+//             : and will fill out the funcTable with pointers to the function objects
 //
-void PythonInterface::CheckInstanceForFunctions(PyObject* instance, char** funcNames, PyObject** funcTable)
+void PythonInterface::CheckInstanceForFunctions(PyObject* instance, const char** funcNames, PyObject** funcTable)
 {
     // start looking for the functions
-    int i=0;
-    while ( funcNames[i] != nil )
-    {
-        PyObject* func = PyObject_GetAttrString(instance, funcNames[i]);
-        if ( func != NULL )
-        {
-            if ( PyCallable_Check(func)>0 )
-            {
-                // if it is defined then mark the funcTable
-                funcTable[i] = instance;
-            }
-            Py_DECREF(func);
+    for (size_t i = 0; funcNames[i] != nullptr; ++i) {
+        // Raises AttributeError if not found and calls to this method assert on !PyErr_Occurred()
+        pyObjectRef func = PyObject_GetAttrString(instance, funcNames[i]);
+        if (func) {
+            if (PyCallable_Check(func.Get()))
+                funcTable[i] = func.Release();
+        } else {
+            PyErr_Clear();
         }
-        i++;
     }
 }
 
@@ -2147,18 +1562,14 @@ bool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, int32_t* size)
 {
     PyObject *s;        // the python string object where the marsalled object wil go
     // convert object to a marshalled string python object
-#if (PY_MAJOR_VERSION == 2) && (PY_MINOR_VERSION < 4)
-    s = PyMarshal_WriteObjectToString(pyobj);
-#else
     s = PyMarshal_WriteObjectToString(pyobj, Py_MARSHAL_VERSION);
-#endif
 
     // did it actually do it?
-    if ( s != NULL )
+    if (s != nullptr)
     {
         // yes, then get the size and the string address
-        *size = PyString_Size(s);
-        *pickle =  PyString_AsString(s);
+        *size = (int32_t)PyBytes_Size(s);
+        *pickle = PyBytes_AsString(s);
         return true;
     }
     else  // otherwise, there was an error
@@ -2201,23 +1612,24 @@ bool PythonInterface::RunStringInteractive(const char *command, PyObject* module
     {
         // if no module was given then use just use the main module
         module = PyImport_AddModule("__main__");
-        if (module == NULL)
+        if (module == nullptr) {
+            PyErr_Print();
             return false;
+        }
     }
     // get the dictionaries for this module
     d = PyModule_GetDict(module);
     // run the string
     v = PyRun_String(command, Py_single_input, d, d);
     // check for errors and print them
-    if (v == NULL)
+    if (v == nullptr)
     {
         // Yikes! errors!
         PyErr_Print();
         return false;
     }
     Py_DECREF(v);
-    if (Py_FlushLine())
-        PyErr_Clear();
+    PyErr_Clear();
     return true;
 }
 
@@ -2229,15 +1641,14 @@ bool PythonInterface::RunStringInteractive(const char *command, PyObject* module
 //
 //  PURPOSE    : run a python string in a specific module name
 //
-bool PythonInterface::RunString(const char *command, PyObject* module)
+bool PythonInterface::RunString(const char* command, PyObject* module)
 {
     PyObject *d, *v;
     // make sure that we're given a good module... or at least one with an address
-    if ( !module )
-    {
+    if (!module) {
         // if no module was given then use just use the main module
         module = PyImport_AddModule("__main__");
-        if (module == NULL)
+        if (!module)
             return false;
     }
     // get the dictionaries for this module
@@ -2245,15 +1656,36 @@ bool PythonInterface::RunString(const char *command, PyObject* module)
     // run the string
     v = PyRun_String(command, Py_file_input, d, d);
     // check for errors and print them
-    if (v == NULL)
-    {
+    if (!v) {
         // Yikes! errors!
         PyErr_Print();
         return false;
     }
     Py_DECREF(v);
-    if (Py_FlushLine())
-        PyErr_Clear();
+    PyErr_Clear();
+    return true;
+}
+
+bool PythonInterface::RunFile(const plFileName& filename, PyObject* module)
+{
+    // make sure that we're given a good module... or at least one with an address
+    if (!module) {
+        // if no module was given then use just use the main module
+        module = PyImport_AddModule("__main__");
+        if (!module) {
+            getOutputAndReset();
+            return false;
+        }
+    }
+
+    PyObject* moduleDict = PyModule_GetDict(module);
+    PyObject* result = PyRun_FileEx(plFileSystem::Open(filename, "r"), filename.AsString().c_str(),
+                                    Py_file_input, moduleDict, moduleDict, 1);
+    if (!result) {
+        getOutputAndReset();
+        return false;
+    }
+    Py_DECREF(result);
     return true;
 }
 
@@ -2273,93 +1705,41 @@ bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
     {
         // if no module was given then use just use the main module
         module = PyImport_AddModule("__main__");
-        if (module == NULL)
+        if (module == nullptr)
             return false;
     }
     // get the dictionaries for this module
     d = PyModule_GetDict(module);
     // run the string
-    v = PyEval_EvalCode((PyCodeObject*)code, d, d);
+    v = PyEval_EvalCode(code, d, d);
     // check for errors and print them
-    if (v == NULL)
+    if (v == nullptr)
     {
         // Yikes! errors!
         PyErr_Print();
         return false;
     }
     Py_DECREF(v);
-    if (Py_FlushLine())
-        PyErr_Clear();
+    PyErr_Clear();
     return true;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//  Function   : RunFunction
-//  PARAMETERS : module - module name to run 'name' in
-//             : name - name of function
-//             : args - tuple with arguments
-//
-//
-PyObject* PythonInterface::RunFunction(PyObject* module, const char* name, PyObject* args)
+bool PythonInterface::RunFunctionStringArg(const char* module, const char* name, const ST::string& arg)
 {
-    if (module == NULL)
-        return NULL;
-
-    PyObject* function = PyObject_GetAttrString(module, name);
-
-    PyObject* result = NULL;
-    if (function != nil) 
-    {
-        result = PyObject_Call(function, args, NULL);
-        Py_DECREF(function);
-    }
-
-    return result;
-}
-
-PyObject* PythonInterface::ParseArgs(const char* args)
-{
-    PyObject* result = NULL;
-    PyObject* scope = PyDict_New();
-    if (scope) 
-    {
-        //- Py_eval_input makes this function accept only single expresion (not statement)
-        //- When using empty scope, functions and classes like 'file' or '__import__' are not visible
-        result = PyRun_String(args, Py_eval_input, scope, NULL);
-        Py_DECREF(scope);
-    }
-   
-    return result;
-}
-
-bool PythonInterface::RunFunctionSafe(const char* module, const char* function, const char* args) 
-{
-    PyObject* moduleObj = ImportModule(module);
+    pyObjectRef moduleObj = ImportModule(module);
     bool result = false;
-    if (moduleObj) 
-    {
-        PyObject* argsObj = ParseArgs(args);
-        if (argsObj) 
-        {
-            PyObject* callResult = RunFunction(moduleObj, function, argsObj);
-            if (callResult) 
-            {
+    if (moduleObj) {
+        pyObjectRef functionObj = PyObject_GetAttrString(moduleObj.Get(), name);
+        if (functionObj) {
+            pyObjectRef callResult = plPython::CallObject(functionObj, arg);
+            if (callResult) {
                 result = true;
-                Py_DECREF(callResult);
             }
-
-            Py_DECREF(argsObj);
         }
-        Py_DECREF(moduleObj);
     }
 
-    if (!result)
-    {
+    if (!result) {
         PyErr_Print();
-
-        if (Py_FlushLine())
-            PyErr_Clear();
     }
 
     return result;
@@ -2375,6 +1755,6 @@ bool PythonInterface::RunFunctionSafe(const char* module, const char* function, 
 pyKey* PythonInterface::GetpyKeyFromPython(PyObject* pkey)
 {
     if (!pyKey::Check(pkey))
-        return nil;
+        return nullptr;
     return pyKey::ConvertFrom(pkey);
 }

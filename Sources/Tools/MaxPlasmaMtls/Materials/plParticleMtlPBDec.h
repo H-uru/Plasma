@@ -60,22 +60,22 @@ public:
         ICustButton *bmSelectBtn;
 
         SendMessage(cbox, CB_SETCURSEL, pb->GetInt(plParticleMtl::kNormal), 0);
-        pbbm = (layer == nil ? nil : layer->GetPBBitmap());
+        pbbm = (layer == nullptr ? nullptr : layer->GetPBBitmap());
 
         bmSelectBtn = GetICustButton(GetDlgItem(hWnd,IDC_PARTICLE_TEXTURE));
-        bmSelectBtn->SetText(pbbm ? (TCHAR*)pbbm->bi.Filename() : "(none)");
+        bmSelectBtn->SetText(pbbm ? pbbm->bi.Filename() : _M("(none)"));
         ReleaseICustButton(bmSelectBtn);    
     }       
 
-    virtual void Update(TimeValue t, Interval& valid, IParamMap2* pmap) { UpdateDisplay(pmap); }    
+    void Update(TimeValue t, Interval& valid, IParamMap2* pmap) override { UpdateDisplay(pmap); }
 
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int id = LOWORD(wParam);
         int code = HIWORD(wParam);
 
         IParamBlock2 *pb = map->GetParamBlock();
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(plParticleMtl::kTexmap));
 
         switch (msg)
@@ -93,12 +93,12 @@ public:
         case WM_COMMAND:  
             if (id == IDC_PARTICLE_NORMAL)
             {
-                pb->SetValue(plParticleMtl::kNormal, t, SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0));
+                pb->SetValue(plParticleMtl::kNormal, t, (int)SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0));
                 return TRUE;
             }
             else if (id == IDC_PARTICLE_TEXTURE)
             {
-                if (layer == nil)
+                if (layer == nullptr)
                     return FALSE;
                 layer->HandleBitmapSelection();
                 UpdateDisplay(map);
@@ -122,7 +122,7 @@ public:
         }
         return FALSE;
     }
-    virtual void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static ParticleBasicDlgProc gParticleBasicDlgProc;
 
@@ -142,31 +142,31 @@ static ParamBlockDesc2 gParticleMtlPB
         p_range, 0, 100,
         p_ui,   TYPE_SPINNER,   EDITTYPE_INT,
         IDC_PARTICLE_OPACITY, IDC_PARTICLE_OPACITY_SPIN, 1.0,
-        end,
+        p_end,
 
     plParticleMtl::kColorAmb,   _T("ambColor"), TYPE_RGBA,      P_ANIMATABLE, IDS_PARTICLE_AMB_COLOR,
         p_ui,           TYPE_COLORSWATCH, IDC_PARTICLE_AMB_COLOR,
         p_default,      Color(0,0,0),
-        end,
+        p_end,
 
     plParticleMtl::kColor,      _T("color"),    TYPE_RGBA,      P_ANIMATABLE, IDS_PARTICLE_COLOR,
         p_ui,           TYPE_COLORSWATCH, IDC_PARTICLE_COLOR,
         p_default,      Color(1,1,1),
-        end,
+        p_end,
         
     plParticleMtl::kWidth,      _T("width"),    TYPE_FLOAT,     P_ANIMATABLE, IDS_PARTICLE_WIDTH,   
         p_default, 1.0,
         p_range, 0.01, 10.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_PARTICLE_WIDTH, IDC_PARTICLE_WIDTH_SPIN, 1.0,
-        end,
+        p_end,
 
     plParticleMtl::kHeight,     _T("height"),   TYPE_FLOAT,     P_ANIMATABLE, IDS_PARTICLE_HEIGHT,  
         p_default, 1.0,
         p_range, 0.01, 10.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_PARTICLE_HEIGHT, IDC_PARTICLE_HEIGHT_SPIN, 1.0,
-        end,
+        p_end,
         
     plParticleMtl::kXTiles, _T("xTiling"),  TYPE_INT,   0, 0,
         p_default, 1,
@@ -174,7 +174,7 @@ static ParamBlockDesc2 gParticleMtlPB
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_INT,   
         IDC_PARTICLE_XTILE, IDC_PARTICLE_XTILE_SPIN, 1.0,
         p_accessor,     &partMtl_accessor,
-        end,
+        p_end,
 
     plParticleMtl::kYTiles, _T("yTiling"),  TYPE_INT,   0, 0,
         p_default, 1,
@@ -182,45 +182,45 @@ static ParamBlockDesc2 gParticleMtlPB
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_INT,   
         IDC_PARTICLE_YTILE, IDC_PARTICLE_YTILE_SPIN, 1.0,
         p_accessor,     &partMtl_accessor,
-        end,
+        p_end,
     
     plParticleMtl::kNormal, _T("normal"),   TYPE_INT,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     plParticleMtl::kBlend,      _T("texBlend"), TYPE_INT,   0, 0,
         p_ui,               TYPE_RADIO, 2, IDC_PARTICLE_BLEND_ALPHA, IDC_PARTICLE_BLEND_ADD,
         p_vals,             plParticleMtl::kBlendAlpha, plParticleMtl::kBlendAdd, 
         p_default,          plParticleMtl::kBlendAlpha,
-        end,
+        p_end,
 
     plParticleMtl::kOrientation,    _T("layerBlend"),   TYPE_INT,   0, 0,
         p_ui,               TYPE_RADIO, 4, IDC_PARTICLE_ORIENT_VELOCITY, IDC_PARTICLE_ORIENT_UP, IDC_PARTICLE_ORIENT_VELSTRETCH, IDC_PARTICLE_ORIENT_VELFLOW,
         p_vals,             plParticleMtl::kOrientVelocity, plParticleMtl::kOrientUp, plParticleMtl::kOrientVelStretch, plParticleMtl::kOrientVelFlow,
         p_default,          plParticleMtl::kOrientVelocity,
-        end,
+        p_end,
     
     plParticleMtl::kBitmap, _T("bitmap"),   TYPE_BITMAP,    P_SHORT_LABELS, 0,
         ///p_ui,            TYPE_BITMAPBUTTON,  IDC_PARTICLE_TEXTURE,
         //p_accessor,       &partMtl_accessor,
-        end,
+        p_end,
 
     plParticleMtl::kTexmap,     _T("texmap"),   TYPE_TEXMAP,        0, 0,
 //      p_ui,               TYPE_TEXMAPBUTTON, IDC_LAYER2,
-        end,
+        p_end,
 
     plParticleMtl::kNoFilter,       _T("noFilter"),     TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_PARTICLE_NOFILTER,
         p_default,          FALSE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 class PartMtlPBAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         plParticleMtl* mtl = (plParticleMtl *)owner;
         //plLayerTex *layer;
@@ -239,7 +239,7 @@ public:
         }
     }
     
-    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid)
+    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid) override
     {
     }
 };

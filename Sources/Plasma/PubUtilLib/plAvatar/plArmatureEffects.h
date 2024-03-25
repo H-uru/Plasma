@@ -45,12 +45,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plArmatureEffects_inc
 #define plArmatureEffects_inc
 
-#include "pnKeyedObject/hsKeyedObject.h"
-#include "hsTemplates.h"
 #include "hsBitVector.h"
 
-class plArmatureMod;
+#include <vector>
+
+#include "pnKeyedObject/hsKeyedObject.h"
+
 class plArmatureEffect;
+class plArmatureMod;
 class plRandomSoundMod;
 
 /** \class plArmatureEffects
@@ -61,24 +63,24 @@ class plRandomSoundMod;
 class plArmatureEffectsMgr : public hsKeyedObject
 {
 protected:
-    hsTArray<plArmatureEffect *> fEffects;
+    std::vector<plArmatureEffect *> fEffects;
     bool fEnabled;
 
 public:
 
-    plArmatureEffectsMgr() : fArmature(nil), fEnabled(true) {}
+    plArmatureEffectsMgr() : fArmature(), fEnabled(true) { }
     virtual ~plArmatureEffectsMgr() {}
 
     CLASSNAME_REGISTER( plArmatureEffectsMgr );
     GETINTERFACE_ANY( plArmatureEffectsMgr, hsKeyedObject );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr); 
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    uint32_t GetNumEffects();
-    plArmatureEffect *GetEffect(uint32_t num);
+    size_t GetNumEffects() const { return fEffects.size(); }
+    plArmatureEffect *GetEffect(size_t num) const { return fEffects[num]; }
     void ResetEffects();
 
     plArmatureMod *fArmature;
@@ -107,7 +109,7 @@ public:
         kMaxSurface,
         kFootNoSurface = kMaxSurface,
     };  
-    static const char *SurfaceStrings[];
+    static ST::string SurfaceStrings[];
 };
 
 class plArmatureEffect : public hsKeyedObject
@@ -133,11 +135,11 @@ public:
 class plArmatureEffectFootSound : public plArmatureEffect
 {
 protected:
-    hsTArray<plArmatureEffectFootSurface *> fSurfaces;
+    std::vector<plArmatureEffectFootSurface *> fSurfaces;
     hsBitVector fActiveSurfaces;
     plRandomSoundMod *fMods[plArmatureEffectsMgr::kMaxSurface];
 
-    uint32_t IFindSurfaceByTrigger(plKey trigger);
+    uint32_t IFindSurfaceByTrigger(const plKey& trigger);
 
 public:
     plArmatureEffectFootSound();
@@ -146,12 +148,12 @@ public:
     CLASSNAME_REGISTER( plArmatureEffectFootSound );
     GETINTERFACE_ANY( plArmatureEffectFootSound, plArmatureEffect );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr); 
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
-    virtual bool HandleTrigger(plMessage* msg);
-    virtual void Reset();
+    bool MsgReceive(plMessage* msg) override;
+    bool HandleTrigger(plMessage* msg) override;
+    void Reset() override;
     void SetFootType(uint8_t);
 
     enum

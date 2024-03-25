@@ -62,7 +62,7 @@ public:
     uint8_t fNumLoops;
 
     plMultistageModMsg() : fStageNum(0), fNumLoops(1) {}
-    plMultistageModMsg(const plKey &sender, const plKey &receiver) : plMessage(sender,receiver,nil),fStageNum(0),fNumLoops(1) {}
+    plMultistageModMsg(const plKey &sender, const plKey &receiver) : plMessage(sender, receiver, nullptr), fStageNum(), fNumLoops(1) { }
 
     bool GetCommand(uint8_t cmd) { return fCmds.IsBitSet(cmd); }
     void SetCommand(uint8_t cmd, bool val = true) { fCmds.SetBit(cmd, val); }
@@ -71,8 +71,8 @@ public:
     CLASSNAME_REGISTER( plMultistageModMsg );
     GETINTERFACE_ANY( plMultistageModMsg, plMessage );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 #endif

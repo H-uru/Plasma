@@ -39,15 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <cfloat>
-#include "hsTimer.h"
-#include "hsTemplates.h"
-#include "plClientUnifiedTime.h"
 
-#if 0
-#include "plNetCommon/plNetObjectDebugger.h"
-#include "plNetClient/plNetClientMgr.h"
-#endif
+#include "hsTimer.h"
+#include "plClientUnifiedTime.h"
 
 // static
 plUnifiedTime   plClientUnifiedTime::fFrameStartTime    = plUnifiedTime::GetCurrent();  // the 'current time' at the start of each time
@@ -67,66 +61,15 @@ void plClientUnifiedTime::SetSysTime()
 //
 // convert from game clock to unified time
 //
-#pragma optimize( "g", off )    // disable global optimizations
-void plClientUnifiedTime::SetFromGameTime(double gameTime, double curGameSecs)
+void plClientUnifiedTime::SetFromGameTime(double gameTime)
 {
-    //double gameTimeOff = curGameSecs-gameTime;    // when did this happen relative to our currrent sysTime
-    //*this = GetFrameStartTime() - plUnifiedTime(gameTimeOff);
     SetSecsDouble(gameTime - fSysTimeOffset);
-
-#if 0
-    extern bool gMooseDump;
-    if (gMooseDump)
-    {
-        plUnifiedTime ct = plUnifiedTime::GetCurrent();
-        plUnifiedTime ft = GetFrameStartTime();
-
-        plNetObjectDebugger::GetInstance()->LogMsg(hsTempStringF("SFGT: CT=%s\n", ct.PrintWMillis()));
-        plNetObjectDebugger::GetInstance()->LogMsg(hsTempStringF("SFGT: FT=%s\n", ft.PrintWMillis()));
-        plNetObjectDebugger::GetInstance()->LogMsg(hsTempStringF("SFGT: gt=%f secs in the past\n", gameTimeOff));
-        plNetObjectDebugger::GetInstance()->LogMsg(hsTempStringF("SFGT: this=%s\n\n", PrintWMillis()));
-    }
-#endif
 }
 
 //
 // convert from unified time to game clock
 //
-void plClientUnifiedTime::ConvertToGameTime(double* gameTimeOut, double curGameSecs)
+double plClientUnifiedTime::ConvertToGameTime()
 {
-    //plUnifiedTime utOff = GetFrameStartTime() - GetAsUnifiedTime();   // compute offset relative to current startFrame time
-    //*gameTimeOut = curGameSecs - utOff.GetSecsDouble();
-    *gameTimeOut = GetSecsDouble() + fSysTimeOffset;
-
-#if 0
-    extern bool gMooseDump;
-    if (gMooseDump)
-    {
-        plUnifiedTime ct = plUnifiedTime::GetCurrent();
-        plUnifiedTime ft = GetFrameStartTime();
-
-        plNetObjectDebugger::GetInstance()->LogMsg( hsTempStringF("CTGT: this=%s\n", PrintWMillis()));
-        plNetObjectDebugger::GetInstance()->LogMsg(hsTempStringF("CTGT: CT=%s\n", ct.PrintWMillis()));
-        plNetObjectDebugger::GetInstance()->LogMsg(hsTempStringF("CTGT: FT=%s\n", ft.PrintWMillis()));
-        plNetObjectDebugger::GetInstance()->LogMsg(hsTempStringF("CTGT: OT=%s\n", utOff.PrintWMillis()));
-        plNetObjectDebugger::GetInstance()->LogMsg(
-            hsTempStringF("CTGT: ct=%f TO=%f\n\n", curGameSecs, *gameTimeOut));
-    }
-#endif
-}
-#pragma optimize( "", on )  // restore optimizations to their defaults
-
-const plClientUnifiedTime & plClientUnifiedTime::operator=(const plUnifiedTime & src) 
-{ 
-    plUnifiedTime* ut=this;
-    *ut=src;
-    return *this;
-}
-
-const plClientUnifiedTime & plClientUnifiedTime::operator=(const plClientUnifiedTime & src) 
-{ 
-    plUnifiedTime* ut=this;
-    plUnifiedTime* utSrc=this;
-    *ut=*utSrc;
-    return *this;
+    return GetSecsDouble() + fSysTimeOffset;
 }

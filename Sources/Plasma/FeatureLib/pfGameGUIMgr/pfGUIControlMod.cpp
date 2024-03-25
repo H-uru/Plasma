@@ -45,41 +45,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIControlMod.h"
+
+#include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "hsGeometry3.h"
+#include "plPipeline.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pfGameGUIMgr.h"
-#include "pfGUIDialogMod.h"
 #include "pfGUIControlHandlers.h"
 #include "pfGUIDialogHandlers.h"
+#include "pfGUIDialogMod.h"
 #include "pfGUIListElement.h"   // Includes dropTargetProc
+#include "pfGUIPopUpMenu.h"     // For skin, can we move that please? Thank you
 
-#include "pnMessage/plRefMsg.h"
 #include "pnMessage/plEnableMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plMessage/plDeviceRecreateMsg.h"
-#include "pnSceneObject/plDrawInterface.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnSceneObject/plAudioInterface.h"
-
-#include "plGImage/plDynamicTextMap.h"
-#include "plSurface/plLayer.h"
-#include "plMessage/plRenderMsg.h"
+#include "pnMessage/plRefMsg.h"
 #include "pnMessage/plSoundMsg.h"
-#include "plPipeline.h"
+#include "pnSceneObject/plAudioInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
 
 #include "plDrawable/plAccessGeometry.h"
 #include "plDrawable/plAccessSpan.h"
 #include "plDrawable/plAccessVtxSpan.h"
-
-#include "pfGUIPopUpMenu.h"     // For skin, can we move that please? Thank you
-
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-
+#include "plGImage/plDynamicTextMap.h"
+#include "plMessage/plDeviceRecreateMsg.h"
+#include "plMessage/plRenderMsg.h"
+#include "plSurface/plLayer.h"
 
 //// pfGUIColorScheme Functions //////////////////////////////////////////////
 
-void    pfGUIColorScheme::IReset( void )
+void    pfGUIColorScheme::IReset()
 {
     fForeColor.Set( 1, 1, 1, 1 );
     fBackColor.Set( 0, 0, 0, 1 );
@@ -103,7 +102,7 @@ pfGUIColorScheme::pfGUIColorScheme( hsColorRGBA &foreColor, hsColorRGBA &backCol
     fBackColor = backColor;
 }
 
-pfGUIColorScheme::pfGUIColorScheme( const plString &face, uint8_t size, uint8_t fontFlags )
+pfGUIColorScheme::pfGUIColorScheme( const ST::string &face, uint8_t size, uint8_t fontFlags )
 {
     IReset();
     fFontFace = face;
@@ -120,8 +119,8 @@ void    pfGUIColorScheme::Read( hsStream *s )
     fTransparent = s->ReadBOOL();
 
     fFontFace = s->ReadSafeString();
-    s->ReadLE( &fFontSize );
-    s->ReadLE( &fFontFlags );
+    s->ReadByte(&fFontSize);
+    s->ReadByte(&fFontFlags);
 }
 
 void    pfGUIColorScheme::Write( hsStream *s )
@@ -133,38 +132,17 @@ void    pfGUIColorScheme::Write( hsStream *s )
     s->WriteBOOL( fTransparent );
 
     s->WriteSafeString( fFontFace );
-    s->WriteLE( fFontSize );
-    s->WriteLE( fFontFlags );
+    s->WriteByte(fFontSize);
+    s->WriteByte(fFontFlags);
 }
 
-//// Constructor/Destructor //////////////////////////////////////////////////
-
-pfGUIControlMod::pfGUIControlMod()
-{
-    fEnabled = true;
-    fDialog = nil;
-    fBoundsValid = false;
-    fCenterValid = false;
-    fFocused = false;
-    fInteresting = false;
-    fVisible = true;
-    fHandler = nil;
-    fTagID = 0;
-    fDropTargetHdlr = nil;
-    fDynTextMap = nil;
-    fProxy = nil;
-
-    fColorScheme = nil;
-    fSkin = nil;
-    
-    fNotifyOnInteresting = false;
-}
+//// Destructor //////////////////////////////////////////////////
 
 pfGUIControlMod::~pfGUIControlMod()
 {
-    ISetHandler( nil );
-    SetDropTargetHdlr( nil );
-    SetColorScheme( nil );
+    ISetHandler(nullptr);
+    SetDropTargetHdlr(nullptr);
+    SetColorScheme(nullptr);
 }
 
 //// IEval ///////////////////////////////////////////////////////////////////
@@ -177,7 +155,7 @@ bool    pfGUIControlMod::IEval( double secs, float del, uint32_t dirty )
 
 //// GetBounds ///////////////////////////////////////////////////////////////
 
-const hsBounds3 &pfGUIControlMod::GetBounds( void )
+const hsBounds3 &pfGUIControlMod::GetBounds()
 {
     UpdateBounds();
     return fBounds; 
@@ -276,8 +254,8 @@ static bool     CreateConvexHull( hsPoint3 *inPoints, int &numPoints )
         
         // If the angle is < 180, then it's a good angle and we can advance all our points by 1...
         // Note: we have a tolerance so that we don't get points that form edges that are pretty darned close...
-        const float tolerance = M_PI / 90.f;
-        if( angle > tolerance && angle < M_PI - tolerance )
+        constexpr float tolerance = hsConstants::pi<float> / 90.f;
+        if (angle > tolerance && angle < hsConstants::pi<float> - tolerance)
         {
             pointA++;
             pointB++;
@@ -318,26 +296,25 @@ static bool     CreateConvexHull( hsPoint3 *inPoints, int &numPoints )
 //  Retrieves ALL of the points of a sceneObject's meshes. And I mean ALL of 
 //  'em...
 
-static void GetObjectPoints( plSceneObject *so, hsTArray<hsPoint3> &outPoints )
+static void GetObjectPoints(plSceneObject *so, std::vector<hsPoint3> &outPoints)
 {
     const plDrawInterface* di = so->GetDrawInterface();
     if( !di )
         return;
 
-    // The following uses mf's spiffy plAccessGeometry/Spans stuff, which, in 
-    // one uint16_t, kicksAss.
-    hsTArray<plAccessSpan> spans;
+    // The following uses mf's spiffy plAccessGeometry/Spans stuff, which, in
+    // one word, kicksAss.
+    std::vector<plAccessSpan> spans;
     plAccessGeometry::Instance()->OpenRO( di, spans );
 
-    int i;
-    outPoints.Reset();
-    for( i = 0; i < spans.GetCount(); i++ )
+    outPoints.clear();
+    for (const plAccessSpan& span : spans)
     {
-        plAccessVtxSpan& vtxSrc = spans[ i ].AccessVtx();
+        const plAccessVtxSpan& vtxSrc = span.AccessVtx();
         plAccPositionIterator iterSrc( &vtxSrc );
 
         for( iterSrc.Begin(); iterSrc.More(); iterSrc.Advance() )
-            outPoints.Append( *iterSrc.Position() );
+            outPoints.emplace_back(*iterSrc.Position());
     }
     
     if (plAccessGeometry::Instance())
@@ -379,13 +356,10 @@ bool    pfGUIControlMod::PointInBounds( const hsPoint3 &point )
 
     if( fBounds.GetType() != kBoundsEmpty && fBounds.GetType() != kBoundsUninitialized && fBounds.IsInside( &point ) )
     {
-        if( fBoundsPoints.GetCount() > 0 )
+        if (!fBoundsPoints.empty())
         {
             // We have a more-accurate bounds set, so use it
-            int     i;
-
-
-            for( i = 1; i < fBoundsPoints.GetCount() - 1; i++ )
+            for (size_t i = 1; i < fBoundsPoints.size() - 1; i++)
             {
                 // Test the triangle (0,i,i+1)
                 if( PointInTriangle( fBoundsPoints[ 0 ], fBoundsPoints[ i ], fBoundsPoints[ i + 1 ], point ) )
@@ -405,9 +379,9 @@ bool    pfGUIControlMod::PointInBounds( const hsPoint3 &point )
 //  any dynmaic text maps, since we want to use the initial bounds to do so
 //  instead of any currently animated state of the bounds.
 
-void    pfGUIControlMod::CalcInitialBounds( void )
+void    pfGUIControlMod::CalcInitialBounds()
 {
-    UpdateBounds( nil, true );
+    UpdateBounds(nullptr, true);
     fInitialBounds = fBounds;
 }
 
@@ -417,37 +391,35 @@ void    pfGUIControlMod::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 {
     hsMatrix44  xformMatrix, projMatrix;
     hsPoint3    corners[ 8 ];
-    int         i;
-
 
     if( ( !fBoundsValid || force ) && fDialog && GetTarget() )
     {
         plDrawInterface *DI = IGetTargetDrawInterface( 0 );
-        if( DI == nil )
+        if (DI == nullptr)
             return;
 
         if( HasFlag( kBetterHitTesting ) )
         {
-            hsTArray<hsPoint3>  scrnPoints;
+            std::vector<hsPoint3> scrnPoints;
 
             // Create a list of points to make a 2D convex hull from
             GetObjectPoints( GetTarget(), scrnPoints );
             hsMatrix44 l2w = GetTarget()->GetLocalToWorld();
-            for( i = 0; i < scrnPoints.GetCount(); i++ )
+            for (hsPoint3& point : scrnPoints)
             {
-                scrnPoints[ i ] = l2w * scrnPoints[ i ];
-                scrnPoints[ i ] = fDialog->WorldToScreenPoint( scrnPoints[ i ] );
+                point = l2w * point;
+                point = fDialog->WorldToScreenPoint(point);
             }
 
             // Now create a convex hull from them, assuming the Zs are all the same
-            int numPoints = scrnPoints.GetCount();
-            if( !CreateConvexHull( scrnPoints.AcquireArray(), numPoints ) )
+            int numPoints = (int)scrnPoints.size();
+            if (!CreateConvexHull(scrnPoints.data(), numPoints))
                 return;
 
             // Copy & store. Also recalc our bounding box just for fun
             fBounds.MakeEmpty();
-            fBoundsPoints.SetCount( numPoints );
-            for( i = 0; i < numPoints; i++ )
+            fBoundsPoints.resize(numPoints);
+            for (int i = 0; i < numPoints; i++)
             {
                 fBoundsPoints[ i ] = scrnPoints[ i ];
                 fBounds.Union( &fBoundsPoints[ i ] );
@@ -462,7 +434,7 @@ void    pfGUIControlMod::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
             worldBounds.Transform( &l2w );
 
             worldBounds.GetCorners( corners );
-            for( i = 0; i < 8; i++ )
+            for (int i = 0; i < 8; i++)
             {
                 hsPoint3 scrnPt = fDialog->WorldToScreenPoint( corners[ i ] );
                 fBounds.Union( &scrnPt );
@@ -518,7 +490,7 @@ void    pfGUIControlMod::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 void    pfGUIControlMod::SetObjectCenter( float x, float y )
 {
     hsMatrix44  xformMatrix, l2p, p2l;
-    hsPoint3    center, corners[ 8 ];
+    hsPoint3    center;
 
 
     if( x > 1.f )
@@ -533,7 +505,7 @@ void    pfGUIControlMod::SetObjectCenter( float x, float y )
     if( fDialog && GetTarget() )
     {
         plCoordinateInterface *CI = IGetTargetCoordinateInterface( 0 );
-        if( CI == nil )
+        if (CI == nullptr)
             return;
 
 //      if( !fInvXformValid )
@@ -587,7 +559,7 @@ bool    pfGUIControlMod::MsgReceive( plMessage *msg )
     }
 
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
-    if( refMsg != nil )
+    if (refMsg != nullptr)
     {
         if( refMsg->fType == kRefDynTextMap )
         {
@@ -611,7 +583,7 @@ bool    pfGUIControlMod::MsgReceive( plMessage *msg )
             if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fDynTextLayer = plLayerInterface::ConvertNoRef( refMsg->GetRef() );
             else
-                fDynTextLayer = nil;
+                fDynTextLayer = nullptr;
             return true;
         }
         else if( refMsg->fType == kRefProxy )
@@ -619,7 +591,7 @@ bool    pfGUIControlMod::MsgReceive( plMessage *msg )
             if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fProxy = plSceneObject::ConvertNoRef( refMsg->GetRef() );
             else
-                fProxy = nil;
+                fProxy = nullptr;
             return true;
         }
         else if( refMsg->fType == kRefSkin )
@@ -627,7 +599,7 @@ bool    pfGUIControlMod::MsgReceive( plMessage *msg )
             if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fSkin = pfGUISkin::ConvertNoRef( refMsg->GetRef() );
             else
-                fSkin = nil;
+                fSkin = nullptr;
 
             return true;
         }
@@ -643,12 +615,12 @@ bool    pfGUIControlMod::MsgReceive( plMessage *msg )
 
 bool    pfGUIControlMod::ISetUpDynTextMap( plPipeline *pipe )
 {
-    if( fDynTextMap == nil )
+    if (fDynTextMap == nullptr)
     {
         hsAssert( false, "Trying to set up a nil dynamicTextMap in a GUI control" );
         return true;
     }
-    if( fDynTextLayer == nil || fInitialBounds.GetType() == kBoundsUninitialized )//|| fDialog == nil )
+    if (fDynTextLayer == nullptr || fInitialBounds.GetType() == kBoundsUninitialized)//|| fDialog == nullptr)
         return false;
 
     uint32_t scrnWidth, scrnHeight;
@@ -707,9 +679,9 @@ bool    pfGUIControlMod::ISetUpDynTextMap( plPipeline *pipe )
 
 //// Get/SetColorScheme //////////////////////////////////////////////////////
 
-pfGUIColorScheme    *pfGUIControlMod::GetColorScheme( void ) const
+pfGUIColorScheme    *pfGUIControlMod::GetColorScheme() const
 {
-    if( fColorScheme == nil )
+    if (fColorScheme == nullptr)
         return fDialog->GetColorScheme();
 
     return fColorScheme;
@@ -717,14 +689,14 @@ pfGUIColorScheme    *pfGUIControlMod::GetColorScheme( void ) const
 
 void    pfGUIControlMod::SetColorScheme( pfGUIColorScheme *newScheme )
 {
-    if( fColorScheme != nil )
+    if (fColorScheme != nullptr)
     {
         hsRefCnt_SafeUnRef( fColorScheme );
-        fColorScheme = nil;
+        fColorScheme = nullptr;
     }
 
     fColorScheme = newScheme;
-    if( fColorScheme != nil )
+    if (fColorScheme != nullptr)
         hsRefCnt_SafeRef( fColorScheme );
 }
 
@@ -792,10 +764,10 @@ void    pfGUIControlMod::SetVisible( bool vis )
     }
 
     if( !fVisible && fFocused )
-        fDialog->SetFocus( nil );
+        fDialog->SetFocus(nullptr);
 }
 
-void    pfGUIControlMod::Refresh( void )
+void    pfGUIControlMod::Refresh()
 {
     IUpdate();
 }
@@ -805,7 +777,7 @@ void    pfGUIControlMod::Refresh( void )
 void    pfGUIControlMod::Read( hsStream *s, hsResMgr *mgr )
 {
     plSingleModifier::Read(s, mgr);
-    s->ReadLE( &fTagID );
+    s->ReadLE32(&fTagID);
     fVisible = s->ReadBool();
 
     // Read the handler in
@@ -819,25 +791,25 @@ void    pfGUIControlMod::Read( hsStream *s, hsResMgr *mgr )
     }
     else
     {
-        fDynTextLayer = nil;
-        fDynTextMap = nil;
+        fDynTextLayer = nullptr;
+        fDynTextMap = nullptr;
     }
 
     if( s->ReadBool() )
     {
-        SetColorScheme( nil );
+        SetColorScheme(nullptr);
         fColorScheme = new pfGUIColorScheme();
         fColorScheme->Read( s );
     }
 
     // Read in our sound indices
-    uint8_t i, count = s->ReadByte();
+    uint8_t count = s->ReadByte();
     if( count == 0 )
-        fSoundIndices.Reset();
+        fSoundIndices.clear();
     else
     {
-        fSoundIndices.SetCountAndZero( count );
-        for( i = 0; i < count; i++ )
+        fSoundIndices.assign(count, 0);
+        for (uint8_t i = 0; i < count; i++)
             fSoundIndices[ i ] = (int)s->ReadLE32();
     }
 
@@ -853,14 +825,14 @@ void    pfGUIControlMod::Write( hsStream *s, hsResMgr *mgr )
         ClearFlag( kHasProxy );
 
     plSingleModifier::Write( s, mgr );
-    s->WriteLE( fTagID );
+    s->WriteLE32(fTagID);
     s->WriteBool( fVisible );
 
     // Write the handler out (if it's not a writeable, damn you)
     pfGUICtrlProcWriteableObject::Write( (pfGUICtrlProcWriteableObject *)fHandler, s );
 
     // Write out the dynTextMap
-    if( fDynTextMap != nil )
+    if (fDynTextMap != nullptr)
     {
         s->WriteBool( true );
         mgr->WriteKey( s, fDynTextLayer->GetKey() );
@@ -869,7 +841,7 @@ void    pfGUIControlMod::Write( hsStream *s, hsResMgr *mgr )
     else
         s->WriteBool( false );
 
-    if( fColorScheme != nil )
+    if (fColorScheme != nullptr)
     {
         s->WriteBool( true );
         fColorScheme->Write( s );
@@ -878,10 +850,9 @@ void    pfGUIControlMod::Write( hsStream *s, hsResMgr *mgr )
         s->WriteBool( false );
 
     // Write out our sound indices
-    s->WriteByte( fSoundIndices.GetCount() );
-    uint8_t i;
-    for( i = 0; i < fSoundIndices.GetCount(); i++ )
-        s->WriteLE32( fSoundIndices[ i ] );
+    s->WriteByte((uint8_t)fSoundIndices.size());
+    for (int idx : fSoundIndices)
+        s->WriteLE32(idx);
 
     if( HasFlag( kHasProxy ) )
         mgr->WriteKey( s, fProxy->GetKey() );
@@ -930,9 +901,9 @@ void    pfGUIControlMod::ISetHandler( pfGUICtrlProcObject *h, bool clearInheritF
 
 //// DoSomething /////////////////////////////////////////////////////////////
 
-void    pfGUIControlMod::DoSomething( void )
+void    pfGUIControlMod::DoSomething()
 {
-    if( fEnabled && fHandler != nil )
+    if (fEnabled && fHandler != nullptr)
         fHandler->DoSomething( this );
 }
 
@@ -940,7 +911,7 @@ void    pfGUIControlMod::DoSomething( void )
 
 void    pfGUIControlMod::HandleExtendedEvent( uint32_t event )
 {
-    if( fEnabled && fHandler != nil )
+    if (fEnabled && fHandler != nullptr)
         fHandler->HandleExtendedEvent( this, event );
 }
 
@@ -962,8 +933,8 @@ void    pfGUIControlMod::SetDropTargetHdlr( pfGUIDropTargetProc *h )
 
 void    pfGUIControlMod::SetSoundIndex( uint8_t guiCtrlEvent, int soundIndex )
 {
-    if( fSoundIndices.GetCount() < guiCtrlEvent + 1 )
-        fSoundIndices.ExpandAndZero( guiCtrlEvent + 1 );
+    if (fSoundIndices.size() < guiCtrlEvent + 1)
+        fSoundIndices.resize(guiCtrlEvent + 1);
 
     fSoundIndices[ guiCtrlEvent ] = soundIndex + 1; // We +1, since 0 means no sound
 }
@@ -974,10 +945,10 @@ void    pfGUIControlMod::SetSoundIndex( uint8_t guiCtrlEvent, int soundIndex )
 
 void    pfGUIControlMod::IPlaySound( uint8_t guiCtrlEvent, bool loop /* = false */ )
 {
-    if( guiCtrlEvent >= fSoundIndices.GetCount() || fSoundIndices[ guiCtrlEvent ] == 0 )
+    if (guiCtrlEvent >= fSoundIndices.size() || fSoundIndices[guiCtrlEvent] == 0)
         return;
 
-    if( GetTarget() == nil || GetTarget()->GetAudioInterface() == nil )
+    if (GetTarget() == nullptr || GetTarget()->GetAudioInterface() == nullptr)
         return;
 
     plSoundMsg  *msg = new plSoundMsg;
@@ -995,10 +966,10 @@ void    pfGUIControlMod::IPlaySound( uint8_t guiCtrlEvent, bool loop /* = false 
 
 void    pfGUIControlMod::IStopSound(uint8_t guiCtrlEvent)
 {
-    if (guiCtrlEvent >= fSoundIndices.GetCount() || fSoundIndices[guiCtrlEvent] == 0)
+    if (guiCtrlEvent >= fSoundIndices.size() || fSoundIndices[guiCtrlEvent] == 0)
         return;
 
-    if (GetTarget() == nil || GetTarget()->GetAudioInterface() == nil )
+    if (GetTarget() == nullptr || GetTarget()->GetAudioInterface() == nullptr)
         return;
 
     plSoundMsg *msg = new plSoundMsg;

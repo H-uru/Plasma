@@ -41,20 +41,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
+#include "MaxAPI.h"
 
 #include "MaxComponent/plComponentMgr.h"
-#include "MaxCompat.h"
-
-
-#include <custcont.h>
-#include <direct.h>
-#include <istdplug.h>
 
 // "TEMP" -- who's gonna rewrite that now? >.<
 #include <CustAttrib.h>
 #include <ICustAttribContainer.h>
-#pragma hdrstop
 
 #include "MaxExport/SimpleExport.h"
 #include "MaxPlasmaMtls/plMtlImport.h"
@@ -66,22 +59,22 @@ extern ClassDesc* GetMaxFileDataDesc();
 extern ClassDesc* GetMaxUtilsDesc();
 
 static HSClassDesc2 HSDesc;
-HINSTANCE hInstance = NULL;
+HINSTANCE hInstance = nullptr;
 
 /*inline*/ TCHAR *GetString(int id)
 {
     static TCHAR buf[256];
     if (hInstance)
-        return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
-    return NULL;
+        return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : nullptr;
+    return nullptr;
 }
 
 //
 // return a string to be displayed if the DLL is not found
 //
-__declspec(dllexport) const TCHAR *LibDescription() 
+__declspec(dllexport) const MCHAR *LibDescription() 
 { 
-    return "Plasma 2.0"; 
+    return _M("Plasma 2.0");
 }
 
 //
@@ -129,32 +122,31 @@ __declspec(dllexport) ClassDesc *LibClassDesc(int i)
     }
 }
 
-//
-// Return version so can detect obsolete DLLs
-//
+// This function returns a pre-defined constant indicating the version of 
+// the system under which it was compiled.  It is used to allow the system
+// to catch obsolete DLLs.
 __declspec(dllexport) ULONG LibVersion() 
 { 
     return VERSION_3DSMAX; 
 }
 
+// This plug-in opts out from 3ds Max's defer loading mechanism
+__declspec(dllexport) ULONG CanAutoDefer()
+{
+    return FALSE;
+}
+
 //
 // DLLMAIN
 //
-BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved) 
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved) 
 {
-    hInstance = hinstDLL;
-
-    switch (fdwReason)
+    if (fdwReason == DLL_PROCESS_ATTACH)
     {
-        case DLL_PROCESS_ATTACH:
-            INIT_CUSTOM_CONTROLS(hInstance);
-            break;
-        case DLL_THREAD_ATTACH:
-            break;
-        case DLL_THREAD_DETACH:
-            break;
-        case DLL_PROCESS_DETACH:
-            break;
+        USE_LANGUAGE_PACK_LOCALE();
+        hInstance = hinstDLL;
+        INIT_CUSTOM_CONTROLS(hInstance);
+        DisableThreadLibraryCalls(hInstance);
     }
 
     return TRUE;
@@ -166,54 +158,55 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 
 #define PL_GEN_ATTRIB_CLASS_ID Class_ID(0x24c36e6e, 0x53ec2ce4)
 
-class plGeneralAttrib : public CustAttrib
+class plGeneralAttrib : public plMaxCustAttrib<CustAttrib>
 {
+protected:
+    MSTR ISubAnimName(int i) override { return fClassDesc->ClassName(); }
+    const MCHAR* IGetName() override { return fClassDesc->ClassName(); }
+
 public:
     ClassDesc2  *fClassDesc;
     IParamBlock2 *fPBlock;
 
     plGeneralAttrib();
 
-    virtual RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-                               PartID& partID,  RefMessage message){return REF_SUCCEED;}
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                               PartID& partID, RefMessage message MAX_REF_PROPAGATE) override { return REF_SUCCEED; }
 
-    int NumParamBlocks() { return 1; }                  // return number of ParamBlocks in this instance
-    IParamBlock2* GetParamBlock(int i) { return fPBlock; } // return i'th ParamBlock
-    IParamBlock2* GetParamBlockByID(BlockID id) { return (fPBlock->ID() == id) ? fPBlock : NULL; } // return id'd ParamBlock
+    int NumParamBlocks() override { return 1; }                  // return number of ParamBlocks in this instance
+    IParamBlock2* GetParamBlock(int i) override { return fPBlock; } // return i'th ParamBlock
+    IParamBlock2* GetParamBlockByID(BlockID id) override { return (fPBlock->ID() == id) ? fPBlock : nullptr; } // return id'd ParamBlock
 
-    int NumRefs() { return 1;}
-    virtual RefTargetHandle GetReference(int i) { if(i == 0) return fPBlock; else return NULL; }
-    virtual void SetReference(int i, RefTargetHandle rtarg) { if(i == 0) fPBlock = (IParamBlock2 *)rtarg; }
+    int NumRefs() override { return 1; }
+    RefTargetHandle GetReference(int i) override { if (i == 0) return fPBlock; else return nullptr; }
+    void SetReference(int i, RefTargetHandle rtarg) override { if (i == 0) fPBlock = (IParamBlock2 *)rtarg; }
 
-    virtual int NumSubs()  { return 1; }
-    virtual Animatable* SubAnim(int i) { return fPBlock; }
-    virtual TSTR SubAnimName(int i){ return fClassDesc->ClassName();} 
+    int NumSubs() override { return 1; }
+    Animatable* SubAnim(int i) override { return fPBlock; }
 
+    void BeginEditParams(IObjParam *ip,ULONG flags,Animatable *prev) override;
+    void EndEditParams(IObjParam *ip, ULONG flags, Animatable *next) override;
+    SClass_ID       SuperClassID() override { return CUST_ATTRIB_CLASS_ID; }
+    Class_ID        ClassID() override { return fClassDesc->ClassID(); }
 
-    void BeginEditParams(IObjParam *ip,ULONG flags,Animatable *prev);
-    void EndEditParams(IObjParam *ip, ULONG flags, Animatable *next);
-    SClass_ID       SuperClassID() {return CUST_ATTRIB_CLASS_ID;}
-    Class_ID        ClassID() {return fClassDesc->ClassID();}
+    ReferenceTarget *Clone(RemapDir &remap = DEFAULTREMAP) override;
+    bool CheckCopyAttribTo(ICustAttribContainer *to) override { return true; }
 
-    ReferenceTarget *Clone(RemapDir &remap = DEFAULTREMAP);
-    virtual bool CheckCopyAttribTo(ICustAttribContainer *to) { return true; }
-    
-    GETNAME_RETURN_TYPE GetName() { return (GETNAME_RETURN_TYPE)_T(fClassDesc->ClassName()); }
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 };
 
 
-class plGeneralAttribClassDesc : public ClassDesc2
+class plGeneralAttribClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
-    int             IsPublic()      { return 1; }
-    void*           Create(BOOL loading) { return new plGeneralAttrib; }
-    const TCHAR*    ClassName()     { return _T("Plasma Attrib"); }
-    SClass_ID       SuperClassID()  { return CUST_ATTRIB_CLASS_ID; }
-    Class_ID        ClassID()       { return PL_GEN_ATTRIB_CLASS_ID; }
-    const TCHAR*    Category()      { return _T(""); }
-    const TCHAR*    InternalName()  { return _T("PlasmaAttrib"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return 1; }
+    void*           Create(BOOL loading) override { return new plGeneralAttrib; }
+    const MCHAR*    ClassName() override    { return _M("Plasma Attrib"); }
+    SClass_ID       SuperClassID() override { return CUST_ATTRIB_CLASS_ID; }
+    Class_ID        ClassID() override      { return PL_GEN_ATTRIB_CLASS_ID; }
+    const MCHAR*    Category() override     { return _M(""); }
+    const MCHAR*    InternalName() override { return _M("PlasmaAttrib"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plGeneralAttribClassDesc theGeneralAttribClassDesc;
 
@@ -231,13 +224,13 @@ ParamBlockDesc2 generalAttribBlock
 
     // params
     kRoomName,      _T("roomName"),         TYPE_STRING,        0,  0,
-    p_default,      "", 
-    end,
+    p_default,      _T(""),
+    p_end,
 
-    end
+    p_end
 );
 
-plGeneralAttrib::plGeneralAttrib() : fClassDesc(&theGeneralAttribClassDesc), fPBlock(NULL)
+plGeneralAttrib::plGeneralAttrib() : fClassDesc(&theGeneralAttribClassDesc), fPBlock()
 {
     fClassDesc->MakeAutoParamBlocks(this);
 }
@@ -262,3 +255,4 @@ ReferenceTarget *plGeneralAttrib::Clone(RemapDir &remap)
 //////////////////////////////////////////////////////////////////////////////////
 // TEMP
 //////////////////////////////////////////////////////////////////////////////////
+

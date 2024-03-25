@@ -62,19 +62,19 @@ protected:
 private:
     void IInit()
     {
-        fRoomKey = nil;
+        fRoomKey = nullptr;
         fWhat=kDontKnow;
         // we will only send this message to those who have registered for it
         SetBCastFlag(plMessage::kBCastByExactType);
     }
 public:
     plRoomLoadNotifyMsg()
-        : plMessage(nil, nil, nil) { IInit(); }
+        : plMessage(nullptr, nullptr, nullptr) { IInit(); }
     plRoomLoadNotifyMsg(const plKey &s, 
                 const plKey &r, 
                 const double* t)
         : plMessage(s, r, t) { IInit(); }
-    virtual ~plRoomLoadNotifyMsg() {;}
+    virtual ~plRoomLoadNotifyMsg() { }
 
     CLASSNAME_REGISTER( plRoomLoadNotifyMsg );
     GETINTERFACE_ANY( plRoomLoadNotifyMsg, plMessage );
@@ -86,25 +86,14 @@ public:
         kUnloaded,
     };
 
-    virtual void SetRoom(plKey &rkey) { fRoomKey = rkey; }
-    virtual plKey GetRoom() { return fRoomKey; }
+    virtual void SetRoom(plKey rkey) { fRoomKey = std::move(rkey); }
+    virtual plKey GetRoom() const { return fRoomKey; }
     virtual void SetWhatHappen(uint8_t what) { fWhat = what; }
-    virtual uint8_t GetWhatHappen() { return fWhat; }
+    virtual uint8_t GetWhatHappen() const { return fWhat; }
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgRead(stream, mgr);
-        fRoomKey = mgr->ReadKey(stream);
-        fWhat = stream->ReadByte();
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        mgr->WriteKey(stream, fRoomKey);
-        stream->WriteByte(fWhat);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 

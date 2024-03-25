@@ -47,26 +47,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyVaultSystemNode   - a wrapper class to provide interface to the RelVaultNode
 //
 //////////////////////////////////////////////////////////////////////
-#include "HeadSpin.h"
-#include "pyGlueHelpers.h"
-#include "pyVaultNode.h"
 
-struct RelVaultNode;
+#include "pyGlueDefinitions.h"
+#include "pyVaultNode.h"
 
 class pyVaultSystemNode : public pyVaultNode
 {
 protected:
-    // should only be created from C++ side
-    pyVaultSystemNode(RelVaultNode* nfsNode);
-
     //create from the Python side
     pyVaultSystemNode();
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultSystemNode);
-    PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject *New(RelVaultNode* nfsNode);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultSystemNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultSystemNode); // converts a PyObject to a pyVaultSystemNode (throws error if not correct type)
 

@@ -42,18 +42,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // singular
 #include "plSittingModifier.h"
 
+#include "plAnimStage.h"
+#include "plArmatureMod.h"
+#include "plAvatarMgr.h"
+#include "plAvBrainGeneric.h"
+#include "plAvBrainHuman.h"
+#include "plAvTaskBrain.h"
+
 //other
 #include "plMessage/plAvatarMsg.h"
-#include "pnMessage/plNotifyMsg.h"
 #include "pnMessage/plCameraMsg.h"
-#include "plAvatar/plArmatureMod.h"
-#include "plAvatar/plAnimStage.h"
-#include "plAvatar/plAvTaskBrain.h"
-#include "plAvatar/plAvBrainGeneric.h"
-#include "plAvatar/plAvBrainHuman.h"
-#include "plAvatar/plAvatarMgr.h"
+#include "pnMessage/plNotifyMsg.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnSceneObject/plSceneObject.h"
+
 #include "plInputCore/plAvatarInputInterface.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -65,16 +67,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // CTOR ------------------------------
 // -----
 plSittingModifier::plSittingModifier()
-: fTriggeredAvatarKey(nil),
-  fMiscFlags(0)
+: fMiscFlags()
 {
 }
 
 // CTOR ------------------------------------------------------------------------
 // -----
 plSittingModifier::plSittingModifier(bool hasFront, bool hasLeft, bool hasRight)
-: fTriggeredAvatarKey(nil),
-  fMiscFlags(0)
+: fMiscFlags()
 {
     if (hasFront)
         fMiscFlags |= kApproachFront;
@@ -98,9 +98,10 @@ void plSittingModifier::Read(hsStream *stream, hsResMgr *mgr)
 
     fMiscFlags = stream->ReadByte();
 
-    int keyCount = stream->ReadLE32();
-    for (int i = 0; i < keyCount; i++ )
-        fNotifyKeys.Append(mgr->ReadKey(stream));
+    uint32_t keyCount = stream->ReadLE32();
+    fNotifyKeys.reserve(keyCount);
+    for (uint32_t i = 0; i < keyCount; i++ )
+        fNotifyKeys.emplace_back(mgr->ReadKey(stream));
 }
 
 // Write -----------------------------------------------------
@@ -111,9 +112,9 @@ void plSittingModifier::Write(hsStream *stream, hsResMgr *mgr)
 
     stream->WriteByte(fMiscFlags);
     
-    stream->WriteLE32(fNotifyKeys.GetCount());
-    for (int i = 0; i < fNotifyKeys.GetCount(); i++)
-        mgr->WriteKey(stream, fNotifyKeys[i]);
+    stream->WriteLE32((uint32_t)fNotifyKeys.size());
+    for (const plKey& key : fNotifyKeys)
+        mgr->WriteKey(stream, key);
 }
 
 // ISetupNotify -------------------------------------------------------------------------
@@ -121,14 +122,10 @@ void plSittingModifier::Write(hsStream *stream, hsResMgr *mgr)
 void plSittingModifier::ISetupNotify(plNotifyMsg *notifyMsg, plNotifyMsg *originalNotify)
 {
     // Copy the original events to the new notify (some notify receivers need to have events)
-    int i;
-    for (i = 0; i < originalNotify->GetEventCount(); i++)
+    for (size_t i = 0; i < originalNotify->GetEventCount(); i++)
         notifyMsg->AddEvent(originalNotify->GetEventRecord(i));
-    for (i = 0; i < fNotifyKeys.Count(); i++)
-    {
-        plKey receiver = fNotifyKeys[i];
+    for (const plKey& receiver : fNotifyKeys)
         notifyMsg->AddReceiver(receiver);
-    }
     notifyMsg->SetSender(GetKey());
     plNetClientApp::InheritNetMsgFlags(originalNotify, notifyMsg, true);
 }
@@ -158,14 +155,14 @@ bool plSittingModifier::MsgReceive(plMessage *msg)
                 plSceneObject * obj = plSceneObject::ConvertNoRef(avatarKey->ObjectIsLoaded());
                 if (obj) {
                     const plArmatureMod * avMod = (plArmatureMod*)obj->GetModifierByType(plArmatureMod::Index());
-                    plAvBrainHuman *brain = (avMod ? plAvBrainHuman::ConvertNoRef(avMod->GetCurrentBrain()) : nil);
+                    plAvBrainHuman *brain = (avMod ? plAvBrainHuman::ConvertNoRef(avMod->GetCurrentBrain()) : nullptr);
                     if (brain && !brain->IsRunningTask())
                     {
                         plNotifyMsg *notifyEnter = new plNotifyMsg();   // a message to send back when the brain starts
                         notifyEnter->fState = 1.0f;                     // it's an "on" event
                         ISetupNotify(notifyEnter, notifyMsg);           // copy events and address to sender
 
-                        plNotifyMsg *notifyExit = nil;
+                        plNotifyMsg *notifyExit = nullptr;
                         if (avatarKey == plNetClientApp::GetInstance()->GetLocalPlayerKey())
                         {
                             notifyExit = new plNotifyMsg();         // a new message to send back when the brain's done
@@ -217,15 +214,15 @@ void plSittingModifier::Trigger(const plArmatureMod *avMod, plNotifyMsg *enterNo
 {
     if (avMod)
     {
-        plKey avModKey = avMod->GetKey();           // key to the avatar MODIFIER
-        plKey ourKey = GetKey();                    // key to this modifier
-        plKey seekKey = GetTarget()->GetKey();      // key to the scene object this modifier's on
+        const plKey& avModKey = avMod->GetKey();           // key to the avatar MODIFIER
+        const plKey& ourKey = GetKey();                    // key to this modifier
+        const plKey& seekKey = GetTarget()->GetKey();      // key to the scene object this modifier's on
 
         // send the SEEK message
 
 
-        const char *animName = nil;   // this will be the name of our sit animation, which we
-                                      // need to know so we can seek properly.
+        const char *animName = nullptr;   // this will be the name of our sit animation, which we
+                                          // need to know so we can seek properly.
         
         plAvBrainGeneric *brain = IBuildSitBrain(avModKey, seekKey, &animName, enterNotify, exitNotify);
         if(brain)
@@ -283,7 +280,7 @@ bool IIsClosestAnim(const char *animName, hsMatrix44 &sitGoal, float &closestDis
         // The first step is to get the transform from the end to the beginning of the
         // animation. That's what this next line is doing. It's a bit unintuitive
         // until you look at the parameter definitions.
-        GetStartToEndTransform(anim, nil, &animEndToStart, "Handle");
+        GetStartToEndTransform(anim, nullptr, &animEndToStart, "Handle");
         hsMatrix44 candidateGoal = sitGoal * animEndToStart;
         hsPoint3 distP = candidateGoal.GetTranslate() - curPosition;
         hsVector3 distV(distP.fX, distP.fY, distP.fZ);
@@ -294,20 +291,19 @@ bool IIsClosestAnim(const char *animName, hsMatrix44 &sitGoal, float &closestDis
             return true;
         }
     } else {
-        hsAssert(false, plFormat("Missing sit animation: {}", animName).c_str());
+        hsAssert(false, ST::format("Missing sit animation: {}", animName).c_str());
     }
     return false;
 }
 
 // IBuildSitBrain ---------------------------------------------------------------------
 // ----------------
-plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKey,
+plAvBrainGeneric *plSittingModifier::IBuildSitBrain(const plKey& avModKey, const plKey& seekKey,
                     const char **pAnimName, plNotifyMsg *enterNotify, plNotifyMsg *exitNotify)
 {
     plArmatureMod *avatar = plArmatureMod::ConvertNoRef(avModKey->ObjectIsLoaded());
     plSceneObject *seekObj = plSceneObject::ConvertNoRef(seekKey->ObjectIsLoaded());
     float closestDist = 0.0f;
-    uint8_t closestApproach = 0;
     const char* sitAnimName = nullptr;
     const char* standAnimName = "StandUpFront";      // always prefer to stand facing front
 
@@ -321,7 +317,6 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
 
         if(fMiscFlags & kApproachLeft && IIsClosestAnim("SitLeft", sitGoal, closestDist, curPosition, avatar))
         {
-            closestApproach = kApproachLeft;
             sitAnimName = "SitLeft";
             if(!frontClear)
                 standAnimName = "StandUpLeft";
@@ -329,7 +324,6 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
 
         if(fMiscFlags & kApproachRight && IIsClosestAnim("SitRight", sitGoal, closestDist, curPosition, avatar))
         {
-            closestApproach = kApproachRight;
             sitAnimName = "SitRight";
             if(!frontClear)
                 standAnimName = "StandUpRight";
@@ -339,13 +333,12 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
         {
             sitAnimName = "SitFront";
             standAnimName = "StandUpFront";
-            closestApproach = kApproachFront;
         }
 
         if(sitAnimName)
         {
             uint32_t exitFlags = plAvBrainGeneric::kExitNormal;   // SOME stages can be interrupted, but not the brain itself
-            brain = new plAvBrainGeneric(nil, enterNotify, exitNotify, nil, exitFlags, plAvBrainGeneric::kDefaultFadeIn, 
+            brain = new plAvBrainGeneric(nullptr, enterNotify, exitNotify, nullptr, exitFlags, plAvBrainGeneric::kDefaultFadeIn,
                                          plAvBrainGeneric::kDefaultFadeOut, plAvBrainGeneric::kMoveRelative);
 
             plAnimStage *sitStage = new plAnimStage(sitAnimName, 0, plAnimStage::kForwardAuto, plAnimStage::kBackNone,
@@ -389,5 +382,5 @@ void plSittingModifier::UnTrigger()
             plAvatarInputInterface::GetInstance()->EnableControl(true, B_CONTROL_MOVE_FORWARD);
     }
     
-    fTriggeredAvatarKey = nil;
+    fTriggeredAvatarKey = nullptr;
 }

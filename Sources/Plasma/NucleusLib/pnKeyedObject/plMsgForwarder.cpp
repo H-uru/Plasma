@@ -39,23 +39,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plMsgForwarder.h"
-#include "hsResMgr.h"
+
 #include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pnMessage/plMessage.h"
-#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plMessageWithCallbacks.h"
+#include "pnMessage/plSelfDestructMsg.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnNetCommon/plSynchedObject.h"
 
-#include "pnMessage/plSelfDestructMsg.h"
-#include "pnMessage/plMessageWithCallbacks.h"
-
-
-class plForwardCallback
+struct plForwardCallback
 {
-public:
-    hsTArray<plKey> fOrigReceivers;
-    int fNumCallbacks;
+    std::vector<plKey> fOrigReceivers;
+    size_t fNumCallbacks;
     bool fNetPropogate;
 };
 
@@ -75,25 +75,20 @@ void plMsgForwarder::Read(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Read(s, mgr);
 
-    int numKeys = s->ReadLE32();
-    fForwardKeys.Reset();
-    fForwardKeys.Expand(numKeys);
-    fForwardKeys.SetCount(numKeys);
-    for (int i = 0; i < numKeys; i++)
-    {
-        plKey key = mgr->ReadKey(s);
-        fForwardKeys[i] = key;
-    }
+    uint32_t numKeys = s->ReadLE32();
+    fForwardKeys.clear();
+    fForwardKeys.reserve(numKeys);
+    for (uint32_t i = 0; i < numKeys; i++)
+        fForwardKeys.emplace_back(mgr->ReadKey(s));
 }
 
 void plMsgForwarder::Write(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Write(s, mgr);
 
-    int numKeys = fForwardKeys.Count();
-    s->WriteLE32(numKeys);
-    for (int i = 0; i < numKeys; i++)
-        mgr->WriteKey(s, fForwardKeys[i]);
+    s->WriteLE32((uint32_t)fForwardKeys.size());
+    for (const plKey& key : fForwardKeys)
+        mgr->WriteKey(s, key);
 }
 
 bool plMsgForwarder::MsgReceive(plMessage* msg)
@@ -118,22 +113,22 @@ bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
     plMessageWithCallbacks *callbackMsg = plMessageWithCallbacks::ConvertNoRef(msg);
     if (callbackMsg && callbackMsg->GetNumCallbacks() > 0)
     {
-        for (int i = 0; i < callbackMsg->GetNumCallbacks(); i++)
+        for (size_t i = 0; i < callbackMsg->GetNumCallbacks(); i++)
         {
             plEventCallbackMsg *event = callbackMsg->GetEventCallback(i);
             hsAssert(event, "Message forwarder only supports event callback messages");
             if (event)
             {
                 plForwardCallback *fc = new plForwardCallback;
-                fc->fNumCallbacks = fForwardKeys.Count();
+                fc->fNumCallbacks = fForwardKeys.size();
 
                 // Turn off net propagate the callbacks to us will all be local.  Only the
                 // callback we send will go over the net
                 fc->fNetPropogate = (event->HasBCastFlag(plMessage::kNetPropagate) != 0);
                 event->SetBCastFlag(plMessage::kNetPropagate, false);
 
-                for (int j = 0; j < event->GetNumReceivers(); j++)
-                    fc->fOrigReceivers.Append((plKey)event->GetReceiver(j));
+                for (size_t j = 0; j < event->GetNumReceivers(); j++)
+                    fc->fOrigReceivers.emplace_back(event->GetReceiver(j));
 
                 event->ClearReceivers();
                 event->AddReceiver(GetKey());
@@ -202,9 +197,10 @@ bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
 void plMsgForwarder::IForwardMsg(plMessage *msg)
 {
     // Back up the message's original receivers
-    hsTArray<plKey> oldKeys;
-    for (int i = 0; i < msg->GetNumReceivers(); i++)
-        oldKeys.Append((plKey)msg->GetReceiver(i));
+    std::vector<plKey> oldKeys;
+    oldKeys.reserve(msg->GetNumReceivers());
+    for (size_t i = 0; i < msg->GetNumReceivers(); i++)
+        oldKeys.emplace_back(msg->GetReceiver(i));
 
     // Set to our receivers and send
     hsRefCnt_SafeRef(msg);
@@ -220,6 +216,7 @@ void plMsgForwarder::IForwardMsg(plMessage *msg)
 
 void plMsgForwarder::AddForwardKey(plKey key)
 {
-    if (fForwardKeys.Find(key) == fForwardKeys.kMissingIndex)
-        fForwardKeys.Append(key);
+    const auto idx = std::find(fForwardKeys.begin(), fForwardKeys.end(), key);
+    if (idx == fForwardKeys.end())
+        fForwardKeys.emplace_back(std::move(key));
 }

@@ -60,9 +60,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsWindows.h"
+#include <tchar.h>
 
 #include "resource.h"
-#pragma hdrstop
 
 #include "plDetailCurveCtrl.h"
 
@@ -70,16 +70,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Static Stuff /////////////////////////////////////////////////////////////
 
 int         plDetailCurveCtrl::fClassRefCnt = 0;
-HINSTANCE   plDetailCurveCtrl::fInstance = NULL;
-HBITMAP     plDetailCurveCtrl::fBgndImage = NULL;
-HFONT       plDetailCurveCtrl::fFont = NULL;
+HINSTANCE   plDetailCurveCtrl::fInstance = nullptr;
+HBITMAP     plDetailCurveCtrl::fBgndImage = nullptr;
+HFONT       plDetailCurveCtrl::fFont = nullptr;
 
 #ifdef MCN_TWO_GRAPH_MODE
-HBITMAP     plDetailCurveCtrl::fBgndImage2 = NULL;
+HBITMAP     plDetailCurveCtrl::fBgndImage2 = nullptr;
 bool        plDetailCurveCtrl::fXAsMipmapLevel = false;
 #endif
 
-const char  gCtrlClassName[] = "DetailCurveClass";
+const TCHAR  gCtrlClassName[] = _T("DetailCurveClass");
 
 #define kHiResStep  0.01f
 
@@ -99,12 +99,12 @@ void    plDetailCurveCtrl::IRegisterCtrl( HINSTANCE instance )
         clInfo.cbClsExtra = 0;
         clInfo.cbWndExtra = 0;
         clInfo.hInstance = fInstance;
-        clInfo.hIcon = NULL;
-        clInfo.hCursor = LoadCursor( NULL, IDC_CROSS );
-        clInfo.hbrBackground = NULL;
-        clInfo.lpszMenuName = NULL;
+        clInfo.hIcon = nullptr;
+        clInfo.hCursor = LoadCursor(nullptr, IDC_CROSS);
+        clInfo.hbrBackground = nullptr;
+        clInfo.lpszMenuName = nullptr;
         clInfo.lpszClassName = gCtrlClassName;
-        clInfo.hIconSm = NULL;
+        clInfo.hIconSm = nullptr;
 
         RegisterClassEx( &clInfo );
 
@@ -113,22 +113,22 @@ void    plDetailCurveCtrl::IRegisterCtrl( HINSTANCE instance )
         fBgndImage2 = (HBITMAP)LoadImage( fInstance, MAKEINTRESOURCE( IDB_DETAILBGND2 ), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR );
 #endif
 
-        HDC hDC = GetDC( NULL );
+        HDC hDC = GetDC(nullptr);
         fFont = CreateFont( -MulDiv( 8, GetDeviceCaps( hDC, LOGPIXELSY ), 72 ), 0, 0, 0, 0, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, 
-                            CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, "Arial" );
-        ReleaseDC( NULL, hDC );
+                            CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, _T("Arial") );
+        ReleaseDC(nullptr, hDC);
     }
 
     fClassRefCnt++;
 }
 
-void    plDetailCurveCtrl::IUnregisterCtrl( void )
+void    plDetailCurveCtrl::IUnregisterCtrl()
 {
     fClassRefCnt--;
     if( fClassRefCnt == 0 )
     {
         UnregisterClass( gCtrlClassName, fInstance );
-        if( fFont != NULL )
+        if (fFont != nullptr)
             DeleteObject( fFont );
     }
 }
@@ -138,13 +138,13 @@ void    plDetailCurveCtrl::IUnregisterCtrl( void )
 plDetailCurveCtrl::plDetailCurveCtrl( HWND parentWnd, WPARAM id, RECT *clientRect, HINSTANCE instance )
 {
     // Class init
-    if( instance == NULL )
-        instance = (HINSTANCE)GetWindowLong( parentWnd, GWL_HINSTANCE );
+    if (instance == nullptr)
+        instance = (HINSTANCE)GetWindowLongPtr(parentWnd, GWLP_HINSTANCE);
     IRegisterCtrl( instance );
 
     // Per-object init
-    fDblDC = NULL;
-    fDblBitmap = NULL;
+    fDblDC = nullptr;
+    fDblBitmap = nullptr;
     fStartPercent = 0;
     fStartOpac = 0;
     fEndPercent = 1.f;
@@ -155,32 +155,32 @@ plDetailCurveCtrl::plDetailCurveCtrl( HWND parentWnd, WPARAM id, RECT *clientRec
 
     // Note: we create originally as disabled since the default detail setting is disabled.
     // The MAX Update stuff should change this if necessary after we're created
-    fHWnd = ::CreateWindowEx( WS_EX_CLIENTEDGE, gCtrlClassName, "Detail Curve", WS_CHILD | WS_VISIBLE | WS_BORDER | WS_DISABLED,
+    fHWnd = ::CreateWindowEx( WS_EX_CLIENTEDGE, gCtrlClassName, _T("Detail Curve"), WS_CHILD | WS_VISIBLE | WS_BORDER | WS_DISABLED,
                             clientRect->left, clientRect->top, clientRect->right - clientRect->left,
                             clientRect->bottom - clientRect->top,
-                            parentWnd, (HMENU)id, instance, 0 );
-    if( fHWnd == NULL )
+                            parentWnd, (HMENU)id, instance, nullptr);
+    if (fHWnd == nullptr)
         return;
 
-    SetWindowLong( fHWnd, GWL_USERDATA, (LONG)this );
+    SetWindowLongPtr(fHWnd, GWLP_USERDATA, (LONG_PTR)this);
 }
 
 plDetailCurveCtrl::~plDetailCurveCtrl()
 {
-    if( fDblDC != NULL )
+    if (fDblDC != nullptr)
     {
-        SelectObject( fDblDC, (HBITMAP)NULL );
+        SelectObject(fDblDC, nullptr);
         DeleteObject( fDblBitmap );
         DeleteDC( fDblDC );
     }
 
-    if( fWhiteBrush != NULL )
+    if (fWhiteBrush != nullptr)
         DeleteObject( fWhiteBrush );
-    if( fBluePen != NULL )
+    if (fBluePen != nullptr)
         DeleteObject( fBluePen );
-    if( fLiteBluePen != NULL )
+    if (fLiteBluePen != nullptr)
         DeleteObject( fLiteBluePen );
-    if( fBlueBrush != NULL )
+    if (fBlueBrush != nullptr)
         DeleteObject( fBlueBrush );
 
 //  DestroyWindow( fHWnd );
@@ -192,13 +192,13 @@ plDetailCurveCtrl::~plDetailCurveCtrl()
 //  any good, 'cause it's black-and-white (right, THAT makes sense). Grabbing
 //  the desktop DC works, however.
 
-void    plDetailCurveCtrl::IInitDblBuffer( void )
+void    plDetailCurveCtrl::IInitDblBuffer()
 {
-    if( fDblDC == NULL )
+    if (fDblDC == nullptr)
     {
         int     width, height;
         RECT    r;
-        HDC     desk = GetDC( NULL );
+        HDC     desk = GetDC(nullptr);
 
         GetClientRect( fHWnd, &r );
         width = r.right - r.left;
@@ -207,7 +207,7 @@ void    plDetailCurveCtrl::IInitDblBuffer( void )
         fDblDC = CreateCompatibleDC( desk );
         fDblBitmap = CreateCompatibleBitmap( desk/*fDblDC*/, width, height );
         SelectObject( fDblDC, fDblBitmap );
-        ReleaseDC( NULL, desk );
+        ReleaseDC(nullptr, desk);
 
         fWhiteBrush = CreateSolidBrush( RGB( 255, 255, 255 ) );
         fBluePen = CreatePen( PS_SOLID, 1, RGB( 0, 0, 255 ) );
@@ -220,7 +220,7 @@ void    plDetailCurveCtrl::IInitDblBuffer( void )
 
 //// IRefreshDblBuffer ////////////////////////////////////////////////////////
 
-void    plDetailCurveCtrl::IRefreshDblBuffer( void )
+void    plDetailCurveCtrl::IRefreshDblBuffer()
 {
     HDC         hBgndDC;
     RECT        clientRect, r;
@@ -237,11 +237,11 @@ void    plDetailCurveCtrl::IRefreshDblBuffer( void )
     width = clientRect.right - clientRect.left;
     height = clientRect.bottom - clientRect.top;
 
-    if( fDblBitmap != NULL )
+    if (fDblBitmap != nullptr)
     {
         FillRect( fDblDC, &clientRect, fWhiteBrush );
 
-        if( fBgndImage != NULL )
+        if (fBgndImage != nullptr)
         {
 
             // Draw bgnd
@@ -254,14 +254,14 @@ void    plDetailCurveCtrl::IRefreshDblBuffer( void )
 
             bmpInfo.bmiHeader.biSize = sizeof( bmpInfo.bmiHeader );
             bmpInfo.bmiHeader.biBitCount = 0;
-            GetDIBits( hBgndDC, fBgndImage, 0, 0, NULL, &bmpInfo, DIB_RGB_COLORS );
+            GetDIBits(hBgndDC, fBgndImage, 0, 0, nullptr, &bmpInfo, DIB_RGB_COLORS);
             bgndSize.cx = bmpInfo.bmiHeader.biWidth;
             bgndSize.cy = bmpInfo.bmiHeader.biHeight;
             x = ( width - bgndSize.cx ) >> 1;
             y = ( height - bgndSize.cy ) >> 1;
 
             BitBlt( fDblDC, x, y, bgndSize.cx, bgndSize.cy, hBgndDC, 0, 0, SRCCOPY );
-            SelectObject( hBgndDC, (HBITMAP)NULL );
+            SelectObject(hBgndDC, nullptr);
             DeleteDC( hBgndDC );
 
             /// Draw graph
@@ -285,11 +285,11 @@ void    plDetailCurveCtrl::IRefreshDblBuffer( void )
 
                 if( fStartPercent == 0.07f && fStartOpac == 0.23f && fEndPercent == 0.19f && fEndOpac == 0.79f )
                 {
-                    const char  str[] = "\x48\x61\x70\x70\x79\x20\x62\x64\x61\x79\x20\x74\x6f\x20\x6d\x63\x6e\x21";
+                    const TCHAR str[] = _T("\x48\x61\x70\x70\x79\x20\x62\x64\x61\x79\x20\x74\x6f\x20\x6d\x63\x6e\x21");
                     SetBkMode( fDblDC, TRANSPARENT );
                     SetTextColor( fDblDC, RGB( 0, 0, 255 ) );
                     SelectObject( fDblDC, fFont );
-                    TextOut( fDblDC, x, y + bgndSize.cy - 10, str, strlen( str ) );
+                    TextOut( fDblDC, x, y + bgndSize.cy - 10, str, std::size( str ) );
                 }
 
                 // Draw our two markers
@@ -338,7 +338,7 @@ void    plDetailCurveCtrl::IDrawCurve( HDC hDC, bool clampToInts, int cornerX, i
         float opac = IXlateDistToValue( dist, clampToInts );
 
         if( dist == 0.f )
-            MoveToEx( hDC, (int)penX, (int)( penBaseY - penYScale * opac ), NULL );
+            MoveToEx(hDC, (int)penX, (int)(penBaseY - penYScale * opac), nullptr);
         else
             LineTo( hDC, (int)penX, (int)( penBaseY - penYScale * opac ) );
 
@@ -465,7 +465,7 @@ void    plDetailCurveCtrl::IMapMouseToValues( int x, int y, bool mapToStart )
     SIZE        bgndSize;
 
 
-    if( fBgndImage == NULL || fDblDC == NULL || !IsWindowEnabled( fHWnd ) )
+    if (fBgndImage == nullptr || fDblDC == nullptr || !IsWindowEnabled(fHWnd))
         return;
 
     GetClientRect( fHWnd, &clientRect );
@@ -474,7 +474,7 @@ void    plDetailCurveCtrl::IMapMouseToValues( int x, int y, bool mapToStart )
 
     bmpInfo.bmiHeader.biSize = sizeof( bmpInfo.bmiHeader );
     bmpInfo.bmiHeader.biBitCount = 0;
-    GetDIBits( fDblDC, fBgndImage, 0, 0, NULL, &bmpInfo, DIB_RGB_COLORS );
+    GetDIBits(fDblDC, fBgndImage, 0, 0, nullptr, &bmpInfo, DIB_RGB_COLORS);
     bgndSize.cx = bmpInfo.bmiHeader.biWidth;
     bgndSize.cy = bmpInfo.bmiHeader.biHeight;
     cX = ( width - bgndSize.cx ) >> 1;
@@ -519,8 +519,8 @@ void    plDetailCurveCtrl::IMapMouseToValues( int x, int y, bool mapToStart )
     }
 
     IRefreshDblBuffer();
-    InvalidateRect( fHWnd, NULL, false );
-    RedrawWindow( fHWnd, NULL, NULL, RDW_UPDATENOW );
+    InvalidateRect(fHWnd, nullptr, false);
+    RedrawWindow(fHWnd, nullptr, nullptr, RDW_UPDATENOW);
 
     ISendDraggedMessage( mapToStart );
 }
@@ -532,7 +532,7 @@ void    plDetailCurveCtrl::ISendDraggedMessage( bool itWasTheStartPoint )
     HWND    parent = GetParent( fHWnd );
 
 
-    if( parent == NULL )
+    if (parent == nullptr)
         return;
 
     SendMessage( parent, PL_DC_POINT_DRAGGED, itWasTheStartPoint ? PL_DC_START_POINT : PL_DC_END_POINT,
@@ -546,7 +546,7 @@ void    plDetailCurveCtrl::SetStartPoint( float percentLevel, float opacity )
     fStartPercent = percentLevel;
     fStartOpac = opacity;
     IRefreshDblBuffer();
-    InvalidateRect( fHWnd, NULL, false );
+    InvalidateRect(fHWnd, nullptr, false);
 }
 
 void    plDetailCurveCtrl::SetEndPoint( float percentLevel, float opacity )
@@ -554,14 +554,14 @@ void    plDetailCurveCtrl::SetEndPoint( float percentLevel, float opacity )
     fEndPercent = percentLevel;
     fEndOpac = opacity;
     IRefreshDblBuffer();
-    InvalidateRect( fHWnd, NULL, false );
+    InvalidateRect(fHWnd, nullptr, false);
 }
 
 void    plDetailCurveCtrl::SetNumLevels( int numLevels )
 {
     fNumLevels = numLevels;
     IRefreshDblBuffer();
-    InvalidateRect( fHWnd, NULL, false );
+    InvalidateRect(fHWnd, nullptr, false);
 }
 
 //// IWndProc /////////////////////////////////////////////////////////////////
@@ -575,7 +575,7 @@ LRESULT CALLBACK    plDetailCurveCtrl::IWndProc( HWND hWnd, UINT msg, WPARAM wPa
     POINT           pt;
 
 
-    plDetailCurveCtrl   *ctrl = (plDetailCurveCtrl *)GetWindowLong( hWnd, GWL_USERDATA );
+    plDetailCurveCtrl   *ctrl = (plDetailCurveCtrl *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
     GetClientRect( hWnd, &clientRect );
     width = clientRect.right - clientRect.left;
     height = clientRect.bottom - clientRect.top;
@@ -586,7 +586,7 @@ LRESULT CALLBACK    plDetailCurveCtrl::IWndProc( HWND hWnd, UINT msg, WPARAM wPa
             return 0;
 
         case WM_ENABLE:
-            if( ctrl != NULL )
+            if (ctrl != nullptr)
                 ctrl->IRefreshDblBuffer();
             return 0;
 
@@ -594,9 +594,9 @@ LRESULT CALLBACK    plDetailCurveCtrl::IWndProc( HWND hWnd, UINT msg, WPARAM wPa
             BeginPaint( hWnd, &pInfo );
             hDC = (HDC)pInfo.hdc;
 
-            if( ctrl != NULL )
+            if (ctrl != nullptr)
             {
-                if( ctrl->fDblDC == NULL )
+                if (ctrl->fDblDC == nullptr)
                     ctrl->IInitDblBuffer();
 
                 BitBlt( hDC, 0, 0, width, height, ctrl->fDblDC, 0, 0, SRCCOPY );
@@ -609,7 +609,7 @@ LRESULT CALLBACK    plDetailCurveCtrl::IWndProc( HWND hWnd, UINT msg, WPARAM wPa
             return TRUE;
 
         case WM_LBUTTONDOWN:
-            if( ctrl != NULL && !ctrl->fDraggingStart && !ctrl->fDraggingEnd )
+            if (ctrl != nullptr && !ctrl->fDraggingStart && !ctrl->fDraggingEnd)
             {
                 pt.x = LOWORD( lParam );
                 pt.y = HIWORD( lParam );
@@ -629,7 +629,7 @@ LRESULT CALLBACK    plDetailCurveCtrl::IWndProc( HWND hWnd, UINT msg, WPARAM wPa
             return 0;
 
         case WM_MOUSEMOVE:
-            if( ctrl != NULL )
+            if (ctrl != nullptr)
             {
                 pt.x = LOWORD( lParam );
                 pt.y = HIWORD( lParam );
@@ -646,7 +646,7 @@ LRESULT CALLBACK    plDetailCurveCtrl::IWndProc( HWND hWnd, UINT msg, WPARAM wPa
                         ctrl->fCanDragEnd = false;
                         SetCapture( hWnd );
                         ctrl->IRefreshDblBuffer();
-                        InvalidateRect( hWnd, NULL, false );
+                        InvalidateRect(hWnd, nullptr, false);
                     }
                 }
                 else if( PtInRect( &ctrl->fEndDragPt, pt ) )
@@ -657,7 +657,7 @@ LRESULT CALLBACK    plDetailCurveCtrl::IWndProc( HWND hWnd, UINT msg, WPARAM wPa
                         ctrl->fCanDragStart = false;
                         SetCapture( hWnd );
                         ctrl->IRefreshDblBuffer();
-                        InvalidateRect( hWnd, NULL, false );
+                        InvalidateRect(hWnd, nullptr, false);
                     }
                 }
                 else if( ctrl->fCanDragStart || ctrl->fCanDragEnd )
@@ -666,13 +666,13 @@ LRESULT CALLBACK    plDetailCurveCtrl::IWndProc( HWND hWnd, UINT msg, WPARAM wPa
                     ctrl->fCanDragEnd = false;
                     ReleaseCapture();
                     ctrl->IRefreshDblBuffer();
-                    InvalidateRect( hWnd, NULL, false );
+                    InvalidateRect(hWnd, nullptr, false);
                 }
             }
             return 0;
 
         case WM_LBUTTONUP:
-            if( ctrl != NULL && ( ctrl->fDraggingStart || ctrl->fDraggingEnd ) )
+            if (ctrl != nullptr && (ctrl->fDraggingStart || ctrl->fDraggingEnd))
             {
                 if( !ctrl->fCanDragStart && !ctrl->fCanDragEnd )
                     ReleaseCapture();
@@ -685,13 +685,13 @@ LRESULT CALLBACK    plDetailCurveCtrl::IWndProc( HWND hWnd, UINT msg, WPARAM wPa
         case WM_RBUTTONDOWN:
             fXAsMipmapLevel = !fXAsMipmapLevel;
             ctrl->IRefreshDblBuffer();
-            InvalidateRect( hWnd, NULL, false );
+            InvalidateRect(hWnd, nullptr, false);
             return 0;
 #endif
 
         case WM_DESTROY:
             delete ctrl;
-            SetWindowLong( hWnd, GWL_USERDATA, 0 );
+            SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
             return 0;
 
         default:

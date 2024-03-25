@@ -53,18 +53,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
 
-class pyVaultNode;
-class pyVaultFolderNode;
-class pyVaultPlayerInfoListNode;
-class pyVaultAgeLinkNode;
-class pyVaultAgeInfoNode;
-class pyAgeInfoStruct;
-class pyVaultChronicleNode;
-class pySDLStateDataRecord;
-class pyVaultTextNoteNode;
+#include "pyGlueDefinitions.h"
+
 class plUUID;
+class pyAgeInfoStruct;
+class pySDLStateDataRecord;
+class pyVaultAgeInfoNode;
+class pyVaultAgeLinkNode;
+class pyVaultChronicleNode;
+class pyVaultFolderNode;
+class pyVaultNode;
+class pyVaultPlayerInfoListNode;
+class pyVaultTextNoteNode;
+namespace ST { class string; }
 
 class pyAgeVault
 {
@@ -72,8 +74,6 @@ protected:
     pyAgeVault();
 
 public:
-    ~pyAgeVault();
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptAgeVault);
     PYTHON_CLASS_NEW_DEFINITION;
@@ -82,38 +82,38 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    plUUID          GetAgeGuid(void);
+    plUUID          GetAgeGuid();
 
     PyObject *      GetAgeSDL() const; // returns pySDLStateDataRecord
     void            UpdateAgeSDL( pySDLStateDataRecord & pyrec );
 
     PyObject*       GetAgeInfo(); // returns pyVaultAgeInfoNode
-    PyObject*       GetAgeDevicesFolder( void ); // returns pyVaultFolderNode
-    PyObject*       GetSubAgesFolder( void ); // returns pyVaultFolderNode
-    PyObject*       GetChronicleFolder( void ); // returns pyVaultFolderNode
+    PyObject*       GetAgeDevicesFolder(); // returns pyVaultFolderNode
+    PyObject*       GetSubAgesFolder(); // returns pyVaultFolderNode
+    PyObject*       GetChronicleFolder(); // returns pyVaultFolderNode
     // Age chronicle (not the player chronicle!)
-    PyObject*       FindChronicleEntry( const plString& entryName ); // returns pyVaultChronicleNode
-    void AddChronicleEntry( const plString& name, uint32_t type, const plString& value );
+    PyObject*       FindChronicleEntry( const ST::string& entryName ); // returns pyVaultChronicleNode
+    void AddChronicleEntry( const ST::string& name, uint32_t type, const ST::string& value );
     // Players who have published to devices in this age
-    PyObject*       GetPeopleIKnowAboutFolder( void ); // returns pyVaultPlayerInfoListNode
+    PyObject*       GetPeopleIKnowAboutFolder(); // returns pyVaultPlayerInfoListNode
     // PERSONAL AGE SPECIFIC
-    PyObject*       GetBookshelfFolder ( void ); // returns pyVaultFolderNode
+    PyObject*       GetBookshelfFolder (); // returns pyVaultFolderNode
     // NEXUS SPECIFIC
-    PyObject*       GetPublicAgesFolder( void ); // returns pyVaultFolderNode
+    PyObject*       GetPublicAgesFolder(); // returns pyVaultFolderNode
     PyObject*       GetSubAgeLink( const pyAgeInfoStruct & info ); // returns pyVaultAgeLinkNode
     // AGE DEVICES. AKA IMAGERS, WHATEVER.
     // Add a new device.
-    void AddDevice( const char * deviceName, PyObject * cb=nil, uint32_t cbContext=0 );
+    void AddDevice(const ST::string& deviceName, PyObject * cb = nullptr, uint32_t cbContext = 0);
     // Remove a device.
-    void RemoveDevice( const char * deviceName );
+    void RemoveDevice(const ST::string& deviceName);
     // True if device exists in age.
-    bool HasDevice( const char * deviceName );
+    bool HasDevice(const ST::string& deviceName);
     // Get the device node by name.
-    PyObject * GetDevice( const char * deviceName ); // returns pyVaultTextNoteNode
+    PyObject * GetDevice(const ST::string& deviceName); // returns pyVaultTextNoteNode
     // Sets the inbox associated with a device.
-    void SetDeviceInbox( const char * deviceName, const char * inboxName, PyObject * cb=nil, uint32_t cbContext=0 );
+    void SetDeviceInbox(const ST::string& deviceName, const ST::string& inboxName, PyObject * cb = nullptr, uint32_t cbContext = 0);
     // Get the inbox associated with a device.
-    PyObject * GetDeviceInbox( const char * deviceName ); // returns pyVaultFolderNode
+    PyObject * GetDeviceInbox(const ST::string& deviceName); // returns pyVaultFolderNode
     // find matching node
     PyObject* FindNode( pyVaultNode* templateNode ) const; // returns pyVaultNode
 };

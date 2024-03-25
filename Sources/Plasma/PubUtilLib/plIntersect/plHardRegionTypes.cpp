@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsResMgr.h"
 
+#include "pnMessage/plRefMsg.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // Base hard and complex
@@ -62,9 +64,8 @@ void plHardRegionComplex::Read(hsStream* s, hsResMgr* mgr)
 {
     plHardRegion::Read(s, mgr);
 
-    int n = s->ReadLE32();
-    int i;
-    for( i = 0; i < n; i++ )
+    uint32_t n = s->ReadLE32();
+    for (uint32_t i = 0; i < n; i++)
         mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kSubRegion), plRefFlags::kActiveRef);
 }
 
@@ -72,10 +73,9 @@ void plHardRegionComplex::Write(hsStream* s, hsResMgr* mgr)
 {
     plHardRegion::Write(s, mgr);
 
-    s->WriteLE32(fSubRegions.GetCount());
-    int i;
-    for( i = 0; i < fSubRegions.GetCount(); i++ )
-        mgr->WriteKey(s, fSubRegions[i]);
+    s->WriteLE32((uint32_t)fSubRegions.size());
+    for (plHardRegion* subRegion : fSubRegions)
+        mgr->WriteKey(s, subRegion);
 }
 
 bool plHardRegionComplex::MsgReceive(plMessage* msg)
@@ -86,15 +86,16 @@ bool plHardRegionComplex::MsgReceive(plMessage* msg)
         if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest) )
         {
             plHardRegion* sub = plHardRegion::ConvertNoRef(refMsg->GetRef());
-            hsAssert(fSubRegions.kMissingIndex == fSubRegions.Find(sub), "Adding subRegion I already have");
-            fSubRegions.Append(sub);
+            hsAssert(std::find(fSubRegions.cbegin(), fSubRegions.cend(), sub) == fSubRegions.cend(),
+                     "Adding subRegion I already have");
+            fSubRegions.emplace_back(sub);
         }
         else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
         {
             plHardRegion* sub = (plHardRegion*)refMsg->GetRef();
-            int idx = fSubRegions.Find(sub);
-            if( idx != fSubRegions.kMissingIndex )
-                fSubRegions.Remove(idx);
+            auto idx = std::find(fSubRegions.cbegin(), fSubRegions.cend(), sub);
+            if (idx != fSubRegions.cend())
+                fSubRegions.erase(idx);
         }
         return true;
     }
@@ -118,10 +119,9 @@ plHardRegionUnion::~plHardRegionUnion()
 
 bool plHardRegionUnion::IIsInside(const hsPoint3& pos) const
 {
-    int i;
-    for( i = 0; i < fSubRegions.GetCount(); i++ )
+    for (plHardRegion* subRegion : fSubRegions)
     {
-        if( fSubRegions[i]->IIsInside(pos) )
+        if (subRegion->IIsInside(pos))
             return true;
     }
     return false;
@@ -132,10 +132,9 @@ bool plHardRegionUnion::ICameraInside() const
     if( fState & kDirty )
     {
         fState &= ~(kCamInside | kDirty);
-        int i;
-        for( i = 0; i < fSubRegions.GetCount(); i++ )
+        for (plHardRegion* subRegion : fSubRegions)
         {
-            if( fSubRegions[i]->ICameraInside() )
+            if (subRegion->ICameraInside())
             {
                 fState |= kCamInside;
                 return true;
@@ -157,10 +156,9 @@ plHardRegionIntersect::~plHardRegionIntersect()
 
 bool plHardRegionIntersect::IIsInside(const hsPoint3& pos) const
 {
-    int i;
-    for( i = 0; i < fSubRegions.GetCount(); i++ )
+    for (plHardRegion* subRegion : fSubRegions)
     {
-        if( !fSubRegions[i]->IIsInside(pos) )
+        if (!subRegion->IIsInside(pos))
             return false;
     }
     return true;
@@ -172,10 +170,9 @@ bool plHardRegionIntersect::ICameraInside() const
     {
         fState &= ~kDirty;
         fState |= kCamInside;
-        int i;
-        for( i = 0; i < fSubRegions.GetCount(); i++ )
+        for (plHardRegion* subRegion : fSubRegions)
         {
-            if( !fSubRegions[i]->ICameraInside() )
+            if (!subRegion->ICameraInside())
             {
                 fState &= ~kCamInside;
                 return false;
@@ -199,13 +196,13 @@ plHardRegionInvert::~plHardRegionInvert()
 
 bool plHardRegionInvert::IIsInside(const hsPoint3& pos) const
 {
-    hsAssert(fSubRegions.GetCount() <= 1, "Too many subRegions on inverter");
+    hsAssert(fSubRegions.size() <= 1, "Too many subRegions on inverter");
     return !fSubRegions[0]->IIsInside(pos);
 }
 
 bool plHardRegionInvert::ICameraInside() const
 {
-    hsAssert(fSubRegions.GetCount() <= 1, "Too many subRegions on inverter");
+    hsAssert(fSubRegions.size() <= 1, "Too many subRegions on inverter");
     return !fSubRegions[0]->ICameraInside();
 }
 

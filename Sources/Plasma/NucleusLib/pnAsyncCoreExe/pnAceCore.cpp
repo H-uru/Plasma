@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "Pch.h"
-#pragma hdrstop
 
 #include <atomic>
 
@@ -58,64 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static std::atomic<long> s_perf[kNumAsyncPerfCounters];
 
-
-/****************************************************************************
-*
-*   Module data exports
-*
-***/
-
-AsyncApi    g_api;
-
-
-/*****************************************************************************
-*
-*   Local functions
-*
-***/
-
-//===========================================================================
-static void IAsyncInitUseNt () {
-#ifdef HS_BUILD_FOR_WIN32
-    NtGetApi(&g_api);
-#else
-    ErrorAssert("Nt I/O Not supported on this platform");
-#endif
-}
-
-//===========================================================================
-static void IAsyncInitUseUnix () {
-#ifdef HS_BUILD_FOR_UNIX
-    #error Unix I/O not implemented yet
-    UxGetApi(&g_api);
-#else
-    ErrorAssert(__LINE__, __FILE__, "Unix I/O Not supported on this platform");
-#endif
-}
-
-//===========================================================================
-static void IAsyncInitForClient () {
-#ifdef HS_BUILD_FOR_WIN32
-    IAsyncInitUseNt();
-#elif HS_BUILD_FOR_UNIX
-    IAsyncInitUseUnix();
-#else
-    ErrorAssert("AsyncCore: No default implementation for this platform");
-#endif    
-}
-
-//===========================================================================
-static void IAsyncInitForServer () {
-#ifdef HS_BUILD_FOR_WIN32
-    IAsyncInitUseNt();
-#elif HS_BUILD_FOR_UNIX
-    IAsyncInitUseUnix();
-#else
-    ErrorAssert("AsyncCore: No default implementation for this platform");
-#endif    
-}
-
-
 /*****************************************************************************
 *
 *   Module exports
@@ -123,23 +64,25 @@ static void IAsyncInitForServer () {
 ***/
 
 //============================================================================
-long PerfAddCounter (unsigned id, unsigned n) {
+long PerfAddCounter(unsigned id, long n)
+{
     ASSERT(id < kNumAsyncPerfCounters);
     return s_perf[id].fetch_add(n);
 }
 
 //============================================================================
-long PerfSubCounter (unsigned id, unsigned n) {
+long PerfSubCounter(unsigned id, long n)
+{
     ASSERT(id < kNumAsyncPerfCounters);
     return s_perf[id].fetch_sub(n);
 }
 
 //============================================================================
-long PerfSetCounter (unsigned id, unsigned n) {
+long PerfSetCounter(unsigned id, long n)
+{
     ASSERT(id < kNumAsyncPerfCounters);
     return s_perf[id].exchange(n);
 }
-
 
 /*****************************************************************************
 *
@@ -148,64 +91,24 @@ long PerfSetCounter (unsigned id, unsigned n) {
 ***/
 
 //===========================================================================
-void AsyncCoreInitialize () {
-    ASSERTMSG(!g_api.initialize, "AsyncCore already initialized");
-    
-#ifdef HS_BUILD_FOR_WIN32
-    // Initialize WinSock
-    WSADATA wsaData;
-    if (WSAStartup(0x101, &wsaData))
-        ErrorAssert(__LINE__, __FILE__, "WSA startup failed");
-    if (wsaData.wVersion != 0x101)
-        ErrorAssert(__LINE__, __FILE__, "WSA version failed");
-#endif
-
-#ifdef CLIENT
-    IAsyncInitForClient();
-#elif SERVER
-    IAsyncInitForServer();
-#else
-# error "Neither CLIENT nor SERVER defined. Cannot configure AsyncCore for target"
-#endif
-    
-    ASSERT(g_api.initialize);
-    g_api.initialize();
+void AsyncCoreInitialize()
+{
+    SocketInitialize();
 }
 
 //============================================================================
-void AsyncCoreDestroy (unsigned waitMs) {
-    if (g_api.destroy) {
-        g_api.destroy(waitMs);
-    }
-    
+void AsyncCoreDestroy(unsigned waitMs)
+{
+    SocketDestroy(waitMs);
     DnsDestroy(waitMs);
     TimerDestroy(waitMs);
     ThreadDestroy(waitMs);
-    
-    memset(&g_api, 0, sizeof(g_api));
 }
 
 //============================================================================
-void AsyncSignalShutdown () {
-    ASSERT(g_api.signalShutdown);
-    g_api.signalShutdown();
-}
-
-//============================================================================
-void AsyncWaitForShutdown () {
-    ASSERT(g_api.waitForShutdown);
-    g_api.waitForShutdown();
-}
-
-//============================================================================
-void AsyncSleep (unsigned sleepMs) {
-    ASSERT(g_api.sleep);
-    g_api.sleep(sleepMs);
-}
-
-//============================================================================
-long AsyncPerfGetCounter (unsigned id) {
-    static_assert(arrsize(s_perf) == kNumAsyncPerfCounters, "Max async counters and array size do not match.");
+long AsyncPerfGetCounter(unsigned id)
+{
+    static_assert(std::size(s_perf) == kNumAsyncPerfCounters, "Max async counters and array size do not match.");
     ASSERT(id < kNumAsyncPerfCounters);
     return s_perf[id];
 }

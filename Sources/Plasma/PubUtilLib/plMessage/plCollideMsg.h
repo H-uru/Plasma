@@ -53,14 +53,20 @@ public:
     bool fEntering;       // otherwise it's leaving
 
     plCollideMsg() { SetBCastFlag(plMessage::kPropagateToModifiers); }
+    plCollideMsg(const plKey& s, const plKey& r, plKey other, bool entering)
+        : fOtherKey(std::move(other)), fEntering(entering), plMessage(s, r, nullptr)
+    {
+        SetBCastFlag(plMessage::kPropagateToModifiers);
+    }
+
     ~plCollideMsg() {}
 
     CLASSNAME_REGISTER( plCollideMsg );
     GETINTERFACE_ANY( plCollideMsg, plMessage );
 
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)  {   plMessage::IMsgRead(stream, mgr);   }
-    void Write(hsStream* stream, hsResMgr* mgr) {   plMessage::IMsgWrite(stream, mgr);  }
+    void Read(hsStream* stream, hsResMgr* mgr) override { plMessage::IMsgRead(stream, mgr); }
+    void Write(hsStream* stream, hsResMgr* mgr) override { plMessage::IMsgWrite(stream, mgr); }
 };
 
 #endif // PLCOLLIDEMSG_INC

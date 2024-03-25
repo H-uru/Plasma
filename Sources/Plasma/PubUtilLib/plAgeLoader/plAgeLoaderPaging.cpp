@@ -48,13 +48,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <algorithm>
 
 #include "pnNetCommon/plNetApp.h"
+#include "pnNetCommon/pnNetCommon.h"
 #include "pnKeyedObject/plKey.h"
 
 #include "plMessage/plAgeLoadedMsg.h"
 #include "plNetMessage/plNetMessage.h"
-#include "plProgressMgr/plProgressMgr.h"
 #include "plSDL/plSDL.h"
-#include "pnDispatch/plDispatch.h"
 #include "plResMgr/plResManager.h"
 
 #include "plNetClient/plNetClientMgr.h"
@@ -69,17 +68,17 @@ bool ReportRoomToServer(const plKey &key)
     plLocation keyLoc=key->GetUoid().GetLocation();
     bool skip=(keyLoc.IsReserved() || keyLoc.IsVirtual() ||
                 // HACK ALERT - replace with new uoid type flags
-                (!key->GetName().IsNull() &&
-                    (!key->GetName().CompareN("global", 6, plString::kCaseInsensitive) ||
-                    key->GetName().Find("_Male") >= 0 ||
-                    key->GetName().Find("_Female") >= 0
+                (!key->GetName().empty() &&
+                    (!key->GetName().compare_ni("global", 6) ||
+                    key->GetName().contains("_Male") ||
+                    key->GetName().contains("_Female")
                     )
                 )
             );  
     
     if (skip)
-        hsLogEntry(plNetApp::StaticDebugMsg("Not reporting room %s to server, reserved=%d, virtual=%d", 
-            key->GetName().c_str(), keyLoc.IsReserved(), keyLoc.IsVirtual()));
+        hsLogEntry(plNetApp::StaticDebugMsg("Not reporting room {} to server, reserved={}, virtual={}",
+            key->GetName(), keyLoc.IsReserved(), keyLoc.IsVirtual()));
     
     return !skip;
 }
@@ -98,7 +97,6 @@ void plAgeLoader::FinishedPagingInRoom(plKey* rmKey, int numRms)
 
     // Send a msg to the server indicating that we have this room paged in
     plNetMsgPagingRoom * pagingMsg = new plNetMsgPagingRoom;
-    pagingMsg->SetNetProtocol(kNetProtocolCli2Game);
     int i;
     for(i=0;i<numRms;i++)
     {
@@ -110,7 +108,7 @@ void plAgeLoader::FinishedPagingInRoom(plKey* rmKey, int numRms)
             continue;
 
         pagingMsg->AddRoom(key);        
-        hsLogEntry(nc->DebugMsg("\tSending PageIn/RequestState msg, room=%s\n", key->GetName().c_str()));
+        hsLogEntry(nc->DebugMsg("\tSending PageIn/RequestState msg, room={}\n", key->GetName()));
     }
     if( pagingMsg->GetNumRooms() > 0 )  // all rooms were reserved
     {
@@ -148,7 +146,7 @@ void plAgeLoader::FinishedPagingOutRoom(plKey* rmKey, int numRms)
         if( found != fPendingPageOuts.end() )
         {
             fPendingPageOuts.erase( found );
-            nc->DebugMsg("Finished paging out room %s", rmKey[i]->GetName().c_str());
+            nc->DebugMsg("Finished paging out room {}", rmKey[i]->GetName());
         }
     }
 
@@ -169,7 +167,6 @@ void plAgeLoader::StartPagingOutRoom(plKey* rmKey, int numRms)
     plNetClientApp* nc = plNetClientApp::GetInstance();
 
     plNetMsgPagingRoom pagingMsg;
-    pagingMsg.SetNetProtocol(kNetProtocolCli2Game);
     pagingMsg.SetPagingOut(true);
     int i;
     for(i=0;i<numRms;i++)
@@ -179,7 +176,7 @@ void plAgeLoader::StartPagingOutRoom(plKey* rmKey, int numRms)
             continue;
     
         pagingMsg.AddRoom(rmKey[i]);
-        nc->DebugMsg("\tSending PageOut msg, room=%s", rmKey[i]->GetName().c_str());
+        nc->DebugMsg("\tSending PageOut msg, room={}", rmKey[i]->GetName());
     }
 
     if (!pagingMsg.GetNumRooms())   // all rooms were reserved
@@ -205,7 +202,7 @@ void plAgeLoader::IgnorePagingOutRoom(plKey* rmKey, int numRms)
         if( found != fPendingPageOuts.end() )
         {
             fPendingPageOuts.erase( found );
-            nc->DebugMsg("Ignoring paged out room %s", rmKey[i]->GetName().c_str());
+            nc->DebugMsg("Ignoring paged out room {}", rmKey[i]->GetName());
         }
     }
 
@@ -217,14 +214,14 @@ void plAgeLoader::IgnorePagingOutRoom(plKey* rmKey, int numRms)
 
 ///////////////////////////////////
 
-bool plAgeLoader::IsPendingPageInRoomKey(plKey pKey, int *idx) 
+bool plAgeLoader::IsPendingPageInRoomKey(const plKey& pKey, int *idx) 
 {
     if (pKey)
     {
         plKeyVec::iterator result=std::find(fPendingPageIns.begin(), fPendingPageIns.end(), pKey);
         bool found = result!=fPendingPageIns.end();
         if (idx)
-            *idx = found ? result-fPendingPageIns.begin() : -1;
+            *idx = found ? (int)(result-fPendingPageIns.begin()) : -1;
         return found;
     }
     return false;
@@ -234,11 +231,11 @@ void plAgeLoader::AddPendingPageInRoomKey(plKey pKey)
 {
     if (!IsPendingPageInRoomKey(pKey))
     {
-        fPendingPageIns.push_back(pKey);
+        fPendingPageIns.emplace_back(std::move(pKey));
     }
 }
 
-bool plAgeLoader::RemovePendingPageInRoomKey(plKey pKey)
+bool plAgeLoader::RemovePendingPageInRoomKey(const plKey& pKey)
 {
     int idx;
     if (IsPendingPageInRoomKey(pKey, &idx))
@@ -259,42 +256,41 @@ bool plAgeLoader::RemovePendingPageInRoomKey(plKey pKey)
 class plExcludePage
 {
     public:
-        plString fPageName;
-        plString fAgeName;
+        ST::string fPageName;
+        ST::string fAgeName;
 
         plExcludePage() { }
-        plExcludePage(const plString& p, const plString& a)
+        plExcludePage(const ST::string& p, const ST::string& a)
             : fPageName(p), fAgeName(a)
         { }
 };
 
-static hsTArray<plExcludePage>  sExcludeList;
+static std::vector<plExcludePage>  sExcludeList;
 
-void    plAgeLoader::ClearPageExcludeList( void )
+void    plAgeLoader::ClearPageExcludeList()
 {
-    sExcludeList.Reset();
+    sExcludeList.clear();
 }
 
-void    plAgeLoader::AddExcludedPage( const plString& pageName, const plString& ageName )
+void    plAgeLoader::AddExcludedPage( const ST::string& pageName, const ST::string& ageName )
 {
-    sExcludeList.Append( plExcludePage( pageName, ageName ) );
+    sExcludeList.emplace_back(pageName, ageName);
 }
 
-bool    plAgeLoader::IsPageExcluded( const plAgePage *page, const plString& ageName )
+bool    plAgeLoader::IsPageExcluded( const plAgePage *page, const ST::string& ageName )
 {
     // check page flags
     if (page->GetFlags() & plAgePage::kPreventAutoLoad)
         return true;
 
     // check exclude list
-    plString pageName = page->GetName();
-    int     i;
-    for( i = 0; i < sExcludeList.GetCount(); i++ )
+    ST::string pageName = page->GetName();
+    for (const plExcludePage& exclude : sExcludeList)
     {
-        if( pageName.CompareI( sExcludeList[ i ].fPageName ) == 0 )
+        if (pageName.compare_i(exclude.fPageName) == 0)
         {
-            if( ageName.IsEmpty() || sExcludeList[ i ].fAgeName.IsEmpty() ||
-                ageName.CompareI(sExcludeList[ i ].fAgeName) == 0 )
+            if (ageName.empty() || exclude.fAgeName.empty() ||
+                ageName.compare_i(exclude.fAgeName) == 0)
             {
                 return true;
             }

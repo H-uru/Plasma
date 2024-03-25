@@ -64,8 +64,8 @@ public:
     plProxyDrawMsg(plKey &rcv, uint16_t flags); // send yourself an ack
     ~plProxyDrawMsg();
 
-    CLASSNAME_REGISTER( plProxyDrawMsg );
-    GETINTERFACE_ANY( plProxyDrawMsg, plMessage );
+    CLASSNAME_REGISTER(plProxyDrawMsg);
+    GETINTERFACE_ANY(plProxyDrawMsg, plMessage);
 
     enum {
         kCreate         = 0x1,
@@ -80,8 +80,8 @@ public:
         kCoordinate     = 0x100,
         kCamera         = 0x200,
 
-        kAllTypes       = kLight 
-                        | kPhysical 
+        kAllTypes       = kLight
+                        | kPhysical
                         | kOccluder
                         | kAudible
                         | kCoordinate
@@ -91,8 +91,8 @@ public:
     uint16_t  GetProxyFlags() const { return fProxyFlags; }
     void    SetProxyFlags(uint16_t f) { fProxyFlags = f; }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plProxyDrawMsg_inc

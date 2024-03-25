@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plWinAudibleProxy::plWinAudibleProxy()
 :   plProxyGen(hsColorRGBA().Set(0.2f,0.2f,0.8f,1.f), hsColorRGBA().Set(1.f,0.5f,0.5f,1.f), 0.2f),
-    fOwner(nil)
+    fOwner()
 {
 }
 
@@ -64,19 +64,19 @@ bool plWinAudibleProxy::Init(plWinAudible* aud)
     fOwner = aud;
     fProxyMsgType = plProxyDrawMsg::kAudible;
 
-    return fOwner != nil;
+    return fOwner != nullptr;
 }
 
 plKey plWinAudibleProxy::IGetNode() const 
 { 
-    return fOwner ? fOwner->GetSceneNode() : nil; 
+    return fOwner ? fOwner->GetSceneNode() : nullptr;
 }
 
-plDrawableSpans* plWinAudibleProxy::ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plWinAudibleProxy::ICreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
 {
     if( fOwner )
     {
         return fOwner->CreateProxy(mat, idx, addTo);
     }
-    return nil;
+    return nullptr;
 }

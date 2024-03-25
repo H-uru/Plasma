@@ -43,10 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAnimationEventConditionalObject_inc
 #define plAnimationEventConditionalObject_inc
 
+#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plEventCallbackMsg.h" // CallbackEvent's defined here
 #include "pnModifier/plConditionalObject.h"
-#include "pnInputCore/plKeyDef.h"
-#include "pnMessage/plEventCallbackMsg.h" // AnimationEvent's defined here
-
 
 class plAnimationEventConditionalObject : public plConditionalObject
 {
@@ -56,20 +55,20 @@ protected:
 public:
     
     
-    plAnimationEventConditionalObject(){;}
-    plAnimationEventConditionalObject(plKey pTargetModifier);
-    ~plAnimationEventConditionalObject(){;}
+    plAnimationEventConditionalObject() : fAction(), fTarget() { }
+    plAnimationEventConditionalObject(plKey pTargetModifier) : fTarget(std::move(pTargetModifier)), fAction(kEventEnd) { }
+    ~plAnimationEventConditionalObject() { }
     
     CLASSNAME_REGISTER( plAnimationEventConditionalObject );
     GETINTERFACE_ANY( plAnimationEventConditionalObject, plConditionalObject );
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     
-    void Evaluate(){;}
-    void Reset() { SetSatisfied(false); }
+    void Evaluate() override { }
+    void Reset() override { SetSatisfied(false); }
 
     void SetEvent(const CallbackEvent b, float time = 0.0f);
     

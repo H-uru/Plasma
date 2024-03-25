@@ -1,0 +1,16 @@
+{
+  "problemMatcher": [
+    {
+      "owner": "game-python-review",
+      "pattern": [
+        {
+          "regexp": "---(ERROR|WARNING|INFO) ([^:]+):([0-9]*) (.*)---",
+          "severity": 1,
+          "file": 2,
+          "line": 3,
+          "message": 4
+        }
+      ]
+    }
+  ]
+}

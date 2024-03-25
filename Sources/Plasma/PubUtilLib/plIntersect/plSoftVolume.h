@@ -82,28 +82,32 @@ private:
     virtual float        IGetStrength(const hsPoint3& pos) const = 0;
 
 public:
-    plSoftVolume();
-    virtual ~plSoftVolume();
+    plSoftVolume()
+        : fListenState(),
+          fListenStrength(),
+          fInsideStrength(1.f),
+          fOutsideStrength()
+    { }
 
     CLASSNAME_REGISTER( plSoftVolume );
     GETINTERFACE_ANY( plSoftVolume, plRegionBase );
 
     virtual float GetStrength(const hsPoint3& pos) const;
-    virtual bool IsInside(const hsPoint3& pos) const { return GetStrength(pos) >= 1.f; }
+    bool IsInside(const hsPoint3& pos) const override { return GetStrength(pos) >= 1.f; }
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override = 0;
 
-    virtual int32_t   GetNumProperties() const { return 1; } // This is stupid.
+    int32_t   GetNumProperties() const override { return 1; } // This is stupid.
 
     virtual float    GetListenerStrength() const;
     virtual void        UpdateListenerPosition(const hsPoint3& p);
     virtual void        SetCheckListener(bool on=true);
     virtual bool        GetCheckListener() const { return 0 != (fListenState & kListenCheck); }
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     void SetInsideStrength(float s);
     void SetOutsideStrength(float s);

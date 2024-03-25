@@ -125,14 +125,14 @@ class plPBBaseDec
 //  Ex. Usage: kDefineAnimPB( gAnimBlock, &gAnimDesc, PASS_ANIM, PASS_ANIM_EASE, gAnimMainProc, gAnimEaseProc );
 
 #define kDefineAnimPB( blockName, descPtr, mainResIDName, easeResIDName, mainProc, easeProc ) \
-    static ParamBlockDesc2 blockName##( \
+    static ParamBlockDesc2 blockName( \
                                         \
         plPBBaseDec::kPlComponentBlkID, _T("animation"), 0, descPtr, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP + P_INCLUDE_PARAMS, plPBBaseDec::kPlComponentRefID, \
         2,  /* # rollouts */            \
         plCAnimPB::kRollMain, IDD_##mainResIDName, IDS_##mainResIDName, 0, 0, mainProc,                 \
         plCAnimPB::kRollEase, IDD_##easeResIDName, IDS_##easeResIDName, 0, 0, easeProc,                 \
-        &plPBBaseDec::fAnimBlock,       /* ParamBlock to include */                                 \
-        end,                                                                                        \
+        &plPBBaseDec::fAnimBlock,       /* ParamBlock to include */                                     \
+        p_end,                                                                                          \
     );
         
 

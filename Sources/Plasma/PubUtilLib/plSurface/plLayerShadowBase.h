@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayerShadowBase_inc
 #define plLayerShadowBase_inc
 
-#include "plLayerInterface.h"
 #include "hsGMatState.h"
+
+#include "plLayerInterface.h"
 
 class plLayerLightBase : public plLayerInterface
 {
@@ -59,9 +60,9 @@ public:
     GETINTERFACE_ANY( plLayerLightBase, plLayerInterface );
 
 
-    virtual plLayerInterface*   Attach(plLayerInterface* prev);
+    plLayerInterface*   Attach(plLayerInterface* prev) override;
 
-    virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
+    uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore) override;
 
 
 };
@@ -79,9 +80,9 @@ public:
     GETINTERFACE_ANY( plLayerShadowBase, plLayerInterface );
 
 
-    virtual plLayerInterface*   Attach(plLayerInterface* prev);
+    plLayerInterface*   Attach(plLayerInterface* prev) override;
 
-    virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
+    uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore) override;
 
 
 };

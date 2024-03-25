@@ -49,11 +49,11 @@ class plClickableComponent : public plActivatorBaseComponent
 public:
     plClickableComponent();
 
-    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg) override;
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    virtual void CollectNonDrawables(INodeTab& nonDrawables);
+    void CollectNonDrawables(INodeTab& nonDrawables) override;
 
 };
 

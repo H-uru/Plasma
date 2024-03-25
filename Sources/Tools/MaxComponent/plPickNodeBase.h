@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPickNodeBase_h_inc
 #define plPickNodeBase_h_inc
 
+#include <tchar.h>
 #include <vector>
 
 class Class_ID;
@@ -56,7 +57,7 @@ protected:
     IParamBlock2* fPB;
     int fNodeParamID;
 
-    static BOOL CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
     void IInitDlg(HWND hDlg);
 
@@ -68,7 +69,7 @@ protected:
     virtual bool ICheckNode(plMaxNode* node)=0;
 
     virtual void IAddUserType(HWND hList) {}
-    virtual void ISetUserType(plMaxNode* node, const char* userType) {}
+    virtual void ISetUserType(plMaxNode* node, const TCHAR* userType) {}
 
 public:
     plPickNodeBase(IParamBlock2* pb, int nodeParamID);
@@ -84,7 +85,7 @@ protected:
     bool fCanConvertToType;
 
     bool ICanConvertToType(Object *obj);
-    virtual bool ICheckNode(plMaxNode* node);
+    bool ICheckNode(plMaxNode* node) override;
 
 public:
     plPickNode(IParamBlock2* pb, int nodeParamID);
@@ -98,7 +99,7 @@ class plPickMtlNode : public plPickNodeBase
 protected:
     Mtl* fMtl;
 
-    bool ICheckNode(plMaxNode* node);
+    bool ICheckNode(plMaxNode* node) override;
 
 public:
     plPickMtlNode(IParamBlock2* pb, int nodeParamID, Mtl* mtl);
@@ -112,7 +113,7 @@ class plPickCompNode : public plPickNodeBase
 protected:
     plComponentBase* fComp;
 
-    bool ICheckNode(plMaxNode* node);
+    bool ICheckNode(plMaxNode* node) override;
 
 public:
     plPickCompNode(IParamBlock2* pb, int nodeParamID, plComponentBase* comp);

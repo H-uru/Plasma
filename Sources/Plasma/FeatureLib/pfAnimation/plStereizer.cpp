@@ -40,33 +40,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-
-#include <cmath>
+#include "plStereizer.h"
 
 #include "HeadSpin.h"
-
-#include "plStereizer.h"
-#include "plLineFollowMod.h"
-
-#include "plMessage/plListenerMsg.h"
 #include "plgDispatch.h"
-
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-
 #include "hsFastMath.h"
-
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
 #include "hsStream.h"
 
-plStereizer::plStereizer()
-:   fInitPos(0,0,0),
-    fListPos(0,0,0),
-    fListDirection(0,1.f,0),
-    fListUp(0,0,1.f)
-{
-}
+#include "plLineFollowMod.h"
+
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plMessage/plListenerMsg.h"
 
 plStereizer::~plStereizer()
 {
@@ -78,13 +66,13 @@ void plStereizer::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Read(stream, mgr);
 
-    fAmbientDist = stream->ReadLEScalar();
-    fTransition = stream->ReadLEScalar();
+    fAmbientDist = stream->ReadLEFloat();
+    fTransition = stream->ReadLEFloat();
 
-    fMaxSepDist = stream->ReadLEScalar();
-    fMinSepDist = stream->ReadLEScalar();
+    fMaxSepDist = stream->ReadLEFloat();
+    fMinSepDist = stream->ReadLEFloat();
 
-    fTanAng = stream->ReadLEScalar();
+    fTanAng = stream->ReadLEFloat();
 
     fInitPos.Read(stream);
 
@@ -96,13 +84,13 @@ void plStereizer::Write(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Write(stream, mgr);
 
-    stream->WriteLEScalar(fAmbientDist);
-    stream->WriteLEScalar(fTransition);
+    stream->WriteLEFloat(fAmbientDist);
+    stream->WriteLEFloat(fTransition);
 
-    stream->WriteLEScalar(fMaxSepDist);
-    stream->WriteLEScalar(fMinSepDist);
+    stream->WriteLEFloat(fMaxSepDist);
+    stream->WriteLEFloat(fMinSepDist);
 
-    stream->WriteLEScalar(fTanAng);
+    stream->WriteLEFloat(fTanAng);
 
     fInitPos.Write(stream);
 }
@@ -214,7 +202,7 @@ hsPoint3 plStereizer::IGetLocalizedPos(const hsVector3& posToList, float distToL
 {
     hsPoint3 pos = IGetUnStereoPos();
 
-    hsVector3 axOut(-posToList.fY, posToList.fX, 0);
+    hsVector3 axOut(-posToList.fY, posToList.fX, 0.f);
     hsFastMath::NormalizeAppr(axOut);
 
     float distOut = distToList * fTanAng;
@@ -272,7 +260,7 @@ plCoordinateInterface* plStereizer::IGetParent() const
     {
         return coord->GetParent();
     }
-    return nil;
+    return nullptr;
 }
 
 // Note that (along with it's many other hacky defects), this
@@ -293,9 +281,8 @@ bool plStereizer::CheckForMaster()
     if( !targ )
         return false;
 
-    int n = targ->GetNumModifiers();
-    int i;
-    for( i = 0; i < n; i++ )
+    size_t n = targ->GetNumModifiers();
+    for (size_t i = 0; i < n; i++)
     {
         plLineFollowMod* line = plLineFollowMod::ConvertNoRef(IGetTargetModifier(0, i));
         if( line )

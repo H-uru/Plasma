@@ -40,11 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#pragma hdrstop
-
 #include "pyAgeVault.h"
+
+#include <string_theory/string>
+
 #include "pyAgeInfoStruct.h"
+#include "pyGlueHelpers.h"
 #include "pySDL.h"
 
 // glue functions
@@ -100,7 +101,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAgeVault, getPublicAgesFolder)
 
 PYTHON_METHOD_DEFINITION(ptAgeVault, getSubAgeLink, args)
 {
-    PyObject* ageInfoObj = NULL;
+    PyObject* ageInfoObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &ageInfoObj))
     {
         PyErr_SetString(PyExc_TypeError, "getSubAgeLink expects a ptAgeInfoStruct");
@@ -117,15 +118,15 @@ PYTHON_METHOD_DEFINITION(ptAgeVault, getSubAgeLink, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeVault, getAgeGuid)
 {
-    return PyString_FromString(self->fThis->GetAgeGuid().AsString().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetAgeGuid().AsString());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeVault, addDevice, args)
 {
-    char* name;
-    PyObject* cbObj = NULL;
+    ST::string name;
+    PyObject* cbObj = nullptr;
     unsigned long context = 0;
-    if (!PyArg_ParseTuple(args, "s|Ol", &name, &cbObj, &context))
+    if (!PyArg_ParseTuple(args, "O&|Ol", PyUnicode_STStringConverter, &name, &cbObj, &context))
     {
         PyErr_SetString(PyExc_TypeError, "addDevice expects a string, an optional object, and an optional unsigned long");
         PYTHON_RETURN_ERROR;
@@ -136,8 +137,8 @@ PYTHON_METHOD_DEFINITION(ptAgeVault, addDevice, args)
 
 PYTHON_METHOD_DEFINITION(ptAgeVault, removeDevice, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "removeDevice expects a string");
         PYTHON_RETURN_ERROR;
@@ -148,8 +149,8 @@ PYTHON_METHOD_DEFINITION(ptAgeVault, removeDevice, args)
 
 PYTHON_METHOD_DEFINITION(ptAgeVault, hasDevice, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "hasDevice expects a string");
         PYTHON_RETURN_ERROR;
@@ -159,8 +160,8 @@ PYTHON_METHOD_DEFINITION(ptAgeVault, hasDevice, args)
 
 PYTHON_METHOD_DEFINITION(ptAgeVault, getDevice, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "getDevice expects a string");
         PYTHON_RETURN_ERROR;
@@ -170,11 +171,11 @@ PYTHON_METHOD_DEFINITION(ptAgeVault, getDevice, args)
 
 PYTHON_METHOD_DEFINITION(ptAgeVault, setDeviceInbox, args)
 {
-    char* name;
-    char* inboxName;
-    PyObject* cb = NULL;
+    ST::string name;
+    ST::string inboxName;
+    PyObject* cb = nullptr;
     unsigned long context = 0;
-    if (!PyArg_ParseTuple(args, "ss|Ol", &name, &inboxName, &cb, &context))
+    if (!PyArg_ParseTuple(args, "O&O&|Ol", PyUnicode_STStringConverter, &name, PyUnicode_STStringConverter, &inboxName, &cb, &context))
     {
         PyErr_SetString(PyExc_TypeError, "setDeviceInbox expects two strings, an optional object, and an optional unsigned long");
         PYTHON_RETURN_ERROR;
@@ -185,8 +186,8 @@ PYTHON_METHOD_DEFINITION(ptAgeVault, setDeviceInbox, args)
 
 PYTHON_METHOD_DEFINITION(ptAgeVault, getDeviceInbox, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "getDeviceInbox expects a string");
         PYTHON_RETURN_ERROR;
@@ -196,8 +197,8 @@ PYTHON_METHOD_DEFINITION(ptAgeVault, getDeviceInbox, args)
 
 PYTHON_METHOD_DEFINITION(ptAgeVault, findChronicleEntry, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "findChronicleEntry expects a string");
         PYTHON_RETURN_ERROR;
@@ -207,10 +208,10 @@ PYTHON_METHOD_DEFINITION(ptAgeVault, findChronicleEntry, args)
 
 PYTHON_METHOD_DEFINITION(ptAgeVault, addChronicleEntry, args)
 {
-    char* name;
+    ST::string name;
     unsigned long entryType;
-    char* val;
-    if (!PyArg_ParseTuple(args, "sls", &name, &entryType, &val))
+    ST::string val;
+    if (!PyArg_ParseTuple(args, "O&lO&", PyUnicode_STStringConverter, &name, &entryType, PyUnicode_STStringConverter, &val))
     {
         PyErr_SetString(PyExc_TypeError, "addChronicleEntry expects a string, an unsigned long, and a string");
         PYTHON_RETURN_ERROR;
@@ -226,7 +227,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAgeVault, getAgeSDL)
 
 PYTHON_METHOD_DEFINITION(ptAgeVault, updateAgeSDL, args)
 {
-    PyObject* recordObj = NULL;
+    PyObject* recordObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &recordObj))
     {
         PyErr_SetString(PyExc_TypeError, "updateAgeSDL expects a ptSDLStateDataRecord");

@@ -71,24 +71,24 @@ public:
     virtual ~plAvTaskBrain();
 
     // task protocol
-    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual void Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
+    bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
+    void Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
         
     /** dump descriptive stuff to the given debug text */
-    virtual void DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt);
+    void DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt) override;
 
-    plArmatureBrain *GetBrain();
+    plArmatureBrain* GetBrain() const;
 
     CLASSNAME_REGISTER( plAvTaskBrain );
     GETINTERFACE_ANY( plAvTaskBrain, plAvTask );
 
     /** Read the task from a stream. Not all tasks need to read/write, so the base implementation
         gives a warning to expose tasks that are being read/written unexpectedly. */
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
 
     /** Write the task to a stream. Not all tasks need to read/write, so the base implementation
         gives a warning to expose tasks that are being read/written unexpectedly. */
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 protected:
     plArmatureBrain *fBrain;
 };

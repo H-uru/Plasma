@@ -40,35 +40,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-#pragma hdrstop
+#include "pyGUIControlClickMap.h"
 
 #include "pfGameGUIMgr/pfGUIClickMapCtrl.h"
 #include "pfGameGUIMgr/pfGUIDialogMod.h"
 
-#include "pyGUIControlClickMap.h"
-#include "pyGUIDialog.h"
 #include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 pyGUIControlClickMap::pyGUIControlClickMap(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlClickMap::pyGUIControlClickMap(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlClickMap::pyGUIControlClickMap(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 
 
-bool pyGUIControlClickMap::IsGUIControlClickMap(pyKey& gckey)
+bool pyGUIControlClickMap::IsGUIControlClickMap(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUIClickMapCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUIClickMapCtrl::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }
 
 
-PyObject* pyGUIControlClickMap::GetLastMousePt( void )
+PyObject* pyGUIControlClickMap::GetLastMousePt()
 {
     if ( fGCkey )
     {
@@ -80,7 +78,7 @@ PyObject* pyGUIControlClickMap::GetLastMousePt( void )
     PYTHON_RETURN_NONE;
 }
 
-PyObject* pyGUIControlClickMap::GetLastMouseUpPt( void )
+PyObject* pyGUIControlClickMap::GetLastMouseUpPt()
 {
     if ( fGCkey )
     {
@@ -92,7 +90,7 @@ PyObject* pyGUIControlClickMap::GetLastMouseUpPt( void )
     PYTHON_RETURN_NONE;
 }
 
-PyObject* pyGUIControlClickMap::GetLastMouseDragPt( void )
+PyObject* pyGUIControlClickMap::GetLastMouseDragPt()
 {
     if ( fGCkey )
     {

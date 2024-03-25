@@ -41,7 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
+
+#include "MaxAPI.h"
 
 #include "MaxComponent/plComponentBase.h"
 #include "MaxComponent/plComponentReg.h"
@@ -49,11 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 
 #include <algorithm>
-#include <notify.h>
-#include <utilapi.h>
-#include <notify.h>
 #include <vector>
-#pragma hdrstop
 
 #include "plComponentDlg.h"
 #include "plComponentPanel.h"
@@ -61,34 +58,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 extern HINSTANCE hInstance;
 
-plComponentDlg::plComponentDlg() : fhDlg(nil), fCompMenu(nil), fTypeMenu(nil), fCommentNode(nil)
+plComponentDlg::plComponentDlg() : fhDlg(), fCompMenu(), fTypeMenu(), fCommentNode()
 {
     fInterface = GetCOREInterface();
 
-    RegisterNotification(INotify, 0, NOTIFY_FILE_PRE_OPEN);
-    RegisterNotification(INotify, 0, NOTIFY_SYSTEM_PRE_NEW);
-    RegisterNotification(INotify, 0, NOTIFY_SYSTEM_PRE_RESET);
-    RegisterNotification(INotify, 0, NOTIFY_FILE_PRE_MERGE);
-    RegisterNotification(INotify, 0, NOTIFY_PRE_IMPORT);
-    RegisterNotification(INotify, 0, NOTIFY_FILE_PRE_SAVE);
-    RegisterNotification(INotify, 0, NOTIFY_FILE_PRE_SAVE_OLD);
+    RegisterNotification(INotify, nullptr, NOTIFY_FILE_PRE_OPEN);
+    RegisterNotification(INotify, nullptr, NOTIFY_SYSTEM_PRE_NEW);
+    RegisterNotification(INotify, nullptr, NOTIFY_SYSTEM_PRE_RESET);
+    RegisterNotification(INotify, nullptr, NOTIFY_FILE_PRE_MERGE);
+    RegisterNotification(INotify, nullptr, NOTIFY_PRE_IMPORT);
+    RegisterNotification(INotify, nullptr, NOTIFY_FILE_PRE_SAVE);
+    RegisterNotification(INotify, nullptr, NOTIFY_FILE_PRE_SAVE_OLD);
 
-    RegisterNotification(INotify, 0, NOTIFY_FILE_POST_OPEN);
-    RegisterNotification(INotify, 0, NOTIFY_SYSTEM_POST_NEW);
-    RegisterNotification(INotify, 0, NOTIFY_SYSTEM_POST_RESET);
-    RegisterNotification(INotify, 0, NOTIFY_FILE_POST_MERGE);
-    RegisterNotification(INotify, 0, NOTIFY_POST_IMPORT);
+    RegisterNotification(INotify, nullptr, NOTIFY_FILE_POST_OPEN);
+    RegisterNotification(INotify, nullptr, NOTIFY_SYSTEM_POST_NEW);
+    RegisterNotification(INotify, nullptr, NOTIFY_SYSTEM_POST_RESET);
+    RegisterNotification(INotify, nullptr, NOTIFY_FILE_POST_MERGE);
+    RegisterNotification(INotify, nullptr, NOTIFY_POST_IMPORT);
 
-    RegisterNotification(INotify, 0, NOTIFY_SYSTEM_SHUTDOWN);
+    RegisterNotification(INotify, nullptr, NOTIFY_SYSTEM_SHUTDOWN);
 }
 
 plComponentDlg::~plComponentDlg()
 {
-    if (fhDlg)
-    {
-        fInterface->UnRegisterDlgWnd(fhDlg);
-        DestroyWindow(fhDlg);
-    }
     if (fCompMenu)
         DestroyMenu(fCompMenu);
     if (fTypeMenu)
@@ -119,10 +111,9 @@ void plComponentDlg::Open()
         rect.right = rect.left + 235;
         rect.bottom = rect.top + 335;
         IPositionControls(&rect, WMSZ_BOTTOM);
-        SetWindowPos(fhDlg, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOMOVE | SWP_NOZORDER);
+        SetWindowPos(fhDlg, nullptr, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOMOVE | SWP_NOZORDER);
     }
     
-    fInterface->RegisterDlgWnd(fhDlg);
     ShowWindow(fhDlg, SW_SHOW);
 
     if (IsIconic(fhDlg))
@@ -166,7 +157,7 @@ void plComponentDlg::IPositionControls(RECT *newRect, int edge)
         IPositionControl(GetDlgItem(fhDlg, IDC_ATTACH),         hDiff);
     }
 
-    InvalidateRect(fhDlg, NULL, TRUE);
+    InvalidateRect(fhDlg, nullptr, TRUE);
 }
 
 void plComponentDlg::IPositionControl(HWND hControl, int hDiff, int wDiff, int flags)
@@ -186,7 +177,7 @@ void plComponentDlg::IPositionControl(HWND hControl, int hDiff, int wDiff, int f
         if (flags & kMoveY)
             pos.y += hDiff;
 
-        SetWindowPos(hControl, NULL, pos.x, pos.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW);
+        SetWindowPos(hControl, nullptr, pos.x, pos.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW);
     }
 
     if (flags & kResizeX || flags & kResizeY)
@@ -198,7 +189,7 @@ void plComponentDlg::IPositionControl(HWND hControl, int hDiff, int wDiff, int f
         if (flags & kResizeY)
             h += hDiff;
 
-        SetWindowPos(hControl, NULL, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER | SWP_NOREDRAW);
+        SetWindowPos(hControl, nullptr, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER | SWP_NOREDRAW);
     }
 }
 
@@ -210,37 +201,46 @@ void plComponentDlg::IGetComment()
         int len = GetWindowTextLength(GetDlgItem(fhDlg, IDC_COMMENTS))+1;
         if (len != 0)
         {
-            char *buf = new char[len];
+            TCHAR* buf = new TCHAR[len];
             GetDlgItemText(fhDlg, IDC_COMMENTS, buf, len);
             fCommentNode->SetUserPropBuffer(buf);
             delete [] buf;
         }
         else
-            fCommentNode->SetUserPropBuffer("");
+            fCommentNode->SetUserPropBuffer(_M(""));
     }
 }
 
-BOOL plComponentDlg::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plComponentDlg::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     return Instance().DlgProc(hDlg, msg, wParam, lParam);
 }
 
 #define MENU_ID_START 41000
 
-BOOL plComponentDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plComponentDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
     case WM_INITDIALOG:
         fhDlg = hDlg;
-        IAddComponentsRecur(GetDlgItem(hDlg, IDC_TREE), (plMaxNode*)GetCOREInterface()->GetRootNode());
-
+        fInterface->RegisterDlgWnd(fhDlg);
+        ICreateComponentsTree();
         ICreateMenu();
         ICreateRightClickMenu();
         return TRUE;
 
+    case WM_CLOSE:
+        DestroyWindow(fhDlg);
+        return TRUE;
+
+    case WM_DESTROY:
+        fInterface->UnRegisterDlgWnd(fhDlg);
+        fhDlg = nullptr;
+        return TRUE;
+
     case WM_SIZING:
-        IPositionControls((RECT*)lParam, wParam);
+        IPositionControls((RECT*)lParam, (int)wParam);
         return TRUE;
 
     case WM_ACTIVATE:
@@ -331,8 +331,8 @@ BOOL plComponentDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
                     }
                     else
                     {
-                        fCommentNode = nil;
-                        SetDlgItemText(hDlg, IDC_COMMENTS, "");
+                        fCommentNode = nullptr;
+                        SetDlgItemText(hDlg, IDC_COMMENTS, _T(""));
                     }
 
                     return TRUE;
@@ -343,7 +343,7 @@ BOOL plComponentDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
                 // If this isn't a component, don't allow the edit
                 if (!IIsComponent(((NMTVDISPINFO*)lParam)->item.lParam))
                 {
-                    SetWindowLong(hDlg, DWL_MSGRESULT, TRUE);
+                    SetWindowLongPtr(hDlg, DWLP_MSGRESULT, TRUE);
                     return TRUE;
                 }
 
@@ -357,9 +357,9 @@ BOOL plComponentDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
             case TVN_ENDLABELEDIT:
                 {
                     NMTVDISPINFO *di = (NMTVDISPINFO*)lParam;
-                    char* text = di->item.pszText;
+                    TCHAR* text = di->item.pszText;
                     // If the name was changed...
-                    if (text && *text != '\0')
+                    if (text && *text != _T('\0'))
                     {
                         // Update the name of the node
                         plMaxNode *node = IGetTreeSelection();
@@ -373,7 +373,7 @@ BOOL plComponentDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
                         SetSaveRequiredFlag();
 
                         // Return true to keep the changes
-                        SetWindowLong(hDlg, DWL_MSGRESULT, TRUE);
+                        SetWindowLongPtr(hDlg, DWLP_MSGRESULT, TRUE);
                     }
 
                     plMaxAccelerators::Enable();
@@ -405,15 +405,15 @@ BOOL plComponentDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-HTREEITEM plComponentDlg::IAddLeaf(HWND hTree, HTREEITEM hParent, const char *text, LPARAM lParam)
+HTREEITEM plComponentDlg::IAddLeaf(HWND hTree, HTREEITEM hParent, const TCHAR* text, LPARAM lParam)
 {
     TVITEM tvi = {0};
     tvi.mask       = TVIF_TEXT | TVIF_PARAM;
-    tvi.pszText    = (char*)text;
-    tvi.cchTextMax = strlen(text);  
+    tvi.pszText    = const_cast<TCHAR*>(text);
+    tvi.cchTextMax = _tcslen(text);
     tvi.lParam     = lParam;
 
-    TVINSERTSTRUCT tvins = {0};
+    TVINSERTSTRUCT tvins = {};
     tvins.item         = tvi;
     tvins.hParent      = hParent;
     tvins.hInsertAfter = TVI_SORT;
@@ -421,13 +421,13 @@ HTREEITEM plComponentDlg::IAddLeaf(HWND hTree, HTREEITEM hParent, const char *te
     return TreeView_InsertItem(hTree, &tvins);
 }
 
-HTREEITEM plComponentDlg::IFindTreeItem(HWND hTree, const char *name, HTREEITEM hParent)
+HTREEITEM plComponentDlg::IFindTreeItem(HWND hTree, const TCHAR* name, HTREEITEM hParent)
 {
     HTREEITEM hChild = TreeView_GetChild(hTree, hParent);
 
     while (hChild)
     {
-        char buf[256];
+        TCHAR buf[256];
         TVITEM tvi;
         tvi.mask  = TVIF_TEXT;
         tvi.hItem = hChild;
@@ -435,13 +435,13 @@ HTREEITEM plComponentDlg::IFindTreeItem(HWND hTree, const char *name, HTREEITEM 
         tvi.cchTextMax = sizeof(buf);
         TreeView_GetItem(hTree, &tvi);
 
-        if (!strcmp(name, tvi.pszText))
+        if (_tcscmp(name, tvi.pszText) == 0)
             return hChild;
 
         hChild = TreeView_GetNextSibling(hTree, hChild);
     }
 
-    return nil;
+    return nullptr;
 }
 
 HTREEITEM plComponentDlg::IAddComponent(HWND hTree, plMaxNode *node)
@@ -449,7 +449,7 @@ HTREEITEM plComponentDlg::IAddComponent(HWND hTree, plMaxNode *node)
     plComponentBase *comp = node->ConvertToComponent();
 
     // Try and find the component category in the tree
-    const char *category = comp->GetCategory();
+    const TCHAR* category = comp->GetCategory();
     HTREEITEM hCat = IFindTreeItem(hTree, category, TVI_ROOT);
     // If it isn't there yet, add it
     if (!hCat)
@@ -462,10 +462,10 @@ HTREEITEM plComponentDlg::IAddComponent(HWND hTree, plMaxNode *node)
     {
         // If it isn't there yet, add it
         TSTR type;
-        comp->GetClassName(type);
+        comp->GetClassName(type, true);
 
         if (IIsHidden(comp->ClassID()))
-            type.Append(" (Hidden)");
+            type.Append(_T(" (Hidden)"));
 
         hType = IAddLeaf(hTree, hCat, type, idx+1);
     }
@@ -486,16 +486,28 @@ void plComponentDlg::IAddComponentsRecur(HWND hTree, plMaxNode *node)
     }
 }
 
+void plComponentDlg::ICreateComponentsTree()
+{
+    HWND tree = GetDlgItem(fhDlg, IDC_TREE);
+
+#if MAX_VERSION_MAJOR >= 14 // Max 2012
+    TreeView_SetBkColor(tree, GetColorManager()->GetColor(kWindow));
+    TreeView_SetTextColor(tree, GetColorManager()->GetColor(kText));
+#endif
+
+    IAddComponentsRecur(tree, (plMaxNode*)GetCOREInterface()->GetRootNode());
+}
+
 void plComponentDlg::ICreateMenu()
 {
     // Add a refresh option to the system menu, for those rare cases where the manager gets out of sync
     HMENU hMenu = GetMenu(fhDlg);
 
     HMENU hNew = CreatePopupMenu();
-    InsertMenu(hMenu, 0, MF_POPUP | MF_STRING | MF_BYPOSITION, (UINT)hNew, "New");
+    InsertMenu(hMenu, 0, MF_POPUP | MF_STRING | MF_BYPOSITION, (UINT_PTR)hNew, _T("New"));
 
-    const char *lastCat = nil;
-    HMENU hCurType = nil;
+    const TCHAR* lastCat = nullptr;
+    HMENU hCurType = nullptr;
 
     uint32_t count = plComponentMgr::Inst().Count();
     for (uint32_t i = 0; i < count; i++)
@@ -506,12 +518,12 @@ void plComponentDlg::ICreateMenu()
         if (desc->IsObsolete())
             continue;
 
-        if (!lastCat || strcmp(lastCat, desc->Category()))
+        if (!lastCat || _tcscmp(lastCat, desc->Category()))
         {
             lastCat = desc->Category();
 
             hCurType = CreatePopupMenu();
-            AppendMenu(hNew, MF_POPUP | MF_STRING, (UINT)hCurType, lastCat);
+            AppendMenu(hNew, MF_POPUP | MF_STRING, (UINT_PTR)hCurType, lastCat);
         }
 
         AppendMenu(hCurType, MF_STRING, MENU_ID_START+i, desc->ClassName());
@@ -603,7 +615,7 @@ void plComponentDlg::SelectComponentTargs(INodeTab& nodes)
         fInterface->SelectNodeTab(targets, TRUE, FALSE);
 
     fInterface->RedrawViews(fInterface->GetTime(), REDRAW_END);
-    theHold.Accept("Select");
+    theHold.Accept(_M("Select"));
 }
 
 void plComponentDlg::ISelectTreeSelection()
@@ -658,7 +670,7 @@ void plComponentDlg::IDeleteComponent(plMaxNode *component)
     // Delete the component from the scene
     theHold.Begin();
     fInterface->DeleteNode(component);
-    theHold.Accept(_T("Delete Component"));
+    theHold.Accept(_M("Delete Component"));
 
     // Delete the component from the tree
     HWND hTree = GetDlgItem(fhDlg, IDC_TREE);
@@ -704,7 +716,7 @@ plMaxNode *plComponentDlg::ITreeItemToNode(HWND hTree, HTREEITEM hItem)
             return (plMaxNode*)item.lParam;
     }
 
-    return nil;
+    return nullptr;
 }
 
 enum
@@ -721,12 +733,12 @@ enum
 void plComponentDlg::ICreateRightClickMenu()
 {
     fCompMenu = CreatePopupMenu();
-    AppendMenu(fCompMenu, MF_STRING, kMenuDelete, "Delete");
-    AppendMenu(fCompMenu, MF_STRING, kMenuRename, "Rename");
-    AppendMenu(fCompMenu, MF_STRING, kMenuCopy, "Copy");
+    AppendMenu(fCompMenu, MF_STRING, kMenuDelete, _T("Delete"));
+    AppendMenu(fCompMenu, MF_STRING, kMenuRename, _T("Rename"));
+    AppendMenu(fCompMenu, MF_STRING, kMenuCopy, _T("Copy"));
 
     fTypeMenu = CreatePopupMenu();
-    AppendMenu(fTypeMenu, MF_STRING, kMenuHide, "Hide/Show");
+    AppendMenu(fTypeMenu, MF_STRING, kMenuHide, _T("Hide/Show"));
 }
 
 void plComponentDlg::IOpenRightClickMenu()
@@ -752,7 +764,7 @@ void plComponentDlg::IOpenRightClickMenu()
     item.hItem = hitTest.hItem;
     TreeView_GetItem(hTree, &item);
 
-    HMENU menu = nil;
+    HMENU menu = nullptr;
     if (IIsComponent(item.lParam))
         menu = fCompMenu;
     else if (IIsType(item.lParam))
@@ -765,7 +777,7 @@ void plComponentDlg::IOpenRightClickMenu()
 
     // Create the popup menu and get the option the user selects
     SetForegroundWindow(fhDlg);
-    int sel = TrackPopupMenu(menu, TPM_NONOTIFY | TPM_RETURNCMD, point.x, point.y, 0, fhDlg, NULL);
+    int sel = TrackPopupMenu(menu, TPM_NONOTIFY | TPM_RETURNCMD, point.x, point.y, 0, fhDlg, nullptr);
     switch(sel)
     {
     case kMenuDelete:
@@ -787,7 +799,7 @@ void plComponentDlg::IOpenRightClickMenu()
             INodeTab copy;
 
             // Make the copy
-            fInterface->CloneNodes(tab, Point3(0,0,0), true, NODE_COPY, NULL, &copy);
+            fInterface->CloneNodes(tab, Point3(0,0,0), true, NODE_COPY, nullptr, &copy);
 
             // Delete the targets for the copy and add it to the tree
             plMaxNode *newNode = (plMaxNode*)copy[0];
@@ -799,22 +811,22 @@ void plComponentDlg::IOpenRightClickMenu()
 
     case kMenuHide:
         {
-            ClassDesc *desc = plComponentMgr::Inst().Get(item.lParam-1);
+            ClassDesc *desc = plComponentMgr::Inst().Get((uint32_t)(item.lParam-1));
 
             std::vector<Class_ID>::iterator it;
             it = std::find(fHiddenComps.begin(), fHiddenComps.end(), desc->ClassID());
 
-            TSTR name = desc->ClassName();
+            MSTR name = desc->ClassName();
             if (it == fHiddenComps.end())
             {
                 fHiddenComps.push_back(desc->ClassID());
-                name.Append(" (Hidden)");
+                name.Append(_M(" (Hidden)"));
             }
             else
                 fHiddenComps.erase(it);
 
             item.mask = TVIF_TEXT;
-            item.pszText = name;
+            item.pszText = const_cast<MCHAR*>(name.data());
             TreeView_SetItem(GetDlgItem(fhDlg, IDC_TREE), &item);
 
             plComponentUtil::Instance().IUpdateRollups();
@@ -848,14 +860,14 @@ HTREEITEM plComponentDlg::ISearchTree(HWND hTree, LPARAM lParam, HTREEITEM hCur)
         hChild = TreeView_GetNextSibling(hTree, hChild);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void plComponentDlg::IRefreshTree()
 {
     if (fhDlg)
     {
-        fCommentNode = nil;
+        fCommentNode = nullptr;
 
         HWND hTree = GetDlgItem(fhDlg, IDC_TREE);
         TreeView_DeleteAllItems(hTree);
@@ -867,21 +879,21 @@ void plComponentDlg::INotify(void *param, NotifyInfo *info)
 {
     if (info->intcode == NOTIFY_SYSTEM_SHUTDOWN)
     {
-        UnRegisterNotification(INotify, 0, NOTIFY_FILE_PRE_OPEN);
-        UnRegisterNotification(INotify, 0, NOTIFY_SYSTEM_PRE_NEW);
-        UnRegisterNotification(INotify, 0, NOTIFY_SYSTEM_PRE_RESET);
-        UnRegisterNotification(INotify, 0, NOTIFY_FILE_PRE_MERGE);
-        UnRegisterNotification(INotify, 0, NOTIFY_PRE_IMPORT);
-        UnRegisterNotification(INotify, 0, NOTIFY_FILE_PRE_SAVE);
-        UnRegisterNotification(INotify, 0, NOTIFY_FILE_PRE_SAVE_OLD);
+        UnRegisterNotification(INotify, nullptr, NOTIFY_FILE_PRE_OPEN);
+        UnRegisterNotification(INotify, nullptr, NOTIFY_SYSTEM_PRE_NEW);
+        UnRegisterNotification(INotify, nullptr, NOTIFY_SYSTEM_PRE_RESET);
+        UnRegisterNotification(INotify, nullptr, NOTIFY_FILE_PRE_MERGE);
+        UnRegisterNotification(INotify, nullptr, NOTIFY_PRE_IMPORT);
+        UnRegisterNotification(INotify, nullptr, NOTIFY_FILE_PRE_SAVE);
+        UnRegisterNotification(INotify, nullptr, NOTIFY_FILE_PRE_SAVE_OLD);
 
-        UnRegisterNotification(INotify, 0, NOTIFY_FILE_POST_OPEN);
-        UnRegisterNotification(INotify, 0, NOTIFY_SYSTEM_POST_NEW);
-        UnRegisterNotification(INotify, 0, NOTIFY_SYSTEM_POST_RESET);
-        UnRegisterNotification(INotify, 0, NOTIFY_FILE_POST_MERGE);
-        UnRegisterNotification(INotify, 0, NOTIFY_POST_IMPORT);
+        UnRegisterNotification(INotify, nullptr, NOTIFY_FILE_POST_OPEN);
+        UnRegisterNotification(INotify, nullptr, NOTIFY_SYSTEM_POST_NEW);
+        UnRegisterNotification(INotify, nullptr, NOTIFY_SYSTEM_POST_RESET);
+        UnRegisterNotification(INotify, nullptr, NOTIFY_FILE_POST_MERGE);
+        UnRegisterNotification(INotify, nullptr, NOTIFY_POST_IMPORT);
 
-        UnRegisterNotification(INotify, 0, NOTIFY_SYSTEM_SHUTDOWN);
+        UnRegisterNotification(INotify, nullptr, NOTIFY_SYSTEM_SHUTDOWN);
     }
     // New nodes are coming in, refresh the scene component list
     else if (info->intcode == NOTIFY_FILE_POST_OPEN ||
@@ -918,7 +930,7 @@ void plComponentDlg::IUpdateNodeName(plMaxNode *node)
     TVITEM tvi = {0};
     tvi.hItem = ISearchTree(hTree, (LPARAM)node);
     tvi.mask = TVIF_TEXT;
-    tvi.pszText = node->GetName();
+    tvi.pszText = const_cast<TCHAR*>(node->GetName());
     TreeView_SetItem(hTree, &tvi);
 }
 
@@ -1003,10 +1015,10 @@ public:
         return true;
     }
 
-    virtual TCHAR *dialogTitle() { return "Select Nodes"; }
-    virtual TCHAR *buttonText() { return "Copy"; }
+    GETDLGTEXT_RETURN_TYPE dialogTitle() override { return _M("Select Nodes"); }
+    GETDLGTEXT_RETURN_TYPE buttonText() override { return _M("Copy"); }
 
-    virtual int filter(INode *node)
+    int filter(INode *node) override
     {
         // Make sure this node doesn't already have the components
         for (int i = 0; i < fSelectedNodes.Count(); i++)
@@ -1018,7 +1030,7 @@ public:
         return TRUE;
     }
 
-    virtual void proc(INodeTab &nodeTab)
+    void proc(INodeTab &nodeTab) override
     {
         for (int i = 0; i < nodeTab.Count(); i++)
         {
@@ -1037,12 +1049,23 @@ void CopyComponents()
         GetCOREInterface()->DoHitByNameDialog(&copyCompCallback);
     else
     {
-        int count = GetCOREInterface()->GetSelNodeCount();
-        if (count == 0)
-            hsMessageBox("No object(s) selected", "Component Copy", hsMessageBoxNormal);
-        else if (count > 1)
-            hsMessageBox("No components are shared among the selected objects", "Component Copy", hsMessageBoxNormal);
-        else
-            hsMessageBox("No components on the selected object", "Component Copy", hsMessageBoxNormal);
+        const TCHAR* msg;
+        switch (GetCOREInterface()->GetSelNodeCount()) {
+        case 0:
+            msg = _T("No object(s) selected");
+            break;
+        case 1:
+            msg = _T("No components on the selected object");
+            break;
+        default:
+            msg = _T("No components are shared among the selected objects");
+            break;
+        }
+        plMaxMessageBox(
+            nullptr,
+            msg,
+            _T("Component Copy"),
+            MB_OK | MB_ICONASTERISK
+        );
     }
 }

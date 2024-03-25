@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plShaderTable_inc
 #define plShaderTable_inc
 
-#include "hsTemplates.h"
+#include "HeadSpin.h"
 
 // When adding to the compiled table, make sure
 // you add the include in plShaderTable.cpp, or you'll
@@ -107,7 +107,9 @@ protected:
     const char* const       fFileName;
 
 public:
-    plShaderDecl(const char* const fname, plShaderID::ID id = plShaderID::Unregistered, uint32_t byteLen = 0, const uint8_t* const codes = 0L) : fID(id), fbyteLen(byteLen), fCodes(codes), fFileName(fname) {}
+    plShaderDecl(const char* const fname, plShaderID::ID id = plShaderID::Unregistered,
+                 uint32_t byteLen = 0, const uint8_t* const codes = nullptr)
+        : fID(id), fbyteLen(byteLen), fCodes(codes), fFileName(fname) { }
     // Data (fCodes) is never deleted, It points to memory compiled in.
 
     plShaderID::ID GetID() const { return fID; }
@@ -128,7 +130,7 @@ protected:
 
     const plShaderDecl*             fTable[plShaderID::kNumShaders];
 
-    plShaderTableInst();
+    plShaderTableInst() : fFlags(), fTable() { }
 
     bool LoadFromFile() const { return 0 != (fFlags & kLoadFromFile); }
     void SetLoadFromFile(bool on) { if(on) fFlags |= kLoadFromFile; else fFlags &= ~kLoadFromFile; }
@@ -140,7 +142,7 @@ protected:
     bool IsRegistered(plShaderID::ID id) const { return (id == 0) || ((id < plShaderID::kNumShaders) && fTable[id]); }
 
 public:
-    virtual ~plShaderTableInst();
+    virtual ~plShaderTableInst() = default;
 
     friend class plShaderTable;
 };

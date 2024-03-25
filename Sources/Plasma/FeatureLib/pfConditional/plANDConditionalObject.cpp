@@ -39,23 +39,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
 #include "plANDConditionalObject.h"
-#include "plPhysical/plDetectorModifier.h"
+
+#include "hsStream.h"
 #include "hsResMgr.h"
+
 #include "pnModifier/plConditionalObject.h"
 #include "pnModifier/plLogicModBase.h"
+
 #include "plMessage/plCondRefMsg.h"
 
 plANDConditionalObject::plANDConditionalObject() 
 {
-    
 }
 
 plANDConditionalObject::~plANDConditionalObject()
 {
-    for (int i = 0; i < fChildren.Count(); i++)
-        delete (fChildren[i]);
+    for (plConditionalObject* child : fChildren)
+        delete child;
 }
 
 bool plANDConditionalObject::MsgReceive(plMessage* msg)
@@ -73,9 +75,9 @@ void plANDConditionalObject::Evaluate()
 {
     if (!Satisfied())
     {
-        for (int i = 0; i < fChildren.Count(); i++)
+        for (plConditionalObject* child : fChildren)
         {
-            if (!fChildren[i]->Satisfied())
+            if (!child->Satisfied())
                 return;
         }
         SetSatisfied(true);
@@ -83,9 +85,9 @@ void plANDConditionalObject::Evaluate()
     }
     else
     {
-        for (int i = 0; i < fChildren.Count(); i++)
+        for (plConditionalObject* child : fChildren)
         {
-            if (fChildren[i]->Satisfied())
+            if (child->Satisfied())
                 return;
         }
         SetSatisfied(false);
@@ -94,8 +96,8 @@ void plANDConditionalObject::Evaluate()
 
 void plANDConditionalObject::Reset()
 {
-    for (int i = 0; i < fChildren.Count(); i++)
-        fChildren[i]->Reset();
+    for (plConditionalObject* child : fChildren)
+        child->Reset();
 }
 
 void plANDConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
@@ -103,21 +105,20 @@ void plANDConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
     plConditionalObject::Read(stream, mgr);
     
     plCondRefMsg* refMsg;
-    int n = stream->ReadLE32();
-    fChildren.SetCountAndZero(n);
-    for(int i = 0; i < n; i++ )
-    {   
+    uint32_t n = stream->ReadLE32();
+    fChildren.resize(n);
+    for (uint32_t i = 0; i < n; i++)
+    {
         refMsg = new plCondRefMsg(GetKey(), i);
         mgr->ReadKeyNotifyMe(stream,refMsg, plRefFlags::kActiveRef);
-    }   
+    }
 }
 
 void plANDConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
     
-    stream->WriteLE32(fChildren.GetCount());
-    for( int i = 0; i < fChildren.GetCount(); i++ )
-        fChildren[i]->Write(stream, mgr);
+    stream->WriteLE32((uint32_t)fChildren.size());
+    for (plConditionalObject* child : fChildren)
+        child->Write(stream, mgr);
 }
-

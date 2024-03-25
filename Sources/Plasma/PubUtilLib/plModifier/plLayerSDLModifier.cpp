@@ -39,8 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsMatrix44.h"
+
 #include "plLayerSDLModifier.h"
+
+#include "hsMatrix44.h"
+
 #include "plSDL/plSDL.h"
 #include "plSurface/plLayerAnimation.h"
 
@@ -56,7 +59,7 @@ char plLayerSDLModifier::kStrChannelData[]="channelData";
 
 plKey plLayerSDLModifier::GetStateOwnerKey() const
 { 
-    return fLayerAnimation ? fLayerAnimation->GetKey() : nil; 
+    return fLayerAnimation ? fLayerAnimation->GetKey() : nullptr;
 }
 
 //

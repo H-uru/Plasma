@@ -39,19 +39,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "pfGameScoreMgr.h"
-#include "pfMessage/pfGameScoreMsg.h"
-#include "plNetGameLib/plNetGameLib.h"
+
+#include <string_theory/string>
+
 #include "pnNetProtocol/pnNetProtocol.h"
+
+#include "plNetGameLib/plNetGameLib.h"
+
+#include "pfMessage/pfGameScoreMsg.h"
+
+
 
 struct ScoreFindParam
 {
     uint32_t fOwnerId;
-    plString fName;
+    ST::string fName;
     plKey fReceiver; // because plKey as a void* isn't cool
 
-    ScoreFindParam(uint32_t ownerId, plString name, plKey r)
-        : fOwnerId(ownerId), fName(name), fReceiver(r)
+    ScoreFindParam(uint32_t ownerId, ST::string name, plKey r)
+        : fOwnerId(ownerId), fName(std::move(name)), fReceiver(std::move(r))
     { }
 };
 
@@ -63,7 +71,7 @@ struct ScoreTransferParam
     plKey        fReceiver;
 
     ScoreTransferParam(pfGameScore* to, pfGameScore* from, int32_t points, plKey r)
-        : fTo(to), fFrom(from), fPoints(points), fReceiver(r)
+        : fTo(to), fFrom(from), fPoints(points), fReceiver(std::move(r))
     { }
 };
 
@@ -74,7 +82,7 @@ struct ScoreUpdateParam
     int32_t      fPoints; // reset points to this if update op
 
     ScoreUpdateParam(pfGameScore* s, plKey r, int32_t points = 0)
-        : fParent(s), fReceiver(r), fPoints(points)
+        : fParent(s), fReceiver(std::move(r)), fPoints(points)
     { }
 };
 
@@ -90,7 +98,7 @@ static void OnScoreSet(ENetError result, void* param)
 void pfGameScore::SetPoints(int32_t value, plKey rcvr)
 {
     Ref(); // netcode holds us
-    NetCliAuthScoreSetPoints(fScoreId, value, OnScoreSet, new ScoreUpdateParam(this, rcvr, value));
+    NetCliAuthScoreSetPoints(fScoreId, value, OnScoreSet, new ScoreUpdateParam(this, std::move(rcvr), value));
 }
 
 //======================================
@@ -105,13 +113,13 @@ static void OnScoreUpdate(ENetError result, void* param)
 void pfGameScore::AddPoints(int32_t add, plKey rcvr)
 {
     Ref(); // netcode holds us
-    NetCliAuthScoreAddPoints(fScoreId, add, OnScoreUpdate, new ScoreUpdateParam(this, rcvr, fValue + add));
+    NetCliAuthScoreAddPoints(fScoreId, add, OnScoreUpdate, new ScoreUpdateParam(this, std::move(rcvr), fValue + add));
 }
 
 //======================================
 void pfGameScore::Delete()
 {
-    NetCliAuthScoreDelete(fScoreId, nil, nil); // who cares about getting a notify here?
+    NetCliAuthScoreDelete(fScoreId, nullptr, nullptr); // who cares about getting a notify here?
     UnRef(); // kthxbai
 }
 
@@ -128,7 +136,7 @@ void pfGameScore::TransferPoints(pfGameScore* to, int32_t points, plKey recvr)
 {
     this->Ref(); to->Ref(); // netcode holds us
     NetCliAuthScoreTransferPoints(this->fScoreId, to->fScoreId, points,
-        OnScoreTransfer, new ScoreTransferParam(to, this, points, recvr));
+        OnScoreTransfer, new ScoreTransferParam(to, this, points, std::move(recvr)));
 }
 
 //======================================
@@ -138,7 +146,7 @@ static void OnScoreCreate(
     uint32_t        scoreId,
     uint32_t        createdTime, // ignored
     uint32_t        ownerId,
-    const plString& gameName,
+    const ST::string& gameName,
     uint32_t        gameType,
     int32_t         value
 ) {
@@ -149,9 +157,9 @@ static void OnScoreCreate(
     delete p;
 }
 
-void pfGameScore::Create(uint32_t ownerId, const plString& name, uint32_t type, int32_t value, const plKey& rcvr)
+void pfGameScore::Create(uint32_t ownerId, const ST::string& name, uint32_t type, int32_t value, const plKey& rcvr)
 {
-    NetCliAuthScoreCreate(ownerId, name, type, value, OnScoreCreate, new ScoreUpdateParam(nil, rcvr));
+    NetCliAuthScoreCreate(ownerId, name, type, value, OnScoreCreate, new ScoreUpdateParam(nullptr, rcvr));
 }
 
 //======================================
@@ -174,12 +182,18 @@ static void OnScoreFound(
     delete p;
 }
 
-void pfGameScore::Find(uint32_t ownerId, const plString& name, const plKey& rcvr)
+void pfGameScore::Find(uint32_t ownerId, const ST::string& name, const plKey& rcvr)
 {
     NetCliAuthScoreGetScores(ownerId, name, OnScoreFound, new ScoreFindParam(ownerId, name, rcvr));
 }
 
-void pfGameScore::FindHighScores(uint32_t ageId, uint32_t maxScores, const plString& name, const plKey& rcvr)
+void pfGameScore::FindHighScores(uint32_t ageId, uint32_t maxScores, const ST::string& name, const plKey& rcvr)
 {
-    NetCliAuthScoreGetHighScores(ageId, maxScores, name, OnScoreFound, new ScoreFindParam(ageId, name, rcvr));
+    // This functionality is only supported by next-gen servers
+    if (NetCliAuthCheckCap(kCapsScoreLeaderBoards)) {
+        NetCliAuthScoreGetHighScores(ageId, maxScores, name, OnScoreFound, new ScoreFindParam(ageId, name, rcvr));
+    } else {
+        pfGameScoreListMsg* msg = new pfGameScoreListMsg(kNetErrNotSupported, ageId, name);
+        msg->Send(rcvr);
+    }
 }

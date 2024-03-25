@@ -49,12 +49,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pyGlueDefinitions.h"
 #include "pyGUIControl.h"
-#include "pyGlueHelpers.h"
-#include <string>
 
-class pyColor;
 class pfGUIColorScheme;
+class plKey;
+class pyColor;
+class pyKey;
+namespace ST { class string; }
 
 class pyGUIControlTextBox : public pyGUIControl
 {
@@ -62,7 +64,7 @@ private:
     pfGUIColorScheme*       fOriginalColorScheme;
 
 protected:
-    pyGUIControlTextBox(): pyGUIControl() {} // for python glue only, do NOT call
+    pyGUIControlTextBox() : pyGUIControl(), fOriginalColorScheme() { } // for python glue only, do NOT call
     pyGUIControlTextBox(pyKey& gckey);
     pyGUIControlTextBox(plKey objkey);
 
@@ -76,19 +78,16 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static bool IsGUIControlTextBox(pyKey& gckey);
+    static bool IsGUIControlTextBox(const plKey& key);
 
-    virtual void    SetText( const char *text );
-    virtual void    SetTextW( std::wstring text );
-    virtual std::string GetText();
-    virtual std::wstring GetTextW();
-    virtual void    SetFontSize( uint8_t size );
-    virtual void    SetForeColor( pyColor& color );
-    virtual void    SetBackColor( pyColor& color );
-    virtual void    SetJustify( uint8_t justify );
+    void SetText(ST::string text);
+    ST::string GetText() const;
+    void SetFontSize(uint8_t size);
+    void SetForeColor(pyColor& color);
+    void SetBackColor(pyColor& color);
+    void SetJustify(uint8_t justify);
     
-    virtual uint8_t   GetJustify();
-    virtual PyObject* GetForeColor() const; // returns pyColor
+    uint8_t GetJustify();
 };
 
 #endif // _pyGUIControlTextBox_h_

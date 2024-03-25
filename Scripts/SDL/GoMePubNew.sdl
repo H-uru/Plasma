@@ -1,0 +1,369 @@
+# /*==LICENSE==*
+#
+# CyanWorlds.com Engine - MMOG client, server and tools
+# Copyright (C) 2011  Cyan Worlds, Inc.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Additional permissions under GNU GPL version 3 section 7
+#
+# If you modify this Program, or any covered work, by linking or
+# combining it with any of RAD Game Tools Bink SDK, Autodesk 3ds Max SDK,
+# NVIDIA PhysX SDK, Microsoft DirectX SDK, OpenSSL library, Independent
+# JPEG Group JPEG library, Microsoft Windows Media SDK, or Apple QuickTime SDK
+# (or a modified version of those libraries),
+# containing parts covered by the terms of the Bink SDK EULA, 3ds Max EULA,
+# PhysX SDK EULA, DirectX SDK EULA, OpenSSL and SSLeay licenses, IJG
+# JPEG Library README, Windows Media SDK EULA, or QuickTime SDK EULA, the
+# licensors of this Program grant you additional
+# permission to convey the resulting work. Corresponding Source for a
+# non-source form of such a combination shall include the source code for
+# the parts of OpenSSL and IJG JPEG Library used as well as that of the covered
+# work.
+#
+# You can contact Cyan Worlds, Inc. by email legal@cyan.com
+#  or by snail mail at:
+#       Cyan Worlds, Inc.
+#       14617 N Newport Hwy
+#       Mead, WA   99021
+#
+# *==LICENSE==*/
+
+STATEDESC GoMePubNew
+{
+    VERSION 1
+#Game Variables
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 2
+    
+#Game Variables
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 3
+
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=0
+
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 4
+
+    VAR BOOL    BarDoorStat[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 5
+
+    VAR BOOL    BarDoorStat[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 6
+    
+    VAR BOOL    BarDoorStat[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    SinkStat[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ChisoBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 7
+    
+    VAR BOOL    BarDoorStat[1]    DEFAULT=1
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    SinkStat[1]    DEFAULT=0
+    VAR BOOL    ChisoBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 8
+
+    VAR BOOL    BarDoorStat[1]    DEFAULT=1
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    SinkStat[1]    DEFAULT=0
+    VAR BOOL    ChisoBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    XMasVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 9
+
+    VAR BOOL    BarDoorStat[1]                   DEFAULT=1
+    VAR BOOL    islmGZBeamVis[1]                 DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    SinkStat[1]                      DEFAULT=0
+    VAR BOOL    ChisoBookVis[1]                  DEFAULT=0    DEFAULTOPTION=VAULT
+# Christmas/Hanukkah Decor
+    VAR BOOL    XMasVis[1]                       DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame01[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame02[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame03[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame04[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame05[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame06[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame07[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame08[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlameShammash[1]      DEFAULT=0    DEFAULTOPTION=VAULT
+# Pride Decor
+    VAR BOOL    gmpnPrideDecoVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# Halloween Deco
+    VAR BOOL    gmpnHalloweenVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# Fall/Thanksgiving
+    VAR BOOL    gmpnFallThanksVis[1]             DEFAULT=0    DEFAULTOPTION=VAULT
+# New Year Deco
+    VAR BOOL    gmpnNewYearVis[1]                DEFAULT=0    DEFAULTOPTION=VAULT
+# St Patricks Day Deco
+    VAR BOOL    gmpnStPatsDayVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# Tiki Deco for GreyDragon
+    VAR BOOL    gmpnTikiDecoVis[1]               DEFAULT=0    DEFAULTOPTION=VAULT
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 10
+
+    VAR BOOL    BarDoorStat[1]                   DEFAULT=1
+    VAR BOOL    islmGZBeamVis[1]                 DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    SinkStat[1]                      DEFAULT=0
+    VAR BOOL    ChisoBookVis[1]                  DEFAULT=0    DEFAULTOPTION=VAULT
+# Christmas/Hanukkah Decor
+    VAR BOOL    gmpnMenorahFlame01[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame02[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame03[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame04[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame05[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame06[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame07[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame08[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlameShammash[1]      DEFAULT=0    DEFAULTOPTION=VAULT
+# Pride Decor
+    VAR BOOL    gmpnPrideDecoVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# New Holiday Deco SDL (USE THIS FOR ALL HOLIDAY DECO!)
+    VAR BYTE    gmpnHolidayVis[1]                   DEFAULT=0    DEFAULTOPTION=VAULT
+#       List of Integers/holidays:
+#       0 - Default (no holiday decor)
+#       1 - New Years
+#       2 - St Pat's Day
+#       3 - Unused For Now
+#       4 - Halloween
+#       5 - Fall/Thanksgiving
+#       6 - Christmas/Hannukah
+#       7 - Tiki (not implemented yet)
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 11
+ 
+    VAR BOOL    BarDoorStat[1]                   DEFAULT=1
+    VAR BOOL    islmGZBeamVis[1]                 DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    SinkStat[1]                      DEFAULT=0
+    VAR BOOL    ChisoBookVis[1]                  DEFAULT=0    DEFAULTOPTION=VAULT
+# Christmas/Hanukkah Decor
+    VAR BOOL    XMasVis[1]                       DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame01[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame02[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame03[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame04[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame05[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame06[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame07[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame08[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlameShammash[1]      DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+# Pride Decor
+    VAR BOOL    gmpnPrideDecoVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# Halloween Deco (depreciated)
+    VAR BOOL    gmpnHalloweenVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# Fall/Thanksgiving (depreciated)
+    VAR BOOL    gmpnFallThanksVis[1]             DEFAULT=0    DEFAULTOPTION=VAULT
+# New Year Deco (depreciated)
+    VAR BOOL    gmpnNewYearVis[1]                DEFAULT=0    DEFAULTOPTION=VAULT
+# St Patricks Day Deco (depreciated)
+    VAR BOOL    gmpnStPatsDayVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# Tiki Deco for GreyDragon (depreciated)
+    VAR BOOL    gmpnTikiDecoVis[1]               DEFAULT=0    DEFAULTOPTION=VAULT
+# New Holiday Deco SDL (USE THIS FOR ALL HOLIDAY DECO!)
+    VAR BYTE    gmpnHolidayVis[1]                   DEFAULT=0    DEFAULTOPTION=VAULT
+#       List of Integers/holidays:
+#       0 - Default (no holiday decor)
+#       1 - New Years
+#       2 - St Pat's Day
+#       3 - Unused For Now
+#       4 - Halloween
+#       5 - Fall/Thanksgiving
+#       6 - Christmas/Hannukah
+#       7 - Tiki (not implemented yet)
+ 
+# New Menorah Flame State
+    VAR INT gmpnMenFlameStat[1]                  DEFAULT=0    DEFAULTOPTION=VAULT
+#       0 - Default (no flames)
+#       1 - Shammash and Flame01 on (Day 1)
+#       2 - Flame02 on (Day 2)
+#       3 - Flame03 on (Day 3)
+#       4 - Flame04 on (Day 4)
+#       5 - Flame05 on (Day 5)
+#       6 - Flame06 on (Day 6)
+#       7 - Flame07 on (Day 7)
+#       8 - Flame08 on (Day 8)
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 12
+
+    VAR BOOL    BarDoorStat[1]                   DEFAULT=1
+    VAR BOOL    islmGZBeamVis[1]                 DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    SinkStat[1]                      DEFAULT=0
+    VAR BOOL    ChisoBookVis[1]                  DEFAULT=0    DEFAULTOPTION=VAULT
+# Christmas/Hanukkah Decor
+    VAR BOOL    XMasVis[1]                       DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame01[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame02[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame03[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame04[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame05[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame06[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame07[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame08[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlameShammash[1]      DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+# Pride Decor
+    VAR BOOL    gmpnPrideDecoVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# Halloween Deco (depreciated)
+    VAR BOOL    gmpnHalloweenVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# Fall/Thanksgiving (depreciated)
+    VAR BOOL    gmpnFallThanksVis[1]             DEFAULT=0    DEFAULTOPTION=VAULT
+# New Year Deco (depreciated)
+    VAR BOOL    gmpnNewYearVis[1]                DEFAULT=0    DEFAULTOPTION=VAULT
+# St Patricks Day Deco (depreciated)
+    VAR BOOL    gmpnStPatsDayVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# Tiki Deco for GreyDragon (depreciated)
+    VAR BOOL    gmpnTikiDecoVis[1]               DEFAULT=0    DEFAULTOPTION=VAULT
+# New Holiday Deco SDL (USE THIS FOR ALL HOLIDAY DECO!)
+    VAR BYTE    gmpnHolidayVis[1]                   DEFAULT=0    DEFAULTOPTION=VAULT
+#       List of Integers/holidays:
+#       0 - Default (no holiday decor)
+#       1 - New Years
+#       2 - St Pat's Day
+#       3 - Mysterium
+#       4 - Halloween
+#       5 - Fall/Thanksgiving
+#       6 - Christmas/Hannukah
+#       7 - Tiki (not implemented yet)
+
+# New Menorah Flame State
+    VAR INT gmpnMenFlameStat[1]                  DEFAULT=0    DEFAULTOPTION=VAULT
+#    0 - Default (no flames)
+#    1 - Shammash and Flame01 on (Day 1)
+#    2 - Flame02 on (Day 2)
+#    3 - Flame03 on (Day 3)
+#    4 - Flame04 on (Day 4)
+#    5 - Flame05 on (Day 5)
+#    6 - Flame06 on (Day 6)
+#    7 - Flame07 on (Day 7)
+#    8 - Flame08 on (Day 8)
+
+# Mysterium Shirts Variable
+    VAR BOOL        gmpnMysteriumShirtsVis[1]   DEFAULT=0    DEFAULTOPTION=VAULT
+
+# Fil's Mic wiring
+    VAR BOOL        gmpnFilMicVis[1]            DEFAULT=0
+    VAR BOOL        gmpnFilMicExtend[1]         DEFAULT=0
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 13
+
+    VAR BOOL    BarDoorStat[1]                   DEFAULT=1
+    VAR BOOL    islmGZBeamVis[1]                 DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    SinkStat[1]                      DEFAULT=0
+    VAR BOOL    ChisoBookVis[1]                  DEFAULT=0    DEFAULTOPTION=VAULT
+# Christmas/Hanukkah Decor
+    VAR BOOL    XMasVis[1]                       DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
+    VAR BOOL    gmpnMenorahFlame01[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame02[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame03[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame04[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame05[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame06[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame07[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame08[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlameShammash[1]      DEFAULT=0    DEFAULTOPTION=VAULT
+# Pride Decor
+    VAR BOOL    gmpnPrideDecoVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# Halloween Deco (depreciated)
+    VAR BOOL    gmpnHalloweenVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# Fall/Thanksgiving (depreciated)
+    VAR BOOL    gmpnFallThanksVis[1]             DEFAULT=0    DEFAULTOPTION=VAULT
+# New Year Deco (depreciated)
+    VAR BOOL    gmpnNewYearVis[1]                DEFAULT=0    DEFAULTOPTION=VAULT
+# St Patricks Day Deco (depreciated)
+    VAR BOOL    gmpnStPatsDayVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# Tiki Deco for GreyDragon (depreciated)
+    VAR BOOL    gmpnTikiDecoVis[1]               DEFAULT=0    DEFAULTOPTION=VAULT
+# New Holiday Deco SDL (USE THIS FOR ALL HOLIDAY DECO!)
+    VAR BYTE    gmpnHolidayVis[1]                   DEFAULT=0    DEFAULTOPTION=VAULT
+#       List of Integers/holidays:
+#       0 - Default (no holiday decor)
+#       1 - New Years
+#       2 - St Pat's Day
+#       3 - Mysterium
+#       4 - Halloween
+#       5 - Fall/Thanksgiving
+#       6 - Christmas/Hannukah
+#       7 - Tiki (not implemented yet)
+
+# New Menorah Flame State
+    VAR INT gmpnMenFlameStat[1]                  DEFAULT=0    DEFAULTOPTION=VAULT
+#    0 - Default (no flames)
+#    1 - Shammash and Flame01 on (Day 1)
+#    2 - Flame02 on (Day 2)
+#    3 - Flame03 on (Day 3)
+#    4 - Flame04 on (Day 4)
+#    5 - Flame05 on (Day 5)
+#    6 - Flame06 on (Day 6)
+#    7 - Flame07 on (Day 7)
+#    8 - Flame08 on (Day 8)
+
+# Mysterium Shirts Variables
+    VAR BOOL        gmpnMysteriumShirtsVis[1]    DEFAULT=1    DEFAULTOPTION=VAULT
+
+# Fil's Mic wiring
+    VAR BOOL        gmpnFilMicVis[1]             DEFAULT=0
+    VAR BOOL        gmpnFilMicExtend[1]          DEFAULT=0
+
+# Moar Shirts
+    VAR BOOL        gmpnTCTShirtVis[1]           DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL        gmpnGoMeShirtVis[1]          DEFAULT=0    DEFAULTOPTION=VAULT
+}
