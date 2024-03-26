@@ -84,7 +84,7 @@ const char *plProduct::UUID() { return PRODUCT_UUID.data(); }
 ST::string plProduct::ProductString()
 {
     static ST::string _cache = ST::format(
-            "{}.{}.{} - {} - " RELEASE_ACCESS "." RELEASE_TYPE,
-            CoreName(), BranchId(), BuildId(), Tag());
+            "{}.{}.{} - " RELEASE_ACCESS "." RELEASE_TYPE,
+            CoreName(), BranchId(), BuildId());
     return _cache;
 }
