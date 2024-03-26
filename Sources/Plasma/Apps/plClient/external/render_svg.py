@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 from __future__ import print_function
 from __future__ import with_statement
 
-
+import shutil
 import os
 import math
 import io
@@ -230,6 +230,16 @@ def render_voice_icons(inpath, outpath):
 			cairosvg.svg2png(bytestring=uiSVG.toxml().encode('utf-8'),
 				write_to=os.path.join(outpath, voiceUI + ".png"), 
 				output_width=resSize["width"], output_height=resSize["height"])
+				
+def copy_files(inpath, outpath):
+    ut_inpath = os.path.join(inpath, f'xLoading_Updating_Text.png')
+    ut_outpath = os.path.join(outpath, f'xLoading_Updating_Text.png')
+    shutil.copy(ut_inpath, ut_outpath)
+    for num in range(0, 31 + 1):
+        filename = f'xLoading_Linking.{num:02d}.png'
+        link_inpath = os.path.join(inpath, filename)
+        link_outpath = os.path.join(outpath, filename)
+        shutil.copy(link_inpath, link_outpath)
 
 if __name__ == '__main__':
 	parser = OptionParser(usage="usage: %prog [options]")
@@ -262,3 +272,4 @@ if __name__ == '__main__':
 	#render_loading_books(inpath, outpath)
 	render_loading_text(inpath, outpath)
 	render_voice_icons(inpath, outpath)
+	copy_files(inpath, outpath)

@@ -104,7 +104,7 @@ void    plDTProgressMgr::Activate()
         fActivePlate->CreateFromResource(plProgressMgr::GetLoadingFrameID(fCurrentImage));
         fActivePlate->SetVisible(true);
         fActivePlate->SetOpacity(1.0f);
-        fActivePlate->SetSize(0.6f, 0.6f, true);
+        fActivePlate->SetSize(1.6f, 1.6f, true);
         fActivePlate->SetPosition(0, 0, 0);
     }
 }
@@ -165,7 +165,7 @@ void    plDTProgressMgr::Draw( plPipeline *p )
             fActivePlate->ReloadFromResource(plProgressMgr::GetLoadingFrameID(fCurrentImage));
             fActivePlate->SetVisible(true);
             fActivePlate->SetOpacity(1.0f);
-            fActivePlate->SetSize(0.6f, 0.6f, true);
+            fActivePlate->SetSize(1.6f, 1.6f, true);
             fActivePlate->SetPosition(0, 0, 0);
         }
     }
