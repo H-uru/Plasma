@@ -55,7 +55,7 @@ END
 // Dialog
 //
 
-IDD_DIALOG DIALOGEX 0, 0, 301, 135
+IDD_DIALOG DIALOGEX 0, 0, 301, 155
 STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_FIXEDSYS | 
     DS_CENTER | WS_POPUP | WS_VISIBLE | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
@@ -63,16 +63,16 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         109,IDB_BITMAP,"Static",SS_BITMAP | SS_SUNKEN | SS_REALSIZECONTROL,7,7,288,36
     CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER | 0x1,7,
-                    111,234,11
+                    131,234,11
     CONTROL         "", IDC_MARQUEE, "msctls_progress32", WS_BORDER | 0x8, 7,
-                    111, 234, 11
-    LTEXT           "Static",IDC_TEXT,10,101,266,8
-    PUSHBUTTON      "Cancel",IDCANCEL,243,111,51,11
-    LTEXT           "Welcome to URU",IDC_STATUS_TEXT,19,57,266,17
-    GROUPBOX        "",IDC_STATIC,7,46,287,49
-    RTEXT           "Product String",IDC_PRODUCTSTRING,19,85,272,8
-    LTEXT           "6 MiB / 666 MiB",IDC_DLSIZE,11,124,110,8
-    LTEXT           "128 KiB/s",IDC_DLSPEED,186,124,53,8,0,WS_EX_RIGHT
+                    131, 234, 11
+    LTEXT           "Static",IDC_TEXT,10,121,266,8
+    PUSHBUTTON      "Cancel",IDCANCEL,243,131,51,11
+    LTEXT           "Welcome to URU",IDC_STATUS_TEXT,19,57,266,40
+    GROUPBOX        "",IDC_STATIC,7,46,287,69
+    RTEXT           "Product String",IDC_PRODUCTSTRING,19,105,272,8
+    LTEXT           "6 MiB / 666 MiB",IDC_DLSIZE,11,144,110,8
+    LTEXT           "128 KiB/s",IDC_DLSPEED,186,144,53,8,0,WS_EX_RIGHT
 END
 
 
