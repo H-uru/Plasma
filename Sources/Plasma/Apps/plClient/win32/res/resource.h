@@ -22,6 +22,7 @@
 #define IDC_BUTTON1                     1030
 #define IDC_URULOGIN_NEWACCTLINK        1030
 #define IDC_AUTH_MESSAGE                1031
+#define IDC_URULOGIN_DONATE             1032
 #define IDC_PRODUCTSTRING               1033
 #define IDC_STATUS_TEXT                 1034
 #define IDC_HOTKEY1                     1035

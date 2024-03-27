@@ -812,6 +812,7 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
             SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_SETCURSEL, (WPARAM)plLocalization::GetLanguage(), 0);
 
             EnableWindow(GetDlgItem(hwndDlg, IDC_URULOGIN_NEWACCTLINK), !GetServerSignupUrl().empty());
+            EnableWindow(GetDlgItem(hwndDlg, IDC_URULOGIN_DONATE), !GetServerDonateUrl().empty());
 
             SetTimer(hwndDlg, AUTH_LOGIN_TIMER, 10, nullptr);
             return FALSE;
@@ -903,6 +904,13 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
             {
                 ST::string signupurl = GetServerSignupUrl();
                 ShellExecuteW(nullptr, L"open", signupurl.to_wchar().data(), nullptr, nullptr, SW_SHOWNORMAL);
+
+                return TRUE;
+            }
+            else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_URULOGIN_DONATE)
+            {
+                ST::string donateurl = GetServerDonateUrl();
+                ShellExecuteW(nullptr, L"open", donateurl.to_wchar().data(), nullptr, nullptr, SW_SHOWNORMAL);
 
                 return TRUE;
             }

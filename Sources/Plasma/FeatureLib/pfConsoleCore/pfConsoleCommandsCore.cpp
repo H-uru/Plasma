@@ -89,6 +89,16 @@ PF_CONSOLE_CMD(
 //============================================================================
 PF_CONSOLE_CMD(
     Server,
+    Donate,
+    "string url",
+    "Set the server's donate URL"
+) {
+    SetServerDonateUrl(params[0]);
+}
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server,
     DispName,
     "string name",
     "Set the displayable server name"

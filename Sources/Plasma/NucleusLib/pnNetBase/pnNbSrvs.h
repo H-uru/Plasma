@@ -104,6 +104,9 @@ void SetServerStatusUrl (const ST::string& url);
 ST::string GetServerSignupUrl ();
 void SetServerSignupUrl (const ST::string& url);
 
+ST::string GetServerDonateUrl ();
+void SetServerDonateUrl (const ST::string& url);
+
 ST::string GetServerDisplayName ();
 void SetServerDisplayName (const ST::string& name);
 

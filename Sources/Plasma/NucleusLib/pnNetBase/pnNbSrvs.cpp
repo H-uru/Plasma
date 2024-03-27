@@ -119,6 +119,7 @@ void SetClientPort(unsigned port) {
 //============================================================================
 static ST::string s_serverStatusUrl;
 static ST::string s_serverSignupUrl;
+static ST::string s_serverDonateUrl;
 static ST::string s_serverName;
 
 //============================================================================
@@ -139,6 +140,16 @@ ST::string GetServerSignupUrl () {
 //============================================================================
 void SetServerSignupUrl (const ST::string& url) {
     s_serverSignupUrl = url;
+}
+
+//============================================================================
+ST::string GetServerDonateUrl () {
+    return s_serverDonateUrl;
+}
+
+//============================================================================
+void SetServerDonateUrl (const ST::string& url) {
+    s_serverDonateUrl = url;
 }
 
 //============================================================================
