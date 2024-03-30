@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+namespace ST { class string; }
+
 void CalculateProfiles();
-void CreateStandardGraphs(const char* groupName, bool create);
+void CreateStandardGraphs(const ST::string& groupName, bool create);
 void UpdateStandardGraphs(float xPos, float yPos);

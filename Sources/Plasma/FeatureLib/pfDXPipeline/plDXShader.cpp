@@ -60,8 +60,7 @@ plDXShader::plDXShader(plShader* owner)
 plDXShader::~plDXShader()
 {
     fPipe = nullptr;
-
-    ISetError(nullptr);
+    fErrorString.clear();
 }
 
 void plDXShader::SetOwner(plShader* owner)
@@ -74,13 +73,13 @@ void plDXShader::SetOwner(plShader* owner)
     }
 }
 
-HRESULT plDXShader::IOnError(HRESULT hr, const char* errStr)
+HRESULT plDXShader::IOnError(HRESULT hr, ST::string errStr)
 {
-    ISetError(errStr);
+    fErrorString = std::move(errStr);
 
     fOwner->Invalidate();
 
-    hsStatusMessage(errStr);
+    hsStatusMessage(fErrorString.c_str());
 
     return hr;
 }

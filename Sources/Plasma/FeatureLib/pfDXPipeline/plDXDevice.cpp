@@ -52,8 +52,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDXVertexShader.h"
 #include "plDXPixelShader.h"
 
+#include <string_theory/string>
+
 //// Macros for D3D error handling
-#define INIT_ERROR_CHECK( cond, errMsg ) if( FAILED( fPipeline->fSettings.fDXError = cond ) ) { return fPipeline->ICreateFail( errMsg ); }    
+#define INIT_ERROR_CHECK(cond, errMsg) if (FAILED(fSettings.fDXError = cond)) { return ICreateFail(ST_LITERAL(errMsg)); }
 
 #if 1       // DEBUG
 #define STRONG_ERROR_CHECK( cond ) if( FAILED( fPipeline->fSettings.fDXError = cond ) ) { fPipeline->IGetD3DError(); fPipeline->IShowErrorMessage(); }   
@@ -189,7 +191,7 @@ void plDXDevice::SetLocalToWorldMatrix(const hsMatrix44& src)
     fD3DDevice->SetTransform(D3DTS_WORLD, &mat);
 }
 
-const char* plDXDevice::GetErrorString() const
+ST::string plDXDevice::GetErrorString() const
 {
     return fPipeline->fSettings.fErrorStr;
 }

@@ -549,9 +549,9 @@ bool    pfGUIControlMod::MsgReceive( plMessage *msg )
     if (rend || device) {
         plPipeline* pipe = rend ? rend->Pipeline() : device->Pipeline();
 
-        plProfile_BeginLap(GUITime, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_BeginLap(GUITime, this->GetKey()->GetUoid().GetObjectName());
         ISetUpDynTextMap(pipe);
-        plProfile_EndLap(GUITime, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_EndLap(GUITime, this->GetKey()->GetUoid().GetObjectName());
 
         if (rend)
             plgDispatch::Dispatch()->UnRegisterForExactType(plRenderMsg::Index(), GetKey());

@@ -480,13 +480,12 @@ PF_CONSOLE_CMD( Stats, Show,    // Group name, Function name
                 "Shows or hides a given category of statistics.\n"
                 "List the valid categories using Stats.ListGroups")
 {
-    const ST::string& group = numParams > 0 ? params[0] : ST::string();
-
     if (numParams > 1) {
-        const ST::string& stat = params[1];
-        plProfileManagerFull::Instance().ShowLaps(group.c_str(), stat.c_str());
+        plProfileManagerFull::Instance().ShowLaps(params[0], params[1]);
+    } else if (numParams > 0) {
+        plProfileManagerFull::Instance().ShowGroup(params[0]);
     } else {
-        plProfileManagerFull::Instance().ShowGroup(group.c_str());
+        plProfileManagerFull::Instance().ShowGroup(ST_LITERAL("General"));
     }
 }
 
@@ -506,9 +505,7 @@ PF_CONSOLE_CMD(Stats, ShowLaps,
                 "string group, string stat",
                 "")
 {
-    const ST::string& group = params[0];
-    const ST::string& stat = params[1];
-    plProfileManagerFull::Instance().ShowLaps(group.c_str(), stat.c_str());
+    plProfileManagerFull::Instance().ShowLaps(params[0], params[1]);
 }
 
 PF_CONSOLE_CMD(Stats, ListGroups, "", "Prints the names of all the stat groups to the console")
@@ -554,8 +551,7 @@ PF_CONSOLE_CMD(Stats, SetAvgTime, "int ms", "Sets the amount of time stats are a
 
 PF_CONSOLE_CMD(Stats, Graph, "string stat, int min, int max", "Graphs the specified stat")
 {
-    const ST::string& stat = params[0];
-    plProfileManagerFull::Instance().CreateGraph(stat.c_str(), (int)params[1], (int)params[2]);
+    plProfileManagerFull::Instance().CreateGraph(params[0], (int)params[1], (int)params[2]);
 }
 
 PF_CONSOLE_CMD(Stats, ShowDetail, "", "Shows the detail stat graph")
@@ -575,36 +571,31 @@ PF_CONSOLE_CMD(Stats, ResetDetailDefaults, "", "Resets the detail graph's defaul
 
 PF_CONSOLE_CMD(Stats, AddDetailVar, "string stat", "Adds the specified var to the detail graph with the default range of 0->100")
 {
-    const ST::string& stat = params[0];
-    plProfileManagerFull::Instance().AddDetailVar(stat.c_str(), 0, 100);
+    plProfileManagerFull::Instance().AddDetailVar(params[0], 0, 100);
 }
 
 PF_CONSOLE_CMD(Stats, AddDetailVarWithOffset, "string stat, int offset", "Adds the specified var to the detail graph with a offset and default range\n"
                                               "of 0->(100-offset)")
 {
-    const ST::string& stat = params[0];
     int offset = (int)params[1];
-    plProfileManagerFull::Instance().AddDetailVar(stat.c_str(), -offset, 100-offset);
+    plProfileManagerFull::Instance().AddDetailVar(params[0], -offset, 100-offset);
 }
 
 PF_CONSOLE_CMD(Stats, AddDetailVarWithRange, "string stat, int min, int max", "Adds the specified var to the detail graph")
 {
-    const ST::string& stat = params[0];
-    plProfileManagerFull::Instance().AddDetailVar(stat.c_str(), (int)params[1], (int)params[2]);
+    plProfileManagerFull::Instance().AddDetailVar(params[0], (int)params[1], (int)params[2]);
 }
 
 PF_CONSOLE_CMD(Stats, AddDetailVarWithOffsetAndRange, "string stat, int offset, int min, int max", "Adds the specified var to the detail graph with an\n"
                                                       "offset and a range of min->(max-offset)")
 {
-    const ST::string& stat = params[0];
     int offset = (int)params[1];
-    plProfileManagerFull::Instance().AddDetailVar(stat.c_str(), (int)params[2]-offset, (int)params[3]-offset);
+    plProfileManagerFull::Instance().AddDetailVar(params[0], (int)params[2]-offset, (int)params[3]-offset);
 }
 
 PF_CONSOLE_CMD(Stats, RemoveDetailVar, "string stat", "Removes the specified var from the detail graph")
 {
-    const ST::string& stat = params[0];
-    plProfileManagerFull::Instance().RemoveDetailVar(stat.c_str());
+    plProfileManagerFull::Instance().RemoveDetailVar(params[0]);
 }
 
 

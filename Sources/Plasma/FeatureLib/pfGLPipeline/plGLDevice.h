@@ -44,13 +44,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsMatrix44.h"
 
+#include <string_theory/string>
+
 class plGLPipeline;
 class plRenderTarget;
 
 class plGLDevice
 {
 protected:
-    const char*         fErrorMsg;
+    ST::string fErrorMsg;
     plGLPipeline*       fPipeline;
 
 public:
@@ -76,7 +78,7 @@ public:
     struct IndexBufferRef;
     struct TextureRef;
 
-    const char* GetErrorString() const { return fErrorMsg; }
+    ST::string GetErrorString() const { return fErrorMsg; }
 };
 
 #endif

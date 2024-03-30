@@ -66,8 +66,7 @@ void plDXPixelShader::Release()
     ReleaseObject(fHandle);
     fHandle = nullptr;
     fPipe = nullptr;
-
-    ISetError(nullptr);
+    fErrorString.clear();
 }
 
 bool plDXPixelShader::VerifyFormat(uint8_t format) const
@@ -94,17 +93,17 @@ HRESULT plDXPixelShader::ICreate(plDXPipeline* pipe)
 {
     fHandle = nullptr; // in case something goes wrong.
     fPipe = nullptr;
-    ISetError(nullptr);
+    fErrorString.clear();
 
     DWORD* shaderCodes = (DWORD*)(fOwner->GetDecl()->GetCodes());
 
     if( !shaderCodes )
-        return IOnError(-1, "Shaders must be compiled into the engine.");
+        return IOnError(-1, ST_LITERAL("Shaders must be compiled into the engine."));
 
     HRESULT hr = pipe->GetD3DDevice()->CreatePixelShader(shaderCodes, &fHandle);
     if( FAILED(hr) )
     {
-        return IOnError(hr, "Error on CreatePixelShader");
+        return IOnError(hr, ST_LITERAL("Error on CreatePixelShader"));
     }
 
     hsAssert(fHandle, "No error, but no pixel shader handle. Grrrr.");
@@ -123,7 +122,7 @@ HRESULT plDXPixelShader::ISetConstants(plDXPipeline* pipe)
                         (const float*)fOwner->GetConstBasePtr(),
                         fOwner->GetNumConsts());
         if( FAILED(hr) )
-            return IOnError(hr, "Error setting constants");
+            return IOnError(hr, ST_LITERAL("Error setting constants"));
     }
 
     return S_OK;

@@ -110,15 +110,17 @@ bool hsGDirect3DTnLEnumerate::SelectFromDevMode(const hsG3DDeviceRecord* devRec,
         D3DEnum_SelectDefaultDisplay(0);
     if( !GetCurrentDisplay() || !GetCurrentRenderer() )
     {
-        if( !*GetEnumeErrorStr() )
-            SetEnumeErrorStr("Error finding device");
+        if (GetEnumeErrorStr().empty()) {
+            fEnumeErrorStr = ST_LITERAL("Error finding device");
+        }
         return true;
     }   
     D3DEnum_SelectDefaultMode(width, height, colorDepth);
     if( !GetCurrentMode() )
     {
-        if( !*GetEnumeErrorStr() )
-            SetEnumeErrorStr("Error finding mode");
+        if (GetEnumeErrorStr().empty()) {
+            fEnumeErrorStr = ST_LITERAL("Error finding mode");
+        }
         return true;
     }
 
@@ -260,8 +262,6 @@ HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultDisplay( DWORD dwFlags )
 
 hsGDirect3DTnLEnumerate::hsGDirect3DTnLEnumerate()
 {
-    memset( &fEnumeErrorStr[0], 0x00, sizeof(fEnumeErrorStr) );
-
     fCurrentDisplay = nullptr;   // The selected DD driver
     fDisplays.clear();           // List of DD drivers
 
@@ -269,7 +269,7 @@ hsGDirect3DTnLEnumerate::hsGDirect3DTnLEnumerate()
     IDirect3D9* pD3D = hsGDirect3D::GetDirect3D();
     if (!pD3D)
     {
-        strcpy( fEnumeErrorStr, "Cannot load DirectX!" );
+        fEnumeErrorStr = ST_LITERAL("Cannot load DirectX!");
         return;
     }
 
@@ -285,8 +285,8 @@ hsGDirect3DTnLEnumerate::hsGDirect3DTnLEnumerate()
         pD3D->GetAdapterDisplayMode(iAdapter, &newDriver.fDesktopMode);
 
         newDriver.fAdapterInfo = adapterInfo;
-        strncpy(newDriver.fStrName, adapterInfo.Driver, 39);
-        strncpy(newDriver.fStrDesc, adapterInfo.Description, 39);
+        newDriver.fStrName = ST::string::from_latin_1(adapterInfo.Driver);
+        newDriver.fStrDesc = ST::string::from_latin_1(adapterInfo.Description);
         newDriver.fGuid = adapterInfo.DeviceIdentifier;
         newDriver.fMemory = 16 * 1024 * 1024;      /// Simulate 16 MB
 
@@ -307,7 +307,7 @@ void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAd
     // Then we can enum through the modes for each format.
 
     const DWORD numDeviceTypes = 2;
-    const TCHAR* strDeviceDescs[] = { "HAL", "REF" };
+    const ST::string strDeviceDescs[] = {ST_LITERAL("HAL"), ST_LITERAL("REF")};
     const D3DDEVTYPE deviceTypes[] = { D3DDEVTYPE_HAL, D3DDEVTYPE_REF };
 
     BOOL *formatWorks = new BOOL[kNumDisplayFormats + 1];       // One for each format
@@ -318,7 +318,7 @@ void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAd
         D3DEnum_RendererInfo& deviceInfo = drivInfo->fRenderers.emplace_back();
 
         pD3D->GetDeviceCaps(iAdapter, deviceTypes[iDevice], &deviceInfo.fDDCaps);
-        strncpy(deviceInfo.fStrName, strDeviceDescs[iDevice], 39);
+        deviceInfo.fStrName = strDeviceDescs[iDevice];
         deviceInfo.fDDType = deviceTypes[iDevice];
         deviceInfo.fIsHardware = deviceInfo.fDDCaps.DevCaps & D3DDEVCAPS_HWRASTERIZATION;
 
@@ -408,7 +408,7 @@ void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAd
                         /// Add it to our driver's global mode list
                         D3DEnum_ModeInfo& modeInfo = drivInfo->fModes.emplace_back();
                         modeInfo.fDDmode = dispMode;
-                        sprintf(modeInfo.fStrDesc, TEXT("%ld x %ld x %ld"), dispMode.Width, dispMode.Height, bitDepth);
+                        modeInfo.fStrDesc = ST::format("{} x {} x {}", dispMode.Width, dispMode.Height, bitDepth);
                         modeInfo.fBitDepth = bitDepth;
 
                         // Add it to the device
@@ -434,7 +434,7 @@ void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAd
                                 pModeInfo.fDDmode = dispMode;
                                 pModeInfo.fDDBehavior = behavior[iFormat];
                                 pModeInfo.fBitDepth = bitDepth;
-                                sprintf(pModeInfo.fStrDesc, TEXT("Windowed"));
+                                pModeInfo.fStrDesc = ST_LITERAL("Windowed");
                                 pModeInfo.fWindowed = true;
 
                                 IFindDepthFormats(pD3D, iAdapter, deviceInfo.fDDType, &pModeInfo);
@@ -556,15 +556,6 @@ VOID hsGDirect3DTnLEnumerate::D3DEnum_FreeResources()
 {
 }
 
-//-----------------------------------------------------------------------------
-// Name: SetEnumeErrorStr()
-// Desc: 
-//-----------------------------------------------------------------------------
-void hsGDirect3DTnLEnumerate::SetEnumeErrorStr(const char* s) 
-{ 
-    hsStrncpy(fEnumeErrorStr, s, 128); 
-}
-
 //// IGetDXBitDepth //////////////////////////////////////////////////////////
 //
 //  From a D3DFORMAT enumeration, return the bit depth associated with it.
@@ -602,7 +593,7 @@ bool    hsG3DDeviceSelector::IGetD3DCardInfo( hsG3DDeviceRecord &record,        
                                               void *driverInfo,
                                               void *deviceInfo,
                                               uint32_t *vendorID, uint32_t *deviceID, // Out
-                                              char **driverString, char **descString  )
+                                              ST::string& driverString, ST::string& descString)
 {
     D3DEnum_DisplayInfo  *driverD3DInfo = (D3DEnum_DisplayInfo *)driverInfo;
     D3DEnum_RendererInfo  *deviceD3DInfo = (D3DEnum_RendererInfo *)deviceInfo;
@@ -613,8 +604,8 @@ bool    hsG3DDeviceSelector::IGetD3DCardInfo( hsG3DDeviceRecord &record,        
 
     *vendorID = adapterInfo->VendorId;
     *deviceID = adapterInfo->DeviceId;
-    *driverString = adapterInfo->Driver;
-    *descString = adapterInfo->Description;
+    driverString = ST::string::from_latin_1(adapterInfo->Driver);
+    descString = ST::string::from_latin_1(adapterInfo->Description);
 
     return true;
 }
@@ -644,15 +635,11 @@ void hsG3DDeviceSelector::ITryDirect3DTnLDriver(D3DEnum_DisplayInfo* drivInfo)
     devRec.SetDriverName( drivInfo->fAdapterInfo.Driver );
     devRec.SetDriverDesc( drivInfo->fAdapterInfo.Description );
 
-    char    buff[ 256 ];
-    sprintf( buff, "%d.%02d.%02d.%04d",
-        HIWORD( drivInfo->fAdapterInfo.DriverVersion.u.HighPart ),
-        LOWORD( drivInfo->fAdapterInfo.DriverVersion.u.HighPart ),
-        HIWORD( drivInfo->fAdapterInfo.DriverVersion.u.LowPart ),
-        LOWORD( drivInfo->fAdapterInfo.DriverVersion.u.LowPart ) );
-
-
-    devRec.SetDriverVersion(buff);
+    devRec.SetDriverVersion(ST::format("{}.{02d}.{02d}.{04d}",
+        HIWORD(drivInfo->fAdapterInfo.DriverVersion.u.HighPart),
+        LOWORD(drivInfo->fAdapterInfo.DriverVersion.u.HighPart),
+        HIWORD(drivInfo->fAdapterInfo.DriverVersion.u.LowPart),
+        LOWORD(drivInfo->fAdapterInfo.DriverVersion.u.LowPart)));
 
     devRec.SetMemoryBytes(drivInfo->fMemory);
 

@@ -73,7 +73,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plMipmap.h"
 
 #include <algorithm>
-#include <string>
+#include <string_theory/string>
+#include <utility>
 
 class plAutoProfileImp : public plAutoProfile
 {
@@ -83,7 +84,7 @@ protected:
     int fNextSpawnPoint;
     ST::string fLastSpawnPointName;
     // For profiling a single age
-    std::string fAgeName;
+    ST::string fAgeName;
     bool fLinkedToSingleAge;
     bool fJustLinkToAges;
 
@@ -103,7 +104,7 @@ public:
         : fNextAge(), fNextSpawnPoint(), fLinkedToSingleAge(), fJustLinkToAges(), fLinkTime()
     { }
 
-    void StartProfile(const char* ageName) override;
+    void StartProfile(ST::string ageName) override;
     void LinkToAllAges() override;
 
     bool MsgReceive(plMessage* msg) override;
@@ -117,12 +118,9 @@ plAutoProfile* plAutoProfile::Instance()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void plAutoProfileImp::StartProfile(const char* ageName)
+void plAutoProfileImp::StartProfile(ST::string ageName)
 {
-    if (ageName)
-        fAgeName = ageName;
-    else
-        fAgeName = "";
+    fAgeName = std::move(ageName);
 
     IInit();
 
@@ -241,22 +239,19 @@ void plAutoProfileImp::INextProfile()
 
 bool plAutoProfileImp::INextAge()
 {
-    const char* ageName = nullptr;
+    ST::string ageName;
 
-    if (fAgeName.length() > 0)
-    {
+    if (!fAgeName.empty()) {
         if (fLinkedToSingleAge)
             return false;
 
         fLinkedToSingleAge = true;
-        ageName = fAgeName.c_str();
-    }
-    else
-    {
+        ageName = fAgeName;
+    } else {
         if (fNextAge >= fAges.size())
             return false;
 
-        ageName = fAges[fNextAge].c_str();
+        ageName = fAges[fNextAge];
     }
 
     fNextAge++;

@@ -500,7 +500,7 @@ void plPXPhysical::SendNewLocation(bool synchTransform, bool isSynchUpdate)
 
             if (!curl2w.Compare(fCachedLocal2World, .0001f)) {
                 plProfile_Inc(LocationsSent);
-                plProfile_BeginLap(PhysicsUpdates, GetKeyName().c_str());
+                plProfile_BeginLap(PhysicsUpdates, GetKeyName());
 
                 if (fCachedLocal2World.GetTranslate().fZ < kMaxNegativeZPos)
                 {
@@ -517,7 +517,7 @@ void plPXPhysical::SendNewLocation(bool synchTransform, bool isSynchUpdate)
                 pCorrMsg->Send();
                 if (fProxyGen)
                     fProxyGen->SetTransform(fCachedLocal2World, w2l);
-                plProfile_EndLap(PhysicsUpdates, GetKeyName().c_str());
+                plProfile_EndLap(PhysicsUpdates, GetKeyName());
             }
         }
     }
