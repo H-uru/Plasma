@@ -41,11 +41,6 @@
         "name": "physx",
         "version": "4.1.2#6",
         "$comment": "Upstream vcpkg updated to PhysX 5, which drops support for several target platforms. Stick with 4.1.2 for now."
-      },
-      {
-        "name": "liblzma",
-        "version": "5.4.4",
-        "$comment": "liblzma & xz were compromised upstream: CVE-2024-3094."
       }
     ],
     "features": {
