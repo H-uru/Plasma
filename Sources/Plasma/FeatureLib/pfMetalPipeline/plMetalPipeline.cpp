@@ -2744,7 +2744,7 @@ void plMetalPipeline::IPreprocessAvatarTextures()
             // But that hash map assumes that it follows the vertex arrangement of the models.
             // After a refactor, this function creation should go there.
             MTL::RenderPipelineDescriptor* descriptor = MTL::RenderPipelineDescriptor::alloc()->init()->autorelease();
-            MTL::Library*                  library = fDevice.fMetalDevice->newDefaultLibrary()->autorelease();
+            MTL::Library*                  library = fDevice.GetShaderLibrary();
 
             MTL::Function* vertFunction = library->newFunction(MTLSTR("PreprocessAvatarVertexShader"))->autorelease();
             MTL::Function* fragFunction = library->newFunction(MTLSTR("PreprocessAvatarFragmentShader"))->autorelease();
