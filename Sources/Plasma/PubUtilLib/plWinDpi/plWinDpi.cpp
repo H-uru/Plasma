@@ -160,7 +160,7 @@ UINT plWinDpi::GetDpi(HWND hWnd) const
     auto dpiForMonitor = fGetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
     if (dpiForMonitor.has_value()) {
         if (SUCCEEDED(dpiForMonitor.value()))
-            return UINT(float(dpiY));
+            return dpiY;
         LogRed("Per-Monitor DPI failed: {}", hsCOMError(dpiForMonitor.value()));
     }
 
