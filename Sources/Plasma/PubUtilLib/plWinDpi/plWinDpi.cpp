@@ -168,7 +168,7 @@ UINT plWinDpi::GetDpi(HWND hWnd) const
     HDC hdc = GetDC(hWnd);
     int ydpi = GetDeviceCaps(hdc, LOGPIXELSY);
     ReleaseDC(hWnd, hdc);
-    return UINT(float(ydpi));
+    return UINT(ydpi);
 }
 
 int plWinDpi::GetSystemMetrics(int nIndex, std::variant<UINT, HWND, std::monostate> dpiArg) const
