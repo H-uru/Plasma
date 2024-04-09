@@ -246,11 +246,6 @@ target_link_libraries(
 target_include_directories(plClient PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 
 if(APPLE)
-    add_dependencies(
-        plClient
-        pfMetalPipelineShadersMSL21
-        pfMetalPipelineShadersMSL23
-    )
     list(APPEND plClient_RESOURCES
         $<TARGET_FILE:pfMetalPipelineShadersMSL21>
         $<TARGET_FILE:pfMetalPipelineShadersMSL23>

@@ -57,6 +57,11 @@ target_link_libraries(pfMetalPipeline
     INTERFACE
         pnFactory
 )
+add_dependencies(
+    pfMetalPipeline
+    pfMetalPipelineShadersMSL21
+    pfMetalPipelineShadersMSL23
+)
 
 target_include_directories(pfMetalPipeline PUBLIC ${metalcpp_SOURCE_DIR})
 target_include_directories(pfMetalPipeline PUBLIC "ShaderSrc")
