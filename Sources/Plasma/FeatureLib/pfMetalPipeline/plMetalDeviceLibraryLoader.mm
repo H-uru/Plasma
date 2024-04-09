@@ -46,13 +46,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plMetalDevice::LoadLibrary()
 {
+    /*
+     On iOS we're fine loading the Metal 2.1 library. Metal 2.1 includes
+     all the Apple Silicon features on iOS. We need Metal 2.3 to get those
+     features on macOS.
+     */
+    
     NS::Error* error;
+    
+#ifdef TARGET_MACOS
     if (@available(macOS 11, *))
     {
         NSURL* shaderURL = [NSBundle.mainBundle URLForResource:@"pfMetalPipelineShadersMSL23" withExtension:@"metallib"];
         fShaderLibrary = fMetalDevice->newLibrary(static_cast<NS::URL*>(shaderURL), &error);
     }
     else
+#endif
     {
         NSURL* shaderURL = [NSBundle.mainBundle URLForResource:@"pfMetalPipelineShadersMSL21" withExtension:@"metallib"];
         fShaderLibrary = fMetalDevice->newLibrary(static_cast<NS::URL*>(shaderURL), &error);
