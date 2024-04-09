@@ -57,4 +57,5 @@ void plMetalDevice::LoadLibrary()
         NSURL* shaderURL = [NSBundle.mainBundle URLForResource:@"pfMetalPipelineShadersMSL21" withExtension:@"metallib"];
         fShaderLibrary = fMetalDevice->newLibrary(static_cast<NS::URL*>(shaderURL), &error);
     }
+    hsAssert(error == nil,  "Unexpected error loading Metal shader library");
 }
