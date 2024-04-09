@@ -189,7 +189,7 @@ public:
 
     MTL::PixelFormat GetFramebufferFormat() const { return fFramebufferFormat; };
     
-    MTL::Library* GetShaderLibrary() { return fShaderLibrary; }
+    MTL::Library* GetShaderLibrary() const { return fShaderLibrary; }
 
 private:
     struct plMetalPipelineRecord
