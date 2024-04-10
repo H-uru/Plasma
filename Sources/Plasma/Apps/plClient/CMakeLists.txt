@@ -169,6 +169,10 @@ if(APPLE)
         TARGETS plClient
         DESTINATION client
     )
+    
+    if(${CMAKE_VERSION} VERSION_LESS 3.28)
+        message(FATAL_ERROR "Cannot build Mac client without CMake 3.28")
+    endif()
 
     if(PLASMA_APPLE_DEVELOPMENT_TEAM_ID)
             set_target_properties(plClient PROPERTIES
@@ -244,13 +248,6 @@ target_link_libraries(
         "$<$<PLATFORM_ID:Darwin>:-framework QuartzCore>"
 )
 target_include_directories(plClient PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
-
-if(APPLE)
-    list(APPEND plClient_RESOURCES
-        $<TARGET_FILE:pfMetalPipelineShadersMSL21>
-        $<TARGET_FILE:pfMetalPipelineShadersMSL23>
-    )
-endif()
 
 if(PLASMA_EXTERNAL_RELEASE)
     set_target_properties(plClient PROPERTIES OUTPUT_NAME "UruExplorer")
