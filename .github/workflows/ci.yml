@@ -55,6 +55,11 @@ jobs:
           arch: ${{ matrix.platform.qt-arch }}
           dir: ${{ github.workspace }}/qt
 
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.29.2'
+
       - name: Setup NuGet
         run: |
           nuget sources add `
@@ -131,6 +136,11 @@ jobs:
           token: ${{ secrets.MACHINE_USER_REPO_READ }}
           path: maxsdk
 
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.29.2'
+
       - name: Setup NuGet
         run: |
           nuget sources add `
@@ -197,6 +207,11 @@ jobs:
               nasm \
               ninja-build \
               qtbase5-dev
+
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.29.2'
 
       - name: Setup NuGet
         run: |
@@ -270,6 +285,11 @@ jobs:
               libtool \
               nasm \
               python-setuptools
+
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.29.2'
 
       - name: Setup NuGet
         run: |
