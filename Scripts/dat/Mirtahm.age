@@ -1,0 +1,8 @@
+StartDateTime=0001811528
+DayLength=30.230000
+MaxCapacity=50
+LingerTime=180
+SequencePrefix=10485
+ReleaseVersion=0
+Page=Concierge,1
+Page=Lake,2
