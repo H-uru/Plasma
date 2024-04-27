@@ -1072,6 +1072,24 @@ pl3DPipeline<DeviceType>::~pl3DPipeline()
     while (fActiveLights)
         UnRegisterLight(fActiveLights);
 
+    while (fVtxBuffRefList) {
+        typename DeviceType::VertexBufferRef* ref = fVtxBuffRefList;
+        ref->Release();
+        ref->Unlink();
+    }
+
+    while (fIdxBuffRefList) {
+        typename DeviceType::IndexBufferRef* ref = fIdxBuffRefList;
+        ref->Release();
+        ref->Unlink();
+    }
+
+    while (fTextureRefList) {
+        typename DeviceType::TextureRef* ref = fTextureRefList;
+        ref->Release();
+        ref->Unlink();
+    }
+
     IReleaseAvRTPool();
     IClearClothingOutfits(&fClothingOutfits);
     IClearClothingOutfits(&fPrevClothingOutfits);
