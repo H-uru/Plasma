@@ -64,6 +64,8 @@ protected:
         : fWindow(window), fDevice(device) {};
 
 public:
+    virtual ~plGLDeviceImpl() { };
+
     virtual void Shutdown() = 0;
     virtual bool BeginRender(ST::string& error) = 0;
     virtual bool EndRender(ST::string& error) = 0;

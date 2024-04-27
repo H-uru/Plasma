@@ -159,6 +159,8 @@ void plGLDevice::Shutdown()
 {
     if (fImpl)
         fImpl->Shutdown();
+
+    delete fImpl;
 }
 
 void plGLDevice::SetRenderTarget(plRenderTarget* target)

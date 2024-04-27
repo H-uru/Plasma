@@ -205,8 +205,14 @@ plGLPipeline::~plGLPipeline()
     if (plGLPlateManager* pm = static_cast<plGLPlateManager*>(fPlateMgr))
         pm->IReleaseGeometry();
 
+    delete fPlateMgr;
+    fPlateMgr = nullptr;
+
     while (fTextFontRefList)
         delete fTextFontRefList;
+
+    delete fDebugTextMgr;
+    fDebugTextMgr = nullptr;
 
     fDevice.Shutdown();
 }
@@ -736,6 +742,7 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
             if (mRef == nullptr) {
                 mRef = new plGLMaterialShaderRef(material, this);
                 material->SetDeviceRef(mRef);
+                hsRefCnt_SafeUnRef(mRef);
             }
 
             if (!mRef->IsLinked())
@@ -1482,6 +1489,7 @@ void plGLPipeline::IDrawPlate(plPlate* plate)
     if (mRef == nullptr) {
         mRef = new plGLMaterialShaderRef(material, this);
         material->SetDeviceRef(mRef);
+        hsRefCnt_SafeUnRef(mRef);
     }
 
     if (!mRef->IsLinked())

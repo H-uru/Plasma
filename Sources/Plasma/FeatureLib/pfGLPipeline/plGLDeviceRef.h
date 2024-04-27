@@ -222,7 +222,7 @@ public:
 
     virtual ~plGLRenderTargetRef();
 
-    void Release();
+    void Release() override;
 
     virtual void SetOwner(plRenderTarget* targ) { fOwner = (plBitmap*)targ; }
 };
