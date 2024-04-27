@@ -407,8 +407,8 @@ void plGLMaterialShaderRef::ICompile()
     LOG_GL_ERROR_CHECK("Create Program failed");
 
     if (plGLVersion() >= 43) {
-        const char* name = ST::format("hsGMaterial::{}", fMaterial->GetKeyName()).c_str();
-        glObjectLabel(GL_PROGRAM, fRef, strlen(name), name);
+        ST::string name = ST::format("hsGMaterial::{}", fMaterial->GetKeyName());
+        glObjectLabel(GL_PROGRAM, fRef, strlen(name.c_str()), name.c_str());
     }
 
     glAttachShader(fRef, fVertShaderRef);

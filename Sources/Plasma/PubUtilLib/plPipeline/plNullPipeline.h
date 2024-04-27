@@ -56,7 +56,9 @@ class plNullPipelineDevice
         uint32_t fVertexSize;
         uint32_t fFormat;
 
+        void Release() { }
         void Link(NullDeviceRef** back) { }
+        void Unlink() { }
         bool IsLinked() { return true; }
         bool Volatile() const { return false; }
     };
