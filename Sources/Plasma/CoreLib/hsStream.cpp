@@ -629,6 +629,8 @@ uint32_t hsRAMStream::Read(uint32_t byteCount, void * buffer)
 
 uint32_t hsRAMStream::Write(uint32_t byteCount, const void* buffer)
 {
+    hsAssert(fVector.data(), "Trying to write to a null RAM buffer");
+
     size_t spaceUntilEof = fVector.size() - fPosition;
     if (byteCount <= spaceUntilEof) {
         memcpy(fVector.data() + fPosition, buffer, byteCount);
@@ -957,26 +959,6 @@ bool hsQueueStream::AtEnd()
 // hsBufferedStream
 ///////////////////////////////////////////////////////////////////////////////
 
-inline void FastByteCopy(void* dest, const void* src, uint32_t bytes)
-{
-    // Don't use memcpy if the read is 4 bytes or less, it's faster to just do a
-    // direct copy
-    switch (bytes)
-    {
-    case 4:
-        *((uint32_t*)dest) = *((const uint32_t*)src);
-        break;
-    case 2:
-        *((uint16_t*)dest) = *((const uint16_t*)src);
-        break;
-    case 1:
-        *((uint8_t*)dest) = *((const uint8_t*)src);
-        break;
-    default:
-        memcpy(dest, src, bytes);
-    }
-}
-
 //#define LOG_BUFFERED
 
 hsBufferedStream::hsBufferedStream()
@@ -1081,7 +1063,7 @@ uint32_t hsBufferedStream::Read(uint32_t bytes, void* buffer)
             uint32_t bytesInBuffer = fBufferLen - bufferPos;
             uint32_t cachedReadSize = bytesInBuffer < bytes ? bytesInBuffer : bytes;
 
-            FastByteCopy(buffer, &fBuffer[bufferPos], cachedReadSize);
+            memcpy(buffer, &fBuffer[bufferPos], cachedReadSize);
 
             fPosition += cachedReadSize;
             numReadBytes += cachedReadSize;
