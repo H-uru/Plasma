@@ -86,9 +86,9 @@ fragment half4 gammaCorrectFragmentInPlace(GammaVertexOut in        [[stage_in]]
                                  texture1d_array<ushort> LUT        [[texture(1)]])
 {
     return {
-        half(float(LUT.sample(lutSampler, color.r, 0).x)/USHRT_MAX),
-        half(float(LUT.sample(lutSampler, color.g, 1).x)/USHRT_MAX),
-        half(float(LUT.sample(lutSampler, color.b, 2).x)/USHRT_MAX),
+        half(float(LUT.sample(lutSampler, color.r, 0).x) / USHRT_MAX),
+        half(float(LUT.sample(lutSampler, color.g, 1).x) / USHRT_MAX),
+        half(float(LUT.sample(lutSampler, color.b, 2).x) / USHRT_MAX),
         1.0
     };
 }
