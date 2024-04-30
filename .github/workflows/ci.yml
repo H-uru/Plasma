@@ -266,7 +266,7 @@ jobs:
       matrix:
         platform:
           - { str: macos-arm64, arch: arm64, runner: "macos-14" }
-          - { str: macos-x64, arch: x86_64, runner: "macos-latest" }
+          - { str: macos-x64, arch: x86_64, runner: "macos-13" }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
