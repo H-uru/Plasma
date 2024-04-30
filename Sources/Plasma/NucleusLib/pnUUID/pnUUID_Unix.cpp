@@ -133,12 +133,12 @@ bool plUUID::FromString( const char * str )
     return true;
 }
 
-bool plUUID::ToString( ST::string & out ) const
+bool plUUID::ToString(ST::string& out) const
 {
     uuid_t g;
-    plUUIDHelper::CopyToNative( g, this );
+    plUUIDHelper::CopyToNative(g, this);
     char buf[40];
-    uuid_unparse( g, buf );
+    uuid_unparse_lower(g, buf);
     out = buf;
     return true;
 }
