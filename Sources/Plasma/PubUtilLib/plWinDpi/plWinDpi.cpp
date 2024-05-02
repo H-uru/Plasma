@@ -160,7 +160,7 @@ UINT plWinDpi::GetDpi(HWND hWnd) const
     auto dpiForMonitor = fGetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
     if (dpiForMonitor.has_value()) {
         if (SUCCEEDED(dpiForMonitor.value()))
-            return UINT(float(dpiY) / 96.0f);
+            return dpiY;
         LogRed("Per-Monitor DPI failed: {}", hsCOMError(dpiForMonitor.value()));
     }
 
@@ -168,7 +168,7 @@ UINT plWinDpi::GetDpi(HWND hWnd) const
     HDC hdc = GetDC(hWnd);
     int ydpi = GetDeviceCaps(hdc, LOGPIXELSY);
     ReleaseDC(hWnd, hdc);
-    return UINT(float(ydpi) / 96.0f);
+    return UINT(ydpi);
 }
 
 int plWinDpi::GetSystemMetrics(int nIndex, std::variant<UINT, HWND, std::monostate> dpiArg) const
