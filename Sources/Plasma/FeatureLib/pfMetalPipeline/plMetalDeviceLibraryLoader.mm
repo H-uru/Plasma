@@ -54,7 +54,7 @@ void plMetalDevice::LoadLibrary()
     
     NS::Error* error;
     
-#ifdef TARGET_MACOS
+#ifdef TARGET_OS_OSX
     if (@available(macOS 11, *))
     {
         NSURL* shaderURL = [NSBundle.mainBundle URLForResource:@"pfMetalPipelineShadersMSL23" withExtension:@"metallib"];
