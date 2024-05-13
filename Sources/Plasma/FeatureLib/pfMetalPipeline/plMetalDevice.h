@@ -259,20 +259,31 @@ private:
     
     void LoadLibrary();
 
-    bool NeedsPostprocessing() const
-    {
-        return fGammaLUTTexture != nullptr;
-    }
-    void                      PostprocessIntoDrawable();
-    void                      CreateGammaAdjustState();
-    MTL::RenderPipelineState* fGammaAdjustState;
-
     void BeginNewRenderPass();
     void ReleaseSamplerStates();
     void ReleaseFramebufferObjects();
 
     // Blur states
     std::unordered_map<float, NS::Object*> fBlurShaders;
+    
+    // MARK: - Post processing
+private:
+    bool NeedsPostprocessing() const
+    {
+        return fGammaLUTTexture != nullptr;
+    }
+    void                      PreparePostProcessing();
+    void                      FinalizePostProcessing();
+    void                      PostprocessIntoDrawable();
+    void                      CreateGammaAdjustState();
+    MTL::RenderPipelineState* fGammaAdjustState;
+
+    // MARK:  - Device capabilities
+public:
+    /// Returns true if the device supports title memory features such as directly writable render buffers.
+    BOOL SupportsTileMemory() { return fSupportsTileMemory; }
+private:
+    BOOL fSupportsTileMemory;
 };
 
 #endif
