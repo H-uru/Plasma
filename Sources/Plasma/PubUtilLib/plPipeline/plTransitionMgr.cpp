@@ -79,10 +79,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 plTransitionMgr::plTransitionMgr()
+    : fEffectPlate(), fCurrentEffect(kIdle), fRegisteredForTime(),
+    fHoldAtEnd(), fPlaying(), fNoSoundFade(), fEffectLength(), fCurrOpacity(),
+    fOpacDelta(), fLastTime()
 {
-    fEffectPlate = nullptr;
-    fCurrentEffect = kIdle;
-    fPlaying = false;
 }
 
 void    plTransitionMgr::Init()

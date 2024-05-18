@@ -104,6 +104,8 @@ jobs:
       - name: Test
         run: |
           cmake --build build --target check --config "${{ matrix.cfg.type }}" -j 4
+        env:
+          CTEST_OUTPUT_ON_FAILURE: 1
 
   max:
     # Can only run if we have a token for our super seekrit Max SDK repo. Sad.
@@ -247,6 +249,8 @@ jobs:
       - name: Test
         run: |
           cmake --build build --target check -j 4
+        env:
+          CTEST_OUTPUT_ON_FAILURE: 1
 
       - name: Install
         run: |
@@ -326,9 +330,10 @@ jobs:
           cmake --build build --config "${{ matrix.cfg.type }}" -j 2
 
       - name: Test
-        if: matrix.platform.arch == 'x86_64'
         run: |
           cmake --build build --target check --config "${{ matrix.cfg.type }}" -j 2
+        env:
+          CTEST_OUTPUT_ON_FAILURE: 1
 
       - name: Install
         run: |
