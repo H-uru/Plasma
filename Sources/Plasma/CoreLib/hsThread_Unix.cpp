@@ -78,6 +78,7 @@ int clock_gettime(int clocktype, struct timespec* ts)
 
 void hsThread::SetThisThreadName(const ST::string& name)
 {
+#ifdef HAVE_PTHREAD_SETNAME_NP
 #if defined(HS_BUILD_FOR_APPLE)
     // The Apple version doesn't take a thread argument and always operates on the current thread.
     int res = pthread_setname_np(name.c_str());
@@ -86,7 +87,8 @@ void hsThread::SetThisThreadName(const ST::string& name)
     // On Linux, thread names must fit into 16 bytes, including the terminator.
     int res = pthread_setname_np(pthread_self(), name.left(15).c_str());
     hsAssert(res == 0, "Failed to set thread name");
-#endif
+#endif // HS_BUILD_FOR_LINUX
+#endif // HAVE_PTHREAD_SETNAME_NP
     // Because this is just a debugging help, do nothing by default (sorry, BSDs).
 }
 

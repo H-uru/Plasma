@@ -10,9 +10,11 @@ if(NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION)
     endif()
 endif()
 
-# Check for Linux sysinfo.
 include(CheckCXXSymbolExists)
+# Check for Linux sysinfo.
 check_cxx_symbol_exists("sysinfo" "sys/sysinfo.h" HAVE_SYSINFO)
+# Check for pthread setname_np API
+check_cxx_symbol_exists(pthread_setname_np pthread.h HAVE_PTHREAD_SETNAME_NP)
 
 # Check for BSD style sysctl.
 try_compile(HAVE_SYSCTL ${PROJECT_BINARY_DIR}
