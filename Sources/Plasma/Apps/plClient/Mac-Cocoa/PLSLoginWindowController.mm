@@ -64,6 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define FAKE_PASS_STRING @"********"
 
 static NSOperationQueue* _loginQueue = nil;
+static dispatch_queue_t _keychainQueue = dispatch_queue_create(nullptr, DISPATCH_QUEUE_SERIAL);
 
 @implementation PLSLoginController
 
@@ -131,11 +132,13 @@ static void* StatusTextDidChangeContext = &StatusTextDidChangeContext;
         ST::string username = [self.username STString];
         ST::string password = [self.password STString];
 
-        pfPasswordStore* store = pfPasswordStore::Instance();
-        if (self.rememberPassword)
-            store->SetPassword(username, password);
-        else
-            store->SetPassword(username, ST::string());
+        dispatch_async(_keychainQueue, ^{
+            pfPasswordStore* store = pfPasswordStore::Instance();
+            if (self.rememberPassword)
+                store->SetPassword(username, password);
+            else
+                store->SetPassword(username, ST::string());
+        });
     }
 }
 
@@ -150,8 +153,10 @@ static void* StatusTextDidChangeContext = &StatusTextDidChangeContext;
     if (self.rememberPassword) {
         pfPasswordStore* store = pfPasswordStore::Instance();
         ST::string username = [self.username STString];
-        ST::string password = store->GetPassword(username);
-        self.password = [NSString stringWithSTString:password];
+        dispatch_sync(_keychainQueue, ^{
+            ST::string password = store->GetPassword(username);
+            self.password = [NSString stringWithSTString:password];
+        });
     }
 }
 
