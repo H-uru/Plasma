@@ -124,6 +124,7 @@ find_package(ZLIB REQUIRED)
 
 if(APPLE)
     find_package(Security)
+    find_package(Metal)
 elseif(UNIX)
     find_package(LIBSECRET)
     find_package(Uuid REQUIRED)
@@ -147,7 +148,7 @@ endif(PLASMA_EXTERNAL_RELEASE)
 # Pipeline Renderers
 cmake_dependent_option(PLASMA_PIPELINE_DX "Enable DirectX rendering pipeline?" ON "DirectX_FOUND" OFF)
 cmake_dependent_option(PLASMA_PIPELINE_GL "Enable OpenGL rendering pipeline?" ON "TARGET epoxy::epoxy" OFF)
-cmake_dependent_option(PLASMA_PIPELINE_METAL "Enable Metal rendering pipeline?" ON "APPLE" OFF)
+cmake_dependent_option(PLASMA_PIPELINE_METAL "Enable Metal rendering pipeline?" ON "TARGET Metal::Metal" OFF)
 
 if(PLASMA_PIPELINE_DX)
     add_definitions(-DPLASMA_PIPELINE_DX)

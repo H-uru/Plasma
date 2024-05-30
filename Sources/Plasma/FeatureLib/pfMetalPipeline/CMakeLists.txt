@@ -49,7 +49,7 @@ target_link_libraries(pfMetalPipeline
         CoreLib
         pnNucleusInc
         plPipeline
-        "-framework Metal"
+        Metal::Metal
         "-framework MetalPerformanceShaders"
     PRIVATE
         plStatusLog
