@@ -58,7 +58,7 @@ plDXShaderAssembler::plDXShaderAssembler()
     fLibrary = LoadLibraryW(D3DCOMPILER_DLL_W);
     if (!fLibrary)
         throw plDXShaderError("Unable to load library '{}'", D3DCOMPILER_DLL_W);
-    fFuncPtr = (D3DAssemble)GetProcAddress(fLibrary, "D3DAssemble");
+    fFuncPtr = reinterpret_cast<D3DAssemble>(GetProcAddress(fLibrary, "D3DAssemble"));
     if (!fFuncPtr) {
         FreeLibrary(fLibrary);
         throw plDXShaderError("Unable to get D3DAssemble proc in library '{}'", D3DCOMPILER_DLL_W);
@@ -83,9 +83,9 @@ std::shared_ptr<ID3DBlob> plDXShaderAssembler::AssShader(const char* shader, uns
     ID3DBlob* errors = nullptr;
     hsCOMError hr = fFuncPtr(shader, shaderLen, nullptr, nullptr, nullptr, 0, &compiled, &errors);
     if (SUCCEEDED(hr))
-        return std::shared_ptr<ID3DBlob>(compiled, IRelease);
+        return {compiled, IRelease};
 
-    ST::string strErrors(errors ? reinterpret_cast<const char*>(errors->GetBufferPointer()) : "Unspecified");
+    ST::string strErrors(errors ? static_cast<const char*>(errors->GetBufferPointer()) : "Unspecified");
     IRelease(compiled);
     IRelease(errors);
 
@@ -96,12 +96,12 @@ std::shared_ptr<ID3DBlob> plDXShaderAssembler::AssShader(const char* shader, uns
 
 void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* fp, ID3DBlob* shader)
 {
-    fputs("\n\n\n", fp);
+    ST::printf(fp, "\n\n\n");
 
     hsSsize_t byteLen = shader->GetBufferSize();
     hsSsize_t quadLen = byteLen >> 2;
 
-    unsigned char* codes = (unsigned char*)shader->GetBufferPointer();
+    auto* codes = reinterpret_cast<unsigned char*>(shader->GetBufferPointer());
 
     ST::printf(fp, "static const uint32_t {}byteLen = {};\n\n", varName, byteLen);
     ST::printf(fp, "static const uint8_t {}Codes[] = {{\n", varName);
@@ -117,13 +117,25 @@ void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* 
     ST::printf(fp, "\t0x{x},", *codes++);
     ST::printf(fp, "\t0x{x},", *codes++);
     ST::printf(fp, "\t0x{x}\n", *codes++);
-    fputs("\t};", fp);
-    fputs("\n\n", fp);
+    ST::printf(fp, "\t];");
+    ST::printf(fp, "\n\n");
 
     ST::printf(fp, "static const plShaderDecl {}Decl(\"{}\", {}, {}byteLen, {}Codes);\n\n",
                varName, fileName, varName, varName, varName);
     ST::printf(fp, "static const plShaderRegister {}Register(&{}Decl);\n\n", varName, varName);
 }
+
+
+static bool AttemptToOpenFile(const plFileName& file, hsUNIXStream& inFp) {
+    if (!inFp.Open(file, "rw")) {
+        fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
+        ST::printf(stderr, "Error opening file {}\n", file);
+        fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
+        return true;
+    }
+    return false;
+}
+
 
 static void IAssShader(const plDXShaderAssembler& ass, const char* name)
 {
@@ -133,21 +145,14 @@ static void IAssShader(const plDXShaderAssembler& ass, const char* name)
     plFileName outFile = ST::format("{}.h", varName);
 
     ST::printf("Processing {} into {}\n", name, outFile);
+
     hsUNIXStream outFp;
-    if (!outFp.Open(outFile, "w")) {
-        fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
-        ST::printf(stderr, "Error opening file {} for output\n", outFile);
-        fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
+    if (AttemptToOpenFile(outFile, outFp))
         return;
-    }
 
     hsUNIXStream inFp;
-    if (!inFp.Open(inFile, "r")) {
-        fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
-        ST::printf(stderr, "Error opening file {} for input\n", inFile);
-        fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
+    if (AttemptToOpenFile(inFile, inFp))
         return;
-    }
 
     uint32_t shaderCodeLen = inFp.GetEOF();
     auto shaderCode = std::make_unique<char[]>(shaderCodeLen);
@@ -162,78 +167,79 @@ static void IAssShader(const plDXShaderAssembler& ass, const char* name)
         fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
     }
 }
-
+// Just copy in the enum and use Replace on
+// vs_ => "vs_
+// ps_ => "ps_
+// , => ",
+static constexpr std::string_view kEnumNames[] {
+    "vs_WaveFixedFin6",
+    "ps_WaveFixed",
+    "vs_CompCosines",
+    "ps_CompCosines",
+    "vs_ShoreLeave6",
+    "ps_ShoreLeave6",
+    "vs_WaveRip",
+    "ps_WaveRip",
+    "vs_WaveDec1Lay",
+    "vs_WaveDec2Lay11",
+    "vs_WaveDec2Lay12",
+    "vs_WaveDecEnv",
+    "ps_CbaseAbase",
+    "ps_CalphaAbase",
+    "ps_CalphaAMult",
+    "ps_CalphaAadd",
+    "ps_CaddAbase",
+    "ps_CaddAMult",
+    "ps_CaddAAdd",
+    "ps_CmultAbase",
+    "ps_CmultAMult",
+    "ps_CmultAAdd",
+    "ps_WaveDecEnv",
+    "vs_WaveGraph2",
+    "ps_WaveGraph",
+    "vs_WaveGridFin",
+    "ps_WaveGrid",
+    "vs_BiasNormals",
+    "ps_BiasNormals",
+    "vs_ShoreLeave7",
+    "vs_WaveRip7",
+    "ps_MoreCosines",
+    "vs_WaveDec1Lay_7",
+    "vs_WaveDec2Lay11_7",
+    "vs_WaveDec2Lay12_7",
+    "vs_WaveDecEnv_7",
+    "vs_WaveFixedFin7",
+    "vs_GrassShader",
+    "ps_GrassShader"
+};
 int main(int argc, char* argv[])
 {
-    if( argc < 2 )
+	const std::vector<std::string_view> CommandLineArgArray(argv+1, argv + argc);
+
+    if( CommandLineArgArray.empty() )
     {
         ST::printf("{} <file0> <file1> ...\n", argv[0]);
         return 0;
     }
 
-    const char* const * nameList = nullptr;
-    int numNames = 0;
-    if (stricmp(argv[1], "all") == 0)
-    {
-        // Just copy in the enum and use Replace on
-        // vs_ => "vs_
-        // ps_ => "ps_
-        // , => ",
-        static const char* kEnumNames[] = {
-            "vs_WaveFixedFin6",
-            "ps_WaveFixed",
-            "vs_CompCosines",
-            "ps_CompCosines",
-            "vs_ShoreLeave6",
-            "ps_ShoreLeave6",
-            "vs_WaveRip",
-            "ps_WaveRip",
-            "vs_WaveDec1Lay",
-            "vs_WaveDec2Lay11",
-            "vs_WaveDec2Lay12",
-            "vs_WaveDecEnv",
-            "ps_CbaseAbase",
-            "ps_CalphaAbase",
-            "ps_CalphaAMult",
-            "ps_CalphaAadd",
-            "ps_CaddAbase",
-            "ps_CaddAMult",
-            "ps_CaddAAdd",
-            "ps_CmultAbase",
-            "ps_CmultAMult",
-            "ps_CmultAAdd",
-            "ps_WaveDecEnv",
-            "vs_WaveGraph2",
-            "ps_WaveGraph",
-            "vs_WaveGridFin",
-            "ps_WaveGrid",
-            "vs_BiasNormals",
-            "ps_BiasNormals",
-            "vs_ShoreLeave7",
-            "vs_WaveRip7",
-            "ps_MoreCosines",
-            "vs_WaveDec1Lay_7",
-            "vs_WaveDec2Lay11_7",
-            "vs_WaveDec2Lay12_7",
-            "vs_WaveDecEnv_7",
-            "vs_WaveFixedFin7",
-            "vs_GrassShader",
-            "ps_GrassShader"
-        };
 
+    const std::string_view* nameList;
+    int numNames;
+    if (CommandLineArgArray.at(0).compare("all") == 0)
+    {
         nameList = kEnumNames;
         numNames = std::size(kEnumNames);
     }
     else
     {
-        nameList = argv+1;
-        numNames = argc-1;
+        nameList = CommandLineArgArray.data();
+        numNames = CommandLineArgArray.size();
     }
 
     try {
-        plDXShaderAssembler ass;
-        for (int i = 0; i < numNames; i++ ) {
-            IAssShader(ass, nameList[i]);
+	    for (int i = 0; i < numNames; i++) {
+		    plDXShaderAssembler ass;
+		    IAssShader(ass, nameList[i].data());
         }
     } catch (const plDXShaderError& error) {
         fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
