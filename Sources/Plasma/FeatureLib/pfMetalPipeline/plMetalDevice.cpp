@@ -1050,15 +1050,18 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
             fCurrentDrawableDepthTexture = fMetalDevice->newTexture(depthTextureDescriptor);
         }
     }
-
-    // Do we need to create a unprocessed output texture?
-    // If the depth needs to be rebuilt - we probably need to rebuild this one too
-    if ((fCurrentUnprocessedOutputTexture && depthNeedsRebuild) || (fCurrentUnprocessedOutputTexture == nullptr && NeedsPostprocessing())) {
-        MTL::TextureDescriptor* mainPassDescriptor = MTL::TextureDescriptor::texture2DDescriptor(drawable->texture()->pixelFormat(), drawable->texture()->width(), drawable->texture()->height(), false);
-        mainPassDescriptor->setStorageMode(MTL::StorageModePrivate);
-        mainPassDescriptor->setUsage(MTL::TextureUsageShaderRead | MTL::TextureUsageRenderTarget);
-        fCurrentUnprocessedOutputTexture->release();
-        fCurrentUnprocessedOutputTexture = fMetalDevice->newTexture(mainPassDescriptor);
+    
+    // We only need to allocate an intermediate texture if we don't have tile memory.
+    if (!SupportsTileMemory()) {
+        // Do we need to create a unprocessed output texture?
+        // If the depth needs to be rebuilt - we probably need to rebuild this one too
+        if ((fCurrentUnprocessedOutputTexture && depthNeedsRebuild) || (fCurrentUnprocessedOutputTexture == nullptr && NeedsPostprocessing())) {
+            MTL::TextureDescriptor* mainPassDescriptor = MTL::TextureDescriptor::texture2DDescriptor(drawable->texture()->pixelFormat(), drawable->texture()->width(), drawable->texture()->height(), false);
+            mainPassDescriptor->setStorageMode(MTL::StorageModePrivate);
+            mainPassDescriptor->setUsage(MTL::TextureUsageShaderRead | MTL::TextureUsageRenderTarget);
+            fCurrentUnprocessedOutputTexture->release();
+            fCurrentUnprocessedOutputTexture = fMetalDevice->newTexture(mainPassDescriptor);
+        }
     }
 
     fCurrentDrawable = drawable->retain();
@@ -1283,13 +1286,20 @@ void plMetalDevice::PostprocessIntoDrawable()
         CreateGammaAdjustState();
     }
 
-    // Gamma adjust
-    MTL::RenderPassDescriptor* gammaPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
-    gammaPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionDontCare);
-    gammaPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentDrawable->texture());
-    gammaPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionStore);
-
-    MTL::RenderCommandEncoder* gammaAdjustEncoder = SupportsTileMemory() ? CurrentRenderCommandEncoder() : fCurrentCommandBuffer->renderCommandEncoder(gammaPassDescriptor);
+    MTL::RenderCommandEncoder* gammaAdjustEncoder;
+    if (SupportsTileMemory()) {
+        // On tilers we can read/write directly on the framebuffer, carry on, no new render pass needed.
+        gammaAdjustEncoder = CurrentRenderCommandEncoder();
+    } else {
+        // On non-tilers, we need to create a new render pass to use our old render target as a texture
+        // source and the output drawable as the target to do post-processing.
+        MTL::RenderPassDescriptor* gammaPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
+        gammaPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionDontCare);
+        gammaPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentDrawable->texture());
+        gammaPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionStore);
+        
+        gammaAdjustEncoder = fCurrentCommandBuffer->renderCommandEncoder(gammaPassDescriptor);
+    }
 
     gammaAdjustEncoder->setRenderPipelineState(fGammaAdjustState);
 
