@@ -41,21 +41,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <gtest/gtest.h>
+#include <string_view>
 
 #include "hsStream.h"
 
+/**
+ * This tests that the hsRAMStream buffer is properly initialized and resized
+ * upon initial writing, ensuring that we don't hit any assertions around
+ * mempy'ing to a null buffer.
+ */
 TEST(hsRAMStream, initializeBufferOnFirstWrite)
 {
-    const char* str = "hsRAMStream initializeBufferOnFirstWrite";
+    constexpr std::string_view str = "hsRAMStream initializeBufferOnFirstWrite";
     hsRAMStream s;
 
+    // Initial write to the buffer should initialize and resize it
     s.WriteSafeString(str);
-    EXPECT_EQ(s.GetPosition(), strlen(str) + 2);
+    EXPECT_EQ(s.GetPosition(), str.size() + 2);
 
+    // Writing more should cause it to resize further
     s.WriteLE32(1);
-    EXPECT_EQ(s.GetPosition(), strlen(str) + 2 + 4);
+    EXPECT_EQ(s.GetPosition(), str.size() + 2 + 4);
 
+    // Going back and rewriting over existing data should memcpy without resize
     s.Skip(-4);
     s.WriteLE32(5);
-    EXPECT_EQ(s.GetPosition(), strlen(str) + 2 + 4);
+    EXPECT_EQ(s.GetPosition(), str.size() + 2 + 4);
 }
