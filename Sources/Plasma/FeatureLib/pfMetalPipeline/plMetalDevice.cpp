@@ -480,6 +480,8 @@ plMetalDevice::plMetalDevice()
     fReverseZStencilState = fMetalDevice->newDepthStencilState(depthDescriptor);
 
     depthDescriptor->release();
+    
+    LoadLibrary();
 }
 
 void plMetalDevice::SetViewport()
@@ -1065,15 +1067,13 @@ void plMetalDevice::StartPipelineBuild(plMetalPipelineRecord& record, std::condi
         return;
     }
 
-    MTL::Library* library = fMetalDevice->newDefaultLibrary();
-
     std::shared_ptr<plMetalPipelineState> pipelineState = record.state;
 
     MTL::RenderPipelineDescriptor* descriptor = MTL::RenderPipelineDescriptor::alloc()->init();
     descriptor->setLabel(pipelineState->GetDescription());
 
-    const MTL::Function* vertexFunction = pipelineState->GetVertexFunction(library);
-    const MTL::Function* fragmentFunction = pipelineState->GetFragmentFunction(library);
+    const MTL::Function* vertexFunction = pipelineState->GetVertexFunction(fShaderLibrary);
+    const MTL::Function* fragmentFunction = pipelineState->GetFragmentFunction(fShaderLibrary);
     descriptor->setVertexFunction(vertexFunction);
     descriptor->setFragmentFunction(fragmentFunction);
 
@@ -1108,7 +1108,6 @@ void plMetalDevice::StartPipelineBuild(plMetalPipelineRecord& record, std::condi
     });
 
     descriptor->release();
-    library->release();
 }
 
 plMetalDevice::plMetalLinkedPipeline* plMetalDevice::PipelineState(plMetalPipelineState* pipelineState)
@@ -1241,12 +1240,9 @@ MTL::SamplerState* plMetalDevice::SampleStateForClampFlags(hsGMatState::hsGMatCl
 void plMetalDevice::CreateGammaAdjustState()
 {
     MTL::RenderPipelineDescriptor* gammaDescriptor = MTL::RenderPipelineDescriptor::alloc()->init();
-    MTL::Library*                  library = fMetalDevice->newDefaultLibrary();
 
-    gammaDescriptor->setVertexFunction(library->newFunction(MTLSTR("gammaCorrectVertex"))->autorelease());
-    gammaDescriptor->setFragmentFunction(library->newFunction(MTLSTR("gammaCorrectFragment"))->autorelease());
-
-    library->release();
+    gammaDescriptor->setVertexFunction(fShaderLibrary->newFunction(MTLSTR("gammaCorrectVertex"))->autorelease());
+    gammaDescriptor->setFragmentFunction(fShaderLibrary->newFunction(MTLSTR("gammaCorrectFragment"))->autorelease());
 
     gammaDescriptor->colorAttachments()->object(0)->setPixelFormat(fFramebufferFormat);
 

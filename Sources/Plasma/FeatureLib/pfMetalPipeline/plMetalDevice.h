@@ -188,6 +188,8 @@ public:
     void EncodeBlur(MTL::CommandBuffer* commandBuffer, MTL::Texture* texture, float sigma);
 
     MTL::PixelFormat GetFramebufferFormat() const { return fFramebufferFormat; };
+    
+    MTL::Library* GetShaderLibrary() const { return fShaderLibrary; }
 
 private:
     struct plMetalPipelineRecord
@@ -252,6 +254,10 @@ private:
 
     MTL::CommandBuffer*      fBlitCommandBuffer;
     MTL::BlitCommandEncoder* fBlitCommandEncoder;
+    
+    MTL::Library* fShaderLibrary;
+    
+    void LoadLibrary();
 
     bool NeedsPostprocessing() const
     {
