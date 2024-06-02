@@ -344,7 +344,7 @@ void plMetalDevice::BeginNewRenderPass()
         } else {
             renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentMSAAOutputTexture);
 
-            // if we need postprocessing, output to the main pass texture
+            // if we need postprocessing, output to the intermediate main pass texture
             // otherwise we can go straight to the drawable
             
             // We only need the intermediate texture for post processing on
@@ -1257,17 +1257,14 @@ void plMetalDevice::CreateGammaAdjustState()
     gammaDescriptor->setVertexFunction(fShaderLibrary->newFunction(MTLSTR("gammaCorrectVertex"))->autorelease());
     if (SupportsTileMemory()) {
         // Tiler GPU version does an in place transform
-        gammaDescriptor->setFragmentFunction(fShaderLibrary->newFunction(MTLSTR("gammaCorrectFragmentInPlace"))->autorelease());
-    } else {
-        gammaDescriptor->setFragmentFunction(fShaderLibrary->newFunction(MTLSTR("gammaCorrectFragment"))->autorelease());
-    }
-    
-    if (SupportsTileMemory()) {
+        // Because it's in place we need to describe all main pass buffers including depth and MSAA
         gammaDescriptor->colorAttachments()->object(0)->setPixelFormat(fCurrentFragmentOutputTexture->pixelFormat());
         gammaDescriptor->setDepthAttachmentPixelFormat(fCurrentDepthFormat);
         gammaDescriptor->setSampleCount(CurrentTargetSampleCount());
+        gammaDescriptor->setFragmentFunction(fShaderLibrary->newFunction(MTLSTR("gammaCorrectFragmentInPlace"))->autorelease());
     } else {
         gammaDescriptor->colorAttachments()->object(0)->setPixelFormat(fFramebufferFormat);
+        gammaDescriptor->setFragmentFunction(fShaderLibrary->newFunction(MTLSTR("gammaCorrectFragment"))->autorelease());
     }
 
     NS::Error* error;

@@ -279,10 +279,9 @@ private:
     MTL::RenderPipelineState* fGammaAdjustState;
 
     // MARK:  - Device capabilities
-public:
-    /// Returns true if the device supports title memory features such as directly writable render buffers.
-    BOOL SupportsTileMemory() { return fSupportsTileMemory; }
 private:
+    /// Returns true if the device supports tile memory features such as directly writable render buffers.
+    inline BOOL SupportsTileMemory() const { return fSupportsTileMemory; }
     BOOL fSupportsTileMemory;
 };
 
