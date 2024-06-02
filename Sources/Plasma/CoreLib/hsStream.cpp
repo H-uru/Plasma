@@ -629,13 +629,15 @@ uint32_t hsRAMStream::Read(uint32_t byteCount, void * buffer)
 
 uint32_t hsRAMStream::Write(uint32_t byteCount, const void* buffer)
 {
-    hsAssert(fVector.data(), "Trying to write to a null RAM buffer");
-
     size_t spaceUntilEof = fVector.size() - fPosition;
     if (byteCount <= spaceUntilEof) {
+        hsAssert(fVector.data(), "Trying to write to a null RAM buffer");
         memcpy(fVector.data() + fPosition, buffer, byteCount);
     } else {
-        memcpy(fVector.data() + fPosition, buffer, spaceUntilEof);
+        if (spaceUntilEof) {
+            hsAssert(fVector.data(), "Trying to write to a null RAM buffer");
+            memcpy(fVector.data() + fPosition, buffer, spaceUntilEof);
+        }
         auto buf = static_cast<const uint8_t*>(buffer);
         fVector.insert(fVector.end(), buf + spaceUntilEof, buf + byteCount);
     }
