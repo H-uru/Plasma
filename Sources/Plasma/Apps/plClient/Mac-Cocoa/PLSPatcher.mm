@@ -232,10 +232,6 @@ void Patcher::ISelfPatch(const plFileName& file)
 
     /* Select which attributes we want to restore. */
     flags = ARCHIVE_EXTRACT_TIME;
-    flags |= ARCHIVE_EXTRACT_ACL;
-    flags |= ARCHIVE_EXTRACT_FFLAGS;
-    flags |= ARCHIVE_EXTRACT_OWNER;
-    flags |= ARCHIVE_EXTRACT_XATTR;
     
     struct archive *a = archive_read_new();
     struct archive *ext = archive_write_disk_new();
