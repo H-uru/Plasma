@@ -573,10 +573,8 @@ void pfPatcherWorker::IHashFile(pfPatcherQueuedFile& file)
 
     // Check to see if ours matches
     plFileName clientPathForComparison = file.fClientPath;
-    if (file.fFlags & kBundle) {
-        if (fFindBundleExe) {
-            clientPathForComparison = fFindBundleExe(clientPathForComparison);
-        }
+    if ((file.fFlags & kBundle) && fFindBundleExe) {
+        clientPathForComparison = fFindBundleExe(clientPathForComparison);
     }
     plFileInfo mine(clientPathForComparison);
     if (mine.FileSize() == file.fFileSize) {
