@@ -246,7 +246,7 @@ target_link_libraries(
         CURL::libcurl
         "$<$<PLATFORM_ID:Darwin>:-framework Cocoa>"
         "$<$<PLATFORM_ID:Darwin>:-framework QuartzCore>"
-        "$<$<PLATFORM_ID:Darwin>:archive>"
+        $<$<PLATFORM_ID:Darwin>:libarchive::libarchive>
 )
 target_include_directories(plClient PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 
