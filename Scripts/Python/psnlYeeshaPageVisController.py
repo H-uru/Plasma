@@ -113,11 +113,14 @@ class psnlYeeshaPageVisController(ptMultiModifier):
                     PtDebugPrint("psnlYeeshaPageVisController:\tERROR reading age SDLVar. Assuming CurrentValue = 0")
                     CurrentValue = 0
 
-                self.EnableDisable(CurrentValue)
+                PtAtTimeCallback(self.key, 0.1, CurrentValue)
             else:
                 PtDebugPrint("psnlYeeshaPageVisController: Error trying to access the ageSDL. ageSDL = %s" % ( ageSDL))
         else:
             PtDebugPrint("psnlYeeshaPageVisController: Error trying to access the Vault.")
+
+    def OnTimer(self,ID):
+        self.EnableDisable(ID)
 
     def EnableDisable(self, val):
         if val in self.enabledStateList:
