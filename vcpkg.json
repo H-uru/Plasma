@@ -54,7 +54,7 @@
         ]
       }
     },
-    "builtin-baseline": "a34c873a9717a888f58dc05268dea15592c2f0ff",
+    "builtin-baseline": "f7423ee180c4b7f40d43402c2feb3859161ef625",
     "vcpkg-configuration": {
       "overlay-ports": ["./Scripts/Ports"],
       "overlay-triplets": ["./Scripts/Triplets"]
