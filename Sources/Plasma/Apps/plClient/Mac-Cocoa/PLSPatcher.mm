@@ -338,12 +338,15 @@ void Patcher::IOnPatchComplete(ENetError result, const ST::string& msg)
         NSString* msgString = [NSString stringWithSTString:msg];
 
         dispatch_async(dispatch_get_main_queue(), ^{
+            ST::string errorString = ST::string::from_wchar(NetErrorToString(result));
+            NSString* errorNSString = [NSString stringWithSTString:errorString];
             [parent.delegate
                 patcherCompletedWithError:parent
                                     error:[NSError errorWithDomain:@"PLSPatchErrors"
                                                               code:result
                                                           userInfo:@{
-                                                              NSLocalizedFailureErrorKey : msgString
+                                                                NSLocalizedFailureErrorKey : errorNSString,
+                                                                NSLocalizedFailureReasonErrorKey: msgString
                                                           }]];
         });
     }
