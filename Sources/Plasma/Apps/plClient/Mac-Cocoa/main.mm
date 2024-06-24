@@ -459,9 +459,8 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     NSAlert* failureAlert = [NSAlert alertWithError:error];
     [failureAlert beginSheetModalForWindow:self.patcherWindow.window
                          completionHandler:^(NSModalResponse returnCode){
-
+                                [NSApp terminate:self];
                          }];
-    [NSApp terminate:self];
 }
 
 - (void)patcher:(PLSPatcher*)patcher
