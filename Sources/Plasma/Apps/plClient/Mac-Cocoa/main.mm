@@ -132,8 +132,6 @@ void plClient::IResizeNativeDisplayDevice(int width, int height, bool windowed)
 }
 void plClient::IChangeResolution(int width, int height) {}
 void plClient::IUpdateProgressIndicator(plOperationProgress* progress) {}
-void plClient::InitDLLs() {}
-void plClient::ShutdownDLLs() {}
 void plClient::ShowClientWindow() {}
 void plClient::FlashWindow()
 {
