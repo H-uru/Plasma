@@ -75,6 +75,7 @@ public:
 @property NSTimer* networkPumpTimer;
 @property Patcher cppPatcher;
 @property NSURL* updatedClientURL;
+@property NSURL* temporaryDirectory;
 @end
 
 @implementation PLSPatcher
@@ -118,7 +119,7 @@ public:
 - (NSURL *)completeSelfPatch:(NSError **)error;
 {
     NSString* destinationPath = [NSString stringWithSTString:plManifest::PatcherExecutable().AsString()];
-    NSURL* destinationURL = [NSURL fileURLWithPath:[NSString stringWithSTString:plManifest::PatcherExecutable().AsString()]];
+    NSURL* destinationURL = [NSURL fileURLWithPath:destinationPath];
     
     NSError* errorInScope;
     
@@ -139,7 +140,9 @@ public:
         if (swapSucceeded) {
             // delete the old version - this is very likely us
             // we want to terminate after. Our bundle will no longer be valid.
-            [NSFileManager.defaultManager removeItemAtURL:self.updatedClientURL error:&errorInScope];
+            if (self.temporaryDirectory) {
+                [NSFileManager.defaultManager removeItemAtURL:self.temporaryDirectory error:&errorInScope];
+            }
         } else {
             // abort and return an error
             errorInScope = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
@@ -231,7 +234,7 @@ void Patcher::ISelfPatch(const plFileName& file)
     la_ssize_t r;
 
     /* Select which attributes we want to restore. */
-    flags = ARCHIVE_EXTRACT_TIME;
+    flags = ARCHIVE_EXTRACT_TIME | ARCHIVE_EXTRACT_PERM;
     
     struct archive *a = archive_read_new();
     struct archive *ext = archive_write_disk_new();
@@ -256,13 +259,11 @@ void Patcher::ISelfPatch(const plFileName& file)
         return;
     }
     
-    plFileSystem::Unlink(plManifest::PatcherExecutable());
-    
     NSError *error;
-    NSURL *tempDirectory = [NSFileManager.defaultManager URLForDirectory:NSItemReplacementDirectory inDomain:NSUserDomainMask appropriateForURL:[NSURL fileURLWithPath:NSFileManager.defaultManager.currentDirectoryPath] create:YES error:&error];
+    patcher.temporaryDirectory = [NSFileManager.defaultManager URLForDirectory:NSItemReplacementDirectory inDomain:NSUserDomainMask appropriateForURL:[NSURL fileURLWithPath:NSFileManager.defaultManager.currentDirectoryPath] create:YES error:&error];
     NSURL *outputURL;
-    if (tempDirectory) {
-        outputURL = [tempDirectory URLByAppendingPathComponent:[NSString stringWithSTString:plManifest::PatcherExecutable().GetFileName()]];
+    if (patcher.temporaryDirectory) {
+        outputURL = [patcher.temporaryDirectory URLByAppendingPathComponent:[NSString stringWithSTString:plManifest::PatcherExecutable().GetFileName()]];
         [NSFileManager.defaultManager createDirectoryAtURL:outputURL withIntermediateDirectories:false attributes:nil error:&error];
     }
     
