@@ -281,8 +281,8 @@ private:
     // MARK:  - Device capabilities
 private:
     /// Returns true if the device supports tile memory features such as directly writable render buffers.
-    inline BOOL SupportsTileMemory() const { return fSupportsTileMemory; }
-    BOOL fSupportsTileMemory;
+    inline bool SupportsTileMemory() const { return fSupportsTileMemory; }
+    bool fSupportsTileMemory;
 };
 
 #endif
