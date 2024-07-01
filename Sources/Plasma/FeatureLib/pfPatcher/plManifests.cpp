@@ -52,19 +52,17 @@ Mead, WA   99021
 #   define MANIFEST(in, ex) in
 #endif // PLASMA_EXTERNAL_RELEASE
 
-#if HS_BUILD_FOR_MACOS
+#if HS_BUILD_FOR_APPLE
 #   define PL_EXECUTABLE_SUFFIX ".app"
-#else
+#elif HS_BUILD_FOR_WIN32
 #   define PL_EXECUTABLE_SUFFIX ".exe"
+#else
+#   define PL_EXECUTABLE_SUFFIX ""
 #endif
 
 plFileName plManifest::ClientExecutable()
 {
-#ifdef HS_BUILD_FOR_MACOS
     return MANIFEST("plClient" PL_EXECUTABLE_SUFFIX, "UruExplorer" PL_EXECUTABLE_SUFFIX);
-#else
-    return MANIFEST("plClient" PL_EXECUTABLE_SUFFIX, "UruExplorer" PL_EXECUTABLE_SUFFIX);
-#endif
 }
 
 plFileName plManifest::PatcherExecutable()
