@@ -51,12 +51,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plClient.h"
 #include "plWinDpi/plWinDpi.h"
 
-#include "pnFactory/plFactory.h"
 #include "pnNetCommon/plNetApp.h"
 #include "plProgressMgr/plProgressMgr.h"
 
 extern ITaskbarList3* gTaskbarList;
-static std::vector<HMODULE> fLoadedDLLs;
 
 void plClient::IResizeNativeDisplayDevice(int width, int height, bool windowed)
 {
@@ -144,34 +142,6 @@ void plClient::IUpdateProgressIndicator(plOperationProgress* progress)
             gTaskbarList->SetProgressState(fInstance->GetWindowHandle(), myState);
         lastState = myState;
     }
-}
-
-void plClient::InitDLLs()
-{
-    hsStatusMessage("Init dlls client\n");
-    std::vector<plFileName> dlls = plFileSystem::ListDir("ModDLL", "*.dll");
-    for (auto iter = dlls.begin(); iter != dlls.end(); ++iter)
-    {
-        HMODULE hMod = LoadLibraryW(iter->WideString().data());
-        if (hMod)
-        {
-            pInitGlobalsFunc initGlobals = (pInitGlobalsFunc)GetProcAddress(hMod, "InitGlobals");
-            (*initGlobals)(hsgResMgr::ResMgr(), plFactory::GetTheFactory(), plgTimerCallbackMgr::Mgr(),
-                hsTimer::GetTheTimer(), plNetClientApp::GetInstance());
-            fLoadedDLLs.emplace_back(hMod);
-        }
-    }
-}
-
-void plClient::ShutdownDLLs()
-{
-    for (HMODULE dll : fLoadedDLLs)
-    {
-        BOOL ret = FreeLibrary(dll);
-        if (!ret)
-            hsStatusMessage("Failed to free lib\n");
-    }
-    fLoadedDLLs.clear();
 }
 
 // Show the client window
