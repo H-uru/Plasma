@@ -11,6 +11,10 @@
         "platform": "!(osx | windows)"
       },
       "freetype",
+      {
+        "name": "libarchive",
+        "platform": "osx"
+      },
       "libepoxy",
       "libjpeg-turbo",
       "libogg",
