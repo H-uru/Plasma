@@ -55,7 +55,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if HS_BUILD_FOR_WIN32
 #   include "hsWindows.h"
 #   include <io.h>
-#   define isatty _isatty
+
+#ifndef __MINGW32__
+#   define ttycheck(fileinfo) (GetFileType(fileinfo) == FILE_TYPE_CHAR)
+#endif
 
     void GetConsoleWidth(size_t& width)
     {
@@ -67,7 +70,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include <sys/ioctl.h>
 #   include <sys/termios.h>
 #   include <unistd.h>
-
+#   define ttycheck(fileinfo) isatty(fileno(fileinfo))
     void GetConsoleWidth(size_t& width)
     {
         struct winsize w;
@@ -174,7 +177,7 @@ int main(int argc, char* argv[])
 
     patcher.SetPatcherFlags(flags);
 
-    if (!cmdParser.GetBool(kArgQuiet) && isatty(fileno(stdout))) {
+    if (!cmdParser.GetBool(kArgQuiet) && ttycheck(stdout)) {
         patcher.SetDownloadBeginCallback(&FileDownloadBegin);
         patcher.SetProgressCallback(&FileDownloadProgress);
     }
@@ -185,7 +188,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    if (!cmdParser.GetBool(kArgQuiet) && isatty(fileno(stdout))) {
+    if (!cmdParser.GetBool(kArgQuiet) && ttycheck(stdout)) {
         ST::printf("\r{}\r", ST::string::fill(consoleWidth, ' '));
         fflush(stdout);
     }

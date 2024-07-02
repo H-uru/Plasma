@@ -189,8 +189,8 @@ plDXTextureRef& plDXTextureRef::Set( D3DFORMAT ft, uint32_t ml, uint32_t mw, uin
     fMaxHeight  = mh;
     fNumPix     = np;
     fDataSize   = manSize;
-    if (fLevelSizes != nullptr)
-        delete [] fLevelSizes;
+
+    delete [] fLevelSizes;
     if( lSz )
         fLevelSizes = lSz;
     else

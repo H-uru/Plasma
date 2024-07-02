@@ -84,7 +84,8 @@ public:
     void    RestoreStates() override;
     void    DestroyObjects() override;
 
-    static const DWORD kFVF;
+    // See the declaration for plFontVertex in plTextFont.h for info
+    static constexpr DWORD kFVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1 | D3DFVF_TEXCOORDSIZE3(0);
 };
 
 

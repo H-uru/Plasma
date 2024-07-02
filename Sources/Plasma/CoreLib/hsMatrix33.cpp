@@ -91,16 +91,16 @@ hsMatrix33 operator*(const hsMatrix33& a, const hsMatrix33& b)
 
 void hsMatrix33::Read(hsStream* s)
 {
-    for (int i = 0; i < 3; i++)
+    for (auto& i : fMap)
     {
-        s->ReadLEFloat(3, fMap[i]);
+        s->ReadLEFloat(3, i);
     }
 }
 
 void hsMatrix33::Write(hsStream* s)
 {
-    for (int i = 0; i < 3; i++)
+    for (const auto& i : fMap)
     {
-        s->WriteLEFloat(3, fMap[i]);
+        s->WriteLEFloat(3, i);
     }
 }
