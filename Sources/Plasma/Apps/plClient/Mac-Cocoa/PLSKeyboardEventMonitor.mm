@@ -152,6 +152,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     if (keycode == kVK_Control) {
         down = (event.modifierFlags & NSEventModifierFlagControl) != 0;
     }
+    if (keycode == kVK_CapsLock) {
+        down = (event.modifierFlags & NSEventModifierFlagCapsLock) != 0;
+    }
 
     /*
      This gets weird.

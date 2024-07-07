@@ -186,6 +186,8 @@ void plKeyboardDevice::HandleKeyEvent(plKeyDef key, bool bKeyDown, bool bKeyRepe
         {
 #ifdef HS_BUILD_FOR_WIN32
             fCapsLockLock = (GetKeyState(KEY_CAPSLOCK) & 1) == 1;
+#else
+            fCapsLockLock = bKeyDown;
 #endif
             plAvatarInputInterface::GetInstance()->ForceAlwaysRun(fCapsLockLock);
         }
