@@ -66,6 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 @property(weak) NSView* view;
 @property plInputManager* inputManager;
 @property(retain) id localMonitor;
+@property BOOL capsLockKeyDown;
 
 @end
 
@@ -152,7 +153,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     if (keycode == kVK_Control) {
         down = (event.modifierFlags & NSEventModifierFlagControl) != 0;
     }
-
+    BOOL capsLockMaskPresent = (event.modifierFlags & NSEventModifierFlagCapsLock) != 0;
+    if (capsLockMaskPresent != self.capsLockKeyDown) {
+        self.capsLockKeyDown = capsLockMaskPresent;
+        self.inputManager->HandleKeyEvent((plKeyDef)kVK_CapsLock, self.capsLockKeyDown, false);
+    }
+    
     /*
      This gets weird.
      Recent Apple hardware is starting to have its system key shortcuts assigned to the fn key
@@ -171,8 +177,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     }
 
     @synchronized(self.view.layer) {
-        self.inputManager->HandleKeyEvent(
-            (plKeyDef)keycode, down, event.type == NSEventTypeFlagsChanged ? false : event.ARepeat);
+        // Caps lock modifer has special handling that was earlier
+        if (keycode != kVK_CapsLock) {
+            self.inputManager->HandleKeyEvent(
+                                              (plKeyDef)keycode, down, event.type == NSEventTypeFlagsChanged ? false : event.ARepeat);
+        }
         if (!(modifierFlags & NSEventModifierFlagFunction) && down) {
             if (event.type != NSEventTypeFlagsChanged && event.characters.length > 0) {
                 // Only works for BMP code points (up to U+FFFF), but that's unlikely to matter at
