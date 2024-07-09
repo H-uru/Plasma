@@ -125,8 +125,7 @@ public:
     
     if (!self.updatedClientURL) {
         // uh oh - this implies we weren't able to decompress the client
-        if (error)
-        {
+        if (error) {
             // Handle as a generic could not read file error.
             // Bad compression on the server will require correction on the server end.
             *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadNoSuchFileError userInfo:nil];
@@ -197,11 +196,11 @@ bool IApproveDownload(const plFileName& file)
     return extExcludeList.find(file.GetFileExt()) == extExcludeList.end();
 }
 
-static la_ssize_t copy_data(struct archive *ar, struct archive *aw)
+static la_ssize_t copy_data(struct archive* ar, struct archive* aw)
 {
     while (true) {
         la_ssize_t r;
-        const void *buff;
+        const void* buff;
         size_t size;
         la_int64_t offset;
         
@@ -212,7 +211,7 @@ static la_ssize_t copy_data(struct archive *ar, struct archive *aw)
             return (r);
         r = archive_write_data_block(aw, buff, size, offset);
         if (r < ARCHIVE_OK) {
-            fprintf(stderr, "%s\n", archive_error_string(aw));
+            plStatusLog::AddLineSF("%s\n", archive_error_string(aw));
             return (r);
         }
     }
@@ -236,8 +235,8 @@ void Patcher::ISelfPatch(const plFileName& file)
     /* Select which attributes we want to restore. */
     flags = ARCHIVE_EXTRACT_TIME | ARCHIVE_EXTRACT_PERM;
     
-    struct archive *a = archive_read_new();
-    struct archive *ext = archive_write_disk_new();
+    struct archive* a = archive_read_new();
+    struct archive* ext = archive_write_disk_new();
     
     {
         int error;
@@ -259,9 +258,14 @@ void Patcher::ISelfPatch(const plFileName& file)
         return;
     }
     
-    NSError *error;
-    patcher.temporaryDirectory = [NSFileManager.defaultManager URLForDirectory:NSItemReplacementDirectory inDomain:NSUserDomainMask appropriateForURL:[NSURL fileURLWithPath:NSFileManager.defaultManager.currentDirectoryPath] create:YES error:&error];
-    NSURL *outputURL;
+    NSError* error;
+    NSURL* currentDirectory = [NSURL fileURLWithPath:NSFileManager.defaultManager.currentDirectoryPath];
+    patcher.temporaryDirectory = [NSFileManager.defaultManager
+                                  URLForDirectory:NSItemReplacementDirectory
+                                  inDomain:NSUserDomainMask
+                                  appropriateForURL:currentDirectory
+                                  create:YES error:&error];
+    NSURL* outputURL;
     if (patcher.temporaryDirectory) {
         outputURL = [patcher.temporaryDirectory URLByAppendingPathComponent:[NSString stringWithSTString:plManifest::PatcherExecutable().GetFileName()]];
         [NSFileManager.defaultManager createDirectoryAtURL:outputURL withIntermediateDirectories:false attributes:nil error:&error];
@@ -272,6 +276,10 @@ void Patcher::ISelfPatch(const plFileName& file)
         // get a writable temp directory. But if we could not, bail.
         // Not populating the patched client path will be caught
         // later.
+        archive_read_close(a);
+        archive_read_free(a);
+        archive_write_close(ext);
+        archive_write_free(ext);
         return;
     }
     
@@ -279,7 +287,7 @@ void Patcher::ISelfPatch(const plFileName& file)
     
     bool succeeded = true;
     
-    struct archive_entry *entry;
+    struct archive_entry* entry;
     while (true) {
         r = archive_read_next_header(a, &entry);
         if (r == ARCHIVE_EOF)
@@ -291,8 +299,8 @@ void Patcher::ISelfPatch(const plFileName& file)
             break;
         }
         const char* currentFile = archive_entry_pathname(entry);
-        auto fullOutputPath = outputPath + "/" + currentFile;
-        archive_entry_set_pathname(entry, fullOutputPath.c_str());
+        auto fullOutputPath = plFileName::Join(plFileName(outputPath), plFileName(currentFile));
+        archive_entry_set_pathname(entry, fullOutputPath.AsString().c_str());
         r = archive_write_header(ext, entry);
         if (r < ARCHIVE_OK)
             pfPatcher::GetLog()->AddLineF(plStatusLog::kRed, "Failed to extract file while patching app bundle: {}", archive_error_string(ext));
@@ -320,8 +328,7 @@ void Patcher::ISelfPatch(const plFileName& file)
     
     plFileSystem::Unlink(file);
     
-    if (succeeded)
-    {
+    if (succeeded) {
         parent.updatedClientURL = outputURL;
     }
 }

@@ -91,7 +91,6 @@ static void* StatusTextDidChangeContext = &StatusTextDidChangeContext;
     // intercepted by the application
 }
 
-
 - (void)observeValueForKeyPath:(NSString*)keyPath
                       ofObject:(id)object
                         change:(NSDictionary*)change
