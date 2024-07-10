@@ -255,6 +255,9 @@ void Patcher::ISelfPatch(const plFileName& file)
     
     if ((r = archive_read_open_filename(a, file.GetFileName().c_str(), 10240)) != ARCHIVE_OK) {
         // couldn't read
+        archive_read_free(a);
+        archive_write_close(ext);
+        archive_write_free(ext);
         return;
     }
     
