@@ -211,7 +211,7 @@ static la_ssize_t copy_data(struct archive* ar, struct archive* aw)
             return (r);
         r = archive_write_data_block(aw, buff, size, offset);
         if (r < ARCHIVE_OK) {
-            plStatusLog::AddLineSF("%s\n", archive_error_string(aw));
+            pfPatcher::GetLog()->AddLine(plStatusLog::kRed, archive_error_string(aw));
             return (r);
         }
     }
@@ -299,7 +299,7 @@ void Patcher::ISelfPatch(const plFileName& file)
             break;
         }
         const char* currentFile = archive_entry_pathname(entry);
-        auto fullOutputPath = plFileName::Join(plFileName(outputPath), plFileName(currentFile));
+        auto fullOutputPath = plFileName::Join(outputPath, currentFile);
         archive_entry_set_pathname(entry, fullOutputPath.AsString().c_str());
         r = archive_write_header(ext, entry);
         if (r < ARCHIVE_OK)
