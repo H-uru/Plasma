@@ -106,6 +106,8 @@ hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const ST::string& name)
 
         /* Named semaphore shared between processes */
         fPSema = sem_open(semName.c_str(), O_CREAT, 0666, initialValue);
+        // Unlink it immediately so it will be freed if we unexpectedly leave it locked
+        sem_unlink(semName.c_str());
         if (fPSema == SEM_FAILED)
         {
             hsAssert(0, "hsOSException");
