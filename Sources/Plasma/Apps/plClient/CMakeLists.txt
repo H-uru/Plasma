@@ -165,10 +165,6 @@ if(APPLE)
     set_source_files_properties(Mac-Cocoa/Assets.xcassets ${RESOURCES} PROPERTIES
          MACOSX_PACKAGE_LOCATION Resources
     )
-    install(
-        TARGETS plClient
-        DESTINATION client
-    )
     
     if(${CMAKE_VERSION} VERSION_LESS 3.28)
         message(FATAL_ERROR "Cannot build Mac client without CMake 3.28")
