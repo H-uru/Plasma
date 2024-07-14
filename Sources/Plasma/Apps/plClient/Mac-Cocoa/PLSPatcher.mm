@@ -305,9 +305,9 @@ void Patcher::ISelfPatch(const plFileName& file)
         auto fullOutputPath = plFileName::Join(outputPath, currentFile);
         archive_entry_set_pathname(entry, fullOutputPath.AsString().c_str());
         r = archive_write_header(ext, entry);
-        if (r < ARCHIVE_OK)
+        if (r < ARCHIVE_OK) {
             pfPatcher::GetLog()->AddLineF(plStatusLog::kRed, "Failed to extract file while patching app bundle: {}", archive_error_string(ext));
-        else if (archive_entry_size(entry) > 0) {
+        } else if (archive_entry_size(entry) > 0) {
             r = copy_data(a, ext);
             if (r < ARCHIVE_OK)
                 pfPatcher::GetLog()->AddLineF(plStatusLog::kRed, "Failed to extract file while patching app bundle: {}", archive_error_string(ext));
