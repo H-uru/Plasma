@@ -58,6 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog.h"
 #include "plEncryptLogLine.h"
 
+#include "hsFILELock.h"
 #include "plProduct.h"
 #include "hsThread.h"
 #include "hsTimer.h"
@@ -259,20 +260,17 @@ bool plStatusLogMgr::DumpLogs( const plFileName &newFolderName )
 uint32_t plStatusLog::fLoggingOff = false;
 
 plStatusLog::plStatusLog( uint8_t numDisplayLines, const plFileName &filename, uint32_t flags )
-    : fFileHandle(), fSema(), fSize(), fForceLog(), fMaxNumLines(numDisplayLines),
+    : fFileHandle(), fSize(), fForceLog(), fMaxNumLines(numDisplayLines),
       fDisplayPointer()
 {
     if (filename.IsValid())
     {
         fFilename = filename;
-        fSema = new hsGlobalSemaphore(1, fFilename.AsString().c_str());
     }
     else
     {
         fFilename = "";
         flags |= kDontWriteFile;
-
-        fSema = new hsGlobalSemaphore(1);
     }
 
     fOrigFlags = fFlags = flags;
@@ -366,9 +364,6 @@ void    plStatusLog::IFini()
     if (fBack != nullptr || fNext != nullptr)
         IUnlink();
 
-    if (fSema)
-        delete fSema;
-
     delete [] fLines;
     delete [] fColors;
 }
@@ -431,7 +426,8 @@ bool plStatusLog::IAddLine(const ST::string& line, uint32_t color)
         return true;
 
     /// Scroll pointers up
-    fSema->Wait();
+    hsFILELock fileLock(fFileHandle);
+    hsLockGuard(fileLock);
 
     if (fMaxNumLines > 0)
     {
@@ -447,8 +443,6 @@ bool plStatusLog::IAddLine(const ST::string& line, uint32_t color)
     }
 
     bool ret = IPrintLineToFile(line);
-
-    fSema->Signal();
 
     return ret;
 }
