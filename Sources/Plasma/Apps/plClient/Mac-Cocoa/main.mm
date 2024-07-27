@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #import <Metal/Metal.h>
 #endif
 #import <QuartzCore/QuartzCore.h>
+#import <IOKit/pwr_mgt/IOPMLib.h>
 
 // Cocoa client
 #import "NSString+StringTheory.h"
@@ -64,6 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <unordered_set>
 
 // Plasma engine
+#include "hsDarwin.h"
 #include "plClient/plClient.h"
 #include "plClient/plClientLoader.h"
 #include "plCmdParser.h"
@@ -477,6 +479,16 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
                                                          inputManager:&gClient];
     ((PLSView*)self.window.contentView).inputManager = gClient->GetInputManager();
     [self.window makeFirstResponder:self.window.contentView];
+
+    IOPMAssertionID assertionID = 0;
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+    IOReturn result = IOPMAssertionCreateWithName(kIOPMAssertionTypePreventUserIdleDisplaySleep, kIOPMAssertionLevelOn, CFStringCreateWithSTString(plProduct::LongName()), &assertionID);
+#else
+    IOReturn result = IOPMAssertionCreate(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, &assertionID);
+#endif
+    if (result != kIOReturnSuccess) {
+        hsStatusMessage("Failed to acquire idle prevention assertion");
+    }
 
     // Main loop
     if (gClient && !gClient->GetDone()) {
