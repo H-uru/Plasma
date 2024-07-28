@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetBase/pnNbError.h"
 
 class plFileName;
+class plFilePath;
+class plMD5Checksum;
 class plStatusLog;
 class hsStream;
 
@@ -84,9 +86,20 @@ public:
 
     /** Represents a function that takes (bytesDLed, totalBytes, statsStr) as a progress indicator. */
     typedef std::function<void(uint64_t, uint64_t, const ST::string&)> ProgressTickFunc;
+    
+    /** Represents a function that takes (const plFileName&) and returns the executable inside the
+     *  macOS application bundle at that path.
+     */
+    typedef std::function<plFileName(const plFileName&)> FindBundleExeFunc;
 
     pfPatcher();
     ~pfPatcher();
+    
+    /** Set a callback that will be fired when the patcher needs to find an executable file
+     *  within an executable bundle. This only occurs on the macOS client and is
+     *  specific to macOS executable application bundles.
+     */
+    void OnFindBundleExe(FindBundleExeFunc cb);
 
     /** Set a callback that will be fired when the patcher finishes its dirty work.
      *  \remarks This may be called from any thread, so make sure your callback is

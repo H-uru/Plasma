@@ -150,7 +150,8 @@ enum {
     kArgStartUpAgeName,
     kArgPvdFile,
     kArgSkipIntroMovies,
-    kArgRenderer
+    kArgRenderer,
+    kArgNoSelfPatch
 };
 
 static const plCmdArgDef s_cmdLineArgs[] = {
@@ -164,6 +165,7 @@ static const plCmdArgDef s_cmdLineArgs[] = {
     { kCmdArgFlagged  | kCmdTypeString,     "PvdFile",         kArgPvdFile },
     { kCmdArgFlagged  | kCmdTypeBool,       "SkipIntroMovies", kArgSkipIntroMovies },
     { kCmdArgFlagged  | kCmdTypeString,     "Renderer",        kArgRenderer },
+    { kCmdArgFlagged  | kCmdTypeBool,       "NoSelfPatch",     kArgNoSelfPatch }
 };
 
 plCmdParser cmdParser(s_cmdLineArgs, std::size(s_cmdLineArgs));
@@ -351,7 +353,8 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     NetCommConnect();
     [[PLSServerStatus sharedStatus] loadServerStatus];
 
-    if (gDataServerLocal) {
+    BOOL skipPatch = cmdParser.IsSpecified(kArgNoSelfPatch);
+    if (gDataServerLocal || skipPatch) {
         [self initializeClient];
     } else {
         [self prepatch];
@@ -416,12 +419,37 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     [self.patcherWindow patcher:patcher beganDownloadOfFile:file];
 }
 
-- (void)patcherCompleted:(PLSPatcher*)patcher
+- (void)patcherCompleted:(PLSPatcher*)patcher didSelfPatch:(BOOL)selfPatched
 {
     self.patcher = nil;
     [NSApp endModalSession:self.currentModalSession];
     [self.patcherWindow.window close];
-    [self initializeClient];
+    if (selfPatched) {
+        NSError* error;
+        NSURL* finalURL = [patcher completeSelfPatch:&error];
+        
+        if (error) {
+            // uh oh, we couldn't self patch, present the error and bail
+            // this should be very rare and could be related to permissions issues
+            // we expect the game directory to be writable by all
+            NSAlert* errorAlert = [NSAlert alertWithError:error];
+            [errorAlert runModal];
+            [NSApp terminate:self];
+            // return just in case we ever reach here
+            return;
+        }
+        
+        // Pass the "we've already patched" argument
+        NSArray* applicationArguments = [[[NSProcessInfo processInfo] arguments] arrayByAddingObject:@"-NoSelfPatch"];
+        
+        // no longer current, bye bye
+        [[NSWorkspace sharedWorkspace] launchApplicationAtURL:finalURL options:NSWorkspaceLaunchNewInstance configuration:@{NSWorkspaceLaunchConfigurationArguments: applicationArguments} error:nil];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [NSApp terminate:self];
+        });
+    } else {
+        [self initializeClient];
+    }
 }
 
 - (void)patcherCompletedWithError:(PLSPatcher*)patcher error:(NSError*)error
@@ -429,9 +457,8 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     NSAlert* failureAlert = [NSAlert alertWithError:error];
     [failureAlert beginSheetModalForWindow:self.patcherWindow.window
                          completionHandler:^(NSModalResponse returnCode){
-
+                                [NSApp terminate:self];
                          }];
-    [NSApp terminate:self];
 }
 
 - (void)patcher:(PLSPatcher*)patcher

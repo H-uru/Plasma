@@ -84,6 +84,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ST::string plFileName::GetFileName() const
 {
+    if (fName.ends_with("/")) {
+        return plFileName(fName.before_last('/')).GetFileName();
+    }
     ST_ssize_t end = fName.find_last('/');
     if (end < 0)
         end = fName.find_last('\\');
