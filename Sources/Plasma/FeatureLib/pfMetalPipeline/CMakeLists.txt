@@ -44,10 +44,27 @@ set(pfMetalPipeline_HEADERS
     pfMetalPipelineCreatable.h
 )
 
+set(pfMetalPipeline_SHADERS
+    ShaderSrc/FixedPipelineShaders.metal
+    ShaderSrc/PlateShaders.metal
+    ShaderSrc/BiasNormals.metal
+    ShaderSrc/CompCosines.metal
+    ShaderSrc/WaveSet7.metal
+    ShaderSrc/Grass.metal
+    ShaderSrc/WaveDecEnv.metal
+    ShaderSrc/Avatar.metal
+    ShaderSrc/WaveDec1Lay_7.metal
+    ShaderSrc/WaveRip.metal
+    ShaderSrc/Clear.metal
+    ShaderSrc/GammaCorrection.metal
+    ShaderSrc/TextFontShader.metal
+)
+
 plasma_library(pfMetalPipeline
     FOLDER FeatureLib
     SOURCES ${pfMetalPipeline_SOURCES} ${pfMetalPipeline_HEADERS}
 )
+
 target_link_libraries(pfMetalPipeline
     PUBLIC
         CoreLib
@@ -73,49 +90,27 @@ source_group("Source Files" FILES ${pfMetalPipeline_SOURCES})
 source_group("Header Files" FILES ${pfMetalPipeline_HEADERS})
 
 # All supported Macs for Plasma/Metal support MSL 2.1
-add_library(pfMetalPipelineShadersMSL21 MODULE)
-# Build a 2.3 varient for macOS 11 and/or Apple Silicon specific features
-add_library(pfMetalPipelineShadersMSL23 MODULE)
-
-set(pfMetalPipeline_SHADERS
-    ShaderSrc/FixedPipelineShaders.metal
-    ShaderSrc/PlateShaders.metal
-    ShaderSrc/BiasNormals.metal
-    ShaderSrc/CompCosines.metal
-    ShaderSrc/WaveSet7.metal
-    ShaderSrc/Grass.metal
-    ShaderSrc/WaveDecEnv.metal
-    ShaderSrc/Avatar.metal
-    ShaderSrc/WaveDec1Lay_7.metal
-    ShaderSrc/WaveRip.metal
-    ShaderSrc/Clear.metal
-    ShaderSrc/GammaCorrection.metal
-    ShaderSrc/TextFontShader.metal
+add_metal_shader_library(pfMetalPipelineShadersMSL21
+    STANDARD macos-metal2.1
+    ${pfMetalPipeline_SHADERS}
+)
+target_include_directories(pfMetalPipelineShadersMSL21
+    PRIVATE
+    $<TARGET_PROPERTY:pnNucleusInc,INTERFACE_INCLUDE_DIRECTORIES>
 )
 set_target_properties(pfMetalPipelineShadersMSL21 PROPERTIES
-    XCODE_PRODUCT_TYPE com.apple.product-type.metal-library
-    XCODE_ATTRIBUTE_MTL_LANGUAGE_REVISION Metal21
-    XCODE_ATTRIBUTE_MTL_HEADER_SEARCH_PATHS "${Plasma_SOURCE_DIR}/Sources/Plasma/NucleusLib/inc/"
-    SUFFIX ".metallib"
-    PREFIX ""
-    XCODE_ATTRIBUTE_MTL_FAST_MATH "YES"
-    XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=Debug] "INCLUDE_SOURCE"
-    XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=RelWithDebInfo] "INCLUDE_SOURCE"
     FOLDER FeatureLib
+)
+
+# Build a 2.3 varient for macOS 11 and/or Apple Silicon specific features
+add_metal_shader_library(pfMetalPipelineShadersMSL23
+    STANDARD macos-metal2.3
+    ${pfMetalPipeline_SHADERS}
+)
+target_include_directories(pfMetalPipelineShadersMSL23
+    PRIVATE
+    $<TARGET_PROPERTY:pnNucleusInc,INTERFACE_INCLUDE_DIRECTORIES>
 )
 set_target_properties(pfMetalPipelineShadersMSL23 PROPERTIES
-    XCODE_PRODUCT_TYPE com.apple.product-type.metal-library
-    XCODE_ATTRIBUTE_MTL_LANGUAGE_REVISION Metal23
-    XCODE_ATTRIBUTE_MTL_HEADER_SEARCH_PATHS "${Plasma_SOURCE_DIR}/Sources/Plasma/NucleusLib/inc/"
-    SUFFIX ".metallib"
-    PREFIX ""
-    XCODE_ATTRIBUTE_MTL_FAST_MATH "YES"
-    XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=Debug] "INCLUDE_SOURCE"
-    XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=RelWithDebInfo] "INCLUDE_SOURCE"
     FOLDER FeatureLib
 )
-set_source_files_properties(${pfMetalPipeline_SHADERS} TARGET_DIRECTORY pfMetalPipelineShadersMSL21 PROPERTIES LANGUAGE METAL)
-set_source_files_properties(${pfMetalPipeline_SHADERS} TARGET_DIRECTORY pfMetalPipelineShadersMSL23 PROPERTIES LANGUAGE METAL)
-
-target_sources(pfMetalPipelineShadersMSL21 PRIVATE ${pfMetalPipeline_SHADERS})
-target_sources(pfMetalPipelineShadersMSL23 PRIVATE ${pfMetalPipeline_SHADERS})
