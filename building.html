@@ -27,8 +27,8 @@
 
       <h2>Building</h2>
 
-      <p>Currently, the complete game client can only be built for Windows, using Visual Studio.</p>
-      <p>By default these steps will compile a client targeting your machine architecture. It is possible to build a 64-bit game client, but only the 32-bit (x86) client is officially supported.</p>
+      <p>Currently, the complete game client can only be built for Windows (using Visual Studio) and macOS (using Xcode). Several tools can be built for Linux, but not a complete game client.</p>
+      <p>By default these steps will compile a client targeting your machine architecture. It is possible to build a 64-bit game client, but only the 32-bit (x86) Windows client is officially supported.</p>
 
 
       <h3 id="dependencies">Library Dependencies</h3>
@@ -64,7 +64,7 @@
           <li><a href="https://www.webmproject.org/">VPX and WebM</a> (for video)</li>
           <li><a href="https://www.opus-codec.org/">Opus</a> (for video and voice chat)</li>
           <li><a href="https://www.speex.org/downloads/">Speex</a> (for legacy voice chat)</li>
-          <li>Autodesk 3ds Max 7 (non-free SDK; for 3ds Max plugin)</li>
+          <li>Autodesk 3ds Max 7 or newer (non-free SDK; for 3ds Max plugin)</li>
         </ul>
       </details>
 
@@ -151,11 +151,13 @@
       </ol>
 
 
-      <h3 id="building-nix">Building on macOS &amp; Linux</h3>
+      <h3 id="building-mac">Building on macOS</h3>
 
-      <p>Linux and macOS are <strong>not officially supported targets</strong>, and the game client does not compile. However, several of the tools can be built and run.</p>
+      <p>Compiling on macOS requires a minimum of macOS 11 and the Xcode build system. Xcode is available as a free download from the <a href="https://apps.apple.com/us/app/xcode/id497799835?mt=12/">App Store</a>.</p>
 
-      <p>You will need to ensure all the required dependencies are available. On macOS, a Homebrew bundle file is included in the repository, which can be installed by running <code>brew bundle</code>. You can also use vcpkg on these platforms for automatically managing dependencies.</p>
+      <p>We strongly encourage using vcpkg to automatically build dependencies; however, this requires some tools be manually installed in advance. The required tools are CMake, nasm, and pkg-config. They can be installed using common package managers such as Homebrew or MacPorts.</p>
+
+      <p>For Homebrew users who wish to manage all dependencies, a Homebrew bundle file is included in the repository, which can be installed by running <code>brew bundle</code> after cloning the project.</p>
 
       <ol>
         <li>
@@ -165,19 +167,55 @@
 
         <li>
           <p>In the folder where you cloned the repository, run CMake to create a build folder:<br>
-            <code>cmake --builddir build -S .</code></p>
-          <p>If you want to use vcpkg to automatically build dependencies, enable the <tt>USE_VCPKG</tt> option:<br>
-            <code>cmake -D USE_VCPKG=ON --builddir build -S .</code></p>
+            <code>cmake -G Xcode -DUSE_VCPKG=ON -B build -S .</code></p>
+          <p>This assumes you wish to use vcpkg to build dependencies. Remove <tt>-DUSE_VCPKG=ON</tt> to manage dependencies yourself.</p>
         </li>
 
         <li>
           <p>Compile the project with the following command:<br>
-            <code>cmake --builddir build --config RelWithDebInfo</code></p>
+            <code>cmake --build build --config RelWithDebInfo</code></p>
         </li>
 
         <li>
           <p>Install the resulting tools with the following command:<br>
-            <code>cmake --install build --config RelWithDebInfo</code></p>
+            <code>cmake --build build --target install --config RelWithDebInfo</code></p>
+        </li>
+
+        <li>
+          <p>The client will be built and installed into the <tt>build/install/client</tt> subfolder of where you cloned the repo.</p>
+          <p>The client output folder will be referred to as your “MOUL-OS” folder in the instructions on <a href="running.html">Running Plasma</a>.</p>
+        </li>
+      </ol>
+
+      <p>You can also open the project in the Xcode IDE by opening the <tt>build/Plasma.xcodeproj</tt> file.</p>
+
+      <h3 id="building-nix">Building on Linux</h3>
+
+      <p>Linux and other UNIX-like operating systems are <strong>not officially supported targets</strong>, and the game client does not compile. However, several of the tools can be built and run.</p>
+
+      <p>You will need to ensure all the required dependencies are available. You can also use vcpkg on these platforms for automatically managing dependencies.</p>
+
+      <ol>
+        <li>
+          <p>Clone the repository from GitHub, including all submodules, using a git client. On the command line, this can be done by executing the following:<br>
+            <code>git clone --recurse-submodules https://github.com/H-uru/Plasma.git</code></p>
+        </li>
+
+        <li>
+          <p>In the folder where you cloned the repository, run CMake to create a build folder:<br>
+            <code>cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -B build -S .</code></p>
+          <p>If you want to use vcpkg to automatically build dependencies, enable the <tt>USE_VCPKG</tt> option:<br>
+            <code>cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DUSE_VCPKG=ON -B build -S .</code></p>
+        </li>
+
+        <li>
+          <p>Compile the project with the following command:<br>
+            <code>cmake --build build</code></p>
+        </li>
+
+        <li>
+          <p>Install the resulting tools with the following command:<br>
+            <code>cmake --build build --target install</code></p>
         </li>
 
         <li>

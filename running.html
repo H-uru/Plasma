@@ -35,14 +35,17 @@
           <p>You should <strong>never</strong> use a custom-built client with servers that are not explicitly intended for testing. Newer features in the client code might be incompatible with those servers and could break the game for other players or result in permanent player data corruption.</p>
       </div>
 
-
-      <h3 id="running-windows">Running on Windows</h3>
+      <p>Before running the client, you will need to do the following:</p>
 
       <ol>
         <li><p>Copy the folders <tt>avi</tt>, <tt>dat</tt>, and <tt>sfx</tt> from your existing MOULa installation to the MOUL-OS folder.</p></li>
 
         <li><p>Get the appropriate <tt>server.ini</tt> file for the server you will be connecting to.</p></li>
+      </ol>
 
+      <h3 id="running-windows">Running on Windows</h3>
+
+      <ol start="3">
         <li><p>Create a shortcut in the MOUL-OS folder to the compiled <tt>plClient.exe</tt>.</p></li>
 
         <li><p>Edit the shortcut’s properties, and after the final quotation mark in the Target field, add <code>/LocalData</code>.<br>Also, change the Start in field to the path of your MOUL-OS folder.</p></li>
@@ -55,11 +58,7 @@
 
       <p>Follow these instructions if you wish to be able to debug using a single content folder from inside Visual Studio.</p>
 
-      <ol>
-        <li><p>Copy the folders <tt>avi</tt>, <tt>dat</tt>, and <tt>sfx</tt> from your existing MOULa installation to the MOUL-OS folder.</p></li>
-
-        <li><p>Get the appropriate <tt>server.ini</tt> file for the server you will be connecting to.</p></li>
-
+      <ol start="3">
         <li><p>Open the Plasma folder in Visual Studio.</p></li>
 
         <li><p>Switch to CMake Targets View in the Solution Explorer.</p></li>
@@ -72,14 +71,19 @@
       </ol>
 
 
+      <h3 id="running-mac">Running on macOS</h3>
+
+      <ol start="3">
+        <li><p>Open a terminal window in your MOUL-OS folder.</p></li>
+
+        <li><p>Run <code>open -n ./plClient.app --args --LocalData</code> to start the client.</p></li>
+      </ol>
+
+
       <!-- No Linux client available, no point including this right now
       <h3 id="running-linux">Running on Linux</h3>
 
-      <ol>
-        <li><p>Copy the folders <tt>avi</tt>, <tt>dat</tt>, and <tt>sfx</tt> from your existing MOULa installation to the MOUL-OS folder.</p></li>
-
-        <li><p>Get the appropriate <tt>server.ini</tt> file for the server you will be connecting to.</p></li>
-
+      <ol start="3">
         <li><p>Open a terminal window in your MOUL-OS folder.</p></li>
 
         <li><p>Run <code>plClient --LocalData</code> to start the client.</p></li>
