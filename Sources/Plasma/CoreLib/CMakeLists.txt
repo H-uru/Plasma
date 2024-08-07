@@ -6,6 +6,7 @@ set(CoreLib_SOURCES
     hsExceptions.cpp
     hsExceptionStack.cpp
     hsFastMath.cpp
+    hsFILELock.cpp
     hsGeometry3.cpp
     hsMatrix33.cpp
     hsMatrix44.cpp
@@ -43,6 +44,7 @@ set(CoreLib_HEADERS
     hsExceptions.h
     hsExceptionStack.h
     hsFastMath.h
+    hsFILELock.h
     hsGeometry3.h
     hsLockGuard.h
     hsMatrix44.h
