@@ -28,6 +28,7 @@ set(pfDXPipeline_HEADERS
 )
 
 plasma_library(pfDXPipeline
+    FOLDER FeatureLib
     SOURCES ${pfDXPipeline_SOURCES} ${pfDXPipeline_HEADERS}
     PRECOMPILED_HEADERS Pch.h
 )

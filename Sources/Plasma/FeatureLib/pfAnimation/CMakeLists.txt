@@ -25,7 +25,10 @@ set(pfAnimation_HEADERS
     plViewFaceModifier.h
 )
 
-plasma_library(pfAnimation SOURCES ${pfAnimation_SOURCES} ${pfAnimation_HEADERS})
+plasma_library(pfAnimation
+    FOLDER FeatureLib
+    SOURCES ${pfAnimation_SOURCES} ${pfAnimation_HEADERS}
+)
 target_link_libraries(
     pfAnimation
     PUBLIC

@@ -13,7 +13,10 @@ set(pfConsoleCore_HEADERS
     pfConsoleParser.h
 )
 
-plasma_library(pfConsoleCore SOURCES ${pfConsoleCore_SOURCES} ${pfConsoleCore_HEADERS})
+plasma_library(pfConsoleCore
+    FOLDER FeatureLib
+    SOURCES ${pfConsoleCore_SOURCES} ${pfConsoleCore_HEADERS}
+)
 target_link_libraries(
     pfConsoleCore
     PUBLIC

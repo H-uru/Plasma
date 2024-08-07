@@ -57,6 +57,7 @@ set(pfGameGUIMgr_HEADERS
 )
 
 plasma_library(pfGameGUIMgr
+    FOLDER FeatureLib
     SOURCES ${pfGameGUIMgr_SOURCES} ${pfGameGUIMgr_HEADERS}
     UNITY_BUILD
     PRECOMPILED_HEADERS Pch.h

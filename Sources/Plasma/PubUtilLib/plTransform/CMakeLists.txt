@@ -10,7 +10,10 @@ set(plTransform_HEADERS
     mat_decomp.h
 )
 
-plasma_library(plTransform SOURCES ${plTransform_SOURCES} ${plTransform_HEADERS})
+plasma_library(plTransform
+    FOLDER PubUtilLib
+    SOURCES ${plTransform_SOURCES} ${plTransform_HEADERS}
+)
 target_link_libraries(
     plTransform
     PUBLIC

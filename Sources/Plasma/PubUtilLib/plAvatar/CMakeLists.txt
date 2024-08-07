@@ -68,6 +68,7 @@ set(plAvatar_HEADERS
 )
 
 plasma_library(plAvatar
+    FOLDER PubUtilLib
     SOURCES ${plAvatar_SOURCES} ${plAvatar_HEADERS}
     UNITY_BUILD
     PRECOMPILED_HEADERS Pch.h

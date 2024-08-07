@@ -14,7 +14,10 @@ set(pfGLPipeline_HEADERS
     plGLPlateManager.h
 )
 
-plasma_library(pfGLPipeline SOURCES ${pfGLPipeline_SOURCES} ${pfGLPipeline_HEADERS})
+plasma_library(pfGLPipeline
+    FOLDER FeatureLib
+    SOURCES ${pfGLPipeline_SOURCES} ${pfGLPipeline_HEADERS}
+)
 target_link_libraries(pfGLPipeline
     PUBLIC
         CoreLib

@@ -6,7 +6,10 @@ set(plClientResMgr_HEADERS
     plClientResMgr.h
 )
 
-plasma_library(plClientResMgr SOURCES ${plClientResMgr_SOURCES} ${plClientResMgr_HEADERS})
+plasma_library(plClientResMgr
+    FOLDER PubUtilLib
+    SOURCES ${plClientResMgr_SOURCES} ${plClientResMgr_HEADERS}
+)
 target_link_libraries(
     plClientResMgr
     PUBLIC

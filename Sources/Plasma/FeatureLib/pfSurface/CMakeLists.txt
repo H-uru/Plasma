@@ -18,6 +18,7 @@ set(pfSurface_HEADERS
 )
 
 plasma_library(pfSurface
+    FOLDER FeatureLib
     SOURCES ${pfSurface_SOURCES} ${pfSurface_HEADERS}
     UNITY_BUILD
     PRECOMPILED_HEADERS Pch.h

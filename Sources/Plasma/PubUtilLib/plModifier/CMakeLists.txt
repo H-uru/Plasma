@@ -46,6 +46,7 @@ set(plModifier_HEADERS
 )
 
 plasma_library(plModifier
+    FOLDER PubUtilLib
     SOURCES ${plModifier_SOURCES} ${plModifier_HEADERS}
     UNITY_BUILD
     PRECOMPILED_HEADERS Pch.h

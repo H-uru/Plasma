@@ -17,7 +17,10 @@ set(pnSceneObject_SOURCES
     plSimulationInterface.cpp
 )
 
-plasma_library(pnSceneObject SOURCES ${pnSceneObject_HEADERS} ${pnSceneObject_SOURCES})
+plasma_library(pnSceneObject
+    FOLDER NucleusLib
+    SOURCES ${pnSceneObject_HEADERS} ${pnSceneObject_SOURCES}
+)
 target_link_libraries(
     pnSceneObject
     PUBLIC

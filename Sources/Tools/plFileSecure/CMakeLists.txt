@@ -2,7 +2,10 @@ set(plFileSecure_SOURCES
     main.cpp
 )
 
-plasma_executable(plFileSecure TOOL SOURCES ${plFileSecure_SOURCES})
+plasma_executable(plFileSecure TOOL
+    FOLDER Tools
+    SOURCES ${plFileSecure_SOURCES}
+)
 target_link_libraries(
     plFileSecure
     PRIVATE

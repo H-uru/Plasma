@@ -22,6 +22,7 @@ set(plNetGameLib_HEADERS
 
 # NOTE: Too many ODR violations and ambiguous names for UNITY_BUILD on this one.
 plasma_library(plNetGameLib
+    FOLDER PubUtilLib
     SOURCES ${plNetGameLib_PRIVATE} ${plNetGameLib_HEADERS}
     PRECOMPILED_HEADERS Pch.h
 )

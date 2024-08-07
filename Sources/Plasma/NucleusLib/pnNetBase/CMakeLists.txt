@@ -14,7 +14,10 @@ set(pnNetBase_SOURCES
     pnNbSrvs.cpp
 )
 
-plasma_library(pnNetBase SOURCES ${pnNetBase_HEADERS} ${pnNetBase_SOURCES})
+plasma_library(pnNetBase
+    FOLDER NucleusLib
+    SOURCES ${pnNetBase_HEADERS} ${pnNetBase_SOURCES}
+)
 target_link_libraries(
     pnNetBase
     PUBLIC

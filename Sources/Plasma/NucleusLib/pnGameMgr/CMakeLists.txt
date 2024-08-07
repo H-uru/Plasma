@@ -9,7 +9,10 @@ set(pnGameMgr_HEADERS
     pnGmVarSync.h
 )
 
-plasma_library(pnGameMgr OBJECT SOURCES ${pnGameMgr_HEADERS})
+plasma_library(pnGameMgr OBJECT
+    FOLDER NucleusLib
+    SOURCES ${pnGameMgr_HEADERS}
+)
 target_link_libraries(
     pnGameMgr
     INTERFACE

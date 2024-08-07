@@ -264,6 +264,7 @@ set(pfPython_GLUE
 )
 
 plasma_library(pfPython
+    FOLDER FeatureLib
     SOURCES ${pfPython_SOURCES} ${pfPython_HEADERS} ${pfPython_GLUE}
     UNITY_BUILD
     PRECOMPILED_HEADERS Pch.h

@@ -17,6 +17,7 @@ set(pfConsole_HEADERS
 )
 
 plasma_library(pfConsole
+    FOLDER FeatureLib
     SOURCES ${pfConsole_SOURCES} ${pfConsole_HEADERS}
     PRECOMPILED_HEADERS Pch.h
 )

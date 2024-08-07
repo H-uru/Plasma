@@ -28,6 +28,7 @@ set(plLocalizationEditor_UIC
 )
 
 plasma_executable(plLocalizationEditor TOOL QT_GUI
+    FOLDER Tools
     SOURCES
         ${plLocalizationEditor_HEADERS} ${plLocalizationEditor_SOURCES}
         ${plLocalizationEditor_RCC} ${plLocalizationEditor_UIC}

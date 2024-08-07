@@ -15,7 +15,10 @@ set(pfCamera_HEADERS
     plVirtualCamNeu.h
 )
 
-plasma_library(pfCamera SOURCES ${pfCamera_SOURCES} ${pfCamera_HEADERS})
+plasma_library(pfCamera
+    FOLDER FeatureLib
+    SOURCES ${pfCamera_SOURCES} ${pfCamera_HEADERS}
+)
 target_link_libraries(
     pfCamera
     PUBLIC

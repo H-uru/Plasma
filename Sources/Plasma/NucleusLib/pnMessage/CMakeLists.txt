@@ -64,6 +64,7 @@ set(pnMessage_SOURCES
 )
 
 plasma_library(pnMessage
+    FOLDER NucleusLib
     SOURCES ${pnMessage_HEADERS} ${pnMessage_SOURCES}
     PRECOMPILED_HEADERS Pch.h
     UNITY_BUILD

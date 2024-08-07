@@ -22,7 +22,10 @@ set(pnNetCommon_SOURCES
     pnNetCommon.cpp
 )
 
-plasma_library(pnNetCommon SOURCES ${pnNetCommon_HEADERS} ${pnNetCommon_SOURCES})
+plasma_library(pnNetCommon
+    FOLDER NucleusLib
+    SOURCES ${pnNetCommon_HEADERS} ${pnNetCommon_SOURCES}
+)
 target_link_libraries(
     pnNetCommon
     PUBLIC

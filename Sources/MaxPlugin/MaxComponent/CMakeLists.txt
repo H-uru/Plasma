@@ -166,6 +166,7 @@ set(MaxComponent_SOURCES
 )
 
 plasma_library(MaxComponent
+    FOLDER MaxPlugin
     SOURCES ${MaxComponent_HEADERS} ${MaxComponent_RESOURCES} ${MaxComponent_SOURCES}
     UNITY_BUILD
     PRECOMPILED_HEADERS Pch.h

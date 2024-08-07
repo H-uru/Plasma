@@ -11,7 +11,10 @@ set(plAudible_HEADERS
     plWinAudibleProxy.h
 )
 
-plasma_library(plAudible SOURCES ${plAudible_SOURCES} ${plAudible_HEADERS})
+plasma_library(plAudible
+    FOLDER PubUtilLib
+    SOURCES ${plAudible_SOURCES} ${plAudible_HEADERS}
+)
 target_link_libraries(
     plAudible
     PUBLIC

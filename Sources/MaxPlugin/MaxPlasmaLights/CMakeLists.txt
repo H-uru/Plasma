@@ -23,6 +23,7 @@ set(MaxPlasmaLights_SOURCES
 )
 
 plasma_library(MaxPlasmaLights SHARED
+    FOLDER MaxPlugin
     SOURCES ${MaxPlasmaLights_HEADERS} ${MaxPlasmaLights_RESOURCES} ${MaxPlasmaLights_SOURCES}
     PRECOMPILED_HEADERS Pch.h
     NO_SANITIZE # The 3ds Max headers are full of clang diagnostic errors.

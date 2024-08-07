@@ -7,7 +7,10 @@ set(plNetClientComm_HEADERS
     plNetClientCommCreatable.h
 )
 
-plasma_library(plNetClientComm SOURCES ${plNetClientComm_SOURCES} ${plNetClientComm_HEADERS})
+plasma_library(plNetClientComm
+    FOLDER PubUtilLib
+    SOURCES ${plNetClientComm_SOURCES} ${plNetClientComm_HEADERS}
+)
 target_link_libraries(
     plNetClientComm
     PUBLIC

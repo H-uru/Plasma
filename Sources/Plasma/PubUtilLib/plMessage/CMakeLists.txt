@@ -133,6 +133,7 @@ set(plMessage_HEADERS
 )
 
 plasma_library(plMessage
+    FOLDER PubUtilLib
     SOURCES ${plMessage_SOURCES} ${plMessage_HEADERS}
     UNITY_BUILD
     PRECOMPILED_HEADERS Pch.h

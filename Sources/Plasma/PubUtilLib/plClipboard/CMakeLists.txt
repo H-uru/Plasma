@@ -6,7 +6,10 @@ set(plClipboard_HEADERS
     plClipboard.h
 )
 
-plasma_library(plClipboard SOURCES ${plClipboard_SOURCES} ${plClipboard_HEADERS})
+plasma_library(plClipboard
+    FOLDER PubUtilLib
+    SOURCES ${plClipboard_SOURCES} ${plClipboard_HEADERS}
+)
 target_link_libraries(
     plClipboard
     PUBLIC

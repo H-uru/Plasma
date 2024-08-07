@@ -28,6 +28,7 @@ set(plScene_HEADERS
 )
 
 plasma_library(plScene
+    FOLDER PubUtilLib
     SOURCES ${plScene_SOURCES} ${plScene_HEADERS}
     UNITY_BUILD
     PRECOMPILED_HEADER Pch.h
