@@ -99,10 +99,11 @@ enum FileFlags
 
     // Executable flags
     kRedistUpdate               = 1<<4,
+    kBundle                     = 1<<5,
 
     // Begin internal flags
-    kLastManifestFlag           = 1<<5,
-    kSelfPatch                  = 1<<6,
+    kLastManifestFlag           = 1<<6,
+    kSelfPatch                  = 1<<7,
 };
 
 // ===================================================
@@ -168,6 +169,7 @@ struct pfPatcherWorker : public hsThread
     hsSemaphore fFileSignal;
 
     pfPatcher::CompletionFunc fOnComplete;
+    pfPatcher::FindBundleExeFunc fFindBundleExe;
     pfPatcher::FileDownloadFunc fFileBeginDownload;
     pfPatcher::FileDesiredFunc fFileDownloadDesired;
     pfPatcher::FileDownloadFunc fFileDownloaded;
@@ -570,9 +572,13 @@ void pfPatcherWorker::IHashFile(pfPatcherQueuedFile& file)
     }
 
     // Check to see if ours matches
-    plFileInfo mine(file.fClientPath);
+    plFileName clientPathForComparison = file.fClientPath;
+    if ((file.fFlags & kBundle) && fFindBundleExe) {
+        clientPathForComparison = fFindBundleExe(clientPathForComparison);
+    }
+    plFileInfo mine(clientPathForComparison);
     if (mine.FileSize() == file.fFileSize) {
-        plMD5Checksum cliMD5(file.fClientPath);
+        plMD5Checksum cliMD5(clientPathForComparison);
         if (cliMD5 == file.fChecksum) {
             WhitelistFile(file.fClientPath, false);
             return;
@@ -692,6 +698,11 @@ pfPatcher::pfPatcher() : fWorker(new pfPatcherWorker) { }
 pfPatcher::~pfPatcher() { }
 
 // ===================================================
+
+void pfPatcher::OnFindBundleExe(FindBundleExeFunc vb)
+{
+    fWorker->fFindBundleExe = std::move(vb);
+}
 
 void pfPatcher::OnCompletion(CompletionFunc cb)
 {

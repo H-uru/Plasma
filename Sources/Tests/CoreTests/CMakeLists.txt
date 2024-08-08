@@ -1,6 +1,7 @@
 set(CoreLibTest_SOURCES
     test_endianSwap.cpp
     test_plCmdParser.cpp
+    test_RAMStream.cpp
     $<$<PLATFORM_ID:Darwin>:test_hsDarwin_CF.cpp>
     $<$<PLATFORM_ID:Darwin>:test_hsDarwin_NS.mm>
 )

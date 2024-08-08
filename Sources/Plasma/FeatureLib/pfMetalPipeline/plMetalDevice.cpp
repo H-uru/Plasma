@@ -334,7 +334,9 @@ void plMetalDevice::BeginNewRenderPass()
         renderPassDescriptor->depthAttachment()->setStoreAction(MTL::StoreActionDontCare);
 
         if (fSampleCount == 1) {
-            if (NeedsPostprocessing()) {
+            // We only need the intermediate texture for post processing on
+            // non-tilers. Tilers can direct read/write on the fragment texture.
+            if (NeedsPostprocessing() && !SupportsTileMemory()) {
                 renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentUnprocessedOutputTexture);
             } else {
                 renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentOutputTexture);
@@ -342,9 +344,12 @@ void plMetalDevice::BeginNewRenderPass()
         } else {
             renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentMSAAOutputTexture);
 
-            // if we need postprocessing, output to the main pass texture
+            // if we need postprocessing, output to the intermediate main pass texture
             // otherwise we can go straight to the drawable
-            if (NeedsPostprocessing()) {
+            
+            // We only need the intermediate texture for post processing on
+            // non-tilers. Tilers can direct read/write on the fragment texture.
+            if (NeedsPostprocessing() && !SupportsTileMemory()) {
                 renderPassDescriptor->colorAttachments()->object(0)->setResolveTexture(fCurrentUnprocessedOutputTexture);
             } else {
                 renderPassDescriptor->colorAttachments()->object(0)->setResolveTexture(fCurrentFragmentOutputTexture);
@@ -450,6 +455,10 @@ plMetalDevice::plMetalDevice()
 
     fMetalDevice = MTL::CreateSystemDefaultDevice();
     fCommandQueue = fMetalDevice->newCommandQueue();
+    
+    // Only known tiler on Apple devices are Apple GPUs.
+    // Apple recommends a family check for tile memory support.
+    fSupportsTileMemory = fMetalDevice->supportsFamily(MTL::GPUFamilyApple1);
 
     // set up all the depth stencil states
     MTL::DepthStencilDescriptor* depthDescriptor = MTL::DepthStencilDescriptor::alloc()->init();
@@ -480,6 +489,8 @@ plMetalDevice::plMetalDevice()
     fReverseZStencilState = fMetalDevice->newDepthStencilState(depthDescriptor);
 
     depthDescriptor->release();
+    
+    LoadLibrary();
 }
 
 void plMetalDevice::SetViewport()
@@ -1039,15 +1050,18 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
             fCurrentDrawableDepthTexture = fMetalDevice->newTexture(depthTextureDescriptor);
         }
     }
-
-    // Do we need to create a unprocessed output texture?
-    // If the depth needs to be rebuilt - we probably need to rebuild this one too
-    if ((fCurrentUnprocessedOutputTexture && depthNeedsRebuild) || (fCurrentUnprocessedOutputTexture == nullptr && NeedsPostprocessing())) {
-        MTL::TextureDescriptor* mainPassDescriptor = MTL::TextureDescriptor::texture2DDescriptor(drawable->texture()->pixelFormat(), drawable->texture()->width(), drawable->texture()->height(), false);
-        mainPassDescriptor->setStorageMode(MTL::StorageModePrivate);
-        mainPassDescriptor->setUsage(MTL::TextureUsageShaderRead | MTL::TextureUsageRenderTarget);
-        fCurrentUnprocessedOutputTexture->release();
-        fCurrentUnprocessedOutputTexture = fMetalDevice->newTexture(mainPassDescriptor);
+    
+    // We only need to allocate an intermediate texture if we don't have tile memory.
+    if (!SupportsTileMemory()) {
+        // Do we need to create a unprocessed output texture?
+        // If the depth needs to be rebuilt - we probably need to rebuild this one too
+        if ((fCurrentUnprocessedOutputTexture && depthNeedsRebuild) || (fCurrentUnprocessedOutputTexture == nullptr && NeedsPostprocessing())) {
+            MTL::TextureDescriptor* mainPassDescriptor = MTL::TextureDescriptor::texture2DDescriptor(drawable->texture()->pixelFormat(), drawable->texture()->width(), drawable->texture()->height(), false);
+            mainPassDescriptor->setStorageMode(MTL::StorageModePrivate);
+            mainPassDescriptor->setUsage(MTL::TextureUsageShaderRead | MTL::TextureUsageRenderTarget);
+            fCurrentUnprocessedOutputTexture->release();
+            fCurrentUnprocessedOutputTexture = fMetalDevice->newTexture(mainPassDescriptor);
+        }
     }
 
     fCurrentDrawable = drawable->retain();
@@ -1065,15 +1079,13 @@ void plMetalDevice::StartPipelineBuild(plMetalPipelineRecord& record, std::condi
         return;
     }
 
-    MTL::Library* library = fMetalDevice->newDefaultLibrary();
-
     std::shared_ptr<plMetalPipelineState> pipelineState = record.state;
 
     MTL::RenderPipelineDescriptor* descriptor = MTL::RenderPipelineDescriptor::alloc()->init();
     descriptor->setLabel(pipelineState->GetDescription());
 
-    const MTL::Function* vertexFunction = pipelineState->GetVertexFunction(library);
-    const MTL::Function* fragmentFunction = pipelineState->GetFragmentFunction(library);
+    const MTL::Function* vertexFunction = pipelineState->GetVertexFunction(fShaderLibrary);
+    const MTL::Function* fragmentFunction = pipelineState->GetFragmentFunction(fShaderLibrary);
     descriptor->setVertexFunction(vertexFunction);
     descriptor->setFragmentFunction(fragmentFunction);
 
@@ -1108,7 +1120,6 @@ void plMetalDevice::StartPipelineBuild(plMetalPipelineRecord& record, std::condi
     });
 
     descriptor->release();
-    library->release();
 }
 
 plMetalDevice::plMetalLinkedPipeline* plMetalDevice::PipelineState(plMetalPipelineState* pipelineState)
@@ -1206,13 +1217,14 @@ void plMetalDevice::SubmitCommandBuffer()
         fBlitCommandEncoder = nullptr;
     }
 
-    fCurrentRenderTargetCommandEncoder->endEncoding();
-    fCurrentRenderTargetCommandEncoder->release();
-    fCurrentRenderTargetCommandEncoder = nil;
 
-    if (NeedsPostprocessing()) {
-        PostprocessIntoDrawable();
-    }
+    // Post processing will end the main render pass.
+    // On Apple Silicon - this code will attempt to combine render passes,
+    // but past this point developer should not rely on the main render pass
+    // being available.
+    PreparePostProcessing();
+    PostprocessIntoDrawable();
+    FinalizePostProcessing();
 
     fCurrentCommandBuffer->presentDrawable(fCurrentDrawable);
     fCurrentCommandBuffer->commit();
@@ -1241,14 +1253,19 @@ MTL::SamplerState* plMetalDevice::SampleStateForClampFlags(hsGMatState::hsGMatCl
 void plMetalDevice::CreateGammaAdjustState()
 {
     MTL::RenderPipelineDescriptor* gammaDescriptor = MTL::RenderPipelineDescriptor::alloc()->init();
-    MTL::Library*                  library = fMetalDevice->newDefaultLibrary();
 
-    gammaDescriptor->setVertexFunction(library->newFunction(MTLSTR("gammaCorrectVertex"))->autorelease());
-    gammaDescriptor->setFragmentFunction(library->newFunction(MTLSTR("gammaCorrectFragment"))->autorelease());
-
-    library->release();
-
-    gammaDescriptor->colorAttachments()->object(0)->setPixelFormat(fFramebufferFormat);
+    gammaDescriptor->setVertexFunction(fShaderLibrary->newFunction(MTLSTR("gammaCorrectVertex"))->autorelease());
+    if (SupportsTileMemory()) {
+        // Tiler GPU version does an in place transform
+        // Because it's in place we need to describe all main pass buffers including depth and MSAA
+        gammaDescriptor->colorAttachments()->object(0)->setPixelFormat(fCurrentFragmentOutputTexture->pixelFormat());
+        gammaDescriptor->setDepthAttachmentPixelFormat(fCurrentDepthFormat);
+        gammaDescriptor->setSampleCount(CurrentTargetSampleCount());
+        gammaDescriptor->setFragmentFunction(fShaderLibrary->newFunction(MTLSTR("gammaCorrectFragmentInPlace"))->autorelease());
+    } else {
+        gammaDescriptor->colorAttachments()->object(0)->setPixelFormat(fFramebufferFormat);
+        gammaDescriptor->setFragmentFunction(fShaderLibrary->newFunction(MTLSTR("gammaCorrectFragment"))->autorelease());
+    }
 
     NS::Error* error;
     fGammaAdjustState->release();
@@ -1258,17 +1275,28 @@ void plMetalDevice::CreateGammaAdjustState()
 
 void plMetalDevice::PostprocessIntoDrawable()
 {
+    if (!NeedsPostprocessing()) {
+        return;
+    }
+    
     if (!fGammaAdjustState) {
         CreateGammaAdjustState();
     }
 
-    // Gamma adjust
-    MTL::RenderPassDescriptor* gammaPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
-    gammaPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionDontCare);
-    gammaPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentDrawable->texture());
-    gammaPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionStore);
-
-    MTL::RenderCommandEncoder* gammaAdjustEncoder = fCurrentCommandBuffer->renderCommandEncoder(gammaPassDescriptor);
+    MTL::RenderCommandEncoder* gammaAdjustEncoder;
+    if (SupportsTileMemory()) {
+        // On tilers we can read/write directly on the framebuffer, carry on, no new render pass needed.
+        gammaAdjustEncoder = CurrentRenderCommandEncoder();
+    } else {
+        // On non-tilers, we need to create a new render pass to use our old render target as a texture
+        // source and the output drawable as the target to do post-processing.
+        MTL::RenderPassDescriptor* gammaPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
+        gammaPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionDontCare);
+        gammaPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentDrawable->texture());
+        gammaPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionStore);
+        
+        gammaAdjustEncoder = fCurrentCommandBuffer->renderCommandEncoder(gammaPassDescriptor);
+    }
 
     gammaAdjustEncoder->setRenderPipelineState(fGammaAdjustState);
 
@@ -1283,7 +1311,34 @@ void plMetalDevice::PostprocessIntoDrawable()
     gammaAdjustEncoder->setFragmentTexture(fCurrentUnprocessedOutputTexture, 0);
     gammaAdjustEncoder->setFragmentTexture(fGammaLUTTexture, 1);
     gammaAdjustEncoder->drawPrimitives(MTL::PrimitiveTypeTriangleStrip, NS::UInteger(0), NS::UInteger(4));
-    gammaAdjustEncoder->endEncoding();
+    
+    // On non-tilers - we created a render pass that we own,
+    // and we're responsible for ending it
+    if (!SupportsTileMemory()) {
+        gammaAdjustEncoder->endEncoding();
+    }
+}
+
+void plMetalDevice::PreparePostProcessing()
+{
+    // If we're on a tiler GPU - we don't need to create a new
+    // render pass. Keep the main render pass alive.
+    if (!SupportsTileMemory()) {
+        fCurrentRenderTargetCommandEncoder->endEncoding();
+        fCurrentRenderTargetCommandEncoder->release();
+        fCurrentRenderTargetCommandEncoder = nil;
+    }
+}
+
+void plMetalDevice::FinalizePostProcessing()
+{
+    // If we were on a tiler, post processing took ownership of the main
+    // render pass so we're responsible for finalizing it.
+    if (SupportsTileMemory()) {
+        fCurrentRenderTargetCommandEncoder->endEncoding();
+        fCurrentRenderTargetCommandEncoder->release();
+        fCurrentRenderTargetCommandEncoder = nil;
+    }
 }
 
 size_t plMetalDevice::plMetalPipelineRecordHashFunction ::operator()(plMetalPipelineRecord const& s) const noexcept

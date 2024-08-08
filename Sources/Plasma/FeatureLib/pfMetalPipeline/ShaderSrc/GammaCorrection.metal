@@ -79,3 +79,17 @@ fragment half4 gammaCorrectFragment(GammaVertexOut in               [[stage_in]]
         1.0
     };
 }
+
+#if defined(__METAL_IOS__) || __METAL_VERSION__ >= 230
+fragment half4 gammaCorrectFragmentInPlace(GammaVertexOut in        [[stage_in]],
+                                                 half4 color        [[color(0)]],
+                                 texture1d_array<ushort> LUT        [[texture(1)]])
+{
+    return {
+        half(float(LUT.sample(lutSampler, color.r, 0).x) / USHRT_MAX),
+        half(float(LUT.sample(lutSampler, color.g, 1).x) / USHRT_MAX),
+        half(float(LUT.sample(lutSampler, color.b, 2).x) / USHRT_MAX),
+        1.0
+    };
+}
+#endif

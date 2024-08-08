@@ -66,8 +66,7 @@ void plDXVertexShader::Release()
     ReleaseObject(fHandle);
     fHandle = nullptr;
     fPipe = nullptr;
-
-    ISetError(nullptr);
+    fErrorString.clear();
 }
 
 bool plDXVertexShader::VerifyFormat(uint8_t format) const
@@ -94,7 +93,7 @@ HRESULT plDXVertexShader::ICreate(plDXPipeline* pipe)
 {
     fHandle = nullptr; // in case something goes wrong.
     fPipe = nullptr;
-    ISetError(nullptr);
+    fErrorString.clear();
 
     // We could store the compiled buffer and skip the assembly step
     // if we need to recreate the shader (e.g. on device lost).
@@ -102,12 +101,12 @@ HRESULT plDXVertexShader::ICreate(plDXPipeline* pipe)
     DWORD* shaderCodes = (DWORD*)(fOwner->GetDecl()->GetCodes());
 
     if( !shaderCodes )
-        return IOnError(-1, "Shaders must be compiled into the engine.");
+        return IOnError(-1, ST_LITERAL("Shaders must be compiled into the engine."));
 
     HRESULT hr = pipe->GetD3DDevice()->CreateVertexShader(shaderCodes, &fHandle);
 
     if( FAILED(hr) )
-        return IOnError(hr, "Error on CreateVertexShader");
+        return IOnError(hr, ST_LITERAL("Error on CreateVertexShader"));
 
     hsAssert(fHandle, "No error, but no vertex shader handle. Grrrr.");
 
@@ -125,7 +124,7 @@ HRESULT plDXVertexShader::ISetConstants(plDXPipeline* pipe)
                                         (const float*)fOwner->GetConstBasePtr(),
                                         fOwner->GetNumConsts());
         if( FAILED(hr) )
-            return IOnError(hr, "Failure setting vertex shader constants");
+            return IOnError(hr, ST_LITERAL("Failure setting vertex shader constants"));
     }
 
     return S_OK;

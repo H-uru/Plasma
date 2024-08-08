@@ -177,9 +177,9 @@ bool plShadowMaster::MsgReceive(plMessage* msg)
     plRenderMsg* rendMsg = plRenderMsg::ConvertNoRef(msg);
     if( rendMsg )
     {
-        plProfile_BeginLap(ShadowMaster, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_BeginLap(ShadowMaster, this->GetKey()->GetUoid().GetObjectName());
         IBeginRender();
-        plProfile_EndLap(ShadowMaster, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_EndLap(ShadowMaster, this->GetKey()->GetUoid().GetObjectName());
         return true;
     }
 

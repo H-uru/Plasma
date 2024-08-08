@@ -210,9 +210,9 @@ bool plShadowCaster::MsgReceive(plMessage* msg)
     plRenderMsg* rendMsg = plRenderMsg::ConvertNoRef(msg);
     if( rendMsg )
     {
-        plProfile_BeginLap(ShadowCaster, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_BeginLap(ShadowCaster, this->GetKey()->GetUoid().GetObjectName());
         IOnRenderMsg(rendMsg);
-        plProfile_EndLap(ShadowCaster, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_EndLap(ShadowCaster, this->GetKey()->GetUoid().GetObjectName());
         return true;
     }
 

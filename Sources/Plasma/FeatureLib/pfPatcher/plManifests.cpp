@@ -52,24 +52,44 @@ Mead, WA   99021
 #   define MANIFEST(in, ex) in
 #endif // PLASMA_EXTERNAL_RELEASE
 
+#if defined(HS_BUILD_FOR_APPLE)
+#   define EXECUTABLE_SUFFIX ".app"
+#elif defined(HS_BUILD_FOR_WIN32)
+#   define EXECUTABLE_SUFFIX ".exe"
+#else
+#   define EXECUTABLE_SUFFIX ""
+#endif
+
 plFileName plManifest::ClientExecutable()
 {
-    return MANIFEST("plClient.exe", "UruExplorer.exe");
+    return MANIFEST("plClient" EXECUTABLE_SUFFIX, "UruExplorer" EXECUTABLE_SUFFIX);
 }
 
 plFileName plManifest::PatcherExecutable()
 {
-    return MANIFEST("plUruLauncher.exe", "UruLauncher.exe");
+#ifdef HS_BUILD_FOR_MACOS
+    return MANIFEST("plClient" EXECUTABLE_SUFFIX, "UruExplorer" EXECUTABLE_SUFFIX);
+#else
+    return MANIFEST("plUruLauncher" EXECUTABLE_SUFFIX, "UruLauncher" EXECUTABLE_SUFFIX);
+#endif
 }
 
 ST::string plManifest::ClientManifest()
 {
+#ifdef HS_BUILD_FOR_MACOS
+    return MANIFEST("macThinInternal", "macThinExternal");
+#else
     return MANIFEST("ThinInternal", "ThinExternal");
+#endif
 }
 
 ST::string plManifest::ClientImageManifest()
 {
+#ifdef HS_BUILD_FOR_MACOS
+    return MANIFEST("macInternal", "macExternal");
+#else
     return MANIFEST("Internal", "External");
+#endif
 }
 
 ST::string plManifest::PatcherManifest()

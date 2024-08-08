@@ -185,7 +185,7 @@ public:
     hsG3DDeviceRecord& operator=(const hsG3DDeviceRecord& src);
 
     uint32_t  GetG3DDeviceType() const { return fG3DDeviceType; }
-    const char* GetG3DDeviceTypeName() const;
+    ST::string GetG3DDeviceTypeName() const;
     uint32_t  GetG3DHALorHEL() const { return fG3DHALorHEL; }
 
     uint32_t GetMemoryBytes() const { return fMemoryBytes; }
@@ -323,10 +323,9 @@ public:
     typedef std::function<void(std::vector<hsG3DDeviceRecord>&)> DeviceEnumerator;
 
 protected:
-    static std::list<DeviceEnumerator> sEnumerators;
+    static std::list<DeviceEnumerator>& Enumerators();
 
     std::vector<hsG3DDeviceRecord> fRecords;
-    char    fErrorString[ 128 ];
 
     void IClear();
     void IRemoveDiscarded();
@@ -340,12 +339,12 @@ protected:
     uint32_t  IAdjustDirectXMemory( uint32_t cardMem );
 
     bool      IGetD3DCardInfo( hsG3DDeviceRecord &record, void *driverInfo, void *deviceInfo,
-                               uint32_t *vendorID, uint32_t *deviceID, char **driverString, char **descString );
+                               uint32_t *vendorID, uint32_t *deviceID, ST::string& driverString, ST::string& descString);
 
     void    ISetFudgeFactors( uint8_t chipsetID, hsG3DDeviceRecord &record );
 
 public:
-    static void AddDeviceEnumerator(const DeviceEnumerator& de) { sEnumerators.emplace_back(de); }
+    static void AddDeviceEnumerator(const DeviceEnumerator& de) { Enumerators().emplace_back(de); }
 
     hsG3DDeviceSelector() { }
     virtual ~hsG3DDeviceSelector();

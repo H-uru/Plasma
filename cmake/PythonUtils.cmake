@@ -23,12 +23,22 @@ function(python_test_modules)
         endif()
 
         if(_ptm_REQUIREMENTS_FILE)
-            message(STATUS "Installing Python modules from: ${_ptm_REQUIREMENTS_FILE}")
-            execute_process(
-                COMMAND "${Python3_EXECUTABLE}" -m pip install -r "${_ptm_REQUIREMENTS_FILE}"
-                RESULT_VARIABLE RETURNCODE
-                OUTPUT_QUIET ERROR_QUIET
-            )
+            # Optimization: hash the requirements file and store it on success
+            # Then, we can avoid running expensive install operations on reconfigure.
+            file(SHA512 "${_ptm_REQUIREMENTS_FILE}" _REQUIREMENTS_FILE_HASH)
+            if(NOT _REQUIREMENTS_FILE_HASH IN_LIST _PLASMA_PIP_REQUIREMENTS_HASHES)
+                message(STATUS "Installing Python modules from: ${_ptm_REQUIREMENTS_FILE}")
+                execute_process(
+                    COMMAND "${Python3_EXECUTABLE}" -m pip install -r "${_ptm_REQUIREMENTS_FILE}"
+                    RESULT_VARIABLE RETURNCODE
+                    OUTPUT_QUIET ERROR_QUIET
+                )
+                if(RETURNCODE EQUAL 0)
+                    set(_PLASMA_PIP_REQUIREMENTS_HASHES "${_PLASMA_PIP_REQUIREMENTS_HASHES}${_REQUIREMENTS_FILE_HASH};" CACHE INTERNAL "")
+                endif()
+            else()
+                message(STATUS "Already installed Python modules from: ${_ptm_REQUIREMENTS_FILE}")
+            endif()
         else()
             message(STATUS "Installing Python modules: ${_ptm_MODULES}")
             execute_process(

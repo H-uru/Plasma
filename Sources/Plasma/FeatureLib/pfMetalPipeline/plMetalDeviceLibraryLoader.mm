@@ -40,47 +40,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plDXShader.h"
+#include <Foundation/Foundation.h>
+#include <Metal/Metal.h>
+#include "plMetalDevice.h"
 
-#include "HeadSpin.h"
-#include "hsWindows.h"
-#include <d3d9.h>
-
-#include "plDXPipeline.h"
-
-#include "plSurface/plShader.h"
-
-plDXShader::plDXShader(plShader* owner)
-:   fOwner(owner),
-    fPipe()
+void plMetalDevice::LoadLibrary()
 {
-    owner->SetDeviceRef(this);
-}
-
-plDXShader::~plDXShader()
-{
-    fPipe = nullptr;
-    fErrorString.clear();
-}
-
-void plDXShader::SetOwner(plShader* owner)
-{
-    if( owner != fOwner )
+    /*
+     On iOS we're fine loading the Metal 2.1 library. Metal 2.1 includes
+     all the Apple Silicon features on iOS. We need Metal 2.3 to get those
+     features on macOS.
+     */
+    
+    NS::Error* error;
+    
+#ifdef TARGET_OS_OSX
+    if (@available(macOS 11, *)) {
+        NSURL* shaderURL = [NSBundle.mainBundle URLForResource:@"pfMetalPipelineShadersMSL23" withExtension:@"metallib"];
+        fShaderLibrary = fMetalDevice->newLibrary(static_cast<NS::URL*>(shaderURL), &error);
+    } else
+#endif
     {
-        Release();
-        fOwner = owner;
-        owner->SetDeviceRef(this);
+        NSURL* shaderURL = [NSBundle.mainBundle URLForResource:@"pfMetalPipelineShadersMSL21" withExtension:@"metallib"];
+        fShaderLibrary = fMetalDevice->newLibrary(static_cast<NS::URL*>(shaderURL), &error);
     }
+    hsAssert(error == nil,  "Unexpected error loading Metal shader library");
 }
-
-HRESULT plDXShader::IOnError(HRESULT hr, ST::string errStr)
-{
-    fErrorString = std::move(errStr);
-
-    fOwner->Invalidate();
-
-    hsStatusMessage(fErrorString.c_str());
-
-    return hr;
-}
-

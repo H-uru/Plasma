@@ -57,7 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plStatusLog_h
 
 #include "HeadSpin.h"
-#include "hsThread.h"
 #include "plFileSystem.h"
 #include "plLoggable.h"
 
@@ -88,7 +87,6 @@ class plStatusLog : public plLog
         plFileName   fFilename;
         ST::string*  fLines;
         uint32_t*    fColors;
-        hsGlobalSemaphore* fSema;
         FILE*        fFileHandle;
         uint32_t     fSize;
         bool         fForceLog;

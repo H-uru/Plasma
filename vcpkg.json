@@ -11,6 +11,10 @@
         "platform": "!(osx | windows)"
       },
       "freetype",
+      {
+        "name": "libarchive",
+        "platform": "osx"
+      },
       "libepoxy",
       "libjpeg-turbo",
       "libogg",
@@ -54,7 +58,7 @@
         ]
       }
     },
-    "builtin-baseline": "53bef8994c541b6561884a8395ea35715ece75db",
+    "builtin-baseline": "f7423ee180c4b7f40d43402c2feb3859161ef625",
     "vcpkg-configuration": {
       "overlay-ports": ["./Scripts/Ports"],
       "overlay-triplets": ["./Scripts/Triplets"]

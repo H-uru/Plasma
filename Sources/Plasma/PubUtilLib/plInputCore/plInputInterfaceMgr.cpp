@@ -290,7 +290,7 @@ void    plInputInterfaceMgr::IUpdateCursor( int32_t newCursor )
 
 bool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
 {
-    const char *inputEval = "Eval";
+    const ST::string inputEval = ST_LITERAL("Eval");
     plProfile_BeginLap(Input, inputEval);
 
 
@@ -420,7 +420,7 @@ bool    plInputInterfaceMgr::MsgReceive( plMessage *msg )
     plInputEventMsg *ieMsg = plInputEventMsg::ConvertNoRef( msg );
     if (ieMsg != nullptr)
     {
-        const char *inputIEM = "InputEventMsg";
+        const ST::string inputIEM = ST_LITERAL("InputEventMsg");
         plProfile_BeginLap(Input, inputIEM);
         bool handled = false;
         size_t missedInputStartIdx = 0;

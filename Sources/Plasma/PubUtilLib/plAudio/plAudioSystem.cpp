@@ -817,7 +817,7 @@ bool plAudioSystem::MsgReceive(plMessage* msg)
     if (plRenderMsg* pRMsg = plRenderMsg::ConvertNoRef( msg )) {
         //if (fListener)
         {
-            plProfile_BeginLap(AudioUpdate, this->GetKey()->GetUoid().GetObjectName().c_str());
+            plProfile_BeginLap(AudioUpdate, this->GetKey()->GetUoid().GetObjectName());
             if (hsTimer::GetMilliSeconds() - fLastUpdateTimeMs > UPDATE_TIME_MS) {
                 IUpdateSoftSounds(fCurrListenerPos);
 
@@ -827,7 +827,7 @@ bool plAudioSystem::MsgReceive(plMessage* msg)
                     plProfile_EndTiming(SoundEAXUpdate);
                 }
             }
-            plProfile_EndLap(AudioUpdate, this->GetKey()->GetUoid().GetObjectName().c_str());
+            plProfile_EndLap(AudioUpdate, this->GetKey()->GetUoid().GetObjectName());
         }
         return true;
     }

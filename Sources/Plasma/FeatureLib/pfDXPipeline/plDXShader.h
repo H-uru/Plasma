@@ -56,8 +56,7 @@ protected:
     ST::string          fErrorString;
     plDXPipeline*       fPipe;
 
-    HRESULT             IOnError(HRESULT hr, const char* errStr);
-    void                ISetError(const char* errStr) { fErrorString = errStr; }
+    HRESULT IOnError(HRESULT hr, ST::string errStr);
 
     virtual HRESULT     ICreate(plDXPipeline* pipe) = 0;
     virtual HRESULT     ISetConstants(plDXPipeline* pipe) = 0; // On error, sets error string.

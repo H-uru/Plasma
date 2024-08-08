@@ -55,6 +55,11 @@ jobs:
           arch: ${{ matrix.platform.qt-arch }}
           dir: ${{ github.workspace }}/qt
 
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.29.2'
+
       - name: Setup NuGet
         run: |
           nuget sources add `
@@ -91,7 +96,7 @@ jobs:
           cmake --build build --target INSTALL --config "${{ matrix.cfg.type }}" -j 4
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
@@ -99,6 +104,8 @@ jobs:
       - name: Test
         run: |
           cmake --build build --target check --config "${{ matrix.cfg.type }}" -j 4
+        env:
+          CTEST_OUTPUT_ON_FAILURE: 1
 
   max:
     # Can only run if we have a token for our super seekrit Max SDK repo. Sad.
@@ -130,6 +137,11 @@ jobs:
           repository: H-uruMachineUser/3dsMaxSDK
           token: ${{ secrets.MACHINE_USER_REPO_READ }}
           path: maxsdk
+
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.29.2'
 
       - name: Setup NuGet
         run: |
@@ -164,7 +176,7 @@ jobs:
           cmake --build build --target INSTALL --config Release -j 4
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: plasma-${{ matrix.cfg.str }}-max-${{ matrix.cfg.sdk-version }}
           path: build/install
@@ -197,6 +209,11 @@ jobs:
               nasm \
               ninja-build \
               qtbase5-dev
+
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.29.2'
 
       - name: Setup NuGet
         run: |
@@ -232,13 +249,15 @@ jobs:
       - name: Test
         run: |
           cmake --build build --target check -j 4
+        env:
+          CTEST_OUTPUT_ON_FAILURE: 1
 
       - name: Install
         run: |
           cmake --build build --target install -j 4
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
@@ -251,7 +270,7 @@ jobs:
       matrix:
         platform:
           - { str: macos-arm64, arch: arm64, runner: "macos-14" }
-          - { str: macos-x64, arch: x86_64, runner: "macos-latest" }
+          - { str: macos-x64, arch: x86_64, runner: "macos-13" }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
@@ -263,16 +282,18 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install \
+          brew install -q \
               qt@5 \
               autoconf \
               automake \
               libtool \
-              nasm
+              nasm \
+              python-setuptools
 
-      # Workaround for missing distutils on macOS: https://github.com/actions/runner/issues/2958
-      - name: Install setuptools
-        run: sudo -H pip3 install setuptools
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.29.2'
 
       - name: Setup NuGet
         run: |
@@ -309,16 +330,17 @@ jobs:
           cmake --build build --config "${{ matrix.cfg.type }}" -j 2
 
       - name: Test
-        if: matrix.platform.arch == 'x86_64'
         run: |
           cmake --build build --target check --config "${{ matrix.cfg.type }}" -j 2
+        env:
+          CTEST_OUTPUT_ON_FAILURE: 1
 
       - name: Install
         run: |
           cmake --build build --target install --config "${{ matrix.cfg.type }}" -j 2
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install

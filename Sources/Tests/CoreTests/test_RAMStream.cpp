@@ -40,47 +40,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plDXShader.h"
+#include <gtest/gtest.h>
+#include <string_view>
 
-#include "HeadSpin.h"
-#include "hsWindows.h"
-#include <d3d9.h>
+#include "hsStream.h"
 
-#include "plDXPipeline.h"
-
-#include "plSurface/plShader.h"
-
-plDXShader::plDXShader(plShader* owner)
-:   fOwner(owner),
-    fPipe()
+/**
+ * This tests that the hsRAMStream buffer is properly initialized and resized
+ * upon initial writing, ensuring that we don't hit any assertions around
+ * mempy'ing to a null buffer.
+ */
+TEST(hsRAMStream, initializeBufferOnFirstWrite)
 {
-    owner->SetDeviceRef(this);
+    constexpr std::string_view str = "hsRAMStream initializeBufferOnFirstWrite";
+    hsRAMStream s;
+
+    // Initial write to the buffer should initialize and resize it
+    s.WriteSafeString(str);
+    EXPECT_EQ(s.GetPosition(), str.size() + 2);
+
+    // Writing more should cause it to resize further
+    s.WriteLE32(1);
+    EXPECT_EQ(s.GetPosition(), str.size() + 2 + 4);
+
+    // Going back and rewriting over existing data should memcpy without resize
+    s.Skip(-4);
+    s.WriteLE32(5);
+    EXPECT_EQ(s.GetPosition(), str.size() + 2 + 4);
 }
-
-plDXShader::~plDXShader()
-{
-    fPipe = nullptr;
-    fErrorString.clear();
-}
-
-void plDXShader::SetOwner(plShader* owner)
-{
-    if( owner != fOwner )
-    {
-        Release();
-        fOwner = owner;
-        owner->SetDeviceRef(this);
-    }
-}
-
-HRESULT plDXShader::IOnError(HRESULT hr, ST::string errStr)
-{
-    fErrorString = std::move(errStr);
-
-    fOwner->Invalidate();
-
-    hsStatusMessage(fErrorString.c_str());
-
-    return hr;
-}
-

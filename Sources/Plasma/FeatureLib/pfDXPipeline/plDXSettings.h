@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 #include <d3d9.h>
 
+#include <string_theory/string>
 #include <vector>
 
 #include "hsBitVector.h"
@@ -73,6 +74,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// General Settings /////////////////////////////////////////////////////////
 
+class plLightInfo;
 class plRenderRequest;
 class plRenderTarget;
 struct IDirect3DSurface9;
@@ -109,7 +111,7 @@ class plDXGeneralSettings
         DWORD                           fCurrFVFFormat;
 
         hsCOMError              fDXError;
-        char                    fErrorStr[ 256 ];
+        ST::string fErrorStr;
 
         void    Reset();
 };

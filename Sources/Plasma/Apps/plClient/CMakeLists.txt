@@ -116,6 +116,10 @@ elseif(APPLE)
         Mac-Cocoa/PLSLoginWindowController.xib
         Mac-Cocoa/PLSPatcherWindowController.xib
     )
+    list(APPEND plClient_SHADERTARGETS
+        pfMetalPipelineShadersMSL21
+        pfMetalPipelineShadersMSL23
+    )
 else()
     list(APPEND plClient_SOURCES
         main.cpp
@@ -146,28 +150,25 @@ if(APPLE)
         MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
         RESOURCE "${plClient_XCODE_RESOURCES}"
         XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME AppIcon
-        XCODE_ATTRIBUTE_MTL_FAST_MATH "YES"
-        XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=Debug] "INCLUDE_SOURCE"
-        XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=RelWithDebInfo] "INCLUDE_SOURCE"
         XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=Debug] "YES"
         XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=RelWithDebInfo] "YES"
-        XCODE_ATTRIBUTE_MTL_HEADER_SEARCH_PATHS "${Plasma_SOURCE_DIR}/Sources/Plasma/NucleusLib/inc/"
         XCODE_ATTRIBUTE_INSTALL_PATH "/Applications"
         XCODE_ATTRIBUTE_SKIP_INSTALL "NO"
         XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${CMAKE_CURRENT_SOURCE_DIR}/Mac-Cocoa/plClient.entitlements"
         XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME "YES"
         XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC "YES"
         XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER org.Huru.UruExplorer
+        XCODE_EMBED_RESOURCES "${plClient_SHADERTARGETS}"
     )
     target_compile_options(plClient PRIVATE -fobjc-arc)
     target_sources(plClient PRIVATE Mac-Cocoa/Assets.xcassets)
     set_source_files_properties(Mac-Cocoa/Assets.xcassets ${RESOURCES} PROPERTIES
          MACOSX_PACKAGE_LOCATION Resources
     )
-    install(
-        TARGETS plClient
-        DESTINATION client
-    )
+    
+    if(${CMAKE_VERSION} VERSION_LESS 3.28)
+        message(FATAL_ERROR "Cannot build Mac client without CMake 3.28")
+    endif()
 
     if(PLASMA_APPLE_DEVELOPMENT_TEAM_ID)
             set_target_properties(plClient PROPERTIES
@@ -238,10 +239,10 @@ target_link_libraries(
         $<$<BOOL:${PLASMA_PIPELINE_DX}>:pfDXPipeline>
         $<$<BOOL:${PLASMA_PIPELINE_GL}>:pfGLPipeline>
         $<$<BOOL:${PLASMA_PIPELINE_METAL}>:pfMetalPipeline>
-        $<$<BOOL:${PLASMA_PIPELINE_METAL}>:pfMetalPipelineShaders>
         CURL::libcurl
         "$<$<PLATFORM_ID:Darwin>:-framework Cocoa>"
         "$<$<PLATFORM_ID:Darwin>:-framework QuartzCore>"
+        $<$<PLATFORM_ID:Darwin>:${LibArchive_LIBRARIES}>
 )
 target_include_directories(plClient PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 

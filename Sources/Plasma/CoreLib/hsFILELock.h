@@ -40,47 +40,44 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plDXShader.h"
+#ifndef hsFILELock_inc
+#define hsFILELock_inc
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include <d3d9.h>
 
-#include "plDXPipeline.h"
-
-#include "plSurface/plShader.h"
-
-plDXShader::plDXShader(plShader* owner)
-:   fOwner(owner),
-    fPipe()
+/**
+ * Acquire a platform dependent lock on the underlying file handle.
+ * \remarks On Windows, file locks are obligatory. Any attempts to
+ * read/write from/to the locked region will be denied. The region
+ * that this method locks is an implementation detail. On unix-like
+ * platforms, locks are advisory, and reads/writes from/to the locked
+ * region will succeed. Therefore, file locks should be treated as
+ * advisory at best (they won't stop someone from making a mess), and
+ * mandatory at worst (they can cause reads/writes to fail).
+ * \note This class meets the requirements of `Lockable`.
+ */
+class hsFILELock
 {
-    owner->SetDeviceRef(this);
-}
+    FILE* fRef;
 
-plDXShader::~plDXShader()
-{
-    fPipe = nullptr;
-    fErrorString.clear();
-}
+    bool ILock(bool block) const;
 
-void plDXShader::SetOwner(plShader* owner)
-{
-    if( owner != fOwner )
+public:
+    hsFILELock() = delete;
+    hsFILELock(const hsFILELock&) = delete;
+    hsFILELock(hsFILELock&& mv)
+        : fRef(mv.fRef)
     {
-        Release();
-        fOwner = owner;
-        owner->SetDeviceRef(this);
+        mv.fRef = nullptr;
     }
-}
+    hsFILELock(FILE* f) : fRef(f) { }
 
-HRESULT plDXShader::IOnError(HRESULT hr, ST::string errStr)
-{
-    fErrorString = std::move(errStr);
+    void lock() const { ILock(true); }
 
-    fOwner->Invalidate();
+    [[nodiscard]]
+    bool try_lock() const { return ILock(false); }
 
-    hsStatusMessage(fErrorString.c_str());
+    void unlock() const;
+};
 
-    return hr;
-}
-
+#endif

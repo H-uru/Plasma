@@ -193,7 +193,7 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
 
     float4 position = float4(in.position, 1.f) * uniforms.localToWorldMatrix;
     if (temp_hasOnlyWeight1) {
-        const float4 position2 = blendMatrix1 * float4(in.position, 1.f);
+        const float4 position2 = float4(in.position, 1.f) * blendMatrix1;
         position = (in.weight1 * position) + ((1.f - in.weight1) * position2);
     }
 

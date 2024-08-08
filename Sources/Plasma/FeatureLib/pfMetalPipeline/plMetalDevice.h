@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Metal/Metal.hpp>
 #include <QuartzCore/QuartzCore.hpp>
 #include <condition_variable>
+#include <string_theory/string>
 #include <unordered_map>
 
 #include "HeadSpin.h"
@@ -85,7 +86,7 @@ public:
     hsWindowHndl fDevice;
     hsWindowHndl fWindow;
 
-    const char* fErrorMsg;
+    ST::string fErrorMsg;
 
     MTL::RenderCommandEncoder* CurrentRenderCommandEncoder();
     MTL::Device*               fMetalDevice;
@@ -140,7 +141,7 @@ public:
     void MakeTextureRef(TextureRef* tRef, plMipmap* img);
     void MakeCubicTextureRef(TextureRef* tRef, plCubicEnvironmap* img);
 
-    const char* GetErrorString() const { return fErrorMsg; }
+    ST::string GetErrorString() const { return fErrorMsg; }
 
     void SetProjectionMatrix(const hsMatrix44& src);
     void SetWorldToCameraMatrix(const hsMatrix44& src);
@@ -187,6 +188,8 @@ public:
     void EncodeBlur(MTL::CommandBuffer* commandBuffer, MTL::Texture* texture, float sigma);
 
     MTL::PixelFormat GetFramebufferFormat() const { return fFramebufferFormat; };
+    
+    MTL::Library* GetShaderLibrary() const { return fShaderLibrary; }
 
 private:
     struct plMetalPipelineRecord
@@ -251,14 +254,10 @@ private:
 
     MTL::CommandBuffer*      fBlitCommandBuffer;
     MTL::BlitCommandEncoder* fBlitCommandEncoder;
-
-    bool NeedsPostprocessing() const
-    {
-        return fGammaLUTTexture != nullptr;
-    }
-    void                      PostprocessIntoDrawable();
-    void                      CreateGammaAdjustState();
-    MTL::RenderPipelineState* fGammaAdjustState;
+    
+    MTL::Library* fShaderLibrary;
+    
+    void LoadLibrary();
 
     void BeginNewRenderPass();
     void ReleaseSamplerStates();
@@ -266,6 +265,24 @@ private:
 
     // Blur states
     std::unordered_map<float, NS::Object*> fBlurShaders;
+    
+    // MARK: - Post processing
+private:
+    bool NeedsPostprocessing() const
+    {
+        return fGammaLUTTexture != nullptr;
+    }
+    void                      PreparePostProcessing();
+    void                      FinalizePostProcessing();
+    void                      PostprocessIntoDrawable();
+    void                      CreateGammaAdjustState();
+    MTL::RenderPipelineState* fGammaAdjustState;
+
+    // MARK:  - Device capabilities
+private:
+    /// Returns true if the device supports tile memory features such as directly writable render buffers.
+    inline bool SupportsTileMemory() const { return fSupportsTileMemory; }
+    bool fSupportsTileMemory;
 };
 
 #endif

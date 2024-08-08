@@ -124,6 +124,8 @@ find_package(ZLIB REQUIRED)
 
 if(APPLE)
     find_package(Security)
+    find_package(Metal)
+    find_package(LibArchive REQUIRED)
 elseif(UNIX)
     find_package(LIBSECRET)
     find_package(Uuid REQUIRED)
@@ -147,7 +149,7 @@ endif(PLASMA_EXTERNAL_RELEASE)
 # Pipeline Renderers
 cmake_dependent_option(PLASMA_PIPELINE_DX "Enable DirectX rendering pipeline?" ON "DirectX_FOUND" OFF)
 cmake_dependent_option(PLASMA_PIPELINE_GL "Enable OpenGL rendering pipeline?" ON "TARGET epoxy::epoxy" OFF)
-cmake_dependent_option(PLASMA_PIPELINE_METAL "Enable Metal rendering pipeline?" ON "APPLE" OFF)
+cmake_dependent_option(PLASMA_PIPELINE_METAL "Enable Metal rendering pipeline?" ON "TARGET Metal::Metal" OFF)
 
 if(PLASMA_PIPELINE_DX)
     add_definitions(-DPLASMA_PIPELINE_DX)
@@ -201,10 +203,18 @@ endif(MSVC)
 
 set(PLASMA_SOURCE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/Sources/Plasma")
 set(PLASMA_TOOLS_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/Sources/Tools")
+set(PLASMA_MAX_PLUGIN_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/Sources/MaxPlugin")
 
 add_subdirectory(Scripts)
 add_subdirectory(Sources/Plasma)
-add_subdirectory(Sources/Tools)
+
+if(PLASMA_BUILD_TOOLS)
+    add_subdirectory(Sources/Tools)
+endif()
+
+if(PLASMA_BUILD_MAX_PLUGIN)
+    add_subdirectory(Sources/MaxPlugin)
+endif()
 
 if(PLASMA_BUILD_TESTS)
     enable_testing()

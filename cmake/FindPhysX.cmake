@@ -139,10 +139,15 @@ elseif(NOT VCPKG_TOOLCHAIN)
     set(_PHYSX_RELEASE_PATHS ${CMAKE_PREFIX_PATH})
 endif()
 
+if(VCPKG_TOOLCHAIN)
+    set(_PHYSX_SKIP_SYSTEM_PATHS NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH)
+endif()
+
 find_path(PHYSX_INCLUDE_DIR NAMES PxPhysicsAPI.h
           PATHS ${_PHYSX_PREFIX}
           PATH_SUFFIXES include/physx include
           NO_CMAKE_PATH
+          ${_PHYSX_SKIP_SYSTEM_PATHS}
 )
 mark_as_advanced(PHYSX_INCLUDE_DIR)
 
@@ -154,6 +159,7 @@ if(PHYSX_INCLUDE_DIR)
                   PATHS ${_PHYSX_PREFIX}
                   PATH_SUFFIXES include/physx include
                   NO_CMAKE_PATHS
+                  ${_PHYSX_SKIP_SYSTEM_PATHS}
         )
         mark_as_advanced(PHYSX_FOUNDATION_INCLUDE_DIR)
     else()
@@ -173,12 +179,14 @@ macro(_find_physx_library SUFFIX)
                  PATHS ${_PHYSX_RELEASE_PATHS}
                  PATH_SUFFIXES lib
                  NO_CMAKE_PATH
+                 ${_PHYSX_SKIP_SYSTEM_PATHS}
     )
     find_library(${VAR_NAME}_LIBRARY_DEBUG
                  NAMES ${_${VAR_NAME}_LIBRARY_NAMES}
                  PATHS ${_PHYSX_DEBUG_PATHS}
                  PATH_SUFFIXES lib
                  NO_CMAKE_PATH
+                 ${_PHYSX_SKIP_SYSTEM_PATHS}
     )
     select_library_configurations(${VAR_NAME})
 

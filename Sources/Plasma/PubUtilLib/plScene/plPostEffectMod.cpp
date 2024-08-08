@@ -232,9 +232,9 @@ bool plPostEffectMod::MsgReceive(plMessage* msg)
     plRenderMsg* rend = plRenderMsg::ConvertNoRef(msg);
     if( rend && IIsEnabled() )
     {
-        plProfile_BeginLap(PostEffect, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_BeginLap(PostEffect, this->GetKey()->GetUoid().GetObjectName());
         ISubmitRequest();
-        plProfile_EndLap(PostEffect, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_EndLap(PostEffect, this->GetKey()->GetUoid().GetObjectName());
 
         return true;
     }

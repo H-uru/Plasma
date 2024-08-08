@@ -43,6 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plProfileManager_h_inc
 
 #include "HeadSpin.h"
+
+#include <string_theory/string>
+#include <utility>
 #include <vector>
 
 #include "plProfile.h"
@@ -88,7 +91,7 @@ protected:
 
     public:
         bool fUsedThisFrame;
-        LapInfo(const char* name) : fUsedThisFrame() { fName = name; fDisplayFlags = kDisplayTime; }
+        LapInfo(ST::string name) : fUsedThisFrame() { fName = std::move(name); fDisplayFlags = kDisplayTime; }
         bool operator<(const LapInfo& rhs) const { return fLastAvg < rhs.fLastAvg; }
 
         void BeginTiming(uint64_t value) { fValue -= value; }
@@ -96,11 +99,11 @@ protected:
     };
     std::vector<LapInfo> fLapTimes;
 
-    LapInfo* IFindLap(const char* lapName);
+    LapInfo* IFindLap(const ST::string& lapName);
 
 public:
-    void BeginLap(uint64_t curValue, const char* name);
-    void EndLap(uint64_t curValue, const char* name);
+    void BeginLap(uint64_t curValue, const ST::string& name);
+    void EndLap(uint64_t curValue, const ST::string& name);
 
     void BeginFrame();
     void EndFrame();

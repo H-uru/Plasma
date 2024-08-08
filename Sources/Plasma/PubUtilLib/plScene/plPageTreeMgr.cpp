@@ -212,7 +212,7 @@ size_t plPageTreeMgr::IRenderVisList(plPipeline* pipe, std::vector<plDrawVisList
         plDrawable* p = sortedDrawList[i].fDrawable;
 
 
-        plProfile_BeginLap(DrawableTime, p->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_BeginLap(DrawableTime, p->GetKey()->GetUoid().GetObjectName());
     
         if( sortedDrawList[i].fDrawable->GetNativeProperty(plDrawable::kPropSortSpans) )
         {
@@ -230,7 +230,7 @@ size_t plPageTreeMgr::IRenderVisList(plPipeline* pipe, std::vector<plDrawVisList
 
         }
 
-        plProfile_EndLap(DrawableTime, p->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_EndLap(DrawableTime, p->GetKey()->GetUoid().GetObjectName());
     }
 
     return numDrawn;

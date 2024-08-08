@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)patcher:(PLSPatcher*)patcher beganDownloadOfFile:(NSString*)file;
 - (void)patcher:(PLSPatcher*)patcher updatedProgress:(NSString*)progressMessage withBytes:(NSUInteger)bytes outOf:(uint64_t)totalBytes;
-- (void)patcherCompleted:(PLSPatcher*)patcher;
+- (void)patcherCompleted:(PLSPatcher*)patcher didSelfPatch:(BOOL)selfPatched;
 - (void)patcherCompletedWithError:(PLSPatcher*)patcher error:(NSError*)error;
 
 @end
@@ -60,6 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(weak) id<PLSPatcherDelegate> delegate;
 @property(readonly) BOOL selfPatched;
 
+- (NSURL*)completeSelfPatch:(NSError **)error;
 - (void)start;
 
 @end
