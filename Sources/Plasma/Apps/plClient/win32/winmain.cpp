@@ -528,10 +528,10 @@ static void AuthFailedStrings (ENetError authError,
                     *ppStr2 = "Account Not Activated.";
                     break;
                 case kNetErrConnectFailed:
-                    *ppStr2 = "Unable to connect to Myst Online.";
+                    *ppStr2 = "Unable to connect to The Open Cave.";
                     break;
                 case kNetErrDisconnected:
-                    *ppStr2 = "Disconnected from Myst Online.";
+                    *ppStr2 = "Disconnected from The Open Cave.";
                     break;
                 case kNetErrAuthenticationFailed:
                     *ppStr2 = "Incorrect password.\n\nMake sure CAPS LOCK is not on.";
