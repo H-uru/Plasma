@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #import "PLSView.h"
-#include <Metal/Metal.h>
 #include <QuartzCore/QuartzCore.h>
 #include "plMessage/plInputEventMsg.h"
 
@@ -63,35 +62,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 @interface PLSView ()
 
 @property NSTrackingArea* mouseTrackingArea;
-#if PLASMA_PIPELINE_METAL
-@property(weak) CAMetalLayer* metalLayer;
-#endif
 
 @end
 
 @implementation PLSView
 
-// MARK: View setup
-- (id)initWithFrame:(NSRect)frameRect
-{
-    self = [super initWithFrame:frameRect];
-#if PLASMA_PIPELINE_METAL
-    CAMetalLayer* layer = [CAMetalLayer layer];
-    layer.contentsScale = [[NSScreen mainScreen] backingScaleFactor];
-    layer.maximumDrawableCount = 3;
-    layer.pixelFormat = MTLPixelFormatBGR10A2Unorm;
-    self.layer = self.metalLayer = layer;
-#endif
-    self.layer.backgroundColor = NSColor.blackColor.CGColor;
-    return self;
-}
-
 - (BOOL)acceptsFirstResponder
-{
-    return YES;
-}
-
-- (BOOL)wantsLayer
 {
     return YES;
 }
@@ -275,9 +251,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
         return;
     }
 
-#if PLASMA_PIPELINE_METAL
-    _metalLayer.drawableSize = newSize;
-#endif
+    self.layer.contentsScale = scaleFactor;
+
+    if ([self.layer isKindOfClass:[CAMetalLayer class]]) {
+        ((CAMetalLayer*)self.layer).drawableSize = newSize;
+    }
+
     [self.delegate renderView:self
           didChangeOutputSize:newSize
                         scale:scaleFactor];
