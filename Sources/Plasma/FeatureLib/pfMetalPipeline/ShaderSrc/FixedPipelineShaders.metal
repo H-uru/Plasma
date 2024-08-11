@@ -256,15 +256,11 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
         position = (in.weight1 * position) + ((1.f - in.weight1) * position2);
     }
     
-    if (perPixelLighting)
-    {
+    if (perPixelLighting) {
         // send the world pos on to the pixel shader for lighting
         out.worldPos = position;
         out.normal = Ndirection;
-    }
-    
-    if (perPixelLighting)
-    {
+        
         out.vtxColor = inColor;
     } else {
         out.vtxColor = calcLitMaterialColor(lights, inColor, materialLighting, position, Ndirection);
