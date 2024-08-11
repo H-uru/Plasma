@@ -27,6 +27,7 @@ set(plAnimation_HEADERS
 )
 
 plasma_library(plAnimation
+    FOLDER PubUtilLib
     SOURCES ${plAnimation_SOURCES} ${plAnimation_HEADERS}
     UNITY_BUILD
     PRECOMPILED_HEADERS Pch.h

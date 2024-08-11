@@ -15,6 +15,7 @@ set(pnAysncCoreExe_PRIVATE
 )
 
 plasma_library(pnAsyncCoreExe
+    FOLDER NucleusLib
     SOURCES ${pnAsyncCoreExe_SOURCES} ${pnAsyncCoreExe_HEADERS} ${pnAsyncCoreExe_PRIVATE}
 )
 

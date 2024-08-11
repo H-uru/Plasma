@@ -9,7 +9,10 @@ set(plCompression_HEADERS
     plZlibStream.h
 )
 
-plasma_library(plCompression SOURCES ${plCompression_SOURCES} ${plCompression_HEADERS})
+plasma_library(plCompression
+    FOLDER PubUtilLib
+    SOURCES ${plCompression_SOURCES} ${plCompression_HEADERS}
+)
 target_link_libraries(
     plCompression
     PUBLIC

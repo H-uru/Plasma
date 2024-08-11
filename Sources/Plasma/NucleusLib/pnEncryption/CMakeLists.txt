@@ -15,7 +15,10 @@ set(pnEncryption_HEADERS
     plRandom.h
 )
 
-plasma_library(pnEncryption SOURCES ${pnEncryption_SOURCES} ${pnEncryption_HEADERS})
+plasma_library(pnEncryption
+    FOLDER NucleusLib
+    SOURCES ${pnEncryption_SOURCES} ${pnEncryption_HEADERS}
+)
 target_link_libraries(
     pnEncryption
     PUBLIC

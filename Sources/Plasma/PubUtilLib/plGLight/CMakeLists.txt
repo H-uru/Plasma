@@ -24,8 +24,10 @@ set(plGLight_HEADERS
     plShadowSlave.h
 )
 
-plasma_library(plGLight SOURCES ${plGLight_SOURCES} ${plGLight_HEADERS})
-
+plasma_library(plGLight
+    FOLDER PubUtilLib
+    SOURCES ${plGLight_SOURCES} ${plGLight_HEADERS}
+)
 target_link_libraries(plGLight
     PUBLIC
         CoreLib

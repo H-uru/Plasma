@@ -69,6 +69,7 @@ set(MaxMain_SOURCES
 )
 
 plasma_library(MaxMain SHARED
+    FOLDER MaxPlugin
     SOURCES ${MaxMain_HEADERS} ${MaxMain_RESOURCES} ${MaxMain_SOURCES}
     PRECOMPILED_HEADERS Pch.h
     NO_SANITIZE # The 3ds Max headers are full of clang diagnostic errors.

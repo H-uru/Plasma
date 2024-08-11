@@ -20,7 +20,10 @@ set(plPhysical_HEADERS
     plSimDefs.h
 )
 
-plasma_library(plPhysical SOURCES ${plPhysical_SOURCES} ${plPhysical_HEADERS})
+plasma_library(plPhysical
+    FOLDER PubUtilLib
+    SOURCES ${plPhysical_SOURCES} ${plPhysical_HEADERS}
+)
 target_link_libraries(
     plPhysical
     PUBLIC

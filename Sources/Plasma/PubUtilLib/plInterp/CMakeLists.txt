@@ -21,6 +21,7 @@ set(plInterp_HEADERS
 )
 
 plasma_library(plInterp
+    FOLDER PubUtilLib
     SOURCES ${plInterp_SOURCES} ${plInterp_HEADERS}
     PRECOMPILED_HEADERS Pch.h
 )

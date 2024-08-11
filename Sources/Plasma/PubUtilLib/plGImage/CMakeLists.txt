@@ -35,6 +35,7 @@ set(plGImage_HEADERS
 )
 
 plasma_library(plGImage
+    FOLDER PubUtilLib
     SOURCES ${plGImage_SOURCES} ${plGImage_HEADERS}
     PRECOMPILED_HEADERS Pch.h
 )

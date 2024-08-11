@@ -8,7 +8,10 @@ set(plMath_HEADERS
     plTriUtils.h
 )
 
-plasma_library(plMath SOURCES ${plMath_SOURCES} ${plMath_HEADERS})
+plasma_library(plMath
+    FOLDER PubUtilLib
+    SOURCES ${plMath_SOURCES} ${plMath_HEADERS}
+)
 target_link_libraries(
     plMath
     PUBLIC

@@ -8,7 +8,10 @@ set(pnUUID_HEADERS
     pnUUID.h
 )
 
-plasma_library(pnUUID SOURCES ${pnUUID_SOURCES} ${pnUUID_HEADERS})
+plasma_library(pnUUID
+    FOLDER NucleusLib
+    SOURCES ${pnUUID_SOURCES} ${pnUUID_HEADERS}
+)
 target_link_libraries(
     pnUUID
     PUBLIC

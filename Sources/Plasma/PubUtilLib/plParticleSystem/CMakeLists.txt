@@ -24,6 +24,7 @@ set(plParticleSystem_HEADERS
 )
 
 plasma_library(plParticleSystem
+    FOLDER PubUtilLib
     SOURCES ${plParticleSystem_SOURCES} ${plParticleSystem_HEADERS}
     PRECOMPILED_HEADERS Pch.h
 )

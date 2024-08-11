@@ -15,7 +15,10 @@ set(pfGameMgr_SOURCES
     pfGmMarker.cpp
 )
 
-plasma_library(pfGameMgr SOURCES ${pfGameMgr_HEADERS} ${pfGameMgr_SOURCES})
+plasma_library(pfGameMgr
+    FOLDER FeatureLib
+    SOURCES ${pfGameMgr_HEADERS} ${pfGameMgr_SOURCES}
+)
 target_link_libraries(
     pfGameMgr
     PUBLIC

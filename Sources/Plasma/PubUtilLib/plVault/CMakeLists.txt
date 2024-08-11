@@ -17,6 +17,7 @@ set(plVault_HEADERS
 )
 
 plasma_library(plVault
+    FOLDER PubUtilLib
     SOURCES ${plVault_SOURCES} ${plVault_HEADERS}
     PRECOMPILED_HEADERS Pch.h
     UNITY_BUILD

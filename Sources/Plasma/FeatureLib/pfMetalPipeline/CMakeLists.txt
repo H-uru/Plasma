@@ -44,7 +44,10 @@ set(pfMetalPipeline_HEADERS
     pfMetalPipelineCreatable.h
 )
 
-plasma_library(pfMetalPipeline SOURCES ${pfMetalPipeline_SOURCES} ${pfMetalPipeline_HEADERS})
+plasma_library(pfMetalPipeline
+    FOLDER FeatureLib
+    SOURCES ${pfMetalPipeline_SOURCES} ${pfMetalPipeline_HEADERS}
+)
 target_link_libraries(pfMetalPipeline
     PUBLIC
         CoreLib
@@ -98,6 +101,7 @@ set_target_properties(pfMetalPipelineShadersMSL21 PROPERTIES
     XCODE_ATTRIBUTE_MTL_FAST_MATH "YES"
     XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=Debug] "INCLUDE_SOURCE"
     XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=RelWithDebInfo] "INCLUDE_SOURCE"
+    FOLDER FeatureLib
 )
 set_target_properties(pfMetalPipelineShadersMSL23 PROPERTIES
     XCODE_PRODUCT_TYPE com.apple.product-type.metal-library
@@ -108,6 +112,7 @@ set_target_properties(pfMetalPipelineShadersMSL23 PROPERTIES
     XCODE_ATTRIBUTE_MTL_FAST_MATH "YES"
     XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=Debug] "INCLUDE_SOURCE"
     XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=RelWithDebInfo] "INCLUDE_SOURCE"
+    FOLDER FeatureLib
 )
 set_source_files_properties(${pfMetalPipeline_SHADERS} TARGET_DIRECTORY pfMetalPipelineShadersMSL21 PROPERTIES LANGUAGE METAL)
 set_source_files_properties(${pfMetalPipeline_SHADERS} TARGET_DIRECTORY pfMetalPipelineShadersMSL23 PROPERTIES LANGUAGE METAL)

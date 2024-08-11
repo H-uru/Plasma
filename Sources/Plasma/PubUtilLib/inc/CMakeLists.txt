@@ -2,7 +2,10 @@ set(plPubUtilInc_HEADERS
     plAllCreatables.h
 )
 
-plasma_library(plPubUtilInc OBJECT SOURCES ${plPubUtilInc_HEADERS})
+plasma_library(plPubUtilInc OBJECT
+    FOLDER PubUtilLib
+    SOURCES ${plPubUtilInc_HEADERS}
+)
 target_link_libraries(plPubUtilInc
     PUBLIC
         plAgeLoader

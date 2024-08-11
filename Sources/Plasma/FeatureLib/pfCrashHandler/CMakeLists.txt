@@ -23,7 +23,10 @@ else()
     )
 endif()
 
-plasma_library(pfCrashHandler SOURCES ${pfCrashHandler_SOURCES} ${pfCrashHandler_HEADERS})
+plasma_library(pfCrashHandler
+    FOLDER FeatureLib
+    SOURCES ${pfCrashHandler_SOURCES} ${pfCrashHandler_HEADERS}
+)
 target_link_libraries(
     pfCrashHandler
     PUBLIC

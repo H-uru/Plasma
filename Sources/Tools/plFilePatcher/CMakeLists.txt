@@ -9,9 +9,9 @@ set(plFilePatcher_HEADERS
 )
 
 plasma_executable(plFilePatcher TOOL
+    FOLDER Tools
     SOURCES ${plFilePatcher_SOURCES} ${plFilePatcher_HEADERS}
 )
-
 target_link_libraries(
     plFilePatcher
     PRIVATE

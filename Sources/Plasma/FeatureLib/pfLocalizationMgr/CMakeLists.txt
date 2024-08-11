@@ -18,7 +18,10 @@ set(pfLocalizationMgr_HEADERS
     pfLocalizedString.h
 )
 
-plasma_library(pfLocalizationMgr SOURCES ${pfLocalizationMgr_SOURCES} ${pfLocalizationMgr_HEADERS})
+plasma_library(pfLocalizationMgr
+    FOLDER FeatureLib
+    SOURCES ${pfLocalizationMgr_SOURCES} ${pfLocalizationMgr_HEADERS}
+)
 
 target_link_libraries(
     pfLocalizationMgr

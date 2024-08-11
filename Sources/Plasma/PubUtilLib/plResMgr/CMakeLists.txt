@@ -25,6 +25,7 @@ set(plResMgr_HEADERS
 )
 
 plasma_library(plResMgr
+    FOLDER PubUtilLib
     SOURCES ${plResMgr_SOURCES} ${plResMgr_HEADERS}
     PRECOMPILED_HEADERS Pch.h
 )

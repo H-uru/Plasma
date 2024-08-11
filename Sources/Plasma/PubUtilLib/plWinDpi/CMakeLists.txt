@@ -7,6 +7,7 @@ list(APPEND plWinDpi_SOURCES
 )
 
 plasma_library(plWinDpi
+    FOLDER PubUtilLib
     SOURCES ${plWinDpi_SOURCES} ${plWinDpi_HEADERS}
 )
 

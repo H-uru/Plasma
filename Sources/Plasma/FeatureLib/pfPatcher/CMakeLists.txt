@@ -8,7 +8,10 @@ set(pfPatcher_HEADERS
     pfPatcher.h
 )
 
-plasma_library(pfPatcher SOURCES ${pfPatcher_SOURCES} ${pfPatcher_HEADERS})
+plasma_library(pfPatcher
+    FOLDER FeatureLib
+    SOURCES ${pfPatcher_SOURCES} ${pfPatcher_HEADERS}
+)
 target_link_libraries(
     pfPatcher
     PUBLIC

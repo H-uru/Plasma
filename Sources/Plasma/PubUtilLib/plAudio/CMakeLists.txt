@@ -36,6 +36,7 @@ set(plAudio_HEADERS
 )
 
 plasma_library(plAudio
+    FOLDER PubUtilLib
     SOURCES ${plAudio_SOURCES} ${plAudio_HEADERS}
     UNITY_BUILD
     PRECOMPILED_HEADERS Pch.h

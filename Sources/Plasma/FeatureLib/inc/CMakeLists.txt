@@ -1,7 +1,10 @@
 set(pfFeatureInc_HEADERS
     pfAllCreatables.h
 )
-plasma_library(pfFeatureInc OBJECT SOURCES ${pfFeatureInc_HEADERS})
+plasma_library(pfFeatureInc OBJECT
+    FOLDER FeatureLib
+    SOURCES ${pfFeatureInc_HEADERS}
+)
 target_link_libraries(pfFeatureInc
     PUBLIC
         pfAnimation

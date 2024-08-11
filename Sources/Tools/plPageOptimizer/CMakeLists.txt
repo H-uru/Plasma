@@ -9,6 +9,7 @@ set(plPageOptimizer_HEADERS
 )
 
 plasma_executable(plPageOptimizer TOOL
+    FOLDER Tools
     SOURCES ${plPageOptimizer_SOURCES} ${plPageOptimizer_HEADERS}
 )
 target_link_libraries(

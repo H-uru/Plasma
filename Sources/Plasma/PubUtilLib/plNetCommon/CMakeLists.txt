@@ -23,6 +23,7 @@ set(plNetCommon_HEADERS
 )
 
 plasma_library(plNetCommon
+    FOLDER PubUtilLib
     SOURCES ${plNetCommon_SOURCES} ${plNetCommon_HEADERS}
     UNITY_BUILD
     PRECOMPILED_HEADERS Pch.h

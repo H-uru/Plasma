@@ -15,7 +15,10 @@ if(SoundDecompress_MOULa_Mode)
     list(APPEND SoundDecompress_HEADERS plOldAudioFileReader.h)
 endif()
 
-plasma_executable(SoundDecompress TOOL SOURCES ${SoundDecompress_SOURCES})
+plasma_executable(SoundDecompress TOOL
+    FOLDER Apps
+    SOURCES ${SoundDecompress_SOURCES}
+)
 target_link_libraries(
     SoundDecompress
     PRIVATE

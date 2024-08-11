@@ -10,7 +10,10 @@ set(pnInputCore_SOURCES
     plInputMap.cpp
 )
 
-plasma_library(pnInputCore SOURCES ${pnInputCore_HEADERS} ${pnInputCore_SOURCES})
+plasma_library(pnInputCore
+    FOLDER NucleusLib
+    SOURCES ${pnInputCore_HEADERS} ${pnInputCore_SOURCES}
+)
 target_link_libraries(
     pnInputCore
     PUBLIC

@@ -21,7 +21,10 @@ set(plInputCore_HEADERS
     plTelescopeInputInterface.h
 )
 
-plasma_library(plInputCore SOURCES ${plInputCore_SOURCES} ${plInputCore_HEADERS})
+plasma_library(plInputCore
+    FOLDER PubUtilLib
+    SOURCES ${plInputCore_SOURCES} ${plInputCore_HEADERS}
+)
 target_link_libraries(
     plInputCore
     PUBLIC

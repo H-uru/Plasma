@@ -8,7 +8,10 @@ set(pnFactory_HEADERS
     plFactory.h
 )
 
-plasma_library(pnFactory SOURCES ${pnFactory_SOURCES} ${pnFactory_HEADERS})
+plasma_library(pnFactory
+    FOLDER NucleusLib
+    SOURCES ${pnFactory_SOURCES} ${pnFactory_HEADERS}
+)
 target_link_libraries(
     pnFactory
     PUBLIC
