@@ -271,11 +271,13 @@ else:
         "Vothol":               ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelvothol' + LinkEnd ),
         "ChisoPreniv":          ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisopreniv' + LinkEnd ),
         "ChisoPrenivNote":      ( 0, 1.0, 1.0, FanAgeStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisopreniv' + LinkEnd ),
+        "ChisoPrenivLower":     ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisolower' + LinkEnd ),
         "Serene":               ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelserene' + LinkEnd ),
         "Tiam":                 ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + DRCStampHolder + ShareBookDelete2 + LinkStart + 'xlinkpaneltiam' + LinkEnd ),
         "Elonin":               ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + DRCStampHolder + ShareBookDelete2 + LinkStart + 'xlinkpanelelonin' + LinkEnd ),
         "EderNaybree":          ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpaneledernaybree' + LinkEnd ),
         "FahetsHighgarden":     ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelhighgarden' + LinkEnd ),
+        "Kalamee":              ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xlinkpanelkalamee' + LinkEnd ),
 }
 
 # cross-references the book name with the age and spawn point it links to
@@ -350,11 +352,13 @@ xLinkDestinations = {\
     "VeeTsah":                ( "VeeTsah", "LinkInPointDefault" ),
     "Vothol":                 ( "Vothol", "LinkInPointDefault" ),
     "ChisoPreniv":            ( "ChisoPreniv", "LinkInPointDefault" ),
+    "ChisoPrenivLower":       ( "ChisoPreniv", "LinkInLowerFloor" ),
     "Serene":                 ( "Serene", "LinkInPointDefault" ),
     "Tiam":                   ( "Tiam", "LinkInPointDefault" ),
     "Elonin":                 ( "Elonin", "LinkInPointDefault" ),
     "EderNaybree":            ( "EderNaybree", "LinkInPointDefault" ),
     "FahetsHighgarden":       ( "FahetsHighgarden", "LinkInPointDefault" ),
+    "Kalamee":                ( "Kalamee", "LinkInPointDefault" ),
 }
 
 #
