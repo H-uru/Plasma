@@ -1,0 +1,4 @@
+Graphics.Renderer.SetClearColor 0.73 0.73 0.73
+Graphics.Renderer.SetYon 100000.0
+Graphics.Renderer.Fog.SetDefColor 0.58 0.64 0.73
+Graphics.Renderer.Fog.SetDefLinear -1500.00 20000.00 1.00
