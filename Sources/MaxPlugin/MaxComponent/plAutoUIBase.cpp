@@ -501,8 +501,8 @@ void plAutoUIBase::ICreateControls()
     RECT rect;
     GetWindowRect(fhDlg, &rect);
 
-#if MAX_VERSION_MAJOR >= 24 // Max 2022
-    // This used to use MoveWindow() to resize the rollup, but in Max 2022,
+#if MAX_VERSION_MAJOR >= 22 // Max 2020
+    // This used to use MoveWindow() to resize the rollup, but in Max 2020,
     // that does not seem to work anymore. So, we now do the same thing
     // that WM_SIZE_PANEL does.
     IRollupWindow* rollup = GetCOREInterface()->GetCommandPanelRollup();
