@@ -100,13 +100,10 @@ public:
 //          doesn't inc the ref count.
 //  Insert into public section of class definition.
 //
-//  Normally one of the next 3 macros should follow CLASSNAME_REGISTER
+//  Normally the following macro should follow CLASSNAME_REGISTER
 //  GETINTERFACE_ANY - allows an interface to an object as plClassName if an object 
 //      is or is derived from plClassName.
-//  GETINTERFACE_EXACT - allows an interface as plClassName only if the type is 
-//      exactly of type plClassName
-//  GETINTERFACE_NONE - Never provide an interface as plClassName.
-//  Instead of using these macros, the class can provide a method
+//  Instead of using this macro, the class can provide a method
 //      virtual plCreatable* GetInterface(uint16_t hClass) which returns an object of
 //      type matching class handle hClass.
 //  Insert into public section of class definition (like right after CLASSNAME_REGISTER).
@@ -150,17 +147,6 @@ public:
 //          fred has pulled a sneaky and created a wilma to return.
 //          so unrelated classes can still "Convert" as one another.
 //
-//
-////////////////////////////
-// EAp - 01/10/2003
-// Added macros to support multiple AUX interfaces primarily,
-// but they are not limited to that. Usage example:
-// 
-//  plBeginInterfaceMap( plMyClass, plBaseClass );
-//      plAddInterfaceAux( plFooClass, fFooMember );
-//      plAddInterfaceAux( plBarClass, fBarMember );
-//      plAddInterface( plSomeOtherClass );
-//  plEndInterfaceMap();
 //
 
 
@@ -221,30 +207,6 @@ public:                                                                     \
     }
 
 
-
-#define GETINTERFACE_EXACT(plClassName)                                     \
-    static bool HasBaseClass(uint16_t hBaseClass) {                         \
-        return hBaseClass == plClassName##ClassIndex;                       \
-    }                                                                       \
-    plCreatable* GetInterface(uint16_t hClass) override {                   \
-        return hClass == plClassName##ClassIndex ? this : nullptr;          \
-    }                                                                       \
-    const plCreatable* GetConstInterface(uint16_t hClass) const override {  \
-        return hClass == plClassName##ClassIndex ? this : nullptr;          \
-    }
-
-
-
-#define GETINTERFACE_NONE(plClassName)                                      \
-    static bool HasBaseClass(uint16_t hBaseClass) { return false; }         \
-    plCreatable* GetInterface(uint16_t hClass) override {                   \
-        return nullptr;                                                     \
-    }                                                                       \
-    const plCreatable* GetConstInterface(uint16_t hClass) const override {  \
-        return nullptr;                                                     \
-    }
-
-
 //
 // Macro for converting to base class OR a class member
 //
@@ -270,35 +232,6 @@ public:                                                                     \
             return &plAuxClassMember;                                       \
         else                                                                \
             return plBaseName::GetConstInterface(hClass);                   \
-    }
-
-#define plBeginInterfaceMap(plClassName, plBaseName)                        \
-    static bool HasBaseClass(uint16_t hBaseClass) {                         \
-        if (hBaseClass == plClassName##ClassIndex)                          \
-            return true;                                                    \
-        else                                                                \
-            return plBaseName::HasBaseClass(hBaseClass);                    \
-    }                                                                       \
-    plCreatable* GetInterface(uint16_t hClass) override {                   \
-        /* NOTE: pulling const off the ptr should be ok, right? */          \
-        return const_cast<plCreatable*>(GetConstInterface(hClass));         \
-    }                                                                       \
-    const plCreatable* GetConstInterface(uint16_t hClass) const override {  \
-        typedef plBaseName MyBaseClass;                                     \
-        if (hClass == plClassName##ClassIndex)                              \
-            return this
-
-#define plAddInterface(plClassName)                                         \
-        else if (hClass == plClassName::Index())                            \
-            return plClassName::GetConstInterface(hClass)
-
-#define plAddInterfaceAux(plAuxClassName, plAuxClassMember)                 \
-        else if (hClass == plAuxClassName::Index())                         \
-            return &plAuxClassMember
-
-#define plEndInterfaceMap()                                                 \
-        else                                                                \
-            return MyBaseClass::GetConstInterface(hClass);                  \
     }
 
 
