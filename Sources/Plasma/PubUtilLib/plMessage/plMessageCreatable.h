@@ -324,6 +324,7 @@ REGISTER_CREATABLE(plVaultNotifyMsg);
 #include "plAIMsg.h"
 REGISTER_CREATABLE(plAIArrivedAtGoalMsg);
 REGISTER_CREATABLE(plAIBrainCreatedMsg);
+REGISTER_CREATABLE(plAIBrainDestroyedMsg);
 REGISTER_CREATABLE(plAIMsg);
 
 #include "plAvCoopMsg.h"

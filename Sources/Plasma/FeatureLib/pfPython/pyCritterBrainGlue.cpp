@@ -61,6 +61,7 @@ void pyAIMsg::AddPlasmaConstantsClasses(PyObject *m)
     PYTHON_ENUM_ELEMENT(PtAIMsgType, kUnknown, plAIMsg::kAIMsg_Unknown)
     PYTHON_ENUM_ELEMENT(PtAIMsgType, kBrainCreated, plAIMsg::kAIMsg_BrainCreated)
     PYTHON_ENUM_ELEMENT(PtAIMsgType, kArrivedAtGoal, plAIMsg::kAIMsg_ArrivedAtGoal)
+    PYTHON_ENUM_ELEMENT(PtAIMsgType, kBrainDestroyed, plAIMsg::kAIMsg_BrainDestroyed)
     PYTHON_ENUM_END(m, PtAIMsgType)
 }
 

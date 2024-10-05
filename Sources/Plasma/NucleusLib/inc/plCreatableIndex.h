@@ -962,6 +962,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plSubtitleMsg),
     CLASS_INDEX(plDisplayScaleChangedMsg),
     CLASS_INDEX(plMetalPipeline),
+    CLASS_INDEX(plAIBrainDestroyedMsg),
 CLASS_INDEX_LIST_END
 
 #endif // plCreatableIndex_inc

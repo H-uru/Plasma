@@ -213,6 +213,12 @@ void plAvBrainCritter::Activate(plArmatureModBase* avMod)
 
 void plAvBrainCritter::Deactivate()
 {
+    // Although "destroyed" is in the past tense, this is really a warning message.
+    // The brain is about to go away, so save anything you need to and toss it!
+    plAIBrainDestroyedMsg* brainDestroyed = new plAIBrainDestroyedMsg(fArmature->GetKey(), nullptr);
+    brainDestroyed->AddReceivers(fReceivers);
+    brainDestroyed->Send();
+
     plArmatureBrain::Deactivate();
 }
 

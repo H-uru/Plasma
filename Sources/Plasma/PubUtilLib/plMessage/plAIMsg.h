@@ -71,6 +71,7 @@ public:
         kAIMsg_Unknown,
         kAIMsg_BrainCreated,
         kAIMsg_ArrivedAtGoal,
+        kAIMsg_BrainDestroyed,
     };
 
 private:
@@ -111,6 +112,26 @@ public:
 
 private:
     hsPoint3 fGoal;
+};
+
+/**
+ * Message spammed to anyone listening so they can discard the brain's key
+ * does NOT get net-propped
+ */
+class plAIBrainDestroyedMsg : public plAIMsg
+{
+public:
+    plAIBrainDestroyedMsg() : plAIMsg() { SetBCastFlag(plMessage::kBCastByExactType); }
+    plAIBrainDestroyedMsg(const plKey& sender, const plKey& receiver)
+        : plAIMsg(sender, receiver)
+    {
+    }
+
+    CLASSNAME_REGISTER(plAIBrainDestroyedMsg);
+    GETINTERFACE_ANY(plAIBrainDestroyedMsg, plAIMsg);
+
+    void Read(hsStream* stream, hsResMgr* mgr) override { plAIMsg::Read(stream, mgr); }
+    void Write(hsStream* stream, hsResMgr* mgr) override { plAIMsg::Write(stream, mgr); }
 };
 
 #endif // plAIMsg_inc
