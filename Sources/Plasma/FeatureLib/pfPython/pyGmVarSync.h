@@ -40,21 +40,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef _pfGameMgrCreatable_h_
-#define _pfGameMgrCreatable_h_
+#ifndef _pyGmVarSync_h_
+#define _pyGmVarSync_h_
 
-#include "pnFactory/plCreator.h"
+#include "pyGameCli.h"
 
-#include "pfGameCli.h"
-REGISTER_NONCREATABLE(pfGameCli);
+#include <variant>
 
-#include "pfGmBlueSpiral.h"
-REGISTER_NONCREATABLE(pfGmBlueSpiral);
+using pfGmVarSyncValue = std::variant<ST::string, double>;
 
-#include "pfGmMarker.h"
-REGISTER_NONCREATABLE(pfGmMarker);
+class pfGmVarSync;
 
-#include "pfGmVarSync.h"
-REGISTER_NONCREATABLE(pfGmVarSync);
+class pyGmVarSync : public pyGameCli
+{
+public:
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGmVarSync);
+    PYTHON_CLASS_GMCLI_NEW_DEFINITION(pfGmVarSync);
+    PYTHON_CLASS_CHECK_DEFINITION;                        // returns true if the PyObject is a pyGmVarSync object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGmVarSync); // converts a PyObject to a pyGmVarSync (throws error if not correct type)
+
+protected:
+    pfGmVarSync* GetGameCli() const { return (pfGmVarSync*)fCli; }
+
+public:
+    void SetVariable(uint32_t varID, const pfGmVarSyncValue& varValue) const;
+
+    void CreateVariable(const ST::string& varName, const pfGmVarSyncValue& varValue) const;
+
+public:
+    static void Join(PyObject* handler);
+
+    static bool IsSupported();
+
+public:
+    static void AddPlasmaGameClasses(PyObject* m);
+};
 
 #endif
