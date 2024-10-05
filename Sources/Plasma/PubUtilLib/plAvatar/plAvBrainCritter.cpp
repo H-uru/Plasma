@@ -642,12 +642,10 @@ void plAvBrainCritter::IEvalGoal()
             fNextMode = IPickBehavior(kIdle);
 
             // tell everyone who cares that we have arrived
-            for (unsigned i = 0; i < fReceivers.size(); ++i)
-            {
-                plAIArrivedAtGoalMsg* msg = new plAIArrivedAtGoalMsg(fArmature->GetKey(), fReceivers[i]);
-                msg->Goal(fFinalGoalPos);
-                msg->Send();
-            }
+            plAIArrivedAtGoalMsg* msg = new plAIArrivedAtGoalMsg(fArmature->GetKey(), nullptr);
+            msg->AddReceivers(fReceivers);
+            msg->Goal(fFinalGoalPos);
+            msg->Send();
         }
     }
 }
