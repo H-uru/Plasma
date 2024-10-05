@@ -63,6 +63,7 @@ class PtAIMsgType:
     kUnknown = 0
     kBrainCreated = 1
     kArrivedAtGoal = 2
+    kBrainDestroyed = 3
 
 class PtAccountUpdateType:
     kCreatePlayer = 1
