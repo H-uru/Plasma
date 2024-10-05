@@ -1560,6 +1560,13 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             PyTuple_SetItem(args.Get(), 0, pyPoint3::New(arrivedMsg->Goal()));
         } else if (plAIBrainDestroyedMsg::ConvertNoRef(aiMsg)) {
             msgType = plAIMsg::kAIMsg_BrainDestroyed;
+        } else if (auto* goToMsg = plAIGoToGoalMsg::ConvertNoRef(aiMsg)) {
+            msgType = plAIMsg::kAIMsg_GoToGoal;
+            args = plPython::ConvertFrom(
+                plPython::ToTuple,
+                pyPoint3::New(goToMsg->Goal()),
+                goToMsg->AvoidingAvatars()
+            );
         }
 
         // if no args were set, simply set to none

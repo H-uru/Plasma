@@ -86,3 +86,19 @@ void plAIArrivedAtGoalMsg::Write(hsStream* stream, hsResMgr* mgr)
     plAIMsg::Write(stream, mgr);
     fGoal.Write(stream);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+void plAIGoToGoalMsg::Read(hsStream* stream, hsResMgr* mgr)
+{
+    plAIMsg::Read(stream, mgr);
+    fGoal.Read(stream);
+    fAvoidingAvatars = stream->ReadBool();
+}
+
+void plAIGoToGoalMsg::Write(hsStream* stream, hsResMgr* mgr)
+{
+    plAIMsg::Write(stream, mgr);
+    fGoal.Write(stream);
+    fAvoidingAvatars = stream->ReadBool();
+}

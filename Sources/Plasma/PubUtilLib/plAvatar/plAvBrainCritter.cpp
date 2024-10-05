@@ -183,6 +183,11 @@ bool plAvBrainCritter::Apply(double time, float elapsed)
 
 bool plAvBrainCritter::MsgReceive(plMessage* msg)
 {
+    if (auto* pGoToMsg = plAIGoToGoalMsg::ConvertNoRef(msg)) {
+        GoToGoal(pGoToMsg->Goal(), pGoToMsg->AvoidingAvatars());
+        return true;
+    }
+
     return plArmatureBrain::MsgReceive(msg);
 }
 
@@ -338,6 +343,13 @@ void plAvBrainCritter::GoToGoal(hsPoint3 newGoal, bool avoidingAvatars /* = fals
     if(!RunningBehavior(RunBehaviorName()))
         fNextMode = IPickBehavior(kRun);
     // Missing TODO Turd: Pathfinding.
+
+    // Let everyone who's listending know that we're going somewhere.
+    plAIGoToGoalMsg* pMsg = new plAIGoToGoalMsg(fArmature->GetKey(), nullptr);
+    pMsg->AddReceivers(fReceivers);
+    pMsg->Goal(newGoal);
+    pMsg->AvoidingAvatars(avoidingAvatars);
+    pMsg->Send();
 }
 
 bool plAvBrainCritter::AtGoal() const

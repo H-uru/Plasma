@@ -72,6 +72,7 @@ public:
         kAIMsg_BrainCreated,
         kAIMsg_ArrivedAtGoal,
         kAIMsg_BrainDestroyed,
+        kAIMsg_GoToGoal,
     };
 
 private:
@@ -132,6 +133,37 @@ public:
 
     void Read(hsStream* stream, hsResMgr* mgr) override { plAIMsg::Read(stream, mgr); }
     void Write(hsStream* stream, hsResMgr* mgr) override { plAIMsg::Write(stream, mgr); }
+};
+
+/**
+ * Message sent to the AI brain to force it to go to a specific goal
+ * might get net-proppped
+ */
+class plAIGoToGoalMsg : public plAIMsg
+{
+    hsPoint3 fGoal;
+    bool     fAvoidingAvatars;
+
+public:
+    plAIGoToGoalMsg() : plAIMsg() {}
+    plAIGoToGoalMsg(const plKey& sender, const plKey& receiver)
+        : plAIMsg(sender, receiver),
+          fAvoidingAvatars()
+    {
+        // Only gets sent to specific receivers
+    }
+
+    CLASSNAME_REGISTER(plAIGoToGoalMsg);
+    GETINTERFACE_ANY(plAIGoToGoalMsg, plAIMsg);
+
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
+
+    void     Goal(const hsPoint3& goal) { fGoal = goal; }
+    hsPoint3 Goal() const { return fGoal; }
+
+    bool AvoidingAvatars() const { return fAvoidingAvatars; }
+    void AvoidingAvatars(bool value) { fAvoidingAvatars = value; }
 };
 
 #endif // plAIMsg_inc
