@@ -133,7 +133,7 @@ protected:
 ///////////////////////////////////////////////////////////////////////////////
 
 plAvBrainCritter::plAvBrainCritter()
-    : fWalkingStrategy(), fCurMode(kIdle), fNextMode(kIdle),
+    : fLocallyControlled(), fWalkingStrategy(), fCurMode(kIdle), fNextMode(kIdle),
       fFadingNextBehavior(true), fAvoidingAvatars(), fDotGoal(),
       fAngRight()
 {
