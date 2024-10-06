@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMessage/plAIMsg.h"
 
+#include "plPythonConvert.h"
 #include "pyEnum.h"
 #include "pyGeometry3.h"
 #include "pyGlueHelpers.h"
@@ -143,6 +144,23 @@ PYTHON_METHOD_DEFINITION(ptCritterBrain, removeReceiver, args)
     pyKey* key = pyKey::ConvertFrom(keyObj);
     self->fThis->RemoveReceiver(*key);
     PYTHON_RETURN_NONE;
+}
+
+PYTHON_METHOD_DEFINITION(ptCritterBrain, setLocallyControlled, args)
+{
+    char local;
+    if (!PyArg_ParseTuple(args, "b", &local)) {
+        PyErr_SetString(PyExc_TypeError, "setLocallyControlled expects a boolean");
+        PYTHON_RETURN_ERROR;
+    }
+
+    self->fThis->LocallyControlled(local != 0);
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_METHOD_DEFINITION_NOARGS(ptCritterBrain, getLocallyControlled)
+{
+    return plPython::ConvertFrom(self->fThis->LocallyControlled());
 }
 
 PYTHON_METHOD_DEFINITION(ptCritterBrain, getSceneObject, GetSceneObject)
@@ -390,7 +408,11 @@ PYTHON_METHOD_DEFINITION(ptCritterBrain, vectorToPlayer, args)
 PYTHON_START_METHODS_TABLE(ptCritterBrain)
     PYTHON_METHOD(ptCritterBrain, addReceiver, "Params: key\nTells the brain that the specified key wants AI messages"),
     PYTHON_METHOD(ptCritterBrain, removeReceiver, "Params: key\nTells the brain that the specified key no longer wants AI messages"),
+    PYTHON_METHOD(ptCritterBrain, setLocallyControlled, "Params: local\n"
+        "Tells the brain that we are the ones making all the AI decisions, and to prop location and other information to the server."),
     PYTHON_METHOD(ptCritterBrain, getSceneObject, "Returns the ptSceneObject this brain controls."),
+    PYTHON_METHOD_NOARGS(ptCritterBrain, getLocallyControlled, "Are we the one making AI decisions? NOTE: Not set automatically, some python script needs to "
+        "tell the brain this using setLocallyControlled()."),
     PYTHON_METHOD_WKEY(ptCritterBrain, addBehavior, "Params: animName, behaviorName, loop = 1, randomStartPos = 1, fadeInLen = 2.0, fadeOutLen = 2.0\n"
         "Adds a new animation to the brain as a behavior with the specified name and parameters. If multiple animations are assigned to the same behavior, "
         "they will be randomly picked from when started."),
