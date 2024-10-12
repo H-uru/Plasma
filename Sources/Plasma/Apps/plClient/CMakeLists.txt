@@ -116,10 +116,6 @@ elseif(APPLE)
         Mac-Cocoa/PLSLoginWindowController.xib
         Mac-Cocoa/PLSPatcherWindowController.xib
     )
-    list(APPEND plClient_SHADERTARGETS
-        pfMetalPipelineShadersMSL21
-        pfMetalPipelineShadersMSL23
-    )
 else()
     list(APPEND plClient_SOURCES
         main.cpp
@@ -159,17 +155,12 @@ if(APPLE)
         XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME "YES"
         XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC "YES"
         XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER org.Huru.UruExplorer
-        XCODE_EMBED_RESOURCES "${plClient_SHADERTARGETS}"
     )
     target_compile_options(plClient PRIVATE -fobjc-arc)
     target_sources(plClient PRIVATE Mac-Cocoa/Assets.xcassets)
     set_source_files_properties(Mac-Cocoa/Assets.xcassets ${RESOURCES} PROPERTIES
          MACOSX_PACKAGE_LOCATION Resources
     )
-    
-    if(${CMAKE_VERSION} VERSION_LESS 3.28)
-        message(FATAL_ERROR "Cannot build Mac client without CMake 3.28")
-    endif()
 
     if(PLASMA_APPLE_DEVELOPMENT_TEAM_ID)
             set_target_properties(plClient PROPERTIES
@@ -177,6 +168,13 @@ if(APPLE)
                 XCODE_ATTRIBUTE_DEVELOPMENT_TEAM ${PLASMA_APPLE_DEVELOPMENT_TEAM_ID}
             )
     endif()
+endif()
+
+if(PLASMA_PIPELINE_METAL)
+    target_embed_metal_shader_libraries(plClient
+        pfMetalPipelineShadersMSL21
+        pfMetalPipelineShadersMSL23
+    )
 endif()
 
 if(PLASMA_BUILD_RESOURCE_DAT)
