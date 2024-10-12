@@ -255,15 +255,27 @@ public:
         case WM_COMMAND:
             if (id == IDC_CLOTHING_TILESET)
             {
+                if (HIWORD(wParam) != CBN_SELCHANGE)
+                    return FALSE;
+
                 int setIdx = (int)SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
-                pb->SetValue(plClothingMtl::kTileset, t, setIdx);
+                if (setIdx != CB_ERR) {
+                    pb->SetValue(plClothingMtl::kTileset, t, setIdx);
+                    pb->GetDesc()->InvalidateUI();
+                }
                 return TRUE;
             }
 
             if (id == IDC_CLOTHING_LAYER)
             {
-                
-                pb->SetValue(plClothingMtl::kLayer, t, ComboBox_GetCurSel(GetDlgItem(hWnd, id)));
+                if (HIWORD(wParam) != CBN_SELCHANGE)
+                    return FALSE;
+
+                int setIdx = (int)ComboBox_GetCurSel(GetDlgItem(hWnd, id));
+                if (setIdx != CB_ERR) {
+                    pb->SetValue(plClothingMtl::kLayer, t, setIdx);
+                    pb->GetDesc()->InvalidateUI();
+                }
                 return TRUE;
             }
 
