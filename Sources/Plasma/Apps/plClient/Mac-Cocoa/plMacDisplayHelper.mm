@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plPipeline.h"
 #include "plMacDisplayHelper.h"
 
 // CGDirectDisplayCopyCurrentMetalDevice only declared in Metal.h?
@@ -133,7 +134,7 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen)
     }
 }
 
-void plMacDisplayHelper::GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth)
+void plMacDisplayHelper::GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth) const
 {
     *res = fDisplayModes;
 }
@@ -142,6 +143,13 @@ plMacDisplayHelper::plMacDisplayHelper()
 {
 
 };
+
+plMacDisplayHelper::plMacDisplayHelper(hsWindowHndl window)
+: plMacDisplayHelper()
+{
+    NSWindow* nsWindow = (__bridge NSWindow*)(window);
+    SetCurrentScreen(nsWindow.screen);
+}
 
 plMacDisplayHelper::~plMacDisplayHelper()
 {

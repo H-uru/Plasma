@@ -970,7 +970,7 @@ plMipmap* plMetalPipeline::ExtractMipMap(plRenderTarget* targ)
 
 void plMetalPipeline::GetSupportedDisplayModes(std::vector<plDisplayMode>* res, int ColorDepth)
 {
-    fDisplayHelper->GetSupportedDisplayModes(res);
+    plDisplayHelper::CurrentDisplayHelper()->GetSupportedDisplayModes(res);
 }
 
 int plMetalPipeline::GetMaxAnisotropicSamples()
