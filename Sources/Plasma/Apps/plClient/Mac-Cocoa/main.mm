@@ -202,6 +202,7 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
     
     _displayHelper = std::make_shared<plMacDisplayHelper>();
     _displayHelper->SetCurrentScreen([window screen]);
+    _displayHelper->MakeCurrentDisplayHelper();
     
     gClient.SetClientWindow((__bridge void *)view.layer);
     gClient.SetClientDisplay((hsWindowHndl)NULL);
@@ -404,7 +405,6 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
         [NSRunLoop.mainRunLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
     }
     
-    gClient->GetPipeline()->SetDisplayHelper(_displayHelper);
 
     if (!gClient || gClient->GetDone()) {
         [NSApp terminate:self];

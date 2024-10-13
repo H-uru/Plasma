@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Metal/Metal.hpp>
 #include <QuartzCore/QuartzCore.h>
 
-#include "plPipeline.h"
+#include "plPipeline/hsG3DDeviceSelector.h"
 
 class plMacDisplayHelper: public plDisplayHelper
 {
@@ -61,11 +61,13 @@ public:
     void SetCurrentScreen(NSScreen* screen);
 
     plDisplayMode DefaultDisplayMode() override { return fDefaultDisplayMode; };
-    void GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth = 32) override;
+    void GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth = 32) const override;
+    std::vector<plDisplayMode> GetDisplayModes() const override { return fDisplayModes; }
 
     MTL::Device* RenderDevice() { return fRenderDevice; }
     
     plMacDisplayHelper();
+    plMacDisplayHelper(hsWindowHndl window);
     ~plMacDisplayHelper();
 private:
     CGDirectDisplayID fCurrentDisplay;
