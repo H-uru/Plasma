@@ -10,7 +10,10 @@ set(plNetMessage_HEADERS
     plNetMsgVersion.h
 )
 
-plasma_library(plNetMessage SOURCES ${plNetMessage_SOURCES} ${plNetMessage_HEADERS})
+plasma_library(plNetMessage
+    FOLDER PubUtilLib
+    SOURCES ${plNetMessage_SOURCES} ${plNetMessage_HEADERS}
+)
 target_link_libraries(
     plNetMessage
     PUBLIC

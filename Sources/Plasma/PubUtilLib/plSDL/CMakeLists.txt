@@ -28,6 +28,7 @@ set(plSDL_SDLFILES
 )
 
 plasma_library(plSDL
+    FOLDER PubUtilLib
     SOURCES ${plSDL_SOURCES} ${plSDL_HEADERS} ${plSDL_SDLFILES}
     PRECOMPILED_HEADERS Pch.h
 )

@@ -30,7 +30,10 @@ set(pnNucleusInc_SOURCES
     pnSingletons.cpp
 )
 
-plasma_library(pnNucleusInc SOURCES ${pnNucleusInc_HEADERS} ${pnNucleusInc_SOURCES})
+plasma_library(pnNucleusInc
+    FOLDER NucleusLib
+    SOURCES ${pnNucleusInc_HEADERS} ${pnNucleusInc_SOURCES}
+)
 target_link_libraries(
     pnNucleusInc
     PUBLIC

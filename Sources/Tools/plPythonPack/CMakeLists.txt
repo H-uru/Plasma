@@ -8,6 +8,7 @@ set(plPythonPack_HEADERS
 )
 
 plasma_executable(plPythonPack TOOL
+    FOLDER Tools
     SOURCES ${plPythonPack_SOURCES} ${plPythonPack_HEADERS}
 )
 target_link_libraries(

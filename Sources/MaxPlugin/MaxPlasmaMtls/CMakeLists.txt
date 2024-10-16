@@ -105,6 +105,7 @@ set(MaxPlasmaMtls_SOURCES_Materials
 )
 
 plasma_library(MaxPlasmaMtls
+    FOLDER MaxPlugin
     SOURCES ${MaxPlasmaMtls_HEADERS}
             ${MaxPlasmaMtls_HEADERS_Layers}
             ${MaxPlasmaMtls_HEADERS_Materials}

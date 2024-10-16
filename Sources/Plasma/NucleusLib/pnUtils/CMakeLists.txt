@@ -6,7 +6,10 @@ set(pnUtils_SOURCES
     pnUtStr.cpp
 )
 
-plasma_library(pnUtils SOURCES ${pnUtils_HEADERS} ${pnUtils_SOURCES})
+plasma_library(pnUtils
+    FOLDER NucleusLib
+    SOURCES ${pnUtils_HEADERS} ${pnUtils_SOURCES}
+)
 target_link_libraries(
     pnUtils
     PUBLIC

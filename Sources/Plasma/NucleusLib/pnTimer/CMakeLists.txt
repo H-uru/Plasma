@@ -7,7 +7,10 @@ set(pnTimer_SOURCES
     plTimerCallbackManager.cpp
 )
 
-plasma_library(pnTimer SOURCES ${pnTimer_HEADERS} ${pnTimer_SOURCES})
+plasma_library(pnTimer
+    FOLDER NucleusLib
+    SOURCES ${pnTimer_HEADERS} ${pnTimer_SOURCES}
+)
 target_link_libraries(
     pnTimer
     PUBLIC

@@ -9,6 +9,7 @@ set(plMessageBox_HEADERS
 )
 
 plasma_library(plMessageBox
+    FOLDER PubUtilLib
     SOURCES ${plMessageBox_SOURCES} ${plMessageBox_HEADERS}
 )
 target_link_libraries(

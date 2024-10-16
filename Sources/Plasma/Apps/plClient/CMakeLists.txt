@@ -127,6 +127,7 @@ else()
 endif()
 
 plasma_executable(plClient CLIENT INSTALL_PDB
+    FOLDER Apps
     SOURCES
         ${plClient_SOURCES} ${plClient_HEADERS}
         ${plClient_TEXT} ${plClient_RESOURCES}

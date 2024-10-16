@@ -28,6 +28,7 @@ set(plPhysX_HEADERS
 )
 
 plasma_library(plPhysX
+    FOLDER PubUtilLib
     SOURCES ${plPhysX_SOURCES} ${plPhysX_HEADERS}
     UNITY_BUILD
     PRECOMPILED_HEADERS Pch.h

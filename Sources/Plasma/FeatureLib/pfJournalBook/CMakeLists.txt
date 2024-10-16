@@ -7,7 +7,10 @@ set(pfJournalBook_HEADERS
     pfJournalBookCreatable.h
 )
 
-plasma_library(pfJournalBook SOURCES ${pfJournalBook_SOURCES} ${pfJournalBook_HEADERS})
+plasma_library(pfJournalBook
+    FOLDER FeatureLib
+    SOURCES ${pfJournalBook_SOURCES} ${pfJournalBook_HEADERS}
+)
 target_link_libraries(
     pfJournalBook
     PUBLIC

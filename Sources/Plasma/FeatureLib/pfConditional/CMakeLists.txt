@@ -30,6 +30,7 @@ set(pfConditional_HEADERS
 )
 
 plasma_library(pfConditional
+    FOLDER FeatureLib
     SOURCES ${pfConditional_SOURCES} ${pfConditional_HEADERS}
     UNITY_BUILD
     PRECOMPILED_HEADERS Pch.h

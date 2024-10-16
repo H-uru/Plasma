@@ -35,6 +35,9 @@ set(PRODUCT_UUID        "ea489821-6c35-4bd0-9dae-bb17c585e680"
 option(PRODUCT_EMBED_BUILD_INFO "Embed build revision information into plProduct" ON)
 cmake_dependent_option(PRODUCT_EMBED_BUILD_TIME "Embed build time into plProduct" ON [[PRODUCT_EMBED_BUILD_INFO]] OFF)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set(CMAKE_FOLDER "CMakePredefinedTargets")
+
 # HeadSpin Configuration
 
 # Define HS_DEBUGGING for debug builds
@@ -165,7 +168,7 @@ endif(PLASMA_PIPELINE_METAL)
 
 # Allow us to disable certain parts of the build
 option(PLASMA_BUILD_CLIENT "Do we want to build plClient?" ON)
-cmake_dependent_option(PLASMA_BUILD_MAX_PLUGIN "Do we want to build the 3ds Max plugin?" OFF "TARGET 3dsm" OFF)
+cmake_dependent_option(PLASMA_BUILD_MAX_PLUGIN "Do we want to build the 3ds Max plugin?" OFF "TARGET 3dsm AND NOT PLASMA_EXTERNAL_RELEASE" OFF)
 option(PLASMA_BUILD_LAUNCHER "Do we want to build plUruLauncher?" ON)
 option(PLASMA_BUILD_TOOLS "Do we want to build the Plasma tools?" ON)
 option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
@@ -188,6 +191,7 @@ include_directories(${PROJECT_BINARY_DIR})
 if(PLASMA_BUILD_TOOLS)
     # Custom dummy target for compiling all tools
     add_custom_target(tools)
+    set_target_properties(tools PROPERTIES XCODE_GENERATE_SCHEME TRUE)
 endif()
 
 include(TestBigEndian)
@@ -205,12 +209,8 @@ set(PLASMA_SOURCE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/Sources/Plasma")
 set(PLASMA_TOOLS_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/Sources/Tools")
 set(PLASMA_MAX_PLUGIN_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/Sources/MaxPlugin")
 
-add_subdirectory(Scripts)
 add_subdirectory(Sources/Plasma)
-
-if(PLASMA_BUILD_TOOLS)
-    add_subdirectory(Sources/Tools)
-endif()
+add_subdirectory(Scripts)
 
 if(PLASMA_BUILD_MAX_PLUGIN)
     add_subdirectory(Sources/MaxPlugin)
@@ -221,6 +221,10 @@ if(PLASMA_BUILD_TESTS)
     add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION>)
     add_subdirectory(Sources/Tests EXCLUDE_FROM_ALL)
 endif(PLASMA_BUILD_TESTS)
+
+if(PLASMA_BUILD_TOOLS)
+    add_subdirectory(Sources/Tools)
+endif()
 
 # This must be called only after all Qt targets are declared
 plasma_deploy_qt()

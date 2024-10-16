@@ -72,6 +72,7 @@ set(CoreLib_HEADERS
 )
 
 plasma_library(CoreLib
+    FOLDER CoreLib
     SOURCES ${CoreLib_SOURCES} ${CoreLib_HEADERS}
     PRECOMPILED_HEADERS _CoreLibPch.h
 )
@@ -113,4 +114,5 @@ add_custom_target(pcBuildInfo
     COMMAND ${BUILD_INFO_COMMAND}
     BYPRODUCTS "${BUILD_INFO_FILE}"
 )
+set_target_properties(pcBuildInfo PROPERTIES FOLDER CoreLib)
 add_dependencies(CoreLib pcBuildInfo)

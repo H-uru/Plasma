@@ -24,7 +24,10 @@ set(plAudioCore_HEADERS
     plWavFile.h
 )
 
-plasma_library(plAudioCore SOURCES ${plAudioCore_SOURCES} ${plAudioCore_HEADERS})
+plasma_library(plAudioCore
+    FOLDER PubUtilLib
+    SOURCES ${plAudioCore_SOURCES} ${plAudioCore_HEADERS}
+)
 target_link_libraries(
     plAudioCore
     PUBLIC

@@ -11,7 +11,10 @@ set(pnNetCli_SOURCES
     pnNcUtils.cpp
 )
 
-plasma_library(pnNetCli SOURCES ${pnNetCli_HEADERS} ${pnNetCli_SOURCES})
+plasma_library(pnNetCli
+    FOLDER NucleusLib
+    SOURCES ${pnNetCli_HEADERS} ${pnNetCli_SOURCES}
+)
 target_link_libraries(
     pnNetCli
     PUBLIC

@@ -42,6 +42,7 @@ set(plPipeline_HEADERS
 )
 
 plasma_library(plPipeline
+    FOLDER PubUtilLib
     SOURCES ${plPipeline_SOURCES} ${plPipeline_HEADERS}
     PRECOMPILED_HEADERS Pch.h
 )

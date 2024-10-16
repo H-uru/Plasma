@@ -31,6 +31,7 @@ set(plNetLog_GameMsg_SOURCES
 )
 
 plasma_executable(plNetLog TOOL QT_GUI
+    FOLDER Tools
     SOURCES
         ${plNetLog_HEADERS}
         ${plNetLog_SOURCES}

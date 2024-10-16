@@ -16,7 +16,8 @@ set(plUruLauncher_RESOURCES
     Dirt.ICO
 )
 
-plasma_executable(plUruLauncher WIN32 CLIENT
+plasma_executable(plUruLauncher CLIENT
+    FOLDER Apps
     SOURCES
         ${plUruLauncher_SOURCES} ${plUruLauncher_HEADERS}
         ${plUruLauncher_RESOURCES}

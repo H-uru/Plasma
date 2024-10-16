@@ -101,6 +101,7 @@ set(plDrawable_HEADERS
 )
 
 plasma_library(plDrawable
+    FOLDER PubUtilLib
     SOURCES ${plDrawable_SOURCES} ${plDrawable_HEADERS}
     UNITY_BUILD
     PRECOMPILED_HEADERS Pch.h

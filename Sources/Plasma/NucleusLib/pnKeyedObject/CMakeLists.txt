@@ -19,6 +19,7 @@ set(pnKeyedObject_SOURCES
 )
 
 plasma_library(pnKeyedObject
+    FOLDER NucleusLib
     SOURCES ${pnKeyedObject_HEADERS} ${pnKeyedObject_SOURCES}
     PRECOMPILED_HEADERS Pch.h
 )

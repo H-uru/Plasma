@@ -16,6 +16,7 @@ set(pnModifier_SOURCES
 )
 
 plasma_library(pnModifier
+    FOLDER NucleusLib
     SOURCES ${pnModifier_HEADERS} ${pnModifier_SOURCES}
     PRECOMPILED_HEADERS Pch.h
 )

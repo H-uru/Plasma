@@ -68,6 +68,7 @@ set(plSurface_SHADERS
 )
 
 plasma_library(plSurface
+    FOLDER PubUtilLib
     SOURCES ${plSurface_SOURCES} ${plSurface_HEADERS} ${plSurface_SHADERS}
     UNITY_BUILD
     PRECOMPILED_HEADERS Pch.h

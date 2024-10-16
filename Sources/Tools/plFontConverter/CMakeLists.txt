@@ -28,6 +28,7 @@ set(plFontConverter_UIC
 )
 
 plasma_executable(plFontConverter TOOL QT_GUI
+    FOLDER Tools
     SOURCES
         ${plFontConverter_HEADERS} ${plFontConverter_SOURCES}
         ${plFontConverter_RCC} ${plFontConverter_UIC}

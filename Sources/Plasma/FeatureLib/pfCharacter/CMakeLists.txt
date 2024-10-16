@@ -11,7 +11,10 @@ set(pfCharacter_HEADERS
     pfMarkerMgr.h
 )
 
-plasma_library(pfCharacter SOURCES ${pfCharacter_SOURCES} ${pfCharacter_HEADERS})
+plasma_library(pfCharacter
+    FOLDER FeatureLib
+    SOURCES ${pfCharacter_SOURCES} ${pfCharacter_HEADERS}
+)
 target_link_libraries(
     pfCharacter
     PUBLIC

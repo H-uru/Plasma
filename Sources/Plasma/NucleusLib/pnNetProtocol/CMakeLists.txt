@@ -29,6 +29,7 @@ set(pnNetProtocol_PROTO_CLI2GK
 )
 
 plasma_library(pnNetProtocol
+    FOLDER NucleusLib
     SOURCES
         ${pnNetProtocol_HEADERS} ${pnNetProtocol_PRIVATE}
         ${pnNetProtocol_PROTO_CLI2AUTH} ${pnNetProtocol_PROTO_CLI2FILE}

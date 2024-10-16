@@ -29,6 +29,7 @@ set(plResBrowser_UIC
 )
 
 plasma_executable(plResBrowser TOOL QT_GUI
+    FOLDER Tools
     SOURCES
         ${plResBrowser_SOURCES} ${plResBrowser_HEADERS}
         ${plResBrowser_RCC} ${plResBrowser_UIC}

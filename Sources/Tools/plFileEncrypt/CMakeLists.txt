@@ -2,7 +2,10 @@ set(plFileEncrypt_SOURCES
     main.cpp
 )
 
-plasma_executable(plFileEncrypt TOOL SOURCES ${plFileEncrypt_SOURCES})
+plasma_executable(plFileEncrypt TOOL
+    FOLDER Tools
+    SOURCES ${plFileEncrypt_SOURCES}
+)
 target_link_libraries(
     plFileEncrypt
     PRIVATE

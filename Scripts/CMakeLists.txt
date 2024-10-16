@@ -9,6 +9,7 @@ source_group("Ages" FILES ${GameData})
 add_custom_target(Scripts
                   SOURCES ${GameScripts} ${GameSDL} ${GameData}
 )
+set_target_properties(Scripts PROPERTIES FOLDER "")
 
 install(
     DIRECTORY "Python/"

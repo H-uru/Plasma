@@ -12,7 +12,10 @@ set(plContainer_HEADERS
     plKeysAndValues.h
 )
 
-plasma_library(plContainer SOURCES ${plContainer_SOURCES} ${plContainer_HEADERS})
+plasma_library(plContainer
+    FOLDER PubUtilLib
+    SOURCES ${plContainer_SOURCES} ${plContainer_HEADERS}
+)
 target_link_libraries(
     plContainer
     PUBLIC

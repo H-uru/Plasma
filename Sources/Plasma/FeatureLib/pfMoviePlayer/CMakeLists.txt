@@ -8,7 +8,10 @@ set(pfMoviePlayer_HEADERS
     plPlanarImage.h
 )
 
-plasma_library(pfMoviePlayer SOURCES ${pfMoviePlayer_SOURCES} ${pfMoviePlayer_HEADERS})
+plasma_library(pfMoviePlayer
+    FOLDER FeatureLib
+    SOURCES ${pfMoviePlayer_SOURCES} ${pfMoviePlayer_HEADERS}
+)
 target_link_libraries(
     pfMoviePlayer
     PUBLIC

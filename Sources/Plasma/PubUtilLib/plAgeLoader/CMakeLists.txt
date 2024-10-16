@@ -10,7 +10,10 @@ set(plAgeLoader_HEADERS
     plResPatcher.h
 )
 
-plasma_library(plAgeLoader SOURCES ${plAgeLoader_SOURCES} ${plAgeLoader_HEADERS})
+plasma_library(plAgeLoader
+    FOLDER PubUtilLib
+    SOURCES ${plAgeLoader_SOURCES} ${plAgeLoader_HEADERS}
+)
 
 target_include_directories(plAgeLoader PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 target_link_libraries(
