@@ -1957,6 +1957,7 @@ static plLayerInterface* IProcessLayerMovie(plPassMtlBase* mtl, plLayerTex* layT
     if( !bi || !bi->Name() || !*bi->Name() )
         return layerIFace;
 
+    BMMGetFullFilename(bi);
     plFileName fileName = bi->Name();
 
     plAnimStealthNode* stealth = IGetEntireAnimation(mtl);
@@ -4529,6 +4530,7 @@ plClothingItem *hsMaterialConverter::GenerateClothingItem(plClothingMtl *mtl, co
             if (layer == nullptr || layer->GetPBBitmap() == nullptr)
                 continue;
 
+            BMMGetFullFilename(&layer->GetPBBitmap()->bi);
             ST::string texName = M2ST(layer->GetPBBitmap()->bi.Name());
 
             for (clipLevels = 0, startWidth = layer->GetPBBitmap()->bi.Width(); 

@@ -2538,6 +2538,7 @@ bool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             PBBitmap *texture = layer->GetPBBitmap();
             if (texture != nullptr)
             {
+                BMMGetFullFilename(&texture->bi);
                 uint32_t flags = plBitmap::kAlphaChannelFlag;
 
                 plBitmap *bMap;
