@@ -400,6 +400,7 @@ bool    plPlasmaMAXLayer::GetBitmapFileName( TCHAR* destFilename, int maxLength,
     if (GetPBBitmap(index) == nullptr)
         return false;
 
+    BMMGetFullFilename(&GetPBBitmap(index)->bi);
     _tcsncpy( destFilename, GetPBBitmap( index )->bi.Name(), maxLength );
     return true;
 }
