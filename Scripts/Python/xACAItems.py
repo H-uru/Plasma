@@ -122,6 +122,7 @@ xClothesXRef = { # "name in max file": "loc path"
                 "Gloves":                   "ACA.Clothing.Gloves",
                 "Fingerless Gloves":        "ACA.Clothing.FingerlessGloves",
                 "Canvas Gloves":            "ACA.Clothing.CanvasGloves",
+                "Bracelet":                 "ACA.Clothing.Bracelet",
                 # Lower body
                 "Shorts":                   "ACA.Clothing.Shorts",
                 "Jeans":                    "ACA.Clothing.Jeans",
