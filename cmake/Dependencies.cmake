@@ -1,4 +1,6 @@
 # List all dependency packages here.
+include(FeatureSummary)
+
 set_package_properties(
     3dsm PROPERTIES
     URL "https://www.autodesk.com/"
