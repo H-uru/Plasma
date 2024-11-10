@@ -72,8 +72,6 @@ void pyLayer::SetTexture(plBitmap* image)
     if (image) {
         plLayRefMsg* refMsg = new plLayRefMsg(fLayerKey, plRefMsg::kOnReplace, 0, plLayRefMsg::kTexture);
         hsgResMgr::ResMgr()->AddViaNotify(image->GetKey(), refMsg, plRefFlags::kActiveRef);
-
-        layer->SetTexture(image);
     }
 }
 
