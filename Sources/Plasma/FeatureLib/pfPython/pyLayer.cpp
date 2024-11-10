@@ -69,8 +69,7 @@ void pyLayer::SetTexture(plBitmap* image)
 {
     plLayer* layer = GetLayer();
 
-    if (image)
-    {
+    if (image) {
         plLayRefMsg* refMsg = new plLayRefMsg(fLayerKey, plRefMsg::kOnReplace, 0, plLayRefMsg::kTexture);
         hsgResMgr::ResMgr()->AddViaNotify(image->GetKey(), refMsg, plRefFlags::kActiveRef);
 
@@ -85,6 +84,6 @@ PyObject* pyLayer::GetTexture() const
     plMipmap* mm = plMipmap::ConvertNoRef(layer->GetTexture());
     if (mm)
         return pyImage::New(mm);
-    
+
     PYTHON_RETURN_NONE;
 }

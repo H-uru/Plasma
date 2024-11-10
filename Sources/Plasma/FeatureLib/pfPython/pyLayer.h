@@ -91,9 +91,9 @@ public:
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptLayer);
-    static PyObject *New(plLayer* layer);
-    static PyObject *New(plKey layerKey);
-    static PyObject *New(pyKey& layerKey);
+    static PyObject* New(plLayer* layer);
+    static PyObject* New(plKey layerKey);
+    static PyObject* New(pyKey& layerKey);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyLayer object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyLayer); // converts a PyObject to a pyLayer (throws error if not correct type)
 

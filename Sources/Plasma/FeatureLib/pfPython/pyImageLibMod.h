@@ -110,13 +110,13 @@ public:
         else
             return false;
     }
-    bool operator!=(const pyImageLibMod &mod) const { return !(mod == *this);   }
+    bool operator!=(const pyImageLibMod& mod) const { return !(mod == *this);   }
 
     // for C++ access
     plKey GetKey() const { return fModifier ? fModifier->GetKey() : fModifierKey; }
 
     // for python access
-    PyObject* GetImage (const ST::string& name) const;
+    PyObject* GetImage(const ST::string& name) const;
     std::vector<ST::string> GetImageNames() const;
     std::vector<PyObject*> GetImages() const;
 };
