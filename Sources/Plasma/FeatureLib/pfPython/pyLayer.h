@@ -56,7 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 
 #include "plSurface/plLayer.h"
-#include "plGImage/plBitmap.h"
+
+class plBitmap;
 
 class pyLayer
 {

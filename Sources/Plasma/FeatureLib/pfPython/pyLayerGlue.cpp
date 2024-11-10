@@ -116,7 +116,7 @@ PyObject* pyLayer::New(plLayer* layer)
 PyObject* pyLayer::New(plKey layerKey)
 {
     ptLayer* newObj = (ptLayer*)ptLayer_type.tp_new(&ptLayer_type, nullptr, nullptr);
-    newObj->fThis->fLayerKey = layerKey;
+    newObj->fThis->fLayerKey = std::move(layerKey);
     return (PyObject*)newObj;
 }
 
