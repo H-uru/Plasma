@@ -5414,7 +5414,15 @@ class ptLayer:
     def __init__(self,layerKey):
         """None"""
         pass
-    
+
+    def getTexture(self) -> ptImage:
+        """Returns the image texture of the layer"""
+        ...
+
+    def setTexture(self, image: ptImage) -> None:
+        """Sets the texture of the layer"""
+        ...
+
 class ptMarkerMgr:
     """Marker manager accessor class"""
     def __init__(self):
