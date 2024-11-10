@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 from __future__ import annotations
 from PlasmaConstants import *
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Iterable, Optional, Tuple, Union
 
 def PtAcceptInviteInGame(friendName,inviteKey):
     """Sends a VaultTask to the server to perform the invite"""
@@ -305,6 +305,10 @@ def PtFakeLinkAvatarToObject(avatar,object):
 def PtFileExists(filename):
     """Returns true if the specified file exists"""
     pass
+
+def PtFindImage(name: str) -> Iterable[ptImage]:
+    """Find an already loaded image by name"""
+    ...
 
 def PtFindSceneobject(name,ageName):
     """This will try to find a sceneobject based on its name and what age its in

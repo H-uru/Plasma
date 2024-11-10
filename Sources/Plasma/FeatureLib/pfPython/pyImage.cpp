@@ -42,6 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyImage.h"
 
+#include <algorithm>
+#include <vector>
+
 #include <string_theory/format>
 
 #include "hsResMgr.h"
@@ -52,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plJPEG.h"
 #include "plGImage/plMipmap.h"
 #include "plGImage/plPNG.h"
+#include "plResMgr/plKeyFinder.h"
 
 #include "pyColor.h"
 #include "pyGeometry3.h"
@@ -199,6 +203,23 @@ void pyImage::SaveAsJPEG(const plFileName& fileName, uint8_t quality)
 void pyImage::SaveAsPNG(const plFileName& fileName, const std::multimap<ST::string, ST::string>& textFields)
 {
     plPNG::Instance().WriteToFile(fileName, this->GetImage(), textFields);
+}
+
+PyObject* pyImage::Find(const ST::string& name)
+{
+    std::vector<plKey> foundKeys;
+    plKeyFinder::Instance().ReallyStupidSubstringSearch(name, plMipmap::Index(), foundKeys);
+    // Remove anything that isn't loaded - they aren't useful in  Python code
+    std::remove_if(
+        foundKeys.begin(),
+        foundKeys.end(),
+        [](const plKey& key) { return key->ObjectIsLoaded() == nullptr; }
+    );
+
+    PyObject* tup = PyTuple_New(foundKeys.size());
+    for (size_t i = 0; i < foundKeys.size(); ++i)
+        PyTuple_SET_ITEM(tup, i, pyImage::New(foundKeys[i]));
+    return tup;
 }
 
 PyObject* pyImage::LoadJPEGFromDisk(const plFileName& filename, uint16_t width, uint16_t height)
