@@ -75,14 +75,20 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptLayer, getTexture)
     return self->fThis->GetTexture();
 }
 
-PYTHON_METHOD_DEFINITION(ptLayer, setTexture, value)
+PYTHON_METHOD_DEFINITION(ptLayer, setTexture, args)
 {
-    if (pyImage::Check(value)) {
-        self->fThis->SetTexture(pyImage::ConvertFrom(value)->GetImage());
-        PYTHON_RETURN_NONE;
+    PyObject* imageObj;
+    if (!PyArg_ParseTuple(args, "O", &imageObj)) {
+        PyErr_SetString(PyExc_TypeError, "setTexture expects a ptImage");
+        PYTHON_RETURN_ERROR;
     }
-    PyErr_SetString(PyExc_TypeError, "setTexture expects a ptImage");
-    PYTHON_RETURN_ERROR;
+    if (!pyImage::Check(imageObj)) {
+        PyErr_SetString(PyExc_TypeError, "setTexture expects a ptImage");
+        PYTHON_RETURN_ERROR;
+    }
+
+    self->fThis->SetTexture(pyImage::ConvertFrom(imageObj)->GetImage());
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_START_METHODS_TABLE(ptLayer)
