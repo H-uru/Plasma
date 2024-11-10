@@ -123,5 +123,5 @@ class stupStartUp(ptResponder):
             # Choose a random image from the available images
             bgChoice = random.choice(ilm.getImages())
             # Update the Background Layer's texture to our chosen image
-            BGLayer.layer.texture = bgChoice
+            BGLayer.layer.setTexture(bgChoice)
             PtDebugPrint("stupStartUp: Background has been randomized.")

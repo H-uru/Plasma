@@ -70,27 +70,24 @@ PYTHON_INIT_DEFINITION(ptLayer, args, keywords)
     PYTHON_RETURN_INIT_OK;
 }
 
-PYTHON_GET_DEFINITION(ptLayer, texture)
+PYTHON_METHOD_DEFINITION_NOARGS(ptLayer, getTexture)
 {
     return self->fThis->GetTexture();
 }
 
-PYTHON_SET_DEFINITION(ptLayer, texture, value)
+PYTHON_METHOD_DEFINITION(ptLayer, setTexture, value)
 {
     if (pyImage::Check(value)) {
         self->fThis->SetTexture(pyImage::ConvertFrom(value)->GetImage());
-        PYTHON_RETURN_SET_OK;
+        PYTHON_RETURN_NONE;
     }
     PyErr_SetString(PyExc_TypeError, "setTexture expects a ptImage");
-    PYTHON_RETURN_SET_ERROR;
+    PYTHON_RETURN_ERROR;
 }
 
-PYTHON_START_GETSET_TABLE(ptLayer)
-    PYTHON_GETSET(ptLayer, texture, "The image texture of the layer"),
-PYTHON_END_GETSET_TABLE;
-
 PYTHON_START_METHODS_TABLE(ptLayer)
-    // no methods
+    PYTHON_METHOD_NOARGS(ptLayer, getTexture, "Returns the image texture of the layer"),
+    PYTHON_METHOD(ptLayer, setTexture, "Params: image\nSets the ptImage texture of the layer"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -101,7 +98,7 @@ PYTHON_END_METHODS_TABLE;
 #define ptLayer_GETATTRO        PYTHON_NO_GETATTRO
 #define ptLayer_SETATTRO        PYTHON_NO_SETATTRO
 #define ptLayer_RICH_COMPARE    PYTHON_NO_RICH_COMPARE
-#define ptLayer_GETSET          PYTHON_DEFAULT_GETSET(ptLayer)
+#define ptLayer_GETSET          PYTHON_NO_GETSET
 #define ptLayer_BASE            PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptLayer, "Params: layerKey\nPlasma layer class");
 
