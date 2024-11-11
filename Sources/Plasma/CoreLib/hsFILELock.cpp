@@ -61,7 +61,7 @@ bool hsFILELock::ILock(bool block) const
 #ifdef HS_BUILD_FOR_WIN32
     OVERLAPPED o{};
     DWORD flags = LOCKFILE_EXCLUSIVE_LOCK;
-    if (block)
+    if (!block)
         flags |= LOCKFILE_FAIL_IMMEDIATELY;
 
     // Lock only the first byte of the file - we have
