@@ -42,6 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // plInputManager.cpp
 #include "HeadSpin.h"
 #include "hsWindows.h"
+#ifdef WIN32
+#   include <Windowsx.h>
+#endif
 
 #include "plInputManager.h"
 #include "plPipeline.h"
@@ -294,10 +297,10 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
             plIMouseYEventMsg* pYMsg = new plIMouseYEventMsg;
             plIMouseBEventMsg* pBMsg = new plIMouseBEventMsg;
 
-            pXMsg->fWx = LOWORD(Lparam);
-            pXMsg->fX = (float)LOWORD(Lparam) / (float)rect.right;
-            pYMsg->fWy = HIWORD(Lparam);
-            pYMsg->fY = (float)HIWORD(Lparam) / (float)rect.bottom;
+            pXMsg->fWx = GET_X_LPARAM(Lparam);
+            pXMsg->fX = (float)GET_X_LPARAM(Lparam) / (float)rect.right;
+            pYMsg->fWy = GET_Y_LPARAM(Lparam);
+            pYMsg->fY = (float)GET_Y_LPARAM(Lparam) / (float)rect.bottom;
 
             // Apply mouse scale
 //          pXMsg->fX *= fMouseScale;
