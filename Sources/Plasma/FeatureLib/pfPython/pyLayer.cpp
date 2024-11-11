@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyImage.h"
 
 #include "plMessage/plLayRefMsg.h"
+#include "plResMgr/plKeyFinder.h"
 
 void pyLayer::setKey(pyKey& layerKey) // only for python glue, do NOT call
 {
@@ -83,5 +84,13 @@ PyObject* pyLayer::GetTexture() const
     if (mm)
         return pyImage::New(mm);
 
+    PYTHON_RETURN_NONE;
+}
+
+PyObject* pyLayer::Find(const ST::string& name, const ST::string& age, const ST::string& page)
+{
+    plKey foundKey = plKeyFinder::Instance().StupidSearch(age, page, plLayer::Index(), name);
+    if (foundKey)
+        return pyLayer::New(std::move(foundKey));
     PYTHON_RETURN_NONE;
 }

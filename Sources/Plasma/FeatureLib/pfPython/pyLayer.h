@@ -99,6 +99,7 @@ public:
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyLayer); // converts a PyObject to a pyLayer (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject* m);
+    static void AddPlasmaMethods(PyObject* m);
 
     void setKey(pyKey& layerKey);
 
@@ -120,6 +121,8 @@ public:
     // For Python access
     void SetTexture(plBitmap* image);
     PyObject* GetTexture() const;
+
+    static PyObject* Find(const ST::string& name, const ST::string& age, const ST::string& page);
 };
 
 #endif  // pyLayer_h

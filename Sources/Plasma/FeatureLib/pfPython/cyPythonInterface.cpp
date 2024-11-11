@@ -1039,6 +1039,7 @@ void PythonInterface::AddPlasmaMethods(PyObject* m)
     pyGUIDialog::AddPlasmaMethods(m);
     pyImage::AddPlasmaMethods(m);
     pyJournalBook::AddPlasmaMethods(m);
+    pyLayer::AddPlasmaMethods(m);
     pySDLModifier::AddPlasmaMethods(m);
     pySpawnPointInfo::AddPlasmaMethods(m);
 }

@@ -310,6 +310,10 @@ def PtFindImage(name: str) -> Iterable[ptImage]:
     """Find an already loaded image by name"""
     ...
 
+def PtFindLayer(name: str, age: str = "", page: str = "") -> Optional[ptLayer]:
+    """Find a layer by name"""
+    ...
+
 def PtFindSceneobject(name,ageName):
     """This will try to find a sceneobject based on its name and what age its in
 - it will return a ptSceneObject if found- if not found then a NameError exception will happen"""

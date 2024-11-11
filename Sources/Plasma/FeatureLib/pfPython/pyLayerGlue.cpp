@@ -146,3 +146,25 @@ void pyLayer::AddPlasmaClasses(PyObject* m)
     PYTHON_CLASS_IMPORT(m, ptLayer);
     PYTHON_CLASS_IMPORT_END(m);
 }
+
+PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtFindLayer, args, kwds, "Params: name\nFind a layer by name.")
+{
+    const char* kwdlist[]{"name", "age", "page", nullptr};
+    ST::string name, age, page;
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O&|O&O&", const_cast<char**>(kwdlist),
+                                     PyUnicode_STStringConverter, &name,
+                                     PyUnicode_STStringConverter, &age,
+                                     PyUnicode_STStringConverter, &page)) {
+        PyErr_SetString(PyExc_TypeError, "PtFindLayer expects a string and two optional strings");
+        PYTHON_RETURN_ERROR;
+    }
+
+    return pyLayer::Find(name, age, page);
+}
+
+void pyLayer::AddPlasmaMethods(PyObject* m)
+{
+    PYTHON_START_GLOBAL_METHOD_TABLE(ptLayer)
+        PYTHON_GLOBAL_METHOD_WKEY(PtFindLayer)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, ptLayer)
+}
