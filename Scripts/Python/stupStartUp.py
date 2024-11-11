@@ -119,7 +119,7 @@ class stupStartUp(ptResponder):
             return
 
         # Get the first available ImageLibModifier on our Background SceneObject
-        if ilm := next(BGObj.sceneobject.getImageLibMods(), None):
+        if ilm := next(iter(BGObj.sceneobject.getImageLibMods()), None):
             # Choose a random image from the available images
             bgChoice = random.choice(ilm.getImages())
             # Update the Background Layer's texture to our chosen image
