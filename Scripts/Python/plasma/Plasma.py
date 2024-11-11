@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 from __future__ import annotations
 from PlasmaConstants import *
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Iterable, Optional, Tuple, Union
 
 def PtAcceptInviteInGame(friendName,inviteKey):
     """Sends a VaultTask to the server to perform the invite"""
@@ -305,6 +305,14 @@ def PtFakeLinkAvatarToObject(avatar,object):
 def PtFileExists(filename):
     """Returns true if the specified file exists"""
     pass
+
+def PtFindImage(name: str) -> Iterable[ptImage]:
+    """Find an already loaded image by name"""
+    ...
+
+def PtFindLayer(name: str, age: str = "", page: str = "") -> Optional[ptLayer]:
+    """Find a layer by name"""
+    ...
 
 def PtFindSceneobject(name,ageName):
     """This will try to find a sceneobject based on its name and what age its in
@@ -5271,6 +5279,24 @@ class ptImage:
         """Saves this image to disk as a JPEG file"""
         pass
 
+class ptImageLibMod:
+    """Plasma ImageLibraryModifier class"""
+    def __init__(self,imlkey):
+        """None"""
+        pass
+
+    def getImage(imageName):
+        """Returns the named image, if present"""
+        pass
+
+    def getImages():
+        """Returns a tuple of ptImages"""
+        pass
+
+    def getNames():
+        """Returns a tuple of the image names"""
+        pass
+
 class ptInputInterface:
     """Plasma input interface class"""
     def __init__(self):
@@ -5390,6 +5416,20 @@ Returns key code for controlCode"""
     def writeKeyMap(self):
         """Forces write of the keymap file"""
         pass
+
+class ptLayer:
+    """Plasma Layer class"""
+    def __init__(self,layerKey):
+        """None"""
+        pass
+
+    def getTexture(self) -> ptImage:
+        """Returns the image texture of the layer"""
+        ...
+
+    def setTexture(self, image: ptImage) -> None:
+        """Sets the texture of the layer"""
+        ...
 
 class ptMarkerMgr:
     """Marker manager accessor class"""
@@ -6064,6 +6104,10 @@ If there are more then one attached, get the first one"""
 
     def getPythonMods(self):
         """Returns list of ptKeys of the python modifiers attached to this sceneobject"""
+        pass
+
+    def getImageLibMods(self):
+        """Returns list of ptKeys of the image library modifiers attached to this sceneobject"""
         pass
 
     def getResponderState(self):

@@ -40,43 +40,66 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plImageLibMod_inc
-#define plImageLibMod_inc
+#include <Python.h>
+#include "pyKey.h"
+#include "hsResMgr.h"
 
-#include <vector>
+#include "pnKeyedObject/plUoid.h"
+#include "pyImage.h"
+#include "pyImageLibMod.h"
 
-#include "pnModifier/plSingleModifier.h"
 
-class plBitmap;
-
-class plImageLibMod : public plSingleModifier
+void pyImageLibMod::setKey(pyKey& ilmKey) // only for python glue, do NOT call
 {
-protected:
+    if (fModifier && fModifierKey)
+        fModifierKey->UnRefObject();
 
-    std::vector<plBitmap *> fImages;
+    fModifier = nullptr;
+    fModifierKey = ilmKey.getKey();
+}
 
-    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
+PyObject* pyImageLibMod::GetImage(const ST::string& name) const
+{
+    plBitmap* image;
 
-public:
-    plImageLibMod() {};
+    if (fModifier)
+        image = fModifier->GetImage(name);
+    else
+        image = plImageLibMod::ConvertNoRef(fModifierKey->ObjectIsLoaded())->GetImage(name);
 
-    CLASSNAME_REGISTER( plImageLibMod );
-    GETINTERFACE_ANY( plImageLibMod, plSingleModifier );
+    if (image)
+        return pyImage::New(plMipmap::ConvertNoRef(image));
 
-    bool MsgReceive(plMessage* msg) override;
-    
-    void Read(hsStream* stream, hsResMgr* mgr) override;
-    void Write(hsStream* stream, hsResMgr* mgr) override;
+    PYTHON_RETURN_NONE;
+}
 
-    enum Refs
-    {
-        kRefImage = 0
-    };
+std::vector<PyObject*> pyImageLibMod::GetImages() const
+{
+    std::vector<PyObject*> imageList;
+    plImageLibMod* mod;
 
-    size_t  GetNumImages() const { return fImages.size(); }
-    plBitmap* GetImage(const ST::string&) const;
-    std::vector<plBitmap*> GetImages() const { return fImages; }
-    std::vector<ST::string> GetImageNames() const;
-};
+    if (fModifier)
+        mod = fModifier;
+    else
+        mod = plImageLibMod::ConvertNoRef(fModifierKey->ObjectIsLoaded());
 
-#endif // plImageLibMod_inc
+    imageList.reserve(mod->GetImages().size());
+    for (const auto& image : mod->GetImages()) {
+        if (image)
+            imageList.push_back(pyImage::New(plMipmap::ConvertNoRef(image)));
+    }
+
+    return imageList;
+}
+
+std::vector<ST::string> pyImageLibMod::GetImageNames() const
+{
+    plImageLibMod* mod;
+
+    if (fModifier)
+        mod = fModifier;
+    else
+        mod = plImageLibMod::ConvertNoRef(fModifierKey->ObjectIsLoaded());
+
+    return mod->GetImageNames();
+}

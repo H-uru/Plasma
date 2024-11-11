@@ -561,6 +561,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                         case plPythonParameter::kClusterComponentList:
                         case plPythonParameter::kMaterialAnimation:
                         case plPythonParameter::kGrassShaderComponent:
+                        case plPythonParameter::kLayer:
                             if (parameter.fObjectKey) {
                                 // create pyKey for the object
                                 value = pyKey::New(parameter.fObjectKey);

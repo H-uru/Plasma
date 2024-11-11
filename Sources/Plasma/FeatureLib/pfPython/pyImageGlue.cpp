@@ -252,6 +252,17 @@ void pyImage::AddPlasmaClasses(PyObject *m)
 }
 
 #ifndef BUILDING_PYPLASMA
+PYTHON_GLOBAL_METHOD_DEFINITION(PtFindImage, args, "Params: name\nFind an already loaded image by name.")
+{
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name)) {
+        PyErr_SetString(PyExc_TypeError, "PtFindImage expects a string");
+        PYTHON_RETURN_ERROR;
+    }
+
+    return pyImage::Find(name);
+}
+
 PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadJPEGFromDisk, args, "Params: filename,width,height\nThe image will be resized to fit the width and height arguments. Set to 0 if resizing is not desired.\nReturns a pyImage of the specified file.")
 {
     plFileName filename;
@@ -283,6 +294,7 @@ void pyImage::AddPlasmaMethods(PyObject* m)
 {
 #ifndef BUILDING_PYPLASMA
     PYTHON_START_GLOBAL_METHOD_TABLE(ptImage)
+        PYTHON_GLOBAL_METHOD(PtFindImage)
         PYTHON_GLOBAL_METHOD(PtLoadJPEGFromDisk)
         PYTHON_GLOBAL_METHOD(PtLoadPNGFromDisk)
     PYTHON_END_GLOBAL_METHOD_TABLE(m, ptImage)

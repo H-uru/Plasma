@@ -895,6 +895,18 @@ class ptAttribGrassShader(ptAttribute):
         self.shader = ptGrassShader(value)
         self.value = self.shader
 
+# a Layer attribute
+class ptAttribLayer(ptAttribute):
+    def __init__(self,id,name=None):
+        ptAttribute.__init__(self,id,name)
+        self.value = None
+        self.layer = None
+    def getdef(self):
+        return (self.id, self.name, 25)
+    def __setvalue__(self,value):
+        self.layer = ptLayer(value)
+        self.value = self.layer
+
 
 #
 # ptModifier  - class for creating a Plasma modifier, such as a responder
