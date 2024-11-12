@@ -492,7 +492,7 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
             fXPos = pXMsg->fX;
 
         SetCursorX(fXPos);
-        fWXPos = pXMsg->fWx * fScale;
+        fWXPos = pXMsg->fWx;
         return true;
     }
 
@@ -529,7 +529,7 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
         else
             fYPos = pYMsg->fY;
 
-        fWYPos = pYMsg->fWy * fScale;
+        fWYPos = pYMsg->fWy;
         SetCursorY(fYPos);
         
         return true;
