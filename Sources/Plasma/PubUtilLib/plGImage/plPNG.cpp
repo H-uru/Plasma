@@ -133,12 +133,13 @@ plMipmap* plPNG::IRead(hsStream* inStream)
                     channels = 3;
                     break;
                 case PNG_COLOR_TYPE_GRAY:
-
-                    if (bitdepth < 8) {
+                    if (bitdepth < 8)
                         png_set_expand_gray_1_2_4_to_8(png_ptr);
-                    }
-
                     bitdepth = 8;
+                    [[fallthrough]];
+                case PNG_COLOR_TYPE_GRAY_ALPHA:
+                    png_set_gray_to_rgb(png_ptr);
+                    channels = 3;
                     break;
             }
 
