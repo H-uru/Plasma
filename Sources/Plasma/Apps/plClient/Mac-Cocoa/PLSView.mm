@@ -191,18 +191,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     CGPoint viewLocation = [self convertPoint:windowLocation fromView:nil];
 
     NSRect windowViewBounds = self.bounds;
-    CGFloat deltaX = (windowLocation.x) / windowViewBounds.size.width;
-    CGFloat deltaY =
+    CGFloat xNormal = (windowLocation.x) / windowViewBounds.size.width;
+    CGFloat yNormal =
         (windowViewBounds.size.height - windowLocation.y) / windowViewBounds.size.height;
 
     plIMouseXEventMsg* pXMsg = new plIMouseXEventMsg;
     plIMouseYEventMsg* pYMsg = new plIMouseYEventMsg;
 
-    pXMsg->fWx = viewLocation.x;
-    pXMsg->fX = deltaX;
+    pXMsg->fX = xNormal;
+    pYMsg->fY = yNormal;
 
-    pYMsg->fWy = (windowViewBounds.size.height - windowLocation.y);
-    pYMsg->fY = deltaY;
+    // Plasma internally uses input coords as display coords
+    pXMsg->fWx = viewLocation.x * self.window.screen.backingScaleFactor;
+    pYMsg->fWy = (windowViewBounds.size.height - windowLocation.y) * self.window.screen.backingScaleFactor;
 
     @synchronized(self.layer) {
         if (self.inputManager) {
@@ -219,7 +220,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
             newWindowLocation.x = CGRectGetMidX(self.window.contentView.bounds);
 
             // macOS won't generate a new message on warp, need to tell Plasma by hand
-            pXMsg->fWx = newWindowLocation.x;
+            pXMsg->fWx = newWindowLocation.x * self.window.screen.backingScaleFactor;;
             pXMsg->fX = 0.5f;
             self.inputManager->MsgReceive(pXMsg);
         }
@@ -228,7 +229,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
             newWindowLocation.y = CGRectGetMidY(self.window.contentView.bounds);
 
             // macOS won't generate a new message on warp, need to tell Plasma by hand
-            pYMsg->fWy = newWindowLocation.y;
+            pYMsg->fWy = newWindowLocation.y * self.window.screen.backingScaleFactor;;
             pYMsg->fY = 0.5f;
             self.inputManager->MsgReceive(pYMsg);
         }
