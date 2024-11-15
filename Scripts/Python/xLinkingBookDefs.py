@@ -264,18 +264,10 @@ else:
         "BahroCaveLower":     ( 'xLinkPanelBahroCaveLower','bkBahroRockBook','Bahro' ),
         "islmGreatTree":        ( 'xLinkPanelCityGreatTree','bkBahroRockBook','Bahro' ),
 # Begin Fan Ages
-        "Trebivdil":          ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpaneltrebivdil' + LinkEnd ),
-        "FehnirHouse":          ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelfehnirhouse' + LinkEnd ),
         "GoMePubNew":           ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelgomepubnew' + LinkEnd ),
         "VeeTsah":              ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelsheten' + LinkEnd ),
-        "Vothol":               ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelvothol' + LinkEnd ),
         "ChisoPreniv":          ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisopreniv' + LinkEnd ),
         "ChisoPrenivNote":      ( 0, 1.0, 1.0, FanAgeStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisopreniv' + LinkEnd ),
-        "Serene":               ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelserene' + LinkEnd ),
-        "Tiam":                 ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + DRCStampHolder + ShareBookDelete2 + LinkStart + 'xlinkpaneltiam' + LinkEnd ),
-        "Elonin":               ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + DRCStampHolder + ShareBookDelete2 + LinkStart + 'xlinkpanelelonin' + LinkEnd ),
-        "EderNaybree":          ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpaneledernaybree' + LinkEnd ),
-        "FahetsHighgarden":     ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelhighgarden' + LinkEnd ),
 }
 
 # cross-references the book name with the age and spawn point it links to
