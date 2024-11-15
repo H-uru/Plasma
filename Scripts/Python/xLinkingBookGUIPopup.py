@@ -528,8 +528,8 @@ class xLinkingBookGUIPopup(ptModifier):
                 gLinkingBook = ptBook(bookdef,self.key)
                 gLinkingBook.setSize( width, height )
                 # make sure there is a cover to show
-                if showOpen and not self.IsThereACover(bookdef):
-                    showOpen = 0
+                if not showOpen and not self.IsThereACover(bookdef):
+                    showOpen = 1
                 gLinkingBook.setGUI(gui)
                 gLinkingBook.show(showOpen)
             except LookupError:
