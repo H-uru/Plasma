@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyImage.h"
 
-#include <algorithm>
 #include <vector>
 
 #include <string_theory/format>
@@ -209,12 +208,6 @@ PyObject* pyImage::Find(const ST::string& name)
 {
     std::vector<plKey> foundKeys;
     plKeyFinder::Instance().ReallyStupidSubstringSearch(name, plMipmap::Index(), foundKeys);
-    // Remove anything that isn't loaded - they aren't useful in  Python code
-    std::remove_if(
-        foundKeys.begin(),
-        foundKeys.end(),
-        [](const plKey& key) { return key->ObjectIsLoaded() == nullptr; }
-    );
 
     PyObject* tup = PyTuple_New(foundKeys.size());
     for (size_t i = 0; i < foundKeys.size(); ++i)

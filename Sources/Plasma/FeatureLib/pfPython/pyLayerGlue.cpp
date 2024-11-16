@@ -87,7 +87,7 @@ PYTHON_METHOD_DEFINITION(ptLayer, setTexture, args)
         PYTHON_RETURN_ERROR;
     }
 
-    self->fThis->SetTexture(pyImage::ConvertFrom(imageObj)->GetImage());
+    self->fThis->SetTexture(pyImage::ConvertFrom(imageObj)->GetKey());
     PYTHON_RETURN_NONE;
 }
 
