@@ -1672,6 +1672,30 @@ bool plPickMaterialAnimationButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LP
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
+plKey plPickLayerButtonParam::GetKey(IParamBlock2 *pb, int idx)
+{
+    // get the plKeys based on the texture map that the Texture map is on
+    Texmap* texmap = (Texmap* )pb->GetReferenceTarget(fID);
+    // make sure that there was a texmap set
+    if (texmap) {
+        plPlasmaMAXLayer *maxLayer = plPlasmaMAXLayer::GetPlasmaMAXLayer(texmap);
+        if (maxLayer != nullptr) {
+            // make sure the index is valid
+            if (idx >= 0 && idx < maxLayer->GetNumConversionTargets()) {
+                plLayerInterface* convertedLayer = maxLayer->GetConversionTarget(idx);
+                if (convertedLayer)
+                    return convertedLayer->GetKey();
+            }
+        }
+    }
+
+    // otherwise we didn't find one, because of one of many reasons
+    return nullptr;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
 plDropDownListParam::plDropDownListParam(ParamID id, ST::string name, std::vector<ST::string> options)
     : plAutoUIParam(id, std::move(name)), fhList(), fOptions(std::move(options))
 {
