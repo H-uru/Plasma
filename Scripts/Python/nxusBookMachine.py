@@ -40,13 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
-"""
-Module: nxusBookMachine
-Age: nexus
-Date: September, 2002
-Author: Bill Slease
-Handler for the nexus book machine.
-"""
+
+from __future__ import annotations
 
 from Plasma import *
 from PlasmaKITypes import *
@@ -58,8 +53,11 @@ from xPsnlVaultSDL import *
 import xLocTools
 
 import PlasmaControlKeys
+
 import datetime
 import random
+import re
+from typing import *
 
 # define the attributes that will be entered in max
 NexusGUI = ptAttribGUIDialog(1, "The Nexus GUI")
@@ -78,8 +76,9 @@ respBookRetract = ptAttribResponder(13, "Rspndr: Retract Book") # onInit
 actGetBook = ptAttribActivator(14, "Actvtr: Get Book")
 respGetBook = ptAttribResponder(15, "Rspndr: Get Book")
 respButtonPress = ptAttribResponder(16, "Rspndr: GetBook Btn Press") # onInit
-objlistLinkPanels = ptAttribSceneobjectList(17, "Objct: Link Panels")
+objlistLinkPanels = ptAttribSceneobjectList(17, "Objct: Link Panels") # Dead
 respKISlotGlow = ptAttribResponder(18, "Rspndr: KI Slot Glow")
+layLinkPanel = ptAttribLayer(19, "Layer: Linking Panel")
 
 #------nexus machine GUI tags
 kNexusDialogName = "NexusAgeDialog"
@@ -180,28 +179,24 @@ colorDisabled = AgenGoldDkSoft
 kNumDisplayFields = 8
 kMaxDisplayableChars = 24 # the avg number of chars to display before tacking on an ellipsis: "..."
 
-#special named link panels (other then 'LinkPanel_' + Age Filename)
-kLinkPanels = {
-'city' : {'LinkInPointFerry' : 'LinkPanel_Ferry Terminal',
-        'LinkInPointDakotahAlley' : 'LinkPanel_Dakotah Alley',
-        'LinkInPointPalace' : 'LinkPanel_Palace Alcove',
-        'LinkInPointConcertHallFoyer' : 'LinkPanel_Concert Hall Foyer',
-        'LinkInPointLibrary' : 'LinkPanel_Library Courtyard'
-        },
-'Cleft' : {
-           #That would be conspicious, if Nexus allowed to link to rainy cleft, unless we belive in great Nexus-Maintainers-Bahro conspiracy
-           'SpawnPointTomahna01' : 'LinkPanel_Tomahna',
-           #Umm, why Nexus even has entry for some boring hole in ground on surface?  
-           '' : 'LinkPanel_Cleft',
-          },
-
-'GreatZero' : {'' : 'LinkPanel_Great Zero Observation',
-               'BigRoomLinkInPoint' : 'LinkPanel_GreatZero'
-              },
-'Neighborhood02' : {'' : 'LinkPanel_Kirel'
-                   },
+# Specially named link panel textures
+kLinkPanels: Dict[Tuple[str, str], str] = {
+    ("Ahnonay", "Default"): "xlinkpanelahnonayvortex",
+    ("GreatZero", "Great Zero"): "xlinkpanelgrtzero",
 }
 
+# Special replacements used in some filenames
+kLinkPanelInstances: Dict[str, str] = {
+    "AhnonayCathedral": "ahnonaytemple",
+    "EderTsogal": "tsogarden",
+    "GreatZero": "grtzero",
+    "GuildPub-Cartographers": "guildpubcartographers",
+    "GuildPub-Greeters": "guildpubgreeters",
+    "GuildPub-Maintainers": "guildpubmaintainers",
+    "GuildPub-Messengers": "guildpubmessengers",
+    "GuildPub-Writers": "guildpubwriters",
+    "Neighborhood": "Bevin",
+}
 
 kHiddenPersonalAges = ["Personal", "Nexus", "Neighborhood", "city", "AvatarCustomization", "Cleft", "BaronCityOffice", "BahroCave", "PelletBahroCave", "Kveer", "Myst", "LiveBahroCaves", "LiveBahroCave", "ChisoPreniv", "GoMePubNew"]
 kHiddenCityLinks = ["islmPalaceBalcony03", "KadishGallery", "islmPalaceBalcony02", "islmDakotahRoof", "islmGreatTree"]
@@ -363,6 +358,8 @@ class nxusBookMachine(ptModifier):
             PtLanguage.kGerman : True
         }
 
+        self.defaultPanelImage = None
+
     def OnFirstUpdate(self):
         "First update, load GUI dialog, give player PAL to Nexus"
         PtLoadDialog(kNexusDialogName, self.key, "Nexus")
@@ -372,9 +369,12 @@ class nxusBookMachine(ptModifier):
         respBookRetract.run(self.key, fastforward = 1)
         respButtonPress.run(self.key, fastforward = 1)
 
-        # hide all the linking panels in the machine - will draw appropriate when selected
+        # hide all the linking panels in the machine - they are no longer used
         for objPanel in objlistLinkPanels.value:
             objPanel.draw.disable()
+
+        if layLinkPanel.value is not None:
+            self.defaultPanelImage = layLinkPanel.value.getTexture()
 
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
@@ -1217,17 +1217,61 @@ class nxusBookMachine(ptModifier):
         self.IUpdateLinks()
         return
 
+    def IGeneratePotentialLinkPanels(self, als: ptAgeLinkStruct) -> Generator[Iterable[ptImage]]:
+        def gen(name: str) -> Iterable[ptImage]:
+            # Texture names (should) be all lowercase.
+            name = re.sub(r"[ '\"]", "", name.lower())
+            PtDebugPrint(f"nxusBookMachine.IGeneratePotentialLinkPanels: Generating images for {name=}", level=kWarningLevel)
+            return PtFindImage(name)
+
+        info = als.getAgeInfo()
+        filename = info.getAgeFilename()
+        swpt = als.getSpawnPoint()
+        swptTitle = swpt.getTitle()
+
+        if hardcodedName := kLinkPanels.get((filename, swptTitle)):
+            PtDebugPrint(f"IGeneratePotentialLinkPanels: Generated images for hardcoded name {hardcodedName}", level=kWarningLevel)
+            yield PtFindImage(hardcodedName)
+            return
+
+        def gen_by_swpt(name: str, title: str) -> Generator[Iterable[ptImage]]:
+            yield gen(f"xlinkpanel{name}{title}")
+            if title == "Default":
+                yield gen(f"xlinkpanel{name}")
+
+        if ageName := kLinkPanelInstances.get(filename):
+            yield from gen_by_swpt(ageName, swptTitle)
+
+        yield from gen_by_swpt(filename, swptTitle)
+        if swptTitle.lower() != "default":
+            yield gen(f"xlinkpanel{swptTitle}")
+        yield from gen_by_swpt(info.getAgeInstanceName(), swptTitle)
+
     def IDrawLinkPanel(self):
         if self.presentedBookAls is None:
             PtDebugPrint("nxusBookMachine.IDrawLinkPanel: trying to draw panel without selected book!")
+            return
+        if layLinkPanel.value is None:
+            PtDebugPrint("nxusBookMachine.IDrawLinkPanel: trying to draw panel with old PRPs!")
+            return
+
+        # Generate a series of potential link panel image names and search for them,
+        # selecting the first matching panel name.
+        panelGen = self.IGeneratePotentialLinkPanels(self.presentedBookAls)
+        if panelImages := next(filter(None, panelGen), None):
+             # Some Ages will have multiple panels that match our lazy string lookup,
+             # and, in some cases, the first match is a very low resolution postage stamp.
+             # These are probably coming from the in-world texture on the book. So,
+             # sort the list so we can get the biggest and therefore clearest one.
+             panelImages = sorted(
+                 panelImages,
+                 key=lambda x: x.getWidth() * x.getHeight()
+             )
+             PtDebugPrint("nxusBookMachine.IDrawLinkPanel: Drawing link panel!", level=kWarningLevel)
+             layLinkPanel.value.setTexture(panelImages[-1])
         else:
-            panelName = self.IGetLinkPanelName(self.presentedBookAls)
-            PtDebugPrint("drawing link panel: %s" % (panelName))
-            for objPanel in objlistLinkPanels.value:
-                if objPanel.getName() == panelName:
-                    objPanel.draw.enable()
-                else:
-                    objPanel.draw.disable()
+            PtDebugPrint("nxusBookMachine.IDrawLinkPanel: Drawing default panel for unknown Age")
+            layLinkPanel.value.setTexture(self.defaultPanelImage)
 
     def IChoosePublicInstances(self):
         for (ageFilename, entry) in self.publicAges.items():
