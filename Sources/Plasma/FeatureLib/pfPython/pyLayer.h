@@ -119,7 +119,7 @@ public:
     plLayer* GetLayer() const;
 
     // For Python access
-    void SetTexture(plBitmap* image);
+    void SetTexture(const plKey& image);
     PyObject* GetTexture() const;
 
     static PyObject* Find(const ST::string& name, const ST::string& age, const ST::string& page);

@@ -66,13 +66,13 @@ plLayer* pyLayer::GetLayer() const
     return plLayer::ConvertNoRef(fLayerKey->ObjectIsLoaded());
 }
 
-void pyLayer::SetTexture(plBitmap* image)
+void pyLayer::SetTexture(const plKey& image)
 {
     plLayer* layer = GetLayer();
 
     if (image) {
         plLayRefMsg* refMsg = new plLayRefMsg(fLayerKey, plRefMsg::kOnReplace, 0, plLayRefMsg::kTexture);
-        hsgResMgr::ResMgr()->AddViaNotify(image->GetKey(), refMsg, plRefFlags::kActiveRef);
+        hsgResMgr::ResMgr()->AddViaNotify(image, refMsg, plRefFlags::kActiveRef);
     }
 }
 
