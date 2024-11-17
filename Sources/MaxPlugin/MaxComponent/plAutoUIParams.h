@@ -394,6 +394,17 @@ public:
     void DestroyKeyArray();
 };
 
+class plPickLayerButtonParam : public plPickMaterialButtonParam
+{
+public:
+    plPickLayerButtonParam(ParamID id, ST::string name)
+        : plPickMaterialButtonParam(id, std::move(name))
+    { }
+
+    int GetParamType() override { return kTypeLayer; }
+    plKey GetKey(IParamBlock2 *pb, int idx = 0) override;
+};
+
 class plDropDownListParam : public plAutoUIParam
 {
 protected:
