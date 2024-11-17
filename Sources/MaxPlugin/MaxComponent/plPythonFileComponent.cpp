@@ -483,7 +483,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         found_atleast_one_good_one = true;
                     }
                 }
-                if ( !found_atleast_one_good_one )
+                if ( !found_atleast_one_good_one && numKeys > 0 )
                 {
                     pErrMsg->Set(
                         true,
@@ -517,7 +517,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                                 found_atleast_one_good_one = true;
                             }
                         }
-                        if ( !found_atleast_one_good_one )
+                        if ( !found_atleast_one_good_one && comp->NumTargets() > 0 )
                         {
                             pErrMsg->Set(
                                 true,
@@ -904,7 +904,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                             }
                         }
                     }
-                    if ( number_of_real_targets_found != 1 )
+                    if ( number_of_real_targets_found != 1 && count > 0 )
                     {
                         // there is zero or more than one node attached to this exclude region
                         ST::string msg;
