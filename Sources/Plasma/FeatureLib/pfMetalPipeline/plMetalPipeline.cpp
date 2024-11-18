@@ -1676,23 +1676,19 @@ void plMetalPipeline::IBindLights()
     size_t         lightSize = offsetof(plMetalLights, lampSources) + (sizeof(plMetalShaderLightSource) * fLights.count);
     
     // FIXME: These states should support dirtying instead of expense memcmps
-    if ( !(fState.fBoundLights.has_value() && fState.fBoundLights == fLights) )
-    {
+    if ( !(fState.fBoundLights.has_value() && fState.fBoundLights == fLights) ) {
         fState.fBoundLights = fLights;
-        if (fLightingPerPixel)
-        {
+        if (fLightingPerPixel) {
             fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&fLights, sizeof(plMetalLights), FragmentShaderArgumentLights);
         } else {
             fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&fLights, sizeof(plMetalLights), VertexShaderArgumentLights);
         }
     }
     
-    if ( !(fState.fBoundMaterialProperties.has_value() && fState.fBoundMaterialProperties == fCurrentRenderPassMaterialLighting) )
-    {
+    if ( !(fState.fBoundMaterialProperties.has_value() && fState.fBoundMaterialProperties == fCurrentRenderPassMaterialLighting) ) {
         fState.fBoundMaterialProperties = fCurrentRenderPassMaterialLighting;
         fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&fDevice.fPipeline->fCurrentRenderPassMaterialLighting, sizeof(plMaterialLightingDescriptor), VertexShaderArgumentMaterialLighting);
-        if (fLightingPerPixel)
-        {
+        if (fLightingPerPixel) {
             fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&fDevice.fPipeline->fCurrentRenderPassMaterialLighting, sizeof(plMaterialLightingDescriptor), FragmentShaderArgumentMaterialLighting);
         }
     }
