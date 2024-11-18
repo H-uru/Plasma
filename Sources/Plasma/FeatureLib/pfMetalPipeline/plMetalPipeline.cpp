@@ -149,24 +149,15 @@ bool plRenderTriListFunc::RenderPrims() const
     plProfile_IncCount(DrawTriangles, fNumTris);
     plProfile_Inc(DrawPrimStatic);
 
+    // FIXME: Why is fCurrentRenderPassUniforms stored as a reference?
+    // FIXME: Replace memory comparison with dirty bool
     size_t uniformsSize = offsetof(VertexUniforms, uvTransforms) + sizeof(UVOutDescriptor) * fDevice->fPipeline->fCurrNumLayers;
-    fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms), VertexShaderArgumentFixedFunctionUniforms);
+    if ( !(fDevice->fPipeline->fState.fCurrentVertexUniforms.has_value() && fDevice->fPipeline->fState.fCurrentVertexUniforms == *fDevice->fPipeline->fCurrentRenderPassUniforms) )
+    {
+        fDevice->fPipeline->fState.fCurrentVertexUniforms = *fDevice->fPipeline->fCurrentRenderPassUniforms;
+        fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms), VertexShaderArgumentFixedFunctionUniforms);
+    }
     
-    fDevice->CurrentRenderCommandEncoder()->setVertexBytes(&fDevice->fPipeline->fCurrentRenderPassMaterialLighting, sizeof(plMaterialLightingDescriptor), VertexShaderArgumentMaterialLighting);
-    if (PLASMA_PER_PIXEL_LIGHTING)
-    {
-        fDevice->CurrentRenderCommandEncoder()->setFragmentBytes(&fDevice->fPipeline->fCurrentRenderPassMaterialLighting, sizeof(plMaterialLightingDescriptor), FragmentShaderArgumentMaterialLighting);
-    }
-
-    plMetalLights* lights = &fDevice->fPipeline->fLights;
-    size_t         lightSize = offsetof(plMetalLights, lampSources) + (sizeof(plMetalShaderLightSource) * lights->count);
-
-    if (PLASMA_PER_PIXEL_LIGHTING)
-    {
-        fDevice->CurrentRenderCommandEncoder()->setFragmentBytes(lights, sizeof(plMetalLights), FragmentShaderArgumentLights);
-    } else {
-        fDevice->CurrentRenderCommandEncoder()->setVertexBytes(lights, sizeof(plMetalLights), VertexShaderArgumentLights);
-    }
     fDevice->CurrentRenderCommandEncoder()->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, fNumTris * 3, MTL::IndexTypeUInt16, fDevice->fCurrentIndexBuffer, (sizeof(uint16_t) * fIStart));
 }
 
@@ -1203,6 +1194,7 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
     uint32_t pass;
     for (pass = 0; pass < mRef->GetNumPasses(); pass++) {
         if (IHandleMaterialPass(material, pass, &span, vRef)) {
+            IBindLights();
             render.RenderPrims();
         }
 
@@ -1376,6 +1368,7 @@ void plMetalPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGM
         IHandleMaterialPass(material, iPass, &span, vRef, false);
 
         IScaleLight(0, true);
+        IBindLights();
 
         // Do the render with projection.
         render.RenderPrims();
@@ -1485,7 +1478,8 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
             fCurrentRenderPassMaterialLighting.emissiveSrc = 0.0;
             fCurrentRenderPassMaterialLighting.specularSrc = 1.0;
         }
-
+        
+        IBindLights();
         render.RenderPrims();
     }
 }
@@ -1662,6 +1656,8 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
                                   preEncodeTransform,
                                   postEncodeTransform);
         }
+        
+        fLightingPerPixel = fragmentShaderDescription.fUsePerPixelLighting = PLASMA_FORCE_PER_PIXEL_LIGHTING;
 
         plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalMaterialPassPipelineState(&fDevice, vRef, fragmentShaderDescription).GetRenderPipelineState();
         const MTL::RenderPipelineState*       pipelineState = linkedPipeline->pipelineState;
@@ -1673,6 +1669,33 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
     }
 
     return true;
+}
+
+void plMetalPipeline::IBindLights()
+{
+    size_t         lightSize = offsetof(plMetalLights, lampSources) + (sizeof(plMetalShaderLightSource) * fLights.count);
+    
+    // FIXME: These states should support dirtying instead of expense memcmps
+    if ( !(fState.fBoundLights.has_value() && fState.fBoundLights == fLights) )
+    {
+        fState.fBoundLights = fLights;
+        if (fLightingPerPixel)
+        {
+            fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&fLights, sizeof(plMetalLights), FragmentShaderArgumentLights);
+        } else {
+            fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&fLights, sizeof(plMetalLights), VertexShaderArgumentLights);
+        }
+    }
+    
+    if ( !(fState.fBoundMaterialProperties.has_value() && fState.fBoundMaterialProperties == fCurrentRenderPassMaterialLighting) )
+    {
+        fState.fBoundMaterialProperties = fCurrentRenderPassMaterialLighting;
+        fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&fDevice.fPipeline->fCurrentRenderPassMaterialLighting, sizeof(plMaterialLightingDescriptor), VertexShaderArgumentMaterialLighting);
+        if (fLightingPerPixel)
+        {
+            fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&fDevice.fPipeline->fCurrentRenderPassMaterialLighting, sizeof(plMaterialLightingDescriptor), FragmentShaderArgumentMaterialLighting);
+        }
+    }
 }
 
 // ISetPipeConsts //////////////////////////////////////////////////////////////////
@@ -2502,6 +2525,8 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
     // FIXME: Hacking the old texture drawing into the plate path
     mRef->prepareTextures(fDevice.CurrentRenderCommandEncoder(), 0);
 
+    // FIXME: Plates don't participate properly in caching
+    fState.fCurrentVertexUniforms.reset();
     fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&uniforms, sizeof(VertexUniforms), VertexShaderArgumentFixedFunctionUniforms);
 
     pm->EncodeDraw(fDevice.CurrentRenderCommandEncoder());
@@ -4346,7 +4371,10 @@ void plMetalPipeline::plMetalPipelineCurrentState::Reset()
     fCurrentPipelineState = nullptr;
     fCurrentDepthStencilState = nullptr;
     fCurrentVertexBuffer = nullptr;
+    fBoundLights.reset();
+    fBoundMaterialProperties.reset();
     fCurrentCullMode.reset();
+    fCurrentVertexUniforms.reset();
 
     for (auto& layer : layerStates) {
         layer.clampFlag = hsGMatState::hsGMatClampFlags(-1);

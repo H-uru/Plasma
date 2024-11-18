@@ -187,6 +187,13 @@ struct plMaterialLightingDescriptor
     uint8_t specularSrc;
     
     bool invertAlpha;
+    
+#ifndef __METAL_VERSION__
+    bool operator==(const plMaterialLightingDescriptor& rhs) const
+    {
+        return memcmp(this, &rhs, sizeof(plMaterialLightingDescriptor)) == 0;
+    }
+#endif
 };
 
 struct VertexUniforms
@@ -206,6 +213,13 @@ struct VertexUniforms
     float3 sampleLocation(size_t index, thread float3 *texCoords, const float4 cameraSpaceNormal, const float4 camPosition) constant;
     half4 calcFog(float4 camPosition) constant;
 #endif
+    
+#ifndef __METAL_VERSION__
+    bool operator==(const VertexUniforms& rhs) const
+    {
+        return memcmp(this, &rhs, sizeof(VertexUniforms)) == 0;
+    }
+#endif
 };
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<VertexUniforms>, "VertexUniforms must be a trivial type!");
@@ -217,6 +231,14 @@ struct plMetalLights
 {
     uint8_t count;
     plMetalShaderLightSource lampSources[kMetalMaxLightCount];
+    
+#ifndef __METAL_VERSION__
+    bool operator==(const plMetalLights& rhs) const
+    {
+        size_t lightSize = offsetof(plMetalLights, lampSources) + (sizeof(plMetalShaderLightSource) * count);
+        return rhs.count == count && memcmp(&rhs, this, lightSize ) == 0;
+    }
+#endif
 };
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<plMetalLights>, "plMetalLights must be a trivial type!");
