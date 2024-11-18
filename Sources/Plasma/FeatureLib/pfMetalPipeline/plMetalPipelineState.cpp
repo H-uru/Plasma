@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMetalPipelineState.h"
 
+#include "HeadSpin.h"
 #include "plDrawable/plGBufferGroup.h"
 #include "plGImage/plCubicEnvironmap.h"
 #include "plGImage/plMipmap.h"
@@ -271,7 +272,7 @@ MTL::Function* plMetalMaterialPassPipelineState::GetVertexFunction(MTL::Library*
     MTL::Function* function = library->newFunction(NS::String::string("pipelineVertexShader", NS::ASCIIStringEncoding),
                                                    MakeFunctionConstants(),
                                                    &error);
-    assert(!error);
+    hsAssert(!error, "Could not find vertex function");
     return function->autorelease();
 }
 
@@ -281,7 +282,7 @@ MTL::Function* plMetalMaterialPassPipelineState::GetFragmentFunction(MTL::Librar
     MTL::Function* function = library->newFunction(NS::String::string("pipelineFragmentShader", NS::ASCIIStringEncoding),
                                                    MakeFunctionConstants(),
                                                    &error);
-    assert(!error);
+    hsAssert(!error, "Could not find fragment function");
     return function->autorelease();
 }
 
