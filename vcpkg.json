@@ -22,7 +22,15 @@
       "libvorbis",
       "libvpx",
       "libwebm",
-      "openal-soft",
+      {
+        "name": "openal-soft",
+        "features": [
+          {
+            "name": "pipewire",
+            "platform": "linux"
+          }
+        ]
+      },
       "openssl",
       "opus",
       "physx",
