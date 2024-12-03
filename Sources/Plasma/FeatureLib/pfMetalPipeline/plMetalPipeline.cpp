@@ -2374,6 +2374,9 @@ void plMetalPipeline::IEnableLight(size_t i, plLightInfo* light)
     plDirectionalLightInfo* dirLight = nullptr;
     plOmniLightInfo*        omniLight = nullptr;
     plSpotLightInfo*        spotLight = nullptr;
+    
+    constexpr float         kMaxRange = 32767.f;
+    fLights.lampSources[i].range = kMaxRange;
 
     if ((dirLight = plDirectionalLightInfo::ConvertNoRef(light)) != nullptr) {
         hsVector3 lightDir = dirLight->GetWorldDirection();
@@ -2383,15 +2386,18 @@ void plMetalPipeline::IEnableLight(size_t i, plLightInfo* light)
         fLights.lampSources[i].constAtten = 1.0f;
         fLights.lampSources[i].linAtten = 0.0f;
         fLights.lampSources[i].quadAtten = 0.0f;
+
     } else if ((omniLight = plOmniLightInfo::ConvertNoRef(light)) != nullptr) {
         hsPoint3 pos = omniLight->GetWorldPosition();
         fLights.lampSources[i].position = {pos.fX, pos.fY, pos.fZ, 1.0};
 
-        // TODO: Maximum Range
-
         fLights.lampSources[i].constAtten = omniLight->GetConstantAttenuation();
         fLights.lampSources[i].linAtten = omniLight->GetLinearAttenuation();
         fLights.lampSources[i].quadAtten = omniLight->GetQuadraticAttenuation();
+
+        if (omniLight->GetRadius() != 0.f) {
+            fLights.lampSources[i].range = omniLight->GetRadius();
+        }
 
         if (!omniLight->GetProjection() && (spotLight = plSpotLightInfo::ConvertNoRef(omniLight)) != nullptr) {
             hsVector3 lightDir = spotLight->GetWorldDirection();

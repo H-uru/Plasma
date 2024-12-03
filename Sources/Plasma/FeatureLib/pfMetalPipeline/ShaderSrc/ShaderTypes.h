@@ -150,6 +150,7 @@ struct plMetalShaderLightSource
     half4 specular;
     simd::float3 direction;
     simd::float4 spotProps; // (falloff, theta, phi)
+    __fp16 range;
     __fp16 constAtten;
     __fp16 linAtten;
     __fp16 quadAtten;

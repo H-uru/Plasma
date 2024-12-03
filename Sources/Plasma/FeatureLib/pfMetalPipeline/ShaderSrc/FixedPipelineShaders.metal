@@ -212,6 +212,11 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
             // Omni Light in all directions
             const float3 v2l = lightSource->position.xyz - position.xyz;
             const float distance = length(v2l);
+            
+            if (distance > lightSource->range) {
+                continue;
+            }
+            
             direction.xyz = normalize(v2l);
 
             direction.w = 1.f / (lightSource->constAtten + lightSource->linAtten * distance + lightSource->quadAtten * pow(distance, 2.f));
