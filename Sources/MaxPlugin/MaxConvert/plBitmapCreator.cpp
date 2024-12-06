@@ -568,7 +568,7 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
         else
         {
             // Well, this really sucks. We couldn't tell what the modify time is, so just pretend all is well (but assert in Debug mode)
-            hsAssert(0, ST::format("Couldn't get bitmap '{}' modify time: {}", bd->fileName, hsCOMError(hsLastWin32Error, GetLastError()).c_str()));
+            hsAssert(0, ST::format("Couldn't get bitmap '{}' modify time: {}", bd->fileName, hsCOMError(hsLastWin32Error, GetLastError())).c_str());
         }
     }
 
@@ -660,7 +660,7 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
         else
         {
             // Well, this really sucks. We couldn't tell what the modify time is, so just pretend all is well (but assert in Debug mode)
-            hsAssert(0, ST::format("Couldn't set bitmap '{}' modify time: {}", bd->fileName, hsCOMError(hsLastWin32Error, GetLastError()).c_str()));
+            hsAssert(0, ST::format("Couldn't set bitmap '{}' modify time: {}", bd->fileName, hsCOMError(hsLastWin32Error, GetLastError())).c_str());
         }
 
         // Add to our list of created textures and ref, since we have a hold of them
