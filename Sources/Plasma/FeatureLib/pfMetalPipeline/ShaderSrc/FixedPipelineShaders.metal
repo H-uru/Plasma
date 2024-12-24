@@ -623,8 +623,6 @@ vertex ColorInOut shadowCastVertexShader(Vertex in                              
 
     float4 position = (float4(in.position, 1.f) * uniforms.localToWorldMatrix);
     const float3 Ndirection = normalize(float4(in.normal, 0.f) * uniforms.localToWorldMatrix).xyz;
-    // Shadow casting uses the diffuse material color to control opacity
-    const half4 MDiffuse = uniforms.diffuseCol;
 
     //w is attenation
     float4 direction;
@@ -640,7 +638,8 @@ vertex ColorInOut shadowCastVertexShader(Vertex in                              
     }
 
     const float3 dotResult = dot(Ndirection, direction.xyz);
-    const half3 diffuse = MDiffuse.rgb * half3(max(0.h, dotResult)) * shadowState.power;
+    // Post lighting diffuse color needs to be clamped to the 0..1 range even though >1.f is valid.
+    const half3 diffuse = clamp(shadowState.opacity * half3(max(0.h, dotResult)) * shadowState.power, 0.f, 1.f);
     out.vtxColor = half4(diffuse, 1.f);
 
     const float4 vCamPosition = position * uniforms.worldToCameraMatrix;
