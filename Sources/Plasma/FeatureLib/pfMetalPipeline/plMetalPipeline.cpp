@@ -3756,7 +3756,7 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             // The shadow light isn't used in generating the shadow map, it's used
             // in projecting the shadow map onto the scene.
             plShadowState shadowState;
-            shadowState.opacity = first? mat->GetLayer(0)->GetOpacity() : 1.f;
+            shadowState.opacity = first ? mat->GetLayer(0)->GetOpacity() : 1.f;
             ISetupShadowState(fShadows[i], shadowState);
 
             struct plMetalFragmentShaderDescription passDescription{};
