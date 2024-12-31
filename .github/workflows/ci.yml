@@ -182,7 +182,7 @@ jobs:
           path: build/install
 
   linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: ${{ matrix.platform.str }}-${{ matrix.cfg.str }}
     strategy:
       matrix:
