@@ -3202,9 +3202,6 @@ bool plMetalPipeline::IPushShadowCastState(plShadowSlave* slave)
     if (!slave->SetupViewTransform(this))
         return false;
 
-    // Set texture to U_LUT
-    fCurrentRenderPassUniforms->specularSrc = 0.0;
-
     // if( !ref->fTexture )
     //{
     //     if( ref->fData )
@@ -3759,6 +3756,7 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             // The shadow light isn't used in generating the shadow map, it's used
             // in projecting the shadow map onto the scene.
             plShadowState shadowState;
+            shadowState.opacity = first ? mat->GetLayer(0)->GetOpacity() : 1.f;
             ISetupShadowState(fShadows[i], shadowState);
 
             struct plMetalFragmentShaderDescription passDescription{};
@@ -3846,9 +3844,6 @@ void plMetalPipeline::ISetupShadowRcvTextureStages(hsGMaterial* mat)
     // same one.
     fForceMatHandle = true;
 
-    // Set the D3D lighting/material model
-    ISetShadowLightState(mat);
-
     // Zbuffering on read-only
 
     if (fState.fCurrentDepthStencilState != fDevice.fNoZWriteStencilState) {
@@ -3883,26 +3878,6 @@ void plMetalPipeline::ISetupShadowRcvTextureStages(hsGMaterial* mat)
     }
 
     fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&layerIndex, sizeof(int), FragmentShaderArgumentShadowCastAlphaSrc);
-}
-
-// ISetShadowLightState //////////////////////////////////////////////////////////////////
-// Set the D3D lighting/material model for projecting the shadow map onto this material.
-void plMetalPipeline::ISetShadowLightState(hsGMaterial* mat)
-{
-    fCurrLightingMethod = plSpan::kLiteShadow;
-
-    if (mat && mat->GetNumLayers() && mat->GetLayer(0))
-        fCurrentRenderPassUniforms->diffuseCol.r = fCurrentRenderPassUniforms->diffuseCol.g = fCurrentRenderPassUniforms->diffuseCol.b = mat->GetLayer(0)->GetOpacity();
-    else
-        fCurrentRenderPassUniforms->diffuseCol.r = fCurrentRenderPassUniforms->diffuseCol.g = fCurrentRenderPassUniforms->diffuseCol.b = 1.f;
-    fCurrentRenderPassUniforms->diffuseCol.a = 1.f;
-
-    fCurrentRenderPassUniforms->diffuseSrc = 1.0f;
-    fCurrentRenderPassUniforms->emissiveSrc = 1.0f;
-    fCurrentRenderPassUniforms->emissiveCol = 0.0f;
-    fCurrentRenderPassUniforms->specularSrc = 0.0f;
-    fCurrentRenderPassUniforms->ambientSrc = 0.0f;
-    fCurrentRenderPassUniforms->globalAmb = 0.0f;
 }
 
 // IDisableLightsForShadow ///////////////////////////////////////////////////////////
