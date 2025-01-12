@@ -124,18 +124,6 @@ static inline uint8_t* inlStuff(uint8_t* dst, const T* val)
     return reinterpret_cast<uint8_t*>(ptr);
 }
 
-matrix_float4x4* hsMatrix2SIMD(const hsMatrix44& src, matrix_float4x4* dst)
-{
-    constexpr auto matrixSize = sizeof(matrix_float4x4);
-    if (src.fFlags & hsMatrix44::kIsIdent) {
-        memcpy(dst, &matrix_identity_float4x4, matrixSize);
-    } else {
-        memcpy(dst, &src.fMap, matrixSize);
-    }
-
-    return dst;
-}
-
 bool plMetalDevice::InitDevice()
 {
     // FIXME: Should Metal adopt InitDevice like OGL?
@@ -972,7 +960,7 @@ void plMetalDevice::MakeCubicTextureRef(plMetalDevice::TextureRef* tRef, plCubic
 
 void plMetalDevice::SetProjectionMatrix(const hsMatrix44& src)
 {
-    hsMatrix2SIMD(src, &fMatrixProj);
+    fMatrixProj = hsMatrix2SIMD(src);
 }
 
 void plMetalDevice::SetWorldToCameraMatrix(const hsMatrix44& src)
@@ -980,8 +968,8 @@ void plMetalDevice::SetWorldToCameraMatrix(const hsMatrix44& src)
     hsMatrix44 inv;
     src.GetInverse(&inv);
 
-    hsMatrix2SIMD(src, &fMatrixW2C);
-    hsMatrix2SIMD(inv, &fMatrixC2W);
+    fMatrixW2C = hsMatrix2SIMD(src);
+    fMatrixC2W = hsMatrix2SIMD(inv);
 }
 
 void plMetalDevice::SetLocalToWorldMatrix(const hsMatrix44& src)
@@ -989,8 +977,8 @@ void plMetalDevice::SetLocalToWorldMatrix(const hsMatrix44& src)
     hsMatrix44 inv;
     src.GetInverse(&inv);
 
-    hsMatrix2SIMD(src, &fMatrixL2W);
-    hsMatrix2SIMD(inv, &fMatrixW2L);
+    fMatrixL2W = hsMatrix2SIMD(src);
+    fMatrixW2L = hsMatrix2SIMD(inv);
 }
 
 void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
