@@ -1635,8 +1635,7 @@ bool plClient::IUpdate()
     plProfile_BeginTiming(DispatchQueue);
     plgDispatch::Dispatch()->MsgQueueProcess();
     plProfile_EndTiming(DispatchQueue);
-    
-    const char *inputUpdate = "Update";
+
     if (fInputManager) // Is this used anymore? Seems to always be nil.
         fInputManager->Update();
 
@@ -1691,19 +1690,15 @@ bool plClient::IUpdate()
     // At this point, we just register for a plDelayedTransformMsg when dirtied.
     if (!plCoordinateInterface::GetDelayedTransformsEnabled())
     {
-        const ST::string xFormLap2 = ST_LITERAL("Simulation");
-        plProfile_BeginLap(TransformMsg, xFormLap2);
+        plProfile_LapGuard(TransformMsg, ST_LITERAL("Simulation"));
         xform = new plTransformMsg(nullptr, nullptr, nullptr, nullptr);
         plgDispatch::MsgSend(xform);
-        plProfile_EndLap(TransformMsg, xFormLap2);
     }
     else
     {
-        const ST::string xFormLap3 = ST_LITERAL("Delayed");
-        plProfile_BeginLap(TransformMsg, xFormLap3);
+        plProfile_LapGuard(TransformMsg, ST_LITERAL("Delayed"));
         xform = new plDelayedTransformMsg(nullptr, nullptr, nullptr, nullptr);
         plgDispatch::MsgSend(xform);
-        plProfile_EndLap(TransformMsg, xFormLap3);
     }
 
     plCoordinateInterface::SetTransformPhase(plCoordinateInterface::kTransformPhaseNormal);
