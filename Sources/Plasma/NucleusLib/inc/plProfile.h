@@ -86,8 +86,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plProfile_CreateAsynchTimer(name, group, varName)   plProfileVar gProfileVar##varName(ST_LITERAL(name), ST_LITERAL(group), plProfileVar::kDisplayTime | plProfileVar::kDisplayResetEveryBegin | plProfileVar::kDisplayNoReset)
 #define plProfile_BeginTiming(varName)              gProfileVar##varName.BeginTiming()
 #define plProfile_EndTiming(varName)                gProfileVar##varName.EndTiming()
+#define plProfile_TimingGuard(varName)              plProfileVar_TimingGuard hsUniqueIdentifier(ProfileTimer)(gProfileVar##varName)
 #define plProfile_BeginLap(varName, lapName)        gProfileVar##varName.BeginLap(lapName)
 #define plProfile_EndLap(varName, lapName)          gProfileVar##varName.EndLap(lapName)
+#define plProfile_LapGuard(varName, lapName)        plProfileVar_LapGuard hsUniqueIdentifier(ProfileLap)(gProfileVar##varName, lapName)
 
 #define plProfile_CreateCounter(name, group, varName)   plProfileVar gProfileVar##varName(ST_LITERAL(name), ST_LITERAL(group), plProfileVar::kDisplayCount)
 #define plProfile_CreateCounterNoReset(name, group, varName)    plProfileVar gProfileVar##varName(ST_LITERAL(name), ST_LITERAL(group), plProfileVar::kDisplayCount | plProfileVar::kDisplayNoReset)
@@ -113,8 +115,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plProfile_CreateAsynchTimer(name, group, varName)
 #define plProfile_BeginTiming(varName)
 #define plProfile_EndTiming(varName)
+#define plProfile_TimingGuard(varName)
 #define plProfile_BeginLap(varName, lapName)
 #define plProfile_EndLap(varName, lapName)
+#define plProfile_LapGuard(varName, lapName)
 
 #define plProfile_CreateCounter(name, group, varName)
 #define plProfile_CreateCounterNoReset(name, group, varName)
@@ -249,6 +253,51 @@ public:
 
     // Enable Lap Sampling
     void SetLapsActive(bool s) { fLapsActive = s; }
+};
+
+class plProfileVar_TimingGuard
+{
+    plProfileVar& fVar;
+
+public:
+    plProfileVar_TimingGuard(plProfileVar& var)
+        : fVar(var)
+    {
+        fVar.BeginTiming();
+    }
+
+    // These are just RAII helpers for the macros, so we don't allow
+    // moving the locks around.
+    plProfileVar_TimingGuard(const plProfileVar_TimingGuard&) = delete;
+    plProfileVar_TimingGuard(plProfileVar_TimingGuard&&) = delete;
+
+    ~plProfileVar_TimingGuard()
+    {
+        fVar.EndTiming();
+    }
+};
+
+class plProfileVar_LapGuard
+{
+    plProfileVar& fVar;
+    ST::string    fLap;
+
+public:
+    plProfileVar_LapGuard(plProfileVar& var, ST::string lap)
+        : fVar(var), fLap(std::move(lap))
+    {
+        fVar.BeginLap(fLap);
+    }
+
+    // These are just RAII helpers for the macros, so we don't allow
+    // moving the locks around.
+    plProfileVar_LapGuard(const plProfileVar_LapGuard&) = delete;
+    plProfileVar_LapGuard(plProfileVar_LapGuard&&) = delete;
+
+    ~plProfileVar_LapGuard()
+    {
+        fVar.EndLap(fLap);
+    }
 };
 
 #endif // plProfile_h_inc

@@ -2512,42 +2512,31 @@ bool plDXPipeline::IAvatarSort(plDrawableSpans* d, const std::vector<int16_t>& v
 // which lights a span will use, needs to be stored on the span.
 bool plDXPipeline::PrepForRender(plDrawable* d, std::vector<int16_t>& visList, plVisMgr* visMgr)
 {
-    plProfile_BeginTiming(PrepDrawable);
+    plProfile_TimingGuard(PrepDrawable);
 
     plDrawableSpans *drawable = plDrawableSpans::ConvertNoRef(d);
-    if( !drawable )
-    {
-        plProfile_EndTiming(PrepDrawable);
+    if (!drawable)
         return false;
-    }
 
     // Find our lights
     ICheckLighting(drawable, visList, visMgr);
 
     // Sort our faces
-    if( drawable->GetNativeProperty(plDrawable::kPropSortFaces) )
-    {
+    if (drawable->GetNativeProperty(plDrawable::kPropSortFaces))
         drawable->SortVisibleSpans(visList, this);
-    }
 
     // Prep for render. This is gives the drawable a chance to
     // do any last minute updates for its buffers, including
     // generating particle tri lists.
-    drawable->PrepForRender( this );
+    drawable->PrepForRender(this);
 
     // Any skinning necessary
-    if( !ISoftwareVertexBlend(drawable, visList) )
-    {
-        plProfile_EndTiming(PrepDrawable);
+    if (!ISoftwareVertexBlend(drawable, visList))
         return false;
-    }
-    // Avatar face sorting happens after the software skin.
-    if( drawable->GetNativeProperty(plDrawable::kPropPartialSort) )
-    {
-        IAvatarSort(drawable, visList);
-    }
 
-    plProfile_EndTiming(PrepDrawable);
+    // Avatar face sorting happens after the software skin.
+    if (drawable->GetNativeProperty(plDrawable::kPropPartialSort))
+        IAvatarSort(drawable, visList);
 
     return true;
 }
