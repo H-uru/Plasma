@@ -91,7 +91,8 @@ public:
 // kDialog
 //    kShowHide         - when the dialog is shown or hidden
 // kButton
-//    kAction           - when the button clicked (should be on mouse button up)
+//    kAction           - when the button is clicked (should be on mouse button up)
+//    kSpecialAction    - when the button is double clicked
 // kListBox
 //    kAction           - single click on item(s)
 // kEditBox
