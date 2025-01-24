@@ -122,7 +122,8 @@ class pfGameGUIMgr : public hsKeyedObject
             kKeyDown,
             kKeyUp,
             kKeyRepeat,
-            kMouseDblClick
+            kMouseDblClick,
+            kMouseWheel
         };
 
         enum
@@ -167,7 +168,7 @@ class pfGameGUIMgr : public hsKeyedObject
 
         void    IActivateGUI( bool activate );
 
-        bool    IHandleMouse( EventType event, float mouseX, float mouseY, uint8_t modifiers, uint32_t *desiredCursor );
+        bool    IHandleMouse( EventType event, float mouseX, float mouseY, float mouseWheel, uint8_t modifiers, uint32_t *desiredCursor );
         bool    IHandleKeyEvt( EventType event, plKeyDef key, uint8_t modifiers );
         bool    IHandleKeyPress( wchar_t key, uint8_t modifiers );
 

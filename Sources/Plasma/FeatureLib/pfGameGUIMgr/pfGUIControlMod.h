@@ -223,6 +223,7 @@ class pfGUIControlMod : public plSingleModifier
         virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers ) { }
         virtual void    HandleMouseHover( hsPoint3 &mousePt, uint8_t modifiers ) { }
         virtual void    HandleMouseDblClick( hsPoint3 &mousePt, uint8_t modifiers ) { }
+        virtual void    HandleMouseWheel(hsPoint3& mousePt, uint8_t modifiers) { }
 
         virtual bool    HandleKeyPress( wchar_t key, uint8_t modifiers );
         virtual bool    HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );

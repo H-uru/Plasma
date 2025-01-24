@@ -608,10 +608,9 @@ void    pfGUIPopUpMenu::ITearDownMenu()
 
 //// HandleMouseEvent ////////////////////////////////////////////////////////
 
-bool        pfGUIPopUpMenu::HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY,
-                                                uint8_t modifiers )
+bool pfGUIPopUpMenu::HandleMouseEvent(pfGameGUIMgr::EventType event, float mouseX, float mouseY, float mouseWheel, uint8_t modifiers)
 {
-    bool r = pfGUIDialogMod::HandleMouseEvent( event, mouseX, mouseY, modifiers );
+    bool r = pfGUIDialogMod::HandleMouseEvent(event, mouseX, mouseY, mouseWheel, modifiers);
     if( r == false && event == pfGameGUIMgr::kMouseUp )
     {
         // We don't want to be active anymore!
@@ -623,7 +622,7 @@ bool        pfGUIPopUpMenu::HandleMouseEvent( pfGameGUIMgr::EventType event, flo
             // will either a) also want to hide (cancel the entire menu selection) or b) select
             // another option
             if (fParent != nullptr)
-                return fParent->HandleMouseEvent( event, mouseX, mouseY, modifiers );
+                return fParent->HandleMouseEvent(event, mouseX, mouseY, mouseWheel, modifiers);
         }
     }
 

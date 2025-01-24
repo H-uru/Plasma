@@ -135,7 +135,7 @@ class pfGUIDialogMod : public plSingleModifier
         void        ScreenToWorldPoint( float x, float y, float z, hsPoint3 &outPt );
         hsPoint3    WorldToScreenPoint( const hsPoint3 &inPt );
 
-        virtual bool    HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY, uint8_t modifiers );
+        virtual bool    HandleMouseEvent(pfGameGUIMgr::EventType event, float mouseX, float mouseY, float mouseWheel, uint8_t modifiers);
         bool            HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
         bool            HandleKeyPress( wchar_t key, uint8_t modifiers );
         void            UpdateInterestingThings( float mouseX, float mouseY, uint8_t modifiers, bool modalPreset );
