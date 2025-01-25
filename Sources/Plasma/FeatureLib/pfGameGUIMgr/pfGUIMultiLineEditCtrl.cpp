@@ -1046,6 +1046,21 @@ void    pfGUIMultiLineEditCtrl::HandleMouseHover(hsPoint3& mousePt, uint8_t modi
     }
 }
 
+//// HandleMouseWheel /////////////////////////////////////////////////////////
+
+void pfGUIMultiLineEditCtrl::HandleMouseWheel(hsPoint3& mousePt, uint8_t modifiers)
+{
+    float wheelAmount = mousePt.fZ;
+
+    // Set the Z-component to 0 for the bounds test
+    mousePt.fZ = 0.f;
+
+    if (IHandleMouse(mousePt)) {
+        int32_t delta = -1 * int32_t(wheelAmount / 120.f);
+        SetScrollPosition(GetScrollPosition() + delta);
+    }
+}
+
 //// IGetDesiredCursor /////////////////////////////////////////////////////////
 
 uint32_t    pfGUIMultiLineEditCtrl::IGetDesiredCursor() const
