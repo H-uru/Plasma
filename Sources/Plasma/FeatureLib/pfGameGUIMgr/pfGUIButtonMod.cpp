@@ -315,6 +315,11 @@ void    pfGUIButtonMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
     }
 }
 
+void    pfGUIButtonMod::HandleMouseDblClick(hsPoint3& mousePt, uint8_t modifiers)
+{
+    HandleExtendedEvent(kDoubleClick);
+}
+
 void    pfGUIButtonMod::SetNotifyType(int32_t kind)
 {
     fNotifyType = kind;

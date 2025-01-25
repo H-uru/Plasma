@@ -301,6 +301,17 @@ class xDialogStartUp(ptResponder):
             elif event == kInterestingEvent: ## RollOver Event ##
                 self.ToggleColor(GUIDiag4b, tagID)
 
+            elif event == kSpecialAction:
+                if tagID in gExp_HotSpot or tagID in gVis_HotSpot:
+                    if gSelectedSlot and gPlayerList[gSelectedSlot-gMinusExplorer]:
+                        PtShowDialog("GUIDialog06a")
+                        PtDebugPrint("Player selected.")
+
+                        # start setting active player (we'll link out when this operation completes)
+                        playerID = gPlayerList[gSelectedSlot-gMinusExplorer][1]
+                        PtDebugPrint("Setting active player.")
+                        PtSetActivePlayer(playerID)
+
         #################################
         ##        Delete Player        ##
         #################################
