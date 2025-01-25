@@ -775,6 +775,14 @@ void    pfGUIListBoxMod::HandleMouseDblClick( hsPoint3 &mousePt, uint8_t modifie
     }
 }
 
+//// HandleMouseWheel /////////////////////////////////////////////////////////
+
+void pfGUIListBoxMod::HandleMouseWheel(hsPoint3& mousePt, uint8_t modifiers)
+{
+    int32_t delta = int32_t(mousePt.fZ / 120.f);
+    SetScrollPos(GetScrollPos() + delta);
+}
+
 //// IGetItemFromPoint ///////////////////////////////////////////////////////
 
 int32_t   pfGUIListBoxMod::IGetItemFromPoint(const hsPoint3 &mousePt)
