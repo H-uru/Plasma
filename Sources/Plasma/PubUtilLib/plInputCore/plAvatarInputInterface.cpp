@@ -699,6 +699,11 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
     {
         uint32_t oldButtonState = fInputMap->fButtonState;
 
+        // There's no "up" event for mouse wheel scrolling, so we have to check
+        // on each message whether we're still scrolling or not
+        fInputMap->fButtonState &= ~kWheelNeg;
+        fInputMap->fButtonState &= ~kWheelPos;
+
         // check for button presses...
         if (fInputMap->fButtonState & kLeftButtonDown)
         {
@@ -739,11 +744,15 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
             fInputMap->fButtonState &= ~kMiddleButtonDown;
             fInputMap->fButtonState &= ~kMiddleButtonRepeat;
         }
-        
-        if( oldButtonState != fInputMap->fButtonState || pMouseMsg->GetDX() != 0.f || pMouseMsg->GetDY() != 0.f )
-        {
-            fCursorTimeout = 0.f;   // Reset cursor opacity timeout thingy
+        if (pMouseMsg->GetButton() == kWheelPos) {
+            fInputMap->fButtonState |= kWheelPos;
         }
+        if (pMouseMsg->GetButton() == kWheelNeg) {
+            fInputMap->fButtonState |= kWheelNeg;
+        }
+
+        if (oldButtonState != fInputMap->fButtonState || pMouseMsg->GetDX() != 0.f || pMouseMsg->GetDY() != 0.f || pMouseMsg->GetWheelDelta() != 0.f)
+            fCursorTimeout = 0.f;   // Reset cursor opacity timeout thingy
 
         /*  NOTE: I see that this interface always returns true for mouse
             messages, even if it does nothing with them. It ends up working
@@ -801,6 +810,8 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     disable = true;
                 if (mouseInfo->fControlFlags & kControlFlagMiddleButtonRepeat && !(fInputMap->fButtonState & kMiddleButtonDown))
                     disable = true;
+                if (mouseInfo->fControlFlags & kControlFlagWheel && !(fInputMap->fButtonState & (kWheelPos | kWheelNeg)))
+                    disable = true;
 
                 // can we disable this control based on the cursor position?
                 if (!CursorInBox(pMouseMsg, mouseInfo->fBox) && mouseInfo->fControlFlags & kControlFlagBoxDisable)
@@ -850,7 +861,9 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     pCmd->fControlCode = mouseInfo->fCode;
                     float pct = 0.0f;
 
-                    if (mouseInfo->fControlFlags & kControlFlagXAxisEvent)
+                    if (mouseInfo->fControlFlags & kControlFlagWheel)
+                        pct = pMouseMsg->GetWheelDelta();
+                    else if (mouseInfo->fControlFlags & kControlFlagXAxisEvent)
                         pct = pMouseMsg->GetDX();
                     else
                         pct = pMouseMsg->GetDY();
@@ -916,6 +929,8 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                         continue;
                     if (mouseInfo->fControlFlags & kControlFlagMiddleButtonUp && !(pMouseMsg->GetButton() == kMiddleButtonUp))
                         continue;
+                    if (mouseInfo->fControlFlags & kControlFlagWheel && !(pMouseMsg->GetButton() == kWheelPos || pMouseMsg->GetButton() == kWheelNeg))
+                        continue;
 
                     // okay, we're in the box and either we don't require a button or our button is pressed.
                     // so set the command as 'enabled' 
@@ -954,7 +969,9 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 
                     if (mouseInfo->fControlFlags & kControlFlagDelta)
                     {
-                        if (mouseInfo->fControlFlags & kControlFlagXAxisEvent)
+                        if (mouseInfo->fControlFlags & kControlFlagWheel)
+                            pct = pMouseMsg->GetWheelDelta();
+                        else if (mouseInfo->fControlFlags & kControlFlagXAxisEvent)
                             pct = pMouseMsg->GetDX();
                         else
                             pct = pMouseMsg->GetDY();
@@ -1056,7 +1073,8 @@ plLadderDismountMap::plLadderDismountMap() : plSuspendedMovementMap()
 
 plBasicThirdPersonControlMap::plBasicThirdPersonControlMap() : plBasicControlMap()
 {   
-    fMouseMap->AddMapping(new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,                 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CAMERA_ADJUST_OFFSET,      kControlFlagWheel | kControlFlagDelta,   0.0f, 1.0f, 0.0f, 1.0f));
 }   
 
 plBasicFirstPersonControlMap::plBasicFirstPersonControlMap() : plBasicControlMap()

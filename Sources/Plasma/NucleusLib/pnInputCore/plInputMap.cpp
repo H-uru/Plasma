@@ -1098,4 +1098,5 @@ const std::map<ControlEventCode, ST::string> plInputMap::fCmdConvert =
     { B_CONTROL_OPEN_BOOK, ST_LITERAL("Open Player Book") },
     { B_CONTROL_EXIT_GUI_MODE, ST_LITERAL("Exit GUI Mode") },
     { B_CONTROL_MODIFIER_STRAFE, ST_LITERAL("Strafe Modifier") },
+    { B_CAMERA_ADJUST_OFFSET, ST_LITERAL("Camera Offset") },
 };
