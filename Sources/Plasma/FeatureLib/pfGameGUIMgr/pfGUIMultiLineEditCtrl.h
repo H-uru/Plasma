@@ -213,6 +213,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
         void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
         void    HandleMouseHover(hsPoint3& mousePt, uint8_t modifiers) override;
+        void    HandleMouseWheel(hsPoint3& mousePt, uint8_t modifiers) override;
 
         bool    HandleKeyPress(wchar_t key, uint8_t modifiers) override;
         bool    HandleKeyEvent(pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers) override;

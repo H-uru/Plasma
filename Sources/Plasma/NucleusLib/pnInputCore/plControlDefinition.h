@@ -79,6 +79,7 @@ enum
     kControlFlagMiddleButtonEx      =   0x08000000,
     kControlFlagMiddleButtonRepeat  =   0x10000000,
     kControlFlagMiddleButtonUp      =   0x20000000,
+    kControlFlagWheel               =   0x40000000
 };
 
 // mouse button flags

@@ -151,6 +151,7 @@ class pfGUIListBoxMod : public pfGUIControlMod
         void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
         void    HandleMouseHover(hsPoint3 &mousePt, uint8_t modifiers) override;
         void    HandleMouseDblClick(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseWheel(hsPoint3 &mousePt, uint8_t modifiers) override;
 
         bool    HandleKeyPress(wchar_t key, uint8_t modifiers) override;
         bool    HandleKeyEvent(pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers) override;

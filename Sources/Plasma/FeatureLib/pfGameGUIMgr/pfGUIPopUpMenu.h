@@ -156,7 +156,7 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
         void Write(hsStream* s, hsResMgr* mgr) override;
 
         void    SetEnabled(bool e) override;
-        bool    HandleMouseEvent(pfGameGUIMgr::EventType event, float mouseX, float mouseY, uint8_t modifiers) override;
+        bool    HandleMouseEvent(pfGameGUIMgr::EventType event, float mouseX, float mouseY, float mouseWheel, uint8_t modifiers) override;
 
         void            Show( float x, float y );
 

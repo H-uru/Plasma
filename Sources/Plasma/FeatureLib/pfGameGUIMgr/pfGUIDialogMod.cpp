@@ -392,8 +392,7 @@ void    pfGUIDialogMod::UpdateInterestingThings( float mouseX, float mouseY, uin
 
 //// HandleMouseEvent ////////////////////////////////////////////////////////
 
-bool        pfGUIDialogMod::HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY,
-                                                uint8_t modifiers )
+bool pfGUIDialogMod::HandleMouseEvent(pfGameGUIMgr::EventType event, float mouseX, float mouseY, float mouseWheel, uint8_t modifiers)
 {
     hsPoint3    mousePoint;
 
@@ -441,7 +440,9 @@ static bool     showBounds = false;
     }
 #endif
 
-    mousePoint.Set( mouseX, mouseY, 0.f );
+    // Need the Z-component to be 0 here for bounds checking, even if we want
+    // it to contain the scroll amount
+    mousePoint.Set(mouseX, mouseY, 0.f);
 
     if( fDragMode )
     {
@@ -477,6 +478,8 @@ static bool     showBounds = false;
 
     if (fMousedCtrl != nullptr)
     {
+        mousePoint.Set(mouseX, mouseY, mouseWheel);
+
 #ifdef HS_DEBUGGING  // Debugging bounds rects
         if (showBounds)
         {
@@ -519,6 +522,8 @@ static bool     showBounds = false;
             fMousedCtrl->HandleMouseDrag( mousePoint, modifiers );
         else if( event == pfGameGUIMgr::kMouseDblClick )
             fMousedCtrl->HandleMouseDblClick( mousePoint, modifiers );
+        else if (event == pfGameGUIMgr::kMouseWheel)
+            fMousedCtrl->HandleMouseWheel(mousePoint, modifiers);
 
         return true;
     }
