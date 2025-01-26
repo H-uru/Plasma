@@ -253,7 +253,7 @@ kKMNextPreviousText = 830
 #
 
 class _KeyLine(NamedTuple):
-    controlCode: Union[str, int, None]
+    controlCode: Union[int, str, None]
     singlePlayer: bool
     multiPlayer: bool
 
@@ -1814,7 +1814,7 @@ class xOptionsMenu(ptModifier):
         else:
             raise ValueError(f"{keyIdx=}")
 
-    def ISetKeyMapping(self, controlCode: Union[str, int], vkey: int, modifiers: int, isPrimary: bool) -> None:
+    def ISetKeyMapping(self, controlCode: Union[int, str], vkey: int, modifiers: int, isPrimary: bool) -> None:
         km = ptKeyMap()
         newKeyStr = km.convertVKeyToChar(vkey, modifiers)
 
