@@ -699,11 +699,20 @@ class xOptionsMenu(ptModifier):
                 if kmID == kKMOkBtn:
                     KeyMapDlg.dialog.hide()
                 elif kmID in gKM1ControlCodesRow1 or kmID in gKM1ControlCodesRow2:
+                    if kmID in gKM1ControlCodesRow1:
+                        controlCodeId = kmID - 300
+                        isPrimary = True
+                    elif kmID in gKM1ControlCodesRow2:
+                        controlCodeId = kmID - 400
+                        isPrimary = False
+                    else:
+                        raise AssertionError(kmID)
+
                     self.ISetKeyMapping(
-                        kmID - 300,
+                        controlCodeId,
                         control.getLastKeyCaptured(),
                         control.getLastModifiersCaptured(),
-                        kmID in gKM1ControlCodesRow1
+                        isPrimary
                     )
                     KeyMapDlg.dialog.noFocus()
                     self.IShowMappedKeys(KeyMapDlg.dialog, gKM1ControlCodesRow1, gKM1ControlCodesRow2)
