@@ -197,7 +197,6 @@ kKMEditLine15Row1 = 314
 kKMEditLine16Row1 = 315
 kKMEditLine17Row1 = 316
 kKMEditLine18Row1 = 317
-# these MUST be 100 more than the above constants
 kKMEditLine1Row2 = 400
 kKMEditLine2Row2 = 401
 kKMEditLine3Row2 = 402
@@ -321,8 +320,6 @@ kDefaultControlCodeBinds = {
     "Game.KICreateMarkerFolder": ("F8", "(unmapped)"),
     "Game.KICreateMarker": ("F7", "(unmapped)"),
 }
-
-kControlCodes = tuple(kDefaultControlCodeBinds.keys())
 
 kVideoQuality = ["Low", "Medium", "High", "Ultra"]
 kVideoTextureQuality = ["Low", "Medium", "High"]
@@ -699,17 +696,19 @@ class xOptionsMenu(ptModifier):
                 if kmID == kKMOkBtn:
                     KeyMapDlg.dialog.hide()
                 elif kmID in gKM1ControlCodesRow1 or kmID in gKM1ControlCodesRow2:
-                    if kmID in gKM1ControlCodesRow1:
-                        controlCodeId = kmID - 300
+                    try:
+                        keyLine = gKM1ControlCodesRow1[kmID]
                         isPrimary = True
-                    elif kmID in gKM1ControlCodesRow2:
-                        controlCodeId = kmID - 400
+                    except KeyError:
+                        keyLine = gKM1ControlCodesRow2[kmID]
                         isPrimary = False
-                    else:
-                        raise AssertionError(kmID)
+
+                    if keyLine.controlCode is None:
+                        PtDebugPrint(f"Missing control code definition for ID {kmID}")
+                        return
 
                     self.ISetKeyMapping(
-                        controlCodeId,
+                        keyLine.controlCode,
                         control.getLastKeyCaptured(),
                         control.getLastModifiersCaptured(),
                         isPrimary
@@ -1815,12 +1814,11 @@ class xOptionsMenu(ptModifier):
         else:
             raise ValueError(f"{keyIdx=}")
 
-    def ISetKeyMapping(self, controlCodeId: int, vkey: int, modifiers: int, isPrimary: bool) -> None:
+    def ISetKeyMapping(self, controlCode: Union[str, int], vkey: int, modifiers: int, isPrimary: bool) -> None:
         km = ptKeyMap()
         newKeyStr = km.convertVKeyToChar(vkey, modifiers)
 
         # If this is the same key as before, unmap the binding.
-        controlCode = kControlCodes[controlCodeId]
         if self.IGetBoundKey(controlCode, keyIdx=0 if isPrimary else 1) == newKeyStr:
             newKeyStr = "(unmapped)"
 
