@@ -5355,9 +5355,8 @@ class ptKeyMap:
         """None"""
         pass
 
-    def bindKey(self):
-        """Params key1,key2,action
-Bind keys to an action"""
+    def bindKey(self, key1, key2, action):
+        """Bind keys to an action"""
         pass
 
     def bindKeyToConsoleCommand(self,keyStr1, command):
@@ -5376,37 +5375,32 @@ Bind keys to an action"""
         """Convert char string to virtual key"""
         pass
 
-    def convertControlCodeToString(self):
-        """Params controlCode
-Convert control code to character string"""
+    def convertControlCodeToString(self, controlCode):
+        """Convert control code to character string"""
         pass
 
     def convertVKeyToChar(self,virtualKey,flags):
         """Convert virtual key and shift flags to string"""
         pass
 
-    def getBindingFlags1(self):
-        """Params controlCode
-Returns modifier flags for controlCode"""
+    def getBindingFlags1(self, controlCode):
+        """Returns modifier flags for controlCode"""
         pass
 
-    def getBindingFlags2(self):
-        """Params controlCode
-Returns modifier flags for controlCode"""
+    def getBindingFlags2(self, controlCode):
+        """Returns modifier flags for controlCode"""
         pass
 
     def getBindingFlagsConsole(self,command):
         """Returns modifier flags for the console command mapping"""
         pass
 
-    def getBindingKey1(self):
-        """Params controlCode
-Returns key code for controlCode"""
+    def getBindingKey1(self, controlCode):
+        """Returns key code for controlCode"""
         pass
 
-    def getBindingKey2(self):
-        """Params controlCode
-Returns key code for controlCode"""
+    def getBindingKey2(self, controlCode):
+        """Returns key code for controlCode"""
         pass
 
     def getBindingKeyConsole(self,command):
