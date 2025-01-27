@@ -115,15 +115,15 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
     {
         return plSoundBuffer::kError;
     }
-    plSoundBuffer *buffer = (plSoundBuffer *)fDataBufferKey->ObjectIsLoaded();      
-    if(!buffer)
+
+    if (!fDataBuffer)
         return plSoundBuffer::kError;
-    
+
     // The databuffer also needs to know if the source is compressed or not
     if (fNewFilename.IsValid())
     {
-        buffer->SetFileName(fNewFilename);
-        buffer->SetFlag(plSoundBuffer::kStreamCompressed, fIsCompressed);
+        fDataBuffer->SetFileName(fNewFilename);
+        fDataBuffer->SetFlag(plSoundBuffer::kStreamCompressed, fIsCompressed);
         fNewFilename = "";
         if(fReallyPlaying)
         {
@@ -132,14 +132,14 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
         }
     }
 
-    if( buffer->IsValid() )
+    if (fDataBuffer->IsValid())
     {
         plAudioFileReader::StreamType type = plAudioFileReader::kStreamNative;
         fStreamType = kStreamCompressed;
 
-        if(!buffer->HasFlag(plSoundBuffer::kStreamCompressed))
+        if (!fDataBuffer->HasFlag(plSoundBuffer::kStreamCompressed))
         {
-            if(buffer->GetDataLengthInSecs() > plgAudioSys::GetStreamFromRAMCutoff( ))
+            if (fDataBuffer->GetDataLengthInSecs() > plgAudioSys::GetStreamFromRAMCutoff())
             {
                 fStreamType = kStreamFromDisk;
                 type = plAudioFileReader::kStreamWAV;
@@ -153,7 +153,7 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
 
         if(!fStartPos)
         {
-            if(buffer->AsyncLoad(type, isIncidental ? 0 : STREAMING_BUFFERS * STREAM_BUFFER_SIZE ) == plSoundBuffer::kPending)
+            if (fDataBuffer->AsyncLoad(type, isIncidental ? 0 : STREAMING_BUFFERS * STREAM_BUFFER_SIZE ) == plSoundBuffer::kPending)
             {
                 fPlayWhenLoaded = playWhenLoaded;
                 fLoading = true;
@@ -161,13 +161,13 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
             }
         }
         
-        fSrcFilename = buffer->GetFileName();
+        fSrcFilename = fDataBuffer->GetFileName();
 
         delete fDataStream;
-        fDataStream = buffer->GetAudioReader();
+        fDataStream = fDataBuffer->GetAudioReader();
         if(!fDataStream)
         {
-            plAudioCore::ChannelSelect select = buffer->GetReaderSelect();
+            plAudioCore::ChannelSelect select = fDataBuffer->GetReaderSelect();
 
             /// Open da file
             plFileName strPath = plFileSystem::GetCWD();
@@ -292,12 +292,11 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
     fTotalBytes = (uint32_t)bufferSize;
     plProfile_NewMem(MemSounds, fTotalBytes);
 
-    plSoundBuffer *buffer = (plSoundBuffer *)fDataBufferKey->ObjectIsLoaded();      
-    if(!buffer)
+    if (!fDataBuffer)
         return false;
 
     bool setupSource = true;
-    if(!buffer->GetData() || fStartPos)
+    if (!fDataBuffer->GetData() || fStartPos)
     { 
         if(fStartPos && fStartPos <= fDataStream->NumBytesLeft())
         {
@@ -314,7 +313,7 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
     else
     {
         // this sound is starting from the beginning. Get the data and start it.
-        if(!fDSoundBuffer->SetupStreamingSource(buffer->GetData(), buffer->GetAsyncLoadLength()))
+        if (!fDSoundBuffer->SetupStreamingSource(fDataBuffer->GetData(), fDataBuffer->GetAsyncLoadLength()))
         {
             setupSource = false;
         }

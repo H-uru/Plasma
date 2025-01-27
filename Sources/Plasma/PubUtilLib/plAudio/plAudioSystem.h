@@ -124,7 +124,7 @@ public:
 
     static bool LogStreamingUpdates() { return fLogStreamingUpdates; }
     static void SetLogStreamingUpdates(bool logUpdates) { fLogStreamingUpdates = logUpdates; }
-    static void RegisterSoftSound(const plKey& soundKey);
+    static void RegisterSoftSound(plKey soundKey);
     static void UnregisterSoftSound(const plKey& soundKey);
 
     static void SetDistanceModel(int type);

@@ -210,7 +210,7 @@ public:
 
     virtual void        Update();
     
-    plSoundBuffer *     GetDataBuffer() const { return (plSoundBuffer *)fDataBufferKey->ObjectIsLoaded(); }
+    plSoundBuffer *     GetDataBuffer() const { return fDataBuffer; }
     float               QueryCurrVolume() const;  // Returns the current volume, attenuated
 
     plFileName          GetFileName() const;
