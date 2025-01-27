@@ -69,7 +69,6 @@ public:
     plBigNum();
     plBigNum(const plBigNum& a);
     plBigNum(uint32_t a);
-    plBigNum(uint32_t bytess, const void* data, bool le=false);
     ~plBigNum();
 
     plBigNum& operator=(const plBigNum& a)
