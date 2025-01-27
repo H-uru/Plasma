@@ -117,32 +117,20 @@ bool ICallIntFunc(PyObject *dict, const char *funcName, int& val)
     return false;
 }
 
-bool ICallStrFunc(PyObject *dict, const char *funcName, char*& val)
+bool ICallStrFunc(PyObject *dict, const char *funcName, ST::string& val)
 {
     PyObject *obj;
     if (ICallVoidFunc(dict, funcName, obj))
     {
         if (PyUnicode_Check(obj))
         {
-            val = hsStrcpy(PyUnicode_AsUTF8(obj));
-            Py_DECREF(obj);
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool ICallStrFunc(PyObject* dict, const char* funcName, wchar_t*& val)
-{
-    PyObject* obj;
-    if (ICallVoidFunc(dict, funcName, obj)) {
-        if (PyUnicode_Check(obj)) {
             Py_ssize_t size;
-            wchar_t* pyUtf16Str = PyUnicode_AsWideCharString(obj, &size);
-            val = new wchar_t[size + 1];
-            wcsncpy(val, pyUtf16Str, size + 1);
-            PyMem_Free(pyUtf16Str);
+            const char* utf8 = PyUnicode_AsUTF8AndSize(obj, &size);
+            if (utf8 == nullptr) {
+                Py_DECREF(obj);
+                return false;
+            }
+            val = ST::string::from_utf8(utf8, size);
             Py_DECREF(obj);
             return true;
         }
@@ -290,7 +278,7 @@ bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
         }
 
         // Get the class name
-        MCHAR* className = nullptr;
+        ST::string className;
         if (!ICallStrFunc(dict, kGetClassName, className))
         {
             Py_DECREF(module);
@@ -326,7 +314,7 @@ bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
 
         if (PyCallable_Check(getParamFunc))
         {
-            plAutoUIBlock *autoUI = new plAutoUIBlock(PythonFile::GetClassDesc(), blockID, className, version);
+            plAutoUIBlock *autoUI = new plAutoUIBlock(PythonFile::GetClassDesc(), blockID, std::move(className), version);
             // test to see if it is a multi-modifier type class
             if (isMulti)
                 autoUI->SetMultiModifierFlag(true);
@@ -466,7 +454,6 @@ bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
             PythonFile::AddAutoUIBlock(autoUI);
         }
 
-        delete [] className;
         Py_DECREF(module);
     }
     else

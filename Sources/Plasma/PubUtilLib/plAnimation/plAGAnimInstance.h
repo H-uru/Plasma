@@ -261,7 +261,7 @@ protected:
 extern ST::string gGlobalAnimName;
 extern ST::string gGlobalChannelName;
 
-void RegisterAGAlloc(plAGChannel *object, const char *chanName, const char *animName, uint16_t classIndex);
+void RegisterAGAlloc(plAGChannel *object, ST::string chanName, ST::string animName, uint16_t classIndex);
 void UnRegisterAGAlloc(plAGChannel *object);
 void DumpAGAllocs();
 

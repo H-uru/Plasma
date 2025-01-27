@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /////////////////////////////////////////////////////////////////////////////////////////
 
 #include <algorithm>
+#include <string_theory/format>
 
 // singular
 #include "plAGAnimInstance.h"
@@ -621,35 +622,20 @@ void plAGAnimInstance::ISetupFade(float goal, float rate, bool detach, uint8_t t
     }
 }
 
-class agAlloc
+struct agAlloc
 {
-public:
-    agAlloc(plAGChannel *object, const char *chanName, const char *animName, uint16_t classIndex)
-        : fObject(object),
-          fClassIndex(classIndex)
-    {
-        fChannelName = hsStrcpy(chanName);
-        fAnimName = hsStrcpy(animName);
-    }
-
-    ~agAlloc()
-    {
-        delete[] fChannelName;
-        delete[] fAnimName;
-    }
-
     plAGChannel *fObject;
-    char *fChannelName;
-    char *fAnimName;
+    ST::string fChannelName;
+    ST::string fAnimName;
     uint16_t fClassIndex;
 };
 
 typedef std::map<plAGChannel *, agAlloc *> agAllocMap;
 static agAllocMap gAGAllocs;
 
-void RegisterAGAlloc(plAGChannel *object, const char *chanName, const char *animName, uint16_t classIndex)
+void RegisterAGAlloc(plAGChannel *object, ST::string chanName, ST::string animName, uint16_t classIndex)
 {
-    gAGAllocs[object] = new agAlloc(object, chanName, animName, classIndex);
+    gAGAllocs[object] = new agAlloc {object, std::move(chanName), std::move(animName), classIndex};
 }
 
 void DumpAGAllocs()
@@ -665,7 +651,7 @@ void DumpAGAllocs()
 
         uint16_t realClassIndex = al->fObject->ClassIndex();
 
-        hsStatusMessageF("agAlloc: an: %s ch: %s, cl: %s", al->fAnimName, al->fChannelName, plFactory::GetNameOfClass(realClassIndex));
+        hsStatusMessage(ST::format("agAlloc: an: {} ch: {}, cl: {}", al->fAnimName, al->fChannelName, plFactory::GetNameOfClass(realClassIndex)).c_str());
 
     }
     // it's not fast but it's safe and simple..
