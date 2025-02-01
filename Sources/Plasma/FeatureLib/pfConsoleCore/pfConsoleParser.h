@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef _pfConsolePareser_h
-#define _pfConsolePareser_h
+#ifndef _pfConsoleParser_h
+#define _pfConsoleParser_h
 
 #include "HeadSpin.h"
 
@@ -98,6 +98,17 @@ public:
     // or nullptr if no matching command was found.
     pfConsoleCmd* ParseCommand();
 
+    // Parse the entire command name part of the line
+    // without taking the currently defined commands and groups into account.
+    // This allows parsing command names that might not exist,
+    // which can be useful for parsing configuration files that could contain unknown commands.
+    // Note that this only works correctly for command names with . or _ separators, not spaces!
+    // For example, "Group.Command" and "Group_Command" are parsed as expected,
+    // but "Group Command" will be parsed as a command "Group" with argument "Command".
+    // Returns a vector containing all tokens in the command name,
+    // or an empty vector if the line is empty.
+    std::vector<ST::string> ParseUnknownCommandName();
+
     // Parse the remainder of the line as command arguments.
     // On success, returns the parsed arguments with any surrounding quotes removed.
     // If any of the arguments couldn't be parsed,
@@ -105,4 +116,4 @@ public:
     std::optional<std::vector<ST::string>> ParseArguments();
 };
 
-#endif // _pfConsolePareser_h
+#endif // _pfConsoleParser_h
