@@ -138,6 +138,23 @@ public:
     int ColorDepth;
 };
 
+class plDisplayHelper
+{
+public:
+    virtual plDisplayMode DefaultDisplayMode() = 0;
+    virtual void GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth = 32) const = 0;
+    virtual std::vector<plDisplayMode> GetDisplayModes() const = 0;
+    
+    plDisplayHelper() = default;
+    virtual ~plDisplayHelper() = default;
+    
+    static const plDisplayHelper* CurrentDisplayHelper() { return _currentDisplayHelper; }
+    void MakeCurrentDisplayHelper() { _currentDisplayHelper = this; }
+    
+private:
+    static plDisplayHelper* _currentDisplayHelper;
+};
+
 class plPipeline : public plCreatable
 {
 public:
@@ -357,6 +374,9 @@ public:
     
     float fBackingScale = 1.0f;
     void SetBackingScale(float scale) { fBackingScale = scale; };
+    
+    std::shared_ptr<plDisplayHelper> fDisplayHelper;
+    void SetDisplayHelper(std::shared_ptr<plDisplayHelper> helper) { fDisplayHelper = helper; };
 };
 
 #endif // plPipeline_inc

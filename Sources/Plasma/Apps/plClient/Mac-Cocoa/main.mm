@@ -73,6 +73,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGLPipeline/plGLPipeline.h"
 #endif
 #include "plInputCore/plInputDevice.h"
+#include "plMacDisplayHelper.h"
 #ifdef PLASMA_PIPELINE_METAL
 #include "pfMetalPipeline/plMetalPipeline.h"
 #endif
@@ -105,6 +106,7 @@ std::vector<ST::string> args;
    @public
     plClientLoader gClient;
     dispatch_source_t _displaySource;
+    std::shared_ptr<plMacDisplayHelper> _displayHelper;
 }
 
 @property(retain) PLSKeyboardEventMonitor* eventMonitor;
@@ -116,6 +118,7 @@ std::vector<ST::string> args;
 @property NSModalSession currentModalSession;
 @property PLSPatcher* patcher;
 @property PLSLoginWindowController* loginWindow;
+@property NSWindow* gameWindow;
 
 @end
 
@@ -194,10 +197,14 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
     PLSView* view = [[PLSView alloc] init];
     self.plsView = view;
     window.contentView = view;
-    [window setDelegate:self];
+    self.gameWindow = window;
+    
+    _displayHelper = std::make_shared<plMacDisplayHelper>();
+    _displayHelper->SetCurrentScreen([window screen]);
+    _displayHelper->MakeCurrentDisplayHelper();
     
     gClient.SetClientWindow((__bridge void *)view.layer);
-    gClient.SetClientDisplay((hsWindowHndl)NULL);
+    gClient.SetClientDisplay((__bridge hsWindowHndl)window.screen);
 
     self = [super initWithWindow:window];
     self.window.acceptsMouseMovedEvents = YES;
@@ -481,6 +488,8 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 - (void)startClient
 {
     PF_CONSOLE_INITIALIZE(Audio)
+    
+    [self.gameWindow setDelegate:self];
 
     self.plsView.delegate = self;
     // Create a window:
@@ -572,6 +581,11 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
                                   NSApplicationPresentationAutoHideMenuBar];
     return NSApplicationPresentationFullScreen | NSApplicationPresentationHideDock |
            NSApplicationPresentationAutoHideMenuBar;
+}
+
+- (void)windowDidChangeScreen:(NSNotification *)notification
+{
+    _displayHelper->SetCurrentScreen(self.window.screen);
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
