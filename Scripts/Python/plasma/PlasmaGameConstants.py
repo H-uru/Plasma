@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 from __future__ import annotations
 
 class PtGameJoinError:
+    kGameJoinPending = -1
     kGameJoinSuccess = 0
     kGameJoinErrNotExist = 1
     kGameJoinErrInitFailed = 2
@@ -53,7 +54,6 @@ class PtGameJoinError:
     kGameJoinErrAlreadyJoined = 6
     kGameJoinErrNoInvite = 7
     kNumGameJoinErrors = 8
-    kGameJoinPending = -1
 
 
 class PtMarkerGameType:

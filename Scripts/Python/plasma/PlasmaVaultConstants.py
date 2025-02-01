@@ -55,9 +55,6 @@ class PtVaultCallbackTypes:
 class PtVaultNodeTypes:
     """(none)"""
     kInvalidNode = 0
-    kAgeInfoNode = 33
-    kAgeInfoListNode = 34
-    kMarkerGameNode = 35
     kVNodeMgrPlayerNode = 2
     kVNodeMgrAgeNode = 3
     kFolderNode = 22
@@ -68,6 +65,9 @@ class PtVaultNodeTypes:
     kAgeLinkNode = 28
     kChronicleNode = 29
     kPlayerInfoListNode = 30
+    kAgeInfoNode = 33
+    kAgeInfoListNode = 34
+    kMarkerGameNode = 35
 
 class PtVaultNotifyTypes:
     """(none)"""
