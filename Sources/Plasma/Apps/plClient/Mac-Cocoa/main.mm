@@ -321,8 +321,8 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     FILE* serverIniFile = plFileSystem::Open(serverIni, "rb");
     if (serverIniFile) {
         fclose(serverIniFile);
-        ST::string errorMsg = pfServerIni::Load(serverIni);
-        if (!errorMsg.empty()) {
+        ST::string errorMsg;
+        if (!pfServerIni::Load(serverIni, errorMsg)) {
             hsMessageBox(ST::format("Error in server.ini file. Please check your URU installation.\n{}", errorMsg), ST_LITERAL("Error"), hsMessageBoxNormal);
             [NSApplication.sharedApplication terminate:nil];
         }

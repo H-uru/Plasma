@@ -61,8 +61,8 @@ plFilePatcher::plFilePatcher(plFileName serverIni)
 
 bool plFilePatcher::ILoadServerIni()
 {
-    ST::string errorMsg = pfServerIni::Load(fServerIni);
-    if (!errorMsg.empty()) {
+    ST::string errorMsg;
+    if (!pfServerIni::Load(fServerIni, errorMsg)) {
         ISetNetError(ST::format("Error in server config file {}: {}", fServerIni, errorMsg));
         return false;
     } else {

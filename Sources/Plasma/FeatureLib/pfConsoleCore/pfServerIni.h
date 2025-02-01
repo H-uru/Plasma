@@ -79,13 +79,13 @@ public:
     {}
 
 private:
-    ST::string IParseOption(const std::vector<ST::string>& name, const ST::string& value);
+    bool IParseOption(const std::vector<ST::string>& name, const ST::string& value, ST::string& errorMsg);
 
 public:
-    ST::string Parse(const plFileName& fileName);
+    bool Parse(const plFileName& fileName, ST::string& errorMsg);
     void Apply();
 
-    static ST::string Load(const plFileName& fileName);
+    static bool Load(const plFileName& fileName, ST::string& errorMsg);
 };
 
 #endif // _pfServerIni_h
