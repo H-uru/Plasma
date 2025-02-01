@@ -114,6 +114,16 @@ class PtButtonNotifyTypes:
     kNotifyOnDown = 1
     kNotifyOnUpAndDown = 2
 
+class PtCCRPetitionType:
+    """(none)"""
+    kGeneralHelp = 0
+    kBug = 1
+    kFeedback = 2
+    kExploit = 3
+    kHarass = 4
+    kStuck = 5
+    kTechnical = 6
+
 class PtConfirmationResult:
     OK = 1
     Cancel = 0
@@ -127,16 +137,6 @@ class PtConfirmationType:
     ConfirmQuit = 1
     ForceQuit = 2
     YesNo = 3
-
-class PtCCRPetitionType:
-    """(none)"""
-    kGeneralHelp = 0
-    kBug = 1
-    kFeedback = 2
-    kExploit = 3
-    kHarass = 4
-    kStuck = 5
-    kTechnical = 6
 
 class PtEventType:
     """(none)"""
@@ -154,6 +154,12 @@ class PtEventType:
     kClickDrag = 12
     kOfferLinkingBook = 14
     kBook = 15
+
+class PtFontFlags:
+    """(none)"""
+    kFontBold = 1
+    kFontItalic = 2
+    kFontShadowed = 4
 
 class PtGUIMultiLineDirection:
     """(none)"""
@@ -181,12 +187,6 @@ class PtJustify:
     kLeftJustify = 0
     kCenter = 1
     kRightJustify = 2
-
-class PtFontFlags:
-    """(none)"""
-    kFontBold = 1
-    kFontItalic = 2
-    kFontShadowed = 4
 
 class PtLOSObjectType:
     """(none)"""

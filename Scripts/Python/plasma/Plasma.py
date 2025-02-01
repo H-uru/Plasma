@@ -2368,143 +2368,6 @@ unsetWrapping() is called"""
         """Stop text wrapping"""
         pass
 
-class ptGameScore:
-    """Plasma Game Score"""
-    def __init__(self):
-        """None"""
-        pass
-
-    def addPoints(self, points, key=None):
-        """Adds points to the score"""
-        pass
-
-    @staticmethod
-    def createAgeScore(scoreName, type, points=0, key=None):
-        """Creates a new score associated with this age"""
-        pass
-
-    @staticmethod
-    def createGlobalScore(scoreName, type, points=0, key=None):
-        """Creates a new global score"""
-        pass
-
-    @staticmethod
-    def createPlayerScore(scoreName, type, points=0, key=None):
-        """Creates a new score associated with this player"""
-        pass
-
-    @staticmethod
-    def createScore(ownerID, scoreName, type, points=0, key=None):
-        """Creates a new score for an arbitrary owner"""
-        pass
-
-    @staticmethod
-    def findAgeHighScores(name, maxScores, key):
-        """Finds the highest matching scores for the current age's owners"""
-        pass
-
-    @staticmethod
-    def findAgeScores(scoreName, key):
-        """Finds matching scores for this age"""
-        pass
-
-    @staticmethod
-    def findGlobalHighScores(name, maxScores, key):
-        """Finds the highest matching scores"""
-        pass
-
-    @staticmethod
-    def findGlobalScores(scoreName, key):
-        """Finds matching global scores"""
-        pass
-
-    @staticmethod
-    def findPlayerScores(scoreName, key):
-        """Finds matching player scores"""
-        pass
-
-    @staticmethod
-    def findScores(ownerID, scoreName, key):
-        """Finds matching scores for an arbitrary owner"""
-        pass
-
-    def getGameType(self):
-        """Returns the score game type."""
-        pass
-
-    def getName(self):
-        """Returns the score game name."""
-        pass
-
-    def getOwnerID(self):
-        """Returns the score game owner."""
-        pass
-
-    def getPoints(self):
-        """Returns the number of points in this score"""
-        pass
-
-    def remove(self):
-        """Removes this score from the server"""
-        pass
-
-    def setPoints(self):
-        """Sets the number of points in the score
-        Don't use to add/remove points, use only to reset values!"""
-        pass
-
-    def transferPoints(self, dest, points=0, key=None):
-        """Transfers points from this score to another"""
-        pass
-
-class ptGameScoreMsg:
-    """Game Score operation callback message"""
-    def __init__(self):
-        """None"""
-        pass
-
-class ptGameScoreListMsg(ptGameScoreMsg):
-    """Game Score message for scores found on the server"""
-    def __init__(self):
-        """None"""
-        pass
-
-    def getName(self):
-        """Returns the template score name"""
-        pass
-
-    def getOwnerID(self):
-        """Returns the template score ownerID"""
-        pass
-
-    def getScores(self):
-        """Returns a list of scores found by the server"""
-        pass
-
-class ptGameScoreTransferMsg(ptGameScoreMsg):
-    """Game Score message indicating a score point transfer"""
-    def __init__(self):
-        """None"""
-        pass
-
-    def getDestination(self):
-        """Returns the score points were transferred to"""
-        pass
-
-    def getSource(self):
-        """Returns the score points were transferred from"""
-        pass
-
-class ptGameScoreUpdateMsg(ptGameScoreMsg):
-    """Game Score message for a score update operation"""
-    def __init__(self):
-        """None"""
-        pass
-
-    def getScore(self):
-        """Returns the updated game score"""
-        pass
-
 class ptGUIControl:
     """Base class for all GUI controls"""
     def __init__(self,controlKey):
@@ -5217,6 +5080,143 @@ class ptGUISkin:
 
     def getKey(self):
         """Returns this object's ptKey"""
+        pass
+
+class ptGameScore:
+    """Plasma Game Score"""
+    def __init__(self):
+        """None"""
+        pass
+
+    def addPoints(self, points, key=None):
+        """Adds points to the score"""
+        pass
+
+    @staticmethod
+    def createAgeScore(scoreName, type, points=0, key=None):
+        """Creates a new score associated with this age"""
+        pass
+
+    @staticmethod
+    def createGlobalScore(scoreName, type, points=0, key=None):
+        """Creates a new global score"""
+        pass
+
+    @staticmethod
+    def createPlayerScore(scoreName, type, points=0, key=None):
+        """Creates a new score associated with this player"""
+        pass
+
+    @staticmethod
+    def createScore(ownerID, scoreName, type, points=0, key=None):
+        """Creates a new score for an arbitrary owner"""
+        pass
+
+    @staticmethod
+    def findAgeHighScores(name, maxScores, key):
+        """Finds the highest matching scores for the current age's owners"""
+        pass
+
+    @staticmethod
+    def findAgeScores(scoreName, key):
+        """Finds matching scores for this age"""
+        pass
+
+    @staticmethod
+    def findGlobalHighScores(name, maxScores, key):
+        """Finds the highest matching scores"""
+        pass
+
+    @staticmethod
+    def findGlobalScores(scoreName, key):
+        """Finds matching global scores"""
+        pass
+
+    @staticmethod
+    def findPlayerScores(scoreName, key):
+        """Finds matching player scores"""
+        pass
+
+    @staticmethod
+    def findScores(ownerID, scoreName, key):
+        """Finds matching scores for an arbitrary owner"""
+        pass
+
+    def getGameType(self):
+        """Returns the score game type."""
+        pass
+
+    def getName(self):
+        """Returns the score game name."""
+        pass
+
+    def getOwnerID(self):
+        """Returns the score game owner."""
+        pass
+
+    def getPoints(self):
+        """Returns the number of points in this score"""
+        pass
+
+    def remove(self):
+        """Removes this score from the server"""
+        pass
+
+    def setPoints(self):
+        """Sets the number of points in the score
+        Don't use to add/remove points, use only to reset values!"""
+        pass
+
+    def transferPoints(self, dest, points=0, key=None):
+        """Transfers points from this score to another"""
+        pass
+
+class ptGameScoreMsg:
+    """Game Score operation callback message"""
+    def __init__(self):
+        """None"""
+        pass
+
+class ptGameScoreListMsg(ptGameScoreMsg):
+    """Game Score message for scores found on the server"""
+    def __init__(self):
+        """None"""
+        pass
+
+    def getName(self):
+        """Returns the template score name"""
+        pass
+
+    def getOwnerID(self):
+        """Returns the template score ownerID"""
+        pass
+
+    def getScores(self):
+        """Returns a list of scores found by the server"""
+        pass
+
+class ptGameScoreTransferMsg(ptGameScoreMsg):
+    """Game Score message indicating a score point transfer"""
+    def __init__(self):
+        """None"""
+        pass
+
+    def getDestination(self):
+        """Returns the score points were transferred to"""
+        pass
+
+    def getSource(self):
+        """Returns the score points were transferred from"""
+        pass
+
+class ptGameScoreUpdateMsg(ptGameScoreMsg):
+    """Game Score message for a score update operation"""
+    def __init__(self):
+        """None"""
+        pass
+
+    def getScore(self):
+        """Returns the updated game score"""
         pass
 
 class ptGrassShader:
