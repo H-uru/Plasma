@@ -492,12 +492,12 @@ def PtGetMouseTurnSensitivity():
     """Returns the sensitivity"""
     pass
 
-def PtGetNPCCount():
-    """This will return the number of NPCs in the current age"""
-    pass
-
 def PtGetNPCByID(npcID):
     """This will return the NPC with a specific ID"""
+    pass
+
+def PtGetNPCCount():
+    """This will return the number of NPCs in the current age"""
     pass
 
 def PtGetNumCameras():
@@ -2368,143 +2368,6 @@ unsetWrapping() is called"""
         """Stop text wrapping"""
         pass
 
-class ptGameScore:
-    """Plasma Game Score"""
-    def __init__(self):
-        """None"""
-        pass
-
-    def addPoints(self, points, key=None):
-        """Adds points to the score"""
-        pass
-
-    @staticmethod
-    def createAgeScore(scoreName, type, points=0, key=None):
-        """Creates a new score associated with this age"""
-        pass
-
-    @staticmethod
-    def createGlobalScore(scoreName, type, points=0, key=None):
-        """Creates a new global score"""
-        pass
-
-    @staticmethod
-    def createPlayerScore(scoreName, type, points=0, key=None):
-        """Creates a new score associated with this player"""
-        pass
-
-    @staticmethod
-    def createScore(ownerID, scoreName, type, points=0, key=None):
-        """Creates a new score for an arbitrary owner"""
-        pass
-
-    @staticmethod
-    def findAgeScores(scoreName, key):
-        """Finds matching scores for this age"""
-        pass
-
-    @staticmethod
-    def findAgeHighScores(name, maxScores, key):
-        """Finds the highest matching scores for the current age's owners"""
-        pass
-
-    @staticmethod
-    def findGlobalScores(scoreName, key):
-        """Finds matching global scores"""
-        pass
-
-    @staticmethod
-    def findGlobalHighScores(name, maxScores, key):
-        """Finds the highest matching scores"""
-        pass
-
-    @staticmethod
-    def findPlayerScores(scoreName, key):
-        """Finds matching player scores"""
-        pass
-
-    @staticmethod
-    def findScores(ownerID, scoreName, key):
-        """Finds matching scores for an arbitrary owner"""
-        pass
-
-    def getGameType(self):
-        """Returns the score game type."""
-        pass
-
-    def getName(self):
-        """Returns the score game name."""
-        pass
-
-    def getOwnerID(self):
-        """Returns the score game owner."""
-        pass
-
-    def getPoints(self):
-        """Returns the number of points in this score"""
-        pass
-
-    def remove(self):
-        """Removes this score from the server"""
-        pass
-
-    def setPoints(self):
-        """Sets the number of points in the score
-        Don't use to add/remove points, use only to reset values!"""
-        pass
-
-    def transferPoints(self, dest, points=0, key=None):
-        """Transfers points from this score to another"""
-        pass
-
-class ptGameScoreMsg:
-    """Game Score operation callback message"""
-    def __init__(self):
-        """None"""
-        pass
-
-class ptGameScoreListMsg(ptGameScoreMsg):
-    """Game Score message for scores found on the server"""
-    def __init__(self):
-        """None"""
-        pass
-
-    def getName(self):
-        """Returns the template score name"""
-        pass
-
-    def getOwnerID(self):
-        """Returns the template score ownerID"""
-        pass
-
-    def getScores(self):
-        """Returns a list of scores found by the server"""
-        pass
-
-class ptGameScoreTransferMsg(ptGameScoreMsg):
-    """Game Score message indicating a score point transfer"""
-    def __init__(self):
-        """None"""
-        pass
-
-    def getDestination(self):
-        """Returns the score points were transferred to"""
-        pass
-
-    def getSource(self):
-        """Returns the score points were transferred from"""
-        pass
-
-class ptGameScoreUpdateMsg(ptGameScoreMsg):
-    """Game Score message for a score update operation"""
-    def __init__(self):
-        """None"""
-        pass
-
-    def getScore(self):
-        """Returns the updated game score"""
-        pass
-
 class ptGUIControl:
     """Base class for all GUI controls"""
     def __init__(self,controlKey):
@@ -4237,12 +4100,12 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Returns the size of the buffer"""
         pass
 
-    def getCursor(self) -> int:
-        """Get the current position of the cursor in the encoded buffer."""
-        ...
-
     def getCurrentLink(self) -> int:
         """Returns the link the mouse is currently over."""
+        ...
+
+    def getCursor(self) -> int:
+        """Get the current position of the cursor in the encoded buffer."""
         ...
 
     def getEncodedBuffer(self):
@@ -5024,13 +4887,13 @@ class ptGUIDialog:
         """Returns the ptKey of the control with the specified index (not tag ID!)"""
         pass
 
-    def getControlModFromIndex(self, index: int) -> ptGUIControl:
-        """Returns the ptGUIControl with the specified index (not tag ID!)"""
-        ...
-
     def getControlFromTag(self,tagID):
         """Returns the ptKey of the control with the specified tag ID"""
         pass
+
+    def getControlModFromIndex(self, index: int) -> ptGUIControl:
+        """Returns the ptGUIControl with the specified index (not tag ID!)"""
+        ...
 
     def getControlModFromTag(self, tagID: int) -> ptGUIControl:
         """Returns the GUI control with the specified tag ID"""
@@ -5217,6 +5080,143 @@ class ptGUISkin:
 
     def getKey(self):
         """Returns this object's ptKey"""
+        pass
+
+class ptGameScore:
+    """Plasma Game Score"""
+    def __init__(self):
+        """None"""
+        pass
+
+    def addPoints(self, points, key=None):
+        """Adds points to the score"""
+        pass
+
+    @staticmethod
+    def createAgeScore(scoreName, type, points=0, key=None):
+        """Creates a new score associated with this age"""
+        pass
+
+    @staticmethod
+    def createGlobalScore(scoreName, type, points=0, key=None):
+        """Creates a new global score"""
+        pass
+
+    @staticmethod
+    def createPlayerScore(scoreName, type, points=0, key=None):
+        """Creates a new score associated with this player"""
+        pass
+
+    @staticmethod
+    def createScore(ownerID, scoreName, type, points=0, key=None):
+        """Creates a new score for an arbitrary owner"""
+        pass
+
+    @staticmethod
+    def findAgeHighScores(name, maxScores, key):
+        """Finds the highest matching scores for the current age's owners"""
+        pass
+
+    @staticmethod
+    def findAgeScores(scoreName, key):
+        """Finds matching scores for this age"""
+        pass
+
+    @staticmethod
+    def findGlobalHighScores(name, maxScores, key):
+        """Finds the highest matching scores"""
+        pass
+
+    @staticmethod
+    def findGlobalScores(scoreName, key):
+        """Finds matching global scores"""
+        pass
+
+    @staticmethod
+    def findPlayerScores(scoreName, key):
+        """Finds matching player scores"""
+        pass
+
+    @staticmethod
+    def findScores(ownerID, scoreName, key):
+        """Finds matching scores for an arbitrary owner"""
+        pass
+
+    def getGameType(self):
+        """Returns the score game type."""
+        pass
+
+    def getName(self):
+        """Returns the score game name."""
+        pass
+
+    def getOwnerID(self):
+        """Returns the score game owner."""
+        pass
+
+    def getPoints(self):
+        """Returns the number of points in this score"""
+        pass
+
+    def remove(self):
+        """Removes this score from the server"""
+        pass
+
+    def setPoints(self):
+        """Sets the number of points in the score
+        Don't use to add/remove points, use only to reset values!"""
+        pass
+
+    def transferPoints(self, dest, points=0, key=None):
+        """Transfers points from this score to another"""
+        pass
+
+class ptGameScoreMsg:
+    """Game Score operation callback message"""
+    def __init__(self):
+        """None"""
+        pass
+
+class ptGameScoreListMsg(ptGameScoreMsg):
+    """Game Score message for scores found on the server"""
+    def __init__(self):
+        """None"""
+        pass
+
+    def getName(self):
+        """Returns the template score name"""
+        pass
+
+    def getOwnerID(self):
+        """Returns the template score ownerID"""
+        pass
+
+    def getScores(self):
+        """Returns a list of scores found by the server"""
+        pass
+
+class ptGameScoreTransferMsg(ptGameScoreMsg):
+    """Game Score message indicating a score point transfer"""
+    def __init__(self):
+        """None"""
+        pass
+
+    def getDestination(self):
+        """Returns the score points were transferred to"""
+        pass
+
+    def getSource(self):
+        """Returns the score points were transferred from"""
+        pass
+
+class ptGameScoreUpdateMsg(ptGameScoreMsg):
+    """Game Score message for a score update operation"""
+    def __init__(self):
+        """None"""
+        pass
+
+    def getScore(self):
+        """Returns the updated game score"""
         pass
 
 class ptGrassShader:
@@ -5712,29 +5712,29 @@ class ptNotify:
         """Add a responder state event record to the notify message"""
         pass
 
+    def addVarFloat(self,name,number):
+        """Add a float variable event record to the Notify message
+This event record is used to pass a number variable to another python program"""
+        pass
+
+    def addVarInt(self,name,number):
+        """Add a integer variable event record to the Notify message
+This event record is used to pass a number variable to another python program"""
+        pass
+
     def addVarKey(self,name,key):
         """Add a ptKey variable event record to the Notify message
 This event record is used to pass a ptKey variable to another python program"""
         pass
 
+    def addVarNull(self,name):
+        """Add a null (no data) variable event record to the Notify message
+This event record is used to pass a number variable to another python program"""
+        pass
+
     def addVarNumber(self,name,number):
         """Add a number variable event record to the Notify message
 Method will try to pick appropriate variable type
-This event record is used to pass a number variable to another python program"""
-        pass
-        
-    def addVarFloat(self,name,number):
-        """Add a float variable event record to the Notify message
-This event record is used to pass a number variable to another python program"""
-        pass
-        
-    def addVarInt(self,name,number):
-        """Add a integer variable event record to the Notify message
-This event record is used to pass a number variable to another python program"""
-        pass
-        
-    def addVarNull(self,name):
-        """Add a null (no data) variable event record to the Notify message
 This event record is used to pass a number variable to another python program"""
         pass
 
@@ -6071,6 +6071,10 @@ Add another sceneobject ptKey"""
         """Find a particular object in just the sceneobjects that are attached"""
         pass
 
+    def getImageLibMods(self):
+        """Returns list of ptKeys of the image library modifiers attached to this sceneobject"""
+        pass
+
     def getKey(self):
         """Get the ptKey of this sceneobject
 If there are more then one attached, get the first one"""
@@ -6098,10 +6102,6 @@ If there are more then one attached, get the first one"""
 
     def getPythonMods(self):
         """Returns list of ptKeys of the python modifiers attached to this sceneobject"""
-        pass
-
-    def getImageLibMods(self):
-        """Returns list of ptKeys of the image library modifiers attached to this sceneobject"""
         pass
 
     def getResponderState(self):
@@ -9327,12 +9327,12 @@ class ptVaultTextNoteNode(ptVaultNode):
         """Sets ID of this ptVaultNode."""
         pass
 
-    def setNoteType(self,type):
-        """Sets the type of text note for this text note node."""
-        pass
-
     def setNoteSubType(self,subType):
         """Sets the subtype of the this text note node."""
+        pass
+
+    def setNoteType(self,type):
+        """Sets the type of text note for this text note node."""
         pass
 
     def setOwnerNodeID(self,id):
