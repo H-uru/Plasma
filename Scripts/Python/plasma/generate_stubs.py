@@ -218,7 +218,8 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
     init_params, doc = parse_params_from_doc(cls.__doc__)
 
     yield f"class {name}{class_parens}:"
-    yield f'    """{doc}"""'
+    if doc:
+        yield f'    """{doc}"""'
 
     first = True
     # This currently also includes attributes inherited from superclasses, to match the existing stubs.
@@ -283,9 +284,10 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
             # (Perhaps we should set the setter to nullptr in that case? Perhaps Python can tell the difference then?)
             # Right now it doesn't matter anyway,
             # because the type annotation syntax doesn't differentiate between read-only and read-write attributes.
-            doc = value.__doc__ or ""
+            doc = value.__doc__
             yield f"    {name}: Any"
-            yield f'    """{doc}"""'
+            if doc:
+                yield f'    """{doc}"""'
         else:
             yield f"    {name}: {format_qualified_name(type(value), cls.__module__)} = ... # = {value!r}"
 
