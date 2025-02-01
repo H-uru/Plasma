@@ -201,8 +201,9 @@ def generate_enum_stub(name: str, enum_obj: PlasmaConstants.Enum) -> Iterable[st
     # (Plasma enums don't have docstrings.)
     yield '    """(none)"""'
 
-    # Output enum constants sorted by their int value.
-    for name, value in sorted(enum_obj.lookup.items(), key=lambda item: int(item[1])):
+    # Output enum constants sorted by their int value,
+    # falling back to sorting by name (case-sensitive) for constants with equal values.
+    for name, value in sorted(enum_obj.lookup.items(), key=lambda item: (int(item[1]), item[0])):
         yield f"    {name} = {int(value)}"
 
 def generate_class_stub(name: str, cls: type) -> Iterable[str]:
