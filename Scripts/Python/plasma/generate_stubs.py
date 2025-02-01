@@ -307,11 +307,14 @@ def generate_module_stub(module: types.ModuleType) -> Iterable[str]:
     yield '# >>> __import__("generate_stubs").run()'
     yield ""
 
-    # Now the actual module docstring (if one exists):
-    if getattr(module, "__doc__", None) is not None:
+    # Now the actual module docstring (if one exists).
+    # Temporarily disabled, because the docstring is currently occupied by the license header,
+    # so a string literal placed here would be considered a regular statement and not a docstring.
+    # This is also important for the __future__ import,
+    # which loses its effect if preceded by any statement other than a docstring.
+    if False and getattr(module, "__doc__", None) is not None:
         yield f'"""{module.__doc__}"""'
-
-    yield ""
+        yield ""
 
     # Hardcoded imports for type annotations:
     yield "from __future__ import annotations"
