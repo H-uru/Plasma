@@ -51,37 +51,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFile/plEncryptedStream.h"
 
-static ST::string ParseIntegerInto(const ST::string& value, unsigned int& out)
+static void ParseIntegerInto(const ST::string& value, unsigned int& out)
 {
     ST::conversion_result res;
     out = value.to_uint(res);
-    if (res.ok() && res.full_match()) {
-        return {};
-    } else {
-        return ST::format("Invalid integer value: {}", value);
+    if (!res.ok() || !res.full_match()) {
+        throw pfServerIniParseException(ST::format("Invalid integer value: {}", value));
     }
 }
 
-static ST::string ParseBase64KeyInto(const ST::string& base64key, NetDhKey& output)
+static void ParseBase64KeyInto(const ST::string& base64key, NetDhKey& output)
 {
     ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
     if (base64len < 0) {
-        return ST::format("Invalid key: Invalid base-64 data (did you forget to put quotes around the value?)");
+        throw pfServerIniParseException("Invalid key: Invalid base-64 data (did you forget to put quotes around the value?)");
     } else if (sizeof(output) != base64len) {
-        return ST::format("Invalid key: Should be exactly {} bytes, not {}", sizeof(output), base64len);
+        throw pfServerIniParseException(ST::format("Invalid key: Should be exactly {} bytes, not {}", sizeof(output), base64len));
     }
 
     ST_ssize_t bytes = ST::base64_decode(base64key, output, sizeof(output));
     if (bytes < 0) {
-        return ST::format("Invalid key: Invalid base-64 data");
+        throw pfServerIniParseException("Invalid key: Invalid base-64 data");
     }
-    return {};
 }
 
-ST::string pfServerIni::IParseOption(const std::vector<ST::string>& name, const ST::string& value)
+void pfServerIni::IParseOption(const std::vector<ST::string>& name, const ST::string& value)
 {
     if (name.empty() || name[0].compare_i("Server") != 0) {
-        return ST_LITERAL("Unknown option name");
+        throw pfServerIniParseException("Unknown option name");
     }
 
     if (name.size() == 2 && name[1].compare_i("Status") == 0) {
@@ -91,55 +88,53 @@ ST::string pfServerIni::IParseOption(const std::vector<ST::string>& name, const 
     } else if (name.size() == 2 && name[1].compare_i("DispName") == 0) {
         fDisplayName = value;
     } else if (name.size() == 2 && name[1].compare_i("Port") == 0) {
-        return ParseIntegerInto(value, fPort);
+        ParseIntegerInto(value, fPort);
     } else if (name.size() == 3 && name[1].compare_i("File") == 0 && name[2].compare_i("Host") == 0) {
         fFileHostname = value;
     } else if (name.size() == 3 && name[1].compare_i("Auth") == 0) {
         if (name[2].compare_i("Host") == 0) {
             fAuthHostname = value;
         } else if (name[2].compare_i("N") == 0) {
-            return ParseBase64KeyInto(value, fAuthDhConstants.n);
+            ParseBase64KeyInto(value, fAuthDhConstants.n);
         } else if (name[2].compare_i("X") == 0) {
-            return ParseBase64KeyInto(value, fAuthDhConstants.x);
+            ParseBase64KeyInto(value, fAuthDhConstants.x);
         } else if (name[2].compare_i("G") == 0) {
-            return ParseIntegerInto(value, fAuthDhConstants.g);
+            ParseIntegerInto(value, fAuthDhConstants.g);
         } else {
-            return ST_LITERAL("Unknown option name");
+            throw pfServerIniParseException("Unknown option name");
         }
     } else if (name.size() == 3 && name[1].compare_i("Game") == 0) {
         if (name[2].compare_i("N") == 0) {
-            return ParseBase64KeyInto(value, fGameDhConstants.n);
+            ParseBase64KeyInto(value, fGameDhConstants.n);
         } else if (name[2].compare_i("X") == 0) {
-            return ParseBase64KeyInto(value, fGameDhConstants.x);
+            ParseBase64KeyInto(value, fGameDhConstants.x);
         } else if (name[2].compare_i("G") == 0) {
-            return ParseIntegerInto(value, fGameDhConstants.g);
+            ParseIntegerInto(value, fGameDhConstants.g);
         } else {
-            return ST_LITERAL("Unknown option name");
+            throw pfServerIniParseException("Unknown option name");
         }
     } else if (name.size() == 3 && name[1].compare_i("Gate") == 0) {
         if (name[2].compare_i("Host") == 0) {
             fGateKeeperHostname = value;
         } else if (name[2].compare_i("N") == 0) {
-            return ParseBase64KeyInto(value, fGateKeeperDhConstants.n);
+            ParseBase64KeyInto(value, fGateKeeperDhConstants.n);
         } else if (name[2].compare_i("X") == 0) {
-            return ParseBase64KeyInto(value, fGateKeeperDhConstants.x);
+            ParseBase64KeyInto(value, fGateKeeperDhConstants.x);
         } else if (name[2].compare_i("G") == 0) {
-            return ParseIntegerInto(value, fGateKeeperDhConstants.g);
+            ParseIntegerInto(value, fGateKeeperDhConstants.g);
         } else {
-            return ST_LITERAL("Unknown option name");
+            throw pfServerIniParseException("Unknown option name");
         }
     } else {
-        return ST_LITERAL("Unknown option name");
+        throw pfServerIniParseException("Unknown option name");
     }
-
-    return {};
 }
 
-ST::string pfServerIni::Parse(const plFileName& fileName)
+void pfServerIni::Parse(const plFileName& fileName)
 {
     std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFile(fileName);
     if (!stream) {
-        return ST::format("File not found or could not be opened: {}", fileName);
+        throw pfServerIniParseException(ST::format("File not found or could not be opened: {}", fileName));
     }
 
     ST::string line;
@@ -149,7 +144,7 @@ ST::string pfServerIni::Parse(const plFileName& fileName)
         auto name = parser.ParseUnknownCommandName();
         if (name.empty()) {
             if (!parser.GetErrorMsg().empty()) {
-                return ST::format("Line {}: {}", lineno, parser.GetErrorMsg());
+                throw pfServerIniParseException(ST::format("Line {}: {}", lineno, parser.GetErrorMsg()));
             } else {
                 // No error, just an empty line.
                 continue;
@@ -158,19 +153,13 @@ ST::string pfServerIni::Parse(const plFileName& fileName)
 
         auto args = parser.ParseArguments();
         if (!args) {
-            return ST::format("Line {}: {}", lineno, parser.GetErrorMsg());
+            throw pfServerIniParseException(ST::format("Line {}: {}", lineno, parser.GetErrorMsg()));
         }
 
         // TODO Warn/error if there isn't exactly one argument after the name?
         ST::string value = args->empty() ? ST::string() : std::move((*args)[0]);
-        ST::string errorMsg = IParseOption(name, value);
-        if (!errorMsg.empty()) {
-            return ST::format("Line {}: {}", lineno, errorMsg);
-        }
+        IParseOption(name, value);
     }
-
-    // Everything went ok!
-    return {};
 }
 
 void pfServerIni::Apply()
@@ -187,15 +176,9 @@ void pfServerIni::Apply()
     gNetGateKeeperDhConstants = fGateKeeperDhConstants;
 }
 
-ST::string pfServerIni::Load(const plFileName& fileName)
+void pfServerIni::Load(const plFileName& fileName)
 {
     pfServerIni ini;
-
-    ST::string errorMsg = ini.Parse(fileName);
-    if (!errorMsg.empty()) {
-        return errorMsg;
-    }
-
+    ini.Parse(fileName);
     ini.Apply();
-    return {};
 }

@@ -44,6 +44,7 @@ Mead, WA   99021
 #include "plFileSystem.h"
 #include "plProduct.h"
 
+#include "pfConsoleCore/pfServerIni.h"
 #include "pfPatcher/plManifests.h"
 #include "pfPatcher/pfPatcher.h"
 
@@ -408,9 +409,11 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
         return PLASMA_OK; // see you on the other side...
 
     // Load the doggone server.ini
-    ST::string errorMsg = launcher.LoadServerIni();
-    if (!errorMsg.empty()) {
-        IShowErrorDialog(ST::format("server.ini file not found or invalid. Please check your URU installation.\n{}", errorMsg));
+    ST::string errorMsg;
+    try {
+        launcher.LoadServerIni();
+    } catch (const pfServerIniParseException& exc) {
+        IShowErrorDialog(ST::format("server.ini file not found or invalid. Please check your URU installation.\n{}", exc.what()));
         return PLASMA_PHAILURE;
     }
 

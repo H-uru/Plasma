@@ -61,13 +61,14 @@ plFilePatcher::plFilePatcher(plFileName serverIni)
 
 bool plFilePatcher::ILoadServerIni()
 {
-    ST::string errorMsg = pfServerIni::Load(fServerIni);
-    if (!errorMsg.empty()) {
-        ISetNetError(ST::format("Error in server config file {}: {}", fServerIni, errorMsg));
+    try {
+        pfServerIni::Load(fServerIni);
+    } catch (const pfServerIniParseException& exc) {
+        ISetNetError(ST::format("Error in server config file {}: {}", fServerIni, exc.what()));
         return false;
-    } else {
-        return true;
     }
+
+    return true;
 }
 
 void plFilePatcher::IInitNetCore()

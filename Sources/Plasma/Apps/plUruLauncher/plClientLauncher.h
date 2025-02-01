@@ -138,7 +138,7 @@ public:
     /** Load the server configuration file. Note that you MUST parse the command
      *  arguments before calling this function!
      */
-    ST::string LoadServerIni() const;
+    void LoadServerIni() const;
 
     /** Parse the command line options. */
     void ParseArguments();

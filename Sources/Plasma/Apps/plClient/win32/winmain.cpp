@@ -1202,9 +1202,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     if (serverIniFile)
     {
         fclose(serverIniFile);
-        ST::string errorMsg = pfServerIni::Load(serverIni);
-        if (!errorMsg.empty()) {
-            hsMessageBox(ST::format("Error in server.ini file. Please check your URU installation.\n{}", errorMsg), ST_LITERAL("Error"), hsMessageBoxNormal);
+        try {
+            pfServerIni::Load(serverIni);
+        } catch (const pfServerIniParseException& exc) {
+            hsMessageBox(ST::format("Error in server.ini file. Please check your URU installation.\n{}", exc.what()), ST_LITERAL("Error"), hsMessageBoxNormal);
             return PARABLE_NORMAL_EXIT;
         }
     }

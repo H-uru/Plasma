@@ -440,9 +440,9 @@ void plClientLauncher::ShutdownNetCore()
 
 // ===================================================
 
-ST::string plClientLauncher::LoadServerIni() const
+void plClientLauncher::LoadServerIni() const
 {
-    return pfServerIni::Load(fServerIni);
+    pfServerIni::Load(fServerIni);
 }
 
 void plClientLauncher::ParseArguments()

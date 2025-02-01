@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfServerIni_h
 #define _pfServerIni_h
 
+#include <stdexcept>
 #include <string_theory/string>
 #include <vector>
 
@@ -50,6 +51,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetBase/pnNbKeys.h"
 
 class plFileName;
+
+class pfServerIniParseException : public std::runtime_error
+{
+public:
+    explicit pfServerIniParseException(const char* message)
+        : std::runtime_error(message)
+    {}
+
+    explicit pfServerIniParseException(const ST::string& message)
+        : pfServerIniParseException(message.c_str())
+    {}
+};
 
 class pfServerIni
 {
@@ -79,13 +92,13 @@ public:
     {}
 
 private:
-    ST::string IParseOption(const std::vector<ST::string>& name, const ST::string& value);
+    void IParseOption(const std::vector<ST::string>& name, const ST::string& value);
 
 public:
-    ST::string Parse(const plFileName& fileName);
+    void Parse(const plFileName& fileName);
     void Apply();
 
-    static ST::string Load(const plFileName& fileName);
+    static void Load(const plFileName& fileName);
 };
 
 #endif // _pfServerIni_h
