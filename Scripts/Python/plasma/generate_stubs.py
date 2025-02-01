@@ -67,9 +67,9 @@ docstring_params_prefix = "Params: "
 def attr_sort_key(item: tuple[str, object]) -> tuple[int, str]:
     name, value = item
 
-    # Put functions and classes after "simple" attributes (constants and instance properties).
+    # Put functions, classes, and enums after "simple" attributes (constants and instance properties).
     # (Note: callable includes both functions and classes).
-    if callable(value):
+    if callable(value) or isinstance(value, PlasmaConstants.Enum):
         order = 1
     else:
         order = 0
@@ -195,6 +195,16 @@ def generate_function_stub(kind: FunctionKind, name: str, params: str, doc: str)
         yield f'    """{doc}"""'
     yield "    pass"
 
+def generate_enum_stub(name: str, enum_obj: PlasmaConstants.Enum) -> Iterable[str]:
+    yield f"class {name}:"
+    # Output the string "(none)" as the docstring for all enums for now, to match the existing stubs.
+    # (Plasma enums don't have docstrings.)
+    yield '    """(none)"""'
+
+    # Output enum constants sorted by their int value.
+    for name, value in sorted(enum_obj.lookup.items(), key=lambda item: int(item[1])):
+        yield f"    {name} = {int(value)}"
+
 def generate_class_stub(name: str, cls: type) -> Iterable[str]:
     if tuple(cls.__bases__) == (object,):
         class_parens = ""
@@ -310,7 +320,9 @@ def generate_module_stub(module: types.ModuleType) -> Iterable[str]:
             continue
 
         yield ""
-        if isinstance(value, type):
+        if isinstance(value, PlasmaConstants.Enum):
+            yield from generate_enum_stub(name, value)
+        elif isinstance(value, type):
             yield from generate_class_stub(name, value)
         elif callable(value):
             params, doc = parse_params_from_doc(value.__doc__)
