@@ -251,7 +251,7 @@ PYTHON_START_METHODS_TABLE(ptWaveSet)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-PLASMA_DEFAULT_TYPE(ptWaveSet, "Params:key\nCreates a new ptWaveSet");
+PLASMA_DEFAULT_TYPE(ptWaveSet, "Params: key\nCreates a new ptWaveSet");
 
 // required functions for PyObject interoperability
 PyObject *pyWaveSet::New(plKey key)
