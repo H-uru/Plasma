@@ -435,7 +435,7 @@ PYTHON_START_METHODS_TABLE(ptAudioControl)
     PYTHON_METHOD_NOARGS(ptAudioControl, getPriorityCutoff, "Returns current sound priority"),
     PYTHON_METHOD(ptAudioControl, setPriorityCutoff, "Params: priority\nSets the sound priority"),
     PYTHON_METHOD(ptAudioControl, enableVoiceChat, "Params: state\nEnables or disables voice chat."),
-    PYTHON_METHOD(ptAudioControl, setCaptureDevice, "Sets the audio capture device by name."),
+    PYTHON_METHOD(ptAudioControl, setCaptureDevice, "Params: devicename\nSets the audio capture device by name."),
     PYTHON_METHOD_NOARGS(ptAudioControl, getCaptureDevice, "Gets the name for the capture device being used by the audio system."),
     PYTHON_METHOD_NOARGS(ptAudioControl, getCaptureDevices, "Gets the name of all available audio capture devices."),
 

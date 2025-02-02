@@ -105,7 +105,7 @@ PYTHON_START_METHODS_TABLE(ptVaultAgeInfoListNode)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-PLASMA_DEFAULT_TYPE_WBASE(ptVaultAgeInfoListNode, pyVaultFolderNode, "Plasma vault age info list node");
+PLASMA_DEFAULT_TYPE_WBASE(ptVaultAgeInfoListNode, pyVaultFolderNode, "Params: n=0\nPlasma vault age info list node");
 
 // required functions for PyObject interoperability
 PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultAgeInfoListNode, pyVaultAgeInfoListNode);

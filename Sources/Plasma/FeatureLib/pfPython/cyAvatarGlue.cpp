@@ -653,7 +653,7 @@ PYTHON_START_METHODS_TABLE(ptAvatar)
     PYTHON_METHOD(ptAvatar, oneShot, "Params: seekKey,duration,usePhysicsFlag,animationName,drivableFlag,reversibleFlag\nPlays a one-shot animation on the avatar"),
     PYTHON_METHOD(ptAvatar, runBehavior, "Params: behaviorKey,netForceFlag\nRuns a behavior on the avatar. Can be a single or multi-stage behavior."),
     PYTHON_METHOD(ptAvatar, runBehaviorSetNotify, "Params: behaviorKey,replyKey,netForceFlag\nSame as runBehavior, except send notifications to specified keyed object"),
-    PYTHON_METHOD(ptAvatar, runCoopAnim, "Params: targetKey,activeAvatarAnim,targetAvatarAnim,dist,move\nSeek near another avatar and run animations on both."),
+    PYTHON_METHOD(ptAvatar, runCoopAnim, "Params: targetKey,activeAvatarAnim,targetAvatarAnim,range=6,dist=3,move=1\nSeek near another avatar and run animations on both."),
     PYTHON_METHOD(ptAvatar, nextStage, "Params: behaviorKey,transitionTime,setTimeFlag,newTime,SetDirectionFlag,isForward,netForce\nTells a multistage behavior to go to the next stage (Why does Matt like so many parameters?)"),
     PYTHON_METHOD(ptAvatar, previousStage, "Params: behaviorKey,transitionTime,setTimeFlag,newTime,SetDirectionFlag,isForward,netForce\nTells a multistage behavior to go to the previous stage"),
     PYTHON_METHOD(ptAvatar, gotoStage, "Params: behaviorKey,stage,transitionTime,setTimeFlag,newTime,SetDirectionFlag,isForward,netForce\nTells a multistage behavior to go to a particular stage"),
