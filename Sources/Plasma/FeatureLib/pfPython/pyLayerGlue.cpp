@@ -92,8 +92,8 @@ PYTHON_METHOD_DEFINITION(ptLayer, setTexture, args)
 }
 
 PYTHON_START_METHODS_TABLE(ptLayer)
-    PYTHON_METHOD_NOARGS(ptLayer, getTexture, "Returns the image texture of the layer"),
-    PYTHON_METHOD(ptLayer, setTexture, "Params: image\nSets the ptImage texture of the layer"),
+    PYTHON_METHOD_NOARGS(ptLayer, getTexture, "Type: () -> ptImage\nReturns the image texture of the layer"),
+    PYTHON_METHOD(ptLayer, setTexture, "Type: (image: ptImage) -> None\nSets the ptImage texture of the layer"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -147,7 +147,7 @@ void pyLayer::AddPlasmaClasses(PyObject* m)
     PYTHON_CLASS_IMPORT_END(m);
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtFindLayer, args, kwds, "Params: name\nFind a layer by name.")
+PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtFindLayer, args, kwds, "Type: (name: str, age: str = \"\", page: str = \"\") -> Optional[ptLayer]\nFind a layer by name.")
 {
     const char* kwdlist[]{"name", "age", "page", nullptr};
     ST::string name, age, page;

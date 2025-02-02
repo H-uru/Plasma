@@ -161,11 +161,11 @@ PYTHON_METHOD_DEFINITION(ptVaultMarkerGameNode, setMarkers, args)
 }
 
 PYTHON_START_METHODS_TABLE(ptVaultMarkerGameNode)
-    PYTHON_METHOD_NOARGS(ptVaultMarkerGameNode, getGameGuid, ""),
+    PYTHON_METHOD_NOARGS(ptVaultMarkerGameNode, getGameGuid, "Returns the marker game's guid"),
     PYTHON_METHOD_NOARGS(ptVaultMarkerGameNode, getGameName, "Returns the marker game's name"),
     PYTHON_METHOD_NOARGS(ptVaultMarkerGameNode, getMarkers, "Returns a tuple of markers associated with this game"),
     PYTHON_METHOD_NOARGS(ptVaultMarkerGameNode, getReward, "Returns a string representing the reward for completing this game"),
-    PYTHON_METHOD(ptVaultMarkerGameNode, setGameGuid, ""),
+    PYTHON_METHOD(ptVaultMarkerGameNode, setGameGuid, "Params: guid\nSets the marker game's guid"),
     PYTHON_METHOD(ptVaultMarkerGameNode, setGameName, "Params: name\nSets marker game's name"),
     PYTHON_METHOD(ptVaultMarkerGameNode, setMarkers, "Params: markers\nSets markers associated with this game"),
     PYTHON_METHOD(ptVaultMarkerGameNode, setReward, "Params: reward\nSets the reward for completing this marker game"),

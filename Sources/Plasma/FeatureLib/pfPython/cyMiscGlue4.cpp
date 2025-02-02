@@ -380,7 +380,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDebugAssert, args, "Params: cond, msg\nDebug o
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtDebugPrint, args, kwargs, "Params: *msgs, level, sep, end\n"
+PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtDebugPrint, args, kwargs, "Params: *msgs, level=3, sep=\" \", end=\"\\n\"\n"
                                      "Prints msgs to the Python log given the message's level, "
                                      "optionally separated and terminated by the given strings")
 {
@@ -611,7 +611,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtEnablePlanarReflections, args, "Params: on\nEn
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtSupportsPlanarReflections, "Returns if planar reflections are supported")
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtSupportsPlanarReflections, "Type: () -> bool\nReturns if planar reflections are supported")
 {
     return PyBool_FromLong(cyMisc::ArePlanarReflectionsSupported() ? 1 : 0);
 }
