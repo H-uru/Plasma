@@ -62,6 +62,7 @@ all_plasma_modules = [
     PlasmaVaultConstants,
 ]
 
+docstring_type_prefix = "Type: "
 docstring_params_prefix = "Params: "
 
 def attr_sort_key(item: tuple[str, object]) -> tuple[int, str]:
@@ -132,17 +133,28 @@ def iter_attributes(obj: object) -> Iterable[tuple[str, object]]:
 
     return attrs
 
-def parse_params_from_doc(doc: str) -> tuple[str, str]:
+def parse_type_from_doc(doc: str) -> tuple[str, str]:
     if doc is None:
-        return "", ""
+        doc = ""
+
+    if doc.startswith(docstring_type_prefix):
+        # The "Type: " prefix is used for both functions/methods and properties.
+        # For functions, the prefix is followed by a complete function signature,
+        # including parentheses, parameter names, and (optionally) parameter and return types.
+        # Example: "Type: (x: int, y: int) -> int"
+        # For properties, the prefix is followed by a single type.
+        # Example: "Type: Tuple[str, int]"
+        type_line, _, doc_body = doc.partition("\n")
+        type_string = type_line.removeprefix(docstring_type_prefix)
+        return type_string, doc_body
     elif doc.startswith(docstring_params_prefix):
+        # Cyan's original format for function/method signatures.
+        # The "Params: " prefix is followed by an unparenthesized list of parameter names.
+        # Example: "Params: x,y"
         params_line, _, doc_body = doc.partition("\n")
         params = params_line.removeprefix(docstring_params_prefix)
-        return params, doc_body
+        return f"({params})", doc_body
     else:
-        # Assume that functions without a "Params: " line have no parameters.
-        # Safer would be to default to "*args, **kwargs" and require some explicit marker for no parameters,
-        # but this would require extensive manual updating of the docstrings.
         return "", doc
 
 def format_qualified_name(cls: type, context_module_name: str) -> str:
@@ -161,7 +173,7 @@ def add_indents(indent: str, lines: Iterable[str]) -> Iterable[str]:
 
 FunctionKind = Literal["function", "method", "classmethod", "staticmethod", "property"]
 
-def generate_function_stub(kind: FunctionKind, name: str, params: str, doc: str) -> Iterable[str]:
+def generate_function_stub(kind: FunctionKind, name: str, signature: str, doc: str) -> Iterable[str]:
     if kind == "function":
         decorator = None
         self_param = None
@@ -180,17 +192,26 @@ def generate_function_stub(kind: FunctionKind, name: str, params: str, doc: str)
     else:
         raise ValueError(f"Unsupported function kind: {kind!r}")
 
-    all_params_parts = []
+    if not signature:
+        # Assume that functions without a "Type: " or "Params: " line have no parameters.
+        # Safer would be to default to "*args, **kwargs"
+        # and require an explicit "Type: ()" for no parameters,
+        # but this would require extensive manual updating of the docstrings.
+        signature = "()"
+
     if self_param is not None:
-        all_params_parts.append(self_param)
-    if params:
-        all_params_parts.append(params)
-    # No space after the comma for now, to match the existing stubs.
-    all_params = ",".join(all_params_parts)
+        # Insert the self parameter into the method signature.
+        if signature.startswith("()"):
+            signature = "(" + self_param + ")" + signature.removeprefix("()")
+        elif signature.startswith("("):
+            # No space after the comma for now, to match the existing stubs.
+            signature = "(" + self_param + "," + signature.removeprefix("(")
+        else:
+            raise ValueError(f"{docstring_type_prefix!r} declaration in method docstring doesn't look like a function signature: {signature!r}")
 
     if decorator is not None:
         yield decorator
-    yield f"def {name}({all_params}):"
+    yield f"def {name}{signature}:"
     if doc:
         yield f'    """{doc}"""'
     yield "    pass"
@@ -216,7 +237,7 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
 
         class_parens = "(" + ", ".join(base_names) + ")"
 
-    init_params, doc = parse_params_from_doc(cls.__doc__)
+    init_signature, doc = parse_type_from_doc(cls.__doc__)
 
     yield f"class {name}{class_parens}:"
     if doc:
@@ -233,9 +254,9 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
                 yield ""
             first = False
 
-            # Special case for __init__: use the parameters from the class docstring.
+            # Special case for __init__: use the signature from the class docstring.
             # Output the string "None" as the docstring for all __init__ methods for now, to match the existing stubs.
-            yield from add_indents("    ", generate_function_stub("method", name, init_params, "None"))
+            yield from add_indents("    ", generate_function_stub("method", name, init_signature, "None"))
             continue
         elif name.startswith("__"):
             # Ignore all other special attributes.
@@ -274,8 +295,8 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
                 # and simply assume that all other callables are instance methods.
                 kind = "method"
 
-            params, doc = parse_params_from_doc(value.__doc__)
-            yield from add_indents("    ", generate_function_stub(kind, name, params, doc))
+            signature, doc = parse_type_from_doc(value.__doc__)
+            yield from add_indents("    ", generate_function_stub(kind, name, signature, doc))
         elif isinstance(value, types.GetSetDescriptorType):
             # C-defined properties have class getset_descriptor (aka types.GetSetDescriptorType).
             # (Note: There is also member_descriptor aka types.MemberDescriptorType,
@@ -285,8 +306,9 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
             # (Perhaps we should set the setter to nullptr in that case? Perhaps Python can tell the difference then?)
             # Right now it doesn't matter anyway,
             # because the type annotation syntax doesn't differentiate between read-only and read-write attributes.
-            doc = value.__doc__
-            yield f"    {name}: Any"
+            property_type, doc = parse_type_from_doc(value.__doc__)
+            property_type = property_type or "Any"
+            yield f"    {name}: {property_type}"
             if doc:
                 yield f'    """{doc}"""'
         else:
@@ -331,8 +353,8 @@ def generate_module_stub(module: types.ModuleType) -> Iterable[str]:
         elif isinstance(value, type):
             yield from generate_class_stub(name, value)
         elif callable(value):
-            params, doc = parse_params_from_doc(value.__doc__)
-            yield from generate_function_stub("function", name, params, doc)
+            signature, doc = parse_type_from_doc(value.__doc__)
+            yield from generate_function_stub("function", name, signature, doc)
         else:
             yield f"{name}: {format_qualified_name(type(value), module.__name__)} = ... # = {value!r}"
 
