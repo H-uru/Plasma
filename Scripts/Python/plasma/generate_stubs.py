@@ -341,6 +341,12 @@ def generate_module_stub(module: types.ModuleType) -> Iterable[str]:
 
     # Hardcoded imports for type annotations:
     yield "from __future__ import annotations"
+    if module.__name__ == "Plasma":
+        # Some parameter default values in the Plasma module
+        # use constant values from PlasmaConstants.
+        # Not sure how to implement a good generic solution to this problem,
+        # so for now, just hardcode this dependency... :(
+        yield "from PlasmaConstants import *"
     yield "from typing import *"
 
     for name, value in iter_attributes(module):
