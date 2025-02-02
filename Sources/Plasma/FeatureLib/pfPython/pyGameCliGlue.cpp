@@ -77,10 +77,10 @@ PYTHON_GET_DEFINITION_PROXY(ptGameCli, ownerID, GetOwnerID)
 PYTHON_SET_DEFINITION_READONLY(ptGameCli, ownerID)
 
 PYTHON_START_GETSET_TABLE(ptGameCli)
-    PYTHON_GETSET(ptGameCli, gameID, "Gets the ID of the game instance on the server."),
-    PYTHON_GETSET(ptGameCli, handler, "Gets the game event handler."),
-    PYTHON_GETSET(ptGameCli, isLocallyOwned, "Gets whether or not we are the owner of this game instance."),
-    PYTHON_GETSET(ptGameCli, ownerID, "Gets the ID of the player who owns this game instance."),
+    PYTHON_GETSET(ptGameCli, gameID, "The ID of the game instance on the server."),
+    PYTHON_GETSET(ptGameCli, handler, "The game event handler."),
+    PYTHON_GETSET(ptGameCli, isLocallyOwned, "Whether or not we are the owner of this game instance."),
+    PYTHON_GETSET(ptGameCli, ownerID, "The ID of the player who owns this game instance."),
 PYTHON_END_GETSET_TABLE;
 
 // Type structure definition
