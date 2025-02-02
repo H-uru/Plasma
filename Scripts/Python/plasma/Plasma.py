@@ -180,7 +180,7 @@ def PtDebugAssert(cond, msg):
     """Debug only: Assert if condition is false."""
     pass
 
-def PtDebugPrint(*msgs, level, sep, end):
+def PtDebugPrint(*msgs, level=3, sep=" ", end="\n"):
     """Prints msgs to the Python log given the message's level, optionally separated and terminated by the given strings"""
     pass
 

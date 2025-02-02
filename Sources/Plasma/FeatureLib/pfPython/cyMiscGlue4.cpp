@@ -380,7 +380,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDebugAssert, args, "Params: cond, msg\nDebug o
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtDebugPrint, args, kwargs, "Params: *msgs, level, sep, end\n"
+PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtDebugPrint, args, kwargs, "Params: *msgs, level=3, sep=\" \", end=\"\\n\"\n"
                                      "Prints msgs to the Python log given the message's level, "
                                      "optionally separated and terminated by the given strings")
 {
