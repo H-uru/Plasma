@@ -70,7 +70,7 @@ namespace plPython
 
 PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtYesNoDialog, args, kwargs,
             "Type: (cb: Union[None, ptKey, Callable], message: str, /, dialogType: int = PtConfirmationType.YesNo) -> None\n"
-            "This will display a confirmation dialog to the user with the text `message` "
+            "This will display a confirmation dialog to the user with the text `message`. "
             "This dialog _has_ to be answered by the user, "
             "and their answer will be returned in a Notify message or callback given by `cb`.")
 {
