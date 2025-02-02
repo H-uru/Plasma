@@ -69,7 +69,7 @@ namespace plPython
 };
 
 PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtYesNoDialog, args, kwargs,
-            "Params: cb, message, /, dialogType\n"
+            "Type: (cb: Union[None, ptKey, Callable], message: str, /, dialogType: int = PtConfirmationType.YesNo) -> None\n"
             "This will display a confirmation dialog to the user with the text `message` "
             "This dialog _has_ to be answered by the user, "
             "and their answer will be returned in a Notify message or callback given by `cb`.")
@@ -108,7 +108,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtYesNoDialog, args, kwargs,
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtLocalizedYesNoDialog, args, kwargs,
-    "Params: cb, path, *args, /, *, dialogType\n"
+    "Type: (cb: Union[None, Callable, ptKey], path: str, *args, dialogType: int = PtConfirmationType.YesNo) -> None\n"
     "This will display a confirmation dialog to the user with the localized text `path` "
     "with any optional localization `args` applied. This dialog _has_ to be answered by the user, "
     "and their answer will be returned in a Notify message or callback given by `cb`.")

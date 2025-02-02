@@ -704,7 +704,7 @@ PYTHON_START_METHODS_TABLE(ptAvatar)
     PYTHON_METHOD(ptAvatar, saveClothingToFile, "Params: filename\nSave avatar clothing to a file"),
     PYTHON_METHOD(ptAvatar, loadClothingFromFile, "Params: filename\nLoad avatar clothing from a file"),
 
-    PYTHON_METHOD(ptAvatar, setDontPanicLink, "Params: value\nDisables panic linking to Personal Age (warps the avatar back to the start instead)"),
+    PYTHON_METHOD(ptAvatar, setDontPanicLink, "Type: (value: bool) -> None\nDisables panic linking to Personal Age (warps the avatar back to the start instead)"),
 PYTHON_END_METHODS_TABLE;
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetBehaviorLoopCount, args, "Params: behaviorKey,stage,loopCount,netForce\nThis will set the loop count for a particular stage in a multistage behavior")

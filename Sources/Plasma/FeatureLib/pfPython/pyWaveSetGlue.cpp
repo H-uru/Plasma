@@ -246,8 +246,8 @@ PYTHON_START_METHODS_TABLE(ptWaveSet)
     WAVESET_OBJ(EnvCenter),
     WAVESET_FLOAT(EnvRadius),
 
-    PYTHON_METHOD(ptWaveSet, addBuoy, "Params: soKey\nAdds the specified object as a buoy"),
-    PYTHON_METHOD(ptWaveSet, removeBuoy, "Params: soKey\nRemoves the specified object as a buoy"),
+    PYTHON_METHOD(ptWaveSet, addBuoy, "Type: (soKey: ptKey) -> None\nAdds the specified object as a buoy"),
+    PYTHON_METHOD(ptWaveSet, removeBuoy, "Type: (soKey: ptKey) -> None\nRemoves the specified object as a buoy"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
