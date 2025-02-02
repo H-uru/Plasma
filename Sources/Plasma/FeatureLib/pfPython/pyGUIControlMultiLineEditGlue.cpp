@@ -358,7 +358,7 @@ PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, unclickable, "Makes this listbox not clickable by the user.\n"
                 "Useful when just displaying a list that is not really selectable."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, setScrollPosition, "Params: topLine\nSets the what line is the top line."),
-    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getScrollPosition, "Gets what line is the top line."),
+    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getScrollPosition, "Returns what line is the top line."),
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, isAtEnd, "Returns true if the end of the buffer has been reached."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, moveCursor, "Params: direction\nMove the cursor in the specified direction (see PtGUIMultiLineDirection)"),
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getCursor, "Get the current position of the cursor in the encoded buffer."),
@@ -381,7 +381,7 @@ PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, isLocked, "Is the multi-line edit control locked? Returns 1 if true otherwise returns 0"),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, setBufferLimit, "Params: bufferLimit\nSets the buffer max for the editbox"),
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getBufferLimit, "Returns the current buffer limit"),
-    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getCurrentLink, "Returns the link the mouse is currently over"),
+    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getCurrentLink, "Returns the link the mouse is currently over."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, enableScrollControl, "Enables the scroll control if there is one"),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, disableScrollControl, "Disables the scroll control if there is one"),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, deleteLinesFromTop, "Params: numLines\nDeletes the specified number of lines from the top of the text buffer"),
