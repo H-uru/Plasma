@@ -196,7 +196,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetClientIDFromAvatarKey, args, "Params: avata
     return PyLong_FromLong(cyMisc::GetClientIDFromAvatarKey(*key));
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtGetNPCByID, args, "This will return the NPC with a specific ID")
+PYTHON_GLOBAL_METHOD_DEFINITION(PtGetNPCByID, args, "Params: npcID\nThis will return the NPC with a specific ID")
 {
     int npcID;
     if (!PyArg_ParseTuple(args, "i", &npcID))

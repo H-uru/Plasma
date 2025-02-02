@@ -388,10 +388,10 @@ PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getFontSize, "Returns the current default font size"),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, setFontSize, "Params: fontSize\nSets the default font size for the edit control"),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, beginUpdate, "Signifies that the control will be updated heavily starting now, so suppress all redraws"),
-    PYTHON_METHOD(ptGUIControlMultiLineEdit, endUpdate, "Signifies that the massive updates are over. We can now redraw."),
+    PYTHON_METHOD(ptGUIControlMultiLineEdit, endUpdate, "Params: redraw=True\nSignifies that the massive updates are over. We can now redraw."),
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, isUpdating, "Is someone else already suppressing redraws of the control?"),
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getMargins, "Returns a tuple of (top, left, bottom, right) margins"),
-    PYTHON_METHOD_WKEY(ptGUIControlMultiLineEdit, setMargins, "Sets the control's margins"),
+    PYTHON_METHOD_WKEY(ptGUIControlMultiLineEdit, setMargins, "Params: top,left,bottom,right\nSets the control's margins"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
