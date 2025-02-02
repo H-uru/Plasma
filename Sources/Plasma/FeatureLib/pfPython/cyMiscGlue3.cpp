@@ -220,7 +220,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtWasLocallyNotified, args, "Params: selfKey\nRe
     PYTHON_RETURN_BOOL(cyMisc::WasLocallyNotified(*key));
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtAttachObject, args, "Params: child,parent,netForce=false\nAttach child to parent based on ptKey or ptSceneobject\n"
+PYTHON_GLOBAL_METHOD_DEFINITION(PtAttachObject, args, "Params: child,parent,netForce=False\nAttach child to parent based on ptKey or ptSceneobject\n"
             "- childKey is the ptKey or ptSceneobject of the one being attached\n"
             "- parentKey is the ptKey or ptSceneobject of the one being attached to\n"
             "(both arguments must be ptKeys or ptSceneobjects, you cannot mix types)")
@@ -253,7 +253,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtAttachObject, args, "Params: child,parent,netF
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtDetachObject, args, "Params: child,parent,netForce=false\nDetach child from parent based on ptKey or ptSceneobject\n"
+PYTHON_GLOBAL_METHOD_DEFINITION(PtDetachObject, args, "Params: child,parent,netForce=False\nDetach child from parent based on ptKey or ptSceneobject\n"
             "- child is the ptKey or ptSceneobject of the one being detached\n"
             "- parent is the ptKey or ptSceneobject of the one being detached from\n"
             "(both arguments must be ptKeys or ptSceneobjects, you cannot mix types)")

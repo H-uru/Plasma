@@ -421,7 +421,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDumpLogs, args, "Params: folder\nDumps all cur
     PYTHON_RETURN_BOOL(cyMisc::DumpLogs(folder));
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtCloneKey, args, "Params: key, loading=false\nCreates clone of key")
+PYTHON_GLOBAL_METHOD_DEFINITION(PtCloneKey, args, "Params: key, loading=False\nCreates clone of key")
 {
     PyObject* keyObj = nullptr;
     char loading = 0;
