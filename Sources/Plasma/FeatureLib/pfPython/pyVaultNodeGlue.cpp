@@ -487,7 +487,7 @@ PYTHON_START_METHODS_TABLE(ptVaultNode)
     PYTHON_BASIC_METHOD(ptVaultNode, removeAllNodes, "Removes all the child nodes on this node."),
     PYTHON_METHOD(ptVaultNode, hasNode, "Params: id\nReturns true if node if a child node"),
     PYTHON_METHOD(ptVaultNode, getNode, "Params: id\nReturns ptVaultNodeRef if is a child node, or None"),
-    PYTHON_METHOD_WKEY(ptVaultNode, findNode, "Params: templateNode, maxDepth=1\nReturns ptVaultNode if child node found matching template, or None"),
+    PYTHON_METHOD_WKEY(ptVaultNode, findNode, "Type: (templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]\nReturns ptVaultNode if child node found matching template, or None"),
 
     PYTHON_METHOD(ptVaultNode, addNode, "Params: node,cb=None,cbContext=0\nAdds 'node'(ptVaultNode) as a child to this node."),
     PYTHON_METHOD(ptVaultNode, linkToNode, "Params: nodeID,cb=None,cbContext=0\nAdds a link to the node designated by nodeID"),

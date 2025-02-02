@@ -611,7 +611,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtEnablePlanarReflections, args, "Params: on\nEn
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtSupportsPlanarReflections, "Returns if planar reflections are supported")
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtSupportsPlanarReflections, "Type: () -> bool\nReturns if planar reflections are supported")
 {
     return PyBool_FromLong(cyMisc::ArePlanarReflectionsSupported() ? 1 : 0);
 }

@@ -135,7 +135,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetLocalPlayer, "Returns a ptPlayer obj
     return cyMisc::GetLocalPlayer();
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtIsSolo, "Returns whether we are the only player in the Age")
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtIsSolo, "Type: () -> bool\nReturns whether we are the only player in the Age")
 {
     return plPython::ConvertFrom(cyMisc::IsSolo());
 }
