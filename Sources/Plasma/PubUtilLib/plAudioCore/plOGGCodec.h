@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Class Definition ////////////////////////////////////////////////////////
 
 struct OggVorbis_File;
+namespace ST { class string; }
 
 class plOGGCodec : public plAudioFileReader
 {
@@ -116,7 +117,7 @@ protected:
     uint8_t *           fHeadBuf;
     int                 fCurHeaderPos;
 
-    void    IError( const char *msg );
+    void IError(int vorbisError, const ST::string& message);
     void    IOpen( const plFileName &path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
 };
 
