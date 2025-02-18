@@ -64,12 +64,13 @@ uint8_t                       plOGGCodec::fDecodeFlags = 0;
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plOGGCodec::plOGGCodec(const plFileName &path, plAudioCore::ChannelSelect whichChan) : fFileHandle()
+plOGGCodec::plOGGCodec(const plFileName &path, plAudioCore::ChannelSelect whichChan)
+    : fFileHandle(),
+      fOggFile(),
+      fCurHeaderPos(),
+      fHeadBuf()
 {
-    fOggFile = nullptr;
     IOpen( path, whichChan );
-    fCurHeaderPos = 0;
-    fHeadBuf = nullptr;
 }
 
 void    plOGGCodec::BuildActualWaveHeader()
