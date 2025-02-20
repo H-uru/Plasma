@@ -155,38 +155,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define EAX_MATERIAL_CURTAINLF             0.15f
 #define EAX_MATERIAL_CURTAINROOMRATIO      1.00f
 
-#define EAX_NUM_LEGACY_PRESETS 26
-const char* EAX_LEGACY_PRESET_NAMES[EAX_NUM_LEGACY_PRESETS] =
-{
-    "Generic",
-    "Padded Cell",
-    "Room",
-    "Bathroom",
-    "Living Room",
-    "Stone Room",
-    "Auditorium",
-    "Concert Hall",
-    "Cave",
-    "Arena",
-    "Hangar",
-    "Carpetted Hallway",
-    "Hallway",
-    "Stone Corridor",
-    "Alley",
-    "Forest",
-    "City",
-    "Mountains",
-    "Quarry",
-    "Plain",
-    "Parking Lot",
-    "Sewer Pipe",
-    "Underwater",
-    "Drugged",
-    "Dizzy",
-    "Psychotic"
+//#define EAX_NUM_LEGACY_PRESETS 26
+const TCHAR *EAX_LEGACY_PRESET_NAMES[] = {
+    _T("Generic"),
+    _T("Padded Cell"),
+    _T("Room"),
+    _T("Bathroom"),
+    _T("Living Room"),
+    _T("Stone Room"),
+    _T("Auditorium"),
+    _T("Concert Hall"),
+    _T("Cave"),
+    _T("Arena"),
+    _T("Hangar"),
+    _T("Carpeted Hallway"),
+    _T("Hallway"),
+    _T("Stone Corridor"),
+    _T("Alley"),
+    _T("Forest"),
+    _T("City"),
+    _T("Mountains"),
+    _T("Quarry"),
+    _T("Plain"),
+    _T("Parking Lot"),
+    _T("Sewer Pipe"),
+    _T("Underwater"),
+    _T("Drugged"),
+    _T("Dizzy"),
+    _T("Psychotic")
 };
 
-EFXEAXREVERBPROPERTIES EAX_LEGACY_PRESETS[EAX_NUM_LEGACY_PRESETS] = {
+EFXEAXREVERBPROPERTIES EAX_LEGACY_PRESETS[] = {
     EFX_REVERB_PRESET_GENERIC,
     EFX_REVERB_PRESET_PADDEDCELL,
     EFX_REVERB_PRESET_ROOM,
@@ -2832,8 +2831,8 @@ public:
                     HWND comboBox = GetDlgItem( hWnd, IDC_EAX_PRESET_COMBO );
                     ComboBox_ResetContent( comboBox );
 
-                    for( int i = 0; i < EAX_NUM_LEGACY_PRESETS; i++ )
-                        ComboBox_AddString(comboBox, EAX_LEGACY_PRESET_NAMES[i]);
+                    for (auto preset_name : EAX_LEGACY_PRESET_NAMES)
+                        ComboBox_AddString(comboBox, preset_name);
 
                     ComboBox_SetCurSel( comboBox, pb->GetInt( (ParamID)plEAXListenerComponent::kRefPreset ) );
 
@@ -2971,39 +2970,38 @@ bool plEAXListenerComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
     // Set up the parameters of the listener mod
     if(fCompPB->GetInt( (ParamID)kRefWhichSettings ) == 0) {
         // Set params based on a preset
-        listener->SetFromEFXPreset(EAX_LEGACY_PRESETS[fCompPB->GetInt((ParamID)kRefPreset)]);
+        listener->SetFromPreset(EAX_LEGACY_PRESETS[fCompPB->GetInt((ParamID)kRefPreset)]);
     } else {
         // Set params based on artist selections
-        EAXREVERBPROPERTIES *eaxProps = new EAXREVERBPROPERTIES;
+        EAXLISTENERPROPERTIES eaxProps;
 
         // Get the raw params
-        eaxProps->flEnvironmentSize = fCompPB->GetFloat( (ParamID)kRefEnvironmentSize );
-        eaxProps->flEnvironmentDiffusion = fCompPB->GetFloat( (ParamID)kRefEnvironmentDiffusion );
-        eaxProps->lRoom = fCompPB->GetInt( (ParamID)kRefRoom );
-        eaxProps->lRoomHF = fCompPB->GetInt( (ParamID)kRefRoomHF );
-        eaxProps->lRoomLF = fCompPB->GetInt( (ParamID)kRefRoomLF );
-        eaxProps->flDecayTime = fCompPB->GetFloat( (ParamID)kRefDecayTime );
-        eaxProps->flDecayHFRatio = fCompPB->GetFloat( (ParamID)kRefDecayHFRatio );
-        eaxProps->flDecayLFRatio = fCompPB->GetFloat( (ParamID)kRefDecayLFRatio );
-        eaxProps->lReflections = fCompPB->GetInt( (ParamID)kRefReflections );
-        eaxProps->flReflectionsDelay = fCompPB->GetFloat( (ParamID)kRefReflectionsDelay );
-        //eaxProps->vReflectionsPan;                                                // early reflections panning vector
-        eaxProps->lReverb = fCompPB->GetInt( (ParamID)kRefReverb );                 // late reverberation level relative to room effect
-        eaxProps->flReverbDelay = fCompPB->GetFloat( (ParamID)kRefReverbDelay );
-        //eaxProps->vReverbPan;                                                     // late reverberation panning vector
-        eaxProps->flEchoTime = fCompPB->GetFloat( (ParamID)kRefEchoTime );
-        eaxProps->flEchoDepth = fCompPB->GetFloat( (ParamID)kRefEchoDepth );
-        eaxProps->flModulationTime = fCompPB->GetFloat( (ParamID)kRefModulationTime );
-        eaxProps->flModulationDepth = fCompPB->GetFloat( (ParamID)kRefModulationDepth );
-        eaxProps->flAirAbsorptionHF = fCompPB->GetFloat( (ParamID)kRefAirAbsorptionHF );
-        eaxProps->flHFReference = fCompPB->GetFloat( (ParamID)kRefHFReference );
-        eaxProps->flLFReference = fCompPB->GetFloat( (ParamID)kRefLFReference );
-        eaxProps->flRoomRolloffFactor = fCompPB->GetFloat( (ParamID)kRefRoomRolloffFactor );
-        eaxProps->ulFlags = fCompPB->GetInt( (ParamID)kRefFlags );
+        eaxProps.flEnvironmentSize = fCompPB->GetFloat( (ParamID)kRefEnvironmentSize );
+        eaxProps.flEnvironmentDiffusion = fCompPB->GetFloat( (ParamID)kRefEnvironmentDiffusion );
+        eaxProps.lRoom = fCompPB->GetInt( (ParamID)kRefRoom );
+        eaxProps.lRoomHF = fCompPB->GetInt( (ParamID)kRefRoomHF );
+        eaxProps.lRoomLF = fCompPB->GetInt( (ParamID)kRefRoomLF );
+        eaxProps.flDecayTime = fCompPB->GetFloat( (ParamID)kRefDecayTime );
+        eaxProps.flDecayHFRatio = fCompPB->GetFloat( (ParamID)kRefDecayHFRatio );
+        eaxProps.flDecayLFRatio = fCompPB->GetFloat( (ParamID)kRefDecayLFRatio );
+        eaxProps.lReflections = fCompPB->GetInt( (ParamID)kRefReflections );
+        eaxProps.flReflectionsDelay = fCompPB->GetFloat( (ParamID)kRefReflectionsDelay );
+        //eaxProps->vReflectionsPan;
+        eaxProps.lReverb = fCompPB->GetInt( (ParamID)kRefReverb );
+        eaxProps.flReverbDelay = fCompPB->GetFloat( (ParamID)kRefReverbDelay );
+        //eaxProps->vReverbPan;
+        eaxProps.flEchoTime = fCompPB->GetFloat( (ParamID)kRefEchoTime );
+        eaxProps.flEchoDepth = fCompPB->GetFloat( (ParamID)kRefEchoDepth );
+        eaxProps.flModulationTime = fCompPB->GetFloat( (ParamID)kRefModulationTime );
+        eaxProps.flModulationDepth = fCompPB->GetFloat( (ParamID)kRefModulationDepth );
+        eaxProps.flAirAbsorptionHF = fCompPB->GetFloat( (ParamID)kRefAirAbsorptionHF );
+        eaxProps.flHFReference = fCompPB->GetFloat( (ParamID)kRefHFReference );
+        eaxProps.flLFReference = fCompPB->GetFloat( (ParamID)kRefLFReference );
+        eaxProps.flRoomRolloffFactor = fCompPB->GetFloat( (ParamID)kRefRoomRolloffFactor );
+        eaxProps.ulFlags = fCompPB->GetInt( (ParamID)kRefFlags );
 
         // Convert to EFX and store them
-        plEAXListenerMod::ConvertEAXToEFX(eaxProps, listener->GetListenerProps());
-        delete eaxProps;
+        *(listener->GetListenerProps()) = *ConvertEAXToEFX(&eaxProps);
     }
     
     return true;
@@ -3011,7 +3009,6 @@ bool plEAXListenerComponent::Convert(plMaxNode *node, plErrorMsg *errMsg)
 
 bool plEAXListenerComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
-
     return true;
 }
 
@@ -3019,7 +3016,6 @@ bool plEAXListenerComponent::PreConvert(plMaxNode *pNode,  plErrorMsg *errMsg)
 // of properties on the MaxNode, as it's still indeterminant.
 bool plEAXListenerComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg)
 {
-
     return true;
 }
 

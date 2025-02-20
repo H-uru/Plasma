@@ -58,7 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plMessage;
 class plSoftVolume;
-//struct EFXEAXREVERBPROPERTIES;
 
 class plEAXListenerMod : public plSingleModifier
 {
@@ -92,5 +91,9 @@ protected:
     void IUnRegister();
     bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 };
+
+typedef struct _EAXLISTENERPROPERTIES *LPEAXLISTENERPROPERTIES;
+LPEFXEAXREVERBPROPERTIES ConvertEAXToEFX(const LPEAXLISTENERPROPERTIES eax);
+LPEAXLISTENERPROPERTIES  ConvertEFXToEAX(const LPEFXEAXREVERBPROPERTIES efx);
 
 #endif // _plEAXListenerMod_h
