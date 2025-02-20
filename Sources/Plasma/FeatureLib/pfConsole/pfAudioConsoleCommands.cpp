@@ -97,10 +97,10 @@ PF_CONSOLE_CMD(Audio, Enable, "bool on", "Switch Audio on or off at runtime")
     plgAudioSys::Activate( on );
 }
 
-PF_CONSOLE_CMD(Audio, UseEAX, "bool on", "Enable EFX environmental sound")
+PF_CONSOLE_CMD(Audio, UseEFX, "bool on", "Enable EFX environmental sound")
 {
     bool on = params[0];
-    plgAudioSys::EnableEAX( on );
+    plgAudioSys::EnableEFX( on );
 }
 
 PF_CONSOLE_CMD(Audio, Initialize, "bool on", "Set to false to completely disable audio playback in plasma")

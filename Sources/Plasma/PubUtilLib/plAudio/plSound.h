@@ -272,8 +272,8 @@ public:
     static void         SetLoadOnDemand( bool activate ) { fLoadOnDemandFlag = activate; }
     static void         SetLoadFromDiskOnDemand( bool activate ) { fLoadFromDiskOnDemand = activate; }
 
-    const plEAXSourceSettings   &GetEAXSettings() const { return fEAXSettings; }
-    plEAXSourceSettings         &GetEAXSettings() { return fEAXSettings; }
+    const plEAXSourceSettings   &GetEFXSettings() const { return fEFXSettings; }
+    plEAXSourceSettings         &GetEFXSettings() { return fEFXSettings; }
     virtual StreamType          GetStreamType() const { return kNoStream; }
     virtual void    FreeSoundData();
 
@@ -313,8 +313,8 @@ protected:
     // Just around for reference and sending messages upward (synched state)
     plSceneObject       *fOwningSceneObject;
 
-    // EAX Settings storage here
-    plEAXSourceSettings fEAXSettings;
+    // EFX Settings storage here
+    plEAXSourceSettings fEFXSettings;
     bool fQueued;
 
     plFadeParams    fFadeInParams, fFadeOutParams;
@@ -354,7 +354,7 @@ protected:
     virtual void        ISetActualTime( double t ) = 0;
     
     virtual bool        IActuallyLoaded() = 0;
-    virtual void        IRefreshEAXSettings( bool force = false ) = 0;
+    virtual void        IRefreshEFXSettings( bool force = false ) = 0;
 
     virtual float    IGetChannelVolume() const;
 

@@ -169,7 +169,7 @@ bool plWin32StaticSound::LoadSound( bool is3D )
         }
 
         plProfile_EndTiming( StaticSndShoveTime );
-        IRefreshEAXSettings( true );
+        IRefreshEFXSettings( true );
 
         fTotalBytes = bufferSize;
 

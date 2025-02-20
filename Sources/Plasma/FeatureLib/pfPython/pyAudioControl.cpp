@@ -214,19 +214,19 @@ void pyAudioControl::SetTwoStageLOD(bool state)
 }
 
 // Enable EFX environmental sound
-void pyAudioControl::UseEAXAcceleration(bool state)
+void pyAudioControl::UseEFXEnvironments(bool state)
 {
-    plgAudioSys::EnableEAX(state);
+    plgAudioSys::EnableEFX(state);
 }
 
-bool pyAudioControl::IsUsingEAXAcceleration() const
+bool pyAudioControl::IsUsingEFXEnvironments() const
 {
-    return plgAudioSys::UsingEAX();
+    return plgAudioSys::UsingEFX();
 }
 
-bool pyAudioControl::IsEAXSupported() const
+bool pyAudioControl::IsEFXSupported() const
 {
-    return plgAudioSys::IsEAXSupported();
+    return plgAudioSys::IsEFXSupported();
 }
 
 

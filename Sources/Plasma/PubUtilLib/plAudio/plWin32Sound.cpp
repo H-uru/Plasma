@@ -329,10 +329,10 @@ void plWin32Sound::IRefreshParams()
     plSound::IRefreshParams();
 }
 
-void plWin32Sound::IRefreshEAXSettings( bool force )
+void plWin32Sound::IRefreshEFXSettings( bool force )
 {
     if (fDSoundBuffer != nullptr)
-        fDSoundBuffer->SetEAXSettings( &GetEAXSettings(), force );
+        fDSoundBuffer->SetEFXSettings( &GetEFXSettings(), force );
 }
 
 void plWin32Sound::IAddCallback( plEventCallbackMsg *pMsg )

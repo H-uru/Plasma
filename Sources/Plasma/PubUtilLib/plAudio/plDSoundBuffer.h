@@ -92,7 +92,7 @@ public:
     bool        IsValid() const { return fValid; }
     bool        IsPlaying();
     bool        IsLooping() const { return fLooping; }
-    bool        IsEAXAccelerated() const;
+    bool        IsEFXAccelerated() const;
 
     bool        FillBuffer(void *data, unsigned bytes, plWAVHeader *header);
 
@@ -111,7 +111,7 @@ public:
     uint32_t      GetBufferBytePos( float timeInSecs ) const;
     uint32_t      bytePosToMSecs( uint32_t bytePos ) const;
 
-    void            SetEAXSettings(  plEAXSourceSettings *settings, bool force = false );
+    void            SetEFXSettings(  plEAXSourceSettings *settings, bool force = false );
     void            SetTimeOffsetBytes(unsigned bytes);
     uint8_t           GetBlockAlign() const;
     static uint32_t   GetNumBuffers() { return fNumBuffers; }
@@ -148,7 +148,7 @@ protected:
     unsigned            source;
     unsigned int        fStreamingBufferSize;
 
-    plEAXSource         fEAXSource;
+    plEAXSource         fEFXSource;
     
     static uint32_t       fNumBuffers;
     static float        fDefaultMinDistance;

@@ -100,7 +100,7 @@ public:
     std::vector<ST::string> GetCaptureDevices() const;
     ST::string GetDefaultCaptureDevice() const;
 
-    bool IsEAXSupported() const { return fEAXSupported; }
+    bool IsEFXSupported() const { return fEFXSupported; }
 
     void SetFadeLength(float lengthSec);
 
@@ -127,10 +127,10 @@ protected:
     plKey fCurrDebugSound;
 
     hsPoint3 fCurrListenerPos;
-    bool fActive, fUsingEAX, fRestartOnDestruct, fWaitingForShutdown;
+    bool fActive, fUsingEFX, fRestartOnDestruct, fWaitingForShutdown;
     int64_t fStartTime;
 
-    std::set<plEAXListenerMod*> fEAXRegions;
+    std::set<plEAXListenerMod*> fEFXRegions;
 
     hsPoint3 fLastPos;
 
@@ -140,7 +140,7 @@ protected:
     double fStartFade;
     float fFadeLength;
     unsigned int fMaxNumSources;
-    bool fEAXSupported;
+    bool fEFXSupported;
     double fLastUpdateTimeMs;
 
     bool OpenCaptureDevice();

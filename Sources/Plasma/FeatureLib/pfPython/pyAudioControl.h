@@ -98,10 +98,10 @@ public:
     // ...Less of a performance hit, harder on memory.
     void SetTwoStageLOD(bool state);
 
-    // Enable EAX sound acceleration
-    void UseEAXAcceleration(bool state);
-    bool IsUsingEAXAcceleration() const;
-    bool IsEAXSupported() const;
+    // Enable EFX environmental audio
+    void UseEFXEnvironments(bool state);
+    bool IsUsingEFXEnvironments() const;
+    bool IsEFXSupported() const;
 
     // Mute or unmute all sounds
     void MuteAll();

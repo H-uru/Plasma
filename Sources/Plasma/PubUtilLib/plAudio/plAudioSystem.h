@@ -79,17 +79,17 @@ public:
     static void SetActive(bool b);
     static void SetMuted(bool b);
     static void SetEnableSubtitles(bool b);
-    static void EnableEAX(bool b);
+    static void EnableEFX(bool b);
     static bool Active() { return fInit; }
     static void Shutdown();
     static void Activate(bool b);
     static bool IsMuted() { return fMuted; }
     static bool AreSubtitlesEnabled() { return fEnableSubtitles; }
     static void Restart();
-    static bool UsingEAX();
+    static bool UsingEFX();
 
-    /** Does the current playback device support EAX? */
-    static bool IsEAXSupported();
+    /** Does the current playback device support EFX? */
+    static bool IsEFXSupported();
 
     static void NextDebugSound();
 
@@ -223,7 +223,7 @@ private:
     static float                fChannelVolumes[kNumChannels];
     static float                fGlobalFadeVolume;
     static uint32_t             fDebugFlags;
-    static bool                 fEnableEAX;
+    static bool                 fEnableEFX;
     static float                fStreamingBufferSize;
     static uint8_t              fPriorityCutoff;
     static bool                 fEnableExtendedLogs;

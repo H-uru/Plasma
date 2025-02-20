@@ -93,9 +93,9 @@ void    plDSoundBuffer::IAllocate( uint32_t size, plWAVHeader &bufferDesc, bool 
 
     fBufferSize = size;
     
-    // Do we want to try EAX?
-    if( plgAudioSys::UsingEAX() )
-        fEAXSource.Init( this );
+    // Do we want to try EFX?
+    if( plgAudioSys::UsingEFX() )
+        fEFXSource.Init( this );
 
     fValid = true;
     plProfile_Inc( NumAllocated );
@@ -109,7 +109,7 @@ void    plDSoundBuffer::IRelease()
         Stop();
 
     // Release stuff
-    fEAXSource.Release();
+    fEFXSource.Release();
     alSourcei(source, AL_BUFFER, 0);
     alDeleteSources(1, &source);
     if(buffer)
@@ -693,11 +693,11 @@ bool    plDSoundBuffer::IsPlaying()
     return state == AL_PLAYING;
 }
 
-//// IsEAXAccelerated ////////////////////////////////////////////////////////
+//// IsEFXAccelerated ////////////////////////////////////////////////////////
 
-bool    plDSoundBuffer::IsEAXAccelerated() const
+bool    plDSoundBuffer::IsEFXAccelerated() const
 {
-    return fEAXSource.IsValid();
+    return fEFXSource.IsValid();
 }
 
 //// bytePosToMSecs //////////////////////////////////////////////////////////
@@ -726,11 +726,11 @@ uint32_t  plDSoundBuffer::GetLengthInBytes() const
     return fBufferSize;
 }
 
-//// SetEAXSettings //////////////////////////////////////////////////////////
+//// SetEFXSettings //////////////////////////////////////////////////////////
 
-void    plDSoundBuffer::SetEAXSettings(  plEAXSourceSettings *settings, bool force )
+void    plDSoundBuffer::SetEFXSettings(  plEAXSourceSettings *settings, bool force )
 {
-    fEAXSource.SetFrom( settings, source, force );
+    fEFXSource.SetFrom( settings, source, force );
 }
 
 //// GetBlockAlign ///////////////////////////////////////////////////////////

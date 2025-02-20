@@ -190,26 +190,26 @@ PYTHON_METHOD_DEFINITION(ptAudioControl, setTwoStageLOD, args)
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION(ptAudioControl, useEAXAcceleration, args)
+PYTHON_METHOD_DEFINITION(ptAudioControl, useEFXEnvironments, args)
 {
     char stateFlag;
     if (!PyArg_ParseTuple(args, "b", &stateFlag))
     {
-        PyErr_SetString(PyExc_TypeError, "useEAXAcceleration expects a boolean");
+        PyErr_SetString(PyExc_TypeError, "useEFXEnvironments expects a boolean");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->UseEAXAcceleration(stateFlag != 0);
+    self->fThis->UseEFXEnvironments(stateFlag != 0);
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, isUsingEAXAcceleration)
+PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, isUsingEFXEnvironments)
 {
-    PYTHON_RETURN_BOOL(self->fThis->IsUsingEAXAcceleration());
+    PYTHON_RETURN_BOOL(self->fThis->IsUsingEFXEnvironments());
 }
 
-PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, isEAXSupported)
+PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, isEFXSupported)
 {
-    PYTHON_RETURN_BOOL(self->fThis->IsEAXSupported());
+    PYTHON_RETURN_BOOL(self->fThis->IsEFXSupported());
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptAudioControl, muteAll, MuteAll)
@@ -409,9 +409,9 @@ PYTHON_START_METHODS_TABLE(ptAudioControl)
     PYTHON_METHOD(ptAudioControl, setLoadOnDemand, "Params: state\nEnables or disables the load on demand for sounds."),
     PYTHON_METHOD(ptAudioControl, setTwoStageLOD, "Params: state\nEnables or disables two-stage LOD, where sounds can be loaded into RAM but not into sound buffers.\n"
                 "...Less of a performance hit, harder on memory."),
-    PYTHON_METHOD(ptAudioControl, useEAXAcceleration, "Params: state\nEnables or disables EFX environmental sound."),
-    PYTHON_METHOD_NOARGS(ptAudioControl, isUsingEAXAcceleration, "Is EFX environmental sound enabled? Returns 1 if true otherwise returns 0."),
-    PYTHON_METHOD_NOARGS(ptAudioControl, isEAXSupported, "Is EFX environmental sound supported by the current device?"),
+    PYTHON_METHOD(ptAudioControl, useEFXEnvironments, "Params: state\nEnables or disables EFX environmental sound."),
+    PYTHON_METHOD_NOARGS(ptAudioControl, isUsingEFXEnvironments, "Is EFX environmental sound enabled? Returns 1 if true otherwise returns 0."),
+    PYTHON_METHOD_NOARGS(ptAudioControl, isEFXSupported, "Is EFX environmental sound supported by the current device?"),
     PYTHON_BASIC_METHOD(ptAudioControl, muteAll, "Mutes all sounds."),
     PYTHON_BASIC_METHOD(ptAudioControl, unmuteAll, "Unmutes all sounds."),
     PYTHON_METHOD_NOARGS(ptAudioControl, isMuted, "Are all sounds muted? Returns 1 if true otherwise returns 0."),

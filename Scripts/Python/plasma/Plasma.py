@@ -1377,8 +1377,8 @@ class ptAudioControl:
         """Hides (disables) the voice recording icons."""
         pass
 
-    def isEAXSupported(self):
-        """Returns true or false based on whether or not a the device specified supports EAX"""
+    def isEFXSupported(self):
+        """Returns true or false based on whether or not a the device specified supports EFX."""
         pass
 
     def isEnabled(self):
@@ -1389,8 +1389,8 @@ class ptAudioControl:
         """Are all sounds muted? Returns 1 if true otherwise returns 0."""
         pass
 
-    def isUsingEAXAcceleration(self):
-        """Is EAX sound acceleration enabled? Returns 1 if true otherwise returns 0."""
+    def isUsingEFXAcceleration(self):
+        """Is EFX environmental audio enabled? Returns 1 if true otherwise returns 0."""
         pass
 
     def isVoiceRecordingEnabled(self):
@@ -1472,8 +1472,8 @@ This only sets the volume for this game session."""
         """Unmutes all sounds."""
         pass
 
-    def useEAXAcceleration(self,state):
-        """Enables or disables EAX sound acceleration (requires hardware acceleration)."""
+    def useEFXAcceleration(self,state):
+        """Enables or disables EFX environmental audio."""
         pass
 
 class ptAvatar:

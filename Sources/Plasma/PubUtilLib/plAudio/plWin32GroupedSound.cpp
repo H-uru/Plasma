@@ -203,7 +203,7 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
         return false;
     }
     
-    IRefreshEAXSettings( true );
+    IRefreshEFXSettings( true );
 
     // Fill the buffer with whatever our current sound is.
     IFillCurrentSound( 0 );
