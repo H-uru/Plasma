@@ -185,7 +185,7 @@ plEAXListener &plEAXListener::GetInstance()
 
 bool plEAXListener::Init()
 {
-    if(fInited)
+    if (fInited)
         return true;
 
     alListenerf(AL_METERS_PER_UNIT, 0.3048f); // Distance units set to feet
@@ -219,7 +219,7 @@ bool plEAXListener::Init()
 
 void plEAXListener::Shutdown()
 {
-    if(!fInited)
+    if (!fInited)
         return;
 
     IRelease();
@@ -314,7 +314,7 @@ void plEAXListener::ProcessMods(const std::set<plEAXListenerMod*>& modArray)
     if (myLog != nullptr)
         myLog->Clear();
 
-    if(modArray.size() != fLastModCount)
+    if (modArray.size() != fLastModCount)
     {
         DebugLog("Clearing cache...");
         ClearProcessCache();    // Code path changed, clear the entire cache
@@ -358,16 +358,16 @@ void plEAXListener::ProcessMods(const std::set<plEAXListenerMod*>& modArray)
                     bMorphing = true;
                 }
 
-                if( totalStrength >= 1.f )
+                if (totalStrength >= 1.f)
                     break;
             }
         }
 
-        if( firstOne )
+        if (firstOne)
         {
             // No regions of strength > 0, so just make it quiet
-            DebugLog( "Reverb should be quiet." );
-            if( fLastWasEmpty )
+            DebugLog("Reverb should be quiet.");
+            if (fLastWasEmpty)
                 return;
 
             finalProps = EFX_REVERB_PRESET_GENERIC;
