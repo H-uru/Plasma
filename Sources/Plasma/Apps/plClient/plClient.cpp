@@ -2102,7 +2102,7 @@ void plClient::IWriteDefaultAudioSettings(const plFileName& destFile)
 {
     std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFileWrite(destFile);
     WriteBool(stream.get(), "Audio.Initialize",  true);
-    WriteBool(stream.get(), "Audio.UseEAX", false);
+    WriteBool(stream.get(), "Audio.UseEAX", true);
     WriteInt(stream.get(), "Audio.SetPriorityCutoff", 6);
     WriteInt(stream.get(), "Audio.MuteAll", false);
     WriteInt(stream.get(), "Audio.SetChannelVolume SoundFX", 1);
