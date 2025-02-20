@@ -39,6 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 //////////////////////////////////////////////////////////////////////////////
 //                                                                          //
 //  plEAXListenerMod Header                                                 //
@@ -51,14 +52,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnModifier/plSingleModifier.h"
 
+#include <efx.h>
+#include <efx-presets.h>
+
+
 class plMessage;
 class plSoftVolume;
-
-#ifdef EAX_SDK_AVAILABLE
-typedef struct _EAXREVERBPROPERTIES EAXREVERBPROPERTIES;
-#else
-#include "plEAXStructures.h"
-#endif
+//struct EFXEAXREVERBPROPERTIES;
 
 class plEAXListenerMod : public plSingleModifier
 {
@@ -78,19 +78,19 @@ public:
     bool    MsgReceive(plMessage* pMsg) override;
     void    Read(hsStream* s, hsResMgr* mgr) override;
     void    Write(hsStream* s, hsResMgr* mgr) override;
-    float           GetStrength();
+    float   GetStrength();
 
-    EAXREVERBPROPERTIES *   GetListenerProps() { return fListenerProps; }
-    void                    SetFromPreset( uint32_t preset );
+    EFXEAXREVERBPROPERTIES* GetListenerProps() { return fReverbProps; }
+    void SetFromPreset(EFXEAXREVERBPROPERTIES preset);
 
 protected:
-    plSoftVolume    *fSoftRegion;
-    EAXREVERBPROPERTIES *fListenerProps;
-    bool        fRegistered, fGetsMessages;
+    plSoftVolume* fSoftRegion;
+    EFXEAXREVERBPROPERTIES* fReverbProps;
+    bool fRegistered, fGetsMessages;
 
-    void            IRegister();
-    void            IUnRegister();
-    bool    IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
+    void IRegister();
+    void IUnRegister();
+    bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 };
 
 #endif // _plEAXListenerMod_h
