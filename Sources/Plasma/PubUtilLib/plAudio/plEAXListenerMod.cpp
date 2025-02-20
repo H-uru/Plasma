@@ -156,9 +156,6 @@ bool    plEAXListenerMod::MsgReceive( plMessage* pMsg )
     return plSingleModifier::MsgReceive( pMsg );
 }
 
-LPEFXEAXREVERBPROPERTIES ConvertEAXToEFX(const LPEAXLISTENERPROPERTIES eax);
-LPEAXLISTENERPROPERTIES  ConvertEFXToEAX(const LPEFXEAXREVERBPROPERTIES efx);
-
 void plEAXListenerMod::Read( hsStream* s, hsResMgr* mgr )
 {
     plSingleModifier::Read( s, mgr );
