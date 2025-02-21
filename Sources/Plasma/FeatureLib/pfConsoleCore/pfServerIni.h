@@ -40,28 +40,52 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef pnNbKeys_inc
-#define pnNbKeys_inc
+#ifndef _pfServerIni_h
+#define _pfServerIni_h
 
-#include "HeadSpin.h"
-#include "pnNbConst.h"
+#include <string_theory/string>
+#include <vector>
 
-using NetDhKey = uint8_t[kNetDiffieHellmanKeyBits / 8];
+#include "pnNetBase/pnNbConst.h"
+#include "pnNetBase/pnNbKeys.h"
 
-struct NetDhConstants
+class plFileName;
+
+class pfServerIni
 {
-    uint32_t g;
-    NetDhKey n;
-    NetDhKey x;
+public:
+    ST::string fStatusUrl;
+    ST::string fSignupUrl;
+    ST::string fDisplayName;
+    unsigned int fPort;
+    ST::string fFileHostname;
+    ST::string fAuthHostname;
+    NetDhConstants fAuthDhConstants;
+    NetDhConstants fGameDhConstants;
+    ST::string fGateKeeperHostname;
+    NetDhConstants fGateKeeperDhConstants;
+
+    pfServerIni() :
+        fStatusUrl(),
+        fSignupUrl(),
+        fDisplayName(),
+        fPort(kDefaultClientPort),
+        fFileHostname(),
+        fAuthHostname(),
+        fAuthDhConstants {kNetAuthDefaultDhGValue},
+        fGameDhConstants {kNetGameDefaultDhGValue},
+        fGateKeeperHostname(),
+        fGateKeeperDhConstants {kNetGateKeeperDefaultDhGValue}
+    {}
+
+private:
+    bool IParseOption(const std::vector<ST::string>& name, const ST::string& value, ST::string& errorMsg);
+
+public:
+    bool Parse(const plFileName& fileName, ST::string& errorMsg);
+    void Apply();
+
+    static bool Load(const plFileName& fileName, ST::string& errorMsg);
 };
 
-// Auth Server
-extern NetDhConstants gNetAuthDhConstants;
-
-// Game Server
-extern NetDhConstants gNetGameDhConstants;
-
-// GateKeeper Server
-extern NetDhConstants gNetGateKeeperDhConstants;
-
-#endif // pnNbKeys_inc
+#endif // _pfServerIni_h

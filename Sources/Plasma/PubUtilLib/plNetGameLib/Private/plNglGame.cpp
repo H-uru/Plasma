@@ -661,9 +661,7 @@ void GameInitialize () {
         kNetProtocolCli2Game,
         s_send, std::size(s_send),
         s_recv, std::size(s_recv),
-        kGameDhGValue,
-        plBigNum(sizeof(kGameDhXData), kGameDhXData),
-        plBigNum(sizeof(kGameDhNData), kGameDhNData)
+        gNetGameDhConstants
     );
 }
 

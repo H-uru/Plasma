@@ -19,10 +19,10 @@ target_link_libraries(
     pnNetCli
     PUBLIC
         CoreLib
+        pnNetBase
         pnEncryption
     PRIVATE
         pnAsyncCore
-        pnNetBase
         pnUUID
 )
 

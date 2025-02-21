@@ -73,15 +73,6 @@ plBigNum::plBigNum(unsigned a) : m_context()
     BN_set_word(m_number, a);
 }
 
-plBigNum::plBigNum(unsigned bytes, const void* data, bool le) : m_context()
-{
-    m_number = BN_new();
-    if (le)
-        FromData_LE(bytes, data);
-    else
-        FromData_BE(bytes, data);
-}
-
 plBigNum::~plBigNum ()
 {
     if (m_context)
