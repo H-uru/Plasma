@@ -287,9 +287,9 @@ def GetAudioMode():
     if gIniFile:
         entryInit,idxInit = gIniFile.findByCommand("Audio.Initialize")
         entryHard,idxHard = gIniFile.findByCommand("Audio.UseHardware")
-        entryEAX,idxEAX = gIniFile.findByCommand("Audio.UseEAX")
+        entryEFX,idxEFX = gIniFile.findByCommand("Audio.UseEFX")
 
-        if entryEAX and entryEAX.getValue(0) == kBeTrue:
+        if entryEFX and entryEFX.getValue(0) == kBeTrue:
             mode = 3
         else:
             if entryHard and entryHard.getValue(0) == kBeTrue:
@@ -310,7 +310,7 @@ def SetAudioMode(init, device, eax):
     if gIniFile:
         entryInit,idxInit = gIniFile.findByCommand("Audio.Initialize")
         entryDev,idxDev = gIniFile.findByCommand("Audio.SetDeviceName")
-        entryEAX,idxEAX = gIniFile.findByCommand("Audio.UseEAX")
+        entryEFX,idxEFX = gIniFile.findByCommand("Audio.UseEFX")
 
         if init:
             val = kBeTrue
@@ -333,10 +333,10 @@ def SetAudioMode(init, device, eax):
         else:
             val = kBeFalse
 
-        if entryEAX:
-            entryEAX.setValue(0, val)
+        if entryEFX:
+            entryEFX.setValue(0, val)
         else:
-            gIniFile.addEntry("Audio.UseEAX " + val)
+            gIniFile.addEntry("Audio.UseEFX " + val)
 
 def SetSubtitle(subtitle):
     if gIniFile:

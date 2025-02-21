@@ -41,12 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include <al.h>
-#ifdef USE_EFX
-#   include <efx.h>
-#endif
-#ifdef EAX_SDK_AVAILABLE
-#   include <eax.h>
-#endif
+#include <efx.h>
 #include <memory>
 #include <array>
 
@@ -83,7 +78,7 @@ ST::string kDefaultDeviceMagic = ST_LITERAL("(Default Device)");
 #   define ALC_ALL_DEVICES_SPECIFIER 0x1013
 #endif
 
-plProfile_CreateTimer("EAX Update", "Sound", SoundEAXUpdate);
+plProfile_CreateTimer("EFX Update", "Sound", SoundEFXUpdate);
 plProfile_CreateTimer("Soft Update", "Sound", SoundSoftUpdate);
 plProfile_CreateCounter("Max Sounds", "Sound", SoundMaxNum);
 plProfile_CreateTimer("AudioUpdate", "RenderSetup", AudioUpdate);
@@ -110,14 +105,14 @@ plAudioSystem::plAudioSystem()
       fStartTime(),
       fListenerInit(),
       fDebugActiveSoundDisplay(),
-      fUsingEAX(),
+      fUsingEFX(),
       fRestartOnDestruct(),
       fWaitingForShutdown(),
       fActive(),
       fDisplayNumBuffers(),
       fStartFade(),
       fFadeLength(FADE_TIME),
-      fEAXSupported(),
+      fEFXSupported(),
       fLastUpdateTimeMs()
 {
     fCurrListenerPos.Set(-1.e30f, -1.e30f, -1.e30f);
@@ -245,6 +240,7 @@ bool plAudioSystem::Init()
     plStatusLog::AddLineSF("audio.log", "OpenAL version: {}",    alGetString(AL_VERSION));
     plStatusLog::AddLineSF("audio.log", "OpenAL renderer: {}",   alGetString(AL_RENDERER));
     plStatusLog::AddLineSF("audio.log", "OpenAL extensions: {}", alGetString(AL_EXTENSIONS));
+    plStatusLog::AddLineSF("audio.log", "OpenAL context extensions: {}", alcGetString(fPlaybackDevice, ALC_EXTENSIONS));
     plStatusLog::AddLineS("audio.log", plStatusLog::kGreen, "ASYS: Detecting caps...");
 
     // Detect maximum number of voices that can be created.
@@ -264,17 +260,24 @@ bool plAudioSystem::Init()
     plStatusLog::AddLineSF("audio.log", "Max Number of sources: {}", fMaxNumSources);
     SetMaxNumberOfActiveSounds();
 
-    // TODO: Detect EAX support. Not adding this in now until the replacement is implemented.
+    // Detect EFX support.
+    if (alcIsExtensionPresent(alcGetContextsDevice(alcGetCurrentContext()), "ALC_EXT_EFX"))
+        fEFXSupported = true;
 
-    // attempt to init the EAX listener.
-    if (plgAudioSys::fEnableEAX) {
-        fUsingEAX = plEAXListener::GetInstance().Init();
-        if (fUsingEAX)
-            plStatusLog::AddLineS("audio.log", plStatusLog::kGreen, "ASYS: EAX support detected and enabled.");
+    // Attempt to init the EFX listener.
+    if (fEFXSupported && plgAudioSys::fEnableEFX) {
+        ALCint iVerMajor, iVerMinor;
+        alcGetIntegerv(fPlaybackDevice, ALC_EFX_MAJOR_VERSION, 1, &iVerMajor);
+        alcGetIntegerv(fPlaybackDevice, ALC_EFX_MAJOR_VERSION, 1, &iVerMinor);
+        plStatusLog::AddLineSF("audio.log", "ASYS: EFX v{}.{} available.", iVerMajor, iVerMinor);
+
+        fUsingEFX = plEAXListener::GetInstance().Init();
+        if (fUsingEFX)
+            plStatusLog::AddLineS("audio.log", plStatusLog::kGreen, "ASYS: EFX support detected and enabled.");
         else
-            plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ASYS: EAX support NOT detected. EAX effects disabled.");
+            plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ASYS: Unable to initialize environmental audio. EFX effects disabled.");
     } else {
-        fUsingEAX = false;
+        fUsingEFX = false;
     }
 
     plProfile_Set(SoundMaxNum, fMaxNumSounds);
@@ -304,11 +307,11 @@ void plAudioSystem::Shutdown()
     fSoftRegionSounds.clear();
     fActiveSofts.clear();
 
-    for (auto rgn : fEAXRegions)
+    for (auto rgn : fEFXRegions)
         GetKey()->Release(rgn->GetKey());
-    fEAXRegions.clear();
+    fEFXRegions.clear();
     plEAXListener::GetInstance().ClearProcessCache();
-    if (fUsingEAX)
+    if (fUsingEFX)
         plEAXListener::GetInstance().Shutdown();
 
     plSound::SetCurrDebugPlate(nullptr);
@@ -327,7 +330,7 @@ void plAudioSystem::Shutdown()
     fPlaybackDevice = nullptr;
 
     fStartTime = 0;
-    fUsingEAX = false;
+    fUsingEFX = false;
     fCurrListenerPos.Set(-1.e30f, -1.e30f, -1.e30f);
 
     if (fRestartOnDestruct) {
@@ -627,14 +630,14 @@ void    plAudioSystem::IUpdateSoftSounds(const hsPoint3 &newPosition)
         if (sound->IsPropertySet(plSound::kPropIncidental))
             color = 0xff00ffff;
 
-        if (fUsingEAX && sound->GetEAXSettings().IsEnabled()) {
+        if (fUsingEFX && sound->GetEFXSettings().IsEnabled()) {
             fDebugActiveSoundDisplay->AddLineF(
                 color,
                 "{} {1.2f} {1.2f} ({} occ) {}",
                 sound->GetPriority(),
                 soundIt->fRank,
                 sound->GetVolume() ? sound->GetVolumeRank() / sound->GetVolume() : 0,
-                sound->GetEAXSettings().GetCurrSofts().GetOcclusion(),
+                sound->GetEFXSettings().GetCurrSofts().GetOcclusion(),
                 sound->GetKeyName()
             );
         } else {
@@ -772,10 +775,10 @@ bool plAudioSystem::MsgReceive(plMessage* msg)
             if (hsTimer::GetMilliSeconds() - fLastUpdateTimeMs > UPDATE_TIME_MS) {
                 IUpdateSoftSounds(fCurrListenerPos);
 
-                if (fUsingEAX) {
-                    plProfile_BeginTiming(SoundEAXUpdate);
-                    plEAXListener::GetInstance().ProcessMods(fEAXRegions);
-                    plProfile_EndTiming(SoundEAXUpdate);
+                if (fUsingEFX) {
+                    plProfile_BeginTiming(SoundEFXUpdate);
+                    plEAXListener::GetInstance().ProcessMods(fEFXRegions);
+                    plProfile_EndTiming(SoundEFXUpdate);
                 }
             }
             plProfile_EndLap(AudioUpdate, this->GetKey()->GetUoid().GetObjectName());
@@ -785,10 +788,10 @@ bool plAudioSystem::MsgReceive(plMessage* msg)
 
     if (plGenRefMsg* refMsg = plGenRefMsg::ConvertNoRef(msg)) {
         if (refMsg->GetContext() & (plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace)) {
-            fEAXRegions.insert(plEAXListenerMod::ConvertNoRef(refMsg->GetRef()));
+            fEFXRegions.insert(plEAXListenerMod::ConvertNoRef(refMsg->GetRef()));
             plEAXListener::GetInstance().ClearProcessCache();
         } else if (refMsg->GetContext() & ( plRefMsg::kOnRemove | plRefMsg::kOnDestroy)) {
-            fEAXRegions.erase(plEAXListenerMod::ConvertNoRef(refMsg->GetRef()));
+            fEFXRegions.erase(plEAXListenerMod::ConvertNoRef(refMsg->GetRef()));
             plEAXListener::GetInstance().ClearProcessCache();
         }
         return true;
@@ -905,7 +908,7 @@ bool            plgAudioSys::fActive = false;
 bool            plgAudioSys::fMuted = true;
 bool            plgAudioSys::fEnableSubtitles = true;
 bool            plgAudioSys::fDelayedActivate = false;
-bool            plgAudioSys::fEnableEAX = false;
+bool            plgAudioSys::fEnableEFX = false;
 float           plgAudioSys::fChannelVolumes[kNumChannels] = { 1.f, 1.f, 1.f, 1.f, 1.f, 1.f };
 uint32_t        plgAudioSys::fDebugFlags = 0;
 float           plgAudioSys::fStreamingBufferSize = 2.f;
@@ -955,9 +958,9 @@ void plgAudioSys::SetEnableSubtitles(bool b)
     fEnableSubtitles = b;
 }
 
-void plgAudioSys::EnableEAX( bool b )
+void plgAudioSys::EnableEFX( bool b )
 {
-    fEnableEAX = b;
+    fEnableEFX = b;
     if (fActive)
         Restart();
 }
@@ -971,17 +974,17 @@ void plgAudioSys::Restart()
     }
 }
 
-bool plgAudioSys::UsingEAX()
+bool plgAudioSys::UsingEFX()
 {
     if (fSys)
-        return fSys->fUsingEAX;
+        return fSys->fUsingEFX;
     return false;
 }
 
-bool plgAudioSys::IsEAXSupported()
+bool plgAudioSys::IsEFXSupported()
 {
     if (fSys)
-        return fSys->IsEAXSupported();
+        return fSys->IsEFXSupported();
     return false;
 }
 

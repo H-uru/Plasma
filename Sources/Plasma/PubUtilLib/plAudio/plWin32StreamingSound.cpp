@@ -332,7 +332,7 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
     }
     FreeSoundData();
     
-    IRefreshEAXSettings( true );
+    IRefreshEFXSettings( true );
 
     // Debug info
     ST::string dbg = ST::format("   Streaming {}.", fSrcFilename);

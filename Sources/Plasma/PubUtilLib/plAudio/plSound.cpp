@@ -742,10 +742,10 @@ bool plSound::MsgReceive( plMessage* pMsg )
     {
         if (fSoftOcclusionRegion != nullptr)
         {
-            // The EAX settings have 0 as the start value and 1 as the end, and since start
+            // The EFX settings have 0 as the start value and 1 as the end, and since start
             // translates to "inside the soft region", it's reversed of what the region gives us
-            fEAXSettings.SetOcclusionSoftValue( 1.f - fSoftOcclusionRegion->GetListenerStrength() );
-            IRefreshEAXSettings();
+            fEFXSettings.SetOcclusionSoftValue( 1.f - fSoftOcclusionRegion->GetListenerStrength() );
+            IRefreshEFXSettings();
         }
         return true;
     }
@@ -1264,10 +1264,10 @@ void plSound::IRead( hsStream *s, hsResMgr *mgr )
     // Read in the data buffer key
     fDataBufferKey = mgr->ReadKey( s );
 
-    // EAX params
-    fEAXSettings.Read( s );
+    // EFX params
+    fEFXSettings.Read( s );
 
-    // EAX soft keys
+    // EFX soft keys
     mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, kRefSoftOcclusionRegion ), plRefFlags::kActiveRef );
 }
 
@@ -1300,10 +1300,10 @@ void plSound::IWrite( hsStream *s, hsResMgr *mgr )
     else
         mgr->WriteKey( s, fDataBufferKey );
 
-    // EAX params
-    fEAXSettings.Write( s );
+    // EFX params
+    fEFXSettings.Write( s );
 
-    // EAX Soft keys
+    // EFX Soft keys
     mgr->WriteKey( s, fSoftOcclusionRegion );
 }
 

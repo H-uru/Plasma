@@ -39,6 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 //////////////////////////////////////////////////////////////////////////////
 //                                                                          //
 //  plDSoundBuffer - Simple wrapper class for a DirectSound buffer.         //
@@ -56,15 +57,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define STREAMING_BUFFERS 16
 #define STREAM_BUFFER_SIZE      4608*4
 
-//#define VOICE_BUFFERS 4
-//#define VOICE_BUFFER_SIZE 4608
-
 class plWAVHeader;
 class plAudioFileReader;
 
 
-// Ported to OpenAL from DirectSound May 2006. Idealy the openal sources would be seperate from this class.
-// OpenAl sound buffer, and source. 
+// Ported to OpenAL from DirectSound May 2006. Ideally the OpenAL sources would be separate from this class.
+// OpenAL sound buffer, and source. 
 class plDSoundBuffer
 {
 public:
@@ -94,7 +92,7 @@ public:
     bool        IsValid() const { return fValid; }
     bool        IsPlaying();
     bool        IsLooping() const { return fLooping; }
-    bool        IsEAXAccelerated() const;
+    bool        IsEFXAccelerated() const;
 
     bool        FillBuffer(void *data, unsigned bytes, plWAVHeader *header);
 
@@ -113,7 +111,7 @@ public:
     uint32_t      GetBufferBytePos( float timeInSecs ) const;
     uint32_t      bytePosToMSecs( uint32_t bytePos ) const;
 
-    void            SetEAXSettings(  plEAXSourceSettings *settings, bool force = false );
+    void            SetEFXSettings(  plEAXSourceSettings *settings, bool force = false );
     void            SetTimeOffsetBytes(unsigned bytes);
     uint8_t           GetBlockAlign() const;
     static uint32_t   GetNumBuffers() { return fNumBuffers; }
@@ -150,7 +148,7 @@ protected:
     unsigned            source;
     unsigned int        fStreamingBufferSize;
 
-    plEAXSource         fEAXSource;
+    plEAXSource         fEFXSource;
     
     static uint32_t       fNumBuffers;
     static float        fDefaultMinDistance;

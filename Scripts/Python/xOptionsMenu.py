@@ -75,7 +75,7 @@ TrailerDlg              = ptAttribGUIDialog(9, "The Trailer dialog")
 AdvGameSettingDlg       = ptAttribGUIDialog(10, "The Adv Game Settings dialog")
 ResetWarnDlg            = ptAttribGUIDialog(11, "The Reset Warning dialog")
 ReleaseNotesDlg         = ptAttribGUIDialog(12, "Release Notes dialog")
-respDisableItems        = ptAttribResponder(13, "resp: Disable Items", ["enableRes", "disableRes", "enableWindow", "disableWindow", "enableEAX", "disableEAX", "enableGamma", "disableGamma", "enableDynRefl", "disableDynRefl"])
+respDisableItems        = ptAttribResponder(13, "resp: Disable Items", ["enableRes", "disableRes", "enableWindow", "disableWindow", "enableEFX", "disableEFX", "enableGamma", "disableGamma", "enableDynRefl", "disableDynRefl"])
 SupportDlg              = ptAttribGUIDialog(14, "Support dialog")
 
 
@@ -346,7 +346,7 @@ kAudioModeCBID01 = 752
 kAudioModeCBID02 = 753
 kAudioModeCBID03 = 754
 kAudioModeTextID = 755
-kAudioModeEAXTextID = 757
+kAudioModeEFXTextID = 757
 
 kGSEnableVoiceChat=340
 
@@ -1113,9 +1113,9 @@ class xOptionsMenu(ptModifier):
                         curSelection = round(audioField.getValue() * audModeNum) 
                         intCurSelection = int(curSelection)
 
-                        #Enable EAX Support
-                        EAXcheckbox = ptGUIControlCheckBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeCBID03))
-                        audio.useEAXAcceleration(EAXcheckbox.isChecked())
+                        #Enable EFX Support
+                        EFXcheckbox = ptGUIControlCheckBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeCBID03))
+                        audio.useEFXEnvironments(EFXcheckbox.isChecked())
 
                         audio.setPlaybackDevice(gAudioDevices[intCurSelection], 1)
                     self.WriteAudioControls()
@@ -1192,24 +1192,24 @@ class xOptionsMenu(ptModifier):
                     audioModeCtrlTextBox = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeTextID))
                     audioModeCtrlTextBox.setString(audio.getFriendlyDeviceName(audioDeviceName))
 
-                    if audioDeviceName != prevAudioDeviceName:  #Only update the EAX checkbox when the mouse has been let up...
+                    if audioDeviceName != prevAudioDeviceName:  #Only update the EFX checkbox when the mouse has been let up...
                         PtDebugPrint("Audio Device Name changed!")
                         prevAudioDeviceName = audioDeviceName
-                        EAXcheckbox = ptGUIControlCheckBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeCBID03))
-                        if not audio.isEAXSupported():
-                            PtDebugPrint("Disabling EAX checkbox")
-                            #Disable EAX checkbox
-                            EAXcheckbox.disable()
-                            respDisableItems.run(self.key, state="disableEAX")
-                            EAXcheckbox.setChecked(False)
-                            ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeEAXTextID)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
+                        EFXcheckbox = ptGUIControlCheckBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeCBID03))
+                        if not audio.isEFXSupported():
+                            PtDebugPrint("Disabling EFX checkbox")
+                            #Disable EFX checkbox
+                            EFXcheckbox.disable()
+                            respDisableItems.run(self.key, state="disableEFX")
+                            EFXcheckbox.setChecked(False)
+                            ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeEFXTextID)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
                         else:
-                            PtDebugPrint("Enabling EAX checkbox")
-                            #We don't need to automatically check the EAX box, but do enable the control
-                            EAXcheckbox.enable()
-                            respDisableItems.run(self.key, state="enableEAX")
-                            EAXcheckbox.setChecked(audio.isUsingEAXAcceleration())
-                            ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeEAXTextID)).setForeColor(ptColor(1, 1, 1, 1))
+                            PtDebugPrint("Enabling EFX checkbox")
+                            #We don't need to automatically check the EFX box, but do enable the control
+                            EFXcheckbox.enable()
+                            respDisableItems.run(self.key, state="enableEFX")
+                            EFXcheckbox.setChecked(audio.isUsingEFXEnvironments())
+                            ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeEFXTextID)).setForeColor(ptColor(1, 1, 1, 1))
 
                 elif tagID == kAudioModeCBID03:
                     self.restartAudio = 1
@@ -1567,11 +1567,11 @@ class xOptionsMenu(ptModifier):
         xIniAudio.SetMute( audio.isMuted() )
         xIniAudio.SetSubtitle( audio.areSubtitlesEnabled() )
 
-        EAXcheckbox = ptGUIControlCheckBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeCBID03))
+        EFXcheckbox = ptGUIControlCheckBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeCBID03))
 
-        xIniAudio.SetAudioMode( True, audio.getPlaybackDevice(), EAXcheckbox.isChecked() )
-        #xIniAudio.SetAudioMode( audio.isEnabled(), audio.getDeviceName(), EAXcheckbox.isChecked() )
-        #xIniAudio.SetAudioMode( audio.isEnabled(), audio.getDeviceName(), audio.isUsingEAXAcceleration() )
+        xIniAudio.SetAudioMode( True, audio.getPlaybackDevice(), EFXcheckbox.isChecked() )
+        #xIniAudio.SetAudioMode( audio.isEnabled(), audio.getDeviceName(), EFXcheckbox.isChecked() )
+        #xIniAudio.SetAudioMode( audio.isEnabled(), audio.getDeviceName(), audio.isUsingEFXEnvironments() )
         #xIniAudio.SetMicLevel( audio.getMicLevel() )
         xIniAudio.SetVoiceRecording( audio.isVoiceRecordingEnabled() )
         
@@ -1613,10 +1613,10 @@ class xOptionsMenu(ptModifier):
         audioField = ptGUIControlCheckBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioMuteCheckBoxTag))
         audioField.setChecked( audio.isMuted() )
 
-        EAXcheckbox = ptGUIControlCheckBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeCBID03))
-        EAXcheckbox.setChecked( audio.isUsingEAXAcceleration() )
-        EAXcheckbox.enable()
-        respDisableItems.run(self.key, state="enableEAX")
+        EFXcheckbox = ptGUIControlCheckBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeCBID03))
+        EFXcheckbox.setChecked( audio.isUsingEFXEnvironments() )
+        EFXcheckbox.enable()
+        respDisableItems.run(self.key, state="enableEFX")
 
         audioField = ptGUIControlKnob(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeID))
         numAudioDevices = len(gAudioDevices) - 1.0
@@ -1624,21 +1624,21 @@ class xOptionsMenu(ptModifier):
         if numAudioDevices > 0:
             for num, device in enumerate(gAudioDevices):
                 if gAudioDevices[num] == audio.getPlaybackDevice():
-                    if not audio.isEAXSupported():
-                        EAXcheckbox.disable()
-                        respDisableItems.run(self.key, state="disableEAX")
-                        EAXcheckbox.setChecked(False)
-                        ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeEAXTextID)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
+                    if not audio.isEFXSupported():
+                        EFXcheckbox.disable()
+                        respDisableItems.run(self.key, state="disableEFX")
+                        EFXcheckbox.setChecked(False)
+                        ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeEFXTextID)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
 
                     audioField.setValue(num/numAudioDevices)
                     audioModeCtrlTextBox = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeTextID))
                     audioDeviceName = prevAudioDeviceName = audio.getPlaybackDevice()
                     audioModeCtrlTextBox.setString(audio.getFriendlyDeviceName(device))
         else:
-            EAXcheckbox.disable()
-            respDisableItems.run(self.key, state="disableEAX")
-            EAXcheckbox.setChecked(False)
-            ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeEAXTextID)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
+            EFXcheckbox.disable()
+            respDisableItems.run(self.key, state="disableEFX")
+            EFXcheckbox.setChecked(False)
+            ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeEFXTextID)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
             audioField.disable()
             audioModeCtrlTextBox = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeTextID))
             audioModeCtrlTextBox.setString("None")

@@ -409,7 +409,7 @@ plVoiceSound::plVoiceSound()
     fPriority = 1;
     fType = plgAudioSys::kVoice;
 
-    fEAXSettings.SetRoomParams(-1200, -100, 0, 0);
+    fEFXSettings.SetRoomParams(-1200, -100, 0, 0);
 
     ST::string keyName = ST::format("VoiceSound_{}", fCount);
     fCount++;
@@ -440,7 +440,7 @@ bool plVoiceSound::LoadSound(bool is3D)
     fDSoundBuffer->SetupVoiceSource();
 
     IRefreshParams();
-    IRefreshEAXSettings(true);
+    IRefreshEFXSettings(true);
     fDSoundBuffer->SetScalarVolume(1.0);
     return true;
 }

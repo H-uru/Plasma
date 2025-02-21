@@ -133,7 +133,7 @@ protected:
     void    IRead(hsStream *s, hsResMgr *mgr) override;
     void    IWrite(hsStream *s, hsResMgr *mgr) override;
 
-    void    IRefreshEAXSettings(bool force = false) override;
+    void    IRefreshEFXSettings(bool force = false) override;
 };
 
 #endif //plWin32Sound_h
