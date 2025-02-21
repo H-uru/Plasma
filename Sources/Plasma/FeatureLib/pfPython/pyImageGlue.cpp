@@ -252,7 +252,7 @@ void pyImage::AddPlasmaClasses(PyObject *m)
 }
 
 #ifndef BUILDING_PYPLASMA
-PYTHON_GLOBAL_METHOD_DEFINITION(PtFindImage, args, "Params: name\nFind an already loaded image by name.")
+PYTHON_GLOBAL_METHOD_DEFINITION(PtFindImage, args, "Type: (name: str) -> Iterable[ptImage]\nFind an already loaded image by name.")
 {
     ST::string name;
     if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name)) {

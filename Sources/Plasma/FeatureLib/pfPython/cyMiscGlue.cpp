@@ -135,7 +135,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetLocalPlayer, "Returns a ptPlayer obj
     return cyMisc::GetLocalPlayer();
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtIsSolo, "Returns whether we are the only player in the Age")
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtIsSolo, "Type: () -> bool\nReturns whether we are the only player in the Age")
 {
     return plPython::ConvertFrom(cyMisc::IsSolo());
 }
@@ -196,7 +196,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetClientIDFromAvatarKey, args, "Params: avata
     return PyLong_FromLong(cyMisc::GetClientIDFromAvatarKey(*key));
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtGetNPCByID, args, "This will return the NPC with a specific ID")
+PYTHON_GLOBAL_METHOD_DEFINITION(PtGetNPCByID, args, "Params: npcID\nThis will return the NPC with a specific ID")
 {
     int npcID;
     if (!PyArg_ParseTuple(args, "i", &npcID))
@@ -421,7 +421,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDumpLogs, args, "Params: folder\nDumps all cur
     PYTHON_RETURN_BOOL(cyMisc::DumpLogs(folder));
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtCloneKey, args, "Params: key, loading=false\nCreates clone of key")
+PYTHON_GLOBAL_METHOD_DEFINITION(PtCloneKey, args, "Params: key, loading=False\nCreates clone of key")
 {
     PyObject* keyObj = nullptr;
     char loading = 0;
