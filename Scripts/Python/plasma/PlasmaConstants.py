@@ -68,25 +68,25 @@ class PtAccountUpdateType:
 
 class PtBehaviorTypes:
     """(none)"""
-    kBehaviorTypeFall = 8192
-    kBehaviorTypeIdle = 32
+    kBehaviorTypeStandingJump = 1
     kBehaviorTypeWalkingJump = 2
-    kBehaviorTypeSidestepRight = 4096
     kBehaviorTypeRunningJump = 4
-    kBehaviorTypeLinkIn = 65536
     kBehaviorTypeAnyJump = 7
     kBehaviorTypeRunningImpact = 8
+    kBehaviorTypeGroundImpact = 16
+    kBehaviorTypeAnyImpact = 24
+    kBehaviorTypeIdle = 32
     kBehaviorTypeWalk = 64
     kBehaviorTypeRun = 128
-    kBehaviorTypeTurnRight = 1024
     kBehaviorTypeWalkBack = 256
-    kBehaviorTypeMovingTurnLeft = 16384
-    kBehaviorTypeGroundImpact = 16
-    kBehaviorTypeStandingJump = 1
     kBehaviorTypeTurnLeft = 512
-    kBehaviorTypeAnyImpact = 24
+    kBehaviorTypeTurnRight = 1024
     kBehaviorTypeSidestepLeft = 2048
+    kBehaviorTypeSidestepRight = 4096
+    kBehaviorTypeFall = 8192
+    kBehaviorTypeMovingTurnLeft = 16384
     kBehaviorTypeMovingTurnRight = 32768
+    kBehaviorTypeLinkIn = 65536
     kBehaviorTypeLinkOut = 131072
 
 class PtBookEventTypes:
@@ -114,20 +114,6 @@ class PtButtonNotifyTypes:
     kNotifyOnDown = 1
     kNotifyOnUpAndDown = 2
 
-class PtConfirmationResult:
-    OK = 1
-    Cancel = 0
-    Yes = 1
-    No = 0
-    Quit = 1
-    Logout = 62
-
-class PtConfirmationType:
-    OK = 0
-    ConfirmQuit = 1
-    ForceQuit = 2
-    YesNo = 3
-
 class PtCCRPetitionType:
     """(none)"""
     kGeneralHelp = 0
@@ -137,6 +123,20 @@ class PtCCRPetitionType:
     kHarass = 4
     kStuck = 5
     kTechnical = 6
+
+class PtConfirmationResult:
+    Cancel = 0
+    No = 0
+    OK = 1
+    Quit = 1
+    Yes = 1
+    Logout = 62
+
+class PtConfirmationType:
+    OK = 0
+    ConfirmQuit = 1
+    ForceQuit = 2
+    YesNo = 3
 
 class PtEventType:
     """(none)"""
@@ -154,6 +154,12 @@ class PtEventType:
     kClickDrag = 12
     kOfferLinkingBook = 14
     kBook = 15
+
+class PtFontFlags:
+    """(none)"""
+    kFontBold = 1
+    kFontItalic = 2
+    kFontShadowed = 4
 
 class PtGUIMultiLineDirection:
     """(none)"""
@@ -181,12 +187,6 @@ class PtJustify:
     kLeftJustify = 0
     kCenter = 1
     kRightJustify = 2
-
-class PtFontFlags:
-    """(none)"""
-    kFontBold = 1
-    kFontItalic = 2
-    kFontShadowed = 4
 
 class PtLOSObjectType:
     """(none)"""
@@ -247,13 +247,14 @@ class PtNotifyDataType:
 
 class PtSDLReadWriteOptions:
     """(none)"""
-    kTimeStampOnRead = 16
     kDirtyOnly = 1
     kSkipNotificationInfo = 2
     kBroadcast = 4
+    kTimeStampOnRead = 16
 
 class PtSDLVarType:
     """(none)"""
+    kNone = -1
     kInt = 0
     kFloat = 1
     kBool = 2
@@ -270,7 +271,6 @@ class PtSDLVarType:
     kRGB = 52
     kRGBA = 53
     kQuaternion = 54
-    kNone = -1
 
 class PtScoreRankGroups:
     """(none)"""
@@ -286,14 +286,14 @@ class PtScoreTimePeriods:
 
 class PtStatusLogFlags:
     """(none)"""
-    kDebugOutput = 32
     kFilledBackground = 1
     kAppendToLast = 2
     kDontWriteFile = 4
     kDeleteForMe = 8
+    kAlignToTop = 16
+    kDebugOutput = 32
     kTimestamp = 64
     kStdout = 128
     kTimeInSeconds = 256
-    kAlignToTop = 16
     kTimeAsDouble = 512
 
