@@ -99,11 +99,8 @@ bool plWin32StaticSound::LoadSound( bool is3D )
 
         // We need it to be resident to read in
         plSoundBuffer::ELoadReturnVal retVal = IPreLoadBuffer(true);
-        plSoundBuffer *buffer = (plSoundBuffer *)fDataBufferKey->ObjectIsLoaded();  
-        if(!buffer)
-        {
+        if (!fDataBuffer)
             return plSoundBuffer::kError;
-        }
 
         if( retVal == plSoundBuffer::kPending)  // we are still reading data. 
         {
@@ -120,7 +117,7 @@ bool plWin32StaticSound::LoadSound( bool is3D )
         
         SetProperty( kPropIs3DSound, is3D );
 
-        plWAVHeader header = buffer->GetHeader();
+        plWAVHeader header = fDataBuffer->GetHeader();
 
         // Debug flag #2
         if( fChannelSelect == 0 && header.fNumChannels > 1 && plgAudioSys::IsDebugFlagSet( plgAudioSys::kDisableLeftSelect ) )
@@ -129,7 +126,7 @@ bool plWin32StaticSound::LoadSound( bool is3D )
             fFailed = true;
             return false;
         }
-        uint32_t bufferSize = buffer->GetDataLength();
+        uint32_t bufferSize = fDataBuffer->GetDataLength();
 
         if( header.fNumChannels > 1 && is3D )
         {
@@ -163,7 +160,7 @@ bool plWin32StaticSound::LoadSound( bool is3D )
     
         plProfile_BeginTiming( StaticSndShoveTime );
 
-        if(!fDSoundBuffer->FillBuffer(buffer->GetData(), buffer->GetDataLength(), &header))
+        if (!fDSoundBuffer->FillBuffer(fDataBuffer->GetData(), fDataBuffer->GetDataLength(), &header))
         {
             delete fDSoundBuffer;
             fDSoundBuffer = nullptr;
