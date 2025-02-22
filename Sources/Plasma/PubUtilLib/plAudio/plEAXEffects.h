@@ -39,6 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 //////////////////////////////////////////////////////////////////////////////
 //                                                                          //
 //  plEAXEffects - Various classes and wrappers to support EAX              //
@@ -49,9 +50,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plEAXEffects_h
 #define _plEAXEffects_h
 
+#include <set>
+#include <efx.h>
+#include <efx-presets.h>
 
 #include "HeadSpin.h"
-#include <set>
 
 
 //// Listener Settings Class Definition ///////////////////////////////////////
@@ -59,48 +62,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plDSoundBuffer;
 class plEAXListenerMod;
 
-#ifdef EAX_SDK_AVAILABLE
-typedef struct _EAXREVERBPROPERTIES EAXREVERBPROPERTIES;
-#else
-#include "plEAXStructures.h"
-#endif
-
-#if HS_BUILD_FOR_WIN32
-    typedef struct _GUID GUID;
-#else
-    typedef char* GUID;
-#endif
-
 class plEAXListener 
 {   
 public:
-    ~plEAXListener();
-    static plEAXListener    &GetInstance();
+    ~plEAXListener() { Shutdown();  }
+    static plEAXListener  &GetInstance();
 
     bool    Init();
     void    Shutdown();
 
-    bool SetGlobalEAXProperty(GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize );
-    bool GetGlobalEAXProperty(GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize );
-
-    void    ProcessMods(const std::set<plEAXListenerMod*>& modArray );
+    void    ProcessMods(const std::set<plEAXListenerMod*>& modArray);
     void    ClearProcessCache();
 
 protected:
-    plEAXListener();
-    void    IFail( bool major );
-    void    IFail( const char *msg, bool major );
+    plEAXListener() : fInited(), fEffectID() { ClearProcessCache(); }
+    void    IFail(bool fatal);
+    void    IFail(const char *msg, bool fatal);
     void    IRelease();
 
-    void    IMuteProperties( EAXREVERBPROPERTIES *props, float percent );
+    void IMuteProperties(EFXEAXREVERBPROPERTIES *props, float percent);
 
-    bool                fInited;
+    bool fInited;
     
     // Cache info
-    int32_t               fLastModCount;
-    bool                fLastWasEmpty;
-    float            fLastSingleStrength;
-    plEAXListenerMod    *fLastBigRegion;
+    size_t             fLastModCount;
+    bool               fLastWasEmpty;
+    float              fLastSingleStrength;
+    plEAXListenerMod  *fLastBigRegion;
+    ALuint             fEffectID;
 
 };
 
@@ -112,19 +101,19 @@ class hsStream;
 class plEAXSourceSoftSettings
 {
 public:
-        int16_t       fOcclusion;
+        int16_t  fOcclusion;
         float    fOcclusionLFRatio, fOcclusionRoomRatio, fOcclusionDirectRatio;
 
-        void        Read( hsStream *s );
-        void        Write( hsStream *s );
+        void     Read( hsStream *s );
+        void     Write( hsStream *s );
 
-        void        SetOcclusion( int16_t occ, float lfRatio, float roomRatio, float directRatio );
-        int16_t       GetOcclusion() const { return fOcclusion; }
+        void     SetOcclusion( int16_t occ, float lfRatio, float roomRatio, float directRatio );
+        int16_t  GetOcclusion() const { return fOcclusion; }
         float    GetOcclusionLFRatio() const { return fOcclusionLFRatio; }
         float    GetOcclusionRoomRatio() const { return fOcclusionRoomRatio; }
         float    GetOcclusionDirectRatio() const { return fOcclusionDirectRatio; }
 
-        void        Reset();
+        void     Reset();
 };
 
 //// Buffer Settings Class Definition /////////////////////////////////////////
@@ -134,8 +123,8 @@ class plEAXSource;
 class plEAXSourceSettings
 {
     public:
-        plEAXSourceSettings();
-        virtual ~plEAXSourceSettings();
+        plEAXSourceSettings() : fDirtyParams(kAll) { Enable(false); }
+        virtual ~plEAXSourceSettings() { }
 
         void    Read( hsStream *s );
         void    Write( hsStream *s );
@@ -144,42 +133,42 @@ class plEAXSourceSettings
         bool    IsEnabled() const { return fEnabled; }
 
         void    SetRoomParams( int16_t room, int16_t roomHF, bool roomAuto, bool roomHFAuto );
-        int16_t   GetRoom() const   { return fRoom; }
-        int16_t   GetRoomHF()  const  { return fRoomHF; }
+        int16_t GetRoom() const   { return fRoom; }
+        int16_t GetRoomHF()  const  { return fRoomHF; }
         bool    GetRoomAuto() const   { return fRoomAuto; }
         bool    GetRoomHFAuto() const  { return fRoomHFAuto; }
 
         void    SetOutsideVolHF( int16_t vol );
-        int16_t   GetOutsideVolHF() const { return fOutsideVolHF; }
+        int16_t GetOutsideVolHF() const { return fOutsideVolHF; }
 
-        void        SetFactors( float airAbsorption, float roomRolloff, float doppler, float rolloff );
-        float    GetAirAbsorptionFactor() const { return fAirAbsorptionFactor; }
-        float    GetRoomRolloffFactor() const { return fRoomRolloffFactor; }
-        float    GetDopplerFactor() const { return fDopplerFactor; }
-        float    GetRolloffFactor() const { return fRolloffFactor; }
+        void    SetFactors( float airAbsorption, float roomRolloff, float doppler, float rolloff );
+        float   GetAirAbsorptionFactor() const { return fAirAbsorptionFactor; }
+        float   GetRoomRolloffFactor() const { return fRoomRolloffFactor; }
+        float   GetDopplerFactor() const { return fDopplerFactor; }
+        float   GetRolloffFactor() const { return fRolloffFactor; }
 
         plEAXSourceSoftSettings &GetSoftStarts() { return fSoftStarts; }
         plEAXSourceSoftSettings &GetSoftEnds() { return fSoftEnds; }
         
         plEAXSourceSoftSettings &GetCurrSofts()  { return fCurrSoftValues; }
 
-        void        SetOcclusionSoftValue( float value );
-        float    GetOcclusionSoftValue() const { return fOcclusionSoftValue; }
+        void  SetOcclusionSoftValue( float value );
+        float GetOcclusionSoftValue() const { return fOcclusionSoftValue; }
 
-        void        ClearDirtyParams() const { fDirtyParams = 0; }
+        void  ClearDirtyParams() const { fDirtyParams = 0; }
 
     protected:
         friend class plEAXSource;
         friend class plEAXSourceSoftSettings;
 
-        bool        fEnabled;
-        int16_t       fRoom, fRoomHF;
-        bool        fRoomAuto, fRoomHFAuto;
-        int16_t       fOutsideVolHF;
-        float    fAirAbsorptionFactor, fRoomRolloffFactor, fDopplerFactor, fRolloffFactor;
+        bool    fEnabled;
+        int16_t fRoom, fRoomHF;
+        bool    fRoomAuto, fRoomHFAuto;
+        int16_t fOutsideVolHF;
+        float   fAirAbsorptionFactor, fRoomRolloffFactor, fDopplerFactor, fRolloffFactor;
+        float   fOcclusionSoftValue;
+        mutable uint32_t fDirtyParams;
         plEAXSourceSoftSettings fSoftStarts, fSoftEnds, fCurrSoftValues;
-        float    fOcclusionSoftValue;
-        mutable uint32_t      fDirtyParams;
 
         enum ParamSets
         {
@@ -201,18 +190,16 @@ public:
     friend class plEAXSourceSettings;
     friend class plEAXSourceSoftSettings;
 
-    plEAXSource();
-    virtual ~plEAXSource();
+    plEAXSource() : fInit(false) {}
+    virtual ~plEAXSource() { Release(); };
 
-    void    Init( plDSoundBuffer *parent );
-    void    Release();
-    bool    IsValid() const;
-    bool SetSourceEAXProperty(unsigned source, GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize);
-    bool GetSourceEAXProperty(unsigned source, GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize);
-    void    SetFrom(  plEAXSourceSettings *settings, unsigned source, bool force = false );
+    void Init( plDSoundBuffer *parent );
+    void Release();
+    bool IsValid() const;
+    void SetFrom(plEAXSourceSettings *settings, ALuint source, bool force = false);
 
 private:
-    bool    fInit;
+    bool fInit;
 };
 
 #endif //_plEAXEffects_h
