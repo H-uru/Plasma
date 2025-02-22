@@ -92,12 +92,35 @@ public:
     {}
 
 private:
+    /**
+     * \param name parts of the "."-separated setting name
+     * \param value the setting value to parse
+     * \throws pfServerIniParseException if the setting name is unknown or the value is invalid for the given setting
+     */
     void IParseOption(const std::vector<ST::string>& name, const ST::string& value);
 
 public:
+    /**
+     * Parse server settings from the given server.ini file into this object.
+     *
+     * \param fileName the server.ini file to load
+     * \throws pfServerIniParseException if the server.ini file is invalid or could not be read
+     */
     void Parse(const plFileName& fileName);
+
+    /**
+     * Replace the global server configuration with the settings from this object.
+     * All settings are copied into global state,
+     * so this object doesn't need to be kept alive after this method returns.
+     */
     void Apply();
 
+    /**
+     * Load server settings from the given server.ini file into the global server configuration.
+     *
+     * \param fileName the server.ini file to load
+     * \throws pfServerIniParseException if the server.ini file is invalid or could not be read
+     */
     static void Load(const plFileName& fileName);
 };
 
