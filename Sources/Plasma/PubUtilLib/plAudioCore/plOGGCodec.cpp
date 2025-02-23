@@ -155,7 +155,7 @@ void    plOGGCodec::IOpen( const plFileName &path, plAudioCore::ChannelSelect wh
         /// Open the OGG decompressor
         int openRes = ov_open(fFileHandle, fOggFile, nullptr, 0);
         if (openRes < 0) {
-            IError(openRes, ST_LITERAL("Unable to open OGG source file"));
+            IError(openRes, ST::format("Unable to open OGG source file {}", path));
             return;
         }
 
