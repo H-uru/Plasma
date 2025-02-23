@@ -51,6 +51,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFile/plEncryptedStream.h"
 
+static ST::string JoinCommandName(const std::vector<ST::string>& name) {
+    ST::string_stream joined;
+    bool first = true;
+    for (const ST::string& part : name) {
+        if (first) {
+            first = false;
+        } else {
+            joined << '.';
+        }
+        joined << part;
+    }
+    return joined.to_string();
+}
+
 static void ParseIntegerInto(const ST::string& value, unsigned int& out)
 {
     ST::conversion_result res;
@@ -77,8 +91,10 @@ static void ParseBase64KeyInto(const ST::string& base64key, NetDhKey& output)
 
 void pfServerIni::IParseOption(const std::vector<ST::string>& name, const ST::string& value)
 {
-    if (name.empty() || name[0].compare_i("Server") != 0) {
-        throw pfServerIniParseException("Unknown option name");
+    if (name.empty()) {
+        throw pfServerIniParseException("server.ini setting name is empty?!");
+    } else if (name[0].compare_i("Server") != 0) {
+        throw pfServerIniParseException(ST::format("Unknown server.ini setting: {}", JoinCommandName(name)));
     }
 
     if (name.size() == 2 && name[1].compare_i("Status") == 0) {
@@ -101,7 +117,7 @@ void pfServerIni::IParseOption(const std::vector<ST::string>& name, const ST::st
         } else if (name[2].compare_i("G") == 0) {
             ParseIntegerInto(value, fAuthDhConstants.g);
         } else {
-            throw pfServerIniParseException("Unknown option name");
+            throw pfServerIniParseException(ST::format("Unknown server.ini setting: {}", JoinCommandName(name)));
         }
     } else if (name.size() == 3 && name[1].compare_i("Game") == 0) {
         if (name[2].compare_i("N") == 0) {
@@ -111,7 +127,7 @@ void pfServerIni::IParseOption(const std::vector<ST::string>& name, const ST::st
         } else if (name[2].compare_i("G") == 0) {
             ParseIntegerInto(value, fGameDhConstants.g);
         } else {
-            throw pfServerIniParseException("Unknown option name");
+            throw pfServerIniParseException(ST::format("Unknown server.ini setting: {}", JoinCommandName(name)));
         }
     } else if (name.size() == 3 && name[1].compare_i("Gate") == 0) {
         if (name[2].compare_i("Host") == 0) {
@@ -123,10 +139,10 @@ void pfServerIni::IParseOption(const std::vector<ST::string>& name, const ST::st
         } else if (name[2].compare_i("G") == 0) {
             ParseIntegerInto(value, fGateKeeperDhConstants.g);
         } else {
-            throw pfServerIniParseException("Unknown option name");
+            throw pfServerIniParseException(ST::format("Unknown server.ini setting: {}", JoinCommandName(name)));
         }
     } else {
-        throw pfServerIniParseException("Unknown option name");
+        throw pfServerIniParseException(ST::format("Unknown server.ini setting: {}", JoinCommandName(name)));
     }
 }
 
