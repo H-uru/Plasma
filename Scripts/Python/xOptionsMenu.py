@@ -1778,7 +1778,7 @@ class xOptionsMenu(ptModifier):
             return
 
         # set the key binds back to the saved
-        for controlCode, mappedKey in zip(kDefaultControlCodeBinds, KeyMapString.split(" ")):
+        for controlCode, mappedKey in zip(kDefaultControlCodeBinds, KeyMapString.split()):
             if isinstance(controlCode, str):
                 PtDebugPrint(f"xOptionsMenu.LoadKeyMap(): Binding {mappedKey=} to {controlCode=}", level=kWarningLevel)
                 km.bindKeyToConsoleCommand(mappedKey, controlCode)
