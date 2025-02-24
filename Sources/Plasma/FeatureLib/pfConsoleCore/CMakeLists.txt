@@ -1,9 +1,9 @@
 set(pfConsoleCore_SOURCES
     pfConsoleCmd.cpp
-    pfConsoleCommandsCore.cpp
     pfConsoleContext.cpp
     pfConsoleEngine.cpp
     pfConsoleParser.cpp
+    pfServerIni.cpp
 )
 
 set(pfConsoleCore_HEADERS
@@ -11,6 +11,7 @@ set(pfConsoleCore_HEADERS
     pfConsoleContext.h
     pfConsoleEngine.h
     pfConsoleParser.h
+    pfServerIni.h
 )
 
 plasma_library(pfConsoleCore

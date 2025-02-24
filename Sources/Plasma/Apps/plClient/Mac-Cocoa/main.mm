@@ -61,6 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // stdlib
 #include <algorithm>
 #include <regex>
+#include <string_theory/format>
 #include <unordered_set>
 
 // Plasma engine
@@ -68,6 +69,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plClient/plClientLoader.h"
 #include "plCmdParser.h"
 #include "pfConsoleCore/pfConsoleEngine.h"
+#include "pfConsoleCore/pfServerIni.h"
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
 #ifdef PLASMA_PIPELINE_GL
 #include "pfGLPipeline/plGLPipeline.h"
@@ -319,8 +321,12 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     FILE* serverIniFile = plFileSystem::Open(serverIni, "rb");
     if (serverIniFile) {
         fclose(serverIniFile);
-        pfConsoleEngine tempConsole;
-        tempConsole.ExecuteFile(serverIni);
+        try {
+            pfServerIni::Load(serverIni);
+        } catch (const pfServerIniParseException& exc) {
+            hsMessageBox(ST::format("Error in server.ini file. Please check your URU installation.\n{}", exc.what()), ST_LITERAL("Error"), hsMessageBoxNormal);
+            [NSApplication.sharedApplication terminate:nil];
+        }
     } else {
         hsMessageBox(ST_LITERAL("No server.ini file found.  Please check your URU installation."), ST_LITERAL("Error"), hsMessageBoxNormal);
         [NSApplication.sharedApplication terminate:nil];

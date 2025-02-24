@@ -46,19 +46,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pnNbConst.h"
 
+using NetDhKey = uint8_t[kNetDiffieHellmanKeyBits / 8];
+
+struct NetDhConstants
+{
+    uint32_t g;
+    NetDhKey n;
+    NetDhKey x;
+};
+
 // Auth Server
-extern uint32_t kAuthDhGValue;
-extern uint8_t kAuthDhNData[kNetDiffieHellmanKeyBits / 8];
-extern uint8_t kAuthDhXData[kNetDiffieHellmanKeyBits / 8];
+extern NetDhConstants gNetAuthDhConstants;
 
 // Game Server
-extern uint32_t kGameDhGValue;
-extern uint8_t kGameDhNData[kNetDiffieHellmanKeyBits / 8];
-extern uint8_t kGameDhXData[kNetDiffieHellmanKeyBits / 8];
+extern NetDhConstants gNetGameDhConstants;
 
 // GateKeeper Server
-extern uint32_t kGateKeeperDhGValue;
-extern uint8_t kGateKeeperDhNData[kNetDiffieHellmanKeyBits / 8];
-extern uint8_t kGateKeeperDhXData[kNetDiffieHellmanKeyBits / 8];
+extern NetDhConstants gNetGateKeeperDhConstants;
 
 #endif // pnNbKeys_inc
