@@ -184,19 +184,20 @@ PYTHON_METHOD_DEFINITION_STATIC_NOARGS(ptGmMarker, isSupported)
 }
 
 PYTHON_START_METHODS_TABLE(ptGmMarker)
-    PYTHON_METHOD_NOARGS(ptGmMarker, startGame, "Request for the server to start the marker game."),
-    PYTHON_METHOD_NOARGS(ptGmMarker, pauseGame, "Request for the server to pause the marker game."),
-    PYTHON_METHOD_NOARGS(ptGmMarker, resetGame, "Request for the server to clear all markers to the uncaptured state."),
-    PYTHON_METHOD(ptGmMarker, changeGameName, "Request for the server to change the internal marker game name."),
-    PYTHON_METHOD(ptGmMarker, changeTimeLimit, "Request for the server to change the marker game's time limit."),
-    PYTHON_METHOD_NOARGS(ptGmMarker, deleteGame, "Request for the server to delete all data associated with this game, including "
+    PYTHON_METHOD_NOARGS(ptGmMarker, startGame, "Type: () -> None\nRequest for the server to start the marker game."),
+    PYTHON_METHOD_NOARGS(ptGmMarker, pauseGame, "Type: () -> None\nRequest for the server to pause the marker game."),
+    PYTHON_METHOD_NOARGS(ptGmMarker, resetGame, "Type: () -> None\nRequest for the server to clear all markers to the uncaptured state."),
+    PYTHON_METHOD(ptGmMarker, changeGameName, "Type: (name: str) -> None\nRequest for the server to change the internal marker game name."),
+    PYTHON_METHOD(ptGmMarker, changeTimeLimit, "Type: (timeLimit: int) -> None\nRequest for the server to change the marker game's time limit."),
+    PYTHON_METHOD_NOARGS(ptGmMarker, deleteGame, "Type: () -> None\n"
+                                                 "Request for the server to delete all data associated with this game, including "
                                                  "the marker definitions and game name."),
-    PYTHON_METHOD_WKEY(ptGmMarker, addMarker, "Request for the server to add a new marker to the game."),
-    PYTHON_METHOD(ptGmMarker, deleteMarker, "Request for the server to delete a specific marker from the game."),
-    PYTHON_METHOD(ptGmMarker, changeMarkerName, "Request for the server to change the name of a specific marker from the game."),
-    PYTHON_METHOD(ptGmMarker, captureMarker, "Request for the server to register a capture of the specified marker for our team."),
-    PYTHON_METHOD_STATIC(ptGmMarker, create, "Initialize a new marker game client with the server."),
-    PYTHON_METHOD_STATIC_NOARGS(ptGmMarker, isSupported, "Checks for the presence of a server-side marker game manager."),
+    PYTHON_METHOD_WKEY(ptGmMarker, addMarker, "Type: (x: float, y: float, z: float, name: str, age: str) -> None\nRequest for the server to add a new marker to the game."),
+    PYTHON_METHOD(ptGmMarker, deleteMarker, "Type: (markerID: int) -> None\nRequest for the server to delete a specific marker from the game."),
+    PYTHON_METHOD(ptGmMarker, changeMarkerName, "Type: (markerID: int) -> None\nRequest for the server to change the name of a specific marker from the game."),
+    PYTHON_METHOD(ptGmMarker, captureMarker, "Type: (markerId: int) -> None\nRequest for the server to register a capture of the specified marker for our team."),
+    PYTHON_METHOD_STATIC(ptGmMarker, create, "Type: (handler: Any, gameType: int, templateId: Optional[str]) -> None\nInitialize a new marker game client with the server."),
+    PYTHON_METHOD_STATIC_NOARGS(ptGmMarker, isSupported, "Type: () -> bool\nChecks for the presence of a server-side marker game manager."),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition

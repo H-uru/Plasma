@@ -61,7 +61,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGameCli, leaveGame)
 }
 
 PYTHON_START_METHODS_TABLE(ptGameCli)
-    PYTHON_METHOD_NOARGS(ptGameCli, leaveGame, "Explicitly ask the server to allow us to leave the game."),
+    PYTHON_METHOD_NOARGS(ptGameCli, leaveGame, "Type: () -> None\nExplicitly ask the server to allow us to leave the game."),
 PYTHON_END_METHODS_TABLE;
 
 PYTHON_GET_DEFINITION_PROXY(ptGameCli, gameID, GetGameID)
@@ -77,10 +77,10 @@ PYTHON_GET_DEFINITION_PROXY(ptGameCli, ownerID, GetOwnerID)
 PYTHON_SET_DEFINITION_READONLY(ptGameCli, ownerID)
 
 PYTHON_START_GETSET_TABLE(ptGameCli)
-    PYTHON_GETSET(ptGameCli, gameID, "Gets the ID of the game instance on the server."),
-    PYTHON_GETSET(ptGameCli, handler, "Gets the game event handler."),
-    PYTHON_GETSET(ptGameCli, isLocallyOwned, "Gets whether or not we are the owner of this game instance."),
-    PYTHON_GETSET(ptGameCli, ownerID, "Gets the ID of the player who owns this game instance."),
+    PYTHON_GETSET(ptGameCli, gameID, "Type: int\nThe ID of the game instance on the server."),
+    PYTHON_GETSET(ptGameCli, handler, "Type: Any\nThe game event handler."),
+    PYTHON_GETSET(ptGameCli, isLocallyOwned, "Type: bool\nWhether or not we are the owner of this game instance."),
+    PYTHON_GETSET(ptGameCli, ownerID, "Type: int\nThe ID of the player who owns this game instance."),
 PYTHON_END_GETSET_TABLE;
 
 // Type structure definition
