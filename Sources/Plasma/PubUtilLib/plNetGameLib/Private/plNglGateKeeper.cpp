@@ -839,9 +839,7 @@ void GateKeeperInitialize () {
         kNetProtocolCli2GateKeeper,
         s_send, std::size(s_send),
         s_recv, std::size(s_recv),
-        kGateKeeperDhGValue,
-        plBigNum(sizeof(kGateKeeperDhXData), kGateKeeperDhXData),
-        plBigNum(sizeof(kGateKeeperDhNData), kGateKeeperDhNData)
+        gNetGateKeeperDhConstants
     );
 }
 

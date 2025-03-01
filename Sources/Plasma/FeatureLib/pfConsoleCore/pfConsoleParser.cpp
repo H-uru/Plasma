@@ -145,6 +145,24 @@ pfConsoleCmd* pfConsoleParser::ParseCommand()
     return group->FindCommandNoCase(*token);
 }
 
+std::vector<ST::string> pfConsoleParser::ParseUnknownCommandName()
+{
+    std::vector<ST::string> parts;
+    auto token = fTokenizer.NextNamePart();
+    while (token) {
+        parts.emplace_back(std::move(*token));
+        // Continue parsing name part tokens
+        // as long as the last token was terminated by a . or _ character.
+        // This stops when reaching an argument token or the end of the line.
+        char trailingSep = fTokenizer.fPos[-1];
+        if (trailingSep != '.' && trailingSep != '_') {
+            break;
+        }
+        token = fTokenizer.NextNamePart();
+    }
+    return parts;
+}
+
 std::optional<std::vector<ST::string>> pfConsoleParser::ParseArguments()
 {
     std::vector<ST::string> args;

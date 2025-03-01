@@ -78,6 +78,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plWinDpi/plWinDpi.h"
 
 #include "pfConsoleCore/pfConsoleEngine.h"
+#include "pfConsoleCore/pfServerIni.h"
 #include "pfCrashHandler/plCrashCli.h"
 #include "pfPasswordStore/pfPasswordStore.h"
 
@@ -1201,8 +1202,12 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     if (serverIniFile)
     {
         fclose(serverIniFile);
-        pfConsoleEngine tempConsole;
-        tempConsole.ExecuteFile(serverIni);
+        try {
+            pfServerIni::Load(serverIni);
+        } catch (const pfServerIniParseException& exc) {
+            hsMessageBox(ST::format("Error in server.ini file. Please check your URU installation.\n{}", exc.what()), ST_LITERAL("Error"), hsMessageBoxNormal);
+            return PARABLE_NORMAL_EXIT;
+        }
     }
     else
     {

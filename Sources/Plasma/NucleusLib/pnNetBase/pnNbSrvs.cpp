@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNbSrvs.h"
 #include <string_theory/string>
 
+#include "pnNbConst.h"
+
 /*****************************************************************************
 *
 *   Local data
@@ -53,7 +55,7 @@ static ST::string s_authAddrs[] = { ST::string() };
 static ST::string s_fileAddrs[] = { ST::string() };
 static ST::string s_gateKeeperAddrs[] = { ST::string() };
 
-static unsigned s_clientPort = 14617;
+static unsigned s_clientPort = kDefaultClientPort;
 
 
 /*****************************************************************************

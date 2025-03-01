@@ -278,11 +278,15 @@ NetMsgChannel* NetMsgChannelCreate(
     uint32_t                sendMsgCount,
     const NetMsgInitRecv    recvMsgs[],
     uint32_t                recvMsgCount,
-    uint32_t                dh_g,
-    const plBigNum&         dh_x,
-    const plBigNum&         dh_n
+    NetDhConstants          dhConstants
 ) {
-    NetMsgChannel* channel = new NetMsgChannel(protocol, dh_g, dh_x, dh_n);
+    plBigNum dh_x;
+    dh_x.FromData_BE(sizeof(dhConstants.x), dhConstants.x);
+
+    plBigNum dh_n;
+    dh_n.FromData_BE(sizeof(dhConstants.n), dhConstants.n);
+
+    NetMsgChannel* channel = new NetMsgChannel(protocol, dhConstants.g, dh_x, dh_n);
 
     if (sendMsgCount) {
         AddSendMsgs(channel, sendMsgs, sendMsgCount);
