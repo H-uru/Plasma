@@ -161,12 +161,12 @@ def format_qualified_name(cls: type, context_module_name: str) -> str:
     if cls.__module__ in {"builtins", context_module_name}:
         return cls.__qualname__
     else:
-        return cls.__module__ + "." + cls.__qualname__
+        return f"{cls.__module__}.{cls.__qualname__}"
 
 def add_indents(indent: str, lines: Iterable[str]) -> Iterable[str]:
     for line in lines:
         if line:
-            yield indent + line
+            yield f"{indent}{line}"
         else:
             # Don't add extra whitespace on blank lines.
             yield ""
@@ -202,10 +202,12 @@ def generate_function_stub(kind: FunctionKind, name: str, signature: str, doc: s
     if self_param is not None:
         # Insert the self parameter into the method signature.
         if signature.startswith("()"):
-            signature = "(" + self_param + ")" + signature.removeprefix("()")
+            signature_tail = signature.removeprefix("()")
+            signature = f"({self_param}){signature_tail}"
         elif signature.startswith("("):
             # No space after the comma for now, to match the existing stubs.
-            signature = "(" + self_param + "," + signature.removeprefix("(")
+            signature_tail = signature.removeprefix("(")
+            signature = f"({self_param},{signature_tail}"
         else:
             raise ValueError(f"{docstring_type_prefix!r} declaration in method docstring doesn't look like a function signature: {signature!r}")
 
@@ -235,7 +237,8 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
         for base in cls.__bases__:
             base_names.append(format_qualified_name(base, cls.__module__))
 
-        class_parens = "(" + ", ".join(base_names) + ")"
+        base_names_concat = ", ".join(base_names)
+        class_parens = f"({base_names_concat})"
 
     init_signature, doc = parse_type_from_doc(cls.__doc__)
 
@@ -376,7 +379,7 @@ def run(dest_dir: str = "plasma_stubs_generated") -> None:
         # Generate all the lines first and only write the file afterwards
         # to avoid leaving behind a half-written file if generate_module_stub throws an exception.
         lines = list(generate_module_stub(module))
-        stub_file = os.path.join(dest_dir, module.__name__ + ".py")
+        stub_file = os.path.join(dest_dir, f"{module.__name__}.py")
         with open(stub_file, "w", encoding="utf-8", newline="\n") as f:
             for line in lines:
-                f.write(line + "\n")
+                print(line, file=f)
