@@ -92,10 +92,10 @@ PYTHON_METHOD_DEFINITION_STATIC_NOARGS(ptGmBlueSpiral, isSupported)
 }
 
 PYTHON_START_METHODS_TABLE(ptGmBlueSpiral)
-    PYTHON_METHOD_NOARGS(ptGmBlueSpiral, startGame, "Request for the server to start the game timer."),
-    PYTHON_METHOD(ptGmBlueSpiral, hitCloth, "Request for the server to hit a specific cloth index and validate the correct sequence of cloth inputs."),
-    PYTHON_METHOD_STATIC(ptGmBlueSpiral, join, "Join a common blue spiral game in the current Age."),
-    PYTHON_METHOD_STATIC_NOARGS(ptGmBlueSpiral, isSupported, "Checks for the presence of a server-side blue spiral game manager."),
+    PYTHON_METHOD_NOARGS(ptGmBlueSpiral, startGame, "Type: () -> None\nRequest for the server to start the game timer."),
+    PYTHON_METHOD(ptGmBlueSpiral, hitCloth, "Type: (cloth: int) -> None\nRequest for the server to hit a specific cloth index and validate the correct sequence of cloth inputs."),
+    PYTHON_METHOD_STATIC(ptGmBlueSpiral, join, "Type: (handler: Any, tableID: int) -> None\nJoin a common blue spiral game in the current Age."),
+    PYTHON_METHOD_STATIC_NOARGS(ptGmBlueSpiral, isSupported, "Type: () -> bool\nChecks for the presence of a server-side blue spiral game manager."),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition

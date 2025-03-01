@@ -94,17 +94,17 @@ class ptGmBlueSpiral(ptGameCli):
         """None"""
         pass
 
-    def hitCloth(self):
+    def hitCloth(self,cloth: int) -> None:
         """Request for the server to hit a specific cloth index and validate the correct sequence of cloth inputs."""
         pass
 
     @staticmethod
-    def isSupported():
+    def isSupported() -> bool:
         """Checks for the presence of a server-side blue spiral game manager."""
         pass
 
     @staticmethod
-    def join():
+    def join(handler: Any, tableID: int) -> None:
         """Join a common blue spiral game in the current Age."""
         pass
 
@@ -112,7 +112,7 @@ class ptGmBlueSpiral(ptGameCli):
         """Explicitly ask the server to allow us to leave the game."""
         pass
 
-    def startGame(self):
+    def startGame(self) -> None:
         """Request for the server to start the game timer."""
         pass
 
