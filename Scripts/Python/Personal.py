@@ -50,7 +50,7 @@ event manager hooks for the personal age
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
-from xLinkingBookDefs import xYeeshaPages
+import itertools
 
 kEmptyGuid = '0000000000000000'
 kIntroPlayedChronicle = "IntroPlayed"
@@ -213,13 +213,15 @@ class Personal(ptResponder):
         pass
 
     def ReportFoundPages(self):
-        ageSDL = PtGetAgeSDL()
-        PtDebugPrint("Personal.ReportFoundPages(): You've found the following Yeesha Pages:")
-        for thispage in xYeeshaPages:
-            varName = thispage[0]
-            if FoundValue := ageSDL[varName][0]:
-                PtDebugPrint(f"\t The value of the SDL variable '{varName}' is {FoundValue}")
-            else:
-                # The first not found page variable is the end of the list of Yeesha Pages.
-                break
+        if psnlSDL := ptAgeVault().getAgeSDL():
+            PtDebugPrint("Personal: You've found the following Yeesha Pages:")
+            for thispage in itertools.count(1):
+                varName = f"YeeshaPage{thispage}"
+                if FoundValue := psnlSDL.findVar(varName):
+                    PtDebugPrint(f"\t The value of the SDL variable '{varName}' is {FoundValue.getInt()}")
+                    if FoundValue.getInt() != 0: 
+                        PtDebugPrint(f"Personal: You have found Yeesha Page #{thispage}")
+                else:
+                    # The first not found page variable is the end of the list of Yeesha Pages.
+                    break
 
