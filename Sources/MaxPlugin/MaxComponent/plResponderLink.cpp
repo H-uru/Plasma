@@ -615,10 +615,10 @@ ParamBlockDesc2 gResponderOneShotBlock
 
     IDD_COMP_RESPOND_ONESHOT, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderOneShotProc,
 
-    kOneShotComp,   _T("oneShotComp"),          TYPE_REFTARG,       0, 0,
+    kOneShotComp,   _T("oneShotComp"),          TYPE_INODE,       0, 0,
         p_end,
 
-    kOneShotNode,   _T("oneShotNode"),          TYPE_REFTARG,       0, 0,
+    kOneShotNode,   _T("oneShotNode"),          TYPE_INODE,       0, 0,
         p_end,
 
     p_end
