@@ -53,7 +53,6 @@ from PlasmaTypes import *
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
 from xPsnlVaultSDL import *
-import xLinkingBookDefs
 
 PageNumber = ptAttribInt(1, "Yeesha Page Number")
 stringShowStates = ptAttribString(2,"States in which shown")
@@ -65,7 +64,6 @@ respDisable = ptAttribResponder(6, "Disabled resp (if necessary)")
 clusterList = ptAttribClusterList(7, "Cluster Group object list")
 
 #globals
-TotalPossibleYeeshaPages = len(xLinkingBookDefs.xYeeshaPages)
 HideCleftPole = 0
 
 
@@ -125,7 +123,6 @@ class psnlYeeshaPageChanges(ptMultiModifier):
 
     def OnServerInitComplete(self):
         "PlayerBook - determine what Yeesha pages are found"
-        global TotalPossibleYeeshaPages
         global HideCleftPole
         FoundYPs = [ ]
         CurrentPage = 0
@@ -196,15 +193,6 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                         newstate = CurrentValue
 
                     self.EnableDisable(newstate)
-                    
-                #There is only one object in Yeesha Page 5 with a value of 0, so I'm temporarily nestling my print statement here...
-                if PageNumber.value == 5 and stringShowStates.value == "0":
-                    PtDebugPrint("psnlYeeshaPageChanges: You've found the following Yeesha Pages:")
-                    for thispage in range(1,TotalPossibleYeeshaPages+1):
-                        FoundValue = ageSDL.findVar(f"YeeshaPage{thispage}")
-                        PtDebugPrint ("\t The previous value of the SDL variable %s is %s" % ("YeeshaPage" + str(thispage), FoundValue.getInt()))
-                        if FoundValue is not None and FoundValue.getInt() != 0: 
-                            PtDebugPrint ("psnlYeeshaPageChanges: You have found Yeesha Page # %s." % (thispage))
                             
             else:
                 PtDebugPrint(f"psnlYeeshaPageChanges: Error trying to access the ageSDL. ageSDL = {ageSDL}")
