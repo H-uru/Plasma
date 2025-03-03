@@ -4674,28 +4674,17 @@ void NetCliAuthStartConnect (
     authAddrCount = std::min(authAddrCount, 1u);
 
     for (unsigned i = 0; i < authAddrCount; ++i) {
-        // Do we need to lookup the address?
         const ST::string& name = authAddrList[i];
-        const char* pos;
-        for (pos = name.begin(); pos != name.end(); ++pos) {
-            if (!(isdigit(*pos) || *pos == '.' || *pos == ':')) {
-                AsyncAddressLookupName(name, GetClientPort(), [name](auto addrs) {
-                    if (addrs.empty()) {
-                        ReportNetError(kNetProtocolCli2Auth, kNetErrNameLookupFailed);
-                        return;
-                    }
-
-                    for (const plNetAddress& addr : addrs) {
-                        Connect(name, addr);
-                    }
-                });
-                break;
+        AsyncAddressLookupName(name, GetClientPort(), [name](auto addrs) {
+            if (addrs.empty()) {
+                ReportNetError(kNetProtocolCli2Auth, kNetErrNameLookupFailed);
+                return;
             }
-        }
-        if (pos == name.end()) {
-            plNetAddress addr(name, GetClientPort());
-            Connect(name, addr);
-        }
+
+            for (const plNetAddress& addr : addrs) {
+                Connect(name, addr);
+            }
+        });
     }
 }
 
