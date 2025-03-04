@@ -69,8 +69,8 @@ namespace plPython
 };
 
 PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtYesNoDialog, args, kwargs,
-            "Params: cb, message, /, dialogType\n"
-            "This will display a confirmation dialog to the user with the text `message` "
+            "Type: (cb: Union[None, ptKey, Callable], message: str, /, dialogType: int = PtConfirmationType.YesNo) -> None\n"
+            "This will display a confirmation dialog to the user with the text `message`. "
             "This dialog _has_ to be answered by the user, "
             "and their answer will be returned in a Notify message or callback given by `cb`.")
 {
@@ -108,7 +108,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtYesNoDialog, args, kwargs,
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtLocalizedYesNoDialog, args, kwargs,
-    "Params: cb, path, *args, /, *, dialogType\n"
+    "Type: (cb: Union[None, Callable, ptKey], path: str, *args, dialogType: int = PtConfirmationType.YesNo) -> None\n"
     "This will display a confirmation dialog to the user with the localized text `path` "
     "with any optional localization `args` applied. This dialog _has_ to be answered by the user, "
     "and their answer will be returned in a Notify message or callback given by `cb`.")
@@ -281,7 +281,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetFrameDeltaTime, "Returns the amount 
     return PyFloat_FromDouble(cyMisc::GetDelSysSeconds());
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=false, ageName=\"\"\nPages in node, or a list of nodes")
+PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=False, ageName=\"\"\nPages in node, or a list of nodes")
 {
     PyObject* nodeNameObj = nullptr;
     ST::string ageName;
@@ -320,7 +320,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtPageOutNode, args, "Params: nodeName, netForce = false\nPages out a node")
+PYTHON_GLOBAL_METHOD_DEFINITION(PtPageOutNode, args, "Params: nodeName, netForce=False\nPages out a node")
 {
     ST::string nodeName;
     char netForce = 0;

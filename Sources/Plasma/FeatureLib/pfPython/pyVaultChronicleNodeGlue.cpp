@@ -127,7 +127,7 @@ PYTHON_START_METHODS_TABLE(ptVaultChronicleNode)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-PLASMA_DEFAULT_TYPE_WBASE(ptVaultChronicleNode, pyVaultNode, "Plasma vault chronicle node");
+PLASMA_DEFAULT_TYPE_WBASE(ptVaultChronicleNode, pyVaultNode, "Params: n=0\nPlasma vault chronicle node");
 
 // required functions for PyObject interoperability
 PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultChronicleNode, pyVaultChronicleNode)

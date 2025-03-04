@@ -932,6 +932,9 @@ void PythonInterface::initPython()
 
     // Initialize built-in Plasma modules. For some reason, when using the append-inittab thingy,
     // we get complaints about these modules being leaked :(
+    // Note: If you add a new built-in module,
+    // please add it to the list in Scripts/Python/plasma/generate_stubs.py
+    // so that a stub will be generated for the new module.
     IInitBuiltinModule("Plasma", "Plasma 2.0 Game Library", dbgLog, AddPlasmaClasses, AddPlasmaMethods);
     IInitBuiltinModule("PlasmaConstants", "Plasma 2.0 Constants", dbgLog, AddPlasmaConstantsClasses);
     IInitBuiltinModule("PlasmaGame", "Plasma 2.0 GameMgr Library", dbgLog, AddPlasmaGameClasses);

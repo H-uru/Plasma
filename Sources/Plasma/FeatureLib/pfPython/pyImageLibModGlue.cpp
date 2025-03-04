@@ -104,7 +104,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptImageLibMod, getNames)
 PYTHON_START_METHODS_TABLE(ptImageLibMod)
     PYTHON_METHOD(ptImageLibMod, getImage, "Params: name\nReturns the ptImage with the specified name"),
     PYTHON_METHOD_NOARGS(ptImageLibMod, getImages, "Returns a tuple of the library's ptImages"),
-    PYTHON_METHOD_NOARGS(ptImageLibMod, getNames, "Returns the list of image names"),
+    PYTHON_METHOD_NOARGS(ptImageLibMod, getNames, "Returns a tuple of the image names"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
