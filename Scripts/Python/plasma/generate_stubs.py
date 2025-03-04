@@ -79,13 +79,7 @@ def attr_sort_key(item: tuple[str, object]) -> tuple[int, str]:
     return order, name
 
 def iter_attributes(obj: object) -> Iterable[tuple[str, object]]:
-    # Note: dir also includes class attributes inherited from superclasses!
-    # We currently want this, to match the existing stubs,
-    # but in the future we should switch to iterating over __dict__ instead
-    # so that only directly defined attributes are included.
-    # TODO Replace with __dict__ and manually add inherited methods
-    attrs = [(name, getattr(obj, name)) for name in dir(obj)]
-    attrs.sort(key=attr_sort_key)
+    attrs = sorted(obj.__dict__.items(), key=attr_sort_key)
 
     # Ensure that every class has its base classes defined first.
     # We manage the iteration index manually
@@ -247,9 +241,6 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
         yield f'    """{doc}"""'
 
     first = True
-    # This currently also includes attributes inherited from superclasses, to match the existing stubs.
-    # We should change this to only include attributes defined in the class itself.
-    # This would make stubs for subclasses a lot more readable.
     for name, value in iter_attributes(cls):
         if name == "__init__":
             # Don't put a blank line between the class docstring and __init__, to match the existing stubs.
@@ -272,24 +263,20 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
             yield from add_indents("    ", generate_class_stub(name, value))
         elif callable(value):
             kind: FunctionKind
-            if isinstance(value, types.BuiltinMethodType):
-                # C-defined non-instance methods have class builtin_function_or_method (aka types.BuiltinMethodType).
-                # This class is used for both static methods and class methods.
-                # It seems that we can tell them apart by looking at __self__,
-                # though this seems like an implementation detail and potentially brittle.
-
-                # If this breaks at some point,
-                # I guess we could just treat all non-instance methods as static methods
-                # (from a caller's perspective, static methods and class methods are almost indistinguishable anyway).
-
-                # A more reliable way might be to look at the class __dict__,
-                # where class methods show up as classmethod_descriptor (aka types.ClassMethodDescriptorType) objects
-                # and static methods as staticmethod objects.
-
-                if getattr(value, "__self__", None) is None:
-                    kind = "staticmethod"
-                else:
-                    kind = "classmethod"
+            if isinstance(value, staticmethod):
+                # C-defined static methods in a class __dict__
+                # have class staticmethod (just like Python-defined ones).
+                kind = "staticmethod"
+                # The __doc__ of staticmethod objects is staticmethod.__doc__,
+                # i. e. the docstring for staticmethod itself and not for the actual method!
+                # (Checked with Python 3.10.7.)
+                # Unwrap it so that the code below can get at the proper docstring.
+                value = value.__func__
+                assert isinstance(value, types.BuiltinMethodType)
+            elif isinstance(value, types.ClassMethodDescriptorType):
+                # C-defined class methods in a class __dict__
+                # have class classmethod_descriptor (aka types.ClassMethodDescriptorType).
+                kind = "classmethod"
             else:
                 # C-defined instance methods have two possible classes:
                 # either wrapper_descriptor (aka types.WrapperDescriptorType) for "special" methods (e. g. __init__),
