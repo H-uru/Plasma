@@ -72,7 +72,19 @@ public:
         SetThisThreadName(ST_LITERAL("hsHackWinFindThread"));
         while (1)
         {
-            HWND hMtlDlg = FindWindow(nullptr, _T("Material/Map Browser"));
+            const std::vector<std::wstring> possibleNames = {
+                L"Material/Map Browser",    // English
+                L"Material-/Map-Übersicht"  // German
+            };
+
+            HWND hMtlDlg = nullptr;
+            for (const auto &name : possibleNames) 
+            {
+                hMtlDlg = FindWindow(nullptr, name.c_str());
+                if (hMtlDlg) 
+                    break;
+            }
+
             if (hMtlDlg && IsWindowVisible(GetDlgItem(hMtlDlg, kOK)))
             {
                 SendMessage(GetDlgItem(hMtlDlg, kScene), BM_CLICK, 0, 0);
