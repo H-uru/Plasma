@@ -70,7 +70,7 @@ public:
     void Run() override
     {
         SetThisThreadName(ST_LITERAL("hsHackWinFindThread"));
-        while (1)
+        while (!GetQuit())
         {
             HWND hMtlDlg = FindWindow(nullptr, _T("Material/Map Browser"));
             if (hMtlDlg && IsWindowVisible(GetDlgItem(hMtlDlg, kOK)))
