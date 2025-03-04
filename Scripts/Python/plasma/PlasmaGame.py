@@ -77,19 +77,6 @@ class ptGameCli:
 
 class ptGmBlueSpiral(ptGameCli):
     """Legacy blue spiral game client."""
-
-    gameID: int
-    """The ID of the game instance on the server."""
-
-    handler: Any
-    """The game event handler."""
-
-    isLocallyOwned: bool
-    """Whether or not we are the owner of this game instance."""
-
-    ownerID: int
-    """The ID of the player who owns this game instance."""
-
     def __init__(self):
         """None"""
         pass
@@ -108,29 +95,12 @@ class ptGmBlueSpiral(ptGameCli):
         """Join a common blue spiral game in the current Age."""
         pass
 
-    def leaveGame(self) -> None:
-        """Explicitly ask the server to allow us to leave the game."""
-        pass
-
     def startGame(self) -> None:
         """Request for the server to start the game timer."""
         pass
 
 class ptGmMarker(ptGameCli):
     """Legacy marker game client."""
-
-    gameID: int
-    """The ID of the game instance on the server."""
-
-    handler: Any
-    """The game event handler."""
-
-    isLocallyOwned: bool
-    """Whether or not we are the owner of this game instance."""
-
-    ownerID: int
-    """The ID of the player who owns this game instance."""
-
     def __init__(self):
         """None"""
         pass
@@ -171,10 +141,6 @@ class ptGmMarker(ptGameCli):
     @staticmethod
     def isSupported() -> bool:
         """Checks for the presence of a server-side marker game manager."""
-        pass
-
-    def leaveGame(self) -> None:
-        """Explicitly ask the server to allow us to leave the game."""
         pass
 
     def pauseGame(self) -> None:

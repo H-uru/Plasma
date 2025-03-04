@@ -2452,140 +2452,16 @@ class ptGUIControlButton(ptGUIControl):
         """None"""
         pass
 
-    def disable(self):
-        """Disables this GUI control"""
-        pass
-
-    def enable(self,flag=1):
-        """Enables this GUI control"""
-        pass
-
-    def focus(self):
-        """Gets focus for this GUI control"""
-        pass
-
-    def getBackColor(self):
-        """Returns the background color"""
-        pass
-
-    def getBackSelectColor(self):
-        """Returns the background selection color"""
-        pass
-
-    def getFontFlags(self):
-        """Returns the current fontflags"""
-        pass
-
-    def getFontSize(self):
-        """Returns the font size"""
-        pass
-
-    def getForeColor(self):
-        """Returns the foreground color"""
-        pass
-
-    def getKey(self):
-        """Returns the ptKey for this GUI control"""
-        pass
-
     def getNotifyType(self):
         """Returns this button's notify type. See PtButtonNotifyTypes"""
-        pass
-
-    def getObjectCenter(self):
-        """Returns ptPoint3 of the center of the GUI control object"""
-        pass
-
-    def getOwnerDialog(self):
-        """Returns a ptGUIDialog of the dialog that owns this GUI control"""
-        pass
-
-    def getSelectColor(self):
-        """Returns the selection color"""
-        pass
-
-    def getTagID(self):
-        """Returns the Tag ID for this GUI control"""
-        pass
-
-    def hide(self):
-        """Hides this GUI control"""
         pass
 
     def isButtonDown(self):
         """Is the button down? Returns 1 for true otherwise returns 0"""
         pass
 
-    def isEnabled(self):
-        """Returns whether this GUI control is enabled"""
-        pass
-
-    def isFocused(self):
-        """Returns whether this GUI control has focus"""
-        pass
-
-    def isInteresting(self):
-        """Returns whether this GUI control is interesting at the moment"""
-        pass
-
-    def isVisible(self):
-        """Returns whether this GUI control is visible"""
-        pass
-
-    def refresh(self):
-        """UNKNOWN"""
-        pass
-
-    def setBackColor(self,r,g,b,a):
-        """Sets the background color"""
-        pass
-
-    def setBackSelectColor(self,r,g,b,a):
-        """Sets the selection background color"""
-        pass
-
-    def setFocus(self,state):
-        """Sets the state of the focus of this GUI control"""
-        pass
-
-    def setFontFlags(self,fontflags):
-        """Sets current fontflags"""
-        pass
-
-    def setFontSize(self,fontSize):
-        """Sets the font size"""
-        pass
-
-    def setForeColor(self,r,g,b,a):
-        """Sets the foreground color"""
-        pass
-
-    def setNotifyOnInteresting(self,state):
-        """Sets whether this control should send interesting events or not"""
-        pass
-
     def setNotifyType(self,kind):
         """Sets this button's notify type. See PtButtonNotifyTypes"""
-        pass
-
-    def setObjectCenter(self,point):
-        """Sets the GUI controls object center to 'point'"""
-        pass
-
-    def setSelectColor(self,r,g,b,a):
-        """Sets the selection color"""
-        pass
-
-    def setVisible(self,state):
-        """Sets the state of visibility of this GUI control"""
-        pass
-
-    def show(self):
-        """Shows this GUI control"""
-        pass
-
-    def unFocus(self):
-        """Releases focus for this GUI control"""
         pass
 
 class ptGUIControlCheckBox(ptGUIControl):
@@ -2594,178 +2470,18 @@ class ptGUIControlCheckBox(ptGUIControl):
         """None"""
         pass
 
-    def disable(self):
-        """Disables this GUI control"""
-        pass
-
-    def enable(self,flag=1):
-        """Enables this GUI control"""
-        pass
-
-    def focus(self):
-        """Gets focus for this GUI control"""
-        pass
-
-    def getBackColor(self):
-        """Returns the background color"""
-        pass
-
-    def getBackSelectColor(self):
-        """Returns the background selection color"""
-        pass
-
-    def getFontFlags(self):
-        """Returns the current fontflags"""
-        pass
-
-    def getFontSize(self):
-        """Returns the font size"""
-        pass
-
-    def getForeColor(self):
-        """Returns the foreground color"""
-        pass
-
-    def getKey(self):
-        """Returns the ptKey for this GUI control"""
-        pass
-
-    def getObjectCenter(self):
-        """Returns ptPoint3 of the center of the GUI control object"""
-        pass
-
-    def getOwnerDialog(self):
-        """Returns a ptGUIDialog of the dialog that owns this GUI control"""
-        pass
-
-    def getSelectColor(self):
-        """Returns the selection color"""
-        pass
-
-    def getTagID(self):
-        """Returns the Tag ID for this GUI control"""
-        pass
-
-    def hide(self):
-        """Hides this GUI control"""
-        pass
-
     def isChecked(self):
         """Is this checkbox checked? Returns 1 for true otherwise returns 0"""
-        pass
-
-    def isEnabled(self):
-        """Returns whether this GUI control is enabled"""
-        pass
-
-    def isFocused(self):
-        """Returns whether this GUI control has focus"""
-        pass
-
-    def isInteresting(self):
-        """Returns whether this GUI control is interesting at the moment"""
-        pass
-
-    def isVisible(self):
-        """Returns whether this GUI control is visible"""
-        pass
-
-    def refresh(self):
-        """UNKNOWN"""
-        pass
-
-    def setBackColor(self,r,g,b,a):
-        """Sets the background color"""
-        pass
-
-    def setBackSelectColor(self,r,g,b,a):
-        """Sets the selection background color"""
         pass
 
     def setChecked(self,checkedState):
         """Sets this checkbox to the 'checkedState'"""
         pass
 
-    def setFocus(self,state):
-        """Sets the state of the focus of this GUI control"""
-        pass
-
-    def setFontFlags(self,fontflags):
-        """Sets current fontflags"""
-        pass
-
-    def setFontSize(self,fontSize):
-        """Sets the font size"""
-        pass
-
-    def setForeColor(self,r,g,b,a):
-        """Sets the foreground color"""
-        pass
-
-    def setNotifyOnInteresting(self,state):
-        """Sets whether this control should send interesting events or not"""
-        pass
-
-    def setObjectCenter(self,point):
-        """Sets the GUI controls object center to 'point'"""
-        pass
-
-    def setSelectColor(self,r,g,b,a):
-        """Sets the selection color"""
-        pass
-
-    def setVisible(self,state):
-        """Sets the state of visibility of this GUI control"""
-        pass
-
-    def show(self):
-        """Shows this GUI control"""
-        pass
-
-    def unFocus(self):
-        """Releases focus for this GUI control"""
-        pass
-
 class ptGUIControlClickMap(ptGUIControl):
     """Plasma GUI control Click Map"""
     def __init__(self,ctrlKey):
         """None"""
-        pass
-
-    def disable(self):
-        """Disables this GUI control"""
-        pass
-
-    def enable(self,flag=1):
-        """Enables this GUI control"""
-        pass
-
-    def focus(self):
-        """Gets focus for this GUI control"""
-        pass
-
-    def getBackColor(self):
-        """Returns the background color"""
-        pass
-
-    def getBackSelectColor(self):
-        """Returns the background selection color"""
-        pass
-
-    def getFontFlags(self):
-        """Returns the current fontflags"""
-        pass
-
-    def getFontSize(self):
-        """Returns the font size"""
-        pass
-
-    def getForeColor(self):
-        """Returns the foreground color"""
-        pass
-
-    def getKey(self):
-        """Returns the ptKey for this GUI control"""
         pass
 
     def getLastMouseDragPoint(self):
@@ -2780,94 +2496,6 @@ class ptGUIControlClickMap(ptGUIControl):
         """Returns the last point the mouse was released at"""
         pass
 
-    def getObjectCenter(self):
-        """Returns ptPoint3 of the center of the GUI control object"""
-        pass
-
-    def getOwnerDialog(self):
-        """Returns a ptGUIDialog of the dialog that owns this GUI control"""
-        pass
-
-    def getSelectColor(self):
-        """Returns the selection color"""
-        pass
-
-    def getTagID(self):
-        """Returns the Tag ID for this GUI control"""
-        pass
-
-    def hide(self):
-        """Hides this GUI control"""
-        pass
-
-    def isEnabled(self):
-        """Returns whether this GUI control is enabled"""
-        pass
-
-    def isFocused(self):
-        """Returns whether this GUI control has focus"""
-        pass
-
-    def isInteresting(self):
-        """Returns whether this GUI control is interesting at the moment"""
-        pass
-
-    def isVisible(self):
-        """Returns whether this GUI control is visible"""
-        pass
-
-    def refresh(self):
-        """UNKNOWN"""
-        pass
-
-    def setBackColor(self,r,g,b,a):
-        """Sets the background color"""
-        pass
-
-    def setBackSelectColor(self,r,g,b,a):
-        """Sets the selection background color"""
-        pass
-
-    def setFocus(self,state):
-        """Sets the state of the focus of this GUI control"""
-        pass
-
-    def setFontFlags(self,fontflags):
-        """Sets current fontflags"""
-        pass
-
-    def setFontSize(self,fontSize):
-        """Sets the font size"""
-        pass
-
-    def setForeColor(self,r,g,b,a):
-        """Sets the foreground color"""
-        pass
-
-    def setNotifyOnInteresting(self,state):
-        """Sets whether this control should send interesting events or not"""
-        pass
-
-    def setObjectCenter(self,point):
-        """Sets the GUI controls object center to 'point'"""
-        pass
-
-    def setSelectColor(self,r,g,b,a):
-        """Sets the selection color"""
-        pass
-
-    def setVisible(self,state):
-        """Sets the state of visibility of this GUI control"""
-        pass
-
-    def show(self):
-        """Shows this GUI control"""
-        pass
-
-    def unFocus(self):
-        """Releases focus for this GUI control"""
-        pass
-
 class ptGUIControlDragBar(ptGUIControl):
     """Plasma GUI Control DragBar class"""
     def __init__(self,ctrlKey):
@@ -2879,132 +2507,8 @@ class ptGUIControlDragBar(ptGUIControl):
 Drop anchor!"""
         pass
 
-    def disable(self):
-        """Disables this GUI control"""
-        pass
-
-    def enable(self,flag=1):
-        """Enables this GUI control"""
-        pass
-
-    def focus(self):
-        """Gets focus for this GUI control"""
-        pass
-
-    def getBackColor(self):
-        """Returns the background color"""
-        pass
-
-    def getBackSelectColor(self):
-        """Returns the background selection color"""
-        pass
-
-    def getFontFlags(self):
-        """Returns the current fontflags"""
-        pass
-
-    def getFontSize(self):
-        """Returns the font size"""
-        pass
-
-    def getForeColor(self):
-        """Returns the foreground color"""
-        pass
-
-    def getKey(self):
-        """Returns the ptKey for this GUI control"""
-        pass
-
-    def getObjectCenter(self):
-        """Returns ptPoint3 of the center of the GUI control object"""
-        pass
-
-    def getOwnerDialog(self):
-        """Returns a ptGUIDialog of the dialog that owns this GUI control"""
-        pass
-
-    def getSelectColor(self):
-        """Returns the selection color"""
-        pass
-
-    def getTagID(self):
-        """Returns the Tag ID for this GUI control"""
-        pass
-
-    def hide(self):
-        """Hides this GUI control"""
-        pass
-
     def isAnchored(self):
         """Is this dragbar control anchored? Returns 1 if true otherwise returns 0"""
-        pass
-
-    def isEnabled(self):
-        """Returns whether this GUI control is enabled"""
-        pass
-
-    def isFocused(self):
-        """Returns whether this GUI control has focus"""
-        pass
-
-    def isInteresting(self):
-        """Returns whether this GUI control is interesting at the moment"""
-        pass
-
-    def isVisible(self):
-        """Returns whether this GUI control is visible"""
-        pass
-
-    def refresh(self):
-        """UNKNOWN"""
-        pass
-
-    def setBackColor(self,r,g,b,a):
-        """Sets the background color"""
-        pass
-
-    def setBackSelectColor(self,r,g,b,a):
-        """Sets the selection background color"""
-        pass
-
-    def setFocus(self,state):
-        """Sets the state of the focus of this GUI control"""
-        pass
-
-    def setFontFlags(self,fontflags):
-        """Sets current fontflags"""
-        pass
-
-    def setFontSize(self,fontSize):
-        """Sets the font size"""
-        pass
-
-    def setForeColor(self,r,g,b,a):
-        """Sets the foreground color"""
-        pass
-
-    def setNotifyOnInteresting(self,state):
-        """Sets whether this control should send interesting events or not"""
-        pass
-
-    def setObjectCenter(self,point):
-        """Sets the GUI controls object center to 'point'"""
-        pass
-
-    def setSelectColor(self,r,g,b,a):
-        """Sets the selection color"""
-        pass
-
-    def setVisible(self,state):
-        """Sets the state of visibility of this GUI control"""
-        pass
-
-    def show(self):
-        """Shows this GUI control"""
-        pass
-
-    def unFocus(self):
-        """Releases focus for this GUI control"""
         pass
 
     def unanchor(self):
@@ -3018,178 +2522,18 @@ class ptGUIControlDraggable(ptGUIControl):
         """None"""
         pass
 
-    def disable(self):
-        """Disables this GUI control"""
-        pass
-
-    def enable(self,flag=1):
-        """Enables this GUI control"""
-        pass
-
-    def focus(self):
-        """Gets focus for this GUI control"""
-        pass
-
-    def getBackColor(self):
-        """Returns the background color"""
-        pass
-
-    def getBackSelectColor(self):
-        """Returns the background selection color"""
-        pass
-
-    def getFontFlags(self):
-        """Returns the current fontflags"""
-        pass
-
-    def getFontSize(self):
-        """Returns the font size"""
-        pass
-
-    def getForeColor(self):
-        """Returns the foreground color"""
-        pass
-
-    def getKey(self):
-        """Returns the ptKey for this GUI control"""
-        pass
-
     def getLastMousePoint(self):
         """Returns the last point we were dragged to"""
-        pass
-
-    def getObjectCenter(self):
-        """Returns ptPoint3 of the center of the GUI control object"""
-        pass
-
-    def getOwnerDialog(self):
-        """Returns a ptGUIDialog of the dialog that owns this GUI control"""
-        pass
-
-    def getSelectColor(self):
-        """Returns the selection color"""
-        pass
-
-    def getTagID(self):
-        """Returns the Tag ID for this GUI control"""
-        pass
-
-    def hide(self):
-        """Hides this GUI control"""
-        pass
-
-    def isEnabled(self):
-        """Returns whether this GUI control is enabled"""
-        pass
-
-    def isFocused(self):
-        """Returns whether this GUI control has focus"""
-        pass
-
-    def isInteresting(self):
-        """Returns whether this GUI control is interesting at the moment"""
-        pass
-
-    def isVisible(self):
-        """Returns whether this GUI control is visible"""
-        pass
-
-    def refresh(self):
-        """UNKNOWN"""
-        pass
-
-    def setBackColor(self,r,g,b,a):
-        """Sets the background color"""
-        pass
-
-    def setBackSelectColor(self,r,g,b,a):
-        """Sets the selection background color"""
-        pass
-
-    def setFocus(self,state):
-        """Sets the state of the focus of this GUI control"""
-        pass
-
-    def setFontFlags(self,fontflags):
-        """Sets current fontflags"""
-        pass
-
-    def setFontSize(self,fontSize):
-        """Sets the font size"""
-        pass
-
-    def setForeColor(self,r,g,b,a):
-        """Sets the foreground color"""
-        pass
-
-    def setNotifyOnInteresting(self,state):
-        """Sets whether this control should send interesting events or not"""
-        pass
-
-    def setObjectCenter(self,point):
-        """Sets the GUI controls object center to 'point'"""
-        pass
-
-    def setSelectColor(self,r,g,b,a):
-        """Sets the selection color"""
-        pass
-
-    def setVisible(self,state):
-        """Sets the state of visibility of this GUI control"""
-        pass
-
-    def show(self):
-        """Shows this GUI control"""
         pass
 
     def stopDragging(self,cancelFlag):
         """UNKNOWN"""
         pass
 
-    def unFocus(self):
-        """Releases focus for this GUI control"""
-        pass
-
 class ptGUIControlDynamicText(ptGUIControl):
     """Plasma GUI Control DynamicText class"""
     def __init__(self,ctrlKey):
         """None"""
-        pass
-
-    def disable(self):
-        """Disables this GUI control"""
-        pass
-
-    def enable(self,flag=1):
-        """Enables this GUI control"""
-        pass
-
-    def focus(self):
-        """Gets focus for this GUI control"""
-        pass
-
-    def getBackColor(self):
-        """Returns the background color"""
-        pass
-
-    def getBackSelectColor(self):
-        """Returns the background selection color"""
-        pass
-
-    def getFontFlags(self):
-        """Returns the current fontflags"""
-        pass
-
-    def getFontSize(self):
-        """Returns the font size"""
-        pass
-
-    def getForeColor(self):
-        """Returns the foreground color"""
-        pass
-
-    def getKey(self):
-        """Returns the ptKey for this GUI control"""
         pass
 
     def getMap(self,index):
@@ -3199,94 +2543,6 @@ If there is no map at 'index' then a KeyError exception will be raised"""
 
     def getNumMaps(self):
         """Returns the number of ptDynamicText maps attached"""
-        pass
-
-    def getObjectCenter(self):
-        """Returns ptPoint3 of the center of the GUI control object"""
-        pass
-
-    def getOwnerDialog(self):
-        """Returns a ptGUIDialog of the dialog that owns this GUI control"""
-        pass
-
-    def getSelectColor(self):
-        """Returns the selection color"""
-        pass
-
-    def getTagID(self):
-        """Returns the Tag ID for this GUI control"""
-        pass
-
-    def hide(self):
-        """Hides this GUI control"""
-        pass
-
-    def isEnabled(self):
-        """Returns whether this GUI control is enabled"""
-        pass
-
-    def isFocused(self):
-        """Returns whether this GUI control has focus"""
-        pass
-
-    def isInteresting(self):
-        """Returns whether this GUI control is interesting at the moment"""
-        pass
-
-    def isVisible(self):
-        """Returns whether this GUI control is visible"""
-        pass
-
-    def refresh(self):
-        """UNKNOWN"""
-        pass
-
-    def setBackColor(self,r,g,b,a):
-        """Sets the background color"""
-        pass
-
-    def setBackSelectColor(self,r,g,b,a):
-        """Sets the selection background color"""
-        pass
-
-    def setFocus(self,state):
-        """Sets the state of the focus of this GUI control"""
-        pass
-
-    def setFontFlags(self,fontflags):
-        """Sets current fontflags"""
-        pass
-
-    def setFontSize(self,fontSize):
-        """Sets the font size"""
-        pass
-
-    def setForeColor(self,r,g,b,a):
-        """Sets the foreground color"""
-        pass
-
-    def setNotifyOnInteresting(self,state):
-        """Sets whether this control should send interesting events or not"""
-        pass
-
-    def setObjectCenter(self,point):
-        """Sets the GUI controls object center to 'point'"""
-        pass
-
-    def setSelectColor(self,r,g,b,a):
-        """Sets the selection color"""
-        pass
-
-    def setVisible(self,state):
-        """Sets the state of visibility of this GUI control"""
-        pass
-
-    def show(self):
-        """Shows this GUI control"""
-        pass
-
-    def unFocus(self):
-        """Releases focus for this GUI control"""
         pass
 
 class ptGUIControlEditBox(ptGUIControl):
@@ -3299,44 +2555,8 @@ class ptGUIControlEditBox(ptGUIControl):
         """Clears the editbox."""
         pass
 
-    def disable(self):
-        """Disables this GUI control"""
-        pass
-
-    def enable(self,flag=1):
-        """Enables this GUI control"""
-        pass
-
     def end(self):
         """Sets the cursor in the editbox to the after the last character."""
-        pass
-
-    def focus(self):
-        """Gets focus for this GUI control"""
-        pass
-
-    def getBackColor(self):
-        """Returns the background color"""
-        pass
-
-    def getBackSelectColor(self):
-        """Returns the background selection color"""
-        pass
-
-    def getFontFlags(self):
-        """Returns the current fontflags"""
-        pass
-
-    def getFontSize(self):
-        """Returns the font size"""
-        pass
-
-    def getForeColor(self):
-        """Returns the foreground color"""
-        pass
-
-    def getKey(self):
-        """Returns the ptKey for this GUI control"""
         pass
 
     def getLastKeyCaptured(self):
@@ -3347,60 +2567,12 @@ class ptGUIControlEditBox(ptGUIControl):
         """Gets the last modifiers flags captured"""
         pass
 
-    def getObjectCenter(self):
-        """Returns ptPoint3 of the center of the GUI control object"""
-        pass
-
-    def getOwnerDialog(self):
-        """Returns a ptGUIDialog of the dialog that owns this GUI control"""
-        pass
-
-    def getSelectColor(self):
-        """Returns the selection color"""
-        pass
-
     def getString(self):
         """Returns the sting that the user typed in."""
         pass
 
-    def getTagID(self):
-        """Returns the Tag ID for this GUI control"""
-        pass
-
-    def hide(self):
-        """Hides this GUI control"""
-        pass
-
     def home(self):
         """Sets the cursor in the editbox to before the first character."""
-        pass
-
-    def isEnabled(self):
-        """Returns whether this GUI control is enabled"""
-        pass
-
-    def isFocused(self):
-        """Returns whether this GUI control has focus"""
-        pass
-
-    def isInteresting(self):
-        """Returns whether this GUI control is interesting at the moment"""
-        pass
-
-    def isVisible(self):
-        """Returns whether this GUI control is visible"""
-        pass
-
-    def refresh(self):
-        """UNKNOWN"""
-        pass
-
-    def setBackColor(self,r,g,b,a):
-        """Sets the background color"""
-        pass
-
-    def setBackSelectColor(self,r,g,b,a):
-        """Sets the selection background color"""
         pass
 
     def setChatMode(self,state):
@@ -3411,36 +2583,8 @@ class ptGUIControlEditBox(ptGUIControl):
         """Sets the fore and back color of the editbox."""
         pass
 
-    def setFocus(self,state):
-        """Sets the state of the focus of this GUI control"""
-        pass
-
-    def setFontFlags(self,fontflags):
-        """Sets current fontflags"""
-        pass
-
-    def setFontSize(self,fontSize):
-        """Sets the font size"""
-        pass
-
-    def setForeColor(self,r,g,b,a):
-        """Sets the foreground color"""
-        pass
-
     def setLastKeyCapture(self,key, modifiers):
         """Set last key captured"""
-        pass
-
-    def setNotifyOnInteresting(self,state):
-        """Sets whether this control should send interesting events or not"""
-        pass
-
-    def setObjectCenter(self,point):
-        """Sets the GUI controls object center to 'point'"""
-        pass
-
-    def setSelectColor(self,r,g,b,a):
-        """Sets the selection color"""
         pass
 
     def setSelectionColor(self,foreColor,backColor):
@@ -3459,18 +2603,6 @@ class ptGUIControlEditBox(ptGUIControl):
         """Sets the maximum size of the string that can be inputted by the user."""
         pass
 
-    def setVisible(self,state):
-        """Sets the state of visibility of this GUI control"""
-        pass
-
-    def show(self):
-        """Shows this GUI control"""
-        pass
-
-    def unFocus(self):
-        """Releases focus for this GUI control"""
-        pass
-
     def wasEscaped(self):
         """If the editbox was escaped then return 1 else return 0"""
         pass
@@ -3481,42 +2613,6 @@ class ptGUIControlValue(ptGUIControl):
         """None"""
         pass
 
-    def disable(self):
-        """Disables this GUI control"""
-        pass
-
-    def enable(self,flag=1):
-        """Enables this GUI control"""
-        pass
-
-    def focus(self):
-        """Gets focus for this GUI control"""
-        pass
-
-    def getBackColor(self):
-        """Returns the background color"""
-        pass
-
-    def getBackSelectColor(self):
-        """Returns the background selection color"""
-        pass
-
-    def getFontFlags(self):
-        """Returns the current fontflags"""
-        pass
-
-    def getFontSize(self):
-        """Returns the font size"""
-        pass
-
-    def getForeColor(self):
-        """Returns the foreground color"""
-        pass
-
-    def getKey(self):
-        """Returns the ptKey for this GUI control"""
-        pass
-
     def getMax(self):
         """Returns the maximum of the control."""
         pass
@@ -3525,92 +2621,16 @@ class ptGUIControlValue(ptGUIControl):
         """Returns the minimum of the control."""
         pass
 
-    def getObjectCenter(self):
-        """Returns ptPoint3 of the center of the GUI control object"""
-        pass
-
-    def getOwnerDialog(self):
-        """Returns a ptGUIDialog of the dialog that owns this GUI control"""
-        pass
-
-    def getSelectColor(self):
-        """Returns the selection color"""
-        pass
-
     def getStep(self):
         """Returns the step increment of the control."""
-        pass
-
-    def getTagID(self):
-        """Returns the Tag ID for this GUI control"""
         pass
 
     def getValue(self):
         """Returns the current value of the control."""
         pass
 
-    def hide(self):
-        """Hides this GUI control"""
-        pass
-
-    def isEnabled(self):
-        """Returns whether this GUI control is enabled"""
-        pass
-
-    def isFocused(self):
-        """Returns whether this GUI control has focus"""
-        pass
-
-    def isInteresting(self):
-        """Returns whether this GUI control is interesting at the moment"""
-        pass
-
-    def isVisible(self):
-        """Returns whether this GUI control is visible"""
-        pass
-
-    def refresh(self):
-        """UNKNOWN"""
-        pass
-
-    def setBackColor(self,r,g,b,a):
-        """Sets the background color"""
-        pass
-
-    def setBackSelectColor(self,r,g,b,a):
-        """Sets the selection background color"""
-        pass
-
-    def setFocus(self,state):
-        """Sets the state of the focus of this GUI control"""
-        pass
-
-    def setFontFlags(self,fontflags):
-        """Sets current fontflags"""
-        pass
-
-    def setFontSize(self,fontSize):
-        """Sets the font size"""
-        pass
-
-    def setForeColor(self,r,g,b,a):
-        """Sets the foreground color"""
-        pass
-
-    def setNotifyOnInteresting(self,state):
-        """Sets whether this control should send interesting events or not"""
-        pass
-
-    def setObjectCenter(self,point):
-        """Sets the GUI controls object center to 'point'"""
-        pass
-
     def setRange(self,minimum,maximum):
         """Sets the minimum and maximum range of the control."""
-        pass
-
-    def setSelectColor(self,r,g,b,a):
-        """Sets the selection color"""
         pass
 
     def setStep(self,step):
@@ -3619,176 +2639,12 @@ class ptGUIControlValue(ptGUIControl):
 
     def setValue(self,value):
         """Sets the current value of the control."""
-        pass
-
-    def setVisible(self,state):
-        """Sets the state of visibility of this GUI control"""
-        pass
-
-    def show(self):
-        """Shows this GUI control"""
-        pass
-
-    def unFocus(self):
-        """Releases focus for this GUI control"""
         pass
 
 class ptGUIControlKnob(ptGUIControlValue):
     """Plasma GUI control for knob"""
     def __init__(self,ctrlKey):
         """None"""
-        pass
-
-    def disable(self):
-        """Disables this GUI control"""
-        pass
-
-    def enable(self,flag=1):
-        """Enables this GUI control"""
-        pass
-
-    def focus(self):
-        """Gets focus for this GUI control"""
-        pass
-
-    def getBackColor(self):
-        """Returns the background color"""
-        pass
-
-    def getBackSelectColor(self):
-        """Returns the background selection color"""
-        pass
-
-    def getFontFlags(self):
-        """Returns the current fontflags"""
-        pass
-
-    def getFontSize(self):
-        """Returns the font size"""
-        pass
-
-    def getForeColor(self):
-        """Returns the foreground color"""
-        pass
-
-    def getKey(self):
-        """Returns the ptKey for this GUI control"""
-        pass
-
-    def getMax(self):
-        """Returns the maximum of the control."""
-        pass
-
-    def getMin(self):
-        """Returns the minimum of the control."""
-        pass
-
-    def getObjectCenter(self):
-        """Returns ptPoint3 of the center of the GUI control object"""
-        pass
-
-    def getOwnerDialog(self):
-        """Returns a ptGUIDialog of the dialog that owns this GUI control"""
-        pass
-
-    def getSelectColor(self):
-        """Returns the selection color"""
-        pass
-
-    def getStep(self):
-        """Returns the step increment of the control."""
-        pass
-
-    def getTagID(self):
-        """Returns the Tag ID for this GUI control"""
-        pass
-
-    def getValue(self):
-        """Returns the current value of the control."""
-        pass
-
-    def hide(self):
-        """Hides this GUI control"""
-        pass
-
-    def isEnabled(self):
-        """Returns whether this GUI control is enabled"""
-        pass
-
-    def isFocused(self):
-        """Returns whether this GUI control has focus"""
-        pass
-
-    def isInteresting(self):
-        """Returns whether this GUI control is interesting at the moment"""
-        pass
-
-    def isVisible(self):
-        """Returns whether this GUI control is visible"""
-        pass
-
-    def refresh(self):
-        """UNKNOWN"""
-        pass
-
-    def setBackColor(self,r,g,b,a):
-        """Sets the background color"""
-        pass
-
-    def setBackSelectColor(self,r,g,b,a):
-        """Sets the selection background color"""
-        pass
-
-    def setFocus(self,state):
-        """Sets the state of the focus of this GUI control"""
-        pass
-
-    def setFontFlags(self,fontflags):
-        """Sets current fontflags"""
-        pass
-
-    def setFontSize(self,fontSize):
-        """Sets the font size"""
-        pass
-
-    def setForeColor(self,r,g,b,a):
-        """Sets the foreground color"""
-        pass
-
-    def setNotifyOnInteresting(self,state):
-        """Sets whether this control should send interesting events or not"""
-        pass
-
-    def setObjectCenter(self,point):
-        """Sets the GUI controls object center to 'point'"""
-        pass
-
-    def setRange(self,minimum,maximum):
-        """Sets the minimum and maximum range of the control."""
-        pass
-
-    def setSelectColor(self,r,g,b,a):
-        """Sets the selection color"""
-        pass
-
-    def setStep(self,step):
-        """Sets the step increment of the control."""
-        pass
-
-    def setValue(self,value):
-        """Sets the current value of the control."""
-        pass
-
-    def setVisible(self,state):
-        """Sets the state of visibility of this GUI control"""
-        pass
-
-    def show(self):
-        """Shows this GUI control"""
-        pass
-
-    def unFocus(self):
-        """Releases focus for this GUI control"""
         pass
 
 class ptGUIControlListBox(ptGUIControl):
@@ -3853,32 +2709,12 @@ class ptGUIControlListBox(ptGUIControl):
         """UNKNOWN"""
         pass
 
-    def disable(self):
-        """Disables this GUI control"""
-        pass
-
     def disallowNoSelect(self):
         """The listbox must always have a selection"""
         pass
 
-    def enable(self,flag=1):
-        """Enables this GUI control"""
-        pass
-
     def findString(self,text):
         """Finds and returns the index of the item that matches 'text' in the listbox."""
-        pass
-
-    def focus(self):
-        """Gets focus for this GUI control"""
-        pass
-
-    def getBackColor(self):
-        """Returns the background color"""
-        pass
-
-    def getBackSelectColor(self):
-        """Returns the background selection color"""
         pass
 
     def getBranchList(self):
@@ -3889,32 +2725,8 @@ class ptGUIControlListBox(ptGUIControl):
         """Get the string of the item at 'index' in the listbox."""
         pass
 
-    def getFontFlags(self):
-        """Returns the current fontflags"""
-        pass
-
-    def getFontSize(self):
-        """Returns the font size"""
-        pass
-
-    def getForeColor(self):
-        """Returns the foreground color"""
-        pass
-
-    def getKey(self):
-        """Returns the ptKey for this GUI control"""
-        pass
-
     def getNumElements(self):
         """Return the number of items in the listbox."""
-        pass
-
-    def getObjectCenter(self):
-        """Returns ptPoint3 of the center of the GUI control object"""
-        pass
-
-    def getOwnerDialog(self):
-        """Returns a ptGUIDialog of the dialog that owns this GUI control"""
         pass
 
     def getScrollPos(self):
@@ -3925,40 +2737,12 @@ class ptGUIControlListBox(ptGUIControl):
         """Returns the max scroll position"""
         pass
 
-    def getSelectColor(self):
-        """Returns the selection color"""
-        pass
-
     def getSelection(self):
         """Returns the currently selected list item in the listbox."""
         pass
 
     def getSelectionList(self):
         """Returns the current selection list"""
-        pass
-
-    def getTagID(self):
-        """Returns the Tag ID for this GUI control"""
-        pass
-
-    def hide(self):
-        """Hides this GUI control"""
-        pass
-
-    def isEnabled(self):
-        """Returns whether this GUI control is enabled"""
-        pass
-
-    def isFocused(self):
-        """Returns whether this GUI control has focus"""
-        pass
-
-    def isInteresting(self):
-        """Returns whether this GUI control is interesting at the moment"""
-        pass
-
-    def isVisible(self):
-        """Returns whether this GUI control is visible"""
         pass
 
     def lock(self):
@@ -3986,32 +2770,8 @@ NOTE: an unlock() call must be made before the next lock() can be."""
         """Scrolls the listbox to the end of the list"""
         pass
 
-    def setBackColor(self,r,g,b,a):
-        """Sets the background color"""
-        pass
-
-    def setBackSelectColor(self,r,g,b,a):
-        """Sets the selection background color"""
-        pass
-
     def setElement(self,index,text):
         """Set a particular item in the listbox to a string."""
-        pass
-
-    def setFocus(self,state):
-        """Sets the state of the focus of this GUI control"""
-        pass
-
-    def setFontFlags(self,fontflags):
-        """Sets current fontflags"""
-        pass
-
-    def setFontSize(self,fontSize):
-        """Sets the font size"""
-        pass
-
-    def setForeColor(self,r,g,b,a):
-        """Sets the foreground color"""
         pass
 
     def setGlobalSwatchEdgeOffset(self,offset):
@@ -4022,20 +2782,8 @@ NOTE: an unlock() call must be made before the next lock() can be."""
         """Sets the size of the color swatches"""
         pass
 
-    def setNotifyOnInteresting(self,state):
-        """Sets whether this control should send interesting events or not"""
-        pass
-
-    def setObjectCenter(self,point):
-        """Sets the GUI controls object center to 'point'"""
-        pass
-
     def setScrollPos(self,pos):
         """Sets the scroll position of the listbox to 'pos'"""
-        pass
-
-    def setSelectColor(self,r,g,b,a):
-        """Sets the selection color"""
         pass
 
     def setSelection(self,selectionIndex):
@@ -4044,18 +2792,6 @@ NOTE: an unlock() call must be made before the next lock() can be."""
 
     def setStringJustify(self,index,justify):
         """Sets the text justification"""
-        pass
-
-    def setVisible(self,state):
-        """Sets the state of visibility of this GUI control"""
-        pass
-
-    def show(self):
-        """Shows this GUI control"""
-        pass
-
-    def unFocus(self):
-        """Releases focus for this GUI control"""
         pass
 
     def unclickable(self):
@@ -4097,16 +2833,8 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Deletes the specified number of lines from the top of the text buffer"""
         pass
 
-    def disable(self):
-        """Disables this GUI control"""
-        pass
-
     def disableScrollControl(self):
         """Disables the scroll control if there is one"""
-        pass
-
-    def enable(self,flag=1):
-        """Enables this GUI control"""
         pass
 
     def enableScrollControl(self):
@@ -4115,18 +2843,6 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
 
     def endUpdate(self,redraw=True):
         """Signifies that the massive updates are over. We can now redraw."""
-        pass
-
-    def focus(self):
-        """Gets focus for this GUI control"""
-        pass
-
-    def getBackColor(self):
-        """Returns the background color"""
-        pass
-
-    def getBackSelectColor(self):
-        """Returns the background selection color"""
         pass
 
     def getBufferLimit(self):
@@ -4149,52 +2865,20 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Returns the encoded buffer in a python buffer object."""
         pass
 
-    def getFontFlags(self):
-        """Returns the current fontflags"""
-        pass
-
     def getFontSize(self):
         """Returns the current default font size"""
-        pass
-
-    def getForeColor(self):
-        """Returns the foreground color"""
-        pass
-
-    def getKey(self):
-        """Returns the ptKey for this GUI control"""
         pass
 
     def getMargins(self) -> Tuple[int, int, int, int]:
         """Returns a tuple of (top, left, bottom, right) margins"""
         pass
 
-    def getObjectCenter(self):
-        """Returns ptPoint3 of the center of the GUI control object"""
-        pass
-
-    def getOwnerDialog(self):
-        """Returns a ptGUIDialog of the dialog that owns this GUI control"""
-        pass
-
     def getScrollPosition(self):
         """Returns what line is the top line."""
         pass
 
-    def getSelectColor(self):
-        """Returns the selection color"""
-        pass
-
     def getString(self):
         """Gets the string of the edit control."""
-        pass
-
-    def getTagID(self):
-        """Returns the Tag ID for this GUI control"""
-        pass
-
-    def hide(self):
-        """Hides this GUI control"""
         pass
 
     def insertChar(self,c):
@@ -4222,28 +2906,12 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Returns true if the end of the buffer has been reached."""
         pass
 
-    def isEnabled(self):
-        """Returns whether this GUI control is enabled"""
-        pass
-
-    def isFocused(self):
-        """Returns whether this GUI control has focus"""
-        pass
-
-    def isInteresting(self):
-        """Returns whether this GUI control is interesting at the moment"""
-        pass
-
     def isLocked(self):
         """Is the multi-line edit control locked? Returns 1 if true otherwise returns 0"""
         pass
 
     def isUpdating(self) -> bool:
         """Is someone else already suppressing redraws of the control?"""
-        pass
-
-    def isVisible(self):
-        """Returns whether this GUI control is visible"""
         pass
 
     def lock(self):
@@ -4254,18 +2922,6 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Move the cursor in the specified direction (see PtGUIMultiLineDirection)"""
         pass
 
-    def refresh(self):
-        """UNKNOWN"""
-        pass
-
-    def setBackColor(self,r,g,b,a):
-        """Sets the background color"""
-        pass
-
-    def setBackSelectColor(self,r,g,b,a):
-        """Sets the selection background color"""
-        pass
-
     def setBufferLimit(self,bufferLimit):
         """Sets the buffer max for the editbox"""
         pass
@@ -4274,56 +2930,20 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Sets the edit control to the encoded buffer in the python buffer object."""
         pass
 
-    def setFocus(self,state):
-        """Sets the state of the focus of this GUI control"""
-        pass
-
-    def setFontFlags(self,fontflags):
-        """Sets current fontflags"""
-        pass
-
     def setFontSize(self,fontSize):
         """Sets the default font size for the edit control"""
-        pass
-
-    def setForeColor(self,r,g,b,a):
-        """Sets the foreground color"""
         pass
 
     def setMargins(self,top: Optional[int] = None, left: Optional[int] = None, bottom: Optional[int] = None, right: Optional[int] = None) -> None:
         """Sets the control's margins"""
         pass
 
-    def setNotifyOnInteresting(self,state):
-        """Sets whether this control should send interesting events or not"""
-        pass
-
-    def setObjectCenter(self,point):
-        """Sets the GUI controls object center to 'point'"""
-        pass
-
     def setScrollPosition(self,topLine):
         """Sets the what line is the top line."""
         pass
 
-    def setSelectColor(self,r,g,b,a):
-        """Sets the selection color"""
-        pass
-
     def setString(self,text):
         """Sets the multi-line edit control string."""
-        pass
-
-    def setVisible(self,state):
-        """Sets the state of visibility of this GUI control"""
-        pass
-
-    def show(self):
-        """Shows this GUI control"""
-        pass
-
-    def unFocus(self):
-        """Releases focus for this GUI control"""
         pass
 
     def unclickable(self):
@@ -4345,294 +2965,18 @@ class ptGUIControlProgress(ptGUIControlValue):
         """Sets the value of the control and animates to that point."""
         pass
 
-    def disable(self):
-        """Disables this GUI control"""
-        pass
-
-    def enable(self,flag=1):
-        """Enables this GUI control"""
-        pass
-
-    def focus(self):
-        """Gets focus for this GUI control"""
-        pass
-
-    def getBackColor(self):
-        """Returns the background color"""
-        pass
-
-    def getBackSelectColor(self):
-        """Returns the background selection color"""
-        pass
-
-    def getFontFlags(self):
-        """Returns the current fontflags"""
-        pass
-
-    def getFontSize(self):
-        """Returns the font size"""
-        pass
-
-    def getForeColor(self):
-        """Returns the foreground color"""
-        pass
-
-    def getKey(self):
-        """Returns the ptKey for this GUI control"""
-        pass
-
-    def getMax(self):
-        """Returns the maximum of the control."""
-        pass
-
-    def getMin(self):
-        """Returns the minimum of the control."""
-        pass
-
-    def getObjectCenter(self):
-        """Returns ptPoint3 of the center of the GUI control object"""
-        pass
-
-    def getOwnerDialog(self):
-        """Returns a ptGUIDialog of the dialog that owns this GUI control"""
-        pass
-
-    def getSelectColor(self):
-        """Returns the selection color"""
-        pass
-
-    def getStep(self):
-        """Returns the step increment of the control."""
-        pass
-
-    def getTagID(self):
-        """Returns the Tag ID for this GUI control"""
-        pass
-
-    def getValue(self):
-        """Returns the current value of the control."""
-        pass
-
-    def hide(self):
-        """Hides this GUI control"""
-        pass
-
-    def isEnabled(self):
-        """Returns whether this GUI control is enabled"""
-        pass
-
-    def isFocused(self):
-        """Returns whether this GUI control has focus"""
-        pass
-
-    def isInteresting(self):
-        """Returns whether this GUI control is interesting at the moment"""
-        pass
-
-    def isVisible(self):
-        """Returns whether this GUI control is visible"""
-        pass
-
-    def refresh(self):
-        """UNKNOWN"""
-        pass
-
-    def setBackColor(self,r,g,b,a):
-        """Sets the background color"""
-        pass
-
-    def setBackSelectColor(self,r,g,b,a):
-        """Sets the selection background color"""
-        pass
-
-    def setFocus(self,state):
-        """Sets the state of the focus of this GUI control"""
-        pass
-
-    def setFontFlags(self,fontflags):
-        """Sets current fontflags"""
-        pass
-
-    def setFontSize(self,fontSize):
-        """Sets the font size"""
-        pass
-
-    def setForeColor(self,r,g,b,a):
-        """Sets the foreground color"""
-        pass
-
-    def setNotifyOnInteresting(self,state):
-        """Sets whether this control should send interesting events or not"""
-        pass
-
-    def setObjectCenter(self,point):
-        """Sets the GUI controls object center to 'point'"""
-        pass
-
-    def setRange(self,minimum,maximum):
-        """Sets the minimum and maximum range of the control."""
-        pass
-
-    def setSelectColor(self,r,g,b,a):
-        """Sets the selection color"""
-        pass
-
-    def setStep(self,step):
-        """Sets the step increment of the control."""
-        pass
-
-    def setValue(self,value):
-        """Sets the current value of the control."""
-        pass
-
-    def setVisible(self,state):
-        """Sets the state of visibility of this GUI control"""
-        pass
-
-    def show(self):
-        """Shows this GUI control"""
-        pass
-
-    def unFocus(self):
-        """Releases focus for this GUI control"""
-        pass
-
 class ptGUIControlRadioGroup(ptGUIControl):
     """Plasma GUI Control Radio Group class"""
     def __init__(self,ctrlKey):
         """None"""
         pass
 
-    def disable(self):
-        """Disables this GUI control"""
-        pass
-
-    def enable(self,flag=1):
-        """Enables this GUI control"""
-        pass
-
-    def focus(self):
-        """Gets focus for this GUI control"""
-        pass
-
-    def getBackColor(self):
-        """Returns the background color"""
-        pass
-
-    def getBackSelectColor(self):
-        """Returns the background selection color"""
-        pass
-
-    def getFontFlags(self):
-        """Returns the current fontflags"""
-        pass
-
-    def getFontSize(self):
-        """Returns the font size"""
-        pass
-
-    def getForeColor(self):
-        """Returns the foreground color"""
-        pass
-
-    def getKey(self):
-        """Returns the ptKey for this GUI control"""
-        pass
-
-    def getObjectCenter(self):
-        """Returns ptPoint3 of the center of the GUI control object"""
-        pass
-
-    def getOwnerDialog(self):
-        """Returns a ptGUIDialog of the dialog that owns this GUI control"""
-        pass
-
-    def getSelectColor(self):
-        """Returns the selection color"""
-        pass
-
-    def getTagID(self):
-        """Returns the Tag ID for this GUI control"""
-        pass
-
     def getValue(self):
         """Returns the current selection of the radio group."""
         pass
 
-    def hide(self):
-        """Hides this GUI control"""
-        pass
-
-    def isEnabled(self):
-        """Returns whether this GUI control is enabled"""
-        pass
-
-    def isFocused(self):
-        """Returns whether this GUI control has focus"""
-        pass
-
-    def isInteresting(self):
-        """Returns whether this GUI control is interesting at the moment"""
-        pass
-
-    def isVisible(self):
-        """Returns whether this GUI control is visible"""
-        pass
-
-    def refresh(self):
-        """UNKNOWN"""
-        pass
-
-    def setBackColor(self,r,g,b,a):
-        """Sets the background color"""
-        pass
-
-    def setBackSelectColor(self,r,g,b,a):
-        """Sets the selection background color"""
-        pass
-
-    def setFocus(self,state):
-        """Sets the state of the focus of this GUI control"""
-        pass
-
-    def setFontFlags(self,fontflags):
-        """Sets current fontflags"""
-        pass
-
-    def setFontSize(self,fontSize):
-        """Sets the font size"""
-        pass
-
-    def setForeColor(self,r,g,b,a):
-        """Sets the foreground color"""
-        pass
-
-    def setNotifyOnInteresting(self,state):
-        """Sets whether this control should send interesting events or not"""
-        pass
-
-    def setObjectCenter(self,point):
-        """Sets the GUI controls object center to 'point'"""
-        pass
-
-    def setSelectColor(self,r,g,b,a):
-        """Sets the selection color"""
-        pass
-
     def setValue(self,value):
         """Sets the current selection to 'value'"""
-        pass
-
-    def setVisible(self,state):
-        """Sets the state of visibility of this GUI control"""
-        pass
-
-    def show(self):
-        """Shows this GUI control"""
-        pass
-
-    def unFocus(self):
-        """Releases focus for this GUI control"""
         pass
 
 class ptGUIControlTextBox(ptGUIControl):
@@ -4641,52 +2985,8 @@ class ptGUIControlTextBox(ptGUIControl):
         """None"""
         pass
 
-    def disable(self):
-        """Disables this GUI control"""
-        pass
-
-    def enable(self,flag=1):
-        """Enables this GUI control"""
-        pass
-
-    def focus(self):
-        """Gets focus for this GUI control"""
-        pass
-
-    def getBackColor(self):
-        """Returns the background color"""
-        pass
-
-    def getBackSelectColor(self):
-        """Returns the background selection color"""
-        pass
-
-    def getFontFlags(self):
-        """Returns the current fontflags"""
-        pass
-
-    def getFontSize(self):
-        """Returns the font size"""
-        pass
-
     def getForeColor(self):
         """Returns the current forecolor"""
-        pass
-
-    def getKey(self):
-        """Returns the ptKey for this GUI control"""
-        pass
-
-    def getObjectCenter(self):
-        """Returns ptPoint3 of the center of the GUI control object"""
-        pass
-
-    def getOwnerDialog(self):
-        """Returns a ptGUIDialog of the dialog that owns this GUI control"""
-        pass
-
-    def getSelectColor(self):
-        """Returns the selection color"""
         pass
 
     def getString(self):
@@ -4697,48 +2997,8 @@ class ptGUIControlTextBox(ptGUIControl):
         """Returns current justify"""
         pass
 
-    def getTagID(self):
-        """Returns the Tag ID for this GUI control"""
-        pass
-
-    def hide(self):
-        """Hides this GUI control"""
-        pass
-
-    def isEnabled(self):
-        """Returns whether this GUI control is enabled"""
-        pass
-
-    def isFocused(self):
-        """Returns whether this GUI control has focus"""
-        pass
-
-    def isInteresting(self):
-        """Returns whether this GUI control is interesting at the moment"""
-        pass
-
-    def isVisible(self):
-        """Returns whether this GUI control is visible"""
-        pass
-
-    def refresh(self):
-        """UNKNOWN"""
-        pass
-
     def setBackColor(self,color):
         """Sets the text backcolor to 'color', which is a ptColor object."""
-        pass
-
-    def setBackSelectColor(self,r,g,b,a):
-        """Sets the selection background color"""
-        pass
-
-    def setFocus(self,state):
-        """Sets the state of the focus of this GUI control"""
-        pass
-
-    def setFontFlags(self,fontflags):
-        """Sets current fontflags"""
         pass
 
     def setFontSize(self,size):
@@ -4749,18 +3009,6 @@ class ptGUIControlTextBox(ptGUIControl):
         """Sets the text forecolor to 'color', which is a ptColor object."""
         pass
 
-    def setNotifyOnInteresting(self,state):
-        """Sets whether this control should send interesting events or not"""
-        pass
-
-    def setObjectCenter(self,point):
-        """Sets the GUI controls object center to 'point'"""
-        pass
-
-    def setSelectColor(self,r,g,b,a):
-        """Sets the selection color"""
-        pass
-
     def setString(self,text):
         """Sets the textbox string to 'text'"""
         pass
@@ -4769,174 +3017,10 @@ class ptGUIControlTextBox(ptGUIControl):
         """Sets current justify"""
         pass
 
-    def setVisible(self,state):
-        """Sets the state of visibility of this GUI control"""
-        pass
-
-    def show(self):
-        """Shows this GUI control"""
-        pass
-
-    def unFocus(self):
-        """Releases focus for this GUI control"""
-        pass
-
 class ptGUIControlUpDownPair(ptGUIControlValue):
     """Plasma GUI control for up/down pair"""
     def __init__(self,ctrlKey):
         """None"""
-        pass
-
-    def disable(self):
-        """Disables this GUI control"""
-        pass
-
-    def enable(self,flag=1):
-        """Enables this GUI control"""
-        pass
-
-    def focus(self):
-        """Gets focus for this GUI control"""
-        pass
-
-    def getBackColor(self):
-        """Returns the background color"""
-        pass
-
-    def getBackSelectColor(self):
-        """Returns the background selection color"""
-        pass
-
-    def getFontFlags(self):
-        """Returns the current fontflags"""
-        pass
-
-    def getFontSize(self):
-        """Returns the font size"""
-        pass
-
-    def getForeColor(self):
-        """Returns the foreground color"""
-        pass
-
-    def getKey(self):
-        """Returns the ptKey for this GUI control"""
-        pass
-
-    def getMax(self):
-        """Returns the maximum of the control."""
-        pass
-
-    def getMin(self):
-        """Returns the minimum of the control."""
-        pass
-
-    def getObjectCenter(self):
-        """Returns ptPoint3 of the center of the GUI control object"""
-        pass
-
-    def getOwnerDialog(self):
-        """Returns a ptGUIDialog of the dialog that owns this GUI control"""
-        pass
-
-    def getSelectColor(self):
-        """Returns the selection color"""
-        pass
-
-    def getStep(self):
-        """Returns the step increment of the control."""
-        pass
-
-    def getTagID(self):
-        """Returns the Tag ID for this GUI control"""
-        pass
-
-    def getValue(self):
-        """Returns the current value of the control."""
-        pass
-
-    def hide(self):
-        """Hides this GUI control"""
-        pass
-
-    def isEnabled(self):
-        """Returns whether this GUI control is enabled"""
-        pass
-
-    def isFocused(self):
-        """Returns whether this GUI control has focus"""
-        pass
-
-    def isInteresting(self):
-        """Returns whether this GUI control is interesting at the moment"""
-        pass
-
-    def isVisible(self):
-        """Returns whether this GUI control is visible"""
-        pass
-
-    def refresh(self):
-        """UNKNOWN"""
-        pass
-
-    def setBackColor(self,r,g,b,a):
-        """Sets the background color"""
-        pass
-
-    def setBackSelectColor(self,r,g,b,a):
-        """Sets the selection background color"""
-        pass
-
-    def setFocus(self,state):
-        """Sets the state of the focus of this GUI control"""
-        pass
-
-    def setFontFlags(self,fontflags):
-        """Sets current fontflags"""
-        pass
-
-    def setFontSize(self,fontSize):
-        """Sets the font size"""
-        pass
-
-    def setForeColor(self,r,g,b,a):
-        """Sets the foreground color"""
-        pass
-
-    def setNotifyOnInteresting(self,state):
-        """Sets whether this control should send interesting events or not"""
-        pass
-
-    def setObjectCenter(self,point):
-        """Sets the GUI controls object center to 'point'"""
-        pass
-
-    def setRange(self,minimum,maximum):
-        """Sets the minimum and maximum range of the control."""
-        pass
-
-    def setSelectColor(self,r,g,b,a):
-        """Sets the selection color"""
-        pass
-
-    def setStep(self,step):
-        """Sets the step increment of the control."""
-        pass
-
-    def setValue(self,value):
-        """Sets the current value of the control."""
-        pass
-
-    def setVisible(self,state):
-        """Sets the state of visibility of this GUI control"""
-        pass
-
-    def show(self):
-        """Shows this GUI control"""
-        pass
-
-    def unFocus(self):
-        """Releases focus for this GUI control"""
         pass
 
 class ptGUIDialog:
@@ -6902,58 +4986,6 @@ class ptVaultFolderNode(ptVaultNode):
         """None"""
         pass
 
-    def addNode(self,node,cb=None,cbContext=0):
-        """Adds 'node'(ptVaultNode) as a child to this node."""
-        pass
-
-    def findNode(self,templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
-        """Returns ptVaultNode if child node found matching template, or None"""
-        pass
-
-    def forceSave(self):
-        """Force the current node to save immediately"""
-        pass
-
-    def getChildNodeCount(self):
-        """Returns how many children this node has."""
-        pass
-
-    def getChildNodeRefList(self):
-        """Returns a list of ptVaultNodeRef that are the children of this node."""
-        pass
-
-    def getClientID(self):
-        """Returns the client's ID."""
-        pass
-
-    def getCreateAgeCoords(self):
-        """Returns the location in the Age where this node was created."""
-        pass
-
-    def getCreateAgeGuid(self):
-        """Returns the guid as a string of the Age where this node was created."""
-        pass
-
-    def getCreateAgeName(self):
-        """Returns the name of the Age where this node was created."""
-        pass
-
-    def getCreateAgeTime(self):
-        """Returns the time in the Age that the node was created...(?)"""
-        pass
-
-    def getCreateTime(self):
-        """Returns the when this node was created, that is useable by python's time library."""
-        pass
-
-    def getCreatorNode(self):
-        """Returns the creator's node"""
-        pass
-
-    def getCreatorNodeID(self):
-        """Returns the creator's node ID"""
-        pass
-
     def getFolderName(self):
         """Returns the folder's name"""
         pass
@@ -6962,141 +4994,12 @@ class ptVaultFolderNode(ptVaultNode):
         """Returns the folder type (of the standard folder types)"""
         pass
 
-    def getID(self):
-        """Returns the unique ID of this ptVaultNode."""
-        pass
-
-    def getModifyTime(self):
-        """Returns the modified time of this node, that is useable by python's time library."""
-        pass
-
-    def getNode(self,id):
-        """Returns ptVaultNodeRef if is a child node, or None"""
-        pass
-
-    def getOwnerNode(self):
-        """Returns a ptVaultNode of the owner of this node"""
-        pass
-
-    def getOwnerNodeID(self):
-        """Returns the node ID of the owner of this node"""
-        pass
-
-    def getType(self):
-        """Returns the type of ptVaultNode this is.
-See PlasmaVaultTypes.py"""
-        pass
-
-    def hasNode(self,id):
-        """Returns true if node if a child node"""
-        pass
-
-    def linkToNode(self,nodeID,cb=None,cbContext=0):
-        """Adds a link to the node designated by nodeID"""
-        pass
-
-    def removeAllNodes(self):
-        """Removes all the child nodes on this node."""
-        pass
-
-    def removeNode(self,node,cb=None,cbContext=0):
-        """Removes the child 'node'(ptVaultNode) from this node."""
-        pass
-
-    def save(self,cb=None,cbContext=0):
-        """Save the changes made to this node."""
-        pass
-
-    def saveAll(self,cb=None,cbContext=0):
-        """Saves this node and all its children nodes."""
-        pass
-
-    def sendTo(self,destID,cb=None,cbContext=0):
-        """Send this node to inbox at 'destID'"""
-        pass
-
-    def setCreateAgeGuid(self,guid):
-        """Set guid as a string of the Age where this node was created."""
-        pass
-
-    def setCreateAgeName(self,name):
-        """Set name of the Age where this node was created."""
-        pass
-
-    def setCreatorNodeID(self,id):
-        """Set creator's node ID"""
-        pass
-
     def setFolderName(self,name):
         """Set the folder name"""
         pass
 
     def setFolderType(self,type):
         """Set the folder type"""
-        pass
-
-    def setID(self,id):
-        """Sets ID of this ptVaultNode."""
-        pass
-
-    def setOwnerNodeID(self,id):
-        """Set node ID of the owner of this node"""
-        pass
-
-    def setType(self,type):
-        """Set the type of ptVaultNode this is."""
-        pass
-
-    def upcastToAgeInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoListNode"""
-        pass
-
-    def upcastToAgeInfoNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoNode"""
-        pass
-
-    def upcastToAgeLinkNode(self):
-        """Returns this ptVaultNode as ptVaultAgeLinkNode"""
-        pass
-
-    def upcastToChronicleNode(self):
-        """Returns this ptVaultNode as ptVaultChronicleNode"""
-        pass
-
-    def upcastToFolderNode(self):
-        """Returns this ptVaultNode as ptVaultFolderNode"""
-        pass
-
-    def upcastToImageNode(self):
-        """Returns this ptVaultNode as ptVaultImageNode"""
-        pass
-
-    def upcastToMarkerGameNode(self):
-        """Returns this ptVaultNode as ptVaultMarkerNode"""
-        pass
-
-    def upcastToPlayerInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoListNode"""
-        pass
-
-    def upcastToPlayerInfoNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoNode"""
-        pass
-
-    def upcastToPlayerNode(self):
-        """Returns this ptVaultNode as a ptVaultPlayerNode"""
-        pass
-
-    def upcastToSDLNode(self):
-        """Returns this ptVaultNode as a ptVaultSDLNode"""
-        pass
-
-    def upcastToSystemNode(self):
-        """Returns this ptVaultNode as a ptVaultSystemNode"""
-        pass
-
-    def upcastToTextNoteNode(self):
-        """Returns this ptVaultNode as ptVaultTextNoteNode"""
         pass
 
 class ptVaultAgeInfoListNode(ptVaultFolderNode):
@@ -7109,209 +5012,12 @@ class ptVaultAgeInfoListNode(ptVaultFolderNode):
         """Adds ageID to list of ages"""
         pass
 
-    def addNode(self,node,cb=None,cbContext=0):
-        """Adds 'node'(ptVaultNode) as a child to this node."""
-        pass
-
-    def findNode(self,templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
-        """Returns ptVaultNode if child node found matching template, or None"""
-        pass
-
-    def forceSave(self):
-        """Force the current node to save immediately"""
-        pass
-
-    def getChildNodeCount(self):
-        """Returns how many children this node has."""
-        pass
-
-    def getChildNodeRefList(self):
-        """Returns a list of ptVaultNodeRef that are the children of this node."""
-        pass
-
-    def getClientID(self):
-        """Returns the client's ID."""
-        pass
-
-    def getCreateAgeCoords(self):
-        """Returns the location in the Age where this node was created."""
-        pass
-
-    def getCreateAgeGuid(self):
-        """Returns the guid as a string of the Age where this node was created."""
-        pass
-
-    def getCreateAgeName(self):
-        """Returns the name of the Age where this node was created."""
-        pass
-
-    def getCreateAgeTime(self):
-        """Returns the time in the Age that the node was created...(?)"""
-        pass
-
-    def getCreateTime(self):
-        """Returns the when this node was created, that is useable by python's time library."""
-        pass
-
-    def getCreatorNode(self):
-        """Returns the creator's node"""
-        pass
-
-    def getCreatorNodeID(self):
-        """Returns the creator's node ID"""
-        pass
-
-    def getFolderName(self):
-        """Returns the folder's name"""
-        pass
-
-    def getFolderType(self):
-        """Returns the folder type (of the standard folder types)"""
-        pass
-
-    def getID(self):
-        """Returns the unique ID of this ptVaultNode."""
-        pass
-
-    def getModifyTime(self):
-        """Returns the modified time of this node, that is useable by python's time library."""
-        pass
-
-    def getNode(self,id):
-        """Returns ptVaultNodeRef if is a child node, or None"""
-        pass
-
-    def getOwnerNode(self):
-        """Returns a ptVaultNode of the owner of this node"""
-        pass
-
-    def getOwnerNodeID(self):
-        """Returns the node ID of the owner of this node"""
-        pass
-
-    def getType(self):
-        """Returns the type of ptVaultNode this is.
-See PlasmaVaultTypes.py"""
-        pass
-
     def hasAge(self,ageID):
         """Returns whether ageID is in the list of ages"""
         pass
 
-    def hasNode(self,id):
-        """Returns true if node if a child node"""
-        pass
-
-    def linkToNode(self,nodeID,cb=None,cbContext=0):
-        """Adds a link to the node designated by nodeID"""
-        pass
-
     def removeAge(self,ageID):
         """Removes ageID from list of ages"""
-        pass
-
-    def removeAllNodes(self):
-        """Removes all the child nodes on this node."""
-        pass
-
-    def removeNode(self,node,cb=None,cbContext=0):
-        """Removes the child 'node'(ptVaultNode) from this node."""
-        pass
-
-    def save(self,cb=None,cbContext=0):
-        """Save the changes made to this node."""
-        pass
-
-    def saveAll(self,cb=None,cbContext=0):
-        """Saves this node and all its children nodes."""
-        pass
-
-    def sendTo(self,destID,cb=None,cbContext=0):
-        """Send this node to inbox at 'destID'"""
-        pass
-
-    def setCreateAgeGuid(self,guid):
-        """Set guid as a string of the Age where this node was created."""
-        pass
-
-    def setCreateAgeName(self,name):
-        """Set name of the Age where this node was created."""
-        pass
-
-    def setCreatorNodeID(self,id):
-        """Set creator's node ID"""
-        pass
-
-    def setFolderName(self,name):
-        """Set the folder name"""
-        pass
-
-    def setFolderType(self,type):
-        """Set the folder type"""
-        pass
-
-    def setID(self,id):
-        """Sets ID of this ptVaultNode."""
-        pass
-
-    def setOwnerNodeID(self,id):
-        """Set node ID of the owner of this node"""
-        pass
-
-    def setType(self,type):
-        """Set the type of ptVaultNode this is."""
-        pass
-
-    def upcastToAgeInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoListNode"""
-        pass
-
-    def upcastToAgeInfoNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoNode"""
-        pass
-
-    def upcastToAgeLinkNode(self):
-        """Returns this ptVaultNode as ptVaultAgeLinkNode"""
-        pass
-
-    def upcastToChronicleNode(self):
-        """Returns this ptVaultNode as ptVaultChronicleNode"""
-        pass
-
-    def upcastToFolderNode(self):
-        """Returns this ptVaultNode as ptVaultFolderNode"""
-        pass
-
-    def upcastToImageNode(self):
-        """Returns this ptVaultNode as ptVaultImageNode"""
-        pass
-
-    def upcastToMarkerGameNode(self):
-        """Returns this ptVaultNode as ptVaultMarkerNode"""
-        pass
-
-    def upcastToPlayerInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoListNode"""
-        pass
-
-    def upcastToPlayerInfoNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoNode"""
-        pass
-
-    def upcastToPlayerNode(self):
-        """Returns this ptVaultNode as a ptVaultPlayerNode"""
-        pass
-
-    def upcastToSDLNode(self):
-        """Returns this ptVaultNode as a ptVaultSDLNode"""
-        pass
-
-    def upcastToSystemNode(self):
-        """Returns this ptVaultNode as a ptVaultSystemNode"""
-        pass
-
-    def upcastToTextNoteNode(self):
-        """Returns this ptVaultNode as ptVaultTextNoteNode"""
         pass
 
 class ptVaultAgeInfoNode(ptVaultNode):
@@ -7320,20 +5026,8 @@ class ptVaultAgeInfoNode(ptVaultNode):
         """None"""
         pass
 
-    def addNode(self,node,cb=None,cbContext=0):
-        """Adds 'node'(ptVaultNode) as a child to this node."""
-        pass
-
     def asAgeInfoStruct(self):
         """Returns this ptVaultAgeInfoNode as a ptAgeInfoStruct"""
-        pass
-
-    def findNode(self,templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
-        """Returns ptVaultNode if child node found matching template, or None"""
-        pass
-
-    def forceSave(self):
-        """Force the current node to save immediately"""
         pass
 
     def getAgeDescription(self):
@@ -7384,46 +5078,6 @@ class ptVaultAgeInfoNode(ptVaultNode):
         """Returns a ptVaultFolderNode of the child ages of this age"""
         pass
 
-    def getChildNodeCount(self):
-        """Returns how many children this node has."""
-        pass
-
-    def getChildNodeRefList(self):
-        """Returns a list of ptVaultNodeRef that are the children of this node."""
-        pass
-
-    def getClientID(self):
-        """Returns the client's ID."""
-        pass
-
-    def getCreateAgeCoords(self):
-        """Returns the location in the Age where this node was created."""
-        pass
-
-    def getCreateAgeGuid(self):
-        """Returns the guid as a string of the Age where this node was created."""
-        pass
-
-    def getCreateAgeName(self):
-        """Returns the name of the Age where this node was created."""
-        pass
-
-    def getCreateAgeTime(self):
-        """Returns the time in the Age that the node was created...(?)"""
-        pass
-
-    def getCreateTime(self):
-        """Returns the when this node was created, that is useable by python's time library."""
-        pass
-
-    def getCreatorNode(self):
-        """Returns the creator's node"""
-        pass
-
-    def getCreatorNodeID(self):
-        """Returns the creator's node ID"""
-        pass
-
     def getCzar(self):
         """Returns ptVaultPlayerInfoNode of the player that is the Czar"""
         pass
@@ -7436,65 +5090,12 @@ class ptVaultAgeInfoNode(ptVaultNode):
         """Returns the displayable version of the age name"""
         pass
 
-    def getID(self):
-        """Returns the unique ID of this ptVaultNode."""
-        pass
-
-    def getModifyTime(self):
-        """Returns the modified time of this node, that is useable by python's time library."""
-        pass
-
-    def getNode(self,id):
-        """Returns ptVaultNodeRef if is a child node, or None"""
-        pass
-
-    def getOwnerNode(self):
-        """Returns a ptVaultNode of the owner of this node"""
-        pass
-
-    def getOwnerNodeID(self):
-        """Returns the node ID of the owner of this node"""
-        pass
-
     def getParentAgeLink(self):
         """Returns ptVaultAgeLinkNode of the age's parent age, or None if not a child age"""
         pass
 
-    def getType(self):
-        """Returns the type of ptVaultNode this is.
-See PlasmaVaultTypes.py"""
-        pass
-
-    def hasNode(self,id):
-        """Returns true if node if a child node"""
-        pass
-
     def isPublic(self):
         """Returns whether the age is Public or Not"""
-        pass
-
-    def linkToNode(self,nodeID,cb=None,cbContext=0):
-        """Adds a link to the node designated by nodeID"""
-        pass
-
-    def removeAllNodes(self):
-        """Removes all the child nodes on this node."""
-        pass
-
-    def removeNode(self,node,cb=None,cbContext=0):
-        """Removes the child 'node'(ptVaultNode) from this node."""
-        pass
-
-    def save(self,cb=None,cbContext=0):
-        """Save the changes made to this node."""
-        pass
-
-    def saveAll(self,cb=None,cbContext=0):
-        """Saves this node and all its children nodes."""
-        pass
-
-    def sendTo(self,destID,cb=None,cbContext=0):
-        """Send this node to inbox at 'destID'"""
         pass
 
     def setAgeDescription(self,description):
@@ -7529,90 +5130,10 @@ See PlasmaVaultTypes.py"""
         """Sets the user defined part of the name"""
         pass
 
-    def setCreateAgeGuid(self,guid):
-        """Set guid as a string of the Age where this node was created."""
-        pass
-
-    def setCreateAgeName(self,name):
-        """Set name of the Age where this node was created."""
-        pass
-
-    def setCreatorNodeID(self,id):
-        """Set creator's node ID"""
-        pass
-
-    def setID(self,id):
-        """Sets ID of this ptVaultNode."""
-        pass
-
-    def setOwnerNodeID(self,id):
-        """Set node ID of the owner of this node"""
-        pass
-
-    def setType(self,type):
-        """Set the type of ptVaultNode this is."""
-        pass
-
-    def upcastToAgeInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoListNode"""
-        pass
-
-    def upcastToAgeInfoNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoNode"""
-        pass
-
-    def upcastToAgeLinkNode(self):
-        """Returns this ptVaultNode as ptVaultAgeLinkNode"""
-        pass
-
-    def upcastToChronicleNode(self):
-        """Returns this ptVaultNode as ptVaultChronicleNode"""
-        pass
-
-    def upcastToFolderNode(self):
-        """Returns this ptVaultNode as ptVaultFolderNode"""
-        pass
-
-    def upcastToImageNode(self):
-        """Returns this ptVaultNode as ptVaultImageNode"""
-        pass
-
-    def upcastToMarkerGameNode(self):
-        """Returns this ptVaultNode as ptVaultMarkerNode"""
-        pass
-
-    def upcastToPlayerInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoListNode"""
-        pass
-
-    def upcastToPlayerInfoNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoNode"""
-        pass
-
-    def upcastToPlayerNode(self):
-        """Returns this ptVaultNode as a ptVaultPlayerNode"""
-        pass
-
-    def upcastToSDLNode(self):
-        """Returns this ptVaultNode as a ptVaultSDLNode"""
-        pass
-
-    def upcastToSystemNode(self):
-        """Returns this ptVaultNode as a ptVaultSystemNode"""
-        pass
-
-    def upcastToTextNoteNode(self):
-        """Returns this ptVaultNode as ptVaultTextNoteNode"""
-        pass
-
 class ptVaultAgeLinkNode(ptVaultNode):
     """Plasma vault age link node"""
     def __init__(self,n=0):
         """None"""
-        pass
-
-    def addNode(self,node,cb=None,cbContext=0):
-        """Adds 'node'(ptVaultNode) as a child to this node."""
         pass
 
     def addSpawnPoint(self,point):
@@ -7623,213 +5144,36 @@ class ptVaultAgeLinkNode(ptVaultNode):
         """Returns this ptVaultAgeLinkNode as a ptAgeLinkStruct"""
         pass
 
-    def findNode(self,templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
-        """Returns ptVaultNode if child node found matching template, or None"""
-        pass
-
-    def forceSave(self):
-        """Force the current node to save immediately"""
-        pass
-
     def getAgeInfo(self):
         """Returns the ageInfo as a ptAgeInfoStruct"""
-        pass
-
-    def getChildNodeCount(self):
-        """Returns how many children this node has."""
-        pass
-
-    def getChildNodeRefList(self):
-        """Returns a list of ptVaultNodeRef that are the children of this node."""
-        pass
-
-    def getClientID(self):
-        """Returns the client's ID."""
-        pass
-
-    def getCreateAgeCoords(self):
-        """Returns the location in the Age where this node was created."""
-        pass
-
-    def getCreateAgeGuid(self):
-        """Returns the guid as a string of the Age where this node was created."""
-        pass
-
-    def getCreateAgeName(self):
-        """Returns the name of the Age where this node was created."""
-        pass
-
-    def getCreateAgeTime(self):
-        """Returns the time in the Age that the node was created...(?)"""
-        pass
-
-    def getCreateTime(self):
-        """Returns the when this node was created, that is useable by python's time library."""
-        pass
-
-    def getCreatorNode(self):
-        """Returns the creator's node"""
-        pass
-
-    def getCreatorNodeID(self):
-        """Returns the creator's node ID"""
-        pass
-
-    def getID(self):
-        """Returns the unique ID of this ptVaultNode."""
         pass
 
     def getLocked(self):
         """Returns whether the link is locked or not"""
         pass
 
-    def getModifyTime(self):
-        """Returns the modified time of this node, that is useable by python's time library."""
-        pass
-
-    def getNode(self,id):
-        """Returns ptVaultNodeRef if is a child node, or None"""
-        pass
-
-    def getOwnerNode(self):
-        """Returns a ptVaultNode of the owner of this node"""
-        pass
-
-    def getOwnerNodeID(self):
-        """Returns the node ID of the owner of this node"""
-        pass
-
     def getSpawnPoints(self):
         """Returns a list of ptSpawnPointInfo objects"""
-        pass
-
-    def getType(self):
-        """Returns the type of ptVaultNode this is.
-See PlasmaVaultTypes.py"""
         pass
 
     def getVolatile(self):
         """Returns whether the link is volatile or not"""
         pass
 
-    def hasNode(self,id):
-        """Returns true if node if a child node"""
-        pass
-
     def hasSpawnPoint(self,spawnPtName):
         """Returns true if this link has the specified spawn point"""
-        pass
-
-    def linkToNode(self,nodeID,cb=None,cbContext=0):
-        """Adds a link to the node designated by nodeID"""
-        pass
-
-    def removeAllNodes(self):
-        """Removes all the child nodes on this node."""
-        pass
-
-    def removeNode(self,node,cb=None,cbContext=0):
-        """Removes the child 'node'(ptVaultNode) from this node."""
         pass
 
     def removeSpawnPoint(self,point):
         """Removes the specified spawn point based on a ptSpawnPointInfo, ptSpawnPointInfoRef, or string"""
         pass
 
-    def save(self,cb=None,cbContext=0):
-        """Save the changes made to this node."""
-        pass
-
-    def saveAll(self,cb=None,cbContext=0):
-        """Saves this node and all its children nodes."""
-        pass
-
-    def sendTo(self,destID,cb=None,cbContext=0):
-        """Send this node to inbox at 'destID'"""
-        pass
-
-    def setCreateAgeGuid(self,guid):
-        """Set guid as a string of the Age where this node was created."""
-        pass
-
-    def setCreateAgeName(self,name):
-        """Set name of the Age where this node was created."""
-        pass
-
-    def setCreatorNodeID(self,id):
-        """Set creator's node ID"""
-        pass
-
-    def setID(self,id):
-        """Sets ID of this ptVaultNode."""
-        pass
-
     def setLocked(self,state):
         """Sets whether the link is locked or not"""
         pass
 
-    def setOwnerNodeID(self,id):
-        """Set node ID of the owner of this node"""
-        pass
-
-    def setType(self,type):
-        """Set the type of ptVaultNode this is."""
-        pass
-
     def setVolatile(self,state):
         """Sets the state of the volitility of the link"""
-        pass
-
-    def upcastToAgeInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoListNode"""
-        pass
-
-    def upcastToAgeInfoNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoNode"""
-        pass
-
-    def upcastToAgeLinkNode(self):
-        """Returns this ptVaultNode as ptVaultAgeLinkNode"""
-        pass
-
-    def upcastToChronicleNode(self):
-        """Returns this ptVaultNode as ptVaultChronicleNode"""
-        pass
-
-    def upcastToFolderNode(self):
-        """Returns this ptVaultNode as ptVaultFolderNode"""
-        pass
-
-    def upcastToImageNode(self):
-        """Returns this ptVaultNode as ptVaultImageNode"""
-        pass
-
-    def upcastToMarkerGameNode(self):
-        """Returns this ptVaultNode as ptVaultMarkerNode"""
-        pass
-
-    def upcastToPlayerInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoListNode"""
-        pass
-
-    def upcastToPlayerInfoNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoNode"""
-        pass
-
-    def upcastToPlayerNode(self):
-        """Returns this ptVaultNode as a ptVaultPlayerNode"""
-        pass
-
-    def upcastToSDLNode(self):
-        """Returns this ptVaultNode as a ptVaultSDLNode"""
-        pass
-
-    def upcastToSystemNode(self):
-        """Returns this ptVaultNode as a ptVaultSystemNode"""
-        pass
-
-    def upcastToTextNoteNode(self):
-        """Returns this ptVaultNode as ptVaultTextNoteNode"""
         pass
 
 class ptVaultChronicleNode(ptVaultNode):
@@ -7838,209 +5182,28 @@ class ptVaultChronicleNode(ptVaultNode):
         """None"""
         pass
 
-    def addNode(self,node,cb=None,cbContext=0):
-        """Adds 'node'(ptVaultNode) as a child to this node."""
-        pass
-
-    def findNode(self,templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
-        """Returns ptVaultNode if child node found matching template, or None"""
-        pass
-
-    def forceSave(self):
-        """Force the current node to save immediately"""
-        pass
-
-    def getChildNodeCount(self):
-        """Returns how many children this node has."""
-        pass
-
-    def getChildNodeRefList(self):
-        """Returns a list of ptVaultNodeRef that are the children of this node."""
-        pass
-
-    def getClientID(self):
-        """Returns the client's ID."""
-        pass
-
-    def getCreateAgeCoords(self):
-        """Returns the location in the Age where this node was created."""
-        pass
-
-    def getCreateAgeGuid(self):
-        """Returns the guid as a string of the Age where this node was created."""
-        pass
-
-    def getCreateAgeName(self):
-        """Returns the name of the Age where this node was created."""
-        pass
-
-    def getCreateAgeTime(self):
-        """Returns the time in the Age that the node was created...(?)"""
-        pass
-
-    def getCreateTime(self):
-        """Returns the when this node was created, that is useable by python's time library."""
-        pass
-
-    def getCreatorNode(self):
-        """Returns the creator's node"""
-        pass
-
-    def getCreatorNodeID(self):
-        """Returns the creator's node ID"""
-        pass
-
     def getEntryType(self):
         """Returns the user defined type of the chronicle node."""
-        pass
-
-    def getID(self):
-        """Returns the unique ID of this ptVaultNode."""
-        pass
-
-    def getModifyTime(self):
-        """Returns the modified time of this node, that is useable by python's time library."""
         pass
 
     def getName(self):
         """Returns the name of the chronicle node."""
         pass
 
-    def getNode(self,id):
-        """Returns ptVaultNodeRef if is a child node, or None"""
-        pass
-
-    def getOwnerNode(self):
-        """Returns a ptVaultNode of the owner of this node"""
-        pass
-
-    def getOwnerNodeID(self):
-        """Returns the node ID of the owner of this node"""
-        pass
-
-    def getType(self):
-        """Returns the type of ptVaultNode this is.
-See PlasmaVaultTypes.py"""
-        pass
-
     def getValue(self):
         """Returns the value as a string of this chronicle node."""
-        pass
-
-    def hasNode(self,id):
-        """Returns true if node if a child node"""
-        pass
-
-    def linkToNode(self,nodeID,cb=None,cbContext=0):
-        """Adds a link to the node designated by nodeID"""
-        pass
-
-    def removeAllNodes(self):
-        """Removes all the child nodes on this node."""
-        pass
-
-    def removeNode(self,node,cb=None,cbContext=0):
-        """Removes the child 'node'(ptVaultNode) from this node."""
-        pass
-
-    def save(self,cb=None,cbContext=0):
-        """Save the changes made to this node."""
-        pass
-
-    def saveAll(self,cb=None,cbContext=0):
-        """Saves this node and all its children nodes."""
-        pass
-
-    def sendTo(self,destID,cb=None,cbContext=0):
-        """Send this node to inbox at 'destID'"""
-        pass
-
-    def setCreateAgeGuid(self,guid):
-        """Set guid as a string of the Age where this node was created."""
-        pass
-
-    def setCreateAgeName(self,name):
-        """Set name of the Age where this node was created."""
-        pass
-
-    def setCreatorNodeID(self,id):
-        """Set creator's node ID"""
         pass
 
     def setEntryType(self,type):
         """Sets this chronicle node to a user defined type."""
         pass
 
-    def setID(self,id):
-        """Sets ID of this ptVaultNode."""
-        pass
-
     def setName(self,name):
         """Sets the name of the chronicle node."""
         pass
 
-    def setOwnerNodeID(self,id):
-        """Set node ID of the owner of this node"""
-        pass
-
-    def setType(self,type):
-        """Set the type of ptVaultNode this is."""
-        pass
-
     def setValue(self,value):
         """Sets the chronicle to a value that is a string"""
-        pass
-
-    def upcastToAgeInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoListNode"""
-        pass
-
-    def upcastToAgeInfoNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoNode"""
-        pass
-
-    def upcastToAgeLinkNode(self):
-        """Returns this ptVaultNode as ptVaultAgeLinkNode"""
-        pass
-
-    def upcastToChronicleNode(self):
-        """Returns this ptVaultNode as ptVaultChronicleNode"""
-        pass
-
-    def upcastToFolderNode(self):
-        """Returns this ptVaultNode as ptVaultFolderNode"""
-        pass
-
-    def upcastToImageNode(self):
-        """Returns this ptVaultNode as ptVaultImageNode"""
-        pass
-
-    def upcastToMarkerGameNode(self):
-        """Returns this ptVaultNode as ptVaultMarkerNode"""
-        pass
-
-    def upcastToPlayerInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoListNode"""
-        pass
-
-    def upcastToPlayerInfoNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoNode"""
-        pass
-
-    def upcastToPlayerNode(self):
-        """Returns this ptVaultNode as a ptVaultPlayerNode"""
-        pass
-
-    def upcastToSDLNode(self):
-        """Returns this ptVaultNode as a ptVaultSDLNode"""
-        pass
-
-    def upcastToSystemNode(self):
-        """Returns this ptVaultNode as a ptVaultSystemNode"""
-        pass
-
-    def upcastToTextNoteNode(self):
-        """Returns this ptVaultNode as ptVaultTextNoteNode"""
         pass
 
 class ptVaultImageNode(ptVaultNode):
@@ -8049,133 +5212,12 @@ class ptVaultImageNode(ptVaultNode):
         """None"""
         pass
 
-    def addNode(self,node,cb=None,cbContext=0):
-        """Adds 'node'(ptVaultNode) as a child to this node."""
-        pass
-
-    def findNode(self,templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
-        """Returns ptVaultNode if child node found matching template, or None"""
-        pass
-
-    def forceSave(self):
-        """Force the current node to save immediately"""
-        pass
-
-    def getChildNodeCount(self):
-        """Returns how many children this node has."""
-        pass
-
-    def getChildNodeRefList(self):
-        """Returns a list of ptVaultNodeRef that are the children of this node."""
-        pass
-
-    def getClientID(self):
-        """Returns the client's ID."""
-        pass
-
-    def getCreateAgeCoords(self):
-        """Returns the location in the Age where this node was created."""
-        pass
-
-    def getCreateAgeGuid(self):
-        """Returns the guid as a string of the Age where this node was created."""
-        pass
-
-    def getCreateAgeName(self):
-        """Returns the name of the Age where this node was created."""
-        pass
-
-    def getCreateAgeTime(self):
-        """Returns the time in the Age that the node was created...(?)"""
-        pass
-
-    def getCreateTime(self):
-        """Returns the when this node was created, that is useable by python's time library."""
-        pass
-
-    def getCreatorNode(self):
-        """Returns the creator's node"""
-        pass
-
-    def getCreatorNodeID(self):
-        """Returns the creator's node ID"""
-        pass
-
-    def getID(self):
-        """Returns the unique ID of this ptVaultNode."""
-        pass
-
     def getImage(self):
         """Returns the image(ptImage) of this image node"""
         pass
 
-    def getModifyTime(self):
-        """Returns the modified time of this node, that is useable by python's time library."""
-        pass
-
-    def getNode(self,id):
-        """Returns ptVaultNodeRef if is a child node, or None"""
-        pass
-
-    def getOwnerNode(self):
-        """Returns a ptVaultNode of the owner of this node"""
-        pass
-
-    def getOwnerNodeID(self):
-        """Returns the node ID of the owner of this node"""
-        pass
-
     def getTitle(self):
         """Returns the title (caption) of this image node"""
-        pass
-
-    def getType(self):
-        """Returns the type of ptVaultNode this is.
-See PlasmaVaultTypes.py"""
-        pass
-
-    def hasNode(self,id):
-        """Returns true if node if a child node"""
-        pass
-
-    def linkToNode(self,nodeID,cb=None,cbContext=0):
-        """Adds a link to the node designated by nodeID"""
-        pass
-
-    def removeAllNodes(self):
-        """Removes all the child nodes on this node."""
-        pass
-
-    def removeNode(self,node,cb=None,cbContext=0):
-        """Removes the child 'node'(ptVaultNode) from this node."""
-        pass
-
-    def save(self,cb=None,cbContext=0):
-        """Save the changes made to this node."""
-        pass
-
-    def saveAll(self,cb=None,cbContext=0):
-        """Saves this node and all its children nodes."""
-        pass
-
-    def sendTo(self,destID,cb=None,cbContext=0):
-        """Send this node to inbox at 'destID'"""
-        pass
-
-    def setCreateAgeGuid(self,guid):
-        """Set guid as a string of the Age where this node was created."""
-        pass
-
-    def setCreateAgeName(self,name):
-        """Set name of the Age where this node was created."""
-        pass
-
-    def setCreatorNodeID(self,id):
-        """Set creator's node ID"""
-        pass
-
-    def setID(self,id):
-        """Sets ID of this ptVaultNode."""
         pass
 
     def setImage(self,image):
@@ -8190,126 +5232,14 @@ See PlasmaVaultTypes.py"""
         """Grabs a screenshot and stuffs it into this node"""
         pass
 
-    def setOwnerNodeID(self,id):
-        """Set node ID of the owner of this node"""
-        pass
-
     def setTitle(self,title):
         """Sets the title (caption) of this image node"""
-        pass
-
-    def setType(self,type):
-        """Set the type of ptVaultNode this is."""
-        pass
-
-    def upcastToAgeInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoListNode"""
-        pass
-
-    def upcastToAgeInfoNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoNode"""
-        pass
-
-    def upcastToAgeLinkNode(self):
-        """Returns this ptVaultNode as ptVaultAgeLinkNode"""
-        pass
-
-    def upcastToChronicleNode(self):
-        """Returns this ptVaultNode as ptVaultChronicleNode"""
-        pass
-
-    def upcastToFolderNode(self):
-        """Returns this ptVaultNode as ptVaultFolderNode"""
-        pass
-
-    def upcastToImageNode(self):
-        """Returns this ptVaultNode as ptVaultImageNode"""
-        pass
-
-    def upcastToMarkerGameNode(self):
-        """Returns this ptVaultNode as ptVaultMarkerNode"""
-        pass
-
-    def upcastToPlayerInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoListNode"""
-        pass
-
-    def upcastToPlayerInfoNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoNode"""
-        pass
-
-    def upcastToPlayerNode(self):
-        """Returns this ptVaultNode as a ptVaultPlayerNode"""
-        pass
-
-    def upcastToSDLNode(self):
-        """Returns this ptVaultNode as a ptVaultSDLNode"""
-        pass
-
-    def upcastToSystemNode(self):
-        """Returns this ptVaultNode as a ptVaultSystemNode"""
-        pass
-
-    def upcastToTextNoteNode(self):
-        """Returns this ptVaultNode as ptVaultTextNoteNode"""
         pass
 
 class ptVaultMarkerGameNode(ptVaultNode):
     """Plasma vault age info node"""
     def __init__(self,n=0):
         """None"""
-        pass
-
-    def addNode(self,node,cb=None,cbContext=0):
-        """Adds 'node'(ptVaultNode) as a child to this node."""
-        pass
-
-    def findNode(self,templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
-        """Returns ptVaultNode if child node found matching template, or None"""
-        pass
-
-    def forceSave(self):
-        """Force the current node to save immediately"""
-        pass
-
-    def getChildNodeCount(self):
-        """Returns how many children this node has."""
-        pass
-
-    def getChildNodeRefList(self):
-        """Returns a list of ptVaultNodeRef that are the children of this node."""
-        pass
-
-    def getClientID(self):
-        """Returns the client's ID."""
-        pass
-
-    def getCreateAgeCoords(self):
-        """Returns the location in the Age where this node was created."""
-        pass
-
-    def getCreateAgeGuid(self):
-        """Returns the guid as a string of the Age where this node was created."""
-        pass
-
-    def getCreateAgeName(self):
-        """Returns the name of the Age where this node was created."""
-        pass
-
-    def getCreateAgeTime(self):
-        """Returns the time in the Age that the node was created...(?)"""
-        pass
-
-    def getCreateTime(self):
-        """Returns the when this node was created, that is useable by python's time library."""
-        pass
-
-    def getCreatorNode(self):
-        """Returns the creator's node"""
-        pass
-
-    def getCreatorNodeID(self):
-        """Returns the creator's node ID"""
         pass
 
     def getGameGuid(self):
@@ -8320,77 +5250,12 @@ class ptVaultMarkerGameNode(ptVaultNode):
         """Returns the marker game's name"""
         pass
 
-    def getID(self):
-        """Returns the unique ID of this ptVaultNode."""
-        pass
-
     def getMarkers(self):
         """Returns a tuple of markers associated with this game"""
         pass
 
-    def getModifyTime(self):
-        """Returns the modified time of this node, that is useable by python's time library."""
-        pass
-
-    def getNode(self,id):
-        """Returns ptVaultNodeRef if is a child node, or None"""
-        pass
-
-    def getOwnerNode(self):
-        """Returns a ptVaultNode of the owner of this node"""
-        pass
-
-    def getOwnerNodeID(self):
-        """Returns the node ID of the owner of this node"""
-        pass
-
     def getReward(self):
         """Returns a string representing the reward for completing this game"""
-        pass
-
-    def getType(self):
-        """Returns the type of ptVaultNode this is.
-See PlasmaVaultTypes.py"""
-        pass
-
-    def hasNode(self,id):
-        """Returns true if node if a child node"""
-        pass
-
-    def linkToNode(self,nodeID,cb=None,cbContext=0):
-        """Adds a link to the node designated by nodeID"""
-        pass
-
-    def removeAllNodes(self):
-        """Removes all the child nodes on this node."""
-        pass
-
-    def removeNode(self,node,cb=None,cbContext=0):
-        """Removes the child 'node'(ptVaultNode) from this node."""
-        pass
-
-    def save(self,cb=None,cbContext=0):
-        """Save the changes made to this node."""
-        pass
-
-    def saveAll(self,cb=None,cbContext=0):
-        """Saves this node and all its children nodes."""
-        pass
-
-    def sendTo(self,destID,cb=None,cbContext=0):
-        """Send this node to inbox at 'destID'"""
-        pass
-
-    def setCreateAgeGuid(self,guid):
-        """Set guid as a string of the Age where this node was created."""
-        pass
-
-    def setCreateAgeName(self,name):
-        """Set name of the Age where this node was created."""
-        pass
-
-    def setCreatorNodeID(self,id):
-        """Set creator's node ID"""
         pass
 
     def setGameGuid(self,guid):
@@ -8401,76 +5266,12 @@ See PlasmaVaultTypes.py"""
         """Sets marker game's name"""
         pass
 
-    def setID(self,id):
-        """Sets ID of this ptVaultNode."""
-        pass
-
     def setMarkers(self,markers):
         """Sets markers associated with this game"""
         pass
 
-    def setOwnerNodeID(self,id):
-        """Set node ID of the owner of this node"""
-        pass
-
     def setReward(self,reward):
         """Sets the reward for completing this marker game"""
-        pass
-
-    def setType(self,type):
-        """Set the type of ptVaultNode this is."""
-        pass
-
-    def upcastToAgeInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoListNode"""
-        pass
-
-    def upcastToAgeInfoNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoNode"""
-        pass
-
-    def upcastToAgeLinkNode(self):
-        """Returns this ptVaultNode as ptVaultAgeLinkNode"""
-        pass
-
-    def upcastToChronicleNode(self):
-        """Returns this ptVaultNode as ptVaultChronicleNode"""
-        pass
-
-    def upcastToFolderNode(self):
-        """Returns this ptVaultNode as ptVaultFolderNode"""
-        pass
-
-    def upcastToImageNode(self):
-        """Returns this ptVaultNode as ptVaultImageNode"""
-        pass
-
-    def upcastToMarkerGameNode(self):
-        """Returns this ptVaultNode as ptVaultMarkerNode"""
-        pass
-
-    def upcastToPlayerInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoListNode"""
-        pass
-
-    def upcastToPlayerInfoNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoNode"""
-        pass
-
-    def upcastToPlayerNode(self):
-        """Returns this ptVaultNode as a ptVaultPlayerNode"""
-        pass
-
-    def upcastToSDLNode(self):
-        """Returns this ptVaultNode as a ptVaultSDLNode"""
-        pass
-
-    def upcastToSystemNode(self):
-        """Returns this ptVaultNode as a ptVaultSystemNode"""
-        pass
-
-    def upcastToTextNoteNode(self):
-        """Returns this ptVaultNode as ptVaultTextNoteNode"""
         pass
 
 class ptVaultNodeRef:
@@ -8517,312 +5318,30 @@ class ptVaultPlayerInfoListNode(ptVaultFolderNode):
         """None"""
         pass
 
-    def addNode(self,node,cb=None,cbContext=0):
-        """Adds 'node'(ptVaultNode) as a child to this node."""
-        pass
-
     def addPlayer(self,playerID):
         """Adds playerID player to this player info list node."""
-        pass
-
-    def findNode(self,templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
-        """Returns ptVaultNode if child node found matching template, or None"""
-        pass
-
-    def forceSave(self):
-        """Force the current node to save immediately"""
-        pass
-
-    def getChildNodeCount(self):
-        """Returns how many children this node has."""
-        pass
-
-    def getChildNodeRefList(self):
-        """Returns a list of ptVaultNodeRef that are the children of this node."""
-        pass
-
-    def getClientID(self):
-        """Returns the client's ID."""
-        pass
-
-    def getCreateAgeCoords(self):
-        """Returns the location in the Age where this node was created."""
-        pass
-
-    def getCreateAgeGuid(self):
-        """Returns the guid as a string of the Age where this node was created."""
-        pass
-
-    def getCreateAgeName(self):
-        """Returns the name of the Age where this node was created."""
-        pass
-
-    def getCreateAgeTime(self):
-        """Returns the time in the Age that the node was created...(?)"""
-        pass
-
-    def getCreateTime(self):
-        """Returns the when this node was created, that is useable by python's time library."""
-        pass
-
-    def getCreatorNode(self):
-        """Returns the creator's node"""
-        pass
-
-    def getCreatorNodeID(self):
-        """Returns the creator's node ID"""
-        pass
-
-    def getFolderName(self):
-        """Returns the folder's name"""
-        pass
-
-    def getFolderType(self):
-        """Returns the folder type (of the standard folder types)"""
-        pass
-
-    def getID(self):
-        """Returns the unique ID of this ptVaultNode."""
-        pass
-
-    def getModifyTime(self):
-        """Returns the modified time of this node, that is useable by python's time library."""
-        pass
-
-    def getNode(self,id):
-        """Returns ptVaultNodeRef if is a child node, or None"""
-        pass
-
-    def getOwnerNode(self):
-        """Returns a ptVaultNode of the owner of this node"""
-        pass
-
-    def getOwnerNodeID(self):
-        """Returns the node ID of the owner of this node"""
         pass
 
     def getPlayer(self,playerID):
         """Gets the player info node for the specified player."""
         pass
 
-    def getType(self):
-        """Returns the type of ptVaultNode this is.
-See PlasmaVaultTypes.py"""
-        pass
-
-    def hasNode(self,id):
-        """Returns true if node if a child node"""
-        pass
-
     def hasPlayer(self,playerID):
         """Returns whether the 'playerID' is a member of this player info list node."""
-        pass
-
-    def linkToNode(self,nodeID,cb=None,cbContext=0):
-        """Adds a link to the node designated by nodeID"""
-        pass
-
-    def removeAllNodes(self):
-        """Removes all the child nodes on this node."""
-        pass
-
-    def removeNode(self,node,cb=None,cbContext=0):
-        """Removes the child 'node'(ptVaultNode) from this node."""
         pass
 
     def removePlayer(self,playerID):
         """Removes playerID player from this player info list node."""
         pass
 
-    def save(self,cb=None,cbContext=0):
-        """Save the changes made to this node."""
-        pass
-
-    def saveAll(self,cb=None,cbContext=0):
-        """Saves this node and all its children nodes."""
-        pass
-
-    def sendTo(self,destID,cb=None,cbContext=0):
-        """Send this node to inbox at 'destID'"""
-        pass
-
-    def setCreateAgeGuid(self,guid):
-        """Set guid as a string of the Age where this node was created."""
-        pass
-
-    def setCreateAgeName(self,name):
-        """Set name of the Age where this node was created."""
-        pass
-
-    def setCreatorNodeID(self,id):
-        """Set creator's node ID"""
-        pass
-
-    def setFolderName(self,name):
-        """Set the folder name"""
-        pass
-
-    def setFolderType(self,type):
-        """Set the folder type"""
-        pass
-
-    def setID(self,id):
-        """Sets ID of this ptVaultNode."""
-        pass
-
-    def setOwnerNodeID(self,id):
-        """Set node ID of the owner of this node"""
-        pass
-
-    def setType(self,type):
-        """Set the type of ptVaultNode this is."""
-        pass
-
     def sort(self):
         """Sorts the player list by some means...?"""
-        pass
-
-    def upcastToAgeInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoListNode"""
-        pass
-
-    def upcastToAgeInfoNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoNode"""
-        pass
-
-    def upcastToAgeLinkNode(self):
-        """Returns this ptVaultNode as ptVaultAgeLinkNode"""
-        pass
-
-    def upcastToChronicleNode(self):
-        """Returns this ptVaultNode as ptVaultChronicleNode"""
-        pass
-
-    def upcastToFolderNode(self):
-        """Returns this ptVaultNode as ptVaultFolderNode"""
-        pass
-
-    def upcastToImageNode(self):
-        """Returns this ptVaultNode as ptVaultImageNode"""
-        pass
-
-    def upcastToMarkerGameNode(self):
-        """Returns this ptVaultNode as ptVaultMarkerNode"""
-        pass
-
-    def upcastToPlayerInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoListNode"""
-        pass
-
-    def upcastToPlayerInfoNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoNode"""
-        pass
-
-    def upcastToPlayerNode(self):
-        """Returns this ptVaultNode as a ptVaultPlayerNode"""
-        pass
-
-    def upcastToSDLNode(self):
-        """Returns this ptVaultNode as a ptVaultSDLNode"""
-        pass
-
-    def upcastToSystemNode(self):
-        """Returns this ptVaultNode as a ptVaultSystemNode"""
-        pass
-
-    def upcastToTextNoteNode(self):
-        """Returns this ptVaultNode as ptVaultTextNoteNode"""
         pass
 
 class ptVaultPlayerInfoNode(ptVaultNode):
     """Plasma vault folder node"""
     def __init__(self):
         """None"""
-        pass
-
-    def addNode(self,node,cb=None,cbContext=0):
-        """Adds 'node'(ptVaultNode) as a child to this node."""
-        pass
-
-    def findNode(self,templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
-        """Returns ptVaultNode if child node found matching template, or None"""
-        pass
-
-    def forceSave(self):
-        """Force the current node to save immediately"""
-        pass
-
-    def getChildNodeCount(self):
-        """Returns how many children this node has."""
-        pass
-
-    def getChildNodeRefList(self):
-        """Returns a list of ptVaultNodeRef that are the children of this node."""
-        pass
-
-    def getClientID(self):
-        """Returns the client's ID."""
-        pass
-
-    def getCreateAgeCoords(self):
-        """Returns the location in the Age where this node was created."""
-        pass
-
-    def getCreateAgeGuid(self):
-        """Returns the guid as a string of the Age where this node was created."""
-        pass
-
-    def getCreateAgeName(self):
-        """Returns the name of the Age where this node was created."""
-        pass
-
-    def getCreateAgeTime(self):
-        """Returns the time in the Age that the node was created...(?)"""
-        pass
-
-    def getCreateTime(self):
-        """Returns the when this node was created, that is useable by python's time library."""
-        pass
-
-    def getCreatorNode(self):
-        """Returns the creator's node"""
-        pass
-
-    def getCreatorNodeID(self):
-        """Returns the creator's node ID"""
-        pass
-
-    def getID(self):
-        """Returns the unique ID of this ptVaultNode."""
-        pass
-
-    def getModifyTime(self):
-        """Returns the modified time of this node, that is useable by python's time library."""
-        pass
-
-    def getNode(self,id):
-        """Returns ptVaultNodeRef if is a child node, or None"""
-        pass
-
-    def getOwnerNode(self):
-        """Returns a ptVaultNode of the owner of this node"""
-        pass
-
-    def getOwnerNodeID(self):
-        """Returns the node ID of the owner of this node"""
-        pass
-
-    def getType(self):
-        """Returns the type of ptVaultNode this is.
-See PlasmaVaultTypes.py"""
-        pass
-
-    def hasNode(self,id):
-        """Returns true if node if a child node"""
-        pass
-
-    def linkToNode(self,nodeID,cb=None,cbContext=0):
-        """Adds a link to the node designated by nodeID"""
         pass
 
     def playerGetAgeGuid(self):
@@ -8869,307 +5388,30 @@ See PlasmaVaultTypes.py"""
         """Not sure this should be used. Sets the state of the player online status for this player info node."""
         pass
 
-    def removeAllNodes(self):
-        """Removes all the child nodes on this node."""
-        pass
-
-    def removeNode(self,node,cb=None,cbContext=0):
-        """Removes the child 'node'(ptVaultNode) from this node."""
-        pass
-
-    def save(self,cb=None,cbContext=0):
-        """Save the changes made to this node."""
-        pass
-
-    def saveAll(self,cb=None,cbContext=0):
-        """Saves this node and all its children nodes."""
-        pass
-
-    def sendTo(self,destID,cb=None,cbContext=0):
-        """Send this node to inbox at 'destID'"""
-        pass
-
-    def setCreateAgeGuid(self,guid):
-        """Set guid as a string of the Age where this node was created."""
-        pass
-
-    def setCreateAgeName(self,name):
-        """Set name of the Age where this node was created."""
-        pass
-
-    def setCreatorNodeID(self,id):
-        """Set creator's node ID"""
-        pass
-
-    def setID(self,id):
-        """Sets ID of this ptVaultNode."""
-        pass
-
-    def setOwnerNodeID(self,id):
-        """Set node ID of the owner of this node"""
-        pass
-
-    def setType(self,type):
-        """Set the type of ptVaultNode this is."""
-        pass
-
-    def upcastToAgeInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoListNode"""
-        pass
-
-    def upcastToAgeInfoNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoNode"""
-        pass
-
-    def upcastToAgeLinkNode(self):
-        """Returns this ptVaultNode as ptVaultAgeLinkNode"""
-        pass
-
-    def upcastToChronicleNode(self):
-        """Returns this ptVaultNode as ptVaultChronicleNode"""
-        pass
-
-    def upcastToFolderNode(self):
-        """Returns this ptVaultNode as ptVaultFolderNode"""
-        pass
-
-    def upcastToImageNode(self):
-        """Returns this ptVaultNode as ptVaultImageNode"""
-        pass
-
-    def upcastToMarkerGameNode(self):
-        """Returns this ptVaultNode as ptVaultMarkerNode"""
-        pass
-
-    def upcastToPlayerInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoListNode"""
-        pass
-
-    def upcastToPlayerInfoNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoNode"""
-        pass
-
-    def upcastToPlayerNode(self):
-        """Returns this ptVaultNode as a ptVaultPlayerNode"""
-        pass
-
-    def upcastToSDLNode(self):
-        """Returns this ptVaultNode as a ptVaultSDLNode"""
-        pass
-
-    def upcastToSystemNode(self):
-        """Returns this ptVaultNode as a ptVaultSystemNode"""
-        pass
-
-    def upcastToTextNoteNode(self):
-        """Returns this ptVaultNode as ptVaultTextNoteNode"""
-        pass
-
 class ptVaultSDLNode(ptVaultNode):
     """Plasma vault SDL node"""
     def __init__(self):
         """None"""
         pass
 
-    def addNode(self,node,cb=None,cbContext=0):
-        """Adds 'node'(ptVaultNode) as a child to this node."""
-        pass
-
-    def findNode(self,templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
-        """Returns ptVaultNode if child node found matching template, or None"""
-        pass
-
-    def forceSave(self):
-        """Force the current node to save immediately"""
-        pass
-
-    def getChildNodeCount(self):
-        """Returns how many children this node has."""
-        pass
-
-    def getChildNodeRefList(self):
-        """Returns a list of ptVaultNodeRef that are the children of this node."""
-        pass
-
-    def getClientID(self):
-        """Returns the client's ID."""
-        pass
-
-    def getCreateAgeCoords(self):
-        """Returns the location in the Age where this node was created."""
-        pass
-
-    def getCreateAgeGuid(self):
-        """Returns the guid as a string of the Age where this node was created."""
-        pass
-
-    def getCreateAgeName(self):
-        """Returns the name of the Age where this node was created."""
-        pass
-
-    def getCreateAgeTime(self):
-        """Returns the time in the Age that the node was created...(?)"""
-        pass
-
-    def getCreateTime(self):
-        """Returns the when this node was created, that is useable by python's time library."""
-        pass
-
-    def getCreatorNode(self):
-        """Returns the creator's node"""
-        pass
-
-    def getCreatorNodeID(self):
-        """Returns the creator's node ID"""
-        pass
-
-    def getID(self):
-        """Returns the unique ID of this ptVaultNode."""
-        pass
-
     def getIdent(self):
         """UNKNOWN"""
-        pass
-
-    def getModifyTime(self):
-        """Returns the modified time of this node, that is useable by python's time library."""
-        pass
-
-    def getNode(self,id):
-        """Returns ptVaultNodeRef if is a child node, or None"""
-        pass
-
-    def getOwnerNode(self):
-        """Returns a ptVaultNode of the owner of this node"""
-        pass
-
-    def getOwnerNodeID(self):
-        """Returns the node ID of the owner of this node"""
         pass
 
     def getStateDataRecord(self):
         """Returns the ptSDLStateDataRecord associated with this node"""
         pass
 
-    def getType(self):
-        """Returns the type of ptVaultNode this is.
-See PlasmaVaultTypes.py"""
-        pass
-
-    def hasNode(self,id):
-        """Returns true if node if a child node"""
-        pass
-
     def initStateDataRecord(self,filename,flags):
         """Read the SDL Rec from File if needed"""
-        pass
-
-    def linkToNode(self,nodeID,cb=None,cbContext=0):
-        """Adds a link to the node designated by nodeID"""
-        pass
-
-    def removeAllNodes(self):
-        """Removes all the child nodes on this node."""
-        pass
-
-    def removeNode(self,node,cb=None,cbContext=0):
-        """Removes the child 'node'(ptVaultNode) from this node."""
-        pass
-
-    def save(self,cb=None,cbContext=0):
-        """Save the changes made to this node."""
-        pass
-
-    def saveAll(self,cb=None,cbContext=0):
-        """Saves this node and all its children nodes."""
-        pass
-
-    def sendTo(self,destID,cb=None,cbContext=0):
-        """Send this node to inbox at 'destID'"""
-        pass
-
-    def setCreateAgeGuid(self,guid):
-        """Set guid as a string of the Age where this node was created."""
-        pass
-
-    def setCreateAgeName(self,name):
-        """Set name of the Age where this node was created."""
-        pass
-
-    def setCreatorNodeID(self,id):
-        """Set creator's node ID"""
-        pass
-
-    def setID(self,id):
-        """Sets ID of this ptVaultNode."""
         pass
 
     def setIdent(self,v):
         """UNKNOWN"""
         pass
 
-    def setOwnerNodeID(self,id):
-        """Set node ID of the owner of this node"""
-        pass
-
     def setStateDataRecord(self,rec,writeOptions=0):
         """Sets the ptSDLStateDataRecord"""
-        pass
-
-    def setType(self,type):
-        """Set the type of ptVaultNode this is."""
-        pass
-
-    def upcastToAgeInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoListNode"""
-        pass
-
-    def upcastToAgeInfoNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoNode"""
-        pass
-
-    def upcastToAgeLinkNode(self):
-        """Returns this ptVaultNode as ptVaultAgeLinkNode"""
-        pass
-
-    def upcastToChronicleNode(self):
-        """Returns this ptVaultNode as ptVaultChronicleNode"""
-        pass
-
-    def upcastToFolderNode(self):
-        """Returns this ptVaultNode as ptVaultFolderNode"""
-        pass
-
-    def upcastToImageNode(self):
-        """Returns this ptVaultNode as ptVaultImageNode"""
-        pass
-
-    def upcastToMarkerGameNode(self):
-        """Returns this ptVaultNode as ptVaultMarkerNode"""
-        pass
-
-    def upcastToPlayerInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoListNode"""
-        pass
-
-    def upcastToPlayerInfoNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoNode"""
-        pass
-
-    def upcastToPlayerNode(self):
-        """Returns this ptVaultNode as a ptVaultPlayerNode"""
-        pass
-
-    def upcastToSDLNode(self):
-        """Returns this ptVaultNode as a ptVaultSDLNode"""
-        pass
-
-    def upcastToSystemNode(self):
-        """Returns this ptVaultNode as a ptVaultSystemNode"""
-        pass
-
-    def upcastToTextNoteNode(self):
-        """Returns this ptVaultNode as ptVaultTextNoteNode"""
         pass
 
 class ptVaultSystemNode(ptVaultNode):
@@ -9178,259 +5420,14 @@ class ptVaultSystemNode(ptVaultNode):
         """None"""
         pass
 
-    def addNode(self,node,cb=None,cbContext=0):
-        """Adds 'node'(ptVaultNode) as a child to this node."""
-        pass
-
-    def findNode(self,templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
-        """Returns ptVaultNode if child node found matching template, or None"""
-        pass
-
-    def forceSave(self):
-        """Force the current node to save immediately"""
-        pass
-
-    def getChildNodeCount(self):
-        """Returns how many children this node has."""
-        pass
-
-    def getChildNodeRefList(self):
-        """Returns a list of ptVaultNodeRef that are the children of this node."""
-        pass
-
-    def getClientID(self):
-        """Returns the client's ID."""
-        pass
-
-    def getCreateAgeCoords(self):
-        """Returns the location in the Age where this node was created."""
-        pass
-
-    def getCreateAgeGuid(self):
-        """Returns the guid as a string of the Age where this node was created."""
-        pass
-
-    def getCreateAgeName(self):
-        """Returns the name of the Age where this node was created."""
-        pass
-
-    def getCreateAgeTime(self):
-        """Returns the time in the Age that the node was created...(?)"""
-        pass
-
-    def getCreateTime(self):
-        """Returns the when this node was created, that is useable by python's time library."""
-        pass
-
-    def getCreatorNode(self):
-        """Returns the creator's node"""
-        pass
-
-    def getCreatorNodeID(self):
-        """Returns the creator's node ID"""
-        pass
-
-    def getID(self):
-        """Returns the unique ID of this ptVaultNode."""
-        pass
-
-    def getModifyTime(self):
-        """Returns the modified time of this node, that is useable by python's time library."""
-        pass
-
-    def getNode(self,id):
-        """Returns ptVaultNodeRef if is a child node, or None"""
-        pass
-
-    def getOwnerNode(self):
-        """Returns a ptVaultNode of the owner of this node"""
-        pass
-
-    def getOwnerNodeID(self):
-        """Returns the node ID of the owner of this node"""
-        pass
-
-    def getType(self):
-        """Returns the type of ptVaultNode this is.
-See PlasmaVaultTypes.py"""
-        pass
-
-    def hasNode(self,id):
-        """Returns true if node if a child node"""
-        pass
-
-    def linkToNode(self,nodeID,cb=None,cbContext=0):
-        """Adds a link to the node designated by nodeID"""
-        pass
-
-    def removeAllNodes(self):
-        """Removes all the child nodes on this node."""
-        pass
-
-    def removeNode(self,node,cb=None,cbContext=0):
-        """Removes the child 'node'(ptVaultNode) from this node."""
-        pass
-
-    def save(self,cb=None,cbContext=0):
-        """Save the changes made to this node."""
-        pass
-
-    def saveAll(self,cb=None,cbContext=0):
-        """Saves this node and all its children nodes."""
-        pass
-
-    def sendTo(self,destID,cb=None,cbContext=0):
-        """Send this node to inbox at 'destID'"""
-        pass
-
-    def setCreateAgeGuid(self,guid):
-        """Set guid as a string of the Age where this node was created."""
-        pass
-
-    def setCreateAgeName(self,name):
-        """Set name of the Age where this node was created."""
-        pass
-
-    def setCreatorNodeID(self,id):
-        """Set creator's node ID"""
-        pass
-
-    def setID(self,id):
-        """Sets ID of this ptVaultNode."""
-        pass
-
-    def setOwnerNodeID(self,id):
-        """Set node ID of the owner of this node"""
-        pass
-
-    def setType(self,type):
-        """Set the type of ptVaultNode this is."""
-        pass
-
-    def upcastToAgeInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoListNode"""
-        pass
-
-    def upcastToAgeInfoNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoNode"""
-        pass
-
-    def upcastToAgeLinkNode(self):
-        """Returns this ptVaultNode as ptVaultAgeLinkNode"""
-        pass
-
-    def upcastToChronicleNode(self):
-        """Returns this ptVaultNode as ptVaultChronicleNode"""
-        pass
-
-    def upcastToFolderNode(self):
-        """Returns this ptVaultNode as ptVaultFolderNode"""
-        pass
-
-    def upcastToImageNode(self):
-        """Returns this ptVaultNode as ptVaultImageNode"""
-        pass
-
-    def upcastToMarkerGameNode(self):
-        """Returns this ptVaultNode as ptVaultMarkerNode"""
-        pass
-
-    def upcastToPlayerInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoListNode"""
-        pass
-
-    def upcastToPlayerInfoNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoNode"""
-        pass
-
-    def upcastToPlayerNode(self):
-        """Returns this ptVaultNode as a ptVaultPlayerNode"""
-        pass
-
-    def upcastToSDLNode(self):
-        """Returns this ptVaultNode as a ptVaultSDLNode"""
-        pass
-
-    def upcastToSystemNode(self):
-        """Returns this ptVaultNode as a ptVaultSystemNode"""
-        pass
-
-    def upcastToTextNoteNode(self):
-        """Returns this ptVaultNode as ptVaultTextNoteNode"""
-        pass
-
 class ptVaultTextNoteNode(ptVaultNode):
     """Plasma vault text note node"""
     def __init__(self):
         """None"""
         pass
 
-    def addNode(self,node,cb=None,cbContext=0):
-        """Adds 'node'(ptVaultNode) as a child to this node."""
-        pass
-
-    def findNode(self,templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
-        """Returns ptVaultNode if child node found matching template, or None"""
-        pass
-
-    def forceSave(self):
-        """Force the current node to save immediately"""
-        pass
-
-    def getChildNodeCount(self):
-        """Returns how many children this node has."""
-        pass
-
-    def getChildNodeRefList(self):
-        """Returns a list of ptVaultNodeRef that are the children of this node."""
-        pass
-
-    def getClientID(self):
-        """Returns the client's ID."""
-        pass
-
-    def getCreateAgeCoords(self):
-        """Returns the location in the Age where this node was created."""
-        pass
-
-    def getCreateAgeGuid(self):
-        """Returns the guid as a string of the Age where this node was created."""
-        pass
-
-    def getCreateAgeName(self):
-        """Returns the name of the Age where this node was created."""
-        pass
-
-    def getCreateAgeTime(self):
-        """Returns the time in the Age that the node was created...(?)"""
-        pass
-
-    def getCreateTime(self):
-        """Returns the when this node was created, that is useable by python's time library."""
-        pass
-
-    def getCreatorNode(self):
-        """Returns the creator's node"""
-        pass
-
-    def getCreatorNodeID(self):
-        """Returns the creator's node ID"""
-        pass
-
     def getDeviceInbox(self):
         """Returns a ptVaultFolderNode"""
-        pass
-
-    def getID(self):
-        """Returns the unique ID of this ptVaultNode."""
-        pass
-
-    def getModifyTime(self):
-        """Returns the modified time of this node, that is useable by python's time library."""
-        pass
-
-    def getNode(self,id):
-        """Returns ptVaultNodeRef if is a child node, or None"""
         pass
 
     def getNoteSubType(self):
@@ -9441,14 +5438,6 @@ class ptVaultTextNoteNode(ptVaultNode):
         """Returns the type of text note for this text note node."""
         pass
 
-    def getOwnerNode(self):
-        """Returns a ptVaultNode of the owner of this node"""
-        pass
-
-    def getOwnerNodeID(self):
-        """Returns the node ID of the owner of this node"""
-        pass
-
     def getText(self):
         """Returns the text of this text note node."""
         pass
@@ -9457,57 +5446,8 @@ class ptVaultTextNoteNode(ptVaultNode):
         """Returns the title of this text note node."""
         pass
 
-    def getType(self):
-        """Returns the type of ptVaultNode this is.
-See PlasmaVaultTypes.py"""
-        pass
-
-    def hasNode(self,id):
-        """Returns true if node if a child node"""
-        pass
-
-    def linkToNode(self,nodeID,cb=None,cbContext=0):
-        """Adds a link to the node designated by nodeID"""
-        pass
-
-    def removeAllNodes(self):
-        """Removes all the child nodes on this node."""
-        pass
-
-    def removeNode(self,node,cb=None,cbContext=0):
-        """Removes the child 'node'(ptVaultNode) from this node."""
-        pass
-
-    def save(self,cb=None,cbContext=0):
-        """Save the changes made to this node."""
-        pass
-
-    def saveAll(self,cb=None,cbContext=0):
-        """Saves this node and all its children nodes."""
-        pass
-
-    def sendTo(self,destID,cb=None,cbContext=0):
-        """Send this node to inbox at 'destID'"""
-        pass
-
-    def setCreateAgeGuid(self,guid):
-        """Set guid as a string of the Age where this node was created."""
-        pass
-
-    def setCreateAgeName(self,name):
-        """Set name of the Age where this node was created."""
-        pass
-
-    def setCreatorNodeID(self,id):
-        """Set creator's node ID"""
-        pass
-
     def setDeviceInbox(self,inboxName,cb=None,cbContext=0):
         """Sets the device inbox"""
-        pass
-
-    def setID(self,id):
-        """Sets ID of this ptVaultNode."""
         pass
 
     def setNoteSubType(self,subType):
@@ -9518,72 +5458,12 @@ See PlasmaVaultTypes.py"""
         """Sets the type of text note for this text note node."""
         pass
 
-    def setOwnerNodeID(self,id):
-        """Set node ID of the owner of this node"""
-        pass
-
     def setText(self,text):
         """Sets text of the this text note node."""
         pass
 
     def setTitle(self,title):
         """Sets the title of this text note node."""
-        pass
-
-    def setType(self,type):
-        """Set the type of ptVaultNode this is."""
-        pass
-
-    def upcastToAgeInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoListNode"""
-        pass
-
-    def upcastToAgeInfoNode(self):
-        """Returns this ptVaultNode as ptVaultAgeInfoNode"""
-        pass
-
-    def upcastToAgeLinkNode(self):
-        """Returns this ptVaultNode as ptVaultAgeLinkNode"""
-        pass
-
-    def upcastToChronicleNode(self):
-        """Returns this ptVaultNode as ptVaultChronicleNode"""
-        pass
-
-    def upcastToFolderNode(self):
-        """Returns this ptVaultNode as ptVaultFolderNode"""
-        pass
-
-    def upcastToImageNode(self):
-        """Returns this ptVaultNode as ptVaultImageNode"""
-        pass
-
-    def upcastToMarkerGameNode(self):
-        """Returns this ptVaultNode as ptVaultMarkerNode"""
-        pass
-
-    def upcastToPlayerInfoListNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoListNode"""
-        pass
-
-    def upcastToPlayerInfoNode(self):
-        """Returns this ptVaultNode as ptVaultPlayerInfoNode"""
-        pass
-
-    def upcastToPlayerNode(self):
-        """Returns this ptVaultNode as a ptVaultPlayerNode"""
-        pass
-
-    def upcastToSDLNode(self):
-        """Returns this ptVaultNode as a ptVaultSDLNode"""
-        pass
-
-    def upcastToSystemNode(self):
-        """Returns this ptVaultNode as a ptVaultSystemNode"""
-        pass
-
-    def upcastToTextNoteNode(self):
-        """Returns this ptVaultNode as ptVaultTextNoteNode"""
         pass
 
 class ptVector3:
