@@ -70,7 +70,7 @@ public:
     void Run() override
     {
         SetThisThreadName(ST_LITERAL("hsHackWinFindThread"));
-        while (1)
+        while (!GetQuit())
         {
             HWND hMtlDlg = FindWindow(nullptr, _T("Material/Map Browser"));
             if (hMtlDlg && IsWindowVisible(GetDlgItem(hMtlDlg, kOK)))
@@ -82,6 +82,8 @@ public:
                 EnableWindow(GetDlgItem(hMtlDlg, kNew), FALSE);
                 return;
             }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
 };
