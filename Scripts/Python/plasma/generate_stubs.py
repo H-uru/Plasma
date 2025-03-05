@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 
 import os.path
+import textwrap
 import types
 
 from typing import Iterable, Literal
@@ -159,11 +160,7 @@ def format_qualified_name(cls: type, context_module_name: str) -> str:
 
 def add_indents(indent: str, lines: Iterable[str]) -> Iterable[str]:
     for line in lines:
-        if line:
-            yield f"{indent}{line}"
-        else:
-            # Don't add extra whitespace on blank lines.
-            yield ""
+        yield textwrap.indent(line, indent)
 
 FunctionKind = Literal["function", "method", "classmethod", "staticmethod", "property"]
 
@@ -209,7 +206,7 @@ def generate_function_stub(kind: FunctionKind, name: str, signature: str, doc: s
         yield decorator
     yield f"def {name}{signature}:"
     if doc:
-        yield f'    """{doc}"""'
+        yield textwrap.indent(f'"""{doc}"""', "    ")
     yield "    pass"
 
 def generate_enum_stub(name: str, enum_obj: PlasmaConstants.Enum) -> Iterable[str]:
@@ -238,7 +235,7 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
 
     yield f"class {name}{class_parens}:"
     if doc:
-        yield f'    """{doc}"""'
+        yield textwrap.indent(f'"""{doc}"""', "    ")
 
     first = True
     for name, value in iter_attributes(cls):
@@ -300,7 +297,7 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
             property_type = property_type or "Any"
             yield f"    {name}: {property_type}"
             if doc:
-                yield f'    """{doc}"""'
+                yield textwrap.indent(f'"""{doc}"""', "    ")
         else:
             yield f"    {name}: {format_qualified_name(type(value), cls.__module__)} = ... # = {value!r}"
 
