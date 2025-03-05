@@ -53,7 +53,7 @@ from __future__ import annotations
 from PlasmaConstants import *
 from typing import *
 
-def PtAcceptInviteInGame(friendName,inviteKey):
+def PtAcceptInviteInGame(friendName, inviteKey):
     """Sends a VaultTask to the server to perform the invite"""
     pass
 
@@ -61,7 +61,7 @@ def PtAmCCR():
     """Returns true if local player is a CCR"""
     pass
 
-def PtAtTimeCallback(selfkey,time,id):
+def PtAtTimeCallback(selfkey, time, id):
     """This will create a timer callback that will call OnTimer when complete
     - 'selfkey' is the ptKey of the PythonFile component
     - 'time' is how much time from now (in seconds) to call back
@@ -69,7 +69,7 @@ def PtAtTimeCallback(selfkey,time,id):
     """
     pass
 
-def PtAttachObject(child,parent,netForce=False):
+def PtAttachObject(child, parent, netForce=False):
     """Attach child to parent based on ptKey or ptSceneobject
     - childKey is the ptKey or ptSceneobject of the one being attached
     - parentKey is the ptKey or ptSceneobject of the one being attached to
@@ -129,7 +129,7 @@ def PtChangePlayerName(name):
     """Change the local avatar's name"""
     pass
 
-def PtCheckVisLOS(startPoint,endPoint):
+def PtCheckVisLOS(startPoint, endPoint):
     """Does LOS check from start to end"""
     pass
 
@@ -161,7 +161,7 @@ def PtConsole(command):
     """This will execute 'command' as if it were typed into the Plasma console."""
     pass
 
-def PtConsoleNet(command,netForce):
+def PtConsoleNet(command, netForce):
     """This will execute 'command' on the console, over the network, on all clients.
     If 'netForce' is true then force command to be sent over the network.
     """
@@ -191,7 +191,7 @@ def PtDeletePlayer(playerInt):
     """Deletes a player associated with the current account"""
     pass
 
-def PtDetachObject(child,parent,netForce=False):
+def PtDetachObject(child, parent, netForce=False):
     """Detach child from parent based on ptKey or ptSceneobject
     - child is the ptKey or ptSceneobject of the one being detached
     - parent is the ptKey or ptSceneobject of the one being detached from
@@ -199,11 +199,11 @@ def PtDetachObject(child,parent,netForce=False):
     """
     pass
 
-def PtDirtySynchClients(selfKey,SDLStateName,flags):
+def PtDirtySynchClients(selfKey, SDLStateName, flags):
     """DO NOT USE - handled by ptSDL"""
     pass
 
-def PtDirtySynchState(selfKey,SDLStateName,flags):
+def PtDirtySynchState(selfKey, SDLStateName, flags):
     """DO NOT USE - handled by ptSDL"""
     pass
 
@@ -283,7 +283,7 @@ def PtEnableShadows():
     """Turns shadows on"""
     pass
 
-def PtExcludeRegionSet(senderKey,regionKey,state):
+def PtExcludeRegionSet(senderKey, regionKey, state):
     """This will set the state of an exclude region
     - 'senderKey' is a ptKey of the PythonFile component
     - 'regionKey' is a ptKey of the exclude region
@@ -291,7 +291,7 @@ def PtExcludeRegionSet(senderKey,regionKey,state):
     """
     pass
 
-def PtExcludeRegionSetNow(senderKey,regionKey,state):
+def PtExcludeRegionSetNow(senderKey, regionKey, state):
     """This will set the state of an exclude region immediately on the server
     - 'senderKey' is a ptKey of the PythonFile component
     - 'regionKey' is a ptKey of the exclude region
@@ -311,7 +311,7 @@ def PtFadeOut(lenTime, holdFlag, noSound=0):
     """Fades screen out for lenTime seconds"""
     pass
 
-def PtFakeLinkAvatarToObject(avatar,object):
+def PtFakeLinkAvatarToObject(avatar, object):
     """Pseudo-links avatar to object within the same age
     """
     pass
@@ -338,7 +338,7 @@ def PtFindLayer(name: str, age: str = "", page: str = "") -> Optional[ptLayer]:
     """Find a layer by name."""
     pass
 
-def PtFindSceneobject(name,ageName):
+def PtFindSceneobject(name, ageName):
     """This will try to find a sceneobject based on its name and what age its in
     - it will return a ptSceneObject if found- if not found then a NameError exception will happen
     """
@@ -360,15 +360,15 @@ def PtFogSetDefColor(color):
     """Sets default fog color"""
     pass
 
-def PtFogSetDefExp(end,density):
+def PtFogSetDefExp(end, density):
     """Set exp fog values"""
     pass
 
-def PtFogSetDefExp2(end,density):
+def PtFogSetDefExp2(end, density):
     """Set exp2 fog values"""
     pass
 
-def PtFogSetDefLinear(start,end,density):
+def PtFogSetDefLinear(start, end, density):
     """Set linear fog values"""
     pass
 
@@ -659,7 +659,7 @@ def PtIsSolo() -> bool:
     """Returns whether we are the only player in the Age"""
     pass
 
-def PtKillParticles(timeRemaining,pctToKill,particleSystem):
+def PtKillParticles(timeRemaining, pctToKill, particleSystem):
     """Tells particleSystem to kill pctToKill percent of its particles"""
     pass
 
@@ -675,19 +675,19 @@ def PtLoadBookGUI(guiName):
     """Loads the gui specified, a gui must be loaded before it can be used. If the gui is already loaded, doesn't do anything"""
     pass
 
-def PtLoadDialog(dialogName,selfKey=None,ageName=""):
+def PtLoadDialog(dialogName, selfKey=None, ageName=""):
     """Loads a GUI dialog by name and optionally set the Notify proc key
     If the dialog is already loaded then it won't load it again
     """
     pass
 
-def PtLoadJPEGFromDisk(filename,width,height):
+def PtLoadJPEGFromDisk(filename, width, height):
     """The image will be resized to fit the width and height arguments. Set to 0 if resizing is not desired.
     Returns a pyImage of the specified file.
     """
     pass
 
-def PtLoadPNGFromDisk(filename,width,height):
+def PtLoadPNGFromDisk(filename, width, height):
     """The image will be resized to fit the width and height arguments. Set to 0 if resizing is not desired.
     Returns a pyImage of the specified file.
     """
@@ -733,11 +733,11 @@ def PtPageOutNode(nodeName, netForce=False):
     """Pages out a node"""
     pass
 
-def PtRateIt(chronicleName,dialogPrompt,onceFlag):
+def PtRateIt(chronicleName, dialogPrompt, onceFlag):
     """Shows a dialog with dialogPrompt and stores user input rating into chronicleName"""
     pass
 
-def PtRebuildCameraStack(name,ageName):
+def PtRebuildCameraStack(name, ageName):
     """Push camera with this name on the stack"""
     pass
 
@@ -749,15 +749,15 @@ def PtRemovePublicAge(ageInstanceGuid):
     """Remove a public instance of the given age."""
     pass
 
-def PtRequestLOSScreen(selfKey,ID,xPos,yPos,distance,what,reportType):
+def PtRequestLOSScreen(selfKey, ID, xPos, yPos, distance, what, reportType):
     """Request a LOS check from a point on the screen"""
     pass
 
-def PtSaveScreenShot(fileName,width=640,height=480,quality=75):
+def PtSaveScreenShot(fileName, width=640, height=480, quality=75):
     """Takes a screenshot with the specified filename, size, and quality"""
     pass
 
-def PtSendChatToCCR(message,CCRPlayerID):
+def PtSendChatToCCR(message, CCRPlayerID):
     """Sends a chat message to a CCR that has contacted this player"""
     pass
 
@@ -765,18 +765,18 @@ def PtSendFriendInvite(emailAddress, toName = "Friend"):
     """Sends an email with invite code"""
     pass
 
-def PtSendKIGZMarkerMsg(markerNumber,sender):
+def PtSendKIGZMarkerMsg(markerNumber, sender):
     """Same as PtSendKIMessageInt except 'sender' could get a notify message back
     """
     pass
 
-def PtSendKIMessage(command,value):
+def PtSendKIMessage(command, value):
     """Sends a command message to the KI frontend.
     See PlasmaKITypes.py for list of commands
     """
     pass
 
-def PtSendKIMessageInt(command,value):
+def PtSendKIMessageInt(command, value):
     """Same as PtSendKIMessage except the value is guaranteed to be a uint32_t
     (for things like player IDs)
     """
@@ -786,7 +786,7 @@ def PtSendKIRegisterImagerMsg(imagerName, sender):
     """Sends a message to the KI to register the specified imager"""
     pass
 
-def PtSendPetitionToCCR(message,reason=0,title=""):
+def PtSendPetitionToCCR(message, reason=0, title=""):
     """Sends a petition with a message to the CCR group"""
     pass
 
@@ -794,7 +794,7 @@ def PtSendPrivateChatList(chatList):
     """Lock the local avatar into private vox messaging, and / or add new members to his chat list"""
     pass
 
-def PtSendRTChat(fromPlayer,toPlayerList,message,flags):
+def PtSendRTChat(fromPlayer, toPlayerList, message, flags):
     """Sends a realtime chat message to the list of ptPlayers
     If toPlayerList is an empty list, it is a broadcast message
     """
@@ -811,7 +811,7 @@ def PtSetAlarm(secs, cbObject, cbContext):
     """
     pass
 
-def PtSetBehaviorLoopCount(behaviorKey,stage,loopCount,netForce):
+def PtSetBehaviorLoopCount(behaviorKey, stage, loopCount, netForce):
     """This will set the loop count for a particular stage in a multistage behavior"""
     pass
 
@@ -819,7 +819,7 @@ def PtSetBehaviorNetFlags(behKey, netForce, netProp):
     """Sets net flags on the associated behavior"""
     pass
 
-def PtSetClearColor(red,green,blue):
+def PtSetClearColor(red, green, blue):
     """Set the clear color"""
     pass
 
@@ -839,11 +839,11 @@ def PtSetGraphicsOptions(width, height, colordepth, windowed, numAAsamples, numA
     """Set the graphics options"""
     pass
 
-def PtSetLightAnimStart(key,name,start):
+def PtSetLightAnimStart(key, name, start):
     """ Key is the key of scene object host to light, start is a bool. Name is the name of the light to manipulate"""
     pass
 
-def PtSetLightValue(key,name,r,g,b,a):
+def PtSetLightValue(key, name, r, g, b, a):
     """ Key is the key of scene object host to light. Name is the name of the light to manipulate"""
     pass
 
@@ -859,7 +859,7 @@ def PtSetMouseUninverted():
     """Uninverts the mouse"""
     pass
 
-def PtSetOfferBookMode(selfkey,ageFilename,ageInstanceName):
+def PtSetOfferBookMode(selfkey, ageFilename, ageInstanceName):
     """Put us into the offer book interface"""
     pass
 
@@ -867,7 +867,7 @@ def PtSetParticleDissentPoint(x, y, z, particlesys):
     """Sets the dissent point of the particlesys to x,y,z"""
     pass
 
-def PtSetParticleOffset(x,y,z,particlesys):
+def PtSetParticleOffset(x, y, z, particlesys):
     """Sets the particlesys particle system's offset"""
     pass
 
@@ -899,7 +899,7 @@ def PtShowDialog(dialogName):
     """Show a GUI dialog by name (does not load dialog)"""
     pass
 
-def PtStartScreenCapture(selfKey,width=800,height=600):
+def PtStartScreenCapture(selfKey, width=800, height=600):
     """Starts a capture of the screen"""
     pass
 
@@ -955,7 +955,7 @@ def PtWearDefaultClothingType(key, type, broadcast=False):
     """Forces the avatar to wear the default clothing of the specified type"""
     pass
 
-def PtWearMaintainerSuit(key,wearOrNot):
+def PtWearMaintainerSuit(key, wearOrNot):
     """Wears or removes the maintainer suit of clothes"""
     pass
 
@@ -970,7 +970,7 @@ def PtYesNoDialog(cb: Union[None, ptKey, Callable], message: str, /, dialogType:
 class ptAgeInfoStruct:
     """Class to hold AgeInfo struct data"""
 
-    def copyFrom(self,other):
+    def copyFrom(self, other):
         """Copies data from one ptAgeInfoStruct or ptAgeInfoStructRef to this one"""
         pass
 
@@ -1006,38 +1006,38 @@ class ptAgeInfoStruct:
         """Returns a string that is the displayable name of the age instance"""
         pass
 
-    def setAgeDescription(self,udName):
+    def setAgeDescription(self, udName):
         """Sets the description part of the Age"""
         pass
 
-    def setAgeFilename(self,filename):
+    def setAgeFilename(self, filename):
         """Sets the filename of the Age"""
         pass
 
-    def setAgeInstanceGuid(self,guid):
+    def setAgeInstanceGuid(self, guid):
         """Sets the Age instance's GUID"""
         pass
 
-    def setAgeInstanceName(self,instanceName):
+    def setAgeInstanceName(self, instanceName):
         """Sets the instance name of the Age"""
         pass
 
-    def setAgeLanguage(self,lang):
+    def setAgeLanguage(self, lang):
         """Sets the age's language (integer)"""
         pass
 
-    def setAgeSequenceNumber(self,seqNumber):
+    def setAgeSequenceNumber(self, seqNumber):
         """Sets the unique sequence number"""
         pass
 
-    def setAgeUserDefinedName(self,udName):
+    def setAgeUserDefinedName(self, udName):
         """Sets the user defined part of the Age"""
         pass
 
 class ptAgeInfoStructRef:
     """Class to hold AgeInfo struct data"""
 
-    def copyFrom(self,other):
+    def copyFrom(self, other):
         """Copies data from one ptAgeInfoStruct or ptAgeInfoStructRef to this one"""
         pass
 
@@ -1065,30 +1065,30 @@ class ptAgeInfoStructRef:
         """Returns a string that is the displayable name of the age instance"""
         pass
 
-    def setAgeFilename(self,filename):
+    def setAgeFilename(self, filename):
         """Sets the filename of the Age"""
         pass
 
-    def setAgeInstanceGuid(self,guid):
+    def setAgeInstanceGuid(self, guid):
         """Sets the Age instance's GUID"""
         pass
 
-    def setAgeInstanceName(self,instanceName):
+    def setAgeInstanceName(self, instanceName):
         """Sets the instance name of the Age"""
         pass
 
-    def setAgeSequenceNumber(self,seqNumber):
+    def setAgeSequenceNumber(self, seqNumber):
         """Sets the unique sequence number"""
         pass
 
-    def setAgeUserDefinedName(self,udName):
+    def setAgeUserDefinedName(self, udName):
         """Sets the user defined part of the Age"""
         pass
 
 class ptAgeLinkStruct:
     """Class to hold the data of the AgeLink structure"""
 
-    def copyFrom(self,other):
+    def copyFrom(self, other):
         """Copies data from one ptAgeLinkStruct or ptAgeLinkStructRef to this one"""
         pass
 
@@ -1108,26 +1108,26 @@ class ptAgeLinkStruct:
         """Gets the spawn point ptSpawnPointInfoRef of this link"""
         pass
 
-    def setAgeInfo(self,ageInfo):
+    def setAgeInfo(self, ageInfo):
         """Sets the AgeInfoStruct from the data in ageInfo (a ptAgeInfoStruct)"""
         pass
 
-    def setLinkingRules(self,rule):
+    def setLinkingRules(self, rule):
         """Sets the linking rules for this link"""
         pass
 
-    def setParentAgeFilename(self,filename):
+    def setParentAgeFilename(self, filename):
         """Sets the parent age filename for child age links"""
         pass
 
-    def setSpawnPoint(self,spawnPtInfo):
+    def setSpawnPoint(self, spawnPtInfo):
         """Sets the spawn point of this link (a ptSpawnPointInfo or ptSpawnPointInfoRef)"""
         pass
 
 class ptAgeLinkStructRef:
     """Class to hold the data of the AgeLink structure"""
 
-    def copyFrom(self,other):
+    def copyFrom(self, other):
         """Copies data from one ptAgeLinkStruct or ptAgeLinkStructRef to this one"""
         pass
 
@@ -1143,30 +1143,30 @@ class ptAgeLinkStructRef:
         """Gets the spawn point ptSpawnPointInfoRef of this link"""
         pass
 
-    def setAgeInfo(self,ageInfo):
+    def setAgeInfo(self, ageInfo):
         """Sets the AgeInfoStruct from the data in ageInfo (a ptAgeInfoStruct)"""
         pass
 
-    def setLinkingRules(self,rule):
+    def setLinkingRules(self, rule):
         """Sets the linking rules for this link"""
         pass
 
-    def setSpawnPoint(self,spawnPtInfo):
+    def setSpawnPoint(self, spawnPtInfo):
         """Sets the spawn point of this link (a ptSpawnPointInfo or ptSpawnPointInfoRef)"""
         pass
 
 class ptAgeVault:
     """Accessor class to the Age's vault"""
 
-    def addChronicleEntry(self,name,type,value):
+    def addChronicleEntry(self, name, type, value):
         """Adds a chronicle entry with the specified type and value"""
         pass
 
-    def addDevice(self,deviceName,cb=None,cbContext=0):
+    def addDevice(self, deviceName, cb=None, cbContext=0):
         """Adds a device to the age"""
         pass
 
-    def findChronicleEntry(self,entryName):
+    def findChronicleEntry(self, entryName):
         """Returns the named ptVaultChronicleNode"""
         pass
 
@@ -1198,11 +1198,11 @@ class ptAgeVault:
         """Returns a ptVaultFolderNode"""
         pass
 
-    def getDevice(self,deviceName):
+    def getDevice(self, deviceName):
         """Returns the specified device (ptVaultTextNoteNode)"""
         pass
 
-    def getDeviceInbox(self,deviceName):
+    def getDeviceInbox(self, deviceName):
         """Returns a ptVaultFolderNode of the inbox for the named device in this age."""
         pass
 
@@ -1214,7 +1214,7 @@ class ptAgeVault:
         """Returns a ptVaultFolderNode that contains all the public Ages"""
         pass
 
-    def getSubAgeLink(self,ageInfo):
+    def getSubAgeLink(self, ageInfo):
         """Returns a ptVaultAgeLinkNode to 'ageInfo' (a ptAgeInfoStruct) for this Age."""
         pass
 
@@ -1222,33 +1222,33 @@ class ptAgeVault:
         """Returns a ptVaultFolderNode of sub Age's folder."""
         pass
 
-    def hasDevice(self,deviceName):
+    def hasDevice(self, deviceName):
         """Does a device with this name exist?"""
         pass
 
-    def removeDevice(self,deviceName):
+    def removeDevice(self, deviceName):
         """Removes a device from the age"""
         pass
 
-    def setDeviceInbox(self,deviceName,inboxName,cb=None,cbContext=0):
+    def setDeviceInbox(self, deviceName, inboxName, cb=None, cbContext=0):
         """Set's the device's inbox"""
         pass
 
-    def updateAgeSDL(self,pyrec):
+    def updateAgeSDL(self, pyrec):
         """Updates the age's SDL"""
         pass
 
 class ptAnimation:
     """Plasma animation class"""
 
-    def __init__(self,key=None):
+    def __init__(self, key=None):
         pass
 
-    def addKey(self,key):
+    def addKey(self, key):
         """Adds an animation modifier to the list of receiver keys"""
         pass
 
-    def backwards(self,backwardsFlag):
+    def backwards(self, backwardsFlag):
         """Turn on and off playing the animation backwards"""
         pass
 
@@ -1266,11 +1266,11 @@ class ptAnimation:
         """Step the animation forward a frame"""
         pass
 
-    def looped(self,loopedFlag):
+    def looped(self, loopedFlag):
         """Turn on and off looping of the animation"""
         pass
 
-    def netForce(self,forceFlag):
+    def netForce(self, forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
         Such as a game master, only running on the client that owns a particular object
@@ -1281,15 +1281,15 @@ class ptAnimation:
         """Plays the animation"""
         pass
 
-    def playRange(self,start,end):
+    def playRange(self, start, end):
         """Play the animation from start to end"""
         pass
 
-    def playToPercentage(self,zeroToOne):
+    def playToPercentage(self, zeroToOne):
         """Play the animation to the specified percentage (0 to 1)"""
         pass
 
-    def playToTime(self,time):
+    def playToTime(self, time):
         """Play the animation to the specified time"""
         pass
 
@@ -1297,21 +1297,21 @@ class ptAnimation:
         """Resumes the animation from where it was stopped last"""
         pass
 
-    def sender(self,selfKey):
+    def sender(self, selfKey):
         """Sets the sender of the messages being sent to the animation modifier"""
         pass
 
-    def setAnimName(self,name):
+    def setAnimName(self, name):
         """Sets the animation notetrack name (or (Entire Animation))"""
         pass
 
-    def setLoopEnd(self,loopEnd):
+    def setLoopEnd(self, loopEnd):
         """Sets the loop ending position
         - 'loopEnd' is the number of seconds from the absolute beginning of the animation
         """
         pass
 
-    def setLoopStart(self,loopStart):
+    def setLoopStart(self, loopStart):
         """Sets the loop starting position
         - 'loopStart' is the number of seconds from the absolute beginning of the animation
         """
@@ -1333,11 +1333,11 @@ class ptAnimation:
         """Skip to the end of the animation loop (don't play)"""
         pass
 
-    def skipToTime(self,time):
+    def skipToTime(self, time):
         """Skip the animation to time (don't play)"""
         pass
 
-    def speed(self,speed):
+    def speed(self, speed):
         """Sets the animation playback speed"""
         pass
 
@@ -1372,11 +1372,11 @@ class ptAudioControl:
         """Enables subtitles for audio."""
         pass
 
-    def enableVoiceChat(self,state):
+    def enableVoiceChat(self, state):
         """Enables or disables voice chat."""
         pass
 
-    def enableVoiceRecording(self,state):
+    def enableVoiceRecording(self, state):
         """Enables or disables voice recording."""
         pass
 
@@ -1392,7 +1392,7 @@ class ptAudioControl:
         """Gets the name of all available audio capture devices."""
         pass
 
-    def getFriendlyDeviceName(self,devicename):
+    def getFriendlyDeviceName(self, devicename):
         """Returns the provided device name without any OpenAL prefixes applied."""
         pass
 
@@ -1460,67 +1460,67 @@ class ptAudioControl:
         """Mutes all sounds."""
         pass
 
-    def pushToTalk(self,state):
+    def pushToTalk(self, state):
         """Enables or disables 'push-to-talk'."""
         pass
 
-    def setAmbienceVolume(self,volume):
+    def setAmbienceVolume(self, volume):
         """Sets the Ambience volume (0.0 to 1.0) for the game.
         This only sets the volume for this game session.
         """
         pass
 
-    def setCaptureDevice(self,devicename):
+    def setCaptureDevice(self, devicename):
         """Sets the audio capture device by name."""
         pass
 
-    def setGUIVolume(self,volume):
+    def setGUIVolume(self, volume):
         """Sets the GUI dialog volume (0.0 to 1.0) for the game.
         This only sets the volume for this game session.
         """
         pass
 
-    def setLoadOnDemand(self,state):
+    def setLoadOnDemand(self, state):
         """Enables or disables the load on demand for sounds."""
         pass
 
-    def setMicLevel(self,level):
+    def setMicLevel(self, level):
         """Sets the microphone recording level (0.0 to 1.0)."""
         pass
 
-    def setMusicVolume(self,volume):
+    def setMusicVolume(self, volume):
         """Sets the Music volume (0.0 to 1.0) for the game.
         This only sets the volume for this game session.
         """
         pass
 
-    def setNPCVoiceVolume(self,volume):
+    def setNPCVoiceVolume(self, volume):
         """Sets the NPC's voice volume (0.0 to 1.0) for the game.
         This only sets the volume for this game session.
         """
         pass
 
-    def setPlaybackDevice(self,devicename,restart):
+    def setPlaybackDevice(self, devicename, restart):
         """Sets audio system output device by name, and optionally restarts it"""
         pass
 
-    def setPriorityCutoff(self,priority):
+    def setPriorityCutoff(self, priority):
         """Sets the sound priority"""
         pass
 
-    def setSoundFXVolume(self,volume):
+    def setSoundFXVolume(self, volume):
         """Sets the SoundFX volume (0.0 to 1.0) for the game.
         This only sets the volume for this game session.
         """
         pass
 
-    def setTwoStageLOD(self,state):
+    def setTwoStageLOD(self, state):
         """Enables or disables two-stage LOD, where sounds can be loaded into RAM but not into sound buffers.
         ...Less of a performance hit, harder on memory.
         """
         pass
 
-    def setVoiceVolume(self,volume):
+    def setVoiceVolume(self, volume):
         """Sets the Voice volume (0.0 to 1.0) for the game.
         This only sets the volume for this game session.
         """
@@ -1530,7 +1530,7 @@ class ptAudioControl:
         """Shows (enables) the voice recording icons."""
         pass
 
-    def squelchLevel(self,level):
+    def squelchLevel(self, level):
         """Sets the squelch level."""
         pass
 
@@ -1538,18 +1538,18 @@ class ptAudioControl:
         """Unmutes all sounds."""
         pass
 
-    def useEAXAcceleration(self,state):
+    def useEAXAcceleration(self, state):
         """Enables or disables EAX sound acceleration (requires hardware acceleration)."""
         pass
 
 class ptAvatar:
     """Plasma avatar class"""
 
-    def addWardrobeClothingItem(self,clothing_name,tint1,tint2):
+    def addWardrobeClothingItem(self, clothing_name, tint1, tint2):
         """To add a clothing item to the avatar's wardrobe (closet)"""
         pass
 
-    def enterSubWorld(self,sceneobject):
+    def enterSubWorld(self, sceneobject):
         """Places the avatar into the subworld of the ptSceneObject specified"""
         pass
 
@@ -1557,7 +1557,7 @@ class ptAvatar:
         """Exits the avatar from the subWorld where it was"""
         pass
 
-    def getAllWithSameMesh(self,clothing_name):
+    def getAllWithSameMesh(self, clothing_name):
         """Returns a lilst of all clothing items that use the same mesh as the specified one"""
         pass
 
@@ -1571,7 +1571,7 @@ class ptAvatar:
         """Returns a list of clothes that the avatar is currently wearing."""
         pass
 
-    def getClosetClothingList(self,clothing_type):
+    def getClosetClothingList(self, clothing_type):
         """Returns a list of clothes for the avatar that are in specified clothing group."""
         pass
 
@@ -1579,27 +1579,27 @@ class ptAvatar:
         """Returns current brain mode for avatar"""
         pass
 
-    def getEntireClothingList(self,clothing_type):
+    def getEntireClothingList(self, clothing_type):
         """Gets the entire list of clothing available. 'clothing_type' not used
         NOTE: should use getClosetClothingList
         """
         pass
 
-    def getMatchingClothingItem(self,clothingName):
+    def getMatchingClothingItem(self, clothingName):
         """Finds the matching clothing item that goes with 'clothingName'
         Used to find matching left and right gloves and shoes.
         """
         pass
 
-    def getMorph(self,clothing_name,layer):
+    def getMorph(self, clothing_name, layer):
         """Get the current morph value"""
         pass
 
-    def getSkinBlend(self,layer):
+    def getSkinBlend(self, layer):
         """Get the current skin blend value"""
         pass
 
-    def getTintClothingItem(self,clothing_name,layer=1):
+    def getTintClothingItem(self, clothing_name, layer=1):
         """Returns a ptColor of a particular item of clothing that the avatar is wearing.
         The color will be a ptColor object.
         """
@@ -1609,7 +1609,7 @@ class ptAvatar:
         """Returns a ptColor of the current skin tint for the avatar"""
         pass
 
-    def getUniqueMeshList(self,clothing_type):
+    def getUniqueMeshList(self, clothing_type):
         """Returns a list of unique clothing items of the desired type (different meshes)"""
         pass
 
@@ -1617,54 +1617,54 @@ class ptAvatar:
         """Return a list of items that are in the avatars closet"""
         pass
 
-    def gotoStage(self,behaviorKey,stage,transitionTime,setTimeFlag,newTime,SetDirectionFlag,isForward,netForce):
+    def gotoStage(self, behaviorKey, stage, transitionTime, setTimeFlag, newTime, SetDirectionFlag, isForward, netForce):
         """Tells a multistage behavior to go to a particular stage"""
         pass
 
-    def loadClothingFromFile(self,filename):
+    def loadClothingFromFile(self, filename):
         """Load avatar clothing from a file"""
         pass
 
-    def netForce(self,forceFlag):
+    def netForce(self, forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
         Such as a game master, only running on the client that owns a particular object
         """
         pass
 
-    def nextStage(self,behaviorKey,transitionTime,setTimeFlag,newTime,SetDirectionFlag,isForward,netForce):
+    def nextStage(self, behaviorKey, transitionTime, setTimeFlag, newTime, SetDirectionFlag, isForward, netForce):
         """Tells a multistage behavior to go to the next stage (Why does Matt like so many parameters?)"""
         pass
 
-    def oneShot(self,seekKey,duration,usePhysicsFlag,animationName,drivableFlag,reversibleFlag):
+    def oneShot(self, seekKey, duration, usePhysicsFlag, animationName, drivableFlag, reversibleFlag):
         """Plays a one-shot animation on the avatar"""
         pass
 
-    def playSimpleAnimation(self,animName):
+    def playSimpleAnimation(self, animName):
         """Play simple animation on avatar"""
         pass
 
-    def previousStage(self,behaviorKey,transitionTime,setTimeFlag,newTime,SetDirectionFlag,isForward,netForce):
+    def previousStage(self, behaviorKey, transitionTime, setTimeFlag, newTime, SetDirectionFlag, isForward, netForce):
         """Tells a multistage behavior to go to the previous stage"""
         pass
 
-    def registerForBehaviorNotify(self,selfKey):
+    def registerForBehaviorNotify(self, selfKey):
         """This will register for behavior notifies from the avatar"""
         pass
 
-    def removeClothingItem(self,clothing_name,update=1):
+    def removeClothingItem(self, clothing_name, update=1):
         """Tells the avatar to remove a particular item of clothing."""
         pass
 
-    def runBehavior(self,behaviorKey,netForceFlag):
+    def runBehavior(self, behaviorKey, netForceFlag):
         """Runs a behavior on the avatar. Can be a single or multi-stage behavior."""
         pass
 
-    def runBehaviorSetNotify(self,behaviorKey,replyKey,netForceFlag):
+    def runBehaviorSetNotify(self, behaviorKey, replyKey, netForceFlag):
         """Same as runBehavior, except send notifications to specified keyed object"""
         pass
 
-    def runCoopAnim(self,targetKey,activeAvatarAnim,targetAvatarAnim,range=6,dist=3,move=1):
+    def runCoopAnim(self, targetKey, activeAvatarAnim, targetAvatarAnim, range=6, dist=3, move=1):
         """Seek near another avatar and run animations on both."""
         pass
 
@@ -1672,45 +1672,45 @@ class ptAvatar:
         """Saves the current clothing options (including morphs) to the vault"""
         pass
 
-    def saveClothingToFile(self,filename):
+    def saveClothingToFile(self, filename):
         """Save avatar clothing to a file"""
         pass
 
-    def setDontPanicLink(self,value: bool) -> None:
+    def setDontPanicLink(self, value: bool) -> None:
         """Disables panic linking to Personal Age (warps the avatar back to the start instead)"""
         pass
 
-    def setMorph(self,clothing_name,layer,value):
+    def setMorph(self, clothing_name, layer, value):
         """Set the morph value (clipped between -1 and 1)"""
         pass
 
-    def setReplyKey(self,key):
+    def setReplyKey(self, key):
         """Sets the sender's key"""
         pass
 
-    def setSkinBlend(self,layer,value):
+    def setSkinBlend(self, layer, value):
         """Set the skin blend (value between 0 and 1)"""
         pass
 
-    def tintClothingItem(self,clothing_name,tint,update=1):
+    def tintClothingItem(self, clothing_name, tint, update=1):
         """Tells the avatar to tint(color) a particular item of clothing that they are already wearing.
         'tint' is a ptColor object
         """
         pass
 
-    def tintClothingItemLayer(self,clothing_name,tint,layer,update=1):
+    def tintClothingItemLayer(self, clothing_name, tint, layer, update=1):
         """Tells the avatar to tint(color) a particular layer of a particular item of clothing."""
         pass
 
-    def tintSkin(self,tint,update=1):
+    def tintSkin(self, tint, update=1):
         """Tints all of the skin on the avatar, with the ptColor tint"""
         pass
 
-    def unRegisterForBehaviorNotify(self,selfKey):
+    def unRegisterForBehaviorNotify(self, selfKey):
         """This will unregister behavior notifications"""
         pass
 
-    def wearClothingItem(self,clothing_name,update=1):
+    def wearClothingItem(self, clothing_name, update=1):
         """Tells the avatar to wear a particular item of clothing.
         And optionally hold update until later (for applying tinting before wearing).
         """
@@ -1719,10 +1719,10 @@ class ptAvatar:
 class ptBook:
     """Creates a new book"""
 
-    def __init__(self,esHTMLSource,coverImage=None,callbackKey=None,guiName=''):
+    def __init__(self, esHTMLSource, coverImage=None, callbackKey=None, guiName=''):
         pass
 
-    def allowPageTurning(self,allow):
+    def allowPageTurning(self, allow):
         """Turns on and off the ability to flip the pages in a book"""
         pass
 
@@ -1742,11 +1742,11 @@ class ptBook:
         """Returns the editable text currently contained in the book."""
         pass
 
-    def getMovie(self,index):
+    def getMovie(self, index):
         """Grabs a ptAnimation object representing the movie indexed by index. The index is the index of the movie in the source code"""
         pass
 
-    def goToPage(self,page):
+    def goToPage(self, page):
         """Flips the book to the specified page"""
         pass
 
@@ -1758,7 +1758,7 @@ class ptBook:
         """Flips the book to the next page"""
         pass
 
-    def open(self,startingPage):
+    def open(self, startingPage):
         """Opens the book to the specified page"""
         pass
 
@@ -1766,36 +1766,36 @@ class ptBook:
         """Flips the book to the previous page"""
         pass
 
-    def setEditable(self,editable):
+    def setEditable(self, editable):
         """Turn book editing on or off. If the book GUI does not support editing, nothing will happen"""
         pass
 
-    def setEditableText(self,text):
+    def setEditableText(self, text):
         """Sets the book's editable text."""
         pass
 
-    def setGUI(self,guiName):
+    def setGUI(self, guiName):
         """Sets the gui to be used by the book, if the requested gui is not loaded, it will use the default
         Do not call while the book is open!
         """
         pass
 
-    def setPageMargin(self,margin):
+    def setPageMargin(self, margin):
         """Sets the text margin for the book"""
         pass
 
-    def setSize(self,width,height):
+    def setSize(self, width, height):
         """Sets the size of the book (width and height are floats from 0 to 1)"""
         pass
 
-    def show(self,startOpened):
+    def show(self, startOpened):
         """Shows the book closed, or open if the the startOpened flag is true"""
         pass
 
 class ptCamera:
     """Plasma camera class"""
 
-    def controlKey(self,controlKey,activateFlag):
+    def controlKey(self, controlKey, activateFlag):
         """Send a control key to the camera as if it was hit by the user.
         This is for sending things like pan-up, pan-down, zoom-in, etc.
         """
@@ -1833,35 +1833,35 @@ class ptCamera:
         """Refreshes the FOV"""
         pass
 
-    def restore(self,cameraKey):
+    def restore(self, cameraKey):
         """Restores camera to saved one"""
         pass
 
-    def save(self,cameraKey):
+    def save(self, cameraKey):
         """Saves the current camera and sets the camera to cameraKey"""
         pass
 
-    def set(self,cameraKey,time,save):
+    def set(self, cameraKey, time, save):
         """DO NOT USE"""
         pass
 
-    def setAspectRatio(self,aspect):
+    def setAspectRatio(self, aspect):
         """Set the global aspect ratio"""
         pass
 
-    def setFOV(self,fov, time):
+    def setFOV(self, fov, time):
         """Sets the current cameras FOV (based on h)"""
         pass
 
-    def setSmootherCam(self,state):
+    def setSmootherCam(self, state):
         """Set the faster cams thing"""
         pass
 
-    def setStayInFirstPerson(self,state):
+    def setStayInFirstPerson(self, state):
         """Set Stay In First Person Always"""
         pass
 
-    def setWalkAndVerticalPan(self,state):
+    def setWalkAndVerticalPan(self, state):
         """Set Walk and chew gum"""
         pass
 
@@ -1874,17 +1874,17 @@ class ptCamera:
 class ptCluster:
     """Creates a new ptCluster"""
 
-    def __init__(self,key):
+    def __init__(self, key):
         pass
 
-    def setVisible(self,visible):
+    def setVisible(self, visible):
         """Shows or hides the cluster object"""
         pass
 
 class ptColor:
     """Plasma color class"""
 
-    def __init__(self,red=0, green=0, blue=0, alpha=0):
+    def __init__(self, red=0, green=0, blue=0, alpha=0):
         pass
 
     def black(self):
@@ -1993,19 +1993,19 @@ class ptColor:
         """
         pass
 
-    def setAlpha(self,alpha):
+    def setAlpha(self, alpha):
         """Set the alpha blend component of the color. 0.0 to 1.0"""
         pass
 
-    def setBlue(self,blue):
+    def setBlue(self, blue):
         """Set the blue component of the color. 0.0 to 1.0"""
         pass
 
-    def setGreen(self,green):
+    def setGreen(self, green):
         """Set the green component of the color. 0.0 to 1.0"""
         pass
 
-    def setRed(self,red):
+    def setRed(self, red):
         """Set the red component of the color. 0.0 to 1.0"""
         pass
 
@@ -2042,15 +2042,15 @@ class ptColor:
 class ptCritterBrain:
     """Object to manipulate critter brains"""
 
-    def addBehavior(self,animName, behaviorName, loop = 1, randomStartPos = 1, fadeInLen = 2.0, fadeOutLen = 2.0):
+    def addBehavior(self, animName, behaviorName, loop = 1, randomStartPos = 1, fadeInLen = 2.0, fadeOutLen = 2.0):
         """Adds a new animation to the brain as a behavior with the specified name and parameters. If multiple animations are assigned to the same behavior, they will be randomly picked from when started."""
         pass
 
-    def addReceiver(self,key):
+    def addReceiver(self, key):
         """Tells the brain that the specified key wants AI messages"""
         pass
 
-    def animationName(self,behavior):
+    def animationName(self, behavior):
         """Returns the animation name associated with the specified integral behavior."""
         pass
 
@@ -2062,15 +2062,15 @@ class ptCritterBrain:
         """Are we currently avoiding avatars while pathfinding?"""
         pass
 
-    def behaviorName(self,behavior):
+    def behaviorName(self, behavior):
         """Returns the behavior name associated with the specified integral behavior."""
         pass
 
-    def canHearAvatar(self,avatarID):
+    def canHearAvatar(self, avatarID):
         """Returns whether this brain can hear the avatar with the specified id."""
         pass
 
-    def canSeeAvatar(self,avatarID):
+    def canSeeAvatar(self, avatarID):
         """Returns whether this brain can see the avatar with the specified id."""
         pass
 
@@ -2102,7 +2102,7 @@ class ptCritterBrain:
         """Returns how far away from the goal we could be and still be considered there."""
         pass
 
-    def goToGoal(self,newGoal, avoidingAvatars = 0):
+    def goToGoal(self, newGoal, avoidingAvatars = 0):
         """Tells the brain to start running towards the specified location, avoiding avatars it can see or hear if told to."""
         pass
 
@@ -2122,7 +2122,7 @@ class ptCritterBrain:
         """Returns a list of player ids which this brain can see."""
         pass
 
-    def removeReceiver(self,key):
+    def removeReceiver(self, key):
         """Tells the brain that the specified key no longer wants AI messages"""
         pass
 
@@ -2130,38 +2130,38 @@ class ptCritterBrain:
         """Returns the name of the brain's run behavior."""
         pass
 
-    def runningBehavior(self,behaviorName):
+    def runningBehavior(self, behaviorName):
         """Returns true if the named behavior is running."""
         pass
 
-    def setHearingDistance(self,dist):
+    def setHearingDistance(self, dist):
         """Set how far away the brain can hear (360 degree field of hearing)."""
         pass
 
-    def setSightCone(self,radians):
+    def setSightCone(self, radians):
         """Set how wide the brain's field of view is in radians. Note that it is the total angle of the cone, half on one side of the brain's line of sight, half on the other."""
         pass
 
-    def setSightDistance(self,dist):
+    def setSightDistance(self, dist):
         """Set how far away the brain can see."""
         pass
 
-    def setStopDistance(self,dist):
+    def setStopDistance(self, dist):
         """Set how far away from the goal we should be when we are considered there and stop running."""
         pass
 
-    def startBehavior(self,behaviorName, fade = 1):
+    def startBehavior(self, behaviorName, fade = 1):
         """Starts playing the named behavior. If fade is true, it will fade out the previous behavior and fade in the new one. If false, they will immediately switch."""
         pass
 
-    def vectorToPlayer(self,avatarID):
+    def vectorToPlayer(self, avatarID):
         """Returns the vector between us and the specified player."""
         pass
 
 class ptDniCoordinates:
     """Constructor for a D'Ni coordinate"""
 
-    def fromPoint(self,pt):
+    def fromPoint(self, pt):
         """Update these coordinates with the specified ptPoint3"""
         pass
 
@@ -2209,11 +2209,11 @@ class ptDraw:
         """
         pass
 
-    def enable(self,state=1):
+    def enable(self, state=1):
         """Sets the draw enable for the sceneobject attached"""
         pass
 
-    def netForce(self,forceFlag):
+    def netForce(self, forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
         Such as a game master, only running on the client that owns a particular object
@@ -2223,14 +2223,14 @@ class ptDraw:
 class ptDynamicMap:
     """Creates a ptDynamicMap object"""
 
-    def __init__(self,key=None):
+    def __init__(self, key=None):
         pass
 
-    def addKey(self,key):
+    def addKey(self, key):
         """Add a receiver... in other words a DynamicMap"""
         pass
 
-    def calcTextExtents(self,text):
+    def calcTextExtents(self, text):
         """Calculates the extent of the specified text, returns it as a (width, height) tuple"""
         pass
 
@@ -2238,28 +2238,28 @@ class ptDynamicMap:
         """Clears the receiver list"""
         pass
 
-    def clearToColor(self,color):
+    def clearToColor(self, color):
         """Clear the DynamicMap to the specified color
         - 'color' is a ptColor object
         """
         pass
 
-    def drawImage(self,x,y,image,respectAlphaFlag):
+    def drawImage(self, x, y, image, respectAlphaFlag):
         """Draws a ptImage object on the dynamicTextmap starting at the location x,y"""
         pass
 
-    def drawImageClipped(self,x,y,image,cx,cy,cw,ch,respectAlphaFlag):
+    def drawImageClipped(self, x, y, image, cx, cy, cw, ch, respectAlphaFlag):
         """Draws a ptImage object clipped to cx,cy with cw(width),ch(height)"""
         pass
 
-    def drawText(self,x,y,text):
+    def drawText(self, x, y, text):
         """Draw text at a specified location
         - x,y is the point to start drawing the text
         - 'text' is a string of the text to be drawn
         """
         pass
 
-    def fillRect(self,left,top,right,bottom,color):
+    def fillRect(self, left, top, right, bottom, color):
         """Fill in the specified rectangle with a color
         - left,top,right,bottom define the rectangle
         - 'color' is a ptColor object
@@ -2270,7 +2270,7 @@ class ptDynamicMap:
         """Flush all the commands that were issued since the last flush()"""
         pass
 
-    def frameRect(self,left,top,right,bottom,color):
+    def frameRect(self, left, top, right, bottom, color):
         """Frame a rectangle with a specified color
         - left,top,right,bottom define the rectangle
         - 'color' is a ptColor object
@@ -2289,7 +2289,7 @@ class ptDynamicMap:
         """Returns the width of the dynamicTextmap"""
         pass
 
-    def netForce(self,forceFlag):
+    def netForce(self, forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
         Such as a game master, only running on the client that owns a particular object
@@ -2297,7 +2297,7 @@ class ptDynamicMap:
         """
         pass
 
-    def netPropagate(self,propagateFlag):
+    def netPropagate(self, propagateFlag):
         """Specify whether this object needs to use messages that are sent on the network
         - The default is for this to be false.
         """
@@ -2307,40 +2307,40 @@ class ptDynamicMap:
         """Purge the DynamicTextMap images"""
         pass
 
-    def sender(self,sender):
+    def sender(self, sender):
         """Set the sender of the message being sent to the DynamicMap"""
         pass
 
-    def setClipping(self,clipLeft,clipTop,clipRight,clipBottom):
+    def setClipping(self, clipLeft, clipTop, clipRight, clipBottom):
         """Sets the clipping rectangle
         - All drawtext will be clipped to this until the
         unsetClipping() is called
         """
         pass
 
-    def setFont(self,facename,size):
+    def setFont(self, facename, size):
         """Set the font of the text to be written
         - 'facename' is a string with the name of the font
         - 'size' is the point size of the font to use
         """
         pass
 
-    def setJustify(self,justify):
+    def setJustify(self, justify):
         """Sets the justification of the text. (justify is a PtJustify)"""
         pass
 
-    def setLineSpacing(self,spacing):
+    def setLineSpacing(self, spacing):
         """Sets the line spacing (in pixels)"""
         pass
 
-    def setTextColor(self,color, blockRGB=0):
+    def setTextColor(self, color, blockRGB=0):
         """Set the color of the text to be written
         - 'color' is a ptColor object
         - 'blockRGB' must be true if you're trying to render onto a transparent or semi-transparent color
         """
         pass
 
-    def setWrapping(self,wrapWidth,wrapHeight):
+    def setWrapping(self, wrapWidth, wrapHeight):
         """Set where text will be wrapped horizontally and vertically
         - All drawtext commands will be wrapped until the
         unsetWrapping() is called
@@ -2358,14 +2358,14 @@ class ptDynamicMap:
 class ptGUIControl:
     """Base class for all GUI controls"""
 
-    def __init__(self,controlKey):
+    def __init__(self, controlKey):
         pass
 
     def disable(self):
         """Disables this GUI control"""
         pass
 
-    def enable(self,flag=1):
+    def enable(self, flag=1):
         """Enables this GUI control"""
         pass
 
@@ -2437,43 +2437,43 @@ class ptGUIControl:
         """UNKNOWN"""
         pass
 
-    def setBackColor(self,r,g,b,a):
+    def setBackColor(self, r, g, b, a):
         """Sets the background color"""
         pass
 
-    def setBackSelectColor(self,r,g,b,a):
+    def setBackSelectColor(self, r, g, b, a):
         """Sets the selection background color"""
         pass
 
-    def setFocus(self,state):
+    def setFocus(self, state):
         """Sets the state of the focus of this GUI control"""
         pass
 
-    def setFontFlags(self,fontflags):
+    def setFontFlags(self, fontflags):
         """Sets current fontflags"""
         pass
 
-    def setFontSize(self,fontSize):
+    def setFontSize(self, fontSize):
         """Sets the font size"""
         pass
 
-    def setForeColor(self,r,g,b,a):
+    def setForeColor(self, r, g, b, a):
         """Sets the foreground color"""
         pass
 
-    def setNotifyOnInteresting(self,state):
+    def setNotifyOnInteresting(self, state):
         """Sets whether this control should send interesting events or not"""
         pass
 
-    def setObjectCenter(self,point):
+    def setObjectCenter(self, point):
         """Sets the GUI controls object center to 'point'"""
         pass
 
-    def setSelectColor(self,r,g,b,a):
+    def setSelectColor(self, r, g, b, a):
         """Sets the selection color"""
         pass
 
-    def setVisible(self,state):
+    def setVisible(self, state):
         """Sets the state of visibility of this GUI control"""
         pass
 
@@ -2488,7 +2488,7 @@ class ptGUIControl:
 class ptGUIControlButton(ptGUIControl):
     """Plasma GUI Control Button class"""
 
-    def __init__(self,ctrlKey):
+    def __init__(self, ctrlKey):
         pass
 
     def getNotifyType(self):
@@ -2499,28 +2499,28 @@ class ptGUIControlButton(ptGUIControl):
         """Is the button down? Returns 1 for true otherwise returns 0"""
         pass
 
-    def setNotifyType(self,kind):
+    def setNotifyType(self, kind):
         """Sets this button's notify type. See PtButtonNotifyTypes"""
         pass
 
 class ptGUIControlCheckBox(ptGUIControl):
     """Plasma GUI Control Checkbox class"""
 
-    def __init__(self,ctrlKey):
+    def __init__(self, ctrlKey):
         pass
 
     def isChecked(self):
         """Is this checkbox checked? Returns 1 for true otherwise returns 0"""
         pass
 
-    def setChecked(self,checkedState):
+    def setChecked(self, checkedState):
         """Sets this checkbox to the 'checkedState'"""
         pass
 
 class ptGUIControlClickMap(ptGUIControl):
     """Plasma GUI control Click Map"""
 
-    def __init__(self,ctrlKey):
+    def __init__(self, ctrlKey):
         pass
 
     def getLastMouseDragPoint(self):
@@ -2538,7 +2538,7 @@ class ptGUIControlClickMap(ptGUIControl):
 class ptGUIControlDragBar(ptGUIControl):
     """Plasma GUI Control DragBar class"""
 
-    def __init__(self,ctrlKey):
+    def __init__(self, ctrlKey):
         pass
 
     def anchor(self):
@@ -2560,24 +2560,24 @@ class ptGUIControlDragBar(ptGUIControl):
 class ptGUIControlDraggable(ptGUIControl):
     """Plasma GUI control for something draggable"""
 
-    def __init__(self,ctrlKey):
+    def __init__(self, ctrlKey):
         pass
 
     def getLastMousePoint(self):
         """Returns the last point we were dragged to"""
         pass
 
-    def stopDragging(self,cancelFlag):
+    def stopDragging(self, cancelFlag):
         """UNKNOWN"""
         pass
 
 class ptGUIControlDynamicText(ptGUIControl):
     """Plasma GUI Control DynamicText class"""
 
-    def __init__(self,ctrlKey):
+    def __init__(self, ctrlKey):
         pass
 
-    def getMap(self,index):
+    def getMap(self, index):
         """Returns a specific ptDynamicText attached to this contol
         If there is no map at 'index' then a KeyError exception will be raised
         """
@@ -2590,7 +2590,7 @@ class ptGUIControlDynamicText(ptGUIControl):
 class ptGUIControlEditBox(ptGUIControl):
     """Plasma GUI Control Editbox class"""
 
-    def __init__(self,ctrlKey):
+    def __init__(self, ctrlKey):
         pass
 
     def clearString(self):
@@ -2617,31 +2617,31 @@ class ptGUIControlEditBox(ptGUIControl):
         """Sets the cursor in the editbox to before the first character."""
         pass
 
-    def setChatMode(self,state):
+    def setChatMode(self, state):
         """Set the Chat mode on this control"""
         pass
 
-    def setColor(self,foreColor,backColor):
+    def setColor(self, foreColor, backColor):
         """Sets the fore and back color of the editbox."""
         pass
 
-    def setLastKeyCapture(self,key, modifiers):
+    def setLastKeyCapture(self, key, modifiers):
         """Set last key captured"""
         pass
 
-    def setSelectionColor(self,foreColor,backColor):
+    def setSelectionColor(self, foreColor, backColor):
         """Sets the selection color of the editbox."""
         pass
 
-    def setSpecialCaptureKeyMode(self,state):
+    def setSpecialCaptureKeyMode(self, state):
         """Set the Capture mode on this control"""
         pass
 
-    def setString(self,text):
+    def setString(self, text):
         """Pre-sets the editbox to a string."""
         pass
 
-    def setStringSize(self,size):
+    def setStringSize(self, size):
         """Sets the maximum size of the string that can be inputted by the user."""
         pass
 
@@ -2652,7 +2652,7 @@ class ptGUIControlEditBox(ptGUIControl):
 class ptGUIControlValue(ptGUIControl):
     """Plasma GUI Control Value class  - knobs, spinners"""
 
-    def __init__(self,ctrlKey):
+    def __init__(self, ctrlKey):
         pass
 
     def getMax(self):
@@ -2671,67 +2671,67 @@ class ptGUIControlValue(ptGUIControl):
         """Returns the current value of the control."""
         pass
 
-    def setRange(self,minimum,maximum):
+    def setRange(self, minimum, maximum):
         """Sets the minimum and maximum range of the control."""
         pass
 
-    def setStep(self,step):
+    def setStep(self, step):
         """Sets the step increment of the control."""
         pass
 
-    def setValue(self,value):
+    def setValue(self, value):
         """Sets the current value of the control."""
         pass
 
 class ptGUIControlKnob(ptGUIControlValue):
     """Plasma GUI control for knob"""
 
-    def __init__(self,ctrlKey):
+    def __init__(self, ctrlKey):
         pass
 
 class ptGUIControlListBox(ptGUIControl):
     """Plasma GUI Control List Box class"""
 
-    def __init__(self,ctrlKey):
+    def __init__(self, ctrlKey):
         pass
 
-    def add2StringsWithColors(self,text1,color1,text2,color2,respectAlpha):
+    def add2StringsWithColors(self, text1, color1, text2, color2, respectAlpha):
         """Doesn't work right - DONT USE"""
         pass
 
-    def addBranch(self,name,initiallyOpen):
+    def addBranch(self, name, initiallyOpen):
         """UNKNOWN"""
         pass
 
-    def addImage(self,image,respectAlphaFlag):
+    def addImage(self, image, respectAlphaFlag):
         """Appends an image item to the listbox"""
         pass
 
-    def addImageAndSwatchesInBox(self,image,x,y,width,height,respectAlpha,primary,secondary):
+    def addImageAndSwatchesInBox(self, image, x, y, width, height, respectAlpha, primary, secondary):
         """Add the image and color swatches to the list"""
         pass
 
-    def addImageInBox(self,image,x,y,width,height,respectAlpha):
+    def addImageInBox(self, image, x, y, width, height, respectAlpha):
         """Appends an image item to the listbox, centering within the box dimension."""
         pass
 
-    def addSelection(self,item):
+    def addSelection(self, item):
         """Adds item to selection list"""
         pass
 
-    def addString(self,text):
+    def addString(self, text):
         """Appends a list item 'text' to the listbox."""
         pass
 
-    def addStringInBox(self,text,min_width,min_height):
+    def addStringInBox(self, text, min_width, min_height):
         """Adds a text list item that has a minimum width and height"""
         pass
 
-    def addStringWithColor(self,text,color,inheritAlpha):
+    def addStringWithColor(self, text, color, inheritAlpha):
         """Adds a colored string to the list box"""
         pass
 
-    def addStringWithColorWithSize(self,text,color,inheritAlpha,fontsize):
+    def addStringWithColorWithSize(self, text, color, inheritAlpha, fontsize):
         """Adds a text list item with a color and different font size"""
         pass
 
@@ -2755,7 +2755,7 @@ class ptGUIControlListBox(ptGUIControl):
         """The listbox must always have a selection"""
         pass
 
-    def findString(self,text):
+    def findString(self, text):
         """Finds and returns the index of the item that matches 'text' in the listbox."""
         pass
 
@@ -2763,7 +2763,7 @@ class ptGUIControlListBox(ptGUIControl):
         """get a list of branches in this list (index,isShowingChildren)"""
         pass
 
-    def getElement(self,index):
+    def getElement(self, index):
         """Get the string of the item at 'index' in the listbox."""
         pass
 
@@ -2797,11 +2797,11 @@ class ptGUIControlListBox(ptGUIControl):
         """Refresh the display of the listbox (after updating contents)."""
         pass
 
-    def removeElement(self,index):
+    def removeElement(self, index):
         """Removes element at 'index' in the listbox."""
         pass
 
-    def removeSelection(self,item):
+    def removeSelection(self, item):
         """Removes item from selection list"""
         pass
 
@@ -2813,27 +2813,27 @@ class ptGUIControlListBox(ptGUIControl):
         """Scrolls the listbox to the end of the list"""
         pass
 
-    def setElement(self,index,text):
+    def setElement(self, index, text):
         """Set a particular item in the listbox to a string."""
         pass
 
-    def setGlobalSwatchEdgeOffset(self,offset):
+    def setGlobalSwatchEdgeOffset(self, offset):
         """Sets the edge offset of the color swatches"""
         pass
 
-    def setGlobalSwatchSize(self,size):
+    def setGlobalSwatchSize(self, size):
         """Sets the size of the color swatches"""
         pass
 
-    def setScrollPos(self,pos):
+    def setScrollPos(self, pos):
         """Sets the scroll position of the listbox to 'pos'"""
         pass
 
-    def setSelection(self,selectionIndex):
+    def setSelection(self, selectionIndex):
         """Sets the current selection in the listbox."""
         pass
 
-    def setStringJustify(self,index,justify):
+    def setStringJustify(self, index, justify):
         """Sets the text justification"""
         pass
 
@@ -2850,7 +2850,7 @@ class ptGUIControlListBox(ptGUIControl):
 class ptGUIControlMultiLineEdit(ptGUIControl):
     """Plasma GUI Control Multi-line edit class"""
 
-    def __init__(self,ctrlKey):
+    def __init__(self, ctrlKey):
         pass
 
     def beginUpdate(self):
@@ -2873,7 +2873,7 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Deletes a character at the current cursor position."""
         pass
 
-    def deleteLinesFromTop(self,numLines):
+    def deleteLinesFromTop(self, numLines):
         """Deletes the specified number of lines from the top of the text buffer"""
         pass
 
@@ -2885,7 +2885,7 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Enables the scroll control if there is one"""
         pass
 
-    def endUpdate(self,redraw=True):
+    def endUpdate(self, redraw=True):
         """Signifies that the massive updates are over. We can now redraw."""
         pass
 
@@ -2925,25 +2925,25 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Gets the string of the edit control."""
         pass
 
-    def insertChar(self,c):
+    def insertChar(self, c):
         """Inserts a character at the current cursor position."""
         pass
 
-    def insertColor(self,color):
+    def insertColor(self, color):
         """Inserts an encoded color object at the current cursor position.
         'color' is a ptColor object.
         """
         pass
 
-    def insertLink(self,linkId: int) -> None:
+    def insertLink(self, linkId: int) -> None:
         """Inserts a link hotspot at the current cursor position."""
         pass
 
-    def insertString(self,string):
+    def insertString(self, string):
         """Inserts a string at the current cursor position."""
         pass
 
-    def insertStyle(self,style):
+    def insertStyle(self, style):
         """Inserts an encoded font style at the current cursor position."""
         pass
 
@@ -2963,31 +2963,31 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Locks the multi-line edit control so the user cannot make changes."""
         pass
 
-    def moveCursor(self,direction):
+    def moveCursor(self, direction):
         """Move the cursor in the specified direction (see PtGUIMultiLineDirection)"""
         pass
 
-    def setBufferLimit(self,bufferLimit):
+    def setBufferLimit(self, bufferLimit):
         """Sets the buffer max for the editbox"""
         pass
 
-    def setEncodedBuffer(self,bufferObject):
+    def setEncodedBuffer(self, bufferObject):
         """Sets the edit control to the encoded buffer in the python buffer object."""
         pass
 
-    def setFontSize(self,fontSize):
+    def setFontSize(self, fontSize):
         """Sets the default font size for the edit control"""
         pass
 
-    def setMargins(self,top: Optional[int] = None, left: Optional[int] = None, bottom: Optional[int] = None, right: Optional[int] = None) -> None:
+    def setMargins(self, top: Optional[int] = None, left: Optional[int] = None, bottom: Optional[int] = None, right: Optional[int] = None) -> None:
         """Sets the control's margins"""
         pass
 
-    def setScrollPosition(self,topLine):
+    def setScrollPosition(self, topLine):
         """Sets the what line is the top line."""
         pass
 
-    def setString(self,text):
+    def setString(self, text):
         """Sets the multi-line edit control string."""
         pass
 
@@ -3004,31 +3004,31 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
 class ptGUIControlProgress(ptGUIControlValue):
     """Plasma GUI control for progress bar"""
 
-    def __init__(self,ctrlKey):
+    def __init__(self, ctrlKey):
         pass
 
-    def animateToPercent(self,percent):
+    def animateToPercent(self, percent):
         """Sets the value of the control and animates to that point."""
         pass
 
 class ptGUIControlRadioGroup(ptGUIControl):
     """Plasma GUI Control Radio Group class"""
 
-    def __init__(self,ctrlKey):
+    def __init__(self, ctrlKey):
         pass
 
     def getValue(self):
         """Returns the current selection of the radio group."""
         pass
 
-    def setValue(self,value):
+    def setValue(self, value):
         """Sets the current selection to 'value'"""
         pass
 
 class ptGUIControlTextBox(ptGUIControl):
     """Plasma GUI Control Textbox class"""
 
-    def __init__(self,ctrlKey):
+    def __init__(self, ctrlKey):
         pass
 
     def getForeColor(self):
@@ -3043,43 +3043,43 @@ class ptGUIControlTextBox(ptGUIControl):
         """Returns current justify"""
         pass
 
-    def setBackColor(self,color):
+    def setBackColor(self, color):
         """Sets the text backcolor to 'color', which is a ptColor object."""
         pass
 
-    def setFontSize(self,size):
+    def setFontSize(self, size):
         """Don't use"""
         pass
 
-    def setForeColor(self,color):
+    def setForeColor(self, color):
         """Sets the text forecolor to 'color', which is a ptColor object."""
         pass
 
-    def setString(self,text):
+    def setString(self, text):
         """Sets the textbox string to 'text'"""
         pass
 
-    def setStringJustify(self,justify):
+    def setStringJustify(self, justify):
         """Sets current justify"""
         pass
 
 class ptGUIControlUpDownPair(ptGUIControlValue):
     """Plasma GUI control for up/down pair"""
 
-    def __init__(self,ctrlKey):
+    def __init__(self, ctrlKey):
         pass
 
 class ptGUIDialog:
     """Plasma GUI dialog class"""
 
-    def __init__(self,dialogKey):
+    def __init__(self, dialogKey):
         pass
 
     def disable(self):
         """Disables this dialog"""
         pass
 
-    def enable(self,enableFlag=1):
+    def enable(self, enableFlag=1):
         """Enable this dialog"""
         pass
 
@@ -3091,19 +3091,19 @@ class ptGUIDialog:
         """Returns the select back color as a ptColor object"""
         pass
 
-    def getControlFromIndex(self,index):
+    def getControlFromIndex(self, index):
         """Returns the ptKey of the control with the specified index (not tag ID!)"""
         pass
 
-    def getControlFromTag(self,tagID):
+    def getControlFromTag(self, tagID):
         """Returns the ptKey of the control with the specified tag ID"""
         pass
 
-    def getControlModFromIndex(self,index: int) -> ptGUIControl:
+    def getControlModFromIndex(self, index: int) -> ptGUIControl:
         """Returns the ptGUIControl with the specified index (not tag ID!)"""
         pass
 
-    def getControlModFromTag(self,tagID: int) -> ptGUIControl:
+    def getControlModFromTag(self, tagID: int) -> ptGUIControl:
         """Returns the ptGUIControl with the specified tag ID"""
         pass
 
@@ -3155,27 +3155,27 @@ class ptGUIDialog:
         """Tells the dialog to redraw all its controls"""
         pass
 
-    def setBackColor(self,red,green,blue,alpha):
+    def setBackColor(self, red, green, blue, alpha):
         """Sets the back color, -1 means don't change"""
         pass
 
-    def setBackSelectColor(self,red,green,blue,alpha):
+    def setBackSelectColor(self, red, green, blue, alpha):
         """Sets the select back color, -1 means don't change"""
         pass
 
-    def setFocus(self,ctrlKey):
+    def setFocus(self, ctrlKey):
         """Sets the control that has input focus"""
         pass
 
-    def setFontSize(self,fontSize):
+    def setFontSize(self, fontSize):
         """Sets the font size"""
         pass
 
-    def setForeColor(self,red,green,blue,alpha):
+    def setForeColor(self, red, green, blue, alpha):
         """Sets the fore color, -1 means don't change"""
         pass
 
-    def setSelectColor(self,red,green,blue,alpha):
+    def setSelectColor(self, red, green, blue, alpha):
         """Sets the select color, -1 means don't change"""
         pass
 
@@ -3198,18 +3198,18 @@ class ptGUIPopUpMenu:
     name,parent,screenOriginX,screenOriginY
     """
 
-    def __init__(self,arg1,arg2=None,arg3=None,arg4=None):
+    def __init__(self, arg1, arg2=None, arg3=None, arg4=None):
         pass
 
-    def addConsoleCmdItem(self,name,consoleCmd):
+    def addConsoleCmdItem(self, name, consoleCmd):
         """Adds a new item to the menu that fires a console command"""
         pass
 
-    def addNotifyItem(self,name):
+    def addNotifyItem(self, name):
         """Adds a new item ot the mneu"""
         pass
 
-    def addSubMenuItem(self,name,subMenu):
+    def addSubMenuItem(self, name, subMenu):
         """Adds a submenu to this menu"""
         pass
 
@@ -3217,7 +3217,7 @@ class ptGUIPopUpMenu:
         """Disables this menu"""
         pass
 
-    def enable(self,state=1):
+    def enable(self, state=1):
         """Enables/disables this menu"""
         pass
 
@@ -3261,19 +3261,19 @@ class ptGUIPopUpMenu:
         """Returns whether this menu is enabled or not"""
         pass
 
-    def setBackColor(self,r,g,b,a):
+    def setBackColor(self, r, g, b, a):
         """Sets the background color"""
         pass
 
-    def setBackSelectColor(self,r,g,b,a):
+    def setBackSelectColor(self, r, g, b, a):
         """Sets the selection background color"""
         pass
 
-    def setForeColor(self,r,g,b,a):
+    def setForeColor(self, r, g, b, a):
         """Sets the foreground color"""
         pass
 
-    def setSelectColor(self,r,g,b,a):
+    def setSelectColor(self, r, g, b, a):
         """Sets the selection color"""
         pass
 
@@ -3284,7 +3284,7 @@ class ptGUIPopUpMenu:
 class ptGUISkin:
     """Plasma GUI Skin object"""
 
-    def __init__(self,key):
+    def __init__(self, key):
         pass
 
     def getKey(self):
@@ -3294,7 +3294,7 @@ class ptGUISkin:
 class ptGameScore:
     """Plasma Game Score"""
 
-    def addPoints(self,points, key=None):
+    def addPoints(self, points, key=None):
         """Adds points to the score"""
         pass
 
@@ -3368,13 +3368,13 @@ class ptGameScore:
         """Removes this score from the server"""
         pass
 
-    def setPoints(self,numPoints, key):
+    def setPoints(self, numPoints, key):
         """Sets the number of points in the score
         Don't use to add/remove points, use only to reset values!
         """
         pass
 
-    def transferPoints(self,dest, points=0, key=None):
+    def transferPoints(self, dest, points=0, key=None):
         """Transfers points from this score to another"""
         pass
 
@@ -3417,18 +3417,18 @@ class ptGameScoreUpdateMsg(ptGameScoreMsg):
 class ptGrassShader:
     """Plasma Grass Shader class"""
 
-    def __init__(self,key):
+    def __init__(self, key):
         pass
 
-    def getWaveDirection(self,waveNum):
+    def getWaveDirection(self, waveNum):
         """Gets the wave waveNum's direction as a tuple of x,y. waveNum must be between 0 and plGrassShaderMod::kNumWaves-1 (currently 3) inclusive"""
         pass
 
-    def getWaveDistortion(self,waveNum):
+    def getWaveDistortion(self, waveNum):
         """Gets the wave waveNum's distortion as a tuple of x,y,z. waveNum must be between 0 and plGrassShaderMod::kNumWaves-1 (currently 3) inclusive"""
         pass
 
-    def getWaveSpeed(self,waveNum):
+    def getWaveSpeed(self, waveNum):
         """Gets the wave waveNum's speed as a float. waveNum must be between 0 and plGrassShaderMod::kNumWaves-1 (currently 3) inclusive"""
         pass
 
@@ -3436,25 +3436,25 @@ class ptGrassShader:
         """Resets wave data to 0"""
         pass
 
-    def setWaveDirection(self,waveNum, direction):
+    def setWaveDirection(self, waveNum, direction):
         """Sets the wave waveNum's direction as a tuple of x,y. waveNum must be between 0 and plGrassShaderMod::kNumWaves-1 (currently 3) inclusive"""
         pass
 
-    def setWaveDistortion(self,waveNum, distortion):
+    def setWaveDistortion(self, waveNum, distortion):
         """Sets the wave waveNum's distortion as a tuple of x,y,z. waveNum must be between 0 and plGrassShaderMod::kNumWaves-1 (currently 3) inclusive"""
         pass
 
-    def setWaveSpeed(self,waveNum, speed):
+    def setWaveSpeed(self, waveNum, speed):
         """Sets the wave waveNum's speed as a float. waveNum must be between 0 and plGrassShaderMod::kNumWaves-1 (currently 3) inclusive"""
         pass
 
 class ptImage:
     """Plasma image class"""
 
-    def __init__(self,imgKey):
+    def __init__(self, imgKey):
         pass
 
-    def getColorLoc(self,color):
+    def getColorLoc(self, color):
         """Returns the ptPoint3 where the specified color is located"""
         pass
 
@@ -3462,7 +3462,7 @@ class ptImage:
         """Returns the height of the image"""
         pass
 
-    def getPixelColor(self,x,y):
+    def getPixelColor(self, x, y):
         """Returns the ptColor at the specified location (float from 0 to 1)"""
         pass
 
@@ -3470,21 +3470,21 @@ class ptImage:
         """Returns the width of the image"""
         pass
 
-    def saveAsJPEG(self,filename,quality=75):
+    def saveAsJPEG(self, filename, quality=75):
         """Saves this image to disk as a JPEG file"""
         pass
 
-    def saveAsPNG(self,filename):
+    def saveAsPNG(self, filename):
         """Saves this image to disk as a PNG file"""
         pass
 
 class ptImageLibMod:
     """Plasma image library modifier class"""
 
-    def __init__(self,ilmKey):
+    def __init__(self, ilmKey):
         pass
 
-    def getImage(self,name):
+    def getImage(self, name):
         """Returns the ptImage with the specified name"""
         pass
 
@@ -3538,7 +3538,7 @@ class ptKey:
         """Returns whether the python file mod is attached to a clone"""
         pass
 
-    def netForce(self,forceFlag):
+    def netForce(self, forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
         Such as a game master, only running on the client that owns a particular object
@@ -3548,55 +3548,55 @@ class ptKey:
 class ptKeyMap:
     """Accessor class to the Key Mapping functions"""
 
-    def bindKey(self,key1,key2,action):
+    def bindKey(self, key1, key2, action):
         """Bind keys to an action"""
         pass
 
-    def bindKeyToConsoleCommand(self,keyStr1, command):
+    def bindKeyToConsoleCommand(self, keyStr1, command):
         """Binds key to console command"""
         pass
 
-    def convertCharToControlCode(self,controlCodeString):
+    def convertCharToControlCode(self, controlCodeString):
         """Convert string version of control code to number"""
         pass
 
-    def convertCharToFlags(self,charString):
+    def convertCharToFlags(self, charString):
         """Convert char string to flags"""
         pass
 
-    def convertCharToVKey(self,charString):
+    def convertCharToVKey(self, charString):
         """Convert char string to virtual key"""
         pass
 
-    def convertControlCodeToString(self,controlCode):
+    def convertControlCodeToString(self, controlCode):
         """Convert control code to character string"""
         pass
 
-    def convertVKeyToChar(self,virtualKey,flags):
+    def convertVKeyToChar(self, virtualKey, flags):
         """Convert virtual key and shift flags to string"""
         pass
 
-    def getBindingFlags1(self,controlCode):
+    def getBindingFlags1(self, controlCode):
         """Returns modifier flags for controlCode"""
         pass
 
-    def getBindingFlags2(self,controlCode):
+    def getBindingFlags2(self, controlCode):
         """Returns modifier flags for controlCode"""
         pass
 
-    def getBindingFlagsConsole(self,command):
+    def getBindingFlagsConsole(self, command):
         """Returns modifier flags for the console command mapping"""
         pass
 
-    def getBindingKey1(self,controlCode):
+    def getBindingKey1(self, controlCode):
         """Returns key code for controlCode"""
         pass
 
-    def getBindingKey2(self,controlCode):
+    def getBindingKey2(self, controlCode):
         """Returns key code for controlCode"""
         pass
 
-    def getBindingKeyConsole(self,command):
+    def getBindingKeyConsole(self, command):
         """Returns key for console command mapping"""
         pass
 
@@ -3607,21 +3607,21 @@ class ptKeyMap:
 class ptLayer:
     """Plasma layer class"""
 
-    def __init__(self,layerKey):
+    def __init__(self, layerKey):
         pass
 
     def getTexture(self) -> ptImage:
         """Returns the image texture of the layer"""
         pass
 
-    def setTexture(self,image: ptImage) -> None:
+    def setTexture(self, image: ptImage) -> None:
         """Sets the ptImage texture of the layer"""
         pass
 
 class ptMarkerMgr:
     """Marker manager accessor class"""
 
-    def addMarker(self,x, y, z, id, justCreated):
+    def addMarker(self, x, y, z, id, justCreated):
         """Add a marker in the specified location with the specified id"""
         pass
 
@@ -3629,11 +3629,11 @@ class ptMarkerMgr:
         """Returns true if we are showing the markers on this local machine"""
         pass
 
-    def captureQuestMarker(self,id, captured):
+    def captureQuestMarker(self, id, captured):
         """Sets a marker as captured or not"""
         pass
 
-    def captureTeamMarker(self,id, team):
+    def captureTeamMarker(self, id, team):
         """Sets a marker as captured by the specified team (0 = not captured)"""
         pass
 
@@ -3657,15 +3657,15 @@ class ptMarkerMgr:
         """Removes all markers"""
         pass
 
-    def removeMarker(self,id):
+    def removeMarker(self, id):
         """Removes the specified marker from the game"""
         pass
 
-    def setMarkersRespawn(self,respawn):
+    def setMarkersRespawn(self, respawn):
         """Sets whether markers respawn after being captured, or not"""
         pass
 
-    def setSelectedMarker(self,id):
+    def setSelectedMarker(self, id):
         """Sets the selected marker to the one with the specified id"""
         pass
 
@@ -3680,7 +3680,7 @@ class ptMatrix44:
         """Copies the matrix and returns the copy"""
         pass
 
-    def getAdjoint(self,adjointMat):
+    def getAdjoint(self, adjointMat):
         """Returns the adjoint of the matrix"""
         pass
 
@@ -3692,7 +3692,7 @@ class ptMatrix44:
         """Get the matrix's determinant"""
         pass
 
-    def getInverse(self,inverseMat):
+    def getInverse(self, inverseMat):
         """Returns the inverse of the matrix"""
         pass
 
@@ -3700,31 +3700,31 @@ class ptMatrix44:
         """Get the parity of the matrix"""
         pass
 
-    def getTranslate(self,vector):
+    def getTranslate(self, vector):
         """Returns the translate vector of the matrix (and sets vector to it as well)"""
         pass
 
-    def getTranspose(self,transposeMat):
+    def getTranspose(self, transposeMat):
         """Returns the transpose of the matrix"""
         pass
 
-    def make(self,fromPt, atPt, upVec):
+    def make(self, fromPt, atPt, upVec):
         """Creates the matrix from from and at points, and the up vector"""
         pass
 
-    def makeRotateMat(self,axis,radians):
+    def makeRotateMat(self, axis, radians):
         """Makes the matrix a rotation matrix"""
         pass
 
-    def makeScaleMat(self,scale):
+    def makeScaleMat(self, scale):
         """Makes the matrix a scaling matrix"""
         pass
 
-    def makeTranslateMat(self,trans):
+    def makeTranslateMat(self, trans):
         """Makes the matrix a translation matrix"""
         pass
 
-    def makeUpPreserving(self,fromPt, atPt, upVec):
+    def makeUpPreserving(self, fromPt, atPt, upVec):
         """Creates the matrix from from and at points, and the up vector (perserving the up vector)"""
         pass
 
@@ -3736,19 +3736,19 @@ class ptMatrix44:
         """Returns the right vector of the matrix"""
         pass
 
-    def rotate(self,axis,radians):
+    def rotate(self, axis, radians):
         """Rotates the matrix by radians around the axis"""
         pass
 
-    def scale(self,scale):
+    def scale(self, scale):
         """Scales the matrix by the vector"""
         pass
 
-    def setData(self,mat):
+    def setData(self, mat):
         """Sets the matrix using tuples"""
         pass
 
-    def translate(self,vector):
+    def translate(self, vector):
         """Translates the matrix by the vector"""
         pass
 
@@ -3763,7 +3763,7 @@ class ptMatrix44:
 class ptMoviePlayer:
     """Accessor class to play in the MoviePlayer"""
 
-    def __init__(self,movieName,selfKey):
+    def __init__(self, movieName, selfKey):
         pass
 
     def pause(self):
@@ -3782,23 +3782,23 @@ class ptMoviePlayer:
         """Resumes movie after pausing"""
         pass
 
-    def setCenter(self,x,y):
+    def setCenter(self, x, y):
         """Sets the center of the movie"""
         pass
 
-    def setColor(self,color):
+    def setColor(self, color):
         """Sets the color of the movie"""
         pass
 
-    def setOpacity(self,opacity):
+    def setOpacity(self, opacity):
         """Sets the opacity of the movie"""
         pass
 
-    def setScale(self,width,height):
+    def setScale(self, width, height):
         """Sets the width and height scale of the movie"""
         pass
 
-    def setVolume(self,volume):
+    def setVolume(self, volume):
         """Set the volume of the movie"""
         pass
 
@@ -3821,15 +3821,15 @@ class ptNetLinkingMgr:
         """True if linking is enabled."""
         pass
 
-    def linkPlayerHere(self,pid):
+    def linkPlayerHere(self, pid):
         """link player(pid) to where I am"""
         pass
 
-    def linkPlayerToAge(self,ageLink,pid):
+    def linkPlayerToAge(self, ageLink, pid):
         """Link player(pid) to ageLink"""
         pass
 
-    def linkToAge(self,ageLink, linkAnim):
+    def linkToAge(self, ageLink, linkAnim):
         """Links to ageLink (ptAgeLinkStruct, string)"""
         pass
 
@@ -3845,11 +3845,11 @@ class ptNetLinkingMgr:
         """Link to my Personal Age with the YeeshaBook"""
         pass
 
-    def linkToPlayersAge(self,pid):
+    def linkToPlayersAge(self, pid):
         """Link me to where player(pid) is"""
         pass
 
-    def setEnabled(self,enable):
+    def setEnabled(self, enable):
         """Enable/Disable linking."""
         pass
 
@@ -3858,70 +3858,70 @@ class ptNotify:
     - selfKey is ptKey of your PythonFile modifier
     """
 
-    def __init__(self,selfKey):
+    def __init__(self, selfKey):
         pass
 
-    def addActivateEvent(self,activeFlag,activateFlag):
+    def addActivateEvent(self, activeFlag, activateFlag):
         """Add an activate event record to the notify message"""
         pass
 
-    def addCallbackEvent(self,eventNumber):
+    def addCallbackEvent(self, eventNumber):
         """Add a callback event record to the notify message"""
         pass
 
-    def addCollisionEvent(self,enterFlag,hitterKey,hitteeKey):
+    def addCollisionEvent(self, enterFlag, hitterKey, hitteeKey):
         """Add a collision event record to the Notify message"""
         pass
 
-    def addContainerEvent(self,enteringFlag,containerKey,containedKey):
+    def addContainerEvent(self, enteringFlag, containerKey, containedKey):
         """Add a container event record to the notify message"""
         pass
 
-    def addControlKeyEvent(self,keynumber,downFlag):
+    def addControlKeyEvent(self, keynumber, downFlag):
         """Add a keyboard event record to the Notify message"""
         pass
 
-    def addFacingEvent(self,enabledFlag,facerKey, faceeKey, dotProduct):
+    def addFacingEvent(self, enabledFlag, facerKey, faceeKey, dotProduct):
         """Add a facing event record to the Notify message"""
         pass
 
-    def addPickEvent(self,enabledFlag,pickerKey,pickeeKey,hitPoint):
+    def addPickEvent(self, enabledFlag, pickerKey, pickeeKey, hitPoint):
         """Add a pick event record to the Notify message"""
         pass
 
-    def addReceiver(self,key):
+    def addReceiver(self, key):
         """Add a receivers key to receive this Notify message"""
         pass
 
-    def addResponderState(self,state):
+    def addResponderState(self, state):
         """Add a responder state event record to the notify message"""
         pass
 
-    def addVarFloat(self,name,number):
+    def addVarFloat(self, name, number):
         """Add a float variable event record to the Notify message
         This event record is used to pass a number variable to another python program
         """
         pass
 
-    def addVarInt(self,name,number):
+    def addVarInt(self, name, number):
         """Add a int variable event record to the Notify message
         This event record is used to pass a number variable to another python program
         """
         pass
 
-    def addVarKey(self,name,key):
+    def addVarKey(self, name, key):
         """Add a ptKey variable event record to the Notify message
         This event record is used to pass a ptKey variable to another python program
         """
         pass
 
-    def addVarNull(self,name,number):
+    def addVarNull(self, name, number):
         """Add a null (no data) variable event record to the Notify message
         This event record is used to pass a number variable to another python program
         """
         pass
 
-    def addVarNumber(self,name,number):
+    def addVarNumber(self, name, number):
         """Add a number variable event record to the Notify message
         Method will try to pick appropriate variable type
         This event record is used to pass a number variable to another python program
@@ -3934,14 +3934,14 @@ class ptNotify:
         """
         pass
 
-    def netForce(self,forceFlag):
+    def netForce(self, forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
         Such as a game master, only running on the client that owns a particular object
         """
         pass
 
-    def netPropagate(self,netFlag):
+    def netPropagate(self, netFlag):
         """Sets the net propagate flag - default to set"""
         pass
 
@@ -3949,82 +3949,82 @@ class ptNotify:
         """Send the notify message"""
         pass
 
-    def setActivate(self,state):
+    def setActivate(self, state):
         """Set the activate state to true(1.0) or false(0.0)"""
         pass
 
-    def setType(self,type):
+    def setType(self, type):
         """Sets the message type"""
         pass
 
 class ptParticle:
     """Plasma particle system class"""
 
-    def netForce(self,forceFlag):
+    def netForce(self, forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
         Such as a game master, only running on the client that owns a particular object
         """
         pass
 
-    def setGeneratorLife(self,value):
+    def setGeneratorLife(self, value):
         """NEEDS DOCSTRING"""
         pass
 
-    def setHeightSize(self,value):
+    def setHeightSize(self, value):
         """NEEDS DOCSTRING"""
         pass
 
-    def setInitPitchRange(self,value):
+    def setInitPitchRange(self, value):
         """NEEDS DOCSTRING"""
         pass
 
-    def setInitYawRange(self,value):
+    def setInitYawRange(self, value):
         """NEEDS DOCSTRING"""
         pass
 
-    def setParticleLifeMaximum(self,value):
+    def setParticleLifeMaximum(self, value):
         """NEEDS DOCSTRING"""
         pass
 
-    def setParticleLifeMinimum(self,value):
+    def setParticleLifeMinimum(self, value):
         """NEEDS DOCSTRING"""
         pass
 
-    def setParticlesPerSecond(self,value):
+    def setParticlesPerSecond(self, value):
         """NEEDS DOCSTRING"""
         pass
 
-    def setScaleMaximum(self,value):
+    def setScaleMaximum(self, value):
         """NEEDS DOCSTRING"""
         pass
 
-    def setScaleMinimum(self,value):
+    def setScaleMinimum(self, value):
         """NEEDS DOCSTRING"""
         pass
 
-    def setVelocityMaximum(self,value):
+    def setVelocityMaximum(self, value):
         """NEEDS DOCSTRING"""
         pass
 
-    def setVelocityMinimum(self,value):
+    def setVelocityMinimum(self, value):
         """NEEDS DOCSTRING"""
         pass
 
-    def setWidthSize(self,value):
+    def setWidthSize(self, value):
         """NEEDS DOCSTRING"""
         pass
 
 class ptPhysics:
     """Plasma physics class"""
 
-    def angularImpulse(self,impulseVector):
+    def angularImpulse(self, impulseVector):
         """Add the given vector (representing a rotation axis and magnitude) to
         the attached sceneobject's velocity
         """
         pass
 
-    def damp(self,damp):
+    def damp(self, damp):
         """Reduce all velocities on the object (0 = all stop, 1 = no effect)"""
         pass
 
@@ -4036,7 +4036,7 @@ class ptPhysics:
         """Disables collision detection on the attached sceneobject"""
         pass
 
-    def enable(self,state=1):
+    def enable(self, state=1):
         """Sets the physics enable state for the sceneobject attached"""
         pass
 
@@ -4044,75 +4044,75 @@ class ptPhysics:
         """Enables collision detection on the attached sceneobject"""
         pass
 
-    def force(self,forceVector):
+    def force(self, forceVector):
         """Applies the specified force to the attached sceneobject"""
         pass
 
-    def forceWithOffset(self,forceVector,offsetPt):
+    def forceWithOffset(self, forceVector, offsetPt):
         """Applies the specified offsetted force to the attached sceneobject"""
         pass
 
-    def impulse(self,impulseVector):
+    def impulse(self, impulseVector):
         """Adds the given vector to the attached sceneobject's velocity"""
         pass
 
-    def impulseWithOffset(self,impulseVector,offsetPt):
+    def impulseWithOffset(self, impulseVector, offsetPt):
         """Adds the given vector to the attached sceneobject's velocity
         with the specified offset
         """
         pass
 
-    def move(self,direction,distance):
+    def move(self, direction, distance):
         """Moves the attached sceneobject the specified distance in the specified direction"""
         pass
 
-    def netForce(self,forceFlag):
+    def netForce(self, forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
         Such as a game master, only running on the client that owns a particular object
         """
         pass
 
-    def rotate(self,radians,axis):
+    def rotate(self, radians, axis):
         """Rotates the attached sceneobject the specified radians around the specified axis"""
         pass
 
-    def setAngularVelocity(self,velocityVector):
+    def setAngularVelocity(self, velocityVector):
         """Sets the objects AngularVelocity to the specified vector"""
         pass
 
-    def setLinearVelocity(self,velocityVector):
+    def setLinearVelocity(self, velocityVector):
         """Sets the objects LinearVelocity to the specified vector"""
         pass
 
-    def shiftMass(self,offsetVector):
+    def shiftMass(self, offsetVector):
         """Shifts the attached sceneobject's center to mass in the specified direction and distance"""
         pass
 
-    def suppress(self,doSuppress):
+    def suppress(self, doSuppress):
         """Completely remove the physical, but keep it around so it
         can be added back later.
         """
         pass
 
-    def torque(self,torqueVector):
+    def torque(self, torqueVector):
         """Applies the specified torque to the attached sceneobject"""
         pass
 
-    def warp(self,position):
+    def warp(self, position):
         """Warps the sceneobject to a specified location.
         'position' can be a ptPoint3 or a ptMatrix44
         """
         pass
 
-    def warpObj(self,objkey):
+    def warpObj(self, objkey):
         """Warps the sceneobject to match the location and orientation of the specified object"""
         pass
 
 class ptPlayer:
     """And optionally __init__(name,playerID)"""
 
-    def __init__(self,avkey,name,playerID,distanceSq):
+    def __init__(self, avkey, name, playerID, distanceSq):
         pass
 
     def getDistanceSq(self):
@@ -4138,18 +4138,18 @@ class ptPlayer:
 class ptPoint3:
     """Plasma Point class"""
 
-    def __init__(self,x=0, y=0, z=0):
+    def __init__(self, x=0, y=0, z=0):
         pass
 
     def copy(self):
         """Returns a copy of the point in another ptPoint3 object"""
         pass
 
-    def distance(self,other):
+    def distance(self, other):
         """Computes the distance from this point to 'other' point"""
         pass
 
-    def distanceSq(self,other):
+    def distanceSq(self, other):
         """Computes the distance squared from this point to 'other' point
         - this function is faster than distance(other)
         """
@@ -4167,15 +4167,15 @@ class ptPoint3:
         """Returns the 'z' component of the point"""
         pass
 
-    def setX(self,x):
+    def setX(self, x):
         """Sets the 'x' component of the point"""
         pass
 
-    def setY(self,y):
+    def setY(self, y):
         """Sets the 'y' component of the point"""
         pass
 
-    def setZ(self,z):
+    def setZ(self, z):
         """Sets the 'z' component of the point"""
         pass
 
@@ -4186,48 +4186,48 @@ class ptPoint3:
 class ptSDL:
     """SDL accessor"""
 
-    def sendToClients(self,key):
+    def sendToClients(self, key):
         """Sets it so changes to this key are sent to the
         server AND the clients. (Normally it just goes
         to the server.)
         """
         pass
 
-    def setDefault(self,key,value):
+    def setDefault(self, key, value):
         """Like setitem, but doesn't broadcast over the net.
         Only use for setting defaults that everyone will
         already know (from reading it off disk)
         """
         pass
 
-    def setFlags(self,name,sendImmediate,skipOwnershipCheck):
+    def setFlags(self, name, sendImmediate, skipOwnershipCheck):
         """Sets the flags for a variable in this SDL"""
         pass
 
-    def setIndex(self,key,idx,value):
+    def setIndex(self, key, idx, value):
         """Sets the value at a specific index in the tuple,
         so you don't have to pass the whole thing in
         """
         pass
 
-    def setIndexNow(self,key,idx,value):
+    def setIndexNow(self, key, idx, value):
         """Same as setIndex but sends immediately"""
         pass
 
-    def setNotify(self,selfkey,key,tolerance):
+    def setNotify(self, selfkey, key, tolerance):
         """Sets the OnSDLNotify to be called when 'key'
         SDL variable changes by 'tolerance' (if number)
         """
         pass
 
-    def setTagString(self,name,tag):
+    def setTagString(self, name, tag):
         """Sets the tag string for a variable"""
         pass
 
 class ptSDLStateDataRecord:
     """Basic SDL state data record class"""
 
-    def findVar(self,name):
+    def findVar(self, name):
         """Finds and returns the specified ptSimpleStateVariable"""
         pass
 
@@ -4239,7 +4239,7 @@ class ptSDLStateDataRecord:
         """Returns the names of the vars we hold as a list of strings"""
         pass
 
-    def setFromDefaults(self,timeStampNow):
+    def setFromDefaults(self, timeStampNow):
         """Sets all our vars to their defaults"""
         pass
 
@@ -4254,10 +4254,10 @@ class ptSceneobject:
 
     physics: Any
 
-    def __init__(self,objKey, selfKey):
+    def __init__(self, objKey, selfKey):
         pass
 
-    def addKey(self,key):
+    def addKey(self, key):
         """Mostly used internally.
         Add another sceneobject ptKey
         """
@@ -4271,11 +4271,11 @@ class ptSceneobject:
         """Returns the velocity of the first attached avatar scene object"""
         pass
 
-    def fastForwardAttachedResponder(self,state):
+    def fastForwardAttachedResponder(self, state):
         """Fast forward the attached responder to the specified state"""
         pass
 
-    def findObject(self,name):
+    def findObject(self, name):
         """Find a particular object in just the sceneobjects that are attached"""
         pass
 
@@ -4325,7 +4325,7 @@ class ptSceneobject:
         """Returns list of ptKeys of the responders attached to this sceneobject"""
         pass
 
-    def getSoundIndex(self,sndComponentName):
+    def getSoundIndex(self, sndComponentName):
         """Get the index of the requested sound component"""
         pass
 
@@ -4349,7 +4349,7 @@ class ptSceneobject:
         """
         pass
 
-    def netForce(self,forceFlag):
+    def netForce(self, forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
         Such as a game master, only running on the client that owns a particular object
@@ -4358,15 +4358,15 @@ class ptSceneobject:
         """
         pass
 
-    def playAnimNamed(self,animName):
+    def playAnimNamed(self, animName):
         """Play the attached named animation"""
         pass
 
-    def popCamera(self,avKey):
+    def popCamera(self, avKey):
         """Pop the camera stack and go back to the previous camera"""
         pass
 
-    def popCutsceneCamera(self,avKey):
+    def popCutsceneCamera(self, avKey):
         """Pop the camera stack and go back to previous camera."""
         pass
 
@@ -4374,19 +4374,19 @@ class ptSceneobject:
         """Returns the scene object's current position"""
         pass
 
-    def pushCamera(self,avKey):
+    def pushCamera(self, avKey):
         """Switch to this object (if it is a camera)"""
         pass
 
-    def pushCameraCut(self,avKey):
+    def pushCameraCut(self, avKey):
         """Switch to this object, cutting the view (if it is a camera)"""
         pass
 
-    def pushCutsceneCamera(self,cutFlag,avKey):
+    def pushCutsceneCamera(self, cutFlag, avKey):
         """Switch to this object (assuming that it is actually a camera)"""
         pass
 
-    def rewindAnimNamed(self,animName):
+    def rewindAnimNamed(self, animName):
         """Rewind the attached named animation"""
         pass
 
@@ -4394,19 +4394,19 @@ class ptSceneobject:
         """Returns the scene object's current right vector"""
         pass
 
-    def runAttachedResponder(self,state):
+    def runAttachedResponder(self, state):
         """Run the attached responder to the specified state"""
         pass
 
-    def setSoundFilename(self,index, filename, isCompressed):
+    def setSoundFilename(self, index, filename, isCompressed):
         """Sets the sound attached to this sceneobject to use the specified sound file."""
         pass
 
-    def setTransform(self,local2world,world2local):
+    def setTransform(self, local2world, world2local):
         """Set our current transforms"""
         pass
 
-    def stopAnimNamed(self,animName):
+    def stopAnimNamed(self, animName):
         """Stop the attached named animation"""
         pass
 
@@ -4418,22 +4418,22 @@ class ptSceneobject:
         """Returns the scene object's current view vector"""
         pass
 
-    def volumeSensorIgnoreExtraEnters(self,ignore):
+    def volumeSensorIgnoreExtraEnters(self, ignore):
         """Tells the volume sensor attached to this object to ignore extra enters (default), or not (hack for garrison)."""
         pass
 
-    def volumeSensorNoArbitration(self,noArbitration):
+    def volumeSensorNoArbitration(self, noArbitration):
         """Tells the volume sensor attached to this object whether or not to negotiate exclusive locks with the server."""
         pass
 
 class ptSimpleStateVariable:
     """Basic SDL state data record class"""
 
-    def getBool(self,idx=0):
+    def getBool(self, idx=0):
         """Returns a boolean variable's value"""
         pass
 
-    def getByte(self,idx=0):
+    def getByte(self, idx=0):
         """Returns a byte variable's value"""
         pass
 
@@ -4445,27 +4445,27 @@ class ptSimpleStateVariable:
         """Returns the variable's display options"""
         pass
 
-    def getDouble(self,idx=0):
+    def getDouble(self, idx=0):
         """Returns a double variable's value"""
         pass
 
-    def getFloat(self,idx=0):
+    def getFloat(self, idx=0):
         """Returns a float variable's value"""
         pass
 
-    def getInt(self,idx=0):
+    def getInt(self, idx=0):
         """Returns an int variable's value"""
         pass
 
-    def getKey(self,idx=0):
+    def getKey(self, idx=0):
         """Returns a plKey variable's value"""
         pass
 
-    def getShort(self,idx=0):
+    def getShort(self, idx=0):
         """Returns a short variable's value"""
         pass
 
-    def getString(self,idx=0):
+    def getString(self, idx=0):
         """Returns a string variable's value"""
         pass
 
@@ -4485,38 +4485,38 @@ class ptSimpleStateVariable:
         """Is this variable used?"""
         pass
 
-    def setBool(self,val,idx=0):
+    def setBool(self, val, idx=0):
         """Sets a boolean variable's value"""
         pass
 
-    def setByte(self,val,idx=0):
+    def setByte(self, val, idx=0):
         """Sets a byte variable's value"""
         pass
 
-    def setDouble(self,val,idx=0):
+    def setDouble(self, val, idx=0):
         """Sets a double variable's value"""
         pass
 
-    def setFloat(self,val,idx=0):
+    def setFloat(self, val, idx=0):
         """Sets a float variable's value"""
         pass
 
-    def setInt(self,val,idx=0):
+    def setInt(self, val, idx=0):
         """Sets an int variable's value"""
         pass
 
-    def setShort(self,val,idx=0):
+    def setShort(self, val, idx=0):
         """Sets a short variable's value"""
         pass
 
-    def setString(self,val,idx=0):
+    def setString(self, val, idx=0):
         """Sets a string variable's value"""
         pass
 
 class ptSpawnPointInfo:
     """Class to hold spawn point data"""
 
-    def __init__(self,title=None,spawnPt=None):
+    def __init__(self, title=None, spawnPt=None):
         pass
 
     def getCameraStack(self):
@@ -4531,15 +4531,15 @@ class ptSpawnPointInfo:
         """Returns the spawnpoint's title"""
         pass
 
-    def setCameraStack(self,stack):
+    def setCameraStack(self, stack):
         """Sets the spawnpoint's camera stack (as a string)"""
         pass
 
-    def setName(self,name):
+    def setName(self, name):
         """Sets the spawnpoint's name"""
         pass
 
-    def setTitle(self,title):
+    def setTitle(self, title):
         """Sets the spawnpoint's title"""
         pass
 
@@ -4558,15 +4558,15 @@ class ptSpawnPointInfoRef:
         """Returns the spawnpoint's title"""
         pass
 
-    def setCameraStack(self,stack):
+    def setCameraStack(self, stack):
         """Sets the spawnpoint's camera stack (as a string)"""
         pass
 
-    def setName(self,name):
+    def setName(self, name):
         """Sets the spawnpoint's name"""
         pass
 
-    def setTitle(self,title):
+    def setTitle(self, title):
         """Sets the spawnpoint's title"""
         pass
 
@@ -4581,7 +4581,7 @@ class ptStatusLog:
         """Returns whether the status log is currently opened"""
         pass
 
-    def open(self,logName,numLines,flags):
+    def open(self, logName, numLines, flags):
         """Open a status log for writing to
         'logname' is the name of the log file (example: special.log)
         'numLines' is the number of lines to display on debug screen
@@ -4589,7 +4589,7 @@ class ptStatusLog:
         """
         pass
 
-    def write(self,text,color=None):
+    def write(self, text, color=None):
         """If the status log is open, write 'text' to log
         'color' is the display color in debug screen
         """
@@ -4606,7 +4606,7 @@ class ptStream:
         """Returns whether the stream file is currently opened"""
         pass
 
-    def open(self,fileName,flags):
+    def open(self, fileName, flags):
         """Open a stream file for reading or writing"""
         pass
 
@@ -4614,7 +4614,7 @@ class ptStream:
         """Reads a list of strings from the file"""
         pass
 
-    def writelines(self,lines):
+    def writelines(self, lines):
         """Write a list of strings to the file"""
         pass
 
@@ -4636,7 +4636,7 @@ class ptSwimCurrentInterface:
     rotation: Any
     """UNKNOWN"""
 
-    def __init__(self,key):
+    def __init__(self, key):
         pass
 
     def disable(self):
@@ -4650,15 +4650,15 @@ class ptSwimCurrentInterface:
 class ptVault:
     """Accessor class to the player's vault"""
 
-    def addChronicleEntry(self,entryName,type,string):
+    def addChronicleEntry(self, entryName, type, string):
         """Adds an entry to the player's chronicle with a value of 'string'."""
         pass
 
-    def amAgeCzar(self,ageInfo):
+    def amAgeCzar(self, ageInfo):
         """Are we the czar (WTH is this?) of the specified age?"""
         pass
 
-    def amAgeOwner(self,ageInfo):
+    def amAgeOwner(self, ageInfo):
         """Are we the owner of the specified age?"""
         pass
 
@@ -4674,11 +4674,11 @@ class ptVault:
         """Creates a new neighborhood"""
         pass
 
-    def findChronicleEntry(self,entryName):
+    def findChronicleEntry(self, entryName):
         """Returns a ptVaultNode of type kNodeTypeChronicle of the current player's chronicle entry by entryName."""
         pass
 
-    def findNode(self,templateNode):
+    def findNode(self, templateNode):
         """Find the node matching the template"""
         pass
 
@@ -4746,7 +4746,7 @@ class ptVault:
         """Returns a ptVaultAgeLinkNode that will go to my neighborhood"""
         pass
 
-    def getOwnedAgeLink(self,ageInfo):
+    def getOwnedAgeLink(self, ageInfo):
         """Returns a ptVaultAgeLinkNode to my owned age(ageInfo)"""
         pass
 
@@ -4762,7 +4762,7 @@ class ptVault:
         """Returns the personal age SDL"""
         pass
 
-    def getVisitAgeLink(self,ageInfo):
+    def getVisitAgeLink(self, ageInfo):
         """Returns a ptVaultAgeLinkNode for a visitor to age(ageInfo)"""
         pass
 
@@ -4774,54 +4774,54 @@ class ptVault:
         """Are we in the player's personal age?"""
         pass
 
-    def invitePlayerToAge(self,link,playerID):
+    def invitePlayerToAge(self, link, playerID):
         """Sends an invitation to visit the age to the specified player"""
         pass
 
-    def offerLinkToPlayer(self,link,playerID):
+    def offerLinkToPlayer(self, link, playerID):
         """Offer a one-time link to the specified player"""
         pass
 
-    def registerMTStation(self,stationName,mtSpawnPoint):
+    def registerMTStation(self, stationName, mtSpawnPoint):
         """Registers this player at the specified mass-transit point"""
         pass
 
-    def registerOwnedAge(self,link):
+    def registerOwnedAge(self, link):
         """Registers the specified age as owned by the player"""
         pass
 
-    def registerVisitAge(self,link):
+    def registerVisitAge(self, link):
         """Register this age as visitable by this player"""
         pass
 
-    def setAgePublic(self,ageInfo,makePublic):
+    def setAgePublic(self, ageInfo, makePublic):
         """Makes the specified age public or private"""
         pass
 
-    def unInvitePlayerToAge(self,guid,playerID):
+    def unInvitePlayerToAge(self, guid, playerID):
         """Revokes the invitation to visit the age"""
         pass
 
-    def unRegisterOwnedAge(self,ageFilename):
+    def unRegisterOwnedAge(self, ageFilename):
         """Unregisters the specified age so it's no longer owned by this player"""
         pass
 
-    def unRegisterVisitAge(self,guid):
+    def unRegisterVisitAge(self, guid):
         """Unregisters the specified age so it can no longer be visited by this player"""
         pass
 
-    def updatePsnlAgeSDL(self,pyrec):
+    def updatePsnlAgeSDL(self, pyrec):
         """Updates the personal age SDL to the specified data"""
         pass
 
 class ptVaultNode:
     """Vault node class"""
 
-    def addNode(self,node,cb=None,cbContext=0):
+    def addNode(self, node, cb=None, cbContext=0):
         """Adds 'node'(ptVaultNode) as a child to this node."""
         pass
 
-    def findNode(self,templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
+    def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
@@ -4877,7 +4877,7 @@ class ptVaultNode:
         """Returns the modified time of this node, that is useable by python's time library."""
         pass
 
-    def getNode(self,id):
+    def getNode(self, id):
         """Returns ptVaultNodeRef if is a child node, or None"""
         pass
 
@@ -4895,11 +4895,11 @@ class ptVaultNode:
         """
         pass
 
-    def hasNode(self,id):
+    def hasNode(self, id):
         """Returns true if node if a child node"""
         pass
 
-    def linkToNode(self,nodeID,cb=None,cbContext=0):
+    def linkToNode(self, nodeID, cb=None, cbContext=0):
         """Adds a link to the node designated by nodeID"""
         pass
 
@@ -4907,43 +4907,43 @@ class ptVaultNode:
         """Removes all the child nodes on this node."""
         pass
 
-    def removeNode(self,node,cb=None,cbContext=0):
+    def removeNode(self, node, cb=None, cbContext=0):
         """Removes the child 'node'(ptVaultNode) from this node."""
         pass
 
-    def save(self,cb=None,cbContext=0):
+    def save(self, cb=None, cbContext=0):
         """Save the changes made to this node."""
         pass
 
-    def saveAll(self,cb=None,cbContext=0):
+    def saveAll(self, cb=None, cbContext=0):
         """Saves this node and all its children nodes."""
         pass
 
-    def sendTo(self,destID,cb=None,cbContext=0):
+    def sendTo(self, destID, cb=None, cbContext=0):
         """Send this node to inbox at 'destID'"""
         pass
 
-    def setCreateAgeGuid(self,guid):
+    def setCreateAgeGuid(self, guid):
         """Set guid as a string of the Age where this node was created."""
         pass
 
-    def setCreateAgeName(self,name):
+    def setCreateAgeName(self, name):
         """Set name of the Age where this node was created."""
         pass
 
-    def setCreatorNodeID(self,id):
+    def setCreatorNodeID(self, id):
         """Set creator's node ID"""
         pass
 
-    def setID(self,id):
+    def setID(self, id):
         """Sets ID of this ptVaultNode."""
         pass
 
-    def setOwnerNodeID(self,id):
+    def setOwnerNodeID(self, id):
         """Set node ID of the owner of this node"""
         pass
 
-    def setType(self,type):
+    def setType(self, type):
         """Set the type of ptVaultNode this is."""
         pass
 
@@ -5002,7 +5002,7 @@ class ptVaultNode:
 class ptVaultFolderNode(ptVaultNode):
     """Plasma vault folder node"""
 
-    def __init__(self,n=0):
+    def __init__(self, n=0):
         pass
 
     def getFolderName(self):
@@ -5013,36 +5013,36 @@ class ptVaultFolderNode(ptVaultNode):
         """Returns the folder type (of the standard folder types)"""
         pass
 
-    def setFolderName(self,name):
+    def setFolderName(self, name):
         """Set the folder name"""
         pass
 
-    def setFolderType(self,type):
+    def setFolderType(self, type):
         """Set the folder type"""
         pass
 
 class ptVaultAgeInfoListNode(ptVaultFolderNode):
     """Plasma vault age info list node"""
 
-    def __init__(self,n=0):
+    def __init__(self, n=0):
         pass
 
-    def addAge(self,ageID):
+    def addAge(self, ageID):
         """Adds ageID to list of ages"""
         pass
 
-    def hasAge(self,ageID):
+    def hasAge(self, ageID):
         """Returns whether ageID is in the list of ages"""
         pass
 
-    def removeAge(self,ageID):
+    def removeAge(self, ageID):
         """Removes ageID from list of ages"""
         pass
 
 class ptVaultAgeInfoNode(ptVaultNode):
     """Plasma vault age info node"""
 
-    def __init__(self,n=0):
+    def __init__(self, n=0):
         pass
 
     def asAgeInfoStruct(self):
@@ -5117,45 +5117,45 @@ class ptVaultAgeInfoNode(ptVaultNode):
         """Returns whether the age is Public or Not"""
         pass
 
-    def setAgeDescription(self,description):
+    def setAgeDescription(self, description):
         """Sets the description of the age"""
         pass
 
-    def setAgeFilename(self,fileName):
+    def setAgeFilename(self, fileName):
         """Sets the filename"""
         pass
 
-    def setAgeID(self,ageID):
+    def setAgeID(self, ageID):
         """Sets the age ID"""
         pass
 
-    def setAgeInstanceGuid(self,guid):
+    def setAgeInstanceGuid(self, guid):
         """Sets the age instance GUID"""
         pass
 
-    def setAgeInstanceName(self,instanceName):
+    def setAgeInstanceName(self, instanceName):
         """Sets the instance name"""
         pass
 
-    def setAgeLanguage(self,lang):
+    def setAgeLanguage(self, lang):
         """Sets the age's language (integer)"""
         pass
 
-    def setAgeSequenceNumber(self,seqNumber):
+    def setAgeSequenceNumber(self, seqNumber):
         """Sets the sequence number"""
         pass
 
-    def setAgeUserDefinedName(self,udname):
+    def setAgeUserDefinedName(self, udname):
         """Sets the user defined part of the name"""
         pass
 
 class ptVaultAgeLinkNode(ptVaultNode):
     """Plasma vault age link node"""
 
-    def __init__(self,n=0):
+    def __init__(self, n=0):
         pass
 
-    def addSpawnPoint(self,point):
+    def addSpawnPoint(self, point):
         """Adds the specified ptSpawnPointInfo or ptSpawnPointInfoRef"""
         pass
 
@@ -5179,26 +5179,26 @@ class ptVaultAgeLinkNode(ptVaultNode):
         """Returns whether the link is volatile or not"""
         pass
 
-    def hasSpawnPoint(self,spawnPtName):
+    def hasSpawnPoint(self, spawnPtName):
         """Returns true if this link has the specified spawn point"""
         pass
 
-    def removeSpawnPoint(self,point):
+    def removeSpawnPoint(self, point):
         """Removes the specified spawn point based on a ptSpawnPointInfo, ptSpawnPointInfoRef, or string"""
         pass
 
-    def setLocked(self,state):
+    def setLocked(self, state):
         """Sets whether the link is locked or not"""
         pass
 
-    def setVolatile(self,state):
+    def setVolatile(self, state):
         """Sets the state of the volitility of the link"""
         pass
 
 class ptVaultChronicleNode(ptVaultNode):
     """Plasma vault chronicle node"""
 
-    def __init__(self,n=0):
+    def __init__(self, n=0):
         pass
 
     def getEntryType(self):
@@ -5213,22 +5213,22 @@ class ptVaultChronicleNode(ptVaultNode):
         """Returns the value as a string of this chronicle node."""
         pass
 
-    def setEntryType(self,type):
+    def setEntryType(self, type):
         """Sets this chronicle node to a user defined type."""
         pass
 
-    def setName(self,name):
+    def setName(self, name):
         """Sets the name of the chronicle node."""
         pass
 
-    def setValue(self,value):
+    def setValue(self, value):
         """Sets the chronicle to a value that is a string"""
         pass
 
 class ptVaultImageNode(ptVaultNode):
     """Plasma vault image node"""
 
-    def __init__(self,n=0):
+    def __init__(self, n=0):
         pass
 
     def getImage(self):
@@ -5239,11 +5239,11 @@ class ptVaultImageNode(ptVaultNode):
         """Returns the title (caption) of this image node"""
         pass
 
-    def setImage(self,image):
+    def setImage(self, image):
         """Sets the image(ptImage) of this image node"""
         pass
 
-    def setImageFromBuf(self,buf):
+    def setImageFromBuf(self, buf):
         """Sets our image from a buffer"""
         pass
 
@@ -5251,14 +5251,14 @@ class ptVaultImageNode(ptVaultNode):
         """Grabs a screenshot and stuffs it into this node"""
         pass
 
-    def setTitle(self,title):
+    def setTitle(self, title):
         """Sets the title (caption) of this image node"""
         pass
 
 class ptVaultMarkerGameNode(ptVaultNode):
     """Plasma vault age info node"""
 
-    def __init__(self,n=0):
+    def __init__(self, n=0):
         pass
 
     def getGameGuid(self):
@@ -5277,19 +5277,19 @@ class ptVaultMarkerGameNode(ptVaultNode):
         """Returns a string representing the reward for completing this game"""
         pass
 
-    def setGameGuid(self,guid):
+    def setGameGuid(self, guid):
         """Sets the marker game's guid"""
         pass
 
-    def setGameName(self,name):
+    def setGameName(self, name):
         """Sets marker game's name"""
         pass
 
-    def setMarkers(self,markers):
+    def setMarkers(self, markers):
         """Sets markers associated with this game"""
         pass
 
-    def setReward(self,reward):
+    def setReward(self, reward):
         """Sets the reward for completing this marker game"""
         pass
 
@@ -5331,22 +5331,22 @@ class ptVaultNodeRef:
 class ptVaultPlayerInfoListNode(ptVaultFolderNode):
     """Plasma vault player info list node"""
 
-    def __init__(self,n=0):
+    def __init__(self, n=0):
         pass
 
-    def addPlayer(self,playerID):
+    def addPlayer(self, playerID):
         """Adds playerID player to this player info list node."""
         pass
 
-    def getPlayer(self,playerID):
+    def getPlayer(self, playerID):
         """Gets the player info node for the specified player."""
         pass
 
-    def hasPlayer(self,playerID):
+    def hasPlayer(self, playerID):
         """Returns whether the 'playerID' is a member of this player info list node."""
         pass
 
-    def removePlayer(self,playerID):
+    def removePlayer(self, playerID):
         """Removes playerID player from this player info list node."""
         pass
 
@@ -5381,23 +5381,23 @@ class ptVaultPlayerInfoNode(ptVaultNode):
         """Returns the online status of the player for this player info node."""
         pass
 
-    def playerSetAgeGuid(self,guidString):
+    def playerSetAgeGuid(self, guidString):
         """Not sure this should be used. Sets the guid for this player info node."""
         pass
 
-    def playerSetAgeInstanceName(self,name):
+    def playerSetAgeInstanceName(self, name):
         """Not sure this should be used. Sets the name of the age where the player is for this player info node."""
         pass
 
-    def playerSetID(self,playerID):
+    def playerSetID(self, playerID):
         """Not sure this should be used. Sets the playerID for this player info node."""
         pass
 
-    def playerSetName(self,name):
+    def playerSetName(self, name):
         """Not sure this should be used. Sets the player name of this player info node."""
         pass
 
-    def playerSetOnline(self,state):
+    def playerSetOnline(self, state):
         """Not sure this should be used. Sets the state of the player online status for this player info node."""
         pass
 
@@ -5412,15 +5412,15 @@ class ptVaultSDLNode(ptVaultNode):
         """Returns the ptSDLStateDataRecord associated with this node"""
         pass
 
-    def initStateDataRecord(self,filename,flags):
+    def initStateDataRecord(self, filename, flags):
         """Read the SDL Rec from File if needed"""
         pass
 
-    def setIdent(self,v):
+    def setIdent(self, v):
         """UNKNOWN"""
         pass
 
-    def setStateDataRecord(self,rec,writeOptions=0):
+    def setStateDataRecord(self, rec, writeOptions=0):
         """Sets the ptSDLStateDataRecord"""
         pass
 
@@ -5450,33 +5450,33 @@ class ptVaultTextNoteNode(ptVaultNode):
         """Returns the title of this text note node."""
         pass
 
-    def setDeviceInbox(self,inboxName,cb=None,cbContext=0):
+    def setDeviceInbox(self, inboxName, cb=None, cbContext=0):
         """Sets the device inbox"""
         pass
 
-    def setNoteSubType(self,subType):
+    def setNoteSubType(self, subType):
         """Sets the subtype of the this text note node."""
         pass
 
-    def setNoteType(self,type):
+    def setNoteType(self, type):
         """Sets the type of text note for this text note node."""
         pass
 
-    def setText(self,text):
+    def setText(self, text):
         """Sets text of the this text note node."""
         pass
 
-    def setTitle(self,title):
+    def setTitle(self, title):
         """Sets the title of this text note node."""
         pass
 
 class ptVector3:
     """Plasma 3D Vector class"""
 
-    def __init__(self,x=0, y=0, z=0):
+    def __init__(self, x=0, y=0, z=0):
         pass
 
-    def add(self,other):
+    def add(self, other):
         """Adds other to the current vector"""
         pass
 
@@ -5484,11 +5484,11 @@ class ptVector3:
         """Copies the vector into another one (which it returns)"""
         pass
 
-    def crossProduct(self,other):
+    def crossProduct(self, other):
         """Finds the cross product between other and this vector"""
         pass
 
-    def dotProduct(self,other):
+    def dotProduct(self, other):
         """Finds the dot product between other and this vector"""
         pass
 
@@ -5518,23 +5518,23 @@ class ptVector3:
         """Normalizes the vector to length 1"""
         pass
 
-    def scale(self,scale):
+    def scale(self, scale):
         """Scale the vector by scale"""
         pass
 
-    def setX(self,x):
+    def setX(self, x):
         """Sets the 'x' component of the vector"""
         pass
 
-    def setY(self,y):
+    def setY(self, y):
         """Sets the 'y' component of the vector"""
         pass
 
-    def setZ(self,z):
+    def setZ(self, z):
         """Sets the 'z' component of the vector"""
         pass
 
-    def subtract(self,other):
+    def subtract(self, other):
         """Subtracts other from the current vector"""
         pass
 
@@ -5545,10 +5545,10 @@ class ptVector3:
 class ptWaveSet:
     """Creates a new ptWaveSet"""
 
-    def __init__(self,key):
+    def __init__(self, key):
         pass
 
-    def addBuoy(self,soKey: ptKey) -> None:
+    def addBuoy(self, soKey: ptKey) -> None:
         """Adds the specified object as a buoy"""
         pass
 
@@ -5680,134 +5680,134 @@ class ptWaveSet:
         """Returns the attribute's value"""
         pass
 
-    def removeBuoy(self,soKey: ptKey) -> None:
+    def removeBuoy(self, soKey: ptKey) -> None:
         """Removes the specified object as a buoy"""
         pass
 
-    def setDepthFalloff(self,s, secs = 0):
+    def setDepthFalloff(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setEnvCenter(self,s, secs = 0):
+    def setEnvCenter(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setEnvRadius(self,s, secs = 0):
+    def setEnvRadius(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setGeoAmpOverLen(self,s, secs = 0):
+    def setGeoAmpOverLen(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setGeoAngleDev(self,s, secs = 0):
+    def setGeoAngleDev(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setGeoChop(self,s, secs = 0):
+    def setGeoChop(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setGeoMaxLength(self,s, secs = 0):
+    def setGeoMaxLength(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setGeoMinLength(self,s, secs = 0):
+    def setGeoMinLength(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setMaxAtten(self,s, secs = 0):
+    def setMaxAtten(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setMinAtten(self,s, secs = 0):
+    def setMinAtten(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setOpacFalloff(self,s, secs = 0):
+    def setOpacFalloff(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setOpacOffset(self,s, secs = 0):
+    def setOpacOffset(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setReflFalloff(self,s, secs = 0):
+    def setReflFalloff(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setReflOffset(self,s, secs = 0):
+    def setReflOffset(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setRippleScale(self,s, secs = 0):
+    def setRippleScale(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setSpecularEnd(self,s, secs = 0):
+    def setSpecularEnd(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setSpecularMute(self,s, secs = 0):
+    def setSpecularMute(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setSpecularNoise(self,s, secs = 0):
+    def setSpecularNoise(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setSpecularStart(self,s, secs = 0):
+    def setSpecularStart(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setSpecularTint(self,s, secs = 0):
+    def setSpecularTint(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setTexAmpOverLen(self,s, secs = 0):
+    def setTexAmpOverLen(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setTexAngleDev(self,s, secs = 0):
+    def setTexAngleDev(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setTexChop(self,s, secs = 0):
+    def setTexChop(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setTexMaxLength(self,s, secs = 0):
+    def setTexMaxLength(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setTexMinLength(self,s, secs = 0):
+    def setTexMinLength(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setWaterHeight(self,s, secs = 0):
+    def setWaterHeight(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setWaterOffset(self,s, secs = 0):
+    def setWaterOffset(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setWaterOpacity(self,s, secs = 0):
+    def setWaterOpacity(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setWaterTint(self,s, secs = 0):
+    def setWaterTint(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setWaveFalloff(self,s, secs = 0):
+    def setWaveFalloff(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setWaveOffset(self,s, secs = 0):
+    def setWaveOffset(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
 
-    def setWindDir(self,s, secs = 0):
+    def setWindDir(self, s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass

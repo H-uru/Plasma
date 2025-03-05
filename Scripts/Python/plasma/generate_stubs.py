@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 
 import os.path
+import re
 import textwrap
 import types
 
@@ -148,6 +149,10 @@ def parse_type_from_doc(doc: str) -> tuple[str, str]:
         # Example: "Params: x,y"
         params_line, _, doc_body = doc.partition("\n")
         params = params_line.removeprefix(docstring_params_prefix)
+        # Put a space after each comma if there isn't one already.
+        # Semi-temporarily doing this using a regex replacement here
+        # so that we don't have to immediately adjust all the old C++-defined docstrings.
+        params = re.sub(r",([^ ])", r", \1", params)
         return f"({params})", doc_body
     else:
         return "", doc
@@ -208,9 +213,8 @@ def generate_function_stub(kind: FunctionKind, name: str, signature: str, doc: s
             signature_tail = signature.removeprefix("()")
             signature = f"({self_param}){signature_tail}"
         elif signature.startswith("("):
-            # No space after the comma for now, to match the existing stubs.
             signature_tail = signature.removeprefix("(")
-            signature = f"({self_param},{signature_tail}"
+            signature = f"({self_param}, {signature_tail}"
         else:
             raise ValueError(f"{docstring_type_prefix!r} declaration in method docstring doesn't look like a function signature: {signature!r}")
 

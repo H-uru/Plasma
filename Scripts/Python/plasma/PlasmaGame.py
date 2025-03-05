@@ -74,7 +74,7 @@ class ptGameCli:
 class ptGmBlueSpiral(ptGameCli):
     """Legacy blue spiral game client."""
 
-    def hitCloth(self,cloth: int) -> None:
+    def hitCloth(self, cloth: int) -> None:
         """Request for the server to hit a specific cloth index and validate the correct sequence of cloth inputs."""
         pass
 
@@ -95,23 +95,23 @@ class ptGmBlueSpiral(ptGameCli):
 class ptGmMarker(ptGameCli):
     """Legacy marker game client."""
 
-    def addMarker(self,x: float, y: float, z: float, name: str, age: str) -> None:
+    def addMarker(self, x: float, y: float, z: float, name: str, age: str) -> None:
         """Request for the server to add a new marker to the game."""
         pass
 
-    def captureMarker(self,markerId: int) -> None:
+    def captureMarker(self, markerId: int) -> None:
         """Request for the server to register a capture of the specified marker for our team."""
         pass
 
-    def changeGameName(self,name: str) -> None:
+    def changeGameName(self, name: str) -> None:
         """Request for the server to change the internal marker game name."""
         pass
 
-    def changeMarkerName(self,markerID: int) -> None:
+    def changeMarkerName(self, markerID: int) -> None:
         """Request for the server to change the name of a specific marker from the game."""
         pass
 
-    def changeTimeLimit(self,timeLimit: int) -> None:
+    def changeTimeLimit(self, timeLimit: int) -> None:
         """Request for the server to change the marker game's time limit."""
         pass
 
@@ -124,7 +124,7 @@ class ptGmMarker(ptGameCli):
         """Request for the server to delete all data associated with this game, including the marker definitions and game name."""
         pass
 
-    def deleteMarker(self,markerID: int) -> None:
+    def deleteMarker(self, markerID: int) -> None:
         """Request for the server to delete a specific marker from the game."""
         pass
 
