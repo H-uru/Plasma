@@ -970,7 +970,6 @@ def PtYesNoDialog(cb: Union[None, ptKey, Callable], message: str, /, dialogType:
 class ptAgeInfoStruct:
     """Class to hold AgeInfo struct data"""
     def __init__(self):
-        """None"""
         pass
 
     def copyFrom(self,other):
@@ -1040,7 +1039,6 @@ class ptAgeInfoStruct:
 class ptAgeInfoStructRef:
     """Class to hold AgeInfo struct data"""
     def __init__(self):
-        """None"""
         pass
 
     def copyFrom(self,other):
@@ -1094,7 +1092,6 @@ class ptAgeInfoStructRef:
 class ptAgeLinkStruct:
     """Class to hold the data of the AgeLink structure"""
     def __init__(self):
-        """None"""
         pass
 
     def copyFrom(self,other):
@@ -1136,7 +1133,6 @@ class ptAgeLinkStruct:
 class ptAgeLinkStructRef:
     """Class to hold the data of the AgeLink structure"""
     def __init__(self):
-        """None"""
         pass
 
     def copyFrom(self,other):
@@ -1170,7 +1166,6 @@ class ptAgeLinkStructRef:
 class ptAgeVault:
     """Accessor class to the Age's vault"""
     def __init__(self):
-        """None"""
         pass
 
     def addChronicleEntry(self,name,type,value):
@@ -1256,7 +1251,6 @@ class ptAgeVault:
 class ptAnimation:
     """Plasma animation class"""
     def __init__(self,key=None):
-        """None"""
         pass
 
     def addKey(self,key):
@@ -1363,7 +1357,6 @@ class ptAnimation:
 class ptAudioControl:
     """Accessor class to the Audio controls"""
     def __init__(self):
-        """None"""
         pass
 
     def areSubtitlesEnabled(self):
@@ -1563,7 +1556,6 @@ class ptAudioControl:
 class ptAvatar:
     """Plasma avatar class"""
     def __init__(self):
-        """None"""
         pass
 
     def addWardrobeClothingItem(self,clothing_name,tint1,tint2):
@@ -1740,7 +1732,6 @@ class ptAvatar:
 class ptBook:
     """Creates a new book"""
     def __init__(self,esHTMLSource,coverImage=None,callbackKey=None,guiName=''):
-        """None"""
         pass
 
     def allowPageTurning(self,allow):
@@ -1816,7 +1807,6 @@ class ptBook:
 class ptCamera:
     """Plasma camera class"""
     def __init__(self):
-        """None"""
         pass
 
     def controlKey(self,controlKey,activateFlag):
@@ -1898,7 +1888,6 @@ class ptCamera:
 class ptCluster:
     """Creates a new ptCluster"""
     def __init__(self,key):
-        """None"""
         pass
 
     def setVisible(self,visible):
@@ -1908,7 +1897,6 @@ class ptCluster:
 class ptColor:
     """Plasma color class"""
     def __init__(self,red=0, green=0, blue=0, alpha=0):
-        """None"""
         pass
 
     def black(self):
@@ -2066,7 +2054,6 @@ class ptColor:
 class ptCritterBrain:
     """Object to manipulate critter brains"""
     def __init__(self):
-        """None"""
         pass
 
     def addBehavior(self,animName, behaviorName, loop = 1, randomStartPos = 1, fadeInLen = 2.0, fadeOutLen = 2.0):
@@ -2188,7 +2175,6 @@ class ptCritterBrain:
 class ptDniCoordinates:
     """Constructor for a D'Ni coordinate"""
     def __init__(self):
-        """None"""
         pass
 
     def fromPoint(self,pt):
@@ -2214,7 +2200,6 @@ class ptDniCoordinates:
 class ptDniInfoSource:
     """DO NOT USE"""
     def __init__(self):
-        """None"""
         pass
 
     def getAgeCoords(self):
@@ -2236,7 +2221,6 @@ class ptDniInfoSource:
 class ptDraw:
     """Plasma Draw class"""
     def __init__(self):
-        """None"""
         pass
 
     def disable(self):
@@ -2259,7 +2243,6 @@ class ptDraw:
 class ptDynamicMap:
     """Creates a ptDynamicMap object"""
     def __init__(self,key=None):
-        """None"""
         pass
 
     def addKey(self,key):
@@ -2394,7 +2377,6 @@ class ptDynamicMap:
 class ptGUIControl:
     """Base class for all GUI controls"""
     def __init__(self,controlKey):
-        """None"""
         pass
 
     def disable(self):
@@ -2524,7 +2506,6 @@ class ptGUIControl:
 class ptGUIControlButton(ptGUIControl):
     """Plasma GUI Control Button class"""
     def __init__(self,ctrlKey):
-        """None"""
         pass
 
     def getNotifyType(self):
@@ -2542,7 +2523,6 @@ class ptGUIControlButton(ptGUIControl):
 class ptGUIControlCheckBox(ptGUIControl):
     """Plasma GUI Control Checkbox class"""
     def __init__(self,ctrlKey):
-        """None"""
         pass
 
     def isChecked(self):
@@ -2556,7 +2536,6 @@ class ptGUIControlCheckBox(ptGUIControl):
 class ptGUIControlClickMap(ptGUIControl):
     """Plasma GUI control Click Map"""
     def __init__(self,ctrlKey):
-        """None"""
         pass
 
     def getLastMouseDragPoint(self):
@@ -2574,7 +2553,6 @@ class ptGUIControlClickMap(ptGUIControl):
 class ptGUIControlDragBar(ptGUIControl):
     """Plasma GUI Control DragBar class"""
     def __init__(self,ctrlKey):
-        """None"""
         pass
 
     def anchor(self):
@@ -2596,7 +2574,6 @@ class ptGUIControlDragBar(ptGUIControl):
 class ptGUIControlDraggable(ptGUIControl):
     """Plasma GUI control for something draggable"""
     def __init__(self,ctrlKey):
-        """None"""
         pass
 
     def getLastMousePoint(self):
@@ -2610,7 +2587,6 @@ class ptGUIControlDraggable(ptGUIControl):
 class ptGUIControlDynamicText(ptGUIControl):
     """Plasma GUI Control DynamicText class"""
     def __init__(self,ctrlKey):
-        """None"""
         pass
 
     def getMap(self,index):
@@ -2626,7 +2602,6 @@ class ptGUIControlDynamicText(ptGUIControl):
 class ptGUIControlEditBox(ptGUIControl):
     """Plasma GUI Control Editbox class"""
     def __init__(self,ctrlKey):
-        """None"""
         pass
 
     def clearString(self):
@@ -2688,7 +2663,6 @@ class ptGUIControlEditBox(ptGUIControl):
 class ptGUIControlValue(ptGUIControl):
     """Plasma GUI Control Value class  - knobs, spinners"""
     def __init__(self,ctrlKey):
-        """None"""
         pass
 
     def getMax(self):
@@ -2722,13 +2696,11 @@ class ptGUIControlValue(ptGUIControl):
 class ptGUIControlKnob(ptGUIControlValue):
     """Plasma GUI control for knob"""
     def __init__(self,ctrlKey):
-        """None"""
         pass
 
 class ptGUIControlListBox(ptGUIControl):
     """Plasma GUI Control List Box class"""
     def __init__(self,ctrlKey):
-        """None"""
         pass
 
     def add2StringsWithColors(self,text1,color1,text2,color2,respectAlpha):
@@ -2886,7 +2858,6 @@ class ptGUIControlListBox(ptGUIControl):
 class ptGUIControlMultiLineEdit(ptGUIControl):
     """Plasma GUI Control Multi-line edit class"""
     def __init__(self,ctrlKey):
-        """None"""
         pass
 
     def beginUpdate(self):
@@ -3040,7 +3011,6 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
 class ptGUIControlProgress(ptGUIControlValue):
     """Plasma GUI control for progress bar"""
     def __init__(self,ctrlKey):
-        """None"""
         pass
 
     def animateToPercent(self,percent):
@@ -3050,7 +3020,6 @@ class ptGUIControlProgress(ptGUIControlValue):
 class ptGUIControlRadioGroup(ptGUIControl):
     """Plasma GUI Control Radio Group class"""
     def __init__(self,ctrlKey):
-        """None"""
         pass
 
     def getValue(self):
@@ -3064,7 +3033,6 @@ class ptGUIControlRadioGroup(ptGUIControl):
 class ptGUIControlTextBox(ptGUIControl):
     """Plasma GUI Control Textbox class"""
     def __init__(self,ctrlKey):
-        """None"""
         pass
 
     def getForeColor(self):
@@ -3102,13 +3070,11 @@ class ptGUIControlTextBox(ptGUIControl):
 class ptGUIControlUpDownPair(ptGUIControlValue):
     """Plasma GUI control for up/down pair"""
     def __init__(self,ctrlKey):
-        """None"""
         pass
 
 class ptGUIDialog:
     """Plasma GUI dialog class"""
     def __init__(self,dialogKey):
-        """None"""
         pass
 
     def disable(self):
@@ -3234,7 +3200,6 @@ class ptGUIPopUpMenu:
     name,parent,screenOriginX,screenOriginY
     """
     def __init__(self,arg1,arg2=None,arg3=None,arg4=None):
-        """None"""
         pass
 
     def addConsoleCmdItem(self,name,consoleCmd):
@@ -3320,7 +3285,6 @@ class ptGUIPopUpMenu:
 class ptGUISkin:
     """Plasma GUI Skin object"""
     def __init__(self,key):
-        """None"""
         pass
 
     def getKey(self):
@@ -3330,7 +3294,6 @@ class ptGUISkin:
 class ptGameScore:
     """Plasma Game Score"""
     def __init__(self):
-        """None"""
         pass
 
     def addPoints(self,points, key=None):
@@ -3420,13 +3383,11 @@ class ptGameScore:
 class ptGameScoreMsg:
     """Game Score operation callback message"""
     def __init__(self):
-        """None"""
         pass
 
 class ptGameScoreListMsg(ptGameScoreMsg):
     """Game Score message for scores found on the server"""
     def __init__(self):
-        """None"""
         pass
 
     def getName(self):
@@ -3444,7 +3405,6 @@ class ptGameScoreListMsg(ptGameScoreMsg):
 class ptGameScoreTransferMsg(ptGameScoreMsg):
     """Game Score message indicating a score point transfer"""
     def __init__(self):
-        """None"""
         pass
 
     def getDestination(self):
@@ -3458,7 +3418,6 @@ class ptGameScoreTransferMsg(ptGameScoreMsg):
 class ptGameScoreUpdateMsg(ptGameScoreMsg):
     """Game Score message for a score update operation"""
     def __init__(self):
-        """None"""
         pass
 
     def getScore(self):
@@ -3468,7 +3427,6 @@ class ptGameScoreUpdateMsg(ptGameScoreMsg):
 class ptGrassShader:
     """Plasma Grass Shader class"""
     def __init__(self,key):
-        """None"""
         pass
 
     def getWaveDirection(self,waveNum):
@@ -3502,7 +3460,6 @@ class ptGrassShader:
 class ptImage:
     """Plasma image class"""
     def __init__(self,imgKey):
-        """None"""
         pass
 
     def getColorLoc(self,color):
@@ -3532,7 +3489,6 @@ class ptImage:
 class ptImageLibMod:
     """Plasma image library modifier class"""
     def __init__(self,ilmKey):
-        """None"""
         pass
 
     def getImage(self,name):
@@ -3550,7 +3506,6 @@ class ptImageLibMod:
 class ptInputInterface:
     """Plasma input interface class"""
     def __init__(self):
-        """None"""
         pass
 
     def popTelescope(self):
@@ -3564,7 +3519,6 @@ class ptInputInterface:
 class ptKey:
     """Plasma Key class"""
     def __init__(self):
-        """None"""
         pass
 
     def disable(self):
@@ -3605,7 +3559,6 @@ class ptKey:
 class ptKeyMap:
     """Accessor class to the Key Mapping functions"""
     def __init__(self):
-        """None"""
         pass
 
     def bindKey(self,key1,key2,action):
@@ -3667,7 +3620,6 @@ class ptKeyMap:
 class ptLayer:
     """Plasma layer class"""
     def __init__(self,layerKey):
-        """None"""
         pass
 
     def getTexture(self) -> ptImage:
@@ -3681,7 +3633,6 @@ class ptLayer:
 class ptMarkerMgr:
     """Marker manager accessor class"""
     def __init__(self):
-        """None"""
         pass
 
     def addMarker(self,x, y, z, id, justCreated):
@@ -3739,7 +3690,6 @@ class ptMarkerMgr:
 class ptMatrix44:
     """Plasma Matrix44 class"""
     def __init__(self):
-        """None"""
         pass
 
     def copy(self):
@@ -3829,7 +3779,6 @@ class ptMatrix44:
 class ptMoviePlayer:
     """Accessor class to play in the MoviePlayer"""
     def __init__(self,movieName,selfKey):
-        """None"""
         pass
 
     def pause(self):
@@ -3875,7 +3824,6 @@ class ptMoviePlayer:
 class ptNetLinkingMgr:
     """Constructor to get access to the net link manager"""
     def __init__(self):
-        """None"""
         pass
 
     def getCurrAgeLink(self):
@@ -3927,7 +3875,6 @@ class ptNotify:
     - selfKey is ptKey of your PythonFile modifier
     """
     def __init__(self,selfKey):
-        """None"""
         pass
 
     def addActivateEvent(self,activeFlag,activateFlag):
@@ -4029,7 +3976,6 @@ class ptNotify:
 class ptParticle:
     """Plasma particle system class"""
     def __init__(self):
-        """None"""
         pass
 
     def netForce(self,forceFlag):
@@ -4090,7 +4036,6 @@ class ptParticle:
 class ptPhysics:
     """Plasma physics class"""
     def __init__(self):
-        """None"""
         pass
 
     def angularImpulse(self,impulseVector):
@@ -4187,7 +4132,6 @@ class ptPhysics:
 class ptPlayer:
     """And optionally __init__(name,playerID)"""
     def __init__(self,avkey,name,playerID,distanceSq):
-        """None"""
         pass
 
     def getDistanceSq(self):
@@ -4213,7 +4157,6 @@ class ptPlayer:
 class ptPoint3:
     """Plasma Point class"""
     def __init__(self,x=0, y=0, z=0):
-        """None"""
         pass
 
     def copy(self):
@@ -4261,7 +4204,6 @@ class ptPoint3:
 class ptSDL:
     """SDL accessor"""
     def __init__(self):
-        """None"""
         pass
 
     def sendToClients(self,key):
@@ -4305,7 +4247,6 @@ class ptSDL:
 class ptSDLStateDataRecord:
     """Basic SDL state data record class"""
     def __init__(self):
-        """None"""
         pass
 
     def findVar(self,name):
@@ -4336,7 +4277,6 @@ class ptSceneobject:
     physics: Any
 
     def __init__(self,objKey, selfKey):
-        """None"""
         pass
 
     def addKey(self,key):
@@ -4511,7 +4451,6 @@ class ptSceneobject:
 class ptSimpleStateVariable:
     """Basic SDL state data record class"""
     def __init__(self):
-        """None"""
         pass
 
     def getBool(self,idx=0):
@@ -4601,7 +4540,6 @@ class ptSimpleStateVariable:
 class ptSpawnPointInfo:
     """Class to hold spawn point data"""
     def __init__(self,title=None,spawnPt=None):
-        """None"""
         pass
 
     def getCameraStack(self):
@@ -4631,7 +4569,6 @@ class ptSpawnPointInfo:
 class ptSpawnPointInfoRef:
     """Class to hold spawn point data"""
     def __init__(self):
-        """None"""
         pass
 
     def getCameraStack(self):
@@ -4661,7 +4598,6 @@ class ptSpawnPointInfoRef:
 class ptStatusLog:
     """A status log class"""
     def __init__(self):
-        """None"""
         pass
 
     def close(self):
@@ -4689,7 +4625,6 @@ class ptStatusLog:
 class ptStream:
     """A basic stream class"""
     def __init__(self):
-        """None"""
         pass
 
     def close(self):
@@ -4731,7 +4666,6 @@ class ptSwimCurrentInterface:
     """UNKNOWN"""
 
     def __init__(self,key):
-        """None"""
         pass
 
     def disable(self):
@@ -4745,7 +4679,6 @@ class ptSwimCurrentInterface:
 class ptVault:
     """Accessor class to the player's vault"""
     def __init__(self):
-        """None"""
         pass
 
     def addChronicleEntry(self,entryName,type,string):
@@ -4915,7 +4848,6 @@ class ptVault:
 class ptVaultNode:
     """Vault node class"""
     def __init__(self):
-        """None"""
         pass
 
     def addNode(self,node,cb=None,cbContext=0):
@@ -5103,7 +5035,6 @@ class ptVaultNode:
 class ptVaultFolderNode(ptVaultNode):
     """Plasma vault folder node"""
     def __init__(self,n=0):
-        """None"""
         pass
 
     def getFolderName(self):
@@ -5125,7 +5056,6 @@ class ptVaultFolderNode(ptVaultNode):
 class ptVaultAgeInfoListNode(ptVaultFolderNode):
     """Plasma vault age info list node"""
     def __init__(self,n=0):
-        """None"""
         pass
 
     def addAge(self,ageID):
@@ -5143,7 +5073,6 @@ class ptVaultAgeInfoListNode(ptVaultFolderNode):
 class ptVaultAgeInfoNode(ptVaultNode):
     """Plasma vault age info node"""
     def __init__(self,n=0):
-        """None"""
         pass
 
     def asAgeInfoStruct(self):
@@ -5253,7 +5182,6 @@ class ptVaultAgeInfoNode(ptVaultNode):
 class ptVaultAgeLinkNode(ptVaultNode):
     """Plasma vault age link node"""
     def __init__(self,n=0):
-        """None"""
         pass
 
     def addSpawnPoint(self,point):
@@ -5299,7 +5227,6 @@ class ptVaultAgeLinkNode(ptVaultNode):
 class ptVaultChronicleNode(ptVaultNode):
     """Plasma vault chronicle node"""
     def __init__(self,n=0):
-        """None"""
         pass
 
     def getEntryType(self):
@@ -5329,7 +5256,6 @@ class ptVaultChronicleNode(ptVaultNode):
 class ptVaultImageNode(ptVaultNode):
     """Plasma vault image node"""
     def __init__(self,n=0):
-        """None"""
         pass
 
     def getImage(self):
@@ -5359,7 +5285,6 @@ class ptVaultImageNode(ptVaultNode):
 class ptVaultMarkerGameNode(ptVaultNode):
     """Plasma vault age info node"""
     def __init__(self,n=0):
-        """None"""
         pass
 
     def getGameGuid(self):
@@ -5397,7 +5322,6 @@ class ptVaultMarkerGameNode(ptVaultNode):
 class ptVaultNodeRef:
     """Vault node relationship pseudo class"""
     def __init__(self):
-        """None"""
         pass
 
     def beenSeen(self):
@@ -5435,7 +5359,6 @@ class ptVaultNodeRef:
 class ptVaultPlayerInfoListNode(ptVaultFolderNode):
     """Plasma vault player info list node"""
     def __init__(self,n=0):
-        """None"""
         pass
 
     def addPlayer(self,playerID):
@@ -5461,7 +5384,6 @@ class ptVaultPlayerInfoListNode(ptVaultFolderNode):
 class ptVaultPlayerInfoNode(ptVaultNode):
     """Plasma vault folder node"""
     def __init__(self):
-        """None"""
         pass
 
     def playerGetAgeGuid(self):
@@ -5511,7 +5433,6 @@ class ptVaultPlayerInfoNode(ptVaultNode):
 class ptVaultSDLNode(ptVaultNode):
     """Plasma vault SDL node"""
     def __init__(self):
-        """None"""
         pass
 
     def getIdent(self):
@@ -5537,13 +5458,11 @@ class ptVaultSDLNode(ptVaultNode):
 class ptVaultSystemNode(ptVaultNode):
     """Plasma vault system node"""
     def __init__(self):
-        """None"""
         pass
 
 class ptVaultTextNoteNode(ptVaultNode):
     """Plasma vault text note node"""
     def __init__(self):
-        """None"""
         pass
 
     def getDeviceInbox(self):
@@ -5589,7 +5508,6 @@ class ptVaultTextNoteNode(ptVaultNode):
 class ptVector3:
     """Plasma 3D Vector class"""
     def __init__(self,x=0, y=0, z=0):
-        """None"""
         pass
 
     def add(self,other):
@@ -5661,7 +5579,6 @@ class ptVector3:
 class ptWaveSet:
     """Creates a new ptWaveSet"""
     def __init__(self,key):
-        """None"""
         pass
 
     def addBuoy(self,soKey: ptKey) -> None:

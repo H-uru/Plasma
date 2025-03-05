@@ -68,7 +68,6 @@ class ptGameCli:
     """The ID of the player who owns this game instance."""
 
     def __init__(self):
-        """None"""
         pass
 
     def leaveGame(self) -> None:
@@ -78,7 +77,6 @@ class ptGameCli:
 class ptGmBlueSpiral(ptGameCli):
     """Legacy blue spiral game client."""
     def __init__(self):
-        """None"""
         pass
 
     def hitCloth(self,cloth: int) -> None:
@@ -102,7 +100,6 @@ class ptGmBlueSpiral(ptGameCli):
 class ptGmMarker(ptGameCli):
     """Legacy marker game client."""
     def __init__(self):
-        """None"""
         pass
 
     def addMarker(self,x: float, y: float, z: float, name: str, age: str) -> None:

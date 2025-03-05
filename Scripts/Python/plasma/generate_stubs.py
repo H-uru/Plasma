@@ -222,14 +222,15 @@ def generate_function_stub(kind: FunctionKind, name: str, signature: str, doc: s
 
 def generate_enum_stub(name: str, enum_obj: PlasmaConstants.Enum) -> Iterable[str]:
     yield f"class {name}:"
-    # Output the string "(none)" as the docstring for all enums for now, to match the existing stubs.
-    # (Plasma enums don't have docstrings.)
-    yield '    """(none)"""'
 
-    # Output enum constants sorted by their int value,
-    # falling back to sorting by name (case-sensitive) for constants with equal values.
-    for name, value in sorted(enum_obj.lookup.items(), key=lambda item: (int(item[1]), item[0])):
-        yield f"    {name} = {int(value)}"
+    if enum_obj.lookup:
+        # Output enum constants sorted by their int value,
+        # falling back to sorting by name (case-sensitive) for constants with equal values.
+        for name, value in sorted(enum_obj.lookup.items(), key=lambda item: (int(item[1]), item[0])):
+            yield f"    {name} = {int(value)}"
+    else:
+        # Just in case we ever get an enum that contains *no* constants...
+        yield "    pass"
 
 def generate_class_stub(name: str, cls: type) -> Iterable[str]:
     if tuple(cls.__bases__) == (object,):
@@ -256,8 +257,8 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
             first = False
 
             # Special case for __init__: use the signature from the class docstring.
-            # Output the string "None" as the docstring for all __init__ methods for now, to match the existing stubs.
-            yield from add_indents("    ", generate_function_stub("method", name, init_signature, "None"))
+            # C-defined __init__ methods have a dummy docstring - don't output that.
+            yield from add_indents("    ", generate_function_stub("method", name, init_signature, ""))
             continue
         elif name.startswith("__"):
             # Ignore all other special attributes.
