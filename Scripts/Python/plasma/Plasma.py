@@ -65,14 +65,16 @@ def PtAtTimeCallback(selfkey,time,id):
     """This will create a timer callback that will call OnTimer when complete
     - 'selfkey' is the ptKey of the PythonFile component
     - 'time' is how much time from now (in seconds) to call back
-    - 'id' is an integer id that will be returned in the OnTimer call"""
+    - 'id' is an integer id that will be returned in the OnTimer call
+    """
     pass
 
 def PtAttachObject(child,parent,netForce=False):
     """Attach child to parent based on ptKey or ptSceneobject
     - childKey is the ptKey or ptSceneobject of the one being attached
     - parentKey is the ptKey or ptSceneobject of the one being attached to
-    (both arguments must be ptKeys or ptSceneobjects, you cannot mix types)"""
+    (both arguments must be ptKeys or ptSceneobjects, you cannot mix types)
+    """
     pass
 
 def PtAvatarEnterAFK():
@@ -161,7 +163,8 @@ def PtConsole(command):
 
 def PtConsoleNet(command,netForce):
     """This will execute 'command' on the console, over the network, on all clients.
-    If 'netForce' is true then force command to be sent over the network."""
+    If 'netForce' is true then force command to be sent over the network.
+    """
     pass
 
 def PtCreateDir(directory):
@@ -192,7 +195,8 @@ def PtDetachObject(child,parent,netForce=False):
     """Detach child from parent based on ptKey or ptSceneobject
     - child is the ptKey or ptSceneobject of the one being detached
     - parent is the ptKey or ptSceneobject of the one being detached from
-    (both arguments must be ptKeys or ptSceneobjects, you cannot mix types)"""
+    (both arguments must be ptKeys or ptSceneobjects, you cannot mix types)
+    """
     pass
 
 def PtDirtySynchClients(selfKey,SDLStateName,flags):
@@ -283,14 +287,16 @@ def PtExcludeRegionSet(senderKey,regionKey,state):
     """This will set the state of an exclude region
     - 'senderKey' is a ptKey of the PythonFile component
     - 'regionKey' is a ptKey of the exclude region
-    - 'state' is either kExRegRelease or kExRegClear"""
+    - 'state' is either kExRegRelease or kExRegClear
+    """
     pass
 
 def PtExcludeRegionSetNow(senderKey,regionKey,state):
     """This will set the state of an exclude region immediately on the server
     - 'senderKey' is a ptKey of the PythonFile component
     - 'regionKey' is a ptKey of the exclude region
-    - 'state' is either kExRegRelease or kExRegClear"""
+    - 'state' is either kExRegRelease or kExRegClear
+    """
     pass
 
 def PtFadeIn(lenTime, holdFlag, noSound=0):
@@ -316,7 +322,8 @@ def PtFileExists(filename):
 
 def PtFindActivator(name):
     """This will try to find an activator based on its name
-    - it will return a ptKey if found- it will return None if not found"""
+    - it will return a ptKey if found- it will return None if not found
+    """
     pass
 
 def PtFindClones(key):
@@ -333,7 +340,8 @@ def PtFindLayer(name: str, age: str = "", page: str = "") -> Optional[ptLayer]:
 
 def PtFindSceneobject(name,ageName):
     """This will try to find a sceneobject based on its name and what age its in
-    - it will return a ptSceneObject if found- if not found then a NameError exception will happen"""
+    - it will return a ptSceneObject if found- if not found then a NameError exception will happen
+    """
     pass
 
 def PtFindSceneobjects(name):
@@ -366,12 +374,14 @@ def PtFogSetDefLinear(start,end,density):
 
 def PtForceCursorHidden():
     """Forces the cursor to hide, overriding everything.
-    Only call if other methods won't work. The only way to show the cursor after this call is PtForceMouseShown()"""
+    Only call if other methods won't work. The only way to show the cursor after this call is PtForceMouseShown()
+    """
     pass
 
 def PtForceCursorShown():
     """Forces the cursor to show, overriding everything.
-    Only call if other methods won't work. This is the only way to show the cursor after a call to PtForceMouseHidden()"""
+    Only call if other methods won't work. This is the only way to show the cursor after a call to PtForceMouseHidden()
+    """
     pass
 
 def PtForceVaultNodeUpdate(nodeId):
@@ -441,7 +451,8 @@ def PtGetClientIDFromAvatarKey(avatarKey):
 def PtGetClientName(avatarKey=None):
     """This will return the name of the client that is owned by the avatar
     - avatarKey is the ptKey of the avatar to get the client name of.
-    If avatarKey is omitted then the local avatar is used"""
+    If avatarKey is omitted then the local avatar is used
+    """
     pass
 
 def PtGetControlEvents(on, key):
@@ -498,7 +509,8 @@ def PtGetLanguage():
 
 def PtGetLocalAvatar():
     """This will return a ptSceneobject of the local avatar
-    - if there is no local avatar a NameError exception will happen."""
+    - if there is no local avatar a NameError exception will happen.
+    """
     pass
 
 def PtGetLocalClientID():
@@ -559,7 +571,8 @@ def PtGetPrevAgeName():
 
 def PtGetPublicAgeList(ageName, cbObject=None):
     """Get list of public ages for the given age name.
-    cbObject, if supplied should have a method called gotPublicAgeList(self,ageList). ageList is a list of tuple(ptAgeInfoStruct,nPlayersInAge)"""
+    cbObject, if supplied should have a method called gotPublicAgeList(self,ageList). ageList is a list of tuple(ptAgeInfoStruct,nPlayersInAge)
+    """
     pass
 
 def PtGetPythonLoggingLevel():
@@ -664,17 +677,20 @@ def PtLoadBookGUI(guiName):
 
 def PtLoadDialog(dialogName,selfKey=None,ageName=""):
     """Loads a GUI dialog by name and optionally set the Notify proc key
-    If the dialog is already loaded then it won't load it again"""
+    If the dialog is already loaded then it won't load it again
+    """
     pass
 
 def PtLoadJPEGFromDisk(filename,width,height):
     """The image will be resized to fit the width and height arguments. Set to 0 if resizing is not desired.
-    Returns a pyImage of the specified file."""
+    Returns a pyImage of the specified file.
+    """
     pass
 
 def PtLoadPNGFromDisk(filename,width,height):
     """The image will be resized to fit the width and height arguments. Set to 0 if resizing is not desired.
-    Returns a pyImage of the specified file."""
+    Returns a pyImage of the specified file.
+    """
     pass
 
 def PtLocalAvatarIsMoving():
@@ -756,12 +772,14 @@ def PtSendKIGZMarkerMsg(markerNumber,sender):
 
 def PtSendKIMessage(command,value):
     """Sends a command message to the KI frontend.
-    See PlasmaKITypes.py for list of commands"""
+    See PlasmaKITypes.py for list of commands
+    """
     pass
 
 def PtSendKIMessageInt(command,value):
     """Same as PtSendKIMessage except the value is guaranteed to be a uint32_t
-    (for things like player IDs)"""
+    (for things like player IDs)
+    """
     pass
 
 def PtSendKIRegisterImagerMsg(imagerName, sender):
@@ -778,7 +796,8 @@ def PtSendPrivateChatList(chatList):
 
 def PtSendRTChat(fromPlayer,toPlayerList,message,flags):
     """Sends a realtime chat message to the list of ptPlayers
-    If toPlayerList is an empty list, it is a broadcast message"""
+    If toPlayerList is an empty list, it is a broadcast message
+    """
     pass
 
 def PtSetActivePlayer(playerInt):
@@ -788,7 +807,8 @@ def PtSetActivePlayer(playerInt):
 def PtSetAlarm(secs, cbObject, cbContext):
     """secs is the amount of time before your alarm goes off.
     cbObject is a python object with the method onAlarm(int context)
-    cbContext is an integer."""
+    cbContext is an integer.
+    """
     pass
 
 def PtSetBehaviorLoopCount(behaviorKey,stage,loopCount,netForce):
@@ -897,7 +917,8 @@ def PtTransferParticlesToObject(objFrom, objTo, num):
 
 def PtUnLoadAvatarModel(avatarKey):
     """Forcibly unloads the specified avatar model.
-    Do not use this method unless you require fine-grained control of avatar unloading."""
+    Do not use this method unless you require fine-grained control of avatar unloading.
+    """
     pass
 
 def PtUnloadAllBookGUIs():
@@ -914,7 +935,8 @@ def PtUnloadDialog(dialogName):
 
 def PtValidateKey(key):
     """Returns true(1) if 'key' is valid and loaded,
-    otherwise returns false(0)"""
+    otherwise returns false(0)
+    """
     pass
 
 def PtVaultDownload(nodeId):
@@ -1247,7 +1269,8 @@ class ptAnimation:
 
     def getFirstKey(self):
         """This will return a ptKey object that is the first receiver (target)
-        However, if the parent is not a modifier or not loaded, then None is returned."""
+        However, if the parent is not a modifier or not loaded, then None is returned.
+        """
         pass
 
     def incrementBackward(self):
@@ -1265,7 +1288,8 @@ class ptAnimation:
     def netForce(self,forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
-        Such as a game master, only running on the client that owns a particular object"""
+        Such as a game master, only running on the client that owns a particular object
+        """
         pass
 
     def play(self):
@@ -1298,12 +1322,14 @@ class ptAnimation:
 
     def setLoopEnd(self,loopEnd):
         """Sets the loop ending position
-        - 'loopEnd' is the number of seconds from the absolute beginning of the animation"""
+        - 'loopEnd' is the number of seconds from the absolute beginning of the animation
+        """
         pass
 
     def setLoopStart(self,loopStart):
         """Sets the loop starting position
-        - 'loopStart' is the number of seconds from the absolute beginning of the animation"""
+        - 'loopStart' is the number of seconds from the absolute beginning of the animation
+        """
         pass
 
     def skipToBegin(self):
@@ -1458,7 +1484,8 @@ class ptAudioControl:
 
     def setAmbienceVolume(self,volume):
         """Sets the Ambience volume (0.0 to 1.0) for the game.
-        This only sets the volume for this game session."""
+        This only sets the volume for this game session.
+        """
         pass
 
     def setCaptureDevice(self,devicename):
@@ -1467,7 +1494,8 @@ class ptAudioControl:
 
     def setGUIVolume(self,volume):
         """Sets the GUI dialog volume (0.0 to 1.0) for the game.
-        This only sets the volume for this game session."""
+        This only sets the volume for this game session.
+        """
         pass
 
     def setLoadOnDemand(self,state):
@@ -1480,12 +1508,14 @@ class ptAudioControl:
 
     def setMusicVolume(self,volume):
         """Sets the Music volume (0.0 to 1.0) for the game.
-        This only sets the volume for this game session."""
+        This only sets the volume for this game session.
+        """
         pass
 
     def setNPCVoiceVolume(self,volume):
         """Sets the NPC's voice volume (0.0 to 1.0) for the game.
-        This only sets the volume for this game session."""
+        This only sets the volume for this game session.
+        """
         pass
 
     def setPlaybackDevice(self,devicename,restart):
@@ -1498,17 +1528,20 @@ class ptAudioControl:
 
     def setSoundFXVolume(self,volume):
         """Sets the SoundFX volume (0.0 to 1.0) for the game.
-        This only sets the volume for this game session."""
+        This only sets the volume for this game session.
+        """
         pass
 
     def setTwoStageLOD(self,state):
         """Enables or disables two-stage LOD, where sounds can be loaded into RAM but not into sound buffers.
-        ...Less of a performance hit, harder on memory."""
+        ...Less of a performance hit, harder on memory.
+        """
         pass
 
     def setVoiceVolume(self,volume):
         """Sets the Voice volume (0.0 to 1.0) for the game.
-        This only sets the volume for this game session."""
+        This only sets the volume for this game session.
+        """
         pass
 
     def showIcons(self):
@@ -1551,7 +1584,8 @@ class ptAvatar:
 
     def getAvatarClothingGroup(self):
         """Returns what clothing group the avatar belongs to.
-        It is also a means to determine if avatar is male or female"""
+        It is also a means to determine if avatar is male or female
+        """
         pass
 
     def getAvatarClothingList(self):
@@ -1568,12 +1602,14 @@ class ptAvatar:
 
     def getEntireClothingList(self,clothing_type):
         """Gets the entire list of clothing available. 'clothing_type' not used
-        NOTE: should use getClosetClothingList"""
+        NOTE: should use getClosetClothingList
+        """
         pass
 
     def getMatchingClothingItem(self,clothingName):
         """Finds the matching clothing item that goes with 'clothingName'
-        Used to find matching left and right gloves and shoes."""
+        Used to find matching left and right gloves and shoes.
+        """
         pass
 
     def getMorph(self,clothing_name,layer):
@@ -1586,7 +1622,8 @@ class ptAvatar:
 
     def getTintClothingItem(self,clothing_name,layer=1):
         """Returns a ptColor of a particular item of clothing that the avatar is wearing.
-        The color will be a ptColor object."""
+        The color will be a ptColor object.
+        """
         pass
 
     def getTintSkin(self):
@@ -1612,7 +1649,8 @@ class ptAvatar:
     def netForce(self,forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
-        Such as a game master, only running on the client that owns a particular object"""
+        Such as a game master, only running on the client that owns a particular object
+        """
         pass
 
     def nextStage(self,behaviorKey,transitionTime,setTimeFlag,newTime,SetDirectionFlag,isForward,netForce):
@@ -1677,7 +1715,8 @@ class ptAvatar:
 
     def tintClothingItem(self,clothing_name,tint,update=1):
         """Tells the avatar to tint(color) a particular item of clothing that they are already wearing.
-        'tint' is a ptColor object"""
+        'tint' is a ptColor object
+        """
         pass
 
     def tintClothingItemLayer(self,clothing_name,tint,layer,update=1):
@@ -1694,7 +1733,8 @@ class ptAvatar:
 
     def wearClothingItem(self,clothing_name,update=1):
         """Tells the avatar to wear a particular item of clothing.
-        And optionally hold update until later (for applying tinting before wearing)."""
+        And optionally hold update until later (for applying tinting before wearing).
+        """
         pass
 
 class ptBook:
@@ -1757,7 +1797,8 @@ class ptBook:
 
     def setGUI(self,guiName):
         """Sets the gui to be used by the book, if the requested gui is not loaded, it will use the default
-        Do not call while the book is open!"""
+        Do not call while the book is open!
+        """
         pass
 
     def setPageMargin(self,margin):
@@ -1780,7 +1821,8 @@ class ptCamera:
 
     def controlKey(self,controlKey,activateFlag):
         """Send a control key to the camera as if it was hit by the user.
-        This is for sending things like pan-up, pan-down, zoom-in, etc."""
+        This is for sending things like pan-up, pan-down, zoom-in, etc.
+        """
         pass
 
     def disableFirstPersonOverride(self):
@@ -1849,7 +1891,8 @@ class ptCamera:
 
     def undoFirstPerson(self):
         """If the user has overridden the camera to be in first person, this will take them out of first person.
-        If the user didn't override the camera, then this will do nothing."""
+        If the user didn't override the camera, then this will do nothing.
+        """
         pass
 
 class ptCluster:
@@ -1870,37 +1913,44 @@ class ptColor:
 
     def black(self):
         """Sets the color to be black
-        Example: black = ptColor().black()"""
+        Example: black = ptColor().black()
+        """
         pass
 
     def blue(self):
         """Sets the color to be blue
-        Example: blue = ptColor().blue()"""
+        Example: blue = ptColor().blue()
+        """
         pass
 
     def brown(self):
         """Sets the color to be brown
-        Example: brown = ptColor().brown()"""
+        Example: brown = ptColor().brown()
+        """
         pass
 
     def cyan(self):
         """Sets the color to be cyan
-        Example: cyan = ptColor.cyan()"""
+        Example: cyan = ptColor.cyan()
+        """
         pass
 
     def darkbrown(self):
         """Sets the color to be darkbrown
-        Example: darkbrown = ptColor().darkbrown()"""
+        Example: darkbrown = ptColor().darkbrown()
+        """
         pass
 
     def darkgreen(self):
         """Sets the color to be darkgreen
-        Example: darkgreen = ptColor().darkgreen()"""
+        Example: darkgreen = ptColor().darkgreen()
+        """
         pass
 
     def darkpurple(self):
         """Sets the color to be darkpurple
-        Example: darkpurple = ptColor().darkpurple()"""
+        Example: darkpurple = ptColor().darkpurple()
+        """
         pass
 
     def getAlpha(self):
@@ -1921,42 +1971,50 @@ class ptColor:
 
     def gray(self):
         """Sets the color to be gray
-        Example: gray = ptColor().gray()"""
+        Example: gray = ptColor().gray()
+        """
         pass
 
     def green(self):
         """Sets the color to be green
-        Example: green = ptColor().green()"""
+        Example: green = ptColor().green()
+        """
         pass
 
     def magenta(self):
         """Sets the color to be magenta
-        Example: magenta = ptColor().magenta()"""
+        Example: magenta = ptColor().magenta()
+        """
         pass
 
     def maroon(self):
         """Sets the color to be maroon
-        Example: maroon = ptColor().maroon()"""
+        Example: maroon = ptColor().maroon()
+        """
         pass
 
     def navyblue(self):
         """Sets the color to be navyblue
-        Example: navyblue = ptColor().navyblue()"""
+        Example: navyblue = ptColor().navyblue()
+        """
         pass
 
     def orange(self):
         """Sets the color to be orange
-        Example: orange = ptColor().orange()"""
+        Example: orange = ptColor().orange()
+        """
         pass
 
     def pink(self):
         """Sets the color to be pink
-        Example: pink = ptColor().pink()"""
+        Example: pink = ptColor().pink()
+        """
         pass
 
     def red(self):
         """Sets the color to be red
-        Example: red = ptColor().red()"""
+        Example: red = ptColor().red()
+        """
         pass
 
     def setAlpha(self,alpha):
@@ -1977,27 +2035,32 @@ class ptColor:
 
     def slateblue(self):
         """Sets the color to be slateblue
-        Example: slateblue = ptColor().slateblue()"""
+        Example: slateblue = ptColor().slateblue()
+        """
         pass
 
     def steelblue(self):
         """Sets the color to be steelblue
-        Example: steelblue = ptColor().steelblue()"""
+        Example: steelblue = ptColor().steelblue()
+        """
         pass
 
     def tan(self):
         """Sets the color to be tan
-        Example: tan = ptColor().tan()"""
+        Example: tan = ptColor().tan()
+        """
         pass
 
     def white(self):
         """Sets the color to be white
-        Example: white = ptColor().white()"""
+        Example: white = ptColor().white()
+        """
         pass
 
     def yellow(self):
         """Sets the color to be yellow
-        Example: yellow = ptColor().yellow()"""
+        Example: yellow = ptColor().yellow()
+        """
         pass
 
 class ptCritterBrain:
@@ -2178,7 +2241,8 @@ class ptDraw:
 
     def disable(self):
         """Disables the draw on the sceneobject attached
-        In other words, makes it invisible"""
+        In other words, makes it invisible
+        """
         pass
 
     def enable(self,state=1):
@@ -2188,7 +2252,8 @@ class ptDraw:
     def netForce(self,forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
-        Such as a game master, only running on the client that owns a particular object"""
+        Such as a game master, only running on the client that owns a particular object
+        """
         pass
 
 class ptDynamicMap:
@@ -2211,7 +2276,8 @@ class ptDynamicMap:
 
     def clearToColor(self,color):
         """Clear the DynamicMap to the specified color
-        - 'color' is a ptColor object"""
+        - 'color' is a ptColor object
+        """
         pass
 
     def drawImage(self,x,y,image,respectAlphaFlag):
@@ -2225,13 +2291,15 @@ class ptDynamicMap:
     def drawText(self,x,y,text):
         """Draw text at a specified location
         - x,y is the point to start drawing the text
-        - 'text' is a string of the text to be drawn"""
+        - 'text' is a string of the text to be drawn
+        """
         pass
 
     def fillRect(self,left,top,right,bottom,color):
         """Fill in the specified rectangle with a color
         - left,top,right,bottom define the rectangle
-        - 'color' is a ptColor object"""
+        - 'color' is a ptColor object
+        """
         pass
 
     def flush(self):
@@ -2241,7 +2309,8 @@ class ptDynamicMap:
     def frameRect(self,left,top,right,bottom,color):
         """Frame a rectangle with a specified color
         - left,top,right,bottom define the rectangle
-        - 'color' is a ptColor object"""
+        - 'color' is a ptColor object
+        """
         pass
 
     def getHeight(self):
@@ -2260,12 +2329,14 @@ class ptDynamicMap:
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
         Such as a game master, only running on the client that owns a particular object
-        This only applies when NetPropagate is set to true"""
+        This only applies when NetPropagate is set to true
+        """
         pass
 
     def netPropagate(self,propagateFlag):
         """Specify whether this object needs to use messages that are sent on the network
-        - The default is for this to be false."""
+        - The default is for this to be false.
+        """
         pass
 
     def purgeImage(self):
@@ -2279,13 +2350,15 @@ class ptDynamicMap:
     def setClipping(self,clipLeft,clipTop,clipRight,clipBottom):
         """Sets the clipping rectangle
         - All drawtext will be clipped to this until the
-        unsetClipping() is called"""
+        unsetClipping() is called
+        """
         pass
 
     def setFont(self,facename,size):
         """Set the font of the text to be written
         - 'facename' is a string with the name of the font
-        - 'size' is the point size of the font to use"""
+        - 'size' is the point size of the font to use
+        """
         pass
 
     def setJustify(self,justify):
@@ -2299,13 +2372,15 @@ class ptDynamicMap:
     def setTextColor(self,color, blockRGB=0):
         """Set the color of the text to be written
         - 'color' is a ptColor object
-        - 'blockRGB' must be true if you're trying to render onto a transparent or semi-transparent color"""
+        - 'blockRGB' must be true if you're trying to render onto a transparent or semi-transparent color
+        """
         pass
 
     def setWrapping(self,wrapWidth,wrapHeight):
         """Set where text will be wrapped horizontally and vertically
         - All drawtext commands will be wrapped until the
-        unsetWrapping() is called"""
+        unsetWrapping() is called
+        """
         pass
 
     def unsetClipping(self):
@@ -2504,7 +2579,8 @@ class ptGUIControlDragBar(ptGUIControl):
 
     def anchor(self):
         """Don't allow this dragbar object to be moved by the user.
-        Drop anchor!"""
+        Drop anchor!
+        """
         pass
 
     def isAnchored(self):
@@ -2513,7 +2589,8 @@ class ptGUIControlDragBar(ptGUIControl):
 
     def unanchor(self):
         """Allow the user to drag this control around the screen.
-        Raise anchor."""
+        Raise anchor.
+        """
         pass
 
 class ptGUIControlDraggable(ptGUIControl):
@@ -2538,7 +2615,8 @@ class ptGUIControlDynamicText(ptGUIControl):
 
     def getMap(self,index):
         """Returns a specific ptDynamicText attached to this contol
-        If there is no map at 'index' then a KeyError exception will be raised"""
+        If there is no map at 'index' then a KeyError exception will be raised
+        """
         pass
 
     def getNumMaps(self):
@@ -2747,7 +2825,8 @@ class ptGUIControlListBox(ptGUIControl):
 
     def lock(self):
         """Locks the updates to a listbox, so a number of operations can be performed
-        NOTE: an unlock() call must be made before the next lock() can be."""
+        NOTE: an unlock() call must be made before the next lock() can be.
+        """
         pass
 
     def refresh(self):
@@ -2796,7 +2875,8 @@ class ptGUIControlListBox(ptGUIControl):
 
     def unclickable(self):
         """Makes this listbox not clickable by the user.
-        Useful when just displaying a list that is not really selectable."""
+        Useful when just displaying a list that is not really selectable.
+        """
         pass
 
     def unlock(self):
@@ -2887,7 +2967,8 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
 
     def insertColor(self,color):
         """Inserts an encoded color object at the current cursor position.
-        'color' is a ptColor object."""
+        'color' is a ptColor object.
+        """
         pass
 
     def insertLink(self,linkId: int) -> None:
@@ -2948,7 +3029,8 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
 
     def unclickable(self):
         """Makes this listbox not clickable by the user.
-        Useful when just displaying a list that is not really selectable."""
+        Useful when just displaying a list that is not really selectable.
+        """
         pass
 
     def unlock(self):
@@ -3149,7 +3231,8 @@ class ptGUIPopUpMenu:
     """Takes three diferent argument lists:
     gckey
     name,screenOriginX,screenOriginY
-    name,parent,screenOriginX,screenOriginY"""
+    name,parent,screenOriginX,screenOriginY
+    """
     def __init__(self,arg1,arg2=None,arg3=None,arg4=None):
         """None"""
         pass
@@ -3326,7 +3409,8 @@ class ptGameScore:
 
     def setPoints(self,numPoints, key):
         """Sets the number of points in the score
-        Don't use to add/remove points, use only to reset values!"""
+        Don't use to add/remove points, use only to reset values!
+        """
         pass
 
     def transferPoints(self,dest, points=0, key=None):
@@ -3497,12 +3581,14 @@ class ptKey:
 
     def getParentKey(self):
         """This will return a ptKey object that is the parent of this modifer
-        However, if the parent is not a modifier or not loaded, then None is returned."""
+        However, if the parent is not a modifier or not loaded, then None is returned.
+        """
         pass
 
     def getSceneObject(self):
         """This will return a ptSceneobject object that is associated with this ptKey
-        However, if this ptKey is _not_ a sceneobject, then unpredicatable results will ensue"""
+        However, if this ptKey is _not_ a sceneobject, then unpredicatable results will ensue
+        """
         pass
 
     def isAttachedToClone(self):
@@ -3512,7 +3598,8 @@ class ptKey:
     def netForce(self,forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
-        Such as a game master, only running on the client that owns a particular object"""
+        Such as a game master, only running on the client that owns a particular object
+        """
         pass
 
 class ptKeyMap:
@@ -3837,7 +3924,8 @@ class ptNetLinkingMgr:
 
 class ptNotify:
     """Creates a Notify message
-    - selfKey is ptKey of your PythonFile modifier"""
+    - selfKey is ptKey of your PythonFile modifier
+    """
     def __init__(self,selfKey):
         """None"""
         pass
@@ -3880,39 +3968,46 @@ class ptNotify:
 
     def addVarFloat(self,name,number):
         """Add a float variable event record to the Notify message
-        This event record is used to pass a number variable to another python program"""
+        This event record is used to pass a number variable to another python program
+        """
         pass
 
     def addVarInt(self,name,number):
         """Add a int variable event record to the Notify message
-        This event record is used to pass a number variable to another python program"""
+        This event record is used to pass a number variable to another python program
+        """
         pass
 
     def addVarKey(self,name,key):
         """Add a ptKey variable event record to the Notify message
-        This event record is used to pass a ptKey variable to another python program"""
+        This event record is used to pass a ptKey variable to another python program
+        """
         pass
 
     def addVarNull(self,name,number):
         """Add a null (no data) variable event record to the Notify message
-        This event record is used to pass a number variable to another python program"""
+        This event record is used to pass a number variable to another python program
+        """
         pass
 
     def addVarNumber(self,name,number):
         """Add a number variable event record to the Notify message
         Method will try to pick appropriate variable type
-        This event record is used to pass a number variable to another python program"""
+        This event record is used to pass a number variable to another python program
+        """
         pass
 
     def clearReceivers(self):
         """Remove all the receivers that this Notify message has
-        - receivers are automatically added if from a ptAttribActivator"""
+        - receivers are automatically added if from a ptAttribActivator
+        """
         pass
 
     def netForce(self,forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
-        Such as a game master, only running on the client that owns a particular object"""
+        Such as a game master, only running on the client that owns a particular object
+        """
         pass
 
     def netPropagate(self,netFlag):
@@ -3940,7 +4035,8 @@ class ptParticle:
     def netForce(self,forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
-        Such as a game master, only running on the client that owns a particular object"""
+        Such as a game master, only running on the client that owns a particular object
+        """
         pass
 
     def setGeneratorLife(self,value):
@@ -3999,7 +4095,8 @@ class ptPhysics:
 
     def angularImpulse(self,impulseVector):
         """Add the given vector (representing a rotation axis and magnitude) to
-        the attached sceneobject's velocity"""
+        the attached sceneobject's velocity
+        """
         pass
 
     def damp(self,damp):
@@ -4036,7 +4133,8 @@ class ptPhysics:
 
     def impulseWithOffset(self,impulseVector,offsetPt):
         """Adds the given vector to the attached sceneobject's velocity
-        with the specified offset"""
+        with the specified offset
+        """
         pass
 
     def move(self,direction,distance):
@@ -4046,7 +4144,8 @@ class ptPhysics:
     def netForce(self,forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
         - This is to be used if your Python program is running on only one client
-        Such as a game master, only running on the client that owns a particular object"""
+        Such as a game master, only running on the client that owns a particular object
+        """
         pass
 
     def rotate(self,radians,axis):
@@ -4067,7 +4166,8 @@ class ptPhysics:
 
     def suppress(self,doSuppress):
         """Completely remove the physical, but keep it around so it
-        can be added back later."""
+        can be added back later.
+        """
         pass
 
     def torque(self,torqueVector):
@@ -4076,7 +4176,8 @@ class ptPhysics:
 
     def warp(self,position):
         """Warps the sceneobject to a specified location.
-        'position' can be a ptPoint3 or a ptMatrix44"""
+        'position' can be a ptPoint3 or a ptMatrix44
+        """
         pass
 
     def warpObj(self,objkey):
@@ -4125,7 +4226,8 @@ class ptPoint3:
 
     def distanceSq(self,other):
         """Computes the distance squared from this point to 'other' point
-        - this function is faster than distance(other)"""
+        - this function is faster than distance(other)
+        """
         pass
 
     def getX(self):
@@ -4165,13 +4267,15 @@ class ptSDL:
     def sendToClients(self,key):
         """Sets it so changes to this key are sent to the
         server AND the clients. (Normally it just goes
-        to the server.)"""
+        to the server.)
+        """
         pass
 
     def setDefault(self,key,value):
         """Like setitem, but doesn't broadcast over the net.
         Only use for setting defaults that everyone will
-        already know (from reading it off disk)"""
+        already know (from reading it off disk)
+        """
         pass
 
     def setFlags(self,name,sendImmediate,skipOwnershipCheck):
@@ -4180,7 +4284,8 @@ class ptSDL:
 
     def setIndex(self,key,idx,value):
         """Sets the value at a specific index in the tuple,
-        so you don't have to pass the whole thing in"""
+        so you don't have to pass the whole thing in
+        """
         pass
 
     def setIndexNow(self,key,idx,value):
@@ -4189,7 +4294,8 @@ class ptSDL:
 
     def setNotify(self,selfkey,key,tolerance):
         """Sets the OnSDLNotify to be called when 'key'
-        SDL variable changes by 'tolerance' (if number)"""
+        SDL variable changes by 'tolerance' (if number)
+        """
         pass
 
     def setTagString(self,name,tag):
@@ -4235,7 +4341,8 @@ class ptSceneobject:
 
     def addKey(self,key):
         """Mostly used internally.
-        Add another sceneobject ptKey"""
+        Add another sceneobject ptKey
+        """
         pass
 
     def animate(self):
@@ -4260,27 +4367,32 @@ class ptSceneobject:
 
     def getKey(self):
         """Get the ptKey of this sceneobject
-        If there are more then one attached, get the first one"""
+        If there are more then one attached, get the first one
+        """
         pass
 
     def getLocalToParent(self):
         """Returns ptMatrix44 of the local to parent transform for this sceneobject
-        - If there is more than one sceneobject attached, returns just the first one"""
+        - If there is more than one sceneobject attached, returns just the first one
+        """
         pass
 
     def getLocalToWorld(self):
         """Returns ptMatrix44 of the local to world transform for this sceneobject
-        - If there is more than one sceneobject attached, returns just the first one"""
+        - If there is more than one sceneobject attached, returns just the first one
+        """
         pass
 
     def getName(self):
         """Returns the name of the sceneobject (Max name)
-        - If there are more than one sceneobject attached, return just the first one"""
+        - If there are more than one sceneobject attached, return just the first one
+        """
         pass
 
     def getParentToLocal(self):
         """Returns ptMatrix44 of the parent to local transform for this sceneobject
-        - If there is more than one sceneobject attached, returns just the first one"""
+        - If there is more than one sceneobject attached, returns just the first one
+        """
         pass
 
     def getPythonMods(self):
@@ -4301,7 +4413,8 @@ class ptSceneobject:
 
     def getWorldToLocal(self):
         """Returns ptMatrix44 of the world to local transform for this sceneobject
-        - If there is more than one sceneobject attached, returns just the first one"""
+        - If there is more than one sceneobject attached, returns just the first one
+        """
         pass
 
     def isAvatar(self):
@@ -4314,7 +4427,8 @@ class ptSceneobject:
 
     def isLocallyOwned(self):
         """Returns true(1) if this object is locally owned by this client
-        or returns false(0) if it is not or don't know"""
+        or returns false(0) if it is not or don't know
+        """
         pass
 
     def netForce(self,forceFlag):
@@ -4322,7 +4436,8 @@ class ptSceneobject:
         - This is to be used if your Python program is running on only one client
         Such as a game master, only running on the client that owns a particular object
         - Setting the netForce flag on a sceneobject will also set the netForce flag on
-        its draw, physics, avatar, particle objects"""
+        its draw, physics, avatar, particle objects
+        """
         pass
 
     def playAnimNamed(self,animName):
@@ -4561,12 +4676,14 @@ class ptStatusLog:
         """Open a status log for writing to
         'logname' is the name of the log file (example: special.log)
         'numLines' is the number of lines to display on debug screen
-        'flags' is a PlasmaConstants.PtStatusLogFlags"""
+        'flags' is a PlasmaConstants.PtStatusLogFlags
+        """
         pass
 
     def write(self,text,color=None):
         """If the status log is open, write 'text' to log
-        'color' is the display color in debug screen"""
+        'color' is the display color in debug screen
+        """
         pass
 
 class ptStream:
@@ -4681,12 +4798,14 @@ class ptVault:
 
     def getAvatarClosetFolder(self):
         """Do not use.
-        Returns a ptVaultFolderNode of the avatars outfit in their closet."""
+        Returns a ptVaultFolderNode of the avatars outfit in their closet.
+        """
         pass
 
     def getAvatarOutfitFolder(self):
         """Do not use.
-        Returns a ptVaultFolderNode of the avatars outfit."""
+        Returns a ptVaultFolderNode of the avatars outfit.
+        """
         pass
 
     def getBuddyListFolder(self):
@@ -4873,7 +4992,8 @@ class ptVaultNode:
 
     def getType(self):
         """Returns the type of ptVaultNode this is.
-        See PlasmaVaultTypes.py"""
+        See PlasmaVaultTypes.py
+        """
         pass
 
     def hasNode(self,id):
@@ -5506,7 +5626,8 @@ class ptVector3:
 
     def lengthSq(self):
         """Returns the length of the vector, squared
-        - this function is faster then length(other)"""
+        - this function is faster then length(other)
+        """
         pass
 
     def normalize(self):

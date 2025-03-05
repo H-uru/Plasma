@@ -156,6 +156,12 @@ def format_docstring(doc: str) -> Iterable[str]:
     if not doc:
         return
 
+    # If the docstring has more than one line,
+    # then ensure that the closing triple quotes are on their own line,
+    # even if the real docstring doesn't contain a trailing newline.
+    if "\n" in doc and not doc.rstrip(" ").endswith("\n"):
+        doc += "\n"
+
     yield f'"""{doc}"""'
 
 def format_qualified_name(cls: type, context_module_name: str) -> str:
