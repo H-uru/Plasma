@@ -69,78 +69,78 @@ class ptGameCli:
 
     def leaveGame(self) -> None:
         """Explicitly ask the server to allow us to leave the game."""
-        pass
+        ...
 
 class ptGmBlueSpiral(ptGameCli):
     """Legacy blue spiral game client."""
 
     def hitCloth(self, cloth: int) -> None:
         """Request for the server to hit a specific cloth index and validate the correct sequence of cloth inputs."""
-        pass
+        ...
 
     @staticmethod
     def isSupported() -> bool:
         """Checks for the presence of a server-side blue spiral game manager."""
-        pass
+        ...
 
     @staticmethod
     def join(handler: Any, tableID: int) -> None:
         """Join a common blue spiral game in the current Age."""
-        pass
+        ...
 
     def startGame(self) -> None:
         """Request for the server to start the game timer."""
-        pass
+        ...
 
 class ptGmMarker(ptGameCli):
     """Legacy marker game client."""
 
     def addMarker(self, x: float, y: float, z: float, name: str, age: str) -> None:
         """Request for the server to add a new marker to the game."""
-        pass
+        ...
 
     def captureMarker(self, markerId: int) -> None:
         """Request for the server to register a capture of the specified marker for our team."""
-        pass
+        ...
 
     def changeGameName(self, name: str) -> None:
         """Request for the server to change the internal marker game name."""
-        pass
+        ...
 
     def changeMarkerName(self, markerID: int) -> None:
         """Request for the server to change the name of a specific marker from the game."""
-        pass
+        ...
 
     def changeTimeLimit(self, timeLimit: int) -> None:
         """Request for the server to change the marker game's time limit."""
-        pass
+        ...
 
     @staticmethod
     def create(handler: Any, gameType: int, templateId: Optional[str]) -> None:
         """Initialize a new marker game client with the server."""
-        pass
+        ...
 
     def deleteGame(self) -> None:
         """Request for the server to delete all data associated with this game, including the marker definitions and game name."""
-        pass
+        ...
 
     def deleteMarker(self, markerID: int) -> None:
         """Request for the server to delete a specific marker from the game."""
-        pass
+        ...
 
     @staticmethod
     def isSupported() -> bool:
         """Checks for the presence of a server-side marker game manager."""
-        pass
+        ...
 
     def pauseGame(self) -> None:
         """Request for the server to pause the marker game."""
-        pass
+        ...
 
     def resetGame(self) -> None:
         """Request for the server to clear all markers to the uncaptured state."""
-        pass
+        ...
 
     def startGame(self) -> None:
         """Request for the server to start the marker game."""
-        pass
+        ...

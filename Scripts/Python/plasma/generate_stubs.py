@@ -222,7 +222,7 @@ def generate_function_stub(kind: FunctionKind, name: str, signature: str, doc: s
         yield decorator
     yield f"def {name}{signature}:"
     yield from add_indents("    ", format_docstring(doc))
-    yield "    pass"
+    yield "    ..."
 
 def generate_enum_stub(name: str, enum_obj: PlasmaConstants.Enum) -> Iterable[str]:
     yield f"class {name}:"
