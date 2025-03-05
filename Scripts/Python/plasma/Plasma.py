@@ -969,8 +969,6 @@ def PtYesNoDialog(cb: Union[None, ptKey, Callable], message: str, /, dialogType:
 
 class ptAgeInfoStruct:
     """Class to hold AgeInfo struct data"""
-    def __init__(self):
-        pass
 
     def copyFrom(self,other):
         """Copies data from one ptAgeInfoStruct or ptAgeInfoStructRef to this one"""
@@ -1038,8 +1036,6 @@ class ptAgeInfoStruct:
 
 class ptAgeInfoStructRef:
     """Class to hold AgeInfo struct data"""
-    def __init__(self):
-        pass
 
     def copyFrom(self,other):
         """Copies data from one ptAgeInfoStruct or ptAgeInfoStructRef to this one"""
@@ -1091,8 +1087,6 @@ class ptAgeInfoStructRef:
 
 class ptAgeLinkStruct:
     """Class to hold the data of the AgeLink structure"""
-    def __init__(self):
-        pass
 
     def copyFrom(self,other):
         """Copies data from one ptAgeLinkStruct or ptAgeLinkStructRef to this one"""
@@ -1132,8 +1126,6 @@ class ptAgeLinkStruct:
 
 class ptAgeLinkStructRef:
     """Class to hold the data of the AgeLink structure"""
-    def __init__(self):
-        pass
 
     def copyFrom(self,other):
         """Copies data from one ptAgeLinkStruct or ptAgeLinkStructRef to this one"""
@@ -1165,8 +1157,6 @@ class ptAgeLinkStructRef:
 
 class ptAgeVault:
     """Accessor class to the Age's vault"""
-    def __init__(self):
-        pass
 
     def addChronicleEntry(self,name,type,value):
         """Adds a chronicle entry with the specified type and value"""
@@ -1356,8 +1346,6 @@ class ptAnimation:
 
 class ptAudioControl:
     """Accessor class to the Audio controls"""
-    def __init__(self):
-        pass
 
     def areSubtitlesEnabled(self):
         """Are subtitles for the audio enabled? Returns 1 if true otherwise returns 0."""
@@ -1555,8 +1543,6 @@ class ptAudioControl:
 
 class ptAvatar:
     """Plasma avatar class"""
-    def __init__(self):
-        pass
 
     def addWardrobeClothingItem(self,clothing_name,tint1,tint2):
         """To add a clothing item to the avatar's wardrobe (closet)"""
@@ -1806,8 +1792,6 @@ class ptBook:
 
 class ptCamera:
     """Plasma camera class"""
-    def __init__(self):
-        pass
 
     def controlKey(self,controlKey,activateFlag):
         """Send a control key to the camera as if it was hit by the user.
@@ -2053,8 +2037,6 @@ class ptColor:
 
 class ptCritterBrain:
     """Object to manipulate critter brains"""
-    def __init__(self):
-        pass
 
     def addBehavior(self,animName, behaviorName, loop = 1, randomStartPos = 1, fadeInLen = 2.0, fadeOutLen = 2.0):
         """Adds a new animation to the brain as a behavior with the specified name and parameters. If multiple animations are assigned to the same behavior, they will be randomly picked from when started."""
@@ -2174,8 +2156,6 @@ class ptCritterBrain:
 
 class ptDniCoordinates:
     """Constructor for a D'Ni coordinate"""
-    def __init__(self):
-        pass
 
     def fromPoint(self,pt):
         """Update these coordinates with the specified ptPoint3"""
@@ -2199,8 +2179,6 @@ class ptDniCoordinates:
 
 class ptDniInfoSource:
     """DO NOT USE"""
-    def __init__(self):
-        pass
 
     def getAgeCoords(self):
         """Current coords of the player in current age as a ptDniCoordinates"""
@@ -2220,8 +2198,6 @@ class ptDniInfoSource:
 
 class ptDraw:
     """Plasma Draw class"""
-    def __init__(self):
-        pass
 
     def disable(self):
         """Disables the draw on the sceneobject attached
@@ -3293,8 +3269,6 @@ class ptGUISkin:
 
 class ptGameScore:
     """Plasma Game Score"""
-    def __init__(self):
-        pass
 
     def addPoints(self,points, key=None):
         """Adds points to the score"""
@@ -3382,13 +3356,9 @@ class ptGameScore:
 
 class ptGameScoreMsg:
     """Game Score operation callback message"""
-    def __init__(self):
-        pass
 
 class ptGameScoreListMsg(ptGameScoreMsg):
     """Game Score message for scores found on the server"""
-    def __init__(self):
-        pass
 
     def getName(self):
         """Returns the template score name"""
@@ -3404,8 +3374,6 @@ class ptGameScoreListMsg(ptGameScoreMsg):
 
 class ptGameScoreTransferMsg(ptGameScoreMsg):
     """Game Score message indicating a score point transfer"""
-    def __init__(self):
-        pass
 
     def getDestination(self):
         """Returns the score points were transferred to"""
@@ -3417,8 +3385,6 @@ class ptGameScoreTransferMsg(ptGameScoreMsg):
 
 class ptGameScoreUpdateMsg(ptGameScoreMsg):
     """Game Score message for a score update operation"""
-    def __init__(self):
-        pass
 
     def getScore(self):
         """Returns the updated game score"""
@@ -3505,8 +3471,6 @@ class ptImageLibMod:
 
 class ptInputInterface:
     """Plasma input interface class"""
-    def __init__(self):
-        pass
 
     def popTelescope(self):
         """pops off the telescope interface and gos back to previous interface"""
@@ -3518,8 +3482,6 @@ class ptInputInterface:
 
 class ptKey:
     """Plasma Key class"""
-    def __init__(self):
-        pass
 
     def disable(self):
         """Sends a disable message to whatever this ptKey is pointing to"""
@@ -3558,8 +3520,6 @@ class ptKey:
 
 class ptKeyMap:
     """Accessor class to the Key Mapping functions"""
-    def __init__(self):
-        pass
 
     def bindKey(self,key1,key2,action):
         """Bind keys to an action"""
@@ -3632,8 +3592,6 @@ class ptLayer:
 
 class ptMarkerMgr:
     """Marker manager accessor class"""
-    def __init__(self):
-        pass
 
     def addMarker(self,x, y, z, id, justCreated):
         """Add a marker in the specified location with the specified id"""
@@ -3689,8 +3647,6 @@ class ptMarkerMgr:
 
 class ptMatrix44:
     """Plasma Matrix44 class"""
-    def __init__(self):
-        pass
 
     def copy(self):
         """Copies the matrix and returns the copy"""
@@ -3823,8 +3779,6 @@ class ptMoviePlayer:
 
 class ptNetLinkingMgr:
     """Constructor to get access to the net link manager"""
-    def __init__(self):
-        pass
 
     def getCurrAgeLink(self):
         """Get the ptAgeLinkStruct for the current age"""
@@ -3975,8 +3929,6 @@ class ptNotify:
 
 class ptParticle:
     """Plasma particle system class"""
-    def __init__(self):
-        pass
 
     def netForce(self,forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
@@ -4035,8 +3987,6 @@ class ptParticle:
 
 class ptPhysics:
     """Plasma physics class"""
-    def __init__(self):
-        pass
 
     def angularImpulse(self,impulseVector):
         """Add the given vector (representing a rotation axis and magnitude) to
@@ -4203,8 +4153,6 @@ class ptPoint3:
 
 class ptSDL:
     """SDL accessor"""
-    def __init__(self):
-        pass
 
     def sendToClients(self,key):
         """Sets it so changes to this key are sent to the
@@ -4246,8 +4194,6 @@ class ptSDL:
 
 class ptSDLStateDataRecord:
     """Basic SDL state data record class"""
-    def __init__(self):
-        pass
 
     def findVar(self,name):
         """Finds and returns the specified ptSimpleStateVariable"""
@@ -4450,8 +4396,6 @@ class ptSceneobject:
 
 class ptSimpleStateVariable:
     """Basic SDL state data record class"""
-    def __init__(self):
-        pass
 
     def getBool(self,idx=0):
         """Returns a boolean variable's value"""
@@ -4568,8 +4512,6 @@ class ptSpawnPointInfo:
 
 class ptSpawnPointInfoRef:
     """Class to hold spawn point data"""
-    def __init__(self):
-        pass
 
     def getCameraStack(self):
         """Returns the camera stack for this spawnpoint as a string"""
@@ -4597,8 +4539,6 @@ class ptSpawnPointInfoRef:
 
 class ptStatusLog:
     """A status log class"""
-    def __init__(self):
-        pass
 
     def close(self):
         """Close the status log file"""
@@ -4624,8 +4564,6 @@ class ptStatusLog:
 
 class ptStream:
     """A basic stream class"""
-    def __init__(self):
-        pass
 
     def close(self):
         """Close the status log file"""
@@ -4678,8 +4616,6 @@ class ptSwimCurrentInterface:
 
 class ptVault:
     """Accessor class to the player's vault"""
-    def __init__(self):
-        pass
 
     def addChronicleEntry(self,entryName,type,string):
         """Adds an entry to the player's chronicle with a value of 'string'."""
@@ -4847,8 +4783,6 @@ class ptVault:
 
 class ptVaultNode:
     """Vault node class"""
-    def __init__(self):
-        pass
 
     def addNode(self,node,cb=None,cbContext=0):
         """Adds 'node'(ptVaultNode) as a child to this node."""
@@ -5321,8 +5255,6 @@ class ptVaultMarkerGameNode(ptVaultNode):
 
 class ptVaultNodeRef:
     """Vault node relationship pseudo class"""
-    def __init__(self):
-        pass
 
     def beenSeen(self):
         """Returns true until we reimplement this"""
@@ -5383,8 +5315,6 @@ class ptVaultPlayerInfoListNode(ptVaultFolderNode):
 
 class ptVaultPlayerInfoNode(ptVaultNode):
     """Plasma vault folder node"""
-    def __init__(self):
-        pass
 
     def playerGetAgeGuid(self):
         """Returns the guid as a string of where the player is for this player info node."""
@@ -5432,8 +5362,6 @@ class ptVaultPlayerInfoNode(ptVaultNode):
 
 class ptVaultSDLNode(ptVaultNode):
     """Plasma vault SDL node"""
-    def __init__(self):
-        pass
 
     def getIdent(self):
         """UNKNOWN"""
@@ -5457,13 +5385,9 @@ class ptVaultSDLNode(ptVaultNode):
 
 class ptVaultSystemNode(ptVaultNode):
     """Plasma vault system node"""
-    def __init__(self):
-        pass
 
 class ptVaultTextNoteNode(ptVaultNode):
     """Plasma vault text note node"""
-    def __init__(self):
-        pass
 
     def getDeviceInbox(self):
         """Returns a ptVaultFolderNode"""

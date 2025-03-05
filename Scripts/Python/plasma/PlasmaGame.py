@@ -67,17 +67,12 @@ class ptGameCli:
     ownerID: int
     """The ID of the player who owns this game instance."""
 
-    def __init__(self):
-        pass
-
     def leaveGame(self) -> None:
         """Explicitly ask the server to allow us to leave the game."""
         pass
 
 class ptGmBlueSpiral(ptGameCli):
     """Legacy blue spiral game client."""
-    def __init__(self):
-        pass
 
     def hitCloth(self,cloth: int) -> None:
         """Request for the server to hit a specific cloth index and validate the correct sequence of cloth inputs."""
@@ -99,8 +94,6 @@ class ptGmBlueSpiral(ptGameCli):
 
 class ptGmMarker(ptGameCli):
     """Legacy marker game client."""
-    def __init__(self):
-        pass
 
     def addMarker(self,x: float, y: float, z: float, name: str, age: str) -> None:
         """Request for the server to add a new marker to the game."""

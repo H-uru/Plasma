@@ -54,13 +54,9 @@ from typing import *
 
 class Enum:
     """Enum base class"""
-    def __init__(self):
-        pass
 
 class EnumValue:
     """A basic enumeration value"""
-    def __init__(self):
-        pass
 
 class PtAIMsgType:
     kUnknown = 0
