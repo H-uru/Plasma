@@ -248,17 +248,12 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
     yield f"class {name}{class_parens}:"
     yield from add_indents("    ", format_docstring(doc))
 
-    first = True
     for name, value in iter_attributes(cls):
         if name == "__init__":
             # Special case for __init__: use the signature from the class docstring.
             # Don't output a stub for __init__ if it has no arguments (the default).
             if init_signature and init_signature != "()":
-                # Don't put a blank line between the class docstring and __init__, to match the existing stubs.
-                if not first:
-                    yield ""
-                first = False
-
+                yield ""
                 # C-defined __init__ methods have a dummy docstring - don't output that.
                 yield from add_indents("    ", generate_function_stub("method", name, init_signature, ""))
             continue
@@ -266,7 +261,6 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
             # Ignore all other special attributes.
             continue
 
-        first = False
         yield ""
 
         if isinstance(value, type):
