@@ -152,6 +152,12 @@ def parse_type_from_doc(doc: str) -> tuple[str, str]:
     else:
         return "", doc
 
+def format_docstring(doc: str) -> Iterable[str]:
+    if not doc:
+        return
+
+    yield f'"""{doc}"""'
+
 def format_qualified_name(cls: type, context_module_name: str) -> str:
     if cls.__module__ in {"builtins", context_module_name}:
         return cls.__qualname__
@@ -205,8 +211,7 @@ def generate_function_stub(kind: FunctionKind, name: str, signature: str, doc: s
     if decorator is not None:
         yield decorator
     yield f"def {name}{signature}:"
-    if doc:
-        yield textwrap.indent(f'"""{doc}"""', "    ")
+    yield from add_indents("    ", format_docstring(doc))
     yield "    pass"
 
 def generate_enum_stub(name: str, enum_obj: PlasmaConstants.Enum) -> Iterable[str]:
@@ -234,8 +239,7 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
     init_signature, doc = parse_type_from_doc(cls.__doc__)
 
     yield f"class {name}{class_parens}:"
-    if doc:
-        yield textwrap.indent(f'"""{doc}"""', "    ")
+    yield from add_indents("    ", format_docstring(doc))
 
     first = True
     for name, value in iter_attributes(cls):
@@ -296,8 +300,7 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
             property_type, doc = parse_type_from_doc(value.__doc__)
             property_type = property_type or "Any"
             yield f"    {name}: {property_type}"
-            if doc:
-                yield textwrap.indent(f'"""{doc}"""', "    ")
+            yield from add_indents("    ", format_docstring(doc))
         else:
             yield f"    {name}: {format_qualified_name(type(value), cls.__module__)} = ... # = {value!r}"
 
@@ -323,7 +326,7 @@ def generate_module_stub(module: types.ModuleType) -> Iterable[str]:
     # This is also important for the __future__ import,
     # which loses its effect if preceded by any statement other than a docstring.
     if False and getattr(module, "__doc__", None) is not None:
-        yield f'"""{module.__doc__}"""'
+        yield from format_docstring(module.__doc__)
         yield ""
 
     # Hardcoded imports for type annotations:
