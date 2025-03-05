@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 
 import os.path
+import re
+import textwrap
 import types
 
 from typing import Iterable, Literal
@@ -147,9 +149,25 @@ def parse_type_from_doc(doc: str) -> tuple[str, str]:
         # Example: "Params: x,y"
         params_line, _, doc_body = doc.partition("\n")
         params = params_line.removeprefix(docstring_params_prefix)
+        # Put a space after each comma if there isn't one already.
+        # Semi-temporarily doing this using a regex replacement here
+        # so that we don't have to immediately adjust all the old C++-defined docstrings.
+        params = re.sub(r",([^ ])", r", \1", params)
         return f"({params})", doc_body
     else:
         return "", doc
+
+def format_docstring(doc: str) -> Iterable[str]:
+    if not doc:
+        return
+
+    # If the docstring has more than one line,
+    # then ensure that the closing triple quotes are on their own line,
+    # even if the real docstring doesn't contain a trailing newline.
+    if "\n" in doc and not doc.rstrip(" ").endswith("\n"):
+        doc += "\n"
+
+    yield f'"""{doc}"""'
 
 def format_qualified_name(cls: type, context_module_name: str) -> str:
     if cls.__module__ in {"builtins", context_module_name}:
@@ -159,11 +177,7 @@ def format_qualified_name(cls: type, context_module_name: str) -> str:
 
 def add_indents(indent: str, lines: Iterable[str]) -> Iterable[str]:
     for line in lines:
-        if line:
-            yield f"{indent}{line}"
-        else:
-            # Don't add extra whitespace on blank lines.
-            yield ""
+        yield textwrap.indent(line, indent)
 
 FunctionKind = Literal["function", "method", "classmethod", "staticmethod", "property"]
 
@@ -199,29 +213,28 @@ def generate_function_stub(kind: FunctionKind, name: str, signature: str, doc: s
             signature_tail = signature.removeprefix("()")
             signature = f"({self_param}){signature_tail}"
         elif signature.startswith("("):
-            # No space after the comma for now, to match the existing stubs.
             signature_tail = signature.removeprefix("(")
-            signature = f"({self_param},{signature_tail}"
+            signature = f"({self_param}, {signature_tail}"
         else:
             raise ValueError(f"{docstring_type_prefix!r} declaration in method docstring doesn't look like a function signature: {signature!r}")
 
     if decorator is not None:
         yield decorator
     yield f"def {name}{signature}:"
-    if doc:
-        yield f'    """{doc}"""'
-    yield "    pass"
+    yield from add_indents("    ", format_docstring(doc))
+    yield "    ..."
 
 def generate_enum_stub(name: str, enum_obj: PlasmaConstants.Enum) -> Iterable[str]:
     yield f"class {name}:"
-    # Output the string "(none)" as the docstring for all enums for now, to match the existing stubs.
-    # (Plasma enums don't have docstrings.)
-    yield '    """(none)"""'
 
-    # Output enum constants sorted by their int value,
-    # falling back to sorting by name (case-sensitive) for constants with equal values.
-    for name, value in sorted(enum_obj.lookup.items(), key=lambda item: (int(item[1]), item[0])):
-        yield f"    {name} = {int(value)}"
+    if enum_obj.lookup:
+        # Output enum constants sorted by their int value,
+        # falling back to sorting by name (case-sensitive) for constants with equal values.
+        for name, value in sorted(enum_obj.lookup.items(), key=lambda item: (int(item[1]), item[0])):
+            yield f"    {name} = {int(value)}"
+    else:
+        # Just in case we ever get an enum that contains *no* constants...
+        yield "    pass"
 
 def generate_class_stub(name: str, cls: type) -> Iterable[str]:
     if tuple(cls.__bases__) == (object,):
@@ -237,26 +250,21 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
     init_signature, doc = parse_type_from_doc(cls.__doc__)
 
     yield f"class {name}{class_parens}:"
-    if doc:
-        yield f'    """{doc}"""'
+    yield from add_indents("    ", format_docstring(doc))
 
-    first = True
     for name, value in iter_attributes(cls):
         if name == "__init__":
-            # Don't put a blank line between the class docstring and __init__, to match the existing stubs.
-            if not first:
-                yield ""
-            first = False
-
             # Special case for __init__: use the signature from the class docstring.
-            # Output the string "None" as the docstring for all __init__ methods for now, to match the existing stubs.
-            yield from add_indents("    ", generate_function_stub("method", name, init_signature, "None"))
+            # Don't output a stub for __init__ if it has no arguments (the default).
+            if init_signature and init_signature != "()":
+                yield ""
+                # C-defined __init__ methods have a dummy docstring - don't output that.
+                yield from add_indents("    ", generate_function_stub("method", name, init_signature, ""))
             continue
         elif name.startswith("__"):
             # Ignore all other special attributes.
             continue
 
-        first = False
         yield ""
 
         if isinstance(value, type):
@@ -299,8 +307,7 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
             property_type, doc = parse_type_from_doc(value.__doc__)
             property_type = property_type or "Any"
             yield f"    {name}: {property_type}"
-            if doc:
-                yield f'    """{doc}"""'
+            yield from add_indents("    ", format_docstring(doc))
         else:
             yield f"    {name}: {format_qualified_name(type(value), cls.__module__)} = ... # = {value!r}"
 
@@ -326,7 +333,7 @@ def generate_module_stub(module: types.ModuleType) -> Iterable[str]:
     # This is also important for the __future__ import,
     # which loses its effect if preceded by any statement other than a docstring.
     if False and getattr(module, "__doc__", None) is not None:
-        yield f'"""{module.__doc__}"""'
+        yield from format_docstring(module.__doc__)
         yield ""
 
     # Hardcoded imports for type annotations:
