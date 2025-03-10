@@ -1045,6 +1045,9 @@ void        pfGUIListBoxMod::SetColorScheme( pfGUIColorScheme *newScheme )
 
 void pfGUIListBoxMod::SetScrollPos( int32_t pos )
 {
+    if (!fScrollControl)
+        return;
+
     if ( pos >= (int)fScrollControl->GetMin() && pos <= (int)fScrollControl->GetMax() )
     {
         fScrollControl->SetCurrValue( (float)pos );
@@ -1055,11 +1058,17 @@ void pfGUIListBoxMod::SetScrollPos( int32_t pos )
 
 int32_t pfGUIListBoxMod::GetScrollPos()
 {
+    if (!fScrollControl)
+        return 0;
+
     return (int)fScrollControl->GetCurrValue();
 }
 
 int32_t pfGUIListBoxMod::GetScrollRange()
 {
+    if (!fScrollControl)
+        return 0;
+
     return (int)fScrollControl->GetMax() - (int)fScrollControl->GetMin();
 }
 
