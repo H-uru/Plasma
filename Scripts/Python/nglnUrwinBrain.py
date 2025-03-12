@@ -326,6 +326,8 @@ class nglnUrwinBrain(ptResponder):
         spawnTimes = [firstTime]
 
         while isinstance(spawnTimes[-1], int):
+            if len(spawnTimes) >= 20:
+                break
             randnum = random.randint(kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns)
             newTime = spawnTimes[-1] + randnum
             if newTime < endOfToday:
