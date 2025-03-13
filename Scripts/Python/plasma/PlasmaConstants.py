@@ -54,24 +54,16 @@ from typing import *
 
 class Enum:
     """Enum base class"""
-    def __init__(self):
-        """None"""
-        pass
 
 class EnumValue:
     """A basic enumeration value"""
-    def __init__(self):
-        """None"""
-        pass
 
 class PtAIMsgType:
-    """(none)"""
     kUnknown = 0
     kBrainCreated = 1
     kArrivedAtGoal = 2
 
 class PtAccountUpdateType:
-    """(none)"""
     kCreatePlayer = 1
     kDeletePlayer = 2
     kUpgradePlayer = 3
@@ -79,7 +71,6 @@ class PtAccountUpdateType:
     kChangePassword = 5
 
 class PtBehaviorTypes:
-    """(none)"""
     kBehaviorTypeStandingJump = 1
     kBehaviorTypeWalkingJump = 2
     kBehaviorTypeRunningJump = 4
@@ -102,7 +93,6 @@ class PtBehaviorTypes:
     kBehaviorTypeLinkOut = 131072
 
 class PtBookEventTypes:
-    """(none)"""
     kNotifyImageLink = 0
     kNotifyShow = 1
     kNotifyHide = 2
@@ -112,7 +102,6 @@ class PtBookEventTypes:
     kNotifyClose = 6
 
 class PtBrainModes:
-    """(none)"""
     kGeneric = 0
     kLadder = 1
     kSit = 2
@@ -122,13 +111,11 @@ class PtBrainModes:
     kNonGeneric = 6
 
 class PtButtonNotifyTypes:
-    """(none)"""
     kNotifyOnUp = 0
     kNotifyOnDown = 1
     kNotifyOnUpAndDown = 2
 
 class PtCCRPetitionType:
-    """(none)"""
     kGeneralHelp = 0
     kBug = 1
     kFeedback = 2
@@ -138,7 +125,6 @@ class PtCCRPetitionType:
     kTechnical = 6
 
 class PtConfirmationResult:
-    """(none)"""
     Cancel = 0
     No = 0
     OK = 1
@@ -147,14 +133,12 @@ class PtConfirmationResult:
     Logout = 62
 
 class PtConfirmationType:
-    """(none)"""
     OK = 0
     ConfirmQuit = 1
     ForceQuit = 2
     YesNo = 3
 
 class PtEventType:
-    """(none)"""
     kCollision = 1
     kPicked = 2
     kControlKey = 3
@@ -171,13 +155,11 @@ class PtEventType:
     kBook = 15
 
 class PtFontFlags:
-    """(none)"""
     kFontBold = 1
     kFontItalic = 2
     kFontShadowed = 4
 
 class PtGUIMultiLineDirection:
-    """(none)"""
     kLineStart = 1
     kLineEnd = 2
     kBufferStart = 3
@@ -192,32 +174,27 @@ class PtGUIMultiLineDirection:
     kPageDown = 12
 
 class PtGameScoreTypes:
-    """(none)"""
     kFixed = 0
     kAccumulative = 1
     kAccumAllowNegative = 2
 
 class PtJustify:
-    """(none)"""
     kLeftJustify = 0
     kCenter = 1
     kRightJustify = 2
 
 class PtLOSObjectType:
-    """(none)"""
     kClickables = 0
     kCameraBlockers = 1
     kCustom = 2
     kShootable = 3
 
 class PtLOSReportType:
-    """(none)"""
     kReportHit = 0
     kReportMiss = 1
     kReportHitOrMiss = 2
 
 class PtLanguage:
-    """(none)"""
     kEnglish = 0
     kFrench = 1
     kGerman = 2
@@ -231,22 +208,18 @@ class PtLanguage:
     kNumLanguages = 10
 
 class PtMarkerMsgType:
-    """(none)"""
     kMarkerCaptured = 0
 
 class PtMovieEventReason:
-    """(none)"""
     kMovieDone = 0
 
 class PtMultiStageEventType:
-    """(none)"""
     kEnterStage = 1
     kBeginingOfLoop = 2
     kAdvanceNextStage = 3
     kRegressPrevStage = 4
 
 class PtNotificationType:
-    """(none)"""
     kActivator = 0
     kVarNotification = 1
     kNotifySelf = 2
@@ -254,21 +227,18 @@ class PtNotificationType:
     kResponderChangeState = 4
 
 class PtNotifyDataType:
-    """(none)"""
     kFloat = 1
     kKey = 2
     kInt = 3
     kNull = 4
 
 class PtSDLReadWriteOptions:
-    """(none)"""
     kDirtyOnly = 1
     kSkipNotificationInfo = 2
     kBroadcast = 4
     kTimeStampOnRead = 16
 
 class PtSDLVarType:
-    """(none)"""
     kNone = -1
     kInt = 0
     kFloat = 1
@@ -288,19 +258,16 @@ class PtSDLVarType:
     kQuaternion = 54
 
 class PtScoreRankGroups:
-    """(none)"""
     kIndividual = 0
     kNeighborhood = 1
 
 class PtScoreTimePeriods:
-    """(none)"""
     kOverall = 0
     kYear = 1
     kMonth = 2
     kDay = 3
 
 class PtStatusLogFlags:
-    """(none)"""
     kFilledBackground = 1
     kAppendToLast = 2
     kDontWriteFile = 4
