@@ -79,6 +79,8 @@ GUIType             = ptAttribString(14,"Book GUI Type",default="bkBook")
 
 # globals
 LocalAvatar = None
+JournalBook = None
+CurrentPage = 2
 
 class xJournalBookGUIPopup(ptModifier):
     "The Journal Book GUI Popup python code"
@@ -96,6 +98,8 @@ class xJournalBookGUIPopup(ptModifier):
 
     def OnNotify(self, state, id, events):
         global LocalAvatar
+        global JournalBook
+        global CurrentPage
 
         # is it a clickable book on a pedestal?
         if id == actClickableBook.id:
@@ -125,25 +129,38 @@ class xJournalBookGUIPopup(ptModifier):
                 if event[0] == PtEventType.kBook:
                     PtDebugPrint("xJournalBookGUIPopup: BookNotify  event=%d, id=%d" % (event[1],event[2]),level=kDebugDumpLevel)
                     if event[1] == PtBookEventTypes.kNotifyShow:
-                        PtDebugPrint("xJournalBookGUIPopup:Book: NotifyShow",level=kDebugDumpLevel)
+                        PtDebugPrint("xJournalBookGUIPopup:Book: NotifyShow")
                         # disable the KI
                         PtSendKIMessage(kDisableKIandBB,0)
+                        if CurrentPage > -1:
+                            JournalBook.open(CurrentPage)
+                            JournalBook.goToPage(CurrentPage)
                     if event[1] == PtBookEventTypes.kNotifyHide:
-                        PtDebugPrint("xJournalBookGUIPopup:Book: NotifyHide",level=kDebugDumpLevel)
+                        PtDebugPrint("xJournalBookGUIPopup:Book: NotifyHide")
                         # re-enable KI
                         PtSendKIMessage(kEnableKIandBB,0)
                         # re-enable our avatar
                         PtToggleAvatarClickability(True)
+                        if CurrentPage == 0:
+                            CurrentPage = -1
+                        elif CurrentPage > 0:
+                            CurrentPage = JournalBook.getCurrentPage()
+                            PtDebugPrint(JournalBook.getCurrentPage())
+                    elif event[1] == PtBookEventTypes.kNotifyClose:
+                        PtDebugPrint("xJournalBookGUIPopup:Book: NotifyClose")
                     elif event[1] == PtBookEventTypes.kNotifyNextPage:
-                        PtDebugPrint("xJournalBookGUIPopup:Book: NotifyNextPage",level=kDebugDumpLevel)
+                        PtDebugPrint("xJournalBookGUIPopup:Book: NotifyNextPage")
+                        CurrentPage = JournalBook.getCurrentPage()
                     elif event[1] == PtBookEventTypes.kNotifyPreviousPage:
-                        PtDebugPrint("xJournalBookGUIPopup:Book: NotifyPreviousPage",level=kDebugDumpLevel)
+                        PtDebugPrint("xJournalBookGUIPopup:Book: NotifyPreviousPage")
+                        CurrentPage = JournalBook.getCurrentPage()
                     elif event[1] == PtBookEventTypes.kNotifyCheckUnchecked:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyCheckUncheck",level=kDebugDumpLevel)
                         pass
 
     def IShowBook(self):
-        self.JournalBook = None
+        global JournalBook
+        JournalBook = None
 
         # This lookup should be removed once all PFMs are converted to specify their details
         if JournalName.value:
@@ -195,15 +212,15 @@ class xJournalBookGUIPopup(ptModifier):
         PtSendKIMessage(kDisableKIandBB, 0)
 
         # now build the book
-        self.JournalBook = ptBook(journalContents, self.key)
-        self.JournalBook.setSize(BookWidth.value, BookHeight.value)
-        self.JournalBook.setGUI(GUIType.value)
+        JournalBook = ptBook(journalContents, self.key)
+        JournalBook.setSize(BookWidth.value, BookHeight.value)
+        JournalBook.setGUI(GUIType.value)
 
         # make sure there is a cover to show
         if not StartOpen.value and not self.IsThereACover(journalContents):
-            self.JournalBook.show(1)
+            JournalBook.show(1)
         else:
-            self.JournalBook.show(StartOpen.value)
+            JournalBook.show(StartOpen.value)
 
 
     def IsThereACover(self, bookHtml):
