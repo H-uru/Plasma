@@ -80,7 +80,11 @@ GUIType             = ptAttribString(14,"Book GUI Type",default="bkBook")
 # globals
 LocalAvatar = None
 JournalBook = None
-CurrentPage = 2
+CurrentPage = -1
+
+
+# Timer variable
+CoverOrPage0 = 1
 
 class xJournalBookGUIPopup(ptModifier):
     "The Journal Book GUI Popup python code"
@@ -133,30 +137,35 @@ class xJournalBookGUIPopup(ptModifier):
                         # disable the KI
                         PtSendKIMessage(kDisableKIandBB,0)
                         if CurrentPage > -1:
-                            JournalBook.open(CurrentPage)
-                            JournalBook.goToPage(CurrentPage)
+                            JournalBook.open(CurrentPage) #Opens to saved page
+                            JournalBook.goToPage(CurrentPage) #shows page tabs at bottom when used after open
+                        CurrentPage = JournalBook.getCurrentPage() #Save current page
                     if event[1] == PtBookEventTypes.kNotifyHide:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyHide")
+                        PtClearTimerCallbacks(self.key)
                         # re-enable KI
                         PtSendKIMessage(kEnableKIandBB,0)
                         # re-enable our avatar
                         PtToggleAvatarClickability(True)
-                        if CurrentPage == 0:
-                            CurrentPage = -1
-                        elif CurrentPage > 0:
+                        if CurrentPage > -1:
                             CurrentPage = JournalBook.getCurrentPage()
-                            PtDebugPrint(JournalBook.getCurrentPage())
                     elif event[1] == PtBookEventTypes.kNotifyClose:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyClose")
+                        PtAtTimeCallback(self.key, 1.01, CoverOrPage0)
                     elif event[1] == PtBookEventTypes.kNotifyNextPage:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyNextPage")
-                        CurrentPage = JournalBook.getCurrentPage()
+                        #CurrentPage = JournalBook.getCurrentPage()
                     elif event[1] == PtBookEventTypes.kNotifyPreviousPage:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyPreviousPage")
-                        CurrentPage = JournalBook.getCurrentPage()
+                        #CurrentPage = JournalBook.getCurrentPage()
                     elif event[1] == PtBookEventTypes.kNotifyCheckUnchecked:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyCheckUncheck",level=kDebugDumpLevel)
                         pass
+
+    def OnTimer(self, id):
+        global CurrentPage
+        if id == CoverOrPage0:
+            CurrentPage = -1
 
     def IShowBook(self):
         global JournalBook
