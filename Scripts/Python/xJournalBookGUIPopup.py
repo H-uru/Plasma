@@ -64,6 +64,7 @@ from PlasmaKITypes import *
 
 import xJournalBookDefs
 import json
+import zlib
 
 
 # define the attributes that will be entered in max
@@ -251,19 +252,22 @@ class xJournalBookGUIPopup(ptModifier):
             BookJson = json.loads(BookJson.getValue())
         else:
             BookJson = {}
-        CurrentPage = BookJson.get(LocPath.value, -1)
-        
+        CurrentPage = BookJson.get(self.EncodeLocPath(), -1)
         
     def WriteCurrentPage(self):
         PtDebugPrint("xJournalBookGUIPopup WriteCurrentPage",level=kDebugDumpLevel)
         global BookJson
         if CurrentPage > -1:
-            BookJson[LocPath.value] = JournalBook.getCurrentPage()
+            BookJson[self.EncodeLocPath()] = JournalBook.getCurrentPage()
         else:
-            BookJson.pop(LocPath.value, None)
+            BookJson.pop(self.EncodeLocPath(), None)
         temp = json.dumps(BookJson)
         while len(temp) > 1024:
             BookJson.pop(next(iter(BookJson)))
             temp = json.dumps(BookJson)
         ptVault().addChronicleEntry(kBookChronicle, 0, temp)
+        
+    def EncodeLocPath(self):
+        temp = zlib.adler32(LocPath.value.encode('utf-8')) & 0xffffffff
+        return f'{temp:x}'
 
