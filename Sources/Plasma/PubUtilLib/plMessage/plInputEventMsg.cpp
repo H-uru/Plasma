@@ -321,7 +321,7 @@ void plIMouseBEventMsg::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLE16(fButton);
 }
 
-plMouseEventMsg::plMouseEventMsg() : fXPos(0.0f), fYPos(0.0f), fDX(0.0f), fDY(0.0f), fWheelDelta(), fButton(0)
+plMouseEventMsg::plMouseEventMsg() : fXPos(), fYPos(), fDX(), fDY(), fWheelDelta(), fButton()
 {
 }
 
