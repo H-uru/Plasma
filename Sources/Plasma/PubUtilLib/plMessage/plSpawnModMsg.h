@@ -56,9 +56,6 @@ class plSpawnModMsg : public plMessage
 
 public:
     plSpawnModMsg() { }
-    plSpawnModMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t) { }
     ~plSpawnModMsg() { }
 
     CLASSNAME_REGISTER( plSpawnModMsg );

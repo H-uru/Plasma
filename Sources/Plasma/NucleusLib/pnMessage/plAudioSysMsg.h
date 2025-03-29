@@ -73,9 +73,6 @@ public:
     plAudioSysMsg() { SetBCastFlag(plMessage::kBCastByExactType); }
     plAudioSysMsg(const plKey &s) { SetBCastFlag(plMessage::kBCastByExactType);SetSender(s); }
     plAudioSysMsg(int i) { fAudFlag = i; SetBCastFlag(plMessage::kBCastByExactType); }
-    plAudioSysMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t) { SetBCastFlag(plMessage::kBCastByExactType); }
     ~plAudioSysMsg() { }
 
     CLASSNAME_REGISTER(plAudioSysMsg);
