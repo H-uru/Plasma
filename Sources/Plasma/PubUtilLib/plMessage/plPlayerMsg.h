@@ -59,9 +59,6 @@ protected:
 
 public:
     plPlayerMsg() { SetBCastFlag(plMessage::kBCastByExactType); }
-    plPlayerMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t){ SetBCastFlag(plMessage::kBCastByExactType);    }
     ~plPlayerMsg() { }
 
     CLASSNAME_REGISTER( plPlayerMsg );

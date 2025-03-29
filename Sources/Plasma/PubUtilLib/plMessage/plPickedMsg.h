@@ -61,11 +61,6 @@ public:
     {
         SetBCastFlag(plMessage::kPropagateToModifiers);
     }
-    plPickedMsg(const plKey &s, const plKey &r, const double* t)
-        : fPicked(true)
-    {
-        SetBCastFlag(plMessage::kPropagateToModifiers);
-    }
 
     CLASSNAME_REGISTER( plPickedMsg );
     GETINTERFACE_ANY( plPickedMsg, plMessage );

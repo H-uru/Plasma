@@ -405,7 +405,7 @@ bool plNoShowComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     {
         if( fCompPB->GetInt(kAffectDraw) )
         {
-            plEnableMsg* eMsg = new plEnableMsg(nullptr, plEnableMsg::kDisable, plEnableMsg::kDrawable);
+            plEnableMsg* eMsg = new plEnableMsg(plEnableMsg::kDisable, plEnableMsg::kDrawable);
             eMsg->AddReceiver(obj->GetKey());
             eMsg->Send();
         }

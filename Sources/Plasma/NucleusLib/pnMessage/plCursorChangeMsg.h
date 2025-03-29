@@ -53,9 +53,6 @@ protected:
 public:
     plCursorChangeMsg() : fType(0),fPriority(0) { }
     plCursorChangeMsg(int i, int p) { fType = i;fPriority =p; }
-    plCursorChangeMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t) : fType(0),fPriority(0) { }
 
     CLASSNAME_REGISTER(plCursorChangeMsg);
     GETINTERFACE_ANY(plCursorChangeMsg, plMessage);

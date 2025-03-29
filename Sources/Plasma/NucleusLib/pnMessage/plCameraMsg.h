@@ -116,10 +116,7 @@ public:
 
     
     plCameraTargetFadeMsg() { }
-    plCameraTargetFadeMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t) { }
-    
+
     CLASSNAME_REGISTER(plCameraTargetFadeMsg);
     GETINTERFACE_ANY(plCameraTargetFadeMsg, plMessage);
 
@@ -249,10 +246,7 @@ public:
     bool GetDisable() const { return fDisable; }
 
     plIfaceFadeAvatarMsg() : fEnable(false),fDisable(false) { }
-    plIfaceFadeAvatarMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t): fEnable(false),fDisable(false) { }
-    
+
     CLASSNAME_REGISTER(plIfaceFadeAvatarMsg);
     GETINTERFACE_ANY(plIfaceFadeAvatarMsg, plMessage);
 

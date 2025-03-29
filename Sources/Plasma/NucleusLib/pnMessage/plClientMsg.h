@@ -99,9 +99,7 @@ public:
 
 
     plClientMsg() { IReset();}
-    plClientMsg(const plKey &s) { IReset();}  
     plClientMsg(int i) { IReset(); fMsgFlag = i; }  
-    plClientMsg(const plKey &s, const plKey &r, const double* t) { IReset(); }
 
     CLASSNAME_REGISTER(plClientMsg);
     GETINTERFACE_ANY(plClientMsg, plMessage);

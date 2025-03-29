@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSelfDestructMsg : public plMessage
 {
 protected:
-    plSelfDestructMsg(plKey& victim) : plMessage(victim, victim, nullptr) {}
+    plSelfDestructMsg(const plKey& victim) : plMessage(victim, victim, nullptr) {}
 
     friend class plKeyImp;
 
