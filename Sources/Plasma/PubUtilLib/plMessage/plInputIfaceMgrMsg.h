@@ -87,7 +87,7 @@ class plInputIfaceMgrMsg : public plMessage
         };
 
         plInputIfaceMgrMsg() : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); fInterface = nullptr; fAvKey = nullptr; }
-        plInputIfaceMgrMsg(plKey &receiver, uint8_t command) : plMessage(nullptr, nullptr, nullptr) { AddReceiver(receiver); fCommand = command; fInterface = nullptr; fAvKey = nullptr; }
+        plInputIfaceMgrMsg(const plKey& receiver, uint8_t command) : plMessage(nullptr, nullptr, nullptr) { AddReceiver(receiver); fCommand = command; fInterface = nullptr; fAvKey = nullptr; }
         plInputIfaceMgrMsg(uint8_t command) : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); fCommand = command; fInterface = nullptr; fAvKey = nullptr; }
         plInputIfaceMgrMsg(uint8_t command, uint32_t pageID) : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); fCommand = command; fPageID = pageID; fInterface = nullptr; fAvKey = nullptr; }
         ~plInputIfaceMgrMsg();

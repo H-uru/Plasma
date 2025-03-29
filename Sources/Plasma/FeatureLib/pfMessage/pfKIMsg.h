@@ -181,7 +181,7 @@ class pfKIMsg : public plMessage
 
         pfKIMsg() : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); IInit(); }
         pfKIMsg(uint8_t command) : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); IInit(); fCommand = command; }
-        pfKIMsg(plKey &receiver, uint8_t command) : plMessage(nullptr, nullptr, nullptr) { AddReceiver(receiver); IInit(); fCommand = command; }
+        pfKIMsg(const plKey& receiver, uint8_t command) : plMessage(nullptr, nullptr, nullptr) { AddReceiver(receiver); IInit(); fCommand = command; }
 
         CLASSNAME_REGISTER( pfKIMsg );
         GETINTERFACE_ANY( pfKIMsg, plMessage );
