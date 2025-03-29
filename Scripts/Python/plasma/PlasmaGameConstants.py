@@ -53,7 +53,6 @@ from __future__ import annotations
 from typing import *
 
 class PtGameJoinError:
-    """(none)"""
     kGameJoinPending = -1
     kGameJoinSuccess = 0
     kGameJoinErrNotExist = 1
@@ -66,7 +65,6 @@ class PtGameJoinError:
     kNumGameJoinErrors = 8
 
 class PtMarkerGameType:
-    """(none)"""
     kMarkerGameQuest = 0
     kMarkerGameCGZ = 1
     kMarkerGameCapture = 2

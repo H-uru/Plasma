@@ -53,7 +53,6 @@ from __future__ import annotations
 from typing import *
 
 class PtLinkingRules:
-    """(none)"""
     kBasicLink = 0
     kOriginalBook = 1
     kSubAgeBook = 2

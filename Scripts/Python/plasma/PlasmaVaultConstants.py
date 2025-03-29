@@ -53,7 +53,6 @@ from __future__ import annotations
 from typing import *
 
 class PtVaultCallbackTypes:
-    """(none)"""
     kVaultConnected = 1
     kVaultNodeSaved = 2
     kVaultNodeRefAdded = 3
@@ -65,7 +64,6 @@ class PtVaultCallbackTypes:
     kVaultDisconnected = 9
 
 class PtVaultNodeTypes:
-    """(none)"""
     kInvalidNode = 0
     kVNodeMgrPlayerNode = 2
     kVNodeMgrAgeNode = 3
@@ -82,7 +80,6 @@ class PtVaultNodeTypes:
     kMarkerGameNode = 35
 
 class PtVaultNotifyTypes:
-    """(none)"""
     kRegisteredOwnedAge = 9
     kUnRegisteredOwnedAge = 10
     kRegisteredVisitAge = 11
@@ -91,7 +88,6 @@ class PtVaultNotifyTypes:
     kPublicAgeRemoved = 14
 
 class PtVaultStandardNodes:
-    """(none)"""
     kUserDefinedNode = 0
     kInboxFolder = 1
     kBuddyListFolder = 2
@@ -117,10 +113,8 @@ class PtVaultStandardNodes:
     kGlobalInboxFolder = 30
 
 class PtVaultTextNoteSubTypes:
-    """(none)"""
     kGeneric = 0
 
 class PtVaultTextNoteTypes:
-    """(none)"""
     kGeneric = 0
     kCCRPetition = 1
