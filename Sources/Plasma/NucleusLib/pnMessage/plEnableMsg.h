@@ -76,8 +76,7 @@ public:
 
     plEnableMsg() { }
 
-    plEnableMsg(const plKey& s, int which, int type)
-        : plMessage()
+    plEnableMsg(int which, int type)
     {
         SetCmd(which);
         SetCmd(type);
