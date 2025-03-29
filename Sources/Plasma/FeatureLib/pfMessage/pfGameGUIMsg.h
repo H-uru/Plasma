@@ -71,8 +71,8 @@ class pfGameGUIMsg : public plMessage
         };
 
         pfGameGUIMsg() : plMessage(nullptr, nullptr, nullptr), fCommand() { SetBCastFlag(kBCastByExactType); }
-        pfGameGUIMsg(plKey &receiver, uint8_t command)
-            : plMessage(nullptr, nullptr, nullptr), fCommand(command) { AddReceiver(receiver); }
+        pfGameGUIMsg(const plKey& receiver, uint8_t command)
+            : plMessage(nullptr, receiver, nullptr), fCommand(command) {}
 
         CLASSNAME_REGISTER( pfGameGUIMsg );
         GETINTERFACE_ANY( pfGameGUIMsg, plMessage );

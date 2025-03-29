@@ -54,10 +54,7 @@ protected:
 
 public:
     plCmdIfaceModMsg() : fInterface(), fIndex(), fControlCode() { SetBCastFlag(plMessage::kBCastByExactType); }
-    plCmdIfaceModMsg(const plKey* s, 
-                    const plKey* r, 
-                    const double* t) : fInterface() { }
-    
+
     CLASSNAME_REGISTER(plCmdIfaceModMsg);
     GETINTERFACE_ANY(plCmdIfaceModMsg, plMessage);
 

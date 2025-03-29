@@ -52,9 +52,6 @@ public:
     plActivatorMsg()
         : fTriggerType()
     { }
-    plActivatorMsg(const plKey& s, const plKey& r, const double* t)
-        : fTriggerType()
-    { }
 
     CLASSNAME_REGISTER( plActivatorMsg );
     GETINTERFACE_ANY( plActivatorMsg, plMessage );

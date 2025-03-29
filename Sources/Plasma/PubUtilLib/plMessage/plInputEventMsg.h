@@ -61,10 +61,6 @@ public:
         kConfigure = 0,
     };
     plInputEventMsg();
-    plInputEventMsg(const plKey &s,
-                      const plKey &r,
-                      const double* t);
-
     ~plInputEventMsg();
 
     CLASSNAME_REGISTER( plInputEventMsg );
@@ -94,9 +90,6 @@ protected:
 public:
 
     plControlEventMsg();
-    plControlEventMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t);
 
     CLASSNAME_REGISTER( plControlEventMsg );
     GETINTERFACE_ANY( plControlEventMsg, plInputEventMsg );
@@ -137,9 +130,6 @@ public:
 
     
     plKeyEventMsg();
-    plKeyEventMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t);
     ~plKeyEventMsg();
 
     CLASSNAME_REGISTER( plKeyEventMsg );
@@ -180,9 +170,6 @@ public:
 
     
     plDebugKeyEventMsg();
-    plDebugKeyEventMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t);
     ~plDebugKeyEventMsg();
 
     CLASSNAME_REGISTER( plDebugKeyEventMsg );
@@ -214,10 +201,6 @@ public:
     
     plIMouseXEventMsg() : 
     fX(0),fWx(0) {}
-    plIMouseXEventMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t) : 
-    fX(0),fWx(0) {}
     ~plIMouseXEventMsg(){}
 
     CLASSNAME_REGISTER( plIMouseXEventMsg );
@@ -235,10 +218,6 @@ public:
 
     plIMouseYEventMsg() : 
     fY(0),fWy(0) {}
-    plIMouseYEventMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t) : 
-    fY(0),fWy(0) {}
     ~plIMouseYEventMsg(){}
 
     CLASSNAME_REGISTER( plIMouseYEventMsg );
@@ -253,10 +232,6 @@ public:
     short   fButton;
 
     plIMouseBEventMsg() : 
-    fButton(0) {}
-    plIMouseBEventMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t) : 
     fButton(0) {}
     ~plIMouseBEventMsg(){}
 
@@ -283,9 +258,6 @@ protected:
 
 public:
     plMouseEventMsg();
-    plMouseEventMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t);
     ~plMouseEventMsg();
 
     CLASSNAME_REGISTER( plMouseEventMsg );
