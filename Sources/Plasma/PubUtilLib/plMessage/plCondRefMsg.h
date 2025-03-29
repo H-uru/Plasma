@@ -51,8 +51,8 @@ class plCondRefMsg : public plRefMsg
 public:
 
     plCondRefMsg() { fWhich = -1; }
-    plCondRefMsg(const plKey &s, int which)
-        : plRefMsg(s, plRefMsg::kOnCreate), fWhich(which) {}
+    plCondRefMsg(const plKey& r, int which)
+        : plRefMsg(r, plRefMsg::kOnCreate), fWhich(which) {}
 
     CLASSNAME_REGISTER( plCondRefMsg );
     GETINTERFACE_ANY( plCondRefMsg, plRefMsg );
