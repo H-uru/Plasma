@@ -77,9 +77,9 @@ void plMetalPlateManager::ICreateGeometry()
 
         uint16_t indices[6] = {0, 1, 2, 1, 2, 3};
 
-        fVtxBuffer = pipeline->fDevice.fMetalDevice->newBuffer(&vertexBuffer, sizeof(plateVertexBuffer), MTL::StorageModeManaged);
+        fVtxBuffer = pipeline->fDevice.fMetalDevice->newBuffer(&vertexBuffer, sizeof(plateVertexBuffer), plMetalDevice::GetDefaultStorageMode());
         fVtxBuffer->retain();
-        idxBuffer = pipeline->fDevice.fMetalDevice->newBuffer(&indices, sizeof(indices), MTL::StorageModeManaged);
+        idxBuffer = pipeline->fDevice.fMetalDevice->newBuffer(&indices, sizeof(indices), plMetalDevice::GetDefaultStorageMode());
     }
 }
 

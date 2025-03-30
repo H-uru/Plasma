@@ -595,7 +595,7 @@ void plMetalDevice::FillVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* gr
         return;
     }
 
-    MTL::Buffer* metalBuffer = fMetalDevice->newBuffer(size, MTL::StorageModeManaged);
+    MTL::Buffer* metalBuffer = fMetalDevice->newBuffer(size, GetDefaultStorageMode());
     ref->SetBuffer(metalBuffer);
     uint8_t* buffer = (uint8_t*)ref->GetBuffer()->contents();
 
@@ -722,13 +722,15 @@ void plMetalDevice::FillIndexBufferRef(plMetalDevice::IndexBufferRef* iRef, plGB
     iRef->PrepareForWrite();
     MTL::Buffer* indexBuffer = iRef->GetBuffer();
     if (!indexBuffer || indexBuffer->length() < fullSize) {
-        indexBuffer = fMetalDevice->newBuffer(fullSize, MTL::ResourceStorageModeManaged);
+        indexBuffer = fMetalDevice->newBuffer(fullSize, GetDefaultStorageMode());
         iRef->SetBuffer(indexBuffer);
         indexBuffer->release();
     }
 
     memcpy(((uint16_t*)indexBuffer->contents()) + startIdx, owner->GetIndexBufferData(idx) + startIdx, size);
-    indexBuffer->didModifyRange(NS::Range(startIdx, size));
+    if (indexBuffer->storageMode() == MTL::StorageModeManaged) {
+        indexBuffer->didModifyRange(NS::Range(startIdx, size));
+    }
 
     iRef->SetDirty(false);
 }
@@ -935,7 +937,7 @@ void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef* tRef, plMipmap* im
         descriptor->setMipmapLevelCount(tRef->fLevels + 1);
     }
 
-    descriptor->setStorageMode(MTL::StorageModeManaged);
+    descriptor->setStorageMode(GetDefaultStorageMode());
 
     tRef->fTexture = fMetalDevice->newTexture(descriptor);
     PopulateTexture(tRef, img, 0);

@@ -190,6 +190,15 @@ public:
     MTL::PixelFormat GetFramebufferFormat() const { return fFramebufferFormat; };
     
     MTL::Library* GetShaderLibrary() const { return fShaderLibrary; }
+    
+    static constexpr MTL::StorageMode GetDefaultStorageMode()
+    {
+#if HS_BUILD_FOR_MACOS
+        return MTL::StorageModeManaged;
+#else
+        return MTL::StorageModeShared;
+#endif
+    }
 
 private:
     struct plMetalPipelineRecord
