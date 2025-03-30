@@ -912,10 +912,10 @@ void PythonInterface::initPython()
 
     // Allow importing from the local python directory if and only if this is an internal client.
 #ifndef PLASMA_EXTERNAL_RELEASE
-    PyWideStringList_Append(&config.module_search_paths, L"./python");
-    PyWideStringList_Append(&config.module_search_paths, L"./python/plasma");
-    PyWideStringList_Append(&config.module_search_paths, L"./python/system");
-    PyWideStringList_Append(&config.module_search_paths, L"./python/system/lib-dynload");
+    PyWideStringList_Append(&config.module_search_paths, L"./Python");
+    PyWideStringList_Append(&config.module_search_paths, L"./Python/plasma");
+    PyWideStringList_Append(&config.module_search_paths, L"./Python/system");
+    PyWideStringList_Append(&config.module_search_paths, L"./Python/system/lib-dynload");
     config.module_search_paths_set = 1;
 #endif
 

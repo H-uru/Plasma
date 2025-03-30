@@ -372,8 +372,8 @@ bool plPythonFileMod::ILoadPythonCode()
 #ifndef PLASMA_EXTERNAL_RELEASE
     // get code from file and execute in module
     // see if the file exists first before trying to import it
-    plFileName pyfile = plFileName::Join(".", "python", ST::format("{}.py", fPythonFile));
-    plFileName gluefile = plFileName::Join(".", "python", "plasma", "glue.py");
+    plFileName pyfile = plFileName::Join(".", "Python", ST::format("{}.py", fPythonFile));
+    plFileName gluefile = plFileName::Join(".", "Python", "plasma", "glue.py");
     if (plFileInfo(pyfile).Exists() && plFileInfo(gluefile).Exists()) {
         // ok... we can't really use import because Python remembers too much where global variables came from
         // ...and using execfile make it sure that globals are defined in this module and not in the imported module
