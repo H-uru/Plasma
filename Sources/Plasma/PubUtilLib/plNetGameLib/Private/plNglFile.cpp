@@ -1295,28 +1295,17 @@ void NetCliFileStartConnect (
     s_serverType = kSrvTypeNone;
 
     for (unsigned i = 0; i < fileAddrCount; ++i) {
-        // Do we need to lookup the address?
         const ST::string& name = fileAddrList[i];
-        const char* pos;
-        for (pos = name.begin(); pos != name.end(); ++pos) {
-            if (!(isdigit(*pos) || *pos == '.' || *pos == ':')) {
-                AsyncAddressLookupName(name, GetClientPort(), [name](auto addrs) {
-                    if (addrs.empty()) {
-                        ReportNetError(kNetProtocolCli2File, kNetErrNameLookupFailed);
-                        return;
-                    }
-
-                    for (const plNetAddress& addr : addrs) {
-                        Connect(name, addr);
-                    }
-                });
-                break;
+        AsyncAddressLookupName(name, GetClientPort(), [name](auto addrs) {
+            if (addrs.empty()) {
+                ReportNetError(kNetProtocolCli2File, kNetErrNameLookupFailed);
+                return;
             }
-        }
-        if (pos == name.end()) {
-            plNetAddress addr(name, GetClientPort());
-            Connect(name, addr);
-        }
+
+            for (const plNetAddress& addr : addrs) {
+                Connect(name, addr);
+            }
+        });
     }
 }
 
