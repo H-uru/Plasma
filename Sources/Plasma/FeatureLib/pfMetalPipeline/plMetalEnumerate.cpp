@@ -76,12 +76,14 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
 
         devRec.SetLayersAtOnce(8);
 
-        // Just make a fake mode so the device selector will let it through
-        hsG3DDeviceMode devMode;
-        devMode.SetWidth(hsG3DDeviceSelector::kDefaultWidth);
-        devMode.SetHeight(hsG3DDeviceSelector::kDefaultHeight);
-        devMode.SetColorDepth(hsG3DDeviceSelector::kDefaultDepth);
-        devRec.GetModes().emplace_back(devMode);
+        const plDisplayHelper* displayHelper = plDisplayHelper::CurrentDisplayHelper();
+        for (const auto& mode : displayHelper->GetDisplayModes()) {
+            hsG3DDeviceMode devMode;
+            devMode.SetWidth(mode.Width);
+            devMode.SetHeight(mode.Height);
+            devMode.SetColorDepth(mode.ColorDepth);
+            devRec.GetModes().emplace_back(devMode);
+        }
 
         records.emplace_back(devRec);
     }
