@@ -12,7 +12,7 @@ function(python_test_modules)
         if(NOT _PLASMA_ENSUREPIP_DONE)
             message(STATUS "Bootstrapping pip...")
             execute_process(
-                COMMAND "${Python3_EXECUTABLE}" -m ensurepip
+                COMMAND "${Python3_HOST_EXECUTABLE}" -m ensurepip
                 RESULT_VARIABLE RETURNCODE
                 OUTPUT_QUIET ERROR_QUIET
             )
@@ -29,7 +29,7 @@ function(python_test_modules)
             if(NOT _REQUIREMENTS_FILE_HASH IN_LIST _PLASMA_PIP_REQUIREMENTS_HASHES)
                 message(STATUS "Installing Python modules from: ${_ptm_REQUIREMENTS_FILE}")
                 execute_process(
-                    COMMAND "${Python3_EXECUTABLE}" -m pip install -r "${_ptm_REQUIREMENTS_FILE}"
+                    COMMAND "${Python3_HOST_EXECUTABLE}" -m pip install -r "${_ptm_REQUIREMENTS_FILE}"
                     RESULT_VARIABLE RETURNCODE
                     OUTPUT_QUIET ERROR_QUIET
                 )
@@ -42,7 +42,7 @@ function(python_test_modules)
         else()
             message(STATUS "Installing Python modules: ${_ptm_MODULES}")
             execute_process(
-                COMMAND "${Python3_EXECUTABLE}" -m pip install ${_ptm_MODULES}
+                COMMAND "${Python3_HOST_EXECUTABLE}" -m pip install ${_ptm_MODULES}
                 OUTPUT_QUIET ERROR_QUIET
             )
         endif()
@@ -53,9 +53,9 @@ function(python_test_modules)
     endif()
 
     foreach(_module_NAME IN LISTS _ptm_MODULES)
-        if(Python3_EXECUTABLE)
+        if(Python3_HOST_EXECUTABLE)
             execute_process(
-                COMMAND "${Python3_EXECUTABLE}" -c "import ${_module_NAME}"
+                COMMAND "${Python3_HOST_EXECUTABLE}" -c "import ${_module_NAME}"
                 RESULT_VARIABLE RETURNCODE
                 OUTPUT_QUIET ERROR_QUIET
             )

@@ -16,6 +16,16 @@ find_program(
     DOC "Path to pngcrush"
 )
 
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 4.0)
+    set(Python3_ARTIFACTS_PREFIX "_HOST")
+    set(Python3_HOST_USE_VCPKG_INTERPRETER ON)
+    find_package(Python3 3.8 COMPONENTS Interpreter)
+endif()
+
+if(Python3_EXECUTABLE AND NOT Python3_HOST_EXECUTABLE)
+    set(Python3_HOST_EXECUTABLE "${Python3_EXECUTABLE}")
+endif()
+
 # Can we generate the resource.dat file?
 python_test_modules(
     MODULES cairosvg PIL
@@ -37,7 +47,7 @@ if(PLASMA_BUILD_RESOURCE_DAT)
 
     add_custom_command(
         OUTPUT ${external_DAT}
-        COMMAND "${Python3_EXECUTABLE}"
+        COMMAND "${Python3_HOST_EXECUTABLE}"
                 "${CMAKE_CURRENT_SOURCE_DIR}/external/makeres.py"
                 --render --package
                 ${OPTIMIZE_ARGUMENT}
