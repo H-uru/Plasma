@@ -182,7 +182,7 @@ plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, cons
     
     fIsFullscreen = !fInitialPipeParams.Windowed;
     
-    fDevice.SetOutputLayer(static_cast<CA::MetalLayer*>(window));
+    fDevice.SetOutputLayer(reinterpret_cast<CA::MetalLayer*>(window));
     // For now - set this once at startup. If the underlying device is allow to change on
     // the fly (eGPU, display change, etc) - revisit.
     fDevice.GetOutputLayer()->setDevice(fDevice.fMetalDevice);
@@ -1992,7 +1992,7 @@ bool plMetalPipeline::IRefreshDynVertices(plGBufferGroup* group, plMetalVertexBu
     vertexBuffer->setPurgeableState(MTL::PurgeableStateNonVolatile);
     if (!vertexBuffer || vertexBuffer->length() < size) {
         // Plasma will present different length buffers at different times
-        vertexBuffer = fDevice.fMetalDevice->newBuffer(vData, size, MTL::ResourceStorageModeManaged)->autorelease();
+        vertexBuffer = fDevice.fMetalDevice->newBuffer(vData, size, plMetalDevice::GetDefaultStorageMode())->autorelease();
         if (vRef->Volatile()) {
             // We need to manually mark the buffer as eligible for freeing after render
             // Only allow this resource to be volatile after the on screen command buffer.
@@ -2006,7 +2006,9 @@ bool plMetalPipeline::IRefreshDynVertices(plGBufferGroup* group, plMetalVertexBu
         memcpy(vertexBuffer->contents(),
                vData,
                size);
-        vertexBuffer->didModifyRange(NS::Range(0, size));
+        if (vertexBuffer->storageMode() == MTL::StorageModeManaged) {
+            vertexBuffer->didModifyRange(NS::Range(0, size));
+        }
     }
 
     vRef->fRefTime = fVtxRefTime;
