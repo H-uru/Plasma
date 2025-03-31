@@ -63,6 +63,8 @@ from PlasmaTypes import *
 from PlasmaKITypes import *
 
 import xJournalBookDefs
+import json
+import zlib
 
 
 # define the attributes that will be entered in max
@@ -79,6 +81,14 @@ GUIType             = ptAttribString(14,"Book GUI Type",default="bkBook")
 
 # globals
 LocalAvatar = None
+JournalBook = None
+BookJson = None
+CurrentPage = -1
+
+
+# Timer variable
+CoverOrPage0 = 1
+kBookChronicle = "JournalReadJSON"
 
 class xJournalBookGUIPopup(ptModifier):
     "The Journal Book GUI Popup python code"
@@ -96,6 +106,8 @@ class xJournalBookGUIPopup(ptModifier):
 
     def OnNotify(self, state, id, events):
         global LocalAvatar
+        global JournalBook
+        global CurrentPage
 
         # is it a clickable book on a pedestal?
         if id == actClickableBook.id:
@@ -128,12 +140,21 @@ class xJournalBookGUIPopup(ptModifier):
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyShow",level=kDebugDumpLevel)
                         # disable the KI
                         PtSendKIMessage(kDisableKIandBB,0)
+                        if CurrentPage > -1:
+                            JournalBook.open(CurrentPage) #Opens to saved page
+                            JournalBook.goToPage(CurrentPage) #shows page tabs at bottom when used after open
+                        CurrentPage = JournalBook.getCurrentPage() #Save current page
                     if event[1] == PtBookEventTypes.kNotifyHide:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyHide",level=kDebugDumpLevel)
+                        PtClearTimerCallbacks(self.key)
                         # re-enable KI
                         PtSendKIMessage(kEnableKIandBB,0)
                         # re-enable our avatar
                         PtToggleAvatarClickability(True)
+                        self.WriteCurrentPage()
+                    elif event[1] == PtBookEventTypes.kNotifyClose:
+                        PtDebugPrint("xJournalBookGUIPopup:Book: NotifyClose",level=kDebugDumpLevel)
+                        PtAtTimeCallback(self.key, 1.01, CoverOrPage0)
                     elif event[1] == PtBookEventTypes.kNotifyNextPage:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyNextPage",level=kDebugDumpLevel)
                     elif event[1] == PtBookEventTypes.kNotifyPreviousPage:
@@ -142,8 +163,14 @@ class xJournalBookGUIPopup(ptModifier):
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyCheckUncheck",level=kDebugDumpLevel)
                         pass
 
+    def OnTimer(self, id):
+        global CurrentPage
+        if id == CoverOrPage0:
+            CurrentPage = -1
+
     def IShowBook(self):
-        self.JournalBook = None
+        global JournalBook
+        JournalBook = None
 
         # This lookup should be removed once all PFMs are converted to specify their details
         if JournalName.value:
@@ -193,17 +220,20 @@ class xJournalBookGUIPopup(ptModifier):
 
         # hide the KI
         PtSendKIMessage(kDisableKIandBB, 0)
+        
+        #find current page variable
+        self.ReadCurrentPage()
 
         # now build the book
-        self.JournalBook = ptBook(journalContents, self.key)
-        self.JournalBook.setSize(BookWidth.value, BookHeight.value)
-        self.JournalBook.setGUI(GUIType.value)
+        JournalBook = ptBook(journalContents, self.key)
+        JournalBook.setSize(BookWidth.value, BookHeight.value)
+        JournalBook.setGUI(GUIType.value)
 
         # make sure there is a cover to show
         if not StartOpen.value and not self.IsThereACover(journalContents):
-            self.JournalBook.show(1)
+            JournalBook.show(1)
         else:
-            self.JournalBook.show(StartOpen.value)
+            JournalBook.show(StartOpen.value)
 
 
     def IsThereACover(self, bookHtml):
@@ -212,3 +242,32 @@ class xJournalBookGUIPopup(ptModifier):
         if idx >= 0:
             return 1
         return 0
+
+    def ReadCurrentPage(self):
+        global BookJson
+        global CurrentPage
+        PtDebugPrint("xJournalBookGUIPopup ReadCurrentPage",level=kDebugDumpLevel)
+        BookJson = ptVault().findChronicleEntry(kBookChronicle)
+        if BookJson:
+            BookJson = json.loads(BookJson.getValue())
+        else:
+            BookJson = {}
+        CurrentPage = BookJson.get(self.EncodeLocPath(), -1)
+        
+    def WriteCurrentPage(self):
+        PtDebugPrint("xJournalBookGUIPopup WriteCurrentPage",level=kDebugDumpLevel)
+        global BookJson
+        if CurrentPage > -1:
+            BookJson[self.EncodeLocPath()] = JournalBook.getCurrentPage()
+        else:
+            BookJson.pop(self.EncodeLocPath(), None)
+        temp = json.dumps(BookJson)
+        while len(temp) > 1024:
+            BookJson.pop(next(iter(BookJson)))
+            temp = json.dumps(BookJson)
+        ptVault().addChronicleEntry(kBookChronicle, 0, temp)
+        
+    def EncodeLocPath(self):
+        temp = zlib.adler32(LocPath.value.encode('utf-8')) & 0xffffffff
+        return f'{temp:x}'
+
