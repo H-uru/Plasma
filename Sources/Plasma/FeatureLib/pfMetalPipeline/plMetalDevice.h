@@ -193,7 +193,7 @@ public:
     
     static constexpr MTL::StorageMode GetDefaultStorageMode()
     {
-#if HS_BUILD_FOR_MACOS
+#ifdef HS_BUILD_FOR_MACOS
         return MTL::StorageModeManaged;
 #else
         return MTL::StorageModeShared;
