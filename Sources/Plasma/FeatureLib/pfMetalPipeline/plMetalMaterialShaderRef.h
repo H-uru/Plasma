@@ -121,7 +121,7 @@ private:
 
     void                                                 IBuildLayerTexture(MTL::RenderCommandEncoder* encoder, const uint32_t offsetFromRootLayer, plLayerInterface* layer);
     void                                                 EncodeTransform(const plLayerInterface* layer, UVOutDescriptor *transform);
-    std::vector<const std::vector<plLayerInterface*>>    fPasses;
+    std::vector<std::vector<plLayerInterface*>>          fPasses;
     std::vector<struct plMetalFragmentShaderDescription> fFragmentShaderDescriptions;
 };
 
