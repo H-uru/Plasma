@@ -48,6 +48,8 @@
 # by running the following call in the in-game Python console:
 # >>> __import__("generate_stubs").run()
 
+"""Plasma 2.0 GameMgr Library"""
+
 from __future__ import annotations
 from typing import *
 
