@@ -204,9 +204,7 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encode
 
 void plMetalMaterialShaderRef::EncodeTransform(const plLayerInterface* layer, UVOutDescriptor* transform)
 {
-    matrix_float4x4 tXfm;
-    hsMatrix2SIMD(layer->GetTransform(), &tXfm);
-    transform->transform = tXfm;
+    transform->transform = hsMatrix2SIMD(layer->GetTransform());
     transform->UVWSrc = layer->GetUVWSrc();
 }
 
