@@ -174,7 +174,7 @@ enum plKeyDef
     KEY_UNMAPPED        = 0xffffffff,
 };
 
-#elif HS_BUILD_FOR_APPLE
+#elif HS_BUILD_FOR_MACOS
 
 #include <Carbon/Carbon.h>
 
