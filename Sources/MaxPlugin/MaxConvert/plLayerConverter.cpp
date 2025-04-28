@@ -323,6 +323,7 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
 
     // Setup the texture creation parameters
     plBitmapData bd;
+    BMMGetFullFilename(bi);
     bd.fileName = bi->Name();
 
     // Create texture and add it to list if unique
@@ -442,6 +443,7 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
 
     // Setup the texture creation parameters
     plBitmapData bd;
+    BMMGetFullFilename(bi);
     bd.fileName = bi->Name();
 
     // Create texture and add it to list if unique
@@ -474,6 +476,7 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
         PBBitmap *face = bitmapPB->GetBitmap( plStaticEnvLayer::kBmpFrontBitmap + i );
         if( !face )
             return (plLayerInterface *)plasmaLayer;
+        BMMGetFullFilename(&face->bi);
         bd.faceNames[ i ] = face->bi.Name();
     }
 

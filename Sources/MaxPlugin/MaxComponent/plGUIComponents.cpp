@@ -4793,6 +4793,7 @@ bool plGUISkinComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         PBBitmap *texture = layer->GetPBBitmap();
         if (texture != nullptr)
         {
+            BMMGetFullFilename(&texture->bi);
             plBitmap *bMap = plLayerConverter::Instance().CreateSimpleTexture( M2ST(texture->bi.Name()), fConvertedSkin->GetKey()->GetUoid().GetLocation(), 0, plMipmap::kForceNonCompressed | plMipmap::kAlphaChannelFlag | plMipmap::kNoMaxSize );
             if (bMap != nullptr && plMipmap::ConvertNoRef(bMap) != nullptr)
             {
