@@ -382,10 +382,10 @@ STATEDESC Personal
     VAR BYTE        YeeshaPage26[1]             DEFAULT=0 # VeeTsah Sky
     VAR BYTE        YeeshaPage27[1]             DEFAULT=0 # Oceans
     VAR BYTE        YeeshaPage28[1]             DEFAULT=0 # Blue Flowers
-    VAR BYTE        YeeshaPage29[1]             DEFAULT=0
-    VAR BYTE        YeeshaPage30[1]             DEFAULT=0
-    VAR BYTE        YeeshaPage31[1]             DEFAULT=0
-    VAR BYTE        YeeshaPage32[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage29[1]             DEFAULT=0 # Crystals Trees
+    VAR BYTE        YeeshaPage30[1]             DEFAULT=0 # Swing Island
+    VAR BYTE        YeeshaPage31[1]             DEFAULT=0 # Ferns
+    VAR BYTE        YeeshaPage32[1]             DEFAULT=0 # Green Bushes
     VAR BYTE        YeeshaPage33[1]             DEFAULT=0
     VAR BYTE        YeeshaPage34[1]             DEFAULT=0
     VAR BYTE        YeeshaPage35[1]             DEFAULT=0
@@ -474,14 +474,14 @@ STATEDESC Personal
     VAR BOOL        psnlCalendarStone02[1]      DEFAULT=0   # February  - Kadish (PillarRoom)
     VAR BOOL        psnlCalendarStone03[1]      DEFAULT=0   # March     - Gira (Canyon)
     VAR BOOL        psnlCalendarStone04[1]      DEFAULT=0   # April     - Garrison (Prison)
-    VAR BOOL        psnlCalendarStone05[1]      DEFAULT=0   # May       - Ercana (?)
-    VAR BOOL        psnlCalendarStone06[1]      DEFAULT=0   # June      - Descent (TreasureBookShaft)
-    VAR BOOL        psnlCalendarStone07[1]      DEFAULT=0   # July      - ?
-    VAR BOOL        psnlCalendarStone08[1]      DEFAULT=0   # August    - ?
-    VAR BOOL        psnlCalendarStone09[1]      DEFAULT=0   # September - ?
-    VAR BOOL        psnlCalendarStone10[1]      DEFAULT=0   # October   - ?
-    VAR BOOL        psnlCalendarStone11[1]      DEFAULT=0   # November  - ?
-    VAR BOOL        psnlCalendarStone12[1]      DEFAULT=0   # December  - ?
+    VAR BOOL        psnlCalendarStone05[1]      DEFAULT=0   # May       - Descent (TreasureBookShaft)
+    VAR BOOL        psnlCalendarStone06[1]      DEFAULT=0   # June      - Minkata (Kiva 2)
+    VAR BOOL        psnlCalendarStone07[1]      DEFAULT=0   # July      - Ercana
+    VAR BOOL        psnlCalendarStone08[1]      DEFAULT=0   # August    - Jalak
+    VAR BOOL        psnlCalendarStone09[1]      DEFAULT=0   # September - Teledahn
+    VAR BOOL        psnlCalendarStone10[1]      DEFAULT=0   # October   - philRelto
+    VAR BOOL        psnlCalendarStone11[1]      DEFAULT=0   # November  - GreatZero
+    VAR BOOL        psnlCalendarStone12[1]      DEFAULT=0   # December  - Myst
 ## Guild Alliance SDL
     VAR INT         guildAlliance[1]            DEFAULT=0
 }
