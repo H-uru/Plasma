@@ -583,8 +583,7 @@ class xLinkingBookGUIPopup(ptModifier):
                 agePanel = SpawnPointTitle_Dict[xLinkingBookDefs.kFirstLinkPanelID]
                 PtDebugPrint("agePanel2 = ",agePanel)
             elif agePanel == "Neighborhood":
-                agevault = ptAgeVault()
-                nblink = self.GetOwnedAgeLink(agevault, "Neighborhood")
+                nblink = self.GetOwnedAgeLink("Neighborhood")
                 if not nblink:
                     SpawnPointTitle_Dict = {xLinkingBookDefs.kFirstLinkPanelID: 'Default'}
                     SpawnPointName_Dict = {xLinkingBookDefs.kFirstLinkPanelID: 'LinkInPointDefault'}
@@ -1015,7 +1014,8 @@ class xLinkingBookGUIPopup(ptModifier):
             cam.enableFirstPersonOverride()
 
 
-    def GetOwnedAgeLink(self, vault, age):
+    def GetOwnedAgeLink(self, age):
+        vault = ptAgeVault()
         PAL = vault.getAgesIOwnFolder()
         if PAL is not None:
             contents = PAL.getChildNodeRefList()
