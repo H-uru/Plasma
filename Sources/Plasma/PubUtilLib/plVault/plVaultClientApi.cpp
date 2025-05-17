@@ -3623,12 +3623,6 @@ hsRef<RelVaultNode> VaultGetAgeSubAgesFolder () {
 }
 
 //============================================================================
-hsRef<RelVaultNode> VaultGetAgePublicAgesFolder () {
-    hsAssert(false, "eric, implement me");
-    return nullptr;
-}
-
-//============================================================================
 hsRef<RelVaultNode> VaultAgeGetBookshelfFolder () {
     if (hsRef<RelVaultNode> rvn = GetAgeNode())
         return rvn->GetChildAgeInfoListNode(plVault::kAgesIOwnFolder, 1);
