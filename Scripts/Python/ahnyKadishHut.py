@@ -49,7 +49,6 @@ wiring for items inside Kadish's hut
 
 from Plasma import *
 from PlasmaTypes import *
-#import time
 
 
 # ---------
@@ -60,10 +59,6 @@ SDLWindows   = ptAttribString(1,"SDL: windows")
 ActWindows   = ptAttribActivator(2,"clk: windows")
 RespWindowsBeh   = ptAttribResponder(3,"resp: windows oneshot")
 RespWindows   = ptAttribResponder(4,"resp: windows use",['close','open'])
-#SDLDniTimer   = ptAttribString(5,"SDL: D'ni timer")
-#ActDniTimer   = ptAttribActivator(6,"clk: D'ni timer")
-#RespDniTimer   = ptAttribResponder(7,"resp: D'ni timer",['off','on'])
-#MatAnimDniTimer   = ptAttribMaterialAnimation(8,"mat anim: D'ni timer")
 
 
 # ---------
@@ -71,10 +66,6 @@ RespWindows   = ptAttribResponder(4,"resp: windows use",['close','open'])
 # ---------
 
 boolWindows = 0
-#StartTime = 0
-#EndTime = 0
-
-#kTimeWarp = 870
 
 
 class ahnyKadishHut(ptResponder):
@@ -92,7 +83,6 @@ class ahnyKadishHut(ptResponder):
         except:
             PtDebugPrint("ahnyKadishHut.OnServerInitComplete():\tERROR---Cannot find AhnySphere04 age SDL")
             ageSDL[SDLWindows.value] = (0,)
-            #ageSDL[SDLDniTimer.value] = (0,)
 
         ageSDL.setFlags(SDLWindows.value,1,1)
         ageSDL.sendToClients(SDLWindows.value)
@@ -107,32 +97,6 @@ class ahnyKadishHut(ptResponder):
             PtDebugPrint("ahnyKadishHut.OnServerInitComplete(): Windows are closed")
             RespWindows.run(self.key,state="close",fastforward=1)
 
-        #ageSDL.setFlags(SDLDniTimer.value,1,1)
-        #ageSDL.sendToClients(SDLDniTimer.value)
-        #ageSDL.setNotify(self.key,SDLDniTimer.value,0.0)
-        #EndTime =  ageSDL[SDLDniTimer.value][0]
-        #InitTime = PtGetDniTime()
-        #if InitTime < EndTime:
-        #    PtDebugPrint("ahnyKadishHut.OnServerInitComplete(): Timer is on")
-        #    RespDniTimer.run(self.key,state="on")
-        #    dniSecsLeft = (EndTime - InitTime)
-        #    dniSecsElapsed = (kTimeWarp - dniSecsLeft)
-        #    #realSecsElapsed = (dniSecsElapsed * 1.3928573888441378)
-        #    PtDebugPrint("dniSecsElapsed = ",dniSecsElapsed)
-        #    MatAnimDniTimer.animation.skipToTime(dniSecsElapsed)
-        #    MatAnimDniTimer.animation.resume()
-        #    PtAtTimeCallback(self.key,1,2)
-        #else:
-        #    PtDebugPrint("ahnyKadishHut.OnServerInitComplete(): Timer is off")
-        #    RespDniTimer.run(self.key,state="off")
-        #if id == 2:
-        #    CurTime = PtGetDniTime()
-        #    if CurTime >= EndTime:
-        #        RespDniTimer.run(self.key,state="off")
-        #    else:
-        #        #RespDniTimer.run(self.key,state="on")
-        #        PtAtTimeCallback(self.key,1,2)
-
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         global boolWindows
         
@@ -145,19 +109,6 @@ class ahnyKadishHut(ptResponder):
             else:
                 PtDebugPrint("ahnyKadishHut.OnSDLNotify(): Windows will now close")
                 RespWindows.run(self.key,state="close")
-
-        #if VARname == SDLDniTimer.value:
-        #    EndTime = ageSDL[SDLDniTimer.value][0]
-        #    if EndTime:
-        #        PtDebugPrint("ahnyKadishHut.OnSDLNotify(): Timer is now on")
-        #        RespDniTimer.run(self.key,state="on")
-        #        MatAnimDniTimer.animation.skipToTime(0)
-        #        MatAnimDniTimer.animation.play()
-        #        PtAtTimeCallback(self.key,1,2)
-        #    else:
-        #        PtDebugPrint("ahnyKadishHut.OnSDLNotify(): Timer is now off")
-        #        RespDniTimer.run(self.key,state="off")
-        #        MatAnimDniTimer.animation.stop()
 
 
     def OnNotify(self,state,id,events):
@@ -172,10 +123,3 @@ class ahnyKadishHut(ptResponder):
                 ageSDL[SDLWindows.value] = (0,)
             else:
                 ageSDL[SDLWindows.value] = (1,)
-
-        #if (id == ActDniTimer.id and state):
-        #    StartTime = PtGetDniTime()
-        #    newtime = (StartTime + kTimeWarp)
-        #    ageSDL[SDLDniTimer.value] = (newtime,)
-        
-

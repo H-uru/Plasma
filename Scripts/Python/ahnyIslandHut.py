@@ -160,28 +160,7 @@ class ahnyIslandHut(ptResponder):
         global actingAvatar
         global actingAvatarDoor
         ageSDL = PtGetAgeSDL()
-        
-        #~ PtDebugPrint("anhySphere1MaintBtn::OnNotify id ",id," state ",state)
-        #~ if (state == 0):
-            #~ return
 
-        #if id == ActRotateSwitch.id and state:
-        #    RespRotateSwitch.run(self.key,avatar=PtGetLocalAvatar())
-
-        #elif id == RespRotateSwitch.id:
-        #    RespRotateSpheres.run(self.key)
-
-        #elif id == RespRotateSpheres.id:
-        #    if boolHutDoor:
-        #        ageSDL[SDLHutDoor.value] = (0,)
-
-        #    currentSphere = ageSDL["ahnyCurrentSphere"][0]
-        #    if currentSphere == 3:
-        #        ageSDL["ahnyCurrentSphere"] = (1,)
-        #    else:
-        #        ageSDL["ahnyCurrentSphere"] = ((currentSphere + 1),)
-        
-        
         if id == ActWaterCurrent.id and state:
             actingAvatar = PtFindAvatar(events)
             if boolCurrent:
