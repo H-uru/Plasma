@@ -456,7 +456,7 @@ class psnlBookshelf(ptModifier):
                                 note.send()
                                 
                                 ageVault = ptAgeVault()
-                                PAL = ageVault.getAgesIOwnFolder()
+                                PAL = ageVault.getBookshelfFolder()
                                 contents = PAL.getChildNodeRefList()
                                 for content in contents:
                                     link = content.getChild()
@@ -1056,7 +1056,7 @@ class psnlBookshelf(ptModifier):
                     note.send()
 
                     ageVault = ptAgeVault()
-                    PAL = ageVault.getAgesIOwnFolder()
+                    PAL = ageVault.getBookshelfFolder()
                     contents = PAL.getChildNodeRefList()
                     for content in contents:
                         link = content.getChild()
@@ -1213,7 +1213,7 @@ class psnlBookshelf(ptModifier):
             return ageLink
 
         ageVault = ptAgeVault()
-        PAL = ageVault.getAgesIOwnFolder()
+        PAL = ageVault.getBookshelfFolder()
         contents = PAL.getChildNodeRefList()
         for content in contents:
             link = content.getChild()
@@ -1245,7 +1245,7 @@ class psnlBookshelf(ptModifier):
         global CityBookAges
         
         ageVault = ptAgeVault()
-        PAL = ageVault.getAgesIOwnFolder()
+        PAL = ageVault.getBookshelfFolder()
         contents = PAL.getChildNodeRefList()
 
         # check for the dang city book and do stuff
@@ -1457,7 +1457,7 @@ class psnlBookshelf(ptModifier):
                             break
         
         ageVault = ptAgeVault()
-        PAL = ageVault.getAgesIOwnFolder()
+        PAL = ageVault.getBookshelfFolder()
         if PAL is not None:
             contents = PAL.getChildNodeRefList()
 
@@ -1970,7 +1970,7 @@ class psnlBookshelf(ptModifier):
 
     def GetOwnedAgeLink(self, age):
         vault = ptAgeVault()
-        PAL = vault.getAgesIOwnFolder()
+        PAL = vault.getBookshelfFolder()
         if PAL is not None:
             contents = PAL.getChildNodeRefList()
             for content in contents:

@@ -736,7 +736,7 @@ class xLinkingBookGUIPopup(ptModifier):
         
         # citybook links have been changed to Hood childages, so we search there now
         #vault = ptAgeVault()
-        #OwnedAges = vault.getAgesIOwnFolder().getChildNodeRefList()
+        #OwnedAges = vault.getBookshelfFolder().getChildNodeRefList()
         childAgeFolder = self.IGetHoodInfoNode().getChildAgesFolder()
         HoodChildAges = childAgeFolder.getChildNodeRefList()
         spawnPoints = []
@@ -878,7 +878,7 @@ class xLinkingBookGUIPopup(ptModifier):
         
         # Step 1: Find this age's spawnPoints
         vault = ptAgeVault()
-        OwnedAges = vault.getAgesIOwnFolder().getChildNodeRefList()
+        OwnedAges = vault.getBookshelfFolder().getChildNodeRefList()
         spawnPoints = None
         for NodeRef in OwnedAges:
             tmpLink = NodeRef.getChild().upcastToAgeLinkNode()
@@ -1016,7 +1016,7 @@ class xLinkingBookGUIPopup(ptModifier):
 
     def GetOwnedAgeLink(self, age):
         vault = ptAgeVault()
-        PAL = vault.getAgesIOwnFolder()
+        PAL = vault.getBookshelfFolder()
         if PAL is not None:
             contents = PAL.getChildNodeRefList()
             for content in contents:
