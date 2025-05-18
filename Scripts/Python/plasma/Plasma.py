@@ -1211,10 +1211,6 @@ class ptAgeVault:
         """Returns a ptVaultPlayerInfoListNode of the players the Age knows about(?)."""
         ...
 
-    def getPublicAgesFolder(self):
-        """Returns a ptVaultFolderNode that contains all the public Ages"""
-        ...
-
     def getSubAgeLink(self, ageInfo):
         """Returns a ptVaultAgeLinkNode to 'ageInfo' (a ptAgeInfoStruct) for this Age."""
         ...

@@ -128,17 +128,6 @@ PyObject* pyAgeVault::GetPeopleIKnowAboutFolder()
     PYTHON_RETURN_NONE;
 }
 
-
-PyObject* pyAgeVault::GetPublicAgesFolder()
-{
-    hsRef<RelVaultNode> rvn = VaultGetAgePublicAgesFolder();
-    if (rvn)
-        return pyVaultFolderNode::New(rvn);
-
-    // just return a None object
-    PYTHON_RETURN_NONE;
-}
-
 PyObject* pyAgeVault::GetSubAgeLink( const pyAgeInfoStruct & info )
 {
     hsRef<RelVaultNode> rvn = VaultFindAgeSubAgeLink(info.GetAgeInfo());
