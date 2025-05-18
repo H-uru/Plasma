@@ -220,59 +220,6 @@ class ahnySaveCloth(ptModifier):
             else:
                 PtDebugPrint("I'm not the age owner, so I don't do anything.")
 
-
-
-
-
-
-
-
-            '''
-            vault = ptVault()
-            myAges = vault.getAgesIOwnFolder()
-            myAges = myAges.getChildNodeRefList()
-            for ageInfo in myAges:
-                link = ageInfo.getChild()
-                link = link.upcastToAgeLinkNode()
-                info = link.getAgeInfo()
-                if not info:
-                    continue
-                ageName = info.getAgeFilename()
-                spawnPoints = link.getSpawnPoints()
-    
-                if ageName == "Ahnonay":
-                    ahnySDL = info.getAgeSDL()
-                    ahnyRecord = ahnySDL.getStateDataRecord()
-                    currentCloth = ahnyRecord.findVar("ahnyCurrentSaveCloth")
-                    currentSphere = ahnyRecord.findVar("ahnyCurrentSphere")
-                    if (clothID.value):
-                        clothNumber = int(clothID.value)
-                        activeSphere = currentSphere.getInt(0)
-
-                        agevault = ptAgeVault()
-                        currentage = int(agevault.getAgeInfo().getAgeFilename()[-1])
-                        PtDebugPrint("currently in sphere:", currentage)
-
-                        currentpos = (currentage - activeSphere) % 4
-
-                        if clothNumber > 6 and clothNumber < 25:
-                            clothOffset = clothNumber % 6
-                            if clothOffset == 0:
-                                clothOffset = 6
-                        else:
-                            clothOffset = clothNumber
-                        
-                        currentCloth.setInt(clothOffset,0)
-                        currentCloth.setInt(currentpos,1)
-                        PtDebugPrint("current save cloth updated to number", clothOffset, " from cloth value of", clothNumber)
-                        PtDebugPrint("current save position updated to:", currentpos)
-                    else:
-                        PtDebugPrint("missing sphere identifier string!")
-                    ahnySDL.setStateDataRecord(ahnyRecord)
-                    ahnySDL.save()
-                    return
-            '''
-
         else:
             PtDebugPrint("ERROR: ahnySaveCloth.OnNotify: Error trying to access the Vault.")
 
