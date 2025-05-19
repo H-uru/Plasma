@@ -79,11 +79,6 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAgeVault, getChronicleFolder)
     return self->fThis->GetChronicleFolder();
 }
 
-PYTHON_METHOD_DEFINITION_NOARGS(ptAgeVault, getAgesIOwnFolder)
-{
-    return self->fThis->GetBookshelfFolder();
-}
-
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeVault, getBookshelfFolder)
 {
     return self->fThis->GetBookshelfFolder();
@@ -92,11 +87,6 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAgeVault, getBookshelfFolder)
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeVault, getPeopleIKnowAboutFolder)
 {
     return self->fThis->GetPeopleIKnowAboutFolder();
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptAgeVault, getPublicAgesFolder)
-{
-    return self->fThis->GetPublicAgesFolder();
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeVault, getSubAgeLink, args)
@@ -248,10 +238,8 @@ PYTHON_START_METHODS_TABLE(ptAgeVault)
     PYTHON_METHOD_NOARGS(ptAgeVault, getAgeDevicesFolder, "Returns a ptVaultFolderNode of the inboxes for the devices in this Age."),
     PYTHON_METHOD_NOARGS(ptAgeVault, getSubAgesFolder, "Returns a ptVaultFolderNode of sub Age's folder."),
     PYTHON_METHOD_NOARGS(ptAgeVault, getChronicleFolder, "Returns a ptVaultFolderNode"),
-    PYTHON_METHOD_NOARGS(ptAgeVault, getAgesIOwnFolder, "(depreciated, use getBookshelfFolder) Returns a ptVaultFolderNode that contain the Ages I own"),
     PYTHON_METHOD_NOARGS(ptAgeVault, getBookshelfFolder, "Personal age only: Returns a ptVaultFolderNode that contains the owning player's AgesIOwn age list"),
     PYTHON_METHOD_NOARGS(ptAgeVault, getPeopleIKnowAboutFolder, "Returns a ptVaultPlayerInfoListNode of the players the Age knows about(?)."),
-    PYTHON_METHOD_NOARGS(ptAgeVault, getPublicAgesFolder, "Returns a ptVaultFolderNode that contains all the public Ages"),
     PYTHON_METHOD(ptAgeVault, getSubAgeLink, "Params: ageInfo\nReturns a ptVaultAgeLinkNode to 'ageInfo' (a ptAgeInfoStruct) for this Age."),
     PYTHON_METHOD_NOARGS(ptAgeVault, getAgeGuid, "Returns the current Age's guid as a string."),
     PYTHON_METHOD(ptAgeVault, addDevice, "Params: deviceName,cb=None,cbContext=0\nAdds a device to the age"),

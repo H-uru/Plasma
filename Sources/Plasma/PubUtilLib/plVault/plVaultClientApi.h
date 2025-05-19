@@ -393,7 +393,6 @@ hsRef<RelVaultNode> VaultGetAgeChildAgesFolder();
 hsRef<RelVaultNode> VaultGetAgeAgeOwnersFolder();
 hsRef<RelVaultNode> VaultGetAgeCanVisitFolder();
 hsRef<RelVaultNode> VaultGetAgePeopleIKnowAboutFolder();
-hsRef<RelVaultNode> VaultGetAgePublicAgesFolder();
 hsRef<RelVaultNode> VaultAgeGetBookshelfFolder();
 hsRef<RelVaultNode> VaultFindAgeSubAgeLink(const plAgeInfoStruct * info);
 hsRef<RelVaultNode> VaultFindAgeChildAgeLink(const plAgeInfoStruct * info);

@@ -51,7 +51,6 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 import xLinkingBookDefs
-import xRandom
 
 
 # define the attributes that will be entered in max
@@ -141,10 +140,6 @@ class ahnyPressurePlates(ptModifier):
 
 
     ###########################
-    def OnServerInitComplete(self):
-        pass
-
-    ###########################
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         if VARname == "ahnyCurrentSphere" and respSphereRotate.value != []:
             PtDebugPrint("ahnyPressurePlates.OnSDLNotify(): playing audio SFX")
@@ -186,7 +181,7 @@ class ahnyPressurePlates(ptModifier):
                                             respClockLights.run(self.key, state='off', objectName=respLightList[index], netForce=1)
                                 else:
 
-                                    if (respLightList != []) and (occupiedZones[index] == 0):# 
+                                    if (respLightList != []) and (occupiedZones[index] == 0):
                                         respClockLights.run(self.key, state='off', objectName=respLightList[index] , netForce=1)
                                 PtDebugPrint("%s - exit %s" % (str(occupiedZones), str(index)))
                             ageSDL[SDLOccupied.value] = tuple(occupiedZones)
@@ -214,7 +209,7 @@ class ahnyPressurePlates(ptModifier):
                     if event[1] == PtBookEventTypes.kNotifyImageLink:
                         if event[2] >= xLinkingBookDefs.kFirstLinkPanelID or event[2] == xLinkingBookDefs.kBookMarkID:
                             PtDebugPrint("ahnyPressurePlates:Book: hit linking panel %s" % (event[2]))
-                            self.HideBook(1)
+                            self.HideBook()
 
                             ageSDL = PtGetAgeSDL()
                             PtDebugPrint(ageSDL[SDLOccupied.value])
@@ -230,39 +225,6 @@ class ahnyPressurePlates(ptModifier):
                                 PtDebugPrint("Sphere staying put")
 
                             respLinkResponder.run(self.key, avatar=PtGetLocalAvatar(),netPropagate=0)
-
-                            '''
-                            vault = ptVault()
-                            myAges = vault.getAgesIOwnFolder()
-                            myAges = myAges.getChildNodeRefList()
-                            for ageInfo in myAges:
-                                link = ageInfo.getChild()
-                                link = link.upcastToAgeLinkNode()
-                                info = link.getAgeInfo()
-                                if not info:
-                                    continue
-                                ageName = info.getAgeFilename()
-                                spawnPoints = link.getSpawnPoints()
-
-                                if ageName == "Ahnonay":
-                                    ahnySDL = info.getAgeSDL()
-                                    ahnyRecord = ahnySDL.getStateDataRecord()
-                                    currentSphere = ahnyRecord.findVar("ahnyCurrentSphere")
-                                    if (sphere.value == "1"):
-                                        currentSphere.setInt(2,0)
-                                    elif (sphere.value == "2"):
-                                        currentSphere.setInt(3,0)
-                                    elif (sphere.value == "3"):
-                                        currentSphere.setInt(1,0)
-                                    elif (sphere.value == "4"):
-                                        currentSphere.setInt(1,0)
-                                    else:
-                                        PtDebugPrint("missing sphere identifier string!")
-                                    ahnySDL.setStateDataRecord(ahnyRecord)
-                                    ahnySDL.save()
-                                    PtDebugPrint("advanced from sphere ",sphere.value)
-                                    return
-                            '''
         
                     elif event[1] == PtBookEventTypes.kNotifyShow:
                         PtDebugPrint("ahnyLinkBookGUIPopup:Book: NotifyShow")
@@ -327,60 +289,9 @@ class ahnyPressurePlates(ptModifier):
             PtDebugPrint("ahnyLinkBookGUIPopup: could not find age AhnonayCathedral's linking panel")
 
     ###########################
-    def HideBook(self, islinking = 0):
+    def HideBook(self):
         global gLinkingBook
         
         PtToggleAvatarClickability(True) # enable me as clickable
         if gLinkingBook:
             gLinkingBook.hide()
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-
-    # utility functions:
-
-
-    ###########################
-    def IGetAgeFilename(self):
-        try:
-            name = xLinkingBookDefs.xLinkDestinations[TargetAge.value][0]
-        except:
-            PtDebugPrint("IGetAgeFilename(): " + TargetAge.value + " is missing from the xLinkDestinations table, attempting to use it as the value")
-            name = TargetAge.value
-        return name
-
-    ###########################
-    def IGetAgeInstanceName(self):
-        try:
-            name = xLinkingBookDefs.xLinkDestinations[TargetAge.value][0]
-        except:
-            PtDebugPrint("IGetAgeInstanceName(): " + TargetAge.value + " is missing from the xLinkDestinations table, attempting to use it as the value")
-            name = TargetAge.value
-        return name
-
-
-    ###########################
-    def IGetAgeSpawnPoint(self):
-        try:
-            name = xLinkingBookDefs.xLinkDestinations[TargetAge.value][1]
-        except:
-            PtDebugPrint("IGetAgeSpawnPoint(): " + TargetAge.value + " is missing from the xLinkDestinations table, attempting to use an empty string as the value")
-            name = ""
-        return name
-
-"""
