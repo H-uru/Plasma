@@ -474,14 +474,14 @@ STATEDESC Personal
     VAR BOOL        psnlCalendarStone02[1]      DEFAULT=0   # February  - Kadish (PillarRoom)
     VAR BOOL        psnlCalendarStone03[1]      DEFAULT=0   # March     - Gira (Canyon)
     VAR BOOL        psnlCalendarStone04[1]      DEFAULT=0   # April     - Garrison (Prison)
-    VAR BOOL        psnlCalendarStone05[1]      DEFAULT=0   # May       - Descent (TreasureBookShaft)
-    VAR BOOL        psnlCalendarStone06[1]      DEFAULT=0   # June      - Minkata (Kiva 2)
-    VAR BOOL        psnlCalendarStone07[1]      DEFAULT=0   # July      - Ercana
-    VAR BOOL        psnlCalendarStone08[1]      DEFAULT=0   # August    - Jalak
-    VAR BOOL        psnlCalendarStone09[1]      DEFAULT=0   # September - Teledahn
-    VAR BOOL        psnlCalendarStone10[1]      DEFAULT=0   # October   - philRelto
-    VAR BOOL        psnlCalendarStone11[1]      DEFAULT=0   # November  - GreatZero
-    VAR BOOL        psnlCalendarStone12[1]      DEFAULT=0   # December  - Myst
+    VAR BOOL        psnlCalendarStone05[1]      DEFAULT=0   # May       - Ercana (?)
+    VAR BOOL        psnlCalendarStone06[1]      DEFAULT=0   # June      - Descent (TreasureBookShaft)
+    VAR BOOL        psnlCalendarStone07[1]      DEFAULT=0   # July      - ?
+    VAR BOOL        psnlCalendarStone08[1]      DEFAULT=0   # August    - ?
+    VAR BOOL        psnlCalendarStone09[1]      DEFAULT=0   # September - ?
+    VAR BOOL        psnlCalendarStone10[1]      DEFAULT=0   # October   - ?
+    VAR BOOL        psnlCalendarStone11[1]      DEFAULT=0   # November  - ?
+    VAR BOOL        psnlCalendarStone12[1]      DEFAULT=0   # December  - ?
 ## Guild Alliance SDL
     VAR INT         guildAlliance[1]            DEFAULT=0
 }
