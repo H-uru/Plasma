@@ -1187,10 +1187,6 @@ class ptAgeVault:
         """Returns the age's SDL (ptSDLStateDataRecord)"""
         ...
 
-    def getAgesIOwnFolder(self):
-        """(depreciated, use getBookshelfFolder) Returns a ptVaultFolderNode that contain the Ages I own"""
-        ...
-
     def getBookshelfFolder(self):
         """Personal age only: Returns a ptVaultFolderNode that contains the owning player's AgesIOwn age list"""
         ...

@@ -424,7 +424,7 @@ class psnlBookshelf(ptModifier):
                             link = self.IGetLinkFromBook()
                             bookAge = self.IGetAgeFromBook()
                             if bookAge in kHardcodedInstances:
-                                link = self.GetOwnedAgeLink(ptAgeVault(), bookAge)
+                                link = self.GetOwnedAgeLink(bookAge)
 
                             if bookAge == "Ahnonay" or bookAge == "AhnonayCathedral":
                                 ageVault = ptAgeVault()
@@ -456,7 +456,7 @@ class psnlBookshelf(ptModifier):
                                 note.send()
                                 
                                 ageVault = ptAgeVault()
-                                PAL = ageVault.getAgesIOwnFolder()
+                                PAL = ageVault.getBookshelfFolder()
                                 contents = PAL.getChildNodeRefList()
                                 for content in contents:
                                     link = content.getChild()
@@ -583,9 +583,8 @@ class psnlBookshelf(ptModifier):
                         return
 
                     if ageName == "city" and PtIsSinglePlayerMode():
-                        ageVault = ptAgeVault()
-                        citylink = self.GetOwnedAgeLink(ageVault, "city")
-                        bcolink = self.GetOwnedAgeLink(ageVault, "BaronCityOffice")
+                        citylink = self.GetOwnedAgeLink("city")
+                        bcolink = self.GetOwnedAgeLink("BaronCityOffice")
                         
                         citylinklocked = citylink and citylink.getLocked()
                         bcolinklocked = bcolink and bcolink.getLocked()
@@ -672,7 +671,7 @@ class psnlBookshelf(ptModifier):
                     link = self.IGetLinkFromBook()
                     # Do not use the age link node of a Hood child age for the city book clasp!
                     if IsChildLink or ageName in kHardcodedInstances:
-                        link = self.GetOwnedAgeLink(ptAgeVault(), ageName)
+                        link = self.GetOwnedAgeLink(ageName)
                     if link is None:
                         return
                     if not isinstance(link, ptVaultAgeLinkNode) or link.getLocked():
@@ -723,9 +722,8 @@ class psnlBookshelf(ptModifier):
         if id==respShelveBook.id:
             ageName = self.IGetAgeFromBook()
             if ageName == "city" and PtIsSinglePlayerMode():
-                ageVault = ptAgeVault()
-                citylink = self.GetOwnedAgeLink(ageVault, "city")
-                bcolink = self.GetOwnedAgeLink(ageVault, "BaronCityOffice")
+                citylink = self.GetOwnedAgeLink("city")
+                bcolink = self.GetOwnedAgeLink("BaronCityOffice")
                 
                 citylinklocked = citylink and citylink.getLocked()
                 bcolinklocked = bcolink and bcolink.getLocked()
@@ -754,7 +752,7 @@ class psnlBookshelf(ptModifier):
             link = self.IGetLinkFromBook()
             # Do not use the age link node of a Hood child age for the city book clasp!
             if IsChildLink or ageName in kHardcodedInstances:
-                link = self.GetOwnedAgeLink(ptAgeVault(), ageName)
+                link = self.GetOwnedAgeLink(ageName)
             if link is None:
                 return
                 
@@ -834,9 +832,8 @@ class psnlBookshelf(ptModifier):
                     agename = self.IGetAgeFromBook()
 
                     if agename == "city" and PtIsSinglePlayerMode():
-                        agevault = ptAgeVault()
-                        citylink = self.GetOwnedAgeLink(agevault, "city")
-                        bcolink = self.GetOwnedAgeLink(agevault, "BaronCityOffice")
+                        citylink = self.GetOwnedAgeLink("city")
+                        bcolink = self.GetOwnedAgeLink("BaronCityOffice")
 
                         citylinklocked = citylink and citylink.getLocked()
                         bcolinklocked = bcolink and bcolink.getLocked()
@@ -871,7 +868,7 @@ class psnlBookshelf(ptModifier):
                     link = self.IGetLinkFromBook()
                     # Do not use the age link node of a Hood child age for the city book clasp!
                     if IsChildLink or agename in kHardcodedInstances:
-                        link = self.GetOwnedAgeLink(ptAgeVault(), agename)
+                        link = self.GetOwnedAgeLink(agename)
                     if link is None:
                         return
                     lockName = objLockPicked.getName()
@@ -1019,7 +1016,7 @@ class psnlBookshelf(ptModifier):
             bookAge = self.IGetAgeFromBook()
 
             if bookAge in kHardcodedInstances:
-                link = self.GetOwnedAgeLink(ptAgeVault(), bookAge)
+                link = self.GetOwnedAgeLink(bookAge)
 
             if bookAge == "Ahnonay" or bookAge == "AhnonayCathedral":
                 ageVault = ptAgeVault()
@@ -1059,7 +1056,7 @@ class psnlBookshelf(ptModifier):
                     note.send()
 
                     ageVault = ptAgeVault()
-                    PAL = ageVault.getAgesIOwnFolder()
+                    PAL = ageVault.getBookshelfFolder()
                     contents = PAL.getChildNodeRefList()
                     for content in contents:
                         link = content.getChild()
@@ -1203,7 +1200,7 @@ class psnlBookshelf(ptModifier):
             ageInfo = ptAgeInfoStruct()
             ageInfo.setAgeFilename(ageName)
             ageInfo.setAgeInstanceName(ageName)
-            link = self.GetOwnedAgeLink(ptAgeVault(), ageName)
+            link = self.GetOwnedAgeLink(ageName)
             if link is None:
                 link = self.IGetHoodChildLink(ageName)
             if link is not None:
@@ -1216,7 +1213,7 @@ class psnlBookshelf(ptModifier):
             return ageLink
 
         ageVault = ptAgeVault()
-        PAL = ageVault.getAgesIOwnFolder()
+        PAL = ageVault.getBookshelfFolder()
         contents = PAL.getChildNodeRefList()
         for content in contents:
             link = content.getChild()
@@ -1248,13 +1245,13 @@ class psnlBookshelf(ptModifier):
         global CityBookAges
         
         ageVault = ptAgeVault()
-        PAL = ageVault.getAgesIOwnFolder()
+        PAL = ageVault.getBookshelfFolder()
         contents = PAL.getChildNodeRefList()
 
         # check for the dang city book and do stuff
         if self.HasCityBook():
-            citylink = self.GetOwnedAgeLink(ageVault, "city")
-            #bcolink = self.GetOwnedAgeLink(ageVault, "BaronCityOffice")
+            citylink = self.GetOwnedAgeLink("city")
+            #bcolink = self.GetOwnedAgeLink("BaronCityOffice")
             bcolink = self.IGetHoodChildLink("BaronCityOffice")
             
             citylinklocked = citylink and citylink.getLocked()
@@ -1427,9 +1424,8 @@ class psnlBookshelf(ptModifier):
 
         # check for the dang city book and do stuff
         if self.HasCityBook():
-            ageVault = ptAgeVault()
-            citylink = self.GetOwnedAgeLink(ageVault, "city")
-            #bcolink = self.GetOwnedAgeLink(ageVault, "BaronCityOffice")
+            citylink = self.GetOwnedAgeLink("city")
+            #bcolink = self.GetOwnedAgeLink("BaronCityOffice")
             bcolink = self.IGetHoodChildLink("BaronCityOffice")
 
             citylinklocked = citylink and citylink.getLocked()
@@ -1461,7 +1457,7 @@ class psnlBookshelf(ptModifier):
                             break
         
         ageVault = ptAgeVault()
-        PAL = ageVault.getAgesIOwnFolder()
+        PAL = ageVault.getBookshelfFolder()
         if PAL is not None:
             contents = PAL.getChildNodeRefList()
 
@@ -1932,10 +1928,9 @@ class psnlBookshelf(ptModifier):
             PtDebugPrint("can't find CityBookLinks chron entry")
         return 0
 
-        vault = ptAgeVault()
         # look for city book age links
         for age, splist in CityBookAges.items():
-            #agelink = self.GetOwnedAgeLink(vault, age)
+            #agelink = self.GetOwnedAgeLink(age)
             agelink = self.IGetHoodChildLink(age)
             PtDebugPrint("age = ",age)
             PtDebugPrint("agelink = ",agelink)
@@ -1952,7 +1947,7 @@ class psnlBookshelf(ptModifier):
                         return 1
 
         # look for a city treasure link, but it's a Hood childage now
-        #agelink = self.GetOwnedAgeLink(vault, "city")
+        #agelink = self.GetOwnedAgeLink("city")
         agelink = self.IGetHoodChildLink(age)
         PtDebugPrint("age = the city")
         PtDebugPrint("agelink = ",agelink)
@@ -1973,8 +1968,9 @@ class psnlBookshelf(ptModifier):
         return 0
 
 
-    def GetOwnedAgeLink(self, vault, age):
-        PAL = vault.getAgesIOwnFolder()
+    def GetOwnedAgeLink(self, age):
+        vault = ptAgeVault()
+        PAL = vault.getBookshelfFolder()
         if PAL is not None:
             contents = PAL.getChildNodeRefList()
             for content in contents:

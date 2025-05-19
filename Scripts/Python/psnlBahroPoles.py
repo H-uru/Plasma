@@ -941,7 +941,7 @@ class psnlBahroPoles(ptModifier):
 
     def IsVolatile(self, age):
         ageVault = ptAgeVault()
-        PAL = ageVault.getAgesIOwnFolder()
+        PAL = ageVault.getBookshelfFolder()
         contents = PAL.getChildNodeRefList()
         for content in contents:
             link = content.getChild()
@@ -966,7 +966,7 @@ class psnlBahroPoles(ptModifier):
             return 0
         
         ageVault = ptAgeVault()
-        PAL = ageVault.getAgesIOwnFolder()
+        PAL = ageVault.getBookshelfFolder()
         contents = PAL.getChildNodeRefList()
         for content in contents:
             link = content.getChild()
@@ -1079,9 +1079,9 @@ class psnlBahroPoles(ptModifier):
 
     def UpdateToState2(self):
         vault = ptAgeVault()
-        myAges = vault.getAgesIOwnFolder()
-        myAges = myAges.getChildNodeRefList()
-        for ageInfo in myAges:
+        PAL = vault.getBookshelfFolder()
+        contents = PAL.getChildNodeRefList()
+        for ageInfo in contents:
             link = ageInfo.getChild()
             link = link.upcastToAgeLinkNode()
             info = link.getAgeInfo()
