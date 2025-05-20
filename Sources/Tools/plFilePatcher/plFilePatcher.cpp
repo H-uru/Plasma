@@ -115,9 +115,9 @@ void plFilePatcher::IRequestFileSrvInfo()
     uint32_t num = GetGateKeeperSrvHostnames(addrs);
     NetCliGateKeeperStartConnect(addrs, num);
 
-    NetCliGateKeeperFileSrvIpAddressRequest([this](auto result, auto addr) {
+    NetCliGateKeeperFileSrvIpAddressRequest(true, [this](auto result, auto addr) {
         IHandleFileSrvInfo(result, addr);
-    }, true);
+    });
 }
 
 void plFilePatcher::IHandleFileSrvInfo(ENetError result, const ST::string& addr)

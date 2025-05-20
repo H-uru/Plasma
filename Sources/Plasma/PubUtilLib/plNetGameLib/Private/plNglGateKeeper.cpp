@@ -931,8 +931,8 @@ void NetCliGateKeeperPingRequest (
 
 //============================================================================
 void NetCliGateKeeperFileSrvIpAddressRequest (
-    FNetCliGateKeeperFileSrvIpAddressRequestCallback    callback,
-    bool                                                isPatcher
+    bool                                                isPatcher,
+    FNetCliGateKeeperFileSrvIpAddressRequestCallback    callback
 ) {
     FileSrvIpAddressRequestTrans * trans = new FileSrvIpAddressRequestTrans(std::move(callback), isPatcher);
     NetTransSend(trans);

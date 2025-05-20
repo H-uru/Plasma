@@ -389,9 +389,9 @@ void plClientLauncher::InitializeNetCore()
     uint32_t num = GetGateKeeperSrvHostnames(addrs);
 
     NetCliGateKeeperStartConnect(addrs, num);
-    NetCliGateKeeperFileSrvIpAddressRequest([this](auto result, auto addr) {
+    NetCliGateKeeperFileSrvIpAddressRequest(true, [this](auto result, auto addr) {
         IGotFileServIPs(result, addr);
-    }, true);
+    });
 
     // Windows is getting a little unreliable about reporting its own state, so we keep
     // track of whether or not we are active now.

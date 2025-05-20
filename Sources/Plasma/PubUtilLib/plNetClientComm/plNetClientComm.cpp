@@ -798,7 +798,7 @@ void NetCommConnect () {
             }
 
             // request a file server ip address
-            NetCliGateKeeperFileSrvIpAddressRequest(FileSrvIpAddressCallback, false);
+            NetCliGateKeeperFileSrvIpAddressRequest(false, FileSrvIpAddressCallback);
 
             while(!s_hasFileSrvIpAddress && !s_netError) {
                 NetClientUpdate();

@@ -101,8 +101,8 @@ using FNetCliGateKeeperFileSrvIpAddressRequestCallback = std::function<void(
 )>;
 
 void NetCliGateKeeperFileSrvIpAddressRequest (
-    FNetCliGateKeeperFileSrvIpAddressRequestCallback    callback,
-    bool                                                isPatcher
+    bool                                                isPatcher,
+    FNetCliGateKeeperFileSrvIpAddressRequestCallback    callback
 );
 
 
