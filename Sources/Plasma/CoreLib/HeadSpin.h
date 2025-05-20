@@ -74,7 +74,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     typedef HMODULE hsLibraryHndl;
     typedef long HRESULT;
     typedef void* HANDLE;
-#elif HS_BUILD_FOR_MACOS
+#elif HS_BUILD_FOR_APPLE
     typedef void* hsWindowHndl;
     typedef void* hsWindowInst;
     typedef void* hsLibraryHndl;

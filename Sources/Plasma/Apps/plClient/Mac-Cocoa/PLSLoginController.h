@@ -40,22 +40,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#import <Cocoa/Cocoa.h>
-
-#include "plNetClient/plNetClientMgr.h"
-
-#import "PLSLoginController.h"
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class PLSLoginWindowController;
+@interface PLSLoginParameters : NSObject
+@property NSString* username;
+@property NSString* password;
+@property BOOL rememberPassword;
 
-@protocol PLSLoginWindowControllerDelegate <NSObject>
-- (void)loginWindowControllerDidLogin:(PLSLoginWindowController*)sender;
+- (void)load;
+- (void)save;
+- (void)makeCurrent;
+
 @end
 
-@interface PLSLoginWindowController : NSWindowController
-@property(weak) id<PLSLoginWindowControllerDelegate> delegate;
+@interface PLSLoginController : NSObject
+
++ (void)attemptLogin:(void (^)(int))completion;
+
 @end
 
 NS_ASSUME_NONNULL_END
