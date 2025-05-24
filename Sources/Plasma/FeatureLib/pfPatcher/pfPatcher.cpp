@@ -192,6 +192,13 @@ struct pfPatcherWorker : public hsThread
 
     void OnQuit() override;
 
+    void IAuthThingDownloadCB(ENetError result, const plFileName& filename, hsStream* writer);
+    void IGotAuthFileList(ENetError result, const NetCliAuthFileInfo infoArr[], unsigned infoCount);
+    void IHandleManifestDownload(const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount);
+    void IPreloaderManifestDownloadCB(ENetError result, const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount);
+    void IFileManifestDownloadCB(ENetError result, const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount);
+    void IFileThingDownloadCB(ENetError result, const plFileName& filename, pfPatcherStream* stream);
+
     void EndPatch(ENetError result, const ST::string& msg={});
     bool IssueRequest();
     void Run() override;
@@ -304,30 +311,30 @@ public:
 
 // ===================================================
 
-static void IAuthThingDownloadCB(pfPatcherWorker* patcher, ENetError result, const plFileName& filename, hsStream* writer)
+void pfPatcherWorker::IAuthThingDownloadCB(ENetError result, const plFileName& filename, hsStream* writer)
 {
     if (IS_NET_SUCCESS(result)) {
         PatcherLogGreen("\tDownloaded Legacy File '{}'", filename);
-        patcher->IssueRequest();
+        IssueRequest();
 
         // Now, we pass our RAM-backed file to the game code handlers. In the main client,
         // this will trickle down and add a new friend to plStreamSource. This should never
         // happen in any other app...
         writer->Rewind();
-        patcher->WhitelistFile(filename, true, writer);
+        WhitelistFile(filename, true, writer);
     } else {
         PatcherLogRed("\tDownloaded Failed: File '{}'", filename);
-        patcher->EndPatch(result, filename.AsString());
+        EndPatch(result, filename.AsString());
     }
 }
 
-static void IGotAuthFileList(pfPatcherWorker* patcher, ENetError result, const NetCliAuthFileInfo infoArr[], unsigned infoCount)
+void pfPatcherWorker::IGotAuthFileList(ENetError result, const NetCliAuthFileInfo infoArr[], unsigned infoCount)
 {
     if (IS_NET_SUCCESS(result)) {
         // so everything goes directly into the Requests deque because AuthSrv lists
         // don't have any hashes attached. WHY did eap think this was a good idea?!?!
         {
-            hsLockGuard(patcher->fRequestMut);
+            hsLockGuard(fRequestMut);
             for (unsigned i = 0; i < infoCount; ++i) {
                 PatcherLogYellow("\tEnqueuing Legacy File '{}'", infoArr[i].filename);
 
@@ -336,50 +343,50 @@ static void IGotAuthFileList(pfPatcherWorker* patcher, ENetError result, const N
 
                 // We purposefully do NOT Open this stream! This uses a special auth-file constructor that
                 // utilizes a backing hsRAMStream. This will be fed to plStreamSource later...
-                pfPatcherStream* s = new pfPatcherStream(patcher, fn, infoArr[i].filesize);
-                patcher->fRequests.emplace_back(fn.AsString(), pfPatcherWorker::Request::kAuthFile, s);
+                pfPatcherStream* s = new pfPatcherStream(this, fn, infoArr[i].filesize);
+                fRequests.emplace_back(fn.AsString(), Request::kAuthFile, s);
             }
         }
-        patcher->IssueRequest();
+        IssueRequest();
     } else {
         PatcherLogRed("\tSHIT! Some legacy manifest phailed");
-        patcher->EndPatch(result, "SecurePreloader failed");
+        EndPatch(result, "SecurePreloader failed");
     }
 }
 
-static void IHandleManifestDownload(pfPatcherWorker* patcher, const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount)
+void pfPatcherWorker::IHandleManifestDownload(const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount)
 {
     PatcherLogGreen("\tDownloaded Manifest '{}'", group);
     {
-        hsLockGuard(patcher->fFileMut);
+        hsLockGuard(fFileMut);
         for (unsigned i = 0; i < entryCount; ++i)
-            patcher->fQueuedFiles.emplace_back(pfPatcherQueuedFile::Type::kManifestHash, manifest[i]);
-        patcher->fFileSignal.Signal();
+            fQueuedFiles.emplace_back(pfPatcherQueuedFile::Type::kManifestHash, manifest[i]);
+        fFileSignal.Signal();
     }
-    patcher->IssueRequest();
+    IssueRequest();
 }
 
-static void IPreloaderManifestDownloadCB(pfPatcherWorker* patcher, ENetError result, const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount)
+void pfPatcherWorker::IPreloaderManifestDownloadCB(ENetError result, const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount)
 {
     if (IS_NET_SUCCESS(result)) {
-        IHandleManifestDownload(patcher, group, manifest, entryCount);
+        IHandleManifestDownload(group, manifest, entryCount);
     } else {
-        patcher->EnqueuePreloaderLists();
-        patcher->IssueRequest();
+        EnqueuePreloaderLists();
+        IssueRequest();
     }
 }
 
-static void IFileManifestDownloadCB(pfPatcherWorker* patcher, ENetError result, const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount)
+void pfPatcherWorker::IFileManifestDownloadCB(ENetError result, const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount)
 {
     if (IS_NET_SUCCESS(result))
-        IHandleManifestDownload(patcher, group, manifest, entryCount);
+        IHandleManifestDownload(group, manifest, entryCount);
     else {
         PatcherLogRed("\tDownload Failed: Manifest '{}'", group);
-        patcher->EndPatch(result, group);
+        EndPatch(result, group);
     }
 }
 
-static void IFileThingDownloadCB(pfPatcherWorker* patcher, ENetError result, const plFileName& filename, pfPatcherStream* stream)
+void pfPatcherWorker::IFileThingDownloadCB(ENetError result, const plFileName& filename, pfPatcherStream* stream)
 {
     // We need to explicitly close any underlying streams NOW because we
     // might be about to signal the client that this file needs to be acted
@@ -391,24 +398,23 @@ static void IFileThingDownloadCB(pfPatcherWorker* patcher, ENetError result, con
 
     if (IS_NET_SUCCESS(result)) {
         PatcherLogGreen("\tDownloaded File '{}'", stream->GetFileName());
-        patcher->WhitelistFile(stream->GetFileName(), true);
-        if (patcher->fSelfPatch && stream->IsSelfPatch())
-            patcher->fSelfPatch(stream->GetFileName());
-        if (patcher->fRedistUpdateDownloaded && stream->IsRedistUpdate())
-            patcher->fRedistUpdateDownloaded(stream->GetFileName());
+        WhitelistFile(stream->GetFileName(), true);
+        if (fSelfPatch && stream->IsSelfPatch())
+            fSelfPatch(stream->GetFileName());
+        if (fRedistUpdateDownloaded && stream->IsRedistUpdate())
+            fRedistUpdateDownloaded(stream->GetFileName());
 
         // Punt the SFX decompression to the patcher thread (this is the main/draw thread)
         if (stream->RequiresSfxCache()) {
-            hsLockGuard(patcher->fFileMut);
-            patcher->fQueuedFiles.emplace_back(pfPatcherQueuedFile::Type::kSoundDecompress,
-                                               stream->GetFileName(), stream->GetFlags());
-            patcher->fFileSignal.Signal();
+            hsLockGuard(fFileMut);
+            fQueuedFiles.emplace_back(pfPatcherQueuedFile::Type::kSoundDecompress, stream->GetFileName(), stream->GetFlags());
+            fFileSignal.Signal();
         }
-        patcher->IssueRequest();
+        IssueRequest();
     } else {
         PatcherLogRed("\tDownloaded Failed: File '{}'", stream->GetFileName());
         stream->Unlink();
-        patcher->EndPatch(result, filename.AsString());
+        EndPatch(result, filename.AsString());
     }
 
     delete stream;
@@ -484,19 +490,19 @@ bool pfPatcherWorker::IssueRequest()
                 fFileBeginDownload(req.fStream->GetFileName());
 
             NetCliFileDownloadRequest(req.fName, req.fStream, 0, [this, filename = req.fName, stream = req.fStream](auto result) {
-                IFileThingDownloadCB(this, result, filename, stream);
+                IFileThingDownloadCB(result, filename, stream);
             });
             break;
         case Request::kManifest:
             NetCliFileManifestRequest(req.fName.to_utf16().data(), 0, [this, group = req.fName](auto result, auto manifest, auto entryCount) {
-                IFileManifestDownloadCB(this, result, group, manifest, entryCount);
+                IFileManifestDownloadCB(result, group, manifest, entryCount);
             });
             break;
         case Request::kSecurePreloader:
             // so, yeah, this is usually the "SecurePreloader" manifest on the file server...
             // except on legacy servers, this may not exist, so we need to fall back without nuking everything!
             NetCliFileManifestRequest(req.fName.to_utf16().data(), 0, [this, group = req.fName](auto result, auto manifest, auto entryCount) {
-                IPreloaderManifestDownloadCB(this, result, group, manifest, entryCount);
+                IPreloaderManifestDownloadCB(result, group, manifest, entryCount);
             });
             break;
         case Request::kAuthFile:
@@ -506,17 +512,17 @@ bool pfPatcherWorker::IssueRequest()
                 fFileBeginDownload(req.fStream->GetFileName());
 
             NetCliAuthFileRequest(req.fName, req.fStream, [this, filename = req.fName, writer = req.fStream](auto result) {
-                IAuthThingDownloadCB(this, result, filename, writer);
+                IAuthThingDownloadCB(result, filename, writer);
             });
             break;
         case Request::kPythonList:
             NetCliAuthFileListRequest(u"Python", u"pak", [this](auto result, auto infoArr, auto infoCount) {
-                IGotAuthFileList(this, result, infoArr, infoCount);
+                IGotAuthFileList(result, infoArr, infoCount);
             });
             break;
         case Request::kSdlList:
             NetCliAuthFileListRequest(u"SDL", u"sdl", [this](auto result, auto infoArr, auto infoCount) {
-                IGotAuthFileList(this, result, infoArr, infoCount);
+                IGotAuthFileList(result, infoArr, infoCount);
             });
             break;
         DEFAULT_FATAL(req.fType);
