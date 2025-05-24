@@ -548,8 +548,9 @@ static void INetCliAuthAgeRequestCallback (
             ageMcpId,
             s_account.accountUuid,
             s_player->playerInt,
-            INetCliGameJoinAgeRequestCallback,
-            param
+            [param](auto result) {
+                INetCliGameJoinAgeRequestCallback(result, param);
+            }
         );
     }
     else {
@@ -601,7 +602,6 @@ static void INetCliAuthSendFriendInviteCallback (
 //============================================================================
 static void AuthSrvIpAddressCallback (
     ENetError       result,
-    void *          param,
     const ST::string& addr
 ) {
     s_authSrvAddr = addr;
@@ -611,7 +611,6 @@ static void AuthSrvIpAddressCallback (
 //============================================================================
 static void FileSrvIpAddressCallback (
     ENetError       result,
-    void *          param,
     const ST::string& addr
 ) {
     s_fileSrvAddr = addr;
@@ -770,7 +769,7 @@ void NetCommConnect () {
         connectedToKeeper = true;
 
         // request an auth server ip address
-        NetCliGateKeeperAuthSrvIpAddressRequest(AuthSrvIpAddressCallback, nullptr);
+        NetCliGateKeeperAuthSrvIpAddressRequest(AuthSrvIpAddressCallback);
 
         while(!s_hasAuthSrvIpAddress && !s_netError) {
             NetClientUpdate();
@@ -799,7 +798,7 @@ void NetCommConnect () {
             }
 
             // request a file server ip address
-            NetCliGateKeeperFileSrvIpAddressRequest(FileSrvIpAddressCallback, nullptr, false);
+            NetCliGateKeeperFileSrvIpAddressRequest(false, FileSrvIpAddressCallback);
 
             while(!s_hasFileSrvIpAddress && !s_netError) {
                 NetClientUpdate();

@@ -91,7 +91,6 @@ struct CliGmConn : hsRefCnt, AsyncNotifySocketCallbacks {
 //============================================================================
 struct JoinAgeRequestTrans : NetGameTrans {
     FNetCliGameJoinAgeRequestCallback   m_callback;
-    void *                              m_param;
     // sent
     unsigned                            m_ageMcpId;
     plUUID                              m_accountUuid;
@@ -101,8 +100,7 @@ struct JoinAgeRequestTrans : NetGameTrans {
         unsigned                            ageMcpId,
         const plUUID&                       accountUuid,
         unsigned                            playerInt,
-        FNetCliGameJoinAgeRequestCallback   callback,
-        void *                              param
+        FNetCliGameJoinAgeRequestCallback   callback
     );
 
     bool Send() override;
@@ -526,11 +524,9 @@ JoinAgeRequestTrans::JoinAgeRequestTrans (
     unsigned                            ageMcpId,
     const plUUID&                       accountUuid,
     unsigned                            playerInt,
-    FNetCliGameJoinAgeRequestCallback   callback,
-    void *                              param
+    FNetCliGameJoinAgeRequestCallback   callback
 ) : NetGameTrans(kJoinAgeRequestTrans)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 ,   m_ageMcpId(ageMcpId)
 ,   m_accountUuid(accountUuid)
 ,   m_playerInt(playerInt)
@@ -557,10 +553,7 @@ bool JoinAgeRequestTrans::Send () {
 
 //============================================================================
 void JoinAgeRequestTrans::Post () {
-    m_callback(
-        m_result,
-        m_param
-    );
+    m_callback(m_result);
 }
 
 //============================================================================
@@ -757,15 +750,13 @@ void NetCliGameJoinAgeRequest (
     unsigned                            ageMcpId,
     const plUUID&                       accountUuid,
     unsigned                            playerInt,
-    FNetCliGameJoinAgeRequestCallback   callback,
-    void *                              param
+    FNetCliGameJoinAgeRequestCallback   callback
 ) {
     JoinAgeRequestTrans * trans = new JoinAgeRequestTrans(
         ageMcpId,
         accountUuid,
         playerInt,
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
 }
@@ -774,7 +765,7 @@ void NetCliGameJoinAgeRequest (
 void NetCliGameSetRecvBufferHandler (
     FNetCliGameRecvBufferHandler    handler
 ) {
-    s_bufHandler = handler;
+    s_bufHandler = std::move(handler);
 }
 
 //============================================================================
@@ -802,7 +793,7 @@ void NetCliGamePropagateBuffer (
 //============================================================================
 void NetCliGameSetRecvGameMgrMsgHandler(FNetCliGameRecvGameMgrMsgHandler handler)
 {
-    s_gameMgrMsgHandler = handler;
+    s_gameMgrMsgHandler = std::move(handler);
 }
 
 //============================================================================
