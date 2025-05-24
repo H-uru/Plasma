@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLFILE_H
 
 #include <functional>
+#include <vector>
 
 /*****************************************************************************
 *
@@ -100,8 +101,7 @@ struct NetCliFileManifestEntry {
 };
 using FNetCliFileManifestRequestCallback = std::function<void(
     ENetError                       result,
-    const NetCliFileManifestEntry   manifest[],
-    unsigned                        entryCount
+    const std::vector<NetCliFileManifestEntry>& manifest
 )>;
 void NetCliFileManifestRequest (
     const char16_t                      group[], // the group of files you want (empty or nil = all)

@@ -2957,7 +2957,7 @@ bool FileListRequestTrans::Send () {
 
 //============================================================================
 void FileListRequestTrans::Post () {
-    m_callback(m_result, m_fileInfoArray.data(), m_fileInfoArray.size());
+    m_callback(m_result, m_fileInfoArray);
 }
 
 //============================================================================

@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLAUTH_H
 
 #include <functional>
+#include <vector>
 
 #include "pnEncryption/plChecksum.h"
 
@@ -362,8 +363,7 @@ struct NetCliAuthFileInfo {
 };
 using FNetCliAuthFileListRequestCallback = std::function<void(
     ENetError                   result,
-    const NetCliAuthFileInfo    infoArr[],
-    unsigned                    infoCount
+    const std::vector<NetCliAuthFileInfo>& infos
 )>;
 void NetCliAuthFileListRequest (
     const char16_t                      dir[],

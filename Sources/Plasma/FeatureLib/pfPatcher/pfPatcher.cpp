@@ -193,10 +193,10 @@ struct pfPatcherWorker : public hsThread
     void OnQuit() override;
 
     void IAuthThingDownloadCB(ENetError result, const plFileName& filename, hsStream* writer);
-    void IGotAuthFileList(ENetError result, const NetCliAuthFileInfo infoArr[], unsigned infoCount);
-    void IHandleManifestDownload(const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount);
-    void IPreloaderManifestDownloadCB(ENetError result, const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount);
-    void IFileManifestDownloadCB(ENetError result, const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount);
+    void IGotAuthFileList(ENetError result, const std::vector<NetCliAuthFileInfo>& infos);
+    void IHandleManifestDownload(const ST::string& group, const std::vector<NetCliFileManifestEntry>& manifest);
+    void IPreloaderManifestDownloadCB(ENetError result, const ST::string& group, const std::vector<NetCliFileManifestEntry>& manifest);
+    void IFileManifestDownloadCB(ENetError result, const ST::string& group, const std::vector<NetCliFileManifestEntry>& manifest);
     void IFileThingDownloadCB(ENetError result, const plFileName& filename, pfPatcherStream* stream);
 
     void EndPatch(ENetError result, const ST::string& msg={});
@@ -328,22 +328,22 @@ void pfPatcherWorker::IAuthThingDownloadCB(ENetError result, const plFileName& f
     }
 }
 
-void pfPatcherWorker::IGotAuthFileList(ENetError result, const NetCliAuthFileInfo infoArr[], unsigned infoCount)
+void pfPatcherWorker::IGotAuthFileList(ENetError result, const std::vector<NetCliAuthFileInfo>& infos)
 {
     if (IS_NET_SUCCESS(result)) {
         // so everything goes directly into the Requests deque because AuthSrv lists
         // don't have any hashes attached. WHY did eap think this was a good idea?!?!
         {
             hsLockGuard(fRequestMut);
-            for (unsigned i = 0; i < infoCount; ++i) {
-                PatcherLogYellow("\tEnqueuing Legacy File '{}'", infoArr[i].filename);
+            for (const auto& info : infos) {
+                PatcherLogYellow("\tEnqueuing Legacy File '{}'", info.filename);
 
-                plFileName fn = ST::string::from_utf16(infoArr[i].filename);
+                plFileName fn = ST::string::from_utf16(info.filename);
                 plFileSystem::CreateDir(fn.StripFileName());
 
                 // We purposefully do NOT Open this stream! This uses a special auth-file constructor that
                 // utilizes a backing hsRAMStream. This will be fed to plStreamSource later...
-                pfPatcherStream* s = new pfPatcherStream(this, fn, infoArr[i].filesize);
+                pfPatcherStream* s = new pfPatcherStream(this, fn, info.filesize);
                 fRequests.emplace_back(fn.AsString(), Request::kAuthFile, s);
             }
         }
@@ -354,32 +354,32 @@ void pfPatcherWorker::IGotAuthFileList(ENetError result, const NetCliAuthFileInf
     }
 }
 
-void pfPatcherWorker::IHandleManifestDownload(const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount)
+void pfPatcherWorker::IHandleManifestDownload(const ST::string& group, const std::vector<NetCliFileManifestEntry>& manifest)
 {
     PatcherLogGreen("\tDownloaded Manifest '{}'", group);
     {
         hsLockGuard(fFileMut);
-        for (unsigned i = 0; i < entryCount; ++i)
-            fQueuedFiles.emplace_back(pfPatcherQueuedFile::Type::kManifestHash, manifest[i]);
+        for (const auto& entry : manifest)
+            fQueuedFiles.emplace_back(pfPatcherQueuedFile::Type::kManifestHash, entry);
         fFileSignal.Signal();
     }
     IssueRequest();
 }
 
-void pfPatcherWorker::IPreloaderManifestDownloadCB(ENetError result, const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount)
+void pfPatcherWorker::IPreloaderManifestDownloadCB(ENetError result, const ST::string& group, const std::vector<NetCliFileManifestEntry>& manifest)
 {
     if (IS_NET_SUCCESS(result)) {
-        IHandleManifestDownload(group, manifest, entryCount);
+        IHandleManifestDownload(group, manifest);
     } else {
         EnqueuePreloaderLists();
         IssueRequest();
     }
 }
 
-void pfPatcherWorker::IFileManifestDownloadCB(ENetError result, const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount)
+void pfPatcherWorker::IFileManifestDownloadCB(ENetError result, const ST::string& group, const std::vector<NetCliFileManifestEntry>& manifest)
 {
     if (IS_NET_SUCCESS(result))
-        IHandleManifestDownload(group, manifest, entryCount);
+        IHandleManifestDownload(group, manifest);
     else {
         PatcherLogRed("\tDownload Failed: Manifest '{}'", group);
         EndPatch(result, group);
@@ -494,15 +494,15 @@ bool pfPatcherWorker::IssueRequest()
             });
             break;
         case Request::kManifest:
-            NetCliFileManifestRequest(req.fName.to_utf16().data(), 0, [this, group = req.fName](auto result, auto manifest, auto entryCount) {
-                IFileManifestDownloadCB(result, group, manifest, entryCount);
+            NetCliFileManifestRequest(req.fName.to_utf16().data(), 0, [this, group = req.fName](auto result, const auto& manifest) {
+                IFileManifestDownloadCB(result, group, manifest);
             });
             break;
         case Request::kSecurePreloader:
             // so, yeah, this is usually the "SecurePreloader" manifest on the file server...
             // except on legacy servers, this may not exist, so we need to fall back without nuking everything!
-            NetCliFileManifestRequest(req.fName.to_utf16().data(), 0, [this, group = req.fName](auto result, auto manifest, auto entryCount) {
-                IPreloaderManifestDownloadCB(result, group, manifest, entryCount);
+            NetCliFileManifestRequest(req.fName.to_utf16().data(), 0, [this, group = req.fName](auto result, const auto& manifest) {
+                IPreloaderManifestDownloadCB(result, group, manifest);
             });
             break;
         case Request::kAuthFile:
@@ -516,13 +516,13 @@ bool pfPatcherWorker::IssueRequest()
             });
             break;
         case Request::kPythonList:
-            NetCliAuthFileListRequest(u"Python", u"pak", [this](auto result, auto infoArr, auto infoCount) {
-                IGotAuthFileList(result, infoArr, infoCount);
+            NetCliAuthFileListRequest(u"Python", u"pak", [this](auto result, const auto& infos) {
+                IGotAuthFileList(result, infos);
             });
             break;
         case Request::kSdlList:
-            NetCliAuthFileListRequest(u"SDL", u"sdl", [this](auto result, auto infoArr, auto infoCount) {
-                IGotAuthFileList(result, infoArr, infoCount);
+            NetCliAuthFileListRequest(u"SDL", u"sdl", [this](auto result, const auto& infos) {
+                IGotAuthFileList(result, infos);
             });
             break;
         DEFAULT_FATAL(req.fType);

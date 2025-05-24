@@ -867,7 +867,7 @@ bool ManifestRequestTrans::Send () {
 
 //============================================================================
 void ManifestRequestTrans::Post () {
-    m_callback(m_result, m_manifest.data(), m_manifest.size());
+    m_callback(m_result, m_manifest);
 }
 
 // Neither char_traits nor C's string library have a "strnlen" equivalent for
