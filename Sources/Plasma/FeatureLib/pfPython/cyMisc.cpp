@@ -692,7 +692,7 @@ void cyMisc::ExcludeRegionSetNow(pyKey& sender, pyKey& exKey, uint16_t state)
     }
     msg->SetSender(sender.getKey());
     msg->AddReceiver(exKey.getKey());
-    msg->fSynchFlags = plSynchedObject::kSendImmediately;
+    msg->fSynchFlags |= plSynchedObject::kSendImmediately;
     plgDispatch::MsgSend( msg );    // whoosh... off it goes
 }
 
