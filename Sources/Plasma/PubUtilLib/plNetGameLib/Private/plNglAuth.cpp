@@ -535,7 +535,6 @@ struct AccountActivateRequestTrans : NetAuthTrans {
 //============================================================================
 struct FileListRequestTrans : NetAuthTrans {
     FNetCliAuthFileListRequestCallback  m_callback;
-    void *                              m_param;
 
     char16_t                            m_directory[kNetDefaultStringSize];
     char16_t                            m_ext[MAX_EXT];
@@ -544,7 +543,6 @@ struct FileListRequestTrans : NetAuthTrans {
 
     FileListRequestTrans (
         FNetCliAuthFileListRequestCallback  callback,
-        void *                              param,
         const char16_t                      directory[],
         const char16_t                      ext[]
     );
@@ -562,14 +560,12 @@ struct FileListRequestTrans : NetAuthTrans {
 //============================================================================
 struct FileDownloadRequestTrans : NetAuthTrans {
     FNetCliAuthFileRequestCallback  m_callback;
-    void *                          m_param;
 
     plFileName                      m_filename;
     hsStream *                      m_writer;
 
     FileDownloadRequestTrans (
         FNetCliAuthFileRequestCallback  callback,
-        void *                          param,
         const plFileName &              filename,
         hsStream *                      writer
     );
@@ -2933,12 +2929,10 @@ bool AccountActivateRequestTrans::Recv (
 //============================================================================
 FileListRequestTrans::FileListRequestTrans (
     FNetCliAuthFileListRequestCallback  callback,
-    void *                              param,
     const char16_t                      directory[],
     const char16_t                      ext[]
 ) : NetAuthTrans(kFileListRequestTrans)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 {
     StrCopy(m_directory, directory, std::size(m_directory));
     StrCopy(m_ext, ext, std::size(m_ext));
@@ -2963,7 +2957,7 @@ bool FileListRequestTrans::Send () {
 
 //============================================================================
 void FileListRequestTrans::Post () {
-    m_callback(m_result, m_param, m_fileInfoArray.data(), m_fileInfoArray.size());
+    m_callback(m_result, m_fileInfoArray);
 }
 
 //============================================================================
@@ -3046,12 +3040,10 @@ bool FileListRequestTrans::Recv (
 //============================================================================
 FileDownloadRequestTrans::FileDownloadRequestTrans (
     FNetCliAuthFileRequestCallback  callback,
-    void *                          param,
     const plFileName &              filename,
     hsStream *                      writer
 ) : NetAuthTrans(kFileDownloadRequestTrans)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 ,   m_filename(filename)
 ,   m_writer(writer)
 {
@@ -3082,7 +3074,7 @@ bool FileDownloadRequestTrans::Send () {
 
 //============================================================================
 void FileDownloadRequestTrans::Post () {
-    m_callback(m_result, m_param, m_filename, m_writer);
+    m_callback(m_result);
 }
 
 //============================================================================
@@ -5038,12 +5030,10 @@ void NetCliAuthAccountActivateRequest (
 void NetCliAuthFileListRequest (
     const char16_t                      dir[],
     const char16_t                      ext[],
-    FNetCliAuthFileListRequestCallback  callback,
-    void *                              param
+    FNetCliAuthFileListRequestCallback  callback
 ) {
     FileListRequestTrans * trans = new FileListRequestTrans(
-        callback,
-        param,
+        std::move(callback),
         dir,
         ext
     );
@@ -5054,12 +5044,10 @@ void NetCliAuthFileListRequest (
 void NetCliAuthFileRequest (
     const plFileName &              filename,
     hsStream *                      writer,
-    FNetCliAuthFileRequestCallback  callback,
-    void *                          param
+    FNetCliAuthFileRequestCallback  callback
 ) {
     FileDownloadRequestTrans * trans = new FileDownloadRequestTrans(
-        callback,
-        param,
+        std::move(callback),
         filename,
         writer
     );

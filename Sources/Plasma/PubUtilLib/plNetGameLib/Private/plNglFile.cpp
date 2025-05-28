@@ -137,14 +137,10 @@ struct CliFileConn : hsRefCnt, AsyncNotifySocketCallbacks {
 //============================================================================
 struct BuildIdRequestTrans : NetFileTrans {
     FNetCliFileBuildIdRequestCallback   m_callback;
-    void *                              m_param;
 
     unsigned                            m_buildId;
-    
-    BuildIdRequestTrans (
-        FNetCliFileBuildIdRequestCallback   callback,
-        void *                              param
-    );
+
+    BuildIdRequestTrans(FNetCliFileBuildIdRequestCallback callback);
 
     bool Send() override;
     void Post() override;
@@ -159,7 +155,6 @@ struct BuildIdRequestTrans : NetFileTrans {
 //============================================================================
 struct ManifestRequestTrans : NetFileTrans {
     FNetCliFileManifestRequestCallback  m_callback;
-    void *                              m_param;
     char16_t                            m_group[kNetDefaultStringSize];
     unsigned                            m_buildId;
 
@@ -168,7 +163,6 @@ struct ManifestRequestTrans : NetFileTrans {
 
     ManifestRequestTrans (
         FNetCliFileManifestRequestCallback  callback,
-        void *                              param,
         const char16_t                      group[],
         unsigned                            buildId
     );
@@ -186,7 +180,6 @@ struct ManifestRequestTrans : NetFileTrans {
 //============================================================================
 struct DownloadRequestTrans : NetFileTrans {
     FNetCliFileDownloadRequestCallback  m_callback;
-    void *                              m_param;
 
     plFileName                          m_filename;
     hsStream *                          m_writer;
@@ -196,7 +189,6 @@ struct DownloadRequestTrans : NetFileTrans {
 
     DownloadRequestTrans (
         FNetCliFileDownloadRequestCallback  callback,
-        void *                              param,
         const plFileName &                  filename,
         hsStream *                          writer,
         unsigned                            buildId
@@ -247,7 +239,7 @@ static std::atomic<long>            s_perf[kNumPerf];
 static unsigned                     s_connectBuildId;
 static unsigned                     s_serverType;
 
-static FNetCliFileBuildIdUpdateCallback s_buildIdCallback = nullptr;
+static FNetCliFileBuildIdUpdateCallback s_buildIdCallback;
 
 const unsigned kMinValidConnectionMs                = 25 * 1000;
 
@@ -785,10 +777,9 @@ bool CliFileConn::Recv_FileDownloadReply (
 ***/
 
 //============================================================================
-BuildIdRequestTrans::BuildIdRequestTrans(
-        FNetCliFileBuildIdRequestCallback callback, void* param)
+BuildIdRequestTrans::BuildIdRequestTrans(FNetCliFileBuildIdRequestCallback callback)
     : NetFileTrans(kBuildIdRequestTrans),
-      m_callback(callback), m_param(param), m_buildId()
+      m_callback(std::move(callback)), m_buildId()
 { }
 
 //============================================================================
@@ -808,7 +799,7 @@ bool BuildIdRequestTrans::Send () {
 
 //============================================================================
 void BuildIdRequestTrans::Post () {
-    m_callback(m_result, m_param, m_buildId);
+    m_callback(m_result, m_buildId);
 }
 
 //============================================================================
@@ -844,12 +835,10 @@ bool BuildIdRequestTrans::Recv (
 //============================================================================
 ManifestRequestTrans::ManifestRequestTrans (
     FNetCliFileManifestRequestCallback  callback,
-    void *                              param,
     const char16_t                      group[],
     unsigned                            buildId
 ) : NetFileTrans(kManifestRequestTrans)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 ,   m_numEntriesReceived(0)
 ,   m_buildId(buildId)
 {
@@ -878,7 +867,7 @@ bool ManifestRequestTrans::Send () {
 
 //============================================================================
 void ManifestRequestTrans::Post () {
-    m_callback(m_result, m_param, m_group, m_manifest.data(), m_manifest.size());
+    m_callback(m_result, m_manifest);
 }
 
 // Neither char_traits nor C's string library have a "strnlen" equivalent for
@@ -1080,13 +1069,11 @@ bool ManifestRequestTrans::Recv (
 //============================================================================
 DownloadRequestTrans::DownloadRequestTrans (
     FNetCliFileDownloadRequestCallback  callback,
-    void *                              param,
     const plFileName &                  filename,
     hsStream *                          writer,
     unsigned                            buildId
 ) : NetFileTrans(kDownloadRequestTrans)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 ,   m_filename(filename)
 ,   m_writer(writer)
 ,   m_totalBytesReceived(0)
@@ -1117,7 +1104,7 @@ bool DownloadRequestTrans::Send () {
 
 //============================================================================
 void DownloadRequestTrans::Post () {
-    m_callback(m_result, m_param, m_filename, m_writer);
+    m_callback(m_result);
 }
 
 //============================================================================
@@ -1325,32 +1312,25 @@ void NetCliFileDisconnect () {
 }
 
 //============================================================================
-void NetCliFileBuildIdRequest (
-    FNetCliFileBuildIdRequestCallback   callback,
-    void *                              param
-) {
-    BuildIdRequestTrans * trans = new BuildIdRequestTrans(
-        callback,
-        param
-    );
+void NetCliFileBuildIdRequest(FNetCliFileBuildIdRequestCallback callback)
+{
+    BuildIdRequestTrans* trans = new BuildIdRequestTrans(std::move(callback));
     NetTransSend(trans);
 }
 
 //============================================================================
 void NetCliFileRegisterBuildIdUpdate (FNetCliFileBuildIdUpdateCallback callback) {
-    s_buildIdCallback = callback;
+    s_buildIdCallback = std::move(callback);
 }
 
 //============================================================================
 void NetCliFileManifestRequest (
-    FNetCliFileManifestRequestCallback  callback,
-    void *                              param,
     const char16_t                      group[],
-    unsigned                            buildId /* = 0 */
+    unsigned                            buildId,
+    FNetCliFileManifestRequestCallback  callback
 ) {
     ManifestRequestTrans * trans = new ManifestRequestTrans(
-        callback,
-        param,
+        std::move(callback),
         group,
         buildId
     );
@@ -1361,13 +1341,11 @@ void NetCliFileManifestRequest (
 void NetCliFileDownloadRequest (
     const plFileName &                  filename,
     hsStream *                          writer,
-    FNetCliFileDownloadRequestCallback  callback,
-    void *                              param,
-    unsigned                            buildId /* = 0 */
+    unsigned                            buildId,
+    FNetCliFileDownloadRequestCallback  callback
 ) {
     DownloadRequestTrans * trans = new DownloadRequestTrans(
-        callback,
-        param,
+        std::move(callback),
         filename,
         writer,
         buildId
