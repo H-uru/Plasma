@@ -114,12 +114,12 @@ struct VaultDownloadTrans {
 
     static void VaultNodeFetched (
         VaultDownloadTrans* trans,
-        ENetError           result,
+        ENetError           res,
         NetVaultNode *      node
     );
     static void VaultNodeRefsFetched (
         VaultDownloadTrans* trans,
-        ENetError           result,
+        ENetError           res,
         NetVaultNodeRef *   refs,
         unsigned            refCount
     );
@@ -160,12 +160,12 @@ struct AddChildNodeFetchTrans {
 
     static void VaultNodeFetched (
         AddChildNodeFetchTrans* trans,
-        ENetError           result,
+        ENetError           res,
         NetVaultNode *      node
     );
     static void VaultNodeRefsFetched (
         AddChildNodeFetchTrans* trans,
-        ENetError           result,
+        ENetError           res,
         NetVaultNodeRef *   refs,
         unsigned            refCount
     );
@@ -654,13 +654,13 @@ static hsRef<RelVaultNode> GetChildPlayerInfoListNode (
 //============================================================================
 void VaultDownloadTrans::VaultNodeFetched (
     VaultDownloadTrans* trans,
-    ENetError           result,
+    ENetError           res,
     NetVaultNode *      node
 ) {
-    ::VaultNodeFetched(result, node);
+    ::VaultNodeFetched(res, node);
 
-    if (IS_NET_ERROR(result)) {
-        trans->result = result;
+    if (IS_NET_ERROR(res)) {
+        trans->result = res;
         //s_log->AddLine("Error fetching node...most likely trying to fetch a nodeid of 0");
     }
     
@@ -691,13 +691,13 @@ void VaultDownloadTrans::VaultNodeFetched (
 //============================================================================
 void VaultDownloadTrans::VaultNodeRefsFetched (
     VaultDownloadTrans* trans,
-    ENetError           result,
+    ENetError           res,
     NetVaultNodeRef *   refs,
     unsigned            refCount
 ) {
-    if (IS_NET_ERROR(result)) {
-        s_log->AddLineF("VaultNodeRefsFetched failed: {} ({})", result, NetErrorToString(result));
-        trans->result       = result;
+    if (IS_NET_ERROR(res)) {
+        s_log->AddLineF("VaultNodeRefsFetched failed: {} ({})", res, NetErrorToString(res));
+        trans->result       = res;
         trans->nodesLeft    = 0;
     }
     else {
@@ -746,12 +746,12 @@ void VaultDownloadTrans::VaultNodeRefsFetched (
 //============================================================================
 void AddChildNodeFetchTrans::VaultNodeRefsFetched (
     AddChildNodeFetchTrans* trans,
-    ENetError           result,
+    ENetError           res,
     NetVaultNodeRef *   refs,
     unsigned            refCount
 ) {
-    if (IS_NET_ERROR(result)) {
-        trans->result       = result;
+    if (IS_NET_ERROR(res)) {
+        trans->result       = res;
     }
     else {
         unsigned incFetchCount = 0;
@@ -780,13 +780,13 @@ void AddChildNodeFetchTrans::VaultNodeRefsFetched (
 //============================================================================
 void AddChildNodeFetchTrans::VaultNodeFetched (
     AddChildNodeFetchTrans* trans,
-    ENetError           result,
+    ENetError           res,
     NetVaultNode *      node
 ) {
-    ::VaultNodeFetched(result, node);
+    ::VaultNodeFetched(res, node);
 
-    if (IS_NET_ERROR(result))
-        trans->result = result;
+    if (IS_NET_ERROR(res))
+        trans->result = res;
 
     if (!(--trans->opCount)) {
         if (trans->callback)
