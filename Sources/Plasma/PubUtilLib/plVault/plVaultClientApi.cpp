@@ -112,13 +112,11 @@ struct VaultDownloadTrans {
     virtual ~VaultDownloadTrans() = default;
 
 
-    static void VaultNodeFetched (
-        VaultDownloadTrans* trans,
+    void VaultNodeFetched(
         ENetError           res,
         NetVaultNode *      node
     );
-    static void VaultNodeRefsFetched (
-        VaultDownloadTrans* trans,
+    void VaultNodeRefsFetched(
         ENetError           res,
         NetVaultNodeRef *   refs,
         unsigned            refCount
@@ -158,13 +156,11 @@ struct AddChildNodeFetchTrans {
     AddChildNodeFetchTrans(FVaultAddChildNodeCallback _callback, void * _param)
         : callback(_callback), cbParam(_param), result(kNetSuccess), opCount() { }
 
-    static void VaultNodeFetched (
-        AddChildNodeFetchTrans* trans,
+    void VaultNodeFetched(
         ENetError           res,
         NetVaultNode *      node
     );
-    static void VaultNodeRefsFetched (
-        AddChildNodeFetchTrans* trans,
+    void VaultNodeRefsFetched(
         ENetError           res,
         NetVaultNodeRef *   refs,
         unsigned            refCount
@@ -653,86 +649,82 @@ static hsRef<RelVaultNode> GetChildPlayerInfoListNode (
 
 //============================================================================
 void VaultDownloadTrans::VaultNodeFetched (
-    VaultDownloadTrans* trans,
     ENetError           res,
     NetVaultNode *      node
 ) {
     ::VaultNodeFetched(res, node);
 
     if (IS_NET_ERROR(res)) {
-        trans->result = res;
+        result = res;
         //s_log->AddLine("Error fetching node...most likely trying to fetch a nodeid of 0");
     }
-    
-    --trans->nodesLeft;
-    //s_log->AddLineF("(Download) {} of {} nodes fetched", trans->nodeCount - trans->nodesLeft, trans->nodeCount);
-    
-    if (trans->progressCallback) {
-        trans->progressCallback(
-            trans->nodeCount,
-            trans->nodeCount - trans->nodesLeft,
-            trans->cbProgressParam
+
+    --nodesLeft;
+    //s_log->AddLineF("(Download) {} of {} nodes fetched", nodeCount - nodesLeft, nodeCount);
+
+    if (progressCallback) {
+        progressCallback(
+            nodeCount,
+            nodeCount - nodesLeft,
+            cbProgressParam
         );
     }
-    
-    if (!trans->nodesLeft) {
-        VaultDump(trans->tag, trans->vaultId);
 
-        if (trans->callback)
-            trans->callback(
-                trans->result,
-                trans->cbParam
+    if (!nodesLeft) {
+        VaultDump(tag, vaultId);
+
+        if (callback)
+            callback(
+                result,
+                cbParam
             );
 
-        delete trans;
+        delete this;
     }
 }
 
 //============================================================================
 void VaultDownloadTrans::VaultNodeRefsFetched (
-    VaultDownloadTrans* trans,
     ENetError           res,
     NetVaultNodeRef *   refs,
     unsigned            refCount
 ) {
     if (IS_NET_ERROR(res)) {
         s_log->AddLineF("VaultNodeRefsFetched failed: {} ({})", res, NetErrorToString(res));
-        trans->result       = res;
-        trans->nodesLeft    = 0;
-    }
-    else {
+        result = res;
+        nodesLeft = 0;
+    } else {
         if (refCount) {
             FetchNodesFromRefs(
                 refs,
                 refCount,
-                [trans](auto result, auto node) {
-                    VaultDownloadTrans::VaultNodeFetched(trans, result, node);
+                [this](auto result, auto node) {
+                    VaultNodeFetched(result, node);
                 },
-                &trans->nodeCount
+                &nodeCount
             );
-            trans->nodesLeft = trans->nodeCount;
-        }
-        else {
+            nodesLeft = nodeCount;
+        } else {
             // root node has no child heirarchy? Make sure we still d/l the root node if necessary.
-            auto rootNodeIt = s_nodes.find(trans->vaultId);
+            auto rootNodeIt = s_nodes.find(vaultId);
             if (rootNodeIt == s_nodes.end() || rootNodeIt->second->GetNodeType() == 0) {
-                NetCliAuthVaultNodeFetch(trans->vaultId, [trans](auto result, auto node) {
-                    VaultDownloadTrans::VaultNodeFetched(trans, result, node);
+                NetCliAuthVaultNodeFetch(vaultId, [this](auto result, auto node) {
+                    VaultNodeFetched(result, node);
                 });
-                trans->nodesLeft = 1;
+                nodesLeft = 1;
             }
         }
     }
 
     // Make the callback now if there are no nodes to fetch, or if error
-    if (!trans->nodesLeft) {
-        if (trans->callback)
-            trans->callback(
-                trans->result,
-                trans->cbParam
+    if (!nodesLeft) {
+        if (callback)
+            callback(
+                result,
+                cbParam
             );
 
-        delete trans;
+        delete this;
     }
 }
 
@@ -745,56 +737,53 @@ void VaultDownloadTrans::VaultNodeRefsFetched (
 
 //============================================================================
 void AddChildNodeFetchTrans::VaultNodeRefsFetched (
-    AddChildNodeFetchTrans* trans,
     ENetError           res,
     NetVaultNodeRef *   refs,
     unsigned            refCount
 ) {
     if (IS_NET_ERROR(res)) {
-        trans->result       = res;
-    }
-    else {
+        result = res;
+    } else {
         unsigned incFetchCount = 0;
         FetchNodesFromRefs(
             refs,
             refCount,
-            [trans](auto result, auto node) {
-                AddChildNodeFetchTrans::VaultNodeFetched(trans, result, node);
+            [this](auto result, auto node) {
+                VaultNodeFetched(result, node);
             },
             &incFetchCount
         );
-        trans->opCount += incFetchCount;
+        opCount += incFetchCount;
     }
 
     // Make the callback now if there are no nodes to fetch, or if error
-    if (!(--trans->opCount)) {
-        if (trans->callback)
-            trans->callback(
-                trans->result,
-                trans->cbParam
+    if (!(--opCount)) {
+        if (callback)
+            callback(
+                result,
+                cbParam
             );
-        delete trans;
+        delete this;
     }
 }
 
 //============================================================================
 void AddChildNodeFetchTrans::VaultNodeFetched (
-    AddChildNodeFetchTrans* trans,
     ENetError           res,
     NetVaultNode *      node
 ) {
     ::VaultNodeFetched(res, node);
 
     if (IS_NET_ERROR(res))
-        trans->result = res;
+        result = res;
 
-    if (!(--trans->opCount)) {
-        if (trans->callback)
-            trans->callback(
-                trans->result,
-                trans->cbParam
+    if (!(--opCount)) {
+        if (callback)
+            callback(
+                result,
+                cbParam
             );
-        delete trans;
+        delete this;
     }
 }
 
@@ -1423,21 +1412,21 @@ void VaultAddChildNode (
                 if (!childNode->GetNodeType()) {
                     ++trans->opCount;
                     NetCliAuthVaultNodeFetch(childId, [trans](auto result, auto node) {
-                        AddChildNodeFetchTrans::VaultNodeFetched(trans, result, node);
+                        trans->VaultNodeFetched(result, node);
                     });
                     ++trans->opCount;
                     NetCliAuthVaultFetchNodeRefs(childId, [trans](auto result, auto refs, auto refCount) {
-                        AddChildNodeFetchTrans::VaultNodeRefsFetched(trans, result, refs, refCount);
+                        trans->VaultNodeRefsFetched(result, refs, refCount);
                     });
                 }
                 if (!parentNode->GetNodeType()) {
                     ++trans->opCount;
                     NetCliAuthVaultNodeFetch(parentId, [trans](auto result, auto node) {
-                        AddChildNodeFetchTrans::VaultNodeFetched(trans, result, node);
+                        trans->VaultNodeFetched(result, node);
                     });
                     ++trans->opCount;
                     NetCliAuthVaultFetchNodeRefs(parentId, [trans](auto result, auto refs, auto refCount) {
-                        AddChildNodeFetchTrans::VaultNodeRefsFetched(trans, result, refs, refCount);
+                        trans->VaultNodeRefsFetched(result, refs, refCount);
                     });
                 }
             }
@@ -3895,7 +3884,7 @@ void VaultDownload (
         progressCallback, cbProgressParam, vaultId);
 
     NetCliAuthVaultFetchNodeRefs(vaultId, [trans](auto result, auto refs, auto refCount) {
-        VaultDownloadTrans::VaultNodeRefsFetched(trans, result, refs, refCount);
+        trans->VaultNodeRefsFetched(result, refs, refCount);
     });
 }
 
@@ -3912,7 +3901,7 @@ void VaultDownloadNoCallbacks (
         callback, cbParam, progressCallback, cbProgressParam, vaultId);
 
     NetCliAuthVaultFetchNodeRefs(vaultId, [trans](auto result, auto refs, auto refCount) {
-        VaultDownloadTrans::VaultNodeRefsFetched(trans, result, refs, refCount);
+        trans->VaultNodeRefsFetched(result, refs, refCount);
     });
 }
 
