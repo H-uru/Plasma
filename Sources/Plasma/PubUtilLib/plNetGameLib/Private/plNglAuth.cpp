@@ -678,14 +678,12 @@ struct VaultFetchNodeRefsTrans : NetAuthTrans {
 
     unsigned                        m_nodeId;
     FNetCliAuthVaultNodeRefsFetched m_callback;
-    void *                          m_param;
 
     std::vector<NetVaultNodeRef>    m_refs;
 
     VaultFetchNodeRefsTrans (
         unsigned                        nodeId,
-        FNetCliAuthVaultNodeRefsFetched callback,
-        void *                          param
+        FNetCliAuthVaultNodeRefsFetched callback
     );
 
     bool Send() override;
@@ -701,7 +699,6 @@ struct VaultFetchNodeRefsTrans : NetAuthTrans {
 //============================================================================
 struct VaultInitAgeTrans : NetAuthTrans {
     FNetCliAuthAgeInitCallback  m_callback;
-    void *                      m_param;
 
     plUUID                      m_ageInstId;
     plUUID                      m_parentAgeInstId;
@@ -716,8 +713,7 @@ struct VaultInitAgeTrans : NetAuthTrans {
     unsigned                    m_ageInfoId;
 
     VaultInitAgeTrans(
-        FNetCliAuthAgeInitCallback  callback,           // optional
-        void *                      param,              // optional
+        FNetCliAuthAgeInitCallback  callback,
         const plUUID&               ageInstId,          // optional. is used in match
         const plUUID&               parentAgeInstId,    // optional. is used in match
         const ST::string&           ageFilename,        // optional. is used in match
@@ -744,14 +740,12 @@ struct VaultFetchNodeTrans : NetAuthTrans {
 
     unsigned                    m_nodeId;
     FNetCliAuthVaultNodeFetched m_callback;
-    void *                      m_param;
-    
+
     hsRef<NetVaultNode>         m_node;
     
     VaultFetchNodeTrans (
         unsigned                    nodeId,
-        FNetCliAuthVaultNodeFetched callback,
-        void *                      param
+        FNetCliAuthVaultNodeFetched callback
     );
     
     bool Send() override;
@@ -770,12 +764,10 @@ struct VaultFindNodeTrans : NetAuthTrans {
     std::vector<uint8_t>        m_buffer;
     std::vector<unsigned>       m_nodeIds;
     FNetCliAuthVaultNodeFind    m_callback;
-    void *                      m_param;
 
     VaultFindNodeTrans (
         NetVaultNode *              templateNode,
-        FNetCliAuthVaultNodeFind    callback,
-        void *                      param
+        FNetCliAuthVaultNodeFind    callback
     );
 
     
@@ -794,13 +786,11 @@ struct VaultCreateNodeTrans : NetAuthTrans {
 
     std::vector<uint8_t>            m_buffer;
     FNetCliAuthVaultNodeCreated     m_callback;
-    void *                          m_param;
     unsigned                        m_nodeId;
 
     VaultCreateNodeTrans (
         NetVaultNode *                  templateNode,
-        FNetCliAuthVaultNodeCreated     callback,
-        void *                          param
+        FNetCliAuthVaultNodeCreated     callback
     );
     
     bool Send() override;
@@ -820,15 +810,13 @@ struct VaultSaveNodeTrans : NetAuthTrans {
     plUUID                              m_revisionId;
     std::vector<uint8_t>                m_buffer;
     FNetCliAuthVaultNodeSaveCallback    m_callback;
-    void *                              m_param;
 
     VaultSaveNodeTrans (
         unsigned                            nodeId,
         const plUUID&                       revisionId,
         unsigned                            dataCount,
         const void *                        data,
-        FNetCliAuthVaultNodeSaveCallback    callback,
-        void *                              param
+        FNetCliAuthVaultNodeSaveCallback    callback
     );
     
     bool Send() override;
@@ -848,14 +836,12 @@ struct VaultAddNodeTrans : NetAuthTrans {
     unsigned                        m_childId;
     unsigned                        m_ownerId;
     FNetCliAuthVaultNodeAddCallback m_callback;
-    void *                          m_param;
-    
+
     VaultAddNodeTrans (
         unsigned                        parentId,
         unsigned                        childId,
         unsigned                        ownerId,
-        FNetCliAuthVaultNodeAddCallback callback,
-        void *                          param
+        FNetCliAuthVaultNodeAddCallback callback
     );
     
     bool Send() override;
@@ -874,13 +860,11 @@ struct VaultRemoveNodeTrans : NetAuthTrans {
     unsigned                            m_parentId;
     unsigned                            m_childId;
     FNetCliAuthVaultNodeRemoveCallback  m_callback;
-    void *                              m_param;
 
     VaultRemoveNodeTrans (
         unsigned                            parentId,
         unsigned                            childId,
-        FNetCliAuthVaultNodeRemoveCallback  callback,
-        void *                              param
+        FNetCliAuthVaultNodeRemoveCallback  callback
     );
     
     bool Send() override;
@@ -3222,12 +3206,10 @@ void VaultNodeDeletedTrans::Post () {
 //============================================================================
 VaultFetchNodeRefsTrans::VaultFetchNodeRefsTrans (
     unsigned                        nodeId,
-    FNetCliAuthVaultNodeRefsFetched callback,
-    void *                          param
+    FNetCliAuthVaultNodeRefsFetched callback
 ) : NetAuthTrans(kVaultFetchNodeRefsTrans)
 ,   m_nodeId(nodeId)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 {
 }
 
@@ -3249,13 +3231,7 @@ bool VaultFetchNodeRefsTrans::Send () {
 
 //============================================================================
 void VaultFetchNodeRefsTrans::Post () {
-    if (m_callback)
-        m_callback(
-            m_result,
-            m_param,
-            m_refs.data(),
-            m_refs.size()
-        );
+    m_callback(m_result, m_refs.data(), m_refs.size());
 }
 
 //============================================================================
@@ -3283,8 +3259,7 @@ bool VaultFetchNodeRefsTrans::Recv (
 
 //============================================================================
 VaultInitAgeTrans::VaultInitAgeTrans (
-    FNetCliAuthAgeInitCallback  callback,           // optional
-    void *                      param,              // optional
+    FNetCliAuthAgeInitCallback  callback,
     const plUUID&               ageInstId,          // optional. is used in match
     const plUUID&               parentAgeInstId,    // optional. is used in match
     const ST::string&           ageFilename,      // optional. is used in match
@@ -3294,8 +3269,7 @@ VaultInitAgeTrans::VaultInitAgeTrans (
     unsigned                    ageSequenceNumber,  // optional. not used in match
     unsigned                    ageLanguage         // optional. not used in match
 ) : NetAuthTrans(kVaultInitAgeTrans)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 ,   m_ageInstId(ageInstId)
 ,   m_parentAgeInstId(parentAgeInstId)
 ,   m_ageFilename(ageFilename)
@@ -3343,13 +3317,7 @@ bool VaultInitAgeTrans::Send () {
 
 //============================================================================
 void VaultInitAgeTrans::Post () {
-    if (m_callback)
-        m_callback(
-            m_result,
-            m_param,
-            m_ageId,
-            m_ageInfoId
-        );
+    m_callback(m_result, m_ageId, m_ageInfoId);
 }
 
 //============================================================================
@@ -3378,12 +3346,10 @@ bool VaultInitAgeTrans::Recv (
 //============================================================================
 VaultFetchNodeTrans::VaultFetchNodeTrans (
     unsigned                    nodeId,
-    FNetCliAuthVaultNodeFetched callback,
-    void *                      param
+    FNetCliAuthVaultNodeFetched callback
 ) : NetAuthTrans(kVaultFetchNodeTrans)
 ,   m_nodeId(nodeId)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 ,   m_node()
 {
 }
@@ -3406,11 +3372,7 @@ bool VaultFetchNodeTrans::Send () {
 
 //============================================================================
 void VaultFetchNodeTrans::Post () {
-    m_callback(
-        m_result,
-        m_param,
-        m_node.Get()
-    );
+    m_callback(m_result, m_node.Get());
 }
 
 //============================================================================
@@ -3446,11 +3408,9 @@ bool VaultFetchNodeTrans::Recv (
 //============================================================================
 VaultFindNodeTrans::VaultFindNodeTrans (
     NetVaultNode *              templateNode,
-    FNetCliAuthVaultNodeFind    callback,
-    void *                      param
+    FNetCliAuthVaultNodeFind    callback
 ) : NetAuthTrans(kVaultFindNodeTrans)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 {
     templateNode->Write(&m_buffer, 0);
 }
@@ -3472,12 +3432,7 @@ bool VaultFindNodeTrans::Send () {
 
 //============================================================================
 void VaultFindNodeTrans::Post () {
-    m_callback(
-        m_result,
-        m_param,
-        m_nodeIds.size(),
-        m_nodeIds.data()
-    );
+    m_callback(m_result, m_nodeIds.size(), m_nodeIds.data());
 }
 
 //============================================================================
@@ -3508,11 +3463,9 @@ bool VaultFindNodeTrans::Recv (
 //============================================================================
 VaultCreateNodeTrans::VaultCreateNodeTrans (
     NetVaultNode *                  templateNode,
-    FNetCliAuthVaultNodeCreated     callback,
-    void *                          param
+    FNetCliAuthVaultNodeCreated     callback
 ) : NetAuthTrans(kVaultCreateNodeTrans)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 ,   m_nodeId(0)
 {
     templateNode->Write(&m_buffer, 0);
@@ -3535,11 +3488,7 @@ bool VaultCreateNodeTrans::Send () {
 
 //============================================================================
 void VaultCreateNodeTrans::Post () {
-    m_callback(
-        m_result,
-        m_param,
-        m_nodeId
-    );
+    m_callback(m_result, m_nodeId);
 }
 
 //============================================================================
@@ -3570,14 +3519,12 @@ VaultSaveNodeTrans::VaultSaveNodeTrans (
     const plUUID&                       revisionId,
     unsigned                            dataCount,
     const void *                        data,
-    FNetCliAuthVaultNodeSaveCallback    callback,
-    void *                              param
+    FNetCliAuthVaultNodeSaveCallback    callback
 ) : NetAuthTrans(kVaultSaveNodeTrans)
 ,   m_nodeId(nodeId)
 ,   m_revisionId(revisionId)
 ,   m_buffer((const uint8_t *)data, (const uint8_t *)data + dataCount)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 {
 }
 
@@ -3602,12 +3549,7 @@ bool VaultSaveNodeTrans::Send () {
 
 //============================================================================
 void VaultSaveNodeTrans::Post () {
-    if (m_callback) {
-        m_callback(
-            m_result,
-            m_param
-        );
-    }
+    m_callback(m_result);
 }
 
 //============================================================================
@@ -3634,14 +3576,12 @@ VaultAddNodeTrans::VaultAddNodeTrans (
     unsigned                        parentId,
     unsigned                        childId,
     unsigned                        ownerId,
-    FNetCliAuthVaultNodeAddCallback callback,
-    void *                          param
+    FNetCliAuthVaultNodeAddCallback callback
 ) : NetAuthTrans(kVaultAddNodeTrans)
 ,   m_parentId(parentId)
 ,   m_childId(childId)
 ,   m_ownerId(ownerId)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 {
 }
 
@@ -3665,12 +3605,7 @@ bool VaultAddNodeTrans::Send () {
 
 //============================================================================
 void VaultAddNodeTrans::Post () {
-    if (m_callback) {
-        m_callback(
-            m_result,
-            m_param
-        );
-    }
+    m_callback(m_result);
 }
 
 //============================================================================
@@ -3696,13 +3631,11 @@ bool VaultAddNodeTrans::Recv (
 VaultRemoveNodeTrans::VaultRemoveNodeTrans (
     unsigned                            parentId,
     unsigned                            childId,
-    FNetCliAuthVaultNodeRemoveCallback  callback,
-    void *                              param
+    FNetCliAuthVaultNodeRemoveCallback  callback
 ) : NetAuthTrans(kVaultRemoveNodeTrans)
 ,   m_parentId(parentId)
 ,   m_childId(childId)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 {
 }
 
@@ -3725,12 +3658,7 @@ bool VaultRemoveNodeTrans::Send () {
 
 //============================================================================
 void VaultRemoveNodeTrans::Post () {
-    if (m_callback) {
-        m_callback(
-            m_result,
-            m_param
-        );
-    }
+    m_callback(m_result);
 }
 
 //============================================================================
@@ -5058,40 +4986,38 @@ void NetCliAuthFileRequest (
 void NetCliAuthVaultSetRecvNodeChangedHandler (
     FNetCliAuthVaultNodeChanged handler
 ) {
-    s_vaultNodeChangedHandler   = handler;
+    s_vaultNodeChangedHandler = std::move(handler);
 }
 
 //============================================================================
 void NetCliAuthVaultSetRecvNodeAddedHandler (
     FNetCliAuthVaultNodeAdded   handler
 ) {
-    s_vaultNodeAddedHandler     = handler;
+    s_vaultNodeAddedHandler = std::move(handler);
 }
 
 //============================================================================
 void NetCliAuthVaultSetRecvNodeRemovedHandler (
     FNetCliAuthVaultNodeRemoved handler
 ) {
-    s_vaultNodeRemovedHandler   = handler;
+    s_vaultNodeRemovedHandler = std::move(handler);
 }
 
 //============================================================================
 void NetCliAuthVaultSetRecvNodeDeletedHandler (
     FNetCliAuthVaultNodeDeleted handler
 ) {
-    s_vaultNodeDeletedHandler   = handler;
+    s_vaultNodeDeletedHandler = std::move(handler);
 }
 
 //============================================================================
 void NetCliAuthVaultNodeCreate (
     NetVaultNode *              templateNode,
-    FNetCliAuthVaultNodeCreated callback,
-    void *                      param
+    FNetCliAuthVaultNodeCreated callback
 ) {
     VaultCreateNodeTrans * trans = new VaultCreateNodeTrans(
         templateNode,
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
 }
@@ -5099,13 +5025,11 @@ void NetCliAuthVaultNodeCreate (
 //============================================================================
 void NetCliAuthVaultNodeFetch (
     unsigned                    nodeId,
-    FNetCliAuthVaultNodeFetched callback,
-    void *                      param
+    FNetCliAuthVaultNodeFetched callback
 ) {
     VaultFetchNodeTrans * trans = new VaultFetchNodeTrans(
         nodeId,
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
 }
@@ -5113,13 +5037,11 @@ void NetCliAuthVaultNodeFetch (
 //============================================================================
 void NetCliAuthVaultNodeFind (
     NetVaultNode *              templateNode,
-    FNetCliAuthVaultNodeFind    callback,
-    void *                      param
+    FNetCliAuthVaultNodeFind    callback
 ) {
     VaultFindNodeTrans * trans = new VaultFindNodeTrans(
         templateNode,
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
 }
@@ -5127,8 +5049,7 @@ void NetCliAuthVaultNodeFind (
 //============================================================================
 unsigned NetCliAuthVaultNodeSave (
     NetVaultNode *                      node,
-    FNetCliAuthVaultNodeSaveCallback    callback,
-    void *                              param
+    FNetCliAuthVaultNodeSaveCallback    callback
 ) {
     if (!node->IsDirty())
         return 0;
@@ -5153,8 +5074,7 @@ unsigned NetCliAuthVaultNodeSave (
         node->GetRevision(),
         buffer.size(),
         buffer.data(),
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
     return buffer.size();
@@ -5172,15 +5092,13 @@ void NetCliAuthVaultNodeAdd (
     unsigned                        parentId,
     unsigned                        childId,
     unsigned                        ownerId,
-    FNetCliAuthVaultNodeAddCallback callback,
-    void *                          param
+    FNetCliAuthVaultNodeAddCallback callback
 ) {
     VaultAddNodeTrans * trans = new VaultAddNodeTrans(
         parentId,
         childId,
         ownerId,
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
 }
@@ -5189,14 +5107,12 @@ void NetCliAuthVaultNodeAdd (
 void NetCliAuthVaultNodeRemove (
     unsigned                            parentId,
     unsigned                            childId,
-    FNetCliAuthVaultNodeRemoveCallback  callback,
-    void *                              param
+    FNetCliAuthVaultNodeRemoveCallback  callback
 ) {
     VaultRemoveNodeTrans * trans = new VaultRemoveNodeTrans(
         parentId,
         childId,
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
 }
@@ -5204,13 +5120,11 @@ void NetCliAuthVaultNodeRemove (
 //============================================================================
 void NetCliAuthVaultFetchNodeRefs (
     unsigned                        nodeId,
-    FNetCliAuthVaultNodeRefsFetched callback,
-    void *                          param
+    FNetCliAuthVaultNodeRefsFetched callback
 ) {
     VaultFetchNodeRefsTrans * trans = new VaultFetchNodeRefsTrans(
         nodeId,
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
 }
@@ -5267,12 +5181,10 @@ void NetCliAuthVaultInitAge (
     const ST::string&           ageDesc,            // optional. not used in match
     unsigned                    ageSequenceNumber,  // optional. not used in match
     unsigned                    ageLanguage,        // optional. not used in match
-    FNetCliAuthAgeInitCallback  callback,           // optional
-    void *                      param               // optional
+    FNetCliAuthAgeInitCallback  callback
 ) {
     VaultInitAgeTrans * trans = new VaultInitAgeTrans(
-        callback,
-        param,
+        std::move(callback),
         ageInstId,
         parentAgeInstId,
         ageFilename,

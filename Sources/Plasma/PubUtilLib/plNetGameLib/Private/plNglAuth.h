@@ -388,118 +388,98 @@ class NetVaultNode;
 struct NetVaultNodeRef;
 
 // VaultNodeChanged
-typedef void (*FNetCliAuthVaultNodeChanged)(
+using FNetCliAuthVaultNodeChanged = std::function<void(
     unsigned        nodeId,
     const plUUID&   revisionId
-);
+)>;
 void NetCliAuthVaultSetRecvNodeChangedHandler (
     FNetCliAuthVaultNodeChanged handler
 );
 // VaultNodeAdded
-typedef void (*FNetCliAuthVaultNodeAdded)(
+using FNetCliAuthVaultNodeAdded = std::function<void(
     unsigned        parentId,
     unsigned        childId,
     unsigned        ownerId
-);
+)>;
 void NetCliAuthVaultSetRecvNodeAddedHandler (
     FNetCliAuthVaultNodeAdded   handler
 );
 // VaultNodeRemoved
-typedef void (*FNetCliAuthVaultNodeRemoved)(
+using FNetCliAuthVaultNodeRemoved = std::function<void(
     unsigned        parentId,
     unsigned        childId
-);
+)>;
 void NetCliAuthVaultSetRecvNodeRemovedHandler (
     FNetCliAuthVaultNodeRemoved handler
 );
 // VaultNodeDeleted
-typedef void (*FNetCliAuthVaultNodeDeleted)(
+using FNetCliAuthVaultNodeDeleted = std::function<void(
     unsigned        nodeId
-);
+)>;
 void NetCliAuthVaultSetRecvNodeDeletedHandler (
     FNetCliAuthVaultNodeDeleted handler
 );
 // VaultNodeAdd
-typedef void (*FNetCliAuthVaultNodeAddCallback)(
-    ENetError           result,
-    void *              param
-);
+using FNetCliAuthVaultNodeAddCallback = std::function<void(ENetError result)>;
 void NetCliAuthVaultNodeAdd (
     unsigned                        parentId,
     unsigned                        childId,
     unsigned                        ownerId,
-    FNetCliAuthVaultNodeAddCallback callback,
-    void *                          param
+    FNetCliAuthVaultNodeAddCallback callback
 );
 // VaultNodeRemove
-typedef void (*FNetCliAuthVaultNodeRemoveCallback)(
-    ENetError           result,
-    void *              param
-);
+using FNetCliAuthVaultNodeRemoveCallback = std::function<void(ENetError result)>;
 void NetCliAuthVaultNodeRemove (
     unsigned                            parentId,
     unsigned                            childId,
-    FNetCliAuthVaultNodeRemoveCallback  callback,
-    void *                              param
+    FNetCliAuthVaultNodeRemoveCallback  callback
 );
 // VaultNodeCreate
-typedef void (*FNetCliAuthVaultNodeCreated)(
+using FNetCliAuthVaultNodeCreated = std::function<void(
     ENetError           result,
-    void *              param,
     unsigned            nodeId
-);
+)>;
 void NetCliAuthVaultNodeCreate (
     NetVaultNode *              templateNode,
-    FNetCliAuthVaultNodeCreated callback,
-    void *                      param
+    FNetCliAuthVaultNodeCreated callback
 );
 // VaultNodeFetch
-typedef void (*FNetCliAuthVaultNodeFetched)(
+using FNetCliAuthVaultNodeFetched = std::function<void(
     ENetError           result,
-    void *              param,
     NetVaultNode *      node
-);
+)>;
 void NetCliAuthVaultNodeFetch (
     unsigned                    nodeId,
-    FNetCliAuthVaultNodeFetched callback,
-    void *                      param
+    FNetCliAuthVaultNodeFetched callback
 );
 // VaultNodeFind
-typedef void (*FNetCliAuthVaultNodeFind)(
+using FNetCliAuthVaultNodeFind = std::function<void(
     ENetError           result,
-    void *              param,
     unsigned            nodeIdCount,
     const unsigned      nodeIds[]
-);
+)>;
 void NetCliAuthVaultNodeFind (
     NetVaultNode *              templateNode,
-    FNetCliAuthVaultNodeFind    callback,
-    void *                      param
+    FNetCliAuthVaultNodeFind    callback
 );
 // VaultNodeSave
-typedef void (*FNetCliAuthVaultNodeSaveCallback)(
-    ENetError           result,
-    void *              param
-);
+using FNetCliAuthVaultNodeSaveCallback = std::function<void(ENetError result)>;
 unsigned NetCliAuthVaultNodeSave (  // returns number of bytes written
     NetVaultNode *                      node,
-    FNetCliAuthVaultNodeSaveCallback    callback,
-    void *                              param
+    FNetCliAuthVaultNodeSaveCallback    callback
 );
 void NetCliAuthVaultNodeDelete (
     unsigned                    nodeId
 );
 // FetchRefs (a vault structure only; no data)
-typedef void (*FNetCliAuthVaultNodeRefsFetched)(
+using FNetCliAuthVaultNodeRefsFetched = std::function<void(
     ENetError           result,
-    void *              param,
     NetVaultNodeRef *   refs,
     unsigned            refCount
-);
+)>;
 void NetCliAuthVaultFetchNodeRefs (
     unsigned                        nodeId,
-    FNetCliAuthVaultNodeRefsFetched callback,
-    void *                          param
+    FNetCliAuthVaultNodeRefsFetched callback
 );
 void NetCliAuthVaultSetSeen (
     unsigned    parentId,
@@ -513,12 +493,11 @@ void NetCliAuthVaultSendNode (
 );
 
 // Initialize an age vault. Will find existing match in db, or create a new age vault structure.
-typedef void (*FNetCliAuthAgeInitCallback) (
+using FNetCliAuthAgeInitCallback = std::function<void(
     ENetError           result,
-    void *              param,
     unsigned            ageVaultId,
     unsigned            ageInfoVaultId
-);
+)>;
 void NetCliAuthVaultInitAge (
     const plUUID&               ageInstId,          // optional. is used in match
     const plUUID&               parentAgeInstId,    // optional. is used in match
@@ -528,8 +507,7 @@ void NetCliAuthVaultInitAge (
     const ST::string&           ageDesc,            // optional. not used in match
     unsigned                    ageSequenceNumber,  // optional. not used in match
     unsigned                    ageLanguage,        // optional. not used in match
-    FNetCliAuthAgeInitCallback  callback,           // optional
-    void *                      param               // optional
+    FNetCliAuthAgeInitCallback  callback
 );
 
 void NetCliAuthLogPythonTraceback (const char16_t traceback[]);
