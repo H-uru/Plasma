@@ -115,6 +115,7 @@ class xHighLevelStarTrekDoor(ptModifier):
                 respCloseDoor.run(self.key)
             elif self.SDL['DoorState'][0] == doorSDLstates.open:
                 respOpenDoor.run(self.key,fastforward=True)
+                xrgnDoorBlocker.releaseNow(self.key)
 
         else:
             # the door is really shut, someone left it open
