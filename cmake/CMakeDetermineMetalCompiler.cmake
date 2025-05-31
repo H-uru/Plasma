@@ -9,7 +9,7 @@ if(NOT CMAKE_Metal_COMPILER_NAMES)
     set(CMAKE_Metal_COMPILER_NAMES metal)
 endif()
 
-if("${CMAKE_GENERATOR}" STREQUAL "Xcode")
+if("${CMAKE_GENERATOR}" STREQUAL "Xcode" OR (APPLE AND CMAKE_VERSION VERSION_GREATER_EQUAL "4.0"))
     set(CMAKE_Metal_COMPILER_XCODE_TYPE sourcecode.metal)
 
     execute_process(COMMAND xcrun --find metal
