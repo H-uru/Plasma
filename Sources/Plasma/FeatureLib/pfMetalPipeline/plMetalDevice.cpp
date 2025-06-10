@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 
 #include "plDrawable/plGBufferGroup.h"
+#include "plGImage/hsCodecManager.h"
 #include "plGImage/plCubicEnvironmap.h"
 #include "plGImage/plMipmap.h"
 #include "plPipeline/plRenderTarget.h"
@@ -459,6 +460,12 @@ plMetalDevice::plMetalDevice()
     // Only known tiler on Apple devices are Apple GPUs.
     // Apple recommends a family check for tile memory support.
     fSupportsTileMemory = fMetalDevice->supportsFamily(MTL::GPUFamilyApple1);
+    fSupportsDXTTextures = fMetalDevice->supportsBCTextureCompression();
+    
+    if (!fSupportsDXTTextures)
+    {
+        DebugMsg("Render device \"%s\" does not support DXT textures. Falling back on software decompression. Performance will be slower.", fMetalDevice->name()->cString(NS::StringEncoding::UTF8StringEncoding));
+    }
 
     // set up all the depth stencil states
     MTL::DepthStencilDescriptor* depthDescriptor = MTL::DepthStencilDescriptor::alloc()->init();
@@ -748,13 +755,17 @@ void plMetalDevice::SetupTextureRef(plBitmap* img, plMetalDevice::TextureRef* tR
     }
 
     if (imageToCheck->IsCompressed()) {
-        switch (imageToCheck->fDirectXInfo.fCompressionType) {
-            case plBitmap::DirectXInfo::kDXT1:
-                tRef->fFormat = MTL::PixelFormatBC1_RGBA;
-                break;
-            case plBitmap::DirectXInfo::kDXT5:
-                tRef->fFormat = MTL::PixelFormatBC3_RGBA;
-                break;
+        if (fSupportsDXTTextures) {
+            switch (imageToCheck->fDirectXInfo.fCompressionType) {
+                case plBitmap::DirectXInfo::kDXT1:
+                    tRef->fFormat = MTL::PixelFormatBC1_RGBA;
+                    break;
+                case plBitmap::DirectXInfo::kDXT5:
+                    tRef->fFormat = MTL::PixelFormatBC3_RGBA;
+                    break;
+            }
+        } else {
+            tRef->fFormat = MTL::PixelFormatBGRA8Unorm;
         }
     } else {
         switch (imageToCheck->fUncompressedInfo.fType) {
@@ -828,7 +839,7 @@ uint plMetalDevice::ConfigureAllowedLevels(plMetalDevice::TextureRef* tRef, plMi
 
 void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef* tRef, plMipmap* img, uint slice)
 {
-    if (img->IsCompressed()) {
+    if (img->IsCompressed() && fSupportsDXTTextures) {
         /*
          Some cubic assets have inconsistant mipmap sizes between their faces.
          The DX pipeline maintains seperate structures noting the expected
@@ -871,6 +882,11 @@ void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef* tRef, plMipmap* i
             }
         }
     } else {
+        if (img->IsCompressed())
+        {
+            img = hsCodecManager::Instance().CreateUncompressedMipmap(img, 8);
+        }
+        
         for (int lvl = 0; lvl <= tRef->fLevels; lvl++) {
             img->SetCurrLevel(lvl);
 
@@ -900,6 +916,12 @@ void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef* tRef, plMipmap* i
                 }
             } else {
                 hsAssert(0, "Texture with no image data?\n");
+            }
+            
+            if (img->IsCompressed())
+            {
+                // if it's compressed, we created it, we delete it
+                delete img;
             }
         }
     }
