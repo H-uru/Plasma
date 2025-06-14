@@ -128,6 +128,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     [self updateClientMouseLocation:event];
 }
 
+// MARK: Mouse scroll
+- (void)scrollWheel:(NSEvent *)event
+{
+    plMouseEventMsg* pMsg = new plMouseEventMsg;
+    float zDelta = [event scrollingDeltaY];
+    pMsg->SetWheelDelta(zDelta);
+    if (zDelta < 0)
+        pMsg->SetButton(kWheelNeg);
+    else
+        pMsg->SetButton(kWheelPos);
+
+    CGPoint windowLocation = [event locationInWindow];
+    CGPoint viewLocation = [self convertPoint:windowLocation fromView:nil];
+
+    NSRect windowViewBounds = self.bounds;
+    CGFloat xNormal = (windowLocation.x) / windowViewBounds.size.width;
+    CGFloat yNormal =
+        (windowViewBounds.size.height - windowLocation.y) / windowViewBounds.size.height;
+    pMsg->SetXPos(xNormal);
+    pMsg->SetYPos(yNormal);
+
+    pMsg->Send();
+}
+
 // MARK: Mouse movement
 - (void)mouseMoved:(NSEvent*)event
 {
