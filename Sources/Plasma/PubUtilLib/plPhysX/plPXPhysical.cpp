@@ -123,6 +123,20 @@ bool plPXPhysical::IsTrigger() const
 
 // ==========================================================================
 
+void plPXPhysical::SetGroup(int group)
+{
+    fGroup = (plSimDefs::Group)group;
+    IUpdateShapeFlags();
+    ISyncFilterData();
+    if (fActor) {
+        // Invalidate character collision cache for exclude regions changing groups.
+        plPXPhysicalControllerCore::InvalidateCache(fWorldKey);
+        InitProxy();
+    }
+}
+
+// ==========================================================================
+
 void plPXPhysical::IUpdateShapeFlags()
 {
     physx::PxShape* shape;
