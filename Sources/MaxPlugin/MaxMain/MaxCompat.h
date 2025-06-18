@@ -291,10 +291,14 @@ public:
 
 // Old versions of Max define this as an integer, not a Class_ID
 #define XREFOBJ_COMPAT_CLASS_ID Class_ID(0x92aab38c, 0)
+
 // This definition is removed in later versions of the sdk
+#if MAX_VERSION_MAJOR < 24
+#   define BIPDRIVEN_CONTROL_CLASS_ID BIPSLAVE_CONTROL_CLASS_ID
+#endif
+
 // In newer versions of the sdk Progress returns an enum value of KeyReduceResult
 #if MAX_VERSION_MAJOR <= 25
-#   define BIPDRIVEN_CONTROL_CLASS_ID BIPSLAVE_CONTROL_CLASS_ID
     using KeyReduceResult = int;
 #endif
 
