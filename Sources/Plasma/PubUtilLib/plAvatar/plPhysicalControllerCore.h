@@ -140,7 +140,7 @@ public:
 
     // Global location
     virtual const hsMatrix44& GetLastGlobalLoc() { return fLastGlobalLoc; }
-    virtual void SetGlobalLoc(const hsMatrix44& l2w) = 0;
+    virtual void SetGlobalLoc(const hsMatrix44& l2w, bool kinematic = true) = 0;
 
     // Local sim position
     virtual void GetPositionSim(hsPoint3& pos) = 0;

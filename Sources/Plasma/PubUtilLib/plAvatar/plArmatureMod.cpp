@@ -818,14 +818,18 @@ void plArmatureMod::SpawnAt(int spawnNum, double time)
         l2w = spawnObj->GetLocalToWorld();
         w2l = spawnObj->GetWorldToLocal();
     }
-    
-    if (fController)
-        fController->ResetAchievedLinearVelocity();
+
     plCoordinateInterface* ci = (plCoordinateInterface*)GetTarget(0)->GetCoordinateInterface();
     l2w.RemoveScale();
     w2l.RemoveScale();
     ci->SetTransform(l2w, w2l);
     ci->FlushTransform();
+
+    // Force the issue with the character controller
+    if (fController) {
+        fController->ResetAchievedLinearVelocity();
+        fController->SetGlobalLoc(l2w, false);
+    }
 
     if (IsLocalAvatar() && plVirtualCam1::Instance())
         plVirtualCam1::Instance()->SetCutNext();

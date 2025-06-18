@@ -443,7 +443,7 @@ void plPXPhysicalControllerCore::SetMovementStrategy(plMovementStrategy* strateg
     fMovementStrategy = strategy;
 }
 
-void plPXPhysicalControllerCore::SetGlobalLoc(const hsMatrix44& l2w)
+void plPXPhysicalControllerCore::SetGlobalLoc(const hsMatrix44& l2w, bool kinematic)
 {
     fLastGlobalLoc = l2w;
 
@@ -461,6 +461,17 @@ void plPXPhysicalControllerCore::SetGlobalLoc(const hsMatrix44& l2w)
     fLastLocalPosition = fLocalPosition;
 
     fController->setFootPosition(plPXConvert::ExtPoint(fLocalPosition));
+
+    // Normally, setting the foot position updates the underlying actor's kinematic target.
+    // On the next simulation step, this will cause the actor to move from the previous
+    // transform to the target, hitting and triggering anything along that path. That's generally
+    // what we want to do... except for in the case of things like changing Ages. So, in that
+    // case, we can forcibly set the current transform to the target to avoid that chaos.
+    if (!kinematic) {
+        physx::PxTransform kineTarget;
+        fController->getActor()->getKinematicTarget(kineTarget);
+        fController->getActor()->setGlobalPose(kineTarget);
+    }
 }
 
 void plPXPhysicalControllerCore::GetPositionSim(hsPoint3& pos)
