@@ -256,9 +256,6 @@ static void BufferedSendData (
     const uintptr_t  msg[], 
     unsigned            fieldCount
 ) {
-    #define ASSERT_MSG_VALID(expr)          \
-        ASSERTMSG(expr, "Invalid message definition");
-
     ASSERT(cli);
     ASSERT(msg);
     ASSERT(fieldCount);
@@ -276,7 +273,7 @@ static void BufferedSendData (
     const uint16_t msgId = hsToLE16((uint16_t)msg[0]);
     AddToSendBuffer(cli, sizeof(uint16_t), (const void*)&msgId);
     ++msg;
-    ASSERT_MSG_VALID(msg < msgEnd);
+    ASSERT(msg < msgEnd);
 
     // insert fields into command stream
     uint32_t varCount  = 0;
