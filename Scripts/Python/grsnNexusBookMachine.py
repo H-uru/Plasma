@@ -88,7 +88,6 @@ class grsnNexusBookMachine(ptResponder):
         PtDebugPrint("book machine init")
         self.id = 53624
         self.version = 2
-        self.serverInitDone = False
 
     def IAmMaster(self):
         return (self.sceneobject.isLocallyOwned())
@@ -105,7 +104,6 @@ class grsnNexusBookMachine(ptResponder):
         return plyrList
 
     def OnServerInitComplete(self):
-        self.serverInitDone = True
         bookPillarSpinning.run(self.key,netPropagate=False)
         if not PtIsSolo():
             return
@@ -152,8 +150,6 @@ class grsnNexusBookMachine(ptResponder):
         global elevatorStatus
 
         #PtDebugPrint("id ",id)
-        if not self.serverInitDone:
-            return
 
         avatar=PtFindAvatar(events)
         local = PtGetLocalAvatar()
