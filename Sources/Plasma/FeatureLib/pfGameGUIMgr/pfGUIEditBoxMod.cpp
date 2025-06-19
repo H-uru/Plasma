@@ -132,9 +132,14 @@ void    pfGUIEditBoxMod::IUpdate()
         oldCursorPos = cursorPos;
         cursorPos -= (int16_t)fScrollPos;
 
-        if( 4 + cursorPos > fDynTextMap->GetVisibleWidth() - 4 - 2 )
+        // plDynamicTextMap::GetVisibleWidth returns an unsigned integer.
+        // We have to explicitly convert it to signed,
+        // otherwise the entire comparison will become unsigned and behave incorrectly for negative numbers.
+        hsAssert(fDynTextMap->GetVisibleWidth() <= INT16_MAX, "Visible width too large for 16-bit int?!");
+        int16_t visWidth = static_cast<int16_t>(fDynTextMap->GetVisibleWidth());
+        if (4 + cursorPos > visWidth - 4 - 2)
         {
-            fScrollPos += ( 4 + cursorPos ) - ( fDynTextMap->GetVisibleWidth() - 4 - 2 );
+            fScrollPos += (4 + cursorPos) - (visWidth - 4 - 2);
         }
         else if( 4 + cursorPos < 4 )
         {
