@@ -6,7 +6,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE STRING "")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-set(CMAKE_OSX_DEPLOYMENT_TARGET "10.14" CACHE STRING "Minimum OS X deployment version")
+if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.14" CACHE STRING "Minimum OS X deployment version")
+endif()
+
+if(CMAKE_SYSTEM_NAME MATCHES "iOS")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "15" CACHE STRING "Minimum iOS deployment version")
+endif()
 
 # CMake 3.22 changes cmake_dependent_option from doing `if(${CONDITION})` to actually evaulating
 # The cmake code `if(<condition>)` using cmake_language(EVAL). That's a breaking change that warns
@@ -16,13 +22,24 @@ if(POLICY CMP0127)
     cmake_policy(SET CMP0127 OLD)
 endif()
 
+
+include(CheckLanguage)
 include(CMakeDependentOption)
 include(Dependencies)
 include(FeatureSummary)
 include(MetalShaderSupport)
 include(VcpkgToolchain)
 
-project(Plasma)
+project(Plasma LANGUAGES C CXX)
+
+if(APPLE)
+    check_language(Swift)
+    if(CMAKE_Swift_COMPILER)
+        enable_language(Swift)
+    else()
+        message(WARNING "Swift is not supported")
+    endif()
+endif()
 
 # Set up Product Identification parameters
 set(PRODUCT_BRANCH_ID   "1"         CACHE STRING "Branch ID")
@@ -117,7 +134,9 @@ find_package(OpenSSL REQUIRED)
 find_package(Opus)
 find_package(PhysX REQUIRED)
 find_package(PNG REQUIRED)
-find_package(Python3 3.8 REQUIRED COMPONENTS Interpreter Development)
+if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
+    find_package(Python3 3.8 REQUIRED COMPONENTS Interpreter Development)
+endif()
 find_package(Speex)
 find_package(string_theory 3.4 REQUIRED)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)

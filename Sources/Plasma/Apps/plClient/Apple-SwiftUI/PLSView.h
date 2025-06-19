@@ -40,22 +40,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#import <Cocoa/Cocoa.h>
-
-#include "plNetClient/plNetClientMgr.h"
-
-#import "PLSLoginController.h"
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class PLSLoginWindowController;
+@protocol PLSViewDelegate;
 
-@protocol PLSLoginWindowControllerDelegate <NSObject>
-- (void)loginWindowControllerDidLogin:(PLSLoginWindowController*)sender;
+@interface PLSView : UIView
+
+@property (readonly) CAMetalLayer *metalLayer;
+
+-(void)setupGestureRecognizer;
+@property(weak) id<PLSViewDelegate> delegate;
+
 @end
 
-@interface PLSLoginWindowController : NSWindowController
-@property(weak) id<PLSLoginWindowControllerDelegate> delegate;
+@protocol PLSViewDelegate <NSObject>
+- (void)renderView:(PLSView*)view didChangeOutputSize:(CGSize)size scale:(NSUInteger)scale;
 @end
 
 NS_ASSUME_NONNULL_END

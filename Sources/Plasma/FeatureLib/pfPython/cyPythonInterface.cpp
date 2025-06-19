@@ -912,10 +912,10 @@ void PythonInterface::initPython()
 
     // Allow importing from the local python directory if and only if this is an internal client.
 #ifndef PLASMA_EXTERNAL_RELEASE
-    PyWideStringList_Append(&config.module_search_paths, L"./python");
-    PyWideStringList_Append(&config.module_search_paths, L"./python/plasma");
-    PyWideStringList_Append(&config.module_search_paths, L"./python/system");
-    PyWideStringList_Append(&config.module_search_paths, L"./python/system/lib-dynload");
+    PyWideStringList_Append(&config.module_search_paths, L"./Python");
+    PyWideStringList_Append(&config.module_search_paths, L"./Python/plasma");
+    PyWideStringList_Append(&config.module_search_paths, L"./Python/system");
+    PyWideStringList_Append(&config.module_search_paths, L"./Python/system/lib-dynload");
     config.module_search_paths_set = 1;
 #endif
 
@@ -1447,7 +1447,7 @@ PyObject* PythonInterface::CreateModule(const char* module)
     {
         // clear it
         hsAssert(false, ST::format("ERROR! Creating a python module of the same name - {}", module).c_str());
-        _PyModule_Clear(m);
+        //_PyModule_Clear(m);
     }
 
     // create the module
