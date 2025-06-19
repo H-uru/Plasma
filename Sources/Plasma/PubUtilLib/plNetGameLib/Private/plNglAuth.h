@@ -626,8 +626,7 @@ void NetCliAuthScoreDelete(
 //============================================================================
 using FNetCliAuthGetScoresCallback = std::function<void(
     ENetError           result,
-    const NetGameScore  scores[],
-    unsigned            scoreCount
+    const std::vector<NetGameScore>& scores
 )>;
 
 void NetCliAuthScoreGetScores(
