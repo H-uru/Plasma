@@ -1039,16 +1039,13 @@ struct ScoreGetScoresTrans : NetAuthTrans {
     ST::string                      m_gameName;
 
     // recv
-    NetGameScore *                  m_scores;
-    unsigned                        m_scoreCount;
+    std::vector<NetGameScore>       m_scores;
 
     ScoreGetScoresTrans (
         unsigned                        ownerId,
         const ST::string&               gameName,
         FNetCliAuthGetScoresCallback    callback
     );
-
-    ~ScoreGetScoresTrans();
 
     bool Send() override;
     void Post() override;
@@ -1184,8 +1181,7 @@ struct ScoreGetHighScoresTrans : NetAuthTrans {
     ST::string                      m_gameName;
 
     // recv
-    NetGameScore *                  m_scores;
-    unsigned                        m_scoreCount;
+    std::vector<NetGameScore>       m_scores;
 
     ScoreGetHighScoresTrans(
         unsigned                        ageId,
@@ -1193,8 +1189,6 @@ struct ScoreGetHighScoresTrans : NetAuthTrans {
         const ST::string&               gameName,
         FNetCliAuthGetScoresCallback    callback
     );
-
-    ~ScoreGetHighScoresTrans();
 
     bool Send() override;
     void Post() override;
@@ -3995,14 +3989,7 @@ ScoreGetScoresTrans::ScoreGetScoresTrans (
 ,   m_callback(std::move(callback))
 ,   m_ownerId(ownerId)
 ,   m_gameName(gameName)
-,   m_scores(nullptr)
-,   m_scoreCount(0)
 {
-}
-
-//============================================================================
-ScoreGetScoresTrans::~ScoreGetScoresTrans () {
-    delete[] m_scores;
 }
 
 //============================================================================
@@ -4026,7 +4013,7 @@ bool ScoreGetScoresTrans::Send () {
 
 //============================================================================
 void ScoreGetScoresTrans::Post () {
-    m_callback(m_result, m_scores, m_scoreCount);
+    m_callback(m_result, m_scores);
 }
 
 //============================================================================
@@ -4036,20 +4023,14 @@ bool ScoreGetScoresTrans::Recv (
 ) {
     const Auth2Cli_ScoreGetScoresReply & reply = *(const Auth2Cli_ScoreGetScoresReply *) msg;
 
+    m_scores.resize(reply.scoreCount);
     if (reply.scoreCount > 0) {
-        m_scoreCount    = reply.scoreCount;
-        m_scores        = new NetGameScore[m_scoreCount];
-
         uint8_t*       bufferPos = const_cast<uint8_t*>(reply.buffer);
         unsigned    bufferLength = reply.byteCount;
 
-        for (unsigned i = 0; i < m_scoreCount; ++i) {
-            bufferLength -= m_scores[i].Read(bufferPos, bufferLength, &bufferPos);
+        for (NetGameScore& score : m_scores) {
+            bufferLength -= score.Read(bufferPos, bufferLength, &bufferPos);
         }
-    }
-    else {
-        m_scoreCount    = 0;
-        m_scores        = nullptr;
     }
 
     m_result        = reply.result;
@@ -4309,14 +4290,7 @@ ScoreGetHighScoresTrans::ScoreGetHighScoresTrans(
     , m_ageId(ageId)
     , m_maxScores(maxScores)
     , m_gameName(gameName)
-    , m_scores(nullptr)
-    , m_scoreCount(0)
 {
-}
-
-//============================================================================
-ScoreGetHighScoresTrans::~ScoreGetHighScoresTrans() {
-    delete[] m_scores;
 }
 
 //============================================================================
@@ -4341,7 +4315,7 @@ bool ScoreGetHighScoresTrans::Send() {
 
 //============================================================================
 void ScoreGetHighScoresTrans::Post() {
-    m_callback(m_result, m_scores, m_scoreCount);
+    m_callback(m_result, m_scores);
 }
 
 //============================================================================
@@ -4351,20 +4325,14 @@ bool ScoreGetHighScoresTrans::Recv(
     ) {
     const Auth2Cli_ScoreGetHighScoresReply & reply = *(const Auth2Cli_ScoreGetHighScoresReply *)msg;
 
+    m_scores.resize(reply.scoreCount);
     if (reply.scoreCount > 0) {
-        m_scoreCount = reply.scoreCount;
-        m_scores = new NetGameScore[m_scoreCount];
-
         uint8_t*    bufferPos = const_cast<uint8_t*>(reply.buffer);
         unsigned    bufferLength = reply.byteCount;
 
-        for (unsigned i = 0; i < m_scoreCount; ++i) {
-            bufferLength -= m_scores[i].Read(bufferPos, bufferLength, &bufferPos);
+        for (NetGameScore& score : m_scores) {
+            bufferLength -= score.Read(bufferPos, bufferLength, &bufferPos);
         }
-    }
-    else {
-        m_scoreCount = 0;
-        m_scores = nullptr;
     }
 
     m_result = reply.result;

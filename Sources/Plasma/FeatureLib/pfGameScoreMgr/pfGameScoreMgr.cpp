@@ -109,13 +109,11 @@ static void OnScoreFound(
     const ST::string&   name,
     const plKey&        rcvr,
     ENetError           result,
-    const NetGameScore  scores[],
-    uint32_t            scoreCount
+    const std::vector<NetGameScore>& scores
 ) {
-    std::vector<pfGameScore*> vec(scoreCount);
-    for (uint32_t i = 0; i < scoreCount; ++i)
-    {
-        const NetGameScore ngs = scores[i];
+    std::vector<pfGameScore*> vec(scores.size());
+    for (size_t i = 0; i < scores.size(); ++i) {
+        const NetGameScore& ngs = scores[i];
         vec[i] = new pfGameScore(ngs.scoreId, ngs.ownerId, ngs.gameName, ngs.gameType, ngs.value);
     }
 
@@ -127,8 +125,8 @@ void pfGameScore::Find(uint32_t ownerId, const ST::string& name, const plKey& rc
 {
     NetCliAuthScoreGetScores(
         ownerId, name,
-        [ownerId, name, rcvr](auto result, auto scores, auto scoreCount) {
-            OnScoreFound(ownerId, name, rcvr, result, scores, scoreCount);
+        [ownerId, name, rcvr](auto result, const auto& scores) {
+            OnScoreFound(ownerId, name, rcvr, result, scores);
         }
     );
 }
@@ -139,8 +137,8 @@ void pfGameScore::FindHighScores(uint32_t ageId, uint32_t maxScores, const ST::s
     if (NetCliAuthCheckCap(kCapsScoreLeaderBoards)) {
         NetCliAuthScoreGetHighScores(
             ageId, maxScores, name,
-            [ageId, name, rcvr](auto result, auto scores, auto scoreCount) {
-                OnScoreFound(ageId, name, rcvr, result, scores, scoreCount);
+            [ageId, name, rcvr](auto result, const auto& scores) {
+                OnScoreFound(ageId, name, rcvr, result, scores);
             }
         );
     } else {
