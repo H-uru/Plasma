@@ -139,10 +139,9 @@ void    pfGUIEditBoxMod::IUpdate()
         else if( 4 + cursorPos < 4 )
         {
             fScrollPos -= 4 - ( 4 + cursorPos );
-            if( fScrollPos < 0 )
-                fScrollPos = 0;
         }
 
+        fScrollPos = std::max(0, fScrollPos);
         cursorPos = (int16_t)(oldCursorPos - fScrollPos);
     }
 
