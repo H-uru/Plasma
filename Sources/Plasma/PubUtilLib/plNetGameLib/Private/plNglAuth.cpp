@@ -1287,8 +1287,11 @@ static ENetError FixupPlayerName (ST::string& name) {
 
     // Now, check to see if we have the appropriate length
     // We could count the characters, but lazy...
-    if (name.replace(" ", "").size() < 3)
+    if (name.replace(" ", "").size() < 3) {
         return kNetErrPlayerNameInvalid;
+    } else if (name.to_wchar().size() >= kMaxPlayerNameLength) {
+        return kNetErrPlayerNameInvalid;
+    }
     return kNetSuccess;
 }
 
