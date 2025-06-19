@@ -750,6 +750,7 @@ class nxusBookMachine(ptModifier):
         respKISlotReturn.run(self.key)
         self.controlsEnabled = True
         self.animCount = 0
+        self.dialogVisible = False
 
         if self.presentedBookAls is not None:
             self.IBookRetract()
