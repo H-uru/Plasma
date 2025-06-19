@@ -273,7 +273,6 @@ static void BufferedSendData (
     const uint16_t msgId = hsToLE16((uint16_t)msg[0]);
     AddToSendBuffer(cli, sizeof(uint16_t), (const void*)&msgId);
     ++msg;
-    ASSERT(msg < msgEnd);
 
     // insert fields into command stream
     uint32_t varCount  = 0;
@@ -281,6 +280,7 @@ static void BufferedSendData (
     const NetMsgField * cmd     = sendMsg->msg->fields;
     const NetMsgField * cmdEnd  = cmd + sendMsg->msg->count;
     for (; cmd < cmdEnd; ++msg, ++cmd) {
+        ASSERT(msg < msgEnd);
         switch (cmd->type) {
             case kNetMsgFieldInteger: {
                 const unsigned count = cmd->count ? cmd->count : 1;
