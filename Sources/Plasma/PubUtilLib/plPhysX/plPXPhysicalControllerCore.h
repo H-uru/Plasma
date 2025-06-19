@@ -202,6 +202,9 @@ public:
     // Update controllers when not performing a physics step
     static void UpdateNonPhysical(float alpha);
 
+    /** Invalidates the collision cache for the specified subworld. */
+    static void InvalidateCache(plKey world = {});
+
 #ifndef PLASMA_EXTERNAL_RELEASE
     static bool fDebugDisplay;
 #endif

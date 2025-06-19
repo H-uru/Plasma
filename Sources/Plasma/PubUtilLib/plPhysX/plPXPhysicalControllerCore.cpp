@@ -68,6 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // ==========================================================================
 
 static std::vector<plPXPhysicalControllerCore*> gControllers;
+static std::set<plKey> gInvalidCacheWorlds;
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 bool plPXPhysicalControllerCore::fDebugDisplay = false;
@@ -680,6 +681,8 @@ plDrawableSpans* plPXPhysicalControllerCore::CreateProxy(hsGMaterial* mat, std::
     return myDraw;
 }
 
+// ==========================================================================
+
 void plPXPhysicalControllerCore::Apply(float delSecs)
 {
     plPXPhysicalControllerCore* controller;
@@ -692,8 +695,14 @@ void plPXPhysicalControllerCore::Apply(float delSecs)
         controller->fDbgCollisionInfo.clear();
 #endif
 
+        auto findIt = gInvalidCacheWorlds.find(controller->fWorldKey);
+        if (findIt != gInvalidCacheWorlds.end())
+            controller->fController->invalidateCache();
+
         controller->IApply(delSecs);
     }
+
+    gInvalidCacheWorlds.clear();
 }
 
 void plPXPhysicalControllerCore::Update(int numSubSteps, float alpha)
@@ -731,6 +740,13 @@ void plPXPhysicalControllerCore::UpdateNonPhysical(float alpha)
 #endif
     }
 }
+
+void plPXPhysicalControllerCore::InvalidateCache(plKey world)
+{
+    gInvalidCacheWorlds.emplace(std::move(world));
+}
+
+// ==========================================================================
 
 void plPXPhysicalControllerCore::ISynchProxy()
 {
