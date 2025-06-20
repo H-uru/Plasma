@@ -228,6 +228,23 @@ void    plInputInterfaceMgr::IRemoveInterface( plInputInterface *iface )
     if (iter != fInterfaces.end())
     {
         (*iter)->Shutdown();
+
+        // Drop all outstanding messages that originate from the interface being removed.
+        // Otherwise, IEval will crash once it tries to process these messages.
+        // This is relevant e. g. when pressing Esc/Backspace quickly multiple times
+        // to exit a dialog (such as the new avatar intro):
+        // if multiple B_CONTROL_EXIT_GUI_MODE messages are queued up,
+        // one message may close the last dialog and thus make the pfGameUIInputInterface disappear,
+        // and then the source pointer of the other messages will become dangling before they could be processed.
+        for (auto ctrlMsgIt = fMessageQueue.begin(); ctrlMsgIt != fMessageQueue.end();) {
+            if ((*ctrlMsgIt)->GetSource() == *iter) {
+                delete *ctrlMsgIt;
+                ctrlMsgIt = fMessageQueue.erase(ctrlMsgIt);
+            } else {
+                ++ctrlMsgIt;
+            }
+        }
+
         hsRefCnt_SafeUnRef(*iter);
         fInterfaces.erase(iter);
     }
