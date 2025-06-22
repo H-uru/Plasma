@@ -1,0 +1,72 @@
+﻿diff --git a/physx/source/foundation/include/PsVecMath.h b/physx/source/foundation/include/PsVecMath.h
+index 2718de2a..b12a762d 100644
+--- a/physx/source/foundation/include/PsVecMath.h
++++ b/physx/source/foundation/include/PsVecMath.h
+@@ -54,5 +54,7 @@
+ #define COMPILE_VECTOR_INTRINSICS 1
+ #elif PX_UWP && PX_NEON
+ #define COMPILE_VECTOR_INTRINSICS 1
++#elif PX_WINDOWS_FAMILY && PX_NEON
++#define COMPILE_VECTOR_INTRINSICS 1
+ #elif PX_IOS && PX_NEON
+ #define COMPILE_VECTOR_INTRINSICS 1
+diff --git a/physx/source/geomutils/include/GuSIMDHelpers.h b/physx/source/geomutils/include/GuSIMDHelpers.h
+index caa8e5a6..039ba1e4 100644
+--- a/physx/source/geomutils/include/GuSIMDHelpers.h
++++ b/physx/source/geomutils/include/GuSIMDHelpers.h
+@@ -72,7 +72,7 @@ namespace Gu
+ 			const QuatV qV = V4LoadU(&q.x);
+ 			Vec3V column0V, column1V, column2V;
+ 			QuatGetMat33V(qV, column0V, column1V, column2V);
+-#if defined(PX_SIMD_DISABLED) || PX_ANDROID || (PX_LINUX && (PX_ARM || PX_A64)) || (PX_UWP && (PX_ARM || PX_A64)) || (PX_OSX && PX_A64)
++#if defined(PX_SIMD_DISABLED) || PX_ANDROID || (PX_LINUX && (PX_ARM || PX_A64)) || (PX_UWP && (PX_ARM || PX_A64)) || (PX_OSX && PX_A64) || (PX_WINDOWS_FAMILY && (PX_ARM || PX_A64))
+ 			V3StoreU(column0V, column0);
+ 			V3StoreU(column1V, column1);
+ 			V3StoreU(column2V, column2);
+diff --git a/pxshared/include/foundation/PxPreprocessor.h b/pxshared/include/foundation/PxPreprocessor.h
+index 12d6147f..ac1168f4 100644
+--- a/pxshared/include/foundation/PxPreprocessor.h
++++ b/pxshared/include/foundation/PxPreprocessor.h
+@@ -523,7 +523,7 @@ protected:
+ 
+ #ifndef DISABLE_CUDA_PHYSX
+ //CUDA is currently supported only on windows 
+-#define PX_SUPPORT_GPU_PHYSX ((PX_WINDOWS_FAMILY) || (PX_LINUX && PX_X64))
++#define PX_SUPPORT_GPU_PHYSX ((PX_WINDOWS_FAMILY && PX_X64) || (PX_LINUX && PX_X64))
+ #else
+ #define PX_SUPPORT_GPU_PHYSX 0
+ #endif
+diff --git a/physx/source/physxextensions/src/serialization/SnSerialUtils.cpp b/physx/source/physxextensions/src/serialization/SnSerialUtils.cpp
+index 282b9810..29fbbd09 100644
+--- a/physx/source/physxextensions/src/serialization/SnSerialUtils.cpp
++++ b/physx/source/physxextensions/src/serialization/SnSerialUtils.cpp
+@@ -39,7 +39,7 @@ using namespace physx;
+ namespace
+ {
+ 
+-#define SN_NUM_BINARY_PLATFORMS 17
++#define SN_NUM_BINARY_PLATFORMS 18
+ const PxU32 sBinaryPlatformTags[SN_NUM_BINARY_PLATFORMS] =
+ {
+ 	PX_MAKE_FOURCC('W','_','3','2'),
+@@ -79,7 +79,8 @@ const char* sBinaryPlatformNames[SN_NUM_BINARY_PLATFORMS] =
+ 	"linuxaarch64",
+ 	"uwparm",
+ 	"uwparm64",
+-	"macaarch64"
++	"macaarch64",
++    "winARM64"
+ };
+ 
+ }
+@@ -121,7 +122,9 @@ PxU32 getBinaryPlatformTag()
+ #elif PX_UWP && PX_A64
+ 	return sBinaryPlatformTags[15];
+ #elif PX_OSX && PX_A64
+-	return sBinaryPlatformTags[16];
++    return sBinaryPlatformTags[16];
++#elif PX_WINDOWS_FAMILY && PX_A64
++    return sBinaryPlatformTags[17];
+ #else
+ 	#error Unknown binary platform
+ #endif
