@@ -1283,6 +1283,9 @@ bool plArmatureMod::MsgReceive(plMessage* msg)
             }
         }
 
+        // copy the user string over
+        fUserStr = avLoadMsg->GetUserStr();
+
         // We also want to use the trigger msg when loading an avatar
         MsgReceive(avLoadMsg->GetTriggerMsg());
 
