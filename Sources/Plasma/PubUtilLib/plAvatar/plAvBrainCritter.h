@@ -106,6 +106,9 @@ public:
     void StartBehavior(const ST::string& behaviorName, bool fade = true);
     bool RunningBehavior(const ST::string& behaviorName) const;
 
+    void LocallyControlled(bool local) { fLocallyControlled = local; }
+    bool LocallyControlled() const { return fLocallyControlled; }
+
     ST::string BehaviorName(int behavior) const;
     ST::string AnimationName(int behavior) const;
     int CurBehavior() const {return fCurMode;}
@@ -169,6 +172,8 @@ protected:
     int fCurMode; // current behavior we are running
     int fNextMode; // the next behavior to run (-1 if we aren't switching on next eval)
     bool fFadingNextBehavior; // is the next behavior supposed to blend?
+
+    bool fLocallyControlled; // is our local AI script the one making all the choices?
 
     bool fAvoidingAvatars; // are we avoiding avatars to the best of our ability when pathfinding?
     hsPoint3 fFinalGoalPos; // the location we are pathfinding to
