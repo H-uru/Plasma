@@ -79,19 +79,6 @@ using namespace std::literals::string_view_literals;
 
 extern  bool    gDataServerLocal;
 
-struct NetCommParam {
-    void *                          param;
-    plNetCommReplyMsg::EParamType   type;
-};
-
-
-/*****************************************************************************
-*
-*   Private
-*
-***/
-
-
 /*****************************************************************************
 *
 *   Private data
@@ -350,7 +337,6 @@ static void INetCliAuthLoginSetPlayerRequestCallback (
 //============================================================================
 static void INetCliAuthLoginRequestCallback (
     ENetError                   result,
-    void *                      param,
     const plUUID&               accountUuid,
     unsigned                    accountFlags,
     unsigned                    billingType,
@@ -398,8 +384,9 @@ static void INetCliAuthLoginRequestCallback (
     if (!wantsStartUpAge && s_player) {
         NetCliAuthSetPlayerRequest(
             s_player->playerInt,
-            INetCliAuthLoginSetPlayerRequestCallback,
-            param
+            [](auto result) {
+                INetCliAuthLoginSetPlayerRequestCallback(result, nullptr);
+            }
         );
     }
 }
@@ -407,7 +394,6 @@ static void INetCliAuthLoginRequestCallback (
 //============================================================================
 static void INetCliAuthCreatePlayerRequestCallback (
     ENetError                       result,
-    void *                          param,
     const NetCliAuthPlayerInfo &    playerInfo
 ) {
     if (IS_NET_ERROR(result)) {
@@ -436,12 +422,8 @@ static void INetCliAuthCreatePlayerRequestCallback (
 }
 
 //============================================================================
-static void INetCliAuthDeletePlayerCallback (
-    ENetError                       result,
-    void *                          param
-) {
-    uint32_t playerInt = (uint32_t)((uintptr_t)param);
-
+static void INetCliAuthDeletePlayerCallback(ENetError result, uint32_t playerInt)
+{
     if (IS_NET_ERROR(result)) {
         plNetApp::StaticErrorMsg("Delete player failed: {} {}", playerInt, NetErrorToString(result));
     }
@@ -473,10 +455,8 @@ static void INetCliAuthDeletePlayerCallback (
 }
 
 //============================================================================
-static void INetCliAuthChangePasswordCallback (
-    ENetError       result,
-    void *          param
-) {
+static void INetCliAuthChangePasswordCallback(ENetError result)
+{
     if (IS_NET_ERROR(result)) {
         plNetApp::StaticErrorMsg("Change password failed: {}", NetErrorToString(result));
     }
@@ -495,18 +475,15 @@ static void INetCliAuthChangePasswordCallback (
 static void INetCliAuthGetPublicAgeListCallback (
     ENetError                   result,
     void *                      param,
+    plNetCommReplyMsg::EParamType ptype,
     std::vector<NetAgeInfo>     ages
 ) {
-    NetCommParam * cp = (NetCommParam *) param;
-    
     plNetCommPublicAgeListMsg * msg = new plNetCommPublicAgeListMsg;
     msg->result     = result;
-    msg->param      = cp->param;
-    msg->ptype      = cp->type;
+    msg->param      = param;
+    msg->ptype      = ptype;
     msg->ages       = std::move(ages);
     msg->Send();
-    
-    delete cp;
 }
 
 //============================================================================
@@ -562,12 +539,8 @@ static void INetCliAuthAgeRequestCallback (
 }
 
 //============================================================================
-static void INetCliAuthUpgradeVisitorRequestCallback (
-    ENetError       result,
-    void *          param
-) {
-    uint32_t playerInt = (uint32_t)((uintptr_t)param);
-
+static void INetCliAuthUpgradeVisitorRequestCallback(ENetError result, uint32_t playerInt)
+{
     if (IS_NET_ERROR(result)) {
         plNetApp::StaticErrorMsg("Upgrade visitor failed: {} {}", playerInt, NetErrorToString(result));
     }
@@ -590,10 +563,8 @@ static void INetCliAuthUpgradeVisitorRequestCallback (
 }
 
 //============================================================================
-static void INetCliAuthSendFriendInviteCallback (
-    ENetError       result,
-    void *          param
-) {
+static void INetCliAuthSendFriendInviteCallback(ENetError result)
+{
     pfKIMsg* kiMsg = new pfKIMsg(pfKIMsg::kFriendInviteSent);
     kiMsg->SetIntValue((int32_t)result);
     kiMsg->Send();
@@ -682,7 +653,7 @@ void NetCommSetAvatarLoaded (bool loaded /* = true */) {
 
 //============================================================================
 void NetCommChangeMyPassword (const ST::string& password) {
-    NetCliAuthAccountChangePasswordRequest(s_account.accountName, password, INetCliAuthChangePasswordCallback, nullptr);
+    NetCliAuthAccountChangePasswordRequest(s_account.accountName, password, INetCliAuthChangePasswordCallback);
 }
 
 //============================================================================
@@ -889,8 +860,7 @@ void NetCommAuthenticate (
         &s_account.accountNamePassHash,
         s_iniAuthToken,
         s_iniOS,
-        INetCliAuthLoginRequestCallback,
-        nullptr
+        INetCliAuthLoginRequestCallback
     );
 }
 
@@ -913,8 +883,9 @@ void NetCommLinkToAge (     // --> plNetCommLinkToAgeMsg
     NetCliAuthAgeRequest(
         s_age.ageDatasetName,
         s_age.ageInstId,
-        INetCliAuthAgeRequestCallback,
-        param
+        [param](auto result, auto ageMcpId, auto ageVaultId, auto ageInstId, auto gameAddr) {
+            INetCliAuthAgeRequestCallback(result, param, ageMcpId, ageVaultId, ageInstId, gameAddr);
+        }
     );
 }
 
@@ -951,8 +922,9 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
 
     NetCliAuthSetPlayerRequest(
         playerInt,
-        INetCliAuthSetPlayerRequestCallback,
-        param
+        [param](auto result) {
+            INetCliAuthSetPlayerRequestCallback(result, param);
+        }
     );
 }
 
@@ -968,8 +940,7 @@ void NetCommCreatePlayer (  // --> plNetCommCreatePlayerMsg
         playerName,
         avatarShape,
         friendInvite,
-        INetCliAuthCreatePlayerRequestCallback,
-        param
+        INetCliAuthCreatePlayerRequestCallback
     );
 }
 
@@ -983,8 +954,9 @@ void NetCommDeletePlayer (  // --> plNetCommDeletePlayerMsg
 
     NetCliAuthPlayerDeleteRequest(
         playerInt,
-        INetCliAuthDeletePlayerCallback,
-        (void*)(uintptr_t)playerInt
+        [playerInt](auto result) {
+            INetCliAuthDeletePlayerCallback(result, playerInt);
+        }
     );
 }
 
@@ -994,14 +966,11 @@ void NetCommGetPublicAgeList (//-> plNetCommPublicAgeListMsg
     void *                          param,
     plNetCommReplyMsg::EParamType   ptype
 ) {
-    NetCommParam * cp = new NetCommParam;
-    cp->param   = param;
-    cp->type    = ptype;
-
     NetCliAuthGetPublicAgeList(
         ageName,
-        INetCliAuthGetPublicAgeListCallback,
-        cp
+        [param, ptype](auto result, auto ages) {
+            INetCliAuthGetPublicAgeListCallback(result, param, ptype, std::move(ages));
+        }
     );
 }
 
@@ -1023,8 +992,9 @@ void NetCommUpgradeVisitorToExplorer (
 ) {
     NetCliAuthUpgradeVisitorRequest(
         playerInt,
-        INetCliAuthUpgradeVisitorRequestCallback,
-        (void*)(uintptr_t)playerInt
+        [playerInt](auto result) {
+            INetCliAuthUpgradeVisitorRequestCallback(result, playerInt);
+        }
     );
 }
 
@@ -1050,8 +1020,7 @@ void NetCommSendFriendInvite (
         emailAddress,
         toName,
         inviteUuid,
-        INetCliAuthSendFriendInviteCallback,
-        nullptr
+        INetCliAuthSendFriendInviteCallback
     );
 }
 
