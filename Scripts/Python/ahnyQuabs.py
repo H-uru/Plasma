@@ -225,7 +225,7 @@ class _QuabGameBrain(abc.ABC):
         # Make sure that the adjustment is actually enough to trigger some movement.
         if not quab.isRunning:
             distSq = goal.distanceSq(quab.goal)
-            if distSq < pow(quab.brain.getStopDistance(), 2):
+            if distSq < quab.brain.getStopDistance()**2:
                 return
 
         # Set and dirty any dimensions that have a non-trivial delta.
