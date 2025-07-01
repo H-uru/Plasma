@@ -408,10 +408,11 @@ PYTHON_METHOD_DEFINITION(ptCritterBrain, vectorToPlayer, args)
 PYTHON_START_METHODS_TABLE(ptCritterBrain)
     PYTHON_METHOD(ptCritterBrain, addReceiver, "Params: key\nTells the brain that the specified key wants AI messages"),
     PYTHON_METHOD(ptCritterBrain, removeReceiver, "Params: key\nTells the brain that the specified key no longer wants AI messages"),
-    PYTHON_METHOD(ptCritterBrain, setLocallyControlled, "Params: local\n"
+    PYTHON_METHOD(ptCritterBrain, setLocallyControlled, "Type: (local: bool) -> None\n"
         "Tells the brain that we are the ones making all the AI decisions, and to prop location and other information to the server."),
     PYTHON_METHOD(ptCritterBrain, getSceneObject, "Returns the ptSceneObject this brain controls."),
-    PYTHON_METHOD_NOARGS(ptCritterBrain, getLocallyControlled, "Are we the one making AI decisions? NOTE: Not set automatically, some python script needs to "
+    PYTHON_METHOD_NOARGS(ptCritterBrain, getLocallyControlled, "Type: () -> bool\n"
+        "Are we the one making AI decisions? NOTE: Not set automatically, some python script needs to "
         "tell the brain this using setLocallyControlled()."),
     PYTHON_METHOD_WKEY(ptCritterBrain, addBehavior, "Params: animName, behaviorName, loop = 1, randomStartPos = 1, fadeInLen = 2.0, fadeOutLen = 2.0\n"
         "Adds a new animation to the brain as a behavior with the specified name and parameters. If multiple animations are assigned to the same behavior, "

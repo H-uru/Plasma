@@ -2079,7 +2079,7 @@ class ptCritterBrain:
         """Returns how far away the brain can hear."""
         ...
 
-    def getLocallyControlled(self):
+    def getLocallyControlled(self) -> bool:
         """Are we the one making AI decisions? NOTE: Not set automatically, some python script needs to tell the brain this using setLocallyControlled()."""
         ...
 
@@ -2135,7 +2135,7 @@ class ptCritterBrain:
         """Set how far away the brain can hear (360 degree field of hearing)."""
         ...
 
-    def setLocallyControlled(self, local):
+    def setLocallyControlled(self, local: bool) -> None:
         """Tells the brain that we are the ones making all the AI decisions, and to prop location and other information to the server."""
         ...
 

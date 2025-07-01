@@ -116,10 +116,22 @@ PYTHON_METHOD_DEFINITION_STATIC_NOARGS(ptGmVarSync, isSupported)
 }
 
 PYTHON_START_METHODS_TABLE(ptGmVarSync)
-    PYTHON_METHOD_STATIC(ptGmVarSync, join, "Join the common var sync game in the current Age."),
-    PYTHON_METHOD_STATIC_NOARGS(ptGmVarSync, isSupported, "Checks for the presence of a server-side var sync game manager."),
-    PYTHON_METHOD(ptGmVarSync, setVariable, "Change the value of a variable on the server."),
-    PYTHON_METHOD(ptGmVarSync, createVariable, "Create a new variable on the server."),
+    PYTHON_METHOD_STATIC(ptGmVarSync, join,
+        "Type: (handler: Any) -> None\n"
+        "Join the common var sync game in the current Age."
+    ),
+    PYTHON_METHOD_STATIC_NOARGS(ptGmVarSync, isSupported,
+        "Type: () -> bool\n"
+        "Checks for the presence of a server-side var sync game manager."
+    ),
+    PYTHON_METHOD(ptGmVarSync, setVariable,
+        "Type: (varID: int, value: Union[float, str]) -> None\n"
+        "Change the value of a variable on the server."
+    ),
+    PYTHON_METHOD(ptGmVarSync, createVariable,
+        "Type: (varName: str, value: Union[float, str]) -> None\n"
+        "Create a new variable on the server."
+    ),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
