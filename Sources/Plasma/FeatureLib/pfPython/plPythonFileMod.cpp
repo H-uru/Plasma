@@ -316,7 +316,7 @@ plPythonFileMod::~plPythonFileMod()
     // then get rid of this module
     // NOTE: fModule shouldn't be made in the plugin, only at runtime
     if (!fModuleName.empty() && fModule) {
-        //_PyModule_Clear(fModule);
+        //PythonInterface::ClearModule(fModule);
         PyObject* m;
         PyObject* modules = PyImport_GetModuleDict();
         if (modules && (m = PyDict_GetItemString(modules, fModuleName.c_str())) && PyModule_Check(m)) {
