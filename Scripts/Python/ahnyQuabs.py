@@ -192,7 +192,7 @@ class _QuabState:
         return all(i.varID is not None for i in self.itervars())
 
 
-class GameState(enum.IntFlag):
+class GameState(enum.Flag):
     kNotReady = 0
     kInitialSyncComplete = enum.auto()
     kVarCreateRequested = enum.auto()
@@ -283,7 +283,7 @@ class _QuabGameBrain(abc.ABC):
 
     @property
     def ready(self) -> bool:
-        return self.gameState & GameState.kReady == GameState.kReady
+        return GameState.kReady in self.gameState
 
     @abc.abstractmethod
     def ISendVars(self, *vars: _QuabVar):
@@ -319,7 +319,7 @@ class _QuabVarSyncBrain(_QuabGameBrain):
         PtDebugPrint(f"_QuabVarSyncBrain.OnNotify(): Unhandled {events=}")
 
     def ICheckGameReady(self) -> None:
-        if not self.gameState & GameState.kInitialSyncComplete:
+        if GameState.kInitialSyncComplete not in self.gameState:
             PtDebugPrint("_QuabVarSyncBrain.ICheckGameReady(): The initial var sync is NOT complete, we are clearly not ready", level=kDebugDumpLevel)
             return
 
@@ -332,7 +332,7 @@ class _QuabVarSyncBrain(_QuabGameBrain):
             return
 
         # The initial state is available, but not all variables are known. Therefore, we must create them.
-        if self.gameState & GameState.kVarCreateRequested:
+        if GameState.kVarCreateRequested in self.gameState:
             return
 
         for _, var in self.iterAllVars():
