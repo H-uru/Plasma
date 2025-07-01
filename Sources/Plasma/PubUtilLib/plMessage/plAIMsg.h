@@ -116,8 +116,8 @@ private:
 };
 
 /**
- * Message spammed to anyone listening so they can discard the brain's key
- * does NOT get net-propped
+ * Message spammed to anyone listening so they can discard the brain's key.
+ * Does NOT get net-propped.
  */
 class plAIBrainDestroyedMsg : public plAIMsg
 {
@@ -136,8 +136,8 @@ public:
 };
 
 /**
- * Message sent to the AI brain to force it to go to a specific goal
- * might get net-proppped
+ * Message sent to the AI brain to force it to go to a specific goal.
+ * Might get net-propped.
  */
 class plAIGoToGoalMsg : public plAIMsg
 {

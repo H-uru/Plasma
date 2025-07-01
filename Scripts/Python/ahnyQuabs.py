@@ -170,7 +170,7 @@ class _QuabState:
     def isRunningDirty(self) -> bool:
         return self.runningVar.dirty
 
-    def itervars(self) -> Generator[_QuabVar]:
+    def itervars(self) -> Iterable[_QuabVar]:
         yield self.runningVar
         yield self.goalVarX
         yield self.goalVarY
@@ -178,7 +178,7 @@ class _QuabState:
 
     @property
     def lastGoalUpdate(self) -> float:
-        return max((i.lastUpdate for i in (self.goalVarX, self.goalVarY, self.goalVarZ)))
+        return max(i.lastUpdate for i in (self.goalVarX, self.goalVarY, self.goalVarZ))
 
     def runAway(self, run: bool = True, goal: Optional[ptPoint3] = None):
         beh = self.brain.runBehaviorName() if run else self.brain.idleBehaviorName()
@@ -248,7 +248,7 @@ class _QuabGameBrain(abc.ABC):
     def currentTime(self) -> int:
         ...
 
-    def iterAllVars(self) -> Generator[Tuple[_QuabState, _QuabVar]]:
+    def iterAllVars(self) -> Iterable[Tuple[_QuabState, _QuabVar]]:
         for quab in self.quabState:
             for var in quab.itervars():
                 yield quab, var
@@ -268,7 +268,7 @@ class _QuabGameBrain(abc.ABC):
         ...
 
     @property
-    def quabs(self) -> Generator[_QuabState]:
+    def quabs(self) -> Iterable[_QuabState]:
         for i in self.quabState:
             if i.brain is not None:
                 yield i
@@ -323,7 +323,7 @@ class _QuabVarSyncBrain(_QuabGameBrain):
             PtDebugPrint("_QuabVarSyncBrain.ICheckGameReady(): The initial var sync is NOT complete, we are clearly not ready", level=kDebugDumpLevel)
             return
 
-        if not self.ready and all((i.varsReady for i in self.quabState)):
+        if not self.ready and all(i.varsReady for i in self.quabState):
             PtDebugPrint("_QuabVarSyncBrain.ICheckGameReady(): All variables created!", level=kWarningLevel)
             self.gameState |= GameState.kAllVarsCreated
 
