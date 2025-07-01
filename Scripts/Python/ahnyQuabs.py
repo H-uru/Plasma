@@ -429,7 +429,7 @@ class _QuabPyNotifyBrain(_QuabGameBrain):
 
                 # It's probably best to just assume that receiving a valid variable notification
                 # is enough to be a state init.
-                self.gameState |= (GameState.kInitialSyncComplete | GameState.kAllVarsCreated)
+                self.gameState |= GameState.kReady
 
         # We strictly speaking don't need to guard this, but I find that the log messages are
         # VERY spammy if we don't.
