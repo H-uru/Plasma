@@ -51,7 +51,6 @@ from dataclasses import dataclass, field
 import enum
 import itertools
 import random
-import re
 from typing import *
 import weakref
 
@@ -71,10 +70,6 @@ kQuabAvatarName = "Quab"
 # Silly behavior name constants
 kQuabIdleBehNames = ("Idle02", "Idle03",)
 kQuabRunBehNames  = ("Run02", "Run03",)
-
-# Regexes for variable notifications
-goalRegex = re.compile(r"^QuabGP(?P<axis>[XYZ])(?P<quabNum>\d+)$")
-runRegex = re.compile(r"^QuabRun(?P<quabNum>\d+)$")
 
 @dataclass
 class _QuabVar:
