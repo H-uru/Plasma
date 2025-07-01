@@ -261,7 +261,7 @@ class _QuabGameBrain(abc.ABC):
             for var in quab.itervars():
                 if (isinstance(varIdent, str) and var.name == varIdent) or (isinstance(varIdent, int) and var.varID == varIdent):
                     return quab, var
-        raise LookupError
+        raise LookupError(varIdent)
 
     @abc.abstractmethod
     def OnNotify(self, events):
