@@ -47,7 +47,7 @@ from PlasmaGame import *
 from PlasmaTypes import *
 
 import abc
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import enum
 import itertools
 import random
@@ -80,31 +80,23 @@ runRegex = re.compile(r"^QuabRun(?P<quabNum>\d+)$")
 class _QuabVar:
     name: str
     varID: Optional[int] = None
-    value: float = 0.0
-    dirty: bool = False
-    lastUpdate: float = 0.0
-
-    def __hash__(self):
-        return hash((self.name, self.varID))
-
-    def __eq__(self, other):
-        if not isinstance(other, _QuabVar):
-            return False
-        return (self.name, self.varID) == (other.name, other.varID)
+    value: float = field(default=0.0, compare=False)
+    dirty: bool = field(default=False, compare=False)
+    lastUpdate: float = field(default=0.0, compare=False)
 
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class _QuabState:
     name: str
-    runningVar: _QuabVar
-    goalVarX: _QuabVar
-    goalVarY: _QuabVar
-    goalVarZ: _QuabVar
-    brain: Optional[ptCritterBrain]
-    lastXform: ptMatrix44
-    lastW2L: ptMatrix44
-    respawn: bool
-    pending: bool
+    runningVar: _QuabVar = field(compare=False)
+    goalVarX: _QuabVar = field(compare=False)
+    goalVarY: _QuabVar = field(compare=False)
+    goalVarZ: _QuabVar = field(compare=False)
+    brain: Optional[ptCritterBrain] = field(compare=False)
+    lastXform: ptMatrix44 = field(compare=False)
+    lastW2L: ptMatrix44 = field(compare=False)
+    respawn: bool = field(compare=False)
+    pending: bool = field(compare=False)
 
     def __init__(self, num: int):
         # Argh, Cyan's code offsets the quab name and variable indices!
@@ -121,14 +113,6 @@ class _QuabState:
         self.lastXform = ptMatrix44()
         self.respawn = False
         self.pending = False
-
-    def __hash__(self):
-        return hash(self.name)
-
-    def __eq__(self, other: _QuabState):
-        if not isinstance(other, _QuabState):
-            return False
-        return self.name == other.name
 
     @property
     def avatarListSorted(self) -> List[ptSceneobject]:
