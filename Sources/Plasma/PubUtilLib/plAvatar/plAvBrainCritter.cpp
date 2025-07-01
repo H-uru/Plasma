@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plgDispatch.h"
 
+#include <algorithm>
 #include <string_theory/formatter>
 #include <utility>
 
@@ -651,21 +652,16 @@ std::vector<unsigned long> plAvBrainCritter::IGetAgePlayerIDList() const
 {
     // make a list of non-local players
     std::vector<unsigned long> playerIDs;
-    std::map<unsigned long, bool> tempMap; // slightly hacky way to remove dups
     plNetClientMgr* nc = plNetClientMgr::GetInstance();
     for (size_t i = 0; i < nc->TransportMgr().GetNumMembers(); ++i)
     {
         plNetTransportMember* mbr = nc->TransportMgr().GetMember(i);
         unsigned long id = mbr->GetPlayerID();
-        if (tempMap.find(id) == tempMap.end())
-        {
-            playerIDs.push_back(id);
-            tempMap[id] = true;
-        }
+        playerIDs.push_back(id);
     }
     // add the local player if he isn't already in the list
     unsigned long localID = nc->GetPlayerID();
-    if (tempMap.find(localID) == tempMap.end())
+    if (std::find(playerIDs.begin(), playerIDs.end(), localID) == playerIDs.end())
         playerIDs.push_back(localID);
 
     // return result
