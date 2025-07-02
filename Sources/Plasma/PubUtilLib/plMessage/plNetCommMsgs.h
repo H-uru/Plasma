@@ -57,14 +57,8 @@ struct NetCliAuthFileInfo;
 
 class plNetCommReplyMsg : public plMessage {
 public:
-    enum EParamType {
-        kParamTypeOther = 0,
-        kParamTypePython,
-    };
-
     ENetError   result;
     void *      param;
-    EParamType  ptype;
 
     plNetCommReplyMsg () { SetBCastFlag(kBCastByExactType); }
 

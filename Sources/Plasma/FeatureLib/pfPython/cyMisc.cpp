@@ -2175,11 +2175,7 @@ void cyMisc::ShootBulletFromObject(pyKey &selfkey, pySceneObject* sobj, float ra
 //
 void cyMisc::GetPublicAgeList(const ST::string& ageName)
 {
-    NetCommGetPublicAgeList(
-        ageName,
-        nullptr,
-        plNetCommReplyMsg::kParamTypePython
-    );
+    NetCommGetPublicAgeList(ageName, nullptr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
