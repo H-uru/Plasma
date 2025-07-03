@@ -475,13 +475,11 @@ static void INetCliAuthChangePasswordCallback(ENetError result)
 static void INetCliAuthGetPublicAgeListCallback (
     ENetError                   result,
     void *                      param,
-    plNetCommReplyMsg::EParamType ptype,
     std::vector<NetAgeInfo>     ages
 ) {
     plNetCommPublicAgeListMsg * msg = new plNetCommPublicAgeListMsg;
     msg->result     = result;
     msg->param      = param;
-    msg->ptype      = ptype;
     msg->ages       = std::move(ages);
     msg->Send();
 }
@@ -963,13 +961,12 @@ void NetCommDeletePlayer (  // --> plNetCommDeletePlayerMsg
 //============================================================================
 void NetCommGetPublicAgeList (//-> plNetCommPublicAgeListMsg
     const ST::string&               ageName,
-    void *                          param,
-    plNetCommReplyMsg::EParamType   ptype
+    void *                          param
 ) {
     NetCliAuthGetPublicAgeList(
         ageName,
-        [param, ptype](auto result, auto ages) {
-            INetCliAuthGetPublicAgeListCallback(result, param, ptype, std::move(ages));
+        [param](auto result, auto ages) {
+            INetCliAuthGetPublicAgeListCallback(result, param, std::move(ages));
         }
     );
 }

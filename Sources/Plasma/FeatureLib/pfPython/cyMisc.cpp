@@ -2169,19 +2169,13 @@ void cyMisc::ShootBulletFromObject(pyKey &selfkey, pySceneObject* sobj, float ra
 //////////////////////////////////////////////////////////////////////////////
 //
 // Function   : GetPublicAgeList
-// PARAMETERS : ageName, callback object
+// PARAMETERS : ageName
 //
 // PURPOSE    : Get the list of public ages for the given age name.
 //
-void cyMisc::GetPublicAgeList(const ST::string& ageName, PyObject * cbObject)
+void cyMisc::GetPublicAgeList(const ST::string& ageName)
 {
-    if (cbObject)
-        Py_XINCREF(cbObject);
-    NetCommGetPublicAgeList(
-        ageName,
-        cbObject,
-        plNetCommReplyMsg::kParamTypePython
-    );
+    NetCommGetPublicAgeList(ageName, nullptr);
 }
 
 //////////////////////////////////////////////////////////////////////////////

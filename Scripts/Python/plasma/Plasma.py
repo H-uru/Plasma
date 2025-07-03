@@ -570,9 +570,9 @@ def PtGetPrevAgeName():
     """Returns filename of previous age visited"""
     ...
 
-def PtGetPublicAgeList(ageName, cbObject=None):
+def PtGetPublicAgeList(ageName):
     """Get list of public ages for the given age name.
-    cbObject, if supplied should have a method called gotPublicAgeList(self,ageList). ageList is a list of tuple(ptAgeInfoStruct,nPlayersInAge)
+    The age list will be delivered asynchronously through the callback method gotPublicAgeList(self,ageList). ageList is a list of tuple(ptAgeInfoStruct,nPlayersInAge)
     """
     ...
 
