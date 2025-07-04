@@ -4,6 +4,7 @@ set(pfGameMgr_HEADERS
     pfGameMgrCreatable.h
     pfGameMgrTrans.h
     pfGmBlueSpiral.h
+    pfGmClimbingWall.h
     pfGmMarker.h
     pfGmVarSync.h
 )
@@ -13,6 +14,7 @@ set(pfGameMgr_SOURCES
     pfGameMgr.cpp
     pfGameMgrTrans.cpp
     pfGmBlueSpiral.cpp
+    pfGmClimbingWall.cpp
     pfGmMarker.cpp
     pfGmVarSync.cpp
 )

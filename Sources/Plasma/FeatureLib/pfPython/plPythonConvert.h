@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plPythonConvert_h_
 
 #include <string_theory/string>
+
+#include <set>
 #include <type_traits>
 #include <tuple>
 
@@ -168,6 +170,15 @@ namespace plPython
     inline PyObject* ConvertFrom(pyObjectRef&& value)
     {
         return value.Release();
+    }
+
+    template<typename _T>
+    inline PyObject* ConvertFrom(std::set<_T>&& value)
+    {
+        PyObject* set = PyFrozenSet_New(nullptr);
+        for (const auto& item : value)
+            PySet_Add(set, ConvertFrom(item));
+        return set;
     }
 
     struct ToTuple_Type {};

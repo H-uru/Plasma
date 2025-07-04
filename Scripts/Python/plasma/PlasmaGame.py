@@ -93,6 +93,47 @@ class ptGmBlueSpiral(ptGameCli):
         """Request for the server to start the game timer."""
         ...
 
+class ptGmClimbingWall(ptGameCli):
+    """Legacy climbing wall game client."""
+
+    def changeBlocker(self, teamNumber: int, blockerNumber: int, added: bool) -> None:
+        """Request for the server to change the state of a blocker."""
+        ...
+
+    def changeNumBlockers(self, amountToAdjust: int) -> None:
+        """Request for the server to change the maximum number of blockers."""
+        ...
+
+    def enterPlayer(self, teamNumber: int) -> None:
+        """Request for the server to enter the local player as the person playing the wall game for the given team."""
+        ...
+
+    def finishGame(self) -> None:
+        """Request for the server to successfully complete the climbing wall game for our team."""
+        ...
+
+    @staticmethod
+    def isSupported() -> bool:
+        """Checks for the presence of a server-side climbing wall game manager."""
+        ...
+
+    @staticmethod
+    def join(handler: Any, tableID: int) -> None:
+        """Join a common climbing wall game in the current Age."""
+        ...
+
+    def panic(self) -> None:
+        """Request for the server to forfeit the wall game for our team."""
+        ...
+
+    def ready(self, readyType: int, teamNumber: int) -> None:
+        """Request for the server to change the ready state for the given team."""
+        ...
+
+    def reset(self) -> None:
+        """Request for the server to reset the game to the initial state."""
+        ...
+
 class ptGmMarker(ptGameCli):
     """Legacy marker game client."""
 

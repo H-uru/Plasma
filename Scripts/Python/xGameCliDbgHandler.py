@@ -78,6 +78,29 @@ class xGameCliDbgHandler:
         PtDebugPrint(f"xGameCliDbgHandler.OnOwnerChanged(): {newOwnerID=}", level=level)
 
     # #####################################
+    #            ClimbingWall             #
+    #######################################
+
+    def OnNumBlockersChanged(self, newBlockerCount: int, localOnly: bool):
+        PtDebugPrint(f"xGameCliDbgHandler.OnNumBlockersChanged(): {newBlockerCount=} {localOnly=}", level=level)
+
+    def OnReady(self, readyType: int, team1Ready: bool, team2Ready: bool, localOnly: bool):
+        readyType = _EnumGetNameFromValue(PtClimbingWallReadyType, readyType)
+        PtDebugPrint(f"xGameCliDbgHandler.OnReady(): {readyType=} {team1Ready=} {team2Ready=} {localOnly=}", level=level)
+
+    def OnBlockersChanged(self, teamNumber: int, blockers: Tuple, localOnly: bool):
+        PtDebugPrint(f"xGameCliDbgHandler.OnBlockersChanged(): {teamNumber=} {blockers=} {localOnly=}", level=level)
+
+    def OnPlayerEntered(self):
+        PtDebugPrint(f"xGameCliDbgHandler.OnPlayerEntered()", level=level)
+
+    def OnSuitMachineLocked(self, team1MachineLocked: bool, team2MachineLocked: bool, localOnly: bool):
+        PtDebugPrint(f"xGameCliDbgHandler.OnSuitMachineLocked(): {team1MachineLocked=} {team2MachineLocked=} {localOnly=}", level=level)
+
+    def OnGameOver(self, teamWon: int, team1Blockers: Tuple, team2Blockers: Tuple, localOnly: bool):
+        PtDebugPrint(f"xGameCliDbgHandler.GameOver(): {teamWon=} {team1Blockers=} {team2Blockers=} {localOnly=}", level=level)
+
+    # #####################################
     #               VarSync               #
     #######################################
 

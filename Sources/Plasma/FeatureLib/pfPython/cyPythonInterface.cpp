@@ -88,6 +88,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGameCli.h"
 #include "pyGameMgr.h"
 #include "pyGmBlueSpiral.h"
+#include "pyGmClimbingWall.h"
 #include "pyGmMarker.h"
 #include "pyGmVarSync.h"
 
@@ -1214,6 +1215,7 @@ void PythonInterface::AddPlasmaGameClasses(PyObject* plasmaGameMod)
 {
     pyGameCli::AddPlasmaGameClasses(plasmaGameMod);
     pyGmBlueSpiral::AddPlasmaGameClasses(plasmaGameMod);
+    pyGmClimbingWall::AddPlasmaGameClasses(plasmaGameMod);
     pyGmMarker::AddPlasmaGameClasses(plasmaGameMod);
     pyGmVarSync::AddPlasmaGameClasses(plasmaGameMod);
 }
@@ -1228,6 +1230,7 @@ void PythonInterface::AddPlasmaGameClasses(PyObject* plasmaGameMod)
 void PythonInterface::AddPlasmaGameConstantsClasses(PyObject* plasmaGameConstantsMod)
 {
     pyGameMgr::AddPlasmaGameConstantsClasses(plasmaGameConstantsMod);
+    pyGmClimbingWall::AddPlasmaGameConstantsClasses(plasmaGameConstantsMod);
     pyGmMarker::AddPlasmaGameConstantsClasses(plasmaGameConstantsMod);
 }
 

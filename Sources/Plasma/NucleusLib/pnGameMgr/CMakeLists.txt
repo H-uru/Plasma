@@ -2,6 +2,8 @@ set(pnGameMgr_HEADERS
     pnGameMgr.h
     pnGameMgrConst.h
     pnGmBlueSpiral.h
+    pnGmClimbingWall.h
+    pnGmClimbingWallConst.h
     pnGmHeek.h
     pnGmHeekConst.h
     pnGmMarker.h

@@ -40,24 +40,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef _pfGameMgrCreatable_h_
-#define _pfGameMgrCreatable_h_
+#ifndef _pnGmClimbingWallConst_h_
+#define _pnGmClimbingWallConst_h_
 
-#include "pnFactory/plCreator.h"
+constexpr size_t kClimbingWallMaxBlockers = 20;
+constexpr int32_t kClimbingWallNoBlocker = -1;   // the value of a slot in the blocker array when no blocker is in that slot
 
-#include "pfGameCli.h"
-REGISTER_NONCREATABLE(pfGameCli);
+enum EClimbingWallInitResult
+{
+    kClimbingWallInitSuccess,
+    kClimbingWallInitError,
+    kNumClimbingWallInitResults
+};
 
-#include "pfGmBlueSpiral.h"
-REGISTER_NONCREATABLE(pfGmBlueSpiral);
-
-#include "pfGmClimbingWall.h"
-REGISTER_NONCREATABLE(pfGmClimbingWall);
-
-#include "pfGmMarker.h"
-REGISTER_NONCREATABLE(pfGmMarker);
-
-#include "pfGmVarSync.h"
-REGISTER_NONCREATABLE(pfGmVarSync);
+enum EClimbingWallReadyType
+{
+    kClimbingWallReadyNumBlockers,
+    kClimbingWallReadyBlockers,
+};
 
 #endif
