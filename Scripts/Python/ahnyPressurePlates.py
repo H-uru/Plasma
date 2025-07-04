@@ -171,7 +171,7 @@ class ahnyPressurePlates(ptModifier):
                                     occupiedZones[index]= occupiedZones[index] + 1
                                 if respLightList != [] and occupiedZones[index]==1: # if we are now equal to one run the responder 
                                     respClockLights.run(self.key, state='on', objectName=respLightList[index], netForce=1 )
-                                PtDebugPrint("%s - enter %s" % (str(occupiedZones), str(index)))
+                                PtDebugPrint(f"ahnyPressurePlates.OnNotify(): {occupiedZones=} enter - {index=}", level=kDebugDumpLevel)
                             else: #this should be exiting
                                 if occupiedZones[index] != 0: #only subtract if we are not zero don't want to overflow
                                     occupiedZones[index] = occupiedZones[index] -1
@@ -183,7 +183,7 @@ class ahnyPressurePlates(ptModifier):
 
                                     if (respLightList != []) and (occupiedZones[index] == 0):
                                         respClockLights.run(self.key, state='off', objectName=respLightList[index] , netForce=1)
-                                PtDebugPrint("%s - exit %s" % (str(occupiedZones), str(index)))
+                                PtDebugPrint(f"ahnyPressurePlates.OnNotify(): {occupiedZones=} exit - {index=}", level=kDebugDumpLevel)
                             ageSDL[SDLOccupied.value] = tuple(occupiedZones)
                             #PtDebugPrint("Occupied: %s" % (str(occupiedZones)))
 
