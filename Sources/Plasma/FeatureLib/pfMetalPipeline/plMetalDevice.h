@@ -65,8 +65,11 @@ class plCubicEnvironmap;
 class plLayerInterface;
 class plMetalPipelineState;
 
-// NOTE: Results of this will be row major
-matrix_float4x4* hsMatrix2SIMD(const hsMatrix44& src, matrix_float4x4* dst);
+inline const matrix_float4x4& hsMatrix2SIMD(const hsMatrix44& src)
+{
+    // reinterpret_cast not allowed in constexpr
+    return *reinterpret_cast<const simd_float4x4* >(src.fMap);
+}
 
 class plMetalDevice
 {

@@ -1147,9 +1147,8 @@ void plMetalPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& 
     }
 
     if (span.fNumMatrices == 2) {
-        matrix_float4x4 mat;
-        hsMatrix2SIMD(drawable->GetPaletteMatrix(span.fBaseMatrix + 1), &mat);
-        fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&mat, sizeof(matrix_float4x4), VertexShaderArgumentBlendMatrix1);
+        const matrix_float4x4* mat = &hsMatrix2SIMD(drawable->GetPaletteMatrix(span.fBaseMatrix + 1));
+        fDevice.CurrentRenderCommandEncoder()->setVertexBytes(mat, sizeof(matrix_float4x4), VertexShaderArgumentBlendMatrix1);
     }
 
     fCurrentRenderPassUniforms->projectionMatrix = fDevice.fMatrixProj;
@@ -1315,8 +1314,7 @@ void plMetalPipeline::IRenderProjection(const plRenderPrimFunc& render, plLightI
     fCurrentRenderPassUniforms->fogColor = {0.f, 0.f, 0.f};
     fCurrentRenderPassUniforms->diffuseCol = {1.f, 1.f, 1.f, 1.f};
 
-    matrix_float4x4 tXfm;
-    hsMatrix2SIMD(proj->GetTransform(), &tXfm);
+    const matrix_float4x4& tXfm = hsMatrix2SIMD(proj->GetTransform());
     fCurrentRenderPassUniforms->uvTransforms[0].transform = tXfm;
     fCurrentRenderPassUniforms->uvTransforms[0].UVWSrc = proj->GetUVWSrc();
 
@@ -3234,10 +3232,7 @@ bool plMetalPipeline::IPushShadowCastState(plShadowSlave* slave)
         castLUT = castLUT * c2w;
     }
 
-    simd_float4x4 tXfm;
-    hsMatrix2SIMD(castLUT, &tXfm);
-
-    fCurrentRenderPassUniforms->uvTransforms[0].transform = tXfm;
+    fCurrentRenderPassUniforms->uvTransforms[0].transform = hsMatrix2SIMD(castLUT);
     fCurrentRenderPassUniforms->uvTransforms[0].UVWSrc = plLayerInterface::kUVWPosition;
 
     /*DWORD clearColor = 0xff000000L;
@@ -3874,9 +3869,7 @@ void plMetalPipeline::ISetupShadowRcvTextureStages(hsGMaterial* mat)
         // Normal UVW source.
         fCurrentRenderPassUniforms->uvTransforms[2].UVWSrc = uvwSrc;
         // MiscFlags to layer's misc flags
-        matrix_float4x4 tXfm;
-        hsMatrix2SIMD(layer->GetTransform(), &tXfm);
-        fCurrentRenderPassUniforms->uvTransforms[2].transform = tXfm;
+        fCurrentRenderPassUniforms->uvTransforms[2].transform = hsMatrix2SIMD(layer->GetTransform());
     }
 
     fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&layerIndex, sizeof(int), FragmentShaderArgumentShadowCastAlphaSrc);
@@ -3924,19 +3917,16 @@ void plMetalPipeline::ISetupShadowSlaveTextures(plShadowSlave* slave)
     fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&uniforms, sizeof(plMetalShadowCastFragmentShaderArgumentBuffer), FragmentShaderArgumentShadowCastUniforms);
 
     hsMatrix44    cameraToTexture = slave->fWorldToTexture * c2w;
-    simd_float4x4 tXfm;
-    hsMatrix2SIMD(cameraToTexture, &tXfm);
 
     fCurrentRenderPassUniforms->uvTransforms[0].UVWSrc = plLayerInterface::kUVWPosition;
-    fCurrentRenderPassUniforms->uvTransforms[0].transform = tXfm;
+    fCurrentRenderPassUniforms->uvTransforms[0].transform = hsMatrix2SIMD(cameraToTexture);
 
     // Stage 1: the lut
     // Set the texture transform to slave's fRcvLUT
     hsMatrix44 cameraToLut = slave->fRcvLUT * c2w;
-    hsMatrix2SIMD(cameraToLut, &tXfm);
 
     fCurrentRenderPassUniforms->uvTransforms[1].UVWSrc = plLayerInterface::kUVWPosition;
-    fCurrentRenderPassUniforms->uvTransforms[1].transform = tXfm;
+    fCurrentRenderPassUniforms->uvTransforms[1].transform = hsMatrix2SIMD(cameraToLut);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -4175,15 +4165,14 @@ void plMetalPipeline::IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, 
         simd_float4 destNorm_buf = (simd_float4){0.f, 0.f, 0.f, 0.f};
         simd_float4 destPt_buf = (simd_float4){0.f, 0.f, 0.f, 1.f};
 
-        simd_float4x4 simdMatrix;
-
         // Blend
         for (uint32_t j = 0; j < numWeights + 1; ++j) {
-            hsMatrix2SIMD(matrixPalette[indices & 0xFF], &simdMatrix);
-            if (weights[j]) {
+            float weight = weights[j];
+            if (weight) {
+                const simd_float4x4& simdMatrix = hsMatrix2SIMD(matrixPalette[indices & 0xFF]);
                 // Note: This bit is different than GL/DirectX. It's using acclerate so this is also accelerated on ARM through NEON or maybe even the Neural Engine.
-                destPt_buf += simd_mul(*(simd_float4*)pt_buf, simdMatrix) * weights[j];
-                destNorm_buf += simd_mul(*(simd_float4*)vec_buf, simdMatrix) * weights[j];
+                destPt_buf += simd_mul(*(simd_float4*)pt_buf, simdMatrix) * weight;
+                destNorm_buf += simd_mul(*(simd_float4*)vec_buf, simdMatrix) * weight;
             }
             // ISkinVertexSSE41(matrixPalette[indices & 0xFF], weights[j], pt_buf, destPt_buf, vec_buf, destNorm_buf);
             indices >>= 8;
