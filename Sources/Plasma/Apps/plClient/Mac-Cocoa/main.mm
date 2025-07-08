@@ -199,7 +199,7 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
     [window setDelegate:self];
     
     gClient.SetClientWindow((__bridge void *)view.layer);
-    gClient.SetClientDisplay([window.screen.deviceDescription[@"NSScreenNumber"] intValue]);
+    gClient.SetClientDisplay([window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue]);
 
     self = [super initWithWindow:window];
     self.window.acceptsMouseMovedEvents = YES;

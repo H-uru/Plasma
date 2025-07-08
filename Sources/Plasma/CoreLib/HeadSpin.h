@@ -78,7 +78,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #elif HS_BUILD_FOR_APPLE
     // Same note as Windows above - would rather not forward declare but I don't want to
     // import Foundation or CoreGraphics
-#if HS_BUILD_FOR_IOS
+#ifdef HS_BUILD_FOR_IOS
     // Exception - iOS doesn't support CGDirectDisplayID.
     // It has UIScreen but that's a Cocoa type.
     typedef void* hsDisplayHndl;
