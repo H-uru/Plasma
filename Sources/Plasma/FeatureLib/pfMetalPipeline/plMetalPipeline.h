@@ -101,7 +101,7 @@ protected:
     plMetalRenderTargetRef*   fRenderTargetRefList;
 
 public:
-    plMetalPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord* devMode);
+    plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord* devMode);
     ~plMetalPipeline();
 
     CLASSNAME_REGISTER(plMetalPipeline);

@@ -69,17 +69,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     struct HINSTANCE__; typedef struct HINSTANCE__ *HINSTANCE;
 
     typedef HWND hsWindowHndl;
+    typedef HWND hsDisplayHndl;
     typedef HINSTANCE hsWindowInst;
     typedef HINSTANCE HMODULE;
     typedef HMODULE hsLibraryHndl;
     typedef long HRESULT;
     typedef void* HANDLE;
-#elif HS_BUILD_FOR_MACOS
+#elif HS_BUILD_FOR_APPLE
+    // Same note as Windows above - would rather not forward declare but I don't want to
+    // import Foundation or CoreGraphics
+#if HS_BUILD_FOR_IOS
+    // Exception - iOS doesn't support CGDirectDisplayID.
+    // It has UIScreen but that's a Cocoa type.
+    typedef void* hsDisplayHndl;
+#else
+    typedef uint32_t CGDirectDisplayID;
+    typedef CGDirectDisplayID hsDisplayHndl;
+#endif
     typedef void* hsWindowHndl;
     typedef void* hsWindowInst;
     typedef void* hsLibraryHndl;
 #else
     typedef int32_t* hsWindowHndl;
+    typedef int32_t* hsDisplayHndl;
     typedef int32_t* hsWindowInst;
     typedef void* hsLibraryHndl;
 #endif // HS_BUILD_FOR_WIN32
