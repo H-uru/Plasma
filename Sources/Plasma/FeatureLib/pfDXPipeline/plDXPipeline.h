@@ -118,15 +118,6 @@ typedef LPDIRECT3D9 (WINAPI * Direct3DCreateProc)( UINT sdkVersion );
 
 //// Helper Classes ///////////////////////////////////////////////////////////
 
-//// The RenderPrimFunc lets you have one function which does a lot of stuff
-// around the actual call to render whatever type of primitives you have, instead
-// of duplicating everything because the one line to render is different.
-class plRenderPrimFunc
-{
-public:
-    virtual bool RenderPrims() const = 0; // return true on error
-};
-
 //// DX-specific Plate Manager implementation
 class plDXPlateManager : public plPlateManager
 {
@@ -177,6 +168,8 @@ class plStatusLogDrawer;
 
 class plDXPipeline : public pl3DPipeline<plDXDevice>
 {
+    friend class plDXDevice;
+
 protected:
     enum {
         kCapsNone               = 0x00000000,
@@ -217,9 +210,6 @@ protected:
     uint32_t                fNextDynVtx;
     uint32_t                fDynVtxSize;
     IDirect3DVertexBuffer9* fDynVtxBuff;
-    bool                    fManagedAlloced;
-    bool                    fAllocUnManaged;
-
 
     // States
     plDXGeneralSettings     fSettings;
@@ -228,7 +218,6 @@ protected:
     bool                    fDevWasLost;
 
     plDXTextureRef*         fTextureRefList;
-    plTextFont*             fTextFontRefList;
     plDXRenderTargetRef*    fRenderTargetRefList;
     plDXVertexShader*       fVShaderRefList;
     plDXPixelShader*        fPShaderRefList;
@@ -285,19 +274,9 @@ protected:
 
     bool            fForceDeviceReset;
 
-    void            IBeginAllocUnManaged();
-    void            IEndAllocUnManaged();
-
     bool            IRefreshDynVertices(plGBufferGroup* group, plDXVertexBufferRef* vRef);
     bool            ICheckAuxBuffers(const plAuxSpan* span);
     bool            ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* group, const plSpan* span);
-    void            ICheckStaticVertexBuffer(plDXVertexBufferRef* vRef, plGBufferGroup* owner, uint32_t idx);
-    void            ICheckIndexBuffer(plDXIndexBufferRef* iRef);
-    void            IFillStaticVertexBufferRef(plDXVertexBufferRef *ref, plGBufferGroup *group, uint32_t idx);
-    void            IFillVolatileVertexBufferRef(plDXVertexBufferRef* ref, plGBufferGroup* group, uint32_t idx);
-    void            IFillIndexBufferRef(plDXIndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx);
-    void            ISetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, plDXVertexBufferRef* vRef);
-    void            ISetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, plDXIndexBufferRef* iRef);
     void            ICreateDynamicBuffers();
     void            IReleaseDynamicBuffers();
 
@@ -307,7 +286,6 @@ protected:
     // Rendering
     bool        IFlipSurface();
     long        IGetBufferD3DFormat(uint8_t format) const;
-    uint32_t    IGetBufferFormatSize(uint8_t format) const;
     void        IGetVisibleSpans(plDrawableSpans* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr);
     bool        ILoopOverLayers(const plRenderPrimFunc& render, hsGMaterial* material, const plSpan& span);
     void        IRenderBufferSpan( const plIcicle& span, 
@@ -362,11 +340,6 @@ protected:
     void        IBottomLayer();
 
     // Push special effects
-    plLayerInterface*   IPushOverBaseLayer(plLayerInterface* li);
-    plLayerInterface*   IPopOverBaseLayer(plLayerInterface* li);
-    plLayerInterface*   IPushOverAllLayer(plLayerInterface* li);
-    plLayerInterface*   IPopOverAllLayer(plLayerInterface* li);
-
     int                 ISetNumActivePiggyBacks();
     void                IPushPiggyBacks(hsGMaterial* mat);
     void                IPopPiggyBacks();
@@ -400,7 +373,6 @@ protected:
     // Visualization of active occluders
     void            IMakeOcclusionSnap();
 
-    bool            IAvatarSort(plDrawableSpans* d, const std::vector<int16_t>& visList);
     void            IBlendVertsIntoBuffer( plSpan* span, 
                                             hsMatrix44* matrixPalette, int numMatrices,
                                             const uint8_t *src, uint8_t format, uint32_t srcStride, 
@@ -459,7 +431,6 @@ protected:
     // Transforms
     D3DMATRIX&     IMatrix44ToD3DMatrix( D3DMATRIX& dst, const hsMatrix44& src );
     void            ISetCullMode(bool flip=false);
-    bool inline   IIsViewLeftHanded();
     bool            IGetClearViewPort(D3DRECT& r);
     void            ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, hsMatrix44& lastL2W);
 
@@ -480,7 +451,6 @@ protected:
 
     /////// Shadow internals
     // Generation
-    void    IClearShadowSlaves();
     void    IPreprocessShadows();
     bool    IPrepShadowCaster(const plShadowCaster* caster);
     void    IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSpans* drawable, const plIcicle& span);
@@ -559,10 +529,6 @@ public:
     // Create a debug text font object
     plTextFont* MakeTextFont(ST::string face, uint16_t size) override;
 
-    // Create and/or Refresh geometry buffers
-    void            CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
-    void            CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
-
     bool            OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly) override;
     bool            CloseAccess(plAccessSpan& acc) override;
 
@@ -597,7 +563,7 @@ public:
     /// Error handling
     ST::string GetErrorString() override;
 
-    bool            ManagedAlloced() const { return fManagedAlloced; }
+    bool            ManagedAlloced() const { return fDevice.fManagedAlloced; }
 
     virtual void    GetSupportedColorDepths(std::vector<int> &ColorDepths);
     void            GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth = 32) override;
