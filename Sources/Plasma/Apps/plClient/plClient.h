@@ -201,7 +201,7 @@ protected:
     void    IIncProgress( float byHowMuch, const char *text );
     void    IStopProgress();
 
-    static plPipeline* ICreatePipeline(hsWindowHndl disp, hsWindowHndl hWnd, const hsG3DDeviceModeRecord* devMode);
+    static plPipeline* ICreatePipeline(hsDisplayHndl disp, hsWindowHndl hWnd, const hsG3DDeviceModeRecord* devMode);
 
     static void IDispatchMsgReceiveCallback();
     static void IReadKeyedObjCallback(const plKey& key);
@@ -241,7 +241,7 @@ public:
     
     bool MsgReceive(plMessage* msg) override;
     
-    bool        InitPipeline(hsWindowHndl display, uint32_t devType = hsG3DDeviceSelector::kDevTypeUnknown);
+    bool        InitPipeline(hsDisplayHndl display, uint32_t devType = hsG3DDeviceSelector::kDevTypeUnknown);
 
     void        InitInputs();
 

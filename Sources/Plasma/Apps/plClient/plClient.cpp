@@ -476,7 +476,7 @@ void plClient::ISetGraphicsDefaults()
     plDynamicCamMap::SetEnabled(plPipeline::fDefaultPipeParams.PlanarReflections ? true : false);
 }
 
-plPipeline* plClient::ICreatePipeline(hsWindowHndl disp, hsWindowHndl hWnd, const hsG3DDeviceModeRecord* devMode)
+plPipeline* plClient::ICreatePipeline(hsDisplayHndl disp, hsWindowHndl hWnd, const hsG3DDeviceModeRecord* devMode)
 {
     uint32_t renderer = devMode->GetDevice()->GetG3DDeviceType();
 
@@ -498,7 +498,7 @@ plPipeline* plClient::ICreatePipeline(hsWindowHndl disp, hsWindowHndl hWnd, cons
     return new plNullPipeline(disp, hWnd, devMode);
 }
 
-bool plClient::InitPipeline(hsWindowHndl display, uint32_t devType)
+bool plClient::InitPipeline(hsDisplayHndl display, uint32_t devType)
 {
     hsStatusMessage("InitPipeline client\n");
 
