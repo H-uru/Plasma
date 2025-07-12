@@ -87,6 +87,7 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
         // now inspect the GPU and figure out a good default resolution
         // This code is in Metal (for now) - but it should also work
         // under OpenGL/Mac as long as the GPU also supports Metal.
+#if defined(HAVE_BUILTIN_AVAILABLE)
         if (@available(macOS 10.15, *)) {
             // The available check needs to be on it's own line or
             // we'll get a compiler warning
@@ -98,6 +99,7 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
                 defaultMode = devRec.GetModes().front();
             }
         }
+#endif
 
         if (defaultMode.GetWidth() == 0)
         {
