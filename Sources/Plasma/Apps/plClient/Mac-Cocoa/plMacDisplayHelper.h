@@ -40,47 +40,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-#include "plPipeResReq.h"
-#include "plPipeline.h"
+#ifndef plMacDisplayHelper_hpp
+#define plMacDisplayHelper_hpp
 
-plDisplayHelper* plDisplayHelper::_currentDisplayHelper = nullptr;
-hsResMgr* hsgResMgr::fResMgr = nullptr;
+// Currently requires Metal to query attached GPU capabilities
+// Capability check will also work for GL - but will need something
+// different for older GPUs.
+#include <AppKit/AppKit.h>
+#include <QuartzCore/QuartzCore.h>
 
-plDispatchBase* plgDispatch::Dispatch()
+#include "plPipeline/hsG3DDeviceSelector.h"
+
+class plMacDisplayHelper: public plDisplayHelper
 {
-    return hsgResMgr::Dispatch();
-}
+public:
+    CGDirectDisplayID CurrentDisplay() { return fCurrentDisplay; }
 
-bool hsgResMgr::Init(hsResMgr* m)
-{
-    hsRefCnt_SafeAssign(fResMgr, m); 
-    hsRefCnt_SafeUnRef(m);
-    if (!m->IInit())
-        return false;
-    return true; 
-}
+    plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
+    std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) override;
+    
+    plMacDisplayHelper();
+    ~plMacDisplayHelper();
+private:
+    CGDirectDisplayID fCurrentDisplay = -1;
+    plDisplayMode fDesktopDisplayMode;
+    std::vector<plDisplayMode> fDisplayModes;
+    
+    void SetCurrentScreen(hsDisplayHndl screen);
+    // we need NSScreen to query for non rectangular screen geometry
+    void SetCurrentScreen(NSScreen *screen);
+};
 
-void hsgResMgr::Shutdown()
-{
-    if (fResMgr)
-    {
-        if (fResMgr->RefCnt() <= 1)
-        {
-            fResMgr->IShutdown();
-            hsRefCnt_SafeUnRef(fResMgr); 
-            fResMgr = nullptr;
-        }
-        else
-        {
-            hsRefCnt_SafeUnRef(fResMgr);
-        }
-    }
-}
-
-plPipeResReq& plPipeResReq::Instance() 
-{ 
-    static  plPipeResReq r; 
-    return r; 
-}
+#endif /* plMacDisplayHelper_hpp */

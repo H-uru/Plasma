@@ -232,6 +232,7 @@ void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
 
 
 #ifdef HS_BUILD_FOR_MACOS
+#include <CoreGraphics/CoreGraphics.h>
 #include <OpenGL/OpenGL.h>
 
 void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
@@ -239,13 +240,16 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
     IGNORE_WARNINGS_BEGIN("deprecated-declarations")
     CGLPixelFormatObj pix = nullptr;
     CGLContextObj ctx = nullptr;
+    
+    CGDirectDisplayID mainDisplay = CGMainDisplayID();
 
     do {
-        CGLPixelFormatAttribute attribs[6] = {
+        CGLPixelFormatAttribute attribs[8] = {
             kCGLPFAAccelerated,
             kCGLPFANoRecovery,
             kCGLPFADoubleBuffer,
             kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute) kCGLOGLPVersion_3_2_Core,
+            kCGLPFADisplayMask, (CGLPixelFormatAttribute) CGDisplayIDToOpenGLDisplayMask(mainDisplay),
             (CGLPixelFormatAttribute) 0
         };
 
@@ -261,6 +265,16 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
         hsG3DDeviceRecord devRec;
         devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeOpenGL);
         devRec.SetDriverName("OpenGL.framework");
+        
+        plDisplayHelper* displayHelper = plDisplayHelper::CurrentDisplayHelper();
+        for (const auto& mode : displayHelper->GetSupportedDisplayModes(mainDisplay)) {
+            hsG3DDeviceMode devMode;
+            devMode.SetWidth(mode.Width);
+            devMode.SetHeight(mode.Height);
+            devMode.SetColorDepth(mode.ColorDepth);
+            devRec.GetModes().emplace_back(devMode);
+        }
+        devRec.SetDefaultMode(devRec.GetModes().front());
 
         if (fillDeviceRecord(devRec))
             records.emplace_back(devRec);

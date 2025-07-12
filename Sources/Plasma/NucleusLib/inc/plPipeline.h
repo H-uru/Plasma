@@ -138,6 +138,22 @@ public:
     int ColorDepth;
 };
 
+class plDisplayHelper
+{
+public:
+    virtual plDisplayMode DesktopDisplayMode() = 0;
+    virtual std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) = 0;
+    
+    plDisplayHelper() = default;
+    virtual ~plDisplayHelper() = default;
+    
+    static plDisplayHelper* CurrentDisplayHelper() { return _currentDisplayHelper; }
+    void MakeCurrentDisplayHelper() { _currentDisplayHelper = this; }
+    
+private:
+    static plDisplayHelper* _currentDisplayHelper;
+};
+
 class plPipeline : public plCreatable
 {
 public:

@@ -41,26 +41,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-
 #include <vector>
 #include <string_theory/format>
-#include <Foundation/Foundation.hpp>
+#include <CoreGraphics/CoreGraphics.h>
+#include <Foundation/Foundation.h>
+#include <Metal/Metal.h>
 
 #include "plMetalPipeline.h"
 
 void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
 {
-    // For now - just use the default device. If there is a high power discrete device - this will
-    // spin it up. This will also automatically pin us to an eGPU if present and the user has
-    // configured us to use it.
-    MTL::Device* device = MTL::CreateSystemDefaultDevice();
+    CGDirectDisplayID mainDisplay = CGMainDisplayID();
+    id<MTLDevice> device = CGDirectDisplayCopyCurrentMetalDevice(mainDisplay);
 
     if (device) {
         hsG3DDeviceRecord devRec;
         devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeMetal);
         devRec.SetDriverName("Metal");
-        devRec.SetDeviceDesc(device->name()->utf8String());
+        devRec.SetDeviceDesc(static_cast<const char*>([device.name UTF8String]));
 
         // Metal has ways to query capabilities, but doesn't expose a flat version
         // Populate with the OS version
@@ -76,12 +74,55 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
 
         devRec.SetLayersAtOnce(8);
 
-        // Just make a fake mode so the device selector will let it through
-        hsG3DDeviceMode devMode;
-        devMode.SetWidth(hsG3DDeviceSelector::kDefaultWidth);
-        devMode.SetHeight(hsG3DDeviceSelector::kDefaultHeight);
-        devMode.SetColorDepth(hsG3DDeviceSelector::kDefaultDepth);
-        devRec.GetModes().emplace_back(devMode);
+        plDisplayHelper* displayHelper = plDisplayHelper::CurrentDisplayHelper();
+        hsG3DDeviceMode defaultMode;
+        for (const auto& mode : displayHelper->GetSupportedDisplayModes(mainDisplay)) {
+            hsG3DDeviceMode devMode;
+            devMode.SetWidth(mode.Width);
+            devMode.SetHeight(mode.Height);
+            devMode.SetColorDepth(mode.ColorDepth);
+            devRec.GetModes().emplace_back(devMode);
+        }
+
+        // now inspect the GPU and figure out a good default resolution
+        // This code is in Metal (for now) - but it should also work
+        // under OpenGL/Mac as long as the GPU also supports Metal.
+        if (@available(macOS 10.15, *)) {
+            // The available check needs to be on it's own line or
+            // we'll get a compiler warning
+            if([device supportsFamily:MTLGPUFamilyMac2])
+            {
+                // if it's a Metal 3 GPU - it should be good
+                // Pick the native display resolution
+                // (Re-picking the first one here for clarity)
+                defaultMode = devRec.GetModes().front();
+            }
+        }
+
+        if (defaultMode.GetWidth() == 0)
+        {
+            // time to go down the rabit hole
+            int maxWidth = INT_MAX;
+            if([device isLowPower])
+            {
+                // integrated - not Apple Silicon, we know it's not very good
+                maxWidth = 1080;
+            }
+            else if([device recommendedMaxWorkingSetSize] < 4000000000)
+            {
+                // if it has less than around 4 gigs of VRAM it might still be performance
+                // limited
+                maxWidth = 1400;
+            }
+            
+            for (auto & mode : devRec.GetModes()) {
+                if(mode.GetWidth() <= maxWidth) {
+                    defaultMode = mode;
+                    abort();
+                }
+            }
+        }
+        devRec.SetDefaultMode(defaultMode);
 
         records.emplace_back(devRec);
     }
