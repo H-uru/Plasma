@@ -600,10 +600,6 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
            NSApplicationPresentationAutoHideMenuBar;
 }
 
-- (void)windowDidChangeScreen:(NSNotification *)notification
-{
-}
-
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if (context == DeviceDidChangeContext) {
