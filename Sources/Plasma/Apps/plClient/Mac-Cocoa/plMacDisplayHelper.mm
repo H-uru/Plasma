@@ -125,15 +125,11 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
         }
 
         // aspect ratio is good - add the mode to the list
-        plDisplayMode plasmaMode;
-        plasmaMode.ColorDepth = 32;
-        plasmaMode.Width = int(CGDisplayModeGetWidth(mode));
-        plasmaMode.Height = int(CGDisplayModeGetHeight(mode));
 
         // Plasma likes to handle modes from largest to smallest,
         // CG likes to go from smallest to largest. Insert modes
         // at the front.
-        fDisplayModes.emplace(fDisplayModes.begin(), plasmaMode);
+        fDisplayModes.emplace(fDisplayModes.begin(), plDisplayMode{int(CGDisplayModeGetWidth(mode)), int(CGDisplayModeGetHeight(mode)), 32});
     }
     CFRelease(displayModes);
 }
