@@ -177,6 +177,13 @@ plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, con
 
     fCurrLayerIdx = 0;
     fDevice.fPipeline = this;
+    
+    // devMode doesn't actually store a reference to the Metal device
+    // We have the display id - go grab the Metal device from the
+    // display id.
+    
+    fDevice.fMetalDevice = plMetalEnumerate::DeviceForDisplay(display);
+    fDevice.InitDevice();
 
     fMaxLayersAtOnce = devMode->GetDevice()->GetLayersAtOnce();
     

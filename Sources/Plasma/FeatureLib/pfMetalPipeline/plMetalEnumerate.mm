@@ -125,3 +125,9 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
         records.emplace_back(devRec);
     }
 }
+
+MTL::Device* plMetalEnumerate::DeviceForDisplay(hsDisplayHndl display)
+{
+    id<MTLDevice> device = CGDirectDisplayCopyCurrentMetalDevice(display);
+    return static_cast<MTL::Device*>(device);
+}
