@@ -75,7 +75,7 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
         devRec.SetLayersAtOnce(8);
 
         plDisplayHelper* displayHelper = plDisplayHelper::CurrentDisplayHelper();
-        hsG3DDeviceMode defaultMode;
+        hsG3DDeviceMode* defaultMode;
         for (const auto& mode : displayHelper->GetSupportedDisplayModes(mainDisplay)) {
             hsG3DDeviceMode devMode;
             devMode.SetWidth(mode.Width);
@@ -95,12 +95,12 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
                 // if it's a Metal 3 GPU - it should be good
                 // Pick the native display resolution
                 // (Re-picking the first one here for clarity)
-                defaultMode = devRec.GetModes().front();
+                defaultMode = &devRec.GetModes().front();
             }
         }
 #endif
 
-        if (defaultMode.GetWidth() == 0) {
+        if (defaultMode == nullptr) {
             // time to go down the rabit hole
             int maxWidth = std::numeric_limits<int>::max();
             if([device isLowPower]) {
@@ -115,12 +115,12 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
             
             for (auto& mode : devRec.GetModes()) {
                 if(mode.GetWidth() <= maxWidth) {
-                    defaultMode = mode;
+                    defaultMode = &mode;
                     break;
                 }
             }
         }
-        devRec.SetDefaultMode(defaultMode);
+        devRec.SetDefaultModeIndex(defaultMode - devRec.GetModes().data());
 
         records.emplace_back(devRec);
     }

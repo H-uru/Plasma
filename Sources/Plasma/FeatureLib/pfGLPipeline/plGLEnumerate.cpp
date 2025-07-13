@@ -274,7 +274,7 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
             devMode.SetColorDepth(mode.ColorDepth);
             devRec.GetModes().emplace_back(devMode);
         }
-        devRec.SetDefaultMode(devRec.GetModes().front());
+        devRec.SetDefaultModeIndex(0);
 
         if (fillDeviceRecord(devRec))
             records.emplace_back(std::move(devRec));
