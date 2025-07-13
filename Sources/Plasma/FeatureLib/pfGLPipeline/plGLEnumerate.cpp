@@ -244,7 +244,7 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
     CGDirectDisplayID mainDisplay = CGMainDisplayID();
 
     do {
-        CGLPixelFormatAttribute attribs[8] = {
+        CGLPixelFormatAttribute attribs[] = {
             kCGLPFAAccelerated,
             kCGLPFANoRecovery,
             kCGLPFADoubleBuffer,
@@ -277,7 +277,7 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
         devRec.SetDefaultMode(devRec.GetModes().front());
 
         if (fillDeviceRecord(devRec))
-            records.emplace_back(devRec);
+            records.emplace_back(std::move(devRec));
     } while (0);
 
     // Cleanup:

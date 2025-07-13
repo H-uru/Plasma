@@ -54,21 +54,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plMacDisplayHelper: public plDisplayHelper
 {
 public:
-    CGDirectDisplayID CurrentDisplay() { return fCurrentDisplay; }
+    plMacDisplayHelper();
+    ~plMacDisplayHelper() = default;
+    
+    CGDirectDisplayID CurrentDisplay() const { return fCurrentDisplay; }
 
     plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
-    std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) override;
-    
-    plMacDisplayHelper();
-    ~plMacDisplayHelper();
+    std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const override;
 private:
-    CGDirectDisplayID fCurrentDisplay = -1;
-    plDisplayMode fDesktopDisplayMode;
-    std::vector<plDisplayMode> fDisplayModes;
+    mutable CGDirectDisplayID fCurrentDisplay;
+    mutable plDisplayMode fDesktopDisplayMode;
+    mutable std::vector<plDisplayMode> fDisplayModes;
     
-    void SetCurrentScreen(hsDisplayHndl screen);
+    void SetCurrentScreen(hsDisplayHndl screen) const;
     // we need NSScreen to query for non rectangular screen geometry
-    void SetCurrentScreen(NSScreen *screen);
+    void SetCurrentScreen(NSScreen* screen) const;
 };
 
 #endif /* plMacDisplayHelper_hpp */

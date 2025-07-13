@@ -142,16 +142,13 @@ class plDisplayHelper
 {
 public:
     virtual plDisplayMode DesktopDisplayMode() = 0;
-    virtual std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) = 0;
+    virtual std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const = 0;
     
-    plDisplayHelper() = default;
-    virtual ~plDisplayHelper() = default;
-    
-    static plDisplayHelper* CurrentDisplayHelper() { return _currentDisplayHelper; }
-    void MakeCurrentDisplayHelper() { _currentDisplayHelper = this; }
+    static plDisplayHelper* CurrentDisplayHelper() { return fCurrentDisplayHelper; }
+    void MakeCurrentDisplayHelper() { fCurrentDisplayHelper = this; }
     
 private:
-    static plDisplayHelper* _currentDisplayHelper;
+    static plDisplayHelper* fCurrentDisplayHelper;
 };
 
 class plPipeline : public plCreatable

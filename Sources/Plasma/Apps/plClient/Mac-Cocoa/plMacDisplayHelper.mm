@@ -43,12 +43,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline.h"
 #include "plMacDisplayHelper.h"
 
-void plMacDisplayHelper::SetCurrentScreen(hsDisplayHndl display)
+plMacDisplayHelper::plMacDisplayHelper() :
+    fCurrentDisplay(-1)
 {
-    NSScreen *nsScreen;
-    for (NSScreen *screen in [NSScreen screens]) {
+}
+
+void plMacDisplayHelper::SetCurrentScreen(hsDisplayHndl display) const
+{
+    NSScreen* nsScreen;
+    for (NSScreen* screen in [NSScreen screens]) {
         NSDictionary *deviceDescription = [screen deviceDescription];
-        NSNumber *screenID = deviceDescription[@"NSScreenNumber"];
+        NSNumber* screenID = deviceDescription[@"NSScreenNumber"];
         if ([screenID unsignedIntValue] == display) {
             nsScreen = screen;
         }
@@ -56,13 +61,13 @@ void plMacDisplayHelper::SetCurrentScreen(hsDisplayHndl display)
     SetCurrentScreen(nsScreen);
 }
 
-void plMacDisplayHelper::SetCurrentScreen(NSScreen *screen)
+void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
 {
-    CGDirectDisplayID displayID = (CGDirectDisplayID)[screen.deviceDescription[@"NSScreenNumber"] intValue];
+    CGDirectDisplayID displayID = (CGDirectDisplayID)[screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue];
+    
     if (fCurrentDisplay == displayID)
-    {
         return;
-    }
+    
     fCurrentDisplay = displayID;
     
     // Save the native resolution of the desktop. This is used to prevent windowed
@@ -80,6 +85,7 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen *screen)
     
     // Calculate the region actually available for full screen
     NSRect currentResolution = [screen frame];
+#if defined(HAVE_BUILTIN_AVAILABLE)
     if (@available(macOS 12.0, *)) {
         NSEdgeInsets currentSafeAreaInsets = [screen safeAreaInsets];
         // Sigh... Origin doesn't matter but lets do it for inspectability
@@ -88,14 +94,14 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen *screen)
         currentResolution.size.width -= currentSafeAreaInsets.left + currentSafeAreaInsets.right;
         currentResolution.size.height -= currentSafeAreaInsets.top + currentSafeAreaInsets.bottom;
     }
+#endif
 
     float safeAspectRatio = currentResolution.size.width / currentResolution.size.height;
 
     fDisplayModes.clear();
 
     CFArrayRef displayModes = CGDisplayCopyAllDisplayModes(fCurrentDisplay, nullptr);
-    for(int i=0; i< CFArrayGetCount(displayModes); i++)
-    {
+    for(int i=0; i< CFArrayGetCount(displayModes); i++) {
         // Now filter out the ones that are taller than the safe area aspect ratio
         // This could break in interesting ways if Apple ships displays that have unsafe
         // areas along the side - but will prevent us stripping any aspect ratios that don't
@@ -114,8 +120,7 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen *screen)
         CGDisplayModeRef mode = (CGDisplayModeRef)CFArrayGetValueAtIndex(displayModes, i);
 
         float modeAspectRatio = float(CGDisplayModeGetWidth(mode)) / float(CGDisplayModeGetHeight(mode));
-        if(modeAspectRatio < safeAspectRatio)
-        {
+        if(modeAspectRatio < safeAspectRatio) {
             continue;
         }
 
@@ -125,23 +130,15 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen *screen)
         plasmaMode.Width = int(CGDisplayModeGetWidth(mode));
         plasmaMode.Height = int(CGDisplayModeGetHeight(mode));
 
-        fDisplayModes.push_back(plasmaMode);
+        fDisplayModes.emplace_back(plasmaMode);
     }
     CFRelease(displayModes);
 }
 
-std::vector<plDisplayMode> plMacDisplayHelper::GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth)
+std::vector<plDisplayMode> plMacDisplayHelper::GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth) const
 {
     // Cache the current display so we can answer repeat requests quickly.
     // SetCurrentScreen will catch redundant sets.
     SetCurrentScreen(display);
     return fDisplayModes;
-}
-
-plMacDisplayHelper::plMacDisplayHelper()
-{
-}
-
-plMacDisplayHelper::~plMacDisplayHelper()
-{
 }

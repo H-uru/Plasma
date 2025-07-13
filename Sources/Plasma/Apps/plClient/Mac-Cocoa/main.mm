@@ -108,7 +108,7 @@ std::vector<ST::string> args;
    @public
     plClientLoader gClient;
     dispatch_source_t _displaySource;
-    std::shared_ptr<plMacDisplayHelper> _displayHelper;
+    plMacDisplayHelper _displayHelper;
 }
 
 @property(retain) PLSKeyboardEventMonitor* eventMonitor;
@@ -214,8 +214,7 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
     window.contentView = view;
     self.gameWindow = window;
     
-    _displayHelper = std::make_shared<plMacDisplayHelper>();
-    _displayHelper->MakeCurrentDisplayHelper();
+    _displayHelper.MakeCurrentDisplayHelper();
     
     gClient.SetClientWindow((__bridge void *)view.layer);
     gClient.SetClientDisplay([window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue]);

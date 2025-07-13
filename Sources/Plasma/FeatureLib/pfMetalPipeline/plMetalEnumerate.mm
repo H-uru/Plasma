@@ -41,11 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <vector>
-#include <string_theory/format>
 #include <CoreGraphics/CoreGraphics.h>
 #include <Foundation/Foundation.h>
 #include <Metal/Metal.h>
+#include <string_theory/format>
+#include <vector>
 
 #include "plMetalPipeline.h"
 
@@ -58,7 +58,7 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
         hsG3DDeviceRecord devRec;
         devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeMetal);
         devRec.SetDriverName("Metal");
-        devRec.SetDeviceDesc(static_cast<const char*>([device.name UTF8String]));
+        devRec.SetDeviceDesc([device.name UTF8String]);
 
         // Metal has ways to query capabilities, but doesn't expose a flat version
         // Populate with the OS version
@@ -81,18 +81,17 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
             devMode.SetWidth(mode.Width);
             devMode.SetHeight(mode.Height);
             devMode.SetColorDepth(mode.ColorDepth);
-            devRec.GetModes().emplace_back(devMode);
+            devRec.GetModes().emplace_back(std::move(devMode));
         }
 
         // now inspect the GPU and figure out a good default resolution
         // This code is in Metal (for now) - but it should also work
         // under OpenGL/Mac as long as the GPU also supports Metal.
-#if defined(HAVE_BUILTIN_AVAILABLE)
+#ifdef HAVE_BUILTIN_AVAILABLE
         if (@available(macOS 10.15, *)) {
             // The available check needs to be on it's own line or
             // we'll get a compiler warning
-            if([device supportsFamily:MTLGPUFamilyMac2])
-            {
+            if([device supportsFamily:MTLGPUFamilyMac2]) {
                 // if it's a Metal 3 GPU - it should be good
                 // Pick the native display resolution
                 // (Re-picking the first one here for clarity)
@@ -101,26 +100,23 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
         }
 #endif
 
-        if (defaultMode.GetWidth() == 0)
-        {
+        if (defaultMode.GetWidth() == 0) {
             // time to go down the rabit hole
-            int maxWidth = INT_MAX;
-            if([device isLowPower])
-            {
+            int maxWidth = std::numeric_limits<int>::max();
+            if([device isLowPower]) {
                 // integrated - not Apple Silicon, we know it's not very good
                 maxWidth = 1080;
             }
-            else if([device recommendedMaxWorkingSetSize] < 4000000000)
-            {
+            else if([device recommendedMaxWorkingSetSize] < 4000000000) {
                 // if it has less than around 4 gigs of VRAM it might still be performance
                 // limited
                 maxWidth = 1400;
             }
             
-            for (auto & mode : devRec.GetModes()) {
+            for (auto& mode : devRec.GetModes()) {
                 if(mode.GetWidth() <= maxWidth) {
                     defaultMode = mode;
-                    abort();
+                    break;
                 }
             }
         }
