@@ -754,6 +754,7 @@ void plMetalPipeline::Resize(uint32_t width, uint32_t height)
         fOrigHeight = height;
         IGetViewTransform().SetScreenSize((uint16_t)(fOrigWidth), (uint16_t)(fOrigHeight));
         resetTransform.SetScreenSize((uint16_t)(fOrigWidth), (uint16_t)(fOrigHeight));
+        fDevice.GetOutputLayer()->setDrawableSize(CGSizeMake(width, height));
     } else {
         // Just for debug
         hsStatusMessage("Recreating the pipeline...\n");
