@@ -43,9 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 #include "plPipeResReq.h"
-#include "plPipeline.h"
 
-plDisplayHelper* plDisplayHelper::fCurrentDisplayHelper = nullptr;
 hsResMgr* hsgResMgr::fResMgr = nullptr;
 
 plDispatchBase* plgDispatch::Dispatch()

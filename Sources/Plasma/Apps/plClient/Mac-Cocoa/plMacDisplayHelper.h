@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <QuartzCore/QuartzCore.h>
 
 #include "plPipeline/hsG3DDeviceSelector.h"
+#include "plPipeline/pl3DPipeline.h"
 
 class plMacDisplayHelper: public plDisplayHelper
 {
