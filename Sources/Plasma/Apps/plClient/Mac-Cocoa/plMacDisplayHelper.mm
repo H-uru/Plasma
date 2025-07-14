@@ -129,9 +129,16 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
         // Plasma likes to handle modes from largest to smallest,
         // CG likes to go from smallest to largest. Insert modes
         // at the front.
-        fDisplayModes.emplace(fDisplayModes.begin(), plDisplayMode{int(CGDisplayModeGetWidth(mode)), int(CGDisplayModeGetHeight(mode)), 32});
+        fDisplayModes.emplace_back(plDisplayMode{int(CGDisplayModeGetWidth(mode)), int(CGDisplayModeGetHeight(mode)), 32});
     }
     CFRelease(displayModes);
+    
+    std::sort(fDisplayModes.begin(), fDisplayModes.end(),
+            [](plDisplayMode a, plDisplayMode b) {
+                int resolutionA = a.Width * a.Height;
+                int resolutionB = b.Width * b.Height;
+                return resolutionA > resolutionB;
+            });
 }
 
 std::vector<plDisplayMode> plMacDisplayHelper::GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth) const
