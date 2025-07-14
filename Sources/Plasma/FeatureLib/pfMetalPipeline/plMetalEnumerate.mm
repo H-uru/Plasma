@@ -75,7 +75,7 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
         devRec.SetLayersAtOnce(8);
 
         plDisplayHelper* displayHelper = plDisplayHelper::CurrentDisplayHelper();
-        hsG3DDeviceMode* defaultMode;
+        hsG3DDeviceMode* defaultMode = nullptr;
         for (const auto& mode : displayHelper->GetSupportedDisplayModes(mainDisplay)) {
             hsG3DDeviceMode devMode;
             devMode.SetWidth(mode.Width);
