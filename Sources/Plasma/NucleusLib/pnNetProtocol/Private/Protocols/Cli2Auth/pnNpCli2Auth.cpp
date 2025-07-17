@@ -46,7 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #define USES_PROTOCOL_CLI2AUTH
-#include "../../../Pch.h"
+#include "pnNetProtocol/pnNetProtocol.h"
+
+#include "pnNetCli/pnNetCli.h"
 
 
 namespace Cli2Auth {
