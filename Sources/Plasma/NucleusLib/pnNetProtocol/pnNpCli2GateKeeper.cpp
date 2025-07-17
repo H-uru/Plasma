@@ -39,14 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetProtocol/Private/Protocols/pnNpCli2Auth.cpp
-*   
-***/
 
-#define USES_PROTOCOL_CLI2GATEKEEPER
-#include "../../../Pch.h"
+#include "pnNpCli2GateKeeper.h"
+
+#include "pnNetCli/pnNetCli.h"
 
 
 namespace Cli2GateKeeper {

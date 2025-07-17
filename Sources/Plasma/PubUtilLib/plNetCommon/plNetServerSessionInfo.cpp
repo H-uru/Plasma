@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 #include "pnMessage/plMessage.h"
-#include "pnNetProtocol/pnNetProtocol.h"
+#include "pnNetProtocol/pnNpCommon.h"
 
 #define SAFE(s) ((s).empty() ? "(nil)" : (s))
 #define kComma  ","
