@@ -50,33 +50,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PRIVATE_PNNPALLINCLUDES_H
 
-#if defined(USES_PROTOCOL_CLI2AUTH) || defined(USES_PROTOCOL_CLI2GAME) || defined(USES_PROTOCOL_CLI2CSR) || defined(USES_PROTOCOL_CLI2GATEKEEPER)
-# define USES_NETCLI
-#endif
-
-#if defined(USES_PROTOCOL_SRV2VAULT) || defined(USES_PROTOCOL_SRV2DB) || defined(USES_PROTOCOL_SRV2MCP) || defined(USES_PROTOCOL_SRV2STATE) || defined(USES_PROTOCOL_SRV2LOG) || defined(USES_PROTOCOL_SRV2SCORE)
-# define USES_NETSRV
-#endif
-
 #include "pnNpCommon.h"
-
-
 
 #ifdef USES_PROTOCOL_CLI2FILE
 # include "Protocols/Cli2File/pnNpCli2File.h"
 #endif
 
+#ifdef USES_PROTOCOL_CLI2AUTH
+# include "Protocols/Cli2Auth/pnNpCli2Auth.h"
+#endif
 
-#ifdef USES_NETCLI
-# ifdef USES_PROTOCOL_CLI2AUTH
-#  include "Protocols/Cli2Auth/pnNpCli2Auth.h"
-# endif
+#ifdef USES_PROTOCOL_CLI2GAME
+# include "Protocols/Cli2Game/pnNpCli2Game.h"
+#endif
 
-# ifdef USES_PROTOCOL_CLI2GAME
-#  include "Protocols/Cli2Game/pnNpCli2Game.h"
-# endif
-
-# ifdef USES_PROTOCOL_CLI2GATEKEEPER
-#  include "Protocols/Cli2GateKeeper/pnNpCli2GateKeeper.h"
-# endif
-#endif // def USES_NETCLI
+#ifdef USES_PROTOCOL_CLI2GATEKEEPER
+# include "Protocols/Cli2GateKeeper/pnNpCli2GateKeeper.h"
+#endif

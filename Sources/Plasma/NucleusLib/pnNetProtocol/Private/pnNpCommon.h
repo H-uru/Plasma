@@ -50,7 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PRIVATE_PNNPCOMMON_H
 
+#include "pnEncryption/plChecksum.h"
 #include "pnNetBase/pnNbConst.h"
+#include "pnNetCli/pnNetCli.h"
 #include "pnUUID/pnUUID.h"
 
 #include "hsRefCnt.h"
@@ -120,11 +122,6 @@ struct AsyncSocketConnectPacket {
 *
 ***/
 
-#ifdef USES_NETCLI
-
-#include "pnEncryption/plChecksum.h"
-#include "pnNetCli/pnNetCli.h"
-
 const NetMsgField kNetMsgFieldAccountName   = NET_MSG_FIELD_STRING(kMaxAccountNameLength);
 const NetMsgField kNetMsgFieldPlayerName    = NET_MSG_FIELD_STRING(kMaxPlayerNameLength);
 const NetMsgField kNetMsgFieldShaDigest     = NET_MSG_FIELD_DATA(sizeof(ShaDigest));
@@ -135,8 +132,6 @@ const NetMsgField kNetMsgFieldENetError     = NET_MSG_FIELD_DWORD();
 const NetMsgField kNetMsgFieldEAgeId        = NET_MSG_FIELD_DWORD();
 const NetMsgField kNetMsgFieldNetNode       = NET_MSG_FIELD_DWORD();
 const NetMsgField kNetMsgFieldBuildId       = NET_MSG_FIELD_DWORD();
-
-#endif
 
 
 /*****************************************************************************
