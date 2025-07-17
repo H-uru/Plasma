@@ -40,9 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PRIVATE_PROTOCOLS_CLI2FILE_PNNPCLI2FILE_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnNetProtocol/Private/Protocols/Cli2File/pnNpCli2File.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PRIVATE_PROTOCOLS_CLI2FILE_PNNPCLI2FILE_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PRIVATE_PROTOCOLS_CLI2FILE_PNNPCLI2FILE_H
 
 
@@ -204,3 +202,5 @@ struct File2Cli_FileDownloadReply : Cli2File_MsgHeader {
 // END PACKED DATA STRUCTURES
 //============================================================================
 #pragma pack(pop)
+
+#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PRIVATE_PROTOCOLS_CLI2FILE_PNNPCLI2FILE_H
