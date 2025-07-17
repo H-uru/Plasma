@@ -393,7 +393,7 @@ struct Cli2Auth_FileListRequest {
     uint32_t       messageId;
     uint32_t       transId;
     char16_t       directory[kNetDefaultStringSize];
-    char16_t       ext[MAX_EXT];
+    char16_t       ext[kMaxFileExtensionLength];
 };
 
 // FileDownloadRequest
