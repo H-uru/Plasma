@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_CLI2FILE_PNNPCLI2FILE_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_CLI2FILE_PNNPCLI2FILE_H
 
+#include "pnNpCommon.h"
 
 // Because SrvFile must remain backward compatible with all client builds,
 // the following enum values may never change under any circumstances.

@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PNNPCLI2GATEKEEPER_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PNNPCLI2GATEKEEPER_H
 
+#include "pnNpCommon.h"
 
 // kNetProtocolCli2GateKeeper messages (must be <= (uint16_t)-1)
 enum {

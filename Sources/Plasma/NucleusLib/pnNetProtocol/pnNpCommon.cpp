@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pnNetProtocol/pnNetProtocol.h"
+#include "pnNpCommon.h"
 
 #include "pnUtils/pnUtStr.h"
 #include "pnUUID/pnUUID.h"

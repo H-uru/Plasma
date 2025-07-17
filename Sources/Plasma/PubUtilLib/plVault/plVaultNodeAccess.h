@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsRefCnt.h"
 
-#include "pnNetProtocol/pnNetProtocol.h"
+#include "pnNetProtocol/pnNpCommon.h"
 
 #include <string_theory/string>
 

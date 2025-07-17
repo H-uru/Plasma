@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_CLI2GAME_PNNPCLI2GAME_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_CLI2GAME_PNNPCLI2GAME_H
 
+#include "pnNpCommon.h"
 
 // kNetProtocolCli2Game messages
 enum {

@@ -40,8 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#define USES_PROTOCOL_CLI2GATEKEEPER
-#include "pnNetProtocol/pnNetProtocol.h"
+#include "pnNpCli2GateKeeper.h"
 
 #include "pnNetCli/pnNetCli.h"
 

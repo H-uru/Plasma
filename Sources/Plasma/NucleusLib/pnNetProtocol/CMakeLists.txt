@@ -1,5 +1,4 @@
 set(pnNetProtocol_HEADERS
-    pnNetProtocol.h
     pnNpCli2Auth.h
     pnNpCli2File.h
     pnNpCli2Game.h

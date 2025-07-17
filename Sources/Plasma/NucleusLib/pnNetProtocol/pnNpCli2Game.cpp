@@ -40,8 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#define USES_PROTOCOL_CLI2GAME
-#include "pnNetProtocol/pnNetProtocol.h"
+#include "pnNpCli2Game.h"
 
 #include "pnNetCli/pnNetCli.h"
 
