@@ -84,6 +84,7 @@ const unsigned kMaxGTOSIdLength                 = 8;
 const unsigned kMaxGameScoreNameLength          = 64;
 const unsigned kMaxEmailAddressLength           = 64;
 const unsigned kMaxTracebackLength              = 1024;
+const unsigned kMaxFileExtensionLength          = 256;
 
 // For string lengths that were formerly set to MAX_PATH,
 // which is 260 on Windows, but generally different on other OSes.

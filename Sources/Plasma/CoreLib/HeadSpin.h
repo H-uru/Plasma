@@ -299,7 +299,6 @@ template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
 #   include <limits.h>
 #   define MAX_PATH PATH_MAX
 #endif
-#define MAX_EXT     (256)
 
 // Useful floating point utilities
 constexpr float hsDegreesToRadians(float deg) { return deg * (hsConstants::pi<float> / 180.f); }

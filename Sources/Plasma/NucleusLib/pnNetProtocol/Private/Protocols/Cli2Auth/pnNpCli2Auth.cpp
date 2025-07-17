@@ -150,8 +150,8 @@ static const NetMsgField kAcctActivateRequestFields[] = {
 
 static const NetMsgField kFileListRequestFields[] = {
     kNetMsgFieldTransId,                                // transId
-    NET_MSG_FIELD_STRING(kNetDefaultStringSize),       // directory
-    NET_MSG_FIELD_STRING(MAX_EXT),                      // ext
+    NET_MSG_FIELD_STRING(kNetDefaultStringSize),        // directory
+    NET_MSG_FIELD_STRING(kMaxFileExtensionLength),      // ext
 };
 
 static const NetMsgField kFileDownloadRequestFields[] = {

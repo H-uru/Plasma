@@ -505,7 +505,7 @@ struct FileListRequestTrans : NetAuthTrans {
     FNetCliAuthFileListRequestCallback  m_callback;
 
     char16_t                            m_directory[kNetDefaultStringSize];
-    char16_t                            m_ext[MAX_EXT];
+    char16_t                            m_ext[kMaxFileExtensionLength];
 
     std::vector<NetCliAuthFileInfo>       m_fileInfoArray;
 
