@@ -123,6 +123,7 @@ struct AsyncSocketConnectPacket {
 #ifdef USES_NETCLI
 
 #include "pnEncryption/plChecksum.h"
+#include "pnNetCli/pnNetCli.h"
 
 const NetMsgField kNetMsgFieldAccountName   = NET_MSG_FIELD_STRING(kMaxAccountNameLength);
 const NetMsgField kNetMsgFieldPlayerName    = NET_MSG_FIELD_STRING(kMaxPlayerNameLength);

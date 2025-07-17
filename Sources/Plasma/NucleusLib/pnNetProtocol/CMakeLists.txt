@@ -41,9 +41,9 @@ target_link_libraries(
         CoreLib
         pnEncryption
         pnNetBase
+        pnNetCli
         pnUUID
     PRIVATE
-        pnNetCli
         pnUtils
 )
 
