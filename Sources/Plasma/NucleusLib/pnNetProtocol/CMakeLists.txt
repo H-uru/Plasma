@@ -3,7 +3,6 @@ set(pnNetProtocol_HEADERS
 )
 
 set(pnNetProtocol_PRIVATE
-    Private/pnNpAllIncludes.h
     Private/pnNpCommon.h
     Private/pnNpCommon.cpp
 )
