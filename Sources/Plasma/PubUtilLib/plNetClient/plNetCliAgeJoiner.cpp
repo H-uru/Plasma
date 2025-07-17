@@ -124,29 +124,6 @@ plNCAgeJoiner* plNCAgeJoiner::s_instance = nullptr;
 
 /*****************************************************************************
 *
-*   Local functions
-*
-***/
-
-//============================================================================
-void AgeVaultDownloadCallback (
-    ENetError           result,
-    void *              param
-) {
-    plNCAgeJoiner * joiner = (plNCAgeJoiner *)param;
-    if (IS_NET_ERROR(result)) {
-        joiner->Complete(false, "Failed to download age vault");
-    }
-    else {
-        // vault downloaded. start loading age data
-        plNetApp::StaticDebugMsg("AgeJoiner: Next:kLoadAge (vault downloaded)");
-        joiner->nextOp = plNCAgeJoiner::kLoadAge;
-    }
-}
-
-
-/*****************************************************************************
-*
 *   plNCAgeJoiner
 *
 ***/
@@ -402,10 +379,16 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
             VaultDownloadNoCallbacks(
                 "AgeJoin",
                 ageVaultId,
-                AgeVaultDownloadCallback,
-                this,
-                nullptr, // FVaultDownloadProgressCallback
-                this
+                [this](auto result) {
+                    if (IS_NET_ERROR(result)) {
+                        Complete(false, "Failed to download age vault");
+                    } else {
+                        // vault downloaded. start loading age data
+                        plNetApp::StaticDebugMsg("AgeJoiner: Next:kLoadAge (vault downloaded)");
+                        nextOp = kLoadAge;
+                    }
+                },
+                nullptr
             );
         }
         else {

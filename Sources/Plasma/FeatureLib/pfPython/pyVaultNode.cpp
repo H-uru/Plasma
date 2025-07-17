@@ -318,11 +318,6 @@ void pyVaultNode::SetCreateAgeGuid(const ST::string& v)
 // Vault Node API
 
 // Add child node
-void _AddNodeCallback(ENetError result, void* param) {
-    pyVaultNode::pyVaultNodeOperationCallback* cb = (pyVaultNode::pyVaultNodeOperationCallback*)param;
-    cb->VaultOperationComplete(result);
-}
-
 PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, uint32_t cbContext)
 {
     pyVaultNodeOperationCallback * cb = new pyVaultNodeOperationCallback(cbObject);
@@ -350,12 +345,9 @@ PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, uint32_t
         cb->fPyNodeRef = nodeRef;
         cb->SetNode(pynode->fNode);
 
-        VaultAddChildNode(fNode->GetNodeId(),
-                          pynode->fNode->GetNodeId(),
-                          NetCommGetPlayer()->playerInt,
-                          (FVaultAddChildNodeCallback)_AddNodeCallback,
-                          cb
-        );
+        VaultAddChildNode(fNode->GetNodeId(), pynode->fNode->GetNodeId(), NetCommGetPlayer()->playerInt, [cb](auto result) {
+            cb->VaultOperationComplete(result);
+        });
 
         // This return value is undocumented, but we maintain it for backwards compatibility.
         // Be sure to NOT decrement the reference count.
@@ -387,12 +379,9 @@ void pyVaultNode::LinkToNode(int nodeID, PyObject* cbObject, uint32_t cbContext)
             cb->fPyNodeRef = pyVaultNodeRef::New(fNode, rvn);
         }
 
-        VaultAddChildNode(fNode->GetNodeId(),
-                          nodeID,
-                          NetCommGetPlayer()->playerInt,
-                          (FVaultAddChildNodeCallback)_AddNodeCallback,
-                          cb
-        );
+        VaultAddChildNode(fNode->GetNodeId(), nodeID, NetCommGetPlayer()->playerInt, [cb](auto result) {
+            cb->VaultOperationComplete(result);
+        });
     }
     else
     {
@@ -400,12 +389,6 @@ void pyVaultNode::LinkToNode(int nodeID, PyObject* cbObject, uint32_t cbContext)
         cb->VaultOperationStarted( cbContext );
         cb->VaultOperationComplete(cbContext, kNetErrInternalError);
     }
-}
-
-static void _RemoveNodeCallback(ENetError result, void* param)
-{
-    auto cb = static_cast<pyVaultNode::pyVaultNodeOperationCallback*>(param);
-    cb->VaultOperationComplete(result);
 }
 
 // Remove child node
@@ -420,7 +403,9 @@ bool pyVaultNode::RemoveNode( pyVaultNode& pynode, PyObject* cbObject, uint32_t 
         cb->SetNode(pynode.fNode);
         cb->fPyNodeRef = pyVaultNodeRef::New(fNode, pynode.fNode);
 
-        VaultRemoveChildNode(fNode->GetNodeId(), pynode.fNode->GetNodeId(), _RemoveNodeCallback, cb);
+        VaultRemoveChildNode(fNode->GetNodeId(), pynode.fNode->GetNodeId(), [cb](auto result) {
+            cb->VaultOperationComplete(result);
+        });
 
         return true;
     }
@@ -443,7 +428,7 @@ void pyVaultNode::RemoveAllNodes()
     std::vector<unsigned> nodeIds;
     fNode->GetChildNodeIds(&nodeIds, 1);
     for (unsigned id : nodeIds)
-        VaultRemoveChildNode(fNode->GetNodeId(), id, nullptr, nullptr);
+        VaultRemoveChildNode(fNode->GetNodeId(), id, nullptr);
 }
 
 // Add/Save this node to vault

@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULTCLIENTAPI_H
 
+#include <functional>
 #include <list>
 
 /*****************************************************************************
@@ -210,31 +211,23 @@ hsRef<RelVaultNode> VaultGetNode(hsWeakRef<NetVaultNode> templateNode);
 
 // VaultAddChildNode will download the child node if necessary
 // the parent exists locally before making the callback.
-typedef void (*FVaultAddChildNodeCallback)(
-    ENetError       result,
-    void *          param
-);
+using FVaultAddChildNodeCallback = std::function<void(ENetError result)>;
 void VaultAddChildNode (
     unsigned                    parentId,
     unsigned                    childId,
     unsigned                    ownerId,
-    FVaultAddChildNodeCallback  callback,   // optional
-    void *                      param       // optional
+    const FVaultAddChildNodeCallback& callback // optional
 );
 void VaultAddChildNodeAndWait (
     unsigned                    parentId,
     unsigned                    childId,
     unsigned                    ownerId
 );
-typedef void (*FVaultRemoveChildNodeCallback)(
-    ENetError       result,
-    void *          param
-);
+using FVaultRemoveChildNodeCallback = std::function<void(ENetError result)>;
 void VaultRemoveChildNode (
     unsigned                        parentId,
     unsigned                        childId,
-    FVaultRemoveChildNodeCallback   callback,
-    void *                          param
+    FVaultRemoveChildNodeCallback   callback
 );
 void VaultSetNodeSeen (
     unsigned    nodeId,
@@ -248,23 +241,17 @@ void VaultSendNode (
     unsigned                dstPlayerId
 );
 
-typedef void (*FVaultCreateNodeCallback)(
+using FVaultCreateNodeCallback = std::function<void(
     ENetError       result,
-    void *          state,
-    void *          param,
     hsWeakRef<RelVaultNode> node
-);
+)>;
 void VaultCreateNode (          // non-blocking
     plVault::NodeTypes          nodeType,
-    FVaultCreateNodeCallback    callback,
-    void *                      state,
-    void *                      param
+    FVaultCreateNodeCallback    callback
 );
 void VaultCreateNode (          // non-blocking
     hsWeakRef<NetVaultNode>     templateNode,
-    FVaultCreateNodeCallback    callback,
-    void *                      state,
-    void *                      param
+    FVaultCreateNodeCallback    callback
 );
 hsRef<RelVaultNode> VaultCreateNodeAndWait (   // block until completion. returns node. nullptr --> failure
     plVault::NodeTypes          nodeType,
@@ -278,16 +265,14 @@ void VaultForceSaveNodeAndWait (
     hsWeakRef<NetVaultNode>     node
 );
 
-typedef void (*FVaultFindNodeCallback)(
+using FVaultFindNodeCallback = std::function<void(
     ENetError           result,
-    void *              param,
     unsigned            nodeIdCount,
     const unsigned      nodeIds[]
-);
+)>;
 void VaultFindNodes (
     hsWeakRef<NetVaultNode> templateNode,
-    FVaultFindNodeCallback  callback,
-    void *                  param
+    FVaultFindNodeCallback  callback
 );
 void VaultFindNodesAndWait (
     hsWeakRef<NetVaultNode> templateNode,
@@ -302,19 +287,15 @@ void VaultFetchNodesAndWait (   // Use VaultGetNode to access the fetched nodes
     unsigned                count,
     bool                    force = false
 );
-typedef void (*FVaultInitAgeCallback)(
+using FVaultInitAgeCallback = std::function<void(
     ENetError       result,
-    void *          state,
-    void *          param,
     unsigned        ageVaultId,
     unsigned        ageInfoVaultId
-);
+)>;
 void VaultInitAge (
     const class plAgeInfoStruct *   info,
     const plUUID                    parentAgeInstId,
-    FVaultInitAgeCallback           callback,
-    void *                          state,
-    void *                          param
+    FVaultInitAgeCallback           callback
 );
 
 
@@ -403,13 +384,13 @@ void           VaultAddAgeChronicleEntry (
     int               entryType,
     const ST::string& entryValue
 );
-typedef void (*FVaultAgeAddDeviceCallback)(ENetError result, hsRef<RelVaultNode> device, void* param);
-void VaultAgeAddDevice(const ST::string& deviceName, FVaultAgeAddDeviceCallback callback, void* param);
+using FVaultAgeAddDeviceCallback = std::function<void(ENetError result, hsRef<RelVaultNode> device)>;
+void VaultAgeAddDevice(const ST::string& deviceName, FVaultAgeAddDeviceCallback callback);
 void VaultAgeRemoveDevice (const ST::string& deviceName);
 bool VaultAgeHasDevice (const ST::string& deviceName);
 hsRef<RelVaultNode> VaultAgeGetDevice(const ST::string& deviceName);
-typedef void (*FVaultAgeSetDeviceInboxCallback)(ENetError result, hsRef<RelVaultNode> inbox, void* param);
-void VaultAgeSetDeviceInbox(const ST::string& deviceName, const ST::string& inboxName, FVaultAgeSetDeviceInboxCallback callback, void* param);
+using FVaultAgeSetDeviceInboxCallback = std::function<void(ENetError result, hsRef<RelVaultNode> inbox)>;
+void VaultAgeSetDeviceInbox(const ST::string& deviceName, const ST::string& inboxName, FVaultAgeSetDeviceInboxCallback callback);
 hsRef<RelVaultNode> VaultAgeGetDeviceInbox(const ST::string& deviceName);
 void VaultClearDeviceInboxMap ();
 
@@ -450,37 +431,25 @@ void VaultCCRDumpPlayers();
 *
 ***/
 
-typedef void (*FVaultDownloadCallback)(
-    ENetError                   result,
-    void *                      param
-);
-typedef void (*FVaultProgressCallback)(
-    unsigned                    total,
-    unsigned                    curr,
-    void *                      param
-);
+using FVaultDownloadCallback = std::function<void(ENetError result)>;
+using FVaultProgressCallback = std::function<void(unsigned total, unsigned curr)>;
 
 void VaultDownload (
     const ST::string&           tag,
     unsigned                    vaultId,
     FVaultDownloadCallback      callback,
-    void *                      cbParam,
-    FVaultProgressCallback      progressCallback,
-    void *                      cbProgressParam
+    FVaultProgressCallback      progressCallback
 );
 void VaultDownloadNoCallbacks (
     const ST::string&           tag,
     unsigned                    vaultId,
     FVaultDownloadCallback      callback,
-    void *                      cbParam,
-    FVaultProgressCallback      progressCallback,
-    void *                      cbProgressParam
+    FVaultProgressCallback      progressCallback
 );
 void VaultDownloadAndWait (
     const ST::string&           tag,
     unsigned                    vaultId,
-    FVaultProgressCallback      progressCallback,
-    void *                      cbProgressParam
+    FVaultProgressCallback      progressCallback
 );
 
 void VaultCull (

@@ -2673,12 +2673,7 @@ void cyMisc::ForceVaultNodeUpdate(unsigned nodeId)
 
 void cyMisc::VaultDownload(unsigned nodeId)
 {
-    VaultDownloadAndWait(
-        "PyVaultDownload",
-        nodeId,
-        nullptr,
-        nullptr
-    );
+    VaultDownloadAndWait("PyVaultDownload", nodeId, nullptr);
 }
 
 PyObject* cyMisc::CloneKey(pyKey* object, bool loading) {
