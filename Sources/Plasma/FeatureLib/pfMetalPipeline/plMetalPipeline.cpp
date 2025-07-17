@@ -1147,8 +1147,8 @@ void plMetalPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& 
     }
 
     if (span.fNumMatrices == 2) {
-        const matrix_float4x4* mat = &hsMatrix2SIMD(drawable->GetPaletteMatrix(span.fBaseMatrix + 1));
-        fDevice.CurrentRenderCommandEncoder()->setVertexBytes(mat, sizeof(matrix_float4x4), VertexShaderArgumentBlendMatrix1);
+        const matrix_float4x4 mat = hsMatrix2SIMD(drawable->GetPaletteMatrix(span.fBaseMatrix + 1));
+        fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&mat, sizeof(matrix_float4x4), VertexShaderArgumentBlendMatrix1);
     }
 
     fCurrentRenderPassUniforms->projectionMatrix = fDevice.fMatrixProj;
@@ -4131,10 +4131,10 @@ void plMetalPipeline::IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, 
                                        uint8_t* dest, uint32_t destStride, uint32_t count,
                                        uint16_t localUVWChans)
 {
-    float      pt_buf[] = {0.f, 0.f, 0.f, 1.f};
-    float      vec_buf[] = {0.f, 0.f, 0.f, 0.f};
-    hsPoint3*  pt = reinterpret_cast<hsPoint3*>(pt_buf);
-    hsVector3* vec = reinterpret_cast<hsVector3*>(vec_buf);
+    simd_float4      pt_buf = {0.f, 0.f, 0.f, 1.f};
+    simd_float4      vec_buf = {0.f, 0.f, 0.f, 0.f};
+    hsPoint3*  pt = reinterpret_cast<hsPoint3*>(&pt_buf);
+    hsVector3* vec = reinterpret_cast<hsVector3*>(&vec_buf);
 
     uint32_t indices;
     float    weights[4];
@@ -4171,8 +4171,8 @@ void plMetalPipeline::IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, 
             if (weight) {
                 const simd_float4x4& simdMatrix = hsMatrix2SIMD(matrixPalette[indices & 0xFF]);
                 // Note: This bit is different than GL/DirectX. It's using acclerate so this is also accelerated on ARM through NEON or maybe even the Neural Engine.
-                destPt_buf += simd_mul(*(simd_float4*)pt_buf, simdMatrix) * weight;
-                destNorm_buf += simd_mul(*(simd_float4*)vec_buf, simdMatrix) * weight;
+                destPt_buf += simd_mul(pt_buf, simdMatrix) * weight;
+                destNorm_buf += simd_mul(vec_buf, simdMatrix) * weight;
             }
             // ISkinVertexSSE41(matrixPalette[indices & 0xFF], weights[j], pt_buf, destPt_buf, vec_buf, destNorm_buf);
             indices >>= 8;

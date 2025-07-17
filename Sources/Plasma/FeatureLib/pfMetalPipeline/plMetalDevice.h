@@ -65,10 +65,15 @@ class plCubicEnvironmap;
 class plLayerInterface;
 class plMetalPipelineState;
 
-inline const matrix_float4x4& hsMatrix2SIMD(const hsMatrix44& src)
+inline const matrix_float4x4 hsMatrix2SIMD(const hsMatrix44& src)
 {
-    // reinterpret_cast not allowed in constexpr
-    return *reinterpret_cast<const simd_float4x4* >(src.fMap);
+    constexpr auto matrixSize = sizeof(matrix_float4x4);
+    if (src.fFlags & hsMatrix44::kIsIdent) {
+        return matrix_identity_float4x4;
+    }
+    simd_float4x4 dst;
+    memcpy(&dst, &src.fMap, matrixSize);
+    return dst;
 }
 
 class plMetalDevice
