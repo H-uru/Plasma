@@ -228,6 +228,8 @@ private:
     
     void SetOutputLayer(CA::MetalLayer* layer) { fLayer = layer; }
     CA::MetalLayer* GetOutputLayer() const { return fLayer; };
+    
+    hsDisplayHndl fDisplay;
 
 protected:
     plMetalLinkedPipeline* PipelineState(plMetalPipelineState* pipelineState);

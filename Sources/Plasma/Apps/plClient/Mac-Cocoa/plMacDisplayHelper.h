@@ -40,36 +40,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pl3DPipeline.h"
+#ifndef plMacDisplayHelper_hpp
+#define plMacDisplayHelper_hpp
 
-plProfile_CreateTimer("RenderScene",            "PipeT", RenderScene);
-plProfile_CreateTimer("VisEval",                "PipeT", VisEval);
-plProfile_CreateTimer("VisSelect",              "PipeT", VisSelect);
+// Currently requires Metal to query attached GPU capabilities
+// Capability check will also work for GL - but will need something
+// different for older GPUs.
+#include <AppKit/AppKit.h>
+#include <QuartzCore/QuartzCore.h>
 
-plProfile_CreateTimer("FindSceneLights",        "PipeT", FindSceneLights);
-plProfile_CreateTimer("  Find Lights",          "PipeT", FindLights);
-plProfile_CreateTimer("    Find Perms",         "PipeT", FindPerm);
-plProfile_CreateTimer("    FindSpan",           "PipeT", FindSpan);
-plProfile_CreateTimer("    FindActiveLights",   "PipeT", FindActiveLights);
-plProfile_CreateTimer("    ApplyActiveLights",  "PipeT", ApplyActiveLights);
-plProfile_CreateTimer("      ApplyMoving",      "PipeT", ApplyMoving);
-plProfile_CreateTimer("      ApplyToSpec",      "PipeT", ApplyToSpec);
-plProfile_CreateTimer("      ApplyToMoving",    "PipeT", ApplyToMoving);
+#include "plPipeline/hsG3DDeviceSelector.h"
+#include "plPipeline/pl3DPipeline.h"
 
-plProfile_CreateCounter("LightOn",              "PipeC", LightOn);
-plProfile_CreateCounter("LightVis",             "PipeC", LightVis);
-plProfile_CreateCounter("LightChar",            "PipeC", LightChar);
-plProfile_CreateCounter("LightActive",          "PipeC", LightActive);
-plProfile_CreateCounter("Lights Found",         "PipeC", FindLightsFound);
-plProfile_CreateCounter("Perms Found",          "PipeC", FindLightsPerm);
+class plMacDisplayHelper: public plDisplayHelper
+{
+public:
+    plMacDisplayHelper();
+    ~plMacDisplayHelper() = default;
+    
+    CGDirectDisplayID CurrentDisplay() const { return fCurrentDisplay; }
 
-plProfile_CreateCounter("Polys",                "General",  DrawTriangles);
-plProfile_CreateCounter("Material Change",      "Draw",     MatChange);
+    plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
+    std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const override;
+private:
+    mutable CGDirectDisplayID fCurrentDisplay;
+    mutable plDisplayMode fDesktopDisplayMode;
+    mutable std::vector<plDisplayMode> fDisplayModes;
+    
+    void SetCurrentScreen(hsDisplayHndl screen) const;
+    // we need NSScreen to query for non rectangular screen geometry
+    void SetCurrentScreen(NSScreen* screen) const;
+};
 
-
-PipelineParams plPipeline::fDefaultPipeParams;
-PipelineParams plPipeline::fInitialPipeParams;
-
-int mfCurrentTest = 100;
-
-plDisplayHelper* plDisplayHelper::fCurrentDisplayHelper = nullptr;
+#endif /* plMacDisplayHelper_hpp */

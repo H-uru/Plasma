@@ -68,6 +68,8 @@ public:
     {
         hsG3DDeviceSelector::AddDeviceEnumerator(&plMetalEnumerate::Enumerate);
     }
+    
+    static MTL::Device* DeviceForDisplay(hsDisplayHndl display);
 
 private:
     static void Enumerate(std::vector<hsG3DDeviceRecord>& records);
