@@ -43,22 +43,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PNNETPROTOCOL_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PNNETPROTOCOL_H
 
-#include "Private/pnNpCommon.h"
+#include "pnNpCommon.h"
 
 #ifdef USES_PROTOCOL_CLI2FILE
-# include "Private/Protocols/Cli2File/pnNpCli2File.h"
+# include "pnNpCli2File.h"
 #endif
 
 #ifdef USES_PROTOCOL_CLI2AUTH
-# include "Private/Protocols/Cli2Auth/pnNpCli2Auth.h"
+# include "pnNpCli2Auth.h"
 #endif
 
 #ifdef USES_PROTOCOL_CLI2GAME
-# include "Private/Protocols/Cli2Game/pnNpCli2Game.h"
+# include "pnNpCli2Game.h"
 #endif
 
 #ifdef USES_PROTOCOL_CLI2GATEKEEPER
-# include "Private/Protocols/Cli2GateKeeper/pnNpCli2GateKeeper.h"
+# include "pnNpCli2GateKeeper.h"
 #endif
 
 #endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PNNETPROTOCOL_H
