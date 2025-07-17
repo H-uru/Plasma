@@ -39,11 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetProtocol/Private/pnNpAllIncludes.h
-*   
-***/
 
 #ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PRIVATE_PNNPALLINCLUDES_H
 #error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnNetProtocol/Private/pnNpAllIncludes.h included more than once"
