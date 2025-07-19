@@ -109,6 +109,9 @@ static hsColorRGBA s_LinkRectColor{ 0.f, 0.f, 1.f, 1.f };
 class pfEsHTMLChunk
 {
     public:
+        struct TextLink_Type {};
+        static constexpr TextLink_Type TextLink{};
+
         enum Type : uint8_t
         {
             kEmpty = 0,
@@ -228,6 +231,20 @@ class pfEsHTMLChunk
               fTintDecal(), fLoopMovie(true), fOnCover(), fMovieIndex(-1)
         {
             fColor.Set(0.f, 0.f, 0.f, 1.f);
+            fCurrColor.Set(0.f, 0.f, 0.f, 1.f);
+            fOffColor.Set(0.f, 0.f, 0.f, 1.f);
+            fOnColor.Set(0.f, 0.f, 0.f, 1.f);
+        }
+
+        // Text link constructor
+        pfEsHTMLChunk(TextLink_Type)
+            : fType(kTextLink), fFlags(), fText(),
+              fFontSize(), fImageKey(), fEventID(), fSFXTime(),
+              fAbsoluteX(), fAbsoluteY(), fNoResizeImg(), fLineSpacing(),
+              fCurrOpacity(1.f), fMinOpacity(), fMaxOpacity(1.f),
+              fTintDecal(), fLoopMovie(true), fOnCover(), fMovieIndex(-1)
+        {
+            fColor.Set(0.f, 0.f, 1.f, 1.f);
             fCurrColor.Set(0.f, 0.f, 0.f, 1.f);
             fOffColor.Set(0.f, 0.f, 0.f, 1.f);
             fOnColor.Set(0.f, 0.f, 0.f, 1.f);
@@ -2105,8 +2122,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
 
                 case pfEsHTMLChunk::kTextLink:
                     c += 5;
-                    chunk = new pfEsHTMLChunk();
-                    chunk->fType = pfEsHTMLChunk::kTextLink;
+                    chunk = new pfEsHTMLChunk(pfEsHTMLChunk::TextLink);
                     while (IGetNextOption(c, end, name, option)) {
                         if (name.compare_i("event") == 0) {
                             ST::conversion_result result;
@@ -2114,6 +2130,8 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                             // Ideally, we'd do something like event=clear, but we'll just
                             // go with anything that isn't a valid integer.
                             hsChangeBits(chunk->fFlags, pfEsHTMLChunk::kCanLink, result.ok());
+                        } else if (name.compare_i("color") == 0) {
+                            chunk->fColor.FromARGB32(option.to_ulong(16) | 0xff000000);
                         }
                     }
                     fHTMLSource.emplace_back(chunk);
@@ -2391,14 +2409,17 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
         int16_t     fontSpacing;
         bool        needSFX = false;
 
+        // Find the current text link
+        pfEsHTMLChunk* currLinkChunk = IFindTextLink(fPageStarts[page]);
+
         // Find and set initial font properties
         IFindFontProps( fPageStarts[ page ], fontFace, fontSize, fontFlags, fontColor, fontSpacing );
         dtMap->SetFont( fontFace, fontSize, fontFlags, false );
-        dtMap->SetTextColor( fontColor, true );
+        if (currLinkChunk != nullptr)
+            dtMap->SetTextColor(currLinkChunk->fColor, true);
+        else
+            dtMap->SetTextColor(fontColor, true);
         dtMap->SetLineSpacing(fontSpacing);
-
-        // Find the current text link
-        pfEsHTMLChunk* currLinkChunk = IFindTextLink(fPageStarts[page]);
 
         for (idx = fPageStarts[page], x = (uint16_t)fPageLMargin, y = (uint16_t)fPageTMargin;
             y < (uint16_t)(512 - fPageTMargin - fPageBMargin) && idx < fHTMLSource.size(); idx++)
@@ -2655,10 +2676,13 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                 }
 
                 case pfEsHTMLChunk::kTextLink:
-                    if (hsCheckBits(chunk->fFlags, pfEsHTMLChunk::kCanLink))
+                    if (hsCheckBits(chunk->fFlags, pfEsHTMLChunk::kCanLink)) {
+                        dtMap->SetTextColor(chunk->fColor, true);
                         currLinkChunk = chunk;
-                    else
+                    } else {
+                        dtMap->SetTextColor(fontColor, true);
                         currLinkChunk = nullptr;
+                    }
                     break;
             }
         }
