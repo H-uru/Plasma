@@ -195,6 +195,7 @@ class pfGUIMultiLineEditCtrl;
 
 class pfJournalBook;
 class pfBookMultiLineEditProc;
+class pfJournalVisibleLink;
 
 class pfBookData : public hsKeyedObject
 {
@@ -514,8 +515,9 @@ class pfJournalBook : public hsKeyedObject
         // Some animation keys we use
         plKey   fPageTurnAnimKey;
 
-        // Current list of linkable image chunks we have visible on the screen, for quick hit testing
-        std::vector<pfEsHTMLChunk *> fVisibleLinks;
+        // Current list of visible link hotspots for quick hit testing.
+        // Can be images or lines of text.
+        std::vector<pfJournalVisibleLink> fVisibleLinks;
 
         static std::map<ST::string,pfBookData*> fBookGUIs;
         ST::string fCurBookGUI;

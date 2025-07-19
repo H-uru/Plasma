@@ -111,8 +111,6 @@ class pfEsHTMLChunk
         uint8_t   fType;
         uint32_t  fEventID;
 
-        pcSmallRect fLinkRect;      // Used only for image chunks, and only when stored in the fVisibleLinks array
-
         hsColorRGBA fColor;
 
         uint16_t      fAbsoluteX, fAbsoluteY;
@@ -230,6 +228,55 @@ class pfEsHTMLChunk
         }
 
         ~pfEsHTMLChunk() { }
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//// Visible Link Stuff //////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+class pfJournalVisibleLink
+{
+    pfEsHTMLChunk* fChunk;
+    pcSmallRect    fLinkRect;
+
+public:
+    pfJournalVisibleLink(
+        pfEsHTMLChunk* chunk,
+        int16_t x, int16_t y,
+        int16_t width, int16_t height
+    ) : fChunk(chunk), fLinkRect(x, y, width, height) {}
+
+    bool Contains(int16_t x, int16_t y) const
+    {
+        return fLinkRect.Contains(x, y);
+    }
+
+    void ClearRect()
+    {
+        fLinkRect.Set(0, 0, 0, 0);
+    }
+
+    uint32_t GetEventID() const
+    {
+        return fChunk->fEventID;
+    }
+
+    bool IsCheckbox() const
+    {
+        return hsCheckBits(fChunk->fFlags, pfEsHTMLChunk::kActAsCB);
+    }
+
+    bool IsChecked() const
+    {
+        hsAssert(IsCheckbox(), "Trying to see if a non-checkbox is checked?");
+        return hsCheckBits(fChunk->fFlags, pfEsHTMLChunk::kChecked);
+    }
+
+    void SetChecked(bool value)
+    {
+        hsAssert(IsCheckbox(), "Trying to check a non-checkbox?");
+        hsChangeBits(fChunk->fFlags, pfEsHTMLChunk::kChecked, value);
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1550,7 +1597,7 @@ hsSsize_t pfJournalBook::IFindCurrVisibleLink(bool rightNotLeft, bool hoverNotUp
     // Search through the list of visible hotspots
     for (size_t i = 0; i < fVisibleLinks.size(); i++)
     {
-        if( fVisibleLinks[ i ]->fLinkRect.Contains( (int16_t)pt.fX, (int16_t)pt.fY ) )
+        if (fVisibleLinks[i].Contains((int16_t)pt.fX, (int16_t)pt.fY ))
         {
             // Found a visible link
             return hsSsize_t(i);
@@ -1569,10 +1616,10 @@ void    pfJournalBook::IHandleLeftSideClick()
 
     if (hsSsize_t idx = IFindCurrVisibleLink(false, false); idx != -1)
     {
-        if( fVisibleLinks[ idx ]->fFlags & pfEsHTMLChunk::kActAsCB )
+        if (fVisibleLinks[idx].IsCheckbox())
             IHandleCheckClick((uint32_t)idx, pfBookData::kLeftSide);
         else
-            ISendNotify( kNotifyImageLink, fVisibleLinks[ idx ]->fEventID );
+            ISendNotify(kNotifyImageLink, fVisibleLinks[ idx ].GetEventID());
         return;
     }
 
@@ -1587,10 +1634,10 @@ void    pfJournalBook::IHandleRightSideClick()
 
     if (hsSsize_t idx = IFindCurrVisibleLink(true, false); idx != -1)
     {
-        if( fVisibleLinks[ idx ]->fFlags & pfEsHTMLChunk::kActAsCB )
+        if (fVisibleLinks[ idx ].IsCheckbox())
             IHandleCheckClick((uint32_t)idx, pfBookData::kRightSide);
         else
-            ISendNotify( kNotifyImageLink, fVisibleLinks[ idx ]->fEventID );
+            ISendNotify(kNotifyImageLink, fVisibleLinks[idx].GetEventID());
         return;
     }
 
@@ -1605,22 +1652,22 @@ void    pfJournalBook::IHandleCheckClick( uint32_t idx, pfBookData::WhichSide wh
 {
     // Special processing for checkboxes--toggle our state, switch our opacity
     // and then send a notify about our new state
-    bool check = ( fVisibleLinks[ idx ]->fFlags & pfEsHTMLChunk::kChecked ) ? false : true;
+    bool check = !fVisibleLinks[idx].IsChecked();
     if( check )
     {
-        fVisibleLinks[ idx ]->fFlags |= pfEsHTMLChunk::kChecked;
+        fVisibleLinks[ idx ].SetChecked(true);
 //      fVisibleLinks[ idx ]->fCurrOpacity = fVisibleLinks[ idx ]->fMaxOpacity;
     }
     else
     {
-        fVisibleLinks[ idx ]->fFlags &= ~pfEsHTMLChunk::kChecked;
+        fVisibleLinks[ idx ].SetChecked(false);
 //      fVisibleLinks[ idx ]->fCurrOpacity = fVisibleLinks[ idx ]->fMinOpacity;
     }
 
     // Re-render the page we're on, to show the change in state
     IRenderPage( fCurrentPage + ( ( which == pfBookData::kLeftSide ) ? 0 : 1 ), ( which == pfBookData::kLeftSide ) ? pfJournalDlgProc::kTagLeftDTMap: pfJournalDlgProc::kTagRightDTMap );
 
-    ISendNotify( check ? kNotifyImageLink : kNotifyCheckUnchecked, fVisibleLinks[ idx ]->fEventID );
+    ISendNotify(check ? kNotifyImageLink : kNotifyCheckUnchecked, fVisibleLinks[idx].GetEventID());
 
     // Register for FX processing, so we can fade the checkbox in
     fBookGUIs[fCurBookGUI]->RegisterForSFX( (pfBookData::WhichSide)( fBookGUIs[fCurBookGUI]->CurSFXPages() | which ) );
@@ -2661,11 +2708,12 @@ void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y
         if( whichDTMap == pfJournalDlgProc::kTagRightDTMap || whichDTMap == pfJournalDlgProc::kTagTurnFrontDTMap )
             x += (uint16_t)(dtMap->GetWidth());   // Right page rects are offsetted to differentiate
 
-        if (dontRender) // if we aren't rendering then this link isn't visible, but the index still needs to be valid, so give it a rect of 0,0,0,0
-            chunk->fLinkRect.Set(0,0,0,0);
-        else
-            chunk->fLinkRect.Set( x, y, (int16_t)(copy->GetWidth()), (int16_t)(copy->GetHeight()) );
-        fVisibleLinks.emplace_back(chunk);
+        // if we aren't rendering then this link isn't visible, but the index still needs to be valid, so give it a rect of 0,0,0,0
+        if (dontRender) {
+            fVisibleLinks.emplace_back(chunk, 0, 0, 0, 0);
+        } else {
+            fVisibleLinks.emplace_back(chunk, x, y, (int16_t)(copy->GetWidth()), (int16_t)(copy->GetHeight()));
+        }
     }
 }
 
@@ -2841,11 +2889,12 @@ plLayerAVI *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uin
         if( whichDTMap == pfJournalDlgProc::kTagRightDTMap || whichDTMap == pfJournalDlgProc::kTagTurnFrontDTMap )
             x += (uint16_t)(baseMipmap->GetWidth());  // Right page rects are offsetted to differentiate
 
-        if (dontRender) // if we aren't rendering then this link isn't visible, but the index still needs to be valid, so give it a rect of 0,0,0,0
-            chunk->fLinkRect.Set(0,0,0,0);
-        else
-            chunk->fLinkRect.Set( x, y, movieWidth, movieHeight );
-        fVisibleLinks.emplace_back(chunk);
+        // if we aren't rendering then this link isn't visible, but the index still needs to be valid, so give it a rect of 0,0,0,0
+        if (dontRender) {
+            fVisibleLinks.emplace_back(chunk, 0, 0, 0, 0);
+        } else {
+            fVisibleLinks.emplace_back(chunk, x, y, movieWidth, movieHeight);
+        }
     }
 
     plAnimTimeConvert &timeConvert = movieLayer->GetTimeConvert();
@@ -3133,8 +3182,8 @@ void    pfJournalBook::IRecalcPageStarts( uint32_t upToPage )
         // actually draw them all (even in large journals), we're just going to do it
         IRenderPage( page, pfJournalDlgProc::kTagTurnBackDTMap, false );
         // Reset any "visible" links since they aren't really visible
-        for (pfEsHTMLChunk* linkChunk : fVisibleLinks)
-            linkChunk->fLinkRect.Set(0, 0, 0, 0);
+        for (auto& link : fVisibleLinks)
+            link.ClearRect();
     }
 }
 
