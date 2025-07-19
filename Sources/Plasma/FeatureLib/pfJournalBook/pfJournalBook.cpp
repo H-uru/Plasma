@@ -2413,18 +2413,24 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                 case pfEsHTMLChunk::kParagraph:             
                     if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) == pfEsHTMLChunk::kLeft )
                     {
-                        dtMap->SetJustify( plDynamicTextMap::kLeftJustify );
-                        x = (uint16_t)fPageLMargin; // reset X if our justification changes
+                        if (dtMap->GetFontJustify() != plDynamicTextMap::kLeftJustify) {
+                            dtMap->SetJustify(plDynamicTextMap::kLeftJustify);
+                            x = (uint16_t)fPageLMargin; // reset X if our justification changes
+                        }
                     }
                     else if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) == pfEsHTMLChunk::kRight )
                     {
-                        dtMap->SetJustify( plDynamicTextMap::kRightJustify );
-                        x = (uint16_t)fPageLMargin; // reset X if our justification changes
+                        if (dtMap->GetFontJustify() != plDynamicTextMap::kRightJustify) {
+                            dtMap->SetJustify(plDynamicTextMap::kRightJustify);
+                            x = (uint16_t)fPageLMargin; // reset X if our justification changes
+                        }
                     }
                     else if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) == pfEsHTMLChunk::kCenter )
                     {
-                        dtMap->SetJustify( plDynamicTextMap::kCenter );
-                        x = (uint16_t)fPageLMargin; // reset X if our justification changes
+                        if (dtMap->GetFontJustify() != plDynamicTextMap::kCenter) {
+                            dtMap->SetJustify(plDynamicTextMap::kCenter);
+                            x = (uint16_t)fPageLMargin; // reset X if our justification changes
+                        }
                     }
 
                     dtMap->SetFirstLineIndent( (int16_t)(x - fPageLMargin) );
