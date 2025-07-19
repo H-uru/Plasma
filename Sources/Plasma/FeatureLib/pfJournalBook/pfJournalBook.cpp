@@ -2578,7 +2578,7 @@ void    pfJournalBook::IMoveMovies( hsGMaterial *source, hsGMaterial *dest )
 
 void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *mip, plDynamicTextMap *dtMap, uint32_t whichDTMap, bool dontRender )
 {
-    plMipmap *copy = new plMipmap();
+    auto copy = std::make_unique<plMipmap>();
     copy->CopyFrom(mip);
     if (chunk->fNoResizeImg)
     {
@@ -2653,7 +2653,7 @@ void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y
                 opts.fFlags = ( chunk->fFlags & pfEsHTMLChunk::kBlendAlpha ) ? plMipmap::kCopySrcAlpha : plMipmap::kForceOpaque;
             opts.fOpacity = (uint8_t)(chunk->fCurrOpacity * 255.f);
         }
-        dtMap->Composite( copy, x, y, &opts );
+        dtMap->Composite( copy.get(), x, y, &opts );
     }
 
     if( chunk->fFlags & pfEsHTMLChunk::kCanLink )
@@ -2667,7 +2667,6 @@ void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y
             chunk->fLinkRect.Set( x, y, (int16_t)(copy->GetWidth()), (int16_t)(copy->GetHeight()) );
         fVisibleLinks.emplace_back(chunk);
     }
-    delete copy;
 }
 
 pfJournalBook::loadedMovie *pfJournalBook::IMovieAlreadyLoaded(pfEsHTMLChunk *chunk)
