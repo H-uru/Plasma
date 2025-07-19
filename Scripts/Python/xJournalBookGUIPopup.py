@@ -86,7 +86,7 @@ LocalAvatar = None
 # This isn't very friendly for age creators, so we'll let them specify
 # a url by doing <link href="https://foo.com">, and this regex will
 # convert that to an integer id.
-_URL_REGEX = re.compile(r"<link\s+href\s*=\s*(?P<quote>[\'\"]?)\s*(?P<url>https?:\/\/[\S]+|www\.[^\s.]+\.[^\s]+)\s*(?P=quote)\s*>")
+_URL_REGEX = re.compile(r"(?P<href>href\s*=\s*(?P<quote>[\"\']?)\s*?(?P<url>https?:\/\/[^\s>]+)\s*?(?P=quote))(?=[^<]*>)")
 
 class xJournalBookGUIPopup(ptModifier):
     "The Journal Book GUI Popup python code"
@@ -230,9 +230,15 @@ class xJournalBookGUIPopup(ptModifier):
 
             PtDebugPrint(f"xJournalBookGUIPopup.IPreprocessJournalContents(): Found {url=} {event=}")
             self.links.append(url)
-            return f"<link event={event}>"
+            return f"event={event}"
 
-        return _URL_REGEX.sub(replace_url, journalContents)
+        newContent = _URL_REGEX.sub(replace_url, journalContents)
+        PtDebugPrint(
+            "xJournalBookGuiPopup.IPreprocessJournalContents(): The journal content has been preprocessed to:",
+            newContent,
+            level=kDebugDumpLevel
+        )
+        return newContent
 
     def IsThereACover(self, bookHtml):
         # search the bookhtml string looking for a cover
