@@ -68,6 +68,7 @@ target_link_libraries(
         pfAudio
         pfAnimation
         pfCamera
+        pfJournalBook
         pfMessage
         pfPython
         pfSurface

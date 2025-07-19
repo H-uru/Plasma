@@ -95,6 +95,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfMessage/pfGUINotifyMsg.h"
 #include "pfSurface/plLayerAVI.h"
 
+//////////////////////////////////////////////////////////////////////////////
+//// Do we show linking rects? ///////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+static bool s_ShowLinkRects = false;
+static hsColorRGBA s_LinkRectColor{ 0.f, 0.f, 1.f, 1.f };
 
 //////////////////////////////////////////////////////////////////////////////
 //// pfEsHTMLChunk Class /////////////////////////////////////////////////////
@@ -1172,6 +1178,11 @@ void    pfJournalBook::UnloadAllGUIs()
         names.emplace_back(name); // store a list of keys
     for (const ST::string& name : names)
         UnloadGUI(name); // UnloadGUI won't unload BkBook
+}
+
+void     pfJournalBook::ShowLinkRect(bool on)
+{
+    s_ShowLinkRects = on;
 }
 
 //// Constructor /////////////////////////////////////////////////////////////
@@ -2705,14 +2716,17 @@ void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y
 
     if( chunk->fFlags & pfEsHTMLChunk::kCanLink )
     {
+        int16_t xOffs = 0;
         if( whichDTMap == pfJournalDlgProc::kTagRightDTMap || whichDTMap == pfJournalDlgProc::kTagTurnFrontDTMap )
-            x += (uint16_t)(dtMap->GetWidth());   // Right page rects are offsetted to differentiate
+            xOffs = (int16_t)(dtMap->GetWidth());   // Right page rects are offsetted to differentiate
 
         // if we aren't rendering then this link isn't visible, but the index still needs to be valid, so give it a rect of 0,0,0,0
         if (dontRender) {
             fVisibleLinks.emplace_back(chunk, 0, 0, 0, 0);
         } else {
-            fVisibleLinks.emplace_back(chunk, x, y, (int16_t)(copy->GetWidth()), (int16_t)(copy->GetHeight()));
+            fVisibleLinks.emplace_back(chunk, x + xOffs, y, (int16_t)(copy->GetWidth()), (int16_t)(copy->GetHeight()));
+            if (s_ShowLinkRects)
+                dtMap->FrameRect(x, y, (int16_t)(copy->GetWidth()), (int16_t)(copy->GetHeight()), s_LinkRectColor);
         }
     }
 }

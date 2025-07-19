@@ -401,6 +401,9 @@ class pfJournalBook : public hsKeyedObject
         // unloads all GUIs except for the default
         static void UnloadAllGUIs();
 
+        // show a rectangle around links
+        static void ShowLinkRect(bool on);
+
         void    SetGUI( const ST::string &guiName );
 
         // Shows the book, optionally starting open or closed
