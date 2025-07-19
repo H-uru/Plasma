@@ -2154,7 +2154,7 @@ uint8_t   pfJournalBook::IGetTagType( const char *string, const char *end )
                 { ST_LITERAL("editable"), pfEsHTMLChunk::kEditable },
     };
 
-    for (auto tag : tags)
+    for (const auto& tag : tags)
     {
         if (string + tag.fTag.size() < end && tag.fTag.compare_ni(string, tag.fTag.size()) == 0)
         {
