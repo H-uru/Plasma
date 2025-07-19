@@ -61,6 +61,9 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 
+import re
+import webbrowser
+
 import xJournalBookDefs
 
 
@@ -78,6 +81,12 @@ GUIType             = ptAttribString(14,"Book GUI Type",default="bkBook")
 
 # globals
 LocalAvatar = None
+
+# pfJournalBook's EsHTML will only allow links with integer events.
+# This isn't very friendly for age creators, so we'll let them specify
+# a url by doing <link href="https://foo.com">, and this regex will
+# convert that to an integer id.
+_URL_REGEX = re.compile(r"<link\s+href\s*=\s*(?P<quote>[\'\"]?)\s*(?P<url>https?:\/\/[\S]+|www\.[^\s.]+\.[^\s]+)\s*(?P=quote)\s*>")
 
 class xJournalBookGUIPopup(ptModifier):
     "The Journal Book GUI Popup python code"
@@ -123,11 +132,20 @@ class xJournalBookGUIPopup(ptModifier):
                 # is it from the OpenBook? (we only have one book to worry about)
                 if event[0] == PtEventType.kBook:
                     PtDebugPrint("xJournalBookGUIPopup: BookNotify  event=%d, id=%d" % (event[1],event[2]),level=kDebugDumpLevel)
-                    if event[1] == PtBookEventTypes.kNotifyShow:
+                    if event[1] == PtBookEventTypes.kNotifyImageLink:
+                        PtDebugPrint("xJournalBookGUIPopup:Book: NotifyImageLink",level=kDebugDumpLevel)
+                        try:
+                            url = self.links[event[2]]
+                        except IndexError:
+                            pass
+                        else:
+                            PtDebugPrint(f"xJournalBookGUIPopup: NotifyImageLink: opening {url=} {event[2]=}", level=kWarningLevel)
+                            webbrowser.open_new_tab(url)
+                    elif event[1] == PtBookEventTypes.kNotifyShow:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyShow",level=kDebugDumpLevel)
                         # disable the KI
                         PtSendKIMessage(kDisableKIandBB,0)
-                    if event[1] == PtBookEventTypes.kNotifyHide:
+                    elif event[1] == PtBookEventTypes.kNotifyHide:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyHide",level=kDebugDumpLevel)
                         # re-enable KI
                         PtSendKIMessage(kEnableKIandBB,0)
@@ -194,7 +212,7 @@ class xJournalBookGUIPopup(ptModifier):
         PtSendKIMessage(kDisableKIandBB, 0)
 
         # now build the book
-        self.JournalBook = ptBook(journalContents, self.key)
+        self.JournalBook = ptBook(self.IPreprocessJournalContents(journalContents), self.key)
         self.JournalBook.setSize(BookWidth.value, BookHeight.value)
         self.JournalBook.setGUI(GUIType.value)
 
@@ -204,6 +222,17 @@ class xJournalBookGUIPopup(ptModifier):
         else:
             self.JournalBook.show(StartOpen.value)
 
+    def IPreprocessJournalContents(self, journalContents: str):
+        self.links = []
+        def replace_url(match: re.Match) -> str:
+            url = match.group("url")
+            event = len(self.links)
+
+            PtDebugPrint(f"xJournalBookGUIPopup.IPreprocessJournalContents(): Found {url=} {event=}")
+            self.links.append(url)
+            return f"<link event={event}>"
+
+        return _URL_REGEX.sub(replace_url, journalContents)
 
     def IsThereACover(self, bookHtml):
         # search the bookhtml string looking for a cover

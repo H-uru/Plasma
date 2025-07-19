@@ -121,7 +121,8 @@ class pfEsHTMLChunk
             kBook,  // another placeholder
             kDecal,
             kMovie,
-            kEditable // placeholder, ver 3.0
+            kEditable, // placeholder, ver 3.0
+            kTextLink,
         };
 
         ST::string fText; // Paragraph text, or face name
@@ -2101,6 +2102,25 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
+
+                case pfEsHTMLChunk::kTextLink:
+                    c += 5;
+                    chunk = new pfEsHTMLChunk();
+                    chunk->fType = pfEsHTMLChunk::kTextLink;
+                    while (IGetNextOption(c, end, name, option)) {
+                        if (name.compare_i("event") == 0) {
+                            ST::conversion_result result;
+                            chunk->fEventID = option.to_uint(result);
+                            // Ideally, we'd do something like event=clear, but we'll just
+                            // go with anything that isn't a valid integer.
+                            hsChangeBits(chunk->fFlags, pfEsHTMLChunk::kCanLink, result.ok());
+                        }
+                    }
+                    fHTMLSource.emplace_back(chunk);
+
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
+                    lastParChunk->fFlags = IFindLastAlignment();
+                    break;
             }
 
             start = c;
@@ -2142,7 +2162,7 @@ uint8_t   pfJournalBook::IGetTagType( const char *string, const char *end )
     {
         ST::string fTag;
         uint8_t       fType;
-    } tags[] = { { ST_LITERAL("p"), pfEsHTMLChunk::kParagraph },
+    } tags[] = {{ ST_LITERAL("p"), pfEsHTMLChunk::kParagraph },
                 { ST_LITERAL("img"), pfEsHTMLChunk::kImage },
                 { ST_LITERAL("pb"), pfEsHTMLChunk::kPageBreak },
                 { ST_LITERAL("font"), pfEsHTMLChunk::kFontChange },
@@ -2152,6 +2172,7 @@ uint8_t   pfJournalBook::IGetTagType( const char *string, const char *end )
                 { ST_LITERAL("decal"), pfEsHTMLChunk::kDecal },
                 { ST_LITERAL("movie"), pfEsHTMLChunk::kMovie },
                 { ST_LITERAL("editable"), pfEsHTMLChunk::kEditable },
+                { ST_LITERAL("link"), pfEsHTMLChunk::kTextLink },
     };
 
     for (const auto& tag : tags)
@@ -2376,6 +2397,9 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
         dtMap->SetTextColor( fontColor, true );
         dtMap->SetLineSpacing(fontSpacing);
 
+        // Find the current text link
+        pfEsHTMLChunk* currLinkChunk = IFindTextLink(fPageStarts[page]);
+
         for (idx = fPageStarts[page], x = (uint16_t)fPageLMargin, y = (uint16_t)fPageTMargin;
             y < (uint16_t)(512 - fPageTMargin - fPageBMargin) && idx < fHTMLSource.size(); idx++)
         {
@@ -2411,6 +2435,54 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                     width = (uint16_t)(512 - fPageLMargin - fPageRMargin);
                     if( !suppressRendering )
                         dtMap->DrawWrappedString( (uint16_t)fPageLMargin, y, chunk->fText, width, (uint16_t)(512 - fPageBMargin - y), &lastX, &lastY );
+
+                    // Insert link rects without making the code too crazy.
+                    // A huge assumption here... We can simply move from the (x, y) render starting position
+                    // down and to the right. This _will_ break if anyone wants to add support for RTL.
+                    // Additionally, if a line wraps such that there's a lot of blank space, that blank
+                    // space will still be clickable. Ugh.
+                    if (currLinkChunk != nullptr) {
+                        int16_t maxCharHt = (int16_t)dtMap->GetCurrFont()->GetMaxCharHeight();
+                        int16_t lineDelta = maxCharHt + fontSpacing;
+                        pcSmallRect linkRect(x, y, 0, maxCharHt);
+
+                         // Right page rects are offsetted to differentiate
+                        int16_t xOffs = 0;
+                        if (whichDTMap == pfJournalDlgProc::kTagRightDTMap || whichDTMap == pfJournalDlgProc::kTagTurnFrontDTMap)
+                            xOffs = (int16_t)(dtMap->GetWidth());
+
+                        while (linkRect.fY <= lastY) {
+                            if (linkRect.fY + lineDelta >= lastY)
+                                linkRect.fWidth = lastX - linkRect.fX;
+                            else
+                                linkRect.fWidth = 512 - fPageRMargin - linkRect.fX;
+
+                            // Blank line at end of page could give us a zero width rect, skip that
+                            if (!suppressRendering && linkRect.fWidth > 0) {
+                                fVisibleLinks.emplace_back(
+                                    currLinkChunk,
+                                    linkRect.fX + xOffs,
+                                    linkRect.fY,
+                                    linkRect.fWidth, linkRect.fHeight
+                                );
+                                if (s_ShowLinkRects) {
+                                    dtMap->FrameRect(
+                                        linkRect.fX, linkRect.fY,
+                                        linkRect.fWidth, linkRect.fHeight,
+                                        s_LinkRectColor
+                                    );
+                                }
+                            } else if (!suppressRendering && linkRect.fWidth > 0) {
+                                fVisibleLinks.emplace_back(
+                                    currLinkChunk,
+                                    0, 0, 0, 0
+                                );
+                            }
+
+                            linkRect.fX = (int16_t)fPageLMargin;
+                            linkRect.fY += lineDelta;
+                        }
+                    }
 
                     if( lastChar == 0 )
                     {
@@ -2534,7 +2606,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                     dtMap->SetLineSpacing(fontSpacing);
                     break;
 
-                case pfEsHTMLChunk::kMovie:
+                case pfEsHTMLChunk::kMovie: {
                     movieAlreadyLoaded = (IMovieAlreadyLoaded(chunk) != nullptr); // have we already cached it?
                     plLayerAVI *movieLayer = IMakeMovieLayer(chunk, x, y, (plMipmap*)dtMap, whichDTMap, suppressRendering);
                     if (movieLayer)
@@ -2573,6 +2645,14 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                         if (material && !suppressRendering)
                             material->AddLayerViaNotify(movieLayer);
                     }
+                    break;
+                }
+
+                case pfEsHTMLChunk::kTextLink:
+                    if (hsCheckBits(chunk->fFlags, pfEsHTMLChunk::kCanLink))
+                        currLinkChunk = chunk;
+                    else
+                        currLinkChunk = nullptr;
                     break;
             }
         }
@@ -3159,6 +3239,25 @@ void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, ST::string &face, uint
         color.Set( 0.f, 0.f, 0.f, 1.f );
     if( !( found & kSpacing ) )
         spacing = 0;
+}
+
+//// IFindTextLink ///////////////////////////////////////////////////////////
+// Starting at the given chunk, works backward to determine the current text link ID
+pfEsHTMLChunk* pfJournalBook::IFindTextLink(uint32_t chunkIdx) const
+{
+    if (fHTMLSource.empty())
+        return nullptr;
+
+    for (hsSsize_t i = chunkIdx; i >= 0; --i) {
+        if (fHTMLSource[i]->fType != pfEsHTMLChunk::kTextLink)
+            continue;
+        if (hsCheckBits(fHTMLSource[i]->fFlags, pfEsHTMLChunk::kCanLink))
+            return fHTMLSource[i];
+        else
+            return nullptr;
+    }
+
+    return nullptr;
 }
 
 //// IFindLastAlignment //////////////////////////////////////////////////////

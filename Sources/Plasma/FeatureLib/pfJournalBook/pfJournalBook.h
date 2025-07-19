@@ -552,6 +552,9 @@ class pfJournalBook : public hsKeyedObject
         // font properties at that point, or assigns defaults if none were specified
         void    IFindFontProps( uint32_t chunkIdx, ST::string &face, uint8_t &size, uint8_t &flags, hsColorRGBA &color, int16_t &spacing );
 
+        // Starting at the given chunk, works backward to determine the current text link ID
+        pfEsHTMLChunk* IFindTextLink(uint32_t chunkIdx) const;
+
         // Find the last paragraph chunk and thus the last par alignment settings
         uint8_t   IFindLastAlignment() const;
 
