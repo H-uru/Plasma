@@ -109,12 +109,26 @@ static hsColorRGBA s_LinkRectColor{ 0.f, 0.f, 1.f, 1.f };
 class pfEsHTMLChunk
 {
     public:
+        enum Type : uint8_t
+        {
+            kEmpty = 0,
+            kParagraph,
+            kImage,
+            kPageBreak,
+            kFontChange,
+            kMargin,
+            kCover, // Just a placeholder, never actually used after compile time
+            kBook,  // another placeholder
+            kDecal,
+            kMovie,
+            kEditable // placeholder, ver 3.0
+        };
 
         ST::string fText; // Paragraph text, or face name
         plKey   fImageKey;  // Key of image
         uint8_t   fFontSize;
         uint32_t  fFlags;
-        uint8_t   fType;
+        Type   fType;
         uint32_t  fEventID;
 
         hsColorRGBA fColor;
@@ -159,21 +173,6 @@ class pfEsHTMLChunk
                                         // is "on opacity"
             kChecked    = 0x00000080,   // Only for kActAsCB, set if it's currently "checked"
             kTranslucent= 0x00000100    // is the image translucent? if so, use fCurrOpacity
-        };
-
-        enum Types
-        {
-            kEmpty = 0,
-            kParagraph,
-            kImage,
-            kPageBreak,
-            kFontChange,
-            kMargin,
-            kCover,         // Just a placeholder, never actually used after compile time
-            kBook,          // another placeholder
-            kDecal,
-            kMovie,
-            kEditable       // placeholder, ver 3.0
         };
 
         // Paragraph constructor
