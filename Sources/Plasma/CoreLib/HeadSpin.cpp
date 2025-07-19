@@ -241,21 +241,21 @@ void DebugMsg(const char* fmt, ...)
 
 void hsStatusMessage(const char* message)
 {
-  if (gHSStatusProc) {
-    gHSStatusProc(message);
-  } else {
+    if (gHSStatusProc) {
+        gHSStatusProc(message);
+    } else {
 #if HS_BUILD_FOR_UNIX
-    printf("%s",message);
-    size_t len = strlen(message);
-    if (len>0 && message[len-1]!='\n')
-        printf("\n");
+        printf("%s",message);
+        size_t len = strlen(message);
+        if (len>0 && message[len-1]!='\n')
+            printf("\n");
 #elif HS_BUILD_FOR_WIN32
-    OutputDebugString(message);
-    size_t len = strlen(message);
-    if (len>0 && message[len-1]!='\n')
-        OutputDebugString("\n");
+        OutputDebugString(message);
+        size_t len = strlen(message);
+        if (len>0 && message[len-1]!='\n')
+            OutputDebugString("\n");
 #endif
-  }
+    }
 }
 
 void hsStatusMessageV(const char * fmt, va_list args)

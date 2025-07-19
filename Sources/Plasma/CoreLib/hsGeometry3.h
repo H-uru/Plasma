@@ -83,7 +83,9 @@ struct hsScalarTriple
 //
 //  int operator=(const hsScalarTriple& o) { privateTemp = o.privateTemp; }
 //  hsScalarTriple(const hsScalarTriple& o) : fX(privateData[0]), fY(privateData[1]), fZ(privateData[2]) 
-//              { *this = o; }
+//  {
+//      *this = o;
+//  }
 //
 //  float& fX;
 //  float& fY;
@@ -101,10 +103,10 @@ public:
     float InnerProduct(const hsScalarTriple *p) const;
 
 //  hsScalarTriple LERP(hsScalarTriple &other, float t);
-     float       Magnitude() const;
-     float       MagnitudeSquared() const { return (fX * fX + fY * fY + fZ * fZ); }
+    float Magnitude() const;
+    float MagnitudeSquared() const { return (fX * fX + fY * fY + fZ * fZ); }
 
-     bool IsEmpty() const { return fX == 0 && fY == 0 && fZ == 0; }
+    bool IsEmpty() const { return fX == 0 && fY == 0 && fZ == 0; }
 
     float    operator[](int i) const;
     float&   operator[](int i);
@@ -119,12 +121,12 @@ public:
 inline float& hsScalarTriple::operator[] (int i) 
 {
     hsAssert(i >=0 && i <3, "Bad index for hsScalarTriple::operator[]");
-     return *(&fX + i); 
+    return *(&fX + i);
 }
 inline float hsScalarTriple::operator[] (int i) const
 {
     hsAssert(i >=0 && i <3, "Bad index for hsScalarTriple::operator[]");
-     return *(&fX + i); 
+    return *(&fX + i);
 }
 inline float hsScalarTriple::InnerProduct(const hsScalarTriple &p) const
 {
@@ -168,7 +170,7 @@ struct hsPoint3  : public hsScalarTriple {
     friend inline hsPoint3 operator/(const hsPoint3& t, const float& s);
     bool operator==(const hsPoint3& ss) const
     {
-            return (ss.fX == fX && ss.fY == fY && ss.fZ == fZ);
+        return (ss.fX == fX && ss.fY == fY && ss.fZ == fZ);
     }
     bool operator!=(const hsPoint3& ss) const { return !(*this == ss); }
     hsPoint3 &operator+=(const hsScalarTriple &s) { fX += s.fX; fY += s.fY; fZ += s.fZ; return *this; }
@@ -191,34 +193,37 @@ struct hsVector3 : public hsScalarTriple {
     hsVector3*   Set(const hsScalarTriple* p) { return (hsVector3*)hsScalarTriple::Set(p) ;}
     hsVector3*   Set(const hsScalarTriple* p1, const hsScalarTriple* p2) { return Set(p1->fX-p2->fX,p1->fY-p2->fY,p1->fZ-p2->fZ);}
 
-    void            Normalize()
-                {
-                    float    length = this->Magnitude();
-//                   hsIfDebugMessage(length == 0, "Err: Normalizing hsVector3 of length 0", 0);
-                    if (length == 0)
-                        return;
-                    float    invMag = hsInvert(length);
-                    
-                    fX = (fX * invMag);
-                    fY = (fY * invMag);
-                    fZ = (fZ * invMag);
-                }
-    inline void     Renormalize()       // if the vector is already close to unit length
-                {
-                    float    mag2 = *this * *this;
-                    hsIfDebugMessage(mag2 == 0, "Err: Renormalizing hsVector3 of length 0", 0);
-                    if (mag2 == 0)
-                        return;
-                    float    invMag = hsInvSqrt(mag2);
-                    
-                    fX = (fX * invMag);
-                    fY = (fY * invMag);
-                    fZ = (fZ * invMag);
-                }
+    void Normalize()
+    {
+        float length = this->Magnitude();
+        // hsIfDebugMessage(length == 0, "Err: Normalizing hsVector3 of length 0", 0);
+        if (length == 0)
+            return;
+        float invMag = hsInvert(length);
 
-//  hsVector3 &Sub(const hsPoint3& s, const hsPoint3& t)
-//  {   Set(s.fX - t.fX, s.fY - t.fY, s.fZ - t.fZ); 
-//          return *this; };
+        fX = (fX * invMag);
+        fY = (fY * invMag);
+        fZ = (fZ * invMag);
+    }
+
+    inline void Renormalize() // if the vector is already close to unit length
+    {
+        float mag2 = *this * *this;
+        hsIfDebugMessage(mag2 == 0, "Err: Renormalizing hsVector3 of length 0", 0);
+        if (mag2 == 0)
+            return;
+        float invMag = hsInvSqrt(mag2);
+
+        fX = (fX * invMag);
+        fY = (fY * invMag);
+        fZ = (fZ * invMag);
+    }
+
+    // hsVector3& Sub(const hsPoint3& s, const hsPoint3& t)
+    // {
+    //     Set(s.fX - t.fX, s.fY - t.fY, s.fZ - t.fZ);
+    //     return *this;
+    // }
     friend inline hsVector3 operator+(const hsVector3& s, const hsVector3& t);
     friend inline hsVector3 operator-(const hsVector3& s, const hsVector3& t);
     friend inline hsVector3 operator-(const hsVector3& s);
@@ -226,10 +231,10 @@ struct hsVector3 : public hsScalarTriple {
     friend inline hsVector3 operator*(const hsVector3& t, const float& s);
     friend inline hsVector3 operator/(const hsVector3& t, const float& s);
     friend inline float operator*(const hsVector3& t, const hsVector3& s);
-    friend  hsVector3 operator%(const hsVector3& t, const hsVector3& s);
+    friend hsVector3 operator%(const hsVector3& t, const hsVector3& s);
     bool operator==(const hsVector3& ss) const
     {
-            return (ss.fX == fX && ss.fY == fY && ss.fZ == fZ);
+        return (ss.fX == fX && ss.fY == fY && ss.fZ == fZ);
     }
 
     hsVector3 &operator+=(const hsScalarTriple &s) { fX += s.fX; fY += s.fY; fZ += s.fZ; return *this; }
@@ -247,8 +252,7 @@ struct hsPoint4 {
 
     hsPoint4& operator=(const hsPoint3&p) { Set(p.fX, p.fY, p.fZ, 1.f); return *this; }
 
-    hsPoint4*   Set(float x, float y, float z, float w) 
-        { fX = x; fY = y; fZ = z; fW = w; return this; }
+    hsPoint4* Set(float x, float y, float z, float w) { fX = x; fY = y; fZ = z; fW = w; return this; }
 };
 
 
@@ -334,13 +338,13 @@ inline hsPoint3 operator*(const float& t, const hsPoint3& s)
 inline float hsPoint4::operator[] (int i) const
 {
     hsAssert(i >=0 && i <4, "Bad index for hsPoint4::operator[]");
-     return *(&fX + i); 
+    return *(&fX + i);
 }
 
 inline float& hsPoint4::operator[] (int i)
 {
     hsAssert(i >=0 && i <4, "Bad index for hsPoint4::operator[]");
-     return *(&fX + i); 
+    return *(&fX + i);
 }
 
 typedef hsPoint3 hsGUv;
@@ -361,11 +365,9 @@ struct hsPlane3 {
     float fD;
 
     hsPlane3() : fD() { }
-    hsPlane3(const hsVector3* nrml, float d) 
-    { fN = *nrml; fD=d; }
-    hsPlane3(const hsPoint3* pt, const hsVector3* nrml)
-    { fN = *nrml; fD = -pt->InnerProduct(nrml); }
-    
+    hsPlane3(const hsVector3* nrml, float d) { fN = *nrml; fD=d; }
+    hsPlane3(const hsPoint3* pt, const hsVector3* nrml) { fN = *nrml; fD = -pt->InnerProduct(nrml); }
+
     // create plane from a triangle (assumes clockwise winding of vertices)
     hsPlane3(const hsPoint3* pt1, const hsPoint3* pt2, const hsPoint3* pt3);
 

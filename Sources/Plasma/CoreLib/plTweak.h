@@ -45,32 +45,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 template <typename T> class plTweak
 {
-    public:
-        plTweak() {}
-        plTweak(const T& init) : fVal(init) {};
+public:
+    plTweak() {}
+    plTweak(const T& init) : fVal(init) {}
 
-        
-        T       fVal;
-        
-        plTweak& operator=(const T& v) { fVal = v; return *this; }
+    T fVal;
 
-        operator T () const 
-        { 
-            return fVal; 
-        }
+    plTweak& operator=(const T& v) { fVal = v; return *this; }
 
+    operator T() const 
+    { 
+        return fVal; 
+    }
 };
 
 #ifndef HS_DEBUGGING
 
-#define     plCONST(T)  const T
+#define plCONST(T) const T
 
 #else // HS_DEBUGGING
 
-#define plCONST(T)      static plTweak<T>
+#define plCONST(T) static plTweak<T>
 
 #endif // HS_DEBUGGING
 
-#define plConst(T)      plCONST(T)
+#define plConst(T) plCONST(T)
 
 #endif // plTweak_inc

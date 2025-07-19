@@ -629,8 +629,8 @@ static inline float Determinant2(float a, float b,float c, float d)
 }
 
 static inline float Determinant3(float a, float b, float c,
-                       float d, float e, float f,
-                       float g, float h, float i)
+                                 float d, float e, float f,
+                                 float g, float h, float i)
 {
     return (a * Determinant2(e, f, h, i))
         -  (b * Determinant2(d, f, g, i))
@@ -640,17 +640,17 @@ static inline float Determinant3(float a, float b, float c,
 float hsMatrix44::GetDeterminant() const
 {
     return (fMap[0][0]*Determinant3(fMap[1][1], fMap[2][1], fMap[3][1],
-                                      fMap[1][2], fMap[2][2], fMap[3][2],
-                                      fMap[1][3], fMap[2][3], fMap[3][3]) - 
+                                    fMap[1][2], fMap[2][2], fMap[3][2],
+                                    fMap[1][3], fMap[2][3], fMap[3][3]) - 
             fMap[1][0]*Determinant3(fMap[0][1], fMap[2][1], fMap[3][1],
-                                      fMap[0][2], fMap[2][2], fMap[3][2],
-                                      fMap[0][3], fMap[2][3], fMap[3][3]) +
+                                    fMap[0][2], fMap[2][2], fMap[3][2],
+                                    fMap[0][3], fMap[2][3], fMap[3][3]) +
             fMap[2][0]*Determinant3(fMap[0][1], fMap[1][1], fMap[3][1],
-                                      fMap[0][2], fMap[1][2], fMap[3][2],
-                                      fMap[0][3], fMap[1][3], fMap[3][3]) -
+                                    fMap[0][2], fMap[1][2], fMap[3][2],
+                                    fMap[0][3], fMap[1][3], fMap[3][3]) -
             fMap[3][0]*Determinant3(fMap[0][1], fMap[1][1], fMap[2][1],
-                                      fMap[0][2], fMap[1][2], fMap[2][2],
-                                      fMap[0][3], fMap[1][3], fMap[2][3]));
+                                    fMap[0][2], fMap[1][2], fMap[2][2],
+                                    fMap[0][3], fMap[1][3], fMap[2][3]));
 }
 
 
@@ -897,8 +897,8 @@ void hsMatrix44::Write(hsStream *stream)
 ST_FORMAT_TYPE(const hsMatrix44&)
 {
     ST_FORMAT_FORWARD(ST::format("hsMatrix44[[{.4f}, {.4f}, {.4f}, {.4f}]; [{.4f}, {.4f}, {.4f}, {.4f}]; [{.4f}, {.4f}, {.4f}, {.4f}]; [{.4f}, {.4f}, {.4f}, {.4f}]]",
-                    value.fMap[0][0], value.fMap[0][1], value.fMap[0][2], value.fMap[0][3],
-                    value.fMap[1][0], value.fMap[1][1], value.fMap[1][2], value.fMap[1][3],
-                    value.fMap[2][0], value.fMap[2][1], value.fMap[2][2], value.fMap[2][3],
-                    value.fMap[3][0], value.fMap[3][1], value.fMap[3][2], value.fMap[3][3]));
+        value.fMap[0][0], value.fMap[0][1], value.fMap[0][2], value.fMap[0][3],
+        value.fMap[1][0], value.fMap[1][1], value.fMap[1][2], value.fMap[1][3],
+        value.fMap[2][0], value.fMap[2][1], value.fMap[2][2], value.fMap[2][3],
+        value.fMap[3][0], value.fMap[3][1], value.fMap[3][2], value.fMap[3][3]));
 }

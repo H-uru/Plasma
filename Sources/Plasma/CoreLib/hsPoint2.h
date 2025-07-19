@@ -99,17 +99,17 @@ struct hsPoint2 {
     }
 
     friend hsPoint2 operator*(const hsPoint2& s, float t)
-        {
-            hsPoint2   result;
-            result.Set(s.fX * t, s.fY * t);
-            return result;
-        }
+    {
+        hsPoint2   result;
+        result.Set(s.fX * t, s.fY * t);
+        return result;
+    }
     friend hsPoint2 operator*(float t, const hsPoint2& s)
-        {
-            hsPoint2   result;
-            result.Set(s.fX * t, s.fY * t);
-            return result;
-        }
+    {
+        hsPoint2   result;
+        result.Set(s.fX * t, s.fY * t);
+        return result;
+    }
 
     hsPoint2*  Grid(float period);
     bool       CloseEnough(const hsPoint2* p, float tolerance) const;
@@ -118,14 +118,14 @@ struct hsPoint2 {
     float       Magnitude() const { return Magnitude(fX, fY); }
     hsPolar*    ToPolar(hsPolar* polar) const;
 
-    static float    Magnitude(float x, float y) { return sqrt(x * x + y * y); }
+    static float Magnitude(float x, float y) { return sqrt(x * x + y * y); }
     static float Distance(const hsPoint2& p1, const hsPoint2& p2);
-    static hsPoint2    Average(const hsPoint2& a, const hsPoint2& b)
-                    {
-                        hsPoint2   result;
-                        result.Set((a.fX + b.fX) * float(0.5), (a.fY + b.fY) * float(0.5));
-                        return result;
-                    }
+    static hsPoint2 Average(const hsPoint2& a, const hsPoint2& b)
+    {
+        hsPoint2   result;
+        result.Set((a.fX + b.fX) * float(0.5), (a.fY + b.fY) * float(0.5));
+        return result;
+    }
     static float ComputeAngle(const hsPoint2& a, const hsPoint2& b, const hsPoint2& c);
 };
 
