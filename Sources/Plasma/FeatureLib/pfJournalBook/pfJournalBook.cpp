@@ -1747,6 +1747,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
     IFreeSource();
 
     pfEsHTMLChunk *chunk, *lastParChunk = new pfEsHTMLChunk(ST::string());
+    pfEsHTMLChunk *lastLinkChunk = nullptr;
     const char *c, *start;
     ST::string name;
     ST::string option;
@@ -1869,6 +1870,13 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                             chunk->fNoResizeImg = (option.compare_i("no") == 0);
                         }
                     }
+
+                    // Inherit link
+                    if (!hsCheckBits(chunk->fFlags, pfEsHTMLChunk::kCanLink) && lastLinkChunk) {
+                        hsSetBits(chunk->fFlags, pfEsHTMLChunk::kCanLink);
+                        chunk->fEventID = lastLinkChunk->fEventID;
+                    }
+
                     if (chunk->fImageKey)
                         fHTMLSource.emplace_back(chunk);
                     else
@@ -2090,6 +2098,13 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                             chunk->fLoopMovie = option.compare_i("no") != 0;
                         }
                     }
+
+                    // Inherit link
+                    if (!hsCheckBits(chunk->fFlags, pfEsHTMLChunk::kCanLink) && lastLinkChunk) {
+                        hsSetBits(chunk->fFlags, pfEsHTMLChunk::kCanLink);
+                        chunk->fEventID = lastLinkChunk->fEventID;
+                    }
+
                     chunk->fMovieIndex = movieIndex;
                     movieIndex++;
                     if (chunk->fOnCover) {
@@ -2135,6 +2150,12 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                         }
                     }
                     fHTMLSource.emplace_back(chunk);
+
+                    // For other interactable bits to inherit the link.
+                    if (hsTestBits(chunk->fFlags, pfEsHTMLChunk::kCanLink))
+                        lastLinkChunk = chunk;
+                    else
+                        lastLinkChunk = nullptr;
 
                     lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
