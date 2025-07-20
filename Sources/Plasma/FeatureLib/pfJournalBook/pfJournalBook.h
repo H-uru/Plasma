@@ -152,6 +152,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                              defaults to yes                             //
 //      <editable> - Marks this book as editable (if the GUI supports it)   //
 //                                                                          //
+//      <a> - Places a link inline with the text. Images and movies will    //
+//            inherit the link's event if they do not have one set.         //
+//            Options are:                                                  //
+//          link=<eventID>    - Defines the text as clickable. When the     //
+//                              user clicks the text, it will generate an   //
+//                              events with the given event ID and send it  //
+//                              to the calling python handler. If the       //
+//                              eventID is not a valid integer, any active  //
+//                              text link is cleared.                       //
+//          color=rrggbb      - Hex color                                   //
 //  The pages don't render until displayed. As a result, jumping to a given //
 //  page requires each page from the current position to the destination    //
 //  to be rendered. Normally, this won't be a problem, because by default   //

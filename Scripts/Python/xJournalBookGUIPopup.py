@@ -85,7 +85,8 @@ LocalAvatar = None
 # pfJournalBook's EsHTML will only allow links with integer events.
 # This isn't very friendly for age creators, so we'll let them specify
 # a url by doing <a href="https://foo.com">, and this regex will
-# convert that to an integer id.
+# convert that to an integer id. It will do the same for any tag, but
+# only <img> and <movie> are useful.
 _URL_REGEX = re.compile(r"(?P<href>href\s*=\s*(?P<quote>[\"\']?)\s*?(?P<url>https?:\/\/[^\s>]+)\s*?(?P=quote))(?=[^<]*>)")
 
 class xJournalBookGUIPopup(ptModifier):
