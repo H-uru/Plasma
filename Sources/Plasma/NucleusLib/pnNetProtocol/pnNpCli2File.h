@@ -39,17 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetProtocol/Private/Protocols/Cli2File/pnNpCli2File.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PRIVATE_PROTOCOLS_CLI2FILE_PNNPCLI2FILE_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnNetProtocol/Private/Protocols/Cli2File/pnNpCli2File.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PRIVATE_PROTOCOLS_CLI2FILE_PNNPCLI2FILE_H
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_CLI2FILE_PNNPCLI2FILE_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_CLI2FILE_PNNPCLI2FILE_H
 
+#include "pnNpCommon.h"
 
 // Because SrvFile must remain backward compatible with all client builds,
 // the following enum values may never change under any circumstances.
@@ -209,3 +203,5 @@ struct File2Cli_FileDownloadReply : Cli2File_MsgHeader {
 // END PACKED DATA STRUCTURES
 //============================================================================
 #pragma pack(pop)
+
+#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_CLI2FILE_PNNPCLI2FILE_H

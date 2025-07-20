@@ -61,13 +61,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnEncryption/plBigNum.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnNetCli/pnNetCli.h"
-
-#define USES_PROTOCOL_CLI2AUTH
-#define USES_PROTOCOL_CLI2GAME
-#define USES_PROTOCOL_CLI2FILE
-#define USES_PROTOCOL_CLI2CSR
-#define USES_PROTOCOL_CLI2GATEKEEPER
-#include "pnNetProtocol/pnNetProtocol.h"
+#include "pnNetProtocol/pnNpCli2Auth.h"
+#include "pnNetProtocol/pnNpCli2File.h"
+#include "pnNetProtocol/pnNpCli2Game.h"
+#include "pnNetProtocol/pnNpCli2GateKeeper.h"
 
 #include "Private/plNglAllIncludes.h"
 #include "Intern.h"
