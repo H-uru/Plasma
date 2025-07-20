@@ -87,7 +87,7 @@ LocalAvatar = None
 # a url by doing <a href="https://foo.com">, and this regex will
 # convert that to an integer id. It will do the same for any tag, but
 # only <img> and <movie> are useful.
-_URL_REGEX = re.compile(r"(?P<href>href\s*=\s*(?P<quote>[\"\']?)\s*?(?P<url>https?:\/\/[^\s>]+)\s*?(?P=quote))(?=[^<]*>)")
+_URL_REGEX = re.compile(r"(?P<href>href\s*=\s*(?P<quote>[\"\']?)\s*?(?P<url>https?:\/\/[^\s>]+)\s*?(?P=quote))(?=[^<]*>)", re.IGNORECASE)
 
 class xJournalBookGUIPopup(ptModifier):
     "The Journal Book GUI Popup python code"
