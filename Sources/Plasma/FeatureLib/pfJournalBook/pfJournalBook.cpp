@@ -176,7 +176,8 @@ class pfEsHTMLChunk
                                         // Min opacity turns into "off opacity" and max opacity
                                         // is "on opacity"
             kChecked    = 0x00000080,   // Only for kActAsCB, set if it's currently "checked"
-            kTranslucent= 0x00000100    // is the image translucent? if so, use fCurrOpacity
+            kTranslucent= 0x00000100,   // is the image translucent? if so, use fCurrOpacity
+            kValidEvent = 0x00000200,
         };
 
         // Paragraph constructor
@@ -279,9 +280,20 @@ public:
         fLinkRect.Set(0, 0, 0, 0);
     }
 
+    bool HasEventID() const
+    {
+        return hsCheckBits(fChunk->fFlags, pfEsHTMLChunk::kValidEvent);
+    }
+
     uint32_t GetEventID() const
     {
+        hsAssert(HasEventID(), "Trying to get the EventID of a non-event, eh?");
         return fChunk->fEventID;
+    }
+
+    const ST::string& GetHRef() const
+    {
+        return fChunk->fText;
     }
 
     bool IsCheckbox() const
@@ -1644,10 +1656,14 @@ void    pfJournalBook::IHandleLeftSideClick()
 
     if (hsSsize_t idx = IFindCurrVisibleLink(false, false); idx != -1)
     {
-        if (fVisibleLinks[idx].IsCheckbox())
+        if (fVisibleLinks[idx].IsCheckbox()) {
             IHandleCheckClick((uint32_t)idx, pfBookData::kLeftSide);
-        else
-            ISendNotify(kNotifyImageLink, fVisibleLinks[ idx ].GetEventID());
+        } else {
+            if (fVisibleLinks[idx].HasEventID())
+                ISendNotify(kNotifyImageLink, fVisibleLinks[idx].GetEventID());
+            if (!fVisibleLinks[idx].GetHRef().empty())
+                IFlipToAnchor(fVisibleLinks[idx].GetHRef());
+        }
         return;
     }
 
@@ -1662,15 +1678,128 @@ void    pfJournalBook::IHandleRightSideClick()
 
     if (hsSsize_t idx = IFindCurrVisibleLink(true, false); idx != -1)
     {
-        if (fVisibleLinks[ idx ].IsCheckbox())
+        if (fVisibleLinks[idx].IsCheckbox()) {
             IHandleCheckClick((uint32_t)idx, pfBookData::kRightSide);
-        else
-            ISendNotify(kNotifyImageLink, fVisibleLinks[idx].GetEventID());
+        } else {
+            if (fVisibleLinks[idx].HasEventID())
+                ISendNotify(kNotifyImageLink, fVisibleLinks[idx].GetEventID());
+            if (!fVisibleLinks[idx].GetHRef().empty())
+                IFlipToAnchor(fVisibleLinks[idx].GetHRef());
+        }
         return;
     }
 
     // No link found that we're inside of, so just do the default behavior of turning the page
     NextPage();
+}
+
+hsSsize_t pfJournalBook::IFindAnchor(const ST::string& anchor) const
+{
+    for (hsSsize_t i = fHTMLSource.size() - 1; i >= 0; --i) {
+        if (fHTMLSource[i]->fType != pfEsHTMLChunk::kTextLink)
+            continue;
+        // Match the anchor, not links to it
+        if (hsTestBits(fHTMLSource[i]->fFlags, pfEsHTMLChunk::kCanLink))
+            continue;
+        if (fHTMLSource[i]->fText.compare_i(anchor) == 0)
+            return i;
+    }
+
+    return -1;
+}
+
+void    pfJournalBook::IFlipToAnchor(const ST::string& anchor)
+{
+    if (fAreEditing)
+        return;
+
+    // We don't know where this anchor is in the book. We could theoretically use
+    // fPageStarts to figure out which page the chunk appears on, but paragraph chunks
+    // can be split as pages are turned. So, fPageStarts can't be trusted until the entire
+    // book is rendered at least once. So, we need to force the issue. Thankfully, forcing
+    // the issue only recalcs what has NOT been rendered yet, so we only incur a performance
+    // penalty once for doing this.
+    ForceCacheCalculations();
+
+    // Now that everything is stable, we can look up the anchor.
+    hsSsize_t chunkIdx = IFindAnchor(anchor);
+    if (chunkIdx == -1) {
+        hsAssert(0, "Trying to link to a non-existent anchor, eh?");
+        return;
+    }
+
+    hsSsize_t pageNum = -1;
+    for (hsSsize_t i = 0; i < fPageStarts.size(); ++i) {
+        // Look for the chunk *after* the anchor - it's the one with the content
+        // we care about. Unless they put the anchor at the end of the book...
+        if (fPageStarts[i] > std::min((uint32_t)(chunkIdx + 1), fPageStarts.back())) {
+            pageNum = i - 1;
+            break;
+        }
+    }
+    if (pageNum == -1) {
+        hsAssert(0, "Ahhhhh! We couldn't find the page for this anchor!");
+        return;
+    }
+
+    if ((pageNum & ~0x00000001) == fCurrentPage) {
+        // Make sure everything is drawn nicely.
+        GoToPage(fCurrentPage);
+    } else if (pageNum < fCurrentPage) {
+        fCurrentPage = pageNum & ~0x00000001;
+        fVisibleLinks.clear();
+
+        // Swap the left DT map into the turn page back DTMap, then render
+        // the new current page into the left and currPage+1 into
+        // the turn page front DTMap
+        plDynamicTextMap* turnBack = fBookGUIs[fCurBookGUI]->GetDTMap(pfJournalDlgProc::kTagTurnBackDTMap);
+        plDynamicTextMap* left = fBookGUIs[fCurBookGUI]->GetDTMap(pfJournalDlgProc::kTagLeftDTMap);
+        if (turnBack->IsValid() && left->IsValid()) {
+            memcpy(turnBack->GetImage(), left->GetImage(), left->GetLevelSize(0));
+            if (turnBack->GetDeviceRef() != nullptr)
+                turnBack->GetDeviceRef()->SetDirty(true);
+        }
+        // copy the videos over
+        IMoveMovies(fBookGUIs[fCurBookGUI]->PageMaterial(pfBookData::kLeftPage), fBookGUIs[fCurBookGUI]->PageMaterial(pfBookData::kTurnBackPage));
+        IRenderPage(fCurrentPage + 1, pfJournalDlgProc::kTagTurnFrontDTMap);
+
+        // This will fire a callback when it's done that'll let us continue the setup
+        fBookGUIs[fCurBookGUI]->StartTriggeredFlip(true);
+
+        // Play us a sound too, if defined on our button
+        fBookGUIs[fCurBookGUI]->TurnPageButton()->PlaySound(pfGUICheckBoxCtrl::kMouseUp);
+
+        fBookGUIs[fCurBookGUI]->UpdatePageCorners(pfBookData::kBothSides);
+
+        ISendNotify(kNotifyPreviousPage);
+    } else {
+        fCurrentPage = pageNum & ~0x00000001;
+        fVisibleLinks.clear();
+
+        // Swap the right DT map into the turn page front DTMap, then render
+        // the new current page into turn page back and currPage+1 into
+        // the right DTMap
+        plDynamicTextMap* turnFront = fBookGUIs[fCurBookGUI]->GetDTMap(pfJournalDlgProc::kTagTurnFrontDTMap);
+        plDynamicTextMap* right = fBookGUIs[fCurBookGUI]->GetDTMap(pfJournalDlgProc::kTagRightDTMap);
+        if (turnFront->IsValid() && right->IsValid()) {
+            memcpy(turnFront->GetImage(), right->GetImage(), right->GetLevelSize(0));
+            if (turnFront->GetDeviceRef() != nullptr)
+                turnFront->GetDeviceRef()->SetDirty(true);
+        }
+        // copy the videos over
+        IMoveMovies(fBookGUIs[fCurBookGUI]->PageMaterial(pfBookData::kRightPage), fBookGUIs[fCurBookGUI]->PageMaterial(pfBookData::kTurnFrontPage));
+        IRenderPage(fCurrentPage, pfJournalDlgProc::kTagTurnBackDTMap);
+
+        // This will fire a callback when it's done that'll let us continue the setup
+        fBookGUIs[fCurBookGUI]->StartTriggeredFlip(false);
+
+        // Play us a sound too, if defined on our button
+        fBookGUIs[fCurBookGUI]->TurnPageButton()->PlaySound(pfGUICheckBoxCtrl::kMouseUp);
+
+        fBookGUIs[fCurBookGUI]->UpdatePageCorners(pfBookData::kBothSides);
+
+        ISendNotify(kNotifyNextPage);
+    }
 }
 
 //// IHandleCheckClick ///////////////////////////////////////////////////////
@@ -1812,6 +1941,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                         } else if (name.compare_i("link") == 0) {
                             chunk->fEventID = option.to_uint();
                             chunk->fFlags |= pfEsHTMLChunk::kCanLink;
+                            chunk->fFlags |= pfEsHTMLChunk::kValidEvent;
                         } else if (name.compare_i("blend") == 0) {
                             if (option.compare_i("alpha") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kBlendAlpha;
@@ -1868,12 +1998,16 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                                 chunk->fCurrColor = chunk->fOffColor;
                         } else if (name.compare_i("resize") == 0) {
                             chunk->fNoResizeImg = (option.compare_i("no") == 0);
+                        } else if (name.compare_i("href") == 0) {
+                            hsSetBits(chunk->fFlags, pfEsHTMLChunk::kCanLink);
+                            chunk->fText = std::move(option);
                         }
                     }
 
                     // Inherit link
                     if (!hsCheckBits(chunk->fFlags, pfEsHTMLChunk::kCanLink) && lastLinkChunk) {
                         hsSetBits(chunk->fFlags, pfEsHTMLChunk::kCanLink);
+                        hsSetBits(chunk->fFlags, pfEsHTMLChunk::kValidEvent);
                         chunk->fEventID = lastLinkChunk->fEventID;
                     }
 
@@ -2082,6 +2216,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                         } else if(name.compare_i("link") == 0) {
                             chunk->fEventID = option.to_uint();
                             chunk->fFlags |= pfEsHTMLChunk::kCanLink;
+                            chunk->fFlags |= pfEsHTMLChunk::kValidEvent;
                         } else if(name.compare_i("pos") == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kFloating;
 
@@ -2096,12 +2231,16 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                             chunk->fOnCover = (option.compare_i("yes") == 0);
                         } else if (name.compare_i("loop") == 0) {
                             chunk->fLoopMovie = option.compare_i("no") != 0;
+                        } else if (name.compare_i("href") == 0) {
+                            hsSetBits(chunk->fFlags, pfEsHTMLChunk::kCanLink);
+                            chunk->fText = std::move(option);
                         }
                     }
 
                     // Inherit link
                     if (!hsCheckBits(chunk->fFlags, pfEsHTMLChunk::kCanLink) && lastLinkChunk) {
                         hsSetBits(chunk->fFlags, pfEsHTMLChunk::kCanLink);
+                        hsSetBits(chunk->fFlags, pfEsHTMLChunk::kValidEvent);
                         chunk->fEventID = lastLinkChunk->fEventID;
                     }
 
@@ -2142,11 +2281,17 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                         if (name.compare_i("link") == 0) {
                             ST::conversion_result result;
                             chunk->fEventID = option.to_uint(result);
-                            // Ideally, we'd do something like event=clear, but we'll just
+                            // Ideally, we'd do something like link=clear, but we'll just
                             // go with anything that isn't a valid integer.
                             hsChangeBits(chunk->fFlags, pfEsHTMLChunk::kCanLink, result.ok());
+                            hsChangeBits(chunk->fFlags, pfEsHTMLChunk::kValidEvent, result.ok());
                         } else if (name.compare_i("color") == 0) {
                             chunk->fColor.FromARGB32(option.to_ulong(16) | 0xff000000);
+                        } else if (name.compare_i("name") == 0) {
+                            chunk->fText = ST::format("#{}", option);
+                        } else if (name.compare_i("href") == 0) {
+                            hsSetBits(chunk->fFlags, pfEsHTMLChunk::kCanLink);
+                            chunk->fText = std::move(option);
                         }
                     }
                     fHTMLSource.emplace_back(chunk);

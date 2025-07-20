@@ -150,17 +150,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                              to be ignored since cover movies can't link //
 //          loop=yes/no       - Defines whether the movie will loop or not  //
 //                              defaults to yes                             //
+//          href=#<name>      - Flips to the page the named anchor is on    //
+//                              when the user clicks it.                    //
 //      <editable> - Marks this book as editable (if the GUI supports it)   //
 //                                                                          //
 //      <a> - Places a link inline with the text. Images and movies will    //
 //            inherit the link's event if they do not have one set.         //
 //            Options are:                                                  //
+//          href=#<name>      - Flips to the page the named anchor is on    //
+//                              when the user clicks it.                    //
 //          link=<eventID>    - Defines the text as clickable. When the     //
 //                              user clicks the text, it will generate an   //
 //                              events with the given event ID and send it  //
 //                              to the calling python handler. If the       //
 //                              eventID is not a valid integer, any active  //
 //                              text link is cleared.                       //
+//          name=<foo>        - Defines a named anchor that can be linked   //
+//                              to using <a href=#foo>                      //
 //          color=rrggbb      - Hex color                                   //
 //  The pages don't render until displayed. As a result, jumping to a given //
 //  page requires each page from the current position to the destination    //
@@ -583,6 +589,12 @@ class pfJournalBook : public hsKeyedObject
 
         // Find the current moused link, if any
         hsSsize_t IFindCurrVisibleLink(bool rightNotLeft, bool hoverNotUp);
+
+        // Find the chunk matching the named anchor, if any
+        hsSsize_t IFindAnchor(const ST::string& anchor) const;
+
+        // Flip to the page with this named text link
+        void IFlipToAnchor(const ST::string &anchor);
 
         // Ensures that all the page starts are calced up to the given page (but not including it)
         void    IRecalcPageStarts( uint32_t upToPage );
