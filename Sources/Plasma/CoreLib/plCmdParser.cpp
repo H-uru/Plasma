@@ -48,11 +48,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <regex>
 #include <vector>
 
-#define  WHITESPACE     " \"\t\r\n\x1A"
-#define  FLAGS          "-/"
-#define  SEPARATORS     "=:"
-#define  TOGGLES        "+-"
-#define  ALL            WHITESPACE FLAGS SEPARATORS TOGGLES
+#define WHITESPACE " \"\t\r\n\x1A"
+#define FLAGS      "-/"
+#define SEPARATORS "=:"
+#define TOGGLES    "+-"
+#define ALL        WHITESPACE FLAGS SEPARATORS TOGGLES
 
 #define hsCheckFlagBits(f,c,m) ((f & m)==c)
 

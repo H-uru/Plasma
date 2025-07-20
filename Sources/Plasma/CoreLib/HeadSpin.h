@@ -100,9 +100,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Basic macros
 //======================================
 #ifdef HS_BUILD_FOR_WIN32
-#    ifndef CDECL
-#        define CDECL __cdecl
-#    endif
+#   ifndef CDECL
+#       define CDECL __cdecl
+#   endif
 #else
 #   define CDECL
 #endif
@@ -159,21 +159,21 @@ inline uint16_t hsSwapEndian16(uint16_t value)
 }
 inline uint32_t hsSwapEndian32(uint32_t value)
 {
-    return ((value)              << 24) | 
-            ((value & 0x0000ff00) << 8)  |
-            ((value & 0x00ff0000) >> 8)  |
-            ((value)              >> 24);
+    return ((value)              << 24) |
+           ((value & 0x0000ff00) << 8)  |
+           ((value & 0x00ff0000) >> 8)  |
+           ((value)              >> 24);
 }
 inline uint64_t hsSwapEndian64(uint64_t value)
 {
     return ((value)                      << 56) |
-            ((value & 0x000000000000ff00) << 40) |
-            ((value & 0x0000000000ff0000) << 24) |
-            ((value & 0x00000000ff000000) << 8)  |
-            ((value & 0x000000ff00000000) >> 8)  |
-            ((value & 0x0000ff0000000000) >> 24) |
-            ((value & 0x00ff000000000000) >> 40) |
-            ((value)                      >> 56);
+           ((value & 0x000000000000ff00) << 40) |
+           ((value & 0x0000000000ff0000) << 24) |
+           ((value & 0x00000000ff000000) << 8)  |
+           ((value & 0x000000ff00000000) >> 8)  |
+           ((value & 0x0000ff0000000000) >> 24) |
+           ((value & 0x00ff000000000000) >> 40) |
+           ((value)                      >> 56);
 }
 #endif
 
@@ -273,11 +273,11 @@ template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
 // Use "correct" non-standard string functions based on the
 // selected compiler / library
 #if HS_BUILD_FOR_WIN32
-#    define stricmp     _stricmp
-#    define strnicmp    _strnicmp
+#   define stricmp     _stricmp
+#   define strnicmp    _strnicmp
 #else
-#    define stricmp     strcasecmp
-#    define strnicmp    strncasecmp
+#   define stricmp     strcasecmp
+#   define strnicmp    strncasecmp
 #endif
 
 // flag testing / clearing
@@ -290,12 +290,12 @@ template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
 
 
 #if HS_BUILD_FOR_WIN32
-     // This is for Windows
-#    ifndef fileno
-#        define fileno(__F)       _fileno(__F)
-#    endif
+    // This is for Windows
+#   ifndef fileno
+#       define fileno(__F) _fileno(__F)
+#   endif
 #else
-     // This is for Unix, Linux, OSX, etc.
+    // This is for Unix, Linux, OSX, etc.
 #   include <limits.h>
 #   define MAX_PATH PATH_MAX
 #endif

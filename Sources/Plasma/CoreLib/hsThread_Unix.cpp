@@ -62,14 +62,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 int clock_gettime(int clocktype, struct timespec* ts)
 {
-  struct timezone tz;
-  struct timeval tv;
+    struct timezone tz;
+    struct timeval tv;
 
-  int result = gettimeofday(&tv, &tz);
-  ts->tv_sec = tv.tv_sec;
-  ts->tv_nsec = tv.tv_usec * 1000 + 500;  // sice we're losing accuracy round up by 500 nanos
+    int result = gettimeofday(&tv, &tz);
+    ts->tv_sec = tv.tv_sec;
+    ts->tv_nsec = tv.tv_usec * 1000 + 500; // sice we're losing accuracy round up by 500 nanos
 
-  return result;
+    return result;
 }
 
 #endif
@@ -170,14 +170,13 @@ bool hsGlobalSemaphore::Wait(hsMilliseconds timeToWait)
     int status = ::pthread_mutex_lock(&fPMutex);
     hsThrowIfOSErr(status);
 
-    if (timeToWait == kWaitForever)
-    {   while (fCounter == 0)
-        {   status = ::pthread_cond_wait(&fPCond, &fPMutex);
+    if (timeToWait == kWaitForever) {
+        while (fCounter == 0) {
+            status = ::pthread_cond_wait(&fPCond, &fPMutex);
             hsThrowIfOSErr(status);
         }
-    }
-    else
-    {   timespec spec;
+    } else {
+        timespec spec;
         int  result;
 
         result = ::clock_gettime(CLOCK_REALTIME, &spec);
@@ -185,15 +184,15 @@ bool hsGlobalSemaphore::Wait(hsMilliseconds timeToWait)
 
         spec.tv_sec += timeToWait / 1000;
         spec.tv_nsec += (timeToWait % 1000) * 1000 * 1000;
-        while (spec.tv_nsec >= 1000 * 1000 * 1000)
-        {   spec.tv_sec += 1;
+        while (spec.tv_nsec >= 1000 * 1000 * 1000) {
+            spec.tv_sec += 1;
             spec.tv_nsec -= 1000 * 1000 * 1000;
         }
 
-        while (fCounter == 0)
-        {   status = ::pthread_cond_timedwait(&fPCond, &fPMutex, &spec);
-            if (status == ETIMEDOUT)
-            {   retVal = false;
+        while (fCounter == 0) {
+            status = ::pthread_cond_timedwait(&fPCond, &fPMutex, &spec);
+            if (status == ETIMEDOUT) {
+                retVal = false;
                 goto EXIT;
             }
             hsThrowIfOSErr(status);

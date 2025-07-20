@@ -117,8 +117,7 @@ struct hsMatrix44 {
     hsMatrix44*     GetTranspose(hsMatrix44* inverse) const;
     hsMatrix44*     GetAdjoint(hsMatrix44* adjoint) const;
     hsVector3*      GetTranslate(hsVector3 *pt) const;
-    hsPoint3*       GetTranslate(hsPoint3 *pt) const 
-        {   return (hsPoint3*)GetTranslate((hsVector3*)pt); }
+    hsPoint3*       GetTranslate(hsPoint3 *pt) const { return (hsPoint3*)GetTranslate((hsVector3*)pt); }
     [[nodiscard]]
     const hsPoint3  GetTranslate() const { return hsPoint3(fMap[0][3], fMap[1][3], fMap[2][3]); }
     void            GetAxis(hsVector3* view, hsVector3 *up, hsVector3* right);

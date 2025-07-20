@@ -577,23 +577,24 @@ float hsFastMath::IATan2OverTwoPi(float y, float x)
     const int tabSize = 16; // pad with one extra because hi can go hi
     const int tabMax = tabSize-1;
     static float tab[tabSize+1] = {
-                    0.f,
-                    0.0105947f,
-                    0.0210962f,
-                    0.0314165f,
-                    0.0414762f,
-                    0.0512082f,
-                    0.0605595f,
-                    0.0694914f,
-                    0.0779791f,
-                    0.0860104f,
-                    0.0935835f,
-                    0.100705f,
-                    0.107388f,
-                    0.113651f,
-                    0.119514f,
-                    0.125f,
-                    0 };
+        0.f,
+        0.0105947f,
+        0.0210962f,
+        0.0314165f,
+        0.0414762f,
+        0.0512082f,
+        0.0605595f,
+        0.0694914f,
+        0.0779791f,
+        0.0860104f,
+        0.0935835f,
+        0.100705f,
+        0.107388f,
+        0.113651f,
+        0.119514f,
+        0.125f,
+        0,
+    };
 
     if( (x == 0)&&(y == 0) )
         return 0;

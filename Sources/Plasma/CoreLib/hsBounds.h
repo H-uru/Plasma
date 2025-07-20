@@ -108,7 +108,12 @@ public:
     hsBounds3() : fBounds3Flags(0) {}
     hsBounds3(const hsBounds3 &pRHS) : fBounds3Flags(0) { Reset(&pRHS); }
     hsBounds3 &operator=(const hsBounds3 &pRHS ) 
-    {   if (&pRHS != this)  Reset(&pRHS);   return *this; }
+    {
+        if (&pRHS != this) {
+            Reset(&pRHS);
+        }
+        return *this;
+    }
 
     //
     // These set type to kBounds Normal
@@ -252,7 +257,12 @@ public:
     hsBounds3Ext &operator=(const hsBounds3 &b);
     hsBounds3Ext(const hsBounds3Ext &pRHS) : hsBounds3() { Reset(&pRHS); }
     hsBounds3Ext &operator=(const hsBounds3Ext &pRHS ) 
-    {   if (&pRHS != this)  Reset(&pRHS);   return *this; }
+    {
+        if (&pRHS != this) {
+            Reset(&pRHS);
+        }
+        return *this;
+    }
 
     virtual void Reset(const hsBounds3Ext *b);
     void Reset(const hsBounds3 *b) override;
@@ -328,8 +338,19 @@ public:
     hsHitInfoExt(const hsPoint3 *ctr, const hsVector3& offset) { fRootCenter=ctr; fDelPos=offset; };
 
     void Set(const hsBounds3Ext *m, const hsVector3* n, float d)
-    { fDepth = d; fBoxBnd = m; fNormal = *n; fOtherBoxBnd = nullptr; }
+    {
+        fDepth = d;
+        fBoxBnd = m;
+        fNormal = *n;
+        fOtherBoxBnd = nullptr;
+    }
+
     void Set(const hsBounds3Ext *m, const hsBounds3Ext *o, const hsVector3 &norm, float d)
-    { fDepth = d; fBoxBnd = m, fOtherBoxBnd = o; fNormal = norm; }
+    {
+        fDepth = d;
+        fBoxBnd = m;
+        fOtherBoxBnd = o;
+        fNormal = norm;
+    }
 };
 #endif // hsBounds_inc

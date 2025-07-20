@@ -47,20 +47,22 @@ class hsStream;
 
 struct hsMatrix33
 {
-    float            fMap[3][3];
+    float fMap[3][3];
 
     hsMatrix33* Reset();
 
-    int         operator==(const hsMatrix33& aa) const
-                    {
-                        return  aa.fMap[0][0] == fMap[0][0] && aa.fMap[0][1] == fMap[0][1] && aa.fMap[0][2] == fMap[0][2] &&
-                                aa.fMap[1][0] == fMap[1][0] && aa.fMap[1][1] == fMap[1][1] && aa.fMap[1][2] == fMap[1][2] &&
-                                aa.fMap[2][0] == fMap[2][0] && aa.fMap[2][1] == fMap[2][1] && aa.fMap[2][2] == fMap[2][2];
-                    }
-    int         operator!=(const hsMatrix33& aa) const
-                    {
-                        return !(aa == *this);
-                    }
+    int operator==(const hsMatrix33& aa) const
+    {
+        return aa.fMap[0][0] == fMap[0][0] && aa.fMap[0][1] == fMap[0][1] && aa.fMap[0][2] == fMap[0][2] &&
+               aa.fMap[1][0] == fMap[1][0] && aa.fMap[1][1] == fMap[1][1] && aa.fMap[1][2] == fMap[1][2] &&
+               aa.fMap[2][0] == fMap[2][0] && aa.fMap[2][1] == fMap[2][1] && aa.fMap[2][2] == fMap[2][2];
+    }
+
+    int operator!=(const hsMatrix33& aa) const
+    {
+        return !(aa == *this);
+    }
+
     hsMatrix33* SetConcat(const hsMatrix33* a, const hsMatrix33* b);
     friend hsMatrix33 operator*(const hsMatrix33& a, const hsMatrix33& b);
 

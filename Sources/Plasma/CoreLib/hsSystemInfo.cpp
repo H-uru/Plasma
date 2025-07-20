@@ -55,21 +55,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <stdio.h>
 
 #ifdef HAVE_SYSINFO
-#    include <sys/sysinfo.h>
-#    include <sys/utsname.h>
+#   include <sys/sysinfo.h>
+#   include <sys/utsname.h>
 #elif defined(HAVE_SYSCTL)
-#    include <sys/types.h>
-#    include <sys/sysctl.h>
+#   include <sys/types.h>
+#   include <sys/sysctl.h>
 #endif
 
 #ifdef HS_BUILD_FOR_UNIX
-#    include <sys/utsname.h>
-#    include <unistd.h>
+#   include <sys/utsname.h>
+#   include <unistd.h>
 #endif
 
 #ifdef HS_BUILD_FOR_APPLE
-#    include <mach/mach.h>
-#    include <CoreFoundation/CoreFoundation.h>
+#   include <mach/mach.h>
+#   include <CoreFoundation/CoreFoundation.h>
 
     extern "C" {
         CF_EXPORT const CFStringRef _kCFSystemVersionProductNameKey;
@@ -81,19 +81,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 #ifdef HAVE_CPUID
-#    if defined(_MSC_VER) || ((defined(_WIN32) || defined(_WIN64)) && defined(__INTEL_COMPILER))
-#        include <intrin.h>
-#        define MSC_COMPATIBLE
-#        define cpuid_t int
-#    elif defined(__GNUC__)
-#        include <cpuid.h>
-#        define GCC_COMPATIBLE
-#        define cpuid_t unsigned int
-#    else
-#        define cpuid_t int
-#    endif
+#   if defined(_MSC_VER) || ((defined(_WIN32) || defined(_WIN64)) && defined(__INTEL_COMPILER))
+#       include <intrin.h>
+#       define MSC_COMPATIBLE
+#       define cpuid_t int
+#   elif defined(__GNUC__)
+#       include <cpuid.h>
+#       define GCC_COMPATIBLE
+#       define cpuid_t unsigned int
+#   else
+#       define cpuid_t int
+#   endif
 #else
-#    define cpuid_t int
+#   define cpuid_t int
 #endif
 
 ST::string hsSystemInfo::AsString()

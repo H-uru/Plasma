@@ -58,8 +58,8 @@ public:
 protected:
     // These two are instanciated in plLoadMask.cpp, as well as
     // function implementations.
-    static      int         fQuality; 
-    static      int         fCapability;
+    static int fQuality; 
+    static int fCapability;
 
     friend class plClient;
     friend class plQualitySlider;
@@ -67,17 +67,17 @@ protected:
     friend class plMetalPipeline;
 
     // Set by the app according to user preference.
-    static      void SetQuality(int q);
+    static void SetQuality(int q);
 
     // Set by the pipeline according to platform capabilities.
-    static      void SetCapability(int c);
+    static void SetCapability(int c);
 
 public:
     // Set by the app according to user preference.
-    static      int GetQuality() { return fQuality; }
+    static int GetQuality() { return fQuality; }
 
     // Set by the pipeline according to platform capabilities.
-    static      int GetCapability() { return fCapability; }
+    static int GetCapability() { return fCapability; }
 
 };
 

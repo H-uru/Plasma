@@ -284,21 +284,21 @@ instructions.
 
 void FastSinCos(long Angle, float *pSin, float *pCos)
 {
-float ang, sgn;
+    float ang, sgn;
 
-        ang = (Angle & 65535) * ((1.0f/65536.0f) * TwoPI);
+    ang = (Angle & 65535) * ((1.0f/65536.0f) * TwoPI);
 
-        sgn = 1.0f;
-        if(ang >= (0.75f * TwoPI))
-                ang -= TwoPI;
-        else if(ang >= (0.25f * TwoPI))
-        {
-                ang -= hsConstants::pi<float>;
-                sgn = -1.0f;
-        }
+    sgn = 1.0f;
+    if(ang >= (0.75f * TwoPI))
+        ang -= TwoPI;
+    else if(ang >= (0.25f * TwoPI))
+    {
+       ang -= hsConstants::pi<float>;
+       sgn = -1.0f;
+    }
 
-        *pSin = (ang - (ang*ang*ang) * (1.0f/6.0f) + (ang*ang*ang*ang*ang) / 120.0f) * sgn;
-        *pCos = (1.0f - (ang*ang / 2.0f) + (ang*ang*ang*ang) / 24.0f) *sgn;
+    *pSin = (ang - (ang*ang*ang) * (1.0f/6.0f) + (ang*ang*ang*ang*ang) / 120.0f) * sgn;
+    *pCos = (1.0f - (ang*ang / 2.0f) + (ang*ang*ang*ang) / 24.0f) *sgn;
 }
 #endif // For future reference
 #endif // hsFastMath_inc
