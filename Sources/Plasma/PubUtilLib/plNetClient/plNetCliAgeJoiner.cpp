@@ -458,7 +458,13 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
     //========================================================================
     plInitialAgeStateLoadedMsg * stateMsg = plInitialAgeStateLoadedMsg::ConvertNoRef(msg);
     if(stateMsg) {
-        plNetObjectDebugger::GetInstance()->LogMsg(ST_LITERAL("OnServerInitComplete"));
+        if (plNetObjectDebugger::GetInstance()->GetNumDebugObjects() != 0) {
+            // Log this only if the debugger is actually in use.
+            // Avoids creating a NetObject.log file with only OnServerInitComplete messages
+            // if no objects are added to the debugger (which is the usual case for non-debug builds).
+            plNetObjectDebugger::GetInstance()->LogMsg(ST_LITERAL("OnServerInitComplete"));
+        }
+
         nc->SetFlagsBit(plNetClientApp::kLoadingInitialAgeState, false);
 
         const plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
