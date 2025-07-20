@@ -914,12 +914,14 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
     plClientMsg* clientMsg = plClientMsg::ConvertNoRef(msg);
     if (clientMsg && clientMsg->GetClientMsgFlag()==plClientMsg::kInitComplete)
     {
+#ifdef HS_DEBUGGING
         // add 1 debug object for age sdl
         if (plNetObjectDebugger::GetInstance())
         {
             plNetObjectDebugger::GetInstance()->RemoveDebugObject(ST_LITERAL("AgeSDLHook"));
             plNetObjectDebugger::GetInstance()->AddDebugObject(ST_LITERAL("AgeSDLHook"));
         }
+#endif
 
         // if we're linking to startup we don't need (or want) a player set
         ST::string ageName = NetCommGetStartupAge()->ageDatasetName;
