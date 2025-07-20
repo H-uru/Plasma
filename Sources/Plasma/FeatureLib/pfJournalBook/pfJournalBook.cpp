@@ -2136,10 +2136,10 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     break;
 
                 case pfEsHTMLChunk::kTextLink:
-                    c += 5;
+                    c += 2;
                     chunk = new pfEsHTMLChunk(pfEsHTMLChunk::TextLink);
                     while (IGetNextOption(c, end, name, option)) {
-                        if (name.compare_i("event") == 0) {
+                        if (name.compare_i("link") == 0) {
                             ST::conversion_result result;
                             chunk->fEventID = option.to_uint(result);
                             // Ideally, we'd do something like event=clear, but we'll just
@@ -2211,7 +2211,7 @@ uint8_t   pfJournalBook::IGetTagType( const char *string, const char *end )
                 { ST_LITERAL("decal"), pfEsHTMLChunk::kDecal },
                 { ST_LITERAL("movie"), pfEsHTMLChunk::kMovie },
                 { ST_LITERAL("editable"), pfEsHTMLChunk::kEditable },
-                { ST_LITERAL("link"), pfEsHTMLChunk::kTextLink },
+                { ST_LITERAL("a"), pfEsHTMLChunk::kTextLink },
     };
 
     for (const auto& tag : tags)
