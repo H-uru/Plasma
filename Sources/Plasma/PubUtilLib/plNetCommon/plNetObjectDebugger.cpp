@@ -117,7 +117,12 @@ bool plNetObjectDebugger::DebugObject::ObjectMatches(const hsKeyedObject* obj)
 /////////////////////////////////////////////////////////////////
 // plNetObjectDebugger
 /////////////////////////////////////////////////////////////////
-plNetObjectDebugger::plNetObjectDebugger() : fStatusLog(), fDebugging()
+plNetObjectDebugger::plNetObjectDebugger()
+    : fStatusLog(plStatusLogMgr::GetInstance().CreateStatusLog(
+          40, "NetObject.log",
+          plStatusLog::kFilledBackground | plStatusLog::kAlignToTop | plStatusLog::kTimestamp
+      )),
+      fDebugging()
 {
 }
 
@@ -138,18 +143,6 @@ plNetObjectDebugger* plNetObjectDebugger::GetInstance()
         plNetObjectDebuggerBase::SetInstance(&gNetObjectDebugger);
 
     return &gNetObjectDebugger;
-}
-
-//
-// create StatusLog if necessary
-//
-void plNetObjectDebugger::ICreateStatusLog() const
-{
-    if (!fStatusLog)
-    {
-        fStatusLog = plStatusLogMgr::GetInstance().CreateStatusLog(40, "NetObject.log",
-            plStatusLog::kFilledBackground | plStatusLog::kAlignToTop | plStatusLog::kTimestamp );
-    }
 }
 
 bool plNetObjectDebugger::AddDebugObject(ST::string objName, const ST::string& pageName)
@@ -197,8 +190,6 @@ bool plNetObjectDebugger::AddDebugObject(ST::string objName, const ST::string& p
     }
 
     fDebugObjects.push_back(new DebugObject(std::move(objName), loc, flags));
-
-    ICreateStatusLog();
 
     return true;
 }
@@ -274,7 +265,7 @@ void plNetObjectDebugger::LogMsgIfMatch(const ST::string& msg) const
 
 void plNetObjectDebugger::LogMsg(const ST::string& msg) const
 {
-    DEBUG_MSG(msg.c_str());
+    fStatusLog->AddLine(msg);
 }
 
 bool plNetObjectDebugger::IsDebugObject(const hsKeyedObject* obj) const
