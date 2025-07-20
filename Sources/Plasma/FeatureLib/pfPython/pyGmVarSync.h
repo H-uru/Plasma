@@ -40,65 +40,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsStream.h"
+#ifndef _pyGmVarSync_h_
+#define _pyGmVarSync_h_
 
-#include "plAIMsg.h"
+#include "pyGameCli.h"
 
-#include "plAvatar/plArmatureMod.h"
+#include <variant>
 
-///////////////////////////////////////////////////////////////////////////////
+using pfGmVarSyncValue = std::variant<ST::string, double>;
 
-plAIMsg::plAIMsg(): plMessage(nullptr, nullptr, nullptr), fBrainUserStr("")
-{}
+class pfGmVarSync;
 
-plAIMsg::plAIMsg(const plKey& sender, const plKey& receiver): plMessage(sender, receiver, nullptr)
+class pyGmVarSync : public pyGameCli
 {
-    // set up our user string from the sender, if it is the right type
-    plArmatureMod* armMod = plArmatureMod::ConvertNoRef(sender->ObjectIsLoaded());
-    if (armMod)
-        fBrainUserStr = armMod->GetUserStr();
-}
+public:
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGmVarSync);
+    PYTHON_CLASS_GMCLI_NEW_DEFINITION(pfGmVarSync);
+    PYTHON_CLASS_CHECK_DEFINITION;                        // returns true if the PyObject is a pyGmVarSync object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGmVarSync); // converts a PyObject to a pyGmVarSync (throws error if not correct type)
 
-void plAIMsg::Read(hsStream* stream, hsResMgr* mgr)
-{
-    plMessage::IMsgRead(stream, mgr);
+protected:
+    pfGmVarSync* GetGameCli() const { return (pfGmVarSync*)fCli; }
 
-    fBrainUserStr = stream->ReadSafeString();
-}
+public:
+    void SetVariable(uint32_t varID, const pfGmVarSyncValue& varValue) const;
 
-void plAIMsg::Write(hsStream* stream, hsResMgr* mgr)
-{
-    plMessage::IMsgWrite(stream, mgr);
+    void CreateVariable(const ST::string& varName, const pfGmVarSyncValue& varValue) const;
 
-    stream->WriteSafeString(fBrainUserStr);
-}
+public:
+    static void Join(PyObject* handler);
 
-///////////////////////////////////////////////////////////////////////////////
+    static bool IsSupported();
 
-void plAIArrivedAtGoalMsg::Read(hsStream* stream, hsResMgr* mgr)
-{
-    plAIMsg::Read(stream, mgr);
-    fGoal.Read(stream);
-}
+public:
+    static void AddPlasmaGameClasses(PyObject* m);
+};
 
-void plAIArrivedAtGoalMsg::Write(hsStream* stream, hsResMgr* mgr)
-{
-    plAIMsg::Write(stream, mgr);
-    fGoal.Write(stream);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-void plAIGoToGoalMsg::Read(hsStream* stream, hsResMgr* mgr)
-{
-    plAIMsg::Read(stream, mgr);
-    fGoal.Read(stream);
-    fAvoidingAvatars = stream->ReadBool();
-}
-
-void plAIGoToGoalMsg::Write(hsStream* stream, hsResMgr* mgr)
-{
-    plAIMsg::Write(stream, mgr);
-    fGoal.Write(stream);
-    fAvoidingAvatars = stream->ReadBool();
-}
+#endif
