@@ -53,6 +53,10 @@
 from __future__ import annotations
 from typing import *
 
+class PtClimbingWallReadyType:
+    kClimbingWallReadyNumBlockers = 0
+    kClimbingWallReadyBlockers = 1
+
 class PtGameJoinError:
     kGameJoinPending = -1
     kGameJoinSuccess = 0
