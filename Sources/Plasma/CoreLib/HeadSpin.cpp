@@ -140,8 +140,7 @@ void ErrorAssert(int line, const char* file, const char* fmt, ...)
     } else
 #endif // _MSC_VER
     {
-        DebugMsg("-------\nASSERTION FAILED:\nFile: %s   Line: %i\nMessage: %s\n-------",
-                 file, line, msg);
+        hsDebugPrintToTerminal("-------\nASSERTION FAILED:\nFile: %s   Line: %i\nMessage: %s\n-------", file, line, msg);
         fflush(stderr);
 
         DebugBreakAlways();
@@ -216,7 +215,7 @@ void DebugBreakAlways()
 #endif // _MSC_VER
 }
 
-void DebugMsg(const char* fmt, ...)
+void hsDebugPrintToTerminal(const char* fmt, ...)
 {
     char msg[1024];
     va_list args;

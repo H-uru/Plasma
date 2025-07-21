@@ -325,7 +325,20 @@ void ErrorAssert (int line, const char* file, const char* fmt, ...);
 bool DebugIsDebuggerPresent();
 void DebugBreakIfDebuggerPresent();
 void DebugBreakAlways();
-void DebugMsg(const char* fmt, ...);
+
+/**
+ * Print a message to stderr (and to the Windows debugger output, if on Windows with a debugger attached).
+ * This function's output is never redirected to a log file (unlike hsStatusMessage and hsDebugMessage).
+ *
+ * Be aware that this function's output is impossible to see for the average player/tester.
+ * Prefer using other logging functions instead.
+ * Please use hsDebugPrintToTerminal ONLY for debugging messages aimed at developers
+ * that must not go to a log file for some reason.
+ *
+ * @param fmt printf-style format string for the log message
+ * @param ... format string arguments
+ */
+void hsDebugPrintToTerminal(const char* fmt, ...);
 
 #ifdef HS_DEBUGGING
     
