@@ -88,6 +88,7 @@ LocalAvatar = None
 # convert that to an integer id. It will do the same for any tag, but
 # only <img> and <movie> are useful.
 _URL_REGEX = re.compile(r"(?P<href>href\s*=\s*(?P<quote>[\"\']?)\s*?(?P<url>https?:\/\/[^\s>]+)\s*?(?P=quote))(?=[^<]*>)", re.IGNORECASE)
+_HOST_REGEX = re.compile(R"(?:https?:\/\/)?(?:www\.)?([^\/?#]+).*", re.IGNORECASE)
 
 class xJournalBookGUIPopup(ptModifier):
     "The Journal Book GUI Popup python code"
@@ -140,8 +141,13 @@ class xJournalBookGUIPopup(ptModifier):
                         except IndexError:
                             pass
                         else:
-                            PtDebugPrint(f"xJournalBookGUIPopup: NotifyImageLink: opening {url=} {event[2]=}", level=kWarningLevel)
-                            webbrowser.open_new_tab(url)
+                            def open_url(result):
+                                if result == PtConfirmationResult.Yes:
+                                    webbrowser.open_new_tab(url)
+
+                            hostname = _HOST_REGEX.sub(R"\1", url)
+                            PtDebugPrint(f"xJournalBookGUIPopup: NotifyImageLink: Prompting user to open {hostname=} {url=} {event[2]=}", level=kWarningLevel)
+                            PtLocalizedYesNoDialog(open_url, "KI.Messages.OpenHyperlink", hostname)
                     elif event[1] == PtBookEventTypes.kNotifyShow:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyShow",level=kDebugDumpLevel)
                         # disable the KI
