@@ -947,7 +947,7 @@ void NetCommDeletePlayer (  // --> plNetCommDeletePlayerMsg
     unsigned                playerInt,
     void *                  param
 ) {
-    ASSERTMSG(!param, "'param' will not be propagated to your callback function, you may modify the code to support this");
+    hsAssert(!param, "'param' will not be propagated to your callback function, you may modify the code to support this");
     ASSERT(NetCommGetPlayer()->playerInt != playerInt);
 
     NetCliAuthPlayerDeleteRequest(
