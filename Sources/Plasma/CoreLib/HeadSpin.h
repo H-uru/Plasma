@@ -315,16 +315,16 @@ hsDebugMessageProc hsSetDebugMessageProc(hsDebugMessageProc newProc);
 extern hsDebugMessageProc gHSStatusProc;
 hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc);
 
-void ErrorEnableGui (bool enabled);
+void hsDebugEnableGuiAsserts(bool enabled);
 
 #ifndef HS_DEBUGGING
 [[noreturn]]
 #endif
-void ErrorAssert (int line, const char* file, const char* fmt, ...);
+void hsDebugAssertionFailed(int line, const char* file, const char* fmt, ...);
 
-bool DebugIsDebuggerPresent();
-void DebugBreakIfDebuggerPresent();
-void DebugBreakAlways();
+bool hsDebugIsDebuggerPresent();
+void hsDebugBreakIfDebuggerPresent();
+void hsDebugBreakAlways();
 
 /**
  * Print a message to stderr (and to the Windows debugger output, if on Windows with a debugger attached).
@@ -344,9 +344,9 @@ void hsDebugPrintToTerminal(const char* fmt, ...);
     
     void    hsDebugMessage(const char* message, long refcon);
     #define hsIfDebugMessage(expr, msg, ref)    (void)( (!!(expr)) || (hsDebugMessage(msg, ref), 0) )
-    #define hsAssert(expr, ...)                 (void)( (!!(expr)) || (ErrorAssert(__LINE__, __FILE__, __VA_ARGS__), 0) )
-    #define ASSERT(expr)                        (void)( (!!(expr)) || (ErrorAssert(__LINE__, __FILE__, #expr), 0) )
-    #define FATAL(...)                          ErrorAssert(__LINE__, __FILE__, __VA_ARGS__)
+    #define hsAssert(expr, ...)                 (void)( (!!(expr)) || (hsDebugAssertionFailed(__LINE__, __FILE__, __VA_ARGS__), 0) )
+    #define ASSERT(expr)                        (void)( (!!(expr)) || (hsDebugAssertionFailed(__LINE__, __FILE__, #expr), 0) )
+    #define FATAL(...)                          hsDebugAssertionFailed(__LINE__, __FILE__, __VA_ARGS__)
     
 #else   /* Not debugging */
 
