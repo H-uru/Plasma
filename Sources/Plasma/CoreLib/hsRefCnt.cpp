@@ -138,9 +138,9 @@ void hsRefCnt::UnRef(const char* tag)
 
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     if (tag)
-        DEBUG_MSG("Dec %p %s: %u", this, tag, fRefCnt - 1);
+        DebugMsg("Dec %p %s: %u", this, tag, fRefCnt - 1);
     else
-        DEBUG_MSG("Dec %p: %u", this, fRefCnt - 1);
+        DebugMsg("Dec %p: %u", this, fRefCnt - 1);
 #endif
 
     if (fRefCnt == 1)   // don't decrement if we call delete
@@ -153,9 +153,9 @@ void hsRefCnt::Ref(const char* tag)
 {
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     if (tag)
-        DEBUG_MSG("Inc %p %s: %u", this, tag, fRefCnt + 1);
+        DebugMsg("Inc %p %s: %u", this, tag, fRefCnt + 1);
     else
-        DEBUG_MSG("Inc %p: %u", this, fRefCnt + 1);
+        DebugMsg("Inc %p: %u", this, fRefCnt + 1);
 #endif
 
     ++fRefCnt;
@@ -164,7 +164,7 @@ void hsRefCnt::Ref(const char* tag)
 void hsRefCnt::TransferRef(const char* oldTag, const char* newTag)
 {
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
-    DEBUG_MSG("Inc %p %s: (xfer)", this, newTag);
-    DEBUG_MSG("Dec %p %s: (xfer)", this, oldTag);
+    DebugMsg("Inc %p %s: (xfer)", this, newTag);
+    DebugMsg("Dec %p %s: (xfer)", this, oldTag);
 #endif
 }

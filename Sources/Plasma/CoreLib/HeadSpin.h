@@ -336,7 +336,6 @@ void DebugMsg(const char* fmt, ...);
     #define ASSERT(expr)                        (void)( (!!(expr)) || (ErrorAssert(__LINE__, __FILE__, #expr), 0) )
     #define ASSERTMSG(expr, ...)                (void)( (!!(expr)) || (ErrorAssert(__LINE__, __FILE__, __VA_ARGS__), 0) )
     #define FATAL(...)                          ErrorAssert(__LINE__, __FILE__, __VA_ARGS__)
-    #define DEBUG_MSG                           DebugMsg
     #define DEBUG_BREAK_IF_DEBUGGER_PRESENT     DebugBreakIfDebuggerPresent
     
 #else   /* Not debugging */
@@ -348,7 +347,6 @@ void DebugMsg(const char* fmt, ...);
     #define ASSERT(expr)                        ((void)0)
     #define ASSERTMSG(expr, ...)                ((void)0)
     #define FATAL(...)                          ((void)0)
-    #define DEBUG_MSG                           (void)
     #define DEBUG_BREAK_IF_DEBUGGER_PRESENT()   ((void)0)
 
 #endif  // HS_DEBUGGING
