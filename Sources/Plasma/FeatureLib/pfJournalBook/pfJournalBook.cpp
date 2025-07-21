@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfJournalBook.h"
 
-#include <memory>
 #include <cwchar>
 
 #include "HeadSpin.h"
@@ -2911,7 +2910,7 @@ void    pfJournalBook::IMoveMovies( hsGMaterial *source, hsGMaterial *dest )
 
 void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *mip, plDynamicTextMap *dtMap, uint32_t whichDTMap, bool dontRender )
 {
-    auto copy = std::make_unique<plMipmap>();
+    hsRef<plMipmap> copy(new plMipmap(), hsStealRef);
     copy->CopyFrom(mip);
     if (chunk->fNoResizeImg)
     {
@@ -2986,7 +2985,7 @@ void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y
                 opts.fFlags = ( chunk->fFlags & pfEsHTMLChunk::kBlendAlpha ) ? plMipmap::kCopySrcAlpha : plMipmap::kForceOpaque;
             opts.fOpacity = (uint8_t)(chunk->fCurrOpacity * 255.f);
         }
-        dtMap->Composite( copy.get(), x, y, &opts );
+        dtMap->Composite(copy.Get(), x, y, &opts);
     }
 
     if( chunk->fFlags & pfEsHTMLChunk::kCanLink )
