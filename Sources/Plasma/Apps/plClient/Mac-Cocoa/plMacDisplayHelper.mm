@@ -43,8 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline.h"
 #include "plMacDisplayHelper.h"
 
-plMacDisplayHelper::plMacDisplayHelper() :
-    fCurrentDisplay(-1)
+plMacDisplayHelper::plMacDisplayHelper() : fCurrentDisplay(-1)
 {
 }
 
@@ -53,7 +52,7 @@ void plMacDisplayHelper::SetCurrentScreen(hsDisplayHndl display) const
     NSScreen* nsScreen;
     for (NSScreen* screen in [NSScreen screens]) {
         NSDictionary *deviceDescription = [screen deviceDescription];
-        NSNumber* screenID = deviceDescription[@"NSScreenNumber"];
+        NSNumber*     screenID = deviceDescription[@"NSScreenNumber"];
         if ([screenID unsignedIntValue] == display) {
             nsScreen = screen;
         }
@@ -64,10 +63,10 @@ void plMacDisplayHelper::SetCurrentScreen(hsDisplayHndl display) const
 void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
 {
     CGDirectDisplayID displayID = (CGDirectDisplayID)[screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue];
-    
+
     if (fCurrentDisplay == displayID)
         return;
-    
+
     fCurrentDisplay = displayID;
     
     // Save the native resolution of the desktop. This is used to prevent windowed
@@ -101,7 +100,7 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
     fDisplayModes.clear();
 
     CFArrayRef displayModes = CGDisplayCopyAllDisplayModes(fCurrentDisplay, nullptr);
-    for(int i=0; i< CFArrayGetCount(displayModes); i++) {
+    for (int i = 0; i < CFArrayGetCount(displayModes); i++) {
         // Now filter out the ones that are taller than the safe area aspect ratio
         // This could break in interesting ways if Apple ships displays that have unsafe
         // areas along the side - but will prevent us stripping any aspect ratios that don't
@@ -120,7 +119,7 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
         CGDisplayModeRef mode = (CGDisplayModeRef)CFArrayGetValueAtIndex(displayModes, i);
 
         float modeAspectRatio = float(CGDisplayModeGetWidth(mode)) / float(CGDisplayModeGetHeight(mode));
-        if(modeAspectRatio < safeAspectRatio) {
+        if (modeAspectRatio < safeAspectRatio) {
             continue;
         }
 
@@ -132,13 +131,13 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
         fDisplayModes.emplace_back(plDisplayMode{int(CGDisplayModeGetWidth(mode)), int(CGDisplayModeGetHeight(mode)), 32});
     }
     CFRelease(displayModes);
-    
+
     std::sort(fDisplayModes.begin(), fDisplayModes.end(),
-            [](plDisplayMode a, plDisplayMode b) {
-                int resolutionA = a.Width * a.Height;
-                int resolutionB = b.Width * b.Height;
-                return resolutionA > resolutionB;
-            });
+              [](plDisplayMode a, plDisplayMode b) {
+        int resolutionA = a.Width * a.Height;
+        int resolutionB = b.Width * b.Height;
+        return resolutionA > resolutionB;
+    });
 }
 
 std::vector<plDisplayMode> plMacDisplayHelper::GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth) const

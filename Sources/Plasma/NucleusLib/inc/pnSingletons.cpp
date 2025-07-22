@@ -40,9 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plgDispatch.h"
 #include "hsResMgr.h"
 #include "plPipeResReq.h"
+#include "plgDispatch.h"
 
 hsResMgr* hsgResMgr::fResMgr = nullptr;
 

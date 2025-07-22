@@ -91,7 +91,7 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
         if (@available(macOS 10.15, *)) {
             // The available check needs to be on it's own line or
             // we'll get a compiler warning
-            if([device supportsFamily:MTLGPUFamilyMac2]) {
+            if ([device supportsFamily:MTLGPUFamilyMac2]) {
                 // if it's a Metal 3 GPU - it should be good
                 // Pick the native display resolution
                 // (Re-picking the first one here for clarity)
@@ -103,16 +103,15 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
         if (defaultMode == nullptr) {
             // time to go down the rabit hole
             int maxWidth = std::numeric_limits<int>::max();
-            if([device isLowPower]) {
+            if ([device isLowPower]) {
                 // integrated - not Apple Silicon, we know it's not very good
                 maxWidth = 1080;
-            }
-            else if([device recommendedMaxWorkingSetSize] < 4000000000) {
+            } else if ([device recommendedMaxWorkingSetSize] < 4000000000) {
                 // if it has less than around 4 gigs of VRAM it might still be performance
                 // limited
                 maxWidth = 1400;
             }
-            
+
             for (auto& mode : devRec.GetModes()) {
                 if(mode.GetWidth() <= maxWidth) {
                     defaultMode = &mode;

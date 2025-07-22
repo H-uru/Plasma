@@ -213,9 +213,9 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
     self.plsView = view;
     window.contentView = view;
     self.gameWindow = window;
-    
+
     _displayHelper.MakeCurrentDisplayHelper();
-    
+
     gClient.SetClientWindow((__bridge void *)view.layer);
     gClient.SetClientDisplay([window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue]);
 

@@ -127,7 +127,7 @@ static inline uint8_t* inlStuff(uint8_t* dst, const T* val)
 bool plMetalDevice::InitDevice()
 {
     fCommandQueue = fMetalDevice->newCommandQueue();
-    
+
     // Only known tiler on Apple devices are Apple GPUs.
     // Apple recommends a family check for tile memory support.
     fSupportsTileMemory = fMetalDevice->supportsFamily(MTL::GPUFamilyApple1);
@@ -161,7 +161,7 @@ bool plMetalDevice::InitDevice()
     fReverseZStencilState = fMetalDevice->newDepthStencilState(depthDescriptor);
 
     depthDescriptor->release();
-    
+
     LoadLibrary();
 }
 

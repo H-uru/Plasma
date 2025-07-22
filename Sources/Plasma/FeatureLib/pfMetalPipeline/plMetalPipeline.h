@@ -68,7 +68,7 @@ public:
     {
         hsG3DDeviceSelector::AddDeviceEnumerator(&plMetalEnumerate::Enumerate);
     }
-    
+
     static MTL::Device* DeviceForDisplay(hsDisplayHndl display);
 
 private:

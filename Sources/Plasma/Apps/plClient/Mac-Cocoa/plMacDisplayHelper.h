@@ -57,15 +57,17 @@ class plMacDisplayHelper: public plDisplayHelper
 public:
     plMacDisplayHelper();
     
+
     CGDirectDisplayID CurrentDisplay() const { return fCurrentDisplay; }
 
     plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
     std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const override;
+
 private:
-    mutable CGDirectDisplayID fCurrentDisplay;
-    mutable plDisplayMode fDesktopDisplayMode;
+    mutable CGDirectDisplayID          fCurrentDisplay;
+    mutable plDisplayMode              fDesktopDisplayMode;
     mutable std::vector<plDisplayMode> fDisplayModes;
-    
+
     void SetCurrentScreen(hsDisplayHndl screen) const;
     // we need NSScreen to query for non rectangular screen geometry
     void SetCurrentScreen(NSScreen* screen) const;
