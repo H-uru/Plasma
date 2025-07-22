@@ -57,14 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_theory/format>
 #include "hsLockGuard.h"
 
-// hsDebugMessage can get overridden to dump to a file :(
-#ifdef _MSC_VER
-#   include "hsWindows.h"
-#   define _LeakDebug(message) OutputDebugString(message)
-#else
-#   define _LeakDebug(message) fputs(message, stderr)
-#endif
-
 struct _RefCountLeakCheck
 {
     std::unordered_set<hsRefCnt *> m_refs;
@@ -75,15 +67,15 @@ struct _RefCountLeakCheck
     {
         hsLockGuard(m_mutex);
 
-        _LeakDebug(ST::format("Refs tracked:  {} created, {} destroyed\n",
-                              m_added, m_removed).c_str());
+        DebugMsg(ST::format("Refs tracked:  {} created, {} destroyed\n",
+                            m_added, m_removed).c_str());
         if (m_refs.empty())
             return;
 
-        _LeakDebug(ST::format("    {} objects leaked...\n", m_refs.size()).c_str());
+        DebugMsg(ST::format("    {} objects leaked...\n", m_refs.size()).c_str());
         for (hsRefCnt *ref : m_refs) {
-            _LeakDebug(ST::format("    {#08x} {}: {} refs remain\n",
-                       (uintptr_t)ref, typeid(*ref).name(), ref->RefCnt()).c_str());
+            DebugMsg(ST::format("    {#08x} {}: {} refs remain\n",
+                                (uintptr_t)ref, typeid(*ref).name(), ref->RefCnt()).c_str());
         }
     }
 
