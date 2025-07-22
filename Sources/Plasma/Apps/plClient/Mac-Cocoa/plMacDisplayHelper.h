@@ -56,7 +56,6 @@ class plMacDisplayHelper: public plDisplayHelper
 {
 public:
     plMacDisplayHelper();
-    ~plMacDisplayHelper() = default;
     
     CGDirectDisplayID CurrentDisplay() const { return fCurrentDisplay; }
 
