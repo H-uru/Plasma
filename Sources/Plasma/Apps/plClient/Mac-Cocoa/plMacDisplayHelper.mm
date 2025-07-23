@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plPipeline.h"
 #include "plMacDisplayHelper.h"
+#include "plPipeline.h"
 
 plMacDisplayHelper::plMacDisplayHelper() : fCurrentDisplay(-1)
 {
@@ -51,7 +51,7 @@ void plMacDisplayHelper::SetCurrentScreen(hsDisplayHndl display) const
 {
     NSScreen* nsScreen;
     for (NSScreen* screen in [NSScreen screens]) {
-        NSDictionary *deviceDescription = [screen deviceDescription];
+        NSDictionary* deviceDescription = [screen deviceDescription];
         NSNumber*     screenID = deviceDescription[@"NSScreenNumber"];
         if ([screenID unsignedIntValue] == display) {
             nsScreen = screen;
@@ -68,7 +68,7 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
         return;
 
     fCurrentDisplay = displayID;
-    
+
     // Save the native resolution of the desktop. This is used to prevent windowed
     // mode from being larger than the desktop.
     // Going to be a little cheeky here - macOS has a best layout area for windows
@@ -77,11 +77,11 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
     fDesktopDisplayMode.Width = windowArea.size.width;
     fDesktopDisplayMode.Height = windowArea.size.height;
     fDesktopDisplayMode.ColorDepth = 32;
-    
+
     // visibleFrame is in points - put into pixels
     fDesktopDisplayMode.Width *= [screen backingScaleFactor];
     fDesktopDisplayMode.Height *= [screen backingScaleFactor];
-    
+
     // Calculate the region actually available for full screen
     NSRect currentResolution = [screen frame];
 #if defined(HAVE_BUILTIN_AVAILABLE)
@@ -115,7 +115,7 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
         // filter would still drop some or all of those.
         //
         // Asked for better guidance here from Apple - FB13375033
-        
+
         CGDisplayModeRef mode = (CGDisplayModeRef)CFArrayGetValueAtIndex(displayModes, i);
 
         float modeAspectRatio = float(CGDisplayModeGetWidth(mode)) / float(CGDisplayModeGetHeight(mode));

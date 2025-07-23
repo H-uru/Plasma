@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
 {
     CGDirectDisplayID mainDisplay = CGMainDisplayID();
-    id<MTLDevice> device = CGDirectDisplayCopyCurrentMetalDevice(mainDisplay);
+    id<MTLDevice>     device = CGDirectDisplayCopyCurrentMetalDevice(mainDisplay);
 
     if (device) {
         hsG3DDeviceRecord devRec;
@@ -113,7 +113,7 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
             }
 
             for (auto& mode : devRec.GetModes()) {
-                if(mode.GetWidth() <= maxWidth) {
+                if (mode.GetWidth() <= maxWidth) {
                     defaultMode = &mode;
                     break;
                 }
