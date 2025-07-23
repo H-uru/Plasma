@@ -189,7 +189,7 @@ plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, con
     
     fIsFullscreen = !fInitialPipeParams.Windowed;
     
-    fDesktopParams = plDisplayHelper::CurrentDisplayHelper()->DesktopDisplayMode();
+    fDesktopParams = plDisplayHelper::GetInstance()->DesktopDisplayMode();
     
     fDevice.SetOutputLayer(reinterpret_cast<CA::MetalLayer*>(window));
     // For now - set this once at startup. If the underlying device is allow to change on
@@ -982,7 +982,7 @@ plMipmap* plMetalPipeline::ExtractMipMap(plRenderTarget* targ)
 
 void plMetalPipeline::GetSupportedDisplayModes(std::vector<plDisplayMode>* res, int ColorDepth)
 {
-    *res = plDisplayHelper::CurrentDisplayHelper()->GetSupportedDisplayModes(fDevice.fDisplay);
+    *res = plDisplayHelper::GetInstance()->GetSupportedDisplayModes(fDevice.fDisplay);
 }
 
 int plMetalPipeline::GetMaxAnisotropicSamples()

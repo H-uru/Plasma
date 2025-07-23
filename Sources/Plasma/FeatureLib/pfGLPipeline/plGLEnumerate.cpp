@@ -265,7 +265,7 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
         devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeOpenGL);
         devRec.SetDriverName("OpenGL.framework");
         
-        plDisplayHelper* displayHelper = plDisplayHelper::CurrentDisplayHelper();
+        plDisplayHelper* displayHelper = plDisplayHelper::GetInstance();
         for (const auto& mode : displayHelper->GetSupportedDisplayModes(mainDisplay)) {
             hsG3DDeviceMode devMode;
             devMode.SetWidth(mode.Width);

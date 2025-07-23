@@ -113,8 +113,8 @@ public:
     virtual plDisplayMode              DesktopDisplayMode() = 0;
     virtual std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const = 0;
 
-    static plDisplayHelper* CurrentDisplayHelper() { return fCurrentDisplayHelper; }
-    void                    MakeCurrentDisplayHelper() { fCurrentDisplayHelper = this; }
+    static plDisplayHelper* GetInstance() { return fCurrentDisplayHelper; }
+    static void             SetInstance(plDisplayHelper* helper) { fCurrentDisplayHelper = helper; }
 
 private:
     static plDisplayHelper* fCurrentDisplayHelper;
