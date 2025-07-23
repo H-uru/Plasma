@@ -25,48 +25,54 @@ elseif("Development.Module" IN_LIST ARGS)
         set(_PythonFinder_WantInterp TRUE)
     endif()
     set(_PythonFinder_WantLibs TRUE)
+elseif("Interpreter" IN_LIST ARGS)
+    if (@PythonFinder_PREFIX@_USE_VCPKG_INTERPRETER)
+        set(_PythonFinder_WantInterp TRUE)
+    endif()
 endif()
 
-if(_PythonFinder_WantLibs)
-    find_path(
-        @PythonFinder_PREFIX@_INCLUDE_DIR
-        NAMES "Python.h"
-        PATHS "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include"
-        PATH_SUFFIXES "python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@"
-        NO_DEFAULT_PATH
-    )
+if(_PythonFinder_WantLibs OR _PythonFinder_WantInterp)
+    if(_PythonFinder_WantLibs)
+        find_path(
+            @PythonFinder_PREFIX@_INCLUDE_DIR
+            NAMES "Python.h"
+            PATHS "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include"
+            PATH_SUFFIXES "python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@"
+            NO_DEFAULT_PATH
+        )
 
-    # Don't set the public facing hint or the finder will be unable to detect the debug library.
-    # Internally, it uses the same value with an underscore prepended.
-    find_library(
-        _@PythonFinder_PREFIX@_LIBRARY_RELEASE
-        NAMES
-        "python@PYTHON_VERSION_MAJOR@@PYTHON_VERSION_MINOR@"
-        "python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@"
-        PATHS "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib"
-        NO_DEFAULT_PATH
-    )
-    find_library(
-        _@PythonFinder_PREFIX@_LIBRARY_DEBUG
-        NAMES
-        "python@PYTHON_VERSION_MAJOR@@PYTHON_VERSION_MINOR@_d"
-        "python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@d"
-        PATHS "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/lib"
-        NO_DEFAULT_PATH
-    )
+        # Don't set the public facing hint or the finder will be unable to detect the debug library.
+        # Internally, it uses the same value with an underscore prepended.
+        find_library(
+            _@PythonFinder_PREFIX@_LIBRARY_RELEASE
+            NAMES
+            "python@PYTHON_VERSION_MAJOR@@PYTHON_VERSION_MINOR@"
+            "python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@"
+            PATHS "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib"
+            NO_DEFAULT_PATH
+        )
+        find_library(
+            _@PythonFinder_PREFIX@_LIBRARY_DEBUG
+            NAMES
+            "python@PYTHON_VERSION_MAJOR@@PYTHON_VERSION_MINOR@_d"
+            "python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@d"
+            PATHS "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/lib"
+            NO_DEFAULT_PATH
+        )
+    endif()
 
     if(_PythonFinder_WantInterp)
         find_program(
             @PythonFinder_PREFIX@_EXECUTABLE
             NAMES "python" "python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@"
-            PATHS "${_VCPKG_INSTALLED_DIR}/${VCPKG_HOST_TRIPLET}/tools/python3"
+            PATHS "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/tools/python3"
             NO_DEFAULT_PATH
         )
     endif()
 
     _find_package(${ARGS})
 
-    if(@VCPKG_LIBRARY_LINKAGE@ STREQUAL static)
+    if(_PythonFinder_WantLibs AND @VCPKG_LIBRARY_LINKAGE@ STREQUAL static)
         include(CMakeFindDependencyMacro)
 
         # Python for Windows embeds the zlib module into the core, so we have to link against it.
