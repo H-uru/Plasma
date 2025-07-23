@@ -128,7 +128,7 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
         // Plasma likes to handle modes from largest to smallest,
         // CG likes to go from smallest to largest. Insert modes
         // at the front.
-        fDisplayModes.emplace_back(plDisplayMode{int(CGDisplayModeGetWidth(mode)), int(CGDisplayModeGetHeight(mode)), 32});
+        fDisplayModes.emplace_back(plDisplayMode{ int(CGDisplayModeGetWidth(mode)), int(CGDisplayModeGetHeight(mode)), 32 });
     }
     CFRelease(displayModes);
 
