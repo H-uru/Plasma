@@ -15,7 +15,7 @@ FetchContent_MakeAvailable(metalcpp)
 set(pfMetalPipeline_SOURCES
     plMetalDevice.cpp
     plMetalDeviceRefs.cpp
-    plMetalEnumerate.cpp
+    plMetalEnumerate.mm
     plMetalMaterialShaderRef.cpp
     plMetalPipeline.cpp
     plMetalPipelineState.cpp

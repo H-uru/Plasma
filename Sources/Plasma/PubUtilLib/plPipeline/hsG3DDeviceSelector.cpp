@@ -95,12 +95,18 @@ void hsG3DDeviceMode::Clear()
 }
 
 hsG3DDeviceRecord::hsG3DDeviceRecord()
-:   fFlags(kNone),
-    fG3DDeviceType(hsG3DDeviceSelector::kDevTypeUnknown),
-    fLayersAtOnce(0), fMemoryBytes(0),
-    fG3DHALorHEL(hsG3DDeviceSelector::kHHTypeUnknown),
-    fZBiasRating( 0 ), fLODBiasRating( 0 ),
-    fFogExpApproxStart( 0.0 ), fFogExp2ApproxStart( 0.0 ), fFogEndBias( 0.0 ), fMaxAnisotropicSamples( 1 )
+    : fFlags(kNone),
+      fG3DDeviceType(hsG3DDeviceSelector::kDevTypeUnknown),
+      fLayersAtOnce(0),
+      fMemoryBytes(0),
+      fG3DHALorHEL(hsG3DDeviceSelector::kHHTypeUnknown),
+      fZBiasRating(0),
+      fLODBiasRating(0),
+      fFogExpApproxStart(0.0),
+      fFogExp2ApproxStart(0.0),
+      fFogEndBias(0.0),
+      fMaxAnisotropicSamples(1),
+      fDefaultModeIndex(-1)
 {
     SetFogKneeParams( kFogExp, 0, 0 );
     SetFogKneeParams( kFogExp2, 0, 0 );
@@ -112,12 +118,16 @@ hsG3DDeviceRecord::~hsG3DDeviceRecord()
 }
 
 hsG3DDeviceRecord::hsG3DDeviceRecord(const hsG3DDeviceRecord& src)
-:   fFlags(kNone),
-    fG3DDeviceType(hsG3DDeviceSelector::kDevTypeUnknown),
-    fG3DHALorHEL(hsG3DDeviceSelector::kHHTypeUnknown),
-    fZBiasRating( src.fZBiasRating ), fLODBiasRating( 0 ),
-    fFogExpApproxStart( src.fFogExpApproxStart ), fFogExp2ApproxStart( src.fFogExp2ApproxStart ), 
-    fFogEndBias( src.fFogEndBias ), fMaxAnisotropicSamples( src.fMaxAnisotropicSamples )
+    : fFlags(kNone),
+      fG3DDeviceType(hsG3DDeviceSelector::kDevTypeUnknown),
+      fG3DHALorHEL(hsG3DDeviceSelector::kHHTypeUnknown),
+      fZBiasRating(src.fZBiasRating),
+      fLODBiasRating(0),
+      fFogExpApproxStart(src.fFogExpApproxStart),
+      fFogExp2ApproxStart(src.fFogExp2ApproxStart),
+      fFogEndBias(src.fFogEndBias),
+      fMaxAnisotropicSamples(src.fMaxAnisotropicSamples),
+      fDefaultModeIndex(src.fDefaultModeIndex)
 {
     *this = src;
 }
@@ -429,17 +439,19 @@ bool hsG3DDeviceSelector::GetRequested(hsG3DDeviceModeRecord *dmr, uint32_t devT
     if (modes.empty())
         return false;
 
-    const hsG3DDeviceMode* mode = nullptr;
-    for (const hsG3DDeviceMode& devMode : modes)
-    {
-        if ((devMode.GetWidth()    == kDefaultWidth) &&
-            (devMode.GetHeight()   == kDefaultHeight) &&
-            (devMode.GetNumZStencilDepths() > 0))
-        {
-            // Don't be too picky about the depth, use what's available if the
-            // default isn't found.
-            if (mode == nullptr || mode->GetColorDepth() != kDefaultDepth)
-                mode = &devMode;
+    const hsG3DDeviceMode* mode = device->GetDefaultMode();
+    if (mode == nullptr) {
+        // Enumerator did not proide a default mode.
+        // Go find a default mode.
+        for (const hsG3DDeviceMode& devMode : modes) {
+            if ((devMode.GetWidth() == kDefaultWidth) &&
+                (devMode.GetHeight() == kDefaultHeight) &&
+                (devMode.GetNumZStencilDepths() > 0)) {
+                // Don't be too picky about the depth, use what's available if the
+                // default isn't found.
+                if (mode == nullptr || mode->GetColorDepth() != kDefaultDepth)
+                    mode = &devMode;
+            }
         }
     }
     // Default mode not found, what kind of card is this?!

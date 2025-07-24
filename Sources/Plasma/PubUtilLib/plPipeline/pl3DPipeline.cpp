@@ -71,3 +71,5 @@ PipelineParams plPipeline::fDefaultPipeParams;
 PipelineParams plPipeline::fInitialPipeParams;
 
 int mfCurrentTest = 100;
+
+plDisplayHelper* plDisplayHelper::fCurrentDisplayHelper = nullptr;
