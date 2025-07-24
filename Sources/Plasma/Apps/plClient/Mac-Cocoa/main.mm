@@ -105,10 +105,10 @@ std::vector<ST::string> args;
                                              PLSLoginWindowControllerDelegate,
                                              PLSPatcherDelegate>
 {
-   @public
-    plClientLoader gClient;
-    dispatch_source_t _displaySource;
-    plMacDisplayHelper *_displayHelper;
+@public
+    plClientLoader      gClient;
+    dispatch_source_t   _displaySource;
+    plMacDisplayHelper* _displayHelper;
 }
 
 @property(retain) PLSKeyboardEventMonitor* eventMonitor;
@@ -217,7 +217,7 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
     _displayHelper = new plMacDisplayHelper();
     plDisplayHelper::SetInstance(_displayHelper);
 
-    gClient.SetClientWindow((__bridge void *)view.layer);
+    gClient.SetClientWindow((__bridge void*)view.layer);
     gClient.SetClientDisplay([window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue]);
 
     self = [super initWithWindow:window];
