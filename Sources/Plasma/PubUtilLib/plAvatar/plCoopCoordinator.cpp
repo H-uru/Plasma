@@ -66,6 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAvCoopMsg.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
 #include "plMessage/plTimerCallbackMsg.h"
+#include "plStatusLog/plStatusLog.h"
 
 const int kAbortTimer = 1;
 const float kAbortTimerDuration = 15; // 15 seconds
@@ -157,7 +158,7 @@ bool plCoopCoordinator::MsgReceive(plMessage *msg)
             bool isFromHost = (noteSender == fHostKey);
             bool isFromGuest = (noteSender == fGuestKey);
 
-            DebugMsg("COOP: Received multi-stage callback - stageNum = %d, stageState = %d, isFromHost = %d", stageNum, stageState, isFromHost ? 1 : 0);
+            plAvatarMgr::GetInstance()->GetLog()->AddLineF("COOP: Received multi-stage callback - stageNum = {}, stageState = {}, isFromHost = {}", stageNum, stageState, isFromHost);
 
             if(isFromHost)
             {
@@ -206,7 +207,7 @@ bool plCoopCoordinator::MsgReceive(plMessage *msg)
     plAvCoopMsg *coop = plAvCoopMsg::ConvertNoRef(msg);
     if(coop)
     {
-        DebugMsg("COOP: Received coop message: %d", coop->fCommand);
+        plAvatarMgr::GetInstance()->GetLog()->AddLineF("COOP: Received coop message: {}", coop->fCommand);
         switch(coop->fCommand)
         {
             case plAvCoopMsg::kGuestAccepted:
@@ -234,7 +235,7 @@ bool plCoopCoordinator::MsgReceive(plMessage *msg)
     plAvTaskSeekDoneMsg *seekDone = plAvTaskSeekDoneMsg::ConvertNoRef(msg);
     if (seekDone)
     {
-        DebugMsg("COOP: Received avatar seek finished msg: aborted = %d", seekDone->fAborted ? 1 : 0);
+        plAvatarMgr::GetInstance()->GetLog()->AddLineF("COOP: Received avatar seek finished msg: aborted = {}", seekDone->fAborted);
         if ( seekDone->fAborted )
         {
             plAvCoopMsg *coopM = new plAvCoopMsg(plAvCoopMsg::kGuestSeekAbort,fInitiatorID,(uint16_t)fInitiatorSerial);
@@ -292,7 +293,7 @@ uint16_t plCoopCoordinator::GetInitiatorSerial()
 // -----------
 void plCoopCoordinator::IStartHost()
 {
-    DebugMsg("COOP: IStartHost()");
+    plAvatarMgr::GetInstance()->GetLog()->AddLine("COOP: IStartHost()");
     plArmatureMod *guestAv = plAvatarMgr::FindAvatar(fGuestKey);
     plArmatureMod *hostAv = plAvatarMgr::FindAvatar(fHostKey);
     if (guestAv && hostAv)
@@ -315,7 +316,7 @@ void plCoopCoordinator::IStartHost()
 // ------------
 void plCoopCoordinator::IStartGuest()
 {
-    DebugMsg("COOP: IStartGuest()");
+    plAvatarMgr::GetInstance()->GetLog()->AddLine("COOP: IStartGuest()");
     plSceneObject *avSO = plSceneObject::ConvertNoRef(fHostKey->ObjectIsLoaded());
     if ( !avSO )
         return;
@@ -337,7 +338,7 @@ void plCoopCoordinator::IStartGuest()
 // ------------
 void plCoopCoordinator::IContinueGuest()
 {
-    DebugMsg("COOP: IContinueGuest()");
+    plAvatarMgr::GetInstance()->GetLog()->AddLine("COOP: IContinueGuest()");
     plAvTaskBrain *brainT = new plAvTaskBrain(fGuestBrain);
     plAvTaskMsg *brainM = new plAvTaskMsg(GetKey(), fGuestKey, brainT);
     brainM->SetBCastFlag(plMessage::kPropagateToModifiers);
@@ -349,7 +350,7 @@ void plCoopCoordinator::IContinueGuest()
 // --------------
 void plCoopCoordinator::IAdvanceParticipant(bool host)
 {
-    DebugMsg("COOP: IAdvanceParticipant(%d)", host ? 1 : 0);
+    plAvatarMgr::GetInstance()->GetLog()->AddLineF("COOP: IAdvanceParticipant({})", host);
     plKey &who = host ? fHostKey : fGuestKey;
 
     plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg(nullptr, who,

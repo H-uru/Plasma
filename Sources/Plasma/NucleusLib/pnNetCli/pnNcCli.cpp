@@ -639,7 +639,7 @@ static void ClientConnect (NetCli * cli) {
         unsigned bytes;
         NetCli_Cli2Srv_Connect msg;
         unsigned char * data = serverSeed.GetData_LE(&bytes); // will be 0 if encryption is disabled, and thereby send an empty seed
-        ASSERTMSG(bytes <= sizeof(msg.dh_y_data), "4");
+        hsAssert(bytes <= sizeof(msg.dh_y_data), "4");
         msg.message    = kNetCliCli2SrvConnect;
         msg.length     = (uint8_t) (sizeof(msg) - sizeof(msg.dh_y_data) +  bytes);
         memcpy(msg.dh_y_data, data, bytes);

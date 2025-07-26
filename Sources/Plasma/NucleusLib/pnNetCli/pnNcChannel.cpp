@@ -239,7 +239,7 @@ const NetMsgInitSend * NetMsgChannelFindSendMessage (
 
     // Is message defined?
     const NetMsgInitSend * sendMsg = &channel->m_sendMsgs[messageId];
-    ASSERTMSG(sendMsg->msg->count, "NetMsg not found for send");
+    hsAssert(sendMsg->msg->count, "NetMsg not found for send");
 
     return sendMsg;
 }
