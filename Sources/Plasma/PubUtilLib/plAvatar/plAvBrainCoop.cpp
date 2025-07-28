@@ -65,6 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAvCoopMsg.h"
 #include "plMessage/plPickedMsg.h"
 #include "plScene/plSceneNode.h"
+#include "plStatusLog/plStatusLog.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -151,7 +152,7 @@ bool plAvBrainCoop::RelayNotifyMsg(plNotifyMsg *msg)
 
     proMultiStageEventData * mtevt = static_cast<proMultiStageEventData *>(msg->FindEventRecord(proEventData::kMultiStage));
     if(mtevt)
-        DebugMsg("COOP: Relaying multi-stage event to %zu recipients (via plAvBrainCoop)", fRecipients.size());
+        plAvatarMgr::GetInstance()->GetLog()->AddLineF("COOP: Relaying multi-stage event to {} recipients (via plAvBrainCoop)", fRecipients.size());
 
     if(fRecipients.size() != 0)
     {
