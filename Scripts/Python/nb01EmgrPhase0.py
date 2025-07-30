@@ -48,7 +48,7 @@ import random
 def Ayhoheek5Man1State(VARname, NewSDLValue):
     PtDebugPrint("nb01EmgrPhase0.Ayhoheek5Man1State(): Attempting to set '{}' to a value of {}".format(VARname, NewSDLValue))
 
-    nb01Ayhoheek5Man1StateMaxINT = 2
+    nb01Ayhoheek5Man1StateMaxINT = 3
     
     if NewSDLValue > nb01Ayhoheek5Man1StateMaxINT:
         PtDebugPrint("ERROR: nb01EmgrPhase0.Ayhoheek5Man1State:\tERROR: Variable '{}'' expected range from  0-{}. Received value of {}.".format(VARname, nb01Ayhoheek5Man1StateMaxINT, NewSDLValue))
@@ -58,17 +58,26 @@ def Ayhoheek5Man1State(VARname, NewSDLValue):
         PtDebugPrint("DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\tPaging out 5 Man Heek table completely.")
         PtPageOutNode("nb01Ayhoheek5Man1State")
         PtPageOutNode("nb01Ayhoheek5Man1Dead")
+        PtPageOutNode("nb01Ayhoheek5Man1Ruin")
 
     elif NewSDLValue == 1:
         PtDebugPrint("DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\tPaging in broken 5 Man Heek table.")
         PtPageInNode("nb01Ayhoheek5Man1Dead")
         PtPageOutNode("nb01Ayhoheek5Man1State")
+        PtPageOutNode("nb01Ayhoheek5Man1Ruin")
 
     elif NewSDLValue == 2:
         PtDebugPrint("DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\tPaging in functional 5 Man Heek table.")
         PtPageInNode("nb01Ayhoheek5Man1State")
         PtPageOutNode("nb01Ayhoheek5Man1Dead")
-        
+        PtPageOutNode("nb01Ayhoheek5Man1Ruin")
+
+    elif NewSDLValue == 3:
+        PtDebugPrint("DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\tPaging in ruined 5 Man Heek table.")
+        PtPageInNode("nb01Ayhoheek5Man1Ruin")
+        PtPageOutNode("nb01Ayhoheek5Man1State")
+        PtPageOutNode("nb01Ayhoheek5Man1Dead")
+
     else:
         PtDebugPrint("ERROR: nb01EmgrPhase0.Ayhoheek5Man1State:\tERROR: Invalid value ({}) for variable '{}'.".format(NewSDLValue, VARname))
         return
