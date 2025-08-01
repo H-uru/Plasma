@@ -75,7 +75,6 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
         devRec.SetLayersAtOnce(8);
 
         plDisplayHelper* displayHelper = plDisplayHelper::GetInstance();
-        hsG3DDeviceMode* defaultMode = nullptr;
         for (const auto& mode : displayHelper->GetSupportedDisplayModes(mainDisplay)) {
             hsG3DDeviceMode devMode;
             devMode.SetWidth(mode.Width);
@@ -83,6 +82,8 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
             devMode.SetColorDepth(mode.ColorDepth);
             devRec.GetModes().emplace_back(std::move(devMode));
         }
+
+        hsG3DDeviceMode* defaultMode = nullptr;
 
         // now inspect the GPU and figure out a good default resolution
         // This code is in Metal (for now) - but it should also work

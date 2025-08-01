@@ -248,9 +248,10 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
             kCGLPFAAccelerated,
             kCGLPFANoRecovery,
             kCGLPFADoubleBuffer,
-            kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_3_2_Core,
-            kCGLPFADisplayMask, (CGLPixelFormatAttribute)CGDisplayIDToOpenGLDisplayMask(mainDisplay),
-            (CGLPixelFormatAttribute)0};
+            kCGLPFAOpenGLProfile, static_cast<CGLPixelFormatAttribute>(kCGLOGLPVersion_3_2_Core),
+            kCGLPFADisplayMask, static_cast<CGLPixelFormatAttribute>(CGDisplayIDToOpenGLDisplayMask(mainDisplay)),
+            static_cast<CGLPixelFormatAttribute>(0),
+        };
 
         int nPix = 0;
         if (CGLChoosePixelFormat(attribs, &pix, &nPix) != kCGLNoError || nPix == 0)

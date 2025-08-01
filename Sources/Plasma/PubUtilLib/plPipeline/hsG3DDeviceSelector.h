@@ -161,7 +161,7 @@ protected:
     uint32_t        fMemoryBytes;
 
     std::vector<hsG3DDeviceMode> fModes;
-    size_t                       fDefaultModeIndex;
+    hsSsize_t                    fDefaultModeIndex;
 
     float   fZBiasRating;
     float   fLODBiasRating;

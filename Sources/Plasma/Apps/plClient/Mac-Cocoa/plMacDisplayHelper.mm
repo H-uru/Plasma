@@ -84,7 +84,7 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
 
     // Calculate the region actually available for full screen
     NSRect currentResolution = [screen frame];
-#if defined(HAVE_BUILTIN_AVAILABLE)
+#ifdef HAVE_BUILTIN_AVAILABLE
     if (@available(macOS 12.0, *)) {
         NSEdgeInsets currentSafeAreaInsets = [screen safeAreaInsets];
         // Sigh... Origin doesn't matter but lets do it for inspectability
@@ -95,12 +95,12 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
     }
 #endif
 
-    float safeAspectRatio = currentResolution.size.width / currentResolution.size.height;
+    CGFloat safeAspectRatio = static_cast<CGFloat>(currentResolution.size.width) / static_cast<CGFloat>(currentResolution.size.height);
 
     fDisplayModes.clear();
 
     CFArrayRef displayModes = CGDisplayCopyAllDisplayModes(fCurrentDisplay, nullptr);
-    for (int i = 0; i < CFArrayGetCount(displayModes); i++) {
+    for (CFIndex i = 0; i < CFArrayGetCount(displayModes); i++) {
         // Now filter out the ones that are taller than the safe area aspect ratio
         // This could break in interesting ways if Apple ships displays that have unsafe
         // areas along the side - but will prevent us stripping any aspect ratios that don't
@@ -118,7 +118,7 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
 
         CGDisplayModeRef mode = (CGDisplayModeRef)CFArrayGetValueAtIndex(displayModes, i);
 
-        float modeAspectRatio = float(CGDisplayModeGetWidth(mode)) / float(CGDisplayModeGetHeight(mode));
+        CGFloat modeAspectRatio = static_cast<CGFloat>(CGDisplayModeGetWidth(mode)) / static_cast<CGFloat>(CGDisplayModeGetHeight(mode));
         if (modeAspectRatio < safeAspectRatio) {
             continue;
         }
@@ -128,7 +128,7 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
         // Plasma likes to handle modes from largest to smallest,
         // CG likes to go from smallest to largest. Insert modes
         // at the front.
-        fDisplayModes.emplace_back(plDisplayMode{ int(CGDisplayModeGetWidth(mode)), int(CGDisplayModeGetHeight(mode)), 32 });
+        fDisplayModes.emplace_back(plDisplayMode{ static_cast<int>(CGDisplayModeGetWidth(mode)), static_cast<int>(CGDisplayModeGetHeight(mode)), 32 });
     }
     CFRelease(displayModes);
 
