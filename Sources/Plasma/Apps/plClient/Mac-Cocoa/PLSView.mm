@@ -299,13 +299,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     if (newSize.width <= 0 || newSize.width <= 0) {
         return;
     }
-
-#if PLASMA_PIPELINE_METAL
-    _metalLayer.drawableSize = newSize;
-#endif
-    [self.delegate renderView:self
-          didChangeOutputSize:newSize
-                        scale:scaleFactor];
 }
 
 @end

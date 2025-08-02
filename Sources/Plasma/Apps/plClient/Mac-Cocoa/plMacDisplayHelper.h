@@ -40,45 +40,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsResMgr.h"
-#include "plPipeResReq.h"
-#include "plgDispatch.h"
+#ifndef plMacDisplayHelper_hpp
+#define plMacDisplayHelper_hpp
 
-hsResMgr* hsgResMgr::fResMgr = nullptr;
+// Currently requires Metal to query attached GPU capabilities
+// Capability check will also work for GL - but will need something
+// different for older GPUs.
+#include <AppKit/AppKit.h>
+#include <QuartzCore/QuartzCore.h>
 
-plDispatchBase* plgDispatch::Dispatch()
+#include "plPipeline/hsG3DDeviceSelector.h"
+#include "plPipeline/pl3DPipeline.h"
+
+class plMacDisplayHelper : public plDisplayHelper
 {
-    return hsgResMgr::Dispatch();
-}
+public:
+    plMacDisplayHelper();
+    
 
-bool hsgResMgr::Init(hsResMgr* m)
-{
-    hsRefCnt_SafeAssign(fResMgr, m); 
-    hsRefCnt_SafeUnRef(m);
-    if (!m->IInit())
-        return false;
-    return true; 
-}
+    CGDirectDisplayID CurrentDisplay() const { return fCurrentDisplay; }
 
-void hsgResMgr::Shutdown()
-{
-    if (fResMgr)
-    {
-        if (fResMgr->RefCnt() <= 1)
-        {
-            fResMgr->IShutdown();
-            hsRefCnt_SafeUnRef(fResMgr); 
-            fResMgr = nullptr;
-        }
-        else
-        {
-            hsRefCnt_SafeUnRef(fResMgr);
-        }
-    }
-}
+    plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
+    std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const override;
 
-plPipeResReq& plPipeResReq::Instance() 
-{ 
-    static  plPipeResReq r; 
-    return r; 
-}
+private:
+    mutable CGDirectDisplayID          fCurrentDisplay;
+    mutable plDisplayMode              fDesktopDisplayMode;
+    mutable std::vector<plDisplayMode> fDisplayModes;
+
+    void SetCurrentScreen(hsDisplayHndl screen) const;
+    // we need NSScreen to query for non rectangular screen geometry
+    void SetCurrentScreen(NSScreen* screen) const;
+};
+
+#endif /* plMacDisplayHelper_hpp */

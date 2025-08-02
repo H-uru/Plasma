@@ -92,6 +92,7 @@ if(WIN32)
 elseif(APPLE)
     list(APPEND plClient_SOURCES
         Mac-Cocoa/main.mm
+        Mac-Cocoa/plMacDisplayHelper.mm
         Mac-Cocoa/NSString+StringTheory.mm
         Mac-Cocoa/PLSKeyboardEventMonitor.mm
         Mac-Cocoa/PLSView.mm
@@ -102,6 +103,7 @@ elseif(APPLE)
     )
     list(APPEND plClient_HEADERS
         Mac-Cocoa/NSString+StringTheory.h
+        Mac-Cocoa/plMacDisplayHelper.h
         Mac-Cocoa/PLSKeyboardEventMonitor.h
         Mac-Cocoa/PLSView.h
         Mac-Cocoa/PLSLoginWindowController.h

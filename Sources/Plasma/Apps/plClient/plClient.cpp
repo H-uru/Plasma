@@ -2061,8 +2061,8 @@ void plClient::IDetectAudioVideoSettings()
     else
 #endif
     {
-        plPipeline::fDefaultPipeParams.Width = hsG3DDeviceSelector::kDefaultWidth;
-        plPipeline::fDefaultPipeParams.Height = hsG3DDeviceSelector::kDefaultHeight;
+        plPipeline::fDefaultPipeParams.Width = mode->GetWidth();
+        plPipeline::fDefaultPipeParams.Height = mode->GetHeight();
     }
 
     plPipeline::fDefaultPipeParams.Shadows = 1;
