@@ -278,34 +278,39 @@ const int kMaxProjectors = 100;
 plProfile_CreateMemCounter("Pipeline Surfaces", "Memory", MemPipelineSurfaces);
 plProfile_Extern(MemVertex);
 plProfile_Extern(MemIndex);
-plProfile_CreateCounter("Feed Triangles", "Draw", DrawFeedTriangles);
-plProfile_CreateCounter("Draw Prim Static", "Draw", DrawPrimStatic);
-plProfile_CreateMemCounter("Total Texture Size", "Draw", TotalTexSize);
-plProfile_CreateCounter("Layer Change", "Draw", LayChange);
+plProfile_Extern(DrawFeedTriangles);
+plProfile_Extern(DrawPrimStatic);
+plProfile_Extern(TotalTexSize);
+plProfile_Extern(LayChange);
 plProfile_Extern(DrawTriangles);
 plProfile_Extern(MatChange);
-
-plProfile_CreateCounterNoReset("Reload", "PipeC", PipeReload);
-
-plProfile_CreateTimer("PrepShadows", "PipeT", PrepShadows);
-plProfile_CreateTimer("PrepDrawable", "PipeT", PrepDrawable);
-plProfile_CreateTimer("  Skin", "PipeT", Skin);
-plProfile_CreateTimer("  AvSort", "PipeT", AvatarSort);
-plProfile_CreateTimer("     ClearLights", "PipeT", ClearLights);
-plProfile_CreateTimer("RenderSpan", "PipeT", RenderSpan);
-plProfile_CreateTimer("  MergeCheck", "PipeT", MergeCheck);
-plProfile_CreateTimer("  MergeSpan", "PipeT", MergeSpan);
-plProfile_CreateTimer("  SpanTransforms", "PipeT", SpanTransforms);
-plProfile_CreateTimer("  SpanFog", "PipeT", SpanFog);
-plProfile_CreateTimer("  SelectLights", "PipeT", SelectLights);
-plProfile_CreateTimer("  SelectProj", "PipeT", SelectProj);
-plProfile_CreateTimer("  CheckDyn", "PipeT", CheckDyn);
-plProfile_CreateTimer("  CheckStat", "PipeT", CheckStat);
-plProfile_CreateTimer("  RenderBuff", "PipeT", RenderBuff);
-plProfile_CreateTimer("  RenderPrim", "PipeT", RenderPrim);
-plProfile_CreateTimer("PlateMgr", "PipeT", PlateMgr);
-plProfile_CreateTimer("DebugText", "PipeT", DebugText);
-plProfile_CreateTimer("Reset", "PipeT", Reset);
+plProfile_Extern(NumSkin);
+plProfile_Extern(PipeReload);
+plProfile_Extern(PrepShadows);
+plProfile_Extern(PrepDrawable);
+plProfile_Extern(Skin);
+plProfile_Extern(ClearLights);
+plProfile_Extern(RenderSpan);
+plProfile_Extern(MergeCheck);
+plProfile_Extern(MergeSpan);
+plProfile_Extern(SpanTransforms);
+plProfile_Extern(SpanFog);
+plProfile_Extern(SelectLights);
+plProfile_Extern(SelectProj);
+plProfile_Extern(CheckDyn);
+plProfile_Extern(CheckStat);
+plProfile_Extern(RenderBuff);
+plProfile_Extern(RenderPrim);
+plProfile_Extern(PlateMgr);
+plProfile_Extern(DebugText);
+plProfile_Extern(Reset);
+plProfile_Extern(AvRTPoolUsed);
+plProfile_Extern(AvRTPoolCount);
+plProfile_Extern(AvRTPoolRes);
+plProfile_Extern(AvRTShrinkTime);
+plProfile_Extern(SpanMerge);
+plProfile_Extern(MatLightState);
+plProfile_Extern(EmptyList);
 
 plProfile_CreateMemCounter("DefMem", "PipeC", DefaultMem);
 plProfile_CreateMemCounter("ManMem", "PipeC", ManagedMem);
@@ -315,19 +320,10 @@ plProfile_CreateMemCounterReset("fTexUsed", "PipeC", fTexUsed);
 plProfile_CreateMemCounterReset("fTexManaged", "PipeC", fTexManaged);
 plProfile_CreateMemCounterReset("fVtxUsed", "PipeC", fVtxUsed);
 plProfile_CreateMemCounterReset("fVtxManaged", "PipeC", fVtxManaged);
-plProfile_CreateCounter("Merge", "PipeC", SpanMerge);
 plProfile_CreateCounter("TexNum", "PipeC", NumTex);
-plProfile_CreateCounter("LiState", "PipeC", MatLightState);
-plProfile_CreateCounter("NumSkin", "PipeC", NumSkin);
-plProfile_CreateCounter("AvatarFaces", "PipeC", AvatarFaces);
 plProfile_CreateCounter("VertexChange", "PipeC", VertexChange);
 plProfile_CreateCounter("IndexChange", "PipeC", IndexChange);
 plProfile_CreateCounter("DynVBuffs", "PipeC", DynVBuffs);
-plProfile_CreateCounter("EmptyList", "PipeC", EmptyList);
-plProfile_CreateCounter("AvRTPoolUsed", "PipeC", AvRTPoolUsed);
-plProfile_CreateCounter("AvRTPoolCount", "PipeC", AvRTPoolCount);
-plProfile_CreateCounter("AvRTPoolRes", "PipeC", AvRTPoolRes);
-plProfile_CreateCounter("AvRTShrinkTime", "PipeC", AvRTShrinkTime);
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 /// Fun inlines for keeping track of surface creation/deletion memory
@@ -478,43 +474,24 @@ void plDXPipeline::ProfilePoolMem(D3DPOOL poolType, uint32_t size, bool add, con
 // First, Declarations.
 
 // Adding a nil RenderPrim for turning off drawing
-class plRenderNilFunc : public plRenderPrimFunc
-{
-public:
-    plRenderNilFunc() {}
-
-    bool RenderPrims() const override { return false; }
-};
 static plRenderNilFunc sRenderNil;
 
-class plRenderTriListFunc : public plRenderPrimFunc
+class plDXRenderTriListFunc : public plRenderTriListFunc<IDirect3DDevice9>
 {
-protected:
-    LPDIRECT3DDEVICE9   fD3DDevice;
-    int                 fBaseVertexIndex;
-    int                 fVStart;
-    int                 fVLength;
-    int                 fIStart;
-    int                 fNumTris;
 public:
-    plRenderTriListFunc(LPDIRECT3DDEVICE9 d3dDevice, int baseVertexIndex,
+    plDXRenderTriListFunc(LPDIRECT3DDEVICE9 d3dDevice, int baseVertexIndex,
                         int vStart, int vLength, int iStart, int iNumTris)
-        : fD3DDevice(d3dDevice), fBaseVertexIndex(baseVertexIndex), fVStart(vStart), fVLength(vLength), fIStart(iStart), fNumTris(iNumTris) {}
+        : plRenderTriListFunc(d3dDevice, baseVertexIndex, vStart, vLength, iStart, iNumTris) {}
 
-    bool RenderPrims() const override;
+    bool RenderPrims() const override
+    {
+        plProfile_IncCount(DrawFeedTriangles, fNumTris);
+        plProfile_IncCount(DrawTriangles, fNumTris);
+        plProfile_Inc(DrawPrimStatic);
+
+        return FAILED( fDevice->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, fBaseVertexIndex, fVStart, fVLength, fIStart, fNumTris ) );
+    }
 };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Implementations
-
-bool plRenderTriListFunc::RenderPrims() const
-{
-    plProfile_IncCount(DrawFeedTriangles, fNumTris);
-    plProfile_IncCount(DrawTriangles, fNumTris);
-    plProfile_Inc(DrawPrimStatic);
-
-    return FAILED( fD3DDevice->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, fBaseVertexIndex, fVStart, fVLength, fIStart, fNumTris ) );
-}   
 
 //// Constructor & Destructor /////////////////////////////////////////////////
 
@@ -524,9 +501,7 @@ uint32_t plDXPipeline::fVtxUsed(0);
 uint32_t plDXPipeline::fVtxManaged(0);
 
 plDXPipeline::plDXPipeline( hsWinRef hWnd, const hsG3DDeviceModeRecord *devModeRec )
-:   pl3DPipeline(devModeRec),
-    fManagedAlloced(false),
-    fAllocUnManaged(false)
+:   pl3DPipeline(devModeRec)
 {
     hsAssert(D3DTSS_TCI_PASSTHRU == plLayerInterface::kUVWPassThru, "D3D Enum has changed. Notify graphics department.");
     hsAssert(D3DTSS_TCI_CAMERASPACENORMAL == plLayerInterface::kUVWNormal, "D3D Enum has changed. Notify graphics department.");
@@ -1732,8 +1707,8 @@ void    plDXPipeline::IReleaseDeviceObjects()
         fD3DDevice = nullptr;
     }
 
-    fManagedAlloced = false;
-    fAllocUnManaged = false;
+    fDevice.fManagedAlloced = false;
+    fDevice.fAllocUnManaged = false;
 }
 
 // IReleaseDynamicBuffers /////////////////////////////////////////////////
@@ -1826,7 +1801,7 @@ void plDXPipeline::ICreateDynamicBuffers()
     fVtxRefTime++;
 
     DWORD usage = D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC;
-    hsAssert(!fManagedAlloced, "Alloc default with managed alloc'd");
+    hsAssert(!fDevice.fManagedAlloced, "Alloc default with managed alloc'd");
     D3DPOOL poolType = D3DPOOL_DEFAULT;
     if( fDynVtxSize )
     {
@@ -1990,7 +1965,7 @@ bool plDXPipeline::IResetDevice()
             }
             fSettings.fCurrFVFFormat = 0;
             fSettings.fCurrVertexShader = nullptr;
-            fManagedAlloced = false;
+            fDevice.fManagedAlloced = false;
             ICreateDynDeviceObjects();
             IInitDeviceState();
 
@@ -2206,7 +2181,7 @@ void    plDXPipeline::Resize( uint32_t width, uint32_t height )
 
         IReleaseDynDeviceObjects();
         HRESULT hr = fD3DDevice->Reset(&fSettings.fPresentParams);
-        fManagedAlloced = false;
+        fDevice.fManagedAlloced = false;
         if( !FAILED(hr) )
         {
             ICreateDynDeviceObjects();
@@ -2350,153 +2325,6 @@ bool  plDXPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visLis
 
 
     return !visList.empty();
-}
-
-struct plSortFace
-{
-    uint16_t      fIdx[3];
-    float    fDist;
-};
-
-struct plCompSortFace
-{
-    bool operator()( const plSortFace& lhs, const plSortFace& rhs) const
-    {
-        return lhs.fDist > rhs.fDist;
-    }
-};
-
-// IAvatarSort /////////////////////////////////////////////////////////////////////////
-// We handle avatar sort differently from the rest of the face sort. The reason is that
-// within the single avatar index buffer, we want to only sort the faces of spans requesting
-// a sort, and sort them in place.
-// Contrast that with the normal scene translucency sort. There, we sort all the spans in a drawble,
-// then we sort all the faces in that drawable, then for each span in the sorted span list, we extract
-// the faces for that span appending onto the index buffer. This gives great efficiency because
-// only the visible faces are sorted and they wind up packed into the front of the index buffer, which
-// permits more batching. See plDrawableSpans::SortVisibleSpans.
-// For the avatar, it's generally the case that all the avatar is visible or not, and there is only
-// one material, so neither of those efficiencies is helpful. Moreover, for the avatar the faces we
-// want sorted are a tiny subset of the avatar's faces. Moreover, and most importantly, for the avatar, we
-// want to preserve the order that spans are drawn, so, for example, the opaque base head will always be
-// drawn before the translucent hair fringe, which will always be drawn before the pink clear plastic baseball cap.
-bool plDXPipeline::IAvatarSort(plDrawableSpans* d, const std::vector<int16_t>& visList)
-{
-    plProfile_BeginTiming(AvatarSort);
-    for (int16_t visIdx : visList)
-    {
-        hsAssert(d->GetSpan(visIdx)->fTypeMask & plSpan::kIcicleSpan, "Unknown type for sorting faces");
-
-        plIcicle* span = (plIcicle*)d->GetSpan(visIdx);
-
-        if( span->fProps & plSpan::kPartialSort )
-        {
-            hsAssert(d->GetBufferGroup(span->fGroupIdx)->AreIdxVolatile(), "Badly setup buffer group - set PartialSort too late?");
-
-            const hsPoint3 viewPos = GetViewPositionWorld();
-
-            plGBufferGroup* group = d->GetBufferGroup(span->fGroupIdx);
-
-            plDXVertexBufferRef* vRef = (plDXVertexBufferRef*)group->GetVertexBufferRef(span->fVBufferIdx); 
-
-            const uint8_t* vdata = vRef->fData;
-            const uint32_t stride = vRef->fVertexSize;
-
-            const int numTris = span->fILength/3;
-            
-            static std::vector<plSortFace> sortScratch;
-            sortScratch.resize(numTris);
-
-            plProfile_IncCount(AvatarFaces, numTris);
-
-            // 
-            // Have three very similar sorts here, differing only on where the "position" of
-            // each triangle is defined, either as the center of the triangle, the nearest
-            // point on the triangle, or the farthest point on the triangle.
-            // Having tried all three on the avatar (the only thing this sort is used on),
-            // the best results surprisingly came from using the center of the triangle.
-            uint16_t* indices = group->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
-            int j;
-            for( j = 0; j < numTris; j++ )
-            {
-#if 1 // TRICENTER
-                uint16_t idx = *indices++;
-                sortScratch[j].fIdx[0] = idx;
-                hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
-
-                idx = *indices++;
-                sortScratch[j].fIdx[1] = idx;
-                pos += *(hsPoint3*)(vdata + idx * stride);
-
-                idx = *indices++;
-                sortScratch[j].fIdx[2] = idx;
-                pos += *(hsPoint3*)(vdata + idx * stride);
-
-                pos *= 0.3333f;
-
-                sortScratch[j].fDist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-#elif 0 // NEAREST
-                uint16_t idx = *indices++;
-                sortScratch[j].fIdx[0] = idx;
-                hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
-                float dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                float minDist = dist;
-
-                idx = *indices++;
-                sortScratch[j].fIdx[1] = idx;
-                pos = *(hsPoint3*)(vdata + idx * stride);
-                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                if( dist < minDist )
-                    minDist = dist;
-
-                idx = *indices++;
-                sortScratch[j].fIdx[2] = idx;
-                pos = *(hsPoint3*)(vdata + idx * stride);
-                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                if( dist < minDist )
-                    minDist = dist;
-
-                sortScratch[j].fDist = minDist;
-#elif 1 // FURTHEST
-                uint16_t idx = *indices++;
-                sortScratch[j].fIdx[0] = idx;
-                hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
-                float dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                float maxDist = dist;
-
-                idx = *indices++;
-                sortScratch[j].fIdx[1] = idx;
-                pos = *(hsPoint3*)(vdata + idx * stride);
-                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                if( dist > maxDist )
-                    maxDist = dist;
-
-                idx = *indices++;
-                sortScratch[j].fIdx[2] = idx;
-                pos = *(hsPoint3*)(vdata + idx * stride);
-                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                if( dist > maxDist )
-                    maxDist = dist;
-
-                sortScratch[j].fDist = maxDist;
-#endif // SORTTYPES
-            }
-
-            std::sort(sortScratch.begin(), sortScratch.end(), plCompSortFace());
-
-            indices = group->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
-            for (const plSortFace& iter : sortScratch)
-            {
-                *indices++ = iter.fIdx[0];
-                *indices++ = iter.fIdx[1];
-                *indices++ = iter.fIdx[2];
-            }
-
-            group->DirtyIndexBuffer(span->fIBufferIdx);
-        }
-    }
-    plProfile_EndTiming(AvatarSort);
-    return true;
 }
 
 // PrepForRender //////////////////////////////////////////////////////////////////
@@ -2737,7 +2565,7 @@ bool plDXPipeline::ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* g
     }
     if( iRef->IsDirty()  )
     {
-        IFillIndexBufferRef(iRef, group, span->fIBufferIdx);
+        fDevice.FillIndexBufferRef(iRef, group, span->fIBufferIdx);
         iRef->SetRebuiltSinceUsed(true);
     }
 
@@ -3471,7 +3299,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
     D3DRESOURCETYPE         resType;
     plCubicRenderTarget     *cubicRT;
 
-    hsAssert(!fManagedAlloced, "Allocating non-managed resource with managed resources alloc'd");
+    hsAssert(!fDevice.fManagedAlloced, "Allocating non-managed resource with managed resources alloc'd");
 
     // If we have Shader Model 3 and support non-POT textures, let's make reflections the pipe size
     plDynamicCamMap* camMap = plDynamicCamMap::ConvertNoRef(owner);
@@ -3706,7 +3534,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
     if( !share )
         return MakeRenderTargetRef(owner);
 
-    hsAssert(!fManagedAlloced, "Allocating non-managed resource with managed resources alloc'd");
+    hsAssert(!fDevice.fManagedAlloced, "Allocating non-managed resource with managed resources alloc'd");
 
 #ifdef HS_DEBUGGING
     // Check out the validity of the match. Debug only.
@@ -3756,7 +3584,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
         else
             ref = new plDXRenderTargetRef( surfFormat, 0, owner );
 
-        hsAssert(!fManagedAlloced, "Alloc default with managed alloc'd");
+        hsAssert(!fDevice.fManagedAlloced, "Alloc default with managed alloc'd");
         if( !FAILED( fD3DDevice->CreateCubeTexture( owner->GetWidth(), 1, D3DUSAGE_RENDERTARGET, surfFormat,
                                                     D3DPOOL_DEFAULT, (IDirect3DCubeTexture9 **)&cTexture, nullptr)))
         {
@@ -3803,7 +3631,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
         else
             ref = new plDXRenderTargetRef( surfFormat, 0, owner );
 
-        hsAssert(!fManagedAlloced, "Alloc default with managed alloc'd");
+        hsAssert(!fDevice.fManagedAlloced, "Alloc default with managed alloc'd");
         if( !FAILED( fD3DDevice->CreateTexture( owner->GetWidth(), owner->GetHeight(), 1, D3DUSAGE_RENDERTARGET, surfFormat, 
                                                 D3DPOOL_DEFAULT, (IDirect3DTexture9 **)&texture, nullptr)))
         {
@@ -5309,88 +5137,6 @@ void    plDXPipeline::IBottomLayer()
 
 // Special effects /////////////////////////////////////////////////////////////
 
-// IPushOverBaseLayer /////////////////////////////////////////////////////////
-// Sets fOverBaseLayer (if any) as a wrapper on top of input layer.
-// This allows the OverBaseLayer to intercept and modify queries of
-// the real current layer's properties (e.g. color or state).
-// fOverBaseLayer is set to only get applied to the base layer during
-// multitexturing.
-// Must be matched with call to IPopOverBaseLayer.
-plLayerInterface* plDXPipeline::IPushOverBaseLayer(plLayerInterface* li)
-{
-    if( !li )
-        return nullptr;
-
-    fOverLayerStack.push_back(li);
-
-    if( !fOverBaseLayer )
-        return fOverBaseLayer = li;
-
-    fForceMatHandle = true;
-    fOverBaseLayer = fOverBaseLayer->Attach(li);
-    fOverBaseLayer->Eval(fTime, fFrame, 0);
-    return fOverBaseLayer;
-}
-
-// IPopOverBaseLayer /////////////////////////////////////////////////////////
-// Removes fOverBaseLayer as wrapper on top of input layer.
-// Should match calls to IPushOverBaseLayer.
-plLayerInterface* plDXPipeline::IPopOverBaseLayer(plLayerInterface* li)
-{
-    if( !li )
-        return nullptr;
-
-    fForceMatHandle = true;
-
-    plLayerInterface* pop = fOverLayerStack.back();
-    fOverLayerStack.pop_back();
-    fOverBaseLayer = fOverBaseLayer->Detach(pop);
-
-    return pop;
-}
-
-// IPushOverAllLayer ///////////////////////////////////////////////////
-// Push fOverAllLayer (if any) as wrapper around the input layer.
-// fOverAllLayer is set to be applied to each layer during multitexturing.
-// Must be matched by call to IPopOverAllLayer
-plLayerInterface* plDXPipeline::IPushOverAllLayer(plLayerInterface* li)
-{
-    if( !li )
-        return nullptr;
-
-    fOverLayerStack.push_back(li);
-
-    if( !fOverAllLayer )
-    {
-        fOverAllLayer = li;
-        fOverAllLayer->Eval(fTime, fFrame, 0);
-        return fOverAllLayer;
-    }
-
-    fForceMatHandle = true;
-    fOverAllLayer = fOverAllLayer->Attach(li);
-    fOverAllLayer->Eval(fTime, fFrame, 0);
-
-    return fOverAllLayer;
-}
-
-// IPopOverAllLayer //////////////////////////////////////////////////
-// Remove fOverAllLayer as wrapper on top of input layer.
-// Should match calls to IPushOverAllLayer.
-plLayerInterface* plDXPipeline::IPopOverAllLayer(plLayerInterface* li)
-{
-    if( !li )
-        return nullptr;
-
-    fForceMatHandle = true;
-
-    plLayerInterface* pop = fOverLayerStack.back();
-    fOverLayerStack.pop_back();
-    fOverAllLayer = fOverAllLayer->Detach(pop);
-
-    return pop;
-}
-
 // PiggyBacks - used in techniques like projective lighting.
 // PiggyBacks are layers appended to each drawprimitive pass.
 // For example, if a material has 3 layers which will be drawn
@@ -5879,22 +5625,18 @@ void    plDXPipeline::IHandleTextureStage( uint32_t stage, plLayerInterface *lay
 void plDXPipeline::CheckTextureRef(plLayerInterface* layer)
 {
     plBitmap* bitmap = layer->GetTexture();
-    if( bitmap )
-    {
+    if (bitmap) {
         hsGDeviceRef* ref = bitmap->GetDeviceRef();
 
-        if( !ref )
-        {
+        if (!ref) {
             plMipmap* mip = plMipmap::ConvertNoRef(bitmap);
-            if( mip )
-            {
+            if (mip) {
                 MakeTextureRef(layer, mip);
                 return;
             }
 
             plCubicEnvironmap* cubic = plCubicEnvironmap::ConvertNoRef(bitmap);
-            if( cubic )
-            {
+            if (cubic) {
                 IMakeCubicTextureRef(layer, cubic);
                 return;
             }
@@ -7257,7 +6999,7 @@ IDirect3DTexture9   *plDXPipeline::IMakeD3DTexture( plDXTextureRef *ref, D3DFORM
 {
     D3DPOOL poolType = D3DPOOL_MANAGED;
     IDirect3DTexture9   *texPtr;
-    fManagedAlloced = true;
+    fDevice.fManagedAlloced = true;
     if( FAILED( fSettings.fDXError = fD3DDevice->CreateTexture( ref->fMaxWidth, ref->fMaxHeight, 
                                           ref->fMMLvs,
                                           IGetD3DTextureUsage(ref),
@@ -7324,7 +7066,7 @@ IDirect3DCubeTexture9   *plDXPipeline::IMakeD3DCubeTexture( plDXTextureRef *ref,
 {
     D3DPOOL                 poolType = D3DPOOL_MANAGED;
     IDirect3DCubeTexture9   *texPtr = nullptr;
-    fManagedAlloced = true;
+    fDevice.fManagedAlloced = true;
     WEAK_ERROR_CHECK(fD3DDevice->CreateCubeTexture( ref->fMaxWidth, ref->fMMLvs, 0, formatType, poolType, &texPtr, nullptr));
     PROFILE_POOL_MEM(poolType, ref->fDataSize, true, ref->fOwner && ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName() : ST_LITERAL("(UnknownTexture)"));
     fTexManaged += ref->fDataSize;
@@ -7987,20 +7729,6 @@ void    plDXPipeline::IFormatTextureData( uint32_t formatType, uint32_t numPix, 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//// View Stuff ///////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-//// IIsViewLeftHanded ////////////////////////////////////////////////////////
-//  Returns true if the combination of the local2world and world2camera
-//  matrices is left-handed.
-
-bool  plDXPipeline::IIsViewLeftHanded()
-{
-    return fView.GetViewTransform().GetOrthogonal() ^ ( fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded ) ? true : false;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
 //// Transforms ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -8045,7 +7773,7 @@ void    plDXPipeline::ISetCullMode(bool flip)
     D3DCULL newCull = D3DCULL_NONE;
 
     if( !(fLayerState[0].fMiscFlags & hsGMatState::kMiscTwoSided) )
-        newCull = !IIsViewLeftHanded() ^ !flip ? D3DCULL_CW : D3DCULL_CCW;
+        newCull = !fView.IsViewLeftHanded() ^ !flip ? D3DCULL_CW : D3DCULL_CCW;
 
     if( newCull != fDevice.fCurrCullMode )
     {
@@ -8054,200 +7782,6 @@ void    plDXPipeline::ISetCullMode(bool flip)
     }
 }
 
-// ISetupVertexBufferRef /////////////////////////////////////////////////////////
-// Initialize input vertex buffer ref according to source.
-void plDXPipeline::ISetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, plDXVertexBufferRef* vRef)
-{
-    // Initialize to nullptr, in case something goes wrong.
-    vRef->fD3DBuffer = nullptr;
-
-    uint8_t format = owner->GetVertexFormat();
-
-    // All indexed skinning is currently done on CPU, so the source data
-    // will have indices, but we strip them out for the D3D buffer.
-    if( format & plGBufferGroup::kSkinIndices )
-    {
-        format &= ~(plGBufferGroup::kSkinWeightMask | plGBufferGroup::kSkinIndices);
-        format |= plGBufferGroup::kSkinNoWeights;       // Should do nothing, but just in case...
-        vRef->SetSkinned(true);
-        vRef->SetVolatile(true);
-    }
-
-    uint32_t vertSize = IGetBufferFormatSize(format); // vertex stride
-    uint32_t numVerts = owner->GetVertBufferCount(idx);
-
-    vRef->fDevice = fD3DDevice;
-
-    vRef->fOwner = owner;
-    vRef->fCount = numVerts;
-    vRef->fVertexSize = vertSize;
-    vRef->fFormat = format;
-    vRef->fRefTime = 0;
-
-    vRef->SetDirty(true);
-    vRef->SetRebuiltSinceUsed(true);
-    vRef->fData = nullptr;
-
-    vRef->SetVolatile(vRef->Volatile() || owner->AreVertsVolatile());
-
-    vRef->fIndex = idx;
-
-    owner->SetVertexBufferRef(idx, vRef);
-    hsRefCnt_SafeUnRef(vRef);
-}
-
-// ICheckStaticVertexBuffer ///////////////////////////////////////////////////////////////////////
-// Ensure a static vertex buffer has any D3D resources necessary for rendering created and filled
-// with proper vertex data.
-void plDXPipeline::ICheckStaticVertexBuffer(plDXVertexBufferRef* vRef, plGBufferGroup* owner, uint32_t idx)
-{
-    hsAssert(!vRef->Volatile(), "Creating a managed vertex buffer for a volatile buffer ref");
-
-    if( !vRef->fD3DBuffer )
-    {
-        // Okay, haven't done this one.
-
-        DWORD fvfFormat = IGetBufferD3DFormat(vRef->fFormat);
-
-    
-        D3DPOOL poolType = D3DPOOL_MANAGED;
-//      DWORD usage = D3DUSAGE_WRITEONLY;
-        DWORD usage = 0;
-        const int numVerts = vRef->fCount;
-        const int vertSize = vRef->fVertexSize;
-        fManagedAlloced = true;
-        if( FAILED( fD3DDevice->CreateVertexBuffer( numVerts * vertSize,
-                                                    usage, 
-                                                    fvfFormat,
-                                                    poolType, 
-                                                    &vRef->fD3DBuffer, nullptr)))
-        {
-            hsAssert( false, "CreateVertexBuffer() call failed!" );
-            vRef->fD3DBuffer = nullptr;
-            return;
-        }
-        PROFILE_POOL_MEM(poolType, numVerts * vertSize, true, ST_LITERAL("VtxBuff"));
-
-        // Record that we've allocated this into managed memory, in case we're
-        // fighting that NVidia driver bug. Search for OSVERSION for mor info.
-        AllocManagedVertex(numVerts * vertSize);
-
-        // Fill in the vertex data.
-        IFillStaticVertexBufferRef(vRef, owner, idx);
-
-        // This is currently a no op, but this would let the buffer know it can
-        // unload the system memory copy, since we have a managed version now.
-        owner->PurgeVertBuffer(idx);
-    }
-}
-
-// IFillStaticVertexBufferRef //////////////////////////////////////////////////
-// BufferRef is set up, just copy the data in.
-// This is uglied up hugely by the insane non-interleaved data case with cells
-// and whatever else.
-void plDXPipeline::IFillStaticVertexBufferRef(plDXVertexBufferRef *ref, plGBufferGroup *group, uint32_t idx)
-{
-    IDirect3DVertexBuffer9* vertexBuff = ref->fD3DBuffer;
-
-    if( !vertexBuff )
-    {
-        // We most likely already warned about this earlier, best to just quietly return now
-        return;
-    }
-
-    const uint32_t vertSize = ref->fVertexSize;
-    const uint32_t vertStart = group->GetVertBufferStart(idx) * vertSize;
-    const uint32_t size = group->GetVertBufferEnd(idx) * vertSize - vertStart;
-    if( !size )
-        return;
-
-    /// Lock the buffer
-    uint8_t* ptr;
-    if( FAILED( vertexBuff->Lock( vertStart, size, (void **)&ptr, group->AreVertsVolatile() ? D3DLOCK_DISCARD : 0 ) ) )
-    {
-        hsAssert( false, "Failed to lock vertex buffer for writing" );
-    }
-
-    if( ref->fData )
-    {
-        memcpy(ptr, ref->fData + vertStart, size);
-    }
-    else
-    {
-        hsAssert(0 == vertStart, "Offsets on non-interleaved data not supported");
-        hsAssert(group->GetVertBufferCount(idx) * vertSize == size, "Trailing dead space on non-interleaved data not supported");
-
-        const uint32_t vertSmallSize = group->GetVertexLiteStride() - sizeof( hsPoint3 ) * 2;
-        uint8_t* srcVPtr = group->GetVertBufferData(idx);
-        plGBufferColor* const srcCPtr = group->GetColorBufferData( idx );
-
-        const int numCells = group->GetNumCells(idx);
-        int i;
-        for( i = 0; i < numCells; i++ )
-        {
-            plGBufferCell   *cell = group->GetCell( idx, i );
-
-            if( cell->fColorStart == (uint32_t)-1 )
-            {
-                /// Interleaved, do straight copy
-                memcpy( ptr, srcVPtr + cell->fVtxStart, cell->fLength * vertSize );
-                ptr += cell->fLength * vertSize;
-            }
-            else
-            {
-                /// Separated, gotta interleave
-                uint8_t* tempVPtr = srcVPtr + cell->fVtxStart;
-                plGBufferColor* tempCPtr = srcCPtr + cell->fColorStart;
-                int j;
-                for( j = 0; j < cell->fLength; j++ )
-                {
-                    memcpy( ptr, tempVPtr, sizeof( hsPoint3 ) * 2 );
-                    ptr += sizeof( hsPoint3 ) * 2;
-                    tempVPtr += sizeof( hsPoint3 ) * 2;
-
-                    memcpy( ptr, &tempCPtr->fDiffuse, sizeof( uint32_t ) );
-                    ptr += sizeof( uint32_t );
-                    memcpy( ptr, &tempCPtr->fSpecular, sizeof( uint32_t ) );
-                    ptr += sizeof( uint32_t );
-
-                    memcpy( ptr, tempVPtr, vertSmallSize );
-                    ptr += vertSmallSize;
-                    tempVPtr += vertSmallSize;
-                    tempCPtr++;
-                }
-            }
-        }
-    }
-
-    /// Unlock and clean up
-    vertexBuff->Unlock();
-    ref->SetRebuiltSinceUsed(true);
-    ref->SetDirty(false);
-}
-
-void plDXPipeline::IFillVolatileVertexBufferRef(plDXVertexBufferRef* ref, plGBufferGroup* group, uint32_t idx)
-{
-    uint8_t* dst = ref->fData;
-    uint8_t* src = group->GetVertBufferData(idx);
-
-    size_t uvChanSize = plGBufferGroup::CalcNumUVs(group->GetVertexFormat()) * sizeof(float) * 3;
-    uint8_t numWeights = (group->GetVertexFormat() & plGBufferGroup::kSkinWeightMask) >> 4;
-
-    for (uint32_t i = 0; i < ref->fCount; ++i) {
-        inlCopy<hsPoint3>(src, dst); // pre-pos
-        src += numWeights * sizeof(float); // weights
-        if (group->GetVertexFormat() & plGBufferGroup::kSkinIndices)
-            inlSkip<uint32_t, 1>(src); // indices
-        inlCopy<hsVector3>(src, dst); // pre-normal
-        inlCopy<uint32_t>(src, dst); // diffuse
-        inlCopy<uint32_t>(src, dst); // specular
-
-        // UVWs
-        memcpy(dst, src, uvChanSize);
-        src += uvChanSize;
-        dst += uvChanSize;
-    }
-}
 
 // OpenAccess ////////////////////////////////////////////////////////////////////////////////////////
 // Lock the managed buffer and setup the accessSpan to point into the buffers data.
@@ -8360,150 +7894,6 @@ bool plDXPipeline::CloseAccess(plAccessSpan& dst)
     return true;
 }
 
-// CheckVertexBufferRef /////////////////////////////////////////////////////
-// Make sure the buffer group has a valid buffer ref and that it is up to date.
-void plDXPipeline::CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx)
-{
-    // First, do we have a device ref at this index?
-    plDXVertexBufferRef* vRef = (plDXVertexBufferRef*)owner->GetVertexBufferRef(idx);
-    // If not
-    if( !vRef )
-    {
-        // Make the blank ref
-        vRef = new plDXVertexBufferRef;
-
-        ISetupVertexBufferRef(owner, idx, vRef);
-
-    }
-    if( !vRef->IsLinked() )
-        vRef->Link( &fVtxBuffRefList );
-
-    // One way or another, we now have a vbufferref[idx] in owner.
-    // Now, does it need to be (re)filled?
-    // If the owner is volatile, then we hold off. It might not
-    // be visible, and we might need to refill it again if we
-    // have an overrun of our dynamic D3D buffer.
-    if( !vRef->Volatile() )
-    {
-        if( fAllocUnManaged )
-            return;
-
-        // If it's a static buffer, allocate a D3D vertex buffer for it. Otherwise, it'll
-        // be sharing the global D3D dynamic buffer, and marked as volatile.
-        ICheckStaticVertexBuffer(vRef, owner, idx);
-
-        // Might want to remove this assert, and replace it with a dirty check if
-        // we have static buffers that change very seldom rather than never.
-        hsAssert(!vRef->IsDirty(), "Non-volatile vertex buffers should never get dirty");
-    }
-    else
-    {
-        // Make sure we're going to be ready to fill it.
-
-        if( !vRef->fData && (vRef->fFormat != owner->GetVertexFormat()) )
-        {
-            vRef->fData = new uint8_t[vRef->fCount * vRef->fVertexSize];
-            IFillVolatileVertexBufferRef(vRef, owner, idx);
-        }
-    }
-}
-
-// CheckIndexBufferRef /////////////////////////////////////////////////////
-// Make sure the buffer group has an index buffer ref and that its data is current.
-void plDXPipeline::CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx)
-{
-    plDXIndexBufferRef* iRef = (plDXIndexBufferRef*)owner->GetIndexBufferRef(idx);
-    if( !iRef )
-    {
-        // Create one from scratch.
-
-        iRef = new plDXIndexBufferRef;
-
-        ISetupIndexBufferRef(owner, idx, iRef);
-
-    }
-    if( !iRef->IsLinked() )
-        iRef->Link(&fIdxBuffRefList);
-
-    // Make sure it has all D3D resources created.
-    ICheckIndexBuffer(iRef);
-
-    // If it's dirty, refill it.
-    if( iRef->IsDirty()  )
-        IFillIndexBufferRef(iRef, owner, idx);
-}
-
-// IFillIndexBufferRef ////////////////////////////////////////////////////////////
-// Refresh the D3D index buffer from the plasma index buffer.
-void plDXPipeline::IFillIndexBufferRef(plDXIndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx)
-{
-    uint32_t startIdx = owner->GetIndexBufferStart(idx);
-    uint32_t size = (owner->GetIndexBufferEnd(idx) - startIdx) * sizeof(uint16_t);
-    if( !size )
-        return;
-
-    DWORD lockFlags = iRef->Volatile() ? D3DLOCK_DISCARD : 0;
-    uint16_t* destPtr = nullptr;
-    if( FAILED( iRef->fD3DBuffer->Lock(startIdx * sizeof(uint16_t), size, (void **)&destPtr, lockFlags) ) )
-    {
-        hsAssert( false, "Cannot lock index buffer for writing" );
-        return;
-    }
-
-    memcpy( destPtr, owner->GetIndexBufferData(idx) + startIdx, size );
-    
-    iRef->fD3DBuffer->Unlock(); 
-
-    iRef->SetDirty( false );
-
-}
-
-// ICheckIndexBuffer ////////////////////////////////////////////////////////
-// Make sure index buffer ref has any D3D resources it needs.
-void plDXPipeline::ICheckIndexBuffer(plDXIndexBufferRef* iRef)
-{
-    if( !iRef->fD3DBuffer && iRef->fCount )
-    {
-        D3DPOOL poolType = fAllocUnManaged ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED;
-        DWORD usage = D3DUSAGE_WRITEONLY;
-        iRef->SetVolatile(false);
-        if( FAILED( fD3DDevice->CreateIndexBuffer( sizeof( uint16_t ) * iRef->fCount,
-                                                    usage, 
-                                                    D3DFMT_INDEX16, 
-                                                    poolType, 
-                                                    &iRef->fD3DBuffer, nullptr)))
-        {
-            hsAssert( false, "CreateIndexBuffer() call failed!" );
-            iRef->fD3DBuffer = nullptr;
-            return;
-        }
-        PROFILE_POOL_MEM(poolType, sizeof(uint16_t) * iRef->fCount, true, ST_LITERAL("IndexBuff"));
-
-        iRef->fPoolType = poolType;
-        iRef->SetDirty(true);
-        iRef->SetRebuiltSinceUsed(true);
-    }
-}
-
-// ISetupIndexBufferRef ////////////////////////////////////////////////////////////////
-// Initialize the index buffer ref, but don't create anything for it.
-void plDXPipeline::ISetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, plDXIndexBufferRef* iRef)
-{
-    uint32_t numIndices = owner->GetIndexBufferCount(idx);
-    iRef->fCount = numIndices;
-    iRef->fOwner = owner;
-    iRef->fIndex = idx;
-    iRef->fRefTime = 0;
-
-    iRef->SetDirty(true);
-    iRef->SetRebuiltSinceUsed(true);
-
-    owner->SetIndexBufferRef(idx, iRef);
-    hsRefCnt_SafeUnRef(iRef);
-
-    iRef->SetVolatile(owner->AreIdxVolatile());
-}
-
 //// ISoftwareVertexBlend ///////////////////////////////////////////////////////
 // Emulate matrix palette operations in software. The big difference between the hardware
 // and software versions is we only want to lock the vertex buffer once and blend all the
@@ -8611,29 +8001,6 @@ bool      plDXPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const st
     return true;
 }
 
-// IBeginAllocUnmanaged ///////////////////////////////////////////////////////////////////
-// Before allocating anything into POOL_DEFAULT, we must evict managed memory.
-// See LoadResources.
-void plDXPipeline::IBeginAllocUnManaged()
-{
-    // Flush out all managed resources to make room for unmanaged resources.
-    fD3DDevice->EvictManagedResources();
-
-    fManagedAlloced = false;
-    fAllocUnManaged = true; // we're currently only allocating POOL_DEFAULT
-}
-
-// IEndAllocUnManged.
-// Before allocating anything into POOL_DEFAULT, we must evict managed memory.
-// See LoadResources.
-void plDXPipeline::IEndAllocUnManaged()
-{
-    fAllocUnManaged = false;
-
-    // Flush the (should be empty) resource manager to reset its internal allocation pool.
-    fD3DDevice->EvictManagedResources();
-}
-
 // LoadResources ///////////////////////////////////////////////////////////////////////
 // Basically, we have to load anything that goes into POOL_DEFAULT before
 // anything into POOL_MANAGED, or the memory manager gets confused.
@@ -8653,7 +8020,7 @@ void plDXPipeline::LoadResources()
     IInitDeviceState(); // 9700 THRASH
 
     // Evict mananged memory.
-    IBeginAllocUnManaged();
+    fDevice.BeginAllocUnManaged();
 
     // Release everything we have in POOL_DEFAULT.
     IReleaseDynamicBuffers();
@@ -8677,7 +8044,7 @@ void plDXPipeline::LoadResources()
     IFillAvRTPool();
 
     // We should have everything POOL_DEFAULT we need now.
-    IEndAllocUnManaged();
+    fDevice.EndAllocUnManaged();
 
     // Force a create of all our static D3D vertex buffers.
 #define MF_PRELOAD_MANAGEDBUFFERS
@@ -9226,7 +8593,7 @@ void plDXPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
     r = fD3DDevice->SetIndices( iRef->fD3DBuffer );
     hsAssert( r == D3D_OK, "Error trying to set the indices!" );
 
-    plRenderTriListFunc render(fD3DDevice, iRef->fOffset, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength/3);
+    plDXRenderTriListFunc render(fD3DDevice, iRef->fOffset, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength/3);
 
     // Now just loop through the aux material, rendering in as many passes as it takes.
     hsGMaterial* material = aux->fMaterial;
@@ -9348,7 +8715,7 @@ void    plDXPipeline::IRenderBufferSpan( const plIcicle& span,
         iRef->SetRebuiltSinceUsed(false);
     }
 
-    plRenderTriListFunc render(fD3DDevice, iRef->fOffset, vStart, vLength, iStart, iLength/3);
+    plDXRenderTriListFunc render(fD3DDevice, iRef->fOffset, vStart, vLength, iStart, iLength/3);
 
     plProfile_EndTiming(RenderBuff);
     ILoopOverLayers(render, material, span);
@@ -9650,28 +9017,6 @@ long    plDXPipeline::IGetBufferD3DFormat( uint8_t format ) const
     return fmt;
 }
 
-//// IGetBufferFormatSize /////////////////////////////////////////////////////
-// Calculate the vertex stride from the given format.
-uint32_t  plDXPipeline::IGetBufferFormatSize( uint8_t format ) const
-{
-    uint32_t  size = sizeof( float ) * 6 + sizeof( uint32_t ) * 2; // Position and normal, and two packed colors
-
-    
-    switch( format & plGBufferGroup::kSkinWeightMask )
-    {
-        case plGBufferGroup::kSkinNoWeights: 
-            break;
-        case plGBufferGroup::kSkin1Weight:
-            size += sizeof(float);
-            break;
-        default:
-            hsAssert( false, "Invalid skin weight value in IGetBufferFormatSize()" );
-    }
-
-    size += sizeof( float ) * 3 * plGBufferGroup::CalcNumUVs( format );
-
-    return size;
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Plate and PlateManager Functions /////////////////////////////////////////
@@ -10803,7 +10148,7 @@ void plDXPipeline::IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSpans
     uint32_t                  iStart = span.fIPackedIdx;
     uint32_t                  iLength= span.fILength;
 
-    plRenderTriListFunc render(fD3DDevice, iRef->fOffset, vStart, vLength, iStart, iLength/3);
+    plDXRenderTriListFunc render(fD3DDevice, iRef->fOffset, vStart, vLength, iStart, iLength/3);
 
     static hsMatrix44 emptyMatrix;
     hsMatrix44 m = emptyMatrix;
@@ -11178,7 +10523,7 @@ bool plDXPipeline::IPopShadowCastState(plShadowSlave* slave)
 // must be created before we start creating things in POOL_MANAGED.
 void plDXPipeline::IMakeRenderTargetPools()
 {
-    hsAssert(!fManagedAlloced, "Allocating rendertargets with managed resources alloced");
+    hsAssert(!fDevice.fManagedAlloced, "Allocating rendertargets with managed resources alloced");
     IReleaseRenderTargetPools(); // Just to be sure.
 
     // Numbers of render targets to be created for each size.
@@ -11437,18 +10782,6 @@ void plDXPipeline::IPreprocessShadows()
     ISetAnisotropy(true);
 
     plProfile_EndTiming(PrepShadows);
-}
-
-// IClearShadowSlaves ///////////////////////////////////////////////////////////////////////////
-// At EndRender(), we need to clear our list of shadow slaves. They are only valid for one frame.
-void plDXPipeline::IClearShadowSlaves()
-{
-    for (plShadowSlave* shadow : fShadows)
-    {
-        const plShadowCaster* caster = shadow->fCaster;
-        caster->GetKey()->UnRefObject();
-    }
-    fShadows.clear();
 }
 
 
