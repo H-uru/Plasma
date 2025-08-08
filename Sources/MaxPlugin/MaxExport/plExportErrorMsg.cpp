@@ -129,7 +129,7 @@ void plExportErrorMsg::Quit()
 void plExportErrorMsg::IDebugThrow()
 {
     try {
-        DebugBreakIfDebuggerPresent();
+        hsDebugBreakIfDebuggerPresent();
     }
     catch(...)
     {

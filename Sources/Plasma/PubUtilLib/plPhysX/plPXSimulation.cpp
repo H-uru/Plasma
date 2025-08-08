@@ -115,12 +115,12 @@ public:
         case physx::PxErrorCode::eABORT:
             log->AddLineF(plStatusLog::kRed, "PhysX ABORT: '{}' File: {} Line: {}",
                           message, file, line);
-            ErrorAssert(line, file, "PhysX ABORT: %s", message);
+            hsDebugAssertionFailed(line, file, "PhysX ABORT: %s", message);
             break;
         case physx::PxErrorCode::eINTERNAL_ERROR:
             log->AddLineF(plStatusLog::kRed, "PhysX INTERNAL ERROR: '{}' File: {} Line: {}",
                           message, file, line);
-            ErrorAssert(line, file, "PhysX INTERNAL ERROR: %s", message);
+            hsDebugAssertionFailed(line, file, "PhysX INTERNAL ERROR: %s", message);
             break;
         case physx::PxErrorCode::eINVALID_OPERATION:
             log->AddLineF(plStatusLog::kRed, "PhysX INVALID OPERATION: '{}' File: {} Line: {}",

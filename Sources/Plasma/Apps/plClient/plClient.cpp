@@ -1569,7 +1569,7 @@ bool plClient::MainLoop()
 #endif
 
 #ifdef PLASMA_EXTERNAL_RELEASE
-    if (DebugIsDebuggerPresent())
+    if (hsDebugIsDebuggerPresent())
     {
         NetCliAuthLogClientDebuggerConnect();
         SetDone(true);

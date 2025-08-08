@@ -67,15 +67,15 @@ struct _RefCountLeakCheck
     {
         hsLockGuard(m_mutex);
 
-        DebugMsg(ST::format("Refs tracked:  {} created, {} destroyed\n",
-                            m_added, m_removed).c_str());
+        hsDebugPrintToTerminal(ST::format("Refs tracked:  {} created, {} destroyed\n",
+                                          m_added, m_removed).c_str());
         if (m_refs.empty())
             return;
 
-        DebugMsg(ST::format("    {} objects leaked...\n", m_refs.size()).c_str());
+        hsDebugPrintToTerminal(ST::format("    {} objects leaked...\n", m_refs.size()).c_str());
         for (hsRefCnt *ref : m_refs) {
-            DebugMsg(ST::format("    {#08x} {}: {} refs remain\n",
-                                (uintptr_t)ref, typeid(*ref).name(), ref->RefCnt()).c_str());
+            hsDebugPrintToTerminal(ST::format("    {#08x} {}: {} refs remain\n",
+                                              (uintptr_t)ref, typeid(*ref).name(), ref->RefCnt()).c_str());
         }
     }
 
@@ -130,9 +130,9 @@ void hsRefCnt::UnRef(const char* tag)
 
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     if (tag)
-        DebugMsg("Dec %p %s: %u", this, tag, fRefCnt - 1);
+        hsDebugPrintToTerminal("Dec %p %s: %u", this, tag, fRefCnt - 1);
     else
-        DebugMsg("Dec %p: %u", this, fRefCnt - 1);
+        hsDebugPrintToTerminal("Dec %p: %u", this, fRefCnt - 1);
 #endif
 
     if (fRefCnt == 1)   // don't decrement if we call delete
@@ -145,9 +145,9 @@ void hsRefCnt::Ref(const char* tag)
 {
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     if (tag)
-        DebugMsg("Inc %p %s: %u", this, tag, fRefCnt + 1);
+        hsDebugPrintToTerminal("Inc %p %s: %u", this, tag, fRefCnt + 1);
     else
-        DebugMsg("Inc %p: %u", this, fRefCnt + 1);
+        hsDebugPrintToTerminal("Inc %p: %u", this, fRefCnt + 1);
 #endif
 
     ++fRefCnt;
@@ -156,7 +156,7 @@ void hsRefCnt::Ref(const char* tag)
 void hsRefCnt::TransferRef(const char* oldTag, const char* newTag)
 {
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
-    DebugMsg("Inc %p %s: (xfer)", this, newTag);
-    DebugMsg("Dec %p %s: (xfer)", this, oldTag);
+    hsDebugPrintToTerminal("Inc %p %s: (xfer)", this, newTag);
+    hsDebugPrintToTerminal("Dec %p %s: (xfer)", this, oldTag);
 #endif
 }
