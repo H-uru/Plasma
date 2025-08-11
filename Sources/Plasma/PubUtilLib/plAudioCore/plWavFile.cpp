@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static inline HRESULT DXTrace(const TCHAR* msg, const char* file, int line, HRESULT hr)
 {
     ST::string error = ST::format("Error Calling: {}\n{}", msg, (hsCOMError)hr);
-    ErrorAssert(line, file, error.c_str());
+    hsDebugAssertionFailed(line, file, error.c_str());
     return hr;
 }
 

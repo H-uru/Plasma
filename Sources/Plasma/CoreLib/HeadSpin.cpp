@@ -112,7 +112,7 @@ void hsDebugMessage (const char* message, long val)
 #endif
 
 static bool s_GuiAsserts = true;
-void ErrorEnableGui(bool enabled)
+void hsDebugEnableGuiAsserts(bool enabled)
 {
     s_GuiAsserts = enabled;
 }
@@ -120,7 +120,7 @@ void ErrorEnableGui(bool enabled)
 #if !defined(HS_DEBUGGING)
 [[noreturn]]
 #endif // defined(HS_DEBUGGING)
-void ErrorAssert(int line, const char* file, const char* fmt, ...)
+void hsDebugAssertionFailed(int line, const char* file, const char* fmt, ...)
 {
 #if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
     char msg[1024];
@@ -133,22 +133,21 @@ void ErrorAssert(int line, const char* file, const char* fmt, ...)
     if (s_GuiAsserts)
     {
         if (_CrtDbgReport(_CRT_ASSERT, file, line, nullptr, msg))
-            DebugBreakAlways();
+            hsDebugBreakAlways();
 
         // All handling was done by the GUI, so bail.
         return;
     } else
 #endif // _MSC_VER
     {
-        DebugMsg("-------\nASSERTION FAILED:\nFile: %s   Line: %i\nMessage: %s\n-------",
-                 file, line, msg);
+        hsDebugPrintToTerminal("-------\nASSERTION FAILED:\nFile: %s   Line: %i\nMessage: %s\n-------", file, line, msg);
         fflush(stderr);
 
-        DebugBreakAlways();
+        hsDebugBreakAlways();
     }
 #endif // HS_DEBUGGING
 #else
-    DebugBreakIfDebuggerPresent();
+    hsDebugBreakIfDebuggerPresent();
 #endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
 
     // If no debugger break occurred, just crash.
@@ -157,7 +156,7 @@ void ErrorAssert(int line, const char* file, const char* fmt, ...)
 #endif // defined(HS_DEBUGGING)
 }
 
-bool DebugIsDebuggerPresent()
+bool hsDebugIsDebuggerPresent()
 {
 #if defined(HS_BUILD_FOR_WIN32)
     return IsDebuggerPresent();
@@ -186,7 +185,7 @@ bool DebugIsDebuggerPresent()
 #endif
 }
 
-void DebugBreakIfDebuggerPresent()
+void hsDebugBreakIfDebuggerPresent()
 {
 #if defined(_MSC_VER)
     __try
@@ -197,14 +196,14 @@ void DebugBreakIfDebuggerPresent()
         // Whatever. Don't crash here.
     }
 #elif defined(HS_BUILD_FOR_UNIX)
-    if (DebugIsDebuggerPresent())
+    if (hsDebugIsDebuggerPresent())
         raise(SIGTRAP);
 #else
     // FIXME
 #endif // _MSC_VER
 }
 
-void DebugBreakAlways()
+void hsDebugBreakAlways()
 {
 #if defined(_MSC_VER)
     DebugBreak();
@@ -216,7 +215,7 @@ void DebugBreakAlways()
 #endif // _MSC_VER
 }
 
-void DebugMsg(const char* fmt, ...)
+void hsDebugPrintToTerminal(const char* fmt, ...)
 {
     char msg[1024];
     va_list args;
@@ -226,7 +225,7 @@ void DebugMsg(const char* fmt, ...)
     fprintf(stderr, "%s\n", msg);
 
 #ifdef _MSC_VER
-    if (DebugIsDebuggerPresent())
+    if (hsDebugIsDebuggerPresent())
     {
         // Also print to the MSVC Output window
         OutputDebugStringA(msg);

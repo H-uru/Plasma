@@ -125,7 +125,7 @@ NetTrans::NetTrans (ENetProtocol protocol, ETransType transType)
 {
     ++s_perf[kPerfCurrTransactions];
     ++s_perfTransCount[m_transType];
-//  DebugMsg("%s@%p created", s_transTypes[m_transType], this);
+//  hsDebugPrintToTerminal("%s@%p created", s_transTypes[m_transType], this);
 }
 
 //============================================================================
@@ -141,7 +141,7 @@ NetTrans::~NetTrans () {
 #endif
     --s_perfTransCount[m_transType];
     --s_perf[kPerfCurrTransactions];
-//  DebugMsg("%s@%p destroyed", s_transTypes[m_transType], this);
+//  hsDebugPrintToTerminal("%s@%p destroyed", s_transTypes[m_transType], this);
 }
 
 //============================================================================
