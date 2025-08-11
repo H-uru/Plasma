@@ -447,10 +447,7 @@ uint32_t hsUNIXStream::Read(uint32_t bytes,  void* buffer)
     fPosition += numItems;
     if (numItems < bytes)
     {
-        if (!feof(fRef))
-        {
-            hsDebugMessage("Error on UNIX Read", ferror(fRef));
-        }
+        hsAssert(feof(fRef), ST::format("Error on UNIX Read (ferror = {})", ferror(fRef)).c_str());
     }
     return numItems;
 }

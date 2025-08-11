@@ -50,18 +50,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void hsThread::Start()
 {
-    if (!fThread.joinable()) {
-        fThread = std::thread([this]() {
-            hsThread::SetThisThreadName(ST_LITERAL("hsNoNameThread"));
+    hsAssert(!fThread.joinable(), "Calling hsThread::Start() more than once");
+
+    fThread = std::thread([this]() {
+        hsThread::SetThisThreadName(ST_LITERAL("hsNoNameThread"));
 #ifdef USE_VLD
-            // Needs to be enabled for each thread except the WinMain
-            VLDEnable();
+        // Needs to be enabled for each thread except the WinMain
+        VLDEnable();
 #endif
-            Run();
-            OnQuit();
-        });
-    } else
-        hsDebugMessage("Calling hsThread::Start() more than once", 0);
+        Run();
+        OnQuit();
+    });
 }
 
 void hsThread::Stop()
