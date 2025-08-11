@@ -308,9 +308,6 @@ constexpr float hsInvert(float a) { return 1.f / a; }
 /************************ Debug/Error Macros **************************/
 
 typedef void (*hsDebugMessageProc)(const char message[]);
-extern hsDebugMessageProc gHSDebugProc;
-#define HSDebugProc(m)  { if (gHSDebugProc) gHSDebugProc(m); }
-hsDebugMessageProc hsSetDebugMessageProc(hsDebugMessageProc newProc);
 
 extern hsDebugMessageProc gHSStatusProc;
 hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc);
@@ -328,7 +325,7 @@ void hsDebugBreakAlways();
 
 /**
  * Print a message to stderr (and to the Windows debugger output, if on Windows with a debugger attached).
- * This function's output is never redirected to a log file (unlike hsStatusMessage and hsDebugMessage).
+ * This function's output is never redirected to a log file (unlike hsStatusMessage).
  *
  * Be aware that this function's output is impossible to see for the average player/tester.
  * Prefer using other logging functions instead.
@@ -342,16 +339,12 @@ void hsDebugPrintToTerminal(const char* fmt, ...);
 
 #ifdef HS_DEBUGGING
     
-    void    hsDebugMessage(const char* message, long refcon);
-    #define hsIfDebugMessage(expr, msg, ref)    (void)( (!!(expr)) || (hsDebugMessage(msg, ref), 0) )
     #define hsAssert(expr, ...)                 (void)( (!!(expr)) || (hsDebugAssertionFailed(__LINE__, __FILE__, __VA_ARGS__), 0) )
     #define ASSERT(expr)                        (void)( (!!(expr)) || (hsDebugAssertionFailed(__LINE__, __FILE__, #expr), 0) )
     #define FATAL(...)                          hsDebugAssertionFailed(__LINE__, __FILE__, __VA_ARGS__)
     
 #else   /* Not debugging */
 
-    #define hsDebugMessage(message, refcon)     ((void)0)
-    #define hsIfDebugMessage(expr, msg, ref)    ((void)0)
     #define hsAssert(expr, ...)                 ((void)0)
     #define ASSERT(expr)                        ((void)0)
     #define FATAL(...)                          ((void)0)

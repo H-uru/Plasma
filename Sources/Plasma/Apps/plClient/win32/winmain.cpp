@@ -473,12 +473,6 @@ void DeInitNetClientComm()
 // For error logging
 //
 static plStatusLog* s_DebugLog = nullptr;
-static void _DebugMessageProc(const char* msg)
-{
-#if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
-    s_DebugLog->AddLine(plStatusLog::kRed, msg);
-#endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
-}
 
 static void _StatusMessageProc(const char* msg)
 {
@@ -501,7 +495,6 @@ static void DebugInit()
     plStatusLogMgr& mgr = plStatusLogMgr::GetInstance();
     s_DebugLog = mgr.CreateStatusLog(30, "plasmadbg.log", plStatusLog::kFilledBackground |
                  plStatusLog::kDeleteForMe | plStatusLog::kAlignToTop | plStatusLog::kTimestamp);
-    hsSetDebugMessageProc(_DebugMessageProc);
     hsSetStatusMessageProc(_StatusMessageProc);
 #endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
 }
@@ -1194,7 +1187,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     }
 #endif
 
-    // Set up to log errors by using hsDebugMessage
+    // Redirect hsStatusMessage to plasmadbg.log
     DebugInit();
     DebugMsg("Plasma 2.0.{}.{} - {}", PLASMA2_MAJOR_VERSION, PLASMA2_MINOR_VERSION, plProduct::ProductString());
 
