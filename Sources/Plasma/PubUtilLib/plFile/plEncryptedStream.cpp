@@ -175,9 +175,9 @@ uint32_t plEncryptedStream::IRead(uint32_t bytes, void* buffer)
 {
     if (!fRef)
         return 0;
-    int numItems = (int)(::fread(buffer, 1 /*size*/, bytes /*count*/, fRef));
+    size_t numItems = fread(buffer, 1 /*size*/, bytes /*count*/, fRef);
     fPosition += numItems;
-    if ((unsigned)numItems < bytes) {
+    if (numItems < bytes) {
         if (feof(fRef)) {
             hsAssert(false, ST::format("Hit EOF on UNIX Read, only read {} out of requested {} bytes", numItems, bytes).c_str());
         } else {

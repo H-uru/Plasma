@@ -284,15 +284,17 @@ uint32_t plSecureStream::IRead(uint32_t bytes, void* buffer)
 {
     if (fRef == INVALID_HANDLE_VALUE)
         return 0;
-    uint32_t numItems = 0;
+    size_t numItems = 0;
 #if HS_BUILD_FOR_WIN32
-    bool success = (ReadFile(fRef, buffer, bytes, (LPDWORD)&numItems, nullptr) != 0);
+    DWORD numItemsDword = 0;
+    bool success = ReadFile(fRef, buffer, bytes, &numItemsDword, nullptr);
+    numItems = numItemsDword;
 #elif HS_BUILD_FOR_UNIX
     numItems = fread(buffer, bytes, 1, fRef);
     bool success = numItems != 0;
 #endif
     fPosition += numItems;
-    if ((unsigned)numItems < bytes)
+    if (numItems < bytes)
     {
         if (success)
         {
