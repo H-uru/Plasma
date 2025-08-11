@@ -61,11 +61,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////////////////////////////////
 /////////////////// For Status Messages ///////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-hsDebugMessageProc gHSStatusProc = nullptr;
+hsStatusMessageProc gHSStatusProc = nullptr;
 
-hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc)
+hsStatusMessageProc hsSetStatusMessageProc(hsStatusMessageProc newProc)
 {
-    hsDebugMessageProc oldProc = gHSStatusProc;
+    hsStatusMessageProc oldProc = gHSStatusProc;
 
     gHSStatusProc = newProc;
 

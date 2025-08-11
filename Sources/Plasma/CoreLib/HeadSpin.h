@@ -307,10 +307,10 @@ constexpr float hsInvert(float a) { return 1.f / a; }
 
 /************************ Debug/Error Macros **************************/
 
-typedef void (*hsDebugMessageProc)(const char message[]);
+typedef void (*hsStatusMessageProc)(const char message[]);
 
-extern hsDebugMessageProc gHSStatusProc;
-hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc);
+extern hsStatusMessageProc gHSStatusProc;
+hsStatusMessageProc hsSetStatusMessageProc(hsStatusMessageProc newProc);
 
 void hsDebugEnableGuiAsserts(bool enabled);
 
