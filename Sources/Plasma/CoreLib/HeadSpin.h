@@ -262,14 +262,6 @@ template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
 ***/
 #define IS_POW2(val) (!((val) & ((val) - 1)))
 
-#ifdef PLASMA_EXTERNAL_RELEASE
-#   define hsStatusMessage(x)                  ((void)0)
-#   define hsStatusMessageF(x, ...)            ((void)0)
-#else
-    void    hsStatusMessage(const char* message);
-    void    hsStatusMessageF(const char * fmt, ...);
-#endif // PLASMA_EXTERNAL_RELEASE
-
 // Use "correct" non-standard string functions based on the
 // selected compiler / library
 #if HS_BUILD_FOR_WIN32
@@ -306,11 +298,6 @@ constexpr float hsRadiansToDegrees(float rad) { return rad * (180.f / hsConstant
 constexpr float hsInvert(float a) { return 1.f / a; }
 
 /************************ Debug/Error Macros **************************/
-
-typedef void (*hsStatusMessageProc)(const char message[]);
-
-extern hsStatusMessageProc gHSStatusProc;
-hsStatusMessageProc hsSetStatusMessageProc(hsStatusMessageProc newProc);
 
 void hsDebugEnableGuiAsserts(bool enabled);
 
@@ -359,6 +346,19 @@ void hsDebugPrintToTerminal(const char* fmt, ...);
 #else
 #define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); break;
 #endif
+
+typedef void (*hsStatusMessageProc)(const char message[]);
+
+extern hsStatusMessageProc gHSStatusProc;
+hsStatusMessageProc hsSetStatusMessageProc(hsStatusMessageProc newProc);
+
+#ifdef PLASMA_EXTERNAL_RELEASE
+#   define hsStatusMessage(x) ((void)0)
+#   define hsStatusMessageF(x, ...) ((void)0)
+#else
+    void hsStatusMessage(const char* message);
+    void hsStatusMessageF(const char* fmt, ...);
+#endif // PLASMA_EXTERNAL_RELEASE
 
 #if defined(__clang__) || defined(__GNUC__)
 #   define _COMPILER_WARNING_NAME(warning) "-W" warning

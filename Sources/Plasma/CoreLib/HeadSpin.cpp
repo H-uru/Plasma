@@ -58,20 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_theory/format>
 
 
-///////////////////////////////////////////////////////////////////////////
-/////////////////// For Status Messages ///////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-hsStatusMessageProc gHSStatusProc = nullptr;
-
-hsStatusMessageProc hsSetStatusMessageProc(hsStatusMessageProc newProc)
-{
-    hsStatusMessageProc oldProc = gHSStatusProc;
-
-    gHSStatusProc = newProc;
-
-    return oldProc;
-}
-
 //////////////////////////////////////////////////////////////////////////
 
 static bool s_GuiAsserts = true;
@@ -198,6 +184,17 @@ void hsDebugPrintToTerminal(const char* fmt, ...)
 }
 
 ////////////////////////////////////////////////////////////////////////////
+
+hsStatusMessageProc gHSStatusProc = nullptr;
+
+hsStatusMessageProc hsSetStatusMessageProc(hsStatusMessageProc newProc)
+{
+    hsStatusMessageProc oldProc = gHSStatusProc;
+
+    gHSStatusProc = newProc;
+
+    return oldProc;
+}
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 
