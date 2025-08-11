@@ -1347,7 +1347,7 @@ bool plDXPipeline::ICreateDevice(bool windowed)
 #ifdef DBG_WRITE_FORMATS
     for (D3DFORMAT fmt : fCurrentMode->fDepthFormats)
     {
-        hsDebugMessage(ST::format("-- Valid depth buffer format: {}", IGetDXFormatName(fmt)).c_str(), 0);
+        hsStatusMessage(ST::format("-- Valid depth buffer format: {}", IGetDXFormatName(fmt)).c_str());
     }
 #endif
 
@@ -1381,13 +1381,13 @@ bool plDXPipeline::ICreateDevice(bool windowed)
         fSettings.fD3DCaps &= ~kCapsZBias;
 
 #ifdef DBG_WRITE_FORMATS
-    hsDebugMessage(ST::format("-- Requesting depth buffer format: {}", IGetDXFormatName(params.AutoDepthStencilFormat)).c_str(), 0);
+    hsStatusMessage(ST::format("-- Requesting depth buffer format: {}", IGetDXFormatName(params.AutoDepthStencilFormat)).c_str());
 #endif
 
 
     params.BackBufferFormat = dispMode.Format;
 #ifdef DBG_WRITE_FORMATS
-    hsDebugMessage(ST::format("-- Requesting back buffer format: {}", IGetDXFormatName(params.BackBufferFormat)).c_str(), 0);
+    hsStatusMessage(ST::format("-- Requesting back buffer format: {}", IGetDXFormatName(params.BackBufferFormat)).c_str());
 #endif
 
     params.hDeviceWindow = fDevice.fHWnd;
