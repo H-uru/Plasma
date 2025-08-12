@@ -50,6 +50,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #import <QuartzCore/QuartzCore.h>
 
+#if defined(HS_BUILD_FOR_MACOS) && MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+#import <IOKit/pwr_mgt/IOPMLib.h>
+#endif
+
 // Cocoa client
 #import "NSString+StringTheory.h"
 #import "PLSKeyboardEventMonitor.h"
@@ -65,6 +69,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <unordered_set>
 
 // Plasma engine
+#include "hsDarwin.h"
 #include "plClient/plClient.h"
 #include "plClient/plClientLoader.h"
 #include "plCmdParser.h"
@@ -99,6 +104,80 @@ bool NeedsResolutionUpdate = false;
 
 std::vector<ST::string> args;
 
+struct PLSWakeLockHolder {
+private:
+#if !defined(HS_BUILD_FOR_MACOS) || MAC_OS_X_VERSION_MAX_ALLOWED >= 1090
+    id<NSObject> fActivity;
+#endif
+#if defined(HS_BUILD_FOR_MACOS) && MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+    IOPMAssertionID fAssertionID;
+#endif
+
+public:
+    PLSWakeLockHolder() {
+#if !defined(HS_BUILD_FOR_MACOS) || MAC_OS_X_VERSION_MAX_ALLOWED >= 1090
+        fActivity = nullptr;
+#endif
+#if defined(HS_BUILD_FOR_MACOS) && MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+        fAssertionID = 0;
+#endif
+    }
+
+    void startUserActivity() {
+#if !defined(HS_BUILD_FOR_MACOS) || MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+        fActivity = [[NSProcessInfo processInfo]
+                        beginActivityWithOptions:(NSActivityUserInitiated | NSActivityIdleDisplaySleepDisabled | NSActivityBackground)
+                                          reason:NSStringCreateWithSTString(plProduct::LongName())];
+#else
+#   if MAC_OS_X_VERSION_MAX_ALLOWED >= 1090 && defined(HAVE_BUILTIN_AVAILABLE)
+        if (__builtin_available(macOS 10.9, *)) {
+            fActivity = [[NSProcessInfo processInfo]
+                            beginActivityWithOptions:(NSActivityUserInitiated | NSActivityIdleDisplaySleepDisabled | NSActivityBackground)
+                                              reason:NSStringCreateWithSTString(plProduct::LongName())];
+        }
+        else
+#   endif
+        {
+#   if MAC_OS_X_VERSION_MAX_ALLOWED >= 1070
+#       if MAC_OS_X_VERSION_MIN_REQUIRED < 1070 && defined(HAVE_BUILTIN_AVAILABLE)
+            if (__builtin_available(macOS 10.7, *))
+#       endif
+                IOReturn result = IOPMAssertionCreateWithName(kIOPMAssertionTypePreventUserIdleDisplaySleep, kIOPMAssertionLevelOn, CFStringCreateWithSTString(plProduct::LongName()), &fAssertionID);
+#       if MAC_OS_X_VERSION_MIN_REQUIRED < 1070 && defined(HAVE_BUILTIN_AVAILABLE)
+            else
+#       endif
+#   endif
+#   if MAC_OS_X_VERSION_MIN_REQUIRED < 1070
+                IOReturn result = IOPMAssertionCreate(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, &fAssertionID);
+#   endif
+
+            if (result != kIOReturnSuccess) {
+                hsStatusMessage("Failed to acquire idle prevention assertion");
+            }
+        }
+#endif
+    }
+
+    void endUserActivity() {
+#if !defined(HS_BUILD_FOR_MACOS) || MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+        [[NSProcessInfo processInfo] endActivity:fActivity];
+        fActivity = nullptr;
+#else
+#   if MAC_OS_X_VERSION_MAX_ALLOWED >= 1090 && defined(HAVE_BUILTIN_AVAILABLE)
+        if (__builtin_available(macOS 10.9, *)) {
+            [[NSProcessInfo processInfo] endActivity:fActivity];
+            fActivity = nullptr;
+        }
+        else
+#   endif
+        {
+            IOPMAssertionRelease(fAssertionID);
+            fAssertionID = 0;
+        }
+#endif
+    }
+};
+
 @interface AppDelegate : NSWindowController <NSApplicationDelegate,
                                              NSWindowDelegate,
                                              PLSViewDelegate,
@@ -109,6 +188,7 @@ std::vector<ST::string> args;
     plClientLoader      gClient;
     dispatch_source_t   _displaySource;
     plMacDisplayHelper* _displayHelper;
+    PLSWakeLockHolder   _wakeLockHolder;
 }
 
 @property(retain) PLSKeyboardEventMonitor* eventMonitor;
@@ -532,6 +612,8 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     ((PLSView*)self.window.contentView).inputManager = gClient->GetInputManager();
     [self.window makeFirstResponder:self.window.contentView];
 
+    _wakeLockHolder.startUserActivity();
+
     // Main loop
     if (gClient && !gClient->GetDone()) {
         [self startRunLoop];
@@ -575,6 +657,8 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
         }
         NetCommShutdown();
     }
+
+    _wakeLockHolder.endUserActivity();
     return NSTerminateNow;
 }
 
