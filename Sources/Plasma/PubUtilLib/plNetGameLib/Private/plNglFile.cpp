@@ -694,7 +694,7 @@ void CliFileConn::Dispatch (Cli2File_MsgHeader * msg) {
         DISPATCH(BuildIdUpdate);
         DISPATCH(ManifestReply);
         DISPATCH(FileDownloadReply);
-        DEFAULT_FATAL(msg->messageId)
+        DEFAULT_FATAL(msg->messageId);
     }
 #undef DISPATCH
 }

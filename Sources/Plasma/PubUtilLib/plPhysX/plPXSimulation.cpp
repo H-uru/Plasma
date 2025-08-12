@@ -138,7 +138,7 @@ public:
             log->AddLineF(plStatusLog::kYellow, "PhysX WARNING: '{}' File: {} Line: {}",
                           message, file, line);
             break;
-        DEFAULT_FATAL(PxErrorCode)
+        DEFAULT_FATAL(PxErrorCode);
         }
     }
 } static gPxErrorCallback;

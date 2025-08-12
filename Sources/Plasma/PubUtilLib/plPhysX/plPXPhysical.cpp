@@ -283,7 +283,7 @@ bool plPXPhysical::InitActor()
     }
     break;
 
-    DEFAULT_FATAL(fBounds)
+    DEFAULT_FATAL(fBounds);
     }
 
     fActor->userData = new plPXActorData(this);
@@ -735,7 +735,7 @@ plDrawableSpans* plPXPhysical::CreateProxy(hsGMaterial* mat, std::vector<uint32_
         return IGenerateProxy(addTo, idx, shape, geometry, l2w, mat, blended);
     }
 
-    DEFAULT_FATAL(shape->getGeometryType())
+    DEFAULT_FATAL(shape->getGeometryType());
     }
 
     return myDraw;
