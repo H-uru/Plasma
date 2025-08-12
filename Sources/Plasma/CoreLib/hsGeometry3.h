@@ -196,7 +196,7 @@ struct hsVector3 : public hsScalarTriple {
     void Normalize()
     {
         float length = this->Magnitude();
-        // hsIfDebugMessage(length == 0, "Err: Normalizing hsVector3 of length 0", 0);
+        // hsAssert(length == 0, "Err: Normalizing hsVector3 of length 0");
         if (length == 0)
             return;
         float invMag = hsInvert(length);
@@ -209,7 +209,7 @@ struct hsVector3 : public hsScalarTriple {
     inline void Renormalize() // if the vector is already close to unit length
     {
         float mag2 = *this * *this;
-        hsIfDebugMessage(mag2 == 0, "Err: Renormalizing hsVector3 of length 0", 0);
+        hsAssert(mag2 == 0, "Err: Renormalizing hsVector3 of length 0");
         if (mag2 == 0)
             return;
         float invMag = hsInvSqrt(mag2);

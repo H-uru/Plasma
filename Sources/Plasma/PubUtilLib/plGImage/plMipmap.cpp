@@ -749,9 +749,7 @@ void    plMipmap::SetConfig( unsigned config )
             fSpace  = kGraySpace;
             fFlags  = kNoFlag;
             break;
-        default:
-            hsDebugMessage( "unknown config", config );
-            break;
+        DEFAULT_FATAL(config);
     }
 }
 

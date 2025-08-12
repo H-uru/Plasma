@@ -58,58 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_theory/format>
 
 
-///////////////////////////////////////////////////////////////////////////
-/////////////////// For Status Messages ///////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-hsDebugMessageProc gHSStatusProc = nullptr;
-
-hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc)
-{
-    hsDebugMessageProc oldProc = gHSStatusProc;
-
-    gHSStatusProc = newProc;
-
-    return oldProc;
-}
-
 //////////////////////////////////////////////////////////////////////////
-
-hsDebugMessageProc gHSDebugProc = nullptr;
-
-hsDebugMessageProc hsSetDebugMessageProc(hsDebugMessageProc newProc)
-{
-    hsDebugMessageProc oldProc = gHSDebugProc;
-
-    gHSDebugProc = newProc;
-
-    return oldProc;
-}
-
-#ifdef HS_DEBUGGING
-void hsDebugMessage (const char* message, long val)
-{
-    char    s[1024];
-
-    if (val)
-        s[0] = snprintf(&s[1], 1022, "%s: %ld", message, val);
-    else
-        s[0] = snprintf(&s[1], 1022, "%s", message);
-
-    if (gHSDebugProc)
-        gHSDebugProc(&s[1]);
-    else
-#if HS_BUILD_FOR_WIN32
-    {
-        OutputDebugString(&s[1]);
-        OutputDebugString("\n");
-    }
-#else
-    {
-        fprintf(stderr, "%s\n", &s[1]);
-    }
-#endif
-}
-#endif
 
 static bool s_GuiAsserts = true;
 void hsDebugEnableGuiAsserts(bool enabled)
@@ -235,6 +184,17 @@ void hsDebugPrintToTerminal(const char* fmt, ...)
 }
 
 ////////////////////////////////////////////////////////////////////////////
+
+hsStatusMessageProc gHSStatusProc = nullptr;
+
+hsStatusMessageProc hsSetStatusMessageProc(hsStatusMessageProc newProc)
+{
+    hsStatusMessageProc oldProc = gHSStatusProc;
+
+    gHSStatusProc = newProc;
+
+    return oldProc;
+}
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 

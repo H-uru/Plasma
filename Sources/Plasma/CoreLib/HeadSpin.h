@@ -262,14 +262,6 @@ template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
 ***/
 #define IS_POW2(val) (!((val) & ((val) - 1)))
 
-#ifdef PLASMA_EXTERNAL_RELEASE
-#   define hsStatusMessage(x)                  ((void)0)
-#   define hsStatusMessageF(x, ...)            ((void)0)
-#else
-    void    hsStatusMessage(const char* message);
-    void    hsStatusMessageF(const char * fmt, ...);
-#endif // PLASMA_EXTERNAL_RELEASE
-
 // Use "correct" non-standard string functions based on the
 // selected compiler / library
 #if HS_BUILD_FOR_WIN32
@@ -307,14 +299,6 @@ constexpr float hsInvert(float a) { return 1.f / a; }
 
 /************************ Debug/Error Macros **************************/
 
-typedef void (*hsDebugMessageProc)(const char message[]);
-extern hsDebugMessageProc gHSDebugProc;
-#define HSDebugProc(m)  { if (gHSDebugProc) gHSDebugProc(m); }
-hsDebugMessageProc hsSetDebugMessageProc(hsDebugMessageProc newProc);
-
-extern hsDebugMessageProc gHSStatusProc;
-hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc);
-
 void hsDebugEnableGuiAsserts(bool enabled);
 
 #ifndef HS_DEBUGGING
@@ -328,7 +312,7 @@ void hsDebugBreakAlways();
 
 /**
  * Print a message to stderr (and to the Windows debugger output, if on Windows with a debugger attached).
- * This function's output is never redirected to a log file (unlike hsStatusMessage and hsDebugMessage).
+ * This function's output is never redirected to a log file (unlike hsStatusMessage).
  *
  * Be aware that this function's output is impossible to see for the average player/tester.
  * Prefer using other logging functions instead.
@@ -342,16 +326,12 @@ void hsDebugPrintToTerminal(const char* fmt, ...);
 
 #ifdef HS_DEBUGGING
     
-    void    hsDebugMessage(const char* message, long refcon);
-    #define hsIfDebugMessage(expr, msg, ref)    (void)( (!!(expr)) || (hsDebugMessage(msg, ref), 0) )
     #define hsAssert(expr, ...)                 (void)( (!!(expr)) || (hsDebugAssertionFailed(__LINE__, __FILE__, __VA_ARGS__), 0) )
     #define ASSERT(expr)                        (void)( (!!(expr)) || (hsDebugAssertionFailed(__LINE__, __FILE__, #expr), 0) )
     #define FATAL(...)                          hsDebugAssertionFailed(__LINE__, __FILE__, __VA_ARGS__)
     
 #else   /* Not debugging */
 
-    #define hsDebugMessage(message, refcon)     ((void)0)
-    #define hsIfDebugMessage(expr, msg, ref)    ((void)0)
     #define hsAssert(expr, ...)                 ((void)0)
     #define ASSERT(expr)                        ((void)0)
     #define FATAL(...)                          ((void)0)
@@ -366,6 +346,19 @@ void hsDebugPrintToTerminal(const char* fmt, ...);
 #else
 #define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); break;
 #endif
+
+typedef void (*hsStatusMessageProc)(const char message[]);
+
+extern hsStatusMessageProc gHSStatusProc;
+hsStatusMessageProc hsSetStatusMessageProc(hsStatusMessageProc newProc);
+
+#ifdef PLASMA_EXTERNAL_RELEASE
+#   define hsStatusMessage(x) ((void)0)
+#   define hsStatusMessageF(x, ...) ((void)0)
+#else
+    void hsStatusMessage(const char* message);
+    void hsStatusMessageF(const char* fmt, ...);
+#endif // PLASMA_EXTERNAL_RELEASE
 
 #if defined(__clang__) || defined(__GNUC__)
 #   define _COMPILER_WARNING_NAME(warning) "-W" warning

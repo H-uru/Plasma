@@ -353,7 +353,7 @@ bool plFileSystem::CreateDir(const plFileName &dir, bool checkParents)
 {
     plFileName fdir = dir;
     if (fdir.GetFileName().empty()) {
-        hsDebugMessage("WARNING: CreateDir called with useless trailing slash", 0);
+        hsStatusMessage("WARNING: CreateDir called with useless trailing slash");
         fdir = fdir.StripFileName();
     }
 
