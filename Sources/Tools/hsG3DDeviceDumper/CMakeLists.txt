@@ -1,0 +1,31 @@
+set(hsG3DDeviceDumper_SOURCES
+    plAllCreatables.cpp
+    main.cpp
+)
+
+plasma_executable(hsG3DDeviceDumper TOOL
+    FOLDER Tools
+    SOURCES
+        ${hsG3DDeviceDumper_SOURCES}
+
+        # Hack hack hack
+        $<$<PLATFORM_ID:Darwin>:../../Plasma/Apps/plClient/Mac-Cocoa/plMacDisplayHelper.mm>
+)
+
+target_link_libraries(
+    hsG3DDeviceDumper
+    PRIVATE
+        CoreLib
+
+        # For the "all creatables"
+        pnNucleusInc
+        plPubUtilInc
+        pfFeatureInc
+
+        # Everything else used in this target.
+        plPipeline
+        $<$<BOOL:${PLASMA_PIPELINE_GL}>:pfGLPipeline>
+        $<$<BOOL:${PLASMA_PIPELINE_METAL}>:pfMetalPipeline>
+)
+
+source_group("Source Files" FILES ${hsG3DDeviceDumper_SOURCES})
