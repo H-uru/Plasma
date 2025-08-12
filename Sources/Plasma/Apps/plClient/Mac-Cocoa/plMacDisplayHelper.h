@@ -43,14 +43,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMacDisplayHelper_hpp
 #define plMacDisplayHelper_hpp
 
-// Currently requires Metal to query attached GPU capabilities
-// Capability check will also work for GL - but will need something
-// different for older GPUs.
-#include <AppKit/AppKit.h>
-#include <QuartzCore/QuartzCore.h>
+#include <CoreGraphics/CoreGraphics.h>
 
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plPipeline/pl3DPipeline.h"
+
+#ifdef __OBJC__
+@class NSScreen;
+#else
+class NSScreen;
+#endif
 
 class plMacDisplayHelper : public plDisplayHelper
 {

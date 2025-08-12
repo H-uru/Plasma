@@ -43,6 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMacDisplayHelper.h"
 #include "plPipeline.h"
 
+// Currently requires Metal to query attached GPU capabilities
+// Capability check will also work for GL - but will need something
+// different for older GPUs.
+#include <AppKit/AppKit.h>
+#include <QuartzCore/QuartzCore.h>
+
 plMacDisplayHelper::plMacDisplayHelper() : fCurrentDisplay(-1)
 {
 }
