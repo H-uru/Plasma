@@ -373,7 +373,6 @@ private:
 
     friend struct plNCAgeJoiner;
     friend struct plNCAgeLeaver;
-    friend class plNetDniInfoSource;
     friend class plNetTalkList;
     friend class plNetClientMsgHandler;
 };
