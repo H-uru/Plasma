@@ -69,14 +69,14 @@ namespace ST { class string; }
     // even more bloated than before!
     struct HWND__; typedef struct HWND__ *HWND;
     struct HINSTANCE__; typedef struct HINSTANCE__ *HINSTANCE;
+    typedef void* HANDLE;
+    typedef HINSTANCE HMODULE;
+    typedef long HRESULT;
 
     typedef HWND hsWindowHndl;
-    typedef HWND hsDisplayHndl;
+    typedef HANDLE hsDisplayHndl;
     typedef HINSTANCE hsWindowInst;
-    typedef HINSTANCE HMODULE;
     typedef HMODULE hsLibraryHndl;
-    typedef long HRESULT;
-    typedef void* HANDLE;
 #elif HS_BUILD_FOR_APPLE
     // Same note as Windows above - would rather not forward declare but I don't want to
     // import Foundation or CoreGraphics
@@ -93,7 +93,7 @@ namespace ST { class string; }
     typedef void* hsLibraryHndl;
 #else
     typedef int32_t* hsWindowHndl;
-    typedef int32_t* hsDisplayHndl;
+    typedef void* hsDisplayHndl;
     typedef int32_t* hsWindowInst;
     typedef void* hsLibraryHndl;
 #endif // HS_BUILD_FOR_WIN32
