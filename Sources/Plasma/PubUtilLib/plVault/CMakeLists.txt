@@ -38,12 +38,9 @@ target_link_libraries(
         plSDL
         plStatusLog
         plUnifiedTime
-        pfMessage # For pfKIMsg
     INTERFACE
         pnFactory
 )
-
-target_include_directories(plVault PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 
 source_group("Source Files" FILES ${plVault_SOURCES})
 source_group("Header Files" FILES ${plVault_HEADERS})

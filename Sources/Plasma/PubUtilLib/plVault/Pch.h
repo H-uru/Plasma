@@ -61,6 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <unordered_map>
 
 #include "hsGeometry3.h"
+#include "hsStream.h"
 #include "hsTimer.h"
 
 #include "pnDispatch/plDispatch.h"
@@ -77,9 +78,5 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSDL/plSDL.h"
 #include "plStatusLog/plStatusLog.h"
 #include "plUnifiedTime/plUnifiedTime.h"
-
-#define KI_CONSTANTS_ONLY
-#include "pfMessage/pfKIMsg.h"  // for KI level constants =(
-#undef KI_CONSTANTS_ONLY
 
 #endif
