@@ -91,7 +91,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     typedef void* hsLibraryHndl;
 #else
     typedef int32_t* hsWindowHndl;
-    typedef int32_t* hsDisplayHndl;
+    typedef void* hsDisplayHndl;
     typedef int32_t* hsWindowInst;
     typedef void* hsLibraryHndl;
 #endif // HS_BUILD_FOR_WIN32
