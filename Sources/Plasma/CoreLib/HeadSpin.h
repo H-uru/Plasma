@@ -286,10 +286,6 @@ template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
 #   ifndef fileno
 #       define fileno(__F) _fileno(__F)
 #   endif
-#else
-    // This is for Unix, Linux, OSX, etc.
-#   include <limits.h>
-#   define MAX_PATH PATH_MAX
 #endif
 
 // Useful floating point utilities
