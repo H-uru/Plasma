@@ -429,10 +429,6 @@ def PtGetAgeSDL():
     """Returns the global ptSDL for the current Age"""
     ...
 
-def PtGetAgeTime():
-    """DEPRECIATED - use ptDniInfoSource instead"""
-    ...
-
 def PtGetAgeTimeOfDayPercent():
     """Returns the current age time of day as a percent (0 to 1)"""
     ...

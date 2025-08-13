@@ -64,11 +64,6 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeInfo, "Returns ptAgeInfoStruct of
     return cyMisc::GetAgeInfo();
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeTime, "DEPRECIATED - use ptDniInfoSource instead")
-{
-    return PyLong_FromUnsignedLong(cyMisc::GetAgeTime());
-}
-
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetPrevAgeName, "Returns filename of previous age visited")
 {
     return PyUnicode_FromSTString(cyMisc::GetPrevAgeName());
@@ -458,7 +453,6 @@ void cyMisc::AddPlasmaMethods(PyObject* m)
 
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetAgeName)
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetAgeInfo)
-        PYTHON_GLOBAL_METHOD_NOARGS(PtGetAgeTime)
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetPrevAgeName) 
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetPrevAgeInfo)
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetDniTime)

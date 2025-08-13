@@ -397,8 +397,6 @@ void VaultClearDeviceInboxMap ();
 bool VaultAgeGetAgeSDL (class plStateDataRecord * out);
 void VaultAgeUpdateAgeSDL (const class plStateDataRecord * rec);
 
-unsigned VaultAgeGetAgeTime ();
-
 hsRef<RelVaultNode> VaultGetSubAgeLink(const plAgeInfoStruct * info);
 bool VaultAgeGetSubAgeLink (
     const plAgeInfoStruct * info,

@@ -584,14 +584,6 @@ PyObject* cyMisc::GetPrevAgeInfo()
     PYTHON_RETURN_NONE; // return none, not nullptr (cause it isn't really an error... or is it?)
 }
 
-// current time in current age
-uint32_t cyMisc::GetAgeTime()
-{
-    return VaultAgeGetAgeTime();
-}
-
-
-
 time_t cyMisc::GetDniTime()
 {
     const plUnifiedTime utime = plNetClientMgr::GetInstance()->GetServerTime();

@@ -281,7 +281,6 @@ public:
     static ST::string GetPrevAgeName();
     static PyObject* GetPrevAgeInfo();
     // current time in current age
-    static uint32_t GetAgeTime();
     static time_t GetDniTime();
     static time_t ConvertGMTtoDni(time_t time);
     static time_t GetServerTime(); // returns the current server time in GMT
