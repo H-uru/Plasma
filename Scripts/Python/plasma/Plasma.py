@@ -422,7 +422,7 @@ def PtGetAgeInfo():
     ...
 
 def PtGetAgeName():
-    """DEPRECIATED - use ptDniInfoSource instead"""
+    """Returns filename of the current Age"""
     ...
 
 def PtGetAgeSDL():
@@ -2168,25 +2168,6 @@ class ptDniCoordinates:
 
     def update(self):
         """Update these coordinates with the players current position"""
-        ...
-
-class ptDniInfoSource:
-    """DO NOT USE"""
-
-    def getAgeCoords(self):
-        """Current coords of the player in current age as a ptDniCoordinates"""
-        ...
-
-    def getAgeGuid(self):
-        """Unique identifier for this age instance"""
-        ...
-
-    def getAgeName(self):
-        """Name of current age"""
-        ...
-
-    def getAgeTime(self):
-        """Current time in current age (tbd)"""
         ...
 
 class ptDraw:

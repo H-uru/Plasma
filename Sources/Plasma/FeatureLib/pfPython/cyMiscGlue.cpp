@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtFlashWindow, cyMisc::FlashWindow, "Flashes the client window if it is not focused");
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeName, "DEPRECIATED - use ptDniInfoSource instead")
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeName, "Returns filename of the current Age")
 {
     return PyUnicode_FromSTString(cyMisc::GetAgeName());
 }

@@ -139,9 +139,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyAgeInfoStruct.h"
 #include "pyAgeLinkStruct.h"
 
-// dni info source
-#include "pyDniInfoSource.h"
-
 // audio setting stuff
 #include "pyAudioControl.h"
 
@@ -1088,7 +1085,6 @@ void PythonInterface::AddPlasmaClasses(PyObject* plasmaMod)
     pyAudioControl::AddPlasmaClasses(plasmaMod);
     pyCluster::AddPlasmaClasses(plasmaMod);
     pyDniCoordinates::AddPlasmaClasses(plasmaMod);
-    pyDniInfoSource::AddPlasmaClasses(plasmaMod);
     pyDynamicText::AddPlasmaClasses(plasmaMod);
     pyImage::AddPlasmaClasses(plasmaMod);
     pyImageLibMod::AddPlasmaClasses(plasmaMod);

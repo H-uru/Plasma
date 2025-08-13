@@ -269,7 +269,6 @@ struct VaultAgeInfoNode : NetVaultNodeAccess {
 
     VaultAgeInfoNode(hsWeakRef<NetVaultNode> node) : NetVaultNodeAccess(node) { }
 
-    const class plUnifiedTime * GetAgeTime () const;
     void CopyFrom (const plAgeInfoStruct * info);
     void CopyTo (plAgeInfoStruct * info) const;
 };

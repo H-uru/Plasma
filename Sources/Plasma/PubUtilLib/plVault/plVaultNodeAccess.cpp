@@ -379,12 +379,6 @@ void VaultAgeLinkNode::SetSpawnPoints (const plSpawnPointVec & in) {
 ***/
 
 //============================================================================
-const class plUnifiedTime * VaultAgeInfoNode::GetAgeTime () const {
-    hsAssert(false, "eric, implement me.");
-    return nullptr;
-}
-
-//============================================================================
 void VaultAgeInfoNode::CopyFrom (const plAgeInfoStruct * info) {
     // age filename
     SetAgeFilename(info->HasAgeFilename() ? info->GetAgeFilename() : "");

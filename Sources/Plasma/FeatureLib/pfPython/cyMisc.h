@@ -264,7 +264,7 @@ public:
 
 
     //
-    // Get Current age information - DEPRECIATED. Use ptDniInfoSource() object instead.
+    // Get Current age information
     //
     /////////////////////////////////////////////////////////////////////////////
     //
