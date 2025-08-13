@@ -334,14 +334,7 @@ void hsDebugPrintToTerminal(const char* fmt, ...);
 
 #endif  // HS_DEBUGGING
 
-
-#if defined(_MSC_VER)
-#define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); __assume(0); break;
-#elif defined(__GNUC__) || defined(__clang__)
-#define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); __builtin_unreachable(); break;
-#else
-#define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); break;
-#endif
+#define DEFAULT_FATAL(var) default: FATAL("No valid case for switch variable '" #var "'"); break
 
 typedef void (*hsStatusMessageProc)(const char message[]);
 
