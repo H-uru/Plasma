@@ -3256,12 +3256,6 @@ void VaultAgeUpdateAgeSDL (const plStateDataRecord * rec) {
 }
 
 //============================================================================
-unsigned VaultAgeGetAgeTime () {
-    hsAssert(false, "eric, implement me");
-    return 0;
-}
-
-//============================================================================
 hsRef<RelVaultNode> VaultGetSubAgeLink (const plAgeInfoStruct * info) {
     hsRef<RelVaultNode> rvnLink;
     if (hsRef<RelVaultNode> rvnFldr = VaultGetAgeSubAgesFolder()) {

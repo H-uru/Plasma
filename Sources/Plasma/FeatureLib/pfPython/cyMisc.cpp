@@ -527,7 +527,7 @@ ST::string cyMisc::GetLocalClientName()
 
 
 //
-// Get Current age information - DEPRECIATED. Use ptDniInfoSource() object instead
+// Get Current age information
 //
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -583,14 +583,6 @@ PyObject* cyMisc::GetPrevAgeInfo()
     }
     PYTHON_RETURN_NONE; // return none, not nullptr (cause it isn't really an error... or is it?)
 }
-
-// current time in current age
-uint32_t cyMisc::GetAgeTime()
-{
-    return VaultAgeGetAgeTime();
-}
-
-
 
 time_t cyMisc::GetDniTime()
 {
