@@ -339,7 +339,6 @@ void            VaultAddChronicleEntryAndWait (
     const ST::string& entryValue
 );
 bool        VaultAmIgnoringPlayer (unsigned playerId);
-unsigned    VaultGetKILevel ();
 bool        VaultGetCCRStatus ();               // true=online, false=away
 bool        VaultSetCCRStatus (bool online);    // true=online, false=away
 void        VaultDump (const ST::string& tag, unsigned vaultId);

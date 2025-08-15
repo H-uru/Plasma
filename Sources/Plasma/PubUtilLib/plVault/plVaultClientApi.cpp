@@ -2742,12 +2742,6 @@ bool VaultAmIgnoringPlayer (unsigned playerId) {
 }
 
 //============================================================================
-unsigned VaultGetKILevel () {
-    hsAssert(false, "eric, implement me");
-    return pfKIMsg::kNanoKI;
-}
-
-//============================================================================
 bool VaultGetCCRStatus () {
     bool retval = false;
     if (hsRef<RelVaultNode> rvnSystem = VaultGetSystemNode()) {
