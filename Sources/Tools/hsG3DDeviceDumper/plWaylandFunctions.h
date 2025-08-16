@@ -40,37 +40,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef HeadSpinConfigHDefined
-#define HeadSpinConfigHDefined
+#include "hsOptionalCall.h"
 
-/* Compiler settings */
-#cmakedefine HAVE_BUILTIN_AVAILABLE
-#cmakedefine HAVE_CPUID
-#cmakedefine HAVE_AVX2
-#cmakedefine HAVE_AVX
-#cmakedefine HAVE_SSE42
-#cmakedefine HAVE_SSSE3
-#cmakedefine HAVE_SSE41
-#cmakedefine HAVE_SSE4
-#cmakedefine HAVE_SSE3
-#cmakedefine HAVE_SSE2
-#cmakedefine HAVE_SSE1
+#include <wayland-client-core.h>
 
-/* External library usage */
-#cmakedefine USE_EGL
-#cmakedefine USE_SPEEX
-#cmakedefine USE_OPUS
-#cmakedefine USE_VIDEOTOOLBOX
-#cmakedefine USE_VPX
-#cmakedefine USE_WEBM
-#cmakedefine USE_WAYLAND
-#cmakedefine USE_X11
+hsOptionalCallDecl("libwayland-client", wl_display_connect);
+hsOptionalCallDecl("libwayland-client", wl_display_disconnect);
+hsOptionalCallDecl("libwayland-client", wl_display_dispatch);
+hsOptionalCallDecl("libwayland-client", wl_display_roundtrip);
+hsOptionalCallDecl("libwayland-client", wl_proxy_add_listener);
+hsOptionalCallDecl("libwayland-client", wl_proxy_destroy);
+hsOptionalCallDecl("libwayland-client", wl_proxy_get_version);
+hsOptionalCallDecl("libwayland-client", wl_proxy_marshal_flags);
 
-#cmakedefine HAVE_SYSCTL
-#cmakedefine HAVE_SYSDIR
-#cmakedefine HAVE_SYSINFO
-#cmakedefine HAVE_SHELLSCALINGAPI
-#cmakedefine HAVE_PTHREAD_SETNAME_NP
-#cmakedefine HAVE_STRNLEN
+#define WL_REGISTRY_INTERFACE
+extern "C" const struct wl_interface wl_registry_interface;
+hsOptionalCallDecl("libwayland-client", wl_registry_interface);
+#define wl_registry_interface           __wl_registry_interface
 
-#endif
+#define WL_OUTPUT_INTERFACE
+extern "C" const struct wl_interface wl_output_interface;
+hsOptionalCallDecl("libwayland-client", wl_output_interface);
+#define wl_output_interface             __wl_output_interface
+
+#define wl_proxy_add_listener(...)      *__wl_proxy_add_listener(__VA_ARGS__)
+#define wl_proxy_destroy(...)           *__wl_proxy_destroy(__VA_ARGS__)
+#define wl_proxy_get_version(...)       *__wl_proxy_get_version(__VA_ARGS__)
+#define wl_proxy_marshal_flags(...)     *__wl_proxy_marshal_flags(__VA_ARGS__)
+
+#include <wayland-client-protocol.h>

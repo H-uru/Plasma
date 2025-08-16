@@ -40,37 +40,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef HeadSpinConfigHDefined
-#define HeadSpinConfigHDefined
+#ifndef plWaylandDisplayHelper_h
+#define plWaylandDisplayHelper_h
 
-/* Compiler settings */
-#cmakedefine HAVE_BUILTIN_AVAILABLE
-#cmakedefine HAVE_CPUID
-#cmakedefine HAVE_AVX2
-#cmakedefine HAVE_AVX
-#cmakedefine HAVE_SSE42
-#cmakedefine HAVE_SSSE3
-#cmakedefine HAVE_SSE41
-#cmakedefine HAVE_SSE4
-#cmakedefine HAVE_SSE3
-#cmakedefine HAVE_SSE2
-#cmakedefine HAVE_SSE1
+#include "plPipeline/hsG3DDeviceSelector.h"
+#include "plPipeline/pl3DPipeline.h"
 
-/* External library usage */
-#cmakedefine USE_EGL
-#cmakedefine USE_SPEEX
-#cmakedefine USE_OPUS
-#cmakedefine USE_VIDEOTOOLBOX
-#cmakedefine USE_VPX
-#cmakedefine USE_WEBM
-#cmakedefine USE_WAYLAND
-#cmakedefine USE_X11
+struct wl_display;
+struct wl_output;
+struct wl_registry;
 
-#cmakedefine HAVE_SYSCTL
-#cmakedefine HAVE_SYSDIR
-#cmakedefine HAVE_SYSINFO
-#cmakedefine HAVE_SHELLSCALINGAPI
-#cmakedefine HAVE_PTHREAD_SETNAME_NP
-#cmakedefine HAVE_STRNLEN
+class plWaylandDisplayHelper : public plDisplayHelper
+{
+public:
+    plWaylandDisplayHelper();
+    ~plWaylandDisplayHelper() override;
 
-#endif
+    plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
+    std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const override;
+    hsDisplayHndl DefaultDisplay() const override;
+
+private:
+    mutable wl_display*                 fCurrentDisplay;
+    mutable wl_registry*                fCurrentRegistry;
+    mutable wl_output*                  fCurrentOutput;
+    mutable plDisplayMode               fDesktopDisplayMode;
+    mutable std::vector<plDisplayMode>  fDisplayModes;
+
+    void SetCurrentScreen(wl_display* screen) const;
+
+    static void global_handler(void* data, wl_registry* registry, uint32_t id, const char* interface, uint32_t version);
+    static void output_handle_mode(void* data, wl_output* wl_output, uint32_t flags, int32_t width, int32_t height, int32_t refresh);
+};
+
+#endif /* plWaylandDisplayHelper_h */
