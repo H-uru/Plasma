@@ -40,39 +40,50 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plMacDisplayHelper_hpp
-#define plMacDisplayHelper_hpp
+#include <string_theory/stdio>
 
-#include <CoreGraphics/CoreGraphics.h>
-
+#include "HeadSpin.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plPipeline/pl3DPipeline.h"
 
-#ifdef __OBJC__
-@class NSScreen;
-#else
-class NSScreen;
+// This is terrible, but this entire tool is a hack so...
+#ifdef HS_BUILD_FOR_MACOS
+#   include "../../Plasma/Apps/plClient/Mac-Cocoa/plMacDisplayHelper.h"
 #endif
 
-class plMacDisplayHelper : public plDisplayHelper
-{
-public:
-    plMacDisplayHelper();
-    
+#ifdef PLASMA_PIPELINE_GL
+#   include "pfGLPipeline/plGLPipeline.h"
+plGLEnumerate glEnum;
+#endif
 
-    CGDirectDisplayID CurrentDisplay() const { return fCurrentDisplay; }
+#ifdef PLASMA_PIPELINE_METAL
+#   include "pfMetalPipeline/plMetalPipeline.h"
+plMetalEnumerate mtlEnum;
+#endif
 
-    plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
-    std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const override;
+int main(int argc, const char* argv[]) {
+    hsG3DDeviceSelector devSel;
 
-private:
-    mutable CGDirectDisplayID          fCurrentDisplay;
-    mutable plDisplayMode              fDesktopDisplayMode;
-    mutable std::vector<plDisplayMode> fDisplayModes;
+#ifdef HS_BUILD_FOR_MACOS
+    plDisplayHelper::SetInstance(new plMacDisplayHelper());
+#endif
 
-    void SetCurrentScreen(hsDisplayHndl screen) const;
-    // we need NSScreen to query for non rectangular screen geometry
-    void SetCurrentScreen(NSScreen* screen) const;
-};
+    ST::printf("Checking device records... ");
 
-#endif /* plMacDisplayHelper_hpp */
+    devSel.Enumerate(nullptr);
+    devSel.RemoveUnusableDevModes(true);
+
+    ST::printf("{} found.\n\n", devSel.GetDeviceRecords().size());
+
+    for (const hsG3DDeviceRecord& rec : devSel.GetDeviceRecords()) {
+        ST::printf("{} ({}) - {}\n", rec.GetDriverName(), rec.GetDriverVersion(), rec.GetDeviceDesc());
+
+        for (const hsG3DDeviceMode& mode : rec.GetModes()) {
+            ST::printf("    {}x{} ({}-bit color)\n", mode.GetWidth(), mode.GetHeight(), mode.GetColorDepth());
+        }
+
+        ST::printf("\n");
+    }
+
+    return 0;
+}

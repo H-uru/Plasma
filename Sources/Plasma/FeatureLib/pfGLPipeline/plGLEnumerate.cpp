@@ -47,10 +47,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plGLPipeline.h"
 
-bool fillDeviceRecord(hsG3DDeviceRecord& devRec)
+bool fillDeviceRecord(hsG3DDeviceRecord& devRec, const ST::string& driverName, hsDisplayHndl display)
 {
     if (epoxy_gl_version() < 33)
         return false;
+
+    devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeOpenGL);
+    devRec.SetDriverName(driverName);
 
     const char* renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
     devRec.SetDeviceDesc(renderer);
@@ -68,17 +71,30 @@ bool fillDeviceRecord(hsG3DDeviceRecord& devRec)
 
     devRec.SetLayersAtOnce(8);
 
-    // Just make a fake mode so the device selector will let it through
-    hsG3DDeviceMode devMode;
-    devMode.SetWidth(hsG3DDeviceSelector::kDefaultWidth);
-    devMode.SetHeight(hsG3DDeviceSelector::kDefaultHeight);
-    devMode.SetColorDepth(hsG3DDeviceSelector::kDefaultDepth);
-    devRec.GetModes().emplace_back(devMode);
+    plDisplayHelper* displayHelper = plDisplayHelper::GetInstance();
+    if (displayHelper) {
+        for (const auto& mode : displayHelper->GetSupportedDisplayModes(display)) {
+            hsG3DDeviceMode devMode;
+            devMode.SetWidth(mode.Width);
+            devMode.SetHeight(mode.Height);
+            devMode.SetColorDepth(mode.ColorDepth);
+            devRec.GetModes().emplace_back(std::move(devMode));
+        }
+        devRec.SetDefaultModeIndex(0);
+    } else {
+        // Just make a fake mode so the device selector will let it through
+        hsG3DDeviceMode devMode;
+        devMode.SetWidth(hsG3DDeviceSelector::kDefaultWidth);
+        devMode.SetHeight(hsG3DDeviceSelector::kDefaultHeight);
+        devMode.SetColorDepth(hsG3DDeviceSelector::kDefaultDepth);
+        devRec.GetModes().emplace_back(devMode);
+    }
 
     return true;
 }
 
 
+#pragma region EGL_Enumerate
 #ifdef USE_EGL
 #include <epoxy/egl.h>
 
@@ -89,22 +105,55 @@ void plEGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
     EGLSurface surface = EGL_NO_SURFACE;
 
     do {
-        display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-        if (display == EGL_NO_DISPLAY)
-            break;
+        if (epoxy_has_egl_extension(EGL_NO_DISPLAY, "EGL_EXT_platform_base") &&
+            epoxy_has_egl_extension(EGL_NO_DISPLAY, "EGL_EXT_device_enumeration") &&
+            epoxy_has_egl_extension(EGL_NO_DISPLAY, "EGL_EXT_platform_device"))
+        {
+            EGLint num_devices = 0;
+            eglQueryDevicesEXT(num_devices, nullptr, &num_devices);
 
-        if (!eglInitialize(display, nullptr, nullptr))
-            break;
+            EGLDeviceEXT* devices = new EGLDeviceEXT[num_devices];
+            eglQueryDevicesEXT(num_devices, devices, &num_devices);
+
+            for (EGLint i = 0; i < num_devices; i++) {
+                display = eglGetPlatformDisplayEXT(EGL_PLATFORM_DEVICE_EXT, devices[i], nullptr);
+                if (eglGetError() == EGL_SUCCESS && display != EGL_NO_DISPLAY) {
+                    EGLBoolean initialized = eglInitialize(display, nullptr, nullptr);
+                    if (eglGetError() == EGL_SUCCESS && initialized == EGL_TRUE) {
+                        break;
+                    }
+                }
+                display = EGL_NO_DISPLAY; // Ensure we always reset to no display
+            }
+
+            delete[] devices;
+        }
+
+        if (display == EGL_NO_DISPLAY) {
+            display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+            if (eglGetError() != EGL_SUCCESS || display == EGL_NO_DISPLAY)
+                break;
+
+            EGLBoolean initialized = eglInitialize(display, nullptr, nullptr);
+            if (eglGetError() != EGL_SUCCESS || initialized != EGL_TRUE)
+                break;
+        }
 
         if (!eglBindAPI(EGL_OPENGL_API))
             break;
 
-        GLint numConfigs = 0;
-        if (!eglGetConfigs(display, nullptr, 0, &numConfigs) || numConfigs == 0)
-            break;
+        /* Set up the config attributes for EGL */
+        EGLConfig config;
+        EGLint config_count;
+        EGLint config_attrs[] = {
+            EGL_BUFFER_SIZE, 24,
+            EGL_DEPTH_SIZE, 24,
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
+            EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
+            EGL_NONE
+        };
 
-        std::vector<EGLConfig> configs(numConfigs);
-        if (!eglGetConfigs(display, configs.data(), configs.size(), &numConfigs))
+        if (!eglChooseConfig(display, config_attrs, &config, 1, &config_count) || config_count != 1)
             break;
 
         EGLint ctx_attrs[] = {
@@ -113,11 +162,17 @@ void plEGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
             EGL_NONE
         };
 
-        context = eglCreateContext(display, configs[0], EGL_NO_CONTEXT, ctx_attrs);
+        context = eglCreateContext(display, config, EGL_NO_CONTEXT, ctx_attrs);
         if (context == EGL_NO_CONTEXT)
             break;
 
-        surface = eglCreatePbufferSurface(display, configs[0], nullptr);
+        EGLint pbuf_attrs[] = {
+            EGL_WIDTH, 800,
+            EGL_HEIGHT, 600,
+            EGL_NONE
+        };
+
+        surface = eglCreatePbufferSurface(display, config, pbuf_attrs);
         if (surface == EGL_NO_SURFACE)
             break;
 
@@ -125,10 +180,7 @@ void plEGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
             break;
 
         hsG3DDeviceRecord devRec;
-        devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeOpenGL);
-        devRec.SetDriverName("EGL");
-
-        if (fillDeviceRecord(devRec))
+        if (fillDeviceRecord(devRec, ST_LITERAL("EGL OpenGL API"), static_cast<hsDisplayHndl>(display)))
             records.emplace_back(devRec);
     } while (0);
 
@@ -145,8 +197,10 @@ void plEGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
         eglTerminate(display);
 }
 #endif // USE_EGL
+#pragma endregion EGL_Enumerate
 
 
+#pragma region WGL_Enumerate
 #ifdef HS_BUILD_FOR_WIN32
 #include "hsWindows.h"
 #include <epoxy/wgl.h>
@@ -164,7 +218,7 @@ void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
         tempClass.hInstance = GetModuleHandle(nullptr);
         tempClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
         tempClass.lpszClassName = L"GLTestClass";
-        tempClass.style = CS_OWNDC;
+        tempClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 
         cls = RegisterClassW(&tempClass);
         if (!cls)
@@ -206,10 +260,7 @@ void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
             break;
 
         hsG3DDeviceRecord devRec;
-        devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeOpenGL);
-        devRec.SetDriverName("opengl32.dll");
-
-        if (fillDeviceRecord(devRec))
+        if (fillDeviceRecord(devRec, ST_LITERAL("opengl32.dll"), nullptr))
             records.emplace_back(devRec);
     } while (0);
 
@@ -229,9 +280,12 @@ void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
         UnregisterClassW(reinterpret_cast<LPCWSTR>(cls), GetModuleHandle(nullptr));
 }
 #endif // HS_BUILD_FOR_WIN32
+#pragma endregion WGL_Enumerate
 
 
+#pragma region CGL_Enumerate
 #ifdef HS_BUILD_FOR_MACOS
+#include <AvailabilityMacros.h>
 #include <CoreGraphics/CoreGraphics.h>
 #include <OpenGL/OpenGL.h>
 
@@ -240,7 +294,6 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
     IGNORE_WARNINGS_BEGIN("deprecated-declarations")
     CGLPixelFormatObj pix = nullptr;
     CGLContextObj ctx = nullptr;
-    
     CGDirectDisplayID mainDisplay = CGMainDisplayID();
 
     do {
@@ -248,35 +301,38 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
             kCGLPFAAccelerated,
             kCGLPFANoRecovery,
             kCGLPFADoubleBuffer,
-            kCGLPFAOpenGLProfile, static_cast<CGLPixelFormatAttribute>(kCGLOGLPVersion_3_2_Core),
             kCGLPFADisplayMask, static_cast<CGLPixelFormatAttribute>(CGDisplayIDToOpenGLDisplayMask(mainDisplay)),
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1070
+            // OpenGL profiles introduced in 10.7
+            kCGLPFAOpenGLProfile, static_cast<CGLPixelFormatAttribute>(kCGLOGLPVersion_3_2_Core),
+#endif
             static_cast<CGLPixelFormatAttribute>(0),
         };
 
         int nPix = 0;
-        if (CGLChoosePixelFormat(attribs, &pix, &nPix) != kCGLNoError || nPix == 0)
+        if (CGLChoosePixelFormat(attribs, &pix, &nPix) != kCGLNoError || nPix == 0) {
+#if MAC_OS_X_VERSION_MIN_REQUIRED < 1070
+            nPix = 0;
+            size_t attrs_count = std::size(attribs);
+
+            // Try without the OpenGL profile
+            attribs[attrs_count - 2] = static_cast<CGLPixelFormatAttribute>(0);
+            attribs[attrs_count - 3] = static_cast<CGLPixelFormatAttribute>(0);
+
+            if (CGLChoosePixelFormat(attribs, &pix, &nPix) != kCGLNoError || nPix == 0)
+                // Intentional fallthrough
+#endif
             break;
+        }
 
         if (CGLCreateContext(pix, nullptr, &ctx) != kCGLNoError)
             break;
 
-        CGLSetCurrentContext(ctx);
+        if (CGLSetCurrentContext(ctx) != kCGLNoError)
+            break;
 
         hsG3DDeviceRecord devRec;
-        devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeOpenGL);
-        devRec.SetDriverName("OpenGL.framework");
-        
-        plDisplayHelper* displayHelper = plDisplayHelper::GetInstance();
-        for (const auto& mode : displayHelper->GetSupportedDisplayModes(mainDisplay)) {
-            hsG3DDeviceMode devMode;
-            devMode.SetWidth(mode.Width);
-            devMode.SetHeight(mode.Height);
-            devMode.SetColorDepth(mode.ColorDepth);
-            devRec.GetModes().emplace_back(std::move(devMode));
-        }
-        devRec.SetDefaultModeIndex(0);
-
-        if (fillDeviceRecord(devRec))
+        if (fillDeviceRecord(devRec, ST_LITERAL("OpenGL.framework"), mainDisplay))
             records.emplace_back(std::move(devRec));
     } while (0);
 
@@ -291,6 +347,7 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
     IGNORE_WARNINGS_END
 }
 #endif // HS_BUILD_FOR_MACOS
+#pragma endregion CGL_Enumerate
 
 void plGLEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
 {
