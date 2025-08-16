@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <cstdlib>
 #include <string_theory/stdio>
 
 #include "HeadSpin.h"
@@ -49,6 +50,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // This is terrible, but this entire tool is a hack so...
 #ifdef HS_BUILD_FOR_MACOS
 #   include "../../Plasma/Apps/plClient/Mac-Cocoa/plMacDisplayHelper.h"
+#endif
+#ifdef HS_BUILD_FOR_WIN32
+#   include "../../Plasma/Apps/plClient/win32/plWinDisplayHelper.h"
+#endif
+
+#ifdef USE_X11
+#   include "plX11DisplayHelper.h"
+#endif
+#ifdef USE_WAYLAND
+#   include "plWaylandDisplayHelper.h"
 #endif
 
 #ifdef PLASMA_PIPELINE_GL
@@ -65,8 +76,33 @@ int main(int argc, const char* argv[]) {
     hsG3DDeviceSelector devSel;
     plDisplayHelper* helper = nullptr;
 
+#ifdef USE_WAYLAND
+#   ifdef USE_X11
+    // In a perfect world, this would always be set to tell us if we're running
+    // X11 or Wayland, but the world is far from perfect so we'll try this and
+    // then guess based on other variables.
+    // We only need to do the runtime detection if both are available,
+    // otherwise you get what you get
+    const char* sessionType = getenv("XDG_SESSION_TYPE");
+    if (strcmp(sessionType, "wayland") == 0 || !sessionType && getenv("WAYLAND_DISPLAY"))
+        // Fallthrough
+#   endif
+        helper = new plWaylandDisplayHelper();
+#endif
+
+#ifdef USE_X11
+    if (!helper && getenv("DISPLAY"))
+        helper = new plX11DisplayHelper();
+#endif
+
 #ifdef HS_BUILD_FOR_MACOS
-    helper = new plMacDisplayHelper();
+    if (!helper)
+        helper = new plMacDisplayHelper();
+#endif
+
+#ifdef HS_BUILD_FOR_WIN32
+    if (!helper)
+        helper = new plWinDisplayHelper();
 #endif
 
     plDisplayHelper::SetInstance(helper);
