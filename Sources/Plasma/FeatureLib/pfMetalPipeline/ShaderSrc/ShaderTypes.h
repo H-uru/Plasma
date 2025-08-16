@@ -54,7 +54,7 @@ typedef __attribute__((__ext_vector_type__(3))) half half3;
 typedef __attribute__((__ext_vector_type__(4))) half half4;
 #endif
 
-enum plMetalVertexShaderArgument
+enum plMetalShaderArgument
 {
     /// Material State
     VertexShaderArgumentFixedFunctionUniforms           = 2,
@@ -62,14 +62,13 @@ enum plMetalVertexShaderArgument
     VertexShaderArgumentMaterialShaderUniforms          = 3,
     /// Light Table
     VertexShaderArgumentLights                          = 4,
+    /// Material properties for vertex lighting
+    VertexShaderArgumentMaterialLighting                = 5,
     /// Blend matrix for GPU side animation blending
     VertexShaderArgumentBlendMatrix1                    = 6,
     /// Describes the state of a shadow caster for shadow cast shader
-    VertexShaderArgumentShadowState                     = 9
-};
-
-enum plMetalFragmentShaderArgumentIndex
-{
+    VertexShaderArgumentShadowState                     = 9,
+    
     /// Texture is a legacy argument for the simpler plate shader
     FragmentShaderArgumentTexture                       = 1,
     /// Fragment uniforms
@@ -77,7 +76,11 @@ enum plMetalFragmentShaderArgumentIndex
     /// Legacy argument buffer
     FragmentShaderArgumentUniforms                      = 5,
     /// Layer index of alpha for shadow fragment shader
-    FragmentShaderArgumentShadowCastAlphaSrc            = 8
+    FragmentShaderArgumentShadowCastAlphaSrc            = 8,
+    /// Light Table
+    FragmentShaderArgumentLights                        = 10,
+    /// Material properties for vertex lighting
+    FragmentShaderArgumentMaterialLighting              = 11
 };
 
 enum plMetalVertexAttribute
@@ -110,6 +113,8 @@ enum plMetalFunctionConstant
     FunctionConstantLayerFlags                          = 18,
     /// Numbrer of weights in the FVF vertex layout.
     FunctionConstantNumWeights                          = 26,
+    /// Per pixel lighting enable flag
+    FunctionConstantPerPixelLighting                    = 27,
 };
 
 enum plMetalLayerPassType: uint8_t
@@ -169,15 +174,8 @@ struct UVOutDescriptor
 static_assert(std::is_trivial_v<UVOutDescriptor>, "UVOutDescriptor must be a trivial type!");
 #endif
 
-struct VertexUniforms
+struct plMaterialLightingDescriptor
 {
-    // transformation
-    matrix_float4x4 projectionMatrix;
-    matrix_float4x4 localToWorldMatrix;
-    matrix_float4x4 cameraToWorldMatrix;
-    matrix_float4x4 worldToCameraMatrix;
-
-    // lighting
     half4 globalAmb;
     half3 ambientCol;
     uint8_t ambientSrc;
@@ -187,7 +185,24 @@ struct VertexUniforms
     uint8_t emissiveSrc;
     half3 specularCol;
     uint8_t specularSrc;
-    bool invVtxAlpha;
+    
+    bool invertAlpha;
+    
+#ifndef __METAL_VERSION__
+    bool operator==(const plMaterialLightingDescriptor& rhs) const
+    {
+        return memcmp(this, &rhs, sizeof(plMaterialLightingDescriptor)) == 0;
+    }
+#endif
+};
+
+struct VertexUniforms
+{
+    // transformation
+    matrix_float4x4 projectionMatrix;
+    matrix_float4x4 localToWorldMatrix;
+    matrix_float4x4 cameraToWorldMatrix;
+    matrix_float4x4 worldToCameraMatrix;
 
     uint8_t fogExponential;
     simd::float2 fogValues;
@@ -197,6 +212,13 @@ struct VertexUniforms
 #ifdef __METAL_VERSION__
     float3 sampleLocation(size_t index, thread float3 *texCoords, const float4 cameraSpaceNormal, const float4 camPosition) constant;
     half4 calcFog(float4 camPosition) constant;
+#endif
+    
+#ifndef __METAL_VERSION__
+    bool operator==(const VertexUniforms& rhs) const
+    {
+        return memcmp(this, &rhs, sizeof(VertexUniforms)) == 0;
+    }
 #endif
 };
 #ifndef __METAL_VERSION__
@@ -209,6 +231,14 @@ struct plMetalLights
 {
     uint8_t count;
     plMetalShaderLightSource lampSources[kMetalMaxLightCount];
+    
+#ifndef __METAL_VERSION__
+    bool operator==(const plMetalLights& rhs) const
+    {
+        size_t lightSize = offsetof(plMetalLights, lampSources) + (sizeof(plMetalShaderLightSource) * count);
+        return rhs.count == count && memcmp(&rhs, this, lightSize ) == 0;
+    }
+#endif
 };
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<plMetalLights>, "plMetalLights must be a trivial type!");

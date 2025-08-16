@@ -170,6 +170,7 @@ public:
 
 private:
     VertexUniforms* fCurrentRenderPassUniforms;
+    plMaterialLightingDescriptor fCurrentRenderPassMaterialLighting;
     
     bool fIsFullscreen;
 
@@ -263,8 +264,10 @@ private:
 
     void                        PushCurrentLightSources();
     void                        PopCurrentLightSources();
+    void                        IBindLights();
     plMetalLights               fLights;
     std::vector<plMetalLights*> fLightSourceStack;
+    bool                        fLightingPerPixel;
 
     static plMetalEnumerate enumerator;
 
@@ -284,12 +287,16 @@ private:
             hsGMatState::hsGMatClampFlags clampFlag;
         } layerStates[8];
 
-        std::optional<MTL::CullMode>    fCurrentCullMode;
-        const MTL::RenderPipelineState* fCurrentPipelineState;
-        MTL::Buffer*                    fCurrentVertexBuffer;
-        MTL::DepthStencilState*         fCurrentDepthStencilState;
+        std::optional<MTL::CullMode>                   fCurrentCullMode;
+        const MTL::RenderPipelineState*                fCurrentPipelineState;
+        MTL::Buffer*                                   fCurrentVertexBuffer;
+        MTL::DepthStencilState*                        fCurrentDepthStencilState;
+        std::optional<plMetalLights>                   fBoundLights;
+        std::optional<plMaterialLightingDescriptor>    fBoundMaterialProperties;
+        std::optional<VertexUniforms>                  fCurrentVertexUniforms;
 
         void Reset();
+        
     } fState;
 };
 
