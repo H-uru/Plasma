@@ -100,12 +100,16 @@ plProfile_Extern(LightChar);
 plProfile_Extern(LightActive);
 plProfile_Extern(FindLightsFound);
 plProfile_Extern(FindLightsPerm);
+plProfile_Extern(AvatarSort);
+plProfile_Extern(AvatarFaces);
 
 static const float kPerspLayerScale  = 0.00001f;
 static const float kPerspLayerScaleW = 0.001f;
 static const float kPerspLayerTrans  = 0.00002f;
 
 static const float kAvTexPoolShrinkThresh = 30.f; // seconds
+
+//// Helper Classes ///////////////////////////////////////////////////////////
 
 class plDisplayHelper
 {
@@ -120,7 +124,60 @@ private:
     static plDisplayHelper* fCurrentDisplayHelper;
 };
 
-template <class DeviceType>
+/**
+ * The RenderPrimFunc lets you have one function which does a lot of stuff
+ * around the actual call to render whatever type of primitives you have,
+ * instead of duplicating everything because the one line to render is
+ * different.
+ *
+ * These allow the same setup code path to be followed, no matter what the
+ * primitive type (i.e. data-type/draw-call is going to happen once the render
+ * state is set.
+ * Originally useful to make one code path for trilists, tri-patches, and
+ * rect-patches, but we've since dropped support for patches. We still use the
+ * RenderNil function to allow the code to go through all the state setup
+ * without knowing whether a render call is going to come out the other end.
+ *
+ * Would allow easy extension for supporting tristrips or pointsprites, but
+ * we've never had a strong reason to use either.
+ */
+class plRenderPrimFunc
+{
+public:
+    virtual bool RenderPrims() const = 0; // return true on error
+};
+
+
+class plRenderNilFunc : public plRenderPrimFunc
+{
+public:
+    plRenderNilFunc() {}
+
+    virtual bool RenderPrims() const { return false; }
+};
+
+
+template<class DeviceType>
+class plRenderTriListFunc : public plRenderPrimFunc
+{
+protected:
+    DeviceType* fDevice;
+    int         fBaseVertexIndex;
+    int         fVStart;
+    int         fVLength;
+    int         fIStart;
+    int         fNumTris;
+
+public:
+    plRenderTriListFunc(DeviceType* device, int baseVertexIndex, int vStart, int vLength, int iStart, int iNumTris)
+        : fDevice(device), fBaseVertexIndex(baseVertexIndex), fVStart(vStart),
+          fVLength(vLength), fIStart(iStart), fNumTris(iNumTris) {}
+};
+
+
+//// Class Definition /////////////////////////////////////////////////////////
+
+template<class DeviceType>
 class pl3DPipeline : public plPipeline
 {
 protected:
@@ -155,6 +212,7 @@ protected:
     typename DeviceType::VertexBufferRef*   fVtxBuffRefList;
     typename DeviceType::IndexBufferRef*    fIdxBuffRefList;
     typename DeviceType::TextureRef*        fTextureRefList;
+    plTextFont*                             fTextFontRefList;
 
     hsGDeviceRef*                           fLayerRef[8];
 
@@ -255,11 +313,25 @@ public:
 
 
     //virtual plTextFont* MakeTextFont(ST::string face, uint16_t size) = 0;
-    //virtual void CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) = 0;
-    //virtual void CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) = 0;
+
+    /**
+     * Make sure the buffer group has a vertex buffer ref and that its data is
+     * current.
+     */
+    void CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
+
+    /**
+     * Make sure the buffer group has an index buffer ref and that its data is
+     * current.
+     */
+    void CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
+
     //virtual bool OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly) = 0;
     //virtual bool CloseAccess(plAccessSpan& acc) = 0;
-    //virtual void CheckTextureRef(plLayerInterface* lay) = 0;
+
+    void CheckTextureRef(plLayerInterface* lay) override;
+
+    void CheckTextureRef(plBitmap* bmp);
 
     void SetDefaultFogEnviron(plFogEnvironment* fog) override {
         fView.SetDefaultFog(*fog);
@@ -627,7 +699,6 @@ public:
     /** Removes a layer wrapper installed by AppendLayerInterface. */
     plLayerInterface* RemoveLayerInterface(plLayerInterface* li, bool onAllLayers = false) override;
 
-
     /**
      * Return the current bits set to be always on for the given category
      * (e.g. ZFlags).
@@ -781,6 +852,12 @@ protected:
      */
     void ISetShadowFromGroup(plDrawableSpans* drawable, const plSpan* span, plLightInfo* liInfo);
 
+    /**
+     * At EndRender(), we need to clear our list of shadow slaves.
+     * They are only valid for one frame.
+     */
+    void IClearShadowSlaves();
+
     void IClearClothingOutfits(std::vector<plClothingOutfit*>* outfits);
     void IFillAvRTPool();
 
@@ -793,6 +870,39 @@ protected:
     plRenderTarget* IGetNextAvRT();
     void IFreeAvRT(plRenderTarget* tex);
 
+    /**
+     * Sets fOverBaseLayer (if any) as a wrapper on top of input layer.
+     * This allows the OverBaseLayer to intercept and modify queries of
+     * the real current layer's properties (e.g. color or state).
+     * fOverBaseLayer is set to only get applied to the base layer during
+     * multitexturing.
+     *
+     * Must be matched with call to IPopOverBaseLayer.
+     */
+    plLayerInterface* IPushOverBaseLayer(plLayerInterface* li);
+
+    /**
+     * Removes fOverBaseLayer as wrapper on top of input layer.
+     *
+     * Should match calls to IPushOverBaseLayer.
+     */
+    plLayerInterface* IPopOverBaseLayer(plLayerInterface* li);
+
+    /**
+     * Push fOverAllLayer (if any) as wrapper around the input layer.
+     *
+     * fOverAllLayer is set to be applied to each layer during multitexturing.
+     *
+     * Must be matched by call to IPopOverAllLayer
+     */
+    plLayerInterface* IPushOverAllLayer(plLayerInterface* li);
+
+    /**
+     * Remove fOverAllLayer as wrapper on top of input layer.
+     *
+     * Should match calls to IPushOverAllLayer.
+     */
+    plLayerInterface* IPopOverAllLayer(plLayerInterface* li);
 
     /**
      * For every span in the list of visible span indices, find the list of
@@ -848,10 +958,36 @@ protected:
 
     /** pass the current local to world tranform on to the device. */
     void ILocalToWorldToDevice();
+
+    /**
+     * Sorts the avatar geometry for display.
+     *
+     * We handle avatar sort differently from the rest of the face sort. The
+     * reason is that within the single avatar index buffer, we want to only
+     * sort the faces of spans requesting a sort, and sort them in place.
+     *
+     * Contrast that with the normal scene translucency sort. There, we sort
+     * all the spans in a drawble, then we sort all the faces in that drawable,
+     * then for each span in the sorted span list, we extract the faces for
+     * that span appending onto the index buffer. This gives great efficiency
+     * because only the visible faces are sorted and they wind up packed into
+     * the front of the index buffer, which permits more batching. See
+     * plDrawableSpans::SortVisibleSpans.
+     *
+     * For the avatar, it's generally the case that all the avatar is visible
+     * or not, and there is only one material, so neither of those efficiencies
+     * is helpful. Moreover, for the avatar the faces we want sorted are a tiny
+     * subset of the avatar's faces. Moreover, and most importantly, for the
+     * avatar, we want to preserve the order that spans are drawn, so, for
+     * example, the opaque base head will always be drawn before the
+     * translucent hair fringe, which will always be drawn before the pink
+     * clear plastic baseball cap.
+     */
+    bool IAvatarSort(plDrawableSpans* d, const std::vector<int16_t>& visList);
 };
 
 
-template <class DeviceType>
+template<class DeviceType>
 pl3DPipeline<DeviceType>::pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec)
 :   fMaxLayersAtOnce(-1),
     fMaxPiggyBacks(),
@@ -863,6 +999,8 @@ pl3DPipeline<DeviceType>::pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec)
     fActivePiggyBacks(),
     fVtxBuffRefList(),
     fIdxBuffRefList(),
+    fTextureRefList(),
+    fTextFontRefList(),
     fCurrMaterial(),
     fCurrLay(),
     fCurrNumLayers(),
@@ -919,7 +1057,7 @@ pl3DPipeline<DeviceType>::pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec)
     fVSync = fInitialPipeParams.VSync;
 }
 
-template <class DeviceType>
+template<class DeviceType>
 pl3DPipeline<DeviceType>::~pl3DPipeline()
 {
     fCurrLay = nullptr;
@@ -934,12 +1072,31 @@ pl3DPipeline<DeviceType>::~pl3DPipeline()
     while (fActiveLights)
         UnRegisterLight(fActiveLights);
 
+    while (fVtxBuffRefList) {
+        typename DeviceType::VertexBufferRef* ref = fVtxBuffRefList;
+        ref->Release();
+        ref->Unlink();
+    }
+
+    while (fIdxBuffRefList) {
+        typename DeviceType::IndexBufferRef* ref = fIdxBuffRefList;
+        ref->Release();
+        ref->Unlink();
+    }
+
+    while (fTextureRefList) {
+        typename DeviceType::TextureRef* ref = fTextureRefList;
+        ref->Release();
+        ref->Unlink();
+    }
+
+    IReleaseAvRTPool();
     IClearClothingOutfits(&fClothingOutfits);
     IClearClothingOutfits(&fPrevClothingOutfits);
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::Render(plDrawable* d, const std::vector<int16_t>& visList)
 {
     // Reset here, since we can push/pop renderTargets after BeginRender() but
@@ -954,7 +1111,7 @@ void pl3DPipeline<DeviceType>::Render(plDrawable* d, const std::vector<int16_t>&
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::Draw(plDrawable* d)
 {
     plDrawableSpans *ds = plDrawableSpans::ConvertNoRef(d);
@@ -972,7 +1129,138 @@ void pl3DPipeline<DeviceType>::Draw(plDrawable* d)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
+void pl3DPipeline<DeviceType>::CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx)
+{
+    // First, do we have a device ref at this index?
+    typename DeviceType::VertexBufferRef* vRef = static_cast<typename DeviceType::VertexBufferRef*>(owner->GetVertexBufferRef(idx));
+
+    // If not
+    if (!vRef) {
+        // Make the blank ref
+        vRef = new typename DeviceType::VertexBufferRef();
+        fDevice.SetupVertexBufferRef(owner, idx, vRef);
+    }
+
+    if (!vRef->IsLinked())
+        vRef->Link(&fVtxBuffRefList);
+
+    // One way or another, we now have a vbufferref[idx] in owner.
+    // Now, does it need to be (re)filled?
+    // If the owner is volatile, then we hold off. It might not
+    // be visible, and we might need to refill it again if we
+    // have an overrun of our dynamic buffer.
+    if (!vRef->Volatile()) {
+        // If it's a static buffer, allocate a vertex buffer for it.
+        fDevice.CheckStaticVertexBuffer(vRef, owner, idx);
+
+        // Might want to remove this assert, and replace it with a dirty check
+        // if we have static buffers that change very seldom rather than never.
+        hsAssert(!vRef->IsDirty(), "Non-volatile vertex buffers should never get dirty");
+    }
+    else
+    {
+        // Make sure we're going to be ready to fill it.
+        if (!vRef->fData && (vRef->fFormat != owner->GetVertexFormat())) {
+            vRef->fData = new uint8_t[vRef->fCount * vRef->fVertexSize];
+            fDevice.FillVolatileVertexBufferRef(vRef, owner, idx);
+        }
+    }
+}
+
+
+template<class DeviceType>
+void pl3DPipeline<DeviceType>::CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx)
+{
+    typename DeviceType::IndexBufferRef* iRef = static_cast<typename DeviceType::IndexBufferRef*>(owner->GetIndexBufferRef(idx));
+
+    if (!iRef) {
+        // Create one from scratch.
+        iRef = new typename DeviceType::IndexBufferRef();
+        fDevice.SetupIndexBufferRef(owner, idx, iRef);
+    }
+
+    if (!iRef->IsLinked())
+        iRef->Link(&fIdxBuffRefList);
+
+    // Make sure it has all resources created.
+    fDevice.CheckIndexBuffer(iRef);
+
+    // If it's dirty, refill it.
+    if (iRef->IsDirty())
+        fDevice.FillIndexBufferRef(iRef, owner, idx);
+}
+
+template<class DeviceType>
+void pl3DPipeline<DeviceType>::CheckTextureRef(plLayerInterface* layer)
+{
+    plBitmap* bitmap = layer->GetTexture();
+
+    if (bitmap) {
+        typename DeviceType::TextureRef* tRef = static_cast<typename DeviceType::TextureRef*>(bitmap->GetDeviceRef());
+
+        if (!tRef) {
+            tRef = new typename DeviceType::TextureRef();
+            fDevice.SetupTextureRef(layer, bitmap, tRef);
+        }
+
+        if (!tRef->IsLinked())
+            tRef->Link(&fTextureRefList);
+
+        // Make sure it has all resources created.
+        fDevice.CheckTexture(tRef);
+
+        // If it's dirty, refill it.
+        if (tRef->IsDirty()) {
+            plMipmap* mip = plMipmap::ConvertNoRef(bitmap);
+            if (mip) {
+                fDevice.MakeTextureRef(tRef, layer, mip);
+                return;
+            }
+
+            plCubicEnvironmap* cubic = plCubicEnvironmap::ConvertNoRef(bitmap);
+            if (cubic) {
+                fDevice.MakeCubicTextureRef(tRef, layer, cubic);
+                return;
+            }
+        }
+    }
+}
+
+template<class DeviceType>
+void pl3DPipeline<DeviceType>::CheckTextureRef(plBitmap* bitmap)
+{
+    typename DeviceType::TextureRef* tRef = static_cast<typename DeviceType::TextureRef*>(bitmap->GetDeviceRef());
+
+    if (!tRef) {
+        tRef = new typename DeviceType::TextureRef();
+        fDevice.SetupTextureRef(nullptr, bitmap, tRef);
+    }
+
+    if (!tRef->IsLinked())
+        tRef->Link(&fTextureRefList);
+
+    // Make sure it has all resources created.
+    fDevice.CheckTexture(tRef);
+
+    // If it's dirty, refill it.
+    if (tRef->IsDirty()) {
+        plMipmap* mip = plMipmap::ConvertNoRef(bitmap);
+        if (mip) {
+            fDevice.MakeTextureRef(tRef, nullptr, mip);
+            return;
+        }
+
+        plCubicEnvironmap* cubic = plCubicEnvironmap::ConvertNoRef(bitmap);
+        if (cubic) {
+            fDevice.MakeCubicTextureRef(tRef, nullptr, cubic);
+            return;
+        }
+    }
+}
+
+
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::RegisterLight(plLightInfo* liInfo)
 {
     if (liInfo->IsLinked())
@@ -984,7 +1272,7 @@ void pl3DPipeline<DeviceType>::RegisterLight(plLightInfo* liInfo)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::UnRegisterLight(plLightInfo* liInfo)
 {
     liInfo->SetDeviceRef(nullptr);
@@ -992,7 +1280,7 @@ void pl3DPipeline<DeviceType>::UnRegisterLight(plLightInfo* liInfo)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::PushRenderTarget(plRenderTarget* target)
 {
     fCurrRenderTarget = target;
@@ -1008,7 +1296,7 @@ void pl3DPipeline<DeviceType>::PushRenderTarget(plRenderTarget* target)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 plRenderTarget* pl3DPipeline<DeviceType>::PopRenderTarget()
 {
     plRenderTarget* old = fRenderTargets.back();
@@ -1039,7 +1327,7 @@ plRenderTarget* pl3DPipeline<DeviceType>::PopRenderTarget()
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::BeginVisMgr(plVisMgr* visMgr)
 {
     // Make Light Lists /////////////////////////////////////////////////////
@@ -1103,7 +1391,7 @@ void pl3DPipeline<DeviceType>::BeginVisMgr(plVisMgr* visMgr)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::EndVisMgr(plVisMgr* visMgr)
 {
     fCharLights.clear();
@@ -1111,7 +1399,7 @@ void pl3DPipeline<DeviceType>::EndVisMgr(plVisMgr* visMgr)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 bool pl3DPipeline<DeviceType>::CheckResources()
 {
     if ((fClothingOutfits.size() <= 1 && fAvRTPool.size() > 1) ||
@@ -1125,7 +1413,7 @@ bool pl3DPipeline<DeviceType>::CheckResources()
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::SetZBiasScale(float scale)
 {
     scale += 1.0f;
@@ -1134,14 +1422,14 @@ void pl3DPipeline<DeviceType>::SetZBiasScale(float scale)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 float pl3DPipeline<DeviceType>::GetZBiasScale() const
 {
     return (fTweaks.fPerspLayerScale / fTweaks.fDefaultPerspLayerScale) - 1.0f;
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w)
 {
     plViewTransform& view_xform = fView.GetViewTransform();
@@ -1155,7 +1443,7 @@ void pl3DPipeline<DeviceType>::SetWorldToCamera(const hsMatrix44& w2c, const hsM
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::ScreenToWorldPoint(int n, uint32_t stride, int32_t* scrX, int32_t* scrY, float dist, uint32_t strideOut, hsPoint3* worldOut)
 {
     while (n--) {
@@ -1166,7 +1454,7 @@ void pl3DPipeline<DeviceType>::ScreenToWorldPoint(int n, uint32_t stride, int32_
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::RefreshScreenMatrices()
 {
     fView.fCullTreeDirty = true;
@@ -1174,7 +1462,7 @@ void pl3DPipeline<DeviceType>::RefreshScreenMatrices()
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 hsGMaterial* pl3DPipeline<DeviceType>::PushOverrideMaterial(hsGMaterial* mat)
 {
     hsGMaterial* ret = GetOverrideMaterial();
@@ -1186,7 +1474,7 @@ hsGMaterial* pl3DPipeline<DeviceType>::PushOverrideMaterial(hsGMaterial* mat)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::PopOverrideMaterial(hsGMaterial* restore)
 {
     hsGMaterial *pop = fOverrideMat.back();
@@ -1198,7 +1486,7 @@ void pl3DPipeline<DeviceType>::PopOverrideMaterial(hsGMaterial* restore)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 plLayerInterface* pl3DPipeline<DeviceType>::AppendLayerInterface(plLayerInterface* li, bool onAllLayers)
 {
     fForceMatHandle = true;
@@ -1209,7 +1497,7 @@ plLayerInterface* pl3DPipeline<DeviceType>::AppendLayerInterface(plLayerInterfac
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 plLayerInterface* pl3DPipeline<DeviceType>::RemoveLayerInterface(plLayerInterface* li, bool onAllLayers)
 {
     fForceMatHandle = true;
@@ -1227,7 +1515,7 @@ plLayerInterface* pl3DPipeline<DeviceType>::RemoveLayerInterface(plLayerInterfac
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 hsGMatState pl3DPipeline<DeviceType>::PushMaterialOverride(const hsGMatState& state, bool on)
 {
     hsGMatState ret = GetMaterialOverride(on);
@@ -1243,7 +1531,7 @@ hsGMatState pl3DPipeline<DeviceType>::PushMaterialOverride(const hsGMatState& st
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 hsGMatState pl3DPipeline<DeviceType>::PushMaterialOverride(hsGMatState::StateIdx cat, uint32_t which, bool on)
 {
     hsGMatState ret = GetMaterialOverride(on);
@@ -1259,7 +1547,7 @@ hsGMatState pl3DPipeline<DeviceType>::PushMaterialOverride(hsGMatState::StateIdx
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::PopMaterialOverride(const hsGMatState& restore, bool on)
 {
     if (on) {
@@ -1273,7 +1561,7 @@ void pl3DPipeline<DeviceType>::PopMaterialOverride(const hsGMatState& restore, b
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::SubmitShadowSlave(plShadowSlave* slave)
 {
     // Check that it's a valid slave.
@@ -1299,7 +1587,7 @@ void pl3DPipeline<DeviceType>::SubmitShadowSlave(plShadowSlave* slave)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::SubmitClothingOutfit(plClothingOutfit* co)
 {
     auto iter = std::find(fClothingOutfits.cbegin(), fClothingOutfits.cend(), co);
@@ -1315,7 +1603,7 @@ void pl3DPipeline<DeviceType>::SubmitClothingOutfit(plClothingOutfit* co)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 plLayerInterface* pl3DPipeline<DeviceType>::PushPiggyBackLayer(plLayerInterface* li)
 {
     fPiggyBackStack.push_back(li);
@@ -1328,7 +1616,7 @@ plLayerInterface* pl3DPipeline<DeviceType>::PushPiggyBackLayer(plLayerInterface*
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 plLayerInterface* pl3DPipeline<DeviceType>::PopPiggyBackLayer(plLayerInterface* li)
 {
     auto iter = std::find(fPiggyBackStack.cbegin(), fPiggyBackStack.cend(), li);
@@ -1345,7 +1633,7 @@ plLayerInterface* pl3DPipeline<DeviceType>::PopPiggyBackLayer(plLayerInterface* 
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::SetViewTransform(const plViewTransform& v)
 {
     fView.SetViewTransform(v);
@@ -1364,7 +1652,7 @@ void pl3DPipeline<DeviceType>::SetViewTransform(const plViewTransform& v)
 
 /*** PROTECTED METHODS *******************************************************/
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IAttachSlaveToReceivers(size_t which, plDrawableSpans* drawable, const std::vector<int16_t>& visList)
 {
     plShadowSlave* slave = fShadows[which];
@@ -1412,7 +1700,7 @@ void pl3DPipeline<DeviceType>::IAttachSlaveToReceivers(size_t which, plDrawableS
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IAttachShadowsToReceivers(plDrawableSpans* drawable, const std::vector<int16_t>& visList)
 {
     for (size_t i = 0; i < fShadows.size(); i++)
@@ -1420,7 +1708,7 @@ void pl3DPipeline<DeviceType>::IAttachShadowsToReceivers(plDrawableSpans* drawab
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 bool pl3DPipeline<DeviceType>::IAcceptsShadow(const plSpan* span, plShadowSlave* slave)
 {
     // The span's shadow bits records which shadow maps that span was rendered
@@ -1429,7 +1717,7 @@ bool pl3DPipeline<DeviceType>::IAcceptsShadow(const plSpan* span, plShadowSlave*
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 bool pl3DPipeline<DeviceType>::IReceivesShadows(const plSpan* span, hsGMaterial* mat)
 {
     if (span->fProps & plSpan::kPropNoShadow)
@@ -1450,7 +1738,7 @@ bool pl3DPipeline<DeviceType>::IReceivesShadows(const plSpan* span, hsGMaterial*
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::ISetShadowFromGroup(plDrawableSpans* drawable, const plSpan* span, plLightInfo* liInfo)
 {
     hsGMaterial* mat = drawable->GetMaterial(span->fMaterialIdx);
@@ -1474,8 +1762,19 @@ void pl3DPipeline<DeviceType>::ISetShadowFromGroup(plDrawableSpans* drawable, co
 }
 
 
+template<class DeviceType>
+void pl3DPipeline<DeviceType>::IClearShadowSlaves()
+{
+    for (plShadowSlave* shadow : fShadows)
+    {
+        const plShadowCaster* caster = shadow->fCaster;
+        caster->GetKey()->UnRefObject();
+    }
+    fShadows.clear();
+}
 
-template <class DeviceType>
+
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IClearClothingOutfits(std::vector<plClothingOutfit*>* outfits)
 {
     while (!outfits->empty()) {
@@ -1488,7 +1787,7 @@ void pl3DPipeline<DeviceType>::IClearClothingOutfits(std::vector<plClothingOutfi
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IFillAvRTPool()
 {
     fAvNextFreeRT = 0;
@@ -1514,7 +1813,7 @@ void pl3DPipeline<DeviceType>::IFillAvRTPool()
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 bool pl3DPipeline<DeviceType>::IFillAvRTPool(uint16_t numRTs, uint16_t width)
 {
     fAvRTPool.resize(numRTs);
@@ -1540,7 +1839,7 @@ bool pl3DPipeline<DeviceType>::IFillAvRTPool(uint16_t numRTs, uint16_t width)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IReleaseAvRTPool()
 {
     for (plClothingOutfit* outfit : fClothingOutfits)
@@ -1556,14 +1855,14 @@ void pl3DPipeline<DeviceType>::IReleaseAvRTPool()
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 plRenderTarget *pl3DPipeline<DeviceType>::IGetNextAvRT()
 {
     return fAvRTPool[fAvNextFreeRT++];
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IFreeAvRT(plRenderTarget* tex)
 {
     auto iter = std::find(fAvRTPool.begin(), fAvRTPool.end(), tex);
@@ -1576,7 +1875,79 @@ void pl3DPipeline<DeviceType>::IFreeAvRT(plRenderTarget* tex)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::IPushOverBaseLayer(plLayerInterface* li)
+{
+    if (!li)
+        return nullptr;
+
+    fOverLayerStack.push_back(li);
+
+    if (!fOverBaseLayer)
+        return fOverBaseLayer = li;
+
+    fForceMatHandle = true;
+    fOverBaseLayer = fOverBaseLayer->Attach(li);
+    fOverBaseLayer->Eval(fTime, fFrame, 0);
+    return fOverBaseLayer;
+}
+
+
+template<class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::IPopOverBaseLayer(plLayerInterface* li)
+{
+    if (!li)
+        return nullptr;
+
+    fForceMatHandle = true;
+
+    plLayerInterface* pop = fOverLayerStack.back();
+    fOverLayerStack.pop_back();
+    fOverBaseLayer = fOverBaseLayer->Detach(pop);
+
+    return pop;
+}
+
+
+template<class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::IPushOverAllLayer(plLayerInterface* li)
+{
+    if (!li)
+        return nullptr;
+
+    fOverLayerStack.push_back(li);
+
+    if (!fOverAllLayer) {
+        fOverAllLayer = li;
+        fOverAllLayer->Eval(fTime, fFrame, 0);
+        return fOverAllLayer;
+    }
+
+    fForceMatHandle = true;
+    fOverAllLayer = fOverAllLayer->Attach(li);
+    fOverAllLayer->Eval(fTime, fFrame, 0);
+
+    return fOverAllLayer;
+}
+
+
+template<class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::IPopOverAllLayer(plLayerInterface* li)
+{
+    if (!li)
+        return nullptr;
+
+    fForceMatHandle = true;
+
+    plLayerInterface* pop = fOverLayerStack.back();
+    fOverLayerStack.pop_back();
+    fOverAllLayer = fOverAllLayer->Detach(pop);
+
+    return pop;
+}
+
+
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::ICheckLighting(plDrawableSpans* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
 {
     if (fView.fRenderState & kRenderNoLights)
@@ -1807,7 +2178,7 @@ void pl3DPipeline<DeviceType>::ICheckLighting(plDrawableSpans* drawable, std::ve
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 hsMatrix44 pl3DPipeline<DeviceType>::IGetCameraToNDC()
 {
     hsMatrix44 cam2ndc = GetViewTransform().GetCameraToNDC();
@@ -1845,7 +2216,7 @@ hsMatrix44 pl3DPipeline<DeviceType>::IGetCameraToNDC()
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::ISetLocalToWorld(const hsMatrix44& l2w, const hsMatrix44& w2l)
 {
     fView.SetLocalToWorld(l2w);
@@ -1861,7 +2232,7 @@ void pl3DPipeline<DeviceType>::ISetLocalToWorld(const hsMatrix44& l2w, const hsM
 
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::ITransformsToDevice()
 {
     if (fView.fXformResetFlags & fView.kResetCamera)
@@ -1875,14 +2246,14 @@ void pl3DPipeline<DeviceType>::ITransformsToDevice()
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IProjectionMatrixToDevice()
 {
     fDevice.SetProjectionMatrix(IGetCameraToNDC());
     fView.fXformResetFlags &= ~fView.kResetProjection;
 }
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IWorldToCameraToDevice()
 {
     fDevice.SetWorldToCameraMatrix(fView.GetWorldToCamera());
@@ -1891,11 +2262,143 @@ void pl3DPipeline<DeviceType>::IWorldToCameraToDevice()
     fFrame++;
 }
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::ILocalToWorldToDevice()
 {
     fDevice.SetLocalToWorldMatrix(fView.GetLocalToWorld());
     fView.fXformResetFlags &= ~fView.kResetL2W;
+}
+
+struct plSortFace
+{
+    uint16_t      fIdx[3];
+    float    fDist;
+};
+
+struct plCompSortFace
+{
+    bool operator()( const plSortFace& lhs, const plSortFace& rhs) const
+    {
+        return lhs.fDist > rhs.fDist;
+    }
+};
+
+template<class DeviceType>
+bool pl3DPipeline<DeviceType>::IAvatarSort(plDrawableSpans* d, const std::vector<int16_t>& visList)
+{
+    plProfile_BeginTiming(AvatarSort);
+    for (int16_t visIdx : visList)
+    {
+        hsAssert(d->GetSpan(visIdx)->fTypeMask & plSpan::kIcicleSpan, "Unknown type for sorting faces");
+
+        plIcicle* span = (plIcicle*)d->GetSpan(visIdx);
+
+        if (span->fProps & plSpan::kPartialSort) {
+            hsAssert(d->GetBufferGroup(span->fGroupIdx)->AreIdxVolatile(), "Badly setup buffer group - set PartialSort too late?");
+
+            const hsPoint3 viewPos = GetViewPositionWorld();
+
+            plGBufferGroup* group = d->GetBufferGroup(span->fGroupIdx);
+
+            typename DeviceType::VertexBufferRef* vRef = static_cast<typename DeviceType::VertexBufferRef*>(group->GetVertexBufferRef(span->fVBufferIdx));
+
+            const uint8_t* vdata = vRef->fData;
+            const uint32_t stride = vRef->fVertexSize;
+
+            const int numTris = span->fILength/3;
+
+            static std::vector<plSortFace> sortScratch;
+            sortScratch.resize(numTris);
+
+            plProfile_IncCount(AvatarFaces, numTris);
+
+            // Have three very similar sorts here, differing only on where the "position" of
+            // each triangle is defined, either as the center of the triangle, the nearest
+            // point on the triangle, or the farthest point on the triangle.
+            // Having tried all three on the avatar (the only thing this sort is used on),
+            // the best results surprisingly came from using the center of the triangle.
+            uint16_t* indices = group->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
+            int j;
+            for( j = 0; j < numTris; j++ )
+            {
+#if 1 // TRICENTER
+                uint16_t idx = *indices++;
+                sortScratch[j].fIdx[0] = idx;
+                hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
+
+                idx = *indices++;
+                sortScratch[j].fIdx[1] = idx;
+                pos += *(hsPoint3*)(vdata + idx * stride);
+
+                idx = *indices++;
+                sortScratch[j].fIdx[2] = idx;
+                pos += *(hsPoint3*)(vdata + idx * stride);
+
+                pos *= 0.3333f;
+
+                sortScratch[j].fDist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+#elif 0 // NEAREST
+                uint16_t idx = *indices++;
+                sortScratch[j].fIdx[0] = idx;
+                hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
+                float dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+                float minDist = dist;
+
+                idx = *indices++;
+                sortScratch[j].fIdx[1] = idx;
+                pos = *(hsPoint3*)(vdata + idx * stride);
+                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+                if( dist < minDist )
+                    minDist = dist;
+
+                idx = *indices++;
+                sortScratch[j].fIdx[2] = idx;
+                pos = *(hsPoint3*)(vdata + idx * stride);
+                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+                if( dist < minDist )
+                    minDist = dist;
+
+                sortScratch[j].fDist = minDist;
+#elif 1 // FURTHEST
+                uint16_t idx = *indices++;
+                sortScratch[j].fIdx[0] = idx;
+                hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
+                float dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+                float maxDist = dist;
+
+                idx = *indices++;
+                sortScratch[j].fIdx[1] = idx;
+                pos = *(hsPoint3*)(vdata + idx * stride);
+                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+                if( dist > maxDist )
+                    maxDist = dist;
+
+                idx = *indices++;
+                sortScratch[j].fIdx[2] = idx;
+                pos = *(hsPoint3*)(vdata + idx * stride);
+                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+                if( dist > maxDist )
+                    maxDist = dist;
+
+                sortScratch[j].fDist = maxDist;
+#endif // SORTTYPES
+            }
+
+            std::sort(sortScratch.begin(), sortScratch.end(), plCompSortFace());
+
+            indices = group->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
+            for (const plSortFace& iter : sortScratch)
+            {
+                *indices++ = iter.fIdx[0];
+                *indices++ = iter.fIdx[1];
+                *indices++ = iter.fIdx[2];
+            }
+
+            group->DirtyIndexBuffer(span->fIBufferIdx);
+        }
+    }
+    plProfile_EndTiming(AvatarSort);
+    return true;
 }
 
 #endif //_pl3DPipeline_inc_
