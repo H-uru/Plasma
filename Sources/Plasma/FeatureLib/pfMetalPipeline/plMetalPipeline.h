@@ -237,7 +237,6 @@ private:
     void                   ISetupShadowRcvTextureStages(hsGMaterial* mat);
     void                   ISetupShadowSlaveTextures(plShadowSlave* slave); 
     void                   ISetupShadowState(plShadowSlave* slave, plShadowState& shadowState);
-    void                   IDisableLightsForShadow();
     void                   IReleaseRenderTargetPools();
     void                   IRenderProjectionEach(const plRenderPrimFunc& render, hsGMaterial* material, int iPass, const plSpan& span, const plMetalVertexBufferRef* vRef);
     void                   IRenderProjections(const plRenderPrimFunc& render, const plMetalVertexBufferRef* vRef);

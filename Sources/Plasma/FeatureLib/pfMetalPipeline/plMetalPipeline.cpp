@@ -149,8 +149,6 @@ bool plRenderTriListFunc::RenderPrims() const
     plProfile_IncCount(DrawTriangles, fNumTris);
     plProfile_Inc(DrawPrimStatic);
 
-    // FIXME: Why is fCurrentRenderPassUniforms stored as a reference?
-    // FIXME: Replace memory comparison with dirty bool
     size_t uniformsSize = offsetof(VertexUniforms, uvTransforms) + sizeof(UVOutDescriptor) * fDevice->fPipeline->fCurrNumLayers;
     if ( !(fDevice->fPipeline->fState.fCurrentVertexUniforms.has_value() && fDevice->fPipeline->fState.fCurrentVertexUniforms == *fDevice->fPipeline->fCurrentRenderPassUniforms) )
     {
@@ -1269,7 +1267,6 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
 void plMetalPipeline::IRenderProjections(const plRenderPrimFunc& render, const plMetalVertexBufferRef* vRef)
 {
     PushCurrentLightSources();
-    IDisableLightsForShadow();
     for (plLightInfo* li : fProjAll) {
         IRenderProjection(render, li, vRef);
     }
@@ -1674,14 +1671,13 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
 void plMetalPipeline::IBindLights()
 {
     size_t         lightSize = offsetof(plMetalLights, lampSources) + (sizeof(plMetalShaderLightSource) * fLights.count);
-    
-    // FIXME: These states should support dirtying instead of expense memcmps
-    if ( !(fState.fBoundLights.has_value() && fState.fBoundLights == fLights) ) {
-        fState.fBoundLights = fLights;
+
+    if ( !(fState.fBoundLights.has_value() && memcmp(&fState.fBoundLights, &fLights, lightSize) == 0) ) {
+        memcpy(&fState.fBoundLights, &fLights, lightSize);
         if (fLightingPerPixel) {
-            fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&fLights, sizeof(plMetalLights), FragmentShaderArgumentLights);
+            fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&fLights, lightSize, FragmentShaderArgumentLights);
         } else {
-            fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&fLights, sizeof(plMetalLights), VertexShaderArgumentLights);
+            fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&fLights, lightSize, VertexShaderArgumentLights);
         }
     }
     
@@ -3684,8 +3680,6 @@ void plMetalPipeline::IResetRenderTargetPools()
         // fBlurScratchRTs[i] = nullptr;
         // fBlurDestRTs[i] = nullptr;
     }
-
-    // fLights.fNextShadowLight = 0;
 }
 
 // IRenderShadowCasterSpan //////////////////////////////////////////////////////////////////////
@@ -3891,19 +3885,6 @@ void plMetalPipeline::ISetupShadowRcvTextureStages(hsGMaterial* mat)
     }
 
     fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&layerIndex, sizeof(int), FragmentShaderArgumentShadowCastAlphaSrc);
-}
-
-// IDisableLightsForShadow ///////////////////////////////////////////////////////////
-// Disable any lights that are enabled. We'll only want the shadow light illuminating
-// the surface.
-void plMetalPipeline::IDisableLightsForShadow()
-{
-    // FIXME: Planned for removal - but used by projections. New light code will obsolete.
-    int i;
-    for (i = 0; i < 8; i++) {
-        IDisableLight(i);
-    }
-    fLights.count = 0;
 }
 
 // ISetupShadowSlaveTextures //////////////////////////////////////////////
