@@ -1654,7 +1654,8 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
                                   postEncodeTransform);
         }
         
-        fLightingPerPixel = fragmentShaderDescription.fUsePerPixelLighting = PLASMA_FORCE_PER_PIXEL_LIGHTING;
+        fragmentShaderDescription.fUsePerPixelLighting = PLASMA_FORCE_PER_PIXEL_LIGHTING;
+        ISetEnablePerPixelLighting( fragmentShaderDescription.fUsePerPixelLighting  );
 
         plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalMaterialPassPipelineState(&fDevice, vRef, fragmentShaderDescription).GetRenderPipelineState();
         const MTL::RenderPipelineState*       pipelineState = linkedPipeline->pipelineState;
@@ -2444,6 +2445,18 @@ void plMetalPipeline::IScaleLight(size_t i, float scale)
 {
     scale = int(scale * 1.e1f) * 1.e-1f;
     fLights.lampSources[i].scale = scale;
+}
+
+void plMetalPipeline::ISetEnablePerPixelLighting(const bool enable)
+{
+    if (fLightingPerPixel != enable)
+    {
+        fLightingPerPixel = enable;
+        
+        // These states need to be reset for a change in lighting technique
+        fState.fBoundLights.reset();
+        fState.fBoundMaterialProperties.reset();
+    }
 }
 
 void plMetalPipeline::IDrawPlate(plPlate* plate)

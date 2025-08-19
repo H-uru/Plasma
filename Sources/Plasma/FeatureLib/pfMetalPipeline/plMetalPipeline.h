@@ -243,6 +243,8 @@ private:
     void                   IRenderProjection(const plRenderPrimFunc& render, plLightInfo* li, const plMetalVertexBufferRef* vRef);
 
     void ISetLayer(uint32_t lay);
+    
+    void ISetEnablePerPixelLighting(const bool enable);
 
     // Shadows
     std::vector<plRenderTarget*> fRenderTargetPool512;
