@@ -58,6 +58,14 @@ if(VCPKG_TARGET_IS_WINDOWS)
     endif()
 endif()
 
+if("deprecated-win7-support" IN_LIST FEATURES)
+    list(APPEND PATCHES
+        win7-0001-Polyfill-PathCch-with-WINE.patch
+        win7-0002-Revert-gh-102336-Remove-code-specifically-for-handli.patch
+        win7-0003-Remove-_winapi.CopyFile2.patch
+    )
+endif()
+
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO python/cpython
@@ -66,6 +74,14 @@ vcpkg_from_github(
     HEAD_REF master
     PATCHES ${PATCHES}
 )
+
+if("deprecated-win7-support" IN_LIST FEATURES)
+    file(COPY
+        "${CURRENT_PORT_DIR}/pathcch.c"
+        "${CURRENT_PORT_DIR}/pathcch_polyfill.h"
+        DESTINATION "${SOURCE_PATH}/PC"
+    )
+endif()
 
 vcpkg_replace_string("${SOURCE_PATH}/Makefile.pre.in" "$(INSTALL) -d -m $(DIRMODE)" "$(MKDIR_P)")
 

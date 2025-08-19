@@ -35,7 +35,10 @@
       "opus",
       "physx",
       {
-        "name": "python3"
+        "name": "python3",
+        "features": [
+          "deprecated-win7-support"
+        ]
       },
       "speex",
       "string-theory",

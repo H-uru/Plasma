@@ -1,6 +1,7 @@
 {
   "name": "python3",
   "version": "3.12.9",
+  "port-version": 1,
   "description": "The Python programming language",
   "homepage": "https://github.com/python/cpython",
   "license": "Python-2.0",
@@ -87,6 +88,9 @@
           "platform": "windows & !mingw"
         }
       ]
+    },
+    "deprecated-win7-support": {
+      "description": "Windows 7 support"
     },
     "readline": {
       "description": "Build with readline. Requires system readline to be installed",

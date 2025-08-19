@@ -33,7 +33,7 @@ index d7d3cf081e..34269f0b75 100644
 +#       pragma comment(lib, "shlwapi.lib")
 +#       pragma comment(lib, "ws2_32.lib")
 +#       pragma comment(lib, "bcrypt.lib")
-+#       if Py_WINVER > 0x0601
++#       if Py_WINVER > 0x0601 && !defined(DONT_HAVE_PATHCCH)
 +#           pragma comment(lib, "pathcch.lib")
 +#       endif /* Py_WINVER */
  #endif /* MS_COREDLL */
