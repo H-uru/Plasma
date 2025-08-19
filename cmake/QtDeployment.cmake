@@ -46,6 +46,14 @@ cmake_dependent_option(PLASMA_APPLOCAL_QT "Deploy Qt libraries into tool binary 
 cmake_dependent_option(PLASMA_INSTALL_QT "Deploy Qt libraries when installing Plasma" ON "TARGET Qt::windeployqt" OFF)
 
 function(plasma_deploy_qt)
+    set(_DEPLOY_ARGS
+        --no-translations
+        --no-opengl-sw
+    )
+    if(Qt5_FOUND)
+        list(APPEND _DEPLOY_ARGS --no-angle)
+    endif()
+
     # Need to deploy Qt to the binary directory for each tool so it can be debugged more easily
     # in the IDE (this is analagous to VCPKG_APPLOCAL_DEPS). Note: add_custom_command cannot
     # attach to targets in a subdir.
@@ -54,7 +62,7 @@ function(plasma_deploy_qt)
         if(PLASMA_APPLOCAL_QT)
             add_custom_target(
                 ${i}_deployqt ALL
-                COMMAND Qt::windeployqt --no-translations --no-angle --no-opengl-sw --dir "$<TARGET_FILE_DIR:${i}>" "$<TARGET_FILE:${i}>"
+                COMMAND Qt::windeployqt ${_DEPLOY_ARGS} --dir "$<TARGET_FILE_DIR:${i}>" "$<TARGET_FILE:${i}>"
                 WORKING_DIRECTORY "$<TARGET_FILE_DIR:Qt::windeployqt>"
             )
             add_dependencies(${i}_deployqt ${i})
@@ -68,7 +76,7 @@ function(plasma_deploy_qt)
         install(
             CODE
             "execute_process(
-                COMMAND \"$<TARGET_FILE:Qt::windeployqt>\" --no-translations --no-angle --no-opengl-sw --dir \"${CMAKE_INSTALL_PREFIX}/tools\" \"${_DEPLOY_ARG}\"
+                COMMAND \"$<TARGET_FILE:Qt::windeployqt>\" ${_DEPLOY_ARGS} --dir \"${CMAKE_INSTALL_PREFIX}/tools\" \"${_DEPLOY_ARG}\"
                 WORKING_DIRECTORY \"$<TARGET_FILE_DIR:Qt::windeployqt>\"
                 COMMAND_ERROR_IS_FATAL ANY
             )"
