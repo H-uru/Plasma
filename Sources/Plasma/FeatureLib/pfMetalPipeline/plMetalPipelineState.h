@@ -50,6 +50,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMetalDevice.h"
 #include "plSurface/plShaderTable.h"
 
+#ifndef PLASMA_FORCE_PER_PIXEL_LIGHTING
+#define PLASMA_FORCE_PER_PIXEL_LIGHTING 0
+#endif
+
 enum plMetalPipelineType
 {
     // Unknown is for abstract types, don't use it
@@ -147,12 +151,13 @@ struct plMetalFragmentShaderDescription
     uint32_t fBlendModes[8];
     uint32_t fMiscFlags[8];
     uint8_t  fNumLayers;
+    bool     fUsePerPixelLighting;
 
     size_t hash;
 
     bool operator==(const plMetalFragmentShaderDescription& p) const
     {
-        bool match = fNumLayers == p.fNumLayers && memcmp(fPassTypes, p.fPassTypes, sizeof(fPassTypes)) == 0 && memcmp(fBlendModes, p.fBlendModes, sizeof(fBlendModes)) == 0 && memcmp(fMiscFlags, p.fMiscFlags, sizeof(fMiscFlags)) == 0;
+        bool match = fNumLayers == p.fNumLayers && memcmp(fPassTypes, p.fPassTypes, sizeof(fPassTypes)) == 0 && memcmp(fBlendModes, p.fBlendModes, sizeof(fBlendModes)) == 0 && memcmp(fMiscFlags, p.fMiscFlags, sizeof(fMiscFlags)) == 0 && fUsePerPixelLighting == p.fUsePerPixelLighting;
         return match;
     }
 
@@ -169,6 +174,8 @@ struct plMetalFragmentShaderDescription
 
         std::size_t value = std::hash<uint8_t>()(fNumLayers);
         value ^= std::hash<uint8_t>()(fNumLayers);
+        
+        value ^= std::hash<bool>()(fUsePerPixelLighting);
 
         for (int i = 0; i < 8; i++) {
             value ^= std::hash<uint32_t>()(fBlendModes[i]);
