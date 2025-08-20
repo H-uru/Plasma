@@ -378,7 +378,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     NetCommConnect();
     [[PLSServerStatus sharedStatus] loadServerStatus];
 
-    BOOL skipPatch = cmdParser.IsSpecified(kArgNoSelfPatch);
+    BOOL skipPatch = cmdParser.IsSpecified(kArgNoSelfPatch) ||  cmdParser.IsSpecified(kArgLocalData);
     if (gDataServerLocal || skipPatch) {
         [self initializeClient];
     } else {
