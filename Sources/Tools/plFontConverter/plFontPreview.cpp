@@ -102,8 +102,8 @@ void plFontPreview::Update(plFont *font, const QString &text)
 
 void plFontPreview::paintEvent(QPaintEvent *event)
 {
+    QFrame::paintEvent(event);
+
     QPainter painter(this);
     painter.drawImage(0, 0, fPreview);
-
-    QFrame::paintEvent(event);
 }
