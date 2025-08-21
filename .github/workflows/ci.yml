@@ -269,8 +269,8 @@ jobs:
     strategy:
       matrix:
         platform:
-          - { str: macos-arm64, arch: arm64, runner: "macos-14" }
-          - { str: macos-x64, arch: x86_64, runner: "macos-13" }
+          - { str: macos-arm64, arch: arm64, runner: "macos-14", qt-version: 6, min-deploy-target: 11.0 }
+          - { str: macos-x64, arch: x86_64, runner: "macos-13", qt-version: 5, min-deploy-target: 10.14 }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
@@ -283,7 +283,7 @@ jobs:
       - name: Install dependencies
         run: |
           brew install -q \
-              qt@5 \
+              qt@${{ matrix.platform.qt-version }} \
               autoconf \
               automake \
               libtool \
@@ -314,12 +314,12 @@ jobs:
             -G Xcode \
             -DUSE_VCPKG=ON \
             -DCMAKE_OSX_ARCHITECTURES=${{ matrix.platform.arch }} \
-            -DCMAKE_OSX_DEPLOYMENT_TARGET=10.14 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ matrix.platform.min-deploy-target }} \
             -DCMAKE_FIND_FRAMEWORK=LAST \
             -DPLASMA_BUILD_TESTS=ON \
             -DPLASMA_BUILD_TOOLS=ON \
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} \
-            -DQt5_ROOT=$(brew --prefix qt@5) \
+            -DQt5_ROOT=$(brew --prefix qt@${{ matrix.platform.qt-version }}) \
             -DVCPKG_INSTALL_OPTIONS=--clean-after-build \
             -S . -B build
         env:
