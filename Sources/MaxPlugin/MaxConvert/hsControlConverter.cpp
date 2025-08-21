@@ -633,7 +633,12 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
             Control* sub = (Control*)control->SubAnim(i);
             if (sub)
             {
-                IConvertSubTransform(sub, control->SubAnimName(i), node, tmc, start, end);
+#if MAX_VERSION_MAJOR < 24
+                MSTR subName = control->SubAnimName(i);
+#else
+                MSTR subName = control->SubAnimName(i, false);
+#endif
+                IConvertSubTransform(sub, subName, node, tmc, start, end);
             }
         }
 
@@ -1635,7 +1640,13 @@ bool hsControlConverter::GetControllerByName(Animatable* anim, const MSTR& name,
         {
             if (anim->SubAnim(i) == nullptr)
                 continue;
+
+#if MAX_VERSION_MAJOR < 24
             MSTR subName = anim->SubAnimName(i);
+#else
+            MSTR subName = anim->SubAnimName(i, false);
+#endif
+
             if( subName == name )
             {
                 fErrorMsg->Set(!anim->SubAnim(i), M2ST(name.data()), "Found controller by name, but nobody home").Check();
@@ -1990,7 +2001,13 @@ bool    hsControlConverter::IGetSubAnimByName( Animatable *anim, const MSTR& nam
         {
             if (anim->SubAnim(i) == nullptr)
                 continue;
+
+#if MAX_VERSION_MAJOR < 24
             MSTR subName = anim->SubAnimName(i);
+#else
+            MSTR subName = anim->SubAnimName(i, false);
+#endif
+
             if( subName == name )
             {
                 fErrorMsg->Set(!anim->SubAnim(i), M2ST(name.data()), "Found controller by name, but nobody home").Check();
