@@ -48,6 +48,10 @@ class plFont;
 
 class plFontPreview : public QFrame
 {
+protected:
+    unsigned int GetBackgroundColor() const;
+    unsigned int GetFontColor() const;
+
 public:
     plFontPreview(QWidget *parent = nullptr) : QFrame(parent), fFont(nullptr) { }
 
