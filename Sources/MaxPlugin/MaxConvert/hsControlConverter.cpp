@@ -633,7 +633,10 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
             Control* sub = (Control*)control->SubAnim(i);
             if (sub)
             {
-                IConvertSubTransform(sub, control->SubAnimName(i), node, tmc, start, end);
+                if (MAX_VERSION_MAJOR >= 24)
+                    IConvertSubTransform(sub, control->SubAnimName(i, false), node, tmc, start, end);
+                else
+                    IConvertSubTransform(sub, control->SubAnimName(i), node, tmc, start, end);
             }
         }
 
