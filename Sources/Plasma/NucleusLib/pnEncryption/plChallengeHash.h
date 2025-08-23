@@ -45,8 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plChecksum.h"
 
-namespace ST { class string; }
-
 void CryptCreateRandomSeed(size_t length, uint8_t* data);
 
 void CryptHashPassword(const ST::string& username, const ST::string& password, ShaDigest dest);

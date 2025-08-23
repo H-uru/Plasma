@@ -63,7 +63,6 @@ class plMorphSequence;
 class pyColor;
 class pyKey;
 class pySceneObject;
-namespace ST { class string; }
 
 class cyAvatar
 {

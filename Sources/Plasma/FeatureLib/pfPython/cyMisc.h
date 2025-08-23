@@ -64,7 +64,6 @@ class pyKey;
 class pyPlayer;
 class pyPoint3;
 class pySceneObject;
-namespace ST { class string; }
 
 typedef struct _object PyObject;
 

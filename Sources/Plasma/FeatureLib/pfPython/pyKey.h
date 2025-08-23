@@ -56,7 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plPipeline;
 class plPythonFileMod;
-namespace ST { class string; }
 
 class pyKey
 {

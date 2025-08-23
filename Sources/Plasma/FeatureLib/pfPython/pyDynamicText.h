@@ -58,7 +58,6 @@ class plDynamicTextMsg;
 class pyColor;
 class pyImage;
 class pyKey;
-namespace ST { class string; }
 
 class pyDynamicText
 {

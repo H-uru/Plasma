@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plStatusLog;
 class pyColor;
-namespace ST { class string; }
 
 class pyStatusLog
 {

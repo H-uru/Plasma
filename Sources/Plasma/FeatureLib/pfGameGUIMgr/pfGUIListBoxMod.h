@@ -58,8 +58,6 @@ class pfGUIValueCtrl;
 class plMessage;
 class pfScrollProc;
 
-namespace ST { class string; }
-
 class pfGUIListBoxMod : public pfGUIControlMod
 {
     friend class pfScrollProc;

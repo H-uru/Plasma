@@ -45,8 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsThread.h"
 
-namespace ST { class string; }
-
 class plCrashBase
 {
 protected:

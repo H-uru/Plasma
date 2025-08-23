@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plNetApp;
 class plNetGenericServer;
-namespace ST { class string; }
 
 ////////////////////////////////
 // A participant (peer) who we can send and recv messages from/to
