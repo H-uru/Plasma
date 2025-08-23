@@ -81,6 +81,9 @@ unsigned ConnGetId (ENetProtocol protocol) {
         case kNetProtocolCli2GateKeeper: return GateKeeperGetConnId();
         DEFAULT_FATAL(protocol);
     }
+
+    // ConnId 0 means no connection
+    return 0;
 }
 
 
