@@ -71,9 +71,7 @@ plLayerMovie::~plLayerMovie()
 bool plLayerMovie::ISetFault(const char* errStr)
 {
 #ifdef HS_DEBUGGING
-    char buff[256];
-    sprintf(buff, "ERROR %s: %s", fMovieName.AsString().c_str(), errStr);
-    hsStatusMessage(buff);
+    hsStatusMessage(ST::format("ERROR {}: {}", fMovieName, errStr).c_str());
 #endif // HS_DEBUGGING
     fMovieName = "";
     return true;

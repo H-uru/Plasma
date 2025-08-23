@@ -340,11 +340,9 @@ void plRegistryPageNode::AddKey(plKeyImp* key)
     // Error check
     if (keys->FindKey(key->GetUoid().GetObjectName()) != nullptr)
     {
-        //char str[512], tempStr[128];
-        //sprintf(str, "Attempting to add a key with a duplicate name. Not allowed."
-        //          "\n\n(Key name: %s, Class: %s, Loc: %s)", key->GetUoid().GetObjectName(), 
-        //          plFactory::GetNameOfClass(classType), key->GetUoid().GetLocation().StringIze(tempStr));
-        //hsStatusMessage(str);
+        //hsStatusMessage(ST::format("Attempting to add a key with a duplicate name. Not allowed."
+        //          "\n\n(Key name: {}, Class: {}, Loc: {})", key->GetUoid().GetObjectName(), 
+        //          plFactory::GetNameOfClass(classType), key->GetUoid().GetLocation()).c_str());
         bool recovered = false;
 
         // Attempt recovery

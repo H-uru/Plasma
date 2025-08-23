@@ -64,6 +64,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPNG.h"
 #include <cmath>
 #include <algorithm>
+#include <string_theory/format>
+#include <string_theory/string_stream>
 
 plProfile_CreateMemCounter("Mipmaps", "Memory", MemMipmaps);
 
@@ -2208,39 +2210,38 @@ void    plMipmap::IRemoveFromMemRecord( uint8_t *image )
 void    plMipmap::IReportLeaks()
 {
     plRecord    *record, *next;
-    static char msg[ 512 ], m2[ 128 ];
     uint32_t      size;
 
 
     hsStatusMessage("--- plMipmap Leaks ---");
     for (record = fRecords; record != nullptr; )
     {
+        ST::string_stream msg;
         size = record->fHeight * record->fRowBytes;
         if (size >= 1024) {
-            sprintf(msg, "%s, %4.1f kB: \t%dx%d, %d levels, %d bpr", record->fKeyName.c_str(),
-                    size / 1024.f, record->fWidth, record->fHeight, record->fNumLevels, record->fRowBytes);
+            msg << ST::format("{}, {4.1f} kB: \t{}x{}, {} levels, {} bpr", record->fKeyName,
+                size / 1024.f, record->fWidth, record->fHeight, record->fNumLevels, record->fRowBytes);
         } else {
-            sprintf(msg, "%s, %u bytes: \t%dx%d, %d levels, %d bpr", record->fKeyName.c_str(),
-                    size, record->fWidth, record->fHeight, record->fNumLevels, record->fRowBytes);
+            msg << ST::format("{}, {} bytes: \t{}x{}, {} levels, {} bpr", record->fKeyName,
+                size, record->fWidth, record->fHeight, record->fNumLevels, record->fRowBytes);
         }
 
         if( record->fCompressionType != kDirectXCompression )
-            sprintf( m2, " UType: %d", record->fUncompressedInfo.fType );
+            msg << ST::format(" UType: {}", record->fUncompressedInfo.fType);
         else
-            sprintf( m2, " DXT%d BSz: %d", record->fDirectXInfo.fCompressionType, record->fDirectXInfo.fBlockSize );
-        strcat( msg, m2 );
+            msg << ST::format(" DXT{} BSz: {}", record->fDirectXInfo.fCompressionType, record->fDirectXInfo.fBlockSize);
 
         switch( record->fCreationMethod )
         {
-            case plRecord::kViaCreate: strcat(msg, " via Create"); break;
-            case plRecord::kViaRead: strcat(msg, " via Read"); break;
-            case plRecord::kViaClipToMaxSize: strcat(msg, " via ClipToMaxSize"); break;
-            case plRecord::kViaDetailMapConstructor: strcat(msg, " via DetailMapConstructor"); break;
-            case plRecord::kViaCopyFrom: strcat(msg, " via CopyFrom"); break;
-            case plRecord::kViaResize: strcat(msg, " via Resize"); break;
+            case plRecord::kViaCreate: msg << " via Create"; break;
+            case plRecord::kViaRead: msg << " via Read"; break;
+            case plRecord::kViaClipToMaxSize: msg << " via ClipToMaxSize"; break;
+            case plRecord::kViaDetailMapConstructor: msg << " via DetailMapConstructor"; break;
+            case plRecord::kViaCopyFrom: msg << " via CopyFrom"; break;
+            case plRecord::kViaResize: msg << " via Resize"; break;
         }
 
-        hsStatusMessage( msg );
+        hsStatusMessage(msg.to_string().c_str());
 
         next = record->fNext;
         record->Unlink();

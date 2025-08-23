@@ -55,6 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define TRACK_REFS 0 // MEMLEAKFISH
 
 #if TRACK_REFS
+#include <string_theory/format>
+
 #include "plCreatableIndex.h"
 #include "plClassIndexMacros.h"
 #include "plTweak.h"
@@ -100,21 +102,16 @@ static int IsTracked(const plKeyData* keyData)
     return false;
 }
 
-static const char* CloneString(const plKeyData* keyData)
+static ST::string CloneString(const plKeyData* keyData)
 {
-    static char buff[256];
-    if( keyData )
-    {
-        sprintf(buff, "CID:%d, CPID:%d LOC:%d", 
+    if (keyData) {
+        return ST::format("CID:{}, CPID:{} LOC:{}",
             keyData->GetUoid().GetCloneID(), 
             keyData->GetUoid().GetClonePlayerID(), 
             keyData->GetUoid().GetLocation().GetSequenceNumber());
+    } else {
+        return ST_LITERAL("nil");
     }
-    else
-    {
-        sprintf(buff, "nil");
-    }
-    return buff;
 }
 #endif
 
@@ -124,10 +121,9 @@ plKey::plKey(const plKey& rhs) : fKeyData(rhs.fKeyData)
 #if TRACK_REFS  // FOR DEBUGGING ONLY
     if( IsTracked(fKeyData) )
     {
-        char msg[ 512 ];
-        sprintf( msg, "C: Key %s %s is being constructed using the plKey(plKey&) constructor", keyNameToLookFor, CloneString(fKeyData) );
-        //hsAssert( false, msg );
-        hsStatusMessageF(msg);
+        ST::string msg = ST::format("C: Key {} {} is being constructed using the plKey(plKey&) constructor", keyNameToLookFor, CloneString(fKeyData));
+        //hsAssert(false, msg.c_str());
+        hsStatusMessage(msg.c_str());
     }
 #endif
     IIncRef();
@@ -138,10 +134,9 @@ plKey::plKey(plKeyData* data) : fKeyData(data)
 #if TRACK_REFS  // FOR DEBUGGING ONLY
     if( IsTracked(fKeyData) )
     {
-        char msg[ 512 ];
-        sprintf( msg, "C: Key %s %s is being constructed using the plKey(plKeyData*) constructor", keyNameToLookFor, CloneString(fKeyData) );
-        //hsAssert( false, msg );
-        hsStatusMessageF(msg);
+        ST::string msg = ST::format("C: Key {} {} is being constructed using the plKey(plKeyData*) constructor", keyNameToLookFor, CloneString(fKeyData));
+        //hsAssert(false, msg.c_str());
+        hsStatusMessage(msg.c_str());
     }
 #endif
     IIncRef();
@@ -152,10 +147,9 @@ plKey::~plKey()
 #if TRACK_REFS  // FOR DEBUGGING ONLY
     if( IsTracked(fKeyData) )
     {
-        char msg[ 512 ];
-        sprintf( msg, "D: Key %s %s is being destructed", keyNameToLookFor, CloneString(fKeyData) );
-        //hsAssert( false, msg );
-        hsStatusMessageF(msg);
+        ST::string msg = ST::format("D: Key {} {} is being destructed", keyNameToLookFor, CloneString(fKeyData));
+        //hsAssert(false, msg.c_str());
+        hsStatusMessage(msg.c_str());
     }
 #endif
     IDecRef();
@@ -168,29 +162,29 @@ plKey &plKey::operator=( const plKey &rhs )
     {
         if( IsTracked(rhs.fKeyData) )
         {
-            char msg[ 512 ];
+            ST::string msg;
             if (fKeyData == nullptr)
-                sprintf( msg, "=: Key %s %s is being assigned to a nil key",
-                         keyNameToLookFor, CloneString(rhs.fKeyData) );
+                msg = ST::format("=: Key {} {} is being assigned to a nil key",
+                    keyNameToLookFor, CloneString(rhs.fKeyData));
             else
-                sprintf( msg, "=: Key %s %s is being assigned to %s",
-                         keyNameToLookFor, CloneString(rhs.fKeyData),
-                         fKeyData->GetUoid().GetObjectName().c_str() );
-            //hsAssert( false, msg );
-            hsStatusMessageF(msg);
+                msg = ST::format("=: Key {} {} is being assigned to {}",
+                    keyNameToLookFor, CloneString(rhs.fKeyData),
+                    fKeyData->GetUoid().GetObjectName());
+            //hsAssert(false, msg.c_str());
+            hsStatusMessage(msg.c_str());
         }
         if( IsTracked(fKeyData) )
         {
-            char msg[ 512 ];
+            ST::string msg;
             if (fKeyData == nullptr)
-                sprintf( msg, "=: Nil key is being assigned to %s %s",
-                         keyNameToLookFor, CloneString(fKeyData) );
+                msg = ST::format("=: Nil key is being assigned to {} {}",
+                    keyNameToLookFor, CloneString(fKeyData));
             else
-                sprintf( msg, "=: Key %s %s is being assigned to %s",
-                         fKeyData->GetUoid().GetObjectName().c_str(),
-                         CloneString(fKeyData), keyNameToLookFor );
-            //hsAssert( false, msg );
-            hsStatusMessageF(msg);
+                msg = ST::format("=: Key {} {} is being assigned to {}",
+                    fKeyData->GetUoid().GetObjectName(),
+                    CloneString(fKeyData), keyNameToLookFor);
+            //hsAssert(false, msg.c_str());
+            hsStatusMessage(msg.c_str());
         }
     }
 #endif
@@ -209,10 +203,9 @@ plKey &plKey::operator=(std::nullptr_t)
 #if TRACK_REFS  // FOR DEBUGGING ONLY
     if (IsTracked(fKeyData))
     {
-        char msg[512];
-        sprintf(msg, "D: Key %s %s is being nilified", keyNameToLookFor, CloneString(fKeyData));
-        //hsAssert(false, msg);
-        hsStatusMessageF(msg);
+        ST::string msg = ST::format("D: Key {} {} is being nilified", keyNameToLookFor, CloneString(fKeyData));
+        //hsAssert(false, msg.c_str());
+        hsStatusMessage(msg.c_str());
     }
 #endif
 
@@ -243,16 +236,17 @@ void plKey::IIncRef()
 #if TRACK_REFS  // FOR DEBUGGING ONLY
     if( IsTracked(fKeyData) )
     {
-        char msg[ 512 ];
+        ST::string msg;
         plConst(int) kMaxCnt(30);
+        // FIXME These ifs seem to do nothing - what is the point of this?
         if( fKeyData->fRefCount > kMaxCnt )
-            *msg = 0;
+            msg.clear();
         if( lastData && (fKeyData != lastData) )
-            *msg = 0;
+            msg.clear();
         lastData = fKeyData;
-        sprintf( msg, "+: Key %s %s is being reffed! Refcount: %d", keyNameToLookFor, CloneString(fKeyData), fKeyData->fRefCount );
-        //hsAssert( false, msg );
-        hsStatusMessageF(msg);
+        msg = ST::format("+: Key {} {} is being reffed! Refcount: {}", keyNameToLookFor, CloneString(fKeyData), fKeyData->fRefCount);
+        //hsAssert(false, msg.c_str());
+        hsStatusMessage(msg.c_str());
     }
 #endif
 
@@ -271,18 +265,19 @@ void plKey::IDecRef()
 #if TRACK_REFS  // FOR DEBUGGING ONLY
     if( IsTracked(fKeyData) )
     {
-        char msg[ 512 ];
+        ST::string msg;
         plConst(int) kMinCnt(2);
+        // FIXME These ifs seem to do nothing - what is the point of this?
         if( fKeyData->fRefCount < kMinCnt )
-            *msg = 0;
+            msg.clear();
         if( lastData && (fKeyData != lastData) )
-            *msg = 0;
+            msg.clear();
         lastData = fKeyData;
-        sprintf( msg, "-: Key %s %s is being de-reffed! Refcount: %d", keyNameToLookFor, CloneString(fKeyData), fKeyData->fRefCount );
-        //hsAssert( false, msg );
-        hsStatusMessageF(msg);
+        msg = ST::format("-: Key {} {} is being de-reffed! Refcount: {}", keyNameToLookFor, CloneString(fKeyData), fKeyData->fRefCount);
+        //hsAssert(false, msg.c_str());
+        hsStatusMessage(msg.c_str());
         if( fKeyData->fRefCount == 0 )
-            *msg = 0;
+            msg.clear();
     }
 #endif
 

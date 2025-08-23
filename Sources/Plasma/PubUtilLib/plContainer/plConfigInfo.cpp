@@ -907,20 +907,17 @@ bool plDebugConfigSource::WriteOutOf(plConfigInfo & configInfo)
     plConfigInfo::Keys::const_iterator      ki, ke;
     plConfigInfo::Values::const_iterator    vi, ve;
 
-    char buf[1024];
     fConfigInfo->GetSectionIterators(si,se);
     for (; si!=se; ++si)
     {
-        sprintf(buf,"\n[%s]",si->first.c_str());
-        hsStatusMessage(buf);
+        hsStatusMessage(ST::format("\n[{}]", si->first).c_str());
         if (fConfigInfo->GetKeyIterators(si->first, ki, ke))
             for (; ki!=ke; ++ki)
             {
                 if (fConfigInfo->GetValueIterators(si->first, ki->first, vi, ve))
                     for (; vi!=ve; ++vi)
                     {
-                        sprintf(buf,"%s=%s",ki->first.c_str(),vi->c_str());
-                        hsStatusMessage(buf);
+                        hsStatusMessage(ST::format("{}={}", ki->first, *vi).c_str());
                     }
             }
     }

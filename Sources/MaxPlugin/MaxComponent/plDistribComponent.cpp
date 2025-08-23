@@ -140,10 +140,8 @@ protected:
     {
         return false;
 
-        char buff[256];
         IRollupWindow *rollup = GetCOREInterface()->GetCommandPanelRollup();
-        sprintf(buff, "%d\t%x\t%x", fRollup, rollup->GetPanelIndex(hWnd), msg);
-        hsStatusMessage(buff);
+        hsStatusMessage(ST::format("{}\t{x}\t{x}", fRollup, rollup->GetPanelIndex(hWnd), msg).c_str());
 
         if( msg == 0x18 )
         {
