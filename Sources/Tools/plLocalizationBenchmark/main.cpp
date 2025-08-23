@@ -61,7 +61,11 @@ static const plCmdArgDef s_cmdLineArgs[] = {
 
 using ClockT = std::chrono::steady_clock;
 
-int main(int argc, char* argv[])
+#ifdef HS_BUILD_FOR_WIN32
+int wmain(int argc, const wchar_t* argv[])
+#else
+int main(int argc, const char* argv[])
+#endif
 {
     std::vector<ST::string> args;
     for (int i = 0; i < argc; ++i)

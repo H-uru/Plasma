@@ -124,7 +124,11 @@ static void FileDownloadProgress(uint64_t bytesDown, uint64_t bytesTotal, const 
     fflush(stdout);
 }
 
-int main(int argc, char* argv[])
+#ifdef HS_BUILD_FOR_WIN32
+int wmain(int argc, const wchar_t* argv[])
+#else
+int main(int argc, const char* argv[])
+#endif
 {
     enum { kArgServerIni, kArgDataOnly, kArgClientOnly, kArgQuiet, kArgHelp1, kArgHelp2 };
     const plCmdArgDef cmdLineArgs[] = {
@@ -139,7 +143,7 @@ int main(int argc, char* argv[])
     std::vector<ST::string> args;
     args.reserve(argc);
     for (size_t i = 0; i < argc; i++) {
-        args.emplace_back(ST::string::from_utf8(argv[i]));
+        args.emplace_back(argv[i]);
     }
 
     plCmdParser cmdParser(cmdLineArgs, std::size(cmdLineArgs));
