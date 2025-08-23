@@ -467,7 +467,7 @@ void plClientLauncher::ParseArguments()
     std::vector<ST::string> args;
     args.reserve(__argc);
     for (size_t i = 0; i < __argc; i++) {
-        args.push_back(ST::string::from_utf8(__argv[i]));
+        args.push_back(ST::string::from_wchar(__wargv[i]));
     }
 
     plCmdParser cmdParser(cmdLineArgs, std::size(cmdLineArgs));
