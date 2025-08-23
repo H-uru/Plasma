@@ -1,0 +1,350 @@
+From aad76884c64cec99558ee03d93b4fcc08efb1ea3 Mon Sep 17 00:00:00 2001
+From: Adam Johnson <AdamJohnso@gmail.com>
+Date: Tue, 19 Aug 2025 17:03:57 -0500
+Subject: [PATCH 2/3] Revert "gh-102336: Remove code specifically for handling
+ Windows 7 (GH-102337)"
+
+This reverts commit 938e36f824c5f834d6b77d47942ad81edd5491d0.
+---
+ Modules/_winapi.c      |  25 +++++++++-
+ Modules/getpath.c      |   5 +-
+ Modules/posixmodule.c  | 103 +++++++++++++++++++++++++++++++++--------
+ Modules/socketmodule.c |  35 ++++++++++++--
+ Python/fileutils.c     |   8 +++-
+ 5 files changed, 149 insertions(+), 27 deletions(-)
+
+diff --git a/Modules/_winapi.c b/Modules/_winapi.c
+index ac3ee113ffd..47fb35a1615 100644
+--- a/Modules/_winapi.c
++++ b/Modules/_winapi.c
+@@ -74,6 +74,23 @@
+ #define STARTF_USESTDHANDLES 0x00000100
+ #endif
+ 
++/* Grab CancelIoEx dynamically from kernel32 */
++static int has_CancelIoEx = -1;
++static BOOL (CALLBACK *Py_CancelIoEx)(HANDLE, LPOVERLAPPED);
++
++static int
++check_CancelIoEx()
++{
++    if (has_CancelIoEx == -1)
++    {
++        HINSTANCE hKernel32 = GetModuleHandle("KERNEL32");
++        * (FARPROC *) &Py_CancelIoEx = GetProcAddress(hKernel32,
++                                                      "CancelIoEx");
++        has_CancelIoEx = (Py_CancelIoEx != NULL);
++    }
++    return has_CancelIoEx;
++}
++
+ typedef struct {
+     PyTypeObject *overlapped_type;
+ } WinApiState;
+@@ -128,7 +145,8 @@ overlapped_dealloc(OverlappedObject *self)
+ 
+     PyObject_GC_UnTrack(self);
+     if (self->pending) {
+-        if (CancelIoEx(self->handle, &self->overlapped) &&
++        if (check_CancelIoEx() &&
++            Py_CancelIoEx(self->handle, &self->overlapped) &&
+             GetOverlappedResult(self->handle, &self->overlapped, &bytes, TRUE))
+         {
+             /* The operation is no longer pending -- nothing to do. */
+@@ -298,7 +316,10 @@ _winapi_Overlapped_cancel_impl(OverlappedObject *self)
+ 
+     if (self->pending) {
+         Py_BEGIN_ALLOW_THREADS
+-        res = CancelIoEx(self->handle, &self->overlapped);
++        if (check_CancelIoEx())
++            res = Py_CancelIoEx(self->handle, &self->overlapped);
++        else
++            res = CancelIo(self->handle);
+         Py_END_ALLOW_THREADS
+     }
+ 
+diff --git a/Modules/getpath.c b/Modules/getpath.c
+index cef0d7b4c46..c3ae07cf6fb 100644
+--- a/Modules/getpath.c
++++ b/Modules/getpath.c
+@@ -227,11 +227,12 @@ getpath_isxfile(PyObject *Py_UNUSED(self), PyObject *args)
+     path = PyUnicode_AsWideCharString(pathobj, &cchPath);
+     if (path) {
+ #ifdef MS_WINDOWS
++        const wchar_t *ext;
+         DWORD attr = GetFileAttributesW(path);
+         r = (attr != INVALID_FILE_ATTRIBUTES) &&
+             !(attr & FILE_ATTRIBUTE_DIRECTORY) &&
+-            (cchPath >= 4) &&
+-            (CompareStringOrdinal(path + cchPath - 4, -1, L".exe", -1, 1 /* ignore case */) == CSTR_EQUAL)
++            SUCCEEDED(PathCchFindExtension(path, cchPath + 1, &ext)) &&
++            (CompareStringOrdinal(ext, -1, L".exe", -1, 1 /* ignore case */) == CSTR_EQUAL)
+             ? Py_True : Py_False;
+ #else
+         struct stat st;
+diff --git a/Modules/posixmodule.c b/Modules/posixmodule.c
+index 8569a1c9105..7fffdb50e43 100644
+--- a/Modules/posixmodule.c
++++ b/Modules/posixmodule.c
+@@ -10,6 +10,16 @@
+ #define PY_SSIZE_T_CLEAN
+ 
+ #include "Python.h"
++// Include <windows.h> before pycore internal headers. FSCTL_GET_REPARSE_POINT
++// is not exported by <windows.h> if the WIN32_LEAN_AND_MEAN macro is defined,
++// whereas pycore_condvar.h defines the WIN32_LEAN_AND_MEAN macro.
++#ifdef MS_WINDOWS
++#  include <windows.h>
++#  include "pathcch_polyfill.h"
++#  include <lmcons.h>             // UNLEN
++#  include "osdefs.h"             // SEP
++#  define HAVE_SYMLINK
++#endif
+ 
+ #ifdef __VXWORKS__
+ #  include "pycore_bitutils.h"    // _Py_popcount32()
+@@ -1587,6 +1597,32 @@ _Py_Sigset_Converter(PyObject *obj, void *addr)
+ }
+ #endif /* HAVE_SIGSET_T */
+ 
++#ifdef MS_WINDOWS
++
++static int
++win32_get_reparse_tag(HANDLE reparse_point_handle, ULONG *reparse_tag)
++{
++    char target_buffer[_Py_MAXIMUM_REPARSE_DATA_BUFFER_SIZE];
++    _Py_REPARSE_DATA_BUFFER *rdb = (_Py_REPARSE_DATA_BUFFER *)target_buffer;
++    DWORD n_bytes_returned;
++
++    if (0 == DeviceIoControl(
++        reparse_point_handle,
++        FSCTL_GET_REPARSE_POINT,
++        NULL, 0, /* in buffer */
++        target_buffer, sizeof(target_buffer),
++        &n_bytes_returned,
++        NULL)) /* we're not using OVERLAPPED_IO */
++        return FALSE;
++
++    if (reparse_tag)
++        *reparse_tag = rdb->ReparseTag;
++
++    return TRUE;
++}
++
++#endif /* MS_WINDOWS */
++
+ /* Return a dictionary corresponding to the POSIX environment table */
+ #if defined(WITH_NEXT_FRAMEWORK) || (defined(__APPLE__) && defined(Py_ENABLE_SHARED))
+ /* On Darwin/MacOSX a shared library or framework has no access to
+@@ -8833,32 +8869,42 @@ os_setpgrp_impl(PyObject *module)
+ #ifdef HAVE_GETPPID
+ 
+ #ifdef MS_WINDOWS
+-#include <processsnapshot.h>
++#include <tlhelp32.h>
+ 
+ static PyObject*
+ win32_getppid(void)
+ {
+-    DWORD error;
++    HANDLE snapshot;
+     PyObject* result = NULL;
+-    HANDLE process = GetCurrentProcess();
++    BOOL have_record;
++    PROCESSENTRY32 pe;
+ 
+-    HPSS snapshot = NULL;
+-    error = PssCaptureSnapshot(process, PSS_CAPTURE_NONE, 0, &snapshot);
+-    if (error != ERROR_SUCCESS) {
+-        return PyErr_SetFromWindowsErr(error);
+-    }
++    DWORD mypid = GetCurrentProcessId(); /* This function never fails */
+ 
+-    PSS_PROCESS_INFORMATION info;
+-    error = PssQuerySnapshot(snapshot, PSS_QUERY_PROCESS_INFORMATION, &info,
+-                             sizeof(info));
+-    if (error == ERROR_SUCCESS) {
+-        result = PyLong_FromUnsignedLong(info.ParentProcessId);
+-    }
+-    else {
+-        result = PyErr_SetFromWindowsErr(error);
++    snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
++    if (snapshot == INVALID_HANDLE_VALUE)
++        return PyErr_SetFromWindowsErr(GetLastError());
++
++    pe.dwSize = sizeof(pe);
++    have_record = Process32First(snapshot, &pe);
++    while (have_record) {
++        if (mypid == pe.th32ProcessID) {
++            /* We could cache the ulong value in a static variable. */
++            result = PyLong_FromUnsignedLong(pe.th32ParentProcessID);
++            break;
++        }
++
++        have_record = Process32Next(snapshot, &pe);
+     }
+ 
+-    PssFreeSnapshot(process, snapshot);
++    /* If our loop exits and our pid was not found (result will be NULL)
++     * then GetLastError will return ERROR_NO_MORE_FILES. This is an
++     * error anyway, so let's raise it. */
++    if (!result)
++        result = PyErr_SetFromWindowsErr(GetLastError());
++
++    CloseHandle(snapshot);
++
+     return result;
+ }
+ #endif /*MS_WINDOWS*/
+@@ -15719,6 +15765,9 @@ os_getrandom_impl(PyObject *module, Py_ssize_t size, int flags)
+  * on win32
+  */
+ 
++typedef DLL_DIRECTORY_COOKIE (WINAPI *PAddDllDirectory)(PCWSTR newDirectory);
++typedef BOOL (WINAPI *PRemoveDllDirectory)(DLL_DIRECTORY_COOKIE cookie);
++
+ /*[clinic input]
+ os._add_dll_directory
+ 
+@@ -15738,6 +15787,8 @@ static PyObject *
+ os__add_dll_directory_impl(PyObject *module, path_t *path)
+ /*[clinic end generated code: output=80b025daebb5d683 input=1de3e6c13a5808c8]*/
+ {
++    HMODULE hKernel32;
++    PAddDllDirectory AddDllDirectory;
+     DLL_DIRECTORY_COOKIE cookie = 0;
+     DWORD err = 0;
+ 
+@@ -15745,8 +15796,14 @@ os__add_dll_directory_impl(PyObject *module, path_t *path)
+         return NULL;
+     }
+ 
++    /* For Windows 7, we have to load this. As this will be a fairly
++       infrequent operation, just do it each time. Kernel32 is always
++       loaded. */
+     Py_BEGIN_ALLOW_THREADS
+-    if (!(cookie = AddDllDirectory(path->wide))) {
++    if (!(hKernel32 = GetModuleHandleW(L"kernel32")) ||
++        !(AddDllDirectory = (PAddDllDirectory)GetProcAddress(
++            hKernel32, "AddDllDirectory")) ||
++        !(cookie = (*AddDllDirectory)(path->wide))) {
+         err = GetLastError();
+     }
+     Py_END_ALLOW_THREADS
+@@ -15775,6 +15832,8 @@ static PyObject *
+ os__remove_dll_directory_impl(PyObject *module, PyObject *cookie)
+ /*[clinic end generated code: output=594350433ae535bc input=c1d16a7e7d9dc5dc]*/
+ {
++    HMODULE hKernel32;
++    PRemoveDllDirectory RemoveDllDirectory;
+     DLL_DIRECTORY_COOKIE cookieValue;
+     DWORD err = 0;
+ 
+@@ -15787,8 +15846,14 @@ os__remove_dll_directory_impl(PyObject *module, PyObject *cookie)
+     cookieValue = (DLL_DIRECTORY_COOKIE)PyCapsule_GetPointer(
+         cookie, "DLL directory cookie");
+ 
++    /* For Windows 7, we have to load this. As this will be a fairly
++       infrequent operation, just do it each time. Kernel32 is always
++       loaded. */
+     Py_BEGIN_ALLOW_THREADS
+-    if (!RemoveDllDirectory(cookieValue)) {
++    if (!(hKernel32 = GetModuleHandleW(L"kernel32")) ||
++        !(RemoveDllDirectory = (PRemoveDllDirectory)GetProcAddress(
++            hKernel32, "RemoveDllDirectory")) ||
++        !(*RemoveDllDirectory)(cookieValue)) {
+         err = GetLastError();
+     }
+     Py_END_ALLOW_THREADS
+diff --git a/Modules/socketmodule.c b/Modules/socketmodule.c
+index 7f2ebba9884..226f94e1a36 100644
+--- a/Modules/socketmodule.c
++++ b/Modules/socketmodule.c
+@@ -658,6 +658,11 @@ select_error(void)
+ #  define SUPPRESS_DEPRECATED_CALL
+ #endif
+ 
++#ifdef MS_WINDOWS
++/* Does WSASocket() support the WSA_FLAG_NO_HANDLE_INHERIT flag? */
++static int support_wsa_no_inherit = -1;
++#endif
++
+ /* Convenience function to raise an error according to errno
+    and return a NULL pointer from a function. */
+ 
+@@ -5500,15 +5505,33 @@ sock_initobj_impl(PySocketSockObject *self, int family, int type, int proto,
+         }
+ #ifdef MS_WINDOWS
+         Py_BEGIN_ALLOW_THREADS
+-        fd = WSASocketW(family, type, proto,
+-                        NULL, 0,
+-                        WSA_FLAG_OVERLAPPED | WSA_FLAG_NO_HANDLE_INHERIT);
++        if (support_wsa_no_inherit) {
++            fd = WSASocketW(family, type, proto,
++                           NULL, 0,
++                           WSA_FLAG_OVERLAPPED | WSA_FLAG_NO_HANDLE_INHERIT);
++            if (fd == INVALID_SOCKET) {
++                /* Windows 7 or Windows 2008 R2 without SP1 or the hotfix */
++                support_wsa_no_inherit = 0;
++                fd = socket(family, type, proto);
++            }
++        }
++        else {
++            fd = socket(family, type, proto);
++        }
+         Py_END_ALLOW_THREADS
+ 
+         if (fd == INVALID_SOCKET) {
+             set_error();
+             return -1;
+         }
++
++        if (!support_wsa_no_inherit) {
++            if (!SetHandleInformation((HANDLE)fd, HANDLE_FLAG_INHERIT, 0)) {
++                closesocket(fd);
++                PyErr_SetFromWindowsErr(0);
++                return -1;
++            }
++        }
+ #else
+         /* UNIX */
+         Py_BEGIN_ALLOW_THREADS
+@@ -7393,6 +7416,12 @@ socket_exec(PyObject *m)
+ #endif
+ #endif
+ 
++#ifdef MS_WINDOWS
++    if (support_wsa_no_inherit == -1) {
++        support_wsa_no_inherit = IsWindows7SP1OrGreater();
++    }
++#endif
++
+ #ifdef SOCK_CLOEXEC
+     state->sock_cloexec_works = -1;
+ #endif
+diff --git a/Python/fileutils.c b/Python/fileutils.c
+index fcefd649bb9..a2b9e75942b 100644
+--- a/Python/fileutils.c
++++ b/Python/fileutils.c
+@@ -1489,11 +1489,17 @@ set_inheritable(int fd, int inheritable, int raise, int *atomic_flag_works)
+     else
+         flags = 0;
+ 
+-    if (!SetHandleInformation(handle, HANDLE_FLAG_INHERIT, flags)) {
++    /* This check can be removed once support for Windows 7 ends. */
++#define CONSOLE_PSEUDOHANDLE(handle) (((ULONG_PTR)(handle) & 0x3) == 0x3 && \
++        GetFileType(handle) == FILE_TYPE_CHAR)
++
++    if (!CONSOLE_PSEUDOHANDLE(handle) &&
++        !SetHandleInformation(handle, HANDLE_FLAG_INHERIT, flags)) {
+         if (raise)
+             PyErr_SetFromWindowsErr(0);
+         return -1;
+     }
++#undef CONSOLE_PSEUDOHANDLE
+     return 0;
+ 
+ #else
+-- 
+2.50.0.windows.2
+
