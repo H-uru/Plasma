@@ -136,7 +136,7 @@ bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
                 fCallbacks[event] = fc;
 
 #if 0
-                hsStatusMessageF("Adding CBMsg, eventSender=%s, eventRemoteMsg=%d\n",                   
+                hsStatusMessageF("Adding CBMsg, eventSender=%s, eventRemoteMsg=%d",
                     event->GetSender() ? event->GetSender()->GetName().c_str() : "nil", fc->fNetPropogate);
 #endif
             }
@@ -161,7 +161,7 @@ bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
             plForwardCallback *fc = it->second;
             if (--fc->fNumCallbacks == 0)
             {
-                hsStatusMessageF("plEventCallbackMsg received, erasing, sender=%s, remoteMsg=%d\n",
+                hsStatusMessageF("plEventCallbackMsg received, erasing, sender=%s, remoteMsg=%d",
                     msg->GetSender() ? msg->GetSender()->GetName().c_str() : "nil", msg->HasBCastFlag(plMessage::kNetNonLocal));
 
                 fCallbacks.erase(eventMsg);
@@ -184,7 +184,7 @@ bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
         }
         else
         {
-            hsStatusMessageF("! Unknown plEventCallbackMsg received, sender=%s, remoteMsg=%d\n",
+            hsStatusMessageF("! Unknown plEventCallbackMsg received, sender=%s, remoteMsg=%d",
                 msg->GetSender() ? msg->GetSender()->GetName().c_str() : "nil", msg->HasBCastFlag(plMessage::kNetNonLocal));
             hsAssert(0, "Unknown plEventCallbackMsg received");
         }

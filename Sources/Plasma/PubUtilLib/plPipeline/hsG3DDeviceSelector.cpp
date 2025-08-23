@@ -609,12 +609,12 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
             if (res.ok()) {
                 if( (series >= 8000) && (series < 9000) )
                 {
-                    hsStatusMessage( "== Using fudge factors for ATI Radeon 8X00 chipset ==\n" );
+                    hsStatusMessage("== Using fudge factors for ATI Radeon 8X00 chipset ==");
                     ISetFudgeFactors( kATIR8X00Chipset, record );
                 }
                 else if (series >= 9000)
                 {
-                    hsStatusMessage("== Using fudge factors for ATI Radeon 9X00 chipset ==\n");
+                    hsStatusMessage("== Using fudge factors for ATI Radeon 9X00 chipset ==");
                     ISetFudgeFactors(kATIRadeonChipset, record);
                 }
                 else
@@ -625,7 +625,7 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
         }
         if (series == 0)
         {
-            hsStatusMessage("== Using fudge factors for ATI/AMD Radeon X/HD/R chipset ==\n");
+            hsStatusMessage("== Using fudge factors for ATI/AMD Radeon X/HD/R chipset ==");
             ISetFudgeFactors(kDefaultChipset, record);
         }
     }
@@ -635,18 +635,18 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
     else if( deviceID == 0x00007125 &&
                 (driverString.compare_i("i81xdd.dll") == 0
                   || (descString.find("intel") >= 0 && descString.find("810") >= 0))) {
-        hsStatusMessage( "== Using fudge factors for an Intel i810 chipset ==\n" );
+        hsStatusMessage("== Using fudge factors for an Intel i810 chipset ==");
         ISetFudgeFactors( kIntelI810Chipset, record );
     }
     /// Detect for a GeForc FX card. We only need to nerf the really low end one.
     else if (descString.find("nvidia") >= 0 && descString.find("geforce fx 5200") >= 0) {
-        hsStatusMessage( "== Using fudge factors for an NVidia GeForceFX-based chipset ==\n" );
+        hsStatusMessage("== Using fudge factors for an NVidia GeForceFX-based chipset ==");
         ISetFudgeFactors( kNVidiaGeForceFXChipset, record );
     }
     /// Default fudge values
     else
     {
-        hsStatusMessage( "== Using default fudge factors ==\n" );
+        hsStatusMessage("== Using default fudge factors ==");
         ISetFudgeFactors( kDefaultChipset, record );
     }
 }

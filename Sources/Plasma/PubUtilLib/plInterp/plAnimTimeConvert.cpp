@@ -760,7 +760,7 @@ float plAnimTimeConvert::GetBestStopDist(float min, float max, float norm, float
         }
     }
     
-    hsStatusMessageF("found stop point %f\n", bestTime);
+    hsStatusMessageF("found stop point %f", bestTime);
 
     if (bestTime == -1)
         bestTime = norm;

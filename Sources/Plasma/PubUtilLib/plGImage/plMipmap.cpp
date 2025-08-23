@@ -2212,7 +2212,7 @@ void    plMipmap::IReportLeaks()
     uint32_t      size;
 
 
-    hsStatusMessage( "--- plMipmap Leaks ---\n" );
+    hsStatusMessage("--- plMipmap Leaks ---");
     for (record = fRecords; record != nullptr; )
     {
         size = record->fHeight * record->fRowBytes;
@@ -2232,12 +2232,12 @@ void    plMipmap::IReportLeaks()
 
         switch( record->fCreationMethod )
         {
-            case plRecord::kViaCreate: strcat( msg, " via Create\n" ); break;
-            case plRecord::kViaRead: strcat( msg, " via Read\n" ); break;
-            case plRecord::kViaClipToMaxSize: strcat( msg, " via ClipToMaxSize\n" ); break;
-            case plRecord::kViaDetailMapConstructor: strcat( msg, " via DetailMapConstructor\n" ); break;
-            case plRecord::kViaCopyFrom: strcat( msg, " via CopyFrom\n" ); break;
-            case plRecord::kViaResize: strcat( msg, " via Resize\n" ); break;
+            case plRecord::kViaCreate: strcat(msg, " via Create"); break;
+            case plRecord::kViaRead: strcat(msg, " via Read"); break;
+            case plRecord::kViaClipToMaxSize: strcat(msg, " via ClipToMaxSize"); break;
+            case plRecord::kViaDetailMapConstructor: strcat(msg, " via DetailMapConstructor"); break;
+            case plRecord::kViaCopyFrom: strcat(msg, " via CopyFrom"); break;
+            case plRecord::kViaResize: strcat(msg, " via Resize"); break;
         }
 
         hsStatusMessage( msg );
@@ -2247,7 +2247,7 @@ void    plMipmap::IReportLeaks()
         delete record;
         record = next;
     }
-    hsStatusMessage( "--- End of plMipmap Leaks ---\n" );
+    hsStatusMessage("--- End of plMipmap Leaks ---");
 }
 
 #endif

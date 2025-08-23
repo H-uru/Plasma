@@ -189,15 +189,10 @@ void hsStatusMessage(const char* message)
         gHSStatusProc(message);
     } else {
 #if HS_BUILD_FOR_UNIX
-        printf("%s",message);
-        size_t len = strlen(message);
-        if (len>0 && message[len-1]!='\n')
-            printf("\n");
+        printf("%s\n", message);
 #elif HS_BUILD_FOR_WIN32
         OutputDebugString(message);
-        size_t len = strlen(message);
-        if (len>0 && message[len-1]!='\n')
-            OutputDebugString("\n");
+        OutputDebugString("\n");
 #endif
     }
 }

@@ -607,7 +607,7 @@ void plAGMasterMod::DumpCurrentAnims(const char *header)
         ST::string name = inst->GetName();
         float blend = inst->GetBlend();
 
-        hsStatusMessageF("%d: %s with blend of %f\n", i, name.c_str(), blend);
+        hsStatusMessageF("%d: %s with blend of %f", i, name.c_str(), blend);
     }
 }
 

@@ -167,7 +167,7 @@ bool plSimpleModifier::IHandleCmd(plAnimCmdMsg* modMsg)
 
 #if 0   // debug
     char str[256];
-        sprintf(str, "ModHandleCmd: time=%f, ts=%f FWD=%d, BWD=%d, SpeedChange=%d sp=%f, CONT=%d, STOP=%d\n",
+        sprintf(str, "ModHandleCmd: time=%f, ts=%f FWD=%d, BWD=%d, SpeedChange=%d sp=%f, CONT=%d, STOP=%d",
             hsTimer::GetSysSeconds(),
             modMsg->GetTimeStamp(),
             modMsg->Cmd(plAnimCmdMsg::kSetForewards),
