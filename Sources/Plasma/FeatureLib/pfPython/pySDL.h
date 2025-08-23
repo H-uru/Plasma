@@ -57,7 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plKey;
 class plSimpleStateVariable;
 class plStateDataRecord;
-namespace ST { class string; }
 
 // pySDL -- this thing really only exists for the constants
 class pySDL

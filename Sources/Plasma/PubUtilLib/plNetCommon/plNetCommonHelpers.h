@@ -50,8 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreatable.h"
 
-namespace ST { class string; }
-
 ////////////////////////////////////////////////////////////////////
 
 class plCreatableListHelper : public plCreatable

@@ -57,7 +57,6 @@ class pyAgeLinkStruct;
 class pySDLStateDataRecord;
 class pyVaultAgeInfoNode;
 class pyVaultNode;
-namespace ST { class string; }
 
 class pyVault
 {

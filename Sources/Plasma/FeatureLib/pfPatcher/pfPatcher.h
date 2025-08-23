@@ -55,8 +55,6 @@ class plMD5Checksum;
 class plStatusLog;
 class hsStream;
 
-namespace ST { class string; }
-
 /** Plasma File Patcher
  *  This is used to patch the client with one or many manifests at once. It assumes that
  *  we have permission to modify the game files, so be sure that you do! We memory manage

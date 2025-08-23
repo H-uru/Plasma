@@ -48,8 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 
-namespace ST { class string; }
-
 enum KAddValueMode
 {
     kAlwaysAdd,         // Add another value if key already exists

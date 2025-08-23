@@ -58,6 +58,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cstdint>
 #include <type_traits>
 
+namespace ST { class string; }
+
 //======================================
 // Winblows Hacks
 //======================================

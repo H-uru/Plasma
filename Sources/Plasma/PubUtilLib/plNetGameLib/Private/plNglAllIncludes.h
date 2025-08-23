@@ -57,8 +57,6 @@ class plNetAddress;
 class hsStream;
 class plUUID;
 
-namespace ST { class string; }
-
 #include "plNglCore.h"
 #include "plNglAuth.h"
 #include "plNglGame.h"

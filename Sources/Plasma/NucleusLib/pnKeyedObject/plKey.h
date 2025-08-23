@@ -49,7 +49,6 @@ class hsKeyedObject;
 class plRefMsg;
 class plUoid;
 class hsBitVector;
-namespace ST { class string; }
 
 //// plKey ///////////////////////////////////////////////////////////////////
 //  Pointer to a plKeyData struct, which is a handle to a keyedObject

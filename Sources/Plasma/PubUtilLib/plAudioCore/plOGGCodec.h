@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Class Definition ////////////////////////////////////////////////////////
 
 struct OggVorbis_File;
-namespace ST { class string; }
 
 class plOGGCodec : public plAudioFileReader
 {

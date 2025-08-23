@@ -87,8 +87,6 @@ class plClothingItem;
 class plClothingMtl;
 class hsBitVector;
 
-namespace ST { class string; }
-
 class plExportMaterialData
 {
 public:

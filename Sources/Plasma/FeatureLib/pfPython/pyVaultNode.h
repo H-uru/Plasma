@@ -58,7 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct RelVaultNode;
 class plUUID;
-namespace ST { class string; }
 
 #define PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION \
     static PyObject* New(hsRef<RelVaultNode> vaultNode=nullptr);

@@ -66,7 +66,6 @@ class pyVaultFolderNode;
 class pyVaultNode;
 class pyVaultPlayerInfoListNode;
 class pyVaultTextNoteNode;
-namespace ST { class string; }
 
 class pyAgeVault
 {
