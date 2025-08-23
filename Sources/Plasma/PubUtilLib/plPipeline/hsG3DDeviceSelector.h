@@ -326,7 +326,7 @@ public:
         kDefaultDepth   = 32
     };
 
-    typedef std::function<void(std::vector<hsG3DDeviceRecord>&)> DeviceEnumerator;
+    typedef std::function<void(std::vector<hsG3DDeviceRecord>&, hsDisplayHndl)> DeviceEnumerator;
 
 protected:
     static std::list<DeviceEnumerator>& Enumerators();
@@ -357,7 +357,7 @@ public:
 
     void RemoveUnusableDevModes(bool bTough); // Removes modes and devices not allowed supported in release
 
-    void Enumerate(hsWindowHndl winRef);
+    void Enumerate(hsDisplayHndl display);
     const std::vector<hsG3DDeviceRecord>& GetDeviceRecords() const { return fRecords; }
 
     bool GetRequested(hsG3DDeviceModeRecord *dmr, uint32_t devType);

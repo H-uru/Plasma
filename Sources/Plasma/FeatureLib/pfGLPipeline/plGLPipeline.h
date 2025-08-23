@@ -54,7 +54,7 @@ public:
     }
 
 private:
-    static void Enumerate(std::vector<hsG3DDeviceRecord>& records);
+    static void Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl mainDisplay);
 };
 
 class plGLPipeline : public pl3DPipeline<plGLDevice>

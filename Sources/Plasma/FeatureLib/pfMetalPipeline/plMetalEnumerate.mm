@@ -49,10 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMetalPipeline.h"
 
-void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
+void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl mainDisplay)
 {
-    CGDirectDisplayID mainDisplay = CGMainDisplayID();
-    id<MTLDevice>     device = CGDirectDisplayCopyCurrentMetalDevice(mainDisplay);
+    id<MTLDevice> device = CGDirectDisplayCopyCurrentMetalDevice(mainDisplay);
 
     if (device) {
         hsG3DDeviceRecord devRec;

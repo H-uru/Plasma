@@ -40,40 +40,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plMacDisplayHelper_hpp
-#define plMacDisplayHelper_hpp
-
-#include <CoreGraphics/CoreGraphics.h>
+#ifndef plWinDisplayHelper_h
+#define plWinDisplayHelper_h
 
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plPipeline/pl3DPipeline.h"
 
-#ifdef __OBJC__
-@class NSScreen;
-#else
-class NSScreen;
-#endif
-
-class plMacDisplayHelper : public plDisplayHelper
+class plWinDisplayHelper : public plDisplayHelper
 {
 public:
-    plMacDisplayHelper();
-    
+    plWinDisplayHelper();
 
-    CGDirectDisplayID CurrentDisplay() const { return fCurrentDisplay; }
+    hsDisplayHndl CurrentDisplay() const { return fCurrentDisplay; }
 
     plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
     std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const override;
     hsDisplayHndl DefaultDisplay() const override;
 
 private:
-    mutable CGDirectDisplayID          fCurrentDisplay;
+    mutable hsDisplayHndl              fCurrentDisplay;
     mutable plDisplayMode              fDesktopDisplayMode;
     mutable std::vector<plDisplayMode> fDisplayModes;
 
     void SetCurrentScreen(hsDisplayHndl screen) const;
-    // we need NSScreen to query for non rectangular screen geometry
-    void SetCurrentScreen(NSScreen* screen) const;
 };
 
-#endif /* plMacDisplayHelper_hpp */
+#endif /* plWinDisplayHelper_h */

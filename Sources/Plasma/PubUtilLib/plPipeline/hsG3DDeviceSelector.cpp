@@ -359,16 +359,16 @@ uint32_t  hsG3DDeviceSelector::IAdjustDirectXMemory( uint32_t cardMem )
 #endif
 }
 
-void hsG3DDeviceSelector::Enumerate(hsWindowHndl winRef)
+void hsG3DDeviceSelector::Enumerate(hsDisplayHndl display)
 {
     IClear();
 
 #ifdef PLASMA_PIPELINE_DX
-    ITryDirect3DTnL(winRef);
+    ITryDirect3DTnL((hsWindowHndl)display);
 #endif
 
     for (const auto& enumerator : Enumerators()) {
-        enumerator(fRecords);
+        enumerator(fRecords, display);
     }
 }
 

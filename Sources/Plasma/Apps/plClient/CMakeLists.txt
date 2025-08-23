@@ -78,7 +78,11 @@ set(plClient_TEXT
 if(WIN32)
     list(APPEND plClient_SOURCES
         win32/plClient_Win.cpp
+        win32/plWinDisplayHelper.cpp
         win32/winmain.cpp
+    )
+    list(APPEND plClient_HEADERS
+        win32/plWinDisplayHelper.h
     )
     list(APPEND plClient_RESOURCES
         win32/res/plClient.exe.manifest
