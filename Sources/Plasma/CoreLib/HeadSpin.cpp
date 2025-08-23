@@ -75,7 +75,7 @@ void hsDebugAssertionFailed(int line, const char* file, const char* msg)
 #if defined(_MSC_VER)
     if (s_GuiAsserts)
     {
-        if (_CrtDbgReport(_CRT_ASSERT, file, line, nullptr, msg))
+        if (_CrtDbgReport(_CRT_ASSERT, file, line, nullptr, "%s", msg))
             hsDebugBreakAlways();
 
         // All handling was done by the GUI, so bail.
