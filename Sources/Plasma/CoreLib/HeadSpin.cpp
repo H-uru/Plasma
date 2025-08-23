@@ -71,7 +71,6 @@ void hsDebugEnableGuiAsserts(bool enabled)
 #endif // defined(HS_DEBUGGING)
 void hsDebugAssertionFailed(int line, const char* file, const char* msg)
 {
-#if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
 #if defined(HS_DEBUGGING)
 #if defined(_MSC_VER)
     if (s_GuiAsserts)
@@ -89,13 +88,9 @@ void hsDebugAssertionFailed(int line, const char* file, const char* msg)
 
         hsDebugBreakAlways();
     }
-#endif // HS_DEBUGGING
 #else
     hsDebugBreakIfDebuggerPresent();
-#endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
-
     // If no debugger break occurred, just crash.
-#if !defined(HS_DEBUGGING)
     std::abort();
 #endif // defined(HS_DEBUGGING)
 }
