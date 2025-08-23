@@ -283,6 +283,8 @@ PYTHON_RICH_COMPARE_DEFINITION(EnumValue, v, w, compareType)
         PYTHON_RETURN_BOOL(i >= j);
     DEFAULT_FATAL(compareType);
     }
+
+    PYTHON_RETURN_NOT_IMPLEMENTED;
 }
 
 PYTHON_NO_INIT_DEFINITION(EnumValue)

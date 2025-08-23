@@ -153,6 +153,8 @@ bool NetTrans::CanStart () const {
         case kNetProtocolCli2GateKeeper: return GateKeeperQueryConnected();
         DEFAULT_FATAL(m_protocol);
     }
+
+    return false;
 }
 
 
