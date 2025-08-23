@@ -4197,7 +4197,7 @@ void plWaveSet7::ISetupShoreLayers(hsGMaterial* mat)
     // Make sure the state is correct for each layer.
     // And set the textures up to point at the render targets
     plLayer* lay = plLayer::ConvertNoRef(mat->GetLayer(0)->BottomOfStack());
-    hsAssert(lay, "Bad first layer on material %s. Animated?");
+    hsAssert(lay, ST::format("Bad first layer on material {}. Animated?", mat->GetKeyName()).c_str());
 //  lay->SetBlendFlags(hsGMatState::kBlendAlpha | hsGMatState::kBlendInvertFinalAlpha | hsGMatState::kBlendAlphaAlways);
     lay->SetBlendFlags(hsGMatState::kBlendAlpha);
     lay->SetClampFlags(hsGMatState::kClampTextureV);
@@ -4211,7 +4211,7 @@ void plWaveSet7::ISetupShoreLayers(hsGMaterial* mat)
     lay->SetUVWSrc(0);
 
     lay = plLayer::ConvertNoRef(mat->GetLayer(1));
-    hsAssert(lay, "Bad second layer on material %s. Animated?");
+    hsAssert(lay, ST::format("Bad second layer on material {}. Animated?", mat->GetKeyName()).c_str());
     lay->SetBlendFlags(hsGMatState::kBlendAlpha);
     lay->SetClampFlags(hsGMatState::kClampTextureV);
     lay->SetShadeFlags(hsGMatState::kShadeNoProjectors
@@ -4224,7 +4224,7 @@ void plWaveSet7::ISetupShoreLayers(hsGMaterial* mat)
     lay->SetUVWSrc(1);
 
     lay = plLayer::ConvertNoRef(mat->GetLayer(2));
-    hsAssert(lay, "Bad third layer on material %s. Animated?");
+    hsAssert(lay, ST::format("Bad third layer on material {}. Animated?", mat->GetKeyName()).c_str());
     lay->SetBlendFlags(hsGMatState::kBlendAlpha);
     lay->SetClampFlags(hsGMatState::kClampTextureV);
     lay->SetShadeFlags(hsGMatState::kShadeNoProjectors

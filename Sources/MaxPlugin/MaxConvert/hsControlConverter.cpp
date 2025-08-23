@@ -497,7 +497,7 @@ plController *hsControlConverter::MakeRotController(Control *control, plMaxNode 
                 TimeValue startTime = interval.Start(); // in ticks
                 TimeValue endTime = interval.End();     // in ticks
 
-                hsStatusMessage("Fixing up euler controller due to missing subcontrollers\n");
+                hsStatusMessage("Fixing up euler controller due to missing subcontrollers");
                 for(i=0; i<3; i++)
                 {
                     if (!rc->GetController(i))

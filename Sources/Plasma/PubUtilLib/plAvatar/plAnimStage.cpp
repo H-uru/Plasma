@@ -521,7 +521,7 @@ bool plAnimStage::ITryAdvance(plArmatureMod *avMod)
     bool stageDone = false;
 
 
-    // hsStatusMessageF("Sending advance message for stage <%s>\n", fAnimName.c_str());
+    // hsStatusMessageF("Sending advance message for stage <%s>", fAnimName.c_str());
     if(fAdvanceType == kAdvanceAuto || fAdvanceType == kAdvanceOnMove) {
         stageDone = true;
     }
@@ -548,7 +548,7 @@ bool plAnimStage::ITryRegress(plArmatureMod *avMod)
     // we may want to rename this to "ReachedStageEnd"
     ISendNotify(kNotifyRegress, proEventData::kRegressPrevStage, avMod, fBrain);
 
-    // hsStatusMessageF("Sending regress message for stage <%s>\n", fAnimName.c_str());
+    // hsStatusMessageF("Sending regress message for stage <%s>", fAnimName.c_str());
     if(fRegressType == kRegressAuto) {
         stageDone = true;
     }

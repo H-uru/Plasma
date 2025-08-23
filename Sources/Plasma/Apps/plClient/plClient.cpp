@@ -190,7 +190,7 @@ plClient::plClient()
     bPythonDebugConnected = false;
 #endif
 
-    hsStatusMessage("Constructing client\n");
+    hsStatusMessage("Constructing client");
     plClient::SetInstance(this);
     // gNextRoom[0] = '\0';
 
@@ -228,7 +228,7 @@ plClient::plClient()
 
 plClient::~plClient()
 {
-    hsStatusMessage("Destructing client\n");
+    hsStatusMessage("Destructing client");
 
     plClient::SetInstance(nullptr);
 
@@ -274,7 +274,7 @@ bool plClient::Shutdown()
     if (plAVIWriter::IsInitialized())
         plAVIWriter::Instance().Shutdown();
 
-    hsStatusMessage( "Shutting down client...\n" );
+    hsStatusMessage("Shutting down client...");
 
     // First, before anybody else goes away, write out our key mappings
     if( plInputInterfaceMgr::GetInstance() )
@@ -378,7 +378,7 @@ bool plClient::Shutdown()
 }
 
 void plClient::InitDLLs() {
-    hsStatusMessage("Init dlls client\n");
+    hsStatusMessage("Init dlls client");
 
     std::vector<plFileName> dlls = plFileSystem::ListDir("ModDLL",
 #if defined(HS_BUILD_FOR_WIN32)
@@ -440,7 +440,7 @@ void plClient::InitAuxInits()
 
 void plClient::InitInputs()
 {
-    hsStatusMessage("InitInputs client\n");
+    hsStatusMessage("InitInputs client");
     fInputManager = new plInputManager( fWindowHndl );
     fInputManager->CreateInterfaceMod(fPipeline);
     fInputManager->RegisterAs( kInput_KEY );
@@ -500,7 +500,7 @@ plPipeline* plClient::ICreatePipeline(hsDisplayHndl disp, hsWindowHndl hWnd, con
 
 bool plClient::InitPipeline(hsDisplayHndl display, uint32_t devType)
 {
-    hsStatusMessage("InitPipeline client\n");
+    hsStatusMessage("InitPipeline client");
 
     hsG3DDeviceModeRecord dmr;
     hsG3DDeviceSelector devSel;
@@ -827,7 +827,7 @@ bool plClient::MsgReceive(plMessage* msg)
     plEventCallbackMsg* callback = plEventCallbackMsg::ConvertNoRef(msg);
     if( callback )
     {
-        ST::string str = ST::format("Callback event from {}\n", callback->GetSender()
+        ST::string str = ST::format("Callback event from {}", callback->GetSender()
                             ? callback->GetSender()->GetName()
                             : ST_LITERAL("Unknown"));
         hsStatusMessage(str.c_str());
@@ -854,7 +854,7 @@ bool plClient::MsgReceive(plMessage* msg)
                 plgDispatch::MsgSend(cmd);
                 hsRefCnt_SafeUnRef(callback);
             }
-            hsStatusMessage("Removed\n");
+            hsStatusMessage("Removed");
             gotten = 0;
         }
         return true;
@@ -1272,7 +1272,7 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
         plgDispatch::MsgSend(loadmsg);
     }
     else
-        hsStatusMessageF("Done loading hold room %s, t=%f\n", pRmKey->GetName().c_str(), hsTimer::GetSeconds());
+        hsStatusMessageF("Done loading hold room %s, t=%f", pRmKey->GetName().c_str(), hsTimer::GetSeconds());
 
     plLocation loc = pRmKey->GetUoid().GetLocation();
     for (auto it = fRoomsLoading.cbegin(); it != fRoomsLoading.cend(); ++it)
@@ -1407,7 +1407,7 @@ void    plClient::IStopProgress()
 //============================================================================
 bool plClient::StartInit()
 {
-    hsStatusMessage("Init client\n");
+    hsStatusMessage("Init client");
     fFlags.SetBit( kFlagIniting );
 
     pfLocalizationMgr::Initialize("dat");

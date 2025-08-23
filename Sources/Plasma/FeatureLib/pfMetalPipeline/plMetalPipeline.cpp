@@ -757,7 +757,7 @@ void plMetalPipeline::Resize(uint32_t width, uint32_t height)
         fDevice.GetOutputLayer()->setDrawableSize(CGSizeMake(width, height));
     } else {
         // Just for debug
-        hsStatusMessage("Recreating the pipeline...\n");
+        hsStatusMessage("Recreating the pipeline...");
     }
 
     ICreateDeviceObjects();

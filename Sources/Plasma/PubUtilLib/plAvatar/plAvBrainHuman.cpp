@@ -627,7 +627,7 @@ bool plAvBrainHuman::IHandleTaskMsg(plAvTaskMsg *msg)
         plAvTask *task = taskM->GetTask();
         QueueTask(task);
     } else {
-        hsStatusMessageF("Couldn't recognize task message type.\n");
+        hsStatusMessageF("Couldn't recognize task message type.");
         return plArmatureBrain::IHandleTaskMsg(msg);
     }
     return true;

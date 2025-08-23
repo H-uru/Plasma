@@ -70,7 +70,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define SND_INDEX_CHECK( index, ret )           \
     if ((size_t)index >= fSoundObjs.size())     \
     {                                           \
-        hsStatusMessageF("ERROR: Sound index out of range (index %d, count %zu)\n", index, fSoundObjs.size()); \
+        hsStatusMessageF("ERROR: Sound index out of range (index %d, count %zu)", index, fSoundObjs.size()); \
         return ret;                             \
     }
 

@@ -207,8 +207,7 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
     nc->DebugMsg( "Net: Loading age {}", fAgeName);
 
     if ((fFlags & kLoadMask) != 0)
-        hsDebugAssertionFailed(__LINE__, __FILE__, "Fatal Error:\nAlready loading or unloading an age.\n%s will now exit.",
-                               plProduct::ShortName().c_str());
+        hsDebugAssertionFailed(__LINE__, __FILE__, ST::format("Fatal Error:\nAlready loading or unloading an age.\n{} will now exit.", plProduct::ShortName()).c_str());
 
     fFlags |= kLoadingAge;
     
