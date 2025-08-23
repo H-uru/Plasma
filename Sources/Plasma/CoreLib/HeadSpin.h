@@ -317,10 +317,9 @@ void hsDebugBreakAlways();
  * Please use hsDebugPrintToTerminal ONLY for debugging messages aimed at developers
  * that must not go to a log file for some reason.
  *
- * @param fmt printf-style format string for the log message
- * @param ... format string arguments
+ * @param msg message to print
  */
-void hsDebugPrintToTerminal(const char* fmt, ...);
+void hsDebugPrintToTerminal(const char* msg);
 
 #ifdef HS_DEBUGGING
     
