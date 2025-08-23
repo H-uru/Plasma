@@ -40,40 +40,51 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plMacDisplayHelper_hpp
-#define plMacDisplayHelper_hpp
+#include "plWinDisplayHelper.h"
+#include "hsWindows.h"
 
-#include <CoreGraphics/CoreGraphics.h>
-
-#include "plPipeline/hsG3DDeviceSelector.h"
-#include "plPipeline/pl3DPipeline.h"
-
-#ifdef __OBJC__
-@class NSScreen;
-#else
-class NSScreen;
-#endif
-
-class plMacDisplayHelper : public plDisplayHelper
+plWinDisplayHelper::plWinDisplayHelper() : fCurrentDisplay(INVALID_HANDLE_VALUE)
 {
-public:
-    plMacDisplayHelper();
-    
+}
 
-    CGDirectDisplayID CurrentDisplay() const { return fCurrentDisplay; }
+void plWinDisplayHelper::SetCurrentScreen(hsDisplayHndl display) const
+{
+    if (fCurrentDisplay == display)
+        return;
 
-    plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
-    std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const override;
-    hsDisplayHndl DefaultDisplay() const override;
+    fCurrentDisplay = display;
 
-private:
-    mutable CGDirectDisplayID          fCurrentDisplay;
-    mutable plDisplayMode              fDesktopDisplayMode;
-    mutable std::vector<plDisplayMode> fDisplayModes;
+    fDisplayModes.clear();
 
-    void SetCurrentScreen(hsDisplayHndl screen) const;
-    // we need NSScreen to query for non rectangular screen geometry
-    void SetCurrentScreen(NSScreen* screen) const;
-};
+    DEVMODE dm = {};
+    dm.dmSize = sizeof(DEVMODE);
 
-#endif /* plMacDisplayHelper_hpp */
+    for (int i = 0;; i++) {
+        if (!EnumDisplaySettings(nullptr, i, &dm))
+            break;
+
+        fDisplayModes.emplace_back(plDisplayMode {
+            static_cast<int>(dm.dmPelsWidth),
+            static_cast<int>(dm.dmPelsHeight),
+            32
+        });
+    }
+
+    std::sort(fDisplayModes.begin(), fDisplayModes.end(), std::greater());
+    auto last = std::unique(fDisplayModes.begin(), fDisplayModes.end());
+    fDisplayModes.erase(last, fDisplayModes.end());
+}
+
+std::vector<plDisplayMode> plWinDisplayHelper::GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth) const
+{
+    // Cache the current display so we can answer repeat requests quickly.
+    // SetCurrentScreen will catch redundant sets.
+    SetCurrentScreen(display);
+    return fDisplayModes;
+}
+
+hsDisplayHndl plWinDisplayHelper::DefaultDisplay() const
+{
+    return GetActiveWindow();
+}
+

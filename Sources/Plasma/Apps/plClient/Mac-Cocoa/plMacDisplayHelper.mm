@@ -43,13 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMacDisplayHelper.h"
 #include "plPipeline.h"
 
-// Currently requires Metal to query attached GPU capabilities
-// Capability check will also work for GL - but will need something
-// different for older GPUs.
 #include <AppKit/AppKit.h>
+#include <CoreGraphics/CoreGraphics.h>
 #include <QuartzCore/QuartzCore.h>
 
-plMacDisplayHelper::plMacDisplayHelper() : fCurrentDisplay(-1)
+plMacDisplayHelper::plMacDisplayHelper() : fCurrentDisplay(kCGNullDirectDisplay)
 {
 }
 
@@ -138,12 +136,9 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
     }
     CFRelease(displayModes);
 
-    std::sort(fDisplayModes.begin(), fDisplayModes.end(),
-              [](plDisplayMode a, plDisplayMode b) {
-        int resolutionA = a.Width * a.Height;
-        int resolutionB = b.Width * b.Height;
-        return resolutionA > resolutionB;
-    });
+    std::sort(fDisplayModes.begin(), fDisplayModes.end(), std::greater());
+    auto last = std::unique(fDisplayModes.begin(), fDisplayModes.end());
+    fDisplayModes.erase(last, fDisplayModes.end());
 }
 
 std::vector<plDisplayMode> plMacDisplayHelper::GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth) const
@@ -152,4 +147,9 @@ std::vector<plDisplayMode> plMacDisplayHelper::GetSupportedDisplayModes(hsDispla
     // SetCurrentScreen will catch redundant sets.
     SetCurrentScreen(display);
     return fDisplayModes;
+}
+
+hsDisplayHndl plMacDisplayHelper::DefaultDisplay() const
+{
+    return CGMainDisplayID();
 }
