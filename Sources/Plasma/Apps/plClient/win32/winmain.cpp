@@ -61,6 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plClient.h"
 #include "plClientLoader.h"
+#include "plWinDisplayHelper.h"
 #include "res/resource.h"
 
 #include "pnEncryption/plChallengeHash.h"
@@ -1045,6 +1046,8 @@ bool WinInit(HINSTANCE hInst)
         nullptr, nullptr, hInst, nullptr
         );
     HDC hDC = GetDC(hWnd);
+
+    plDisplayHelper::SetInstance(new plWinDisplayHelper());
 
     gClient.SetClientWindow((hsWindowHndl)hWnd);
     gClient.SetClientDisplay((hsWindowHndl)hDC);

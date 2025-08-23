@@ -333,7 +333,7 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records, CGDirectDisplayID d
 #endif // HS_BUILD_FOR_MACOS
 #pragma endregion CGL_Enumerate
 
-void plGLEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
+void plGLEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl mainDisplay)
 {
 #ifdef USE_EGL
     // The USE_EGL define tells us whether the epoxy library includes support
@@ -345,15 +345,15 @@ void plGLEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
     //
     // On Linux, this should be true with mesa or nvidia drivers.
     if (epoxy_has_egl()) {
-        plEGLEnumerate(records);
+        plEGLEnumerate(records, mainDisplay);
     }
 #endif
 
 #ifdef HS_BUILD_FOR_WIN32
-    plWGLEnumerate(records);
+    plWGLEnumerate(records, mainDisplay);
 #endif
 
 #ifdef HS_BUILD_FOR_MACOS
-    plCGLEnumerate(records);
+    plCGLEnumerate(records, mainDisplay);
 #endif
 }
