@@ -935,7 +935,7 @@ void    plGeometrySpan::EndCreate()
             case kSkin1Weight: numWeights = 1; break;
             case kSkin2Weights: numWeights = 2; break;
             case kSkin3Weights: numWeights = 3; break;
-            default: hsAssert(false, "Garbage for weight format"); break;
+            DEFAULT_FATAL(fFormat & kSkinWeightMask);
             }
             memcpy( tempPtr, &fVertAccum[ i ].fWeights[ 0 ], numWeights * sizeof(float) );
             tempPtr += numWeights * sizeof(float);
@@ -1118,7 +1118,7 @@ void    plGeometrySpan::ExtractWeights( uint32_t vIdx, float *weightArray, uint3
         case kSkin1Weight: numWeights = 1; break;
         case kSkin2Weights: numWeights = 2; break;
         case kSkin3Weights: numWeights = 3; break;
-        default: hsAssert( false, "Bad number of weights in ExtractWeights()" );
+        DEFAULT_FATAL(fFormat & kSkinWeightMask);
     }
 
     memcpy( weightArray, fPtr, sizeof( float ) * numWeights );
