@@ -302,7 +302,7 @@ void hsDebugEnableGuiAsserts(bool enabled);
 #ifndef HS_DEBUGGING
 [[noreturn]]
 #endif
-void hsDebugAssertionFailed(int line, const char* file, const char* fmt, ...);
+void hsDebugAssertionFailed(int line, const char* file, const char* msg);
 
 bool hsDebugIsDebuggerPresent();
 void hsDebugBreakIfDebuggerPresent();
@@ -324,15 +324,15 @@ void hsDebugPrintToTerminal(const char* fmt, ...);
 
 #ifdef HS_DEBUGGING
     
-    #define hsAssert(expr, ...)                 (void)( (!!(expr)) || (hsDebugAssertionFailed(__LINE__, __FILE__, __VA_ARGS__), 0) )
+    #define hsAssert(expr, message)             (void)( (!!(expr)) || (hsDebugAssertionFailed(__LINE__, __FILE__, (message)), 0) )
     #define ASSERT(expr)                        (void)( (!!(expr)) || (hsDebugAssertionFailed(__LINE__, __FILE__, #expr), 0) )
-    #define FATAL(...)                          hsDebugAssertionFailed(__LINE__, __FILE__, __VA_ARGS__)
+    #define FATAL(message)                      hsDebugAssertionFailed(__LINE__, __FILE__, (message))
     
 #else   /* Not debugging */
 
-    #define hsAssert(expr, ...)                 ((void)0)
+    #define hsAssert(expr, message)             ((void)0)
     #define ASSERT(expr)                        ((void)0)
-    #define FATAL(...)                          ((void)0)
+    #define FATAL(message)                      ((void)0)
 
 #endif  // HS_DEBUGGING
 

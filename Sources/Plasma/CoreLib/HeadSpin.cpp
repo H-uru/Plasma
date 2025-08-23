@@ -69,14 +69,9 @@ void hsDebugEnableGuiAsserts(bool enabled)
 #if !defined(HS_DEBUGGING)
 [[noreturn]]
 #endif // defined(HS_DEBUGGING)
-void hsDebugAssertionFailed(int line, const char* file, const char* fmt, ...)
+void hsDebugAssertionFailed(int line, const char* file, const char* msg)
 {
 #if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
-    char msg[1024];
-    va_list args;
-    va_start(args, fmt);
-    vsnprintf(msg, std::size(msg), fmt, args);
-    va_end(args);
 #if defined(HS_DEBUGGING)
 #if defined(_MSC_VER)
     if (s_GuiAsserts)
