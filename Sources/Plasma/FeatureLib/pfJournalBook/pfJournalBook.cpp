@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfJournalBook.h"
 
-#include <memory>
 #include <cwchar>
 
 #include "HeadSpin.h"
@@ -95,6 +94,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfMessage/pfGUINotifyMsg.h"
 #include "pfSurface/plLayerAVI.h"
 
+//////////////////////////////////////////////////////////////////////////////
+//// Do we show linking rects? ///////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+static bool s_ShowLinkRects = false;
+static hsColorRGBA s_LinkRectColor{ 0.f, 0.f, 1.f, 1.f };
 
 //////////////////////////////////////////////////////////////////////////////
 //// pfEsHTMLChunk Class /////////////////////////////////////////////////////
@@ -103,15 +108,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pfEsHTMLChunk
 {
     public:
+        struct TextLink_Type {};
+        static constexpr TextLink_Type TextLink{};
+
+        enum Type : uint8_t
+        {
+            kEmpty = 0,
+            kParagraph,
+            kImage,
+            kPageBreak,
+            kFontChange,
+            kMargin,
+            kCover, // Just a placeholder, never actually used after compile time
+            kBook,  // another placeholder
+            kDecal,
+            kMovie,
+            kEditable, // placeholder, ver 3.0
+            kTextLink,
+        };
 
         ST::string fText; // Paragraph text, or face name
         plKey   fImageKey;  // Key of image
         uint8_t   fFontSize;
         uint32_t  fFlags;
-        uint8_t   fType;
+        Type   fType;
         uint32_t  fEventID;
-
-        pcSmallRect fLinkRect;      // Used only for image chunks, and only when stored in the fVisibleLinks array
 
         hsColorRGBA fColor;
 
@@ -154,22 +175,8 @@ class pfEsHTMLChunk
                                         // Min opacity turns into "off opacity" and max opacity
                                         // is "on opacity"
             kChecked    = 0x00000080,   // Only for kActAsCB, set if it's currently "checked"
-            kTranslucent= 0x00000100    // is the image translucent? if so, use fCurrOpacity
-        };
-
-        enum Types
-        {
-            kEmpty = 0,
-            kParagraph,
-            kImage,
-            kPageBreak,
-            kFontChange,
-            kMargin,
-            kCover,         // Just a placeholder, never actually used after compile time
-            kBook,          // another placeholder
-            kDecal,
-            kMovie,
-            kEditable       // placeholder, ver 3.0
+            kTranslucent= 0x00000100,   // is the image translucent? if so, use fCurrOpacity
+            kValidEvent = 0x00000200,
         };
 
         // Paragraph constructor
@@ -229,7 +236,81 @@ class pfEsHTMLChunk
             fOnColor.Set(0.f, 0.f, 0.f, 1.f);
         }
 
+        // Text link constructor
+        pfEsHTMLChunk(TextLink_Type)
+            : fType(kTextLink), fFlags(), fText(),
+              fFontSize(), fImageKey(), fEventID(), fSFXTime(),
+              fAbsoluteX(), fAbsoluteY(), fNoResizeImg(), fLineSpacing(),
+              fCurrOpacity(1.f), fMinOpacity(), fMaxOpacity(1.f),
+              fTintDecal(), fLoopMovie(true), fOnCover(), fMovieIndex(-1)
+        {
+            fColor.Set(0.f, 0.f, 1.f, 1.f);
+            fCurrColor.Set(0.f, 0.f, 0.f, 1.f);
+            fOffColor.Set(0.f, 0.f, 0.f, 1.f);
+            fOnColor.Set(0.f, 0.f, 0.f, 1.f);
+        }
+
         ~pfEsHTMLChunk() { }
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//// Visible Link Stuff //////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+class pfJournalVisibleLink
+{
+    pfEsHTMLChunk* fChunk;
+    pcSmallRect    fLinkRect;
+
+public:
+    pfJournalVisibleLink(
+        pfEsHTMLChunk* chunk,
+        int16_t x, int16_t y,
+        int16_t width, int16_t height
+    ) : fChunk(chunk), fLinkRect(x, y, width, height) {}
+
+    bool Contains(int16_t x, int16_t y) const
+    {
+        return fLinkRect.Contains(x, y);
+    }
+
+    void ClearRect()
+    {
+        fLinkRect.Set(0, 0, 0, 0);
+    }
+
+    bool HasEventID() const
+    {
+        return hsCheckBits(fChunk->fFlags, pfEsHTMLChunk::kValidEvent);
+    }
+
+    uint32_t GetEventID() const
+    {
+        hsAssert(HasEventID(), "Trying to get the EventID of a non-event, eh?");
+        return fChunk->fEventID;
+    }
+
+    const ST::string& GetHRef() const
+    {
+        return fChunk->fText;
+    }
+
+    bool IsCheckbox() const
+    {
+        return hsCheckBits(fChunk->fFlags, pfEsHTMLChunk::kActAsCB);
+    }
+
+    bool IsChecked() const
+    {
+        hsAssert(IsCheckbox(), "Trying to see if a non-checkbox is checked?");
+        return hsCheckBits(fChunk->fFlags, pfEsHTMLChunk::kChecked);
+    }
+
+    void SetChecked(bool value)
+    {
+        hsAssert(IsCheckbox(), "Trying to check a non-checkbox?");
+        hsChangeBits(fChunk->fFlags, pfEsHTMLChunk::kChecked, value);
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1127,6 +1208,11 @@ void    pfJournalBook::UnloadAllGUIs()
         UnloadGUI(name); // UnloadGUI won't unload BkBook
 }
 
+void     pfJournalBook::ShowLinkRect(bool on)
+{
+    s_ShowLinkRects = on;
+}
+
 //// Constructor /////////////////////////////////////////////////////////////
 // The constructor takes in the esHTML source for the journal, along with
 // the name of the mipmap to use as the cover of the book. The callback
@@ -1550,7 +1636,7 @@ hsSsize_t pfJournalBook::IFindCurrVisibleLink(bool rightNotLeft, bool hoverNotUp
     // Search through the list of visible hotspots
     for (size_t i = 0; i < fVisibleLinks.size(); i++)
     {
-        if( fVisibleLinks[ i ]->fLinkRect.Contains( (int16_t)pt.fX, (int16_t)pt.fY ) )
+        if (fVisibleLinks[i].Contains((int16_t)pt.fX, (int16_t)pt.fY ))
         {
             // Found a visible link
             return hsSsize_t(i);
@@ -1569,10 +1655,14 @@ void    pfJournalBook::IHandleLeftSideClick()
 
     if (hsSsize_t idx = IFindCurrVisibleLink(false, false); idx != -1)
     {
-        if( fVisibleLinks[ idx ]->fFlags & pfEsHTMLChunk::kActAsCB )
+        if (fVisibleLinks[idx].IsCheckbox()) {
             IHandleCheckClick((uint32_t)idx, pfBookData::kLeftSide);
-        else
-            ISendNotify( kNotifyImageLink, fVisibleLinks[ idx ]->fEventID );
+        } else {
+            if (fVisibleLinks[idx].HasEventID())
+                ISendNotify(kNotifyImageLink, fVisibleLinks[idx].GetEventID());
+            if (!fVisibleLinks[idx].GetHRef().empty())
+                IFlipToAnchor(fVisibleLinks[idx].GetHRef());
+        }
         return;
     }
 
@@ -1587,15 +1677,128 @@ void    pfJournalBook::IHandleRightSideClick()
 
     if (hsSsize_t idx = IFindCurrVisibleLink(true, false); idx != -1)
     {
-        if( fVisibleLinks[ idx ]->fFlags & pfEsHTMLChunk::kActAsCB )
+        if (fVisibleLinks[idx].IsCheckbox()) {
             IHandleCheckClick((uint32_t)idx, pfBookData::kRightSide);
-        else
-            ISendNotify( kNotifyImageLink, fVisibleLinks[ idx ]->fEventID );
+        } else {
+            if (fVisibleLinks[idx].HasEventID())
+                ISendNotify(kNotifyImageLink, fVisibleLinks[idx].GetEventID());
+            if (!fVisibleLinks[idx].GetHRef().empty())
+                IFlipToAnchor(fVisibleLinks[idx].GetHRef());
+        }
         return;
     }
 
     // No link found that we're inside of, so just do the default behavior of turning the page
     NextPage();
+}
+
+hsSsize_t pfJournalBook::IFindAnchor(const ST::string& anchor) const
+{
+    for (hsSsize_t i = fHTMLSource.size() - 1; i >= 0; --i) {
+        if (fHTMLSource[i]->fType != pfEsHTMLChunk::kTextLink)
+            continue;
+        // Match the anchor, not links to it
+        if (hsTestBits(fHTMLSource[i]->fFlags, pfEsHTMLChunk::kCanLink))
+            continue;
+        if (fHTMLSource[i]->fText.compare_i(anchor) == 0)
+            return i;
+    }
+
+    return -1;
+}
+
+void    pfJournalBook::IFlipToAnchor(const ST::string& anchor)
+{
+    if (fAreEditing)
+        return;
+
+    // We don't know where this anchor is in the book. We could theoretically use
+    // fPageStarts to figure out which page the chunk appears on, but paragraph chunks
+    // can be split as pages are turned. So, fPageStarts can't be trusted until the entire
+    // book is rendered at least once. So, we need to force the issue. Thankfully, forcing
+    // the issue only recalcs what has NOT been rendered yet, so we only incur a performance
+    // penalty once for doing this.
+    ForceCacheCalculations();
+
+    // Now that everything is stable, we can look up the anchor.
+    hsSsize_t chunkIdx = IFindAnchor(anchor);
+    if (chunkIdx == -1) {
+        hsAssert(0, "Trying to link to a non-existent anchor, eh?");
+        return;
+    }
+
+    hsSsize_t pageNum = -1;
+    for (hsSsize_t i = 0; i < fPageStarts.size(); ++i) {
+        // Look for the chunk *after* the anchor - it's the one with the content
+        // we care about. Unless they put the anchor at the end of the book...
+        if (fPageStarts[i] > std::min((uint32_t)(chunkIdx + 1), fPageStarts.back())) {
+            pageNum = i - 1;
+            break;
+        }
+    }
+    if (pageNum == -1) {
+        hsAssert(0, "Ahhhhh! We couldn't find the page for this anchor!");
+        return;
+    }
+
+    if ((pageNum & ~0x00000001) == fCurrentPage) {
+        // Make sure everything is drawn nicely.
+        GoToPage(fCurrentPage);
+    } else if (pageNum < fCurrentPage) {
+        fCurrentPage = pageNum & ~0x00000001;
+        fVisibleLinks.clear();
+
+        // Swap the left DT map into the turn page back DTMap, then render
+        // the new current page into the left and currPage+1 into
+        // the turn page front DTMap
+        plDynamicTextMap* turnBack = fBookGUIs[fCurBookGUI]->GetDTMap(pfJournalDlgProc::kTagTurnBackDTMap);
+        plDynamicTextMap* left = fBookGUIs[fCurBookGUI]->GetDTMap(pfJournalDlgProc::kTagLeftDTMap);
+        if (turnBack->IsValid() && left->IsValid()) {
+            memcpy(turnBack->GetImage(), left->GetImage(), left->GetLevelSize(0));
+            if (turnBack->GetDeviceRef() != nullptr)
+                turnBack->GetDeviceRef()->SetDirty(true);
+        }
+        // copy the videos over
+        IMoveMovies(fBookGUIs[fCurBookGUI]->PageMaterial(pfBookData::kLeftPage), fBookGUIs[fCurBookGUI]->PageMaterial(pfBookData::kTurnBackPage));
+        IRenderPage(fCurrentPage + 1, pfJournalDlgProc::kTagTurnFrontDTMap);
+
+        // This will fire a callback when it's done that'll let us continue the setup
+        fBookGUIs[fCurBookGUI]->StartTriggeredFlip(true);
+
+        // Play us a sound too, if defined on our button
+        fBookGUIs[fCurBookGUI]->TurnPageButton()->PlaySound(pfGUICheckBoxCtrl::kMouseUp);
+
+        fBookGUIs[fCurBookGUI]->UpdatePageCorners(pfBookData::kBothSides);
+
+        ISendNotify(kNotifyPreviousPage);
+    } else {
+        fCurrentPage = pageNum & ~0x00000001;
+        fVisibleLinks.clear();
+
+        // Swap the right DT map into the turn page front DTMap, then render
+        // the new current page into turn page back and currPage+1 into
+        // the right DTMap
+        plDynamicTextMap* turnFront = fBookGUIs[fCurBookGUI]->GetDTMap(pfJournalDlgProc::kTagTurnFrontDTMap);
+        plDynamicTextMap* right = fBookGUIs[fCurBookGUI]->GetDTMap(pfJournalDlgProc::kTagRightDTMap);
+        if (turnFront->IsValid() && right->IsValid()) {
+            memcpy(turnFront->GetImage(), right->GetImage(), right->GetLevelSize(0));
+            if (turnFront->GetDeviceRef() != nullptr)
+                turnFront->GetDeviceRef()->SetDirty(true);
+        }
+        // copy the videos over
+        IMoveMovies(fBookGUIs[fCurBookGUI]->PageMaterial(pfBookData::kRightPage), fBookGUIs[fCurBookGUI]->PageMaterial(pfBookData::kTurnFrontPage));
+        IRenderPage(fCurrentPage, pfJournalDlgProc::kTagTurnBackDTMap);
+
+        // This will fire a callback when it's done that'll let us continue the setup
+        fBookGUIs[fCurBookGUI]->StartTriggeredFlip(false);
+
+        // Play us a sound too, if defined on our button
+        fBookGUIs[fCurBookGUI]->TurnPageButton()->PlaySound(pfGUICheckBoxCtrl::kMouseUp);
+
+        fBookGUIs[fCurBookGUI]->UpdatePageCorners(pfBookData::kBothSides);
+
+        ISendNotify(kNotifyNextPage);
+    }
 }
 
 //// IHandleCheckClick ///////////////////////////////////////////////////////
@@ -1605,22 +1808,22 @@ void    pfJournalBook::IHandleCheckClick( uint32_t idx, pfBookData::WhichSide wh
 {
     // Special processing for checkboxes--toggle our state, switch our opacity
     // and then send a notify about our new state
-    bool check = ( fVisibleLinks[ idx ]->fFlags & pfEsHTMLChunk::kChecked ) ? false : true;
+    bool check = !fVisibleLinks[idx].IsChecked();
     if( check )
     {
-        fVisibleLinks[ idx ]->fFlags |= pfEsHTMLChunk::kChecked;
+        fVisibleLinks[ idx ].SetChecked(true);
 //      fVisibleLinks[ idx ]->fCurrOpacity = fVisibleLinks[ idx ]->fMaxOpacity;
     }
     else
     {
-        fVisibleLinks[ idx ]->fFlags &= ~pfEsHTMLChunk::kChecked;
+        fVisibleLinks[ idx ].SetChecked(false);
 //      fVisibleLinks[ idx ]->fCurrOpacity = fVisibleLinks[ idx ]->fMinOpacity;
     }
 
     // Re-render the page we're on, to show the change in state
     IRenderPage( fCurrentPage + ( ( which == pfBookData::kLeftSide ) ? 0 : 1 ), ( which == pfBookData::kLeftSide ) ? pfJournalDlgProc::kTagLeftDTMap: pfJournalDlgProc::kTagRightDTMap );
 
-    ISendNotify( check ? kNotifyImageLink : kNotifyCheckUnchecked, fVisibleLinks[ idx ]->fEventID );
+    ISendNotify(check ? kNotifyImageLink : kNotifyCheckUnchecked, fVisibleLinks[idx].GetEventID());
 
     // Register for FX processing, so we can fade the checkbox in
     fBookGUIs[fCurBookGUI]->RegisterForSFX( (pfBookData::WhichSide)( fBookGUIs[fCurBookGUI]->CurSFXPages() | which ) );
@@ -1672,6 +1875,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
     IFreeSource();
 
     pfEsHTMLChunk *chunk, *lastParChunk = new pfEsHTMLChunk(ST::string());
+    pfEsHTMLChunk *lastLinkChunk = nullptr;
     const char *c, *start;
     ST::string name;
     ST::string option;
@@ -1736,6 +1940,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                         } else if (name.compare_i("link") == 0) {
                             chunk->fEventID = option.to_uint();
                             chunk->fFlags |= pfEsHTMLChunk::kCanLink;
+                            chunk->fFlags |= pfEsHTMLChunk::kValidEvent;
                         } else if (name.compare_i("blend") == 0) {
                             if (option.compare_i("alpha") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kBlendAlpha;
@@ -1792,8 +1997,19 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                                 chunk->fCurrColor = chunk->fOffColor;
                         } else if (name.compare_i("resize") == 0) {
                             chunk->fNoResizeImg = (option.compare_i("no") == 0);
+                        } else if (name.compare_i("href") == 0) {
+                            hsSetBits(chunk->fFlags, pfEsHTMLChunk::kCanLink);
+                            chunk->fText = std::move(option);
                         }
                     }
+
+                    // Inherit link
+                    if (!hsCheckBits(chunk->fFlags, pfEsHTMLChunk::kCanLink) && lastLinkChunk) {
+                        hsSetBits(chunk->fFlags, pfEsHTMLChunk::kCanLink);
+                        hsSetBits(chunk->fFlags, pfEsHTMLChunk::kValidEvent);
+                        chunk->fEventID = lastLinkChunk->fEventID;
+                    }
+
                     if (chunk->fImageKey)
                         fHTMLSource.emplace_back(chunk);
                     else
@@ -1999,6 +2215,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                         } else if(name.compare_i("link") == 0) {
                             chunk->fEventID = option.to_uint();
                             chunk->fFlags |= pfEsHTMLChunk::kCanLink;
+                            chunk->fFlags |= pfEsHTMLChunk::kValidEvent;
                         } else if(name.compare_i("pos") == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kFloating;
 
@@ -2013,8 +2230,19 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                             chunk->fOnCover = (option.compare_i("yes") == 0);
                         } else if (name.compare_i("loop") == 0) {
                             chunk->fLoopMovie = option.compare_i("no") != 0;
+                        } else if (name.compare_i("href") == 0) {
+                            hsSetBits(chunk->fFlags, pfEsHTMLChunk::kCanLink);
+                            chunk->fText = std::move(option);
                         }
                     }
+
+                    // Inherit link
+                    if (!hsCheckBits(chunk->fFlags, pfEsHTMLChunk::kCanLink) && lastLinkChunk) {
+                        hsSetBits(chunk->fFlags, pfEsHTMLChunk::kCanLink);
+                        hsSetBits(chunk->fFlags, pfEsHTMLChunk::kValidEvent);
+                        chunk->fEventID = lastLinkChunk->fEventID;
+                    }
+
                     chunk->fMovieIndex = movieIndex;
                     movieIndex++;
                     if (chunk->fOnCover) {
@@ -2041,6 +2269,38 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     }
                     fHTMLSource.emplace_back(chunk);
                     // Start new paragraph chunk after this one
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
+                    lastParChunk->fFlags = IFindLastAlignment();
+                    break;
+
+                case pfEsHTMLChunk::kTextLink:
+                    c += 2;
+                    chunk = new pfEsHTMLChunk(pfEsHTMLChunk::TextLink);
+                    while (IGetNextOption(c, end, name, option)) {
+                        if (name.compare_i("link") == 0) {
+                            ST::conversion_result result;
+                            chunk->fEventID = option.to_uint(result);
+                            // Ideally, we'd do something like link=clear, but we'll just
+                            // go with anything that isn't a valid integer.
+                            hsChangeBits(chunk->fFlags, pfEsHTMLChunk::kCanLink, result.ok());
+                            hsChangeBits(chunk->fFlags, pfEsHTMLChunk::kValidEvent, result.ok());
+                        } else if (name.compare_i("color") == 0) {
+                            chunk->fColor.FromARGB32(option.to_ulong(16) | 0xff000000);
+                        } else if (name.compare_i("name") == 0) {
+                            chunk->fText = ST::format("#{}", option);
+                        } else if (name.compare_i("href") == 0) {
+                            hsSetBits(chunk->fFlags, pfEsHTMLChunk::kCanLink);
+                            chunk->fText = std::move(option);
+                        }
+                    }
+                    fHTMLSource.emplace_back(chunk);
+
+                    // For other interactable bits to inherit the link.
+                    if (hsTestBits(chunk->fFlags, pfEsHTMLChunk::kCanLink))
+                        lastLinkChunk = chunk;
+                    else
+                        lastLinkChunk = nullptr;
+
                     lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
@@ -2085,7 +2345,7 @@ uint8_t   pfJournalBook::IGetTagType( const char *string, const char *end )
     {
         ST::string fTag;
         uint8_t       fType;
-    } tags[] = { { ST_LITERAL("p"), pfEsHTMLChunk::kParagraph },
+    } tags[] = {{ ST_LITERAL("p"), pfEsHTMLChunk::kParagraph },
                 { ST_LITERAL("img"), pfEsHTMLChunk::kImage },
                 { ST_LITERAL("pb"), pfEsHTMLChunk::kPageBreak },
                 { ST_LITERAL("font"), pfEsHTMLChunk::kFontChange },
@@ -2095,9 +2355,10 @@ uint8_t   pfJournalBook::IGetTagType( const char *string, const char *end )
                 { ST_LITERAL("decal"), pfEsHTMLChunk::kDecal },
                 { ST_LITERAL("movie"), pfEsHTMLChunk::kMovie },
                 { ST_LITERAL("editable"), pfEsHTMLChunk::kEditable },
+                { ST_LITERAL("a"), pfEsHTMLChunk::kTextLink },
     };
 
-    for (auto tag : tags)
+    for (const auto& tag : tags)
     {
         if (string + tag.fTag.size() < end && tag.fTag.compare_ni(string, tag.fTag.size()) == 0)
         {
@@ -2313,10 +2574,16 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
         int16_t     fontSpacing;
         bool        needSFX = false;
 
+        // Find the current text link
+        pfEsHTMLChunk* currLinkChunk = IFindTextLink(fPageStarts[page]);
+
         // Find and set initial font properties
         IFindFontProps( fPageStarts[ page ], fontFace, fontSize, fontFlags, fontColor, fontSpacing );
         dtMap->SetFont( fontFace, fontSize, fontFlags, false );
-        dtMap->SetTextColor( fontColor, true );
+        if (currLinkChunk != nullptr)
+            dtMap->SetTextColor(currLinkChunk->fColor, true);
+        else
+            dtMap->SetTextColor(fontColor, true);
         dtMap->SetLineSpacing(fontSpacing);
 
         for (idx = fPageStarts[page], x = (uint16_t)fPageLMargin, y = (uint16_t)fPageTMargin;
@@ -2332,18 +2599,24 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                 case pfEsHTMLChunk::kParagraph:             
                     if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) == pfEsHTMLChunk::kLeft )
                     {
-                        dtMap->SetJustify( plDynamicTextMap::kLeftJustify );
-                        x = (uint16_t)fPageLMargin; // reset X if our justification changes
+                        if (dtMap->GetFontJustify() != plDynamicTextMap::kLeftJustify) {
+                            dtMap->SetJustify(plDynamicTextMap::kLeftJustify);
+                            x = (uint16_t)fPageLMargin; // reset X if our justification changes
+                        }
                     }
                     else if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) == pfEsHTMLChunk::kRight )
                     {
-                        dtMap->SetJustify( plDynamicTextMap::kRightJustify );
-                        x = (uint16_t)fPageLMargin; // reset X if our justification changes
+                        if (dtMap->GetFontJustify() != plDynamicTextMap::kRightJustify) {
+                            dtMap->SetJustify(plDynamicTextMap::kRightJustify);
+                            x = (uint16_t)fPageLMargin; // reset X if our justification changes
+                        }
                     }
                     else if( ( chunk->fFlags & pfEsHTMLChunk::kAlignMask ) == pfEsHTMLChunk::kCenter )
                     {
-                        dtMap->SetJustify( plDynamicTextMap::kCenter );
-                        x = (uint16_t)fPageLMargin; // reset X if our justification changes
+                        if (dtMap->GetFontJustify() != plDynamicTextMap::kCenter) {
+                            dtMap->SetJustify(plDynamicTextMap::kCenter);
+                            x = (uint16_t)fPageLMargin; // reset X if our justification changes
+                        }
                     }
 
                     dtMap->SetFirstLineIndent( (int16_t)(x - fPageLMargin) );
@@ -2354,6 +2627,54 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                     width = (uint16_t)(512 - fPageLMargin - fPageRMargin);
                     if( !suppressRendering )
                         dtMap->DrawWrappedString( (uint16_t)fPageLMargin, y, chunk->fText, width, (uint16_t)(512 - fPageBMargin - y), &lastX, &lastY );
+
+                    // Insert link rects without making the code too crazy.
+                    // A huge assumption here... We can simply move from the (x, y) render starting position
+                    // down and to the right. This _will_ break if anyone wants to add support for RTL.
+                    // Additionally, if a line wraps such that there's a lot of blank space, that blank
+                    // space will still be clickable. Ugh.
+                    if (currLinkChunk != nullptr) {
+                        int16_t maxCharHt = (int16_t)dtMap->GetCurrFont()->GetMaxCharHeight();
+                        int16_t lineDelta = maxCharHt + fontSpacing;
+                        pcSmallRect linkRect(x, y, 0, maxCharHt);
+
+                         // Right page rects are offsetted to differentiate
+                        int16_t xOffs = 0;
+                        if (whichDTMap == pfJournalDlgProc::kTagRightDTMap || whichDTMap == pfJournalDlgProc::kTagTurnFrontDTMap)
+                            xOffs = (int16_t)(dtMap->GetWidth());
+
+                        while (linkRect.fY <= lastY) {
+                            if (linkRect.fY + lineDelta >= lastY)
+                                linkRect.fWidth = lastX - linkRect.fX;
+                            else
+                                linkRect.fWidth = 512 - fPageRMargin - linkRect.fX;
+
+                            // Blank line at end of page could give us a zero width rect, skip that
+                            if (!suppressRendering && linkRect.fWidth > 0) {
+                                fVisibleLinks.emplace_back(
+                                    currLinkChunk,
+                                    linkRect.fX + xOffs,
+                                    linkRect.fY,
+                                    linkRect.fWidth, linkRect.fHeight
+                                );
+                                if (s_ShowLinkRects) {
+                                    dtMap->FrameRect(
+                                        linkRect.fX, linkRect.fY,
+                                        linkRect.fWidth, linkRect.fHeight,
+                                        s_LinkRectColor
+                                    );
+                                }
+                            } else if (!suppressRendering && linkRect.fWidth > 0) {
+                                fVisibleLinks.emplace_back(
+                                    currLinkChunk,
+                                    0, 0, 0, 0
+                                );
+                            }
+
+                            linkRect.fX = (int16_t)fPageLMargin;
+                            linkRect.fY += lineDelta;
+                        }
+                    }
 
                     if( lastChar == 0 )
                     {
@@ -2477,7 +2798,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                     dtMap->SetLineSpacing(fontSpacing);
                     break;
 
-                case pfEsHTMLChunk::kMovie:
+                case pfEsHTMLChunk::kMovie: {
                     movieAlreadyLoaded = (IMovieAlreadyLoaded(chunk) != nullptr); // have we already cached it?
                     plLayerAVI *movieLayer = IMakeMovieLayer(chunk, x, y, (plMipmap*)dtMap, whichDTMap, suppressRendering);
                     if (movieLayer)
@@ -2515,6 +2836,17 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                         }
                         if (material && !suppressRendering)
                             material->AddLayerViaNotify(movieLayer);
+                    }
+                    break;
+                }
+
+                case pfEsHTMLChunk::kTextLink:
+                    if (hsCheckBits(chunk->fFlags, pfEsHTMLChunk::kCanLink)) {
+                        dtMap->SetTextColor(chunk->fColor, true);
+                        currLinkChunk = chunk;
+                    } else {
+                        dtMap->SetTextColor(fontColor, true);
+                        currLinkChunk = nullptr;
                     }
                     break;
             }
@@ -2578,7 +2910,7 @@ void    pfJournalBook::IMoveMovies( hsGMaterial *source, hsGMaterial *dest )
 
 void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *mip, plDynamicTextMap *dtMap, uint32_t whichDTMap, bool dontRender )
 {
-    plMipmap *copy = new plMipmap();
+    hsRef<plMipmap> copy(new plMipmap(), hsStealRef);
     copy->CopyFrom(mip);
     if (chunk->fNoResizeImg)
     {
@@ -2653,21 +2985,24 @@ void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y
                 opts.fFlags = ( chunk->fFlags & pfEsHTMLChunk::kBlendAlpha ) ? plMipmap::kCopySrcAlpha : plMipmap::kForceOpaque;
             opts.fOpacity = (uint8_t)(chunk->fCurrOpacity * 255.f);
         }
-        dtMap->Composite( copy, x, y, &opts );
+        dtMap->Composite(copy.Get(), x, y, &opts);
     }
 
     if( chunk->fFlags & pfEsHTMLChunk::kCanLink )
     {
+        int16_t xOffs = 0;
         if( whichDTMap == pfJournalDlgProc::kTagRightDTMap || whichDTMap == pfJournalDlgProc::kTagTurnFrontDTMap )
-            x += (uint16_t)(dtMap->GetWidth());   // Right page rects are offsetted to differentiate
+            xOffs = (int16_t)(dtMap->GetWidth());   // Right page rects are offsetted to differentiate
 
-        if (dontRender) // if we aren't rendering then this link isn't visible, but the index still needs to be valid, so give it a rect of 0,0,0,0
-            chunk->fLinkRect.Set(0,0,0,0);
-        else
-            chunk->fLinkRect.Set( x, y, (int16_t)(copy->GetWidth()), (int16_t)(copy->GetHeight()) );
-        fVisibleLinks.emplace_back(chunk);
+        // if we aren't rendering then this link isn't visible, but the index still needs to be valid, so give it a rect of 0,0,0,0
+        if (dontRender) {
+            fVisibleLinks.emplace_back(chunk, 0, 0, 0, 0);
+        } else {
+            fVisibleLinks.emplace_back(chunk, x + xOffs, y, (int16_t)(copy->GetWidth()), (int16_t)(copy->GetHeight()));
+            if (s_ShowLinkRects)
+                dtMap->FrameRect(x, y, (int16_t)(copy->GetWidth()), (int16_t)(copy->GetHeight()), s_LinkRectColor);
+        }
     }
-    delete copy;
 }
 
 pfJournalBook::loadedMovie *pfJournalBook::IMovieAlreadyLoaded(pfEsHTMLChunk *chunk)
@@ -2842,11 +3177,12 @@ plLayerAVI *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uin
         if( whichDTMap == pfJournalDlgProc::kTagRightDTMap || whichDTMap == pfJournalDlgProc::kTagTurnFrontDTMap )
             x += (uint16_t)(baseMipmap->GetWidth());  // Right page rects are offsetted to differentiate
 
-        if (dontRender) // if we aren't rendering then this link isn't visible, but the index still needs to be valid, so give it a rect of 0,0,0,0
-            chunk->fLinkRect.Set(0,0,0,0);
-        else
-            chunk->fLinkRect.Set( x, y, movieWidth, movieHeight );
-        fVisibleLinks.emplace_back(chunk);
+        // if we aren't rendering then this link isn't visible, but the index still needs to be valid, so give it a rect of 0,0,0,0
+        if (dontRender) {
+            fVisibleLinks.emplace_back(chunk, 0, 0, 0, 0);
+        } else {
+            fVisibleLinks.emplace_back(chunk, x, y, movieWidth, movieHeight);
+        }
     }
 
     plAnimTimeConvert &timeConvert = movieLayer->GetTimeConvert();
@@ -3100,6 +3436,25 @@ void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, ST::string &face, uint
         spacing = 0;
 }
 
+//// IFindTextLink ///////////////////////////////////////////////////////////
+// Starting at the given chunk, works backward to determine the current text link ID
+pfEsHTMLChunk* pfJournalBook::IFindTextLink(uint32_t chunkIdx) const
+{
+    if (fHTMLSource.empty())
+        return nullptr;
+
+    for (hsSsize_t i = chunkIdx; i >= 0; --i) {
+        if (fHTMLSource[i]->fType != pfEsHTMLChunk::kTextLink)
+            continue;
+        if (hsCheckBits(fHTMLSource[i]->fFlags, pfEsHTMLChunk::kCanLink))
+            return fHTMLSource[i];
+        else
+            return nullptr;
+    }
+
+    return nullptr;
+}
+
 //// IFindLastAlignment //////////////////////////////////////////////////////
 // Find the last paragraph chunk and thus the last par alignment settings
 
@@ -3134,8 +3489,8 @@ void    pfJournalBook::IRecalcPageStarts( uint32_t upToPage )
         // actually draw them all (even in large journals), we're just going to do it
         IRenderPage( page, pfJournalDlgProc::kTagTurnBackDTMap, false );
         // Reset any "visible" links since they aren't really visible
-        for (pfEsHTMLChunk* linkChunk : fVisibleLinks)
-            linkChunk->fLinkRect.Set(0, 0, 0, 0);
+        for (auto& link : fVisibleLinks)
+            link.ClearRect();
     }
 }
 
