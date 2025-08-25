@@ -922,6 +922,10 @@ void PythonInterface::initPython()
     if (!ICheckedInit<PyConfig, Py_InitializeFromConfig, PyConfig_Clear>(config, dbgLog, "Core init failed!"))
         return;
 
+    // Create an interned string for __builtins__ so we don't have to keep converting the string over and over.
+    // Python LIKELY already has this string interned.
+    builtInModuleName = PyUnicode_InternFromString("__builtins__");
+
     // We now have enough Python to insert our PEP 451 import machinery.
     initPyPackHook();
 
@@ -929,10 +933,6 @@ void PythonInterface::initPython()
     config._init_main = 1;
     if (!ICheckedInit<PyConfig, Py_InitializeFromConfig, PyConfig_Clear>(config, dbgLog, "Main init failed!"))
         return;
-
-    // Create an interned string for __builtins__ so we don't have to keep converting the string over and over.
-    // Python LIKELY already has this string interned.
-    builtInModuleName = PyUnicode_InternFromString("__builtins__");
 
     // Initialize built-in Plasma modules. For some reason, when using the append-inittab thingy,
     // we get complaints about these modules being leaked :(
