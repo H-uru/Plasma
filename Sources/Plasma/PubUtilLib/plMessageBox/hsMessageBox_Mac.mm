@@ -46,72 +46,105 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #import <Cocoa/Cocoa.h>
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1090
+typedef NSInteger NSModalResponse;
+#endif
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 101200
+#   define NSAlertStyleCritical         NSCriticalAlertStyle
+#   define NSAlertStyleInformational    NSInformationalAlertStyle
+#   define NSAlertStyleWarning          NSWarningAlertStyle
+#endif
+
+#pragma mark - hsMessageBoxPresenter
+__attribute__((visibility("hidden")))
+@interface hsMessageBoxPresenter : NSObject {
+@public
+    hsMessageBoxResult result;
+}
+
+- (void)showAlert:(NSAlert*)alert;
+@end
+
+@implementation hsMessageBoxPresenter
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        result = hsMBoxCancel;
+    }
+    return self;
+}
+
+- (void)showAlert:(NSAlert*)alert
+{
+    NSModalResponse response = [alert runModal];
+    result = static_cast<hsMessageBoxResult>(response);
+}
+@end
+
+
+#pragma mark - hsMessageBox
 hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& caption, hsMessageBoxKind kind, hsMessageBoxIcon icon)
 {
     if (hsMessageBox_SuppressPrompts)
         return hsMBoxOk;
 
-    @autoreleasepool {
-        NSString* nsMessage = NSStringCreateWithSTString(message);
-        NSString* nsCaption = NSStringCreateWithSTString(caption);
+    hsMessageBoxResult result = hsMBoxCancel;
 
-        __block NSModalResponse response;
-        NSCondition* lock = [NSCondition new];
-        dispatch_block_t alertBlock = ^{
-            NSAlert* alert = [NSAlert new];
-            alert.messageText = nsCaption;
-            alert.informativeText = nsMessage;
+    hsAutoreleasingScope;
 
-            if (icon == hsMessageBoxIconError)
-                alert.alertStyle = NSAlertStyleCritical;
-            else if (icon == hsMessageBoxIconQuestion)
-                alert.alertStyle = NSAlertStyleInformational;
-            else if (icon == hsMessageBoxIconExclamation)
-                alert.alertStyle = NSAlertStyleWarning;
-            else if (icon == hsMessageBoxIconAsterisk)
-                alert.alertStyle = NSAlertStyleWarning;
-            else
-                alert.alertStyle = NSAlertStyleCritical;
+    NSString* nsMessage = NSStringCreateWithSTString(message);
+    NSString* nsCaption = NSStringCreateWithSTString(caption);
 
-            if (kind == hsMessageBoxNormal)
-                [alert addButtonWithTitle:@"OK"];
-            else if (kind == hsMessageBoxAbortRetyIgnore) {
-                [alert addButtonWithTitle:@"Retry"];
-                [alert addButtonWithTitle:@"Ignore"];
-            } else if (kind == hsMessageBoxOkCancel) {
-                [alert addButtonWithTitle:@"OK"];
-                [alert addButtonWithTitle:@"Cancel"];
-            } else if (kind == hsMessageBoxRetryCancel) {
-                [alert addButtonWithTitle:@"Retry"];
-                [alert addButtonWithTitle:@"Cancel"];
-            } else if (kind == hsMessageBoxYesNo) {
-                [alert addButtonWithTitle:@"Yes"];
-                [alert addButtonWithTitle:@"No"];
-            } else if (kind == hsMessageBoxYesNoCancel) {
-                [alert addButtonWithTitle:@"Yes"];
-                [alert addButtonWithTitle:@"No"];
-                [alert addButtonWithTitle:@"Cancel"];
-            } else
-                [alert addButtonWithTitle:@"OK"];
-            response = [alert runModal];
-            [lock lock];
-            [lock signal];
-            [lock unlock];
-        };
+    NSAlert* alert = hsAutorelease([NSAlert new]);
+    alert.messageText = nsCaption;
+    alert.informativeText = nsMessage;
 
-        //Plasma may call dialogs from any thread, not just the main thread
-        //Check to see if we're on the main thread and directly execute
-        //the dialog if we are.
-        if ([NSRunLoop currentRunLoop] == [NSRunLoop mainRunLoop]) {
-            alertBlock();
-        } else {
-            [[NSRunLoop mainRunLoop] performInModes:@[NSDefaultRunLoopMode] block:alertBlock];
-            [lock lock];
-            [lock wait];
-            [lock unlock];
-        }
+    if (icon == hsMessageBoxIconError)
+        alert.alertStyle = NSAlertStyleCritical;
+    else if (icon == hsMessageBoxIconQuestion)
+        alert.alertStyle = NSAlertStyleInformational;
+    else if (icon == hsMessageBoxIconExclamation)
+        alert.alertStyle = NSAlertStyleWarning;
+    else if (icon == hsMessageBoxIconAsterisk)
+        alert.alertStyle = NSAlertStyleWarning;
+    else
+        alert.alertStyle = NSAlertStyleCritical;
 
-        // This is only really safe for OK and Cancel
-        return (hsMessageBoxResult)response;
+    if (kind == hsMessageBoxNormal)
+        [alert addButtonWithTitle:@"OK"];
+    else if (kind == hsMessageBoxAbortRetyIgnore) {
+        [alert addButtonWithTitle:@"Retry"];
+        [alert addButtonWithTitle:@"Ignore"];
+    } else if (kind == hsMessageBoxOkCancel) {
+        [alert addButtonWithTitle:@"OK"];
+        [alert addButtonWithTitle:@"Cancel"];
+    } else if (kind == hsMessageBoxRetryCancel) {
+        [alert addButtonWithTitle:@"Retry"];
+        [alert addButtonWithTitle:@"Cancel"];
+    } else if (kind == hsMessageBoxYesNo) {
+        [alert addButtonWithTitle:@"Yes"];
+        [alert addButtonWithTitle:@"No"];
+    } else if (kind == hsMessageBoxYesNoCancel) {
+        [alert addButtonWithTitle:@"Yes"];
+        [alert addButtonWithTitle:@"No"];
+        [alert addButtonWithTitle:@"Cancel"];
+    } else {
+        [alert addButtonWithTitle:@"OK"];
     }
+
+    if ([NSThread isMainThread]) {
+        NSModalResponse response = [alert runModal];
+        result = static_cast<hsMessageBoxResult>(response);
+    } else {
+        hsMessageBoxPresenter* presenter = hsAutorelease([hsMessageBoxPresenter new]);
+
+        [presenter performSelectorOnMainThread:@selector(showAlert:) withObject:alert waitUntilDone:YES];
+
+        result = presenter->result;
+    }
+
+    // This is only really safe for OK and Cancel
+    return result;
 }
