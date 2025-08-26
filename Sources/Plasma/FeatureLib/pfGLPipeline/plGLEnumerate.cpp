@@ -267,8 +267,13 @@ void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displ
 
 #pragma region CGL_Enumerate
 #ifdef HS_BUILD_FOR_MACOS
+
 #include <AvailabilityMacros.h>
-#include <CoreGraphics/CoreGraphics.h>
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1090
+#   include <ApplicationServices/ApplicationServices.h>
+#else
+#   include <CoreGraphics/CoreGraphics.h>
+#endif
 #include <OpenGL/OpenGL.h>
 
 void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records, CGDirectDisplayID displayHndl = kCGNullDirectDisplay)

@@ -43,7 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMacDisplayHelper_hpp
 #define plMacDisplayHelper_hpp
 
-#include <CoreGraphics/CoreGraphics.h>
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1090
+#   include <ApplicationServices/ApplicationServices.h>
+#else
+#   include <CoreGraphics/CoreGraphics.h>
+#endif
 
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plPipeline/pl3DPipeline.h"
@@ -58,7 +62,6 @@ class plMacDisplayHelper : public plDisplayHelper
 {
 public:
     plMacDisplayHelper();
-    
 
     CGDirectDisplayID CurrentDisplay() const { return fCurrentDisplay; }
 
