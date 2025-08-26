@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline.h"
 
 #include <AppKit/AppKit.h>
-#include <CoreGraphics/CoreGraphics.h>
 #include <QuartzCore/QuartzCore.h>
 
 plMacDisplayHelper::plMacDisplayHelper() : fCurrentDisplay(kCGNullDirectDisplay)
@@ -54,9 +53,11 @@ plMacDisplayHelper::plMacDisplayHelper() : fCurrentDisplay(kCGNullDirectDisplay)
 void plMacDisplayHelper::SetCurrentScreen(hsDisplayHndl display) const
 {
     NSScreen* nsScreen;
-    for (NSScreen* screen in [NSScreen screens]) {
+    NSArray* screens = [NSScreen screens];
+    for (NSUInteger i = 0; i < screens.count; i++) {
+        NSScreen*     screen = [screens objectAtIndex:i];
         NSDictionary* deviceDescription = [screen deviceDescription];
-        NSNumber*     screenID = deviceDescription[@"NSScreenNumber"];
+        NSNumber*     screenID = [deviceDescription objectForKey:@"NSScreenNumber"];
         if ([screenID unsignedIntValue] == display) {
             nsScreen = screen;
         }
@@ -66,7 +67,7 @@ void plMacDisplayHelper::SetCurrentScreen(hsDisplayHndl display) const
 
 void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
 {
-    CGDirectDisplayID displayID = (CGDirectDisplayID)[screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue];
+    CGDirectDisplayID displayID = (CGDirectDisplayID)[[screen.deviceDescription objectForKey:@"NSScreenNumber"] unsignedIntValue];
 
     if (fCurrentDisplay == displayID)
         return;
@@ -82,13 +83,17 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
     fDesktopDisplayMode.Height = windowArea.size.height;
     fDesktopDisplayMode.ColorDepth = 32;
 
-    // visibleFrame is in points - put into pixels
-    fDesktopDisplayMode.Width *= [screen backingScaleFactor];
-    fDesktopDisplayMode.Height *= [screen backingScaleFactor];
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1070
+    if ([screen respondsToSelector:@selector(backingScaleFactor)]) {
+        // visibleFrame is in points - put into pixels
+        fDesktopDisplayMode.Width *= [screen backingScaleFactor];
+        fDesktopDisplayMode.Height *= [screen backingScaleFactor];
+    }
+#endif
 
     // Calculate the region actually available for full screen
     NSRect currentResolution = [screen frame];
-#ifdef HAVE_BUILTIN_AVAILABLE
+#if MAC_OS_X_VERSION_MAX_ALLOWED > 101200 && defined(HAVE_BUILTIN_AVAILABLE)
     if (@available(macOS 12.0, *)) {
         NSEdgeInsets currentSafeAreaInsets = [screen safeAreaInsets];
         // Sigh... Origin doesn't matter but lets do it for inspectability
@@ -103,38 +108,66 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
 
     fDisplayModes.clear();
 
-    CFArrayRef displayModes = CGDisplayCopyAllDisplayModes(fCurrentDisplay, nullptr);
-    for (CFIndex i = 0; i < CFArrayGetCount(displayModes); i++) {
-        // Now filter out the ones that are taller than the safe area aspect ratio
-        // This could break in interesting ways if Apple ships displays that have unsafe
-        // areas along the side - but will prevent us stripping any aspect ratios that don't
-        // match the display entirely.
-        //
-        // I'd prefer not to filter a bunch of stuff out but don't strictly have a choice
-        // here because there are a lot of fake resolutions in the list.
-        //
-        // Apple also doesn't include some traditional resolutions on some of their hardware
-        // like 800x600, so don't expect those here. My Macbook Pro gives me back 1080p as the lowest.
-        // We could force that with kCGDisplayShowDuplicateLowResolutionModes but the aspect ratio
-        // filter would still drop some or all of those.
-        //
-        // Asked for better guidance here from Apple - FB13375033
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
+    if (&CGDisplayCopyAllDisplayModes != nullptr) {
+        CFArrayRef displayModes = CGDisplayCopyAllDisplayModes(fCurrentDisplay, nullptr);
+        for (CFIndex i = 0; i < CFArrayGetCount(displayModes); i++) {
+            // Now filter out the ones that are taller than the safe area aspect ratio
+            // This could break in interesting ways if Apple ships displays that have unsafe
+            // areas along the side - but will prevent us stripping any aspect ratios that don't
+            // match the display entirely.
+            //
+            // I'd prefer not to filter a bunch of stuff out but don't strictly have a choice
+            // here because there are a lot of fake resolutions in the list.
+            //
+            // Apple also doesn't include some traditional resolutions on some of their hardware
+            // like 800x600, so don't expect those here. My Macbook Pro gives me back 1080p as the lowest.
+            // We could force that with kCGDisplayShowDuplicateLowResolutionModes but the aspect ratio
+            // filter would still drop some or all of those.
+            //
+            // Asked for better guidance here from Apple - FB13375033
 
-        CGDisplayModeRef mode = (CGDisplayModeRef)CFArrayGetValueAtIndex(displayModes, i);
+            CGDisplayModeRef mode = (CGDisplayModeRef)CFArrayGetValueAtIndex(displayModes, i);
 
-        CGFloat modeAspectRatio = static_cast<CGFloat>(CGDisplayModeGetWidth(mode)) / static_cast<CGFloat>(CGDisplayModeGetHeight(mode));
-        if (modeAspectRatio < safeAspectRatio) {
-            continue;
+            CGFloat modeAspectRatio = static_cast<CGFloat>(CGDisplayModeGetWidth(mode)) / static_cast<CGFloat>(CGDisplayModeGetHeight(mode));
+            if (modeAspectRatio < safeAspectRatio) {
+                continue;
+            }
+
+            // aspect ratio is good - add the mode to the list
+
+            // Plasma likes to handle modes from largest to smallest,
+            // CG likes to go from smallest to largest. Insert modes
+            // at the front.
+            fDisplayModes.emplace_back(plDisplayMode { static_cast<int>(CGDisplayModeGetWidth(mode)), static_cast<int>(CGDisplayModeGetHeight(mode)), 32 });
         }
-
-        // aspect ratio is good - add the mode to the list
-
-        // Plasma likes to handle modes from largest to smallest,
-        // CG likes to go from smallest to largest. Insert modes
-        // at the front.
-        fDisplayModes.emplace_back(plDisplayMode{ static_cast<int>(CGDisplayModeGetWidth(mode)), static_cast<int>(CGDisplayModeGetHeight(mode)), 32 });
+        CFRelease(displayModes);
     }
-    CFRelease(displayModes);
+#   if MAC_OS_X_VERSION_MIN_REQUIRED < 1060
+    else
+#   endif
+#endif
+#if MAC_OS_X_VERSION_MIN_REQUIRED < 1060
+    {
+        CFArrayRef displayModes = CGDisplayAvailableModes(fCurrentDisplay);
+        for (CFIndex i = 0; i < CFArrayGetCount(displayModes); i++) {
+            CFDictionaryRef mode = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(displayModes, i));
+
+            int width, height, depth;
+
+            CFNumberGetValue(static_cast<CFNumberRef>(CFDictionaryGetValue(mode, kCGDisplayWidth)), kCFNumberIntType, &width);
+            CFNumberGetValue(static_cast<CFNumberRef>(CFDictionaryGetValue(mode, kCGDisplayHeight)), kCFNumberIntType, &height);
+            CFNumberGetValue(static_cast<CFNumberRef>(CFDictionaryGetValue(mode, kCGDisplayBitsPerPixel)), kCFNumberIntType, &depth);
+
+            CGFloat modeAspectRatio = static_cast<CGFloat>(width) / static_cast<CGFloat>(height);
+            if (modeAspectRatio < safeAspectRatio) {
+                continue;
+            }
+
+            fDisplayModes.emplace_back(plDisplayMode { static_cast<int>(width), static_cast<int>(height), static_cast<int>(depth) });
+        }
+    }
+#endif
 
     std::sort(fDisplayModes.begin(), fDisplayModes.end(), std::greater());
     auto last = std::unique(fDisplayModes.begin(), fDisplayModes.end());
