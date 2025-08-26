@@ -200,6 +200,10 @@ bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
     }
     // get the dictionaries for this module
     d = PyModule_GetDict(module);
+
+    if (!PyDict_GetItemString(d, "__builtins__"))
+        PyDict_SetItemString(d, "__builtins__", PyEval_GetBuiltins());
+
     // run the string
     v = PyEval_EvalCode(code, d, d);
     // check for errors and print them
