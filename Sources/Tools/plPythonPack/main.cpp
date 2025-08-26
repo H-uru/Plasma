@@ -62,6 +62,15 @@ static const std::unordered_set<ST::string, ST::hash_i, ST::equal_i> s_ignoreSub
     ST_LITERAL("__pycache__"),
 };
 
+/** Modules that should never be packed. */
+static const std::unordered_set<ST::string, ST::hash_i, ST::equal_i> s_ignoreModules{
+    // These built-in modules that are part of Python itself.
+    // Do NOT try to import them... it will give Python heartburn,
+    // which is basically fatal since we share the interpreter state.
+    ST_LITERAL("importlib._bootstrap"),
+    ST_LITERAL("importlib._bootstrap_external"),
+};
+
 #if HS_BUILD_FOR_WIN32
     #define NULL_DEVICE "NUL:"
 #else
@@ -124,11 +133,22 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
     }
 
     // import the module first, to make packages work correctly
-    PyObject* fModule = PyImport_ImportModule(fileName.AsString().c_str());
-    if (!fModule)
-        ST::printf(stderr, "......import failed ");
+    ST::string moduleName = fileName.AsString();
+    if (moduleName.after_last('.') == "__init__")
+        moduleName = moduleName.before_last('.');
 
-    PyObject* pythonCode = PythonInterface::CompileString(code, fileName);
+    PyObject* fModule = nullptr;
+    PyObject* pythonCode = nullptr;
+    if (s_ignoreModules.find(moduleName) == s_ignoreModules.end()) {
+        fModule = PyImport_ImportModule(moduleName.c_str());
+        if (fModule)
+            pythonCode = PythonInterface::CompileString(code, moduleName);
+        else
+            ST::printf(stderr, "......import failed ");
+    } else {
+        ST::printf(stderr, "......module is in skip list ");
+    }
+
     if (pythonCode)
     {
         // run the code
@@ -136,9 +156,12 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
         {
             // set the name of the file (in the global dictionary of the module)
             PyObject* dict = PyModule_GetDict(fModule);
-            PyObject* pfilename = PyUnicode_FromString(fileName.AsString().c_str());
-            PyDict_SetItemString(dict, "glue_name", pfilename);
-            Py_DECREF(pfilename);
+            PyObject* moduleNameObj = PyUnicode_FromStringAndSize(
+                moduleName.c_str(),
+                moduleName.size()
+            );
+            PyDict_SetItemString(dict, "glue_name", moduleNameObj);
+            Py_DECREF(moduleNameObj);
 
             // next we need to:
             //  - create instance of class
@@ -197,11 +220,16 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
     }
     else
     {
-        ST::printf(stderr, "......blast! Compile error in {}!\n", fileName);
+        ST::printf(stderr, "......blast! ");
+        if (PyErr_Occurred())
+            ST::printf(stderr, "Compile error in {}!\n", fileName);
+        else
+            ST::printf(stderr, "No code available!\n");
+
         s->WriteLE32(0);
 
-        PyErr_Print();
-        PyErr_Clear();
+        if (PyErr_Occurred())
+            PyErr_Print();
     }
 
     delete [] code;
