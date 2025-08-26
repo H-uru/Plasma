@@ -46,72 +46,121 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #import <Cocoa/Cocoa.h>
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1090
+typedef NSInteger NSModalResponse;
+#endif
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 101200
+#   define NSAlertStyleCritical         NSCriticalAlertStyle
+#   define NSAlertStyleInformational    NSInformationalAlertStyle
+#   define NSAlertStyleWarning          NSWarningAlertStyle
+#endif
+
+@interface HSMBPresenter : NSObject {
+@public
+    hsMessageBoxResult result;
+}
+
+- (void)showAlert:(NSAlert*)alert;
+@end
+
+@implementation HSMBPresenter
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        result = hsMBoxCancel;
+    }
+    return self;
+}
+
+- (void)showAlert:(NSAlert*)alert
+{
+    NSModalResponse response = [alert runModal];
+    result = static_cast<hsMessageBoxResult>(response);
+}
+@end
+
 hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& caption, hsMessageBoxKind kind, hsMessageBoxIcon icon)
 {
     if (hsMessageBox_SuppressPrompts)
         return hsMBoxOk;
 
+    hsMessageBoxResult result = hsMBoxCancel;
+
+#if __has_feature(objc_arc)
     @autoreleasepool {
-        NSString* nsMessage = NSStringCreateWithSTString(message);
-        NSString* nsCaption = NSStringCreateWithSTString(caption);
+#else
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+#endif
 
-        __block NSModalResponse response;
-        NSCondition* lock = [NSCondition new];
-        dispatch_block_t alertBlock = ^{
-            NSAlert* alert = [NSAlert new];
-            alert.messageText = nsCaption;
-            alert.informativeText = nsMessage;
+    NSString* nsMessage = NSStringCreateWithSTString(message);
+    NSString* nsCaption = NSStringCreateWithSTString(caption);
 
-            if (icon == hsMessageBoxIconError)
-                alert.alertStyle = NSAlertStyleCritical;
-            else if (icon == hsMessageBoxIconQuestion)
-                alert.alertStyle = NSAlertStyleInformational;
-            else if (icon == hsMessageBoxIconExclamation)
-                alert.alertStyle = NSAlertStyleWarning;
-            else if (icon == hsMessageBoxIconAsterisk)
-                alert.alertStyle = NSAlertStyleWarning;
-            else
-                alert.alertStyle = NSAlertStyleCritical;
+    NSAlert* alert = [NSAlert new];
+    alert.messageText = nsCaption;
+    alert.informativeText = nsMessage;
 
-            if (kind == hsMessageBoxNormal)
-                [alert addButtonWithTitle:@"OK"];
-            else if (kind == hsMessageBoxAbortRetyIgnore) {
-                [alert addButtonWithTitle:@"Retry"];
-                [alert addButtonWithTitle:@"Ignore"];
-            } else if (kind == hsMessageBoxOkCancel) {
-                [alert addButtonWithTitle:@"OK"];
-                [alert addButtonWithTitle:@"Cancel"];
-            } else if (kind == hsMessageBoxRetryCancel) {
-                [alert addButtonWithTitle:@"Retry"];
-                [alert addButtonWithTitle:@"Cancel"];
-            } else if (kind == hsMessageBoxYesNo) {
-                [alert addButtonWithTitle:@"Yes"];
-                [alert addButtonWithTitle:@"No"];
-            } else if (kind == hsMessageBoxYesNoCancel) {
-                [alert addButtonWithTitle:@"Yes"];
-                [alert addButtonWithTitle:@"No"];
-                [alert addButtonWithTitle:@"Cancel"];
-            } else
-                [alert addButtonWithTitle:@"OK"];
-            response = [alert runModal];
-            [lock lock];
-            [lock signal];
-            [lock unlock];
-        };
+    if (icon == hsMessageBoxIconError)
+        alert.alertStyle = NSAlertStyleCritical;
+    else if (icon == hsMessageBoxIconQuestion)
+        alert.alertStyle = NSAlertStyleInformational;
+    else if (icon == hsMessageBoxIconExclamation)
+        alert.alertStyle = NSAlertStyleWarning;
+    else if (icon == hsMessageBoxIconAsterisk)
+        alert.alertStyle = NSAlertStyleWarning;
+    else
+        alert.alertStyle = NSAlertStyleCritical;
 
-        //Plasma may call dialogs from any thread, not just the main thread
-        //Check to see if we're on the main thread and directly execute
-        //the dialog if we are.
-        if ([NSRunLoop currentRunLoop] == [NSRunLoop mainRunLoop]) {
-            alertBlock();
-        } else {
-            [[NSRunLoop mainRunLoop] performInModes:@[NSDefaultRunLoopMode] block:alertBlock];
-            [lock lock];
-            [lock wait];
-            [lock unlock];
-        }
-
-        // This is only really safe for OK and Cancel
-        return (hsMessageBoxResult)response;
+    if (kind == hsMessageBoxNormal)
+        [alert addButtonWithTitle:@"OK"];
+    else if (kind == hsMessageBoxAbortRetyIgnore) {
+        [alert addButtonWithTitle:@"Retry"];
+        [alert addButtonWithTitle:@"Ignore"];
+    } else if (kind == hsMessageBoxOkCancel) {
+        [alert addButtonWithTitle:@"OK"];
+        [alert addButtonWithTitle:@"Cancel"];
+    } else if (kind == hsMessageBoxRetryCancel) {
+        [alert addButtonWithTitle:@"Retry"];
+        [alert addButtonWithTitle:@"Cancel"];
+    } else if (kind == hsMessageBoxYesNo) {
+        [alert addButtonWithTitle:@"Yes"];
+        [alert addButtonWithTitle:@"No"];
+    } else if (kind == hsMessageBoxYesNoCancel) {
+        [alert addButtonWithTitle:@"Yes"];
+        [alert addButtonWithTitle:@"No"];
+        [alert addButtonWithTitle:@"Cancel"];
+    } else {
+        [alert addButtonWithTitle:@"OK"];
     }
+
+#if !__has_feature(objc_arc)
+    [nsCaption autorelease];
+    [nsMessage autorelease];
+    [alert autorelease];
+#endif
+
+    if ([NSThread isMainThread]) {
+        NSModalResponse response = [alert runModal];
+        result = static_cast<hsMessageBoxResult>(response);
+    } else {
+        HSMBPresenter* presenter = [[HSMBPresenter alloc] init];
+
+#if !__has_feature(objc_arc)
+        [presenter autorelease];
+#endif
+
+        [presenter performSelectorOnMainThread:@selector(showAlert:) withObject:alert waitUntilDone:YES];
+
+        result = presenter->result;
+    }
+
+#if __has_feature(objc_arc)
+    }
+#else
+    [pool drain];
+#endif
+
+    // This is only really safe for OK and Cancel
+    return result;
 }
