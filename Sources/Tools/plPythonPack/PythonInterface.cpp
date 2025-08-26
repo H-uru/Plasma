@@ -121,7 +121,27 @@ void PythonInterface::finiPython()
 //
 PyObject* PythonInterface::CompileString(const char *command, const plFileName& filename)
 {
-    PyObject* pycode = Py_CompileString(command, filename.AsString().c_str(), Py_file_input);
+    PyObject* filenameObj = PyUnicode_FromStringAndSize(
+        filename.AsString().c_str(),
+        filename.AsString().size()
+    );
+
+    PyCompilerFlags flags{};
+    flags.cf_feature_version = PY_MINOR_VERSION;
+
+    // Py_CompileString decodes the filename using the filesystem encoding.
+    // This is always UTF-8 on Windows as of Python 3.6 (see PEP 529), but we
+    // probably shouldn't rely on that. We always use UTF-8 internally, so
+    // pass the filename as a Python string object.
+    PyObject* pycode = Py_CompileStringObject(
+        command,
+        filenameObj,
+        Py_file_input,
+        &flags,
+        -1
+    );
+
+    Py_DECREF(filenameObj);
     return pycode;
 }
 
