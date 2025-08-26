@@ -130,6 +130,55 @@ if(_PythonFinder_WantLibs)
                 list(APPEND @PythonFinder_PREFIX@_LIBRARIES "-framework CoreFoundation" ${Iconv_LIBRARIES} ${Intl_LIBRARIES})
             endif()
         endif()
+
+        # Plasma static modules for Apple platforms
+        if(APPLE)
+            if(TARGET @PythonFinder_PREFIX@::Python)
+                set_property(
+                    TARGET @PythonFinder_PREFIX@::Python
+                    APPEND PROPERTY INTERFACE_LINK_LIBRARIES
+                    "-framework SystemConfiguration"
+                )
+            endif()
+            if(TARGET @PythonFinder_PREFIX@::Module)
+                set_property(
+                    TARGET @PythonFinder_PREFIX@::Module
+                    APPEND PROPERTY INTERFACE_LINK_LIBRARIES
+                    "-framework SystemConfiguration"
+                )
+            endif()
+            if(DEFINED @PythonFinder_PREFIX@_LIBRARIES)
+                list(
+                    APPEND @PythonFinder_PREFIX@_LIBRARIES
+                    "-framework SystemConfiguration"
+                )
+            endif()
+        endif()
+
+        # Plasma static modules for unix-like platforms.
+        if(UNIX)
+            find_package(ZLIB)
+            if(TARGET @PythonFinder_PREFIX@::Python)
+                set_property(
+                    TARGET @PythonFinder_PREFIX@::Python
+                    APPEND PROPERTY INTERFACE_LINK_LIBRARIES
+                    ZLIB::ZLIB
+                )
+            endif()
+            if(TARGET @PythonFinder_PREFIX@::Module)
+                set_property(
+                    TARGET @PythonFinder_PREFIX@::Module
+                    APPEND PROPERTY INTERFACE_LINK_LIBRARIES
+                    ZLIB::ZLIB
+                )
+            endif()
+            if(DEFINED @PythonFinder_PREFIX@_LIBRARIES)
+                list(
+                    APPEND @PythonFinder_PREFIX@_LIBRARIES
+                    ${ZLIB_LIBRARIES}
+                )
+            endif()
+        endif()
     endif()
 else()
     _find_package(${ARGS})

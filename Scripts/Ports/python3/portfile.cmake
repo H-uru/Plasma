@@ -296,9 +296,28 @@ else()
         list(APPEND OPTIONS "--with-build-python=${_python_for_build}")
     endif()
 
+    if(NOT VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+        set(DISABLE_MODULE___SCPROXY "#")
+    endif()
+
+    # Copy over modules config file to request more modules be built into
+    # the interpreter (instead of as dynamic libraries) to (somewhat) match
+    # the Windows build.
+    configure_file(
+        "${CURRENT_PORT_DIR}/Setup.local.in"
+        "${SOURCE_PATH}/Modules/Setup.local"
+        @ONLY
+    )
+
     vcpkg_make_configure(
         SOURCE_PATH "${SOURCE_PATH}"
         AUTORECONF
+        # This ensures that the Setup.local file for our Plasma static
+        # extension module build is ingested into the build process.
+        # We can't copy it to the build directory because a) we don't
+        # know where that is and b) vcpkg will delete it when this function
+        # is called anyway.
+        COPY_SOURCE
         OPTIONS
             ${OPTIONS}
         OPTIONS_DEBUG
