@@ -76,7 +76,7 @@ void PythonInterface::initPython(const plFileName& rootDir, const std::vector<pl
         PyConfig_InitIsolatedConfig(&config);
         config.optimization_level = 2;
         config.write_bytecode = 0;
-        config.user_site_directory = 0;
+        config.site_import = 0;
         PyConfig_SetString(&config, &config.program_name, L"plasma");
 
         // Explicit module search paths so no build-env specific stuff gets in.
