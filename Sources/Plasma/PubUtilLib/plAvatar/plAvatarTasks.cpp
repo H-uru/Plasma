@@ -581,7 +581,7 @@ bool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, doubl
         {
             // Must do the physics re-enable through a callback so that it happens before the "done" callback and we don't
             // step over some script's attempt to disable physics again.
-            plAvatarPhysicsEnableCallbackMsg *epMsg = new plAvatarPhysicsEnableCallbackMsg(avatar->GetKey(), kStop, 0, 0, 0, 0);
+            plAvatarPhysicsEnableCallbackMsg *epMsg = new plAvatarPhysicsEnableCallbackMsg(avatar->GetKey(), plEventCallbackMsg::kStop, 0, 0, 0, 0);
             fAnimInstance->GetTimeConvert()->AddCallback(epMsg);
             hsRefCnt_SafeUnRef(epMsg);
         }   

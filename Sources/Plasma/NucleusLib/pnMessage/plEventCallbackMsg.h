@@ -45,25 +45,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMessage.h"
 
-enum CallbackEvent
-{
-    kStart = 0,
-    kStop,
-    kReverse,
-    kTime,
-    kLoop,
-    kBegin,
-    kEnd,
-    kEventEnd,
-    kSingleFrameAdjust,
-    kSingleFrameEval
-};
-
 class plEventCallbackMsg : public plMessage
 {
-protected:
-
 public:
+    enum CallbackEvent
+    {
+        kStart = 0,
+        kStop,
+        kReverse,
+        kTime,
+        kLoop,
+        kBegin,
+        kEnd,
+        kEventEnd,
+        kSingleFrameAdjust,
+        kSingleFrameEval
+    };
+
     float           fEventTime; // the time for time events
     CallbackEvent   fEvent;     // the event    
     int16_t         fIndex;     // the index of the object we want the event to come from

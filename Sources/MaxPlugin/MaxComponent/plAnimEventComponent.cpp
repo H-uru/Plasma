@@ -199,12 +199,12 @@ bool plAnimEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if (fCompPB->GetInt(kAnimBegin))
     {
         plEventCallbackMsg *eventMsg = CreateCallbackMsg(animMsg, modKey);
-        eventMsg->fEvent = kBegin;
+        eventMsg->fEvent = plEventCallbackMsg::kBegin;
     }
     if (fCompPB->GetInt(kAnimEnd))
     {
         plEventCallbackMsg *eventMsg = CreateCallbackMsg(animMsg, modKey);
-        eventMsg->fEvent = kEnd;
+        eventMsg->fEvent = plEventCallbackMsg::kEnd;
     }
     if (fCompPB->Count(kAnimMarkers) > 0)
     {
@@ -218,7 +218,7 @@ bool plAnimEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             float time = info.GetMarkerTime(marker);
 
             plEventCallbackMsg *eventMsg = CreateCallbackMsg(animMsg, modKey);
-            eventMsg->fEvent = kTime;
+            eventMsg->fEvent = plEventCallbackMsg::kTime;
             eventMsg->fEventTime = time;
         }
     }
@@ -505,12 +505,12 @@ bool plMtlEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if (fCompPB->GetInt(kMtlBegin))
     {
         plEventCallbackMsg *eventMsg = CreateCallbackMsg(animMsg, modKey);
-        eventMsg->fEvent = kBegin;
+        eventMsg->fEvent = plEventCallbackMsg::kBegin;
     }
     if (fCompPB->GetInt(kMtlEnd))
     {
         plEventCallbackMsg *eventMsg = CreateCallbackMsg(animMsg, modKey);
-        eventMsg->fEvent = kEnd;
+        eventMsg->fEvent = plEventCallbackMsg::kEnd;
     }
     if (fCompPB->Count(kMtlMarkers) > 0)
     {
@@ -524,7 +524,7 @@ bool plMtlEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
             float time = info.GetMarkerTime(marker);
 
             plEventCallbackMsg *eventMsg = CreateCallbackMsg(animMsg, modKey);
-            eventMsg->fEvent = kTime;
+            eventMsg->fEvent = plEventCallbackMsg::kTime;
             eventMsg->fEventTime = time;
         }
     }

@@ -467,7 +467,7 @@ bool pfBookData::MsgReceive(plMessage *pMsg)
             {
                 // Or actually maybe it's that we're done closing and should hide now,
                 // produced from a CloseAndHide()
-                if( callback->fEvent == kStop )
+                if( callback->fEvent == plEventCallbackMsg::kStop )
                     fCurrBook->Hide();
                 else
                     fCurrBook->IFinishShow( ( callback->fUser & 0x01 ) ? true : false );
@@ -827,12 +827,12 @@ void pfBookData::ITriggerPageFlip(bool flipBackwards, bool immediate)
     if (immediate)
     {
         eventMsg->fUser = ((!flipBackwards) ? 0x01 : 0x00) | 0x02;
-        eventMsg->fEvent = kSingleFrameAdjust;
+        eventMsg->fEvent = plEventCallbackMsg::kSingleFrameAdjust;
     }
     else
     {
         eventMsg->fUser = (flipBackwards ? 0x01 : 0x00);
-        eventMsg->fEvent = kStop;
+        eventMsg->fEvent = plEventCallbackMsg::kStop;
     }
     msg->SetCmd(plAnimCmdMsg::kAddCallbacks);
     msg->AddCallback(eventMsg);
@@ -846,7 +846,7 @@ void pfBookData::ITriggerPageFlip(bool flipBackwards, bool immediate)
         eventMsg->AddReceiver(GetKey());
         eventMsg->fRepeats = 0;
         eventMsg->fUser = !flipBackwards ? (0x04 | 0x01) : 0x04;
-        eventMsg->fEvent = kBegin;  // Should cause it to be triggered once it seeks at the start of the command
+        eventMsg->fEvent = plEventCallbackMsg::kBegin;  // Should cause it to be triggered once it seeks at the start of the command
         msg->AddCallback(eventMsg);
         hsRefCnt_SafeUnRef(eventMsg);
     }
@@ -1386,7 +1386,7 @@ void    pfJournalBook::ITriggerCloseWithNotify( bool closeNotOpen, bool immediat
     eventMsg->AddReceiver( fBookGUIs[fCurBookGUI]->GetKey() );
     eventMsg->fRepeats = 0;
     eventMsg->fUser = 0x08 | ( closeNotOpen ? 0x00 : 0x01 );    // So we know which this is for
-    eventMsg->fEvent = immediate ? ( kSingleFrameEval ) : kStop;
+    eventMsg->fEvent = immediate ? ( plEventCallbackMsg::kSingleFrameEval ) : plEventCallbackMsg::kStop;
     msg->SetCmd( plAnimCmdMsg::kAddCallbacks );
     msg->AddCallback( eventMsg );
     hsRefCnt_SafeUnRef( eventMsg );

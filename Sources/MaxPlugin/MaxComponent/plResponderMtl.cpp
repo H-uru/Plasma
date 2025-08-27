@@ -458,7 +458,7 @@ void plResponderCmdMtl::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamB
     plEventCallbackMsg *eventMsg = new plEventCallbackMsg;
     eventMsg->AddReceiver(waitInfo.receiver);
     eventMsg->fRepeats = 0;
-    eventMsg->fEvent = kStop;
+    eventMsg->fEvent = plEventCallbackMsg::kStop;
     eventMsg->fUser = waitInfo.callbackUser;
 
     if (!waitInfo.point.empty())
@@ -470,12 +470,12 @@ void plResponderCmdMtl::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamB
         plNotetrackAnim notetrackAnim(mtl, nullptr);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
 
-        eventMsg->fEvent = kTime;
+        eventMsg->fEvent = plEventCallbackMsg::kTime;
         eventMsg->fEventTime = info.GetMarkerTime(waitInfo.point);
     }
     else
     {
-        eventMsg->fEvent = kStop;
+        eventMsg->fEvent = plEventCallbackMsg::kStop;
     }
 
     plMessageWithCallbacks *callbackMsg = plMessageWithCallbacks::ConvertNoRef(waitInfo.msg);

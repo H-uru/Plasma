@@ -2108,13 +2108,13 @@ PF_CONSOLE_CMD( App,
     int reps = 1;
 
     const ST::string& eventStr = params[1];
-    CallbackEvent event;
+    plEventCallbackMsg::CallbackEvent event;
     if (eventStr.compare_i("Start") == 0) {
-        event = kStart;
+        event = plEventCallbackMsg::kStart;
     } else if (eventStr.compare_i("Stop") == 0) {
-        event = kStop;
+        event = plEventCallbackMsg::kStop;
     } else if (eventStr.compare_i("Time") == 0) {
-        event = kTime;
+        event = plEventCallbackMsg::kTime;
         if (numParams < 2) {
             PrintString("'Time' expects a timestamp (in seconds)");
             return;
@@ -2162,13 +2162,13 @@ PF_CONSOLE_CMD( App,
     int reps = -1;
 
     const ST::string& eventStr = params[1];
-    CallbackEvent event;
+    plEventCallbackMsg::CallbackEvent event;
     if (eventStr.compare_i("Start") == 0) {
-        event = kStart;
+        event = plEventCallbackMsg::kStart;
     } else if (eventStr.compare_i("Stop") == 0) {
-        event = kStop;
+        event = plEventCallbackMsg::kStop;
     } else if (eventStr.compare_i("Time") == 0) {
-        event = kTime;
+        event = plEventCallbackMsg::kTime;
         secs = params[2];
     }
 

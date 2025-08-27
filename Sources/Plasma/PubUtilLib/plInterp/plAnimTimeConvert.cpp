@@ -175,14 +175,14 @@ void plAnimTimeConvert::ICheckTimeCallbacks(float frameStart, float frameStop)
 {
     for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
-        if (fCallbackMsgs[i]->fEvent == kTime)
+        if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kTime)
         {
             if( ITimeInFrame(fCallbackMsgs[i]->fEventTime, frameStart, frameStop) )
                 ISendCallback(i);
         }
-        else if (fCallbackMsgs[i]->fEvent == kBegin && ITimeInFrame(fBegin, frameStart, frameStop) )
+        else if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kBegin && ITimeInFrame(fBegin, frameStart, frameStop) )
             ISendCallback(i);
-        else if (fCallbackMsgs[i]->fEvent == kEnd && ITimeInFrame(fEnd, frameStart, frameStop) )
+        else if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kEnd && ITimeInFrame(fEnd, frameStart, frameStop) )
             ISendCallback(i);
 
     }
@@ -267,7 +267,7 @@ plAnimTimeConvert& plAnimTimeConvert::IStop(double time, float animTime)
 
     for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
-        if (fCallbackMsgs[i]->fEvent == kStop)
+        if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kStop)
         {
             ISendCallback(i);
         }
@@ -416,7 +416,7 @@ float plAnimTimeConvert::WorldToAnimTime(double wSecs)
         {
             for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
             {
-                if (fCallbackMsgs[i]->fEvent == kSingleFrameEval)
+                if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kSingleFrameEval)
                 {
                     ISendCallback(i);
                 }
@@ -665,7 +665,7 @@ void plAnimTimeConvert::SetCurrentAnimTime(float s, bool jump /* = false */)
     fCurrentAnimTime = s;
     for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
-        if (fCallbackMsgs[i]->fEvent == kSingleFrameAdjust)
+        if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kSingleFrameAdjust)
         {
             ISendCallback(i);
         }
@@ -958,7 +958,7 @@ plAnimTimeConvert& plAnimTimeConvert::Start(double startTime)
     // check for a start callback
     for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
-        if (fCallbackMsgs[i]->fEvent == kStart)
+        if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kStart)
         {
             ISendCallback(i);
         }
@@ -991,7 +991,7 @@ plAnimTimeConvert& plAnimTimeConvert::Backwards()
     // check for a reverse callback
     for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
-        if (fCallbackMsgs[i]->fEvent == kReverse)
+        if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kReverse)
         {
             ISendCallback(i);
         }
@@ -1013,7 +1013,7 @@ plAnimTimeConvert& plAnimTimeConvert::Forewards()
     // check for a reverse callback
     for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
-        if (fCallbackMsgs[i]->fEvent == kReverse)
+        if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kReverse)
         {
             ISendCallback(i);
         }

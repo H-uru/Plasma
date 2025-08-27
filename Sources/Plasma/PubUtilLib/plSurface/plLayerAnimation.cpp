@@ -418,7 +418,7 @@ plLayerLinkAnimation::plLayerLinkAnimation() :
     fFadeFlagsDirty()
 { 
     fIFaceCallback = new plEventCallbackMsg();
-    fIFaceCallback->fEvent = kTime;
+    fIFaceCallback->fEvent = plEventCallbackMsg::kTime;
     fIFaceCallback->fRepeats = 0;           
 }
 
@@ -517,7 +517,7 @@ uint32_t plLayerLinkAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignor
             {
                 // Either we're going opaque, or we were opaque and now we're fading.
                 // Tell the armature to re-eval its opacity settings.
-                plAvatarOpacityCallbackMsg *opacityMsg = new plAvatarOpacityCallbackMsg(fLinkKey, kStop);
+                plAvatarOpacityCallbackMsg *opacityMsg = new plAvatarOpacityCallbackMsg(fLinkKey, plEventCallbackMsg::kStop);
                 opacityMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
                 opacityMsg->Send();
             }               

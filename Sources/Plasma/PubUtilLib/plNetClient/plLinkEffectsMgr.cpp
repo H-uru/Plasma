@@ -525,7 +525,7 @@ void plLinkEffectsMgr::WaitForEffect(plKey linkKey, float time)
 
     msg->fEffects++;
     plLinkCallbackMsg *callback = new plLinkCallbackMsg();
-    callback->fEvent = kStop;
+    callback->fEvent = plEventCallbackMsg::kStop;
     callback->fRepeats = 0;
     callback->fLinkKey = std::move(linkKey);
     double timeToDeliver = hsTimer::GetSysSeconds() + time;
@@ -545,7 +545,7 @@ plMessage *plLinkEffectsMgr::WaitForEffect(plKey linkKey)
     msg->fEffects++;
 
     plLinkCallbackMsg *callback = new plLinkCallbackMsg();
-    callback->fEvent = kStop;
+    callback->fEvent = plEventCallbackMsg::kStop;
     callback->fRepeats = 0;
     callback->fLinkKey = std::move(linkKey);
     callback->AddReceiver( GetKey() );

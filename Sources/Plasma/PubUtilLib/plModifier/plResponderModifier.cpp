@@ -727,7 +727,7 @@ void plResponderModifier::IDebugPlayMsg(plAnimCmdMsg* msg)
     eventMsg->AddReceiver(GetKey());
     eventMsg->fRepeats = 0;
     eventMsg->fUser = -1;
-    eventMsg->fEvent = kStop;
+    eventMsg->fEvent = plEventCallbackMsg::kStop;
     msg->SetCmd(plAnimCmdMsg::kAddCallbacks);
     msg->AddCallback(eventMsg);
     hsRefCnt_SafeUnRef(eventMsg);
