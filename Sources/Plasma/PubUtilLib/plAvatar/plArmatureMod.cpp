@@ -2409,14 +2409,14 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
         {
             plEventCallbackInterceptMsg *iMsg;
 
-            plArmatureEffectMsg *msg = new plArmatureEffectMsg(fEffects->GetKey(), kTime);
+            plArmatureEffectMsg *msg = new plArmatureEffectMsg(fEffects->GetKey(), plEventCallbackMsg::kTime);
             msg->fEventTime = time;
             msg->fTriggerIdx = AnimNameToIndex(anim->GetName());
             
             iMsg = new plEventCallbackInterceptMsg();
             iMsg->AddReceiver(fEffects->GetKey());
             iMsg->fEventTime = time;
-            iMsg->fEvent = kTime;
+            iMsg->fEvent = plEventCallbackMsg::kTime;
             iMsg->SetMessageRef(msg);
             atc->AddCallback(iMsg);
             hsRefCnt_SafeUnRef(msg);
@@ -2428,7 +2428,7 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
             iMsg = new plEventCallbackInterceptMsg();
             iMsg->AddReceiver(fEffects->GetKey());
             iMsg->fEventTime = time;
-            iMsg->fEvent = kTime;
+            iMsg->fEvent = plEventCallbackMsg::kTime;
             iMsg->SetMessageRef(foot);
             atc->AddCallback(iMsg);
             hsRefCnt_SafeUnRef(foot);

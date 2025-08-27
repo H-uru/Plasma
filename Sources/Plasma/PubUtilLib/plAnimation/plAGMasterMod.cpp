@@ -451,7 +451,7 @@ void plAGMasterMod::PlaySimpleAnim(const ST::string &name)
         instance->SetLoop(false);
         instance->Start();
 
-        plAGDetachCallbackMsg *msg = new plAGDetachCallbackMsg(GetKey(), kStop); 
+        plAGDetachCallbackMsg *msg = new plAGDetachCallbackMsg(GetKey(), plEventCallbackMsg::kStop); 
         msg->SetAnimName(name);
         instance->GetTimeConvert()->AddCallback(msg);
         hsRefCnt_SafeUnRef(msg);
@@ -679,11 +679,11 @@ bool plAGMasterMod::MsgReceive(plMessage* msg)
     plAGInstanceCallbackMsg *agicMsg = plAGInstanceCallbackMsg::ConvertNoRef(msg);
     if (agicMsg)
     {
-        if (agicMsg->fEvent == kStart)
+        if (agicMsg->fEvent == plEventCallbackMsg::kStart)
         {
             IRegForEval(true);
         }
-        else if (agicMsg->fEvent == kStop)
+        else if (agicMsg->fEvent == plEventCallbackMsg::kStop)
         {
             if (!HasRunningAnims())
                 IRegForEval(false);

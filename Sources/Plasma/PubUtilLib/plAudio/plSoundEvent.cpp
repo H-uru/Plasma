@@ -151,10 +151,10 @@ plSoundEvent::Types plSoundEvent::GetTypeFromCallbackMsg( plEventCallbackMsg *ms
 {
     switch( msg->fEvent )
     {
-        case ::kStart: return kStart;
-        case ::kTime:  return kTime;
-        case ::kStop:  return kStop;
-        case ::kLoop:  return kLoop;
+        case plEventCallbackMsg::kStart: return kStart;
+        case plEventCallbackMsg::kTime:  return kTime;
+        case plEventCallbackMsg::kStop:  return kStop;
+        case plEventCallbackMsg::kLoop:  return kLoop;
         default:       return kStop;
     }
 }

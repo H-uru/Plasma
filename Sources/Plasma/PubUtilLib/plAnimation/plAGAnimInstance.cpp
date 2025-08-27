@@ -194,17 +194,17 @@ void plAGAnimInstance::IInitAnimTimeConvert(plAnimTimeConvert* atc, plATCAnim* a
     // Set up our eval callbacks
     plAGInstanceCallbackMsg* instMsg;
 
-    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kStart);
+    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), plEventCallbackMsg::kStart);
     instMsg->fInstance = this;
     atc->AddCallback(instMsg);
     hsRefCnt_SafeUnRef(instMsg);
 
-    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kStop);
+    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), plEventCallbackMsg::kStop);
     instMsg->fInstance = this;
     atc->AddCallback(instMsg);
     hsRefCnt_SafeUnRef(instMsg);
 
-    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kSingleFrameAdjust);
+    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), plEventCallbackMsg::kSingleFrameAdjust);
     instMsg->fInstance = this;
     atc->AddCallback(instMsg);
     hsRefCnt_SafeUnRef(instMsg);
@@ -497,11 +497,11 @@ void plAGAnimInstance::AttachCallbacks(plOneShotCallbacks *callbacks)
                 float marker = anim->GetMarker(cb.fMarker);
                 hsAssert(marker != -1, "Bad marker name");
                 eventMsg->fEventTime = marker;
-                eventMsg->fEvent = kTime;
+                eventMsg->fEvent = plEventCallbackMsg::kTime;
             }
             else
             {
-                eventMsg->fEvent = kStop;
+                eventMsg->fEvent = plEventCallbackMsg::kStop;
             }
             
             animMsg.AddCallback(eventMsg);

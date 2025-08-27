@@ -65,7 +65,7 @@ bool plAnimationEventConditionalObject::MsgReceive(plMessage* msg)
 }
     
 
-void plAnimationEventConditionalObject::SetEvent(const CallbackEvent b, float time)
+void plAnimationEventConditionalObject::SetEvent(const plEventCallbackMsg::CallbackEvent b, float time)
 {
     plAnimCmdMsg* pMsg = new plAnimCmdMsg;
     pMsg->AddReceiver(fTarget);
@@ -83,7 +83,7 @@ void plAnimationEventConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Read(stream, mgr);
     fTarget = mgr->ReadKey(stream);
-    fAction = (CallbackEvent)stream->ReadLE32();
+    fAction = (plEventCallbackMsg::CallbackEvent)stream->ReadLE32();
 }
 
 void plAnimationEventConditionalObject::Write(hsStream* stream, hsResMgr* mgr)

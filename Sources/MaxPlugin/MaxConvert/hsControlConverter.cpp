@@ -2129,7 +2129,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, std::vector<h
         pFOVMsg->AddReceiver(pCamMod->GetKey());
         
         plEventCallbackMsg* pCall = new plEventCallbackMsg;
-        pCall->fEvent = kTime;
+        pCall->fEvent = plEventCallbackMsg::kTime;
         pCall->fEventTime = (*kfArray)[i].fFrame / MAX_FRAMES_PER_SEC;
         pCall->fIndex = i;
         pCall->AddReceiver(pCamMod->GetKey());
