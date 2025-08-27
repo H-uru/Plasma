@@ -1,0 +1,49 @@
+############################################################################
+# This is a surgical list of modules that need to be built
+# into the Pythoncore for Plasma to be happy.
+*static*
+
+_contextvars _contextvarsmodule.c
+_csv _csv.c
+_datetime _datetimemodule.c
+_json _json.c
+_pickle _pickle.c
+_queue _queuemodule.c
+_random _randommodule.c
+_statistics _statisticsmodule.c
+_struct _struct.c
+_typing _typingmodule.c
+array arraymodule.c
+binascii binascii.c
+cmath cmathmodule.c
+math mathmodule.c
+select selectmodule.c
+
+# The _blake2 module depends on libb2 on ARM. This is a pain to propagate downstream, so
+# we'll skip building this one into the core. Nothing in the stdlib seems to require it, so
+# hopefully its absence will go unnoticed.
+_md5 md5module.c -I$(srcdir)/Modules/_hacl/include _hacl/Hacl_Hash_MD5.c -D_BSD_SOURCE -D_DEFAULT_SOURCE
+_sha1 sha1module.c -I$(srcdir)/Modules/_hacl/include _hacl/Hacl_Hash_SHA1.c -D_BSD_SOURCE -D_DEFAULT_SOURCE
+# Typically, _sha2 consumes a static HACL library, but that's difficult to deal with.
+# Build the source file directly into the core instead.
+_sha2 sha2module.c -I$(srcdir)/Modules/_hacl/include _hacl/Hacl_Hash_SHA2.c -D_BSD_SOURCE -D_DEFAULT_SOURCE
+_sha3 sha3module.c -I$(srcdir)/Modules/_hacl/include _hacl/Hacl_Hash_SHA3.c -D_BSD_SOURCE -D_DEFAULT_SOURCE
+
+_codecs_cn cjkcodecs/_codecs_cn.c
+_codecs_hk cjkcodecs/_codecs_hk.c
+_codecs_iso2022 cjkcodecs/_codecs_iso2022.c
+_codecs_jp cjkcodecs/_codecs_jp.c
+_codecs_kr cjkcodecs/_codecs_kr.c
+_codecs_tw cjkcodecs/_codecs_tw.c
+_multibytecodec cjkcodecs/multibytecodec.c
+
+_posixsubprocess _posixsubprocess.c
+fcntl fcntlmodule.c
+grp grpmodule.c
+
+zlib  zlibmodule.c -lz
+
+############################################################################
+# macOS specific modules
+
+@DISABLE_MODULE___SCPROXY@_scproxy _scproxy.c
