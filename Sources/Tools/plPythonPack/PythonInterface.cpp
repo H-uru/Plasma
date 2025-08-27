@@ -83,6 +83,7 @@ void PythonInterface::initPython(const plFileName& rootDir, const std::vector<pl
         IAddWideString(config.module_search_paths, rootDir);
         IAddWideString(config.module_search_paths, plFileName::Join(rootDir, "plasma"));
         IAddWideString(config.module_search_paths, plFileName::Join(rootDir, "system"));
+        IAddWideString(config.module_search_paths, plFileName::Join(rootDir, "system", "lib-dynload"));
         for (const auto& dir : extraDirs)
             IAddWideString(config.module_search_paths, plFileName::Join(rootDir, dir));
         config.module_search_paths_set = 1;
