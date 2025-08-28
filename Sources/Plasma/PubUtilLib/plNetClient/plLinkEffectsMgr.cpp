@@ -217,7 +217,7 @@ void plLinkEffectsMgr::ISendAllReadyCallbacks()
             hsRefCnt_SafeUnRef(fLinks[i]);
             fLinks.erase(fLinks.begin() + i);
 
-            hsStatusMessage("Done - removing link FX msg\n");
+            hsStatusMessage("Done - removing link FX msg");
         }
     }
 }
@@ -346,9 +346,9 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
         }
         
         if (pTriggerMsg->IsLeavingAge())
-            hsStatusMessage("Starting LinkOut FX\n");
+            hsStatusMessage("Starting LinkOut FX");
         else
-            hsStatusMessage("Starting LinkIn FX\n");
+            hsStatusMessage("Starting LinkIn FX");
         
         plLinkEffectBCMsg *BCMsg = new plLinkEffectBCMsg();
         BCMsg->fLinkKey = linkKey;

@@ -76,7 +76,7 @@ static bool ISetRegKey(const QString &keyName, const QString &value, const QStri
                           nullptr, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS,
                           nullptr, &regKey, &result) != ERROR_SUCCESS)
     {
-        hsStatusMessageF("Warning: Registry database open failed for key '%s'.\n", qPrintable(keyName));
+        hsStatusMessageF("Warning: Registry database open failed for key '%s'.", qPrintable(keyName));
         return false;
     }
 
@@ -89,7 +89,7 @@ static bool ISetRegKey(const QString &keyName, const QString &value, const QStri
     if (::RegCloseKey(regKey) == ERROR_SUCCESS && lResult == ERROR_SUCCESS)
         return true;
 
-    hsStatusMessageF("Warning: Registry database update failed for key '%s'.\n", qPrintable(keyName));
+    hsStatusMessageF("Warning: Registry database update failed for key '%s'.", qPrintable(keyName));
     return false;
 }
 
@@ -173,7 +173,7 @@ QString plWinRegistryTools::GetCurrentFileExtensionAssociation(const QString &ex
     {
         char msg[512];
         FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, retVal, 0, msg, std::size(msg), nullptr);
-        hsStatusMessageF("Error querying registry key '%s' : %s\n", qPrintable(extension), msg);
+        hsStatusMessageF("Error querying registry key '%s' : %s", qPrintable(extension), msg);
         return QString();
     }
 

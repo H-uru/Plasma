@@ -2196,7 +2196,7 @@ void    plDXPipeline::Resize( uint32_t width, uint32_t height )
     {
         /// Direct3D is reporting that we lost the device but are unable to reset
         /// it yet, so ignore.
-        hsStatusMessage( "Received Resize() request at an invalid time. Ignoring...\n" );
+        hsStatusMessage("Received Resize() request at an invalid time. Ignoring...");
         return;
     }
     if( !width && !height )
@@ -2240,7 +2240,7 @@ void    plDXPipeline::Resize( uint32_t width, uint32_t height )
     else
     {
         // Just for debug
-        hsStatusMessage( "Recreating the pipeline...\n" );
+        hsStatusMessage("Recreating the pipeline...");
     }
 
     // Recreate

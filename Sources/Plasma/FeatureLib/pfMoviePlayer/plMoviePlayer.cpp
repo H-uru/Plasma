@@ -345,7 +345,7 @@ void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
             plPlanarImage::Yuv420ToRgba(fLastImg->d_w, fLastImg->d_h, fLastImg->stride, fLastImg->planes, reinterpret_cast<uint8_t*>(fTexture->GetImage()));
             break;
 
-        DEFAULT_FATAL("image format");
+        DEFAULT_FATAL(fLastImg->fmt);
         }
 
         // Flush new data to the device

@@ -204,7 +204,7 @@ void    pfGUIListBoxMod::IUpdate()
 
     if( fLocked )
     {
-        hsStatusMessage( "WARNING: Forcing unlock on GUI list box due to call to IUpdate()\n" );
+        hsStatusMessage("WARNING: Forcing unlock on GUI list box due to call to IUpdate()");
         UnlockList();
     }
 

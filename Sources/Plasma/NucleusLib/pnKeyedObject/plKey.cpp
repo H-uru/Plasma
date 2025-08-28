@@ -78,7 +78,7 @@ static int IsTracked(const plKeyData* keyData)
 {
     if( mlfTrack && keyData )
     {
-        if( !keyData->GetUoid().GetObjectName().CompareI(keyNameToLookFor)
+        if( !keyData->GetUoid().GetObjectName().compare_i(keyNameToLookFor)
             && (keyData->GetUoid().GetClassType() == CLASS_TO_TRACK) )
         {
             if( (kCloneID < 0)

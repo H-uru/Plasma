@@ -69,19 +69,13 @@ void hsDebugEnableGuiAsserts(bool enabled)
 #if !defined(HS_DEBUGGING)
 [[noreturn]]
 #endif // defined(HS_DEBUGGING)
-void hsDebugAssertionFailed(int line, const char* file, const char* fmt, ...)
+void hsDebugAssertionFailed(int line, const char* file, const char* msg)
 {
-#if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
-    char msg[1024];
-    va_list args;
-    va_start(args, fmt);
-    vsnprintf(msg, std::size(msg), fmt, args);
-    va_end(args);
 #if defined(HS_DEBUGGING)
 #if defined(_MSC_VER)
     if (s_GuiAsserts)
     {
-        if (_CrtDbgReport(_CRT_ASSERT, file, line, nullptr, msg))
+        if (_CrtDbgReport(_CRT_ASSERT, file, line, nullptr, "%s", msg))
             hsDebugBreakAlways();
 
         // All handling was done by the GUI, so bail.
@@ -89,18 +83,14 @@ void hsDebugAssertionFailed(int line, const char* file, const char* fmt, ...)
     } else
 #endif // _MSC_VER
     {
-        hsDebugPrintToTerminal("-------\nASSERTION FAILED:\nFile: %s   Line: %i\nMessage: %s\n-------", file, line, msg);
+        hsDebugPrintToTerminal(ST::format("-------\nASSERTION FAILED:\nFile: {}   Line: {}\nMessage: {}\n-------", file, line, msg).c_str());
         fflush(stderr);
 
         hsDebugBreakAlways();
     }
-#endif // HS_DEBUGGING
 #else
     hsDebugBreakIfDebuggerPresent();
-#endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
-
     // If no debugger break occurred, just crash.
-#if !defined(HS_DEBUGGING)
     std::abort();
 #endif // defined(HS_DEBUGGING)
 }
@@ -164,13 +154,8 @@ void hsDebugBreakAlways()
 #endif // _MSC_VER
 }
 
-void hsDebugPrintToTerminal(const char* fmt, ...)
+void hsDebugPrintToTerminal(const char* msg)
 {
-    char msg[1024];
-    va_list args;
-    va_start(args, fmt);
-    vsnprintf(msg, std::size(msg), fmt, args);
-    va_end(args);
     fprintf(stderr, "%s\n", msg);
 
 #ifdef _MSC_VER
@@ -204,15 +189,10 @@ void hsStatusMessage(const char* message)
         gHSStatusProc(message);
     } else {
 #if HS_BUILD_FOR_UNIX
-        printf("%s",message);
-        size_t len = strlen(message);
-        if (len>0 && message[len-1]!='\n')
-            printf("\n");
+        printf("%s\n", message);
 #elif HS_BUILD_FOR_WIN32
         OutputDebugString(message);
-        size_t len = strlen(message);
-        if (len>0 && message[len-1]!='\n')
-            OutputDebugString("\n");
+        OutputDebugString("\n");
 #endif
     }
 }
