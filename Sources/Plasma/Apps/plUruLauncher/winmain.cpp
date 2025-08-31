@@ -387,7 +387,7 @@ static pfPatcher* IPatcherFactory()
 
 // ===================================================
 
-int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLink, int nCmdShow)
+int __stdcall wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLink, int nCmdShow)
 {
     plWinDpi::Instance();
 

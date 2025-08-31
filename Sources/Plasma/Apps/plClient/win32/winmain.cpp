@@ -1051,7 +1051,7 @@ bool WinInit(HINSTANCE hInst)
     return true;
 }
 
-int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
+int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpCmdLine, int nCmdShow)
 {
     PF_CONSOLE_INIT_ALL()
 
@@ -1061,7 +1061,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     std::vector<ST::string> args;
     args.reserve(__argc);
     for (size_t i = 0; i < __argc; i++) {
-        args.push_back(ST::string::from_utf8(__argv[i]));
+        args.push_back(ST::string::from_wchar(__wargv[i]));
     }
 
     plCmdParser cmdParser(s_cmdLineArgs, std::size(s_cmdLineArgs));
