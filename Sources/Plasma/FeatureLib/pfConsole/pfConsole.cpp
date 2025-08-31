@@ -80,6 +80,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfPython/cyPythonInterface.h"
 
+#ifdef HAVE_STRNLEN
+#   define pfStrnlen strnlen
+#else
+    static size_t pfStrnlen(const char* str, size_t max)
+    {
+        return static_cast<const char*>(memchr(str, '\0', max)) - str;
+    }
+#endif
 
 //// Static Class Stuff //////////////////////////////////////////////////////
 
@@ -548,7 +556,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     }
     else if( msg->GetKeyCode() == KEY_END )
     {
-        fWorkingCursor = strnlen(fWorkingLine, std::size(fWorkingLine));
+        fWorkingCursor = pfStrnlen(fWorkingLine, std::size(fWorkingLine));
     }
     else if( msg->GetKeyCode() == KEY_HOME )
     {
@@ -638,7 +646,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
         {
             // FIXME: make the console unicode friendly.
             IHandleCharacter((char)key);
-            if (strnlen(fWorkingLine, std::size(fWorkingLine)) < kMaxCharsWide - 2 && key != 0) {
+            if (pfStrnlen(fWorkingLine, std::size(fWorkingLine)) < kMaxCharsWide - 2 && key != 0) {
                 findAgain = false;
                 findCounter = 0;
                 IUpdateTooltip();
@@ -657,7 +665,7 @@ void    pfConsole::IHandleCharacter(const char c)
         return;
     }
 
-    size_t i = strnlen(fWorkingLine, std::size(fWorkingLine));
+    size_t i = pfStrnlen(fWorkingLine, std::size(fWorkingLine));
 
     // The current working line is too long. Ignore this character.
     if (i >= kMaxCharsWide - 2 || c == '\0')
