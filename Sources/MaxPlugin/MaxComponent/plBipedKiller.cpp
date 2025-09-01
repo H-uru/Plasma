@@ -274,7 +274,7 @@ int CompareKeys(ILinPoint3Key &a, ILinPoint3Key &b)
 {
     int result = a.val.Equals(b.val, .001f);
 #if 0
-    hsStatusMessageF("COMPAREKEYS(point): (%f %f %f) vs (%f, %f, %f) = %s\n", a.val.x, a.val.y, a.val.z, b.val.x, b.val.y, b.val.z, result ? "yes" : "no");
+    hsStatusMessageF("COMPAREKEYS(point): (%f %f %f) vs (%f, %f, %f) = %s", a.val.x, a.val.y, a.val.z, b.val.x, b.val.y, b.val.z, result ? "yes" : "no");
 #endif
     return result;
 }

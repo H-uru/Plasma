@@ -911,7 +911,7 @@ bool plDebugConfigSource::WriteOutOf(plConfigInfo & configInfo)
     fConfigInfo->GetSectionIterators(si,se);
     for (; si!=se; ++si)
     {
-        sprintf(buf,"\n[%s]\n",si->first.c_str());
+        sprintf(buf,"\n[%s]",si->first.c_str());
         hsStatusMessage(buf);
         if (fConfigInfo->GetKeyIterators(si->first, ki, ke))
             for (; ki!=ke; ++ki)
@@ -919,7 +919,7 @@ bool plDebugConfigSource::WriteOutOf(plConfigInfo & configInfo)
                 if (fConfigInfo->GetValueIterators(si->first, ki->first, vi, ve))
                     for (; vi!=ve; ++vi)
                     {
-                        sprintf(buf,"%s=%s\n",ki->first.c_str(),vi->c_str());
+                        sprintf(buf,"%s=%s",ki->first.c_str(),vi->c_str());
                         hsStatusMessage(buf);
                     }
             }

@@ -130,9 +130,9 @@ void hsRefCnt::UnRef(const char* tag)
 
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     if (tag)
-        hsDebugPrintToTerminal("Dec %p %s: %u", this, tag, fRefCnt - 1);
+        hsDebugPrintToTerminal(ST::format("Dec {#x} {}: {}", reinterpret_cast<uintptr_t>(this), tag, fRefCnt - 1).c_str());
     else
-        hsDebugPrintToTerminal("Dec %p: %u", this, fRefCnt - 1);
+        hsDebugPrintToTerminal(ST::format("Dec {#x}: {}", reinterpret_cast<uintptr_t>(this), fRefCnt - 1).c_str());
 #endif
 
     if (fRefCnt == 1)   // don't decrement if we call delete
@@ -145,9 +145,9 @@ void hsRefCnt::Ref(const char* tag)
 {
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     if (tag)
-        hsDebugPrintToTerminal("Inc %p %s: %u", this, tag, fRefCnt + 1);
+        hsDebugPrintToTerminal(ST::format("Inc {#x} {}: {}", reinterpret_cast<uintptr_t>(this), tag, fRefCnt + 1).c_str());
     else
-        hsDebugPrintToTerminal("Inc %p: %u", this, fRefCnt + 1);
+        hsDebugPrintToTerminal(ST::format("Inc {#x}: {}", reinterpret_cast<uintptr_t>(this), fRefCnt + 1).c_str());
 #endif
 
     ++fRefCnt;
@@ -156,7 +156,7 @@ void hsRefCnt::Ref(const char* tag)
 void hsRefCnt::TransferRef(const char* oldTag, const char* newTag)
 {
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
-    hsDebugPrintToTerminal("Inc %p %s: (xfer)", this, newTag);
-    hsDebugPrintToTerminal("Dec %p %s: (xfer)", this, oldTag);
+    hsDebugPrintToTerminal(ST::format("Inc {#x} {}: (xfer)", reinterpret_cast<uintptr_t>(this), newTag).c_str());
+    hsDebugPrintToTerminal(ST::format("Dec {#x} {}: (xfer)", reinterpret_cast<uintptr_t>(this), oldTag).c_str());
 #endif
 }

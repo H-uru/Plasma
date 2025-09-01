@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfGameMgr.h"
 
+#include <string_theory/format>
+
 #include "pfGameCli.h"
 #include "pfGameMgrTrans.h"
 
@@ -128,7 +130,7 @@ void pfGameMgr::RecvGameMgrMsg(GameMsgHeader* msg)
         gameIt->second->RecvGameMgrMsg(msg);
         return;
     } else if (msg->recvGameId) {
-        hsAssert(0, "Got a message for an unknown game client %u", msg->recvGameId);
+        hsAssert(0, ST::format("Got a message for an unknown game client {}", msg->recvGameId).c_str());
         return;
     }
 
