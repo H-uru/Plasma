@@ -319,7 +319,7 @@ void hsDebugBreakAlways();
  *
  * @param msg message to print
  */
-void hsDebugPrintToTerminal(const char* msg);
+void hsDebugPrintToTerminal(const ST::string& msg);
 
 #ifdef HS_DEBUGGING
     

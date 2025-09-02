@@ -83,7 +83,7 @@ void hsDebugAssertionFailed(int line, const char* file, const char* msg)
     } else
 #endif // _MSC_VER
     {
-        hsDebugPrintToTerminal(ST::format("-------\nASSERTION FAILED:\nFile: {}   Line: {}\nMessage: {}\n-------", file, line, msg).c_str());
+        hsDebugPrintToTerminal(ST::format("-------\nASSERTION FAILED:\nFile: {}   Line: {}\nMessage: {}\n-------", file, line, msg));
         fflush(stderr);
 
         hsDebugBreakAlways();
@@ -154,16 +154,16 @@ void hsDebugBreakAlways()
 #endif // _MSC_VER
 }
 
-void hsDebugPrintToTerminal(const char* msg)
+void hsDebugPrintToTerminal(const ST::string& msg)
 {
-    fprintf(stderr, "%s\n", msg);
+    ST::printf(stderr, "{}\n", msg);
 
 #ifdef _MSC_VER
     if (hsDebugIsDebuggerPresent())
     {
         // Also print to the MSVC Output window
-        OutputDebugStringA(msg);
-        OutputDebugStringA("\n");
+        OutputDebugStringW(msg.to_wchar().c_str());
+        OutputDebugStringW(L"\n");
     }
 #endif
 }
