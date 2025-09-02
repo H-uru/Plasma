@@ -65,7 +65,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cmath>
 #include <algorithm>
 #include <string_theory/format>
-#include <string_theory/string_stream>
 
 plProfile_CreateMemCounter("Mipmaps", "Memory", MemMipmaps);
 
@@ -2216,32 +2215,41 @@ void    plMipmap::IReportLeaks()
     hsStatusMessage("--- plMipmap Leaks ---");
     for (record = fRecords; record != nullptr; )
     {
-        ST::string_stream msg;
         size = record->fHeight * record->fRowBytes;
+        ST::string sizeStr;
         if (size >= 1024) {
-            msg << ST::format("{}, {4.1f} kB: \t{}x{}, {} levels, {} bpr", record->fKeyName,
-                size / 1024.f, record->fWidth, record->fHeight, record->fNumLevels, record->fRowBytes);
+            sizeStr = ST::format("{4.1f} kB", size / 1024.f);
         } else {
-            msg << ST::format("{}, {} bytes: \t{}x{}, {} levels, {} bpr", record->fKeyName,
-                size, record->fWidth, record->fHeight, record->fNumLevels, record->fRowBytes);
+            sizeStr = ST::format("{} bytes", size);
         }
 
+        ST::string compressionStr;
         if( record->fCompressionType != kDirectXCompression )
-            msg << ST::format(" UType: {}", record->fUncompressedInfo.fType);
+            compressionStr = ST::format("UType: {}", record->fUncompressedInfo.fType);
         else
-            msg << ST::format(" DXT{} BSz: {}", record->fDirectXInfo.fCompressionType, record->fDirectXInfo.fBlockSize);
+            compressionStr = ST::format("DXT{} BSz: {}", record->fDirectXInfo.fCompressionType, record->fDirectXInfo.fBlockSize);
 
+        ST::string creationMethodStr;
         switch( record->fCreationMethod )
         {
-            case plRecord::kViaCreate: msg << " via Create"; break;
-            case plRecord::kViaRead: msg << " via Read"; break;
-            case plRecord::kViaClipToMaxSize: msg << " via ClipToMaxSize"; break;
-            case plRecord::kViaDetailMapConstructor: msg << " via DetailMapConstructor"; break;
-            case plRecord::kViaCopyFrom: msg << " via CopyFrom"; break;
-            case plRecord::kViaResize: msg << " via Resize"; break;
+            case plRecord::kViaCreate: creationMethodStr = ST_LITERAL("Create"); break;
+            case plRecord::kViaRead: creationMethodStr = ST_LITERAL("Read"); break;
+            case plRecord::kViaClipToMaxSize: creationMethodStr = ST_LITERAL("ClipToMaxSize"); break;
+            case plRecord::kViaDetailMapConstructor: creationMethodStr = ST_LITERAL("DetailMapConstructor"); break;
+            case plRecord::kViaCopyFrom: creationMethodStr = ST_LITERAL("CopyFrom"); break;
+            case plRecord::kViaResize: creationMethodStr = ST_LITERAL("Resize"); break;
         }
 
-        hsStatusMessage(msg.to_string().c_str());
+        hsStatusMessage(ST::format(
+            "{}, {}: \t{}x{}, {} levels, {} bpr {} via {}",
+            record->fKeyName,
+            sizeStr,
+            record->fWidth, record->fHeight,
+            record->fNumLevels,
+            record->fRowBytes,
+            compressionStr,
+            creationMethodStr
+        ).c_str());
 
         next = record->fNext;
         record->Unlink();
