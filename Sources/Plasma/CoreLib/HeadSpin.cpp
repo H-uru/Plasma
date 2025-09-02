@@ -197,19 +197,4 @@ void hsStatusMessage(const char* message)
     }
 }
 
-void hsStatusMessageV(const char * fmt, va_list args)
-{
-    char  buffer[2000];
-    vsnprintf(buffer, std::size(buffer), fmt, args);
-    hsStatusMessage(buffer);
-}
-
-void hsStatusMessageF(const char * fmt, ...)
-{
-    va_list args;
-    va_start(args,fmt);
-    hsStatusMessageV(fmt,args);
-    va_end(args);
-}
-
 #endif

@@ -54,6 +54,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plDynamicTextMap.h"
 
+#include <string_theory/format>
+
 #include "hsStream.h"
 #include "hsExceptions.h"
 
@@ -439,7 +441,7 @@ void    plDynamicTextMap::SetFont( const ST::string &face, uint16_t size, uint8_
     if (fCurrFont == nullptr)
     {
         if (!fCurrFont)
-            hsStatusMessageF("Font missing - %s. Using Arial", fFontFace.c_str("nil"));
+            hsStatusMessage(ST::format("Font missing - {}. Using Arial", fFontFace).c_str());
 
         fFontFace = "Arial";
         // lets try again with Arial

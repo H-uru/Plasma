@@ -709,7 +709,7 @@ plKey plResManager::ReadKeyNotifyMe(hsStream* stream, plRefMsg* msg, plRefFlags:
     }
     if(key->GetUoid().GetLoadMask().DontLoad())
     {
-        hsStatusMessageF("%s being skipped because of load mask", key->GetName().c_str());
+        hsStatusMessage(ST::format("{} being skipped because of load mask", key->GetName()).c_str());
         hsRefCnt_SafeUnRef(msg);
         return nullptr;
     }
@@ -1040,14 +1040,14 @@ void plResManager::LoadAgeKeys(const ST::string& age)
     if (it != fHeldAgeKeys.end())
     {
         kResMgrLog(1, ILog(1, "Reffing age keys for age {}", age));
-        hsStatusMessageF("*** Reffing age keys for age %s ***", age.c_str());
+        hsStatusMessage(ST::format("*** Reffing age keys for age {} ***", age).c_str());
         plResAgeHolder* holder = it->second;
         holder->Ref();
     }
     else
     {
         kResMgrLog(1, ILog(1, "Loading age keys for age {}", age));
-        hsStatusMessageF("*** Loading age keys for age %s ***", age.c_str());
+        hsStatusMessage(ST::format("*** Loading age keys for age {} ***", age).c_str());
 
         plResAgeHolder* holder = new plResAgeHolder(age);
         fHeldAgeKeys[age] = holder;
@@ -1544,7 +1544,7 @@ static void sIReportLeak(plKeyImp* key, plRegistryPageNode* page)
     if (!alreadyDone)
     {
         // Print out page header
-        hsStatusMessageF("\tLeaks in page %s>%s[%08x]:", lastPage->GetPageInfo().GetAge().c_str(), lastPage->GetPageInfo().GetPage().c_str(), lastPage->GetPageInfo().GetLocation().GetSequenceNumber());
+        hsStatusMessage(ST::format("\tLeaks in page {}>{}[{08x}]:", lastPage->GetPageInfo().GetAge(), lastPage->GetPageInfo().GetPage(), lastPage->GetPageInfo().GetLocation().GetSequenceNumber()).c_str());
         alreadyDone = true;
     }
 

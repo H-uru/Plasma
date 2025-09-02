@@ -106,7 +106,7 @@ plAGChannel *plQuatChannel::MakeBlend(plAGChannel *channelB, plScalarChannel *ch
     {
         return new plQuatBlend(this, chanB, chanBias);
     } else {
-        hsStatusMessageF("Blend operation failed.");
+        hsStatusMessage("Blend operation failed.");
         return this;
     }
 }

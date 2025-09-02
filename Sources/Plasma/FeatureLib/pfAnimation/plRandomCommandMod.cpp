@@ -224,8 +224,8 @@ bool plRandomCommandMod::MsgReceive(plMessage* msg)
         if( anim->GetSender() != GetKey() )
         {
 #if 0
-            hsStatusMessageF("someone triggered me, remote=%d", 
-                msg->HasBCastFlag(plMessage::kNetNonLocal));
+            hsStatusMessage(ST::format("someone triggered me, remote={}", 
+                msg->HasBCastFlag(plMessage::kNetNonLocal)).c_str());
 #endif
             if( anim->Cmd(plAnimCmdMsg::kContinue) )
                 IStart();
@@ -243,8 +243,8 @@ bool plRandomCommandMod::MsgReceive(plMessage* msg)
         {
             
 #if 0
-            hsStatusMessageF("play next if master, remote=%d", 
-                msg->HasBCastFlag(plMessage::kNetNonLocal));
+            hsStatusMessage(ST::format("play next if master, remote={}", 
+                msg->HasBCastFlag(plMessage::kNetNonLocal)).c_str());
 #endif
             IPlayNextIfMaster();
         }

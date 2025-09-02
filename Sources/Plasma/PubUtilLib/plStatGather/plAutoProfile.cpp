@@ -344,9 +344,9 @@ bool plAutoProfileImp::MsgReceive(plMessage* msg)
             fLinkTime = hsTimer::GetTicks() - fLinkTime;
             float ms = hsTimer::GetMilliSeconds<float>(fLinkTime);
 
-            hsStatusMessageF("Age %s finished load, took %.1f ms",
-                fAges[fNextAge-1].c_str(),
-                ms);
+            hsStatusMessage(ST::format("Age {} finished load, took {.1f} ms",
+                fAges[fNextAge-1],
+                ms).c_str());
 
             plStatusLog::AddLineSF("agetimings.log", "Age {} took {.1f} ms",
                 fAges[fNextAge-1],

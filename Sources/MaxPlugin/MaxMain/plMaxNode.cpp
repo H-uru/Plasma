@@ -628,7 +628,7 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
     if (!physProps->IsUsed())
         return true;
 
-    //hsStatusMessageF("Making phys for %s", dbgNodeName);
+    //hsStatusMessage(ST::format("Making phys for {}", dbgNodeName).c_str());
 
     plSimDefs::Group group = (plSimDefs::Group)physProps->GetGroup();
     plSimDefs::Bounds bounds = (plSimDefs::Bounds)physProps->GetBoundsType();

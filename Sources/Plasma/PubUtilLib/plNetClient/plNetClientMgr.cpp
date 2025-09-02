@@ -1196,7 +1196,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
         plSceneObject *playerSO = plSceneObject::ConvertNoRef(playerKey->ObjectIsLoaded());
         if (!playerSO)
         {
-            hsStatusMessageF("Ignoring player page message for non-existant player.");
+            hsStatusMessage("Ignoring player page message for non-existant player.");
         }
         else
         if(playerMsg->fPlayer)

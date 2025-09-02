@@ -55,6 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsStream.h"
 
+#include <string_theory/format>
+
 // other
 #include "plInterp/plAnimEaseTypes.h"
 #include "plMessage/plAnimCmdMsg.h"
@@ -308,7 +310,7 @@ void plAGAnim::DumpAnimationRegistry()
     do {
         plAGAnim *anim = (*i).second;
         ST::string name = anim->GetName();
-        hsStatusMessageF("GLOBAL ANIMS [%d]: <%s>", j++, name.c_str());
+        hsStatusMessage(ST::format("GLOBAL ANIMS [{}]: <{}>", j++, name).c_str());
     } while(++i != fAllAnims.end());
 }
 

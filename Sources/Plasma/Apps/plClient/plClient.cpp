@@ -1032,11 +1032,11 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
         {
             #ifdef HS_DEBUGGING
             if (!info)
-                hsStatusMessageF("Ignoring LoadRoom request for location 0x%x because we can't find the location", loc.GetSequenceNumber());
+                hsStatusMessage(ST::format("Ignoring LoadRoom request for location {#x} because we can't find the location", loc.GetSequenceNumber()).c_str());
             else if (alreadyLoaded)
-                hsStatusMessageF("Ignoring LoadRoom request for %s-%s, since room is already loaded", info->GetAge().c_str(), info->GetPage().c_str());
+                hsStatusMessage(ST::format("Ignoring LoadRoom request for {}-{}, since room is already loaded", info->GetAge(), info->GetPage()).c_str());
             else if (isLoading)
-                hsStatusMessageF("Ignoring LoadRoom request for %s-%s, since room is currently loading", info->GetAge().c_str(), info->GetPage().c_str());
+                hsStatusMessage(ST::format("Ignoring LoadRoom request for {}-{}, since room is currently loading", info->GetAge(), info->GetPage()).c_str());
             #endif
 
             continue;
@@ -1049,7 +1049,7 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
         else
             allSameAge = false;
 
-//      hsStatusMessageF("+++ Loading room %s-%s", info.GetAge(), info.GetPage());
+        //hsStatusMessage(ST::format("+++ Loading room {}-{}", info.GetAge(), info.GetPage()).c_str());
         numRooms++;
     }
 
@@ -1272,7 +1272,7 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
         plgDispatch::MsgSend(loadmsg);
     }
     else
-        hsStatusMessageF("Done loading hold room %s, t=%f", pRmKey->GetName().c_str(), hsTimer::GetSeconds());
+        hsStatusMessage(ST::format("Done loading hold room {}, t={}", pRmKey->GetName(), hsTimer::GetSeconds()).c_str());
 
     plLocation loc = pRmKey->GetUoid().GetLocation();
     for (auto it = fRoomsLoading.cbegin(); it != fRoomsLoading.cend(); ++it)

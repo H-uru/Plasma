@@ -441,7 +441,7 @@ void plObjectInVolumeAndFacingDetector::ICheckForTrigger()
         objView.Normalize();
 
         float dot = playerView * objView;
-//      hsStatusMessageF("Dot: %f Tolerance: %f", dot, fFacingTolerance);
+        //hsStatusMessage(ST::format("Dot: {} Tolerance: {}", dot, fFacingTolerance).c_str());
         bool facing = dot >= fFacingTolerance;
 
         bool movingForward = false;

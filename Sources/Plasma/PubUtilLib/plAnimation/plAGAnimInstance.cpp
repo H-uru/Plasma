@@ -128,7 +128,7 @@ plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
     fCleanupChannels.push_back(timeChan);
 
 #ifdef SHOW_AG_CHANGES
-    hsStatusMessageF("\nAbout to Attach anim <%s>", GetName().c_str());
+    hsStatusMessage(ST::format("\nAbout to Attach anim <{}>", GetName()).c_str());
     fMaster->DumpAniGraph("bone_pelvis", false, hsTimer::GetSysSeconds());
 #endif
 
@@ -315,7 +315,7 @@ void plAGAnimInstance::Detach()
 void plAGAnimInstance::DetachChannels()
 {
 #ifdef SHOW_AG_CHANGES
-    hsStatusMessageF("\nAbout to DETACH anim <%s>", GetName().c_str());
+    hsStatusMessage(ST::format("\nAbout to DETACH anim <{}>", GetName()).c_str());
     fMaster->DumpAniGraph("bone_pelvis", false, hsTimer::GetSysSeconds());
 #endif
     plDetachMap::iterator i = fManualDetachChannels.begin();
@@ -346,7 +346,7 @@ void plAGAnimInstance::DetachChannels()
     fCleanupChannels.clear();
 
 #ifdef SHOW_AG_CHANGES
-    hsStatusMessageF("\nFinished DETACHING anim <%s>", GetName().c_str());
+    hsStatusMessage(ST::format("\nFinished DETACHING anim <{}>", GetName()).c_str());
     fMaster->DumpAniGraph("bone_pelvis", false, hsTimer::GetSysSeconds());
 #endif
 }

@@ -64,13 +64,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plSceneObject.h"
 #include "plStatusLog/plStatusLog.h"
 
+#include <string_theory/format>
+
 // Visualization
 #include "plWinAudibleProxy.h"
 
 #define SND_INDEX_CHECK( index, ret )           \
     if ((size_t)index >= fSoundObjs.size())     \
     {                                           \
-        hsStatusMessageF("ERROR: Sound index out of range (index %d, count %zu)", index, fSoundObjs.size()); \
+        hsStatusMessage(ST::format("ERROR: Sound index out of range (index {}, count {})", index, fSoundObjs.size()).c_str()); \
         return ret;                             \
     }
 

@@ -344,10 +344,8 @@ hsStatusMessageProc hsSetStatusMessageProc(hsStatusMessageProc newProc);
 
 #ifdef PLASMA_EXTERNAL_RELEASE
 #   define hsStatusMessage(x) ((void)0)
-#   define hsStatusMessageF(x, ...) ((void)0)
 #else
     void hsStatusMessage(const char* message);
-    void hsStatusMessageF(const char* fmt, ...);
 #endif // PLASMA_EXTERNAL_RELEASE
 
 #if defined(__clang__) || defined(__GNUC__)

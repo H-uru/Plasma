@@ -236,7 +236,7 @@ hsKeyedObject* plKeyImp::RefObject(plRefFlags::Type flags)
 
 #ifdef LOG_ACTIVE_REFS
     if (IsTrackedKey(this))
-        hsStatusMessageF("@@@ RefObject adding active ref to %s (%d total)", kObjName, fNumActiveRefs+1);
+        hsStatusMessage(ST::format("@@@ RefObject adding active ref to {} ({} total)", kObjName, fNumActiveRefs+1).c_str());
 #endif // LOG_ACTIVE_REFS
 
     IncActiveRefs();
@@ -253,7 +253,7 @@ void plKeyImp::UnRefObject(plRefFlags::Type flags)
 
 #ifdef LOG_ACTIVE_REFS
     if (IsTrackedKey(this))
-        hsStatusMessageF("@@@ UnRefObject releasing active ref to %s (%d total)", kObjName, fNumActiveRefs-1);
+        hsStatusMessage(ST::format("@@@ UnRefObject releasing active ref to {} ({} total)", kObjName, fNumActiveRefs-1).c_str());
 #endif // LOG_ACTIVE_REFS
     DecActiveRefs();
 
@@ -318,8 +318,8 @@ void plKeyImp::AddNotifyCreated(plRefMsg* msg, plRefFlags::Type flags)
 #ifdef LOG_ACTIVE_REFS
         if (IsTrackedKey(this))
         {
-            hsStatusMessageF("@@@ %s(%s) adding active ref to %s (%d total)", msg->GetReceiver(0)->GetName().c_str(),
-                plFactory::GetNameOfClass(msg->GetReceiver(0)->GetUoid().GetClassType()), kObjName, fNumActiveRefs+1);
+            hsStatusMessage(ST::format("@@@ {}({}) adding active ref to {} ({} total)", msg->GetReceiver(0)->GetName(),
+                plFactory::GetNameOfClass(msg->GetReceiver(0)->GetUoid().GetClassType()), kObjName, fNumActiveRefs+1).c_str());
         }
 #endif // LOG_ACTIVE_REFS
 
@@ -603,8 +603,8 @@ void plKeyImp::IRelease(plKeyImp* iTargetKey)
     // it has been notified it is going away.
 #ifdef LOG_ACTIVE_REFS
     if (isActive && IsTrackedKey(iTargetKey))
-        hsStatusMessageF("@@@ %s(%s) releasing active ref on %s (%d total)", GetName().c_str(),
-                         plFactory::GetNameOfClass(GetUoid().GetClassType()), kObjName, iTargetKey->fNumActiveRefs-1);
+        hsStatusMessage(ST::format("@@@ {}({}) releasing active ref on {} ({} total)", GetName(),
+            plFactory::GetNameOfClass(GetUoid().GetClassType()), kObjName, iTargetKey->fNumActiveRefs-1).c_str());
 #endif // LOG_ACTIVE_REFS
 
     if (isActive && iTargetKey->GetActiveRefs() && !iTargetKey->DecActiveRefs())

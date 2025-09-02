@@ -127,7 +127,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfCamera/plVirtualCamNeu.h"
 
 #include <algorithm>
-#include <string_theory/string>
+#include <string_theory/format>
 #include <utility>
 
 //#define MF_TOSSER
@@ -1727,7 +1727,7 @@ void    plDXPipeline::IReleaseDeviceObjects()
         LONG ret;
         while( ret = fD3DDevice->Release() )
         {
-            hsStatusMessageF("%d - Error releasing device", ret);
+            hsStatusMessage(ST::format("{} - Error releasing device", ret).c_str());
         }
         fD3DDevice = nullptr;
     }
@@ -8646,7 +8646,7 @@ void plDXPipeline::IEndAllocUnManaged()
 // a new age.
 void plDXPipeline::LoadResources()
 {
-    hsStatusMessageF("Begin Device Reload t=%f",hsTimer::GetSeconds());
+    hsStatusMessage(ST::format("Begin Device Reload t={}", hsTimer::GetSeconds()).c_str());
     plNetClientApp::StaticDebugMsg("Begin Device Reload");
 
     // Just to be safe.
@@ -8704,7 +8704,7 @@ void plDXPipeline::LoadResources()
 
     plProfile_IncCount(PipeReload, 1);
 
-    hsStatusMessageF("End Device Reload t=%f",hsTimer::GetSeconds());
+    hsStatusMessage(ST::format("End Device Reload t={}", hsTimer::GetSeconds()).c_str());
     plNetClientApp::StaticDebugMsg("End Device Reload");
 }
 
