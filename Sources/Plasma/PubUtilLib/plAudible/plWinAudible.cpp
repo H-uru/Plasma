@@ -72,7 +72,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define SND_INDEX_CHECK( index, ret )           \
     if ((size_t)index >= fSoundObjs.size())     \
     {                                           \
-        hsStatusMessage(ST::format("ERROR: Sound index out of range (index {}, count {})", index, fSoundObjs.size()).c_str()); \
+        hsStatusMessageF("ERROR: Sound index out of range (index {}, count {})", index, fSoundObjs.size()); \
         return ret;                             \
     }
 

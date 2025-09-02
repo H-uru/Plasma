@@ -910,14 +910,14 @@ bool plDebugConfigSource::WriteOutOf(plConfigInfo & configInfo)
     fConfigInfo->GetSectionIterators(si,se);
     for (; si!=se; ++si)
     {
-        hsStatusMessage(ST::format("\n[{}]", si->first).c_str());
+        hsStatusMessageF("\n[{}]", si->first);
         if (fConfigInfo->GetKeyIterators(si->first, ki, ke))
             for (; ki!=ke; ++ki)
             {
                 if (fConfigInfo->GetValueIterators(si->first, ki->first, vi, ve))
                     for (; vi!=ve; ++vi)
                     {
-                        hsStatusMessage(ST::format("{}={}", ki->first, *vi).c_str());
+                        hsStatusMessageF("{}={}", ki->first, *vi);
                     }
             }
     }

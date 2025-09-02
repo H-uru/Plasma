@@ -189,7 +189,7 @@ void plResManagerHelper::LoadAndHoldPageKeys( plRegistryPageNode *page )
 
     // Load and ref the keys
 #ifdef HS_DEBUGGING
-    hsStatusMessage(ST::format("*** Temporarily loading keys for room {}>{} based on FindKey() query, will drop in 1 sec ***", page->GetPageInfo().GetAge(), page->GetPageInfo().GetPage()).c_str());
+    hsStatusMessageF("*** Temporarily loading keys for room {}>{} based on FindKey() query, will drop in 1 sec ***", page->GetPageInfo().GetAge(), page->GetPageInfo().GetPage());
 #endif
     kResMgrLogF(2, 0xff80ff80, "Temporarily loading keys for room {}>{}, will drop in 1 sec", page->GetPageInfo().GetAge(), page->GetPageInfo().GetPage());
         

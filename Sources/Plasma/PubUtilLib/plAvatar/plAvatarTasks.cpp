@@ -409,7 +409,7 @@ bool plAvAnimTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double t
         }
         else
         {
-            hsStatusMessage(ST::format("Couldn't find animation <{}> for plAvAnimTask: will try again", fAnimName).c_str());
+            hsStatusMessageF("Couldn't find animation <{}> for plAvAnimTask: will try again", fAnimName);
         }
     }
     else

@@ -141,7 +141,7 @@ protected:
         return false;
 
         IRollupWindow *rollup = GetCOREInterface()->GetCommandPanelRollup();
-        hsStatusMessage(ST::format("{}\t{x}\t{x}", fRollup, rollup->GetPanelIndex(hWnd), msg).c_str());
+        hsStatusMessageF("{}\t{x}\t{x}", fRollup, rollup->GetPanelIndex(hWnd), msg);
 
         if( msg == 0x18 )
         {

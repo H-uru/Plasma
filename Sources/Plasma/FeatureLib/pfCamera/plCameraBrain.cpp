@@ -1023,7 +1023,7 @@ void plCameraBrain1_Avatar::Update(bool forced)
     if (fFlags.IsBitSet(kIsTransitionCamera))
     {
         if (GetKey())
-            hsStatusMessage(ST::format("{} thinks it's the transition camera", GetKeyName()).c_str());
+            hsStatusMessageF("{} thinks it's the transition camera", GetKeyName());
     }
     else
     {

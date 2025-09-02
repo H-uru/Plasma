@@ -348,6 +348,9 @@ hsStatusMessageProc hsSetStatusMessageProc(hsStatusMessageProc newProc);
     void hsStatusMessage(const char* message);
 #endif // PLASMA_EXTERNAL_RELEASE
 
+// Defined as a macro instead of a template function to avoid globally including <string_theory/format>.
+#define hsStatusMessageF(message, ...) (hsStatusMessage(ST::format((message), __VA_ARGS__).c_str()))
+
 #if defined(__clang__) || defined(__GNUC__)
 #   define _COMPILER_WARNING_NAME(warning) "-W" warning
 

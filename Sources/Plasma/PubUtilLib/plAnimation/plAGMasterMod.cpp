@@ -315,7 +315,7 @@ void plAGMasterMod::DumpAniGraph(const char *justThisChannel, bool optimized, do
                     plMatrixChannel *topChannel = plMatrixChannel::ConvertNoRef(channel);
                     if(topChannel)
                     {
-                        hsStatusMessage(ST::format("AGModifier: <{}>", mod->GetChannelName()).c_str());
+                        hsStatusMessageF("AGModifier: <{}>", mod->GetChannelName());
                         topChannel->Dump(1, optimized, time);
                     }
                 }
@@ -601,7 +601,7 @@ void plAGMasterMod::DetachAnimation(const ST::string &name)
 void plAGMasterMod::DumpCurrentAnims(const char *header)
 {
     if(header)
-        hsStatusMessage(ST::format("Dumping Armature Anim Stack: {}", header).c_str());
+        hsStatusMessageF("Dumping Armature Anim Stack: {}", header);
     int nAnims = fAnimInstances.size();
     for(int i = nAnims - 1; i >= 0; i--)
     {
@@ -609,7 +609,7 @@ void plAGMasterMod::DumpCurrentAnims(const char *header)
         ST::string name = inst->GetName();
         float blend = inst->GetBlend();
 
-        hsStatusMessage(ST::format("{}: {} with blend of {}", i, name, blend).c_str());
+        hsStatusMessageF("{}: {} with blend of {}", i, name, blend);
     }
 }
 

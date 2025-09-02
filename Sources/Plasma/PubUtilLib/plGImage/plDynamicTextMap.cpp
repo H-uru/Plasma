@@ -441,7 +441,7 @@ void    plDynamicTextMap::SetFont( const ST::string &face, uint16_t size, uint8_
     if (fCurrFont == nullptr)
     {
         if (!fCurrFont)
-            hsStatusMessage(ST::format("Font missing - {}. Using Arial", fFontFace).c_str());
+            hsStatusMessageF("Font missing - {}. Using Arial", fFontFace);
 
         fFontFace = "Arial";
         // lets try again with Arial

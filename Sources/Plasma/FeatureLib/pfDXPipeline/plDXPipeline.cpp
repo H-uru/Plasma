@@ -1347,7 +1347,7 @@ bool plDXPipeline::ICreateDevice(bool windowed)
 #ifdef DBG_WRITE_FORMATS
     for (D3DFORMAT fmt : fCurrentMode->fDepthFormats)
     {
-        hsStatusMessage(ST::format("-- Valid depth buffer format: {}", IGetDXFormatName(fmt)).c_str());
+        hsStatusMessageF("-- Valid depth buffer format: {}", IGetDXFormatName(fmt));
     }
 #endif
 
@@ -1381,13 +1381,13 @@ bool plDXPipeline::ICreateDevice(bool windowed)
         fSettings.fD3DCaps &= ~kCapsZBias;
 
 #ifdef DBG_WRITE_FORMATS
-    hsStatusMessage(ST::format("-- Requesting depth buffer format: {}", IGetDXFormatName(params.AutoDepthStencilFormat)).c_str());
+    hsStatusMessageF("-- Requesting depth buffer format: {}", IGetDXFormatName(params.AutoDepthStencilFormat));
 #endif
 
 
     params.BackBufferFormat = dispMode.Format;
 #ifdef DBG_WRITE_FORMATS
-    hsStatusMessage(ST::format("-- Requesting back buffer format: {}", IGetDXFormatName(params.BackBufferFormat)).c_str());
+    hsStatusMessageF("-- Requesting back buffer format: {}", IGetDXFormatName(params.BackBufferFormat));
 #endif
 
     params.hDeviceWindow = fDevice.fHWnd;
@@ -1727,7 +1727,7 @@ void    plDXPipeline::IReleaseDeviceObjects()
         LONG ret;
         while( ret = fD3DDevice->Release() )
         {
-            hsStatusMessage(ST::format("{} - Error releasing device", ret).c_str());
+            hsStatusMessageF("{} - Error releasing device", ret);
         }
         fD3DDevice = nullptr;
     }
@@ -8646,7 +8646,7 @@ void plDXPipeline::IEndAllocUnManaged()
 // a new age.
 void plDXPipeline::LoadResources()
 {
-    hsStatusMessage(ST::format("Begin Device Reload t={}", hsTimer::GetSeconds()).c_str());
+    hsStatusMessageF("Begin Device Reload t={}", hsTimer::GetSeconds());
     plNetClientApp::StaticDebugMsg("Begin Device Reload");
 
     // Just to be safe.
@@ -8704,7 +8704,7 @@ void plDXPipeline::LoadResources()
 
     plProfile_IncCount(PipeReload, 1);
 
-    hsStatusMessage(ST::format("End Device Reload t={}", hsTimer::GetSeconds()).c_str());
+    hsStatusMessageF("End Device Reload t={}", hsTimer::GetSeconds());
     plNetClientApp::StaticDebugMsg("End Device Reload");
 }
 

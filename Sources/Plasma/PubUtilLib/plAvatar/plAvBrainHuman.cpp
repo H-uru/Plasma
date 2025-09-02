@@ -318,7 +318,7 @@ void plAvBrainHuman::IInitBoneMap()
             fAvMod->AddBoneMapping(id, bone);
         }
         else
-            hsStatusMessage(ST::format("Couldn't find standard bone {}.", name).c_str());
+            hsStatusMessageF("Couldn't find standard bone {}.", name);
     }
 }
 

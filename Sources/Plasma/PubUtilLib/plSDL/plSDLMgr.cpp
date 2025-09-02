@@ -201,7 +201,7 @@ int plSDLMgr::Read(hsStream* s, plSDL::DescriptorList* dl)
         }
         else
         {
-            hsStatusMessage(ST::format("Something bad happened while reading SDLMgr data: {}", e.what()).c_str());
+            hsStatusMessageF("Something bad happened while reading SDLMgr data: {}", e.what());
         }
         return 0;
     }

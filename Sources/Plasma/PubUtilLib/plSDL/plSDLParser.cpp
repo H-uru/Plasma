@@ -381,7 +381,7 @@ bool plSDLParser::IReadDescriptors() const
             if (netApp)
                 netApp->ErrorMsg("Error loading SDL file {}", files[i]);
             else
-                hsStatusMessage(ST::format("Error loading SDL file {}", files[i]).c_str());
+                hsStatusMessageF("Error loading SDL file {}", files[i]);
             ret=false;
         }
         else

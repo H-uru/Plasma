@@ -310,7 +310,7 @@ void plAGAnim::DumpAnimationRegistry()
     do {
         plAGAnim *anim = (*i).second;
         ST::string name = anim->GetName();
-        hsStatusMessage(ST::format("GLOBAL ANIMS [{}]: <{}>", j++, name).c_str());
+        hsStatusMessageF("GLOBAL ANIMS [{}]: <{}>", j++, name);
     } while(++i != fAllAnims.end());
 }
 

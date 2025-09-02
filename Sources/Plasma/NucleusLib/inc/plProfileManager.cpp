@@ -308,7 +308,7 @@ void plProfileLaps::EndFrame()
         fLapTimes[i].EndFrame();
         if (!fLapTimes[i].fUsedThisFrame)
         {
-            hsStatusMessage(ST::format("Dropping unused lap {}", fLapTimes[i].GetName()).c_str());
+            hsStatusMessageF("Dropping unused lap {}", fLapTimes[i].GetName());
             fLapTimes.erase(fLapTimes.begin()+i);
             i--;
         }

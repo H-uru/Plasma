@@ -138,14 +138,14 @@ bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
                 fCallbacks[event] = fc;
 
 #if 0
-                hsStatusMessage(ST::format("Adding CBMsg, eventSender={}, eventRemoteMsg={}",
-                    event->GetSender() ? event->GetSender()->GetName() : ST_LITERAL("nil"), fc->fNetPropogate).c_str());
+                hsStatusMessageF("Adding CBMsg, eventSender={}, eventRemoteMsg={}",
+                    event->GetSender() ? event->GetSender()->GetName() : ST_LITERAL("nil"), fc->fNetPropogate);
 #endif
             }
         }
 #if 0
-        hsStatusMessage(ST::format("Fwding CBMsg, sender={}, remoteMsg={}",
-            msg->GetSender() ? msg->GetSender()->GetName() : ST_LITERAL("nil"), msg->HasBCastFlag(plMessage::kNetNonLocal)).c_str());
+        hsStatusMessageF("Fwding CBMsg, sender={}, remoteMsg={}",
+            msg->GetSender() ? msg->GetSender()->GetName() : ST_LITERAL("nil"), msg->HasBCastFlag(plMessage::kNetNonLocal));
 #endif
         IForwardMsg(callbackMsg);
         
@@ -163,8 +163,8 @@ bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
             plForwardCallback *fc = it->second;
             if (--fc->fNumCallbacks == 0)
             {
-                hsStatusMessage(ST::format("plEventCallbackMsg received, erasing, sender={}, remoteMsg={}",
-                    msg->GetSender() ? msg->GetSender()->GetName() : ST_LITERAL("nil"), msg->HasBCastFlag(plMessage::kNetNonLocal)).c_str());
+                hsStatusMessageF("plEventCallbackMsg received, erasing, sender={}, remoteMsg={}",
+                    msg->GetSender() ? msg->GetSender()->GetName() : ST_LITERAL("nil"), msg->HasBCastFlag(plMessage::kNetNonLocal));
 
                 fCallbacks.erase(eventMsg);
 
@@ -186,8 +186,8 @@ bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
         }
         else
         {
-            hsStatusMessage(ST::format("! Unknown plEventCallbackMsg received, sender={}, remoteMsg={}",
-                msg->GetSender() ? msg->GetSender()->GetName() : ST_LITERAL("nil"), msg->HasBCastFlag(plMessage::kNetNonLocal)).c_str());
+            hsStatusMessageF("! Unknown plEventCallbackMsg received, sender={}, remoteMsg={}",
+                msg->GetSender() ? msg->GetSender()->GetName() : ST_LITERAL("nil"), msg->HasBCastFlag(plMessage::kNetNonLocal));
             hsAssert(0, "Unknown plEventCallbackMsg received");
         }
         return true;

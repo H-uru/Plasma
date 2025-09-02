@@ -420,11 +420,11 @@ void plClient::ShutdownDLLs()
 #ifdef HS_BUILD_FOR_WIN32
         BOOL ret = FreeLibrary(mod);
         if (!ret)
-            hsStatusMessage(ST::format("Failed to free lib: {}", hsCOMError(hsLastWin32Error, GetLastError())).c_str());
+            hsStatusMessageF("Failed to free lib: {}", hsCOMError(hsLastWin32Error, GetLastError()));
 #else
         int ret = dlclose(mod);
         if (ret)
-            hsStatusMessage(ST::format("Failed to free lib: {}", dlerror()).c_str());
+            hsStatusMessageF("Failed to free lib: {}", dlerror());
 #endif
     }
 
@@ -827,10 +827,9 @@ bool plClient::MsgReceive(plMessage* msg)
     plEventCallbackMsg* callback = plEventCallbackMsg::ConvertNoRef(msg);
     if( callback )
     {
-        ST::string str = ST::format("Callback event from {}", callback->GetSender()
-                            ? callback->GetSender()->GetName()
-                            : ST_LITERAL("Unknown"));
-        hsStatusMessage(str.c_str());
+        hsStatusMessageF("Callback event from {}", callback->GetSender()
+                         ? callback->GetSender()->GetName()
+                         : ST_LITERAL("Unknown"));
         static int gotten = 0;
         if( ++gotten > 5 )
         {
@@ -1032,11 +1031,11 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
         {
             #ifdef HS_DEBUGGING
             if (!info)
-                hsStatusMessage(ST::format("Ignoring LoadRoom request for location {#x} because we can't find the location", loc.GetSequenceNumber()).c_str());
+                hsStatusMessageF("Ignoring LoadRoom request for location {#x} because we can't find the location", loc.GetSequenceNumber());
             else if (alreadyLoaded)
-                hsStatusMessage(ST::format("Ignoring LoadRoom request for {}-{}, since room is already loaded", info->GetAge(), info->GetPage()).c_str());
+                hsStatusMessageF("Ignoring LoadRoom request for {}-{}, since room is already loaded", info->GetAge(), info->GetPage());
             else if (isLoading)
-                hsStatusMessage(ST::format("Ignoring LoadRoom request for {}-{}, since room is currently loading", info->GetAge(), info->GetPage()).c_str());
+                hsStatusMessageF("Ignoring LoadRoom request for {}-{}, since room is currently loading", info->GetAge(), info->GetPage());
             #endif
 
             continue;
@@ -1049,7 +1048,7 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
         else
             allSameAge = false;
 
-        //hsStatusMessage(ST::format("+++ Loading room {}-{}", info.GetAge(), info.GetPage()).c_str());
+        //hsStatusMessageF("+++ Loading room {}-{}", info.GetAge(), info.GetPage());
         numRooms++;
     }
 
@@ -1272,7 +1271,7 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
         plgDispatch::MsgSend(loadmsg);
     }
     else
-        hsStatusMessage(ST::format("Done loading hold room {}, t={}", pRmKey->GetName(), hsTimer::GetSeconds()).c_str());
+        hsStatusMessageF("Done loading hold room {}, t={}", pRmKey->GetName(), hsTimer::GetSeconds());
 
     plLocation loc = pRmKey->GetUoid().GetLocation();
     for (auto it = fRoomsLoading.cbegin(); it != fRoomsLoading.cend(); ++it)

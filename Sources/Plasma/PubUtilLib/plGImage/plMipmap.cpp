@@ -2240,7 +2240,7 @@ void    plMipmap::IReportLeaks()
             case plRecord::kViaResize: creationMethodStr = ST_LITERAL("Resize"); break;
         }
 
-        hsStatusMessage(ST::format(
+        hsStatusMessageF(
             "{}, {}: \t{}x{}, {} levels, {} bpr {} via {}",
             record->fKeyName,
             sizeStr,
@@ -2249,7 +2249,7 @@ void    plMipmap::IReportLeaks()
             record->fRowBytes,
             compressionStr,
             creationMethodStr
-        ).c_str());
+        );
 
         next = record->fNext;
         record->Unlink();
