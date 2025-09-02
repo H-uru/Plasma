@@ -40,24 +40,57 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef _pfGameMgrCreatable_h_
-#define _pfGameMgrCreatable_h_
+#ifndef _pyGmClimbingWall_h_
+#define _pyGmClimbingWall_h_
 
-#include "pnFactory/plCreator.h"
+#include "pyGameCli.h"
 
-#include "pfGameCli.h"
-REGISTER_NONCREATABLE(pfGameCli);
+#include "pnGameMgr/pnGmClimbingWallConst.h"
 
-#include "pfGmBlueSpiral.h"
-REGISTER_NONCREATABLE(pfGmBlueSpiral);
+class pfGmClimbingWall;
 
-#include "pfGmClimbingWall.h"
-REGISTER_NONCREATABLE(pfGmClimbingWall);
+class pyGmClimbingWall : public pyGameCli
+{
+public:
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGmClimbingWall);
+    PYTHON_CLASS_GMCLI_NEW_DEFINITION(pfGmClimbingWall);
+    PYTHON_CLASS_CHECK_DEFINITION;                        // returns true if the PyObject is a pyGmClimbingWall object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGmClimbingWall); // converts a PyObject to a pyGmClimbingWall (throws error if not correct type)
 
-#include "pfGmMarker.h"
-REGISTER_NONCREATABLE(pfGmMarker);
+protected:
+    pfGmClimbingWall* GetGameCli() const { return (pfGmClimbingWall*)fCli; }
 
-#include "pfGmVarSync.h"
-REGISTER_NONCREATABLE(pfGmVarSync);
+public:
+    void ChangeNumBlockers(int32_t amountToAdjust) const;
+
+    void Ready(EClimbingWallReadyType readyType, uint8_t teamNumber) const;
+
+    void ChangeBlocker(
+        uint8_t teamNumber,
+        uint8_t blockerNumber,
+        bool added
+    ) const;
+
+    void Reset() const;
+
+    void EnterPlayer(uint8_t teamNumber) const;
+
+    void FinishGame() const;
+
+    void Panic() const;
+
+public:
+    static void Join(
+        PyObject* handler,
+        uint32_t  tableID
+    );
+
+    static bool IsSupported();
+
+public:
+    static void AddPlasmaGameClasses(PyObject* m);
+    static void AddPlasmaGameConstantsClasses(PyObject* m);
+};
 
 #endif

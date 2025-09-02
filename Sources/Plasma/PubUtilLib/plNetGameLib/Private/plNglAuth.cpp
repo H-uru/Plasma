@@ -1481,8 +1481,10 @@ CliAuConn::CliAuConn ()
 
     // Servers that don't send any caps are assumed to be legacy and
     // therefore support all game mgr games.
+    // MAJOR CAVEAT: MOSS does NOT support ClimbingWall or TTT.
+    // That means MOSS better figure out how to tell us otherwise.
     caps.SetBit(kCapsGameMgrBlueSpiral);
-    // NOTE: climbing wall's status is currently unknown, omitting...
+    caps.SetBit(kCapsGameMgrClimbingWall);
     caps.SetBit(kCapsGameMgrHeek);
     caps.SetBit(kCapsGameMgrMarker);
     caps.SetBit(kCapsGameMgrTTT);
