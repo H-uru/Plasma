@@ -59,7 +59,7 @@ void plSDLParser::DebugMsg(const ST::string& msg) const
     if (netApp)
         hsLogEntry(netApp->DebugMsg(msg));
     else
-        hsStatusMessage(msg.c_str());
+        hsStatusMessage(msg);
 }
 
 //

@@ -474,7 +474,7 @@ void DeInitNetClientComm()
 //
 static plStatusLog* s_DebugLog = nullptr;
 
-static void _StatusMessageProc(const char* msg)
+static void _StatusMessageProc(const ST::string& msg)
 {
 #if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
     s_DebugLog->AddLine(msg);

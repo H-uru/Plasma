@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 #include <string_theory/format>
-
+#include <string_theory/stdio>
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -183,16 +183,16 @@ hsStatusMessageProc hsSetStatusMessageProc(hsStatusMessageProc newProc)
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 
-void hsStatusMessage(const char* message)
+void hsStatusMessage(const ST::string& message)
 {
     if (gHSStatusProc) {
         gHSStatusProc(message);
     } else {
 #if HS_BUILD_FOR_UNIX
-        printf("%s\n", message);
+        ST::printf("{}\n", message);
 #elif HS_BUILD_FOR_WIN32
-        OutputDebugString(message);
-        OutputDebugString("\n");
+        OutputDebugStringW(message.to_wchar().c_str());
+        OutputDebugStringW(L"\n");
 #endif
     }
 }

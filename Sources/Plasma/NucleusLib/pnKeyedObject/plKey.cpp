@@ -123,7 +123,7 @@ plKey::plKey(const plKey& rhs) : fKeyData(rhs.fKeyData)
     {
         ST::string msg = ST::format("C: Key {} {} is being constructed using the plKey(plKey&) constructor", keyNameToLookFor, CloneString(fKeyData));
         //hsAssert(false, msg.c_str());
-        hsStatusMessage(msg.c_str());
+        hsStatusMessage(msg);
     }
 #endif
     IIncRef();
@@ -136,7 +136,7 @@ plKey::plKey(plKeyData* data) : fKeyData(data)
     {
         ST::string msg = ST::format("C: Key {} {} is being constructed using the plKey(plKeyData*) constructor", keyNameToLookFor, CloneString(fKeyData));
         //hsAssert(false, msg.c_str());
-        hsStatusMessage(msg.c_str());
+        hsStatusMessage(msg);
     }
 #endif
     IIncRef();
@@ -149,7 +149,7 @@ plKey::~plKey()
     {
         ST::string msg = ST::format("D: Key {} {} is being destructed", keyNameToLookFor, CloneString(fKeyData));
         //hsAssert(false, msg.c_str());
-        hsStatusMessage(msg.c_str());
+        hsStatusMessage(msg);
     }
 #endif
     IDecRef();
@@ -171,7 +171,7 @@ plKey &plKey::operator=( const plKey &rhs )
                     keyNameToLookFor, CloneString(rhs.fKeyData),
                     fKeyData->GetUoid().GetObjectName());
             //hsAssert(false, msg.c_str());
-            hsStatusMessage(msg.c_str());
+            hsStatusMessage(msg);
         }
         if( IsTracked(fKeyData) )
         {
@@ -184,7 +184,7 @@ plKey &plKey::operator=( const plKey &rhs )
                     fKeyData->GetUoid().GetObjectName(),
                     CloneString(fKeyData), keyNameToLookFor);
             //hsAssert(false, msg.c_str());
-            hsStatusMessage(msg.c_str());
+            hsStatusMessage(msg);
         }
     }
 #endif
@@ -205,7 +205,7 @@ plKey &plKey::operator=(std::nullptr_t)
     {
         ST::string msg = ST::format("D: Key {} {} is being nilified", keyNameToLookFor, CloneString(fKeyData));
         //hsAssert(false, msg.c_str());
-        hsStatusMessage(msg.c_str());
+        hsStatusMessage(msg);
     }
 #endif
 
@@ -246,7 +246,7 @@ void plKey::IIncRef()
         lastData = fKeyData;
         msg = ST::format("+: Key {} {} is being reffed! Refcount: {}", keyNameToLookFor, CloneString(fKeyData), fKeyData->fRefCount);
         //hsAssert(false, msg.c_str());
-        hsStatusMessage(msg.c_str());
+        hsStatusMessage(msg);
     }
 #endif
 
@@ -275,7 +275,7 @@ void plKey::IDecRef()
         lastData = fKeyData;
         msg = ST::format("-: Key {} {} is being de-reffed! Refcount: {}", keyNameToLookFor, CloneString(fKeyData), fKeyData->fRefCount);
         //hsAssert(false, msg.c_str());
-        hsStatusMessage(msg.c_str());
+        hsStatusMessage(msg);
         if( fKeyData->fRefCount == 0 )
             msg.clear();
     }

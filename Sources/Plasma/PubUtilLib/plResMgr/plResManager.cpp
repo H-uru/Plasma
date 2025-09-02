@@ -1559,7 +1559,7 @@ static void sIReportLeak(plKeyImp* key, plRegistryPageNode* page)
         ss << "- " << key->GetDataLen() << " bytes - " << refsLeft << " refs left";
     else
         ss << "(key only, " << refsLeft << " refs left)";
-    hsStatusMessage(ss.to_string().c_str());
+    hsStatusMessage(ss.to_string());
 }
 
 //// UnloadPageObjects ///////////////////////////////////////////////////////
