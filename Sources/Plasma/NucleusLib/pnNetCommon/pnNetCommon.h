@@ -69,9 +69,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # endif
 #endif
 
-#define Bool2Int(value) ((value)?1:0)
-#define Int2Bool(value) ((value)?true:false)
-
 
 class plCreatableStream : public plCreatable
 {
