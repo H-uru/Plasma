@@ -42,21 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnNetCommon.h"
 
-#include <string_theory/format>
-
-namespace pnNetCommon
-{
-
-ST::string GetTextAddr(uint32_t binAddr)
-{
-    static_assert(sizeof(binAddr) == 4*sizeof(uint8_t));
-    const auto* bytes = reinterpret_cast<const uint8_t*>(&binAddr);
-    return ST::format("{}.{}.{}.{}", bytes[0], bytes[1], bytes[2], bytes[3]);
-}
-
-} // pnNetCommon namespace
-
-
 
 ////////////////////////////////////////////////////////////////////
 
