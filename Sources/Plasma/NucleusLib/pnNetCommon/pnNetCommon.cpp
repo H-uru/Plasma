@@ -65,23 +65,6 @@ ST::string GetTextAddr(uint32_t binAddr)
     return ST::string::from_utf8(inet_ntop(AF_INET, &in, text_addr, sizeof(text_addr)));
 }
 
-// NOTE: On Win32, WSAStartup() must be called before GetBinAddr() will work.
-uint32_t GetBinAddr(const ST::string& textAddr)
-{
-    uint32_t addr = 0;
-    if (textAddr.empty())
-        return addr;
-
-    in_addr in;
-    int result = inet_pton(AF_INET, textAddr.c_str(), &in);
-    hsAssert(result >= 0, "inet_pton failed");
-    if (result) {
-        addr = in.s_addr;
-    }
-
-    return addr;
-}
-
 } // pnNetCommon namespace
 
 

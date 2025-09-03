@@ -99,19 +99,6 @@ public:
         SetHost(addr);
     }
 
-    /**
-     * Initializes a new network address from the given IPv4 address and port
-     * number.
-     *
-     * @param addr The IPv4 address as a string in 4-octet dotted notation.
-     * @param port The port number as a 16-bit host order integer.
-     */
-    plNetAddress(const ST::string& addr, uint16_t port)
-        : fHost(), fPort(port)
-    {
-        SetHost(addr);
-    }
-
     bool operator==(const plNetAddress& other) const {
         return (GetHost() == other.GetHost()) && (GetPort() == other.GetPort());
     }
@@ -158,14 +145,6 @@ public:
      * @return The IPv4 host address
      */
     std::array<uint8_t, 4> GetHostBytes() const;
-
-    /**
-     * Sets the IPv4 address of the host from a string in 4-octet dotted
-     * notation.
-     *
-     * @param hostname The IPv4 host address.
-     */
-    void SetHost(const ST::string& hostname);
 
     /**
      * Sets the IPv4 address of the host from an unsigned 32-bit integer in

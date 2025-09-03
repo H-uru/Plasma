@@ -77,7 +77,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace pnNetCommon
 {
-    uint32_t GetBinAddr(const ST::string& textAddr);
     ST::string GetTextAddr(uint32_t binAddr);
 }
 
