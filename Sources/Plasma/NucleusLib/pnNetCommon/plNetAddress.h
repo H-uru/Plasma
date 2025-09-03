@@ -163,6 +163,15 @@ public:
     void SetHost(const std::array<uint8_t, 4>& ip4addr);
 
     /**
+     * Returns the given IPv4 address as a string in 4-octet dotted
+     * notation.
+     *
+     * @param ip4addr The IPv4 address to convert, in network byte order.
+     * @return A string of the given IPv4 address.
+     */
+    static ST::string GetIPv4AddressAsString(uint32_t ip4addr);
+
+    /**
      * Returns the IPv4 address of the host as a string in 4-octet dotted
      * notation.
      *

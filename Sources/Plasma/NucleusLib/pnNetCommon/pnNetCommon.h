@@ -75,13 +75,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ///////////////////////////////////////////////////////////////////
 
-namespace pnNetCommon
-{
-    ST::string GetTextAddr(uint32_t binAddr);
-}
-
-///////////////////////////////////////////////////////////////////
-
 class plCreatableStream : public plCreatable
 {
     hsRAMStream fStream;
