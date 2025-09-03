@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <array>
 #include <gtest/gtest.h>
 #include <string_theory/string>
 
