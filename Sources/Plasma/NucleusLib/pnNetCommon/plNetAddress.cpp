@@ -66,11 +66,6 @@ std::array<uint8_t, 4> plNetAddress::GetHostBytes() const
     return bytes;
 }
 
-void plNetAddress::SetHost(const ST::string& hostname)
-{
-    fHost = pnNetCommon::GetBinAddr(hostname);
-}
-
 void plNetAddress::SetHost(const std::array<uint8_t, 4>& addr)
 {
     static_assert(sizeof(fHost) == sizeof(addr));
