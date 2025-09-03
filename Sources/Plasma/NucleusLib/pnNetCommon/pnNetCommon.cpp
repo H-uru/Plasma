@@ -39,30 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <string>
+
 #include "pnNetCommon.h"
 
-#if defined(HS_BUILD_FOR_UNIX)
-# include <sys/socket.h>
-# include <arpa/inet.h>
-#elif defined(HS_BUILD_FOR_WIN32)
-#include "hsWindows.h"
-#include <ws2tcpip.h>
-#else
-#error "Not implemented for this platform"
-#endif
+#include <string_theory/format>
 
 namespace pnNetCommon
 {
 
-// NOTE: On Win32, WSAStartup() must be called before GetTextAddr() will work.
 ST::string GetTextAddr(uint32_t binAddr)
 {
-    in_addr in;
-    in.s_addr = binAddr;
-
-    char text_addr[INET_ADDRSTRLEN];
-    return ST::string::from_utf8(inet_ntop(AF_INET, &in, text_addr, sizeof(text_addr)));
+    static_assert(sizeof(binAddr) == 4*sizeof(uint8_t));
+    const auto* bytes = reinterpret_cast<const uint8_t*>(&binAddr);
+    return ST::format("{}.{}.{}.{}", bytes[0], bytes[1], bytes[2], bytes[3]);
 }
 
 } // pnNetCommon namespace
