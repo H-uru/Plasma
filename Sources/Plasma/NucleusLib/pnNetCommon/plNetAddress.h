@@ -100,10 +100,10 @@ public:
     }
 
     /**
-     * Initializes a new network address from the given hostname and port
+     * Initializes a new network address from the given IPv4 address and port
      * number.
      *
-     * @param addr The DNS hostname of the host.
+     * @param addr The IPv4 address as a string in 4-octet dotted notation.
      * @param port The port number as a 16-bit host order integer.
      */
     plNetAddress(const ST::string& addr, uint16_t port)
@@ -160,9 +160,10 @@ public:
     std::array<uint8_t, 4> GetHostBytes() const;
 
     /**
-     * Sets the IPv4 address of the host from a DNS name.
+     * Sets the IPv4 address of the host from a string in 4-octet dotted
+     * notation.
      *
-     * @param hostname The DNS name of the host.
+     * @param hostname The IPv4 host address.
      */
     void SetHost(const ST::string& hostname);
 
