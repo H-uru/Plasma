@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <array>
 #include <string_theory/format>
-#include <string_theory/string_stream>
 
 #include "plNetAddress.h"
 
@@ -60,9 +59,7 @@ ST::string plNetAddress::GetHostString() const
 
 ST::string plNetAddress::GetHostWithPort() const
 {
-    ST::string_stream ss;
-    ss << GetIPv4AddressAsString(fHost) << ":" << fPort;
-    return ss.to_string();
+    return ST::format("{}:{}", GetIPv4AddressAsString(fHost), fPort);
 }
 
 std::array<uint8_t, 4> plNetAddress::GetHostBytes() const
@@ -81,11 +78,7 @@ void plNetAddress::SetHost(const std::array<uint8_t, 4>& addr)
 
 ST::string plNetAddress::AsString() const
 {
-    ST::string_stream ss;
-    ss << "IP:" << GetIPv4AddressAsString(fHost);
-    ss << ":" << fPort;
-
-    return ss.to_string();
+    return ST::format("IP:{}:{}", GetIPv4AddressAsString(fHost), fPort);
 }
 
 void plNetAddress::Read(hsStream * s)
