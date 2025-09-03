@@ -44,9 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #if defined(HS_BUILD_FOR_UNIX)
 # include <sys/socket.h>
-# include <netinet/in.h>
 # include <arpa/inet.h>
-# include <netdb.h>
 #elif defined(HS_BUILD_FOR_WIN32)
 #include "hsWindows.h"
 #include <ws2tcpip.h>
@@ -79,19 +77,6 @@ uint32_t GetBinAddr(const ST::string& textAddr)
     hsAssert(result >= 0, "inet_pton failed");
     if (result) {
         addr = in.s_addr;
-    } else {
-        struct addrinfo* ai = nullptr;
-        struct addrinfo hints = {};
-        hints.ai_family = PF_INET;
-        hints.ai_flags  = AI_CANONNAME;
-        if (getaddrinfo(textAddr.c_str(), nullptr, &hints, &ai) != 0)
-        {
-            hsAssert(false, "getaddrinfo failed");
-            return addr;
-        }
-
-        addr = reinterpret_cast<sockaddr_in *>(ai->ai_addr)->sin_addr.s_addr;
-        freeaddrinfo(ai);
     }
 
     return addr;
