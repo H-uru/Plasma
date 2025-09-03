@@ -73,8 +73,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define Int2Bool(value) ((value)?true:false)
 
 
-///////////////////////////////////////////////////////////////////
-
 class plCreatableStream : public plCreatable
 {
     hsRAMStream fStream;
@@ -90,6 +88,3 @@ public:
 };
 
 #endif // pnNetCommon_h_inc
-
-///////////////////////////////////////////////////////////////////
-// End.
