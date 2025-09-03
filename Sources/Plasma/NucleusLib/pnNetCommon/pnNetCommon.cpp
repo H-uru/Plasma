@@ -43,8 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetCommon.h"
 
 
-////////////////////////////////////////////////////////////////////
-
 void plCreatableStream::Write( hsStream* stream, hsResMgr* mgr )
 {
     fStream.Rewind();
@@ -73,6 +71,3 @@ void plCreatableStream::Read( hsStream* stream, hsResMgr* mgr )
     fStream.Rewind();
     delete[] buf;
 }
-
-////////////////////////////////////////////////////////////////////
-// End.
