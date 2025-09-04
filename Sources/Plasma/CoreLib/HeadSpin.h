@@ -157,29 +157,11 @@ using hsSsize_t = std::make_signed<size_t>::type;
 
 /************************ Debug/Error Macros **************************/
 
-void hsDebugEnableGuiAsserts(bool enabled);
-
+// Implemented in hsDebug.cpp.
 #ifndef HS_DEBUGGING
 [[noreturn]]
 #endif
 void hsDebugAssertionFailed(int line, const char* file, const char* msg);
-
-bool hsDebugIsDebuggerPresent();
-void hsDebugBreakIfDebuggerPresent();
-void hsDebugBreakAlways();
-
-/**
- * Print a message to stderr (and to the Windows debugger output, if on Windows with a debugger attached).
- * This function's output is never redirected to a log file (unlike hsStatusMessage).
- *
- * Be aware that this function's output is impossible to see for the average player/tester.
- * Prefer using other logging functions instead.
- * Please use hsDebugPrintToTerminal ONLY for debugging messages aimed at developers
- * that must not go to a log file for some reason.
- *
- * @param msg message to print
- */
-void hsDebugPrintToTerminal(const ST::string& msg);
 
 #ifdef HS_DEBUGGING
     
@@ -197,11 +179,7 @@ void hsDebugPrintToTerminal(const ST::string& msg);
 
 #define DEFAULT_FATAL(var) default: FATAL("No valid case for switch variable '" #var "'"); break
 
-typedef void (*hsStatusMessageProc)(const ST::string& message);
-
-extern hsStatusMessageProc gHSStatusProc;
-hsStatusMessageProc hsSetStatusMessageProc(hsStatusMessageProc newProc);
-
+// Can be redirected using hsSetStatusMessageProc (from hsDebug.h).
 #ifdef PLASMA_EXTERNAL_RELEASE
 #   define hsStatusMessage(x) ((void)0)
 #else
