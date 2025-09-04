@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMath/hsRadixSort.h"
 #include "plSpaceTree.h"
 
- // for testing, get hsRand()
 #include "hsTimer.h"
 #include "plIntersect/plVolumeIsect.h"
 
