@@ -46,17 +46,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 TEST(hsDarwin_CoreFoundation, converts_to_ST_string)
 {
-    CFStringRef str = CFSTR("Test ö");
+    CFStringRef str = CFSTR("Test 123");
     ST::string st = STStringFromCFString(str);
-    EXPECT_STREQ(st.c_str(), "Test \xc3\xb6");
+    EXPECT_STREQ(st.c_str(), "Test 123");
 }
 
 TEST(hsDarwin_CoreFoundation, converts_to_CFString)
 {
+    ST::string st = ST_LITERAL("Test 123");
+    CFStringRef cf = CFStringCreateWithSTString(st);
+    EXPECT_EQ(kCFCompareEqualTo, CFStringCompare(cf, CFSTR("Test 123"), 0));
+    CFRelease(cf);
+}
+
+TEST(hsDarwin_CoreFoundation, converts_to_ST_string_UTF8)
+{
+    CFStringRef str = CFStringCreateWithCString(nullptr, "Test ö", kCFStringEncodingUTF8);
+    ST::string st = STStringFromCFString(str);
+    EXPECT_STREQ(st.c_str(), "Test \xc3\xb6");
+    CFRelease(str);
+}
+
+TEST(hsDarwin_CoreFoundation, converts_to_CFString_UTF8)
+{
+    CFStringRef str = CFStringCreateWithCString(nullptr, "Test ö", kCFStringEncodingUTF8);
     ST::string st = ST_LITERAL("Test ö");
     CFStringRef cf = CFStringCreateWithSTString(st);
-    EXPECT_EQ(kCFCompareEqualTo, CFStringCompare(cf, CFSTR("Test ö"), 0));
+    EXPECT_EQ(kCFCompareEqualTo, CFStringCompare(cf, str, 0));
     CFRelease(cf);
+    CFRelease(str);
 }
 
 TEST(hsDarwin_CoreFoundation, returns_retained_CFString)
