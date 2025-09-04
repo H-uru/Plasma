@@ -109,27 +109,6 @@ namespace ST { class string; }
 #   define CDECL
 #endif
 
-// Based on std::numbers from C++20
-namespace hsConstants
-{
-    template <typename T>
-    inline constexpr T pi =
-        std::enable_if_t<std::is_floating_point_v<T>, T>(3.141592653589793238462643383279502884L);
-
-    template <typename T>
-    inline constexpr T half_pi = pi<T> / T(2.0);
-
-    template <typename T>
-    inline constexpr T two_pi = pi<T> * T(2.0);
-
-    template <typename T>
-    inline constexpr T sqrt2 =
-        std::enable_if_t<std::is_floating_point_v<T>, T>(1.414213562373095048801688724209698079L);
-
-    template <typename T>
-    inline constexpr T inv_sqrt2 = T(1.0) / hsConstants::sqrt2<T>;
-}
-
 // Indirection required for joining preprocessor macros together
 #define _hsMacroJoin_(lhs, rhs) lhs ## rhs
 #define hsMacroJoin(lhs, rhs)   _hsMacroJoin_(lhs, rhs)
@@ -289,11 +268,6 @@ template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
 #       define fileno(__F) _fileno(__F)
 #   endif
 #endif
-
-// Useful floating point utilities
-constexpr float hsDegreesToRadians(float deg) { return deg * (hsConstants::pi<float> / 180.f); }
-constexpr float hsRadiansToDegrees(float rad) { return rad * (180.f / hsConstants::pi<float>); }
-constexpr float hsInvert(float a) { return 1.f / a; }
 
 /************************ Debug/Error Macros **************************/
 

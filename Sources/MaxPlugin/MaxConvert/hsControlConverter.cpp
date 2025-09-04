@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsExceptionStack.h"
+#include "hsMath.h"
 #include "hsWindows.h"
 
 #include "MaxMain/MaxAPI.h"
