@@ -67,7 +67,6 @@ static const char* keyNameToLookFor = "AgeSDLHook";
 static const uint16_t CLASS_TO_TRACK = CLASS_INDEX_SCOPED(plSceneObject);
 static const int kCloneID = 0;
 static const int kClonePlayerID = 0;
-static plKeyData* lastData = nullptr;
 static const int kLocSeq = -1;
 
 class keyDataFriend : public plKeyData
@@ -236,15 +235,7 @@ void plKey::IIncRef()
 #if TRACK_REFS  // FOR DEBUGGING ONLY
     if( IsTracked(fKeyData) )
     {
-        ST::string msg;
-        plConst(int) kMaxCnt(30);
-        // FIXME These ifs seem to do nothing - what is the point of this?
-        if( fKeyData->fRefCount > kMaxCnt )
-            msg.clear();
-        if( lastData && (fKeyData != lastData) )
-            msg.clear();
-        lastData = fKeyData;
-        msg = ST::format("+: Key {} {} is being reffed! Refcount: {}", keyNameToLookFor, CloneString(fKeyData), fKeyData->fRefCount);
+        ST::string msg = ST::format("+: Key {} {} is being reffed! Refcount: {}", keyNameToLookFor, CloneString(fKeyData), fKeyData->fRefCount);
         //hsAssert(false, msg.c_str());
         hsStatusMessage(msg);
     }
@@ -265,19 +256,9 @@ void plKey::IDecRef()
 #if TRACK_REFS  // FOR DEBUGGING ONLY
     if( IsTracked(fKeyData) )
     {
-        ST::string msg;
-        plConst(int) kMinCnt(2);
-        // FIXME These ifs seem to do nothing - what is the point of this?
-        if( fKeyData->fRefCount < kMinCnt )
-            msg.clear();
-        if( lastData && (fKeyData != lastData) )
-            msg.clear();
-        lastData = fKeyData;
-        msg = ST::format("-: Key {} {} is being de-reffed! Refcount: {}", keyNameToLookFor, CloneString(fKeyData), fKeyData->fRefCount);
+        ST::string msg = ST::format("-: Key {} {} is being de-reffed! Refcount: {}", keyNameToLookFor, CloneString(fKeyData), fKeyData->fRefCount);
         //hsAssert(false, msg.c_str());
         hsStatusMessage(msg);
-        if( fKeyData->fRefCount == 0 )
-            msg.clear();
     }
 #endif
 
