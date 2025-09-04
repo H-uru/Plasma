@@ -51,6 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#include <hkmath/quaternion.h>
 
 #include <cmath>
+#include <string_theory/format>
+#include <string_theory/string_stream>
 
 // singular
 #include "plMatrixChannel.h"
@@ -167,12 +169,12 @@ plAGChannel * plMatrixChannel::MakeTimeScale(plScalarChannel *timeSource)
 // -----
 void plMatrixChannel::Dump(int indent, bool optimized, double time)
 {
-    std::string indentStr;
+    ST::string_stream indentStr;
     for(int i = 0; i < indent; i++)
     {
-        indentStr += "- ";
+        indentStr << "- ";
     }
-    hsStatusMessageF("%s matChan<%s>", indentStr.c_str(), fName.c_str());
+    hsStatusMessageF("{} matChan<{}>", indentStr.to_string(), fName);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -297,12 +299,12 @@ plAGChannel * plMatrixTimeScale::Detach(plAGChannel * detach)
 // -----
 void plMatrixTimeScale::Dump(int indent, bool optimized, double time)
 {
-    std::string indentStr;
+    ST::string_stream indentStr;
     for(int i = 0; i < indent; i++)
     {
-        indentStr += "- ";
+        indentStr << "- ";
     }
-    hsStatusMessageF("%s matTimeScale <%s> at time <%f>", indentStr.c_str(), fName.c_str(), fTimeSource->Value(time, true));
+    hsStatusMessageF("{} matTimeScale <{}> at time <{}>", indentStr.to_string(), fName, fTimeSource->Value(time, true));
     fChannelIn->Dump(indent + 1, optimized, time);
 
 }
@@ -470,12 +472,12 @@ plAGChannel *plMatrixBlend::Optimize(double time)
 // -----
 void plMatrixBlend::Dump(int indent, bool optimized, double time)
 {
-    std::string indentStr;
+    ST::string_stream indentStr;
     for(int i = 0; i < indent; i++)
     {
-        indentStr += "- ";
+        indentStr << "- ";
     }
-    hsStatusMessageF("%s matBlend<%s>, bias:<%f>", indentStr.c_str(), fName.c_str(), fChannelBias->Value(time, true));
+    hsStatusMessageF("{} matBlend<{}>, bias:<{}>", indentStr.to_string(), fName, fChannelBias->Value(time, true));
     if(optimized)
     {
         fOptimizedB->Dump(indent + 1, optimized, time);
@@ -569,12 +571,12 @@ plAGChannel *plMatrixControllerChannel::MakeCacheChannel(plAnimTimeConvert *atc)
 
 void plMatrixControllerChannel::Dump(int indent, bool optimized, double time)
 {
-    std::string indentStr;
+    ST::string_stream indentStr;
     for(int i = 0; i < indent; i++)
     {
-        indentStr += "- ";
+        indentStr << "- ";
     }
-    hsStatusMessageF("%s MatController<%s>", indentStr.c_str(), fName.c_str());
+    hsStatusMessageF("{} MatController<{}>", indentStr.to_string(), fName);
 }
 
 // Write -------------------------------------------------------------

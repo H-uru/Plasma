@@ -166,8 +166,7 @@ bool plSimpleModifier::IHandleCmd(plAnimCmdMsg* modMsg)
     }
 
 #if 0   // debug
-    char str[256];
-    sprintf(str, "ModHandleCmd: time=%f, ts=%f FWD=%d, BWD=%d, SpeedChange=%d sp=%f, CONT=%d, STOP=%d",
+    hsStatusMessageF("ModHandleCmd: time={}, ts={} FWD={}, BWD={}, SpeedChange={} sp={}, CONT={}, STOP={}",
         hsTimer::GetSysSeconds(),
         modMsg->GetTimeStamp(),
         modMsg->Cmd(plAnimCmdMsg::kSetForewards),
@@ -175,8 +174,8 @@ bool plSimpleModifier::IHandleCmd(plAnimCmdMsg* modMsg)
         modMsg->Cmd(plAnimCmdMsg::kSetSpeed),
         modMsg->fSpeed,
         modMsg->Cmd(plAnimCmdMsg::kContinue),
-        modMsg->Cmd(plAnimCmdMsg::kStop));
-    hsStatusMessage(str);
+        modMsg->Cmd(plAnimCmdMsg::kStop)
+    );
 #endif
     return true;
 }   

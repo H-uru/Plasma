@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 #include <string_theory/format>
-
+#include <string_theory/stdio>
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -83,7 +83,7 @@ void hsDebugAssertionFailed(int line, const char* file, const char* msg)
     } else
 #endif // _MSC_VER
     {
-        hsDebugPrintToTerminal(ST::format("-------\nASSERTION FAILED:\nFile: {}   Line: {}\nMessage: {}\n-------", file, line, msg).c_str());
+        hsDebugPrintToTerminal(ST::format("-------\nASSERTION FAILED:\nFile: {}   Line: {}\nMessage: {}\n-------", file, line, msg));
         fflush(stderr);
 
         hsDebugBreakAlways();
@@ -154,16 +154,16 @@ void hsDebugBreakAlways()
 #endif // _MSC_VER
 }
 
-void hsDebugPrintToTerminal(const char* msg)
+void hsDebugPrintToTerminal(const ST::string& msg)
 {
-    fprintf(stderr, "%s\n", msg);
+    ST::printf(stderr, "{}\n", msg);
 
 #ifdef _MSC_VER
     if (hsDebugIsDebuggerPresent())
     {
         // Also print to the MSVC Output window
-        OutputDebugStringA(msg);
-        OutputDebugStringA("\n");
+        OutputDebugStringW(msg.to_wchar().c_str());
+        OutputDebugStringW(L"\n");
     }
 #endif
 }
@@ -183,33 +183,18 @@ hsStatusMessageProc hsSetStatusMessageProc(hsStatusMessageProc newProc)
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 
-void hsStatusMessage(const char* message)
+void hsStatusMessage(const ST::string& message)
 {
     if (gHSStatusProc) {
         gHSStatusProc(message);
     } else {
 #if HS_BUILD_FOR_UNIX
-        printf("%s\n", message);
+        ST::printf("{}\n", message);
 #elif HS_BUILD_FOR_WIN32
-        OutputDebugString(message);
-        OutputDebugString("\n");
+        OutputDebugStringW(message.to_wchar().c_str());
+        OutputDebugStringW(L"\n");
 #endif
     }
-}
-
-void hsStatusMessageV(const char * fmt, va_list args)
-{
-    char  buffer[2000];
-    vsnprintf(buffer, std::size(buffer), fmt, args);
-    hsStatusMessage(buffer);
-}
-
-void hsStatusMessageF(const char * fmt, ...)
-{
-    va_list args;
-    va_start(args,fmt);
-    hsStatusMessageV(fmt,args);
-    va_end(args);
 }
 
 #endif

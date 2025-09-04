@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include <cmath>
+#include <string_theory/format>
 
 #include "plAnimEaseTypes.h"
 #include "plAnimTimeConvert.h"
@@ -760,7 +761,7 @@ float plAnimTimeConvert::GetBestStopDist(float min, float max, float norm, float
         }
     }
     
-    hsStatusMessageF("found stop point %f", bestTime);
+    hsStatusMessageF("found stop point {}", bestTime);
 
     if (bestTime == -1)
         bestTime = norm;

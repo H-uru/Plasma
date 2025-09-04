@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 
 #include <cmath>
+#include <string_theory/format>
 
 #include "plCameraModifier.h"
 #include "plVirtualCamNeu.h"
@@ -1022,7 +1023,7 @@ void plCameraBrain1_Avatar::Update(bool forced)
     if (fFlags.IsBitSet(kIsTransitionCamera))
     {
         if (GetKey())
-            hsStatusMessageF("%s thinks it's the transition camera", GetKeyName().c_str());
+            hsStatusMessageF("{} thinks it's the transition camera", GetKeyName());
     }
     else
     {

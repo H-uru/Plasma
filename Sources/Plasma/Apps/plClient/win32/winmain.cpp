@@ -474,7 +474,7 @@ void DeInitNetClientComm()
 //
 static plStatusLog* s_DebugLog = nullptr;
 
-static void _StatusMessageProc(const char* msg)
+static void _StatusMessageProc(const ST::string& msg)
 {
 #if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
     s_DebugLog->AddLine(msg);
@@ -1181,7 +1181,7 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpCmdLine, int 
 
     // Redirect hsStatusMessage to plasmadbg.log
     DebugInit();
-    hsStatusMessage(ST::format("Plasma 2.0.{}.{} - {}", PLASMA2_MAJOR_VERSION, PLASMA2_MINOR_VERSION, plProduct::ProductString()).c_str());
+    hsStatusMessageF("Plasma 2.0.{}.{} - {}", PLASMA2_MAJOR_VERSION, PLASMA2_MINOR_VERSION, plProduct::ProductString());
 
     FILE *serverIniFile = plFileSystem::Open(serverIni, "rb");
     if (serverIniFile)

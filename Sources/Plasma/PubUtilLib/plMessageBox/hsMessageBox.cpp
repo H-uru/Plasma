@@ -54,7 +54,7 @@ hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& cap
     if (hsMessageBox_SuppressPrompts)
         return hsMBoxOk;
 
-    hsStatusMessage(ST::format("{}\n{}", message, caption).c_str());
+    hsStatusMessageF("{}\n{}", message, caption);
     return hsMBoxCancel;
 }
 #endif

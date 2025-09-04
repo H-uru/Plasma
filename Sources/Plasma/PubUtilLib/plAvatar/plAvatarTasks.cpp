@@ -54,6 +54,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plgDispatch.h"
 
+#include <string_theory/format>
+
 // other
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plCameraMsg.h"
@@ -407,7 +409,7 @@ bool plAvAnimTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double t
         }
         else
         {
-            hsStatusMessageF("Couldn't find animation <%s> for plAvAnimTask: will try again", fAnimName.c_str());
+            hsStatusMessageF("Couldn't find animation <{}> for plAvAnimTask: will try again", fAnimName);
         }
     }
     else

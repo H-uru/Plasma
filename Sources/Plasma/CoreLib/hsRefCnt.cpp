@@ -68,14 +68,14 @@ struct _RefCountLeakCheck
         hsLockGuard(m_mutex);
 
         hsDebugPrintToTerminal(ST::format("Refs tracked:  {} created, {} destroyed\n",
-                                          m_added, m_removed).c_str());
+                                          m_added, m_removed));
         if (m_refs.empty())
             return;
 
-        hsDebugPrintToTerminal(ST::format("    {} objects leaked...\n", m_refs.size()).c_str());
+        hsDebugPrintToTerminal(ST::format("    {} objects leaked...\n", m_refs.size()));
         for (hsRefCnt *ref : m_refs) {
             hsDebugPrintToTerminal(ST::format("    {#08x} {}: {} refs remain\n",
-                                              (uintptr_t)ref, typeid(*ref).name(), ref->RefCnt()).c_str());
+                                              (uintptr_t)ref, typeid(*ref).name(), ref->RefCnt()));
         }
     }
 
@@ -130,9 +130,9 @@ void hsRefCnt::UnRef(const char* tag)
 
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     if (tag)
-        hsDebugPrintToTerminal(ST::format("Dec {#x} {}: {}", reinterpret_cast<uintptr_t>(this), tag, fRefCnt - 1).c_str());
+        hsDebugPrintToTerminal(ST::format("Dec {#x} {}: {}", reinterpret_cast<uintptr_t>(this), tag, fRefCnt - 1));
     else
-        hsDebugPrintToTerminal(ST::format("Dec {#x}: {}", reinterpret_cast<uintptr_t>(this), fRefCnt - 1).c_str());
+        hsDebugPrintToTerminal(ST::format("Dec {#x}: {}", reinterpret_cast<uintptr_t>(this), fRefCnt - 1));
 #endif
 
     if (fRefCnt == 1)   // don't decrement if we call delete
@@ -145,9 +145,9 @@ void hsRefCnt::Ref(const char* tag)
 {
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     if (tag)
-        hsDebugPrintToTerminal(ST::format("Inc {#x} {}: {}", reinterpret_cast<uintptr_t>(this), tag, fRefCnt + 1).c_str());
+        hsDebugPrintToTerminal(ST::format("Inc {#x} {}: {}", reinterpret_cast<uintptr_t>(this), tag, fRefCnt + 1));
     else
-        hsDebugPrintToTerminal(ST::format("Inc {#x}: {}", reinterpret_cast<uintptr_t>(this), fRefCnt + 1).c_str());
+        hsDebugPrintToTerminal(ST::format("Inc {#x}: {}", reinterpret_cast<uintptr_t>(this), fRefCnt + 1));
 #endif
 
     ++fRefCnt;
@@ -156,7 +156,7 @@ void hsRefCnt::Ref(const char* tag)
 void hsRefCnt::TransferRef(const char* oldTag, const char* newTag)
 {
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
-    hsDebugPrintToTerminal(ST::format("Inc {#x} {}: (xfer)", reinterpret_cast<uintptr_t>(this), newTag).c_str());
-    hsDebugPrintToTerminal(ST::format("Dec {#x} {}: (xfer)", reinterpret_cast<uintptr_t>(this), oldTag).c_str());
+    hsDebugPrintToTerminal(ST::format("Inc {#x} {}: (xfer)", reinterpret_cast<uintptr_t>(this), newTag));
+    hsDebugPrintToTerminal(ST::format("Dec {#x} {}: (xfer)", reinterpret_cast<uintptr_t>(this), oldTag));
 #endif
 }

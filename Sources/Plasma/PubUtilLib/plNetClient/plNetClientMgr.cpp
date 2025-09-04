@@ -262,7 +262,7 @@ bool plNetClientMgr::Log(const ST::string& str) const
     ST::string buf2 = ST::format("{.2f} {}", hsTimer::GetSeconds(), ProcessTab(str.c_str()));
 
     if ( GetConsoleOutput() )
-        hsStatusMessage(buf2.c_str());
+        hsStatusMessage(buf2);
 
     GetLog();
 
@@ -1196,7 +1196,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
         plSceneObject *playerSO = plSceneObject::ConvertNoRef(playerKey->ObjectIsLoaded());
         if (!playerSO)
         {
-            hsStatusMessageF("Ignoring player page message for non-existant player.");
+            hsStatusMessage("Ignoring player page message for non-existant player.");
         }
         else
         if(playerMsg->fPlayer)

@@ -59,7 +59,7 @@ void plSDLParser::DebugMsg(const ST::string& msg) const
     if (netApp)
         hsLogEntry(netApp->DebugMsg(msg));
     else
-        hsStatusMessage(msg.c_str());
+        hsStatusMessage(msg);
 }
 
 //
@@ -381,7 +381,7 @@ bool plSDLParser::IReadDescriptors() const
             if (netApp)
                 netApp->ErrorMsg("Error loading SDL file {}", files[i]);
             else
-                hsStatusMessageF("Error loading SDL file %s", files[i].AsString().c_str());
+                hsStatusMessageF("Error loading SDL file {}", files[i]);
             ret=false;
         }
         else

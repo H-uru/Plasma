@@ -320,10 +320,10 @@ plPythonFileMod::~plPythonFileMod()
         PyObject* m;
         PyObject* modules = PyImport_GetModuleDict();
         if (modules && (m = PyDict_GetItemString(modules, fModuleName.c_str())) && PyModule_Check(m)) {
-            hsStatusMessageF("Module %s removed from python dictionary", fModuleName.c_str());
+            hsStatusMessageF("Module {} removed from python dictionary", fModuleName);
             PyDict_DelItemString(modules, fModuleName.c_str());
         } else {
-            hsStatusMessageF("Module %s not found in python dictionary. Already removed?",fModuleName.c_str());
+            hsStatusMessageF("Module {} not found in python dictionary. Already removed?", fModuleName);
         }
     }
 }

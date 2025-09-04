@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPickingDetector.h"
 
+#include <string_theory/format>
+
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plObjRefMsg.h"
 #include "pnNetCommon/plNetApp.h"
@@ -97,7 +99,7 @@ bool plPickingDetector::MsgReceive(plMessage* msg)
 
             pMsg->SetSender(GetKey());
             pMsg->Send();
-            hsStatusMessageF("%s sending activate message to %s",GetKey()->GetName().c_str(), receiver->GetName().c_str());
+            hsStatusMessageF("{} sending activate message to {}", GetKey()->GetName(), receiver->GetName());
         }
     }
 

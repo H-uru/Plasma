@@ -128,7 +128,7 @@ plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
     fCleanupChannels.push_back(timeChan);
 
 #ifdef SHOW_AG_CHANGES
-    hsStatusMessageF("\nAbout to Attach anim <%s>", GetName().c_str());
+    hsStatusMessageF("\nAbout to Attach anim <{}>", GetName());
     fMaster->DumpAniGraph("bone_pelvis", false, hsTimer::GetSysSeconds());
 #endif
 
@@ -315,7 +315,7 @@ void plAGAnimInstance::Detach()
 void plAGAnimInstance::DetachChannels()
 {
 #ifdef SHOW_AG_CHANGES
-    hsStatusMessageF("\nAbout to DETACH anim <%s>", GetName().c_str());
+    hsStatusMessageF("\nAbout to DETACH anim <{}>", GetName());
     fMaster->DumpAniGraph("bone_pelvis", false, hsTimer::GetSysSeconds());
 #endif
     plDetachMap::iterator i = fManualDetachChannels.begin();
@@ -346,7 +346,7 @@ void plAGAnimInstance::DetachChannels()
     fCleanupChannels.clear();
 
 #ifdef SHOW_AG_CHANGES
-    hsStatusMessageF("\nFinished DETACHING anim <%s>", GetName().c_str());
+    hsStatusMessageF("\nFinished DETACHING anim <{}>", GetName());
     fMaster->DumpAniGraph("bone_pelvis", false, hsTimer::GetSysSeconds());
 #endif
 }
@@ -651,7 +651,7 @@ void DumpAGAllocs()
 
         uint16_t realClassIndex = al->fObject->ClassIndex();
 
-        hsStatusMessage(ST::format("agAlloc: an: {} ch: {}, cl: {}", al->fAnimName, al->fChannelName, plFactory::GetNameOfClass(realClassIndex)).c_str());
+        hsStatusMessageF("agAlloc: an: {} ch: {}, cl: {}", al->fAnimName, al->fChannelName, plFactory::GetNameOfClass(realClassIndex));
 
     }
     // it's not fast but it's safe and simple..

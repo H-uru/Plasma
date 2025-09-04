@@ -786,7 +786,7 @@ void plMetalPipeline::IReleaseDeviceObjects()
 
 void plMetalPipeline::LoadResources()
 {
-    hsStatusMessageF("Begin Device Reload t=%f", hsTimer::GetSeconds());
+    hsStatusMessageF("Begin Device Reload t={}", hsTimer::GetSeconds());
     plNetClientApp::StaticDebugMsg("Begin Device Reload");
 
     if (fFragFunction == nil) {
@@ -823,7 +823,7 @@ void plMetalPipeline::LoadResources()
 
     plProfile_IncCount(PipeReload, 1);
 
-    hsStatusMessageF("End Device Reload t=%f", hsTimer::GetSeconds());
+    hsStatusMessageF("End Device Reload t={}", hsTimer::GetSeconds());
     plNetClientApp::StaticDebugMsg("End Device Reload");
 }
 

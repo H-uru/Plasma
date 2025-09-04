@@ -79,7 +79,7 @@ HRESULT plDXShader::IOnError(HRESULT hr, ST::string errStr)
 
     fOwner->Invalidate();
 
-    hsStatusMessage(fErrorString.c_str());
+    hsStatusMessage(fErrorString);
 
     return hr;
 }

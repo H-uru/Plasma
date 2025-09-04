@@ -323,7 +323,7 @@ bool plAnimStage::Detach(plArmatureMod *armature)
     snprintf(sbuf, std::size(sbuf), "AnimStage::Detach - detaching stage %s", fAnimName.c_str());
     plAvatarMgr::GetInstance()->GetLog()->AddLine(sbuf);
 #endif
-//  hsStatusMessageF("Detaching plAnimStage <%s>", fAnimName.c_str());
+    // hsStatusMessageF("Detaching plAnimStage {}>", fAnimName);
     if(fArmature) {
         fArmature = nullptr;
 
@@ -336,7 +336,7 @@ bool plAnimStage::Detach(plArmatureMod *armature)
     } else {
         plAvatarMgr::GetInstance()->GetLog()->AddLine("AnimStage::Detach: stage already detached");
 #endif
-//      hsStatusMessageF("Detach: stage already detached.");
+        // hsStatusMessage("Detach: stage already detached.");
     }
     
     fBrain = nullptr;
@@ -521,7 +521,7 @@ bool plAnimStage::ITryAdvance(plArmatureMod *avMod)
     bool stageDone = false;
 
 
-    // hsStatusMessageF("Sending advance message for stage <%s>", fAnimName.c_str());
+    // hsStatusMessageF("Sending advance message for stage <{}>", fAnimName);
     if(fAdvanceType == kAdvanceAuto || fAdvanceType == kAdvanceOnMove) {
         stageDone = true;
     }
@@ -548,7 +548,7 @@ bool plAnimStage::ITryRegress(plArmatureMod *avMod)
     // we may want to rename this to "ReachedStageEnd"
     ISendNotify(kNotifyRegress, proEventData::kRegressPrevStage, avMod, fBrain);
 
-    // hsStatusMessageF("Sending regress message for stage <%s>", fAnimName.c_str());
+    // hsStatusMessageF("Sending regress message for stage <{}>", fAnimName);
     if(fRegressType == kRegressAuto) {
         stageDone = true;
     }

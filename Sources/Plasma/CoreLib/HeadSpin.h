@@ -319,7 +319,7 @@ void hsDebugBreakAlways();
  *
  * @param msg message to print
  */
-void hsDebugPrintToTerminal(const char* msg);
+void hsDebugPrintToTerminal(const ST::string& msg);
 
 #ifdef HS_DEBUGGING
     
@@ -337,18 +337,19 @@ void hsDebugPrintToTerminal(const char* msg);
 
 #define DEFAULT_FATAL(var) default: FATAL("No valid case for switch variable '" #var "'"); break
 
-typedef void (*hsStatusMessageProc)(const char message[]);
+typedef void (*hsStatusMessageProc)(const ST::string& message);
 
 extern hsStatusMessageProc gHSStatusProc;
 hsStatusMessageProc hsSetStatusMessageProc(hsStatusMessageProc newProc);
 
 #ifdef PLASMA_EXTERNAL_RELEASE
 #   define hsStatusMessage(x) ((void)0)
-#   define hsStatusMessageF(x, ...) ((void)0)
 #else
-    void hsStatusMessage(const char* message);
-    void hsStatusMessageF(const char* fmt, ...);
+    void hsStatusMessage(const ST::string& message);
 #endif // PLASMA_EXTERNAL_RELEASE
+
+// Defined as a macro instead of a template function to avoid globally including <string_theory/format>.
+#define hsStatusMessageF(message, ...) (hsStatusMessage(ST::format((message), __VA_ARGS__)))
 
 #if defined(__clang__) || defined(__GNUC__)
 #   define _COMPILER_WARNING_NAME(warning) "-W" warning
