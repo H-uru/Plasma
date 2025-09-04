@@ -222,22 +222,6 @@ template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
 
 /****************************************************************************
 *
-*   AUTO_INIT_FUNC
-*   Declares a function that is automatically called at program startup time
-*
-*   Example:
-*
-*   AUTO_INIT_FUNC(BuildLookupTables) {
-*       ...
-*   }
-*
-***/
-
-#define AUTO_INIT_FUNC(name)  namespace { struct name { name (); } name##_instance; } name::name ()
-
-
-/****************************************************************************
-*
 *   IS_POW2
 *
 ***/
