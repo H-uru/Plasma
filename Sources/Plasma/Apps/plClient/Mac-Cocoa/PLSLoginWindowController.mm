@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <regex>
 #import "PLSServerStatus.h"
 #import "NSString+StringTheory.h"
+#include "hsEndian.h"
 #include "pfPasswordStore/pfPasswordStore.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plProduct.h"

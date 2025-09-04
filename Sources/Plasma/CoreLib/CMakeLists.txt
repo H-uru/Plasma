@@ -41,6 +41,7 @@ set(CoreLib_HEADERS
     hsColorRGBA.h
     hsCpuID.h
     hsDarwin.h
+    hsEndian.h
     hsExceptions.h
     hsExceptionStack.h
     hsFastMath.h

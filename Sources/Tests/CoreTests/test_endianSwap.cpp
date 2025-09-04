@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include "hsEndian.h"
 #include "hsMath.h"
 
 TEST(endianSwap, detection_accuracy)

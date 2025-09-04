@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <type_traits>
 
 #include "hsBitVector.h"
+#include "hsEndian.h"
 #include "plProduct.h"
 #include "hsThread.h"
 #include "hsTimer.h"

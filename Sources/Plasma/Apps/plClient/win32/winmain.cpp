@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plCmdParser.h"
+#include "hsEndian.h"
 #include "plPipeline.h"
 #include "plProduct.h"
 #include "hsStream.h"
