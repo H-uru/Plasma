@@ -1,24 +1,15 @@
 {
   "name": "python3",
-  "version": "3.10.7",
-  "port-version": 10,
+  "version": "3.12.9",
+  "port-version": 2,
   "description": "The Python programming language",
   "homepage": "https://github.com/python/cpython",
   "license": "Python-2.0",
   "supports": "!uwp & !mingw",
   "dependencies": [
     {
-      "name": "bzip2",
-      "platform": "!(windows & static)"
-    },
-    "expat",
-    {
       "name": "gettext-libintl",
       "platform": "!windows"
-    },
-    {
-      "name": "libffi",
-      "platform": "!(windows & static)"
     },
     {
       "name": "libiconv",
@@ -29,22 +20,86 @@
       "platform": "!osx & !windows"
     },
     {
-      "name": "openssl",
-      "platform": "!(windows & static)"
+      "name": "python3",
+      "host": true,
+      "default-features": false
     },
     {
       "name": "python3",
+      "features": [
+        "extensions"
+      ],
+      "platform": "!windows"
+    },
+    {
+      "name": "vcpkg-get-python",
       "host": true
     },
     {
-      "name": "sqlite3",
-      "platform": "!(windows & static)"
+      "name": "vcpkg-make",
+      "host": true,
+      "platform": "!windows"
+    },
+    {
+      "name": "vcpkg-msbuild",
+      "host": true,
+      "platform": "windows"
     },
     "zlib"
   ],
+  "default-features": [
+    {
+      "name": "extensions",
+      "platform": "!(staticcrt & windows)"
+    }
+  ],
   "features": {
+    "extensions": {
+      "description": "Allow the build and usage of python extensions. On windows this requires python to be a dynamic library!",
+      "supports": "!(staticcrt & windows)",
+      "dependencies": [
+        {
+          "name": "bzip2",
+          "default-features": false
+        },
+        {
+          "name": "expat",
+          "default-features": false
+        },
+        {
+          "name": "libb2",
+          "default-features": false,
+          "platform": "!windows"
+        },
+        {
+          "name": "libffi",
+          "default-features": false
+        },
+        {
+          "name": "liblzma",
+          "default-features": false
+        },
+        {
+          "name": "openssl",
+          "default-features": false
+        },
+        {
+          "name": "sqlite3",
+          "default-features": false
+        },
+        {
+          "name": "vcpkg-pkgconfig-get-modules",
+          "host": true,
+          "platform": "windows & !mingw"
+        }
+      ]
+    },
     "deprecated-win7-support": {
-      "description": "Deprecated support for the Windows 7 platform -- may be removed at any time."
+      "description": "Windows 7 support"
+    },
+    "readline": {
+      "description": "Build with readline. Requires system readline to be installed",
+      "supports": "!windows"
     }
   }
 }
