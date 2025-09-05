@@ -67,6 +67,11 @@
           "default-features": false
         },
         {
+          "name": "libb2",
+          "default-features": false,
+          "platform": "!windows"
+        },
+        {
           "name": "libffi",
           "default-features": false
         },

@@ -157,11 +157,15 @@ if(_PythonFinder_WantLibs)
 
         # Plasma static modules for unix-like platforms.
         if(UNIX)
+            find_package(PkgConfig)
+            pkg_check_modules(B2 IMPORTED_TARGET libb2)
             find_package(ZLIB)
+
             if(TARGET @PythonFinder_PREFIX@::Python)
                 set_property(
                     TARGET @PythonFinder_PREFIX@::Python
                     APPEND PROPERTY INTERFACE_LINK_LIBRARIES
+                    PkgConfig::B2
                     ZLIB::ZLIB
                 )
             endif()
@@ -169,12 +173,14 @@ if(_PythonFinder_WantLibs)
                 set_property(
                     TARGET @PythonFinder_PREFIX@::Module
                     APPEND PROPERTY INTERFACE_LINK_LIBRARIES
+                    PkgConfig::B2
                     ZLIB::ZLIB
                 )
             endif()
             if(DEFINED @PythonFinder_PREFIX@_LIBRARIES)
                 list(
                     APPEND @PythonFinder_PREFIX@_LIBRARIES
+                    ${B2_LIBRARIES}
                     ${ZLIB_LIBRARIES}
                 )
             endif()
