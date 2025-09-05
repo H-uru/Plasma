@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 
 #include "cyPythonInterface.h"
+#include "plPythonCallable.h"
 #include "plPythonPack.h"
 #include "pyGlueHelpers.h"
 #include "pyObjectRef.h"
@@ -98,23 +99,13 @@ static pyObjectRef IInitModuleSpec(
         packedNameObj = PyUnicode_FromSTString(packedName);
     }
 
-    pyObjectRef spec = s_ModuleSpec->tp_alloc(s_ModuleSpec, 0);
+    pyObjectRef spec = plPython::CallObject(
+        (PyObject*)s_ModuleSpec,
+        std::move(modNameObj), std::move(loader),
+        plPython::KwArg("origin", std::move(packedNameObj)),
+        plPython::KwArg("is_package", isPackage)
+    );
     hsAssert(spec, "Could not create ModuleSpec object");
-
-    // Call the __init__() method the old fashioned way because using the fancy
-    // vectorcall stuff seems to corrupt the internal Python state. Probably because
-    // Python may not be completely initialized when this is called.
-    pyObjectRef args = PyTuple_New(2);
-    PyTuple_SetItem(args.Get(), 0, modNameObj.Release());
-    PyTuple_SetItem(args.Get(), 1, loader.Release());
-
-    pyObjectRef kwargs = PyDict_New();
-    PyDict_SetItemString(kwargs.Get(), "origin", packedNameObj.Get());
-    PyDict_SetItemString(kwargs.Get(), "is_package", isPackage ? Py_True : Py_False);
-    int initResult = s_ModuleSpec->tp_init(spec.Get(), args.Get(), kwargs.Get());
-
-    if (initResult != 0)
-        PYTHON_RETURN_ERROR;
     return spec;
 }
 
