@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef HS_BUILD_FOR_APPLE
 #include <CoreFoundation/CoreFoundation.h>
+#include <objc/message.h>
 
 template<typename T, typename U>
 inline T bridge_cast(U* obj)
@@ -59,6 +60,23 @@ inline T bridge_cast(U* obj)
     return reinterpret_cast<T>(obj);
 #endif
 }
+
+
+inline CFTypeRef hsAutorelease(CFTypeRef ptr) {
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    return CFAutorelease(ptr);
+#else
+    return (reinterpret_cast<CFTypeRef (*)(CFTypeRef, SEL)>(&objc_msgSend))(ptr, sel_registerName("autorelease"));
+#endif
+}
+
+#ifdef __OBJC__
+#   if __has_feature(objc_arc)
+        inline id hsAutorelease(id ptr) { return ptr; }
+#   else
+        inline id hsAutorelease(id ptr) { return [ptr autorelease]; }
+#   endif
+#endif
 
 [[nodiscard]]
 #if __has_feature(attribute_cf_returns_retained)

@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 + (id)stringWithSTString:(const ST::string&)string
 {
-    return NSStringCreateWithSTString(string);
+    return hsAutorelease(NSStringCreateWithSTString(string));
 }
 
 - (const ST::string)STString

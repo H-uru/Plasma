@@ -58,14 +58,14 @@ ST::string pfApplePasswordStore::GetPassword(const ST::string& username)
     CFStringRef accountName = CFStringCreateWithSTString(username);
     CFStringRef serviceName = CFStringCreateWithSTString(service);
 
-    CFAutorelease(accountName);
-    CFAutorelease(serviceName);
+    hsAutorelease(accountName);
+    hsAutorelease(serviceName);
 
     const void* keys[] = { kSecClass, kSecAttrAccount, kSecAttrService, kSecReturnData };
     const void* values[] = { kSecClassGenericPassword, accountName, serviceName, kCFBooleanTrue };
 
     CFDictionaryRef query = CFDictionaryCreate(nullptr, keys, values, 4, nullptr, nullptr);
-    CFAutorelease(query);
+    hsAutorelease(query);
 
     CFDataRef result;
 
@@ -89,15 +89,15 @@ bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::str
     CFStringRef serviceName = CFStringCreateWithSTString(service);
     CFDataRef   passwordData = CFDataCreate(nullptr, (const UInt8*)password.c_str(), password.size());
 
-    CFAutorelease(accountName);
-    CFAutorelease(serviceName);
-    CFAutorelease(passwordData);
+    hsAutorelease(accountName);
+    hsAutorelease(serviceName);
+    hsAutorelease(passwordData);
 
     const void* keys[] = { kSecClass, kSecAttrService, kSecAttrAccount, kSecValueData };
     const void* values[] = { kSecClassGenericPassword, serviceName, accountName, passwordData };
 
     CFDictionaryRef query = CFDictionaryCreate(nullptr, keys, values, 4, nullptr, nullptr);
-    CFAutorelease(query);
+    hsAutorelease(query);
 
     OSStatus err = SecItemAdd(query, nullptr);
 
@@ -107,7 +107,7 @@ bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::str
         const void* queryKeys[] = { kSecClass, kSecAttrService, kSecAttrAccount };
         const void* queryValues[] = { kSecClassGenericPassword, serviceName, accountName };
         CFDictionaryRef updateQuery = CFDictionaryCreate(nullptr, queryKeys, queryValues, 3, nullptr, nullptr);
-        CFAutorelease(updateQuery);
+        hsAutorelease(updateQuery);
 
         const void* attributeKeys[1] = { kSecValueData };
         const void* attributeValues[1] = { passwordData };
