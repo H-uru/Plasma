@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsGeometry3.h"
+#include "hsMath.h"
 #include "hsQuat.h"
 #include "hsStream.h"
 

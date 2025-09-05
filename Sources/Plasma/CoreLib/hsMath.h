@@ -39,35 +39,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Pch.h
-*   
-***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PCH_H
-#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PCH_H
+#ifndef hsMath_inc
+#define hsMath_inc
 
-#include <atomic>
 #include <type_traits>
 
-#include "hsBitVector.h"
-#include "hsEndian.h"
-#include "plProduct.h"
-#include "hsThread.h"
-#include "hsTimer.h"
+// Based on std::numbers from C++20
+namespace hsConstants
+{
+    template <typename T>
+    inline constexpr T pi =
+        std::enable_if_t<std::is_floating_point_v<T>, T>(3.141592653589793238462643383279502884L);
 
-#include "pnAsyncCore/pnAsyncCore.h"
-#include "pnGameMgr/pnGameMgr.h"
-#include "pnEncryption/plBigNum.h"
-#include "pnNetBase/pnNetBase.h"
-#include "pnNetCli/pnNetCli.h"
-#include "pnNetProtocol/pnNpCli2Auth.h"
-#include "pnNetProtocol/pnNpCli2File.h"
-#include "pnNetProtocol/pnNpCli2Game.h"
-#include "pnNetProtocol/pnNpCli2GateKeeper.h"
+    template <typename T>
+    inline constexpr T half_pi = pi<T> / T(2.0);
 
-#include "Private/plNglAllIncludes.h"
-#include "Intern.h"
+    template <typename T>
+    inline constexpr T two_pi = pi<T> * T(2.0);
 
-#endif
+    template <typename T>
+    inline constexpr T sqrt2 =
+        std::enable_if_t<std::is_floating_point_v<T>, T>(1.414213562373095048801688724209698079L);
+
+    template <typename T>
+    inline constexpr T inv_sqrt2 = T(1.0) / hsConstants::sqrt2<T>;
+}
+
+// Useful floating point utilities
+constexpr float hsDegreesToRadians(float deg) { return deg * (hsConstants::pi<float> / 180.f); }
+constexpr float hsRadiansToDegrees(float rad) { return rad * (180.f / hsConstants::pi<float>); }
+constexpr float hsInvert(float a) { return 1.f / a; }
+
+#endif // hsMath_inc

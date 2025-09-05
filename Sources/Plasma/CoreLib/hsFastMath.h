@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsPoint2.h"
 #include "hsGeometry3.h"
+#include "hsMath.h"
 
 class hsFastMath {
 protected:

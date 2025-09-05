@@ -57,6 +57,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 #include "plProfile.h"
 
+#ifdef HS_DEBUGGING
+#include "hsDebug.h"
+#endif
+
 plProfile_CreateTimer("MsgReceive", "Update", MsgReceive);
 plProfile_CreateTimer("  TimeMsg", "Update", TimeMsg);
 plProfile_CreateTimer("  EvalMsg", "Update", EvalMsg);

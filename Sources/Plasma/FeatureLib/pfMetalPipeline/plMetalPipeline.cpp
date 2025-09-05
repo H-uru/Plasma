@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsGMatState.inl"
+#include "hsMath.h"
 #include "hsTimer.h"
 
 #include "pfCamera/plVirtualCamNeu.h"

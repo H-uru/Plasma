@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plgDispatch.h"
 #include "hsGeometry3.h"
+#include "hsMath.h"
 #include "plPipeline.h"
 #include "hsResMgr.h"
 #include "hsStream.h"

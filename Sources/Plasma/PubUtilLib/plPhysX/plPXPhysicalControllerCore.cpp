@@ -51,6 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cmath>
 
+#include "hsMath.h"
+
 #include "pnMessage/plSetNetGroupIDMsg.h"
 #include "pnSceneObject/plCoordinateInterface.h"
 #include "pnSceneObject/plSceneObject.h"

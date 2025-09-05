@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 
+#include "hsEndian.h"
 #include "hsWindows.h"
 #include "pnEncryption/plChallengeHash.h"
 #include "pnEncryption/plEncryption.h"

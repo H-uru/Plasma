@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plParticleApplicator.h"
 
+#include "hsMath.h"
+
 #include "plParticleSystem.h"
 #include "plParticleGenerator.h"
 

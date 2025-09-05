@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // singular
 #include "plAvTaskSeek.h"
 
+#include "hsMath.h"
 #include "hsTimer.h"
 #include "plgDispatch.h"
 

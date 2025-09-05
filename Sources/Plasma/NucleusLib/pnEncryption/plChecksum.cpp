@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plChecksum.h"
+
+#include "hsEndian.h"
 #include "hsStream.h"
 
 #include <cstring>

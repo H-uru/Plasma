@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScalarChannel.h"
 
 // global
+#include "hsMath.h"
 #include "hsResMgr.h"
 
 // other

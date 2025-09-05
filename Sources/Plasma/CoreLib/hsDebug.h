@@ -39,35 +39,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Pch.h
-*   
-***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PCH_H
-#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PCH_H
+#ifndef hsDebug_inc
+#define hsDebug_inc
 
-#include <atomic>
-#include <type_traits>
+#include "HeadSpin.h"
 
-#include "hsBitVector.h"
-#include "hsEndian.h"
-#include "plProduct.h"
-#include "hsThread.h"
-#include "hsTimer.h"
+void hsDebugEnableGuiAsserts(bool enabled);
 
-#include "pnAsyncCore/pnAsyncCore.h"
-#include "pnGameMgr/pnGameMgr.h"
-#include "pnEncryption/plBigNum.h"
-#include "pnNetBase/pnNetBase.h"
-#include "pnNetCli/pnNetCli.h"
-#include "pnNetProtocol/pnNpCli2Auth.h"
-#include "pnNetProtocol/pnNpCli2File.h"
-#include "pnNetProtocol/pnNpCli2Game.h"
-#include "pnNetProtocol/pnNpCli2GateKeeper.h"
+bool hsDebugIsDebuggerPresent();
+void hsDebugBreakIfDebuggerPresent();
+void hsDebugBreakAlways();
 
-#include "Private/plNglAllIncludes.h"
-#include "Intern.h"
+/**
+ * Print a message to stderr (and to the Windows debugger output, if on Windows with a debugger attached).
+ * This function's output is never redirected to a log file (unlike hsStatusMessage).
+ *
+ * Be aware that this function's output is impossible to see for the average player/tester.
+ * Prefer using other logging functions instead.
+ * Please use hsDebugPrintToTerminal ONLY for debugging messages aimed at developers
+ * that must not go to a log file for some reason.
+ *
+ * @param msg message to print
+ */
+void hsDebugPrintToTerminal(const ST::string& msg);
 
-#endif
+typedef void (*hsStatusMessageProc)(const ST::string& message);
+
+extern hsStatusMessageProc gHSStatusProc;
+hsStatusMessageProc hsSetStatusMessageProc(hsStatusMessageProc newProc);
+
+#endif // hsDebug_inc
