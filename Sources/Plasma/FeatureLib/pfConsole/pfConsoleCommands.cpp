@@ -167,6 +167,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfCamera/plVirtualCamNeu.h"
 #include "pfConsoleCore/pfConsoleCmd.h"
 #include "pfConsoleCore/pfConsoleContext.h"
+#include "pfJournalBook/pfJournalBook.h"
 #include "pfMessage/pfBackdoorMsg.h"
 #include "pfMessage/plClothingMsg.h"
 #include "pfMessage/pfKIMsg.h"
@@ -464,6 +465,33 @@ PF_CONSOLE_BASE_CMD( DumpLogs, "string folderName", "Dumps all current logs to t
 {
     plStatusLogMgr::GetInstance().DumpLogs(params[0]);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//// Journal Commands ////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+#ifndef LIMIT_CONSOLE_COMMANDS
+
+PF_CONSOLE_GROUP(Journal)
+
+PF_CONSOLE_CMD(
+    Journal, ShowLinkRect,
+    "bool on",
+    ""
+)
+{
+    if (numParams != 1)
+        return;
+
+    pfJournalBook::ShowLinkRect((bool)params[0]);
+    if ((bool)params[0]) {
+        PrintString("Journals will now have link rects.");
+    } else {
+        PrintString("Journals will no longer have link rects.");
+    }
+}
+
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////////
