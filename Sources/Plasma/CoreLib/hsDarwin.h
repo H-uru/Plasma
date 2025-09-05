@@ -43,11 +43,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _hsDarwin_inc_
 #define _hsDarwin_inc_
 
+#include "HeadSpin.h"
 #include <string_theory/string>
 #include <string_theory/format>
 
 #ifdef HS_BUILD_FOR_APPLE
 #include <CoreFoundation/CoreFoundation.h>
+
+template<typename T, typename U>
+inline T bridge_cast(U* obj)
+{
+#if defined(__OBJC__) && __has_feature(objc_arc)
+    return (__bridge T)(obj);
+#else
+    return reinterpret_cast<T>(obj);
+#endif
+}
 
 [[nodiscard]]
 #if __has_feature(attribute_cf_returns_retained)
@@ -78,7 +89,7 @@ inline void format_type(const ST::format_spec &format, ST::format_writer &output
 
 
 #ifdef __OBJC__
-@class NSString;
+#import <Foundation/Foundation.h>
 
 [[nodiscard]]
 #if __has_feature(attribute_ns_returns_retained)
@@ -95,11 +106,7 @@ inline NSString* NSStringCreateWithSTString(const ST::string& str)
 
 inline ST::string STStringFromNSString(NSString* str, ST::utf_validation_t validation = ST_DEFAULT_VALIDATION)
 {
-#if __has_feature(objc_arc)
-    return STStringFromCFString((__bridge CFStringRef)str, validation);
-#else
-    return STStringFromCFString((CFStringRef)str, validation);
-#endif
+    return STStringFromCFString(bridge_cast<CFStringRef>(str), validation);
 }
 
 inline void format_type(const ST::format_spec &format, ST::format_writer &output, NSString* str)
@@ -107,6 +114,39 @@ inline void format_type(const ST::format_spec &format, ST::format_writer &output
     ST::char_buffer utf8 = STStringFromNSString(str).to_utf8();
     ST::format_string(format, output, utf8.data(), utf8.size());
 }
+
+
+#if __has_feature(objc_arc) || (MAC_OS_X_VERSION_MIN_REQUIRED >= 1070 && defined(__clang__))
+    extern "C" void* objc_autoreleasePoolPush(void);
+    extern "C" void  objc_autoreleasePoolPop(void* pool);
+#endif
+
+class hsAutoreleasePool
+{
+private:
+    void* const fPool;
+
+public:
+    hsAutoreleasePool()
+#if __has_feature(objc_arc) || (MAC_OS_X_VERSION_MIN_REQUIRED >= 1070 && defined(__clang__))
+        : fPool(objc_autoreleasePoolPush())
+#else
+        : fPool([NSAutoreleasePool new])
+#endif
+    {}
+
+    ~hsAutoreleasePool()
+    {
+#if __has_feature(objc_arc) || (MAC_OS_X_VERSION_MIN_REQUIRED >= 1070 && defined(__clang__))
+        objc_autoreleasePoolPop(fPool);
+#else
+        [bridge_cast<NSAutoreleasePool*>(fPool) drain];
+#endif
+    }
+};
+
+#define hsAutoreleasingScope hsAutoreleasePool hsUniqueIdentifier(_AutoreleasePool_);
+
 #endif // __OBJC__
 
 #endif // HS_BUILD_FOR_APPLE
