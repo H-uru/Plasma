@@ -264,6 +264,9 @@ else()
         "--with-suffix="
         "--with-system-expat"
         "--disable-test-modules"
+        # Plasma static: The built-in libb2 causes executables to not link correctly on arm,
+        # so pull in an external libb2 and expose it to the downstream linker in the cmake wrapper.
+        "--with-libb2"
     )
     if(VCPKG_TARGET_IS_OSX)
         list(APPEND OPTIONS "LIBS=-liconv -lintl")

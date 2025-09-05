@@ -19,9 +19,7 @@ cmath cmathmodule.c
 math mathmodule.c
 select selectmodule.c
 
-# The _blake2 module depends on libb2 on ARM. This is a pain to propagate downstream, so
-# we'll skip building this one into the core. Nothing in the stdlib seems to require it, so
-# hopefully its absence will go unnoticed.
+_blake2 _blake2/blake2module.c _blake2/blake2b_impl.c _blake2/blake2s_impl.c
 _md5 md5module.c -I$(srcdir)/Modules/_hacl/include _hacl/Hacl_Hash_MD5.c -D_BSD_SOURCE -D_DEFAULT_SOURCE
 _sha1 sha1module.c -I$(srcdir)/Modules/_hacl/include _hacl/Hacl_Hash_SHA1.c -D_BSD_SOURCE -D_DEFAULT_SOURCE
 # Typically, _sha2 consumes a static HACL library, but that's difficult to deal with.
