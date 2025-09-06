@@ -58,21 +58,20 @@ ST::string pfApplePasswordStore::GetPassword(const ST::string& username)
     CFStringRef accountName = CFStringCreateWithSTString(username);
     CFStringRef serviceName = CFStringCreateWithSTString(service);
 
-    hsAutorelease(accountName);
-    hsAutorelease(serviceName);
-
     const void* keys[] = { kSecClass, kSecAttrAccount, kSecAttrService, kSecReturnData };
     const void* values[] = { kSecClassGenericPassword, accountName, serviceName, kCFBooleanTrue };
 
     CFDictionaryRef query = CFDictionaryCreate(nullptr, keys, values, 4, nullptr, nullptr);
-    hsAutorelease(query);
 
     CFDataRef result;
+    OSStatus err = SecItemCopyMatching(query, (CFTypeRef*)&result);
 
-    if (SecItemCopyMatching(query, (CFTypeRef*)&result) != errSecSuccess)
-    {
+    CFRelease(accountName);
+    CFRelease(serviceName);
+    CFRelease(query);
+
+    if (err != errSecSuccess)
         return ST::string();
-    }
 
     ST::string ret(reinterpret_cast<const char*>(CFDataGetBytePtr(result)), size_t(CFDataGetLength(result)));
 
@@ -89,17 +88,13 @@ bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::str
     CFStringRef serviceName = CFStringCreateWithSTString(service);
     CFDataRef   passwordData = CFDataCreate(nullptr, (const UInt8*)password.c_str(), password.size());
 
-    hsAutorelease(accountName);
-    hsAutorelease(serviceName);
-    hsAutorelease(passwordData);
-
     const void* keys[] = { kSecClass, kSecAttrService, kSecAttrAccount, kSecValueData };
     const void* values[] = { kSecClassGenericPassword, serviceName, accountName, passwordData };
 
     CFDictionaryRef query = CFDictionaryCreate(nullptr, keys, values, 4, nullptr, nullptr);
-    hsAutorelease(query);
 
     OSStatus err = SecItemAdd(query, nullptr);
+    CFRelease(query);
 
     if (err == errSecDuplicateItem) {
         // the keychain item already exists, update it
@@ -107,7 +102,6 @@ bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::str
         const void* queryKeys[] = { kSecClass, kSecAttrService, kSecAttrAccount };
         const void* queryValues[] = { kSecClassGenericPassword, serviceName, accountName };
         CFDictionaryRef updateQuery = CFDictionaryCreate(nullptr, queryKeys, queryValues, 3, nullptr, nullptr);
-        hsAutorelease(updateQuery);
 
         const void* attributeKeys[1] = { kSecValueData };
         const void* attributeValues[1] = { passwordData };
@@ -115,8 +109,13 @@ bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::str
 
         err = SecItemUpdate(updateQuery, attributes);
 
+        CFRelease(updateQuery);
         CFRelease(attributes);
     }
+
+    CFRelease(accountName);
+    CFRelease(serviceName);
+    CFRelease(passwordData);
 
     return err == errSecSuccess;
 }
