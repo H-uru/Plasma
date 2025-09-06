@@ -69,19 +69,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # endif
 #endif
 
-#define Bool2Int(value) ((value)?1:0)
-#define Int2Bool(value) ((value)?true:false)
-
-
-///////////////////////////////////////////////////////////////////
-
-namespace pnNetCommon
-{
-    uint32_t GetBinAddr(const ST::string& textAddr);
-    ST::string GetTextAddr(uint32_t binAddr);
-}
-
-///////////////////////////////////////////////////////////////////
 
 class plCreatableStream : public plCreatable
 {
@@ -98,6 +85,3 @@ public:
 };
 
 #endif // pnNetCommon_h_inc
-
-///////////////////////////////////////////////////////////////////
-// End.

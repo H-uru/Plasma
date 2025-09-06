@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <array>
+
 #include "hsStream.h"
 
 #ifdef SetPort
@@ -99,19 +101,6 @@ public:
         SetHost(addr);
     }
 
-    /**
-     * Initializes a new network address from the given hostname and port
-     * number.
-     *
-     * @param addr The DNS hostname of the host.
-     * @param port The port number as a 16-bit host order integer.
-     */
-    plNetAddress(const ST::string& addr, uint16_t port)
-        : fHost(), fPort(port)
-    {
-        SetHost(addr);
-    }
-
     bool operator==(const plNetAddress& other) const {
         return (GetHost() == other.GetHost()) && (GetPort() == other.GetPort());
     }
@@ -160,13 +149,6 @@ public:
     std::array<uint8_t, 4> GetHostBytes() const;
 
     /**
-     * Sets the IPv4 address of the host from a DNS name.
-     *
-     * @param hostname The DNS name of the host.
-     */
-    void SetHost(const ST::string& hostname);
-
-    /**
      * Sets the IPv4 address of the host from an unsigned 32-bit integer in
      * network byte order (big endian).
      *
@@ -181,6 +163,15 @@ public:
      * @param ip4addr The host IPv4 address in network byte order.
      */
     void SetHost(const std::array<uint8_t, 4>& ip4addr);
+
+    /**
+     * Returns the given IPv4 address as a string in 4-octet dotted
+     * notation.
+     *
+     * @param ip4addr The IPv4 address to convert, in network byte order.
+     * @return A string of the given IPv4 address.
+     */
+    static ST::string GetIPv4AddressAsString(uint32_t ip4addr);
 
     /**
      * Returns the IPv4 address of the host as a string in 4-octet dotted
