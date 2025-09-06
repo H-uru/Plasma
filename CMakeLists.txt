@@ -127,7 +127,7 @@ find_package(VPX)
 find_package(ZLIB REQUIRED)
 
 if(APPLE)
-    find_package(Security)
+    find_package(Security REQUIRED)
     find_package(Metal)
     find_package(LibArchive REQUIRED)
 elseif(UNIX)
