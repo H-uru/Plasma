@@ -134,7 +134,7 @@ protected:
 ///////////////////////////////////////////////////////////////////////////////
 
 plAvBrainCritter::plAvBrainCritter()
-    : fWalkingStrategy(), fCurMode(kIdle), fNextMode(kIdle),
+    : fLocallyControlled(), fWalkingStrategy(), fCurMode(kIdle), fNextMode(kIdle),
       fFadingNextBehavior(true), fAvoidingAvatars(), fDotGoal(),
       fAngRight()
 {
@@ -184,6 +184,11 @@ bool plAvBrainCritter::Apply(double time, float elapsed)
 
 bool plAvBrainCritter::MsgReceive(plMessage* msg)
 {
+    if (auto* pGoToMsg = plAIGoToGoalMsg::ConvertNoRef(msg)) {
+        GoToGoal(pGoToMsg->Goal(), pGoToMsg->AvoidingAvatars());
+        return true;
+    }
+
     return plArmatureBrain::MsgReceive(msg);
 }
 
@@ -213,6 +218,12 @@ void plAvBrainCritter::Activate(plArmatureModBase* avMod)
 
 void plAvBrainCritter::Deactivate()
 {
+    // Although "destroyed" is in the past tense, this is really a warning message.
+    // The brain is about to go away, so save anything you need to and toss it!
+    plAIBrainDestroyedMsg* brainDestroyed = new plAIBrainDestroyedMsg(fArmature->GetKey(), nullptr);
+    brainDestroyed->AddReceivers(fReceivers);
+    brainDestroyed->Send();
+
     plArmatureBrain::Deactivate();
 }
 
@@ -333,6 +344,13 @@ void plAvBrainCritter::GoToGoal(hsPoint3 newGoal, bool avoidingAvatars /* = fals
     if(!RunningBehavior(RunBehaviorName()))
         fNextMode = IPickBehavior(kRun);
     // Missing TODO Turd: Pathfinding.
+
+    // Let everyone who's listending know that we're going somewhere.
+    plAIGoToGoalMsg* pMsg = new plAIGoToGoalMsg(fArmature->GetKey(), nullptr);
+    pMsg->AddReceivers(fReceivers);
+    pMsg->Goal(newGoal);
+    pMsg->AvoidingAvatars(avoidingAvatars);
+    pMsg->Send();
 }
 
 bool plAvBrainCritter::AtGoal() const
@@ -624,12 +642,10 @@ void plAvBrainCritter::IEvalGoal()
             fNextMode = IPickBehavior(kIdle);
 
             // tell everyone who cares that we have arrived
-            for (unsigned i = 0; i < fReceivers.size(); ++i)
-            {
-                plAIArrivedAtGoalMsg* msg = new plAIArrivedAtGoalMsg(fArmature->GetKey(), fReceivers[i]);
-                msg->Goal(fFinalGoalPos);
-                msg->Send();
-            }
+            plAIArrivedAtGoalMsg* msg = new plAIArrivedAtGoalMsg(fArmature->GetKey(), nullptr);
+            msg->AddReceivers(fReceivers);
+            msg->Goal(fFinalGoalPos);
+            msg->Send();
         }
     }
 }

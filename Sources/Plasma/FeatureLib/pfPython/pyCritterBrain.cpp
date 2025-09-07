@@ -74,6 +74,19 @@ void pyCritterBrain::RemoveReceiver(pyKey& oldReceiver)
     fBrain->RemoveReceiver(oldReceiver.getKey());
 }
 
+void pyCritterBrain::LocallyControlled(bool local)
+{
+    if (fBrain)
+        fBrain->LocallyControlled(local);
+}
+
+bool pyCritterBrain::LocallyControlled() const
+{
+    if (fBrain)
+        return fBrain->LocallyControlled();
+    return false;
+}
+
 PyObject* pyCritterBrain::GetSceneObject()
 {
     if (fBrain)

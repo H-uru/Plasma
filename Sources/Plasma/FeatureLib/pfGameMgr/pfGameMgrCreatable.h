@@ -54,4 +54,7 @@ REGISTER_NONCREATABLE(pfGmBlueSpiral);
 #include "pfGmMarker.h"
 REGISTER_NONCREATABLE(pfGmMarker);
 
+#include "pfGmVarSync.h"
+REGISTER_NONCREATABLE(pfGmVarSync);
+
 #endif

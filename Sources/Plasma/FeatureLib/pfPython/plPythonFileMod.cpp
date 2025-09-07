@@ -1552,13 +1552,21 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         int msgType = plAIMsg::kAIMsg_Unknown;
         pyObjectRef args;
 
-        if (plAIBrainCreatedMsg::ConvertNoRef(aiMsg))
+        if (plAIBrainCreatedMsg::ConvertNoRef(aiMsg)) {
             msgType = plAIMsg::kAIMsg_BrainCreated;
-        plAIArrivedAtGoalMsg* arrivedMsg = plAIArrivedAtGoalMsg::ConvertNoRef(aiMsg);
-        if (arrivedMsg) {
+        } else if (auto* arrivedMsg = plAIArrivedAtGoalMsg::ConvertNoRef(aiMsg)) {
             msgType = plAIMsg::kAIMsg_ArrivedAtGoal;
             args = PyTuple_New(1);
             PyTuple_SetItem(args.Get(), 0, pyPoint3::New(arrivedMsg->Goal()));
+        } else if (plAIBrainDestroyedMsg::ConvertNoRef(aiMsg)) {
+            msgType = plAIMsg::kAIMsg_BrainDestroyed;
+        } else if (auto* goToMsg = plAIGoToGoalMsg::ConvertNoRef(aiMsg)) {
+            msgType = plAIMsg::kAIMsg_GoToGoal;
+            args = plPython::ConvertFrom(
+                plPython::ToTuple,
+                pyPoint3::New(goToMsg->Goal()),
+                goToMsg->AvoidingAvatars()
+            );
         }
 
         // if no args were set, simply set to none
