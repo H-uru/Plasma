@@ -1947,18 +1947,12 @@ static plLayerInterface* IProcessLayerMovie(plPassMtlBase* mtl, plLayerTex* layT
     IParamBlock2* bitmapPB = layTex->GetParamBlockByID( plLayerTex::kBlkBitmap );
     if( !bitmapPB )
         return layerIFace;
-
-    PBBitmap    *pbbm = nullptr;
-
-    if( !bitmapPB->GetInt(kBmpUseBitmap) || !(pbbm = bitmapPB->GetBitmap(kBmpBitmap)) )
+    if (!bitmapPB->GetInt(kBmpUseBitmap))
         return layerIFace;
 
-    BitmapInfo  *bi = &pbbm->bi;
-    if( !bi || !bi->Name() || !*bi->Name() )
+    plFileName fileName = layTex->GetBitmapFileName(); // LayerTex always pulls from kBlkBitmap
+    if (!fileName.IsValid())
         return layerIFace;
-
-    BMMGetFullFilename(bi);
-    plFileName fileName = bi->Name();
 
     plAnimStealthNode* stealth = IGetEntireAnimation(mtl);
 
@@ -4530,8 +4524,7 @@ plClothingItem *hsMaterialConverter::GenerateClothingItem(plClothingMtl *mtl, co
             if (layer == nullptr || layer->GetPBBitmap() == nullptr)
                 continue;
 
-            BMMGetFullFilename(&layer->GetPBBitmap()->bi);
-            ST::string texName = M2ST(layer->GetPBBitmap()->bi.Name());
+            plFileName texName = layer->GetBitmapFileName();
 
             for (clipLevels = 0, startWidth = layer->GetPBBitmap()->bi.Width(); 
                  startWidth > tileset->fElements[i]->fWidth;
