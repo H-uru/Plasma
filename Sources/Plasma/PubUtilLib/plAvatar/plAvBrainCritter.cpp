@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAvBrainCritter.h"
 
+#include "hsMath.h"
 #include "plgDispatch.h"
 
 #include <algorithm>

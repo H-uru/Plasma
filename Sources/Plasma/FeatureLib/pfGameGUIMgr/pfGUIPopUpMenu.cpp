@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGameGUIMgr.h"
 
 #include "HeadSpin.h"
+#include "hsMath.h"
 #include "hsResMgr.h"
 #include "plViewTransform.h"
 

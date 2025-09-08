@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 
+#include "hsEndian.h"
 #include "hsExceptions.h"
 
 #include <cctype>

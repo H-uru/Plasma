@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <unordered_set>
 #include <mutex>
 #include <string_theory/format>
+#include "hsDebug.h"
 #include "hsLockGuard.h"
 
 struct _RefCountLeakCheck

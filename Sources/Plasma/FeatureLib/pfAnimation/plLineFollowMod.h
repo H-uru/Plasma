@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plLineFollowMod_inc
 
 #include "hsGeometry3.h"
+#include "hsMath.h"
 #include "hsMatrix44.h"
 
 #include "pnModifier/plMultiModifier.h"

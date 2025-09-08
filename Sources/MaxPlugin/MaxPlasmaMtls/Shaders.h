@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __SHADERS_H
 #define __SHADERS_H
 
+#include "hsMath.h"
+
 class AColor;
 class Color;
 class Point3;

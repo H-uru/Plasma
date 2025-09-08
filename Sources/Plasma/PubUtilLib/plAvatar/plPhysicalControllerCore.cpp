@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <algorithm>
 #include <cmath>
 
+#include "hsMath.h"
+
 #include "plArmatureMod.h"
 #include "plAvatarMgr.h"
 #include "plSwimRegion.h"

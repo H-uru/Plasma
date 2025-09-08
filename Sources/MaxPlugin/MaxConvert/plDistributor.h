@@ -43,7 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDistributor_inc
 #define plDistributor_inc
 
+#include "hsMath.h"
+
 #include "pnEncryption/plRandom.h"
+
 #include "plDistTree.h"
 
 class INode;

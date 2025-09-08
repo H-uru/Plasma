@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plgDispatch.h"
 #include "hsGeometry3.h"
+#include "hsMath.h"
 #include "plPhysical.h"
 #include "hsQuat.h"
 #include "hsTimer.h"
