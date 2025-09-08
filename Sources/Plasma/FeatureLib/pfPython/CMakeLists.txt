@@ -329,7 +329,7 @@ source_group("Header Files" FILES ${pfPython_HEADERS})
 source_group("Glue Files" FILES ${pfPython_GLUE})
 
 if(CMAKE_SYSTEM_NAME MATCHES "iOS")
-    find_library(Python_LIBRARY Python PATHS "${CMAKE_SOURCE_DIR}/arm64-iphoneos/" REQUIRED)
+    set(Python_LIBRARY "${CMAKE_SOURCE_DIR}/arm64-iphoneos/Python.framework")
     target_link_libraries(pfPython PRIVATE ${Python_LIBRARY})
     set_target_properties(plClient PROPERTIES
   XCODE_EMBED_FRAMEWORKS ${Python_LIBRARY}

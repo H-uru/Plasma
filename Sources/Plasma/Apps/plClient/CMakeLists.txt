@@ -135,6 +135,7 @@ elseif(APPLE)
             Apple-SwiftUI/LoginView.swift
             Apple-SwiftUI/PLSView.mm
             Apple-SwiftUI/PLSClient.mm
+            Apple-SwiftUI/plUIKitDisplayHelper.mm
             Mac-Cocoa/NSString+StringTheory.mm
             Mac-Cocoa/PLSLoginController.mm
             Mac-Cocoa/PLSPatcher.mm
@@ -143,6 +144,7 @@ elseif(APPLE)
         set(plClient_HEADERS ${plClient_HEADERS}
             Apple-SwiftUI/PLSView.h
             Apple-SwiftUI/PLSClient.h
+            Apple-SwiftUI/plUIKitDisplayHelper.h
             Mac-Cocoa/NSString+StringTheory.h
             Mac-Cocoa/PLSLoginController.h
             Mac-Cocoa/PLSPatcher.h
@@ -208,7 +210,7 @@ if(APPLE)
         XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME "YES"
         XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC "YES"
         XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER org.Huru.UruExplorer
-        XCODE_ATTRIBUTE_SWIFT_OBJC_BRIDGING_HEADER "$<$<PLATFORM_ID:iOS>:Sources/Plasma/Apps/plClient/Apple-SwiftUI/PLSClient.h>"
+        XCODE_ATTRIBUTE_SWIFT_OBJC_BRIDGING_HEADER "$<$<PLATFORM_ID:iOS>:Sources/Plasma/Apps/plClient/Apple-SwiftUI/BridgingHeader.h>"
         XCODE_ATTRIBUTE_GENERATE_INFOPLIST_FILE "YES"
     )
     if(CMAKE_SYSTEM_NAME MATCHES "iOS")
