@@ -132,6 +132,16 @@ bool plMetalDevice::InitDevice()
     // Only known tiler on Apple devices are Apple GPUs.
     // Apple recommends a family check for tile memory support.
     fSupportsTileMemory = fMetalDevice->supportsFamily(MTL::GPUFamilyApple1);
+    
+    // Only known tiler on Apple devices are Apple GPUs.
+    // Apple recommends a family check for tile memory support.
+    fSupportsTileMemory = fMetalDevice->supportsFamily(MTL::GPUFamilyApple1);
+    fSupportsDXTTextures = fMetalDevice->supportsBCTextureCompression();
+    
+    if (!fSupportsDXTTextures)
+    {
+        DebugMsg("Render device \"%s\" does not support DXT textures. Falling back on software decompression. Performance will be slower.", fMetalDevice->name()->cString(NS::StringEncoding::UTF8StringEncoding));
+    }
 
     // set up all the depth stencil states
     MTL::DepthStencilDescriptor* depthDescriptor = MTL::DepthStencilDescriptor::alloc()->init();
@@ -476,51 +486,6 @@ plMetalDevice::plMetalDevice()
     fClearRenderTargetColor = {0.0, 0.0, 0.0, 1.0};
     fClearDrawableColor = {0.0, 0.0, 0.0, 1.0};
     fSamplerStates[0] = nullptr;
-
-    fMetalDevice = MTL::CreateSystemDefaultDevice();
-    fCommandQueue = fMetalDevice->newCommandQueue();
-    
-    // Only known tiler on Apple devices are Apple GPUs.
-    // Apple recommends a family check for tile memory support.
-    fSupportsTileMemory = fMetalDevice->supportsFamily(MTL::GPUFamilyApple1);
-    fSupportsDXTTextures = fMetalDevice->supportsBCTextureCompression();
-    
-    if (!fSupportsDXTTextures)
-    {
-        DebugMsg("Render device \"%s\" does not support DXT textures. Falling back on software decompression. Performance will be slower.", fMetalDevice->name()->cString(NS::StringEncoding::UTF8StringEncoding));
-    }
-
-    // set up all the depth stencil states
-    MTL::DepthStencilDescriptor* depthDescriptor = MTL::DepthStencilDescriptor::alloc()->init();
-
-    depthDescriptor->setDepthCompareFunction(MTL::CompareFunctionAlways);
-    depthDescriptor->setDepthWriteEnabled(true);
-    depthDescriptor->setLabel(NS::String::string("No Z Read", NS::UTF8StringEncoding));
-    fNoZReadStencilState = fMetalDevice->newDepthStencilState(depthDescriptor);
-
-    depthDescriptor->setDepthCompareFunction(MTL::CompareFunctionLessEqual);
-    depthDescriptor->setDepthWriteEnabled(false);
-    depthDescriptor->setLabel(NS::String::string("No Z Write", NS::UTF8StringEncoding));
-    fNoZWriteStencilState = fMetalDevice->newDepthStencilState(depthDescriptor);
-
-    depthDescriptor->setDepthCompareFunction(MTL::CompareFunctionAlways);
-    depthDescriptor->setDepthWriteEnabled(false);
-    depthDescriptor->setLabel(NS::String::string("No Z Read or Write", NS::UTF8StringEncoding));
-    fNoZReadOrWriteStencilState = fMetalDevice->newDepthStencilState(depthDescriptor);
-
-    depthDescriptor->setDepthCompareFunction(MTL::CompareFunctionLessEqual);
-    depthDescriptor->setLabel(NS::String::string("Z Read and Write", NS::UTF8StringEncoding));
-    depthDescriptor->setDepthWriteEnabled(true);
-    fDefaultStencilState = fMetalDevice->newDepthStencilState(depthDescriptor);
-
-    depthDescriptor->setDepthCompareFunction(MTL::CompareFunctionGreaterEqual);
-    depthDescriptor->setLabel(NS::String::string("Reverse Z", NS::UTF8StringEncoding));
-    depthDescriptor->setDepthWriteEnabled(true);
-    fReverseZStencilState = fMetalDevice->newDepthStencilState(depthDescriptor);
-
-    depthDescriptor->release();
-    
-    LoadLibrary();
 }
 
 void plMetalDevice::SetViewport()
