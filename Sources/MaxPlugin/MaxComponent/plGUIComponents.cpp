@@ -4790,10 +4790,10 @@ bool plGUISkinComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plLayerTex *layer= (plLayerTex *)fCompPB->GetTexmap( kRefBitmap );
     if (layer != nullptr)
     {
-        PBBitmap *texture = layer->GetPBBitmap();
-        if (texture != nullptr)
+        plFileName texturePath = layer->GetBitmapFileName();
+        if (texturePath.IsValid())
         {
-            plBitmap *bMap = plLayerConverter::Instance().CreateSimpleTexture( M2ST(texture->bi.Name()), fConvertedSkin->GetKey()->GetUoid().GetLocation(), 0, plMipmap::kForceNonCompressed | plMipmap::kAlphaChannelFlag | plMipmap::kNoMaxSize );
+            plBitmap *bMap = plLayerConverter::Instance().CreateSimpleTexture( texturePath, fConvertedSkin->GetKey()->GetUoid().GetLocation(), 0, plMipmap::kForceNonCompressed | plMipmap::kAlphaChannelFlag | plMipmap::kNoMaxSize );
             if (bMap != nullptr && plMipmap::ConvertNoRef(bMap) != nullptr)
             {
                 hsgResMgr::ResMgr()->AddViaNotify( bMap->GetKey(), new plGenRefMsg( fConvertedSkin->GetKey(), 

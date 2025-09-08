@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 #include "HeadSpin.h"
+#include "plFileSystem.h"
 #include "hsResMgr.h"
 
 #include "MaxMain/MaxAPI.h"
@@ -400,8 +401,33 @@ bool    plPlasmaMAXLayer::GetBitmapFileName( TCHAR* destFilename, int maxLength,
     if (GetPBBitmap(index) == nullptr)
         return false;
 
-    _tcsncpy( destFilename, GetPBBitmap( index )->bi.Name(), maxLength );
+#if MAX_VERSION_MAJOR >= 24
+    // 3ds Max 2022 and higher have an API to resolve the full path
+    // as a string. Earlier maxes (somewhere post-7) have one as well,
+    // but it's not safe.
+    return BMMGetFullFilename(GetPBBitmap(index)->bi.Name(), destFilename, maxLength);
+#else
+    // Make a copy of the bitmap info. Resolving the path may change it, and we
+    // would prefer for the bitmap info in the paramblock to remain unchanged to
+    // prevent the max file from being dirtied by the exporter.
+    BitmapInfo bi(GetPBBitmap(index)->bi);
+    BMMGetFullFilename(&bi);
+
+    _tcsncpy( destFilename, bi.Name(), maxLength );
     return true;
+#endif
+}
+
+plFileName plPlasmaMAXLayer::GetBitmapFileName(int index)
+{
+    // Yeah, this is a double copy, but it looks like the weird MAXASS code
+    // expects to be able to write to a buffer. If we're going to play nice,
+    // we have to do it this way and not just assume that we can parse the
+    // string from the BitmapInfo.
+    TCHAR filename[MAX_PATH];
+    if (GetBitmapFileName(filename, std::size(filename), index))
+        return ST::string(filename);
+    return {};
 }
 
 BOOL plPlasmaMAXLayer::HandleBitmapSelection(int index /* = 0 */)

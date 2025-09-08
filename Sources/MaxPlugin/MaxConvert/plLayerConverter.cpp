@@ -292,6 +292,7 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
     plLayer *plasmaLayer = ICreateLayer( M2ST( layer->GetName() ), upperLayer, loc );
 
     // We're using a texture, try and get its info
+    plFileName fileName = layer->GetBitmapFileName();
     PBBitmap    *pbbm = nullptr;
     BitmapInfo  *bi = nullptr;
 
@@ -304,7 +305,7 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
     }
 
     // If the texture had bad info, assert and return the empty layer
-    if( !bi || !bi->Name() || _tcscmp(bi->Name(), _T("")) == 0 )
+    if( !fileName.IsValid() )
     {
         if( upperLayer )
         {
@@ -323,7 +324,7 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
 
     // Setup the texture creation parameters
     plBitmapData bd;
-    bd.fileName = bi->Name();
+    bd.fileName = std::move(fileName);
 
     // Create texture and add it to list if unique
     int32_t texFlags = 0;//hsGTexture::kMipMap;
@@ -427,13 +428,14 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
     plLayer *plasmaLayer = ICreateLayer( M2ST( layer->GetName() ), upperLayer, loc );
 
     // Get the texture info
+    plFileName fileName = layer->GetBitmapFileName(); // the index==0 bitmap is the front face
     PBBitmap *pbbm = bitmapPB->GetBitmap( plStaticEnvLayer::kBmpFrontBitmap + 0 );
     BitmapInfo *bi = nullptr;
     if( pbbm )
         bi = &pbbm->bi;
 
     // If the texture had bad info, assert and return the empty layer
-    if (!bi || !bi->Name() || _tcscmp(bi->Name(), _T("")) == 0)
+    if (!fileName.IsValid())
     {
         // Or don't assert since it can get annoying when you are using someone
         // elses file and don't have all the textures.
@@ -442,7 +444,7 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
 
     // Setup the texture creation parameters
     plBitmapData bd;
-    bd.fileName = bi->Name();
+    bd.fileName = std::move(fileName);
 
     // Create texture and add it to list if unique
     int32_t texFlags = 0;
@@ -474,7 +476,7 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
         PBBitmap *face = bitmapPB->GetBitmap( plStaticEnvLayer::kBmpFrontBitmap + i );
         if( !face )
             return (plLayerInterface *)plasmaLayer;
-        bd.faceNames[ i ] = face->bi.Name();
+        bd.faceNames[i] = layer->GetBitmapFileName(i);
     }
 
     // Get detail parameters

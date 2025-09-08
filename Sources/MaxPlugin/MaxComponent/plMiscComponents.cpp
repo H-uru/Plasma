@@ -2535,8 +2535,8 @@ bool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         plLayerTex *layer = GetBitmap( i );
         if (layer != nullptr)
         {
-            PBBitmap *texture = layer->GetPBBitmap();
-            if (texture != nullptr)
+            plFileName texturePath = layer->GetBitmapFileName();
+            if (texturePath.IsValid())
             {
                 uint32_t flags = plBitmap::kAlphaChannelFlag;
 
@@ -2544,10 +2544,10 @@ bool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 if (fCompPB->GetInt(kCompressImage, 0, i) == 0)
                 {
                     flags |= plBitmap::kForceNonCompressed;
-                    bMap = plLayerConverter::Instance().CreateSimpleTexture( M2ST(texture->bi.Name()), lib->GetKey()->GetUoid().GetLocation(), 0, flags );
+                    bMap = plLayerConverter::Instance().CreateSimpleTexture( texturePath, lib->GetKey()->GetUoid().GetLocation(), 0, flags );
                 }
                 else // compress using PNG compression scheme
-                    bMap = plLayerConverter::Instance().CreateSimpleTexture( M2ST(texture->bi.Name()), lib->GetKey()->GetUoid().GetLocation(), 0, flags, true );
+                    bMap = plLayerConverter::Instance().CreateSimpleTexture( texturePath, lib->GetKey()->GetUoid().GetLocation(), 0, flags, true );
                 if (bMap != nullptr)
                 {
                     hsgResMgr::ResMgr()->AddViaNotify( bMap->GetKey(), new plGenRefMsg( lib->GetKey(), 
