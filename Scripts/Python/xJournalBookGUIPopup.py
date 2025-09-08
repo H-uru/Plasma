@@ -189,26 +189,14 @@ class xJournalBookGUIPopup(ptModifier):
         journalContents = ""
         if Dynamic.value:
             inbox = ptVault().getGlobalInbox()
-            inboxChildList = inbox.getChildNodeRefList()
-            for child in inboxChildList:
-                PtDebugPrint("xJournalBookGUIPopupDyn: looking at node " + str(child), level=kDebugDumpLevel)
-                node = child.getChild()
-                folderNode = node.upcastToFolderNode()
-                if folderNode:
-                    PtDebugPrint("xJournalBookGUIPopupDyn: node is named %s" % (folderNode.getFolderName()), level=kDebugDumpLevel)
-                    if folderNode.getFolderName() == "Journals":
-                        folderNodeChildList = folderNode.getChildNodeRefList()
-                        for folderChild in folderNodeChildList:
-                            PtDebugPrint("xJournalBookGUIPopupDyn: looking at child node " + str(folderChild), level=kDebugDumpLevel)
-                            childNode = folderChild.getChild()
-                            textNode = childNode.upcastToTextNoteNode()
-                            if textNode:
-                                PtDebugPrint("xJournalBookGUIPopupDyn: child node is named %s" % (textNode.getTitle()), level=kDebugDumpLevel)
-                                # TODO: Convert this to use LocPath.value and migrate node values in DB if necessary once all PFMs
-                                #  are converted to use LocalizationPaths
-                                if textNode.getTitle() == JournalIdent:
-                                    journalContents = textNode.getText()
-                                    PtDebugPrint("xJournalBookGUIPopupDyn: journal contents are '%s'" % (journalContents), level=kDebugDumpLevel)
+            journalTemplate = ptVaultFolderNode(0)
+            journalTemplate.setFolderName("Journals")
+            if journalFolderNode := inbox.findNode(journalTemplate):
+                textTemplate = ptVaultTextNoteNode(0)
+                textTemplate.setTitle(JournalIdent)
+                if textNoteNode := journalFolderNode.findNode(textTemplate):
+                    textNoteNode = textNoteNode.upcastToTextNoteNode()
+                    journalContents = textNoteNode.getText()
         else:
             journalContents = PtGetLocalizedString(LocPath.value)
 
