@@ -61,6 +61,9 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 
+import re
+import webbrowser
+
 import xJournalBookDefs
 
 
@@ -78,6 +81,14 @@ GUIType             = ptAttribString(14,"Book GUI Type",default="bkBook")
 
 # globals
 LocalAvatar = None
+
+# pfJournalBook's EsHTML will only allow links with integer events.
+# This isn't very friendly for age creators, so we'll let them specify
+# a url by doing <a href="https://foo.com">, and this regex will
+# convert that to an integer id. It will do the same for any tag, but
+# only <img> and <movie> are useful.
+_URL_REGEX = re.compile(r"(?P<href>href\s*=\s*(?P<quote>[\"\']?)\s*?(?P<url>https?:\/\/[^\s>]+)\s*?(?P=quote))(?=[^<]*>)", re.IGNORECASE)
+_HOST_REGEX = re.compile(R"(?:https?:\/\/)?(?:www\.)?([^\/?#]+).*", re.IGNORECASE)
 
 class xJournalBookGUIPopup(ptModifier):
     "The Journal Book GUI Popup python code"
@@ -123,11 +134,25 @@ class xJournalBookGUIPopup(ptModifier):
                 # is it from the OpenBook? (we only have one book to worry about)
                 if event[0] == PtEventType.kBook:
                     PtDebugPrint("xJournalBookGUIPopup: BookNotify  event=%d, id=%d" % (event[1],event[2]),level=kDebugDumpLevel)
-                    if event[1] == PtBookEventTypes.kNotifyShow:
+                    if event[1] == PtBookEventTypes.kNotifyImageLink:
+                        PtDebugPrint("xJournalBookGUIPopup:Book: NotifyImageLink",level=kDebugDumpLevel)
+                        try:
+                            url = self.links[event[2]]
+                        except IndexError:
+                            pass
+                        else:
+                            def open_url(result):
+                                if result == PtConfirmationResult.Yes:
+                                    webbrowser.open_new_tab(url)
+
+                            hostname = _HOST_REGEX.sub(R"\1", url)
+                            PtDebugPrint(f"xJournalBookGUIPopup: NotifyImageLink: Prompting user to open {hostname=} {url=} {event[2]=}", level=kWarningLevel)
+                            PtLocalizedYesNoDialog(open_url, "KI.Messages.OpenHyperlink", hostname)
+                    elif event[1] == PtBookEventTypes.kNotifyShow:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyShow",level=kDebugDumpLevel)
                         # disable the KI
                         PtSendKIMessage(kDisableKIandBB,0)
-                    if event[1] == PtBookEventTypes.kNotifyHide:
+                    elif event[1] == PtBookEventTypes.kNotifyHide:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyHide",level=kDebugDumpLevel)
                         # re-enable KI
                         PtSendKIMessage(kEnableKIandBB,0)
@@ -194,7 +219,7 @@ class xJournalBookGUIPopup(ptModifier):
         PtSendKIMessage(kDisableKIandBB, 0)
 
         # now build the book
-        self.JournalBook = ptBook(journalContents, self.key)
+        self.JournalBook = ptBook(self.IPreprocessJournalContents(journalContents), self.key)
         self.JournalBook.setSize(BookWidth.value, BookHeight.value)
         self.JournalBook.setGUI(GUIType.value)
 
@@ -204,6 +229,23 @@ class xJournalBookGUIPopup(ptModifier):
         else:
             self.JournalBook.show(StartOpen.value)
 
+    def IPreprocessJournalContents(self, journalContents: str):
+        self.links = []
+        def replace_url(match: re.Match) -> str:
+            url = match.group("url")
+            event = len(self.links)
+
+            PtDebugPrint(f"xJournalBookGUIPopup.IPreprocessJournalContents(): Found {url=} {event=}")
+            self.links.append(url)
+            return f"link={event}"
+
+        newContent = _URL_REGEX.sub(replace_url, journalContents)
+        PtDebugPrint(
+            "xJournalBookGuiPopup.IPreprocessJournalContents(): The journal content has been preprocessed to:",
+            newContent,
+            level=kDebugDumpLevel
+        )
+        return newContent
 
     def IsThereACover(self, bookHtml):
         # search the bookhtml string looking for a cover

@@ -250,6 +250,7 @@ class plFont : public hsKeyedObject
         uint32_t    GetFlags() const { return fFlags; }
         float       GetDescent() const { return (float)fFontDescent; }
         float       GetAscent() const { return (float)fFontAscent; }
+        float       GetMaxCharHeight() const { return (float)fMaxCharHeight; }
 
         uint32_t      GetBitmapWidth() const { return fWidth; }
         uint32_t      GetBitmapHeight() const { return fHeight; }
