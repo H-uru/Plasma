@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #import <Foundation/Foundation.h>
 
+#import "pnNetBase/pnNbError.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface PLSLoginParameters : NSObject
@@ -57,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PLSLoginController : NSObject
 
-+ (void)attemptLogin:(void (^)(int))completion;
++ (void)attemptLogin:(void (^)(ENetError))completion;
 
 @end
 
