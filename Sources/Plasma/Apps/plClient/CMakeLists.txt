@@ -222,6 +222,7 @@ if(APPLE)
             XCODE_ATTRIBUTE_INFOPLIST_KEY_GCSupportsGameMode YES
             XCODE_ATTRIBUTE_INFOPLIST_KEY_UIFileSharingEnabled YES
             XCODE_ATTRIBUTE_INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace YES
+            XCODE_ATTRIBUTE_SWIFT_OBJC_INTEROP_MODE objcxx
         )
     endif()
     target_compile_options(plClient PRIVATE $<$<COMPILE_LANGUAGE:C,CXX,OBJC>:-fobjc-arc>)

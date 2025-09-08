@@ -71,7 +71,7 @@ struct LoginView: View {
                     showAlert = true
                     alertType = .loggingIn
                     PLSLoginController.attemptLogin { result in
-                        if result != 0 {
+                        if result != kNetSuccess {
                             alertType = .loginFailed
                             showAlert = true
                             return
