@@ -41,9 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 // System Frameworks
-#ifdef PLASMA_PIPELINE_GL
-#import <OpenGL/gl.h>
-#endif
 #ifdef PLASMA_PIPELINE_METAL
 #import <Metal/Metal.h>
 #endif
@@ -74,9 +71,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfConsoleCore/pfServerIni.h"
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
-#ifdef PLASMA_PIPELINE_GL
-#include "pfGLPipeline/plGLPipeline.h"
-#endif
 #include "plInputCore/plInputDevice.h"
 #ifdef PLASMA_PIPELINE_METAL
 #include "pfMetalPipeline/plMetalPipeline.h"
@@ -95,6 +89,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/pl3DPipeline.h"
 
 #include "PLSClient.h"
+#include "plUIKitDisplayHelper.h"
 #include "PLSPatcher.h"
 
 void PumpMessageQueueProc();
@@ -184,6 +179,9 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 {
     self = [super init];
     
+    auto displayHelper = new plUIKitDisplayHelper();
+    plDisplayHelper::SetInstance(displayHelper);
+    
     self.view = [PLSView new];
     self.view.delegate = self;
     
@@ -195,7 +193,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     NSArray *nsArgs = [NSProcessInfo processInfo].arguments;
     
     gClient.SetClientWindow((__bridge void *)self.view.metalLayer);
-    gClient.SetClientDisplay((hsWindowHndl)NULL);
+    gClient.SetClientDisplay(0);
     
     PF_CONSOLE_INIT_ALL()
     args.reserve(nsArgs.count);

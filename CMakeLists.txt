@@ -13,7 +13,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "iOS")
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "15" CACHE STRING "Minimum iOS deployment version")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "16" CACHE STRING "Minimum iOS deployment version")
 endif()
 
 # CMake 3.22 changes cmake_dependent_option from doing `if(${CONDITION})` to actually evaulating
