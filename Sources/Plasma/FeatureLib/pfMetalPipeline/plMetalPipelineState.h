@@ -50,10 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMetalDevice.h"
 #include "plSurface/plShaderTable.h"
 
-#ifndef PLASMA_FORCE_PER_PIXEL_LIGHTING
-#define PLASMA_FORCE_PER_PIXEL_LIGHTING 0
-#endif
-
 enum plMetalPipelineType
 {
     // Unknown is for abstract types, don't use it

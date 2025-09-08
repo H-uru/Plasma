@@ -118,6 +118,10 @@ plProfile_CreateCounter("AvRTPoolRes", "PipeC", AvRTPoolRes);
 plProfile_CreateCounter("AvRTShrinkTime", "PipeC", AvRTShrinkTime);
 plProfile_CreateCounter("NumSkin", "PipeC", NumSkin);
 
+#ifndef PLASMA_FORCE_PER_PIXEL_LIGHTING
+#define PLASMA_FORCE_PER_PIXEL_LIGHTING 0
+#endif
+
 plMetalEnumerate plMetalPipeline::enumerator;
 
 class plRenderTriListFunc : public plRenderPrimFunc
