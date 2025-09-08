@@ -301,6 +301,9 @@ private:
     /// Returns true if the device supports tile memory features such as directly writable render buffers.
     inline bool SupportsTileMemory() const { return fSupportsTileMemory; }
     bool fSupportsTileMemory;
+    
+    inline bool SupportsDXTTextures() const { return fSupportsDXTTextures; }
+    bool fSupportsDXTTextures;
 };
 
 #endif

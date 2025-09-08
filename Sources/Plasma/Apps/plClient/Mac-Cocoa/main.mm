@@ -425,7 +425,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     if (cmdParser.IsSpecified(kArgSkipLoginDialog)) {
         PLSLoginParameters* params = [PLSLoginParameters new];
         [params makeCurrent];
-        [PLSLoginController attemptLogin:^(ENetError error) {
+        [PLSLoginController attemptLogin:^(int error) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (error == kNetSuccess) {
                     [self startClient];
