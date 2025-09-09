@@ -55,7 +55,7 @@ from PlasmaConstants import *
 from typing import *
 
 def PtAcceptInviteInGame(friendName, inviteKey):
-    """Sends an FBI helicopter to the server to perform the invite"""
+    """Sends a VaultTask to the server to perform the invite"""
     ...
 
 def PtAmCCR():
