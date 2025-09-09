@@ -1546,6 +1546,10 @@ class ptAvatar:
         """Exits the avatar from the subWorld where it was"""
         ...
 
+    def findBone(self, bone_name: str) -> ptSceneObject:
+        """Find the ptSceneObject for the requested bone"""
+        ...
+
     def getAllWithSameMesh(self, clothing_name):
         """Returns a lilst of all clothing items that use the same mesh as the specified one"""
         ...

@@ -645,6 +645,18 @@ PYTHON_METHOD_DEFINITION(ptAvatar, setDontPanicLink, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION(ptAvatar, findBone, args)
+{
+    ST::string boneName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &boneName))
+    {
+        PyErr_SetString(PyExc_TypeError, "findBone expects a string bone name");
+        PYTHON_RETURN_ERROR;
+    }
+
+    return self->fThis->FindBone(boneName);
+}
+
 PYTHON_START_METHODS_TABLE(ptAvatar)
     PYTHON_METHOD(ptAvatar, netForce, "Params: forceFlag\nSpecify whether this object needs to use messages that are forced to the network\n"
                 "- This is to be used if your Python program is running on only one client\n"
@@ -705,6 +717,7 @@ PYTHON_START_METHODS_TABLE(ptAvatar)
     PYTHON_METHOD(ptAvatar, loadClothingFromFile, "Params: filename\nLoad avatar clothing from a file"),
 
     PYTHON_METHOD(ptAvatar, setDontPanicLink, "Type: (value: bool) -> None\nDisables panic linking to Personal Age (warps the avatar back to the start instead)"),
+    PYTHON_METHOD(ptAvatar, findBone, "Type: (bone_name: str) -> ptSceneObject\nFind the ptSceneObject for the requested bone"),
 PYTHON_END_METHODS_TABLE;
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetBehaviorLoopCount, args, "Params: behaviorKey,stage,loopCount,netForce\nThis will set the loop count for a particular stage in a multistage behavior")
