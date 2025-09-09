@@ -236,8 +236,4 @@ class xJournalBookGUIPopup(ptModifier):
         return newContent
 
     def IsThereACover(self, bookHtml):
-        # search the bookhtml string looking for a cover
-        idx = bookHtml.find('<cover')
-        if idx >= 0:
-            return 1
-        return 0
+        return "<cover" in bookHtml
