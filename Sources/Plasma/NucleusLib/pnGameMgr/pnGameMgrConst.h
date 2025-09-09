@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //============================================================================
 // EGameJoinError
 //============================================================================
-enum class EGameJoinError : uint32_t
+enum class EGameJoinError : int32_t
 {
     kGameJoinSuccess,
     kGameJoinErrNotExist,
@@ -59,7 +59,7 @@ enum class EGameJoinError : uint32_t
     kGameJoinErrAlreadyJoined,
     kGameJoinErrNoInvite,
     kNumGameJoinErrors,
-    kGameJoinPending = (uint32_t)-1,
+    kGameJoinPending = -1,
 };
 
 //============================================================================
