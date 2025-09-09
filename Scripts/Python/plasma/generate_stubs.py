@@ -328,7 +328,7 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
                 kind = "staticmethod"
                 # The __doc__ of staticmethod objects is staticmethod.__doc__,
                 # i. e. the docstring for staticmethod itself and not for the actual method!
-                # (Checked with Python 3.10.7.)
+                # (Checked with Python 3.12.9.)
                 # Unwrap it so that the code below can get at the proper docstring.
                 value = value.__func__
                 assert isinstance(value, types.BuiltinMethodType)
