@@ -46,9 +46,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 
 #include "cyPythonInterface.h"
+#include "plPythonCallable.h"
 #include "plPythonPack.h"
 #include "pyGlueHelpers.h"
 #include "pyObjectRef.h"
+
+// ==========================================================================
+
+static PyTypeObject* s_ModuleSpec = nullptr;
 
 // ==========================================================================
 
@@ -64,25 +69,6 @@ PYTHON_DEFAULT_NEW_DEFINITION(ptModulePackFinder, pyModulePackFinder)
 PYTHON_DEFAULT_DEALLOC_DEFINITION(ptModulePackFinder)
 PYTHON_NO_INIT_DEFINITION(ptModulePackFinder)
 
-struct pyModulePackSpec
-{
-    ST::string fName;
-    ST::string fParent;
-    pyObjectRef fPycCode;
-    pyObjectRef fLoader;
-    pyObjectRef fTargetModule;
-    bool fInitializing{ false };
-
-    PYTHON_CLASS_NEW_DEFINITION;
-    PYTHON_CLASS_CHECK_DEFINITION;
-    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyModulePackSpec);
-};
-
-PYTHON_CLASS_DEFINITION(ptModulePackSpec, pyModulePackSpec)
-PYTHON_DEFAULT_NEW_DEFINITION(ptModulePackSpec, pyModulePackSpec)
-PYTHON_DEFAULT_DEALLOC_DEFINITION(ptModulePackSpec)
-PYTHON_NO_INIT_DEFINITION(ptModulePackSpec)
-
 struct pyModulePackLoader
 {
     PYTHON_CLASS_NEW_DEFINITION;
@@ -95,6 +81,34 @@ PYTHON_NO_INIT_DEFINITION(ptModulePackLoader)
 
 // ==========================================================================
 
+static pyObjectRef IInitModuleSpec(
+    const ST::string& modName,
+    const ST::string& packedName,
+    pyObjectRef loader,
+    bool isPackage
+)
+{
+    // Try to share the same python string object for the module name and
+    // the packed name, since they are often the same.
+    pyObjectRef modNameObj, packedNameObj;
+    if (modName.c_str() == packedName.c_str()) {
+        modNameObj = PyUnicode_FromSTString(modName);
+        packedNameObj = modNameObj;
+    } else {
+        modNameObj = PyUnicode_FromSTString(modName);
+        packedNameObj = PyUnicode_FromSTString(packedName);
+    }
+
+    pyObjectRef spec = plPython::CallObject(
+        (PyObject*)s_ModuleSpec,
+        std::move(modNameObj), std::move(loader),
+        plPython::KwArg("origin", std::move(packedNameObj)),
+        plPython::KwArg("is_package", isPackage)
+    );
+    hsAssert(spec, "Could not create ModuleSpec object");
+    return spec;
+}
+
 PYTHON_METHOD_DEFINITION(ptModulePackFinder, find_spec, args)
 {
     ST::string name;
@@ -102,38 +116,25 @@ PYTHON_METHOD_DEFINITION(ptModulePackFinder, find_spec, args)
     PyObject* target = nullptr;
     if (!PyArg_ParseTuple(args, "O&|OO", PyUnicode_STStringConverter, &name, &path, &target)) {
         PyErr_SetString(PyExc_TypeError, "find_spec expects a string, and optional object, and an optional module object");
-        return nullptr;
+        PYTHON_RETURN_ERROR;
     }
     if (!(target == nullptr || target == Py_None || PyModule_Check(target))) {
         PyErr_SetString(PyExc_TypeError, "find_spec expects a string, and optional object, and an optional module object");
-        return nullptr;
+        PYTHON_RETURN_ERROR;
     }
 
-    ptModulePackSpec* spec = nullptr;
+    pyObjectRef spec;
     if (PythonPack::IsItPythonPacked(name)) {
-        spec = (ptModulePackSpec*)pyModulePackSpec::New();
-        spec->fThis->fParent = name.before_last('.');
-        spec->fThis->fPycCode = PythonPack::OpenPythonPacked(name);
+        spec = IInitModuleSpec(name, name, self->fThis->fLoader, false);
     } else {
         ST::string package = ST::format("{}.__init__", name);
-        if (PythonPack::IsItPythonPacked(package)) {
-            spec = (ptModulePackSpec*)pyModulePackSpec::New();
-            spec->fThis->fParent = name;
-            spec->fThis->fPycCode = PythonPack::OpenPythonPacked(package);
-        }
+        if (PythonPack::IsItPythonPacked(package))
+            spec = IInitModuleSpec(name, package, self->fThis->fLoader, true);
+        else
+            spec.SetPyNone();
     }
 
-    if (spec) {
-        spec->fThis->fName = name;
-        spec->fThis->fLoader = self->fThis->fLoader;
-        // yes, this happens...
-        if (target != Py_None)
-            spec->fThis->fTargetModule = target;
-        return (PyObject*)spec;
-    } else {
-        // Not an error condition, technically.
-        PYTHON_RETURN_NONE;
-    }
+    return spec.Release();
 }
 
 PYTHON_START_METHODS_TABLE(ptModulePackFinder)
@@ -145,118 +146,14 @@ PYTHON_CLASS_NEW_IMPL(ptModulePackFinder, pyModulePackFinder);
 
 // ==========================================================================
 
-PYTHON_GET_DEFINITION(ptModulePackSpec, name)
-{
-    return PyUnicode_FromSTString(self->fThis->fName);
-}
-
-PYTHON_GET_DEFINITION(ptModulePackSpec, loader)
-{
-    PyObject* loader = self->fThis->fLoader.Get();
-    Py_INCREF(loader);
-    return loader;
-}
-
-PYTHON_GET_DEFINITION(ptModulePackSpec, parent)
-{
-    return PyUnicode_FromSTString(self->fThis->fParent);
-}
-
-PYTHON_GET_DEFINITION(ptModulePackSpec, origin)
-{
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_GET_DEFINITION(ptModulePackSpec, cached)
-{
-    // Don't look at me.
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_GET_DEFINITION(ptModulePackSpec, submodule_search_locations)
-{
-    // Actual system paths to search for submodules on. If we really have a module in python.pak,
-    // then we don't want to be traipsing around the system for stray files. That is both a security
-    // hole and a bug that prevents package modules from working.
-    return PyList_New(0);
-}
-
-PYTHON_GET_DEFINITION(ptModulePackSpec, loader_state)
-{
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_GET_DEFINITION(ptModulePackSpec, has_location)
-{
-    PYTHON_RETURN_BOOL(false);
-}
-
-PYTHON_GET_DEFINITION(ptModulePackSpec, _initializing)
-{
-    PYTHON_RETURN_BOOL(self->fThis->fInitializing);
-}
-
-PYTHON_SET_DEFINITION_READONLY(ptModulePackSpec, name)
-PYTHON_SET_DEFINITION_READONLY(ptModulePackSpec, loader)
-PYTHON_SET_DEFINITION_READONLY(ptModulePackSpec, parent)
-PYTHON_SET_DEFINITION_READONLY(ptModulePackSpec, origin)
-PYTHON_SET_DEFINITION_READONLY(ptModulePackSpec, cached)
-PYTHON_SET_DEFINITION_READONLY(ptModulePackSpec, submodule_search_locations)
-PYTHON_SET_DEFINITION_READONLY(ptModulePackSpec, loader_state)
-PYTHON_SET_DEFINITION_READONLY(ptModulePackSpec, has_location)
-PYTHON_SET_DEFINITION(ptModulePackSpec, _initializing, value)
-{
-    if (PyBool_Check(value)) {
-        self->fThis->fInitializing = PyLong_AsLong(value) != 0;
-        PYTHON_RETURN_SET_OK;
-    }
-
-    PyErr_SetString(PyExc_TypeError, "_initializing should be a bool");
-    PYTHON_RETURN_SET_ERROR;
-}
-
-PYTHON_START_GETSET_TABLE(ptModulePackSpec)
-    PYTHON_GETSET(ptModulePackSpec, name, ""),
-    PYTHON_GETSET(ptModulePackSpec, loader, ""),
-    PYTHON_GETSET(ptModulePackSpec, parent, ""),
-    PYTHON_GETSET(ptModulePackSpec, origin, ""),
-    PYTHON_GETSET(ptModulePackSpec, cached, ""),
-    PYTHON_GETSET(ptModulePackSpec, submodule_search_locations, ""),
-    PYTHON_GETSET(ptModulePackSpec, loader_state, ""),
-    PYTHON_GETSET(ptModulePackSpec, has_location, ""),
-    PYTHON_GETSET(ptModulePackSpec, _initializing, ""),
-PYTHON_END_GETSET_TABLE;
-
-PYTHON_START_METHODS_TABLE(ptModulePackSpec)
-    // no methods
-PYTHON_END_METHODS_TABLE;
-
-#define ptModulePackSpec_AS_NUMBER      PYTHON_NO_AS_NUMBER
-#define ptModulePackSpec_AS_SEQUENCE    PYTHON_NO_AS_SEQUENCE
-#define ptModulePackSpec_AS_MAPPING     PYTHON_NO_AS_MAPPING
-#define ptModulePackSpec_STR            PYTHON_NO_STR
-#define ptModulePackSpec_GETATTRO       PYTHON_DEFAULT_GETATTRO
-#define ptModulePackSpec_SETATTRO       PYTHON_DEFAULT_SETATTRO
-#define ptModulePackSpec_RICH_COMPARE   PYTHON_NO_RICH_COMPARE
-#define ptModulePackSpec_GETSET         PYTHON_DEFAULT_GETSET(ptModulePackSpec)
-#define ptModulePackSpec_BASE           PYTHON_NO_BASE
-
-PLASMA_CUSTOM_TYPE(ptModulePackSpec, "PEP 451 module spec for plPythonPack");
-PYTHON_CLASS_NEW_IMPL(ptModulePackSpec, pyModulePackSpec);
-PYTHON_CLASS_CHECK_IMPL(ptModulePackSpec, pyModulePackSpec);
-PYTHON_CLASS_CONVERT_FROM_IMPL(ptModulePackSpec, pyModulePackSpec);
-
-// ==========================================================================
-
 PYTHON_METHOD_DEFINITION(ptModulePackLoader, create_module, args)
 {
-#ifdef HS_DEBUGGING
     PyObject* specObj;
-    if (!PyArg_ParseTuple(args, "O", &specObj) || !pyModulePackSpec::Check(specObj)) {
-        PyErr_SetString(PyExc_TypeError, "create_module expects a ptModulePackSpec object");
-        return nullptr;
+    if (!PyArg_ParseTuple(args, "O!", s_ModuleSpec, &specObj)) {
+        // PyArg_ParseTuple should already set an appropriate error message
+        // due to the usage of the O! code.
+        PYTHON_RETURN_ERROR;
     }
-#endif
 
     // Creating the module here causes very bad things to happen for some reason. PEP 451 indicates
     // that this method is optional, however, it was made required in Python 3.6. Returning None
@@ -269,26 +166,44 @@ PYTHON_METHOD_DEFINITION(ptModulePackLoader, exec_module, args)
     PyObject* pymodule;
     if (!PyArg_ParseTuple(args, "O", &pymodule) || !PyModule_Check(pymodule)) {
         PyErr_SetString(PyExc_TypeError, "exec_module expects a module object");
-        return nullptr;
+        PYTHON_RETURN_ERROR;
     }
 
     pyObjectRef moduleSpecObj = PyObject_GetAttrString(pymodule, "__spec__");
     if (!moduleSpecObj) {
         PyErr_SetString(PyExc_ImportError, "module spec missing");
-        return nullptr;
+        PYTHON_RETURN_ERROR;
     }
-    hsAssert(pyModulePackSpec::Check(moduleSpecObj.Get()), "module spec of unexpected type");
-    pyModulePackSpec* spec = pyModulePackSpec::ConvertFrom(moduleSpecObj.Get());
+
+    pyObjectRef packedNameObj = PyObject_GetAttrString(moduleSpecObj.Get(), "origin");
+    if (!(packedNameObj && PyUnicode_Check(packedNameObj.Get()))) {
+        PyErr_Format(
+            PyExc_ImportError,
+            "origin missing or invalid in ModuleSpec for module %s",
+            PyModule_GetName(pymodule)
+        );
+        PYTHON_RETURN_ERROR;
+    }
+
+    ST::string packedName = PyUnicode_AsSTString(packedNameObj.Get());
+    pyObjectRef pycCode = PythonPack::OpenPythonPacked(packedName);
+    if (!(pycCode && PyCode_Check(pycCode.Get()))) {
+        PyErr_Format(
+            PyExc_ImportError,
+            "Could not load packed code for module %s",
+            PyModule_GetName(pymodule)
+        );
+        PYTHON_RETURN_ERROR;
+    }
 
     PyObject* dict = PyModule_GetDict(pymodule);
     if (!PyDict_GetItemString(dict, "__builtins__"))
         PyDict_SetItemString(dict, "__builtins__", PyEval_GetBuiltins());
 
-    if (spec->fPycCode) {
-        pyObjectRef result = PyEval_EvalCode(spec->fPycCode.Get(), dict, dict);
-        if (!result)
-            return nullptr;
-    }
+    pyObjectRef evalResult = PyEval_EvalCode(pycCode.Get(), dict, dict);
+    if (!evalResult)
+        PYTHON_RETURN_ERROR;
+
     PYTHON_RETURN_NONE;
 }
 
@@ -304,9 +219,23 @@ PYTHON_CLASS_NEW_IMPL(ptModulePackLoader, pyModulePackLoader);
 
 void PythonInterface::initPyPackHook()
 {
-#ifdef HS_DEBUGGING
-    dbgLog->AddLine(plStatusLog::kGreen, "Creating PEP 451 module...");
-#endif
+    dbgLog->AddLine(plStatusLog::kGreen, "Begin initializing PEP 451 python.pak functionality...");
+
+    pyObjectRef implib = PyImport_ImportModule("_frozen_importlib");
+    if (!implib) {
+        dbgLog->AddLine(plStatusLog::kRed, "Failed to import _frozen_importlib!");
+        return;
+    }
+
+    PyObject* moduleSpec = GetModuleItem("ModuleSpec", implib.Get());
+    if (moduleSpec && PyType_Check(moduleSpec)) {
+        s_ModuleSpec = (PyTypeObject*)moduleSpec;
+    } else {
+        dbgLog->AddLineF(plStatusLog::kRed, "Failed to get ModuleSpec from _frozen_importlib!");
+        return;
+    }
+
+    dbgLog->AddLine(plStatusLog::kGreen, "Creating _PlasmaImport module...");
 
     // note: steals ref
     PyObject* mod = PyImport_AddModule("_PlasmaImport");
@@ -317,13 +246,10 @@ void PythonInterface::initPyPackHook()
 
     PYTHON_CLASS_IMPORT_START(mod);
     PYTHON_CLASS_IMPORT(mod, ptModulePackFinder);
-    PYTHON_CLASS_IMPORT(mod, ptModulePackSpec);
     PYTHON_CLASS_IMPORT(mod, ptModulePackLoader);
     PYTHON_CLASS_IMPORT_END(mod);
 
-#ifdef HS_DEBUGGING
     dbgLog->AddLine(plStatusLog::kGreen, "Installing PEP 451 machinery...");
-#endif
 
     pyObjectRef metaFinder = pyModulePackFinder::New();
     ((ptModulePackFinder*)metaFinder.Get())->fThis->fLoader = pyModulePackLoader::New();

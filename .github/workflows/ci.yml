@@ -202,6 +202,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
               autoconf \
+              autoconf-archive \
               cmake \
               libcairo2 \
               libsecret-1-dev \
@@ -285,6 +286,7 @@ jobs:
           brew install -q \
               qt@${{ matrix.platform.qt-version }} \
               autoconf \
+              autoconf-archive \
               automake \
               libtool \
               nasm \
