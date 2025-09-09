@@ -118,6 +118,25 @@ generated_module_header = """\
 docstring_type_prefix = "Type: "
 docstring_params_prefix = "Params: "
 
+def is_special_attribute_name(name: str) -> bool:
+    """Return whether the given attribute name is a "special" attribute
+    that should never be output into the stubs.
+
+    Attributes of the form __foo__ have a special meaning to the Python language/runtime.
+    Attributes of the form _foo_ have a special meaning to standard library modules like enum.
+    Both kinds are mainly defined implicitly by Python or the stdlib and not explicitly by user code.
+    Sometimes, user code will explicitly define/override them,
+    but even then we don't want to write them into the stubs.
+
+    Attributes of the form __foo normally shouldn't appear
+    (such names are rewritten by Python at compile time),
+    but we ignore them regardless, just in case.
+    We intentionally don't ignore attributes of the form _foo,
+    because those are sometimes defined by user code.
+    """
+
+    return name.startswith("__") or (name.startswith("_") and name.endswith("_"))
+
 def attr_sort_key(item: tuple[str, object]) -> tuple[int, str]:
     name, value = item
 
@@ -143,10 +162,11 @@ def iter_attributes(obj: object) -> Iterable[tuple[str, object]]:
     while i < len(attrs):
         name, value = attrs[i]
 
-        # Ignore dunder attributes for the purposes of discovering base class dependencies.
+        # Ignore special attributes for the purposes of discovering base class dependencies.
         # Otherwise, the logic will get confused by special attributes
-        # whose value is a type object, such as __class__.
-        if not name.startswith("__") and isinstance(value, type):
+        # whose value is a type object, such as __class__,
+        # or _member_type_ on enum.Enum subclasses.
+        if not is_special_attribute_name(name) and isinstance(value, type):
             # Find all base classes that haven't been seen yet
             # and wrap them in (name, value) tuples.
             missing_bases = [
@@ -312,7 +332,7 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
                 # C-defined __init__ methods have a dummy docstring - don't output that.
                 yield from add_indents("    ", generate_function_stub("method", name, init_signature, ""))
             continue
-        elif name.startswith("__"):
+        elif is_special_attribute_name(name):
             # Ignore all other special attributes.
             continue
 
@@ -381,7 +401,7 @@ def generate_module_stub(module: types.ModuleType) -> Iterable[str]:
     yield "from typing import *"
 
     for name, value in iter_attributes(module):
-        if name.startswith("__"):
+        if is_special_attribute_name(name):
             continue
 
         yield ""
