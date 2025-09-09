@@ -50,17 +50,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 #include <string_theory/string>
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// NAME: pyEnum
-//
-// PURPOSE: Base class stuff for enumeration support (you don't instance this
-//          class
-//
+// Helper functions used by the enum glue
 class pyEnum
 {
 public:
-    static void AddPlasmaConstantsClasses(PyObject *m);
     static void MakeEnum(PyObject *m, const char* name, const std::vector<std::tuple<ST::string, Py_ssize_t>>& values);
 };
 

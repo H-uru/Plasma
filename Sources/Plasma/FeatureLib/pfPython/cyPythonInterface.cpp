@@ -1174,8 +1174,6 @@ void PythonInterface::AddPlasmaClasses(PyObject* plasmaMod)
 //
 void PythonInterface::AddPlasmaConstantsClasses(PyObject* plasmaConstantsMod)
 {
-    pyEnum::AddPlasmaConstantsClasses(plasmaConstantsMod);
-
     cyAvatar::AddPlasmaConstantsClasses(plasmaConstantsMod);
     cyMisc::AddPlasmaConstantsClasses(plasmaConstantsMod);
     cyAccountManagement::AddPlasmaConstantsClasses(plasmaConstantsMod);
