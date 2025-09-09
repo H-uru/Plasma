@@ -1393,7 +1393,13 @@ void    pfJournalBook::Open( uint32_t startingPage /*= 0 */)
 {
     if( !fBookGUIs[fCurBookGUI]->CurrentlyOpen() )
     {
+        ISendNotify(kNotifyOpen);
+
         fBookGUIs[fCurBookGUI]->PlayBookCloseAnim( false );
+
+        // Make sure we actually know where the requested page is.
+        if (startingPage > fCurrentPage)
+            IRecalcPageStarts(startingPage);
 
         // Render initial pages
         fCurrentPage = startingPage;
@@ -1413,7 +1419,7 @@ void    pfJournalBook::Close()
     // don't allow them to close the book if the book started open
     if( !fBookGUIs[fCurBookGUI]->StartedOpen() && fBookGUIs[fCurBookGUI]->CurrentlyOpen() )
     {
-        ISendNotify( kNotifyClose );
+        ISendNotify( kNotifyClose, 0 );
         fBookGUIs[fCurBookGUI]->PlayBookCloseAnim( true );
     }
 }
@@ -1429,7 +1435,7 @@ void    pfJournalBook::CloseAndHide()
         // if we are flipping a book then kill the page flipping animation
         if ( fBookGUIs[fCurBookGUI]->CurrentlyTurning() )
             fBookGUIs[fCurBookGUI]->KillPageFlip();
-        ISendNotify( kNotifyClose );
+        ISendNotify( kNotifyClose, 1 );
 
         ITriggerCloseWithNotify( true, false );
 
