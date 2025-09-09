@@ -39,49 +39,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef pnNetCommon_h_inc
-#define pnNetCommon_h_inc
 
-#include "hsRefCnt.h"
-#include "hsStream.h"
-#include "pnFactory/plCreatable.h"
+#include <gtest/gtest.h>
+#include <string_theory/string>
 
-//
-// main logging switch
-//
-#ifndef PLASMA_EXTERNAL_RELEASE
-# define NET_LOGGING
-#endif
+#include "pnNetCommon/plNetAddress.h"
 
-#ifndef hsLogEntry
-# ifdef NET_LOGGING
-#  define hsLogEntry(x) x
-# else
-#  define hsLogEntry(x)
-# endif
-#endif
+using namespace ST::literals;
 
-#define hsDbgLogEntry(x) 
-#ifdef NET_LOGGING
-# ifdef HS_DEBUGGING
-#  undef hsDbgLogEntry
-#  define hsDbgLogEntry(x) x
-# endif
-#endif
-
-
-class plCreatableStream : public plCreatable
+TEST(plNetAddress, HostPortAsString)
 {
-    hsRAMStream fStream;
+    plNetAddress addr1({1, 2, 3, 4}, 80);
+    EXPECT_EQ(addr1.GetHostString(), "1.2.3.4"_st);
+    EXPECT_EQ(addr1.GetHostWithPort(), "1.2.3.4:80"_st);
 
-public:
-    CLASSNAME_REGISTER(plCreatableStream);
-    GETINTERFACE_ANY(plCreatableStream, plCreatable);
+    plNetAddress addr2({10, 20, 30, 40}, 443);
+    EXPECT_EQ(addr2.GetHostString(), "10.20.30.40"_st);
+    EXPECT_EQ(addr2.GetHostWithPort(), "10.20.30.40:443"_st);
 
-    void Read(hsStream* stream, hsResMgr* mgr=nullptr) override;
-    void Write(hsStream* stream, hsResMgr* mgr=nullptr) override;
+    plNetAddress addr3({127, 0, 0, 1}, 8080);
+    EXPECT_EQ(addr3.GetHostString(), "127.0.0.1"_st);
+    EXPECT_EQ(addr3.GetHostWithPort(), "127.0.0.1:8080"_st);
 
-    hsStream* GetStream() { return &fStream;}
-};
+    plNetAddress addr4({184, 73, 198, 22}, 14617);
+    EXPECT_EQ(addr4.GetHostString(), "184.73.198.22"_st);
+    EXPECT_EQ(addr4.GetHostWithPort(), "184.73.198.22:14617"_st);
 
-#endif // pnNetCommon_h_inc
+    plNetAddress addr5({255, 254, 253, 252}, 65535);
+    EXPECT_EQ(addr5.GetHostString(), "255.254.253.252"_st);
+    EXPECT_EQ(addr5.GetHostWithPort(), "255.254.253.252:65535"_st);
+}

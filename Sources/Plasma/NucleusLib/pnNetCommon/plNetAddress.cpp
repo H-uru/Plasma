@@ -40,22 +40,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <array>
-#include <string_theory/string_stream>
+#include <string_theory/format>
 
 #include "plNetAddress.h"
-#include "pnNetCommon.h"
+
+ST::string plNetAddress::GetIPv4AddressAsString(uint32_t ip4addr)
+{
+    static_assert(sizeof(ip4addr) == 4*sizeof(uint8_t));
+    const auto* bytes = reinterpret_cast<const uint8_t*>(&ip4addr);
+    return ST::format("{}.{}.{}.{}", bytes[0], bytes[1], bytes[2], bytes[3]);
+}
 
 ST::string plNetAddress::GetHostString() const
 {
-    return pnNetCommon::GetTextAddr(fHost);
+    return GetIPv4AddressAsString(fHost);
 }
 
 ST::string plNetAddress::GetHostWithPort() const
 {
-    ST::string_stream ss;
-    ss << pnNetCommon::GetTextAddr(fHost) << ":" << fPort;
-    return ss.to_string();
+    return ST::format("{}:{}", GetIPv4AddressAsString(fHost), fPort);
 }
 
 std::array<uint8_t, 4> plNetAddress::GetHostBytes() const
@@ -66,11 +69,6 @@ std::array<uint8_t, 4> plNetAddress::GetHostBytes() const
     return bytes;
 }
 
-void plNetAddress::SetHost(const ST::string& hostname)
-{
-    fHost = pnNetCommon::GetBinAddr(hostname);
-}
-
 void plNetAddress::SetHost(const std::array<uint8_t, 4>& addr)
 {
     static_assert(sizeof(fHost) == sizeof(addr));
@@ -79,11 +77,7 @@ void plNetAddress::SetHost(const std::array<uint8_t, 4>& addr)
 
 ST::string plNetAddress::AsString() const
 {
-    ST::string_stream ss;
-    ss << "IP:" << pnNetCommon::GetTextAddr(fHost);
-    ss << ":" << fPort;
-
-    return ss.to_string();
+    return ST::format("IP:{}:{}", GetIPv4AddressAsString(fHost), fPort);
 }
 
 void plNetAddress::Read(hsStream * s)
