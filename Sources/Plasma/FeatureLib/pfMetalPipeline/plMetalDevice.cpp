@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMetalDevice.h"
 
 #include "hsDarwin.h"
-#include "hsDebug.h"
 #include "hsThread.h"
 
 #include "plDrawable/plGBufferGroup.h"
@@ -140,7 +139,7 @@ bool plMetalDevice::InitDevice()
     fSupportsDXTTextures = fMetalDevice->supportsBCTextureCompression();
     
     if (!fSupportsDXTTextures) {
-        hsDebugPrintToTerminal(ST::format("Render device \"%s\" does not support DXT textures. Falling back on software decompression. Performance will be slower.", fMetalDevice->name()->cString(NS::StringEncoding::UTF8StringEncoding)));
+        hsStatusMessageF("Render device \"{}\" does not support DXT textures. Falling back on software decompression. Performance will be slower.", fMetalDevice->name()->cString(NS::StringEncoding::UTF8StringEncoding));
     }
 
     // set up all the depth stencil states
