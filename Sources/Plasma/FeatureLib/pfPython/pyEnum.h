@@ -44,17 +44,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include <tuple>
-#include <vector>
+#include <type_traits>
 
-#include <Python.h>
-#include <string_theory/string>
+#include "plPythonConvert.h"
+#include "pyObjectRef.h"
 
 // Helper functions used by the enum glue
 class pyEnum
 {
 public:
-    static void MakeEnum(PyObject *m, const char* name, const std::vector<std::tuple<ST::string, Py_ssize_t>>& values);
+    // FIXME This should probably be integrated into plPythonConvert, but I can't get it to work right now...
+    template<typename T, typename R>
+    static R GetUnderlyingEnumValue(T value)
+    {
+        return value;
+    }
+
+    template<typename T, typename R = std::underlying_type_t<T>, std::enable_if_t<std::is_enum_v<T>, bool> = true>
+    static R GetUnderlyingEnumValue(T value)
+    {
+        return static_cast<R>(value);
+    }
+
+    static void MakeEnum(PyObject *m, const char* name, pyObjectRef nameValuePairs);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -62,12 +74,12 @@ public:
 /////////////////////////////////////////////////////////////////////
 
 // the start of an enum block
-#define PYTHON_ENUM_START(enumName) std::vector<std::tuple<ST::string, Py_ssize_t>> enumName##_enumValues{
+#define PYTHON_ENUM_START(enumName) pyObjectRef enumName##_pairs = PyList_New(0);
 
 // for each element of the enum
-#define PYTHON_ENUM_ELEMENT(enumName, elementName, elementValue) std::make_tuple(ST_LITERAL(#elementName), (Py_ssize_t)elementValue),
+#define PYTHON_ENUM_ELEMENT(enumName, elementName, elementValue) PyList_Append(enumName##_pairs.Get(), plPython::ConvertFrom(plPython::ToTuple, PyUnicode_FromStringAndSize(#elementName, sizeof(#elementName) - 1), pyEnum::GetUnderlyingEnumValue(elementValue)));
 
 // to finish off and define the enum
-#define PYTHON_ENUM_END(m, enumName) }; pyEnum::MakeEnum(m, #enumName, enumName##_enumValues);
+#define PYTHON_ENUM_END(m, enumName) pyEnum::MakeEnum(m, #enumName, std::move(enumName##_pairs));
 
 #endif  // pyEnum_h

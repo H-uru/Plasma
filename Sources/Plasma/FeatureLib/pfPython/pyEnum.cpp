@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyObjectRef.h"
 
 // makes an enum object using the specified name and values
-void pyEnum::MakeEnum(PyObject* m, const char* name, const std::vector<std::tuple<ST::string, Py_ssize_t>>& values)
+void pyEnum::MakeEnum(PyObject* m, const char* name, pyObjectRef nameValuePairs)
 {
     if (m == nullptr)
         return;
@@ -59,13 +59,6 @@ void pyEnum::MakeEnum(PyObject* m, const char* name, const std::vector<std::tupl
     pyObjectRef intEnumClass = PyObject_GetAttrString(enumModule.Get(), "IntEnum");
     if (!intEnumClass) {
         return;
-    }
-
-    pyObjectRef nameValuePairs = PyList_New(values.size());
-    Py_ssize_t i = 0;
-    for (const auto& [key, value] : values) {
-        PyList_SET_ITEM(nameValuePairs.Get(), i, plPython::ConvertFrom(plPython::ToTuple, key, value));
-        i++;
     }
 
     pyObjectRef newEnum = plPython::CallObject(intEnumClass, PyUnicode_FromString(name), std::move(nameValuePairs));
