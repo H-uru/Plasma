@@ -54,43 +54,86 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyEnum
 {
 public:
-    // FIXME This should probably be integrated into plPythonConvert, but I can't get it to work right now...
-    template<typename T, typename R>
-    static R GetUnderlyingEnumValue(T value)
+    class EnumValue
     {
-        return value;
+        pyObjectRef fName;
+        pyObjectRef fValue;
+
+    public:
+        EnumValue() = delete;
+        EnumValue(const EnumValue&) = delete;
+
+        template <size_t _Sz, typename _ValueT>
+        EnumValue(const char (&name)[_Sz], _ValueT&& value)
+            : fName(PyUnicode_FromStringAndSize(name, _Sz - 1)),
+              fValue(plPython::ConvertFrom(static_cast<std::underlying_type_t<_ValueT>>(value)))
+        {
+            static_assert(std::is_enum_v<_ValueT>, "EnumValue can only be used with enumerations");
+            static_assert(std::is_integral_v<std::underlying_type_t<_ValueT>>, "EnumValue can only be used with enumerations with integral underlying types");
+        }
+
+        EnumValue(EnumValue&& move) noexcept
+            : fName(std::move(move.fName)),
+              fValue(std::move(move.fValue))
+        {
+        }
+
+        PyObject* ReleaseName() { return fName.Release(); }
+        PyObject* ReleaseValue() { return fValue.Release(); }
+    };
+
+private:
+    template <typename Arg>
+    static inline void InsertEnumValue(PyObject* list, Py_ssize_t& i, Arg& arg)
+    {
+        using T = std::decay_t<decltype(arg)>;
+        static_assert(
+            std::is_same_v<T, EnumValue>,
+            "InsertEnumValue() can only be used with EnumValue instances"
+        );
+
+        if constexpr (std::is_same_v<T, EnumValue>) {
+            PyObject* tuple = PyTuple_New(2);
+            PyTuple_SET_ITEM(tuple, 0, arg.ReleaseName());
+            PyTuple_SET_ITEM(tuple, 1, arg.ReleaseValue());
+            PyList_SET_ITEM(list, i, tuple);
+            i++;
+        }
     }
 
-    template<typename T, typename R = std::underlying_type_t<T>, std::enable_if_t<std::is_enum_v<T>, bool> = true>
-    static R GetUnderlyingEnumValue(T value)
-    {
-        return static_cast<R>(value);
-    }
-
-    static void MakeEnum(PyObject* m, const char* name, pyObjectRef nameValuePairs)
+public:
+    template<size_t _Sz, typename... Args>
+    static void MakeEnum(PyObject* m, const char (&name)[_Sz], Args&&... args)
     {
         if (m == nullptr)
             return;
 
         pyObjectRef enumModule = PyImport_ImportModule("enum");
-        if (!enumModule) {
+        hsAssert(enumModule, "Failed to import enum module");
+        if (!enumModule)
             return;
-        }
 
         pyObjectRef intEnumClass = PyObject_GetAttrString(enumModule.Get(), "IntEnum");
-        if (!intEnumClass) {
+        if (!intEnumClass)
             return;
-        }
 
-        pyObjectRef newEnum = plPython::CallObject(intEnumClass, PyUnicode_FromString(name), std::move(nameValuePairs));
-        if (!newEnum) {
-            return;
-        }
+        pyObjectRef enumList = PyList_New(sizeof...(args));
+        Py_ssize_t  i = 0;
+        (InsertEnumValue(enumList.Get(), i, args), ...);
 
-        if (PyModule_AddObject(m, name, newEnum.Get()) == 0) {
-            // PyModule_AddObject steals a reference only on success.
-            // On error, we still own the reference.
-            newEnum.Release();
+        pyObjectRef newEnum = plPython::CallObject(
+            intEnumClass,
+            PyUnicode_FromStringAndSize(name, _Sz - 1),
+            std::move(enumList)
+        );
+
+        hsAssert(newEnum, "Failed to create enum");
+        if (newEnum) {
+            if (PyModule_AddObject(m, name, newEnum.Get()) == 0) {
+                // PyModule_AddObject steals a reference only on success.
+                // On error, we still own the reference.
+                newEnum.Release();
+            }
         }
     }
 };
@@ -100,12 +143,12 @@ public:
 /////////////////////////////////////////////////////////////////////
 
 // the start of an enum block
-#define PYTHON_ENUM_START(m, enumName) pyObjectRef enumName##_pairs = PyList_New(0);
+#define PYTHON_ENUM_START(m, enumName) pyEnum::MakeEnum(m, #enumName
 
 // for each element of the enum
-#define PYTHON_ENUM_ELEMENT(enumName, elementName, elementValue) PyList_Append(enumName##_pairs.Get(), plPython::ConvertFrom(plPython::ToTuple, PyUnicode_FromStringAndSize(#elementName, sizeof(#elementName) - 1), pyEnum::GetUnderlyingEnumValue(elementValue)));
+#define PYTHON_ENUM_ELEMENT(enumName, elementName, elementValue) , pyEnum::EnumValue(#elementName, elementValue)
 
 // to finish off and define the enum
-#define PYTHON_ENUM_END(m, enumName) pyEnum::MakeEnum(m, #enumName, std::move(enumName##_pairs));
+#define PYTHON_ENUM_END(m, enumName) );
 
 #endif  // pyEnum_h
