@@ -194,8 +194,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
     if (event.type == NSEventTypeLeftMouseUp) {
         pBMsg->fButton |= kLeftButtonUp;
+        if (event.clickCount == 2)
+            pBMsg->fButton |= kLeftButtonDblClk;
     } else if (event.type == NSEventTypeRightMouseUp) {
         pBMsg->fButton |= kRightButtonUp;
+        if (event.clickCount == 2)
+            pBMsg->fButton |= kRightButtonDblClk;
     } else if (event.type == NSEventTypeLeftMouseDown) {
         pBMsg->fButton |= kLeftButtonDown;
     } else if (event.type == NSEventTypeRightMouseDown) {
