@@ -61,7 +61,8 @@
         "dependencies": [
           {
             "name": "python3-cairosvg",
-            "host": true
+            "host": true,
+            "platform": "!(windows & arm64)"
           }
         ]
       }

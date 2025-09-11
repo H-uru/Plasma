@@ -83,6 +83,10 @@ struct plWindowsStackFrame : plStackFrame
         fFrame.AddrPC.Offset = ctx->Rip;
         fFrame.AddrStack.Offset = ctx->Rsp;
         fFrame.AddrFrame.Offset = ctx->Rbp;
+#elif _M_ARM64
+        fFrame.AddrPC.Offset = ctx->Pc;
+        fFrame.AddrStack.Offset = ctx->Sp;
+        fFrame.AddrFrame.Offset = ctx->Fp;
 #else
         fFrame.AddrPC.Offset = ctx->Eip;
         fFrame.AddrStack.Offset = ctx->Esp;
