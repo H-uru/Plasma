@@ -729,7 +729,7 @@ void plMetalDevice::FillIndexBufferRef(plMetalDevice::IndexBufferRef* iRef, plGB
     iRef->SetDirty(false);
 }
 
-void plMetalDevice::SetupTextureRef(plBitmap* img, plMetalDevice::TextureRef* tRef)
+void plMetalDevice::SetupTextureRef(plLayerInterface* layer, plBitmap* img, plMetalDevice::TextureRef* tRef)
 {
     tRef->fOwner = img;
 
@@ -917,7 +917,7 @@ void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef* tRef, plMipmap* i
     tRef->SetDirty(false);
 }
 
-void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef* tRef, plMipmap* img)
+void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef* tRef, plLayerInterface* layer, plMipmap* img)
 {
     if (!img->GetImage()) {
         return;
@@ -953,7 +953,7 @@ void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef* tRef, plMipmap* im
     tRef->SetDirty(false);
 }
 
-void plMetalDevice::MakeCubicTextureRef(plMetalDevice::TextureRef* tRef, plCubicEnvironmap* img)
+void plMetalDevice::MakeCubicTextureRef(plMetalDevice::TextureRef* tRef, plLayerInterface* layer, plCubicEnvironmap* img)
 {
     MTL::TextureDescriptor* descriptor = MTL::TextureDescriptor::textureCubeDescriptor(tRef->fFormat, img->GetFace(0)->GetWidth(), tRef->fLevels != 0);
 

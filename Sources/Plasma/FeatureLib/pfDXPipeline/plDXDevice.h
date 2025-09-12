@@ -50,7 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 #include <d3d9.h>
 
+class plCubicEnvironmap;
 class plDXPipeline;
+class plGBufferGroup;
 class plRenderTarget;
 struct IDirect3DDevice9;
 struct IDirect3DSurface9;
@@ -76,6 +78,9 @@ public:
 
     D3DCULL             fCurrCullMode;
 
+    bool                fManagedAlloced;
+    bool                fAllocUnManaged;
+
 
 public:
     plDXDevice();
@@ -93,12 +98,41 @@ public:
     /** Translate our viewport into a D3D viewport. */
     void SetViewport();
 
+    /* Device Ref Functions **************************************************/
+    void SetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, VertexBufferRef* vRef);
+    void CheckStaticVertexBuffer(VertexBufferRef* vRef, plGBufferGroup* owner, uint32_t idx);
+    void FillStaticVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx);
+    void FillVolatileVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx);
+
+    void SetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, IndexBufferRef* iRef);
+    void CheckIndexBuffer(IndexBufferRef* iRef);
+    void FillIndexBufferRef(IndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx);
+
+    // Texture stuff is all handled in plDXPipeline, not in plDXDevice
+    void SetupTextureRef(plLayerInterface* layer, plBitmap* img, TextureRef* tRef) {}
+    void CheckTexture(TextureRef* tRef) {}
+    void MakeTextureRef(TextureRef* tRef, plLayerInterface* layer, plMipmap* img) {}
+    void MakeCubicTextureRef(TextureRef* tRef, plLayerInterface* layer, plCubicEnvironmap* img) {}
 
     void SetProjectionMatrix(const hsMatrix44& src);
     void SetWorldToCameraMatrix(const hsMatrix44& src);
     void SetLocalToWorldMatrix(const hsMatrix44& src);
 
     ST::string GetErrorString() const;
+
+    /**
+     * Before allocating anything into POOL_DEFAULT, we must evict managed memory.
+     *
+     * See plDXPipeline::LoadResources.
+     */
+    void BeginAllocUnManaged();
+
+    /**
+     * Before allocating anything into POOL_DEFAULT, we must evict managed memory.
+     *
+     * See plDXPipeline::LoadResources.
+     */
+    void EndAllocUnManaged();
 };
 
 #endif

@@ -144,10 +144,10 @@ public:
     void CheckIndexBuffer(IndexBufferRef* iRef);
     void FillIndexBufferRef(IndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx);
 
-    void SetupTextureRef(plBitmap* img, TextureRef* tRef);
+    void SetupTextureRef(plLayerInterface* layer, plBitmap* img, TextureRef* tRef);
     void CheckTexture(TextureRef* tRef);
-    void MakeTextureRef(TextureRef* tRef, plMipmap* img);
-    void MakeCubicTextureRef(TextureRef* tRef, plCubicEnvironmap* img);
+    void MakeTextureRef(TextureRef* tRef, plLayerInterface* layer, plMipmap* img);
+    void MakeCubicTextureRef(TextureRef* tRef, plLayerInterface* layer, plCubicEnvironmap* img);
 
     ST::string GetErrorString() const { return fErrorMsg; }
 
