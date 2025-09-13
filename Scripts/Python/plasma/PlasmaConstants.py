@@ -103,6 +103,7 @@ class PtBookEventTypes:
     kNotifyPreviousPage = 4
     kNotifyCheckUnchecked = 5
     kNotifyClose = 6
+    kNotifyOpen = 7
 
 class PtBrainModes:
     kGeneric = 0

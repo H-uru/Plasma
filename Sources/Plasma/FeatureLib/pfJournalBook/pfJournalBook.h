@@ -387,6 +387,7 @@ class pfJournalBook : public hsKeyedObject
             kNotifyPreviousPage,
             kNotifyCheckUnchecked,
             kNotifyClose,
+            kNotifyOpen,
         };
 
         // The constructor takes in the esHTML source for the journal, along with

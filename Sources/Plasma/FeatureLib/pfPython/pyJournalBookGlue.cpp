@@ -335,5 +335,6 @@ void pyJournalBook::AddPlasmaConstantsClasses(PyObject *m)
     PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyPreviousPage,      pfJournalBook::kNotifyPreviousPage)
     PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyCheckUnchecked,    pfJournalBook::kNotifyCheckUnchecked)
     PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyClose,             pfJournalBook::kNotifyClose)
+    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyOpen,              pfJournalBook::kNotifyOpen)
     PYTHON_ENUM_END(m, PtBookEventTypes)
 }
