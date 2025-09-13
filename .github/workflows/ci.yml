@@ -207,6 +207,9 @@ jobs:
               libcairo2 \
               libsecret-1-dev \
               libtool \
+              libx11-dev \
+              libxfixes-dev \
+              libxrandr-dev \
               nasm \
               ninja-build \
               qtbase5-dev
