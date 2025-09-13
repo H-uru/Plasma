@@ -133,7 +133,7 @@ void cyAccountManagement::AddPlasmaMethods(PyObject* m)
 
 void cyAccountManagement::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtAccountUpdateType)
+    PYTHON_ENUM_START(m, PtAccountUpdateType)
     PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kCreatePlayer,     plAccountUpdateMsg::kCreatePlayer)
     PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kDeletePlayer,     plAccountUpdateMsg::kDeletePlayer)
     PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kUpgradePlayer,    plAccountUpdateMsg::kUpgradePlayer)

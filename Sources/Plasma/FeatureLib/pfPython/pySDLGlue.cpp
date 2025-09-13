@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void pySDL::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtSDLReadWriteOptions)
+    PYTHON_ENUM_START(m, PtSDLReadWriteOptions)
     PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kDirtyOnly,              plSDL::kDirtyOnly)
     PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kSkipNotificationInfo,   plSDL::kSkipNotificationInfo)
     PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kBroadcast,              plSDL::kBroadcast)
@@ -61,7 +61,7 @@ void pySDL::AddPlasmaConstantsClasses(PyObject *m)
     //PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kTimeStampDirtyOnRead, plSDL::kTimeStampDirtyOnRead)
     PYTHON_ENUM_END(m, PtSDLReadWriteOptions)
     
-    PYTHON_ENUM_START(PtSDLVarType)
+    PYTHON_ENUM_START(m, PtSDLVarType)
     PYTHON_ENUM_ELEMENT(PtSDLVarType, kNone,            plVarDescriptor::kNone)
     PYTHON_ENUM_ELEMENT(PtSDLVarType, kInt,             plVarDescriptor::kInt)
     PYTHON_ENUM_ELEMENT(PtSDLVarType, kFloat,           plVarDescriptor::kFloat)

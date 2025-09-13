@@ -201,7 +201,7 @@ void pyMarkerMgr::AddPlasmaClasses(PyObject *m)
 
 void pyMarkerMgr::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtMarkerMsgType)
+    PYTHON_ENUM_START(m, PtMarkerMsgType)
     PYTHON_ENUM_ELEMENT(PtMarkerMsgType, kMarkerCaptured,   pfMarkerMsg::kMarkerCaptured)
     PYTHON_ENUM_END(m, PtMarkerMsgType)
 }

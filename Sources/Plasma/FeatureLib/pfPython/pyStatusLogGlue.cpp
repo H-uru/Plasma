@@ -143,7 +143,7 @@ void pyStatusLog::AddPlasmaClasses(PyObject *m)
 
 void pyStatusLog::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtStatusLogFlags)
+    PYTHON_ENUM_START(m, PtStatusLogFlags)
     PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kFilledBackground,    plStatusLog::kFilledBackground)
     PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kAppendToLast,        plStatusLog::kAppendToLast)
     PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kDontWriteFile,       plStatusLog::kDontWriteFile)

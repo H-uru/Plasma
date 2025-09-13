@@ -100,7 +100,7 @@ public:
 /////////////////////////////////////////////////////////////////////
 
 // the start of an enum block
-#define PYTHON_ENUM_START(enumName) pyObjectRef enumName##_pairs = PyList_New(0);
+#define PYTHON_ENUM_START(m, enumName) pyObjectRef enumName##_pairs = PyList_New(0);
 
 // for each element of the enum
 #define PYTHON_ENUM_ELEMENT(enumName, elementName, elementValue) PyList_Append(enumName##_pairs.Get(), plPython::ConvertFrom(plPython::ToTuple, PyUnicode_FromStringAndSize(#elementName, sizeof(#elementName) - 1), pyEnum::GetUnderlyingEnumValue(elementValue)));
