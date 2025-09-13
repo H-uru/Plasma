@@ -40,42 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef _pnGameMgrConst_h_
-#define _pnGameMgrConst_h_
-
-#include <cstdint>
-
-//============================================================================
-// EGameJoinError
-//============================================================================
-enum class EGameJoinError : int32_t
-{
-    kGameJoinSuccess,
-    kGameJoinErrNotExist,
-    kGameJoinErrInitFailed,
-    kGameJoinErrGameStarted,
-    kGameJoinErrGameOver,
-    kGameJoinErrMaxPlayers,
-    kGameJoinErrAlreadyJoined,
-    kGameJoinErrNoInvite,
-    kNumGameJoinErrors,
-    kGameJoinPending = -1,
-};
-
-//============================================================================
-// EGameInviteError
-//============================================================================
-enum class EGameInviteError : uint32_t
-{
-    kGameInviteSuccess,
-    kGameInviteErrNotOwner,
-    kGameInviteErrAlreadyInvited,
-    kGameInviteErrAlreadyJoined,
-    kGameInviteErrGameStarted,
-    kGameInviteErrGameOver,
-    kGameInviteErrGameFull,
-    kGameInviteErrNoJoin,   // GameSrv reports the player may not join right now
-    kNumGameInviteErrors
-};
-
-#endif
+#include "pnAllCreatables.h"
+#include "plAllCreatables.h"
+#include "pfAllCreatables.h"

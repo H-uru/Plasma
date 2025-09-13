@@ -346,3 +346,42 @@ jobs:
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
+
+  stubs:
+    needs: [linux, macos, windows]
+    runs-on: ${{ matrix.platform.runner }}
+    name: stubs-${{ matrix.platform.str }}
+    strategy:
+      matrix:
+        platform:
+          - { str: macos-arm64, runner: "macos-14" }
+          - { str: macos-x64, runner: "macos-13" }
+          - { str: linux-x64, runner: "ubuntu-22.04" }
+          - { str: windows-x64, runner: "windows-2022" }
+          - { str: windows-x86, runner: "windows-2022" }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: plasma-${{ matrix.platform.str }}-internal-release
+          path: build/install
+
+      - name: Set Permissions
+        if: runner.os != 'Windows'
+        run: |
+          chmod +x build/install/tools/plGeneratePythonStubs
+
+      - name: Check Python Stubs
+        shell: bash
+        run: |
+          build/install/tools/plGeneratePythonStubs -Client build/install/client -Stubs Scripts/Python/plasma
+          diff_output=$(git diff -- Scripts/Python/plasma)
+          if [[ -n "$diff_output" ]]; then
+            echo "::error::The Python stubs are out of date. Please run 'plGeneratePythonStubs' and commit the changes."
+            echo "$diff_output"
+            exit 1
+          fi
