@@ -414,7 +414,10 @@ class _QuabPyNotifyBrain(_QuabGameBrain):
                 continue
             else:
                 if event[2] not in {PtNotifyDataType.kFloat, PtNotifyDataType.kInt}:
-                    eventDataType = PtNotifyDataType.reverseLookup.get(event[2], f"<UNKNOWN: {event[2]}>")
+                    try:
+                        eventDataType = PtNotifyDataType(event[2])
+                    except ValueError:
+                        eventDataType = f"<UNKNOWN: {event[2]}>"
                     PtDebugPrint(f"_QuabPyNotifyBrain.OnNotify(): Invalid data type {event[1]=} {eventDataType=}")
                     continue
 
