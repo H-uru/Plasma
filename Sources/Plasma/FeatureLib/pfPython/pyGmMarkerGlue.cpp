@@ -219,7 +219,7 @@ void pyGmMarker::AddPlasmaGameClasses(PyObject* m)
 
 void pyGmMarker::AddPlasmaGameConstantsClasses(PyObject* m)
 {
-    PYTHON_ENUM_START(PtMarkerGameType)
+    PYTHON_ENUM_START(m, PtMarkerGameType)
     PYTHON_ENUM_ELEMENT(PtMarkerGameType, kMarkerGameQuest, EMarkerGameType::kMarkerGameQuest)
     PYTHON_ENUM_ELEMENT(PtMarkerGameType, kMarkerGameCGZ, EMarkerGameType::kMarkerGameCGZ)
     PYTHON_ENUM_ELEMENT(PtMarkerGameType, kMarkerGameCapture, EMarkerGameType::kMarkerGameCapture)

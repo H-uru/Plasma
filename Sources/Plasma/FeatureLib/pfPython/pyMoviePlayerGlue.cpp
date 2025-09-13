@@ -186,7 +186,7 @@ void pyMoviePlayer::AddPlasmaClasses(PyObject *m)
 
 void pyMoviePlayer::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtMovieEventReason)
+    PYTHON_ENUM_START(m, PtMovieEventReason)
     PYTHON_ENUM_ELEMENT(PtMovieEventReason, kMovieDone, pfMovieEventMsg::kMovieDone)
     PYTHON_ENUM_END(m, PtMovieEventReason)
 }
