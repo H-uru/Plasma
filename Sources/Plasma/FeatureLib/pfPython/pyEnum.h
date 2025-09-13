@@ -83,22 +83,13 @@ public:
     };
 
 private:
-    template <typename Arg>
-    static inline void InsertEnumValue(PyObject* list, Py_ssize_t& i, Arg& arg)
+    static inline void InsertEnumValue(PyObject* list, Py_ssize_t& i, EnumValue& arg)
     {
-        using T = std::decay_t<decltype(arg)>;
-        static_assert(
-            std::is_same_v<T, EnumValue>,
-            "InsertEnumValue() can only be used with EnumValue instances"
-        );
-
-        if constexpr (std::is_same_v<T, EnumValue>) {
-            PyObject* tuple = PyTuple_New(2);
-            PyTuple_SET_ITEM(tuple, 0, arg.ReleaseName());
-            PyTuple_SET_ITEM(tuple, 1, arg.ReleaseValue());
-            PyList_SET_ITEM(list, i, tuple);
-            i++;
-        }
+        PyObject* tuple = PyTuple_New(2);
+        PyTuple_SET_ITEM(tuple, 0, arg.ReleaseName());
+        PyTuple_SET_ITEM(tuple, 1, arg.ReleaseValue());
+        PyList_SET_ITEM(list, i, tuple);
+        i++;
     }
 
 public:
