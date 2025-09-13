@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <type_traits>
 
+#include "plPythonCallable.h"
 #include "plPythonConvert.h"
 #include "pyObjectRef.h"
 
@@ -66,7 +67,32 @@ public:
         return static_cast<R>(value);
     }
 
-    static void MakeEnum(PyObject *m, const char* name, pyObjectRef nameValuePairs);
+    static void MakeEnum(PyObject* m, const char* name, pyObjectRef nameValuePairs)
+    {
+        if (m == nullptr)
+            return;
+
+        pyObjectRef enumModule = PyImport_ImportModule("enum");
+        if (!enumModule) {
+            return;
+        }
+
+        pyObjectRef intEnumClass = PyObject_GetAttrString(enumModule.Get(), "IntEnum");
+        if (!intEnumClass) {
+            return;
+        }
+
+        pyObjectRef newEnum = plPython::CallObject(intEnumClass, PyUnicode_FromString(name), std::move(nameValuePairs));
+        if (!newEnum) {
+            return;
+        }
+
+        if (PyModule_AddObject(m, name, newEnum.Get()) == 0) {
+            // PyModule_AddObject steals a reference only on success.
+            // On error, we still own the reference.
+            newEnum.Release();
+        }
+    }
 };
 
 /////////////////////////////////////////////////////////////////////
