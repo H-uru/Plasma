@@ -45,10 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifdef PLASMA_EXTERNAL_RELEASE
-#define LIMIT_CONSOLE_COMMANDS 1
-#endif
-
 #include <string_theory/format>
 #include <string_theory/stdio>
 
@@ -181,8 +177,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // FIXME
 #include "../../Apps/plClient/plClient.h"
-
-#define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
 
 //// DO NOT REMOVE!!!!
 //// This is here so Microsoft VC won't decide to "optimize" this file out

@@ -49,6 +49,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plKey;
 
+// If LIMIT_CONSOLE_COMMANDS is defined, only console commands needed during
+// normal gameplay will be built. This includes commands called by:
+// * age .fni scripts
+// * user .ini settings
+// * assorted engine code (via plConsoleMsg)
+// * key bindings (via Keyboard.BindConsoleCmd and plControlEventMsg::SetCmdString)
+// * GUI controls (via pfGUIConsoleCmdProc)
+// * Python scripts (via PtConsole/PtConsoleNet)
+// Most developer-oriented commands will be compiled out if this macro is defined.
+#ifdef PLASMA_EXTERNAL_RELEASE
+#define LIMIT_CONSOLE_COMMANDS 1
+#endif
+
+// Ensure that the given condition is true.
+// If it isn't, print the given message to the console and return from the command.
+#define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
+
 // Find an object from name, type (int), and optionally age.
 // Name can be an alias specified by saying $foo.
 plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, ST::string& statusStr, bool subString=false);
