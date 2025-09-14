@@ -105,15 +105,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
         switch (event.type) {
             case NSEventTypeKeyDown:
             case NSEventTypeKeyUp:
-            case NSEventTypeFlagsChanged: {
-                if (self.gClient->GetQuitIntro() == false) {
-                    self.gClient->SetQuitIntro(true);
-                    return true;
-                } else {
-                    return [self processKeyEvent:event];
-                }
-                break;
-            }
+            case NSEventTypeFlagsChanged:
+                self.gClient->SetQuitIntro(true);
+                return [self processKeyEvent:event];
             default:
                 NSLog(@"Unexpected unhandled event type %@", event);
                 return NO;
