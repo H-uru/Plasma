@@ -41,9 +41,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #import "PLSView.h"
+
 #include <Metal/Metal.h>
 #include <QuartzCore/QuartzCore.h>
+
+#include "plInputCore/plInputManager.h"
 #include "plMessage/plInputEventMsg.h"
+
+#include "plClient/plClient.h"
+#include "plClient/plClientLoader.h"
 
 /*
  Plasma view for Cocoa
@@ -70,6 +76,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 @end
 
 @implementation PLSView
+
+- (plClientLoader&)gClient
+{
+    return *self._gClient;
+}
 
 // MARK: View setup
 - (id)initWithFrame:(NSRect)frameRect
@@ -194,15 +205,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
     if (event.type == NSEventTypeLeftMouseUp) {
         pBMsg->fButton |= kLeftButtonUp;
-        if (event.clickCount == 2)
+        if (event.clickCount == 2) {
+            if (self.gClient)
+                self.gClient->SetQuitIntro(true);
             pBMsg->fButton |= kLeftButtonDblClk;
+        }
     } else if (event.type == NSEventTypeRightMouseUp) {
         pBMsg->fButton |= kRightButtonUp;
-        if (event.clickCount == 2)
+        if (event.clickCount == 2) {
+            if (self.gClient)
+                self.gClient->SetQuitIntro(true);
             pBMsg->fButton |= kRightButtonDblClk;
+        }
     } else if (event.type == NSEventTypeLeftMouseDown) {
+        if (self.gClient)
+            self.gClient->SetQuitIntro(true);
         pBMsg->fButton |= kLeftButtonDown;
     } else if (event.type == NSEventTypeRightMouseDown) {
+        if (self.gClient)
+            self.gClient->SetQuitIntro(true);
         pBMsg->fButton |= kRightButtonDown;
     }
 
