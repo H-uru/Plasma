@@ -128,7 +128,7 @@ PF_CONSOLE_FILE_DUMMY(Net)
 //        name isn't obvious (i.e. SetFogColor doesn't really need one)
 //  
 //  The actual C code prototype looks like:
-//      void pfConsoleCmd_groupName_functionName(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&));
+//      void pfConsoleCmd_groupName_functionName(int32_t numParams, pfConsoleCmdParam* params, pfConsolePrintFunc PrintString);
 //
 //  numParams is exactly what it sounds like. params is an array of console
 //  parameter objects, each of which are rather nifty in that they can be cast

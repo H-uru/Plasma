@@ -218,7 +218,7 @@ PF_CONSOLE_FILE_DUMMY(Main)
 //        name isn't obvious (i.e. SetFogColor doesn't really need one)
 //  
 //  The actual C code prototype looks like:
-//      void pfConsoleCmd_groupName_functionName(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&));
+//      void pfConsoleCmd_groupName_functionName(int32_t numParams, pfConsoleCmdParam* params, pfConsolePrintFunc PrintString);
 //
 //  numParams is exactly what it sounds like. params is an array of console
 //  parameter objects, each of which are rather nifty in that they can be cast
@@ -2498,7 +2498,7 @@ class pfConsoleActiveRefPeeker
 };
 
 // Not static so others can call it - making it even handier
-void MyHandyPrintFunction(const plKey &obj, void (*PrintString)(const ST::string&))
+void MyHandyPrintFunction(const plKey& obj, pfConsolePrintFunc PrintString)
 {
     if (obj->GetUoid().IsClone())
         PrintString(ST::format("{} refs on {}, clone {}:{}: loaded={}",
@@ -3982,12 +3982,10 @@ namespace plWaveCmd {
     };
 };
 
-typedef void PrintFunk(const ST::string& str);
-
 static constexpr float FracToPercent(float f) { return 100.f * f; }
 static constexpr float PercentToFrac(float f) { return f / 100.f; }
 
-static void IDisplayWaveVal(PrintFunk PrintString, plWaveSet7* wave, plWaveCmd::Cmd cmd)
+static void IDisplayWaveVal(pfConsolePrintFunc PrintString, plWaveSet7* wave, plWaveCmd::Cmd cmd)
 {
     if( !wave )
         return;
@@ -4112,7 +4110,7 @@ static void IDisplayWaveVal(PrintFunk PrintString, plWaveSet7* wave, plWaveCmd::
     PrintString(msg);
 }
 
-static plWaveSet7* IGetWaveSet(PrintFunk PrintString, const ST::string& name)
+static plWaveSet7* IGetWaveSet(pfConsolePrintFunc PrintString, const ST::string& name)
 {
     ST::string status;
     plKey waveKey = FindObjectByName(name, plWaveSet7::Index(), {}, status, false);
@@ -4128,7 +4126,7 @@ static plWaveSet7* IGetWaveSet(PrintFunk PrintString, const ST::string& name)
     return waveSet;
 }
 
-static plWaveSet7* ICheckWaveParams(PrintFunk PrintString, const ST::string& name, int numParams, int n, plWaveCmd::Cmd cmd)
+static plWaveSet7* ICheckWaveParams(pfConsolePrintFunc PrintString, const ST::string& name, int numParams, int n, plWaveCmd::Cmd cmd)
 {
     if( !numParams )
     {
@@ -4144,7 +4142,7 @@ static plWaveSet7* ICheckWaveParams(PrintFunk PrintString, const ST::string& nam
     return waveSet;
 }
 
-static bool ISendWaveCmd1f(PrintFunk PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
+static bool ISendWaveCmd1f(pfConsolePrintFunc PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
 {
     plWaveSet7* wave = ICheckWaveParams(PrintString, params[0], numParams, 2, cmd);
     if( !wave )
@@ -4223,7 +4221,7 @@ static bool ISendWaveCmd1f(PrintFunk PrintString, pfConsoleCmdParam* params, int
     return true;
 }
 
-static bool ISendWaveCmd2f(PrintFunk PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
+static bool ISendWaveCmd2f(pfConsolePrintFunc PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
 {
     plWaveSet7* wave = ICheckWaveParams(PrintString, params[0], numParams, 3, cmd);
     if( !wave )
@@ -4265,7 +4263,7 @@ static bool ISendWaveCmd2f(PrintFunk PrintString, pfConsoleCmdParam* params, int
     return true;
 }
 
-static bool ISendWaveCmd3f(PrintFunk PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
+static bool ISendWaveCmd3f(pfConsolePrintFunc PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
 {
     plWaveSet7* wave = ICheckWaveParams(PrintString, params[0], numParams, 4, cmd);
     if( !wave )
@@ -4303,7 +4301,7 @@ static bool ISendWaveCmd3f(PrintFunk PrintString, pfConsoleCmdParam* params, int
     return true;
 }
 
-static bool ISendWaveCmd4c(PrintFunk PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
+static bool ISendWaveCmd4c(pfConsolePrintFunc PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
 {
     plWaveSet7* wave = ICheckWaveParams(PrintString, params[0], numParams, 4, cmd);
     if( !wave )
@@ -5264,7 +5262,7 @@ PF_CONSOLE_CMD( Age, SetSDLBool, "string varName, bool value, int index", "Set t
 
 PF_CONSOLE_GROUP( ParticleSystem ) // Defines a main command group
 
-void UpdateParticleParam(const ST::string &objName, int32_t paramID, float value, void (*PrintString)(const ST::string&))
+void UpdateParticleParam(const ST::string& objName, int32_t paramID, float value, pfConsolePrintFunc PrintString)
 {
     ST::string status;
     plKey key = FindSceneObjectByName(objName, {}, status);
