@@ -55,6 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 
+#include "pfConsoleCommandUtilities.h"
+
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnMessage/plAudioSysMsg.h"
 #include "pnMessage/plSoundMsg.h"
@@ -82,12 +84,6 @@ PF_CONSOLE_FILE_DUMMY(Audio)
 // how to add console commands.
 //
 /////////////////////////////////////////////////////////////////
-
-// External Helpers (see pfConsoleCommands.cpp)
-plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, ST::string& statusStr, bool subString=false);
-plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, ST::string& statusStr, bool subString=false);
-plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
-                              ST::string& statusStr, bool subString=false);
 
 PF_CONSOLE_GROUP(Audio)
 

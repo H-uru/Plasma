@@ -63,6 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 
 #include "pfConsole.h"
+#include "pfConsoleCommandUtilities.h"
 #include "pfDispatchLog.h"
 
 #include "pnFactory/plFactory.h"
@@ -270,101 +271,6 @@ PF_CONSOLE_FILE_DUMMY(Main)
 //  the 
 //
 //////////////////////////////////////////////////////////////////////////////
-
-//
-// utility functions
-//
-//////////////////////////////////////////////////////////////////////////////
-
-//
-// Find an object from name, type (int), and optionally age.
-// Name can be an alias specified by saying $foo
-//
-plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName,
-                       ST::string& statusStr, bool subString = false)
-{
-    if (name.empty())
-    {
-        statusStr = ST_LITERAL("Object name is nil");
-        return nullptr;
-    }
-    
-    if (type<0 || type>=plFactory::GetNumClasses())
-    {
-        statusStr = ST_LITERAL("Illegal class type val");
-        return nullptr;
-    }
-
-    plKey key;
-    // Try restricted to our age first, if we're not given an age name. This works
-    // around most of the problems associated with unused keys in pages causing the pages to be marked
-    // as not loaded and thus screwing up our searches
-    if (ageName.empty() && plNetClientMgr::GetInstance() != nullptr)
-    {
-        ST::string thisAge = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
-        if (!thisAge.empty())
-        {
-            key = plKeyFinder::Instance().StupidSearch(thisAge, ST::string(), type, name, subString);
-            if (key != nullptr)
-            {
-                statusStr = ST_LITERAL("Found Object");
-                return key;
-            }
-        }
-    }
-    // Fallback
-    key = plKeyFinder::Instance().StupidSearch(ageName, ST::string(), type, name, subString);
-
-    if (!key)
-    {
-        statusStr = ST_LITERAL("Can't find object");
-        return nullptr;
-    }
-    
-    if (!key->ObjectIsLoaded())
-    {
-        statusStr = ST_LITERAL("Object is not loaded");
-    }
-
-    statusStr = ST_LITERAL("Found Object");
-
-    return key;
-}
-
-//
-// Find a SCENEOBJECT from name, and optionally age.
-// Name can be an alias specified by saying $foo.
-// Will load the object if necessary.
-//
-plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName,
-                            ST::string& statusStr, bool subString = false)
-{
-    plKey key=FindObjectByName(name, plSceneObject::Index(), ageName, statusStr, subString);
-
-    if (!plSceneObject::ConvertNoRef(key ? key->ObjectIsLoaded() : nullptr))
-    {
-        statusStr = ST_LITERAL("Can't find SceneObject");
-        return nullptr;
-    }
-
-    return key;
-}
-
-//
-// Find an object from name, type (string) and optionally age.
-// Name can be an alias specified by saying $foo
-//
-plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
-                              ST::string& statusStr, bool subString = false)
-{
-    if (!typeName)
-    {
-        statusStr = ST_LITERAL("TypeName is nil");
-        return nullptr;
-    }
-    
-    return FindObjectByName(name, plFactory::FindClassIndex(typeName), ageName, statusStr, subString);
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //// Base Commands ///////////////////////////////////////////////////////////

@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 
 #include "pfConsole.h"
+#include "pfConsoleCommandUtilities.h"
 
 #include "pnMessage/plNotifyMsg.h"
 #include "pnNetCommon/plNetApp.h"
@@ -104,19 +105,6 @@ PF_CONSOLE_FILE_DUMMY(Avatar)
 // how to add console commands.
 //
 /////////////////////////////////////////////////////////////////
-
-
-
-/////////////////////////////////////////////////////////////////
-//
-// UTILITIES - LOCAL AND OTHERWISE
-//
-/////////////////////////////////////////////////////////////////
-
-plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, ST::string& statusStr, bool subString=false);
-plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, ST::string& statusStr, bool subString=false);
-plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
-                              ST::string& statusStr, bool subString=false);
 
 PF_CONSOLE_GROUP( Avatar )
 
