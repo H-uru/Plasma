@@ -290,6 +290,7 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
     window.backgroundColor = NSColor.blackColor;
 
     PLSView* view = [[PLSView alloc] init];
+    view._gClient = &gClient;
     self.plsView = view;
     window.contentView = view;
     self.gameWindow = window;
