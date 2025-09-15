@@ -402,17 +402,26 @@ PF_CONSOLE_CMD( Net,        // groupName
 // LINK WITH ORIGINAL LINKING BOOK
 PF_CONSOLE_CMD( Net,
                LinkWithOriginalBook,
-               "string ageFilename, string spawnPt",
-               "Link to specified age using Original Age Linking Book rules" )
+               "string ageFilename, ...",
+               "Link to specified age using Original Age Linking Book rules. Optional second argument is a spawn point in the format Title:SpawnPointName (defaults to " kDefaultSpawnPtTitle ":" kDefaultSpawnPtName ")." )
 {
-    plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename(params[0]);
-    ST::string error;
-    link.SetSpawnPoint(TryParseSpawnPointInfo(params[1], error));
-    if (!error.empty()) {
-        PrintString(ST::format("Invalid spawn point: {}", error));
+    if (numParams > 2) {
+        PrintString(ST::format("Expected 1 or 2 arguments, not {}", numParams));
         return;
     }
+
+    plAgeLinkStruct link;
+    link.GetAgeInfo()->SetAgeFilename(params[0]);
+
+    if (numParams >= 2) {
+        ST::string error;
+        link.SetSpawnPoint(TryParseSpawnPointInfo(params[1], error));
+        if (!error.empty()) {
+            PrintString(ST::format("Invalid spawn point: {}", error));
+            return;
+        }
+    }
+
     link.SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age with original book...");
