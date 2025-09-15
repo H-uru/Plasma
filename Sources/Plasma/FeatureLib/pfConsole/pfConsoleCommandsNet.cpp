@@ -319,6 +319,47 @@ PF_CONSOLE_CMD( Net,        // groupName
         PrintString("Linking disabled.");
     }
 }
+
+/**
+ * Parse spawn point info from a string entered by the user,
+ * returning a useful parse error message if the input is invalid.
+ *
+ * @param input Spawn point info string to parse
+ * @param error Parse error message, or empty string on success
+ * @return Parsed spawn point info object
+ */
+static plSpawnPointInfo TryParseSpawnPointInfo(const ST::string& input, ST::string& error)
+{
+    // Ignore any trailing semicolon.
+    ST::string inputNoSemicolon = input.trim_right(";");
+    // Fail on semicolon anywhere else.
+    if (inputNoSemicolon.contains(';')) {
+        error = ST_LITERAL("Cannot contain a semicolon");
+        return {};
+    }
+
+    // Check for the expected number of colon-separated parts.
+    // Title and spawn point name are required, camera stack is optional.
+    auto parts = inputNoSemicolon.split(':');
+    if (parts.size() < 2) {
+        error = ST_LITERAL("Missing colon, expected e.g. " kDefaultSpawnPtTitle ":" kDefaultSpawnPtName);
+        return {};
+    } else if (parts.size() > 3) {
+        error = ST::format("At most 2 colons allowed, found {}", parts.size() - 1);
+        return {};
+    }
+
+    plSpawnPointInfo ret;
+    ret.SetTitle(parts[0]);
+    ret.SetName(parts[1]);
+    if (parts.size() >= 3) {
+        ret.SetCameraStack(parts[2]);
+    }
+
+    error.clear();
+    return ret;
+}
+
 // GENERIC LINK. PLS WILL LOAD-BALANCE YOU TO A PUBLIC INSTANCE.
 PF_CONSOLE_CMD( Net,        // groupName
                LinkToAge,       // fxnName
@@ -366,7 +407,12 @@ PF_CONSOLE_CMD( Net,
 {
     plAgeLinkStruct link;
     link.GetAgeInfo()->SetAgeFilename(params[0]);
-    link.SpawnPoint() = plSpawnPointInfo(params[1], params[1]);
+    ST::string error;
+    link.SetSpawnPoint(TryParseSpawnPointInfo(params[1], error));
+    if (!error.empty()) {
+        PrintString(ST::format("Invalid spawn point: {}", error));
+        return;
+    }
     link.SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age with original book...");
