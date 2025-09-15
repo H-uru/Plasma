@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 #include <string_theory/format>
+#include <variant>
 
 #include "plgDispatch.h"
 #include "hsResMgr.h"
@@ -325,28 +326,24 @@ PF_CONSOLE_CMD( Net,        // groupName
  * returning a useful parse error message if the input is invalid.
  *
  * @param input Spawn point info string to parse
- * @param error Parse error message, or empty string on success
- * @return Parsed spawn point info object
+ * @return Parsed spawn point info object on success, or parse error message on error
  */
-static plSpawnPointInfo TryParseSpawnPointInfo(const ST::string& input, ST::string& error)
+static std::variant<plSpawnPointInfo, ST::string> TryParseSpawnPointInfo(const ST::string& input)
 {
     // Ignore any trailing semicolon.
     ST::string inputNoSemicolon = input.trim_right(";");
     // Fail on semicolon anywhere else.
     if (inputNoSemicolon.contains(';')) {
-        error = ST_LITERAL("Cannot contain a semicolon");
-        return {};
+        return ST_LITERAL("Cannot contain a semicolon");
     }
 
     // Check for the expected number of colon-separated parts.
     // Title and spawn point name are required, camera stack is optional.
     auto parts = inputNoSemicolon.split(':');
     if (parts.size() < 2) {
-        error = ST_LITERAL("Missing colon, expected e.g. " kDefaultSpawnPtTitle ":" kDefaultSpawnPtName);
-        return {};
+        return ST_LITERAL("Missing colon, expected e.g. " kDefaultSpawnPtTitle ":" kDefaultSpawnPtName);
     } else if (parts.size() > 3) {
-        error = ST::format("At most 2 colons allowed, found {}", parts.size() - 1);
-        return {};
+        return ST::format("At most 2 colons allowed, found {}", parts.size() - 1);
     }
 
     plSpawnPointInfo ret;
@@ -355,8 +352,6 @@ static plSpawnPointInfo TryParseSpawnPointInfo(const ST::string& input, ST::stri
     if (parts.size() >= 3) {
         ret.SetCameraStack(parts[2]);
     }
-
-    error.clear();
     return ret;
 }
 
@@ -414,12 +409,12 @@ PF_CONSOLE_CMD( Net,
     link.GetAgeInfo()->SetAgeFilename(params[0]);
 
     if (numParams >= 2) {
-        ST::string error;
-        link.SetSpawnPoint(TryParseSpawnPointInfo(params[1], error));
-        if (!error.empty()) {
-            PrintString(ST::format("Invalid spawn point: {}", error));
+        auto res = TryParseSpawnPointInfo(params[1]);
+        if (const auto* error = std::get_if<ST::string>(&res)) {
+            PrintString(ST::format("Invalid spawn point: {}", *error));
             return;
         }
+        link.SetSpawnPoint(std::get<plSpawnPointInfo>(res));
     }
 
     link.SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
