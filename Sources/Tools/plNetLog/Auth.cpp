@@ -87,8 +87,8 @@ static const QString s_nodeTypeNames[] = {
 static QString readNodeString(ChunkBuffer& buffer)
 {
     unsigned length = buffer.read<unsigned>() / sizeof(unsigned short);
-    auto utf16 = std::make_unique<unsigned short[]>(length);
-    buffer.chomp(utf16.get(), length * sizeof(unsigned short));
+    auto utf16 = std::make_unique<char16_t[]>(length);
+    buffer.chomp(utf16.get(), length * sizeof(char16_t));
     return QString::fromUtf16(utf16.get(), length-1);
 }
 
@@ -863,23 +863,23 @@ bool Auth_Factory(QTreeWidget* logger, const QString& timeFmt, int direction,
                 unsigned count = buffer.read<unsigned>();
                 QTreeWidgetItem* ages = new QTreeWidgetItem(top, QStringList() << "Ages");
                 for (unsigned i=0; i<count; ++i) {
-                    unsigned short strbuf[1024];
+                    char16_t strbuf[1024];
                     QTreeWidgetItem* age = new QTreeWidgetItem(ages, QStringList()
                         << QString("Age Instance %1").arg(buffer.readUuid()));
 
-                    buffer.chomp(strbuf, 64 * sizeof(unsigned short));
+                    buffer.chomp(strbuf, 64 * sizeof(char16_t));
                     strbuf[63] = 0;
                     new QTreeWidgetItem(age, QStringList()
                         << QString("Age Filename: %1").arg(QString::fromUtf16(strbuf)));
-                    buffer.chomp(strbuf, 64 * sizeof(unsigned short));
+                    buffer.chomp(strbuf, 64 * sizeof(char16_t));
                     strbuf[63] = 0;
                     new QTreeWidgetItem(age, QStringList()
                         << QString("Age Instance Name: %1").arg(QString::fromUtf16(strbuf)));
-                    buffer.chomp(strbuf, 64 * sizeof(unsigned short));
+                    buffer.chomp(strbuf, 64 * sizeof(char16_t));
                     strbuf[63] = 0;
                     new QTreeWidgetItem(age, QStringList()
                         << QString("Age User Name: %1").arg(QString::fromUtf16(strbuf)));
-                    buffer.chomp(strbuf, 1024 * sizeof(unsigned short));
+                    buffer.chomp(strbuf, 1024 * sizeof(char16_t));
                     strbuf[1023] = 0;
                     new QTreeWidgetItem(age, QStringList()
                         << QString("Age Description: %1").arg(QString::fromUtf16(strbuf)));

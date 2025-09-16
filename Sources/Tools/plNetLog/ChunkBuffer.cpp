@@ -172,9 +172,9 @@ QString ChunkBuffer::readSafeWString()
         read<unsigned short>();   // Discarded
     length &= 0x0FFF;
 
-    auto buffer = std::make_unique<unsigned short[]>(length + 1);
-    chomp(buffer.get(), length * sizeof(unsigned short));
-    read<unsigned short>(); // Extra \0
+    auto buffer = std::make_unique<char16_t[]>(length + 1);
+    chomp(buffer.get(), length * sizeof(char16_t));
+    read<char16_t>(); // Extra \0
     buffer[length] = 0;
     if (length && (buffer[0] & 0x8000)) {
         for (unsigned i = 0; i < length; ++i)
