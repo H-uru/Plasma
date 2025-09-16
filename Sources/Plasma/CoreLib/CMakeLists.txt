@@ -45,6 +45,7 @@ set(CoreLib_HEADERS
     hsEndian.h
     hsExceptions.h
     hsExceptionStack.h
+    hsExpected.h
     hsFastMath.h
     hsFILELock.h
     hsGeometry3.h
