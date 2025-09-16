@@ -429,7 +429,7 @@ void    pfConsoleCmd::Unregister()
 //// Execute /////////////////////////////////////////////////////////////////
 //  Run da thing!
 
-void pfConsoleCmd::Execute(int32_t numParams, pfConsoleCmdParam *params, void (*PrintFn)(const ST::string&))
+void pfConsoleCmd::Execute(int32_t numParams, pfConsoleCmdParam* params, pfConsolePrintFunc PrintFn)
 {
     fFunction( numParams, params, PrintFn );
 }
