@@ -46,9 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include <string_theory/format>
-#include <variant>
 
 #include "plgDispatch.h"
+#include "hsExpected.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
 #include "hsTimer.h"
@@ -238,22 +238,22 @@ PF_CONSOLE_CMD( Net,        // groupName
  * @param input Spawn point info string to parse
  * @return Parsed spawn point info object on success, or parse error message on error
  */
-static std::variant<plSpawnPointInfo, ST::string> TryParseSpawnPointInfo(const ST::string& input)
+static hsExpected<plSpawnPointInfo, ST::string> TryParseSpawnPointInfo(const ST::string& input)
 {
     // Ignore any trailing semicolon.
     ST::string inputNoSemicolon = input.trim_right(";");
     // Fail on semicolon anywhere else.
     if (inputNoSemicolon.contains(';')) {
-        return ST_LITERAL("Cannot contain a semicolon");
+        return hsUnexpected(ST_LITERAL("Cannot contain a semicolon"));
     }
 
     // Check for the expected number of colon-separated parts.
     // Title and spawn point name are required, camera stack is optional.
     auto parts = inputNoSemicolon.split(':');
     if (parts.size() < 2) {
-        return ST_LITERAL("Missing colon, expected e.g. " kDefaultSpawnPtTitle ":" kDefaultSpawnPtName);
+        return hsUnexpected(ST_LITERAL("Missing colon, expected e.g. " kDefaultSpawnPtTitle ":" kDefaultSpawnPtName));
     } else if (parts.size() > 3) {
-        return ST::format("At most 2 colons allowed, found {}", parts.size() - 1);
+        return hsUnexpected(ST::format("At most 2 colons allowed, found {}", parts.size() - 1));
     }
 
     plSpawnPointInfo ret;
@@ -320,11 +320,11 @@ PF_CONSOLE_CMD( Net,
 
     if (numParams >= 2) {
         auto res = TryParseSpawnPointInfo(params[1]);
-        if (const auto* error = std::get_if<ST::string>(&res)) {
-            PrintString(ST::format("Invalid spawn point: {}", *error));
+        if (!res.HasValue()) {
+            PrintString(ST::format("Invalid spawn point: {}", res.Error()));
             return;
         }
-        link.SetSpawnPoint(std::get<plSpawnPointInfo>(res));
+        link.SetSpawnPoint(res.Value());
     }
 
     link.SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
