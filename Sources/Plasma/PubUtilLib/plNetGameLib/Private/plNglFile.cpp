@@ -1283,7 +1283,7 @@ void NetCliFileStartConnect (
 
     for (unsigned i = 0; i < fileAddrCount; ++i) {
         const ST::string& name = fileAddrList[i];
-        AsyncAddressLookupName(name, GetClientPort(), [name](auto addrs) {
+        AsyncAddressLookupName(name, GetClientPort(), [name](const auto& addrs) {
             if (addrs.empty()) {
                 ReportNetError(kNetProtocolCli2File, kNetErrNameLookupFailed);
                 return;

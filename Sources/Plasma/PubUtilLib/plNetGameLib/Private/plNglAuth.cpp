@@ -4378,7 +4378,7 @@ void NetCliAuthStartConnect (
 
     for (unsigned i = 0; i < authAddrCount; ++i) {
         const ST::string& name = authAddrList[i];
-        AsyncAddressLookupName(name, GetClientPort(), [name](auto addrs) {
+        AsyncAddressLookupName(name, GetClientPort(), [name](const auto& addrs) {
             if (addrs.empty()) {
                 ReportNetError(kNetProtocolCli2Auth, kNetErrNameLookupFailed);
                 return;

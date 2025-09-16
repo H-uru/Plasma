@@ -342,11 +342,8 @@ bool plResManager::ReadObject(plKeyImp* key)
         std::vector<plKey> children = fQueuedReads;
         fQueuedReads.clear();
 
-        for (int i = 0; i < children.size(); i++)
-        {
-            plKey childKey = children[i];
+        for (const auto& childKey : children)
             childKey->VerifyLoaded();
-        }
     }
 
     // we're done loading, and all our children are too, so send the notify
@@ -643,7 +640,7 @@ bool plResManager::SendRef(hsKeyedObject* ko, plRefMsg* refMsg, plRefFlags::Type
 {
     if (!ko)
         return false;
-    plKey key = ko->GetKey();
+    const plKey& key = ko->GetKey();
     return SendRef(key, refMsg, flags);
 }
 

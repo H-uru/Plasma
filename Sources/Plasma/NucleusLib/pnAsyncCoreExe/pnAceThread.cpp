@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 
-static void CreateThreadProc(AsyncThreadRef thread)
+static void CreateThreadProc(const AsyncThreadRef& thread)
 {
     hsThread::SetThisThreadName(ST_LITERAL("NoNameAceThread"));
 
