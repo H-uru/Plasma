@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 #include <string_theory/format>
+#include <variant>
 
 #include "plgDispatch.h"
 #include "hsResMgr.h"
@@ -319,6 +320,41 @@ PF_CONSOLE_CMD( Net,        // groupName
         PrintString("Linking disabled.");
     }
 }
+
+/**
+ * Parse spawn point info from a string entered by the user,
+ * returning a useful parse error message if the input is invalid.
+ *
+ * @param input Spawn point info string to parse
+ * @return Parsed spawn point info object on success, or parse error message on error
+ */
+static std::variant<plSpawnPointInfo, ST::string> TryParseSpawnPointInfo(const ST::string& input)
+{
+    // Ignore any trailing semicolon.
+    ST::string inputNoSemicolon = input.trim_right(";");
+    // Fail on semicolon anywhere else.
+    if (inputNoSemicolon.contains(';')) {
+        return ST_LITERAL("Cannot contain a semicolon");
+    }
+
+    // Check for the expected number of colon-separated parts.
+    // Title and spawn point name are required, camera stack is optional.
+    auto parts = inputNoSemicolon.split(':');
+    if (parts.size() < 2) {
+        return ST_LITERAL("Missing colon, expected e.g. " kDefaultSpawnPtTitle ":" kDefaultSpawnPtName);
+    } else if (parts.size() > 3) {
+        return ST::format("At most 2 colons allowed, found {}", parts.size() - 1);
+    }
+
+    plSpawnPointInfo ret;
+    ret.SetTitle(parts[0]);
+    ret.SetName(parts[1]);
+    if (parts.size() >= 3) {
+        ret.SetCameraStack(parts[2]);
+    }
+    return ret;
+}
+
 // GENERIC LINK. PLS WILL LOAD-BALANCE YOU TO A PUBLIC INSTANCE.
 PF_CONSOLE_CMD( Net,        // groupName
                LinkToAge,       // fxnName
@@ -361,12 +397,26 @@ PF_CONSOLE_CMD( Net,        // groupName
 // LINK WITH ORIGINAL LINKING BOOK
 PF_CONSOLE_CMD( Net,
                LinkWithOriginalBook,
-               "string ageFilename, string spawnPt",
-               "Link to specified age using Original Age Linking Book rules" )
+               "string ageFilename, ...",
+               "Link to specified age using Original Age Linking Book rules. Optional second argument is a spawn point in the format Title:SpawnPointName (defaults to " kDefaultSpawnPtTitle ":" kDefaultSpawnPtName ")." )
 {
+    if (numParams > 2) {
+        PrintString(ST::format("Expected 1 or 2 arguments, not {}", numParams));
+        return;
+    }
+
     plAgeLinkStruct link;
     link.GetAgeInfo()->SetAgeFilename(params[0]);
-    link.SpawnPoint() = plSpawnPointInfo(params[1], params[1]);
+
+    if (numParams >= 2) {
+        auto res = TryParseSpawnPointInfo(params[1]);
+        if (const auto* error = std::get_if<ST::string>(&res)) {
+            PrintString(ST::format("Invalid spawn point: {}", *error));
+            return;
+        }
+        link.SetSpawnPoint(std::get<plSpawnPointInfo>(res));
+    }
+
     link.SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age with original book...");

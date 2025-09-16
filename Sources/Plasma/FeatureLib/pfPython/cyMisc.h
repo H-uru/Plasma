@@ -783,7 +783,7 @@ public:
 
     static int GetNumCameras();
     static ST::string GetCameraNumber(int number);
-    static void RebuildCameraStack(const ST::string& name, const ST::string& ageName);
+    static PyObject* RebuildCameraStack(const ST::string& name, const ST::string& ageName);
     static void PyClearCameraStack();
     static void RecenterCamera();
     static bool IsFirstPerson();

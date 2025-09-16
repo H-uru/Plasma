@@ -2234,14 +2234,14 @@ ST::string cyMisc::GetCameraNumber(int number)
     return "empty";
 }
 
-void cyMisc::RebuildCameraStack(const ST::string& name, const ST::string& ageName)
+PyObject* cyMisc::RebuildCameraStack(const ST::string& name, const ST::string& ageName)
 {
     plKey key;
     ST::string str = ST::format("attempting to restore camera named {} from chronicle\n", name);
     plVirtualCam1::Instance()->AddMsgToLog(str.c_str());
 
     if (name.compare("empty") == 0)
-        return;
+        PYTHON_RETURN_NONE;
 
     if ( !name.empty() )
     {
@@ -2256,6 +2256,7 @@ void cyMisc::RebuildCameraStack(const ST::string& name, const ST::string& ageNam
             plVirtualCam1::Instance()->PushThirdPerson();
             ST::string errmsg = ST::format("Sceneobject {} not found", name);
             PyErr_SetString(PyExc_NameError, errmsg.c_str());
+            PYTHON_RETURN_ERROR;
         }
     }
     else
@@ -2274,12 +2275,13 @@ void cyMisc::RebuildCameraStack(const ST::string& name, const ST::string& ageNam
             if (pMod)
             {   
                 plVirtualCam1::Instance()->RebuildStack(pMod->GetKey());
-                return;
+                PYTHON_RETURN_NONE;
             }
         }
         plVirtualCam1::Instance()->PushThirdPerson();
         ST::string errmsg = ST::format("Sceneobject {} has no camera modifier", name);
         PyErr_SetString(PyExc_NameError, errmsg.c_str());
+        PYTHON_RETURN_ERROR;
     }
     
 }

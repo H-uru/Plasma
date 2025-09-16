@@ -316,8 +316,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtRebuildCameraStack, args, "Params: name,ageNam
         PyErr_SetString(PyExc_TypeError, "PtRebuildCameraStack expects two strings");
         PYTHON_RETURN_ERROR;
     }
-    cyMisc::RebuildCameraStack(name, ageName);
-    PYTHON_RETURN_NONE;
+    return cyMisc::RebuildCameraStack(name, ageName);
 }
 
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtRecenterCamera, cyMisc::RecenterCamera, "re-centers the camera")
