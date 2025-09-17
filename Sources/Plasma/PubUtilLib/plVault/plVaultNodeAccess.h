@@ -65,7 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plAgeInfoStruct;
 class plAgeLinkStruct;
-struct plSpawnPointInfo;
+class plSpawnPointInfo;
 
 typedef std::vector<plSpawnPointInfo>   plSpawnPointVec;
 

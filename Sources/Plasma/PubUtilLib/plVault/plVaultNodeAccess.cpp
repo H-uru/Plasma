@@ -270,7 +270,7 @@ static plSpawnPointVec::const_iterator FindSpawnPointByTitle(const plSpawnPointV
 {
     return std::find_if(
         points.begin(), points.end(),
-        [&title](const auto& p) { return p.fTitle == title; }
+        [&title](const auto& p) { return p.GetTitle() == title; }
     );
 }
 
@@ -278,7 +278,7 @@ static plSpawnPointVec::const_iterator FindSpawnPointByName(const plSpawnPointVe
 {
     return std::find_if(
         points.begin(), points.end(),
-        [&spawnPtName](const auto& p) { return p.fSpawnPt == spawnPtName; }
+        [&spawnPtName](const auto& p) { return p.GetName() == spawnPtName; }
     );
 }
 
@@ -300,7 +300,7 @@ void VaultAgeLinkNode::AddSpawnPoint (const plSpawnPointInfo & point) {
 
     plSpawnPointVec points;
     GetSpawnPoints( &points );
-    if (FindSpawnPointByTitle(points, point.fTitle) != points.end())
+    if (FindSpawnPointByTitle(points, point.GetTitle()) != points.end())
         return;
 
     // only check to see if the titles are the same... 
@@ -351,11 +351,11 @@ void VaultAgeLinkNode::GetSpawnPoints (plSpawnPointVec * out) const {
         plSpawnPointInfo point;
         std::vector<ST::string> izer2 = token1->tokenize(":");
         if ( izer2.size() > 0)
-            point.fTitle = std::move(izer2[0]);
+            point.SetTitle(std::move(izer2[0]));
         if ( izer2.size() > 1)
-            point.fSpawnPt = std::move(izer2[1]);
+            point.SetName(std::move(izer2[1]));
         if ( izer2.size() > 2)
-            point.fCameraStack = std::move(izer2[2]);
+            point.SetCameraStack(std::move(izer2[2]));
 
         out->push_back(point);
     }
@@ -367,9 +367,9 @@ void VaultAgeLinkNode::SetSpawnPoints (const plSpawnPointVec & in) {
     ST::string_stream ss;
     for ( unsigned i=0; i<in.size(); i++ ) {
         ss
-            << in[i].fTitle << ":"
-            << in[i].fSpawnPt << ":"
-            << in[i].fCameraStack << ";";
+            << in[i].GetTitle() << ":"
+            << in[i].GetName() << ":"
+            << in[i].GetCameraStack() << ";";
     }
     ST::string blob = ss.to_string();
     SetSpawnPoints(reinterpret_cast<const uint8_t *>(blob.c_str()), blob.size());
