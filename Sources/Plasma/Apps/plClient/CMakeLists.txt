@@ -96,6 +96,7 @@ elseif(APPLE)
         Mac-Cocoa/NSString+StringTheory.mm
         Mac-Cocoa/PLSKeyboardEventMonitor.mm
         Mac-Cocoa/PLSView.mm
+        Mac-Cocoa/PLSLoginController.mm
         Mac-Cocoa/PLSLoginWindowController.mm
         Mac-Cocoa/PLSPatcherWindowController.mm
         Mac-Cocoa/PLSPatcher.mm
@@ -106,6 +107,7 @@ elseif(APPLE)
         Mac-Cocoa/plMacDisplayHelper.h
         Mac-Cocoa/PLSKeyboardEventMonitor.h
         Mac-Cocoa/PLSView.h
+        Mac-Cocoa/PLSLoginController.h
         Mac-Cocoa/PLSLoginWindowController.h
         Mac-Cocoa/PLSPatcherWindowController.h
         Mac-Cocoa/PLSPatcher.h

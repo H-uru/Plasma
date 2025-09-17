@@ -40,15 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#import "PLSLoginWindowController.h"
-#include <regex>
-#import "PLSServerStatus.h"
-#import "NSString+StringTheory.h"
-#include "hsEndian.h"
-#include "pfPasswordStore/pfPasswordStore.h"
+#include "PLSLoginWindowController.h"
+
+#include "NSString+StringTheory.h"
+#include "PLSServerStatus.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plProduct.h"
-#include "pnEncryption/plChallengeHash.h"
 
 @interface PLSLoginWindowController ()
 
@@ -64,136 +61,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define FAKE_PASS_STRING @"********"
 
-static NSOperationQueue* _loginQueue = nil;
-
-@implementation PLSLoginController
-
-+ (void)initialize
-{
-    _loginQueue = [NSOperationQueue new];
-    _loginQueue.maxConcurrentOperationCount = 1;
-}
-
-+ (void)attemptLogin:(void (^)(ENetError))completion
-{
-    NSBlockOperation* operation = [[NSBlockOperation alloc] init];
-    __weak NSBlockOperation* weakOperation = operation;
-    [operation addExecutionBlock:^{
-        NetCliAuthAutoReconnectEnable(false);
-
-        if (!NetCliAuthQueryConnected())
-            NetCommConnect();
-        NetCommAuthenticate(nullptr);
-
-        while (!NetCommIsLoginComplete()) {
-            if (weakOperation.cancelled) {
-                return;
-            }
-            NetCommUpdate();
-        }
-
-        ENetError result = NetCommGetAuthResult();
-        [NSOperationQueue.mainQueue addOperationWithBlock:^{
-            completion(result);
-        }];
-    }];
-    [_loginQueue addOperation:operation];
-}
-
-@end
-
-@implementation PLSLoginParameters
+@implementation PLSLoginWindowController
 
 static void* StatusTextDidChangeContext = &StatusTextDidChangeContext;
-
-- (id)init
-{
-    self = [super init];
-    [self load];
-    return self;
-}
-
-- (void)save
-{
-    // windows segments by product name here. in since user defaults belong to this product, we
-    // don't need to do that.
-    NSString* serverName = [NSString stringWithSTString:GetServerDisplayName()];
-    NSMutableDictionary* settingsDictionary =
-        [[[NSUserDefaults standardUserDefaults] dictionaryForKey:serverName] mutableCopy];
-    if (!settingsDictionary)
-        settingsDictionary = [NSMutableDictionary dictionary];
-    [settingsDictionary setObject:self.username forKey:@"LastAccountName"];
-    [settingsDictionary setObject:[NSNumber numberWithBool:self.rememberPassword]
-                           forKey:@"RememberPassword"];
-    [[NSUserDefaults standardUserDefaults] setObject:settingsDictionary forKey:serverName];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-
-    if (self.password && ![self.password isEqualToString:FAKE_PASS_STRING]) {
-        ST::string username = [self.username STString];
-        ST::string password = [self.password STString];
-
-        pfPasswordStore* store = pfPasswordStore::Instance();
-        if (self.rememberPassword)
-            store->SetPassword(username, password);
-        else
-            store->SetPassword(username, ST::string());
-    }
-}
-
-- (void)load
-{
-    NSString* serverName = [NSString stringWithSTString:GetServerDisplayName()];
-    NSDictionary* settingsDictionary =
-        [[NSUserDefaults standardUserDefaults] dictionaryForKey:serverName];
-    self.username = [settingsDictionary objectForKey:@"LastAccountName"];
-    self.rememberPassword = [[settingsDictionary objectForKey:@"RememberPassword"] boolValue];
-
-    if (self.rememberPassword) {
-        pfPasswordStore* store = pfPasswordStore::Instance();
-        ST::string username = [self.username STString];
-        ST::string password = store->GetPassword(username);
-        self.password = [NSString stringWithSTString:password];
-    }
-}
-
-- (void)storeHash:(ShaDigest&)namePassHash
-{
-    //  Hash username and password before sending over the 'net.
-    //  -- Legacy compatibility: @gametap (and other usernames with domains in them) need
-    //     to be hashed differently.
-    ST::string username = [self.username STString];
-    ST::string password = [self.password STString];
-    static const std::regex re_domain("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
-    std::cmatch match;
-    std::regex_search(username.c_str(), match, re_domain);
-    if (match.empty() || ST::string(match[2].str()).compare_i("gametap") == 0) {
-        plSHA1Checksum shasum(password.size(), reinterpret_cast<const uint8_t*>(password.c_str()));
-        uint32_t* dest = reinterpret_cast<uint32_t*>(namePassHash);
-        const uint32_t* from = reinterpret_cast<const uint32_t*>(shasum.GetValue());
-        dest[0] = hsToBE32(from[0]);
-        dest[1] = hsToBE32(from[1]);
-        dest[2] = hsToBE32(from[2]);
-        dest[3] = hsToBE32(from[3]);
-        dest[4] = hsToBE32(from[4]);
-    } else {
-        //  Domain-based Usernames...
-        CryptHashPassword(username, password, namePassHash);
-    }
-}
-
-- (void)makeCurrent
-{
-    ShaDigest hash;
-    [self storeHash:hash];
-
-    ST::string username = [self.username STString];
-    NetCommSetAccountUsernamePassword(username, hash);
-    NetCommSetAuthTokenAndOS(nullptr, u"mac");
-}
-
-@end
-
-@implementation PLSLoginWindowController
 
 - (void)windowDidLoad
 {
