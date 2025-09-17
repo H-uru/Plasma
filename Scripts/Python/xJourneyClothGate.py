@@ -334,3 +334,37 @@ class xJourneyClothGate(ptResponder):
                     GateInUse = 1
                     PtAtTimeCallback(self.key,4,TimerID.kResetGate)
 
+    def OnBackdoorMsg(self, target: str, param: str) -> None:
+        vault = ptVault()
+        vault.addChronicleEntry("JourneyClothProgress", 0, "")
+        entry = vault.findChronicleEntry("JourneyClothProgress")
+        ageChron = self.GetCurrentAgeChronicle(entry)
+
+        command = (target.lower(), param.lower())
+        if command == ("journeycloth", "reset"):
+            if ageChron and ageChron.getValue():
+                PtDebugPrint("xJourneyClothGate.OnBackdoorMsg(): Resetting journey cloths", level=kWarningLevel)
+                ageChron.setValue("")
+            else:
+                PtDebugPrint("xJourneyClothGate.OnBackdoorMsg(): You've never touched a journey", level=kWarningLevel)
+        elif command == ("journeycloth", "all"):
+            PtDebugPrint("xJourneyClothGate.OnBackdoorMsg(): Pressing all journey cloths", level=kWarningLevel)
+            if ageChron is None:
+                ageChron = ptVaultChronicleNode(0)
+                ageChron.setName(Age.value)
+                ageChron.setValue(AllCloths)
+                entry.addNode(ageChron)
+            else:
+                ageChron.setValue(AllCloths)
+        elif command == ("journeycloth", "next"):
+            if ageChron is None:
+                ageChron = ptVaultChronicleNode(0)
+                ageChron.setName(Age.value)
+                ageChron.setValue(AllCloths[0])
+                entry.addNode(ageChron)
+            else:
+                missingCloths = frozenset(AllCloths) - frozenset(ageChron.getValue())
+                ageChron.setValue(f"{ageChron.getValue()}{next(iter(missingCloths), '')}")
+                PtDebugPrint(f"xJourneyClothGate.OnBackdoorMsg(): You have pressed '{ageChron.getValue()}'", level=kWarningLevel)
+        else:
+            PtDebugPrint(f"xJourneyClothGate.OnBackdoorMsg(): Unknown command {command=}")
