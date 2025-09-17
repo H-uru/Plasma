@@ -266,18 +266,21 @@ bool VaultImageNode::ExtractImage (plMipmap ** dst) {
 *
 ***/
 
-struct MatchesSpawnPointTitle
+static plSpawnPointVec::const_iterator FindSpawnPointByTitle(const plSpawnPointVec& points, const ST::string& title)
 {
-    ST::string fTitle;
-    MatchesSpawnPointTitle( const ST::string & title ):fTitle( title ){}
-    bool operator ()( const plSpawnPointInfo & p ) const { return ( p.fTitle==fTitle ); }
-};
-struct MatchesSpawnPointName
+    return std::find_if(
+        points.begin(), points.end(),
+        [&title](const auto& p) { return p.fTitle == title; }
+    );
+}
+
+static plSpawnPointVec::const_iterator FindSpawnPointByName(const plSpawnPointVec& points, const ST::string& spawnPtName)
 {
-    ST::string fName;
-    MatchesSpawnPointName( const ST::string & name ):fName( name ){}
-    bool operator ()( const plSpawnPointInfo & p ) const { return ( p.fSpawnPt==fName ); }
-};
+    return std::find_if(
+        points.begin(), points.end(),
+        [&spawnPtName](const auto& p) { return p.fSpawnPt == spawnPtName; }
+    );
+}
 
 //============================================================================
 bool VaultAgeLinkNode::CopyTo (plAgeLinkStruct * link) {
@@ -297,13 +300,13 @@ void VaultAgeLinkNode::AddSpawnPoint (const plSpawnPointInfo & point) {
 
     plSpawnPointVec points;
     GetSpawnPoints( &points );
-    if ( std::find_if( points.begin(), points.end(), MatchesSpawnPointTitle( point.fTitle ) )!=points.end() )
+    if (FindSpawnPointByTitle(points, point.fTitle) != points.end())
         return;
 
     // only check to see if the titles are the same... 
     //... so we can add the same spawnpoint as long as they have different titles
-        //if ( std::find_if( points.begin(), points.end(), MatchesSpawnPointName( point.fSpawnPt.c_str() ) )!=points.end() )
-        //  return;
+    //if (FindSpawnPointByName(points, point.fSpawnPt) != points.end())
+    //    return;
 
     points.push_back( point );
     SetSpawnPoints( points );
@@ -314,12 +317,12 @@ void VaultAgeLinkNode::RemoveSpawnPoint (const ST::string & spawnPtName) {
 
     plSpawnPointVec points;
     GetSpawnPoints( &points );                                                  
-    plSpawnPointVec::iterator it = std::find_if( points.begin(), points.end(), MatchesSpawnPointName( spawnPtName ) );
+    auto it = FindSpawnPointByName(points, spawnPtName);
     while ( it!=points.end() )
     {
         points.erase( it );
         SetSpawnPoints( points );
-        it = std::find_if( points.begin(), points.end(), MatchesSpawnPointName( spawnPtName ) );
+        it = FindSpawnPointByName(points, spawnPtName);
     }
 }
 
@@ -328,7 +331,7 @@ bool VaultAgeLinkNode::HasSpawnPoint (const ST::string & spawnPtName) const {
 
     plSpawnPointVec points;
     GetSpawnPoints( &points );                                                  
-    return ( std::find_if( points.begin(), points.end(), MatchesSpawnPointName( spawnPtName ) )!=points.end() );
+    return FindSpawnPointByName(points, spawnPtName) != points.end();
 }
 
 //============================================================================
