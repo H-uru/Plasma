@@ -144,13 +144,13 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, getOwnedAgeLink, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, removeOwnedAgeLink, args)
 {
-    ST::string guid;
-    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guid))
+    ST::string ageFilename;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &ageFilename))
     {
         PyErr_SetString(PyExc_TypeError, "removeOwnedAgeLink expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->RemoveOwnedAgeLink(guid);
+    self->fThis->RemoveOwnedAgeLink(ageFilename);
     PYTHON_RETURN_NONE;
 }
 
@@ -297,7 +297,7 @@ PYTHON_START_METHODS_TABLE(ptVaultPlayerNode)
     PYTHON_METHOD_NOARGS(ptVaultPlayerNode, getLinkToMyNeighborhood, "Returns ptVaultAgeLinkNode"),
     PYTHON_METHOD_NOARGS(ptVaultPlayerNode, getLinkToCity, "Returns ptVaultAgeLinkNode"),
     PYTHON_METHOD(ptVaultPlayerNode, getOwnedAgeLink, "Params: info\nReturns pyVaultAgeLinkNode"),
-    PYTHON_METHOD(ptVaultPlayerNode, removeOwnedAgeLink, "Params: guid\nRemoves the specified link"),
+    PYTHON_METHOD(ptVaultPlayerNode, removeOwnedAgeLink, "Params: ageFilename\nRemoves the specified link"),
     PYTHON_METHOD(ptVaultPlayerNode, getVisitAgeLink, "Params: info\nReturns pyVaultAgeLinkNode"),
     PYTHON_METHOD(ptVaultPlayerNode, removeVisitAgeLink, "Params: guid\nRemoves the specified link"),
     PYTHON_METHOD(ptVaultPlayerNode, findChronicleEntry, "Params: entryName\nReturns ptVaultChronicleNode"),

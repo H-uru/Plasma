@@ -85,7 +85,7 @@ public:
     PyObject *GetLinkToCity(); // returns pyVaultAgeLinkNode
 
     PyObject *GetOwnedAgeLink(const pyAgeInfoStruct *info); // returns pyVaultAgeLinkNode
-    void RemoveOwnedAgeLink(const ST::string& guid);
+    void RemoveOwnedAgeLink(const ST::string& ageFilename);
 
     PyObject *GetVisitAgeLink(const pyAgeInfoStruct *info); // returns pyVaultAgeLinkNode
     void RemoveVisitAgeLink(const ST::string& guid);
