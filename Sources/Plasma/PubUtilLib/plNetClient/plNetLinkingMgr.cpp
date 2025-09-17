@@ -637,7 +637,7 @@ void plNetLinkingMgr::LinkToMyPersonalAge( uint32_t playerID )
 
     plSpawnPointInfo hutSpawnPoint;
     hutSpawnPoint.SetName(kPersonalAgeLinkInPointCloset);
-    link.SetSpawnPoint(hutSpawnPoint);
+    link.SetSpawnPoint(std::move(hutSpawnPoint));
 
     plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( &link );
     IDispatchMsg( pMsg, playerID );

@@ -324,7 +324,7 @@ PF_CONSOLE_CMD( Net,
             PrintString(ST::format("Invalid spawn point: {}", res.Error()));
             return;
         }
-        link.SetSpawnPoint(res.Value());
+        link.SetSpawnPoint(std::move(res.Value()));
     }
 
     link.SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );

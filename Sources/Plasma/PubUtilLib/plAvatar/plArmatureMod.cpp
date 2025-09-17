@@ -1529,7 +1529,7 @@ void plArmatureMod::ILinkToPersonalAge()
     
     plSpawnPointInfo hutSpawnPoint;
     hutSpawnPoint.SetName(kPersonalAgeLinkInPointCloset);
-    link.SetSpawnPoint(hutSpawnPoint);
+    link.SetSpawnPoint(std::move(hutSpawnPoint));
     
     link.SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
     plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( &link );

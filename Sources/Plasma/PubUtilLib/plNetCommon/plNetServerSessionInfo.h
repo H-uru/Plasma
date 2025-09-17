@@ -209,7 +209,7 @@ public:
 
     void    SetLinkingRules( int v ) { SetFlag( kHasLinkingRules ); fLinkingRules=v; }
     int     GetLinkingRules() const { return fLinkingRules; }
-    void    SetSpawnPoint( const plSpawnPointInfo & point ) { SetFlag( kHasSpawnPt ); fSpawnPoint=point; }
+    void    SetSpawnPoint(plSpawnPointInfo point) { SetFlag(kHasSpawnPt); fSpawnPoint = std::move(point); }
     plSpawnPointInfo & SpawnPoint() { return fSpawnPoint; }
     const plSpawnPointInfo & SpawnPoint() const { return fSpawnPoint; }
     void    SetAmCCR( bool v ) { SetFlag( kHasAmCCR ); fAmCCR=v?1:0; }

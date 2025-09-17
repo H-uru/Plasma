@@ -867,7 +867,7 @@ void plSceneInputInterface::ILinkOffereeToAge()
     if (!fSpawnPoint.empty()) {
         plSpawnPointInfo spawnPoint;
         spawnPoint.SetName(fSpawnPoint);
-        link.SetSpawnPoint(spawnPoint);
+        link.SetSpawnPoint(std::move(spawnPoint));
     }
     
             
