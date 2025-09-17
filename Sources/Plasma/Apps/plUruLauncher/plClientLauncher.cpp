@@ -389,7 +389,7 @@ void plClientLauncher::InitializeNetCore()
     uint32_t num = GetGateKeeperSrvHostnames(addrs);
 
     NetCliGateKeeperStartConnect(addrs, num);
-    NetCliGateKeeperFileSrvIpAddressRequest(true, [this](auto result, auto addr) {
+    NetCliGateKeeperFileSrvIpAddressRequest(true, [this](auto result, const auto& addr) {
         IGotFileServIPs(result, addr);
     });
 

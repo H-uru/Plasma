@@ -203,7 +203,7 @@ void Create_KIMessage(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     static const char* s_flagNames[] = {
         "kPrivateMsg", "kAdminMsg", "kDead", "kUNUSED1",
         "kStatusMsg", "kNeighborMsg", "(1<<6)", "(1<<7)",
-        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
         "(1<<16)", "(1<<17)", "(1<<18)", "(1<<19)",
         "(1<<20)", "(1<<21)", "(1<<22)", "(1<<23)",
         "(1<<24)", "(1<<25)", "(1<<26)", "(1<<27)",

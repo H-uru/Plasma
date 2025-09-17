@@ -118,7 +118,7 @@ uint16_t  *plTextFont::IInitFontTexture()
 
     SelectObject(hDC, hFont);
     
-    DWORD fontDataSize = GetFontData( hDC, 0, 0, 0, 0 );
+    DWORD fontDataSize = GetFontData( hDC, 0, 0, nullptr, 0 );
     void* fontData = std::malloc( fontDataSize );
     GetFontData(hDC, 0, 0, fontData, fontDataSize);
     ftError = FT_New_Memory_Face(library, (FT_Byte *) fontData, fontDataSize, 0, &face);

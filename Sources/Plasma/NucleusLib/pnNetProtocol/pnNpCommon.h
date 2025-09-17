@@ -291,7 +291,7 @@ private:
     template<typename T>
     inline void ISetVaultField(uint64_t bits, T& field, T value)
     {
-        field = value;
+        field = std::move(value);
         fUsedFields |= bits;
         fDirtyFields |= bits;
     }
@@ -299,7 +299,7 @@ private:
     template<typename T>
     inline void ISetVaultField_NoDirty(uint64_t bits, T& field, T value)
     {
-        field = value;
+        field = std::move(value);
         fUsedFields |= bits;
     }
 

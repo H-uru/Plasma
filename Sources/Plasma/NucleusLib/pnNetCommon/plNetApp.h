@@ -120,25 +120,25 @@ public:
     template <typename... _Args>
     static bool StaticErrorMsg(const char* fmt, _Args... args)
     {
-        return StaticErrorMsg(ST::format(fmt, args...));
+        return StaticErrorMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 
     template <typename... _Args>
-    static bool StaticWarningMsg(const char* fmt, _Args... args)
+    static bool StaticWarningMsg(const char* fmt, _Args&&... args)
     {
-        return StaticWarningMsg(ST::format(fmt, args...));
+        return StaticWarningMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 
     template <typename... _Args>
-    static bool StaticAppMsg(const char* fmt, _Args... args)
+    static bool StaticAppMsg(const char* fmt, _Args&&... args)
     {
-        return StaticAppMsg(ST::format(fmt, args...));
+        return StaticAppMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 
     template <typename... _Args>
-    static bool StaticDebugMsg(const char* fmt, _Args... args)
+    static bool StaticDebugMsg(const char* fmt, _Args&&... args)
     {
-        return StaticDebugMsg(ST::format(fmt, args...));
+        return StaticDebugMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 };
 
