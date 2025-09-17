@@ -348,11 +348,11 @@ void VaultAgeLinkNode::GetSpawnPoints (plSpawnPointVec * out) const {
         plSpawnPointInfo point;
         std::vector<ST::string> izer2 = token1->tokenize(":");
         if ( izer2.size() > 0)
-            point.fTitle = izer2[0];
+            point.fTitle = std::move(izer2[0]);
         if ( izer2.size() > 1)
-            point.fSpawnPt = izer2[1];
+            point.fSpawnPt = std::move(izer2[1]);
         if ( izer2.size() > 2)
-            point.fCameraStack = izer2[2];
+            point.fCameraStack = std::move(izer2[2]);
 
         out->push_back(point);
     }

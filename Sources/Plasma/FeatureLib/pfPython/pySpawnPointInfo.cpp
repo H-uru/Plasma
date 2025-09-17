@@ -49,8 +49,8 @@ pySpawnPointInfo::pySpawnPointInfo()
 {
 }
 
-pySpawnPointInfo::pySpawnPointInfo(const ST::string& title, const ST::string& spawnPt)
-    : fInfo(title, spawnPt) {}
+pySpawnPointInfo::pySpawnPointInfo(ST::string title, ST::string spawnPt)
+    : fInfo(std::move(title), std::move(spawnPt)) {}
 
 PyObject *pySpawnPointInfo::GetDefaultSpawnPoint()
 {

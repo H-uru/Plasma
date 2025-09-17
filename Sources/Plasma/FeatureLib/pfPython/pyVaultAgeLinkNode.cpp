@@ -174,8 +174,8 @@ PyObject * pyVaultAgeLinkNode::GetSpawnPoints() const
     plSpawnPointVec points;
     VaultAgeLinkNode access(fNode);
     access.GetSpawnPoints(&points);
-    for (unsigned i = 0; i < points.size(); ++i) {
-        PyObject* elementObj = pySpawnPointInfo::New(points[i]);
+    for (auto& point : points) {
+        PyObject* elementObj = pySpawnPointInfo::New(std::move(point));
         PyList_Append(pyEL, elementObj);
         Py_DECREF(elementObj);
     }

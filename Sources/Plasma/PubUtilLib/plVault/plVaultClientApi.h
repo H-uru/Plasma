@@ -350,8 +350,8 @@ bool VaultAmCzarOfCurrentAge ();
 bool VaultAmOwnerOfAge (const plUUID& ageInstId);
 bool VaultAmCzarOfAge (const plUUID& ageInstId);
 bool VaultRegisterMTStation(
-    const ST::string& stationName,
-    const ST::string& linkBackSpawnPtObjName
+    ST::string stationName,
+    ST::string linkBackSpawnPtObjName
 );
 void VaultProcessPlayerInbox ();
 

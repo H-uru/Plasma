@@ -257,10 +257,10 @@ static hsExpected<plSpawnPointInfo, ST::string> TryParseSpawnPointInfo(const ST:
     }
 
     plSpawnPointInfo ret;
-    ret.SetTitle(parts[0]);
-    ret.SetName(parts[1]);
+    ret.SetTitle(std::move(parts[0]));
+    ret.SetName(std::move(parts[1]));
     if (parts.size() >= 3) {
-        ret.SetCameraStack(parts[2]);
+        ret.SetCameraStack(std::move(parts[2]));
     }
     return ret;
 }
@@ -710,7 +710,7 @@ PF_CONSOLE_CMD( Net_Vault,
                "string stationName, string mtSpawnPt",
                "Register an MT Station with your Nexus" )
 {
-    VaultRegisterMTStation(params[0], params[1]);
+    VaultRegisterMTStation(std::move(params[0]), std::move(params[1]));
     PrintString("Registered MT Station.");
 }
 

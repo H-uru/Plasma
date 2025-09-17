@@ -315,7 +315,7 @@ PYTHON_METHOD_DEFINITION(ptVault, registerMTStation, args)
         PyErr_SetString(PyExc_TypeError, "registerMTStation expects two strings");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->RegisterMTStation(stationName, mtSpawnPoint);
+    self->fThis->RegisterMTStation(std::move(stationName), std::move(mtSpawnPoint));
     PYTHON_RETURN_NONE;
 }
 

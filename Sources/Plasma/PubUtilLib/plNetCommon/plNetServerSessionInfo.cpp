@@ -378,7 +378,7 @@ void plAgeLinkStruct::Read( hsStream * s, hsResMgr* m)
         if ( fSpawnPoint.GetName() == kDefaultSpawnPtName )
             fSpawnPoint.SetTitle( kDefaultSpawnPtTitle );
         else
-            fSpawnPoint.SetTitle( str );
+            fSpawnPoint.SetTitle(std::move(str));
         ClearFlag( kHasSpawnPt_DEAD );
         SetFlag( kHasSpawnPt );
     }

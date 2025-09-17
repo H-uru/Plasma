@@ -456,9 +456,9 @@ bool pyVault::AmAgeCzar( const pyAgeInfoStruct * ageInfo )
     return VaultAmCzarOfAge(ageInstId);
 }
 
-void pyVault::RegisterMTStation( const ST::string& stationName, const ST::string& backLinkSpawnPtObjName )
+void pyVault::RegisterMTStation(ST::string stationName, ST::string backLinkSpawnPtObjName)
 {
-    VaultRegisterMTStation(stationName, backLinkSpawnPtObjName);
+    VaultRegisterMTStation(std::move(stationName), std::move(backLinkSpawnPtObjName));
 }
 
 void pyVault::RegisterOwnedAge( const pyAgeLinkStruct & link )
