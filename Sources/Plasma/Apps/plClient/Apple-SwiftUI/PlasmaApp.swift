@@ -40,22 +40,51 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#import <Cocoa/Cocoa.h>
+import SwiftUI
 
-#include "plNetClient/plNetClientMgr.h"
+struct MetalView: UIViewRepresentable {
+    
+    var view: PLSView
+    
+    init(view: PLSView) {
+        self.view = view
+    }
+    
+    func makeUIView(context: Context) -> UIView {
+        view.contentScaleFactor = 2;
+        view.metalLayer.contentsScale = 2;
+        view.metalLayer.maximumDrawableCount = 3;
+        view.metalLayer.pixelFormat = .bgr10a2Unorm;
+        view.metalLayer.drawableSize = view.bounds.size
+        return view
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) {
+        view.setupGestureRecognizer()
+    }
+}
 
-#import "PLSLoginController.h"
-
-NS_ASSUME_NONNULL_BEGIN
-
-@class PLSLoginWindowController;
-
-@protocol PLSLoginWindowControllerDelegate <NSObject>
-- (void)loginWindowControllerDidLogin:(PLSLoginWindowController*)sender;
-@end
-
-@interface PLSLoginWindowController : NSWindowController
-@property(weak) id<PLSLoginWindowControllerDelegate> delegate;
-@end
-
-NS_ASSUME_NONNULL_END
+@main
+struct PlasmaApp: App {
+    
+    @State var client: PLSClient = PLSClient()
+    @State var loggedIn: Bool = false
+    
+    var body: some Scene {
+        WindowGroup {
+            if loggedIn {
+                MetalView(view: client.view)
+                    .onAppear {
+                        client.start()
+                    }
+                    .ignoresSafeArea()
+                    .statusBarHidden()
+                    .persistentSystemOverlays(.hidden)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .defersSystemGestures(on: .bottom)
+            } else {
+                LoginView(client: client, isLoggedIn: $loggedIn)
+            }
+        }
+    }
+}

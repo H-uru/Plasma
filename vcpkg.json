@@ -8,14 +8,17 @@
       "expat",
       {
         "name": "fontconfig",
-        "platform": "!(osx | windows)"
+        "platform": "!(osx | windows | ios)"
       },
       "freetype",
       {
         "name": "libarchive",
-        "platform": "osx"
+        "platform": "osx | ios"
       },
-      "libepoxy",
+      {
+        "name": "libepoxy",
+        "platform": "!(ios)"
+      },
       "libjpeg-turbo",
       "libogg",
       "libpng",
@@ -38,7 +41,8 @@
         "name": "python3",
         "features": [
           "deprecated-win7-support"
-        ]
+        ],
+        "platform": "!(ios)"
       },
       "speex",
       "string-theory",
@@ -62,7 +66,7 @@
           {
             "name": "python3-cairosvg",
             "host": true,
-            "platform": "!(windows & arm64)"
+            "platform": "!(windows & arm64) | !(ios)"
           }
         ]
       }
