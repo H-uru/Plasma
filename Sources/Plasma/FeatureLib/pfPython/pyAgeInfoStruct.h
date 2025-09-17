@@ -62,7 +62,6 @@ class pyAgeInfoStruct
 private:
     plAgeInfoStruct fAgeInfo;
     mutable ST::string fAgeInstanceGuidStr;    // for getting Age Instance GUID
-    mutable ST::string fDisplayName;           // used by GetDisplayName()
 
 protected:
     pyAgeInfoStruct();
@@ -108,7 +107,6 @@ private:
 
     plAgeInfoStruct & fAgeInfo;
     mutable ST::string fAgeInstanceGuidStr;   // for getting Age Instance GUID
-    mutable ST::string fDisplayName;          // used by GetDisplayName()
 
 protected:
     pyAgeInfoStructRef(): fAgeInfo( fDefaultAgeInfo ) {} // only here for the python glue... do NOT call directly
