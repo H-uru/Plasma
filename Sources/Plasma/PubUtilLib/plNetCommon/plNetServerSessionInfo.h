@@ -126,11 +126,11 @@ public:
     uint32_t  GetAgeSequenceNumber() const { return fAgeSequenceNumber; }
     uint32_t  GetAgeLanguage() const { return fAgeLanguage; }
 
-    void    SetAgeFilename( const ST::string & v );
-    void    SetAgeInstanceName( const ST::string & v );
+    void    SetAgeFilename(ST::string v);
+    void    SetAgeInstanceName(ST::string v);
     void    SetAgeInstanceGuid( const plUUID * v );
-    void    SetAgeUserDefinedName( const ST::string & v );
-    void    SetAgeDescription( const ST::string & v );
+    void    SetAgeUserDefinedName(ST::string v);
+    void    SetAgeDescription(ST::string v);
     void    SetAgeSequenceNumber( uint32_t v );
     void    SetAgeLanguage( uint32_t v );
 

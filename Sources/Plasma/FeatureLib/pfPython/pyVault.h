@@ -142,7 +142,7 @@ public:
     ///////////////
     // Registser the given age as owned by player.
     void RegisterOwnedAge( const pyAgeLinkStruct & link );
-    void UnRegisterOwnedAge(const ST::string& ageFilename);
+    void UnRegisterOwnedAge(ST::string ageFilename);
     // Register the given age as visitable by player
     void RegisterVisitAge( const pyAgeLinkStruct & link );
     void UnRegisterVisitAge(const ST::string& guid);

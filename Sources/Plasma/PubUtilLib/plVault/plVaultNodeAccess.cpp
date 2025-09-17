@@ -110,13 +110,13 @@ bool VaultTextNoteNode::GetVisitInfo (plAgeInfoStruct * info) {
         return false;
 
     if (!toks[kAgeFilename].empty())
-        info->SetAgeFilename(toks[kAgeFilename]);
+        info->SetAgeFilename(std::move(toks[kAgeFilename]));
     if (!toks[kAgeInstName].empty())
-        info->SetAgeInstanceName(toks[kAgeInstName]);
+        info->SetAgeInstanceName(std::move(toks[kAgeInstName]));
     if (!toks[kAgeUserName].empty())
-        info->SetAgeUserDefinedName(toks[kAgeUserName]);
+        info->SetAgeUserDefinedName(std::move(toks[kAgeUserName]));
     if (!toks[kAgeDesc].empty())
-        info->SetAgeDescription(toks[kAgeDesc]);
+        info->SetAgeDescription(std::move(toks[kAgeDesc]));
     if (!toks[kAgeInstGuid].empty()) {
         std::unique_ptr<plUUID> guid = std::make_unique<plUUID>(toks[kAgeInstGuid]);
         info->SetAgeInstanceGuid(guid.get());

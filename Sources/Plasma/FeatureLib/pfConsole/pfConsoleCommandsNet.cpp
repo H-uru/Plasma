@@ -272,7 +272,7 @@ PF_CONSOLE_CMD( Net,        // groupName
                "Link to an age." )  // helpString
 {   
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename(params[0]);
+    link.GetAgeInfo()->SetAgeFilename(std::move(params[0]));
     link.SetLinkingRules( plNetCommon::LinkingRules::kBasicLink );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age...");
@@ -286,7 +286,7 @@ PF_CONSOLE_CMD( Net,        // groupName
                "Link to a specific age by guid." )  // helpString
 {   
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename(params[0]);
+    link.GetAgeInfo()->SetAgeFilename(std::move(params[0]));
     //link.GetAgeInfo()->SetAgeInstanceName( params[0] );
     //link.GetAgeInfo()->SetAgeUserDefinedName( params[0] );
     plUUID guid(params[1]);
@@ -316,7 +316,7 @@ PF_CONSOLE_CMD( Net,
     }
 
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename(params[0]);
+    link.GetAgeInfo()->SetAgeFilename(std::move(params[0]));
 
     if (numParams >= 2) {
         auto res = TryParseSpawnPointInfo(params[1]);
@@ -338,7 +338,7 @@ PF_CONSOLE_CMD( Net,
                "Link to specified age using Personal Age Linking Book rules" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename(params[0]);
+    link.GetAgeInfo()->SetAgeFilename(std::move(params[0]));
     link.SetLinkingRules( plNetCommon::LinkingRules::kOwnedBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age I own...");
@@ -350,7 +350,7 @@ PF_CONSOLE_CMD( Net,
                "Link to specified age using Personal Age Linking Book rules" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename(params[0]);
+    link.GetAgeInfo()->SetAgeFilename(std::move(params[0]));
     link.SetLinkingRules( plNetCommon::LinkingRules::kVisitBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age I can visit...");
@@ -362,7 +362,7 @@ PF_CONSOLE_CMD( Net,
                "Link to a sub-age of the current age" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename(params[0]);
+    link.GetAgeInfo()->SetAgeFilename(std::move(params[0]));
     link.SetLinkingRules( plNetCommon::LinkingRules::kSubAgeBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to a sub-age...");
@@ -431,7 +431,7 @@ PF_CONSOLE_CMD( Net,
     plNetLinkingMgr * lm = plNetLinkingMgr::GetInstance();
 
     plAgeInfoStruct info;
-    info.SetAgeFilename(params[0]);
+    info.SetAgeFilename(std::move(params[0]));
     
     plAgeLinkStruct link;
     if (!VaultGetOwnedAgeLink(&info, &link)) {
@@ -723,7 +723,7 @@ PF_CONSOLE_CMD( Net_Vault,
 {
     plAgeLinkStruct link;
     link.GetAgeInfo()->SetAgeFilename(params[0]);
-    link.GetAgeInfo()->SetAgeInstanceName(params[0]);
+    link.GetAgeInfo()->SetAgeInstanceName(std::move(params[0]));
     plUUID guid = plUUID::Generate();
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
@@ -738,7 +738,7 @@ PF_CONSOLE_CMD( Net_Vault,
                "Remove the specified age from your bookshelf" )
 {
     plAgeInfoStruct info;
-    info.SetAgeFilename(params[0]);
+    info.SetAgeFilename(std::move(params[0]));
     bool success = VaultUnregisterOwnedAge(&info);
     PrintString(ST::format("Operation {}.", success ? "Successful" : "Failed"));
 }
@@ -751,7 +751,7 @@ PF_CONSOLE_CMD( Net_Vault,
 {
     plAgeLinkStruct link;
     link.GetAgeInfo()->SetAgeFilename(params[0]);
-    link.GetAgeInfo()->SetAgeInstanceName(params[0]);
+    link.GetAgeInfo()->SetAgeInstanceName(std::move(params[0]));
     plUUID guid = plUUID::Generate();
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
@@ -766,7 +766,7 @@ PF_CONSOLE_CMD( Net_Vault,
                "Remove all instances of the specified age from your private links" )
 {
     plAgeInfoStruct info;
-    info.SetAgeFilename(params[0]);
+    info.SetAgeFilename(std::move(params[0]));
 
     unsigned count = 0;
     while (VaultUnregisterVisitAge(&info))

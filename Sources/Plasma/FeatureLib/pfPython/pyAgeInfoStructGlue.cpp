@@ -127,7 +127,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeFilename, args)
         PyErr_SetString(PyExc_TypeError, "setAgeFilename expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetAgeFilename(filename);
+    self->fThis->SetAgeFilename(std::move(filename));
     PYTHON_RETURN_NONE;
 }
 
@@ -144,7 +144,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeInstanceName, args)
         PyErr_SetString(PyExc_TypeError, "setAgeInstanceName expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetAgeInstanceName(instanceName);
+    self->fThis->SetAgeInstanceName(std::move(instanceName));
     PYTHON_RETURN_NONE;
 }
 
@@ -161,7 +161,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeUserDefinedName, args)
         PyErr_SetString(PyExc_TypeError, "setAgeUserDefinedName expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetAgeUserDefinedName(userName);
+    self->fThis->SetAgeUserDefinedName(std::move(userName));
     PYTHON_RETURN_NONE;
 }
 
@@ -178,7 +178,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeDescription, args)
         PyErr_SetString(PyExc_TypeError, "setAgeDescription expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetAgeDescription(desc);
+    self->fThis->SetAgeDescription(std::move(desc));
     PYTHON_RETURN_NONE;
 }
 
@@ -338,7 +338,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeFilename, args)
         PyErr_SetString(PyExc_TypeError, "setAgeFilename expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetAgeFilename(filename);
+    self->fThis->SetAgeFilename(std::move(filename));
     PYTHON_RETURN_NONE;
 }
 
@@ -355,7 +355,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeInstanceName, args)
         PyErr_SetString(PyExc_TypeError, "setAgeInstanceName expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetAgeInstanceName(instanceName);
+    self->fThis->SetAgeInstanceName(std::move(instanceName));
     PYTHON_RETURN_NONE;
 }
 
@@ -372,7 +372,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeUserDefinedName, args)
         PyErr_SetString(PyExc_TypeError, "setAgeUserDefinedName expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetAgeUserDefinedName(userName);
+    self->fThis->SetAgeUserDefinedName(std::move(userName));
     PYTHON_RETURN_NONE;
 }
 

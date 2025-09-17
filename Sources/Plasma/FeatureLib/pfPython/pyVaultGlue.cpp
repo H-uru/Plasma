@@ -345,7 +345,7 @@ PYTHON_METHOD_DEFINITION(ptVault, unRegisterOwnedAge, args)
         PyErr_SetString(PyExc_TypeError, "unRegisterOwnedAge expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->UnRegisterOwnedAge(ageFilename);
+    self->fThis->UnRegisterOwnedAge(std::move(ageFilename));
     PYTHON_RETURN_NONE;
 }
 

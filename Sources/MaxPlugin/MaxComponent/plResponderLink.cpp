@@ -257,8 +257,8 @@ plMessage *plResponderCmdLink::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, I
     plLinkToAgeMsg *msg = new plLinkToAgeMsg;
     msg->GetAgeLink()->SetLinkingRules( linkingRule );
     msg->GetAgeLink()->SetSpawnPoint(plSpawnPointInfo(std::move(ageSpawnPtTitle), std::move(ageSpawnPtName)));
-    msg->GetAgeLink()->GetAgeInfo()->SetAgeFilename(ageFilename);
-    msg->GetAgeLink()->GetAgeInfo()->SetAgeInstanceName(ageInstanceName);
+    msg->GetAgeLink()->GetAgeInfo()->SetAgeFilename(std::move(ageFilename));
+    msg->GetAgeLink()->GetAgeInfo()->SetAgeInstanceName(std::move(ageInstanceName));
     if (!ageInstanceGuid.empty())
         msg->GetAgeLink()->GetAgeInfo()->SetAgeInstanceGuid(&plUUID(ageInstanceGuid));
     msg->SetLinkInAnimName(ageLinkInAnimName);

@@ -466,10 +466,10 @@ void pyVault::RegisterOwnedAge( const pyAgeLinkStruct & link )
     VaultRegisterOwnedAgeAndWait(link.GetAgeLink());
 }
 
-void pyVault::UnRegisterOwnedAge(const ST::string& ageFilename)
+void pyVault::UnRegisterOwnedAge(ST::string ageFilename)
 {
     plAgeInfoStruct info;
-    info.SetAgeFilename(ageFilename);
+    info.SetAgeFilename(std::move(ageFilename));
     VaultUnregisterOwnedAge(&info);
 }
 
@@ -560,8 +560,8 @@ void pyVault::CreateNeighborhood()
 
     plUUID guid = plUUID::Generate();
     link.GetAgeInfo()->SetAgeInstanceGuid(&guid);
-    link.GetAgeInfo()->SetAgeUserDefinedName(title);
-    link.GetAgeInfo()->SetAgeDescription(desc);
+    link.GetAgeInfo()->SetAgeUserDefinedName(std::move(title));
+    link.GetAgeInfo()->SetAgeDescription(std::move(desc));
 
     VaultRegisterOwnedAge(&link);
 }

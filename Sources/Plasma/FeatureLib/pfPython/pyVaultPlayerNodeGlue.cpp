@@ -150,7 +150,7 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, removeOwnedAgeLink, args)
         PyErr_SetString(PyExc_TypeError, "removeOwnedAgeLink expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->RemoveOwnedAgeLink(ageFilename);
+    self->fThis->RemoveOwnedAgeLink(std::move(ageFilename));
     PYTHON_RETURN_NONE;
 }
 
