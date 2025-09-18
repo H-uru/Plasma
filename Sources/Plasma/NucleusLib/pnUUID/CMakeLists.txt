@@ -17,7 +17,7 @@ target_link_libraries(
     PUBLIC
         CoreLib
     PRIVATE
-        $<$<AND:$<NOT:$<PLATFORM_ID:Windows>>,$<NOT:$<PLATFORM_ID:Darwin>>>:Uuid::Uuid>
+        $<$<AND:$<NOT:$<PLATFORM_ID:Windows>>,$<NOT:$<PLATFORM_ID:Darwin>>,$<NOT:$<PLATFORM_ID:iOS>>>:Uuid::Uuid>
         $<$<PLATFORM_ID:Windows>:rpcrt4>
 )
 

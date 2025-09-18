@@ -40,22 +40,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#import <Cocoa/Cocoa.h>
+#ifndef plUIKitDisplayHelper_hpp
+#define plUIKitDisplayHelper_hpp
 
-#include "plNetClient/plNetClientMgr.h"
+// Currently requires Metal to query attached GPU capabilities
+// Capability check will also work for GL - but will need something
+// different for older GPUs.
+#include <UIKit/UIKit.h>
+#include <QuartzCore/QuartzCore.h>
 
-#import "PLSLoginController.h"
+#include "plPipeline/hsG3DDeviceSelector.h"
+#include "plPipeline/pl3DPipeline.h"
 
-NS_ASSUME_NONNULL_BEGIN
+class plUIKitDisplayHelper : public plDisplayHelper
+{
+public:
+    plUIKitDisplayHelper();
+    
 
-@class PLSLoginWindowController;
+    UIScreen* CurrentDisplay() const { return fCurrentDisplay; }
 
-@protocol PLSLoginWindowControllerDelegate <NSObject>
-- (void)loginWindowControllerDidLogin:(PLSLoginWindowController*)sender;
-@end
+    plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
+    std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const override;
 
-@interface PLSLoginWindowController : NSWindowController
-@property(weak) id<PLSLoginWindowControllerDelegate> delegate;
-@end
+private:
+    mutable UIScreen*                  fCurrentDisplay;
+    mutable plDisplayMode              fDesktopDisplayMode;
+    mutable std::vector<plDisplayMode> fDisplayModes;
 
-NS_ASSUME_NONNULL_END
+    void SetCurrentScreen(hsDisplayHndl screen) const;
+    // we need NSScreen to query for non rectangular screen geometry
+    void SetCurrentScreen(UIScreen* screen) const;
+};
+
+#endif /* plUIKitDisplayHelper_hpp */

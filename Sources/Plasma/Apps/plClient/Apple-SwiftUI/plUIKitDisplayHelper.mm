@@ -40,22 +40,56 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#import <Cocoa/Cocoa.h>
+#include "plUIKitDisplayHelper.h"
+#include "plPipeline.h"
 
-#include "plNetClient/plNetClientMgr.h"
+plUIKitDisplayHelper::plUIKitDisplayHelper() : fCurrentDisplay(nullptr)
+{
+}
 
-#import "PLSLoginController.h"
+void plUIKitDisplayHelper::SetCurrentScreen(hsDisplayHndl display) const
+{
+    // For now lock to the main display
+    SetCurrentScreen([UIScreen mainScreen]);
+}
 
-NS_ASSUME_NONNULL_BEGIN
+void plUIKitDisplayHelper::SetCurrentScreen(UIScreen* screen) const
+{
+    if (fCurrentDisplay == screen)
+        return;
 
-@class PLSLoginWindowController;
+    fCurrentDisplay = screen;
 
-@protocol PLSLoginWindowControllerDelegate <NSObject>
-- (void)loginWindowControllerDidLogin:(PLSLoginWindowController*)sender;
-@end
+    fDesktopDisplayMode.Width = screen.bounds.size.width;
+    fDesktopDisplayMode.Height = screen.bounds.size.height;
+    fDesktopDisplayMode.ColorDepth = 32;
 
-@interface PLSLoginWindowController : NSWindowController
-@property(weak) id<PLSLoginWindowControllerDelegate> delegate;
-@end
+    // visibleFrame is in points - put into pixels
+    fDesktopDisplayMode.Width *= [screen scale];
+    fDesktopDisplayMode.Height *= [screen scale];
 
-NS_ASSUME_NONNULL_END
+    fDisplayModes.clear();
+
+    NSArray *displayModes = [screen availableModes];
+    for (UIScreenMode *mode in displayModes) {
+        // Plasma likes to handle modes from largest to smallest,
+        // CG likes to go from smallest to largest. Insert modes
+        // at the front.
+        fDisplayModes.emplace_back(plDisplayMode{ static_cast<int>(mode.size.width), static_cast<int>(mode.size.height), 32 });
+    }
+
+    std::sort(fDisplayModes.begin(), fDisplayModes.end(),
+              [](plDisplayMode a, plDisplayMode b) {
+        int resolutionA = a.Width * a.Height;
+        int resolutionB = b.Width * b.Height;
+        return resolutionA > resolutionB;
+    });
+}
+
+std::vector<plDisplayMode> plUIKitDisplayHelper::GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth) const
+{
+    // Cache the current display so we can answer repeat requests quickly.
+    // SetCurrentScreen will catch redundant sets.
+    SetCurrentScreen(display);
+    return fDisplayModes;
+}
