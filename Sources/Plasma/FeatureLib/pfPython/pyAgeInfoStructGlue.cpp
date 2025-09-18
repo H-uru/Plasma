@@ -272,7 +272,7 @@ PLASMA_CUSTOM_TYPE(ptAgeInfoStruct, "Class to hold AgeInfo struct data");
 // required functions for PyObject interoperability
 PYTHON_CLASS_NEW_IMPL(ptAgeInfoStruct, pyAgeInfoStruct)
 
-PyObject *pyAgeInfoStruct::New(plAgeInfoStruct *info)
+PyObject* pyAgeInfoStruct::New(const plAgeInfoStruct* info)
 {
     ptAgeInfoStruct *newObj = (ptAgeInfoStruct*)ptAgeInfoStruct_type.tp_new(&ptAgeInfoStruct_type, nullptr, nullptr);
     newObj->fThis->fAgeInfo.CopyFrom(info);

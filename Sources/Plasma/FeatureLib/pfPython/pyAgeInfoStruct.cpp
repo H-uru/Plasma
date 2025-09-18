@@ -54,7 +54,7 @@ pyAgeInfoStruct::pyAgeInfoStruct()
 {
 }
 
-pyAgeInfoStruct::pyAgeInfoStruct(plAgeInfoStruct * info)
+pyAgeInfoStruct::pyAgeInfoStruct(const plAgeInfoStruct* info)
 {
     fAgeInfo.CopyFrom( info );
 }

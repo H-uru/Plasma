@@ -65,13 +65,13 @@ private:
 
 protected:
     pyAgeInfoStruct();
-    pyAgeInfoStruct(plAgeInfoStruct * info);
+    pyAgeInfoStruct(const plAgeInfoStruct* info);
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptAgeInfoStruct);
     PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject *New(plAgeInfoStruct *info);
+    static PyObject* New(const plAgeInfoStruct* info);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyAgeInfoStruct object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyAgeInfoStruct); // converts a PyObject to a pyAgeInfoStruct (throws error if not correct type)
 
