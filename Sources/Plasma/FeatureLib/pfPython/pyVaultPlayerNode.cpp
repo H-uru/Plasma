@@ -196,10 +196,10 @@ PyObject *pyVaultPlayerNode::GetOwnedAgeLink(const pyAgeInfoStruct *info)
     PYTHON_RETURN_NONE;
 }
 
-void pyVaultPlayerNode::RemoveOwnedAgeLink(const ST::string& ageFilename)
+void pyVaultPlayerNode::RemoveOwnedAgeLink(ST::string ageFilename)
 {
     plAgeInfoStruct info;
-    info.SetAgeFilename(ageFilename);
+    info.SetAgeFilename(std::move(ageFilename));
     VaultUnregisterOwnedAge(&info);
 }
 

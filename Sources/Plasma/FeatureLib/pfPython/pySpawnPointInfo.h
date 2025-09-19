@@ -58,8 +58,8 @@ class pySpawnPointInfo
 {
 protected:
     pySpawnPointInfo();
-    pySpawnPointInfo( const plSpawnPointInfo & info ): fInfo( info ) {}
-    pySpawnPointInfo(const ST::string& title, const ST::string& spawnPt);
+    pySpawnPointInfo(plSpawnPointInfo info) : fInfo(std::move(info)) {}
+    pySpawnPointInfo(ST::string title, ST::string spawnPt);
 
 public:
     plSpawnPointInfo    fInfo;
@@ -67,8 +67,8 @@ public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptSpawnPointInfo);
     PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject *New(const plSpawnPointInfo& info);
-    static PyObject *New(const ST::string& title, const ST::string& spawnPt);
+    static PyObject* New(plSpawnPointInfo info);
+    static PyObject* New(ST::string title, ST::string spawnPt);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a ptSpawnPointInfo object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySpawnPointInfo); // converts a PyObject to a pySpawnPointInfo (throws error if not correct type)
 
@@ -76,11 +76,11 @@ public:
     static void AddPlasmaMethods(PyObject* m);
 
     plSpawnPointInfo & SpawnPoint() { return fInfo; }
-    void    SetTitle(const ST::string& v) { fInfo.SetTitle(v); }
+    void    SetTitle(ST::string v) { fInfo.SetTitle(std::move(v)); }
     ST::string GetTitle() const { return fInfo.GetTitle(); }
-    void    SetName(const ST::string& v) { fInfo.SetName(v); }
+    void    SetName(ST::string v) { fInfo.SetName(std::move(v)); }
     ST::string GetName() const { return fInfo.GetName(); }
-    void    SetCameraStack(const ST::string& v) { fInfo.SetCameraStack(v); }
+    void    SetCameraStack(ST::string v) { fInfo.SetCameraStack(std::move(v)); }
     ST::string GetCameraStack() const { return fInfo.GetCameraStack(); }
 
     static PyObject* GetDefaultSpawnPoint();
@@ -107,11 +107,11 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     plSpawnPointInfo & SpawnPoint() { return fInfo; }
-    void    SetTitle(const ST::string& v) { fInfo.SetTitle(v); }
+    void    SetTitle(ST::string v) { fInfo.SetTitle(std::move(v)); }
     ST::string GetTitle() const { return fInfo.GetTitle(); }
-    void    SetName(const ST::string& v) { fInfo.SetName(v); }
+    void    SetName(ST::string v) { fInfo.SetName(std::move(v)); }
     ST::string GetName() const { return fInfo.GetName(); }
-    void    SetCameraStack(const ST::string& v) { fInfo.SetCameraStack(v); }
+    void    SetCameraStack(ST::string v) { fInfo.SetCameraStack(std::move(v)); }
     ST::string GetCameraStack() const { return fInfo.GetCameraStack(); }
 };
 

@@ -54,7 +54,7 @@ pyAgeInfoStruct::pyAgeInfoStruct()
 {
 }
 
-pyAgeInfoStruct::pyAgeInfoStruct(plAgeInfoStruct * info)
+pyAgeInfoStruct::pyAgeInfoStruct(const plAgeInfoStruct* info)
 {
     fAgeInfo.CopyFrom( info );
 }
@@ -81,9 +81,9 @@ ST::string pyAgeInfoStruct::GetAgeFilename() const
     return fAgeInfo.GetAgeFilename();
 }
 
-void pyAgeInfoStruct::SetAgeFilename( const ST::string & v )
+void pyAgeInfoStruct::SetAgeFilename(ST::string v)
 {
-    fAgeInfo.SetAgeFilename( v );
+    fAgeInfo.SetAgeFilename(std::move(v));
 }
 
 ST::string pyAgeInfoStruct::GetAgeInstanceName() const
@@ -91,9 +91,9 @@ ST::string pyAgeInfoStruct::GetAgeInstanceName() const
     return fAgeInfo.GetAgeInstanceName();
 }
 
-void pyAgeInfoStruct::SetAgeInstanceName( const ST::string & v )
+void pyAgeInfoStruct::SetAgeInstanceName(ST::string v)
 {
-    fAgeInfo.SetAgeInstanceName( v );
+    fAgeInfo.SetAgeInstanceName(std::move(v));
 }
 
 ST::string pyAgeInfoStruct::GetAgeUserDefinedName() const
@@ -101,9 +101,9 @@ ST::string pyAgeInfoStruct::GetAgeUserDefinedName() const
     return fAgeInfo.GetAgeUserDefinedName();
 }
 
-void pyAgeInfoStruct::SetAgeUserDefinedName( const ST::string & v )
+void pyAgeInfoStruct::SetAgeUserDefinedName(ST::string v)
 {
-    fAgeInfo.SetAgeUserDefinedName( v );
+    fAgeInfo.SetAgeUserDefinedName(std::move(v));
 }
 
 ST::string pyAgeInfoStruct::GetAgeDescription() const
@@ -111,9 +111,9 @@ ST::string pyAgeInfoStruct::GetAgeDescription() const
     return fAgeInfo.GetAgeDescription();
 }
 
-void pyAgeInfoStruct::SetAgeDescription( const ST::string & v )
+void pyAgeInfoStruct::SetAgeDescription(ST::string v)
 {
-    fAgeInfo.SetAgeDescription( v );
+    fAgeInfo.SetAgeDescription(std::move(v));
 }
 
 ST::string pyAgeInfoStruct::GetAgeInstanceGuid() const
@@ -211,9 +211,9 @@ ST::string pyAgeInfoStructRef::GetAgeFilename() const
     return fAgeInfo.GetAgeFilename();
 }
 
-void pyAgeInfoStructRef::SetAgeFilename( const ST::string & v )
+void pyAgeInfoStructRef::SetAgeFilename(ST::string v)
 {
-    fAgeInfo.SetAgeFilename( v );
+    fAgeInfo.SetAgeFilename(std::move(v));
 }
 
 ST::string pyAgeInfoStructRef::GetAgeInstanceName() const
@@ -221,9 +221,9 @@ ST::string pyAgeInfoStructRef::GetAgeInstanceName() const
     return fAgeInfo.GetAgeInstanceName();
 }
 
-void pyAgeInfoStructRef::SetAgeInstanceName( const ST::string & v )
+void pyAgeInfoStructRef::SetAgeInstanceName(ST::string v)
 {
-    fAgeInfo.SetAgeInstanceName( v );
+    fAgeInfo.SetAgeInstanceName(std::move(v));
 }
 
 ST::string pyAgeInfoStructRef::GetAgeUserDefinedName() const
@@ -231,9 +231,9 @@ ST::string pyAgeInfoStructRef::GetAgeUserDefinedName() const
     return fAgeInfo.GetAgeUserDefinedName();
 }
 
-void pyAgeInfoStructRef::SetAgeUserDefinedName( const ST::string & v )
+void pyAgeInfoStructRef::SetAgeUserDefinedName(ST::string v)
 {
-    fAgeInfo.SetAgeUserDefinedName( v );
+    fAgeInfo.SetAgeUserDefinedName(std::move(v));
 }
 
 ST::string pyAgeInfoStructRef::GetAgeInstanceGuid() const

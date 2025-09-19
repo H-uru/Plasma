@@ -126,11 +126,11 @@ public:
     uint32_t  GetAgeSequenceNumber() const { return fAgeSequenceNumber; }
     uint32_t  GetAgeLanguage() const { return fAgeLanguage; }
 
-    void    SetAgeFilename( const ST::string & v );
-    void    SetAgeInstanceName( const ST::string & v );
+    void    SetAgeFilename(ST::string v);
+    void    SetAgeInstanceName(ST::string v);
     void    SetAgeInstanceGuid( const plUUID * v );
-    void    SetAgeUserDefinedName( const ST::string & v );
-    void    SetAgeDescription( const ST::string & v );
+    void    SetAgeUserDefinedName(ST::string v);
+    void    SetAgeDescription(ST::string v);
     void    SetAgeSequenceNumber( uint32_t v );
     void    SetAgeLanguage( uint32_t v );
 
@@ -209,7 +209,7 @@ public:
 
     void    SetLinkingRules( int v ) { SetFlag( kHasLinkingRules ); fLinkingRules=v; }
     int     GetLinkingRules() const { return fLinkingRules; }
-    void    SetSpawnPoint( const plSpawnPointInfo & point ) { SetFlag( kHasSpawnPt ); fSpawnPoint=point; }
+    void    SetSpawnPoint(plSpawnPointInfo point) { SetFlag(kHasSpawnPt); fSpawnPoint = std::move(point); }
     plSpawnPointInfo & SpawnPoint() { return fSpawnPoint; }
     const plSpawnPointInfo & SpawnPoint() const { return fSpawnPoint; }
     void    SetAmCCR( bool v ) { SetFlag( kHasAmCCR ); fAmCCR=v?1:0; }

@@ -237,12 +237,12 @@ ST::string plAgeInfoStruct::AsString() const
 }
 
 
-void plAgeInfoStruct::SetAgeFilename( const ST::string & v )
+void plAgeInfoStruct::SetAgeFilename(ST::string v)
 {
     if (!v.empty())
     {
         SetFlag( kHasAgeFilename );
-        fAgeFilename=v;
+        fAgeFilename = std::move(v);
     }
     else
     {
@@ -250,12 +250,12 @@ void plAgeInfoStruct::SetAgeFilename( const ST::string & v )
     }
 }
 
-void plAgeInfoStruct::SetAgeInstanceName( const ST::string & v )
+void plAgeInfoStruct::SetAgeInstanceName(ST::string v)
 {
     if (!v.empty())
     {
         SetFlag( kHasAgeInstanceName );
-        fAgeInstanceName=v;
+        fAgeInstanceName = std::move(v);
     }
     else
     {
@@ -277,12 +277,12 @@ void plAgeInfoStruct::SetAgeInstanceGuid( const plUUID * v )
     }
 }
 
-void plAgeInfoStruct::SetAgeUserDefinedName( const ST::string & v )
+void plAgeInfoStruct::SetAgeUserDefinedName(ST::string v)
 {
     if (!v.empty())
     {
         SetFlag( kHasAgeUserDefinedName );
-        fAgeUserDefinedName=v;
+        fAgeUserDefinedName = std::move(v);
     }
     else
     {
@@ -303,12 +303,12 @@ void plAgeInfoStruct::SetAgeSequenceNumber( uint32_t v )
     }
 }
 
-void plAgeInfoStruct::SetAgeDescription( const ST::string & v )
+void plAgeInfoStruct::SetAgeDescription(ST::string v)
 {
     if (!v.empty())
     {
         SetFlag( kHasAgeDescription );
-        fAgeDescription=v;
+        fAgeDescription = std::move(v);
     }
     else
     {
@@ -378,7 +378,7 @@ void plAgeLinkStruct::Read( hsStream * s, hsResMgr* m)
         if ( fSpawnPoint.GetName() == kDefaultSpawnPtName )
             fSpawnPoint.SetTitle( kDefaultSpawnPtTitle );
         else
-            fSpawnPoint.SetTitle( str );
+            fSpawnPoint.SetTitle(std::move(str));
         ClearFlag( kHasSpawnPt_DEAD );
         SetFlag( kHasSpawnPt );
     }

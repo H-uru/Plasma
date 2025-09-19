@@ -503,20 +503,22 @@ void pyVaultNode::SendTo(uint32_t destClientNodeID, PyObject* cbObject, uint32_t
 // Get all child nodes, simulating a NodeRef list for legacy compatibility
 PyObject* pyVaultNode::GetChildNodeRefList()
 {
-    // create the list
-    PyObject* pyEL = PyList_New(0);
+    if (!fNode)
+        return PyList_New(0);
 
     // fill in the elements list of this folder
-    if (fNode)
-    {
-        RelVaultNode::RefList nodes;
-        fNode->GetChildNodes(1, &nodes);
-        
-        for (const hsRef<RelVaultNode> &node : nodes) {
-            PyObject* elementObj = pyVaultNodeRef::New(fNode, node);
-            PyList_Append(pyEL, elementObj);
-            Py_DECREF(elementObj);
-        }
+    RelVaultNode::RefList nodes;
+    fNode->GetChildNodes(1, &nodes);
+
+    // create the list
+    PyObject* pyEL = PyList_New(nodes.size());
+    // Can't use a classic index loop, because nodes is a linked list
+    // and so doesn't support lookup by index.
+    Py_ssize_t i = 0;
+    for (const hsRef<RelVaultNode>& node : nodes) {
+        PyObject* elementObj = pyVaultNodeRef::New(fNode, node);
+        PyList_SET_ITEM(pyEL, i, elementObj);
+        i++;
     }
 
     return pyEL;

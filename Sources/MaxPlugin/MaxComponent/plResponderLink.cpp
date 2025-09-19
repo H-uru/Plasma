@@ -256,16 +256,16 @@ plMessage *plResponderCmdLink::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, I
 
     plLinkToAgeMsg *msg = new plLinkToAgeMsg;
     msg->GetAgeLink()->SetLinkingRules( linkingRule );
-    msg->GetAgeLink()->SetSpawnPoint(plSpawnPointInfo(ageSpawnPtTitle, ageSpawnPtName));
-    msg->GetAgeLink()->GetAgeInfo()->SetAgeFilename(ageFilename);
-    msg->GetAgeLink()->GetAgeInfo()->SetAgeInstanceName(ageInstanceName);
+    msg->GetAgeLink()->SetSpawnPoint(plSpawnPointInfo(std::move(ageSpawnPtTitle), std::move(ageSpawnPtName)));
+    msg->GetAgeLink()->GetAgeInfo()->SetAgeFilename(std::move(ageFilename));
+    msg->GetAgeLink()->GetAgeInfo()->SetAgeInstanceName(std::move(ageInstanceName));
     if (!ageInstanceGuid.empty())
         msg->GetAgeLink()->GetAgeInfo()->SetAgeInstanceGuid(&plUUID(ageInstanceGuid));
     msg->SetLinkInAnimName(ageLinkInAnimName);
     if (!parentageFilename.empty())
     {
         if (parentageFilename != "<None>") // <None> is our special string to denote no parent age
-            msg->GetAgeLink()->SetParentAgeFilename(parentageFilename);
+            msg->GetAgeLink()->SetParentAgeFilename(std::move(parentageFilename));
     }
 
     return msg;

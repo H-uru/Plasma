@@ -119,7 +119,7 @@ public:
     void    SetAccountUUID(const plUUID * v);
     void    SetAccountUUID(const plUUID & v);
     void    SetPlayerID(uint32_t v);
-    void    SetPlayerName( const ST::string & v );
+    void    SetPlayerName(ST::string v);
     void    SetCCRLevel(uint8_t v);
     void    SetProtectedLogin(bool v);
     void    SetBuildType(uint8_t v);
@@ -127,7 +127,7 @@ public:
     void    SetSrcAddrFromStr( const char * s );
     void    SetSrcPort( uint16_t v );
     void    SetReserved( bool v );
-    void    SetClientKey( const ST::string& key );
+    void    SetClientKey(ST::string key);
     // When a client hasn't selected a player yet,
     // we need to uniquely identify them in the lobby server.
     // We do this by stuffing a temp value into the fPlayerID

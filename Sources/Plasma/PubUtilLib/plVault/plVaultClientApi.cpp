@@ -2865,14 +2865,14 @@ bool VaultAmCzarOfAge (const plUUID& ageInstId) {
 
 //============================================================================
 bool VaultRegisterMTStation(
-    const ST::string& stationName,
-    const ST::string& linkBackSpawnPtObjName
+    ST::string stationName,
+    ST::string linkBackSpawnPtObjName
 ) {
     plAgeInfoStruct info;
     info.SetAgeFilename(kCityAgeFilename);
     if (hsRef<RelVaultNode> rvn = VaultGetOwnedAgeLink(&info)) {
         VaultAgeLinkNode link(rvn);
-        link.AddSpawnPoint({ stationName, linkBackSpawnPtObjName });
+        link.AddSpawnPoint({std::move(stationName), std::move(linkBackSpawnPtObjName)});
         return true;
     }
     return false;

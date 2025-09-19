@@ -55,7 +55,7 @@ pyAgeLinkStruct::pyAgeLinkStruct()
 {
 }
 
-pyAgeLinkStruct::pyAgeLinkStruct( plAgeLinkStruct * link )
+pyAgeLinkStruct::pyAgeLinkStruct(const plAgeLinkStruct* link)
 {
     fAgeLink.CopyFrom( link );
 }
@@ -72,7 +72,7 @@ PyObject * pyAgeLinkStruct::GetAgeInfo()
     return pyAgeInfoStructRef::New( *fAgeLink.GetAgeInfo() );
 }
 
-void pyAgeLinkStruct::SetAgeInfo( pyAgeInfoStruct & info )
+void pyAgeLinkStruct::SetAgeInfo(const pyAgeInfoStruct& info)
 {
     fAgeLink.GetAgeInfo()->CopyFrom( info.GetAgeInfo() );
 }
@@ -132,7 +132,7 @@ PyObject * pyAgeLinkStructRef::GetAgeInfo()
     return pyAgeInfoStructRef::New( *fAgeLink.GetAgeInfo() );
 }
 
-void pyAgeLinkStructRef::SetAgeInfo( pyAgeInfoStruct & info )
+void pyAgeLinkStructRef::SetAgeInfo(const pyAgeInfoStruct& info)
 {
     fAgeLink.GetAgeInfo()->CopyFrom( info.GetAgeInfo() );
 }

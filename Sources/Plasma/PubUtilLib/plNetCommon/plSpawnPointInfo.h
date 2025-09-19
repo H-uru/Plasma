@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plSpawnPointInfo_h_inc
 
 #include <string_theory/string>
+#include <utility>
 
 ///////////////////////////////////////////////////////////////////
 
@@ -53,24 +54,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class hsStream;
 
-struct plSpawnPointInfo
+class plSpawnPointInfo
 {
     ST::string fTitle;         // friendly title for GUIs
     ST::string fSpawnPt;       // name of spawn point in dataset
     ST::string fCameraStack;
+
+public:
     plSpawnPointInfo(){}
     plSpawnPointInfo(const plSpawnPointInfo & other) = default;
     plSpawnPointInfo(plSpawnPointInfo&& other) = default;
-    plSpawnPointInfo( const ST::string & title, const ST::string & spawnPt )
-        : fTitle( title ), fSpawnPt( spawnPt ) {}
+    plSpawnPointInfo(ST::string title, ST::string spawnPt)
+        : fTitle(std::move(title)), fSpawnPt(std::move(spawnPt)) {}
+
     plSpawnPointInfo& operator=(const plSpawnPointInfo&) = default;
     plSpawnPointInfo& operator=(plSpawnPointInfo&&) = default;
+
     ST::string GetTitle() const { return fTitle; }
-    void    SetTitle( const ST::string & v ) { fTitle=v; }
+    void    SetTitle(ST::string title) { fTitle = std::move(title); }
     ST::string GetName() const { return fSpawnPt; }
-    void    SetName( const ST::string & v ) { fSpawnPt = v; }
+    void    SetName(ST::string name) { fSpawnPt = std::move(name); }
     ST::string GetCameraStack() const { return fCameraStack; }
-    void    SetCameraStack( const ST::string & v ) { fCameraStack=v; }
+    void    SetCameraStack(ST::string cameraStack) { fCameraStack = std::move(cameraStack); }
+
     void    Reset();
     void    Read( hsStream * s );
     void    ReadOld( hsStream * s );

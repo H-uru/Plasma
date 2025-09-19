@@ -66,8 +66,8 @@ PYTHON_INIT_DEFINITION(ptSpawnPointInfo, args, keywords)
     }
     else if (!title.empty() && !spawnPt.empty())
     {
-        self->fThis->SetTitle(title);
-        self->fThis->SetName(spawnPt);
+        self->fThis->SetTitle(std::move(title));
+        self->fThis->SetName(std::move(spawnPt));
         PYTHON_RETURN_INIT_OK;
     }
     // only one param existed
@@ -88,7 +88,7 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setTitle, args)
         PyErr_SetString(PyExc_TypeError, "setTitle expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetTitle(title);
+    self->fThis->SetTitle(std::move(title));
     PYTHON_RETURN_NONE;
 }
 
@@ -105,7 +105,7 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setName, args)
         PyErr_SetString(PyExc_TypeError, "setName expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetName(name);
+    self->fThis->SetName(std::move(name));
     PYTHON_RETURN_NONE;
 }
 
@@ -122,7 +122,7 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setCameraStack, args)
         PyErr_SetString(PyExc_TypeError, "setCameraStack expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetCameraStack(camStack);
+    self->fThis->SetCameraStack(std::move(camStack));
     PYTHON_RETURN_NONE;
 }
 
@@ -141,18 +141,18 @@ PLASMA_DEFAULT_TYPE(ptSpawnPointInfo, "Params: title=None,spawnPt=None\nClass to
 // required functions for PyObject interoperability
 PYTHON_CLASS_NEW_IMPL(ptSpawnPointInfo, pySpawnPointInfo)
 
-PyObject *pySpawnPointInfo::New(const plSpawnPointInfo& info)
+PyObject* pySpawnPointInfo::New(plSpawnPointInfo info)
 {
     ptSpawnPointInfo *newObj = (ptSpawnPointInfo*)ptSpawnPointInfo_type.tp_new(&ptSpawnPointInfo_type, nullptr, nullptr);
-    newObj->fThis->fInfo = info;
+    newObj->fThis->fInfo = std::move(info);
     return (PyObject*)newObj;
 }
 
-PyObject *pySpawnPointInfo::New(const ST::string& title, const ST::string& spawnPt)
+PyObject* pySpawnPointInfo::New(ST::string title, ST::string spawnPt)
 {
     ptSpawnPointInfo *newObj = (ptSpawnPointInfo*)ptSpawnPointInfo_type.tp_new(&ptSpawnPointInfo_type, nullptr, nullptr);
-    newObj->fThis->fInfo.SetTitle(title);
-    newObj->fThis->fInfo.SetName(spawnPt);
+    newObj->fThis->fInfo.SetTitle(std::move(title));
+    newObj->fThis->fInfo.SetName(std::move(spawnPt));
     return (PyObject*)newObj;
 }
 
@@ -203,7 +203,7 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setTitle, args)
         PyErr_SetString(PyExc_TypeError, "setTitle expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetTitle(title);
+    self->fThis->SetTitle(std::move(title));
     PYTHON_RETURN_NONE;
 }
 
@@ -220,7 +220,7 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setName, args)
         PyErr_SetString(PyExc_TypeError, "setName expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetName(name);
+    self->fThis->SetName(std::move(name));
     PYTHON_RETURN_NONE;
 }
 
@@ -237,7 +237,7 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setCameraStack, args)
         PyErr_SetString(PyExc_TypeError, "setCameraStack expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetCameraStack(camStack);
+    self->fThis->SetCameraStack(std::move(camStack));
     PYTHON_RETURN_NONE;
 }
 

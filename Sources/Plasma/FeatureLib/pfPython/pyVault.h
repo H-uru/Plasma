@@ -142,12 +142,12 @@ public:
     ///////////////
     // Registser the given age as owned by player.
     void RegisterOwnedAge( const pyAgeLinkStruct & link );
-    void UnRegisterOwnedAge(const ST::string& ageFilename);
+    void UnRegisterOwnedAge(ST::string ageFilename);
     // Register the given age as visitable by player
     void RegisterVisitAge( const pyAgeLinkStruct & link );
     void UnRegisterVisitAge(const ST::string& guid);
     // Register a nexus station
-    void RegisterMTStation( const ST::string& stationName, const ST::string& mtSpawnPt );
+    void RegisterMTStation(ST::string stationName, ST::string mtSpawnPt);
 
     ///////////////
     // Invite player to visit an age.

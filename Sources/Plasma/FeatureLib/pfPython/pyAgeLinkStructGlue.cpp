@@ -230,7 +230,7 @@ PLASMA_CUSTOM_TYPE(ptAgeLinkStruct, "Class to hold the data of the AgeLink struc
 // required functions for PyObject interoperability
 PYTHON_CLASS_NEW_IMPL(ptAgeLinkStruct, pyAgeLinkStruct)
 
-PyObject *pyAgeLinkStruct::New(plAgeLinkStruct *link)
+PyObject* pyAgeLinkStruct::New(const plAgeLinkStruct* link)
 {
     ptAgeLinkStruct *newObj = (ptAgeLinkStruct*)ptAgeLinkStruct_type.tp_new(&ptAgeLinkStruct_type, nullptr, nullptr);
     newObj->fThis->fAgeLink.CopyFrom(link);
