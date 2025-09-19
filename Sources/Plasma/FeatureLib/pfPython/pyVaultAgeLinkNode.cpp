@@ -166,18 +166,17 @@ bool pyVaultAgeLinkNode::HasSpawnPoint( const ST::string & spawnPtName ) const
 
 PyObject * pyVaultAgeLinkNode::GetSpawnPoints() const
 {
-    PyObject* pyEL = PyList_New(0);
-
     if (!fNode)
-        return pyEL;
+        return PyList_New(0);
 
     plSpawnPointVec points;
     VaultAgeLinkNode access(fNode);
     access.GetSpawnPoints(&points);
-    for (auto& point : points) {
-        PyObject* elementObj = pySpawnPointInfo::New(std::move(point));
-        PyList_Append(pyEL, elementObj);
-        Py_DECREF(elementObj);
+
+    PyObject* pyEL = PyList_New(points.size());
+    for (size_t i = 0; i < points.size(); i++) {
+        PyObject* elementObj = pySpawnPointInfo::New(std::move(points[i]));
+        PyList_SET_ITEM(pyEL, i, elementObj);
     }
 
     return pyEL;
