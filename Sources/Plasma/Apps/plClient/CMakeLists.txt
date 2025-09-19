@@ -112,6 +112,7 @@ elseif(APPLE)
         Mac-Cocoa/PLSServerStatus.h
     )
     list(APPEND plClient_RESOURCES
+        Mac-Cocoa/AppIcon.icon
         Mac-Cocoa/banner.png
         Mac-Cocoa/banner@2x.png
         Mac-Cocoa/MainMenu.xib
