@@ -5386,80 +5386,16 @@ class ptVaultPlayerInfoNode(ptVaultNode):
 class ptVaultPlayerNode(ptVaultNode):
     """Plasma vault player node"""
 
-    def findChronicleEntry(self, entryName):
-        """Returns ptVaultChronicleNode"""
-        ...
-
-    def getAgeJournalsFolder(self):
-        """Returns ptVaultFolderNode"""
-        ...
-
-    def getAgesICanVisitFolder(self):
-        """Returns ptVaultFolderNode"""
-        ...
-
-    def getAgesIOwnFolder(self):
-        """Returns ptVaultFolderNode"""
-        ...
-
-    def getAvatarClosetFolder(self):
-        """Returns ptVaultFolderNode"""
-        ...
-
-    def getAvatarOutfitFolder(self):
-        """Returns ptVaultFolderNode"""
-        ...
-
     def getAvatarShapeName(self):
         """Returns the avatar's 'shape'"""
-        ...
-
-    def getBuddyListFolder(self):
-        """Returns ptVaultPlayerInfoListNode"""
-        ...
-
-    def getChronicleFolder(self):
-        """Returns ptVaultFolderNode"""
-        ...
-
-    def getIgnoreListFolder(self):
-        """Returns ptVaultPlayerInfoListNode"""
-        ...
-
-    def getInbox(self):
-        """Returns the player's inbox"""
-        ...
-
-    def getLinkToCity(self):
-        """Returns ptVaultAgeLinkNode"""
-        ...
-
-    def getLinkToMyNeighborhood(self):
-        """Returns ptVaultAgeLinkNode"""
         ...
 
     def getOnlineTime(self):
         """Returns the avatar's online time"""
         ...
 
-    def getOwnedAgeLink(self, info):
-        """Returns pyVaultAgeLinkNode"""
-        ...
-
-    def getPeopleIKnowAboutFolder(self):
-        """Returns ptVaultPlayerInfoListNode"""
-        ...
-
-    def getPlayerInfo(self):
-        """Returns ptVaultPlayerInfoNode"""
-        ...
-
     def getPlayerName(self):
         """Returns the player's name"""
-        ...
-
-    def getVisitAgeLink(self, info):
-        """Returns pyVaultAgeLinkNode"""
         ...
 
     def isDisabled(self):
@@ -5468,14 +5404,6 @@ class ptVaultPlayerNode(ptVaultNode):
 
     def isExplorer(self):
         """Returns true for 'explorer', false for 'visitor'."""
-        ...
-
-    def removeOwnedAgeLink(self, ageFilename):
-        """Removes the specified link"""
-        ...
-
-    def removeVisitAgeLink(self, guid):
-        """Removes the specified link"""
         ...
 
     def setAvatarShapeName(self, name):
