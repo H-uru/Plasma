@@ -122,6 +122,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultTextNoteNode.h"
 #include "pyVaultAgeLinkNode.h"
 #include "pyVaultChronicleNode.h"
+#include "pyVaultPlayerNode.h"
 #include "pyVaultPlayerInfoNode.h"
 #include "pyVaultAgeInfoNode.h"
 #include "pyVaultAgeInfoListNode.h"
@@ -1146,6 +1147,7 @@ void PythonInterface::AddPlasmaClasses(PyObject* plasmaMod)
     pyVaultMarkerGameNode::AddPlasmaClasses(plasmaMod);
     pyVaultPlayerInfoListNode::AddPlasmaClasses(plasmaMod);
     pyVaultPlayerInfoNode::AddPlasmaClasses(plasmaMod);
+    pyVaultPlayerNode::AddPlasmaClasses(plasmaMod);
     pyVaultSDLNode::AddPlasmaClasses(plasmaMod);
     pyVaultSystemNode::AddPlasmaClasses(plasmaMod);
     pyVaultTextNoteNode::AddPlasmaClasses(plasmaMod);
