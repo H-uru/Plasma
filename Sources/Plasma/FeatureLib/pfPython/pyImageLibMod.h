@@ -97,7 +97,6 @@ public:
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyImageLibMod); // converts a PyObject to a pyImageLibMod (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject* m);
-    static void AddPlasmaMethods(PyObject* m);
 
     void setKey(pyKey& ilmKey);
 
