@@ -5383,6 +5383,125 @@ class ptVaultPlayerInfoNode(ptVaultNode):
         """Not sure this should be used. Sets the state of the player online status for this player info node."""
         ...
 
+class ptVaultPlayerNode(ptVaultNode):
+    """Plasma vault player node"""
+
+    def findChronicleEntry(self, entryName):
+        """Returns ptVaultChronicleNode"""
+        ...
+
+    def getAgeJournalsFolder(self):
+        """Returns ptVaultFolderNode"""
+        ...
+
+    def getAgesICanVisitFolder(self):
+        """Returns ptVaultFolderNode"""
+        ...
+
+    def getAgesIOwnFolder(self):
+        """Returns ptVaultFolderNode"""
+        ...
+
+    def getAvatarClosetFolder(self):
+        """Returns ptVaultFolderNode"""
+        ...
+
+    def getAvatarOutfitFolder(self):
+        """Returns ptVaultFolderNode"""
+        ...
+
+    def getAvatarShapeName(self):
+        """Returns the avatar's 'shape'"""
+        ...
+
+    def getBuddyListFolder(self):
+        """Returns ptVaultPlayerInfoListNode"""
+        ...
+
+    def getChronicleFolder(self):
+        """Returns ptVaultFolderNode"""
+        ...
+
+    def getIgnoreListFolder(self):
+        """Returns ptVaultPlayerInfoListNode"""
+        ...
+
+    def getInbox(self):
+        """Returns the player's inbox"""
+        ...
+
+    def getLinkToCity(self):
+        """Returns ptVaultAgeLinkNode"""
+        ...
+
+    def getLinkToMyNeighborhood(self):
+        """Returns ptVaultAgeLinkNode"""
+        ...
+
+    def getOnlineTime(self):
+        """Returns the avatar's online time"""
+        ...
+
+    def getOwnedAgeLink(self, info):
+        """Returns pyVaultAgeLinkNode"""
+        ...
+
+    def getPeopleIKnowAboutFolder(self):
+        """Returns ptVaultPlayerInfoListNode"""
+        ...
+
+    def getPlayerInfo(self):
+        """Returns ptVaultPlayerInfoNode"""
+        ...
+
+    def getPlayerName(self):
+        """Returns the player's name"""
+        ...
+
+    def getVisitAgeLink(self, info):
+        """Returns pyVaultAgeLinkNode"""
+        ...
+
+    def isDisabled(self):
+        """Is the avatar disabled?"""
+        ...
+
+    def isExplorer(self):
+        """Returns true for 'explorer', false for 'visitor'."""
+        ...
+
+    def removeOwnedAgeLink(self, ageFilename):
+        """Removes the specified link"""
+        ...
+
+    def removeVisitAgeLink(self, guid):
+        """Removes the specified link"""
+        ...
+
+    def save(self):
+        """Saves the node"""
+        ...
+
+    def setAvatarShapeName(self, name):
+        """Sets the avatar's 'shape'"""
+        ...
+
+    def setDisabled(self, state):
+        """Disables/enables the avatar"""
+        ...
+
+    def setExplorer(self, boolean):
+        """set true for 'explorer', false for 'visitor'"""
+        ...
+
+    def setOnlineTime(self, time):
+        """Sets the avatar's online time"""
+        ...
+
+    def setPlayerName(self, name):
+        """Sets the player's name"""
+        ...
+
 class ptVaultSDLNode(ptVaultNode):
     """Plasma vault SDL node"""
 
