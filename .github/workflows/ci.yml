@@ -270,8 +270,8 @@ jobs:
     strategy:
       matrix:
         platform:
-          - { str: macos-arm64, arch: arm64, runner: "macos-14", qt-version: 6, min-deploy-target: 11.0 }
-          - { str: macos-x64, arch: x86_64, runner: "macos-13", qt-version: 5, min-deploy-target: 10.14 }
+          - { str: macos-arm64, arch: arm64, runner: "macos-15", qt-version: 6, min-deploy-target: 11.0 }
+          - { str: macos-x64, arch: x86_64, runner: "macos-15-intel", qt-version: 5, min-deploy-target: 10.14 }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
@@ -290,6 +290,7 @@ jobs:
               automake \
               libtool \
               nasm \
+              nuget \
               python-setuptools
 
       - name: Setup cmake
@@ -354,8 +355,8 @@ jobs:
     strategy:
       matrix:
         platform:
-          - { str: macos-arm64, runner: "macos-14" }
-          - { str: macos-x64, runner: "macos-13" }
+          - { str: macos-arm64, runner: "macos-15" }
+          - { str: macos-x64, runner: "macos-15-intel" }
           - { str: linux-x64, runner: "ubuntu-22.04" }
           - { str: windows-x64, runner: "windows-2022" }
           - { str: windows-x86, runner: "windows-2022" }
