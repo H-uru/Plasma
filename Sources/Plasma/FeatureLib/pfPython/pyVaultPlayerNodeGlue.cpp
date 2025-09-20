@@ -280,8 +280,6 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultPlayerNode, isExplorer)
 }
 
 
-PYTHON_BASIC_METHOD_DEFINITION(ptVaultPlayerNode, save, Save)
-
 PYTHON_START_METHODS_TABLE(ptVaultPlayerNode)
     PYTHON_METHOD_NOARGS(ptVaultPlayerNode, getInbox, "Returns the player's inbox"),
     PYTHON_METHOD_NOARGS(ptVaultPlayerNode, getPlayerInfo, "Returns ptVaultPlayerInfoNode"),
@@ -309,7 +307,6 @@ PYTHON_START_METHODS_TABLE(ptVaultPlayerNode)
     PYTHON_METHOD(ptVaultPlayerNode, isDisabled, "Is the avatar disabled?"),
     PYTHON_METHOD(ptVaultPlayerNode, setOnlineTime, "Params: time\nSets the avatar's online time"),
     PYTHON_METHOD_NOARGS(ptVaultPlayerNode, getOnlineTime, "Returns the avatar's online time"),
-    PYTHON_BASIC_METHOD(ptVaultPlayerNode, save, "Saves the node"),
     PYTHON_METHOD(ptVaultPlayerNode, setExplorer, "Params: boolean\nset true for 'explorer', false for 'visitor'"),
     PYTHON_METHOD_NOARGS(ptVaultPlayerNode, isExplorer, "Returns true for 'explorer', false for 'visitor'."),
 PYTHON_END_METHODS_TABLE;

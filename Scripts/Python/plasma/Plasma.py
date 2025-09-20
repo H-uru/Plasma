@@ -5478,10 +5478,6 @@ class ptVaultPlayerNode(ptVaultNode):
         """Removes the specified link"""
         ...
 
-    def save(self):
-        """Saves the node"""
-        ...
-
     def setAvatarShapeName(self, name):
         """Sets the avatar's 'shape'"""
         ...
