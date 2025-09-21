@@ -112,12 +112,15 @@ elseif(APPLE)
         Mac-Cocoa/PLSServerStatus.h
     )
     list(APPEND plClient_RESOURCES
-        Mac-Cocoa/AppIcon.icon
+        "$<$<VERSION_GREATER_EQUAL:${XCODE_VERSION},26.0>:Mac-Cocoa/AppIcon.icon>"
         Mac-Cocoa/banner.png
         Mac-Cocoa/banner@2x.png
         Mac-Cocoa/MainMenu.xib
         Mac-Cocoa/PLSLoginWindowController.xib
         Mac-Cocoa/PLSPatcherWindowController.xib
+    )
+    set_source_files_properties("Mac-Cocoa/AppIcon.icon" PROPERTIES
+        XCODE_EXPLICIT_FILE_TYPE "folder.iconcomposer.icon"
     )
 else()
     list(APPEND plClient_SOURCES
