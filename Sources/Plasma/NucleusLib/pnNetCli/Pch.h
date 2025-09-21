@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_PCH_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnNetCli/Pch.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_PCH_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_PCH_H
 
 
@@ -57,3 +55,5 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnNetCli.h"
 #include "Intern.h"
+
+# endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_PCH_H

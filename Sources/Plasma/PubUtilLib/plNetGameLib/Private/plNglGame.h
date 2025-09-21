@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGAME_H
-#error "Header $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Private/plNglGame.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGAME_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGAME_H
 
 #include <functional>
@@ -104,3 +102,5 @@ void NetCliGamePropagateBuffer (
 using FNetCliGameRecvGameMgrMsgHandler = std::function<void(struct GameMsgHeader* msg)>;
 void NetCliGameSetRecvGameMgrMsgHandler(FNetCliGameRecvGameMgrMsgHandler handler);
 void NetCliGameSendGameMgrMsg(const struct GameMsgHeader* msg);
+
+#endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGAME_H

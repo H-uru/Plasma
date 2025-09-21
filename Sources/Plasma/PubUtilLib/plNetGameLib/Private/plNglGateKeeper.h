@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGATEKEEPER_H
-#error "Header $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Private/plNglGateKeeper.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGATEKEEPER_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGATEKEEPER_H
 
 #include <functional>
@@ -118,5 +116,4 @@ void NetCliGateKeeperAuthSrvIpAddressRequest (
     FNetCliGateKeeperAuthSrvIpAddressRequestCallback    callback
 );
 
-
-
+#endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGATEKEEPER_H
