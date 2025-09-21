@@ -40,75 +40,62 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGATEKEEPER_H
-#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGATEKEEPER_H
+#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLGAME_H
+#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLGAME_H
 
 #include <functional>
 
 /*****************************************************************************
 *
-*   Client gatekeeper functions
+*   Client-side Game functions
 *
 ***/
-
 
 //============================================================================
 // Connect
 //============================================================================
-void NetCliGateKeeperStartConnect (
-    const ST::string gateKeeperAddrList[],
-    uint32_t         gateKeeperAddrCount
+void NetCliGameStartConnect (
+    const uint32_t node
 );
-
 
 //============================================================================
 // Disconnect
 //============================================================================
-void NetCliGateKeeperDisconnect ();
-
+void NetCliGameDisconnect ();
 
 //============================================================================
-// Ping
+// Join Age
 //============================================================================
-using FNetCliGateKeeperPingRequestCallback = std::function<void(
-    ENetError   result,
-    unsigned    pingAtMs,
-    unsigned    replyAtMs,
-    unsigned    payloadBytes,
-    const uint8_t  payload[]
-)>;
-void NetCliGateKeeperPingRequest (
-    unsigned                                pingTimeMs,
-    unsigned                                payloadBytes,   // max 64k (pnNetCli enforced upon send)
-    const void *                            payload,
-    FNetCliGateKeeperPingRequestCallback    callback
+using FNetCliGameJoinAgeRequestCallback = std::function<void(ENetError result)>;
+void NetCliGameJoinAgeRequest (
+    unsigned                            ageMcpId,
+    const plUUID&                       accountUuid,
+    unsigned                            playerInt,
+    FNetCliGameJoinAgeRequestCallback   callback
 );
 
-
 //============================================================================
-// FileSrvIpAddress
+// Propagate app-specific data
 //============================================================================
-using FNetCliGateKeeperFileSrvIpAddressRequestCallback = std::function<void(
-    ENetError       result,
-    const ST::string& addr
+using FNetCliGameRecvBufferHandler = std::function<void(
+    unsigned                        type,
+    unsigned                        bytes,
+    const uint8_t                      buffer[]
 )>;
-
-void NetCliGateKeeperFileSrvIpAddressRequest (
-    bool                                                isPatcher,
-    FNetCliGateKeeperFileSrvIpAddressRequestCallback    callback
+void NetCliGameSetRecvBufferHandler (
+    FNetCliGameRecvBufferHandler    handler
+);
+void NetCliGamePropagateBuffer (
+    unsigned                        type,
+    unsigned                        bytes,
+    const uint8_t                      buffer[]
 );
 
-
 //============================================================================
-// AuthSrvIpAddress
+// GameMgrMsg
 //============================================================================
-using FNetCliGateKeeperAuthSrvIpAddressRequestCallback = std::function<void(
-    ENetError       result,
-    const ST::string& addr
-)>;
+using FNetCliGameRecvGameMgrMsgHandler = std::function<void(struct GameMsgHeader* msg)>;
+void NetCliGameSetRecvGameMgrMsgHandler(FNetCliGameRecvGameMgrMsgHandler handler);
+void NetCliGameSendGameMgrMsg(const struct GameMsgHeader* msg);
 
-void NetCliGateKeeperAuthSrvIpAddressRequest (
-    FNetCliGateKeeperAuthSrvIpAddressRequestCallback    callback
-);
-
-#endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGATEKEEPER_H
+#endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLGAME_H

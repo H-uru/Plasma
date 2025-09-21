@@ -40,43 +40,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACLOG_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACLOG_H
+#include "Pch.h"
 
-#include <string_theory/format>
 
-/****************************************************************************
+namespace Ngl {
+
+/*****************************************************************************
 *
-*   Log API
+*   Private data
 *
 ***/
 
-enum ELogSeverity {
-    // For indicating design problems
-    kLogDebug,
-    
-    // For indicating performance warnings
-    // (e.g. transaction failed, retrying...)
-    kLogPerf,
-    
-    // For indicating error conditions that change program behavior
-    // (e.g. socket connect failed)
-    kLogError,
-    
-    // For indicating failures that may lead to program termination
-    // (e.g. out of memory)
-    kLogFatal,
-    
-    kNumLogSeverity
-};
+static unsigned s_connSequence;
 
-void LogMsg(ELogSeverity severity, const char* line);
-void LogMsg(ELogSeverity severity, const ST::string& line);
 
-template<typename... _Args>
-inline void LogMsg(ELogSeverity severity, const char* format, _Args&&... args)
-{
-    LogMsg(severity, ST::format(format, std::forward<_Args>(args)...));
+/*****************************************************************************
+*
+*   Module functions
+*
+***/
+
+//============================================================================
+unsigned ConnNextSequence () {
+    if (!++s_connSequence)
+        ++s_connSequence;
+    return s_connSequence;
 }
 
-#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACLOG_H
+//============================================================================
+unsigned ConnGetId (ENetProtocol protocol) {
+    switch (protocol) {
+        case kNetProtocolCli2Auth: return AuthGetConnId();
+        case kNetProtocolCli2Game: return GameGetConnId();
+        case kNetProtocolCli2File: return FileGetConnId();
+        case kNetProtocolCli2GateKeeper: return GateKeeperGetConnId();
+        DEFAULT_FATAL(protocol);
+    }
+
+    // ConnId 0 means no connection
+    return 0;
+}
+
+
+} // namespace Ngl

@@ -50,11 +50,11 @@ class plNetAddress;
 class hsStream;
 class plUUID;
 
-#include "Private/plNglCore.h"
-#include "Private/plNglAuth.h"
-#include "Private/plNglGame.h"
-#include "Private/plNglFile.h"
-#include "Private/plNglGateKeeper.h"
+#include "plNglCore.h"
+#include "plNglAuth.h"
+#include "plNglGame.h"
+#include "plNglFile.h"
+#include "plNglGateKeeper.h"
 
 
 #endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNETGAMELIB_H

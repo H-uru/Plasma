@@ -40,58 +40,52 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACTHREAD_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACTHREAD_H
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTIMER_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTIMER_H
 
-#include <mutex>
-#include <thread>
-
-#include "pnNetBase/pnNbError.h"
-
-
-/****************************************************************************
-*
-*   Type definitions
-*
-***/
-
-// for IoWaitId/TimerCreate/TimerUpdate
-constexpr unsigned kAsyncTimeInfinite = (unsigned) -1;
-
-struct AsyncThread;
-
-struct AsyncThreadRef {
-    std::shared_ptr<AsyncThread> impl;
-    std::thread&                 thread() const;
-    bool joinable() const;
-};
-
-
-// Threads are also allowed to set the workTimeMs field of their
-// structure to a nonzero value for "on", and IO_TIME_INFINITE for
-// "off" to avoid the overhead of calling these functions. Note
-// that this function may not be called for the main thread. I
-// suggest that application code not worry that timeMs might
-// "accidentally" equal the IO_TIME_INFINITE value, as it only
-// happens for one millisecond every 49 days.
-struct AsyncThread {
-    std::function<void()>                proc;
-    std::thread                          handle;
-    unsigned                             workTimeMs;
-    std::timed_mutex                     completion;
-};
-
+#include <functional>
 
 /*****************************************************************************
 *
-*   Thread functions
+*   Timer functions
+*
+*   Timers are repeatedly called back at a scheduled interval. Note that all
+*   timer procedures share the same thread, so timer procedures should:
+*
+*   1) Not be called too frequently
+*   2) Not take too long to run or block for a long time
 *
 ***/
 
-AsyncThreadRef AsyncThreadCreate (
-    std::function<void()>    procs
+struct AsyncTimer;
+
+// Return callbackMs to wait that long until next callback.
+// Return kAsyncTimeInfinite to stop callbacks (note: does not destroy Timer structure)
+typedef std::function<unsigned()> FAsyncTimerProc;
+
+// 1) Timer procs do not get starved by I/O, they are called periodically.
+// 2) Timer procs will never be called by multiple threads simultaneously.
+AsyncTimer* AsyncTimerCreate (
+    unsigned callbackMs,
+    FAsyncTimerProc timerProc
 );
 
-void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs);
+typedef std::function<void()> FAsyncTimerDestroyProc;
 
-#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACTHREAD_H
+// Timer procs can be in the process of getting called in
+// another thread during the unregister function -- be careful!
+// This will wait until the timer has been unregistered and is
+// no longer in the process of being called before returning.
+void AsyncTimerDelete(AsyncTimer* timer);
+void AsyncTimerDeleteCallback (
+    AsyncTimer *    timer,
+    FAsyncTimerDestroyProc destroyProc
+);
+
+// Set the time value for a timer
+void AsyncTimerUpdate (
+    AsyncTimer *    timer,
+    unsigned        callbackMs
+);
+
+#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTIMER_H

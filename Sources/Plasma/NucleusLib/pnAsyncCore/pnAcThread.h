@@ -40,30 +40,58 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLCORE_H
-#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLCORE_H
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTHREAD_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTHREAD_H
 
-#include <functional>
+#include <mutex>
+#include <thread>
+
+#include "pnNetBase/pnNbError.h"
+
+
+/****************************************************************************
+*
+*   Type definitions
+*
+***/
+
+// for IoWaitId/TimerCreate/TimerUpdate
+constexpr unsigned kAsyncTimeInfinite = (unsigned) -1;
+
+struct AsyncThread;
+
+struct AsyncThreadRef {
+    std::shared_ptr<AsyncThread> impl;
+    std::thread&                 thread() const;
+    bool joinable() const;
+};
+
+
+// Threads are also allowed to set the workTimeMs field of their
+// structure to a nonzero value for "on", and IO_TIME_INFINITE for
+// "off" to avoid the overhead of calling these functions. Note
+// that this function may not be called for the main thread. I
+// suggest that application code not worry that timeMs might
+// "accidentally" equal the IO_TIME_INFINITE value, as it only
+// happens for one millisecond every 49 days.
+struct AsyncThread {
+    std::function<void()>                proc;
+    std::thread                          handle;
+    unsigned                             workTimeMs;
+    std::timed_mutex                     completion;
+};
 
 
 /*****************************************************************************
 *
-*   Core functions
+*   Thread functions
 *
 ***/
 
-void NetClientInitialize ();
-// void NetClientCancelAllTrans ();
-void NetClientDestroy (bool wait = true);
+AsyncThreadRef AsyncThreadCreate (
+    std::function<void()>    procs
+);
 
-void NetClientUpdate ();
+void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs);
 
-void NetClientSetTransTimeoutMs (unsigned ms);
-void NetClientPingEnable (bool enable);
-
-
-typedef std::function<void(ENetProtocol, ENetError)> NetClientErrorFunc;
-
-void NetClientSetErrorHandler(NetClientErrorFunc errorFunc);
-
-#endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLCORE_H
+#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTHREAD_H

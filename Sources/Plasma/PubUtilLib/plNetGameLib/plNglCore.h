@@ -40,46 +40,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "../Pch.h"
+#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLCORE_H
+#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLCORE_H
 
-
-namespace Ngl {
-
-/*****************************************************************************
-*
-*   Private data
-*
-***/
-
-static unsigned s_connSequence;
+#include <functional>
 
 
 /*****************************************************************************
 *
-*   Module functions
+*   Core functions
 *
 ***/
 
-//============================================================================
-unsigned ConnNextSequence () {
-    if (!++s_connSequence)
-        ++s_connSequence;
-    return s_connSequence;
-}
+void NetClientInitialize ();
+// void NetClientCancelAllTrans ();
+void NetClientDestroy (bool wait = true);
 
-//============================================================================
-unsigned ConnGetId (ENetProtocol protocol) {
-    switch (protocol) {
-        case kNetProtocolCli2Auth: return AuthGetConnId();
-        case kNetProtocolCli2Game: return GameGetConnId();
-        case kNetProtocolCli2File: return FileGetConnId();
-        case kNetProtocolCli2GateKeeper: return GateKeeperGetConnId();
-        DEFAULT_FATAL(protocol);
-    }
+void NetClientUpdate ();
 
-    // ConnId 0 means no connection
-    return 0;
-}
+void NetClientSetTransTimeoutMs (unsigned ms);
+void NetClientPingEnable (bool enable);
 
 
-} // namespace Ngl
+typedef std::function<void(ENetProtocol, ENetError)> NetClientErrorFunc;
+
+void NetClientSetErrorHandler(NetClientErrorFunc errorFunc);
+
+#endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLCORE_H

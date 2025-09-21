@@ -40,62 +40,75 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGAME_H
-#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGAME_H
+#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLGATEKEEPER_H
+#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLGATEKEEPER_H
 
 #include <functional>
 
 /*****************************************************************************
 *
-*   Client-side Game functions
+*   Client gatekeeper functions
 *
 ***/
+
 
 //============================================================================
 // Connect
 //============================================================================
-void NetCliGameStartConnect (
-    const uint32_t node
+void NetCliGateKeeperStartConnect (
+    const ST::string gateKeeperAddrList[],
+    uint32_t         gateKeeperAddrCount
 );
+
 
 //============================================================================
 // Disconnect
 //============================================================================
-void NetCliGameDisconnect ();
+void NetCliGateKeeperDisconnect ();
+
 
 //============================================================================
-// Join Age
+// Ping
 //============================================================================
-using FNetCliGameJoinAgeRequestCallback = std::function<void(ENetError result)>;
-void NetCliGameJoinAgeRequest (
-    unsigned                            ageMcpId,
-    const plUUID&                       accountUuid,
-    unsigned                            playerInt,
-    FNetCliGameJoinAgeRequestCallback   callback
-);
-
-//============================================================================
-// Propagate app-specific data
-//============================================================================
-using FNetCliGameRecvBufferHandler = std::function<void(
-    unsigned                        type,
-    unsigned                        bytes,
-    const uint8_t                      buffer[]
+using FNetCliGateKeeperPingRequestCallback = std::function<void(
+    ENetError   result,
+    unsigned    pingAtMs,
+    unsigned    replyAtMs,
+    unsigned    payloadBytes,
+    const uint8_t  payload[]
 )>;
-void NetCliGameSetRecvBufferHandler (
-    FNetCliGameRecvBufferHandler    handler
-);
-void NetCliGamePropagateBuffer (
-    unsigned                        type,
-    unsigned                        bytes,
-    const uint8_t                      buffer[]
+void NetCliGateKeeperPingRequest (
+    unsigned                                pingTimeMs,
+    unsigned                                payloadBytes,   // max 64k (pnNetCli enforced upon send)
+    const void *                            payload,
+    FNetCliGateKeeperPingRequestCallback    callback
 );
 
-//============================================================================
-// GameMgrMsg
-//============================================================================
-using FNetCliGameRecvGameMgrMsgHandler = std::function<void(struct GameMsgHeader* msg)>;
-void NetCliGameSetRecvGameMgrMsgHandler(FNetCliGameRecvGameMgrMsgHandler handler);
-void NetCliGameSendGameMgrMsg(const struct GameMsgHeader* msg);
 
-#endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGAME_H
+//============================================================================
+// FileSrvIpAddress
+//============================================================================
+using FNetCliGateKeeperFileSrvIpAddressRequestCallback = std::function<void(
+    ENetError       result,
+    const ST::string& addr
+)>;
+
+void NetCliGateKeeperFileSrvIpAddressRequest (
+    bool                                                isPatcher,
+    FNetCliGateKeeperFileSrvIpAddressRequestCallback    callback
+);
+
+
+//============================================================================
+// AuthSrvIpAddress
+//============================================================================
+using FNetCliGateKeeperAuthSrvIpAddressRequestCallback = std::function<void(
+    ENetError       result,
+    const ST::string& addr
+)>;
+
+void NetCliGateKeeperAuthSrvIpAddressRequest (
+    FNetCliGateKeeperAuthSrvIpAddressRequestCallback    callback
+);
+
+#endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLGATEKEEPER_H

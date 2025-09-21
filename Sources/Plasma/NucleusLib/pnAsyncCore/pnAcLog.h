@@ -40,22 +40,43 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "../Pch.h"
-#include "plStatusLog/plStatusLog.h"
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACLOG_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACLOG_H
 
-/*****************************************************************************
+#include <string_theory/format>
+
+/****************************************************************************
 *
-*   Exports
+*   Log API
 *
 ***/
 
-//===========================================================================
-void LogMsg(ELogSeverity severity, const char* line) {
-    ASSERT(line);
-    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", line);
+enum ELogSeverity {
+    // For indicating design problems
+    kLogDebug,
+    
+    // For indicating performance warnings
+    // (e.g. transaction failed, retrying...)
+    kLogPerf,
+    
+    // For indicating error conditions that change program behavior
+    // (e.g. socket connect failed)
+    kLogError,
+    
+    // For indicating failures that may lead to program termination
+    // (e.g. out of memory)
+    kLogFatal,
+    
+    kNumLogSeverity
+};
+
+void LogMsg(ELogSeverity severity, const char* line);
+void LogMsg(ELogSeverity severity, const ST::string& line);
+
+template<typename... _Args>
+inline void LogMsg(ELogSeverity severity, const char* format, _Args&&... args)
+{
+    LogMsg(severity, ST::format(format, std::forward<_Args>(args)...));
 }
 
-//===========================================================================
-void LogMsg(ELogSeverity severity, const ST::string& line) {
-    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", line);
-}
+#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACLOG_H

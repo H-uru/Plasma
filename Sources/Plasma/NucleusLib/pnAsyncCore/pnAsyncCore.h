@@ -54,11 +54,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNASYNCCORE_H
 
 
-#include "Private/pnAcCore.h"
-#include "Private/pnAcIo.h"
-#include "Private/pnAcLog.h"
-#include "Private/pnAcThread.h"
-#include "Private/pnAcTimer.h"
+#include "pnAcCore.h"
+#include "pnAcIo.h"
+#include "pnAcLog.h"
+#include "pnAcThread.h"
+#include "pnAcTimer.h"
 
 
 #endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNASYNCCORE_H
