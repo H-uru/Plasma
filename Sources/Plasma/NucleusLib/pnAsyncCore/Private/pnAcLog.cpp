@@ -39,11 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Private/pnAcLog.cpp
-*   
-***/
 
 #include "../Pch.h"
 #include "plStatusLog/plStatusLog.h"
