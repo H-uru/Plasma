@@ -46,6 +46,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <functional>
 #include <vector>
 
+#include "pnNetBase/pnNetBase.h"
+
+class hsStream;
+class plFileName;
+
 /*****************************************************************************
 *
 *   Client file functions

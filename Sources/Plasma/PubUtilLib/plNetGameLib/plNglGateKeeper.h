@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <functional>
 
+#include "pnNetBase/pnNetBase.h"
+
 /*****************************************************************************
 *
 *   Client gatekeeper functions
