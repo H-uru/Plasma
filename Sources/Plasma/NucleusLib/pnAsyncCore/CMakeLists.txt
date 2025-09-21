@@ -1,5 +1,4 @@
 set(pnAsyncCore_HEADERS
-    Pch.h
     pnAcCore.h
     pnAcIo.h
     pnAcLog.h
