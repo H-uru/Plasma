@@ -118,19 +118,3 @@ uint32_t pyVaultPlayerNode::GetOnlineTime()
     VaultPlayerNode player(fNode);
     return player.GetOnlineTime();
 }
-
-void pyVaultPlayerNode::SetExplorer (bool b) {
-    if (!fNode)
-        return;
-
-    VaultPlayerNode player(fNode);
-    player.SetExplorer(b);
-}
-
-bool pyVaultPlayerNode::IsExplorer () {
-    if (!fNode)
-        return false;
-
-    VaultPlayerNode player(fNode);
-    return player.GetExplorer();
-}

@@ -5402,20 +5402,12 @@ class ptVaultPlayerNode(ptVaultNode):
         """Is the avatar disabled?"""
         ...
 
-    def isExplorer(self):
-        """Returns true for 'explorer', false for 'visitor'."""
-        ...
-
     def setAvatarShapeName(self, name):
         """Sets the avatar's 'shape'"""
         ...
 
     def setDisabled(self, state):
         """Disables/enables the avatar"""
-        ...
-
-    def setExplorer(self, boolean):
-        """set true for 'explorer', false for 'visitor'"""
         ...
 
     def setOnlineTime(self, time):

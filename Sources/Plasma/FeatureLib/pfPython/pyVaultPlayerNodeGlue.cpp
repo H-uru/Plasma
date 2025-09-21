@@ -128,23 +128,6 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultPlayerNode, getOnlineTime)
     return PyLong_FromUnsignedLong(self->fThis->GetOnlineTime());
 }
 
-PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, setExplorer, args)
-{
-    char explorer;
-    if (!PyArg_ParseTuple(args, "b", &explorer))
-    {
-        PyErr_SetString(PyExc_TypeError, "setExplorer expects a boolean");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->SetExplorer(explorer != 0);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultPlayerNode, isExplorer)
-{
-    PYTHON_RETURN_BOOL(self->fThis->IsExplorer());
-}
-
 
 PYTHON_START_METHODS_TABLE(ptVaultPlayerNode)
     PYTHON_METHOD(ptVaultPlayerNode, setPlayerName, "Params: name\nSets the player's name"),
@@ -155,8 +138,6 @@ PYTHON_START_METHODS_TABLE(ptVaultPlayerNode)
     PYTHON_METHOD(ptVaultPlayerNode, isDisabled, "Is the avatar disabled?"),
     PYTHON_METHOD(ptVaultPlayerNode, setOnlineTime, "Params: time\nSets the avatar's online time"),
     PYTHON_METHOD_NOARGS(ptVaultPlayerNode, getOnlineTime, "Returns the avatar's online time"),
-    PYTHON_METHOD(ptVaultPlayerNode, setExplorer, "Params: boolean\nset true for 'explorer', false for 'visitor'"),
-    PYTHON_METHOD_NOARGS(ptVaultPlayerNode, isExplorer, "Returns true for 'explorer', false for 'visitor'."),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition

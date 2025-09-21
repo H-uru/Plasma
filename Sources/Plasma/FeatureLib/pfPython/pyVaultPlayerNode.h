@@ -80,9 +80,6 @@ public:
 
     void SetOnlineTime(uint32_t value);
     uint32_t GetOnlineTime();
-
-    void    SetExplorer (bool b);
-    bool    IsExplorer ();
 };
 
 #endif  // pyVaultPlayerNode_h_
