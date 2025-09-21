@@ -1,5 +1,4 @@
 set(plNetGameLib_PRIVATE
-    Private/plNglAllIncludes.h
     Private/plNglAuth.h
     Private/plNglAuth.cpp
     Private/plNglCore.h

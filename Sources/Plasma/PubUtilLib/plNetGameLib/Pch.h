@@ -67,7 +67,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetProtocol/pnNpCli2Game.h"
 #include "pnNetProtocol/pnNpCli2GateKeeper.h"
 
-#include "Private/plNglAllIncludes.h"
+#include "plNetGameLib.h"
 #include "Intern.h"
 
 #endif

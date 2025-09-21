@@ -54,7 +54,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #error "plNetGameLib and pnNetDiag libraries may not be included in the same project because they invalidate each other's pnNetCli settings"
 #endif
 
-#include "Private/plNglAllIncludes.h"
+#include "pnNetBase/pnNetBase.h"
+
+class plFileName;
+class plNetAddress;
+class hsStream;
+class plUUID;
+
+#include "Private/plNglCore.h"
+#include "Private/plNglAuth.h"
+#include "Private/plNglGame.h"
+#include "Private/plNglFile.h"
+#include "Private/plNglGateKeeper.h"
 
 
 #endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNETGAMELIB_H
