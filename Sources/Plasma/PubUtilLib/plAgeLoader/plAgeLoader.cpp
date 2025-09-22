@@ -304,18 +304,20 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
         }
     }
 
+    if (nPages == 0) {
+        nc->ErrorMsg("Found no pages to load for age {}", fAgeName);
+        hsAssert(false, ST::format("Found no pages to load for age {}. You will now link into the empty void and the game may misbehave.", fAgeName).c_str());
+#ifndef HS_DEBUGGING
+        return false;
+#endif
+    }
+
     pMsg1->Send(clientKey);
 
     // Send the client a message to let go of the extra keys it was holding on to
     plClientMsg *dumpAgeKeys = new plClientMsg( plClientMsg::kReleaseAgeKeys );
     dumpAgeKeys->SetAgeName( fAgeName);
     dumpAgeKeys->Send( clientKey );
-
-    if ( nPages==0 )
-    {
-        // age is done loading because it has no pages?
-        fFlags &= ~kLoadingAge;
-    }
 
     return true;
 }
