@@ -262,10 +262,10 @@ plFileName plFileSystem::GetCWD()
         cwd = ST::string::from_wchar(cwd_sm);
     }
 #else
-    char *cwd_a = getcwd(nullptr, 0);
-    hsAssert(cwd_a, "Failure to get working directory (unsupported libc?)");
+    char cwd_a[1024];
+    const char* res = getcwd(cwd_a, sizeof(cwd_a));
+    hsAssert(res, "Failure to get working directory (unsupported libc?)");
     cwd = cwd_a;
-    free(cwd_a);
 #endif
 
     return cwd;
