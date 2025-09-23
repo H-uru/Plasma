@@ -2283,7 +2283,8 @@ PyObject* cyMisc::RebuildCameraStack(const ST::string& name, const ST::string& a
         PyErr_SetString(PyExc_NameError, errmsg.c_str());
         PYTHON_RETURN_ERROR;
     }
-    
+
+    PYTHON_RETURN_NONE;
 }
 
 void cyMisc::PyClearCameraStack()
