@@ -2203,7 +2203,7 @@ bool hsBounds3Ext::ISectBoxBS(const hsBounds3Ext &other, const hsVector3 &myVel,
     hsAssert(fBounds3Flags & kCenterValid, "Sphere set but not center (BoxBS(vel))");
 
     hsVector3 minAxis;
-    float minDepth;
+    float minDepth = -1.f;
     bool haveAxis = false;
     hsVector3 tstAxis;
     float tstDepth;
