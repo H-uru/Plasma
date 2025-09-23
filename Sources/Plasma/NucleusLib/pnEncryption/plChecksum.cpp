@@ -182,7 +182,7 @@ void plMD5Checksum::CalcFromStream(hsStream* stream)
 
     uint8_t *buf = new uint8_t[loadLen];
 
-    while (int read = stream->Read(loadLen, buf))
+    while (size_t read = stream->Read(loadLen, buf))
         AddTo(read, buf);
     delete[] buf;
 
@@ -311,7 +311,7 @@ void plSHAChecksum::CalcFromStream(hsStream* stream)
 
     uint8_t* buf = new uint8_t[loadLen];
 
-    while (int read = stream->Read(loadLen, buf))
+    while (size_t read = stream->Read(loadLen, buf))
     {
         AddTo( read, buf );
     }
@@ -452,7 +452,7 @@ void plSHA1Checksum::CalcFromStream(hsStream* stream)
 
     uint8_t* buf = new uint8_t[loadLen];
 
-    while (int read = stream->Read(loadLen, buf))
+    while (size_t read = stream->Read(loadLen, buf))
     {
         AddTo( read, buf );
     }
