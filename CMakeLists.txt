@@ -18,10 +18,17 @@ if(POLICY CMP0127)
     cmake_policy(SET CMP0127 OLD)
 endif()
 
-
 # When cross-compiling, we want CMake to find the host system's Python interpreter
 if(POLICY CMP0190)
     cmake_policy(SET CMP0190 NEW)
+endif()
+
+# Deduplicate libraries on linker commands
+if(POLICY CMP0156)
+    cmake_policy(SET CMP0156 NEW)
+    if(POLICY CMP0179)
+        cmake_policy(SET CMP0179 NEW)
+    endif()
 endif()
 
 include(CheckLanguage)
