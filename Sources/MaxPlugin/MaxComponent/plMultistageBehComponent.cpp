@@ -499,7 +499,7 @@ public:
 
     uint32_t  GetEOF() override { return (uint32_t)fLoad->CurChunkLength(); }
 
-    uint32_t Read(uint32_t byteCount, void * buffer) override
+    size_t Read(size_t byteCount, void * buffer) override
     {
         ULONG numRead = 0;
         hsAssert(fLoad, "No Max ILoad!");
@@ -508,7 +508,7 @@ public:
         fPosition += numRead;
         return numRead;
     }
-    uint32_t Write(uint32_t byteCount, const void* buffer) override
+    size_t Write(size_t byteCount, const void* buffer) override
     {
         ULONG numWritten;
         hsAssert(fSave, "No Max ISave!");
