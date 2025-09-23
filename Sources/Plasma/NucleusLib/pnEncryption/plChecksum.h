@@ -96,9 +96,7 @@ class plMD5Checksum
         // Backdoor for cached checksums (ie, if you loaded it off disk)
         void SetValue(uint8_t* checksum);
 
-        // Note: GetAsHexString() returns a pointer to a static string;
-        // do not rely on the contents of this string between calls!
-        const char* GetAsHexString() const;
+        ST::string GetAsHexString() const;
         void SetFromHexString(const char* string);
 
         bool operator==(const plMD5Checksum& rhs) const;
@@ -142,9 +140,7 @@ class plSHAChecksum
         // Backdoor for cached checksums (ie, if you loaded it off disk)
         void SetValue(uint8_t* checksum);
 
-        // Note: GetAsHexString() returns a pointer to a static string;
-        // do not rely on the contents of this string between calls!
-        const char* GetAsHexString() const;
+        ST::string GetAsHexString() const;
         void SetFromHexString(const char* string);
 
         bool operator==(const plSHAChecksum& rhs) const;
@@ -182,9 +178,7 @@ class plSHA1Checksum
         // Backdoor for cached checksums (ie, if you loaded it off disk)
         void SetValue(uint8_t* checksum);
 
-        // Note: GetAsHexString() returns a pointer to a static string;
-        // do not rely on the contents of this string between calls!
-        const char* GetAsHexString() const;
+        ST::string GetAsHexString() const;
         void SetFromHexString(const char* string);
 
         bool operator==(const plSHA1Checksum& rhs) const;
