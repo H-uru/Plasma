@@ -236,7 +236,9 @@ void plNCAgeJoiner::ExecNextOp () {
             ((plResManager*)hsgResMgr::ResMgr())->SetProgressBarProc(IResMgrProgressBarCallback);
 
             // Start loading age data
-            al->LoadAge(age.ageDatasetName);
+            if (!al->LoadAge(age.ageDatasetName)) {
+                Complete(false, "plAgeLoader::LoadAge failed - most likely the age doesn't exist or has no pages");
+            }
         }
         break;
 
