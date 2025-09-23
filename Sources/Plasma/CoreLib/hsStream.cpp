@@ -201,9 +201,8 @@ bool hsStream::IsTokenSeparator(char c)
 
 bool hsStream::GetToken(char *s, uint32_t maxLen, const char beginComment, const char endComment)
 {
-    char c;
-    char endCom;
-        endCom = endComment;
+    char c = 0;
+    char endCom = endComment;
 
     while( true )
     {
@@ -235,9 +234,8 @@ bool hsStream::GetToken(char *s, uint32_t maxLen, const char beginComment, const
 
 bool hsStream::ReadLn(char *s, uint32_t maxLen, const char beginComment, const char endComment)
 {
-    char c;
-    char endCom;
-        endCom = endComment;
+    char c = 0;
+    char endCom = endComment;
 
     while( true )
     {
@@ -270,7 +268,7 @@ bool hsStream::ReadLn(char *s, uint32_t maxLen, const char beginComment, const c
 bool hsStream::ReadLn(ST::string& s, const char beginComment, const char endComment)
 {
     ST::string_stream ss;
-    char c;
+    char c = 0;
     char endCom = endComment;
 
     while (true) {
