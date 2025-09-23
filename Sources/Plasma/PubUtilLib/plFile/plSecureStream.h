@@ -80,7 +80,7 @@ protected:
 
     void IBufferFile();
 
-    uint32_t IRead(uint32_t bytes, void* buffer);
+    size_t IRead(size_t bytes, void* buffer);
 
     void IEncipher(uint32_t* const v, uint32_t n);
     void IDecipher(uint32_t* const v, uint32_t n);
@@ -103,8 +103,8 @@ public:
     bool Open(const plFileName& name, const char* mode = "rb") override;
     bool Open(hsStream* stream);
 
-    uint32_t Read(uint32_t byteCount, void* buffer) override;
-    uint32_t Write(uint32_t byteCount, const void* buffer) override;
+    size_t Read(size_t byteCount, void* buffer) override;
+    size_t Write(size_t byteCount, const void* buffer) override;
     bool AtEnd() override;
     void Skip(uint32_t deltaByteCount) override;
     void Rewind() override;
@@ -135,7 +135,7 @@ public:
     // searches the parent directory of filename for the encryption key file, and reads it
     // into the key passed in. Returns false if the key file didn't exist (and sets key to
     // the default key)
-    static bool GetSecureEncryptionKey(const plFileName& filename, uint32_t* key, unsigned length);
+    static bool GetSecureEncryptionKey(const plFileName& filename, uint32_t* key, size_t length);
 
     static const char kKeyFilename[];
 };

@@ -101,18 +101,18 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
     ST::printf(out, "== Packing {}, ", fileName);
 
     pyStream.FastFwd();
-    uint32_t pyFileSize = pyStream.GetPosition();
+    size_t pyFileSize = pyStream.GetPosition();
     pyStream.Rewind();
 
     glueStream.FastFwd();
-    uint32_t glueFileSize = glueStream.GetPosition();
+    size_t glueFileSize = glueStream.GetPosition();
     glueStream.Rewind();
 
-    uint32_t totalSize = pyFileSize + glueFileSize + 2;
+    size_t totalSize = pyFileSize + glueFileSize + 2;
 
     char *code = new char[totalSize];
 
-    uint32_t amountRead = pyStream.Read(pyFileSize, code);
+    size_t amountRead = pyStream.Read(pyFileSize, code);
     hsAssert(amountRead == pyFileSize, "Bad read");
 
     code[pyFileSize] = '\n';
@@ -183,8 +183,8 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
                 code[amountRead] = '\n';
                 code[amountRead+1] = '\0';
                 k = 0;
-                int len = strlen(code)+1;
-                for (int i = 0; i < len; i++)
+                size_t len = strlen(code)+1;
+                for (size_t i = 0; i < len; i++)
                 {
                     if (code[i] != '\r')    // is it not a CR?
                         code[k++] = code[i];
