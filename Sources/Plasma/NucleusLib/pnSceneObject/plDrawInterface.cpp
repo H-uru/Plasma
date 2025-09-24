@@ -61,7 +61,7 @@ plDrawInterface::~plDrawInterface()
 
 }
 
-void plDrawInterface::SetDrawableMeshIndex(size_t which, size_t index)
+void plDrawInterface::SetDrawableMeshIndex(size_t which, uint32_t index)
 {
     ICheckDrawableIndex(which);
 
@@ -148,7 +148,7 @@ void plDrawInterface::Read(hsStream* s, hsResMgr* mgr)
     {
         fDrawableIndices[i] = s->ReadLE32();
 
-        plIntRefMsg* refMsg = new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, i, plIntRefMsg::kDrawable);
+        plIntRefMsg* refMsg = new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, static_cast<int32_t>(i), plIntRefMsg::kDrawable);
         mgr->ReadKeyNotifyMe(s,refMsg, plRefFlags::kActiveRef);
     }
 
@@ -283,7 +283,7 @@ void plDrawInterface::SetDrawable(size_t which, plDrawable *dr)
     if( dr )
     {
         // This is a little convoluted, but it makes GCC happy and doesn't hurt anybody.
-        plIntRefMsg* intRefMsg = new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, which, plIntRefMsg::kDrawable);
+        plIntRefMsg* intRefMsg = new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, static_cast<int32_t>(which), plIntRefMsg::kDrawable);
         plRefMsg* refMsg = intRefMsg;
 //      hsgResMgr::ResMgr()->SendRef(dr->GetKey(), intRefMsg, plRefFlags::kActiveRef); // THIS WON'T COMPILE UNDER GCC
         hsgResMgr::ResMgr()->SendRef(dr, refMsg, plRefFlags::kActiveRef);
