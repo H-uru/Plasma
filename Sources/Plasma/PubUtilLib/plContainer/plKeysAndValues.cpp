@@ -126,7 +126,7 @@ bool plKeysAndValues::AddValue(const ST::string & key, double value, KAddValueMo
 
 bool plKeysAndValues::AddValues(const ST::string & key, const std::vector<ST::string> & values, KAddValueMode mode)
 {
-    for (int i=0; i<values.size(); i++)
+    for (size_t i=0; i<values.size(); i++)
         AddValue(key,values[i],mode);
     return true;
 }

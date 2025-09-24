@@ -81,7 +81,7 @@ static void CalcCreatableVersions()
 
         GetChangedCreatables(minorVer, changedTypes);
 
-        for (int i = 0; i < changedTypes.size(); i++)
+        for (size_t i = 0; i < changedTypes.size(); i++)
         {
             uint16_t changedType = changedTypes[i];
             CreatableVersions[changedType] = minorVer;
