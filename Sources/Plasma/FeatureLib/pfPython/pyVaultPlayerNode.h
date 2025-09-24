@@ -69,29 +69,6 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    PyObject *GetInbox(); // returns pyVaultFolderNode
-    PyObject *GetPlayerInfo(); // returns pyVaultPlayerInfoNode
-    PyObject *GetAvatarOutfitFolder(); // returns pyVaultFolderNode
-    PyObject *GetAvatarClosetFolder(); // returns pyVaultFolderNode
-    PyObject *GetChronicleFolder(); // returns pyVaultFolderNode
-    PyObject *GetAgeJournalsFolder(); // returns pyVaultFolderNode
-    PyObject *GetIgnoreListFolder(); // returns pyVaultPlayerInfoListNode
-    PyObject *GetBuddyListFolder(); // returns pyVaultPlayerInfoListNode
-    PyObject *GetPeopleIKnowAboutFolder(); // returns pyVaultPlayerInfoListNode
-    PyObject *GetAgesICanVisitFolder(); // returns pyVaultFolderNode
-    PyObject *GetAgesIOwnFolder(); // returns pyVaultFolderNode
-
-    PyObject *GetLinkToMyNeighborhood(); // returns pyVaultAgeLinkNode
-    PyObject *GetLinkToCity(); // returns pyVaultAgeLinkNode
-
-    PyObject *GetOwnedAgeLink(const pyAgeInfoStruct *info); // returns pyVaultAgeLinkNode
-    void RemoveOwnedAgeLink(ST::string ageFilename);
-
-    PyObject *GetVisitAgeLink(const pyAgeInfoStruct *info); // returns pyVaultAgeLinkNode
-    void RemoveVisitAgeLink(const ST::string& guid);
-
-    PyObject *FindChronicleEntry(const ST::string& entryName); // returns pyVaultChronicleNode
-
     void SetPlayerName(const ST::string& value);
     ST::string GetPlayerName() const;
 
@@ -103,9 +80,6 @@ public:
 
     void SetOnlineTime(uint32_t value);
     uint32_t GetOnlineTime();
-
-    void    SetExplorer (bool b);
-    bool    IsExplorer ();
 };
 
 #endif  // pyVaultPlayerNode_h_

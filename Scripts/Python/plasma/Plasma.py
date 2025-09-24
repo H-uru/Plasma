@@ -5383,6 +5383,41 @@ class ptVaultPlayerInfoNode(ptVaultNode):
         """Not sure this should be used. Sets the state of the player online status for this player info node."""
         ...
 
+class ptVaultPlayerNode(ptVaultNode):
+    """Plasma vault player node"""
+
+    def getAvatarShapeName(self):
+        """Returns the avatar's 'shape'"""
+        ...
+
+    def getOnlineTime(self):
+        """Returns the avatar's online time"""
+        ...
+
+    def getPlayerName(self):
+        """Returns the player's name"""
+        ...
+
+    def isDisabled(self):
+        """Is the avatar disabled?"""
+        ...
+
+    def setAvatarShapeName(self, name):
+        """Sets the avatar's 'shape'"""
+        ...
+
+    def setDisabled(self, state):
+        """Disables/enables the avatar"""
+        ...
+
+    def setOnlineTime(self, time):
+        """Sets the avatar's online time"""
+        ...
+
+    def setPlayerName(self, name):
+        """Sets the player's name"""
+        ...
+
 class ptVaultSDLNode(ptVaultNode):
     """Plasma vault SDL node"""
 
