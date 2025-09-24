@@ -98,7 +98,7 @@ size_t plZlibStream::Write(size_t byteCount, const void* buffer)
         zstream->zalloc = ZlibAlloc;
         zstream->zfree = ZlibFree;
         zstream->opaque = nullptr;
-        zstream->avail_in = byteCount;
+        zstream->avail_in = static_cast<uInt>(byteCount);
         zstream->next_in = byteBuf;
         // windowBits = 31 means require a gzip header and window size 15.
         bool initOk = (inflateInit2(zstream, 31) == Z_OK);
@@ -114,7 +114,7 @@ size_t plZlibStream::Write(size_t byteCount, const void* buffer)
     ASSERT(fOutput);
     ASSERT(fZStream);
     z_streamp zstream = (z_streamp)fZStream;
-    zstream->avail_in = byteCount;
+    zstream->avail_in = static_cast<uInt>(byteCount);
     zstream->next_in = byteBuf;
 
     char outBuf[2048];

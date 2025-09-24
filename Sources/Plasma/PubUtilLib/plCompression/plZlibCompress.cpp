@@ -56,7 +56,7 @@ bool plZlibCompress::Uncompress(uint8_t* bufOut, uint32_t* bufLenOut, const uint
 bool plZlibCompress::Compress(uint8_t* bufOut, uint32_t* bufLenOut, const uint8_t* bufIn, uint32_t bufLenIn)
 {
     // according to compress doc, the bufOut buffer should be at least .1% larger than source buffer, plus 12 bytes.
-    hsAssert(*bufLenOut>=(int)(bufLenIn*1.1+12), "bufOut compress buffer is not large enough");
+    hsAssert(*bufLenOut >= static_cast<uint32_t>(bufLenIn * 1.1 + 12), "bufOut compress buffer is not large enough");
     unsigned long buflen_out = *bufLenOut;
     bool result = (compress(bufOut, &buflen_out, bufIn, bufLenIn) == Z_OK);
     *bufLenOut = buflen_out;
@@ -259,23 +259,20 @@ bool  plZlibCompress::CompressToFile( hsStream * s, const char * filename )
             uint32_t avail = s->GetEOF() - s->GetPosition();
             uint32_t n = ( avail > kGzBufferSize ) ? kGzBufferSize : avail;
 
-            if( n == 0 )
-            {
+            if (n == 0) {
                 worked = true;
                 break;
             }
 
-            uint32_t length = s->Read( n, buffer.get() );
+            size_t length = s->Read(n, buffer.get());
 
-            if( length == 0 )
-            {
+            if (length == 0) {
                 worked = true;
                 break;
             }
 
-            if( gzwrite( outFile, buffer.get(), length ) != length )
-            {
-                gzerror( outFile, &err );
+            if (gzwrite(outFile, buffer.get(), static_cast<unsigned int>(length)) != length) {
+                gzerror(outFile, &err);
                 break;
             }
         }

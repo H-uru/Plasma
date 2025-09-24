@@ -112,8 +112,8 @@ public:
     ST::string  GetAgeName() const { return fAgeName; }
     void        SetAgeName(ST::string age) { fAgeName = std::move(age); }
 
-    int GetNumRoomLocs() { return fRoomLocs.size(); }
-    const plLocation& GetRoomLoc(int i) const { return fRoomLocs[i]; }
+    size_t GetNumRoomLocs() { return fRoomLocs.size(); }
+    const plLocation& GetRoomLoc(size_t i) const { return fRoomLocs[i]; }
     const std::vector<plLocation>& GetRoomLocs() { return fRoomLocs; }
 
     // IO
