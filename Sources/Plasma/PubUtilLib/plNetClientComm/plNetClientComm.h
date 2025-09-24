@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plNetClientComm/plNetClientComm.h
-*
 *   This module is the translation layer between simple network types
 *   such as byte arrays, and higher-level Plasma-specific types such
 *   as the plFactory-managed types.

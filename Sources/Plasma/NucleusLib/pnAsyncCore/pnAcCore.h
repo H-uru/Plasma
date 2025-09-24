@@ -39,36 +39,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
+
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACCORE_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACCORE_H
+
+
+/****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Private/plNglCore.h
-*   
-***/
-
-#ifdef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLCORE_H
-#error "Header $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Private/plNglCore.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLCORE_H
-
-#include <functional>
-
-
-/*****************************************************************************
-*
-*   Core functions
+*   Library initialization
 *
 ***/
 
-void NetClientInitialize ();
-// void NetClientCancelAllTrans ();
-void NetClientDestroy (bool wait = true);
+void AsyncCoreInitialize ();
+void AsyncCoreDestroy (unsigned waitMs);
 
-void NetClientUpdate ();
+/*****************************************************************************
+*
+*   Performance counters
+*
+***/
 
-void NetClientSetTransTimeoutMs (unsigned ms);
-void NetClientPingEnable (bool enable);
+enum EAsyncPerfCounter {
+    // Sockets
+    kAsyncPerfSocketsCurr,
+    kAsyncPerfSocketsTotal,
+    kAsyncPerfSocketBytesWriteQueued,
+    kAsyncPerfSocketBytesWaitQueued,
+    kAsyncPerfSocketConnAttemptsOutCurr,
+    kAsyncPerfSocketConnAttemptsOutTotal,
+    kAsyncPerfSocketDisconnectBacklog,
+    kAsyncPerfNameLookupAttemptsCurr,
+    kAsyncPerfNameLookupAttemptsTotal,
 
+    // Threads
+    kAsyncPerfThreadsCurr,
+    kAsyncPerfThreadsTotal,
 
-typedef std::function<void(ENetProtocol, ENetError)> NetClientErrorFunc;
+    kNumAsyncPerfCounters
+};
 
-void NetClientSetErrorHandler(NetClientErrorFunc errorFunc);
+long AsyncPerfGetCounter (unsigned id);
+
+#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACCORE_H

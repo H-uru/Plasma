@@ -39,19 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plVault/plVaultClientApi.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULTCLIENTAPI_H
-#error "Header $/Plasma20/Sources/Plasma/PubUtilLib/plVault/plVaultClientApi.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULTCLIENTAPI_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULTCLIENTAPI_H
 
 #include <functional>
 #include <list>
+
+#include "pnNetBase/pnNetBase.h"
 
 /*****************************************************************************
 *
@@ -461,3 +456,5 @@ void VaultCull (
 
 hsRef<RelVaultNode> VaultGetSystemNode();
 hsRef<RelVaultNode> VaultGetGlobalInbox();
+
+#endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULTCLIENTAPI_H

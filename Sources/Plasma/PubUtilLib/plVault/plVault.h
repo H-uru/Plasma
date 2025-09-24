@@ -39,16 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plVault/plVault.h
-*   
-***/
 
 #ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULT_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULT_H
-
-#include "pnNetBase/pnNetBase.h"
 
 #include "plVaultConstants.h"
 #include "plVaultNodeAccess.h"

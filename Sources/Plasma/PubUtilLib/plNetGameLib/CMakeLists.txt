@@ -1,29 +1,28 @@
-set(plNetGameLib_PRIVATE
-    Private/plNglAllIncludes.h
-    Private/plNglAuth.h
-    Private/plNglAuth.cpp
-    Private/plNglCore.h
-    Private/plNglCore.cpp
-    Private/plNglFile.h
-    Private/plNglFile.cpp
-    Private/plNglGame.h
-    Private/plNglGame.cpp
-    Private/plNglGateKeeper.h
-    Private/plNglGateKeeper.cpp
-    Private/plNglMisc.cpp
-    Private/plNglTrans.cpp
-)
-
 set(plNetGameLib_HEADERS
     Intern.h
     Pch.h
     plNetGameLib.h
+    plNglAuth.h
+    plNglCore.h
+    plNglFile.h
+    plNglGame.h
+    plNglGateKeeper.h
+)
+
+set(plNetGameLib_SOURCES
+    plNglAuth.cpp
+    plNglCore.cpp
+    plNglFile.cpp
+    plNglGame.cpp
+    plNglGateKeeper.cpp
+    plNglMisc.cpp
+    plNglTrans.cpp
 )
 
 # NOTE: Too many ODR violations and ambiguous names for UNITY_BUILD on this one.
 plasma_library(plNetGameLib
     FOLDER PubUtilLib
-    SOURCES ${plNetGameLib_PRIVATE} ${plNetGameLib_HEADERS}
+    SOURCES ${plNetGameLib_HEADERS} ${plNetGameLib_SOURCES}
     PRECOMPILED_HEADERS Pch.h
 )
 
@@ -44,5 +43,5 @@ target_link_libraries(
         plVault
 )
 
-source_group("Private" FILES ${plNetGameLib_PRIVATE})
 source_group("Header Files" FILES ${plNetGameLib_HEADERS})
+source_group("Source Files" FILES ${plNetGameLib_SOURCES})

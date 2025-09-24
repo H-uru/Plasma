@@ -39,19 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Pch.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PCH_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Pch.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PCH_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PCH_H
 
 #include <thread>
 
 #include "plProduct.h"
 #include "pnNetBase/pnNetBase.h"
-#include "Private/pnAcAllIncludes.h"
+#include "pnAsyncCore.h"
+
+#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PCH_H

@@ -39,50 +39,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Private/pnAcCore.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACCORE_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Private/pnAcCore.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACCORE_H
+#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLCORE_H
+#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLCORE_H
 
+#include <functional>
 
-/****************************************************************************
-*
-*   Library initialization
-*
-***/
-
-void AsyncCoreInitialize ();
-void AsyncCoreDestroy (unsigned waitMs);
+#include "pnNetBase/pnNetBase.h"
 
 /*****************************************************************************
 *
-*   Performance counters
+*   Core functions
 *
 ***/
 
-enum EAsyncPerfCounter {
-    // Sockets
-    kAsyncPerfSocketsCurr,
-    kAsyncPerfSocketsTotal,
-    kAsyncPerfSocketBytesWriteQueued,
-    kAsyncPerfSocketBytesWaitQueued,
-    kAsyncPerfSocketConnAttemptsOutCurr,
-    kAsyncPerfSocketConnAttemptsOutTotal,
-    kAsyncPerfSocketDisconnectBacklog,
-    kAsyncPerfNameLookupAttemptsCurr,
-    kAsyncPerfNameLookupAttemptsTotal,
+void NetClientInitialize ();
+// void NetClientCancelAllTrans ();
+void NetClientDestroy (bool wait = true);
 
-    // Threads
-    kAsyncPerfThreadsCurr,
-    kAsyncPerfThreadsTotal,
+void NetClientUpdate ();
 
-    kNumAsyncPerfCounters
-};
+void NetClientSetTransTimeoutMs (unsigned ms);
+void NetClientPingEnable (bool enable);
 
-long AsyncPerfGetCounter (unsigned id);
+
+typedef std::function<void(ENetProtocol, ENetError)> NetClientErrorFunc;
+
+void NetClientSetErrorHandler(NetClientErrorFunc errorFunc);
+
+#endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLCORE_H

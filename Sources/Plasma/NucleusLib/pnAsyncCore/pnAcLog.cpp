@@ -39,26 +39,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "Pch.h"
+#include "plStatusLog/plStatusLog.h"
+
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Private/plNglAllIncludes.h
-*   
+*   Exports
+*
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLALLINCLUDES_H
-#error "Header $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Private/plNglAllIncludes.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLALLINCLUDES_H
+//===========================================================================
+void LogMsg(ELogSeverity severity, const char* line) {
+    ASSERT(line);
+    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", line);
+}
 
-#include "pnNetBase/pnNetBase.h"
-
-class plFileName;
-class plNetAddress;
-class hsStream;
-class plUUID;
-
-#include "plNglCore.h"
-#include "plNglAuth.h"
-#include "plNglGame.h"
-#include "plNglFile.h"
-#include "plNglGateKeeper.h"
+//===========================================================================
+void LogMsg(ELogSeverity severity, const ST::string& line) {
+    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", line);
+}

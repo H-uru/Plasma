@@ -39,21 +39,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Private/plNglAuth.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLAUTH_H
-#error "Header $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Private/plNglAuth.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLAUTH_H
+#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLAUTH_H
+#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLAUTH_H
 
 #include <functional>
 #include <vector>
 
 #include "pnEncryption/plChecksum.h"
+#include "pnNetBase/pnNetBase.h"
+
+class hsStream;
+class plFileName;
+class plNetAddress;
+class plUUID;
 
 /*****************************************************************************
 *
@@ -628,3 +627,5 @@ void NetCliAuthScoreGetHighScores(
     const ST::string&               gameName,
     FNetCliAuthGetScoresCallback    callback
 );
+
+#endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLAUTH_H

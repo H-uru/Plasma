@@ -39,28 +39,53 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Private/pnAcLog.cpp
-*   
-***/
 
-#include "../Pch.h"
-#include "plStatusLog/plStatusLog.h"
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTIMER_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTIMER_H
+
+#include <functional>
 
 /*****************************************************************************
 *
-*   Exports
+*   Timer functions
+*
+*   Timers are repeatedly called back at a scheduled interval. Note that all
+*   timer procedures share the same thread, so timer procedures should:
+*
+*   1) Not be called too frequently
+*   2) Not take too long to run or block for a long time
 *
 ***/
 
-//===========================================================================
-void LogMsg(ELogSeverity severity, const char* line) {
-    ASSERT(line);
-    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", line);
-}
+struct AsyncTimer;
 
-//===========================================================================
-void LogMsg(ELogSeverity severity, const ST::string& line) {
-    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", line);
-}
+// Return callbackMs to wait that long until next callback.
+// Return kAsyncTimeInfinite to stop callbacks (note: does not destroy Timer structure)
+typedef std::function<unsigned()> FAsyncTimerProc;
+
+// 1) Timer procs do not get starved by I/O, they are called periodically.
+// 2) Timer procs will never be called by multiple threads simultaneously.
+AsyncTimer* AsyncTimerCreate (
+    unsigned callbackMs,
+    FAsyncTimerProc timerProc
+);
+
+typedef std::function<void()> FAsyncTimerDestroyProc;
+
+// Timer procs can be in the process of getting called in
+// another thread during the unregister function -- be careful!
+// This will wait until the timer has been unregistered and is
+// no longer in the process of being called before returning.
+void AsyncTimerDelete(AsyncTimer* timer);
+void AsyncTimerDeleteCallback (
+    AsyncTimer *    timer,
+    FAsyncTimerDestroyProc destroyProc
+);
+
+// Set the time value for a timer
+void AsyncTimerUpdate (
+    AsyncTimer *    timer,
+    unsigned        callbackMs
+);
+
+#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTIMER_H

@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAsyncCore.h
-*
 *   Asynchronous APIs:
 *       Sockets
 *       Files
@@ -56,7 +54,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNASYNCCORE_H
 
 
-#include "Private/pnAcAllIncludes.h"
+#include "pnAcCore.h"
+#include "pnAcIo.h"
+#include "pnAcLog.h"
+#include "pnAcThread.h"
+#include "pnAcTimer.h"
 
 
 #endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNASYNCCORE_H

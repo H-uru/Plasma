@@ -39,64 +39,47 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "Pch.h"
+
+
+namespace Ngl {
+
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Private/pnAcThread.h
-*   
-***/
-
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACTHREAD_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Private/pnAcThread.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACTHREAD_H
-
-#include <mutex>
-#include <thread>
-
-#include "pnNetBase/pnNbError.h"
-
-
-/****************************************************************************
-*
-*   Type definitions
+*   Private data
 *
 ***/
 
-// for IoWaitId/TimerCreate/TimerUpdate
-constexpr unsigned kAsyncTimeInfinite = (unsigned) -1;
-
-struct AsyncThread;
-
-struct AsyncThreadRef {
-    std::shared_ptr<AsyncThread> impl;
-    std::thread&                 thread() const;
-    bool joinable() const;
-};
-
-
-// Threads are also allowed to set the workTimeMs field of their
-// structure to a nonzero value for "on", and IO_TIME_INFINITE for
-// "off" to avoid the overhead of calling these functions. Note
-// that this function may not be called for the main thread. I
-// suggest that application code not worry that timeMs might
-// "accidentally" equal the IO_TIME_INFINITE value, as it only
-// happens for one millisecond every 49 days.
-struct AsyncThread {
-    std::function<void()>                proc;
-    std::thread                          handle;
-    unsigned                             workTimeMs;
-    std::timed_mutex                     completion;
-};
+static unsigned s_connSequence;
 
 
 /*****************************************************************************
 *
-*   Thread functions
+*   Module functions
 *
 ***/
 
-AsyncThreadRef AsyncThreadCreate (
-    std::function<void()>    procs
-);
+//============================================================================
+unsigned ConnNextSequence () {
+    if (!++s_connSequence)
+        ++s_connSequence;
+    return s_connSequence;
+}
 
-void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs);
+//============================================================================
+unsigned ConnGetId (ENetProtocol protocol) {
+    switch (protocol) {
+        case kNetProtocolCli2Auth: return AuthGetConnId();
+        case kNetProtocolCli2Game: return GameGetConnId();
+        case kNetProtocolCli2File: return FileGetConnId();
+        case kNetProtocolCli2GateKeeper: return GateKeeperGetConnId();
+        DEFAULT_FATAL(protocol);
+    }
+
+    // ConnId 0 means no connection
+    return 0;
+}
+
+
+} // namespace Ngl

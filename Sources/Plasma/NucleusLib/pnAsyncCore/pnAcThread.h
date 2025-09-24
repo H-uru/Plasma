@@ -39,52 +39,59 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
+
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTHREAD_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTHREAD_H
+
+#include <mutex>
+#include <thread>
+
+#include "pnNetBase/pnNbError.h"
+
+
+/****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Private/plNglMisc.cpp
-*   
-***/
-
-#include "../Pch.h"
-
-
-namespace Ngl {
-
-/*****************************************************************************
-*
-*   Private data
-*
-***/
-
-static unsigned s_connSequence;
-
-
-/*****************************************************************************
-*
-*   Module functions
+*   Type definitions
 *
 ***/
 
-//============================================================================
-unsigned ConnNextSequence () {
-    if (!++s_connSequence)
-        ++s_connSequence;
-    return s_connSequence;
-}
+// for IoWaitId/TimerCreate/TimerUpdate
+constexpr unsigned kAsyncTimeInfinite = (unsigned) -1;
 
-//============================================================================
-unsigned ConnGetId (ENetProtocol protocol) {
-    switch (protocol) {
-        case kNetProtocolCli2Auth: return AuthGetConnId();
-        case kNetProtocolCli2Game: return GameGetConnId();
-        case kNetProtocolCli2File: return FileGetConnId();
-        case kNetProtocolCli2GateKeeper: return GateKeeperGetConnId();
-        DEFAULT_FATAL(protocol);
-    }
+struct AsyncThread;
 
-    // ConnId 0 means no connection
-    return 0;
-}
+struct AsyncThreadRef {
+    std::shared_ptr<AsyncThread> impl;
+    std::thread&                 thread() const;
+    bool joinable() const;
+};
 
 
-} // namespace Ngl
+// Threads are also allowed to set the workTimeMs field of their
+// structure to a nonzero value for "on", and IO_TIME_INFINITE for
+// "off" to avoid the overhead of calling these functions. Note
+// that this function may not be called for the main thread. I
+// suggest that application code not worry that timeMs might
+// "accidentally" equal the IO_TIME_INFINITE value, as it only
+// happens for one millisecond every 49 days.
+struct AsyncThread {
+    std::function<void()>                proc;
+    std::thread                          handle;
+    unsigned                             workTimeMs;
+    std::timed_mutex                     completion;
+};
+
+
+/*****************************************************************************
+*
+*   Thread functions
+*
+***/
+
+AsyncThreadRef AsyncThreadCreate (
+    std::function<void()>    procs
+);
+
+void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs);
+
+#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTHREAD_H
