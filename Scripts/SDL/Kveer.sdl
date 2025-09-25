@@ -72,3 +72,17 @@ STATEDESC Kveer
     VAR BOOL    kverAtrusGet[1]              DEFAULT=1
 
 }
+
+STATEDESC Kveer
+{
+	VERSION 2
+
+    # Boolean variables
+    VAR BOOL    kverMystLinkingBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    YeeshaPage32Vis[1]           DEFAULT=0 DEFAULTOPTION=VAULT
+
+    ## Reward Clothing
+    VAR BOOL    kverAtrusVis[1]              DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    kverAtrusGet[1]              DEFAULT=1
+
+}
