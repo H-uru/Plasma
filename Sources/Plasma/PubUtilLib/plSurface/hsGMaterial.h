@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class hsScene;
 class hsResMgr;
-class hsG3DDevice;
+class hsGDeviceRef;
 class plLayerInterface;
 class plLayer;
 
@@ -84,15 +84,14 @@ public:
     };
 
 protected:
-    uint32_t                  fLOD;
-    std::vector<plLayerInterface*> fLayers;
-    std::vector<plLayerInterface*> fPiggyBacks;
+    uint32_t                        fLOD;
+    std::vector<plLayerInterface*>  fLayers;
+    std::vector<plLayerInterface*>  fPiggyBacks;
 
-    uint32_t                  fCompFlags;
-    uint32_t                  fLoadFlags;
+    uint32_t                        fCompFlags;
+    uint32_t                        fLoadFlags;
 
-    float                fLastUpdateTime;
-    
+    float                           fLastUpdateTime;
     hsGDeviceRef*                   fDeviceRef;
 
     void                IClearLayers();
@@ -131,8 +130,8 @@ public:
     bool                    IsDynamic() const           { return (fCompFlags & kCompDynamic); }
     bool                    IsDecal() const             { return (fCompFlags & kCompDecal); }
     bool                    NeedsBlendChannel()         { return (fCompFlags & kCompNeedsBlendChannel); }
-    
-    
+
+
     void SetDeviceRef(hsGDeviceRef* ref) { hsRefCnt_SafeAssign(fDeviceRef, ref); }
     hsGDeviceRef* GetDeviceRef() const { return fDeviceRef; }
 

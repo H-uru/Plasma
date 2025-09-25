@@ -39,50 +39,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#ifndef _plWGLDevice_h_
+#define _plWGLDevice_h_
 
-#ifndef _plGLPlateManager_inc_
-#define _plGLPlateManager_inc_
+#include "HeadSpin.h"
+#include "plGLDevice.h"
 
-#include "plGLDeviceRef.h"
+#ifdef HS_BUILD_FOR_WIN32
+#include "hsWindows.h"
+#include "plPipeline/hsG3DDeviceSelector.h"
+#include <epoxy/wgl.h>
 
-#include "hsGeometry3.h"
-#include "plPipeline/plPlates.h"
-
-class plGLPipeline;
-
-
-class plGLPlateManager : public plPlateManager
+class plWGLDevice : public plGLDeviceImpl
 {
-    friend class plGLPipeline;
+protected:
+    HGLRC fContext;
+
+    plWGLDevice(hsWindowHndl window, hsWindowHndl device, HGLRC context);
 
 public:
-    virtual ~plGLPlateManager();
+    static bool Enumerate(hsG3DDeviceRecord& record);
+    static plWGLDevice* TryInit(hsWindowHndl window, hsWindowHndl device, ST::string& error);
 
-protected:
-    struct plPlateVertex
-    {
-        hsPoint3 fPoint;
-        hsVector3 fNormal;
-        uint32_t fColor;
-        hsPoint3 fUV;
-    };
-
-    struct plPlateBuffers
-    {
-        GLuint VRef;
-        GLuint IRef;
-        GLuint ARef;
-    };
-
-    plPlateBuffers fBuffers;
-
-    plGLPlateManager(plGLPipeline* pipe);
-
-    void ICreateGeometry();
-    void IReleaseGeometry();
-
-    void IDrawToDevice(plPipeline* pipe) override;
+    void Shutdown() override;
+    bool BeginRender(ST::string& error) override;
+    bool EndRender(ST::string& error) override;
 };
 
-#endif //_plGLPlateManager_inc_
+#endif // HS_BUILD_FOR_WIN32
+
+#endif // _plWGLDevice_h_
 
