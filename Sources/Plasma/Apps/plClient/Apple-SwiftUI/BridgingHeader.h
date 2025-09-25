@@ -40,22 +40,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#import <Cocoa/Cocoa.h>
-
-#include "plNetClient/plNetClientMgr.h"
-
-#import "PLSLoginController.h"
-
-NS_ASSUME_NONNULL_BEGIN
-
-@class PLSLoginWindowController;
-
-@protocol PLSLoginWindowControllerDelegate <NSObject>
-- (void)loginWindowControllerDidLogin:(PLSLoginWindowController*)sender;
-@end
-
-@interface PLSLoginWindowController : NSWindowController
-@property(weak) id<PLSLoginWindowControllerDelegate> delegate;
-@end
-
-NS_ASSUME_NONNULL_END
+#import "PLSClient.h"

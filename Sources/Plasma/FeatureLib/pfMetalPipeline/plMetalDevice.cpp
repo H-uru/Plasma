@@ -139,6 +139,7 @@ bool plMetalDevice::InitDevice()
     fSupportsDXTTextures = fMetalDevice->supportsBCTextureCompression();
     
     if (!fSupportsDXTTextures) {
+    {
         hsStatusMessageF("Render device \"{}\" does not support DXT textures. Falling back on software decompression. Performance will be slower.", fMetalDevice->name()->cString(NS::StringEncoding::UTF8StringEncoding));
     }
 
