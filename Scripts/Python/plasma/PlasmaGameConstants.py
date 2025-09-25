@@ -51,9 +51,10 @@
 """Plasma 2.0 Game Constants"""
 
 from __future__ import annotations
+import enum
 from typing import *
 
-class PtGameJoinError:
+class PtGameJoinError(enum.IntEnum):
     kGameJoinPending = -1
     kGameJoinSuccess = 0
     kGameJoinErrNotExist = 1
@@ -65,7 +66,7 @@ class PtGameJoinError:
     kGameJoinErrNoInvite = 7
     kNumGameJoinErrors = 8
 
-class PtMarkerGameType:
+class PtMarkerGameType(enum.IntEnum):
     kMarkerGameQuest = 0
     kMarkerGameCGZ = 1
     kMarkerGameCapture = 2

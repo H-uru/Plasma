@@ -935,7 +935,7 @@ void cyAvatar::AddPlasmaMethods(PyObject* m)
 //
 void cyAvatar::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtBrainModes)
+    PYTHON_ENUM_START(m, PtBrainModes)
     PYTHON_ENUM_ELEMENT(PtBrainModes, kGeneric,     plAvBrainGeneric::kGeneric)
     PYTHON_ENUM_ELEMENT(PtBrainModes, kLadder,      plAvBrainGeneric::kLadder)
     PYTHON_ENUM_ELEMENT(PtBrainModes, kSit,         plAvBrainGeneric::kSit)
@@ -945,7 +945,7 @@ void cyAvatar::AddPlasmaConstantsClasses(PyObject *m)
     PYTHON_ENUM_ELEMENT(PtBrainModes, kNonGeneric,  plAvBrainGeneric::kNonGeneric)
     PYTHON_ENUM_END(m, PtBrainModes)
 
-    PYTHON_ENUM_START(PtBehaviorTypes)
+    PYTHON_ENUM_START(m, PtBehaviorTypes)
     PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeStandingJump,     plHBehavior::kBehaviorTypeStandingJump)
     PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeWalkingJump,      plHBehavior::kBehaviorTypeWalkingJump)
     PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeRunningJump,      plHBehavior::kBehaviorTypeRunningJump)

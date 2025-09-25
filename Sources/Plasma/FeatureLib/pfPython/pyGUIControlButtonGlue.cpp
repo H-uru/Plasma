@@ -136,7 +136,7 @@ void pyGUIControlButton::AddPlasmaClasses(PyObject *m)
 
 void pyGUIControlButton::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtButtonNotifyTypes)
+    PYTHON_ENUM_START(m, PtButtonNotifyTypes)
     PYTHON_ENUM_ELEMENT(PtButtonNotifyTypes, kNotifyOnUp,           pfGUIButtonMod::kNotifyOnUp)
     PYTHON_ENUM_ELEMENT(PtButtonNotifyTypes, kNotifyOnDown,         pfGUIButtonMod::kNotifyOnDown)
     PYTHON_ENUM_ELEMENT(PtButtonNotifyTypes, kNotifyOnUpAndDown,    pfGUIButtonMod::kNotifyOnUpAndDown)

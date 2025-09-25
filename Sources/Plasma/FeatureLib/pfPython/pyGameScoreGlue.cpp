@@ -412,18 +412,18 @@ void pyGameScore::AddPlasmaClasses(PyObject *m)
 
 void pyGameScore::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtGameScoreTypes)
+    PYTHON_ENUM_START(m, PtGameScoreTypes)
     PYTHON_ENUM_ELEMENT(PtGameScoreTypes, kFixed, kScoreTypeFixed)
     PYTHON_ENUM_ELEMENT(PtGameScoreTypes, kAccumulative, kScoreTypeAccumulative)
     PYTHON_ENUM_ELEMENT(PtGameScoreTypes, kAccumAllowNegative, kScoreTypeAccumAllowNegative)
     PYTHON_ENUM_END(m, PtGameScoreTypes)
 
-    PYTHON_ENUM_START(PtScoreRankGroups)
+    PYTHON_ENUM_START(m, PtScoreRankGroups)
     PYTHON_ENUM_ELEMENT(PtScoreRankGroups, kIndividual, kScoreRankGroupIndividual)
     PYTHON_ENUM_ELEMENT(PtScoreRankGroups, kNeighborhood, kScoreRankGroupNeighborhood)
     PYTHON_ENUM_END(m, PtScoreRankGroups)
 
-    PYTHON_ENUM_START(PtScoreTimePeriods)
+    PYTHON_ENUM_START(m, PtScoreTimePeriods)
     PYTHON_ENUM_ELEMENT(PtScoreTimePeriods, kOverall, kScoreTimePeriodOverall)
     PYTHON_ENUM_ELEMENT(PtScoreTimePeriods, kYear, kScoreTimePeriodYear)
     PYTHON_ENUM_ELEMENT(PtScoreTimePeriods, kMonth, kScoreTimePeriodMonth)

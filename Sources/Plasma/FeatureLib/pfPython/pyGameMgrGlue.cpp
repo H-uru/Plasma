@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void pyGameMgr::AddPlasmaGameConstantsClasses(PyObject* m)
 {
-    PYTHON_ENUM_START(PtGameJoinError)
+    PYTHON_ENUM_START(m, PtGameJoinError)
     PYTHON_ENUM_ELEMENT(PtGameJoinError, kGameJoinSuccess, EGameJoinError::kGameJoinSuccess)
     PYTHON_ENUM_ELEMENT(PtGameJoinError, kGameJoinErrNotExist, EGameJoinError::kGameJoinErrNotExist)
     PYTHON_ENUM_ELEMENT(PtGameJoinError, kGameJoinErrInitFailed, EGameJoinError::kGameJoinErrInitFailed)
