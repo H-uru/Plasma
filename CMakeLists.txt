@@ -18,6 +18,8 @@ if(POLICY CMP0127)
     cmake_policy(SET CMP0127 OLD)
 endif()
 
+
+include(CheckLanguage)
 include(CMakeDependentOption)
 include(Dependencies)
 include(FeatureSummary)
@@ -132,6 +134,10 @@ if(APPLE)
     find_package(Security)
     find_package(Metal)
     find_package(LibArchive REQUIRED)
+
+    if(TARGET Metal::Metal)
+        check_language(Metal)
+    endif()
 elseif(UNIX)
     find_package(LIBSECRET)
     find_package(Uuid REQUIRED)
@@ -155,7 +161,7 @@ endif(PLASMA_EXTERNAL_RELEASE)
 # Pipeline Renderers
 cmake_dependent_option(PLASMA_PIPELINE_DX "Enable DirectX rendering pipeline?" ON "DirectX_FOUND" OFF)
 cmake_dependent_option(PLASMA_PIPELINE_GL "Enable OpenGL rendering pipeline?" ON "TARGET epoxy::epoxy" OFF)
-cmake_dependent_option(PLASMA_PIPELINE_METAL "Enable Metal rendering pipeline?" ON "TARGET Metal::Metal" OFF)
+cmake_dependent_option(PLASMA_PIPELINE_METAL "Enable Metal rendering pipeline?" ON "TARGET Metal::Metal AND CMAKE_Metal_COMPILER" OFF)
 
 if(PLASMA_PIPELINE_DX)
     add_definitions(-DPLASMA_PIPELINE_DX)
