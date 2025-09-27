@@ -112,7 +112,7 @@ elseif(APPLE)
         Mac-Cocoa/PLSServerStatus.h
     )
     list(APPEND plClient_RESOURCES
-        "$<$<VERSION_GREATER_EQUAL:${XCODE_VERSION},26.0>:Mac-Cocoa/AppIcon.icon>"
+        $<$<VERSION_GREATER_EQUAL:${XCODE_VERSION},26.0>:Mac-Cocoa/AppIcon.icon>
         Mac-Cocoa/banner.png
         Mac-Cocoa/banner@2x.png
         Mac-Cocoa/MainMenu.xib
@@ -152,6 +152,7 @@ if(APPLE)
         MACOSX_BUNDLE_BUNDLE_VERSION "0.1"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
         RESOURCE "${plClient_XCODE_RESOURCES}"
+        XCODE_ATTRIBUTE_ASSETCATALOG_OTHER_FLAGS "$<$<VERSION_GREATER_EQUAL:${XCODE_VERSION},26>:--enable-icon-stack-fallback-generation=disabled>"
         XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME AppIcon
         XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=Debug] "YES"
         XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=RelWithDebInfo] "YES"
