@@ -94,7 +94,7 @@ void plSceneNode::Read(hsStream* s, hsResMgr* mgr)
     hsKeyedObject::Read(s, mgr);
 
     uint32_t n;
-    int i;
+    uint32_t i;
 
     n = s->ReadLE32();
     fSceneObjects.clear();
@@ -177,8 +177,7 @@ plSpaceTree* plSceneNode::IBuildSpaceTree()
     hsPoint3 zero;
     bnd.Reset(&zero);
     
-    int i;
-    for( i = 0; i < fDrawPool.size(); i++ )
+    for (size_t i = 0; i < fDrawPool.size(); i++)
     {
         if( fDrawPool[i] )
             maker.AddLeaf(fDrawPool[i]->GetSpaceTree()->GetWorldBounds());

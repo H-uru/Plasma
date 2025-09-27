@@ -83,7 +83,7 @@ void plZlibStream::Close()
     }
 }
 
-uint32_t plZlibStream::Write(uint32_t byteCount, const void* buffer)
+size_t plZlibStream::Write(size_t byteCount, const void* buffer)
 {
     uint8_t* byteBuf = (uint8_t*)buffer;
 
@@ -122,7 +122,7 @@ uint32_t plZlibStream::Write(uint32_t byteCount, const void* buffer)
         zstream->avail_out = sizeof(outBuf);
         zstream->next_out = (uint8_t*)outBuf;
 
-        uint32_t amtWritten = zstream->total_out;
+        size_t amtWritten = zstream->total_out;
 
         int ret = inflate(zstream, Z_NO_FLUSH);
 
@@ -154,7 +154,7 @@ bool plZlibStream::AtEnd()
     return true;
 }
 
-uint32_t plZlibStream::Read(uint32_t byteCount, void* buffer)
+size_t plZlibStream::Read(size_t byteCount, void* buffer)
 {
     hsAssert(0, "Read not supported");
     return 0;

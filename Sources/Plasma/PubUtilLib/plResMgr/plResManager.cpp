@@ -678,7 +678,7 @@ bool plResManager::SendRef(const plKey& key, plRefMsg* refMsg, plRefFlags::Type 
     refMsg->SetRef(ko);
     refMsg->SetTimeStamp(hsTimer::GetSysSeconds());
 
-    for (int i = 0; i < refMsg->GetNumReceivers(); i++)
+    for (size_t i = 0; i < refMsg->GetNumReceivers(); i++)
     {
         hsKeyedObject* rcv = refMsg->GetReceiver(i)->ObjectIsLoaded();
         if (rcv)

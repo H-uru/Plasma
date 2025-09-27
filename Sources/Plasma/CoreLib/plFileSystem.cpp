@@ -262,10 +262,10 @@ plFileName plFileSystem::GetCWD()
         cwd = ST::string::from_wchar(cwd_sm);
     }
 #else
-    char *cwd_a = getcwd(nullptr, 0);
+    char cwd_a[1024];
+    getcwd(cwd_a, sizeof(cwd_a));
     hsAssert(cwd_a, "Failure to get working directory (unsupported libc?)");
     cwd = cwd_a;
-    free(cwd_a);
 #endif
 
     return cwd;
@@ -471,7 +471,7 @@ plFileName plFileSystem::GetUserDataPath()
 #if HS_BUILD_FOR_WIN32
         wchar_t path[MAX_PATH];
         if (!SHGetSpecialFolderPathW(nullptr, path, CSIDL_LOCAL_APPDATA, TRUE))
-            return "";
+            return {};
 
         _userData = plFileName::Join(ST::string::from_wchar(path), plProduct::LongName());
 #elif HS_BUILD_FOR_APPLE
@@ -480,7 +480,7 @@ plFileName plFileSystem::GetUserDataPath()
         if (__builtin_available(macOS 10.12, *)) {
             sysdir_search_path_enumeration_state state;
             state = sysdir_start_search_path_enumeration(SYSDIR_DIRECTORY_APPLICATION_SUPPORT, SYSDIR_DOMAIN_MASK_USER);
-            state = sysdir_get_next_search_path_enumeration(state, path);
+            sysdir_get_next_search_path_enumeration(state, path);
         }
         else
 #endif
@@ -489,14 +489,18 @@ plFileName plFileSystem::GetUserDataPath()
 
             NSSearchPathEnumerationState state;
             state = NSStartSearchPathEnumeration(NSApplicationSupportDirectory, NSUserDomainMask);
-            state = NSGetNextSearchPathEnumeration(state, path);
+            NSGetNextSearchPathEnumeration(state, path);
 
             IGNORE_WARNINGS_END
         }
 
         if (path[0] == '~') {
+            const char* homedir = getenv("HOME");
+            if (!homedir)
+                return {};
+
             char home[PATH_MAX] {};
-            strlcat(home, getenv("HOME"), sizeof(home));
+            strlcat(home, homedir, sizeof(home));
             strlcat(home, &path[1], sizeof(home));
 
             _userData = plFileName::Join(home, plProduct::LongName());
@@ -510,7 +514,7 @@ plFileName plFileSystem::GetUserDataPath()
         } else {
             homedir = getenv("HOME");
             if (!homedir)
-                return "";
+                return {};
 
             _userData = plFileName::Join(homedir, ".config", plProduct::LongName());
         }

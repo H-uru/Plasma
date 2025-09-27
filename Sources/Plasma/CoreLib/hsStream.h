@@ -63,8 +63,8 @@ public:
     virtual     ~hsStream() { }
 
     virtual bool      AtEnd() = 0;
-    virtual uint32_t  Read(uint32_t byteCount, void * buffer) = 0;
-    virtual uint32_t  Write(uint32_t byteCount, const void* buffer) = 0;
+    virtual size_t    Read(size_t byteCount, void * buffer) = 0;
+    virtual size_t    Write(size_t byteCount, const void* buffer) = 0;
     virtual void      Skip(uint32_t deltaByteCount) = 0;
     virtual void      Rewind() = 0;
     virtual void      FastFwd() = 0;
@@ -76,10 +76,10 @@ public:
     virtual uint32_t  GetEOF() = 0;
     uint32_t          GetSizeLeft();
 
-    uint32_t        WriteString(const ST::string & string) { return Write((uint32_t)string.size(), string.c_str()); }
+    size_t          WriteString(const ST::string & string) { return Write(string.size(), string.c_str()); }
 
-    uint32_t        WriteSafeString(const ST::string &string);
-    uint32_t        WriteSafeWString(const ST::string &string);
+    size_t          WriteSafeString(const ST::string &string);
+    size_t          WriteSafeWString(const ST::string &string);
     ST::string      ReadSafeString();
     ST::string      ReadSafeWString();
 
@@ -169,8 +169,8 @@ public:
     bool  Open(const plFileName& name, const char* mode = "rb") override;
 
     bool      AtEnd() override;
-    uint32_t  Read(uint32_t byteCount, void* buffer) override;
-    uint32_t  Write(uint32_t byteCount, const void* buffer) override;
+    size_t    Read(size_t byteCount, void* buffer) override;
+    size_t    Write(size_t byteCount, const void* buffer) override;
     void      SetPosition(uint32_t position) override;
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
@@ -199,8 +199,8 @@ public:
     plReadOnlySubStream(hsStream* base, uint32_t offset, uint32_t length);
 
     bool      AtEnd() override;
-    uint32_t  Read(uint32_t byteCount, void* buffer) override;
-    uint32_t  Write(uint32_t byteCount, const void* buffer) override;
+    size_t    Read(size_t byteCount, void* buffer) override;
+    size_t    Write(size_t byteCount, const void* buffer) override;
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
     void      FastFwd() override;
@@ -222,8 +222,8 @@ public:
     hsRAMStream(uint32_t chunkSize) { fVector.reserve(chunkSize); }
 
     bool      AtEnd() override;
-    uint32_t  Read(uint32_t byteCount, void * buffer) override;
-    uint32_t  Write(uint32_t byteCount, const void* buffer) override;
+    size_t    Read(size_t byteCount, void * buffer) override;
+    size_t    Write(size_t byteCount, const void* buffer) override;
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
     void FastFwd() override;
@@ -246,8 +246,8 @@ public:
 class hsNullStream : public hsStream {
 public:
     bool AtEnd() override;
-    uint32_t  Read(uint32_t byteCount, void * buffer) override;  // throws exception
-    uint32_t  Write(uint32_t byteCount, const void* buffer) override;
+    size_t    Read(size_t byteCount, void * buffer) override;  // throws exception
+    size_t    Write(size_t byteCount, const void* buffer) override;
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
     void FastFwd() override;
@@ -271,8 +271,8 @@ public:
     {}
 
     bool      AtEnd() override;
-    uint32_t  Read(uint32_t byteCount, void * buffer) override;
-    uint32_t  Write(uint32_t byteCount, const void* buffer) override;    // throws exception
+    size_t    Read(size_t byteCount, void * buffer) override;
+    size_t    Write(size_t byteCount, const void* buffer) override;    // throws exception
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
     void FastFwd() override;
@@ -301,8 +301,8 @@ public:
     hsWriteOnlyStream& operator=(hsWriteOnlyStream&& other) = delete;
 
     bool      AtEnd() override;
-    uint32_t  Read(uint32_t byteCount, void * buffer) override;  // throws exception
-    uint32_t  Write(uint32_t byteCount, const void* buffer) override;
+    size_t    Read(size_t byteCount, void * buffer) override;  // throws exception
+    size_t    Write(size_t byteCount, const void* buffer) override;
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
     void FastFwd() override;
@@ -315,12 +315,12 @@ public:
 class hsQueueStream : public hsStream {
 private:
     char* fQueue;
-    uint32_t fReadCursor;
-    uint32_t fWriteCursor;
-    uint32_t fSize;
-    
+    size_t fReadCursor;
+    size_t fWriteCursor;
+    size_t fSize;
+
 public:
-    hsQueueStream(int32_t size);
+    hsQueueStream(size_t size);
     hsQueueStream(const hsQueueStream& other) = delete;
     hsQueueStream(hsQueueStream&& other) = delete;
     ~hsQueueStream();
@@ -328,19 +328,19 @@ public:
     const hsQueueStream& operator=(const hsQueueStream& other) = delete;
     hsQueueStream& operator=(hsQueueStream&& other) = delete;
 
-    uint32_t  Read(uint32_t byteCount, void * buffer) override;
-    uint32_t  Write(uint32_t byteCount, const void* buffer) override;
+    size_t    Read(size_t byteCount, void * buffer) override;
+    size_t    Write(size_t byteCount, const void* buffer) override;
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
     void      FastFwd() override;
     void Truncate() override;
     bool      AtEnd() override;
 
-    uint32_t GetEOF() override { return fWriteCursor - fReadCursor; }
-    uint32_t GetSize() { return fSize; }
-    const char* GetQueue() { return fQueue; }
-    uint32_t GetReadCursor() { return fReadCursor; }
-    uint32_t GetWriteCursor() { return fWriteCursor; }
+    uint32_t GetEOF() override { return static_cast<uint32_t>(fWriteCursor - fReadCursor); }
+    size_t GetSize() const { return fSize; }
+    const char* GetQueue() const { return fQueue; }
+    size_t GetReadCursor() const { return fReadCursor; }
+    size_t GetWriteCursor() const { return fWriteCursor; }
 };
 
 class hsBufferedStream : public hsFileSystemStream
@@ -353,7 +353,7 @@ class hsBufferedStream : public hsFileSystemStream
     // If the buffer is empty, this is zero.  Otherwise it is the size of the
     // buffer (if we read a full block), or something less than that if we read
     // a partial block at the end of the file.
-    uint32_t fBufferLen;
+    size_t fBufferLen;
 
     bool fWriteBufferUsed;
 
@@ -377,8 +377,8 @@ public:
     bool  Open(const plFileName& name, const char* mode = "rb") override;
 
     bool      AtEnd() override;
-    uint32_t  Read(uint32_t byteCount, void* buffer) override;
-    uint32_t  Write(uint32_t byteCount, const void* buffer) override;
+    size_t    Read(size_t byteCount, void* buffer) override;
+    size_t    Write(size_t byteCount, const void* buffer) override;
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
     void FastFwd() override;

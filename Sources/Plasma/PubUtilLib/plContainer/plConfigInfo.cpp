@@ -125,7 +125,7 @@ bool plConfigInfo::HasKeyIn(const ST::string & key, const char * section1, ...)
 
 bool plConfigInfo::HasKeyIn(const ST::string & key, const std::vector<ST::string> & sections )
 {
-    for ( int i=0; i<sections.size(); i++ )
+    for (size_t i=0; i<sections.size(); i++)
     {
         if (HasSection(sections[i]))
         {
@@ -282,7 +282,7 @@ ST::string plConfigInfo::GetValueIn(const ST::string & key, const ST::string & d
 ST::string plConfigInfo::GetValueIn(const ST::string & key, const ST::string & defval, bool * outFound, const std::vector<ST::string> & sections ) const
 {
     if (outFound) *outFound=false;
-    for ( int i=0; i<sections.size(); i++ )
+    for (size_t i=0; i<sections.size(); i++)
     {
         if (HasSection(sections[i]))
         {
@@ -319,7 +319,7 @@ int plConfigInfo::GetValueIn(const ST::string & key, int defval, bool * outFound
 int plConfigInfo::GetValueIn(const ST::string & key, int defval, bool * outFound, const std::vector<ST::string> & sections ) const
 {
     if (outFound) *outFound=false;
-    for ( int i=0; i<sections.size(); i++ )
+    for (size_t i=0; i<sections.size(); i++)
     {
         if (HasSection(sections[i]))
         {
@@ -356,7 +356,7 @@ double plConfigInfo::GetValueIn(const ST::string & key, double defval, bool * ou
 double plConfigInfo::GetValueIn(const ST::string & key, double defval, bool * outFound, const std::vector<ST::string> & sections ) const
 {
     if (outFound) *outFound=false;
-    for ( int i=0; i<sections.size(); i++ )
+    for (size_t i=0; i<sections.size(); i++)
     {
         if (HasSection(sections[i]))
         {
@@ -473,7 +473,7 @@ bool plConfigSource::ReadString(const ST::string & in)
 
     // dot notation makes section change for this key=value only.
     ST_ssize_t t = key.find('.');
-    if (t>0 && t<key.size()-1)
+    if (t > 0 && static_cast<size_t>(t) < key.size()-1)
     {
         fEffectiveSection = key.left(t);
         key = key.substr(t+1);
@@ -756,7 +756,7 @@ bool plIniStreamConfigSource::WriteOutOf(plConfigInfo & configInfo)
 plIniSectionConfigSource::plIniSectionConfigSource(const char * iniFileName, std::vector<ST::string> & sections)
 :   plIniConfigSource(iniFileName)
 {
-    for (int i=0; i<sections.size(); i++)
+    for (size_t i=0; i<sections.size(); i++)
         fSections.push_back(sections[i]);
 }
 
@@ -1003,14 +1003,14 @@ bool plConfigGroup::Read(plConfigSource * src)
 {
     if (!fOpts.ReadFrom(src))
         return false;
-    for (int i=0; i<fItems.size(); i++)
+    for (size_t i=0; i<fItems.size(); i++)
         fItems[i]->ConfigRead(&fOpts);
     return true;
 }
 
 bool plConfigGroup::Write(plConfigSource * src)
 {
-    for (int i=0; i<fItems.size(); i++)
+    for (size_t i=0; i<fItems.size(); i++)
         fItems[i]->ConfigWrite(&fOpts);
     return fOpts.WriteTo(src);
 }
@@ -1062,7 +1062,7 @@ void plConfigAggregateValue::ISetValue(const ST::string & value)
 {
     ST::string work = value.trim();
     ST_ssize_t p=0;
-    int i=0;
+    size_t i=0;
     do
     {
         p = work.find(" ");
@@ -1075,7 +1075,7 @@ void plConfigAggregateValue::ISetValue(const ST::string & value)
 ST::string plConfigAggregateValue::IGetValue() const
 {
     ST::string_stream value;
-    for (int i=0; i<fItems.size(); i++)
+    for (size_t i=0; i<fItems.size(); i++)
     {
         value << fItems[i]->GetValue();
         value << ' ';

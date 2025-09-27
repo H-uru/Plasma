@@ -280,7 +280,7 @@ bool plSecureStream::Open(hsStream* stream)
     return true;
 }
 
-uint32_t plSecureStream::IRead(uint32_t bytes, void* buffer)
+size_t plSecureStream::IRead(size_t bytes, void* buffer)
 {
     if (fRef == INVALID_HANDLE_VALUE)
         return 0;
@@ -318,7 +318,7 @@ void plSecureStream::IBufferFile()
     char buf[1024];
     while (!AtEnd())
     {
-        uint32_t numRead = Read(1024, buf);
+        size_t numRead = Read(1024, buf);
         fRAMStream->Write(numRead, buf);
     }
     fRAMStream->Rewind();
@@ -409,26 +409,26 @@ uint32_t plSecureStream::GetEOF()
     return fActualFileSize;
 }
 
-uint32_t plSecureStream::Read(uint32_t bytes, void* buffer)
+size_t plSecureStream::Read(size_t bytes, void* buffer)
 {
     if (fBufferedStream)
     {
-        uint32_t numRead = fRAMStream->Read(bytes, buffer);
+        size_t numRead = fRAMStream->Read(bytes, buffer);
         fPosition = fRAMStream->GetPosition();
         return numRead;
     }
 
-    uint32_t startPos = fPosition;
+    size_t startPos = fPosition;
 
     // Offset into the first buffer (0 if we are aligned on a chunk, which means no extra block read)
-    uint32_t startChunkPos = startPos % kEncryptChunkSize;
+    size_t startChunkPos = startPos % kEncryptChunkSize;
     // Amount of data in the partial first chunk (0 if we're aligned)
-    uint32_t startAmt = (startChunkPos != 0) ? std::min(kEncryptChunkSize - startChunkPos, bytes) : 0;
+    size_t startAmt = (startChunkPos != 0) ? std::min(kEncryptChunkSize - startChunkPos, bytes) : 0;
 
-    uint32_t totalNumRead = IRead(bytes, buffer);
+    size_t totalNumRead = IRead(bytes, buffer);
 
-    uint32_t numMidChunks = (totalNumRead - startAmt) / kEncryptChunkSize;
-    uint32_t endAmt = (totalNumRead - startAmt) % kEncryptChunkSize;
+    size_t numMidChunks = (totalNumRead - startAmt) / kEncryptChunkSize;
+    size_t endAmt = (totalNumRead - startAmt) % kEncryptChunkSize;
 
     // If the start position is in the middle of a chunk we need to rewind and
     // read that whole chunk in and decrypt it.
@@ -451,7 +451,7 @@ uint32_t plSecureStream::Read(uint32_t bytes, void* buffer)
     if (numMidChunks != 0)
     {
         uint32_t* bufferPos = (uint32_t*)(((char*)buffer)+startAmt);
-        for (int i = 0; i < numMidChunks; i++)
+        for (size_t i = 0; i < numMidChunks; i++)
         {
             // Decrypt chunk
             IDecipher(bufferPos, kEncryptChunkSize / sizeof(uint32_t));
@@ -482,7 +482,7 @@ uint32_t plSecureStream::Read(uint32_t bytes, void* buffer)
     return totalNumRead;
 }
 
-uint32_t plSecureStream::Write(uint32_t bytes, const void* buffer)
+size_t plSecureStream::Write(size_t bytes, const void* buffer)
 {
     if (fOpenMode != kOpenWrite)
     {
@@ -507,7 +507,7 @@ bool plSecureStream::IWriteEncrypted(hsStream* sourceStream, const plFileName& o
 
     // Write out all the full size encrypted blocks we can
     char buf[kEncryptChunkSize];
-    uint32_t amtRead;
+    size_t amtRead;
     while ((amtRead = sourceStream->Read(kEncryptChunkSize, &buf)) == kEncryptChunkSize)
     {
         IEncipher((uint32_t*)&buf, kEncryptChunkSize / sizeof(uint32_t));
@@ -524,7 +524,7 @@ bool plSecureStream::IWriteEncrypted(hsStream* sourceStream, const plFileName& o
             srand((unsigned int)time(nullptr));
         }
 
-        for (int i = amtRead; i < kEncryptChunkSize; i++)
+        for (size_t i = amtRead; i < kEncryptChunkSize; i++)
             buf[i] = rand();
 
         IEncipher((uint32_t*)&buf, kEncryptChunkSize / sizeof(uint32_t));
@@ -586,7 +586,7 @@ bool plSecureStream::FileDecrypt(const plFileName& fileName, uint32_t* key /* = 
 
         while (!sIn.AtEnd())
         {
-            uint32_t numRead = sIn.Read(sizeof(buf), buf);
+            size_t numRead = sIn.Read(sizeof(buf), buf);
             sOut.Write(numRead, buf);
         }
     }
@@ -680,7 +680,7 @@ std::unique_ptr<hsStream> plSecureStream::OpenSecureFileWrite(const plFileName& 
 
 //// GetSecureEncryptionKey //////////////////////////////////////////////////
 
-bool plSecureStream::GetSecureEncryptionKey(const plFileName& filename, uint32_t* key, unsigned length)
+bool plSecureStream::GetSecureEncryptionKey(const plFileName& filename, uint32_t* key, size_t length)
 {
     // looks for an encryption key file in the same directory, and reads it
     plFileName keyFile = plFileName::Join(filename.StripFileName(), kKeyFilename);
@@ -691,11 +691,11 @@ bool plSecureStream::GetSecureEncryptionKey(const plFileName& filename, uint32_t
         hsUNIXStream file;
         file.Open(keyFile, "rb");
 
-        unsigned bytesToRead = length * sizeof(uint32_t);
+        size_t bytesToRead = length * sizeof(uint32_t);
         uint8_t* buffer = (uint8_t*)malloc(bytesToRead);
-        unsigned bytesRead = file.Read(bytesToRead, buffer);
+        size_t bytesRead = file.Read(bytesToRead, buffer);
 
-        unsigned memSize = std::min(bytesToRead, bytesRead);
+        size_t memSize = std::min(bytesToRead, bytesRead);
         memcpy(key, buffer, memSize);
         free(buffer);
 
@@ -703,7 +703,7 @@ bool plSecureStream::GetSecureEncryptionKey(const plFileName& filename, uint32_t
     }
 
     // file doesn't exist, use default key
-    unsigned memSize = std::min(size_t(length), std::size(plSecureStream::kDefaultKey));
+    size_t memSize = std::min(length, std::size(plSecureStream::kDefaultKey));
     memSize *= sizeof(uint32_t);
     memcpy(key, plSecureStream::kDefaultKey, memSize);
 

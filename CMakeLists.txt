@@ -18,6 +18,13 @@ if(POLICY CMP0127)
     cmake_policy(SET CMP0127 OLD)
 endif()
 
+if(POLICY CMP0156)
+    cmake_policy(SET CMP0156 NEW)
+    if(POLICY CMP0179)
+        cmake_policy(SET CMP0179 NEW)
+    endif()
+endif()
+
 include(CMakeDependentOption)
 include(Dependencies)
 include(FeatureSummary)

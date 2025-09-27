@@ -70,7 +70,7 @@ protected:
 
     void IBufferFile();
 
-    uint32_t IRead(uint32_t bytes, void* buffer);
+    size_t IRead(size_t bytes, void* buffer);
 
     void IEncipher(uint32_t* const v);
     void IDecipher(uint32_t* const v);
@@ -91,8 +91,8 @@ public:
 
     bool    Open(const plFileName& name, const char* mode = "rb") override;
 
-    uint32_t  Read(uint32_t byteCount, void* buffer) override;
-    uint32_t  Write(uint32_t byteCount, const void* buffer) override;
+    size_t  Read(size_t byteCount, void* buffer) override;
+    size_t  Write(size_t byteCount, const void* buffer) override;
     bool    AtEnd() override;
     void    Skip(uint32_t deltaByteCount) override;
     void    Rewind() override;

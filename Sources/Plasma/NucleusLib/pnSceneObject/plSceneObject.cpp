@@ -133,7 +133,7 @@ void plSceneObject::Read(hsStream* stream, hsResMgr* mgr)
     fModifiers.resize(nOldMods + nNewMods);    // reserve space for new modifiers+existing modifiers
     for (size_t i = nOldMods; i < nOldMods + nNewMods; i++)
     {
-        refMsg = new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, i, plObjRefMsg::kModifier);
+        refMsg = new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, static_cast<int8_t>(i), plObjRefMsg::kModifier);
         mgr->ReadKeyNotifyMe(stream,refMsg, plRefFlags::kActiveRef);
     }
 

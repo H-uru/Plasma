@@ -50,7 +50,7 @@ void hsBitVector::IGrow(uint32_t newNumBitVectors)
     hsAssert(newNumBitVectors > fNumBitVectors, "Growing smaller");
     uint32_t *old = fBitVectors;
     fBitVectors = new uint32_t[newNumBitVectors];
-    int i;
+    size_t i;
     for( i = 0; i < fNumBitVectors; i++ )
         fBitVectors[i] = old[i];
     for( ; i < newNumBitVectors; i++ )

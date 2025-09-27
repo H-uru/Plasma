@@ -122,8 +122,8 @@ static inline ST::string IGetAppleCPUVendor()
     ST::string result;
 
 #ifdef HAVE_SYSCTL
-    size_t bufsize = 100;
-    char buffer[bufsize];
+    char buffer[100];
+    size_t bufsize = sizeof(buffer);
 
     if (sysctlbyname("machdep.cpu.brand_string", &buffer, &bufsize, nullptr, 0) == 0) {
         result = buffer;

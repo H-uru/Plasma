@@ -74,7 +74,7 @@ public:
     plZlibStream& operator=(plZlibStream&& other) = delete;
 
     bool     Open(const plFileName& filename, const char* mode) override;
-    uint32_t Write(uint32_t byteCount, const void* buffer) override;
+    size_t   Write(size_t byteCount, const void* buffer) override;
 
     // Since most functions don't check the return value from Write, you can
     // call this after you've passed in all your data to determine if it
@@ -83,7 +83,7 @@ public:
 
     // You can't use these
     bool     AtEnd() override;
-    uint32_t Read(uint32_t byteCount, void* buffer) override;
+    size_t   Read(size_t byteCount, void* buffer) override;
     void     Skip(uint32_t deltaByteCount) override;
     void     Rewind() override;
     void     FastFwd() override;

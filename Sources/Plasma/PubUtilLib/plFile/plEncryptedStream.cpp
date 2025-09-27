@@ -171,7 +171,7 @@ bool plEncryptedStream::Open(const plFileName& name, const char* mode)
     }
 }
 
-uint32_t plEncryptedStream::IRead(uint32_t bytes, void* buffer)
+size_t plEncryptedStream::IRead(size_t bytes, void* buffer)
 {
     if (!fRef)
         return 0;
@@ -193,7 +193,7 @@ void plEncryptedStream::IBufferFile()
     char buf[1024];
     while (!AtEnd())
     {
-        uint32_t numRead = Read(1024, buf);
+        size_t numRead = Read(1024, buf);
         fRAMStream->Write(numRead, buf);
     }
     fRAMStream->Rewind();
@@ -269,26 +269,26 @@ uint32_t plEncryptedStream::GetEOF()
     return fActualFileSize;
 }
 
-uint32_t plEncryptedStream::Read(uint32_t bytes, void* buffer)
+size_t plEncryptedStream::Read(size_t bytes, void* buffer)
 {
     if (fBufferedStream)
     {
-        uint32_t numRead = fRAMStream->Read(bytes, buffer);
+        size_t numRead = fRAMStream->Read(bytes, buffer);
         fPosition = fRAMStream->GetPosition();
         return numRead;
     }
 
-    uint32_t startPos = fPosition;
+    size_t startPos = fPosition;
 
     // Offset into the first buffer (0 if we are aligned on a chunk, which means no extra block read)
-    uint32_t startChunkPos = startPos % kEncryptChunkSize;
+    size_t startChunkPos = startPos % kEncryptChunkSize;
     // Amount of data in the partial first chunk (0 if we're aligned)
-    uint32_t startAmt = (startChunkPos != 0) ? std::min(kEncryptChunkSize - startChunkPos, bytes) : 0;
+    size_t startAmt = (startChunkPos != 0) ? std::min(kEncryptChunkSize - startChunkPos, bytes) : 0;
 
-    uint32_t totalNumRead = IRead(bytes, buffer);
+    size_t totalNumRead = IRead(bytes, buffer);
 
-    uint32_t numMidChunks = (totalNumRead - startAmt) / kEncryptChunkSize;
-    uint32_t endAmt = (totalNumRead - startAmt) % kEncryptChunkSize;
+    size_t numMidChunks = (totalNumRead - startAmt) / kEncryptChunkSize;
+    size_t endAmt = (totalNumRead - startAmt) % kEncryptChunkSize;
 
     // If the start position is in the middle of a chunk we need to rewind and
     // read that whole chunk in and decrypt it.
@@ -342,7 +342,7 @@ uint32_t plEncryptedStream::Read(uint32_t bytes, void* buffer)
     return totalNumRead;
 }
 
-uint32_t plEncryptedStream::Write(uint32_t bytes, const void* buffer)
+size_t plEncryptedStream::Write(size_t bytes, const void* buffer)
 {
     if (fOpenMode != kOpenWrite)
     {
@@ -367,7 +367,7 @@ bool plEncryptedStream::IWriteEncypted(hsStream* sourceStream, const plFileName&
 
     // Write out all the full size encrypted blocks we can
     char buf[kEncryptChunkSize];
-    uint32_t amtRead;
+    size_t amtRead;
     while ((amtRead = sourceStream->Read(kEncryptChunkSize, &buf)) == kEncryptChunkSize)
     {
         IEncipher((uint32_t*)&buf);
@@ -384,7 +384,7 @@ bool plEncryptedStream::IWriteEncypted(hsStream* sourceStream, const plFileName&
             srand((unsigned int)time(nullptr));
         }
 
-        for (int i = amtRead; i < kEncryptChunkSize; i++)
+        for (size_t i = amtRead; i < kEncryptChunkSize; i++)
             buf[i] = rand();
 
         IEncipher((uint32_t*)&buf);
@@ -446,7 +446,7 @@ bool plEncryptedStream::FileDecrypt(const plFileName& fileName)
 
         while (!sIn.AtEnd())
         {
-            uint32_t numRead = sIn.Read(sizeof(buf), buf);
+            size_t numRead = sIn.Read(sizeof(buf), buf);
             sOut.Write(numRead, buf);
         }
     }
