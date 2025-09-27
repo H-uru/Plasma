@@ -322,7 +322,7 @@ jobs:
             -DPLASMA_BUILD_TESTS=ON \
             -DPLASMA_BUILD_TOOLS=ON \
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} \
-            -DQt5_ROOT=$(brew --prefix qt@${{ matrix.platform.qt-version }}) \
+            -DQt${{ matrix.platform.qt-version }}_ROOT=$(brew --prefix qt@${{ matrix.platform.qt-version }}) \
             -DVCPKG_INSTALL_OPTIONS=--clean-after-build \
             -S . -B build
         env:
