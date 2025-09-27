@@ -19,6 +19,11 @@ if(POLICY CMP0127)
 endif()
 
 
+# When cross-compiling, we want CMake to find the host system's Python interpreter
+if(POLICY CMP0190)
+    cmake_policy(SET CMP0190 NEW)
+endif()
+
 include(CheckLanguage)
 include(CMakeDependentOption)
 include(Dependencies)
@@ -121,7 +126,6 @@ find_package(OpenSSL REQUIRED)
 find_package(Opus)
 find_package(PhysX REQUIRED)
 find_package(PNG REQUIRED)
-find_package(Python3 3.8 REQUIRED COMPONENTS Interpreter Development)
 find_package(Speex)
 find_package(string_theory 3.4 REQUIRED)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
@@ -129,6 +133,12 @@ find_package(Threads REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(VPX)
 find_package(ZLIB REQUIRED)
+
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 4.0 AND CMAKE_CROSSCOMPILING)
+    find_package(Python3 3.8 REQUIRED COMPONENTS Development)
+else()
+    find_package(Python3 3.8 REQUIRED COMPONENTS Interpreter Development)
+endif()
 
 if(APPLE)
     find_package(Security)
