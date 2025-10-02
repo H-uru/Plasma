@@ -21,11 +21,8 @@ target_link_libraries(
     pnAsyncCore
     PUBLIC
         CoreLib
-        pnNetCommon
-        pnUUID
     PRIVATE
         pnAsyncCoreExe # Implementation is here
-        pnNetBase
         plStatusLog # :(
 )
 

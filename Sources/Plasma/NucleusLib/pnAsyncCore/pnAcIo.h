@@ -43,11 +43,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACIO_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACIO_H
 
+#include "HeadSpin.h"
+
 #include <functional>
 #include <optional>
+#include <vector>
 
-#include "pnNetCommon/plNetAddress.h"
-#include "pnUUID/pnUUID.h"
+class plNetAddress;
 
 
 /****************************************************************************

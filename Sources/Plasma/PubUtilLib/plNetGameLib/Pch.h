@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnEncryption/plBigNum.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnNetCli/pnNetCli.h"
+#include "pnNetCommon/plNetAddress.h"
 #include "pnNetProtocol/pnNpCli2Auth.h"
 #include "pnNetProtocol/pnNpCli2File.h"
 #include "pnNetProtocol/pnNpCli2Game.h"

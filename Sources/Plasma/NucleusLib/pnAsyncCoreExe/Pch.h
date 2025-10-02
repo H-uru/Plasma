@@ -65,6 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProduct.h"
 #include "pnAsyncCore/pnAsyncCore.h"
 #include "pnNetBase/pnNetBase.h"
+#include "pnNetCommon/plNetAddress.h"
 
 #ifdef USE_VLD
 #include <vld.h>
