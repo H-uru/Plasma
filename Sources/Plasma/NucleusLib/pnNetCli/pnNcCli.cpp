@@ -40,17 +40,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "Pch.h"
+#include "pnNetCli.h"
 
 #include "hsEndian.h"
+#include "hsLockGuard.h"
 #include "hsWindows.h"
+
+#include "pnAsyncCore/pnAcIo.h"
+#include "pnAsyncCore/pnAcLog.h"
+#include "pnEncryption/plBigNum.h"
 #include "pnEncryption/plChallengeHash.h"
 #include "pnEncryption/plEncryption.h"
-#include "hsLockGuard.h"
+#include "pnNetBase/pnNbConst.h"
+
+#include <algorithm>
+#include <memory>
 #include <mutex>
 #include <string>
 #include <string_theory/format>
 #include <utility>
+
+#include "Intern.h"
 
 #ifdef HS_DEBUGGING
 # define NCCLI_LOG  LogMsg

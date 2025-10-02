@@ -40,8 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "Pch.h"
+#include "Intern.h"
 
+#include "pnEncryption/plBigNum.h"
+#include "pnNetBase/pnNbConst.h"
 
 namespace pnNetCli {
 

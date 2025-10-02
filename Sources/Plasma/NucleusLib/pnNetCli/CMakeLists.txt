@@ -1,6 +1,5 @@
 set(pnNetCli_HEADERS
     Intern.h
-    Pch.h
     pnNetCli.h
 )
 
@@ -14,6 +13,7 @@ set(pnNetCli_SOURCES
 plasma_library(pnNetCli
     FOLDER NucleusLib
     SOURCES ${pnNetCli_HEADERS} ${pnNetCli_SOURCES}
+    PRECOMPILED_HEADERS Pch.h
 )
 target_link_libraries(
     pnNetCli
