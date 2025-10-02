@@ -20,10 +20,9 @@ target_link_libraries(
     PUBLIC
         CoreLib
         pnNetBase
-        pnEncryption
     PRIVATE
         pnAsyncCore
-        pnUUID
+        pnEncryption
 )
 
 source_group("Header Files" FILES ${pnNetCli_HEADERS})

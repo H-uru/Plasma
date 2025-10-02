@@ -45,9 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <functional>
 
-#include "pnEncryption/plBigNum.h"
 #include "pnNetBase/pnNbError.h"
-#include "pnNetBase/pnNbKeys.h"
+
+struct NetDhConstants;
 
 /*****************************************************************************
 *
