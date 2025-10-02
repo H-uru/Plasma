@@ -40,7 +40,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "Pch.h"
+#include "pnAsyncCore/pnAcTimer.h"
+
+#include <algorithm>
+#include <chrono>
+#include <list>
+#include <mutex>
+#include <utility>
+
+#include "hsLockGuard.h"
+#include "hsThread.h"
+#include "hsWindows.h"
+
+// Must include asio after hsWindows.h so asio sees our definition of _WIN32_WINNT!
+#include <asio/executor_work_guard.hpp>
+#include <asio/io_context.hpp>
+#include <asio/post.hpp>
+#include <asio/steady_timer.hpp>
+
+#include "pnAsyncCore/pnAcThread.h"
 
 struct AsyncTimer
 {

@@ -40,7 +40,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "Pch.h"
+#include "pnAsyncCore/pnAcThread.h"
+
+#include <chrono>
+#include <string_theory/string>
+#include <thread>
+
+#ifdef USE_VLD
+#include <vld.h>
+#endif
+
+#include "hsThread.h"
+#include "hsTimer.h"
+
+#include "pnAsyncCore/pnAcCore.h"
+#include "pnAsyncCore/pnAcLog.h"
+
+#include "Private/pnAceInt.h"
 
 static void CreateThreadProc(const AsyncThreadRef& thread)
 {

@@ -6,17 +6,14 @@ set(pnAsyncCoreExe_SOURCES
     pnAceTimer.cpp
 )
 
-set(pnAsyncCoreExe_HEADERS
-    Pch.h
-)
-
 set(pnAysncCoreExe_PRIVATE
     Private/pnAceInt.h
 )
 
 plasma_library(pnAsyncCoreExe
     FOLDER NucleusLib
-    SOURCES ${pnAsyncCoreExe_SOURCES} ${pnAsyncCoreExe_HEADERS} ${pnAsyncCoreExe_PRIVATE}
+    SOURCES ${pnAsyncCoreExe_SOURCES} ${pnAsyncCoreExe_PRIVATE}
+    PRECOMPILED_HEADERS Pch.h
 )
 
 # Yeah, this looks strange, but this library has no public headers. It's
@@ -26,7 +23,6 @@ target_link_libraries(
     PRIVATE
         CoreLib
         pnAsyncCore
-        pnNetBase
         pnNetCommon
         pnNucleusInc
         ASIO::ASIO
@@ -34,5 +30,4 @@ target_link_libraries(
 )
 
 source_group("Source Files" FILES ${pnAsyncCoreExe_SOURCES})
-source_group("Header Files" FILES ${pnAsyncCoreExe_HEADERS})
 source_group("Private" FILES ${pnAsyncCoreExe_PRIVATE})
