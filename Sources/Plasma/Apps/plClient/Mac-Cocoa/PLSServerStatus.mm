@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #import "PLSServerStatus.h"
 #import "NSString+StringTheory.h"
-#include "plNetGameLib/plNetGameLib.h"
+#include "pnNetBase/pnNbSrvs.h"
 
 @interface PLSServerStatus () <NSURLSessionDelegate>
 @property NSString* serverStatusString;

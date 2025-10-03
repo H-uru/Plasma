@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PCH_H
 
 #include <atomic>
-#include <type_traits>
 
 #include "hsBitVector.h"
 #include "hsEndian.h"
@@ -54,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnAsyncCore/pnAsyncCore.h"
 #include "pnGameMgr/pnGameMgr.h"
-#include "pnEncryption/plBigNum.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnNetCli/pnNetCli.h"
 #include "pnNetCommon/plNetAddress.h"
@@ -62,6 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetProtocol/pnNpCli2File.h"
 #include "pnNetProtocol/pnNpCli2Game.h"
 #include "pnNetProtocol/pnNpCli2GateKeeper.h"
+#include "pnUUID/pnUUID.h"
 
 #include "plNetGameLib.h"
 #include "Intern.h"

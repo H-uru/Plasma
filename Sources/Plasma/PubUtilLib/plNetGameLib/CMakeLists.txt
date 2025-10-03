@@ -40,6 +40,7 @@ target_link_libraries(
         pnNetCommon
         pnNetProtocol
         pnUtils
+        pnUUID
         plVault
 )
 

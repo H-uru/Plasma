@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <functional>
 
-#include "pnNetBase/pnNetBase.h"
+#include "pnNetBase/pnNbError.h"
 
 /*****************************************************************************
 *

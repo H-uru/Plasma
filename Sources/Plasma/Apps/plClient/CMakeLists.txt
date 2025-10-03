@@ -200,6 +200,7 @@ target_link_libraries(
         pnFactory
         pnKeyedObject
         pnMessage
+        pnNetBase
         pnSceneObject
         plAgeLoader
         plAnimation
