@@ -40,7 +40,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "Pch.h"
+#include "plNglGateKeeper.h"
+
+#include <chrono>
+#include <mutex>
+#include <string_theory/string>
+#include <thread>
+#include <utility>
+
+#include "hsEndian.h"
+#include "hsLockGuard.h"
+#include "hsTimer.h"
+#include "plProduct.h"
+
+#include "pnAsyncCore/pnAcIo.h"
+#include "pnAsyncCore/pnAcLog.h"
+#include "pnAsyncCore/pnAcThread.h"
+#include "pnAsyncCore/pnAcTimer.h"
+#include "pnNetBase/pnNbKeys.h"
+#include "pnNetBase/pnNbSrvs.h"
+#include "pnNetCli/pnNetCli.h"
+#include "pnNetCommon/plNetAddress.h"
+#include "pnNetProtocol/pnNpCli2GateKeeper.h"
+#include "pnUUID/pnUUID.h"
+
+#include "Intern.h"
 
 namespace Ngl { namespace GateKeeper {
 

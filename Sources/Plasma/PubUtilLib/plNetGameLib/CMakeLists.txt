@@ -1,6 +1,5 @@
 set(plNetGameLib_HEADERS
     Intern.h
-    Pch.h
     plNetGameLib.h
     plNglAuth.h
     plNglCore.h

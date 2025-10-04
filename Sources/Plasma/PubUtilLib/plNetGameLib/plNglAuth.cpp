@@ -40,13 +40,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "Pch.h"
+#include "plNglAuth.h"
 
+#include <algorithm>
+#include <chrono>
+#include <mutex>
 #include <regex>
+#include <string>
+#include <string_theory/string_stream>
+#include <thread>
+#include <utility>
+
+#include "hsBitVector.h"
+#include "hsEndian.h"
+#include "hsLockGuard.h"
+#include "hsStream.h"
+#include "hsTimer.h"
+#include "plFileSystem.h"
+#include "plProduct.h"
+
+#include "pnAsyncCore/pnAcIo.h"
+#include "pnAsyncCore/pnAcLog.h"
+#include "pnAsyncCore/pnAcThread.h"
+#include "pnAsyncCore/pnAcTimer.h"
+#include "pnNetBase/pnNbKeys.h"
+#include "pnNetBase/pnNbSrvs.h"
+#include "pnNetCli/pnNetCli.h"
+#include "pnNetCommon/plNetAddress.h"
+#include "pnNetProtocol/pnNpCli2Auth.h"
 #include "pnEncryption/plChallengeHash.h"
 #include "pnUtils/pnUtStr.h"
+#include "pnUUID/pnUUID.h"
 
 #include "plVault/plVaultConstants.h"
+
+#include "Intern.h"
 
 namespace Ngl { namespace Auth {
 /*****************************************************************************

@@ -43,23 +43,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PCH_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PCH_H
 
-#include <atomic>
+#include <algorithm>
+#include <chrono>
+#include <mutex>
+#include <string>
+#include <string_theory/string>
+#include <thread>
+#include <utility>
 
-#include "hsBitVector.h"
+#include "hsLockGuard.h"
 #include "hsEndian.h"
-#include "plProduct.h"
+#include "hsStream.h"
 #include "hsThread.h"
 #include "hsTimer.h"
+#include "plProduct.h"
 
 #include "pnAsyncCore/pnAsyncCore.h"
-#include "pnGameMgr/pnGameMgr.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnNetCli/pnNetCli.h"
 #include "pnNetCommon/plNetAddress.h"
-#include "pnNetProtocol/pnNpCli2Auth.h"
-#include "pnNetProtocol/pnNpCli2File.h"
-#include "pnNetProtocol/pnNpCli2Game.h"
-#include "pnNetProtocol/pnNpCli2GateKeeper.h"
+#include "pnNetProtocol/pnNpCommon.h"
 #include "pnUUID/pnUUID.h"
 
 #include "plNetGameLib.h"
