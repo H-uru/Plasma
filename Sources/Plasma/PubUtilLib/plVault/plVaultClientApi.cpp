@@ -40,8 +40,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "Pch.h"
+#include "plVaultClientApi.h"
 
+#include <algorithm>
+#include <atomic>
+#include <chrono>
+#include <string_theory/string_stream>
+#include <thread>
+#include <unordered_map>
+
+#include "hsTimer.h"
+#include "plgDispatch.h"
+
+#include "plMessage/plVaultNotifyMsg.h"
+#include "plNetClientComm/plNetClientComm.h"
+#include "plNetCommon/plNetCommon.h"
+#include "plNetCommon/plNetServerSessionInfo.h"
+#include "plNetCommon/plSpawnPointInfo.h"
+#include "plNetGameLib/plNglCore.h"
+#include "plNetGameLib/plNglAuth.h"
+#include "plSDL/plSDL.h"
+#include "plStatusLog/plStatusLog.h"
+
+#include "plVaultNodeAccess.h"
 
 /*****************************************************************************
 *

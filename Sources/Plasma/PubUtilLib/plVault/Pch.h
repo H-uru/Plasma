@@ -44,30 +44,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PCH_H
 
 #include "plVault.h"
-#include "plDniCoordinateInfo.h"
 
 #include <algorithm>
-#include <atomic>
-#include <chrono>
-#include <memory>
-#include <string_theory/string>
-#include <thread>
-#include <unordered_map>
+#include <string_theory/string_stream>
 
-#include "hsGeometry3.h"
 #include "hsStream.h"
-#include "hsTimer.h"
-#include "plgDispatch.h"
 
-#include "plGImage/plJPEG.h"
-#include "plGImage/plPNG.h"
-#include "plMessage/plVaultNotifyMsg.h"
-#include "plNetClientComm/plNetClientComm.h"
-#include "plNetCommon/plNetCommon.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
-#include "plNetCommon/plSpawnPointInfo.h"
-#include "plNetGameLib/plNetGameLib.h"
 #include "plSDL/plSDL.h"
-#include "plStatusLog/plStatusLog.h"
 
 #endif

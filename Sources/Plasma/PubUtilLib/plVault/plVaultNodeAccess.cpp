@@ -40,7 +40,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "Pch.h"
+#include "plVaultNodeAccess.h"
+
+#include <algorithm>
+#include <memory>
+#include <string_theory/string_stream>
+
+#include "hsStream.h"
+
+#include "plGImage/plJPEG.h"
+#include "plGImage/plPNG.h"
+#include "plNetCommon/plNetServerSessionInfo.h"
+#include "plSDL/plSDL.h"
+
+#include "plVaultConstants.h"
+#include "plVaultClientApi.h"
 
 /*****************************************************************************
 *
