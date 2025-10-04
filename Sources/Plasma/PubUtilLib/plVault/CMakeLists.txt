@@ -28,15 +28,14 @@ target_link_libraries(
         pnNetBase
         pnNetProtocol # plVaultNodeAccess
     PRIVATE
-        pnDispatch
         pnNucleusInc
+        pnUUID
         plGImage
         plMessage
         plNetCommon
         plNetGameLib
         plSDL
         plStatusLog
-        plUnifiedTime
     INTERFACE
         pnFactory
 )

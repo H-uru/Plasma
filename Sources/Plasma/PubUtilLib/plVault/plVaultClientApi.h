@@ -46,7 +46,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <functional>
 #include <list>
 
+#include "hsRefCnt.h"
+
 #include "pnNetBase/pnNetBase.h"
+#include "pnNetProtocol/pnNpCommon.h"
+
+#include "plVaultConstants.h"
 
 /*****************************************************************************
 *
@@ -55,6 +60,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 struct RelVaultNode;
+class plAgeLinkStruct;
+class plSpawnPointInfo;
 class plUUID;
 
 struct VaultCallback {
