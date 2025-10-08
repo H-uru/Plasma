@@ -1677,7 +1677,7 @@ void plMetalPipeline::IBindLights()
 {
     size_t         lightSize = offsetof(plMetalLights, lampSources) + (sizeof(plMetalShaderLightSource) * fLights.count);
 
-    if ( !(fState.fBoundLights.has_value() && memcmp(&fState.fBoundLights, &fLights, lightSize) == 0) ) {
+    if (!(fState.fBoundLights.has_value() && memcmp(&fState.fBoundLights, &fLights, lightSize) == 0)) {
         memcpy(&fState.fBoundLights, &fLights, lightSize);
         if (fLightingPerPixel) {
             fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&fLights, lightSize, FragmentShaderArgumentLights);
@@ -1686,7 +1686,7 @@ void plMetalPipeline::IBindLights()
         }
     }
     
-    if ( !(fState.fBoundMaterialProperties.has_value() && fState.fBoundMaterialProperties == fCurrentRenderPassMaterialLighting) ) {
+    if (!(fState.fBoundMaterialProperties.has_value() && fState.fBoundMaterialProperties == fCurrentRenderPassMaterialLighting)) {
         fState.fBoundMaterialProperties = fCurrentRenderPassMaterialLighting;
         fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&fDevice.fPipeline->fCurrentRenderPassMaterialLighting, sizeof(plMaterialLightingDescriptor), VertexShaderArgumentMaterialLighting);
         if (fLightingPerPixel) {
@@ -2453,8 +2453,7 @@ void plMetalPipeline::IScaleLight(size_t i, float scale)
 
 void plMetalPipeline::ISetEnablePerPixelLighting(const bool enable)
 {
-    if (fLightingPerPixel != enable)
-    {
+    if (fLightingPerPixel != enable) {
         fLightingPerPixel = enable;
         
         // These states need to be reset for a change in lighting technique
