@@ -1681,9 +1681,9 @@ void plMetalPipeline::IBindLights()
     if (!(fState.fBoundLights.has_value() && memcmp(&fState.fBoundLights, &fLights, lightSize) == 0)) {
         memcpy(&fState.fBoundLights, &fLights, lightSize);
         if (fLightingPerPixel) {
-            fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&fLights, lightSize, FragmentShaderArgumentLights);
+            fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&fLights, sizeof(plMetalLights), FragmentShaderArgumentLights);
         } else {
-            fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&fLights, lightSize, VertexShaderArgumentLights);
+            fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&fLights, sizeof(plMetalLights), VertexShaderArgumentLights);
         }
     }
     
