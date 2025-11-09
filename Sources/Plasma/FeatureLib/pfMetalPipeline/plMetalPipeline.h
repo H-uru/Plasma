@@ -170,6 +170,7 @@ public:
 
 private:
     VertexUniforms* fCurrentRenderPassUniforms;
+    plMaterialLightingDescriptor fCurrentRenderPassMaterialLighting;
     
     bool fIsFullscreen;
 
@@ -236,13 +237,14 @@ private:
     void                   ISetupShadowRcvTextureStages(hsGMaterial* mat);
     void                   ISetupShadowSlaveTextures(plShadowSlave* slave); 
     void                   ISetupShadowState(plShadowSlave* slave, plShadowState& shadowState);
-    void                   IDisableLightsForShadow();
     void                   IReleaseRenderTargetPools();
     void                   IRenderProjectionEach(const plRenderPrimFunc& render, hsGMaterial* material, int iPass, const plSpan& span, const plMetalVertexBufferRef* vRef);
     void                   IRenderProjections(const plRenderPrimFunc& render, const plMetalVertexBufferRef* vRef);
     void                   IRenderProjection(const plRenderPrimFunc& render, plLightInfo* li, const plMetalVertexBufferRef* vRef);
 
     void ISetLayer(uint32_t lay);
+    
+    void ISetEnablePerPixelLighting(const bool enable);
 
     // Shadows
     std::vector<plRenderTarget*> fRenderTargetPool512;
@@ -263,8 +265,10 @@ private:
 
     void                        PushCurrentLightSources();
     void                        PopCurrentLightSources();
+    void                        IBindLights();
     plMetalLights               fLights;
     std::vector<plMetalLights*> fLightSourceStack;
+    bool                        fLightingPerPixel;
 
     static plMetalEnumerate enumerator;
 
@@ -284,10 +288,13 @@ private:
             hsGMatState::hsGMatClampFlags clampFlag;
         } layerStates[8];
 
-        std::optional<MTL::CullMode>    fCurrentCullMode;
-        const MTL::RenderPipelineState* fCurrentPipelineState;
-        MTL::Buffer*                    fCurrentVertexBuffer;
-        MTL::DepthStencilState*         fCurrentDepthStencilState;
+        std::optional<MTL::CullMode>                   fCurrentCullMode;
+        const MTL::RenderPipelineState*                fCurrentPipelineState;
+        MTL::Buffer*                                   fCurrentVertexBuffer;
+        MTL::DepthStencilState*                        fCurrentDepthStencilState;
+        std::optional<plMetalLights>                   fBoundLights;
+        std::optional<plMaterialLightingDescriptor>    fBoundMaterialProperties;
+        std::optional<VertexUniforms>                  fCurrentVertexUniforms;
 
         void Reset();
     } fState;

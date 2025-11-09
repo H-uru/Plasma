@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMetalPipelineState.h"
 
+#include "HeadSpin.h"
 #include "plDrawable/plGBufferGroup.h"
 #include "plGImage/plCubicEnvironmap.h"
 #include "plGImage/plMipmap.h"
@@ -110,6 +111,7 @@ void plMetalMaterialPassPipelineState::GetFunctionConstants(MTL::FunctionConstan
     constants->setConstantValues(&fFragmentShaderDescription.fPassTypes, MTL::DataTypeUChar, NS::Range(FunctionConstantSources, 8));
     constants->setConstantValues(&fFragmentShaderDescription.fBlendModes, MTL::DataTypeUInt, NS::Range(FunctionConstantBlendModes, 8));
     constants->setConstantValues(&fFragmentShaderDescription.fMiscFlags, MTL::DataTypeUInt, NS::Range(FunctionConstantLayerFlags, 8));
+    constants->setConstantValue(&fFragmentShaderDescription.fUsePerPixelLighting, MTL::DataTypeBool, FunctionConstantPerPixelLighting);
 }
 
 size_t plMetalMaterialPassPipelineState::GetHash() const
@@ -267,23 +269,21 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
 MTL::Function* plMetalMaterialPassPipelineState::GetVertexFunction(MTL::Library* library)
 {
     NS::Error*                   error = nullptr;
-    MTL::FunctionConstantValues* constants = MTL::FunctionConstantValues::alloc()->init()->autorelease();
-    GetFunctionConstants(constants);
-    MTL::Function* function = library->newFunction(
-                                         NS::String::string("pipelineVertexShader", NS::ASCIIStringEncoding),
-                                         MakeFunctionConstants(),
-                                         &error)
-                                  ->autorelease();
-    return function;
+    MTL::Function* function = library->newFunction(NS::String::string("pipelineVertexShader", NS::ASCIIStringEncoding),
+                                                   MakeFunctionConstants(),
+                                                   &error);
+    hsAssert(!error, "Could not find vertex function");
+    return function->autorelease();
 }
 
 MTL::Function* plMetalMaterialPassPipelineState::GetFragmentFunction(MTL::Library* library)
 {
-    return library->newFunction(
-                      NS::String::string("pipelineFragmentShader", NS::ASCIIStringEncoding),
-                      MakeFunctionConstants(),
-                      (NS::Error**)nullptr)
-        ->autorelease();
+    NS::Error* error = nullptr;
+    MTL::Function* function = library->newFunction(NS::String::string("pipelineFragmentShader", NS::ASCIIStringEncoding),
+                                                   MakeFunctionConstants(),
+                                                   &error);
+    hsAssert(!error, "Could not find fragment function");
+    return function->autorelease();
 }
 
 plMetalMaterialPassPipelineState::~plMetalMaterialPassPipelineState()
