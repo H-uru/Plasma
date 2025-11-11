@@ -169,6 +169,7 @@ void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder* en
         plLayerInterface *bumpLayer = fMaterial->GetLayer(fMaterial->GetNumLayers()-1);
         auto texture = (plMetalTextureRef*)bumpLayer->GetTexture()->GetDeviceRef();
         encoder->setFragmentTexture(texture->fTexture, 7);
+        encoder->setVertexBytes(&fBumps[pass].value(), sizeof(plMetalBumpMapping), VertexShaderArgumentBumpState);
     }
 }
 
@@ -342,8 +343,7 @@ std::optional<plMetalBumpMapping> plMetalMaterialShaderRef::IEatBumpmapLayers( u
     {
         return bumpMapping;
     }
-    
-    printf("Bump map layer found!\n");
+
     bumpMapping = plMetalBumpMapping();
     // We have a bump map and it should occupy the next four layers
     for (size_t bumpLayer = 0; bumpLayer < 4; bumpLayer++)

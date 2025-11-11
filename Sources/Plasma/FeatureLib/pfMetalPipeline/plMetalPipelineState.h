@@ -107,13 +107,6 @@ protected:
 
 //MARK: Abstract FVF vertex shader program parent type
 
-struct plMetalBumpMapping
-{
-    uint8_t dTangentUIndex;
-    uint8_t dTangentVIndex;
-    uint8_t bumpMapTextureIndex;
-};
-
 class plMetalRenderSpanPipelineState : public plMetalPipelineState
 {
 public:
