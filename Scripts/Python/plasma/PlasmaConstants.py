@@ -51,29 +51,24 @@
 """Plasma 2.0 Constants"""
 
 from __future__ import annotations
+import enum
 from typing import *
 
-class Enum:
-    """Enum base class"""
-
-class EnumValue:
-    """A basic enumeration value"""
-
-class PtAIMsgType:
+class PtAIMsgType(enum.IntEnum):
     kUnknown = 0
     kBrainCreated = 1
     kArrivedAtGoal = 2
     kBrainDestroyed = 3
     kGoToGoal = 4
 
-class PtAccountUpdateType:
+class PtAccountUpdateType(enum.IntEnum):
     kCreatePlayer = 1
     kDeletePlayer = 2
     kUpgradePlayer = 3
     kActivePlayer = 4
     kChangePassword = 5
 
-class PtBehaviorTypes:
+class PtBehaviorTypes(enum.IntEnum):
     kBehaviorTypeStandingJump = 1
     kBehaviorTypeWalkingJump = 2
     kBehaviorTypeRunningJump = 4
@@ -95,7 +90,7 @@ class PtBehaviorTypes:
     kBehaviorTypeLinkIn = 65536
     kBehaviorTypeLinkOut = 131072
 
-class PtBookEventTypes:
+class PtBookEventTypes(enum.IntEnum):
     kNotifyImageLink = 0
     kNotifyShow = 1
     kNotifyHide = 2
@@ -105,7 +100,7 @@ class PtBookEventTypes:
     kNotifyClose = 6
     kNotifyOpen = 7
 
-class PtBrainModes:
+class PtBrainModes(enum.IntEnum):
     kGeneric = 0
     kLadder = 1
     kSit = 2
@@ -114,12 +109,12 @@ class PtBrainModes:
     kAFK = 5
     kNonGeneric = 6
 
-class PtButtonNotifyTypes:
+class PtButtonNotifyTypes(enum.IntEnum):
     kNotifyOnUp = 0
     kNotifyOnDown = 1
     kNotifyOnUpAndDown = 2
 
-class PtCCRPetitionType:
+class PtCCRPetitionType(enum.IntEnum):
     kGeneralHelp = 0
     kBug = 1
     kFeedback = 2
@@ -128,7 +123,7 @@ class PtCCRPetitionType:
     kStuck = 5
     kTechnical = 6
 
-class PtConfirmationResult:
+class PtConfirmationResult(enum.IntEnum):
     Cancel = 0
     No = 0
     OK = 1
@@ -136,13 +131,13 @@ class PtConfirmationResult:
     Yes = 1
     Logout = 62
 
-class PtConfirmationType:
+class PtConfirmationType(enum.IntEnum):
     OK = 0
     ConfirmQuit = 1
     ForceQuit = 2
     YesNo = 3
 
-class PtEventType:
+class PtEventType(enum.IntEnum):
     kCollision = 1
     kPicked = 2
     kControlKey = 3
@@ -158,12 +153,12 @@ class PtEventType:
     kOfferLinkingBook = 14
     kBook = 15
 
-class PtFontFlags:
+class PtFontFlags(enum.IntEnum):
     kFontBold = 1
     kFontItalic = 2
     kFontShadowed = 4
 
-class PtGUIMultiLineDirection:
+class PtGUIMultiLineDirection(enum.IntEnum):
     kLineStart = 1
     kLineEnd = 2
     kBufferStart = 3
@@ -177,28 +172,28 @@ class PtGUIMultiLineDirection:
     kPageUp = 11
     kPageDown = 12
 
-class PtGameScoreTypes:
+class PtGameScoreTypes(enum.IntEnum):
     kFixed = 0
     kAccumulative = 1
     kAccumAllowNegative = 2
 
-class PtJustify:
+class PtJustify(enum.IntEnum):
     kLeftJustify = 0
     kCenter = 1
     kRightJustify = 2
 
-class PtLOSObjectType:
+class PtLOSObjectType(enum.IntEnum):
     kClickables = 0
     kCameraBlockers = 1
     kCustom = 2
     kShootable = 3
 
-class PtLOSReportType:
+class PtLOSReportType(enum.IntEnum):
     kReportHit = 0
     kReportMiss = 1
     kReportHitOrMiss = 2
 
-class PtLanguage:
+class PtLanguage(enum.IntEnum):
     kEnglish = 0
     kFrench = 1
     kGerman = 2
@@ -211,38 +206,38 @@ class PtLanguage:
     kCzech = 9
     kNumLanguages = 10
 
-class PtMarkerMsgType:
+class PtMarkerMsgType(enum.IntEnum):
     kMarkerCaptured = 0
 
-class PtMovieEventReason:
+class PtMovieEventReason(enum.IntEnum):
     kMovieDone = 0
 
-class PtMultiStageEventType:
+class PtMultiStageEventType(enum.IntEnum):
     kEnterStage = 1
     kBeginingOfLoop = 2
     kAdvanceNextStage = 3
     kRegressPrevStage = 4
 
-class PtNotificationType:
+class PtNotificationType(enum.IntEnum):
     kActivator = 0
     kVarNotification = 1
     kNotifySelf = 2
     kResponderFF = 3
     kResponderChangeState = 4
 
-class PtNotifyDataType:
+class PtNotifyDataType(enum.IntEnum):
     kFloat = 1
     kKey = 2
     kInt = 3
     kNull = 4
 
-class PtSDLReadWriteOptions:
+class PtSDLReadWriteOptions(enum.IntEnum):
     kDirtyOnly = 1
     kSkipNotificationInfo = 2
     kBroadcast = 4
     kTimeStampOnRead = 16
 
-class PtSDLVarType:
+class PtSDLVarType(enum.IntEnum):
     kNone = -1
     kInt = 0
     kFloat = 1
@@ -261,17 +256,17 @@ class PtSDLVarType:
     kRGBA = 53
     kQuaternion = 54
 
-class PtScoreRankGroups:
+class PtScoreRankGroups(enum.IntEnum):
     kIndividual = 0
     kNeighborhood = 1
 
-class PtScoreTimePeriods:
+class PtScoreTimePeriods(enum.IntEnum):
     kOverall = 0
     kYear = 1
     kMonth = 2
     kDay = 3
 
-class PtStatusLogFlags:
+class PtStatusLogFlags(enum.IntEnum):
     kFilledBackground = 1
     kAppendToLast = 2
     kDontWriteFile = 4

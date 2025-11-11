@@ -25,7 +25,6 @@ set(pfPython_SOURCES
     pyDniCoordinates.cpp
     pyDrawControl.cpp
     pyDynamicText.cpp
-    pyEnum.cpp
     pyGameCli.cpp
     pyGameScore.cpp
     pyGameScoreMsg.cpp

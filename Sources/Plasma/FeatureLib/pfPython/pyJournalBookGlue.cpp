@@ -327,7 +327,7 @@ void pyJournalBook::AddPlasmaMethods(PyObject* m)
 
 void pyJournalBook::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtBookEventTypes)
+    PYTHON_ENUM_START(m, PtBookEventTypes)
     PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyImageLink,         pfJournalBook::kNotifyImageLink)
     PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyShow,              pfJournalBook::kNotifyShow)
     PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyHide,              pfJournalBook::kNotifyHide)
