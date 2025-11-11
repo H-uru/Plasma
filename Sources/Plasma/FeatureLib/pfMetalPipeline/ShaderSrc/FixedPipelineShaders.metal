@@ -252,7 +252,8 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
                                        constant VertexUniforms & uniforms   [[ buffer(VertexShaderArgumentFixedFunctionUniforms) ]],
                                        Lighting lighting [[ function_constant(perVertexLighting) ]],
                                        constant plMaterialLightingDescriptor & materialLighting   [[ buffer(VertexShaderArgumentMaterialLighting), function_constant(perVertexLighting) ]],
-                                       constant float4x4 & blendMatrix1     [[ buffer(VertexShaderArgumentBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]])
+                                       constant float4x4 & blendMatrix1     [[ buffer(VertexShaderArgumentBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]],
+                                       constant plMetalBumpMapping & bumpInfo [[ buffer(VertexShaderArgumentBumpState), function_constant(bumpMap) ]])
 {
     ColorInOut out;
     const half4 inColor = half4(in.color.b, in.color.g, in.color.r, in.color.a) / half4(255.f);
@@ -286,8 +287,11 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
         (&out.texCoord1)[layer] = uniforms.sampleLocation(layer, &in.texCoord1, cameraSpaceNormal, vCamPosition);
     }
 
-    out.T = normalize( uniforms.localToWorldMatrix * float4(in.texCoord2, 0.f)). xyz;
-    out.B = normalize( uniforms.localToWorldMatrix * float4(in.texCoord2, 0.f)). xyz;
+    
+    if(bumpMap) {
+        out.T = normalize( uniforms.localToWorldMatrix * float4((&in.texCoord1)[bumpInfo.dTangentUIndex], 0.f)). xyz;
+        out.B = normalize( uniforms.localToWorldMatrix * float4((&in.texCoord1)[bumpInfo.dTangentVIndex], 0.f)). xyz;
+    }
     
     out.position = vCamPosition * uniforms.projectionMatrix;
 
@@ -470,7 +474,7 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
      proper normal mapping.
      */
     constexpr bool bumpMapIsAdditive = true;
-    const bool performBaseLighting = bumpMapIsAdditive || !bumpMap;
+    constexpr bool performBaseLighting = bumpMapIsAdditive || !bumpMap;
     
     if(performBaseLighting) {
     const half4 lightingContributionColor = perPixelLighting ? calcLitMaterialColor(lighting, in.vtxColor, materialLighting, in.worldPos, in.normal) : in.vtxColor;

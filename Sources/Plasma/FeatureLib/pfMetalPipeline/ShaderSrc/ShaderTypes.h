@@ -72,6 +72,8 @@ enum plMetalShaderArgument
     ShaderActiveLights = 12,
     /// Count of the active lights for the material to be rendered
     ShaderActiveLightCount = 13,
+    /// Bump/normal mapping information
+    VertexShaderArgumentBumpState = 14,
 
     /// Texture is a legacy argument for the simpler plate shader
     FragmentShaderArgumentTexture = 1,
@@ -252,6 +254,17 @@ struct plShadowState
 };
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<plShadowState>, "plShadowState must be a trivial type!");
+#endif
+
+struct plMetalBumpMapping
+{
+    uint8_t dTangentUIndex;
+    uint8_t dTangentVIndex;
+    // If you're looking for a texture index of the bump
+    // it will always be bound to the last texture slot.
+};
+#ifndef __METAL_VERSION__
+static_assert(std::is_trivial_v<plMetalBumpMapping>, "plShadowState must be a trivial type!");
 #endif
 
 #endif /* ShaderTypes_h */
