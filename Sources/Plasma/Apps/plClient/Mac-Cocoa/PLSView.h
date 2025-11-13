@@ -55,7 +55,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol PLSViewDelegate <NSObject>
-- (void)renderView:(PLSView*)view didChangeOutputSize:(CGSize)size scale:(NSUInteger)scale;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -62,7 +62,6 @@ typedef struct
 {
     float4 position [[position]];
     float3 texCoord;
-    float4 normal;
     half4  color;
 } ColorInOut;
 
@@ -73,10 +72,9 @@ vertex ColorInOut textFontVertexShader(constant Vertex *in                      
     ColorInOut out;
 
     Vertex vert = in[v_id];
-    float4 position = float4(vert.position, 1.0);
+    float4 position = float4(vert.position + float3(0.5, 0.5, 0.0), 1.0);
     out.position =  (transform * position);
     out.texCoord = vert.UV;
-    out.normal = float4(0.0, 0.0, 1.0, 0.0);
     out.color = half4(vert.color.b, vert.color.g, vert.color.r, vert.color.a) / 255.0f;
 
     return out;
