@@ -208,7 +208,7 @@ void plClient::IResizeNativeDisplayDevice(int width, int height, bool windowed)
 {
     // Client load is threaded so we might not receive this on the main thread
     // We _need_ to do this on the main thread becuase it has AppKit calls.
-    if(NSThread.currentThread != NSThread.mainThread) {
+    if (NSThread.currentThread != NSThread.mainThread) {
         // Even though I used NSThread above this is cleaner to send to
         // the main thread in libDispatch
         dispatch_sync(dispatch_get_main_queue(), ^{
