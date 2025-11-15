@@ -206,28 +206,41 @@ public:
 
 void plClient::IResizeNativeDisplayDevice(int width, int height, bool windowed)
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        AppDelegate* appDelegate = (AppDelegate*)[NSApp delegate];
-        
-        // Lock the aspect ratio and set window resolution
-        if (windowed) {
-            NSWindow* gameWindow = appDelegate.gameWindow;
-            NSRect frame = gameWindow.frame;
-            CGFloat scale = gameWindow.backingScaleFactor;
-            frame.size = NSMakeSize(width/scale, height/scale);
-            [gameWindow setFrame:frame display:NO];
-            gameWindow.aspectRatio = frame.size;
-            [gameWindow center];
-        }
-        
-        // Toggle full screen if we need to
-        if (((appDelegate.window.styleMask & NSWindowStyleMaskFullScreen) > 0) == windowed) {
-            [appDelegate.window toggleFullScreen:nil];
-        }
-        auto* msg = new plDisplayScaleChangedMsg(appDelegate.window.backingScaleFactor);
-        msg->Send();
-    });
+    // Client load is threaded so we might not receive this on the main thread
+    // We _need_ to do this on the main thread becuase it has AppKit calls.
+    if (NSThread.currentThread != NSThread.mainThread) {
+        // Even though I used NSThread above this is cleaner to send to
+        // the main thread in libDispatch
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            IResizeNativeDisplayDevice(width, height, windowed);
+        });
+        // Things should have completed on the main thread, don't continue
+        // on here.
+        return;
+    }
+    
+    AppDelegate* appDelegate = (AppDelegate*)[NSApp delegate];
+    
+    // Lock the aspect ratio and set window resolution
+    if (windowed) {
+        NSWindow* gameWindow = appDelegate.gameWindow;
+        CGFloat scale = gameWindow.backingScaleFactor;
+        NSSize size = NSMakeSize(width/scale, height/scale);
+        [gameWindow setContentSize:size];
+        gameWindow.aspectRatio = size;
+        [gameWindow center];
+    }
+    
+    appDelegate->gClient->GetPipeline()->Resize(width, height);
+    
+    // Toggle full screen if we need to
+    if (((appDelegate.window.styleMask & NSWindowStyleMaskFullScreen) > 0) == windowed) {
+        [appDelegate.window toggleFullScreen:nil];
+    }
+    auto* msg = new plDisplayScaleChangedMsg(appDelegate.window.backingScaleFactor);
+    msg->Send();
 }
+
 void plClient::IChangeResolution(int width, int height) {}
 void plClient::IUpdateProgressIndicator(plOperationProgress* progress) {}
 void plClient::ShowClientWindow() {}
@@ -379,22 +392,6 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     if (gClient->GetDone()) {
         [NSApp terminate:self];
     }
-}
-
-- (void)renderView:(PLSView*)view didChangeOutputSize:(CGSize)size scale:(NSUInteger)scale
-{
-    [[NSRunLoop mainRunLoop]
-        performInModes:@[ @"PlasmaEventMode" ]
-                 block:^{
-                     auto* msg = new plDisplayScaleChangedMsg(scale);
-                     msg->Send();
-                     float aspectratio = (float)size.width / (float)size.height;
-                     pfGameGUIMgr::GetInstance()->SetAspectRatio(aspectratio);
-                     plMouseDevice::Instance()->SetDisplayResolution(size.width, size.height);
-                     AppDelegate* appDelegate = (AppDelegate*)[NSApp delegate];
-                     appDelegate->gClient->GetPipeline()->Resize((int)size.width, (int)size.height);
-                 }];
-    if (gClient->GetQuitIntro()) [self runLoop];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification*)notification

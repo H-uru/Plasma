@@ -123,7 +123,7 @@ uint16_t  *plTextFont::IInitFontTexture()
     GetFontData(hDC, 0, 0, fontData, fontDataSize);
     ftError = FT_New_Memory_Face(library, (FT_Byte *) fontData, fontDataSize, 0, &face);
     ASSERT(ftError == FT_Err_Ok);
-    FT_UInt freeTypeResolution = plWinDpi::Instance().GetDpi();
+    FT_UInt freeTypeDPI = plWinDpi::Instance().GetDpi();
 
     DeleteDC( hDC );
     DeleteObject( hFont );
@@ -149,7 +149,10 @@ uint16_t  *plTextFont::IInitFontTexture()
     CFRelease(fontURL);
     CFRelease(fileSystemPath);
     
-    FT_UInt freeTypeResolution = 192;
+    // Windows uses a base DPI of 96, while Mac uses a DPI of 72.
+    // To make sure everything aligns match Windows.
+    // FIXME: We don't update when the DPI changes at runtime
+    FT_UInt freeTypeDPI = fPipe->fBackingScale * 96;
     
     fTextureWidth *= 2;
     fTextureHeight *= 2;
@@ -188,10 +191,10 @@ uint16_t  *plTextFont::IInitFontTexture()
     ftError = FT_New_Face(library, filename, 0, &face);
     ASSERT(ftError == FT_Err_Ok);
 
-    FT_UInt freeTypeResolution = 96;
+    FT_UInt freeTypeDPI = 96;
 #endif
 
-    ftError = FT_Set_Char_Size(face, 0, fSize * 64, freeTypeResolution, freeTypeResolution);
+    ftError = FT_Set_Char_Size(face, 0, fSize * 64, freeTypeDPI, freeTypeDPI);
     ASSERT(ftError == FT_Err_Ok);
     FT_Size_Metrics fontMetrics = face->size->metrics;
 
