@@ -43,10 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTHREAD_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTHREAD_H
 
+#include <functional>
+#include <memory>
 #include <mutex>
 #include <thread>
-
-#include "pnNetBase/pnNbError.h"
 
 
 /****************************************************************************

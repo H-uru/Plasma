@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_theory/format>
 
 #include "pnAsyncCore/pnAsyncCore.h"
+#include "pnNetBase/pnNbSrvs.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "pfConsoleCore/pfServerIni.h"
 #include "pfPatcher/plManifests.h"

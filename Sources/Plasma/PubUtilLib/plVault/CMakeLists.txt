@@ -6,7 +6,6 @@ set(plVault_SOURCES
 )
 
 set(plVault_HEADERS
-    Pch.h
     plDniCoordinateInfo.h
     plVault.h
     plVaultClientApi.h
@@ -28,15 +27,14 @@ target_link_libraries(
         pnNetBase
         pnNetProtocol # plVaultNodeAccess
     PRIVATE
-        pnDispatch
         pnNucleusInc
+        pnUUID
         plGImage
         plMessage
         plNetCommon
         plNetGameLib
         plSDL
         plStatusLog
-        plUnifiedTime
     INTERFACE
         pnFactory
 )

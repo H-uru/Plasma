@@ -50,6 +50,7 @@ Mead, WA   99021
 #include "hsTimer.h"
 
 #include "pnAsyncCore/pnAsyncCore.h"
+#include "pnNetBase/pnNbSrvs.h"
 
 #include "plMessageBox/hsMessageBox.h"
 #include "plNetGameLib/plNetGameLib.h"

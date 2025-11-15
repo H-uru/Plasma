@@ -40,9 +40,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "Pch.h"
+#include "plNglFile.h"
 
+#include <algorithm>
+#include <mutex>
+#include <string>
+#include <string_theory/string>
+#include <utility>
+
+#include "hsEndian.h"
+#include "hsLockGuard.h"
+#include "hsStream.h"
+#include "hsThread.h"
+#include "hsTimer.h"
+#include "plFileSystem.h"
+#include "plProduct.h"
+
+#include "pnAsyncCore/pnAcIo.h"
+#include "pnAsyncCore/pnAcThread.h"
+#include "pnAsyncCore/pnAcTimer.h"
+#include "pnNetBase/pnNbSrvs.h"
+#include "pnNetCommon/plNetAddress.h"
+#include "pnNetProtocol/pnNpCli2File.h"
 #include "pnUtils/pnUtStr.h"
+
+#include "Intern.h"
 
 // Define this if the file servers are running behind load-balancing hardware.
 // It changes the logic by which the decision to attempt a reconnect is made.

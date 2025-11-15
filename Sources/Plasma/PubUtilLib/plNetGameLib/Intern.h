@@ -43,6 +43,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_INTERN_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_INTERN_H
 
+#include <atomic>
+#include <type_traits>
+#include <vector>
+
+#include "hsRefCnt.h"
+
+#include "pnNetBase/pnNbError.h"
+#include "pnNetBase/pnNbProtocol.h"
 
 namespace Ngl {
 

@@ -40,9 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "Pch.h"
+#include "Intern.h"
 
+#include <algorithm>
+#include <chrono>
 #include <list>
+#include <mutex>
+#include <thread>
+
+#include "hsLockGuard.h"
+#include "hsTimer.h"
 
 namespace Ngl {
 /*****************************************************************************

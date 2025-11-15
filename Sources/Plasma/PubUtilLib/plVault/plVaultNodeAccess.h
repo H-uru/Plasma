@@ -47,8 +47,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsRefCnt.h"
 
 #include "pnNetProtocol/pnNpCommon.h"
+#include "pnUUID/pnUUID.h"
 
 #include <string_theory/string>
+#include <utility>
+#include <vector>
 
 /*****************************************************************************
 *

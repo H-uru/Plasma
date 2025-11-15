@@ -40,8 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "Pch.h"
-
+#include "Intern.h"
 
 namespace Ngl {
 

@@ -63,6 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "res/resource.h"
 
 #include "pnEncryption/plChallengeHash.h"
+#include "pnNetBase/pnNbSrvs.h"
 
 #include "plFile/plEncryptedStream.h"
 #include "plInputCore/plInputDevice.h"

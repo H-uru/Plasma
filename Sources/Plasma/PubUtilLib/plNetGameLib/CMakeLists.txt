@@ -1,6 +1,5 @@
 set(plNetGameLib_HEADERS
     Intern.h
-    Pch.h
     plNetGameLib.h
     plNglAuth.h
     plNglCore.h
@@ -40,6 +39,7 @@ target_link_libraries(
         pnNetCommon
         pnNetProtocol
         pnUtils
+        pnUUID
         plVault
 )
 

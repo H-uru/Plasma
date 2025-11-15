@@ -40,7 +40,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "Pch.h"
+#include "plNglGame.h"
+
+#include <chrono>
+#include <mutex>
+#include <thread>
+#include <utility>
+
+#include "hsEndian.h"
+#include "hsLockGuard.h"
+#include "hsTimer.h"
+#include "plProduct.h"
+
+#include "pnAsyncCore/pnAcIo.h"
+#include "pnAsyncCore/pnAcThread.h"
+#include "pnAsyncCore/pnAcTimer.h"
+#include "pnGameMgr/pnGameMgr.h"
+#include "pnNetBase/pnNbKeys.h"
+#include "pnNetBase/pnNbSrvs.h"
+#include "pnNetCli/pnNetCli.h"
+#include "pnNetCommon/plNetAddress.h"
+#include "pnNetProtocol/pnNpCli2Game.h"
+#include "pnUUID/pnUUID.h"
+
+#include "Intern.h"
 
 namespace Ngl { namespace Game {
 /*****************************************************************************

@@ -1,5 +1,4 @@
 set(pnAsyncCore_HEADERS
-    Pch.h
     pnAcCore.h
     pnAcIo.h
     pnAcLog.h
@@ -22,11 +21,8 @@ target_link_libraries(
     pnAsyncCore
     PUBLIC
         CoreLib
-        pnNetCommon
-        pnUUID
     PRIVATE
         pnAsyncCoreExe # Implementation is here
-        pnNetBase
         plStatusLog # :(
 )
 

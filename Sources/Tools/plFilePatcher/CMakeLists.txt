@@ -16,6 +16,7 @@ target_link_libraries(
     plFilePatcher
     PRIVATE
         CoreLib
+        pnNetBase
         pnNucleusInc
         plNetGameLib
         pfConsoleCore
