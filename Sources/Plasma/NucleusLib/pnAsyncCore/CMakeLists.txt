@@ -5,15 +5,22 @@ set(pnAsyncCore_HEADERS
     pnAcThread.h
     pnAcTimer.h
     pnAsyncCore.h
+    pnAsyncCore_Private.h
 )
 
 set(pnAsyncCore_SOURCES
+    pnAcCore.cpp
+    pnAcDns.cpp
     pnAcLog.cpp
+    pnAcSocket.cpp
+    pnAcThread.cpp
+    pnAcTimer.cpp
 )
 
 plasma_library(pnAsyncCore
     FOLDER NucleusLib
     SOURCES ${pnAsyncCore_HEADERS} ${pnAsyncCore_SOURCES}
+    PRECOMPILED_HEADERS Pch.h
 )
 
 target_include_directories(pnAsyncCore PRIVATE "${PLASMA_SOURCE_ROOT}/PubUtilLib")
@@ -22,8 +29,11 @@ target_link_libraries(
     PUBLIC
         CoreLib
     PRIVATE
-        pnAsyncCoreExe # Implementation is here
+        pnNetCommon
+        pnNucleusInc
         plStatusLog # :(
+        ASIO::ASIO
+        $<$<BOOL:${USE_VLD}>:${VLD_LIBRARY}>
 )
 
 source_group("Header Files" FILES ${pnAsyncCore_HEADERS})

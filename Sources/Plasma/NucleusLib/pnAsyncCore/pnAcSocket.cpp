@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pnAsyncCore/pnAcIo.h"
+#include "pnAcIo.h"
 
 #include <algorithm>
 #include <list>
@@ -61,12 +61,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <asio/ip/tcp.hpp>
 #include <asio/write.hpp>
 
-#include "pnAsyncCore/pnAcCore.h"
-#include "pnAsyncCore/pnAcLog.h"
-#include "pnAsyncCore/pnAcThread.h"
 #include "pnNetCommon/plNetAddress.h"
 
-#include "Private/pnAceInt.h"
+#include "pnAcCore.h"
+#include "pnAcLog.h"
+#include "pnAcThread.h"
+#include "pnAsyncCore_Private.h"
 
 using tcp = asio::ip::tcp;
 
@@ -100,7 +100,7 @@ struct AsyncIoPool
         size_t i = 0;
         for (auto& threadHandle : fThreadHandles) {
             threadHandle = AsyncThreadCreate([this, i] {
-                hsThread::SetThisThreadName(ST::format("AceSocketPool{02d}", i));
+                hsThread::SetThisThreadName(ST::format("AcSocketPool{02d}", i));
                 // This can be run concurrently from several threads
                 fContext.run();
             });

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pnAsyncCore/pnAcTimer.h"
+#include "pnAcTimer.h"
 
 #include <algorithm>
 #include <chrono>
@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <asio/post.hpp>
 #include <asio/steady_timer.hpp>
 
-#include "pnAsyncCore/pnAcThread.h"
+#include "pnAcThread.h"
 
 struct AsyncTimer
 {
@@ -87,7 +87,7 @@ struct AsyncTimerManager
     AsyncTimerManager() : fWorkGuard(fContext.get_executor())
     {
         fTimerThread = AsyncThreadCreate([this] {
-            hsThread::SetThisThreadName(ST_LITERAL("AceTimerMgr"));
+            hsThread::SetThisThreadName(ST_LITERAL("AcTimerMgr"));
             fContext.run();
         });
     }

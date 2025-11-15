@@ -40,14 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pnAsyncCore/pnAcCore.h"
+#include "pnAcCore.h"
 
 #include <atomic>
 #include <vector>
 
 #include "HeadSpin.h"
 
-#include "Private/pnAceInt.h"
+#include "pnAsyncCore_Private.h"
 
 /*****************************************************************************
 *
