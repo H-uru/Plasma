@@ -63,7 +63,6 @@ struct AsyncThread;
 using AsyncThreadRef = std::shared_ptr<AsyncThread>;
 
 struct AsyncThread {
-    std::function<void()>                proc;
     std::thread                          handle;
     std::timed_mutex                     completion;
 };

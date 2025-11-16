@@ -76,11 +76,9 @@ void ThreadDestroy(unsigned exitThreadWaitMs)
 AsyncThreadRef AsyncThreadCreate(std::function<void()> threadProc)
 {
     AsyncThreadRef ref = std::make_shared<AsyncThread>();
-    ref->proc = std::move(threadProc);
-
     ref->completion.lock();
 
-    ref->handle = std::thread([ref] {
+    ref->handle = std::thread([ref, threadProc = std::move(threadProc)] {
         hsThread::SetThisThreadName(ST_LITERAL("NoNameAcThread"));
 
 #ifdef USE_VLD
@@ -91,7 +89,7 @@ AsyncThreadRef AsyncThreadCreate(std::function<void()> threadProc)
         PerfAddCounter(kAsyncPerfThreadsCurr, 1);
 
         // Call thread procedure
-        ref->proc();
+        threadProc();
 
         PerfSubCounter(kAsyncPerfThreadsCurr, 1);
 
