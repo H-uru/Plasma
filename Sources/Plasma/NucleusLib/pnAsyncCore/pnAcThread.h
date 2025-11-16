@@ -66,18 +66,9 @@ struct AsyncThreadRef {
     bool joinable() const;
 };
 
-
-// Threads are also allowed to set the workTimeMs field of their
-// structure to a nonzero value for "on", and IO_TIME_INFINITE for
-// "off" to avoid the overhead of calling these functions. Note
-// that this function may not be called for the main thread. I
-// suggest that application code not worry that timeMs might
-// "accidentally" equal the IO_TIME_INFINITE value, as it only
-// happens for one millisecond every 49 days.
 struct AsyncThread {
     std::function<void()>                proc;
     std::thread                          handle;
-    unsigned                             workTimeMs;
     std::timed_mutex                     completion;
 };
 
