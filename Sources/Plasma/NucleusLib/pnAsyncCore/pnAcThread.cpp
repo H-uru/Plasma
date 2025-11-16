@@ -69,11 +69,11 @@ static void CreateThreadProc(const AsyncThreadRef& thread)
     PerfAddCounter(kAsyncPerfThreadsCurr, 1);
 
     // Call thread procedure
-    thread.impl->proc();
+    thread->proc();
 
     PerfSubCounter(kAsyncPerfThreadsCurr, 1);
 
-    thread.impl->completion.unlock();
+    thread->completion.unlock();
 }
 
 /*****************************************************************************
@@ -94,31 +94,30 @@ void ThreadDestroy(unsigned exitThreadWaitMs)
 //============================================================================
 AsyncThreadRef AsyncThreadCreate(std::function<void()> threadProc)
 {
-    AsyncThreadRef ref;
-    ref.impl = std::make_shared<AsyncThread>();
-    ref.impl->proc = std::move(threadProc);
+    AsyncThreadRef ref = std::make_shared<AsyncThread>();
+    ref->proc = std::move(threadProc);
 
-    ref.impl->completion.lock();
+    ref->completion.lock();
 
-    ref.impl->handle = std::thread(&CreateThreadProc, ref);
+    ref->handle = std::thread(&CreateThreadProc, ref);
     return ref;
 }
 
 void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs)
 {
-    if (ref.impl == nullptr || !ref.impl->handle.joinable()) {
+    if (ref == nullptr || !ref->handle.joinable()) {
         // The AsyncThreadRef is invalid (probably default-constructed),
         // so there's nothing we need to wait on.
         return;
     }
 
-    bool threadFinished = ref.impl->completion.try_lock_for(std::chrono::milliseconds(timeoutMs));
+    bool threadFinished = ref->completion.try_lock_for(std::chrono::milliseconds(timeoutMs));
     if (threadFinished) {
         //thread is finished, safe to join with no deadlock risk
-        ref.impl->completion.unlock();
-        ref.impl->handle.join();
+        ref->completion.unlock();
+        ref->handle.join();
     } else {
         LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
-        ref.impl->handle.detach();
+        ref->handle.detach();
     }
 }

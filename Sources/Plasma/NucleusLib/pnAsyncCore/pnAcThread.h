@@ -60,9 +60,7 @@ constexpr unsigned kAsyncTimeInfinite = (unsigned) -1;
 
 struct AsyncThread;
 
-struct AsyncThreadRef {
-    std::shared_ptr<AsyncThread> impl;
-};
+using AsyncThreadRef = std::shared_ptr<AsyncThread>;
 
 struct AsyncThread {
     std::function<void()>                proc;
