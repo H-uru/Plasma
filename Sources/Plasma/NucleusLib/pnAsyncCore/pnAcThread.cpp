@@ -57,25 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnAcLog.h"
 #include "pnAsyncCore_Private.h"
 
-static void CreateThreadProc(const AsyncThreadRef& thread)
-{
-    hsThread::SetThisThreadName(ST_LITERAL("NoNameAcThread"));
-
-#ifdef USE_VLD
-    VLDEnable();
-#endif
-
-    PerfAddCounter(kAsyncPerfThreadsTotal, 1);
-    PerfAddCounter(kAsyncPerfThreadsCurr, 1);
-
-    // Call thread procedure
-    thread->proc();
-
-    PerfSubCounter(kAsyncPerfThreadsCurr, 1);
-
-    thread->completion.unlock();
-}
-
 /*****************************************************************************
 *
 *   Module functions
@@ -99,7 +80,23 @@ AsyncThreadRef AsyncThreadCreate(std::function<void()> threadProc)
 
     ref->completion.lock();
 
-    ref->handle = std::thread(&CreateThreadProc, ref);
+    ref->handle = std::thread([ref] {
+        hsThread::SetThisThreadName(ST_LITERAL("NoNameAcThread"));
+
+#ifdef USE_VLD
+        VLDEnable();
+#endif
+
+        PerfAddCounter(kAsyncPerfThreadsTotal, 1);
+        PerfAddCounter(kAsyncPerfThreadsCurr, 1);
+
+        // Call thread procedure
+        ref->proc();
+
+        PerfSubCounter(kAsyncPerfThreadsCurr, 1);
+
+        ref->completion.unlock();
+    });
     return ref;
 }
 
