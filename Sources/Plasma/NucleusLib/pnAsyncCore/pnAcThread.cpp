@@ -75,10 +75,11 @@ void ThreadDestroy(unsigned exitThreadWaitMs)
 //============================================================================
 AsyncThreadRef AsyncThreadCreate(std::function<void()> threadProc)
 {
-    AsyncThreadRef ref = std::make_shared<AsyncThread>();
-    ref->completion.lock();
+    AsyncThreadRef ref;
+    ref.completion = std::make_shared<std::timed_mutex>();
+    ref.completion->lock();
 
-    ref->handle = std::thread([ref, threadProc = std::move(threadProc)] {
+    ref.handle = std::thread([completion = ref.completion, threadProc = std::move(threadProc)] {
         hsThread::SetThisThreadName(ST_LITERAL("NoNameAcThread"));
 
 #ifdef USE_VLD
@@ -93,26 +94,26 @@ AsyncThreadRef AsyncThreadCreate(std::function<void()> threadProc)
 
         PerfSubCounter(kAsyncPerfThreadsCurr, 1);
 
-        ref->completion.unlock();
+        completion->unlock();
     });
     return ref;
 }
 
 void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs)
 {
-    if (ref == nullptr || !ref->handle.joinable()) {
+    if (!ref.handle.joinable()) {
         // The AsyncThreadRef is invalid (probably default-constructed),
         // so there's nothing we need to wait on.
         return;
     }
 
-    bool threadFinished = ref->completion.try_lock_for(std::chrono::milliseconds(timeoutMs));
+    bool threadFinished = ref.completion->try_lock_for(std::chrono::milliseconds(timeoutMs));
     if (threadFinished) {
         //thread is finished, safe to join with no deadlock risk
-        ref->completion.unlock();
-        ref->handle.join();
+        ref.completion->unlock();
+        ref.handle.join();
     } else {
         LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
-        ref->handle.detach();
+        ref.handle.detach();
     }
 }

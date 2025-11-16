@@ -58,13 +58,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // for IoWaitId/TimerCreate/TimerUpdate
 constexpr unsigned kAsyncTimeInfinite = (unsigned) -1;
 
-struct AsyncThread;
-
-using AsyncThreadRef = std::shared_ptr<AsyncThread>;
-
-struct AsyncThread {
+struct AsyncThreadRef {
     std::thread                          handle;
-    std::timed_mutex                     completion;
+    // The completion mutex needs to be used by both the thread proc and the AsyncThreadRef,
+    // but either of the two might disappear without the other:
+    // the thread may finish while the AsyncThreadRef still exists,
+    // or the AsyncThreadRef may be destroyed while the thread is still running
+    // (if AsyncThreadTimedJoin timed out, which detaches the thread).
+    // Keep it in a shared_ptr to ensure that both combinations work.
+    std::shared_ptr<std::timed_mutex>    completion;
 };
 
 
