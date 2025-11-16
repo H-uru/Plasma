@@ -117,11 +117,6 @@ void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs)
     }
 }
 
-std::thread& AsyncThreadRef::thread() const
-{
-    return impl->handle;
-}
-
 bool AsyncThreadRef::joinable() const
 {
     if (!impl) {
