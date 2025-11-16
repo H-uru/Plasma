@@ -107,6 +107,13 @@ protected:
 
 //MARK: Abstract FVF vertex shader program parent type
 
+struct plMetalBumpMapping
+{
+    uint8_t dTangentUIndex;
+    uint8_t dTangentVIndex;
+    uint8_t bumpMapTextureIndex;
+};
+
 class plMetalRenderSpanPipelineState : public plMetalPipelineState
 {
 public:
@@ -148,12 +155,13 @@ struct plMetalFragmentShaderDescription
     uint32_t fMiscFlags[8];
     uint8_t  fNumLayers;
     bool     fUsePerPixelLighting;
+    bool     fHasBumpMap;
 
     size_t hash;
 
     bool operator==(const plMetalFragmentShaderDescription& p) const
     {
-        bool match = fNumLayers == p.fNumLayers && memcmp(fPassTypes, p.fPassTypes, sizeof(fPassTypes)) == 0 && memcmp(fBlendModes, p.fBlendModes, sizeof(fBlendModes)) == 0 && memcmp(fMiscFlags, p.fMiscFlags, sizeof(fMiscFlags)) == 0 && fUsePerPixelLighting == p.fUsePerPixelLighting;
+        bool match = fNumLayers == p.fNumLayers && memcmp(fPassTypes, p.fPassTypes, sizeof(fPassTypes)) == 0 && memcmp(fBlendModes, p.fBlendModes, sizeof(fBlendModes)) == 0 && memcmp(fMiscFlags, p.fMiscFlags, sizeof(fMiscFlags)) == 0 && fUsePerPixelLighting == p.fUsePerPixelLighting && fHasBumpMap == p.fHasBumpMap;
         return match;
     }
 
@@ -172,6 +180,7 @@ struct plMetalFragmentShaderDescription
         value ^= std::hash<uint8_t>()(fNumLayers);
         
         value ^= std::hash<bool>()(fUsePerPixelLighting);
+        value ^= std::hash<bool>()(fHasBumpMap);
 
         for (int i = 0; i < 8; i++) {
             value ^= std::hash<uint32_t>()(fBlendModes[i]);

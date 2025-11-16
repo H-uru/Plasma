@@ -118,10 +118,13 @@ private:
                              const std::function<plLayerInterface* (plLayerInterface*, uint32_t)>& postEncodeTransform);
     bool     ICanEatLayer(plLayerInterface* lay);
     uint32_t ILayersAtOnce(uint32_t which);
+    
+    std::optional<plMetalBumpMapping> IEatBumpmapLayers( uint32_t& layer );
 
     void                                                 IBuildLayerTexture(MTL::RenderCommandEncoder* encoder, const uint32_t offsetFromRootLayer, plLayerInterface* layer);
     void                                                 EncodeTransform(const plLayerInterface* layer, UVOutDescriptor *transform);
     std::vector<std::vector<plLayerInterface*>>          fPasses;
+    std::vector<std::optional<plMetalBumpMapping>>    fBumps;
     std::vector<struct plMetalFragmentShaderDescription> fFragmentShaderDescriptions;
 };
 

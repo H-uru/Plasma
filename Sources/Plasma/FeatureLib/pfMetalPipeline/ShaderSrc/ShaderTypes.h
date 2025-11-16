@@ -117,6 +117,7 @@ enum plMetalFunctionConstant
     FunctionConstantNumWeights                          = 26,
     /// Per pixel lighting enable flag
     FunctionConstantPerPixelLighting                    = 27,
+    FunctionConstantPerPixelBumpMap                     = 28,
 };
 
 enum plMetalLayerPassType: uint8_t
@@ -146,7 +147,10 @@ enum plMetalFragmentShaderTextures
 {
     FragmentShaderArgumentAttributeTextures = 0,
     FragmentShaderArgumentAttributeCubicTextures = 8,
-    FragmentShaderArgumentAttributeUniforms = 32
+    FragmentShaderArgumentAttributeUniforms = 32,
+    // A bump map pass can't use all 8 texture passes
+    // Re-use the last texture for bump.
+    FragmentShaderArgumentAttributeBumpMapTexture = 7
 };
 
 struct plMetalShaderLightSource

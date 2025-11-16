@@ -71,6 +71,7 @@ using namespace metal;
 
 constant const bool perPixelLighting [[ function_constant(FunctionConstantPerPixelLighting)    ]];
 constant const bool perVertexLighting = !perPixelLighting;
+constant const bool bumpMap [[ function_constant(FunctionConstantPerPixelBumpMap)    ]];
 
 constant const uint8_t sourceType1 [[ function_constant(FunctionConstantSources + 0)    ]];
 constant const uint8_t sourceType2 [[ function_constant(FunctionConstantSources + 1)    ]];
@@ -167,6 +168,7 @@ typedef struct
     float3 texCoord6 [[ function_constant(hasLayer6) ]];
     float3 texCoord7 [[ function_constant(hasLayer7) ]];
     float3 texCoord8 [[ function_constant(hasLayer8) ]];
+    float3 T, B [[ function_constant(bumpMap) ]];
     half4 vtxColor   [[ centroid_perspective ]];
     half4 fogColor;
 } ColorInOut;
@@ -284,6 +286,9 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
         (&out.texCoord1)[layer] = uniforms.sampleLocation(layer, &in.texCoord1, cameraSpaceNormal, vCamPosition);
     }
 
+    out.T = normalize( uniforms.localToWorldMatrix * float4(in.texCoord2, 0.f)). xyz;
+    out.B = normalize( uniforms.localToWorldMatrix * float4(in.texCoord2, 0.f)). xyz;
+    
     out.position = vCamPosition * uniforms.projectionMatrix;
 
     return out;
@@ -450,8 +455,42 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
                                       const FragmentShaderArguments fragmentShaderArgs,
                                       Lighting lighting [[ function_constant(perPixelLighting) ]],
                                       constant plMaterialLightingDescriptor & materialLighting   [[ buffer(FragmentShaderArgumentMaterialLighting), function_constant(perPixelLighting) ]])
+                                      texture2d<half> bumpTexture  [[ texture(FragmentShaderArgumentAttributeBumpMapTexture), function_constant(bumpMap)    ]])
 {
+    half4 lightingContributionColor = half4(0.h);
+    
+    /*
+     This controls the bumpmap style:
+     - Additive bump maps do a secondary hilight pass on the material. This is
+     how Cyan shipped bump maps in Uru. These bump maps ignore the blue channel
+     of the normal map file.
+     - If bumpMapIsAdditive is false, full normal mapping is performed on a per
+     pixel basis. This is not how the engine shipped and will produce different
+     results than the original age artist may have expected. But it will be
+     proper normal mapping.
+     */
+    constexpr bool bumpMapIsAdditive = true;
+    const bool performBaseLighting = bumpMapIsAdditive || !bumpMap;
+    
+    if(performBaseLighting) {
     const half4 lightingContributionColor = perPixelLighting ? calcLitMaterialColor(lighting, in.vtxColor, materialLighting, in.worldPos, in.normal) : in.vtxColor;
+    }
+    
+    if(bumpMap) {
+        float3 sampleCoord = in.texCoord1;
+        half3 bumpNormal = bumpTexture.sample(fragmentShaderArgs.samplers, sampleCoord.xy).rgb;
+        
+        bumpNormal -= 0.5f;
+        bumpNormal *= 2.f;
+        
+        float3x3 TBN = float3x3(in.T, in.B, in.normal);
+        bumpNormal = half3(normalize(TBN * float3(bumpNormal)));
+        
+        if(performBaseLighting) {
+            bumpNormal.z = 0.f;
+        }
+        lightingContributionColor += perPixelLighting ? calcLitMaterialColor(lighting, in.vtxColor, materialLighting, in.worldPos, float3(bumpNormal)) : in.vtxColor;
+    }
     half4 currentColor = lightingContributionColor;
 
     /*

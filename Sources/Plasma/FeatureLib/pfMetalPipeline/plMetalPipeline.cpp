@@ -1689,7 +1689,11 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
                                   postEncodeTransform);
         }
         
-        fragmentShaderDescription.fUsePerPixelLighting = PLASMA_FORCE_PER_PIXEL_LIGHTING;
+        if(!fragmentShaderDescription.fUsePerPixelLighting)
+        {
+            fragmentShaderDescription.fUsePerPixelLighting = PLASMA_FORCE_PER_PIXEL_LIGHTING;
+        }
+        
         ISetEnablePerPixelLighting( fragmentShaderDescription.fUsePerPixelLighting  );
 
         plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalMaterialPassPipelineState(&fDevice, vRef, fragmentShaderDescription).GetRenderPipelineState();

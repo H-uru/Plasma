@@ -112,6 +112,7 @@ void plMetalMaterialPassPipelineState::GetFunctionConstants(MTL::FunctionConstan
     constants->setConstantValues(&fFragmentShaderDescription.fBlendModes, MTL::DataTypeUInt, NS::Range(FunctionConstantBlendModes, 8));
     constants->setConstantValues(&fFragmentShaderDescription.fMiscFlags, MTL::DataTypeUInt, NS::Range(FunctionConstantLayerFlags, 8));
     constants->setConstantValue(&fFragmentShaderDescription.fUsePerPixelLighting, MTL::DataTypeBool, FunctionConstantPerPixelLighting);
+    constants->setConstantValue(&fFragmentShaderDescription.fHasBumpMap, MTL::DataTypeBool, FunctionConstantPerPixelBumpMap);
 }
 
 size_t plMetalMaterialPassPipelineState::GetHash() const
