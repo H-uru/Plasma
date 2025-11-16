@@ -113,8 +113,7 @@ struct AsyncIoPool
         fWorkGuard.reset();
 
         for (AsyncThreadRef& thread : fThreadHandles) {
-            if (thread.joinable())
-                AsyncThreadTimedJoin(thread, exitThreadWaitMs);
+            AsyncThreadTimedJoin(thread, exitThreadWaitMs);
         }
 
         // Ensure the event loop exits without processing any more tasks,

@@ -62,7 +62,6 @@ struct AsyncThread;
 
 struct AsyncThreadRef {
     std::shared_ptr<AsyncThread> impl;
-    bool joinable() const;
 };
 
 struct AsyncThread {

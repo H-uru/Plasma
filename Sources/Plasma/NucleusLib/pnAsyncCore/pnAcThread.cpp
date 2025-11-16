@@ -106,6 +106,12 @@ AsyncThreadRef AsyncThreadCreate(std::function<void()> threadProc)
 
 void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs)
 {
+    if (ref.impl == nullptr || !ref.impl->handle.joinable()) {
+        // The AsyncThreadRef is invalid (probably default-constructed),
+        // so there's nothing we need to wait on.
+        return;
+    }
+
     bool threadFinished = ref.impl->completion.try_lock_for(std::chrono::milliseconds(timeoutMs));
     if (threadFinished) {
         //thread is finished, safe to join with no deadlock risk
@@ -114,14 +120,5 @@ void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs)
     } else {
         LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
         ref.impl->handle.detach();
-    }
-}
-
-bool AsyncThreadRef::joinable() const
-{
-    if (!impl) {
-        return false;
-    } else {
-        return impl->handle.joinable();
     }
 }
