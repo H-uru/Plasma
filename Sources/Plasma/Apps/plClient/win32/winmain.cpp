@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline.h"
 #include "plProduct.h"
 #include "hsStream.h"
+#include "hsThread.h"
 #include "hsWindows.h"
 
 #include <process.h>
@@ -731,11 +732,9 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
         case WM_INITDIALOG:
         {
             s_loginDlgRunning = true;
-            s_statusThread = std::thread([hwndDlg]() {
+            s_statusThread = hsThread::StartSimpleThread([hwndDlg] {
                 hsThread::SetThisThreadName(ST_LITERAL("LoginDialogShardStatus"));
-#ifdef USE_VLD
-                VLDEnable();
-#endif
+
                 ST::string statusUrl = GetServerStatusUrl();
                 CURL* hCurl = curl_easy_init();
 

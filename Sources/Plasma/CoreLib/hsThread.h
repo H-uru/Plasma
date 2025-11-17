@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <atomic>
 #include <condition_variable>
+#include <functional>
 #include <limits>
 #include <mutex>
 #include <thread>
@@ -99,6 +100,13 @@ public:
     // must be able to manage itself -- destroying the hsThread object
     // WILL NOT stop a detached thread!
     void StartDetached();
+
+    // Start a std::thread that runs the given function.
+    // This is a simpler alternative to a full hsThread.
+    // Behaves like the plain std::thread constructor,
+    // but also does a few tasks that should happen for all Plasma threads,
+    // such as enabling VLD if configured.
+    static std::thread StartSimpleThread(std::function<void()> threadProc);
 
     // Set a name for the current thread, to be displayed in debuggers and such.
     // If possible, don't use names longer than 15 characters,

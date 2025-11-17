@@ -48,16 +48,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vld.h>
 #endif
 
-void hsThread::Start()
+std::thread hsThread::StartSimpleThread(std::function<void()> threadProc)
 {
-    hsAssert(!fThread.joinable(), "Calling hsThread::Start() more than once");
-
-    fThread = std::thread([this]() {
+    return std::thread([threadProc = std::move(threadProc)] {
         hsThread::SetThisThreadName(ST_LITERAL("hsNoNameThread"));
 #ifdef USE_VLD
         // Needs to be enabled for each thread except the WinMain
         VLDEnable();
 #endif
+        threadProc();
+    });
+}
+
+void hsThread::Start()
+{
+    hsAssert(!fThread.joinable(), "Calling hsThread::Start() more than once");
+
+    fThread = StartSimpleThread([this] {
         Run();
         OnQuit();
     });

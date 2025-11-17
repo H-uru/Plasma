@@ -43,12 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnAcThread.h"
 
 #include <chrono>
-#include <string_theory/string>
 #include <thread>
-
-#ifdef USE_VLD
-#include <vld.h>
-#endif
 
 #include "hsThread.h"
 #include "hsTimer.h"
@@ -79,13 +74,7 @@ AsyncThreadRef AsyncThreadCreate(std::function<void()> threadProc)
     ref.completion = std::make_shared<std::timed_mutex>();
     ref.completion->lock();
 
-    ref.handle = std::thread([completion = ref.completion, threadProc = std::move(threadProc)] {
-        hsThread::SetThisThreadName(ST_LITERAL("NoNameAcThread"));
-
-#ifdef USE_VLD
-        VLDEnable();
-#endif
-
+    ref.handle = hsThread::StartSimpleThread([completion = ref.completion, threadProc = std::move(threadProc)] {
         PerfAddCounter(kAsyncPerfThreadsTotal, 1);
         PerfAddCounter(kAsyncPerfThreadsCurr, 1);
 
