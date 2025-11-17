@@ -39,8 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef CoreLib_Thread
-#define CoreLib_Thread
 
 #include "hsThread.h"
 
@@ -83,5 +81,3 @@ void hsThread::StartDetached()
     if (fThread.joinable())
         fThread.detach();
 }
-
-#endif // CoreLib_Thread
