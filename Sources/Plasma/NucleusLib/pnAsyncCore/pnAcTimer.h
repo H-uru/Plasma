@@ -57,6 +57,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
+constexpr unsigned kAsyncTimeInfinite = (unsigned)-1;
+
 struct AsyncTimer;
 
 // Return callbackMs to wait that long until next callback.

@@ -55,9 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-// for IoWaitId/TimerCreate/TimerUpdate
-constexpr unsigned kAsyncTimeInfinite = (unsigned) -1;
-
 struct AsyncThreadRef {
     std::thread                          handle;
     // The completion mutex needs to be used by both the thread proc and the AsyncThreadRef,
