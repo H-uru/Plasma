@@ -119,7 +119,7 @@ private:
     bool     ICanEatLayer(plLayerInterface* lay);
     uint32_t ILayersAtOnce(uint32_t which);
     
-    std::optional<plMetalBumpMapping> IEatBumpmapLayers( uint32_t& layer );
+    std::optional<plMetalBumpMapping> IEatBumpmapLayers(uint32_t& layer);
 
     void                                                 IBuildLayerTexture(MTL::RenderCommandEncoder* encoder, const uint32_t offsetFromRootLayer, plLayerInterface* layer);
     void                                                 EncodeTransform(const plLayerInterface* layer, UVOutDescriptor *transform);

@@ -1659,7 +1659,7 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
                                   postEncodeTransform);
         }
         
-        if(!fragmentShaderDescription.fUsePerPixelLighting)
+        if (!fragmentShaderDescription.fUsePerPixelLighting)
         {
             fragmentShaderDescription.fUsePerPixelLighting = PLASMA_FORCE_PER_PIXEL_LIGHTING;
         }
