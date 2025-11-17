@@ -458,7 +458,7 @@ half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 verte
 fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
                                       const FragmentShaderArguments fragmentShaderArgs,
                                       Lighting lighting [[ function_constant(perPixelLighting) ]],
-                                      constant plMaterialLightingDescriptor & materialLighting   [[ buffer(FragmentShaderArgumentMaterialLighting), function_constant(perPixelLighting) ]])
+                                      constant plMaterialLightingDescriptor & materialLighting   [[ buffer(FragmentShaderArgumentMaterialLighting), function_constant(perPixelLighting) ]],
                                       texture2d<half> bumpTexture  [[ texture(FragmentShaderArgumentAttributeBumpMapTexture), function_constant(bumpMap)    ]])
 {
     half4 lightingContributionColor = half4(0.h);

@@ -310,10 +310,12 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
         auto bumpMap = IEatBumpmapLayers(j);
         
         if (bumpMap.has_value()) {
-            fBumps.push_back(bumpMap);
             passDescription.fUsePerPixelLighting = true;
             passDescription.fHasBumpMap = true;
         }
+        
+        // This needs to be added regardless so each pass has a value
+        fBumps.push_back(std::move(bumpMap));
         
         fFragmentShaderDescriptions.push_back(passDescription);
         
