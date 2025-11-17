@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pnAsyncCore/pnAcIo.h"
+#include "pnAcIo.h"
 
 #include <mutex>
 #include <string_theory/string>
@@ -56,12 +56,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <asio/io_context.hpp>
 #include <asio/ip/tcp.hpp>
 
-#include "pnAsyncCore/pnAcCore.h"
-#include "pnAsyncCore/pnAcLog.h"
-#include "pnAsyncCore/pnAcThread.h"
 #include "pnNetCommon/plNetAddress.h"
 
-#include "Private/pnAceInt.h"
+#include "pnAcCore.h"
+#include "pnAcLog.h"
+#include "pnAcThread.h"
+#include "pnAsyncCore_Private.h"
 
 using tcp = asio::ip::tcp;
 
@@ -77,7 +77,7 @@ struct DnsResolver
     {
         // Start the resolver thread
         fLookupThread = AsyncThreadCreate([this] {
-            hsThread::SetThisThreadName(ST_LITERAL("AceDnsResolver"));
+            hsThread::SetThisThreadName(ST_LITERAL("AcDnsResolver"));
             fContext.run();
         });
     }

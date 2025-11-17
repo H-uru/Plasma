@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pnAsyncCore/pnAcThread.h"
+#include "pnAcThread.h"
 
 #include <chrono>
 #include <string_theory/string>
@@ -53,14 +53,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 #include "hsTimer.h"
 
-#include "pnAsyncCore/pnAcCore.h"
-#include "pnAsyncCore/pnAcLog.h"
-
-#include "Private/pnAceInt.h"
+#include "pnAcCore.h"
+#include "pnAcLog.h"
+#include "pnAsyncCore_Private.h"
 
 static void CreateThreadProc(const AsyncThreadRef& thread)
 {
-    hsThread::SetThisThreadName(ST_LITERAL("NoNameAceThread"));
+    hsThread::SetThisThreadName(ST_LITERAL("NoNameAcThread"));
 
 #ifdef USE_VLD
     VLDEnable();

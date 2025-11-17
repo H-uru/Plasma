@@ -40,33 +40,56 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PCH_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PCH_H
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_H
 
-// The asio headers want _WIN32_WINNT defined,
-// otherwise they show a warning and define it themselves.
-// To ensure that our definition is visible to asio, include hsWindows.h first.
-#include "hsWindows.h"
 
-#include <asio/executor_work_guard.hpp>
-#include <asio/io_context.hpp>
-#include <asio/ip/tcp.hpp>
-#include <asio/steady_timer.hpp>
-#include <algorithm>
-#include <chrono>
-#include <list>
-#include <memory>
-#include <mutex>
-#include <thread>
-#include <utility>
+/*****************************************************************************
+*
+*   Core.cpp
+*
+***/
 
-#include "hsLockGuard.h"
-#include "hsThread.h"
-#include "hsTimer.h"
+// Performance counter functions
+long PerfAddCounter (unsigned id, long n);
+long PerfSubCounter (unsigned id, long n);
+long PerfSetCounter (unsigned id, long n);
 
-#include "pnAsyncCore/pnAsyncCore.h"
-#include "pnNetCommon/plNetAddress.h"
 
-#include "Private/pnAceInt.h"
+/*****************************************************************************
+*
+*   Dns.cpp
+*
+***/
 
-#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PCH_H
+void DnsDestroy (unsigned exitThreadWaitMs);
+
+
+/*****************************************************************************
+*
+*   Socket.cpp
+*
+***/
+
+void SocketInitialize();
+void SocketDestroy(unsigned exitThreadWaitMs);
+
+
+/*****************************************************************************
+*
+*   Thread.cpp
+*
+***/
+
+void ThreadDestroy (unsigned exitThreadWaitMs);
+
+
+/*****************************************************************************
+*
+*   Timer.cpp
+*
+***/
+
+void TimerDestroy (unsigned exitThreadWaitMs);
+
+#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_H

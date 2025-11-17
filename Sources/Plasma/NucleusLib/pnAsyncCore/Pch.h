@@ -40,56 +40,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PRIVATE_PNACEINT_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PRIVATE_PNACEINT_H
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PCH_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PCH_H
 
+// The asio headers want _WIN32_WINNT defined,
+// otherwise they show a warning and define it themselves.
+// To ensure that our definition is visible to asio, include hsWindows.h first.
+#include "hsWindows.h"
 
-/*****************************************************************************
-*
-*   Core.cpp
-*
-***/
+#include <asio/executor_work_guard.hpp>
+#include <asio/io_context.hpp>
+#include <asio/ip/tcp.hpp>
+#include <asio/steady_timer.hpp>
+#include <algorithm>
+#include <chrono>
+#include <list>
+#include <memory>
+#include <mutex>
+#include <thread>
+#include <utility>
 
-// Performance counter functions
-long PerfAddCounter (unsigned id, long n);
-long PerfSubCounter (unsigned id, long n);
-long PerfSetCounter (unsigned id, long n);
+#include "hsLockGuard.h"
+#include "hsThread.h"
+#include "hsTimer.h"
 
+#include "pnNetCommon/plNetAddress.h"
 
-/*****************************************************************************
-*
-*   Dns.cpp
-*
-***/
+#include "pnAsyncCore.h"
+#include "pnAsyncCore_Private.h"
 
-void DnsDestroy (unsigned exitThreadWaitMs);
-
-
-/*****************************************************************************
-*
-*   Socket.cpp
-*
-***/
-
-void SocketInitialize();
-void SocketDestroy(unsigned exitThreadWaitMs);
-
-
-/*****************************************************************************
-*
-*   Thread.cpp
-*
-***/
-
-void ThreadDestroy (unsigned exitThreadWaitMs);
-
-
-/*****************************************************************************
-*
-*   Timer.cpp
-*
-***/
-
-void TimerDestroy (unsigned exitThreadWaitMs);
-
-#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PRIVATE_PNACEINT_H
+#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PCH_H
