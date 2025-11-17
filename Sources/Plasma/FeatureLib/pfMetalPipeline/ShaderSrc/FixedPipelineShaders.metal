@@ -288,9 +288,9 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
     }
 
     
-    if(bumpMap) {
-        out.T = normalize( uniforms.localToWorldMatrix * float4((&in.texCoord1)[bumpInfo.dTangentUIndex], 0.f)). xyz;
-        out.B = normalize( uniforms.localToWorldMatrix * float4((&in.texCoord1)[bumpInfo.dTangentVIndex], 0.f)). xyz;
+    if (bumpMap) {
+        out.T = normalize(uniforms.localToWorldMatrix * float4((&in.texCoord1)[bumpInfo.dTangentUIndex], 0.f)). xyz;
+        out.B = normalize(uniforms.localToWorldMatrix * float4((&in.texCoord1)[bumpInfo.dTangentVIndex], 0.f)). xyz;
     }
     
     out.position = vCamPosition * uniforms.projectionMatrix;
@@ -476,11 +476,11 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
     constexpr bool bumpMapIsAdditive = true;
     constexpr bool performBaseLighting = bumpMapIsAdditive || !bumpMap;
     
-    if(performBaseLighting) {
-    const half4 lightingContributionColor = perPixelLighting ? calcLitMaterialColor(lighting, in.vtxColor, materialLighting, in.worldPos, in.normal) : in.vtxColor;
+    if (performBaseLighting) {
+        lightingContributionColor = perPixelLighting ? calcLitMaterialColor(lighting, in.vtxColor, materialLighting, in.worldPos, in.normal) : in.vtxColor;
     }
     
-    if(bumpMap) {
+    if (bumpMap) {
         float3 sampleCoord = in.texCoord1;
         half3 bumpNormal = bumpTexture.sample(fragmentShaderArgs.samplers, sampleCoord.xy).rgb;
         
@@ -490,7 +490,7 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
         float3x3 TBN = float3x3(in.T, in.B, in.normal);
         bumpNormal = half3(normalize(TBN * float3(bumpNormal)));
         
-        if(performBaseLighting) {
+        if (performBaseLighting) {
             bumpNormal.z = 0.f;
         }
         lightingContributionColor += perPixelLighting ? calcLitMaterialColor(lighting, in.vtxColor, materialLighting, in.worldPos, float3(bumpNormal)) : in.vtxColor;

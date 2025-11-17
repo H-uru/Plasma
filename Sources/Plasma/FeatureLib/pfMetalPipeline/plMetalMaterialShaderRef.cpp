@@ -166,7 +166,7 @@ void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder* en
     
     if (fBumps[pass].has_value())
     {
-        plLayerInterface *bumpLayer = fMaterial->GetLayer(fMaterial->GetNumLayers()-1);
+        plLayerInterface* bumpLayer = fMaterial->GetLayer(fMaterial->GetNumLayers()-1);
         auto texture = (plMetalTextureRef*)bumpLayer->GetTexture()->GetDeviceRef();
         encoder->setFragmentTexture(texture->fTexture, 7);
         encoder->setVertexBytes(&fBumps[pass].value(), sizeof(plMetalBumpMapping), VertexShaderArgumentBumpState);
@@ -207,9 +207,8 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encode
         }
     );
     
-    if (fBumps[pass].has_value())
-    {
-        plLayerInterface *bumpLayer = fMaterial->GetLayer(fMaterial->GetNumLayers()-1);
+    if (fBumps[pass].has_value()) {
+        plLayerInterface* bumpLayer = fMaterial->GetLayer(fMaterial->GetNumLayers()-1);
         auto texture = (plMetalTextureRef*)bumpLayer->GetTexture()->GetDeviceRef();
         encoder->setFragmentTexture(texture->fTexture, 7);
     }
@@ -309,10 +308,9 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
         fPassLengths.push_back(j - currLayer);
         
         auto bumpMap = IEatBumpmapLayers(j);
-        fBumps.push_back(bumpMap);
         
-        if (bumpMap.has_value())
-        {
+        if (bumpMap.has_value()) {
+            fBumps.push_back(bumpMap);
             passDescription.fUsePerPixelLighting = true;
             passDescription.fHasBumpMap = true;
         }
@@ -327,42 +325,36 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
     }
 }
 
-std::optional<plMetalBumpMapping> plMetalMaterialShaderRef::IEatBumpmapLayers( uint32_t& layerIdx )
+std::optional<plMetalBumpMapping> plMetalMaterialShaderRef::IEatBumpmapLayers(uint32_t& layerIdx)
 {
-    
-    std::optional<plMetalBumpMapping> bumpMapping;
-    
     // If there aren't enough layers left to support a bump map, return
-    if (!(layerIdx + 3 < fMaterial->GetNumLayers()))
-    {
-        return bumpMapping;
+    if (!(layerIdx + 3 < fMaterial->GetNumLayers())) {
+        return std::nullopt;
     }
     
     // Does the next layer imply a bump map?
-    if (!(fMaterial->GetLayer(layerIdx)->GetMiscFlags() & hsGMatState::kMiscBumpChans))
-    {
-        return bumpMapping;
+    if (!(fMaterial->GetLayer(layerIdx)->GetMiscFlags() & hsGMatState::kMiscBumpChans)) {
+        return std::nullopt;
     }
 
-    bumpMapping = plMetalBumpMapping();
+    plMetalBumpMapping bumpMapping;
     // We have a bump map and it should occupy the next four layers
-    for (size_t bumpLayer = 0; bumpLayer < 4; bumpLayer++)
-    {
+    for (size_t bumpLayer = 0; bumpLayer < 4; bumpLayer++) {
         plLayerInterface* layer = fMaterial->GetLayer(layerIdx + bumpLayer);
         uint32_t miscFlags = layer->GetMiscFlags();
-        switch( miscFlags & hsGMatState::kMiscBumpChans )
+        switch (miscFlags & hsGMatState::kMiscBumpChans)
         {
         case hsGMatState::kMiscBumpDu:
-            bumpMapping.value().dTangentUIndex = layer->GetUVWSrc();
+            bumpMapping.dTangentUIndex = layer->GetUVWSrc();
         case hsGMatState::kMiscBumpDv:
-            bumpMapping.value().dTangentVIndex = layer->GetUVWSrc();
+            bumpMapping.dTangentVIndex = layer->GetUVWSrc();
         case hsGMatState::kMiscBumpDw:
         default:
             break;
         }
     }
     
-    layerIdx+=4;
+    layerIdx += 4;
     return bumpMapping;
 }
 
