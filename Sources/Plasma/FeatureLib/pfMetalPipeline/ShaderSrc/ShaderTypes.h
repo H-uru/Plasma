@@ -68,6 +68,8 @@ enum plMetalShaderArgument
     VertexShaderArgumentBlendMatrix1                    = 6,
     /// Describes the state of a shadow caster for shadow cast shader
     VertexShaderArgumentShadowState                     = 9,
+    /// Bump/normal mapping information
+    VertexShaderArgumentBumpState                       = 12,
     
     /// Texture is a legacy argument for the simpler plate shader
     FragmentShaderArgumentTexture                       = 1,
@@ -115,6 +117,7 @@ enum plMetalFunctionConstant
     FunctionConstantNumWeights                          = 26,
     /// Per pixel lighting enable flag
     FunctionConstantPerPixelLighting                    = 27,
+    FunctionConstantPerPixelBumpMap                     = 28,
 };
 
 enum plMetalLayerPassType: uint8_t
@@ -144,7 +147,10 @@ enum plMetalFragmentShaderTextures
 {
     FragmentShaderArgumentAttributeTextures = 0,
     FragmentShaderArgumentAttributeCubicTextures = 8,
-    FragmentShaderArgumentAttributeUniforms = 32
+    FragmentShaderArgumentAttributeUniforms = 32,
+    // A bump map pass can't use all 8 texture passes
+    // Re-use the last texture for bump.
+    FragmentShaderArgumentAttributeBumpMapTexture = 7
 };
 
 struct plMetalShaderLightSource
@@ -254,6 +260,17 @@ struct plShadowState
 };
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<plShadowState>, "plShadowState must be a trivial type!");
+#endif
+
+struct plMetalBumpMapping
+{
+    uint8_t dTangentUIndex;
+    uint8_t dTangentVIndex;
+    // If you're looking for a texture index of the bump
+    // it will always be bound to the last texture slot.
+};
+#ifndef __METAL_VERSION__
+static_assert(std::is_trivial_v<plMetalBumpMapping>, "plShadowState must be a trivial type!");
 #endif
 
 #endif /* ShaderTypes_h */
