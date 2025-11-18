@@ -33,7 +33,6 @@ target_link_libraries(
         pnNucleusInc
         plStatusLog # :(
         ASIO::ASIO
-        $<$<BOOL:${USE_VLD}>:${VLD_LIBRARY}>
 )
 
 source_group("Header Files" FILES ${pnAsyncCore_HEADERS})

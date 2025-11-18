@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProduct.h"
 
 #include "pnAsyncCore/pnAcIo.h"
-#include "pnAsyncCore/pnAcThread.h"
 #include "pnAsyncCore/pnAcTimer.h"
 #include "pnGameMgr/pnGameMgr.h"
 #include "pnNetBase/pnNbKeys.h"

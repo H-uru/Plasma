@@ -43,12 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnAcThread.h"
 
 #include <chrono>
-#include <string_theory/string>
 #include <thread>
-
-#ifdef USE_VLD
-#include <vld.h>
-#endif
 
 #include "hsThread.h"
 #include "hsTimer.h"
@@ -56,25 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnAcCore.h"
 #include "pnAcLog.h"
 #include "pnAsyncCore_Private.h"
-
-static void CreateThreadProc(const AsyncThreadRef& thread)
-{
-    hsThread::SetThisThreadName(ST_LITERAL("NoNameAcThread"));
-
-#ifdef USE_VLD
-    VLDEnable();
-#endif
-
-    PerfAddCounter(kAsyncPerfThreadsTotal, 1);
-    PerfAddCounter(kAsyncPerfThreadsCurr, 1);
-
-    // Call thread procedure
-    thread.impl->proc();
-
-    PerfSubCounter(kAsyncPerfThreadsCurr, 1);
-
-    thread.impl->completion.unlock();
-}
 
 /*****************************************************************************
 *
@@ -95,39 +71,38 @@ void ThreadDestroy(unsigned exitThreadWaitMs)
 AsyncThreadRef AsyncThreadCreate(std::function<void()> threadProc)
 {
     AsyncThreadRef ref;
-    ref.impl = std::make_shared<AsyncThread>();
-    ref.impl->proc = std::move(threadProc);
-    ref.impl->workTimeMs = kAsyncTimeInfinite;
+    ref.completion = std::make_shared<std::timed_mutex>();
+    ref.completion->lock();
 
-    ref.impl->completion.lock();
+    ref.handle = hsThread::StartSimpleThread([completion = ref.completion, threadProc = std::move(threadProc)] {
+        PerfAddCounter(kAsyncPerfThreadsTotal, 1);
+        PerfAddCounter(kAsyncPerfThreadsCurr, 1);
 
-    ref.impl->handle = std::thread(&CreateThreadProc, ref);
+        // Call thread procedure
+        threadProc();
+
+        PerfSubCounter(kAsyncPerfThreadsCurr, 1);
+
+        completion->unlock();
+    });
     return ref;
 }
 
 void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs)
 {
-    bool threadFinished = ref.impl->completion.try_lock_for(std::chrono::milliseconds(timeoutMs));
+    if (!ref.handle.joinable()) {
+        // The AsyncThreadRef is invalid (probably default-constructed),
+        // so there's nothing we need to wait on.
+        return;
+    }
+
+    bool threadFinished = ref.completion->try_lock_for(std::chrono::milliseconds(timeoutMs));
     if (threadFinished) {
         //thread is finished, safe to join with no deadlock risk
-        ref.impl->completion.unlock();
-        ref.impl->handle.join();
+        ref.completion->unlock();
+        ref.handle.join();
     } else {
         LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
-        ref.impl->handle.detach();
-    }
-}
-
-std::thread& AsyncThreadRef::thread() const
-{
-    return impl->handle;
-}
-
-bool AsyncThreadRef::joinable() const
-{
-    if (!impl) {
-        return false;
-    } else {
-        return impl->handle.joinable();
+        ref.handle.detach();
     }
 }
