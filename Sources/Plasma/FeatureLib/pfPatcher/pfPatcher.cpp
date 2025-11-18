@@ -782,13 +782,12 @@ void pfPatcher::RequestManifest(const std::vector<ST::string>& mfs)
     );
 }
 
-bool pfPatcher::Start()
+void pfPatcher::Start(std::unique_ptr<pfPatcher> patcher)
 {
-    hsAssert(!fWorker->fStarted, "pfPatcher is one-use only. kthx.");
-    if (!fWorker->fStarted) {
-        fWorker->fParent = this; // wheeeee circular
-        fWorker->StartDetached();
-        return true;
+    hsAssert(!patcher->fWorker->fStarted, "pfPatcher is one-use only. kthx.");
+    if (!patcher->fWorker->fStarted) {
+        patcher->fWorker->fParent = patcher.get(); // wheeeee circular
+        patcher->fWorker->StartDetached();
     }
-    return false;
+    patcher.release();
 }

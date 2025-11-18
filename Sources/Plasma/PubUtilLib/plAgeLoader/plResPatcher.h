@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFileSystem.h"
 #include "pnNetBase/pnNbError.h"
+
+#include <memory>
 #include <vector>
 
 class plOperationProgress;
@@ -67,7 +69,7 @@ class plResPatcher
     bool OnGameCodeDiscovered(const plFileName& file, class hsStream* stream);
     void OnProgressTick(uint64_t dl, uint64_t total, const ST::string& msg);
 
-    class pfPatcher* CreatePatcher();
+    std::unique_ptr<class pfPatcher> CreatePatcher();
     void InitProgress();
 
 public:

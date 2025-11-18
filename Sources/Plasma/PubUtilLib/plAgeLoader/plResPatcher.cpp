@@ -135,9 +135,9 @@ void plResPatcher::OnProgressTick(uint64_t dl, uint64_t total, const ST::string&
     fProgress->SetInfoText(msg);
 }
 
-pfPatcher* plResPatcher::CreatePatcher()
+std::unique_ptr<pfPatcher> plResPatcher::CreatePatcher()
 {
-    pfPatcher* patcher = new pfPatcher;
+    auto patcher = pfPatcher::Create();
     patcher->OnCompletion(std::bind(&plResPatcher::OnCompletion, this, std::placeholders::_1, std::placeholders::_2));
     patcher->OnFileDownloadBegin(std::bind(&plResPatcher::OnFileDownloadBegin, this, std::placeholders::_1));
     patcher->OnFileDownloaded(std::bind(&plResPatcher::OnFileDownloaded, this, std::placeholders::_1));
@@ -176,18 +176,18 @@ plResPatcher::~plResPatcher()
 void plResPatcher::Update(const std::vector<ST::string>& manifests)
 {
     InitProgress();
-    pfPatcher* patcher = CreatePatcher();
+    auto patcher = CreatePatcher();
     if (!gDataServerLocal)
         patcher->RequestManifest(manifests);
-    patcher->Start(); // whoosh... off it goes
+    pfPatcher::Start(std::move(patcher)); // whoosh... off it goes
 }
 
 void plResPatcher::Update(const ST::string& manifest)
 {
     InitProgress();
-    pfPatcher* patcher = CreatePatcher();
+    auto patcher = CreatePatcher();
     if (!gDataServerLocal)
         patcher->RequestManifest(manifest);
-    patcher->Start(); // whoosh... off it goes
+    pfPatcher::Start(std::move(patcher)); // whoosh... off it goes
 }
 

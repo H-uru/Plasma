@@ -138,7 +138,7 @@ void plFilePatcher::IHandleFileSrvInfo(ENetError result, const ST::string& addr)
 
 void plFilePatcher::IRunPatcher()
 {
-    pfPatcher* patcher = new pfPatcher();
+    auto patcher = pfPatcher::Create();
     patcher->OnFileDownloadDesired(std::bind(&plFilePatcher::IApproveDownload, this, std::placeholders::_1));
     patcher->OnCompletion(std::bind(&plFilePatcher::IOnPatchComplete, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -150,7 +150,7 @@ void plFilePatcher::IRunPatcher()
 
     // Request everything, and then we'll filter the file list before we fetch
     patcher->RequestManifest(plManifest::ClientImageManifest());
-    patcher->Start();
+    pfPatcher::Start(std::move(patcher));
 }
 
 bool plFilePatcher::IApproveDownload(const plFileName& file)
