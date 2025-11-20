@@ -1426,7 +1426,7 @@ class ptAudioControl:
         ...
 
     def isEAXSupported(self):
-        """Returns true or false based on whether or not a the device specified supports EAX"""
+        """Returns true or false based on whether or not a the device specified supports EFX"""
         ...
 
     def isEnabled(self):
@@ -1438,7 +1438,7 @@ class ptAudioControl:
         ...
 
     def isUsingEAXAcceleration(self):
-        """Is EAX sound acceleration enabled? Returns 1 if true otherwise returns 0."""
+        """Is EFX environmental audio enabled? Returns 1 if true otherwise returns 0."""
         ...
 
     def isVoiceRecordingEnabled(self):
@@ -1528,7 +1528,7 @@ class ptAudioControl:
         ...
 
     def useEAXAcceleration(self, state):
-        """Enables or disables EAX sound acceleration (requires hardware acceleration)."""
+        """Enables or disables EFX environmental audio."""
         ...
 
 class ptAvatar:
