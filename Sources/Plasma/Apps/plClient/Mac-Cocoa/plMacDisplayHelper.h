@@ -43,25 +43,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMacDisplayHelper_hpp
 #define plMacDisplayHelper_hpp
 
-// Currently requires Metal to query attached GPU capabilities
-// Capability check will also work for GL - but will need something
-// different for older GPUs.
-#include <AppKit/AppKit.h>
-#include <QuartzCore/QuartzCore.h>
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1090
+#   include <ApplicationServices/ApplicationServices.h>
+#else
+#   include <CoreGraphics/CoreGraphics.h>
+#endif
 
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plPipeline/pl3DPipeline.h"
+
+#ifdef __OBJC__
+@class NSScreen;
+#else
+class NSScreen;
+#endif
 
 class plMacDisplayHelper : public plDisplayHelper
 {
 public:
     plMacDisplayHelper();
-    
 
     CGDirectDisplayID CurrentDisplay() const { return fCurrentDisplay; }
 
     plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
     std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const override;
+    hsDisplayHndl DefaultDisplay() const override;
 
 private:
     mutable CGDirectDisplayID          fCurrentDisplay;
