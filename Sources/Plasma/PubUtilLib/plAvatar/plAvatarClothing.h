@@ -65,6 +65,7 @@ class plSharedMesh;
 class plStateDataRecord;
 class plDXPipeline;
 class plMetalPipeline;
+class plGLPipeline;
 
 struct plClothingItemOptions
 {
@@ -165,6 +166,7 @@ class plClothingOutfit : public plSynchedObject
 {
     friend class plDXPipeline;
     friend class plMetalPipeline;
+    friend class plGLPipeline;
 
 public:
     plArmatureMod *fAvatar;

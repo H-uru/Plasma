@@ -39,50 +39,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-
-#ifndef _plGLPlateManager_inc_
-#define _plGLPlateManager_inc_
+#ifndef _plGLTextFont_h
+#define _plGLTextFont_h
 
 #include "plGLDeviceRef.h"
+#include "plPipeline/plTextFont.h"
 
-#include "hsGeometry3.h"
-#include "plPipeline/plPlates.h"
+class plPipeline;
+class plGLDevice;
 
-class plGLPipeline;
-
-
-class plGLPlateManager : public plPlateManager
+class plGLTextFont : public plTextFont
 {
-    friend class plGLPipeline;
+protected:
+    GLuint fTexture;
+    GLuint fBuffer;
+    GLuint fState;
+    GLuint fShader;
+    uint32_t fBufferCursor;
+
+    void ICreateTexture(uint16_t* data) override;
+    void IInitStateBlocks() override;
+    void IDrawPrimitive(uint32_t count, plFontVertex* array) override;
+    void IDrawLines(uint32_t count, plFontVertex* array) override;
 
 public:
-    virtual ~plGLPlateManager();
+    plGLTextFont(plPipeline* pipe, plGLDevice* device);
+    ~plGLTextFont();
 
-protected:
-    struct plPlateVertex
-    {
-        hsPoint3 fPoint;
-        hsVector3 fNormal;
-        uint32_t fColor;
-        hsPoint3 fUV;
-    };
-
-    struct plPlateBuffers
-    {
-        GLuint VRef;
-        GLuint IRef;
-        GLuint ARef;
-    };
-
-    plPlateBuffers fBuffers;
-
-    plGLPlateManager(plGLPipeline* pipe);
-
-    void ICreateGeometry();
-    void IReleaseGeometry();
-
-    void IDrawToDevice(plPipeline* pipe) override;
+    void FlushDraws() override;
+    void SaveStates() override;
+    void RestoreStates() override;
+    void DestroyObjects() override;
 };
 
-#endif //_plGLPlateManager_inc_
-
+#endif // _plGLTextFont_h

@@ -43,20 +43,60 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plGLDevice_h_
 
 #include "hsMatrix44.h"
+#include "plGLDeviceRef.h"
 
 #include <string_theory/string>
 
+class plBitmap;
+class plCubicEnvironmap;
 class plGLPipeline;
+class plLayerInterface;
+class plMipmap;
 class plRenderTarget;
+
+class plGLDeviceImpl
+{
+protected:
+    hsWindowHndl    fWindow;
+    hsWindowHndl    fDevice;
+
+    plGLDeviceImpl(hsWindowHndl window, hsWindowHndl device)
+        : fWindow(window), fDevice(device) {};
+
+public:
+    virtual ~plGLDeviceImpl() { };
+
+    virtual void Shutdown() = 0;
+    virtual bool BeginRender(ST::string& error) = 0;
+    virtual bool EndRender(ST::string& error) = 0;
+};
 
 class plGLDevice
 {
+public:
+    typedef plGLVertexBufferRef VertexBufferRef;
+    typedef plGLIndexBufferRef  IndexBufferRef;
+    typedef plGLTextureRef      TextureRef;
+
 protected:
     ST::string fErrorMsg;
     plGLPipeline*       fPipeline;
+    plGLDeviceImpl*     fImpl;
+    hsWindowHndl        fWindow;
+    hsWindowHndl        fDevice;
+    size_t              fActiveThread;
+    GLuint              fCurrentProgram;
+    GLfloat             fMatrixL2W[16];
+    GLfloat             fMatrixW2L[16];
+    GLfloat             fMatrixW2C[16];
+    GLfloat             fMatrixC2W[16];
+    GLfloat             fMatrixProj[16];
 
 public:
     plGLDevice();
+
+    void Setup(plGLPipeline* pipe, hsWindowHndl window, hsWindowHndl device);
+    void Shutdown();
 
     /**
      * Set rendering to the specified render target.
@@ -66,19 +106,53 @@ public:
      */
     void SetRenderTarget(plRenderTarget* target);
 
-    /** Translate our viewport into a D3D viewport. */
+    /** Translate our viewport into a GL viewport. */
     void SetViewport();
 
+    bool BeginRender();
+
+    /**
+     * Tell GL we're through rendering for this frame, and flip the back buffer
+     * to front.
+     */
+    bool EndRender();
+
+    /* Device Ref Functions **************************************************/
+    void SetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, VertexBufferRef* vRef);
+    void CheckStaticVertexBuffer(VertexBufferRef* vRef, plGBufferGroup* owner, uint32_t idx);
+    void FillStaticVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx);
+    void FillVolatileVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx);
+    void SetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, IndexBufferRef* iRef);
+    void CheckIndexBuffer(IndexBufferRef* iRef);
+    void FillIndexBufferRef(IndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx);
+    void SetupTextureRef(plLayerInterface* layer, plBitmap* img, TextureRef* tRef);
+    void CheckTexture(TextureRef* tRef);
+    void MakeTextureRef(TextureRef* tRef, plLayerInterface* layer, plMipmap* img);
+    void MakeCubicTextureRef(TextureRef* tRef, plLayerInterface* layer, plCubicEnvironmap* img);
 
     void SetProjectionMatrix(const hsMatrix44& src);
     void SetWorldToCameraMatrix(const hsMatrix44& src);
     void SetLocalToWorldMatrix(const hsMatrix44& src);
 
-    struct VertexBufferRef;
-    struct IndexBufferRef;
-    struct TextureRef;
+    void SetCurrentProgram(GLuint program) { fCurrentProgram = program; }
 
     ST::string GetErrorString() const { return fErrorMsg; }
+
+    bool HasContext() const { return fImpl != nullptr; }
+
+    const GLfloat* GetL2WMatrix() const { return fMatrixL2W; }
+    const GLfloat* GetW2LMatrix() const { return fMatrixW2L; }
+    const GLfloat* GetC2WMatrix() const { return fMatrixC2W; }
+    const GLfloat* GetW2CMatrix() const { return fMatrixW2C; }
+    const GLfloat* GetProjectionMatrix() const { return fMatrixProj; }
+
+private:
+    /**
+     * Initializes the OpenGL rendering context.
+     */
+    bool InitDevice();
+
+    void BindTexture(TextureRef* tRef, plMipmap* img, GLuint mapping);
 };
 
 #endif

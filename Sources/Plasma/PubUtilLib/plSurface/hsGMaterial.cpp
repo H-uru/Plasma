@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plProfile.h"
 #include "hsResMgr.h"
+#include "hsGDeviceRef.h"
 
 #include "plLayer.h"
 #include "plLayerInterface.h"
@@ -61,18 +62,17 @@ plLayer defaultLayer;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-hsGMaterial::hsGMaterial() :
-fLOD(0),
-fCompFlags(0),
-fLoadFlags(0),
-fLastUpdateTime(0),
-fDeviceRef()
+hsGMaterial::hsGMaterial()
+    : fLOD(), fCompFlags(), fLoadFlags(), fLastUpdateTime(), fDeviceRef()
 {
 }
 
 hsGMaterial::~hsGMaterial()
 {
     IClearLayers();
+
+    if (fDeviceRef != nullptr)
+        hsRefCnt_SafeUnRef(fDeviceRef);
 }
 
 plLayerInterface* hsGMaterial::GetPiggyBack(size_t which)

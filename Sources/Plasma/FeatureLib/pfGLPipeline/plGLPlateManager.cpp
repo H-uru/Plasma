@@ -40,16 +40,187 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plGLMaterialShaderRef.h"
 #include "plGLPlateManager.h"
 #include "plGLPipeline.h"
 
 plGLPlateManager::plGLPlateManager(plGLPipeline* pipe)
-    : plPlateManager(pipe)
+    : plPlateManager(pipe), fBuffers { 0, 0, 0 }
 {}
 
 plGLPlateManager::~plGLPlateManager()
-{}
+{
+    IReleaseGeometry();
+}
+
+void plGLPlateManager::ICreateGeometry()
+{
+    plPlateVertex verts[4];
+
+    verts[0].fPoint.Set(-0.5f, -0.5f, 0.0f);
+    verts[0].fNormal.Set(0.0f, 0.0f, 1.0f);
+    verts[0].fColor = 0xffffffff;
+    verts[0].fUV.Set(0.0f, 0.0f, 0.0f);
+
+    verts[1].fPoint.Set(-0.5f, 0.5f, 0.0f);
+    verts[1].fNormal.Set(0.0f, 0.0f, 1.0f);
+    verts[1].fColor = 0xffffffff;
+    verts[1].fUV.Set(0.0f, 1.0f, 0.0f);
+
+    verts[2].fPoint.Set(0.5f, -0.5f, 0.0f);
+    verts[2].fNormal.Set(0.0f, 0.0f, 1.0f);
+    verts[2].fColor = 0xffffffff;
+    verts[2].fUV.Set(1.0f, 0.0f, 0.0f);
+
+    verts[3].fPoint.Set(0.5f, 0.5f, 0.0f);
+    verts[3].fNormal.Set(0.0f, 0.0f, 1.0f);
+    verts[3].fColor = 0xffffffff;
+    verts[3].fUV.Set(1.0f, 1.0f, 0.0f);
+
+    uint16_t indices[6] = {0, 1, 2, 1, 2, 3};
+
+
+    GLuint vbo, ibo, vao = 0;
+
+    if (plGLVersion() >= 45) {
+        glCreateBuffers(1, &vbo);
+        glObjectLabel(GL_BUFFER, vbo, -1, "plPlate/VBO");
+        glNamedBufferStorage(vbo, sizeof(verts), verts, 0);
+
+        glCreateBuffers(1, &ibo);
+        glObjectLabel(GL_BUFFER, ibo, -1, "plPlate/IBO");
+        glNamedBufferStorage(ibo, sizeof(indices), indices, 0);
+
+        glCreateVertexArrays(1, &vao);
+        glObjectLabel(GL_VERTEX_ARRAY, vao, -1, "plPlate/VAO");
+
+        glVertexArrayVertexBuffer(vao, 0, vbo, 0, sizeof(plPlateVertex));
+        glVertexArrayElementBuffer(vao, ibo);
+
+        glEnableVertexArrayAttrib(vao, kVtxPosition);
+        glEnableVertexArrayAttrib(vao, kVtxNormal);
+        glEnableVertexArrayAttrib(vao, kVtxColor);
+        glEnableVertexArrayAttrib(vao, kVtxUVWSrc);
+
+        glVertexArrayAttribFormat(vao, kVtxPosition, 3, GL_FLOAT, GL_FALSE, offsetof(plPlateVertex, fPoint));
+        glVertexArrayAttribFormat(vao, kVtxNormal, 3, GL_FLOAT, GL_FALSE, offsetof(plPlateVertex, fNormal));
+        glVertexArrayAttribFormat(vao, kVtxColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, offsetof(plPlateVertex, fColor));
+        glVertexArrayAttribFormat(vao, kVtxUVWSrc, 3, GL_FLOAT, GL_FALSE, offsetof(plPlateVertex, fUV));
+
+        glVertexArrayAttribBinding(vao, kVtxPosition, 0);
+        glVertexArrayAttribBinding(vao, kVtxNormal, 0);
+        glVertexArrayAttribBinding(vao, kVtxColor, 0);
+        glVertexArrayAttribBinding(vao, kVtxUVWSrc, 0);
+    } else {
+        if (plGLVersion() >= 30) {
+            glGenVertexArrays(1, &vao);
+            glBindVertexArray(vao);
+        }
+
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
+
+        glGenBuffers(1, &ibo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+        if (plGLVersion() >= 30) {
+            glEnableVertexAttribArray(kVtxPosition);
+            glVertexAttribPointer(kVtxPosition, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), (void*)(sizeof(float) * 0));
+
+            glEnableVertexAttribArray(kVtxNormal);
+            glVertexAttribPointer(kVtxNormal, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), (void*)(sizeof(float) * 3));
+
+            glEnableVertexAttribArray(kVtxColor);
+            glVertexAttribPointer(kVtxColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(plPlateVertex), (void*)(sizeof(float) * 3 * 2));
+
+            glEnableVertexAttribArray(kVtxUVWSrc);
+            glVertexAttribPointer(kVtxUVWSrc, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), (void*)((sizeof(float) * 3 * 2) + sizeof(uint32_t)));
+
+            glBindVertexArray(0);
+        }
+    }
+
+    fBuffers = {vbo, ibo, vao };
+}
+
+void plGLPlateManager::IReleaseGeometry()
+{
+    if (plGLVersion() >= 30 && fBuffers.ARef) {
+        if (plGLVersion() >= 45) {
+            glDisableVertexArrayAttrib(fBuffers.ARef, kVtxPosition);
+            glDisableVertexArrayAttrib(fBuffers.ARef, kVtxNormal);
+            glDisableVertexArrayAttrib(fBuffers.ARef, kVtxColor);
+            glDisableVertexArrayAttrib(fBuffers.ARef, kVtxUVWSrc);
+        }
+
+        glDeleteVertexArrays(1, &fBuffers.ARef);
+        fBuffers.ARef = 0;
+    }
+
+    if (fBuffers.VRef) {
+        glDeleteBuffers(1, &fBuffers.VRef);
+        fBuffers.VRef = 0;
+    }
+
+    if (fBuffers.IRef) {
+        glDeleteBuffers(1, &fBuffers.IRef);
+        fBuffers.IRef = 0;
+    }
+}
 
 void plGLPlateManager::IDrawToDevice(plPipeline* pipe)
-{}
+{
+    plGLPipeline* glPipe = static_cast<plGLPipeline*>(pipe);
+    uint32_t scrnWidthDiv2  = fOwner->Width() >> 1;
+    uint32_t scrnHeightDiv2 = fOwner->Height() >> 1;
+    plPlate* plate = nullptr;
 
+    if (fBuffers.VRef == 0 || fBuffers.IRef == 0) {
+        ICreateGeometry();
+
+        if (fBuffers.VRef == 0 || fBuffers.IRef == 0)
+            return;
+    }
+
+    if (plGLVersion() >= 30) {
+        if (fBuffers.ARef == 0)
+            return;
+
+        glBindVertexArray(fBuffers.ARef);
+    } else {
+        glBindBuffer(GL_ARRAY_BUFFER, fBuffers.VRef);
+
+        glVertexAttribPointer(kVtxPosition, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), (void*)(sizeof(float) * 0));
+        glEnableVertexAttribArray(kVtxPosition);
+
+        glVertexAttribPointer(kVtxNormal, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), (void*)(sizeof(float) * 3));
+        glEnableVertexAttribArray(kVtxNormal);
+
+        glVertexAttribPointer(kVtxColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(plPlateVertex), (void*)(sizeof(float) * 3 * 2));
+        glEnableVertexAttribArray(kVtxColor);
+
+        glVertexAttribPointer(kVtxUVWSrc, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), (void*)((sizeof(float) * 3 * 2) + sizeof(uint32_t)));
+        glEnableVertexAttribArray(kVtxUVWSrc);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, fBuffers.IRef);
+    }
+
+    glPipe->fDevice.SetWorldToCameraMatrix(hsMatrix44::IdentityMatrix());
+
+    GLboolean cull = glIsEnabled(GL_CULL_FACE);
+    if (cull)
+        glDisable(GL_CULL_FACE);
+
+    for (plate = fPlates; plate != nullptr; plate = plate->GetNext()) {
+        if (plate->IsVisible())
+            glPipe->IDrawPlate(plate);
+    }
+
+    if (cull)
+        glEnable(GL_CULL_FACE);
+
+    if (plGLVersion() >= 30)
+        glBindVertexArray(0);
+}

@@ -46,6 +46,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/pl3DPipeline.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
 
+class plIcicle;
+class plGLMaterialShaderRef;
+class plGLVertexBufferRef;
+class plPlate;
+
 class plGLEnumerate
 {
 public:
@@ -60,10 +65,19 @@ private:
 class plGLPipeline : public pl3DPipeline<plGLDevice>
 {
     friend class plGLPlateManager;
+    friend class plGLDevice;
+    friend class plGLMaterialShaderRef;
+
+protected:
+    typedef void(*blend_vert_buffer_ptr)(plSpan*, hsMatrix44*, int, const uint8_t*, uint8_t , uint32_t, uint8_t*, uint32_t, uint32_t, uint16_t);
+    static hsCpuFunctionDispatcher<blend_vert_buffer_ptr> blend_vert_buffer;
+
+    plGLMaterialShaderRef*  fMatRefList;
+    plGLRenderTargetRef*    fRenderTargetRefList;
 
 public:
     plGLPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode);
-    virtual ~plGLPipeline() = default;
+    virtual ~plGLPipeline();
 
     CLASSNAME_REGISTER(plGLPipeline);
     GETINTERFACE_ANY(plGLPipeline, plPipeline);
@@ -76,33 +90,20 @@ public:
     /*** VIRTUAL METHODS ***/
     bool PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
     bool PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
-    void Render(plDrawable* d, const std::vector<int16_t>& visList) override;
     plTextFont* MakeTextFont(ST::string face, uint16_t size) override;
-    void CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
-    void CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
     bool OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly) override;
     bool CloseAccess(plAccessSpan& acc) override;
-    void CheckTextureRef(plLayerInterface* lay) override;
     void PushRenderRequest(plRenderRequest* req) override;
     void PopRenderRequest(plRenderRequest* req) override;
     void ClearRenderTarget(plDrawable* d) override;
     void ClearRenderTarget(const hsColorRGBA* col = nullptr, const float* depth = nullptr) override;
     hsGDeviceRef* MakeRenderTargetRef(plRenderTarget* owner) override;
-    void PushRenderTarget(plRenderTarget* target) override;
-    plRenderTarget* PopRenderTarget() override;
     bool BeginRender() override;
     bool EndRender() override;
     void RenderScreenElements() override;
     bool IsFullScreen() const override;
-    uint32_t ColorDepth() const override;
     void Resize(uint32_t width, uint32_t height) override;
-    bool CheckResources() override;
     void LoadResources() override;
-    void SetZBiasScale(float scale) override;
-    float GetZBiasScale() const override;
-    void SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w) override;
-    void RefreshScreenMatrices() override;
-    void SubmitClothingOutfit(plClothingOutfit* co) override;
     bool SetGamma(float eR, float eG, float eB) override;
     bool SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) override;
     bool CaptureScreen(plMipmap* dest, bool flipVertical = false, uint16_t desiredWidth = 0, uint16_t desiredHeight = 0) override;
@@ -112,6 +113,64 @@ public:
     int GetMaxAntiAlias(int Width, int Height, int ColorDepth) override;
     void ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync = false  ) override;
     void RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>& visList) override;
+
+protected:
+    void ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, plGLMaterialShaderRef* mRef, hsMatrix44& lastL2W);
+    void IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb, hsGDeviceRef* ib, hsGMaterial* material, uint32_t vStart, uint32_t vLength, uint32_t iStart, uint32_t iLength);
+
+    /**
+     * Only software skinned objects, dynamic decals, and particle systems
+     * currently use the dynamic vertex buffer.
+     */
+    bool IRefreshDynVertices(plGBufferGroup* group, plGLVertexBufferRef* vRef);
+
+    /**
+     * Make sure the buffers underlying this span are ready to be rendered.
+     * Meaning that the underlying GL buffers are in sync with the plasma
+     * buffers.
+     */
+    bool ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* group, const plSpan* span);
+
+    void IHandleZMode(hsGMatState flags);
+    void IHandleBlendMode(hsGMatState flags);
+
+    /**
+     * Tests and sets the current winding order cull mode (CW, CCW, or none).
+     * Will reverse the cull mode as necessary for left handed camera or local
+     * to world transforms.
+     */
+    void ISetCullMode();
+
+    void ICalcLighting(plGLMaterialShaderRef* mRef, const plLayerInterface* currLayer, const plSpan* currSpan);
+    void ISelectLights(const plSpan* span, plGLMaterialShaderRef* mRef, bool proj = false);
+    void IEnableLight(plGLMaterialShaderRef* mRef, size_t i, plLightInfo* light);
+    void IDisableLight(plGLMaterialShaderRef* mRef, size_t i);
+    void IScaleLight(plGLMaterialShaderRef* mRef, size_t i, float scale);
+    void IDrawPlate(plPlate* plate);
+    void IPreprocessAvatarTextures();
+    void IDrawClothingQuad(float x, float y, float w, float h, float uOff, float vOff, plMipmap *tex);
+
+    /**
+     * Emulate matrix palette operations in software.
+     *
+     * The big difference between the hardware and software versions is we only
+     * want to lock the vertex buffer once and blend all the verts we're going
+     * to in software, so the vertex blend happens once for an entire drawable.
+     * In hardware, we want the opposite, to break it into managable chunks,
+     * manageable meaning few enough matrices to fit into hardware registers.
+     * So for hardware version, we set up our palette, draw a span or few,
+     * setup our matrix palette with new matrices, draw, repeat.
+     */
+    bool ISoftwareVertexBlend(plDrawableSpans* drawable, const std::vector<int16_t>& visList);
+
+    /**
+     * Given a pointer into a buffer of verts that have blending data in the
+     * plVertCoder format, blends them into the destination buffer given
+     * without the blending info.
+     */
+    void IBlendVertsIntoBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMatrices, const uint8_t* src, uint8_t format, uint32_t srcStride, uint8_t* dest, uint32_t destStride, uint32_t count, uint16_t localUVWChans) {
+        blend_vert_buffer.call(span, matrixPalette, numMatrices, src, format, srcStride, dest, destStride, count, localUVWChans);
+    };
 
 private:
     static plGLEnumerate enumerator;

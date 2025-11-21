@@ -39,27 +39,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plPipeline/hsWinRef.h"
 
 #include "plGLPipeline.h"
 #include "plGLDeviceRef.h"
 
 #include "plProfile.h"
-#include "plStatusLog/plStatusLog.h"
 
-plProfile_CreateMemCounter("Vertices", "Memory", MemVertex);
-plProfile_CreateMemCounter("Indices", "Memory", MemIndex);
-plProfile_CreateMemCounter("Textures", "Memory", MemTexture);
+plProfile_Extern(MemVertex);
+plProfile_Extern(MemIndex);
+plProfile_Extern(MemTexture);
 
 
 /*****************************************************************************
  ** Generic plGLDeviceRef Functions                                         **
  *****************************************************************************/
 plGLDeviceRef::plGLDeviceRef()
-{
-    fNext = nullptr;
-    fBack = nullptr;
-}
+    : fRef(), fNext(), fBack()
+{ }
 
 plGLDeviceRef::~plGLDeviceRef()
 {
@@ -88,4 +84,84 @@ void plGLDeviceRef::Link(plGLDeviceRef** back)
         (*back)->fBack = &fNext;
     fBack = back;
     *back = this;
+}
+
+
+/*****************************************************************************
+ ** Vertex buffer cleanup Functions                                         **
+ *****************************************************************************/
+
+plGLVertexBufferRef::~plGLVertexBufferRef()
+{
+    Release();
+}
+
+
+void plGLVertexBufferRef::Release()
+{
+    if (fRef) {
+        glDeleteBuffers(1, &fRef);
+        fRef = 0;
+    }
+
+    if (fData) {
+        delete[] fData;
+    }
+
+    SetDirty(true);
+}
+
+
+/*****************************************************************************
+ ** Index buffer cleanup Functions                                          **
+ *****************************************************************************/
+
+plGLIndexBufferRef::~plGLIndexBufferRef()
+{
+    Release();
+}
+
+void plGLIndexBufferRef::Release()
+{
+    if (fRef) {
+        glDeleteBuffers(1, &fRef);
+        fRef = 0;
+    }
+    SetDirty(true);
+}
+
+
+/*****************************************************************************
+ ** Texture Reference cleanup Functions                                     **
+ *****************************************************************************/
+
+plGLTextureRef::~plGLTextureRef()
+{
+    Release();
+}
+
+
+void plGLTextureRef::Release()
+{
+    if (fRef) {
+        glDeleteTextures(1, &fRef);
+        fRef = 0;
+    }
+    SetDirty(true);
+}
+
+
+/*****************************************************************************
+ ** FrameBuffer cleanup Functions                                           **
+ *****************************************************************************/
+
+plGLRenderTargetRef::~plGLRenderTargetRef()
+{
+    Release();
+}
+
+void plGLRenderTargetRef::Release()
+{
+    plGLTextureRef::Release();
+    SetDirty(true);
 }

@@ -2,22 +2,33 @@ set(pfGLPipeline_SOURCES
     plGLDevice.cpp
     plGLEnumerate.cpp
     plGLDeviceRefs.cpp
+    plGLMaterialShaderRef.cpp
     plGLPipeline.cpp
     plGLPlateManager.cpp
+    plGLTextFont.cpp
+    $<$<PLATFORM_ID:Darwin>:plCGLDevice.cpp>
+    plEGLDevice.cpp
+    $<$<PLATFORM_ID:Windows>:plWGLDevice.cpp>
 )
 
 set(pfGLPipeline_HEADERS
     plGLDevice.h
     plGLDeviceRef.h
+    plGLMaterialShaderRef.h
     plGLPipeline.h
     pfGLPipelineCreatable.h
     plGLPlateManager.h
+    plGLTextFont.h
+    plCGLDevice.h
+    plEGLDevice.h
+    plWGLDevice.h
 )
 
 plasma_library(pfGLPipeline
     FOLDER FeatureLib
     SOURCES ${pfGLPipeline_SOURCES} ${pfGLPipeline_HEADERS}
 )
+plasma_target_simd_sources(pfGLPipeline SSE3 SSE41 plGLPipeline.cpp)
 target_link_libraries(pfGLPipeline
     PUBLIC
         CoreLib

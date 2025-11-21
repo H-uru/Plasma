@@ -75,17 +75,6 @@ private:
     static void Enumerate(std::vector<hsG3DDeviceRecord>& records);
 };
 
-//// Helper Classes ///////////////////////////////////////////////////////////
-
-//// The RenderPrimFunc lets you have one function which does a lot of stuff
-// around the actual call to render whatever type of primitives you have, instead
-// of duplicating everything because the one line to render is different.
-class plRenderPrimFunc
-{
-public:
-    virtual bool RenderPrims() const = 0; // return true on error
-};
-
 class plMetalPipeline : public pl3DPipeline<plMetalDevice>
 {
 public:
@@ -96,7 +85,7 @@ protected:
     friend class plMetalDevice;
     friend class plMetalPlateManager;
     friend class plMetalMaterialShaderRef;
-    friend class plRenderTriListFunc;
+    friend class plMetalRenderTriListFunc;
     friend class plMetalTextFont;
 
     plMetalMaterialShaderRef* fMatRefList;
@@ -153,15 +142,7 @@ public:
     bool           IHandleMaterialPass(hsGMaterial* material, uint32_t pass, const plSpan* currSpan, const plMetalVertexBufferRef* vRef, const bool allowShaders = true);
     plMetalDevice* GetMetalDevice() const;
 
-    // Create and/or Refresh geometry buffers
-    void          CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
-    void          CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
-    void          CheckTextureRef(plLayerInterface* lay) override;
-    void          CheckTextureRef(plBitmap* bitmap);
-    hsGDeviceRef* MakeTextureRef(plBitmap* bitmap);
     void          IReloadTexture(plBitmap* bitmap, plMetalTextureRef* ref);
-
-    uint32_t IGetBufferFormatSize(uint8_t format) const;
 
     plRenderTarget* PopRenderTarget() override;
 
@@ -188,7 +169,6 @@ private:
     void IPreprocessAvatarTextures();
     void IDrawClothingQuad(float x, float y, float w, float h,
                            float uOff, float vOff, plMipmap* tex);
-    void IClearShadowSlaves();
 
     void ICreateDeviceObjects();
     void IReleaseDynDeviceObjects();
@@ -196,13 +176,7 @@ private:
     void IReleaseDynamicBuffers();
     void IReleaseDeviceObjects();
 
-    bool IIsViewLeftHanded();
     void ISetCullMode(bool flip = false);
-
-    plLayerInterface* IPushOverBaseLayer(plLayerInterface* li);
-    plLayerInterface* IPopOverBaseLayer(plLayerInterface* li);
-    plLayerInterface* IPushOverAllLayer(plLayerInterface* li);
-    plLayerInterface* IPopOverAllLayer(plLayerInterface* li);
 
     void IPushPiggyBacks(hsGMaterial* mat);
     void IPopPiggyBacks();
@@ -271,8 +245,6 @@ private:
     bool                        fLightingPerPixel;
 
     static plMetalEnumerate enumerator;
-
-    plTextFont* fTextFontRefList;
 
     NS::AutoreleasePool* fCurrentPool;
 
