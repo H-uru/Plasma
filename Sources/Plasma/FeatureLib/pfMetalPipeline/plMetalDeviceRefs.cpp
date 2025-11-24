@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plMetalDeviceRef.h"
+#include "plMetalLightRef.h"
 #include "plMetalPipeline.h"
 #include "plPipeline/hsWinRef.h"
 #include "plProfile.h"
@@ -156,4 +157,71 @@ void plMetalRenderTargetRef::Release()
     }
     plMetalTextureRef::Release();
     SetDirty(true);
+}
+
+void plMetalLightRef::UpdateMetalInfo(plMetalShaderLightSource* dev)
+{
+    hsColorRGBA amb = fOwner->GetAmbient();
+    dev->ambient = {static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), static_cast<half>(amb.a)};
+
+    hsColorRGBA diff = fOwner->GetDiffuse();
+    dev->diffuse = {static_cast<half>(diff.r), static_cast<half>(diff.g), static_cast<half>(diff.b), static_cast<half>(diff.a)};
+
+    hsColorRGBA spec = fOwner->GetSpecular();
+    dev->specular = {static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b), static_cast<half>(spec.a)};
+
+    plDirectionalLightInfo* dirLight = nullptr;
+    plOmniLightInfo*        omniLight = nullptr;
+    plSpotLightInfo*        spotLight = nullptr;
+
+    constexpr float kMaxRange = 32767.f;
+    dev->range = kMaxRange;
+
+    if ((dirLight = plDirectionalLightInfo::ConvertNoRef(fOwner)) != nullptr) {
+        hsVector3 lightDir = dirLight->GetWorldDirection();
+        dev->position = {lightDir.fX, lightDir.fY, lightDir.fZ, 0.0};
+        dev->direction = {lightDir.fX, lightDir.fY, lightDir.fZ};
+
+        dev->constAtten = 1.0f;
+        dev->linAtten = 0.0f;
+        dev->quadAtten = 0.0f;
+
+    } else if ((omniLight = plOmniLightInfo::ConvertNoRef(fOwner)) != nullptr) {
+        hsPoint3 pos = omniLight->GetWorldPosition();
+        dev->position = {pos.fX, pos.fY, pos.fZ, 1.0};
+
+        dev->constAtten = omniLight->GetConstantAttenuation();
+        dev->linAtten = omniLight->GetLinearAttenuation();
+        dev->quadAtten = omniLight->GetQuadraticAttenuation();
+
+        if (omniLight->GetRadius() != 0.f) {
+            dev->range = omniLight->GetRadius();
+        }
+
+        if (!omniLight->GetProjection() && (spotLight = plSpotLightInfo::ConvertNoRef(omniLight)) != nullptr) {
+            hsVector3 lightDir = spotLight->GetWorldDirection();
+            dev->direction = {lightDir.fX, lightDir.fY, lightDir.fZ};
+
+            float falloff = spotLight->GetFalloff();
+            float gamma = cosf(spotLight->GetSpotInner());
+            float phi = cosf(spotLight->GetProjection() ? hsConstants::half_pi<float> : spotLight->GetSpotOuter());
+
+            dev->spotProps = {falloff, gamma, phi};
+        } else {
+            dev->spotProps = {0.0f, 0.0f, 0.0f};
+        }
+    }
+}
+
+plMetalLightRef::~plMetalLightRef()
+{
+    Release();
+}
+
+void plMetalLightRef::Release()
+{
+    // Nothing to do here
+    // The DX version had to release DX resources,
+    // but once this light is gone is just won't be sent
+    // to the next render
 }

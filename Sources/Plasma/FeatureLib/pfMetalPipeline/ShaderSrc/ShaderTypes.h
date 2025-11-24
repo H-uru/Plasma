@@ -57,30 +57,32 @@ typedef __attribute__((__ext_vector_type__(4))) half half4;
 enum plMetalShaderArgument
 {
     /// Material State
-    VertexShaderArgumentFixedFunctionUniforms           = 2,
+    VertexShaderArgumentFixedFunctionUniforms = 2,
     /// Uniform table for Plasma dynamic shaders
-    VertexShaderArgumentMaterialShaderUniforms          = 3,
+    VertexShaderArgumentMaterialShaderUniforms = 3,
     /// Light Table
-    VertexShaderArgumentLights                          = 4,
+    ShaderLights = 4,
     /// Material properties for vertex lighting
-    VertexShaderArgumentMaterialLighting                = 5,
+    VertexShaderArgumentMaterialLighting = 5,
     /// Blend matrix for GPU side animation blending
-    VertexShaderArgumentBlendMatrix1                    = 6,
+    VertexShaderArgumentBlendMatrix1 = 6,
     /// Describes the state of a shadow caster for shadow cast shader
-    VertexShaderArgumentShadowState                     = 9,
-    
+    VertexShaderArgumentShadowState = 9,
+    /// Table of active light indices/strengths for the material to be rendered
+    ShaderActiveLights = 12,
+    /// Count of the active lights for the material to be rendered
+    ShaderActiveLightCount = 13,
+
     /// Texture is a legacy argument for the simpler plate shader
-    FragmentShaderArgumentTexture                       = 1,
+    FragmentShaderArgumentTexture = 1,
     /// Fragment uniforms
-    FragmentShaderArgumentShadowCastUniforms            = 4,
+    FragmentShaderArgumentShadowCastUniforms = 4,
     /// Legacy argument buffer
-    FragmentShaderArgumentUniforms                      = 5,
+    FragmentShaderArgumentUniforms = 5,
     /// Layer index of alpha for shadow fragment shader
-    FragmentShaderArgumentShadowCastAlphaSrc            = 8,
-    /// Light Table
-    FragmentShaderArgumentLights                        = 10,
+    FragmentShaderArgumentShadowCastAlphaSrc = 8,
     /// Material properties for vertex lighting
-    FragmentShaderArgumentMaterialLighting              = 11
+    FragmentShaderArgumentMaterialLighting = 10,
 };
 
 enum plMetalVertexAttribute
@@ -159,6 +161,11 @@ struct plMetalShaderLightSource
     __fp16 constAtten;
     __fp16 linAtten;
     __fp16 quadAtten;
+};
+
+struct plMetalShaderActiveLight
+{
+    uint index;
     __fp16 scale;
 };
 #ifndef __METAL_VERSION__
@@ -223,25 +230,6 @@ struct VertexUniforms
 };
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<VertexUniforms>, "VertexUniforms must be a trivial type!");
-#endif
-
-#define kMetalMaxLightCount 32
-
-struct plMetalLights
-{
-    uint8_t count;
-    plMetalShaderLightSource lampSources[kMetalMaxLightCount];
-    
-#ifndef __METAL_VERSION__
-    bool operator==(const plMetalLights& rhs) const
-    {
-        size_t lightSize = offsetof(plMetalLights, lampSources) + (sizeof(plMetalShaderLightSource) * count);
-        return rhs.count == count && memcmp(&rhs, this, lightSize ) == 0;
-    }
-#endif
-};
-#ifndef __METAL_VERSION__
-static_assert(std::is_trivial_v<plMetalLights>, "plMetalLights must be a trivial type!");
 #endif
 
 struct plShadowState
