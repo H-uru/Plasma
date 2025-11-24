@@ -171,6 +171,12 @@ typedef struct
     half4 fogColor;
 } ColorInOut;
 
+struct Lighting
+{
+    constant plMetalShaderLightSource * lights      [[ buffer(ShaderLights) ]];
+    constant plMetalShaderActiveLight * activeLights      [[ buffer(ShaderActiveLights) ]];
+    constant uint & lightCount [[ buffer(ShaderActiveLightCount)  ]];
+};
 
 typedef struct
 {
@@ -178,7 +184,7 @@ typedef struct
     float3 texCoord1;
 } ShadowCasterInOut;
     
-half4 calcLitMaterialColor(constant plMetalLights & lights,
+half4 calcLitMaterialColor(Lighting lighting,
                            const half4 materialColor,
                            constant plMaterialLightingDescriptor & materialLighting,
                            const float4 position,
@@ -191,47 +197,48 @@ half4 calcLitMaterialColor(constant plMetalLights & lights,
     const half4 MDiffuse = mix(materialColor, materialLighting.diffuseCol, materialLighting.diffuseSrc);
     const half3 MEmissive = mix(materialColor.rgb, materialLighting.emissiveCol, materialLighting.emissiveSrc);
     
-    for (size_t i = 0; i < lights.count; i++) {
-        constant const plMetalShaderLightSource *lightSource = &lights.lampSources[i];
-        if (lightSource->scale == 0.0h)
+    for (size_t i = 0; i < lighting.lightCount; i++) {
+        constant const plMetalShaderActiveLight* activeLight = &lighting.activeLights[i];
+        constant const plMetalShaderLightSource& light = lighting.lights[activeLight->index];
+        if (activeLight->scale == 0.0h)
             continue;
 
         // direction.w is attenuation
         float4 direction;
 
-        if (lightSource->position.w == 0.f) {
+        if (light.position.w == 0.f) {
             // Directional Light with no attenuation
-            direction = float4(-(lightSource->direction).xyz, 1.f);
+            direction = float4(-(light.direction).xyz, 1.f);
         } else {
             // Omni Light in all directions
-            const float3 v2l = lightSource->position.xyz - position.xyz;
+            const float3 v2l = light.position.xyz - position.xyz;
             const float distance = length(v2l);
             
-            if (distance > lightSource->range) {
+            if (distance > light.range) {
                 continue;
             }
             
             direction.xyz = normalize(v2l);
 
-            direction.w = 1.f / (lightSource->constAtten + lightSource->linAtten * distance + lightSource->quadAtten * pow(distance, 2.f));
+            direction.w = 1.f / (light.constAtten + light.linAtten * distance + light.quadAtten * pow(distance, 2.f));
 
-            if (lightSource->spotProps.x > 0.f) {
+            if (light.spotProps.x > 0.f) {
                 // Spot Light with cone falloff
-                const float theta = dot(direction.xyz, normalize(-lightSource->direction).xyz);
+                const float theta = dot(direction.xyz, normalize(-light.direction).xyz);
                 // inner cutoff
-                const float gamma = lightSource->spotProps.y;
+                const float gamma = light.spotProps.y;
                 // outer cutoff
-                const float phi = lightSource->spotProps.z;
+                const float phi = light.spotProps.z;
                 const float epsilon = (gamma - phi);
                 const float intensity = clamp((theta - phi) / epsilon, 0.f, 1.f);
 
-                direction.w *= pow(intensity, lightSource->spotProps.x);
+                direction.w *= pow(intensity, light.spotProps.x);
             }
         }
 
-        LAmbient.rgb = LAmbient.rgb + half3(direction.w * (lightSource->ambient.rgb * lightSource->scale));
+        LAmbient.rgb = LAmbient.rgb + half3(direction.w * (light.ambient.rgb * activeLight->scale));
         const float3 dotResult = dot(normal, direction.xyz);
-        LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (lightSource->diffuse.rgb * lightSource->scale) * half3(max(0.f, dotResult) * direction.w);
+        LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (light.diffuse.rgb * activeLight->scale) * half3(max(0.f, dotResult) * direction.w);
     }
 
     const half3 ambient = (MAmbient.rgb) * clamp(materialLighting.globalAmb.rgb + LAmbient.rgb, 0.h, 1.h);
@@ -241,8 +248,8 @@ half4 calcLitMaterialColor(constant plMetalLights & lights,
 
 vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
                                        constant VertexUniforms & uniforms   [[ buffer(VertexShaderArgumentFixedFunctionUniforms) ]],
+                                       Lighting lighting [[ function_constant(perVertexLighting) ]],
                                        constant plMaterialLightingDescriptor & materialLighting   [[ buffer(VertexShaderArgumentMaterialLighting), function_constant(perVertexLighting) ]],
-                                       constant plMetalLights & lights      [[ buffer(VertexShaderArgumentLights), function_constant(perVertexLighting) ]],
                                        constant float4x4 & blendMatrix1     [[ buffer(VertexShaderArgumentBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]])
 {
     ColorInOut out;
@@ -263,7 +270,7 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
         
         out.vtxColor = inColor;
     } else {
-        out.vtxColor = calcLitMaterialColor(lights, inColor, materialLighting, position, Ndirection);
+        out.vtxColor = calcLitMaterialColor(lighting, inColor, materialLighting, position, Ndirection);
     }
     
     const float4 vCamPosition = position * uniforms.worldToCameraMatrix;
@@ -441,10 +448,10 @@ half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 verte
 
 fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
                                       const FragmentShaderArguments fragmentShaderArgs,
-                                      constant plMetalLights & lights      [[ buffer(FragmentShaderArgumentLights), function_constant(perPixelLighting) ]],
+                                      Lighting lighting [[ function_constant(perPixelLighting) ]],
                                       constant plMaterialLightingDescriptor & materialLighting   [[ buffer(FragmentShaderArgumentMaterialLighting), function_constant(perPixelLighting) ]])
 {
-    const half4 lightingContributionColor = perPixelLighting ? calcLitMaterialColor(lights, in.vtxColor, materialLighting, in.worldPos, in.normal) : in.vtxColor;
+    const half4 lightingContributionColor = perPixelLighting ? calcLitMaterialColor(lighting, in.vtxColor, materialLighting, in.worldPos, in.normal) : in.vtxColor;
     half4 currentColor = lightingContributionColor;
 
     /*

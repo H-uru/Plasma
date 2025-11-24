@@ -55,6 +55,7 @@ class plIcicle;
 class plPlate;
 class plMetalMaterialShaderRef;
 class plAuxSpan;
+class plMetalLightRef;
 class plMetalVertexShader;
 class plMetalFragmentShader;
 class plShadowCaster;
@@ -168,6 +169,9 @@ public:
     MTL::PixelFormat GetFramebufferFormat() { return fDevice.GetFramebufferFormat(); };
     void             SetFramebufferFormat(MTL::PixelFormat format) { fDevice.SetFramebufferFormat(format); };
 
+    void RegisterLight(plLightInfo* light) override;
+    void UnRegisterLight(plLightInfo* light) override;
+
 private:
     VertexUniforms* fCurrentRenderPassUniforms;
     plMaterialLightingDescriptor fCurrentRenderPassMaterialLighting;
@@ -177,10 +181,11 @@ private:
     void FindFragFunction();
 
     void ISelectLights(const plSpan* span, plMetalMaterialShaderRef* mRef, bool proj = false);
-    void IEnableLight(size_t i, plLightInfo* light);
-    void IDisableLight(size_t i);
-    void IScaleLight(size_t i, float scale);
+    void ILoadLight(plLightInfo* light);
+    void IScaleLight(plLightInfo* light, float scale);
+    void LoadLightsOnDevice();
     void ICalcLighting(plMetalMaterialShaderRef* mRef, const plLayerInterface* currLayer, const plSpan* currSpan);
+    hsGDeviceRef* IMakeLightRef(plLightInfo* owner);
     void IHandleBlendMode(hsGMatState flags);
     void IHandleZMode(hsGMatState flags);
 
@@ -263,16 +268,21 @@ private:
 
     uint32_t fCurrRenderLayer;
 
-    void                        PushCurrentLightSources();
-    void                        PopCurrentLightSources();
+    void                        SaveCurrentLightSources();
+    void                        RestoreCurrentLightSources();
     void                        IBindLights();
-    plMetalLights               fLights;
-    std::vector<plMetalLights*> fLightSourceStack;
-    bool                        fLightingPerPixel;
+
+    std::vector<plMetalShaderActiveLight>*             fLights;
+    bool                                               fLightingPerPixel;
+    std::vector<std::vector<plMetalShaderActiveLight>> fLightSourceStack;
 
     static plMetalEnumerate enumerator;
 
     plTextFont* fTextFontRefList;
+    plMetalLightRef* fLightRefList;
+    bool fLightsDirty = true;
+
+    MTL::Buffer* fLightBuffers[3];
 
     NS::AutoreleasePool* fCurrentPool;
 
@@ -292,7 +302,6 @@ private:
         const MTL::RenderPipelineState*                fCurrentPipelineState;
         MTL::Buffer*                                   fCurrentVertexBuffer;
         MTL::DepthStencilState*                        fCurrentDepthStencilState;
-        std::optional<plMetalLights>                   fBoundLights;
         std::optional<plMaterialLightingDescriptor>    fBoundMaterialProperties;
         std::optional<VertexUniforms>                  fCurrentVertexUniforms;
 
