@@ -173,9 +173,9 @@ typedef struct
 
 struct Lighting
 {
-    constant plMetalShaderLightSource * lights      [[ buffer(ShaderLights) ]];
-    constant plMetalShaderActiveLight * activeLights      [[ buffer(ShaderActiveLights) ]];
-    constant uint & lightCount [[ buffer(ShaderActiveLightCount)  ]];
+    constant plMetalShaderLightSource* lights      [[ buffer(ShaderLights) ]];
+    constant plMetalShaderActiveLight* activeLights      [[ buffer(ShaderActiveLights) ]];
+    constant uint& lightCount [[ buffer(ShaderActiveLightCount)  ]];
 };
 
 typedef struct
