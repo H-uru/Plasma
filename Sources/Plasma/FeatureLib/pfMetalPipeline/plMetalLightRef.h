@@ -68,7 +68,7 @@ public:
     {
     }
 
-    virtual ~plMetalLightRef();
+    ~plMetalLightRef();
     void Release() override;
 
     void UpdateMetalInfo(plMetalShaderLightSource* dev);

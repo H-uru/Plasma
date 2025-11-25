@@ -280,7 +280,7 @@ private:
 
     plTextFont* fTextFontRefList;
     plMetalLightRef* fLightRefList;
-    bool fLightsDirty = true;
+    bool fLightsDirty;
 
     MTL::Buffer* fLightBuffers[3];
 

@@ -179,7 +179,7 @@ void plMetalLightRef::UpdateMetalInfo(plMetalShaderLightSource* dev)
 
     if ((dirLight = plDirectionalLightInfo::ConvertNoRef(fOwner)) != nullptr) {
         hsVector3 lightDir = dirLight->GetWorldDirection();
-        dev->position = {lightDir.fX, lightDir.fY, lightDir.fZ, 0.0};
+        dev->position = {lightDir.fX, lightDir.fY, lightDir.fZ, 0.f};
         dev->direction = {lightDir.fX, lightDir.fY, lightDir.fZ};
 
         dev->constAtten = 1.0f;
@@ -188,7 +188,7 @@ void plMetalLightRef::UpdateMetalInfo(plMetalShaderLightSource* dev)
 
     } else if ((omniLight = plOmniLightInfo::ConvertNoRef(fOwner)) != nullptr) {
         hsPoint3 pos = omniLight->GetWorldPosition();
-        dev->position = {pos.fX, pos.fY, pos.fZ, 1.0};
+        dev->position = {pos.fX, pos.fY, pos.fZ, 1.f};
 
         dev->constAtten = omniLight->GetConstantAttenuation();
         dev->linAtten = omniLight->GetLinearAttenuation();

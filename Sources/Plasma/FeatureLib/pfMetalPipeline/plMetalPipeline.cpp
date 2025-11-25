@@ -129,7 +129,7 @@ plProfile_CreateCounter("NumSkin", "PipeC", NumSkin);
 // Command buffer encode limit is 4096 bytes, lets undercut that a bit
 // and max at 256 lights.
 
-#define kMetalMaxLightCount 256
+constexpr size_t kMetalMaxLightCount = 256;
 
 plMetalEnumerate plMetalPipeline::enumerator;
 
@@ -191,6 +191,8 @@ plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, con
 
     fCurrLayerIdx = 0;
     fDevice.fPipeline = this;
+    
+    fLightsDirty = true;
 
     // devMode doesn't actually store a reference to the Metal device
     // We have the display id - go grab the Metal device from the
@@ -1710,7 +1712,7 @@ void plMetalPipeline::IBindLights()
     // will still be 0.
     // lightSize needs to be a uint to load onto into the shader
     uint lightSize = uint(fLights->size());
-    int  bindSize = sizeof(plMetalShaderActiveLight) * fmax(fmin(lightSize, kMetalMaxLightCount), 1);
+    size_t bindSize = sizeof(plMetalShaderActiveLight) * std::clamp(size_t(lightSize), size_t(1), kMetalMaxLightCount);
 
     if (fLightsDirty) {
         if (fLightingPerPixel) {
@@ -2483,8 +2485,7 @@ void plMetalPipeline::ILoadLight(plLightInfo* light)
     auto metalLight = static_cast<plMetalLightRef*>(light->GetDeviceRef());
     // Track the index of the light for this pass so we can find it again
     metalLight->fPassIndex = fLights->size();
-    fLights->push_back({metalLight->fBufferIndex,
-                        1.f});
+    fLights->push_back({metalLight->fBufferIndex, 1.f});
     fLightsDirty = true;
 }
 
@@ -2493,7 +2494,7 @@ void plMetalPipeline::IScaleLight(plLightInfo* light, float scale)
     auto metalLight = static_cast<plMetalLightRef*>(light->GetDeviceRef());
 
     scale = int(scale * 1.e1f) * 1.e-1f;
-    fLights->at(metalLight->fPassIndex).scale = scale;
+    (*fLights)[metalLight->fPassIndex].scale = scale;
     fLightsDirty = true;
 }
 
@@ -2594,8 +2595,7 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
 // we'll just let them push/pop the current state.
 void plMetalPipeline::SaveCurrentLightSources()
 {
-    fLightSourceStack.emplace_back();
-    fLights = &fLightSourceStack.back();
+    fLights = &fLightSourceStack.emplace_back();
     // Metal is always going to want some data - reserve one light
     // We'll pass it to Metal - if it's trash we'll know becuse the
     // count will still be zero.
