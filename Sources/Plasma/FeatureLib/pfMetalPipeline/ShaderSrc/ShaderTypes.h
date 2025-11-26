@@ -167,6 +167,12 @@ struct plMetalShaderActiveLight
 {
     uint index;
     __fp16 scale;
+    
+    plMetalShaderActiveLight(uint indexIn, float scaleIn)
+    {
+        index = indexIn;
+        scale = scaleIn;
+    }
 };
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<plMetalShaderLightSource>, "plMetalShaderLightSource must be a trivial type!");
