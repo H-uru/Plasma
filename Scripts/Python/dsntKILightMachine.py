@@ -47,7 +47,7 @@
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
-import xRandom
+import random
 
 
 #=============================================================
@@ -58,8 +58,8 @@ clkDispensor = ptAttribActivator(1,"clk: KI dispensor")
 respDispensor = ptAttribResponder(2,"resp: KI dispensor")
 respGotKI = ptAttribResponder(3,"resp: got KI")
 sdlKILightFunc = ptAttribString(4,"sdl: KI light func")
-intKILightTime = ptAttribInt(5,"int: Length that Ki light lasts in seconds",0)
-boolKIRandom = ptAttribBoolean(6,"bool: Randomize time light last, longest time is intKILightTime, Shortest is 5s",False)
+intKILightTimeShort = ptAttribInt(5,"int: Length that Ki light when unrepaired",5)
+intKILightTimeLong = ptAttribInt(6,"int: Length that Ki light when repaired",60)
 
 
 #----------
@@ -76,8 +76,8 @@ lightOn = 0
 #----------
 # constants
 #----------
-kLightTimeShort = 5
-kLightTimeLong = 60
+kLightTimeShort = intKILightTimeShort.value
+kLightTimeLong = intKILightTimeLong.value
 listLightResps = ["respKILightOff","respKILightOn"]
 kLightStopID = 1
 kKILightShortSFXRespName = "respSFX-KILight-Short"
@@ -96,8 +96,7 @@ class dsntKILightMachine(ptModifier):
         #PtDebugPrint("DEBUG: dsntKILightMachine.OnServerInitComplete()")
         global byteKILightFunc
         
-        xRandom.seed()
-        xRandom.setmaxseries(2)
+        random.seed()
 
         if sdlKILightFunc.value != "":
             ageSDL = PtGetAgeSDL()
@@ -163,11 +162,6 @@ class dsntKILightMachine(ptModifier):
         global lightOn
         PtDebugPrint("dsntKILightMachine.SetKILightTime(): byteKILightFunc = ",byteKILightFunc)
         lightStart = PtGetDniTime()
-        
-        if intKILightTime.value:
-            kLightTimeLong = intKILightTime.value
-        if boolKIRandom.value:
-            kLightTimeLong = xRandom.random.randint(kLightTimeShort,kLightTimeLong)
 
         if not byteKILightFunc:
             return
@@ -175,6 +169,8 @@ class dsntKILightMachine(ptModifier):
             lightStop = (lightStart + kLightTimeShort)
         elif byteKILightFunc == 2:
             lightStop = (lightStart + kLightTimeLong)
+        elif byteKILightFunc == 3:
+            lightStop = (lightStart + random.randint(kLightTimeShort,kLightTimeLong))
 
         timeRemaining = (lightStop - lightStart)
         PtDebugPrint("timer set, light will shut off in ",timeRemaining," seconds; lightStop = ",lightStop)
