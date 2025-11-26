@@ -103,22 +103,25 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
 
         if (defaultMode == nullptr) {
             // time to go down the rabit hole
-            int maxWidth = std::numeric_limits<int>::max();
+            int maxHeight = std::numeric_limits<int>::max();
             if ([device isLowPower]) {
                 // integrated - not Apple Silicon, we know it's not very good
-                maxWidth = 1080;
+                maxHeight = 1080;
             } else if ([device recommendedMaxWorkingSetSize] < 4000000000) {
                 // if it has less than around 4 gigs of VRAM it might still be performance
                 // limited
-                maxWidth = 1400;
+                maxHeight = 1400;
             }
 
             for (auto& mode : devRec.GetModes()) {
-                if (mode.GetWidth() <= maxWidth) {
+                if (mode.GetHeight() <= maxHeight) {
                     defaultMode = &mode;
                     break;
                 }
             }
+            
+            // Last resort - pick the lowest
+            defaultMode = &devRec.GetModes().back();
         }
         devRec.SetDefaultModeIndex(defaultMode - devRec.GetModes().data());
 
