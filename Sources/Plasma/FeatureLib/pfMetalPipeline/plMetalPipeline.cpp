@@ -2485,7 +2485,7 @@ void plMetalPipeline::ILoadLight(plLightInfo* light)
     auto metalLight = static_cast<plMetalLightRef*>(light->GetDeviceRef());
     // Track the index of the light for this pass so we can find it again
     metalLight->fPassIndex = fLights->size();
-    fLights->push_back({metalLight->fBufferIndex, 1.f});
+    fLights->emplace_back(metalLight->fBufferIndex, 1.f);
     fLightsDirty = true;
 }
 
