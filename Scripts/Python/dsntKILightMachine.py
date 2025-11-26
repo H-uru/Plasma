@@ -47,6 +47,7 @@
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
+import xRandom
 
 
 #=============================================================
@@ -57,6 +58,8 @@ clkDispensor = ptAttribActivator(1,"clk: KI dispensor")
 respDispensor = ptAttribResponder(2,"resp: KI dispensor")
 respGotKI = ptAttribResponder(3,"resp: got KI")
 sdlKILightFunc = ptAttribString(4,"sdl: KI light func")
+intKILightTime = ptAttribInt(5,"int: Length that Ki light lasts in seconds",0)
+boolKIRandom = ptAttribBoolean(6,"bool: Randomize time light last, longest time is intKILightTime, Shortest is 5s",False)
 
 
 #----------
@@ -92,6 +95,9 @@ class dsntKILightMachine(ptModifier):
     def OnServerInitComplete(self):
         #PtDebugPrint("DEBUG: dsntKILightMachine.OnServerInitComplete()")
         global byteKILightFunc
+        
+        xRandom.seed()
+        xRandom.setmaxseries(2)
 
         if sdlKILightFunc.value != "":
             ageSDL = PtGetAgeSDL()
@@ -157,6 +163,11 @@ class dsntKILightMachine(ptModifier):
         global lightOn
         PtDebugPrint("dsntKILightMachine.SetKILightTime(): byteKILightFunc = ",byteKILightFunc)
         lightStart = PtGetDniTime()
+        
+        if intKILightTime.value:
+            kLightTimeLong = intKILightTime.value
+        if boolKIRandom.value:
+            kLightTimeLong = xRandom.random.randint(kLightTimeShort,kLightTimeLong)
 
         if not byteKILightFunc:
             return
