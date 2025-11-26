@@ -76,8 +76,6 @@ lightOn = 0
 #----------
 # constants
 #----------
-kLightTimeShort = intKILightTimeShort.value
-kLightTimeLong = intKILightTimeLong.value
 listLightResps = ["respKILightOff","respKILightOn"]
 kLightStopID = 1
 kKILightShortSFXRespName = "respSFX-KILight-Short"
@@ -166,11 +164,11 @@ class dsntKILightMachine(ptModifier):
         if not byteKILightFunc:
             return
         elif byteKILightFunc == 1:
-            lightStop = (lightStart + kLightTimeShort)
+            lightStop = (lightStart + intKILightTimeShort.value)
         elif byteKILightFunc == 2:
-            lightStop = (lightStart + kLightTimeLong)
+            lightStop = (lightStart + intKILightTimeLong.value)
         elif byteKILightFunc == 3:
-            lightStop = (lightStart + random.randint(kLightTimeShort,kLightTimeLong))
+            lightStop = (lightStart + random.randint(intKILightTimeShort.value,intKILightTimeLong.value))
 
         timeRemaining = (lightStop - lightStart)
         PtDebugPrint("timer set, light will shut off in ",timeRemaining," seconds; lightStop = ",lightStop)
@@ -241,7 +239,7 @@ class dsntKILightMachine(ptModifier):
                         self.SetKILightChron(remaining)
                         lightOn = 0
                         PtSetLightAnimStart(avatarKey, KILightObjectName, False)
-                elif resp.getName() == kKILightShortSFXRespName and remaining == kLightTimeShort:
+                elif resp.getName() == kKILightShortSFXRespName and remaining == intKILightTimeShort.value:
                     PtDebugPrint("dsntKILightMachine.DoKILight():\tRunning short KI Light SFX")
                     sndResp = ptAttribResponder(43)
                     sndResp.__setvalue__(resp)
