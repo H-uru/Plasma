@@ -31,6 +31,7 @@ set(pfMetalPipeline_SOURCES
 set(pfMetalPipeline_HEADERS
     plMetalDevice.h
     plMetalDeviceRef.h
+    plMetalLightRef.h
     plMetalMaterialShaderRef.h
     plMetalPipeline.h
     plMetalPipelineState.h
