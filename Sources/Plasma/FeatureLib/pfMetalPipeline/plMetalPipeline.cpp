@@ -1720,7 +1720,7 @@ void plMetalPipeline::IBindLights()
 
     if (fLightsDirty) {
         if (fLightingPerPixel) {
-            fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(fLights->data(), sizeof(plMetalShaderActiveLight) * fLights->size(), ShaderActiveLights);
+            fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(fLights->data(), bindSize, ShaderActiveLights);
             fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&lightSize, sizeof(uint), ShaderActiveLightCount);
         } else {
             fDevice.CurrentRenderCommandEncoder()->setVertexBytes(fLights->data(), bindSize, ShaderActiveLights);
@@ -2506,6 +2506,7 @@ void plMetalPipeline::ISetEnablePerPixelLighting(const bool enable)
 {
     if (fLightingPerPixel != enable) {
         fLightingPerPixel = enable;
+        fLightsDirty = true;
 
         // These states need to be reset for a change in lighting technique
         fState.fBoundMaterialProperties.reset();

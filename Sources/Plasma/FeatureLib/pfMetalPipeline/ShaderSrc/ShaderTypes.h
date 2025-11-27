@@ -78,9 +78,10 @@ enum plMetalShaderArgument
     /// Texture is a legacy argument for the simpler plate shader
     FragmentShaderArgumentTexture = 1,
     /// Fragment uniforms
-    FragmentShaderArgumentShadowCastUniforms = 4,
+    FragmentShaderArgumentShadowCastUniforms = 5,
+    // FIXME: Plate shader is using a hardcoded argument in slot 6
     /// Legacy argument buffer
-    FragmentShaderArgumentUniforms = 5,
+    FragmentShaderArgumentUniforms = 7,
     /// Layer index of alpha for shadow fragment shader
     FragmentShaderArgumentShadowCastAlphaSrc = 8,
     /// Material properties for vertex lighting
