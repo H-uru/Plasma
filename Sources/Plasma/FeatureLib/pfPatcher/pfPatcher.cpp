@@ -178,7 +178,7 @@ struct pfPatcherWorker : public hsThread
     pfPatcher::FileDownloadFunc fRedistUpdateDownloaded;
     pfPatcher::FileDownloadFunc fSelfPatch;
 
-    pfPatcher* fParent;
+    std::unique_ptr<pfPatcher> fParent;
     volatile bool fStarted;
     volatile bool fRequestActive;
     volatile bool fWantPython;
@@ -423,7 +423,7 @@ void pfPatcherWorker::IFileThingDownloadCB(ENetError result, const plFileName& f
 // ===================================================
 
 pfPatcherWorker::pfPatcherWorker() :
-    fStarted(false), fCurrBytes(0), fTotalBytes(0), fRequestActive(true), fParent(nullptr),
+    fStarted(false), fCurrBytes(0), fTotalBytes(0), fRequestActive(true),
     fWantPython(), fWantSDL()
 { }
 
@@ -448,7 +448,7 @@ pfPatcherWorker::~pfPatcherWorker()
 void pfPatcherWorker::OnQuit()
 {
     // the thread's Run() has exited sanely... now we can commit hara-kiri
-    delete fParent;
+    delete this;
 }
 
 void pfPatcherWorker::EndPatch(ENetError result, const ST::string& msg)
@@ -784,10 +784,15 @@ void pfPatcher::RequestManifest(const std::vector<ST::string>& mfs)
 
 void pfPatcher::Start(std::unique_ptr<pfPatcher> patcher)
 {
-    hsAssert(!patcher->fWorker->fStarted, "pfPatcher is one-use only. kthx.");
-    if (!patcher->fWorker->fStarted) {
-        patcher->fWorker->fParent = patcher.get(); // wheeeee circular
-        patcher->fWorker->StartDetached();
+    hsAssert(patcher->fWorker, "pfPatcher is one-use only. kthx.");
+    if (!patcher->fWorker) {
+        return;
     }
-    patcher.release();
+
+    // Ownership is reversed once the patcher is started:
+    // now pfPatcherWorker is responsible for deleting itself,
+    // and pfPatcher becomes owned by the newly independent pfPatcherWorker.
+    pfPatcherWorker* worker = patcher->fWorker.release();
+    worker->fParent = std::move(patcher);
+    worker->StartDetached();
 }
