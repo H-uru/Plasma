@@ -144,8 +144,8 @@ struct pfPatcherQueuedFile
 
 // ===================================================
 
-/** Patcher grunt work thread */
-struct pfPatcherWorker : public hsThread
+/** State for a patcher worker thread started by pfPatcher::Start */
+struct pfPatcherWorker final
 {
     /** Represents a File/Auth download request */
     struct Request
@@ -190,8 +190,6 @@ struct pfPatcherWorker : public hsThread
     pfPatcherWorker();
     ~pfPatcherWorker();
 
-    void OnQuit() override;
-
     void IAuthThingDownloadCB(ENetError result, const plFileName& filename, hsStream* writer);
     void IGotAuthFileList(ENetError result, const std::vector<NetCliAuthFileInfo>& infos);
     void IHandleManifestDownload(const ST::string& group, const std::vector<NetCliFileManifestEntry>& manifest);
@@ -201,7 +199,7 @@ struct pfPatcherWorker : public hsThread
 
     void EndPatch(ENetError result, const ST::string& msg={});
     bool IssueRequest();
-    void Run() override;
+    void Run();
     void IHashFile(pfPatcherQueuedFile& file);
     void IDecompressSound(const pfPatcherQueuedFile& sound) const;
     void ProcessFile();
@@ -445,12 +443,6 @@ pfPatcherWorker::~pfPatcherWorker()
     }
 }
 
-void pfPatcherWorker::OnQuit()
-{
-    // the thread's Run() has exited sanely... now we can commit hara-kiri
-    delete this;
-}
-
 void pfPatcherWorker::EndPatch(ENetError result, const ST::string& msg)
 {
     // Guard against multiple calls
@@ -534,7 +526,6 @@ bool pfPatcherWorker::IssueRequest()
 
 void pfPatcherWorker::Run()
 {
-    SetThisThreadName(ST_LITERAL("pfPatcherWorker"));
     // So here's the rub:
     // We have one or many manifests in the fRequests deque. We begin issuing those requests one-by one, starting here.
     // As we receive the answer, the NetCli thread populates fQueuedFiles and pings the fFileSignal semaphore, then issues the next request...
@@ -790,9 +781,14 @@ void pfPatcher::Start(std::unique_ptr<pfPatcher> patcher)
     }
 
     // Ownership is reversed once the patcher is started:
-    // now pfPatcherWorker is responsible for deleting itself,
-    // and pfPatcher becomes owned by the newly independent pfPatcherWorker.
-    pfPatcherWorker* worker = patcher->fWorker.release();
+    // now pfPatcher is owned by pfPatcherWorker,
+    // which in turn becomes owned by the patcher thread.
+    // Have to store the pfPatcherWorker in a shared_ptr so that it can be passed to the thread lambda,
+    // because std::function requires the lambda to be copyable... :(
+    std::shared_ptr worker = std::move(patcher->fWorker);
     worker->fParent = std::move(patcher);
-    worker->StartDetached();
+    hsThread::StartSimpleThread([worker = std::move(worker)] {
+        hsThread::SetThisThreadName(ST_LITERAL("pfPatcherWorker"));
+        worker->Run();
+    }).detach();
 }
