@@ -376,9 +376,9 @@ static void ISetShardStatus(const ST::string& status)
     SetDlgItemTextW(s_dialog, IDC_STATUS_TEXT, status.to_wchar().data());
 }
 
-static pfPatcher* IPatcherFactory()
+static std::unique_ptr<pfPatcher> IPatcherFactory()
 {
-    pfPatcher* patcher = new pfPatcher();
+    auto patcher = pfPatcher::Create();
     patcher->OnFileDownloadBegin(IOnDownloadBegin);
     patcher->OnProgressTick(IOnProgressTick);
 

@@ -74,10 +74,3 @@ void hsThread::Stop()
     if (fThread.joinable())
         fThread.join();
 }
-
-void hsThread::StartDetached()
-{
-    Start();
-    if (fThread.joinable())
-        fThread.detach();
-}
