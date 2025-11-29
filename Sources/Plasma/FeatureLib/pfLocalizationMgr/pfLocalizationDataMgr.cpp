@@ -900,6 +900,10 @@ void pfLocalizationDataMgr::IWriteText(const plFileName & filename, const ST::st
     {
         // now spit the results out to the file
         std::unique_ptr<hsStream> xmlStream = plEncryptedStream::OpenEncryptedFileWrite(filename);
+        if (!xmlStream) {
+            fLog->AddLineF("ERROR: Can't open file write stream for {}", filename);
+            return;
+        }
         xmlStream->Write(fileData.size(), fileData.raw_buffer());
     }
 }
