@@ -81,7 +81,7 @@ void plClientLoader::Run()
     }
 }
 
-void plClientLoader::Start()
+void plClientLoader::StartClient()
 {
     fClient->ResizeDisplayDevice(fClient->GetPipeline()->Width(), fClient->GetPipeline()->Height(), !fClient->GetPipeline()->IsFullScreen());
     fClient->ShowClientWindow();

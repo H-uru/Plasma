@@ -1286,7 +1286,7 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpCmdLine, int 
         if (gPendingActivate)
             gClient->WindowActivate(gPendingActivateFlag);
         gClient->SetMessagePumpProc(PumpMessageQueueProc);
-        gClient.Start();
+        gClient.StartClient();
 
         // PhysX installs its own exception handler somewhere in PhysXCore.dll. Unfortunately, this code appears to suck
         // the big one. It actually makes us unable to attach with the Visual Studio debugger! We're going to override that

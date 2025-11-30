@@ -351,7 +351,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
             gClient->SetFlag(plClient::kFlagSkipIntroMovies);
         gClient->WindowActivate(TRUE);
         gClient->SetMessagePumpProc(PumpMessageQueueProc);
-        gClient.Start();
+        gClient.StartClient();
     });
 
     dispatch_async(loadingQueue, ^{

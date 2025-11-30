@@ -69,7 +69,7 @@ public:
     void Init()
     {
         hsAssert(fClient == nullptr, "trying to init the client more than once?");
-        hsThread::Start();
+        Start();
     }
 
     /**
@@ -106,7 +106,7 @@ public:
      * Launches the client window and starts the game.
      * This will block if the client is not initialized.
      */
-    void Start() override;
+    void StartClient();
 
     /**
      * Waits for the client to finish initing
