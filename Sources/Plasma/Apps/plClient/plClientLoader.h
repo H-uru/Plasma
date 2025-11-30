@@ -75,7 +75,7 @@ public:
     /**
      * Returns whether or not the client init is done
      */
-    bool IsInited() const { return hsThread::GetQuit(); }
+    bool IsInited() const { return GetQuit(); }
 
     /**
      * Sets the client window handle.
@@ -111,7 +111,7 @@ public:
     /**
      * Waits for the client to finish initing
      */
-    void Wait() { hsThread::Stop(); }
+    void Wait() { Stop(); }
 
     /** Returns the current plClient instance */
     plClient* operator ->() const { return fClient; }

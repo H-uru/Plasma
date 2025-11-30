@@ -94,7 +94,7 @@ void plClientLoader::StartClient()
 void plClientLoader::ShutdownStart()
 {
     // Ensure that the client actually inited
-    hsThread::Stop();
+    Stop();
 
     // Now request the sane exit
     fClient->SetDone(true);

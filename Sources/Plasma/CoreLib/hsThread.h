@@ -82,7 +82,7 @@ public:
 
     virtual ~hsThread()
     {
-        this->Stop();
+        Stop();
     }
 
     // Disable copying
