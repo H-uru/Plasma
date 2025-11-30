@@ -58,7 +58,7 @@ class hsStream;
 /** Plasma File Patcher
  *  This is used to patch the client with one or many manifests at once. It assumes that
  *  we have permission to modify the game files, so be sure that you do! We memory manage
- *  ourselves, so allocate a new pfPatcher, add your manifests, and Start!
+ *  ourselves, so get a new patcher using pfPatcher::Create, add your manifests, and Start!
  */
 class pfPatcher
 {
@@ -90,9 +90,17 @@ public:
      */
     typedef std::function<plFileName(const plFileName&)> FindBundleExeFunc;
 
+private:
     pfPatcher();
+
+public:
     ~pfPatcher();
-    
+
+    static std::unique_ptr<pfPatcher> Create()
+    {
+        return std::unique_ptr<pfPatcher>(new pfPatcher());
+    }
+
     /** Set a callback that will be fired when the patcher needs to find an executable file
      *  within an executable bundle. This only occurs on the macOS client and is
      *  specific to macOS executable application bundles.
@@ -146,10 +154,10 @@ public:
     void RequestManifest(const ST::string& mfs);
     void RequestManifest(const std::vector<ST::string>& mfs);
 
-    /** Start patching the requested manifests. Please note that after calling this, you should
-     *  discard your pointer to this object as it will memory-manage itself.
+    /** Start patching the requested manifests. This consumes a unique_ptr,
+     * because pfPatcher will memory-manage itself from this point on.
      */
-    bool Start();
+    static void Start(std::unique_ptr<pfPatcher> patcher);
 };
 
 #endif // _pfPatcher_inc_

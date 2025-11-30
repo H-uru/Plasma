@@ -46,16 +46,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vld.h>
 #endif
 
-std::thread hsThread::StartSimpleThread(std::function<void()> threadProc)
+void hsThread::InitThisThread()
 {
-    return std::thread([threadProc = std::move(threadProc)] {
-        hsThread::SetThisThreadName(ST_LITERAL("hsNoNameThread"));
+    SetThisThreadName(ST_LITERAL("hsNoNameThread"));
 #ifdef USE_VLD
-        // Needs to be enabled for each thread except the WinMain
-        VLDEnable();
+    // Needs to be enabled for each thread except the WinMain
+    VLDEnable();
 #endif
-        threadProc();
-    });
 }
 
 void hsThread::Start()
@@ -73,11 +70,4 @@ void hsThread::Stop()
     fQuit = true;
     if (fThread.joinable())
         fThread.join();
-}
-
-void hsThread::StartDetached()
-{
-    Start();
-    if (fThread.joinable())
-        fThread.detach();
 }
