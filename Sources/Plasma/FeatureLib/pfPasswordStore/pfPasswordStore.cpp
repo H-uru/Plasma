@@ -51,7 +51,7 @@ pfPasswordStore* pfPasswordStore::Instance()
 {
 #if defined(HS_BUILD_FOR_WIN32)
     static pfWin32PasswordStore store;
-#elif defined(HAVE_SECURITY)
+#elif defined(HS_BUILD_FOR_APPLE)
     static pfApplePasswordStore store;
 #elif defined(HAVE_LIBSECRET)
     static pfUnixPasswordStore store;
