@@ -783,9 +783,7 @@ void pfPatcher::Start(std::unique_ptr<pfPatcher> patcher)
     // Ownership is reversed once the patcher is started:
     // now pfPatcher is owned by pfPatcherWorker,
     // which in turn becomes owned by the patcher thread.
-    // Have to store the pfPatcherWorker in a shared_ptr so that it can be passed to the thread lambda,
-    // because std::function requires the lambda to be copyable... :(
-    std::shared_ptr worker = std::move(patcher->fWorker);
+    auto worker = std::move(patcher->fWorker);
     worker->fParent = std::move(patcher);
     hsThread::StartSimpleThread([worker = std::move(worker)] {
         hsThread::SetThisThreadName(ST_LITERAL("pfPatcherWorker"));
