@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plEncryptedStream.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnNetCommon/pnNetCommon.h"
 
 #include <ctime>
 #include <string_theory/format>
@@ -179,12 +181,12 @@ uint32_t plEncryptedStream::IRead(uint32_t bytes, void* buffer)
     fPosition += numItems;
     if (numItems < bytes) {
         if (feof(fRef)) {
-            hsAssert(false, ST::format("Hit EOF on UNIX Read, only read {} out of requested {} bytes", numItems, bytes).c_str());
+            hsLogEntry(plNetApp::StaticDebugMsg(ST::format("Hit EOF on UNIX Read, only read {} out of requested {} bytes", numItems, bytes).c_str()));
         } else {
             hsAssert(false, ST::format("Error on UNIX Read (ferror = {})", ferror(fRef)).c_str());
         }
     }
-    return numItems;
+    return uint32_t(numItems);
 }
 
 void plEncryptedStream::IBufferFile()
