@@ -23,7 +23,6 @@ target_link_libraries(
     PUBLIC
         CoreLib
     PRIVATE
-        plNetClient
         $<$<PLATFORM_ID:Windows>:shell32>
 )
 
