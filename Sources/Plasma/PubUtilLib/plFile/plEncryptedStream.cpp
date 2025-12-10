@@ -487,8 +487,11 @@ std::unique_ptr<hsStream> plEncryptedStream::OpenEncryptedFile(const plFileName&
     else
         s = std::make_unique<hsUNIXStream>();
 
-    s->Open(fileName, "rb");
-    return s;
+    if (s->Open(fileName, "rb")) {
+        return s;
+    } else {
+        return nullptr;
+    }
 }
 
 std::unique_ptr<hsStream> plEncryptedStream::OpenEncryptedFileWrite(const plFileName& fileName, uint32_t* cryptKey)
@@ -499,6 +502,9 @@ std::unique_ptr<hsStream> plEncryptedStream::OpenEncryptedFileWrite(const plFile
     else
         s = std::make_unique<hsUNIXStream>();
 
-    s->Open(fileName, "wb");
-    return s;
+    if (s->Open(fileName, "wb")) {
+        return s;
+    } else {
+        return nullptr;
+    }
 }
