@@ -296,11 +296,7 @@ uint32_t plSecureStream::IRead(uint32_t bytes, void* buffer)
     fPosition += numItems;
     if (numItems < bytes)
     {
-        if (success)
-        {
-            hsAssert(false, ST::format("Hit EOF on Windows read, only read {} out of requested {} bytes", numItems, bytes).c_str());
-        }
-        else
+        if (!success)
         {
 #if HS_BUILD_FOR_WIN32
             hsAssert(false, ST::format("Error on Windows read (GetLastError = {})", GetLastError()).c_str());
@@ -309,7 +305,7 @@ uint32_t plSecureStream::IRead(uint32_t bytes, void* buffer)
 #endif
         }
     }
-    return numItems;
+    return static_cast<uint32_t>(numItems);
 }
 
 void plSecureStream::IBufferFile()
