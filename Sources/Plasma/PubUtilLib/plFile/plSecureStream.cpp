@@ -296,11 +296,7 @@ uint32_t plSecureStream::IRead(uint32_t bytes, void* buffer)
     fPosition += numItems;
     if (numItems < bytes)
     {
-        if (success)
-        {
-            hsAssert(false, ST::format("Hit EOF on Windows read, only read {} out of requested {} bytes", numItems, bytes).c_str());
-        }
-        else
+        if (!success)
         {
 #if HS_BUILD_FOR_WIN32
             hsAssert(false, ST::format("Error on Windows read (GetLastError = {})", GetLastError()).c_str());
@@ -309,7 +305,7 @@ uint32_t plSecureStream::IRead(uint32_t bytes, void* buffer)
 #endif
         }
     }
-    return numItems;
+    return static_cast<uint32_t>(numItems);
 }
 
 void plSecureStream::IBufferFile()
@@ -655,14 +651,19 @@ std::unique_ptr<hsStream> plSecureStream::OpenSecureFile(const plFileName& fileN
     bool isEncrypted = IsSecureFile(fileName);
 
     std::unique_ptr<hsFileSystemStream> s;
-    if (isEncrypted)
+    if (isEncrypted) {
         s = std::make_unique<plSecureStream>(deleteOnExit, key);
-    else if (!requireEncryption)
+    } else if (!requireEncryption) {
         s = std::make_unique<hsUNIXStream>();
+    } else {
+        return nullptr;
+    }
 
-    if (s)
-        s->Open(fileName, "rb");
-    return s;
+    if (s->Open(fileName, "rb")) {
+        return s;
+    } else {
+        return nullptr;
+    }
 }
 
 std::unique_ptr<hsStream> plSecureStream::OpenSecureFileWrite(const plFileName& fileName, uint32_t* key /* = nullptr */)
@@ -674,8 +675,11 @@ std::unique_ptr<hsStream> plSecureStream::OpenSecureFileWrite(const plFileName& 
     s = std::make_unique<hsUNIXStream>();
 #endif
 
-    s->Open(fileName, "wb");
-    return s;
+    if (s->Open(fileName, "wb")) {
+        return s;
+    } else {
+        return nullptr;
+    }
 }
 
 //// GetSecureEncryptionKey //////////////////////////////////////////////////

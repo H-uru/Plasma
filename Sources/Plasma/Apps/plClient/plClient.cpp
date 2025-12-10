@@ -2102,6 +2102,10 @@ void plClient::IDetectAudioVideoSettings()
 void plClient::IWriteDefaultAudioSettings(const plFileName& destFile)
 {
     std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFileWrite(destFile);
+    if (!stream) {
+        return;
+    }
+
     WriteBool(stream.get(), "Audio.Initialize",  true);
     WriteBool(stream.get(), "Audio.UseEAX", false);
     WriteInt(stream.get(), "Audio.SetPriorityCutoff", 6);
@@ -2117,6 +2121,9 @@ void plClient::IWriteDefaultAudioSettings(const plFileName& destFile)
 void plClient::IWriteDefaultGraphicsSettings(const plFileName& destFile)
 {
     std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFileWrite(destFile);
+    if (!stream) {
+        return;
+    }
 
     WriteInt(stream.get(), "Graphics.Width", plPipeline::fDefaultPipeParams.Width);
     WriteInt(stream.get(), "Graphics.Height", plPipeline::fDefaultPipeParams.Height);
