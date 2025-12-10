@@ -473,7 +473,7 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
             }
         }
         
-        currentColor = lightingContributionColor * currentColor;
+        currentColor = half4(lightingContributionColor.rgb, 1.h) * currentColor;
     }
     
     currentColor.rgb = mix(in.fogColor.rgb, currentColor.rgb, (float)clamp(in.fogColor.a, 0.0h, 1.0h));
