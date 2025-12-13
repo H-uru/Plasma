@@ -23,6 +23,7 @@ target_link_libraries(
         pnModifier
         pnNetCommon
         pnNucleusInc
+        pnSceneObject
         plMessage
         plResMgr
 )
