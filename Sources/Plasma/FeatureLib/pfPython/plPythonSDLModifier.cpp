@@ -532,16 +532,6 @@ bool plPythonSDLModifier::HasSDL(const ST::string& pythonFile)
     return (plSDLMgr::GetInstance()->FindDescriptor(pythonFile, plSDL::kLatestVersion) != nullptr);
 }
 
-const plSDLModifier* ExternFindAgeSDL()
-{
-    return plPythonSDLModifier::FindAgeSDL();
-}
-
-plPythonSDLModifier* ExternFindAgePySDL()
-{
-    return plPythonSDLModifier::FindAgeSDL();
-}
-
 plPythonSDLModifier* plPythonSDLModifier::FindAgeSDL()
 {
     ST::string ageName = cyMisc::GetAgeName();
@@ -583,11 +573,6 @@ plPythonSDLModifier* plPythonSDLModifier::FindAgeSDL()
 
     // couldn't find one (maybe because we didn't look)
     return nullptr;
-}
-
-plKey ExternFindAgeSDLTarget()
-{
-    return plPythonSDLModifier::FindAgeSDLTarget();
 }
 
 plKey plPythonSDLModifier::FindAgeSDLTarget()

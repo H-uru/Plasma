@@ -64,6 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClient/plLinkEffectsMgr.h"
 #include "plSDL/plSDL.h"
 
+#include "pfPython/plPythonSDLModifier.h" // for plPythonSDLModifier::FindAgeSDL :(
 
 plLayerAnimationBase::~plLayerAnimationBase()
 {
@@ -678,8 +679,7 @@ uint32_t plLayerSDLAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore
         {
             if (!fVarName.empty())
             {
-                extern const plSDLModifier *ExternFindAgeSDL();
-                const plSDLModifier *sdlMod = ExternFindAgeSDL();
+                const plSDLModifier *sdlMod = plPythonSDLModifier::FindAgeSDL();
                 if (sdlMod)
                 {
                     fVar = sdlMod->GetStateCache()->FindVar(fVarName);
