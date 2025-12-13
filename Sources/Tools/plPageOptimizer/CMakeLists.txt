@@ -16,11 +16,8 @@ target_link_libraries(
     plPageOptimizer
     PRIVATE
         CoreLib
-        pnDispatch
         pnFactory
         pnKeyedObject
-        pnMessage
-        pnModifier
         pnNetCommon
         pnNucleusInc
         pnSceneObject
