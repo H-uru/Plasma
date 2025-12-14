@@ -68,6 +68,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plModifier/plSDLModifier.h"
 #include "plSDL/plSDL.h"
 
+#include "pfPython/plPythonSDLModifier.h" // for plPythonSDLModifier::FindAgeSDL :(
+
 /////////////////////////////////////////////////////////////////////////////////////////
 //
 // FLAGS
@@ -262,8 +264,7 @@ void plAGAnimInstance::SearchForGlobals()
     const plAgeGlobalAnim *ageAnim = plAgeGlobalAnim::ConvertNoRef(fAnimation);
     if (ageAnim != nullptr && fSDLChannels.size() > 0)
     {
-        extern const plSDLModifier *ExternFindAgeSDL();
-        const plSDLModifier *sdlMod = ExternFindAgeSDL();
+        const plSDLModifier *sdlMod = plPythonSDLModifier::FindAgeSDL();
         if (!sdlMod)
             return;
 

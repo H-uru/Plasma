@@ -90,9 +90,12 @@ target_link_libraries(plSurface
         plModifier
         plNetClient
         plSDL
+        pfPython # for plPythonSDLModifier::FindAgeSDL :(
     INTERFACE
         pnFactory
 )
+
+target_include_directories(plSurface PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 
 source_group("Source Files" FILES ${plSurface_SOURCES})
 source_group("Header Files" FILES ${plSurface_HEADERS})

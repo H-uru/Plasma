@@ -49,7 +49,10 @@ target_link_libraries(
         plMessage
         plModifier
         plSDL
+        pfPython # for plPythonSDLModifier::FindAgeSDL :(
 )
+
+target_include_directories(plAnimation PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 
 source_group("Source Files" FILES ${plAnimation_SOURCES})
 source_group("Header Files" FILES ${plAnimation_HEADERS})
