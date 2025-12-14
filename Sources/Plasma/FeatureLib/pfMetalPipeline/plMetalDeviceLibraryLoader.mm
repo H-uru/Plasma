@@ -51,11 +51,19 @@ void plMetalDevice::LoadLibrary()
      all the Apple Silicon features on iOS. We need Metal 2.3 to get those
      features on macOS.
      */
-    
+
     NS::Error* error;
-    
+#ifdef METAL_3_SDK
+    if (@available(macOS 12, iOS 15, *)) {
+        if (fMetalDevice->supportsFamily(MTL::GPUFamilyMetal3)) {
+            NSURL* shaderURL = [NSBundle.mainBundle URLForResource:@"pfMetalPipelineShadersMSL30" withExtension:@"metallib"];
+            fShaderLibrary = fMetalDevice->newLibrary(static_cast<NS::URL*>(shaderURL), &error);
+            return;
+        }
+    }
+#endif
 #ifdef TARGET_OS_OSX
-    if (@available(macOS 11, *)) {
+    if (@available(macOS 11, iOS 14, *)) {
         NSURL* shaderURL = [NSBundle.mainBundle URLForResource:@"pfMetalPipelineShadersMSL23" withExtension:@"metallib"];
         fShaderLibrary = fMetalDevice->newLibrary(static_cast<NS::URL*>(shaderURL), &error);
     } else
