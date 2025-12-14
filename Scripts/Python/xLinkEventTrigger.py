@@ -70,18 +70,24 @@ from PlasmaTypes import *
 import enum
 import itertools
 
-# This is anticipated to be a kMultiTrigger plLogicModifier with a plActivatorActivatorConditionalObject
-# set as its only condition. plAACO seems to not be exposed to Max, but it's very useful. It tells
-# its LM to trigger when it receives a state==1.0 notification (if not already triggered) and to
-# untrigger when it receives a state==0.0 (if already triggered). Since this is a kMultiTrigger,
-# any time we send a notify (state==1.0) to the LM, the plAACO will trigger the LM, sending off
-# whatever notifies it has stored up. This can be used to activate other PFMs to do things like
-# set SDL variables (xAgeSDLBoolSet) on link in...
-actActivator = ptAttribActivator(1, "Activator: An ActivatorActivator to send notifications to")
-
-# ... Or you can fire a responder off to do whatever evil link in magic you want. Like, maybe
-# you want fart noises to play when people despawn or something.
-respRespond = ptAttribResponder(2, "Responder: Fire")
+# Fire this "responder" on link in. In 3ds Max or Korman logic nodes, this can be a responder
+# with some messages that you fire on link in. You need to be careful about doing that, though,
+# because it's easy to craft something that won't synchronize well in multiplayer. In reality, my
+# thinking is that, although this is labelled a responder, it should really hold a key to a kMultiTrigger
+# plLogicModifier with a plActivatorActivatorConditionalObject set as its only condition. plAACO
+# seems to not be exposed to Max, but it's very useful. It tells its LM to trigger when it receives
+# a state==1.0 notification (if not already triggered) and to untrigger when it receives a state==0.0
+# (if already triggered). Since this is a kMultiTrigger, any time we send a notify (state==1.0) to
+# the LM, the plAACO will trigger the LM, sending off whatever notifies it has stored up. This can
+# be used to activate other PFMs to do things like set SDL variables (xAgeSDLBoolSet) on link in...
+#
+# So why a responder attribute, you ask? Well, we *could* use a ``ptAttribActivator`` and manually
+# build a plNotifyMsg and send to it. But ``ptAttribResponder`` already does that with its `run()`
+# method. There is really nothing in the engine that will get mad at us for sending the "wrong" key
+# type for any given attribute. At the end of the day, a key is a key, and we're just sending
+# messages to the receiver owned by that key. So we're just saving some time and effort by abusing
+# an already existing solution.
+respRespond = ptAttribResponder(1, "Responder: Fire on Link/Spawn Event", netPropagate=False)
 
 # These trigger settings are mirror images of the enums below. The reason why we have duplicated
 # the enums is because Korman parses the Python scripts with regex to get the attributes. If we
@@ -133,7 +139,7 @@ class xLinkEventTrigger(ptModifier):
 
         if self._triggerOn == TriggerOn.SPAWN_OUT:
             PtDebugPrint(f"xLinkEventTrigger.OnFirstUpdate(): {self.sceneObjectName=} sending trigger (local player spawn out)", level=kWarningLevel)
-            self.sendNotify(avObj.getKey())
+            respRespond.run(self.key, avatar=avObj)
         else:
             PtDebugPrint(f"xLinkEventTrigger.OnFirstUpdate(): {self.sceneObjectName=} ignoring", level=kDebugDumpLevel)
 
@@ -193,10 +199,10 @@ class xLinkEventTrigger(ptModifier):
         # Hopefully this all makes sense. :)
         if self._triggerOn == TriggerOn.SPAWN_IN and pageIn:
             PtDebugPrint(f"xLinkEventTrigger.AvatarPage(): {self.sceneObjectName=} {playerID=} sending trigger (spawn in)", level=kWarningLevel)
-            self.sendNotify(avObj.getKey())
+            respRespond.run(self.key, avatar=avObj)
         elif self._triggerOn == TriggerOn.SPAWN_OUT and not pageIn:
             PtDebugPrint(f"xLinkEventTrigger.AvatarPage(): {self.sceneObjectName=} {playerID=} sending trigger (spawn out)", level=kWarningLevel)
-            self.sendNotify(avObj.getKey())
+            respRespond.run(self.key, avatar=avObj)
         elif self._triggerOn in {TriggerOn.LINK_IN, TriggerOn.LINK_OUT} and pageIn:
             PtDebugPrint(f"xLinkEventTrigger.AvatarPage(): {self.sceneObjectName=} {playerID=} registering for beh notify", level=kDebugDumpLevel)
             avObj.avatar.registerForBehaviorNotify(self.key)
@@ -206,7 +212,7 @@ class xLinkEventTrigger(ptModifier):
             # match that we have for this condition. If a post link out notify is ever added,
             # remove this block.
             PtDebugPrint(f"xLinkEventTrigger.AvatarPage(): {self.sceneObjectName=} {playerID=} sending trigger (after link out)", level=kWarningLevel)
-            self.sendNotify(avObj.getKey())
+            respRespond.run(self.key, avatar=avObj)
         else:
             PtDebugPrint(f"xLinkEventTrigger.AvatarPage(): {self.sceneObjectName=} {playerID=} {pageIn=} ignoring", level=kDebugDumpLevel)
 
@@ -229,11 +235,11 @@ class xLinkEventTrigger(ptModifier):
         if self._triggerOn == TriggerOn.LINK_IN and behType == PtBehaviorTypes.kBehaviorTypeLinkIn:
             PtDebugPrint(f"xLinkEventTrigger.OnBehaviorNotify(): {self.sceneObjectName=} {playerID=} sending trigger ({at_time_str} link in)", level=kWarningLevel)
             avObj.avatar.unRegisterForBehaviorNotify(self.key)
-            self.sendNotify(avObj.getKey())
+            respRespond.run(self.key, avatar=avObj)
         elif self._triggerOn == TriggerOn.LINK_OUT and behType == PtBehaviorTypes.kBehaviorTypeLinkOut:
             PtDebugPrint(f"xLinkEventTrigger.OnBehaviorNotify(): {self.sceneObjectName=} {playerID=} sending trigger ({at_time_str} link out)", level=kWarningLevel)
             avObj.avatar.unRegisterForBehaviorNotify(self.key)
-            self.sendNotify(avObj.getKey())
+            respRespond.run(self.key, avatar=avObj)
         else:
             # This is probably an error condition.
             PtDebugPrint(f"xLinkEventTrigger.OnBehaviorNotify(): {self.sceneObjectName=} {playerID=} ignoring {at_time_str} link event")
@@ -259,7 +265,7 @@ class xLinkEventTrigger(ptModifier):
             avObj.avatar.registerForBehaviorNotify(self.key)
         elif self._triggerOn == TriggerOn.SPAWN_IN:
             PtDebugPrint(f"xLinkEventTrigger.OnFirstUpdate(): {self.sceneObjectName=} sending trigger (local player spawn in)", level=kWarningLevel)
-            self.sendNotify(avObj.getKey())
+            respRespond.run(self.key, avatar=avObj)
         elif self._triggerOn == TriggerOn.SPAWN_OUT:
             PtDebugPrint(f"xLinkEventTrigger.OnFirstUpdate(): {self.sceneObjectName=} ignoring (want spawn out)", level=kDebugDumpLevel)
         else:
@@ -269,22 +275,6 @@ class xLinkEventTrigger(ptModifier):
 
     def isLocalAvatar(self, avObj: ptSceneobject) -> bool:
         return avObj == PtGetLocalAvatar()
-
-    def sendNotify(self, avKey: ptKey) -> None:
-        note = ptNotify(self.key)
-        note.setActivate(1.0)
-        note.addCollisionEvent(True, avKey, avKey)
-
-        # This is a bit of a cheat code. The ptAttribResponder.run() method is just a cheat
-        # code for sending a plNotifyMsg to the responder with the state==1.0. We also need
-        # to send one to the plActivatorActivatorConditionalObject attached to the actActivator
-        # plLogicModifier, so just build the notify message here.
-        receiverIter = itertools.chain(actActivator.value or [], respRespond.value or [])
-        for i in receiverIter:
-            note.addReceiver(i)
-
-        # Whoosh.. off it goes...
-        note.send()
 
     @property
     def sceneObjectName(self) -> str:
