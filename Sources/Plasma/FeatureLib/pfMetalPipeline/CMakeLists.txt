@@ -115,7 +115,7 @@ set_target_properties(pfMetalPipelineShadersMSL23 PROPERTIES
     FOLDER FeatureLib
 )
 
-if (NOT DEFINED CMAKE_XCODE_VERSION_MAJOR OR
+if(NOT DEFINED CMAKE_XCODE_VERSION_MAJOR OR
     CMAKE_XCODE_VERSION_MAJOR VERSION_GREATER_EQUAL 13)
 
     add_metal_shader_library(pfMetalPipelineShadersMSL30
