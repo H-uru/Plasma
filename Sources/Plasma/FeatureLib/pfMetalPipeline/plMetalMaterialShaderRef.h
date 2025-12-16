@@ -45,8 +45,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <map>
 #include <vector>
 
+#include <Metal/Metal.hpp>
+
 #include "ShaderTypes.h"
 #include "hsGMatState.h"
+#include "plMetalArgumentBuffer.h"
 #include "plMetalDeviceRef.h"
 #include "plMetalPipelineState.h"
 
@@ -119,10 +122,14 @@ private:
     bool     ICanEatLayer(plLayerInterface* lay);
     uint32_t ILayersAtOnce(uint32_t which);
 
-    void                                                 IBuildLayerTexture(MTL::RenderCommandEncoder* encoder, const uint32_t offsetFromRootLayer, plLayerInterface* layer);
-    void                                                 EncodeTransform(const plLayerInterface* layer, UVOutDescriptor *transform);
-    std::vector<std::vector<plLayerInterface*>>          fPasses;
-    std::vector<struct plMetalFragmentShaderDescription> fFragmentShaderDescriptions;
+    void IEatBumpmapLayers(uint32_t& layer, std::vector<plMetalBumpMapping>& bumpsOut);
+    void IEncodeBumpmapLayers(const std::vector<plMetalBumpMapping>& bumps, uint32_t pass);
+    void IBuildLayerTexture(MTL::RenderCommandEncoder* encoder, const uint32_t offsetFromRootLayer, plLayerInterface* layer);
+    void EncodeTransform(const plLayerInterface* layer, UVOutDescriptor* transform);
+
+    std::vector<std::vector<plLayerInterface*>>                            fPasses;
+    std::vector<std::optional<std::shared_ptr<plMetalBumpArgumentBuffer>>> fBumps;
+    std::vector<struct plMetalFragmentShaderDescription>                   fFragmentShaderDescriptions;
 };
 
 #endif
