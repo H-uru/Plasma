@@ -69,8 +69,10 @@ enum plUVWSrcModifiers: uint32_t
 
 using namespace metal;
 
-constant const bool perPixelLighting [[ function_constant(FunctionConstantPerPixelLighting)    ]];
-constant const bool perVertexLighting = !perPixelLighting;
+constant const bool     perPixelLighting [[ function_constant(FunctionConstantPerPixelLighting)    ]];
+constant const bool     perVertexLighting = !perPixelLighting;
+constant const uint8_t  numBumpMaps [[ function_constant(FunctionConstantNumBumpMaps)    ]];
+constant const bool     bumpMap = numBumpMaps > 0;
 
 constant const uint8_t sourceType1 [[ function_constant(FunctionConstantSources + 0)    ]];
 constant const uint8_t sourceType2 [[ function_constant(FunctionConstantSources + 1)    ]];
@@ -122,6 +124,15 @@ constant const bool hasCubicTexture5 = (sourceType5 == PassTypeCubicTexture && h
 constant const bool hasCubicTexture6 = (sourceType6 == PassTypeCubicTexture && hasLayer6);
 constant const bool hasCubicTexture7 = (sourceType7 == PassTypeCubicTexture && hasLayer7);
 constant const bool hasCubicTexture8 = (sourceType8 == PassTypeCubicTexture && hasLayer8);
+    
+constant const bool hasBumpMap1 = (numBumpMaps > 0);
+constant const bool hasBumpMap2 = (numBumpMaps > 1);
+constant const bool hasBumpMap3 = (numBumpMaps > 2);
+constant const bool hasBumpMap4 = (numBumpMaps > 3);
+constant const bool hasBumpMap5 = (numBumpMaps > 4);
+constant const bool hasBumpMap6 = (numBumpMaps > 5);
+constant const bool hasBumpMap7 = (numBumpMaps > 6);
+constant const bool hasBumpMap8 = (numBumpMaps > 7);
 
 struct FragmentShaderArguments
 {
@@ -167,6 +178,24 @@ typedef struct
     float3 texCoord6 [[ function_constant(hasLayer6) ]];
     float3 texCoord7 [[ function_constant(hasLayer7) ]];
     float3 texCoord8 [[ function_constant(hasLayer8) ]];
+    
+    float3 T    [[ function_constant(hasBumpMap1) ]];
+    float3 T1   [[ function_constant(hasBumpMap2) ]];
+    float3 T2   [[ function_constant(hasBumpMap3) ]];
+    float3 T3   [[ function_constant(hasBumpMap4) ]];
+    float3 T4   [[ function_constant(hasBumpMap5) ]];
+    float3 T5   [[ function_constant(hasBumpMap6) ]];
+    float3 T6   [[ function_constant(hasBumpMap7) ]];
+    float3 T7   [[ function_constant(hasBumpMap8) ]];
+    float3 B    [[ function_constant(hasBumpMap1) ]];
+    float3 B1   [[ function_constant(hasBumpMap2) ]];
+    float3 B2   [[ function_constant(hasBumpMap3) ]];
+    float3 B3   [[ function_constant(hasBumpMap4) ]];
+    float3 B4   [[ function_constant(hasBumpMap5) ]];
+    float3 B5   [[ function_constant(hasBumpMap6) ]];
+    float3 B6   [[ function_constant(hasBumpMap7) ]];
+    float3 B7   [[ function_constant(hasBumpMap8) ]];
+    
     half4 vtxColor   [[ centroid_perspective ]];
     half4 fogColor;
 } ColorInOut;
@@ -177,6 +206,19 @@ struct Lighting
     constant plMetalShaderActiveLight* activeLights      [[ buffer(ShaderActiveLights) ]];
     constant uint& lightCount [[ buffer(ShaderActiveLightCount)  ]];
 };
+    
+struct plTier1Bumpmap
+{
+    char2 dTangentIndex [[ id(dTangentIndexID) ]];
+    texture2d<half> bumpTexture [[ id(textureID) ]];
+    float3 scale [[ id(dScaleID) ]];
+};
+    
+#if __METAL_VERSION__ >= 300
+typedef plMetalBumpmap ShaderBumpMapType;
+#else
+typedef plTier1Bumpmap ShaderBumpMapType;
+#endif
 
 typedef struct
 {
@@ -250,7 +292,8 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
                                        constant VertexUniforms & uniforms   [[ buffer(VertexShaderArgumentFixedFunctionUniforms) ]],
                                        Lighting lighting [[ function_constant(perVertexLighting) ]],
                                        constant plMaterialLightingDescriptor & materialLighting   [[ buffer(VertexShaderArgumentMaterialLighting), function_constant(perVertexLighting) ]],
-                                       constant float4x4 & blendMatrix1     [[ buffer(VertexShaderArgumentBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]])
+                                       constant float4x4 & blendMatrix1     [[ buffer(VertexShaderArgumentBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]],
+                                       device ShaderBumpMapType *bumpInfo [[ buffer(BumpState), function_constant(bumpMap) ]])
 {
     ColorInOut out;
     const half4 inColor = half4(in.color.b, in.color.g, in.color.r, in.color.a) / half4(255.f);
@@ -280,10 +323,16 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
 
     const float4 cameraSpaceNormal = normalize(((float4(in.normal, 0.f) * uniforms.localToWorldMatrix) * uniforms.worldToCameraMatrix));
 
-    for (size_t layer=0; layer<num_layers; layer++) {
+    for (int layer=0; layer<num_layers; layer++) {
         (&out.texCoord1)[layer] = uniforms.sampleLocation(layer, &in.texCoord1, cameraSpaceNormal, vCamPosition);
     }
 
+    
+    for (int bumpMap=0; bumpMap<numBumpMaps; bumpMap++) {
+        (&out.T)[bumpMap] = normalize(uniforms.localToWorldMatrix * float4((&in.texCoord1)[bumpInfo[bumpMap].dTangentIndex[0]], 0.f)). xyz;
+        (&out.B)[bumpMap] = normalize(uniforms.localToWorldMatrix * float4((&in.texCoord1)[bumpInfo[bumpMap].dTangentIndex[1]], 0.f)). xyz;
+    }
+    
     out.position = vCamPosition * uniforms.projectionMatrix;
 
     return out;
@@ -449,9 +498,47 @@ half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 verte
 fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
                                       const FragmentShaderArguments fragmentShaderArgs,
                                       Lighting lighting [[ function_constant(perPixelLighting) ]],
-                                      constant plMaterialLightingDescriptor & materialLighting   [[ buffer(FragmentShaderArgumentMaterialLighting), function_constant(perPixelLighting) ]])
+                                      constant plMaterialLightingDescriptor & materialLighting   [[ buffer(FragmentShaderArgumentMaterialLighting), function_constant(perPixelLighting) ]],
+                                      device ShaderBumpMapType *bumpInfo [[ buffer(BumpState), function_constant(bumpMap) ]])
 {
-    const half4 lightingContributionColor = perPixelLighting ? calcLitMaterialColor(lighting, in.vtxColor, materialLighting, in.worldPos, in.normal) : in.vtxColor;
+    half4 lightingContributionColor = half4(0.h);
+    
+    /*
+     This controls the bumpmap style:
+     - Additive bump maps do a secondary hilight pass on the material. This is
+     how Cyan shipped bump maps in Uru. These bump maps ignore the blue channel
+     of the normal map file.
+     - If bumpMapIsAdditive is false, full normal mapping is performed on a per
+     pixel basis. This is not how the engine shipped and will produce different
+     results than the original age artist may have expected. But it will be
+     proper normal mapping.
+     */
+    constexpr bool bumpMapIsAdditive = true;
+    constexpr bool performBaseLighting = bumpMapIsAdditive || !bumpMap;
+    
+    if (performBaseLighting) {
+        lightingContributionColor = perPixelLighting ? calcLitMaterialColor(lighting, in.vtxColor, materialLighting, in.worldPos, in.normal) : in.vtxColor;
+    }
+    
+    if (bumpMap) {
+        float3 normal = 0.f;
+        for (size_t bump=0; bump<numBumpMaps; bump++) {
+            float3 sampleCoord = in.texCoord1;
+            half3 bumpNormal = bumpInfo[bump].bumpTexture.sample(fragmentShaderArgs.samplers, sampleCoord.xy).rgb;
+            
+            bumpNormal -= 0.5f;
+            bumpNormal *= 2.f;
+            
+            float3x3 TBN = float3x3(in.T, in.B, in.normal);
+            normal += TBN * float3(bumpNormal) * bumpInfo[bump].scale;
+        }
+        
+        normal = normalize(normal);
+        if (performBaseLighting) {
+            normal.z = 0.f;
+        }
+        lightingContributionColor += perPixelLighting ? calcLitMaterialColor(lighting, in.vtxColor, materialLighting, in.worldPos, normal) : in.vtxColor;
+    }
     half4 currentColor = lightingContributionColor;
 
     /*
