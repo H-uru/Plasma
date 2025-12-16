@@ -54,6 +54,30 @@ typedef __attribute__((__ext_vector_type__(3))) half half3;
 typedef __attribute__((__ext_vector_type__(4))) half half4;
 #endif
 
+#if !defined(__METAL_VERSION__) && defined(METAL_3_SDK)
+// Declaration of texture2d for when this header is imported to
+// the renderer. Borrowed from Apple sample code.
+template <typename T>
+class texture2d : public MTL::ResourceID
+{
+public:
+    texture2d(MTL::ResourceID v) : MTL::ResourceID(v) {}
+};
+
+class sampler : public MTL::ResourceID
+{
+public:
+    sampler(MTL::ResourceID v) : MTL::ResourceID(v) {}
+};
+
+#define DEVICE
+
+#else
+
+#define DEVICE device
+
+#endif
+
 enum plMetalShaderArgument
 {
     /// Material State
@@ -72,13 +96,17 @@ enum plMetalShaderArgument
     ShaderActiveLights = 12,
     /// Count of the active lights for the material to be rendered
     ShaderActiveLightCount = 13,
+    /// Bump/normal mapping information
+    BumpState = 14,
 
+    // FIXME: Plate shader is using a hardcoded argument in slot 1
     /// Texture is a legacy argument for the simpler plate shader
     FragmentShaderArgumentTexture = 1,
     /// Fragment uniforms
-    FragmentShaderArgumentShadowCastUniforms = 4,
+    FragmentShaderArgumentShadowCastUniforms = 5,
+    // FIXME: Plate shader is using a hardcoded argument in slot 7
     /// Legacy argument buffer
-    FragmentShaderArgumentUniforms = 5,
+    FragmentShaderArgumentUniforms = 7,
     /// Layer index of alpha for shadow fragment shader
     FragmentShaderArgumentShadowCastAlphaSrc = 8,
     /// Material properties for vertex lighting
@@ -117,6 +145,7 @@ enum plMetalFunctionConstant
     FunctionConstantNumWeights                          = 26,
     /// Per pixel lighting enable flag
     FunctionConstantPerPixelLighting                    = 27,
+    FunctionConstantNumBumpMaps                         = 28,
 };
 
 enum plMetalLayerPassType: uint8_t
@@ -249,6 +278,22 @@ struct plShadowState
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<plShadowState>, "plShadowState must be a trivial type!");
 #endif
+
+typedef enum plMetalBumpMappingBufferLayout
+{
+    dTangentIndexID,
+    textureID,
+    dScaleID
+} plMetalBumpMappingBufferLayout;
+
+struct plMetalBumpmap
+{
+#if __METAL_VERSION__ >= 300 || defined(METAL_3_SDK)
+    texture2d<half> bumpTexture;
+#endif
+    float       scale;
+    simd::char2 dTangentIndex;
+} __attribute__((aligned(4)));
 
 #endif /* ShaderTypes_h */
 
