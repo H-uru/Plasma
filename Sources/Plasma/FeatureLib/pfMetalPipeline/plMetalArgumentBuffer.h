@@ -138,10 +138,11 @@ private:
 
 struct plMetalBumpMapping
 {
-    uint8_t       dTangentUIndex;
-    uint8_t       dTangentVIndex;
-    float         scale;
-    MTL::Texture* texture;
+    uint8_t             dTangentUIndex;
+    uint8_t             dTangentVIndex;
+    float               scale;
+    MTL::Texture*       texture;
+    MTL::SamplerState*  sampler;
 };
 
 class plMetalBumpArgumentBuffer final : public plMetalArgumentBuffer<plMetalBumpmap>
