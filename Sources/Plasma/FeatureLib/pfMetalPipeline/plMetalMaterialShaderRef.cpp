@@ -371,6 +371,8 @@ void plMetalMaterialShaderRef::IEatBumpmapLayers(uint32_t& layerIdx, std::vector
     bumpMapping.scale = bumpTextureLayer->GetRuntimeColor().r;
     fPipeline->CheckTextureRef(bumpTextureLayer);
     bumpMapping.texture = static_cast<plMetalTextureRef*>(bumpTextureLayer->GetTexture()->GetDeviceRef())->fTexture;
+    MTL::SamplerState* samplerState = fPipeline->fDevice.SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(bumpTextureLayer->GetClampFlags()));
+    bumpMapping.sampler = samplerState;
     bumpsOut.emplace_back(bumpMapping);
 
     layerIdx += 4;

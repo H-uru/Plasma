@@ -209,9 +209,10 @@ struct Lighting
     
 struct plTier1Bumpmap
 {
-    char2 dTangentIndex [[ id(dTangentIndexID) ]];
+    char2 dTangentIndex         [[ id(dTangentIndexID) ]];
     texture2d<half> bumpTexture [[ id(textureID) ]];
-    float3 scale [[ id(dScaleID) ]];
+    sampler bumpTextureSampler  [[ id(samplerID) ]];
+    float3 scale                [[ id(dScaleID) ]];
 };
     
 #if __METAL_VERSION__ >= 300
@@ -522,15 +523,16 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
     
     if (bumpMap) {
         float3 normal = 0.f;
-        for (size_t bump=0; bump<numBumpMaps; bump++) {
+        for (size_t bumpIndex=0; bumpIndex<numBumpMaps; bumpIndex++) {
+            device ShaderBumpMapType& bump = bumpInfo[bumpIndex];
             float3 sampleCoord = in.texCoord1;
-            half3 bumpNormal = bumpInfo[bump].bumpTexture.sample(fragmentShaderArgs.samplers, sampleCoord.xy).rgb;
+            half3 bumpNormal = bump.bumpTexture.sample(bump.bumpTextureSampler, sampleCoord.xy).rgb;
             
             bumpNormal -= 0.5f;
             bumpNormal *= 2.f;
             
             float3x3 TBN = float3x3(in.T, in.B, in.normal);
-            normal += TBN * float3(bumpNormal) * bumpInfo[bump].scale;
+            normal += TBN * float3(bumpNormal) * bump.scale;
         }
         
         normal = normalize(normal);
