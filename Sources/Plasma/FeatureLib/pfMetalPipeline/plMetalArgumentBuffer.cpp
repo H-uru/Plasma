@@ -77,12 +77,12 @@ void plMetalBumpArgumentBuffer::Set(const std::vector<plMetalBumpMapping>& bumps
         for (const auto& bump : bumps) {
             _encoder->setArgumentBuffer(GetBuffer(), 0, i);
             _encoder->setTexture(bump.texture, textureID);
+            _encoder->setSamplerState(bump.sampler, samplerID);
             uint8_t* cotangentUBuffer = static_cast<uint8_t*>(_encoder->constantData(dTangentIndexID));
             memcpy(cotangentUBuffer, &bump.dTangentUIndex, sizeof(uint8_t) * 2);
             float* scaleBuffer = static_cast<float*>(_encoder->constantData(dScaleID));
             memcpy(scaleBuffer, &bump.scale, sizeof(float));
 
-            // FIXME: We can't track this with a tier 1 buffer
             _bumps[i] = bump;
             i++;
         }
@@ -91,6 +91,7 @@ void plMetalBumpArgumentBuffer::Set(const std::vector<plMetalBumpMapping>& bumps
     else {
         for (const auto& bump : bumps) {
             _value[i].bumpTexture = bump.texture->gpuResourceID();
+            _value[i].bumpTextureSampler = bump.sampler->gpuResourceID();
             _value[i].dTangentIndex = simd::make_char2(bump.dTangentUIndex, bump.dTangentVIndex);
             _value[i].scale = bump.scale;
 
