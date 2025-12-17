@@ -283,6 +283,7 @@ typedef enum plMetalBumpMappingBufferLayout
 {
     dTangentIndexID,
     textureID,
+    samplerID,
     dScaleID
 } plMetalBumpMappingBufferLayout;
 
@@ -290,6 +291,7 @@ struct plMetalBumpmap
 {
 #if __METAL_VERSION__ >= 300 || defined(METAL_3_SDK)
     texture2d<half> bumpTexture;
+    sampler         bumpTextureSampler;
 #endif
     float       scale;
     simd::char2 dTangentIndex;
