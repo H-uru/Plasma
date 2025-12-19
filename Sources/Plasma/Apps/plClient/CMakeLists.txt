@@ -178,6 +178,7 @@ if(PLASMA_PIPELINE_METAL)
     target_embed_metal_shader_libraries(plClient
         pfMetalPipelineShadersMSL21
         pfMetalPipelineShadersMSL23
+        pfMetalPipelineShadersMSL30
     )
 endif()
 
