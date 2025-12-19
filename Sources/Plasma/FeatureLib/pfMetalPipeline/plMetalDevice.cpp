@@ -198,6 +198,7 @@ void plMetalDevice::SetMaxAnsiotropy(uint8_t maxAnsiotropy)
     samplerDescriptor->setMinFilter(MTL::SamplerMinMagFilterLinear);
     samplerDescriptor->setMagFilter(MTL::SamplerMinMagFilterLinear);
     samplerDescriptor->setMipFilter(MTL::SamplerMipFilterLinear);
+    samplerDescriptor->setSupportArgumentBuffers(true);
 
     samplerDescriptor->setSAddressMode(MTL::SamplerAddressModeRepeat);
     samplerDescriptor->setTAddressMode(MTL::SamplerAddressModeRepeat);
