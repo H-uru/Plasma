@@ -73,7 +73,7 @@ import itertools
 # Fire this "responder" on link in. In 3ds Max or Korman logic nodes, this can be a responder
 # with some messages that you fire on link in. You need to be careful about doing that, though,
 # because it's easy to craft something that won't synchronize well in multiplayer. In reality, my
-# thinking is that, although this is labelled a responder, it should really hold a key to a kMultiTrigger
+# thinking is that, although this is labeled a responder, it should really hold a key to a kMultiTrigger
 # plLogicModifier with a plActivatorActivatorConditionalObject set as its only condition. plAACO
 # seems to not be exposed to Max, but it's very useful. It tells its LM to trigger when it receives
 # a state==1.0 notification (if not already triggered) and to untrigger when it receives a state==0.0
@@ -159,10 +159,10 @@ class xLinkEventTrigger(ptModifier):
             PtDebugPrint(f"xLinkEventTrigger.AvatarPage(): {self.sceneObjectName=} {playerID=} ignoring spawn {inout} (we trigger for nobody)", level=kDebugDumpLevel)
             return
         if self._triggerFor == TriggerFor.ME and not self.isLocalAvatar(avObj):
-            PtDebugPrint(f"xLinkEventTrigger.AvatarPage(): {self.sceneObjectName=} {playerID=} ignoring spawn in (we trigger for the local player only)", level=kDebugDumpLevel)
+            PtDebugPrint(f"xLinkEventTrigger.AvatarPage(): {self.sceneObjectName=} {playerID=} ignoring spawn {inout} (we trigger for the local player only)", level=kDebugDumpLevel)
             return
         if self._triggerFor == TriggerFor.HUMANS and not avObj.isHuman():
-            PtDebugPrint(f"xLinkEventTrigger.AvatarPage(): {self.sceneObjectName=} {playerID=} ignoring spawn {inout} (we trigger for humans only", level=kDebugDumpLevel)
+            PtDebugPrint(f"xLinkEventTrigger.AvatarPage(): {self.sceneObjectName=} {playerID=} ignoring spawn {inout} (we trigger for humans only)", level=kDebugDumpLevel)
             return
         if self._triggerFor == TriggerFor.NPCS and avObj.isHuman():
             PtDebugPrint(f"xLinkEventTrigger.AvatarPage(): {self.sceneObjectName=} {playerID=} ignoring spawn {inout} (we trigger for NPCs only)", level=kDebugDumpLevel)
@@ -190,7 +190,7 @@ class xLinkEventTrigger(ptModifier):
         # link in effect stops. Unfortunately, that's not going to work.
         #
         # Why won't it work, you ask? Well, gather 'round and let Hoikas explain. Because players
-        # might be linking/spawning in/out simultaneously, if we're using an the actActivator
+        # might be linking/spawning in/out simultaneously, if we're using an actActivator
         # mechanism, that's pointing to a LogicModifier with the MultiTrigger flag set. If MultiTrigger
         # isn't set, then the logic mod can only trigger for one avatar's link process at a time.
         # So you might miss some link events. Further, in MultiTrigger mode, you can't untrigger
