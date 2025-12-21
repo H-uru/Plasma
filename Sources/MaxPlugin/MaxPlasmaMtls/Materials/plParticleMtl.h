@@ -111,7 +111,7 @@ public:
         kNumNormalOptions
     };
 
-    static const char *NormalStrings[];
+    static const TCHAR* NormalStrings[];
 
     plParticleMtl(BOOL loading);
     void DeleteThis() override { delete this; }
