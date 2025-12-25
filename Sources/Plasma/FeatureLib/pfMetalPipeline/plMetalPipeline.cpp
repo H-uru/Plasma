@@ -129,7 +129,7 @@ plProfile_CreateCounter("NumSkin", "PipeC", NumSkin);
 // Command buffer encode limit is 4096 bytes, lets undercut that a bit
 // and max at 256 lights.
 
-constexpr size_t kMetalMaxLightCount = 256;
+constexpr size_t kMetalMaxLightCount = INT16_MAX;
 
 plMetalEnumerate plMetalPipeline::enumerator;
 
@@ -824,6 +824,15 @@ void plMetalPipeline::LoadResources()
 {
     hsStatusMessageF("Begin Device Reload t={}", hsTimer::GetSeconds());
     plNetClientApp::StaticDebugMsg("Begin Device Reload");
+
+    // Tell the light infos to unlink themselves
+    while (fActiveLights)
+        UnRegisterLight(fActiveLights);
+    while (fLightRefList) {
+        plMetalLightRef* ref = fLightRefList;
+        ref->Release();
+        ref->Unlink();
+    }
 
     if (fFragFunction == nil) {
         FindFragFunction();
@@ -2409,7 +2418,7 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
 // strongest N changes membership.
 void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef* mRef, bool proj)
 {
-    const size_t                     numLights = kMetalMaxLightCount;
+    const size_t                     numLights = 32;
     int32_t                          i = 0;
     int32_t                          startScale;
     float                            threshhold;
