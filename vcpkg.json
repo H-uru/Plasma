@@ -66,7 +66,7 @@
           {
             "name": "python3-cairosvg",
             "host": true,
-            "platform": "!(windows & arm64) | !(ios)"
+            "platform": "!(windows & arm64) & !(ios)"
           }
         ]
       }

@@ -91,6 +91,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "PLSClient.h"
 #include "plUIKitDisplayHelper.h"
 #include "PLSPatcher.h"
+#include "hsEndian.h"
 
 void PumpMessageQueueProc();
 

@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetGameLib/plNetGameLib.h"
 #include "plProduct.h"
 #include "plNetClient/plNetClientMgr.h"
-#include "pnEncryption/plChallengeHash.h"
+#include "hsEndian.h"
 
 #define FAKE_PASS_STRING @"********"
 
