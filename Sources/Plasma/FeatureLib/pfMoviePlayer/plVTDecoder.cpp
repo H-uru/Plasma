@@ -54,7 +54,8 @@ class plVTMovieFrame : public plMovieFrame
 public:
     plVTMovieFrame(CVPixelBufferRef pixelBuffer) : fPixelBuffer(pixelBuffer)
     {
-        CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+        CVPixelBufferLockBaseAddress(fPixelBuffer, 0);
+        CVPixelBufferRetain(fPixelBuffer);
         fPlanes[0] = static_cast<unsigned char*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
         fPlanes[1] = static_cast<unsigned char*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 1));
         fPlanes[2] = static_cast<unsigned char*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 2));
@@ -94,6 +95,7 @@ public:
     ~plVTMovieFrame()
     {
         CVPixelBufferUnlockBaseAddress(fPixelBuffer, 0);
+        CVPixelBufferRelease(fPixelBuffer);
     }
 
 private:
