@@ -173,7 +173,7 @@ plVTDecoder::plVTDecoder(const mkvparser::VideoTrack* track)
         &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
     err = VTDecompressionSessionCreate(kCFAllocatorDefault, fFormat, decoderOptions, outputDescription, nullptr, &fDecompressionSession);
-    hsAssert(err = noErr, "Decoder creation failed");
+    hsAssert(err == noErr, "Decoder creation failed");
 }
 
 plMovieFrameRef plVTDecoder::DecodeNextFrame(uint8_t* frameData, const size_t size)
@@ -183,10 +183,10 @@ plMovieFrameRef plVTDecoder::DecodeNextFrame(uint8_t* frameData, const size_t si
 
     OSStatus err;
     err = CMBlockBufferCreateWithMemoryBlock(nullptr, frameData, size, nullptr, nullptr, 0, size, 0, &buffer);
-    hsAssert(err = noErr, "Could not create block buffer for frame data");
+    hsAssert(err == noErr, "Could not create block buffer for frame data");
     err = CMSampleBufferCreate(nullptr, buffer, true, nullptr, nullptr, fFormat, 1, 0, nullptr, 1, &size, &sampleBuffer);
-    hsAssert(err = noErr, "Could not create sample buffer");
     plMovieFrame* frame = new plMovieFrame();
+    hsAssert(err == noErr, "Could not create sample buffer");
     err = VTDecompressionSessionDecodeFrameWithOutputHandler(fDecompressionSession, sampleBuffer, 0, nullptr, ^(OSStatus status, VTDecodeInfoFlags infoFlags, CVImageBufferRef _Nullable imageBuffer, CMTime presentationTimeStamp, CMTime presentationDuration) {
         CVPixelBufferLockBaseAddress(imageBuffer, 0);
 
@@ -204,7 +204,7 @@ plMovieFrameRef plVTDecoder::DecodeNextFrame(uint8_t* frameData, const size_t si
         frame->fStride[2] = static_cast<int32_t>(CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 2));
         frame->fStride[3] = 0;
     });
-    hsAssert(err = noErr, "Decoding failed");
+    hsAssert(err == noErr, "Decoding failed");
 
     return std::unique_ptr<plMovieFrame, void (*)(plMovieFrame*)>(frame, [](plMovieFrame* ptr) {
         CVImageBufferRef imageBuffer = static_cast<CVImageBufferRef>(ptr->fContext);
