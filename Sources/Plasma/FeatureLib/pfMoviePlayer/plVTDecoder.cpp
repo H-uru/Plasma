@@ -49,7 +49,62 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMoviePlayer.h"
 #include "plPlanarImage.h"
 
-OSStatus CreateFormatDescriptionFromVP9Track(
+class plVTMovieFrame : public plMovieFrame
+{
+public:
+    plVTMovieFrame(CVPixelBufferRef pixelBuffer) : fPixelBuffer(pixelBuffer)
+    {
+        CVPixelBufferLockBaseAddress(fPixelBuffer, 0);
+        CVPixelBufferRetain(fPixelBuffer);
+        fPlanes[0] = static_cast<unsigned char*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
+        fPlanes[1] = static_cast<unsigned char*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 1));
+        fPlanes[2] = static_cast<unsigned char*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 2));
+        fPlanes[3] = nullptr;
+
+        fStrides[0] = static_cast<int32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0));
+        fStrides[1] = static_cast<int32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1));
+        fStrides[2] = static_cast<int32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 2));
+        fStrides[3] = 0;
+    }
+
+    uint32_t GetWidth() override
+    {
+        return uint32_t(CVPixelBufferGetWidth(fPixelBuffer));
+    }
+
+    uint32_t GetHeight() override
+    {
+        return uint32_t(CVPixelBufferGetHeight(fPixelBuffer));
+    }
+
+    int32_t* GetStrides() override
+    {
+        return fStrides;
+    }
+
+    unsigned char** GetPlanes() override
+    {
+        return fPlanes;
+    }
+
+    Format GetFormat() override
+    {
+        return plMovieFrame::Format::I420;
+    }
+
+    ~plVTMovieFrame()
+    {
+        CVPixelBufferUnlockBaseAddress(fPixelBuffer, 0);
+        CVPixelBufferRelease(fPixelBuffer);
+    }
+
+private:
+    CVPixelBufferRef fPixelBuffer;
+    unsigned char*   fPlanes[4];
+    int32_t          fStrides[4];
+};
+
+static OSStatus CreateFormatDescriptionFromVP9Track(
     const mkvparser::VideoTrack* video_track,
     CMFormatDescriptionRef*      format_desc_out)
 {
@@ -105,21 +160,24 @@ OSStatus CreateFormatDescriptionFromVP9Track(
     }
 
     // Create extensions dictionary
-    CFMutableDictionaryRef extensions = CFDictionaryCreateMutable(kCFAllocatorDefault,
-                                                                  1,
-                                                                  &kCFTypeDictionaryKeyCallBacks,
-                                                                  &kCFTypeDictionaryValueCallBacks);
+    CFMutableDictionaryRef extensions = CFDictionaryCreateMutable(
+        kCFAllocatorDefault,
+        1,
+        &kCFTypeDictionaryKeyCallBacks,
+        &kCFTypeDictionaryValueCallBacks);
 
-    CFMutableDictionaryRef atoms = CFDictionaryCreateMutable(kCFAllocatorDefault,
-                                                             1,
-                                                             &kCFTypeDictionaryKeyCallBacks,
-                                                             &kCFTypeDictionaryValueCallBacks);
+    CFMutableDictionaryRef atoms = CFDictionaryCreateMutable(
+        kCFAllocatorDefault,
+        1,
+        &kCFTypeDictionaryKeyCallBacks,
+        &kCFTypeDictionaryValueCallBacks);
 
     CFDictionarySetValue(atoms, CFSTR("vpcC"), boxData);
 
-    CFDictionarySetValue(extensions,
-                         kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms,
-                         atoms);
+    CFDictionarySetValue(
+        extensions,
+        kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms,
+        atoms);
 
     CFRelease(atoms);
     CFRelease(boxData);
@@ -155,60 +213,100 @@ plVTDecoder* plVTDecoder::CreateDecoder(const mkvparser::VideoTrack* track)
 plVTDecoder::plVTDecoder(const mkvparser::VideoTrack* track)
 {
     OSStatus               err;
-    CFMutableDictionaryRef decoderOptions = CFDictionaryCreateMutable(kCFAllocatorDefault,
-                                                                      1,
-                                                                      &kCFTypeDictionaryKeyCallBacks,
-                                                                      &kCFTypeDictionaryValueCallBacks);
-    CFDictionarySetValue(decoderOptions, kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder, kCFBooleanTrue);
+    CFMutableDictionaryRef decoderOptions = CFDictionaryCreateMutable(
+        kCFAllocatorDefault,
+        1,
+        &kCFTypeDictionaryKeyCallBacks,
+        &kCFTypeDictionaryValueCallBacks);
+
+    CFDictionarySetValue(
+        decoderOptions,
+        kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder,
+        kCFBooleanTrue);
 
     CreateFormatDescriptionFromVP9Track(track, &fFormat);
 
     SInt32      PixelFormatTypeValue = kCVPixelFormatType_420YpCbCr8PlanarFullRange;
-    CFNumberRef PixelFormatTypeNumber = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &PixelFormatTypeValue);
+    CFNumberRef PixelFormatTypeNumber = CFNumberCreate(
+        kCFAllocatorDefault,
+        kCFNumberSInt32Type,
+        &PixelFormatTypeValue);
 
     const void* outputKeys[] = {kCVPixelBufferPixelFormatTypeKey};
     const void* outputValues[] = {PixelFormatTypeNumber};
-    auto        outputDescription = CFDictionaryCreate(
-        kCFAllocatorDefault, outputKeys, outputValues, 1,
-        &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
-    err = VTDecompressionSessionCreate(kCFAllocatorDefault, fFormat, decoderOptions, outputDescription, nullptr, &fDecompressionSession);
-    hsAssert(err = noErr, "Decoder creation failed");
+    auto outputDescription = CFDictionaryCreate(
+        kCFAllocatorDefault,
+        outputKeys,
+        outputValues,
+        1,
+        &kCFTypeDictionaryKeyCallBacks,
+        &kCFTypeDictionaryValueCallBacks);
+
+    err = VTDecompressionSessionCreate(
+        kCFAllocatorDefault,
+        fFormat,
+        decoderOptions,
+        outputDescription,
+        nullptr,
+        &fDecompressionSession);
+    hsAssert(err == noErr, "Decoder creation failed");
 }
 
-plMovieFrameRef plVTDecoder::DecodeNextFrame(uint8_t* frameData, const size_t size)
+std::unique_ptr<plMovieFrame> plVTDecoder::DecodeNextFrame(uint8_t* frameData, const size_t size)
 {
     CMSampleBufferRef sampleBuffer;
     CMBlockBufferRef  buffer;
 
     OSStatus err;
-    err = CMBlockBufferCreateWithMemoryBlock(nullptr, frameData, size, nullptr, nullptr, 0, size, 0, &buffer);
-    hsAssert(err = noErr, "Could not create block buffer for frame data");
-    err = CMSampleBufferCreate(nullptr, buffer, true, nullptr, nullptr, fFormat, 1, 0, nullptr, 1, &size, &sampleBuffer);
-    hsAssert(err = noErr, "Could not create sample buffer");
-    plMovieFrame* frame = new plMovieFrame();
-    err = VTDecompressionSessionDecodeFrameWithOutputHandler(fDecompressionSession, sampleBuffer, 0, nullptr, ^(OSStatus status, VTDecodeInfoFlags infoFlags, CVImageBufferRef _Nullable imageBuffer, CMTime presentationTimeStamp, CMTime presentationDuration) {
-        CVPixelBufferLockBaseAddress(imageBuffer, 0);
+    err = CMBlockBufferCreateWithMemoryBlock(
+        nullptr,
+        frameData,
+        size,
+        nullptr,
+        nullptr,
+        0,
+        size,
+        0,
+        &buffer);
+    hsAssert(err == noErr, "Could not create block buffer for frame data");
+    err = CMSampleBufferCreate(
+        nullptr,
+        buffer,
+        true,
+        nullptr,
+        nullptr,
+        fFormat,
+        1,
+        0,
+        nullptr,
+        1,
+        &size,
+        &sampleBuffer);
+    hsAssert(err == noErr, "Could not create sample buffer");
+    __block std::unique_ptr<plMovieFrame> frame;
+    VTDecompressionOutputHandler handler = ^(
+        OSStatus status,
+        VTDecodeInfoFlags infoFlags,
+        CVImageBufferRef _Nullable imageBuffer,
+        CMTime presentationTimeStamp,
+        CMTime presentationDuration) {
+        if (imageBuffer)
+            frame = std::make_unique<plVTMovieFrame>(imageBuffer);
+    };
+    err = VTDecompressionSessionDecodeFrameWithOutputHandler(
+        fDecompressionSession,
+        sampleBuffer,
+        0,
+        nullptr,
+        handler);
+    hsAssert(err == noErr, "Decoding failed");
 
-        frame->fFormat = plMovieFrame::Format::I420;
-        frame->fWidth = uint32_t(CVPixelBufferGetWidth(imageBuffer));
-        frame->fHeight = uint32_t(CVPixelBufferGetHeight(imageBuffer));
+    return std::move(frame);
+}
 
-        frame->fPlanes[0] = static_cast<unsigned char*>(CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 0));
-        frame->fPlanes[1] = static_cast<unsigned char*>(CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 1));
-        frame->fPlanes[2] = static_cast<unsigned char*>(CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 2));
-        frame->fPlanes[3] = nullptr;
-
-        frame->fStride[0] = static_cast<int32_t>(CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 0));
-        frame->fStride[1] = static_cast<int32_t>(CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 1));
-        frame->fStride[2] = static_cast<int32_t>(CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 2));
-        frame->fStride[3] = 0;
-    });
-    hsAssert(err = noErr, "Decoding failed");
-
-    return std::unique_ptr<plMovieFrame, void (*)(plMovieFrame*)>(frame, [](plMovieFrame* ptr) {
-        CVImageBufferRef imageBuffer = static_cast<CVImageBufferRef>(ptr->fContext);
-        CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
-        delete ptr;
-    });
+plVTDecoder::~plVTDecoder()
+{
+    CFRelease(fDecompressionSession);
+    CFRelease(fFormat);
 }

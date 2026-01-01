@@ -54,6 +54,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #   define WEBM_CODECID_VP9 "V_VP9"
 #   define WEBM_CODECID_OPUS "A_OPUS"
+#   ifdef USE_VIDEOTOOLBOX
+#       include "plVTDecoder.h"
+#   endif
 #endif
 
 #include "hsConfig.h"
@@ -70,7 +73,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPlanarImage.h"
 #include "plResMgr/plLocalization.h"
 #include "plStatusLog/plStatusLog.h"
-#include "plVTDecoder.h"
 
 #define SAFE_OP(x, err) \
 { \
@@ -83,6 +85,49 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 }
 
 // =====================================================
+
+#ifdef USE_VPX
+class plVPXMovieFrame : public plMovieFrame
+{
+public:
+    plVPXMovieFrame(vpx_image_t* image) : fImage(image)
+    {
+    }
+
+    uint32_t GetWidth() override
+    {
+        return fImage->d_w;
+    }
+
+    uint32_t GetHeight() override
+    {
+        return fImage->d_h;
+    }
+
+    int32_t* GetStrides() override
+    {
+        return fImage->stride;
+    }
+
+    unsigned char** GetPlanes() override
+    {
+        return fImage->planes;
+    }
+
+    Format GetFormat() override
+    {
+        return plMovieFrame::Format::I420;
+    }
+
+    ~plVPXMovieFrame()
+    {
+        vpx_img_free(fImage);
+    }
+
+private:
+    vpx_image_t* fImage;
+};
+#endif
 
 class VPX
 {
@@ -110,12 +155,12 @@ public:
         return instance;
     }
 
-    plMovieFrameRef Decode(uint8_t* buf, uint32_t size)
+    std::unique_ptr<plMovieFrame> Decode(uint8_t* buf, uint32_t size)
     {
         if (vpx_codec_decode(&codec, buf, size, nullptr, 0) != VPX_CODEC_OK) {
             const char* detail = vpx_codec_error_detail(&codec);
             hsAssert(false, detail ? detail : "unspecified decode error");
-            return std::nullopt;
+            return nullptr;
         }
 
         vpx_codec_iter_t  iter = nullptr;
@@ -124,31 +169,13 @@ public:
         auto vpxFrame = vpx_codec_get_frame(&codec, &iter);
         
         if (vpxFrame->fmt != VPX_IMG_FMT_I420) {
-            // We only handle YUX 420 right now...
+            // We only handle YUV 420 right now...
+            hsAssert(0, "VPX decoded a frame in an unexpected format");
             vpx_img_free(vpxFrame);
-            return std::nullopt;
+            return nullptr;
         }
 
-        plMovieFrame* frame = new plMovieFrame();
-        frame->fFormat = plMovieFrame::Format::I420;
-        frame->fWidth = vpxFrame->d_w;
-        frame->fHeight = vpxFrame->d_h;
-
-        frame->fPlanes[0] = vpxFrame->planes[0];
-        frame->fPlanes[1] = vpxFrame->planes[1];
-        frame->fPlanes[2] = vpxFrame->planes[2];
-        frame->fPlanes[3] = vpxFrame->planes[3];
-
-        frame->fStride[0] = vpxFrame->stride[0];
-        frame->fStride[1] = vpxFrame->stride[1];
-        frame->fStride[2] = vpxFrame->stride[2];
-        frame->fStride[3] = vpxFrame->stride[3];
-
-        return std::unique_ptr<plMovieFrame, void (*)(plMovieFrame*)>(frame, [](plMovieFrame* ptr) {
-            auto imageBuffer = static_cast<vpx_image*>(ptr->fContext);
-            vpx_img_free(imageBuffer);
-            delete ptr;
-        });
+        return std::make_unique<plVPXMovieFrame>(vpxFrame);
     }
 #else
     VPX() { }
@@ -174,7 +201,7 @@ public:
 #ifdef USE_WEBM
         // If we have no block yet, grab the first one
         if (!fCurrentBlock)
-            fStatus = fTrack->GetFirst(fCurrentBlock);
+            fStatus = int32_t(fTrack->GetFirst(fCurrentBlock));
 
         // Continue through the blocks until our current movie time
         while (fCurrentBlock && fStatus == 0) {
@@ -189,7 +216,7 @@ public:
                     data.Read(reader, buf);
                     frames.push_back(std::make_tuple(std::unique_ptr<uint8_t>(buf), static_cast<int32_t>(data.len)));
                 }
-                fStatus = fTrack->GetNext(fCurrentBlock, fCurrentBlock);
+                fStatus = int32_t(fTrack->GetNext(fCurrentBlock, fCurrentBlock));
             } else {
                 // We've got all frames that have to play... come back for more later!
                 return true;
@@ -345,35 +372,38 @@ bool plMoviePlayer::ICheckLanguage(const mkvparser::Track* track)
 void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
 {
 #ifdef USE_WEBM
-    plMovieFrameRef img;
+    std::unique_ptr<plMovieFrame> img;
 
     // We have to decode all the frames, but we only want to display the most recent one to the user.
     for (const auto& frame : frames) {
         const std::unique_ptr<uint8_t>& buf = std::get<0>(frame);
         uint32_t size = static_cast<uint32_t>(std::get<1>(frame));
+        // Assume only one decoder is active here
 #ifdef USE_VIDEOTOOLBOX
-        if (!img && fVt)
+        if (fVt)
             img = fVt->DecodeNextFrame(buf.get(), size);
 #endif
 #ifdef USE_VPX
-        if (!img && fVpx)
+        if (fVpx)
             img = fVpx->Decode(buf.get(), size);
 #endif
     }
 
+    bool decoded = false;
     if (img) {
         fLastImg = std::move(img);
+        decoded = true;
     }
     
     // We need to refill the buffer if there is a new image or a new buffer
-    if (img || (!fTexture->GetDeviceRef() && fLastImg)) {
+    if (decoded || (!fTexture->GetDeviceRef() && fLastImg)) {
         // According to VideoLAN[1], I420 is the most common image format in videos. I am inclined to believe this as our
         // attemps to convert the common Uru videos use I420 image data. So, as a shortcut, we will only implement that format.
         // If for some reason we need other formats, please, be my guest!
         // [1] = http://wiki.videolan.org/YUV#YUV_4:2:0_.28I420.2FJ420.2FYV12.29
-        switch (fLastImg->get()->fFormat) {
+        switch (fLastImg->GetFormat()) {
         case plMovieFrame::Format::I420:
-            plPlanarImage::Yuv420ToRgba(fLastImg->get()->fWidth, fLastImg->get()->fHeight, fLastImg->get()->fStride, fLastImg->get()->fPlanes, reinterpret_cast<uint8_t*>(fTexture->GetImage()));
+            plPlanarImage::Yuv420ToRgba(fLastImg->GetWidth(), fLastImg->GetHeight(), fLastImg->GetStrides(), fLastImg->GetPlanes(), reinterpret_cast<uint8_t*>(fTexture->GetImage()));
             break;
 
         DEFAULT_FATAL(fLastImg->fmt);

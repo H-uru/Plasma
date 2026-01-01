@@ -66,22 +66,22 @@ namespace mkvparser
 typedef std::tuple<std::unique_ptr<uint8_t>, int32_t> blkbuf_t;
 typedef struct vpx_image vpx_image_t;
 
-struct plMovieFrame
+class plMovieFrame
 {
+public:
     enum class Format
     {
         I420
     };
 
-    uint32_t       fWidth;
-    uint32_t       fHeight;
-    int32_t        fStride[4];
-    unsigned char* fPlanes[4];
-    Format         fFormat;
-    void*          fContext;
-};
+    virtual uint32_t        GetWidth() = 0;
+    virtual uint32_t        GetHeight() = 0;
+    virtual int32_t*        GetStrides() = 0;
+    virtual unsigned char** GetPlanes() = 0;
+    virtual Format          GetFormat() = 0;
 
-typedef std::optional<std::unique_ptr<plMovieFrame, void (*)(plMovieFrame*)>> plMovieFrameRef;
+    virtual ~plMovieFrame() {}
+};
 
 class plMoviePlayer
 {
@@ -92,12 +92,16 @@ protected:
 #ifdef USE_WEBM
     mkvparser::MkvReader* fReader;
     std::unique_ptr<mkvparser::Segment> fSegment;
-    plMovieFrameRef fLastImg;
+    std::unique_ptr<plMovieFrame>       fLastImg;
 #endif
     std::unique_ptr<class TrackMgr> fAudioTrack, fVideoTrack; // TODO: vector of tracks?
     std::unique_ptr<class plWin32VideoSound> fAudioSound;
+#ifdef USE_VPX
     std::unique_ptr<class VPX> fVpx;
+#endif
+#ifdef USE_VIDEOTOOLBOX
     std::unique_ptr<class plVTDecoder> fVt;
+#endif
 
     int64_t fMovieTime, fLastFrameTime; // in ms
     hsPoint2 fPosition, fScale;

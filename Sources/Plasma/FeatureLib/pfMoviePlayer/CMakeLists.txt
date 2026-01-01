@@ -32,19 +32,5 @@ target_link_libraries(
         $<$<BOOL:${USE_VIDEOTOOLBOX}>:VideoToolbox::VideoToolbox>
 )
 
-if(USE_VPX)
-    target_compile_definitions(pfMoviePlayer
-        PRIVATE
-        USE_VPX
-    )
-endif(USE_VPX)
-
-if(USE_VIDEOTOOLBOX)
-    target_compile_definitions(pfMoviePlayer
-        PRIVATE
-        USE_VIDEOTOOLBOX
-    )
-endif(USE_VIDEOTOOLBOX)
-
 source_group("Source Files" FILES ${pfMoviePlayer_SOURCES})
 source_group("Header Files" FILES ${pfMoviePlayer_HEADERS})

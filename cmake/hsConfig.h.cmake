@@ -60,6 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #cmakedefine USE_EGL
 #cmakedefine USE_SPEEX
 #cmakedefine USE_OPUS
+#cmakedefine USE_VIDEOTOOLBOX
 #cmakedefine USE_VPX
 #cmakedefine USE_WEBM
 

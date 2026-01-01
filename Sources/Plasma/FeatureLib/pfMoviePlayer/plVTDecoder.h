@@ -45,10 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plMipmap.h"
 #include "plMoviePlayer.h"
 
-namespace mkvparser
-{
-class VideoTrack;
-}
+namespace mkvparser { class VideoTrack; }
 
 struct plMovieFrame;
 
@@ -56,9 +53,15 @@ class plVTDecoder
 {
 public:
     static plVTDecoder* CreateDecoder(const mkvparser::VideoTrack* track);
-    plMovieFrameRef     DecodeNextFrame(uint8_t* frameData, const size_t size);
+    std::unique_ptr<plMovieFrame> DecodeNextFrame(uint8_t* frameData, const size_t size);
+
+    ~plVTDecoder();
+
+    plVTDecoder(const plVTDecoder&) = delete;
+    plVTDecoder& operator=(const plVTDecoder&) = delete;
 
 private:
+    plVTDecoder() = default;
     plVTDecoder(const mkvparser::VideoTrack* track);
     VTDecompressionSessionRef   fDecompressionSession;
     CMVideoFormatDescriptionRef fFormat;
