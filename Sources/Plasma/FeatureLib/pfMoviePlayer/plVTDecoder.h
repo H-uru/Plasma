@@ -56,7 +56,7 @@ class plVTDecoder
 {
 public:
     static plVTDecoder* CreateDecoder(const mkvparser::VideoTrack* track);
-    plMovieFrameRef     DecodeNextFrame(uint8_t* frameData, const size_t size);
+    std::unique_ptr<plMovieFrame> DecodeNextFrame(uint8_t* frameData, const size_t size);
 
     ~plVTDecoder();
 

@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #   define WEBM_CODECID_VP9 "V_VP9"
 #   define WEBM_CODECID_OPUS "A_OPUS"
-#   if USE_VIDEOTOOLBOX
+#   ifdef USE_VIDEOTOOLBOX
 #   include "plVTDecoder.h"
 #   endif
 #endif
@@ -86,6 +86,49 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // =====================================================
 
+#ifdef USE_VPX
+class plVPXMovieFrame : public plMovieFrame
+{
+public:
+    plVPXMovieFrame(vpx_image_t* image) : fImage(image)
+    {
+    }
+
+    virtual uint32_t GetWidth() override
+    {
+        return fImage->d_w;
+    }
+
+    virtual uint32_t GetHeight() override
+    {
+        return fImage->d_h;
+    }
+
+    virtual int32_t* GetStrides() override
+    {
+        return fImage->stride;
+    }
+
+    virtual unsigned char** GetPlanes() override
+    {
+        return fImage->planes;
+    }
+
+    virtual Format GetFormat() override
+    {
+        return plMovieFrame::Format::I420;
+    }
+
+    ~plVPXMovieFrame()
+    {
+        vpx_img_free(fImage);
+    }
+
+private:
+    vpx_image_t* fImage;
+};
+#endif
+
 class VPX
 {
 
@@ -112,12 +155,12 @@ public:
         return instance;
     }
 
-    plMovieFrameRef Decode(uint8_t* buf, uint32_t size)
+    std::unique_ptr<plMovieFrame> Decode(uint8_t* buf, uint32_t size)
     {
         if (vpx_codec_decode(&codec, buf, size, nullptr, 0) != VPX_CODEC_OK) {
             const char* detail = vpx_codec_error_detail(&codec);
             hsAssert(false, detail ? detail : "unspecified decode error");
-            return std::nullopt;
+            return nullptr;
         }
 
         vpx_codec_iter_t  iter = nullptr;
@@ -128,29 +171,10 @@ public:
         if (vpxFrame->fmt != VPX_IMG_FMT_I420) {
             // We only handle YUX 420 right now...
             vpx_img_free(vpxFrame);
-            return std::nullopt;
+            return nullptr;
         }
 
-        plMovieFrame* frame = new plMovieFrame();
-        frame->fFormat = plMovieFrame::Format::I420;
-        frame->fWidth = vpxFrame->d_w;
-        frame->fHeight = vpxFrame->d_h;
-
-        frame->fPlanes[0] = vpxFrame->planes[0];
-        frame->fPlanes[1] = vpxFrame->planes[1];
-        frame->fPlanes[2] = vpxFrame->planes[2];
-        frame->fPlanes[3] = vpxFrame->planes[3];
-
-        frame->fStride[0] = vpxFrame->stride[0];
-        frame->fStride[1] = vpxFrame->stride[1];
-        frame->fStride[2] = vpxFrame->stride[2];
-        frame->fStride[3] = vpxFrame->stride[3];
-
-        return std::unique_ptr<plMovieFrame, void (*)(plMovieFrame*)>(frame, [](plMovieFrame* ptr) {
-            auto imageBuffer = static_cast<vpx_image*>(ptr->fContext);
-            vpx_img_free(imageBuffer);
-            delete ptr;
-        });
+        return std::make_unique<plVPXMovieFrame>(vpxFrame);
     }
 #else
     VPX() { }
@@ -347,7 +371,7 @@ bool plMoviePlayer::ICheckLanguage(const mkvparser::Track* track)
 void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
 {
 #ifdef USE_WEBM
-    plMovieFrameRef img;
+    std::unique_ptr<plMovieFrame> img;
 
     // We have to decode all the frames, but we only want to display the most recent one to the user.
     for (const auto& frame : frames) {
@@ -363,19 +387,21 @@ void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
 #endif
     }
 
+    bool decoded = false;
     if (img) {
         fLastImg = std::move(img);
+        decoded = true;
     }
     
     // We need to refill the buffer if there is a new image or a new buffer
-    if (img || (!fTexture->GetDeviceRef() && fLastImg)) {
+    if (decoded || (!fTexture->GetDeviceRef() && fLastImg)) {
         // According to VideoLAN[1], I420 is the most common image format in videos. I am inclined to believe this as our
         // attemps to convert the common Uru videos use I420 image data. So, as a shortcut, we will only implement that format.
         // If for some reason we need other formats, please, be my guest!
         // [1] = http://wiki.videolan.org/YUV#YUV_4:2:0_.28I420.2FJ420.2FYV12.29
-        switch (fLastImg->get()->fFormat) {
+        switch (fLastImg->GetFormat()) {
         case plMovieFrame::Format::I420:
-            plPlanarImage::Yuv420ToRgba(fLastImg->get()->fWidth, fLastImg->get()->fHeight, fLastImg->get()->fStride, fLastImg->get()->fPlanes, reinterpret_cast<uint8_t*>(fTexture->GetImage()));
+            plPlanarImage::Yuv420ToRgba(fLastImg->GetWidth(), fLastImg->GetHeight(), fLastImg->GetStrides(), fLastImg->GetPlanes(), reinterpret_cast<uint8_t*>(fTexture->GetImage()));
             break;
 
         DEFAULT_FATAL(fLastImg->fmt);

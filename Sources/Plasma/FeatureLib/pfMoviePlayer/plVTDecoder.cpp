@@ -49,7 +49,60 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMoviePlayer.h"
 #include "plPlanarImage.h"
 
-OSStatus CreateFormatDescriptionFromVP9Track(
+class plVTMovieFrame : public plMovieFrame
+{
+public:
+    plVTMovieFrame(CVPixelBufferRef pixelBuffer) : fPixelBuffer(pixelBuffer)
+    {
+        CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+        fPlanes[0] = static_cast<unsigned char*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
+        fPlanes[1] = static_cast<unsigned char*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 1));
+        fPlanes[2] = static_cast<unsigned char*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 2));
+        fPlanes[3] = nullptr;
+
+        fStrides[0] = static_cast<int32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0));
+        fStrides[1] = static_cast<int32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1));
+        fStrides[2] = static_cast<int32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 2));
+        fStrides[3] = 0;
+    }
+
+    virtual uint32_t GetWidth() override
+    {
+        return uint32_t(CVPixelBufferGetWidth(fPixelBuffer));
+    }
+
+    virtual uint32_t GetHeight() override
+    {
+        return uint32_t(CVPixelBufferGetHeight(fPixelBuffer));
+    }
+
+    virtual int32_t* GetStrides() override
+    {
+        return fStrides;
+    }
+
+    virtual unsigned char** GetPlanes() override
+    {
+        return fPlanes;
+    }
+
+    virtual Format GetFormat() override
+    {
+        return plMovieFrame::Format::I420;
+    }
+
+    ~plVTMovieFrame()
+    {
+        CVPixelBufferUnlockBaseAddress(fPixelBuffer, 0);
+    }
+
+private:
+    CVPixelBufferRef fPixelBuffer;
+    unsigned char*   fPlanes[4];
+    int32_t          fStrides[4];
+};
+
+static OSStatus CreateFormatDescriptionFromVP9Track(
     const mkvparser::VideoTrack* video_track,
     CMFormatDescriptionRef*      format_desc_out)
 {
@@ -176,7 +229,7 @@ plVTDecoder::plVTDecoder(const mkvparser::VideoTrack* track)
     hsAssert(err == noErr, "Decoder creation failed");
 }
 
-plMovieFrameRef plVTDecoder::DecodeNextFrame(uint8_t* frameData, const size_t size)
+std::unique_ptr<plMovieFrame> plVTDecoder::DecodeNextFrame(uint8_t* frameData, const size_t size)
 {
     CMSampleBufferRef sampleBuffer;
     CMBlockBufferRef  buffer;
@@ -185,32 +238,14 @@ plMovieFrameRef plVTDecoder::DecodeNextFrame(uint8_t* frameData, const size_t si
     err = CMBlockBufferCreateWithMemoryBlock(nullptr, frameData, size, nullptr, nullptr, 0, size, 0, &buffer);
     hsAssert(err == noErr, "Could not create block buffer for frame data");
     err = CMSampleBufferCreate(nullptr, buffer, true, nullptr, nullptr, fFormat, 1, 0, nullptr, 1, &size, &sampleBuffer);
-    plMovieFrame* frame = new plMovieFrame();
     hsAssert(err == noErr, "Could not create sample buffer");
+    __block std::unique_ptr<plMovieFrame> frame;
     err = VTDecompressionSessionDecodeFrameWithOutputHandler(fDecompressionSession, sampleBuffer, 0, nullptr, ^(OSStatus status, VTDecodeInfoFlags infoFlags, CVImageBufferRef _Nullable imageBuffer, CMTime presentationTimeStamp, CMTime presentationDuration) {
-        CVPixelBufferLockBaseAddress(imageBuffer, 0);
-
-        frame->fFormat = plMovieFrame::Format::I420;
-        frame->fWidth = uint32_t(CVPixelBufferGetWidth(imageBuffer));
-        frame->fHeight = uint32_t(CVPixelBufferGetHeight(imageBuffer));
-
-        frame->fPlanes[0] = static_cast<unsigned char*>(CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 0));
-        frame->fPlanes[1] = static_cast<unsigned char*>(CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 1));
-        frame->fPlanes[2] = static_cast<unsigned char*>(CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 2));
-        frame->fPlanes[3] = nullptr;
-
-        frame->fStride[0] = static_cast<int32_t>(CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 0));
-        frame->fStride[1] = static_cast<int32_t>(CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 1));
-        frame->fStride[2] = static_cast<int32_t>(CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 2));
-        frame->fStride[3] = 0;
+        frame = std::make_unique<plVTMovieFrame>(imageBuffer);
     });
     hsAssert(err == noErr, "Decoding failed");
 
-    return std::unique_ptr<plMovieFrame, void (*)(plMovieFrame*)>(frame, [](plMovieFrame* ptr) {
-        CVImageBufferRef imageBuffer = static_cast<CVImageBufferRef>(ptr->fContext);
-        CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
-        delete ptr;
-    });
+    return std::move(frame);
 }
 
 plVTDecoder::~plVTDecoder()
