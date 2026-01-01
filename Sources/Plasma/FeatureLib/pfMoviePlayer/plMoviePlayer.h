@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsRefCnt.h"
 
 #include <memory>
+#include <optional>
 #include <tuple>
 #include <vector>
 
