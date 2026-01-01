@@ -1,0 +1,22 @@
+#include "resource.h"
+#include <windows.h>
+#include <commctrl.h>
+
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+
+STRINGTABLE
+BEGIN
+    IDC_TEXT_LOGIN           "Anmelden"
+    IDC_TEXT_QUIT            "Beenden"
+    IDC_TEXT_ACCOUNT         "Kontoname:"
+    IDC_TEXT_PASSWORD        "Passwort:"
+    IDC_TEXT_LANGUAGE        "Sprache:"
+    IDC_TEXT_REMEMBER_PASS   "Passwort merken:"
+    IDC_TEXT_NEED_ACCOUNT    "Konto erstellen?"
+    IDC_TEXT_DONATE          "Spenden"
+
+    IDC_TEXT_ACCEPT          "Akzeptieren"
+    IDC_TEXT_DECLINE         "Ablehnen"
+
+    IDC_TEXT_AUTH            "Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut."
+END
