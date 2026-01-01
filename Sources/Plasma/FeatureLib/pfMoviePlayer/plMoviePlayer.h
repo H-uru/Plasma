@@ -96,8 +96,12 @@ protected:
 #endif
     std::unique_ptr<class TrackMgr> fAudioTrack, fVideoTrack; // TODO: vector of tracks?
     std::unique_ptr<class plWin32VideoSound> fAudioSound;
+#ifdef USE_VPX
     std::unique_ptr<class VPX> fVpx;
+#endif
+#ifdef USE_VIDEOTOOLBOX
     std::unique_ptr<class plVTDecoder> fVt;
+#endif
 
     int64_t fMovieTime, fLastFrameTime; // in ms
     hsPoint2 fPosition, fScale;

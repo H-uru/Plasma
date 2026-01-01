@@ -34,14 +34,14 @@ target_link_libraries(
 
 if(USE_VPX)
     target_compile_definitions(pfMoviePlayer
-        PRIVATE
+        PUBLIC
         USE_VPX
     )
 endif(USE_VPX)
 
 if(USE_VIDEOTOOLBOX)
     target_compile_definitions(pfMoviePlayer
-        PRIVATE
+        PUBLIC
         USE_VIDEOTOOLBOX
     )
 endif(USE_VIDEOTOOLBOX)

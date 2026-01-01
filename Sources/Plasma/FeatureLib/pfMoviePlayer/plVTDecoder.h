@@ -58,7 +58,13 @@ public:
     static plVTDecoder* CreateDecoder(const mkvparser::VideoTrack* track);
     plMovieFrameRef     DecodeNextFrame(uint8_t* frameData, const size_t size);
 
+    ~plVTDecoder();
+
+    plVTDecoder(const plVTDecoder&) = delete;
+    plVTDecoder& operator=(const plVTDecoder&) = delete;
+
 private:
+    plVTDecoder() = default;
     plVTDecoder(const mkvparser::VideoTrack* track);
     VTDecompressionSessionRef   fDecompressionSession;
     CMVideoFormatDescriptionRef fFormat;

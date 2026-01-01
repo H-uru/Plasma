@@ -212,3 +212,9 @@ plMovieFrameRef plVTDecoder::DecodeNextFrame(uint8_t* frameData, const size_t si
         delete ptr;
     });
 }
+
+plVTDecoder::~plVTDecoder()
+{
+    CFRelease(fDecompressionSession);
+    CFRelease(fFormat);
+}

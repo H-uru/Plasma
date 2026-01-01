@@ -174,7 +174,7 @@ public:
 #ifdef USE_WEBM
         // If we have no block yet, grab the first one
         if (!fCurrentBlock)
-            fStatus = fTrack->GetFirst(fCurrentBlock);
+            fStatus = int32_t(fTrack->GetFirst(fCurrentBlock));
 
         // Continue through the blocks until our current movie time
         while (fCurrentBlock && fStatus == 0) {
@@ -189,7 +189,7 @@ public:
                     data.Read(reader, buf);
                     frames.push_back(std::make_tuple(std::unique_ptr<uint8_t>(buf), static_cast<int32_t>(data.len)));
                 }
-                fStatus = fTrack->GetNext(fCurrentBlock, fCurrentBlock);
+                fStatus = int32_t(fTrack->GetNext(fCurrentBlock, fCurrentBlock));
             } else {
                 // We've got all frames that have to play... come back for more later!
                 return true;
