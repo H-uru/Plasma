@@ -68,7 +68,6 @@ from Plasma import *
 from PlasmaTypes import *
 
 import enum
-import itertools
 
 # Fire this "responder" on link in. In 3ds Max or Korman logic nodes, this can be a responder
 # with some messages that you fire on link in. You need to be careful about doing that, though,
