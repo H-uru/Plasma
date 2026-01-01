@@ -67,10 +67,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plMipmap.h"
 #include "plMessage/plMovieMsg.h"
 #include "plPipeline/plPlates.h"
+#include "plPlanarImage.h"
 #include "plResMgr/plLocalization.h"
 #include "plStatusLog/plStatusLog.h"
-
-#include "plPlanarImage.h"
+#include "plVTDecoder.h"
 
 #define SAFE_OP(x, err) \
 { \
@@ -110,18 +110,45 @@ public:
         return instance;
     }
 
-    vpx_image_t* Decode(uint8_t* buf, uint32_t size)
+    plMovieFrameRef Decode(uint8_t* buf, uint32_t size)
     {
         if (vpx_codec_decode(&codec, buf, size, nullptr, 0) != VPX_CODEC_OK) {
             const char* detail = vpx_codec_error_detail(&codec);
             hsAssert(false, detail ? detail : "unspecified decode error");
-            return nullptr;
+            return std::nullopt;
         }
 
         vpx_codec_iter_t  iter = nullptr;
         // ASSUMPTION: only one image per frame
         // if this proves false, move decoder function into IProcessVideoFrame
-        return vpx_codec_get_frame(&codec, &iter);
+        auto vpxFrame = vpx_codec_get_frame(&codec, &iter);
+        
+        if (vpxFrame->fmt != VPX_IMG_FMT_I420) {
+            // We only handle YUX 420 right now...
+            vpx_img_free(vpxFrame);
+            return std::nullopt;
+        }
+
+        plMovieFrame* frame = new plMovieFrame();
+        frame->fFormat = plMovieFrame::Format::I420;
+        frame->fWidth = vpxFrame->d_w;
+        frame->fHeight = vpxFrame->d_h;
+
+        frame->fPlanes[0] = vpxFrame->planes[0];
+        frame->fPlanes[1] = vpxFrame->planes[1];
+        frame->fPlanes[2] = vpxFrame->planes[2];
+        frame->fPlanes[3] = vpxFrame->planes[3];
+
+        frame->fStride[0] = vpxFrame->stride[0];
+        frame->fStride[1] = vpxFrame->stride[1];
+        frame->fStride[2] = vpxFrame->stride[2];
+        frame->fStride[3] = vpxFrame->stride[3];
+
+        return std::unique_ptr<plMovieFrame, void (*)(plMovieFrame*)>(frame, [](plMovieFrame* ptr) {
+            auto imageBuffer = static_cast<vpx_image*>(ptr->fContext);
+            vpx_img_free(imageBuffer);
+            delete ptr;
+        });
     }
 #else
     VPX() { }
@@ -318,20 +345,24 @@ bool plMoviePlayer::ICheckLanguage(const mkvparser::Track* track)
 void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
 {
 #ifdef USE_WEBM
-    vpx_image_t* img = nullptr;
+    plMovieFrameRef img;
 
     // We have to decode all the frames, but we only want to display the most recent one to the user.
     for (const auto& frame : frames) {
         const std::unique_ptr<uint8_t>& buf = std::get<0>(frame);
         uint32_t size = static_cast<uint32_t>(std::get<1>(frame));
-        img = fVpx->Decode(buf.get(), size);
+#ifdef USE_VIDEOTOOLBOX
+        if (!img && fVt)
+            img = fVt->DecodeNextFrame(buf.get(), size);
+#endif
+#ifdef USE_VPX
+        if (!img && fVpx)
+            img = fVpx->Decode(buf.get(), size);
+#endif
     }
 
     if (img) {
-        if (fLastImg) {
-            vpx_img_free(fLastImg);
-        }
-        fLastImg = img;
+        fLastImg = std::move(img);
     }
     
     // We need to refill the buffer if there is a new image or a new buffer
@@ -340,9 +371,9 @@ void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
         // attemps to convert the common Uru videos use I420 image data. So, as a shortcut, we will only implement that format.
         // If for some reason we need other formats, please, be my guest!
         // [1] = http://wiki.videolan.org/YUV#YUV_4:2:0_.28I420.2FJ420.2FYV12.29
-        switch (fLastImg->fmt) {
-        case VPX_IMG_FMT_I420:
-            plPlanarImage::Yuv420ToRgba(fLastImg->d_w, fLastImg->d_h, fLastImg->stride, fLastImg->planes, reinterpret_cast<uint8_t*>(fTexture->GetImage()));
+        switch (fLastImg->get()->fFormat) {
+        case plMovieFrame::Format::I420:
+            plPlanarImage::Yuv420ToRgba(fLastImg->get()->fWidth, fLastImg->get()->fHeight, fLastImg->get()->fStride, fLastImg->get()->fPlanes, reinterpret_cast<uint8_t*>(fTexture->GetImage()));
             break;
 
         DEFAULT_FATAL(fLastImg->fmt);
@@ -372,10 +403,24 @@ bool plMoviePlayer::Start()
         plStatusLog::AddLineSF("movie.log", "{}: Not a VP9 video track!", fMoviePath);
         return false;
     }
-    if (VPX* vpx = VPX::Create())
-        fVpx.reset(vpx);
-    else
-        return false;
+
+    bool ready = false;
+#ifdef USE_VIDEOTOOLBOX
+    if (!ready) {
+        if (plVTDecoder* vt = plVTDecoder::CreateDecoder(video)) {
+            fVt.reset(vt);
+            ready = true;
+        }
+    }
+#endif
+#ifdef USE_VPX
+    if (!ready) {
+        if (VPX* vpx = VPX::Create())
+            fVpx.reset(vpx);
+        else
+            return false;
+    }
+#endif
 
     // Decode the audio track and load it into a sound buffer
     if (!ILoadAudio())
@@ -437,6 +482,7 @@ bool plMoviePlayer::NextFrame()
     }
 
     // Show our mess
+    const mkvparser::VideoTrack* videoTrack = static_cast<const mkvparser::VideoTrack*>(fVideoTrack->GetTrack());
     IProcessVideoFrame(video);
     fAudioSound->RefreshVolume();
 
@@ -471,8 +517,7 @@ bool plMoviePlayer::Stop()
         fPlate->SetVisible(false);
 #ifdef USE_WEBM
     if (fLastImg) {
-        vpx_img_free(fLastImg);
-        fLastImg = nullptr;
+        fLastImg.reset();
     }
 #endif
 
