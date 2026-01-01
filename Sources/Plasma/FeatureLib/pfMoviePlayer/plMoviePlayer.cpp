@@ -54,6 +54,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #   define WEBM_CODECID_VP9 "V_VP9"
 #   define WEBM_CODECID_OPUS "A_OPUS"
+#   if USE_VIDEOTOOLBOX
+#   include "plVTDecoder.h"
+#   endif
 #endif
 
 #include "hsConfig.h"
@@ -70,7 +73,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPlanarImage.h"
 #include "plResMgr/plLocalization.h"
 #include "plStatusLog/plStatusLog.h"
-#include "plVTDecoder.h"
 
 #define SAFE_OP(x, err) \
 { \
