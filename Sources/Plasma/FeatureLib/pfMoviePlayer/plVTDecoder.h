@@ -45,10 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plMipmap.h"
 #include "plMoviePlayer.h"
 
-namespace mkvparser
-{
-class VideoTrack;
-}
+namespace mkvparser { class VideoTrack; }
 
 struct plMovieFrame;
 

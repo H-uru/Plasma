@@ -158,21 +158,24 @@ static OSStatus CreateFormatDescriptionFromVP9Track(
     }
 
     // Create extensions dictionary
-    CFMutableDictionaryRef extensions = CFDictionaryCreateMutable(kCFAllocatorDefault,
-                                                                  1,
-                                                                  &kCFTypeDictionaryKeyCallBacks,
-                                                                  &kCFTypeDictionaryValueCallBacks);
+    CFMutableDictionaryRef extensions = CFDictionaryCreateMutable(
+        kCFAllocatorDefault,
+        1,
+        &kCFTypeDictionaryKeyCallBacks,
+        &kCFTypeDictionaryValueCallBacks);
 
-    CFMutableDictionaryRef atoms = CFDictionaryCreateMutable(kCFAllocatorDefault,
-                                                             1,
-                                                             &kCFTypeDictionaryKeyCallBacks,
-                                                             &kCFTypeDictionaryValueCallBacks);
+    CFMutableDictionaryRef atoms = CFDictionaryCreateMutable(
+        kCFAllocatorDefault,
+        1,
+        &kCFTypeDictionaryKeyCallBacks,
+        &kCFTypeDictionaryValueCallBacks);
 
     CFDictionarySetValue(atoms, CFSTR("vpcC"), boxData);
 
-    CFDictionarySetValue(extensions,
-                         kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms,
-                         atoms);
+    CFDictionarySetValue(
+        extensions,
+        kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms,
+        atoms);
 
     CFRelease(atoms);
     CFRelease(boxData);
@@ -208,11 +211,16 @@ plVTDecoder* plVTDecoder::CreateDecoder(const mkvparser::VideoTrack* track)
 plVTDecoder::plVTDecoder(const mkvparser::VideoTrack* track)
 {
     OSStatus               err;
-    CFMutableDictionaryRef decoderOptions = CFDictionaryCreateMutable(kCFAllocatorDefault,
-                                                                      1,
-                                                                      &kCFTypeDictionaryKeyCallBacks,
-                                                                      &kCFTypeDictionaryValueCallBacks);
-    CFDictionarySetValue(decoderOptions, kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder, kCFBooleanTrue);
+    CFMutableDictionaryRef decoderOptions = CFDictionaryCreateMutable(
+        kCFAllocatorDefault,
+        1,
+        &kCFTypeDictionaryKeyCallBacks,
+        &kCFTypeDictionaryValueCallBacks);
+
+    CFDictionarySetValue(
+        decoderOptions,
+        kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder,
+        kCFBooleanTrue);
 
     CreateFormatDescriptionFromVP9Track(track, &fFormat);
 
@@ -221,11 +229,22 @@ plVTDecoder::plVTDecoder(const mkvparser::VideoTrack* track)
 
     const void* outputKeys[] = {kCVPixelBufferPixelFormatTypeKey};
     const void* outputValues[] = {PixelFormatTypeNumber};
-    auto        outputDescription = CFDictionaryCreate(
-        kCFAllocatorDefault, outputKeys, outputValues, 1,
-        &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
-    err = VTDecompressionSessionCreate(kCFAllocatorDefault, fFormat, decoderOptions, outputDescription, nullptr, &fDecompressionSession);
+    auto outputDescription = CFDictionaryCreate(
+        kCFAllocatorDefault,
+        outputKeys,
+        outputValues,
+        1,
+        &kCFTypeDictionaryKeyCallBacks,
+        &kCFTypeDictionaryValueCallBacks);
+
+    err = VTDecompressionSessionCreate(
+        kCFAllocatorDefault,
+        fFormat,
+        decoderOptions,
+        outputDescription,
+        nullptr,
+        &fDecompressionSession);
     hsAssert(err == noErr, "Decoder creation failed");
 }
 
