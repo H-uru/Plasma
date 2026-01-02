@@ -40,35 +40,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef HeadSpinConfigHDefined
-#define HeadSpinConfigHDefined
+#include <VideoToolbox/VideoToolbox.h>
 
-/* Compiler settings */
-#cmakedefine HAVE_BUILTIN_AVAILABLE
-#cmakedefine HAVE_CPUID
-#cmakedefine HAVE_AVX2
-#cmakedefine HAVE_AVX
-#cmakedefine HAVE_SSE42
-#cmakedefine HAVE_SSSE3
-#cmakedefine HAVE_SSE41
-#cmakedefine HAVE_SSE4
-#cmakedefine HAVE_SSE3
-#cmakedefine HAVE_SSE2
-#cmakedefine HAVE_SSE1
+#include "plGImage/plMipmap.h"
+#include "plMoviePlayer.h"
 
-/* External library usage */
-#cmakedefine USE_EGL
-#cmakedefine USE_SPEEX
-#cmakedefine USE_OPUS
-#cmakedefine USE_VIDEOTOOLBOX
-#cmakedefine USE_VPX
-#cmakedefine USE_WEBM
+namespace mkvparser { class VideoTrack; }
 
-#cmakedefine HAVE_SYSCTL
-#cmakedefine HAVE_SYSDIR
-#cmakedefine HAVE_SYSINFO
-#cmakedefine HAVE_SHELLSCALINGAPI
-#cmakedefine HAVE_PTHREAD_SETNAME_NP
-#cmakedefine HAVE_STRNLEN
+struct plMovieFrame;
 
-#endif
+class plVTDecoder
+{
+public:
+    static plVTDecoder* CreateDecoder(const mkvparser::VideoTrack* track);
+    std::unique_ptr<plMovieFrame> DecodeNextFrame(uint8_t* frameData, const size_t size);
+
+    ~plVTDecoder();
+
+    plVTDecoder(const plVTDecoder&) = delete;
+    plVTDecoder& operator=(const plVTDecoder&) = delete;
+
+private:
+    plVTDecoder() = default;
+    plVTDecoder(const mkvparser::VideoTrack* track);
+    VTDecompressionSessionRef   fDecompressionSession;
+    CMVideoFormatDescriptionRef fFormat;
+};
