@@ -122,8 +122,8 @@ bool plMetalBumpArgumentBuffer::CheckBuffer(const std::vector<plMetalBumpMapping
     if (bumps.size() != fNumElements || GetBuffer() == nullptr) {
         return false;
     }
-    int i = 0;
-    for (const auto& bump : bumps) {
+    for (int i = 0; i < bumps.size(); ++i) {
+        auto& bump = bumps[i];
         if (bump.texture != _bumps[i].texture)
             return false;
         if (bump.dTangentUIndex != _bumps[i].dTangentUIndex ||
@@ -133,7 +133,6 @@ bool plMetalBumpArgumentBuffer::CheckBuffer(const std::vector<plMetalBumpMapping
         if (bump.scale != _bumps[i].scale) {
             return false;
         }
-        i++;
     }
     return true;
 }
