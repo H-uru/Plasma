@@ -377,12 +377,13 @@ void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
     for (const auto& frame : frames) {
         const std::unique_ptr<uint8_t>& buf = std::get<0>(frame);
         uint32_t size = static_cast<uint32_t>(std::get<1>(frame));
+        // Assume only one decoder is active here
 #ifdef USE_VIDEOTOOLBOX
-        if (!img && fVt)
+        if (fVt)
             img = fVt->DecodeNextFrame(buf.get(), size);
 #endif
 #ifdef USE_VPX
-        if (!img && fVpx)
+        if (fVpx)
             img = fVpx->Decode(buf.get(), size);
 #endif
     }
