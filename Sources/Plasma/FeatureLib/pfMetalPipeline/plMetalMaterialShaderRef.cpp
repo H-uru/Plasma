@@ -164,8 +164,8 @@ void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder* en
 
     encoder->setFragmentBuffer(fPassArgumentBuffers[pass], 0, FragmentShaderArgumentUniforms);
 
-    if (fBumps[pass].has_value()) {
-        auto& bump = fBumps[pass].value();
+    if (fBumps[pass]) {
+        auto& bump = fBumps[pass];
         bump->Bind(encoder);
     }
 }
@@ -204,8 +204,8 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encode
         }
     );
 
-    if (fBumps[pass].has_value()) {
-        auto& bump = fBumps[pass].value();
+    if (fBumps[pass]) {
+        auto& bump = fBumps[pass];
         bump->Bind(encoder);
     }
 
@@ -309,7 +309,7 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
             // Shader only supports 8 bump maps, cap the number we build the shader for
             passDescription.fNumBumpMaps = std::min(bumps.size(), size_t(8));
         } else {
-            fBumps.emplace_back(std::nullopt);
+            fBumps.emplace_back(nullptr);
         }
 
         fFragmentShaderDescriptions.push_back(passDescription);
@@ -325,7 +325,7 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
 void plMetalMaterialShaderRef::IEncodeBumpmapLayers(const std::vector<plMetalBumpMapping>& bumps, uint32_t pass)
 {
     if (fBumps.size() <= pass) {
-        fBumps.emplace_back(std::nullopt);
+        fBumps.emplace_back(nullptr);
     }
     auto& buffer = fBumps[pass];
     auto  bumpCount = bumps.size();
@@ -333,11 +333,11 @@ void plMetalMaterialShaderRef::IEncodeBumpmapLayers(const std::vector<plMetalBum
         buffer.reset();
         return;
     }
-    if (!buffer.has_value() || buffer.value()->GetNumElements() != bumpCount) {
-        buffer = std::make_shared<plMetalBumpArgumentBuffer>(fDevice, bumps.size());
+    if (!buffer|| buffer->GetNumElements() != bumpCount) {
+        buffer = std::make_unique<plMetalBumpArgumentBuffer>(fDevice, bumps.size());
     }
     size_t index = 0;
-    buffer.value()->Set(bumps);
+    buffer->Set(bumps);
 }
 
 void plMetalMaterialShaderRef::IEatBumpmapLayers(uint32_t& layerIdx, std::vector<plMetalBumpMapping>& bumpsOut)
@@ -363,7 +363,6 @@ void plMetalMaterialShaderRef::IEatBumpmapLayers(uint32_t& layerIdx, std::vector
             case hsGMatState::kMiscBumpDv:
                 bumpMapping.dTangentVIndex = layer->GetUVWSrc();
             case hsGMatState::kMiscBumpDw:
-            default:
                 break;
         }
     }

@@ -128,7 +128,7 @@ private:
     void EncodeTransform(const plLayerInterface* layer, UVOutDescriptor* transform);
 
     std::vector<std::vector<plLayerInterface*>>                            fPasses;
-    std::vector<std::optional<std::shared_ptr<plMetalBumpArgumentBuffer>>> fBumps;
+    std::vector<std::unique_ptr<plMetalBumpArgumentBuffer>>                fBumps;
     std::vector<struct plMetalFragmentShaderDescription>                   fFragmentShaderDescriptions;
 };
 
