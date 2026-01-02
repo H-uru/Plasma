@@ -72,10 +72,10 @@ void plMetalBumpArgumentBuffer::Set(const std::vector<plMetalBumpMapping>& bumps
         return;
     }
     ConfigureBuffer();
-    int i = 0;
     if (fTier == plMetalArgumentBufferTier::Tier1) {
         // Tier 1, because Tier 1 doesn't guarantee memory layout, go through the encoder
-        for (const auto& bump : bumps) {
+        for (int i = 0; i < bumps.size(); ++i) {
+            auto& bump = bumps[i];
             fEncoder->setArgumentBuffer(GetBuffer(), 0, i);
             fEncoder->setTexture(bump.texture, textureID);
             fEncoder->setSamplerState(bump.sampler, samplerID);
@@ -85,20 +85,19 @@ void plMetalBumpArgumentBuffer::Set(const std::vector<plMetalBumpMapping>& bumps
             memcpy(scaleBuffer, &bump.scale, sizeof(float));
 
             _bumps[i] = bump;
-            i++;
         }
     }
 #ifdef METAL_3_SDK
     else {
         // Tier 2, memory layout is guaranteed, we can scrible directly on buffer memory
-        for (const auto& bump : bumps) {
+        for (int i = 0; i < bumps.size(); ++i) {
+            auto& bump = bumps[i];
             fValue[i].bumpTexture = bump.texture->gpuResourceID();
             fValue[i].bumpTextureSampler = bump.sampler->gpuResourceID();
             fValue[i].dTangentIndex = simd::make_char2(bump.dTangentUIndex, bump.dTangentVIndex);
             fValue[i].scale = bump.scale;
 
             _bumps[i] = bump;
-            i++;
         }
     }
 #endif
@@ -124,7 +123,7 @@ bool plMetalBumpArgumentBuffer::CheckBuffer(const std::vector<plMetalBumpMapping
         return false;
     }
     int i = 0;
-    for (auto& bump : bumps) {
+    for (const auto& bump : bumps) {
         if (bump.texture != _bumps[i].texture)
             return false;
         if (bump.dTangentUIndex != _bumps[i].dTangentUIndex ||
