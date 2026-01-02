@@ -47,10 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_theory/format>
 
 #include "HeadSpin.h"
+#include "ShaderTypes.h"
 #include "hsGMatState.inl"
 #include "hsMath.h"
 #include "hsTimer.h"
-
 #include "pfCamera/plVirtualCamNeu.h"
 #include "plAvatar/plAvatarClothing.h"
 #include "plDrawable/plAuxSpan.h"
@@ -82,7 +82,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/plLayerShadowBase.h"
 #include "plTweak.h"
 #include "plgDispatch.h"
-
 #include "pnMessage/plPipeResMakeMsg.h"
 #include "pnNetCommon/plNetApp.h" // for dbg logging
 
@@ -1697,8 +1696,11 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
                                   preEncodeTransform,
                                   postEncodeTransform);
         }
-        
-        fragmentShaderDescription.fUsePerPixelLighting = PLASMA_FORCE_PER_PIXEL_LIGHTING;
+
+        if (!fragmentShaderDescription.fUsePerPixelLighting) {
+            fragmentShaderDescription.fUsePerPixelLighting = PLASMA_FORCE_PER_PIXEL_LIGHTING;
+        }
+
         ISetEnablePerPixelLighting( fragmentShaderDescription.fUsePerPixelLighting  );
 
         plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalMaterialPassPipelineState(&fDevice, vRef, fragmentShaderDescription).GetRenderPipelineState();
@@ -1725,7 +1727,7 @@ void plMetalPipeline::IBindLights()
 
     if (fLightsDirty) {
         if (fLightingPerPixel) {
-            fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(fLights->data(), sizeof(plMetalShaderActiveLight) * fLights->size(), ShaderActiveLights);
+            fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(fLights->data(), bindSize, ShaderActiveLights);
             fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&lightSize, sizeof(uint), ShaderActiveLightCount);
         } else {
             fDevice.CurrentRenderCommandEncoder()->setVertexBytes(fLights->data(), bindSize, ShaderActiveLights);
@@ -2511,6 +2513,7 @@ void plMetalPipeline::ISetEnablePerPixelLighting(const bool enable)
 {
     if (fLightingPerPixel != enable) {
         fLightingPerPixel = enable;
+        fLightsDirty = true;
 
         // These states need to be reset for a change in lighting technique
         fState.fBoundMaterialProperties.reset();
@@ -2965,7 +2968,7 @@ void plMetalPipeline::IDrawClothingQuad(float x, float y, float w, float h,
 
 void plMetalPipeline::FindFragFunction()
 {
-    MTL::Library* library = fDevice.fMetalDevice->newDefaultLibrary();
+    MTL::Library* library = fDevice.GetShaderLibrary();
 
     NS::Error* error = nullptr;
 
@@ -2981,7 +2984,6 @@ void plMetalPipeline::FindFragFunction()
     fFragFunction = fragFunction;
 
     functionContents->release();
-    library->release();
 }
 
 /*plPipeline* plPipelineCreate::ICreateMetalPipeline(hsWindowHndl disp, hsWindowHndl hWnd, const hsG3DDeviceModeRecord* devMode)
