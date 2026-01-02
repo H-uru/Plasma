@@ -155,11 +155,11 @@ struct plMetalFragmentShaderDescription
     bool operator==(const plMetalFragmentShaderDescription& p) const
     {
         bool match = fNumLayers == p.fNumLayers &&
-                                    memcmp(fPassTypes, p.fPassTypes, sizeof(fPassTypes)) == 0 &&
-                                    memcmp(fBlendModes, p.fBlendModes, sizeof(fBlendModes)) == 0 &&
-                                    memcmp(fMiscFlags, p.fMiscFlags, sizeof(fMiscFlags)) == 0 &&
-                                    fUsePerPixelLighting == p.fUsePerPixelLighting &&
-                                    fNumBumpMaps == p.fNumBumpMaps;
+            memcmp(fPassTypes, p.fPassTypes, sizeof(fPassTypes)) == 0 &&
+            memcmp(fBlendModes, p.fBlendModes, sizeof(fBlendModes)) == 0 &&
+            memcmp(fMiscFlags, p.fMiscFlags, sizeof(fMiscFlags)) == 0 &&
+            fUsePerPixelLighting == p.fUsePerPixelLighting &&
+            fNumBumpMaps == p.fNumBumpMaps;
         return match;
     }
 
