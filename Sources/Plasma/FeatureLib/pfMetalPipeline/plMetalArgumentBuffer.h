@@ -67,7 +67,8 @@ template <class T>
 class plMetalArgumentBuffer
 {
 public:
-    plMetalArgumentBuffer(MTL::Device* device, size_t numElements) : fDevice(device), fNumElements(numElements), fEncoder(nullptr)
+    plMetalArgumentBuffer(MTL::Device* device, size_t numElements)
+        : fDevice(device), fNumElements(numElements), fEncoder(nullptr)
     {
         fCurrentBufferIndex = -1;
         auto tier = std::max(device->argumentBuffersSupport(), MTL::ArgumentBuffersTier2);
@@ -76,6 +77,7 @@ public:
         fBuffer[1] = nullptr;
         fBuffer[2] = nullptr;
     };
+    
     constexpr MTL::Buffer* GetBuffer()
     {
         if (fCurrentBufferIndex == -1) {
@@ -83,8 +85,11 @@ public:
         }
         return fBuffer[fCurrentBufferIndex];
     }
+    
     T*     ValueAt(size_t i) { return fValue[i]; }
-    size_t GetNumElements() { return fNumElements; }
+    
+    size_t GetNumElements() const { return fNumElements; }
+    
     ~plMetalArgumentBuffer()
     {
         fBuffer[0]->release();
