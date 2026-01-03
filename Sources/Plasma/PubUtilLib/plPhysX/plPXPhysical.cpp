@@ -192,6 +192,7 @@ void plPXPhysical::DirtyRecipe()
     fObjectKey = fRecipe.objectKey;
     fReportsOn = fRecipe.reportsOn;
     fSceneNode = fRecipe.sceneNode;
+    fWorldKey = fRecipe.worldKey;
 
     // PhysX 4.1 cannot handle dynamic triangle meshes, so we force these to be hulls. Sad.
     switch (fBounds) {
