@@ -212,7 +212,7 @@ struct plTier1Bumpmap
     char2 dTangentIndex         [[ id(dTangentIndexID) ]];
     texture2d<half> bumpTexture [[ id(textureID) ]];
     sampler bumpTextureSampler  [[ id(samplerID) ]];
-    float3 scale                [[ id(dScaleID) ]];
+    float scale                 [[ id(dScaleID) ]];
 };
     
 #if __METAL_VERSION__ >= 300
