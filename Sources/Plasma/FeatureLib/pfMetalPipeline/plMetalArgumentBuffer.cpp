@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 NS::Array* plMetalBumpArgumentBuffer::GetArgumentDescriptors()
 {
-    MTL::ArgumentDescriptor* descriptors[3];
+    MTL::ArgumentDescriptor* descriptors[4];
     descriptors[0] = MTL::ArgumentDescriptor::argumentDescriptor();
     descriptors[0]->setIndex(dTangentIndexID);
     descriptors[0]->setDataType(MTL::DataTypeChar2);
@@ -54,10 +54,14 @@ NS::Array* plMetalBumpArgumentBuffer::GetArgumentDescriptors()
     descriptors[1]->setDataType(MTL::DataTypeTexture);
 
     descriptors[2] = MTL::ArgumentDescriptor::argumentDescriptor();
-    descriptors[2]->setIndex(dScaleID);
-    descriptors[2]->setDataType(MTL::DataTypeFloat);
+    descriptors[2]->setIndex(samplerID);
+    descriptors[2]->setDataType(MTL::DataTypeSampler);
 
-    NS::Array* array = NS::Array::array((const NS::Object* const*)descriptors, 3);
+    descriptors[3] = MTL::ArgumentDescriptor::argumentDescriptor();
+    descriptors[3]->setIndex(dScaleID);
+    descriptors[3]->setDataType(MTL::DataTypeFloat);
+
+    NS::Array* array = NS::Array::array((const NS::Object* const*)descriptors, 4);
     return array;
 }
 
