@@ -199,6 +199,8 @@ plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, con
     // display id.
 
     fDevice.fMetalDevice = plMetalEnumerate::DeviceForDisplay(display);
+    fDevice.fDeviceType = devMode->GetDevice()->GetG3DDeviceType();
+
     fDevice.InitDevice();
 
     fMaxLayersAtOnce = devMode->GetDevice()->GetLayersAtOnce();

@@ -98,6 +98,7 @@ public:
 
     MTL::RenderCommandEncoder* CurrentRenderCommandEncoder();
     MTL::Device*               fMetalDevice;
+    uint32_t                   fDeviceType;
     MTL::CommandQueue*         fCommandQueue;
     MTL::Buffer*               fCurrentIndexBuffer;
 

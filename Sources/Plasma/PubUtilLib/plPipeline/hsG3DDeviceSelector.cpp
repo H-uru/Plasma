@@ -381,7 +381,8 @@ bool hsG3DDeviceSelector::GetRequested(hsG3DDeviceModeRecord *dmr, uint32_t devT
 
     hsG3DDeviceRecord* iTnL = nullptr;
     hsG3DDeviceRecord* iD3D = nullptr;
-    hsG3DDeviceRecord* iMetal = nullptr;
+    hsG3DDeviceRecord* iMetal2 = nullptr;
+    hsG3DDeviceRecord* iMetal3 = nullptr;
     hsG3DDeviceRecord* iOpenGL = nullptr;
     hsG3DDeviceRecord* device = nullptr;
 
@@ -410,10 +411,15 @@ bool hsG3DDeviceSelector::GetRequested(hsG3DDeviceModeRecord *dmr, uint32_t devT
             if (iOpenGL == nullptr || force)
                 iOpenGL = &record;
             break;
-                
-        case kDevTypeMetal:
-            if (iMetal == nullptr || force)
-                iMetal = &record;
+
+        case kDevTypeMetal2:
+            if (iMetal2 == nullptr || force)
+                iMetal2 = &record;
+            break;
+
+        case kDevTypeMetal3:
+            if (iMetal3 == nullptr || force)
+                iMetal3 = &record;
             break;
         }
     }
@@ -423,8 +429,10 @@ bool hsG3DDeviceSelector::GetRequested(hsG3DDeviceModeRecord *dmr, uint32_t devT
         device = iTnL;
     else if (iD3D != nullptr)
         device = iD3D;
-    else if (iMetal != nullptr)
-        device = iMetal;
+    else if (iMetal3 != nullptr)
+        device = iMetal3;
+    else if (iMetal2 != nullptr)
+        device = iMetal2;
     else if (iOpenGL != nullptr)
         device = iOpenGL;
     else

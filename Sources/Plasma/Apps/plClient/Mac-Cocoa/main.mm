@@ -178,6 +178,34 @@ public:
     }
 };
 
+uint32_t ParseRendererArgument(const ST::string& requested)
+{
+    using namespace ST::literals;
+
+    static std::unordered_set<ST::string, ST::hash_i, ST::equal_i> metal2_args {
+        "metal2"_st
+    };
+    
+    static std::unordered_set<ST::string, ST::hash_i, ST::equal_i> metal3_args {
+        "metal3"_st
+    };
+
+    static std::unordered_set<ST::string, ST::hash_i, ST::equal_i> gl_args {
+        "opengl"_st, "gl"_st
+    };
+    
+    if (metal2_args.find(requested) != metal2_args.end())
+        return hsG3DDeviceSelector::kDevTypeMetal2;
+
+    if (metal3_args.find(requested) != metal3_args.end())
+        return hsG3DDeviceSelector::kDevTypeMetal3;
+
+    if (gl_args.find(requested) != gl_args.end())
+        return hsG3DDeviceSelector::kDevTypeOpenGL;
+
+    return hsG3DDeviceSelector::kDevTypeUnknown;
+}
+
 @interface AppDelegate : NSWindowController <NSApplicationDelegate,
                                              NSWindowDelegate,
                                              PLSViewDelegate,
@@ -447,8 +475,10 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     plPipeline::fInitialPipeParams.TextureQuality = 2;
     // if (cmdParser.IsSpecified(kArgPvdFile))
     //    plPXSimulation::SetDefaultDebuggerEndpoint(cmdParser.GetString(kArgPvdFile));
-    // if (cmdParser.IsSpecified(kArgRenderer))
-    //     gClient.SetRequestedRenderingBackend(ParseRendererArgument(cmdParser.GetString(kArgRenderer)));
+    if (cmdParser.IsSpecified(kArgRenderer))
+        gClient.SetRequestedRenderingBackend(
+            ParseRendererArgument(cmdParser.GetString(kArgRenderer))
+        );
 #endif
 
     NetCommStartup();

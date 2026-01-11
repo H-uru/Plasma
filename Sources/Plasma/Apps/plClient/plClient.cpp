@@ -492,7 +492,8 @@ plPipeline* plClient::ICreatePipeline(hsDisplayHndl disp, hsWindowHndl hWnd, con
 #endif
     
 #ifdef PLASMA_PIPELINE_METAL
-    if (renderer == hsG3DDeviceSelector::kDevTypeMetal)
+    if (renderer == hsG3DDeviceSelector::kDevTypeMetal2 ||
+        renderer == hsG3DDeviceSelector::kDevTypeMetal3)
         return new plMetalPipeline(disp, hWnd, devMode);
 #endif
 
