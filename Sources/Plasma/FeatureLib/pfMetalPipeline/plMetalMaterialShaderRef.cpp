@@ -334,7 +334,7 @@ void plMetalMaterialShaderRef::IEncodeBumpmapLayers(const std::vector<plMetalBum
         return;
     }
     if (!buffer|| buffer->GetNumElements() != bumpCount) {
-        buffer = std::make_unique<plMetalBumpArgumentBuffer>(fDevice, bumps.size());
+        buffer = std::make_unique<plMetalBumpArgumentBuffer>(&fPipeline->fDevice, bumps.size());
     }
     size_t index = 0;
     buffer->Set(bumps);

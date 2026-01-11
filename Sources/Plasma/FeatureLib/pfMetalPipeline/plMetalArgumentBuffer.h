@@ -46,7 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <stdio.h>
 #include <Metal/Metal.hpp>
 
+#include "plMetalDevice.h"
 #include "ShaderTypes.h"
+
+class plMetalDevice;
 
 // Define our own enum so our code doesn't do weird things
 // if tier 3 shows up.
@@ -67,11 +70,11 @@ template <class T>
 class plMetalArgumentBuffer
 {
 public:
-    plMetalArgumentBuffer(MTL::Device* device, size_t numElements)
+    plMetalArgumentBuffer(plMetalDevice* device, size_t numElements)
         : fDevice(device), fNumElements(numElements), fEncoder(nullptr)
     {
         fCurrentBufferIndex = -1;
-        auto tier = std::max(device->argumentBuffersSupport(), MTL::ArgumentBuffersTier2);
+        auto tier = std::min(device->ArgumentBuffersTier(), MTL::ArgumentBuffersTier2);
         fTier = plMetalArgumentBufferTier(tier);
         fBuffer[0] = nullptr;
         fBuffer[1] = nullptr;
@@ -103,8 +106,8 @@ protected:
     T*                        fValue;
     // Triple buffered argument buffers
     MTL::Buffer*              fBuffer[3];
-    // Host device for buffers
-    MTL::Device*              fDevice;
+    // Host Plasma device for buffers
+    plMetalDevice*            fDevice;
     // Encoder for tier 1 buffers, don't use in tier 2
     MTL::ArgumentEncoder*     fEncoder;
     // Number of array elements supported per buffer
@@ -137,9 +140,9 @@ private:
     void ConfigureTier1()
     {
         if (!fEncoder)
-            fEncoder = fDevice->newArgumentEncoder(GetArgumentDescriptors());
+            fEncoder = fDevice->fMetalDevice->newArgumentEncoder(GetArgumentDescriptors());
         if (!fBuffer[fCurrentBufferIndex])
-            fBuffer[fCurrentBufferIndex] = fDevice->newBuffer(fEncoder->encodedLength() * fNumElements, MTL::CPUCacheModeWriteCombined);
+            fBuffer[fCurrentBufferIndex] = fDevice->fMetalDevice->newBuffer(fEncoder->encodedLength() * fNumElements, MTL::CPUCacheModeWriteCombined);
         // raw access to buffer not available in tier 1 argument buffers
         fValue = nullptr;
     }
@@ -147,7 +150,7 @@ private:
     void ConfigureTier2()
     {
         if (!fBuffer[fCurrentBufferIndex])
-            fBuffer[fCurrentBufferIndex] = fDevice->newBuffer(sizeof(T) * fNumElements, MTL::CPUCacheModeWriteCombined);
+            fBuffer[fCurrentBufferIndex] = fDevice->fMetalDevice->newBuffer(sizeof(T) * fNumElements, MTL::CPUCacheModeWriteCombined);
         fValue = static_cast<T*>(fBuffer[fCurrentBufferIndex]->contents());
         // Encoders are not used in tier 2 argument buffers
         fEncoder = nullptr;
@@ -168,7 +171,7 @@ class plMetalBumpArgumentBuffer final : public plMetalArgumentBuffer<plMetalBump
 {
 public:
     void Set(const std::vector<plMetalBumpMapping>& bumps);
-    plMetalBumpArgumentBuffer(MTL::Device* device, size_t numElements);
+    plMetalBumpArgumentBuffer(plMetalDevice* device, size_t numElements);
     void Bind(MTL::RenderCommandEncoder* encoder);
     bool CheckBuffer(const std::vector<plMetalBumpMapping>& bumps);
 

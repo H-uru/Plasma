@@ -138,6 +138,9 @@ bool plMetalDevice::InitDevice()
     fSupportsTileMemory = fMetalDevice->supportsFamily(MTL::GPUFamilyApple1);
     fSupportsDXTTextures = fMetalDevice->supportsBCTextureCompression();
     
+    fArgumentBuffersTier = fDeviceType == hsG3DDeviceSelector::kDevTypeMetal2 ?
+                                MTL::ArgumentBuffersTier1 : fMetalDevice->argumentBuffersSupport();
+    
     if (!fSupportsDXTTextures) {
         hsStatusMessageF("Render device \"{}\" does not support DXT textures. Falling back on software decompression. Performance will be slower.", fMetalDevice->name()->cString(NS::StringEncoding::UTF8StringEncoding));
     }

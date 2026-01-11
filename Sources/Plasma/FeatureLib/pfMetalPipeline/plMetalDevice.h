@@ -305,6 +305,10 @@ private:
     
     inline bool SupportsDXTTextures() const { return fSupportsDXTTextures; }
     bool fSupportsDXTTextures;
+
+    MTL::ArgumentBuffersTier fArgumentBuffersTier;
+public:
+    inline MTL::ArgumentBuffersTier ArgumentBuffersTier() const { return fArgumentBuffersTier; }
 };
 
 #endif
