@@ -992,20 +992,17 @@ uint32_t ParseRendererArgument(const ST::string& requested)
 {
     using namespace ST::literals;
 
-    static std::unordered_set<ST::string, ST::hash_i, ST::equal_i> dx_args {
-        "directx"_st, "direct3d"_st, "dx"_st, "d3d"_st
-    };
+    static std::unordered_map<ST::string, uint32_t, ST::hash_i, ST::equal_i> args{
+        {"directx"_st, hsG3DDeviceSelector::kDevTypeDirect3D},
+        {"direct3d"_st, hsG3DDeviceSelector::kDevTypeDirect3D},
+        {"dx"_st, hsG3DDeviceSelector::kDevTypeDirect3D},
+        {"d3d"_st, hsG3DDeviceSelector::kDevTypeDirect3D},
+        {"opengl"_st, hsG3DDeviceSelector::kDevTypeOpenGL},
+        {"gl"_st, hsG3DDeviceSelector::kDevTypeOpenGL}};
 
-    static std::unordered_set<ST::string, ST::hash_i, ST::equal_i> gl_args {
-        "opengl"_st, "gl"_st
-    };
-
-    if (dx_args.find(requested) != dx_args.end())
-        return hsG3DDeviceSelector::kDevTypeDirect3D;
-
-    if (gl_args.find(requested) != gl_args.end())
-        return hsG3DDeviceSelector::kDevTypeOpenGL;
-
+    auto it = args.find(requested);
+    if (it != args.end())
+        return it->second;
     return hsG3DDeviceSelector::kDevTypeUnknown;
 }
 
