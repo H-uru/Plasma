@@ -75,7 +75,7 @@ target_link_libraries(plPipeline
         $<$<PLATFORM_ID:Windows>:plWinDpi>
         freetype
         "$<$<PLATFORM_ID:Darwin>:-framework CoreText>"
-        $<$<AND:$<NOT:$<PLATFORM_ID:Windows>>,$<NOT:$<PLATFORM_ID:Darwin>>>:Fontconfig::Fontconfig>
+        $<$<AND:$<NOT:$<PLATFORM_ID:Windows>>,$<NOT:$<PLATFORM_ID:Darwin>>,$<NOT:$<PLATFORM_ID:iOS>>>:Fontconfig::Fontconfig>
     INTERFACE
         pnFactory
 )
