@@ -51,7 +51,7 @@
     "overrides": [
       {
         "name": "physx",
-        "version": "4.1.2#6",
+        "version": "4.1.2#7",
         "$comment": "Upstream vcpkg updated to PhysX 5, which drops support for several target platforms. Stick with 4.1.2 for now."
       }
     ],

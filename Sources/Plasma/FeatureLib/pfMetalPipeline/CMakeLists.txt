@@ -31,6 +31,7 @@ set(pfMetalPipeline_SOURCES
 set(pfMetalPipeline_HEADERS
     plMetalDevice.h
     plMetalDeviceRef.h
+    plMetalLightRef.h
     plMetalMaterialShaderRef.h
     plMetalPipeline.h
     plMetalPipelineState.h
@@ -114,3 +115,23 @@ target_include_directories(pfMetalPipelineShadersMSL23
 set_target_properties(pfMetalPipelineShadersMSL23 PROPERTIES
     FOLDER FeatureLib
 )
+
+if(NOT DEFINED CMAKE_XCODE_VERSION_MAJOR OR
+    CMAKE_XCODE_VERSION_MAJOR VERSION_GREATER_EQUAL 13)
+
+    add_metal_shader_library(pfMetalPipelineShadersMSL30
+        STANDARD macos-metal3.0
+        ${pfMetalPipeline_SHADERS}
+    )
+    target_include_directories(pfMetalPipelineShadersMSL30
+        PRIVATE
+        $<TARGET_PROPERTY:pnNucleusInc,INTERFACE_INCLUDE_DIRECTORIES>
+    )
+    set_target_properties(pfMetalPipelineShadersMSL30 PROPERTIES
+        FOLDER FeatureLib
+    )
+    target_compile_definitions(pfMetalPipeline
+        PRIVATE
+        METAL_3_SDK
+    )
+endif()

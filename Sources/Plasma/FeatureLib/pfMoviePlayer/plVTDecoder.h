@@ -40,37 +40,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Foundation/Foundation.h>
-#include <Metal/Metal.h>
-#include "plMetalDevice.h"
+#include <VideoToolbox/VideoToolbox.h>
 
-void plMetalDevice::LoadLibrary()
+#include "plGImage/plMipmap.h"
+#include "plMoviePlayer.h"
+
+namespace mkvparser { class VideoTrack; }
+
+struct plMovieFrame;
+
+class plVTDecoder
 {
-    /*
-     On iOS we're fine loading the Metal 2.1 library. Metal 2.1 includes
-     all the Apple Silicon features on iOS. We need Metal 2.3 to get those
-     features on macOS.
-     */
+public:
+    static plVTDecoder* CreateDecoder(const mkvparser::VideoTrack* track);
+    std::unique_ptr<plMovieFrame> DecodeNextFrame(uint8_t* frameData, const size_t size);
 
-    NS::Error* error;
-#ifdef METAL_3_SDK
-    if (@available(macOS 12, iOS 15, *)) {
-        if (fMetalDevice->supportsFamily(MTL::GPUFamilyMetal3)) {
-            NSURL* shaderURL = [NSBundle.mainBundle URLForResource:@"pfMetalPipelineShadersMSL30" withExtension:@"metallib"];
-            fShaderLibrary = fMetalDevice->newLibrary(static_cast<NS::URL*>(shaderURL), &error);
-            return;
-        }
-    }
-#endif
-#ifdef TARGET_OS_OSX
-    if (@available(macOS 11, iOS 14, *)) {
-        NSURL* shaderURL = [NSBundle.mainBundle URLForResource:@"pfMetalPipelineShadersMSL23" withExtension:@"metallib"];
-        fShaderLibrary = fMetalDevice->newLibrary(static_cast<NS::URL*>(shaderURL), &error);
-    } else
-#endif
-    {
-        NSURL* shaderURL = [NSBundle.mainBundle URLForResource:@"pfMetalPipelineShadersMSL21" withExtension:@"metallib"];
-        fShaderLibrary = fMetalDevice->newLibrary(static_cast<NS::URL*>(shaderURL), &error);
-    }
-    hsAssert(error == nil,  "Unexpected error loading Metal shader library");
-}
+    ~plVTDecoder();
+
+    plVTDecoder(const plVTDecoder&) = delete;
+    plVTDecoder& operator=(const plVTDecoder&) = delete;
+
+private:
+    plVTDecoder() = default;
+    plVTDecoder(const mkvparser::VideoTrack* track);
+    VTDecompressionSessionRef   fDecompressionSession;
+    CMVideoFormatDescriptionRef fFormat;
+};

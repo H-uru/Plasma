@@ -63,6 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGLight/plShadowSlave.h"
 #include "plMessage/plDeviceRecreateMsg.h"
 #include "plMetalFragmentShader.h"
+#include "plMetalLightRef.h"
 #include "plMetalMaterialShaderRef.h"
 #include "plMetalPipelineState.h"
 #include "plMetalPlateManager.h"
@@ -123,6 +124,13 @@ plProfile_CreateCounter("NumSkin", "PipeC", NumSkin);
 #define PLASMA_FORCE_PER_PIXEL_LIGHTING 0
 #endif
 
+// Hypothetically we have no light limit, but Metal will be upset
+// if we encode too much data directly into the command buffer.
+// Command buffer encode limit is 4096 bytes, lets undercut that a bit
+// and max at 256 lights.
+
+constexpr size_t kMetalMaxLightCount = INT16_MAX;
+
 plMetalEnumerate plMetalPipeline::enumerator;
 
 class plRenderTriListFunc : public plRenderPrimFunc
@@ -179,9 +187,12 @@ plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, con
     fIdxBuffRefList = nullptr;
     fMatRefList = nullptr;
     fTextFontRefList = nullptr;
+    fLightRefList = nullptr;
 
     fCurrLayerIdx = 0;
     fDevice.fPipeline = this;
+    
+    fLightsDirty = true;
 
     // devMode doesn't actually store a reference to the Metal device
     // We have the display id - go grab the Metal device from the
@@ -218,6 +229,20 @@ plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, con
     fDevice.SetMSAASampleCount(fInitialPipeParams.AntiAliasingAmount);
 
     fCurrentRenderPassUniforms = (VertexUniforms*)calloc(sizeof(VertexUniforms), sizeof(char));
+
+    // Initialize the buffers for holding all scene lights
+    // In theory there is no light limit but we need to give
+    // a buffer size, allocate for the max count.
+    for (size_t i = 0; i < 3; i++) {
+        fLightBuffers[i] = fDevice.fMetalDevice->newBuffer(kMetalMaxLightCount * sizeof(plMetalShaderLightSource), fDevice.GetDefaultStorageMode() | MTL::ResourceOptionCPUCacheModeWriteCombined);
+    }
+    
+    // Pull the light start from the stack
+    // We don't need a very big stack, allocate only 3
+    fLightSourceStack.reserve(3);
+    // Push the initial light sources onto the stack
+    SaveCurrentLightSources();
+    fLights = &fLightSourceStack.front();
 
     // RenderTarget pools are shared for our shadow generation algorithm.
     // Different sizes for different resolutions.
@@ -266,6 +291,12 @@ bool plMetalPipeline::PrepForRender(plDrawable* drawable, std::vector<int16_t>& 
 
     // Find our lights
     ICheckLighting(ice, visList, visMgr);
+
+    LoadLightsOnDevice();
+
+    fDevice.CurrentRenderCommandEncoder()->setFragmentBuffer(fLightBuffers[fVtxRefTime % 3], 0, ShaderLights);
+    fDevice.CurrentRenderCommandEncoder()->setVertexBuffer(fLightBuffers[fVtxRefTime % 3], 0, ShaderLights);
+    fLightsDirty = true;
 
     // Sort our faces
     if (ice->GetNativeProperty(plDrawable::kPropSortFaces)) {
@@ -794,6 +825,15 @@ void plMetalPipeline::LoadResources()
     hsStatusMessageF("Begin Device Reload t={}", hsTimer::GetSeconds());
     plNetClientApp::StaticDebugMsg("Begin Device Reload");
 
+    // Tell the light infos to unlink themselves
+    while (fActiveLights)
+        UnRegisterLight(fActiveLights);
+    while (fLightRefList) {
+        plMetalLightRef* ref = fLightRefList;
+        ref->Release();
+        ref->Unlink();
+    }
+
     if (fFragFunction == nil) {
         FindFragFunction();
     }
@@ -1203,7 +1243,7 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
 
         // Projection wants to do it's own lighting, push the current lighting state
         // so we can keep the same light calculations on the next pass
-        PushCurrentLightSources();
+        SaveCurrentLightSources();
 
         plProfile_BeginTiming(SelectProj);
         ISelectLights(&span, mRef, true);
@@ -1220,7 +1260,7 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
 #endif
         }
         // Revert the light state back to what we had before projections
-        PopCurrentLightSources();
+        RestoreCurrentLightSources();
 
         if (IsDebugFlagSet(plPipeDbg::kFlagNoUpperLayers))
             pass = mRef->GetNumPasses();
@@ -1271,11 +1311,11 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
 // all passes on the object are complete.
 void plMetalPipeline::IRenderProjections(const plRenderPrimFunc& render, const plMetalVertexBufferRef* vRef)
 {
-    PushCurrentLightSources();
+    SaveCurrentLightSources();
     for (plLightInfo* li : fProjAll) {
         IRenderProjection(render, li, vRef);
     }
-    PopCurrentLightSources();
+    RestoreCurrentLightSources();
 }
 
 // IRenderProjection //////////////////////////////////////////////////////////////
@@ -1283,14 +1323,14 @@ void plMetalPipeline::IRenderProjections(const plRenderPrimFunc& render, const p
 void plMetalPipeline::IRenderProjection(const plRenderPrimFunc& render, plLightInfo* li, const plMetalVertexBufferRef* vRef)
 {
     // Enable the projecting light only.
-    IEnableLight(0, li);
-    fLights.count = 1;
+    ILoadLight(li);
 
     plLayerInterface* proj = li->GetProjection();
     CheckTextureRef(proj);
     plMetalTextureRef* tex = (plMetalTextureRef*)proj->GetTexture()->GetDeviceRef();
 
-    IScaleLight(0, true);
+    IScaleLight(li, true);
+    IBindLights();
 
     fCurrentRenderPassMaterialLighting.ambientSrc = 1;
     fCurrentRenderPassMaterialLighting.diffuseSrc = 1;
@@ -1362,14 +1402,13 @@ void plMetalPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGM
         IPushProjPiggyBack(proj);
 
         // Enable the projecting light only.
-        IEnableLight(0, li);
-        fLights.count = 1;
+        ILoadLight(li);
 
         AppendLayerInterface(&layLightBase, false);
 
         IHandleMaterialPass(material, iPass, &span, vRef, false);
 
-        IScaleLight(0, true);
+        IScaleLight(li, true);
         IBindLights();
 
         // Do the render with projection.
@@ -1676,15 +1715,23 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
 
 void plMetalPipeline::IBindLights()
 {
-    size_t         lightSize = offsetof(plMetalLights, lampSources) + (sizeof(plMetalShaderLightSource) * fLights.count);
+    // We do need at least some data, Metal gets mad on zero length
+    // data. We reserve at least one light's worth of data elsewhere so
+    // bind at least one light. It's ok if it's garbage, ShaderLightCount
+    // will still be 0.
+    // lightSize needs to be a uint to load onto into the shader
+    uint lightSize = uint(fLights->size());
+    size_t bindSize = sizeof(plMetalShaderActiveLight) * std::clamp(size_t(lightSize), size_t(1), kMetalMaxLightCount);
 
-    if (!(fState.fBoundLights.has_value() && memcmp(&fState.fBoundLights, &fLights, lightSize) == 0)) {
-        memcpy(&fState.fBoundLights, &fLights, lightSize);
+    if (fLightsDirty) {
         if (fLightingPerPixel) {
-            fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&fLights, sizeof(plMetalLights), FragmentShaderArgumentLights);
+            fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(fLights->data(), sizeof(plMetalShaderActiveLight) * fLights->size(), ShaderActiveLights);
+            fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&lightSize, sizeof(uint), ShaderActiveLightCount);
         } else {
-            fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&fLights, sizeof(plMetalLights), VertexShaderArgumentLights);
+            fDevice.CurrentRenderCommandEncoder()->setVertexBytes(fLights->data(), bindSize, ShaderActiveLights);
+            fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&lightSize, sizeof(uint), ShaderActiveLightCount);
         }
+        fLightsDirty = false;
     }
     
     if (!(fState.fBoundMaterialProperties.has_value() && fState.fBoundMaterialProperties == fCurrentRenderPassMaterialLighting)) {
@@ -1694,6 +1741,65 @@ void plMetalPipeline::IBindLights()
             fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&fDevice.fPipeline->fCurrentRenderPassMaterialLighting, sizeof(plMaterialLightingDescriptor), FragmentShaderArgumentMaterialLighting);
         }
     }
+}
+
+void plMetalPipeline::LoadLightsOnDevice()
+{
+    MTL::Buffer*              currentLightBuffer = fLightBuffers[fVtxRefTime % 3];
+    plMetalShaderLightSource* lightSource = static_cast<plMetalShaderLightSource*>(currentLightBuffer->contents());
+    uint32_t                  index = 0;
+    for (plMetalLightRef* light = fLightRefList; light != nullptr; light = light->GetNext()) {
+        light->UpdateMetalInfo(lightSource);
+        light->fBufferIndex = index;
+        lightSource++;
+        index++;
+    }
+
+    if (currentLightBuffer->storageMode() == MTL::StorageModeManaged) {
+        currentLightBuffer->didModifyRange(NS::Range(0, index * sizeof(plMetalLightRef)));
+    }
+}
+
+//// IMakeLightRef ////////////////////////////////////////////////////////////
+// Create a plasma device ref for a light. Includes reserving a D3D light
+// index for the light. Ref is kept in a linked list for ready disposal
+// as well as attached to the light.
+hsGDeviceRef* plMetalPipeline::IMakeLightRef(plLightInfo* owner)
+{
+    plMetalLightRef* lRef = new plMetalLightRef();
+
+    /// Assign stuff and update
+    // lRef->fD3DIndex = fLights.ReserveD3DIndex();
+    lRef->fOwner = owner;
+    owner->SetDeviceRef(lRef);
+    // Unref now, since for now ONLY the BG owns the ref, not us (not until we use it, at least)
+    hsRefCnt_SafeUnRef(lRef);
+
+    lRef->Link(&fLightRefList);
+
+    // lRef->UpdateD3DInfo( fD3DDevice, &fLights );
+
+    // Neutralize it until we need it.
+    // fD3DDevice->LightEnable(lRef->fD3DIndex, false);
+
+    return lRef;
+}
+
+//// RegisterLight ////////////////////////////////////////////////////////////
+// Register a light with the pipeline. Light become immediately
+// ready to illuminate the scene.
+void plMetalPipeline::RegisterLight(plLightInfo* liInfo)
+{
+    pl3DPipeline::RegisterLight(liInfo);
+    liInfo->SetDeviceRef(IMakeLightRef(liInfo));
+}
+
+//// UnRegisterLight //////////////////////////////////////////////////////////
+// Remove a light from the pipeline's active light list. Light will
+// no longer illuminate the scene.
+void plMetalPipeline::UnRegisterLight(plLightInfo* liInfo)
+{
+    pl3DPipeline::UnRegisterLight(liInfo);
 }
 
 // ISetPipeConsts //////////////////////////////////////////////////////////////////
@@ -2312,7 +2418,7 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
 // strongest N changes membership.
 void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef* mRef, bool proj)
 {
-    const size_t                     numLights = kMetalMaxLightCount;
+    const size_t                     numLights = 32;
     int32_t                          i = 0;
     int32_t                          startScale;
     float                            threshhold;
@@ -2325,13 +2431,14 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
         !(IsDebugFlagSet(plPipeDbg::kFlagNoApplyProjLights) && proj) &&
         !(IsDebugFlagSet(plPipeDbg::kFlagOnlyApplyProjLights) && !proj)) {
         std::vector<plLightInfo*>& spanLights = span->GetLightList(proj);
+        if (!proj) {
+            fLights->clear();
+        }
 
-        fLights.count = 0;
         for (i = 0; i < spanLights.size() && i < numLights; i++) {
             // If these are non-projected lights, go ahead and enable them.
             if (!proj) {
-                IEnableLight(fLights.count, spanLights[i]);
-                fLights.count++;
+                ILoadLight(spanLights[i]);
             }
             onLights.emplace_back(spanLights[i]);
         }
@@ -2340,8 +2447,9 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
         /// Attempt #2: Take some of the n strongest lights (below a given threshhold) and
         /// fade them out to nothing as they get closer to the bottom. This way, they fade
         /// out of existence instead of pop out.
+        /// We don't have to do this for a proj pass - no lights will be enabled
 
-        if (i < spanLights.size() - 1 && i > 0) {
+        if (i < spanLights.size() - 1 && i > 0 && !proj) {
             threshhold = span->GetLightStrength(i, proj);
             i--;
             overHold = threshhold * 1.5f;
@@ -2353,14 +2461,17 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
             for (; i > 0 && span->GetLightStrength(i, proj) < overHold; i--) {
                 scale = (overHold - span->GetLightStrength(i, proj)) / (overHold - threshhold);
 
-                IScaleLight(i, (1 - scale) * span->GetLightScale(i, proj));
+                IScaleLight(spanLights[i], (1 - scale) * span->GetLightScale(i, proj));
             }
             startScale = i + 1;
         }
 
-        /// Make sure those lights that aren't scaled....aren't
-        for (i = 0; i < startScale; i++) {
-            IScaleLight(i, span->GetLightScale(i, proj));
+        if (!proj) {
+            /// Make sure those lights that aren't scaled....aren't
+            /// We don't have to do this for a proj pass - no lights will be enabled
+            for (i = 0; i < startScale; i++) {
+                IScaleLight(spanLights[i], span->GetLightScale(i, proj));
+            }
         }
     }
 
@@ -2378,87 +2489,30 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
     }
 }
 
-void plMetalPipeline::IEnableLight(size_t i, plLightInfo* light)
+void plMetalPipeline::ILoadLight(plLightInfo* light)
 {
-    hsColorRGBA amb = light->GetAmbient();
-    fLights.lampSources[i].ambient = {static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), static_cast<half>(amb.a)};
-
-    hsColorRGBA diff = light->GetDiffuse();
-    fLights.lampSources[i].diffuse = {static_cast<half>(diff.r), static_cast<half>(diff.g), static_cast<half>(diff.b), static_cast<half>(diff.a)};
-
-    hsColorRGBA spec = light->GetSpecular();
-    fLights.lampSources[i].specular = {static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b), static_cast<half>(spec.a)};
-
-    plDirectionalLightInfo* dirLight = nullptr;
-    plOmniLightInfo*        omniLight = nullptr;
-    plSpotLightInfo*        spotLight = nullptr;
-    
-    constexpr float         kMaxRange = 32767.f;
-    fLights.lampSources[i].range = kMaxRange;
-
-    if ((dirLight = plDirectionalLightInfo::ConvertNoRef(light)) != nullptr) {
-        hsVector3 lightDir = dirLight->GetWorldDirection();
-        fLights.lampSources[i].position = {lightDir.fX, lightDir.fY, lightDir.fZ, 0.0};
-        fLights.lampSources[i].direction = {lightDir.fX, lightDir.fY, lightDir.fZ};
-
-        fLights.lampSources[i].constAtten = 1.0f;
-        fLights.lampSources[i].linAtten = 0.0f;
-        fLights.lampSources[i].quadAtten = 0.0f;
-
-    } else if ((omniLight = plOmniLightInfo::ConvertNoRef(light)) != nullptr) {
-        hsPoint3 pos = omniLight->GetWorldPosition();
-        fLights.lampSources[i].position = {pos.fX, pos.fY, pos.fZ, 1.0};
-
-        fLights.lampSources[i].constAtten = omniLight->GetConstantAttenuation();
-        fLights.lampSources[i].linAtten = omniLight->GetLinearAttenuation();
-        fLights.lampSources[i].quadAtten = omniLight->GetQuadraticAttenuation();
-
-        if (omniLight->GetRadius() != 0.f) {
-            fLights.lampSources[i].range = omniLight->GetRadius();
-        }
-
-        if (!omniLight->GetProjection() && (spotLight = plSpotLightInfo::ConvertNoRef(omniLight)) != nullptr) {
-            hsVector3 lightDir = spotLight->GetWorldDirection();
-            fLights.lampSources[i].direction = {lightDir.fX, lightDir.fY, lightDir.fZ};
-
-            float falloff = spotLight->GetFalloff();
-            float gamma = cosf(spotLight->GetSpotInner());
-            float phi = cosf(spotLight->GetProjection() ? hsConstants::half_pi<float> : spotLight->GetSpotOuter());
-
-            fLights.lampSources[i].spotProps = {falloff, gamma, phi};
-        } else {
-            fLights.lampSources[i].spotProps = {0.0f, 0.0f, 0.0f};
-        }
-    } else {
-        IDisableLight(i);
-    }
+    auto metalLight = static_cast<plMetalLightRef*>(light->GetDeviceRef());
+    // Track the index of the light for this pass so we can find it again
+    metalLight->fPassIndex = fLights->size();
+    fLights->emplace_back(metalLight->fBufferIndex, 1.f);
+    fLightsDirty = true;
 }
 
-void plMetalPipeline::IDisableLight(size_t i)
+void plMetalPipeline::IScaleLight(plLightInfo* light, float scale)
 {
-    fLights.lampSources[i].position = {0.0f, 0.0f, 0.0f, 0.0f};
-    fLights.lampSources[i].ambient = {0.0f, 0.0f, 0.0f, 0.0f};
-    fLights.lampSources[i].diffuse = {0.0f, 0.0f, 0.0f, 0.0f};
-    fLights.lampSources[i].specular = {0.0f, 0.0f, 0.0f, 0.0f};
-    fLights.lampSources[i].constAtten = {1.0f};
-    fLights.lampSources[i].linAtten = {0.0f};
-    fLights.lampSources[i].quadAtten = {0.0f};
-    fLights.lampSources[i].scale = {0.0f};
-}
+    auto metalLight = static_cast<plMetalLightRef*>(light->GetDeviceRef());
 
-void plMetalPipeline::IScaleLight(size_t i, float scale)
-{
     scale = int(scale * 1.e1f) * 1.e-1f;
-    fLights.lampSources[i].scale = scale;
+    (*fLights)[metalLight->fPassIndex].scale = scale;
+    fLightsDirty = true;
 }
 
 void plMetalPipeline::ISetEnablePerPixelLighting(const bool enable)
 {
     if (fLightingPerPixel != enable) {
         fLightingPerPixel = enable;
-        
+
         // These states need to be reset for a change in lighting technique
-        fState.fBoundLights.reset();
         fState.fBoundMaterialProperties.reset();
     }
 }
@@ -2548,20 +2602,22 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
 // that could be claimed by different parts of the pipeline.
 // In Metal, when a part of the pipeline wants to own lights
 // we'll just let them push/pop the current state.
-void plMetalPipeline::PushCurrentLightSources()
+void plMetalPipeline::SaveCurrentLightSources()
 {
-    plMetalLights* lightSources = new plMetalLights();
-    memcpy(lightSources, &fLights, sizeof(plMetalLights));
-    fLightSourceStack.emplace_back(lightSources);
+    fLights = &fLightSourceStack.emplace_back();
+    // Metal is always going to want some data - reserve one light
+    // We'll pass it to Metal - if it's trash we'll know becuse the
+    // count will still be zero.
+    fLights->reserve(1);
+    fLightsDirty = true;
 }
 
-void plMetalPipeline::PopCurrentLightSources()
+void plMetalPipeline::RestoreCurrentLightSources()
 {
-    hsAssert(fLightSourceStack.size() > 0, "Asked to pop light sources but none on stack");
-    plMetalLights* lightSources = fLightSourceStack.back();
+    hsAssert(fLightSourceStack.size() > 1, "Asked to pop light sources but none on stack");
     fLightSourceStack.pop_back();
-    memcpy(&fLights, lightSources, sizeof(plMetalLights));
-    delete lightSources;
+    fLights = &fLightSourceStack.back();
+    fLightsDirty = true;
 }
 
 // Special effects /////////////////////////////////////////////////////////////
@@ -4365,7 +4421,6 @@ void plMetalPipeline::plMetalPipelineCurrentState::Reset()
     fCurrentPipelineState = nullptr;
     fCurrentDepthStencilState = nullptr;
     fCurrentVertexBuffer = nullptr;
-    fBoundLights.reset();
     fBoundMaterialProperties.reset();
     fCurrentCullMode.reset();
     fCurrentVertexUniforms.reset();

@@ -5126,8 +5126,6 @@ PF_CONSOLE_CMD( Mouse, ForceHide, "bool force", "Forces the mouse to be hidden (
 
 PF_CONSOLE_GROUP( Age )
 
-plPythonSDLModifier* ExternFindAgePySDL();
-
 template<typename _PrintStringT>
 void IShowSDL(const plStateDataRecord* rec, _PrintStringT&& PrintString)
 {
@@ -5150,7 +5148,7 @@ void IShowSDL(const plStateDataRecord* rec, _PrintStringT&& PrintString)
 
 PF_CONSOLE_CMD(Age, ShowPythonSDL, "", "Prints the Python AgeSDL values")
 {
-    plPythonSDLModifier* sdlMod = ExternFindAgePySDL();
+    plPythonSDLModifier* sdlMod = plPythonSDLModifier::FindAgeSDL();
     if (sdlMod && sdlMod->GetStateCache() != nullptr) {
         IShowSDL(sdlMod->GetStateCache(), PrintString);
     } else {
@@ -5169,7 +5167,7 @@ PF_CONSOLE_CMD(Age, ShowVaultSDL, "", "Prints the age vault SDL values")
 
 PF_CONSOLE_CMD(Age, ResetPythonSDL, "", "Resets the Python Age SDL")
 {
-    plPythonSDLModifier* sdlMod = ExternFindAgePySDL();
+    plPythonSDLModifier* sdlMod = plPythonSDLModifier::FindAgeSDL();
     if (sdlMod == nullptr) {
         PrintString("Python Age SDL not found");
         return;
@@ -5233,21 +5231,21 @@ PF_CONSOLE_CMD( Age, GetTimeOfDay, "string agedefnfile", "Gets the elapsed days 
 
 PF_CONSOLE_CMD( Age, SetSDLFloat, "string varName, float value, int index", "Set the value of an age global variable" )
 {
-    plPythonSDLModifier* sdlMod = ExternFindAgePySDL();
+    plPythonSDLModifier* sdlMod = plPythonSDLModifier::FindAgeSDL();
     if (sdlMod)
         sdlMod->SetItem(params[0], (int)params[2], (float)params[1]);
 }
 
 PF_CONSOLE_CMD( Age, SetSDLInt, "string varName, int value, int index", "Set the value of an age global variable" )
 {
-    plPythonSDLModifier* sdlMod = ExternFindAgePySDL();
+    plPythonSDLModifier* sdlMod = plPythonSDLModifier::FindAgeSDL();
     if (sdlMod)
         sdlMod->SetItem(params[0], (int)params[2], (int)params[1]);
 }
 
 PF_CONSOLE_CMD( Age, SetSDLBool, "string varName, bool value, int index", "Set the value of an age global variable" )
 {
-    plPythonSDLModifier* sdlMod = ExternFindAgePySDL();
+    plPythonSDLModifier* sdlMod = plPythonSDLModifier::FindAgeSDL();
     if (sdlMod)
         sdlMod->SetItem(params[0], (int)params[2], (bool)params[1]);
 }
