@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 using namespace metal;
 
 #include "ShaderVertex.h"
+#include "Water.h"
 
 typedef struct
 {
@@ -65,9 +66,7 @@ typedef struct
     float4 WindRot;
     float4 EnvAdjust;
     float4 EnvTint;
-    float4 LocalToWorldRow1;
-    float4 LocalToWorldRow2;
-    float4 LocalToWorldRow3;
+    float3x4 LocalToWorld;
     float4 Lengths;
     float4 WaterLevel;
     float4 DepthFalloff;
@@ -95,24 +94,78 @@ typedef struct
     float fog;
 } vs_WaveFixedFin7InOut;
 
-vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[stage_in]],
-                             constant vs_WaveFixedFin7Uniforms & uniforms   [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]])
+void CalcEyeRayAndBumpAttenuation(const float4 wPos,
+                                  const float4 cameraPos,
+                                  const float4 specAtten,
+                                  thread float3 &cam2Vtx,
+                                  thread float &pertAtten)
 {
+    cam2Vtx = wPos.xyz - cameraPos.xyz;
+    pertAtten = length(cam2Vtx);
+    cam2Vtx /= pertAtten;
+
+    // Calculate our specular attenuation from and into r5.w.
+    // r5.w starts off the distance from vtx to camera.
+    // Once we've turned it into an attenuation factor, we
+    // scale the x and y of our normal map (through the transform bases)
+    // so that in the distance, the normal map is flat. Note that the
+    // geometry in the distance isn't necessarily flat. We want to apply
+    // this scale to the normal read from the normal map before it is
+    // transformed into surface space.
+    pertAtten += specAtten.x;
+    pertAtten *= specAtten.y;
+    pertAtten = clamp(pertAtten, 0.f, 1.f);
+    pertAtten *= pertAtten; // Square it to account for perspective
+    pertAtten *= specAtten.z;
+}
+
+float3 FinitizeEyeRay(const float3 cam2Vtx, const float4 envAdjust)
+{
+    // So, our "finitized" eyeray is:
+    //  camPos + D * t - envCenter = D * t - (envCenter - camPos)
+    // with
+    //  D = (pos - camPos) / |pos - camPos| // normalized usual eyeray
+    // and
+    //  t = D dot F + sqrt( (D dot F)^2 - G )
+    // with
+    //  F = (envCenter - camPos)    => c19.xyz
+    //  G = F^2 - R^2               => c19.w
+    //  R = environment radius.     => unused
+    //
+    // This all derives from the positive root of equation
+    //  (camPos + (pos - camPos) * t - envCenter)^2 = R^2,
+    // In other words, where on a sphere of radius R centered about envCenter
+    // does the ray from the real camera position through this point hit.
+    //
+    // Note that F, G, and R are all constants (one point, two scalars).
+    //
+    // So first we calculate D into r0,
+    // then D dot F into r10.x,
+    // then (D dot F)^2 - G into r10.y
+    // then rsq( (D dot F)^2 - G ) into r9.x;
+    // then t = r10.z = r10.x + r10.y * r9.x;
+    // and
+    // r0 = D * t - (envCenter - camPos)
+    //      = r0 * r10.zzzz - F;
+    //
+    //https://developer.download.nvidia.com/books/HTML/gpugems/gpugems_ch01.html
+    
+    const float3 F = envAdjust.xyz;
+    const float G = envAdjust.w;
+    // METAL NOTE: HLSL 1.1 always applies an abs operation to values it's about to sqrt
+    const float3 t = dot(cam2Vtx, F.xyz) + sqrt(abs(pow(abs(dot(cam2Vtx, F.xyz)), 2) - G));// r10.z = D dot F + SQRT((D dot F)^2 - G)
+    const float3 eyeRay = (cam2Vtx * t) - F; // r0.xyz = D * t - (envCenter - camPos)
+
+    // ATI 9000 is having trouble with eyeVec as computed. Normalizing seems to get it over the hump.
+    return normalize(eyeRay);
+}
+
+vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
+                               constant vs_WaveFixedFin7Uniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     vs_WaveFixedFin7InOut out;
 
     // Store our input position in world space in r6
-    float3 column1 = float3(uniforms.LocalToWorldRow1[0], uniforms.LocalToWorldRow2[0], uniforms.LocalToWorldRow3[0]);
-    float3 column2 = float3(uniforms.LocalToWorldRow1[1], uniforms.LocalToWorldRow2[1], uniforms.LocalToWorldRow3[1]);
-    float3 column3 = float3(uniforms.LocalToWorldRow1[2], uniforms.LocalToWorldRow2[2], uniforms.LocalToWorldRow3[2]);
-    float3 column4 = float3(uniforms.LocalToWorldRow1[3], uniforms.LocalToWorldRow2[3], uniforms.LocalToWorldRow3[3]);
-
-    matrix_float4x3 localToWorld;
-    localToWorld[0] = column1;
-    localToWorld[1] = column2;
-    localToWorld[2] = column3;
-    localToWorld[3] = column4;
-
-    float4 worldPosition = float4(localToWorld * float4(in.position, 1.0), 1.0);
+    float4 worldPosition = float4(transpose(uniforms.LocalToWorld) * float4(in.position, 1.0), 1.0);
 
     //
 
@@ -168,56 +221,27 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     
     //
     //    dist = mad( dist, kFreq.xyzw, kPhase.xyzw);
-    distance = distance * uniforms.Frequency;
-    distance = distance + uniforms.Phase;
-    //
-    //    // Now we need dist mod'd into range [-Pi..Pi]
-    //    dist *= rcp(kTwoPi);
-    float4 piRecip = 1.0f / uniforms.PiConsts.wwww;
-    distance = distance + uniforms.PiConsts.zzzz;
-    distance *= piRecip;
-    //    dist = frac(dist);
-    distance = fract(distance);
-    //    dist *= kTwoPi;
-    distance *= uniforms.PiConsts.wwww;
-    //    dist += -kPi;
-    distance -= uniforms.PiConsts.zzzz;
-
-    //Metals pow function does not like negative bases
-    //Doing the same thing as the DX assembly until I know more about why
-
-    float4 pow2 = distance * distance; // r0^2
-    float4 pow3 = pow2 * distance; // r0^3 - probably stall
-    float4 pow4 = pow2 * pow2; // r0^4
-    float4 pow5 = pow2 * pow3; // r0^5
-    float4 pow7 = pow2 * pow5; // r0^7
-
-    //
-    //    sincos(dist, sinDist, cosDist);
-    // sin = r0 + r0^3 * vSin.y + r0^5 * vSin.z
-    // cos = 1 + r0^2 * vCos.y + r0^4 * vCos.z
-    //r1
-    float4 cosDist = 1 + pow2 * uniforms.CosConsts.y + pow4 * uniforms.CosConsts.z;
-    //r2
-    float4 sinDist = distance + pow3 * uniforms.SinConsts.y + pow5 * uniforms.SinConsts.z;
-
-    cosDist = ((pow3 * pow3) * uniforms.CosConsts.w) + cosDist;
-    sinDist = (pow7 * uniforms.SinConsts.w) + sinDist;
+    distance = (distance * uniforms.Frequency) + uniforms.Phase;
+    
+    /*
+     Metal note: This section of the shader originally implemented a fast sin/cos
+     algorithm in HLSL - including the GPU Gems Ch 1 version. Metal has a built in
+     fast cos/sin algorithm. When porting this shader to a different shading language,
+     make sure fast math or a fast algorithm is available for best performance. Fast
+     math is on for the MSL compiler, but I'm making the fast version explicit here.
+     */
+    float4 cosDist = fast::cos(distance);
+    float4 sinDist = fast::sin(distance);
 
 
     // Calc our depth based filtering here into r4 (because we don't use it again
     // after here, and we need our filtering shortly).
-    float4 depth = uniforms.WaterLevel - worldPosition.zzzz;
-    depth *= uniforms.DepthFalloff;
-    depth += uniforms.MinAtten;
-    // Clamp .xyz to range [0..1]
-    depth = clamp(depth, 0, 1);
+    float3 depthFilter = CalcDepthFilter(uniforms.WaterLevel, uniforms.DepthFalloff, worldPosition, uniforms.MinAtten);
 
     // Calc our filter (see above).
-    float4 inColor = float4(in.color) / 255.0f;
+    const float4 inColor = float4(in.color) / 255.0f;
     float4 filter = inColor.wwww * uniforms.Lengths;
-    filter = max(filter, uniforms.NumericConsts.xxxx);
-    filter = min(filter, uniforms.NumericConsts.zzzz);
+    filter = clamp(filter, 0.0f, 1.0f);
 
     //mov    r2, r1;
     // r2 == sinDist
@@ -231,8 +255,8 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     //    height = dp4(sinDist, kOne);
     //    accumPos.z += height; (but accumPos.z is currently 0).
     float4 accumPos = 0;
-    accumPos.x = dot(sinDist, uniforms.NumericConsts.zzzz);
-    accumPos.y = accumPos.x * depth.z;
+    accumPos.x = dot(sinDist, float4(1.0f));
+    accumPos.y = accumPos.x * depthFilter.z;
     accumPos.z = accumPos.y + uniforms.WaterLevel.w;
     worldPosition.z = max(worldPosition.z, accumPos.z); // CLAMP
     // r8.x == wave height relative to 0
@@ -273,9 +297,12 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     //
     // But we want the transpose of that to go into r1-r3
 
+    // CalcFinalPosition
+    
     worldPosition.x += dot(cosDist, uniforms.DirXK);
     worldPosition.y += dot(cosDist, uniforms.DirYK);
 
+    // CalcTangentBasis
     float4 r1, r2, r3 = 0;
 
     r1.x = dot(sinDist, -uniforms.DirXSqKW);
@@ -293,96 +320,37 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     r3.z = dot(sinDist, -uniforms.WK);
     r3.z = r3.z + uniforms.NumericConsts.z;
 
-    // Calculate our normalized vector from camera to vtx.
-    // We'll use that a couple of times coming up.
-    float4 r5 = worldPosition - uniforms.CameraPos;
-    float4 r10;
-    r10.x = rsqrt(dot(r5.xyz, r5.xyz));
-    r5 = r5 * r10.xxxx;
-    r5.w = 1.0 / r10.x;
+    float3 cam2Vtx;
+    float pertAtten;
+    
+    CalcEyeRayAndBumpAttenuation(worldPosition, uniforms.CameraPos, uniforms.SpecAtten, cam2Vtx, pertAtten);
 
-    // Calculate our specular attenuation from and into r5.w.
-    // r5.w starts off the distance from vtx to camera.
-    // Once we've turned it into an attenuation factor, we
-    // scale the x and y of our normal map (through the transform bases)
-    // so that in the distance, the normal map is flat. Note that the
-    // geometry in the distance isn't necessarily flat. We want to apply
-    // this scale to the normal read from the normal map before it is
-    // transformed into surface space.
-    r5.w += uniforms.SpecAtten.x;
-    r5.w *= uniforms.SpecAtten.y;
-    r5.w = min(r5.w, uniforms.NumericConsts.z);
-    r5.w = max(r5.w, uniforms.NumericConsts.x);
-    r5.w *= r5.w; // Square it to account for perspective
-    r5.w *= uniforms.SpecAtten.z;
+    float3 eyeRay = FinitizeEyeRay(cam2Vtx, uniforms.EnvAdjust);
 
-    // So, our "finitized" eyeray is:
-    //  camPos + D * t - envCenter = D * t - (envCenter - camPos)
-    // with
-    //  D = (pos - camPos) / |pos - camPos| // normalized usual eyeray
-    // and
-    //  t = D dot F + sqrt( (D dot F)^2 - G )
-    // with
-    //  F = (envCenter - camPos)    => c19.xyz
-    //  G = F^2 - R^2               => c19.w
-    //  R = environment radius.     => unused
-    //
-    // This all derives from the positive root of equation
-    //  (camPos + (pos - camPos) * t - envCenter)^2 = R^2,
-    // In other words, where on a sphere of radius R centered about envCenter
-    // does the ray from the real camera position through this point hit.
-    //
-    // Note that F, G, and R are all constants (one point, two scalars).
-    //
-    // So first we calculate D into r0,
-    // then D dot F into r10.x,
-    // then (D dot F)^2 - G into r10.y
-    // then rsq( (D dot F)^2 - G ) into r9.x;
-    // then t = r10.z = r10.x + r10.y * r9.x;
-    // and
-    // r0 = D * t - (envCenter - camPos)
-    //      = r0 * r10.zzzz - F;
-    //
-    //https://developer.download.nvidia.com/books/HTML/gpugems/gpugems_ch01.html
-
+    r1.w = -eyeRay.x;
+    r2.w = -eyeRay.y;
+    r3.w = -eyeRay.z;
 
     float4 r0 = float4(0);
-
-    {
-        float3 D = r5.xyz;
-        float3 F = uniforms.EnvAdjust.xyz;
-        float G = uniforms.EnvAdjust.w;
-        // METAL NOTE: HLSL 1.1 always applies an abs operation to values it's about to sqrt
-        float3 t = dot(D.xyz, F.xyz) + sqrt(abs(pow(abs(dot(D.xyz, F.xyz)), 2) - G));// r10.z = D dot F + SQRT((D dot F)^2 - G)
-        r0.xyz = (D * t) - F; // r0.xyz = D * t - (envCenter - camPos)
-    }
-
-    // ATI 9000 is having trouble with eyeVec as computed. Normalizing seems to get it over the hump.
-    r0.xyz = normalize(r0.xyz);
-
-    r1.w = -r0.x;
-    r2.w = -r0.y;
-    r3.w = -r0.z;
-
     r0.zw = uniforms.NumericConsts.xz;
 
     float4 r11 = float4(0);
 
     r0.x = dot(r1.xyz, r1.xyz);
     r0.xy = rsqrt(r0.x);
-    r0.x *= r5.w;
+    r0.x *= pertAtten;
     out.texCoord1 = r1 * r0.xxyw;
     r11.x = r1.z * r0.y;
 
     r0.x = dot(r2.xyz, r2.xyz);
     r0.xy = rsqrt(r0.x);
-    r0.x *= r5.w;
+    r0.x *= pertAtten;
     out.texCoord3 = r2 * r0.xxyw;
     r11.y = r2.z * r0.y;
 
     r0.x = dot(r3.xyz, r3.xyz);
     r0.xy = rsqrt(r0.x);
-    r0.x *= r5.w;
+    r0.x *= pertAtten;
     out.texCoord2 = r3 * r0.xxyw;
     r11.z = r3.z * r0.y;
     
@@ -410,7 +378,8 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     // // Transform position to screen
     //
     //
-    float4 r9;
+    // CalcScreenPosAndFog
+    float4 r9, r10;
     r9 = worldPosition * uniforms.WorldToNDC;
     r10.x = r9.w + uniforms.FogSet.x;
     out.fog = r10.x * uniforms.FogSet.y;
@@ -423,14 +392,14 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     // Questionble attenuation follows
     // vector from this point to camera and normalize stashed in r5
     // Dot that with the computed normal
-    r1.x = dot(-r5, r11);
+    r1.x = dot(-cam2Vtx.xyz, r11.xyz);
     r1.x = r1.x * inColor.z;
     r1.xyzw = uniforms.NumericConsts.z - r1.x;
     r1.w += uniforms.NumericConsts.z;
     r1.w *= uniforms.NumericConsts.y;
     // No need to clamp, since the destination register (in the pixel shader)
     // will saturate [0..1] anyway.
-    r1 *= depth.yyyx; // HACKTESTCOLOR
+    r1 *= depthFilter.yyyx; // HACKTESTCOLOR
     //R in the in color is the alpha value, but remember it's encoded ARGB
     r1.w *= inColor.g;
     r1.w *= uniforms.WaterTint.w;
@@ -472,10 +441,9 @@ fragment float4 ps_WaveFixed(vs_WaveFixedFin7InOut in           [[stage_in]],
     float3 N = float3(u, v, w);
     float3 E = float3(in.texCoord1.w, in.texCoord2.w, in.texCoord3.w);
 
-    //float3 coord = reflect(E, N);
-    float3 coord = 2*(dot(N, E) / dot(N, N))*N - E;
+    float3 reflectCoord = reflect(E, N);
 
-    float4 out = float4(environmentMap.sample(colorSampler, coord));
+    float4 out = float4(environmentMap.sample(colorSampler, reflectCoord));
     out = (out * in.c1) + in.c2;
     out.a = in.c1.a;
     return out;
