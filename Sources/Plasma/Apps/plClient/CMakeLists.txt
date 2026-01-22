@@ -90,35 +90,86 @@ if(WIN32)
         win32/res/headspin.ico
     )
 elseif(APPLE)
-    list(APPEND plClient_SOURCES
-        Mac-Cocoa/main.mm
-        Mac-Cocoa/plMacDisplayHelper.mm
-        Mac-Cocoa/NSString+StringTheory.mm
-        Mac-Cocoa/PLSKeyboardEventMonitor.mm
-        Mac-Cocoa/PLSView.mm
-        Mac-Cocoa/PLSLoginController.mm
-        Mac-Cocoa/PLSLoginWindowController.mm
-        Mac-Cocoa/PLSPatcherWindowController.mm
-        Mac-Cocoa/PLSPatcher.mm
-        Mac-Cocoa/PLSServerStatus.mm
-    )
-    list(APPEND plClient_HEADERS
-        Mac-Cocoa/NSString+StringTheory.h
-        Mac-Cocoa/plMacDisplayHelper.h
-        Mac-Cocoa/PLSKeyboardEventMonitor.h
-        Mac-Cocoa/PLSView.h
-        Mac-Cocoa/PLSLoginController.h
-        Mac-Cocoa/PLSLoginWindowController.h
-        Mac-Cocoa/PLSPatcherWindowController.h
-        Mac-Cocoa/PLSPatcher.h
-        Mac-Cocoa/PLSServerStatus.h
-    )
-    list(APPEND plClient_RESOURCES
-        Mac-Cocoa/banner.png
-        Mac-Cocoa/banner@2x.png
-        Mac-Cocoa/MainMenu.xib
-        Mac-Cocoa/PLSLoginWindowController.xib
-        Mac-Cocoa/PLSPatcherWindowController.xib
+    if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    	list(APPEND plClient_SOURCES
+        	Mac-Cocoa/main.mm
+        	Mac-Cocoa/NSString+StringTheory.mm
+        	Mac-Cocoa/PLSKeyboardEventMonitor.mm
+        	Mac-Cocoa/PLSView.mm
+            Mac-Cocoa/PLSLoginController.mm
+        	Mac-Cocoa/PLSLoginWindowController.mm
+        	Mac-Cocoa/PLSPatcherWindowController.mm
+            Mac-Cocoa/PLSPatcher.mm
+            Mac-Cocoa/PLSServerStatus.mm
+        )
+        set(plClient_HEADERS ${plClient_HEADERS}
+            Mac-Cocoa/NSString+StringTheory.h
+            Mac-Cocoa/plMacDisplayHelper.h
+            Mac-Cocoa/PLSKeyboardEventMonitor.h
+            Mac-Cocoa/PLSView.h
+            Mac-Cocoa/PLSLoginController.h
+            Mac-Cocoa/PLSLoginWindowController.h
+            Mac-Cocoa/PLSPatcherWindowController.h
+            Mac-Cocoa/PLSPatcher.h
+            Mac-Cocoa/PLSServerStatus.h
+        )
+        list(APPEND plClient_RESOURCES
+            Mac-Cocoa/banner.png
+            Mac-Cocoa/banner@2x.png
+            Mac-Cocoa/MainMenu.xib
+            Mac-Cocoa/PLSLoginWindowController.xib
+            Mac-Cocoa/PLSPatcherWindowController.xib
+        )
+        set(RESOURCES
+            Mac-Cocoa/MainMenu.xib
+            Mac-Cocoa/PLSLoginWindowController.xib
+            Mac-Cocoa/PLSPatcherWindowController.xib
+            Mac-Cocoa/banner.png
+            Mac-Cocoa/banner@2x.png
+            win32/res/Dirt.ICO
+        )
+    endif()
+    if(CMAKE_SYSTEM_NAME MATCHES "iOS")
+        set(plClient_SOURCES ${plClient_SOURCES}
+            Apple-SwiftUI/PlasmaApp.swift
+            Apple-SwiftUI/LoginView.swift
+            Apple-SwiftUI/PLSView.mm
+            Apple-SwiftUI/PLSClient.mm
+            Apple-SwiftUI/plUIKitDisplayHelper.mm
+            Mac-Cocoa/NSString+StringTheory.mm
+            Mac-Cocoa/PLSLoginController.mm
+            Mac-Cocoa/PLSPatcher.mm
+            Mac-Cocoa/PLSServerStatus.mm
+        )
+        set(plClient_HEADERS ${plClient_HEADERS}
+            Apple-SwiftUI/PLSView.h
+            Apple-SwiftUI/PLSClient.h
+            Apple-SwiftUI/plUIKitDisplayHelper.h
+            Mac-Cocoa/NSString+StringTheory.h
+            Mac-Cocoa/PLSLoginController.h
+            Mac-Cocoa/PLSPatcher.h
+            Mac-Cocoa/PLSServerStatus.h
+        )
+        set(plClient_RESOURCES
+            "${CMAKE_SOURCE_DIR}/dylib-Info-template.plist"
+        )
+    endif()
+    #shaders need to be compiled as part of the app
+    #this could change in the future, but for now the Metal code expects the library to be compiled in the app
+    set(plClient_SHADERS
+	../../FeatureLib/pfMetalPipeline/ShaderSrc/FixedPipelineShaders.metal
+	../../FeatureLib/pfMetalPipeline/ShaderSrc/PlateShaders.metal
+	../../FeatureLib/pfMetalPipeline/ShaderSrc/BiasNormals.metal
+	../../FeatureLib/pfMetalPipeline/ShaderSrc/CompCosines.metal
+	../../FeatureLib/pfMetalPipeline/ShaderSrc/WaveSet7.metal
+	../../FeatureLib/pfMetalPipeline/ShaderSrc/Grass.metal
+	../../FeatureLib/pfMetalPipeline/ShaderSrc/WaveDecEnv.metal
+    ../../FeatureLib/pfMetalPipeline/ShaderSrc/Avatar.metal
+    ../../FeatureLib/pfMetalPipeline/ShaderSrc/WaveDec1Lay_7.metal
+    ../../FeatureLib/pfMetalPipeline/ShaderSrc/WaveRip.metal
+    ../../FeatureLib/pfMetalPipeline/ShaderSrc/Clear.metal
+    ../../FeatureLib/pfMetalPipeline/ShaderSrc/GammaCorrection.metal
+    ../../FeatureLib/pfMetalPipeline/ShaderSrc/TextFontShader.metal
     )
 else()
     list(APPEND plClient_SOURCES
@@ -159,8 +210,22 @@ if(APPLE)
         XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME "YES"
         XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC "YES"
         XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER org.Huru.UruExplorer
+        XCODE_ATTRIBUTE_SWIFT_OBJC_BRIDGING_HEADER "$<$<PLATFORM_ID:iOS>:Sources/Plasma/Apps/plClient/Apple-SwiftUI/BridgingHeader.h>"
+        XCODE_ATTRIBUTE_GENERATE_INFOPLIST_FILE "YES"
     )
-    target_compile_options(plClient PRIVATE -fobjc-arc)
+    if(CMAKE_SYSTEM_NAME MATCHES "iOS")
+        set_target_properties(plClient PROPERTIES
+            XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@executable_path/Frameworks"
+            XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY 1,2
+            XCODE_ATTRIBUTE_INFOPLIST_KEY_UISupportedInterfaceOrientations "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"
+            XCODE_ATTRIBUTE_INFOPLIST_KEY_UILaunchScreen_Generation YES
+            XCODE_ATTRIBUTE_INFOPLIST_KEY_GCSupportsGameMode YES
+            XCODE_ATTRIBUTE_INFOPLIST_KEY_UIFileSharingEnabled YES
+            XCODE_ATTRIBUTE_INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace YES
+            XCODE_ATTRIBUTE_SWIFT_OBJC_INTEROP_MODE objcxx
+        )
+    endif()
+    target_compile_options(plClient PRIVATE $<$<COMPILE_LANGUAGE:C,CXX,OBJC>:-fobjc-arc>)
     target_sources(plClient PRIVATE Mac-Cocoa/Assets.xcassets)
     set_source_files_properties(Mac-Cocoa/Assets.xcassets ${RESOURCES} PROPERTIES
          MACOSX_PACKAGE_LOCATION Resources
@@ -249,7 +314,11 @@ target_link_libraries(
         "$<$<PLATFORM_ID:Darwin>:-framework QuartzCore>"
         # Only need IOKit when targeting Mac OS X < 10.9
         "$<$<AND:$<PLATFORM_ID:Darwin>,$<VERSION_LESS:${CMAKE_OSX_DEPLOYMENT_TARGET},10.9>>:-framework IOKit>"
-        $<$<PLATFORM_ID:Darwin>:${LibArchive_LIBRARIES}>
+        "$<$<PLATFORM_ID:Darwin,iOS>:-framework QuartzCore>"
+        "$<$<PLATFORM_ID:iOS>:-framework Accelerate>"
+        "$<$<PLATFORM_ID:iOS>:-framework GameController>"
+        "$<$<PLATFORM_ID:iOS>:-framework UIKit>"
+        $<$<PLATFORM_ID:Darwin,iOS>:${LibArchive_LIBRARIES}>
 )
 target_include_directories(plClient PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 
@@ -270,6 +339,11 @@ if(APPLE)
         ]]
         DESTINATION client
     )
+endif()
+
+if(CMAKE_SYSTEM_NAME MATCHES "iOS")
+    add_custom_command(TARGET plClient POST_BUILD COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/Apple-SwiftUI/InstallPythonModules.sh")
+    add_custom_command(TARGET plClient POST_BUILD COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/Apple-SwiftUI/PrepPythonModules.sh")
 endif()
 
 if(PLASMA_BUILD_RESOURCE_DAT)

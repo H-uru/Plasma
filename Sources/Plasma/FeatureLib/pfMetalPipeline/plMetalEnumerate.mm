@@ -51,8 +51,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
 {
+#ifdef HS_BUILD_FOR_MAC
     CGDirectDisplayID mainDisplay = CGMainDisplayID();
     id<MTLDevice>     device = CGDirectDisplayCopyCurrentMetalDevice(mainDisplay);
+#else
+    int               mainDisplay = 0;
+    id<MTLDevice>     device = MTLCreateSystemDefaultDevice();
+#endif
 
     if (device) {
         hsG3DDeviceRecord devRec;
@@ -89,7 +94,13 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
         // This code is in Metal (for now) - but it should also work
         // under OpenGL/Mac as long as the GPU also supports Metal.
 #ifdef HAVE_BUILTIN_AVAILABLE
-        if (@available(macOS 10.15, *)) {
+        if (@available(macOS 11, *)) {
+            // The available check needs to be on it's own line or
+            // we'll get a compiler warning
+            if ([device supportsFamily:MTLGPUFamilyApple5]) {
+                defaultMode = &devRec.GetModes().front();
+            }
+        } else if (@available(macOS 10.15, *)) {
             // The available check needs to be on it's own line or
             // we'll get a compiler warning
             if ([device supportsFamily:MTLGPUFamilyMac2]) {
@@ -101,6 +112,7 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
         }
 #endif
 
+#ifdef HS_BUILD_FOR_MAC
         if (defaultMode == nullptr) {
             // time to go down the rabit hole
             int maxHeight = std::numeric_limits<int>::max();
@@ -123,6 +135,7 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
             // Last resort - pick the lowest
             defaultMode = &devRec.GetModes().back();
         }
+#endif
         devRec.SetDefaultModeIndex(defaultMode - devRec.GetModes().data());
 
         records.emplace_back(devRec);
@@ -131,6 +144,10 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
 
 MTL::Device* plMetalEnumerate::DeviceForDisplay(hsDisplayHndl display)
 {
+#ifdef HS_BUILD_FOR_MAC
     id<MTLDevice> device = CGDirectDisplayCopyCurrentMetalDevice(display);
     return static_cast<MTL::Device*>(device);
+#else
+    return static_cast<MTL::Device*>(MTLCreateSystemDefaultDevice());
+#endif
 }
