@@ -5,14 +5,16 @@ include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
 
 if(PLASMA_BUILD_CLIENT)
     add_subdirectory(plClient)
-
-    if(WIN32)
-        add_subdirectory(plCrashHandler)
-    endif()
 endif()
 
-if(PLASMA_BUILD_LAUNCHER AND WIN32)
-    add_subdirectory(plUruLauncher)
+if(WIN32)
+    if(PLASMA_BUILD_CLIENT)
+        add_subdirectory(plCrashHandler)
+    endif()
+
+    if(PLASMA_BUILD_LAUNCHER)
+        add_subdirectory(plUruLauncher)
+    endif()
 endif()
 
 if(PLASMA_BUILD_TOOLS)
