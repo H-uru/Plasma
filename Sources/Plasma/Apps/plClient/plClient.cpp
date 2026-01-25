@@ -506,7 +506,9 @@ bool plClient::InitPipeline(hsDisplayHndl display, uint32_t devType)
 
     hsG3DDeviceModeRecord dmr;
     hsG3DDeviceSelector devSel;
-    devSel.Enumerate(fWindowHndl);
+
+    plDisplayHelper* displayHelper = plDisplayHelper::GetInstance();
+    devSel.Enumerate(displayHelper->DefaultDisplay());
     devSel.RemoveUnusableDevModes(true);
 
     if (!devSel.GetRequested(&dmr, devType))
@@ -2035,7 +2037,9 @@ void plClient::IDetectAudioVideoSettings()
     bool devmode = true;
     hsG3DDeviceModeRecord dmr;
     hsG3DDeviceSelector devSel;
-    devSel.Enumerate(fWindowHndl);
+
+    plDisplayHelper* displayHelper = plDisplayHelper::GetInstance();
+    devSel.Enumerate(displayHelper->DefaultDisplay());
     devSel.RemoveUnusableDevModes(true);
 
     if (!devSel.GetDefault(&dmr))
