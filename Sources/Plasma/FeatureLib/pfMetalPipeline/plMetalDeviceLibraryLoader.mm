@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Foundation/Foundation.h>
 #include <Metal/Metal.h>
 #include "plMetalDevice.h"
+#include "plPipeline/hsG3DDeviceSelector.h"
 
 void plMetalDevice::LoadLibrary()
 {
@@ -53,15 +54,21 @@ void plMetalDevice::LoadLibrary()
      */
 
     NS::Error* error;
+    // If we're Metal 3 compatible - load the Metal 3 shader library
 #ifdef METAL_3_SDK
     if (@available(macOS 12, iOS 15, *)) {
-        if (fMetalDevice->supportsFamily(MTL::GPUFamilyMetal3)) {
+        if (fDeviceType == hsG3DDeviceSelector::kDevTypeMetal3) {
             NSURL* shaderURL = [NSBundle.mainBundle URLForResource:@"pfMetalPipelineShadersMSL30" withExtension:@"metallib"];
             fShaderLibrary = fMetalDevice->newLibrary(static_cast<NS::URL*>(shaderURL), &error);
             return;
         }
     }
 #endif
+    // Otherwise load the right Metal 2 shader library.
+    // The MSL23 library is optimized for Apple Silicon. It will
+    // still load on Intel Macs, but we need to be running at least
+    // macOS 11. Intel Macs running older versions of macOS need to
+    // run an MSL 2.1 version of the library.
 #ifdef TARGET_OS_OSX
     if (@available(macOS 11, iOS 14, *)) {
         NSURL* shaderURL = [NSBundle.mainBundle URLForResource:@"pfMetalPipelineShadersMSL23" withExtension:@"metallib"];

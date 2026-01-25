@@ -56,8 +56,6 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
 
     if (device) {
         hsG3DDeviceRecord devRec;
-        devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeMetal);
-        devRec.SetDriverName("Metal");
         devRec.SetDeviceDesc([device.name UTF8String]);
 
         // Metal has ways to query capabilities, but doesn't expose a flat version
@@ -125,6 +123,15 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
         }
         devRec.SetDefaultModeIndex(defaultMode - devRec.GetModes().data());
 
+        if (@available(macOS 13.0, *)) {
+            if ([device supportsFamily:MTLGPUFamilyMetal3]) {
+                devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeMetal3);
+                devRec.SetDriverName("Metal 3");
+                records.emplace_back(devRec);
+            }
+        }
+        devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeMetal2);
+        devRec.SetDriverName("Metal 2");
         records.emplace_back(devRec);
     }
 }
