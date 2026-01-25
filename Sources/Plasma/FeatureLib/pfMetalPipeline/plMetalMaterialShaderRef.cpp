@@ -352,7 +352,7 @@ void plMetalMaterialShaderRef::IEatBumpmapLayers(uint32_t& layerIdx, std::vector
         return;
     }
 
-    plMetalBumpMapping bumpMapping;
+    plMetalBumpMapping& bumpMapping = bumpsOut.emplace_back();
     // We have a bump map and it should occupy the next four layers
     for (size_t bumpLayer = 0; bumpLayer < 4; bumpLayer++) {
         plLayerInterface* layer = fMaterial->GetLayer(layerIdx + bumpLayer);
@@ -372,7 +372,6 @@ void plMetalMaterialShaderRef::IEatBumpmapLayers(uint32_t& layerIdx, std::vector
     bumpMapping.texture = static_cast<plMetalTextureRef*>(bumpTextureLayer->GetTexture()->GetDeviceRef())->fTexture;
     MTL::SamplerState* samplerState = fPipeline->fDevice.SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(bumpTextureLayer->GetClampFlags()));
     bumpMapping.sampler = samplerState;
-    bumpsOut.emplace_back(bumpMapping);
 
     layerIdx += 4;
     // Keep going until they are all eaten
