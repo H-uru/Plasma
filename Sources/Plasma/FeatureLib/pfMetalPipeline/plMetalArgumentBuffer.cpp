@@ -65,7 +65,8 @@ NS::Array* plMetalBumpArgumentBuffer::GetArgumentDescriptors()
     return array;
 }
 
-plMetalBumpArgumentBuffer::plMetalBumpArgumentBuffer(plMetalDevice* device, size_t numElements) : plMetalArgumentBuffer<plMetalBumpmap>(device, numElements)
+plMetalBumpArgumentBuffer::plMetalBumpArgumentBuffer(plMetalDevice* device, size_t numElements)
+    : plMetalArgumentBuffer<plMetalBumpmap>(device, numElements)
 {
     _bumps.resize(numElements);
 }
