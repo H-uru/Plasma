@@ -256,8 +256,8 @@ private:
     plUUID fRevision;
 
     uint32_t fNodeId;
-    uint32_t fCreateTime;
-    uint32_t fModifyTime;
+    int64_t  fCreateTime;
+    int64_t  fModifyTime;
     ST::string fCreateAgeName;
     plUUID   fCreateAgeUuid;
     plUUID   fCreatorAcct;
@@ -351,8 +351,8 @@ public:
     void GenerateRevision() { fRevision = plUUID::Generate(); }
 
     uint32_t GetNodeId() const { return fNodeId; }
-    uint32_t GetCreateTime() const { return fCreateTime; }
-    uint32_t GetModifyTime() const { return fModifyTime; }
+    int64_t GetCreateTime() const { return fCreateTime; }
+    int64_t GetModifyTime() const { return fModifyTime; }
     ST::string GetCreateAgeName() const { return fCreateAgeName; }
     plUUID GetCreateAgeUuid() const { return fCreateAgeUuid; }
     plUUID GetCreatorAcct() const { return fCreatorAcct; }
@@ -386,8 +386,8 @@ public:
 public:
     void SetNodeId(uint32_t value) { ISetVaultField(kNodeId, fNodeId, value); }
     void SetNodeId_NoDirty(uint32_t value) { ISetVaultField_NoDirty(kNodeId, fNodeId, value); }
-    void SetCreateTime(uint32_t value) { ISetVaultField(kCreateTime, fCreateTime, value); }
-    void SetModifyTime(uint32_t value) { ISetVaultField(kModifyTime, fModifyTime, value); }
+    void SetCreateTime(int64_t value) { ISetVaultField(kCreateTime, fCreateTime, value); }
+    void SetModifyTime(int64_t value) { ISetVaultField(kModifyTime, fModifyTime, value); }
     void SetCreateAgeName(const ST::string& value) { ISetVaultField(kCreateAgeName, fCreateAgeName, value); }
     void SetCreateAgeUuid(const plUUID& value) { ISetVaultField(kCreateAgeUuid, fCreateAgeUuid, value); }
     void SetCreatorAcct(const plUUID& value) { ISetVaultField(kCreatorAcct, fCreatorAcct, value); }

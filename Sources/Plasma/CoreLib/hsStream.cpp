@@ -326,6 +326,21 @@ void hsStream::ReadLE32(size_t count, uint32_t values[])
         values[i] = hsToLE32(values[i]);
 }
 
+uint64_t hsStream::ReadLE64()
+{
+    uint64_t  value;
+    Read(sizeof(uint64_t), &value);
+    value = hsToLE64(value);
+    return value;
+}
+
+void hsStream::ReadLE64(size_t count, uint64_t values[])
+{
+    this->Read(count * sizeof(uint64_t), values);
+    for (size_t i = 0; i < count; i++)
+        values[i] = hsToLE64(values[i]);
+}
+
 double hsStream::ReadLEDouble()
 {
     double  value;
@@ -377,7 +392,7 @@ void hsStream::WriteByte(uint8_t value)
 void  hsStream::WriteLE16(uint16_t value)
 {
     value = hsToLE16(value);
-    this->Write(sizeof(int16_t), &value);
+    this->Write(sizeof(uint16_t), &value);
 }
 
 void  hsStream::WriteLE16(size_t count, const uint16_t values[])
@@ -389,13 +404,25 @@ void  hsStream::WriteLE16(size_t count, const uint16_t values[])
 void  hsStream::WriteLE32(uint32_t value)
 {
     value = hsToLE32(value);
-    this->Write(sizeof(int32_t), &value);
+    this->Write(sizeof(uint32_t), &value);
 }
 
 void  hsStream::WriteLE32(size_t count, const uint32_t values[])
 {
     for (size_t i = 0; i < count; i++)
         this->WriteLE32(values[i]);
+}
+
+void hsStream::WriteLE64(uint64_t value)
+{
+    value = hsToLE64(value);
+    this->Write(sizeof(uint64_t), &value);
+}
+
+void hsStream::WriteLE64(size_t count, const uint64_t values[])
+{
+    for (size_t i = 0; i < count; i++)
+        this->WriteLE64(values[i]);
 }
 
 void hsStream::WriteLEDouble(double value)

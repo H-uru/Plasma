@@ -117,11 +117,11 @@ public:
     uint32_t GetType();
     uint32_t  GetOwnerNodeID();
     PyObject* GetOwnerNode(); // returns pyVaultPlayerInfoNode
-    uint32_t GetModifyTime();
+    int64_t GetModifyTime();
     uint32_t GetCreatorNodeID();
     PyObject* GetCreatorNode(); // returns pyVaultPlayerInfoNode
-    uint32_t GetCreateTime();
-    uint32_t GetCreateAgeTime();
+    int64_t GetCreateTime();
+    int64_t GetCreateAgeTime();
     ST::string GetCreateAgeName() const;
     plUUID    GetCreateAgeGuid() const;
     PyObject* GetCreateAgeCoords ();
