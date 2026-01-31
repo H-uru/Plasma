@@ -43,11 +43,84 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _hsDarwin_inc_
 #define _hsDarwin_inc_
 
+#include "HeadSpin.h"
 #include <string_theory/string>
 #include <string_theory/format>
 
 #ifdef HS_BUILD_FOR_APPLE
 #include <CoreFoundation/CoreFoundation.h>
+
+template<typename T, typename U>
+inline T bridge_cast(U* obj)
+{
+#if defined(__OBJC__) && __has_feature(objc_arc)
+    return (__bridge T)(obj);
+#else
+    return reinterpret_cast<T>(obj);
+#endif
+}
+
+
+#if __has_feature(objc_arc) || (MAC_OS_X_VERSION_MIN_REQUIRED >= 1070 && defined(__clang__))
+#   define HAS_AUTORELEASEPOOL_ARC
+    extern "C" void* objc_autoreleasePoolPush(void);
+    extern "C" void  objc_autoreleasePoolPop(void* pool);
+#else
+#   include <objc/message.h>
+#endif
+
+
+inline CFTypeRef hsAutorelease(CFTypeRef ptr) {
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    return CFAutorelease(ptr);
+#else
+    SEL autorelease = sel_registerName("autorelease");
+    IMP imp = class_getMethodImplementation(object_getClass(bridge_cast<id>(const_cast<void*>(ptr))), autorelease);
+    return ((CFTypeRef (*)(CFTypeRef, SEL))imp)(ptr, autorelease);
+#endif
+}
+
+#ifdef __OBJC__
+#   if __has_feature(objc_arc)
+        inline id hsAutorelease(id ptr) { return ptr; }
+#   else
+        inline id hsAutorelease(id ptr) { return [ptr autorelease]; }
+#   endif
+#endif
+
+class hsAutoreleasePool
+{
+private:
+    void* const fPool;
+
+public:
+    hsAutoreleasePool()
+#ifdef HAS_AUTORELEASEPOOL_ARC
+        : fPool(objc_autoreleasePoolPush())
+#else
+        : fPool(objc_msgSend(
+                    bridge_cast<id>(objc_msgSend(
+                            bridge_cast<id>(objc_lookUpClass("NSAutoreleasePool")),
+                            sel_registerName("alloc"))),
+                    sel_registerName("init")))
+#endif
+    {}
+
+    ~hsAutoreleasePool()
+    {
+#ifdef HAS_AUTORELEASEPOOL_ARC
+        objc_autoreleasePoolPop(fPool);
+#else
+        objc_msgSend(bridge_cast<id>(fPool), sel_registerName("drain"));
+#endif
+    }
+};
+
+#define hsAutoreleasingScope hsAutoreleasePool hsUniqueIdentifier(_AutoreleasePool_);
+
+#ifdef HAS_AUTORELEASEPOOL_ARC
+#   undef HAS_AUTORELEASEPOOL_ARC
+#endif
 
 [[nodiscard]]
 #if __has_feature(attribute_cf_returns_retained)
@@ -89,17 +162,13 @@ inline NSString* NSStringCreateWithSTString(const ST::string& str)
 #if __has_feature(objc_arc)
     return (NSString*)CFBridgingRelease(CFStringCreateWithSTString(str));
 #else
-    return (NSString*)CFStringCreateWithSTString(str);
+    return (NSString*)hsAutorelease(CFStringCreateWithSTString(str));
 #endif
 }
 
 inline ST::string STStringFromNSString(NSString* str, ST::utf_validation_t validation = ST_DEFAULT_VALIDATION)
 {
-#if __has_feature(objc_arc)
-    return STStringFromCFString((__bridge CFStringRef)str, validation);
-#else
-    return STStringFromCFString((CFStringRef)str, validation);
-#endif
+    return STStringFromCFString(bridge_cast<CFStringRef>(str), validation);
 }
 
 inline void format_type(const ST::format_spec &format, ST::format_writer &output, NSString* str)
