@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plGLPipeline.h"
 
-bool fillDeviceRecord(hsG3DDeviceRecord& devRec, const ST::string& driverName, hsDisplayHndl display)
+static bool fillDeviceRecord(hsG3DDeviceRecord& devRec, const ST::string& driverName, hsDisplayHndl display)
 {
     if (epoxy_gl_version() < 33)
         return false;
@@ -74,20 +74,16 @@ bool fillDeviceRecord(hsG3DDeviceRecord& devRec, const ST::string& driverName, h
     plDisplayHelper* displayHelper = plDisplayHelper::GetInstance();
     if (displayHelper) {
         for (const auto& mode : displayHelper->GetSupportedDisplayModes(display)) {
-            hsG3DDeviceMode devMode;
-            devMode.SetWidth(mode.Width);
-            devMode.SetHeight(mode.Height);
-            devMode.SetColorDepth(mode.ColorDepth);
-            devRec.GetModes().emplace_back(std::move(devMode));
+            devRec.GetModes().emplace_back(mode.Width, mode.Height, mode.ColorDepth);
         }
         devRec.SetDefaultModeIndex(0);
     } else {
         // Just make a fake mode so the device selector will let it through
-        hsG3DDeviceMode devMode;
-        devMode.SetWidth(hsG3DDeviceSelector::kDefaultWidth);
-        devMode.SetHeight(hsG3DDeviceSelector::kDefaultHeight);
-        devMode.SetColorDepth(hsG3DDeviceSelector::kDefaultDepth);
-        devRec.GetModes().emplace_back(devMode);
+        devRec.GetModes().emplace_back(
+            hsG3DDeviceSelector::kDefaultWidth,
+            hsG3DDeviceSelector::kDefaultHeight,
+            hsG3DDeviceSelector::kDefaultDepth
+        );
     }
 
     return true;

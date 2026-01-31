@@ -40,51 +40,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plWinDisplayHelper.h"
-#include "hsWindows.h"
+#ifndef plWinDisplayHelper_h
+#define plWinDisplayHelper_h
 
-plWinDisplayHelper::plWinDisplayHelper() : fCurrentDisplay(INVALID_HANDLE_VALUE)
+#include "plPipeline/hsG3DDeviceSelector.h"
+#include "plPipeline/pl3DPipeline.h"
+
+class plWinDisplayHelper : public plDisplayHelper
 {
-}
+public:
+    plWinDisplayHelper();
 
-void plWinDisplayHelper::SetCurrentScreen(hsDisplayHndl display) const
-{
-    if (fCurrentDisplay == display)
-        return;
+    hsDisplayHndl CurrentDisplay() const { return fCurrentDisplay; }
 
-    fCurrentDisplay = display;
+    plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
+    std::vector<plDisplayMode> GetSupportedDisplayModes(
+            hsDisplayHndl display, int ColorDepth = 32) const override;
+    hsDisplayHndl DefaultDisplay() const override;
 
-    fDisplayModes.clear();
+private:
+    mutable hsDisplayHndl              fCurrentDisplay;
+    mutable plDisplayMode              fDesktopDisplayMode;
+    mutable std::vector<plDisplayMode> fDisplayModes;
 
-    DEVMODE dm = {};
-    dm.dmSize = sizeof(DEVMODE);
+    void SetCurrentScreen(hsDisplayHndl screen) const;
+};
 
-    for (int i = 0;; i++) {
-        if (!EnumDisplaySettings(nullptr, i, &dm))
-            break;
-
-        fDisplayModes.emplace_back(plDisplayMode {
-            static_cast<int>(dm.dmPelsWidth),
-            static_cast<int>(dm.dmPelsHeight),
-            32
-        });
-    }
-
-    std::sort(fDisplayModes.begin(), fDisplayModes.end(), std::greater());
-    auto last = std::unique(fDisplayModes.begin(), fDisplayModes.end());
-    fDisplayModes.erase(last, fDisplayModes.end());
-}
-
-std::vector<plDisplayMode> plWinDisplayHelper::GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth) const
-{
-    // Cache the current display so we can answer repeat requests quickly.
-    // SetCurrentScreen will catch redundant sets.
-    SetCurrentScreen(display);
-    return fDisplayModes;
-}
-
-hsDisplayHndl plWinDisplayHelper::DefaultDisplay() const
-{
-    return GetActiveWindow();
-}
-
+#endif /* plWinDisplayHelper_h */

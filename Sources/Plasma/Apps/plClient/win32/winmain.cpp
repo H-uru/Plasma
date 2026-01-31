@@ -61,7 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plClient.h"
 #include "plClientLoader.h"
-#include "plWinDisplayHelper.h"
 #include "res/resource.h"
 
 #include "pnEncryption/plChallengeHash.h"
@@ -85,6 +84,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfConsoleCore/pfServerIni.h"
 #include "pfCrashHandler/plCrashCli.h"
+#include "pfDisplayHelpers/plWinDisplayHelper.h"
 #include "pfPasswordStore/pfPasswordStore.h"
 
 //

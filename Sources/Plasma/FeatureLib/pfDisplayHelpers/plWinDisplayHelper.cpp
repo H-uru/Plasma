@@ -40,64 +40,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plX11DisplayHelper.h"
+#include "plWinDisplayHelper.h"
+#include "hsWindows.h"
 
-// X11 includes MUST be after everything else to avoid contamination!
-#include "plX11Functions.h"
-
-plX11DisplayHelper::plX11DisplayHelper()
-    : fCurrentDisplay()
+plWinDisplayHelper::plWinDisplayHelper()
+    : fCurrentDisplay(INVALID_HANDLE_VALUE)
 {
 }
 
-plX11DisplayHelper::~plX11DisplayHelper()
-{
-    if (fCurrentDisplay)
-        __XCloseDisplay(fCurrentDisplay);
-}
-
-void plX11DisplayHelper::SetCurrentScreen(Display* display) const
+void plWinDisplayHelper::SetCurrentScreen(hsDisplayHndl display) const
 {
     if (fCurrentDisplay == display)
         return;
-    else if (fCurrentDisplay)
-        __XCloseDisplay(fCurrentDisplay);
 
     fCurrentDisplay = display;
-    if (!fCurrentDisplay)
-        return;
-
-    int screen = DefaultScreen(fCurrentDisplay);
 
     fDisplayModes.clear();
 
-#ifdef HAS_XRANDR
-    if ((bool)__XRRSizes) {
-        // We can use the X RandR extension to get resolutions
-        int num_sizes;
-        XRRScreenSize* xrrs;
+    DEVMODE dm{};
+    dm.dmSize = sizeof(DEVMODE);
 
-        xrrs = *__XRRSizes(fCurrentDisplay, 0, &num_sizes);
-        for (int i = 0; i < num_sizes; i++) {
-            // Don't include unreasonably small sizes
-            if (xrrs[i].width < 800 || xrrs[i].height < 600)
-                continue;
+    for (int i = 0;; i++) {
+        if (!EnumDisplaySettings(nullptr, i, &dm))
+            break;
 
-            fDisplayModes.emplace_back(plDisplayMode {
-                xrrs[i].width,
-                xrrs[i].height,
-                DefaultDepth(fCurrentDisplay, screen)
-            });
-        }
-    }
-    else
-#endif
-    {
-        fDisplayModes.emplace_back(plDisplayMode {
-            DisplayWidth(fCurrentDisplay, screen),
-            DisplayHeight(fCurrentDisplay, screen),
-            DefaultDepth(fCurrentDisplay, screen)
-        });
+        fDisplayModes.emplace_back(static_cast<int>(dm.dmPelsWidth), static_cast<int>(dm.dmPelsHeight), 32);
     }
 
     std::sort(fDisplayModes.begin(), fDisplayModes.end(), std::greater());
@@ -105,21 +72,16 @@ void plX11DisplayHelper::SetCurrentScreen(Display* display) const
     fDisplayModes.erase(last, fDisplayModes.end());
 }
 
-std::vector<plDisplayMode> plX11DisplayHelper::GetSupportedDisplayModes(
+std::vector<plDisplayMode> plWinDisplayHelper::GetSupportedDisplayModes(
         hsDisplayHndl display, int ColorDepth) const
 {
     // Cache the current display so we can answer repeat requests quickly.
     // SetCurrentScreen will catch redundant sets.
-    SetCurrentScreen(reinterpret_cast<Display*>(display));
+    SetCurrentScreen(display);
     return fDisplayModes;
 }
 
-hsDisplayHndl plX11DisplayHelper::DefaultDisplay() const
+hsDisplayHndl plWinDisplayHelper::DefaultDisplay() const
 {
-    if (!fCurrentDisplay) {
-        Display* display = *__XOpenDisplay(nullptr);
-        SetCurrentScreen(display);
-    }
-
-    return reinterpret_cast<hsDisplayHndl>(fCurrentDisplay);
+    return GetActiveWindow();
 }

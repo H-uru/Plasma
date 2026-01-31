@@ -55,11 +55,7 @@ void plWaylandDisplayHelper::output_handle_mode(void* data,
     plWaylandDisplayHelper* self = reinterpret_cast<plWaylandDisplayHelper*>(data);
 
     if (flags & WL_OUTPUT_MODE_CURRENT) {
-        self->fDisplayModes.emplace_back(plDisplayMode {
-            width,
-            height,
-            32
-        });
+        self->fDisplayModes.emplace_back(width, height, 32);
     }
 }
 

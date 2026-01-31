@@ -40,29 +40,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plWinDisplayHelper_h
-#define plWinDisplayHelper_h
+#ifndef plWaylandFunctions_h
+#define plWaylandFunctions_h
 
-#include "plPipeline/hsG3DDeviceSelector.h"
-#include "plPipeline/pl3DPipeline.h"
+#include "hsOptionalCall.h"
 
-class plWinDisplayHelper : public plDisplayHelper
-{
-public:
-    plWinDisplayHelper();
+#include <wayland-client-core.h>
 
-    hsDisplayHndl CurrentDisplay() const { return fCurrentDisplay; }
+hsOptionalCallDecl("libwayland-client", wl_display_connect);
+hsOptionalCallDecl("libwayland-client", wl_display_disconnect);
+hsOptionalCallDecl("libwayland-client", wl_display_dispatch);
+hsOptionalCallDecl("libwayland-client", wl_display_roundtrip);
+hsOptionalCallDecl("libwayland-client", wl_proxy_add_listener);
+hsOptionalCallDecl("libwayland-client", wl_proxy_destroy);
+hsOptionalCallDecl("libwayland-client", wl_proxy_get_version);
+hsOptionalCallDecl("libwayland-client", wl_proxy_marshal_flags);
 
-    plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
-    std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const override;
-    hsDisplayHndl DefaultDisplay() const override;
+#define WL_REGISTRY_INTERFACE
+extern "C" const struct wl_interface wl_registry_interface;
+hsOptionalCallDecl("libwayland-client", wl_registry_interface);
+#define wl_registry_interface           __wl_registry_interface
 
-private:
-    mutable hsDisplayHndl              fCurrentDisplay;
-    mutable plDisplayMode              fDesktopDisplayMode;
-    mutable std::vector<plDisplayMode> fDisplayModes;
+#define WL_OUTPUT_INTERFACE
+extern "C" const struct wl_interface wl_output_interface;
+hsOptionalCallDecl("libwayland-client", wl_output_interface);
+#define wl_output_interface             __wl_output_interface
 
-    void SetCurrentScreen(hsDisplayHndl screen) const;
-};
+#define wl_proxy_add_listener(...)      *__wl_proxy_add_listener(__VA_ARGS__)
+#define wl_proxy_destroy(...)           *__wl_proxy_destroy(__VA_ARGS__)
+#define wl_proxy_get_version(...)       *__wl_proxy_get_version(__VA_ARGS__)
+#define wl_proxy_marshal_flags(...)     *__wl_proxy_marshal_flags(__VA_ARGS__)
 
-#endif /* plWinDisplayHelper_h */
+#include <wayland-client-protocol.h>
+
+#endif /* plWaylandFunctions_h */
