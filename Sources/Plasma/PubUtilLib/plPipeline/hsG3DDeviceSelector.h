@@ -99,6 +99,7 @@ protected:
 
 public:
     hsG3DDeviceMode();
+    hsG3DDeviceMode(uint32_t width, uint32_t height, uint32_t depth);
     ~hsG3DDeviceMode();
 
     bool operator< (const hsG3DDeviceMode &mode) const;
@@ -241,6 +242,7 @@ public:
     bool    IsInvalid() const { return 0 != ( fFlags & kInvalid ); }
 
     std::vector<hsG3DDeviceMode>& GetModes() { return fModes; }
+    const std::vector<hsG3DDeviceMode>& GetModes() const { return fModes; }
 
     const hsG3DDeviceMode* GetDefaultMode() const { return fDefaultModeIndex == -1 ? nullptr : &fModes[fDefaultModeIndex]; }
     void                   SetDefaultModeIndex(hsSsize_t defaultModeIndex) { fDefaultModeIndex = defaultModeIndex; }
@@ -325,7 +327,7 @@ public:
         kDefaultDepth   = 32
     };
 
-    typedef std::function<void(std::vector<hsG3DDeviceRecord>&)> DeviceEnumerator;
+    typedef std::function<void(std::vector<hsG3DDeviceRecord>&, hsDisplayHndl)> DeviceEnumerator;
 
 protected:
     static std::list<DeviceEnumerator>& Enumerators();
@@ -356,7 +358,7 @@ public:
 
     void RemoveUnusableDevModes(bool bTough); // Removes modes and devices not allowed supported in release
 
-    void Enumerate(hsWindowHndl winRef);
+    void Enumerate(hsDisplayHndl display);
     const std::vector<hsG3DDeviceRecord>& GetDeviceRecords() const { return fRecords; }
 
     bool GetRequested(hsG3DDeviceModeRecord *dmr, uint32_t devType);

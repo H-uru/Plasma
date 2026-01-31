@@ -40,37 +40,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plMacDisplayHelper_hpp
-#define plMacDisplayHelper_hpp
+#ifndef plWaylandFunctions_h
+#define plWaylandFunctions_h
 
-// Currently requires Metal to query attached GPU capabilities
-// Capability check will also work for GL - but will need something
-// different for older GPUs.
-#include <AppKit/AppKit.h>
-#include <QuartzCore/QuartzCore.h>
+#include "hsOptionalCall.h"
 
-#include "plPipeline/hsG3DDeviceSelector.h"
-#include "plPipeline/pl3DPipeline.h"
+#include <wayland-client-core.h>
 
-class plMacDisplayHelper : public plDisplayHelper
-{
-public:
-    plMacDisplayHelper();
-    
+hsOptionalCallDecl("libwayland-client", wl_display_connect);
+hsOptionalCallDecl("libwayland-client", wl_display_disconnect);
+hsOptionalCallDecl("libwayland-client", wl_display_dispatch);
+hsOptionalCallDecl("libwayland-client", wl_display_roundtrip);
+hsOptionalCallDecl("libwayland-client", wl_proxy_add_listener);
+hsOptionalCallDecl("libwayland-client", wl_proxy_destroy);
+hsOptionalCallDecl("libwayland-client", wl_proxy_get_version);
+hsOptionalCallDecl("libwayland-client", wl_proxy_marshal_flags);
 
-    CGDirectDisplayID CurrentDisplay() const { return fCurrentDisplay; }
+#define WL_REGISTRY_INTERFACE
+extern "C" const struct wl_interface wl_registry_interface;
+hsOptionalCallDecl("libwayland-client", wl_registry_interface);
+#define wl_registry_interface           __wl_registry_interface
 
-    plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
-    std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const override;
+#define WL_OUTPUT_INTERFACE
+extern "C" const struct wl_interface wl_output_interface;
+hsOptionalCallDecl("libwayland-client", wl_output_interface);
+#define wl_output_interface             __wl_output_interface
 
-private:
-    mutable CGDirectDisplayID          fCurrentDisplay;
-    mutable plDisplayMode              fDesktopDisplayMode;
-    mutable std::vector<plDisplayMode> fDisplayModes;
+#define wl_proxy_add_listener(...)      *__wl_proxy_add_listener(__VA_ARGS__)
+#define wl_proxy_destroy(...)           *__wl_proxy_destroy(__VA_ARGS__)
+#define wl_proxy_get_version(...)       *__wl_proxy_get_version(__VA_ARGS__)
+#define wl_proxy_marshal_flags(...)     *__wl_proxy_marshal_flags(__VA_ARGS__)
 
-    void SetCurrentScreen(hsDisplayHndl screen) const;
-    // we need NSScreen to query for non rectangular screen geometry
-    void SetCurrentScreen(NSScreen* screen) const;
-};
+#include <wayland-client-protocol.h>
 
-#endif /* plMacDisplayHelper_hpp */
+#endif /* plWaylandFunctions_h */

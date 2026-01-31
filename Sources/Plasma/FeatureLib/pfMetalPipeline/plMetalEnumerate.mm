@@ -49,10 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMetalPipeline.h"
 
-void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
+void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl display)
 {
-    CGDirectDisplayID mainDisplay = CGMainDisplayID();
-    id<MTLDevice>     device = CGDirectDisplayCopyCurrentMetalDevice(mainDisplay);
+    id<MTLDevice> device = CGDirectDisplayCopyCurrentMetalDevice(display);
 
     if (device) {
         hsG3DDeviceRecord devRec;
@@ -73,7 +72,7 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
         devRec.SetLayersAtOnce(8);
 
         plDisplayHelper* displayHelper = plDisplayHelper::GetInstance();
-        for (const auto& mode : displayHelper->GetSupportedDisplayModes(mainDisplay)) {
+        for (const auto& mode : displayHelper->GetSupportedDisplayModes(display)) {
             hsG3DDeviceMode devMode;
             devMode.SetWidth(mode.Width);
             devMode.SetHeight(mode.Height);

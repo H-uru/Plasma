@@ -73,7 +73,7 @@ public:
     static MTL::Device* DeviceForDisplay(hsDisplayHndl display);
 
 private:
-    static void Enumerate(std::vector<hsG3DDeviceRecord>& records);
+    static void Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl display);
 };
 
 //// Helper Classes ///////////////////////////////////////////////////////////

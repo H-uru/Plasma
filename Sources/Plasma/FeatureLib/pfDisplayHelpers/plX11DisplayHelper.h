@@ -40,38 +40,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef HeadSpinConfigHDefined
-#define HeadSpinConfigHDefined
+#ifndef plX11DisplayHelper_h
+#define plX11DisplayHelper_h
 
-/* Compiler settings */
-#cmakedefine HAVE_BUILTIN_AVAILABLE
-#cmakedefine HAVE_CPUID
-#cmakedefine HAVE_AVX2
-#cmakedefine HAVE_AVX
-#cmakedefine HAVE_SSE42
-#cmakedefine HAVE_SSSE3
-#cmakedefine HAVE_SSE41
-#cmakedefine HAVE_SSE4
-#cmakedefine HAVE_SSE3
-#cmakedefine HAVE_SSE2
-#cmakedefine HAVE_SSE1
+#include "plPipeline/hsG3DDeviceSelector.h"
+#include "plPipeline/pl3DPipeline.h"
 
-/* External library usage */
-#cmakedefine USE_EGL
-#cmakedefine USE_SPEEX
-#cmakedefine USE_OPUS
-#cmakedefine USE_VIDEOTOOLBOX
-#cmakedefine USE_VPX
-#cmakedefine USE_WEBM
-#cmakedefine USE_WAYLAND
-#cmakedefine USE_X11
-#cmakedefine USE_XRANDR
+struct _XDisplay;
 
-#cmakedefine HAVE_SYSCTL
-#cmakedefine HAVE_SYSDIR
-#cmakedefine HAVE_SYSINFO
-#cmakedefine HAVE_SHELLSCALINGAPI
-#cmakedefine HAVE_PTHREAD_SETNAME_NP
-#cmakedefine HAVE_STRNLEN
+class plX11DisplayHelper : public plDisplayHelper
+{
+public:
+    plX11DisplayHelper();
+    ~plX11DisplayHelper() override;
 
-#endif
+    plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
+    std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const override;
+    hsDisplayHndl DefaultDisplay() const override;
+
+private:
+    mutable _XDisplay*                  fCurrentDisplay;
+    mutable plDisplayMode               fDesktopDisplayMode;
+    mutable std::vector<plDisplayMode>  fDisplayModes;
+
+    void SetCurrentScreen(_XDisplay* screen) const;
+};
+
+#endif /* plX11DisplayHelper_h */

@@ -134,6 +134,19 @@ public:
     int Width;
     int Height;
     int ColorDepth;
+
+    plDisplayMode() = default;
+
+    plDisplayMode(int width, int height, int depth)
+        : Width(width), Height(height), ColorDepth(depth) {}
+
+    bool operator>(const plDisplayMode& dm) const {
+        return (Width * Height) > (dm.Width * dm.Height);
+    }
+
+    bool operator==(const plDisplayMode& dm) const {
+        return (Width == dm.Width && Height == dm.Height && ColorDepth == dm.ColorDepth);
+    }
 };
 
 class plPipeline : public plCreatable

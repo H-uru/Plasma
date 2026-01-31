@@ -84,6 +84,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfConsoleCore/pfServerIni.h"
 #include "pfCrashHandler/plCrashCli.h"
+#include "pfDisplayHelpers/plWinDisplayHelper.h"
 #include "pfPasswordStore/pfPasswordStore.h"
 
 //
@@ -1045,6 +1046,8 @@ bool WinInit(HINSTANCE hInst)
         nullptr, nullptr, hInst, nullptr
         );
     HDC hDC = GetDC(hWnd);
+
+    plDisplayHelper::SetInstance(new plWinDisplayHelper());
 
     gClient.SetClientWindow((hsWindowHndl)hWnd);
     gClient.SetClientDisplay((hsWindowHndl)hDC);

@@ -40,38 +40,47 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef HeadSpinConfigHDefined
-#define HeadSpinConfigHDefined
+#include "plWinDisplayHelper.h"
+#include "hsWindows.h"
 
-/* Compiler settings */
-#cmakedefine HAVE_BUILTIN_AVAILABLE
-#cmakedefine HAVE_CPUID
-#cmakedefine HAVE_AVX2
-#cmakedefine HAVE_AVX
-#cmakedefine HAVE_SSE42
-#cmakedefine HAVE_SSSE3
-#cmakedefine HAVE_SSE41
-#cmakedefine HAVE_SSE4
-#cmakedefine HAVE_SSE3
-#cmakedefine HAVE_SSE2
-#cmakedefine HAVE_SSE1
+plWinDisplayHelper::plWinDisplayHelper()
+    : fCurrentDisplay(INVALID_HANDLE_VALUE)
+{
+}
 
-/* External library usage */
-#cmakedefine USE_EGL
-#cmakedefine USE_SPEEX
-#cmakedefine USE_OPUS
-#cmakedefine USE_VIDEOTOOLBOX
-#cmakedefine USE_VPX
-#cmakedefine USE_WEBM
-#cmakedefine USE_WAYLAND
-#cmakedefine USE_X11
-#cmakedefine USE_XRANDR
+void plWinDisplayHelper::SetCurrentScreen(hsDisplayHndl display) const
+{
+    if (fCurrentDisplay == display)
+        return;
 
-#cmakedefine HAVE_SYSCTL
-#cmakedefine HAVE_SYSDIR
-#cmakedefine HAVE_SYSINFO
-#cmakedefine HAVE_SHELLSCALINGAPI
-#cmakedefine HAVE_PTHREAD_SETNAME_NP
-#cmakedefine HAVE_STRNLEN
+    fCurrentDisplay = display;
 
-#endif
+    fDisplayModes.clear();
+
+    DEVMODE dm{};
+    dm.dmSize = sizeof(DEVMODE);
+
+    for (int i = 0;; i++) {
+        if (!EnumDisplaySettings(nullptr, i, &dm))
+            break;
+
+        fDisplayModes.emplace_back(static_cast<int>(dm.dmPelsWidth), static_cast<int>(dm.dmPelsHeight), 32);
+    }
+
+    std::sort(fDisplayModes.begin(), fDisplayModes.end(), std::greater());
+    auto last = std::unique(fDisplayModes.begin(), fDisplayModes.end());
+    fDisplayModes.erase(last, fDisplayModes.end());
+}
+
+std::vector<plDisplayMode> plWinDisplayHelper::GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth) const
+{
+    // Cache the current display so we can answer repeat requests quickly.
+    // SetCurrentScreen will catch redundant sets.
+    SetCurrentScreen(display);
+    return fDisplayModes;
+}
+
+hsDisplayHndl plWinDisplayHelper::DefaultDisplay() const
+{
+    return GetActiveWindow();
+}
