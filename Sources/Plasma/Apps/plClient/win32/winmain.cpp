@@ -185,7 +185,7 @@ void DebugMsgF(const char* format, ...);
 static void HandleDpiChange(HWND hWnd, UINT dpi, float scale, const RECT& rect)
 {
     // Inform the engine about the new DPI.
-    auto* msg = new plDisplayScaleChangedMsg(scale, plDisplayScaleChangedMsg::ConvertRect(rect));
+    auto* msg = new plDisplayScaleChangedMsg(scale, plWinDpi::ConvertRect(rect));
     msg->Send();
 }
 

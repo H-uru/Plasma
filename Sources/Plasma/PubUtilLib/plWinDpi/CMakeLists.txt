@@ -15,5 +15,6 @@ target_link_libraries(
     plWinDpi
     PUBLIC
         CoreLib
+        plMessage
         plStatusLog
 )
