@@ -115,7 +115,7 @@ public:
     static plWinDpi& Instance();
 
 public:
-    /** Polyfill for AdjustsWindowRectExForDpi */
+    /** Polyfill for AdjustWindowRectExForDpi */
     BOOL AdjustWindowRectEx(LPRECT lprect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle, UINT dpi) const;
 
     UINT GetDpi(HWND hWnd = nullptr) const;
