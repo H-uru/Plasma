@@ -40,14 +40,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsOptionalCall.h"
+#ifndef plX11DisplayHelper_h
+#define plX11DisplayHelper_h
 
-#include <X11/Xlib.h>
-hsOptionalCallDecl("libX11", XCloseDisplay);
-hsOptionalCallDecl("libX11", XOpenDisplay);
+#include "plPipeline/hsG3DDeviceSelector.h"
+#include "plPipeline/pl3DPipeline.h"
 
-#if __has_include(<X11/extensions/Xrandr.h>)
-#   define HAS_XRANDR
-#   include <X11/extensions/Xrandr.h>
-    hsOptionalCallDecl("libXrandr", XRRSizes);
-#endif
+struct _XDisplay;
+
+class plX11DisplayHelper : public plDisplayHelper
+{
+public:
+    plX11DisplayHelper();
+    ~plX11DisplayHelper() override;
+
+    plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
+    std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const override;
+    hsDisplayHndl DefaultDisplay() const override;
+
+private:
+    mutable _XDisplay*                  fCurrentDisplay;
+    mutable plDisplayMode               fDesktopDisplayMode;
+    mutable std::vector<plDisplayMode>  fDisplayModes;
+
+    void SetCurrentScreen(_XDisplay* screen) const;
+};
+
+#endif /* plX11DisplayHelper_h */

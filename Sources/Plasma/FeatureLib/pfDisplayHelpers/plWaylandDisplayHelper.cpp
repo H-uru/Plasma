@@ -52,11 +52,7 @@ void plWaylandDisplayHelper::output_handle_mode(void* data, wl_output* wl_output
     plWaylandDisplayHelper* self = reinterpret_cast<plWaylandDisplayHelper*>(data);
 
     if (flags & WL_OUTPUT_MODE_CURRENT) {
-        self->fDisplayModes.emplace_back(plDisplayMode {
-            width,
-            height,
-            32
-        });
+        self->fDisplayModes.emplace_back(width, height, 32);
     }
 }
 
@@ -79,7 +75,8 @@ void plWaylandDisplayHelper::global_handler(void* data, wl_registry* registry, u
     }
 }
 
-plWaylandDisplayHelper::plWaylandDisplayHelper() : fCurrentDisplay(), fCurrentRegistry(), fCurrentOutput()
+plWaylandDisplayHelper::plWaylandDisplayHelper()
+    : fCurrentDisplay(), fCurrentRegistry(), fCurrentOutput()
 {
 }
 

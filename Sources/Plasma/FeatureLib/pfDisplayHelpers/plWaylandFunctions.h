@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef plWaylandFunctions_h
+#define plWaylandFunctions_h
+
 #include "hsOptionalCall.h"
 
 #include <wayland-client-core.h>
@@ -69,3 +72,5 @@ hsOptionalCallDecl("libwayland-client", wl_output_interface);
 #define wl_proxy_marshal_flags(...)     *__wl_proxy_marshal_flags(__VA_ARGS__)
 
 #include <wayland-client-protocol.h>
+
+#endif /* plWaylandFunctions_h */

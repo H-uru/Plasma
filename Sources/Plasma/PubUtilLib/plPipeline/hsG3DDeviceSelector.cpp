@@ -56,11 +56,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
 hsG3DDeviceMode::hsG3DDeviceMode()
-:   fWidth(0), fHeight(0), 
-    fDepth(0),
-    fFlags(kNone)
-{
-}
+    : fFlags(kNone), fWidth(0), fHeight(0), fDepth(0)
+{}
+
+hsG3DDeviceMode::hsG3DDeviceMode(uint32_t width, uint32_t height, uint32_t depth)
+    : fFlags(kNone), fWidth(width), fHeight(height), fDepth(depth)
+{}
 
 hsG3DDeviceMode::~hsG3DDeviceMode()
 {

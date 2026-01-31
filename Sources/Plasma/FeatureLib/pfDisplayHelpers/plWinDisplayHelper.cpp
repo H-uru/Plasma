@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plWinDisplayHelper.h"
 #include "hsWindows.h"
 
-plWinDisplayHelper::plWinDisplayHelper() : fCurrentDisplay(INVALID_HANDLE_VALUE)
+plWinDisplayHelper::plWinDisplayHelper()
+    : fCurrentDisplay(INVALID_HANDLE_VALUE)
 {
 }
 
@@ -56,18 +57,14 @@ void plWinDisplayHelper::SetCurrentScreen(hsDisplayHndl display) const
 
     fDisplayModes.clear();
 
-    DEVMODE dm = {};
+    DEVMODE dm{};
     dm.dmSize = sizeof(DEVMODE);
 
     for (int i = 0;; i++) {
         if (!EnumDisplaySettings(nullptr, i, &dm))
             break;
 
-        fDisplayModes.emplace_back(plDisplayMode {
-            static_cast<int>(dm.dmPelsWidth),
-            static_cast<int>(dm.dmPelsHeight),
-            32
-        });
+        fDisplayModes.emplace_back(static_cast<int>(dm.dmPelsWidth), static_cast<int>(dm.dmPelsHeight), 32);
     }
 
     std::sort(fDisplayModes.begin(), fDisplayModes.end(), std::greater());
@@ -87,4 +84,3 @@ hsDisplayHndl plWinDisplayHelper::DefaultDisplay() const
 {
     return GetActiveWindow();
 }
-

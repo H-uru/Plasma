@@ -47,29 +47,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plPipeline/pl3DPipeline.h"
 
-// This is terrible, but this entire tool is a hack so...
 #ifdef HS_BUILD_FOR_MACOS
-#   include "../../Plasma/Apps/plClient/Mac-Cocoa/plMacDisplayHelper.h"
+#   include "pfDisplayHelpers/plMacDisplayHelper.h"
 #endif
+
 #ifdef HS_BUILD_FOR_WIN32
-#   include "../../Plasma/Apps/plClient/win32/plWinDisplayHelper.h"
+#   include "pfDisplayHelpers/plWinDisplayHelper.h"
 #endif
 
 #ifdef USE_X11
-#   include "plX11DisplayHelper.h"
+#   include "pfDisplayHelpers/plX11DisplayHelper.h"
 #endif
+
 #ifdef USE_WAYLAND
-#   include "plWaylandDisplayHelper.h"
+#   include "pfDisplayHelpers/plWaylandDisplayHelper.h"
 #endif
 
 #ifdef PLASMA_PIPELINE_GL
 #   include "pfGLPipeline/plGLPipeline.h"
-plGLEnumerate glEnum;
+static plGLEnumerate glEnum;
 #endif
 
 #ifdef PLASMA_PIPELINE_METAL
 #   include "pfMetalPipeline/plMetalPipeline.h"
-plMetalEnumerate mtlEnum;
+static plMetalEnumerate mtlEnum;
 #endif
 
 int main(int argc, const char* argv[]) {

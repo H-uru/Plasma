@@ -197,6 +197,7 @@ cmake_dependent_option(USE_WEBM "Use WebM movie player" ON "TARGET Opus::opus AN
 cmake_dependent_option(USE_VLD "Build and link with Visual Leak Detector" OFF "TARGET VLD::VLD" OFF)
 cmake_dependent_option(USE_WAYLAND "Build with Wayland compositor support" ON "TARGET Wayland::Client" OFF)
 cmake_dependent_option(USE_X11 "Build with X11 support" ON "TARGET X11::X11" OFF)
+cmake_dependent_option(USE_XRANDR "Build with X11 XRandR support" ON "TARGET X11::Xrandr" OFF)
 
 # Configure compile-time compiler-specific flags and other config files
 include(cmake/CompilerChecks.cmake)

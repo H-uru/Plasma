@@ -45,7 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // X11 includes MUST be after everything else to avoid contamination!
 #include "plX11Functions.h"
 
-plX11DisplayHelper::plX11DisplayHelper() : fCurrentDisplay()
+plX11DisplayHelper::plX11DisplayHelper()
+    : fCurrentDisplay()
 {
 }
 
@@ -70,7 +71,7 @@ void plX11DisplayHelper::SetCurrentScreen(Display* display) const
 
     fDisplayModes.clear();
 
-#ifdef HAS_XRANDR
+#ifdef USE_XRANDR
     if ((bool)__XRRSizes) {
         // We can use the X RandR extension to get resolutions
         int num_sizes;
@@ -82,21 +83,13 @@ void plX11DisplayHelper::SetCurrentScreen(Display* display) const
             if (xrrs[i].width < 800 || xrrs[i].height < 600)
                 continue;
 
-            fDisplayModes.emplace_back(plDisplayMode {
-                xrrs[i].width,
-                xrrs[i].height,
-                DefaultDepth(fCurrentDisplay, screen)
-            });
+            fDisplayModes.emplace_back(xrrs[i].width, xrrs[i].height, DefaultDepth(fCurrentDisplay, screen));
         }
     }
     else
 #endif
     {
-        fDisplayModes.emplace_back(plDisplayMode {
-            DisplayWidth(fCurrentDisplay, screen),
-            DisplayHeight(fCurrentDisplay, screen),
-            DefaultDepth(fCurrentDisplay, screen)
-        });
+        fDisplayModes.emplace_back(DisplayWidth(fCurrentDisplay, screen), DisplayHeight(fCurrentDisplay, screen), DefaultDepth(fCurrentDisplay, screen));
     }
 
     std::sort(fDisplayModes.begin(), fDisplayModes.end(), std::greater());

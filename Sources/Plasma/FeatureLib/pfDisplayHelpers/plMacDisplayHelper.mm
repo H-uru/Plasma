@@ -46,7 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <AppKit/AppKit.h>
 #include <QuartzCore/QuartzCore.h>
 
-plMacDisplayHelper::plMacDisplayHelper() : fCurrentDisplay(kCGNullDirectDisplay)
+plMacDisplayHelper::plMacDisplayHelper()
+    : fCurrentDisplay(kCGNullDirectDisplay)
 {
 }
 
@@ -139,7 +140,7 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
             // Plasma likes to handle modes from largest to smallest,
             // CG likes to go from smallest to largest. Insert modes
             // at the front.
-            fDisplayModes.emplace_back(plDisplayMode { static_cast<int>(CGDisplayModeGetWidth(mode)), static_cast<int>(CGDisplayModeGetHeight(mode)), 32 });
+            fDisplayModes.emplace_back(static_cast<int>(CGDisplayModeGetWidth(mode)), static_cast<int>(CGDisplayModeGetHeight(mode)), 32);
         }
         CFRelease(displayModes);
     }
@@ -164,7 +165,7 @@ void plMacDisplayHelper::SetCurrentScreen(NSScreen* screen) const
                 continue;
             }
 
-            fDisplayModes.emplace_back(plDisplayMode { static_cast<int>(width), static_cast<int>(height), static_cast<int>(depth) });
+            fDisplayModes.emplace_back(static_cast<int>(width), static_cast<int>(height), static_cast<int>(depth));
         }
     }
 #endif

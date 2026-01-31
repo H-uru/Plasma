@@ -99,6 +99,7 @@ protected:
 
 public:
     hsG3DDeviceMode();
+    hsG3DDeviceMode(uint32_t width, uint32_t height, uint32_t depth);
     ~hsG3DDeviceMode();
 
     bool operator< (const hsG3DDeviceMode &mode) const;
