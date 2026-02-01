@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMetalArgumentBuffer.h"
 
-NS::Array* plMetalBumpArgumentBuffer::GetArgumentDescriptors()
+NS::Array* plMetalBumpArgumentBuffer::GetArgumentDescriptors() const
 {
     MTL::ArgumentDescriptor* descriptors[4];
     descriptors[0] = MTL::ArgumentDescriptor::argumentDescriptor();
@@ -68,7 +68,7 @@ NS::Array* plMetalBumpArgumentBuffer::GetArgumentDescriptors()
 plMetalBumpArgumentBuffer::plMetalBumpArgumentBuffer(plMetalDevice* device, size_t numElements)
     : plMetalArgumentBuffer<plMetalBumpmap>(device, numElements)
 {
-    _bumps.resize(numElements);
+    fBumps.resize(numElements);
 }
 
 void plMetalBumpArgumentBuffer::Set(const std::vector<plMetalBumpMapping>& bumps)
@@ -82,14 +82,14 @@ void plMetalBumpArgumentBuffer::Set(const std::vector<plMetalBumpMapping>& bumps
         for (int i = 0; i < bumps.size(); ++i) {
             auto& bump = bumps[i];
             fEncoder->setArgumentBuffer(GetBuffer(), 0, i);
-            fEncoder->setTexture(bump.texture, textureID);
-            fEncoder->setSamplerState(bump.sampler, samplerID);
+            fEncoder->setTexture(bump.fTexture, textureID);
+            fEncoder->setSamplerState(bump.fSampler, samplerID);
             uint8_t* cotangentUBuffer = static_cast<uint8_t*>(fEncoder->constantData(dTangentIndexID));
-            memcpy(cotangentUBuffer, &bump.dTangentUIndex, sizeof(uint8_t) * 2);
+            memcpy(cotangentUBuffer, &bump.fDTangentUIndex, sizeof(uint8_t) * 2);
             float* scaleBuffer = static_cast<float*>(fEncoder->constantData(dScaleID));
-            memcpy(scaleBuffer, &bump.scale, sizeof(float));
+            memcpy(scaleBuffer, &bump.fScale, sizeof(float));
 
-            _bumps[i] = bump;
+            fBumps[i] = bump;
         }
     }
 #ifdef METAL_3_SDK
@@ -97,12 +97,12 @@ void plMetalBumpArgumentBuffer::Set(const std::vector<plMetalBumpMapping>& bumps
         // Tier 2, memory layout is guaranteed, we can scrible directly on buffer memory
         for (int i = 0; i < bumps.size(); ++i) {
             auto& bump = bumps[i];
-            fValue[i].bumpTexture = bump.texture->gpuResourceID();
-            fValue[i].bumpTextureSampler = bump.sampler->gpuResourceID();
-            fValue[i].dTangentIndex = simd::make_char2(bump.dTangentUIndex, bump.dTangentVIndex);
-            fValue[i].scale = bump.scale;
+            fValue[i].bumpTexture = bump.fTexture->gpuResourceID();
+            fValue[i].bumpTextureSampler = bump.fSampler->gpuResourceID();
+            fValue[i].dTangentIndex = simd::make_char2(bump.fDTangentUIndex, bump.fDTangentVIndex);
+            fValue[i].scale = bump.fScale;
 
-            _bumps[i] = bump;
+            fBumps[i] = bump;
         }
     }
 #endif
@@ -113,10 +113,10 @@ void plMetalBumpArgumentBuffer::Set(const std::vector<plMetalBumpMapping>& bumps
 
 void plMetalBumpArgumentBuffer::Bind(MTL::RenderCommandEncoder* encoder)
 {
-    for (const auto& bump : _bumps) {
+    for (const auto& bump : fBumps) {
         // These textures can't go into a heap because they're shared by multiple
         // materials, boo. Mark them as needing to be resident one at a time.
-        encoder->useResource(bump.texture, MTL::ResourceUsageRead, MTL::RenderStageFragment);
+        encoder->useResource(bump.fTexture, MTL::ResourceUsageRead, MTL::RenderStageFragment);
     }
     encoder->setVertexBuffer(GetBuffer(), 0, BumpState);
     encoder->setFragmentBuffer(GetBuffer(), 0, BumpState);
@@ -129,13 +129,13 @@ bool plMetalBumpArgumentBuffer::CheckBuffer(const std::vector<plMetalBumpMapping
     }
     for (int i = 0; i < bumps.size(); ++i) {
         auto& bump = bumps[i];
-        if (bump.texture != _bumps[i].texture)
+        if (bump.fTexture != fBumps[i].fTexture)
             return false;
-        if (bump.dTangentUIndex != _bumps[i].dTangentUIndex ||
-            bump.dTangentVIndex != _bumps[i].dTangentVIndex) {
+        if (bump.fDTangentUIndex != fBumps[i].fDTangentUIndex ||
+            bump.fDTangentVIndex != fBumps[i].fDTangentVIndex) {
             return false;
         }
-        if (bump.scale != _bumps[i].scale) {
+        if (bump.fScale != fBumps[i].fScale) {
             return false;
         }
     }

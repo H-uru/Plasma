@@ -63,6 +63,8 @@ enum class plMetalArgumentBufferTier : NS::UInteger
     // the buffer directly without overhead. Only available on Metal 3
     // hardware.
     Tier2 = MTL::ArgumentBuffersTier2,
+#else
+    Tier2 = NS::UIntegerMax,
 #endif
 };
 
@@ -71,17 +73,17 @@ class plMetalArgumentBuffer
 {
 public:
     plMetalArgumentBuffer(plMetalDevice* device, size_t numElements)
-        : fDevice(device), fNumElements(numElements), fEncoder(nullptr)
+        : fDevice(device), fNumElements(numElements), fEncoder()
     {
         fCurrentBufferIndex = -1;
-        auto tier = std::min(device->ArgumentBuffersTier(), MTL::ArgumentBuffersTier2);
+        auto tier = std::min(device->ArgumentBuffersTier(), static_cast<MTL::ArgumentBuffersTier>(plMetalArgumentBufferTier::Tier2));
         fTier = plMetalArgumentBufferTier(tier);
         fBuffer[0] = nullptr;
         fBuffer[1] = nullptr;
         fBuffer[2] = nullptr;
     };
     
-    constexpr MTL::Buffer* GetBuffer()
+    MTL::Buffer* GetBuffer() const
     {
         if (fCurrentBufferIndex == -1) {
             return nullptr;
@@ -95,9 +97,9 @@ public:
     
     ~plMetalArgumentBuffer()
     {
-        fBuffer[0]->release();
-        fBuffer[1]->release();
-        fBuffer[2]->release();
+        for (auto& buffer : fBuffer) {
+            buffer->release();
+        }
         fEncoder->release();
     }
 
@@ -119,20 +121,18 @@ protected:
     // Subclasses must override this to create an encoder for
     // tier 1 buffers. Encoder creation needs to know the
     // buffer layout.
-    virtual NS::Array*        GetArgumentDescriptors() = 0;
+    virtual NS::Array*        GetArgumentDescriptors() const = 0;
 
     void ConfigureBuffer()
     {
-        fCurrentBufferIndex = (fCurrentBufferIndex + 1) % 3;
+        fCurrentBufferIndex = (fCurrentBufferIndex + 1) % std::size(fBuffer);
         switch (fTier) {
             case plMetalArgumentBufferTier::Tier1:
                 ConfigureTier1();
                 break;
-#ifdef METAL_3_SDK
             case plMetalArgumentBufferTier::Tier2:
                 ConfigureTier2();
                 break;
-#endif
         }
     }
 
@@ -146,7 +146,7 @@ private:
         // raw access to buffer not available in tier 1 argument buffers
         fValue = nullptr;
     }
-#ifdef METAL_3_SDK
+
     void ConfigureTier2()
     {
         if (!fBuffer[fCurrentBufferIndex])
@@ -155,16 +155,16 @@ private:
         // Encoders are not used in tier 2 argument buffers
         fEncoder = nullptr;
     }
-#endif
 };
 
 struct plMetalBumpMapping
 {
-    uint8_t             dTangentUIndex;
-    uint8_t             dTangentVIndex;
-    float               scale;
-    MTL::Texture*       texture;
-    MTL::SamplerState*  sampler;
+    uint8_t             fDTangentUIndex;
+    uint8_t             fDTangentVIndex;
+    float               fScale;
+    // These pointers should remain unowned by plMetalBumpMapping
+    MTL::Texture*       fTexture;
+    MTL::SamplerState*  fSampler;
 };
 
 class plMetalBumpArgumentBuffer final : public plMetalArgumentBuffer<plMetalBumpmap>
@@ -176,10 +176,10 @@ public:
     bool CheckBuffer(const std::vector<plMetalBumpMapping>& bumps);
 
 protected:
-    virtual NS::Array* GetArgumentDescriptors() override;
+    virtual NS::Array* GetArgumentDescriptors() const override;
 
 private:
-    std::vector<plMetalBumpMapping> _bumps;
+    std::vector<plMetalBumpMapping> fBumps;
 };
 
 #endif /* plMetalArgumentBuffer_hpp */
