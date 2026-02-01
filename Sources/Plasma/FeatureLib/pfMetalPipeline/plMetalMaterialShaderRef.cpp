@@ -359,19 +359,19 @@ void plMetalMaterialShaderRef::IEatBumpmapLayers(uint32_t& layerIdx, std::vector
         uint32_t          miscFlags = layer->GetMiscFlags();
         switch (miscFlags & hsGMatState::kMiscBumpChans) {
             case hsGMatState::kMiscBumpDu:
-                bumpMapping.dTangentUIndex = layer->GetUVWSrc();
+                bumpMapping.fDTangentUIndex = layer->GetUVWSrc();
             case hsGMatState::kMiscBumpDv:
-                bumpMapping.dTangentVIndex = layer->GetUVWSrc();
+                bumpMapping.fDTangentVIndex = layer->GetUVWSrc();
             case hsGMatState::kMiscBumpDw:
                 break;
         }
     }
     plLayerInterface* bumpTextureLayer = fMaterial->GetLayer(layerIdx + 3);
-    bumpMapping.scale = bumpTextureLayer->GetRuntimeColor().r;
+    bumpMapping.fScale = bumpTextureLayer->GetRuntimeColor().r;
     fPipeline->CheckTextureRef(bumpTextureLayer);
-    bumpMapping.texture = static_cast<plMetalTextureRef*>(bumpTextureLayer->GetTexture()->GetDeviceRef())->fTexture;
+    bumpMapping.fTexture = static_cast<plMetalTextureRef*>(bumpTextureLayer->GetTexture()->GetDeviceRef())->fTexture;
     MTL::SamplerState* samplerState = fPipeline->fDevice.SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(bumpTextureLayer->GetClampFlags()));
-    bumpMapping.sampler = samplerState;
+    bumpMapping.fSampler = samplerState;
 
     layerIdx += 4;
     // Keep going until they are all eaten
