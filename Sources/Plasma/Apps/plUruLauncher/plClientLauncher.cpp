@@ -317,7 +317,7 @@ void plClientLauncher::PatchClient()
             patcher->RequestManifest(plManifest::ClientManifest());
     } else
         patcher->RequestManifest(plManifest::PatcherManifest());
-    pfPatcher::Start(std::move(patcher));
+    patcher->Start();
 }
 
 bool plClientLauncher::CompleteSelfPatch(const std::function<void()>& waitProc) const

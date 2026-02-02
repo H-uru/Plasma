@@ -100,7 +100,7 @@ public:
 {
     [[NSRunLoop mainRunLoop] addTimer:self.networkPumpTimer forMode:NSDefaultRunLoopMode];
 
-    auto patcher = pfPatcher::Create();
+    auto patcher = std::make_unique<pfPatcher>();
     patcher->OnFileDownloadBegin(
         std::bind(&Patcher::IOnDownloadBegin, _cppPatcher, std::placeholders::_1));
     patcher->OnProgressTick(std::bind(&Patcher::IOnProgressTick, _cppPatcher,
@@ -112,7 +112,7 @@ public:
     patcher->OnSelfPatch(std::bind(&Patcher::ISelfPatch, _cppPatcher, std::placeholders::_1));
     patcher->OnFindBundleExe(std::bind(&Patcher::IFindBundleExe, _cppPatcher, std::placeholders::_1));
     patcher->RequestManifest(plManifest::ClientManifest());
-    pfPatcher::Start(std::move(patcher));
+    patcher->Start();
 }
 
 - (NSURL *)completeSelfPatch:(NSError **)error;

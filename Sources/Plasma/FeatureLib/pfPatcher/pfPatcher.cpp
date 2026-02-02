@@ -772,19 +772,16 @@ void pfPatcher::RequestManifest(const std::vector<ST::string>& mfs)
     );
 }
 
-void pfPatcher::Start(std::unique_ptr<pfPatcher> patcher)
+void pfPatcher::Start()
 {
-    hsAssert(patcher->fWorker, "pfPatcher is one-use only. kthx.");
-    if (!patcher->fWorker) {
+    hsAssert(fWorker, "pfPatcher is one-use only. kthx.");
+    if (!fWorker) {
         return;
     }
 
     // Ownership of the pfPatcherWorker moves from pfPatcher to the newly started patcher thread.
-    hsThread::StartSimpleThread([worker = std::move(patcher->fWorker)] {
+    hsThread::StartSimpleThread([worker = std::move(fWorker)] {
         hsThread::SetThisThreadName(ST_LITERAL("pfPatcherWorker"));
         worker->Run();
     }).detach();
-
-    // pfPatcher's job is done now.
-    patcher.reset();
 }

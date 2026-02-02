@@ -378,7 +378,7 @@ static void ISetShardStatus(const ST::string& status)
 
 static std::unique_ptr<pfPatcher> IPatcherFactory()
 {
-    auto patcher = pfPatcher::Create();
+    auto patcher = std::make_unique<pfPatcher>();
     patcher->OnFileDownloadBegin(IOnDownloadBegin);
     patcher->OnProgressTick(IOnProgressTick);
 

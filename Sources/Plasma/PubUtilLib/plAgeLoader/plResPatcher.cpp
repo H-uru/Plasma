@@ -137,7 +137,7 @@ void plResPatcher::OnProgressTick(uint64_t dl, uint64_t total, const ST::string&
 
 std::unique_ptr<pfPatcher> plResPatcher::CreatePatcher()
 {
-    auto patcher = pfPatcher::Create();
+    auto patcher = std::make_unique<pfPatcher>();
     patcher->OnCompletion(std::bind(&plResPatcher::OnCompletion, this, std::placeholders::_1, std::placeholders::_2));
     patcher->OnFileDownloadBegin(std::bind(&plResPatcher::OnFileDownloadBegin, this, std::placeholders::_1));
     patcher->OnFileDownloaded(std::bind(&plResPatcher::OnFileDownloaded, this, std::placeholders::_1));
@@ -179,7 +179,7 @@ void plResPatcher::Update(const std::vector<ST::string>& manifests)
     auto patcher = CreatePatcher();
     if (!gDataServerLocal)
         patcher->RequestManifest(manifests);
-    pfPatcher::Start(std::move(patcher)); // whoosh... off it goes
+    patcher->Start(); // whoosh... off it goes
 }
 
 void plResPatcher::Update(const ST::string& manifest)
@@ -188,6 +188,6 @@ void plResPatcher::Update(const ST::string& manifest)
     auto patcher = CreatePatcher();
     if (!gDataServerLocal)
         patcher->RequestManifest(manifest);
-    pfPatcher::Start(std::move(patcher)); // whoosh... off it goes
+    patcher->Start(); // whoosh... off it goes
 }
 
