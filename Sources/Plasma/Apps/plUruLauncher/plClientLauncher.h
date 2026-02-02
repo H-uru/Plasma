@@ -52,7 +52,7 @@ Mead, WA   99021
 class plClientLauncher
 {
 public:
-    typedef std::function<std::unique_ptr<class pfPatcher>()> CreatePatcherFunc;
+    typedef std::function<class pfPatcher()> CreatePatcherFunc;
     typedef std::function<void(ENetError, const ST::string&)> ErrorFunc;
     typedef std::function<bool(const plFileName&)> InstallRedistFunc;
     typedef std::function<void(const plFileName&, const ST::string&)> LaunchClientFunc;

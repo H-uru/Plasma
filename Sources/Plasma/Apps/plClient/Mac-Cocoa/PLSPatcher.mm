@@ -100,19 +100,19 @@ public:
 {
     [[NSRunLoop mainRunLoop] addTimer:self.networkPumpTimer forMode:NSDefaultRunLoopMode];
 
-    auto patcher = std::make_unique<pfPatcher>();
-    patcher->OnFileDownloadBegin(
+    pfPatcher patcher;
+    patcher.OnFileDownloadBegin(
         std::bind(&Patcher::IOnDownloadBegin, _cppPatcher, std::placeholders::_1));
-    patcher->OnProgressTick(std::bind(&Patcher::IOnProgressTick, _cppPatcher,
-                                      std::placeholders::_1, std::placeholders::_2,
-                                      std::placeholders::_3));
-    patcher->OnCompletion(std::bind(&Patcher::IOnPatchComplete, _cppPatcher, std::placeholders::_1,
-                                    std::placeholders::_2));
-    patcher->OnFileDownloadDesired(IApproveDownload);
-    patcher->OnSelfPatch(std::bind(&Patcher::ISelfPatch, _cppPatcher, std::placeholders::_1));
-    patcher->OnFindBundleExe(std::bind(&Patcher::IFindBundleExe, _cppPatcher, std::placeholders::_1));
-    patcher->RequestManifest(plManifest::ClientManifest());
-    patcher->Start();
+    patcher.OnProgressTick(std::bind(&Patcher::IOnProgressTick, _cppPatcher,
+                                     std::placeholders::_1, std::placeholders::_2,
+                                     std::placeholders::_3));
+    patcher.OnCompletion(std::bind(&Patcher::IOnPatchComplete, _cppPatcher, std::placeholders::_1,
+                                   std::placeholders::_2));
+    patcher.OnFileDownloadDesired(IApproveDownload);
+    patcher.OnSelfPatch(std::bind(&Patcher::ISelfPatch, _cppPatcher, std::placeholders::_1));
+    patcher.OnFindBundleExe(std::bind(&Patcher::IFindBundleExe, _cppPatcher, std::placeholders::_1));
+    patcher.RequestManifest(plManifest::ClientManifest());
+    patcher.Start();
 }
 
 - (NSURL *)completeSelfPatch:(NSError **)error;

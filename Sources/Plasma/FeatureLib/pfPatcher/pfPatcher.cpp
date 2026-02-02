@@ -692,7 +692,10 @@ plStatusLog* pfPatcher::GetLog()
 }
 
 pfPatcher::pfPatcher() : fWorker(new pfPatcherWorker) { }
+pfPatcher::pfPatcher(pfPatcher&& other) noexcept = default;
 pfPatcher::~pfPatcher() { }
+
+pfPatcher& pfPatcher::operator=(pfPatcher&& other) noexcept = default;
 
 // ===================================================
 
