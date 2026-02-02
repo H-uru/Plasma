@@ -178,7 +178,6 @@ struct pfPatcherWorker final
     pfPatcher::FileDownloadFunc fRedistUpdateDownloaded;
     pfPatcher::FileDownloadFunc fSelfPatch;
 
-    std::unique_ptr<pfPatcher> fParent;
     volatile bool fStarted;
     volatile bool fRequestActive;
     volatile bool fWantPython;
@@ -780,13 +779,12 @@ void pfPatcher::Start(std::unique_ptr<pfPatcher> patcher)
         return;
     }
 
-    // Ownership is reversed once the patcher is started:
-    // now pfPatcher is owned by pfPatcherWorker,
-    // which in turn becomes owned by the patcher thread.
-    auto worker = std::move(patcher->fWorker);
-    worker->fParent = std::move(patcher);
-    hsThread::StartSimpleThread([worker = std::move(worker)] {
+    // Ownership of the pfPatcherWorker moves from pfPatcher to the newly started patcher thread.
+    hsThread::StartSimpleThread([worker = std::move(patcher->fWorker)] {
         hsThread::SetThisThreadName(ST_LITERAL("pfPatcherWorker"));
         worker->Run();
     }).detach();
+
+    // pfPatcher's job is done now.
+    patcher.reset();
 }
