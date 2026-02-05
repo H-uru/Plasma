@@ -135,22 +135,22 @@ void plResPatcher::OnProgressTick(uint64_t dl, uint64_t total, const ST::string&
     fProgress->SetInfoText(msg);
 }
 
-pfPatcher* plResPatcher::CreatePatcher()
+pfPatcher plResPatcher::CreatePatcher()
 {
-    pfPatcher* patcher = new pfPatcher;
-    patcher->OnCompletion(std::bind(&plResPatcher::OnCompletion, this, std::placeholders::_1, std::placeholders::_2));
-    patcher->OnFileDownloadBegin(std::bind(&plResPatcher::OnFileDownloadBegin, this, std::placeholders::_1));
-    patcher->OnFileDownloaded(std::bind(&plResPatcher::OnFileDownloaded, this, std::placeholders::_1));
-    patcher->OnProgressTick(std::bind(&plResPatcher::OnProgressTick, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    pfPatcher patcher;
+    patcher.OnCompletion(std::bind(&plResPatcher::OnCompletion, this, std::placeholders::_1, std::placeholders::_2));
+    patcher.OnFileDownloadBegin(std::bind(&plResPatcher::OnFileDownloadBegin, this, std::placeholders::_1));
+    patcher.OnFileDownloaded(std::bind(&plResPatcher::OnFileDownloaded, this, std::placeholders::_1));
+    patcher.OnProgressTick(std::bind(&plResPatcher::OnProgressTick, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
     // sneaky hax: do the old SecurePreloader thing.... except here
     if (!fRequestedGameCode && (!gPythonLocal || !gSDLLocal)) {
-        patcher->OnGameCodeDiscovery(std::bind(&plResPatcher::OnGameCodeDiscovered, this, std::placeholders::_1, std::placeholders::_2));
+        patcher.OnGameCodeDiscovery(std::bind(&plResPatcher::OnGameCodeDiscovered, this, std::placeholders::_1, std::placeholders::_2));
 
         // There is a very special case for local data, and that is the SDL. The SDL is a contract that we have with the
         // server. If the client and server have different ideas about what the SDL is, then we're really up poop creek.
         // So, we *always* ask for the server's SDL unless we really, really, really don't want it.
-        patcher->RequestGameCode(!gPythonLocal, !gSDLLocal);
+        patcher.RequestGameCode(!gPythonLocal, !gSDLLocal);
         fRequestedGameCode = true;
     }
 
@@ -176,18 +176,18 @@ plResPatcher::~plResPatcher()
 void plResPatcher::Update(const std::vector<ST::string>& manifests)
 {
     InitProgress();
-    pfPatcher* patcher = CreatePatcher();
+    pfPatcher patcher = CreatePatcher();
     if (!gDataServerLocal)
-        patcher->RequestManifest(manifests);
-    patcher->Start(); // whoosh... off it goes
+        patcher.RequestManifest(manifests);
+    patcher.Start(); // whoosh... off it goes
 }
 
 void plResPatcher::Update(const ST::string& manifest)
 {
     InitProgress();
-    pfPatcher* patcher = CreatePatcher();
+    pfPatcher patcher = CreatePatcher();
     if (!gDataServerLocal)
-        patcher->RequestManifest(manifest);
-    patcher->Start(); // whoosh... off it goes
+        patcher.RequestManifest(manifest);
+    patcher.Start(); // whoosh... off it goes
 }
 

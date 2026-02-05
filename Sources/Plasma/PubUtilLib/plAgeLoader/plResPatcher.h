@@ -67,7 +67,7 @@ class plResPatcher
     bool OnGameCodeDiscovered(const plFileName& file, class hsStream* stream);
     void OnProgressTick(uint64_t dl, uint64_t total, const ST::string& msg);
 
-    class pfPatcher* CreatePatcher();
+    class pfPatcher CreatePatcher();
     void InitProgress();
 
 public:

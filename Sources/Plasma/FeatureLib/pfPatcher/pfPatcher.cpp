@@ -144,8 +144,8 @@ struct pfPatcherQueuedFile
 
 // ===================================================
 
-/** Patcher grunt work thread */
-struct pfPatcherWorker : public hsThread
+/** State for a patcher worker thread started by pfPatcher::Start */
+struct pfPatcherWorker final
 {
     /** Represents a File/Auth download request */
     struct Request
@@ -178,7 +178,6 @@ struct pfPatcherWorker : public hsThread
     pfPatcher::FileDownloadFunc fRedistUpdateDownloaded;
     pfPatcher::FileDownloadFunc fSelfPatch;
 
-    pfPatcher* fParent;
     volatile bool fStarted;
     volatile bool fRequestActive;
     volatile bool fWantPython;
@@ -190,8 +189,6 @@ struct pfPatcherWorker : public hsThread
     pfPatcherWorker();
     ~pfPatcherWorker();
 
-    void OnQuit() override;
-
     void IAuthThingDownloadCB(ENetError result, const plFileName& filename, hsStream* writer);
     void IGotAuthFileList(ENetError result, const std::vector<NetCliAuthFileInfo>& infos);
     void IHandleManifestDownload(const ST::string& group, const std::vector<NetCliFileManifestEntry>& manifest);
@@ -201,7 +198,7 @@ struct pfPatcherWorker : public hsThread
 
     void EndPatch(ENetError result, const ST::string& msg={});
     bool IssueRequest();
-    void Run() override;
+    void Run();
     void IHashFile(pfPatcherQueuedFile& file);
     void IDecompressSound(const pfPatcherQueuedFile& sound) const;
     void ProcessFile();
@@ -423,7 +420,7 @@ void pfPatcherWorker::IFileThingDownloadCB(ENetError result, const plFileName& f
 // ===================================================
 
 pfPatcherWorker::pfPatcherWorker() :
-    fStarted(false), fCurrBytes(0), fTotalBytes(0), fRequestActive(true), fParent(nullptr),
+    fStarted(false), fCurrBytes(0), fTotalBytes(0), fRequestActive(true),
     fWantPython(), fWantSDL()
 { }
 
@@ -443,12 +440,6 @@ pfPatcherWorker::~pfPatcherWorker()
         hsLockGuard(fFileMut);
         fQueuedFiles.clear();
     }
-}
-
-void pfPatcherWorker::OnQuit()
-{
-    // the thread's Run() has exited sanely... now we can commit hara-kiri
-    delete fParent;
 }
 
 void pfPatcherWorker::EndPatch(ENetError result, const ST::string& msg)
@@ -534,7 +525,6 @@ bool pfPatcherWorker::IssueRequest()
 
 void pfPatcherWorker::Run()
 {
-    SetThisThreadName(ST_LITERAL("pfPatcherWorker"));
     // So here's the rub:
     // We have one or many manifests in the fRequests deque. We begin issuing those requests one-by one, starting here.
     // As we receive the answer, the NetCli thread populates fQueuedFiles and pings the fFileSignal semaphore, then issues the next request...
@@ -702,7 +692,10 @@ plStatusLog* pfPatcher::GetLog()
 }
 
 pfPatcher::pfPatcher() : fWorker(new pfPatcherWorker) { }
+pfPatcher::pfPatcher(pfPatcher&& other) noexcept = default;
 pfPatcher::~pfPatcher() { }
+
+pfPatcher& pfPatcher::operator=(pfPatcher&& other) noexcept = default;
 
 // ===================================================
 
@@ -782,13 +775,16 @@ void pfPatcher::RequestManifest(const std::vector<ST::string>& mfs)
     );
 }
 
-bool pfPatcher::Start()
+void pfPatcher::Start()
 {
-    hsAssert(!fWorker->fStarted, "pfPatcher is one-use only. kthx.");
-    if (!fWorker->fStarted) {
-        fWorker->fParent = this; // wheeeee circular
-        fWorker->StartDetached();
-        return true;
+    hsAssert(fWorker, "pfPatcher is one-use only. kthx.");
+    if (!fWorker) {
+        return;
     }
-    return false;
+
+    // Ownership of the pfPatcherWorker moves from pfPatcher to the newly started patcher thread.
+    hsThread::StartSimpleThread([worker = std::move(fWorker)] {
+        hsThread::SetThisThreadName(ST_LITERAL("pfPatcherWorker"));
+        worker->Run();
+    }).detach();
 }

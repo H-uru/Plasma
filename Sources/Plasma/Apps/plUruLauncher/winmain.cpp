@@ -376,12 +376,11 @@ static void ISetShardStatus(const ST::string& status)
     SetDlgItemTextW(s_dialog, IDC_STATUS_TEXT, status.to_wchar().data());
 }
 
-static pfPatcher* IPatcherFactory()
+static pfPatcher IPatcherFactory()
 {
-    pfPatcher* patcher = new pfPatcher();
-    patcher->OnFileDownloadBegin(IOnDownloadBegin);
-    patcher->OnProgressTick(IOnProgressTick);
-
+    pfPatcher patcher;
+    patcher.OnFileDownloadBegin(IOnDownloadBegin);
+    patcher.OnProgressTick(IOnProgressTick);
     return patcher;
 }
 
