@@ -47,7 +47,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnNetCommon/plSynchedObject.h"
 
+#include "plGImage/plFontCache.h"
+#include "plPhysX/plSimulationMgr.h"
 #include "plResMgr/plResManager.h"
+
+#include "pfPython/plPythonFileMod.h"
 
 int main(int argc, char* argv[])
 {
@@ -60,11 +64,17 @@ int main(int argc, char* argv[])
     plFileName filename = argv[1];
     ST::printf("Optimizing {}...", filename);
 
+    plFontCache* fontCache;
 #ifndef HS_DEBUGGING
     try {
 #endif
         plResManager* resMgr = new plResManager;
         hsgResMgr::Init(resMgr);
+
+        // Setup all the crap that needs to be around to load
+        plSimulationMgr::Init();
+        fontCache = new plFontCache;
+        plPythonFileMod::SetAtConvertTime();
 #ifndef HS_DEBUGGING
     } catch (std::exception &e) {
         printf(" ***crashed on init: %s\n", e.what());
@@ -96,6 +106,10 @@ int main(int argc, char* argv[])
 #ifndef HS_DEBUGGING
     try {
 #endif
+        // Deinit the crap
+        fontCache->UnRegisterAs(kFontCache_KEY);
+        plSimulationMgr::Shutdown();
+
         // Reading in objects may have generated dirty state which we're obviously
         // not sending out. Clear it so that we don't have leaked keys before the
         // ResMgr goes away.
