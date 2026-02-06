@@ -39,30 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
 
-#include "pnFactory/plCreator.h"
+#include "pnNucleusCreatables.h"
+#include "plAllCreatables.h"
 
-#include "plAudible.h"
-REGISTER_NONCREATABLE( plAudible );
-
-#include "plDrawable.h"
-REGISTER_NONCREATABLE( plDrawable );
-
-#include "plPhysical.h"
-REGISTER_NONCREATABLE( plPhysical );
-
-#include "plgDispatch.h"
-REGISTER_NONCREATABLE( plDispatchBase );
-
-#include "pnDispatch/pnDispatchCreatable.h"
-#include "pnKeyedObject/pnKeyedObjectCreatable.h"
-#include "pnMessage/pnMessageCreatable.h"
-#include "pnModifier/pnModifierCreatable.h"
-#include "pnNetCommon/pnNetCommonCreatable.h"
-#include "pnTimerCreatable.h"
-
-#include "plMessage/plResMgrHelperMsg.h"
-REGISTER_CREATABLE(plResMgrHelperMsg);
-
-#include "plResMgr/plResMgrCreatable.h"
+// All of pfAllCreatables.h, except for pfConsole and the pipelines.
+#include "pfAnimation/pfAnimationCreatable.h"
+#include "pfAudio/pfAudioCreatable.h"
+#include "pfCamera/pfCameraCreatable.h"
+#include "pfCharacter/pfCharacterCreatable.h"
+#include "pfConditional/plConditionalObjectCreatable.h"
+#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
+#include "pfGameMgr/pfGameMgrCreatable.h" // These aren't used in PRPs, but pfPython depends on them...
+#include "pfJournalBook/pfJournalBookCreatable.h"
+#include "pfMessage/pfMessageCreatable.h"
+#include "pfPython/pfPythonCreatable.h"
+#include "pfSurface/pfSurfaceCreatable.h"

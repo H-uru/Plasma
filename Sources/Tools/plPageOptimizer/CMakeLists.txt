@@ -16,15 +16,26 @@ target_link_libraries(
     plPageOptimizer
     PRIVATE
         CoreLib
-        pnDispatch
         pnFactory
         pnKeyedObject
-        pnMessage
-        pnModifier
         pnNetCommon
         pnNucleusInc
+        plGImage
         plMessage
+        plPhysX
+        plPubUtilInc
         plResMgr
+        pfAnimation
+        pfAudio
+        pfCamera
+        pfCharacter
+        pfConditional
+        pfGameGUIMgr
+        pfGameMgr
+        pfJournalBook
+        pfMessage
+        pfPython
+        pfSurface
 )
 
 source_group("Source Files" FILES ${plPageOptimizer_SOURCES})
