@@ -85,8 +85,6 @@ private:
     plStateDataRecord* fInitialAgeState;
     ST::string fAgeName;
 
-    bool ILoadAge(const ST::string& ageName);
-    bool IUnloadAge();
     void ISetInitialAgeState(plStateDataRecord* s);     // sent from server with joinAck
     const plStateDataRecord* IGetInitialAgeState() const { return fInitialAgeState; }
 
@@ -105,7 +103,7 @@ public:
     void Shutdown();
     bool MsgReceive(plMessage* msg) override;
     bool LoadAge(const ST::string& ageName);
-    bool UnloadAge()                              { return IUnloadAge(); }
+    bool UnloadAge();
     void UpdateAge(const ST::string& ageName);
     void NotifyAgeLoaded( bool loaded );
 

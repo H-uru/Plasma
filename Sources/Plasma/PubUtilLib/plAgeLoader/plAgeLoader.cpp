@@ -164,16 +164,6 @@ bool plAgeLoader::MsgReceive(plMessage* msg)
     return plReceiver::MsgReceive(msg);
 }
 
-//
-// read in the age desc file and page in/out the rooms belonging to the specified age.
-// return false on error
-//
-//============================================================================
-bool plAgeLoader::LoadAge(const ST::string& ageName)
-{
-    return ILoadAge(ageName);
-}
-
 //============================================================================
 void plAgeLoader::UpdateAge(const ST::string& ageName)
 {
@@ -194,10 +184,11 @@ void plAgeLoader::NotifyAgeLoaded( bool loaded )
 }
 
 
-//// ILoadAge ////////////////////////////////////////////////////////////////
-//  Does the loading-specific stuff for queueing an age to load
+//// LoadAge /////////////////////////////////////////////////////////////////
+// Read in the age desc file and page in/out the rooms belonging to the specified age.
+// Return false on error.
 
-bool plAgeLoader::ILoadAge(const ST::string& ageName)
+bool plAgeLoader::LoadAge(const ST::string& ageName)
 {
     plNetClientApp* nc = plNetClientApp::GetInstance();
     ASSERT(!nc->GetFlagsBit(plNetClientApp::kPlayingGame));
@@ -347,11 +338,11 @@ class plUnloadAgeCollector : public plRegistryPageIterator
         }
 };
 
-//// IUnloadAge //////////////////////////////////////////////////////////////
+//// UnloadAge ///////////////////////////////////////////////////////////////
 //  Does the UNloading-specific stuff for queueing an age to unload.
-//  Far simpler that ILoadAge :)
+//  Far simpler that LoadAge :)
 
-bool    plAgeLoader::IUnloadAge()
+bool plAgeLoader::UnloadAge()
 {
     plNetClientApp* nc = plNetClientApp::GetInstance();
     nc->DebugMsg( "Net: Unloading age {}", fAgeName);
