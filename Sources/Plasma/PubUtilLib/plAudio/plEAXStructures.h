@@ -49,32 +49,39 @@ typedef struct _EAXVECTOR {
         float z;
 } EAXVECTOR;
 
-typedef struct _EAXREVERBPROPERTIES
-{
-    unsigned long ulEnvironment;
-    float flEnvironmentSize;
-    float flEnvironmentDiffusion;
-    long lRoom;
-    long lRoomHF;
-    long lRoomLF;
-    float flDecayTime;
-    float flDecayHFRatio;
-    float flDecayLFRatio;
-    long lReflections;
-    float flReflectionsDelay;
-    EAXVECTOR vReflectionsPan;
-    long lReverb;
-    float flReverbDelay;
-    EAXVECTOR vReverbPan;
-    float flEchoTime;
-    float flEchoDepth;
-    float flModulationTime;
-    float flModulationDepth;
-    float flAirAbsorptionHF;
-    float flHFReference;
-    float flLFReference;
-    float flRoomRolloffFactor;
-    unsigned long ulFlags;
-} EAXREVERBPROPERTIES, *LPEAXREVERBPROPERTIES;
+/////////////////////////////////
+//
+// EAX 4.0 Listener Properties
+//
+typedef struct _EAXLISTENERPROPERTIES {
+    unsigned long ulEnvironment;                   // Reverb properties preset index
+    float         flEnvironmentSize;               // Environment size in meters
+    float         flEnvironmentDiffusion;          // Environment diffusion
+    long          lRoom;                           // Room effect level (at mid frequencies)
+    long          lRoomHF;                         // Relative room effect level at high frequencies
+    long          lRoomLF;                         // Relative room effect level at low frequencies
+    float         flDecayTime;                     // Reverberation decay time at mid frequencies
+    float         flDecayHFRatio;                  // High-frequency to mid-frequency decay time ratio
+    float         flDecayLFRatio;                  // Low-frequency to mid-frequency decay time ratio
+    long          lReflections;                    // Early reflections level relative to room effect
+    float         flReflectionsDelay;              // Initial reflection delay time
+    EAXVECTOR     vReflectionsPan;                 // Early reflections panning vector
+    long          lReverb;                         // Late reverberation level relative to room effect
+    float         flReverbDelay;                   // Late reverberation delay time relative to initial reflection
+    EAXVECTOR     vReverbPan;                      // Late reverberation panning vector
+    float         flEchoTime;                      // Echo time
+    float         flEchoDepth;                     // Echo depth
+    float         flModulationTime;                // Modulation time
+    float         flModulationDepth;               // Modulation depth
+    float         flAirAbsorptionHF;               // Change in level per meter at high frequencies
+    float         flHFReference;                   // Reference high frequency
+    float         flLFReference;                   // Reference low frequency
+    float         flRoomRolloffFactor;             // Rolloff Factor for room effects
+    unsigned long ulFlags;                         // Modifies the behavior of properties
+} EAXLISTENERPROPERTIES, *LPEAXLISTENERPROPERTIES; // EAXLISTENERPROPERTIES
+
+// This flag limits high-frequency decay time according to air absorption.
+constexpr auto EAXLISTENERFLAGS_DECAYHFLIMIT = 0x00000020UL;
+
 
 #endif //plEAXStructures_h_inc

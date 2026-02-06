@@ -409,9 +409,9 @@ PYTHON_START_METHODS_TABLE(ptAudioControl)
     PYTHON_METHOD(ptAudioControl, setLoadOnDemand, "Params: state\nEnables or disables the load on demand for sounds."),
     PYTHON_METHOD(ptAudioControl, setTwoStageLOD, "Params: state\nEnables or disables two-stage LOD, where sounds can be loaded into RAM but not into sound buffers.\n"
                 "...Less of a performance hit, harder on memory."),
-    PYTHON_METHOD(ptAudioControl, useEAXAcceleration, "Params: state\nEnables or disables EAX sound acceleration (requires hardware acceleration)."),
-    PYTHON_METHOD_NOARGS(ptAudioControl, isUsingEAXAcceleration, "Is EAX sound acceleration enabled? Returns 1 if true otherwise returns 0."),
-    PYTHON_METHOD_NOARGS(ptAudioControl, isEAXSupported, "Returns true or false based on whether or not a the device specified supports EAX"),
+    PYTHON_METHOD(ptAudioControl, useEAXAcceleration, "Params: state\nEnables or disables EFX environmental sound."),
+    PYTHON_METHOD_NOARGS(ptAudioControl, isUsingEAXAcceleration, "Is EFX environmental sound enabled? Returns 1 if true otherwise returns 0."),
+    PYTHON_METHOD_NOARGS(ptAudioControl, isEAXSupported, "Is EFX environmental sound supported by the current device?"),
     PYTHON_BASIC_METHOD(ptAudioControl, muteAll, "Mutes all sounds."),
     PYTHON_BASIC_METHOD(ptAudioControl, unmuteAll, "Unmutes all sounds."),
     PYTHON_METHOD_NOARGS(ptAudioControl, isMuted, "Are all sounds muted? Returns 1 if true otherwise returns 0."),
