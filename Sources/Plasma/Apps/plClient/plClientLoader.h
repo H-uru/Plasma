@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef plClientLoader_inc
+#define plClientLoader_inc
+
 #include "HeadSpin.h"
 #include "hsThread.h"
 #include "hsWindows.h"
@@ -69,13 +72,13 @@ public:
     void Init()
     {
         hsAssert(fClient == nullptr, "trying to init the client more than once?");
-        hsThread::Start();
+        Start();
     }
 
     /**
      * Returns whether or not the client init is done
      */
-    bool IsInited() const { return hsThread::GetQuit(); }
+    bool IsInited() const { return GetQuit(); }
 
     /**
      * Sets the client window handle.
@@ -106,12 +109,12 @@ public:
      * Launches the client window and starts the game.
      * This will block if the client is not initialized.
      */
-    void Start() override;
+    void StartClient();
 
     /**
      * Waits for the client to finish initing
      */
-    void Wait() { hsThread::Stop(); }
+    void Wait() { Stop(); }
 
     /** Returns the current plClient instance */
     plClient* operator ->() const { return fClient; }
@@ -120,3 +123,4 @@ public:
     operator bool() const { return fClient != nullptr; }
 };
 
+#endif // plClientLoader_inc

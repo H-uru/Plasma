@@ -194,14 +194,6 @@ public:
             }
         }
     }
-
-    void Start() override
-    {
-        if (fRedistQueue.empty())
-            OnQuit();
-        else
-            hsThread::Start();
-    }
 };
 
 // ===================================================
@@ -259,8 +251,12 @@ void plClientLauncher::IOnPatchComplete(ENetError result, const ST::string& msg)
             PatchClient();
         } else {
             // cases 2 & 3 -- update any redistributables, then launch the client.
-            fInstallerThread->fParent = this;
-            fInstallerThread->Start();
+            if (fInstallerThread->fRedistQueue.empty()) {
+                LaunchClient();
+            } else {
+                fInstallerThread->fParent = this;
+                fInstallerThread->Start();
+            }
         }
     } else if (s_errorProc)
         s_errorProc(result, msg);
