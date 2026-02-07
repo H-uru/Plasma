@@ -142,10 +142,22 @@ class hsExpected
     inline void IThrowIfNoValue() const
     {
         if (!fHasValue)
+            throw hsBadExpectedAccess(std::monostate());
+    }
+
+    inline void IThrowIfNoValue()
+    {
+        if (!fHasValue)
             throw hsBadExpectedAccess<E>(std::move(fUnexpected));
     }
 
     inline void IThrowIfValue() const
+    {
+        if (fHasValue)
+            throw hsBadExpectedAccess(std::monostate());
+    }
+
+    inline void IThrowIfValue()
     {
         if (fHasValue)
             throw hsBadExpectedAccess<T>(std::move(fExpected));
