@@ -73,12 +73,40 @@ static hsExpected<ST::string, ST::string> ITestNontrivial(bool pass)
     return hsUnexpected<ST::string>("fail");
 }
 
+static hsExpected<std::unique_ptr<int>, int> ITestMoveOnlyExTrivialUnex(bool pass)
+{
+    if (pass)
+        return std::make_unique<int>(0);
+    return hsUnexpected(-1);
+}
+
+static hsExpected<int, std::unique_ptr<int>> ITestTrivialExMoveOnlyUnex(bool pass)
+{
+    if (pass)
+        return 0;
+    return hsUnexpected(std::make_unique<int>(-1));
+}
+
 TEST(expected, fail)
 {
     EXPECT_FALSE(ITestTrivialExNontrivialUnex(false));
     EXPECT_STREQ(ITestNontrivial(false).Error().c_str(), "fail");
     EXPECT_THROW((void)ITestTrivial(false).Value(), hsBadExpectedAccess<int>);
     EXPECT_EQ(ITestTrivial(false).Error(), -1);
+
+    // Accessing move-only contents in a mutable hsExpected:
+    EXPECT_EQ(ITestMoveOnlyExTrivialUnex(false).Error(), -1);
+    EXPECT_THROW((void)ITestMoveOnlyExTrivialUnex(false).Value(), hsBadExpectedAccess<int>);
+    EXPECT_EQ(*ITestTrivialExMoveOnlyUnex(false).Error(), -1);
+    EXPECT_THROW((void)ITestTrivialExMoveOnlyUnex(false).Value(), hsBadExpectedAccess<std::unique_ptr<int>>);
+
+    // Accessing move-only contents in a const hsExpected:
+    const auto constRes1 = ITestMoveOnlyExTrivialUnex(false);
+    EXPECT_EQ(constRes1.Error(), -1);
+    EXPECT_THROW((void)constRes1.Value(), hsBadExpectedAccess<hsMonostate>);
+    const auto constRes2 = ITestTrivialExMoveOnlyUnex(false);
+    EXPECT_EQ(*constRes2.Error(), -1);
+    EXPECT_THROW((void)constRes2.Value(), hsBadExpectedAccess<hsMonostate>);
 }
 
 TEST(expected, success)
@@ -87,4 +115,18 @@ TEST(expected, success)
     EXPECT_EQ(*ITestTrivial(true), 0);
     EXPECT_STREQ(ITestNontrivialExTrivialUnex(true)->c_str(), "meow");
     EXPECT_EQ(ITestTrivialExNontrivialUnex(true).Value(), 0);
+
+    // Accessing move-only contents in a mutable hsExpected:
+    EXPECT_EQ(**ITestMoveOnlyExTrivialUnex(true), 0);
+    EXPECT_THROW((void)ITestMoveOnlyExTrivialUnex(true).Error(), hsBadExpectedAccess<std::unique_ptr<int>>);
+    EXPECT_EQ(*ITestTrivialExMoveOnlyUnex(true), 0);
+    EXPECT_THROW((void)ITestTrivialExMoveOnlyUnex(true).Error(), hsBadExpectedAccess<int>);
+
+    // Accessing move-only contents in a const hsExpected:
+    const auto constRes1 = ITestMoveOnlyExTrivialUnex(true);
+    EXPECT_EQ(**constRes1, 0);
+    EXPECT_THROW((void)constRes1.Error(), hsBadExpectedAccess<hsMonostate>);
+    const auto constRes2 = ITestTrivialExMoveOnlyUnex(true);
+    EXPECT_EQ(*constRes2, 0);
+    EXPECT_THROW((void)constRes2.Error(), hsBadExpectedAccess<hsMonostate>);
 }
