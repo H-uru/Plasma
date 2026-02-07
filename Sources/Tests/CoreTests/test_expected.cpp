@@ -103,10 +103,10 @@ TEST(expected, fail)
     // Accessing move-only contents in a const hsExpected:
     const auto constRes1 = ITestMoveOnlyExTrivialUnex(false);
     EXPECT_EQ(constRes1.Error(), -1);
-    EXPECT_THROW((void)constRes1.Value(), hsBadExpectedAccess<std::monostate>);
+    EXPECT_THROW((void)constRes1.Value(), hsBadExpectedAccess<hsMonostate>);
     const auto constRes2 = ITestTrivialExMoveOnlyUnex(false);
     EXPECT_EQ(*constRes2.Error(), -1);
-    EXPECT_THROW((void)constRes2.Value(), hsBadExpectedAccess<std::monostate>);
+    EXPECT_THROW((void)constRes2.Value(), hsBadExpectedAccess<hsMonostate>);
 }
 
 TEST(expected, success)
@@ -125,8 +125,8 @@ TEST(expected, success)
     // Accessing move-only contents in a const hsExpected:
     const auto constRes1 = ITestMoveOnlyExTrivialUnex(true);
     EXPECT_EQ(**constRes1, 0);
-    EXPECT_THROW((void)constRes1.Error(), hsBadExpectedAccess<std::monostate>);
+    EXPECT_THROW((void)constRes1.Error(), hsBadExpectedAccess<hsMonostate>);
     const auto constRes2 = ITestTrivialExMoveOnlyUnex(true);
     EXPECT_EQ(*constRes2, 0);
-    EXPECT_THROW((void)constRes2.Error(), hsBadExpectedAccess<std::monostate>);
+    EXPECT_THROW((void)constRes2.Error(), hsBadExpectedAccess<hsMonostate>);
 }

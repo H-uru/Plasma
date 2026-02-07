@@ -50,6 +50,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <type_traits>
 #include <utility>
 
+/**
+ * Replacement for std::monostate, because that's only guaranteed to be in <utility> since C++26,
+ * and we don't want to include <variant> just for this trivial type.
+ */
+struct hsMonostate {};
+
 template<typename E>
 class hsBadExpectedAccess : public std::exception
 {
@@ -142,7 +148,7 @@ class hsExpected
     inline void IThrowIfNoValue() const
     {
         if (!fHasValue)
-            throw hsBadExpectedAccess(std::monostate());
+            throw hsBadExpectedAccess(hsMonostate());
     }
 
     inline void IThrowIfNoValue()
@@ -154,7 +160,7 @@ class hsExpected
     inline void IThrowIfValue() const
     {
         if (fHasValue)
-            throw hsBadExpectedAccess(std::monostate());
+            throw hsBadExpectedAccess(hsMonostate());
     }
 
     inline void IThrowIfValue()
