@@ -51,8 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #    include <unistd.h>
 #endif
 
-#include "plProduct.h"
-
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnSceneObject/plSceneObject.h"
@@ -197,8 +195,10 @@ tl::expected<tl::monostate, ST::string> plAgeLoader::LoadAge(const ST::string& a
 
     nc->DebugMsg( "Net: Loading age {}", fAgeName);
 
-    if ((fFlags & kLoadMask) != 0)
-        hsDebugAssertionFailed(__LINE__, __FILE__, ST::format("Fatal Error:\nAlready loading or unloading an age.\n{} will now exit.", plProduct::ShortName()).c_str());
+    if ((fFlags & kLoadMask) != 0) {
+        hsAssert(false, "Already loading or unloading an age");
+        return tl::unexpected(ST_LITERAL("Already loading or unloading an age"));
+    }
 
     fFlags |= kLoadingAge;
     
