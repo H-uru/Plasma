@@ -48,8 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <utility>
-
 #include "pnKeyedObject/plKey.h"
 
 #include "pyGlueDefinitions.h"
@@ -95,7 +93,7 @@ public:
 
     // getter and setters
     plKey getKey() const { return fKey; }
-    void setKey(plKey key) { fKey = std::move(key); }
+    void setKey(plKey key);
     ST::string getName() const;
 #ifndef BUILDING_PYPLASMA
     PyObject* GetPySceneObject();

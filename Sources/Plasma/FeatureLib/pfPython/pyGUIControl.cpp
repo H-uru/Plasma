@@ -61,6 +61,11 @@ pyGUIControl::pyGUIControl(plKey objkey)
     fGCkey = std::move(objkey);
 }
 
+void pyGUIControl::setKey(plKey key)
+{
+    fGCkey = std::move(key);
+}
+
 pyGUIControl& pyGUIControl::operator=(const pyGUIControl& other)
 {
     return Copy(other);
