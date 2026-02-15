@@ -290,8 +290,18 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
 
         nPages++;
 
-        pMsg1->AddRoomLoc(ad.CalcPageLocation(page->GetName()));
-        nc->DebugMsg("\tPaging in room {}\n", page->GetName());
+        plLocation pageLoc = ad.CalcPageLocation(page->GetName());
+        if (pageLoc.IsValid()) {
+            pMsg1->AddRoomLoc(pageLoc);
+            nc->DebugMsg("\tPaging in room {}", page->GetName());
+        } else {
+            ST::string msg = ST::format(
+                "Could not find page {} that is listed in the .age file for {}",
+                page->GetName(), fAgeName
+            );
+            nc->ErrorMsg("\t{}", msg);
+            hsAssert(false, msg.c_str());
+        }
     }
 
     pMsg1->Send(clientKey);

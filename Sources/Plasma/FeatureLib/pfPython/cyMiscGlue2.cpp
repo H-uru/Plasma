@@ -48,7 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMessage/plConfirmationMsg.h"
 #include "plMessage/plLOSRequestMsg.h"
+#include "plNetClientComm/plNetClientComm.h"
 #include "plNetCommon/plNetCommon.h"
+#include "plResMgr/plKeyFinder.h"
 #include "plResMgr/plLocalization.h"
 
 #include "plPythonCallable.h"
@@ -291,6 +293,11 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=
         PyErr_SetString(PyExc_TypeError, "PtPageInNode expects a string or list of strings, and optionally a string");
         PYTHON_RETURN_ERROR;
     }
+
+    if (ageName.empty()) {
+        ageName = NetCommGetAge()->ageDatasetName;
+    }
+
     std::vector<ST::string> nodeNames;
     if (PyUnicode_Check(nodeNameObj))
     {
@@ -316,7 +323,17 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=
         PYTHON_RETURN_ERROR;
     }
 
-    cyMisc::PageInNodes(nodeNames, ageName, netForce);
+    std::vector<plLocation> nodeLocs;
+    for (const auto& nodeName : nodeNames) {
+        plLocation nodeLoc = plKeyFinder::Instance().FindLocation(ageName, nodeName);
+        if (!nodeLoc.IsValid()) {
+            PyErr_SetString(PyExc_ValueError, ST::format("Age {} has no page named {}", ageName, nodeName).c_str());
+            PYTHON_RETURN_ERROR;
+        }
+        nodeLocs.emplace_back(nodeLoc);
+    }
+
+    cyMisc::PageInNodes(nodeLocs, netForce);
     PYTHON_RETURN_NONE;
 }
 
@@ -329,7 +346,14 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageOutNode, args, "Params: nodeName, netForce
         PyErr_SetString(PyExc_TypeError, "PtPageOutNode expects a string and bool");
         PYTHON_RETURN_ERROR;
     }
-    cyMisc::PageOutNode(nodeName, netForce);
+
+    plLocation nodeLoc = plKeyFinder::Instance().FindLocation({}, nodeName);
+    if (!nodeLoc.IsValid()) {
+        PyErr_SetString(PyExc_ValueError, ST::format("Could not find any page named {}", nodeName).c_str());
+        PYTHON_RETURN_ERROR;
+    }
+
+    cyMisc::PageOutNodes({nodeLoc}, netForce);
     PYTHON_RETURN_NONE;
 }
 
