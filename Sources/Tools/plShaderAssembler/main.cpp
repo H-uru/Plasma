@@ -62,6 +62,49 @@ Mead, WA   99021
 #include <string_theory/format>
 #include <string_theory/stdio>
 
+static constexpr char kLicenseHeader[] =
+    "/*==LICENSE==*\n"
+    "\n"
+    "CyanWorlds.com Engine - MMOG client, server and tools\n"
+    "Copyright (C) 2011  Cyan Worlds, Inc.\n"
+    "\n"
+    "This program is free software: you can redistribute it and/or modify\n"
+    "it under the terms of the GNU General Public License as published by\n"
+    "the Free Software Foundation, either version 3 of the License, or\n"
+    "(at your option) any later version.\n"
+    "\n"
+    "This program is distributed in the hope that it will be useful,\n"
+    "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+    "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+    "GNU General Public License for more details.\n"
+    "\n"
+    "You should have received a copy of the GNU General Public License\n"
+    "along with this program.  If not, see <http://www.gnu.org/licenses/>.\n"
+    "\n"
+    "Additional permissions under GNU GPL version 3 section 7\n"
+    "\n"
+    "If you modify this Program, or any covered work, by linking or\n"
+    "combining it with any of RAD Game Tools Bink SDK, Autodesk 3ds Max SDK,\n"
+    "NVIDIA PhysX SDK, Microsoft DirectX SDK, OpenSSL library, Independent\n"
+    "JPEG Group JPEG library, Microsoft Windows Media SDK, or Apple QuickTime SDK\n"
+    "(or a modified version of those libraries),\n"
+    "containing parts covered by the terms of the Bink SDK EULA, 3ds Max EULA,\n"
+    "PhysX SDK EULA, DirectX SDK EULA, OpenSSL and SSLeay licenses, IJG\n"
+    "JPEG Library README, Windows Media SDK EULA, or QuickTime SDK EULA, the\n"
+    "licensors of this Program grant you additional\n"
+    "permission to convey the resulting work. Corresponding Source for a\n"
+    "non-source form of such a combination shall include the source code for\n"
+    "the parts of OpenSSL and IJG JPEG Library used as well as that of the covered\n"
+    "work.\n"
+    "\n"
+    "You can contact Cyan Worlds, Inc. by email legal@cyan.com\n"
+    " or by snail mail at:\n"
+    "      Cyan Worlds, Inc.\n"
+    "      14617 N Newport Hwy\n"
+    "      Mead, WA   99021\n"
+    "\n"
+    "*==LICENSE==*/\n";
+
 class plDXShaderError
 {
     ST::string fError;
@@ -142,9 +185,21 @@ std::shared_ptr<ID3DBlob> plDXShaderAssembler::AssShader(const char* shader, uns
 
 // ===================================================
 
+// Temporary helper to reproduce the silly formatting
+// caused by tabs-to-spaces conversion on the original plShaderAssembler output...
+static ST::string IRightPadHexByte(uint8_t byte)
+{
+    if (byte < 0x10) {
+        return ST::format("0x{x},    ", byte);
+    } else {
+        return ST::format("0x{x},   ", byte);
+    }
+}
+
 void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* fp, ID3DBlob* shader)
 {
-    fputs("\n\n\n", fp);
+    fputs(kLicenseHeader, fp);
+    fputs("\n\n", fp);
 
     hsSsize_t byteLen = shader->GetBufferSize();
     hsSsize_t quadLen = byteLen >> 2;
@@ -156,16 +211,16 @@ void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* 
 
     for (hsSsize_t i = 0; i < quadLen-1; i++)
     {
-        ST::printf(fp, "\t0x{x},", *codes++);
-        ST::printf(fp, "\t0x{x},", *codes++);
-        ST::printf(fp, "\t0x{x},", *codes++);
-        ST::printf(fp, "\t0x{x},\n", *codes++);
+        ST::printf(fp, "    {}", IRightPadHexByte(*codes++));
+        ST::printf(fp, "{}", IRightPadHexByte(*codes++));
+        ST::printf(fp, "{}", IRightPadHexByte(*codes++));
+        ST::printf(fp, "0x{x},\n", *codes++);
     }
-    ST::printf(fp, "\t0x{x},", *codes++);
-    ST::printf(fp, "\t0x{x},", *codes++);
-    ST::printf(fp, "\t0x{x},", *codes++);
-    ST::printf(fp, "\t0x{x}\n", *codes++);
-    fputs("\t};", fp);
+    ST::printf(fp, "    {}", IRightPadHexByte(*codes++));
+    ST::printf(fp, "{}", IRightPadHexByte(*codes++));
+    ST::printf(fp, "{}", IRightPadHexByte(*codes++));
+    ST::printf(fp, "0x{x}\n", *codes++);
+    fputs("    };", fp);
     fputs("\n\n", fp);
 
     ST::printf(fp, "static const plShaderDecl {}Decl(\"{}\", {}, {}byteLen, {}Codes);\n\n",
@@ -182,7 +237,8 @@ static void IAssShader(const plDXShaderAssembler& ass, const char* name)
 
     ST::printf("Processing {} into {}\n", name, outFile);
     hsUNIXStream outFp;
-    if (!outFp.Open(outFile, "w")) {
+    // Write in binary mode to get LF line endings even on Windows.
+    if (!outFp.Open(outFile, "wb")) {
         fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
         ST::printf(stderr, "Error opening file {} for output\n", outFile);
         fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
