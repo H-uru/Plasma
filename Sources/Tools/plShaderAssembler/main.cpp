@@ -45,9 +45,8 @@ Mead, WA   99021
 // that can be included into Plasma's plShaderTable.
 
 // To recompile Plasma's shaders:
-// PS> cd Sources\Plasma\PubUtilLib\plSurface\ShaderSrc
-// PS> plShaderAssembler all
-// PS> Move-Item -Force *.h ../
+// > cd Sources\Plasma\PubUtilLib\plSurface
+// > plShaderAssembler all
 
 #include "HeadSpin.h"
 #include "plFileSystem.h"
@@ -215,7 +214,7 @@ static void IAssShader(const plDXShaderAssembler& ass, const char* name)
 {
     ST::string varName = plFileName(name).StripFileExt().AsString();
 
-    plFileName inFile = ST::format("{}.inl", varName);
+    plFileName inFile = ST::format("ShaderSrc/{}.inl", varName);
     plFileName outFile = ST::format("{}.h", varName);
 
     ST::printf("Processing {} into {}\n", name, outFile);
