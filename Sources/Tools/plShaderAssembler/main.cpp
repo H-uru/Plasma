@@ -191,18 +191,19 @@ void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* 
     fputs("\n\n", fp);
 
     SIZE_T byteLen = shader->GetBufferSize();
-    SIZE_T quadLen = byteLen >> 2;
+    hsAssert(byteLen % 4 == 0, "We expect Direct3D shader bytecode to be a multiple of 4 bytes!");
 
     unsigned char* codes = (unsigned char*)shader->GetBufferPointer();
 
     ST::printf(fp, "static const uint32_t {}byteLen = {};\n\n", varName, byteLen);
     ST::printf(fp, "static const uint8_t {}Codes[] = {{\n", varName);
 
-    for (SIZE_T i = 0; i < quadLen; i++) {
-        ST::printf(fp, "    0x{>02x}, ", *codes++);
-        ST::printf(fp, "0x{>02x}, ", *codes++);
-        ST::printf(fp, "0x{>02x}, ", *codes++);
-        ST::printf(fp, "0x{>02x},\n", *codes++);
+    for (SIZE_T i = 0; i < byteLen; i += 4) {
+        ST::printf(
+            fp,
+            "    0x{>02x}, 0x{>02x}, 0x{>02x}, 0x{>02x},\n",
+            codes[i], codes[i+1], codes[i+2], codes[i+3]
+        );
     }
     fputs("};\n\n", fp);
 
