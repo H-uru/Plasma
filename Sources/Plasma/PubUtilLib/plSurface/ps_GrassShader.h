@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-static const uint32_t ps_GrassShaderbyteLen = 32;
-
 static const uint8_t ps_GrassShaderCodes[] = {
     0x01, 0x01, 0xff, 0xff,
     0x42, 0x00, 0x00, 0x00,
@@ -54,7 +52,7 @@ static const uint8_t ps_GrassShaderCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl ps_GrassShaderDecl("sha/ps_GrassShader.inl", ps_GrassShader, ps_GrassShaderbyteLen, ps_GrassShaderCodes);
+static const plShaderDecl ps_GrassShaderDecl("sha/ps_GrassShader.inl", ps_GrassShader, sizeof(ps_GrassShaderCodes), ps_GrassShaderCodes);
 
 static const plShaderRegister ps_GrassShaderRegister(&ps_GrassShaderDecl);
 

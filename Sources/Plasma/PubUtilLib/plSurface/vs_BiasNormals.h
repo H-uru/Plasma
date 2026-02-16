@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-static const uint32_t vs_BiasNormalsbyteLen = 168;
-
 static const uint8_t vs_BiasNormalsCodes[] = {
     0x01, 0x01, 0xfe, 0xff,
     0x1f, 0x00, 0x00, 0x00,
@@ -88,7 +86,7 @@ static const uint8_t vs_BiasNormalsCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl vs_BiasNormalsDecl("sha/vs_BiasNormals.inl", vs_BiasNormals, vs_BiasNormalsbyteLen, vs_BiasNormalsCodes);
+static const plShaderDecl vs_BiasNormalsDecl("sha/vs_BiasNormals.inl", vs_BiasNormals, sizeof(vs_BiasNormalsCodes), vs_BiasNormalsCodes);
 
 static const plShaderRegister vs_BiasNormalsRegister(&vs_BiasNormalsDecl);
 

@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-static const uint32_t vs_WaveRipbyteLen = 1344;
-
 static const uint8_t vs_WaveRipCodes[] = {
     0x01, 0x01, 0xfe, 0xff,
     0x1f, 0x00, 0x00, 0x00,
@@ -382,7 +380,7 @@ static const uint8_t vs_WaveRipCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl vs_WaveRipDecl("sha/vs_WaveRip.inl", vs_WaveRip, vs_WaveRipbyteLen, vs_WaveRipCodes);
+static const plShaderDecl vs_WaveRipDecl("sha/vs_WaveRip.inl", vs_WaveRip, sizeof(vs_WaveRipCodes), vs_WaveRipCodes);
 
 static const plShaderRegister vs_WaveRipRegister(&vs_WaveRipDecl);
 

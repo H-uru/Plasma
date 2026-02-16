@@ -195,7 +195,6 @@ void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* 
 
     unsigned char* codes = (unsigned char*)shader->GetBufferPointer();
 
-    ST::printf(fp, "static const uint32_t {}byteLen = {};\n\n", varName, byteLen);
     ST::printf(fp, "static const uint8_t {}Codes[] = {{\n", varName);
 
     for (SIZE_T i = 0; i < byteLen; i += 4) {
@@ -207,7 +206,7 @@ void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* 
     }
     fputs("};\n\n", fp);
 
-    ST::printf(fp, "static const plShaderDecl {}Decl(\"{}\", {}, {}byteLen, {}Codes);\n\n",
+    ST::printf(fp, "static const plShaderDecl {}Decl(\"{}\", {}, sizeof({}Codes), {}Codes);\n\n",
                varName, fileName, varName, varName, varName);
     ST::printf(fp, "static const plShaderRegister {}Register(&{}Decl);\n\n", varName, varName);
 }

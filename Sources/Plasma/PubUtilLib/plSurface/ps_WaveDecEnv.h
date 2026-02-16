@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-static const uint32_t ps_WaveDecEnvbyteLen = 84;
-
 static const uint8_t ps_WaveDecEnvCodes[] = {
     0x01, 0x01, 0xff, 0xff,
     0x42, 0x00, 0x00, 0x00,
@@ -67,7 +65,7 @@ static const uint8_t ps_WaveDecEnvCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl ps_WaveDecEnvDecl("sha/ps_WaveDecEnv.inl", ps_WaveDecEnv, ps_WaveDecEnvbyteLen, ps_WaveDecEnvCodes);
+static const plShaderDecl ps_WaveDecEnvDecl("sha/ps_WaveDecEnv.inl", ps_WaveDecEnv, sizeof(ps_WaveDecEnvCodes), ps_WaveDecEnvCodes);
 
 static const plShaderRegister ps_WaveDecEnvRegister(&ps_WaveDecEnvDecl);
 

@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-static const uint32_t vs_ShoreLeave6byteLen = 1220;
-
 static const uint8_t vs_ShoreLeave6Codes[] = {
     0x01, 0x01, 0xfe, 0xff,
     0x1f, 0x00, 0x00, 0x00,
@@ -351,7 +349,7 @@ static const uint8_t vs_ShoreLeave6Codes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl vs_ShoreLeave6Decl("sha/vs_ShoreLeave6.inl", vs_ShoreLeave6, vs_ShoreLeave6byteLen, vs_ShoreLeave6Codes);
+static const plShaderDecl vs_ShoreLeave6Decl("sha/vs_ShoreLeave6.inl", vs_ShoreLeave6, sizeof(vs_ShoreLeave6Codes), vs_ShoreLeave6Codes);
 
 static const plShaderRegister vs_ShoreLeave6Register(&vs_ShoreLeave6Decl);
 

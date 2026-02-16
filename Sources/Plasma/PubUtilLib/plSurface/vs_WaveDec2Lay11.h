@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-static const uint32_t vs_WaveDec2Lay11byteLen = 1144;
-
 static const uint8_t vs_WaveDec2Lay11Codes[] = {
     0x01, 0x01, 0xfe, 0xff,
     0x1f, 0x00, 0x00, 0x00,
@@ -332,7 +330,7 @@ static const uint8_t vs_WaveDec2Lay11Codes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl vs_WaveDec2Lay11Decl("sha/vs_WaveDec2Lay11.inl", vs_WaveDec2Lay11, vs_WaveDec2Lay11byteLen, vs_WaveDec2Lay11Codes);
+static const plShaderDecl vs_WaveDec2Lay11Decl("sha/vs_WaveDec2Lay11.inl", vs_WaveDec2Lay11, sizeof(vs_WaveDec2Lay11Codes), vs_WaveDec2Lay11Codes);
 
 static const plShaderRegister vs_WaveDec2Lay11Register(&vs_WaveDec2Lay11Decl);
 

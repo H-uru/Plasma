@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-static const uint32_t ps_CaddAMultbyteLen = 72;
-
 static const uint8_t ps_CaddAMultCodes[] = {
     0x01, 0x01, 0xff, 0xff,
     0x42, 0x00, 0x00, 0x00,
@@ -64,7 +62,7 @@ static const uint8_t ps_CaddAMultCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl ps_CaddAMultDecl("sha/ps_CaddAMult.inl", ps_CaddAMult, ps_CaddAMultbyteLen, ps_CaddAMultCodes);
+static const plShaderDecl ps_CaddAMultDecl("sha/ps_CaddAMult.inl", ps_CaddAMult, sizeof(ps_CaddAMultCodes), ps_CaddAMultCodes);
 
 static const plShaderRegister ps_CaddAMultRegister(&ps_CaddAMultDecl);
 

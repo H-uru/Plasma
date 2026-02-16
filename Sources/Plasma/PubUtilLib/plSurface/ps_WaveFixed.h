@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-static const uint32_t ps_WaveFixedbyteLen = 108;
-
 static const uint8_t ps_WaveFixedCodes[] = {
     0x01, 0x01, 0xff, 0xff,
     0x51, 0x00, 0x00, 0x00,
@@ -73,7 +71,7 @@ static const uint8_t ps_WaveFixedCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl ps_WaveFixedDecl("sha/ps_WaveFixed.inl", ps_WaveFixed, ps_WaveFixedbyteLen, ps_WaveFixedCodes);
+static const plShaderDecl ps_WaveFixedDecl("sha/ps_WaveFixed.inl", ps_WaveFixed, sizeof(ps_WaveFixedCodes), ps_WaveFixedCodes);
 
 static const plShaderRegister ps_WaveFixedRegister(&ps_WaveFixedDecl);
 

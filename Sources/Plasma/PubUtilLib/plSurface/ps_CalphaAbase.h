@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-static const uint32_t ps_CalphaAbasebyteLen = 72;
-
 static const uint8_t ps_CalphaAbaseCodes[] = {
     0x01, 0x01, 0xff, 0xff,
     0x42, 0x00, 0x00, 0x00,
@@ -64,7 +62,7 @@ static const uint8_t ps_CalphaAbaseCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl ps_CalphaAbaseDecl("sha/ps_CalphaAbase.inl", ps_CalphaAbase, ps_CalphaAbasebyteLen, ps_CalphaAbaseCodes);
+static const plShaderDecl ps_CalphaAbaseDecl("sha/ps_CalphaAbase.inl", ps_CalphaAbase, sizeof(ps_CalphaAbaseCodes), ps_CalphaAbaseCodes);
 
 static const plShaderRegister ps_CalphaAbaseRegister(&ps_CalphaAbaseDecl);
 

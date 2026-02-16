@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-static const uint32_t ps_MoreCosinesbyteLen = 160;
-
 static const uint8_t ps_MoreCosinesCodes[] = {
     0x01, 0x01, 0xff, 0xff,
     0x42, 0x00, 0x00, 0x00,
@@ -86,7 +84,7 @@ static const uint8_t ps_MoreCosinesCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl ps_MoreCosinesDecl("sha/ps_MoreCosines.inl", ps_MoreCosines, ps_MoreCosinesbyteLen, ps_MoreCosinesCodes);
+static const plShaderDecl ps_MoreCosinesDecl("sha/ps_MoreCosines.inl", ps_MoreCosines, sizeof(ps_MoreCosinesCodes), ps_MoreCosinesCodes);
 
 static const plShaderRegister ps_MoreCosinesRegister(&ps_MoreCosinesDecl);
 
