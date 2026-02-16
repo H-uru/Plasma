@@ -190,15 +190,15 @@ void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* 
     fputs(kLicenseHeader, fp);
     fputs("\n\n", fp);
 
-    hsSsize_t byteLen = shader->GetBufferSize();
-    hsSsize_t quadLen = byteLen >> 2;
+    SIZE_T byteLen = shader->GetBufferSize();
+    SIZE_T quadLen = byteLen >> 2;
 
     unsigned char* codes = (unsigned char*)shader->GetBufferPointer();
 
     ST::printf(fp, "static const uint32_t {}byteLen = {};\n\n", varName, byteLen);
     ST::printf(fp, "static const uint8_t {}Codes[] = {{\n", varName);
 
-    for (hsSsize_t i = 0; i < quadLen; i++) {
+    for (SIZE_T i = 0; i < quadLen; i++) {
         ST::printf(fp, "    0x{>02x}, ", *codes++);
         ST::printf(fp, "0x{>02x}, ", *codes++);
         ST::printf(fp, "0x{>02x}, ", *codes++);
