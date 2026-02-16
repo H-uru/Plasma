@@ -40,8 +40,14 @@ Mead, WA   99021
 
 *==LICENSE==*/
 
-// AssShader.cpp : Defines the entry point for the console application.
-//
+// Compiles Direct3D 8/9 shader assembly source code to bytecode
+// and outputs the shader bytecode as C++ declarations
+// that can be included into Plasma's plShaderTable.
+
+// To recompile Plasma's shaders:
+// PS> cd Sources\Plasma\PubUtilLib\plSurface\ShaderSrc
+// PS> plShaderAssembler all
+// PS> Move-Item -Force *.h ../
 
 #include "HeadSpin.h"
 #include "plFileSystem.h"
