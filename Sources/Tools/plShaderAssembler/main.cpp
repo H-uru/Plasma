@@ -241,7 +241,7 @@ static void IAssShader(const plDXShaderAssembler& ass, const char* name)
 
     try {
         auto compiledShader = ass.AssShader(shaderCode.get(), shaderCodeLen);
-        ICreateHeader(varName, ST::format("sha/{}.inl", varName), outFp.GetFILE(), compiledShader.get());
+        ICreateHeader(varName, inFile, outFp.GetFILE(), compiledShader.get());
     } catch (const plDXShaderError& error) {
         fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
         fputs(error.c_str(), stderr);

@@ -63,7 +63,7 @@ static const uint8_t ps_CalphaAaddCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl ps_CalphaAaddDecl("sha/ps_CalphaAadd.inl", ps_CalphaAadd, sizeof(ps_CalphaAaddCodes), ps_CalphaAaddCodes);
+static const plShaderDecl ps_CalphaAaddDecl("ShaderSrc/ps_CalphaAadd.inl", ps_CalphaAadd, sizeof(ps_CalphaAaddCodes), ps_CalphaAaddCodes);
 
 static const plShaderRegister ps_CalphaAaddRegister(&ps_CalphaAaddDecl);
 

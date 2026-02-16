@@ -65,7 +65,7 @@ static const uint8_t ps_WaveGridCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl ps_WaveGridDecl("sha/ps_WaveGrid.inl", ps_WaveGrid, sizeof(ps_WaveGridCodes), ps_WaveGridCodes);
+static const plShaderDecl ps_WaveGridDecl("ShaderSrc/ps_WaveGrid.inl", ps_WaveGrid, sizeof(ps_WaveGridCodes), ps_WaveGridCodes);
 
 static const plShaderRegister ps_WaveGridRegister(&ps_WaveGridDecl);
 

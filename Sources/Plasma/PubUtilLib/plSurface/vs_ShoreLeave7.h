@@ -287,7 +287,7 @@ static const uint8_t vs_ShoreLeave7Codes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl vs_ShoreLeave7Decl("sha/vs_ShoreLeave7.inl", vs_ShoreLeave7, sizeof(vs_ShoreLeave7Codes), vs_ShoreLeave7Codes);
+static const plShaderDecl vs_ShoreLeave7Decl("ShaderSrc/vs_ShoreLeave7.inl", vs_ShoreLeave7, sizeof(vs_ShoreLeave7Codes), vs_ShoreLeave7Codes);
 
 static const plShaderRegister vs_ShoreLeave7Register(&vs_ShoreLeave7Decl);
 

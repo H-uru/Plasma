@@ -65,7 +65,7 @@ static const uint8_t ps_WaveDecEnvCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl ps_WaveDecEnvDecl("sha/ps_WaveDecEnv.inl", ps_WaveDecEnv, sizeof(ps_WaveDecEnvCodes), ps_WaveDecEnvCodes);
+static const plShaderDecl ps_WaveDecEnvDecl("ShaderSrc/ps_WaveDecEnv.inl", ps_WaveDecEnv, sizeof(ps_WaveDecEnvCodes), ps_WaveDecEnvCodes);
 
 static const plShaderRegister ps_WaveDecEnvRegister(&ps_WaveDecEnvDecl);
 

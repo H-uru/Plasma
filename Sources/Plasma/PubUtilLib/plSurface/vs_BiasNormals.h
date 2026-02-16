@@ -86,7 +86,7 @@ static const uint8_t vs_BiasNormalsCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl vs_BiasNormalsDecl("sha/vs_BiasNormals.inl", vs_BiasNormals, sizeof(vs_BiasNormalsCodes), vs_BiasNormalsCodes);
+static const plShaderDecl vs_BiasNormalsDecl("ShaderSrc/vs_BiasNormals.inl", vs_BiasNormals, sizeof(vs_BiasNormalsCodes), vs_BiasNormalsCodes);
 
 static const plShaderRegister vs_BiasNormalsRegister(&vs_BiasNormalsDecl);
 

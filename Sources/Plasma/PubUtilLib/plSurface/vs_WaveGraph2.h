@@ -196,7 +196,7 @@ static const uint8_t vs_WaveGraph2Codes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl vs_WaveGraph2Decl("sha/vs_WaveGraph2.inl", vs_WaveGraph2, sizeof(vs_WaveGraph2Codes), vs_WaveGraph2Codes);
+static const plShaderDecl vs_WaveGraph2Decl("ShaderSrc/vs_WaveGraph2.inl", vs_WaveGraph2, sizeof(vs_WaveGraph2Codes), vs_WaveGraph2Codes);
 
 static const plShaderRegister vs_WaveGraph2Register(&vs_WaveGraph2Decl);
 

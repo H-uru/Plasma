@@ -86,7 +86,7 @@ static const uint8_t vs_CompCosinesCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl vs_CompCosinesDecl("sha/vs_CompCosines.inl", vs_CompCosines, sizeof(vs_CompCosinesCodes), vs_CompCosinesCodes);
+static const plShaderDecl vs_CompCosinesDecl("ShaderSrc/vs_CompCosines.inl", vs_CompCosines, sizeof(vs_CompCosinesCodes), vs_CompCosinesCodes);
 
 static const plShaderRegister vs_CompCosinesRegister(&vs_CompCosinesDecl);
 

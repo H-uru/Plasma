@@ -62,7 +62,7 @@ static const uint8_t ps_CmultAAddCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl ps_CmultAAddDecl("sha/ps_CmultAAdd.inl", ps_CmultAAdd, sizeof(ps_CmultAAddCodes), ps_CmultAAddCodes);
+static const plShaderDecl ps_CmultAAddDecl("ShaderSrc/ps_CmultAAdd.inl", ps_CmultAAdd, sizeof(ps_CmultAAddCodes), ps_CmultAAddCodes);
 
 static const plShaderRegister ps_CmultAAddRegister(&ps_CmultAAddDecl);
 

@@ -62,7 +62,7 @@ static const uint8_t ps_CaddAAddCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl ps_CaddAAddDecl("sha/ps_CaddAAdd.inl", ps_CaddAAdd, sizeof(ps_CaddAAddCodes), ps_CaddAAddCodes);
+static const plShaderDecl ps_CaddAAddDecl("ShaderSrc/ps_CaddAAdd.inl", ps_CaddAAdd, sizeof(ps_CaddAAddCodes), ps_CaddAAddCodes);
 
 static const plShaderRegister ps_CaddAAddRegister(&ps_CaddAAddDecl);
 

@@ -482,7 +482,7 @@ static const uint8_t vs_WaveDecEnv_7Codes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl vs_WaveDecEnv_7Decl("sha/vs_WaveDecEnv_7.inl", vs_WaveDecEnv_7, sizeof(vs_WaveDecEnv_7Codes), vs_WaveDecEnv_7Codes);
+static const plShaderDecl vs_WaveDecEnv_7Decl("ShaderSrc/vs_WaveDecEnv_7.inl", vs_WaveDecEnv_7, sizeof(vs_WaveDecEnv_7Codes), vs_WaveDecEnv_7Codes);
 
 static const plShaderRegister vs_WaveDecEnv_7Register(&vs_WaveDecEnv_7Decl);
 

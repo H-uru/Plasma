@@ -476,7 +476,7 @@ static const uint8_t vs_WaveGridFinCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl vs_WaveGridFinDecl("sha/vs_WaveGridFin.inl", vs_WaveGridFin, sizeof(vs_WaveGridFinCodes), vs_WaveGridFinCodes);
+static const plShaderDecl vs_WaveGridFinDecl("ShaderSrc/vs_WaveGridFin.inl", vs_WaveGridFin, sizeof(vs_WaveGridFinCodes), vs_WaveGridFinCodes);
 
 static const plShaderRegister vs_WaveGridFinRegister(&vs_WaveGridFinDecl);
 

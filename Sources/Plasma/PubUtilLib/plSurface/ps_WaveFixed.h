@@ -71,7 +71,7 @@ static const uint8_t ps_WaveFixedCodes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl ps_WaveFixedDecl("sha/ps_WaveFixed.inl", ps_WaveFixed, sizeof(ps_WaveFixedCodes), ps_WaveFixedCodes);
+static const plShaderDecl ps_WaveFixedDecl("ShaderSrc/ps_WaveFixed.inl", ps_WaveFixed, sizeof(ps_WaveFixedCodes), ps_WaveFixedCodes);
 
 static const plShaderRegister ps_WaveFixedRegister(&ps_WaveFixedDecl);
 

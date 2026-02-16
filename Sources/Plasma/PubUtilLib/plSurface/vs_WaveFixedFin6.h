@@ -526,7 +526,7 @@ static const uint8_t vs_WaveFixedFin6Codes[] = {
     0xff, 0xff, 0x00, 0x00,
 };
 
-static const plShaderDecl vs_WaveFixedFin6Decl("sha/vs_WaveFixedFin6.inl", vs_WaveFixedFin6, sizeof(vs_WaveFixedFin6Codes), vs_WaveFixedFin6Codes);
+static const plShaderDecl vs_WaveFixedFin6Decl("ShaderSrc/vs_WaveFixedFin6.inl", vs_WaveFixedFin6, sizeof(vs_WaveFixedFin6Codes), vs_WaveFixedFin6Codes);
 
 static const plShaderRegister vs_WaveFixedFin6Register(&vs_WaveFixedFin6Decl);
 
