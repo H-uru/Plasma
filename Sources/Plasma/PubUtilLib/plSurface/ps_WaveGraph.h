@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef ps_WaveGraph_inc
+#define ps_WaveGraph_inc
 
 static const uint8_t ps_WaveGraphCodes[] = {
     0x01, 0x01, 0xff, 0xff,
@@ -68,3 +70,4 @@ static const plShaderDecl ps_WaveGraphDecl("ShaderSrc/ps_WaveGraph.inl", ps_Wave
 
 static const plShaderRegister ps_WaveGraphRegister(&ps_WaveGraphDecl);
 
+#endif // ps_WaveGraph_inc

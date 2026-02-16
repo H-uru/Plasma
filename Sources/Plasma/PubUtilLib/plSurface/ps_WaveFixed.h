@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef ps_WaveFixed_inc
+#define ps_WaveFixed_inc
 
 static const uint8_t ps_WaveFixedCodes[] = {
     0x01, 0x01, 0xff, 0xff,
@@ -75,3 +77,4 @@ static const plShaderDecl ps_WaveFixedDecl("ShaderSrc/ps_WaveFixed.inl", ps_Wave
 
 static const plShaderRegister ps_WaveFixedRegister(&ps_WaveFixedDecl);
 
+#endif // ps_WaveFixed_inc

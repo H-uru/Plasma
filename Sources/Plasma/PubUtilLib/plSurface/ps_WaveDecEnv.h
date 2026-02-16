@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef ps_WaveDecEnv_inc
+#define ps_WaveDecEnv_inc
 
 static const uint8_t ps_WaveDecEnvCodes[] = {
     0x01, 0x01, 0xff, 0xff,
@@ -69,3 +71,4 @@ static const plShaderDecl ps_WaveDecEnvDecl("ShaderSrc/ps_WaveDecEnv.inl", ps_Wa
 
 static const plShaderRegister ps_WaveDecEnvRegister(&ps_WaveDecEnvDecl);
 
+#endif // ps_WaveDecEnv_inc

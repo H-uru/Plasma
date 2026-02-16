@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef ps_WaveRip_inc
+#define ps_WaveRip_inc
 
 static const uint8_t ps_WaveRipCodes[] = {
     0x01, 0x01, 0xff, 0xff,
@@ -56,3 +58,4 @@ static const plShaderDecl ps_WaveRipDecl("ShaderSrc/ps_WaveRip.inl", ps_WaveRip,
 
 static const plShaderRegister ps_WaveRipRegister(&ps_WaveRipDecl);
 
+#endif // ps_WaveRip_inc

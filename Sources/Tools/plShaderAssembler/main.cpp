@@ -187,7 +187,10 @@ std::shared_ptr<ID3DBlob> plDXShaderAssembler::AssShader(const char* shader, uns
 void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* fp, ID3DBlob* shader)
 {
     fputs(kLicenseHeader, fp);
-    fputs("\n\n", fp);
+    fputs("\n", fp);
+    ST::printf(fp, "#ifndef {}_inc\n", varName);
+    ST::printf(fp, "#define {}_inc\n", varName);
+    fputs("\n", fp);
 
     SIZE_T byteLen = shader->GetBufferSize();
     hsAssert(byteLen % 4 == 0, "We expect Direct3D shader bytecode to be a multiple of 4 bytes!");
@@ -208,6 +211,8 @@ void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* 
     ST::printf(fp, "static const plShaderDecl {}Decl(\"{}\", {}, sizeof({}Codes), {}Codes);\n\n",
                varName, fileName, varName, varName, varName);
     ST::printf(fp, "static const plShaderRegister {}Register(&{}Decl);\n\n", varName, varName);
+
+    ST::printf(fp, "#endif // {}_inc\n", varName);
 }
 
 static void IAssShader(const plDXShaderAssembler& ass, const char* name)

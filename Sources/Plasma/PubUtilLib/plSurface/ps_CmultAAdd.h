@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef ps_CmultAAdd_inc
+#define ps_CmultAAdd_inc
 
 static const uint8_t ps_CmultAAddCodes[] = {
     0x01, 0x01, 0xff, 0xff,
@@ -66,3 +68,4 @@ static const plShaderDecl ps_CmultAAddDecl("ShaderSrc/ps_CmultAAdd.inl", ps_Cmul
 
 static const plShaderRegister ps_CmultAAddRegister(&ps_CmultAAddDecl);
 
+#endif // ps_CmultAAdd_inc

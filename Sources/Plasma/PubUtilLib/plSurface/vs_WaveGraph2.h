@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef vs_WaveGraph2_inc
+#define vs_WaveGraph2_inc
 
 static const uint8_t vs_WaveGraph2Codes[] = {
     0x01, 0x01, 0xfe, 0xff,
@@ -200,3 +202,4 @@ static const plShaderDecl vs_WaveGraph2Decl("ShaderSrc/vs_WaveGraph2.inl", vs_Wa
 
 static const plShaderRegister vs_WaveGraph2Register(&vs_WaveGraph2Decl);
 
+#endif // vs_WaveGraph2_inc

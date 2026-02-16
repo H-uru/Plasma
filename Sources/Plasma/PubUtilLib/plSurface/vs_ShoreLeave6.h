@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef vs_ShoreLeave6_inc
+#define vs_ShoreLeave6_inc
 
 static const uint8_t vs_ShoreLeave6Codes[] = {
     0x01, 0x01, 0xfe, 0xff,
@@ -353,3 +355,4 @@ static const plShaderDecl vs_ShoreLeave6Decl("ShaderSrc/vs_ShoreLeave6.inl", vs_
 
 static const plShaderRegister vs_ShoreLeave6Register(&vs_ShoreLeave6Decl);
 
+#endif // vs_ShoreLeave6_inc

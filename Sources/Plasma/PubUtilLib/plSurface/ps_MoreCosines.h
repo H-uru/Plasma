@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef ps_MoreCosines_inc
+#define ps_MoreCosines_inc
 
 static const uint8_t ps_MoreCosinesCodes[] = {
     0x01, 0x01, 0xff, 0xff,
@@ -88,3 +90,4 @@ static const plShaderDecl ps_MoreCosinesDecl("ShaderSrc/ps_MoreCosines.inl", ps_
 
 static const plShaderRegister ps_MoreCosinesRegister(&ps_MoreCosinesDecl);
 
+#endif // ps_MoreCosines_inc

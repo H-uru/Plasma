@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef vs_WaveGridFin_inc
+#define vs_WaveGridFin_inc
 
 static const uint8_t vs_WaveGridFinCodes[] = {
     0x01, 0x01, 0xfe, 0xff,
@@ -480,3 +482,4 @@ static const plShaderDecl vs_WaveGridFinDecl("ShaderSrc/vs_WaveGridFin.inl", vs_
 
 static const plShaderRegister vs_WaveGridFinRegister(&vs_WaveGridFinDecl);
 
+#endif // vs_WaveGridFin_inc

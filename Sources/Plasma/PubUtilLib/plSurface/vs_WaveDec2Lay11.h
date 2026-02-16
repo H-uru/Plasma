@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef vs_WaveDec2Lay11_inc
+#define vs_WaveDec2Lay11_inc
 
 static const uint8_t vs_WaveDec2Lay11Codes[] = {
     0x01, 0x01, 0xfe, 0xff,
@@ -334,3 +336,4 @@ static const plShaderDecl vs_WaveDec2Lay11Decl("ShaderSrc/vs_WaveDec2Lay11.inl",
 
 static const plShaderRegister vs_WaveDec2Lay11Register(&vs_WaveDec2Lay11Decl);
 
+#endif // vs_WaveDec2Lay11_inc

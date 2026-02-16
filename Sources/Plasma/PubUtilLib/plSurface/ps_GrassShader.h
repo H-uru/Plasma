@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef ps_GrassShader_inc
+#define ps_GrassShader_inc
 
 static const uint8_t ps_GrassShaderCodes[] = {
     0x01, 0x01, 0xff, 0xff,
@@ -56,3 +58,4 @@ static const plShaderDecl ps_GrassShaderDecl("ShaderSrc/ps_GrassShader.inl", ps_
 
 static const plShaderRegister ps_GrassShaderRegister(&ps_GrassShaderDecl);
 
+#endif // ps_GrassShader_inc

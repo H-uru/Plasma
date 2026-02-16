@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef vs_WaveFixedFin6_inc
+#define vs_WaveFixedFin6_inc
 
 static const uint8_t vs_WaveFixedFin6Codes[] = {
     0x01, 0x01, 0xfe, 0xff,
@@ -530,3 +532,4 @@ static const plShaderDecl vs_WaveFixedFin6Decl("ShaderSrc/vs_WaveFixedFin6.inl",
 
 static const plShaderRegister vs_WaveFixedFin6Register(&vs_WaveFixedFin6Decl);
 
+#endif // vs_WaveFixedFin6_inc

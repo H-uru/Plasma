@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef ps_CompCosines_inc
+#define ps_CompCosines_inc
 
 static const uint8_t ps_CompCosinesCodes[] = {
     0x01, 0x01, 0xff, 0xff,
@@ -85,3 +87,4 @@ static const plShaderDecl ps_CompCosinesDecl("ShaderSrc/ps_CompCosines.inl", ps_
 
 static const plShaderRegister ps_CompCosinesRegister(&ps_CompCosinesDecl);
 
+#endif // ps_CompCosines_inc

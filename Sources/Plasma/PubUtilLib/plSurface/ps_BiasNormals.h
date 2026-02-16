@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef ps_BiasNormals_inc
+#define ps_BiasNormals_inc
 
 static const uint8_t ps_BiasNormalsCodes[] = {
     0x01, 0x01, 0xff, 0xff,
@@ -67,3 +69,4 @@ static const plShaderDecl ps_BiasNormalsDecl("ShaderSrc/ps_BiasNormals.inl", ps_
 
 static const plShaderRegister ps_BiasNormalsRegister(&ps_BiasNormalsDecl);
 
+#endif // ps_BiasNormals_inc
