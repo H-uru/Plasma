@@ -185,17 +185,6 @@ std::shared_ptr<ID3DBlob> plDXShaderAssembler::AssShader(const char* shader, uns
 
 // ===================================================
 
-// Temporary helper to reproduce the silly formatting
-// caused by tabs-to-spaces conversion on the original plShaderAssembler output...
-static ST::string IRightPadHexByte(uint8_t byte)
-{
-    if (byte < 0x10) {
-        return ST::format("0x{x},    ", byte);
-    } else {
-        return ST::format("0x{x},   ", byte);
-    }
-}
-
 void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* fp, ID3DBlob* shader)
 {
     fputs(kLicenseHeader, fp);
@@ -209,19 +198,13 @@ void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* 
     ST::printf(fp, "static const uint32_t {}byteLen = {};\n\n", varName, byteLen);
     ST::printf(fp, "static const uint8_t {}Codes[] = {{\n", varName);
 
-    for (hsSsize_t i = 0; i < quadLen-1; i++)
-    {
-        ST::printf(fp, "    {}", IRightPadHexByte(*codes++));
-        ST::printf(fp, "{}", IRightPadHexByte(*codes++));
-        ST::printf(fp, "{}", IRightPadHexByte(*codes++));
-        ST::printf(fp, "0x{x},\n", *codes++);
+    for (hsSsize_t i = 0; i < quadLen; i++) {
+        ST::printf(fp, "    0x{>02x}, ", *codes++);
+        ST::printf(fp, "0x{>02x}, ", *codes++);
+        ST::printf(fp, "0x{>02x}, ", *codes++);
+        ST::printf(fp, "0x{>02x},\n", *codes++);
     }
-    ST::printf(fp, "    {}", IRightPadHexByte(*codes++));
-    ST::printf(fp, "{}", IRightPadHexByte(*codes++));
-    ST::printf(fp, "{}", IRightPadHexByte(*codes++));
-    ST::printf(fp, "0x{x}\n", *codes++);
-    fputs("    };", fp);
-    fputs("\n\n", fp);
+    fputs("};\n\n", fp);
 
     ST::printf(fp, "static const plShaderDecl {}Decl(\"{}\", {}, {}byteLen, {}Codes);\n\n",
                varName, fileName, varName, varName, varName);
