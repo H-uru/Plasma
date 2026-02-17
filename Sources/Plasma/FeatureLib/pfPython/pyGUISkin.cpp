@@ -80,6 +80,12 @@ bool pyGUISkin::operator==(const pyGUISkin &gcobj) const
 }
 
 
+// used by python glue, do NOT call
+void pyGUISkin::setKey(plKey key)
+{
+    fGCkey = std::move(key);
+}
+
 // getter and setters
 plKey pyGUISkin::getObjKey()
 {
