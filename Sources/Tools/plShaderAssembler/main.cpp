@@ -50,6 +50,7 @@ Mead, WA   99021
 
 #include "HeadSpin.h"
 #include "plFileSystem.h"
+#include "hsMain.inl"
 #include "hsStream.h"
 
 #include "hsWindows.h"
@@ -60,6 +61,8 @@ Mead, WA   99021
 
 #include <string_theory/format>
 #include <string_theory/stdio>
+
+using namespace ST::literals;
 
 static constexpr char kLicenseHeader[] =
     "/*==LICENSE==*\n"
@@ -215,7 +218,7 @@ void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* 
     ST::printf(fp, "#endif // {}_inc\n", varName);
 }
 
-static void IAssShader(const plDXShaderAssembler& ass, const char* name)
+static void IAssShader(const plDXShaderAssembler& ass, const ST::string& name)
 {
     ST::string varName = plFileName(name).StripFileExt().AsString();
 
@@ -254,77 +257,68 @@ static void IAssShader(const plDXShaderAssembler& ass, const char* name)
     }
 }
 
-int main(int argc, char* argv[])
+int hsMain(std::vector<ST::string> args)
 {
-    if( argc < 2 )
-    {
-        ST::printf("{} <file0> <file1> ...\n", argv[0]);
+    if (args.size() < 2) {
+        ST::printf("{} <file0> <file1> ...\n", args[0]);
         return 0;
     }
 
-    const char* const * nameList = nullptr;
-    int numNames = 0;
-    if (stricmp(argv[1], "all") == 0)
-    {
+    std::vector<ST::string> nameList;
+    if (args[1].compare_i("all") == 0) {
         // Just copy in the enum and use Replace on
         // vs_ => "vs_
         // ps_ => "ps_
-        // , => ",
-        static const char* kEnumNames[] = {
-            "vs_WaveFixedFin6",
-            "ps_WaveFixed",
-            "vs_CompCosines",
-            "ps_CompCosines",
-            "vs_ShoreLeave6",
-            "ps_ShoreLeave6",
-            "vs_WaveRip",
-            "ps_WaveRip",
-            "vs_WaveDec1Lay",
-            "vs_WaveDec2Lay11",
-            "vs_WaveDec2Lay12",
-            "vs_WaveDecEnv",
-            "ps_CbaseAbase",
-            "ps_CalphaAbase",
-            "ps_CalphaAMult",
-            "ps_CalphaAadd",
-            "ps_CaddAbase",
-            "ps_CaddAMult",
-            "ps_CaddAAdd",
-            "ps_CmultAbase",
-            "ps_CmultAMult",
-            "ps_CmultAAdd",
-            "ps_WaveDecEnv",
-            "vs_WaveGraph2",
-            "ps_WaveGraph",
-            "vs_WaveGridFin",
-            "ps_WaveGrid",
-            "vs_BiasNormals",
-            "ps_BiasNormals",
-            "vs_ShoreLeave7",
-            "vs_WaveRip7",
-            "ps_MoreCosines",
-            "vs_WaveDec1Lay_7",
-            "vs_WaveDec2Lay11_7",
-            "vs_WaveDec2Lay12_7",
-            "vs_WaveDecEnv_7",
-            "vs_WaveFixedFin7",
-            "vs_GrassShader",
-            "ps_GrassShader"
+        // , => "_st,
+        nameList = {
+            "vs_WaveFixedFin6"_st,
+            "ps_WaveFixed"_st,
+            "vs_CompCosines"_st,
+            "ps_CompCosines"_st,
+            "vs_ShoreLeave6"_st,
+            "ps_ShoreLeave6"_st,
+            "vs_WaveRip"_st,
+            "ps_WaveRip"_st,
+            "vs_WaveDec1Lay"_st,
+            "vs_WaveDec2Lay11"_st,
+            "vs_WaveDec2Lay12"_st,
+            "vs_WaveDecEnv"_st,
+            "ps_CbaseAbase"_st,
+            "ps_CalphaAbase"_st,
+            "ps_CalphaAMult"_st,
+            "ps_CalphaAadd"_st,
+            "ps_CaddAbase"_st,
+            "ps_CaddAMult"_st,
+            "ps_CaddAAdd"_st,
+            "ps_CmultAbase"_st,
+            "ps_CmultAMult"_st,
+            "ps_CmultAAdd"_st,
+            "ps_WaveDecEnv"_st,
+            "vs_WaveGraph2"_st,
+            "ps_WaveGraph"_st,
+            "vs_WaveGridFin"_st,
+            "ps_WaveGrid"_st,
+            "vs_BiasNormals"_st,
+            "ps_BiasNormals"_st,
+            "vs_ShoreLeave7"_st,
+            "vs_WaveRip7"_st,
+            "ps_MoreCosines"_st,
+            "vs_WaveDec1Lay_7"_st,
+            "vs_WaveDec2Lay11_7"_st,
+            "vs_WaveDec2Lay12_7"_st,
+            "vs_WaveDecEnv_7"_st,
+            "vs_WaveFixedFin7"_st,
+            "vs_GrassShader"_st,
+            "ps_GrassShader"_st,
         };
-
-        nameList = kEnumNames;
-        numNames = std::size(kEnumNames);
-    }
-    else
-    {
-        nameList = argv+1;
-        numNames = argc-1;
+    } else {
+        nameList.assign(args.begin() + 1, args.end());
     }
 
     try {
         plDXShaderAssembler ass;
-        for (int i = 0; i < numNames; i++ ) {
-            IAssShader(ass, nameList[i]);
+        for (const auto& name : nameList) {
+            IAssShader(ass, name);
         }
     } catch (const plDXShaderError& error) {
         fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
