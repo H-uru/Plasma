@@ -3,6 +3,7 @@ set(CoreLib_SOURCES
     hsBounds.cpp
     hsCpuID.cpp
     hsDebug.cpp
+    hsEndian.cpp
     hsExceptions.cpp
     hsExceptionStack.cpp
     hsFastMath.cpp
