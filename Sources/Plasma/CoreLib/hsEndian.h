@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <vector>
+
 #ifdef _MSC_VER
     #define hsSwapEndian16(val) _byteswap_ushort(val)
     #define hsSwapEndian32(val) _byteswap_ulong(val)
@@ -138,5 +140,9 @@ template <> inline int64_t hsToLE(int64_t value) { return (int64_t)hsToLE64((uin
 template <> inline uint64_t hsToLE(uint64_t value) { return hsToLE64(value); }
 template <> inline float hsToLE(float value) { return hsToLEFloat(value); }
 template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
+
+ST::string hsSTStringFromUTF16LE(const void* buffer, size_t char16Count);
+ST::string hsSTStringFromTerminatedUTF16LE(const void* buffer, size_t bufferSize, size_t& consumedSize);
+std::vector<uint8_t> hsSTStringToUTF16LE(const ST::string& string);
 
 #endif // hsEndian_inc
