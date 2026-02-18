@@ -1130,8 +1130,7 @@ struct ScoreGetRanksTrans : NetAuthTrans {
     unsigned                        m_sortDesc;
 
     // recv
-    NetGameRank *                   m_ranks;
-    unsigned                        m_rankCount;
+    std::vector<NetGameRank>        m_ranks;
 
     ScoreGetRanksTrans (
         unsigned                    ownerId,
@@ -4129,7 +4128,7 @@ ScoreGetRanksTrans::ScoreGetRanksTrans(
     : NetAuthTrans(kScoreGetRanksTrans), m_callback(std::move(callback)),
       m_ownerId(ownerId),  m_scoreGroup(scoreGroup), m_parentFolderId(parentFolderId),
       m_gameName(gameName), m_timePeriod(timePeriod), m_numResults(numResults),
-      m_pageNumber(pageNumber), m_sortDesc(sortDesc), m_ranks(), m_rankCount()
+      m_pageNumber(pageNumber), m_sortDesc(sortDesc)
 { }
 
 //============================================================================
@@ -4159,7 +4158,7 @@ bool ScoreGetRanksTrans::Send () {
 
 //============================================================================
 void ScoreGetRanksTrans::Post () {
-    m_callback(m_result, m_ranks, m_rankCount);
+    m_callback(m_result, m_ranks);
 }
 
 //============================================================================
@@ -4169,20 +4168,14 @@ bool ScoreGetRanksTrans::Recv (
 ) {
     const Auth2Cli_ScoreGetRanksReply & reply = *(const Auth2Cli_ScoreGetRanksReply *) msg;
 
+    m_ranks.resize(reply.rankCount);
     if (reply.rankCount > 0) {
-        m_rankCount = reply.rankCount;
-        m_ranks     = new NetGameRank[m_rankCount];
-
         uint8_t*       bufferPos = const_cast<uint8_t*>(reply.buffer);
         unsigned    bufferLength = reply.byteCount;
 
-        for (unsigned i = 0; i < m_rankCount; ++i) {
-            bufferLength -= m_ranks[i].Read(bufferPos, bufferLength, &bufferPos);
+        for (NetGameRank& rank : m_ranks) {
+            bufferLength -= rank.Read(bufferPos, bufferLength, &bufferPos);
         }
-    }
-    else {
-        m_rankCount = 0;
-        m_ranks     = nullptr;
     }
 
     m_result        = reply.result;
