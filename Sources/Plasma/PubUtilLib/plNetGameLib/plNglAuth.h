@@ -606,8 +606,7 @@ void NetCliAuthScoreSetPoints(
 struct NetGameRank;
 using FNetCliAuthGetRanksCallback = std::function<void(
     ENetError           result,
-    const NetGameRank   ranks[],
-    unsigned            rankCount
+    const std::vector<NetGameRank>& ranks
 )>;
 
 void NetCliAuthScoreGetRankList(
