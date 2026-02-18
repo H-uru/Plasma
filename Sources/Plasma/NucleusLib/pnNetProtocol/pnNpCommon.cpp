@@ -42,9 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnNpCommon.h"
 
-#include "pnUUID/pnUUID.h"
+#include "hsEndian.h"
 
-#include <string>
+#include "pnUUID/pnUUID.h"
 
 namespace pnNpCommon {
 
@@ -69,34 +69,32 @@ const unsigned kNumBlobFields   = 4;
 template <typename T>
 inline void IReadValue (T * value, uint8_t ** buffer, unsigned * bufsz) {
     ASSERT(*bufsz >= sizeof(T));
-    *value = *(T *)*buffer;
+    T leValue;
+    memcpy(&leValue, *buffer, sizeof(T));
+    *value = hsToLE(leValue);
     *buffer += sizeof(T);
     *bufsz -= sizeof(T);
 }
 
 //============================================================================
-template <typename T>
-inline void IReadArray (T ** buf, unsigned * elems, uint8_t ** buffer, unsigned * bufsz) {
+inline void IReadUTF16String(ST::string* string, uint8_t** buffer, unsigned* bufsz)
+{
     uint32_t bytes;
     IReadValue(&bytes, buffer, bufsz);
-    ASSERT(bytes % sizeof(T) == 0);
-    *elems = bytes / sizeof(T);
-    T * src = (T *)*buffer;
-    free(*buf);
-    *buf = (T *)malloc(bytes);
-    memcpy(*buf, src, bytes);
+    ASSERT(bytes % sizeof(char16_t) == 0);
+
+    // Check for and ignore the explicit string terminator in the data.
+    if (bytes >= sizeof(char16_t)) {
+        ASSERT((*buffer)[bytes-2] == 0 && (*buffer)[bytes-1] == 0);
+        size_t char16Count = bytes / sizeof(char16_t) - 1;
+        *string = hsSTStringFromUTF16LE(*buffer, char16Count);
+    } else {
+        ASSERT(false);
+        string->clear();
+    }
+
     *buffer += bytes;
     *bufsz -= bytes;
-}
-
-//============================================================================
-template <typename T>
-inline void IReadString (T ** buf, uint8_t ** buffer, unsigned * bufsz) {
-    unsigned elems;
-    IReadArray(buf, &elems, buffer, bufsz);
-    // ensure the string is null-terminated
-    if (elems)
-        (*buf)[elems-1] = 0;
 }
 
 //============================================================================
@@ -106,25 +104,23 @@ inline void IWriteValue (const T & value, std::vector<uint8_t> * buffer) {
                   "IWriteValue can only be used on trivially copyable types");
     const size_t endPos = buffer->size();
     buffer->resize(endPos + sizeof(T));
-    memcpy(buffer->data() + endPos, &value, sizeof(T));
+    T leValue = hsToLE(value);
+    memcpy(buffer->data() + endPos, &leValue, sizeof(T));
 }
 
 //============================================================================
-template <typename T>
-inline void IWriteArray (const T buf[], unsigned elems, std::vector<uint8_t> * buffer) {
-    static_assert(std::is_trivially_copyable_v<T>,
-                  "IWriteArray can only be used on trivially copyable types");
-    unsigned bytes = elems * sizeof(T);
+inline void IWriteUTF16String(const ST::string& str, std::vector<uint8_t>* buffer)
+{
+    std::vector<uint8_t> strBuf = hsSTStringToUTF16LE(str);
+    // Add string terminator
+    strBuf.emplace_back(0);
+    strBuf.emplace_back(0);
+    uint32_t bytes = strBuf.size();
     IWriteValue(bytes, buffer);
-    const size_t endPos = buffer->size();
-    buffer->resize(endPos + bytes);
-    memcpy(buffer->data() + endPos, buf, bytes);
-}
 
-//============================================================================
-template <typename T>
-inline void IWriteString (const T str[], std::vector<uint8_t> * buffer) {
-    IWriteArray(str, std::char_traits<T>::length(str) + 1, buffer);
+    size_t endPos = buffer->size();
+    buffer->resize(endPos + bytes);
+    memcpy(buffer->data() + endPos, strBuf.data(), bytes);
 }
 
 
@@ -143,17 +139,12 @@ unsigned NetGameScore::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** 
     uint8_t * buffer = const_cast<uint8_t *>(inbuffer);
     uint8_t * start = buffer;
 
-    char16_t* tempstr = nullptr;
-
     IReadValue(&scoreId, &buffer, &bufsz);
     IReadValue(&ownerId, &buffer, &bufsz);
     IReadValue(&createdTime, &buffer, &bufsz);
     IReadValue(&gameType, &buffer, &bufsz);
     IReadValue(&value, &buffer, &bufsz);
-    IReadString(&tempstr, &buffer, &bufsz);
-
-    gameName = ST::string::from_utf16(tempstr);
-    free(tempstr);
+    IReadUTF16String(&gameName, &buffer, &bufsz);
 
     if (end)
         *end = buffer;
@@ -171,7 +162,7 @@ unsigned NetGameScore::Write(std::vector<uint8_t> * buffer) const {
     IWriteValue(createdTime, buffer);
     IWriteValue(gameType, buffer);
     IWriteValue(value, buffer);
-    IWriteString(gameName.to_wchar().data(), buffer);
+    IWriteUTF16String(gameName, buffer);
 
     return buffer->size() - pos;
 }
@@ -188,14 +179,9 @@ unsigned NetGameRank::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** e
     uint8_t * buffer = const_cast<uint8_t *>(inbuffer);
     uint8_t * start = buffer;
 
-    char16_t* tempstr = nullptr;
-
     IReadValue(&rank, &buffer, &bufsz);
     IReadValue(&score, &buffer, &bufsz);
-    IReadString(&tempstr, &buffer, &bufsz);
-
-    name = ST::string::from_utf16(tempstr);
-    free(tempstr);
+    IReadUTF16String(&name, &buffer, &bufsz);
 
     if (end)
         *end = buffer;
@@ -210,7 +196,7 @@ unsigned NetGameRank::Write(std::vector<uint8_t> * buffer) const {
 
     IWriteValue(rank, buffer);
     IWriteValue(score, buffer);
-    IWriteString(name.to_wchar().data(), buffer);
+    IWriteUTF16String(name, buffer);
 
     return buffer->size() - pos;
 }
@@ -369,8 +355,9 @@ inline bool IRead(const uint8_t*& buf, size_t& bufsz, T& dest)
     if (bufsz < sizeof(T)) {
         return false;
     }
-    const T* ptr = reinterpret_cast<const T*>(buf);
-    dest = *ptr;
+    T leValue;
+    memcpy(&leValue, buf, sizeof(T));
+    dest = hsToLE(leValue);
     buf += sizeof(T);
     bufsz -= sizeof(T);
     return true;
@@ -391,12 +378,21 @@ inline bool IRead<ST::string>(const uint8_t*& buf, size_t& bufsz, ST::string& de
     }
     uint32_t nChars = (size / sizeof(char16_t)) - 1;
 
-    ST::utf16_buffer str;
-    str.allocate(nChars);
-    memcpy(str.data(), buf, nChars * sizeof(char16_t));
-    dest = ST::string::from_utf16(str);
+    dest = hsSTStringFromUTF16LE(buf, nChars);
     buf += size;
     bufsz -= size;
+    return true;
+}
+
+template<>
+inline bool IRead<plUUID>(const uint8_t*& buf, size_t& bufsz, plUUID& dest)
+{
+    if (bufsz < sizeof(dest.fData)) {
+        return false;
+    }
+    memcpy(dest.fData, buf, sizeof(dest.fData));
+    buf += sizeof(dest.fData);
+    bufsz -= sizeof(dest.fData);
     return true;
 }
 
@@ -468,19 +464,31 @@ inline void IWrite(std::vector<uint8_t>* buffer, const T& value)
                   "IWrite can only be used on trivially copyable types");
     const size_t oldSize = buffer->size();
     buffer->resize(oldSize + sizeof(T));
-    memcpy(buffer->data() + oldSize, &value, sizeof(T));
+    T leValue = hsToLE(value);
+    memcpy(buffer->data() + oldSize, &leValue, sizeof(T));
 }
 
 template<>
 inline void IWrite<ST::string>(std::vector<uint8_t>* buffer, const ST::string& value)
 {
-    ST::utf16_buffer utf16 = value.to_utf16();
-    uint32_t strsz = (utf16.size() + 1) * sizeof(char16_t);
+    std::vector<uint8_t> utf16 = hsSTStringToUTF16LE(value);
+    // Add string terminator
+    utf16.emplace_back(0);
+    utf16.emplace_back(0);
+    uint32_t strsz = utf16.size();
     IWrite(buffer, strsz);
 
     const size_t oldSize = buffer->size();
     buffer->resize(oldSize + strsz);
     memcpy(buffer->data() + oldSize, utf16.data(), strsz);
+}
+
+template<>
+inline void IWrite<plUUID>(std::vector<uint8_t>* buffer, const plUUID& value)
+{
+    const size_t oldSize = buffer->size();
+    buffer->resize(oldSize + sizeof(value.fData));
+    memcpy(buffer->data() + oldSize, &value.fData, sizeof(value.fData));
 }
 
 template<>
