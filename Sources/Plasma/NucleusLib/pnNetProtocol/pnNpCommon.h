@@ -190,7 +190,7 @@ struct NetGameScore {
 struct NetGameRank {
     unsigned    rank;
     int         score;
-    char16_t    name[kMaxPlayerNameLength];
+    ST::string  name;
 
     unsigned Read (const uint8_t inbuffer[], unsigned bufsz, uint8_t** end = nullptr); // returns number of bytes read
     unsigned Write (std::vector<uint8_t> * buffer) const;                             // returns number of bytes written
