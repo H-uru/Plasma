@@ -176,16 +176,6 @@ unsigned NetGameScore::Write(std::vector<uint8_t> * buffer) const {
     return buffer->size() - pos;
 }
 
-//============================================================================
-void NetGameScore::CopyFrom(const NetGameScore & score) {
-    scoreId     = score.scoreId;
-    ownerId     = score.ownerId;
-    createdTime = score.createdTime;
-    gameType    = score.gameType;
-    value       = score.value;
-    gameName    = score.gameName;
-}
-
 /*****************************************************************************
 *
 *   NetGameRank
@@ -223,13 +213,6 @@ unsigned NetGameRank::Write(std::vector<uint8_t> * buffer) const {
     IWriteString(name.to_wchar().data(), buffer);
 
     return buffer->size() - pos;
-}
-
-//============================================================================
-void NetGameRank::CopyFrom(const NetGameRank & fromRank) {
-    rank        = fromRank.rank;
-    score       = fromRank.score;
-    name        = fromRank.name;
 }
 
 /*****************************************************************************
