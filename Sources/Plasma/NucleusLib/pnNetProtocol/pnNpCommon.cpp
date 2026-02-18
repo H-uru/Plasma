@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnNpCommon.h"
 
-#include "pnUtils/pnUtStr.h"
 #include "pnUUID/pnUUID.h"
 
 #include <string>
@@ -205,7 +204,7 @@ unsigned NetGameRank::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** e
     IReadValue(&score, &buffer, &bufsz);
     IReadString(&tempstr, &buffer, &bufsz);
 
-    StrCopy(name, tempstr, std::size(name));
+    name = ST::string::from_utf16(tempstr);
     free(tempstr);
 
     if (end)
@@ -221,7 +220,7 @@ unsigned NetGameRank::Write(std::vector<uint8_t> * buffer) const {
 
     IWriteValue(rank, buffer);
     IWriteValue(score, buffer);
-    IWriteString(name, buffer);
+    IWriteString(name.to_wchar().data(), buffer);
 
     return buffer->size() - pos;
 }
@@ -230,7 +229,7 @@ unsigned NetGameRank::Write(std::vector<uint8_t> * buffer) const {
 void NetGameRank::CopyFrom(const NetGameRank & fromRank) {
     rank        = fromRank.rank;
     score       = fromRank.score;
-    StrCopy(name, fromRank.name, std::size(name));
+    name        = fromRank.name;
 }
 
 /*****************************************************************************

@@ -25,8 +25,6 @@ target_link_libraries(
         pnNetBase
         pnNetCli
         pnUUID
-    PRIVATE
-        pnUtils
 )
 
 source_group("Header Files" FILES ${pnNetProtocol_HEADERS})
