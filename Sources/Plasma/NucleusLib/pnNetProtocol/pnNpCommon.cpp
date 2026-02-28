@@ -373,6 +373,8 @@ inline bool IRead<ST::string>(const uint8_t*& buf, size_t& bufsz, ST::string& de
         || size % sizeof(char16_t) != 0
         // String must contain at least one character (the terminator)
         || size < sizeof(char16_t)
+        // Last 2 bytes (the terminator) must be 0
+        || buf[size-2] != 0 || buf[size-1] != 0
     ) {
         return false;
     }
