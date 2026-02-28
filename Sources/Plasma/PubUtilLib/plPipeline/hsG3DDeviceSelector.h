@@ -144,7 +144,7 @@ protected:
     uint32_t        fFlags;
 
     uint32_t        fG3DDeviceType;
-    uint32_t        fG3DHALorHEL;
+    uint32_t        fG3DSubDeviceType;
 
 
     ST::string      fG3DDriverDesc;
@@ -183,7 +183,8 @@ public:
 
     uint32_t  GetG3DDeviceType() const { return fG3DDeviceType; }
     ST::string GetG3DDeviceTypeName() const;
-    uint32_t  GetG3DHALorHEL() const { return fG3DHALorHEL; }
+    uint32_t  GetG3DSubDeviceType() const { return fG3DSubDeviceType; }
+    uint32_t  GetG3DHALorHEL() const { return fG3DSubDeviceType; }
 
     uint32_t GetMemoryBytes() const { return fMemoryBytes; }
 
@@ -193,7 +194,8 @@ public:
     ST::string GetDeviceDesc() const { return fG3DDeviceDesc; }
 
     void SetG3DDeviceType(uint32_t t) { fG3DDeviceType = t; }
-    void SetG3DHALorHEL(uint32_t h) { fG3DHALorHEL = h; }
+    void SetG3DSubDeviceType(uint32_t t) { fG3DSubDeviceType = t; }
+    void SetG3DHALorHEL(uint32_t h) { fG3DSubDeviceType = h; }
     void SetMemoryBytes(uint32_t b) { fMemoryBytes = b; }
 
     void SetDriverDesc(const ST::string& s) { fG3DDriverDesc = s; }
@@ -289,6 +291,15 @@ public:
         kHHD3DRefDev,
 
         kNumHHTypes
+    };
+    enum {
+        kGLProviderUnknown  = 0,
+        kGLProviderEGL,
+        kGLProviderWGL,
+        kGLProviderCGL,
+        kGLProviderGLX,
+
+        kNumGLProviders
     };
     enum {
         kCapsNone           = 0,

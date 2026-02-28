@@ -47,12 +47,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plGLPipeline.h"
 
-static bool fillDeviceRecord(hsG3DDeviceRecord& devRec, const ST::string& driverName, hsDisplayHndl display)
+static bool fillDeviceRecord(hsG3DDeviceRecord& devRec, const ST::string& driverName, uint32_t provider, hsDisplayHndl display)
 {
     if (epoxy_gl_version() < 33)
         return false;
 
     devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeOpenGL);
+    devRec.SetG3DSubDeviceType(provider);
     devRec.SetDriverName(driverName);
 
     const char* renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
@@ -85,6 +86,8 @@ static bool fillDeviceRecord(hsG3DDeviceRecord& devRec, const ST::string& driver
             hsG3DDeviceSelector::kDefaultDepth
         );
     }
+
+    devRec.SetFudgeFactors(hsG3DDeviceRecord::kDefaultChipset);
 
     return true;
 }
@@ -160,7 +163,7 @@ void plEGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displ
             break;
 
         hsG3DDeviceRecord devRec;
-        if (fillDeviceRecord(devRec, ST_LITERAL("EGL OpenGL API"), displayHndl))
+        if (fillDeviceRecord(devRec, ST_LITERAL("EGL OpenGL API"), hsG3DDeviceSelector::kGLProviderEGL, displayHndl))
             records.emplace_back(devRec);
     } while (0);
 
@@ -239,7 +242,7 @@ void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displ
             break;
 
         hsG3DDeviceRecord devRec;
-        if (fillDeviceRecord(devRec, ST_LITERAL("opengl32.dll"), displayHndl))
+        if (fillDeviceRecord(devRec, ST_LITERAL("opengl32.dll"), hsG3DDeviceSelector::kGLProviderWGL, displayHndl))
             records.emplace_back(devRec);
     } while (0);
 
@@ -317,7 +320,7 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records, CGDirectDisplayID d
             break;
 
         hsG3DDeviceRecord devRec;
-        if (fillDeviceRecord(devRec, ST_LITERAL("OpenGL.framework"), displayHndl))
+        if (fillDeviceRecord(devRec, ST_LITERAL("OpenGL.framework"), hsG3DDeviceSelector::kGLProviderCGL, displayHndl))
             records.emplace_back(std::move(devRec));
     } while (0);
 

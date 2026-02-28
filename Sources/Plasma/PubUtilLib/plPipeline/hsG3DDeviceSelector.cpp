@@ -94,7 +94,7 @@ hsG3DDeviceRecord::hsG3DDeviceRecord()
       fG3DDeviceType(hsG3DDeviceSelector::kDevTypeUnknown),
       fLayersAtOnce(0),
       fMemoryBytes(0),
-      fG3DHALorHEL(hsG3DDeviceSelector::kHHTypeUnknown),
+      fG3DSubDeviceType(0),
       fZBiasRating(0),
       fLODBiasRating(0),
       fFogExpApproxStart(0.0),
@@ -115,7 +115,7 @@ hsG3DDeviceRecord::~hsG3DDeviceRecord()
 hsG3DDeviceRecord::hsG3DDeviceRecord(const hsG3DDeviceRecord& src)
     : fFlags(kNone),
       fG3DDeviceType(hsG3DDeviceSelector::kDevTypeUnknown),
-      fG3DHALorHEL(hsG3DDeviceSelector::kHHTypeUnknown),
+      fG3DSubDeviceType(0),
       fZBiasRating(src.fZBiasRating),
       fLODBiasRating(0),
       fFogExpApproxStart(src.fFogExpApproxStart),
@@ -132,7 +132,7 @@ hsG3DDeviceRecord& hsG3DDeviceRecord::operator=(const hsG3DDeviceRecord& src)
     fFlags = src.fFlags;
 
     SetG3DDeviceType(src.GetG3DDeviceType());
-    SetG3DHALorHEL(src.GetG3DHALorHEL());
+    SetG3DSubDeviceType(src.GetG3DSubDeviceType());
 
     SetDriverDesc(src.GetDriverDesc());
     SetDriverName(src.GetDriverName());
