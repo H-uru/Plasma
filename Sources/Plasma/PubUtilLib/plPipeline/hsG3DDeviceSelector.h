@@ -58,25 +58,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <functional>
 #include <list>
 #include <vector>
+#include <string_theory/string>
 
 #include "hsBitVector.h"
 #include "hsRefCnt.h"
-
-#include "hsWinRef.h"
-
-#include <string_theory/string>
-
-#ifdef HS_BUILD_FOR_WIN32
-#define __MSC__
-#define DYNAHEADER 1
-#endif // HS_BUILD_FOR_WIN32
-
-
-class hsStream;
-struct D3DEnum_RendererInfo;
-struct D3DEnum_DisplayInfo;
-struct D3DEnum_RendererInfo;
-struct D3DEnum_DisplayInfo;
 
 class hsG3DDeviceMode
 {
@@ -142,6 +127,16 @@ public:
         kFogExp = 0,
         kFogExp2,
         kNumFogTypes
+    };
+
+    enum {
+        kDefaultChipset = 0x00,
+        kIntelI810Chipset,
+        kS3GenericChipset,
+        kATIRadeonChipset,
+        kATIR8X00Chipset,
+        kMatroxParhelia,
+        kNVidiaGeForceFXChipset
     };
 
 protected:
@@ -250,6 +245,12 @@ public:
     void ClearModes();
     void Clear();
     void RemoveDiscarded();
+
+    /**
+     * Given a chipset ID, looks the values up in the Chipset Fudgefactor Table
+     * and sets the appropriate values.
+     */
+    void SetFudgeFactors(uint8_t chipsetID);
 };
 
 class hsG3DDeviceModeRecord
@@ -336,19 +337,6 @@ protected:
 
     void IClear();
     void IRemoveDiscarded();
-
-    void ITryDirect3DTnLDevice(D3DEnum_RendererInfo* devInfo, hsG3DDeviceRecord& srcDevRec);
-    void ITryDirect3DTnLDriver(D3DEnum_DisplayInfo* drivInfo);
-    void ITryDirect3DTnL(hsWinRef winRef);
-
-    void IFudgeDirectXDevice( hsG3DDeviceRecord &record,
-                                D3DEnum_DisplayInfo *driverInfo, D3DEnum_RendererInfo *deviceInfo );
-    uint32_t  IAdjustDirectXMemory( uint32_t cardMem );
-
-    bool      IGetD3DCardInfo( hsG3DDeviceRecord &record, void *driverInfo, void *deviceInfo,
-                               uint32_t *vendorID, uint32_t *deviceID, ST::string& driverString, ST::string& descString);
-
-    void    ISetFudgeFactors( uint8_t chipsetID, hsG3DDeviceRecord &record );
 
 public:
     static void AddDeviceEnumerator(const DeviceEnumerator& de) { Enumerators().emplace_back(de); }

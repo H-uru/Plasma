@@ -518,6 +518,8 @@ bool plRenderTriListFunc::RenderPrims() const
 
 //// Constructor & Destructor /////////////////////////////////////////////////
 
+plDXEnumerate plDXPipeline::enumerator;
+
 uint32_t plDXPipeline::fTexUsed(0);
 uint32_t plDXPipeline::fTexManaged(0);
 uint32_t plDXPipeline::fVtxUsed(0);

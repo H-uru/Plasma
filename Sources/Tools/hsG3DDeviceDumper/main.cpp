@@ -63,6 +63,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include "pfDisplayHelpers/plWaylandDisplayHelper.h"
 #endif
 
+#ifdef PLASMA_PIPELINE_DX
+#   include "pfDXPipeline/plDXEnumerate.h"
+static plDXEnumerate dxEnum;
+#endif
+
 #ifdef PLASMA_PIPELINE_GL
 #   include "pfGLPipeline/plGLPipeline.h"
 static plGLEnumerate glEnum;
