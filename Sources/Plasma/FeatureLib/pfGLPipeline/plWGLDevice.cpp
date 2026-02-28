@@ -130,7 +130,7 @@ bool plWGLDevice::Enumerate(hsG3DDeviceRecord& record)
 }
 
 
-plWGLDevice* plWGLDevice::TryInit(hsWindowHndl window, hsWindowHndl device, ST::string& error)
+plWGLDevice* plWGLDevice::TryInit(hsWindowHndl window, hsDisplayHndl device, ST::string& error)
 {
     HDC dc = static_cast<HDC>((HANDLE)device);
     HGLRC ctx = nullptr;
@@ -180,7 +180,7 @@ plWGLDevice* plWGLDevice::TryInit(hsWindowHndl window, hsWindowHndl device, ST::
 }
 
 
-plWGLDevice::plWGLDevice(hsWindowHndl window, hsWindowHndl device, HGLRC context)
+plWGLDevice::plWGLDevice(hsWindowHndl window, hsDisplayHndl device, HGLRC context)
     : plGLDeviceImpl(window, device), fContext(context)
 { }
 
@@ -195,7 +195,7 @@ bool plWGLDevice::BeginRender(ST::string& error)
 {
     // Best practice, apparently, is to get and release the DC every time we need it.
     // A DC is only valid on one thread at a time.
-    fDevice = static_cast<hsWindowHndl>((HANDLE)GetDC(fWindow));
+    fDevice = static_cast<hsDisplayHndl>((HANDLE)GetDC(fWindow));
 
     return true;
 }

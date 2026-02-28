@@ -57,11 +57,11 @@ protected:
     EGLContext fContext;
     EGLSurface fSurface;
 
-    plEGLDevice(hsWindowHndl window, hsWindowHndl device, EGLDisplay display, EGLContext context, EGLSurface surface);
+    plEGLDevice(hsWindowHndl window, hsDisplayHndl device, EGLDisplay display, EGLContext context, EGLSurface surface);
 
 public:
     static bool Enumerate(hsG3DDeviceRecord& record);
-    static plEGLDevice* TryInit(hsWindowHndl window, hsWindowHndl device, ST::string& error);
+    static plEGLDevice* TryInit(hsWindowHndl window, hsDisplayHndl device, ST::string& error);
 
     void Shutdown() override;
     bool BeginRender(ST::string& error) override;

@@ -55,11 +55,11 @@ class plWGLDevice : public plGLDeviceImpl
 protected:
     HGLRC fContext;
 
-    plWGLDevice(hsWindowHndl window, hsWindowHndl device, HGLRC context);
+    plWGLDevice(hsWindowHndl window, hsDisplayHndl device, HGLRC context);
 
 public:
     static bool Enumerate(hsG3DDeviceRecord& record);
-    static plWGLDevice* TryInit(hsWindowHndl window, hsWindowHndl device, ST::string& error);
+    static plWGLDevice* TryInit(hsWindowHndl window, hsDisplayHndl device, ST::string& error);
 
     void Shutdown() override;
     bool BeginRender(ST::string& error) override;

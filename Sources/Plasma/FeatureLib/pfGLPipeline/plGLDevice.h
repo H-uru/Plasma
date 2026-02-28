@@ -58,9 +58,9 @@ class plGLDeviceImpl
 {
 protected:
     hsWindowHndl    fWindow;
-    hsWindowHndl    fDevice;
+    hsDisplayHndl    fDevice;
 
-    plGLDeviceImpl(hsWindowHndl window, hsWindowHndl device)
+    plGLDeviceImpl(hsWindowHndl window, hsDisplayHndl device)
         : fWindow(window), fDevice(device) {};
 
 public:
@@ -83,7 +83,7 @@ protected:
     plGLPipeline*       fPipeline;
     plGLDeviceImpl*     fImpl;
     hsWindowHndl        fWindow;
-    hsWindowHndl        fDevice;
+    hsDisplayHndl       fDevice;
     size_t              fActiveThread;
     GLuint              fCurrentProgram;
     GLfloat             fMatrixL2W[16];
@@ -95,7 +95,7 @@ protected:
 public:
     plGLDevice();
 
-    void Setup(plGLPipeline* pipe, hsWindowHndl window, hsWindowHndl device);
+    void Setup(plGLPipeline* pipe, hsWindowHndl window, hsDisplayHndl device);
     void Shutdown();
 
     /**

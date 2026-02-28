@@ -54,11 +54,11 @@ class plCGLDevice : public plGLDeviceImpl
 protected:
     CGLContextObj fContext;
 
-    plCGLDevice(hsWindowHndl window, hsWindowHndl device, CGLContextObj context);
+    plCGLDevice(hsWindowHndl window, hsDisplayHndl device, CGLContextObj context);
 
 public:
     static bool Enumerate(hsG3DDeviceRecord& record);
-    static plCGLDevice* TryInit(hsWindowHndl window, hsWindowHndl device, ST::string& error);
+    static plCGLDevice* TryInit(hsWindowHndl window, hsDisplayHndl device, ST::string& error);
 
     void Shutdown() override;
     bool BeginRender(ST::string& error) override;

@@ -127,7 +127,7 @@ bool plEGLDevice::Enumerate(hsG3DDeviceRecord& record)
 }
 
 
-plEGLDevice* plEGLDevice::TryInit(hsWindowHndl window, hsWindowHndl device, ST::string& error)
+plEGLDevice* plEGLDevice::TryInit(hsWindowHndl window, hsDisplayHndl device, ST::string& error)
 {
     EGLDisplay display = EGL_NO_DISPLAY;
     EGLContext context = EGL_NO_CONTEXT;
@@ -212,7 +212,7 @@ plEGLDevice* plEGLDevice::TryInit(hsWindowHndl window, hsWindowHndl device, ST::
 }
 
 
-plEGLDevice::plEGLDevice(hsWindowHndl window, hsWindowHndl device, EGLDisplay display, EGLContext context, EGLSurface surface)
+plEGLDevice::plEGLDevice(hsWindowHndl window, hsDisplayHndl device, EGLDisplay display, EGLContext context, EGLSurface surface)
     : plGLDeviceImpl(window, device), fDisplay(display), fContext(context), fSurface(surface)
 { }
 

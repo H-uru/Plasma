@@ -112,7 +112,7 @@ bool plCGLDevice::Enumerate(hsG3DDeviceRecord& record)
 }
 
 
-plCGLDevice* plCGLDevice::TryInit(hsWindowHndl window, hsWindowHndl device, ST::string& error)
+plCGLDevice* plCGLDevice::TryInit(hsWindowHndl window, hsDisplayHndl device, ST::string& error)
 {
     IGNORE_WARNINGS_BEGIN("deprecated-declarations")
 
@@ -168,7 +168,7 @@ plCGLDevice* plCGLDevice::TryInit(hsWindowHndl window, hsWindowHndl device, ST::
 }
 
 
-plCGLDevice::plCGLDevice(hsWindowHndl window, hsWindowHndl device, CGLContextObj context)
+plCGLDevice::plCGLDevice(hsWindowHndl window, hsDisplayHndl device, CGLContextObj context)
     : plGLDeviceImpl(window, device), fContext(context)
 { }
 
