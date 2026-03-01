@@ -47,7 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plGLPipeline.h"
 
-static bool fillDeviceRecord(hsG3DDeviceRecord& devRec, const ST::string& driverName, uint32_t provider, hsDisplayHndl display)
+static bool fillDeviceRecord(hsG3DDeviceRecord& devRec, const ST::string& driverName,
+        uint32_t provider, hsDisplayHndl display)
 {
     if (epoxy_gl_version() < 33)
         return false;
@@ -163,7 +164,8 @@ void plEGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displ
             break;
 
         hsG3DDeviceRecord devRec;
-        if (fillDeviceRecord(devRec, ST_LITERAL("EGL OpenGL API"), hsG3DDeviceSelector::kGLProviderEGL, displayHndl))
+        if (fillDeviceRecord(devRec, ST_LITERAL("EGL OpenGL API"),
+                    hsG3DDeviceSelector::kGLProviderEGL, displayHndl))
             records.emplace_back(devRec);
     } while (0);
 
@@ -242,7 +244,8 @@ void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displ
             break;
 
         hsG3DDeviceRecord devRec;
-        if (fillDeviceRecord(devRec, ST_LITERAL("opengl32.dll"), hsG3DDeviceSelector::kGLProviderWGL, displayHndl))
+        if (fillDeviceRecord(devRec, ST_LITERAL("opengl32.dll"),
+                    hsG3DDeviceSelector::kGLProviderWGL, displayHndl))
             records.emplace_back(devRec);
     } while (0);
 
@@ -320,7 +323,8 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records, CGDirectDisplayID d
             break;
 
         hsG3DDeviceRecord devRec;
-        if (fillDeviceRecord(devRec, ST_LITERAL("OpenGL.framework"), hsG3DDeviceSelector::kGLProviderCGL, displayHndl))
+        if (fillDeviceRecord(devRec, ST_LITERAL("OpenGL.framework"),
+                    hsG3DDeviceSelector::kGLProviderCGL, displayHndl))
             records.emplace_back(std::move(devRec));
     } while (0);
 
@@ -336,6 +340,75 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records, CGDirectDisplayID d
 }
 #endif // HS_BUILD_FOR_MACOS
 #pragma endregion CGL_Enumerate
+
+#pragma region GLX_Enumerate
+#ifdef USE_X11
+#include "hsOptionalCall.h"
+#include "pfDisplayHelpers/plX11DisplayHelper.h"
+
+#include <epoxy/glx.h>
+#include <X11/Xlib.h>
+
+hsOptionalCallDecl("libX11", XCloseDisplay);
+hsOptionalCallDecl("libX11", XFree);
+hsOptionalCallDecl("libX11", XOpenDisplay);
+
+void plGLXEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displayHndl = nullptr)
+{
+    Display* display = reinterpret_cast<Display*>(displayHndl);
+    XVisualInfo* visinfo = nullptr;
+    GLXContext context = nullptr;
+
+    if (display == nullptr)
+        display = *__XOpenDisplay(nullptr);
+
+    do {
+        if (!display)
+            break;
+
+        int attribs[] = {
+            GLX_RGBA,
+            GLX_DOUBLEBUFFER,
+            GLX_RED_SIZE, 1,
+            GLX_GREEN_SIZE, 1,
+            GLX_BLUE_SIZE, 1,
+            GLX_DEPTH_SIZE, 1,
+            None
+        };
+
+        int screen = DefaultScreen(display);
+        visinfo = glXChooseVisual(display, screen, attribs);
+        if (!visinfo)
+            break;
+
+        context = glXCreateContext(display, visinfo, False, True);
+        if (!context)
+            break;
+
+        if (glXMakeCurrent(display, None, context) != True)
+            break;
+
+        hsG3DDeviceRecord devRec;
+        if (fillDeviceRecord(devRec, ST_LITERAL("libGL (GLX)"),
+                    hsG3DDeviceSelector::kGLProviderGLX, displayHndl))
+            records.emplace_back(std::move(devRec));
+    } while (0);
+
+    if (context) {
+        glXMakeCurrent(display, None, nullptr);
+        glXDestroyContext(display, context);
+    }
+
+    if (visinfo)
+        __XFree(visinfo);
+
+    // Only close the display if we opened it
+    if (display && displayHndl == nullptr)
+        __XCloseDisplay(display);
+}
+
+#endif // USE_X11
+#pragma endregion GLX_Enumerate
 
 void plGLEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl mainDisplay)
 {
@@ -359,5 +432,13 @@ void plGLEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplay
 
 #ifdef HS_BUILD_FOR_MACOS
     plCGLEnumerate(records, mainDisplay);
+#endif
+
+#if defined(USE_X11)
+    // I hate this, but things go poorly if you try to use a Wayland display to
+    // set up a GLX context, so we need to know if we're running for X11 or not
+    plDisplayHelper* displayHelper = plDisplayHelper::GetInstance();
+    if (displayHelper && typeid(*displayHelper) == typeid(plX11DisplayHelper))
+        plGLXEnumerate(records, mainDisplay);
 #endif
 }
