@@ -53,7 +53,7 @@ public:
 
     hsDisplayHndl CurrentDisplay() const { return fCurrentDisplay; }
 
-    plDisplayMode DesktopDisplayMode() override { return fDesktopDisplayMode; };
+    const plDisplayMode& DesktopDisplayMode() const override { return fDesktopDisplayMode; };
     std::vector<plDisplayMode> GetSupportedDisplayModes(
             hsDisplayHndl display, int ColorDepth = 32) const override;
     hsDisplayHndl DefaultDisplay() const override;

@@ -112,7 +112,7 @@ class plDisplayHelper
 public:
     virtual ~plDisplayHelper() {}
 
-    virtual plDisplayMode              DesktopDisplayMode() = 0;
+    virtual const plDisplayMode&       DesktopDisplayMode() const = 0;
     virtual std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const = 0;
     virtual hsDisplayHndl DefaultDisplay() const = 0;
 
