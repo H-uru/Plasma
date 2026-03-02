@@ -285,6 +285,14 @@ void    pfGameGUIMgr::LoadDialog(const ST::string& name, plKey recvrKey, const S
         }
     }
 
+    plLocation pageLoc = plKeyFinder::Instance().FindLocation(ageName, name);
+    if (!pageLoc.IsValid()) {
+        ST::string msg = ST::format("Could not find page for dialog {} {}", name, ageName);
+        plStatusLog::AddLineS("plasmadbg.log", plStatusLog::kRed, msg);
+        hsAssert(false, msg.c_str());
+        return;
+    }
+
     plStatusLog::AddLineSF("plasmadbg.log", "Loading Dialog {} {} ... {}",
                            name, ageName, hsTimer::GetSeconds());
 
@@ -292,7 +300,7 @@ void    pfGameGUIMgr::LoadDialog(const ST::string& name, plKey recvrKey, const S
 
     plClientMsg *msg = new plClientMsg( plClientMsg::kLoadRoomHold );
     msg->AddReceiver( clientKey );
-    msg->AddRoomLoc(plKeyFinder::Instance().FindLocation(ageName, name));
+    msg->AddRoomLoc(pageLoc);
     msg->Send();
 }
 

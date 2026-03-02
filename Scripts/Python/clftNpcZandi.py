@@ -478,7 +478,7 @@ class clftNpcZandi(ptModifier):
                 if useSpeech == "1":
                     self.ZandiFace = "ZandiJC04aFace"
                 else:
-                    self.ZandiFace = "ZandiJC04bFace"
+                    self.ZandiFace = "ZandiJC04aFace" # Because ZandiJC04bFace is missing...
                 
             elif not self.CheckForJC(jcProgress, JC.Sign) and not PtIsDemoMode():
                 if self.LastSpeech != 7:

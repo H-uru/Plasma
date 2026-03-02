@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct PipelineParams;
 class plDisplayMode;
 class plFileName;
+class plLocation;
 class plPipeline;
 class plUUID;
 class pyAgeInfoStruct;
@@ -560,12 +561,13 @@ public:
     /////////////////////////////////////////////////////////////////////////////
     //
     //  Function   : Paging functions
-    //  PARAMETERS : nodeName  - name of the page to load
+    //  PARAMETERS : nodeLocs - the nodes to (un)load
+    //               netForce - whether to propagate the (un)load to all other players
     //  
-    //  PURPOSE    : page in, or out a paritcular node
+    //  PURPOSE    : page in or out one or more nodes
     //
-    static void PageInNodes(const std::vector<ST::string>& nodeNames, const ST::string& age, bool netForce);
-    static void PageOutNode(const ST::string& nodeName, bool netForce);
+    static void PageInNodes(const std::vector<plLocation>& nodeLocs, bool netForce);
+    static void PageOutNodes(const std::vector<plLocation>& nodeLocs, bool netForce);
 
     /////////////////////////////////////////////////////////////////////////////
     //

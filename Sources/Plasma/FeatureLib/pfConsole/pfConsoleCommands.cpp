@@ -3136,10 +3136,17 @@ PF_CONSOLE_CMD( Nav, PageInNode,    // Group name, Function name
                 "string roomName",          // Params
                 "Pages in a scene node." )  // Help string
 {
+    ST::string pageName = params[0];
+    plLocation pageLoc = plKeyFinder::Instance().FindLocation({}, pageName);
+    if (!pageLoc.IsValid()) {
+        PrintString(ST::format("Could not find any page named {}", pageName));
+        return;
+    }
+
     plSynchEnabler ps(false);   // disable dirty tracking while paging in
     plClientMsg* pMsg1 = new plClientMsg(plClientMsg::kLoadRoom);
     pMsg1->AddReceiver( plClient::GetInstance()->GetKey() );
-    pMsg1->AddRoomLoc(plKeyFinder::Instance().FindLocation({}, params[0]));
+    pMsg1->AddRoomLoc(pageLoc);
     plgDispatch::MsgSend(pMsg1);
 }
 
@@ -3150,10 +3157,17 @@ PF_CONSOLE_CMD( Nav, PageOutNode,   // Group name, Function name
                 "string roomName",          // Params
                 "pages out a scene node." ) // Help string
 {
+    ST::string pageName = params[0];
+    plLocation pageLoc = plKeyFinder::Instance().FindLocation({}, pageName);
+    if (!pageLoc.IsValid()) {
+        PrintString(ST::format("Could not find any page named {}", pageName));
+        return;
+    }
+
     plSynchEnabler ps(false);   // disable dirty tracking while paging out
     plClientMsg* pMsg1 = new plClientMsg(plClientMsg::kUnloadRoom);
     pMsg1->AddReceiver( plClient::GetInstance()->GetKey() );
-    pMsg1->AddRoomLoc(plKeyFinder::Instance().FindLocation({}, params[0]));
+    pMsg1->AddRoomLoc(pageLoc);
     plgDispatch::MsgSend(pMsg1);
 }
 
