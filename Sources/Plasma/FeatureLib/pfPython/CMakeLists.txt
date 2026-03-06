@@ -319,7 +319,7 @@ target_link_libraries(
         pfJournalBook
         pfLocalizationMgr
         pfMessage
-        Python3::Python
+        $<$<NOT:$<PLATFORM_ID:iOS>>:Python3::Python>
     INTERFACE
         pnFactory
 )
@@ -327,3 +327,15 @@ target_link_libraries(
 source_group("Source Files" FILES ${pfPython_SOURCES})
 source_group("Header Files" FILES ${pfPython_HEADERS})
 source_group("Glue Files" FILES ${pfPython_GLUE})
+
+if(CMAKE_SYSTEM_NAME MATCHES "iOS")
+    set(Python_LIBRARY "${CMAKE_SOURCE_DIR}/arm64-iphoneos/Python.framework")
+    target_link_libraries(pfPython PRIVATE ${Python_LIBRARY})
+    set_target_properties(plClient PROPERTIES
+  XCODE_EMBED_FRAMEWORKS ${Python_LIBRARY}
+  XCODE_EMBED_FRAMEWORKS_CODE_SIGN_ON_COPY ON)
+      
+    get_filename_component(PYTHON_PATH ${Python_LIBRARY} DIRECTORY)
+    target_include_directories(pfPython PRIVATE "${PYTHON_PATH}/Python.framework/Headers"
+)
+endif()
