@@ -252,10 +252,10 @@ void plNetClientMgr::ICreateStatusLog() const
 //
 // override for plLoggable
 //
-bool plNetClientMgr::Log(const ST::string& str) const
+void plNetClientMgr::Log(const ST::string& str) const
 {
     if (str.empty()) {
-        return true;
+        return;
     }
 
     // prepend raw time
@@ -269,10 +269,8 @@ bool plNetClientMgr::Log(const ST::string& str) const
     plNetObjectDebugger::GetInstance()->LogMsgIfMatch(buf2);
 
     if (fStatusLog) {
-        return fStatusLog->AddLine(buf2);
+        fStatusLog->AddLine(buf2);
     }
-
-    return true;
 }
 
 //

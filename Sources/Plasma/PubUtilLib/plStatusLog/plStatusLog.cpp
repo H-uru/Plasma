@@ -301,7 +301,7 @@ void    plStatusLog::IInit()
 
 }
 
-bool plStatusLog::IReOpen()
+void plStatusLog::IReOpen()
 {
     if (fFileHandle != nullptr)
     {
@@ -331,10 +331,12 @@ bool plStatusLog::IReOpen()
         if (fFlags & kAppendToLast)
         {
             fFileHandle = plFileSystem::Open(fileToOpen, "at");
+            hsAssert(fFileHandle != nullptr, ST::format("Failed to open log file {} for appending, errno = {}", fileToOpen.GetFileName(), errno).c_str());
         }
         else
         {
             fFileHandle = plFileSystem::Open(fileToOpen, "wt");
+            hsAssert(fFileHandle != nullptr, ST::format("Failed to open log file {} for writing, errno = {}", fileToOpen.GetFileName(), errno).c_str());
             // if we need to reopen lets just append
             fFlags |= kAppendToLast;
         }
@@ -344,8 +346,6 @@ bool plStatusLog::IReOpen()
         fSize = ftell( fFileHandle );
     else
         fSize = 0;
-
-    return fFileHandle != nullptr;
 }
 
 void    plStatusLog::IFini()
@@ -418,12 +418,12 @@ void    plStatusLog::ILink( plStatusLog **back )
 //// IAddLine ////////////////////////////////////////////////////////////////
 //  Actually add a stinking line.
 
-bool plStatusLog::IAddLine(const ST::string& line, uint32_t color)
+void plStatusLog::IAddLine(const ST::string& line, uint32_t color)
 {
     int     i;
 
     if(fLoggingOff && !fForceLog)
-        return true;
+        return;
 
     /// Scroll pointers up
     hsFILELock fileLock(fFileHandle);
@@ -442,19 +442,15 @@ bool plStatusLog::IAddLine(const ST::string& line, uint32_t color)
         fColors[i] = color;
     }
 
-    bool ret = IPrintLineToFile(line);
-
-    return ret;
+    IPrintLineToFile(line);
 }
 
 //// AddLine /////////////////////////////////////////////////////////////////
 
-bool plStatusLog::AddLine(uint32_t color, const ST::string& line)
+void plStatusLog::AddLine(uint32_t color, const ST::string& line)
 {
     if(fLoggingOff && !fForceLog)
-        return true;
-
-    bool ret = true;
+        return;
 
     /// Scan for carriage returns and feed each section into IAddLine()
     size_t startPos = 0;
@@ -462,7 +458,7 @@ bool plStatusLog::AddLine(uint32_t color, const ST::string& line)
     while (pos != -1)
     {
         // So if we got here, pos points to a carriage return...
-        ret &= IAddLine(line.substr(startPos, pos - startPos), color);
+        IAddLine(line.substr(startPos, pos - startPos), color);
         startPos = pos + 1;
         pos = line.find(startPos, '\n');
     }
@@ -470,10 +466,8 @@ bool plStatusLog::AddLine(uint32_t color, const ST::string& line)
     /// We might have some left over
     if (startPos < line.size())
     {
-        ret &= IAddLine(line.substr(startPos), color);
+        IAddLine(line.substr(startPos), color);
     }
-
-    return ret;
 }
 
 //// Clear ///////////////////////////////////////////////////////////////////
@@ -507,15 +501,13 @@ void    plStatusLog::Bounce( uint32_t flags)
 
 //// IPrintLineToFile ////////////////////////////////////////////////////////
 
-bool plStatusLog::IPrintLineToFile(const ST::string& line)
+void plStatusLog::IPrintLineToFile(const ST::string& line)
 {
     if( fFlags & kDontWriteFile )
-        return true;
+        return;
 
     if (!fFileHandle)
         IReOpen();
-
-    bool ret = (fFileHandle != nullptr);
 
     if (fFileHandle != nullptr)
     {
@@ -556,13 +548,13 @@ bool plStatusLog::IPrintLineToFile(const ST::string& line)
         {
             int err;
             err = fwrite(buf.raw_buffer(), 1, buf.size(), fFileHandle);
-            ret = ( ferror( fFileHandle )==0 );
 
-            if ( ret )
-            {
+            if (ferror(fFileHandle) == 0) {
                 fSize += err;
                 if (!(fFlags & kNonFlushedLog))
                     fflush(fFileHandle);
+            } else {
+                hsAssert(false, ST::format("Failed to write to log file {}, errno = {}", GetFileName().GetFileName(), errno).c_str());
             }
         }
 
@@ -593,6 +585,4 @@ bool plStatusLog::IPrintLineToFile(const ST::string& line)
         fwrite(line.c_str(), 1, line.size(), stdout);
         fputc('\n', stdout);
     }
-
-    return ret;
 }

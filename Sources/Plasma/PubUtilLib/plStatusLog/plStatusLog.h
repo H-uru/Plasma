@@ -98,14 +98,14 @@ class plStatusLog : public plLog
         void    IUnlink();
         void    ILink( plStatusLog **back );
 
-        bool    IAddLine(const ST::string& line, uint32_t color);
-        bool    IPrintLineToFile(const ST::string& line);
+        void    IAddLine(const ST::string& line, uint32_t color);
+        void    IPrintLineToFile(const ST::string& line);
         void    IParseFileName(plFileName &fileNoExt, ST::string &ext) const;
         static plStatusLog* IFindLog(const plFileName& filename);
 
         void    IInit();
         void    IFini();
-        bool    IReOpen();
+        void    IReOpen();
 
         plStatusLog( uint8_t numDisplayLines, const plFileName &filename, uint32_t flags );
 
@@ -158,71 +158,65 @@ class plStatusLog : public plLog
 
         ~plStatusLog();
 
-        bool AddLine(uint32_t color, const char* line) { return AddLine(color, ST::string(line)); };
-        bool AddLine(const char* line) { return AddLine(kWhite, ST::string(line)); }
-        bool AddLine(uint32_t color, const ST::string& line);
-        bool AddLine(const ST::string& line) override { return AddLine(kWhite, line); }
+        void AddLine(uint32_t color, const char* line) { AddLine(color, ST::string(line)); }
+        void AddLine(const char* line) { AddLine(kWhite, ST::string(line)); }
+        void AddLine(uint32_t color, const ST::string& line);
+        void AddLine(const ST::string& line) override { AddLine(kWhite, line); }
 
         template<typename... _Args>
-        bool AddLineF(const char* format, _Args&&... args)
+        void AddLineF(const char* format, _Args&&... args)
         {
-            return AddLine(ST::format(format, std::forward<_Args>(args)...));
-        }
-
-        template<typename... _Args>
-        bool AddLineF(uint32_t color, const char* format, _Args&&... args)
-        {
-            return AddLine(color, ST::format(format, std::forward<_Args>(args)...));
-        }
-
-        static bool AddLineS(const plFileName& filename, const char* line)
-        {
-            plStatusLog* log = IFindLog(filename);
-            if (!log)
-                return false;
-            return log->AddLine(line);
-        }
-
-        static bool AddLineS(const plFileName& filename, uint32_t color, const char* line)
-        {
-            plStatusLog* log = IFindLog(filename);
-            if (!log)
-                return false;
-            return log->AddLine(color, line);
-        }
-
-        static bool AddLineS(const plFileName& filename, const ST::string& line)
-        {
-            plStatusLog* log = IFindLog(filename);
-            if (!log)
-                return false;
-            return log->AddLine(line);
-        }
-
-        static bool AddLineS(const plFileName& filename, uint32_t color, const ST::string& line)
-        {
-            plStatusLog* log = IFindLog(filename);
-            if (!log)
-                return false;
-            return log->AddLine(color, line);
+            AddLine(ST::format(format, std::forward<_Args>(args)...));
         }
 
         template<typename... _Args>
-        static bool AddLineSF(const plFileName& filename, const char* format, _Args&&... args)
+        void AddLineF(uint32_t color, const char* format, _Args&&... args)
         {
-            plStatusLog* log = IFindLog(filename);
-            if (!log)
-                return false;
-            return log->AddLineF(format, std::forward<_Args>(args)...);
+            AddLine(color, ST::format(format, std::forward<_Args>(args)...));
+        }
+
+        static void AddLineS(const plFileName& filename, const char* line)
+        {
+            if (plStatusLog* log = IFindLog(filename)) {
+                log->AddLine(line);
+            }
+        }
+
+        static void AddLineS(const plFileName& filename, uint32_t color, const char* line)
+        {
+            if (plStatusLog* log = IFindLog(filename)) {
+                log->AddLine(color, line);
+            }
+        }
+
+        static void AddLineS(const plFileName& filename, const ST::string& line)
+        {
+            if (plStatusLog* log = IFindLog(filename)) {
+                log->AddLine(line);
+            }
+        }
+
+        static void AddLineS(const plFileName& filename, uint32_t color, const ST::string& line)
+        {
+            if (plStatusLog* log = IFindLog(filename)) {
+                log->AddLine(color, line);
+            }
         }
 
         template<typename... _Args>
-        static bool AddLineSF(const plFileName& filename, uint32_t color, const char* format, _Args&&... args)
+        static void AddLineSF(const plFileName& filename, const char* format, _Args&&... args)
         {
-            plStatusLog* log = IFindLog(filename);
-            if (!log)
-                return false;
-            return log->AddLineF(color, format, std::forward<_Args>(args)...);
+            if (plStatusLog* log = IFindLog(filename)) {
+                log->AddLineF(format, std::forward<_Args>(args)...);
+            }
+        }
+
+        template<typename... _Args>
+        static void AddLineSF(const plFileName& filename, uint32_t color, const char* format, _Args&&... args)
+        {
+            if (plStatusLog* log = IFindLog(filename)) {
+                log->AddLineF(color, format, std::forward<_Args>(args)...);
+            }
         }
 
         void    Clear();
