@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 
 #include <memory>
+#include <tl/expected.hpp>
 
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "plAgeDescription/plAgeDescription.h"
@@ -102,7 +103,7 @@ public:
     void Init();
     void Shutdown();
     bool MsgReceive(plMessage* msg) override;
-    bool LoadAge(const ST::string& ageName);
+    tl::expected<tl::monostate, ST::string> LoadAge(const ST::string& ageName);
     bool UnloadAge();
     void UpdateAge(const ST::string& ageName);
     void NotifyAgeLoaded( bool loaded );

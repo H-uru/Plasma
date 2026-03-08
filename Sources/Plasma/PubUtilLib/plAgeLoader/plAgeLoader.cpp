@@ -188,7 +188,7 @@ void plAgeLoader::NotifyAgeLoaded( bool loaded )
 // Read in the age desc file and page in/out the rooms belonging to the specified age.
 // Return false on error.
 
-bool plAgeLoader::LoadAge(const ST::string& ageName)
+tl::expected<tl::monostate, ST::string> plAgeLoader::LoadAge(const ST::string& ageName)
 {
     plNetClientApp* nc = plNetClientApp::GetInstance();
     ASSERT(!nc->GetFlagsBit(plNetClientApp::kPlayingGame));
@@ -226,7 +226,7 @@ bool plAgeLoader::LoadAge(const ST::string& ageName)
         {
             nc->ErrorMsg("Failed loading age.  Age desc file {} has nil stream", fAgeName);
             fFlags &= ~kLoadingAge;
-            return false;
+            return tl::unexpected(ST::format("Could not open .age file for {}", fAgeName));
         }
 
         ad.Read(stream.get());
@@ -292,14 +292,18 @@ bool plAgeLoader::LoadAge(const ST::string& ageName)
             );
             nc->ErrorMsg("\t{}", msg);
             hsAssert(false, msg.c_str());
+#ifndef HS_DEBUGGING
+            return tl::unexpected(std::move(msg));
+#endif
         }
     }
 
     if (nPages == 0) {
-        nc->ErrorMsg("Found no pages to load for age {}", fAgeName);
+        ST::string msg = ST::format("Found no pages to load for age {}", fAgeName);
+        nc->ErrorMsg(msg);
         hsAssert(false, ST::format("Found no pages to load for age {}. You will now link into the empty void and the game may misbehave.", fAgeName).c_str());
 #ifndef HS_DEBUGGING
-        return false;
+        return tl::unexpected(std::move(msg));
 #endif
     }
 
@@ -310,7 +314,7 @@ bool plAgeLoader::LoadAge(const ST::string& ageName)
     dumpAgeKeys->SetAgeName( fAgeName);
     dumpAgeKeys->Send( clientKey );
 
-    return true;
+    return tl::monostate();
 }
 
 //// plUnloadAgeCollector ////////////////////////////////////////////////////
