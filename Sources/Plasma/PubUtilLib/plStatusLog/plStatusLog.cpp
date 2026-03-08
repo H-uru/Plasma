@@ -342,10 +342,17 @@ void plStatusLog::IReOpen()
         }
     }
 
-    if (fFileHandle)
-        fSize = ftell( fFileHandle );
-    else
+    if (fFileHandle) {
+        long pos = ftell(fFileHandle);
+        if (pos >= 0) {
+            fSize = pos;
+        } else {
+            hsAssert(false, ST::format("ftell failed for log file {}, errno = {}", GetFileName().GetFileName(), errno).c_str());
+            fSize = 0;
+        }
+    } else {
         fSize = 0;
+    }
 }
 
 void    plStatusLog::IFini()
@@ -546,11 +553,9 @@ void plStatusLog::IPrintLineToFile(const ST::string& line)
         }
 
         {
-            int err;
-            err = fwrite(buf.raw_buffer(), 1, buf.size(), fFileHandle);
-
+            size_t written = fwrite(buf.raw_buffer(), 1, buf.size(), fFileHandle);
             if (ferror(fFileHandle) == 0) {
-                fSize += err;
+                fSize += written;
                 if (!(fFlags & kNonFlushedLog))
                     fflush(fFileHandle);
             } else {

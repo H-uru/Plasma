@@ -88,7 +88,7 @@ class plStatusLog : public plLog
         ST::string*  fLines;
         uint32_t*    fColors;
         FILE*        fFileHandle;
-        uint32_t     fSize;
+        size_t       fSize;
         bool         fForceLog;
 
         plStatusLog *fNext, **fBack;
