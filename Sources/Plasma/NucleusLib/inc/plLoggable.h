@@ -145,11 +145,6 @@ public:
         Log("WRN: " + msg);
     }
 
-    virtual void AppMsg(const ST::string& msg) const
-    {
-        Log("APP: " + msg);
-    }
-
     virtual void DebugMsg(const ST::string& msg) const
     {
         Log("DBG: " + msg);
@@ -163,11 +158,6 @@ public:
     virtual void WarningMsg(const char* msg) const
     {
         Log(ST_LITERAL("WRN: ") + msg);
-    }
-
-    virtual void AppMsg(const char* msg) const
-    {
-        Log(ST_LITERAL("APP: ") + msg);
     }
 
     virtual void DebugMsg(const char* msg) const
@@ -191,12 +181,6 @@ public:
     void WarningMsg(const char* fmt, _Args... args) const
     {
         WarningMsg(ST::format(fmt, std::forward<_Args>(args)...));
-    }
-
-    template <typename... _Args>
-    void AppMsg(const char* fmt, _Args... args) const
-    {
-        AppMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 };
 

@@ -73,13 +73,6 @@ void plNetApp::StaticWarningMsg(const ST::string& msg)
     }
 }
 
-void plNetApp::StaticAppMsg(const ST::string& msg)
-{
-    if (plNetApp* app = GetInstance()) {
-        app->AppMsg(msg);
-    }
-}
-
 void plNetApp::StaticDebugMsg(const ST::string& msg)
 {
     if (plNetApp* app = GetInstance()) {

@@ -94,7 +94,6 @@ public:
 
     static void StaticErrorMsg(const ST::string& msg);
     static void StaticWarningMsg(const ST::string& msg);
-    static void StaticAppMsg(const ST::string& msg);
     static void StaticDebugMsg(const ST::string& msg);
 
     static void StaticErrorMsg(const char* msg)
@@ -105,11 +104,6 @@ public:
     static void StaticWarningMsg(const char* msg)
     {
         StaticWarningMsg(ST::string(msg));
-    }
-
-    static void StaticAppMsg(const char* msg)
-    {
-        StaticAppMsg(ST::string(msg));
     }
 
     static void StaticDebugMsg(const char* msg)
@@ -127,12 +121,6 @@ public:
     static void StaticWarningMsg(const char* fmt, _Args&&... args)
     {
         StaticWarningMsg(ST::format(fmt, std::forward<_Args>(args)...));
-    }
-
-    template <typename... _Args>
-    static void StaticAppMsg(const char* fmt, _Args&&... args)
-    {
-        StaticAppMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 
     template <typename... _Args>
