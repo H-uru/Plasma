@@ -207,6 +207,44 @@ public:
     }
 };
 
+#if defined(HS_BUILD_FOR_WIN32)
+template<class, class...>
+class plOptionalWinCall;
+
+template<class _ReturnT, class... _ArgsT>
+class plOptionalWinCall<_ReturnT(_ArgsT...)> : public hsOptionalCallBase
+{
+    using _FuncPtrT = _ReturnT(WINAPI *)(_ArgsT...);
+    using _ResultT = typename std::conditional<std::is_void<_ReturnT>::value, std::nullptr_t, _ReturnT>::type;
+
+public:
+    template<class _StrT>
+    plOptionalWinCall(const _StrT* lib, const char* func)
+        : hsOptionalCallBase(lib, func)
+    { }
+
+    std::optional<_ResultT> operator()(_ArgsT... args) const
+    {
+        _FuncPtrT proc = Get();
+        hsAssert(proc, "Trying to invoke undefined function");
+
+        if (proc) {
+            if constexpr (std::is_void<_ReturnT>::value) {
+                return proc(std::forward<_ArgsT>(args)...), nullptr;
+            } else {
+                return (_ResultT)proc(std::forward<_ArgsT>(args)...);
+            }
+        }
+        return std::nullopt;
+    }
+
+    _FuncPtrT Get() const
+    {
+        return reinterpret_cast<_FuncPtrT>(fValue);
+    }
+};
+#endif
+
 
 #if defined(HS_BUILD_FOR_WIN32)
 #   define HS_OPTIONAL_LIB_SUFFIX ""
