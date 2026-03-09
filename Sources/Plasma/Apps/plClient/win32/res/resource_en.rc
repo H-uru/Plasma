@@ -1,0 +1,22 @@
+#include "resource.h"
+#include <windows.h>
+#include <commctrl.h>
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
+STRINGTABLE
+BEGIN
+    IDC_TEXT_LOGIN           "Login"
+    IDC_TEXT_QUIT            "Quit"
+    IDC_TEXT_ACCOUNT         "Account name:"
+    IDC_TEXT_PASSWORD        "Password:"
+    IDC_TEXT_LANGUAGE        "Language:"
+    IDC_TEXT_REMEMBER_PASS   "Remember Password:"
+    IDC_TEXT_NEED_ACCOUNT    "Need an account?"
+    IDC_TEXT_DONATE          "Donate"
+
+    IDC_TEXT_ACCEPT          "Accept"
+    IDC_TEXT_DECLINE         "Decline"
+
+    IDC_TEXT_AUTH            "Authentication failed.  Please try again."
+END
