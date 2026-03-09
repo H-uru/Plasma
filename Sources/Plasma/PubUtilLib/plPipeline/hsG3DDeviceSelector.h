@@ -58,25 +58,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <functional>
 #include <list>
 #include <vector>
+#include <string_theory/string>
 
 #include "hsBitVector.h"
 #include "hsRefCnt.h"
-
-#include "hsWinRef.h"
-
-#include <string_theory/string>
-
-#ifdef HS_BUILD_FOR_WIN32
-#define __MSC__
-#define DYNAHEADER 1
-#endif // HS_BUILD_FOR_WIN32
-
-
-class hsStream;
-struct D3DEnum_RendererInfo;
-struct D3DEnum_DisplayInfo;
-struct D3DEnum_RendererInfo;
-struct D3DEnum_DisplayInfo;
 
 class hsG3DDeviceMode
 {
@@ -99,6 +84,7 @@ protected:
 
 public:
     hsG3DDeviceMode();
+    hsG3DDeviceMode(uint32_t width, uint32_t height, uint32_t depth);
     ~hsG3DDeviceMode();
 
     bool operator< (const hsG3DDeviceMode &mode) const;
@@ -143,12 +129,22 @@ public:
         kNumFogTypes
     };
 
+    enum {
+        kDefaultChipset = 0x00,
+        kIntelI810Chipset,
+        kS3GenericChipset,
+        kATIRadeonChipset,
+        kATIR8X00Chipset,
+        kMatroxParhelia,
+        kNVidiaGeForceFXChipset
+    };
+
 protected:
 
     uint32_t        fFlags;
 
     uint32_t        fG3DDeviceType;
-    uint32_t        fG3DHALorHEL;
+    uint32_t        fG3DSubDeviceType;
 
 
     ST::string      fG3DDriverDesc;
@@ -187,7 +183,8 @@ public:
 
     uint32_t  GetG3DDeviceType() const { return fG3DDeviceType; }
     ST::string GetG3DDeviceTypeName() const;
-    uint32_t  GetG3DHALorHEL() const { return fG3DHALorHEL; }
+    uint32_t  GetG3DSubDeviceType() const { return fG3DSubDeviceType; }
+    uint32_t  GetG3DHALorHEL() const { return fG3DSubDeviceType; }
 
     uint32_t GetMemoryBytes() const { return fMemoryBytes; }
 
@@ -197,7 +194,8 @@ public:
     ST::string GetDeviceDesc() const { return fG3DDeviceDesc; }
 
     void SetG3DDeviceType(uint32_t t) { fG3DDeviceType = t; }
-    void SetG3DHALorHEL(uint32_t h) { fG3DHALorHEL = h; }
+    void SetG3DSubDeviceType(uint32_t t) { fG3DSubDeviceType = t; }
+    void SetG3DHALorHEL(uint32_t h) { fG3DSubDeviceType = h; }
     void SetMemoryBytes(uint32_t b) { fMemoryBytes = b; }
 
     void SetDriverDesc(const ST::string& s) { fG3DDriverDesc = s; }
@@ -241,6 +239,7 @@ public:
     bool    IsInvalid() const { return 0 != ( fFlags & kInvalid ); }
 
     std::vector<hsG3DDeviceMode>& GetModes() { return fModes; }
+    const std::vector<hsG3DDeviceMode>& GetModes() const { return fModes; }
 
     const hsG3DDeviceMode* GetDefaultMode() const { return fDefaultModeIndex == -1 ? nullptr : &fModes[fDefaultModeIndex]; }
     void                   SetDefaultModeIndex(hsSsize_t defaultModeIndex) { fDefaultModeIndex = defaultModeIndex; }
@@ -248,6 +247,12 @@ public:
     void ClearModes();
     void Clear();
     void RemoveDiscarded();
+
+    /**
+     * Given a chipset ID, looks the values up in the Chipset Fudgefactor Table
+     * and sets the appropriate values.
+     */
+    void SetFudgeFactors(uint8_t chipsetID);
 };
 
 class hsG3DDeviceModeRecord
@@ -288,6 +293,15 @@ public:
         kNumHHTypes
     };
     enum {
+        kGLProviderUnknown  = 0,
+        kGLProviderEGL,
+        kGLProviderWGL,
+        kGLProviderCGL,
+        kGLProviderGLX,
+
+        kNumGLProviders
+    };
+    enum {
         kCapsNone           = 0,
         kCapsMipmap,
         kCapsPerspective,
@@ -325,7 +339,7 @@ public:
         kDefaultDepth   = 32
     };
 
-    typedef std::function<void(std::vector<hsG3DDeviceRecord>&)> DeviceEnumerator;
+    typedef std::function<void(std::vector<hsG3DDeviceRecord>&, hsDisplayHndl)> DeviceEnumerator;
 
 protected:
     static std::list<DeviceEnumerator>& Enumerators();
@@ -335,19 +349,6 @@ protected:
     void IClear();
     void IRemoveDiscarded();
 
-    void ITryDirect3DTnLDevice(D3DEnum_RendererInfo* devInfo, hsG3DDeviceRecord& srcDevRec);
-    void ITryDirect3DTnLDriver(D3DEnum_DisplayInfo* drivInfo);
-    void ITryDirect3DTnL(hsWinRef winRef);
-
-    void IFudgeDirectXDevice( hsG3DDeviceRecord &record,
-                                D3DEnum_DisplayInfo *driverInfo, D3DEnum_RendererInfo *deviceInfo );
-    uint32_t  IAdjustDirectXMemory( uint32_t cardMem );
-
-    bool      IGetD3DCardInfo( hsG3DDeviceRecord &record, void *driverInfo, void *deviceInfo,
-                               uint32_t *vendorID, uint32_t *deviceID, ST::string& driverString, ST::string& descString);
-
-    void    ISetFudgeFactors( uint8_t chipsetID, hsG3DDeviceRecord &record );
-
 public:
     static void AddDeviceEnumerator(const DeviceEnumerator& de) { Enumerators().emplace_back(de); }
 
@@ -356,7 +357,7 @@ public:
 
     void RemoveUnusableDevModes(bool bTough); // Removes modes and devices not allowed supported in release
 
-    void Enumerate(hsWindowHndl winRef);
+    void Enumerate(hsDisplayHndl display);
     const std::vector<hsG3DDeviceRecord>& GetDeviceRecords() const { return fRecords; }
 
     bool GetRequested(hsG3DDeviceModeRecord *dmr, uint32_t devType);

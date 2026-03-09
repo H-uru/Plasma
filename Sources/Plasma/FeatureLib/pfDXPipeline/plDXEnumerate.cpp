@@ -40,11 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plDXEnumerate.h"
-#include "plPipeline/hsG3DDeviceSelector.h"
-#include "hsGDirect3D.h"
 #include <string_theory/format>
-
+#include "plDXEnumerate.h"
+#include "hsGDirect3D.h"
 
 //// Local Typedefs ///////////////////////////////////////////////////////////
 
@@ -179,7 +177,7 @@ HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultMode(int width, int height
 // Name: D3DEnum_SelectDefaultDriver()
 // Desc: Picks a default driver according to the passed in flags.
 //-----------------------------------------------------------------------------
-HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultDisplay( DWORD dwFlags )
+HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultDisplay(DWORD dwFlags)
 {
     // If a specific driver was requested, perform that search here
     if( dwFlags & D3DENUM_MASK )
@@ -301,7 +299,7 @@ hsGDirect3DTnLEnumerate::hsGDirect3DTnLEnumerate()
 //  two faked modes for HAL and REF, attaches the modes to each "device" that
 //  can support them. 
 
-void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAdapter, D3DEnum_DisplayInfo *drivInfo )
+void hsGDirect3DTnLEnumerate::IEnumAdapterDevices(IDirect3D9 *pD3D, UINT iAdapter, D3DEnum_DisplayInfo *drivInfo)
 {
     // A bit backwards from DX8... First we have to go through our list of formats and check for validity.
     // Then we can enum through the modes for each format.
@@ -459,11 +457,11 @@ void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAd
 //  DirectX: Given a device and mode, find ALL available depth/stencil
 //  formats and add them to the mode info struct.
 
-bool    hsGDirect3DTnLEnumerate::IFindDepthFormats( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType,
-                                                   D3DEnum_ModeInfo *modeInfo )
+bool hsGDirect3DTnLEnumerate::IFindDepthFormats(IDirect3D9 *pD3D,
+        UINT iAdapter, D3DDEVTYPE deviceType, D3DEnum_ModeInfo *modeInfo)
 {
-    D3DFORMAT       formats[] = { D3DFMT_D16, D3DFMT_D24X8, D3DFMT_D32,
-        D3DFMT_D15S1, D3DFMT_D24X4S4, D3DFMT_D24S8, D3DFMT_UNKNOWN };
+    D3DFORMAT formats[] = { D3DFMT_D16, D3DFMT_D24X8, D3DFMT_D32, D3DFMT_D15S1,
+        D3DFMT_D24X4S4, D3DFMT_D24S8, D3DFMT_UNKNOWN };
 
     /// Try 'em
     for( int i = 0; formats[ i ] != D3DFMT_UNKNOWN; i++ )
@@ -487,8 +485,8 @@ bool    hsGDirect3DTnLEnumerate::IFindDepthFormats( IDirect3D9 *pD3D, UINT iAdap
 //  DirectX: Given a device and mode, find ALL available multisample types
 //  and add them to the mode info struct.
 
-bool    hsGDirect3DTnLEnumerate::IFindFSAATypes( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType,
-                                                D3DEnum_ModeInfo *modeInfo )
+bool hsGDirect3DTnLEnumerate::IFindFSAATypes(IDirect3D9 *pD3D, UINT iAdapter,
+        D3DDEVTYPE deviceType, D3DEnum_ModeInfo *modeInfo)
 {
     /// Try 'em
     for (int type = 2; type <= 16; type++)
@@ -506,8 +504,8 @@ bool    hsGDirect3DTnLEnumerate::IFindFSAATypes( IDirect3D9 *pD3D, UINT iAdapter
 
 //// ICheckCubicRenderTargets /////////////////////////////////////////////////
 
-bool    hsGDirect3DTnLEnumerate::ICheckCubicRenderTargets( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType,
-                                                          D3DEnum_ModeInfo *modeInfo )
+bool hsGDirect3DTnLEnumerate::ICheckCubicRenderTargets(IDirect3D9 *pD3D,
+        UINT iAdapter, D3DDEVTYPE deviceType, D3DEnum_ModeInfo *modeInfo)
 {
     if( SUCCEEDED( pD3D->CheckDeviceFormat( iAdapter, deviceType, modeInfo->fDDmode.Format,
         D3DUSAGE_RENDERTARGET, D3DRTYPE_CUBETEXTURE, 
@@ -525,8 +523,8 @@ bool    hsGDirect3DTnLEnumerate::ICheckCubicRenderTargets( IDirect3D9 *pD3D, UIN
 //
 //  Nice, encapsulated way of testing for specific caps on a particular device
 
-HRESULT hsGDirect3DTnLEnumerate::IConfirmDevice( D3DCAPS9* pCaps, DWORD dwBehavior,
-                                                D3DFORMAT Format )
+HRESULT hsGDirect3DTnLEnumerate::IConfirmDevice(D3DCAPS9* pCaps,
+        DWORD dwBehavior, D3DFORMAT Format)
 {
     short       bits;
 
@@ -563,7 +561,7 @@ VOID hsGDirect3DTnLEnumerate::D3DEnum_FreeResources()
 //  the RenderMenu project (for some reason, VC can't figure out we're only
 //  calling one static function!)
 
-short   hsGDirect3DTnLEnumerate::IGetDXBitDepth( D3DFORMAT format )
+short hsGDirect3DTnLEnumerate::IGetDXBitDepth(D3DFORMAT format)
 {
 #define ReturnDepth(type, depth) if (format == type) return depth
 
@@ -581,26 +579,14 @@ short   hsGDirect3DTnLEnumerate::IGetDXBitDepth( D3DFORMAT format )
     return 0;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//// Direct3D DeviceSelector Code ///////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
 //// IGetD3DCardInfo /////////////////////////////////////////////////////////
-//  Given two enum structs, strips out and produces the vendor ID, device ID
-//  and the driver name. Returns true if processed, false otherwise.
 
-bool    hsG3DDeviceSelector::IGetD3DCardInfo( hsG3DDeviceRecord &record,            // In
-                                              void *driverInfo,
-                                              void *deviceInfo,
-                                              uint32_t *vendorID, uint32_t *deviceID, // Out
+bool hsGDirect3DTnLEnumerate::IGetD3DCardInfo(hsG3DDeviceRecord& record,            // In
+                                              D3DEnum_DisplayInfo* driverInfo,
+                                              uint32_t* vendorID, uint32_t* deviceID, // Out
                                               ST::string& driverString, ST::string& descString)
 {
-    D3DEnum_DisplayInfo  *driverD3DInfo = (D3DEnum_DisplayInfo *)driverInfo;
-    D3DEnum_RendererInfo  *deviceD3DInfo = (D3DEnum_RendererInfo *)deviceInfo;
-
-    D3DADAPTER_IDENTIFIER9  *adapterInfo;
-
-    adapterInfo = &driverD3DInfo->fAdapterInfo;
+    D3DADAPTER_IDENTIFIER9* adapterInfo = &driverInfo->fAdapterInfo;
 
     *vendorID = adapterInfo->VendorId;
     *deviceID = adapterInfo->DeviceId;
@@ -610,15 +596,93 @@ bool    hsG3DDeviceSelector::IGetD3DCardInfo( hsG3DDeviceRecord &record,        
     return true;
 }
 
-//// ITryDirect3DTnL //////////////////////////////////////////////////////////
+//// IAdjustDirectXMemory /////////////////////////////////////////////////////
 
-void hsG3DDeviceSelector::ITryDirect3DTnL(hsWinRef winRef)
+uint32_t hsGDirect3DTnLEnumerate::IAdjustDirectXMemory(uint32_t cardMem)
 {
-    hsGDirect3DTnLEnumerate& d3dEnum = hsGDirect3D::EnumerateTnL();
+    HDC deskDC;
+    int width, height, bpp, total;
 
-    for (size_t i = 0; i < d3dEnum.GetNumDisplays(); i++)
-    {
-        ITryDirect3DTnLDriver(d3dEnum.GetDisplay(i));
+    deskDC = GetDC(nullptr);
+    width = GetDeviceCaps( deskDC, HORZRES );
+    height = GetDeviceCaps( deskDC, VERTRES );
+    bpp = GetDeviceCaps( deskDC, BITSPIXEL );
+
+    total = width * height;
+    if( bpp > 8 )
+        total *= ( bpp >> 3 );
+
+    return cardMem + total;
+}
+
+//// IFudgeDirectXDevice //////////////////////////////////////////////////////
+
+void hsGDirect3DTnLEnumerate::IFudgeDirectXDevice(hsG3DDeviceRecord& record,
+        D3DEnum_DisplayInfo* driverInfo, D3DEnum_RendererInfo* deviceInfo)
+{
+    uint32_t vendorID, deviceID;
+    ST::string driverString;
+    ST::string descString;
+
+    /// Send it off to each D3D device, respectively
+    if (record.GetG3DDeviceType() == hsG3DDeviceSelector::kDevTypeDirect3D) {
+        if (!IGetD3DCardInfo(record, driverInfo, &vendorID, &deviceID, driverString, descString)) {
+            hsAssert( false, "Trying to fudge D3D device but D3D support isn't in this EXE!" );
+        }
+    } else {
+        hsAssert( false, "IFudgeDirectXDevice got a device type that support wasn't compiled for!" );
+    }
+
+    /// So capitalization won't matter in our tests
+    descString = descString.to_lower();
+
+    /// Detect ATI Radeon chipset
+    // We will probably need to differentiate between different Radeons at some point in 
+    // the future, but not now.
+    ST_ssize_t radeon = descString.find("radeon");
+    if (driverString.compare_i("ati2dvag.dll") == 0 || radeon >= 0) {
+        int series = 0;
+        if (radeon >= 0) {
+            ST::string str = descString.substr(radeon + strlen("radeon")).trim_left();
+            ST::conversion_result res;
+            series = str.to_int(res, 10);
+            if (res.ok()) {
+                if ((series >= 8000) && (series < 9000)) {
+                    hsStatusMessage("== Using fudge factors for ATI Radeon 8X00 chipset ==");
+                    record.SetFudgeFactors(hsG3DDeviceRecord::kATIR8X00Chipset);
+                } else if (series >= 9000) {
+                    hsStatusMessage("== Using fudge factors for ATI Radeon 9X00 chipset ==");
+                    record.SetFudgeFactors(hsG3DDeviceRecord::kATIRadeonChipset);
+                } else {
+                    series = 0;
+                }
+            }
+        }
+        if (series == 0) {
+            hsStatusMessage("== Using fudge factors for ATI/AMD Radeon X/HD/R chipset ==");
+            record.SetFudgeFactors(hsG3DDeviceRecord::kDefaultChipset);
+        }
+    }
+
+    //// Other Cards //////////////////////////////////////////////////////////
+    /// Detect Intel i810 chipset
+    else if (deviceID == 0x00007125 &&
+                (driverString.compare_i("i81xdd.dll") == 0
+                  || (descString.find("intel") >= 0 && descString.find("810") >= 0))) {
+        hsStatusMessage("== Using fudge factors for an Intel i810 chipset ==");
+        record.SetFudgeFactors(hsG3DDeviceRecord::kIntelI810Chipset);
+    }
+
+    /// Detect for a GeForc FX card. We only need to nerf the really low end one.
+    else if (descString.find("nvidia") >= 0 && descString.find("geforce fx 5200") >= 0) {
+        hsStatusMessage("== Using fudge factors for an NVidia GeForceFX-based chipset ==");
+        record.SetFudgeFactors(hsG3DDeviceRecord::kNVidiaGeForceFXChipset);
+    }
+
+    /// Default fudge values
+    else {
+        hsStatusMessage("== Using default fudge factors ==");
+        record.SetFudgeFactors(hsG3DDeviceRecord::kDefaultChipset);
     }
 }
 
@@ -626,14 +690,15 @@ void hsG3DDeviceSelector::ITryDirect3DTnL(hsWinRef winRef)
 //
 //  New DirectX Way
 
-void hsG3DDeviceSelector::ITryDirect3DTnLDriver(D3DEnum_DisplayInfo* drivInfo)
+void hsGDirect3DTnLEnumerate::TryDirect3DTnLDriver(
+        std::vector<hsG3DDeviceRecord>& records, D3DEnum_DisplayInfo* drivInfo)
 {
     hsG3DDeviceRecord devRec;
     devRec.Clear();
-    devRec.SetG3DDeviceType( kDevTypeDirect3D );
+    devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeDirect3D);
 
-    devRec.SetDriverName( drivInfo->fAdapterInfo.Driver );
-    devRec.SetDriverDesc( drivInfo->fAdapterInfo.Description );
+    devRec.SetDriverName(drivInfo->fAdapterInfo.Driver);
+    devRec.SetDriverDesc(drivInfo->fAdapterInfo.Description);
 
     devRec.SetDriverVersion(ST::format("{}.{02d}.{02d}.{04d}",
         HIWORD(drivInfo->fAdapterInfo.DriverVersion.u.HighPart),
@@ -647,14 +712,14 @@ void hsG3DDeviceSelector::ITryDirect3DTnLDriver(D3DEnum_DisplayInfo* drivInfo)
     {
         /// 9.6.2000 mcn - Changed here so we can do fudging here, rather
         /// than passing all the messy driver data to the function
-        hsG3DDeviceRecord   currDevRec = devRec;
+        hsG3DDeviceRecord currDevRec = devRec;
 
         /// Done first now, so we can alter the D3D type later
-        ITryDirect3DTnLDevice(&device, currDevRec);
+        ITryDirect3DTnLDevice(currDevRec, &device);
         IFudgeDirectXDevice(currDevRec, drivInfo, &device);
 
         if (!currDevRec.GetModes().empty())
-            fRecords.emplace_back(currDevRec);
+            records.emplace_back(currDevRec);
     }
 }
 
@@ -662,102 +727,116 @@ void hsG3DDeviceSelector::ITryDirect3DTnLDriver(D3DEnum_DisplayInfo* drivInfo)
 //
 //  New DirectX Way
 
-void hsG3DDeviceSelector::ITryDirect3DTnLDevice(D3DEnum_RendererInfo* devInfo, hsG3DDeviceRecord& devRec)
+void hsGDirect3DTnLEnumerate::ITryDirect3DTnLDevice(
+        hsG3DDeviceRecord& devRec, D3DEnum_RendererInfo* devInfo)
 {
     devRec.SetDeviceDesc(devInfo->fStrName);
 
-    if( devInfo->fDDType == D3DDEVTYPE_REF )
-        devRec.SetG3DHALorHEL( kHHD3DRefDev );
-    else if( devInfo->fDDType == D3DDEVTYPE_HAL )
-    {
-        if( devInfo->fDDCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT )
-        {   
-            devRec.SetG3DHALorHEL( kHHD3DTnLHalDev );
-            devRec.SetCap( kCapsHWTransform );
+    if (devInfo->fDDType == D3DDEVTYPE_REF) {
+        devRec.SetG3DHALorHEL(hsG3DDeviceSelector::kHHD3DRefDev);
+    } else if (devInfo->fDDType == D3DDEVTYPE_HAL) {
+        if (devInfo->fDDCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) {
+            devRec.SetG3DHALorHEL(hsG3DDeviceSelector::kHHD3DTnLHalDev);
+            devRec.SetCap(hsG3DDeviceSelector::kCapsHWTransform);
+        } else {
+            devRec.SetG3DHALorHEL(hsG3DDeviceSelector::kHHD3DHALDev);
         }
-        else
-            devRec.SetG3DHALorHEL( kHHD3DHALDev );
     }
 
-    if( devInfo->fDDCaps.TextureCaps & D3DPTEXTURECAPS_CUBEMAP )
-        devRec.SetCap( kCapsCubicTextures );
+    if (devInfo->fDDCaps.TextureCaps & D3DPTEXTURECAPS_CUBEMAP)
+        devRec.SetCap(hsG3DDeviceSelector::kCapsCubicTextures);
 
-    devRec.SetLayersAtOnce( devInfo->fDDCaps.MaxSimultaneousTextures );
+    devRec.SetLayersAtOnce(devInfo->fDDCaps.MaxSimultaneousTextures);
 
-    if( devInfo->fDDCaps.TextureFilterCaps & D3DPTFILTERCAPS_MIPFLINEAR )
-        devRec.SetCap( kCapsMipmap );
-    if( devInfo->fDDCaps.TextureCaps & D3DPTEXTURECAPS_MIPCUBEMAP )
-        devRec.SetCap( kCapsCubicMipmap );
-    if( devInfo->fDDCaps.TextureCaps & D3DPTEXTURECAPS_PERSPECTIVE )
-        devRec.SetCap(kCapsPerspective);
-    if( devInfo->fIsHardware )
-        devRec.SetCap( kCapsHardware );
-    if( devInfo->fDDCaps.RasterCaps & D3DPRASTERCAPS_FOGTABLE )
-    {
-        devRec.SetCap( kCapsFogLinear );
-        devRec.SetCap( kCapsFogExp );
-        devRec.SetCap( kCapsFogExp2 );
-        devRec.SetCap( kCapsPixelFog );
+    if (devInfo->fDDCaps.TextureFilterCaps & D3DPTFILTERCAPS_MIPFLINEAR)
+        devRec.SetCap(hsG3DDeviceSelector::kCapsMipmap);
+
+    if (devInfo->fDDCaps.TextureCaps & D3DPTEXTURECAPS_MIPCUBEMAP)
+        devRec.SetCap(hsG3DDeviceSelector::kCapsCubicMipmap);
+
+    if (devInfo->fDDCaps.TextureCaps & D3DPTEXTURECAPS_PERSPECTIVE)
+        devRec.SetCap(hsG3DDeviceSelector::kCapsPerspective);
+
+    if (devInfo->fIsHardware)
+        devRec.SetCap(hsG3DDeviceSelector::kCapsHardware);
+
+    if (devInfo->fDDCaps.RasterCaps & D3DPRASTERCAPS_FOGTABLE) {
+        devRec.SetCap(hsG3DDeviceSelector::kCapsFogLinear);
+        devRec.SetCap(hsG3DDeviceSelector::kCapsFogExp);
+        devRec.SetCap(hsG3DDeviceSelector::kCapsFogExp2);
+        devRec.SetCap(hsG3DDeviceSelector::kCapsPixelFog);
+    } else {
+        devRec.SetCap(hsG3DDeviceSelector::kCapsFogLinear);
     }
+
+    if (devInfo->fDDCaps.RasterCaps & D3DPRASTERCAPS_FOGRANGE)
+        devRec.SetCap(hsG3DDeviceSelector::kCapsFogRange);
+
+    if (devInfo->fDDCaps.MaxAnisotropy <= 1)
+        devRec.SetMaxAnisotropicSamples(0);
     else
-    {
-        devRec.SetCap( kCapsFogLinear );
-    }
-    if( devInfo->fDDCaps.RasterCaps & D3DPRASTERCAPS_FOGRANGE )
-        devRec.SetCap( kCapsFogRange );
-
-    if( devInfo->fDDCaps.MaxAnisotropy <= 1 )
-        devRec.SetMaxAnisotropicSamples( 0 );
-    else
-        devRec.SetMaxAnisotropicSamples( (uint8_t)devInfo->fDDCaps.MaxAnisotropy );
+        devRec.SetMaxAnisotropicSamples((uint8_t)devInfo->fDDCaps.MaxAnisotropy);
 
     if (D3DSHADER_VERSION_MAJOR(devInfo->fDDCaps.PixelShaderVersion) > 0)
-        devRec.SetCap(kCapsPixelShader);
+        devRec.SetCap(hsG3DDeviceSelector::kCapsPixelShader);
 
     /// Assume these by default
-    devRec.SetCap( kCapsCompressTextures );
-    devRec.SetCap( kCapsDoesSmallTextures );
+    devRec.SetCap(hsG3DDeviceSelector::kCapsCompressTextures);
+    devRec.SetCap(hsG3DDeviceSelector::kCapsDoesSmallTextures);
 
 #if 1 // mf - want to leave this one off by default
-    //  if( devInfo->fCanAntialias )
-    //      devRec.SetCap( kCapsAntiAlias );
+    //  if (devInfo->fCanAntialias)
+    //      devRec.SetCap(hsG3DDeviceSelector::kCapsAntiAlias);
 #endif // mf - want to leave this one off by default
 
     hsG3DDeviceMode devMode;
 
-    const struct 
-    {
-        D3DFORMAT fmt; uint16_t depth; 
-    } depths[] = { { D3DFMT_D16, 0x0010 }, { D3DFMT_D24X8, 0x0018 }, { D3DFMT_D32, 0x0020 },
-    { D3DFMT_D15S1, 0x010f }, { D3DFMT_D24X4S4, 0x0418 }, { D3DFMT_D24S8, 0x0818 }, { D3DFMT_UNKNOWN, 0 } };
+    const struct {
+        D3DFORMAT fmt;
+        uint16_t depth;
+    } depths[] = {
+        { D3DFMT_D16,       0x0010 },
+        { D3DFMT_D24X8,     0x0018 },
+        { D3DFMT_D32,       0x0020 },
+        { D3DFMT_D15S1,     0x010f },
+        { D3DFMT_D24X4S4,   0x0418 },
+        { D3DFMT_D24S8,     0x0818 },
+        { D3DFMT_UNKNOWN,   0x0000 }
+    };
 
-    for (const D3DEnum_ModeInfo& modeInfo : devInfo->fModes)
-    {
+    for (const D3DEnum_ModeInfo& modeInfo : devInfo->fModes) {
         devMode.Clear();
         devMode.SetWidth(modeInfo.fDDmode.Width);
         devMode.SetHeight(modeInfo.fDDmode.Height);
         devMode.SetColorDepth(modeInfo.fBitDepth);
 
         if (modeInfo.fCanRenderToCubic)
-            devMode.SetCanRenderToCubics( true );
+            devMode.SetCanRenderToCubics(true);
         else
-            devMode.SetCanRenderToCubics( false );
+            devMode.SetCanRenderToCubics(false);
 
-        for (size_t j = 0; depths[j].depth != 0; j++)
-        {
+        for (size_t j = 0; depths[j].depth != 0; j++) {
             auto iter = std::find(modeInfo.fDepthFormats.cbegin(), modeInfo.fDepthFormats.cend(), depths[j].fmt);
             if (iter != modeInfo.fDepthFormats.cend())
-                devMode.AddZStencilDepth( depths[ j ].depth );
+                devMode.AddZStencilDepth(depths[j].depth);
         }
 
-        for (uint8_t j = 2; j <= 16; j++)
-        {
-            auto iter = std::find(modeInfo.fFSAATypes.cbegin(), modeInfo.fFSAATypes.cend(),
-                                  (D3DMULTISAMPLE_TYPE)j);
+        for (uint8_t j = 2; j <= 16; j++) {
+            auto iter = std::find(modeInfo.fFSAATypes.cbegin(), modeInfo.fFSAATypes.cend(), (D3DMULTISAMPLE_TYPE)j);
             if (iter != modeInfo.fFSAATypes.cend())
-                devMode.AddFSAAType( j );
+                devMode.AddFSAAType(j);
         }
 
         devRec.GetModes().emplace_back(devMode);
+    }
+}
+
+void plDXEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl mainDisplay)
+{
+    hsGDirect3DTnLEnumerate& d3dEnum = hsGDirect3D::EnumerateTnL();
+
+    for (size_t i = 0; i < d3dEnum.GetNumDisplays(); i++)
+    {
+        d3dEnum.TryDirect3DTnLDriver(records, d3dEnum.GetDisplay(i));
     }
 }

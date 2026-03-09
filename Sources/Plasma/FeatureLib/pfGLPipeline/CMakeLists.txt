@@ -25,14 +25,24 @@ target_link_libraries(pfGLPipeline
         plPipeline
     PRIVATE
         plStatusLog
+        pfDisplayHelpers
         epoxy::epoxy
 
         # On macOS, we need to link against OpenGL.framework for access to the
         # CGL functions. On other platforms, the OpenGL library is loaded
         # dynamically by epoxy.
         "$<$<PLATFORM_ID:Darwin>:-framework OpenGL>"
+        "$<$<AND:$<PLATFORM_ID:Darwin>,$<VERSION_LESS:${CMAKE_OSX_DEPLOYMENT_TARGET},10.9>>:-framework ApplicationServices>"
+        "$<$<AND:$<PLATFORM_ID:Darwin>,$<VERSION_GREATER_EQUAL:${CMAKE_OSX_DEPLOYMENT_TARGET},10.9>>:-framework CoreGraphics>"
     INTERFACE
         pnFactory
+)
+
+# We're not linking against X11, but we do need its include paths to be added here
+target_include_directories(
+    pfGLPipeline
+    PUBLIC
+        $<$<BOOL:${USE_X11}>:$<TARGET_PROPERTY:X11::X11,INCLUDE_DIRECTORIES>>
 )
 
 source_group("Source Files" FILES ${pfGLPipeline_SOURCES})

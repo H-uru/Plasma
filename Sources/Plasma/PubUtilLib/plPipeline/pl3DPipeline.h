@@ -110,8 +110,11 @@ static const float kAvTexPoolShrinkThresh = 30.f; // seconds
 class plDisplayHelper
 {
 public:
-    virtual plDisplayMode              DesktopDisplayMode() = 0;
+    virtual ~plDisplayHelper() {}
+
+    virtual const plDisplayMode&       DesktopDisplayMode() const = 0;
     virtual std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const = 0;
+    virtual hsDisplayHndl DefaultDisplay() const = 0;
 
     static plDisplayHelper* GetInstance() { return fCurrentDisplayHelper; }
     static void             SetInstance(plDisplayHelper* helper) { fCurrentDisplayHelper = helper; }

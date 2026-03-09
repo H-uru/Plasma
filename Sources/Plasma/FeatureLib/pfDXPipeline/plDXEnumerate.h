@@ -52,6 +52,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <d3d9.h>
 //#include "plMemTrackerOn.h"
 
+#include "plPipeline/hsG3DDeviceSelector.h"
+
 //-----------------------------------------------------------------------------
 // Name: D3DEnum_ModeInfo
 // Desc: Structure to hold information about a display mode. This
@@ -130,10 +132,6 @@ struct D3DEnum_DisplayInfo
           fDesktopMode(), fCurrentMode(), fCurrentRenderer() { }
 };
 
-
-class hsG3DDeviceRecord;
-class hsG3DDeviceMode;
-
 class hsGDirect3DTnLEnumerate
 {
 protected:
@@ -151,6 +149,33 @@ protected:
     bool    IFindFSAATypes( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType, D3DEnum_ModeInfo *modeInfo );
     bool    ICheckCubicRenderTargets( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType, D3DEnum_ModeInfo *modeInfo );
     HRESULT IConfirmDevice( D3DCAPS9* pCaps, DWORD dwBehavior, D3DFORMAT format );
+
+    void ITryDirect3DTnLDevice(hsG3DDeviceRecord& srcDevRec, D3DEnum_RendererInfo* devInfo);
+
+    /**
+     * Given a driver enum struct, strips out and produces the vendor ID,
+     * device ID and the driver name. Returns true if processed, false
+     * otherwise.
+     */
+    bool IGetD3DCardInfo(hsG3DDeviceRecord& record, D3DEnum_DisplayInfo* driverInfo,
+            uint32_t* vendorID, uint32_t* deviceID, ST::string& driverString,
+            ST::string& descString);
+
+    /**
+     * Adjusts the number coming off of the DirectX caps for "total video
+     * memory" to be more reflective of what is really on the board.
+     *
+     * According to Microsoft, the best way to do this is to add in the memory
+     * necessary for the entire desktop. Okay, whatever...
+     */
+    uint32_t IAdjustDirectXMemory(uint32_t cardMem);
+
+    /**
+     * Checks this DirectX device against all our known types and fudges our
+     * caps flags and bias values, etc, accordingly
+     */
+    void IFudgeDirectXDevice(hsG3DDeviceRecord& record,
+            D3DEnum_DisplayInfo* driverInfo, D3DEnum_RendererInfo* deviceInfo);
 
     static const uint8_t kNumDisplayFormats;
     static const D3DFORMAT kDisplayFormats[];
@@ -176,9 +201,21 @@ public:
     void SetCurrentRenderer(D3DEnum_RendererInfo* d) { hsAssert(GetCurrentDisplay(), "Set Display first"); GetCurrentDisplay()->fCurrentRenderer = d; } 
     void SetCurrentMode(D3DEnum_ModeInfo* m) { hsAssert(GetCurrentDisplay(), "Set Display first"); GetCurrentDisplay()->fCurrentMode = m; } 
 
+    void TryDirect3DTnLDriver(std::vector<hsG3DDeviceRecord>& records, D3DEnum_DisplayInfo* drivInfo);
+
     ST::string GetEnumeErrorStr() const { return fEnumeErrorStr; }
 };
 
+class plDXEnumerate
+{
+public:
+    plDXEnumerate() {
+        hsG3DDeviceSelector::AddDeviceEnumerator(&plDXEnumerate::Enumerate);
+    }
+
+private:
+    static void Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl display);
+};
 
 
 //-----------------------------------------------------------------------------

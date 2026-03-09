@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <optional>
 #include <variant>
 
-#include "hsWindows.h"
+#include "hsOptionalCall.h"
 
 #include "plMessage/plDisplayScaleChangedMsg.h"
 

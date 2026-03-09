@@ -75,12 +75,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCmdParser.h"
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfConsoleCore/pfServerIni.h"
+#include "pfDisplayHelpers/plMacDisplayHelper.h"
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
 #ifdef PLASMA_PIPELINE_GL
 #include "pfGLPipeline/plGLPipeline.h"
 #endif
 #include "plInputCore/plInputDevice.h"
-#include "plMacDisplayHelper.h"
 #ifdef PLASMA_PIPELINE_METAL
 #include "pfMetalPipeline/plMetalPipeline.h"
 #endif
