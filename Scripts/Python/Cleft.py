@@ -107,12 +107,12 @@ class Cleft(ptResponder):
         else:
             pages += ["Desert","Cleft","FemaleCleftDropIn","MaleCleftDropIn","clftJCsDesert","clftJCsChasm"]
         if loadZandi:
-            pages += ["clftZandiVis","ZandiCrossLegs","ZandiDirections","ZandiDirections01","ZandiDirections02","ZandiDirections03"]
+            pages += ["clftZandiVis","ZandiCrossLegs","ZandiDirections"]
             pages += ["ZandiIdle","ZandiRubNose","ZandiScratchHead","ZandiTurnPage","ZandiAllFace","ZandiOpen01Face"]
             pages += ["ZandiOpen02Face","ZandiRand01Face","ZandiRand02Face","ZandiRand03Face","ZandiRand04Face","ZandiRand05Face"]
             pages += ["ZandiRes01aFace","ZandiRes01bFace","ZandiRes02aFace","ZandiRes02bFace","ZandiRes03aFace","ZandiRes03bFace"]
             pages += ["ZandiJC01aFace","ZandiJC01bFace","ZandiJC02aFace","ZandiJC02bFace","ZandiJC03aFace","ZandiJC03bFace"]
-            pages += ["ZandiJC04aFace","ZandiJC04bFace","ZandiJC05aFace","ZandiJC05bFace","ZandiJC06aFace","ZandiJC06bFace"]
+            pages += ["ZandiJC04aFace","ZandiJC05aFace","ZandiJC05bFace","ZandiJC06aFace","ZandiJC06bFace"]
             pages += ["ZandiJC07aFace","ZandiJC07bFace"]
         else:
             PtDebugPrint("Zandi seems to have stepped away from the Airstream. Hmmm...")
@@ -190,8 +190,6 @@ class Cleft(ptResponder):
             SDLVarSceneYeesha = "clftSceneYeeshaUnseen"
             boolSceneYeesha = ageSDL[SDLVarSceneYeesha][0]
             if boolSceneYeesha:
-                #PtDebugPrint("Cleft.OnServerInitComplete: SDL says Yeesha hasn't played yet, paging in SceneYeesha stuff...")
-                #PtPageInNode("clftSceneYeesha")
                 SDLVarOfficeDoor = "clftOfficeDoorClosed"
                 boolOfficeDoor = ageSDL[SDLVarOfficeDoor][0]
                 if boolOfficeDoor:

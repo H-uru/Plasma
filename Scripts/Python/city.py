@@ -121,7 +121,7 @@ class city(ptResponder):
         # For the non-public age, add all the remaining pages
         if not IsKadishGallery:
             pages += ["canyon","cavetjunction","courtyard","ferry","greatstair","guildhall","harbor","HarborReflect"]
-            pages += ["islmGreatZeroState","islmJCNote","islmNegilahnCreatureChartGUI","islmNickNote","islmPodMapGUI"]
+            pages += ["islmJCNote","islmNegilahnCreatureChartGUI","islmNickNote","islmPodMapGUI"]
             pages += ["islmWatsonLetterGUI","KahloPub","kahlopubtunnel","library","LibraryInterior"]
             pages += ["MuseumInteriorPage","palace","libraryDoors","museumDoor"]
             pages += ["islmBahroShoutFerry","islmBahroShoutLibrary","islmBahroShoutPalace"]
