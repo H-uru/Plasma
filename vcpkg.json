@@ -46,6 +46,7 @@
         "name": "libuuid",
         "platform": "linux"
       },
+      "tl-expected",
       "zlib"
     ],
     "overrides": [

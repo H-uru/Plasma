@@ -151,6 +151,12 @@ set_package_properties(
     TYPE REQUIRED
 )
 set_package_properties(
+    tl-expected PROPERTIES
+    URL "https://github.com/TartanLlama/expected"
+    DESCRIPTION "std::expected polyfill for C++11/14/17 with functional extensions"
+    TYPE REQUIRED
+)
+set_package_properties(
     Uuid PROPERTIES
     DESCRIPTION "UUID library for Linux (provided by util-linux)"
     TYPE REQUIRED

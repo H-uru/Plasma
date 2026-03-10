@@ -74,6 +74,7 @@ target_link_libraries(
         pfMessage
         pfPython
         pfSurface
+        tl::expected
     INTERFACE
         pnFactory
 )
