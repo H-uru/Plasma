@@ -236,7 +236,10 @@ void plNCAgeJoiner::ExecNextOp () {
             ((plResManager*)hsgResMgr::ResMgr())->SetProgressBarProc(IResMgrProgressBarCallback);
 
             // Start loading age data
-            al->LoadAge(age.ageDatasetName);
+            auto res = al->LoadAge(age.ageDatasetName);
+            if (!res.has_value()) {
+                Complete(false, ST::format("Failed to load age {}: {}", age.ageDatasetName, res.error()).c_str());
+            }
         }
         break;
 
