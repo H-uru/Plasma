@@ -109,8 +109,8 @@ public:
     void EndFrame();
     void UpdateAvgs();
 
-    int GetNumLaps();
-    plProfileBase* GetLap(int i);
+    size_t GetNumLaps();
+    plProfileBase* GetLap(size_t i);
 };
 
 #endif // plProfileManager_h_inc

@@ -54,9 +54,11 @@ int wmain(int argc, const wchar_t* argv[])
 int main(int argc, const char* argv[])
 #endif
 {
+    const size_t num_args = static_cast<size_t>(argc);
+
     std::vector<ST::string> args;
-    args.reserve(argc);
-    for (size_t i = 0; i < argc; i++)
+    args.reserve(num_args);
+    for (size_t i = 0; i < num_args; i++)
         args.emplace_back(argv[i]);
     return hsMain(std::move(args));
 }

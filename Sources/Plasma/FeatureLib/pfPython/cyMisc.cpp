@@ -2237,47 +2237,42 @@ PyObject* cyMisc::RebuildCameraStack(const ST::string& name, const ST::string& a
     if (name.compare("empty") == 0)
         PYTHON_RETURN_NONE;
 
-    if ( !name.empty() )
-    {
-        key=plKeyFinder::Instance().StupidSearch("", "", plSceneObject::Index(), name, false);
-    }
-    if (key == nullptr)
-    {
+    if (!name.empty())
+        key = plKeyFinder::Instance().StupidSearch("", "", plSceneObject::Index(), name, false);
+
+    if (key == nullptr) {
         // try and use this new hack method to find it
-        if (!plVirtualCam1::Instance()->RestoreFromName(name))
-        {
+        if (!plVirtualCam1::Instance()->RestoreFromName(name)) {
             // give up and force built in 3rd person
             plVirtualCam1::Instance()->PushThirdPerson();
             ST::string errmsg = ST::format("Sceneobject {} not found", name);
             PyErr_SetString(PyExc_NameError, errmsg.c_str());
             PYTHON_RETURN_ERROR;
         }
-    }
-    else
-    {
+
+        PYTHON_RETURN_NONE;
+    } else {
         // now we have the scene object, look for it's camera modifier
         const plCameraModifier1* pMod = nullptr;
         plSceneObject* pObj = plSceneObject::ConvertNoRef(key->ObjectIsLoaded());
-        if (pObj)
-        {
-            for (size_t i = 1; i < pObj->GetNumModifiers(); i++)
-            {
+        if (pObj) {
+            for (size_t i = 1; i < pObj->GetNumModifiers(); i++) {
                 pMod = plCameraModifier1::ConvertNoRef(pObj->GetModifier(i));
                 if (pMod)
                     break;
             }
-            if (pMod)
-            {   
+
+            if (pMod) {
                 plVirtualCam1::Instance()->RebuildStack(pMod->GetKey());
                 PYTHON_RETURN_NONE;
             }
         }
+
         plVirtualCam1::Instance()->PushThirdPerson();
         ST::string errmsg = ST::format("Sceneobject {} has no camera modifier", name);
         PyErr_SetString(PyExc_NameError, errmsg.c_str());
         PYTHON_RETURN_ERROR;
     }
-    
 }
 
 void cyMisc::PyClearCameraStack()

@@ -244,23 +244,20 @@ ST::string plProfileBase::PrintMax(bool printType)
 
 plProfileLaps::LapInfo* plProfileLaps::IFindLap(const ST::string& lapName)
 {
-    static int lastSearch = 0;
+    static size_t lastSearch = 0;
 
-    int i;
-    for (i = lastSearch; i < fLapTimes.size(); i++)
-    {
-        if(fLapTimes[i].GetName() == lapName)
-        {
+    for (size_t i = lastSearch; i < fLapTimes.size(); i++) {
+        if (fLapTimes[i].GetName() == lapName) {
             lastSearch = i;
             return &fLapTimes[i];
         }
     }
 
-    if(lastSearch > fLapTimes.size()) lastSearch = fLapTimes.size();
-    for (i = 0; i < lastSearch; i++)
-    {
-        if(fLapTimes[i].GetName() == lapName)
-        {
+    if (lastSearch > fLapTimes.size())
+        lastSearch = fLapTimes.size();
+
+    for (size_t i = 0; i < lastSearch; i++) {
+        if (fLapTimes[i].GetName() == lapName) {
             lastSearch = i;
             return &fLapTimes[i];
         }
@@ -321,13 +318,13 @@ void plProfileLaps::UpdateAvgs()
         fLapTimes[i].UpdateAvg();
 }
 
-int plProfileLaps::GetNumLaps()
+size_t plProfileLaps::GetNumLaps()
 {
 //  std::sort(fLapTimes.begin(), fLapTimes.end());
     return fLapTimes.size();
 }
 
-plProfileBase* plProfileLaps::GetLap(int i)
+plProfileBase* plProfileLaps::GetLap(size_t i)
 {
     return &fLapTimes[i];
 }
