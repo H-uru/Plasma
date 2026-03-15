@@ -1059,10 +1059,14 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
         numRooms++;
     }
 
-    if (numRooms == 0)
-        return;
-
     fNumLoadingRooms += numRooms;
+
+    if (fNumLoadingRooms == 0) {
+        hsStatusMessage("Received a load request for 0 rooms..? Assuming we're \"done loading\" a broken age with no pages.");
+        plAgeLoaded2Msg* msg = new plAgeLoaded2Msg();
+        msg->Send();
+        IStopProgress();
+    }
 }
 
 void plClient::ILoadNextRoom()

@@ -51,8 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #    include <unistd.h>
 #endif
 
-#include "plProduct.h"
-
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnSceneObject/plSceneObject.h"
@@ -164,16 +162,6 @@ bool plAgeLoader::MsgReceive(plMessage* msg)
     return plReceiver::MsgReceive(msg);
 }
 
-//
-// read in the age desc file and page in/out the rooms belonging to the specified age.
-// return false on error
-//
-//============================================================================
-bool plAgeLoader::LoadAge(const ST::string& ageName)
-{
-    return ILoadAge(ageName);
-}
-
 //============================================================================
 void plAgeLoader::UpdateAge(const ST::string& ageName)
 {
@@ -194,10 +182,11 @@ void plAgeLoader::NotifyAgeLoaded( bool loaded )
 }
 
 
-//// ILoadAge ////////////////////////////////////////////////////////////////
-//  Does the loading-specific stuff for queueing an age to load
+//// LoadAge /////////////////////////////////////////////////////////////////
+// Read in the age desc file and page in/out the rooms belonging to the specified age.
+// Return false on error.
 
-bool plAgeLoader::ILoadAge(const ST::string& ageName)
+tl::expected<tl::monostate, ST::string> plAgeLoader::LoadAge(const ST::string& ageName)
 {
     plNetClientApp* nc = plNetClientApp::GetInstance();
     ASSERT(!nc->GetFlagsBit(plNetClientApp::kPlayingGame));
@@ -206,8 +195,10 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
 
     nc->DebugMsg( "Net: Loading age {}", fAgeName);
 
-    if ((fFlags & kLoadMask) != 0)
-        hsDebugAssertionFailed(__LINE__, __FILE__, ST::format("Fatal Error:\nAlready loading or unloading an age.\n{} will now exit.", plProduct::ShortName()).c_str());
+    if ((fFlags & kLoadMask) != 0) {
+        hsAssert(false, "Already loading or unloading an age");
+        return tl::unexpected(ST_LITERAL("Already loading or unloading an age"));
+    }
 
     fFlags |= kLoadingAge;
     
@@ -235,7 +226,7 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
         {
             nc->ErrorMsg("Failed loading age.  Age desc file {} has nil stream", fAgeName);
             fFlags &= ~kLoadingAge;
-            return false;
+            return tl::unexpected(ST::format("Could not open .age file for {}", fAgeName));
         }
 
         ad.Read(stream.get());
@@ -301,7 +292,19 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
             );
             nc->ErrorMsg("\t{}", msg);
             hsAssert(false, msg.c_str());
+#ifndef HS_DEBUGGING
+            return tl::unexpected(std::move(msg));
+#endif
         }
+    }
+
+    if (nPages == 0) {
+        ST::string msg = ST::format("Found no pages to load for age {}", fAgeName);
+        nc->ErrorMsg(msg);
+        hsAssert(false, ST::format("Found no pages to load for age {}. You will now link into the empty void and the game may misbehave.", fAgeName).c_str());
+#ifndef HS_DEBUGGING
+        return tl::unexpected(std::move(msg));
+#endif
     }
 
     pMsg1->Send(clientKey);
@@ -311,13 +314,7 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
     dumpAgeKeys->SetAgeName( fAgeName);
     dumpAgeKeys->Send( clientKey );
 
-    if ( nPages==0 )
-    {
-        // age is done loading because it has no pages?
-        fFlags &= ~kLoadingAge;
-    }
-
-    return true;
+    return tl::monostate();
 }
 
 //// plUnloadAgeCollector ////////////////////////////////////////////////////
@@ -345,11 +342,11 @@ class plUnloadAgeCollector : public plRegistryPageIterator
         }
 };
 
-//// IUnloadAge //////////////////////////////////////////////////////////////
+//// UnloadAge ///////////////////////////////////////////////////////////////
 //  Does the UNloading-specific stuff for queueing an age to unload.
-//  Far simpler that ILoadAge :)
+//  Far simpler that LoadAge :)
 
-bool    plAgeLoader::IUnloadAge()
+bool plAgeLoader::UnloadAge()
 {
     plNetClientApp* nc = plNetClientApp::GetInstance();
     nc->DebugMsg( "Net: Unloading age {}", fAgeName);
