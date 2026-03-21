@@ -67,7 +67,8 @@ ST::string hsSTStringFromTerminatedUTF16LE(const void* buffer, size_t bufferSize
         }
         utf16Buffer.emplace_back(c);
     }
-    consumedSize = utf16Buffer.size() * sizeof(char16_t);
+    // consumedSize includes the terminator, which is not stored in utf16Buffer
+    consumedSize = (utf16Buffer.size() + 1) * sizeof(char16_t);
     return ST::string::from_utf16(utf16Buffer.data(), utf16Buffer.size());
 }
 
