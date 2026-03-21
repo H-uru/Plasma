@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <gtest/gtest.h>
+#include <string_theory/string>
 
 #include "HeadSpin.h"
 
@@ -152,4 +153,57 @@ TEST(endianSwap, toBEDouble)
     memcpy(c, &d, sizeof(d));
 
     EXPECT_EQ(c[0], 0x40);
+}
+
+const ST::string kTestString = ST_LITERAL("hḗllo");
+constexpr char kTestStringUtf16[] = {
+    'h', 0x00,
+    0x17, 0x1e, // U+1E17 LATIN SMALL LETTER E WITH MACRON AND ACUTE
+    'l', 0x00,
+    'l', 0x00,
+    'o', 0x00,
+};
+
+TEST(endianSwap, hsSTStringFromUTF16LE)
+{
+    constexpr size_t bufferSize = sizeof(kTestStringUtf16);
+    // Force non-even alignment
+    alignas(char16_t) char allocation[bufferSize + 1];
+    char* buffer = allocation + 1;
+
+    memcpy(buffer, kTestStringUtf16, bufferSize);
+
+    ST::string string = hsSTStringFromUTF16LE(buffer, bufferSize / sizeof(char16_t));
+
+    EXPECT_EQ(string, kTestString);
+}
+
+TEST(endianSwap, hsSTStringFromTerminatedUTF16LE)
+{
+    constexpr size_t bufferSize = sizeof(kTestStringUtf16) + 5;
+    // Force non-even alignment
+    alignas(char16_t) char allocation[bufferSize + 1];
+    char* buffer = allocation + 1;
+
+    memcpy(buffer, kTestStringUtf16, sizeof(kTestStringUtf16));
+    // Add string terminator and some junk data that should be ignored
+    buffer[sizeof(kTestStringUtf16)] = 0;
+    buffer[sizeof(kTestStringUtf16) + 1] = 0;
+    buffer[sizeof(kTestStringUtf16) + 2] = '\234';
+    buffer[sizeof(kTestStringUtf16) + 3] = '\235';
+    buffer[sizeof(kTestStringUtf16) + 4] = '\236';
+
+    size_t consumedSize;
+    ST::string string = hsSTStringFromTerminatedUTF16LE(buffer, bufferSize, consumedSize);
+
+    // consumedSize includes the terminator
+    EXPECT_EQ(consumedSize, sizeof(kTestStringUtf16) + 2);
+    EXPECT_EQ(string, kTestString);
+}
+
+TEST(endianSwap, hsSTStringToUTF16LE)
+{
+    std::vector<uint8_t> buffer = hsSTStringToUTF16LE(kTestString);
+    EXPECT_EQ(buffer.size(), sizeof(kTestStringUtf16));
+    EXPECT_EQ(memcmp(buffer.data(), kTestStringUtf16, sizeof(kTestStringUtf16)), 0);
 }
