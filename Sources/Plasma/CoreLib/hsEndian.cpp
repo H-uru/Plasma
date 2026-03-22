@@ -58,21 +58,21 @@ ST::string hsSTStringFromUTF16LE(const void* buffer, size_t char16Count)
 ST::string hsSTStringFromTerminatedUTF16LE(const void* buffer, size_t bufferSize, size_t& consumedSize)
 {
     auto byteBuffer = static_cast<const uint8_t*>(buffer);
-    // consumedChar16Count may be equal to or one higher than utf16Buffer.size(),
-    // depending on whether a terminator was found before the end of the buffer.
+    // Count how many char16_ts there are in the string.
+    // char16Count only counts the actual string contents,
+    // consumedChar16Count also counts the terminator, if present
+    // (there is no terminator if the end of the buffer was reached unexpectedly).
     size_t consumedChar16Count = 0;
-    // Can't pre-allocate anything, because we don't know the string length yet...
-    std::vector<char16_t> utf16Buffer;
+    size_t char16Count = 0;
     for (size_t i = 0; i < bufferSize / sizeof(char16_t); i++) {
-        char16_t c = byteBuffer[2*i] | byteBuffer[2*i + 1] << 8;
         consumedChar16Count++;
-        if (c == 0) {
+        if (byteBuffer[2*i] == 0 && byteBuffer[2*i + 1] == 0) {
             break;
         }
-        utf16Buffer.emplace_back(c);
+        char16Count++;
     }
     consumedSize = consumedChar16Count * sizeof(char16_t);
-    return ST::string::from_utf16(utf16Buffer.data(), utf16Buffer.size());
+    return hsSTStringFromUTF16LE(buffer, char16Count);
 }
 
 std::vector<uint8_t> hsSTStringToUTF16LE(const ST::string& string)
