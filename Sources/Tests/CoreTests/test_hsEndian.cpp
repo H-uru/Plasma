@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsEndian.h"
 #include "hsMath.h"
 
-TEST(endianSwap, detection_accuracy)
+TEST(hsEndian, detection_accuracy)
 {
     uint32_t i = 0x01020304;
     uint8_t c[sizeof(i)] {};
@@ -61,7 +61,7 @@ TEST(endianSwap, detection_accuracy)
 #endif
 }
 
-TEST(endianSwap, toLE16)
+TEST(hsEndian, toLE16)
 {
     uint16_t s = hsToLE16(0x0102);
     uint8_t c[sizeof(s)] {};
@@ -70,7 +70,7 @@ TEST(endianSwap, toLE16)
     EXPECT_EQ(c[0], 0x02);
 }
 
-TEST(endianSwap, toBE16)
+TEST(hsEndian, toBE16)
 {
     uint16_t s = hsToBE16(0x0102);
     uint8_t c[sizeof(s)] {};
@@ -79,7 +79,7 @@ TEST(endianSwap, toBE16)
     EXPECT_EQ(c[0], 0x01);
 }
 
-TEST(endianSwap, toLE32)
+TEST(hsEndian, toLE32)
 {
     uint32_t i = hsToLE32(0x01020304);
     uint8_t c[sizeof(i)] {};
@@ -88,7 +88,7 @@ TEST(endianSwap, toLE32)
     EXPECT_EQ(c[0], 0x04);
 }
 
-TEST(endianSwap, toBE32)
+TEST(hsEndian, toBE32)
 {
     uint32_t i = hsToBE32(0x01020304);
     uint8_t c[sizeof(i)] {};
@@ -97,7 +97,7 @@ TEST(endianSwap, toBE32)
     EXPECT_EQ(c[0], 0x01);
 }
 
-TEST(endianSwap, toLE64)
+TEST(hsEndian, toLE64)
 {
     uint64_t l = hsToLE64(0x0102030405060708);
     uint8_t c[sizeof(l)] {};
@@ -106,7 +106,7 @@ TEST(endianSwap, toLE64)
     EXPECT_EQ(c[0], 0x08);
 }
 
-TEST(endianSwap, toBE64)
+TEST(hsEndian, toBE64)
 {
     uint64_t l = hsToBE64(0x0102030405060708);
     uint8_t c[sizeof(l)] {};
@@ -115,7 +115,7 @@ TEST(endianSwap, toBE64)
     EXPECT_EQ(c[0], 0x01);
 }
 
-TEST(endianSwap, toLEFloat)
+TEST(hsEndian, toLEFloat)
 {
     // Float value of PI is 0x40490fdb
     float f = hsToLEFloat(hsConstants::pi<float>);
@@ -125,7 +125,7 @@ TEST(endianSwap, toLEFloat)
     EXPECT_EQ(c[0], 0xdb);
 }
 
-TEST(endianSwap, toBEFloat)
+TEST(hsEndian, toBEFloat)
 {
     // Float value of PI is 0x40490fdb
     float f = hsToBEFloat(hsConstants::pi<float>);
@@ -135,7 +135,7 @@ TEST(endianSwap, toBEFloat)
     EXPECT_EQ(c[0], 0x40);
 }
 
-TEST(endianSwap, toLEDouble)
+TEST(hsEndian, toLEDouble)
 {
     // Double value of PI is 0x400921fb54442d18
     double d = hsToLEDouble(hsConstants::pi<double>);
@@ -145,7 +145,7 @@ TEST(endianSwap, toLEDouble)
     EXPECT_EQ(c[0], 0x18);
 }
 
-TEST(endianSwap, toBEDouble)
+TEST(hsEndian, toBEDouble)
 {
     // Double value of PI is 0x400921fb54442d18
     double d = hsToBEDouble(hsConstants::pi<double>);
@@ -164,7 +164,7 @@ constexpr char kTestStringUtf16[] = {
     'o', 0x00,
 };
 
-TEST(endianSwap, hsSTStringFromUTF16LE)
+TEST(hsEndian, hsSTStringFromUTF16LE)
 {
     constexpr size_t bufferSize = sizeof(kTestStringUtf16);
     // Force non-even alignment
@@ -178,7 +178,7 @@ TEST(endianSwap, hsSTStringFromUTF16LE)
     EXPECT_EQ(string, kTestString);
 }
 
-TEST(endianSwap, hsSTStringFromTerminatedUTF16LE)
+TEST(hsEndian, hsSTStringFromTerminatedUTF16LE)
 {
     constexpr size_t bufferSize = sizeof(kTestStringUtf16) + 5;
     // Force non-even alignment
@@ -220,7 +220,7 @@ TEST(endianSwap, hsSTStringFromTerminatedUTF16LE)
     EXPECT_TRUE(string5.empty());
 }
 
-TEST(endianSwap, hsSTStringToUTF16LE)
+TEST(hsEndian, hsSTStringToUTF16LE)
 {
     std::vector<uint8_t> buffer = hsSTStringToUTF16LE(kTestString);
     EXPECT_EQ(buffer.size(), sizeof(kTestStringUtf16));
