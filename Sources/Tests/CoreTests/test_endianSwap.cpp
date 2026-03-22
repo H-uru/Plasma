@@ -194,11 +194,30 @@ TEST(endianSwap, hsSTStringFromTerminatedUTF16LE)
     buffer[sizeof(kTestStringUtf16) + 4] = '\236';
 
     size_t consumedSize;
-    ST::string string = hsSTStringFromTerminatedUTF16LE(buffer, bufferSize, consumedSize);
 
-    // consumedSize includes the terminator
+    ST::string string = hsSTStringFromTerminatedUTF16LE(buffer, bufferSize, consumedSize);
+    // consumedSize includes the terminator.
     EXPECT_EQ(consumedSize, sizeof(kTestStringUtf16) + 2);
     EXPECT_EQ(string, kTestString);
+
+    ST::string string2 = hsSTStringFromTerminatedUTF16LE(buffer, sizeof(kTestStringUtf16) + 1, consumedSize);
+    // consumedSize does *not* count a terminator if there was none in the source buffer.
+    EXPECT_EQ(consumedSize, sizeof(kTestStringUtf16));
+    EXPECT_EQ(string2, kTestString);
+
+    ST::string string3 = hsSTStringFromTerminatedUTF16LE(buffer, sizeof(kTestStringUtf16), consumedSize);
+    EXPECT_EQ(consumedSize, sizeof(kTestStringUtf16));
+    EXPECT_EQ(string3, kTestString);
+
+    // Test that buffers shorter than one char16_t are handled correctly.
+
+    ST::string string4 = hsSTStringFromTerminatedUTF16LE(buffer, 1, consumedSize);
+    EXPECT_EQ(consumedSize, 0);
+    EXPECT_TRUE(string4.empty());
+
+    ST::string string5 = hsSTStringFromTerminatedUTF16LE(buffer, 0, consumedSize);
+    EXPECT_EQ(consumedSize, 0);
+    EXPECT_TRUE(string5.empty());
 }
 
 TEST(endianSwap, hsSTStringToUTF16LE)
