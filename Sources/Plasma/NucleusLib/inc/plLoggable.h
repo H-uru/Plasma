@@ -52,7 +52,7 @@ class plLog
 public:
     virtual ~plLog() { }
 
-    virtual bool AddLine(const ST::string& line) = 0;
+    virtual void AddLine(const ST::string& line) = 0;
 };
 
 
@@ -121,84 +121,66 @@ public:
     }
 
     // logging
-    virtual bool Log(const ST::string& str) const
+    virtual void Log(const ST::string& str) const
     {
         if (str.empty()) {
-            return true;
+            return;
         }
 
         GetLog();
 
         if (fStatusLog) {
-            return fStatusLog->AddLine(str);
+            fStatusLog->AddLine(str);
         }
-
-        return true;
     }
 
 
-    virtual bool ErrorMsg(const ST::string& msg) const
+    virtual void ErrorMsg(const ST::string& msg) const
     {
-        return Log("ERR: " + msg);
+        Log("ERR: " + msg);
     }
 
-    virtual bool WarningMsg(const ST::string& msg) const
+    virtual void WarningMsg(const ST::string& msg) const
     {
-        return Log("WRN: " + msg);
+        Log("WRN: " + msg);
     }
 
-    virtual bool AppMsg(const ST::string& msg) const
+    virtual void DebugMsg(const ST::string& msg) const
     {
-        return Log("APP: " + msg);
+        Log("DBG: " + msg);
     }
 
-    virtual bool DebugMsg(const ST::string& msg) const
+    virtual void ErrorMsg(const char* msg) const
     {
-        return Log("DBG: " + msg);
+        Log(ST_LITERAL("ERR: ") + msg);
     }
 
-    virtual bool ErrorMsg(const char* msg) const
+    virtual void WarningMsg(const char* msg) const
     {
-        return Log(ST_LITERAL("ERR: ") + msg);
+        Log(ST_LITERAL("WRN: ") + msg);
     }
 
-    virtual bool WarningMsg(const char* msg) const
+    virtual void DebugMsg(const char* msg) const
     {
-        return Log(ST_LITERAL("WRN: ") + msg);
-    }
-
-    virtual bool AppMsg(const char* msg) const
-    {
-        return Log(ST_LITERAL("APP: ") + msg);
-    }
-
-    virtual bool DebugMsg(const char* msg) const
-    {
-        return Log(ST_LITERAL("DBG: ") + msg);
+        Log(ST_LITERAL("DBG: ") + msg);
     }
 
     template <typename... _Args>
-    bool ErrorMsg(const char* fmt, _Args... args) const
+    void ErrorMsg(const char* fmt, _Args... args) const
     {
-        return ErrorMsg(ST::format(fmt, std::forward<_Args>(args)...));
+        ErrorMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 
     template <typename... _Args>
-    bool DebugMsg(const char* fmt, _Args... args) const
+    void DebugMsg(const char* fmt, _Args... args) const
     {
-        return DebugMsg(ST::format(fmt, std::forward<_Args>(args)...));
+        DebugMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 
     template <typename... _Args>
-    bool WarningMsg(const char* fmt, _Args... args) const
+    void WarningMsg(const char* fmt, _Args... args) const
     {
-        return WarningMsg(ST::format(fmt, std::forward<_Args>(args)...));
-    }
-
-    template <typename... _Args>
-    bool AppMsg(const char* fmt, _Args... args) const
-    {
-        return AppMsg(ST::format(fmt, std::forward<_Args>(args)...));
+        WarningMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 };
 

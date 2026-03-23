@@ -92,53 +92,41 @@ public:
     void SetFlagsBit(int b, bool on=true) { fFlagsVec.SetBit(b, on); }
     bool GetFlagsBit(int b) const { return fFlagsVec.IsBitSet(b) ? true : false; }
 
-    static bool StaticErrorMsg(const ST::string& msg);
-    static bool StaticWarningMsg(const ST::string& msg);
-    static bool StaticAppMsg(const ST::string& msg);
-    static bool StaticDebugMsg(const ST::string& msg);
+    static void StaticErrorMsg(const ST::string& msg);
+    static void StaticWarningMsg(const ST::string& msg);
+    static void StaticDebugMsg(const ST::string& msg);
 
-    static bool StaticErrorMsg(const char* msg)
+    static void StaticErrorMsg(const char* msg)
     {
-        return StaticErrorMsg(ST::string(msg));
+        StaticErrorMsg(ST::string(msg));
     }
 
-    static bool StaticWarningMsg(const char* msg)
+    static void StaticWarningMsg(const char* msg)
     {
-        return StaticWarningMsg(ST::string(msg));
+        StaticWarningMsg(ST::string(msg));
     }
 
-    static bool StaticAppMsg(const char* msg)
+    static void StaticDebugMsg(const char* msg)
     {
-        return StaticAppMsg(ST::string(msg));
-    }
-
-    static bool StaticDebugMsg(const char* msg)
-    {
-        return StaticDebugMsg(ST::string(msg));
+        StaticDebugMsg(ST::string(msg));
     }
 
     template <typename... _Args>
-    static bool StaticErrorMsg(const char* fmt, _Args... args)
+    static void StaticErrorMsg(const char* fmt, _Args... args)
     {
-        return StaticErrorMsg(ST::format(fmt, std::forward<_Args>(args)...));
+        StaticErrorMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 
     template <typename... _Args>
-    static bool StaticWarningMsg(const char* fmt, _Args&&... args)
+    static void StaticWarningMsg(const char* fmt, _Args&&... args)
     {
-        return StaticWarningMsg(ST::format(fmt, std::forward<_Args>(args)...));
+        StaticWarningMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 
     template <typename... _Args>
-    static bool StaticAppMsg(const char* fmt, _Args&&... args)
+    static void StaticDebugMsg(const char* fmt, _Args&&... args)
     {
-        return StaticAppMsg(ST::format(fmt, std::forward<_Args>(args)...));
-    }
-
-    template <typename... _Args>
-    static bool StaticDebugMsg(const char* fmt, _Args&&... args)
-    {
-        return StaticDebugMsg(ST::format(fmt, std::forward<_Args>(args)...));
+        StaticDebugMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 };
 
