@@ -41,13 +41,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <gtest/gtest.h>
+#include <string_theory/string>
 
 #include "HeadSpin.h"
 
 #include "hsEndian.h"
 #include "hsMath.h"
 
-TEST(endianSwap, detection_accuracy)
+TEST(hsEndian, detection_accuracy)
 {
     uint32_t i = 0x01020304;
     uint8_t c[sizeof(i)] {};
@@ -60,7 +61,7 @@ TEST(endianSwap, detection_accuracy)
 #endif
 }
 
-TEST(endianSwap, toLE16)
+TEST(hsEndian, toLE16)
 {
     uint16_t s = hsToLE16(0x0102);
     uint8_t c[sizeof(s)] {};
@@ -69,7 +70,7 @@ TEST(endianSwap, toLE16)
     EXPECT_EQ(c[0], 0x02);
 }
 
-TEST(endianSwap, toBE16)
+TEST(hsEndian, toBE16)
 {
     uint16_t s = hsToBE16(0x0102);
     uint8_t c[sizeof(s)] {};
@@ -78,7 +79,7 @@ TEST(endianSwap, toBE16)
     EXPECT_EQ(c[0], 0x01);
 }
 
-TEST(endianSwap, toLE32)
+TEST(hsEndian, toLE32)
 {
     uint32_t i = hsToLE32(0x01020304);
     uint8_t c[sizeof(i)] {};
@@ -87,7 +88,7 @@ TEST(endianSwap, toLE32)
     EXPECT_EQ(c[0], 0x04);
 }
 
-TEST(endianSwap, toBE32)
+TEST(hsEndian, toBE32)
 {
     uint32_t i = hsToBE32(0x01020304);
     uint8_t c[sizeof(i)] {};
@@ -96,7 +97,7 @@ TEST(endianSwap, toBE32)
     EXPECT_EQ(c[0], 0x01);
 }
 
-TEST(endianSwap, toLE64)
+TEST(hsEndian, toLE64)
 {
     uint64_t l = hsToLE64(0x0102030405060708);
     uint8_t c[sizeof(l)] {};
@@ -105,7 +106,7 @@ TEST(endianSwap, toLE64)
     EXPECT_EQ(c[0], 0x08);
 }
 
-TEST(endianSwap, toBE64)
+TEST(hsEndian, toBE64)
 {
     uint64_t l = hsToBE64(0x0102030405060708);
     uint8_t c[sizeof(l)] {};
@@ -114,7 +115,7 @@ TEST(endianSwap, toBE64)
     EXPECT_EQ(c[0], 0x01);
 }
 
-TEST(endianSwap, toLEFloat)
+TEST(hsEndian, toLEFloat)
 {
     // Float value of PI is 0x40490fdb
     float f = hsToLEFloat(hsConstants::pi<float>);
@@ -124,7 +125,7 @@ TEST(endianSwap, toLEFloat)
     EXPECT_EQ(c[0], 0xdb);
 }
 
-TEST(endianSwap, toBEFloat)
+TEST(hsEndian, toBEFloat)
 {
     // Float value of PI is 0x40490fdb
     float f = hsToBEFloat(hsConstants::pi<float>);
@@ -134,7 +135,7 @@ TEST(endianSwap, toBEFloat)
     EXPECT_EQ(c[0], 0x40);
 }
 
-TEST(endianSwap, toLEDouble)
+TEST(hsEndian, toLEDouble)
 {
     // Double value of PI is 0x400921fb54442d18
     double d = hsToLEDouble(hsConstants::pi<double>);
@@ -144,7 +145,7 @@ TEST(endianSwap, toLEDouble)
     EXPECT_EQ(c[0], 0x18);
 }
 
-TEST(endianSwap, toBEDouble)
+TEST(hsEndian, toBEDouble)
 {
     // Double value of PI is 0x400921fb54442d18
     double d = hsToBEDouble(hsConstants::pi<double>);
@@ -152,4 +153,76 @@ TEST(endianSwap, toBEDouble)
     memcpy(c, &d, sizeof(d));
 
     EXPECT_EQ(c[0], 0x40);
+}
+
+const ST::string kTestString = ST_LITERAL("hḗllo");
+constexpr char kTestStringUtf16[] = {
+    'h', 0x00,
+    0x17, 0x1e, // U+1E17 LATIN SMALL LETTER E WITH MACRON AND ACUTE
+    'l', 0x00,
+    'l', 0x00,
+    'o', 0x00,
+};
+
+TEST(hsEndian, hsSTStringFromUTF16LE)
+{
+    constexpr size_t bufferSize = sizeof(kTestStringUtf16);
+    // Force non-even alignment
+    alignas(char16_t) char allocation[bufferSize + 1];
+    char* buffer = allocation + 1;
+
+    memcpy(buffer, kTestStringUtf16, bufferSize);
+
+    ST::string string = hsSTStringFromUTF16LE(buffer, bufferSize / sizeof(char16_t));
+
+    EXPECT_EQ(string, kTestString);
+}
+
+TEST(hsEndian, hsSTStringFromTerminatedUTF16LE)
+{
+    constexpr size_t bufferSize = sizeof(kTestStringUtf16) + 5;
+    // Force non-even alignment
+    alignas(char16_t) char allocation[bufferSize + 1];
+    char* buffer = allocation + 1;
+
+    memcpy(buffer, kTestStringUtf16, sizeof(kTestStringUtf16));
+    // Add string terminator and some junk data that should be ignored
+    buffer[sizeof(kTestStringUtf16)] = 0;
+    buffer[sizeof(kTestStringUtf16) + 1] = 0;
+    buffer[sizeof(kTestStringUtf16) + 2] = '\234';
+    buffer[sizeof(kTestStringUtf16) + 3] = '\235';
+    buffer[sizeof(kTestStringUtf16) + 4] = '\236';
+
+    size_t consumedSize;
+
+    ST::string string = hsSTStringFromTerminatedUTF16LE(buffer, bufferSize, consumedSize);
+    // consumedSize includes the terminator.
+    EXPECT_EQ(consumedSize, sizeof(kTestStringUtf16) + 2);
+    EXPECT_EQ(string, kTestString);
+
+    ST::string string2 = hsSTStringFromTerminatedUTF16LE(buffer, sizeof(kTestStringUtf16) + 1, consumedSize);
+    // consumedSize does *not* count a terminator if there was none in the source buffer.
+    EXPECT_EQ(consumedSize, sizeof(kTestStringUtf16));
+    EXPECT_EQ(string2, kTestString);
+
+    ST::string string3 = hsSTStringFromTerminatedUTF16LE(buffer, sizeof(kTestStringUtf16), consumedSize);
+    EXPECT_EQ(consumedSize, sizeof(kTestStringUtf16));
+    EXPECT_EQ(string3, kTestString);
+
+    // Test that buffers shorter than one char16_t are handled correctly.
+
+    ST::string string4 = hsSTStringFromTerminatedUTF16LE(buffer, 1, consumedSize);
+    EXPECT_EQ(consumedSize, 0);
+    EXPECT_TRUE(string4.empty());
+
+    ST::string string5 = hsSTStringFromTerminatedUTF16LE(buffer, 0, consumedSize);
+    EXPECT_EQ(consumedSize, 0);
+    EXPECT_TRUE(string5.empty());
+}
+
+TEST(hsEndian, hsSTStringToUTF16LE)
+{
+    std::vector<uint8_t> buffer = hsSTStringToUTF16LE(kTestString);
+    EXPECT_EQ(buffer.size(), sizeof(kTestStringUtf16));
+    EXPECT_EQ(memcmp(buffer.data(), kTestStringUtf16, sizeof(kTestStringUtf16)), 0);
 }
