@@ -65,9 +65,9 @@ public:
     };
 
 protected:
-    time_t  fSecs;
+    int64_t   fSecs;
     uint32_t  fMicros;
-    Mode    fMode;
+    Mode      fMode;
 
     static int32_t    fLocalTimeZoneOffset;
 
@@ -80,13 +80,13 @@ public:
     plUnifiedTime(double secsDouble) : fMode(kGmt) { SetSecsDouble(secsDouble); }
     plUnifiedTime(const struct timespec& tv);
     plUnifiedTime(Mode mode, struct tm src);
-    plUnifiedTime(time_t t);
+    plUnifiedTime(int64_t t);
     plUnifiedTime(int year, int month, int day, int hour, int min, int sec, unsigned long usec=0, int dst=-1);
 
     static plUnifiedTime GetCurrent(Mode mode=kGmt);
 
     // getters
-    time_t GetSecs() const { return fSecs; }
+    int64_t GetSecs() const { return fSecs; }
     uint32_t GetMicros() const { return fMicros; }
     double GetSecsDouble() const;  // get the secs and micros as a double floating point value
     bool GetTime(short &year, short &month, short &day, short &hour, short &minute, short &second) const;
@@ -102,7 +102,7 @@ public:
     Mode GetMode() const { return fMode; } // local or gmt.
 
     // setters
-    void SetSecs(const time_t secs) { fSecs = secs; }
+    void SetSecs(int64_t secs) { fSecs = secs; }
     void SetSecsDouble(double secs);
     void SetMicros(const uint32_t micros) { fMicros = micros; }
     bool SetTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec=0, int dst=-1);
@@ -136,7 +136,6 @@ public:
 
 
     // casting
-    operator time_t() const { return fSecs;}
     operator struct timespec() const;
     operator struct tm() const;
 
