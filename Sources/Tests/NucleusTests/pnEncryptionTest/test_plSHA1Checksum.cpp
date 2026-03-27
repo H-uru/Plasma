@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cstring>
 #include <gtest/gtest.h>
 #include "pnEncryption/plChecksum.h"
+#include <string_theory/string>
 
 TEST(plSHA1Checksum, ctor_with_buffer)
 {
@@ -58,7 +59,7 @@ TEST(plSHA1Checksum, ctor_with_buffer)
 
     EXPECT_EQ(sizeof(value), sum.GetSize());
     EXPECT_EQ(0, memcmp(sum.GetValue(), value, 20));
-    EXPECT_STREQ(hexStr, sum.GetAsHexString());
+    EXPECT_STREQ(hexStr, sum.GetAsHexString().c_str());
 }
 
 TEST(plSHA1Checksum, update)
@@ -79,7 +80,7 @@ TEST(plSHA1Checksum, update)
 
     EXPECT_EQ(sizeof(value), sum.GetSize());
     EXPECT_EQ(0, memcmp(sum.GetValue(), value, 20));
-    EXPECT_STREQ(hexStr, sum.GetAsHexString());
+    EXPECT_STREQ(hexStr, sum.GetAsHexString().c_str());
 }
 
 TEST(plSHA1Checksum, well_known_hashes)
@@ -88,23 +89,23 @@ TEST(plSHA1Checksum, well_known_hashes)
     const char case0_text[] = "";
     const char case0_digest[] = "da39a3ee5e6b4b0d3255bfef95601890afd80709";
     plSHA1Checksum case0(strlen(case0_text), (const uint8_t*)case0_text);
-    EXPECT_STREQ(case0_digest, case0.GetAsHexString());
+    EXPECT_STREQ(case0_digest, case0.GetAsHexString().c_str());
 
     const char case1_text[] = "abc";
     const char case1_digest[] = "a9993e364706816aba3e25717850c26c9cd0d89d";
     plSHA1Checksum case1(strlen(case1_text), (const uint8_t*)case1_text);
-    EXPECT_STREQ(case1_digest, case1.GetAsHexString());
+    EXPECT_STREQ(case1_digest, case1.GetAsHexString().c_str());
 
     const char case2_text[] = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
     const char case2_digest[] = "84983e441c3bd26ebaae4aa1f95129e5e54670f1";
     plSHA1Checksum case2(strlen(case2_text), (const uint8_t*)case2_text);
-    EXPECT_STREQ(case2_digest, case2.GetAsHexString());
+    EXPECT_STREQ(case2_digest, case2.GetAsHexString().c_str());
 
     const char case3_text[] = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmn"
                               "hijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu";
     const char case3_digest[] = "a49b2446a02c645bf419f995b67091253a04a259";
     plSHA1Checksum case3(strlen(case3_text), (const uint8_t*)case3_text);
-    EXPECT_STREQ(case3_digest, case3.GetAsHexString());
+    EXPECT_STREQ(case3_digest, case3.GetAsHexString().c_str());
 
     // 1,000,000 copies of 'a'
     uint8_t onek_a[1000];
@@ -115,7 +116,7 @@ TEST(plSHA1Checksum, well_known_hashes)
     for (size_t i = 0; i < 1000; ++i)
         case4.AddTo(sizeof(onek_a), onek_a);
     case4.Finish();
-    EXPECT_STREQ(case4_digest, case4.GetAsHexString());
+    EXPECT_STREQ(case4_digest, case4.GetAsHexString().c_str());
 
     // case5_text repeated 16,777,216 times
     const char case5_text[] = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmno";
@@ -126,5 +127,5 @@ TEST(plSHA1Checksum, well_known_hashes)
     for (size_t i = 0; i < 16777216; ++i)
         case5.AddTo(case5_text_len, (const uint8_t*)case5_text);
     case5.Finish();
-    EXPECT_STREQ(case5_digest, case5.GetAsHexString());
+    EXPECT_STREQ(case5_digest, case5.GetAsHexString().c_str());
 }

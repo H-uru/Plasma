@@ -135,7 +135,7 @@ void pyAgeInfoStruct::SetAgeInstanceGuid(const ST::string& guid)
         hash.AddTo(y.size(), (uint8_t*)y.c_str());
         hash.Finish();
 
-        const char* md5sum = hash.GetAsHexString();
+        ST::string md5sum = hash.GetAsHexString();
         ST::string_stream ss;
         for (size_t i = 0; i < 16; i++) {
             ss << md5sum[2*i];

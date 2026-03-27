@@ -65,10 +65,10 @@ public:
     virtual void Copy(plNetSharedState* ss);
     void Reset();
     
-    int GetNumVars() const { return fVars.size(); }
-    plGenericVar* GetVar(int i) const { return fVars[i]; }
+    size_t GetNumVars() const { return fVars.size(); }
+    plGenericVar* GetVar(size_t i) const { return fVars[i]; }
     
-    void RemoveVar(int i) { fVars.erase(fVars.begin()+i); }
+    void RemoveVar(size_t i) { fVars.erase(fVars.begin()+i); }
     void AddVar(plGenericVar* v)    { fVars.push_back(v); }
     
     const char* GetName() const     { return fName.c_str(); }

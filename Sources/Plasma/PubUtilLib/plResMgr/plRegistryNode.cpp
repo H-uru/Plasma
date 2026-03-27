@@ -113,7 +113,7 @@ PageCond plRegistryPageNode::IVerify()
 
     // Check the minor versions
     const plPageInfo::ClassVerVec& classVersions = fPageInfo.GetClassVersions();
-    for (int i = 0; i < classVersions.size(); i++)
+    for (size_t i = 0; i < classVersions.size(); i++)
     {
         const plPageInfo::ClassVersion& cv = classVersions[i];
         uint16_t curVersion = plVersion::GetCreatableVersion(cv.Class);

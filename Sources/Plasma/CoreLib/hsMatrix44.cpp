@@ -320,7 +320,7 @@ hsMatrix44&     hsMatrix44::SetRotate(int axis, float radians)
 {
     float s = sin(radians);
     float c = cos(radians);
-    int c1,c2;
+    int c1 = 0, c2 = 0;
     switch (axis)
     {
     case 0:
