@@ -9,7 +9,8 @@ source_group("Ages" FILES ${GameData})
 add_custom_target(Scripts
                   SOURCES ${GameScripts} ${GameSDL} ${GameData}
 )
-set_target_properties(Scripts PROPERTIES FOLDER "")
+# Move to top level, out of the default "CMakePredefinedTargets" folder.
+set_property(TARGET Scripts PROPERTY FOLDER)
 
 install(
     DIRECTORY "Python/"

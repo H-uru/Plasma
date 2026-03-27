@@ -52,7 +52,9 @@ if(USE_CLANG_TIDY)
             COMMAND ${CMAKE_COMMAND} -E remove_directory "${_TIDY_REPLACEMENTS_DIR}"
             COMMAND ${CMAKE_COMMAND} -E make_directory "${_TIDY_REPLACEMENTS_DIR}"
         )
+        set_target_properties(tidy_init PROPERTIES FOLDER tidy)
         add_custom_target(tidy DEPENDS tidy_init)
+        set_target_properties(tidy PROPERTIES FOLDER tidy)
         if(CLANG_APPLY_EXE)
             add_custom_target(fix
                 DEPENDS tidy
@@ -60,6 +62,7 @@ if(USE_CLANG_TIDY)
                 COMMAND ${CLANG_APPLY_EXE} "${_TIDY_REPLACEMENTS_DIR}"
                 WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
             )
+            set_target_properties(fix PROPERTIES FOLDER tidy)
         endif()
 
         # If we were on CMake 3.20, we could do this per-target...
@@ -105,6 +108,7 @@ function(plasma_sanitize_target TARGET)
                     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                     BYPRODUCTS "${_TARGET_FIXES_FILE}"
                 )
+                set_target_properties(tidy_${TARGET} PROPERTIES FOLDER tidy)
                 add_dependencies(tidy tidy_${TARGET})
             endif()
         endif()
