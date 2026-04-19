@@ -148,13 +148,7 @@ public:
     virtual plOptionalMetalRenderSurface GetNextRenderSurface(MTL::CommandBuffer* buffer) = 0;
     virtual void SetOutputSize(CGSize size) = 0;
 
-    void MakeCurrentRenderDestination() { fCurrentRenderDestination = this; }
-    static plMetalRenderDestinationType* CurrentRenderDestination() { return fCurrentRenderDestination; }
-
     virtual ~plMetalRenderDestinationType() = default;
-
-private:
-    static plMetalRenderDestinationType* fCurrentRenderDestination;
 };
 
 /*
@@ -192,6 +186,11 @@ public:
 
 private:
     std::unique_ptr<T> fProvider;
+};
+
+struct plMetalDestinationWindow
+{
+    plMetalRenderDestinationType* fMetalRenderDestination;
 };
 
 #endif

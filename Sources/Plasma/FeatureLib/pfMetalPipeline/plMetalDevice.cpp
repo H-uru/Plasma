@@ -61,8 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfMetalPipeline/plMetalPipelineState.h"
 #include "pfMetalPipeline/ShaderSrc/ShaderTypes.h"
 
-plMetalRenderDestinationType* plMetalRenderDestinationType::fCurrentRenderDestination;
-
 /// Macros for getting/setting data in a vertex buffer
 template<typename T>
 static inline void inlCopy(uint8_t*& src, uint8_t*& dst)
@@ -1008,7 +1006,7 @@ bool plMetalDevice::CreateNewCommandBuffer()
 {
     fCurrentCommandBuffer = fCommandQueue->commandBuffer();
 
-    auto surface = plMetalRenderDestinationType::CurrentRenderDestination()->GetNextRenderSurface(fCurrentCommandBuffer);
+    auto surface = (*fRenderDestination)->GetNextRenderSurface(fCurrentCommandBuffer);
     if (!surface) {
         fCurrentCommandBuffer = nullptr;
         return false;

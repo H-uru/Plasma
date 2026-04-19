@@ -211,7 +211,9 @@ plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, con
 
     // For now - set this once at startup. If the underlying device is allow to change on
     // the fly (eGPU, display change, etc) - revisit.
-    plMetalRenderDestinationType::CurrentRenderDestination()->SetOutputSize(CGSizeMake(devMode->GetMode()->GetWidth(), devMode->GetMode()->GetHeight()));
+    plMetalRenderDestinationType** renderDestination = static_cast<plMetalRenderDestinationType**>(window);
+    (*renderDestination)->SetOutputSize(CGSizeMake(devMode->GetMode()->GetWidth(), devMode->GetMode()->GetHeight()));
+    fDevice.fRenderDestination = renderDestination;
     fDevice.fDisplay = display;
 
     // Default our output format to 8 bit BGRA. Client may immediately change this to
@@ -785,7 +787,7 @@ void plMetalPipeline::Resize(uint32_t width, uint32_t height)
         fOrigHeight = height;
         IGetViewTransform().SetScreenSize((uint16_t)(fOrigWidth), (uint16_t)(fOrigHeight));
         resetTransform.SetScreenSize((uint16_t)(fOrigWidth), (uint16_t)(fOrigHeight));
-        plMetalRenderDestinationType::CurrentRenderDestination()->SetOutputSize(CGSizeMake(width, height));
+        (*fDevice.fRenderDestination)->SetOutputSize(CGSizeMake(width, height));
     } else {
         // Just for debug
         hsStatusMessage("Recreating the pipeline...");

@@ -169,13 +169,18 @@ public:
     MTL::PixelFormat GetFramebufferFormat() { return fDevice.GetFramebufferFormat(); };
     void             SetFramebufferFormat(MTL::PixelFormat format) { fDevice.SetFramebufferFormat(format); };
 
+    void                          SetRenderDestination(plMetalRenderDestinationType* renderDestination) { fRenderDestination = renderDestination; }
+    plMetalRenderDestinationType* GetRenderDestination() { return fRenderDestination; }
+
     void RegisterLight(plLightInfo* light) override;
     void UnRegisterLight(plLightInfo* light) override;
 
 private:
     VertexUniforms* fCurrentRenderPassUniforms;
     plMaterialLightingDescriptor fCurrentRenderPassMaterialLighting;
-    
+
+    plMetalRenderDestinationType* fRenderDestination;
+
     bool fIsFullscreen;
 
     void FindFragFunction();

@@ -221,6 +221,9 @@ static uint32_t ParseRendererArgument(const ST::string& requested)
 @property NSWindow* gameWindow;
 @property plMetalRenderDestinationType*    renderDestination;
 
+@property plMetalPipeline* metalPipeline;
+@property plGLPipeline*    glPipeline;
+
 @end
 
 void plClient::IResizeNativeDisplayDevice(int width, int height, bool windowed)
@@ -262,7 +265,17 @@ void plClient::IResizeNativeDisplayDevice(int width, int height, bool windowed)
 
 void plClient::IChangeResolution(int width, int height) {}
 void plClient::IUpdateProgressIndicator(plOperationProgress* progress) {}
-void plClient::ShowClientWindow() {}
+void plClient::ShowClientWindow()
+{
+    AppDelegate* appDelegate = (AppDelegate*)[NSApp delegate];
+    plPipeline* pipeline = appDelegate->gClient->GetPipeline();
+    appDelegate.metalPipeline = dynamic_cast<plMetalPipeline*>(pipeline);
+    appDelegate.glPipeline = dynamic_cast<plGLPipeline*>(pipeline);
+
+    if (appDelegate.metalPipeline) {
+        appDelegate.metalPipeline->SetRenderDestination(appDelegate.renderDestination);
+    }
+}
 void plClient::FlashWindow()
 {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -329,15 +342,14 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
     _displayHelper = new plMacDisplayHelper();
     plDisplayHelper::SetInstance(_displayHelper);
 
-    gClient.SetClientWindow((__bridge void*)view.layer);
-    gClient.SetClientDisplay([window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue]);
-
     // Start the game with a direct render destination
     // Components like the intro movie may want to draw
     // before we're ready to start a vsync managed render
     // destination.
     self.renderDestination = new plMetalRenderDestination<plDirectMetalRenderDestination*>((CAMetalLayer*)self.plsView.layer);
-    self.renderDestination->MakeCurrentRenderDestination();
+
+    gClient.SetClientWindow(&_renderDestination);
+    gClient.SetClientDisplay([window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue]);
 
     self = [super initWithWindow:window];
     self.window.acceptsMouseMovedEvents = YES;

@@ -65,6 +65,7 @@ class plMipmap;
 class plCubicEnvironmap;
 class plLayerInterface;
 class plMetalPipelineState;
+class plMetalRenderDestinationType;
 
 inline const matrix_float4x4 hsMatrix2SIMD(const hsMatrix44& src)
 {
@@ -102,6 +103,8 @@ public:
     uint32_t                   fDeviceType;
     MTL::CommandQueue*         fCommandQueue;
     MTL::Buffer*               fCurrentIndexBuffer;
+
+    plMetalRenderDestinationType** fRenderDestination;
 
     size_t          fActiveThread;
     matrix_float4x4 fMatrixProj;
