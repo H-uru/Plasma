@@ -168,27 +168,8 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     //    dist += -kPi;
     distance -= uniforms.PiConsts.zzzz;
 
-    //Metals pow function does not like negative bases
-    //Doing the same thing as the DX assembly until I know more about why
-
-    float4 pow2 = distance * distance; // r0^2
-    float4 pow3 = pow2 * distance; // r0^3 - probably stall
-    float4 pow4 = pow2 * pow2; // r0^4
-    float4 pow5 = pow2 * pow3; // r0^5
-    float4 pow7 = pow2 * pow5; // r0^7
-
-    //
-    //    sincos(dist, sinDist, cosDist);
-    // sin = r0 + r0^3 * vSin.y + r0^5 * vSin.z
-    // cos = 1 + r0^2 * vCos.y + r0^4 * vCos.z
-    //r1
-    float4 cosDist = 1 + pow2 * uniforms.CosConsts.y + pow4 * uniforms.CosConsts.z;
-    //r2
-    float4 sinDist = distance + pow3 * uniforms.SinConsts.y + pow5 * uniforms.SinConsts.z;
-
-    cosDist = ((pow3 * pow3) * uniforms.CosConsts.w) + cosDist;
-    sinDist = (pow7 * uniforms.SinConsts.w) + sinDist;
-
+    float4 cosDist = fast::cos(distance);
+    float4 sinDist = fast::sin(distance);
 
     // Calc our depth based filtering here into r4 (because we don't use it again
     // after here, and we need our filtering shortly).
