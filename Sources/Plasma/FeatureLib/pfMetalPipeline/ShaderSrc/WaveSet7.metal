@@ -153,20 +153,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     
     //
     //    dist = mad( dist, kFreq.xyzw, kPhase.xyzw);
-    distance = distance * uniforms.Frequency;
-    distance = distance + uniforms.Phase;
-    //
-    //    // Now we need dist mod'd into range [-Pi..Pi]
-    //    dist *= rcp(kTwoPi);
-    float4 piRecip = 1.0f / uniforms.PiConsts.wwww;
-    distance = distance + uniforms.PiConsts.zzzz;
-    distance *= piRecip;
-    //    dist = frac(dist);
-    distance = fract(distance);
-    //    dist *= kTwoPi;
-    distance *= uniforms.PiConsts.wwww;
-    //    dist += -kPi;
-    distance -= uniforms.PiConsts.zzzz;
+    distance = (distance * uniforms.Frequency) + uniforms.Phase;
 
     float4 cosDist = fast::cos(distance);
     float4 sinDist = fast::sin(distance);

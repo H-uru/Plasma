@@ -155,18 +155,6 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     //
     //    dist = mad( dist, kFreq.xyzw, kPhase.xyzw);
     distance = (distance * uniforms.Frequency) + uniforms.Phase;
-
-    //    // Now we need dist mod'd into range [-Pi..Pi]
-    //    dist *= rcp(kTwoPi);
-    distance += uniforms.PiConsts.zzzz;
-    distance *= 1.0f / uniforms.PiConsts.wwww;
-
-    //    dist = frac(dist);
-    distance = fract(distance);
-    //    dist *= kTwoPi;
-    distance *= uniforms.PiConsts.wwww;
-    //    dist += -kPi;
-    distance -= uniforms.PiConsts.zzzz;
     
     float4 cosDist = fast::cos(distance);
     float4 sinDist = fast::sin(distance);
