@@ -148,15 +148,15 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
 
     // Dot our position with our direction vectors.
     
-    float4 distance = uniforms.DirectionX * worldPosition.xxxx;
-    distance = (uniforms.DirectionY * worldPosition.yyyy) + distance;
+    float4 phases = uniforms.DirectionX * worldPosition.xxxx;
+    phases = (uniforms.DirectionY * worldPosition.yyyy) + phases;
     
     //
     //    dist = mad( dist, kFreq.xyzw, kPhase.xyzw);
-    distance = (distance * uniforms.Frequency) + uniforms.Phase;
+    phases = (phases * uniforms.Frequency) + uniforms.Phase;
 
-    float4 cosDist = fast::cos(distance);
-    float4 sinDist = fast::sin(distance);
+    float4 cosPhases = fast::cos(phases);
+    float4 sinPhases = fast::sin(phases);
 
     // Calc our depth based filtering here into r4 (because we don't use it again
     // after here, and we need our filtering shortly).
@@ -175,15 +175,15 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     // r2 == sinDist
     // r1 == cosDist
     //    sinDist *= filter;
-    sinDist *= filter;
+    sinPhases *= filter;
     //    sinDist *= kAmplitude.xyzw
-    sinDist *= uniforms.Amplitude;
+    sinPhases *= uniforms.Amplitude;
     // r5 is now T = sum(Ai * sin())
     // METAL NOTE: from here on, r5 is sinDist
     //    height = dp4(sinDist, kOne);
     //    accumPos.z += height; (but accumPos.z is currently 0).
     float4 accumPos = 0;
-    accumPos.x = dot(sinDist, uniforms.NumericConsts.zzzz);
+    accumPos.x = dot(sinPhases, uniforms.NumericConsts.zzzz);
     accumPos.y = accumPos.x * depth.z;
     accumPos.z = accumPos.y + uniforms.WaterLevel.w;
     worldPosition.z = max(worldPosition.z, accumPos.z); // CLAMP
@@ -194,9 +194,9 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     //
     //    cosDist *= kAmplitude.xyzw; // Combine?
     //METAL NOTE: cosDist is now r7
-    cosDist *= uniforms.Amplitude;
+    cosPhases *= uniforms.Amplitude;
     //    cosDist *= filter;
-    cosDist *= filter;
+    cosPhases *= filter;
     // r7 is now M = sum(Ai * cos())
 
     // Okay, here we go:
@@ -225,24 +225,24 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     //
     // But we want the transpose of that to go into r1-r3
 
-    worldPosition.x += dot(cosDist, uniforms.DirXK);
-    worldPosition.y += dot(cosDist, uniforms.DirYK);
+    worldPosition.x += dot(cosPhases, uniforms.DirXK);
+    worldPosition.y += dot(cosPhases, uniforms.DirYK);
 
     float4 r1, r2, r3 = 0;
 
-    r1.x = dot(sinDist, -uniforms.DirXSqKW);
-    r2.x = dot(sinDist, -uniforms.DirXDirYKW);
-    r3.x = dot(cosDist, uniforms.DirXW);
+    r1.x = dot(sinPhases, -uniforms.DirXSqKW);
+    r2.x = dot(sinPhases, -uniforms.DirXDirYKW);
+    r3.x = dot(cosPhases, uniforms.DirXW);
     r1.x = r1.x + uniforms.NumericConsts.z;
 
-    r1.y = dot(sinDist, -uniforms.DirXDirYKW);
-    r2.y = dot(sinDist, -uniforms.DirYSqKW);
-    r3.y = dot(cosDist, uniforms.DirYW);
+    r1.y = dot(sinPhases, -uniforms.DirXDirYKW);
+    r2.y = dot(sinPhases, -uniforms.DirYSqKW);
+    r3.y = dot(cosPhases, uniforms.DirYW);
     r2.y = r2.y + uniforms.NumericConsts.z;
 
-    r1.z = dot(cosDist, -uniforms.DirXW);
-    r2.z = dot(cosDist, -uniforms.DirYW);
-    r3.z = dot(sinDist, -uniforms.WK);
+    r1.z = dot(cosPhases, -uniforms.DirXW);
+    r2.z = dot(cosPhases, -uniforms.DirYW);
+    r3.z = dot(sinPhases, -uniforms.WK);
     r3.z = r3.z + uniforms.NumericConsts.z;
 
     // Calculate our normalized vector from camera to vtx.

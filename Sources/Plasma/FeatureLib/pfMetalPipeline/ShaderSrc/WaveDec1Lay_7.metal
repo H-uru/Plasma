@@ -145,15 +145,15 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in                         
     // So r4.w is the depth of this vertex in feet.
 
     // Dot our position with our direction vectors.
-    float4 distance = uniforms.DirectionX * worldPosition.xxxx;
-    distance += uniforms.DirectionY * worldPosition.yyyy;
+    float4 phases = uniforms.DirectionX * worldPosition.xxxx;
+    phases += uniforms.DirectionY * worldPosition.yyyy;
 
     //
     //    dist = mad( dist, kFreq.xyzw, kPhase.xyzw);
-    distance = (distance * uniforms.Frequency) + uniforms.Phase;
+    phases = (phases * uniforms.Frequency) + uniforms.Phase;
     
-    float4 cosDist = fast::cos(distance);
-    float4 sinDist = fast::sin(distance);
+    float4 cosPhases = fast::cos(phases);
+    float4 sinPhases = fast::sin(phases);
 
     // Calc our depth based filtering here into r4 (because we don't use it again
     // after here, and we need our filtering shortly).
@@ -172,15 +172,15 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in                         
     // r2 == sinDist
     // r1 == cosDist
     //    sinDist *= filter;
-    sinDist *= filter;
+    sinPhases *= filter;
     //    sinDist *= kAmplitude.xyzw
-    sinDist *= uniforms.Amplitude;
+    sinPhases *= uniforms.Amplitude;
     // r5 is now T = sum(Ai * sin())
     // METAL NOTE: from here on, r5 is sinDist
     //    height = dp4(sinDist, kOne);
     //    accumPos.z += height; (but accumPos.z is currently 0).
     float4 accumPos = float4(0);
-    accumPos.x = dot(sinDist, uniforms.NumericConsts.zzzz);
+    accumPos.x = dot(sinPhases, uniforms.NumericConsts.zzzz);
     accumPos.y = accumPos.x * depth.z;
     accumPos.z = accumPos.y + uniforms.WaterLevel.w;
     worldPosition.z = max(worldPosition.z, accumPos.z); // CLAMP
@@ -191,9 +191,9 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in                         
     //
     //    cosDist *= kAmplitude.xyzw; // Combine?
     //METAL NOTE: cosDist is now r7
-    cosDist *= uniforms.Amplitude;
+    cosPhases *= uniforms.Amplitude;
     //    cosDist *= filter;
-    cosDist *= filter;
+    cosPhases *= filter;
     // Pos = (in.x + S, in.y + R, r6.z)
     // S = sum(k Dir.x A cos())
     // R = sum(k Dir.y A cos())
@@ -201,8 +201,8 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in                         
     // c31 = k Dir.y A
     //    S = sum(cosDist * c30);
     worldPosition.xy += float2(
-                              dot(cosDist, uniforms.QADirX),
-                              dot(cosDist, uniforms.QADirY)
+                              dot(cosPhases, uniforms.QADirX),
+                              dot(cosPhases, uniforms.QADirY)
                               );
 
     // Bias our vert up a bit to compensate for precision errors.
