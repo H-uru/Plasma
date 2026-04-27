@@ -253,7 +253,8 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
                                        constant float4x4 & blendMatrix1     [[ buffer(VertexShaderArgumentBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]])
 {
     ColorInOut out;
-    const half4 inColor = half4(in.color.b, in.color.g, in.color.r, in.color.a) / half4(255.f);
+    // FVF ARGB color is in little endian order, so we need to swizzle it into RGBA
+    const half4 inColor = half4(in.color.bgra);
 
     const float3 Ndirection = normalize(float4(in.normal, 0.f) * uniforms.localToWorldMatrix).xyz;
 
