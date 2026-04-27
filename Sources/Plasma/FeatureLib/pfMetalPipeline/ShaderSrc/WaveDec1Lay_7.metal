@@ -152,8 +152,8 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in                         
     //    dist = mad( dist, kFreq.xyzw, kPhase.xyzw);
     phases = (phases * uniforms.Frequency) + uniforms.Phase;
     
-    float4 cosPhases = fast::cos(phases);
-    float4 sinPhases = fast::sin(phases);
+    float4 cosPhases;
+    float4 sinPhases = fast::sincos(phases, cosPhases);
 
     // Calc our depth based filtering here into r4 (because we don't use it again
     // after here, and we need our filtering shortly).
