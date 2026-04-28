@@ -103,7 +103,7 @@ vertex vs_GrassInOut vs_GrassShader(Vertex in                                   
     float4 position = float4(in.position.xyz + offset, 1);
     out.position = position * uniforms.Local2NDC;
 
-    out.color = float4(in.color.r, in.color.g, in.color.b, in.color.a) / 255.f;
+    out.color = float4(in.color.r, in.color.g, in.color.b, in.color.a);
     out.texCoord = float4(in.texCoord1, 0.f);
 
     return out;

@@ -214,8 +214,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     depth = clamp(depth, 0, 1);
 
     // Calc our filter (see above).
-    float4 inColor = float4(in.color) / 255.0f;
-    float4 filter = inColor.wwww * uniforms.Lengths;
+    float4 filter = in.color.wwww * uniforms.Lengths;
     filter = max(filter, uniforms.NumericConsts.xxxx);
     filter = min(filter, uniforms.NumericConsts.zzzz);
 
@@ -424,7 +423,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     // vector from this point to camera and normalize stashed in r5
     // Dot that with the computed normal
     r1.x = dot(-r5, r11);
-    r1.x = r1.x * inColor.z;
+    r1.x = r1.x * in.color.z;
     r1.xyzw = uniforms.NumericConsts.z - r1.x;
     r1.w += uniforms.NumericConsts.z;
     r1.w *= uniforms.NumericConsts.y;
@@ -432,7 +431,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     // will saturate [0..1] anyway.
     r1 *= depth.yyyx; // HACKTESTCOLOR
     //R in the in color is the alpha value, but remember it's encoded ARGB
-    r1.w *= inColor.g;
+    r1.w *= in.color.g;
     r1.w *= uniforms.WaterTint.w;
     out.c1 = clamp(r1 * uniforms.EnvTint, 0, 1);
     out.c2 = uniforms.WaterTint; // SEENORM

@@ -78,5 +78,5 @@ typedef struct
     float3 texCoord6 [[attribute(VertexAttributeTexcoord+5), function_constant(hasTexture6)]];
     float3 texCoord7 [[attribute(VertexAttributeTexcoord+6), function_constant(hasTexture7)]];
     float3 texCoord8 [[attribute(VertexAttributeTexcoord+7), function_constant(hasTexture8)]];
-    uchar4 color [[attribute(VertexAttributeColor)]];
+    float4 color [[attribute(VertexAttributeColor)]];
 } Vertex;

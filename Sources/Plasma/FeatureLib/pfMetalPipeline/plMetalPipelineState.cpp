@@ -156,7 +156,7 @@ void plMetalRenderSpanPipelineState::ConfigureVertexDescriptor(MTL::VertexDescri
         vertexDescriptor->attributes()->object(VertexAttributeTexcoord + i)->setOffset(baseUvOffset + (i * sizeof(hsPoint3)));
     }
 
-    vertexDescriptor->attributes()->object(VertexAttributeColor)->setFormat(MTL::VertexFormatUChar4);
+    vertexDescriptor->attributes()->object(VertexAttributeColor)->setFormat(MTL::VertexFormatUChar4Normalized);
     vertexDescriptor->attributes()->object(VertexAttributeColor)->setBufferIndex(0);
     vertexDescriptor->attributes()->object(VertexAttributeColor)->setOffset(colorOffset);
 

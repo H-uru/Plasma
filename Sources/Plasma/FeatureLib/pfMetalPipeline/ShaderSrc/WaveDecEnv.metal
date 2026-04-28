@@ -204,8 +204,7 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     depth = clamp(depth, 0, 1);
 
     // Calc our filter (see above).
-    float4 inColor = float4(in.color) / 255.0f;
-    float4 filter = inColor.wwww * uniforms.Lengths;
+    float4 filter = in.color.wwww * uniforms.Lengths;
     filter = max(filter, uniforms.NumericConsts.xxxx);
     filter = min(filter, uniforms.NumericConsts.zzzz);
 
@@ -401,7 +400,7 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     out.texCoord3 = r2 * r10.xxxw;
 
     float4 matColor = uniforms.MatColor;
-    out.c1 = clamp(float4(in.color).yyyz/255.0 * matColor, 0.0, 1.0);
+    out.c1 = clamp(in.color.yyyz * matColor, 0.0, 1.0);
 
     return out;
 }

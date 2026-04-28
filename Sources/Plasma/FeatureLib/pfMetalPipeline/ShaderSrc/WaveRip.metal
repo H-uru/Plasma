@@ -198,8 +198,7 @@ vertex waveRipInOut vs_WaveRip7(Vertex in                               [[stage_
     depth = clamp(depth, 0, 1);
 
     // Calc our filter (see above).
-    float4 inColor = float4(in.color) / 255.0f;
-    float4 filter = inColor.wwww * uniforms.Lengths;
+    float4 filter = in.color.wwww * uniforms.Lengths;
     filter = clamp(filter, 0.0f, 1.0f);
 
     //mov    r2, r1;

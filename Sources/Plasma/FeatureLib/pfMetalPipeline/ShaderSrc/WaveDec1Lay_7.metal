@@ -199,8 +199,7 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in                         
     depth = clamp(depth, 0, 1);
 
     // Calc our filter (see above).
-    float4 inColor = float4(in.color) / 255.0f;
-    float4 filter = inColor.wwww * uniforms.Lengths;
+    float4 filter = in.color.wwww * uniforms.Lengths;
     filter = max(filter, uniforms.NumericConsts.xxxx);
     filter = min(filter, uniforms.NumericConsts.zzzz);
 
@@ -262,7 +261,7 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in                         
     // Output alpha is vertex red (vtx alpha is used for wave filtering)
     // Whole thing modulated by material color/opacity.
 
-    out.c0 = half4(in.color.yyyz)/255.0 * half4(uniforms.MatColor);
+    out.c0 = half4(in.color.yyyz) * half4(uniforms.MatColor);
 
     // Usual texture transform
     out.texCoord0.x = dot(float4(in.texCoord1, 1.0), uniforms.Tex0_Row0);
