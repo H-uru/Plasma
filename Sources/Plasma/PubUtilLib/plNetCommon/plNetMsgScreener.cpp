@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 
 #include "plMessage/plAnimCmdMsg.h"
+#include "plMessage/plInputEventMsg.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
 #include "plMessage/plLinkToAgeMsg.h"
 
@@ -116,6 +117,7 @@ plNetMsgScreener::Answer plNetMsgScreener::IAllowMessageType(int16_t classIndex,
     case CLASS_INDEX_SCOPED(plAvTaskMsg):
     case CLASS_INDEX_SCOPED(plLinkEffectsTriggerMsg):
     case CLASS_INDEX_SCOPED(plInputIfaceMgrMsg):
+    case CLASS_INDEX_SCOPED(plControlEventMsg):
     case CLASS_INDEX_SCOPED(plParticleKillMsg):
     case CLASS_INDEX_SCOPED(plParticleTransferMsg):
     case CLASS_INDEX_SCOPED(plAvatarInputStateMsg):
@@ -202,6 +204,14 @@ bool plNetMsgScreener::IValidateMessage(const plMessage* msg, const plNetGameMem
             return ret;
         }
         break;
+
+    case CLASS_INDEX_SCOPED(plControlEventMsg):
+        {
+            const plControlEventMsg* controlEventMsg = plControlEventMsg::ConvertNoRef(msg);
+            // Console command messages only, as used by PtConsoleNet.
+            return controlEventMsg->GetControlCode() == B_CONTROL_CONSOLE_COMMAND
+                && controlEventMsg->ControlActivated();
+        }
     
     case CLASS_INDEX_SCOPED(plParticleKillMsg):
     case CLASS_INDEX_SCOPED(plParticleTransferMsg):

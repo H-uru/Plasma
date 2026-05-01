@@ -41,6 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "plNetClientMsgScreener.h"
+
+#include <string_theory/string>
+#include <unordered_set>
+
 #include "plCreatableIndex.h"
 #include "plNetLinkingMgr.h"
 
@@ -57,11 +61,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plCoopCoordinator.h"
 #include "plMessage/plAvCoopMsg.h"
 #include "plMessage/plAvatarMsg.h"
+#include "plMessage/plInputEventMsg.h"
 #include "plMessage/plLoadAvatarMsg.h"
 #include "plMessage/plLoadCloneMsg.h"
 #include "plStatusLog/plStatusLog.h"
 
 #include "pfMessage/pfKIMsg.h"
+
+using namespace ST::literals;
 
 ///////////////////////////////////////////////////////////////
 // CLIENT Version
@@ -133,6 +140,80 @@ bool plNetClientMsgScreener::AllowOutgoingMessage(const plMessage* msg) const
         WarningMsg("Rejected: (Outgoing) {} [Validation Failed]", msg->ClassName());
         return false;
     }
+    return true;
+}
+
+// The longest safe command name is 34 characters,
+// so this maximum leaves at least 93 characters for the arguments,
+// which is hopefully enough.
+static constexpr size_t kMaxSafeCommandLength = 128;
+
+/**
+ * Console command names that are always safe to execute.
+ * Currently includes all commands used by the TOC-MOUL shard and by Mir-o-Bot,
+ * mostly for changing visual settings like fog color and distance.
+ * We do not want to just allow all commands under Graphics.Renderer,
+ * because some of them write files to disk (such as Graphics.Renderer.GrabCubeMap).
+ */
+static const std::unordered_set<ST::string, ST::hash_i, ST::equal_i> kSafeConsoleCommandNames = {
+    "Avatar.Spawn.DontPanic"_st,
+    "Graphics.Renderer.Fog.SetDefColor"_st,
+    "Graphics.Renderer.Fog.SetDefExp"_st,
+    "Graphics.Renderer.Fog.SetDefExp2"_st,
+    "Graphics.Renderer.Fog.SetDefLinear"_st,
+    "Graphics.Renderer.SetClearColor"_st,
+    "Graphics.Renderer.SetYon"_st,
+    "Graphics.SetDebugFlag"_st,
+    "Nav.PageInNode"_st,
+    "Nav.PageOutNode"_st,
+};
+
+/**
+ * Checks whether the given command is definitely safe to execute
+ * and thus accepted when received over the network.
+ * Currently, a command is only considered safe
+ * if its command name is listed in \ref kSafeConsoleCommandNames
+ * and its arguments only consist of ASCII letters, digits, "-", ".", and "_".
+ *
+ * This check is very restrictive - it rejects many commands that are not actually dangerous
+ * and disallows alternative spellings of otherwise allowed commands
+ * (such as "_" instead of "." as the command group separator).
+ * This is intentional, to avoid overly complex parsing of untrusted inputs.
+ *
+ * @param command the complete command (name and arguments) to check
+ * @return whether the command is definitely safe
+ */
+bool plNetClientMsgScreener::IIsConsoleCommandSafe(const ST::string& command)
+{
+    // Overly long commands are considered unsafe.
+    if (command.size() > kMaxSafeCommandLength) {
+        return false;
+    }
+
+    // Split name and arguments.
+    auto parts = command.split(' ', 1);
+    if (parts.empty()) {
+        hsAssert(false, "ST::string::split returned an empty vector??");
+        return false;
+    }
+
+    // Is the command name safe?
+    const ST::string& name = parts[0];
+    if (kSafeConsoleCommandNames.find(name) == kSafeConsoleCommandNames.end()) {
+        return false;
+    }
+
+    // If there are arguments, are they all "simple" characters?
+    if (parts.size() > 1) {
+        const ST::string& args = parts[1];
+        for (char c : args) {
+            if (c < 0 || !(isalnum(c) || c == ' ' || c == '-' || c == '.' || c == '_')) {
+                return false;
+            }
+        }
+    }
+
+    // Everything seems to be in order.
     return true;
 }
 
@@ -234,6 +315,19 @@ bool plNetClientMsgScreener::IScreenIncoming(const plMessage* msg)
     case CLASS_INDEX_SCOPED(plConsoleMsg):
         // Python remote code execution vulnerability
         return false;
+    case CLASS_INDEX_SCOPED(plControlEventMsg):
+        // Other clients have no business sending us inputs,
+        // but plControlEventMsg is also used by PtConsoleNet
+        // to send console commands to other players.
+        // This is another remote code execution risk, like plConsoleMsg.
+        // Unfortunately, PtConsoleNet has some safe, legitimate uses (see kSafeConsoleCommandNames),
+        // so allow plControlEventMsgs containing such known-safe console commands.
+        {
+            const plControlEventMsg* controlEventMsg = plControlEventMsg::ConvertNoRef(msg);
+            return controlEventMsg->GetControlCode() == B_CONTROL_CONSOLE_COMMAND
+                && controlEventMsg->ControlActivated()
+                && IIsConsoleCommandSafe(controlEventMsg->GetCmdString());
+        }
     case CLASS_INDEX_SCOPED(pfKIMsg):
         {
             // Only accept Chat Messages!
@@ -248,8 +342,8 @@ bool plNetClientMsgScreener::IScreenIncoming(const plMessage* msg)
             return false;
 
         // Other clients have no business sending us inputs.
-        // Also mitigates another remote code execution risk:
-        // plControlEventMsg can run console commands.
+        // The only exception is plControlEventMsg,
+        // which is handled separately above.
         if (plFactory::DerivesFrom(CLASS_INDEX_SCOPED(plInputEventMsg), msg->ClassIndex())) {
             return false;
         }
