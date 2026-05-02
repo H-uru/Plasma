@@ -43,10 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "plAgeDescription.h"
 
-#include "plFile/plInitFileReader.h"
 #include "plFile/plEncryptedStream.h"
 #include "pnKeyedObject/plUoid.h"
-#include "hsStringTokenizer.h"
 
 #include <functional>
 #include <algorithm>
@@ -292,84 +290,59 @@ void plAgeDescription::Write(hsStream* stream) const
         stream->WriteString(ST::format("Page={}\n", page.GetAsString()));
 }
 
-struct plAgeDescriptionTokenReader : plInitSectionTokenReader
-{
-    plAgeDescription* fAgeDesc;
-
-    plAgeDescriptionTokenReader(plAgeDescription* ageDesc) : fAgeDesc(ageDesc) {}
-
-    const char* GetSectionName() const override;
-    bool IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData) override;
-};
-
-const char* plAgeDescriptionTokenReader::GetSectionName() const
-{
-    return "AgeInfo";
-}
-
-bool plAgeDescriptionTokenReader::IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData)
-{
-    char *tok;
-
-    if( !stricmp( token, "StartDateTime" ) )
-    {
-        if ((tok = tokenizer->next()) != nullptr)
-        {
-            char buf[11];
-            strncpy(buf, tok, 10); buf[10] = '\0';
-            fAgeDesc->SetStartSecs(atoi(buf));
-        }
-    }
-    else if (!stricmp(token, "DayLength"))
-    {
-        if ((tok = tokenizer->next()) != nullptr)
-            fAgeDesc->SetDayLength((float)atof(tok));
-    }
-    else if (!stricmp(token, "Page"))
-    {
-        fAgeDesc->AppendPage(plAgePage(tokenizer->GetRestOfString()));
-    }
-    else if (!stricmp(token, "MaxCapacity"))
-    {
-        if ((tok = tokenizer->next()) != nullptr)
-            fAgeDesc->SetMaxCapacity(atoi(tok));
-    }
-    else if (!stricmp(token, "LingerTime"))
-    {
-        if ((tok = tokenizer->next()) != nullptr)
-            fAgeDesc->SetLingerTime(atoi(tok));
-    }
-    else if( !stricmp(token, "SequencePrefix"))
-    {
-        if ((tok = tokenizer->next()) != nullptr)
-            fAgeDesc->SetSequencePrefix(atoi(tok));
-    }
-    else if( !stricmp(token, "ReleaseVersion"))
-    {
-        if ((tok = tokenizer->next()) != nullptr)
-            fAgeDesc->SetReleaseVersion(atoi(tok));
-    }
-
-    return true;
-}
-
 //
 // Reads the Age Description File
 //
 void plAgeDescription::Read(hsStream* stream)
 {
-    plAgeDescriptionTokenReader tokenReader(this);
-    plInitSectionReader* sections[] = {&tokenReader, nullptr};
+    ST::string line;
+    while (stream->ReadLn(line)) {
+        if (line.trim_left().empty()) {
+            continue;
+        }
 
-    plInitFileReader    reader( stream, sections );
+        auto parts = line.split("=", 1);
+        hsAssert(parts.size() == 2, "Syntax error in .age file: missing equals sign");
+        ST::string name = std::move(parts[0]);
+        ST::string value = std::move(parts[1]);
 
-    if( !reader.IsOpen() )
-    {
-        hsAssert( false, "Unable to open age description file for reading" );
-        return;
+        ST::conversion_result result;
+        if (name.compare_i("StartDateTime") == 0) {
+            // Cyan's original code copied the StartDateTime into a 10-char buffer,
+            // silently truncating any digits after the first 10...
+            // Not sure if anything relies on this by accident, so just in case:
+            hsAssert(value.size() <= 10, "Syntax warning in .age file: StartDateTime is longer than 10 characters - it will be truncated for compatibility!");
+            value = value.left(10);
+
+            SetStartSecs(value.to_int64(result, 10));
+            hsAssert(result.ok(), "Syntax error in .age file: StartDateTime is not a valid integer");
+            hsAssert(result.full_match(), "Syntax error in .age file: StartDateTime has trailing junk");
+        } else if (name.compare_i("DayLength") == 0) {
+            SetDayLength(value.to_float(result));
+            hsAssert(result.ok(), "Syntax error in .age file: DayLength is not a valid float");
+            hsAssert(result.full_match(), "Syntax error in .age file: DayLength has trailing junk");
+        } else if (name.compare_i("Page") == 0) {
+            AppendPage(plAgePage(value));
+        } else if (name.compare_i("MaxCapacity") == 0) {
+            SetMaxCapacity(value.to_short(result, 10));
+            hsAssert(result.ok(), "Syntax error in .age file: MaxCapacity is not a valid integer");
+            hsAssert(result.full_match(), "Syntax error in .age file: MaxCapacity has trailing junk");
+        } else if (name.compare_i("LingerTime") == 0) {
+            SetLingerTime(value.to_short(result, 10));
+            hsAssert(result.ok(), "Syntax error in .age file: LingerTime is not a valid integer");
+            hsAssert(result.full_match(), "Syntax error in .age file: LingerTime has trailing junk");
+        } else if (name.compare_i("SequencePrefix") == 0) {
+            SetSequencePrefix(value.to_int(result, 10));
+            hsAssert(result.ok(), "Syntax error in .age file: SequencePrefix is not a valid integer");
+            hsAssert(result.full_match(), "Syntax error in .age file: SequencePrefix has trailing junk");
+        } else if (name.compare_i("ReleaseVersion") == 0) {
+            SetReleaseVersion(value.to_uint(result, 10));
+            hsAssert(result.ok(), "Syntax error in .age file: ReleaseVersion is not a valid integer");
+            hsAssert(result.full_match(), "Syntax error in .age file: ReleaseVersion has trailing junk");
+        } else {
+            hsAssert(false, ST::format("Unknown property in .age file: {}", name).c_str());
+        }
     }
-    
-    reader.Parse();
 }
 
 //
