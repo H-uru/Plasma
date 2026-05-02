@@ -94,7 +94,6 @@ class plAgeDescription
 {
     ST::string  fName;
 
-    int32_t     fPageIterator;
     std::vector<plAgePage> fPages;
 
     plUnifiedTime fStart;
@@ -137,9 +136,7 @@ public:
     void    AppendPage(plAgePage page);
     void    AppendPage(ST::string name, uint32_t seqSuffix = plAgePage::kInvalidSeqSuffix, uint8_t flags = 0);
 
-    void        SeekFirstPage();
-    plAgePage   *GetNextPage();
-    size_t      GetNumPages() const { return fPages.size(); }
+    const std::vector<plAgePage>& GetPages() const { return fPages; }
     const plAgePage   *FindPage(const ST::string &name) const;
     bool FindLocation(const plLocation& loc) const;
     plLocation  CalcPageLocation( const ST::string &page ) const;

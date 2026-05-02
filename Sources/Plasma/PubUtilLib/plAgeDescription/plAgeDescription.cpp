@@ -176,8 +176,6 @@ void plAgeDescription::IInit()
     fSeqPrefix = 0;
     fReleaseVersion = 0;
     fStart.SetMode( plUnifiedTime::kLocal );
-
-    fPageIterator = -1;
 }
 
 void plAgeDescription::ClearPageList()
@@ -196,26 +194,6 @@ void plAgeDescription::AppendPage(plAgePage page)
 void plAgeDescription::AppendPage(ST::string name, uint32_t seqSuffix, uint8_t flags)
 {
     AppendPage(plAgePage(std::move(name), seqSuffix, flags));
-}
-
-void    plAgeDescription::SeekFirstPage()
-{
-    fPageIterator = 0;
-}
-
-plAgePage   *plAgeDescription::GetNextPage()
-{
-    plAgePage   *ret = nullptr;
-
-
-    if (fPageIterator >= 0 && (size_t)fPageIterator < fPages.size())
-    {
-        ret = &fPages[ fPageIterator++ ];
-        if ((size_t)fPageIterator >= fPages.size())
-            fPageIterator = -1;
-    }
-
-    return ret;
 }
 
 void plAgeDescription::RemovePage( const ST::string &page )
