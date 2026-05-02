@@ -92,8 +92,6 @@ class plAgePage
 
 class plAgeDescription
 {
-    friend struct plAgeDescriptionTokenReader;
-
     ST::string  fName;
 
     int32_t     fPageIterator;
@@ -136,6 +134,7 @@ public:
     // Page list
     void    ClearPageList();
     void    RemovePage( const ST::string &page );
+    void    AppendPage(plAgePage page);
     void    AppendPage(ST::string name, uint32_t seqSuffix = plAgePage::kInvalidSeqSuffix, uint8_t flags = 0);
 
     void        SeekFirstPage();

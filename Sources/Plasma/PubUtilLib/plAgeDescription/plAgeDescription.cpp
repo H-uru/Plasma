@@ -185,9 +185,17 @@ void plAgeDescription::ClearPageList()
     fPages.clear();
 }
 
+void plAgeDescription::AppendPage(plAgePage page)
+{
+    if (page.GetSeqSuffix() == plAgePage::kInvalidSeqSuffix) {
+        page.SetSeqSuffix(fPages.size());
+    }
+    fPages.emplace_back(std::move(page));
+}
+
 void plAgeDescription::AppendPage(ST::string name, uint32_t seqSuffix, uint8_t flags)
 {
-    fPages.emplace_back(std::move(name), seqSuffix == plAgePage::kInvalidSeqSuffix ? fPages.size() : seqSuffix, flags);
+    AppendPage(plAgePage(std::move(name), seqSuffix, flags));
 }
 
 void    plAgeDescription::SeekFirstPage()
@@ -341,9 +349,7 @@ bool plAgeDescriptionTokenReader::IParseToken(const char* token, hsStringTokeniz
     }
     else if (!stricmp(token, "Page"))
     {
-        fAgeDesc->fPages.emplace_back(tokenizer->GetRestOfString());
-        if (fAgeDesc->fPages.back().GetSeqSuffix() == plAgePage::kInvalidSeqSuffix)
-            fAgeDesc->fPages.back().SetSeqSuffix(fAgeDesc->fPages.size());
+        fAgeDesc->AppendPage(plAgePage(tokenizer->GetRestOfString()));
     }
     else if (!stricmp(token, "MaxCapacity"))
     {
