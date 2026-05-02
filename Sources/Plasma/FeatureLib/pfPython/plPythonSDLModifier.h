@@ -104,7 +104,6 @@ public:
     static bool HasSDL(const ST::string& pythonFile);
     // find the Age global SDL guy... if there is one
     static plPythonSDLModifier* FindAgeSDL();
-    static plKey FindAgeSDLTarget();
 
     void SetDefault(const ST::string& key, PyObject* value);
     void SendToClients(const ST::string& key);

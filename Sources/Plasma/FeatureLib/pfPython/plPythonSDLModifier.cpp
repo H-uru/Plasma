@@ -575,28 +575,6 @@ plPythonSDLModifier* plPythonSDLModifier::FindAgeSDL()
     return nullptr;
 }
 
-plKey plPythonSDLModifier::FindAgeSDLTarget()
-{
-    // find the Age Global object
-    plLocation loc = plKeyFinder::Instance().FindLocation(cyMisc::GetAgeName(),plAgeDescription::GetCommonPage(plAgeDescription::kGlobal));
-    if (loc.IsValid()) {
-        plUoid oid(loc,plPythonFileMod::Index(), plPythonFileMod::kGlobalNameKonstant);
-        if (oid.IsValid()) {
-            plKey key = hsgResMgr::ResMgr()->FindKey(oid);
-
-            plPythonFileMod* pfmod = plPythonFileMod::ConvertNoRef(key ? key->GetObjectPtr() : nullptr);
-            if (pfmod) {
-                if (pfmod->GetTarget(0))
-                    return pfmod->GetTarget(0)->GetKey();
-            }
-        }
-    }
-
-    // couldn't find one (maybe because we didn't look)
-    return nullptr;
-}
-
-
 /////////////////////////////////////////////
 
 pySDLModifier::pySDLModifier(plPythonSDLModifier* sdlMod)
