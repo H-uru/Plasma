@@ -66,9 +66,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plOneShotCallbacks.h"
 #include "plModifier/plSDLModifier.h"
+#include "plNetClient/plNetClientMgr.h"
 #include "plSDL/plSDL.h"
-
-#include "pfPython/plPythonSDLModifier.h" // for plPythonSDLModifier::FindAgeSDL :(
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -264,7 +263,7 @@ void plAGAnimInstance::SearchForGlobals()
     const plAgeGlobalAnim *ageAnim = plAgeGlobalAnim::ConvertNoRef(fAnimation);
     if (ageAnim != nullptr && fSDLChannels.size() > 0)
     {
-        const plSDLModifier *sdlMod = plPythonSDLModifier::FindAgeSDL();
+        const plSDLModifier* sdlMod = plNetClientMgr::GetInstance()->GetAgeSDLModifier();
         if (!sdlMod)
             return;
 

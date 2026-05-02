@@ -71,6 +71,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAvatarMsg.h"
 #include "plMessage/plConsoleMsg.h"
 #include "plMessage/plOneShotMsg.h"
+#include "plModifier/plSDLModifier.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetClient/plNetLinkingMgr.h"
 #include "plNetCommon/plNetObjectDebugger.h"
@@ -84,7 +85,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVault/plVault.h"
 
 #include "pfConsoleCore/pfConsoleCmd.h"
-#include "pfPython/plPythonSDLModifier.h"
 
 // FIXME FIXME
 #include "../../Apps/plClient/plClient.h"
@@ -575,7 +575,7 @@ PF_CONSOLE_CMD( Net_DebugObject,        // groupName
                "bool dirtyOnly", // paramList
                "Dump the age SDL hook to the object debugger" ) // helpString
 {
-    const plPythonSDLModifier * mod = plPythonSDLModifier::FindAgeSDL();
+    const plSDLModifier* mod = plNetClientMgr::GetInstance()->GetAgeSDLModifier();
     mod->GetStateCache()->DumpToObjectDebugger("AgeSDLHook", params[0] );
 }
 
