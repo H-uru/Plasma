@@ -350,7 +350,7 @@ bool plAgeDescriptionTokenReader::IParseToken(const char* token, hsStringTokeniz
         {
             char buf[11];
             strncpy(buf, tok, 10); buf[10] = '\0';
-            fAgeDesc->fStart.SetSecs(atoi(buf));
+            fAgeDesc->SetStartSecs(atoi(buf));
         }
     }
     else if (!stricmp(token, "DayLength"))

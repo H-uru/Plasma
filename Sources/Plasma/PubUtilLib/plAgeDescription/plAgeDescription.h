@@ -149,6 +149,7 @@ public:
     plLocation  CalcPageLocation( const ST::string &page ) const;
 
     // Getters
+    plUnifiedTime GetStart() const { return fStart; }
     short GetStartMonth() const { return fStart.GetMonth(); }
     short GetStartDay() const { return fStart.GetDay(); }
     short GetStartYear() const { return fStart.GetYear(); }
@@ -165,6 +166,7 @@ public:
     bool    IsGlobalAge() const { return ( fSeqPrefix < 0 ) ? true : false; }
 
     // Setters
+    void SetStartSecs(time_t secs) { fStart.SetSecs(secs); }
     bool SetStart(short year, short month, short day, short hour, short minute, short second)
         { return fStart.SetTime(year,month,day,hour,minute,second); }
 
