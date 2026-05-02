@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plSceneObject.h"
 
 #include "plAgeDescription/plAgeDescription.h"
-#include "plResMgr/plKeyFinder.h"
+#include "plNetClient/plNetClientMgr.h"
 #include "plSDL/plSDL.h"
 
 #include "cyMisc.h"
@@ -525,44 +525,24 @@ bool plPythonSDLModifier::HasSDL(const ST::string& pythonFile)
 
 plPythonSDLModifier* plPythonSDLModifier::FindAgeSDL()
 {
-    ST::string ageName = cyMisc::GetAgeName();
-
-    if (ageName.empty())
-        return nullptr; // don't have an age, probably because we're running in max?
-
-    // find the Age Global object
-    plLocation loc = plKeyFinder::Instance().FindLocation(ageName, plAgeDescription::GetCommonPage(plAgeDescription::kGlobal));
-    if (loc.IsValid()) {
-        plUoid oid(loc,plPythonFileMod::Index(), plPythonFileMod::kGlobalNameKonstant);
-        if (oid.IsValid()) {
-            plKey key = hsgResMgr::ResMgr()->FindKey(oid);
-
-            plPythonFileMod *pfmod = plPythonFileMod::ConvertNoRef(key ? key->ObjectIsLoaded() : nullptr);
-            if (pfmod) {
-                plPythonSDLModifier * sdlMod = pfmod->GetSDLMod();
-                if (sdlMod)
-                    return sdlMod;
-
-                plNetClientApp::StaticErrorMsg("pfmod {} has a nil python SDL modifier for age sdl {}",
-                    pfmod->GetKeyName().c_str("?"), ageName);
+    plNetClientMgr* netClientMgr = plNetClientMgr::GetInstance();
+    const plKey& ageSDLHookKey = netClientMgr->GetAgeSDLObjectKey();
+    if (ageSDLHookKey && ageSDLHookKey->ObjectIsLoaded()) {
+        if (const plSceneObject* ageSDLHook = plSceneObject::ConvertNoRef(ageSDLHookKey->GetObjectPtr())) {
+            plPythonSDLModifier* pythonSDLMod = plPythonSDLModifier::ConvertNoRef(const_cast<plModifier*>(ageSDLHook->GetModifierByType(plPythonSDLModifier::Index())));
+            if (pythonSDLMod != nullptr) {
+                return pythonSDLMod;
             } else {
-                if (!key)
-                    plNetClientApp::StaticErrorMsg("nil key {} for age sdl {}", ageName, oid.StringIze());
-                else if (!key->ObjectIsLoaded())
-                    plNetClientApp::StaticErrorMsg("key {} not loaded for age sdl {}",
-                                                   key->GetName().c_str("?"), ageName);
-                else if (!plPythonFileMod::ConvertNoRef(key->ObjectIsLoaded()))
-                    plNetClientApp::StaticErrorMsg("key {} is not a python file mod for age sdl {}",
-                                                   key->GetName().c_str("?"), ageName);
+                plNetClientApp::StaticErrorMsg("Cannot get plPythonSDLModifier, because the AgeSDLHook doesn't have one");
             }
         } else {
-            plNetClientApp::StaticErrorMsg("Invalid plUoid for age sdl {}", ageName);
+            plNetClientApp::StaticErrorMsg("Cannot get plPythonSDLModifier, because the AgeSDLHook isn't a scene object???");
         }
     } else {
-        plNetClientApp::StaticErrorMsg("Invalid plLocation for age sdl {}", ageName);
+        plNetClientApp::StaticErrorMsg("Cannot get plPythonSDLModifier, because the AgeSDLHook isn't loaded yet");
     }
 
-    // couldn't find one (maybe because we didn't look)
+    // couldn't find one
     return nullptr;
 }
 
