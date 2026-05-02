@@ -236,7 +236,7 @@ tl::expected<tl::monostate, ST::string> plAgeLoader::LoadAge(const ST::string& a
     plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
 
     // Copy, exclude pages we want excluded, and collect our scene nodes
-    fCurAgeDescription.CopyFrom(ad);
+    fCurAgeDescription = ad;
     for (const auto& page : ad.GetPages()) {
         if (IsPageExcluded(&page, fAgeName))
             continue;

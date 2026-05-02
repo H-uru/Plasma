@@ -107,20 +107,11 @@ class plAgeDescription
     
     static const char* fCommonPages[];
 
-    void    IInit();
-    void    IDeInit();
-
 public:
     static char kAgeDescPath[];
 
     plAgeDescription();
     plAgeDescription(const plFileName &fileNameToReadFrom);
-    plAgeDescription(const plAgeDescription &src)
-    {
-        IInit();
-        CopyFrom( src );
-    }
-    ~plAgeDescription();
 
     bool ReadFromFile( const plFileName &fileNameToReadFrom );
     void Read(hsStream* stream);
@@ -186,13 +177,6 @@ public:
     static const char *GetCommonPage( int pageType );
 
     void    AppendCommonPages();
-    void    CopyFrom(const plAgeDescription& other);
-
-    plAgeDescription &operator=( const plAgeDescription &src )
-    {
-        CopyFrom( src );
-        return *this;
-    }
 };
 
 

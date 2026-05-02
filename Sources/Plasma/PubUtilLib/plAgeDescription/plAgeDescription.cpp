@@ -117,19 +117,13 @@ char        plAgeDescription::kAgeDescPath[] = { "dat" PATH_SEPARATOR_STR };
 const char* plAgeDescription::fCommonPages[] = { "Textures", "BuiltIn" };
 
 plAgeDescription::plAgeDescription()
+    : fDayLength(24.0f),
+      fMaxCapacity(-1),
+      fLingerTime(180), // seconds
+      fSeqPrefix(),
+      fReleaseVersion()
 {
-    IInit();
-}
-
-
-plAgeDescription::~plAgeDescription()
-{
-    IDeInit();
-}
-
-void plAgeDescription::IDeInit()
-{
-    ClearPageList();
+    fStart.SetMode(plUnifiedTime::kLocal);
 }
 
 plAgeDescription::plAgeDescription( const plFileName &fileNameToReadFrom )
@@ -142,7 +136,8 @@ plAgeDescription::plAgeDescription( const plFileName &fileNameToReadFrom )
 //
 bool plAgeDescription::ReadFromFile( const plFileName &fileNameToReadFrom )
 {
-    IInit();
+    // Initialize defaults for anything not set in the file.
+    *this = plAgeDescription();
 
     std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFile(fileNameToReadFrom);
     if( !stream )
@@ -163,17 +158,6 @@ void plAgeDescription::SetAgeNameFromPath( const plFileName &path )
     }
 
     fName = path.GetFileNameNoExt();
-}
-
-void plAgeDescription::IInit()
-{
-    fName = "";
-    fDayLength = 24.0f;
-    fMaxCapacity = -1;
-    fLingerTime = 180;  // seconds
-    fSeqPrefix = 0;
-    fReleaseVersion = 0;
-    fStart.SetMode( plUnifiedTime::kLocal );
 }
 
 void plAgeDescription::ClearPageList()
@@ -415,21 +399,6 @@ void    plAgeDescription::AppendCommonPages()
 
     for (uint32_t i = 0; i < kNumCommonPages; i++)
         fPages.emplace_back(fCommonPages[i], startSuffix - i, 0);
-}
-
-void    plAgeDescription::CopyFrom(const plAgeDescription& other)
-{
-    IDeInit();
-    fName = other.GetAgeName();
-    fPages = other.fPages;
-
-    fStart = other.fStart;
-    fDayLength = other.fDayLength;
-    fMaxCapacity = other.fMaxCapacity;
-    fLingerTime = other.fLingerTime;
-
-    fSeqPrefix = other.fSeqPrefix;
-    fReleaseVersion = other.fReleaseVersion;
 }
 
 bool plAgeDescription::FindLocation(const plLocation& loc) const
