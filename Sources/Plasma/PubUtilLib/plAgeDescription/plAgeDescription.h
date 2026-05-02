@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 #include "plUnifiedTime/plUnifiedTime.h"
-#include "plFile/plInitFileReader.h"
 
 //
 // Age Definition File Reader/Writer
@@ -94,11 +93,9 @@ class plAgePage
         plAgePage &operator=( const plAgePage &src );
 };
 
-// Derived from plInitSectionTokenReader so we can do nifty things with reading the files
-
-class plAgeDescription : public plInitSectionTokenReader
+class plAgeDescription
 {
-private:
+    friend struct plAgeDescriptionTokenReader;
 
     ST::string  fName;
 
@@ -119,15 +116,12 @@ private:
     void    IInit();
     void    IDeInit();
 
-    // Overload for plInitSectionTokenReader
-    bool        IParseToken(const char *token, hsStringTokenizer *tokenizer, uint32_t userData) override;
-
 public:
     static char kAgeDescPath[];
 
     plAgeDescription();
     plAgeDescription(const plFileName &fileNameToReadFrom);
-    plAgeDescription(const plAgeDescription &src) : plInitSectionTokenReader()
+    plAgeDescription(const plAgeDescription &src)
     {
         IInit();
         CopyFrom( src );
@@ -137,9 +131,6 @@ public:
     bool ReadFromFile( const plFileName &fileNameToReadFrom );
     void Read(hsStream* stream);
     void Write(hsStream* stream) const;
-
-    // Overload for plInitSectionTokenReader
-    const char  *GetSectionName() const override;
 
     ST::string  GetAgeName() const { return fName; }
     void        SetAgeNameFromPath( const plFileName &path );

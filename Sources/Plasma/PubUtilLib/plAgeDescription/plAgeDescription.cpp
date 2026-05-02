@@ -137,8 +137,7 @@ ST::string plAgePage::GetAsString() const
 char        plAgeDescription::kAgeDescPath[] = { "dat" PATH_SEPARATOR_STR };
 const char* plAgeDescription::fCommonPages[] = { "Textures", "BuiltIn" };
 
-// Also gotta init the separators for our helper reading function
-plAgeDescription::plAgeDescription() : plInitSectionTokenReader()
+plAgeDescription::plAgeDescription()
 {
     IInit();
 }
@@ -154,7 +153,7 @@ void plAgeDescription::IDeInit()
     ClearPageList();
 }
 
-plAgeDescription::plAgeDescription( const plFileName &fileNameToReadFrom ) : plInitSectionTokenReader()
+plAgeDescription::plAgeDescription( const plFileName &fileNameToReadFrom )
 {
     ReadFromFile(fileNameToReadFrom);
 }
@@ -326,17 +325,22 @@ void plAgeDescription::Write(hsStream* stream) const
         stream->WriteString(ST::format("Page={}\n", page.GetAsString()));
 }
 
-// Somewhat of an overkill, but I created it, so I better use it.
-// The really nifty (or scary, depending on your viewpoint) thing is that, since
-// we only have one section, we can safely use ourselves as the section reader.
-// Later I might just add section readers with function pointers to avoid this need entirely
+struct plAgeDescriptionTokenReader : plInitSectionTokenReader
+{
+    plAgeDescription* fAgeDesc;
 
-const char  *plAgeDescription::GetSectionName() const
+    plAgeDescriptionTokenReader(plAgeDescription* ageDesc) : fAgeDesc(ageDesc) {}
+
+    const char* GetSectionName() const override;
+    bool IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData) override;
+};
+
+const char* plAgeDescriptionTokenReader::GetSectionName() const
 {
     return "AgeInfo";
 }
 
-bool        plAgeDescription::IParseToken( const char *token, hsStringTokenizer *tokenizer, uint32_t userData )
+bool plAgeDescriptionTokenReader::IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData)
 {
     char *tok;
 
@@ -346,39 +350,39 @@ bool        plAgeDescription::IParseToken( const char *token, hsStringTokenizer 
         {
             char buf[11];
             strncpy(buf, tok, 10); buf[10] = '\0';
-            fStart.SetSecs(atoi(buf));
+            fAgeDesc->fStart.SetSecs(atoi(buf));
         }
     }
     else if (!stricmp(token, "DayLength"))
     {
         if ((tok = tokenizer->next()) != nullptr)
-            fDayLength = (float)atof(tok);
+            fAgeDesc->SetDayLength((float)atof(tok));
     }
     else if (!stricmp(token, "Page"))
     {
-        fPages.emplace_back(tokenizer->GetRestOfString());
-        if (fPages.back().GetSeqSuffix() == plAgePage::kInvalidSeqSuffix)
-            fPages.back().SetSeqSuffix(fPages.size());
+        fAgeDesc->fPages.emplace_back(tokenizer->GetRestOfString());
+        if (fAgeDesc->fPages.back().GetSeqSuffix() == plAgePage::kInvalidSeqSuffix)
+            fAgeDesc->fPages.back().SetSeqSuffix(fAgeDesc->fPages.size());
     }
     else if (!stricmp(token, "MaxCapacity"))
     {
         if ((tok = tokenizer->next()) != nullptr)
-            fMaxCapacity = atoi(tok);
+            fAgeDesc->SetMaxCapacity(atoi(tok));
     }
     else if (!stricmp(token, "LingerTime"))
     {
         if ((tok = tokenizer->next()) != nullptr)
-            fLingerTime = atoi(tok);
+            fAgeDesc->SetLingerTime(atoi(tok));
     }
     else if( !stricmp(token, "SequencePrefix"))
     {
         if ((tok = tokenizer->next()) != nullptr)
-            fSeqPrefix = atoi(tok);
+            fAgeDesc->SetSequencePrefix(atoi(tok));
     }
     else if( !stricmp(token, "ReleaseVersion"))
     {
         if ((tok = tokenizer->next()) != nullptr)
-            fReleaseVersion = atoi(tok);
+            fAgeDesc->SetReleaseVersion(atoi(tok));
     }
 
     return true;
@@ -389,7 +393,8 @@ bool        plAgeDescription::IParseToken( const char *token, hsStringTokenizer 
 //
 void plAgeDescription::Read(hsStream* stream)
 {
-    plInitSectionReader *sections[] = { (plInitSectionReader *)this, nullptr };
+    plAgeDescriptionTokenReader tokenReader(this);
+    plInitSectionReader* sections[] = {&tokenReader, nullptr};
 
     plInitFileReader    reader( stream, sections );
 

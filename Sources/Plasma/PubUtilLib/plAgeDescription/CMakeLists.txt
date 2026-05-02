@@ -15,10 +15,10 @@ target_link_libraries(
     plAgeDescription
     PUBLIC
         CoreLib
-        plFile
         plUnifiedTime
     PRIVATE
         pnKeyedObject
+        plFile
 )
 
 source_group("Source Files" FILES ${plAgeDescription_SOURCES})
