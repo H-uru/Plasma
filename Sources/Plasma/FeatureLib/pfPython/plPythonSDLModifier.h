@@ -53,9 +53,6 @@ class plSimpleStateVariable;
 class plStateDataRecord;
 class pyKey;
 
-// hack for plNetClientVNodeMgr single-player mode SDLHook stuff.
-plStateDataRecord * GetAgeSDL();
-
 //
 // The fields of a SDL record in Python format.
 // If the Python code changes a value an update is sent automatically

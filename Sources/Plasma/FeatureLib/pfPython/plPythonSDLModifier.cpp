@@ -58,15 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 #include "pyObjectRef.h"
 
-plStateDataRecord * GetAgeSDL()
-{
-    const plPythonSDLModifier * mod = plPythonSDLModifier::FindAgeSDL();
-    if ( mod )
-        return mod->GetStateCache();
-    return nullptr;
-}
-
-
 #define PyLoggedAssert(cond, text)                              \
     if (!cond) PythonInterface::WriteToLog(ST_LITERAL(text));   \
     hsAssert(cond, text);
