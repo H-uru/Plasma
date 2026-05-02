@@ -525,25 +525,7 @@ bool plPythonSDLModifier::HasSDL(const ST::string& pythonFile)
 
 plPythonSDLModifier* plPythonSDLModifier::FindAgeSDL()
 {
-    plNetClientMgr* netClientMgr = plNetClientMgr::GetInstance();
-    const plKey& ageSDLHookKey = netClientMgr->GetAgeSDLObjectKey();
-    if (ageSDLHookKey && ageSDLHookKey->ObjectIsLoaded()) {
-        if (const plSceneObject* ageSDLHook = plSceneObject::ConvertNoRef(ageSDLHookKey->GetObjectPtr())) {
-            plPythonSDLModifier* pythonSDLMod = plPythonSDLModifier::ConvertNoRef(const_cast<plModifier*>(ageSDLHook->GetModifierByType(plPythonSDLModifier::Index())));
-            if (pythonSDLMod != nullptr) {
-                return pythonSDLMod;
-            } else {
-                plNetClientApp::StaticErrorMsg("Cannot get plPythonSDLModifier, because the AgeSDLHook doesn't have one");
-            }
-        } else {
-            plNetClientApp::StaticErrorMsg("Cannot get plPythonSDLModifier, because the AgeSDLHook isn't a scene object???");
-        }
-    } else {
-        plNetClientApp::StaticErrorMsg("Cannot get plPythonSDLModifier, because the AgeSDLHook isn't loaded yet");
-    }
-
-    // couldn't find one
-    return nullptr;
+    return plPythonSDLModifier::ConvertNoRef(plNetClientMgr::GetInstance()->GetAgeSDLModifier());
 }
 
 /////////////////////////////////////////////
