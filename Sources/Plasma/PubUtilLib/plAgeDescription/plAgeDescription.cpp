@@ -204,9 +204,9 @@ void plAgeDescription::ClearPageList()
     fPages.clear();
 }
 
-void    plAgeDescription::AppendPage( const ST::string &name, int seqSuffix, uint8_t flags )
+void plAgeDescription::AppendPage(const ST::string& name, uint32_t seqSuffix, uint8_t flags)
 {
-    fPages.emplace_back(name, (seqSuffix == -1) ? fPages.size() : (uint32_t)seqSuffix, flags);
+    fPages.emplace_back(name, seqSuffix == plAgePage::kInvalidSeqSuffix ? fPages.size() : seqSuffix, flags);
 }
 
 void    plAgeDescription::SeekFirstPage()

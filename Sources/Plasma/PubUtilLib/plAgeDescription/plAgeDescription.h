@@ -139,7 +139,7 @@ public:
     // Page list
     void    ClearPageList();
     void    RemovePage( const ST::string &page );
-    void    AppendPage( const ST::string &name, int seqSuffix = -1, uint8_t flags = 0 );
+    void    AppendPage(const ST::string& name, uint32_t seqSuffix = plAgePage::kInvalidSeqSuffix, uint8_t flags = 0);
 
     void        SeekFirstPage();
     plAgePage   *GetNextPage();
