@@ -75,9 +75,8 @@ class plAgePage
             kIsVolatile         = 0x08,
         };
 
-        plAgePage( const ST::string &name, uint32_t seqSuffix, uint8_t flags );
+        plAgePage(ST::string name, uint32_t seqSuffix, uint8_t flags);
         plAgePage( const ST::string &stringFrom );
-        plAgePage( const plAgePage &src );
         plAgePage();
 
         ST::string  GetName() const { return fName; }
@@ -89,8 +88,6 @@ class plAgePage
 
         bool        SetFromString( const ST::string &string );
         ST::string  GetAsString() const;
-
-        plAgePage &operator=( const plAgePage &src );
 };
 
 class plAgeDescription
@@ -139,7 +136,7 @@ public:
     // Page list
     void    ClearPageList();
     void    RemovePage( const ST::string &page );
-    void    AppendPage(const ST::string& name, uint32_t seqSuffix = plAgePage::kInvalidSeqSuffix, uint8_t flags = 0);
+    void    AppendPage(ST::string name, uint32_t seqSuffix = plAgePage::kInvalidSeqSuffix, uint8_t flags = 0);
 
     void        SeekFirstPage();
     plAgePage   *GetNextPage();

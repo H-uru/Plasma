@@ -55,12 +55,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 const uint32_t    plAgePage::kInvalidSeqSuffix = (uint32_t)-1;
 
-plAgePage::plAgePage( const ST::string &name, uint32_t seqSuffix, uint8_t flags )
-{
-    fName = name;
-    fSeqSuffix = seqSuffix;
-    fFlags = flags;
-}
+plAgePage::plAgePage(ST::string name, uint32_t seqSuffix, uint8_t flags)
+    : fName(std::move(name)), fSeqSuffix(seqSuffix), fFlags(flags)
+{}
 
 plAgePage::plAgePage( const ST::string &stringFrom )
 {
@@ -72,22 +69,6 @@ plAgePage::plAgePage()
     fName = "";
     fFlags = 0;
     fSeqSuffix = 0;
-}
-
-plAgePage::plAgePage( const plAgePage &src )
-{
-    fName = src.fName;
-    fSeqSuffix = src.fSeqSuffix;
-    fFlags = src.fFlags;
-}
-
-plAgePage &plAgePage::operator=( const plAgePage &src )
-{
-    fName = src.fName;
-    fSeqSuffix = src.fSeqSuffix;
-    fFlags = src.fFlags;
-
-    return *this;
 }
 
 void plAgePage::SetFlags(uint8_t f, bool on)
@@ -204,9 +185,9 @@ void plAgeDescription::ClearPageList()
     fPages.clear();
 }
 
-void plAgeDescription::AppendPage(const ST::string& name, uint32_t seqSuffix, uint8_t flags)
+void plAgeDescription::AppendPage(ST::string name, uint32_t seqSuffix, uint8_t flags)
 {
-    fPages.emplace_back(name, seqSuffix == plAgePage::kInvalidSeqSuffix ? fPages.size() : seqSuffix, flags);
+    fPages.emplace_back(std::move(name), seqSuffix == plAgePage::kInvalidSeqSuffix ? fPages.size() : seqSuffix, flags);
 }
 
 void    plAgeDescription::SeekFirstPage()
