@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <string_theory/string>
 #include <vector>
 
 #include "plUnifiedTime/plUnifiedTime.h"
@@ -52,8 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // Age Definition File Reader/Writer
 //
-class plLocation;
 class hsStream;
+class plFileName;
+class plLocation;
 
 class plAgePage
 {
