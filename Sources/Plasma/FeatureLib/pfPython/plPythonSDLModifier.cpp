@@ -542,9 +542,9 @@ PyObject* pySDLModifier::GetAgeSDL()
     if (ageName.empty())
         PYTHON_RETURN_NONE; // just return none if the age is blank (running in max?)
 
-    const plPythonSDLModifier* ageSDL = plPythonSDLModifier::FindAgeSDL();
+    plPythonSDLModifier* ageSDL = plPythonSDLModifier::FindAgeSDL();
     if (ageSDL)
-        return pySDLModifier::New((plPythonSDLModifier*)ageSDL);
+        return pySDLModifier::New(ageSDL);
 
     // didn't find one, throw an exception for the python programmer to chew on
     ST::string err = ST::format("Age Global SDL for {} does not exist!", ageName);
