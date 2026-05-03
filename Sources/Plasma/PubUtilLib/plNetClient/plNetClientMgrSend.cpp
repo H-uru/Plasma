@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsTimer.h"
 
-#include <string_theory/char_buffer>
+#include <string_theory/string_stream>
 
 #include "pnMessage/plCameraMsg.h"
 #include "pnNetCommon/plSDLTypes.h"
@@ -57,7 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvatarClothing.h"
 #include "plAvatar/plAvatarMgr.h"
-#include "plContainer/plConfigInfo.h"
 #include "plDrawable/plMorphSequence.h"
 #include "plMessage/plCCRMsg.h"
 #include "plMessage/plLoadAvatarMsg.h"
@@ -145,27 +144,18 @@ void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
     ST::string title = petMsg->GetTitle();
     ST::string note = petMsg->GetNote().replace("\n", "\t");
 
-    // stuff petition info fields into a config info object
-    plConfigInfo info;
-    info.AddValue( "Petition", "Type", type );
-    info.AddValue( "Petition", "Content", note );
-    info.AddValue( "Petition", "Title", title );
-    info.AddValue( "Petition", "Language", plLocalization::GetLanguageName( plLocalization::GetLanguage() ) );
-    info.AddValue("Petition", "AcctName", NetCommGetAccount()->accountName);
-    info.AddValue("Petition", "PlayerID", ST::string::from_uint(GetPlayerID()));
-    info.AddValue( "Petition", "PlayerName", GetPlayerName() );
+    // write petition info fields formatted like an ini file
+    ST::string_stream petition;
+    petition << "[Petition]\n";
+    petition << "Type=" << ST::string::from_int(type) << '\n';
+    petition << "Content=" << note << '\n';
+    petition << "Title=" << title << '\n';
+    petition << "Language=" << plLocalization::GetLanguageName(plLocalization::GetLanguage()) << '\n';
+    petition << "AcctName=" << NetCommGetAccount()->accountName << '\n';
+    petition << "PlayerID=" << ST::string::from_uint(GetPlayerID()) << '\n';
+    petition << "PlayerName=" << GetPlayerName() << '\n';
 
-    // write config info formatted like an ini file to a buffer
-    hsRAMStream ram;
-    plIniStreamConfigSource src(&ram);
-    info.WriteTo(&src);
-    int size = ram.GetPosition();
-    ram.Rewind();
-    ST::char_buffer buf;
-    buf.allocate(size);
-    ram.CopyToMem(buf.data());
-
-    NetCliAuthSendCCRPetition(buf);
+    NetCliAuthSendCCRPetition(petition.to_string());
 }
 
 //
