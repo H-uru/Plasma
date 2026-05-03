@@ -1,12 +1,10 @@
 set(plContainer_SOURCES
-    hsStringTable.cpp
     plConfigInfo.cpp
     plConfigInfoLogging.cpp
     plKeysAndValues.cpp
 )
 
 set(plContainer_HEADERS
-    hsStringTable.h
     plConfigInfo.h
     plContainer.h
     plKeysAndValues.h
