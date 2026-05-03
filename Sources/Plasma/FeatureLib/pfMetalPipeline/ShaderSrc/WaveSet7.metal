@@ -471,8 +471,8 @@ fragment float4 ps_WaveFixed(vs_WaveFixedFin7InOut in           [[stage_in]],
     float3 N = float3(u, v, w);
     float3 E = float3(in.texCoord1.w, in.texCoord2.w, in.texCoord3.w);
 
-    //float3 coord = reflect(E, N);
-    float3 coord = 2*(dot(N, E) / dot(N, N))*N - E;
+    // Invert the normal to an incident ray, then reflect
+    float3 coord = reflect(-E, N);
 
     float4 out = float4(environmentMap.sample(colorSampler, coord));
     out = (out * in.c1) + in.c2;
