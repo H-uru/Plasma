@@ -46,8 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsTimer.h"
 
-#include <string_theory/string_stream>
-
 #include "pnMessage/plCameraMsg.h"
 #include "pnNetCommon/plSDLTypes.h"
 #include "pnNetCommon/plSynchedObject.h"
@@ -58,18 +56,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plAvatarClothing.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plDrawable/plMorphSequence.h"
-#include "plMessage/plCCRMsg.h"
 #include "plMessage/plLoadAvatarMsg.h"
 #include "plMessage/plLoadCloneMsg.h"
 #include "plNetClientRecorder/plNetClientRecorder.h"
 #include "plNetCommon/plNetObjectDebugger.h"
-#include "plNetGameLib/plNetGameLib.h"
 #include "plNetMessage/plNetMessage.h"
 #include "plParticleSystem/plParticleSDLMod.h"
 #include "plParticleSystem/plParticleSystem.h"
-#include "plResMgr/plLocalization.h"
 #include "plSDL/plSDL.h"
-#include "plVault/plVault.h"
 
 #include "pfMessage/pfKIMsg.h"  // TMP
 
@@ -131,31 +125,6 @@ void plNetClientMgr::ISendDirtyState(double secs)
     }
 
     plSynchedObject::ClearDirtyState(carryOvers);
-}
-
-//
-// Given a plasma petition msg, send a petition text node to the vault
-// vault will detect and fwd to CCR system.
-//
-void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
-{
-    // petition msg info
-    uint8_t type = petMsg->GetType();
-    ST::string title = petMsg->GetTitle();
-    ST::string note = petMsg->GetNote().replace("\n", "\t");
-
-    // write petition info fields formatted like an ini file
-    ST::string_stream petition;
-    petition << "[Petition]\n";
-    petition << "Type=" << ST::string::from_int(type) << '\n';
-    petition << "Content=" << note << '\n';
-    petition << "Title=" << title << '\n';
-    petition << "Language=" << plLocalization::GetLanguageName(plLocalization::GetLanguage()) << '\n';
-    petition << "AcctName=" << NetCommGetAccount()->accountName << '\n';
-    petition << "PlayerID=" << ST::string::from_uint(GetPlayerID()) << '\n';
-    petition << "PlayerName=" << GetPlayerName() << '\n';
-
-    NetCliAuthSendCCRPetition(petition.to_string());
 }
 
 //

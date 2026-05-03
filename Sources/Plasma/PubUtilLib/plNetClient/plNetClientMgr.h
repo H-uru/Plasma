@@ -191,7 +191,6 @@ private:
     void ISendDirtyState(double secs);
     void ISendMembersListRequest();
     void ISendRoomsReset();
-    void ISendCCRPetition(plCCRPetitionMsg* petMsg);    
     void ISendCameraReset(bool bEnteringAge);
     
     bool IUpdateListenList(double secs);
