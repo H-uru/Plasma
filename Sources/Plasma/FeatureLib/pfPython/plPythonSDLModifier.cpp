@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plSceneObject.h"
 
 #include "plAgeDescription/plAgeDescription.h"
-#include "plResMgr/plKeyFinder.h"
+#include "plNetClient/plNetClientMgr.h"
 #include "plSDL/plSDL.h"
 
 #include "cyMisc.h"
@@ -57,15 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
 #include "pyObjectRef.h"
-
-plStateDataRecord * GetAgeSDL()
-{
-    const plPythonSDLModifier * mod = plPythonSDLModifier::FindAgeSDL();
-    if ( mod )
-        return mod->GetStateCache();
-    return nullptr;
-}
-
 
 #define PyLoggedAssert(cond, text)                              \
     if (!cond) PythonInterface::WriteToLog(ST_LITERAL(text));   \
@@ -534,68 +525,8 @@ bool plPythonSDLModifier::HasSDL(const ST::string& pythonFile)
 
 plPythonSDLModifier* plPythonSDLModifier::FindAgeSDL()
 {
-    ST::string ageName = cyMisc::GetAgeName();
-
-    if (ageName.empty())
-        return nullptr; // don't have an age, probably because we're running in max?
-
-    // find the Age Global object
-    plLocation loc = plKeyFinder::Instance().FindLocation(ageName, plAgeDescription::GetCommonPage(plAgeDescription::kGlobal));
-    if (loc.IsValid()) {
-        plUoid oid(loc,plPythonFileMod::Index(), plPythonFileMod::kGlobalNameKonstant);
-        if (oid.IsValid()) {
-            plKey key = hsgResMgr::ResMgr()->FindKey(oid);
-
-            plPythonFileMod *pfmod = plPythonFileMod::ConvertNoRef(key ? key->ObjectIsLoaded() : nullptr);
-            if (pfmod) {
-                plPythonSDLModifier * sdlMod = pfmod->GetSDLMod();
-                if (sdlMod)
-                    return sdlMod;
-
-                plNetClientApp::StaticErrorMsg("pfmod {} has a nil python SDL modifier for age sdl {}",
-                    pfmod->GetKeyName().c_str("?"), ageName);
-            } else {
-                if (!key)
-                    plNetClientApp::StaticErrorMsg("nil key {} for age sdl {}", ageName, oid.StringIze());
-                else if (!key->ObjectIsLoaded())
-                    plNetClientApp::StaticErrorMsg("key {} not loaded for age sdl {}",
-                                                   key->GetName().c_str("?"), ageName);
-                else if (!plPythonFileMod::ConvertNoRef(key->ObjectIsLoaded()))
-                    plNetClientApp::StaticErrorMsg("key {} is not a python file mod for age sdl {}",
-                                                   key->GetName().c_str("?"), ageName);
-            }
-        } else {
-            plNetClientApp::StaticErrorMsg("Invalid plUoid for age sdl {}", ageName);
-        }
-    } else {
-        plNetClientApp::StaticErrorMsg("Invalid plLocation for age sdl {}", ageName);
-    }
-
-    // couldn't find one (maybe because we didn't look)
-    return nullptr;
+    return plPythonSDLModifier::ConvertNoRef(plNetClientMgr::GetInstance()->GetAgeSDLModifier());
 }
-
-plKey plPythonSDLModifier::FindAgeSDLTarget()
-{
-    // find the Age Global object
-    plLocation loc = plKeyFinder::Instance().FindLocation(cyMisc::GetAgeName(),plAgeDescription::GetCommonPage(plAgeDescription::kGlobal));
-    if (loc.IsValid()) {
-        plUoid oid(loc,plPythonFileMod::Index(), plPythonFileMod::kGlobalNameKonstant);
-        if (oid.IsValid()) {
-            plKey key = hsgResMgr::ResMgr()->FindKey(oid);
-
-            plPythonFileMod* pfmod = plPythonFileMod::ConvertNoRef(key ? key->GetObjectPtr() : nullptr);
-            if (pfmod) {
-                if (pfmod->GetTarget(0))
-                    return pfmod->GetTarget(0)->GetKey();
-            }
-        }
-    }
-
-    // couldn't find one (maybe because we didn't look)
-    return nullptr;
-}
-
 
 /////////////////////////////////////////////
 
@@ -611,9 +542,9 @@ PyObject* pySDLModifier::GetAgeSDL()
     if (ageName.empty())
         PYTHON_RETURN_NONE; // just return none if the age is blank (running in max?)
 
-    const plPythonSDLModifier* ageSDL = plPythonSDLModifier::FindAgeSDL();
+    plPythonSDLModifier* ageSDL = plPythonSDLModifier::FindAgeSDL();
     if (ageSDL)
-        return pySDLModifier::New((plPythonSDLModifier*)ageSDL);
+        return pySDLModifier::New(ageSDL);
 
     // didn't find one, throw an exception for the python programmer to chew on
     ST::string err = ST::format("Age Global SDL for {} does not exist!", ageName);

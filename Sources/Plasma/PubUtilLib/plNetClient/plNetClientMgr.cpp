@@ -73,6 +73,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plVaultNotifyMsg.h"
 #include "plMessageBox/hsMessageBox.h"
 #include "plModifier/plResponderModifier.h"
+#include "plModifier/plSDLModifier.h"
 #include "plNetClientRecorder/plNetClientRecorder.h"
 #include "plNetCommon/plNetObjectDebugger.h"
 #include "plNetMessage/plNetMessage.h"
@@ -1305,6 +1306,27 @@ plUoid plNetClientMgr::GetAgeSDLObjectUoid(const ST::string& ageName) const
     }
 
     return plUoid(loc, plSceneObject::Index(), plSDL::kAgeSDLObjectName);
+}
+
+plSDLModifier* plNetClientMgr::GetAgeSDLModifier() const
+{
+    if (fAgeSDLObjectKey && fAgeSDLObjectKey->ObjectIsLoaded()) {
+        if (const plSceneObject* ageSDLHook = plSceneObject::ConvertNoRef(fAgeSDLObjectKey->GetObjectPtr())) {
+            plSDLModifier* sdlMod = plSDLModifier::ConvertNoRef(const_cast<plModifier*>(ageSDLHook->GetModifierByType(plSDLModifier::Index())));
+            if (sdlMod != nullptr) {
+                return sdlMod;
+            } else {
+                ErrorMsg("Cannot get age SDL, because the AgeSDLHook doesn't have a plSDLModifier");
+            }
+        } else {
+            ErrorMsg("Cannot get age SDL, because the AgeSDLHook isn't a scene object???");
+        }
+    } else {
+        ErrorMsg("Cannot get age SDL, because the AgeSDLHook isn't loaded yet");
+    }
+
+    // couldn't find one
+    return nullptr;
 }
 
 //

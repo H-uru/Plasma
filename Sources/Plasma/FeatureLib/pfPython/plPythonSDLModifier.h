@@ -53,9 +53,6 @@ class plSimpleStateVariable;
 class plStateDataRecord;
 class pyKey;
 
-// hack for plNetClientVNodeMgr single-player mode SDLHook stuff.
-plStateDataRecord * GetAgeSDL();
-
 //
 // The fields of a SDL record in Python format.
 // If the Python code changes a value an update is sent automatically
@@ -104,7 +101,6 @@ public:
     static bool HasSDL(const ST::string& pythonFile);
     // find the Age global SDL guy... if there is one
     static plPythonSDLModifier* FindAgeSDL();
-    static plKey FindAgeSDLTarget();
 
     void SetDefault(const ST::string& key, PyObject* value);
     void SendToClients(const ST::string& key);
