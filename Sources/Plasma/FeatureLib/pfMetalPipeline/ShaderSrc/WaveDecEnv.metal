@@ -424,8 +424,8 @@ fragment float4 ps_WaveDecEnv(vs_WaveDecEnv7InOut in            [[ stage_in ]],
     float3 N = float3(u, v, w);
     float3 E = float3(in.texCoord1.w, in.texCoord2.w, in.texCoord3.w);
 
-    //float3 coord = reflect(E, N);
-    float3 coord = 2*(dot(N, E) / dot(N, N))*N - E;
+    // Invert the normal to an incident ray, then reflect
+    float3 coord = reflect(-E, N);
 
     // t3 now has our reflected environment map value
     // We've (presumably) attenuated the effect on a vertex basis
