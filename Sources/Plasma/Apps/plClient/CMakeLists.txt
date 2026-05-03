@@ -265,7 +265,7 @@ if(PLASMA_EXTERNAL_RELEASE)
     set_target_properties(plClient PROPERTIES OUTPUT_NAME "UruExplorer")
 endif(PLASMA_EXTERNAL_RELEASE)
 
-if(APPLE)
+if(APPLE AND NOT CMAKE_CROSSCOMPILING)
     # CMake will attempt to strip rpaths, thus preventing fixup_bundle from finding libraries.
     # Not sure why - turning that off.
     set_target_properties(plClient PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
