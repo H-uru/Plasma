@@ -61,11 +61,12 @@ protected:
     bool IIsSenderCCR(const plNetGameMember* gm=nullptr) const override;
     bool IAmClient() const override { return true; }
 
+    static bool IIsConsoleCommandSafe(const ST::string& command);
     static bool IScreenIncomingBrain(const plArmatureBrain* brain);
     static bool IScreenIncomingTask(const plAvTask* task);
-    static bool IScreenIncoming(const plMessage* msg);
-
 public:
+    static bool IScreenIncoming(const plMessage* msg); // public for tests only
+
     plNetClientMsgScreener();
     
     bool AllowOutgoingMessage(const plMessage* msg) const;
