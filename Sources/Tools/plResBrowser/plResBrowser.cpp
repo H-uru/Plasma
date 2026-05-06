@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include "plWinRegistryTools.h"
 #endif
 
-#include "pnAllCreatables.h"
+#include "pnNucleusCreatables.h"
 
 #include "pnFactory/plFactory.h"
 #include "pnKeyedObject/plKey.h"

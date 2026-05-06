@@ -73,6 +73,7 @@ set(plClient_SOURCES
     pfAllCreatables.cpp
     plAllCreatables.cpp
     plClient.cpp
+    plClientCreatable.cpp
     plClientLoader.cpp
     pnAllCreatables.cpp
 )

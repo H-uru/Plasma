@@ -40,10 +40,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef pnAllCreatables_inc
-#define pnAllCreatables_inc
-
-#include "pnNucleusCreatables.h"
-#include "../../Apps/plClient/plClientCreatable.h"
-
-#endif // pnAllCreatables_inc
+#include "plClientCreatable.h"

@@ -20,7 +20,6 @@ set(pnNucleusInc_HEADERS
     plProfileManager.h
     plRefFlags.h
     plTimerCallbackManager.h
-    pnAllCreatables.h
     pnNucleusCreatables.h
     pnTimerCreatable.h
 )

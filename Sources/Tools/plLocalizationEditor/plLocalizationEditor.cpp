@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pnAllCreatables.h"
+#include "pnNucleusCreatables.h"
 
 // These are so that we don't have to link in stuff we don't have to
 #include "plMessage/plResMgrHelperMsg.h"
