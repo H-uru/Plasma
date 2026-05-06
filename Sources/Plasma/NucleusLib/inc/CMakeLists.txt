@@ -20,7 +20,7 @@ set(pnNucleusInc_HEADERS
     plProfileManager.h
     plRefFlags.h
     plTimerCallbackManager.h
-    pnNucleusCreatables.h
+    pnAllCreatables.h
     pnTimerCreatable.h
 )
 
@@ -39,7 +39,7 @@ target_link_libraries(
         CoreLib
 
     # This target brings in "all of the nucleus" in theory and effectively in practice
-    # with pnNucleusCreatables. So, we need to have almost everything as an interface.
+    # with pnAllCreatables. So, we need to have almost everything as an interface.
     INTERFACE
         pnDispatch
         pnFactory

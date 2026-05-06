@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClient/plNetClientMsgScreener.h"
 
 // Assorted creatables needed to make it link...
-#include "pnNucleusCreatables.h"
+#include "pnAllCreatables.h"
 #include "plAllCreatables.h"
 #include "pfAnimation/pfAnimationCreatable.h"
 #include "pfAudio/pfAudioCreatable.h"

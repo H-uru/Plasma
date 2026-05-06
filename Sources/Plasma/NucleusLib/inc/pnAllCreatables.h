@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef pnNucleusCreatables_inc
-#define pnNucleusCreatables_inc
+#ifndef pnAllCreatables_inc
+#define pnAllCreatables_inc
 
 #include "pnFactory/plCreator.h"
 
@@ -68,4 +68,4 @@ REGISTER_NONCREATABLE(plPipeline);
 #include "pnSceneObject/pnSceneObjectCreatable.h"
 #include "pnTimerCreatable.h"
 
-#endif // pnNucleusCreatables_inc
+#endif // pnAllCreatables_inc
