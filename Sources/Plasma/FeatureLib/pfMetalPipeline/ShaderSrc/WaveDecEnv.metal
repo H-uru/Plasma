@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+// Used in Ahnonay around the edges of the island
+
 #include <metal_stdlib>
 using namespace metal;
 
@@ -58,13 +60,10 @@ typedef struct
     float4 CosConsts;
     float4 PiConsts;
     float4 NumericConsts;
-    float4 Tex0_Row0;
-    float4 Tex0_Row1;
+    float2x4 Tex0;
     float4 Tex1_Row0;
     float4 Tex1_Row1;
-    float4 L2WRow0;
-    float4 L2WRow1;
-    float4 L2WRow2;
+    float3x4 L2W;
     float4 Lengths;
     float4 WaterLevel;
     float4 DepthFalloff;
@@ -102,14 +101,7 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     vs_WaveDecEnv7InOut out;
 
     // Store our input position in world space in r6
-    float4 worldPosition = float4(0);
-    worldPosition.x = dot(float4(in.position, 1.0), uniforms.L2WRow0);
-    worldPosition.y = dot(float4(in.position, 1.0), uniforms.L2WRow1);
-    worldPosition.z = dot(float4(in.position, 1.0), uniforms.L2WRow2);
-    // Fill out our w (m4x3 doesn't touch w).
-    worldPosition.w = 1.0;
-
-    //
+    float4 worldPosition = float4(float4(in.position, 1.f) * uniforms.L2W, 1.f);
 
     // Input diffuse v5 color is:
     // v5.r = overall transparency
@@ -262,11 +254,7 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     // Now onto texture coordinate generation.
     //
     // First is the usual texture transform
-    out.texCoord0 = float4(
-                           dot(float4(in.texCoord1, 1.0), uniforms.Tex0_Row0),
-                           dot(float4(in.texCoord1, 1.0), uniforms.Tex0_Row1),
-                           uniforms.NumericConsts.zz
-                           );
+    out.texCoord0 = float4(float4(in.texCoord1, 1.0) * uniforms.Tex0, 0.f, 0.f);
 
     // Calculate our basis vectors as input into our tex3x3vspec
     // First we get our basis set off our surface. This is
