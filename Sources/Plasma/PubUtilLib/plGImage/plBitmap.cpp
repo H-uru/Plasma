@@ -81,8 +81,7 @@ plBitmap::plBitmap()
 
 plBitmap::~plBitmap()
 {
-    if (fDeviceRef != nullptr)
-        hsRefCnt_SafeUnRef( fDeviceRef );
+    hsRefCnt_SafeUnRef(fDeviceRef);
 }
 
 bool plBitmap::IsSameModifiedTime(uint32_t lowTime, uint32_t highTime)

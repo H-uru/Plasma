@@ -223,7 +223,7 @@ void plKeyImp::UnRegister()     // called from plRegistry
         fObjectPtr = nullptr;
         fNumActiveRefs = 0;
 
-        hsRefCnt_SafeUnRef(ko);
+        ko->UnRef();
     }
     IClearRefs();
     ClearNotifyCreated();
@@ -440,12 +440,12 @@ void plKeyImp::SetupNotify(plRefMsg* msg, plRefFlags::Type flags)
     // the KeyedObject is already Loaded, so we better go ahead and send the notify message just added.
     if (ko)
     {
-        hsRefCnt_SafeRef(ko);
+        ko->Ref();
         msg->SetRef(ko);
         msg->SetTimeStamp(hsTimer::GetSysSeconds());
 
         // Add ref, since Dispatch will unref this msg but we want to keep using it.
-        hsRefCnt_SafeRef(msg);
+        msg->Ref();
 
         SetNotified(GetNumNotifyCreated()-1);
         SatisfyPending(msg);
@@ -456,9 +456,9 @@ void plKeyImp::SetupNotify(plRefMsg* msg, plRefFlags::Type flags)
         plgDispatch::Dispatch()->MsgSend(msg);
 #endif
 
-        hsRefCnt_SafeUnRef(ko);
+        ko->UnRef();
     }
-    hsRefCnt_SafeUnRef(msg);
+    msg->UnRef();
 }
 
 // We could just call NotifyCreated() on all our fRefs, and then fix
@@ -489,7 +489,7 @@ void plKeyImp::INotifySelf(hsKeyedObject* ko)
                             ref->SetNotified(j);
                             ref->SatisfyPending(refMsg);
 
-                            hsRefCnt_SafeRef(refMsg);
+                            refMsg->Ref();
                             plgDispatch::MsgSend(refMsg);
                             break;
                         }
@@ -516,7 +516,7 @@ void plKeyImp::NotifyCreated()
             msg->SetRef(ko);
             msg->SetTimeStamp(hsTimer::GetSysSeconds());
             msg->SetContext(plRefMsg::kOnCreate);
-            hsRefCnt_SafeRef(msg);
+            msg->Ref();
 
             SetNotified(i);
             SatisfyPending(msg);
@@ -538,7 +538,7 @@ void plKeyImp::INotifyDestroyed()
         msg->SetRef(ko);
         msg->SetTimeStamp(hsTimer::GetSysSeconds());
         msg->SetContext(plRefMsg::kOnDestroy);
-        hsRefCnt_SafeRef(msg);
+        msg->Ref();
         msg->Send();
     }
     fNotified.Clear();
@@ -628,7 +628,7 @@ void plKeyImp::IRelease(plKeyImp* iTargetKey)
             refMsg->SetRef(iTargetKey->ObjectIsLoaded());
             refMsg->SetTimeStamp(hsTimer::GetSysSeconds());
             refMsg->SetContext(plRefMsg::kOnRemove);
-            hsRefCnt_SafeRef(refMsg);
+            refMsg->Ref();
             plgDispatch::MsgSend(refMsg);
         }
         hsRefCnt_SafeUnRef(refMsg);

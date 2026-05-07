@@ -161,16 +161,15 @@ void    plInputInterfaceMgr::Init()
     /// Hacks (?) for now
     plAvatarInputInterface *avatar = new plAvatarInputInterface();
     IAddInterface( avatar );
-    hsRefCnt_SafeUnRef( avatar );
+    avatar->UnRef();
 
     plSceneInputInterface *scene = new plSceneInputInterface();
     IAddInterface( scene );
-    hsRefCnt_SafeUnRef( scene );
+    scene->UnRef();
 
     plDebugInputInterface *camDrive = new plDebugInputInterface();
     IAddInterface( camDrive );
-    hsRefCnt_SafeUnRef( camDrive );
-    
+    camDrive->UnRef();
 }
 
 //// Shutdown ////////////////////////////////////////////////////////////////
@@ -183,7 +182,7 @@ void    plInputInterfaceMgr::Shutdown()
     for (plInputInterface* iface : fInterfaces)
     {
         iface->Shutdown();
-        hsRefCnt_SafeUnRef(iface);
+        iface->UnRef();
     }
     fInterfaces.clear();
 
@@ -217,7 +216,7 @@ void    plInputInterfaceMgr::IAddInterface( plInputInterface *iface )
     }
 
     fInterfaces.insert(iter, iface);
-    hsRefCnt_SafeRef( iface );
+    iface->Ref();
     iface->Init( this );
     iface->ISetMessageQueue( &fMessageQueue );
 }
@@ -245,7 +244,7 @@ void    plInputInterfaceMgr::IRemoveInterface( plInputInterface *iface )
             }
         }
 
-        hsRefCnt_SafeUnRef(*iter);
+        (*iter)->UnRef();
         fInterfaces.erase(iter);
     }
 }

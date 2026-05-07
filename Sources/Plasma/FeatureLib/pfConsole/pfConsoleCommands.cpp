@@ -2061,7 +2061,7 @@ PF_CONSOLE_CMD( App,
 
     plEventCallbackMsg* callback = new plEventCallbackMsg(plClient::GetInstance()->GetKey(), event, 0, secs, reps);
     cmd->AddCallback(callback);
-    hsRefCnt_SafeUnRef(callback);
+    callback->UnRef();
     plgDispatch::MsgSend(cmd);
 }
 
@@ -2108,7 +2108,7 @@ PF_CONSOLE_CMD( App,
 
     plEventCallbackMsg* callback = new plEventCallbackMsg(plClient::GetInstance()->GetKey(), event, 0, secs, reps);
     cmd->AddCallback(callback);
-    hsRefCnt_SafeUnRef(callback);
+    callback->UnRef();
     plgDispatch::MsgSend(cmd);
 }
 

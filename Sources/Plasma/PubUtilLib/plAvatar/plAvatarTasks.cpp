@@ -585,14 +585,14 @@ bool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, doubl
             // step over some script's attempt to disable physics again.
             plAvatarPhysicsEnableCallbackMsg *epMsg = new plAvatarPhysicsEnableCallbackMsg(avatar->GetKey(), plEventCallbackMsg::kStop, 0, 0, 0, 0);
             fAnimInstance->GetTimeConvert()->AddCallback(epMsg);
-            hsRefCnt_SafeUnRef(epMsg);
+            epMsg->UnRef();
         }   
 
         if (fCallbacks)
         {
             fAnimInstance->AttachCallbacks(fCallbacks);
             // ok, we're done with it, release it back to the river
-            hsRefCnt_SafeUnRef(fCallbacks);
+            fCallbacks->UnRef();
             fCallbacks = nullptr;
         }
 

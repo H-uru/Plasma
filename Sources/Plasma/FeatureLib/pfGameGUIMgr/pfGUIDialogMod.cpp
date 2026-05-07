@@ -99,7 +99,7 @@ pfGUIDialogMod::~pfGUIDialogMod()
 
     SetHandler(nullptr);
 
-    hsRefCnt_SafeUnRef( fColorScheme );
+    fColorScheme->UnRef();
     fColorScheme = nullptr;
 }
 

@@ -111,9 +111,10 @@ void plAccessGeometry::Init(plPipeline* pipe)
 
 void plAccessGeometry::DeInit()
 {
-    if( fInstance )
+    if (fInstance) {
         fInstance->Nilify();
-    hsRefCnt_SafeUnRef(fInstance);
+        fInstance->UnRef();
+    }
 }
 
 void plAccessGeometry::SetTheIntance(plAccessGeometry* i)

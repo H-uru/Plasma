@@ -2419,8 +2419,8 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
             iMsg->fEvent = plEventCallbackMsg::kTime;
             iMsg->SetMessageRef(msg);
             atc->AddCallback(iMsg);
-            hsRefCnt_SafeUnRef(msg);
-            hsRefCnt_SafeUnRef(iMsg);
+            msg->UnRef();
+            iMsg->UnRef();
 
             plAvatarFootMsg* foot = new plAvatarFootMsg(GetKey(), this, isLeft);
             foot->fEventTime = time;
@@ -2431,8 +2431,8 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
             iMsg->fEvent = plEventCallbackMsg::kTime;
             iMsg->SetMessageRef(foot);
             atc->AddCallback(iMsg);
-            hsRefCnt_SafeUnRef(foot);
-            hsRefCnt_SafeUnRef(iMsg);
+            foot->UnRef();
+            iMsg->UnRef();
         }
     }
 }

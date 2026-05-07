@@ -178,7 +178,7 @@ bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
                 eventMsg->ClearReceivers();
                 eventMsg->AddReceivers(fc->fOrigReceivers);
                 eventMsg->SetSender(GetKey());
-                hsRefCnt_SafeRef(eventMsg);
+                eventMsg->Ref();
                 eventMsg->Send();
 
                 delete fc;
@@ -205,7 +205,7 @@ void plMsgForwarder::IForwardMsg(plMessage *msg)
         oldKeys.emplace_back(msg->GetReceiver(i));
 
     // Set to our receivers and send
-    hsRefCnt_SafeRef(msg);
+    msg->Ref();
     msg->ClearReceivers();
     msg->AddReceivers(fForwardKeys);
     msg->Send();

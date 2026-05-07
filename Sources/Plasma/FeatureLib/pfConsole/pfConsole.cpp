@@ -209,7 +209,7 @@ pfConsole::~pfConsole()
         msg->SetIFace( fInputInterface );
         plgDispatch::MsgSend( msg );
 
-        hsRefCnt_SafeUnRef( fInputInterface );
+        fInputInterface->UnRef();
         fInputInterface = nullptr;
     }
 

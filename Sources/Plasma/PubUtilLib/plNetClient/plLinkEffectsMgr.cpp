@@ -214,7 +214,7 @@ void plLinkEffectsMgr::ISendAllReadyCallbacks()
                 }
             }
 
-            hsRefCnt_SafeUnRef(fLinks[i]);
+            fLinks[i]->UnRef();
             fLinks.erase(fLinks.begin() + i);
 
             hsStatusMessage("Done - removing link FX msg");

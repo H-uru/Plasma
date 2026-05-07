@@ -198,17 +198,17 @@ void plAGAnimInstance::IInitAnimTimeConvert(plAnimTimeConvert* atc, plATCAnim* a
     instMsg = new plAGInstanceCallbackMsg(master->GetKey(), plEventCallbackMsg::kStart);
     instMsg->fInstance = this;
     atc->AddCallback(instMsg);
-    hsRefCnt_SafeUnRef(instMsg);
+    instMsg->UnRef();
 
     instMsg = new plAGInstanceCallbackMsg(master->GetKey(), plEventCallbackMsg::kStop);
     instMsg->fInstance = this;
     atc->AddCallback(instMsg);
-    hsRefCnt_SafeUnRef(instMsg);
+    instMsg->UnRef();
 
     instMsg = new plAGInstanceCallbackMsg(master->GetKey(), plEventCallbackMsg::kSingleFrameAdjust);
     instMsg->fInstance = this;
     atc->AddCallback(instMsg);
-    hsRefCnt_SafeUnRef(instMsg);
+    instMsg->UnRef();
 
     atc->SetOwner(master);
     atc->ClearFlags();
@@ -505,7 +505,7 @@ void plAGAnimInstance::AttachCallbacks(plOneShotCallbacks *callbacks)
             }
             
             animMsg.AddCallback(eventMsg);
-            hsRefCnt_SafeUnRef(eventMsg);
+            eventMsg->UnRef();
         }
         
         fTimeConvert->HandleCmd(&animMsg);

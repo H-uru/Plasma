@@ -480,7 +480,7 @@ void plResponderCmdMtl::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamB
 
     plMessageWithCallbacks *callbackMsg = plMessageWithCallbacks::ConvertNoRef(waitInfo.msg);
     callbackMsg->AddCallback(eventMsg);
-    hsRefCnt_SafeUnRef( eventMsg );
+    eventMsg->UnRef();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

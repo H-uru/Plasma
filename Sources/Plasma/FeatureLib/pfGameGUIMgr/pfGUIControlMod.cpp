@@ -692,13 +692,13 @@ void    pfGUIControlMod::SetColorScheme( pfGUIColorScheme *newScheme )
 {
     if (fColorScheme != nullptr)
     {
-        hsRefCnt_SafeUnRef( fColorScheme );
+        fColorScheme->UnRef();
         fColorScheme = nullptr;
     }
 
     fColorScheme = newScheme;
     if (fColorScheme != nullptr)
-        hsRefCnt_SafeRef( fColorScheme );
+        fColorScheme->Ref();
 }
 
 //// SetDynTextMap ///////////////////////////////////////////////////////////

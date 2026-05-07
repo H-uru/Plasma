@@ -370,12 +370,12 @@ bool plResponderModifier::IContinueSending()
 
                 if (plTimerCallbackMsg *timerMsg = plTimerCallbackMsg::ConvertNoRef(msg))
                 {
-                    hsRefCnt_SafeRef(timerMsg);
+                    timerMsg->Ref();
                     plgTimerCallbackMgr::NewTimer(timerMsg->fTime, timerMsg);
                 }
                 else
                 {
-                    hsRefCnt_SafeRef(msg);
+                    msg->Ref();
                     plgDispatch::MsgSend(msg);
                 }
             }
@@ -470,7 +470,7 @@ void plResponderModifier::Restore()
                 for (size_t iCallback = 0; iCallback < numCallbacks; iCallback++)
                 {
                     plMessage* callback = callbackMsg->GetCallback(iCallback);
-//                  hsRefCnt_SafeRef(callback); AddCallback will ref this for us.
+                    //callback->Ref(); // AddCallback will ref this for us.
                     newCallbackMsg->AddCallback(callback);
                 }
 
@@ -519,7 +519,7 @@ plMessage* plResponderModifier::IGetFastForwardMsg(plMessage* msg, bool python)
         }
 
         ResponderLog(ILog(plStatusLog::kWhite, "FF Animation Non-Play Msg"));
-        hsRefCnt_SafeRef(msg);
+        msg->Ref();
         return msg;
     }
     else if(plSoundMsg *soundMsg = plSoundMsg::ConvertNoRef(msg))
@@ -566,31 +566,31 @@ plMessage* plResponderModifier::IGetFastForwardMsg(plMessage* msg, bool python)
             return newSoundMsg;
         }
         ResponderLog(ILog(plStatusLog::kWhite, "FF Sound Non-Play/Toggle Msg"));
-        hsRefCnt_SafeRef(msg);
+        msg->Ref();
         return msg;
     }
     else if (msg->ClassIndex() == CLASS_INDEX_SCOPED(plExcludeRegionMsg))
     {
         ResponderLog(ILog(plStatusLog::kWhite, "FF Exclude Region Msg"));
-        hsRefCnt_SafeRef(msg);
+        msg->Ref();
         return msg;
     }
     else if (msg->ClassIndex() == CLASS_INDEX_SCOPED(plEnableMsg))
     {
         ResponderLog(ILog(plStatusLog::kWhite, "FF Visibility/Detector Enable Msg"));
-        hsRefCnt_SafeRef(msg);
+        msg->Ref();
         return msg;
     }
     else if (msg->ClassIndex() == CLASS_INDEX_SCOPED(plResponderEnableMsg))
     {
         ResponderLog(ILog(plStatusLog::kWhite, "FF Responder Enable Msg"));
-        hsRefCnt_SafeRef(msg);
+        msg->Ref();
         return msg;
     }
     else if (msg->ClassIndex() == CLASS_INDEX_SCOPED(plSimSuppressMsg))
     {
         ResponderLog(ILog(plStatusLog::kWhite, "FF Physical Enable Msg"));
-        hsRefCnt_SafeRef(msg);
+        msg->Ref();
         return msg;
     }
 
@@ -730,7 +730,7 @@ void plResponderModifier::IDebugPlayMsg(plAnimCmdMsg* msg)
     eventMsg->fEvent = plEventCallbackMsg::kStop;
     msg->SetCmd(plAnimCmdMsg::kAddCallbacks);
     msg->AddCallback(eventMsg);
-    hsRefCnt_SafeUnRef(eventMsg);
+    eventMsg->UnRef();
 
     IDebugAnimBox(true);
 }

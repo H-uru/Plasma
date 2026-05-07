@@ -51,7 +51,7 @@ plOneShotMsg::plOneShotMsg()
 
 plOneShotMsg::~plOneShotMsg()
 {
-    hsRefCnt_SafeUnRef(fCallbacks);
+    fCallbacks->UnRef();
     fCallbacks = nullptr;
 }
 
