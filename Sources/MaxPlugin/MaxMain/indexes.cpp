@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include "pnNucleusCreatables.h"
+#include "pnAllCreatables.h"
 #include "plAllCreatables.h"
 
 #include "pfAnimation/pfAnimationCreatable.h"

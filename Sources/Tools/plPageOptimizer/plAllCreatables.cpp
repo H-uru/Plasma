@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pnNucleusCreatables.h"
+#include "pnAllCreatables.h"
 #include "plAllCreatables.h"
 
 // All of pfAllCreatables.h, except for pfConsole and the pipelines.
