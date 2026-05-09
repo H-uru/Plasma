@@ -489,8 +489,7 @@ void plKeyImp::INotifySelf(hsKeyedObject* ko)
                             ref->SetNotified(j);
                             ref->SatisfyPending(refMsg);
 
-                            refMsg->Ref();
-                            plgDispatch::MsgSend(refMsg);
+                            refMsg->SendAndKeep();
                             break;
                         }
                     }
@@ -538,8 +537,7 @@ void plKeyImp::INotifyDestroyed()
         msg->SetRef(ko);
         msg->SetTimeStamp(hsTimer::GetSysSeconds());
         msg->SetContext(plRefMsg::kOnDestroy);
-        msg->Ref();
-        msg->Send();
+        msg->SendAndKeep();
     }
     fNotified.Clear();
 }
@@ -628,8 +626,7 @@ void plKeyImp::IRelease(plKeyImp* iTargetKey)
             refMsg->SetRef(iTargetKey->ObjectIsLoaded());
             refMsg->SetTimeStamp(hsTimer::GetSysSeconds());
             refMsg->SetContext(plRefMsg::kOnRemove);
-            refMsg->Ref();
-            plgDispatch::MsgSend(refMsg);
+            refMsg->SendAndKeep();
         }
         hsRefCnt_SafeUnRef(refMsg);
     }

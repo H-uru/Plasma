@@ -375,8 +375,7 @@ bool plResponderModifier::IContinueSending()
                 }
                 else
                 {
-                    msg->Ref();
-                    plgDispatch::MsgSend(msg);
+                    msg->SendAndKeep();
                 }
             }
         }

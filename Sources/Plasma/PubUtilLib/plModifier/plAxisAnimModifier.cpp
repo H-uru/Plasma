@@ -150,8 +150,7 @@ bool plAxisAnimModifier::MsgReceive(plMessage* msg)
         fNotify->SetState(1.0f);
         fNotify->AddActivateEvent(true);
         fNotify->AddClickDragEvent(GetTarget()->GetKey(), plNetClientApp::GetInstance()->GetLocalPlayerKey(), time);
-        fNotify->Ref();
-        plgDispatch::MsgSend( fNotify );
+        fNotify->SendAndKeep();
         return true;
     }
         

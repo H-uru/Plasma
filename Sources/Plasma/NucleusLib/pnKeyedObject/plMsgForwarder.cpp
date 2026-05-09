@@ -178,8 +178,7 @@ bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
                 eventMsg->ClearReceivers();
                 eventMsg->AddReceivers(fc->fOrigReceivers);
                 eventMsg->SetSender(GetKey());
-                eventMsg->Ref();
-                eventMsg->Send();
+                eventMsg->SendAndKeep();
 
                 delete fc;
             }
@@ -205,10 +204,9 @@ void plMsgForwarder::IForwardMsg(plMessage *msg)
         oldKeys.emplace_back(msg->GetReceiver(i));
 
     // Set to our receivers and send
-    msg->Ref();
     msg->ClearReceivers();
     msg->AddReceivers(fForwardKeys);
-    msg->Send();
+    msg->SendAndKeep();
 
     // Reset back to the original receivers.  This is so we don't screw up objects
     // who reuse their messages
