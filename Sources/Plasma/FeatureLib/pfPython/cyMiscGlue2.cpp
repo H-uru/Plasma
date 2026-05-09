@@ -298,6 +298,11 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=
         ageName = NetCommGetAge()->ageDatasetName;
     }
 
+    if (ageName.empty()) {
+        // No age connected (e.g. running in 3ds Max) — nothing to page in
+        PYTHON_RETURN_NONE;
+    }
+
     std::vector<ST::string> nodeNames;
     if (PyUnicode_Check(nodeNameObj))
     {
@@ -345,6 +350,11 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageOutNode, args, "Params: nodeName, netForce
     {
         PyErr_SetString(PyExc_TypeError, "PtPageOutNode expects a string and bool");
         PYTHON_RETURN_ERROR;
+    }
+
+    if (!hsgResMgr::ResMgr()) {
+        // No ResManager available (e.g. running in 3ds Max) — nothing to page out
+        PYTHON_RETURN_NONE;
     }
 
     plLocation nodeLoc = plKeyFinder::Instance().FindLocation({}, nodeName);

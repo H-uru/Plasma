@@ -471,9 +471,13 @@ plKey plKeyFinder::IFindSceneNodeKey(plRegistryPageNode* page) const
 
 const plLocation    &plKeyFinder::FindLocation(const ST::string &age, const ST::string &page) const
 {
+    static plLocation invalidLoc;
+
+    if (!IGetResMgr())
+        return invalidLoc;
+
     if (age.empty())
     {
-        static plLocation   invalidLoc;
         plRegistryPageNode *pageNode;
         plPageFinder        pageFinder( &pageNode, page );
 
