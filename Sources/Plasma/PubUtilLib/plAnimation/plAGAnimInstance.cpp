@@ -475,7 +475,7 @@ double plAGAnimInstance::WorldToAnimTime(double foo)
 
 // AttachCallbacks --------------------------------------------------
 // ----------------
-void plAGAnimInstance::AttachCallbacks(plOneShotCallbacks *callbacks)
+void plAGAnimInstance::AttachCallbacks(hsWeakRef<plOneShotCallbacks> callbacks)
 {
     const plATCAnim *anim = plATCAnim::ConvertNoRef(fAnimation);
     if (callbacks && anim)

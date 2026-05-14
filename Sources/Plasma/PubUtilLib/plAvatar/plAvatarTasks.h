@@ -179,7 +179,7 @@ public:
         \param reversible Unused. Allows the oneshot to be backed up by keyboard input
         \param callbacks A vector of callback messages to be sent at specific times during the animation
         */
-    plAvOneShotTask(ST::string animName, bool drivable, bool reversible, plOneShotCallbacks *callbacks);
+    plAvOneShotTask(ST::string animName, bool drivable, bool reversible, hsRef<plOneShotCallbacks> callbacks);
     /** Construct from a oneshot message.
         \param msg The message to copy our parameters from
         \param brain The brain to attach the task to.
@@ -215,7 +215,7 @@ protected:
     bool fDetachAnimation;            // should we detach the animation when we're done?
     bool fIgnore;                     // if this gets set before we start, we just finish without doing anything.
     
-    plOneShotCallbacks *fCallbacks;     // a set of callbacks to set up on our animation
+    hsRef<plOneShotCallbacks> fCallbacks; // a set of callbacks to set up on our animation
     
     hsMatrix44 fPlayer2Anim;            // matrix from player root space to animation root space
     hsMatrix44 fAnim2Player;            // matrix from animation root space to player root space
