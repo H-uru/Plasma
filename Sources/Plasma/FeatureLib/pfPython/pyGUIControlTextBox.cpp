@@ -51,15 +51,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 
 pyGUIControlTextBox::pyGUIControlTextBox(pyKey& gckey) : pyGUIControl(gckey)
-{
-    fOriginalColorScheme = nullptr;
-}
+{}
 
 pyGUIControlTextBox::pyGUIControlTextBox(plKey objkey) : pyGUIControl(std::move(objkey))
-{
-    fOriginalColorScheme = nullptr;
-}
-
+{}
 
 bool pyGUIControlTextBox::IsGUIControlTextBox(const plKey& key)
 {
