@@ -86,9 +86,14 @@ class plInputIfaceMgrMsg : public plMessage
             kSetShareAgeInstanceGuid,
         };
 
-        plInputIfaceMgrMsg() : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); fInterface = nullptr; fAvKey = nullptr; }
-        plInputIfaceMgrMsg(uint8_t command) : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); fCommand = command; fInterface = nullptr; fAvKey = nullptr; }
-        plInputIfaceMgrMsg(uint8_t command, uint32_t pageID) : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); fCommand = command; fPageID = pageID; fInterface = nullptr; fAvKey = nullptr; }
+        plInputIfaceMgrMsg(uint8_t command = 0, uint32_t pageID = 0)
+            : plMessage(nullptr, nullptr, nullptr),
+              fCommand(command),
+              fInterface(),
+              fPageID(pageID)
+        {
+            SetBCastFlag(kBCastByExactType);
+        }
         ~plInputIfaceMgrMsg();
 
         CLASSNAME_REGISTER( plInputIfaceMgrMsg );
