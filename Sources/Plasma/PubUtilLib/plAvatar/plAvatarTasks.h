@@ -170,9 +170,6 @@ protected:
 */
 class plAvOneShotTask : public plAvTask {
 public:
-    /** Put default values for all member variables. */
-    void InitDefaults();
-    
     /** Default constructor for the class factor and descendants. */
     plAvOneShotTask();
 
@@ -182,7 +179,7 @@ public:
         \param reversable Unused. Allows the oneshot to be backed up by keyboard input
         \param callbacks A vector of callback messages to be sent at specific times during the animation
         */
-    plAvOneShotTask(const ST::string &animName, bool drivable, bool reversible, plOneShotCallbacks *callbacks);
+    plAvOneShotTask(ST::string animName, bool drivable, bool reversible, plOneShotCallbacks *callbacks);
     /** Construct from a oneshot message.
         \param msg The message to copy our parameters from
         \param brain The brain to attach the task to.
