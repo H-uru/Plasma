@@ -43,8 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAccessGeometry_inc
 #define plAccessGeometry_inc
 
-#include "hsRefCnt.h"
-
+#include <memory>
 #include <vector>
 
 class plAccessSpan;
@@ -58,35 +57,24 @@ class plPipeline;
 class plSpan;
 class plVertexSpan;
 
-class plAccessGeometry : public hsRefCnt
+class plAccessGeometry
 {
 protected:
-    void                    Nilify() { fPipe = nullptr; }
-
     plPipeline*                     fPipe;
 
-    static plAccessGeometry*        fInstance;
+    static std::unique_ptr<plAccessGeometry> fInstance;
 public:
     // You're welcome to make your own,
     // but this is normally just called by the global plAccessGeometry's Init() function.
     // You should normally just use the instance supplied by Instance();
     plAccessGeometry(plPipeline* pipe=nullptr);
 
-    static plAccessGeometry*        Instance() { return fInstance; }
+    static plAccessGeometry* Instance() { return fInstance.get(); }
 
     // App will initialize, which will create the global instance.
     // DeInit will nil the global instance.
     static void Init(plPipeline* pipe);
     static void DeInit();
-
-    // External DLL's will share the same plAccessGeometry. After the main App has
-    // DeInited the AccessGeometry,
-    // all calls to Instance()->Function() will return nil in one form or another (e.g.
-    // empty triangle lists). The external DLL needs to either not try to use these
-    // accessor functions after PythonInterface::WeAreInShutdown() (it won't do any good
-    // anyway as any work done will be thrown away), or else be prepared for receiving
-    // empty data where there was data before.
-    static void SetTheIntance(plAccessGeometry* i);
 
     // You have 2 options in opening the data.
     // RO - Read Only. 
