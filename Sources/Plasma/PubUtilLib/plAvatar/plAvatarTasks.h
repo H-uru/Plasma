@@ -176,7 +176,7 @@ public:
     /** Canonical constructor
         \param animName The name of the animation we're going to play
         \param drivable Unused. Allows the oneshot to be controlled by keyboard input
-        \param reversable Unused. Allows the oneshot to be backed up by keyboard input
+        \param reversible Unused. Allows the oneshot to be backed up by keyboard input
         \param callbacks A vector of callback messages to be sent at specific times during the animation
         */
     plAvOneShotTask(ST::string animName, bool drivable, bool reversible, plOneShotCallbacks *callbacks);
