@@ -86,7 +86,7 @@ bool    pfGUITextBoxMod::MsgReceive( plMessage *msg )
 
 void    pfGUITextBoxMod::IPostSetUpDynTextMap()
 {
-    pfGUIColorScheme *scheme = GetColorScheme();
+    hsWeakRef scheme = GetColorScheme();
 
     fDynTextMap->SetFont( scheme->fFontFace, scheme->fFontSize, scheme->fFontFlags, 
                             HasFlag( kXparentBgnd ) ? false : true );

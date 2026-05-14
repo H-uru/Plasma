@@ -174,7 +174,7 @@ bool    pfGUIListBoxMod::MsgReceive( plMessage *msg )
 
 void    pfGUIListBoxMod::IPostSetUpDynTextMap()
 {
-    pfGUIColorScheme *scheme = GetColorScheme();
+    hsWeakRef scheme = GetColorScheme();
     fDynTextMap->SetFont( scheme->fFontFace, scheme->fFontSize, scheme->fFontFlags, 
                             !HasFlag( kXparentBgnd ));
 
@@ -1032,15 +1032,15 @@ void    pfGUIListBoxMod::ScrollToBegin()
     IUpdate();
 }
 
-void        pfGUIListBoxMod::SetColorScheme( pfGUIColorScheme *newScheme )
+void pfGUIListBoxMod::SetColorScheme(hsRef<pfGUIColorScheme> newScheme)
 {
-    pfGUIControlMod::SetColorScheme( newScheme );
-
     for (pfGUIListElement* element : fElements)
     {
         element->SetColorScheme(newScheme);
         element->SetSkin(fSkin);
     }
+
+    pfGUIControlMod::SetColorScheme(std::move(newScheme));
 }
 
 void pfGUIListBoxMod::SetScrollPos( int32_t pos )

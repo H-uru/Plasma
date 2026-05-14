@@ -173,7 +173,7 @@ class pfGUIListBoxMod : public pfGUIControlMod
 
         void    Refresh() override { IUpdate(); }
 
-        void        SetColorScheme(pfGUIColorScheme *newScheme) override;
+        void    SetColorScheme(hsRef<pfGUIColorScheme> newScheme) override;
 
         // Element manipulation
 
