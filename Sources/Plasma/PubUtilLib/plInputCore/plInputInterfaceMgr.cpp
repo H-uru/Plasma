@@ -518,7 +518,7 @@ bool    plInputInterfaceMgr::MsgReceive( plMessage *msg )
     {
         if( mgrMsg->GetCommand() == plInputIfaceMgrMsg::kAddInterface )
         {
-            IAddInterface(hsWeakRef(mgrMsg->GetIFace()));
+            IAddInterface(mgrMsg->GetIFace());
             return true;
         }
         else if( mgrMsg->GetCommand() == plInputIfaceMgrMsg::kRemoveInterface )

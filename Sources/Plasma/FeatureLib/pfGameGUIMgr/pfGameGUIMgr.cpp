@@ -129,7 +129,7 @@ pfGameGUIMgr    *pfGameGUIMgr::fInstance = nullptr;
 //// Constructor & Destructor ////////////////////////////////////////////////
 
 pfGameGUIMgr::pfGameGUIMgr()
-    : fActivated(), fInputCtlIndex(), fActiveDialogs(), fInputConfig(),
+    : fActivated(), fInputCtlIndex(), fActiveDialogs(),
       fDefaultCursor(plInputInterface::kCursorUp), fCursorOpacity(1.f), fAspectRatio(),
       fActiveDlgCount()
 {
@@ -149,8 +149,6 @@ pfGameGUIMgr::~pfGameGUIMgr()
 
     if( fActivated )
         IActivateGUI( false );
-
-    delete fInputConfig;
 }
 
 
@@ -479,7 +477,7 @@ void    pfGameGUIMgr::IActivateGUI( bool activate )
 
     if( activate )
     {
-        fInputConfig = new pfGameUIInputInterface( this );
+        fInputConfig.Steal(new pfGameUIInputInterface(this));
         plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
         msg->SetIFace( fInputConfig );
         msg->Send();
@@ -490,7 +488,6 @@ void    pfGameGUIMgr::IActivateGUI( bool activate )
         msg->SetIFace( fInputConfig );
         msg->Send();
 
-        hsRefCnt_SafeUnRef( fInputConfig );
         fInputConfig = nullptr;
     }
 

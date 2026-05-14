@@ -295,7 +295,7 @@ void    plResManagerHelper::EnableDebugScreen( bool enable )
 //          msg->SetTimeStamp( hsTimer::GetSysSeconds() + kUpdateDelay );
             msg->Send( GetKey() );
 
-            fDebugInput = new plResMgrDebugInterface( this );
+            fDebugInput.Steal(new plResMgrDebugInterface(this));
             plInputIfaceMgrMsg *imsg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
             imsg->SetIFace( fDebugInput );
             imsg->Send();
@@ -313,7 +313,6 @@ void    plResManagerHelper::EnableDebugScreen( bool enable )
             imsg->SetIFace( fDebugInput );
             imsg->Send();
 
-            hsRefCnt_SafeUnRef( fDebugInput );
             fDebugInput = nullptr;
         }
     }

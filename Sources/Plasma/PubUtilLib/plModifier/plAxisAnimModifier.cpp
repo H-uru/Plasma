@@ -110,12 +110,11 @@ fIface(),
 fAllOrNothing()
 {
     fNotify = new plNotifyMsg;
-    fInputIface = new plAxisInputInterface( this );
+    fInputIface.Steal(new plAxisInputInterface(this));
 }
 plAxisAnimModifier::~plAxisAnimModifier()
 {
     hsRefCnt_SafeUnRef(fNotify);
-    fInputIface->UnRef();
 }
 
 
