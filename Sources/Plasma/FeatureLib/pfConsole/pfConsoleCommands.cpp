@@ -2466,6 +2466,7 @@ PF_CONSOLE_CMD( Registry, ToggleDebugStats, "", "Toggles the debug statistics sc
         plStatusLogMgr::GetInstance().SetCurrStatusLog( "ResManager Status" );
         PrintString( "ResManager debug stats enabled" );
     }
+    on = !on;
 }
 
 PF_CONSOLE_CMD( Registry, SetLoggingLevel, "int level", "Sets the logging level for the registry. 0 is no logging, 3 is max detail." )

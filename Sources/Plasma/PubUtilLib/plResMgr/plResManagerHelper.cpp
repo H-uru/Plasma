@@ -432,8 +432,8 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
                         char line[ 128 ];
                         memset( line, ' ', sizeof( line ) - 1 );
                         line[ 127 ] = 0;
-                        if(page->GetPageInfo().GetPage().GetSize() < startPos - 2 )
-                            memcpy( line + 2, page->GetPageInfo().GetPage().c_str(), page->GetPageInfo().GetPage().GetSize() );
+                        if(page->GetPageInfo().GetPage().size() < startPos - 2 )
+                            memcpy( line + 2, page->GetPageInfo().GetPage().c_str(), page->GetPageInfo().GetPage().size() );
                         else
                             memcpy( line + 2, page->GetPageInfo().GetPage().c_str(), startPos - 2 );
 
@@ -479,10 +479,10 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
             if( key->ObjectIsLoaded() )
             {
                 fLoadedKeys++;
-                fLoadedSize += ((plKeyImp *)key)->GetDataLen();
+                fLoadedSize += plKeyImp::GetFromKey(key)->GetDataLen();
             }
             fTotalKeys++;
-            fTotalSize += ((plKeyImp *)key)->GetDataLen();
+            fTotalSize += plKeyImp::GetFromKey(key)->GetDataLen();
             return true;
         }
 };
