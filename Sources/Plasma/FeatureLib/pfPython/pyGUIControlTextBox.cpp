@@ -99,7 +99,7 @@ void pyGUIControlTextBox::SetFontSize( uint8_t size )
         pfGUITextBoxMod* ptbmod = pfGUITextBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( ptbmod )
         {
-            pfGUIColorScheme* colorscheme = ptbmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> colorscheme = ptbmod->GetColorScheme();
             colorscheme->fFontSize = size;
             ptbmod->UpdateColorScheme();
         }
@@ -115,7 +115,7 @@ void pyGUIControlTextBox::SetForeColor( pyColor& color )
         pfGUITextBoxMod* ptbmod = pfGUITextBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( ptbmod )
         {
-            pfGUIColorScheme* colorscheme = ptbmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> colorscheme = ptbmod->GetColorScheme();
             colorscheme->fForeColor = color.getColor();
             ptbmod->UpdateColorScheme();
         }
@@ -131,7 +131,7 @@ void pyGUIControlTextBox::SetBackColor( pyColor& color )
         pfGUITextBoxMod* ptbmod = pfGUITextBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( ptbmod )
         {
-            pfGUIColorScheme* colorscheme = ptbmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> colorscheme = ptbmod->GetColorScheme();
             colorscheme->fBackColor = color.getColor();
         }
     }
