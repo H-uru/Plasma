@@ -159,17 +159,9 @@ void    plInputInterfaceMgr::Init()
     plgDispatch::Dispatch()->RegisterForExactType( plClientMsg::Index(), GetKey() );
     
     /// Hacks (?) for now
-    plAvatarInputInterface *avatar = new plAvatarInputInterface();
-    IAddInterface( avatar );
-    avatar->UnRef();
-
-    plSceneInputInterface *scene = new plSceneInputInterface();
-    IAddInterface( scene );
-    scene->UnRef();
-
-    plDebugInputInterface *camDrive = new plDebugInputInterface();
-    IAddInterface( camDrive );
-    camDrive->UnRef();
+    IAddInterface(hsRef<plInputInterface>(new plAvatarInputInterface(), hsStealRef));
+    IAddInterface(hsRef<plInputInterface>(new plSceneInputInterface(), hsStealRef));
+    IAddInterface(hsRef<plInputInterface>(new plDebugInputInterface(), hsStealRef));
 }
 
 //// Shutdown ////////////////////////////////////////////////////////////////
@@ -179,10 +171,8 @@ void    plInputInterfaceMgr::Shutdown()
 
 //  WriteKeyMap();
 
-    for (plInputInterface* iface : fInterfaces)
-    {
+    for (const auto& iface : fInterfaces) {
         iface->Shutdown();
-        iface->UnRef();
     }
     fInterfaces.clear();
 
@@ -206,7 +196,7 @@ void    plInputInterfaceMgr::Shutdown()
 //  Doing it this way allows us to keep the manager unaware of the number or 
 //  types of interfaces.
 
-void    plInputInterfaceMgr::IAddInterface( plInputInterface *iface )
+void plInputInterfaceMgr::IAddInterface(hsRef<plInputInterface> iface)
 {
     auto iter = fInterfaces.cbegin();
     for (; iter != fInterfaces.cend(); ++iter)
@@ -215,13 +205,12 @@ void    plInputInterfaceMgr::IAddInterface( plInputInterface *iface )
             break;
     }
 
-    fInterfaces.insert(iter, iface);
-    iface->Ref();
-    iface->Init( this );
-    iface->ISetMessageQueue( &fMessageQueue );
+    auto inserted = fInterfaces.insert(iter, std::move(iface));
+    (*inserted)->Init(this);
+    (*inserted)->ISetMessageQueue(&fMessageQueue);
 }
 
-void    plInputInterfaceMgr::IRemoveInterface( plInputInterface *iface )
+void plInputInterfaceMgr::IRemoveInterface(hsWeakRef<plInputInterface> iface)
 {
     auto iter = std::find(fInterfaces.begin(), fInterfaces.end(), iface);
     if (iter != fInterfaces.end())
@@ -244,7 +233,6 @@ void    plInputInterfaceMgr::IRemoveInterface( plInputInterface *iface )
             }
         }
 
-        (*iter)->UnRef();
         fInterfaces.erase(iter);
     }
 }
@@ -254,7 +242,7 @@ void    plInputInterfaceMgr::IRemoveInterface( plInputInterface *iface )
 void plInputInterfaceMgr::ResetClickableState()
 {
     // look for the scene input interface
-    for (plInputInterface* iface : fInterfaces)
+    for (const auto& iface : fInterfaces)
         iface->ResetClickableState();
 }
 
@@ -311,7 +299,7 @@ bool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
 
 
     // Let all our layers eval
-    for (plInputInterface* iface : fInterfaces)
+    for (const auto& iface : fInterfaces)
         iface->IEval(secs, del, dirty);
 
     // Handle our message queue now
@@ -406,7 +394,7 @@ void plInputInterfaceMgr::ForceCursorHidden( bool requestedState )
 
 }
 
-bool plInputInterfaceMgr::ICheckCursor(plInputInterface *iFace)
+bool plInputInterfaceMgr::ICheckCursor(hsWeakRef<plInputInterface> iFace)
 {
     if( iFace->IsEnabled() && iFace->HasInterestingCursorID() )
     {
@@ -440,7 +428,7 @@ bool    plInputInterfaceMgr::MsgReceive( plMessage *msg )
         plProfile_BeginLap(Input, inputIEM);
         bool handled = false;
         size_t missedInputStartIdx = 0;
-        plInputInterface *oldCurrentFocus = fCurrentFocus;
+        hsWeakRef<plInputInterface> oldCurrentFocus = fCurrentFocus;
 
         // Current focus (if there is one) gets first crack
         if( fCurrentFocus )
@@ -495,7 +483,7 @@ bool    plInputInterfaceMgr::MsgReceive( plMessage *msg )
 
             if (!cursorHandled)
             {
-                for (plInputInterface* iface : fInterfaces)
+                for (const auto& iface : fInterfaces)
                 {
                     if (ICheckCursor(iface))
                     {
@@ -530,7 +518,7 @@ bool    plInputInterfaceMgr::MsgReceive( plMessage *msg )
     {
         if( mgrMsg->GetCommand() == plInputIfaceMgrMsg::kAddInterface )
         {
-            IAddInterface( mgrMsg->GetIFace() );
+            IAddInterface(hsWeakRef(mgrMsg->GetIFace()));
             return true;
         }
         else if( mgrMsg->GetCommand() == plInputIfaceMgrMsg::kRemoveInterface )
@@ -601,8 +589,7 @@ bool    plInputInterfaceMgr::MsgReceive( plMessage *msg )
         return true;
     }
     // Wasn't one we want. Was it one that one of our interfaces wanted?
-    for (plInputInterface* iface : fInterfaces)
-    {
+    for (const auto& iface : fInterfaces) {
         if (iface->MsgReceive(msg))
             return true;
     }
@@ -632,8 +619,7 @@ void    plInputInterfaceMgr::Write( hsStream* s, hsResMgr* mgr )
         
 plKeyMap    *plInputInterfaceMgr::IGetRoutedKeyMap( ControlEventCode code )
 {
-    for (plInputInterface* iface : fInterfaces)
-    {
+    for (const auto& iface : fInterfaces) {
         if (iface->IOwnsControlCode(code))
             return iface->fControlMap;
     }
@@ -651,14 +637,14 @@ plKeyMap    *plInputInterfaceMgr::IGetRoutedKeyMap( ControlEventCode code )
 void    plInputInterfaceMgr::IUnbind( const plKeyCombo &key )
 {
 #if !(ALLOW_MULTIPLE_CMDS_PER_KEY)
-    for (plInputInterface* iface : fInterfaces)
+    for (const auto& iface : fInterfaces)
         iface->fControlMap->UnmapKey(key);
 #endif
 }
 
 void plInputInterfaceMgr::ClearAllKeyMaps()
 {
-    for (plInputInterface* iface : fInterfaces)
+    for (const auto& iface : fInterfaces)
         iface->ClearKeyMap();
 }
 
@@ -738,7 +724,7 @@ const plKeyBinding* plInputInterfaceMgr::FindBindingByConsoleCmd(const ST::strin
 
 void    plInputInterfaceMgr::InitDefaultKeyMap()
 {
-    for (plInputInterface* iface : fInterfaces)
+    for (const auto& iface : fInterfaces)
         iface->RestoreDefaultKeyMappings();
 
     RefreshInterfaceKeyMaps();
@@ -748,7 +734,7 @@ void    plInputInterfaceMgr::InitDefaultKeyMap()
 
 void    plInputInterfaceMgr::RefreshInterfaceKeyMaps()
 {
-    for (plInputInterface* iface : fInterfaces)
+    for (const auto& iface : fInterfaces)
         iface->RefreshKeyMap();
 }
 
@@ -788,7 +774,7 @@ void    plInputInterfaceMgr::WriteKeyMap()
         fprintf(gKeyFile, "#\n");
 //      fprintf(gKeyFile, "Keyboard.ClearBindings\n");
         
-        for (plInputInterface* iface : fInterfaces)
+        for (const auto& iface : fInterfaces)
             IWriteNonConsoleCmdKeys(iface->fControlMap, gKeyFile);
 
         fprintf(gKeyFile, "#\n");
@@ -797,7 +783,7 @@ void    plInputInterfaceMgr::WriteKeyMap()
         fprintf(gKeyFile, "# Keyboard.BindConsoleCmd \tKey\t\t\tCommand\n");
         fprintf(gKeyFile, "#\n");
         
-        for (plInputInterface* iface : fInterfaces)
+        for (const auto& iface : fInterfaces)
             IWriteConsoleCmdKeys(iface->fControlMap, gKeyFile);
 
         fprintf(gKeyFile, "#\n");
@@ -822,12 +808,12 @@ void    plInputInterfaceMgr::WriteKeyMap()
     }
 }
 
-void plInputInterfaceMgr::SetCurrentFocus(plInputInterface *focus)
+void plInputInterfaceMgr::SetCurrentFocus(hsWeakRef<plInputInterface> focus)
 {
     fCurrentFocus = focus;
 }
 
-void plInputInterfaceMgr::ReleaseCurrentFocus(plInputInterface *focus)
+void plInputInterfaceMgr::ReleaseCurrentFocus(hsWeakRef<plInputInterface> focus)
 {
     if (fCurrentFocus == focus)
         fCurrentFocus = nullptr;
