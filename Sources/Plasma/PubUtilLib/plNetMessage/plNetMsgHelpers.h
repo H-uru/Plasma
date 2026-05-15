@@ -61,29 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plKey;
 class hsRAMStream;
 class hsStream;
-class hsStreamable;
-
-
-////////////////////////////////////////////////////////////////////
-// plNetMsgStreamableHelper
-// Will peek/poke anything derived from hsStreamable
-
-class plNetMsgStreamableHelper : public plCreatable
-{
-    hsStreamable *  fObject;
-public:
-    plNetMsgStreamableHelper() : fObject() { }
-    plNetMsgStreamableHelper(hsStreamable * object):fObject(object){}
-    plNetMsgStreamableHelper & operator =(hsStreamable * value);
-    operator hsStreamable *() const { return fObject;}
-    operator const hsStreamable *() const { return fObject;}
-    CLASSNAME_REGISTER( plNetMsgStreamableHelper );
-    GETINTERFACE_ANY(plNetMsgStreamableHelper, plCreatable);
-    void SetObject(hsStreamable * object) { fObject=object;}
-    hsStreamable * GetObject() const { return fObject;}
-    int Poke(hsStream* stream, uint32_t peekOptions=0);
-    int Peek(hsStream* stream, uint32_t peekOptions=0);
-};
 
 ////////////////////////////////////////////////////////////////////
 // plNetMsgCreatableHelper

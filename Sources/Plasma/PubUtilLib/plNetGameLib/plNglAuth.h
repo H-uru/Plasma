@@ -500,13 +500,6 @@ void NetCliAuthChangePlayerNameRequest (
 );
 
 //============================================================================
-// CCRPetition
-//============================================================================
-void NetCliAuthSendCCRPetition (
-    const ST::string&     petitionText
-);
-
-//============================================================================
 // SendFriendInvite
 //============================================================================
 using FNetCliAuthSendFriendInviteCallback = std::function<void(ENetError result)>;

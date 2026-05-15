@@ -146,13 +146,6 @@ public:
     virtual bool Open(const plFileName&, const char* = "rb") = 0;
 };
 
-class hsStreamable {
-public:
-    virtual void    Read(hsStream* stream) = 0;
-    virtual void    Write(hsStream* stream) = 0;
-    virtual uint32_t  GetStreamSize() = 0;
-};
-
 class hsUNIXStream : public hsFileSystemStream
 {   
     FILE*       fRef;
