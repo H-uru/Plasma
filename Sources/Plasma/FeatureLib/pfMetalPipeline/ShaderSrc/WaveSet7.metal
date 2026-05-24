@@ -148,47 +148,15 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
 
     // Dot our position with our direction vectors.
     
-    float4 distance = uniforms.DirectionX * worldPosition.xxxx;
-    distance = (uniforms.DirectionY * worldPosition.yyyy) + distance;
+    float4 phases = uniforms.DirectionX * worldPosition.xxxx;
+    phases = (uniforms.DirectionY * worldPosition.yyyy) + phases;
     
     //
     //    dist = mad( dist, kFreq.xyzw, kPhase.xyzw);
-    distance = distance * uniforms.Frequency;
-    distance = distance + uniforms.Phase;
-    //
-    //    // Now we need dist mod'd into range [-Pi..Pi]
-    //    dist *= rcp(kTwoPi);
-    float4 piRecip = 1.0f / uniforms.PiConsts.wwww;
-    distance = distance + uniforms.PiConsts.zzzz;
-    distance *= piRecip;
-    //    dist = frac(dist);
-    distance = fract(distance);
-    //    dist *= kTwoPi;
-    distance *= uniforms.PiConsts.wwww;
-    //    dist += -kPi;
-    distance -= uniforms.PiConsts.zzzz;
+    phases = (phases * uniforms.Frequency) + uniforms.Phase;
 
-    //Metals pow function does not like negative bases
-    //Doing the same thing as the DX assembly until I know more about why
-
-    float4 pow2 = distance * distance; // r0^2
-    float4 pow3 = pow2 * distance; // r0^3 - probably stall
-    float4 pow4 = pow2 * pow2; // r0^4
-    float4 pow5 = pow2 * pow3; // r0^5
-    float4 pow7 = pow2 * pow5; // r0^7
-
-    //
-    //    sincos(dist, sinDist, cosDist);
-    // sin = r0 + r0^3 * vSin.y + r0^5 * vSin.z
-    // cos = 1 + r0^2 * vCos.y + r0^4 * vCos.z
-    //r1
-    float4 cosDist = 1 + pow2 * uniforms.CosConsts.y + pow4 * uniforms.CosConsts.z;
-    //r2
-    float4 sinDist = distance + pow3 * uniforms.SinConsts.y + pow5 * uniforms.SinConsts.z;
-
-    cosDist = ((pow3 * pow3) * uniforms.CosConsts.w) + cosDist;
-    sinDist = (pow7 * uniforms.SinConsts.w) + sinDist;
-
+    float4 cosPhases;
+    float4 sinPhases = fast::sincos(phases, cosPhases);
 
     // Calc our depth based filtering here into r4 (because we don't use it again
     // after here, and we need our filtering shortly).
@@ -207,15 +175,15 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     // r2 == sinDist
     // r1 == cosDist
     //    sinDist *= filter;
-    sinDist *= filter;
+    sinPhases *= filter;
     //    sinDist *= kAmplitude.xyzw
-    sinDist *= uniforms.Amplitude;
+    sinPhases *= uniforms.Amplitude;
     // r5 is now T = sum(Ai * sin())
     // METAL NOTE: from here on, r5 is sinDist
     //    height = dp4(sinDist, kOne);
     //    accumPos.z += height; (but accumPos.z is currently 0).
     float4 accumPos = 0;
-    accumPos.x = dot(sinDist, uniforms.NumericConsts.zzzz);
+    accumPos.x = dot(sinPhases, uniforms.NumericConsts.zzzz);
     accumPos.y = accumPos.x * depth.z;
     accumPos.z = accumPos.y + uniforms.WaterLevel.w;
     worldPosition.z = max(worldPosition.z, accumPos.z); // CLAMP
@@ -226,9 +194,9 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     //
     //    cosDist *= kAmplitude.xyzw; // Combine?
     //METAL NOTE: cosDist is now r7
-    cosDist *= uniforms.Amplitude;
+    cosPhases *= uniforms.Amplitude;
     //    cosDist *= filter;
-    cosDist *= filter;
+    cosPhases *= filter;
     // r7 is now M = sum(Ai * cos())
 
     // Okay, here we go:
@@ -257,24 +225,24 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     //
     // But we want the transpose of that to go into r1-r3
 
-    worldPosition.x += dot(cosDist, uniforms.DirXK);
-    worldPosition.y += dot(cosDist, uniforms.DirYK);
+    worldPosition.x += dot(cosPhases, uniforms.DirXK);
+    worldPosition.y += dot(cosPhases, uniforms.DirYK);
 
     float4 r1, r2, r3 = 0;
 
-    r1.x = dot(sinDist, -uniforms.DirXSqKW);
-    r2.x = dot(sinDist, -uniforms.DirXDirYKW);
-    r3.x = dot(cosDist, uniforms.DirXW);
+    r1.x = dot(sinPhases, -uniforms.DirXSqKW);
+    r2.x = dot(sinPhases, -uniforms.DirXDirYKW);
+    r3.x = dot(cosPhases, uniforms.DirXW);
     r1.x = r1.x + uniforms.NumericConsts.z;
 
-    r1.y = dot(sinDist, -uniforms.DirXDirYKW);
-    r2.y = dot(sinDist, -uniforms.DirYSqKW);
-    r3.y = dot(cosDist, uniforms.DirYW);
+    r1.y = dot(sinPhases, -uniforms.DirXDirYKW);
+    r2.y = dot(sinPhases, -uniforms.DirYSqKW);
+    r3.y = dot(cosPhases, uniforms.DirYW);
     r2.y = r2.y + uniforms.NumericConsts.z;
 
-    r1.z = dot(cosDist, -uniforms.DirXW);
-    r2.z = dot(cosDist, -uniforms.DirYW);
-    r3.z = dot(sinDist, -uniforms.WK);
+    r1.z = dot(cosPhases, -uniforms.DirXW);
+    r2.z = dot(cosPhases, -uniforms.DirYW);
+    r3.z = dot(sinPhases, -uniforms.WK);
     r3.z = r3.z + uniforms.NumericConsts.z;
 
     // Calculate our normalized vector from camera to vtx.
