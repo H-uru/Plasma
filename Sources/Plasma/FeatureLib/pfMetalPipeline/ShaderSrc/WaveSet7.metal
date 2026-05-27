@@ -375,7 +375,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     // Questionble attenuation follows
     // vector from this point to camera and normalize stashed in r5
     // Dot that with the computed normal
-    r1.x = dot(-r5, r11);
+    r1.x = dot(-r5.xyz, r11.xyz);
     r1.x = r1.x * in.color.z;
     r1.xyzw = uniforms.NumericConsts.z - r1.x;
     r1.w += uniforms.NumericConsts.z;
