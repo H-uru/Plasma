@@ -269,8 +269,8 @@ void plClient::ShowClientWindow()
 {
     AppDelegate* appDelegate = (AppDelegate*)[NSApp delegate];
     plPipeline* pipeline = appDelegate->gClient->GetPipeline();
-    appDelegate.metalPipeline = dynamic_cast<plMetalPipeline*>(pipeline);
-    appDelegate.glPipeline = dynamic_cast<plGLPipeline*>(pipeline);
+    appDelegate.metalPipeline = plMetalPipeline::ConvertNoRef(pipeline);
+    appDelegate.glPipeline = plGLPipeline::ConvertNoRef(pipeline);
 
     if (appDelegate.metalPipeline) {
         appDelegate.metalPipeline->SetRenderDestination(appDelegate.renderDestination);
