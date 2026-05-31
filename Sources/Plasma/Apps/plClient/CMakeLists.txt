@@ -110,9 +110,12 @@ elseif(APPLE)
         Mac-Cocoa/PLSLoginWindowController.mm
         Mac-Cocoa/PLSPatcherWindowController.mm
         Mac-Cocoa/PLSPatcher.mm
+        Mac-Cocoa/PLSRenderLoop.mm
         Mac-Cocoa/PLSServerStatus.mm
+        Mac-Cocoa/RenderLoops.swift
     )
     list(APPEND plClient_HEADERS
+        Mac-Cocoa/BridgingHeader.h
         Mac-Cocoa/NSString+StringTheory.h
         Mac-Cocoa/plDirectMetalRenderDestination.h
         Mac-Cocoa/PLSKeyboardEventMonitor.h
@@ -121,6 +124,7 @@ elseif(APPLE)
         Mac-Cocoa/PLSLoginWindowController.h
         Mac-Cocoa/PLSPatcherWindowController.h
         Mac-Cocoa/PLSPatcher.h
+        Mac-Cocoa/PLSRenderLoop.h
         Mac-Cocoa/PLSServerStatus.h
     )
     list(APPEND plClient_RESOURCES
@@ -160,6 +164,7 @@ if(APPLE)
         MACOSX_BUNDLE_BUNDLE_VERSION "0.1"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
         RESOURCE "${plClient_XCODE_RESOURCES}"
+        Swift_MODULE_NAME "PlasmaClient"
         XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME AppIcon
         XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=Debug] "YES"
         XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=RelWithDebInfo] "YES"
@@ -169,8 +174,14 @@ if(APPLE)
         XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME "YES"
         XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC "YES"
         XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER org.Huru.UruExplorer
+        # Swift/C++ bridging will use the module name as the root namespace
+        # for exposing Swift types to C++. Change the module name to prevent
+        # collisions with plClient types.
+        XCODE_ATTRIBUTE_PRODUCT_MODULE_NAME "PlasmaClient"
+        XCODE_ATTRIBUTE_SWIFT_OBJC_INTEROP_MODE objcxx
+        XCODE_ATTRIBUTE_SWIFT_OBJC_BRIDGING_HEADER "Sources/Plasma/Apps/plClient/Mac-Cocoa/BridgingHeader.h"
     )
-    target_compile_options(plClient PRIVATE -fobjc-arc)
+    target_compile_options(plClient PRIVATE $<$<COMPILE_LANGUAGE:C,CXX,OBJC>:-fobjc-arc>)
     target_sources(plClient PRIVATE Mac-Cocoa/Assets.xcassets)
     set_source_files_properties(Mac-Cocoa/Assets.xcassets ${RESOURCES} PROPERTIES
          MACOSX_PACKAGE_LOCATION Resources
