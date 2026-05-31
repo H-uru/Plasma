@@ -59,9 +59,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #import "PLSKeyboardEventMonitor.h"
 #import "PLSLoginWindowController.h"
 #import "PLSPatcherWindowController.h"
-#import "plDirectMetalRenderDestination.h"
+#import "PLSRenderLoop.h"
 #import "PLSServerStatus.h"
 #import "PLSView.h"
+#import "plDirectMetalRenderDestination.h"
 
 // stdlib
 #include <algorithm>
@@ -84,6 +85,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputCore/plInputDevice.h"
 #ifdef PLASMA_PIPELINE_METAL
 #include "pfMetalPipeline/plMetalPipeline.h"
+#include "pfMetalPipeline/plMetalRenderDestination.h"
 #endif
 #include "plMessage/plDisplayScaleChangedMsg.h"
 #include "plMessageBox/hsMessageBox.h"
@@ -94,6 +96,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Until a pipeline is integrated with macOS, need to import the
 // abstract definition.
 #include "plPipeline/pl3DPipeline.h"
+
+#import "PlasmaClient-Swift.h"
 
 void PumpMessageQueueProc();
 
@@ -204,13 +208,11 @@ static uint32_t ParseRendererArgument(const ST::string& requested)
 {
 @public
     plClientLoader      gClient;
-    dispatch_source_t   _displaySource;
     plMacDisplayHelper* _displayHelper;
     PLSWakeLockHolder   _wakeLockHolder;
 }
 
 @property(retain) PLSKeyboardEventMonitor* eventMonitor;
-@property CVDisplayLinkRef displayLink;
 @property dispatch_queue_t renderQueue;
 @property CALayer* renderLayer;
 @property(weak) PLSView* plsView;
@@ -220,6 +222,7 @@ static uint32_t ParseRendererArgument(const ST::string& requested)
 @property PLSLoginWindowController* loginWindow;
 @property NSWindow* gameWindow;
 @property plMetalRenderDestinationType*    renderDestination;
+@property plMetalRenderLoopType*           renderLoop;
 
 @property plMetalPipeline* metalPipeline;
 @property plGLPipeline*    glPipeline;
@@ -356,6 +359,11 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
     return self;
 }
 
+- (void)metalDisplayLink:(CAMetalDisplayLink*)link needsUpdate:(CAMetalDisplayLinkUpdate*)update API_AVAILABLE(macos(14.0))
+{
+    [self runLoop];
+}
+
 dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL);
 
 - (void)startRunLoop
@@ -394,32 +402,30 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 - (void)setupRunLoop
 {
     NetCliAuthAutoReconnectEnable(true);
-    if (self.displayLink) {
-        CVDisplayLinkStop(self.displayLink);
-        CVDisplayLinkRelease(self.displayLink);
+
+    delete self.renderDestination;
+    if (@available(macOS 14.0, *)) {
+        auto renderLoop = PlasmaClient::MetalRenderLoop::Create((CAMetalLayer*)self.plsView.layer);
+        self.renderDestination = new plMetalRenderDestination<PlasmaClient::MetalRenderLoop>(renderLoop);
+        self.renderLoop = new plRenderLoop<PlasmaClient::MetalRenderLoop>(renderLoop);
+    } else {
+        self.renderDestination = new plMetalRenderDestination<plDirectMetalRenderDestination*>((CAMetalLayer*)self.plsView.layer);
+        self.renderLoop = new plRenderLoop<plLegacyRenderLoop>(self.window);
     }
 
-    _displaySource =
-        dispatch_source_create(DISPATCH_SOURCE_TYPE_DATA_ADD, 0, 0, dispatch_get_main_queue());
-    __weak AppDelegate* weakSelf = self;
-    dispatch_source_set_event_handler(_displaySource, ^() {
-        @autoreleasepool {
-            [self runLoop];
-        }
+    self.renderLoop->SetRenderCallback([self] {
+        [self render];
     });
-    dispatch_resume(_displaySource);
+    // Start the render loop now. The intro movie will require
+    // the render loop to be active in some cases. For modern
+    // render loops the system won't provide us framebuffers until
+    // there is an active loop.
+    self.renderLoop->StartRenderLoop();
+}
 
-    CVDisplayLinkCreateWithCGDisplay(
-        [self.window.screen.deviceDescription[@"NSScreenNumber"] intValue], &_displayLink);
-    CVDisplayLinkSetOutputHandler(
-        self.displayLink,
-        ^CVReturn(CVDisplayLinkRef _Nonnull displayLink, const CVTimeStamp* _Nonnull inNow,
-                  const CVTimeStamp* _Nonnull inOutputTime, CVOptionFlags flagsIn,
-                  CVOptionFlags* _Nonnull flagsOut) {
-            dispatch_source_merge_data(_displaySource, 1);
-            return kCVReturnSuccess;
-        });
-    CVDisplayLinkStart(self.displayLink);
+- (void)render
+{
+    [self runLoop];
 }
 
 - (void)runLoop
@@ -685,7 +691,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     // macOS has requested we terminate. This could happen because the user asked us to quit, the
     // system is going to restart, etc... Do any cleanup we need to do. If we need to we can ask for
     // more time, but right now nothing in our implementation requires that.
-    CVDisplayLinkStop(self.displayLink);
+    self.renderLoop->StopRenderLoop();
     @synchronized(_renderLayer) {
         if (gClient) {
             gClient.ShutdownStart();

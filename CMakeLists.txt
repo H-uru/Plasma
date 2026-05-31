@@ -38,7 +38,17 @@ include(FeatureSummary)
 include(MetalShaderSupport)
 include(VcpkgToolchain)
 
-project(Plasma)
+project(Plasma LANGUAGES C CXX)
+
+if(APPLE)
+    check_language(Swift)
+    if(CMAKE_Swift_COMPILER)
+        enable_language(Swift)
+	set(CMAKE_Swift_LANGUAGE_VERSION 5.2)
+    else()
+        message(WARNING "Swift is not supported")
+    endif()
+endif()
 
 # Set up Product Identification parameters
 set(PRODUCT_BRANCH_ID   "1"         CACHE STRING "Branch ID")
