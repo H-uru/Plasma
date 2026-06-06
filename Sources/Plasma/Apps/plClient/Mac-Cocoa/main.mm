@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #import "PLSKeyboardEventMonitor.h"
 #import "PLSLoginWindowController.h"
 #import "PLSPatcherWindowController.h"
+#import "plDirectMetalRenderDestination.h"
 #import "PLSServerStatus.h"
 #import "PLSView.h"
 
@@ -218,6 +219,7 @@ static uint32_t ParseRendererArgument(const ST::string& requested)
 @property PLSPatcher* patcher;
 @property PLSLoginWindowController* loginWindow;
 @property NSWindow* gameWindow;
+@property plMetalRenderDestinationType*    renderDestination;
 
 @end
 
@@ -329,6 +331,13 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
 
     gClient.SetClientWindow((__bridge void*)view.layer);
     gClient.SetClientDisplay([window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue]);
+
+    // Start the game with a direct render destination
+    // Components like the intro movie may want to draw
+    // before we're ready to start a vsync managed render
+    // destination.
+    self.renderDestination = new plMetalRenderDestination<plDirectMetalRenderDestination*>((CAMetalLayer*)self.plsView.layer);
+    self.renderDestination->MakeCurrentRenderDestination();
 
     self = [super initWithWindow:window];
     self.window.acceptsMouseMovedEvents = YES;

@@ -61,6 +61,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfMetalPipeline/plMetalPipelineState.h"
 #include "pfMetalPipeline/ShaderSrc/ShaderTypes.h"
 
+plMetalRenderDestinationType* plMetalRenderDestinationType::fCurrentRenderDestination;
+
 /// Macros for getting/setting data in a vertex buffer
 template<typename T>
 static inline void inlCopy(uint8_t*& src, uint8_t*& dst)
@@ -458,7 +460,7 @@ void plMetalDevice::SetRenderTarget(plRenderTarget* target)
             fCurrentDepthFormat = MTL::PixelFormatInvalid;
         }
     } else {
-        fCurrentFragmentOutputTexture = fCurrentDrawable->texture();
+        fCurrentFragmentOutputTexture = fCurrentRenderSurface ? fCurrentRenderSurface->colorTexture : nullptr;
         fCurrentDepthFormat = MTL::PixelFormatDepth32Float_Stencil8;
     }
 }
@@ -466,7 +468,7 @@ void plMetalDevice::SetRenderTarget(plRenderTarget* target)
 plMetalDevice::plMetalDevice()
     : fErrorMsg(),
       fActiveThread(hsThread::ThisThreadHash()),
-      fCurrentDrawable(),
+      fCurrentRenderSurface(),
       fCommandQueue(),
       fCurrentRenderTargetCommandEncoder(),
       fCurrentDrawableDepthTexture(),
@@ -1002,15 +1004,24 @@ void plMetalDevice::SetLocalToWorldMatrix(const hsMatrix44& src)
     fMatrixW2L = hsMatrix2SIMD(inv);
 }
 
-void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
+bool plMetalDevice::CreateNewCommandBuffer()
 {
     fCurrentCommandBuffer = fCommandQueue->commandBuffer();
+
+    auto surface = plMetalRenderDestinationType::CurrentRenderDestination()->GetNextRenderSurface(fCurrentCommandBuffer);
+    if (!surface) {
+        fCurrentCommandBuffer = nullptr;
+        return false;
+    }
+
     fCurrentCommandBuffer->retain();
 
-    SetFramebufferFormat(drawable->texture()->pixelFormat());
+    auto colorAttachment = surface->colorTexture;
+
+    SetFramebufferFormat(colorAttachment->pixelFormat());
 
     bool depthNeedsRebuild = fCurrentDrawableDepthTexture == nullptr;
-    depthNeedsRebuild |= drawable->texture()->width() != fCurrentDrawableDepthTexture->width() || drawable->texture()->height() != fCurrentDrawableDepthTexture->height();
+    depthNeedsRebuild |= colorAttachment->width() != fCurrentDrawableDepthTexture->width() || colorAttachment->height() != fCurrentDrawableDepthTexture->height();
 
     // cache the depth buffer, we'll just clear it every time.
     if (depthNeedsRebuild) {
@@ -1020,8 +1031,8 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
         }
 
         MTL::TextureDescriptor* depthTextureDescriptor = MTL::TextureDescriptor::texture2DDescriptor(MTL::PixelFormatDepth32Float_Stencil8,
-                                                                                                     drawable->texture()->width(),
-                                                                                                     drawable->texture()->height(),
+                                                                                                     colorAttachment->width(),
+                                                                                                     colorAttachment->height(),
                                                                                                      false);
         if (fMetalDevice->supportsFamily(MTL::GPUFamilyApple1) && fSampleCount == 1) {
             depthTextureDescriptor->setStorageMode(MTL::StorageModeMemoryless);
@@ -1042,9 +1053,9 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
             }
             fCurrentDrawableDepthTexture = fMetalDevice->newTexture(depthTextureDescriptor);
 
-            MTL::TextureDescriptor* msaaColorTextureDescriptor = MTL::TextureDescriptor::texture2DDescriptor(drawable->texture()->pixelFormat(),
-                                                                                                             drawable->texture()->width(),
-                                                                                                             drawable->texture()->height(),
+            MTL::TextureDescriptor* msaaColorTextureDescriptor = MTL::TextureDescriptor::texture2DDescriptor(colorAttachment->pixelFormat(),
+                                                                                                             colorAttachment->width(),
+                                                                                                             colorAttachment->height(),
                                                                                                              false);
             msaaColorTextureDescriptor->setUsage(MTL::TextureUsageRenderTarget);
             if (fMetalDevice->supportsFamily(MTL::GPUFamilyApple1) && fSampleCount == 1) {
@@ -1065,7 +1076,7 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
         // Do we need to create a unprocessed output texture?
         // If the depth needs to be rebuilt - we probably need to rebuild this one too
         if ((fCurrentUnprocessedOutputTexture && depthNeedsRebuild) || (fCurrentUnprocessedOutputTexture == nullptr && NeedsPostprocessing())) {
-            MTL::TextureDescriptor* mainPassDescriptor = MTL::TextureDescriptor::texture2DDescriptor(drawable->texture()->pixelFormat(), drawable->texture()->width(), drawable->texture()->height(), false);
+            MTL::TextureDescriptor* mainPassDescriptor = MTL::TextureDescriptor::texture2DDescriptor(colorAttachment->pixelFormat(), colorAttachment->width(), colorAttachment->height(), false);
             mainPassDescriptor->setStorageMode(MTL::StorageModePrivate);
             mainPassDescriptor->setUsage(MTL::TextureUsageShaderRead | MTL::TextureUsageRenderTarget);
             fCurrentUnprocessedOutputTexture->release();
@@ -1073,7 +1084,8 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
         }
     }
 
-    fCurrentDrawable = drawable->retain();
+    fCurrentRenderSurface = surface;
+    return true;
 }
 
 void plMetalDevice::StartPipelineBuild(plMetalPipelineRecord& record, std::condition_variable** condOut)
@@ -1235,13 +1247,14 @@ void plMetalDevice::SubmitCommandBuffer()
     PostprocessIntoDrawable();
     FinalizePostProcessing();
 
-    fCurrentCommandBuffer->presentDrawable(fCurrentDrawable);
+    if (fCurrentRenderSurface.has_value() && fCurrentRenderSurface->drawable) {
+        fCurrentCommandBuffer->presentDrawable(fCurrentRenderSurface->drawable);
+    }
     fCurrentCommandBuffer->commit();
     fCurrentCommandBuffer->release();
     fCurrentCommandBuffer = nullptr;
 
-    fCurrentDrawable->release();
-    fCurrentDrawable = nullptr;
+    fCurrentRenderSurface.reset();
 
     // Reset the clear colors for the next pass
     // Metal clears on framebuffer load - so don't cause a clear
@@ -1301,7 +1314,7 @@ void plMetalDevice::PostprocessIntoDrawable()
         // source and the output drawable as the target to do post-processing.
         MTL::RenderPassDescriptor* gammaPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
         gammaPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionDontCare);
-        gammaPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentDrawable->texture());
+        gammaPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentRenderSurface->colorTexture);
         gammaPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionStore);
         
         gammaAdjustEncoder = fCurrentCommandBuffer->renderCommandEncoder(gammaPassDescriptor);
@@ -1382,11 +1395,6 @@ MTL::RenderCommandEncoder* plMetalDevice::CurrentRenderCommandEncoder()
     }
 
     return fCurrentRenderTargetCommandEncoder;
-}
-
-CA::MetalDrawable* plMetalDevice::GetCurrentDrawable() const
-{
-    return fCurrentDrawable;
 }
 
 void plMetalDevice::BlitTexture(MTL::Texture* src, MTL::Texture* dst)

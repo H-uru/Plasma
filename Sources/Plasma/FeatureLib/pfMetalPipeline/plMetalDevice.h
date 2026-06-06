@@ -54,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGMatState.h"
 #include "hsMatrix44.h"
 #include "plMetalDeviceRef.h"
+#include "plMetalRenderDestination.h"
 #include "plSurface/plShader.h"
 #include "plSurface/plShaderTable.h"
 
@@ -169,11 +170,9 @@ public:
     uint8_t                 fSampleCount;
 
     /// Create a new command buffer to encode all the operations needed to draw a frame
-    // Currently requires a CA drawable and not a Metal drawable. In since CA drawable is only abstract implementation I know about, not sure where we would find others?
-    void                CreateNewCommandBuffer(CA::MetalDrawable* drawable);
+    bool                CreateNewCommandBuffer();
     MTL::CommandBuffer* GetCurrentCommandBuffer() const;
     MTL::CommandBuffer* GetCurrentDrawableCommandBuffer() const { return fCurrentCommandBuffer; }
-    CA::MetalDrawable*  GetCurrentDrawable() const;
     /// Submit the command buffer to the GPU and draws all the render passes. Clears the current command buffer.
     void                SubmitCommandBuffer();
     void                Clear(bool shouldClearColor, simd_float4 clearColor, bool shouldClearDepth, float clearDepth);
@@ -231,9 +230,7 @@ private:
     std::mutex                                                                                             fPipelineCreationMtx;
     void                                                                                                   StartPipelineBuild(plMetalPipelineRecord& record, std::condition_variable** condOut);
     std::condition_variable*                                                                               PrewarmPipelineStateFor(plMetalPipelineState* pipelineState);
-    
-    void SetOutputLayer(CA::MetalLayer* layer) { fLayer = layer; }
-    CA::MetalLayer* GetOutputLayer() const { return fLayer; };
+
     hsDisplayHndl fDisplay;
 
 protected:
@@ -252,15 +249,14 @@ private:
     MTL::CommandBuffer*        fCurrentCommandBuffer;
     MTL::CommandBuffer*        fCurrentOffscreenCommandBuffer;
     MTL::RenderCommandEncoder* fCurrentRenderTargetCommandEncoder;
-    
-    CA::MetalLayer*            fLayer;
 
     MTL::Texture* fCurrentDrawableDepthTexture;
     MTL::Texture* fCurrentFragmentOutputTexture;
     MTL::Texture* fCurrentUnprocessedOutputTexture;
     MTL::Texture* fCurrentFragmentMSAAOutputTexture;
 
-    CA::MetalDrawable* fCurrentDrawable;
+    std::optional<plMetalRenderSurface> fCurrentRenderSurface;
+
     MTL::PixelFormat   fCurrentDepthFormat;
     simd_float4        fClearRenderTargetColor;
     simd_float4        fClearDrawableColor;
