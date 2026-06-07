@@ -279,21 +279,6 @@ if(PLASMA_EXTERNAL_RELEASE)
     set_target_properties(plClient PROPERTIES OUTPUT_NAME "UruExplorer")
 endif(PLASMA_EXTERNAL_RELEASE)
 
-if(APPLE AND NOT CMAKE_CROSSCOMPILING)
-    # CMake will attempt to strip rpaths, thus preventing fixup_bundle from finding libraries.
-    # Not sure why - turning that off.
-    set_target_properties(plClient PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
-    install(
-        CODE
-        [[
-            include("BundleUtilities")
-            fixup_bundle("${CMAKE_INSTALL_PREFIX}/client/$<TARGET_FILE_NAME:plClient>.app" "" "${searchDirs}" IGNORE_ITEM Python)
-            execute_process(COMMAND "codesign" "--remove-signature" "--deep" "-f" "${CMAKE_INSTALL_PREFIX}/client/$<TARGET_FILE_NAME:plClient>.app")
-        ]]
-        DESTINATION client
-    )
-endif()
-
 if(PLASMA_BUILD_RESOURCE_DAT)
     source_group("Client Resource Scripts" FILES ${external_SCRIPTS})
     source_group("Client Resource Images" FILES ${external_SOURCES})
