@@ -148,12 +148,13 @@ public:
 
 /*
  One final twist - Swift exports it's types as value types,
- but these types behave as references - similar to std::shared_ptr.
+ but they behave like references - similar to std::shared_ptr.
  That means we need to have a version of plMetalRenderDestination
  for value types, and another for pointer types.
 
  The pointer types version is used when we have a real C++
- type that we need to specialize on.
+ type that we need to specialize on. The value type is used
+ when this template specializes on a Swift type.
  */
 
 template <typename T>
@@ -173,7 +174,7 @@ class plMetalRenderDestination<T*> : public plMetalRenderDestinationType
 {
 public:
     template <typename... Args>
-    plMetalRenderDestination(Args&&... args) : fProvider(new T(std::forward<Args>(args)...))
+    plMetalRenderDestination(Args&&... args) : fProvider(std::make_unique<T>(std::forward<Args>(args)...))
     {
     }
     plOptionalMetalRenderSurface GetNextRenderSurface(MTL::CommandBuffer* buffer) override { return fProvider->GetNextRenderSurface(buffer); }
