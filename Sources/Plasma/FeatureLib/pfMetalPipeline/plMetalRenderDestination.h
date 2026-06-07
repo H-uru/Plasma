@@ -55,22 +55,22 @@ struct plMetalRenderSurface
     CA::MetalDrawable* drawable;
 
     // Initialize with new objects - retain them
-    plMetalRenderSurface(MTL::Texture* colorTexture, CA::MetalDrawable* drawable):
-        colorTexture(colorTexture->retain()), drawable(drawable->retain())
-    {}
+    plMetalRenderSurface(MTL::Texture* colorTexture, CA::MetalDrawable* drawable)
+        : colorTexture(colorTexture->retain()), drawable(drawable->retain())
+    { }
 
     // Move constructor - transfer ownership directly
-    plMetalRenderSurface(plMetalRenderSurface&& other):
-        colorTexture(other.colorTexture), drawable(other.drawable)
+    plMetalRenderSurface(plMetalRenderSurface&& other)
+        : colorTexture(other.colorTexture), drawable(other.drawable)
     {
         other.colorTexture = nullptr;
         other.drawable = nullptr;
     }
 
     // Copy constructor - retain to create independent copy
-    plMetalRenderSurface(const plMetalRenderSurface& other):
-        colorTexture(other.colorTexture), drawable(other.drawable)
-    {}
+    plMetalRenderSurface(const plMetalRenderSurface& other)
+        : colorTexture(other.colorTexture), drawable(other.drawable)
+    { }
 
     // Copy assignment with self-assignment protection
     plMetalRenderSurface& operator=(const plMetalRenderSurface& other)
@@ -141,7 +141,7 @@ class plMetalRenderDestinationType
 {
 public:
     virtual plOptionalMetalRenderSurface GetNextRenderSurface(MTL::CommandBuffer* buffer) = 0;
-    virtual void SetOutputSize(CGSize size) = 0;
+    virtual void                         SetOutputSize(CGSize size) = 0;
 
     virtual ~plMetalRenderDestinationType() = default;
 };
@@ -163,7 +163,7 @@ class plMetalRenderDestination : public plMetalRenderDestinationType
 public:
     plMetalRenderDestination(T provider) : fProvider(provider) {}
     plOptionalMetalRenderSurface GetNextRenderSurface(MTL::CommandBuffer* buffer) override { return fProvider.GetNextRenderSurface(buffer); }
-    void SetOutputSize(CGSize size) override { fProvider.SetOutputSize(size); }
+    void                         SetOutputSize(CGSize size) override { fProvider.SetOutputSize(size); }
 
 private:
     T fProvider;
@@ -174,11 +174,11 @@ class plMetalRenderDestination<T*> : public plMetalRenderDestinationType
 {
 public:
     template <typename... Args>
-    plMetalRenderDestination(Args&&... args) : fProvider(std::make_unique<T>(std::forward<Args>(args)...))
-    {
-    }
+    plMetalRenderDestination(Args&&... args)
+        : fProvider(std::make_unique<T>(std::forward<Args>(args)...))
+    { }
     plOptionalMetalRenderSurface GetNextRenderSurface(MTL::CommandBuffer* buffer) override { return fProvider->GetNextRenderSurface(buffer); }
-    void SetOutputSize(CGSize size) override { fProvider->SetOutputSize(size); }
+    void                         SetOutputSize(CGSize size) override { fProvider->SetOutputSize(size); }
 
 private:
     std::unique_ptr<T> fProvider;
