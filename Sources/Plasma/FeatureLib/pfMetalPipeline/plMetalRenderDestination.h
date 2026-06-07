@@ -55,37 +55,32 @@ struct plMetalRenderSurface
     CA::MetalDrawable* drawable;
 
     // Initialize with new objects - retain them
-    plMetalRenderSurface(MTL::Texture* colorTexture, CA::MetalDrawable* drawable)
-    {
-        this->colorTexture = colorTexture->retain();
-        this->drawable = drawable->retain();
-    }
+    plMetalRenderSurface(MTL::Texture* colorTexture, CA::MetalDrawable* drawable):
+        colorTexture(colorTexture->retain()), drawable(drawable->retain())
+    {}
 
     // Move constructor - transfer ownership directly
-    plMetalRenderSurface(plMetalRenderSurface&& other)
+    plMetalRenderSurface(plMetalRenderSurface&& other):
+        colorTexture(other.colorTexture), drawable(other.drawable)
     {
-        this->colorTexture = other.colorTexture;
-        this->drawable = other.drawable;
         other.colorTexture = nullptr;
         other.drawable = nullptr;
     }
 
     // Copy constructor - retain to create independent copy
-    plMetalRenderSurface(const plMetalRenderSurface& other)
-    {
-        this->colorTexture = other.colorTexture->retain();
-        this->drawable = other.drawable->retain();
-    }
+    plMetalRenderSurface(const plMetalRenderSurface& other):
+        colorTexture(other.colorTexture), drawable(other.drawable)
+    {}
 
     // Copy assignment with self-assignment protection
     plMetalRenderSurface& operator=(const plMetalRenderSurface& other)
     {
         if (this != &other) {
-            this->colorTexture = other.colorTexture->retain();
-            this->drawable = other.drawable->retain();
+            colorTexture->release();
+            drawable->release();
+            colorTexture = other.colorTexture->retain();
+            drawable = other.drawable->retain();
         }
-        this->colorTexture->release();
-        this->drawable->release();
         return *this;
     }
 
@@ -93,8 +88,8 @@ struct plMetalRenderSurface
     plMetalRenderSurface& operator=(plMetalRenderSurface&& other)
     {
         if (this != &other) {
-            this->colorTexture = other.colorTexture;
-            this->drawable = other.drawable;
+            colorTexture = other.colorTexture;
+            drawable = other.drawable;
             other.colorTexture = nullptr;
             other.drawable = nullptr;
         }
