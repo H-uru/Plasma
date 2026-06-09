@@ -276,6 +276,7 @@ void plClient::ShowClientWindow()
         appDelegate.metalPipeline->SetRenderDestination(appDelegate.renderDestination);
     }
 }
+
 void plClient::FlashWindow()
 {
     dispatch_async(dispatch_get_main_queue(), ^{

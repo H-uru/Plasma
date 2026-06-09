@@ -157,7 +157,7 @@ public:
  when this template specializes on a Swift type.
  */
 
-template <typename T>
+template<typename T>
 class plMetalRenderDestination : public plMetalRenderDestinationType
 {
 public:
@@ -169,11 +169,11 @@ private:
     T fProvider;
 };
 
-template <typename T>
+template<typename T>
 class plMetalRenderDestination<T*> : public plMetalRenderDestinationType
 {
 public:
-    template <typename... Args>
+    template<typename... Args>
     plMetalRenderDestination(Args&&... args)
         : fProvider(std::make_unique<T>(std::forward<Args>(args)...))
     { }

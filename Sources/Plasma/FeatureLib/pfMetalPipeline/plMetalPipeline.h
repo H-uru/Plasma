@@ -169,8 +169,8 @@ public:
     MTL::PixelFormat GetFramebufferFormat() { return fDevice.GetFramebufferFormat(); };
     void             SetFramebufferFormat(MTL::PixelFormat format) { fDevice.SetFramebufferFormat(format); };
 
-    void                          SetRenderDestination(plMetalRenderDestinationType* renderDestination) { fRenderDestination = renderDestination; }
-    plMetalRenderDestinationType* GetRenderDestination() { return fRenderDestination; }
+    void SetRenderDestination(plMetalRenderDestinationType* renderDestination) { fRenderDestination = renderDestination; }
+    const plMetalRenderDestinationType* GetRenderDestination() { return fRenderDestination; }
 
     void RegisterLight(plLightInfo* light) override;
     void UnRegisterLight(plLightInfo* light) override;
