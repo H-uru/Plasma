@@ -67,6 +67,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  */
 
 @interface PLSView ()
+{
+    plClientLoader* _gClient;
+}
 
 @property NSTrackingArea* mouseTrackingArea;
 #if PLASMA_PIPELINE_METAL
@@ -79,11 +82,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 - (plClientLoader&)gClient
 {
-    return *self._gClient;
+    return *_gClient;
 }
 
 // MARK: View setup
-- (id)initWithFrame:(NSRect)frameRect
+- (instancetype)initWithFrame:(NSRect)frameRect client:(plClientLoader*)gClient
 {
     self = [super initWithFrame:frameRect];
 #if PLASMA_PIPELINE_METAL
@@ -94,6 +97,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     self.layer = self.metalLayer = layer;
 #endif
     self.layer.backgroundColor = NSColor.blackColor.CGColor;
+    _gClient = gClient;
     return self;
 }
 

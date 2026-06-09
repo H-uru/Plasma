@@ -51,7 +51,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PLSView : NSView
 
-@property plClientLoader* _gClient;
+- (id)initWithFrame:(NSRect)frameRect NS_UNAVAILABLE;
+- (instancetype)initWithFrame:(NSRect)frameRect client:(plClientLoader*)gClient;
+- (plClientLoader&)gClient;
 @property plInputManager* inputManager;
 @property(weak) id<PLSViewDelegate> delegate;
 
