@@ -50,10 +50,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plDirectMetalRenderDestination
 {
 public:
-    plDirectMetalRenderDestination(CAMetalLayer *layer);
+    plDirectMetalRenderDestination(CAMetalLayer* layer);
     std::optional<plMetalRenderSurface> GetNextRenderSurface(MTL::CommandBuffer* buffer);
     void SetOutputSize(CGSize size);
 
 private:
-    CAMetalLayer *fLayer;
+    CAMetalLayer* fLayer;
 };

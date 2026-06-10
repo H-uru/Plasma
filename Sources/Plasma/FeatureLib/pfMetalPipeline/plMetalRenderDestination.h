@@ -50,36 +50,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct plMetalRenderSurface
 {
     // Required - the color texture to draw to.
-    MTL::Texture*      colorTexture;
+    MTL::Texture*      fColorTexture;
     // Optional - only provided for a CA based windowing system
-    CA::MetalDrawable* drawable;
+    CA::MetalDrawable* fDrawable;
 
     // Initialize with new objects - retain them
     plMetalRenderSurface(MTL::Texture* colorTexture, CA::MetalDrawable* drawable)
-        : colorTexture(colorTexture->retain()), drawable(drawable->retain())
+        : fColorTexture(colorTexture->retain()), fDrawable(drawable->retain())
     { }
 
     // Move constructor - transfer ownership directly
     plMetalRenderSurface(plMetalRenderSurface&& other)
-        : colorTexture(other.colorTexture), drawable(other.drawable)
+        : fColorTexture(other.fColorTexture), fDrawable(other.fDrawable)
     {
-        other.colorTexture = nullptr;
-        other.drawable = nullptr;
+        other.fColorTexture = nullptr;
+        other.fDrawable = nullptr;
     }
 
     // Copy constructor - retain to create independent copy
     plMetalRenderSurface(const plMetalRenderSurface& other)
-        : colorTexture(other.colorTexture), drawable(other.drawable)
+        : fColorTexture(other.fColorTexture), fDrawable(other.fDrawable)
     { }
 
     // Copy assignment with self-assignment protection
     plMetalRenderSurface& operator=(const plMetalRenderSurface& other)
     {
         if (this != &other) {
-            colorTexture->release();
-            drawable->release();
-            colorTexture = other.colorTexture->retain();
-            drawable = other.drawable->retain();
+            fColorTexture->release();
+            fDrawable->release();
+            fColorTexture = other.fColorTexture->retain();
+            fDrawable = other.fDrawable->retain();
         }
         return *this;
     }
@@ -88,10 +88,10 @@ struct plMetalRenderSurface
     plMetalRenderSurface& operator=(plMetalRenderSurface&& other)
     {
         if (this != &other) {
-            colorTexture = other.colorTexture;
-            drawable = other.drawable;
-            other.colorTexture = nullptr;
-            other.drawable = nullptr;
+            fColorTexture = other.fColorTexture;
+            fDrawable = other.fDrawable;
+            other.fColorTexture = nullptr;
+            other.fDrawable = nullptr;
         }
         return *this;
     }
@@ -99,11 +99,11 @@ struct plMetalRenderSurface
     // Destructor - release retained resources
     ~plMetalRenderSurface()
     {
-        if (colorTexture) {
-            colorTexture->release();
+        if (fColorTexture) {
+            fColorTexture->release();
         }
-        if (drawable) {
-            drawable->release();
+        if (fDrawable) {
+            fDrawable->release();
         }
     }
 };

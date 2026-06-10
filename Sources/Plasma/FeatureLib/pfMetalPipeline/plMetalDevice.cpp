@@ -458,7 +458,7 @@ void plMetalDevice::SetRenderTarget(plRenderTarget* target)
             fCurrentDepthFormat = MTL::PixelFormatInvalid;
         }
     } else {
-        fCurrentFragmentOutputTexture = fCurrentRenderSurface ? fCurrentRenderSurface->colorTexture : nullptr;
+        fCurrentFragmentOutputTexture = fCurrentRenderSurface ? fCurrentRenderSurface->fColorTexture : nullptr;
         fCurrentDepthFormat = MTL::PixelFormatDepth32Float_Stencil8;
     }
 }
@@ -1014,7 +1014,7 @@ bool plMetalDevice::CreateNewCommandBuffer()
 
     fCurrentCommandBuffer->retain();
 
-    auto colorAttachment = surface->colorTexture;
+    auto colorAttachment = surface->fColorTexture;
 
     SetFramebufferFormat(colorAttachment->pixelFormat());
 
@@ -1245,8 +1245,8 @@ void plMetalDevice::SubmitCommandBuffer()
     PostprocessIntoDrawable();
     FinalizePostProcessing();
 
-    if (fCurrentRenderSurface.has_value() && fCurrentRenderSurface->drawable) {
-        fCurrentCommandBuffer->presentDrawable(fCurrentRenderSurface->drawable);
+    if (fCurrentRenderSurface.has_value() && fCurrentRenderSurface->fDrawable) {
+        fCurrentCommandBuffer->presentDrawable(fCurrentRenderSurface->fDrawable);
     }
     fCurrentCommandBuffer->commit();
     fCurrentCommandBuffer->release();
@@ -1312,7 +1312,7 @@ void plMetalDevice::PostprocessIntoDrawable()
         // source and the output drawable as the target to do post-processing.
         MTL::RenderPassDescriptor* gammaPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
         gammaPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionDontCare);
-        gammaPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentRenderSurface->colorTexture);
+        gammaPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentRenderSurface->fColorTexture);
         gammaPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionStore);
         
         gammaAdjustEncoder = fCurrentCommandBuffer->renderCommandEncoder(gammaPassDescriptor);
