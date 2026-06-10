@@ -271,10 +271,6 @@ void plClient::ShowClientWindow()
     plPipeline* pipeline = appDelegate->gClient->GetPipeline();
     appDelegate.metalPipeline = plMetalPipeline::ConvertNoRef(pipeline);
     appDelegate.glPipeline = plGLPipeline::ConvertNoRef(pipeline);
-
-    if (appDelegate.metalPipeline) {
-        appDelegate.metalPipeline->SetRenderDestination(appDelegate.renderDestination);
-    }
 }
 
 void plClient::FlashWindow()
