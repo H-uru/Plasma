@@ -122,6 +122,11 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisp
         }
         devRec.SetDefaultModeIndex(defaultMode - devRec.GetModes().data());
 
+        // ifdef check for Xcode 13 support
+        // Xcode 13 should not be used to generate an actual
+        // Mac client release if it does not compile the Metal 3
+        // path. But this is useful for development.
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 130000
         if (@available(macOS 13.0, *)) {
             if ([device supportsFamily:MTLGPUFamilyMetal3]) {
                 devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeMetal3);
@@ -129,6 +134,8 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisp
                 records.emplace_back(devRec);
             }
         }
+#endif
+
         devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeMetal2);
         devRec.SetDriverName("Metal 2");
         records.emplace_back(devRec);
