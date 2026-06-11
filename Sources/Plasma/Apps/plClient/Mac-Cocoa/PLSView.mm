@@ -41,9 +41,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #import "PLSView.h"
+
 #include <Metal/Metal.h>
 #include <QuartzCore/QuartzCore.h>
+
+#include "plInputCore/plInputManager.h"
 #include "plMessage/plInputEventMsg.h"
+
+#include "plClient/plClient.h"
+#include "plClient/plClientLoader.h"
 
 /*
  Plasma view for Cocoa
@@ -61,6 +67,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  */
 
 @interface PLSView ()
+{
+    plClientLoader* _gClient;
+}
 
 @property NSTrackingArea* mouseTrackingArea;
 #if PLASMA_PIPELINE_METAL
@@ -71,8 +80,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 @implementation PLSView
 
+- (plClientLoader&)gClient
+{
+    return *_gClient;
+}
+
 // MARK: View setup
-- (id)initWithFrame:(NSRect)frameRect
+- (instancetype)initWithFrame:(NSRect)frameRect client:(plClientLoader*)gClient
 {
     self = [super initWithFrame:frameRect];
 #if PLASMA_PIPELINE_METAL
@@ -83,6 +97,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     self.layer = self.metalLayer = layer;
 #endif
     self.layer.backgroundColor = NSColor.blackColor.CGColor;
+    _gClient = gClient;
     return self;
 }
 
@@ -194,15 +209,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
     if (event.type == NSEventTypeLeftMouseUp) {
         pBMsg->fButton |= kLeftButtonUp;
-        if (event.clickCount == 2)
+        if (event.clickCount == 2) {
+            if (self.gClient)
+                self.gClient->SetQuitIntro(true);
             pBMsg->fButton |= kLeftButtonDblClk;
+        }
     } else if (event.type == NSEventTypeRightMouseUp) {
         pBMsg->fButton |= kRightButtonUp;
-        if (event.clickCount == 2)
+        if (event.clickCount == 2) {
+            if (self.gClient)
+                self.gClient->SetQuitIntro(true);
             pBMsg->fButton |= kRightButtonDblClk;
+        }
     } else if (event.type == NSEventTypeLeftMouseDown) {
+        if (self.gClient)
+            self.gClient->SetQuitIntro(true);
         pBMsg->fButton |= kLeftButtonDown;
     } else if (event.type == NSEventTypeRightMouseDown) {
+        if (self.gClient)
+            self.gClient->SetQuitIntro(true);
         pBMsg->fButton |= kRightButtonDown;
     }
 
