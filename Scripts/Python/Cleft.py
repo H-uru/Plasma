@@ -72,6 +72,7 @@ class Cleft(ptResponder):
         self.id = 5209
         self.version = 22
 
+    def OnInit(self):
         #var used to load in Cleft/Tomahna specific stuff based on chronicle vals
         global loadTomahna
         global loadZandi
