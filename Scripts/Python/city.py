@@ -68,6 +68,7 @@ class city(ptResponder):
         self.id = 5026
         self.version = 1
 
+    def OnInit(self):
         global IsPublic
         global IsKadishGallery
 
@@ -102,8 +103,8 @@ class city(ptResponder):
             spTitle = "title unknown"
             spName = "spawn point unknown"
 
-        PtDebugPrint("city.__init__(): spTitle = ",spTitle)
-        PtDebugPrint("city.__init__(): spName = ",spName)
+        PtDebugPrint("city.OnInit(): spTitle = ",spTitle)
+        PtDebugPrint("city.OnInit(): spName = ",spName)
 
         ## NOT USING THIS FOR NOW - MAY NEED TO LOAD IN SPECIFIC PAGE(S) FOR FUTURE CITY AREAS...
 #        if spTitle == "KadishGallery":
