@@ -41,13 +41,15 @@
 # *==LICENSE==*/
 
 """
-Age SDL Boolean OR Set Module
+Age SDL Boolean Gate Set Module
 
-This module accepts a comma separated list of input SDL variables. When any of them change,
-a logical OR is performed on the values, and the result is stored in the output SDL variable.
+This module provides functionality to perform a boolean logic on SDL variables when one of the
+input variables changes. The result of the operation is stored in an output variable. The currently
+supported operations are AND, OR, NAND, and XOR.
 """
 
 from __future__ import annotations
+import abc
 from typing import *
 
 from Plasma import *
@@ -55,30 +57,28 @@ from PlasmaTypes import *
 
 stringSDLVariableInput = ptAttribString(1, "AgeSDL Input Variables (comma separated)")
 stringSDLVariableOutput = ptAttribString(2, "AgeSDL Output Variable")
-boolExclusive = ptAttribBoolean(3, "eXclusive OR", default=False)
+stringLogicOp = ptAttribDropDownList(3, "Logic operation", ["AND", "OR", "NAND", "XOR"])
 
-class xAgeSDLBoolOrSet(ptResponder):
+class xAgeSDLBoolGateSetBase:
     if TYPE_CHECKING:
         key: ptKey = ...
         sceneobject: ptSceneobject = ...
 
-    def __init__(self):
-        super().__init__()
-        self.id = 1827796758
-        self.version = 1
-
     def OnServerInitComplete(self):
-        inputVariables, outputVariable = self.inputVariables, self.outputVariable
+        inputVariables, outputVariable, op = self.inputVariables, self.outputVariable, self.logicOp
         if not inputVariables:
-            PtDebugPrint(f"xAgeSDLBoolOrSet.OnServerInitComplete(): [{self.sceneobject.getName()}] Input variable list empty, bailing!")
+            PtDebugPrint(f"{self.__class__.__name__}.OnServerInitComplete(): [{self.sceneobject.getName()}] Input variable list empty, bailing!")
             return
         if not all(inputVariables):
-            PtDebugPrint(f"xAgeSDLBoolOrSet.OnServerInitComplete(): [{self.sceneobject.getName()}] One of the input variables is empty, bailing!")
+            PtDebugPrint(f"{self.__class__.__name__}.OnServerInitComplete(): [{self.sceneobject.getName()}] One of the input variables is empty, bailing!")
             return
         if len(inputVariables) == 1:
-            PtDebugPrint(f"xAgeSDLBoolOrSet.OnServerInitComplete(): [{self.sceneobject.getName()}] Hmm... Only one input variable?", level=kWarningLevel)
+            PtDebugPrint(f"{self.__class__.__name__}.OnServerInitComplete(): [{self.sceneobject.getName()}] Hmm... Only one input variable?", level=kWarningLevel)
         if not outputVariable:
-            PtDebugPrint(f"xAgeSDLBoolOrSet.OnServerInitComplete(): [{self.sceneobject.getName()}] Output variable empty, bailing!")
+            PtDebugPrint(f"{self.__class__.__name__}.OnServerInitComplete(): [{self.sceneobject.getName()}] Output variable empty, bailing!")
+            return
+        if self.logicOp not in {"AND", "OR", "NAND", "XOR"}:
+            PtDebugPrint(f"{self.__class__.__name__}.OnServerInitComplete(): [{self.sceneobject.getName()}] Invalid {op=}, bailing!")
             return
 
         ageSDL = PtGetAgeSDL()
@@ -94,16 +94,44 @@ class xAgeSDLBoolOrSet(ptResponder):
             return
 
         ageSDL = PtGetAgeSDL()
-        PtDebugPrint(f"xAgeSDLBoolOrSet.OnSDLNotify(): {VARname} = {ageSDL[VARname][0]}", level=kDebugDumpLevel)
+        PtDebugPrint(f"{self.__class__.__name__}.OnSDLNotify(): {VARname} = {ageSDL[VARname][0]}", level=kDebugDumpLevel)
         self.updateSDL(ageSDL)
 
     def updateSDL(self, ageSDL: ptSDL) -> None:
-        if self.xor:
+        if self.logicOp == "AND":
+            result = all((ageSDL[i][0] for i in self.inputVariables))
+        elif self.logicOp == "NAND":
+            result = not all((ageSDL[i][0] for i in self.inputVariables))
+        elif self.logicOp == "OR":
+            result = any((ageSDL[i][0] for i in self.inputVariables))
+        elif self.logicOp == "XOR":
             result = sum((1 for i in self.inputVariables if ageSDL[i][0])) % 2 == 1
         else:
-            result = any((ageSDL[i][0] for i in self.inputVariables))
-        PtDebugPrint(f"xAgeSDLBoolOrSet.updateSDL(): {self.outputVariable} = {result} ({self.xor=})", level=kWarningLevel)
+            raise ValueError(self.logicOp)
+        PtDebugPrint(f"{self.__class__.__name__}.updateSDL(): {self.outputVariable} = {result}", level=kWarningLevel)
         ageSDL[self.outputVariable] = (result,)
+
+    @property
+    @abc.abstractmethod
+    def inputVariables(self) -> List[str]:
+        ...
+
+    @property
+    @abc.abstractmethod
+    def outputVariable(self) -> str:
+        ...
+
+    @property
+    @abc.abstractmethod
+    def logicOp(self) -> str:
+        ...
+
+
+class xAgeSDLBoolGateSet(xAgeSDLBoolGateSetBase, ptResponder):
+    def __init__(self):
+        super().__init__()
+        self.id = 1827796758
+        self.version = 1
 
     @property
     def inputVariables(self):
@@ -114,5 +142,5 @@ class xAgeSDLBoolOrSet(ptResponder):
         return stringSDLVariableOutput.value
 
     @property
-    def xor(self):
-        return boolExclusive.value
+    def logicOp(self):
+        return stringLogicOp.value

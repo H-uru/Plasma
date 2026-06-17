@@ -49,75 +49,15 @@ that allows specifying the input and output variables and a ``ptResponder`` `xAg
 that accepts a comma separated list of input variables and a single output variable.
 """
 
-from __future__ import annotations
-import abc
-from typing import *
-
 from Plasma import *
 from PlasmaTypes import *
 
+from xAgeSDLBoolGateSet import xAgeSDLBoolGateSetBase
+
 stringSDLVariableInput = ptAttribString(1, "AgeSDL Input Variables (comma separated)")
 stringSDLVariableOutput = ptAttribString(2, "AgeSDL Output Variable")
-boolInvertOutput = ptAttribBoolean(3, "Invert Output (NAND)", default=False)
 
-class xAgeSDLBoolAndSetBase:
-    if TYPE_CHECKING:
-        key: ptKey = ...
-        sceneobject: ptSceneobject = ...
-
-    def OnServerInitComplete(self):
-        inputVariables, outputVariable = self.inputVariables, self.outputVariable
-        if not inputVariables:
-            PtDebugPrint(f"xAgeSDLBoolAndSet.OnServerInitComplete(): [{self.sceneobject.getName()}] Input variable list empty, bailing!")
-            return
-        if not all(inputVariables):
-            PtDebugPrint(f"xAgeSDLBoolAndSet.OnServerInitComplete(): [{self.sceneobject.getName()}] One of the input variables is empty, bailing!")
-            return
-        if len(inputVariables) == 1:
-            PtDebugPrint(f"xAgeSDLBoolAndSet.OnServerInitComplete(): [{self.sceneobject.getName()}] Hmm... Only one input variable?", level=kWarningLevel)
-        if not outputVariable:
-            PtDebugPrint(f"xAgeSDLBoolAndSet.OnServerInitComplete(): [{self.sceneobject.getName()}] Output variable empty, bailing!")
-            return
-
-        ageSDL = PtGetAgeSDL()
-        ageSDL.setFlags(outputVariable, True, True)
-        ageSDL.sendToClients(outputVariable)
-        for i in inputVariables:
-            ageSDL.setNotify(self.key, i, 0.0)
-
-        self.updateSDL(ageSDL)
-
-    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
-        if not VARname in self.inputVariables:
-            return
-
-        ageSDL = PtGetAgeSDL()
-        PtDebugPrint(f"xAgeSDLBoolAndSet.OnSDLNotify(): {VARname} = {ageSDL[VARname][0]}", level=kDebugDumpLevel)
-        self.updateSDL(ageSDL)
-
-    def updateSDL(self, ageSDL: ptSDL) -> None:
-        result = all((ageSDL[i][0] for i in self.inputVariables))
-        if self.invert:
-            result = not result
-        PtDebugPrint(f"xAgeSDLBoolAndSet.updateSDL(): {self.outputVariable} = {result} ({self.invert=})", level=kWarningLevel)
-        ageSDL[self.outputVariable] = (result,)
-
-    @property
-    @abc.abstractmethod
-    def inputVariables(self) -> List[str]:
-        ...
-
-    @property
-    @abc.abstractmethod
-    def outputVariable(self) -> str:
-        ...
-
-    @property
-    def invert(self) -> bool:
-        return False
-
-
-class xAgeSDLBoolAndSetV2(xAgeSDLBoolAndSetBase, ptResponder):
+class xAgeSDLBoolAndSetV2(xAgeSDLBoolGateSetBase, ptResponder):
     def __init__(self):
         super().__init__()
         self.id = 1384463667
@@ -132,5 +72,5 @@ class xAgeSDLBoolAndSetV2(xAgeSDLBoolAndSetBase, ptResponder):
         return stringSDLVariableOutput.value
 
     @property
-    def invert(self):
-        return boolInvertOutput.value
+    def logicOp(self):
+        return "AND"

@@ -50,7 +50,7 @@ detects changes in two age sdl bools and sets a third...A and B => C
 from Plasma import *
 from PlasmaTypes import *
 
-from xAgeSDLBoolAndSetV2 import xAgeSDLBoolAndSetBase
+from xAgeSDLBoolGateSet import xAgeSDLBoolGateSetBase
 
 # ---------
 # max wiring
@@ -60,7 +60,7 @@ stringOpA = ptAttribString(1,"AgeSDL Operand 1")
 stringOpB = ptAttribString(2,"AgeSDL Operand 2")
 stringResult = ptAttribString(3,"AgeSDL Result")
 
-class xAgeSDLBoolAndSet(xAgeSDLBoolAndSetBase, ptResponder):
+class xAgeSDLBoolAndSet(xAgeSDLBoolGateSetBase, ptResponder):
     def __init__(self):
         super().__init__()
         self.id = 5041
@@ -73,3 +73,7 @@ class xAgeSDLBoolAndSet(xAgeSDLBoolAndSetBase, ptResponder):
     @property
     def outputVariable(self):
         return stringResult.value
+
+    @property
+    def logicOp(self):
+        return "AND"
