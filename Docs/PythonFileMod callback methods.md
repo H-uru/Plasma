@@ -100,7 +100,8 @@ known to work:
 After `__init__` returns, the engine adds the following attributes to `self`:
 
 * `isInitialStateLoaded`: `bool` as `int` - Whether all SDL states for the age
-  instance have been received yet. Initially 0, changes to 1 when
+  instance have been received yet, meaning that it's safe to use `self.SDL` and
+  `PtGetAgeSDL()`. Initially 0, changes to 1 when
   [`OnServerInitComplete`](#onserverinitcomplete) is called.
 * `key`: `ptKey` - The `plPythonFileMod`'s key.
 * `sceneobject`: `ptSceneobject` - Target of the Python modifier.
@@ -378,8 +379,10 @@ requested via `ptSDL.setNotify`.
 ## `OnOwnershipChanged`
 
 Corresponds to `plNetOwnershipMsg`. Called when the client becomes, or stops
-being, the owner of network-synchronized objects in the current age instance, as
-indicated by `ptSceneobject.isLocallyOwned`.
+being, the owner of some network-synchronized objects in the current age
+instance. The callback doesn't indicate which objects have changed ownership.
+The Python modifier needs to call `ptSceneobject.isLocallyOwned` on objects it
+cares about to determine if the client now owns those objects.
 
 ## `OnAgeVaultEvent`
 
@@ -411,11 +414,14 @@ requests from players.
 
 Corresponds to `plInitialAgeStateLoadedMsg`. Called when the age loading process
 finishes, which happens once the client has received all SDL states for the
-current age instance. Normally, [`OnFirstUpdate`](#onfirstupdate) has already
-been called by that point.
+current age instance. From this point on, `self.SDL` and `PtGetAgeSDL()` contain
+usable values. Before `OnServerInitComplete` is called, Python modifiers
+shouldn't try to interact with age SDL values.
 
-For Python modifiers loaded after the normal age loading process has already
-finished, `OnServerInitComplete` is instead called immediately after
+Normally, [`OnFirstUpdate`](#onfirstupdate) has already been called by the time
+`OnServerInitComplete` runs. For Python modifiers loaded after the normal age
+loading process has already finished (that is, after SDL states have already
+been received), `OnServerInitComplete` is instead called immediately after
 [`OnInit`](#oninit) and before [`OnFirstUpdate`](#onfirstupdate).
 
 The Python modifier's [`isInitialStateLoaded`](#default-attributes) attribute
@@ -606,6 +612,8 @@ Corresponds to `plNetCommPublicAgeListMsg`. Called when the server replies to a
 Currently, all Python modifiers receive `gotPublicAgeList` callbacks for all
 `PtGetPublicAgeList` calls - there is no way to direct one call's callback to
 one particular Python modifier.
+
+This callback is mainly used by the Nexus.
 
 ### Parameters
 
