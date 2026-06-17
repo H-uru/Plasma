@@ -74,7 +74,6 @@ private:
         kfunc_AtTimer,
         kfunc_OnKeyEvent,
         kfunc_Load,
-        kfunc_Save,
         kfunc_GUINotify,
         kfunc_PageLoad,
         kfunc_ClothingUpdate,

@@ -152,7 +152,6 @@ const char* plPythonFileMod::fFunctionNames[] =
     "OnTimer",              // kfunc_AtTimer
     "OnControlKeyEvent",    // kfunc_OnKeyEvent
     "Load",                 // kfunc_Load
-    "Save",                 // kfunc_Save
     "OnGUINotify",          // kfunc_GUINotify
     "OnPageLoad",           // kfunc_PageLoad
     "OnClothingUpdate",     // kfunc_ClothingUpdate
