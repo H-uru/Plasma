@@ -55,6 +55,7 @@ from PlasmaTypes import *
 
 stringSDLVariableInput = ptAttribString(1, "AgeSDL Input Variables (comma separated)")
 stringSDLVariableOutput = ptAttribString(2, "AgeSDL Output Variable")
+boolExclusive = ptAttribBoolean(3, "eXclusive OR", default=False)
 
 class xAgeSDLBoolOrSet(ptResponder):
     if TYPE_CHECKING:
@@ -97,8 +98,11 @@ class xAgeSDLBoolOrSet(ptResponder):
         self.updateSDL(ageSDL)
 
     def updateSDL(self, ageSDL: ptSDL) -> None:
-        result = any((ageSDL[i][0] for i in self.inputVariables))
-        PtDebugPrint(f"xAgeSDLBoolOrSet.updateSDL(): {self.outputVariable} = {result}", level=kWarningLevel)
+        if self.xor:
+            result = sum((1 for i in self.inputVariables if ageSDL[i][0])) % 2 == 1
+        else:
+            result = any((ageSDL[i][0] for i in self.inputVariables))
+        PtDebugPrint(f"xAgeSDLBoolOrSet.updateSDL(): {self.outputVariable} = {result} ({self.xor=})", level=kWarningLevel)
         ageSDL[self.outputVariable] = (result,)
 
     @property
@@ -108,3 +112,7 @@ class xAgeSDLBoolOrSet(ptResponder):
     @property
     def outputVariable(self):
         return stringSDLVariableOutput.value
+
+    @property
+    def xor(self):
+        return boolExclusive.value

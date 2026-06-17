@@ -58,6 +58,7 @@ from PlasmaTypes import *
 
 stringSDLVariableInput = ptAttribString(1, "AgeSDL Input Variables (comma separated)")
 stringSDLVariableOutput = ptAttribString(2, "AgeSDL Output Variable")
+boolInvertOutput = ptAttribBoolean(3, "Invert Output (NAND)", default=False)
 
 class xAgeSDLBoolAndSetBase:
     if TYPE_CHECKING:
@@ -96,7 +97,9 @@ class xAgeSDLBoolAndSetBase:
 
     def updateSDL(self, ageSDL: ptSDL) -> None:
         result = all((ageSDL[i][0] for i in self.inputVariables))
-        PtDebugPrint(f"xAgeSDLBoolAndSet.updateSDL(): {self.outputVariable} = {result}", level=kWarningLevel)
+        if self.invert:
+            result = not result
+        PtDebugPrint(f"xAgeSDLBoolAndSet.updateSDL(): {self.outputVariable} = {result} ({self.invert=})", level=kWarningLevel)
         ageSDL[self.outputVariable] = (result,)
 
     @property
@@ -108,6 +111,10 @@ class xAgeSDLBoolAndSetBase:
     @abc.abstractmethod
     def outputVariable(self) -> str:
         ...
+
+    @property
+    def invert(self) -> bool:
+        return False
 
 
 class xAgeSDLBoolAndSetV2(xAgeSDLBoolAndSetBase, ptResponder):
@@ -123,3 +130,7 @@ class xAgeSDLBoolAndSetV2(xAgeSDLBoolAndSetBase, ptResponder):
     @property
     def outputVariable(self):
         return stringSDLVariableOutput.value
+
+    @property
+    def invert(self):
+        return boolInvertOutput.value
