@@ -365,6 +365,17 @@ void plPythonFileMod::ICallScriptMethod(func_num methodId, Args&&... args)
     DisplayPythonOutput();
 }
 
+void plPythonFileMod::IInitialStateLoaded()
+{
+    if (fInstance) {
+        // set the isInitialStateLoaded to that it is loaded
+        pyObjectRef pInitialState = PyLong_FromLong(1);
+        PyObject_SetAttrString(fInstance, "isInitialStateLoaded", pInitialState.Get());
+    }
+
+    ICallScriptMethod(kfunc_OnServerInitComplete);
+}
+
 #include "plPythonPack.h"
 
 bool plPythonFileMod::ILoadPythonCode()
@@ -674,7 +685,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
             plNetClientApp* na = plNetClientApp::GetInstance();
             if (!na->GetFlagsBit(plNetClientApp::kLoadingInitialAgeState) && na->GetFlagsBit(plNetClientApp::kPlayingGame)) {
                 plgDispatch::Dispatch()->UnRegisterForExactType(plInitialAgeStateLoadedMsg::Index(), GetKey());
-                ICallScriptMethod(kfunc_OnServerInitComplete);
+                IInitialStateLoaded();
             }
 
             // display python output
@@ -1376,13 +1387,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
 
     // initial server update complete message
     if (plInitialAgeStateLoadedMsg::ConvertNoRef(msg)) {
-        if (fInstance) {
-            // set the isInitialStateLoaded to that it is loaded
-            pyObjectRef pInitialState = PyLong_FromLong(1);
-            PyObject_SetAttrString(fInstance, "isInitialStateLoaded", pInitialState.Get());
-        }
-
-        ICallScriptMethod(kfunc_OnServerInitComplete);
+        IInitialStateLoaded();
         return true;
     }
 

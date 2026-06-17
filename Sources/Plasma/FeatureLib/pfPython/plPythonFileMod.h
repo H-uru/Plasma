@@ -124,6 +124,8 @@ private:
     template<typename... Args>
     void ICallScriptMethod(func_num methodId, Args&&... args);
 
+    void IInitialStateLoaded();
+
 protected:
     friend class plPythonSDLModifier;
 
