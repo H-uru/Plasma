@@ -156,30 +156,30 @@ const char* plPythonFileMod::fFunctionNames[] =
     "OnGUINotify",          // kfunc_GUINotify
     "OnPageLoad",           // kfunc_PageLoad
     "OnClothingUpdate",     // kfunc_ClothingUpdate
-    "OnKIMsg",              // kfunc_KIMsg,
-    "OnMemberUpdate",       // kfunc_MemberUpdate,
-    "OnRemoteAvatarInfo",   // kfunc_RemoteAvatarInfo,
-    "OnRTChat",             // kfunc_RTChat,
-    "OnVaultEvent",         // kfunc_VaultEvent,
-    "AvatarPage",           // kfunc_AvatarPage,
+    "OnKIMsg",              // kfunc_KIMsg
+    "OnMemberUpdate",       // kfunc_MemberUpdate
+    "OnRemoteAvatarInfo",   // kfunc_RemoteAvatarInfo
+    "OnRTChat",             // kfunc_RTChat
+    "OnVaultEvent",         // kfunc_VaultEvent
+    "AvatarPage",           // kfunc_AvatarPage
     "OnSDLNotify",          // kfunc_SDLNotify
     "OnOwnershipChanged",   // kfunc_OwnershipNotify
     "OnAgeVaultEvent",      // kfunc_AgeVaultEvent
-    "OnInit",               // kfunc_Init,
-    "OnCCRMsg",             // kfunc_OnCCRMsg,
+    "OnInit",               // kfunc_Init
+    "OnCCRMsg",             // kfunc_OnCCRMsg
     "OnServerInitComplete", // kfunc_OnServerInitComplete
     "OnVaultNotify",        // kfunc_OnVaultNotify
     "OnDefaultKeyCaught",   // kfunc_OnDefaultKeyCaught
-    "OnMarkerMsg",          // kfunc_OnMarkerMsg,
-    "OnBackdoorMsg",        // kfunc_OnBackdoorMsg,
-    "OnBehaviorNotify",     // kfunc_OnBehaviorNotify,
-    "OnLOSNotify",          // kfunc_OnLOSNotify,
-    "BeginAgeUnLoad",       // kfunc_OnBeginAgeLoad,
-    "OnMovieEvent",         // kfunc_OnMovieEvent,
-    "OnScreenCaptureDone",  // kfunc_OnScreenCaptureDone,
-    "OnClimbingBlockerEvent",// kFunc_OnClimbingBlockerEvent,
-    "OnAvatarSpawn",        // kFunc_OnAvatarSpawn
-    "OnAccountUpdate",      // kFunc_OnAccountUpdate
+    "OnMarkerMsg",          // kfunc_OnMarkerMsg
+    "OnBackdoorMsg",        // kfunc_OnBackdoorMsg
+    "OnBehaviorNotify",     // kfunc_OnBehaviorNotify
+    "OnLOSNotify",          // kfunc_OnLOSNotify
+    "BeginAgeUnLoad",       // kfunc_OnBeginAgeLoad
+    "OnMovieEvent",         // kfunc_OnMovieEvent
+    "OnScreenCaptureDone",  // kfunc_OnScreenCaptureDone
+    "OnClimbingBlockerEvent", // kfunc_OnClimbBlockerEvent
+    "OnAvatarSpawn",        // kfunc_OnAvatarSpawn
+    "OnAccountUpdate",      // kfunc_OnAccountUpdate
     "gotPublicAgeList",     // kfunc_gotPublicAgeList
     "OnAIMsg",              // kfunc_OnAIMsg
     "OnGameScoreMsg",       // kfunc_OnGameScoreMsg
