@@ -60,9 +60,8 @@ stringSDLVariableOutput = ptAttribString(2, "AgeSDL Output Variable")
 stringLogicOp = ptAttribDropDownList(3, "Logic operation", ["AND", "OR", "NAND", "XOR"])
 
 class xAgeSDLBoolGateSetBase:
-    if TYPE_CHECKING:
-        key: ptKey = ...
-        sceneobject: ptSceneobject = ...
+    key: ptKey
+    sceneobject: ptSceneobject
 
     def OnServerInitComplete(self):
         inputVariables, outputVariable, op = self.inputVariables, self.outputVariable, self.logicOp
