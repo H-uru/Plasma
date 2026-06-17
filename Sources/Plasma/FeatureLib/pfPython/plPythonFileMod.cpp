@@ -146,25 +146,25 @@ plProfile_CreateTimer("Update", "Python", PythonUpdate);
 //
 const char* plPythonFileMod::fFunctionNames[] = 
 {
-    "OnFirstUpdate",        // kfunc_FirstUpdate
-    "OnUpdate",             // kfunc_Update
-    "OnNotify",             // kfunc_Notify
-    "OnTimer",              // kfunc_AtTimer
-    "OnControlKeyEvent",    // kfunc_OnKeyEvent
+    "OnFirstUpdate",        // kfunc_OnFirstUpdate
+    "OnUpdate",             // kfunc_OnUpdate
+    "OnNotify",             // kfunc_OnNotify
+    "OnTimer",              // kfunc_OnTimer
+    "OnControlKeyEvent",    // kfunc_OnControlKeyEvent
     "Load",                 // kfunc_Load
-    "OnGUINotify",          // kfunc_GUINotify
-    "OnPageLoad",           // kfunc_PageLoad
-    "OnClothingUpdate",     // kfunc_ClothingUpdate
-    "OnKIMsg",              // kfunc_KIMsg
-    "OnMemberUpdate",       // kfunc_MemberUpdate
-    "OnRemoteAvatarInfo",   // kfunc_RemoteAvatarInfo
-    "OnRTChat",             // kfunc_RTChat
-    "OnVaultEvent",         // kfunc_VaultEvent
+    "OnGUINotify",          // kfunc_OnGUINotify
+    "OnPageLoad",           // kfunc_OnPageLoad
+    "OnClothingUpdate",     // kfunc_OnClothingUpdate
+    "OnKIMsg",              // kfunc_OnKIMsg
+    "OnMemberUpdate",       // kfunc_OnMemberUpdate
+    "OnRemoteAvatarInfo",   // kfunc_OnRemoteAvatarInfo
+    "OnRTChat",             // kfunc_OnRTChat
+    "OnVaultEvent",         // kfunc_OnVaultEvent
     "AvatarPage",           // kfunc_AvatarPage
-    "OnSDLNotify",          // kfunc_SDLNotify
-    "OnOwnershipChanged",   // kfunc_OwnershipNotify
-    "OnAgeVaultEvent",      // kfunc_AgeVaultEvent
-    "OnInit",               // kfunc_Init
+    "OnSDLNotify",          // kfunc_OnSDLNotify
+    "OnOwnershipChanged",   // kfunc_OnOwnershipChanged
+    "OnAgeVaultEvent",      // kfunc_OnAgeVaultEvent
+    "OnInit",               // kfunc_OnInit
     "OnCCRMsg",             // kfunc_OnCCRMsg
     "OnServerInitComplete", // kfunc_OnServerInitComplete
     "OnVaultNotify",        // kfunc_OnVaultNotify
@@ -173,10 +173,10 @@ const char* plPythonFileMod::fFunctionNames[] =
     "OnBackdoorMsg",        // kfunc_OnBackdoorMsg
     "OnBehaviorNotify",     // kfunc_OnBehaviorNotify
     "OnLOSNotify",          // kfunc_OnLOSNotify
-    "BeginAgeUnLoad",       // kfunc_OnBeginAgeLoad
+    "BeginAgeUnLoad",       // kfunc_BeginAgeUnLoad
     "OnMovieEvent",         // kfunc_OnMovieEvent
     "OnScreenCaptureDone",  // kfunc_OnScreenCaptureDone
-    "OnClimbingBlockerEvent", // kfunc_OnClimbBlockerEvent
+    "OnClimbingBlockerEvent", // kfunc_OnClimbingBlockerEvent
     "OnAvatarSpawn",        // kfunc_OnAvatarSpawn
     "OnAccountUpdate",      // kfunc_OnAccountUpdate
     "gotPublicAgeList",     // kfunc_gotPublicAgeList
@@ -599,23 +599,23 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
             PythonInterface::CheckInstanceForFunctions(fInstance, fFunctionNames, fPyFunctionInstances);
 
             // register for PageLoaded message if needed
-            if (fPyFunctionInstances[kfunc_PageLoad])
+            if (fPyFunctionInstances[kfunc_OnPageLoad])
                 plgDispatch::Dispatch()->RegisterForExactType(plRoomLoadNotifyMsg::Index(), GetKey());
 
             // register for ClothingUpdate message if needed
-            if (fPyFunctionInstances[kfunc_ClothingUpdate])
+            if (fPyFunctionInstances[kfunc_OnClothingUpdate])
                 plgDispatch::Dispatch()->RegisterForExactType(plClothingUpdateBCMsg::Index(), GetKey());
 
             // register for pfKIMsg message if needed
-            if (fPyFunctionInstances[kfunc_KIMsg])
+            if (fPyFunctionInstances[kfunc_OnKIMsg])
                 plgDispatch::Dispatch()->RegisterForExactType(pfKIMsg::Index(), GetKey());
 
             // register for Member update message if needed
-            if (fPyFunctionInstances[kfunc_MemberUpdate])
+            if (fPyFunctionInstances[kfunc_OnMemberUpdate])
                 plgDispatch::Dispatch()->RegisterForExactType(plMemberUpdateMsg::Index(), GetKey());
 
             // register for Remote Avatar Info message if needed
-            if (fPyFunctionInstances[kfunc_RemoteAvatarInfo])
+            if (fPyFunctionInstances[kfunc_OnRemoteAvatarInfo])
                 plgDispatch::Dispatch()->RegisterForExactType(plRemoteAvatarInfoMsg::Index(), GetKey());
 
             // register for CCR message if needed
@@ -627,7 +627,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                 plgDispatch::Dispatch()->RegisterForExactType(plVaultNotifyMsg::Index(), GetKey());
 
             // register for Owndership change notification message if needed
-            if (fPyFunctionInstances[kfunc_OwnershipNotify])
+            if (fPyFunctionInstances[kfunc_OnOwnershipChanged])
                 plgDispatch::Dispatch()->RegisterForExactType(plNetOwnershipMsg::Index(), GetKey());
 
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -637,8 +637,8 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
 #endif  //PLASMA_EXTERNAL_RELEASE
 
             // register for VaultCallback events if needed
-            if (fPyFunctionInstances[kfunc_VaultEvent]) {
-                fVaultCallback = new PythonVaultCallback(this, kfunc_VaultEvent);
+            if (fPyFunctionInstances[kfunc_OnVaultEvent]) {
+                fVaultCallback = new PythonVaultCallback(this, kfunc_OnVaultEvent);
                 VaultRegisterCallback(fVaultCallback);
             }
 
@@ -657,7 +657,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                 plgDispatch::Dispatch()->RegisterForExactType(plRenderMsg::Index(), GetKey());
 
             // if this is a climbing-wall function, we need to register for climbing wall messages
-            if (fPyFunctionInstances[kfunc_OnClimbBlockerEvent])
+            if (fPyFunctionInstances[kfunc_OnClimbingBlockerEvent])
                 plgDispatch::Dispatch()->RegisterForExactType(plClimbEventMsg::Index(), GetKey());
 
             if (fPyFunctionInstances[kfunc_OnAvatarSpawn])
@@ -676,7 +676,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                 plgDispatch::Dispatch()->RegisterForExactType(plSubtitleMsg::Index(), GetKey());
 
             // As the last thing... call the OnInit function if they have one
-            ICallScriptMethod(kfunc_Init);
+            ICallScriptMethod(kfunc_OnInit);
 
             // Oversight fix... Sometimes PythonFileMods are loaded after the AgeInitialState is received.
             // We should really let the script know about that via OnServerInitComplete anyway because it's
@@ -865,10 +865,10 @@ bool plPythonFileMod::IEval(double secs, float del, uint32_t dirty)
         // if this is the first time at the Eval, then run Python OnFirstUpdate
         if (fIsFirstTimeEval) {
             fIsFirstTimeEval = false;
-            ICallScriptMethod(kfunc_FirstUpdate);
+            ICallScriptMethod(kfunc_OnFirstUpdate);
         }
 
-        ICallScriptMethod(kfunc_Update, secs, del);
+        ICallScriptMethod(kfunc_OnUpdate, secs, del);
     }
     return true;
 }
@@ -916,7 +916,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     }
 
     // are they looking for an Notify message? should be coming from a proActivator
-    auto pNtfyMsg = IScriptWantsMsg<plNotifyMsg>(kfunc_Notify, msg);
+    auto pNtfyMsg = IScriptWantsMsg<plNotifyMsg>(kfunc_OnNotify, msg);
     if (pNtfyMsg) {
         // Cache the whether or not this is a local notification for calls to PtWasLocallyNotified()
         fLocalNotify = !pNtfyMsg->HasBCastFlag(plMessage::kNetNonLocal);
@@ -1138,26 +1138,26 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             }
         }
 
-        ICallScriptMethod(kfunc_Notify, pNtfyMsg->fState, id, levents);
+        ICallScriptMethod(kfunc_OnNotify, pNtfyMsg->fState, id, levents);
         return true;
     }
 
     // are they looking for a key event message?
-    auto pEMsg = IScriptWantsMsg<plControlEventMsg>(kfunc_OnKeyEvent, msg);
+    auto pEMsg = IScriptWantsMsg<plControlEventMsg>(kfunc_OnControlKeyEvent, msg);
     if (pEMsg) {
-        ICallScriptMethod(kfunc_OnKeyEvent, pEMsg->GetControlCode(), pEMsg->ControlActivated());
+        ICallScriptMethod(kfunc_OnControlKeyEvent, pEMsg->GetControlCode(), pEMsg->ControlActivated());
         return true;
     }
 
     // are they looking for an Timer message?
-    auto pTimerMsg = IScriptWantsMsg<plTimerCallbackMsg>(kfunc_AtTimer, msg);
+    auto pTimerMsg = IScriptWantsMsg<plTimerCallbackMsg>(kfunc_OnTimer, msg);
     if (pTimerMsg) {
-        ICallScriptMethod(kfunc_AtTimer, pTimerMsg->fID);
+        ICallScriptMethod(kfunc_OnTimer, pTimerMsg->fID);
         return true;
     }
 
     // are they looking for an GUINotify message?
-    auto pGUIMsg = IScriptWantsMsg<pfGUINotifyMsg>(kfunc_GUINotify, msg);
+    auto pGUIMsg = IScriptWantsMsg<pfGUINotifyMsg>(kfunc_OnGUINotify, msg);
     if (pGUIMsg) {
         pyObjectRef pyControl;
         if (pGUIMsg->GetControlKey()) {
@@ -1195,28 +1195,28 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             pyControl.SetPyNone();
 
         // call their OnGUINotify method
-        ICallScriptMethod(kfunc_GUINotify, id, std::move(pyControl), pGUIMsg->GetEvent());
+        ICallScriptMethod(kfunc_OnGUINotify, id, std::move(pyControl), pGUIMsg->GetEvent());
         return true;
     }
 
     // are they looking for an RoomLoadNotify message?
-    auto pRLNMsg = IScriptWantsMsg<plRoomLoadNotifyMsg>(kfunc_PageLoad, msg);
+    auto pRLNMsg = IScriptWantsMsg<plRoomLoadNotifyMsg>(kfunc_OnPageLoad, msg);
     if (pRLNMsg) {
-        ICallScriptMethod(kfunc_PageLoad, pRLNMsg->GetWhatHappen(),
+        ICallScriptMethod(kfunc_OnPageLoad, pRLNMsg->GetWhatHappen(),
                           pRLNMsg->GetRoom() ? pRLNMsg->GetRoom()->GetName() : ST::string());
         return true;
     }
 
 
     // are they looking for an ClothingUpdate message?
-    auto pCUMsg = IScriptWantsMsg<plClothingUpdateBCMsg>(kfunc_ClothingUpdate, msg);
+    auto pCUMsg = IScriptWantsMsg<plClothingUpdateBCMsg>(kfunc_OnClothingUpdate, msg);
     if (pCUMsg) {
-        ICallScriptMethod(kfunc_ClothingUpdate);
+        ICallScriptMethod(kfunc_OnClothingUpdate);
         return true;
     }
 
     // are they looking for an KIMsg message?
-    auto pkimsg = IScriptWantsMsg<pfKIMsg>(kfunc_KIMsg, msg);
+    auto pkimsg = IScriptWantsMsg<pfKIMsg>(kfunc_OnKIMsg, msg);
     if (pkimsg && pkimsg->GetCommand() != pfKIMsg::kHACKChatMsg) {
         pyObjectRef value;
         switch (pkimsg->GetCommand()) {
@@ -1274,19 +1274,19 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 break;
         }
 
-        ICallScriptMethod(kfunc_KIMsg, pkimsg->GetCommand(), std::move(value));
+        ICallScriptMethod(kfunc_OnKIMsg, pkimsg->GetCommand(), std::move(value));
         return true;
     }
 
     // are they looking for an MemberUpdate message?
-    auto pmumsg = IScriptWantsMsg<plMemberUpdateMsg>(kfunc_MemberUpdate, msg);
+    auto pmumsg = IScriptWantsMsg<plMemberUpdateMsg>(kfunc_OnMemberUpdate, msg);
     if (pmumsg) {
-        ICallScriptMethod(kfunc_MemberUpdate);
+        ICallScriptMethod(kfunc_OnMemberUpdate);
         return true;
     }
 
     // are they looking for a RemoteAvatar Info message?
-    auto pramsg = IScriptWantsMsg<plRemoteAvatarInfoMsg>(kfunc_RemoteAvatarInfo, msg);
+    auto pramsg = IScriptWantsMsg<plRemoteAvatarInfoMsg>(kfunc_OnRemoteAvatarInfo, msg);
     if (pramsg) {
         pyObjectRef player;
         if (pramsg->GetAvatarKey()) {
@@ -1297,7 +1297,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         }
         if (!player)
             player = PyLong_FromLong(0);
-        ICallScriptMethod(kfunc_RemoteAvatarInfo, std::move(player));
+        ICallScriptMethod(kfunc_OnRemoteAvatarInfo, std::move(player));
         return true;
     }
 
@@ -1349,7 +1349,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     }
 
     // are they looking for a RealTimeChat message?
-    pkimsg = IScriptWantsMsg<pfKIMsg>(kfunc_RTChat, msg);
+    pkimsg = IScriptWantsMsg<pfKIMsg>(kfunc_OnRTChat, msg);
     if (pkimsg && pkimsg->GetCommand() == pfKIMsg::kHACKChatMsg) {
         if (!VaultAmIgnoringPlayer(pkimsg->GetPlayerID())) {
             PyObject* player;
@@ -1364,7 +1364,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 player = pyPlayer::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), fromName, pkimsg->GetPlayerID(), 0.0);
             }
 
-            ICallScriptMethod(kfunc_RTChat, player, pkimsg->GetString(), pkimsg->GetFlags());
+            ICallScriptMethod(kfunc_OnRTChat, player, pkimsg->GetString(), pkimsg->GetFlags());
         }
     }
 
@@ -1376,11 +1376,11 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         return true;
     }
 
-    auto pABLMsg = IScriptWantsMsg<plAgeBeginLoadingMsg>(kfunc_OnBeginAgeLoad, msg);
+    auto pABLMsg = IScriptWantsMsg<plAgeBeginLoadingMsg>(kfunc_BeginAgeUnLoad, msg);
     if (pABLMsg) {
         pyObjectRef pSobj = pySceneObject::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), fSelfKey);
         plSynchEnabler ps(true);    // enable dirty state tracking during shutdowny
-        ICallScriptMethod(kfunc_OnBeginAgeLoad, std::move(pSobj));
+        ICallScriptMethod(kfunc_BeginAgeUnLoad, std::move(pSobj));
         return true;
     }
 
@@ -1390,17 +1390,17 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         return true;
     }
 
-    auto sn = IScriptWantsMsg<plSDLNotificationMsg>(kfunc_SDLNotify, msg);
+    auto sn = IScriptWantsMsg<plSDLNotificationMsg>(kfunc_OnSDLNotify, msg);
     if (sn) {
-        ICallScriptMethod(kfunc_SDLNotify, sn->fVar->GetName(), sn->fSDLName,
+        ICallScriptMethod(kfunc_OnSDLNotify, sn->fVar->GetName(), sn->fSDLName,
                           sn->fPlayerID, sn->fHintString);
         return true;
     }
 
     // are they looking for a plNetOwnershipMsg message?
-    auto nom = IScriptWantsMsg<plNetOwnershipMsg>(kfunc_OwnershipNotify, msg);
+    auto nom = IScriptWantsMsg<plNetOwnershipMsg>(kfunc_OnOwnershipChanged, msg);
     if (nom) {
-        ICallScriptMethod(kfunc_OwnershipNotify);
+        ICallScriptMethod(kfunc_OnOwnershipChanged);
         return true;
     }
 
@@ -1498,10 +1498,10 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         return true;
     }
 
-    auto pEvent = IScriptWantsMsg<plClimbEventMsg>(kfunc_OnClimbBlockerEvent, msg);
+    auto pEvent = IScriptWantsMsg<plClimbEventMsg>(kfunc_OnClimbingBlockerEvent, msg);
     if (pEvent) {
         pyObjectRef pSobj = pySceneObject::New(pEvent->GetSender(), fSelfKey);
-        ICallScriptMethod(kfunc_OnClimbBlockerEvent, std::move(pSobj));
+        ICallScriptMethod(kfunc_OnClimbingBlockerEvent, std::move(pSobj));
         return true;
     }
 
@@ -1661,7 +1661,7 @@ ST::string plPythonFileMod::getPythonOutput()
 void plPythonFileMod::EnableControlKeyEvents()
 {
     // register for keyboard events if needed
-    if (fPyFunctionInstances[kfunc_OnKeyEvent]) {
+    if (fPyFunctionInstances[kfunc_OnControlKeyEvent]) {
         plCmdIfaceModMsg* pModMsg = new plCmdIfaceModMsg;
         pModMsg->SetBCastFlag(plMessage::kBCastByExactType);
         pModMsg->SetSender(GetKey());
