@@ -56,6 +56,7 @@ Internal KI/GUI event handlers:
 | [`OnAccountUpdate`](#onaccountupdate) | `(self, updateType: int, result: int, playerID: int)` | `plAccountUpdateMsg` | avatar-/account-related events |
 | [`OnClothingUpdate`](#onclothingupdate) | `(self)` | `plClothingUpdateBCMsg` | avatar clothing changed |
 | [`OnDefaultKeyCaught`](#ondefaultkeycaught) | `(self, ch: str, isDown: bool, isRepeat: bool, isShift: bool, isCtrl: bool, keycode: int)` | `plKeyEventMsg` | unhandled key press |
+| [`OnKIMsg`](#onkimsg) | `(self, command: str, value: ...)` | `pfKIMsg` | non-chat KI events |
 | [`OnMarkerMsg`](#onmarkermsg) | `(self, msgType: int, tupData: tuple)` | `pfMarkerMsg` | marker captured |
 | [`OnMemberUpdate`](#onmemberupdate) | `(self)` | `plMemberUpdateMsg` | "Age Players" list needs updating |
 | [`OnMovieEvent`](#onmovieevent) | `(self, movieName: str, reason: int)` | `pfMovieEventMsg` | movie finished playing |
@@ -284,6 +285,21 @@ Corresponds to `plClothingUpdateBCMsg`.
 This callback is only expected to be used by the avatar customization (closet)
 code.
 
+## `OnKIMsg`
+
+Corresponds to `pfKIMsg` with any type other than `kHACKChatMsg`. Chat messages
+are reported via [`OnRTChat`](#onrtchat) instead.
+
+This callback is only expected to be used by the KI code.
+
+### Parameters
+
+* `command`: `int` - `pfKIMsg::GetCommand()`.
+* `value`: `int | float | str | tuple | None` - Data stored in the message,
+  depending on the command. This is usually `pfKIMsg::GetString()` or
+  `pfKIMsg::GetIntValue()`, but some commands have more complex data. See the
+  code for the exact details.
+
 ## `OnMemberUpdate`
 
 Corresponds to `plMemberUpdateMsg`. Called when the KI "Age Players" list needs
@@ -314,6 +330,7 @@ This callback is only expected to be used by the KI code.
 ## `OnRTChat`
 
 Corresponds to `pfKIMsg` with type `kHACKChatMsg` - that is, KI chat messages.
+Other `pfKIMsg` types are reported via [`OnKIMsg`](#onkimsg) instead.
 
 This callback is only expected to be used by the KI code.
 
