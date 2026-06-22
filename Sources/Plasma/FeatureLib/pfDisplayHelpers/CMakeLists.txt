@@ -33,7 +33,7 @@ target_link_libraries(
 # so the header definitions can be loaded
 target_include_directories(
     pfDisplayHelpers
-    PUBLIC
+    PRIVATE
         $<$<BOOL:${USE_WAYLAND}>:$<TARGET_PROPERTY:Wayland::Client,INCLUDE_DIRECTORIES>>
         $<$<BOOL:${USE_X11}>:$<TARGET_PROPERTY:X11::X11,INCLUDE_DIRECTORIES>>
         $<$<BOOL:${USE_XRANDR}>:$<TARGET_PROPERTY:X11::Xrandr,INCLUDE_DIRECTORIES>>
