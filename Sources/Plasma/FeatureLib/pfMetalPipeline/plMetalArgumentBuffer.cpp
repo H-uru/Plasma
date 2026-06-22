@@ -1,0 +1,143 @@
+/*==LICENSE==*
+
+CyanWorlds.com Engine - MMOG client, server and tools
+Copyright (C) 2011  Cyan Worlds, Inc.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Additional permissions under GNU GPL version 3 section 7
+
+If you modify this Program, or any covered work, by linking or
+combining it with any of RAD Game Tools Bink SDK, Autodesk 3ds Max SDK,
+NVIDIA PhysX SDK, Microsoft DirectX SDK, OpenSSL library, Independent
+JPEG Group JPEG library, Microsoft Windows Media SDK, or Apple QuickTime SDK
+(or a modified version of those libraries),
+containing parts covered by the terms of the Bink SDK EULA, 3ds Max EULA,
+PhysX SDK EULA, DirectX SDK EULA, OpenSSL and SSLeay licenses, IJG
+JPEG Library README, Windows Media SDK EULA, or QuickTime SDK EULA, the
+licensors of this Program grant you additional
+permission to convey the resulting work. Corresponding Source for a
+non-source form of such a combination shall include the source code for
+the parts of OpenSSL and IJG JPEG Library used as well as that of the covered
+work.
+
+You can contact Cyan Worlds, Inc. by email legal@cyan.com
+ or by snail mail at:
+      Cyan Worlds, Inc.
+      14617 N Newport Hwy
+      Mead, WA   99021
+
+*==LICENSE==*/
+
+#include "plMetalArgumentBuffer.h"
+
+NS::Array* plMetalBumpArgumentBuffer::GetArgumentDescriptors() const
+{
+    MTL::ArgumentDescriptor* descriptors[4];
+    descriptors[0] = MTL::ArgumentDescriptor::argumentDescriptor();
+    descriptors[0]->setIndex(dTangentIndexID);
+    descriptors[0]->setDataType(MTL::DataTypeChar2);
+
+    descriptors[1] = MTL::ArgumentDescriptor::argumentDescriptor();
+    descriptors[1]->setIndex(textureID);
+    descriptors[1]->setDataType(MTL::DataTypeTexture);
+
+    descriptors[2] = MTL::ArgumentDescriptor::argumentDescriptor();
+    descriptors[2]->setIndex(samplerID);
+    descriptors[2]->setDataType(MTL::DataTypeSampler);
+
+    descriptors[3] = MTL::ArgumentDescriptor::argumentDescriptor();
+    descriptors[3]->setIndex(dScaleID);
+    descriptors[3]->setDataType(MTL::DataTypeFloat);
+
+    NS::Array* array = NS::Array::array((const NS::Object* const*)descriptors, 4);
+    return array;
+}
+
+plMetalBumpArgumentBuffer::plMetalBumpArgumentBuffer(plMetalDevice* device, size_t numElements)
+    : plMetalArgumentBuffer<plMetalBumpmap>(device, numElements)
+{
+    fBumps.resize(numElements);
+}
+
+void plMetalBumpArgumentBuffer::Set(const std::vector<plMetalBumpMapping>& bumps)
+{
+    if (CheckBuffer(bumps)) {
+        return;
+    }
+    ConfigureBuffer();
+    if (fTier == plMetalArgumentBufferTier::Tier1) {
+        // Tier 1, because Tier 1 doesn't guarantee memory layout, go through the encoder
+        for (int i = 0; i < bumps.size(); ++i) {
+            auto& bump = bumps[i];
+            fEncoder->setArgumentBuffer(GetBuffer(), 0, i);
+            fEncoder->setTexture(bump.fTexture, textureID);
+            fEncoder->setSamplerState(bump.fSampler, samplerID);
+            uint8_t* cotangentUBuffer = static_cast<uint8_t*>(fEncoder->constantData(dTangentIndexID));
+            memcpy(cotangentUBuffer, &bump.fDTangentUIndex, sizeof(uint8_t) * 2);
+            float* scaleBuffer = static_cast<float*>(fEncoder->constantData(dScaleID));
+            memcpy(scaleBuffer, &bump.fScale, sizeof(float));
+
+            fBumps[i] = bump;
+        }
+    }
+#ifdef METAL_3_SDK
+    else {
+        // Tier 2, memory layout is guaranteed, we can scrible directly on buffer memory
+        for (int i = 0; i < bumps.size(); ++i) {
+            auto& bump = bumps[i];
+            fValue[i].bumpTexture = bump.fTexture->gpuResourceID();
+            fValue[i].bumpTextureSampler = bump.fSampler->gpuResourceID();
+            fValue[i].dTangentIndex = simd::make_char2(bump.fDTangentUIndex, bump.fDTangentVIndex);
+            fValue[i].scale = bump.fScale;
+
+            fBumps[i] = bump;
+        }
+    }
+#endif
+    if (GetBuffer()->storageMode() == MTL::StorageModeManaged) {
+        GetBuffer()->didModifyRange(NS::Range(0, GetBuffer()->length()));
+    }
+}
+
+void plMetalBumpArgumentBuffer::Bind(MTL::RenderCommandEncoder* encoder)
+{
+    for (const auto& bump : fBumps) {
+        // These textures can't go into a heap because they're shared by multiple
+        // materials, boo. Mark them as needing to be resident one at a time.
+        encoder->useResource(bump.fTexture, MTL::ResourceUsageRead, MTL::RenderStageFragment);
+    }
+    encoder->setVertexBuffer(GetBuffer(), 0, BumpState);
+    encoder->setFragmentBuffer(GetBuffer(), 0, BumpState);
+}
+
+bool plMetalBumpArgumentBuffer::CheckBuffer(const std::vector<plMetalBumpMapping>& bumps)
+{
+    if (bumps.size() != fNumElements || GetBuffer() == nullptr) {
+        return false;
+    }
+    for (int i = 0; i < bumps.size(); ++i) {
+        auto& bump = bumps[i];
+        if (bump.fTexture != fBumps[i].fTexture)
+            return false;
+        if (bump.fDTangentUIndex != fBumps[i].fDTangentUIndex ||
+            bump.fDTangentVIndex != fBumps[i].fDTangentVIndex) {
+            return false;
+        }
+        if (bump.fScale != fBumps[i].fScale) {
+            return false;
+        }
+    }
+    return true;
+}
