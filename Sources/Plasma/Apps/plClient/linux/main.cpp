@@ -409,7 +409,7 @@ int main(int argc, const char** argv)
     if (cmdParser.IsSpecified(kArgServerIni))
         serverIni = cmdParser.GetString(kArgServerIni);
 
-    gWindow = new plClientWindow();
+    gWindow = new plX11ClientWindow();
     if (!gWindow->PreInit()) {
         hsMessageBox(ST_LITERAL("Failed to pre-initialize plClient"), ST_LITERAL("Error"), hsMessageBoxNormal);
         return 1;
