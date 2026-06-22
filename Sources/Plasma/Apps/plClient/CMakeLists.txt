@@ -133,6 +133,13 @@ elseif(APPLE)
         XCODE_EXPLICIT_FILE_TYPE "folder.iconcomposer.icon"
         MACOSX_PACKAGE_LOCATION Resources
     )
+elseif(UNIX)
+    list(APPEND plClient_SOURCES
+        linux/main.cpp
+    )
+    list(APPEND plClient_HEADERS
+        linux/plClientWindow.h
+    )
 else()
     list(APPEND plClient_SOURCES
         main.cpp
