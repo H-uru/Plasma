@@ -128,6 +128,13 @@ elseif(APPLE)
         Mac-Cocoa/PLSLoginWindowController.xib
         Mac-Cocoa/PLSPatcherWindowController.xib
     )
+elseif(UNIX)
+    list(APPEND plClient_SOURCES
+        linux/main.cpp
+    )
+    list(APPEND plClient_HEADERS
+        linux/plClientWindow.h
+    )
 else()
     list(APPEND plClient_SOURCES
         main.cpp
