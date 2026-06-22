@@ -122,7 +122,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getOwnerNode)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getModifyTime)
 {
-    return PyLong_FromUnsignedLong(self->fThis->GetModifyTime());
+    return PyLong_FromLongLong(self->fThis->GetModifyTime());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getCreatorNodeID)
@@ -137,12 +137,12 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getCreatorNode)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getCreateTime)
 {
-    return PyLong_FromUnsignedLong(self->fThis->GetCreateTime());
+    return PyLong_FromLongLong(self->fThis->GetCreateTime());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getCreateAgeTime)
 {
-    return PyLong_FromUnsignedLong(self->fThis->GetCreateAgeTime());
+    return PyLong_FromLongLong(self->fThis->GetCreateAgeTime());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getCreateAgeName)
