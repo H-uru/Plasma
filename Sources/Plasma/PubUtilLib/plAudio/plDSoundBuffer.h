@@ -39,6 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 //////////////////////////////////////////////////////////////////////////////
 //                                                                          //
 //  plDSoundBuffer - Simple wrapper class for a DirectSound buffer.         //
@@ -56,15 +57,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define STREAMING_BUFFERS 16
 #define STREAM_BUFFER_SIZE      4608*4
 
-//#define VOICE_BUFFERS 4
-//#define VOICE_BUFFER_SIZE 4608
-
 class plWAVHeader;
 class plAudioFileReader;
 
 
-// Ported to OpenAL from DirectSound May 2006. Idealy the openal sources would be seperate from this class.
-// OpenAl sound buffer, and source. 
+// Ported to OpenAL from DirectSound May 2006. Ideally the OpenAL sources would be separate from this class.
+// OpenAL sound buffer, and source. 
 class plDSoundBuffer
 {
 public:
