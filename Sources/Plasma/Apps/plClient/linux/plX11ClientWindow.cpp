@@ -56,31 +56,61 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // X11 includes MUST be after everything else to avoid contamination!
 #include <X11/Xlib.h>
+#include <X11/Xatom.h>
 #include <X11/Xutil.h>
 
+typedef struct {
+    unsigned long   flags;
+    unsigned long   functions;
+    unsigned long   decorations;
+    long            inputMode;
+    unsigned long   status;
+} WMHints;
+
+hsOptionalCallDecl("libX11", XAllocNamedColor);
+hsOptionalCallDecl("libX11", XChangeProperty);
 hsOptionalCallDecl("libX11", XCloseDisplay);
+hsOptionalCallDecl("libX11", XCreateFontSet);
+hsOptionalCallDecl("libX11", XCreateGC);
+hsOptionalCallDecl("libX11", XCreateSimpleWindow);
 hsOptionalCallDecl("libX11", XCreateWindow);
 hsOptionalCallDecl("libX11", XDestroyWindow);
+hsOptionalCallDecl("libX11", XDrawString);
 hsOptionalCallDecl("libX11", XFilterEvent);
+hsOptionalCallDecl("libX11", XFreeGC);
+hsOptionalCallDecl("libX11", XFreeStringList);
 hsOptionalCallDecl("libX11", XFlush);
 hsOptionalCallDecl("libX11", XInitThreads);
 hsOptionalCallDecl("libX11", XInternAtom);
+hsOptionalCallDecl("libX11", XLoadQueryFont);
 hsOptionalCallDecl("libX11", XLookupString);
 hsOptionalCallDecl("libX11", XMapWindow);
 hsOptionalCallDecl("libX11", XNextEvent);
 hsOptionalCallDecl("libX11", XOpenDisplay);
 hsOptionalCallDecl("libX11", XPending);
+hsOptionalCallDecl("libX11", XPutImage);
 hsOptionalCallDecl("libX11", XRaiseWindow);
 hsOptionalCallDecl("libX11", XRefreshKeyboardMapping);
 hsOptionalCallDecl("libX11", XResizeWindow);
+hsOptionalCallDecl("libX11", XSelectInput);
+hsOptionalCallDecl("libX11", XSetBackground);
+hsOptionalCallDecl("libX11", XSetForeground);
+hsOptionalCallDecl("libX11", XSetFont);
 hsOptionalCallDecl("libX11", XSetWMProtocols);
 hsOptionalCallDecl("libX11", XStoreName);
 hsOptionalCallDecl("libX11", XSync);
+hsOptionalCallDecl("libX11", XTextWidth);
+hsOptionalCallDecl("libX11", Xutf8DrawString);
 
 #ifdef USE_XFIXES
 #   include <X11/extensions/Xfixes.h>
     hsOptionalCallDecl("libXfixes", XFixesHideCursor);
     hsOptionalCallDecl("libXfixes", XFixesShowCursor);
+#endif
+
+#ifdef USE_XPM
+#   include <X11/xpm.h>
+    hsOptionalCallDecl("libXpm", XpmCreateImageFromData);
 #endif
 
 bool plX11ClientWindow::PreInit()
@@ -330,4 +360,113 @@ void plX11ClientWindow::ResizeClientWindow(uint16_t width, uint16_t height, bool
 {
     __XResizeWindow(fXDisplay, fXWindow, width, height);
     __XSync(fXDisplay, False);
+}
+
+void plX11ClientWindow::ShowLoadingSplashScreen()
+{
+    if (fSplashScreen)
+        return;
+
+    int width = 315;
+    int height = 52;
+    int screen = DefaultScreen(fXDisplay);
+    int posX = (DisplayWidth(fXDisplay, screen) - width) / 2;
+    int posY = (DisplayHeight(fXDisplay, screen) - height) / 2;
+    Window root = DefaultRootWindow(fXDisplay);
+    Colormap colorMap = DefaultColormap(fXDisplay, screen);
+    XColor background;
+
+    __XAllocNamedColor(fXDisplay, colorMap, "gray", &background, &background);
+
+    fSplashScreen = *__XCreateSimpleWindow(fXDisplay, root,
+            posX, posY, width, height, 0,
+            BlackPixel(fXDisplay, screen),
+            background.pixel);
+
+    // Identify it as a Splash Screen window
+    Atom type = *__XInternAtom(fXDisplay, "_NET_WM_WINDOW_TYPE", False);
+    Atom value = *__XInternAtom(fXDisplay, "_NET_WM_WINDOW_TYPE_SPLASH", False);
+    __XChangeProperty(fXDisplay, fSplashScreen, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&value), 1);
+
+    // Do not show a window frame/border/title/buttons
+    WMHints hints = { 2, 0, 2, 0, 0};
+    Atom property = *__XInternAtom(fXDisplay, "_MOTIF_WM_HINTS", True);
+    __XChangeProperty(fXDisplay, fSplashScreen, property, XA_ATOM, 32, PropModeReplace, (unsigned char *)&hints, 5);
+
+    __XSelectInput(fXDisplay, fSplashScreen, ExposureMask);
+    __XMapWindow(fXDisplay, fSplashScreen);
+    __XFlush(fXDisplay);
+
+    while (true) {
+        XEvent ev;
+        __XNextEvent(fXDisplay, &ev);
+
+        if (ev.type == Expose) {
+            break;
+        }
+    }
+
+    XFontStruct* font = *__XLoadQueryFont(fXDisplay, "-*-*-medium-r-normal--*-120-*-*-*-*-iso8859-1");
+    if (!font)
+        font = *__XLoadQueryFont(fXDisplay, "fixed");
+
+    GC gc = *__XCreateGC(fXDisplay, fSplashScreen, 0, nullptr);
+
+    __XSetFont(fXDisplay, gc, font->fid);
+    __XSetForeground(fXDisplay, gc, BlackPixel(fXDisplay, screen));
+    __XSetBackground(fXDisplay, gc, background.pixel);
+
+    __XSync(fXDisplay, False);
+
+    int imgWidth = 0;
+#ifdef USE_XPM
+    if ((bool)__XpmCreateImageFromData) {
+        XImage* img;
+
+#       include "./res/Dirt.xpm"
+
+        if (!*__XpmCreateImageFromData(fXDisplay, const_cast<char**>(Dirt_xpm), &img, nullptr, nullptr)) {
+            int margin = (height - img->height) / 2;
+            __XPutImage(fXDisplay, fSplashScreen, gc, img, 0, 0, margin, margin, img->width, img->height);
+            imgWidth = img->width + (margin * 3);
+        }
+    }
+#endif
+
+    ST::string text = ST_LITERAL("Starting URU. Please wait...");
+
+    int textX = imgWidth ? imgWidth : ((width - *__XTextWidth(font, text.c_str(), text.size())) / 2);
+    int textY = (height + font->ascent + font->descent) / 2;
+
+    bool drewUtf8 = false;
+#ifdef X_HAVE_UTF8_STRING
+    if ((bool)__Xutf8DrawString) {
+        char** missingList;
+        int missingCount;
+
+        XFontSet fontSet = *__XCreateFontSet(fXDisplay, "-*-*-medium-r-normal--*-120-*-*-*-*-*-*", &missingList, &missingCount, nullptr);
+
+        if (fontSet) {
+            __XFreeStringList(missingList);
+
+            __Xutf8DrawString(fXDisplay, fSplashScreen, fontSet, gc, textX, textY, text.c_str(), text.size());
+            drewUtf8 = true;
+        }
+    }
+#endif
+
+    if (!drewUtf8) {
+        __XDrawString(fXDisplay, fSplashScreen, gc, textX, textY, text.c_str(), text.size());
+    }
+
+    __XFreeGC(fXDisplay, gc);
+    __XFlush(fXDisplay);
+}
+
+void plX11ClientWindow::HideLoadingSplashScreen()
+{
+    if (fSplashScreen) {
+        __XDestroyWindow(fXDisplay, fSplashScreen);
+        fSplashScreen = 0;
+    }
 }

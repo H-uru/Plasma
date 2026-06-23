@@ -137,6 +137,9 @@ elseif(UNIX)
         linux/plClientWindow.h
         $<$<BOOL:${USE_X11}>:linux/plX11ClientWindow.h>
     )
+    list(APPEND plClient_RESOURCES
+        $<$<BOOL:${USE_X11}>:linux/res/Dirt.xpm>
+    )
 else()
     list(APPEND plClient_SOURCES
         main.cpp
