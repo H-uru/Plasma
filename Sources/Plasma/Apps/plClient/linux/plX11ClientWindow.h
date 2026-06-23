@@ -50,11 +50,13 @@ class plX11ClientWindow : public plClientWindow
 private:
     struct _XDisplay* fXDisplay;
     uint32_t fXWindow;
+    uint32_t fSplashScreen;
 
     bool HandleEvent(union _XEvent* evt);
 
 public:
-    plX11ClientWindow() : plClientWindow(), fXDisplay(), fXWindow() { }
+    plX11ClientWindow()
+        : plClientWindow(), fXDisplay(), fXWindow(), fSplashScreen() {}
 
     bool PreInit() override;
     bool CreateClientWindow() override;
@@ -63,6 +65,9 @@ public:
     void DeInit() override;
 
     void ResizeClientWindow(uint16_t width, uint16_t height, bool windowed) override;
+
+    void ShowLoadingSplashScreen() override;
+    void HideLoadingSplashScreen() override;
 
     hsWindowHndl GetWindowHandle() const override {
         return (hsWindowHndl)(uintptr_t)fXWindow;
