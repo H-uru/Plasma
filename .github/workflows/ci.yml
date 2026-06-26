@@ -36,12 +36,12 @@ jobs:
 
     steps:
       - name: Checkout Plasma
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Checkout MaxSDK
         continue-on-error: true
         if: needs.max-secrets.outputs.HAS_MACHINE_USER_TOKEN == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: H-uruMachineUser/3dsMaxSDK
           token: ${{ secrets.MACHINE_USER_REPO_READ }}
@@ -49,7 +49,7 @@ jobs:
 
       - name: Install Qt
         continue-on-error: true
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           version: ${{ matrix.platform.qt-version }}
           arch: ${{ matrix.platform.qt-arch }}
@@ -96,7 +96,7 @@ jobs:
           cmake --build build --target INSTALL --config "${{ matrix.cfg.type }}" -j 4
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
@@ -129,10 +129,10 @@ jobs:
 
     steps:
       - name: Checkout Plasma
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Checkout MaxSDK
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: H-uruMachineUser/3dsMaxSDK
           token: ${{ secrets.MACHINE_USER_REPO_READ }}
@@ -176,7 +176,7 @@ jobs:
           cmake --build build --target INSTALL --config Release -j 4
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: plasma-${{ matrix.cfg.str }}-max-${{ matrix.cfg.sdk-version }}
           path: build/install
@@ -195,7 +195,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install dependencies
         run: |
@@ -262,7 +262,7 @@ jobs:
           cmake --build build --target install -j 4
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
@@ -283,7 +283,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install dependencies
         run: |
@@ -347,7 +347,7 @@ jobs:
           cmake --build build --target install --config "${{ matrix.cfg.type }}" -j 2
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
@@ -367,10 +367,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: plasma-${{ matrix.platform.str }}-internal-release
           path: build/install
