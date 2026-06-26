@@ -9,7 +9,7 @@ jobs:
   # HACK to enable/disable the max CI based on presence/absence of secret. See also:
   # https://github.com/actions/runner/issues/1138
   max-secrets:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     name: Check for Max SDK
     outputs:
       HAS_MACHINE_USER_TOKEN: ${{ steps.check.outputs.MACHINE_USER_TOKEN }}

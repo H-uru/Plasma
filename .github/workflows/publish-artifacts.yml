@@ -8,7 +8,7 @@ on:
 
 jobs:
   check-publishing-enabled:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     outputs:
       SHOULD_PUBLISH: ${{ steps.check.outputs.SHOULD_PUBLISH }}
@@ -20,7 +20,7 @@ jobs:
           PUBLISH_ENABLED: ${{ vars.ENABLE_PRERELEASE_ARTIFACT_PUBLISHING }}
 
   publish-artifacts:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     needs: [check-publishing-enabled]
     if: needs.check-publishing-enabled.outputs.SHOULD_PUBLISH == 'true'
 
