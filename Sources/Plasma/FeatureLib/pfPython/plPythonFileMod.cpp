@@ -289,10 +289,13 @@ plPythonFileMod::~plPythonFileMod()
             if (fInstance->ob_refcnt > 1)
                 Py_DECREF(fInstance);
 
-            //  then have the glue delete the instance of class
-            PyObject* delInst = PythonInterface::GetModuleItem("glue_delInst", fModule);
+            // then have the glue delete the instance of class
+            hsAssert(fGlueModule, "plPythonFileMod has fInstance, but not fGlueModule??");
+            hsAssert(fModule, "plPythonFileMod has fInstance, but not fModule??");
+            PyObject* delInst = PythonInterface::GetModuleItem("delInstance", fGlueModule);
             if (delInst && PyCallable_Check(delInst)) {
-                pyObjectRef retVal = plPython::CallObject(delInst);
+                Py_INCREF(fModule);
+                pyObjectRef retVal = plPython::CallObject(delInst, fModule);
                 if (!retVal)
                     ReportError();
                 DisplayPythonOutput();
@@ -300,6 +303,8 @@ plPythonFileMod::~plPythonFileMod()
         }
         fInstance = nullptr;
     }
+
+    Py_CLEAR(fGlueModule);
 
     // If we have a key catcher, get rid of it
     delete fKeyCatcher;
@@ -373,16 +378,12 @@ bool plPythonFileMod::ILoadPythonCode()
     // get code from file and execute in module
     // see if the file exists first before trying to import it
     plFileName pyfile = plFileName::Join(".", "python", ST::format("{}.py", fPythonFile));
-    plFileName gluefile = plFileName::Join(".", "python", "plasma", "glue.py");
-    if (plFileInfo(pyfile).Exists() && plFileInfo(gluefile).Exists()) {
+    if (plFileInfo(pyfile).Exists()) {
         // ok... we can't really use import because Python remembers too much where global variables came from
         // ...and using execfile make it sure that globals are defined in this module and not in the imported module
         // ...but execfile was removed in Python 3 ^_^
         if (PythonInterface::RunFile(pyfile, fModule)) {
-            // we've loaded the code into our module
-            // now attach the glue python code to the end
-            if (PythonInterface::RunFile(gluefile, fModule))
-                return true;
+            return true;
         }
 
         ST::string errMsg = ST::format("Python file {}.py had errors!!! Could not load.", fPythonFile);
@@ -439,6 +440,14 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                 return;
             }
 
+            // Import the module with the Python glue functions
+            fGlueModule = PyImport_ImportModule("PlasmaGlue");
+            DisplayPythonOutput();
+            if (!fGlueModule) {
+                PythonInterface::WriteToLog("Failed to import PlasmaGlue!");
+                return;
+            }
+
             // set the name of the file (in the global dictionary of the module)
             PyObject* dict = PyModule_GetDict(fModule);
             PyObject* pfilename = PyUnicode_FromSTString(fPythonFile);
@@ -446,10 +455,11 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
 
             // next we need to:
             //  - create instance of class
-            PyObject* getInst = PythonInterface::GetModuleItem("glue_getInst",fModule);
+            PyObject* getInst = PythonInterface::GetModuleItem("getInstance", fGlueModule);
             fInstance = nullptr;
             if (getInst && PyCallable_Check(getInst)) {
-                fInstance = plPython::CallObject(getInst).Release();
+                Py_INCREF(fModule);
+                fInstance = plPython::CallObject(getInst, fModule).Release();
                 if (!fInstance)
                     ReportError();
             }
@@ -492,8 +502,8 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
             }
 
             //  - set the parameters
-            PyObject* setParams = PythonInterface::GetModuleItem("glue_setParam", fModule);
-            PyObject* check_isNamed = PythonInterface::GetModuleItem("glue_isNamedAttribute",fModule);
+            PyObject* setParams = PythonInterface::GetModuleItem("setParam", fGlueModule);
+            PyObject* check_isNamed = PythonInterface::GetModuleItem("isNamedAttribute", fGlueModule);
             if (setParams && PyCallable_Check(setParams)) {
                 // loop throught the parameters and set them by id
                 // (will need to create the appropiate Python object for each type)
@@ -517,8 +527,9 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                         case plPythonParameter::kAnimationName:
                             isNamedAttr = 0;
                             if (check_isNamed && PyCallable_Check(check_isNamed)) {
-                                retvalue = plPython::CallObject(check_isNamed, parameter.fID);
-                                if (!retvalue ) {
+                                Py_INCREF(fModule);
+                                retvalue = plPython::CallObject(check_isNamed, fModule, parameter.fID);
+                                if (!retvalue) {
                                     ReportError();
                                     DisplayPythonOutput();
                                 }
@@ -570,8 +581,10 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                     }
                     // if there is a value that was converted then tell the Python code
                     if (value) {
+                        Py_INCREF(fModule);
                         pyObjectRef retVal = plPython::CallObject(
                             setParams,
+                            fModule,
                             parameter.fID,
                             std::move(value)
                         );
@@ -760,7 +773,7 @@ ST::string plPythonFileMod::IMakeModuleName(const plSceneObject* sobj)
 //
 void plPythonFileMod::ISetKeyValue(const plKey& key, int32_t id)
 {
-    PyObject* setParams = PythonInterface::GetModuleItem("glue_setParam",fModule);
+    PyObject* setParams = PythonInterface::GetModuleItem("setParam", fGlueModule);
 
     if (setParams && PyCallable_Check(setParams)) {
         if (key) {
@@ -768,8 +781,10 @@ void plPythonFileMod::ISetKeyValue(const plKey& key, int32_t id)
             pyObjectRef value = pyKey::New(key);
 
             if (value) {
+                Py_INCREF(fModule);
                 pyObjectRef retVal = plPython::CallObject(
                     setParams,
+                    fModule,
                     id,
                     std::move(value)
                 );

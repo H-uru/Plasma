@@ -67,23 +67,14 @@ plPythonMgr& plPythonMgr::Instance()
     return theInstance;
 }
 
-// Python wants char, not const char, LAME!
-static char* kGetBlockID = "glue_getBlockID";
-static char* kGetClassName = "glue_getClassName";
-static char* kGetNumParams = "glue_getNumParams";
-static char* kGetParam = "glue_getParam";
-static char* kGetVersion = "glue_getVersion";
-static char* kIsMultiModifier = "glue_isMultiModifier";
-static char* kGetVisInfo = "glue_getVisInfo";
-
-bool ICallVoidFunc(PyObject *dict, const char *funcName, PyObject*& val)
+static bool ICallGlueVoidFunc(const pyObjectRef& glueModule, const char* funcName, pyObjectRef modifierModule, pyObjectRef& val)
 {
-    PyObject *func = PyDict_GetItemString(dict, funcName);
-    if (func )
+    PyObject* func = PythonInterface::GetModuleItem(funcName, glueModule.Get());
+    if (func)
     {
         if (PyCallable_Check(func))
         {
-            val = plPython::CallObject(func).Release();
+            val = plPython::CallObject(func, std::move(modifierModule)).Release();
             if (val)
             {
                 // there might have been some message printed, so get it out to the log file
@@ -102,40 +93,35 @@ bool ICallVoidFunc(PyObject *dict, const char *funcName, PyObject*& val)
     return false;
 }
 
-bool ICallIntFunc(PyObject *dict, const char *funcName, int& val)
+static bool ICallGlueIntFunc(const pyObjectRef& glueModule, const char* funcName, pyObjectRef modifierModule, int& val)
 {
-    PyObject *obj;
-    if (ICallVoidFunc(dict, funcName, obj))
+    pyObjectRef obj;
+    if (ICallGlueVoidFunc(glueModule, funcName, std::move(modifierModule), obj))
     {
-        if (PyLong_Check(obj))
+        if (PyLong_Check(obj.Get()))
         {
-            val = PyLong_AsLong(obj);
-            Py_DECREF(obj);
+            val = PyLong_AsLong(obj.Get());
             return true;
         }
     }
     return false;
 }
 
-bool ICallStrFunc(PyObject *dict, const char *funcName, ST::string& val)
+static bool ICallGlueStrFunc(const pyObjectRef& glueModule, const char* funcName, pyObjectRef modifierModule, ST::string& val)
 {
-    PyObject *obj;
-    if (ICallVoidFunc(dict, funcName, obj))
+    pyObjectRef obj;
+    if (ICallGlueVoidFunc(glueModule, funcName, std::move(modifierModule), obj))
     {
-        if (PyUnicode_Check(obj))
+        if (PyUnicode_Check(obj.Get()))
         {
             Py_ssize_t size;
-            const char* utf8 = PyUnicode_AsUTF8AndSize(obj, &size);
+            const char* utf8 = PyUnicode_AsUTF8AndSize(obj.Get(), &size);
             if (utf8 == nullptr) {
-                Py_DECREF(obj);
                 return false;
             }
             val = ST::string::from_utf8(utf8, size);
-            Py_DECREF(obj);
             return true;
         }
-
-        Py_XDECREF(obj);
     }
 
     return false;
@@ -143,7 +129,7 @@ bool ICallStrFunc(PyObject *dict, const char *funcName, ST::string& val)
 
 enum ParamTypes
 {
-                            // These numbers used in the python/plasma/glue.py code
+    // These numbers are used in the PlasmaTypes.ptAttribute.getdef methods.
     kTypeUndefined,         //  0
     kTypeBool,              //  1
     kTypeInt,               //  2
@@ -252,50 +238,40 @@ void IExtractVisInfo(PyObject* tuple, int* id, std::unordered_set<ST::string>& v
 
 bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
 {
-    PyObject *module = PyImport_ImportModule(fileName.c_str());
-    if (module)
+    pyObjectRef glueModule = PyImport_ImportModule("PlasmaGlue");
+    pyObjectRef modifierModule = PyImport_ImportModule(fileName.c_str());
+    if (glueModule && modifierModule)
     {
-        // attach the glue python code to the end
-        if (!PythonInterface::RunString("with open('.\\python\\plasma\\glue.py') as f: glue = f.read()\nexec(glue)", module))
-        {
-            // display any output (NOTE: this would be disabled in production)
-            // get the messages
-            PythonInterface::getOutputAndReset();
-            return false;           // if we can't create the instance then there is nothing to do here
-        }
         // Get the dictionary for this module
-        PyObject *dict = PyModule_GetDict(module);
-        // set the name of the file for the glue.py code to find
+        PyObject *dict = PyModule_GetDict(modifierModule.Get());
+        // set the name of the file for the PlasmaGlue functions to find
         PyObject* pfilename = PyUnicode_FromStringAndSize(fileName.c_str(), fileName.size());
         PyDict_SetItemString(dict, "glue_name", pfilename);
 
         // Get the block ID
         int blockID = 0;
-        if (!ICallIntFunc(dict, kGetBlockID, blockID))
+        if (!ICallGlueIntFunc(glueModule, "getBlockID", modifierModule, blockID))
         {
-            Py_DECREF(module);
             return false;
         }
 
         // Get the class name
         ST::string className;
-        if (!ICallStrFunc(dict, kGetClassName, className))
+        if (!ICallGlueStrFunc(glueModule, "getClassName", modifierModule, className))
         {
-            Py_DECREF(module);
             return false;
         }
 
         // Get the number of parameters
         int numParams = 0;
-        if (!ICallIntFunc(dict, kGetNumParams, numParams))
+        if (!ICallGlueIntFunc(glueModule, "getNumParams", modifierModule, numParams))
         {
-            Py_DECREF(module);
             return false;
         }
 
         // determine if this is a multimodifier
         int isMulti = 0;
-        ICallIntFunc(dict, kIsMultiModifier, isMulti);
+        ICallGlueIntFunc(glueModule, "isMultiModifier", modifierModule, isMulti);
 
         // Get the version 
         //======================
@@ -303,14 +279,13 @@ bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
         //  ... because it delete the instance afterwards
         //  NOTE: get attribute params doesn't need the pythonfile class instance
         int version = 0;
-        if (!ICallIntFunc(dict, kGetVersion, version))
+        if (!ICallGlueIntFunc(glueModule, "getVersion", modifierModule, version))
         {
-            Py_DECREF(module);
             return false;
         }
 
-        PyObject *getParamFunc = PyDict_GetItemString(dict, kGetParam);
-        PyObject *getVisInfoFunc = PyDict_GetItemString(dict, kGetVisInfo);
+        PyObject* getParamFunc = PythonInterface::GetModuleItem("getParam", glueModule.Get());
+        PyObject* getVisInfoFunc = PythonInterface::GetModuleItem("getVisInfo", glueModule.Get());
 
         if (PyCallable_Check(getParamFunc))
         {
@@ -321,14 +296,18 @@ bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
 
             for (int i = numParams-1; i >= 0; i--)
             {
-                PyObject* ret = plPython::CallObject(getParamFunc, i).Release();
+                // plPython::CallObject steals the argument refs...
+                pyObjectRef modifierModuleExtraRef = modifierModule;
+                PyObject* ret = plPython::CallObject(getParamFunc, std::move(modifierModuleExtraRef), i).Release();
                 
                 int ddlParamID = -1;
                 std::unordered_set<ST::string> vec;
 
                 if (PyCallable_Check(getVisInfoFunc))
                 {
-                    pyObjectRef visinfo = plPython::CallObject(getVisInfoFunc, i);
+                    // plPython::CallObject steals the argument refs...
+                    pyObjectRef modifierModuleExtraRef = modifierModule;
+                    pyObjectRef visinfo = plPython::CallObject(getVisInfoFunc, std::move(modifierModuleExtraRef), i);
                     if (visinfo && PyTuple_Check(visinfo.Get()))
                     {
                         IExtractVisInfo(visinfo.Get(), &ddlParamID, vec);
@@ -453,12 +432,10 @@ bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
 
             PythonFile::AddAutoUIBlock(autoUI);
         }
-
-        Py_DECREF(module);
     }
     else
     {
-        // There was an error when importing the module
+        // There was an error when importing PlasmaGlue or the modifier module.
         // get the error message and put it in the log
         PyErr_Print();
         PyErr_Clear();

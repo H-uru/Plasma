@@ -190,23 +190,14 @@ bool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, Py_ssize_t* siz
 //
 bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
 {
-    PyObject *d, *v;
-    // make sure that we're given a good module... or at least one with an address
-    if ( !module )
-    {
-        // if no module was given then use just use the main module
-        module = PyImport_AddModule("__main__");
-        if (module == nullptr)
-            return false;
-    }
     // get the dictionaries for this module
-    d = PyModule_GetDict(module);
+    PyObject* d = PyModule_GetDict(module);
 
     if (!PyDict_GetItemString(d, "__builtins__"))
         PyDict_SetItemString(d, "__builtins__", PyEval_GetBuiltins());
 
     // run the string
-    v = PyEval_EvalCode(code, d, d);
+    PyObject* v = PyEval_EvalCode(code, d, d);
     // check for errors and print them
     if (v == nullptr)
     {
