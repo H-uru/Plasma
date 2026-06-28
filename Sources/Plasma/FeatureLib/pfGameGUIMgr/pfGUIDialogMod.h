@@ -80,7 +80,7 @@ class pfGUIDialogMod : public plSingleModifier
         pfGUIControlMod             *fControlOfInterest;
         pfGUIControlMod             *fFocusCtrl;
         pfGUIControlMod             *fMousedCtrl;   // Which one is the mouse over?
-        pfGUIColorScheme            *fColorScheme;
+        hsRef<pfGUIColorScheme>     fColorScheme;
 
         pfGUIDialogProc             *fHandler;
         plKey                       fProcReceiver;      // Non-nil means we handle everything by creating notify messages and sending them to this key
@@ -152,7 +152,7 @@ class pfGUIDialogMod : public plSingleModifier
         size_t          GetNumControls() const { return fControls.size(); }
         pfGUIControlMod *GetControl(size_t idx) const { return fControls[idx]; }
 
-        pfGUIColorScheme    *GetColorScheme() const { return fColorScheme; }
+        hsWeakRef<pfGUIColorScheme> GetColorScheme() const { return fColorScheme; }
 
         void    LinkToList( pfGUIDialogMod **prevPtr )
         {

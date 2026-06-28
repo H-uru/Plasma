@@ -51,10 +51,7 @@ fTelescopeInterface()
 }
 
 cyInputInterface::~cyInputInterface() 
-{
-    if (fTelescopeInterface)
-        hsRefCnt_SafeUnRef( fTelescopeInterface );
-}
+{}
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -70,7 +67,7 @@ void cyInputInterface::PushTelescopeInterface()
 {
     if (!fTelescopeInterface)
     {
-        fTelescopeInterface = new plTelescopeInputInterface;
+        fTelescopeInterface.Steal(new plTelescopeInputInterface());
         plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kAddInterface);
         pMsg->SetIFace(fTelescopeInterface);
         pMsg->Send();
@@ -91,7 +88,6 @@ void cyInputInterface::PopTelescope()
         plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kRemoveInterface);
         pMsg->SetIFace(fTelescopeInterface);
         pMsg->Send();
-        hsRefCnt_SafeUnRef( fTelescopeInterface );
         fTelescopeInterface = nullptr;
     }
 }

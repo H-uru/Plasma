@@ -167,7 +167,7 @@ plEventCallbackMsg* CreateCallbackMsg(plAnimCmdMsg* animMsg, plKey modKey)
     eventMsg->fRepeats = -1;
 
     animMsg->AddCallback(eventMsg);
-    hsRefCnt_SafeUnRef(eventMsg);   // AddCallback adds it's own ref, so remove ours (the default of 1)
+    eventMsg->UnRef(); // AddCallback adds it's own ref, so remove ours (the default of 1)
 
     return eventMsg;
 }

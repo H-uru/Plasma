@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper to map InputInterface functions to plasma2 message
 //
 
+#include "hsRefCnt.h"
+
 #include "pyGlueDefinitions.h"
 
 class plInputInterface;
@@ -56,7 +58,7 @@ class plInputInterface;
 class cyInputInterface
 {
 protected:
-    plInputInterface* fTelescopeInterface;
+    hsRef<plInputInterface> fTelescopeInterface;
 
     cyInputInterface();
 public:

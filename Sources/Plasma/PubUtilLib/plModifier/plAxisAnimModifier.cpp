@@ -110,12 +110,11 @@ fIface(),
 fAllOrNothing()
 {
     fNotify = new plNotifyMsg;
-    fInputIface = new plAxisInputInterface( this );
+    fInputIface.Steal(new plAxisInputInterface(this));
 }
 plAxisAnimModifier::~plAxisAnimModifier()
 {
     hsRefCnt_SafeUnRef(fNotify);
-    hsRefCnt_SafeUnRef( fInputIface );
 }
 
 
@@ -150,8 +149,7 @@ bool plAxisAnimModifier::MsgReceive(plMessage* msg)
         fNotify->SetState(1.0f);
         fNotify->AddActivateEvent(true);
         fNotify->AddClickDragEvent(GetTarget()->GetKey(), plNetClientApp::GetInstance()->GetLocalPlayerKey(), time);
-        hsRefCnt_SafeRef(fNotify);
-        plgDispatch::MsgSend( fNotify );
+        fNotify->SendAndKeep();
         return true;
     }
         
@@ -301,8 +299,8 @@ bool plAxisAnimModifier::MsgReceive(plMessage* msg)
                 pMsg->SetAnimName(fAnimLabel);
                 pMsg->AddReceiver( fXAnim );
 
-                hsRefCnt_SafeUnRef( pCall1 );
-                hsRefCnt_SafeUnRef( pCall2 );
+                pCall1->UnRef();
+                pCall2->UnRef();
 
                 plgDispatch::MsgSend(pMsg);
             }
@@ -329,8 +327,8 @@ bool plAxisAnimModifier::MsgReceive(plMessage* msg)
                 pMsg->AddReceiver( fYAnim );
                 pMsg->SetAnimName(fAnimLabel);
 
-                hsRefCnt_SafeUnRef( pCall1 );
-                hsRefCnt_SafeUnRef( pCall2 );
+                pCall1->UnRef();
+                pCall2->UnRef();
 
                 plgDispatch::MsgSend(pMsg);
             }

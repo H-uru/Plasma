@@ -188,7 +188,7 @@ plNetMessage* plNetClientStreamRecorder::GetNextMessage()
         if (IIsValidMsg(msg))
             return msg;
         else
-            hsRefCnt_SafeUnRef(msg);
+            msg->UnRef();
     }
 
     return nullptr;
@@ -252,7 +252,7 @@ bool plNetClientStreamRecorder::IIsValidMsg(plNetMessage* msg)
             if (plNetClientApp::GetInstance())
             {
                 bool isLocal = (linkMsg->GetLinkKey() == plNetClientApp::GetInstance()->GetLocalPlayerKey());
-                hsRefCnt_SafeUnRef(linkMsg);
+                linkMsg->UnRef();
 
                 if (isLocal)
                 {
@@ -267,7 +267,7 @@ bool plNetClientStreamRecorder::IIsValidMsg(plNetMessage* msg)
             if (plNetClientApp::GetInstance())
             {
                 bool isLocal = (loadAvMsg->GetCloneKey() == plNetClientApp::GetInstance()->GetLocalPlayerKey());
-                hsRefCnt_SafeUnRef(loadAvMsg);
+                loadAvMsg->UnRef();
 
                 if (isLocal)
                 {
@@ -317,7 +317,7 @@ void plNetClientStreamRecorder::ILogMsg(plNetMessage* msg, const char* preText)
                 fLog->AddLineF("\t{}", eventName);
             }
 
-            hsRefCnt_SafeUnRef(notifyMsg);
+            notifyMsg->UnRef();
         }
     }
     else if (plNetMsgSDLState* sdlMsg = plNetMsgSDLState::ConvertNoRef(msg))

@@ -170,7 +170,7 @@ bool plCameraModifier1::MsgReceive(plMessage* msg)
     {
         if (pCamMsg->Cmd(plCameraMsg::kAddFOVKeyframe))
         {
-            hsRefCnt_SafeRef(msg);
+            msg->Ref();
             fFOVInstructions.emplace_back(pCamMsg);
             return true;
         }
@@ -196,7 +196,7 @@ bool plCameraModifier1::MsgReceive(plMessage* msg)
     plAnimCmdMsg* pAnimMsg = plAnimCmdMsg::ConvertNoRef(msg);
     if (pAnimMsg)
     {
-        hsRefCnt_SafeRef(msg);
+        msg->Ref();
         msg->ClearReceivers();
         msg->AddReceiver(msg->GetSender());
         fMessageQueue.emplace_back(msg);

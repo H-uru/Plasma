@@ -1681,7 +1681,7 @@ void    plDXPipeline::IReleaseDeviceObjects()
     {
         if( fLayerRef[i] )
         {
-            hsRefCnt_SafeUnRef(fLayerRef[i]);
+            fLayerRef[i]->UnRef();
             fLayerRef[i] = nullptr;
         }
     }
@@ -1691,9 +1691,10 @@ void    plDXPipeline::IReleaseDeviceObjects()
     hackOffscreens.clear();
 #endif // MF_ENABLE_HACKOFF
 
-    if( fULutTextureRef )
+    if (fULutTextureRef) {
         delete [] fULutTextureRef->fData;
-    hsRefCnt_SafeUnRef(fULutTextureRef);
+        fULutTextureRef->UnRef();
+    }
     fULutTextureRef = nullptr;
 
     while( fVtxBuffRefList )
@@ -3153,7 +3154,7 @@ bool plDXPipeline::EndRender()
     {
         if( fLayerRef[i] )
         {
-            hsRefCnt_SafeUnRef(fLayerRef[i]);
+            fLayerRef[i]->UnRef();
             fLayerRef[i] = nullptr;
         }
     }
@@ -3584,7 +3585,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
                     face->SetDeviceRef( new plDXRenderTargetRef( surfFormat, 0, face, false ) );
                     ( (plDXRenderTargetRef *)face->GetDeviceRef())->Link( &fRenderTargetRefList );
                     // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
-                    hsRefCnt_SafeUnRef( face->GetDeviceRef() );
+                    face->GetDeviceRef()->UnRef();
                 }
             }
 
@@ -3595,7 +3596,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
         else
         {
             ReleaseObject(depthSurface);
-            hsRefCnt_SafeUnRef(ref);
+            ref->UnRef();
             ref = nullptr;
         }
     }
@@ -3619,7 +3620,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
         else
         {
             ReleaseObject(depthSurface);
-            hsRefCnt_SafeUnRef(ref);
+            ref->UnRef();
             ref = nullptr;
         }
     }
@@ -3654,7 +3655,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
         else
         {
             ReleaseObject(depthSurface);
-            hsRefCnt_SafeUnRef(ref);
+            ref->UnRef();
             ref = nullptr;
         }
 
@@ -3781,7 +3782,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
                     face->SetDeviceRef( new plDXRenderTargetRef( surfFormat, 0, face, false ) );
                     ( (plDXRenderTargetRef *)face->GetDeviceRef())->Link( &fRenderTargetRefList );
                     // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
-                    hsRefCnt_SafeUnRef( face->GetDeviceRef() );
+                    face->GetDeviceRef()->UnRef();
                 }
             }
         
@@ -3792,7 +3793,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
         else
         {
             ReleaseObject(depthSurface);
-            hsRefCnt_SafeUnRef(ref);
+            ref->UnRef();
             ref = nullptr;
         }
     }
@@ -3816,7 +3817,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
         else
         {
             ReleaseObject(depthSurface);
-            hsRefCnt_SafeUnRef(ref);
+            ref->UnRef();
             ref = nullptr;
         }
     }
@@ -3843,7 +3844,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
         else
         {
             ReleaseObject(depthSurface);
-            hsRefCnt_SafeUnRef(ref);
+            ref->UnRef();
             ref = nullptr;
         }
 
@@ -4081,7 +4082,7 @@ void plDXPipeline::PushRenderRequest(plRenderRequest* req)
     fView.fRenderState = req->GetRenderState();
 
     fView.fRenderRequest = req;
-    hsRefCnt_SafeRef(fView.fRenderRequest);
+    fView.fRenderRequest->Ref();
 
     SetDrawableTypeMask(req->GetDrawableMask());
     SetSubDrawableTypeMask(req->GetSubDrawableMask());
@@ -4687,7 +4688,7 @@ hsGDeviceRef    *plDXPipeline::IMakeLightRef( plLightInfo *owner )
     lRef->fOwner = owner;
     owner->SetDeviceRef( lRef );
     // Unref now, since for now ONLY the BG owns the ref, not us (not until we use it, at least)
-    hsRefCnt_SafeUnRef( lRef );
+    lRef->UnRef();
 
     lRef->Link( &fLights.fRefList );
 
@@ -7422,7 +7423,7 @@ hsGDeviceRef    *plDXPipeline::MakeTextureRef( plLayerInterface* layer, plMipmap
         original->SetDeviceRef( ref );
         // Note: this is because SetDeviceRef() will ref it, and at this point,
         // only the bitmap should own the ref, not us. We ref/unref it on Use()
-        hsRefCnt_SafeUnRef( ref );  
+        ref->UnRef();  
     }
     else
         ref->Set( formatType, mmlvs, b->GetWidth(), b->GetHeight(), 
@@ -7549,7 +7550,7 @@ hsGDeviceRef    *plDXPipeline::IMakeCubicTextureRef( plLayerInterface* layer, pl
         cubic->SetDeviceRef( ref );
         // Note: this is because SetDeviceRef() will ref it, and at this point,
         // only the bitmap should own the ref, not us. We ref/unref it on Use()
-        hsRefCnt_SafeUnRef( ref );
+        ref->UnRef();
     }
     else
     {
@@ -8095,7 +8096,7 @@ void plDXPipeline::ISetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, pl
     vRef->fIndex = idx;
 
     owner->SetVertexBufferRef(idx, vRef);
-    hsRefCnt_SafeUnRef(vRef);
+    vRef->UnRef();
 }
 
 // ICheckStaticVertexBuffer ///////////////////////////////////////////////////////////////////////
@@ -8501,7 +8502,7 @@ void plDXPipeline::ISetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, plD
     iRef->SetRebuiltSinceUsed(true);
 
     owner->SetIndexBufferRef(idx, iRef);
-    hsRefCnt_SafeUnRef(iRef);
+    iRef->UnRef();
 
     iRef->SetVolatile(owner->AreIdxVolatile());
 }
@@ -9128,7 +9129,7 @@ HRESULT plDXPipeline::ISetShaders(plShader* vShader, plShader* pShader)
         if( !vRef )
         {
             vRef = new plDXVertexShader(vShader);
-            hsRefCnt_SafeUnRef(vRef);
+            vRef->UnRef();
         }
         if( !vRef->IsLinked() )
             vRef->Link(&fVShaderRefList);
@@ -9156,7 +9157,7 @@ HRESULT plDXPipeline::ISetShaders(plShader* vShader, plShader* pShader)
         if( !pRef )
         {
             pRef = new plDXPixelShader(pShader);
-            hsRefCnt_SafeUnRef(pRef);
+            pRef->UnRef();
         }
         if( !pRef->IsLinked() )
             pRef->Link(&fPShaderRefList);

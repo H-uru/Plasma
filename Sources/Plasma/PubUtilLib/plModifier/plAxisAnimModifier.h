@@ -75,7 +75,7 @@ protected:
 
     ST::string      fAnimLabel;
 
-    plAxisInputInterface    *fInputIface;
+    hsRef<plAxisInputInterface> fInputIface;
 
     bool IEval(double secs, float del, uint32_t dirty) override;
 

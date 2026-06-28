@@ -354,7 +354,7 @@ void plMetalPipeline::PushRenderRequest(plRenderRequest* req)
     fView.fRenderState = req->GetRenderState();
 
     fView.fRenderRequest = req;
-    hsRefCnt_SafeRef(fView.fRenderRequest);
+    fView.fRenderRequest->Ref();
 
     SetDrawableTypeMask(req->GetDrawableMask());
     SetSubDrawableTypeMask(req->GetSubDrawableMask());
@@ -501,7 +501,7 @@ hsGDeviceRef* plMetalPipeline::MakeRenderTargetRef(plRenderTarget* owner)
                 face->SetDeviceRef(fRef);
                 ((plMetalRenderTargetRef*)face->GetDeviceRef())->Link(&fRenderTargetRefList);
                 // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
-                hsRefCnt_SafeUnRef(face->GetDeviceRef());
+                face->GetDeviceRef()->UnRef();
             }
 
             // in since the root texture has changed reload all the face textures
@@ -720,7 +720,7 @@ bool plMetalPipeline::EndRender()
 
     for (int i = 0; i < 8; i++) {
         if (fLayerRef[i]) {
-            hsRefCnt_SafeUnRef(fLayerRef[i]);
+            fLayerRef[i]->UnRef();
             fLayerRef[i] = nullptr;
         }
     }
@@ -1775,7 +1775,7 @@ hsGDeviceRef* plMetalPipeline::IMakeLightRef(plLightInfo* owner)
     lRef->fOwner = owner;
     owner->SetDeviceRef(lRef);
     // Unref now, since for now ONLY the BG owns the ref, not us (not until we use it, at least)
-    hsRefCnt_SafeUnRef(lRef);
+    lRef->UnRef();
 
     lRef->Link(&fLightRefList);
 
@@ -2014,7 +2014,7 @@ bool plMetalPipeline::ISetShaders(const plMetalVertexBufferRef* vRef, const hsGM
         plMetalVertexShader* vRef = (plMetalVertexShader*)vShader->GetDeviceRef();
         if (!vRef) {
             vRef = new plMetalVertexShader(vShader);
-            hsRefCnt_SafeUnRef(vRef);
+            vRef->UnRef();
         }
         if (!vRef->IsLinked())
             vRef->Link(&fVShaderRefList);
@@ -2030,7 +2030,7 @@ bool plMetalPipeline::ISetShaders(const plMetalVertexBufferRef* vRef, const hsGM
         plMetalFragmentShader* pRef = (plMetalFragmentShader*)pShader->GetDeviceRef();
         if (!pRef) {
             pRef = new plMetalFragmentShader(pShader);
-            hsRefCnt_SafeUnRef(pRef);
+            pRef->UnRef();
         }
         if (!pRef->IsLinked())
             pRef->Link(&fPShaderRefList);
@@ -3574,13 +3574,13 @@ hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRe
                     face->SetDeviceRef(targetRef);
                     ((plMetalRenderTargetRef*)face->GetDeviceRef())->Link(&fRenderTargetRefList);
                     // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
-                    hsRefCnt_SafeUnRef(face->GetDeviceRef());
+                    face->GetDeviceRef()->UnRef();
                 }
             }
 
             ref->fTexture = cubeTexture;
         } else {
-            hsRefCnt_SafeUnRef(ref);
+            ref->UnRef();
             ref = nullptr;
         }
     }
@@ -3602,7 +3602,7 @@ hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRe
         if (texture) {
             ref->fTexture = texture;
         } else {
-            hsRefCnt_SafeUnRef(ref);
+            ref->UnRef();
             ref = nullptr;
         }
 

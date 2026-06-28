@@ -151,8 +151,7 @@ fMsg(pMsg)
 
 plTimerCallback::~plTimerCallback()
 {
-    if (fMsg)
-        hsRefCnt_SafeUnRef(fMsg);
+    hsRefCnt_SafeUnRef(fMsg);
     fMsg = nullptr;
 }
 

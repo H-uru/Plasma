@@ -130,7 +130,6 @@ bool plOneShotMod::MsgReceive(plMessage* msg)
 
                     avOSmsg->fNoSeek = fNoSeek;
                     avOSmsg->SetBCastFlag(plMessage::kPropagateToModifiers);
-                    hsRefCnt_SafeRef(oneShotMsg->fCallbacks);
                     avOSmsg->fCallbacks = oneShotMsg->fCallbacks;
                     plgDispatch::MsgSend(avOSmsg);
                 }

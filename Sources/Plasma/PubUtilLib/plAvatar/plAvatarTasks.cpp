@@ -499,69 +499,44 @@ void plAvAnimTask::Write(hsStream *stream, hsResMgr *mgr)
 //
 ////////////////
 
-void plAvOneShotTask::InitDefaults()
-{
-    fBackwards = false;
-    fDisableLooping = false;
-    fDisablePhysics = true;
-    fMoveHandle = false;
-    fAnimInstance = nullptr;
-    fDrivable = false;
-    fReversible = false;
-    fEnablePhysicsAtEnd = false;
-    fDetachAnimation = false;
-    fIgnore = false;
-    fCallbacks = nullptr;
-    fWaitFrames = 0;
-}
-
 // CTOR default
 plAvOneShotTask::plAvOneShotTask()
-{
-    InitDefaults();
-}
+    : plAvOneShotTask({}, false, false, nullptr)
+{}
 
 // CTOR (animName, drivable, reversible)
 // this construct is typically used when you want to create a one-shot task as part of a sequence
 // of tasks
 // it's different than the message-based constructor in that fDetachAnimation and fMoveHandle default to false
-plAvOneShotTask::plAvOneShotTask(const ST::string &animName, bool drivable, bool reversible, plOneShotCallbacks *callbacks)
-{
-    InitDefaults();
-
-    fDrivable = drivable;
-    fReversible = reversible;
-    fCallbacks = callbacks;
-    
-    // we're going to use this sometime in the future, better ref it so someone else doesn't release it
-    hsRefCnt_SafeRef(fCallbacks);
-    fAnimName = animName;
-}
+plAvOneShotTask::plAvOneShotTask(ST::string animName, bool drivable, bool reversible, hsRef<plOneShotCallbacks> callbacks)
+    : fBackwards(),
+      fDisableLooping(),
+      fDisablePhysics(true),
+      fAnimName(std::move(animName)),
+      fMoveHandle(),
+      fAnimInstance(),
+      fDrivable(drivable),
+      fReversible(reversible),
+      fEnablePhysicsAtEnd(),
+      fDetachAnimation(),
+      fIgnore(),
+      fCallbacks(std::move(callbacks)),
+      fWaitFrames()
+{}
 
 // CTOR (plAvOneShotMsg, plArmatureMod)
 // this constructor is typically used when we're doing a classic, isolated one-shot
 // fDetachAnimation and fMoveHandle both default to *true*
 plAvOneShotTask::plAvOneShotTask (plAvOneShotMsg *msg, plArmatureMod *avatar, plArmatureBrain *brain)
+    : plAvOneShotTask(msg->fAnimName, msg->fDrivable, msg->fReversible, msg->fCallbacks)
 {
-    InitDefaults();
-
-    fDrivable = msg->fDrivable;
-    fReversible = msg->fReversible;
-    fCallbacks = msg->fCallbacks;
     fDetachAnimation = true;
     fMoveHandle = true;
-
-    // we're going to use this sometime in the future, better ref it so someone else doesn't release it
-    hsRefCnt_SafeRef(fCallbacks);
-    fAnimName = msg->fAnimName;
 }
 
 // DTOR
 plAvOneShotTask::~plAvOneShotTask()
-{
-    hsRefCnt_SafeUnRef(fCallbacks);
-}
-
+{}
 
 // START
 bool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed)
@@ -585,14 +560,12 @@ bool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, doubl
             // step over some script's attempt to disable physics again.
             plAvatarPhysicsEnableCallbackMsg *epMsg = new plAvatarPhysicsEnableCallbackMsg(avatar->GetKey(), plEventCallbackMsg::kStop, 0, 0, 0, 0);
             fAnimInstance->GetTimeConvert()->AddCallback(epMsg);
-            hsRefCnt_SafeUnRef(epMsg);
+            epMsg->UnRef();
         }   
 
         if (fCallbacks)
         {
             fAnimInstance->AttachCallbacks(fCallbacks);
-            // ok, we're done with it, release it back to the river
-            hsRefCnt_SafeUnRef(fCallbacks);
             fCallbacks = nullptr;
         }
 
