@@ -65,11 +65,11 @@ def glue_getClass():
                 glue_cl = cl
             else:
                 if glue_verbose:
-                    PtDebugPrint("Class %s is not derived from modifier" % (cl.__name__))
+                    PtDebugPrint(f"Class {cl.__name__} is not derived from modifier")
         except:
             if glue_verbose:
                 try:
-                    PtDebugPrint("Could not find class %s" % (glue_name))
+                    PtDebugPrint(f"Could not find class {glue_name}")
                 except NameError:
                     PtDebugPrint("Filename/classname not set!")
 
@@ -110,7 +110,7 @@ def glue_findAndAddAttribs(obj, glue_params):
         if obj.id in glue_params:
             if glue_verbose:
                 PtDebugPrint("WARNING: Duplicate attribute ids!")
-                PtDebugPrint("%s has id %d which is already defined in %s" % (obj.name, obj.id, glue_params[obj.id].name))
+                PtDebugPrint(f"{obj.name} has id {obj.id} which is already defined in {glue_params[obj.id].name}")
         else:
             glue_params[obj.id] = obj
     elif isinstance(obj, list):
@@ -145,7 +145,7 @@ def glue_getClassName():
         return cl.__name__
 
     if glue_verbose:
-        PtDebugPrint("Class not found in %s.py" % (glue_name))
+        PtDebugPrint(f"Class not found in {glue_name}.py")
 
     return None
 
@@ -155,7 +155,7 @@ def glue_getBlockID():
         return inst.id
 
     if glue_verbose:
-        PtDebugPrint("Instance could not be created in %s.py" % (glue_name))
+        PtDebugPrint(f"Instance could not be created in {glue_name}.py")
 
     return None
 
@@ -165,7 +165,7 @@ def glue_getNumParams():
         return len(pd)
 
     if glue_verbose:
-        PtDebugPrint("No attributes found in %s.py" % (glue_name))
+        PtDebugPrint(f"No attributes found in {glue_name}.py")
 
     return 0
 
@@ -179,14 +179,14 @@ def glue_getParam(number):
             if number in range(len(glue_paramKeys)):
                 return pd[glue_paramKeys[number]].getdef()
             else:
-                PtDebugPrint("glue_getParam: Error! %d out of range of attribute list" % (number))
+                PtDebugPrint(f"glue_getParam: Error! {number} out of range of attribute list")
         else:
             pl = list(pd.values())
             if number in range(len(pl)):
                 return pl[number].getdef()
             else:
                 if glue_verbose:
-                    PtDebugPrint("glue_getParam: Error! %d out of range of attribute list" % (number))
+                    PtDebugPrint(f"glue_getParam: Error! {number} out of range of attribute list")
 
     if glue_verbose:
         PtDebugPrint("GLUE: Attribute list error")
@@ -227,7 +227,7 @@ def glue_isNamedAttribute(id):
                 return 2
         except KeyError:
             if glue_verbose:
-                PtDebugPrint("Could not find id=%d attribute" % (id))
+                PtDebugPrint(f"Could not find id={id} attribute")
 
     return 0
 
@@ -247,14 +247,14 @@ def glue_getVisInfo(number):
             if number in range(len(glue_paramKeys)):
                 return pd[glue_paramKeys[number]].getVisInfo()
             else:
-                PtDebugPrint("glue_getVisInfo: Error! %d out of range of attribute list" % (number))
+                PtDebugPrint(f"glue_getVisInfo: Error! {number} out of range of attribute list")
         else:
             pl = list(pd.values())
             if number in range(len(pl)):
                 return pl[number].getVisInfo()
             else:
                 if glue_verbose:
-                    PtDebugPrint("glue_getVisInfo: Error! %d out of range of attribute list" % (number))
+                    PtDebugPrint(f"glue_getVisInfo: Error! {number} out of range of attribute list")
 
     if glue_verbose:
         PtDebugPrint("GLUE: Attribute list error")
