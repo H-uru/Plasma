@@ -67,14 +67,13 @@ plPythonMgr& plPythonMgr::Instance()
     return theInstance;
 }
 
-// Python wants char, not const char, LAME!
-static char* kGetBlockID = "glue_getBlockID";
-static char* kGetClassName = "glue_getClassName";
-static char* kGetNumParams = "glue_getNumParams";
-static char* kGetParam = "glue_getParam";
-static char* kGetVersion = "glue_getVersion";
-static char* kIsMultiModifier = "glue_isMultiModifier";
-static char* kGetVisInfo = "glue_getVisInfo";
+static const char* kGetBlockID = "glue_getBlockID";
+static const char* kGetClassName = "glue_getClassName";
+static const char* kGetNumParams = "glue_getNumParams";
+static const char* kGetParam = "glue_getParam";
+static const char* kGetVersion = "glue_getVersion";
+static const char* kIsMultiModifier = "glue_isMultiModifier";
+static const char* kGetVisInfo = "glue_getVisInfo";
 
 bool ICallVoidFunc(PyObject *dict, const char *funcName, PyObject*& val)
 {
