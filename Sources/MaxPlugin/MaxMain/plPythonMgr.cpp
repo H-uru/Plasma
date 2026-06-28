@@ -67,14 +67,6 @@ plPythonMgr& plPythonMgr::Instance()
     return theInstance;
 }
 
-static const char* kGetBlockID = "glue_getBlockID";
-static const char* kGetClassName = "glue_getClassName";
-static const char* kGetNumParams = "glue_getNumParams";
-static const char* kGetParam = "glue_getParam";
-static const char* kGetVersion = "glue_getVersion";
-static const char* kIsMultiModifier = "glue_isMultiModifier";
-static const char* kGetVisInfo = "glue_getVisInfo";
-
 bool ICallVoidFunc(PyObject *dict, const char *funcName, PyObject*& val)
 {
     PyObject *func = PyDict_GetItemString(dict, funcName);
@@ -270,7 +262,7 @@ bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
 
         // Get the block ID
         int blockID = 0;
-        if (!ICallIntFunc(dict, kGetBlockID, blockID))
+        if (!ICallIntFunc(dict, "glue_getBlockID", blockID))
         {
             Py_DECREF(module);
             return false;
@@ -278,7 +270,7 @@ bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
 
         // Get the class name
         ST::string className;
-        if (!ICallStrFunc(dict, kGetClassName, className))
+        if (!ICallStrFunc(dict, "glue_getClassName", className))
         {
             Py_DECREF(module);
             return false;
@@ -286,7 +278,7 @@ bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
 
         // Get the number of parameters
         int numParams = 0;
-        if (!ICallIntFunc(dict, kGetNumParams, numParams))
+        if (!ICallIntFunc(dict, "glue_getNumParams", numParams))
         {
             Py_DECREF(module);
             return false;
@@ -294,7 +286,7 @@ bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
 
         // determine if this is a multimodifier
         int isMulti = 0;
-        ICallIntFunc(dict, kIsMultiModifier, isMulti);
+        ICallIntFunc(dict, "glue_isMultiModifier", isMulti);
 
         // Get the version 
         //======================
@@ -302,14 +294,14 @@ bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
         //  ... because it delete the instance afterwards
         //  NOTE: get attribute params doesn't need the pythonfile class instance
         int version = 0;
-        if (!ICallIntFunc(dict, kGetVersion, version))
+        if (!ICallIntFunc(dict, "glue_getVersion", version))
         {
             Py_DECREF(module);
             return false;
         }
 
-        PyObject *getParamFunc = PyDict_GetItemString(dict, kGetParam);
-        PyObject *getVisInfoFunc = PyDict_GetItemString(dict, kGetVisInfo);
+        PyObject *getParamFunc = PyDict_GetItemString(dict, "glue_getParam");
+        PyObject *getVisInfoFunc = PyDict_GetItemString(dict, "glue_getVisInfo");
 
         if (PyCallable_Check(getParamFunc))
         {
