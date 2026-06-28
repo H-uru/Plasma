@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMain.inl"
 
 #include <vector>
-#include <string>
 #include <algorithm>
 #include <string_theory/stdio>
 #include <unordered_set>
@@ -62,15 +61,6 @@ static const std::unordered_set<ST::string, ST::hash_i, ST::equal_i> s_ignoreSub
     ST_LITERAL("__pycache__"),
 };
 
-/** Modules that should never be packed. */
-static const std::unordered_set<ST::string, ST::hash_i, ST::equal_i> s_ignoreModules{
-    // These built-in modules that are part of Python itself.
-    // Do NOT try to import them... it will give Python heartburn,
-    // which is basically fatal since we share the interpreter state.
-    ST_LITERAL("importlib._bootstrap"),
-    ST_LITERAL("importlib._bootstrap_external"),
-};
-
 #if HS_BUILD_FOR_WIN32
     #define NULL_DEVICE "NUL:"
 #else
@@ -81,10 +71,9 @@ FILE* out = stdout;
 
 void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStream *s)
 {
-    hsUNIXStream pyStream, glueStream;
+    hsUNIXStream pyStream;
     plFileName filePath;
     ST_ssize_t filestart = fileName.AsString().find_last('.');
-    plFileName glueFile = plFileName::Join("plasma", "glue.py");
 
     if (filestart >= 0)
         filePath = fileName.AsString().substr(filestart+1);
@@ -92,23 +81,19 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
         filePath = fileName;
     filePath = plFileName::Join(path, filePath + ".py");
 
-    if (!pyStream.Open(filePath) || !glueStream.Open(glueFile))
+    if (!pyStream.Open(filePath))
     {
-        ST::printf(stderr, "Unable to open path {}, ", filePath);
+        ST::printf(stderr, "Unable to open path {}!\n", filePath);
         return;
     }
 
-    ST::printf(out, "== Packing {}, ", fileName);
+    ST::printf(out, "== Packing {}...", fileName);
 
     pyStream.FastFwd();
     uint32_t pyFileSize = pyStream.GetPosition();
     pyStream.Rewind();
 
-    glueStream.FastFwd();
-    uint32_t glueFileSize = glueStream.GetPosition();
-    glueStream.Rewind();
-
-    uint32_t totalSize = pyFileSize + glueFileSize + 2;
+    uint32_t totalSize = pyFileSize + 2;
 
     char *code = new char[totalSize];
 
@@ -116,11 +101,7 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
     hsAssert(amountRead == pyFileSize, "Bad read");
 
     code[pyFileSize] = '\n';
-
-    amountRead = glueStream.Read(glueFileSize, code+pyFileSize+1);
-    hsAssert(amountRead == glueFileSize, "Bad read");
-
-    code[totalSize-1] = '\0';
+    code[pyFileSize+1] = '\0';
 
     // remove the CRs, they seem to give Python heartburn
     int k = 0;
@@ -132,79 +113,7 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
         //   skip the CRs
     }
 
-    // import the module first, to make packages work correctly
-    ST::string moduleName = fileName.AsString();
-    if (moduleName.after_last('.') == "__init__")
-        moduleName = moduleName.before_last('.');
-
-    PyObject* fModule = nullptr;
-    PyObject* pythonCode = nullptr;
-    if (s_ignoreModules.find(moduleName) == s_ignoreModules.end()) {
-        fModule = PyImport_ImportModule(moduleName.c_str());
-        if (fModule)
-            pythonCode = PythonInterface::CompileString(code, moduleName);
-        else
-            ST::printf(stderr, "......import failed ");
-    } else {
-        ST::printf(stderr, "......module is in skip list ");
-    }
-
-    if (pythonCode)
-    {
-        // run the code
-        if (PythonInterface::RunPYC(pythonCode, fModule) )
-        {
-            // set the name of the file (in the global dictionary of the module)
-            PyObject* dict = PyModule_GetDict(fModule);
-            PyObject* moduleNameObj = PyUnicode_FromStringAndSize(
-                moduleName.c_str(),
-                moduleName.size()
-            );
-            PyDict_SetItemString(dict, "glue_name", moduleNameObj);
-            Py_DECREF(moduleNameObj);
-
-            // next we need to:
-            //  - create instance of class
-            PyObject* getID = PythonInterface::GetModuleItem("glue_getBlockID",fModule);
-            bool foundID = false;
-            if (getID != nullptr && PyCallable_Check(getID))
-            {
-                PyObject* id = _PyObject_Vectorcall(getID, nullptr, 0, nullptr);
-                if ( id && PyLong_Check(id) )
-                    foundID = true;
-            }
-            if ( foundID == false )     // then there was an error or no ID or somethin'
-            {
-                // oops, this is not a PythonFile modifier
-                // re-read the source and compile it without the glue code this time
-                pyStream.Rewind();
-                amountRead = pyStream.Read(pyFileSize, code);
-                hsAssert(amountRead == pyFileSize, "Bad read");
-                code[amountRead] = '\n';
-                code[amountRead+1] = '\0';
-                k = 0;
-                int len = strlen(code)+1;
-                for (int i = 0; i < len; i++)
-                {
-                    if (code[i] != '\r')    // is it not a CR?
-                        code[k++] = code[i];
-                    // else
-                    //   skip the CRs
-                }
-                pythonCode = PythonInterface::CompileString(code, fileName);
-                hsAssert(pythonCode,"Not sure why this didn't compile the second time???");
-                ST::printf(out, "an import file ");
-            }
-            else
-                ST::printf(out, "a PythonFile modifier(tm) ");
-        }
-        else
-        {
-            ST::printf(stderr, "......blast! Error during run-code in {}!\n", fileName);
-            PyErr_Print();
-        }
-    }
-
+    PyObject* pythonCode = PythonInterface::CompileString(code, fileName);
     // make sure that we have code to save
     if (pythonCode)
     {
@@ -220,7 +129,7 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
     }
     else
     {
-        ST::printf(stderr, "......blast! ");
+        ST::printf(stderr, " ...blast! ");
         if (PyErr_Occurred())
             ST::printf(stderr, "Compile error in {}!\n", fileName);
         else
@@ -234,7 +143,6 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
 
     delete [] code;
     Py_XDECREF(pythonCode);
-    Py_XDECREF(fModule);
 }
 
 void FindFiles(std::vector<plFileName> &filenames, std::vector<plFileName> &pathnames, const plFileName& path)

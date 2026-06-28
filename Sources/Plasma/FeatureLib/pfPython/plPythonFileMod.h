@@ -146,6 +146,9 @@ protected:
     /** List of ptAttributes */
     std::vector<plPythonParameter> fParameters;
 
+    /** PlasmaGlue module */
+    PyObject* fGlueModule;
+
     /** Python Module */
     PyObject*   fModule;
 
