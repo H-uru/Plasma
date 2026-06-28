@@ -53,7 +53,7 @@ glue_paramKeys = None # this is the parameter ID list, that should be sorted
 try:
     glue_verbose
 except NameError:
-    glue_verbose = 0
+    glue_verbose = False
 
 def glue_getClass():
     global glue_cl
@@ -233,9 +233,7 @@ def glue_isNamedAttribute(id):
 
 def glue_isMultiModifier():
     inst = glue_getInst()
-    if isinstance(inst, ptMultiModifier):
-        return 1
-    return 0
+    return isinstance(inst, ptMultiModifier)
 
 def glue_getVisInfo(number):
     global glue_paramKeys
