@@ -51,14 +51,14 @@ glue_params = None   # parameters dictionary: mapped id to instance
 glue_paramKeys = None # this is the parameter ID list, that should be sorted
 
 try:
-    x = glue_verbose
+    glue_verbose
 except NameError:
     glue_verbose = 0
 
 def glue_getClass():
     global glue_cl
 
-    if glue_cl == None:
+    if glue_cl is None:
         try:
             cl = globals()[glue_name]
             if issubclass(cl, ptModifier):
@@ -80,7 +80,7 @@ def glue_getInst():
 
     if glue_inst is None:
         cl = glue_getClass()
-        if cl != None:
+        if cl is not None:
             glue_inst = cl()
 
     return glue_inst
@@ -141,7 +141,7 @@ def glue_getParamDict():
 
 def glue_getClassName():
     cl = glue_getClass()
-    if cl != None:
+    if cl is not None:
         return cl.__name__
 
     if glue_verbose:
@@ -151,7 +151,7 @@ def glue_getClassName():
 
 def glue_getBlockID():
     inst = glue_getInst()
-    if inst != None:
+    if inst is not None:
         return inst.id
 
     if glue_verbose:
@@ -161,7 +161,7 @@ def glue_getBlockID():
 
 def glue_getNumParams():
     pd = glue_getParamDict()
-    if pd != None:
+    if pd is not None:
         return len(pd)
 
     if glue_verbose:
@@ -173,16 +173,16 @@ def glue_getParam(number):
     global glue_paramKeys
 
     pd = glue_getParamDict()
-    if pd != None:
+    if pd is not None:
         # see if there is a paramKey list
         if isinstance(glue_paramKeys, list):
-            if number >= 0 and number < len(glue_paramKeys):
+            if number in range(len(glue_paramKeys)):
                 return pd[glue_paramKeys[number]].getdef()
             else:
                 PtDebugPrint("glue_getParam: Error! %d out of range of attribute list" % (number))
         else:
             pl = list(pd.values())
-            if number >= 0 and number < len(pl):
+            if number in range(len(pl)):
                 return pl[number].getdef()
             else:
                 if glue_verbose:
@@ -195,7 +195,7 @@ def glue_getParam(number):
 
 def glue_setParam(id, value):
     pd = glue_getParamDict()
-    if pd != None:
+    if pd is not None:
         if id in pd:
             # first try to set the attribute via function call (if there is one)
             try:
@@ -219,7 +219,7 @@ def glue_setParam(id, value):
 
 def glue_isNamedAttribute(id):
     pd = glue_getParamDict()
-    if pd != None:
+    if pd is not None:
         try:
             if isinstance(pd[id], ptAttribNamedActivator):
                 return 1
@@ -241,16 +241,16 @@ def glue_getVisInfo(number):
     global glue_paramKeys
 
     pd = glue_getParamDict()
-    if pd != None:
+    if pd is not None:
         # see if there is a paramKey list
         if isinstance(glue_paramKeys, list):
-            if number >= 0 and number < len(glue_paramKeys):
+            if number in range(len(glue_paramKeys)):
                 return pd[glue_paramKeys[number]].getVisInfo()
             else:
                 PtDebugPrint("glue_getVisInfo: Error! %d out of range of attribute list" % (number))
         else:
             pl = list(pd.values())
-            if number >= 0 and number < len(pl):
+            if number in range(len(pl)):
                 return pl[number].getVisInfo()
             else:
                 if glue_verbose:
