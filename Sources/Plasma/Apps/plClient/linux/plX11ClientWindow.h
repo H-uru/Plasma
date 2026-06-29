@@ -40,41 +40,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef HeadSpinConfigHDefined
-#define HeadSpinConfigHDefined
+#ifndef plX11ClientWindow_inc
+#define plX11ClientWindow_inc
 
-/* Compiler settings */
-#cmakedefine HAVE_BUILTIN_AVAILABLE
-#cmakedefine HAVE_CPUID
-#cmakedefine HAVE_AVX2
-#cmakedefine HAVE_AVX
-#cmakedefine HAVE_SSE42
-#cmakedefine HAVE_SSSE3
-#cmakedefine HAVE_SSE41
-#cmakedefine HAVE_SSE4
-#cmakedefine HAVE_SSE3
-#cmakedefine HAVE_SSE2
-#cmakedefine HAVE_SSE1
+#include "plClientWindow.h"
 
-/* External library usage */
-#cmakedefine USE_EGL
-#cmakedefine USE_SPEEX
-#cmakedefine USE_OPUS
-#cmakedefine USE_VIDEOTOOLBOX
-#cmakedefine USE_VPX
-#cmakedefine USE_WEBM
-#cmakedefine USE_WAYLAND
-#cmakedefine USE_X11
-#cmakedefine USE_XAW
-#cmakedefine USE_XFIXES
-#cmakedefine USE_XPM
-#cmakedefine USE_XRANDR
+class plX11ClientWindow : public plClientWindow
+{
+private:
+    struct _XDisplay* fXDisplay;
+    uint32_t fXWindow;
+    uint32_t fSplashScreen;
 
-#cmakedefine HAVE_SYSCTL
-#cmakedefine HAVE_SYSDIR
-#cmakedefine HAVE_SYSINFO
-#cmakedefine HAVE_SHELLSCALINGAPI
-#cmakedefine HAVE_PTHREAD_SETNAME_NP
-#cmakedefine HAVE_STRNLEN
+    bool HandleEvent(union _XEvent* evt);
 
-#endif
+public:
+    plX11ClientWindow()
+        : plClientWindow(), fXDisplay(), fXWindow(), fSplashScreen() {}
+
+    bool PreInit() override;
+    bool CreateClientWindow() override;
+    void ShowClientWindow() override;
+    bool ProcessEvents() override;
+    void DeInit() override;
+
+    void ResizeClientWindow(uint16_t width, uint16_t height, bool windowed) override;
+
+    void ShowLoadingSplashScreen() override;
+    void HideLoadingSplashScreen() override;
+
+    hsWindowHndl GetWindowHandle() const override {
+        return (hsWindowHndl)(uintptr_t)fXWindow;
+    }
+    hsDisplayHndl GetDisplayHandle() const override {
+        return reinterpret_cast<hsDisplayHndl>(fXDisplay);
+    }
+};
+
+#endif // plX11ClientWindow_inc
