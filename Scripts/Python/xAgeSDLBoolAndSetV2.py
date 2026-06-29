@@ -39,12 +39,14 @@
 #       Mead, WA   99021
 #
 # *==LICENSE==*/
+
 """
-Module: xAgeSDLBoolAndSet
-Age: global
-Date: December 2002
-Author: Bill Slease
-detects changes in two age sdl bools and sets a third...A and B => C
+Age SDL Boolean AND Set Module
+
+This module provides functionality to perform a boolean AND on the value of a list of SDL variables
+and set the value of another SDL variable to the result of the AND operation. Provided are an ABC
+that allows specifying the input and output variables and a ``ptResponder`` `xAgeSDLBoolAndSetV2`
+that accepts a comma separated list of input variables and a single output variable.
 """
 
 from Plasma import *
@@ -52,27 +54,22 @@ from PlasmaTypes import *
 
 from xAgeSDLBoolGateSet import xAgeSDLBoolGateSetBase
 
-# ---------
-# max wiring
-# ---------
+stringSDLVariableInput = ptAttribString(1, "AgeSDL Input Variables (comma separated)")
+stringSDLVariableOutput = ptAttribString(2, "AgeSDL Output Variable")
 
-stringOpA = ptAttribString(1,"AgeSDL Operand 1")
-stringOpB = ptAttribString(2,"AgeSDL Operand 2")
-stringResult = ptAttribString(3,"AgeSDL Result")
-
-class xAgeSDLBoolAndSet(xAgeSDLBoolGateSetBase, ptResponder):
+class xAgeSDLBoolAndSetV2(xAgeSDLBoolGateSetBase, ptResponder):
     def __init__(self):
         super().__init__()
-        self.id = 5041
+        self.id = 1384463667
         self.version = 1
 
     @property
     def inputVariables(self):
-        return [stringOpA.value, stringOpB.value]
+        return [i.strip() for i in stringSDLVariableInput.value.split(",")]
 
     @property
     def outputVariable(self):
-        return stringResult.value
+        return stringSDLVariableOutput.value
 
     @property
     def logicOp(self):
