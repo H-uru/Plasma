@@ -28,8 +28,8 @@ jobs:
       matrix:
         platform:
           - { generator: Visual Studio 17 2022, max-version: 7, arch: Win32, qt-arch: win32_msvc2019, qt-version: 5.15.2, runner: "windows-2022", str: windows-x86 }
-          - { generator: Visual Studio 18 2026, max-version: 2022, arch: x64, qt-arch: win64_msvc2022_64, qt-version: 6.9.1, runner: "windows-2025-vs2026", str: windows-x64 }
-          - { generator: Visual Studio 18 2026, max-version: 2022, arch: arm64, qt-arch: win64_msvc2022_arm64, qt-version: 6.9.1, runner: "windows-11-vs2026-arm", str: windows-arm64 }
+          - { generator: Visual Studio 18 2026, max-version: 2022, arch: x64, qt-arch: win64_msvc2022_64, qt-version: 6.11.1, runner: "windows-2025-vs2026", str: windows-x64 }
+          - { generator: Visual Studio 18 2026, max-version: 2022, arch: arm64, qt-arch: win64_msvc2022_arm64, qt-version: 6.11.1, runner: "windows-11-vs2026-arm", str: windows-arm64 }
         cfg:
           - { external: OFF, type: RelWithPDB, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
@@ -281,8 +281,8 @@ jobs:
     strategy:
       matrix:
         platform:
-          - { str: macos-arm64, arch: arm64, runner: "macos-26", qt-version: 6, min-deploy-target: 11.0 }
-          - { str: macos-x64, arch: x86_64, runner: "macos-15-intel", qt-version: 5, min-deploy-target: 10.14 }
+          - { str: macos-arm64, arch: arm64, runner: "macos-26", qt-version: 6.11.1, min-deploy-target: 11.0 }
+          - { str: macos-x64, arch: x86_64, runner: "macos-15-intel", qt-version: 5.15.2, min-deploy-target: 10.14 }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
@@ -295,7 +295,6 @@ jobs:
       - name: Install dependencies
         run: |
           brew install -q \
-              qt@${{ matrix.platform.qt-version }} \
               autoconf \
               autoconf-archive \
               automake \
@@ -303,6 +302,15 @@ jobs:
               nasm \
               nuget \
               python-setuptools
+
+      - name: Install Qt
+        continue-on-error: true
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ matrix.platform.qt-version }}
+          arch: clang_64
+          host: mac
+          dir: ${{ github.workspace }}/qt
 
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
@@ -333,7 +341,6 @@ jobs:
             -DPLASMA_BUILD_TESTS=ON \
             -DPLASMA_BUILD_TOOLS=ON \
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} \
-            -DQt${{ matrix.platform.qt-version }}_ROOT=$(brew --prefix qt@${{ matrix.platform.qt-version }}) \
             -DVCPKG_INSTALL_OPTIONS=--clean-after-build \
             -S . -B build
         env:
