@@ -164,16 +164,6 @@ def getParamDict(module):
         module.glue_paramKeys = paramKeys
         return params
 
-def getClassName(module):
-    cl = getClass(module)
-    if cl is not None:
-        return cl.__name__
-
-    if _isVerbose(module):
-        PtDebugPrint(f"Class not found in {module.glue_name}.py")
-
-    return None
-
 def getBlockID(module):
     inst = getInstance(module)
     if inst is not None:

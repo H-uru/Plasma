@@ -255,13 +255,6 @@ bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
             return false;
         }
 
-        // Get the class name
-        ST::string className;
-        if (!ICallGlueStrFunc(glueModule, "getClassName", modifierModule, className))
-        {
-            return false;
-        }
-
         // Get the number of parameters
         int numParams = 0;
         if (!ICallGlueIntFunc(glueModule, "getNumParams", modifierModule, numParams))
@@ -289,7 +282,7 @@ bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
 
         if (PyCallable_Check(getParamFunc))
         {
-            plAutoUIBlock *autoUI = new plAutoUIBlock(PythonFile::GetClassDesc(), blockID, std::move(className), version);
+            plAutoUIBlock *autoUI = new plAutoUIBlock(PythonFile::GetClassDesc(), blockID, fileName, version);
             // test to see if it is a multi-modifier type class
             if (isMulti)
                 autoUI->SetMultiModifierFlag(true);
