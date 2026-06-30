@@ -1006,7 +1006,7 @@ bool plMetalDevice::CreateNewCommandBuffer()
 {
     fCurrentCommandBuffer = fCommandQueue->commandBuffer();
 
-    auto surface = (*fRenderDestination)->GetNextRenderSurface(fCurrentCommandBuffer);
+    auto surface = fWindow->metalRenderDestination().GetNextRenderSurface(fCurrentCommandBuffer);
     if (!surface) {
         fCurrentCommandBuffer = nullptr;
         return false;

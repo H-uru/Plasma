@@ -143,6 +143,10 @@ public:
     virtual plOptionalMetalRenderSurface GetNextRenderSurface(MTL::CommandBuffer* buffer) = 0;
     virtual void                         SetOutputSize(CGSize size) = 0;
 
+    plMetalRenderDestinationType() = default;
+    plMetalRenderDestinationType (const plMetalRenderDestinationType&) = delete;
+    plMetalRenderDestinationType& operator= (const plMetalRenderDestinationType&) = delete;
+
     virtual ~plMetalRenderDestinationType() = default;
 };
 
@@ -184,9 +188,12 @@ private:
     std::unique_ptr<T> fProvider;
 };
 
-struct plMetalDestinationWindow
+class plMetalWindow
 {
-    plMetalRenderDestinationType* fMetalRenderDestination;
+public:
+    // metalRenderDestination can change frame to frame (for now)
+    // Result provided as a reference to prevent holding on to a pointer
+    virtual plMetalRenderDestinationType& metalRenderDestination() = 0;
 };
 
 #endif

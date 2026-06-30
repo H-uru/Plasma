@@ -94,7 +94,7 @@ public:
     plMetalPipeline* fPipeline;
 
     hsWindowHndl fDevice;
-    hsWindowHndl fWindow;
+    plMetalWindow* fWindow;
 
     ST::string fErrorMsg;
 
@@ -103,8 +103,6 @@ public:
     uint32_t                   fDeviceType;
     MTL::CommandQueue*         fCommandQueue;
     MTL::Buffer*               fCurrentIndexBuffer;
-
-    plMetalRenderDestinationType** fRenderDestination;
 
     size_t          fActiveThread;
     matrix_float4x4 fMatrixProj;

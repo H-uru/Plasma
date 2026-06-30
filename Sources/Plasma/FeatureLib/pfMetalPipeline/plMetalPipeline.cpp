@@ -211,9 +211,11 @@ plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, con
 
     // For now - set this once at startup. If the underlying device is allow to change on
     // the fly (eGPU, display change, etc) - revisit.
-    plMetalRenderDestinationType** renderDestination = static_cast<plMetalRenderDestinationType**>(window);
-    (*renderDestination)->SetOutputSize(CGSizeMake(devMode->GetMode()->GetWidth(), devMode->GetMode()->GetHeight()));
-    fDevice.fRenderDestination = renderDestination;
+    // This is a static cast because plClientWindow has not been integrated into the engine yet
+    // The pointer to the window is going to be a void*. Assume it's a window that conforms to
+    // plMetalRenderDestinationProvider
+    fDevice.fWindow = static_cast<plMetalWindow*>(window);
+    fDevice.fWindow->metalRenderDestination().SetOutputSize(CGSizeMake(devMode->GetMode()->GetWidth(), devMode->GetMode()->GetHeight()));
     fDevice.fDisplay = display;
 
     // Default our output format to 8 bit BGRA. Client may immediately change this to
@@ -787,7 +789,7 @@ void plMetalPipeline::Resize(uint32_t width, uint32_t height)
         fOrigHeight = height;
         IGetViewTransform().SetScreenSize((uint16_t)(fOrigWidth), (uint16_t)(fOrigHeight));
         resetTransform.SetScreenSize((uint16_t)(fOrigWidth), (uint16_t)(fOrigHeight));
-        (*fDevice.fRenderDestination)->SetOutputSize(CGSizeMake(width, height));
+        fDevice.fWindow->metalRenderDestination().SetOutputSize(CGSizeMake(width, height));
     } else {
         // Just for debug
         hsStatusMessage("Recreating the pipeline...");

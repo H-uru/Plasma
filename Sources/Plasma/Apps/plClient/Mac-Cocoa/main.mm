@@ -196,6 +196,24 @@ static uint32_t ParseRendererArgument(const ST::string& requested)
     return hsG3DDeviceSelector::kDevTypeUnknown;
 }
 
+@class AppDelegate;
+
+// Stub placeholder for actual plClientWindow implementation
+class plClientWindow {
+
+};
+
+class plMacClientWindow: public plClientWindow, public plMetalWindow
+{
+public:
+    plMetalRenderDestinationType& metalRenderDestination() override {
+        return *fMetalRenderDestination;
+    }
+
+    std::unique_ptr<plMetalRenderDestinationType> fMetalRenderDestination;
+    ~plMacClientWindow() = default;
+};
+
 @interface AppDelegate : NSWindowController <NSApplicationDelegate,
                                              NSWindowDelegate,
                                              PLSViewDelegate,
@@ -207,6 +225,7 @@ static uint32_t ParseRendererArgument(const ST::string& requested)
     dispatch_source_t   _displaySource;
     plMacDisplayHelper* _displayHelper;
     PLSWakeLockHolder   _wakeLockHolder;
+    plMacClientWindow   _plasmaWindow;
 }
 
 @property(retain) PLSKeyboardEventMonitor* eventMonitor;
@@ -219,7 +238,6 @@ static uint32_t ParseRendererArgument(const ST::string& requested)
 @property PLSPatcher* patcher;
 @property PLSLoginWindowController* loginWindow;
 @property NSWindow* gameWindow;
-@property plMetalRenderDestinationType*    renderDestination;
 
 @property plMetalPipeline* metalPipeline;
 @property plGLPipeline*    glPipeline;
@@ -343,9 +361,9 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
     // Components like the intro movie may want to draw
     // before we're ready to start a vsync managed render
     // destination.
-    self.renderDestination = new plMetalRenderDestination<plDirectMetalRenderDestination*>((CAMetalLayer*)self.plsView.layer);
+    _plasmaWindow.fMetalRenderDestination = std::make_unique<plMetalRenderDestination<plDirectMetalRenderDestination*>>((CAMetalLayer*)self.plsView.layer);
 
-    gClient.SetClientWindow(&_renderDestination);
+    gClient.SetClientWindow(&_plasmaWindow);
     gClient.SetClientDisplay([window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue]);
 
     self = [super initWithWindow:window];
