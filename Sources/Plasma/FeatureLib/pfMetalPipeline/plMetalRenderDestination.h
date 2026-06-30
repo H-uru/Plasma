@@ -69,7 +69,7 @@ struct plMetalRenderSurface
 
     // Copy constructor - retain to create independent copy
     plMetalRenderSurface(const plMetalRenderSurface& other)
-        : fColorTexture(other.fColorTexture), fDrawable(other.fDrawable)
+        : fColorTexture(other.fColorTexture->retain()), fDrawable(other.fDrawable->retain())
     { }
 
     // Copy assignment with self-assignment protection
