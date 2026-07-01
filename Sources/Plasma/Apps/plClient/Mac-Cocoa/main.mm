@@ -239,9 +239,6 @@ public:
 @property PLSLoginWindowController* loginWindow;
 @property NSWindow* gameWindow;
 
-@property plMetalPipeline* metalPipeline;
-@property plGLPipeline*    glPipeline;
-
 @end
 
 void plClient::IResizeNativeDisplayDevice(int width, int height, bool windowed)
@@ -283,13 +280,7 @@ void plClient::IResizeNativeDisplayDevice(int width, int height, bool windowed)
 
 void plClient::IChangeResolution(int width, int height) {}
 void plClient::IUpdateProgressIndicator(plOperationProgress* progress) {}
-void plClient::ShowClientWindow()
-{
-    AppDelegate* appDelegate = (AppDelegate*)[NSApp delegate];
-    plPipeline* pipeline = appDelegate->gClient->GetPipeline();
-    appDelegate.metalPipeline = plMetalPipeline::ConvertNoRef(pipeline);
-    appDelegate.glPipeline = plGLPipeline::ConvertNoRef(pipeline);
-}
+void plClient::ShowClientWindow() {}
 
 void plClient::FlashWindow()
 {
