@@ -208,12 +208,14 @@ plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, con
     fIsFullscreen = !fInitialPipeParams.Windowed;
     
     fDesktopParams = plDisplayHelper::GetInstance()->DesktopDisplayMode();
-    
-    fDevice.SetOutputLayer(reinterpret_cast<CA::MetalLayer*>(window));
+
     // For now - set this once at startup. If the underlying device is allow to change on
     // the fly (eGPU, display change, etc) - revisit.
-    fDevice.GetOutputLayer()->setDevice(fDevice.fMetalDevice);
-    fDevice.GetOutputLayer()->setDrawableSize(CGSizeMake(devMode->GetMode()->GetWidth(), devMode->GetMode()->GetHeight()));
+    // This is a static cast because plClientWindow has not been integrated into the engine yet
+    // The pointer to the window is going to be a void*. Assume it's a window that conforms to
+    // plMetalRenderDestinationProvider
+    fDevice.fWindow = static_cast<plMetalWindow*>(window);
+    fDevice.fWindow->metalRenderDestination().SetOutputSize(CGSizeMake(devMode->GetMode()->GetWidth(), devMode->GetMode()->GetHeight()));
     fDevice.fDisplay = display;
 
     // Default our output format to 8 bit BGRA. Client may immediately change this to
@@ -678,16 +680,11 @@ bool plMetalPipeline::BeginRender()
         IPreprocessShadows();
         IPreprocessAvatarTextures();
 
-        CA::MetalLayer* outputLayer = fDevice.GetOutputLayer();
-        
-        CA::MetalDrawable* drawable = fDevice.GetOutputLayer()->nextDrawable()->retain();
-        if (!drawable) {
+        if (!fDevice.CreateNewCommandBuffer()) {
             // no framebuffer available - abort
             EndRender();
             return true;
         }
-        fDevice.CreateNewCommandBuffer(drawable);
-        drawable->release();
 
         /// If we have a renderTarget active, use its viewport
         // FIXME: New drawables should inherit existing viewport
@@ -792,7 +789,7 @@ void plMetalPipeline::Resize(uint32_t width, uint32_t height)
         fOrigHeight = height;
         IGetViewTransform().SetScreenSize((uint16_t)(fOrigWidth), (uint16_t)(fOrigHeight));
         resetTransform.SetScreenSize((uint16_t)(fOrigWidth), (uint16_t)(fOrigHeight));
-        fDevice.GetOutputLayer()->setDrawableSize(CGSizeMake(width, height));
+        fDevice.fWindow->metalRenderDestination().SetOutputSize(CGSizeMake(width, height));
     } else {
         // Just for debug
         hsStatusMessage("Recreating the pipeline...");
