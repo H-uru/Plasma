@@ -240,8 +240,7 @@ public:
 @property PLSPatcher* patcher;
 @property PLSLoginWindowController* loginWindow;
 @property NSWindow* gameWindow;
-@property plMetalRenderDestinationType*    renderDestination;
-@property plMetalRenderLoopType*           renderLoop;
+@property plMetalRenderLoopType* renderLoop;
 
 @end
 
@@ -410,13 +409,11 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 {
     NetCliAuthAutoReconnectEnable(true);
 
-    delete self.renderDestination;
     if (@available(macOS 14.0, *)) {
         auto renderLoop = PlasmaClient::MetalRenderLoop::Create((CAMetalLayer*)self.plsView.layer);
-        self.renderDestination = new plMetalRenderDestination<PlasmaClient::MetalRenderLoop>(renderLoop);
+        _plasmaWindow.fMetalRenderDestination = std::make_unique<plMetalRenderDestination<PlasmaClient::MetalRenderLoop>>(renderLoop);
         self.renderLoop = new plRenderLoop<PlasmaClient::MetalRenderLoop>(renderLoop);
     } else {
-        self.renderDestination = new plMetalRenderDestination<plDirectMetalRenderDestination*>((CAMetalLayer*)self.plsView.layer);
         self.renderLoop = new plRenderLoop<plLegacyRenderLoop>(self.window);
     }
 
@@ -698,7 +695,9 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     // macOS has requested we terminate. This could happen because the user asked us to quit, the
     // system is going to restart, etc... Do any cleanup we need to do. If we need to we can ask for
     // more time, but right now nothing in our implementation requires that.
-    self.renderLoop->StopRenderLoop();
+    if (self.renderLoop) {
+        self.renderLoop->StopRenderLoop();
+    }
     @synchronized(_renderLayer) {
         if (gClient) {
             gClient.ShutdownStart();
