@@ -59,8 +59,7 @@ static inline void IAddWideString(PyWideStringList& list, const plFileName& file
     PyWideStringList_Append(&list, filename.AsString().to_wchar().data());
 }
 
-void PythonInterface::initPython(const plFileName& rootDir, const std::vector<plFileName>& extraDirs,
-                                 FILE* outstream, FILE* errstream)
+void PythonInterface::initPython(const plFileName& rootDir, FILE* outstream, FILE* errstream)
 {
     // if haven't been initialized then do it
     if (Py_IsInitialized() == 0) {
@@ -79,13 +78,11 @@ void PythonInterface::initPython(const plFileName& rootDir, const std::vector<pl
         config.site_import = 0;
         PyConfig_SetString(&config, &config.program_name, L"plasma");
 
-        // Explicit module search paths so no build-env specific stuff gets in.
-        IAddWideString(config.module_search_paths, rootDir);
-        IAddWideString(config.module_search_paths, plFileName::Join(rootDir, "plasma"));
+        // Set up Python stdlib module search paths - Python won't work at all without these.
+        // Don't add the Plasma modules or the files being packed -
+        // when building the .pak file, they are only parsed, not imported!
         IAddWideString(config.module_search_paths, plFileName::Join(rootDir, "system"));
         IAddWideString(config.module_search_paths, plFileName::Join(rootDir, "system", "lib-dynload"));
-        for (const auto& dir : extraDirs)
-            IAddWideString(config.module_search_paths, plFileName::Join(rootDir, dir));
         config.module_search_paths_set = 1;
 
         // initialize the Python stuff

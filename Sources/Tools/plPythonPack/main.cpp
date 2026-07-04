@@ -193,7 +193,7 @@ void FindPackages(std::vector<plFileName>& fileNames, std::vector<plFileName>& p
     }
 }
 
-void PackDirectory(const plFileName& dir, const plFileName& rootPath, const plFileName& pakName, std::vector<plFileName>& extraDirs, bool packSysAndPlasma = false)
+void PackDirectory(const plFileName& dir, const plFileName& rootPath, const plFileName& pakName, bool packSysAndPlasma = false)
 {
     ST::printf(out, "\nCreating {} using the contents of {}\n", pakName, dir);
     ST::printf(out, "Changing working directory to {}\n", rootPath);
@@ -237,7 +237,7 @@ void PackDirectory(const plFileName& dir, const plFileName& rootPath, const plFi
             s.WriteLE32(0);
         }
 
-        PythonInterface::initPython(rootPath, extraDirs, out, stderr);
+        PythonInterface::initPython(rootPath, out, stderr);
     
         std::vector<uint32_t> filePositions(fileNames.size());
 
@@ -314,13 +314,13 @@ static int hsMain(std::vector<ST::string> args)
     plFileName rootPath(packDir);
     rootPath = rootPath.AbsolutePath();
 
-    PackDirectory(rootPath, rootPath, plFileName::Join(rootPath, kPackFileName), dirNames, true);
+    PackDirectory(rootPath, rootPath, plFileName::Join(rootPath, kPackFileName), true);
     for (auto it = dirNames.begin(); it != dirNames.end(); ++it) {
         // Make sure this subdirectory is not just a python module. Those are packed into the
         // main python root package...
         plFileName dir = plFileName::Join(rootPath, *it);
         if (plFileSystem::ListDir(dir, kModuleFile).empty())
-            PackDirectory(*it, rootPath, plFileName::Join(rootPath, *it + ".pak"), dirNames);
+            PackDirectory(*it, rootPath, plFileName::Join(rootPath, *it + ".pak"));
     }
 
     if (out && out != stdout)
