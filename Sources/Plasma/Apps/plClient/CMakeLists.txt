@@ -67,6 +67,7 @@ set(plClient_HEADERS
     plClientCreatable.h
     plClientLoader.h
     plClientUpdateFormat.h
+    plClientWindow.h
 )
 
 set(plClient_SOURCES
@@ -134,7 +135,6 @@ elseif(UNIX)
         $<$<BOOL:${USE_X11}>:linux/plX11ClientWindow.cpp>
     )
     list(APPEND plClient_HEADERS
-        linux/plClientWindow.h
         $<$<BOOL:${USE_X11}>:linux/plX11ClientWindow.h>
     )
     list(APPEND plClient_RESOURCES
