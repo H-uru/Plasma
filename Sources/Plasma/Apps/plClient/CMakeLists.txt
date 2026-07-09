@@ -121,6 +121,7 @@ elseif(APPLE)
     )
     set_source_files_properties("Mac-Cocoa/AppIcon.icon" PROPERTIES
         XCODE_EXPLICIT_FILE_TYPE "folder.iconcomposer.icon"
+        MACOSX_PACKAGE_LOCATION Resources
     )
 else()
     list(APPEND plClient_SOURCES
