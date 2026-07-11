@@ -59,8 +59,6 @@ class plMetalMaterialShaderRef : public plMetalDeviceRef
 protected:
     plMetalPipeline*    fPipeline;
     hsGMaterial*        fMaterial;
-    // temporary holder for the fragment shader to use, we don't own this reference
-    MTL::Function*      fFragFunction;
 
 private:
     std::vector<uint32_t>      fPassIndices;
