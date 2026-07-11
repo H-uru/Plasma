@@ -52,6 +52,9 @@ typedef _Float16 half;
 typedef __attribute__((__ext_vector_type__(2))) half half2;
 typedef __attribute__((__ext_vector_type__(3))) half half3;
 typedef __attribute__((__ext_vector_type__(4))) half half4;
+#else
+#include <metal_stdlib>
+using namespace metal;
 #endif
 
 #if !defined(__METAL_VERSION__) && defined(METAL_3_SDK)
@@ -62,6 +65,13 @@ class texture2d : public MTL::ResourceID
 {
 public:
     texture2d(MTL::ResourceID v) : MTL::ResourceID(v) {}
+};
+
+template <typename T>
+class texture3d : public MTL::ResourceID
+{
+public:
+    texture3d(MTL::ResourceID v) : MTL::ResourceID(v) {}
 };
 
 class sampler : public MTL::ResourceID
@@ -111,6 +121,7 @@ enum plMetalShaderArgument
     FragmentShaderArgumentShadowCastAlphaSrc = 8,
     /// Material properties for vertex lighting
     FragmentShaderArgumentMaterialLighting = 10,
+    FragmentShaderLayers = 11,
 };
 
 enum plMetalVertexAttribute
@@ -170,13 +181,6 @@ struct plMetalShadowCastFragmentShaderArgumentBuffer
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<plMetalShadowCastFragmentShaderArgumentBuffer>, "plMetalShadowCastFragmentShaderArgumentBuffer must be a trivial type!");
 #endif
-
-enum plMetalFragmentShaderTextures
-{
-    FragmentShaderArgumentAttributeTextures = 0,
-    FragmentShaderArgumentAttributeCubicTextures = 8,
-    FragmentShaderArgumentAttributeUniforms = 32
-};
 
 struct plMetalShaderLightSource
 {
@@ -296,6 +300,15 @@ struct plMetalBumpmap
     float       scale;
     simd::char2 dTangentIndex;
 } __attribute__((aligned(4)));
+
+struct plMetalLayer
+{
+#if __METAL_VERSION__ >= 300 || defined(METAL_3_SDK)
+    texture2d<half> texture;
+    texture3d<half> texture3D;
+    sampler         sampler;
+#endif
+};
 
 #endif /* ShaderTypes_h */
 

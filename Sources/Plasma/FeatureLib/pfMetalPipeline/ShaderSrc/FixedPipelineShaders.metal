@@ -51,12 +51,7 @@ using namespace metal;
 // Including header shared between this Metal shader code and Swift/C code executing Metal API commands
 #include "ShaderVertex.h"
 #include "ShaderTypes.h"
-
-#define GMAT_STATE_ENUM_START(name)       enum name {
-#define GMAT_STATE_ENUM_VALUE(name, val)    name = val,
-#define GMAT_STATE_ENUM_END(name)         };
-
-#include "hsGMatStateEnums.h"
+#include "MetalShaderCommon.h"
 
 enum plUVWSrcModifiers: uint32_t
 {
@@ -91,20 +86,10 @@ constant const uint32_t blendModes5 [[ function_constant(FunctionConstantBlendMo
 constant const uint32_t blendModes6 [[ function_constant(FunctionConstantBlendModes + 5)    ]];
 constant const uint32_t blendModes7 [[ function_constant(FunctionConstantBlendModes + 6)    ]];
 constant const uint32_t blendModes8 [[ function_constant(FunctionConstantBlendModes + 7)    ]];
-    
-constant const uint32_t miscFlags1 [[ function_constant(FunctionConstantLayerFlags + 0)    ]];
-constant const uint32_t miscFlags2 [[ function_constant(FunctionConstantLayerFlags + 1)    ]];
-constant const uint32_t miscFlags3 [[ function_constant(FunctionConstantLayerFlags + 2)    ]];
-constant const uint32_t miscFlags4 [[ function_constant(FunctionConstantLayerFlags + 3)    ]];
-constant const uint32_t miscFlags5 [[ function_constant(FunctionConstantLayerFlags + 4)    ]];
-constant const uint32_t miscFlags6 [[ function_constant(FunctionConstantLayerFlags + 5)    ]];
-constant const uint32_t miscFlags7 [[ function_constant(FunctionConstantLayerFlags + 6)    ]];
-constant const uint32_t miscFlags8 [[ function_constant(FunctionConstantLayerFlags + 7)    ]];
 
 #define MAX_BLEND_PASSES 8
 constant const uint8_t sourceTypes[MAX_BLEND_PASSES] = { sourceType1, sourceType2, sourceType3, sourceType4, sourceType5, sourceType6, sourceType7, sourceType8};
 constant const uint32_t blendModes[MAX_BLEND_PASSES] = { blendModes1, blendModes2, blendModes3, blendModes4, blendModes5, blendModes6, blendModes7, blendModes8};
-constant const uint32_t miscFlags[MAX_BLEND_PASSES] = { miscFlags1, miscFlags2, miscFlags3, miscFlags4, miscFlags5, miscFlags6, miscFlags7, miscFlags8};
 constant const uint8_t passCount = (sourceType1 > 0) + (sourceType2 > 0) + (sourceType3 > 0) + (sourceType4 > 0) + (sourceType5 > 0) + (sourceType6 > 0) + (sourceType7 > 0) + (sourceType8 > 0);
     
 constant const bool has2DTexture1 = (sourceType1 == PassTypeTexture && hasLayer1);
@@ -133,37 +118,6 @@ constant const bool hasBumpMap5 = (numBumpMaps > 4);
 constant const bool hasBumpMap6 = (numBumpMaps > 5);
 constant const bool hasBumpMap7 = (numBumpMaps > 6);
 constant const bool hasBumpMap8 = (numBumpMaps > 7);
-
-struct FragmentShaderArguments
-{
-    texture2d<half> textures  [[ texture(FragmentShaderArgumentAttributeTextures), function_constant(has2DTexture1)  ]];
-    texture2d<half> texture2  [[ texture(FragmentShaderArgumentAttributeTextures + 1), function_constant(has2DTexture2)    ]];
-    texture2d<half> texture3  [[ texture(FragmentShaderArgumentAttributeTextures + 2), function_constant(has2DTexture3)    ]];
-    texture2d<half> texture4  [[ texture(FragmentShaderArgumentAttributeTextures + 3), function_constant(has2DTexture4)    ]];
-    texture2d<half> texture5  [[ texture(FragmentShaderArgumentAttributeTextures + 4), function_constant(has2DTexture5)    ]];
-    texture2d<half> texture6  [[ texture(FragmentShaderArgumentAttributeTextures + 5), function_constant(has2DTexture6)    ]];
-    texture2d<half> texture7  [[ texture(FragmentShaderArgumentAttributeTextures + 6), function_constant(has2DTexture7)    ]];
-    texture2d<half> texture8  [[ texture(FragmentShaderArgumentAttributeTextures + 7), function_constant(has2DTexture8)    ]];
-    texturecube<half> cubicTextures  [[ texture(FragmentShaderArgumentAttributeCubicTextures), function_constant(hasCubicTexture1)    ]];
-    texturecube<half> cubicTexture2  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 1), function_constant(hasCubicTexture2)  ]];
-    texturecube<half> cubicTexture3  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 2), function_constant(hasCubicTexture3)  ]];
-    texturecube<half> cubicTexture4  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 3), function_constant(hasCubicTexture4)  ]];
-    texturecube<half> cubicTexture5  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 4), function_constant(hasCubicTexture5)  ]];
-    texturecube<half> cubicTexture6  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 5), function_constant(hasCubicTexture6)  ]];
-    texturecube<half> cubicTexture7  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 6), function_constant(hasCubicTexture7)  ]];
-    texturecube<half> cubicTexture8  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 7), function_constant(hasCubicTexture8)  ]];
-    const constant plMetalFragmentShaderArgumentBuffer*     bufferedUniforms   [[ buffer(FragmentShaderArgumentUniforms)   ]];
-    half4 sampleLayer(const size_t index, const half4 vertexColor, const uint8_t passType, float3 sampleCoord) const;
-    // number of layers is variable, so have to declare these samplers the ugly way
-    sampler samplers  [[ sampler(0), function_constant(hasLayer1)  ]];
-    sampler sampler2  [[ sampler(1), function_constant(hasLayer2)  ]];
-    sampler sampler3  [[ sampler(2), function_constant(hasLayer3)  ]];
-    sampler sampler4  [[ sampler(3), function_constant(hasLayer4)  ]];
-    sampler sampler5  [[ sampler(4), function_constant(hasLayer5)  ]];
-    sampler sampler6  [[ sampler(5), function_constant(hasLayer6)  ]];
-    sampler sampler7  [[ sampler(6), function_constant(hasLayer7)  ]];
-    sampler sampler8  [[ sampler(7), function_constant(hasLayer8)  ]];
-};
 
 typedef struct
 {
@@ -206,20 +160,6 @@ struct Lighting
     constant plMetalShaderActiveLight* activeLights      [[ buffer(ShaderActiveLights) ]];
     constant uint& lightCount [[ buffer(ShaderActiveLightCount)  ]];
 };
-    
-struct plTier1Bumpmap
-{
-    char2 dTangentIndex         [[ id(dTangentIndexID) ]];
-    texture2d<half> bumpTexture [[ id(textureID) ]];
-    sampler bumpTextureSampler  [[ id(samplerID) ]];
-    float scale                 [[ id(dScaleID) ]];
-};
-    
-#if __METAL_VERSION__ >= 300
-typedef plMetalBumpmap ShaderBumpMapType;
-#else
-typedef plTier1Bumpmap ShaderBumpMapType;
-#endif
 
 typedef struct
 {
@@ -477,26 +417,6 @@ half4 VertexUniforms::calcFog(float4 camPosition) constant
     }
     resultColor.rgb = fogColor;
     return resultColor;
-}
-    
-half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 vertexColor, const uint8_t passType, float3 sampleCoord) const
-{
-    if (passType == PassTypeColor) {
-        return vertexColor;
-    } else {
-        if (miscFlags[index] & kMiscPerspProjection) {
-            sampleCoord.xy /= sampleCoord.z;
-        }
-        
-        // do the actual sample
-        if (passType == PassTypeTexture) {
-            return (&textures)[index].sample((&samplers)[index], sampleCoord.xy);
-        } else if (passType == PassTypeCubicTexture) {
-            return (&cubicTextures)[index].sample((&samplers)[index], sampleCoord.xyz);
-        } else {
-            return half4(0.h);
-        }
-    }
 }
 
 fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],

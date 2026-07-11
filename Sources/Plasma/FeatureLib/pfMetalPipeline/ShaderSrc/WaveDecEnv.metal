@@ -367,7 +367,7 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
 
 fragment float4 ps_WaveDecEnv(vs_WaveDecEnv7InOut in            [[ stage_in ]],
                              texture2d<float> normalMap         [[ texture(0) ]],
-                             texturecube<float> environmentMap  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 1) ]])
+                             texturecube<float> environmentMap  [[ texture(1) ]])
 {
     // Very simular to ps_WaveFixed.inl. Only the final coloring is different.
     // Even though so far they are identical.

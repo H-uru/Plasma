@@ -40,60 +40,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plMetalPlateManager_h
-#define plMetalPlateManager_h
+#include "MetalShaderCommon.h"
 
-#include <simd/simd.h>
-#include <stdio.h>
-
-#include <Metal/Metal.hpp>
-
-#include "hsPoint2.h"
-#include "plMetalPipelineState.h"
-#include "plPipeline/plPlates.h"
-
-class plMetalPipeline;
-class plMetalDevice;
-
-class plMetalPlatePipelineState : public plMetalPipelineState
+half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 vertexColor, const uint8_t passType, float3 sampleCoord) const
 {
-public:
-    plMetalPlatePipelineState(plMetalDevice* device) : plMetalPipelineState(device){};
-    bool                  IsEqual(const plMetalPipelineState& p) const override;
-    uint16_t              GetID() const override { return plMetalPipelineType::Plate; }
-    plMetalPipelineState* Clone() override;
-    const MTL::Function * GetVertexFunction(MTL::Library* library) override;
-    const MTL::Function * GetFragmentFunction(MTL::Library* library) override;
-    const NS::String*     GetDescription() override;
-
-    void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) override;
-
-    void ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor) override;
-
-    void GetFunctionConstants(MTL::FunctionConstantValues*) const override;
-};
-
-class plMetalPlateManager : public plPlateManager
-{
-    friend class plMetalPipeline;
-
-public:
-    plMetalPlateManager(plMetalPipeline* pipe);
-    void IDrawToDevice(plPipeline* pipe) override;
-    void ICreateGeometry();
-    void IReleaseGeometry();
-    void EncodeDraw(MTL::RenderCommandEncoder* encoder);
-    ~plMetalPlateManager();
-
-private:
-    struct plateVertexBuffer
-    {
-        hsPoint2 vertices[4];
-        hsPoint2 uv[4];
-    };
-    MTL::Buffer*            fVtxBuffer;
-    MTL::Buffer*            idxBuffer;
-    MTL::DepthStencilState* fDepthState;
-};
-
-#endif
+    if (passType == PassTypeColor) {
+        return vertexColor;
+    } else {
+        if (miscFlags[index] & kMiscPerspProjection) {
+            sampleCoord.xy /= sampleCoord.z;
+        }
+        
+        device ShaderLayerType &layer = layers[index];
+        // do the actual sample
+        if (passType == PassTypeTexture) {
+            return layer.texture.sample(layer.sampler, sampleCoord.xy);
+        } else if (passType == PassTypeCubicTexture) {
+            return layer.texture3D.sample(layer.sampler, sampleCoord.xyz);
+        } else {
+            return half4(0.h);
+        }
+    }
+}
