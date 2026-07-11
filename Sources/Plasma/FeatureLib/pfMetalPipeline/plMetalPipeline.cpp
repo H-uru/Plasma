@@ -176,7 +176,6 @@ plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, con
                                                                                                                     fRenderTargetRefList(),
                                                                                                                     fMatRefList(),
                                                                                                                     fCurrentRenderPassUniforms(),
-                                                                                                                    fFragFunction(),
                                                                                                                     fVShaderRefList(),
                                                                                                                     fPShaderRefList(),
                                                                                                                     fULutTextureRef(),
@@ -834,10 +833,6 @@ void plMetalPipeline::LoadResources()
         plMetalLightRef* ref = fLightRefList;
         ref->Release();
         ref->Unlink();
-    }
-
-    if (fFragFunction == nil) {
-        FindFragFunction();
     }
 
     if (plMetalPlateManager* pm = static_cast<plMetalPlateManager*>(fPlateMgr))
@@ -2963,27 +2958,6 @@ void plMetalPipeline::IDrawClothingQuad(float x, float y, float w, float h,
 
     fDevice.CurrentRenderCommandEncoder()->setVertexBytes(ptr, sizeof(ptr), 0);
     fDevice.CurrentRenderCommandEncoder()->drawPrimitives(MTL::PrimitiveType::PrimitiveTypeTriangleStrip, NS::UInteger(0), NS::UInteger(4));
-}
-
-void plMetalPipeline::FindFragFunction()
-{
-    MTL::Library* library = fDevice.fMetalDevice->newDefaultLibrary();
-
-    NS::Error* error = nullptr;
-
-    MTL::FunctionConstantValues* functionContents = MTL::FunctionConstantValues::alloc()->init();
-    short                        numUVs = 1;
-    functionContents->setConstantValue(&numUVs, MTL::DataTypeUShort, FunctionConstantNumUVs);
-    functionContents->setConstantValue(&numUVs, MTL::DataTypeUShort, FunctionConstantNumLayers);
-
-    MTL::Function* fragFunction = library->newFunction(
-        NS::String::string("pipelineFragmentShader", NS::ASCIIStringEncoding),
-        functionContents,
-        &error);
-    fFragFunction = fragFunction;
-
-    functionContents->release();
-    library->release();
 }
 
 /*plPipeline* plPipelineCreate::ICreateMetalPipeline(hsWindowHndl disp, hsWindowHndl hWnd, const hsG3DDeviceModeRecord* devMode)

@@ -89,10 +89,6 @@ public:
 
 class plMetalPipeline : public pl3DPipeline<plMetalDevice>
 {
-public:
-    // caching the frag function here so that the shader compiler can quickly access it
-    MTL::Function*                                         fFragFunction;
-
 protected:
     friend class plMetalDevice;
     friend class plMetalPlateManager;
@@ -177,8 +173,6 @@ private:
     plMaterialLightingDescriptor fCurrentRenderPassMaterialLighting;
     
     bool fIsFullscreen;
-
-    void FindFragFunction();
 
     void ISelectLights(const plSpan* span, plMetalMaterialShaderRef* mRef, bool proj = false);
     void ILoadLight(plLightInfo* light);
