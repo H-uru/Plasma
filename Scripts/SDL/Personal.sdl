@@ -382,10 +382,10 @@ STATEDESC Personal
     VAR BYTE        YeeshaPage26[1]             DEFAULT=0 # VeeTsah Sky
     VAR BYTE        YeeshaPage27[1]             DEFAULT=0 # Oceans
     VAR BYTE        YeeshaPage28[1]             DEFAULT=0 # Blue Flowers
-    VAR BYTE        YeeshaPage29[1]             DEFAULT=0
-    VAR BYTE        YeeshaPage30[1]             DEFAULT=0
-    VAR BYTE        YeeshaPage31[1]             DEFAULT=0
-    VAR BYTE        YeeshaPage32[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage29[1]             DEFAULT=0 # Crystals Trees
+    VAR BYTE        YeeshaPage30[1]             DEFAULT=0 # Swing Island
+    VAR BYTE        YeeshaPage31[1]             DEFAULT=0 # Ferns
+    VAR BYTE        YeeshaPage32[1]             DEFAULT=0 # Green Bushes
     VAR BYTE        YeeshaPage33[1]             DEFAULT=0
     VAR BYTE        YeeshaPage34[1]             DEFAULT=0
     VAR BYTE        YeeshaPage35[1]             DEFAULT=0
