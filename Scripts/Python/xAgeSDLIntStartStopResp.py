@@ -58,7 +58,8 @@ respStop = ptAttribResponder(5,"Stop Responder")
 boolStopFF = ptAttribBoolean(6,"Fast forward on stop",1)
 intDefault = ptAttribInt(7,"Default setting",0)
 boolFFOnInit = ptAttribBoolean(8, "F-Forward on Init", 0)
-
+# This was added long after this file was used in game, so default to false for compatibility
+boolVaultManagerFF = ptAttribBoolean(9, "F-Forward on VM notifications", 0)
 
 class xAgeSDLIntStartStopResp(ptResponder):
     def __init__(self):
@@ -108,12 +109,21 @@ class xAgeSDLIntStartStopResp(ptResponder):
         ageSDL = PtGetAgeSDL()
         SDLvalue = ageSDL[stringSDLVarName.value][0]
         
-        PtDebugPrint("DEBUG: xAgeSDLIntStartStopResp.OnSDLNotify received: %s = %d" % (VARname, SDLvalue))
-        
-        if  SDLvalue in self.enabledStateList:
-            PtDebugPrint("DEBUG: xAgeSDLIntStartStopResp.OnSDLNotify: running start responder")
-            respStart.run(self.key,avatar=None,fastforward=boolStartFF.value)
+        PtDebugPrint(f"xAgeSDLIntStartStopResp.OnSDLNotify(): {VARname=} {SDLvalue=}", level=kDebugDumpLevel)
+
+        if PlayerID:
+            objAvatar = ptSceneobject(PtGetAvatarKeyFromClientID(PlayerID), self.key)
+            fastforward = False
         else:
-            PtDebugPrint("DEBUG: xAgeSDLIntStartStopResp.OnSDLNotify: running stop responder")
-            respStop.run(self.key,avatar=None,fastforward=boolStopFF.value)
+            objAvatar = None
+            fastforward = boolVaultManagerFF.value
+
+        if SDLvalue in self.enabledStateList:
+            PtDebugPrint(f"xAgeSDLIntStartStopResp.OnSDLNotify(): Running start responder", level=kWarningLevel)
+            fastforward |= boolStartFF.value
+            respStart.run(self.key, avatar=objAvatar, fastforward=fastforward)
+        else:
+            PtDebugPrint(f"xAgeSDLIntStartStopResp.OnSDLNotify(): Running stop responder", level=kWarningLevel)
+            fastforward |= boolStopFF.value
+            respStop.run(self.key, avatar=objAvatar, fastforward=fastforward)
 
