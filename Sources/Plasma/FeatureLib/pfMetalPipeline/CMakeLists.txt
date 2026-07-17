@@ -37,6 +37,7 @@ set(pfMetalPipeline_HEADERS
     plMetalPipeline.h
     plMetalPipelineState.h
     plMetalPlateManager.h
+    plMetalRenderDestination.h
     plMetalShader.h
     plMetalTextFont.h
     plMetalFragmentShader.h
