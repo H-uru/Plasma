@@ -1323,24 +1323,21 @@ int cyMisc::GetNumRemotePlayers()
 
 static void IPageNodes(int action, const std::vector<plLocation>& nodeLocs, bool netForce)
 {
-    if (hsgResMgr::ResMgr())
-    {
-        plSynchEnabler ps(false); // disable dirty tracking while paging
-        plClientMsg* msg = new plClientMsg(action);
-        plKey clientKey = hsgResMgr::ResMgr()->FindKey(kClient_KEY);
-        msg->AddReceiver(clientKey);
+    plSynchEnabler ps(false); // disable dirty tracking while paging
+    plClientMsg* msg = new plClientMsg(action);
+    plKey clientKey = hsgResMgr::ResMgr()->FindKey(kClient_KEY);
+    msg->AddReceiver(clientKey);
 
-        if (netForce) {
-            msg->SetBCastFlag(plMessage::kNetPropagate);
-            msg->SetBCastFlag(plMessage::kNetForce);
-        }
-
-        for (const auto& nodeLoc : nodeLocs) {
-            msg->AddRoomLoc(nodeLoc);
-        }
-
-        msg->Send();
+    if (netForce) {
+        msg->SetBCastFlag(plMessage::kNetPropagate);
+        msg->SetBCastFlag(plMessage::kNetForce);
     }
+
+    for (const auto& nodeLoc : nodeLocs) {
+        msg->AddRoomLoc(nodeLoc);
+    }
+
+    msg->Send();
 }
 
 void cyMisc::PageInNodes(const std::vector<plLocation>& nodeLocs, bool netForce)

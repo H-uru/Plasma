@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_view>
 #include <vector>
 
+#include "hsResMgr.h"
+
 #include "plMessage/plConfirmationMsg.h"
 #include "plMessage/plLOSRequestMsg.h"
 #include "plNetClientComm/plNetClientComm.h"
@@ -323,6 +325,17 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=
         PYTHON_RETURN_ERROR;
     }
 
+    // In the past, some age scripts called this function in their __init__,
+    // which gets called during Max plugin startup where there is no ResMgr yet.
+    // This "worked" in the past, but isn't supported anymore.
+    // We still guard against this case so that scripts that haven't been updated
+    // will only cause Python errors and not hard-crash the Max plugin on startup.
+    // See: https://github.com/H-uru/Plasma/issues/1874
+    if (hsgResMgr::ResMgr() == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "No ResMgr present. PtPageInNode needs a ResMgr to find pages. If you are calling PtPageInNode from your Python modifier __init__, move the call into an OnInit callback to fix this error.");
+        PYTHON_RETURN_ERROR;
+    }
+
     std::vector<plLocation> nodeLocs;
     for (const auto& nodeName : nodeNames) {
         plLocation nodeLoc = plKeyFinder::Instance().FindLocation(ageName, nodeName);
@@ -344,6 +357,17 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageOutNode, args, "Params: nodeName, netForce
     if (!PyArg_ParseTuple(args, "O&|b", PyUnicode_STStringConverter, &nodeName, &netForce))
     {
         PyErr_SetString(PyExc_TypeError, "PtPageOutNode expects a string and bool");
+        PYTHON_RETURN_ERROR;
+    }
+
+    // In the past, some age scripts called this function in their __init__,
+    // which gets called during Max plugin startup where there is no ResMgr yet.
+    // This "worked" in the past, but isn't supported anymore.
+    // We still guard against this case so that scripts that haven't been updated
+    // will only cause Python errors and not hard-crash the Max plugin on startup.
+    // See: https://github.com/H-uru/Plasma/issues/1874
+    if (hsgResMgr::ResMgr() == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "No ResMgr present. PtPageOutNode needs a ResMgr to find pages. If you are calling PtPageOutNode from your Python modifier __init__, move the call into an OnInit callback to fix this error.");
         PYTHON_RETURN_ERROR;
     }
 
