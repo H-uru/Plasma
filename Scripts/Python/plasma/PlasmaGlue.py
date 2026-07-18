@@ -137,14 +137,11 @@ def findAndAddAttribs(obj, params, *, verbose):
                 PtDebugPrint(f"{obj.name} has id {obj.id} which is already defined in {params[obj.id].name}")
         else:
             params[obj.id] = obj
-    elif isinstance(obj, list):
+    elif isinstance(obj, (list, tuple)):
         for o in obj:
             findAndAddAttribs(o, params, verbose=verbose)
     elif isinstance(obj, dict):
         for o in obj.values():
-            findAndAddAttribs(o, params, verbose=verbose)
-    elif isinstance(obj, tuple):
-        for o in obj:
             findAndAddAttribs(o, params, verbose=verbose)
 
 def getParamDict(module):
@@ -185,17 +182,22 @@ def getNumParams(module):
     return 0
 
 def getParam(module, number):
+    if number < 0:
+        if _isVerbose(module):
+            PtDebugPrint(f"PlasmaGlue.getParam: Error! Negative attribute list index: {number}")
+        return None
+
     pd = getParamDict(module)
     if pd is not None:
         # see if there is a paramKey list
         if isinstance(module.glue_paramKeys, list):
-            if number in range(len(module.glue_paramKeys)):
+            if number < len(module.glue_paramKeys):
                 return pd[module.glue_paramKeys[number]].getdef()
             else:
                 PtDebugPrint(f"PlasmaGlue.getParam: Error! {number} out of range of attribute list")
         else:
             pl = list(pd.values())
-            if number in range(len(pl)):
+            if number < len(pl):
                 return pl[number].getdef()
             else:
                 if _isVerbose(module):
@@ -226,7 +228,7 @@ def setParam(module, id, value):
                     pd[id].value = value
         else:
             if _isVerbose(module):
-                PtDebugPrint("PlasmaGlue.setParam: can't find id=", id)
+                PtDebugPrint(f"PlasmaGlue.setParam: can't find {id=}")
     else:
         PtDebugPrint("PlasmaGlue.setParam: Something terribly has gone wrong. Head for the cover.")
 
@@ -240,7 +242,7 @@ def isNamedAttribute(module, id):
                 return 2
         except KeyError:
             if _isVerbose(module):
-                PtDebugPrint(f"Could not find id={id} attribute")
+                PtDebugPrint(f"Could not find {id=} attribute")
 
     return 0
 
@@ -249,17 +251,22 @@ def isMultiModifier(module):
     return isinstance(inst, ptMultiModifier)
 
 def getVisInfo(module, number):
+    if number < 0:
+        if _isVerbose(module):
+            PtDebugPrint(f"PlasmaGlue.getVisInfo: Error! Negative attribute list index: {number}")
+        return None
+
     pd = getParamDict(module)
     if pd is not None:
         # see if there is a paramKey list
         if isinstance(module.glue_paramKeys, list):
-            if number in range(len(module.glue_paramKeys)):
+            if number < len(module.glue_paramKeys):
                 return pd[module.glue_paramKeys[number]].getVisInfo()
             else:
                 PtDebugPrint(f"PlasmaGlue.getVisInfo: Error! {number} out of range of attribute list")
         else:
             pl = list(pd.values())
-            if number in range(len(pl)):
+            if number < len(pl):
                 return pl[number].getVisInfo()
             else:
                 if _isVerbose(module):
