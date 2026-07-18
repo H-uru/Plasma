@@ -288,14 +288,12 @@ void plLinkEffectsTriggerMsg::SetLinkInAnimKey(plKey &key)
 
 plLinkEffectsTriggerPrepMsg::~plLinkEffectsTriggerPrepMsg()
 {
-    if (fTrigger)
-        hsRefCnt_SafeUnRef(fTrigger);
+    hsRefCnt_SafeUnRef(fTrigger);
 }
 
 void plLinkEffectsTriggerPrepMsg::SetTrigger(plLinkEffectsTriggerMsg *msg)
 {
-    if (fTrigger)
-        hsRefCnt_SafeUnRef(fTrigger);
+    hsRefCnt_SafeUnRef(fTrigger);
     
     hsRefCnt_SafeRef(msg);
     fTrigger = msg;

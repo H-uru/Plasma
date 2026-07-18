@@ -456,7 +456,7 @@ void plAGMasterMod::PlaySimpleAnim(const ST::string &name)
         plAGDetachCallbackMsg *msg = new plAGDetachCallbackMsg(GetKey(), plEventCallbackMsg::kStop); 
         msg->SetAnimName(name);
         instance->GetTimeConvert()->AddCallback(msg);
-        hsRefCnt_SafeUnRef(msg);
+        msg->UnRef();
     }
 }
 

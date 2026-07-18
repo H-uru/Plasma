@@ -680,7 +680,7 @@ bool    pfGUIControlMod::ISetUpDynTextMap( plPipeline *pipe )
 
 //// Get/SetColorScheme //////////////////////////////////////////////////////
 
-pfGUIColorScheme    *pfGUIControlMod::GetColorScheme() const
+hsWeakRef<pfGUIColorScheme> pfGUIControlMod::GetColorScheme() const
 {
     if (fColorScheme == nullptr)
         return fDialog->GetColorScheme();
@@ -688,17 +688,9 @@ pfGUIColorScheme    *pfGUIControlMod::GetColorScheme() const
     return fColorScheme;
 }
 
-void    pfGUIControlMod::SetColorScheme( pfGUIColorScheme *newScheme )
+void pfGUIControlMod::SetColorScheme(hsRef<pfGUIColorScheme> newScheme)
 {
-    if (fColorScheme != nullptr)
-    {
-        hsRefCnt_SafeUnRef( fColorScheme );
-        fColorScheme = nullptr;
-    }
-
-    fColorScheme = newScheme;
-    if (fColorScheme != nullptr)
-        hsRefCnt_SafeRef( fColorScheme );
+    fColorScheme = std::move(newScheme);
 }
 
 //// SetDynTextMap ///////////////////////////////////////////////////////////
@@ -799,7 +791,7 @@ void    pfGUIControlMod::Read( hsStream *s, hsResMgr *mgr )
     if( s->ReadBool() )
     {
         SetColorScheme(nullptr);
-        fColorScheme = new pfGUIColorScheme();
+        fColorScheme.Steal(new pfGUIColorScheme());
         fColorScheme->Read( s );
     }
 

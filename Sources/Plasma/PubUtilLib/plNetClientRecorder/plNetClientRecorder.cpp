@@ -141,7 +141,7 @@ bool plNetClientLoggingRecorder::IProcessRecordMsg(plNetMessage* msg, double sec
                     hasPick = true;
             }
 
-            hsRefCnt_SafeUnRef(notifyMsg);
+            notifyMsg->UnRef();
 
             if (!hasPick)
                 return false;

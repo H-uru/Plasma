@@ -169,7 +169,7 @@ bool plCaptureRender::Capture(const plKey& ack, uint16_t width, uint16_t height)
 
     // Submit
     plRenderRequestMsg* msg = new plRenderRequestMsg(ack, req);
-    hsRefCnt_SafeUnRef(req);
+    req->UnRef();
     msg->Send();
 
     return true;

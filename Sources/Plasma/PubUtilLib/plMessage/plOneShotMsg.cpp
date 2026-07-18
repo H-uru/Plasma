@@ -45,15 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plOneShotCallbacks.h"
 
 plOneShotMsg::plOneShotMsg()
-{
-    fCallbacks = new plOneShotCallbacks;
-}
-
-plOneShotMsg::~plOneShotMsg()
-{
-    hsRefCnt_SafeUnRef(fCallbacks);
-    fCallbacks = nullptr;
-}
+    : fCallbacks(new plOneShotCallbacks(), hsStealRef)
+{}
 
 void plOneShotMsg::Read(hsStream* stream, hsResMgr* mgr)
 {

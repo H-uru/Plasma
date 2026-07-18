@@ -559,7 +559,7 @@ void plMetalDevice::SetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, pl
 
     owner->SetVertexBufferRef(idx, vRef);
 
-    hsRefCnt_SafeUnRef(vRef);
+    vRef->UnRef();
 }
 
 void plMetalDevice::CheckStaticVertexBuffer(plMetalDevice::VertexBufferRef* vRef, plGBufferGroup* owner, uint32_t idx)
@@ -688,7 +688,7 @@ void plMetalDevice::SetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, plM
     iRef->SetRebuiltSinceUsed(true);
 
     owner->SetIndexBufferRef(idx, iRef);
-    hsRefCnt_SafeUnRef(iRef);
+    iRef->UnRef();
 
     iRef->SetVolatile(owner->AreIdxVolatile());
 }
@@ -779,7 +779,7 @@ void plMetalDevice::SetupTextureRef(plBitmap* img, plMetalDevice::TextureRef* tR
     tRef->SetDirty(true);
 
     img->SetDeviceRef(tRef);
-    hsRefCnt_SafeUnRef(tRef);
+    tRef->UnRef();
 }
 
 void plMetalDevice::ReleaseFramebufferObjects()

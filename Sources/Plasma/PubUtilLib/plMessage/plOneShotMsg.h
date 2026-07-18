@@ -52,10 +52,9 @@ public:
     // We can't use a plEventCallbackMsg since we don't know the actual times we
     // want to be called back at.  We need to use a string, then the plAGAnim
     // will figure out the time internally and create a plEventCallbackMsg.
-    plOneShotCallbacks *fCallbacks;
+    hsRef<plOneShotCallbacks> fCallbacks;
 
     plOneShotMsg();
-    ~plOneShotMsg();
 
     CLASSNAME_REGISTER(plOneShotMsg);
     GETINTERFACE_ANY(plOneShotMsg, plResponderMsg);

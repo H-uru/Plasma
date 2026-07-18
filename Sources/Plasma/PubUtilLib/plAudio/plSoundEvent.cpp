@@ -98,7 +98,7 @@ void    plSoundEvent::SendCallbacks()
             plSoundMsg* sMsg = nullptr;
 
             // Ref to make sure the dispatcher doesn't delete it on us
-            hsRefCnt_SafeRef( msg );
+            msg->Ref();
             if( msg->fRepeats == 0 && fCallbackEndingFlags[ j ] == 0 )
             {
                 // Note: we get fancy here. We never want to remove the callback directly,

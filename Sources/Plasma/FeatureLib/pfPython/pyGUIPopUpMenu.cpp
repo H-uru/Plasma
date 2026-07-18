@@ -258,7 +258,7 @@ PyObject* pyGUIPopUpMenu::GetForeColor()
 {
     kGetMenuPtr(nullptr);
 
-    pfGUIColorScheme* color = menu->GetColorScheme();
+    hsWeakRef<pfGUIColorScheme> color = menu->GetColorScheme();
     return pyColor::New(color->fForeColor.r,color->fForeColor.g,color->fForeColor.b,color->fForeColor.a);
 }
 
@@ -266,7 +266,7 @@ PyObject* pyGUIPopUpMenu::GetSelColor()
 {
     kGetMenuPtr(nullptr);
 
-    pfGUIColorScheme* color = menu->GetColorScheme();
+    hsWeakRef<pfGUIColorScheme> color = menu->GetColorScheme();
     return pyColor::New(color->fSelForeColor.r,color->fSelForeColor.g,color->fSelForeColor.b,color->fSelForeColor.a);
 }
 
@@ -274,7 +274,7 @@ PyObject* pyGUIPopUpMenu::GetBackColor()
 {
     kGetMenuPtr(nullptr);
 
-    pfGUIColorScheme* color = menu->GetColorScheme();
+    hsWeakRef<pfGUIColorScheme> color = menu->GetColorScheme();
     return pyColor::New(color->fBackColor.r,color->fBackColor.g,color->fBackColor.b,color->fBackColor.a);
 }
 
@@ -282,7 +282,7 @@ PyObject* pyGUIPopUpMenu::GetBackSelColor()
 {
     kGetMenuPtr(nullptr);
 
-    pfGUIColorScheme* color = menu->GetColorScheme();
+    hsWeakRef<pfGUIColorScheme> color = menu->GetColorScheme();
     return pyColor::New(color->fSelBackColor.r,color->fSelBackColor.g,color->fSelBackColor.b,color->fSelBackColor.a);
 }
 
@@ -291,7 +291,7 @@ void pyGUIPopUpMenu::SetForeColor( float r, float g, float b, float a )
 {
     kGetMenuPtr( ; );
 
-    pfGUIColorScheme* color = menu->GetColorScheme();
+    hsWeakRef<pfGUIColorScheme> color = menu->GetColorScheme();
     if ( r >= 0.0 && r <= 1.0 )
         color->fForeColor.r = r;
     if ( g >= 0.0 && g <= 1.0 )
@@ -306,7 +306,7 @@ void pyGUIPopUpMenu::SetSelColor( float r, float g, float b, float a )
 {
     kGetMenuPtr( ; );
 
-    pfGUIColorScheme* color = menu->GetColorScheme();
+    hsWeakRef<pfGUIColorScheme> color = menu->GetColorScheme();
     if ( r >= 0.0 && r <= 1.0 )
         color->fSelForeColor.r = r;
     if ( g >= 0.0 && g <= 1.0 )
@@ -321,7 +321,7 @@ void pyGUIPopUpMenu::SetBackColor( float r, float g, float b, float a )
 {
     kGetMenuPtr( ; );
 
-    pfGUIColorScheme* color = menu->GetColorScheme();
+    hsWeakRef<pfGUIColorScheme> color = menu->GetColorScheme();
     if ( r >= 0.0 && r <= 1.0 )
         color->fBackColor.r = r;
     if ( g >= 0.0 && g <= 1.0 )
@@ -336,7 +336,7 @@ void pyGUIPopUpMenu::SetBackSelColor( float r, float g, float b, float a )
 {
     kGetMenuPtr( ; );
 
-    pfGUIColorScheme* color = menu->GetColorScheme();
+    hsWeakRef<pfGUIColorScheme> color = menu->GetColorScheme();
     if ( r >= 0.0 && r <= 1.0 )
         color->fSelBackColor.r = r;
     if ( g >= 0.0 && g <= 1.0 )
