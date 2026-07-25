@@ -358,8 +358,6 @@ class clftImager(ptResponder):
         global PlayScene
         global PlayTPOT
 
-        self.ageSDL = PtGetAgeSDL()
-
         if (id == MakeMeVisible.id and state):
             if (PtFirstPerson()):
                 return
