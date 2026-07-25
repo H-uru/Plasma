@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <optional>
 
-#include "pnNetCommon/plNetApp.h"
 #include "pnSceneObject/plSceneObject.h"
 
 #include "plAgeDescription/plAgeDescription.h"
@@ -547,9 +546,7 @@ PyObject* pySDLModifier::GetAgeSDL()
         return pySDLModifier::New(ageSDL);
 
     // didn't find one, throw an exception for the python programmer to chew on
-    ST::string err = ST::format("Age Global SDL for {} does not exist!", ageName);
-    plNetClientApp::StaticErrorMsg(err);
-    PyErr_SetString(PyExc_KeyError, err.c_str());
+    PyErr_SetString(PyExc_KeyError, ST::format("Age Global SDL for {} does not exist!", ageName).c_str());
     PYTHON_RETURN_ERROR;
 }
 
