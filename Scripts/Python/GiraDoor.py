@@ -65,18 +65,18 @@ class GiraDoor(ptResponder):
     
 
     def OnServerInitComplete(self):
-        self.ageSDL = PtGetAgeSDL()
-            
-        self.ageSDL.setFlags("giraDoorOpen",1,1)
-        self.ageSDL.sendToClients("giraDoorOpen")
+        ageSDL = PtGetAgeSDL()
+
+        ageSDL.setFlags("giraDoorOpen",1,1)
+        ageSDL.sendToClients("giraDoorOpen")
 
         # register for notification of locked SDL var changes
-        self.ageSDL.setNotify(self.key,"giraDoorOpen",0.0)
+        ageSDL.setNotify(self.key,"giraDoorOpen",0.0)
         
         # get initial SDL state
         doorClosed = True
         try:
-            doorOpen = self.ageSDL["giraDoorOpen"][0]
+            doorOpen = ageSDL["giraDoorOpen"][0]
         except:
             doorOpen = True
         
@@ -88,15 +88,15 @@ class GiraDoor(ptResponder):
             
     #def OnSDLNotify(self,VARname,SDLname,playerID,tag):
     def OnNotify(self, state, id, events):
-        self.ageSDL = PtGetAgeSDL()
         if id == doorAct.id and state:
-            doorOpen = self.ageSDL["giraDoorOpen"][0]
+            ageSDL = PtGetAgeSDL()
+            doorOpen = ageSDL["giraDoorOpen"][0]
             if (doorOpen):
-                self.ageSDL["giraDoorOpen"] = (0,)
+                ageSDL["giraDoorOpen"] = (0,)
                 doorAct.disable()
                 doorResp.run(self.key,state = 'Close',avatar = PtFindAvatar(events))
             else:
-                self.ageSDL["giraDoorOpen"] = (1,)
+                ageSDL["giraDoorOpen"] = (1,)
                 doorAct.disable()
                 doorResp.run(self.key,state = 'Open',avatar = PtFindAvatar(events))
         elif id == doorResp.id:
