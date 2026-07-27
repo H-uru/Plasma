@@ -98,7 +98,7 @@ public:
     // ...Less of a performance hit, harder on memory.
     void SetTwoStageLOD(bool state);
 
-    // Enable EAX sound acceleration
+    // Enable EFX environmental audio
     void UseEAXAcceleration(bool state);
     bool IsUsingEAXAcceleration() const;
     bool IsEAXSupported() const;

@@ -213,7 +213,7 @@ void pyAudioControl::SetTwoStageLOD(bool state)
     plSound::SetLoadFromDiskOnDemand(!state);
 }
 
-// Enable EAX sound acceleration (requires hardware acceleration)
+// Enable EFX environmental sound
 void pyAudioControl::UseEAXAcceleration(bool state)
 {
     plgAudioSys::EnableEAX(state);

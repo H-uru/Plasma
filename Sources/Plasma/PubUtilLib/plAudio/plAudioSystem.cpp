@@ -41,12 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include <al.h>
-#ifdef USE_EFX
-#   include <efx.h>
-#endif
-#ifdef EAX_SDK_AVAILABLE
-#   include <eax.h>
-#endif
+#include <efx.h>
 #include <memory>
 #include <array>
 
@@ -245,6 +240,7 @@ bool plAudioSystem::Init()
     plStatusLog::AddLineSF("audio.log", "OpenAL version: {}",    alGetString(AL_VERSION));
     plStatusLog::AddLineSF("audio.log", "OpenAL renderer: {}",   alGetString(AL_RENDERER));
     plStatusLog::AddLineSF("audio.log", "OpenAL extensions: {}", alGetString(AL_EXTENSIONS));
+    plStatusLog::AddLineSF("audio.log", "OpenAL context extensions: {}", alcGetString(fPlaybackDevice, ALC_EXTENSIONS));
     plStatusLog::AddLineS("audio.log", plStatusLog::kGreen, "ASYS: Detecting caps...");
 
     // Detect maximum number of voices that can be created.
@@ -264,15 +260,22 @@ bool plAudioSystem::Init()
     plStatusLog::AddLineSF("audio.log", "Max Number of sources: {}", fMaxNumSources);
     SetMaxNumberOfActiveSounds();
 
-    // TODO: Detect EAX support. Not adding this in now until the replacement is implemented.
+    // Detect EFX support.
+    if (alcIsExtensionPresent(alcGetContextsDevice(alcGetCurrentContext()), "ALC_EXT_EFX"))
+        fEAXSupported = true;
 
-    // attempt to init the EAX listener.
-    if (plgAudioSys::fEnableEAX) {
+    // Attempt to init the EFX listener.
+    if (fEAXSupported && plgAudioSys::fEnableEAX) {
+        ALCint iVerMajor, iVerMinor;
+        alcGetIntegerv(fPlaybackDevice, ALC_EFX_MAJOR_VERSION, 1, &iVerMajor);
+        alcGetIntegerv(fPlaybackDevice, ALC_EFX_MAJOR_VERSION, 1, &iVerMinor);
+        plStatusLog::AddLineSF("audio.log", "ASYS: EFX v{}.{} available.", iVerMajor, iVerMinor);
+
         fUsingEAX = plEAXListener::GetInstance().Init();
         if (fUsingEAX)
-            plStatusLog::AddLineS("audio.log", plStatusLog::kGreen, "ASYS: EAX support detected and enabled.");
+            plStatusLog::AddLineS("audio.log", plStatusLog::kGreen, "ASYS: EFX support detected and enabled.");
         else
-            plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ASYS: EAX support NOT detected. EAX effects disabled.");
+            plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ASYS: Unable to initialize environmental audio. EFX effects disabled.");
     } else {
         fUsingEAX = false;
     }
