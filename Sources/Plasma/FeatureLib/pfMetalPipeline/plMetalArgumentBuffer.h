@@ -71,6 +71,22 @@ enum class plMetalArgumentBufferTier : NS::UInteger
 template <class T>
 class plMetalArgumentBuffer
 {
+protected:
+    // Pointer to buffer memory - only available in tier 2
+    T*                          fValue;
+    // Triple buffered argument buffers
+    NS::SharedPtr<MTL::Buffer>  fBuffer[3];
+    // Host Plasma device for buffers
+    plMetalDevice*              fDevice;
+    // Encoder for tier 1 buffers, don't use in tier 2
+    NS::SharedPtr<MTL::ArgumentEncoder>   fEncoder;
+    // Number of array elements supported per buffer
+    size_t                      fNumElements;
+    // Tier of argument buffers targeted by this instance
+    plMetalArgumentBufferTier fTier;
+    // Current buffer in the triple buffer rotation
+    size_t                      fCurrentBufferIndex;
+
 public:
     plMetalArgumentBuffer(plMetalDevice* device, size_t numElements)
         : fDevice(device), fNumElements(numElements), fEncoder()
@@ -93,20 +109,6 @@ public:
     size_t GetNumElements() const { return fNumElements; }
 
 protected:
-    // Pointer to buffer memory - only available in tier 2
-    T*                          fValue;
-    // Triple buffered argument buffers
-    NS::SharedPtr<MTL::Buffer>  fBuffer[3];
-    // Host Plasma device for buffers
-    plMetalDevice*              fDevice;
-    // Encoder for tier 1 buffers, don't use in tier 2
-    NS::SharedPtr<MTL::ArgumentEncoder>   fEncoder;
-    // Number of array elements supported per buffer
-    size_t                      fNumElements;
-    // Tier of argument buffers targeted by this instance
-    plMetalArgumentBufferTier fTier;
-    // Current buffer in the triple buffer rotation
-    size_t                      fCurrentBufferIndex;
     // Subclasses must override this to create an encoder for
     // tier 1 buffers. Encoder creation needs to know the
     // buffer layout.

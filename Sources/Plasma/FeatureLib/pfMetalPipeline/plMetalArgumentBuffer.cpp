@@ -79,7 +79,7 @@ void plMetalBumpArgumentBuffer::Set(const std::vector<plMetalBumpMapping>& bumps
     ConfigureBuffer();
     if (fTier == plMetalArgumentBufferTier::Tier1) {
         // Tier 1, because Tier 1 doesn't guarantee memory layout, go through the encoder
-        for (int i = 0; i < bumps.size(); ++i) {
+        for (size_t i = 0; i < bumps.size(); ++i) {
             auto& bump = bumps[i];
             fEncoder->setArgumentBuffer(GetBuffer(), 0, i);
             fEncoder->setTexture(bump.fTexture, textureID);
