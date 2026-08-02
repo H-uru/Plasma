@@ -78,9 +78,6 @@ public:
         fCurrentBufferIndex = -1;
         auto tier = std::min(device->ArgumentBuffersTier(), static_cast<MTL::ArgumentBuffersTier>(plMetalArgumentBufferTier::Tier2));
         fTier = plMetalArgumentBufferTier(tier);
-        fBuffer[0] = nullptr;
-        fBuffer[1] = nullptr;
-        fBuffer[2] = nullptr;
     };
     
     MTL::Buffer* GetBuffer() const
@@ -88,36 +85,28 @@ public:
         if (fCurrentBufferIndex == -1) {
             return nullptr;
         }
-        return fBuffer[fCurrentBufferIndex];
+        return fBuffer[fCurrentBufferIndex].get();
     }
     
     T*     ValueAt(size_t i) { return fValue[i]; }
     
     size_t GetNumElements() const { return fNumElements; }
-    
-    ~plMetalArgumentBuffer()
-    {
-        for (auto& buffer : fBuffer) {
-            buffer->release();
-        }
-        fEncoder->release();
-    }
 
 protected:
     // Pointer to buffer memory - only available in tier 2
-    T*                        fValue;
+    T*                          fValue;
     // Triple buffered argument buffers
-    MTL::Buffer*              fBuffer[3];
+    NS::SharedPtr<MTL::Buffer>  fBuffer[3];
     // Host Plasma device for buffers
-    plMetalDevice*            fDevice;
+    plMetalDevice*              fDevice;
     // Encoder for tier 1 buffers, don't use in tier 2
-    MTL::ArgumentEncoder*     fEncoder;
+    NS::SharedPtr<MTL::ArgumentEncoder>   fEncoder;
     // Number of array elements supported per buffer
-    size_t                    fNumElements;
+    size_t                      fNumElements;
     // Tier of argument buffers targeted by this instance
     plMetalArgumentBufferTier fTier;
     // Current buffer in the triple buffer rotation
-    size_t                    fCurrentBufferIndex;
+    size_t                      fCurrentBufferIndex;
     // Subclasses must override this to create an encoder for
     // tier 1 buffers. Encoder creation needs to know the
     // buffer layout.
@@ -140,9 +129,9 @@ private:
     void ConfigureTier1()
     {
         if (!fEncoder)
-            fEncoder = fDevice->fMetalDevice->newArgumentEncoder(GetArgumentDescriptors());
+            fEncoder = NS::TransferPtr(fDevice->fMetalDevice->newArgumentEncoder(GetArgumentDescriptors()));
         if (!fBuffer[fCurrentBufferIndex])
-            fBuffer[fCurrentBufferIndex] = fDevice->fMetalDevice->newBuffer(fEncoder->encodedLength() * fNumElements, MTL::CPUCacheModeWriteCombined);
+            fBuffer[fCurrentBufferIndex] = NS::TransferPtr(fDevice->fMetalDevice->newBuffer(fEncoder->encodedLength() * fNumElements, MTL::CPUCacheModeWriteCombined));
         // raw access to buffer not available in tier 1 argument buffers
         fValue = nullptr;
     }
@@ -150,10 +139,10 @@ private:
     void ConfigureTier2()
     {
         if (!fBuffer[fCurrentBufferIndex])
-            fBuffer[fCurrentBufferIndex] = fDevice->fMetalDevice->newBuffer(sizeof(T) * fNumElements, MTL::CPUCacheModeWriteCombined);
+            fBuffer[fCurrentBufferIndex] = NS::TransferPtr(fDevice->fMetalDevice->newBuffer(sizeof(T) * fNumElements, MTL::CPUCacheModeWriteCombined));
         fValue = static_cast<T*>(fBuffer[fCurrentBufferIndex]->contents());
         // Encoders are not used in tier 2 argument buffers
-        fEncoder = nullptr;
+        fEncoder.reset();
     }
 };
 
