@@ -82,6 +82,12 @@ public:
         return mine ^ hers;
     }
 
+    bool IsFramebufferAdditive() const
+    {
+        return (fBlendFlags & (kBlendAdd | kBlendMADD |
+                               kBlendAddColorTimesAlpha)) != 0;
+    }
+
     bool operator!=(const hsGMatState& other)
     {
         return ((fBlendFlags ^ other.fBlendFlags)

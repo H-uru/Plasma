@@ -219,6 +219,8 @@ void plMetalDevice::Shutdown()
         fCurrentDrawable = nullptr;
     }
 
+    IDestroyGTAO();
+
     ReleaseFramebufferObjects();
     if (fCurrentDrawableDepthTexture) {
         fCurrentDrawableDepthTexture->release();
@@ -460,9 +462,11 @@ void plMetalDevice::BeginNewRenderPass()
         }
 
         renderPassDescriptor->depthAttachment()->setClearDepth(fClearDrawableDepth);
-        renderPassDescriptor->depthAttachment()->setLoadAction(MTL::LoadActionClear);
+        renderPassDescriptor->depthAttachment()->setLoadAction(
+            fGTAOResumePass ? MTL::LoadActionLoad : MTL::LoadActionClear);
         renderPassDescriptor->depthAttachment()->setTexture(fCurrentDrawableDepthTexture);
-        renderPassDescriptor->depthAttachment()->setStoreAction(MTL::StoreActionDontCare);
+        renderPassDescriptor->depthAttachment()->setStoreAction(
+            fGTAOSettings.fEnabled ? MTL::StoreActionStore : MTL::StoreActionDontCare);
 
         if (fSampleCount == 1) {
             // We only need the intermediate texture for post processing on
@@ -486,13 +490,16 @@ void plMetalDevice::BeginNewRenderPass()
                 renderPassDescriptor->colorAttachments()->object(0)->setResolveTexture(fCurrentFragmentOutputTexture);
             }
 
-            renderPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionMultisampleResolve);
+            renderPassDescriptor->colorAttachments()->object(0)->setStoreAction(
+                fGTAOSettings.fEnabled ? MTL::StoreActionStoreAndMultisampleResolve
+                                       : MTL::StoreActionMultisampleResolve);
         }
 
         fCurrentRenderTargetCommandEncoder = fCurrentCommandBuffer->renderCommandEncoder(renderPassDescriptor)->retain();
     }
 
     fCurrentRenderTargetCommandEncoder->setFragmentSamplerStates(fSamplerStates, NS::Range::Make(0, 4));
+    fGTAOResumePass = false;
 }
 
 void plMetalDevice::SetRenderTarget(plRenderTarget* target)
@@ -1149,7 +1156,14 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
     SetFramebufferFormat(drawable->texture()->pixelFormat());
 
     bool depthNeedsRebuild = fCurrentDrawableDepthTexture == nullptr;
-    depthNeedsRebuild |= drawable->texture()->width() != fCurrentDrawableDepthTexture->width() || drawable->texture()->height() != fCurrentDrawableDepthTexture->height();
+    if (fCurrentDrawableDepthTexture) {
+        depthNeedsRebuild |= drawable->texture()->width() != fCurrentDrawableDepthTexture->width() ||
+                             drawable->texture()->height() != fCurrentDrawableDepthTexture->height();
+    }
+    if (fGTAOSettings.fEnabled && fCurrentDrawableDepthTexture) {
+        depthNeedsRebuild |= (fCurrentDrawableDepthTexture->usage() &
+                              MTL::TextureUsageShaderRead) == 0;
+    }
 
     // cache the depth buffer, we'll just clear it every time.
     if (depthNeedsRebuild) {
@@ -1165,12 +1179,16 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
                                                                                                      drawable->texture()->width(),
                                                                                                      drawable->texture()->height(),
                                                                                                      false);
-        if (fMetalDevice->supportsFamily(MTL::GPUFamilyApple1) && fSampleCount == 1) {
+        if (!fGTAOSettings.fEnabled &&
+            fMetalDevice->supportsFamily(MTL::GPUFamilyApple1) && fSampleCount == 1) {
             depthTextureDescriptor->setStorageMode(MTL::StorageModeMemoryless);
         } else {
             depthTextureDescriptor->setStorageMode(MTL::StorageModePrivate);
         }
-        depthTextureDescriptor->setUsage(MTL::TextureUsageRenderTarget);
+        depthTextureDescriptor->setUsage(MTL::TextureUsageRenderTarget |
+                                         (fGTAOSettings.fEnabled
+                                              ? MTL::TextureUsageShaderRead
+                                              : MTL::TextureUsage(0)));
 
         if (fSampleCount != 1) {
             // MSSA depth and color output

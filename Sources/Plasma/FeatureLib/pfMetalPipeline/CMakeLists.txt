@@ -27,6 +27,7 @@ set(pfMetalPipeline_SOURCES
     plMetalTextFont.cpp
     plMetalDevicePerformanceShaders.mm
     plMetalDeviceLibraryLoader.mm
+    plMetalGTAO.cpp
 )
 
 set(pfMetalPipeline_HEADERS
@@ -60,6 +61,7 @@ set(pfMetalPipeline_SHADERS
     ShaderSrc/Clear.metal
     ShaderSrc/GammaCorrection.metal
     ShaderSrc/TextFontShader.metal
+    ShaderSrc/GTAO.metal
 )
 
 plasma_library(pfMetalPipeline

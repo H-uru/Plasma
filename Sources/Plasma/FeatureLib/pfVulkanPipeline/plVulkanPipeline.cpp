@@ -99,6 +99,7 @@ plVulkanPipeline::plVulkanPipeline(hsDisplayHndl display, hsWindowHndl window,
     fDevice.SetDeviceName(devMode->GetDevice()->GetDeviceDesc());
     fDevice.SetVSync(fVSync);
     fDevice.SetMSAASampleCount(uint32_t(std::max(1, fInitialPipeParams.AntiAliasingAmount)));
+    fDevice.SetGTAOSettings(fInitialPipeParams.AmbientOcclusion);
 
     // A non-empty error string here makes plClient::InitPipeline throw this
     // pipeline away and fall back to the default device, so there is nothing to
@@ -327,6 +328,13 @@ void plVulkanPipeline::RenderScreenElements()
     if (resetTransforms)
         fView.fXformResetFlags = fView.kResetAll;
 
+    fState.Reset();
+}
+
+void plVulkanPipeline::RenderPostEffects()
+{
+    fDevice.ApplyGTAO();
+    // GTAO binds its own fullscreen pipeline behind the draw-state cache.
     fState.Reset();
 }
 

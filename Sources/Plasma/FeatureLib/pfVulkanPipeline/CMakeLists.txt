@@ -20,6 +20,7 @@ set(pfVulkanPipeline_SOURCES
     plVulkanProjections.cpp
     plVulkanShaderPath.cpp
     plVulkanShadows.cpp
+    plVulkanGTAO.cpp
     plVulkanMaterialShaderRef.cpp
 )
 
@@ -66,6 +67,13 @@ set(pfVulkanPipeline_SHADERS
     ShaderSrc/WaveDecEnv.frag
     ShaderSrc/WaveSet7.vert
     ShaderSrc/WaveSet7.frag
+    ShaderSrc/GTAOPrefilter.comp
+    ShaderSrc/GTAOPrefilterMS.comp
+    ShaderSrc/GTAONormals.comp
+    ShaderSrc/GTAONormalsMS.comp
+    ShaderSrc/GTAOMain.comp
+    ShaderSrc/GTAODenoise.comp
+    ShaderSrc/GTAOComposite.frag
 )
 
 # Anything a shader includes; touching one of these has to recompile every shader.
@@ -73,6 +81,9 @@ set(pfVulkanPipeline_SHADER_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/ShaderSrc/plVulkanShaderTypes.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/ShaderSrc/FixedFunctionVertex.glsl"
     "${CMAKE_CURRENT_SOURCE_DIR}/ShaderSrc/WaveConsts.glsl"
+    "${CMAKE_CURRENT_SOURCE_DIR}/ShaderSrc/GTAOCommon.glsl"
+    "${CMAKE_CURRENT_SOURCE_DIR}/ShaderSrc/GTAOPrefilterCommon.glsl"
+    "${CMAKE_CURRENT_SOURCE_DIR}/ShaderSrc/GTAONormalsCommon.glsl"
     "${PLASMA_SOURCE_ROOT}/NucleusLib/inc/hsGMatStateEnums.h"
 )
 

@@ -1,0 +1,44 @@
+#version 450
+#extension GL_GOOGLE_include_directive : require
+
+layout(local_size_x = 8, local_size_y = 8) in;
+
+#include "GTAOCommon.glsl"
+
+layout(set = 0, binding = 5) uniform usampler2D workingAO;
+layout(set = 0, binding = 6) uniform sampler2D workingEdges;
+layout(r8ui, set = 0, binding = 15) uniform writeonly uimage2D outFinalAO;
+
+float GTAOEdgeWeight(vec4 centerEdges, ivec2 offset)
+{
+    float weight = 1.0;
+    if (offset.x < 0) weight *= centerEdges.x;
+    if (offset.x > 0) weight *= centerEdges.y;
+    if (offset.y < 0) weight *= centerEdges.z;
+    if (offset.y > 0) weight *= centerEdges.w;
+    return weight;
+}
+
+void main()
+{
+    ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
+    if (any(greaterThanEqual(pixel, gtao.viewportSize)))
+        return;
+
+    ivec2 maxPixel = gtao.viewportSize - 1;
+    vec4 centerEdges = GTAOUnpackEdges(texelFetch(workingEdges, pixel, 0).r);
+    float sum = 0.0;
+    float sumWeight = 0.0;
+    for (int y = -1; y <= 1; ++y) {
+        for (int x = -1; x <= 1; ++x) {
+            ivec2 offset = ivec2(x, y);
+            ivec2 samplePixel = clamp(pixel + offset, ivec2(0), maxPixel);
+            float spatial = (x == 0 && y == 0) ? 1.0 : ((x == 0 || y == 0) ? 0.75 : 0.425);
+            float weight = spatial * GTAOEdgeWeight(centerEdges, offset);
+            sum += float(texelFetch(workingAO, samplePixel, 0).r) * weight;
+            sumWeight += weight;
+        }
+    }
+    float visibility = sum / max(sumWeight, 1e-6) / 255.0 * GTAO_OCCLUSION_SCALE;
+    imageStore(outFinalAO, pixel, uvec4(uint(clamp(visibility, 0.0, 1.0) * 255.0 + 0.5)));
+}

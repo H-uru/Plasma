@@ -54,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsGMatState.h"
 #include "hsMatrix44.h"
+#include "plGTAO.h"
 #include "plMetalDeviceRef.h"
 #include "plSurface/plShader.h"
 #include "plSurface/plShaderTable.h"
@@ -201,6 +202,11 @@ public:
     void EncodeBlur(MTL::CommandBuffer* commandBuffer, MTL::Texture* texture, float sigma);
 
     MTL::PixelFormat GetFramebufferFormat() const { return fFramebufferFormat; };
+
+    void ApplyGTAO();
+    const plGTAOSettings& GetGTAOSettings() const { return fGTAOSettings; }
+    void SetGTAOSettings(const plGTAOSettings& settings)
+    { fGTAOSettings = plClampGTAOSettings(settings); }
     
     MTL::Library* GetShaderLibrary() const { return fShaderLibrary; }
     
@@ -316,6 +322,31 @@ private:
     void                      PostprocessIntoDrawable();
     void                      CreateGammaAdjustState();
     MTL::RenderPipelineState* fGammaAdjustState;
+
+    // Native XeGTAO resources. They are private to the effect and never enter
+    // the material argument-buffer path.
+    bool IEnsureGTAO();
+    void IDestroyGTAO();
+    plGTAOSettings fGTAOSettings;
+    bool fGTAOResumePass = false;
+    bool fGTAOWarned = false;
+    NS::UInteger fGTAOWidth = 0;
+    NS::UInteger fGTAOHeight = 0;
+    NS::UInteger fGTAOSampleCount = 0;
+    MTL::PixelFormat fGTAOColorFormat = MTL::PixelFormatInvalid;
+    MTL::Texture* fGTAODepth = nullptr;
+    MTL::Texture* fGTAODepthMips[5]{};
+    MTL::Texture* fGTAONormals = nullptr;
+    MTL::Texture* fGTAOWorkingAO = nullptr;
+    MTL::Texture* fGTAOEdges = nullptr;
+    MTL::Texture* fGTAOFinalAO = nullptr;
+    MTL::ComputePipelineState* fGTAOPrefilterState = nullptr;
+    MTL::ComputePipelineState* fGTAOPrefilterMSState = nullptr;
+    MTL::ComputePipelineState* fGTAONormalsState = nullptr;
+    MTL::ComputePipelineState* fGTAONormalsMSState = nullptr;
+    MTL::ComputePipelineState* fGTAOMainState = nullptr;
+    MTL::ComputePipelineState* fGTAODenoiseState = nullptr;
+    MTL::RenderPipelineState* fGTAOCompositeState = nullptr;
 
     // MARK:  - Device capabilities
 private:

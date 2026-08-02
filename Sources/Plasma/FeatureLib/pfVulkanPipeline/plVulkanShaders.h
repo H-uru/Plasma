@@ -77,6 +77,14 @@ extern const plVulkanShaderBlob kFullscreenVertexShader;
 extern const plVulkanShaderBlob kBlurFragmentShader;
 extern const plVulkanShaderBlob kGammaFragmentShader;
 
+extern const plVulkanShaderBlob kGTAOPrefilterShader;
+extern const plVulkanShaderBlob kGTAOPrefilterMSShader;
+extern const plVulkanShaderBlob kGTAONormalsShader;
+extern const plVulkanShaderBlob kGTAONormalsMSShader;
+extern const plVulkanShaderBlob kGTAOMainShader;
+extern const plVulkanShaderBlob kGTAODenoiseShader;
+extern const plVulkanShaderBlob kGTAOCompositeShader;
+
 /*** The plShader programmable path ***/
 
 extern const plVulkanShaderBlob kGrassVertexShader;

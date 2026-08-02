@@ -831,6 +831,20 @@ PF_CONSOLE_CMD( Console, ExecuteFileDelayed, "string filename, float timeInSecs"
 
 PF_CONSOLE_GROUP( Graphics ) // Defines a main command group
 
+namespace
+{
+void IApplyGTAOSettings(const plGTAOSettings& requested)
+{
+    const plGTAOSettings settings = plClampGTAOSettings(requested);
+    plPipeline::fInitialPipeParams.AmbientOcclusion = settings;
+    plPipeline::fDefaultPipeParams.AmbientOcclusion = settings;
+
+    plPipeline* pipeline = pfConsole::GetPipeline();
+    if (pipeline && pipeline->SupportsAmbientOcclusion())
+        pipeline->SetAmbientOcclusionSettings(settings);
+}
+}
+
 #ifndef LIMIT_CONSOLE_COMMANDS
 
 // NOTE ON THESE DEBUG FLAGS:
@@ -1982,6 +1996,53 @@ PF_CONSOLE_CMD( Graphics, EnablePlanarReflections, "bool", "Enable the draw and 
 {
     bool enable = (bool)params[0];
     plDynamicCamMap::SetEnabled(enable);
+}
+
+PF_CONSOLE_SUBGROUP(Graphics, AmbientOcclusion)
+
+PF_CONSOLE_CMD(Graphics_AmbientOcclusion, Enable, "bool enabled",
+               "Enable XeGTAO on supported renderers")
+{
+    plGTAOSettings settings = plPipeline::fInitialPipeParams.AmbientOcclusion;
+    settings.fEnabled = static_cast<bool>(params[0]);
+    IApplyGTAOSettings(settings);
+
+    plPipeline* pipeline = pfConsole::GetPipeline();
+    if (pipeline && !pipeline->SupportsAmbientOcclusion())
+        PrintString("Ambient occlusion is not supported by this renderer");
+    else
+        PrintString(settings.fEnabled ? "Ambient occlusion enabled" :
+                                        "Ambient occlusion disabled");
+}
+
+PF_CONSOLE_CMD(Graphics_AmbientOcclusion, Quality, "int quality",
+               "Set XeGTAO quality: 0 low, 1 medium, 2 high, 3 ultra")
+{
+    plGTAOSettings settings = plPipeline::fInitialPipeParams.AmbientOcclusion;
+    settings.fQuality = static_cast<plGTAOQuality>(static_cast<int>(params[0]));
+    IApplyGTAOSettings(settings);
+    PrintString(ST::format("Ambient occlusion quality {}",
+                           static_cast<int>(plPipeline::fInitialPipeParams.AmbientOcclusion.fQuality)));
+}
+
+PF_CONSOLE_CMD(Graphics_AmbientOcclusion, Radius, "float radius",
+               "Set the XeGTAO view-space radius")
+{
+    plGTAOSettings settings = plPipeline::fInitialPipeParams.AmbientOcclusion;
+    settings.fRadius = static_cast<float>(params[0]);
+    IApplyGTAOSettings(settings);
+    PrintString(ST::format("Ambient occlusion radius {}",
+                           plPipeline::fInitialPipeParams.AmbientOcclusion.fRadius));
+}
+
+PF_CONSOLE_CMD(Graphics_AmbientOcclusion, Power, "float power",
+               "Set the XeGTAO final visibility power")
+{
+    plGTAOSettings settings = plPipeline::fInitialPipeParams.AmbientOcclusion;
+    settings.fPower = static_cast<float>(params[0]);
+    IApplyGTAOSettings(settings);
+    PrintString(ST::format("Ambient occlusion power {}",
+                           plPipeline::fInitialPipeParams.AmbientOcclusion.fPower));
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -2518,6 +2518,22 @@ bool cyMisc::ArePlanarReflectionsSupported()
     return plDynamicCamMap::GetCapable();
 }
 
+void cyMisc::EnableAmbientOcclusion(bool enable)
+{
+    if (!fPipeline || !fPipeline->SupportsAmbientOcclusion())
+        return;
+
+    plGTAOSettings settings = fPipeline->GetAmbientOcclusionSettings();
+    settings.fEnabled = enable;
+    fPipeline->SetAmbientOcclusionSettings(settings);
+    plPipeline::fInitialPipeParams.AmbientOcclusion = settings;
+}
+
+bool cyMisc::IsAmbientOcclusionSupported()
+{
+    return fPipeline && fPipeline->SupportsAmbientOcclusion();
+}
+
 void cyMisc::GetSupportedDisplayModes(std::vector<plDisplayMode> *res)
 {
     fPipeline->GetSupportedDisplayModes(res);

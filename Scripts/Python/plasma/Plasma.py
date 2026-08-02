@@ -276,6 +276,10 @@ def PtEnablePlanarReflections(on):
     """Enables/disables planar reflections"""
     ...
 
+def PtEnableAmbientOcclusion(on):
+    """Enables/disables ambient occlusion"""
+    ...
+
 def PtEnableRenderScene():
     """UNKNOWN"""
     ...
@@ -902,6 +906,10 @@ def PtStartScreenCapture(selfKey, width=800, height=600):
 
 def PtSupportsPlanarReflections() -> bool:
     """Returns if planar reflections are supported"""
+    ...
+
+def PtSupportsAmbientOcclusion() -> bool:
+    """Returns if ambient occlusion is supported"""
     ...
 
 def PtToggleAvatarClickability(on):

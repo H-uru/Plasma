@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsColorRGBA.h"
 #include "hsMatrix44.h"
+#include "plGTAO.h"
 
 #include "plVulkanDeviceRef.h"
 #include "plVulkanPipelineState.h"
@@ -417,6 +418,11 @@ public:
                      const uint16_t* tabB, uint32_t count);
     bool Supports10BitGamma() const { return fSupports10BitSwapchain; }
 
+    /** Runs native XeGTAO over the main depth buffer and multiplies the scene. */
+    void ApplyGTAO();
+    const plGTAOSettings& GetGTAOSettings() const { return fGTAOSettings; }
+    void SetGTAOSettings(const plGTAOSettings& settings) { fGTAOSettings = plClampGTAOSettings(settings); }
+
     plVulkanPipeline* fPipeline;
 
 private:
@@ -505,6 +511,13 @@ private:
     void IDrainRetiredSwapchains(uint64_t completedTimeline);
 
     bool ICreateDepthBuffer();
+
+    bool IEnsureGTAO();
+    void IDestroyGTAO();
+    bool ICreateGTAOImage(VkFormat format, uint32_t mipLevels, VkImageUsageFlags usage,
+                          const ST::string& name, VkImage& image,
+                          VmaAllocation& allocation, VkImageView& sampledView,
+                          VkImageView storageViews[5]);
 
     /** Resolves the gamma-corrected scene image into the acquired swapchain image. */
     bool IPostprocessGamma();
@@ -612,6 +625,61 @@ private:
     VkShaderModule fFullscreenVertexShader;
     VkShaderModule fBlurFragmentShader;
     VkShaderModule fGammaFragmentShader;
+
+    /*** Native XeGTAO post effect (dedicated descriptors; never uses draw rings). ***/
+    plGTAOSettings fGTAOSettings;
+    VkExtent2D fGTAOExtent{};
+    VkFormat fGTAOColorFormat = VK_FORMAT_UNDEFINED;
+    VkSampleCountFlagBits fGTAOSampleCount = VK_SAMPLE_COUNT_1_BIT;
+    bool fGTAOImagesInitialized = false;
+    bool fGTAOWarned = false;
+
+    VkImage fGTAODepthImage = VK_NULL_HANDLE;
+    VmaAllocation fGTAODepthAllocation = nullptr;
+    VkImageView fGTAODepthView = VK_NULL_HANDLE;
+    VkImageView fGTAODepthMipViews[5]{};
+
+    VkImage fGTAONormalsImage = VK_NULL_HANDLE;
+    VmaAllocation fGTAONormalsAllocation = nullptr;
+    VkImageView fGTAONormalsView = VK_NULL_HANDLE;
+    VkImageView fGTAONormalsStorageViews[5]{};
+
+    VkImage fGTAOWorkingAOImage = VK_NULL_HANDLE;
+    VmaAllocation fGTAOWorkingAOAllocation = nullptr;
+    VkImageView fGTAOWorkingAOView = VK_NULL_HANDLE;
+    VkImageView fGTAOWorkingAOStorageViews[5]{};
+
+    VkImage fGTAOEdgesImage = VK_NULL_HANDLE;
+    VmaAllocation fGTAOEdgesAllocation = nullptr;
+    VkImageView fGTAOEdgesView = VK_NULL_HANDLE;
+    VkImageView fGTAOEdgesStorageViews[5]{};
+
+    VkImage fGTAOFinalAOImage = VK_NULL_HANDLE;
+    VmaAllocation fGTAOFinalAOAllocation = nullptr;
+    VkImageView fGTAOFinalAOView = VK_NULL_HANDLE;
+    VkImageView fGTAOFinalAOStorageViews[5]{};
+
+    plVulkanBuffer fGTAOConstants[kMaxFramesInFlight];
+    VkDescriptorPool fGTAODescriptorPool = VK_NULL_HANDLE;
+    VkDescriptorSetLayout fGTAODescriptorSetLayout = VK_NULL_HANDLE;
+    VkDescriptorSet fGTAODescriptorSets[kMaxFramesInFlight]{};
+    VkPipelineLayout fGTAOPipelineLayout = VK_NULL_HANDLE;
+    VkSampler fGTAOPointSampler = VK_NULL_HANDLE;
+    VkSampler fGTAOLinearSampler = VK_NULL_HANDLE;
+    VkShaderModule fGTAOPrefilterModule = VK_NULL_HANDLE;
+    VkShaderModule fGTAOPrefilterMSModule = VK_NULL_HANDLE;
+    VkShaderModule fGTAONormalsModule = VK_NULL_HANDLE;
+    VkShaderModule fGTAONormalsMSModule = VK_NULL_HANDLE;
+    VkShaderModule fGTAOMainModule = VK_NULL_HANDLE;
+    VkShaderModule fGTAODenoiseModule = VK_NULL_HANDLE;
+    VkShaderModule fGTAOCompositeModule = VK_NULL_HANDLE;
+    VkPipeline fGTAOPrefilterPipeline = VK_NULL_HANDLE;
+    VkPipeline fGTAOPrefilterMSPipeline = VK_NULL_HANDLE;
+    VkPipeline fGTAONormalsPipeline = VK_NULL_HANDLE;
+    VkPipeline fGTAONormalsMSPipeline = VK_NULL_HANDLE;
+    VkPipeline fGTAOMainPipeline = VK_NULL_HANDLE;
+    VkPipeline fGTAODenoisePipeline = VK_NULL_HANDLE;
+    VkPipeline fGTAOCompositePipeline = VK_NULL_HANDLE;
 
     /** Scratch color target reused by the two blur passes. */
     plVulkanRenderTargetRef* fBlurTarget;

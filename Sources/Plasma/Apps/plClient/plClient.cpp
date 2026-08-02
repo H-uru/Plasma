@@ -473,6 +473,8 @@ void plClient::ISetGraphicsDefaults()
     plPipeline::fInitialPipeParams.AnisotropicLevel = plPipeline::fDefaultPipeParams.AnisotropicLevel;
     plPipeline::fInitialPipeParams.TextureQuality = plPipeline::fDefaultPipeParams.TextureQuality;
     plPipeline::fInitialPipeParams.VSync = plPipeline::fDefaultPipeParams.VSync;
+    plPipeline::fInitialPipeParams.AmbientOcclusion =
+        plPipeline::fDefaultPipeParams.AmbientOcclusion;
     plShadowCaster::EnableShadowCast(plPipeline::fDefaultPipeParams.Shadows ? true : false);
     plQuality::SetQuality(plPipeline::fDefaultPipeParams.VideoQuality);
     if( (fClampCap >= 0) && (fClampCap < plQuality::GetCapability()) )
@@ -1816,6 +1818,11 @@ bool plClient::IDraw()
         fPageMgr->Render(fPipeline);
     plProfile_EndTiming(MainRender);
 
+    // World depth is still intact here. Post-render requests and screen-space
+    // UI can switch render targets or clear/write depth, so depth-driven post
+    // effects must run before either of them.
+    fPipeline->RenderPostEffects();
+
     plProfile_BeginTiming(PostRender);
     if( !fFlags.IsBitSet( kFlagDBGDisableRRequests ) )
         IProcessPostRenderRequests();
@@ -2038,6 +2045,13 @@ void WriteInt(hsStream *stream, const char *name, int val )
     stream->WriteString(command);
 }
 
+void WriteFloat(hsStream* stream, const char* name, float val)
+{
+    char command[256];
+    snprintf(command, sizeof(command), "%s %.6g\r\n", name, val);
+    stream->WriteString(command);
+}
+
 void WriteString(hsStream *stream, const char *name, const char *val)
 {
     char command[256];
@@ -2156,6 +2170,14 @@ void plClient::IWriteDefaultGraphicsSettings(const plFileName& destFile)
     WriteInt(stream.get(), "Graphics.Shadow.Enable", plPipeline::fDefaultPipeParams.Shadows);
     WriteInt(stream.get(), "Graphics.EnablePlanarReflections", plPipeline::fDefaultPipeParams.PlanarReflections);
     WriteBool(stream.get(), "Graphics.EnableVSync", plPipeline::fDefaultPipeParams.VSync);
+    WriteBool(stream.get(), "Graphics.AmbientOcclusion.Enable",
+              plPipeline::fDefaultPipeParams.AmbientOcclusion.fEnabled);
+    WriteInt(stream.get(), "Graphics.AmbientOcclusion.Quality",
+             static_cast<int>(plPipeline::fDefaultPipeParams.AmbientOcclusion.fQuality));
+    WriteFloat(stream.get(), "Graphics.AmbientOcclusion.Radius",
+               plPipeline::fDefaultPipeParams.AmbientOcclusion.fRadius);
+    WriteFloat(stream.get(), "Graphics.AmbientOcclusion.Power",
+               plPipeline::fDefaultPipeParams.AmbientOcclusion.fPower);
 }
 
 

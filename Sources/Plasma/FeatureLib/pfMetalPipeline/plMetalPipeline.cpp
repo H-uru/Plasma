@@ -233,6 +233,7 @@ plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, con
 
     fDevice.SetMaxAnsiotropy(fInitialPipeParams.AnisotropicLevel);
     fDevice.SetMSAASampleCount(fInitialPipeParams.AntiAliasingAmount);
+    fDevice.SetGTAOSettings(fInitialPipeParams.AmbientOcclusion);
 
     fCurrentRenderPassUniforms = (VertexUniforms*)calloc(sizeof(VertexUniforms), sizeof(char));
 
@@ -845,6 +846,12 @@ void plMetalPipeline::RenderScreenElements()
         fView.fXformResetFlags = fView.kResetAll; // Text destroys view transforms
     }
     plProfile_EndTiming(Reset);
+}
+
+void plMetalPipeline::RenderPostEffects()
+{
+    fDevice.ApplyGTAO();
+    fState.Reset();
 }
 
 bool plMetalPipeline::IsFullScreen() const { return fIsFullscreen; }
@@ -1647,6 +1654,14 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
 
     hsGMatState s;
     s.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
+
+    // Lens flares, other framebuffer-additive geometry, and decals preserve
+    // depth testing for occlusion, but never alter depth.
+    const bool isDecal = (material->GetCompositeFlags() & hsGMaterial::kCompDecal) != 0;
+    if ((s.IsFramebufferAdditive() || isDecal) &&
+        !(s.fZFlags & hsGMatState::kZClearZ)) {
+        s.fZFlags |= hsGMatState::kZNoZWrite;
+    }
 
     if (s.fZFlags & hsGMatState::kZIncLayer)
         ISetLayer(1);

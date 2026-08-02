@@ -62,9 +62,10 @@ kGraphicsShadows = "Graphics.Shadow.Enable"
 kGraphicsVerticalSync = "Graphics.EnableVSync"
 kGraphicsShadowQuality = "Graphics.Shadow.VisibleDistance"
 kGraphicsDynamicReflections = "Graphics.EnablePlanarReflections"
+kGraphicsAmbientOcclusion = "Graphics.AmbientOcclusion.Enable"
 
-CmdList = [kGraphicsWidth, kGraphicsHeight, kGraphicsColorDepth, kGraphicsWindowed, kGraphicsTextureQuality, kGraphicsAntiAliasLevel, kGraphicsAnisotropicLevel, kGraphicsQualityLevel, kGraphicsShadows, kGraphicsVerticalSync, kGraphicsShadowQuality, kGraphicsDynamicReflections]
-DefaultsList = ["800", "600", "32", "false", "2", "0", "0", "2", "true", "false", "0", "1"]
+CmdList = [kGraphicsWidth, kGraphicsHeight, kGraphicsColorDepth, kGraphicsWindowed, kGraphicsTextureQuality, kGraphicsAntiAliasLevel, kGraphicsAnisotropicLevel, kGraphicsQualityLevel, kGraphicsShadows, kGraphicsVerticalSync, kGraphicsShadowQuality, kGraphicsDynamicReflections, kGraphicsAmbientOcclusion]
+DefaultsList = ["800", "600", "32", "false", "2", "0", "0", "2", "true", "false", "0", "1", "false"]
 
 def ConstructFilenameAndPath():
     global gFilenameAndPath
@@ -106,6 +107,7 @@ def ReadIni():
         gIniFile.addEntry(kGraphicsVerticalSync + " false")
         gIniFile.addEntry(kGraphicsShadowQuality + " 0")
         gIniFile.addEntry(kGraphicsDynamicReflections + " 1")
+        gIniFile.addEntry(kGraphicsAmbientOcclusion + " false")
         gIniFile.writeFile(gFilenameAndPath)
 
     else:
@@ -121,9 +123,9 @@ def ReadIni():
             ConstructFilenameAndPath()
             gIniFile.writeFile(gFilenameAndPath)
 
-def SetGraphicsOptions(width, heigth, colordepth, windowed, texquality, aaLevel, anisoLevel, qualityLevel, useShadows, vsync, shadowqual, dynRefl):
+def SetGraphicsOptions(width, heigth, colordepth, windowed, texquality, aaLevel, anisoLevel, qualityLevel, useShadows, vsync, shadowqual, dynRefl, ambientOcclusion):
     if gIniFile:
-        paramList = [width, heigth, colordepth, windowed, texquality, aaLevel, anisoLevel, qualityLevel, useShadows, vsync, shadowqual, dynRefl]
+        paramList = [width, heigth, colordepth, windowed, texquality, aaLevel, anisoLevel, qualityLevel, useShadows, vsync, shadowqual, dynRefl, ambientOcclusion]
         for idx in range(len(CmdList)):
             entry,junk = gIniFile.findByCommand(CmdList[idx])
             val = str(paramList[idx])

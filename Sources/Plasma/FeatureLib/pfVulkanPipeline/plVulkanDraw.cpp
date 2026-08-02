@@ -302,6 +302,15 @@ bool plVulkanPipeline::IHandleMaterialPass(VkCommandBuffer cmd, hsGMaterial* mat
     hsGMatState state;
     state.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
 
+    // Additive geometry and decals must remain depth-tested so scene geometry
+    // can occlude them, but they must not become occluders for later draws or
+    // depth-derived post effects such as GTAO.
+    const bool isDecal = (material->GetCompositeFlags() & hsGMaterial::kCompDecal) != 0;
+    if ((state.IsFramebufferAdditive() || isDecal) &&
+        !(state.fZFlags & hsGMatState::kZClearZ)) {
+        state.fZFlags |= hsGMatState::kZNoZWrite;
+    }
+
     //
     // Dynamic state that Metal keeps on the encoder.
     //

@@ -1138,7 +1138,8 @@ bool plVulkanDevice::ICreateDepthBuffer()
     imageInfo.arrayLayers = 1;
     imageInfo.samples = fSampleCount;
     imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-    imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+    imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT |
+                      VK_IMAGE_USAGE_SAMPLED_BIT;
     imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
@@ -2023,6 +2024,8 @@ void plVulkanDevice::Shutdown()
 {
     if (fDevice != VK_NULL_HANDLE)
         vkDeviceWaitIdle(fDevice);
+
+    IDestroyGTAO();
 
     delete fBlurTarget;
     fBlurTarget = nullptr;

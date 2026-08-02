@@ -166,6 +166,36 @@ const plVulkanShaderBlob kGammaFragmentShader{
     s_gammaFragmentShader, sizeof(s_gammaFragmentShader)
 };
 
+static const uint32_t s_gtaoPrefilterShader[] = {
+#include "ShaderSrc/GTAOPrefilter.comp.spv.h"
+};
+static const uint32_t s_gtaoPrefilterMSShader[] = {
+#include "ShaderSrc/GTAOPrefilterMS.comp.spv.h"
+};
+static const uint32_t s_gtaoNormalsShader[] = {
+#include "ShaderSrc/GTAONormals.comp.spv.h"
+};
+static const uint32_t s_gtaoNormalsMSShader[] = {
+#include "ShaderSrc/GTAONormalsMS.comp.spv.h"
+};
+static const uint32_t s_gtaoMainShader[] = {
+#include "ShaderSrc/GTAOMain.comp.spv.h"
+};
+static const uint32_t s_gtaoDenoiseShader[] = {
+#include "ShaderSrc/GTAODenoise.comp.spv.h"
+};
+static const uint32_t s_gtaoCompositeShader[] = {
+#include "ShaderSrc/GTAOComposite.frag.spv.h"
+};
+
+const plVulkanShaderBlob kGTAOPrefilterShader{ s_gtaoPrefilterShader, sizeof(s_gtaoPrefilterShader) };
+const plVulkanShaderBlob kGTAOPrefilterMSShader{ s_gtaoPrefilterMSShader, sizeof(s_gtaoPrefilterMSShader) };
+const plVulkanShaderBlob kGTAONormalsShader{ s_gtaoNormalsShader, sizeof(s_gtaoNormalsShader) };
+const plVulkanShaderBlob kGTAONormalsMSShader{ s_gtaoNormalsMSShader, sizeof(s_gtaoNormalsMSShader) };
+const plVulkanShaderBlob kGTAOMainShader{ s_gtaoMainShader, sizeof(s_gtaoMainShader) };
+const plVulkanShaderBlob kGTAODenoiseShader{ s_gtaoDenoiseShader, sizeof(s_gtaoDenoiseShader) };
+const plVulkanShaderBlob kGTAOCompositeShader{ s_gtaoCompositeShader, sizeof(s_gtaoCompositeShader) };
+
 static const uint32_t s_grassVertexShader[] = {
 #include "ShaderSrc/Grass.vert.spv.h"
 };
