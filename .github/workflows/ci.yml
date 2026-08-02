@@ -209,7 +209,9 @@ jobs:
               libsecret-1-dev \
               libtool \
               libx11-dev \
+              libxaw7-dev \
               libxfixes-dev \
+              libxpm-dev \
               libxrandr-dev \
               nasm \
               ninja-build \

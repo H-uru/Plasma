@@ -67,6 +67,7 @@ set(plClient_HEADERS
     plClientCreatable.h
     plClientLoader.h
     plClientUpdateFormat.h
+    plClientWindow.h
 )
 
 set(plClient_SOURCES
@@ -127,6 +128,17 @@ elseif(APPLE)
         Mac-Cocoa/MainMenu.xib
         Mac-Cocoa/PLSLoginWindowController.xib
         Mac-Cocoa/PLSPatcherWindowController.xib
+    )
+elseif(UNIX)
+    list(APPEND plClient_SOURCES
+        linux/main.cpp
+        $<$<BOOL:${USE_X11}>:linux/plX11ClientWindow.cpp>
+    )
+    list(APPEND plClient_HEADERS
+        $<$<BOOL:${USE_X11}>:linux/plX11ClientWindow.h>
+    )
+    list(APPEND plClient_RESOURCES
+        $<$<BOOL:${USE_X11}>:linux/res/Dirt.xpm>
     )
 else()
     list(APPEND plClient_SOURCES
@@ -260,7 +272,20 @@ target_link_libraries(
         "$<$<AND:$<PLATFORM_ID:Darwin>,$<VERSION_LESS:${CMAKE_OSX_DEPLOYMENT_TARGET},10.9>>:-framework IOKit>"
         $<$<PLATFORM_ID:Darwin>:${LibArchive_LIBRARIES}>
 )
-target_include_directories(plClient PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+
+target_include_directories(
+    plClient
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}"
+
+        # We're not linking against X11 or Wayland because we want to load them
+        # dynamically at runtime, but we do need their include paths to be
+        # added here so the header definitions can be loaded
+        $<$<BOOL:${USE_X11}>:$<TARGET_PROPERTY:X11::X11,INCLUDE_DIRECTORIES>>
+        $<$<BOOL:${USE_XAW}>:$<TARGET_PROPERTY:X11::Xaw,INCLUDE_DIRECTORIES>>
+        $<$<BOOL:${USE_XFIXES}>:$<TARGET_PROPERTY:X11::Xfixes,INCLUDE_DIRECTORIES>>
+        $<$<BOOL:${USE_XPM}>:$<TARGET_PROPERTY:X11::Xpm,INCLUDE_DIRECTORIES>>
+)
 
 if(PLASMA_EXTERNAL_RELEASE)
     set_target_properties(plClient PROPERTIES OUTPUT_NAME "UruExplorer")
