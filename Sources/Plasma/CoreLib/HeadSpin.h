@@ -92,9 +92,11 @@ namespace ST { class string; }
     typedef void* hsWindowInst;
     typedef void* hsLibraryHndl;
 #else
-    typedef int32_t* hsWindowHndl;
+    // Opaque handles. On Linux these carry an SDL_Window* and the native display
+    // connection (Display* for X11, wl_display* for Wayland).
+    typedef void* hsWindowHndl;
     typedef void* hsDisplayHndl;
-    typedef int32_t* hsWindowInst;
+    typedef void* hsWindowInst;
     typedef void* hsLibraryHndl;
 #endif // HS_BUILD_FOR_WIN32
 

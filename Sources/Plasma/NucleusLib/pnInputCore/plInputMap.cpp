@@ -102,6 +102,11 @@ plKeyCombo::plKeyCombo()
 
 bool plKeyCombo::IsSatisfiedBy(const plKeyCombo &combo) const
 {
+    // An unbound slot must never match. On Windows KEY_UNMAPPED is 0xffffffff,
+    // which no real key event carries, but on Unix it is 0 -- so without this
+    // an unbound key2 would match any event whose key code failed to translate.
+    if (fKey == KEY_UNMAPPED || combo.fKey == KEY_UNMAPPED)
+        return false;
     if (fKey != combo.fKey)
         return false;
     if ((fFlags & kShift) && !(combo.fFlags & kShift))

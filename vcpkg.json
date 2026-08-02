@@ -35,6 +35,32 @@
       "opus",
       "physx",
       {
+        "name": "sdl3",
+        "default-features": false,
+        "features": [
+          "vulkan",
+          "wayland",
+          "x11"
+        ],
+        "platform": "!(windows | osx)",
+        "$comment": "Windowing and input for the Unix client frontend. We skip the ibus IME feature; the engine does its own text input."
+      },
+      {
+        "name": "dbus",
+        "default-features": false,
+        "platform": "!(windows | osx)",
+        "$comment": "Pulled in by sdl3. Stated here to keep the systemd default feature off, since libsystemd does not build in vcpkg."
+      },
+      {
+        "name": "volk",
+        "platform": "linux",
+        "$comment": "Vulkan entry point loader for the Vulkan rendering pipeline."
+      },
+      {
+        "name": "vulkan-memory-allocator",
+        "platform": "linux"
+      },
+      {
         "name": "python3",
         "features": [
           "deprecated-win7-support"
