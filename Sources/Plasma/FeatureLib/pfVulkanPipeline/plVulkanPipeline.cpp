@@ -107,6 +107,7 @@ plVulkanPipeline::plVulkanPipeline(hsDisplayHndl display, hsWindowHndl window,
         return;
 
     fPlateMgr = new plVulkanPlateManager(this);
+    fDebugTextMgr = new plDebugTextManager();
 
     IMakeRenderTargetPools();
 }
@@ -123,6 +124,9 @@ plVulkanPipeline::~plVulkanPipeline()
     // has to hand it back first.
     delete fPlateMgr;
     fPlateMgr = nullptr;
+
+    delete fDebugTextMgr;
+    fDebugTextMgr = nullptr;
 
     while (fTextFontRefList)
         delete fTextFontRefList;
