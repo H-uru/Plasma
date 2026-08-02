@@ -786,6 +786,9 @@ bool plMetalPipeline::BeginRender()
 bool plMetalPipeline::EndRender()
 {
     bool retVal = false;
+    fDeferShadowApply = false;
+    fRenderingDeferredShadows = false;
+    fDeferredShadowBatches.clear();
     fState.Reset();
 
     if (--fInSceneDepth == 0) {
@@ -848,9 +851,41 @@ void plMetalPipeline::RenderScreenElements()
     plProfile_EndTiming(Reset);
 }
 
-void plMetalPipeline::RenderPostEffects()
+void plMetalPipeline::BeginOpaquePass()
 {
+    fDeferredShadowBatches.clear();
+    fDeferShadowApply = true;
+    fRenderingDeferredShadows = false;
+}
+
+void plMetalPipeline::IFlushDeferredShadows()
+{
+    fDeferShadowApply = false;
+    fRenderingDeferredShadows = true;
+
+    std::vector<plDeferredShadowBatch> batches = std::move(fDeferredShadowBatches);
+    fDeferredShadowBatches.clear();
+    for (plDeferredShadowBatch& batch : batches) {
+        if (batch.fDrawable && !batch.fVisList.empty())
+            RenderSpans(batch.fDrawable, batch.fVisList);
+    }
+
+    fRenderingDeferredShadows = false;
+}
+
+void plMetalPipeline::RenderPostOpaqueEffects()
+{
+    // Only the primary scene opts into this hook. Keep render requests excluded
+    // defensively so GUI dialogs can never composite AO over the finished world.
+    if (fView.fRenderRequest) {
+        fDeferShadowApply = false;
+        fDeferredShadowBatches.clear();
+        return;
+    }
+
     fDevice.ApplyGTAO();
+    fState.Reset();
+    IFlushDeferredShadows();
     fState.Reset();
 }
 
@@ -1183,6 +1218,11 @@ void plMetalPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_
 {
     plProfile_BeginTiming(RenderSpan);
 
+    if (fDeferShadowApply && !fRenderingDeferredShadows && fShadows.size() &&
+        !(fView.fRenderState & kRenderNoShadows) && !visList.empty()) {
+        fDeferredShadowBatches.push_back({ ice, visList });
+    }
+
     hsMatrix44                  lastL2W;
     size_t                      i, j;
     hsGMaterial*                material;
@@ -1352,6 +1392,16 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
     }
     fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
 
+    if (fRenderingDeferredShadows) {
+        IHandleMaterialPass(material, 0, &span, vRef);
+        if (fShadows.size() && !(fView.fRenderState & kRenderNoShadows))
+            IRenderShadowsOntoSpan(render, &span, material, vRef);
+#ifdef HS_DEBUGGING
+        fDevice.CurrentRenderCommandEncoder()->popDebugGroup();
+#endif
+        return;
+    }
+
     IPushPiggyBacks(material);
     hsRefCnt_SafeAssign(fCurrMaterial, material);
     uint32_t pass;
@@ -1413,12 +1463,15 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
         }
 
         // Handle render of shadows onto geometry.
-        if (fShadows.size()) {
+        if (!fDeferShadowApply && fShadows.size() &&
+            !(fView.fRenderState & kRenderNoShadows)) {
             IRenderShadowsOntoSpan(render, &span, material, vRef);
         }
     }
 
-    if (span.GetNumAuxSpans() || (pass >= 0 && fShadows.size())) {
+    if (span.GetNumAuxSpans() ||
+        (pass >= 0 && !fDeferShadowApply && fShadows.size() &&
+         !(fView.fRenderState & kRenderNoShadows))) {
     }
 
 #ifdef HS_DEBUGGING
@@ -1654,14 +1707,6 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
 
     hsGMatState s;
     s.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
-
-    // Lens flares, other framebuffer-additive geometry, and decals preserve
-    // depth testing for occlusion, but never alter depth.
-    const bool isDecal = (material->GetCompositeFlags() & hsGMaterial::kCompDecal) != 0;
-    if ((s.IsFramebufferAdditive() || isDecal) &&
-        !(s.fZFlags & hsGMatState::kZClearZ)) {
-        s.fZFlags |= hsGMatState::kZNoZWrite;
-    }
 
     if (s.fZFlags & hsGMatState::kZIncLayer)
         ISetLayer(1);

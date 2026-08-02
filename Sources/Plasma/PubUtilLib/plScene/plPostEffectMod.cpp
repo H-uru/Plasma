@@ -89,6 +89,7 @@ void plPostEffectMod::ISetupRenderRequest()
     fRenderRequest = new plRenderRequest;
     uint32_t renderState = plPipeline::kRenderNormal
         | plPipeline::kRenderNoProjection
+        | plPipeline::kRenderNoShadows
         | plPipeline::kRenderNoLights
         | plPipeline::kRenderClearDepth;
     fRenderRequest->SetRenderState(renderState);

@@ -5559,13 +5559,6 @@ int32_t   plDXPipeline::IHandleMaterial( hsGMaterial *newMat, uint32_t layer, co
 
     /// Save stuff for next time around
     ICompositeLayerState(0, currLay);
-    // Additive geometry and decals should be occluded by existing depth, but
-    // must not write depth themselves.
-    const bool isDecal = (newMat->GetCompositeFlags() & hsGMaterial::kCompDecal) != 0;
-    if ((fLayerState[0].IsFramebufferAdditive() || isDecal) &&
-        !(fLayerState[0].fZFlags & hsGMatState::kZClearZ)) {
-        fLayerState[0].fZFlags |= hsGMatState::kZNoZWrite;
-    }
     hsRefCnt_SafeAssign( fCurrMaterial, newMat );
     fCurrLayerIdx = layer;
     fCurrLay = currLay;
@@ -9447,7 +9440,7 @@ bool plDXPipeline::ILoopOverLayers(const plRenderPrimFunc& inRender, hsGMaterial
             IRenderProjections(render);
 
         // Handle render of shadows onto geometry.
-        if (!fShadows.empty())
+        if (!fShadows.empty() && !(fView.fRenderState & kRenderNoShadows))
             IRenderShadowsOntoSpan(render, &span, material);
     }
 

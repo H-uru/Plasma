@@ -226,7 +226,8 @@ public:
         kRenderOrthogonal       = 0x40,
         kRenderNoProjection     = 0x80,
         kRenderNoLights         = 0x100,
-        kRenderShadowErase      = 0x200
+        kRenderShadowErase      = 0x200,
+        kRenderNoShadows        = 0x400
     };
 
     virtual void                        PushRenderRequest(plRenderRequest* req) = 0;
@@ -244,8 +245,12 @@ public:
     virtual bool                        BeginRender() = 0;
     virtual bool                        EndRender() = 0;
     virtual void                        RenderScreenElements() = 0;
-    /** Backend post effects that must consume world depth before UI rendering. */
-    virtual void                        RenderPostEffects() { }
+    /** Starts a solid-only scene phase whose shadow receiver draws may be
+        deferred until after depth-derived effects. */
+    virtual void                        BeginOpaquePass() { }
+    /** Runs depth-derived scene effects after solid geometry, before overlay
+        and translucent geometry. */
+    virtual void                        RenderPostOpaqueEffects() { }
 
     virtual void                        BeginVisMgr(plVisMgr* visMgr) = 0;
     virtual void                        EndVisMgr(plVisMgr* visMgr) = 0;

@@ -24,7 +24,7 @@ layout(scalar, set = 0, binding = 0) uniform GTAOConstantBlock
     float effectRadius;
     float effectFalloffRange;
     float radiusMultiplier;
-    float padding0;
+    float skyViewDepth;
     float finalValuePower;
     float denoiseBlurBeta;
     float sampleDistributionPower;
@@ -146,21 +146,38 @@ uint GTAOHilbertIndex(uvec2 pixel)
     return index;
 }
 
+// A clamp-to-edge sampler turns a tap past the frame border into a duplicate of
+// the border texel. That reads back as real geometry and fabricates a horizon,
+// which shows up as a dark band hugging all four edges of the screen. Nothing is
+// known about off-screen geometry, so such a tap must contribute no occlusion.
+bool GTAOOnScreen(vec2 screen)
+{
+    return all(greaterThanEqual(screen, vec2(0.0))) &&
+           all(lessThanEqual(screen, vec2(1.0)));
+}
+
 float GTAOVisibility(ivec2 pixel, uint sliceCount, uint stepsPerSlice,
                      vec2 noise, vec3 normal, sampler2D viewDepth)
 {
     vec2 screen = (vec2(pixel) + 0.5) * gtao.viewportPixelSize;
     float centerDepth = texelFetch(viewDepth, pixel, 0).r;
-    if (centerDepth >= 65500.0)
+    if (centerDepth >= gtao.skyViewDepth)
         return 1.0;
 
-    vec3 center = GTAOViewPosition(screen, centerDepth * 0.99920);
+    // Nudge the center toward the camera to hide depth-buffer imprecision. The
+    // working depth chain is 32 bit, so this is XeGTAO's FP32 constant, not its
+    // much heavier FP16 one.
+    vec3 center = GTAOViewPosition(screen, centerDepth * 0.99999);
     vec3 view = normalize(-center);
     float radius = gtao.effectRadius * gtao.radiusMultiplier;
     float falloffRange = gtao.effectFalloffRange * radius;
     float falloffFrom = radius * (1.0 - gtao.effectFalloffRange);
     float falloffMul = -1.0 / max(falloffRange, 1e-6);
     float falloffAdd = falloffFrom / max(falloffRange, 1e-6) + 1.0;
+    // XeGTAO's thickness heuristic: stretching the view-space Z of the sample
+    // delta discards occluders behind the center sooner. At the default
+    // compensation of 0 this is exactly length(delta).
+    float thickness = 1.0 + gtao.thinOccluderCompensation;
     float screenRadius = abs(radius / max(centerDepth * gtao.ndcToViewMulPixelSize.x, 1e-6));
     float visibility = GTAOSaturate((10.0 - screenRadius) / 100.0) * 0.5;
     float minSample = 1.3 / max(screenRadius, 1e-6);
@@ -200,8 +217,12 @@ float GTAOVisibility(ivec2 pixel, uint sliceCount, uint stepsPerSlice,
             vec3 delta1 = GTAOViewPosition(screen1, depth1) - center;
             float distance0 = max(length(delta0), 1e-6);
             float distance1 = max(length(delta1), 1e-6);
-            float weight0 = GTAOSaturate(distance0 * falloffMul + falloffAdd);
-            float weight1 = GTAOSaturate(distance1 * falloffMul + falloffAdd);
+            float falloffBase0 = length(vec3(delta0.xy, delta0.z * thickness));
+            float falloffBase1 = length(vec3(delta1.xy, delta1.z * thickness));
+            float weight0 = GTAOOnScreen(screen0)
+                          ? GTAOSaturate(falloffBase0 * falloffMul + falloffAdd) : 0.0;
+            float weight1 = GTAOOnScreen(screen1)
+                          ? GTAOSaturate(falloffBase1 * falloffMul + falloffAdd) : 0.0;
             float horizonSample0 = dot(delta0 / distance0, view);
             float horizonSample1 = dot(delta1 / distance1, view);
             horizonSample0 = mix(low0, horizonSample0, weight0);

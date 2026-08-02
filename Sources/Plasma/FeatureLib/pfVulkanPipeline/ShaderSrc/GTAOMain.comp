@@ -22,8 +22,10 @@ void main()
     if (any(greaterThanEqual(pixel, gtao.viewportSize)))
         return;
 
+    // No geometry here -- the sky, or the depth clear. Fully visible, and every
+    // edge open so the denoiser is free to blur across it.
     float center = texelFetch(viewDepth, pixel, 0).r;
-    if (center >= 65500.0) {
+    if (center >= gtao.skyViewDepth) {
         imageStore(outWorkingAO, pixel, uvec4(170u));
         imageStore(outEdges, pixel, vec4(1.0));
         return;

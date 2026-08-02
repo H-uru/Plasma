@@ -27,9 +27,12 @@ enum class plGTAOQuality : uint8_t
 struct plGTAOSettings
 {
     bool fEnabled = true;
-    plGTAOQuality fQuality = plGTAOQuality::kUltra;
-    float fRadius = 0.5f;
-    float fPower = 3.0f;
+    plGTAOQuality fQuality = plGTAOQuality::kUltra; // upstream GTAOSettings::QualityLevel
+    // Upstream defaults to a 0.5 *metre* radius, and its auto-tuned heuristics
+    // were fitted against an occlusion sphere of that world size. Plasma measures
+    // in feet, so the default is converted rather than copied.
+    float fRadius = 1.6404199f;
+    float fPower = 2.2f; // XE_GTAO_DEFAULT_FINAL_VALUE_POWER
 };
 
 /** Shared CPU/GPU constant layout used by both the Vulkan and Metal ports. */
@@ -45,7 +48,8 @@ struct plGTAOConstants
     float fEffectRadius;
     float fEffectFalloffRange;
     float fRadiusMultiplier;
-    float fPadding0;
+    float fSkyViewDepth; // upstream's Padding0 slot
+
     float fFinalValuePower;
     float fDenoiseBlurBeta;
     float fSampleDistributionPower;
@@ -62,7 +66,10 @@ inline plGTAOSettings plClampGTAOSettings(plGTAOSettings settings)
         static_cast<int>(settings.fQuality),
         static_cast<int>(plGTAOQuality::kLow),
         static_cast<int>(plGTAOQuality::kUltra)));
-    settings.fRadius = std::clamp(settings.fRadius, 0.01f, 100.f);
+    // Upstream's own UI clamps are [0, 10000] and [0.5, 5.0]. The radius floor is
+    // raised off zero because a zero screen-space radius divides through in the
+    // sampling loop.
+    settings.fRadius = std::clamp(settings.fRadius, 0.01f, 10000.f);
     settings.fPower = std::clamp(settings.fPower, 0.5f, 5.f);
     return settings;
 }
@@ -115,11 +122,11 @@ inline bool plUpdateGTAOConstants(plGTAOConstants& out, uint32_t width, uint32_t
     out.fViewportPixelSize[0] = 1.f / static_cast<float>(width);
     out.fViewportPixelSize[1] = 1.f / static_cast<float>(height);
 
-    // Plasma copies hsMatrix44's row-major projection directly into the shader
-    // matrix storage. The perspective marker is therefore at [14], while the
-    // view-depth numerator (cameraToNDC[2][3]) is at [11]. XeGTAO's upstream
-    // column-vector extraction uses [14] for the latter, which is not valid for
-    // Plasma's row-vector shader convention.
+    // Plasma copies hsMatrix44 straight into shader matrix storage: column-vector
+    // convention in row-major memory. That puts the perspective marker
+    // (cameraToNDC[3][2]) at [14] and the view-depth numerator (cameraToNDC[2][3])
+    // at [11], which is XeGTAO's non-rowMajor extraction. Its rowMajor branch reads
+    // [14] for the numerator and would pick up the marker instead.
     if (projection[14] == 0.f)
         return false;
 
@@ -132,6 +139,17 @@ inline bool plUpdateGTAOConstants(plGTAOConstants& out, uint32_t width, uint32_t
 
     out.fDepthUnpackConsts[0] = depthMul;
     out.fDepthUnpackConsts[1] = depthAdd;
+
+    // A device depth of 1 -- the depth clear, and anything sitting on the far
+    // plane such as the sky -- linearizes to this. The shaders treat pixels at or
+    // past it as having no geometry. Upstream instead relies on its half-float
+    // depth format saturating, which never happens here: the working depth chain
+    // is 32 bit, so a far plane of a few thousand units linearizes to a perfectly
+    // ordinary value and the sky would otherwise be occluded like a flat wall.
+    const float farDenominator = depthAdd - 1.f;
+    out.fSkyViewDepth = (farDenominator > 1e-7f)
+                      ? std::min(depthMul / farDenominator, 65504.f) * 0.999f
+                      : 65504.f;
     out.fCameraTanHalfFOV[0] = 1.f / projection[0];
     out.fCameraTanHalfFOV[1] = 1.f / projection[5];
     out.fNDCToViewMul[0] = out.fCameraTanHalfFOV[0] * 2.f;
@@ -141,10 +159,12 @@ inline bool plUpdateGTAOConstants(plGTAOConstants& out, uint32_t width, uint32_t
     out.fNDCToViewMulPixelSize[0] = out.fNDCToViewMul[0] * out.fViewportPixelSize[0];
     out.fNDCToViewMulPixelSize[1] = out.fNDCToViewMul[1] * out.fViewportPixelSize[1];
 
+    // XE_GTAO_DEFAULT_* from upstream's XeGTAO.h. Intel fitted these together
+    // against a ray-traced ground truth, so they are not meaningful to retune one
+    // at a time.
     out.fEffectRadius = settings.fRadius;
     out.fEffectFalloffRange = 0.615f;
     out.fRadiusMultiplier = 1.457f;
-    out.fPadding0 = 0.f;
     out.fFinalValuePower = settings.fPower;
     out.fDenoiseBlurBeta = 1.2f;
     out.fSampleDistributionPower = 2.f;

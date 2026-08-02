@@ -233,6 +233,17 @@ void plVulkanPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
         vkCmdBindIndexBuffer(cmd, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
     }
 
+    if (fRenderingDeferredShadows) {
+        IPushPiggyBacks(material);
+        hsRefCnt_SafeAssign(fCurrMaterial, material);
+        IHandleMaterialPass(cmd, material, 0, &span, vRef);
+        IPopPiggyBacks();
+
+        if (!fShadows.empty() && !(fView.fRenderState & kRenderNoShadows))
+            IRenderShadowsOntoSpan(cmd, &span, material, vRef, iStart, iLength);
+        return;
+    }
+
     IPushPiggyBacks(material);
     hsRefCnt_SafeAssign(fCurrMaterial, material);
 
@@ -278,7 +289,8 @@ void plVulkanPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
 
     // Shadows go on after the span is fully drawn, because they darken what is
     // already in the frame buffer rather than contributing to it.
-    if (!fShadows.empty())
+    if (!fDeferShadowApply && !fShadows.empty() &&
+        !(fView.fRenderState & kRenderNoShadows))
         IRenderShadowsOntoSpan(cmd, &span, material, vRef, iStart, iLength);
 }
 
@@ -301,15 +313,6 @@ bool plVulkanPipeline::IHandleMaterialPass(VkCommandBuffer cmd, hsGMaterial* mat
 
     hsGMatState state;
     state.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
-
-    // Additive geometry and decals must remain depth-tested so scene geometry
-    // can occlude them, but they must not become occluders for later draws or
-    // depth-derived post effects such as GTAO.
-    const bool isDecal = (material->GetCompositeFlags() & hsGMaterial::kCompDecal) != 0;
-    if ((state.IsFramebufferAdditive() || isDecal) &&
-        !(state.fZFlags & hsGMatState::kZClearZ)) {
-        state.fZFlags |= hsGMatState::kZNoZWrite;
-    }
 
     //
     // Dynamic state that Metal keeps on the encoder.
@@ -1023,6 +1026,11 @@ bool plVulkanPipeline::PrepForRender(plDrawable* drawable, std::vector<int16_t>&
 // Ported from plMetalPipeline::RenderSpans (plMetalPipeline.cpp:1059-1155).
 void plVulkanPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>& visList)
 {
+    if (fDeferShadowApply && !fRenderingDeferredShadows && !fShadows.empty() &&
+        !(fView.fRenderState & kRenderNoShadows) && !visList.empty()) {
+        fDeferredShadowBatches.push_back({ ice, visList });
+    }
+
     hsMatrix44 lastL2W;
     lastL2W.Reset();
     ISetLocalToWorld(lastL2W, lastL2W);

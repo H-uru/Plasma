@@ -119,13 +119,10 @@ void plVulkanDevice::IDestroyGTAO()
         vkDestroyDescriptorSetLayout(fDevice, fGTAODescriptorSetLayout, nullptr);
     if (fGTAOPointSampler != VK_NULL_HANDLE)
         vkDestroySampler(fDevice, fGTAOPointSampler, nullptr);
-    if (fGTAOLinearSampler != VK_NULL_HANDLE)
-        vkDestroySampler(fDevice, fGTAOLinearSampler, nullptr);
     fGTAOPipelineLayout = VK_NULL_HANDLE;
     fGTAODescriptorPool = VK_NULL_HANDLE;
     fGTAODescriptorSetLayout = VK_NULL_HANDLE;
     fGTAOPointSampler = VK_NULL_HANDLE;
-    fGTAOLinearSampler = VK_NULL_HANDLE;
     std::fill(std::begin(fGTAODescriptorSets), std::end(fGTAODescriptorSets), VK_NULL_HANDLE);
 
     for (plVulkanBuffer& buffer : fGTAOConstants) {
@@ -252,6 +249,9 @@ bool plVulkanDevice::IEnsureGTAO()
             return fail("constant-buffer creation");
     }
 
+    // Every GTAO read is point clamp. XeGTAO calls out linear-on-the-depth-chain
+    // specifically: it interpolates neighbouring depths on the same MIP level and
+    // invents surfaces that are not in the depth buffer.
     VkSamplerCreateInfo samplerInfo{ VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO };
     samplerInfo.magFilter = VK_FILTER_NEAREST;
     samplerInfo.minFilter = VK_FILTER_NEAREST;
@@ -262,11 +262,6 @@ bool plVulkanDevice::IEnsureGTAO()
     samplerInfo.maxLod = 4.f;
     if (vkCreateSampler(fDevice, &samplerInfo, nullptr, &fGTAOPointSampler) != VK_SUCCESS)
         return fail("point sampler creation");
-    samplerInfo.magFilter = VK_FILTER_LINEAR;
-    samplerInfo.minFilter = VK_FILTER_LINEAR;
-    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-    if (vkCreateSampler(fDevice, &samplerInfo, nullptr, &fGTAOLinearSampler) != VK_SUCCESS)
-        return fail("linear sampler creation");
 
     std::array<VkDescriptorSetLayoutBinding, 16> bindings{};
     const uint32_t bindingNumbers[] = { 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
@@ -444,7 +439,7 @@ bool plVulkanDevice::IEnsureGTAO()
         };
         imageInfos[0] = sampled(fGTAOPointSampler, fDepthView,
                                 VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL);
-        imageInfos[1] = sampled(fGTAOLinearSampler, fGTAODepthView,
+        imageInfos[1] = sampled(fGTAOPointSampler, fGTAODepthView,
                                 VK_IMAGE_LAYOUT_GENERAL);
         imageInfos[2] = sampled(fGTAOPointSampler, fGTAONormalsView,
                                 VK_IMAGE_LAYOUT_GENERAL);

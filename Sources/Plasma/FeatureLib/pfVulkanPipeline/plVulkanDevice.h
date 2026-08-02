@@ -665,7 +665,6 @@ private:
     VkDescriptorSet fGTAODescriptorSets[kMaxFramesInFlight]{};
     VkPipelineLayout fGTAOPipelineLayout = VK_NULL_HANDLE;
     VkSampler fGTAOPointSampler = VK_NULL_HANDLE;
-    VkSampler fGTAOLinearSampler = VK_NULL_HANDLE;
     VkShaderModule fGTAOPrefilterModule = VK_NULL_HANDLE;
     VkShaderModule fGTAOPrefilterMSModule = VK_NULL_HANDLE;
     VkShaderModule fGTAONormalsModule = VK_NULL_HANDLE;

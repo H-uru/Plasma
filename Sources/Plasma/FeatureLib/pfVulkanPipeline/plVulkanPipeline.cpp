@@ -210,6 +210,10 @@ bool plVulkanPipeline::BeginRender()
 
 bool plVulkanPipeline::EndRender()
 {
+    fDeferShadowApply = false;
+    fRenderingDeferredShadows = false;
+    fDeferredShadowBatches.clear();
+
     if (!fInFrame) {
         IClearShadowSlaves();
         hsRefCnt_SafeUnRef(fCurrMaterial);
@@ -331,10 +335,42 @@ void plVulkanPipeline::RenderScreenElements()
     fState.Reset();
 }
 
-void plVulkanPipeline::RenderPostEffects()
+void plVulkanPipeline::BeginOpaquePass()
 {
+    fDeferredShadowBatches.clear();
+    fDeferShadowApply = true;
+    fRenderingDeferredShadows = false;
+}
+
+void plVulkanPipeline::IFlushDeferredShadows()
+{
+    fDeferShadowApply = false;
+    fRenderingDeferredShadows = true;
+
+    std::vector<plDeferredShadowBatch> batches = std::move(fDeferredShadowBatches);
+    fDeferredShadowBatches.clear();
+    for (plDeferredShadowBatch& batch : batches) {
+        if (batch.fDrawable && !batch.fVisList.empty())
+            RenderSpans(batch.fDrawable, batch.fVisList);
+    }
+
+    fRenderingDeferredShadows = false;
+}
+
+void plVulkanPipeline::RenderPostOpaqueEffects()
+{
+    // Only the primary scene opts into this hook. Keep render requests excluded
+    // defensively so GUI dialogs can never composite AO over the finished world.
+    if (fView.fRenderRequest) {
+        fDeferShadowApply = false;
+        fDeferredShadowBatches.clear();
+        return;
+    }
+
     fDevice.ApplyGTAO();
     // GTAO binds its own fullscreen pipeline behind the draw-state cache.
+    fState.Reset();
+    IFlushDeferredShadows();
     fState.Reset();
 }
 

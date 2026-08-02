@@ -38,7 +38,7 @@ struct GTAOConstants
     float effectRadius;
     float effectFalloffRange;
     float radiusMultiplier;
-    float padding0;
+    float skyViewDepth;
     float finalValuePower;
     float denoiseBlurBeta;
     float sampleDistributionPower;
@@ -325,8 +325,20 @@ kernel void gtaoNormalsMS(constant GTAOConstants& gtao [[buffer(0)]],
     GTAONormalsStore(center, left, right, top, bottom, pixel, outNormals, gtao);
 }
 
+// Point clamp, not linear. XeGTAO calls out linear-on-the-depth-chain specifically:
+// it interpolates neighbouring depths on the same MIP level and invents surfaces
+// that are not in the depth buffer.
 constant sampler gtaoDepthSampler(coord::normalized, address::clamp_to_edge,
-                                  filter::linear, mip_filter::linear);
+                                  filter::nearest, mip_filter::nearest);
+
+// A clamp-to-edge sampler turns a tap past the frame border into a duplicate of
+// the border texel. That reads back as real geometry and fabricates a horizon,
+// which shows up as a dark band hugging all four edges of the screen. Nothing is
+// known about off-screen geometry, so such a tap must contribute no occlusion.
+inline bool GTAOOnScreen(float2 screen)
+{
+    return all(screen >= 0.0f) && all(screen <= 1.0f);
+}
 
 inline float GTAOVisibility(int2 pixel, uint sliceCount, uint stepsPerSlice,
                             float2 noise, float3 normal,
@@ -335,16 +347,23 @@ inline float GTAOVisibility(int2 pixel, uint sliceCount, uint stepsPerSlice,
 {
     float2 screen = (float2(pixel) + 0.5f) * gtao.viewportPixelSize;
     float centerDepth = viewDepth.read(uint2(pixel), 0).r;
-    if (centerDepth >= 65500.0f)
+    if (centerDepth >= gtao.skyViewDepth)
         return 1.0f;
 
-    float3 center = GTAOViewPosition(screen, centerDepth * 0.99920f, gtao);
+    // Nudge the center toward the camera to hide depth-buffer imprecision. The
+    // working depth chain is 32 bit, so this is XeGTAO's FP32 constant, not its
+    // much heavier FP16 one.
+    float3 center = GTAOViewPosition(screen, centerDepth * 0.99999f, gtao);
     float3 view = normalize(-center);
     float radius = gtao.effectRadius * gtao.radiusMultiplier;
     float falloffRange = gtao.effectFalloffRange * radius;
     float falloffFrom = radius * (1.0f - gtao.effectFalloffRange);
     float falloffMul = -1.0f / max(falloffRange, 1e-6f);
     float falloffAdd = falloffFrom / max(falloffRange, 1e-6f) + 1.0f;
+    // XeGTAO's thickness heuristic: stretching the view-space Z of the sample
+    // delta discards occluders behind the center sooner. At the default
+    // compensation of 0 this is exactly length(delta).
+    float thickness = 1.0f + gtao.thinOccluderCompensation;
     float screenRadius = abs(radius / max(centerDepth * gtao.ndcToViewMulPixelSize.x, 1e-6f));
     float visibility = GTAOSaturate((10.0f - screenRadius) / 100.0f) * 0.5f;
     float minSample = 1.3f / max(screenRadius, 1e-6f);
@@ -383,8 +402,12 @@ inline float GTAOVisibility(int2 pixel, uint sliceCount, uint stepsPerSlice,
             float3 delta1 = GTAOViewPosition(screen1, depth1, gtao) - center;
             float distance0 = max(length(delta0), 1e-6f);
             float distance1 = max(length(delta1), 1e-6f);
-            float weight0 = GTAOSaturate(distance0 * falloffMul + falloffAdd);
-            float weight1 = GTAOSaturate(distance1 * falloffMul + falloffAdd);
+            float falloffBase0 = length(float3(delta0.xy, delta0.z * thickness));
+            float falloffBase1 = length(float3(delta1.xy, delta1.z * thickness));
+            float weight0 = GTAOOnScreen(screen0)
+                          ? GTAOSaturate(falloffBase0 * falloffMul + falloffAdd) : 0.0f;
+            float weight1 = GTAOOnScreen(screen1)
+                          ? GTAOSaturate(falloffBase1 * falloffMul + falloffAdd) : 0.0f;
             horizon0 = max(horizon0, mix(low0, dot(delta0 / distance0, view), weight0));
             horizon1 = max(horizon1, mix(low1, dot(delta1 / distance1, view), weight1));
         }
@@ -410,8 +433,10 @@ kernel void gtaoMain(constant GTAOConstants& gtao [[buffer(0)]],
 {
     if (any(pixel >= uint2(gtao.viewportSize)))
         return;
+    // No geometry here -- the sky, or the depth clear. Fully visible, and every
+    // edge open so the denoiser is free to blur across it.
     float center = viewDepth.read(pixel, 0).r;
-    if (center >= 65500.0f) {
+    if (center >= gtao.skyViewDepth) {
         outWorkingAO.write(uint4(170u), pixel);
         outEdges.write(float4(1.0f), pixel);
         return;
@@ -435,14 +460,15 @@ kernel void gtaoMain(constant GTAOConstants& gtao [[buffer(0)]],
                                   255.0f + 0.5f)), pixel);
 }
 
-inline float GTAOEdgeWeight(float4 centerEdges, int2 offset)
+constant float GTAO_DIAGONAL_WEIGHT = 0.85f * 0.5f;
+constant float GTAO_LEAK_THRESHOLD = 2.5f;
+constant float GTAO_LEAK_STRENGTH = 0.5f;
+
+inline void GTAOAddSample(float visibility, float weight,
+                          thread float& sum, thread float& sumWeight)
 {
-    float weight = 1.0f;
-    if (offset.x < 0) weight *= centerEdges.x;
-    if (offset.x > 0) weight *= centerEdges.y;
-    if (offset.y < 0) weight *= centerEdges.z;
-    if (offset.y > 0) weight *= centerEdges.w;
-    return weight;
+    sum += weight * visibility;
+    sumWeight += weight;
 }
 
 kernel void gtaoDenoise(constant GTAOConstants& gtao [[buffer(0)]],
@@ -455,22 +481,59 @@ kernel void gtaoDenoise(constant GTAOConstants& gtao [[buffer(0)]],
         return;
     int2 p = int2(pixel);
     int2 maxPixel = gtao.viewportSize - 1;
-    float4 centerEdges = GTAOUnpackEdges(workingEdges.read(pixel).r);
-    float sum = 0.0f;
-    float sumWeight = 0.0f;
-    for (int y = -1; y <= 1; ++y) {
-        for (int x = -1; x <= 1; ++x) {
-            int2 offset = int2(x, y);
-            uint2 samplePixel = uint2(clamp(p + offset, int2(0), maxPixel));
-            float spatial = (x == 0 && y == 0) ? 1.0f :
-                            ((x == 0 || y == 0) ? 0.75f : 0.425f);
-            float weight = spatial * GTAOEdgeWeight(centerEdges, offset);
-            sum += float(workingAO.read(samplePixel).r) * weight;
-            sumWeight += weight;
-        }
-    }
-    float visibility = sum / max(sumWeight, 1e-6f) / 255.0f * GTAO_OCCLUSION_SCALE;
-    outFinalAO.write(uint4(uint(clamp(visibility, 0.0f, 1.0f) * 255.0f + 0.5f)), pixel);
+    uint2 leftPixel = uint2(clamp(p + int2(-1, 0), int2(0), maxPixel));
+    uint2 rightPixel = uint2(clamp(p + int2(1, 0), int2(0), maxPixel));
+    uint2 topPixel = uint2(clamp(p + int2(0, -1), int2(0), maxPixel));
+    uint2 bottomPixel = uint2(clamp(p + int2(0, 1), int2(0), maxPixel));
+    uint2 topLeftPixel = uint2(clamp(p + int2(-1, -1), int2(0), maxPixel));
+    uint2 topRightPixel = uint2(clamp(p + int2(1, -1), int2(0), maxPixel));
+    uint2 bottomLeftPixel = uint2(clamp(p + int2(-1, 1), int2(0), maxPixel));
+    uint2 bottomRightPixel = uint2(clamp(p + int2(1, 1), int2(0), maxPixel));
+
+    float4 edgesCenter = GTAOUnpackEdges(workingEdges.read(pixel).r);
+    float4 edgesLeft = GTAOUnpackEdges(workingEdges.read(leftPixel).r);
+    float4 edgesRight = GTAOUnpackEdges(workingEdges.read(rightPixel).r);
+    float4 edgesTop = GTAOUnpackEdges(workingEdges.read(topPixel).r);
+    float4 edgesBottom = GTAOUnpackEdges(workingEdges.read(bottomPixel).r);
+
+    // Edge detection is not symmetrical on its own: a left edge on the right
+    // neighbour need not agree with the right edge on this pixel. Folding the
+    // neighbour's opposing edge in enforces that and sharpens the blur.
+    edgesCenter *= float4(edgesLeft.y, edgesRight.x, edgesTop.w, edgesBottom.z);
+
+    // Let a little occlusion leak into pixels walled in by three or four edges.
+    // Without it those pixels keep their raw, unfiltered noise.
+    float edginess = (GTAOSaturate(4.0f - GTAO_LEAK_THRESHOLD -
+                                   dot(edgesCenter, float4(1.0f))) /
+                      (4.0f - GTAO_LEAK_THRESHOLD)) * GTAO_LEAK_STRENGTH;
+    edgesCenter = GTAOSaturate(edgesCenter + edginess);
+
+    float weightTopLeft = GTAO_DIAGONAL_WEIGHT *
+        (edgesCenter.x * edgesLeft.z + edgesCenter.z * edgesTop.x);
+    float weightTopRight = GTAO_DIAGONAL_WEIGHT *
+        (edgesCenter.z * edgesTop.y + edgesCenter.y * edgesRight.z);
+    float weightBottomLeft = GTAO_DIAGONAL_WEIGHT *
+        (edgesCenter.w * edgesBottom.x + edgesCenter.x * edgesLeft.w);
+    float weightBottomRight = GTAO_DIAGONAL_WEIGHT *
+        (edgesCenter.y * edgesRight.w + edgesCenter.w * edgesBottom.y);
+
+    float sumWeight = gtao.denoiseBlurBeta;
+    float sum = float(workingAO.read(pixel).r) / 255.0f * sumWeight;
+
+    GTAOAddSample(float(workingAO.read(leftPixel).r) / 255.0f, edgesCenter.x, sum, sumWeight);
+    GTAOAddSample(float(workingAO.read(rightPixel).r) / 255.0f, edgesCenter.y, sum, sumWeight);
+    GTAOAddSample(float(workingAO.read(topPixel).r) / 255.0f, edgesCenter.z, sum, sumWeight);
+    GTAOAddSample(float(workingAO.read(bottomPixel).r) / 255.0f, edgesCenter.w, sum, sumWeight);
+
+    GTAOAddSample(float(workingAO.read(topLeftPixel).r) / 255.0f, weightTopLeft, sum, sumWeight);
+    GTAOAddSample(float(workingAO.read(topRightPixel).r) / 255.0f, weightTopRight, sum, sumWeight);
+    GTAOAddSample(float(workingAO.read(bottomLeftPixel).r) / 255.0f, weightBottomLeft, sum, sumWeight);
+    GTAOAddSample(float(workingAO.read(bottomRightPixel).r) / 255.0f, weightBottomRight, sum, sumWeight);
+
+    // This is the only denoise pass, so it is also the one that undoes the
+    // occlusion-term packing scale.
+    float visibility = sum / max(sumWeight, 1e-6f) * GTAO_OCCLUSION_SCALE;
+    outFinalAO.write(uint4(uint(GTAOSaturate(visibility) * 255.0f + 0.5f)), pixel);
 }
 
 struct GTAOCompositeVertexOut

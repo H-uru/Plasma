@@ -124,7 +124,8 @@ public:
     bool           BeginRender() override;
     bool           EndRender() override;
     void           RenderScreenElements() override;
-    void           RenderPostEffects() override;
+    void           BeginOpaquePass() override;
+    void           RenderPostOpaqueEffects() override;
     bool           IsFullScreen() const override;
     void           Resize(uint32_t width, uint32_t height) override;
     void           LoadResources() override;
@@ -253,6 +254,18 @@ private:
     void ISetEnablePerPixelLighting(const bool enable);
 
     // Shadows
+    struct plDeferredShadowBatch
+    {
+        plDrawableSpans* fDrawable = nullptr;
+        std::vector<int16_t> fVisList;
+    };
+
+    std::vector<plDeferredShadowBatch> fDeferredShadowBatches;
+    bool fDeferShadowApply = false;
+    bool fRenderingDeferredShadows = false;
+
+    void IFlushDeferredShadows();
+
     std::vector<plRenderTarget*> fRenderTargetPool512;
     std::vector<plRenderTarget*> fRenderTargetPool256;
     std::vector<plRenderTarget*> fRenderTargetPool128;

@@ -1815,13 +1815,8 @@ bool plClient::IDraw()
 
     plProfile_BeginTiming(MainRender);
     if( !fFlags.IsBitSet( kFlagDBGDisableRender ) )
-        fPageMgr->Render(fPipeline);
+        fPageMgr->Render(fPipeline, true);
     plProfile_EndTiming(MainRender);
-
-    // World depth is still intact here. Post-render requests and screen-space
-    // UI can switch render targets or clear/write depth, so depth-driven post
-    // effects must run before either of them.
-    fPipeline->RenderPostEffects();
 
     plProfile_BeginTiming(PostRender);
     if( !fFlags.IsBitSet( kFlagDBGDisableRRequests ) )
