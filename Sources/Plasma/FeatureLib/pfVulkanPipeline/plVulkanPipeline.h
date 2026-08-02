@@ -145,7 +145,8 @@ public:
 
     /*** The draw path, in plVulkanDraw.cpp ***/
 
-    void ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, hsMatrix44& lastL2W);
+    void ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, hsMatrix44& lastL2W,
+                          bool force = false);
     bool ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* group, const plSpan* spanBase);
     bool IRefreshDynVertices(plGBufferGroup* group, plVulkanVertexBufferRef* vRef);
 

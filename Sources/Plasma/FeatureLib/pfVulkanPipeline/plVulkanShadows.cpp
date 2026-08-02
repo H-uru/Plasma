@@ -428,7 +428,12 @@ void plVulkanPipeline::IRenderShadowCasterSpan(VkCommandBuffer cmd, plShadowSlav
 
     hsMatrix44 lastL2W;
     lastL2W.Reset();
-    ISetupTransforms(drawable, span, lastL2W);
+    // Each caster span is rendered independently, so lastL2W does not describe
+    // the matrix currently cached by the device. In particular, software-skinned
+    // vertices are already in world space and must force an identity transform;
+    // otherwise a matrix left by an earlier draw moves them outside the slave's
+    // light-space frustum.
+    ISetupTransforms(drawable, span, lastL2W, true);
 
     plVulkanDevice::plScratchAlloc vertexAlloc = fDevice.AllocateScratch(sizeof(VertexUniforms));
     if (!vertexAlloc.IsValid())
@@ -441,8 +446,11 @@ void plVulkanPipeline::IRenderShadowCasterSpan(VkCommandBuffer cmd, plShadowSlav
     if (uniformSet == VK_NULL_HANDLE || textureSet == VK_NULL_HANDLE)
         return;
 
+    // Shadow-map generation happens before this frame's light buffer is uploaded.
+    // The caster shader does not read the light binding, so use a valid offset in
+    // the current frame's scratch buffer instead of the previous frame's offset.
     const uint32_t dynamicOffsets[6] = { vertexAlloc.fOffset, fEmptyShadowState.fOffset,
-                                         fLightBuffer.fOffset, fEmptyShadowState.fOffset,
+                                         0, fEmptyShadowState.fOffset,
                                          fEmptyShadowState.fOffset,
                                          fEmptyShadowState.fOffset };
     VkDescriptorSet sets[2] = { uniformSet, textureSet };

@@ -71,10 +71,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // Ported from plMetalPipeline::ISetupTransforms (plMetalPipeline.cpp:1157-1185).
 void plVulkanPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& span,
-                                        hsMatrix44& lastL2W)
+                                        hsMatrix44& lastL2W, bool force)
 {
     if (span.fNumMatrices <= 1) {
-        if (lastL2W != span.fLocalToWorld) {
+        if (force || lastL2W != span.fLocalToWorld) {
             ISetLocalToWorld(span.fLocalToWorld, span.fWorldToLocal);
             lastL2W = span.fLocalToWorld;
         } else {
@@ -91,7 +91,7 @@ void plVulkanPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan&
     } else {
         // More than two matrices means ISoftwareVertexBlend already folded the
         // transform into the vertices, so the world matrix has to be identity.
-        if (!lastL2W.IsIdentity()) {
+        if (force || !lastL2W.IsIdentity()) {
             lastL2W.Reset();
             ISetLocalToWorld(lastL2W, lastL2W);
         }
