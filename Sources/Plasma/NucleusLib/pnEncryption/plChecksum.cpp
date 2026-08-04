@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cstring>
 #include <string_theory/codecs>
+#include <openssl/evp.h>
 
 struct _InitOpenSSL
 {

@@ -44,7 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plSha0.h"
-#include <openssl/evp.h>
+
+#include <openssl/ossl_typ.h>
 
 #define MD5_DIGEST_LENGTH 16
 #define SHA_DIGEST_LENGTH 20
