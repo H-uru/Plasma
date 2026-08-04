@@ -119,14 +119,14 @@ struct pfPatcherQueuedFile
     Type fType;
     plFileName fClientPath;
     plFileName fServerPath;
-    plMD5Checksum fChecksum;
+    plChecksum fChecksum;
     uint32_t fFileSize;
     uint32_t fZipSize;
     uint32_t fFlags;
 
     pfPatcherQueuedFile(Type t, const NetCliFileManifestEntry& file)
-    : fType(t), fClientPath(plFileName(ST::string::from_utf16(file.clientName)).Normalize()),
-          fServerPath(ST::string::from_utf16(file.downloadName)), fChecksum(),
+        : fType(t), fClientPath(plFileName(ST::string::from_utf16(file.clientName)).Normalize()),
+          fServerPath(ST::string::from_utf16(file.downloadName)), fChecksum(plChecksum::Type::kMD5),
           fFileSize(file.fileSize), fZipSize(file.zipSize), fFlags(file.flags)
     {
         ST::string temp(file.md5, std::size(file.md5));
@@ -134,7 +134,8 @@ struct pfPatcherQueuedFile
     }
 
     pfPatcherQueuedFile(Type t, plFileName path, uint32_t flags=0)
-        : fType(t), fClientPath(std::move(path)), fChecksum(), fFileSize(), fZipSize(), fFlags(flags)
+        : fType(t), fClientPath(std::move(path)), fChecksum(plChecksum::Type::kMD5),
+          fFileSize(), fZipSize(), fFlags(flags)
     { }
 
     pfPatcherQueuedFile(const pfPatcherQueuedFile& copy) = delete;
@@ -575,7 +576,7 @@ void pfPatcherWorker::IHashFile(pfPatcherQueuedFile& file)
     }
     plFileInfo mine(clientPathForComparison);
     if (mine.FileSize() == file.fFileSize) {
-        plMD5Checksum cliMD5(clientPathForComparison);
+        plChecksum cliMD5(plChecksum::Type::kMD5, clientPathForComparison);
         if (cliMD5 == file.fChecksum) {
             WhitelistFile(file.fClientPath, false);
             return;
