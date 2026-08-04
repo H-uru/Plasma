@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
 #if defined(MSC_COMPATIBLE)
     // We need to test - Windows ARM64 will have the headers but not the definition
-    unsigned int features[4] = {0, 0, 0, 0};
+    int features[4] = {0, 0, 0, 0};
     __cpuid(features, 0);
 #endif
     return 0;
