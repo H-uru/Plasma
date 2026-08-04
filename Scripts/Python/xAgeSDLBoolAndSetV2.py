@@ -39,50 +39,38 @@
 #       Mead, WA   99021
 #
 # *==LICENSE==*/
+
 """
-Module: Garden.py
-Age: Garden
-Date: October 2002
-event manager hooks for the Garden
+Age SDL Boolean AND Set Module
+
+This module provides functionality to perform a boolean AND on the value of a list of SDL variables
+and set the value of another SDL variable to the result of the AND operation. Provided are an ABC
+that allows specifying the input and output variables and a ``ptResponder`` `xAgeSDLBoolAndSetV2`
+that accepts a comma separated list of input variables and a single output variable.
 """
 
 from Plasma import *
 from PlasmaTypes import *
-from PlasmaConstants import *
 
+from xAgeSDLBoolGateSet import xAgeSDLBoolGateSetBase
 
-caveSolved = ptAttribActivator(2,"cave solved")
-sdlSolved = ptAttribString(4,"our sdl var")
+stringSDLVariableInput = ptAttribString(1, "AgeSDL Input Variables (comma separated)")
+stringSDLVariableOutput = ptAttribString(2, "AgeSDL Output Variable")
 
-#globals
-
-class GiraCave1(ptResponder):
-
+class xAgeSDLBoolAndSetV2(xAgeSDLBoolGateSetBase, ptResponder):
     def __init__(self):
-        ptResponder.__init__(self)
-        self.id = 5360224
+        super().__init__()
+        self.id = 1384463667
         self.version = 1
 
-    def OnServerInitComplete(self):
-        if sdlSolved.value:
-            ageSDL = PtGetAgeSDL()
-            ageSDL.setFlags(sdlSolved.value,1,1)
-            ageSDL.sendToClients(sdlSolved.value)
-        else:
-            PtDebugPrint("GiraCave.OnFirstUpdate():\tERROR: missing SDL var in max file")
-        
+    @property
+    def inputVariables(self):
+        return [i.strip() for i in stringSDLVariableInput.value.split(",")]
 
-    def OnNotify(self,state,id,events):
+    @property
+    def outputVariable(self):
+        return stringSDLVariableOutput.value
 
-        if (id == caveSolved.id):
-            if (state): # we entered the region, check for bugs
-                avatar = PtFindAvatar(events)
-                bugs = PtGetNumParticles(avatar.getKey())
-                if (bugs > 0):
-                    ageSDL = PtGetAgeSDL()
-                    ageSDL[sdlSolved.value] = (1,)
-                    return
-            
-    
-    
-            
+    @property
+    def logicOp(self):
+        return "AND"

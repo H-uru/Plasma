@@ -860,7 +860,7 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
     plCCRPetitionMsg* petMsg=plCCRPetitionMsg::ConvertNoRef(msg);
     if (petMsg)
     {
-        ISendCCRPetition(petMsg);
+        hsAssert(false, "CCR petitions are not implemented");
         return true;
     }
 

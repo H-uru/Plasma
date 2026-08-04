@@ -6,8 +6,9 @@ endif()
 
 FetchContent_Declare(
     metalcpp
-    URL_HASH_SHA256 0afd87ca851465191ae4e3980aa036c7e9e02fe32e7c760ac1a74244aae6023b
-    URL "https://developer.apple.com/metal/cpp/files/metal-cpp_macOS13.3_iOS16.4.zip"
+    GIT_REPOSITORY https://github.com/apple/metal-cpp.git
+    #release/metal-cpp_macOS13.3_iOS16.4
+    GIT_TAG        d72d46fccb230b53b28ff65fddbbe07ec693964b
 )
 
 FetchContent_MakeAvailable(metalcpp)

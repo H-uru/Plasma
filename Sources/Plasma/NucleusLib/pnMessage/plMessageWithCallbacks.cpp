@@ -55,7 +55,7 @@ plMessageWithCallbacks::~plMessageWithCallbacks()
 
 void plMessageWithCallbacks::AddCallback(plMessage* e) 
 { 
-    hsRefCnt_SafeRef(e); 
+    e->Ref(); 
 
     // make sure callback msgs have the same net propagate properties as the container msg
     e->SetBCastFlag(plMessage::kNetPropagate, HasBCastFlag(plMessage::kNetPropagate));

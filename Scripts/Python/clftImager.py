@@ -148,14 +148,6 @@ class clftImager(ptResponder):
         self.version = 29
         random.seed()
 
-
-    def OnFirstUpdate(self):
-        #self.ageSDL = PtGetAgeSDL()
-        #self.ageSDL.setFlags(stringSDLVarPanelE.value,1,1)
-        #self.ageSDL.sendToClients(stringSDLVarPanelE.value)
-        pass
-        
-    
     def OnServerInitComplete(self):
         global statesN
         global statesS
@@ -169,49 +161,49 @@ class clftImager(ptResponder):
         # makes sure Tomahna book is disabled and invisible when linking in to age
         respBookAnim.run(self.key)
         #TomahnaBookDisable.run(self.key,avatar=PtGetLocalAvatar())
-        
-        self.ageSDL = PtGetAgeSDL()
+
+        ageSDL = PtGetAgeSDL()
         # register for notification of locked SDL var changes
-        self.ageSDL.setNotify(self.key,stringSDLVarLocked.value,0.0)
+        ageSDL.setNotify(self.key,stringSDLVarLocked.value,0.0)
         # register for notification of 4 Imager Panels SDL var changes
-        self.ageSDL.setNotify(self.key,stringSDLVarPanelN.value,0.0)
-        self.ageSDL.setNotify(self.key,stringSDLVarPanelS.value,0.0)
-        self.ageSDL.setNotify(self.key,stringSDLVarPanelE.value,0.0)
-        self.ageSDL.setNotify(self.key,stringSDLVarPanelW.value,0.0)
-                
+        ageSDL.setNotify(self.key,stringSDLVarPanelN.value,0.0)
+        ageSDL.setNotify(self.key,stringSDLVarPanelS.value,0.0)
+        ageSDL.setNotify(self.key,stringSDLVarPanelE.value,0.0)
+        ageSDL.setNotify(self.key,stringSDLVarPanelW.value,0.0)
+
         # gets SDL values of 4 Imager panels, uses this value to retrieve correct state from 4 state lists,
         # and runs the corresponding responder to set initial default state for each state panel
         try:
-            intPanelN = self.ageSDL[stringSDLVarPanelN.value][0]            
+            intPanelN = ageSDL[stringSDLVarPanelN.value][0]            
         except:
             intPanelN = 3
             PtDebugPrint("ERROR:  clftImager.OnServerInitComplete():\tERROR: age sdl read failed, defaulting intPanelN = 3")                                
         panelN = statesN[intPanelN]
         imagerRespN.run(self.key,state="%s" % (panelN))
         try:
-            intPanelS = self.ageSDL[stringSDLVarPanelS.value][0]            
+            intPanelS = ageSDL[stringSDLVarPanelS.value][0]            
         except:
             intPanelS = 5
             PtDebugPrint("ERROR:  clftImager.OnServerInitComplete():\tERROR: age sdl read failed, defaulting intPanelS = 5")                                
         panelS = statesS[intPanelS]
         imagerRespS.run(self.key,state="%s" % (panelS))
         try:
-            intPanelE = self.ageSDL[stringSDLVarPanelE.value][0]            
+            intPanelE = ageSDL[stringSDLVarPanelE.value][0]            
         except:
             intPanelE = 3
             PtDebugPrint("ERROR:  clftImager.OnServerInitComplete():\tERROR: age sdl read failed, defaulting intPanelE = 3")                                
         panelE = statesE[intPanelE]
         imagerRespE.run(self.key,state="%s" % (panelE))
         try:
-            intPanelW = self.ageSDL[stringSDLVarPanelW.value][0]            
+            intPanelW = ageSDL[stringSDLVarPanelW.value][0]            
         except:
             intPanelW = 0
             PtDebugPrint("ERROR:  clftImager.OnServerInitComplete():\tERROR: age sdl read failed, defaulting intPanelW = 0")                                
         panelW = statesW[intPanelW]
         imagerRespW.run(self.key,state="%s" % (panelW))
 
-        boolSceneYeesha = self.ageSDL[SDLVarSceneYeesha][0]
-        boolTomahnaActive = self.ageSDL[SDLVarTomahnaActive][0]
+        boolSceneYeesha = ageSDL[SDLVarSceneYeesha][0]
+        boolTomahnaActive = ageSDL[SDLVarTomahnaActive][0]
 
         if boolTomahnaActive:
             PtDebugPrint("clftImager.OnServerInitComplete: SDL says Tomahna is active, will set Imager to break...")
@@ -261,11 +253,11 @@ class clftImager(ptResponder):
         global statesE
         global statesW
         global speechKilled
-        
-        self.ageSDL = PtGetAgeSDL()
-            
+
+        ageSDL = PtGetAgeSDL()
+
         if VARname == stringSDLVarLocked.value:
-            windmillLocked = self.ageSDL[stringSDLVarLocked.value][0]
+            windmillLocked = ageSDL[stringSDLVarLocked.value][0]
             if windmillLocked and visionplaying:
                 PtAtTimeCallback(self.key,3,kLostPowerID)
                 #~ speechKilled = 1
@@ -279,26 +271,26 @@ class clftImager(ptResponder):
         # checks if one of the Imager panel/symbol SDL vars has changed, 
         # sets new state of any changed panels and runs corresponding responder
         if VARname == stringSDLVarPanelN.value:
-            intPanelN = self.ageSDL[stringSDLVarPanelN.value][0]
+            intPanelN = ageSDL[stringSDLVarPanelN.value][0]
             panelN = statesN[intPanelN]
             imagerRespN.run(self.key,state="%s" % (panelN))
         if VARname == stringSDLVarPanelS.value:
-            intPanelS = self.ageSDL[stringSDLVarPanelS.value][0]
+            intPanelS = ageSDL[stringSDLVarPanelS.value][0]
             panelS = statesS[intPanelS]
             imagerRespS.run(self.key,state="%s" % (panelS))
         if VARname == stringSDLVarPanelE.value:
-            intPanelE = self.ageSDL[stringSDLVarPanelE.value][0]
+            intPanelE = ageSDL[stringSDLVarPanelE.value][0]
             panelE = statesE[intPanelE]
             imagerRespE.run(self.key,state="%s" % (panelE))
         if VARname == stringSDLVarPanelW.value:
-            intPanelW = self.ageSDL[stringSDLVarPanelW.value][0]
+            intPanelW = ageSDL[stringSDLVarPanelW.value][0]
             panelW = statesW[intPanelW]
             imagerRespW.run(self.key,state="%s" % (panelW))
 
-        intPanelN = self.ageSDL[stringSDLVarPanelN.value][0]
-        intPanelS = self.ageSDL[stringSDLVarPanelS.value][0]
-        intPanelE = self.ageSDL[stringSDLVarPanelE.value][0]
-        intPanelW = self.ageSDL[stringSDLVarPanelW.value][0]
+        intPanelN = ageSDL[stringSDLVarPanelN.value][0]
+        intPanelS = ageSDL[stringSDLVarPanelS.value][0]
+        intPanelE = ageSDL[stringSDLVarPanelE.value][0]
+        intPanelW = ageSDL[stringSDLVarPanelW.value][0]
         if intPanelN == 0 and intPanelS == 0 and intPanelW == 0 and intPanelE == 0:
             import xSndLogTracks
             if xSndLogTracks.LogTrack("421","15"):
@@ -357,8 +349,6 @@ class clftImager(ptResponder):
         global PuzzleView
         global PlayScene
         global PlayTPOT
-
-        self.ageSDL = PtGetAgeSDL()
 
         if (id == MakeMeVisible.id and state):
             if (PtFirstPerson()):
@@ -463,7 +453,8 @@ class clftImager(ptResponder):
             PtEnableForwardMovement()
             if StartInRelto():
                 PtSendKIMessage(kEnableEntireYeeshaBook,0)
-            windmillRunning = self.ageSDL[stringSDLVarRunning.value][0]
+            ageSDL = PtGetAgeSDL()
+            windmillRunning = ageSDL[stringSDLVarRunning.value][0]
             if windmillRunning == 1 and imagerBusted == 0:
                 PtDebugPrint("clftImager.OnNotify: SDL says windmill is running, so button will do SOMETHING after oneshot...")
                 for event in events:
@@ -522,23 +513,23 @@ class clftImager(ptResponder):
 
         if (id == YeeshaSceneTimerDoorClose.id and state and PlayScene == 1):
             PtDebugPrint("clftImager.OnNotify(): Yeesha's leaving, now shutting Office Door")
-            self.ageSDL = PtGetAgeSDL()
+            ageSDL = PtGetAgeSDL()
             SDLVarOfficeDoor = "clftOfficeDoorClosed"
             xtraInfo = "fromOutside"
-            boolOfficeDoor = self.ageSDL[SDLVarOfficeDoor][0]
+            boolOfficeDoor = ageSDL[SDLVarOfficeDoor][0]
             if boolOfficeDoor == 0:
-                self.ageSDL.setTagString(SDLVarOfficeDoor,xtraInfo)
-                self.ageSDL[SDLVarOfficeDoor] = (1,)
+                ageSDL.setTagString(SDLVarOfficeDoor,xtraInfo)
+                ageSDL[SDLVarOfficeDoor] = (1,)
             else:
                 PtDebugPrint("what's wrong with the door?")
 
         if (id == YeeshaSceneTimerDone.id and state and PlayScene == 1):
             PtDebugPrint("clftImager.OnNotify(): Yeesha timer is done.  Getting rid of Yeesha and setting SDL.")
-            self.ageSDL = PtGetAgeSDL()
+            ageSDL = PtGetAgeSDL()
             YeeshaName.draw.disable()
             YeeshaName.physics.warpObj(YeeshaWarpHid.value.getKey())
             YeeshaMultiStage.gotoStage(YeeshaName, 0,dirFlag=1,isForward=1)
-            self.ageSDL[SDLVarSceneYeesha] = (0,)
+            ageSDL[SDLVarSceneYeesha] = (0,)
             PlayScene == 0
             cam = ptCamera()
             cam.enableFirstPersonOverride()

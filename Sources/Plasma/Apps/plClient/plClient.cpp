@@ -846,7 +846,7 @@ bool plClient::MsgReceive(plMessage* msg)
                 cmd->SetCmd(plAnimCmdMsg::kRemoveCallbacks);
                 cmd->AddCallback(callback);
                 plgDispatch::MsgSend(cmd);
-                hsRefCnt_SafeUnRef(callback);
+                callback->UnRef();
             }
             else if( aud )
             {
@@ -855,7 +855,7 @@ bool plClient::MsgReceive(plMessage* msg)
                 cmd->SetCmd(plSoundMsg::kRemoveCallbacks);
                 cmd->AddCallback(callback);
                 plgDispatch::MsgSend(cmd);
-                hsRefCnt_SafeUnRef(callback);
+                callback->UnRef();
             }
             hsStatusMessage("Removed");
             gotten = 0;
@@ -1266,7 +1266,7 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
         }
     }
 
-    hsRefCnt_SafeUnRef(fCurrentNode);
+    fCurrentNode->UnRef();
     plKey pRmKey = fCurrentNode->GetKey();
     plAgeLoader::GetInstance()->FinishedPagingInRoom(&pRmKey, 1);
     // *** this used to call "ActivateNode" (in physics) which wasn't implemented.
@@ -1306,7 +1306,7 @@ void plClient::IRoomUnloaded(plSceneNode* node)
     #endif
 
     fCurrentNode = node; 
-    hsRefCnt_SafeUnRef(fCurrentNode);
+    fCurrentNode->UnRef();
     plKey pRmKey = fCurrentNode->GetKey();
     if (plAgeLoader::GetInstance())
         plAgeLoader::GetInstance()->FinishedPagingOutRoom(&pRmKey, 1);
@@ -1941,7 +1941,7 @@ void plClient::IProcessRenderRequests(std::vector<plRenderRequest*>& reqs)
     for (plRenderRequest* rr : reqs)
     {
         rr->Render(fPipeline, fPageMgr);
-        hsRefCnt_SafeUnRef(rr);
+        rr->UnRef();
     }
     reqs.clear();
 }
@@ -1967,7 +1967,7 @@ void plClient::IAddRenderRequest(plRenderRequest* req)
                 break;
         }
         fPreRenderRequests.insert(it, req);
-        hsRefCnt_SafeRef(req);
+        req->Ref();
     }
     else
     {
@@ -1978,7 +1978,7 @@ void plClient::IAddRenderRequest(plRenderRequest* req)
                 break;
         }
         fPostRenderRequests.insert(it, req);
-        hsRefCnt_SafeRef(req);
+        req->Ref();
     }
 }
 

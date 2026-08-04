@@ -46,8 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsTimer.h"
 
-#include <string_theory/char_buffer>
-
 #include "pnMessage/plCameraMsg.h"
 #include "pnNetCommon/plSDLTypes.h"
 #include "pnNetCommon/plSynchedObject.h"
@@ -57,20 +55,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvatarClothing.h"
 #include "plAvatar/plAvatarMgr.h"
-#include "plContainer/plConfigInfo.h"
 #include "plDrawable/plMorphSequence.h"
-#include "plMessage/plCCRMsg.h"
 #include "plMessage/plLoadAvatarMsg.h"
 #include "plMessage/plLoadCloneMsg.h"
 #include "plNetClientRecorder/plNetClientRecorder.h"
 #include "plNetCommon/plNetObjectDebugger.h"
-#include "plNetGameLib/plNetGameLib.h"
 #include "plNetMessage/plNetMessage.h"
 #include "plParticleSystem/plParticleSDLMod.h"
 #include "plParticleSystem/plParticleSystem.h"
-#include "plResMgr/plLocalization.h"
 #include "plSDL/plSDL.h"
-#include "plVault/plVault.h"
 
 #include "pfMessage/pfKIMsg.h"  // TMP
 
@@ -132,40 +125,6 @@ void plNetClientMgr::ISendDirtyState(double secs)
     }
 
     plSynchedObject::ClearDirtyState(carryOvers);
-}
-
-//
-// Given a plasma petition msg, send a petition text node to the vault
-// vault will detect and fwd to CCR system.
-//
-void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
-{
-    // petition msg info
-    uint8_t type = petMsg->GetType();
-    ST::string title = petMsg->GetTitle();
-    ST::string note = petMsg->GetNote().replace("\n", "\t");
-
-    // stuff petition info fields into a config info object
-    plConfigInfo info;
-    info.AddValue( "Petition", "Type", type );
-    info.AddValue( "Petition", "Content", note );
-    info.AddValue( "Petition", "Title", title );
-    info.AddValue( "Petition", "Language", plLocalization::GetLanguageName( plLocalization::GetLanguage() ) );
-    info.AddValue("Petition", "AcctName", NetCommGetAccount()->accountName);
-    info.AddValue("Petition", "PlayerID", ST::string::from_uint(GetPlayerID()));
-    info.AddValue( "Petition", "PlayerName", GetPlayerName() );
-
-    // write config info formatted like an ini file to a buffer
-    hsRAMStream ram;
-    plIniStreamConfigSource src(&ram);
-    info.WriteTo(&src);
-    int size = ram.GetPosition();
-    ram.Rewind();
-    ST::char_buffer buf;
-    buf.allocate(size);
-    ram.CopyToMem(buf.data());
-
-    NetCliAuthSendCCRPetition(buf);
 }
 
 //

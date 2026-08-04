@@ -917,7 +917,7 @@ void pfBookData::ITriggerPageFlip(bool flipBackwards, bool immediate)
     }
     msg->SetCmd(plAnimCmdMsg::kAddCallbacks);
     msg->AddCallback(eventMsg);
-    hsRefCnt_SafeUnRef(eventMsg);
+    eventMsg->UnRef();
     if (!immediate)
     {
         // We want a second callback to tell us when, indeed, the page has started turning
@@ -929,7 +929,7 @@ void pfBookData::ITriggerPageFlip(bool flipBackwards, bool immediate)
         eventMsg->fUser = !flipBackwards ? (0x04 | 0x01) : 0x04;
         eventMsg->fEvent = plEventCallbackMsg::kBegin;  // Should cause it to be triggered once it seeks at the start of the command
         msg->AddCallback(eventMsg);
-        hsRefCnt_SafeUnRef(eventMsg);
+        eventMsg->UnRef();
     }
     fCurrentlyTurning = true;
 
@@ -1481,7 +1481,7 @@ void    pfJournalBook::ITriggerCloseWithNotify( bool closeNotOpen, bool immediat
     eventMsg->fEvent = immediate ? ( plEventCallbackMsg::kSingleFrameEval ) : plEventCallbackMsg::kStop;
     msg->SetCmd( plAnimCmdMsg::kAddCallbacks );
     msg->AddCallback( eventMsg );
-    hsRefCnt_SafeUnRef( eventMsg );
+    eventMsg->UnRef();
 
     msg->Send();
 

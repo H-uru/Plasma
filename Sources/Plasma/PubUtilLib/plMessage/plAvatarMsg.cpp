@@ -286,7 +286,7 @@ void plAvTaskSeekDoneMsg::Write(hsStream *stream, hsResMgr *mgr)
 
 // CTOR()
 plAvOneShotMsg::plAvOneShotMsg()
-: plAvSeekMsg(), fDrivable(false), fReversible(false), fCallbacks()
+: plAvSeekMsg(), fDrivable(false), fReversible(false)
 {
 }
 
@@ -295,16 +295,13 @@ plAvOneShotMsg::plAvOneShotMsg(const plKey &sender, const plKey& receiver,
                          const plKey& seekKey, float duration, bool smartSeek,
                          const ST::string &animName, bool drivable, bool reversible)
 : plAvSeekMsg(sender, receiver, seekKey, duration, smartSeek, kAlignHandle, animName),
-  fDrivable(drivable), fReversible(reversible), fCallbacks()
+  fDrivable(drivable), fReversible(reversible)
 {
 }
 
 // DTOR
 plAvOneShotMsg::~plAvOneShotMsg()
-{
-    hsRefCnt_SafeUnRef(fCallbacks);
-    fCallbacks = nullptr;
-}
+{}
 
 // READ
 void plAvOneShotMsg::Read(hsStream *stream, hsResMgr *mgr)

@@ -418,7 +418,7 @@ bool    pfGUIPopUpMenu::IBuildMenu()
     if (fWaitingForSkin && fSkin == nullptr)
         return false;       // Still waiting to get our skin before building
 
-    pfGUIColorScheme *scheme = new pfGUIColorScheme();
+    hsRef scheme(new pfGUIColorScheme(), hsStealRef);
     scheme->fForeColor.Set( 0, 0, 0, 1 );
     scheme->fBackColor.Set( 1, 1, 1, 1 );
 
@@ -547,7 +547,7 @@ bool    pfGUIPopUpMenu::IBuildMenu()
         pfGUIMenuItem *button = pfGUICtrlGenerator::Instance().CreateRectButton(this, x, y + thisOffset, width, height + thisMargin, mat);
         if (button != nullptr)
         {
-            button->SetColorScheme( scheme );
+            button->SetColorScheme(std::move(scheme));
             button->SetName(fMenuItems[i].fName);
             button->SetHandler( new pfGUIMenuItemProc( this, i ) );
             // make the tag ID the position in the menu list

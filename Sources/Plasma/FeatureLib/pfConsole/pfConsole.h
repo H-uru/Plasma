@@ -110,7 +110,7 @@ class pfConsole : public hsKeyedObject
         char    fWorkingLine[ kWorkingLineSize ];
         uint32_t  fWorkingCursor;
 
-        pfConsoleInputInterface *fInputInterface;
+        hsRef<pfConsoleInputInterface> fInputInterface;
 
         pfConsoleEngine     *fEngine;
 

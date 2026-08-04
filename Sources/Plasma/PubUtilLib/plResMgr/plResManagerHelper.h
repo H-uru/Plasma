@@ -96,7 +96,7 @@ class plResManagerHelper : public hsKeyedObject
             kBars,
             kMaxDisplayType
         };
-        plResMgrDebugInterface  *fDebugInput;
+        hsRef<plResMgrDebugInterface> fDebugInput;
 #endif
 
         void    IUpdateDebugScreen( bool force = false );

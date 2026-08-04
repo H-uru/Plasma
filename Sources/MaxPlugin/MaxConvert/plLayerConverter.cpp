@@ -388,8 +388,12 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
     int expHt = bitmapPB->GetInt( kBmpExportHeight );
     if( bd.maxDimension < expHt )
         bd.maxDimension = expHt;
-    int clipID = 0, w;
-    for( clipID = 0, w = bi->Width(); w > bd.maxDimension; w >>= 1, clipID++ );
+
+    int clipID = 0;
+    if (bi != nullptr) {
+        for (int w = bi->Width(); w > bd.maxDimension; w >>= 1)
+            ++clipID;
+    }
 
     // Do the UV gen (before we do texture, since it could modify the bitmapData struct)
     IProcessUVGen( layer, plasmaLayer, &bd, preserveUVOffset );

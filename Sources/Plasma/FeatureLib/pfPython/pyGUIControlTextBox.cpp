@@ -51,15 +51,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 
 pyGUIControlTextBox::pyGUIControlTextBox(pyKey& gckey) : pyGUIControl(gckey)
-{
-    fOriginalColorScheme = nullptr;
-}
+{}
 
 pyGUIControlTextBox::pyGUIControlTextBox(plKey objkey) : pyGUIControl(std::move(objkey))
-{
-    fOriginalColorScheme = nullptr;
-}
-
+{}
 
 bool pyGUIControlTextBox::IsGUIControlTextBox(const plKey& key)
 {
@@ -99,7 +94,7 @@ void pyGUIControlTextBox::SetFontSize( uint8_t size )
         pfGUITextBoxMod* ptbmod = pfGUITextBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( ptbmod )
         {
-            pfGUIColorScheme* colorscheme = ptbmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> colorscheme = ptbmod->GetColorScheme();
             colorscheme->fFontSize = size;
             ptbmod->UpdateColorScheme();
         }
@@ -115,7 +110,7 @@ void pyGUIControlTextBox::SetForeColor( pyColor& color )
         pfGUITextBoxMod* ptbmod = pfGUITextBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( ptbmod )
         {
-            pfGUIColorScheme* colorscheme = ptbmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> colorscheme = ptbmod->GetColorScheme();
             colorscheme->fForeColor = color.getColor();
             ptbmod->UpdateColorScheme();
         }
@@ -131,7 +126,7 @@ void pyGUIControlTextBox::SetBackColor( pyColor& color )
         pfGUITextBoxMod* ptbmod = pfGUITextBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( ptbmod )
         {
-            pfGUIColorScheme* colorscheme = ptbmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> colorscheme = ptbmod->GetColorScheme();
             colorscheme->fBackColor = color.getColor();
         }
     }

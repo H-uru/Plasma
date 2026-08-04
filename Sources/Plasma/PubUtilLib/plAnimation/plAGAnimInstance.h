@@ -211,7 +211,7 @@ public:
     /** Attach a sequence of callback messages to the animation instance.
         Messages are each associated with a specific (local) time
         in the animation and will be sent when playback passes that time. */
-    void AttachCallbacks(plOneShotCallbacks *callbacks);
+    void AttachCallbacks(hsWeakRef<plOneShotCallbacks> callbacks);
     
     void ProcessFade(float elapsed);             // process any outstanding fades    
     void SearchForGlobals(); // Util function to setup SDL channels

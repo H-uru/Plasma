@@ -449,7 +449,7 @@ bool plDispatch::IMsgNetPropagate(plMessage* msg)
     // Decide if msg should get sent locally
     if (!msg->HasBCastFlag(plMessage::kLocalPropagate))
     {   
-        hsRefCnt_SafeUnRef(msg);
+        msg->UnRef();
         return true;
     }
 
@@ -472,7 +472,7 @@ bool plDispatch::MsgSend(plMessage* msg, bool async)
         ICheckDeferred(timeMsg->DSeconds());
 
     plMsgWrap* msgWrap = new plMsgWrap(msg);
-    hsRefCnt_SafeUnRef(msg);
+    msg->UnRef();
 
     // broadcast
     if( msg->HasBCastFlag(plMessage::kBCastByExactType) | msg->HasBCastFlag(plMessage::kBCastByType) )

@@ -399,7 +399,7 @@ PyObject* pyGUIDialog::GetForeColor()
         pfGUIDialogMod* pdmod = pfGUIDialogMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             return pyColor::New(color->fForeColor.r,color->fForeColor.g,color->fForeColor.b,color->fForeColor.a);
         }
     }
@@ -413,7 +413,7 @@ PyObject* pyGUIDialog::GetSelColor()
         pfGUIDialogMod* pdmod = pfGUIDialogMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             return pyColor::New(color->fSelForeColor.r,color->fSelForeColor.g,color->fSelForeColor.b,color->fSelForeColor.a);
         }
     }
@@ -427,7 +427,7 @@ PyObject* pyGUIDialog::GetBackColor()
         pfGUIDialogMod* pdmod = pfGUIDialogMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             return pyColor::New(color->fBackColor.r,color->fBackColor.g,color->fBackColor.b,color->fBackColor.a);
         }
     }
@@ -441,7 +441,7 @@ PyObject* pyGUIDialog::GetBackSelColor()
         pfGUIDialogMod* pdmod = pfGUIDialogMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             return pyColor::New(color->fSelBackColor.r,color->fSelBackColor.g,color->fSelBackColor.b,color->fSelBackColor.a);
         }
     }
@@ -455,7 +455,7 @@ uint32_t pyGUIDialog::GetFontSize()
         pfGUIDialogMod* pdmod = pfGUIDialogMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             return color->fFontSize;
         }
     }
@@ -472,7 +472,7 @@ void pyGUIDialog::SetForeColor( float r, float g, float b, float a )
         pfGUIDialogMod* pdmod = pfGUIDialogMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             if ( r >= 0.0 && r <= 1.0 )
                 color->fForeColor.r = r;
             if ( g >= 0.0 && g <= 1.0 )
@@ -492,7 +492,7 @@ void pyGUIDialog::SetSelColor( float r, float g, float b, float a )
         pfGUIDialogMod* pdmod = pfGUIDialogMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             if ( r >= 0.0 && r <= 1.0 )
                 color->fSelForeColor.r = r;
             if ( g >= 0.0 && g <= 1.0 )
@@ -512,7 +512,7 @@ void pyGUIDialog::SetBackColor( float r, float g, float b, float a )
         pfGUIDialogMod* pdmod = pfGUIDialogMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             if ( r >= 0.0 && r <= 1.0 )
                 color->fBackColor.r = r;
             if ( g >= 0.0 && g <= 1.0 )
@@ -532,7 +532,7 @@ void pyGUIDialog::SetBackSelColor( float r, float g, float b, float a )
         pfGUIDialogMod* pdmod = pfGUIDialogMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             if ( r >= 0.0 && r <= 1.0 )
                 color->fSelBackColor.r = r;
             if ( g >= 0.0 && g <= 1.0 )
@@ -553,7 +553,7 @@ void pyGUIDialog::SetFontSize(uint32_t fontsize)
         pfGUIDialogMod* pdmod = pfGUIDialogMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             color->fFontSize = (uint8_t)fontsize;
         }
     }

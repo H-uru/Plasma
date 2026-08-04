@@ -533,7 +533,7 @@ void plResponderCmdAnim::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParam
     plMessageWithCallbacks *callbackMsg = plMessageWithCallbacks::ConvertNoRef(waitInfo.msg);
     callbackMsg->AddCallback(eventMsg);
     // AddCallback adds it's own ref, so remove ours (the default of 1)
-    hsRefCnt_SafeUnRef(eventMsg);
+    eventMsg->UnRef();
 }
 
 class plResponderAnimProc : public plAnimCompProc

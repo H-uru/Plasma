@@ -54,7 +54,7 @@ plDispatchBase* plgDispatch::Dispatch()
 bool hsgResMgr::Init(hsResMgr* m)
 {
     hsRefCnt_SafeAssign(fResMgr, m); 
-    hsRefCnt_SafeUnRef(m);
+    m->UnRef();
     if (!m->IInit())
         return false;
     return true; 
@@ -67,12 +67,12 @@ void hsgResMgr::Shutdown()
         if (fResMgr->RefCnt() <= 1)
         {
             fResMgr->IShutdown();
-            hsRefCnt_SafeUnRef(fResMgr); 
+            fResMgr->UnRef(); 
             fResMgr = nullptr;
         }
         else
         {
-            hsRefCnt_SafeUnRef(fResMgr);
+            fResMgr->UnRef();
         }
     }
 }

@@ -99,8 +99,7 @@ bool plAnimEventModifier::MsgReceive(plMessage* msg)
     plGenRefMsg* genRefMsg = plGenRefMsg::ConvertNoRef(msg);
     if (genRefMsg && (genRefMsg->GetContext() & plRefMsg::kOnCreate) && fCallback)
     {
-        hsRefCnt_SafeRef(fCallback);
-        fCallback->Send();
+        fCallback->SendAndKeep();
     }
 
     plEventCallbackMsg* callbackMsg = plEventCallbackMsg::ConvertNoRef(msg);

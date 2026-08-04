@@ -53,30 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <algorithm>
 
-
-////////////////////////////////////////////////////////////////////
-// plNetMsgStreamableHelper
-
-plNetMsgStreamableHelper & plNetMsgStreamableHelper::operator =(hsStreamable * value)
-{
-    fObject = value;
-    return *this;
-}
-
-int plNetMsgStreamableHelper::Poke(hsStream* stream, uint32_t peekOptions)
-{
-    hsAssert(fObject, "plNetMsgStreamableHelper::Poke: fObject not set.");
-    fObject->Write(stream);
-    return stream->GetPosition();
-}
-
-int plNetMsgStreamableHelper::Peek(hsStream* stream, uint32_t peekOptions)
-{
-    hsAssert(fObject, "plNetMsgStreamableHelper::Peek: fObject not set.");
-    fObject->Read(stream);
-    return stream->GetPosition();
-}
-
 ////////////////////////////////////////////////////////////////////
 // plNetMsgCreatableHelper
 

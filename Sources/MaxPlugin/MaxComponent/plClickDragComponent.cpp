@@ -491,8 +491,8 @@ bool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         pMsg->AddCallback(pCall1);
         pMsg->AddCallback(pCall2);
 
-        hsRefCnt_SafeUnRef( pCall1 );
-        hsRefCnt_SafeUnRef( pCall2 );
+        pCall1->UnRef();
+        pCall2->UnRef();
 
         pMsg->AddReceiver( pAnim->GetModKey(node) );
         plgDispatch::MsgSend(pMsg);

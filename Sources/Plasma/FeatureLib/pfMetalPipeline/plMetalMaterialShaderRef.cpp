@@ -64,11 +64,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plMetalMaterialShaderRef::plMetalMaterialShaderRef(hsGMaterial* mat, plMetalPipeline* pipe) : fPipeline(pipe),
                                                                                               fMaterial(mat),
-                                                                                              fFragFunction(),
                                                                                               fNumPasses()
 {
     fDevice = pipe->fDevice.fMetalDevice;
-    fFragFunction = pipe->fFragFunction;
     CheckMateralRef();
 }
 

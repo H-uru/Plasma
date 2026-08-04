@@ -121,7 +121,7 @@ class TriggerAt(enum.Enum):
 class xLinkEventTrigger(ptModifier):
     def __init__(self):
         ptModifier.__init__(self)
-        self.id = 4010721418
+        self.id = 684201797
         self.version = 1
         PtDebugPrint(f"xLinkEventTrigger.__init__(): v{self.version}", level=kWarningLevel)
 

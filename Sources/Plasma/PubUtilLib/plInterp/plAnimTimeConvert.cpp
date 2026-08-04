@@ -238,13 +238,13 @@ void plAnimTimeConvert::ISendCallback(hsSsize_t i)
     {
         fCallbackMsgs[i]->SetSender(fOwner ? fOwner->GetKey() : nullptr);
 
-        hsRefCnt_SafeRef(fCallbackMsgs[i]);
+        fCallbackMsgs[i]->Ref();
         plgDispatch::MsgSend(fCallbackMsgs[i]);
 
         // No more repeats, remove this callback from our list
         if (fCallbackMsgs[i]->fRepeats == 0)
         {
-            hsRefCnt_SafeUnRef(fCallbackMsgs[i]);
+            fCallbackMsgs[i]->UnRef();
             fCallbackMsgs.erase(fCallbackMsgs.begin() + i);
         }
         // If this isn't infinite, decrement the number of repeats

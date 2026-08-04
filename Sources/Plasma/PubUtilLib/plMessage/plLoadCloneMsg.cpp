@@ -249,8 +249,7 @@ bool plLoadCloneMsg::GetIsLoading() const
 
 void plLoadCloneMsg::SetTriggerMsg(plMessage *msg)
 {
-    if (fTriggerMsg != nullptr)
-        hsRefCnt_SafeUnRef(fTriggerMsg);
+    hsRefCnt_SafeUnRef(fTriggerMsg);
 
     hsRefCnt_SafeRef(msg);
     fTriggerMsg = msg;

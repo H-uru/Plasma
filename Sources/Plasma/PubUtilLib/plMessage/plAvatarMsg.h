@@ -262,8 +262,7 @@ public:
     // public members
     bool fDrivable;               // are we animated by time or by mouse movement?
     bool fReversible;             // can we play backwards?
-    plOneShotCallbacks *fCallbacks; // Callbacks given to us by a one-shot modifier
-                                    // we share it, so release with UnRef
+    hsRef<plOneShotCallbacks> fCallbacks; // Callbacks given to us by a one-shot modifier
 };
 
 ////////////////

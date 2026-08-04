@@ -98,30 +98,17 @@ plAccessGeometry::plAccessGeometry(plPipeline* pipe)
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 // Global access stuff.
-plAccessGeometry*   plAccessGeometry::fInstance = nullptr;
+std::unique_ptr<plAccessGeometry> plAccessGeometry::fInstance;
 
 void plAccessGeometry::Init(plPipeline* pipe)
 {
-    plAccessGeometry* oldAcc = fInstance;
-
-    fInstance = new plAccessGeometry(pipe);
-
-    hsRefCnt_SafeUnRef(oldAcc);
+    fInstance = std::make_unique<plAccessGeometry>(pipe);
 }
 
 void plAccessGeometry::DeInit()
 {
-    if( fInstance )
-        fInstance->Nilify();
-    hsRefCnt_SafeUnRef(fInstance);
+    fInstance.reset();
 }
-
-void plAccessGeometry::SetTheIntance(plAccessGeometry* i)
-{
-    hsRefCnt_SafeAssign(fInstance, i);
-}
-
-
 
 
 //////////////////////////////////////////////////////////////////////////////////

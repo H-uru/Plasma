@@ -81,7 +81,7 @@ class plInputInterfaceMgr : public plSingleModifier
 
         static plInputInterfaceMgr  *fInstance;
 
-        std::vector<plInputInterface *> fInterfaces;
+        std::vector<hsRef<plInputInterface>> fInterfaces;
         std::vector<plCtrlCmd *>        fMessageQueue;
         std::vector<plKey>              fReceivers;
 
@@ -90,17 +90,17 @@ class plInputInterfaceMgr : public plSingleModifier
         float    fCursorOpacity;
         bool        fForceCursorHidden;
         int32_t       fForceCursorHiddenCount;
-        plInputInterface        *fCurrentFocus;
+        hsWeakRef<plInputInterface> fCurrentFocus;
         plDefaultKeyCatcher     *fDefaultCatcher;
 
         
         bool IEval(double secs, float del, uint32_t dirty) override;
 
-        void    IAddInterface( plInputInterface *iface );
-        void    IRemoveInterface( plInputInterface *iface );
+        void    IAddInterface(hsRef<plInputInterface> iface);
+        void    IRemoveInterface(hsWeakRef<plInputInterface> iface);
 
         void    IUpdateCursor( int32_t newCursor );
-        bool    ICheckCursor(plInputInterface *iFace); // returns true if the iface changed cursor settings
+        bool    ICheckCursor(hsWeakRef<plInputInterface> iFace); // returns true if the iface changed cursor settings
             
         void    IWriteConsoleCmdKeys( plKeyMap *keyMap, FILE *keyFile );
         void    IWriteNonConsoleCmdKeys( plKeyMap *keyMap, FILE *keyFile );
@@ -127,8 +127,8 @@ class plInputInterfaceMgr : public plSingleModifier
         void        WriteKeyMap();
         void        RefreshInterfaceKeyMaps();
 
-        void    SetCurrentFocus(plInputInterface *focus);
-        void    ReleaseCurrentFocus(plInputInterface *focus);
+        void    SetCurrentFocus(hsWeakRef<plInputInterface> focus);
+        void    ReleaseCurrentFocus(hsWeakRef<plInputInterface> focus);
         void    SetDefaultKeyCatcher( plDefaultKeyCatcher *c ) { fDefaultCatcher = c; }
 
         bool    IsClickEnabled() { return fClickEnabled; }
@@ -155,10 +155,10 @@ class plCtrlCmd
 {
     private:
         ST::string          fCmd;
-        plInputInterface    *fSource;
+        hsWeakRef<plInputInterface> fSource;
 
     public:
-        plCtrlCmd(plInputInterface* source)
+        plCtrlCmd(hsWeakRef<plInputInterface> source)
             : fCmd(), fPct(1.f), fSource(source),
               fControlCode(), fControlActivated(), fNetPropagateToPlayers()
         { }
@@ -176,7 +176,7 @@ class plCtrlCmd
         void Read( hsStream* s, hsResMgr* mgr );
         void Write( hsStream* s, hsResMgr* mgr );
 
-        plInputInterface    *GetSource() const { return fSource; }
+        hsWeakRef<plInputInterface> GetSource() const { return fSource; }
 };
 
 //// Tiny Virtual Class For The Default Key Processor ////////////////////////

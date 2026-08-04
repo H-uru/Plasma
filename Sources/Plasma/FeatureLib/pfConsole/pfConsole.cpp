@@ -196,7 +196,7 @@ pfConsole::pfConsole()
     : fNumDisplayLines(32), fDisplayBuffer(), fFXEnabled(true), fEffectCounter(), fLastTime(),
       fHelpTimer(), fMode(), fInited(), fHelpMode(), fCursorTicks(), fMsgTimeoutTimer(),
       fPythonMode(), fPythonFirstTime(true), fPythonMultiLines(), fHistory(), fWorkingCursor(),
-      fInputInterface(), fEngine()
+      fEngine()
 {
     fTheConsole = this;
 }
@@ -209,7 +209,6 @@ pfConsole::~pfConsole()
         msg->SetIFace( fInputInterface );
         plgDispatch::MsgSend( msg );
 
-        hsRefCnt_SafeUnRef( fInputInterface );
         fInputInterface = nullptr;
     }
 
@@ -283,7 +282,7 @@ void    pfConsole::Init( pfConsoleEngine *engine )
     fLastHelpMsg.clear();
     fEngine = engine;
 
-    fInputInterface = new pfConsoleInputInterface( this );
+    fInputInterface.Steal(new pfConsoleInputInterface(this));
     plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
     msg->SetIFace( fInputInterface );
     plgDispatch::MsgSend( msg );

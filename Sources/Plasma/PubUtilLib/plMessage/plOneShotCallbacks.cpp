@@ -45,15 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsStream.h"
 
-plOneShotCallbacks::plOneShotCallbacks()
-{
-}
-
-plOneShotCallbacks::~plOneShotCallbacks()
-{
-    fCallbacks.clear();
-}
-
 void plOneShotCallbacks::AddCallback(const ST::string &marker, plKey &receiver, int16_t user)
 {
     fCallbacks.push_back(plOneShotCallback(marker, receiver, user));

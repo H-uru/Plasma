@@ -2141,7 +2141,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, std::vector<h
         pMsg->SetAnimName(ENTIRE_ANIMATION_NAME);
         pMsg->fTime = (*kfArray)[i].fFrame / MAX_FRAMES_PER_SEC;
         pMsg->AddCallback(pCall);
-        hsRefCnt_SafeUnRef(pCall);
+        pCall->UnRef();
         plConvert::Instance().AddMessageToQueue(pFOVMsg);
         plConvert::Instance().AddMessageToQueue(pMsg);
     }

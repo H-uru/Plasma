@@ -67,7 +67,7 @@ pyMoviePlayer::pyMoviePlayer(const ST::string& movieName, pyKey& selfKey)
         movCallback->AddReceiver(fSelfKey);
         mov->AddCallback(movCallback);
         mov->Send();
-        hsRefCnt_SafeUnRef(movCallback);
+        movCallback->UnRef();
     }
 }
 
@@ -90,7 +90,7 @@ void pyMoviePlayer::MakeMovie(const ST::string& movieName, pyKey& selfKey)
         movCallback->AddReceiver(fSelfKey);
         mov->AddCallback(movCallback);
         mov->Send();
-        hsRefCnt_SafeUnRef(movCallback);
+        movCallback->UnRef();
     }
 }
 

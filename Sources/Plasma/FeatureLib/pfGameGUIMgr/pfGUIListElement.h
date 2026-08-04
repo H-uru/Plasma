@@ -67,7 +67,7 @@ class pfGUIListElement
         bool        fCollapsed;     // For tree view support
         uint8_t       fIndentLevel;   // Ditto
 
-        pfGUIColorScheme    *fColors;
+        hsWeakRef<pfGUIColorScheme> fColors; // owned by the pfGUIListBoxMod
         pfGUISkin           *fSkin;
 
     public:
@@ -81,7 +81,7 @@ class pfGUIListElement
 
         pfGUIListElement( uint8_t type )
             : fType(type), fSelected(), fCollapsed(), fIndentLevel(),
-              fColors(), fSkin() { }
+              fSkin() { }
         virtual ~pfGUIListElement() { }
         
         virtual void    Read( hsStream *s, hsResMgr *mgr );
@@ -101,7 +101,7 @@ class pfGUIListElement
 
         uint8_t   GetType() { return fType; }
 
-        void    SetColorScheme( pfGUIColorScheme *scheme ) { fColors = scheme; }
+        void    SetColorScheme(hsWeakRef<pfGUIColorScheme> scheme) { fColors = scheme; }
         void    SetSkin( pfGUISkin *skin ) { fSkin = skin; }
 
         bool            IsCollapsed() const { return fCollapsed; }

@@ -41,7 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #import <Cocoa/Cocoa.h>
-#include "plInputCore/plInputManager.h"
+
+class plClientLoader;
+class plInputManager;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -49,6 +51,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PLSView : NSView
 
+- (id)initWithFrame:(NSRect)frameRect NS_UNAVAILABLE;
+- (instancetype)initWithFrame:(NSRect)frameRect client:(plClientLoader*)gClient;
+- (plClientLoader&)gClient;
 @property plInputManager* inputManager;
 @property(weak) id<PLSViewDelegate> delegate;
 

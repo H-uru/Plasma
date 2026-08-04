@@ -424,7 +424,7 @@ plLayerLinkAnimation::plLayerLinkAnimation() :
 
 plLayerLinkAnimation::~plLayerLinkAnimation() 
 { 
-    hsRefCnt_SafeUnRef(fIFaceCallback);
+    fIFaceCallback->UnRef();
 }
 
 

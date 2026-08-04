@@ -303,7 +303,7 @@ void pfGUIMultiLineEditCtrl::SetScrollEnable( bool state )
 
 void    pfGUIMultiLineEditCtrl::IPostSetUpDynTextMap()
 {
-    pfGUIColorScheme *scheme = GetColorScheme();
+    hsWeakRef<pfGUIColorScheme> scheme = GetColorScheme();
 
     // fill in any blanks
     if (!(fFontFlagsSet & kFontFaceSet))

@@ -137,7 +137,7 @@ class pfGUIControlMod : public plSingleModifier
         plDynamicTextMap    *fDynTextMap;   // Some controls use this; for others, it'll be nil
         plLayerInterface    *fDynTextLayer; // Juse so we can reset the transform. Sheesh!
 
-        pfGUIColorScheme    *fColorScheme;
+        hsRef<pfGUIColorScheme> fColorScheme;
         plSceneObject       *fProxy;
 
         std::vector<hsPoint3> fBoundsPoints;      // For more accurate bounds tests
@@ -170,7 +170,7 @@ class pfGUIControlMod : public plSingleModifier
             : fEnabled(true), fDialog(), fBoundsValid(), fCenterValid(),
               fFocused(), fInteresting(), fVisible(true), fHandler(),
               fTagID(), fDropTargetHdlr(), fDynTextMap(), fProxy(),
-              fColorScheme(), fSkin(), fNotifyOnInteresting(),
+              fSkin(), fNotifyOnInteresting(),
               fScreenMinZ(), fDynTextLayer() { }
         virtual ~pfGUIControlMod();
 
@@ -260,8 +260,8 @@ class pfGUIControlMod : public plSingleModifier
             kDerivedFlagsStart = 32
         };
 
-        virtual void        SetColorScheme( pfGUIColorScheme *newScheme );
-        pfGUIColorScheme    *GetColorScheme() const;
+        virtual void SetColorScheme(hsRef<pfGUIColorScheme> newScheme);
+        hsWeakRef<pfGUIColorScheme> GetColorScheme() const;
 
         virtual void    UpdateColorScheme() { IPostSetUpDynTextMap(); IUpdate(); }
 

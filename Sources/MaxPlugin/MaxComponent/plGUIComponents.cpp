@@ -688,7 +688,7 @@ public:
         kRefFontShadowed
     };
 
-    static void     ConvertScheme( IParamBlock2 *pb, pfGUIColorScheme *destScheme, plErrorMsg *pErrMsg );
+    static void ConvertScheme(IParamBlock2* pb, hsWeakRef<pfGUIColorScheme> destScheme, plErrorMsg* pErrMsg);
 };
 
 //Max desc stuff necessary below.
@@ -977,9 +977,9 @@ bool plGUIColorSchemeComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     pfGUIControlMod *ctrl = plGUIControlBase::GrabControlFromObject( node );
     if (ctrl != nullptr)
     {
-        pfGUIColorScheme *cs = new pfGUIColorScheme;
+        hsRef cs(new pfGUIColorScheme(), hsStealRef);
         ConvertScheme( fCompPB, cs, pErrMsg );
-        ctrl->SetColorScheme( cs );
+        ctrl->SetColorScheme(std::move(cs));
     }
     else
     {
@@ -996,7 +996,7 @@ void    SMaxRGBAToPlasmaRGBA( Color maxRGB, hsColorRGBA &plasmaRGBA )
     plasmaRGBA.Set( maxRGB.r, maxRGB.g, maxRGB.b, 1.f );
 }
 
-void    plGUIColorSchemeComp::ConvertScheme( IParamBlock2 *pb, pfGUIColorScheme *destScheme, plErrorMsg *pErrMsg )
+void plGUIColorSchemeComp::ConvertScheme(IParamBlock2* pb, hsWeakRef<pfGUIColorScheme> destScheme, plErrorMsg* pErrMsg)
 {
     SMaxRGBAToPlasmaRGBA( pb->GetColor( kRefForeColor ), destScheme->fForeColor );
     SMaxRGBAToPlasmaRGBA( pb->GetColor( kRefBackColor ), destScheme->fBackColor );

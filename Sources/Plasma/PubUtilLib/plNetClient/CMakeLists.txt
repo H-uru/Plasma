@@ -58,7 +58,6 @@ target_link_libraries(plNetClient
         plAgeLoader
         plAnimation
         plAvatar
-        plContainer
         plDrawable
         plMessage
         plMessageBox

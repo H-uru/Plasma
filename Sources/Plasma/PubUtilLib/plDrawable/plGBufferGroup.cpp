@@ -571,7 +571,7 @@ void    plGBufferGroup::DeleteVertsFromStorage( uint32_t which, uint32_t start, 
 
     if (fVertexBufferRefs.size() > which && fVertexBufferRefs[which])
     {
-        hsRefCnt_SafeUnRef(fVertexBufferRefs[which]);
+        fVertexBufferRefs[which]->UnRef();
         fVertexBufferRefs[which] = nullptr;
     }
 
@@ -624,7 +624,7 @@ void    plGBufferGroup::DeleteIndicesFromStorage( uint32_t which, uint32_t start
 
     if (fIndexBufferRefs.size() > which && fIndexBufferRefs[which])
     {
-        hsRefCnt_SafeUnRef(fIndexBufferRefs[which]);
+        fIndexBufferRefs[which]->UnRef();
         fIndexBufferRefs[which] = nullptr;
     }
 
@@ -793,7 +793,7 @@ bool    plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex
 
     if (fVertexBufferRefs.size() > i && fVertexBufferRefs[i])
     {
-        hsRefCnt_SafeUnRef(fVertexBufferRefs[i]);
+        fVertexBufferRefs[i]->UnRef();
         fVertexBufferRefs[i] = nullptr;
     }
 
@@ -1062,7 +1062,7 @@ bool    plGBufferGroup::ReserveIndexStorage( uint32_t numIndices, uint32_t *ibIn
     /// All done!
     if ( fIndexBufferRefs.size() > i && fIndexBufferRefs[i])
     {
-        hsRefCnt_SafeUnRef(fIndexBufferRefs[i]);
+        fIndexBufferRefs[i]->UnRef();
         fIndexBufferRefs[i] = nullptr;
     }
 

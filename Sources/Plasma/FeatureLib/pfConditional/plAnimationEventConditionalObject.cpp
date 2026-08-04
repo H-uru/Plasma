@@ -74,7 +74,7 @@ void plAnimationEventConditionalObject::SetEvent(const plEventCallbackMsg::Callb
     plEventCallbackMsg* cb = new plEventCallbackMsg(GetKey(), b, 0, time);
 
     pMsg->AddCallback( cb );
-    hsRefCnt_SafeUnRef(cb);
+    cb->UnRef();
     pMsg->SetCmd( plAnimCmdMsg::kAddCallbacks );
     pMsg->Send();
 }

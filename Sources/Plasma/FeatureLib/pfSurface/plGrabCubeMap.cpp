@@ -151,6 +151,6 @@ void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& cente
 
         plRenderRequestMsg* reqMsg = new plRenderRequestMsg(nullptr, req);
         reqMsg->Send();
-        hsRefCnt_SafeUnRef(req);
+        req->UnRef();
     }
 }

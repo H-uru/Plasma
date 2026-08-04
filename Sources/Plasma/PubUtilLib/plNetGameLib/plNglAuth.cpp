@@ -4974,13 +4974,6 @@ void NetCliAuthSetRecvBufferHandler (
 }
 
 //============================================================================
-void NetCliAuthSendCCRPetition (
-    const ST::string&     petitionText
-) {
-    hsAssert(false, "eric, implement me.");
-}
-
-//============================================================================
 void NetCliAuthPropagateBuffer (
     unsigned                        type,
     unsigned                        bytes,

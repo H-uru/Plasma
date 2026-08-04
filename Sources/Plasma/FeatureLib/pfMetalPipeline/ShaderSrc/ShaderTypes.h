@@ -165,10 +165,10 @@ struct plMetalShaderLightSource
 
 struct plMetalShaderActiveLight
 {
-    uint index;
+    unsigned int index;
     __fp16 scale;
     
-    plMetalShaderActiveLight(uint indexIn, float scaleIn)
+    plMetalShaderActiveLight(unsigned int indexIn, float scaleIn)
     {
         index = indexIn;
         scale = scaleIn;

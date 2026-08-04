@@ -139,7 +139,7 @@ void plFactory::UnRegister(uint16_t hClass, plCreator* worker)
     if( theFactory )
     {
         theFactory->IUnRegister(hClass);
-        hsRefCnt_SafeUnRef(theFactory);
+        theFactory->UnRef();
         if( theFactory->RefCnt() < 2 )
             IShutdown();
     }
@@ -155,7 +155,7 @@ uint16_t plFactory::Register(uint16_t hClass, plCreator* worker)
     if( !theFactory && !ICreateTheFactory() )
         return 0;
 
-    hsRefCnt_SafeRef(theFactory);
+    theFactory->Ref();
     return theFactory->IRegister(hClass, worker);
 }
 
@@ -239,16 +239,19 @@ void plFactory::SetTheFactory(plFactory* fac)
     //      Shouldn't happen, but if it does, just ignore it.
     if( !theFactory && fac )
     {
-        hsRefCnt_SafeAssign(theFactory, fac);
+        fac->Ref();
+        theFactory = fac;
     }
     else if( theFactory && fac )
     {
         theFactory->IForceShutdown();
-        hsRefCnt_SafeAssign(theFactory, fac);
+        fac->Ref();
+        theFactory->UnRef();
+        theFactory = fac;
     }
     else if( theFactory && !fac )
     {
-        hsRefCnt_SafeUnRef(theFactory);
+        theFactory->UnRef();
         if( theFactory->RefCnt() < 2 )
             delete theFactory;
         theFactory = nullptr;

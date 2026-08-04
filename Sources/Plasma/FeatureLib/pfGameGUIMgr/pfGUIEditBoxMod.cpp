@@ -98,7 +98,7 @@ bool    pfGUIEditBoxMod::MsgReceive( plMessage *msg )
 
 void    pfGUIEditBoxMod::IPostSetUpDynTextMap()
 {
-    pfGUIColorScheme *scheme = GetColorScheme();
+    hsWeakRef<pfGUIColorScheme> scheme = GetColorScheme();
     fDynTextMap->SetFont( scheme->fFontFace, scheme->fFontSize, scheme->fFontFlags, 
                             HasFlag( kXparentBgnd ) ? false : true );
 }

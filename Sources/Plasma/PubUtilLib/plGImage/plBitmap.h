@@ -190,7 +190,7 @@ class plBitmap : public hsKeyedObject
         uint8_t           fSpace;     // no, direct, gray, index
         uint16_t          fFlags;     // alphachannel | alphabit
 
-        mutable hsGDeviceRef    *fDeviceRef;
+        hsGDeviceRef* fDeviceRef;
 
         static uint8_t            fGlobalNumLevelsToChop;
 
