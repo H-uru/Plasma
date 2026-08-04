@@ -41,6 +41,8 @@ Mead, WA   99021
 *==LICENSE==*/
 
 #include "plManifests.h"
+
+#include "hsConfig.h"
 #include "plFileSystem.h"
 
 #include <string_theory/string>
@@ -62,7 +64,9 @@ Mead, WA   99021
 #   define EXECUTABLE_SUFFIX ""
 #endif
 
-#if (defined(__GNUC__) && defined(__x86_64__)) || (defined(_MSC_VER) && defined(_M_X64))
+#if !defined(USE_PLATFORM_MANIFESTS)
+#   define MANIFEST_SUFFIX ""
+#elif (defined(__GNUC__) && defined(__x86_64__)) || (defined(_MSC_VER) && defined(_M_X64))
 #   define MANIFEST_SUFFIX "AMD64"
 #elif (defined(__GNUC__) && defined(__i386__)) || (defined(_MSC_VER) && defined(_M_IX86))
 #   define MANIFEST_SUFFIX ""
@@ -78,7 +82,9 @@ Mead, WA   99021
 #   error "Unknown architecture in plManifest"
 #endif
 
-#if defined(HS_BUILD_FOR_WIN32)
+#if !defined(USE_PLATFORM_MANIFESTS)
+#   define MANIFEST_PREFIX ""
+#elif defined(HS_BUILD_FOR_WIN32)
 #   define MANIFEST_PREFIX ""
 #elif defined(HS_BUILD_FOR_MACOS)
     // "mac" was used by the old Cider wrappers. To prevent silently overwriting these clients,
