@@ -44,8 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include <exception>
 #include <memory>
+#include <stdexcept>
 
 /* A bunch of things might store either a SHA or a SHA1 checksum, this provides
  * them a way to store the checksum itself, rather than a union of the classes.
@@ -117,11 +117,11 @@ public:
     plChecksum& operator=(plChecksum&& move) noexcept;
 };
 
-class plChecksumException : public std::exception
+class plChecksumException : public std::logic_error
 {
 public:
-    plChecksumException() = default;
-    plChecksumException(const char* message) : std::exception(message) {}
+    plChecksumException() = delete;
+    plChecksumException(const char* message) : std::logic_error(message) {}
     plChecksumException(const plChecksumException&) = default;
     plChecksumException(plChecksumException&&) = default;
 };
