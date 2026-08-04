@@ -49,6 +49,10 @@ TEST(plSHA512Checksum, lifecycle)
 {
     plChecksum sum(plChecksum::Type::kSHA512);
 
+    // We can set the checksum value directly if no checksum is in progress.
+    EXPECT_NO_THROW(sum.SetFromHexString("cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"));
+    EXPECT_THROW(sum.SetFromHexString("1"), plChecksumException);
+
     // Can't add to or finish until Start() is called.
     EXPECT_THROW(sum.AddTo(1, (const uint8_t*)"a"), plChecksumException);
     EXPECT_THROW(sum.Finish(), plChecksumException);
@@ -57,9 +61,14 @@ TEST(plSHA512Checksum, lifecycle)
     EXPECT_NO_THROW(sum.Start());
     EXPECT_THROW(sum.Start(), plChecksumException);
 
-    // Can't get the value or size until Finish() is called.
+    // Now that we've started, we can't set the checksum value directly.
+    EXPECT_THROW(
+        sum.SetFromHexString("cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"),
+        plChecksumException
+    );
+
+    // Can't get the value until Finish() is called.
     EXPECT_THROW(sum.GetValue(), plChecksumException);
-    EXPECT_THROW(sum.GetSize(), plChecksumException);
 
     // Can't add after Finish() is called.
     EXPECT_NO_THROW(sum.AddTo(1, (const uint8_t*)"a"));
@@ -75,6 +84,9 @@ TEST(plSHA512Checksum, lifecycle)
     EXPECT_NO_THROW(sum.AddTo(1, (const uint8_t*)"a"));
     EXPECT_NO_THROW(sum.Finish());
 
+    // We can set the checksum value directly if no checksum is in progress.
+    EXPECT_NO_THROW(sum.SetFromHexString("cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"));
+
     // Moving invalidates the source.
     plChecksum sum2 = std::move(sum);
     EXPECT_THROW(sum.GetValue(), plChecksumException);
@@ -82,6 +94,10 @@ TEST(plSHA512Checksum, lifecycle)
     EXPECT_THROW(sum.Start(), plChecksumException);
     EXPECT_THROW(sum.AddTo(1, (const uint8_t*)"a"), plChecksumException);
     EXPECT_THROW(sum.Finish(), plChecksumException);
+    EXPECT_THROW(
+        sum.SetFromHexString("cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"),
+        plChecksumException
+    );
 }
 
 TEST(plSHA512Checksum, ctor_with_buffer)

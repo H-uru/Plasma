@@ -307,7 +307,9 @@ void plChecksum::CalcFromStream(hsStream* stream)
 void plChecksum::SetFromHexString(const char* string)
 {
     size_t stringLen = strlen(string);
-    if (fStatus != Status::kReady)
+    if (fStatus == Status::kInvalid)
+        throw plChecksumException("Checksum invalid");
+    if (fStatus == Status::kStarted)
         throw plChecksumException("Checksum in use");
     if (stringLen != 2 * GetSize())
         throw plChecksumException("Invalid string in ISetFromHexString");
@@ -361,8 +363,8 @@ void plChecksum::Finish()
 
 size_t plChecksum::GetSize() const
 {
-    if (fStatus != Status::kFinished)
-        throw plChecksumException("Checksum not finished");
+    if (fStatus == Status::kInvalid)
+        throw plChecksumException("Checksum is invalid");
     return fImpl->GetSize();
 }
 
