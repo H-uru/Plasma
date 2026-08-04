@@ -45,6 +45,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnEncryption/plChecksum.h"
 #include <string_theory/string>
 
+TEST(plSHA1Checksum, lifecycle)
+{
+    plChecksum sum(plChecksum::Type::kSHA1);
+
+    // Can't add to or finish until Start() is called.
+    EXPECT_THROW(sum.AddTo(1, (const uint8_t*)"a"), plChecksumException);
+    EXPECT_THROW(sum.Finish(), plChecksumException);
+
+    // Calling Start() twice doesn't make sense.
+    EXPECT_NO_THROW(sum.Start());
+    EXPECT_THROW(sum.Start(), plChecksumException);
+
+    // Can't get the value or size until Finish() is called.
+    EXPECT_THROW(sum.GetValue(), plChecksumException);
+    EXPECT_THROW(sum.GetSize(), plChecksumException);
+
+    // Can't add after Finish() is called.
+    EXPECT_NO_THROW(sum.AddTo(1, (const uint8_t*)"a"));
+    EXPECT_NO_THROW(sum.Finish());
+    EXPECT_THROW(sum.AddTo(1, (const uint8_t*)"a"), plChecksumException);
+
+    // Value and size should work now.
+    EXPECT_NO_THROW(sum.GetSize());
+    EXPECT_NO_THROW(sum.GetValue());
+
+    // Should be able to restart and reuse the checksum object.
+    EXPECT_NO_THROW(sum.Start());
+    EXPECT_NO_THROW(sum.AddTo(1, (const uint8_t*)"a"));
+    EXPECT_NO_THROW(sum.Finish());
+
+    // Moving invalidates the source.
+    plChecksum sum2 = std::move(sum);
+    EXPECT_THROW(sum.GetValue(), plChecksumException);
+    EXPECT_THROW(sum.GetSize(), plChecksumException);
+    EXPECT_THROW(sum.Start(), plChecksumException);
+    EXPECT_THROW(sum.AddTo(1, (const uint8_t*)"a"), plChecksumException);
+    EXPECT_THROW(sum.Finish(), plChecksumException);
+}
+
 TEST(plSHA1Checksum, ctor_with_buffer)
 {
     const char buffer[] = "Hello World";
