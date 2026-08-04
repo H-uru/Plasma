@@ -49,6 +49,10 @@ TEST(plMD5Checksum, lifecycle)
 {
     plChecksum sum(plChecksum::Type::kMD5);
 
+    // We can set the checksum value directly if no checksum is in progress.
+    EXPECT_NO_THROW(sum.SetFromHexString("d41d8cd98f00b204e9800998ecf8427e"));
+    EXPECT_THROW(sum.SetFromHexString("1"), plChecksumException);
+
     // Can't add to or finish until Start() is called.
     EXPECT_THROW(sum.AddTo(1, (const uint8_t*)"a"), plChecksumException);
     EXPECT_THROW(sum.Finish(), plChecksumException);
@@ -57,9 +61,11 @@ TEST(plMD5Checksum, lifecycle)
     EXPECT_NO_THROW(sum.Start());
     EXPECT_THROW(sum.Start(), plChecksumException);
 
-    // Can't get the value or size until Finish() is called.
+    // Now that we've started, we can't set the checksum value directly.
+    EXPECT_THROW(sum.SetFromHexString("d41d8cd98f00b204e9800998ecf8427e"), plChecksumException);
+
+    // Can't get the value until Finish() is called.
     EXPECT_THROW(sum.GetValue(), plChecksumException);
-    EXPECT_THROW(sum.GetSize(), plChecksumException);
 
     // Can't add after Finish() is called.
     EXPECT_NO_THROW(sum.AddTo(1, (const uint8_t*)"a"));
@@ -75,6 +81,9 @@ TEST(plMD5Checksum, lifecycle)
     EXPECT_NO_THROW(sum.AddTo(1, (const uint8_t*)"a"));
     EXPECT_NO_THROW(sum.Finish());
 
+    // We can set the checksum value directly if no checksum is in progress.
+    EXPECT_NO_THROW(sum.SetFromHexString("d41d8cd98f00b204e9800998ecf8427e"));
+
     // Moving invalidates the source.
     plChecksum sum2 = std::move(sum);
     EXPECT_THROW(sum.GetValue(), plChecksumException);
@@ -82,6 +91,7 @@ TEST(plMD5Checksum, lifecycle)
     EXPECT_THROW(sum.Start(), plChecksumException);
     EXPECT_THROW(sum.AddTo(1, (const uint8_t*)"a"), plChecksumException);
     EXPECT_THROW(sum.Finish(), plChecksumException);
+    EXPECT_THROW(sum.SetFromHexString("d41d8cd98f00b204e9800998ecf8427e"), plChecksumException);
 }
 
 TEST(plMD5Checksum, ctor_with_buffer)

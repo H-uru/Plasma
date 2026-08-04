@@ -49,6 +49,10 @@ TEST(plSHA256Checksum, lifecycle)
 {
     plChecksum sum(plChecksum::Type::kSHA256);
 
+    // We can set the checksum value directly if no checksum is in progress.
+    EXPECT_NO_THROW(sum.SetFromHexString("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
+    EXPECT_THROW(sum.SetFromHexString("1"), plChecksumException);
+
     // Can't add to or finish until Start() is called.
     EXPECT_THROW(sum.AddTo(1, (const uint8_t*)"a"), plChecksumException);
     EXPECT_THROW(sum.Finish(), plChecksumException);
@@ -57,9 +61,11 @@ TEST(plSHA256Checksum, lifecycle)
     EXPECT_NO_THROW(sum.Start());
     EXPECT_THROW(sum.Start(), plChecksumException);
 
-    // Can't get the value or size until Finish() is called.
+    // Now that we've started, we can't set the checksum value directly.
+    EXPECT_THROW(sum.SetFromHexString("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"), plChecksumException);
+
+    // Can't get the value until Finish() is called.
     EXPECT_THROW(sum.GetValue(), plChecksumException);
-    EXPECT_THROW(sum.GetSize(), plChecksumException);
 
     // Can't add after Finish() is called.
     EXPECT_NO_THROW(sum.AddTo(1, (const uint8_t*)"a"));
@@ -75,6 +81,9 @@ TEST(plSHA256Checksum, lifecycle)
     EXPECT_NO_THROW(sum.AddTo(1, (const uint8_t*)"a"));
     EXPECT_NO_THROW(sum.Finish());
 
+    // We can set the checksum value directly if no checksum is in progress.
+    EXPECT_NO_THROW(sum.SetFromHexString("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
+
     // Moving invalidates the source.
     plChecksum sum2 = std::move(sum);
     EXPECT_THROW(sum.GetValue(), plChecksumException);
@@ -82,6 +91,7 @@ TEST(plSHA256Checksum, lifecycle)
     EXPECT_THROW(sum.Start(), plChecksumException);
     EXPECT_THROW(sum.AddTo(1, (const uint8_t*)"a"), plChecksumException);
     EXPECT_THROW(sum.Finish(), plChecksumException);
+    EXPECT_THROW(sum.SetFromHexString("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"), plChecksumException);
 }
 
 TEST(plSHA256Checksum, ctor_with_buffer)
