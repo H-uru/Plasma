@@ -231,14 +231,11 @@ protected:
             curPage = nullptr;
 
         // Load the page combo and select the saved page (if it's in there)
-        plAgePage *page;
-        aged.SeekFirstPage();
-        while ((page = aged.GetNextPage()) != nullptr)
-        {
-            int idx = ComboBox_AddString(hPageCombo, ST2T(page->GetName()));
-            if (curPage && (page->GetName() == curPage))
+        for (const auto& page : aged.GetPages()) {
+            int idx = ComboBox_AddString(hPageCombo, ST2T(page.GetName()));
+            if (curPage && page.GetName() == curPage)
                 ComboBox_SetCurSel(hPageCombo, idx);
-            ComboBox_SetItemData( hPageCombo, idx, (int)page->GetSeqSuffix() );
+            ComboBox_SetItemData(hPageCombo, idx, (int)page.GetSeqSuffix());
         }
     }
 
@@ -696,17 +693,12 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
         return;
     }
 
-    plAgePage   *page;
-    aged->SeekFirstPage();
-
-    while ((page = aged->GetNextPage()) != nullptr)
-    {
-        if( page->GetName().compare_i( compPBPageName ) == 0 )
-        {
-            fCompPB->SetValue( kInfoSeqSuffix, 0, (int)page->GetSeqSuffix() );
+    for (const auto& page : aged->GetPages()) {
+        if (page.GetName().compare_i(compPBPageName) == 0) {
+            fCompPB->SetValue(kInfoSeqSuffix, 0, (int)page.GetSeqSuffix());
 
             // Also re-copy the page name, just to make sure the case is correct
-            fCompPB->SetValue( kInfoPage, 0, ST2M(page->GetName()) );
+            fCompPB->SetValue(kInfoPage, 0, ST2M(page.GetName()));
             return;
         }
     }
@@ -779,13 +771,9 @@ int32_t   plPageInfoUtils::GetSeqNumFromAgeDesc( const ST::string& ageName, cons
     seqPrefix = aged->GetSequencePrefix();
 
     // Find our page
-    plAgePage *page;
-    aged->SeekFirstPage();
-    while ((page = aged->GetNextPage()) != nullptr)
-    {
-        if (page->GetName().compare_i(pageName) == 0)
-        {
-            seqSuffix = page->GetSeqSuffix();
+    for (const auto& page : aged->GetPages()) {
+        if (page.GetName().compare_i(pageName) == 0) {
+            seqSuffix = page.GetSeqSuffix();
             break;
         }
     }

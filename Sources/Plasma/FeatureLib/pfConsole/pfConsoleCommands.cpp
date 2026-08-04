@@ -5162,7 +5162,7 @@ void IShowSDL(const plStateDataRecord* rec, _PrintStringT&& PrintString)
 
 PF_CONSOLE_CMD(Age, ShowPythonSDL, "", "Prints the Python AgeSDL values")
 {
-    plPythonSDLModifier* sdlMod = plPythonSDLModifier::FindAgeSDL();
+    plSDLModifier* sdlMod = plNetClientMgr::GetInstance()->GetAgeSDLModifier();
     if (sdlMod && sdlMod->GetStateCache() != nullptr) {
         IShowSDL(sdlMod->GetStateCache(), PrintString);
     } else {
@@ -5181,7 +5181,7 @@ PF_CONSOLE_CMD(Age, ShowVaultSDL, "", "Prints the age vault SDL values")
 
 PF_CONSOLE_CMD(Age, ResetPythonSDL, "", "Resets the Python Age SDL")
 {
-    plPythonSDLModifier* sdlMod = plPythonSDLModifier::FindAgeSDL();
+    plSDLModifier* sdlMod = plNetClientMgr::GetInstance()->GetAgeSDLModifier();
     if (sdlMod == nullptr) {
         PrintString("Python Age SDL not found");
         return;

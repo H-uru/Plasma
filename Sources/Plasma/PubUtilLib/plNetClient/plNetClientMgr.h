@@ -76,6 +76,7 @@ class plNetClientRecorder;
 class plVaultPlayerNode;
 class plVaultAgeNode;
 class plNetVoiceListMsg;
+class plSDLModifier;
 class plStateDataRecord;
 class plCCRPetitionMsg;
 class plNetMsgPagingRoom;
@@ -340,6 +341,7 @@ public:
     void AddPendingLoad(PendingLoad *pl);
     const plKey& GetAgeSDLObjectKey() const { return fAgeSDLObjectKey; }
     plUoid GetAgeSDLObjectUoid(const ST::string& ageName) const override;
+    plSDLModifier* GetAgeSDLModifier() const;
     plNetClientComm& GetNetClientComm()  { return fNetClientComm; }
     ST::string GetNextAgeFilename() const;
     void SetOverrideAgeTimeOfDayPercent(float f) { fOverrideAgeTimeOfDayPercent=f;  }

@@ -1439,15 +1439,12 @@ void    plGUIDialogProc::ILoadPages( HWND hWnd, IParamBlock2 *pb )
     if (aged == nullptr)
         return;
 
-    plAgePage   *page;
     ST::string selPageName = M2ST(pb->GetStr( plGUIDialogComponent::kRefDialogName ));
-    aged->SeekFirstPage();
     ComboBox_ResetContent( hWnd );
 
-    while ((page = aged->GetNextPage()) != nullptr)
-    {
-        int idx = ComboBox_AddString( hWnd, ST2T(page->GetName()) );
-        if( !selPageName.empty() && page->GetName().compare_i( selPageName ) == 0 )
+    for (const auto& page : aged->GetPages()) {
+        int idx = ComboBox_AddString(hWnd, ST2T(page.GetName()));
+        if (!selPageName.empty() && page.GetName().compare_i(selPageName) == 0)
             ComboBox_SetCurSel( hWnd, idx );
     }
 

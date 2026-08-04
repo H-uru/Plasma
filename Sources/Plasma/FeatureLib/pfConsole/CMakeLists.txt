@@ -58,7 +58,6 @@ target_link_libraries(
         plPhysical
         plPhysX
         plPipeline
-        pfPython
         plResMgr
         plScene
         plSDL

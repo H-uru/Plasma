@@ -44,16 +44,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <string_theory/string>
 #include <vector>
 
 #include "plUnifiedTime/plUnifiedTime.h"
-#include "plFile/plInitFileReader.h"
 
 //
 // Age Definition File Reader/Writer
 //
-class plLocation;
 class hsStream;
+class plFileName;
+class plLocation;
 
 class plAgePage
 {
@@ -74,9 +75,8 @@ class plAgePage
             kIsVolatile         = 0x08,
         };
 
-        plAgePage( const ST::string &name, uint32_t seqSuffix, uint8_t flags );
+        plAgePage(ST::string name, uint32_t seqSuffix, uint8_t flags);
         plAgePage( const ST::string &stringFrom );
-        plAgePage( const plAgePage &src );
         plAgePage();
 
         ST::string  GetName() const { return fName; }
@@ -88,19 +88,12 @@ class plAgePage
 
         bool        SetFromString( const ST::string &string );
         ST::string  GetAsString() const;
-
-        plAgePage &operator=( const plAgePage &src );
 };
 
-// Derived from plInitSectionTokenReader so we can do nifty things with reading the files
-
-class plAgeDescription : public plInitSectionTokenReader
+class plAgeDescription
 {
-private:
-
     ST::string  fName;
 
-    int32_t     fPageIterator;
     std::vector<plAgePage> fPages;
 
     plUnifiedTime fStart;
@@ -114,30 +107,15 @@ private:
     
     static const char* fCommonPages[];
 
-    void    IInit();
-    void    IDeInit();
-
-    // Overload for plInitSectionTokenReader
-    bool        IParseToken(const char *token, hsStringTokenizer *tokenizer, uint32_t userData) override;
-
 public:
     static char kAgeDescPath[];
 
     plAgeDescription();
     plAgeDescription(const plFileName &fileNameToReadFrom);
-    plAgeDescription(const plAgeDescription &src) : plInitSectionTokenReader()
-    {
-        IInit();
-        CopyFrom( src );
-    }
-    ~plAgeDescription();
 
     bool ReadFromFile( const plFileName &fileNameToReadFrom );
     void Read(hsStream* stream);
     void Write(hsStream* stream) const;
-
-    // Overload for plInitSectionTokenReader
-    const char  *GetSectionName() const override;
 
     ST::string  GetAgeName() const { return fName; }
     void        SetAgeNameFromPath( const plFileName &path );
@@ -146,16 +124,16 @@ public:
     // Page list
     void    ClearPageList();
     void    RemovePage( const ST::string &page );
-    void    AppendPage( const ST::string &name, int seqSuffix = -1, uint8_t flags = 0 );
+    void    AppendPage(plAgePage page);
+    void    AppendPage(ST::string name, uint32_t seqSuffix = plAgePage::kInvalidSeqSuffix, uint8_t flags = 0);
 
-    void        SeekFirstPage();
-    plAgePage   *GetNextPage();
-    size_t      GetNumPages() const { return fPages.size(); }
+    const std::vector<plAgePage>& GetPages() const { return fPages; }
     const plAgePage   *FindPage(const ST::string &name) const;
     bool FindLocation(const plLocation& loc) const;
     plLocation  CalcPageLocation( const ST::string &page ) const;
 
     // Getters
+    plUnifiedTime GetStart() const { return fStart; }
     short GetStartMonth() const { return fStart.GetMonth(); }
     short GetStartDay() const { return fStart.GetDay(); }
     short GetStartYear() const { return fStart.GetYear(); }
@@ -172,6 +150,7 @@ public:
     bool    IsGlobalAge() const { return ( fSeqPrefix < 0 ) ? true : false; }
 
     // Setters
+    void SetStartSecs(time_t secs) { fStart.SetSecs(secs); }
     bool SetStart(short year, short month, short day, short hour, short minute, short second)
         { return fStart.SetTime(year,month,day,hour,minute,second); }
 
@@ -198,13 +177,6 @@ public:
     static const char *GetCommonPage( int pageType );
 
     void    AppendCommonPages();
-    void    CopyFrom(const plAgeDescription& other);
-
-    plAgeDescription &operator=( const plAgeDescription &src )
-    {
-        CopyFrom( src );
-        return *this;
-    }
 };
 
 

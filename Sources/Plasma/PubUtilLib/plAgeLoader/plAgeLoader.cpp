@@ -232,24 +232,19 @@ tl::expected<tl::monostate, ST::string> plAgeLoader::LoadAge(const ST::string& a
         ad.Read(stream.get());
         ad.SetAgeName(fAgeName);
     }
-    ad.SeekFirstPage();
-    
-    plAgePage *page;
+
     plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
 
     // Copy, exclude pages we want excluded, and collect our scene nodes
-    fCurAgeDescription.CopyFrom(ad);
-    while ((page = ad.GetNextPage()) != nullptr)
-    {
-        if( IsPageExcluded( page, fAgeName) )
+    fCurAgeDescription = ad;
+    for (const auto& page : ad.GetPages()) {
+        if (IsPageExcluded(&page, fAgeName))
             continue;
 
-        plKey roomKey = plKeyFinder::Instance().FindSceneNodeKey( fAgeName, page->GetName() );
+        plKey roomKey = plKeyFinder::Instance().FindSceneNodeKey(fAgeName, page.GetName());
         if (roomKey != nullptr)
             AddPendingPageInRoomKey( roomKey );
     }
-    ad.SeekFirstPage();
-
 
     // Tell the client to load-and-hold all the keys for this age, to make the loading process work better
     plClientMsg *loadAgeKeysMsg = new plClientMsg( plClientMsg::kLoadAgeKeys );
@@ -271,24 +266,22 @@ tl::expected<tl::monostate, ST::string> plAgeLoader::LoadAge(const ST::string& a
     pMsg1->SetAgeName(fAgeName);
 
     // Loop and ref!
-    while ((page = ad.GetNextPage()) != nullptr)
-    {
-        if( IsPageExcluded( page, fAgeName) )
-        {
-            nc->DebugMsg("\tExcluding page {}\n", page->GetName());
+    for (const auto& page : ad.GetPages()) {
+        if (IsPageExcluded(&page, fAgeName)) {
+            nc->DebugMsg("\tExcluding page {}\n", page.GetName());
             continue;
         }
 
         nPages++;
 
-        plLocation pageLoc = ad.CalcPageLocation(page->GetName());
+        plLocation pageLoc = ad.CalcPageLocation(page.GetName());
         if (pageLoc.IsValid()) {
             pMsg1->AddRoomLoc(pageLoc);
-            nc->DebugMsg("\tPaging in room {}", page->GetName());
+            nc->DebugMsg("\tPaging in room {}", page.GetName());
         } else {
             ST::string msg = ST::format(
                 "Could not find page {} that is listed in the .age file for {}",
-                page->GetName(), fAgeName
+                page.GetName(), fAgeName
             );
             nc->ErrorMsg("\t{}", msg);
             hsAssert(false, msg.c_str());
