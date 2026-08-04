@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plChecksum.h"
 
-#include "hsEndian.h"
+#include "plSha0.h"
 #include "hsStream.h"
 
 #include <cstring>
@@ -100,402 +100,303 @@ static uint8_t IHexCharToInt(char c)
 
 //============================================================================
 
-plMD5Checksum::plMD5Checksum(size_t size, const uint8_t* buffer)
-    : fValid(), fContext()
+class plChecksumImpl
 {
-    Start();
-    AddTo(size, buffer);
-    Finish();
-}
+protected:
+    plChecksumImpl() = default;
+    plChecksumImpl(const plChecksumImpl&) = delete;
+    plChecksumImpl(plChecksumImpl&&) = delete;
 
-plMD5Checksum::plMD5Checksum()
-    : fValid(), fContext()
-{
-    memset(fChecksum, 0, sizeof(fChecksum));
-}
+public:
+    virtual ~plChecksumImpl() = default;
 
-plMD5Checksum::plMD5Checksum(const plMD5Checksum& rhs)
-    : fValid(rhs.fValid), fContext()
-{
-    memcpy(fChecksum, rhs.fChecksum, sizeof(fChecksum));
-}
+    virtual void Start() = 0;
+    virtual void AddTo(size_t size, const uint8_t* buffer) = 0;
+    virtual void Finish() = 0;
 
-plMD5Checksum::plMD5Checksum(const plFileName& fileName)
-    : fValid(), fContext()
-{
-    CalcFromFile(fileName);
-}
-
-plMD5Checksum::plMD5Checksum(hsStream* stream)
-    : fValid(), fContext()
-{
-    CalcFromStream(stream);
-}
-
-void plMD5Checksum::Clear()
-{
-    if (fContext)
-        EVP_MD_CTX_destroy(fContext);
-    fContext = nullptr;
-    memset(fChecksum, 0, sizeof(fChecksum));
-    fValid = false;
-}
-
-void plMD5Checksum::CalcFromFile(const plFileName& fileName)
-{
-    hsUNIXStream s;
-    fValid = false;
-
-    if (s.Open(fileName))
-    {
-        CalcFromStream(&s);
-    }
-}
-
-void plMD5Checksum::CalcFromStream(hsStream* stream)
-{
-    uint32_t sPos = stream->GetPosition();
-    unsigned loadLen = 1024 * 1024;
-    Start();
-
-    uint8_t *buf = new uint8_t[loadLen];
-
-    while (int read = stream->Read(loadLen, buf))
-        AddTo(read, buf);
-    delete[] buf;
-
-    Finish();
-    stream->SetPosition(sPos);
-}
-
-void plMD5Checksum::Start()
-{
-    const EVP_MD* md = EVP_get_digestbyname("md5");
-    hsAssert(md, "This OpenSSL has no support for MD5");
-
-    size_t out_size = EVP_MD_size(md);
-    hsAssert(out_size == sizeof(fChecksum), "Incorrect output size for MD5");
-
-    fContext = EVP_MD_CTX_create();
-    EVP_DigestInit_ex(fContext, md, nullptr);
-    fValid = false;
-}
-
-void plMD5Checksum::AddTo(size_t size, const uint8_t* buffer)
-{
-    EVP_DigestUpdate(fContext, buffer, size);
-}
-
-void plMD5Checksum::Finish()
-{
-    unsigned int out_size;
-    EVP_DigestFinal_ex(fContext, fChecksum, &out_size);
-    fValid = true;
-    if (fContext)
-        EVP_MD_CTX_destroy(fContext);
-    fContext = nullptr;
-}
-
-ST::string plMD5Checksum::GetAsHexString() const
-{
-    hsAssert(fValid, "Trying to get string version of invalid checksum");
-
-    return ST::hex_encode(fChecksum, sizeof(fChecksum));
-}
-
-void plMD5Checksum::SetFromHexString(const char* string)
-{
-    const char  *ptr;
-    int         i;
-
-
-    hsAssert(strlen(string) == 2 * MD5_DIGEST_LENGTH, "Invalid string in MD5Checksum Set()");
-
-    for (i = 0, ptr = string; i < sizeof(fChecksum); i++, ptr += 2)
-        fChecksum[i] = (IHexCharToInt(ptr[0]) << 4) | IHexCharToInt(ptr[1]);
-
-    fValid = true;
-}
-
-void plMD5Checksum::SetValue(uint8_t* checksum)
-{
-    fValid = true;
-    memcpy(fChecksum, checksum, sizeof(fChecksum));
-}
-
-bool plMD5Checksum::operator==(const plMD5Checksum& rhs) const
-{
-    return (fValid && rhs.fValid && memcmp(fChecksum, rhs.fChecksum, sizeof(fChecksum)) == 0);
-}
+    virtual size_t GetSize() const = 0;
+    virtual uint8_t* GetValue() = 0;
+};
 
 //============================================================================
-plSHAChecksum::plSHAChecksum(size_t size, const uint8_t* buffer)
-    : fValid(), fOpenSSLContext()
+
+class plEVPChecksum : public plChecksumImpl
 {
+    EVP_MD_CTX* fCtx;
+    const EVP_MD* fMd;
+    std::unique_ptr<uint8_t[]> fValue;
+
+public:
+    plEVPChecksum() = delete;
+    plEVPChecksum(const plEVPChecksum&) = delete;
+    plEVPChecksum(plEVPChecksum&&) = delete;
+
+    plEVPChecksum(const EVP_MD* md)
+        : fCtx(), fMd(md)
+    {
+        // This could have been passed in as a template paraemter, which could
+        // be used to statically allocate the buffer. That would be more performant,
+        // but it would also mean generating a different class in the executable
+        // for almost every checksum type, which seems a little silly. This is
+        // not a performace-critical path, so we'll just allocate the buffer dynamically.
+        size_t size = EVP_MD_size(md);
+        fValue = std::make_unique<uint8_t[]>(size);
+        memset(fValue.get(), 0, size);
+    }
+
+    ~plEVPChecksum()
+    {
+        if (fCtx)
+            EVP_MD_CTX_destroy(fCtx);
+    }
+
+public:
+    void Start() override
+    {
+        if (fCtx == nullptr)
+            fCtx = EVP_MD_CTX_create();
+        EVP_DigestInit_ex(fCtx, fMd, nullptr);
+    }
+
+    void AddTo(size_t size, const uint8_t* buffer) override
+    {
+        EVP_DigestUpdate(fCtx, buffer, size);
+    }
+
+    void Finish() override
+    {
+        EVP_DigestFinal_ex(fCtx, fValue.get(), nullptr);
+        EVP_MD_CTX_reset(fCtx);
+    }
+
+    size_t GetSize() const override
+    {
+        return EVP_MD_size(fMd);
+    }
+
+    uint8_t* GetValue() override
+    {
+        return fValue.get();
+    }
+};
+
+//============================================================================
+
+class plSHA0Checksum : public plChecksumImpl
+{
+    plSha0 fCtx;
+    ShaDigest fValue;
+
+public:
+    plSHA0Checksum()
+    {
+        memset(fValue, 0, sizeof(fValue));
+    }
+
+    plSHA0Checksum(const plSHA0Checksum&) = delete;
+    plSHA0Checksum(plSHA0Checksum&&) = delete;
+
+public:
+    void Start() override { fCtx.Start(); }
+    void AddTo(size_t size, const uint8_t* buffer) override { fCtx.AddTo(size, buffer); }
+    void Finish() override { fCtx.Finish(fValue); }
+    size_t GetSize() const override { return sizeof(fValue); }
+    uint8_t* GetValue() override { return fValue; }
+};
+
+//============================================================================
+
+plChecksum::plChecksum(plChecksum&& move) noexcept
+    : fStatus(move.fStatus), fType(move.fType),
+      fImpl(std::move(move.fImpl))
+{
+    move.fStatus = Status::kInvalid;
+}
+
+plChecksum::plChecksum(plChecksum::Type type)
+    : fStatus(Status::kReady), fType(type)
+{
+    IInit(type);
+}
+
+plChecksum::plChecksum(plChecksum::Type type, const plFileName& fileName)
+    : fStatus(Status::kReady), fType(type)
+{
+    IInit(type);
+    CalcFromFile(fileName);
+}
+
+plChecksum::plChecksum(plChecksum::Type type, hsStream* stream)
+    : fStatus(Status::kReady), fType(type)
+{
+    IInit(type);
+    CalcFromStream(stream);
+}
+
+plChecksum::plChecksum(plChecksum::Type type, size_t size, const uint8_t* buffer)
+    : fStatus(Status::kReady), fType(type)
+{
+    IInit(type);
     Start();
     AddTo(size, buffer);
     Finish();
 }
 
-plSHAChecksum::plSHAChecksum()
-    : fValid(), fOpenSSLContext()
+void plChecksum::IInit(plChecksum::Type type)
 {
-    memset(fChecksum, 0, sizeof(fChecksum));
-}
-
-plSHAChecksum::plSHAChecksum(const plSHAChecksum& rhs)
-    : fValid(rhs.fValid), fOpenSSLContext()
-{
-    memcpy(fChecksum, rhs.fChecksum, sizeof(fChecksum));
-}
-
-plSHAChecksum::plSHAChecksum(const plFileName& fileName)
-    : fValid(), fOpenSSLContext()
-{
-    CalcFromFile(fileName);
-}
-
-plSHAChecksum::plSHAChecksum(hsStream* stream)
-    : fValid(), fOpenSSLContext()
-{
-    CalcFromStream(stream);
-}
-
-void plSHAChecksum::Clear()
-{
-    if (fOpenSSLContext)
-        EVP_MD_CTX_destroy(fOpenSSLContext);
-    fOpenSSLContext = nullptr;
-    memset(fChecksum, 0, sizeof(fChecksum));
-    fValid = false;
-}
-
-void plSHAChecksum::CalcFromFile(const plFileName& fileName)
-{
-    hsUNIXStream s;
-    fValid = false;
-
-    if (s.Open(fileName))
-    {
-        CalcFromStream(&s);
+    switch (type) {
+        case Type::kMD5:
+            fImpl = std::make_unique<plEVPChecksum>(EVP_md5());
+            break;
+        case Type::kSHA0: {
+            // SHA-0 is not supported by OpenSSL these days, so we may have to
+            // use our own implementation.
+            const EVP_MD* md = EVP_get_digestbyname("sha");
+            if (md)
+                fImpl = std::make_unique<plEVPChecksum>(md);
+            else
+                fImpl = std::make_unique<plSHA0Checksum>();
+            break;
+        }
+        case Type::kSHA1:
+            fImpl = std::make_unique<plEVPChecksum>(EVP_sha1());
+            break;
+        DEFAULT_FATAL("checksumType");
     }
 }
 
-void plSHAChecksum::CalcFromStream(hsStream* stream)
+plChecksum::~plChecksum()
 {
-    uint32_t sPos = stream->GetPosition();
-    unsigned loadLen = 1024 * 1024;
-    Start();
-
-    uint8_t* buf = new uint8_t[loadLen];
-
-    while (int read = stream->Read(loadLen, buf))
-    {
-        AddTo( read, buf );
-    }
-    delete[] buf;
-
-    Finish();
-    stream->SetPosition(sPos);
-}
-
-void plSHAChecksum::Start()
-{
-    const EVP_MD* md = EVP_get_digestbyname("sha");
-    if (md) {
-        size_t out_size = EVP_MD_size(md);
-        hsAssert(out_size == sizeof(fChecksum), "Incorrect output size for SHA0");
-
-        fOpenSSLContext = EVP_MD_CTX_create();
-        EVP_DigestInit_ex(fOpenSSLContext, md, nullptr);
-    } else {
-        fOpenSSLContext = nullptr;
-        fPlasmaContext.Start();
-    }
-    fValid = false;
-}
-
-void plSHAChecksum::AddTo(size_t size, const uint8_t* buffer)
-{
-    if (fOpenSSLContext)
-        EVP_DigestUpdate(fOpenSSLContext, buffer, size);
-    else
-        fPlasmaContext.AddTo(size, buffer);
-}
-
-void plSHAChecksum::Finish()
-{
-    if (fOpenSSLContext) {
-        unsigned int out_size;
-        EVP_DigestFinal_ex(fOpenSSLContext, fChecksum, &out_size);
-        if (fOpenSSLContext)
-            EVP_MD_CTX_destroy(fOpenSSLContext);
-        fOpenSSLContext = nullptr;
-    } else {
-        fPlasmaContext.Finish(fChecksum);
-    }
-    fValid = true;
-}
-
-ST::string plSHAChecksum::GetAsHexString() const
-{
-    hsAssert(fValid, "Trying to get string version of invalid checksum");
-
-    return ST::hex_encode(fChecksum, sizeof(fChecksum));
-}
-
-void plSHAChecksum::SetFromHexString(const char* string)
-{
-    const char* ptr;
-    int         i;
-
-    hsAssert(strlen(string) == (2 * SHA_DIGEST_LENGTH), "Invalid string in SHAChecksum Set()");
-
-    for (i = 0, ptr = string; i < sizeof(fChecksum); i++, ptr += 2)
-        fChecksum[i] = (IHexCharToInt(ptr[0]) << 4) | IHexCharToInt(ptr[1]);
-
-    fValid = true;
-}
-
-void plSHAChecksum::SetValue(uint8_t* checksum)
-{
-    fValid = true;
-    memcpy(fChecksum, checksum, sizeof(fChecksum));
-}
-
-bool plSHAChecksum::operator==(const plSHAChecksum& rhs) const
-{
-    return (fValid && rhs.fValid && memcmp(fChecksum, rhs.fChecksum, sizeof(fChecksum)) == 0);
+    // This is in the cpp file because plChecksumImpl is incomplete in the header file.
 }
 
 //============================================================================
 
-plSHA1Checksum::plSHA1Checksum(size_t size, const uint8_t* buffer)
-    : fValid(), fContext()
-{
-    Start();
-    AddTo(size, buffer);
-    Finish();
-}
-
-plSHA1Checksum::plSHA1Checksum()
-    : fValid(), fContext()
-{
-    memset(fChecksum, 0, sizeof(fChecksum));
-}
-
-plSHA1Checksum::plSHA1Checksum(const plSHA1Checksum& rhs)
-    : fValid(rhs.fValid), fContext()
-{
-    memcpy(fChecksum, rhs.fChecksum, sizeof(fChecksum));
-}
-
-plSHA1Checksum::plSHA1Checksum(const plFileName& fileName)
-    : fValid(), fContext()
-{
-    CalcFromFile(fileName);
-}
-
-plSHA1Checksum::plSHA1Checksum(hsStream* stream)
-    : fValid(), fContext()
-{
-    CalcFromStream(stream);
-}
-
-void plSHA1Checksum::Clear()
-{
-    if (fContext)
-        EVP_MD_CTX_destroy(fContext);
-    fContext = nullptr;
-    memset(fChecksum, 0, sizeof(fChecksum));
-    fValid = false;
-}
-
-void plSHA1Checksum::CalcFromFile(const plFileName& fileName)
+void plChecksum::CalcFromFile(const plFileName& fileName)
 {
     hsUNIXStream s;
-    fValid = false;
-
     if (s.Open(fileName))
-    {
         CalcFromStream(&s);
-    }
 }
 
-void plSHA1Checksum::CalcFromStream(hsStream* stream)
+void plChecksum::CalcFromStream(hsStream* stream)
 {
+    if (fStatus == Status::kStarted)
+        throw plChecksumException("Checksum already started");
+
     uint32_t sPos = stream->GetPosition();
-    unsigned loadLen = 1024 * 1024;
+    constexpr uint32_t loadLen = 1024 * 1024;
+    auto buf = std::make_unique<uint8_t[]>(loadLen);
+
     Start();
-
-    uint8_t* buf = new uint8_t[loadLen];
-
-    while (int read = stream->Read(loadLen, buf))
-    {
-        AddTo( read, buf );
-    }
-    delete[] buf;
-
+    while (int read = stream->Read(loadLen, buf.get()))
+        AddTo(read, buf.get());
     Finish();
+
     stream->SetPosition(sPos);
 }
 
-void plSHA1Checksum::Start()
+//============================================================================
+
+void plChecksum::SetFromHexString(const char* string)
 {
-    const EVP_MD* md = EVP_get_digestbyname("sha1");
-    hsAssert(md, "This OpenSSL has no support for SHA1");
+    size_t stringLen = strlen(string);
+    if (fStatus != Status::kReady)
+        throw plChecksumException("Checksum in use");
+    if (stringLen != 2 * GetSize())
+        throw plChecksumException("Invalid string in ISetFromHexString");
 
-    size_t out_size = EVP_MD_size(md);
-    hsAssert(out_size == sizeof(fChecksum), "Incorrect output size for SHA1");
+    size_t checksumSz = fImpl->GetSize();
+    uint8_t* value = fImpl->GetValue();
 
-    fContext = EVP_MD_CTX_create();
-    EVP_DigestInit_ex(fContext, md, nullptr);
-    fValid = false;
-}
-
-void plSHA1Checksum::AddTo(size_t size, const uint8_t* buffer)
-{
-    EVP_DigestUpdate(fContext, buffer, size);
-}
-
-void plSHA1Checksum::Finish()
-{
-    unsigned int out_size;
-    EVP_DigestFinal_ex(fContext, fChecksum, &out_size);
-    fValid = true;
-    if (fContext)
-        EVP_MD_CTX_destroy(fContext);
-    fContext = nullptr;
-}
-
-ST::string plSHA1Checksum::GetAsHexString() const
-{
-    hsAssert(fValid, "Trying to get string version of invalid checksum");
-
-    return ST::hex_encode(fChecksum, sizeof(fChecksum));
-}
-
-void plSHA1Checksum::SetFromHexString(const char* string)
-{
     const char* ptr;
-    int         i;
-
-    hsAssert(strlen(string) == (2 * SHA_DIGEST_LENGTH), "Invalid string in SHA1Checksum Set()");
-
-    for (i = 0, ptr = string; i < sizeof(fChecksum); i++, ptr += 2)
-        fChecksum[i] = (IHexCharToInt(ptr[0]) << 4) | IHexCharToInt(ptr[1]);
-
-    fValid = true;
+    size_t i;
+    for (i = 0, ptr = string; i < checksumSz; i++, ptr += 2)
+        value[i] = (IHexCharToInt(ptr[0]) << 4) | IHexCharToInt(ptr[1]);
+    fStatus = Status::kFinished;
 }
 
-void plSHA1Checksum::SetValue(uint8_t* checksum)
+ST::string plChecksum::GetAsHexString() const
 {
-    fValid = true;
-    memcpy(fChecksum, checksum, sizeof(fChecksum));
+    if (fStatus != Status::kFinished)
+        throw plChecksumException("Checksum not finished");
+    return ST::hex_encode(fImpl->GetValue(), GetSize());
 }
 
-bool plSHA1Checksum::operator==(const plSHA1Checksum& rhs) const
+//============================================================================
+
+void plChecksum::Start()
 {
-    return (fValid && rhs.fValid && memcmp(fChecksum, rhs.fChecksum, sizeof(fChecksum)) == 0);
+    if (fStatus == Status::kInvalid)
+        throw plChecksumException("Checksum invalid");
+    if (fStatus == Status::kStarted)
+        throw plChecksumException("Checksum in use");
+
+    fImpl->Start();
+    fStatus = Status::kStarted;
 }
 
+void plChecksum::AddTo(size_t size, const uint8_t* buffer)
+{
+    if (fStatus != Status::kStarted)
+        throw plChecksumException("Checksum not started");
+
+    fImpl->AddTo(size, buffer);
+}
+
+void plChecksum::Finish()
+{
+    if (fStatus != Status::kStarted)
+        throw plChecksumException("Checksum not started");
+
+    fImpl->Finish();
+    fStatus = Status::kFinished;
+}
+
+size_t plChecksum::GetSize() const
+{
+    if (fStatus != Status::kFinished)
+        throw plChecksumException("Checksum not finished");
+    return fImpl->GetSize();
+}
+
+const uint8_t* plChecksum::GetValue() const
+{
+    if (fStatus != Status::kFinished)
+        throw plChecksumException("Checksum not finished");
+    return fImpl->GetValue();
+}
+
+//============================================================================
+
+bool plChecksum::operator==(const plChecksum& rhs) const
+{
+    if (!IsValid())
+        return false;
+    if (!rhs.IsValid())
+        return false;
+
+    if (fType != rhs.fType)
+        return false;
+    if (fImpl->GetSize() != rhs.fImpl->GetSize())
+        return false;
+
+    return memcmp(
+        fImpl->GetValue(),
+        rhs.fImpl->GetValue(),
+        fImpl->GetSize()
+    ) == 0;
+}
+
+//============================================================================
+
+plChecksum& plChecksum::operator=(plChecksum&& move) noexcept
+{
+    if (this != &move) {
+        fStatus = move.fStatus;
+        fType = move.fType;
+        fImpl = std::move(move.fImpl);
+        move.fStatus = Status::kInvalid;
+    }
+    return *this;
+}

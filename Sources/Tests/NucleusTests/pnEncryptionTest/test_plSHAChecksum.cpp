@@ -55,7 +55,7 @@ TEST(plSHAChecksum, ctor_with_buffer)
                              0x7e, 0xbd, 0x58, 0x68,
                              0x38, 0xb0, 0xf7, 0xfb};
 
-    plSHAChecksum sum(strlen(buffer), (const uint8_t*)buffer);
+    plChecksum sum(plChecksum::Type::kSHA0, strlen(buffer), (const uint8_t*)buffer);
 
     EXPECT_EQ(sizeof(value), sum.GetSize());
     EXPECT_EQ(0, memcmp(sum.GetValue(), value, 20));
@@ -72,7 +72,7 @@ TEST(plSHAChecksum, update)
                              0x7e, 0xbd, 0x58, 0x68,
                              0x38, 0xb0, 0xf7, 0xfb};
 
-    plSHAChecksum sum;
+    plChecksum sum(plChecksum::Type::kSHA0);
     sum.Start();
     sum.AddTo(strlen(buffer[0]), (const uint8_t*)buffer[0]);
     sum.AddTo(strlen(buffer[1]), (const uint8_t*)buffer[1]);
@@ -88,30 +88,30 @@ TEST(plSHAChecksum, well_known_hashes)
     // From NIST FIPS-180
     const char case0_text[] = "";
     const char case0_digest[] = "f96cea198ad1dd5617ac084a3d92c6107708c0ef";
-    plSHAChecksum case0(strlen(case0_text), (const uint8_t*)case0_text);
+    plChecksum case0(plChecksum::Type::kSHA0, strlen(case0_text), (const uint8_t*)case0_text);
     EXPECT_STREQ(case0_digest, case0.GetAsHexString().c_str());
 
     const char case1_text[] = "abc";
     const char case1_digest[] = "0164b8a914cd2a5e74c4f7ff082c4d97f1edf880";
-    plSHAChecksum case1(strlen(case1_text), (const uint8_t*)case1_text);
+    plChecksum case1(plChecksum::Type::kSHA0, strlen(case1_text), (const uint8_t*)case1_text);
     EXPECT_STREQ(case1_digest, case1.GetAsHexString().c_str());
 
     const char case2_text[] = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
     const char case2_digest[] = "d2516ee1acfa5baf33dfc1c471e438449ef134c8";
-    plSHAChecksum case2(strlen(case2_text), (const uint8_t*)case2_text);
+    plChecksum case2(plChecksum::Type::kSHA0, strlen(case2_text), (const uint8_t*)case2_text);
     EXPECT_STREQ(case2_digest, case2.GetAsHexString().c_str());
 
     const char case3_text[] = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmn"
                               "hijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu";
     const char case3_digest[] = "459f83b95db2dc87bb0f5b513a28f900ede83237";
-    plSHAChecksum case3(strlen(case3_text), (const uint8_t*)case3_text);
+    plChecksum case3(plChecksum::Type::kSHA0, strlen(case3_text), (const uint8_t*)case3_text);
     EXPECT_STREQ(case3_digest, case3.GetAsHexString().c_str());
 
     // 1,000,000 copies of 'a'
     uint8_t onek_a[1000];
     memset(onek_a, 'a', sizeof(onek_a));
     const char case4_digest[] = "3232affa48628a26653b5aaa44541fd90d690603";
-    plSHAChecksum case4;
+    plChecksum case4(plChecksum::Type::kSHA0);
     case4.Start();
     for (size_t i = 0; i < 1000; ++i)
         case4.AddTo(sizeof(onek_a), onek_a);
@@ -125,7 +125,7 @@ TEST(plSHAChecksum, well_known_hashes)
     const char case5_text[] = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmno";
     const size_t case5_text_len = strlen(case5_text);
     const char case5_digest[] = "bd18f2e7736c8e6de8b5abdfdeab948f5171210c";
-    plSHAChecksum case5;
+    plChecksum case5(plChecksum::Type::kSHA0);
     case5.Start();
     for (size_t i = 0; i < 16777216; ++i)
         case5.AddTo(case5_text_len, (const uint8_t*)case5_text);

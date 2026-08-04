@@ -130,7 +130,7 @@ void pyAgeInfoStruct::SetAgeInstanceGuid(const ST::string& guid)
         ST::string curInst = fAgeInfo.GetAgeInstanceName();
         ST::string y = curInst + guid;
 
-        plMD5Checksum hash;
+        plChecksum hash(plChecksum::Type::kMD5);
         hash.Start();
         hash.AddTo(y.size(), (uint8_t*)y.c_str());
         hash.Finish();
