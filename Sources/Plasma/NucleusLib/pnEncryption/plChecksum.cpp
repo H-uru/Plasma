@@ -97,29 +97,6 @@ static uint8_t IHexCharToInt(char c)
     return 0xff;
 }
 
-plChecksum::plChecksum(unsigned int bufsize, const char* buffer)
-{
-    unsigned int wndsz = GetWindowSize(),i = 0;
-    fSum = 0;
-
-    const char* bufferAbsEnd = buffer + bufsize;
-    const char* bufferEnvenEnd = buffer + bufsize - (bufsize % wndsz);
-
-    while (buffer < bufferEnvenEnd)
-    {
-        fSum += hsToLE32(*((SumStorage*)buffer));
-        buffer += wndsz;
-    }
-
-    SumStorage last = 0;
-    while (buffer < bufferAbsEnd)
-    {
-        ((char*)&last)[i % wndsz] = *buffer;
-        buffer++;
-    }
-    fSum+= hsToLE32(last);
-}
-
 //============================================================================
 
 plMD5Checksum::plMD5Checksum(size_t size, const uint8_t* buffer)

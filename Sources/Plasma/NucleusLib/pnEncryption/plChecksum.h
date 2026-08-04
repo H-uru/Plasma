@@ -49,19 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define MD5_DIGEST_LENGTH 16
 #define SHA_DIGEST_LENGTH 20
 
-class plChecksum
-{
-public:
-    typedef uint32_t SumStorage;
-private:
-    SumStorage fSum;
-public:
-    plChecksum(unsigned int bufsize, const char* buffer);
-    static int GetChecksumSize() { return sizeof(SumStorage); }
-    static int GetWindowSize() { return sizeof(SumStorage); }
-    SumStorage GetChecksum() { return fSum; }
-};
-
 class hsStream;
 class plFileName;
 
