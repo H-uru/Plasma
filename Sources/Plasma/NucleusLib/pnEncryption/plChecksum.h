@@ -63,6 +63,8 @@ public:
         kMD5,
         kSHA0,
         kSHA1,
+        kSHA256,
+        kSHA512,
     };
 
 private:

@@ -261,6 +261,12 @@ void plChecksum::IInit(plChecksum::Type type)
         case Type::kSHA1:
             fImpl = std::make_unique<plEVPChecksum>(EVP_sha1());
             break;
+        case Type::kSHA256:
+            fImpl = std::make_unique<plEVPChecksum>(EVP_sha256());
+            break;
+        case Type::kSHA512:
+            fImpl = std::make_unique<plEVPChecksum>(EVP_sha512());
+            break;
         DEFAULT_FATAL("checksumType");
     }
 }
