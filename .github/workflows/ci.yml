@@ -5,6 +5,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
+env:
+  CMAKE_VERSION: "4.2.7"
+
 jobs:
   # HACK to enable/disable the max CI based on presence/absence of secret. See also:
   # https://github.com/actions/runner/issues/1138
@@ -59,7 +62,7 @@ jobs:
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
-          cmake-version: '4.2.7'
+          cmake-version: ${{ env.CMAKE_VERSION }}
 
       - name: Configure NuGet
         run: |
@@ -142,7 +145,7 @@ jobs:
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
-          cmake-version: '4.2.7'
+          cmake-version: ${{ env.CMAKE_VERSION }}
 
       - name: Configure NuGet
         run: |
@@ -223,7 +226,7 @@ jobs:
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
-          cmake-version: '4.2.7'
+          cmake-version: ${{ env.CMAKE_VERSION }}
 
       - name: Setup NuGet
         uses: nuget/setup-nuget@v4
@@ -316,7 +319,7 @@ jobs:
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
-          cmake-version: '4.2.7'
+          cmake-version: ${{ env.CMAKE_VERSION }}
 
       - name: Configure NuGet
         run: |
