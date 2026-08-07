@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plFileName;
 class plFilePath;
-class plMD5Checksum;
 class plStatusLog;
 class hsStream;
 

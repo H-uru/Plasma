@@ -631,7 +631,11 @@ static void StoreHash(const ST::string& username, const ST::string& password, Lo
     std::regex_search(username.c_str(), match, re_domain);
     if (match.empty() || ST::string(match[2].str()).compare_i("gametap") == 0) {
         //  Plain Usernames...
-        plSHA1Checksum shasum(password.size(), reinterpret_cast<const uint8_t*>(password.c_str()));
+        plChecksum shasum(
+            plChecksum::Type::kSHA1,
+            password.size(),
+            reinterpret_cast<const uint8_t*>(password.c_str())
+        );
         uint32_t* dest = reinterpret_cast<uint32_t*>(pLoginParam->namePassHash);
         const uint32_t* from = reinterpret_cast<const uint32_t*>(shasum.GetValue());
 

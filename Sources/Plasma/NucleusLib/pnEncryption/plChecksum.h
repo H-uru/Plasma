@@ -43,146 +43,87 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_CHECKSUM_H
 
 #include "HeadSpin.h"
-#include "plSha0.h"
-#include <openssl/evp.h>
 
-#define MD5_DIGEST_LENGTH 16
-#define SHA_DIGEST_LENGTH 20
-
-class plChecksum
-{
-public:
-    typedef uint32_t SumStorage;
-private:
-    SumStorage fSum;
-public:
-    plChecksum(unsigned int bufsize, const char* buffer);
-    static int GetChecksumSize() { return sizeof(SumStorage); }
-    static int GetWindowSize() { return sizeof(SumStorage); }
-    SumStorage GetChecksum() { return fSum; }
-};
-
-class hsStream;
-class plFileName;
-
-class plMD5Checksum
-{
-    protected:
-        bool        fValid;
-        EVP_MD_CTX* fContext;
-        uint8_t     fChecksum[MD5_DIGEST_LENGTH];
-
-    public:
-        plMD5Checksum(size_t size, const uint8_t* buffer);
-        plMD5Checksum();
-        plMD5Checksum(const plMD5Checksum& rhs);
-        plMD5Checksum(const plFileName& fileName);
-        plMD5Checksum(hsStream* stream);
-        ~plMD5Checksum() { Clear(); }
-
-        bool IsValid() const { return fValid; }
-        void Clear();
-
-        void CalcFromFile(const plFileName& fileName);
-        void CalcFromStream(hsStream* stream);
-
-        void Start();
-        void AddTo(size_t size, const uint8_t* buffer);
-        void Finish();
-
-        const uint8_t* GetValue() const { return fChecksum; }
-        size_t GetSize() const { return sizeof(fChecksum); }
-
-        // Backdoor for cached checksums (ie, if you loaded it off disk)
-        void SetValue(uint8_t* checksum);
-
-        ST::string GetAsHexString() const;
-        void SetFromHexString(const char* string);
-
-        bool operator==(const plMD5Checksum& rhs) const;
-        bool operator!=(const plMD5Checksum& rhs) const { return !operator==(rhs); }
-};
+#include <memory>
+#include <stdexcept>
 
 /* A bunch of things might store either a SHA or a SHA1 checksum, this provides
  * them a way to store the checksum itself, rather than a union of the classes.
  */
-typedef uint8_t ShaDigest[SHA_DIGEST_LENGTH];
+typedef uint8_t ShaDigest[20];
 
-class plSHAChecksum
+class hsStream;
+class plFileName;
+
+class plChecksum
 {
-    protected:
-        bool        fValid;
-        EVP_MD_CTX* fOpenSSLContext;
-        plSha0      fPlasmaContext;
-        ShaDigest   fChecksum;
+public:
+    enum class Type
+    {
+        kMD5,
+        kSHA0,
+        kSHA1,
+        kSHA256,
+        kSHA512,
+    };
 
-    public:
-        plSHAChecksum(size_t size, const uint8_t* buffer);
-        plSHAChecksum();
-        plSHAChecksum(const plSHAChecksum& rhs);
-        plSHAChecksum(const plFileName& fileName);
-        plSHAChecksum(hsStream* stream);
-        ~plSHAChecksum() { Clear(); }
+private:
+    enum class Status
+    {
+        kInvalid,
+        kReady,
+        kStarted,
+        kFinished,
+    };
 
-        bool IsValid() const { return fValid; }
-        void Clear();
+    Status fStatus;
+    Type fType;
+    std::unique_ptr<class plChecksumImpl> fImpl;
 
-        void CalcFromFile(const plFileName& fileName);
-        void CalcFromStream(hsStream* stream);
+private:
+    void IInit(Type type);
 
-        void Start();
-        void AddTo(size_t size, const uint8_t* buffer);
-        void Finish();
+public:
+    plChecksum() = delete;
+    plChecksum(plChecksum&& move) noexcept;
+    plChecksum(const plChecksum& copy) = delete;
 
-        const uint8_t* GetValue() const { return fChecksum; }
-        size_t GetSize() const { return sizeof(fChecksum); }
+    plChecksum(Type type);
+    plChecksum(Type type, const plFileName& fileName);
+    plChecksum(Type type, hsStream* stream);
+    plChecksum(Type type, size_t size, const uint8_t* buffer);
 
-        // Backdoor for cached checksums (ie, if you loaded it off disk)
-        void SetValue(uint8_t* checksum);
+    ~plChecksum();
 
-        ST::string GetAsHexString() const;
-        void SetFromHexString(const char* string);
+    size_t GetSize() const;
+    const uint8_t* GetValue() const;
+    bool IsValid() const { return fStatus == Status::kFinished; }
 
-        bool operator==(const plSHAChecksum& rhs) const;
-        bool operator!=(const plSHAChecksum& rhs) const { return !operator==(rhs); }
+    void Start();
+    void AddTo(size_t size, const uint8_t* buffer);
+    void Finish();
+
+    void CalcFromFile(const plFileName& fileName);
+    void CalcFromStream(hsStream* stream);
+
+    ST::string GetAsHexString() const;
+    void SetFromHexString(const char* string);
+
+public:
+    bool operator==(const plChecksum& rhs) const;
+    bool operator!=(const plChecksum& rhs) const { return !operator==(rhs); }
+
+    plChecksum& operator=(const plChecksum& copy) = delete;
+    plChecksum& operator=(plChecksum&& move) noexcept;
 };
 
-class plSHA1Checksum
+class plChecksumException : public std::logic_error
 {
-    protected:
-        bool        fValid;
-        EVP_MD_CTX* fContext;
-        ShaDigest   fChecksum;
-
-    public:
-        plSHA1Checksum(size_t size, const uint8_t* buffer);
-        plSHA1Checksum();
-        plSHA1Checksum(const plSHA1Checksum& rhs);
-        plSHA1Checksum(const plFileName& fileName);
-        plSHA1Checksum(hsStream* stream);
-        ~plSHA1Checksum() { Clear(); }
-
-        bool IsValid() const { return fValid; }
-        void Clear();
-
-        void CalcFromFile(const plFileName& fileName);
-        void CalcFromStream(hsStream* stream);
-
-        void Start();
-        void AddTo(size_t size, const uint8_t* buffer);
-        void Finish();
-
-        const uint8_t* GetValue() const { return fChecksum; }
-        size_t GetSize() const { return sizeof(fChecksum); }
-
-        // Backdoor for cached checksums (ie, if you loaded it off disk)
-        void SetValue(uint8_t* checksum);
-
-        ST::string GetAsHexString() const;
-        void SetFromHexString(const char* string);
-
-        bool operator==(const plSHA1Checksum& rhs) const;
-        bool operator!=(const plSHA1Checksum& rhs) const { return !operator==(rhs); }
+public:
+    plChecksumException() = delete;
+    plChecksumException(const char* message) : std::logic_error(message) {}
+    plChecksumException(const plChecksumException&) = default;
+    plChecksumException(plChecksumException&&) = default;
 };
 
 #endif // PL_CHECKSUM_H

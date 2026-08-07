@@ -45,12 +45,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnEncryption/plChecksum.h"
 #include <string_theory/string>
 
-TEST(plSHAChecksum, lifecycle)
+TEST(plSHA256Checksum, lifecycle)
 {
-    plChecksum sum(plChecksum::Type::kSHA0);
+    plChecksum sum(plChecksum::Type::kSHA256);
 
     // We can set the checksum value directly if no checksum is in progress.
-    EXPECT_NO_THROW(sum.SetFromHexString("f96cea198ad1dd5617ac084a3d92c6107708c0ef"));
+    EXPECT_NO_THROW(sum.SetFromHexString("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
     EXPECT_THROW(sum.SetFromHexString("1"), plChecksumException);
 
     // Can't add to or finish until Start() is called.
@@ -62,7 +62,7 @@ TEST(plSHAChecksum, lifecycle)
     EXPECT_THROW(sum.Start(), plChecksumException);
 
     // Now that we've started, we can't set the checksum value directly.
-    EXPECT_THROW(sum.SetFromHexString("f96cea198ad1dd5617ac084a3d92c6107708c0ef"), plChecksumException);
+    EXPECT_THROW(sum.SetFromHexString("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"), plChecksumException);
 
     // Can't get the value until Finish() is called.
     EXPECT_THROW(sum.GetValue(), plChecksumException);
@@ -82,7 +82,7 @@ TEST(plSHAChecksum, lifecycle)
     EXPECT_NO_THROW(sum.Finish());
 
     // We can set the checksum value directly if no checksum is in progress.
-    EXPECT_NO_THROW(sum.SetFromHexString("f96cea198ad1dd5617ac084a3d92c6107708c0ef"));
+    EXPECT_NO_THROW(sum.SetFromHexString("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
 
     // Moving invalidates the source.
     plChecksum sum2 = std::move(sum);
@@ -91,94 +91,99 @@ TEST(plSHAChecksum, lifecycle)
     EXPECT_THROW(sum.Start(), plChecksumException);
     EXPECT_THROW(sum.AddTo(1, (const uint8_t*)"a"), plChecksumException);
     EXPECT_THROW(sum.Finish(), plChecksumException);
-    EXPECT_THROW(sum.SetFromHexString("f96cea198ad1dd5617ac084a3d92c6107708c0ef"), plChecksumException);
+    EXPECT_THROW(sum.SetFromHexString("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"), plChecksumException);
 }
 
-TEST(plSHAChecksum, ctor_with_buffer)
+TEST(plSHA256Checksum, ctor_with_buffer)
 {
     const char buffer[] = "Hello World";
-    const char hexStr[] = "45d579c3582a30e6ec0cc15e7ebd586838b0f7fb";
-    const ShaDigest value = {0x45, 0xd5, 0x79, 0xc3,
-                             0x58, 0x2a, 0x30, 0xe6,
-                             0xec, 0x0c, 0xc1, 0x5e,
-                             0x7e, 0xbd, 0x58, 0x68,
-                             0x38, 0xb0, 0xf7, 0xfb};
+    const char hexStr[] = "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e";
+    const uint8_t value[] = {
+        0xa5, 0x91, 0xa6, 0xd4,
+        0x0b, 0xf4, 0x20, 0x40,
+        0x4a, 0x01, 0x17, 0x33,
+        0xcf, 0xb7, 0xb1, 0x90,
+        0xd6, 0x2c, 0x65, 0xbf,
+        0x0b, 0xcd, 0xa3, 0x2b,
+        0x57, 0xb2, 0x77, 0xd9,
+        0xad, 0x9f, 0x14, 0x6e,
+    };
 
-    plChecksum sum(plChecksum::Type::kSHA0, strlen(buffer), (const uint8_t*)buffer);
+    plChecksum sum(plChecksum::Type::kSHA256, strlen(buffer), (const uint8_t*)buffer);
 
     EXPECT_EQ(sizeof(value), sum.GetSize());
-    EXPECT_EQ(0, memcmp(sum.GetValue(), value, 20));
+    EXPECT_EQ(0, memcmp(sum.GetValue(), value, 32));
     EXPECT_STREQ(hexStr, sum.GetAsHexString().c_str());
 }
 
-TEST(plSHAChecksum, update)
+TEST(plSHA256Checksum, update)
 {
     const char* buffer[] = {"Hello ", "World"};
-    const char hexStr[] = "45d579c3582a30e6ec0cc15e7ebd586838b0f7fb";
-    const ShaDigest value = {0x45, 0xd5, 0x79, 0xc3,
-                             0x58, 0x2a, 0x30, 0xe6,
-                             0xec, 0x0c, 0xc1, 0x5e,
-                             0x7e, 0xbd, 0x58, 0x68,
-                             0x38, 0xb0, 0xf7, 0xfb};
+    const char hexStr[] = "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e";
+    const uint8_t value[] = {
+        0xa5, 0x91, 0xa6, 0xd4,
+        0x0b, 0xf4, 0x20, 0x40,
+        0x4a, 0x01, 0x17, 0x33,
+        0xcf, 0xb7, 0xb1, 0x90,
+        0xd6, 0x2c, 0x65, 0xbf,
+        0x0b, 0xcd, 0xa3, 0x2b,
+        0x57, 0xb2, 0x77, 0xd9,
+        0xad, 0x9f, 0x14, 0x6e,
+    };
 
-    plChecksum sum(plChecksum::Type::kSHA0);
+    plChecksum sum(plChecksum::Type::kSHA256);
     sum.Start();
     sum.AddTo(strlen(buffer[0]), (const uint8_t*)buffer[0]);
     sum.AddTo(strlen(buffer[1]), (const uint8_t*)buffer[1]);
     sum.Finish();
 
     EXPECT_EQ(sizeof(value), sum.GetSize());
-    EXPECT_EQ(0, memcmp(sum.GetValue(), value, 20));
+    EXPECT_EQ(0, memcmp(sum.GetValue(), value, 32));
     EXPECT_STREQ(hexStr, sum.GetAsHexString().c_str());
 }
 
-TEST(plSHAChecksum, well_known_hashes)
+TEST(plSHA256Checksum, well_known_hashes)
 {
-    // From NIST FIPS-180
     const char case0_text[] = "";
-    const char case0_digest[] = "f96cea198ad1dd5617ac084a3d92c6107708c0ef";
-    plChecksum case0(plChecksum::Type::kSHA0, strlen(case0_text), (const uint8_t*)case0_text);
+    const char case0_digest[] = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+    plChecksum case0(plChecksum::Type::kSHA256, strlen(case0_text), (const uint8_t*)case0_text);
     EXPECT_STREQ(case0_digest, case0.GetAsHexString().c_str());
 
     const char case1_text[] = "abc";
-    const char case1_digest[] = "0164b8a914cd2a5e74c4f7ff082c4d97f1edf880";
-    plChecksum case1(plChecksum::Type::kSHA0, strlen(case1_text), (const uint8_t*)case1_text);
+    const char case1_digest[] = "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad";
+    plChecksum case1(plChecksum::Type::kSHA256, strlen(case1_text), (const uint8_t*)case1_text);
     EXPECT_STREQ(case1_digest, case1.GetAsHexString().c_str());
 
     const char case2_text[] = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
-    const char case2_digest[] = "d2516ee1acfa5baf33dfc1c471e438449ef134c8";
-    plChecksum case2(plChecksum::Type::kSHA0, strlen(case2_text), (const uint8_t*)case2_text);
+    const char case2_digest[] = "248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1";
+    plChecksum case2(plChecksum::Type::kSHA256, strlen(case2_text), (const uint8_t*)case2_text);
     EXPECT_STREQ(case2_digest, case2.GetAsHexString().c_str());
 
     const char case3_text[] = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmn"
                               "hijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu";
-    const char case3_digest[] = "459f83b95db2dc87bb0f5b513a28f900ede83237";
-    plChecksum case3(plChecksum::Type::kSHA0, strlen(case3_text), (const uint8_t*)case3_text);
+    const char case3_digest[] = "cf5b16a778af8380036ce59e7b0492370b249b11e8f07a51afac45037afee9d1";
+    plChecksum case3(plChecksum::Type::kSHA256, strlen(case3_text), (const uint8_t*)case3_text);
     EXPECT_STREQ(case3_digest, case3.GetAsHexString().c_str());
 
     // 1,000,000 copies of 'a'
     uint8_t onek_a[1000];
     memset(onek_a, 'a', sizeof(onek_a));
-    const char case4_digest[] = "3232affa48628a26653b5aaa44541fd90d690603";
-    plChecksum case4(plChecksum::Type::kSHA0);
+    const char case4_digest[] = "cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0";
+    plChecksum case4(plChecksum::Type::kSHA256);
     case4.Start();
     for (size_t i = 0; i < 1000; ++i)
         case4.AddTo(sizeof(onek_a), onek_a);
     case4.Finish();
     EXPECT_STREQ(case4_digest, case4.GetAsHexString().c_str());
 
-#if 0
     // case5_text repeated 16,777,216 times
-    // This test is too slow (~12 sec) with the built-in SHA0, but it can be
-    // enabled if more conformance testing is desired.
     const char case5_text[] = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmno";
     const size_t case5_text_len = strlen(case5_text);
-    const char case5_digest[] = "bd18f2e7736c8e6de8b5abdfdeab948f5171210c";
-    plChecksum case5(plChecksum::Type::kSHA0);
+    const char case5_digest[] = "50e72a0e26442fe2552dc3938ac58658228c0cbfb1d2ca872ae435266fcd055e";
+    plChecksum case5(plChecksum::Type::kSHA256);
     case5.Start();
     for (size_t i = 0; i < 16777216; ++i)
         case5.AddTo(case5_text_len, (const uint8_t*)case5_text);
     case5.Finish();
     EXPECT_STREQ(case5_digest, case5.GetAsHexString().c_str());
-#endif
 }
