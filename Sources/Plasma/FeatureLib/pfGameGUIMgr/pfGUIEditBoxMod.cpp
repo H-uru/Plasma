@@ -292,15 +292,43 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
             {
                 SetCursorToEnd();
             }
+            else if (key == KEY_LEFT && modifiers & pfGameGUIMgr::kCtrlDown) {
+                // Go back a word
+                if (fCursorPos > 0) {
+                    do {
+                        fCursorPos--;
+                    } while (fCursorPos > 0 && fBuffer[fCursorPos - 1] != L' ');
+                }
+            }
             else if( key == KEY_LEFT )
             {
                 if( fCursorPos > 0 )
                     fCursorPos--;
             }
+            else if (key == KEY_RIGHT && modifiers & pfGameGUIMgr::kCtrlDown) {
+                // Go forward a word
+                size_t end = wcslen(fBuffer.c_str());
+                if (fCursorPos < end) {
+                    do {
+                        fCursorPos++;
+                    } while (fCursorPos < end && fBuffer[fCursorPos - 1] != L' ');
+                }
+            }
             else if (key == KEY_RIGHT)
             {
                 if( fCursorPos < wcslen( fBuffer.c_str() ) )
                     fCursorPos++;
+            }
+            else if (key == KEY_BACKSPACE && modifiers & pfGameGUIMgr::kCtrlDown) {
+                // Delete last word
+                if (fCursorPos > 0) {
+                    uint32_t removed = 0;
+                    do {
+                        fCursorPos--;
+                        removed++;
+                    } while (fCursorPos > 0 && fBuffer[fCursorPos - 1] != L' ');
+                    memmove(&fBuffer[fCursorPos], &fBuffer[fCursorPos + removed], (wcslen(&fBuffer[fCursorPos + removed]) + 1) * sizeof(wchar_t));
+                }
             }
             else if (key == KEY_BACKSPACE)
             {
@@ -308,6 +336,17 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
                 {
                     fCursorPos--;
                     memmove( &fBuffer[fCursorPos], &fBuffer[fCursorPos + 1], (wcslen( &fBuffer[fCursorPos + 1] ) + 1) * sizeof(wchar_t) );
+                }
+            }
+            else if (key == KEY_DELETE && modifiers & pfGameGUIMgr::kCtrlDown) {
+                // Delete next word
+                size_t end = wcslen(fBuffer.c_str());
+                if (fCursorPos < end) {
+                    uint32_t removed = 0;
+                    do {
+                        removed++;
+                    } while (fCursorPos + removed < end && fBuffer[fCursorPos + removed - 1] != L' ');
+                    memmove(&fBuffer[fCursorPos], &fBuffer[fCursorPos + removed], (wcslen(&fBuffer[fCursorPos + removed]) + 1) * sizeof(wchar_t));
                 }
             }
             else if (key == KEY_DELETE)
