@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static bool fillDeviceRecord(hsG3DDeviceRecord& devRec, const ST::string& driverName,
         uint32_t provider, hsDisplayHndl display)
 {
-    if (epoxy_gl_version() < 33)
+    if (plGLVersion() < 21)
         return false;
 
     devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeOpenGL);
@@ -142,11 +142,22 @@ void plEGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displ
 
         EGLint ctx_attrs[] = {
             EGL_CONTEXT_MAJOR_VERSION, 3,
+            EGL_CONTEXT_MINOR_VERSION, 2,
             EGL_CONTEXT_OPENGL_PROFILE_MASK, EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT,
             EGL_NONE
         };
 
         context = eglCreateContext(display, config, EGL_NO_CONTEXT, ctx_attrs);
+        if (context == EGL_NO_CONTEXT) {
+            EGLint ctx_attrs21[] = {
+                EGL_CONTEXT_MAJOR_VERSION, 2,
+                EGL_CONTEXT_MINOR_VERSION, 1,
+                EGL_NONE
+            };
+
+            context = eglCreateContext(display, config, EGL_NO_CONTEXT, ctx_attrs21);
+        }
+
         if (context == EGL_NO_CONTEXT)
             break;
 
