@@ -96,11 +96,22 @@ void InitEGLDevice(plGLDevice* dev)
         /* Set up the GL context */
         EGLint ctx_attrs[] = {
             EGL_CONTEXT_MAJOR_VERSION, 3,
+            EGL_CONTEXT_MINOR_VERSION, 2,
             EGL_CONTEXT_OPENGL_PROFILE_MASK, EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT,
             EGL_NONE
         };
 
         context = eglCreateContext(display, config, EGL_NO_CONTEXT, ctx_attrs);
+        if (context == EGL_NO_CONTEXT) {
+            EGLint ctx_attrs21[] = {
+                EGL_CONTEXT_MAJOR_VERSION, 2,
+                EGL_CONTEXT_MINOR_VERSION, 1,
+                EGL_NONE
+            };
+
+            context = eglCreateContext(display, config, EGL_NO_CONTEXT, ctx_attrs21);
+        }
+
         if (context == EGL_NO_CONTEXT) {
             dev->fErrorMsg = "Unable to create rendering context";
             break;
@@ -224,8 +235,21 @@ void InitCGLDevice(plGLDevice* dev)
 
         int nPix = 0;
         if (CGLChoosePixelFormat(attribs, &pix, &nPix) != kCGLNoError || nPix == 0) {
-            dev->fErrorMsg = "Could not choose appropriate config";
-            break;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1070 && MAC_OS_X_VERSION_MIN_REQUIRED < 1070
+            nPix = 0;
+            size_t attrs_count = std::size(attribs);
+
+            // Try without the OpenGL profile
+            attribs[attrs_count - 2] = static_cast<CGLPixelFormatAttribute>(0);
+            attribs[attrs_count - 3] = static_cast<CGLPixelFormatAttribute>(0);
+
+            if (CGLChoosePixelFormat(attribs, &pix, &nPix) != kCGLNoError || nPix == 0)
+                // Intentional fallthrough
+#endif
+            {
+                dev->fErrorMsg = "Could not choose appropriate config";
+                break;
+            }
         }
 
         if (CGLCreateContext(pix, nullptr, &ctx) != kCGLNoError) {
@@ -308,7 +332,7 @@ bool plGLDevice::InitDevice()
     plStatusLog::AddLineSF("pipeline.log", "Initialized with OpenGL {}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
 
 #ifdef HS_DEBUGGING
-    if (epoxy_gl_version() >= 43) {
+    if (plGLVersion() >= 43) {
         glEnable(GL_DEBUG_OUTPUT);
 
         // Turn off low-severity messages
