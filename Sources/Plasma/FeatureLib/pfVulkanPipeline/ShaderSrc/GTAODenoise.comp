@@ -1,0 +1,87 @@
+#version 450
+#extension GL_GOOGLE_include_directive : require
+
+layout(local_size_x = 8, local_size_y = 8) in;
+
+#include "GTAOCommon.glsl"
+
+layout(set = 0, binding = 5) uniform usampler2D workingAO;
+layout(set = 0, binding = 6) uniform sampler2D workingEdges;
+layout(r8ui, set = 0, binding = 15) uniform writeonly uimage2D outFinalAO;
+
+const float GTAO_DIAGONAL_WEIGHT = 0.85 * 0.5;
+const float GTAO_LEAK_THRESHOLD = 2.5;
+const float GTAO_LEAK_STRENGTH = 0.5;
+
+float GTAOLoadVisibility(ivec2 pixel)
+{
+    return float(texelFetch(workingAO, pixel, 0).r) / 255.0;
+}
+
+void GTAOAddSample(float visibility, float weight, inout float sum, inout float sumWeight)
+{
+    sum += weight * visibility;
+    sumWeight += weight;
+}
+
+void main()
+{
+    ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
+    if (any(greaterThanEqual(pixel, gtao.viewportSize)))
+        return;
+
+    ivec2 maxPixel = gtao.viewportSize - 1;
+    ivec2 leftPixel = clamp(pixel + ivec2(-1, 0), ivec2(0), maxPixel);
+    ivec2 rightPixel = clamp(pixel + ivec2(1, 0), ivec2(0), maxPixel);
+    ivec2 topPixel = clamp(pixel + ivec2(0, -1), ivec2(0), maxPixel);
+    ivec2 bottomPixel = clamp(pixel + ivec2(0, 1), ivec2(0), maxPixel);
+    ivec2 topLeftPixel = clamp(pixel + ivec2(-1, -1), ivec2(0), maxPixel);
+    ivec2 topRightPixel = clamp(pixel + ivec2(1, -1), ivec2(0), maxPixel);
+    ivec2 bottomLeftPixel = clamp(pixel + ivec2(-1, 1), ivec2(0), maxPixel);
+    ivec2 bottomRightPixel = clamp(pixel + ivec2(1, 1), ivec2(0), maxPixel);
+
+    vec4 edgesCenter = GTAOUnpackEdges(texelFetch(workingEdges, pixel, 0).r);
+    vec4 edgesLeft = GTAOUnpackEdges(texelFetch(workingEdges, leftPixel, 0).r);
+    vec4 edgesRight = GTAOUnpackEdges(texelFetch(workingEdges, rightPixel, 0).r);
+    vec4 edgesTop = GTAOUnpackEdges(texelFetch(workingEdges, topPixel, 0).r);
+    vec4 edgesBottom = GTAOUnpackEdges(texelFetch(workingEdges, bottomPixel, 0).r);
+
+    // Edge detection is not symmetrical on its own: a left edge on the right
+    // neighbour need not agree with the right edge on this pixel. Folding the
+    // neighbour's opposing edge in enforces that and sharpens the blur.
+    edgesCenter *= vec4(edgesLeft.y, edgesRight.x, edgesTop.w, edgesBottom.z);
+
+    // Let a little occlusion leak into pixels walled in by three or four edges.
+    // Without it those pixels keep their raw, unfiltered noise.
+    float edginess = (GTAOSaturate(4.0 - GTAO_LEAK_THRESHOLD -
+                                   dot(edgesCenter, vec4(1.0))) /
+                      (4.0 - GTAO_LEAK_THRESHOLD)) * GTAO_LEAK_STRENGTH;
+    edgesCenter = GTAOSaturate(edgesCenter + edginess);
+
+    float weightTopLeft = GTAO_DIAGONAL_WEIGHT *
+        (edgesCenter.x * edgesLeft.z + edgesCenter.z * edgesTop.x);
+    float weightTopRight = GTAO_DIAGONAL_WEIGHT *
+        (edgesCenter.z * edgesTop.y + edgesCenter.y * edgesRight.z);
+    float weightBottomLeft = GTAO_DIAGONAL_WEIGHT *
+        (edgesCenter.w * edgesBottom.x + edgesCenter.x * edgesLeft.w);
+    float weightBottomRight = GTAO_DIAGONAL_WEIGHT *
+        (edgesCenter.y * edgesRight.w + edgesCenter.w * edgesBottom.y);
+
+    float sumWeight = gtao.denoiseBlurBeta;
+    float sum = GTAOLoadVisibility(pixel) * sumWeight;
+
+    GTAOAddSample(GTAOLoadVisibility(leftPixel), edgesCenter.x, sum, sumWeight);
+    GTAOAddSample(GTAOLoadVisibility(rightPixel), edgesCenter.y, sum, sumWeight);
+    GTAOAddSample(GTAOLoadVisibility(topPixel), edgesCenter.z, sum, sumWeight);
+    GTAOAddSample(GTAOLoadVisibility(bottomPixel), edgesCenter.w, sum, sumWeight);
+
+    GTAOAddSample(GTAOLoadVisibility(topLeftPixel), weightTopLeft, sum, sumWeight);
+    GTAOAddSample(GTAOLoadVisibility(topRightPixel), weightTopRight, sum, sumWeight);
+    GTAOAddSample(GTAOLoadVisibility(bottomLeftPixel), weightBottomLeft, sum, sumWeight);
+    GTAOAddSample(GTAOLoadVisibility(bottomRightPixel), weightBottomRight, sum, sumWeight);
+
+    // This is the only denoise pass, so it is also the one that undoes the
+    // occlusion-term packing scale.
+    float visibility = sum / max(sumWeight, 1e-6) * GTAO_OCCLUSION_SCALE;
+    imageStore(outFinalAO, pixel, uvec4(uint(GTAOSaturate(visibility) * 255.0 + 0.5)));
+}

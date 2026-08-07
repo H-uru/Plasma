@@ -204,16 +204,25 @@ jobs:
               autoconf \
               autoconf-archive \
               cmake \
+              glslang-tools \
               libcairo2 \
+              libegl1-mesa-dev \
               libexpected-dev \
+              libgl1-mesa-dev \
               libsecret-1-dev \
               libtool \
+              libwayland-dev \
               libx11-dev \
+              libxcursor-dev \
+              libxext-dev \
               libxfixes-dev \
+              libxi-dev \
+              libxkbcommon-dev \
               libxrandr-dev \
               nasm \
               ninja-build \
-              qtbase5-dev
+              qtbase5-dev \
+              wayland-protocols
 
       - name: Setup cmake
         uses: jwlawson/actions-setup-cmake@v2
@@ -246,6 +255,17 @@ jobs:
             -S . -B build
         env:
           VCPKG_BINARY_SOURCES: "clear;nuget,GitHub,readwrite"
+
+      # PLASMA_PIPELINE_VULKAN is a cmake_dependent_option, so a missing
+      # dependency silently turns it off instead of failing the configure.
+      # Fail loudly here rather than shipping an untested renderer.
+      - name: Verify Vulkan pipeline is enabled
+        run: |
+          if ! grep -q '^PLASMA_PIPELINE_VULKAN:BOOL=ON$' build/CMakeCache.txt; then
+              echo "::error::PLASMA_PIPELINE_VULKAN is OFF; the Vulkan renderer was not built."
+              grep -E 'GLSLANG_VALIDATOR_EXECUTABLE|PLASMA_PIPELINE_' build/CMakeCache.txt || true
+              exit 1
+          fi
 
       - name: Build
         run: |

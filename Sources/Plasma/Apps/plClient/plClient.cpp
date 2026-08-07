@@ -153,6 +153,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifdef PLASMA_PIPELINE_METAL
     #include "pfMetalPipeline/plMetalPipeline.h"
 #endif
+#ifdef PLASMA_PIPELINE_VULKAN
+    #include "pfVulkanPipeline/plVulkanPipeline.h"
+#endif
 #include "pfJournalBook/pfJournalBook.h"
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
 #include "pfMoviePlayer/plMoviePlayer.h"
@@ -470,6 +473,8 @@ void plClient::ISetGraphicsDefaults()
     plPipeline::fInitialPipeParams.AnisotropicLevel = plPipeline::fDefaultPipeParams.AnisotropicLevel;
     plPipeline::fInitialPipeParams.TextureQuality = plPipeline::fDefaultPipeParams.TextureQuality;
     plPipeline::fInitialPipeParams.VSync = plPipeline::fDefaultPipeParams.VSync;
+    plPipeline::fInitialPipeParams.AmbientOcclusion =
+        plPipeline::fDefaultPipeParams.AmbientOcclusion;
     plShadowCaster::EnableShadowCast(plPipeline::fDefaultPipeParams.Shadows ? true : false);
     plQuality::SetQuality(plPipeline::fDefaultPipeParams.VideoQuality);
     if( (fClampCap >= 0) && (fClampCap < plQuality::GetCapability()) )
@@ -495,6 +500,11 @@ plPipeline* plClient::ICreatePipeline(hsDisplayHndl disp, hsWindowHndl hWnd, con
     if (renderer == hsG3DDeviceSelector::kDevTypeMetal2 ||
         renderer == hsG3DDeviceSelector::kDevTypeMetal3)
         return new plMetalPipeline(disp, hWnd, devMode);
+#endif
+
+#ifdef PLASMA_PIPELINE_VULKAN
+    if (renderer == hsG3DDeviceSelector::kDevTypeVulkan)
+        return new plVulkanPipeline(disp, hWnd, devMode);
 #endif
 
     return new plNullPipeline(disp, hWnd, devMode);
@@ -1805,7 +1815,7 @@ bool plClient::IDraw()
 
     plProfile_BeginTiming(MainRender);
     if( !fFlags.IsBitSet( kFlagDBGDisableRender ) )
-        fPageMgr->Render(fPipeline);
+        fPageMgr->Render(fPipeline, true);
     plProfile_EndTiming(MainRender);
 
     plProfile_BeginTiming(PostRender);
@@ -2030,6 +2040,13 @@ void WriteInt(hsStream *stream, const char *name, int val )
     stream->WriteString(command);
 }
 
+void WriteFloat(hsStream* stream, const char* name, float val)
+{
+    char command[256];
+    snprintf(command, sizeof(command), "%s %.6g\r\n", name, val);
+    stream->WriteString(command);
+}
+
 void WriteString(hsStream *stream, const char *name, const char *val)
 {
     char command[256];
@@ -2148,6 +2165,14 @@ void plClient::IWriteDefaultGraphicsSettings(const plFileName& destFile)
     WriteInt(stream.get(), "Graphics.Shadow.Enable", plPipeline::fDefaultPipeParams.Shadows);
     WriteInt(stream.get(), "Graphics.EnablePlanarReflections", plPipeline::fDefaultPipeParams.PlanarReflections);
     WriteBool(stream.get(), "Graphics.EnableVSync", plPipeline::fDefaultPipeParams.VSync);
+    WriteBool(stream.get(), "Graphics.AmbientOcclusion.Enable",
+              plPipeline::fDefaultPipeParams.AmbientOcclusion.fEnabled);
+    WriteInt(stream.get(), "Graphics.AmbientOcclusion.Quality",
+             static_cast<int>(plPipeline::fDefaultPipeParams.AmbientOcclusion.fQuality));
+    WriteFloat(stream.get(), "Graphics.AmbientOcclusion.Radius",
+               plPipeline::fDefaultPipeParams.AmbientOcclusion.fRadius);
+    WriteFloat(stream.get(), "Graphics.AmbientOcclusion.Power",
+               plPipeline::fDefaultPipeParams.AmbientOcclusion.fPower);
 }
 
 

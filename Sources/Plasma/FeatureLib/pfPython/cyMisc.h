@@ -899,6 +899,8 @@ public:
 
     static void EnablePlanarReflections(bool enable = true);
     static bool ArePlanarReflectionsSupported();
+    static void EnableAmbientOcclusion(bool enable = true);
+    static bool IsAmbientOcclusionSupported();
     static void SetGraphicsOptions(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool VSync);
     static void GetSupportedDisplayModes(std::vector<plDisplayMode> *res);
     static int GetDesktopWidth();

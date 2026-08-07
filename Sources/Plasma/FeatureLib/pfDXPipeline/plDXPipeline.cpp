@@ -9440,7 +9440,7 @@ bool plDXPipeline::ILoopOverLayers(const plRenderPrimFunc& inRender, hsGMaterial
             IRenderProjections(render);
 
         // Handle render of shadows onto geometry.
-        if (!fShadows.empty())
+        if (!fShadows.empty() && !(fView.fRenderState & kRenderNoShadows))
             IRenderShadowsOntoSpan(render, &span, material);
     }
 

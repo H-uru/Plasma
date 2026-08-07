@@ -9,3 +9,7 @@ include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib/inc")
 add_subdirectory(pfConsoleCoreTest)
 add_subdirectory(pfPasswordStoreTest)
 add_subdirectory(pfPythonTest)
+
+if(TARGET pfVulkanPipeline)
+    add_subdirectory(pfVulkanPipelineTest)
+endif()

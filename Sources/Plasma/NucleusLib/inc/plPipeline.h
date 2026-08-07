@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreatable.h"
 #include "hsGMatState.h"
+#include "plGTAO.h"
 
 #define MIN_WIDTH 640
 #define MIN_HEIGHT 480
@@ -105,6 +106,7 @@ struct PipelineParams
     VideoQuality(DEFAULT_VIDEOQUALITY),
     Shadows(DEFAULT_SHADOWS),
     PlanarReflections(DEFAULT_PLANARREFLECTIONS),
+    AmbientOcclusion(),
 #ifndef PLASMA_EXTERNAL_RELEASE
     ForceSecondMonitor(false),
 #endif // PLASMA_EXTERNAL_RELEASE
@@ -122,6 +124,7 @@ struct PipelineParams
     int VideoQuality;
     int Shadows;
     int PlanarReflections;
+    plGTAOSettings AmbientOcclusion;
     bool VSync;
 #ifndef PLASMA_EXTERNAL_RELEASE
     bool ForceSecondMonitor;
@@ -223,7 +226,8 @@ public:
         kRenderOrthogonal       = 0x40,
         kRenderNoProjection     = 0x80,
         kRenderNoLights         = 0x100,
-        kRenderShadowErase      = 0x200
+        kRenderShadowErase      = 0x200,
+        kRenderNoShadows        = 0x400
     };
 
     virtual void                        PushRenderRequest(plRenderRequest* req) = 0;
@@ -241,6 +245,12 @@ public:
     virtual bool                        BeginRender() = 0;
     virtual bool                        EndRender() = 0;
     virtual void                        RenderScreenElements() = 0;
+    /** Starts a solid-only scene phase whose shadow receiver draws may be
+        deferred until after depth-derived effects. */
+    virtual void                        BeginOpaquePass() { }
+    /** Runs depth-derived scene effects after solid geometry, before overlay
+        and translucent geometry. */
+    virtual void                        RenderPostOpaqueEffects() { }
 
     virtual void                        BeginVisMgr(plVisMgr* visMgr) = 0;
     virtual void                        EndVisMgr(plVisMgr* visMgr) = 0;
@@ -343,6 +353,10 @@ public:
     virtual bool                        SetGamma10(const uint16_t* const table) { return SetGamma10(table, table, table); }
     virtual bool                        SetGamma10(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) { return false; }
     virtual bool                        Supports10BitGamma() const { return false; }
+
+    virtual bool SupportsAmbientOcclusion() const { return false; }
+    virtual plGTAOSettings GetAmbientOcclusionSettings() const { return {}; }
+    virtual void SetAmbientOcclusionSettings(const plGTAOSettings&) { }
 
     // flipVertical is for the AVI writer, which wants it's frames upside down
     virtual bool                        CaptureScreen( plMipmap *dest, bool flipVertical = false, uint16_t desiredWidth = 0, uint16_t desiredHeight = 0 ) = 0;

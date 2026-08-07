@@ -280,6 +280,7 @@ public:
         kDevTypeOpenGL,
         kDevTypeMetal2,
         kDevTypeMetal3,
+        kDevTypeVulkan,
 
         kNumDevTypes
     };

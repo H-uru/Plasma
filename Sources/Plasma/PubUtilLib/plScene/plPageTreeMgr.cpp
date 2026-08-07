@@ -59,6 +59,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plSpaceTreeMaker.h"
 #include "plDrawable/plSpaceTree.h"
 #include "plMath/hsRadixSort.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 
 static std::vector<hsRadixSortElem> scratchList;
 
@@ -136,7 +138,7 @@ bool plPageTreeMgr::Harvest(plVolumeIsect* isect, std::vector<plDrawVisList>& le
 plProfile_CreateTimer("DrawableTime", "Draw", DrawableTime);
 plProfile_Extern(RenderScene);
 
-int plPageTreeMgr::Render(plPipeline* pipe)
+int plPageTreeMgr::Render(plPipeline* pipe, bool renderPostOpaqueEffects)
 {
     // If we don't have a space tree and can't make one, just bail
     if( !(GetSpaceTree() || IBuildSpaceTree()) )
@@ -171,7 +173,46 @@ int plPageTreeMgr::Render(plPipeline* pipe)
         fNodes[idx]->CollectForRender(pipe, levList, visMgr);
     }
     
-    int numDrawn = IRenderVisList(pipe, levList);
+    int numDrawn = 0;
+    const plGTAOSettings gtao = pipe->GetAmbientOcclusionSettings();
+    const bool splitPostOpaque = renderPostOpaqueEffects &&
+                                 pipe->SupportsAmbientOcclusion() && gtao.fEnabled;
+
+    if (splitPostOpaque) {
+        std::vector<plDrawVisList> opaqueList;
+        std::vector<plDrawVisList> translucentList;
+        opaqueList.reserve(levList.size());
+        translucentList.reserve(levList.size());
+
+        for (const plDrawVisList& draw : levList) {
+            plDrawVisList opaque(draw.fDrawable);
+            plDrawVisList translucent(draw.fDrawable);
+            const bool blendLevel = draw.fDrawable->GetRenderLevel().Major() >=
+                                    plRenderLevel::kBlendRendMajorLevel;
+
+            for (int16_t spanIndex : draw.fVisList) {
+                hsGMaterial* material = draw.fDrawable->GetSubMaterial(size_t(spanIndex));
+                plLayerInterface* baseLayer = material ? material->GetLayer(0) : nullptr;
+                const bool blendedMaterial = baseLayer &&
+                    (baseLayer->GetBlendFlags() & hsGMatState::kBlendMask) != 0;
+
+                (blendLevel || blendedMaterial ? translucent : opaque)
+                    .fVisList.emplace_back(spanIndex);
+            }
+
+            if (!opaque.fVisList.empty())
+                opaqueList.emplace_back(std::move(opaque));
+            if (!translucent.fVisList.empty())
+                translucentList.emplace_back(std::move(translucent));
+        }
+
+        pipe->BeginOpaquePass();
+        numDrawn += IRenderVisList(pipe, opaqueList);
+        pipe->RenderPostOpaqueEffects();
+        numDrawn += IRenderVisList(pipe, translucentList);
+    } else {
+        numDrawn = IRenderVisList(pipe, levList);
+    }
 
     IResetOcclusion(pipe);
 
@@ -210,7 +251,6 @@ size_t plPageTreeMgr::IRenderVisList(plPipeline* pipe, std::vector<plDrawVisList
     for (size_t i = 0; i < sortedDrawList.size(); i++)
     {
         plDrawable* p = sortedDrawList[i].fDrawable;
-
 
         plProfile_BeginLap(DrawableTime, p->GetKey()->GetUoid().GetObjectName());
     
