@@ -153,6 +153,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifdef PLASMA_PIPELINE_METAL
     #include "pfMetalPipeline/plMetalPipeline.h"
 #endif
+#ifdef PLASMA_PIPELINE_VULKAN
+    #include "pfVulkanPipeline/plVulkanPipeline.h"
+#endif
 #include "pfJournalBook/pfJournalBook.h"
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
 #include "pfMoviePlayer/plMoviePlayer.h"
@@ -495,6 +498,11 @@ plPipeline* plClient::ICreatePipeline(hsDisplayHndl disp, hsWindowHndl hWnd, con
     if (renderer == hsG3DDeviceSelector::kDevTypeMetal2 ||
         renderer == hsG3DDeviceSelector::kDevTypeMetal3)
         return new plMetalPipeline(disp, hWnd, devMode);
+#endif
+
+#ifdef PLASMA_PIPELINE_VULKAN
+    if (renderer == hsG3DDeviceSelector::kDevTypeVulkan)
+        return new plVulkanPipeline(disp, hWnd, devMode);
 #endif
 
     return new plNullPipeline(disp, hWnd, devMode);

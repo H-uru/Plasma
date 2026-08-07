@@ -66,7 +66,8 @@ plRenderRequest::plRenderRequest()
     fClearDrawable(),
     fPriority(-1.e6f),
     fUserData(),
-    fIgnoreOccluders()
+    fIgnoreOccluders(),
+    fCanceled()
 {
     fClearColor.Set(0,0,0,1.f);
 
@@ -117,6 +118,10 @@ void plRenderRequest::Write(hsStream* s, hsResMgr* mgr)
 
 void plRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)
 {
+    // Submitter is gone, and took our render target and page mgr with it.
+    if( fCanceled )
+        return;
+
     if( !fVisForce.Empty() )
     {
         plGlobalVisMgr::Instance()->DisableNormal();

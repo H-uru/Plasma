@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <condition_variable>
 #include <string_theory/string>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "HeadSpin.h"
 #include "hsGMatState.h"
@@ -135,6 +136,7 @@ public:
     void SetViewport();
 
     bool BeginRender();
+    void WaitForIdle();
 
     /* Device Ref Functions **************************************************/
     void SetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, VertexBufferRef* vRef);
@@ -157,7 +159,7 @@ public:
     void SetLocalToWorldMatrix(const hsMatrix44& src);
 
     void PopulateTexture(plMetalDevice::TextureRef* tRef, plMipmap* img, uint slice);
-    uint ConfigureAllowedLevels(plMetalDevice::TextureRef* tRef, plMipmap* mipmap);
+    void ConfigureAllowedLevels(plMetalDevice::TextureRef* tRef, plMipmap* mipmap);
 
     // stencil states are expensive to make, they should be cached
     // FIXME: There should be a function to pair these with hsGMatState
@@ -177,6 +179,8 @@ public:
     /// Submit the command buffer to the GPU and draws all the render passes. Clears the current command buffer.
     void                SubmitCommandBuffer();
     void                Clear(bool shouldClearColor, simd_float4 clearColor, bool shouldClearDepth, float clearDepth);
+    bool                ReadLastDrawable(void* dest, size_t destSize,
+                                         uint32_t* widthOut, uint32_t* heightOut);
 
     void SetMaxAnsiotropy(uint8_t maxAnsiotropy);
     void SetMSAASampleCount(uint8_t sampleCount);
@@ -228,11 +232,26 @@ private:
     std::unordered_map<plMetalPipelineRecord, plMetalLinkedPipeline*, plMetalPipelineRecordHashFunction>   fNewPipelineStateMap;
     // the condition map allows consumers of pipeline states to wait until the pipeline state is ready
     std::unordered_map<plMetalPipelineRecord, std::condition_variable*, plMetalPipelineRecordHashFunction> fConditionMap;
+    std::unordered_set<plMetalPipelineRecord, plMetalPipelineRecordHashFunction>                           fFinishedPipelineStates;
     std::mutex                                                                                             fPipelineCreationMtx;
+    std::condition_variable                                                                                fPipelineBuildCondition;
+    uint32_t                                                                                               fPendingPipelineBuilds = 0;
     void                                                                                                   StartPipelineBuild(plMetalPipelineRecord& record, std::condition_variable** condOut);
     std::condition_variable*                                                                               PrewarmPipelineStateFor(plMetalPipelineState* pipelineState);
     
-    void SetOutputLayer(CA::MetalLayer* layer) { fLayer = layer; }
+    void SetOutputLayer(CA::MetalLayer* layer)
+    {
+        fLayer = layer;
+        if (fLayer)
+            fLayer->setFramebufferOnly(false);
+    }
+    void SetVSync(bool enabled)
+    {
+#ifdef HS_BUILD_FOR_MACOS
+        if (fLayer)
+            fLayer->setDisplaySyncEnabled(enabled);
+#endif
+    }
     CA::MetalLayer* GetOutputLayer() const { return fLayer; };
     hsDisplayHndl fDisplay;
 
@@ -261,6 +280,7 @@ private:
     MTL::Texture* fCurrentFragmentMSAAOutputTexture;
 
     CA::MetalDrawable* fCurrentDrawable;
+    MTL::Texture*      fLastDrawableTexture;
     MTL::PixelFormat   fCurrentDepthFormat;
     simd_float4        fClearRenderTargetColor;
     simd_float4        fClearDrawableColor;

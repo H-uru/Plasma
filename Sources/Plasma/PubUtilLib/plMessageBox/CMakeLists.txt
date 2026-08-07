@@ -18,6 +18,8 @@ target_link_libraries(
         CoreLib
     PRIVATE
         "$<$<PLATFORM_ID:Darwin>:-framework Cocoa>"
+        # Backs the message box where there is no native implementation.
+        $<$<TARGET_EXISTS:SDL3::SDL3>:SDL3::SDL3>
 )
 
 source_group("Source Files" FILES ${plMessageBox_SOURCES})

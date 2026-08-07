@@ -14,6 +14,9 @@ target_link_libraries(
     plClipboard
     PUBLIC
         CoreLib
+    PRIVATE
+        # Backs the clipboard on platforms with no native implementation.
+        $<$<TARGET_EXISTS:SDL3::SDL3>:SDL3::SDL3>
 )
 
 source_group("Source Files" FILES ${plClipboard_SOURCES})

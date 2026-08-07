@@ -168,6 +168,8 @@ public:
     void RegisterLight(plLightInfo* light) override;
     void UnRegisterLight(plLightInfo* light) override;
 
+    uint32_t GetMaxPiggyBacks() const { return fMaxPiggyBacks; }
+
 private:
     VertexUniforms* fCurrentRenderPassUniforms;
     plMaterialLightingDescriptor fCurrentRenderPassMaterialLighting;
