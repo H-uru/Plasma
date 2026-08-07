@@ -47,6 +47,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plGLPipeline.h"
 
+#ifdef USE_WAYLAND
+#   include "hsOptionalCall.h"
+#   ifndef WL_DISPLAY_INTERFACE
+#   define WL_DISPLAY_INTERFACE
+    extern "C" const struct wl_interface wl_display_interface;
+    hsOptionalCallDecl("libwayland-client", wl_display_interface);
+#   endif
+#endif
+
 static bool fillDeviceRecord(hsG3DDeviceRecord& devRec, const ST::string& driverName,
         uint32_t provider, hsDisplayHndl display)
 {
@@ -446,11 +455,16 @@ void plGLEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplay
     plCGLEnumerate(records, mainDisplay);
 #endif
 
-#if defined(USE_X11)
-    // I hate this, but things go poorly if you try to use a Wayland display to
-    // set up a GLX context, so we need to know if we're running for X11 or not
-    plDisplayHelper* displayHelper = plDisplayHelper::GetInstance();
-    if (displayHelper && typeid(*displayHelper) == typeid(plX11DisplayHelper))
-        plGLXEnumerate(records, mainDisplay);
+#ifdef USE_X11
+#ifdef USE_WAYLAND
+    if (mainDisplay != nullptr) {
+        void* first_pointer = *(void**)mainDisplay;
+
+        if (first_pointer == &__wl_display_interface)
+            return;
+    }
+#endif
+
+    plGLXEnumerate(records, mainDisplay);
 #endif
 }
