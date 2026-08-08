@@ -58,6 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetCommon/pnNetCommon.h"
 #include "pnSceneObject/plCoordinateInterface.h"
 
+#include "plAgeDescription/plAgeDescription.h"
 #include "plAgeLoader/plAgeLoader.h"
 #include "plAvatar/plAvatarClothing.h"
 #include "plAvatar/plAvatarMgr.h"
@@ -1280,33 +1281,14 @@ bool plNetClientMgr::IFindModifier(plSynchedObject* obj, int16_t classIdx)
     return cnt==0 ? false : true;
 }
 
-plUoid plNetClientMgr::GetAgeSDLObjectUoid(const ST::string& ageName) const
+plUoid plNetClientMgr::GetAgeSDLObjectUoid(const plAgeDescription& ageDesc)
 {
-    hsAssert(!ageName.empty(), "nil ageName");
-
-    // if age sdl hook is loaded
-    if (fAgeSDLObjectKey)
-        return fAgeSDLObjectKey->GetUoid();
-
     // if age is loaded
-    plLocation loc = plKeyFinder::Instance().FindLocation(ageName,plAgeDescription::GetCommonPage(plAgeDescription::kGlobal));
+    plLocation loc = plKeyFinder::Instance().FindLocation(ageDesc.GetAgeName(), plAgeDescription::GetCommonPage(plAgeDescription::kGlobal));
     if (!loc.IsValid())
     {
-        // check current age des
-        if (plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName() == ageName)
-            loc=plAgeLoader::GetInstance()->GetCurrAgeDesc().CalcPageLocation("BuiltIn");
-
-        if (!loc.IsValid())
-        {
-            // try to load age desc
-            std::unique_ptr<hsStream> stream = plAgeLoader::GetAgeDescFileStream(ageName);
-            if (stream)
-            {
-                plAgeDescription ad;
-                ad.Read(stream.get());
-                loc=ad.CalcPageLocation("BuiltIn");
-            }
-        }
+        // check age desc
+        loc = ageDesc.CalcPageLocation("BuiltIn");
     }
 
     return plUoid(loc, plSceneObject::Index(), plSDL::kAgeSDLObjectName);
