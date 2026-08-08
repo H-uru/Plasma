@@ -390,6 +390,11 @@ bool    pfConsole::MsgReceive( plMessage *msg )
 
 //// IHandleKey //////////////////////////////////////////////////////////////
 
+inline bool IIsWordBoundary(const char& c)
+{
+    return strchr(" _.", c) != nullptr;
+}
+
 void    pfConsole::IHandleKey( plKeyEventMsg *msg )
 {
     char            *c;
@@ -502,15 +507,53 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
             IUpdateTooltip();
         }
     }
+    else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_LEFT)
+    {
+        // Move one word back
+        if (fWorkingCursor > 0) {
+            fWorkingCursor--;
+            do {
+                fWorkingCursor--;
+            } while (fWorkingCursor > 0 && !IIsWordBoundary(fWorkingLine[fWorkingCursor - 1]));
+        }
+    }
     else if( msg->GetKeyCode() == KEY_LEFT )
     {
         if( fWorkingCursor > 0 )
             fWorkingCursor--;
     }
+    else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_RIGHT)
+    {
+        // Move one word forward
+        size_t end = strlen(fWorkingLine);
+        if (fWorkingCursor < end) {
+            do {
+                fWorkingCursor++;
+            } while (fWorkingCursor < end && !IIsWordBoundary(fWorkingLine[fWorkingCursor - 1]));
+        }
+    }
     else if( msg->GetKeyCode() == KEY_RIGHT )
     {
         if( fWorkingCursor < strlen( fWorkingLine ) )
             fWorkingCursor++;
+    }
+    else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_BACKSPACE)
+    {
+        // Delete last word
+        if (fWorkingCursor > 0) {
+            uint32_t removed = 0;
+            do {
+                fWorkingCursor--;
+                removed++;
+            } while (fWorkingCursor > 0 && !IIsWordBoundary(fWorkingLine[fWorkingCursor - 1]));
+            memmove(&fWorkingLine[fWorkingCursor], &fWorkingLine[fWorkingCursor + removed], (strlen(&fWorkingLine[fWorkingCursor + removed]) + 1) * sizeof(char));
+
+            findAgain = false;
+            findCounter = 0;
+        } else if (fHelpMode)
+            fHelpMode = false;
+
+        IUpdateTooltip();
     }
     else if( msg->GetKeyCode() == KEY_BACKSPACE )
     {
@@ -532,6 +575,22 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
             fHelpMode = false;
 
         IUpdateTooltip();
+    }
+    else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_DELETE)
+    {
+        // Delete next word
+        size_t end = strlen(fWorkingLine);
+        if (fWorkingCursor < end) {
+            uint32_t removed = 0;
+            do {
+                removed++;
+            } while (fWorkingCursor + removed < end && !IIsWordBoundary(fWorkingLine[fWorkingCursor + removed - 1]));
+            memmove(&fWorkingLine[fWorkingCursor], &fWorkingLine[fWorkingCursor + removed], (strlen(&fWorkingLine[fWorkingCursor + removed]) + 1) * sizeof(char));
+
+            findAgain = false;
+            findCounter = 0;
+            IUpdateTooltip();
+        }
     }
     else if( msg->GetKeyCode() == KEY_DELETE )
     {
