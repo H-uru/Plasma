@@ -249,6 +249,8 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         void    ClearLink() { InsertLink(-1); }
 
         void    DeleteChar();
+        void    DeleteNextWord();
+        void    DeletePreviousWord();
         void    ClearBuffer();
         void    SetBuffer(const ST::string& text);
         void    SetBuffer(const wchar_t *codedText, size_t length);
