@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plStatusLog/plStatusLog.h"
 
+int plGLVersionOverride = 0;
+
 #pragma region EGL_Init
 #ifdef USE_EGL
 #include <epoxy/egl.h>
@@ -93,23 +95,43 @@ void InitEGLDevice(plGLDevice* dev)
             break;
         }
 
-        /* Set up the GL context */
-        EGLint ctx_attrs[] = {
-            EGL_CONTEXT_MAJOR_VERSION, 3,
-            EGL_CONTEXT_MINOR_VERSION, 2,
-            EGL_CONTEXT_OPENGL_PROFILE_MASK, EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT,
-            EGL_NONE
-        };
+        // If we're overriding with a GL version <3.0, we need to not request a newer context
+        if (!plGLVersionOverride || plGLVersionOverride >= 30) {
+            EGLint major = 3;
+            EGLint minor = EGL_NONE;
 
-        context = eglCreateContext(display, config, EGL_NO_CONTEXT, ctx_attrs);
+            if (plGLVersionOverride) {
+                major = plGLVersionOverride / 10;
+                minor = plGLVersionOverride % 10;
+
+                plStatusLog::AddLineSF("pipeline.log", "Requesting a {}.{} context", major, minor);
+            }
+
+            /* Set up the GL context */
+            EGLint ctx_attrs[] = {
+                EGL_CONTEXT_OPENGL_PROFILE_MASK, EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT,
+                EGL_CONTEXT_MAJOR_VERSION, major,
+                EGL_CONTEXT_MINOR_VERSION, minor,
+                EGL_NONE
+            };
+
+            if (!plGLVersionOverride) {
+                ctx_attrs[4] = EGL_NONE;
+            }
+
+            context = eglCreateContext(display, config, EGL_NO_CONTEXT, ctx_attrs);
+        }
+
         if (context == EGL_NO_CONTEXT) {
-            EGLint ctx_attrs21[] = {
+            plStatusLog::AddLineSF("pipeline.log", "Requesting a 2.1 context");
+
+            EGLint ctx_attrs[] = {
                 EGL_CONTEXT_MAJOR_VERSION, 2,
                 EGL_CONTEXT_MINOR_VERSION, 1,
                 EGL_NONE
             };
 
-            context = eglCreateContext(display, config, EGL_NO_CONTEXT, ctx_attrs21);
+            context = eglCreateContext(display, config, EGL_NO_CONTEXT, ctx_attrs);
         }
 
         if (context == EGL_NO_CONTEXT) {
@@ -317,6 +339,7 @@ bool plGLDevice::InitDevice()
         return false;
 
     plStatusLog::AddLineSF("pipeline.log", "Initialized with OpenGL {}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+    plStatusLog::AddLineSF("pipeline.log", "Rendering assuming OpenGL {.2}", 0.1f * plGLVersion());
 
 #ifdef HS_DEBUGGING
     if (plGLVersion() >= 43) {

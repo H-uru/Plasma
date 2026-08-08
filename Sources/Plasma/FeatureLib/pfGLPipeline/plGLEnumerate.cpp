@@ -151,7 +151,6 @@ void plEGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displ
 
         EGLint ctx_attrs[] = {
             EGL_CONTEXT_MAJOR_VERSION, 3,
-            EGL_CONTEXT_MINOR_VERSION, 2,
             EGL_CONTEXT_OPENGL_PROFILE_MASK, EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT,
             EGL_NONE
         };
