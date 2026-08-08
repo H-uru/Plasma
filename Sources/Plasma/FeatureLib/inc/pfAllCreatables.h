@@ -65,6 +65,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #include "pfMetalPipeline/pfMetalPipelineCreatable.h"
 #endif
 
+#ifdef PLASMA_PIPELINE_VULKAN
+    #include "pfVulkanPipeline/pfVulkanPipelineCreatable.h"
+#endif
+
 #include "pfJournalBook/pfJournalBookCreatable.h"
 #include "pfMessage/pfMessageCreatable.h"
 #include "pfPython/pfPythonCreatable.h"

@@ -40,23 +40,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plClient.h"
-#include "plClientLoader.h"
+// Combines two normal maps for the water, rebiasing the result.
+//
+// Ported from vs_BiasNormals (BiasNormals.metal:71-91). Like CompCosines this
+// runs over a quad already in clip space; the "color" outputs are not colors,
+// they carry the scale and bias the fragment stage applies -- an artefact of the
+// original shader having only interpolator registers to pass them through.
 
-#include "plPipeline/hsG3DDeviceSelector.h"
-#include "plProgressMgr/plProgressMgr.h"
+#version 450
+#extension GL_GOOGLE_include_directive : require
+#extension GL_EXT_scalar_block_layout : require
 
-// Stub all of these on non-Windows for now
-void plClient::IResizeNativeDisplayDevice(int width, int height, bool windowed) {}
-void plClient::IChangeResolution(int width, int height) {}
-void plClient::IUpdateProgressIndicator(plOperationProgress* progress) {}
-void plClient::ShowClientWindow() {}
-void plClient::FlashWindow() {}
+#include "plVulkanShaderTypes.h"
 
-static plClientLoader gClient;
+layout(scalar, set = kDescSetUniforms, binding = kBindingVertexShaderConsts)
+uniform BiasNormalsBlock {
+    vec4 TexU0;
+    vec4 TexV0;
+    vec4 TexU1;
+    vec4 TexV1;
+    vec4 Numbers;
+    vec4 ScaleBias;
+};
 
-// Stub main function so it compiles on non-Windows
-int main(int argc, const char** argv)
+layout(location = kVtxAttrPosition) in vec3 inPosition;
+layout(location = kVtxAttrTexcoord) in vec3 inTexCoord[kMaxLayers];
+
+layout(location = 0) out vec4 outTexCoord0;
+layout(location = 1) out vec4 outTexCoord1;
+layout(location = 2) out vec4 outScale;
+layout(location = 3) out vec4 outBias;
+
+void main()
 {
-    return 0;
+    const vec4 uvw = vec4(inTexCoord[0], 1.0);
+
+    outTexCoord0 = vec4(dot(uvw, TexU0), dot(uvw, TexV0), 0.0, 1.0);
+    outTexCoord1 = vec4(dot(uvw, TexU1), dot(uvw, TexV1), 0.0, 1.0);
+
+    outScale = ScaleBias.xxzz;
+    outBias = ScaleBias.yyzz;
+
+    gl_Position = vec4(inPosition, 1.0);
 }

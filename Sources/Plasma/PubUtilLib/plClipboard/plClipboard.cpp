@@ -45,6 +45,11 @@ Mead, WA   99021
 #include "HeadSpin.h"
 #include "hsWindows.h"
 
+#if !defined(HS_BUILD_FOR_WIN32) && !defined(HS_BUILD_FOR_APPLE)
+#   include <SDL3/SDL_clipboard.h>
+#   define PL_CLIPBOARD_SDL 1
+#endif
+
 #include <memory>
 #include <string_theory/string>
 
@@ -58,6 +63,8 @@ bool plClipboard::IsTextInClipboard()
 {
 #ifdef HS_BUILD_FOR_WIN32
     return ::IsClipboardFormatAvailable(CF_UNICODETEXT);
+#elif defined(PL_CLIPBOARD_SDL)
+    return SDL_HasClipboardText();
 #else
     return false;
 #endif
@@ -83,6 +90,16 @@ ST::string plClipboard::GetClipboardText()
 
     ::GlobalUnlock(clipboardData);
     ::CloseClipboard();
+
+    return result;
+#elif defined(PL_CLIPBOARD_SDL)
+    // SDL hands back an owned UTF-8 buffer that we have to free.
+    char* text = SDL_GetClipboardText();
+    if (!text)
+        return ST::string();
+
+    ST::string result = ST::string::from_utf8(text);
+    SDL_free(text);
 
     return result;
 #else
@@ -135,6 +152,9 @@ void plClipboard::SetClipboardText(const ST::string& text)
     }
 
     CloseClipboard();
+#elif defined(PL_CLIPBOARD_SDL)
+    // SDL copies the string, so the temporary UTF-8 buffer is fine here.
+    SDL_SetClipboardText(text.c_str());
 #endif
 }
 

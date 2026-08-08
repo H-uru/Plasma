@@ -964,6 +964,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plMetalPipeline),
     CLASS_INDEX(plAIBrainDestroyedMsg),
     CLASS_INDEX(plAIGoToGoalMsg),
+    CLASS_INDEX(plVulkanPipeline),
 CLASS_INDEX_LIST_END
 
 #endif // plCreatableIndex_inc

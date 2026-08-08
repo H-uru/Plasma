@@ -359,7 +359,9 @@ uint32_t plMetalMaterialShaderRef::ILayersAtOnce(uint32_t which)
         return currNumLayers;
     }
 
-    uint32_t maxLayers = 8;
+    // Leave room for the piggybacks that may be appended to every cached pass.
+    // The shader argument arrays are eight elements wide.
+    uint32_t maxLayers = fPipeline->GetMaxLayersAtOnce() - fPipeline->GetMaxPiggyBacks();
     if (which + maxLayers > fMaterial->GetNumLayers()) {
         maxLayers = uint32_t(fMaterial->GetNumLayers()) - which;
     }

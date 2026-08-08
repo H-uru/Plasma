@@ -96,9 +96,18 @@ protected:
     uint32_t                  fUserData;
     bool                    fIgnoreOccluders;
 
+    // Set when the submitter goes away while this request is still queued
+    // in plClient. Keeps a doomed request from rendering through resources
+    // (render target, page mgr) the submitter already destroyed.
+    bool                    fCanceled;
+
 public:
     plRenderRequest();
     ~plRenderRequest();
+
+    // The requestor is going away, but someone else may still hold a ref.
+    void            Cancel() { fCanceled = true; }
+    bool            IsCanceled() const { return fCanceled; }
 
     bool            GetRenderSelect() const { return !fVisForce.Empty(); }
     bool            GetRenderCharacters() const;

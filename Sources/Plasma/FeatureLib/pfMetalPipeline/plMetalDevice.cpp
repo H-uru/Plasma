@@ -173,12 +173,110 @@ bool plMetalDevice::InitDevice()
     depthDescriptor->release();
 
     LoadLibrary();
+    return fCommandQueue != nullptr && fShaderLibrary != nullptr;
 }
 
 void plMetalDevice::Shutdown()
 {
-    // FIXME: Should Metal adopt Shutdown like OGL?
-    hsAssert(0, "Shutdown not implemented for Metal rendering");
+    if (!fCommandQueue)
+        return;
+
+    // Completion handlers capture this device and their pipeline-state record.
+    // Settle them before releasing either the maps or the shader library.
+    {
+        std::unique_lock<std::mutex> lock(fPipelineCreationMtx);
+        fPipelineBuildCondition.wait(lock, [this] { return fPendingPipelineBuilds == 0; });
+    }
+
+    if (fCurrentRenderTargetCommandEncoder) {
+        fCurrentRenderTargetCommandEncoder->endEncoding();
+        fCurrentRenderTargetCommandEncoder->release();
+        fCurrentRenderTargetCommandEncoder = nullptr;
+    }
+    if (fBlitCommandEncoder) {
+        fBlitCommandEncoder->endEncoding();
+        fBlitCommandEncoder->release();
+        fBlitCommandEncoder = nullptr;
+    }
+    if (fBlitCommandBuffer) {
+        fBlitCommandBuffer->commit();
+        fBlitCommandBuffer->waitUntilCompleted();
+        fBlitCommandBuffer->release();
+        fBlitCommandBuffer = nullptr;
+    }
+    if (fCurrentOffscreenCommandBuffer) {
+        fCurrentOffscreenCommandBuffer->commit();
+        fCurrentOffscreenCommandBuffer->waitUntilCompleted();
+        fCurrentOffscreenCommandBuffer->release();
+        fCurrentOffscreenCommandBuffer = nullptr;
+    }
+    if (fCurrentCommandBuffer) {
+        fCurrentCommandBuffer->release();
+        fCurrentCommandBuffer = nullptr;
+    }
+    if (fCurrentDrawable) {
+        fCurrentDrawable->release();
+        fCurrentDrawable = nullptr;
+    }
+
+    ReleaseFramebufferObjects();
+    if (fCurrentDrawableDepthTexture) {
+        fCurrentDrawableDepthTexture->release();
+        fCurrentDrawableDepthTexture = nullptr;
+    }
+    if (fCurrentFragmentMSAAOutputTexture) {
+        fCurrentFragmentMSAAOutputTexture->release();
+        fCurrentFragmentMSAAOutputTexture = nullptr;
+    }
+    if (fLastDrawableTexture) {
+        fLastDrawableTexture->release();
+        fLastDrawableTexture = nullptr;
+    }
+    if (fGammaLUTTexture) {
+        fGammaLUTTexture->release();
+        fGammaLUTTexture = nullptr;
+    }
+
+    for (auto& entry : fBlurShaders) {
+        if (entry.second)
+            entry.second->release();
+    }
+    fBlurShaders.clear();
+
+    for (auto& entry : fNewPipelineStateMap) {
+        plMetalLinkedPipeline* pipeline = entry.second;
+        if (pipeline) {
+            if (pipeline->pipelineState)
+                pipeline->pipelineState->release();
+            delete pipeline;
+        }
+    }
+    fNewPipelineStateMap.clear();
+    for (auto& entry : fConditionMap)
+        delete entry.second;
+    fConditionMap.clear();
+    fFinishedPipelineStates.clear();
+
+    if (fSamplerStates[0])
+        ReleaseSamplerStates();
+
+    MTL::DepthStencilState** depthStates[] = {
+        &fNoZReadStencilState, &fNoZWriteStencilState, &fNoZReadOrWriteStencilState,
+        &fReverseZStencilState, &fDefaultStencilState
+    };
+    for (MTL::DepthStencilState** state : depthStates) {
+        if (*state) {
+            (*state)->release();
+            *state = nullptr;
+        }
+    }
+
+    if (fShaderLibrary) {
+        fShaderLibrary->release();
+        fShaderLibrary = nullptr;
+    }
+    fCommandQueue->release();
+    fCommandQueue = nullptr;
 }
 
 void plMetalDevice::SetMaxAnsiotropy(uint8_t maxAnsiotropy)
@@ -480,11 +578,19 @@ plMetalDevice::plMetalDevice()
       fGammaLUTTexture(),
       fGammaAdjustState(),
       fBlitCommandBuffer(),
-      fBlitCommandEncoder()
+      fBlitCommandEncoder(),
+      fLastDrawableTexture(),
+      fShaderLibrary()
 {
     fClearRenderTargetColor = {0.0, 0.0, 0.0, 1.0};
     fClearDrawableColor = {0.0, 0.0, 0.0, 1.0};
-    fSamplerStates[0] = nullptr;
+    for (MTL::SamplerState*& sampler : fSamplerStates)
+        sampler = nullptr;
+    fNoZReadStencilState = nullptr;
+    fNoZWriteStencilState = nullptr;
+    fNoZReadOrWriteStencilState = nullptr;
+    fReverseZStencilState = nullptr;
+    fDefaultStencilState = nullptr;
 }
 
 void plMetalDevice::SetViewport()
@@ -505,6 +611,16 @@ bool plMetalDevice::BeginRender()
     fActiveThread = hsThread::ThisThreadHash();
 
     return true;
+}
+
+void plMetalDevice::WaitForIdle()
+{
+    if (!fCommandQueue)
+        return;
+
+    MTL::CommandBuffer* fence = fCommandQueue->commandBuffer();
+    fence->commit();
+    fence->waitUntilCompleted();
 }
 
 static uint32_t IGetBufferFormatSize(uint8_t format)
@@ -768,10 +884,10 @@ void plMetalDevice::SetupTextureRef(plBitmap* img, plMetalDevice::TextureRef* tR
                 tRef->fFormat = MTL::PixelFormatBGR5A1Unorm;
                 break;
             case plBitmap::UncompressedInfo::kInten8:
-                tRef->fFormat = MTL::PixelFormatR8Uint;
+                tRef->fFormat = MTL::PixelFormatR8Unorm;
                 break;
             case plBitmap::UncompressedInfo::kAInten88:
-                tRef->fFormat = MTL::PixelFormatRG8Uint;
+                tRef->fFormat = MTL::PixelFormatRG8Unorm;
                 break;
         }
     }
@@ -784,8 +900,10 @@ void plMetalDevice::SetupTextureRef(plBitmap* img, plMetalDevice::TextureRef* tR
 
 void plMetalDevice::ReleaseFramebufferObjects()
 {
-    if (fCurrentUnprocessedOutputTexture)
+    if (fCurrentUnprocessedOutputTexture) {
         fCurrentUnprocessedOutputTexture->release();
+        fCurrentUnprocessedOutputTexture = nullptr;
+    }
     fCurrentFragmentOutputTexture = nullptr;
 
     if (fGammaAdjustState)
@@ -808,7 +926,7 @@ void plMetalDevice::CheckTexture(plMetalDevice::TextureRef* tRef)
     }
 }
 
-uint plMetalDevice::ConfigureAllowedLevels(plMetalDevice::TextureRef* tRef, plMipmap* mipmap)
+void plMetalDevice::ConfigureAllowedLevels(plMetalDevice::TextureRef* tRef, plMipmap* mipmap)
 {
     if (mipmap->IsCompressed()) {
         mipmap->SetCurrLevel(tRef->fLevels);
@@ -826,6 +944,8 @@ uint plMetalDevice::ConfigureAllowedLevels(plMetalDevice::TextureRef* tRef, plMi
 
 void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef* tRef, plMipmap* img, uint slice)
 {
+    bool releaseImage = false;
+
     if (img->IsCompressed() && fSupportsDXTTextures) {
         /*
          Some cubic assets have inconsistant mipmap sizes between their faces.
@@ -871,10 +991,13 @@ void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef* tRef, plMipmap* i
     } else {
         if (img->IsCompressed()) {
             img = hsCodecManager::Instance().CreateUncompressedMipmap(img, 8);
+            if (!img)
+                return;
         } else {
             // hsCodecManager returns a new strong reference
             img->Ref();
         }
+        releaseImage = true;
         
         for (int lvl = 0; lvl <= tRef->fLevels; lvl++) {
             img->SetCurrLevel(lvl);
@@ -890,30 +1013,46 @@ void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef* tRef, plMipmap* i
                     };
 
                     RGBA4444Component* in = (RGBA4444Component*)img->GetCurrLevelPtr();
-                    auto out = std::make_unique<simd_uint4[]>(img->GetCurrHeight() * img->GetCurrWidth());
+                    const size_t texelCount = size_t(img->GetCurrHeight()) * img->GetCurrWidth();
+                    auto out = std::make_unique<uint8_t[]>(texelCount * 4);
 
-                    for (int i = 0; i < (img->GetCurrWidth() * img->GetCurrHeight()); i++) {
-                        out[i].r = in[i].r;
-                        out[i].g = in[i].g;
-                        out[i].b = in[i].b;
-                        out[i].a = in[i].a;
+                    for (size_t i = 0; i < texelCount; i++) {
+                        out[i * 4 + 0] = uint8_t(in[i].b * 17);
+                        out[i * 4 + 1] = uint8_t(in[i].g * 17);
+                        out[i * 4 + 2] = uint8_t(in[i].r * 17);
+                        out[i * 4 + 3] = uint8_t(in[i].a * 17);
                     }
 
                     tRef->fTexture->replaceRegion(MTL::Region::Make2D(0, 0, img->GetCurrWidth(), img->GetCurrHeight()), img->GetCurrLevel(), slice, out.get(), img->GetCurrWidth() * 4, 0);
                 } else {
-                    tRef->fTexture->replaceRegion(MTL::Region::Make2D(0, 0, img->GetCurrWidth(), img->GetCurrHeight()), img->GetCurrLevel(), slice, img->GetCurrLevelPtr(), img->GetCurrWidth() * 4, 0);
+                    size_t bytesPerPixel = 4;
+                    switch (img->fUncompressedInfo.fType) {
+                        case plBitmap::UncompressedInfo::kRGB1555:
+                        case plBitmap::UncompressedInfo::kAInten88:
+                            bytesPerPixel = 2;
+                            break;
+                        case plBitmap::UncompressedInfo::kInten8:
+                            bytesPerPixel = 1;
+                            break;
+                        default:
+                            break;
+                    }
+                    tRef->fTexture->replaceRegion(MTL::Region::Make2D(0, 0, img->GetCurrWidth(), img->GetCurrHeight()), img->GetCurrLevel(), slice, img->GetCurrLevelPtr(), img->GetCurrWidth() * bytesPerPixel, 0);
                 }
             } else {
                 hsAssert(0, "Texture with no image data?\n");
             }
         }
         
-        img->UnRef();
     }
     
     CFStringRef name = CFStringCreateWithSTString(img->GetKeyName());
     tRef->fTexture->setLabel(reinterpret_cast<const NS::String *>(name));
     CFRelease(name);
+
+    if (releaseImage)
+        img->UnRef();
+
     tRef->SetDirty(false);
 }
 
@@ -1016,7 +1155,10 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
     if (depthNeedsRebuild) {
         if (fCurrentDrawableDepthTexture) {
             fCurrentDrawableDepthTexture->release();
-            fCurrentFragmentMSAAOutputTexture->release();
+            if (fCurrentFragmentMSAAOutputTexture) {
+                fCurrentFragmentMSAAOutputTexture->release();
+                fCurrentFragmentMSAAOutputTexture = nullptr;
+            }
         }
 
         MTL::TextureDescriptor* depthTextureDescriptor = MTL::TextureDescriptor::texture2DDescriptor(MTL::PixelFormatDepth32Float_Stencil8,
@@ -1068,7 +1210,8 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
             MTL::TextureDescriptor* mainPassDescriptor = MTL::TextureDescriptor::texture2DDescriptor(drawable->texture()->pixelFormat(), drawable->texture()->width(), drawable->texture()->height(), false);
             mainPassDescriptor->setStorageMode(MTL::StorageModePrivate);
             mainPassDescriptor->setUsage(MTL::TextureUsageShaderRead | MTL::TextureUsageRenderTarget);
-            fCurrentUnprocessedOutputTexture->release();
+            if (fCurrentUnprocessedOutputTexture)
+                fCurrentUnprocessedOutputTexture->release();
             fCurrentUnprocessedOutputTexture = fMetalDevice->newTexture(mainPassDescriptor);
         }
     }
@@ -1078,14 +1221,23 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
 
 void plMetalDevice::StartPipelineBuild(plMetalPipelineRecord& record, std::condition_variable** condOut)
 {
-    fConditionMap[record] = new std::condition_variable();
-    if (condOut) {
-        *condOut = fConditionMap[record];
-    }
-
-    if (fNewPipelineStateMap[record] != nullptr) {
-        // The shader is already compiled.
-        return;
+    {
+        std::lock_guard<std::mutex> lock(fPipelineCreationMtx);
+        if (fNewPipelineStateMap[record]) {
+            if (condOut)
+                *condOut = nullptr;
+            return;
+        }
+        if (std::condition_variable* building = fConditionMap[record]) {
+            if (condOut)
+                *condOut = building;
+            return;
+        }
+        fConditionMap[record] = new std::condition_variable();
+        fFinishedPipelineStates.erase(record);
+        fPendingPipelineBuilds++;
+        if (condOut)
+            *condOut = fConditionMap[record];
     }
 
     std::shared_ptr<plMetalPipelineState> pipelineState = record.state;
@@ -1111,6 +1263,7 @@ void plMetalDevice::StartPipelineBuild(plMetalPipelineRecord& record, std::condi
 
     NS::Error* error;
     fMetalDevice->newRenderPipelineState(descriptor, ^(MTL::RenderPipelineState* pipelineState, NS::Error* error) {
+        std::lock_guard<std::mutex> lock(fPipelineCreationMtx);
         if (error) {
             // leave the condition in place for now, we don't want to
             // retry if the shader is defective. the condition will
@@ -1123,9 +1276,11 @@ void plMetalDevice::StartPipelineBuild(plMetalPipelineRecord& record, std::condi
             linkedPipeline->vertexFunction = vertexFunction;
 
             fNewPipelineStateMap[record] = linkedPipeline;
-            // signal that we're done
-            fConditionMap[record]->notify_all();
         }
+        fFinishedPipelineStates.insert(record);
+        fConditionMap[record]->notify_all();
+        fPendingPipelineBuilds--;
+        fPipelineBuildCondition.notify_all();
     });
 
     descriptor->release();
@@ -1143,33 +1298,26 @@ plMetalDevice::plMetalLinkedPipeline* plMetalDevice::PipelineState(plMetalPipeli
 
     record.state = std::shared_ptr<plMetalPipelineState>(pipelineState->Clone());
 
-    plMetalLinkedPipeline* renderState = fNewPipelineStateMap[record];
-
-    // if it exists, return it, we're done
-    if (renderState) {
-        return renderState;
+    std::condition_variable* alreadyBuildingCondition = nullptr;
+    {
+        std::unique_lock<std::mutex> lock(fPipelineCreationMtx);
+        if (plMetalLinkedPipeline* renderState = fNewPipelineStateMap[record])
+            return renderState;
+        alreadyBuildingCondition = fConditionMap[record];
     }
 
-    // check and see if we're already building it. If so, wait.
-    // Note: even if it already exists, this lock will be kept, and it will
-    // let us through. This is to prevent race conditions where the render state
-    // was null, but maybe in the time it took us to get here the state compiled.
-    std::condition_variable* alreadyBuildingCondition = fConditionMap[record];
-    if (alreadyBuildingCondition) {
-        std::unique_lock<std::mutex> lock(fPipelineCreationMtx);
-        alreadyBuildingCondition->wait(lock);
+    if (!alreadyBuildingCondition)
+        StartPipelineBuild(record, &alreadyBuildingCondition);
 
-        // should be returning the render state here, if not it failed to build
-        // we'll allow the null return
+    if (!alreadyBuildingCondition) {
+        std::lock_guard<std::mutex> lock(fPipelineCreationMtx);
         return fNewPipelineStateMap[record];
     }
 
-    // it doesn't exist, start a build and wait
-    // only render thread is allowed to start builds,
-    // shouldn't be race conditions here
-    StartPipelineBuild(record, &alreadyBuildingCondition);
     std::unique_lock<std::mutex> lock(fPipelineCreationMtx);
-    alreadyBuildingCondition->wait(lock);
+    alreadyBuildingCondition->wait(lock, [this, &record] {
+        return fFinishedPipelineStates.find(record) != fFinishedPipelineStates.end();
+    });
 
     // should be returning the render state here, if not it failed to build
     // we'll allow the null return
@@ -1187,14 +1335,17 @@ std::condition_variable* plMetalDevice::PrewarmPipelineStateFor(plMetalPipelineS
         CurrentTargetSampleCount()};
 
     record.state = std::shared_ptr<plMetalPipelineState>(pipelineState->Clone());
-    // only render thread is allowed to prewarm, no race conditions around
-    // fConditionMap creation
-    if (!fNewPipelineStateMap[record] && fConditionMap[record]) {
-        std::condition_variable* condOut;
-        StartPipelineBuild(record, &condOut);
-        return condOut;
+    {
+        std::lock_guard<std::mutex> lock(fPipelineCreationMtx);
+        if (fNewPipelineStateMap[record])
+            return nullptr;
+        if (std::condition_variable* building = fConditionMap[record])
+            return building;
     }
-    return nullptr;
+
+    std::condition_variable* condOut = nullptr;
+    StartPipelineBuild(record, &condOut);
+    return condOut;
 }
 
 bool plMetalDevice::plMetalPipelineRecord::operator==(const plMetalPipelineRecord& p) const
@@ -1235,6 +1386,10 @@ void plMetalDevice::SubmitCommandBuffer()
     PostprocessIntoDrawable();
     FinalizePostProcessing();
 
+    if (fLastDrawableTexture)
+        fLastDrawableTexture->release();
+    fLastDrawableTexture = fCurrentDrawable->texture()->retain();
+
     fCurrentCommandBuffer->presentDrawable(fCurrentDrawable);
     fCurrentCommandBuffer->commit();
     fCurrentCommandBuffer->release();
@@ -1252,6 +1407,55 @@ void plMetalDevice::SubmitCommandBuffer()
     fShouldClearDrawable = false;
     fClearRenderTargetDepth = 1.0;
     fClearDrawableDepth = 1.0;
+}
+
+bool plMetalDevice::ReadLastDrawable(void* dest, size_t destSize,
+                                     uint32_t* widthOut, uint32_t* heightOut)
+{
+    if (!dest || !fLastDrawableTexture || !fCommandQueue)
+        return false;
+
+    const uint32_t width = uint32_t(fLastDrawableTexture->width());
+    const uint32_t height = uint32_t(fLastDrawableTexture->height());
+    const size_t rowBytes = size_t(width) * 4;
+    const size_t needed = rowBytes * height;
+    if (destSize < needed)
+        return false;
+
+    const MTL::PixelFormat format = fLastDrawableTexture->pixelFormat();
+    if (format != MTL::PixelFormatBGRA8Unorm &&
+        format != MTL::PixelFormatBGRA8Unorm_sRGB) {
+        return false;
+    }
+
+    NS::AutoreleasePool* pool = NS::AutoreleasePool::alloc()->init();
+    MTL::Buffer* staging = fMetalDevice->newBuffer(needed, MTL::ResourceStorageModeShared);
+    if (!staging) {
+        pool->release();
+        return false;
+    }
+
+    MTL::CommandBuffer* command = fCommandQueue->commandBuffer();
+    MTL::BlitCommandEncoder* blit = command->blitCommandEncoder();
+    blit->copyFromTexture(fLastDrawableTexture, 0, 0,
+                          MTL::Origin(0, 0, 0), MTL::Size(width, height, 1),
+                          staging, 0, rowBytes, needed);
+    blit->endEncoding();
+    command->commit();
+    command->waitUntilCompleted();
+
+    const bool succeeded = command->status() == MTL::CommandBufferStatusCompleted;
+    if (succeeded) {
+        memcpy(dest, staging->contents(), needed);
+        if (widthOut)
+            *widthOut = width;
+        if (heightOut)
+            *heightOut = height;
+    }
+
+    staging->release();
+    pool->release();
+    return succeeded;
 }
 
 MTL::SamplerState* plMetalDevice::SampleStateForClampFlags(hsGMatState::hsGMatClampFlags sampleState) const
@@ -1277,7 +1481,8 @@ void plMetalDevice::CreateGammaAdjustState()
     }
 
     NS::Error* error;
-    fGammaAdjustState->release();
+    if (fGammaAdjustState)
+        fGammaAdjustState->release();
     fGammaAdjustState = fMetalDevice->newRenderPipelineState(gammaDescriptor, &error);
     gammaDescriptor->release();
 }

@@ -117,8 +117,16 @@ void plPostEffectMod::IDestroyRenderRequest()
 {
     delete fRenderTarget;
     fRenderTarget = nullptr;
-    delete fRenderRequest;
-    fRenderRequest = nullptr;
+    if (fRenderRequest)
+    {
+        // plClient may still have this request queued for this frame (it takes
+        // a ref in IAddRenderRequest), so we can't just delete it. Cancel it so
+        // it won't touch the render target and page mgr we're destroying, and
+        // let the last ref holder do the delete.
+        fRenderRequest->Cancel();
+        hsRefCnt_SafeUnRef(fRenderRequest);
+        fRenderRequest = nullptr;
+    }
     delete fPageMgr;
     fPageMgr = nullptr;
 }
