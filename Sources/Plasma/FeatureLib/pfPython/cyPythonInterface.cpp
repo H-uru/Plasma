@@ -1657,21 +1657,10 @@ PyObject* PythonInterface::LoadObject(char* pickle, int32_t size)
 //
 bool PythonInterface::RunStringInteractive(const char *command, PyObject* module)
 {
-    PyObject *d, *v;
-    // make sure that we're given a good module... or at least one with an address
-    if ( !module )
-    {
-        // if no module was given then use just use the main module
-        module = PyImport_AddModule("__main__");
-        if (module == nullptr) {
-            PyErr_Print();
-            return false;
-        }
-    }
     // get the dictionaries for this module
-    d = PyModule_GetDict(module);
+    PyObject* d = PyModule_GetDict(module);
     // run the string
-    v = PyRun_String(command, Py_single_input, d, d);
+    PyObject* v = PyRun_String(command, Py_single_input, d, d);
     // check for errors and print them
     if (v == nullptr)
     {
@@ -1694,18 +1683,10 @@ bool PythonInterface::RunStringInteractive(const char *command, PyObject* module
 //
 bool PythonInterface::RunString(const char* command, PyObject* module)
 {
-    PyObject *d, *v;
-    // make sure that we're given a good module... or at least one with an address
-    if (!module) {
-        // if no module was given then use just use the main module
-        module = PyImport_AddModule("__main__");
-        if (!module)
-            return false;
-    }
     // get the dictionaries for this module
-    d = PyModule_GetDict(module);
+    PyObject* d = PyModule_GetDict(module);
     // run the string
-    v = PyRun_String(command, Py_file_input, d, d);
+    PyObject* v = PyRun_String(command, Py_file_input, d, d);
     // check for errors and print them
     if (!v) {
         // Yikes! errors!
@@ -1719,16 +1700,6 @@ bool PythonInterface::RunString(const char* command, PyObject* module)
 
 bool PythonInterface::RunFile(const plFileName& filename, PyObject* module)
 {
-    // make sure that we're given a good module... or at least one with an address
-    if (!module) {
-        // if no module was given then use just use the main module
-        module = PyImport_AddModule("__main__");
-        if (!module) {
-            getOutputAndReset();
-            return false;
-        }
-    }
-
     PyObject* moduleDict = PyModule_GetDict(module);
     PyObject* result = PyRun_FileEx(plFileSystem::Open(filename, "r"), filename.AsString().c_str(),
                                     Py_file_input, moduleDict, moduleDict, 1);
@@ -1750,19 +1721,10 @@ bool PythonInterface::RunFile(const plFileName& filename, PyObject* module)
 //
 bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
 {
-    PyObject *d, *v;
-    // make sure that we're given a good module... or at least one with an address
-    if ( !module )
-    {
-        // if no module was given then use just use the main module
-        module = PyImport_AddModule("__main__");
-        if (module == nullptr)
-            return false;
-    }
     // get the dictionaries for this module
-    d = PyModule_GetDict(module);
+    PyObject* d = PyModule_GetDict(module);
     // run the string
-    v = PyEval_EvalCode(code, d, d);
+    PyObject* v = PyEval_EvalCode(code, d, d);
     // check for errors and print them
     if (v == nullptr)
     {
