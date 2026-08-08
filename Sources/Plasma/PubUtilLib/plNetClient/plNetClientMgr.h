@@ -61,6 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ////////////////////////////////////////////////////////////////////
 
+class plAgeDescription;
 class plUoid;
 class hsStream;
 class plKey;
@@ -340,7 +341,8 @@ public:
     void AddPendingLoad(PendingLoad *pl);
     const plKey& GetAgeSDLObjectKey() const { return fAgeSDLObjectKey; }
     void SetAgeSDLObjectKey(plKey ageSDLObjectKey) { fAgeSDLObjectKey = std::move(ageSDLObjectKey); }
-    plUoid GetAgeSDLObjectUoid(const ST::string& ageName) const override;
+    static plUoid GetAgeSDLObjectUoidForAge(const plAgeDescription& ageDesc);
+    plUoid GetAgeSDLObjectUoid(const ST::string& ageName) const override; // for compatibility only - prefer GetAgeSDLObjectUoidForAge instead
     plSDLModifier* GetAgeSDLModifier() const;
     plNetClientComm& GetNetClientComm()  { return fNetClientComm; }
     ST::string GetNextAgeFilename() const;

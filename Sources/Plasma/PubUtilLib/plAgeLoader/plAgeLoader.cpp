@@ -254,7 +254,7 @@ tl::expected<tl::monostate, ST::string> plAgeLoader::LoadAge(const ST::string& a
     //
     // Load the Age's SDL Hook object (and it's python modifier)
     //  
-    plUoid oid=nc->GetAgeSDLObjectUoid(fAgeName);
+    plUoid oid = plNetClientMgr::GetAgeSDLObjectUoidForAge(ad);
     plKey ageSDLObjectKey = hsgResMgr::ResMgr()->FindKey(oid);
     // Loading the AgeSDLHook also loads the VeryVerySpecialPythonFileMod,
     // so the create notification only gets sent after the age Python has finished initializing.
