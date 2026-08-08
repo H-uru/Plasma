@@ -339,6 +339,7 @@ public:
 
     void AddPendingLoad(PendingLoad *pl);
     const plKey& GetAgeSDLObjectKey() const { return fAgeSDLObjectKey; }
+    void SetAgeSDLObjectKey(plKey ageSDLObjectKey) { fAgeSDLObjectKey = std::move(ageSDLObjectKey); }
     plUoid GetAgeSDLObjectUoid(const ST::string& ageName) const override;
     plSDLModifier* GetAgeSDLModifier() const;
     plNetClientComm& GetNetClientComm()  { return fNetClientComm; }

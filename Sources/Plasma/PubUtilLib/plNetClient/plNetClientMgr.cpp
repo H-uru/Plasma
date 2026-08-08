@@ -798,7 +798,11 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
         hsAssert(ref->fType==kAgeSDLHook, "unknown ref msg context");
         if (ref->GetContext()==plRefMsg::kOnCreate)
         {
-            hsAssert(fAgeSDLObjectKey == nullptr, "already have a ref to age sdl hook");
+            hsAssert(fAgeSDLObjectKey == nullptr || fAgeSDLObjectKey == ref->GetRef()->GetKey(), ST::format(
+                "Newly loaded age SDL hook object {} doesn't match the key {} we were told earlier",
+                ref->GetRef()->GetKey()->GetUoid().StringIze(),
+                fAgeSDLObjectKey->GetUoid().StringIze()
+            ).c_str());
             fAgeSDLObjectKey = ref->GetRef()->GetKey();
             DebugMsg("Age SDL hook object created, uoid={}", fAgeSDLObjectKey->GetUoid().StringIze());
         }
