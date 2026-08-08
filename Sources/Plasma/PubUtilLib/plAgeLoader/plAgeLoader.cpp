@@ -188,7 +188,7 @@ void plAgeLoader::NotifyAgeLoaded( bool loaded )
 
 tl::expected<tl::monostate, ST::string> plAgeLoader::LoadAge(const ST::string& ageName)
 {
-    plNetClientApp* nc = plNetClientApp::GetInstance();
+    plNetClientMgr* nc = plNetClientMgr::GetInstance();
     ASSERT(!nc->GetFlagsBit(plNetClientApp::kPlayingGame));
 
     fAgeName = ageName;
@@ -254,8 +254,13 @@ tl::expected<tl::monostate, ST::string> plAgeLoader::LoadAge(const ST::string& a
     //
     // Load the Age's SDL Hook object (and it's python modifier)
     //  
-    plUoid oid=nc->GetAgeSDLObjectUoid(fAgeName);
+    plUoid oid = plNetClientMgr::GetAgeSDLObjectUoid(ad);
     plKey ageSDLObjectKey = hsgResMgr::ResMgr()->FindKey(oid);
+    // Loading the AgeSDLHook also loads the VeryVerySpecialPythonFileMod,
+    // so the create notification only gets sent after the age Python has finished initializing.
+    // Some existing age scripts call PtGetAgeSDL *during* their initialization though, even though they shouldn't.
+    // To make those early calls work, tell plNetClientMgr the AgeSDLHook key now, before the create notification.
+    nc->SetAgeSDLObjectKey(ageSDLObjectKey);
     if (ageSDLObjectKey)
         hsgResMgr::ResMgr()->AddViaNotify(ageSDLObjectKey, new plGenRefMsg(nc->GetKey(), plRefMsg::kOnCreate, -1, 
         plNetClientMgr::kAgeSDLHook), plRefFlags::kActiveRef);
