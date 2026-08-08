@@ -1126,6 +1126,12 @@ bool    pfGUIMultiLineEditCtrl::HandleKeyEvent( pfGameGUIMgr::EventType event, p
         else if( key == KEY_RIGHT )
             IMoveCursor( ( modifiers & pfGameGUIMgr::kCtrlDown ) ? kOneWordForward : kOneForward );
 
+        else if (modifiers & pfGameGUIMgr::kCtrlDown && key == KEY_BACKSPACE)
+        {
+            if (IsLocked())
+                return true;
+            DeletePreviousWord();
+        }
         else if( key == KEY_BACKSPACE )
         {
             if( IsLocked() )
@@ -1136,6 +1142,12 @@ bool    pfGUIMultiLineEditCtrl::HandleKeyEvent( pfGameGUIMgr::EventType event, p
                 IMoveCursor(kOneBack);
                 DeleteChar();
             }
+        }
+        else if (modifiers & pfGameGUIMgr::kCtrlDown && key == KEY_DELETE)
+        {
+            if (IsLocked())
+                return true;
+            DeleteNextWord();
         }
         else if( key == KEY_DELETE )
         {
@@ -1497,6 +1509,43 @@ void    pfGUIMultiLineEditCtrl::DeleteChar()
 
         IOffsetLineStarts( fCursorPos, -offset );
         IRecalcFromCursor( forceUpdate );
+    }
+}
+
+void pfGUIMultiLineEditCtrl::DeleteNextWord()
+{
+    if (fBuffer[fCursorPos] != L'\0') {
+        int32_t removed = 0;
+        bool forceUpdate = false;
+        do {
+            forceUpdate = forceUpdate || IIsCodeChar(fBuffer[fCursorPos + removed]);
+            removed++;
+        } while (fBuffer[fCursorPos + removed] != L'\0' && !IIsWordBreaker(fBuffer[fCursorPos + removed - 1]));
+
+        const auto cursorIter = fBuffer.cbegin() + fCursorPos;
+        fBuffer.erase(cursorIter, cursorIter + removed);
+        ISetGlobalBuffer(); // update the global buffer
+        IOffsetLineStarts(fCursorPos, -removed);
+        IRecalcFromCursor(forceUpdate);
+    }
+}
+
+void pfGUIMultiLineEditCtrl::DeletePreviousWord()
+{
+    if (fCursorPos > 0) {
+        int32_t removed = 0;
+        bool forceUpdate = false;
+        do {
+            fCursorPos--;
+            removed++;
+            forceUpdate = forceUpdate || IIsCodeChar(fBuffer[fCursorPos]);
+        } while (fCursorPos > 0 && !IIsWordBreaker(fBuffer[fCursorPos - 1]));
+
+        const auto cursorIter = fBuffer.cbegin() + fCursorPos;
+        fBuffer.erase(cursorIter, cursorIter + removed);
+        ISetGlobalBuffer(); // update the global buffer
+        IOffsetLineStarts(fCursorPos, -removed);
+        IRecalcFromCursor(forceUpdate);
     }
 }
 
