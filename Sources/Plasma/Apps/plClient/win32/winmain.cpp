@@ -580,6 +580,46 @@ INT_PTR CALLBACK AuthFailedDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, L
     return FALSE;
 }
 
+static const wchar_t* GetLocalizedString(UINT nID)
+{
+    static wchar_t buffer[256];
+    LoadStringW(gHInst, nID, buffer, static_cast<int>(std::size(buffer)));
+    return buffer;
+}
+
+static void SetWindowsUILanguage(plLocalization::Language lang)
+{
+    LANGID langId;
+
+    switch (lang) {
+        case plLocalization::kGerman:
+            langId = MAKELANGID(LANG_GERMAN, SUBLANG_GERMAN);
+            break;
+
+        default:
+            langId = MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
+            break;
+    }
+
+    SetThreadUILanguage(langId);
+}
+
+static void ApplyLoginDialogLanguage(HWND hwndDlg, plLocalization::Language lang)
+{
+    static const struct { UINT ctrl; UINT str; } kControls[] = {
+        { IDC_BUTTON_LOGIN,          IDC_TEXT_LOGIN },
+        { IDC_BUTTON_CANCEL,         IDC_TEXT_QUIT },
+        { IDC_STATIC_ACCOUNT,        IDC_TEXT_ACCOUNT },
+        { IDC_STATIC_PASSWORD,       IDC_TEXT_PASSWORD },
+        { IDC_STATIC_LANGUAGE,       IDC_TEXT_LANGUAGE },
+        { IDC_URULOGIN_REMEMBERPASS, IDC_TEXT_REMEMBER_PASS },
+        { IDC_URULOGIN_NEWACCTLINK,  IDC_TEXT_NEED_ACCOUNT },
+    };
+    SetWindowsUILanguage(lang);
+    for (auto [ctrl, str] : kControls)
+        SetDlgItemTextW(hwndDlg, ctrl, GetLocalizedString(str));
+}
+
 INT_PTR CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
     switch( uMsg )
@@ -599,6 +639,9 @@ INT_PTR CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 
                 SetDlgItemTextW(hwndDlg, IDC_URULOGIN_EULATEXT,
                                 ST::string(eula, ST::substitute_invalid).to_wchar().data());
+
+                SetDlgItemTextW(hwndDlg, IDC_BUTTON_ACCEPT, GetLocalizedString(IDC_TEXT_ACCEPT));
+                SetDlgItemTextW(hwndDlg, IDC_BUTTON_DECLINE, GetLocalizedString(IDC_TEXT_DECLINE));
             }
             else // no TOS found, go ahead
                 EndDialog(hwndDlg, true);
@@ -606,9 +649,9 @@ INT_PTR CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
             break;
         }
     case WM_COMMAND:
-        if (HIWORD(wParam) == BN_CLICKED && (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL))
+        if (HIWORD(wParam) == BN_CLICKED && (LOWORD(wParam) == IDC_BUTTON_ACCEPT || LOWORD(wParam) == IDC_BUTTON_DECLINE))
         {
-            bool ok = (LOWORD(wParam) == IDOK);
+            bool ok = (LOWORD(wParam) == IDC_BUTTON_ACCEPT);
             EndDialog(hwndDlg, ok);
             return TRUE;
         }
@@ -800,6 +843,8 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
             }
             SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_SETCURSEL, (WPARAM)plLocalization::GetLanguage(), 0);
 
+            ApplyLoginDialogLanguage(hwndDlg, plLocalization::GetLanguage());
+
             EnableWindow(GetDlgItem(hwndDlg, IDC_URULOGIN_NEWACCTLINK), !GetServerSignupUrl().empty());
 
             SetTimer(hwndDlg, AUTH_LOGIN_TIMER, 10, nullptr);
@@ -836,9 +881,9 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
     
         case WM_COMMAND:
         {
-            if (HIWORD(wParam) == BN_CLICKED && (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL))
+            if (HIWORD(wParam) == BN_CLICKED && (LOWORD(wParam) == IDC_BUTTON_LOGIN || LOWORD(wParam) == IDC_BUTTON_CANCEL))
             {
-                bool ok = (LOWORD(wParam) == IDOK);
+                bool ok = (LOWORD(wParam) == IDC_BUTTON_LOGIN);
                 if (ok)
                 {
                     wchar_t password[kMaxPasswordLength];
@@ -896,6 +941,17 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
                 ShellExecuteW(nullptr, L"open", signupurl.to_wchar().data(), nullptr, nullptr, SW_SHOWNORMAL);
 
                 return TRUE;
+            }
+            else if (HIWORD(wParam) == CBN_SELCHANGE && LOWORD(wParam) == IDC_LANGUAGE)
+            {
+                HWND hCombo = (HWND)lParam;
+                int currentIndex = (int)SendMessage(hCombo, CB_GETCURSEL, 0, 0);
+
+                if (currentIndex != CB_ERR) {
+                    plLocalization::Language new_language = (plLocalization::Language)SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_GETCURSEL, 0, 0L);
+                    plLocalization::SetLanguage(new_language);
+                    ApplyLoginDialogLanguage(hwndDlg, new_language);
+                }
             }
             break;
         }
@@ -1004,6 +1060,7 @@ uint32_t ParseRendererArgument(const ST::string& requested)
     auto it = args.find(requested);
     if (it != args.end())
         return it->second;
+
     return hsG3DDeviceSelector::kDevTypeUnknown;
 }
 

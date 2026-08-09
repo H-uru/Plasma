@@ -26,6 +26,29 @@
 #define IDC_STATUS_TEXT                 1034
 #define IDC_HOTKEY1                     1035
 #define IDC_LANGUAGE                    1040
+#define IDC_STATIC_ACCOUNT              1050
+#define IDC_STATIC_PASSWORD             1051
+#define IDC_STATIC_LANGUAGE             1052
+
+#define IDC_BUTTON_LOGIN 1901
+#define IDC_BUTTON_CANCEL 1902
+#define IDC_BUTTON_ACCEPT 1903
+#define IDC_BUTTON_DECLINE 1904
+
+#define IDC_TEXT_LOGIN 2000
+#define IDC_TEXT_QUIT 2001
+#define IDC_TEXT_ACCOUNT 2002
+#define IDC_TEXT_PASSWORD 2003
+#define IDC_TEXT_LANGUAGE 2004
+#define IDC_TEXT_REMEMBER_PASS 2005
+#define IDC_TEXT_WELCOME 2006
+#define IDC_TEXT_NEED_ACCOUNT 2007
+#define IDC_TEXT_DONATE 2008
+
+#define IDC_TEXT_ACCEPT 2009
+#define IDC_TEXT_DECLINE 2010
+#define IDC_TEXT_AUTH 2011
+
 
 // Next default values for new objects
 // 
