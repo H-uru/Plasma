@@ -66,7 +66,7 @@ typedef struct
 {
     float4 position [[position]];
     float4 color;
-    float4 texCoord;
+    float3 texCoord;
 } vs_GrassInOut;
 
 vertex vs_GrassInOut vs_GrassShader(Vertex in                                       [[stage_in]],
@@ -74,28 +74,18 @@ vertex vs_GrassInOut vs_GrassShader(Vertex in                                   
 {
     vs_GrassInOut out;
 
-    float4 r0 = (in.position.x * uniforms.waveDirX) + (in.position.y * uniforms.waveDirX);
+    float4 wavePhase = (in.position.x * uniforms.waveDirX) + (in.position.y * uniforms.waveDirY);
 
-    r0 += (uniforms.time.x * uniforms.waveSpeed); // scale by speed and add to X,Y input
-    r0 = fract(r0);
+    wavePhase += (uniforms.time.x * uniforms.waveSpeed); // scale by speed and add to X,Y input
+    // Take the fractional value of the phase to put it into a [0,1] range
+    wavePhase = fract(wavePhase);
 
-    r0 = (r0 - 0.5f) * M_PI_F * 2.f;
-
-    float4 pow2 = r0 * r0;
-    float4 pow3 = pow2 * r0;
-    float4 pow5 = pow2 * pow3;
-    float4 pow7 = pow2 * pow5;
-    float4 pow9 = pow2 * pow7;
-
-    r0 += pow3 * uniforms.sinConstants.x;
-    r0 += pow5 * uniforms.sinConstants.y;
-    r0 += pow7 * uniforms.sinConstants.z;
-    r0 += pow9 * uniforms.sinConstants.w;
+    wavePhase = sin((wavePhase - 0.5f) * M_PI_F * 2.f);
 
     float3 offset = float3(
-                             dot(r0, uniforms.waveDistortX),
-                             dot(r0, uniforms.waveDistortY),
-                             dot(r0, uniforms.waveDistortZ)
+                             dot(wavePhase, uniforms.waveDistortX),
+                             dot(wavePhase, uniforms.waveDistortY),
+                             dot(wavePhase, uniforms.waveDistortZ)
                              );
 
     offset *= (2.f * (1.f - in.texCoord1.y)); // mult by Y tex coord. So the waves only affect the top verts
@@ -104,7 +94,7 @@ vertex vs_GrassInOut vs_GrassShader(Vertex in                                   
     out.position = position * uniforms.Local2NDC;
 
     out.color = float4(in.color.r, in.color.g, in.color.b, in.color.a);
-    out.texCoord = float4(in.texCoord1, 0.f);
+    out.texCoord = in.texCoord1;
 
     return out;
 }
