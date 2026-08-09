@@ -2953,14 +2953,12 @@ bool FileDownloadRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    char16_t filename[kNetDefaultStringSize] {};
     const ST::utf16_buffer buffer = m_filename.AsString().to_utf16();
-    memcpy(filename, buffer.data(), std::min(sizeof(filename), buffer.size() * sizeof(char16_t)));
 
     const uintptr_t msg[] = {
         kCli2Auth_FileDownloadRequest,
         m_transId,
-        reinterpret_cast<uintptr_t>(filename),
+        reinterpret_cast<uintptr_t>(buffer.data()),
     };
 
     m_conn->Send(msg, std::size(msg));
