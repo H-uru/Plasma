@@ -14,6 +14,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(metalcpp)
 
 set(pfMetalPipeline_SOURCES
+    plMetalArgumentBuffer.cpp
     plMetalDevice.cpp
     plMetalDeviceRefs.cpp
     plMetalEnumerate.mm
@@ -30,6 +31,7 @@ set(pfMetalPipeline_SOURCES
 )
 
 set(pfMetalPipeline_HEADERS
+    plMetalArgumentBuffer.h
     plMetalDevice.h
     plMetalDeviceRef.h
     plMetalLightRef.h
