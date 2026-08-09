@@ -61,7 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetBase/pnNbSrvs.h"
 #include "pnNetCommon/plNetAddress.h"
 #include "pnNetProtocol/pnNpCli2File.h"
-#include "pnUtils/pnUtStr.h"
 
 #include "Intern.h"
 
@@ -171,7 +170,7 @@ struct BuildIdRequestTrans : NetFileTrans {
 //============================================================================
 struct ManifestRequestTrans : NetFileTrans {
     FNetCliFileManifestRequestCallback  m_callback;
-    char16_t                            m_group[kNetDefaultStringSize];
+    ST::string                          m_group;
     unsigned                            m_buildId;
 
     std::vector<NetCliFileManifestEntry>  m_manifest;
@@ -179,7 +178,7 @@ struct ManifestRequestTrans : NetFileTrans {
 
     ManifestRequestTrans (
         FNetCliFileManifestRequestCallback  callback,
-        const char16_t                      group[],
+        ST::string                          group,
         unsigned                            buildId
     );
 
@@ -758,7 +757,6 @@ bool CliFileConn::Recv_ManifestReply (
     msg->numFiles = hsToLE32(msg->numFiles);
     msg->wcharCount = hsToLE32(msg->wcharCount);
 
-    // The manifest format includes \0 characters, so we can't just StrCopy
     for (size_t i = 0; i < msg->wcharCount; i++) {
         msg->manifestData[i] = hsToLE16(msg->manifestData[i]);
     }
@@ -851,18 +849,14 @@ bool BuildIdRequestTrans::Recv (
 //============================================================================
 ManifestRequestTrans::ManifestRequestTrans (
     FNetCliFileManifestRequestCallback  callback,
-    const char16_t                      group[],
+    ST::string                          group,
     unsigned                            buildId
 ) : NetFileTrans(kManifestRequestTrans)
 ,   m_callback(std::move(callback))
+,   m_group(std::move(group))
 ,   m_numEntriesReceived(0)
 ,   m_buildId(buildId)
-{
-    if (group)
-        StrCopy(m_group, group, std::size(m_group));
-    else
-        m_group[0] = L'\0';
-}
+{}
 
 //============================================================================
 bool ManifestRequestTrans::Send () {
@@ -870,7 +864,7 @@ bool ManifestRequestTrans::Send () {
         return false;
 
     Cli2File_ManifestRequest manifestReq;
-    StrCopyLE16(manifestReq.group, m_group, std::size(manifestReq.group));
+    StrCopyLE16(manifestReq.group, m_group.to_utf16().data(), std::size(manifestReq.group));
     manifestReq.messageId = hsToLE32(kCli2File_ManifestRequest);
     manifestReq.transId = hsToLE32(m_transId);
     manifestReq.messageBytes = hsToLE32(sizeof(manifestReq));
@@ -1341,13 +1335,13 @@ void NetCliFileRegisterBuildIdUpdate (FNetCliFileBuildIdUpdateCallback callback)
 
 //============================================================================
 void NetCliFileManifestRequest (
-    const char16_t                      group[],
+    ST::string                          group,
     unsigned                            buildId,
     FNetCliFileManifestRequestCallback  callback
 ) {
     ManifestRequestTrans * trans = new ManifestRequestTrans(
         std::move(callback),
-        group,
+        std::move(group),
         buildId
     );
     NetTransSend(trans);

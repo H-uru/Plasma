@@ -485,14 +485,14 @@ bool pfPatcherWorker::IssueRequest()
             });
             break;
         case Request::kManifest:
-            NetCliFileManifestRequest(req.fName.to_utf16().data(), 0, [this, group = req.fName](auto result, const auto& manifest) {
+            NetCliFileManifestRequest(req.fName, 0, [this, group = req.fName](auto result, const auto& manifest) {
                 IFileManifestDownloadCB(result, group, manifest);
             });
             break;
         case Request::kSecurePreloader:
             // so, yeah, this is usually the "SecurePreloader" manifest on the file server...
             // except on legacy servers, this may not exist, so we need to fall back without nuking everything!
-            NetCliFileManifestRequest(req.fName.to_utf16().data(), 0, [this, group = req.fName](auto result, const auto& manifest) {
+            NetCliFileManifestRequest(req.fName, 0, [this, group = req.fName](auto result, const auto& manifest) {
                 IPreloaderManifestDownloadCB(result, group, manifest);
             });
             break;

@@ -103,7 +103,7 @@ using FNetCliFileManifestRequestCallback = std::function<void(
     const std::vector<NetCliFileManifestEntry>& manifest
 )>;
 void NetCliFileManifestRequest (
-    const char16_t                      group[], // the group of files you want (empty or nil = all)
+    ST::string                          group, // the group of files you want (empty or nil = all)
     unsigned                            buildId, // 0 = get latest, other = get particular build (servers only)
     FNetCliFileManifestRequestCallback  callback
 );
