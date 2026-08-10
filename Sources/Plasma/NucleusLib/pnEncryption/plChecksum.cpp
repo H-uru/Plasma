@@ -216,13 +216,10 @@ plChecksum::plChecksum(plChecksum::Type type)
             fImpl = std::make_unique<plEVPChecksum>(EVP_md5());
             break;
         case Type::kSHA0: {
-            // SHA-0 is not supported by OpenSSL these days, so we may have to
-            // use our own implementation.
-            const EVP_MD* md = EVP_get_digestbyname("sha");
-            if (md)
-                fImpl = std::make_unique<plEVPChecksum>(md);
-            else
-                fImpl = std::make_unique<plSHA0Checksum>();
+            // SHA-0 is not supported by OpenSSL these days, so just use our
+            // hand rolled implementation. This way, we can be sure it's being
+            // tested in the tests (not OpenSSL's implementation) for consistency.
+            fImpl = std::make_unique<plSHA0Checksum>();
             break;
         }
         case Type::kSHA1:
