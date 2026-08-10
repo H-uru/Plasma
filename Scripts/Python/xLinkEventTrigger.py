@@ -135,6 +135,7 @@ class xLinkEventTrigger(ptModifier):
         # Age is unloaded when going to the character select screen.
         if not self.triggerForLocalAvatar:
             PtDebugPrint(f"xLinkEventTrigger.BeginAgeUnLoad(): {self.sceneObjectName=} ignoring (don't want local avatar notify)", level=kDebugDumpLevel)
+            return
 
         if self._triggerOn == TriggerOn.SPAWN_OUT:
             PtDebugPrint(f"xLinkEventTrigger.OnFirstUpdate(): {self.sceneObjectName=} sending trigger (local player spawn out)", level=kWarningLevel)
