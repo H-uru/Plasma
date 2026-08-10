@@ -85,20 +85,20 @@ vertex vs_CompCosinesnInOut vs_CompCosines(Vertex in                            
 
 typedef struct
 {
-    float4 c0;
-    float4 c1;
-    float4 c2;
-    float4 c3;
-    float4 c4;
-    float4 c5;
+    float4 wave0;
+    float4 wave1;
+    float4 wave2;
+    float4 wave3;
+    float4 halfOne;
+    float4 bias;
 } ps_CompCosinesUniforms;
 
-fragment float4 ps_CompCosines(vs_CompCosinesnInOut in                  [[ stage_in ]],
-                             texture2d<float> t0                        [[ texture(0) ]],
-                             texture2d<float> t1                        [[ texture(1) ]],
-                             texture2d<float> t2                        [[ texture(2) ]],
-                             texture2d<float> t3                        [[ texture(3) ]],
-                            constant ps_CompCosinesUniforms & uniforms  [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]])
+fragment float4 ps_CompCosines(vs_CompCosinesnInOut in                    [[ stage_in ]],
+                               texture2d<float> t0                        [[ texture(0) ]],
+                               texture2d<float> t1                        [[ texture(1) ]],
+                               texture2d<float> t2                        [[ texture(2) ]],
+                               texture2d<float> t3                        [[ texture(3) ]],
+                               constant ps_CompCosinesUniforms & uniforms  [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]])
 {
     // Composite the cosines together.
     // Input map is cosine(pix) for each of
@@ -120,13 +120,13 @@ fragment float4 ps_CompCosines(vs_CompCosinesnInOut in                  [[ stage
                                              min_filter::linear,
                                              address::repeat);
 
-    float4 out =    2.f * (t0.sample(colorSampler, fract(in.texCoord0.xy)) - 0.5f) * uniforms.c0;
-    out +=          2.f * (t1.sample(colorSampler, fract(in.texCoord1.xy)) - 0.5f) * uniforms.c1;
-    out +=          2.f * (t2.sample(colorSampler, fract(in.texCoord2.xy)) - 0.5f) * uniforms.c2;
-    out +=          2.f * (t3.sample(colorSampler, fract(in.texCoord3.xy)) - 0.5f) * uniforms.c3;
+    float4 out =    2.f * (t0.sample(colorSampler, fract(in.texCoord0.xy)) - 0.5f) * uniforms.wave0;
+    out +=          2.f * (t1.sample(colorSampler, fract(in.texCoord1.xy)) - 0.5f) * uniforms.wave1;
+    out +=          2.f * (t2.sample(colorSampler, fract(in.texCoord2.xy)) - 0.5f) * uniforms.wave2;
+    out +=          2.f * (t3.sample(colorSampler, fract(in.texCoord3.xy)) - 0.5f) * uniforms.wave3;
     // Now bias it back into range [0..1] for output.
-    out *= uniforms.c4;
-    out += uniforms.c5;
+    out *= uniforms.halfOne;
+    out += uniforms.bias;
     out.b = 1.f;
     out.a = 1.f;
     return out;
