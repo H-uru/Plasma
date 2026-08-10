@@ -366,6 +366,13 @@ const uint8_t* plChecksum::GetValue() const
 
 bool plChecksum::operator==(const plChecksum& rhs) const
 {
+    // Early bail out: if we're the same object, it's obviously the same checksum,
+    // so who really cares if we're finished or not.
+    if (this == &rhs)
+        return true;
+
+    // In progress and invalid checksums can't be equal. They're in an
+    // indeterminant state..
     if (!IsValid())
         return false;
     if (!rhs.IsValid())
