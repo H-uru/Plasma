@@ -373,9 +373,9 @@ bool plChecksum::operator==(const plChecksum& rhs) const
 
     // In progress and invalid checksums can't be equal. They're in an
     // indeterminant state..
-    if (!IsValid())
+    if (!IsFinished())
         return false;
-    if (!rhs.IsValid())
+    if (!rhs.IsFinished())
         return false;
 
     if (fType != rhs.fType)

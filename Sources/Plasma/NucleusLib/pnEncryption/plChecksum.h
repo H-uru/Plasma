@@ -94,7 +94,7 @@ public:
 
     size_t GetSize() const;
     const uint8_t* GetValue() const;
-    bool IsValid() const { return fStatus == Status::kFinished; }
+    bool IsFinished() const { return fStatus == Status::kFinished; }
 
     void Start();
     void AddTo(size_t size, const uint8_t* buffer);
