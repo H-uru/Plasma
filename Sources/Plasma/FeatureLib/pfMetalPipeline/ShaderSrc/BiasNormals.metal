@@ -63,9 +63,8 @@ typedef struct
     float4 position [[position]];
     float4 texCoord0;
     float4 texCoord1;
-    //not actually colors, just emulating the registers
-    float4 color1;
-    float4 color2;
+    float4 scale [[flat]];
+    float4 bias [[flat]];
 } vs_BiasNormalsOut;
 
 vertex vs_BiasNormalsOut vs_BiasNormals(Vertex in                           [[ stage_in ]],
@@ -85,8 +84,8 @@ vertex vs_BiasNormalsOut vs_BiasNormals(Vertex in                           [[ s
                            0.f,
                            1.f);
 
-    out.color1 = uniforms.ScaleBias.xxzz;
-    out.color2 = uniforms.ScaleBias.yyzz;
+    out.scale = uniforms.ScaleBias.xxzz;
+    out.bias = uniforms.ScaleBias.yyzz;
     
     return out;
 }
@@ -115,10 +114,10 @@ fragment float4 ps_BiasNormals(vs_BiasNormalsOut in     [[ stage_in ]],
                                              min_filter::linear,
                                              address::repeat);
     
-    float4 sample1 = t0.sample(colorSampler, in.texCoord0.xy);
-    float4 sample2 = t1.sample(colorSampler, in.texCoord0.xy);
+    const float4 sample1 = t0.sample(colorSampler, in.texCoord0.xy);
+    const float4 sample2 = t1.sample(colorSampler, in.texCoord1.xy);
     float4 out = float4(sample1.rgb - 0.5 + sample2.rgb - 0.5, sample1.a + sample2.a);
-    out.rgb = (out.rgb * in.color1.rgb) + in.color2.rgb;
+    out.rgb = (out.rgb * in.scale.rgb) + in.bias.rgb;
     
     return out;
 }
