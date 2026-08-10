@@ -80,9 +80,6 @@ private:
     Type fType;
     std::unique_ptr<class plChecksumImpl> fImpl;
 
-private:
-    void IInit(Type type);
-
 public:
     plChecksum() = delete;
     plChecksum(plChecksum&& move) noexcept;

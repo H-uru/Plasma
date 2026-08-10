@@ -211,34 +211,6 @@ plChecksum::plChecksum(plChecksum&& move) noexcept
 plChecksum::plChecksum(plChecksum::Type type)
     : fStatus(Status::kReady), fType(type)
 {
-    IInit(type);
-}
-
-plChecksum::plChecksum(plChecksum::Type type, const plFileName& fileName)
-    : fStatus(Status::kReady), fType(type)
-{
-    IInit(type);
-    CalcFromFile(fileName);
-}
-
-plChecksum::plChecksum(plChecksum::Type type, hsStream* stream)
-    : fStatus(Status::kReady), fType(type)
-{
-    IInit(type);
-    CalcFromStream(stream);
-}
-
-plChecksum::plChecksum(plChecksum::Type type, size_t size, const uint8_t* buffer)
-    : fStatus(Status::kReady), fType(type)
-{
-    IInit(type);
-    Start();
-    AddTo(size, buffer);
-    Finish();
-}
-
-void plChecksum::IInit(plChecksum::Type type)
-{
     switch (type) {
         case Type::kMD5:
             fImpl = std::make_unique<plEVPChecksum>(EVP_md5());
@@ -264,6 +236,26 @@ void plChecksum::IInit(plChecksum::Type type)
             break;
         DEFAULT_FATAL("checksumType");
     }
+}
+
+plChecksum::plChecksum(plChecksum::Type type, const plFileName& fileName)
+    : plChecksum(type)
+{
+    CalcFromFile(fileName);
+}
+
+plChecksum::plChecksum(plChecksum::Type type, hsStream* stream)
+    : plChecksum(type)
+{
+    CalcFromStream(stream);
+}
+
+plChecksum::plChecksum(plChecksum::Type type, size_t size, const uint8_t* buffer)
+    : plChecksum(type)
+{
+    Start();
+    AddTo(size, buffer);
+    Finish();
 }
 
 plChecksum::~plChecksum()
