@@ -1518,7 +1518,7 @@ void pfGUIMultiLineEditCtrl::DeleteNextWord()
         int32_t removed = 0;
         bool forceUpdate = false;
         do {
-            forceUpdate = forceUpdate || IIsCodeChar(fBuffer[fCursorPos + removed]);
+            forceUpdate |= IIsCodeChar(fBuffer[fCursorPos + removed]);
             removed++;
         } while (fBuffer[fCursorPos + removed] != L'\0' && !IIsWordBreaker(fBuffer[fCursorPos + removed - 1]));
 
@@ -1538,7 +1538,7 @@ void pfGUIMultiLineEditCtrl::DeletePreviousWord()
         do {
             fCursorPos--;
             removed++;
-            forceUpdate = forceUpdate || IIsCodeChar(fBuffer[fCursorPos]);
+            forceUpdate |= IIsCodeChar(fBuffer[fCursorPos]);
         } while (fCursorPos > 0 && !IIsWordBreaker(fBuffer[fCursorPos - 1]));
 
         const auto cursorIter = fBuffer.cbegin() + fCursorPos;
