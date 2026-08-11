@@ -390,7 +390,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
 
 //// IHandleKey //////////////////////////////////////////////////////////////
 
-inline bool IIsWordBoundary(const char& c)
+static inline bool IIsWordBoundary(const char c)
 {
     return strchr(" _.", c) != nullptr;
 }
