@@ -694,9 +694,23 @@ int32_t   pfGUIMultiLineEditCtrl::IPointToPosition( int16_t ptX, int16_t ptY, bo
 //// IIsWordBreaker //////////////////////////////////////////////////////////
 //  Returns whether the given character is one that can break a line
 
-inline bool IIsWordBreaker( const wchar_t c )
+static inline bool IIsWordBreaker(const wchar_t c)
 {
-    return (wcschr(L" \t,.;\n", c) != nullptr);
+    if (c == L' ')
+        return true;
+    if (c == L'\t')
+        return true;
+    if (c == L'\n')
+        return true;
+    if (c == L',')
+        return true;
+    if (c == L'.')
+        return true;
+    if (c == L';')
+        return true;
+    if (c == L'\0')
+        return true;
+    return false;
 }
 
 //// IOffsetToNextChar ///////////////////////////////////////////////////////
@@ -1132,7 +1146,8 @@ bool    pfGUIMultiLineEditCtrl::HandleKeyEvent( pfGameGUIMgr::EventType event, p
         {
             if (IsLocked())
                 return true;
-            DeletePreviousWord();
+
+            DeleteWord(false);
         }
         else if( key == KEY_BACKSPACE )
         {
@@ -1149,7 +1164,8 @@ bool    pfGUIMultiLineEditCtrl::HandleKeyEvent( pfGameGUIMgr::EventType event, p
         {
             if (IsLocked())
                 return true;
-            DeleteNextWord();
+
+            DeleteWord(true);
         }
         else if( key == KEY_DELETE )
         {
@@ -1247,6 +1263,57 @@ void    pfGUIMultiLineEditCtrl::ISetCursor( int32_t newPosition )
     fLastCursorLine = newLine;
 }
 
+/**
+ * Check the next/previous character, accounting for control sequences, and adjust our position output variable accordingly.
+ */
+pfGUIMultiLineEditCtrl::CharType pfGUIMultiLineEditCtrl::IAdvanceChar(bool next, int32_t& pos) const
+{
+    hsAssert(pos >= 0, "out of range");
+    hsAssert(pos < (int32_t)fBuffer.size(), "out of range");
+    hsAssert(next || pos > 0, "advanced left at start of string");
+
+    wchar_t c = next ? fBuffer[pos] : fBuffer[pos - 1];
+    if (next)
+        pos += IOffsetToNextChar(c);
+    else
+        pos -= IOffsetToNextChar(c);
+    if (IIsCodeChar(c))
+        return CharType::kControlCode;
+    if (IIsWordBreaker(c))
+        return CharType::kWordBreaker;
+    // Assumption: we're never given anything in the middle of a control sequence.
+    return CharType::kNormal;
+}
+
+/**
+ * Advance the supplied position by one word left or right.
+ */
+bool pfGUIMultiLineEditCtrl::IAdvanceWordFromPos(bool next, int32_t& pos) const
+{
+    bool hitCtrlCode = false;
+
+    // If we're moving left, we want to move into the previous word first.
+    while (!next && pos > 0) {
+        CharType charType = IAdvanceChar(next, pos);
+        hitCtrlCode |= charType == CharType::kControlCode;
+        if (charType == CharType::kNormal)
+            break;
+    }
+    // Now, keep moving until we advanced past a word breaker
+    while (next && pos < (int32_t)fBuffer.size() - 1 || !next && pos > 0) {
+        CharType charType = IAdvanceChar(next, pos);
+        hitCtrlCode |= charType == CharType::kControlCode;
+        if (charType == CharType::kWordBreaker) {
+            // If we're moving left, we now want to stop before a word breaker, so go one back when we moved past one.
+            if (!next)
+              IAdvanceChar(true, pos);
+            break;
+        }
+    }
+
+    return hitCtrlCode;
+}
+
 //// IMoveCursor /////////////////////////////////////////////////////////////
 //  Moves the cursor in a relative direction.
 
@@ -1276,37 +1343,21 @@ void    pfGUIMultiLineEditCtrl::IMoveCursor( pfGUIMultiLineEditCtrl::Direction d
             break;
 
         case kOneBack:
-            if( cursor > 0 )
-            {
-                cursor--;
-                while (cursor > 0 && IIsCodeChar(fBuffer[cursor]))
-                    cursor -= IOffsetToNextChar( fBuffer[ cursor ] );
-            }
+            if (cursor > 0)
+                IAdvanceChar(false, cursor);
             break;
 
         case kOneForward:
             if (cursor < (int32_t)fBuffer.size() - 1)
-            {
-                cursor++;
-                while (cursor < (int32_t)fBuffer.size() - 1 && IIsCodeChar(fBuffer[cursor]))
-                    cursor += IOffsetToNextChar( fBuffer[ cursor ] );
-            }
+                IAdvanceChar(true, cursor);
             break;
 
         case kOneWordBack:
-            if( cursor > 0 )
-            {
-                for( ; cursor > 0 && IIsWordBreaker( fBuffer[ cursor - 1 ] ); cursor-- );
-                for( ; cursor > 0 && !IIsWordBreaker( fBuffer[ cursor - 1 ] ); cursor-- );
-            }
+            IAdvanceWordFromPos(false, cursor);
             break;
 
         case kOneWordForward:
-            if (cursor < (int32_t)fBuffer.size() - 1)
-            {
-                for (; cursor < (int32_t)fBuffer.size() - 1 && !IIsWordBreaker(fBuffer[cursor]); cursor++);
-                for (; cursor < (int32_t)fBuffer.size() - 1 && IIsWordBreaker(fBuffer[cursor]); cursor++);
-            }
+            IAdvanceWordFromPos(true, cursor);
             break;
 
         case kOneLineUp:
@@ -1494,9 +1545,6 @@ void     pfGUIMultiLineEditCtrl::IActuallyInsertLink(int32_t pos, int16_t linkId
 }
 
 //// DeleteChar //////////////////////////////////////////////////////////////
-//  If there is no selection, deletes the single character that the cursor
-//  is in front of. Otherwise, deletes the current selection and places the
-//  cursor where the selection used to be.
 
 void    pfGUIMultiLineEditCtrl::DeleteChar()
 {
@@ -1514,39 +1562,23 @@ void    pfGUIMultiLineEditCtrl::DeleteChar()
     }
 }
 
-void pfGUIMultiLineEditCtrl::DeleteNextWord()
+/**
+ * Deletes the next or previous word from the current cursor position.
+ */
+void pfGUIMultiLineEditCtrl::DeleteWord(bool next)
 {
-    if (fBuffer[fCursorPos] != L'\0') {
-        int32_t removed = 0;
-        bool forceUpdate = false;
-        do {
-            forceUpdate |= IIsCodeChar(fBuffer[fCursorPos + removed]);
-            removed++;
-        } while (fBuffer[fCursorPos + removed] != L'\0' && !IIsWordBreaker(fBuffer[fCursorPos + removed - 1]));
+    int32_t oldCursor, newCursor;
+    oldCursor = newCursor = fCursorPos;
+    bool forceUpdate = IAdvanceWordFromPos(next, newCursor);
 
+    if (oldCursor != newCursor) {
+        if (!next)
+            IMoveCursorTo(newCursor);
+        int32_t count = next ? newCursor - oldCursor : oldCursor - newCursor;
         const auto cursorIter = fBuffer.cbegin() + fCursorPos;
-        fBuffer.erase(cursorIter, cursorIter + removed);
+        fBuffer.erase(cursorIter, cursorIter + count);
         ISetGlobalBuffer(); // update the global buffer
-        IOffsetLineStarts(fCursorPos, -removed);
-        IRecalcFromCursor(forceUpdate);
-    }
-}
-
-void pfGUIMultiLineEditCtrl::DeletePreviousWord()
-{
-    if (fCursorPos > 0) {
-        int32_t removed = 0;
-        bool forceUpdate = false;
-        do {
-            fCursorPos--;
-            removed++;
-            forceUpdate |= IIsCodeChar(fBuffer[fCursorPos]);
-        } while (fCursorPos > 0 && !IIsWordBreaker(fBuffer[fCursorPos - 1]));
-
-        const auto cursorIter = fBuffer.cbegin() + fCursorPos;
-        fBuffer.erase(cursorIter, cursorIter + removed);
-        ISetGlobalBuffer(); // update the global buffer
-        IOffsetLineStarts(fCursorPos, -removed);
+        IOffsetLineStarts(fCursorPos, -count);
         IRecalcFromCursor(forceUpdate);
     }
 }
