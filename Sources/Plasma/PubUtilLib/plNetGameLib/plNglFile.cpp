@@ -880,7 +880,8 @@ inline size_t FIXME_u16snlen(const char16_t* str, size_t maxlen)
 }
 
 //============================================================================
-void ReadStringFromMsg(const char16_t* curMsgPtr, char16_t* destPtr, unsigned* length) {
+void ReadStringFromMsg(const char16_t* curMsgPtr, char16_t* destPtr, size_t* length)
+{
     size_t maxlen = FIXME_u16snlen(curMsgPtr, kNetDefaultStringSize - 1); // Hacky sack
     *length = maxlen;
     destPtr[maxlen] = 0;
@@ -915,7 +916,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
 
         // --------------------------------------------------------------------
         // read in the clientFilename
-        unsigned filenameLen = 0;
+        size_t filenameLen = 0;
         ReadStringFromMsg(curChar, entry.clientName, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
