@@ -59,19 +59,15 @@ ST::string hsSTStringFromTerminatedUTF16LE(const void* buffer, size_t bufferSize
 {
     auto byteBuffer = static_cast<const uint8_t*>(buffer);
     // Count how many char16_ts there are in the string.
-    // char16Count only counts the actual string contents,
-    // consumedChar16Count also counts the terminator, if present
-    // (there is no terminator if the end of the buffer was reached unexpectedly).
-    size_t consumedChar16Count = 0;
+    // The terminator (if present) isn't included in this count.
     size_t char16Count = 0;
     for (size_t i = 0; i < bufferSize / sizeof(char16_t); i++) {
-        consumedChar16Count++;
         if (byteBuffer[2*i] == 0 && byteBuffer[2*i + 1] == 0) {
             break;
         }
         char16Count++;
     }
-    consumedSize = consumedChar16Count * sizeof(char16_t);
+    consumedSize = char16Count * sizeof(char16_t);
     return hsSTStringFromUTF16LE(buffer, char16Count);
 }
 

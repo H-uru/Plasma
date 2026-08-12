@@ -195,16 +195,17 @@ TEST(hsEndian, hsSTStringFromTerminatedUTF16LE)
 
     size_t consumedSize;
 
+    // With a complete terminator:
     ST::string string = hsSTStringFromTerminatedUTF16LE(buffer, bufferSize, consumedSize);
-    // consumedSize includes the terminator.
-    EXPECT_EQ(consumedSize, sizeof(kTestStringUtf16) + 2);
+    EXPECT_EQ(consumedSize, sizeof(kTestStringUtf16));
     EXPECT_EQ(string, kTestString);
 
+    // With half a terminator:
     ST::string string2 = hsSTStringFromTerminatedUTF16LE(buffer, sizeof(kTestStringUtf16) + 1, consumedSize);
-    // consumedSize does *not* count a terminator if there was none in the source buffer.
     EXPECT_EQ(consumedSize, sizeof(kTestStringUtf16));
     EXPECT_EQ(string2, kTestString);
 
+    // With no terminator:
     ST::string string3 = hsSTStringFromTerminatedUTF16LE(buffer, sizeof(kTestStringUtf16), consumedSize);
     EXPECT_EQ(consumedSize, sizeof(kTestStringUtf16));
     EXPECT_EQ(string3, kTestString);
