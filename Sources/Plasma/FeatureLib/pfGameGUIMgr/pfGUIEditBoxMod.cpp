@@ -168,6 +168,78 @@ void    pfGUIEditBoxMod::IUpdate()
     fDynTextMap->FlushToHost();
 }
 
+static inline bool IIsWordBreaker(const wchar_t c)
+{
+    if (c == L' ')
+        return true;
+    if (c == L'\0')
+        return true;
+    return false;
+}
+
+/**
+ * Check the next/previous character and adjust our position output variable accordingly.
+ */
+pfGUIEditBoxMod::CharType pfGUIEditBoxMod::IAdvanceChar(bool next, uint32_t& pos) const
+{
+    hsAssert(pos >= 0, "out of range");
+    hsAssert(pos <= wcslen(fBuffer.c_str()), "out of range");
+    hsAssert(next || pos > 0, "advanced left at start of string");
+
+    wchar_t c = next ? fBuffer[pos] : fBuffer[pos - 1];
+    if (next)
+        pos++;
+    else
+        pos--;
+    if (IIsWordBreaker(c))
+        return CharType::kWordBreaker;
+    return CharType::kNormal;
+}
+
+/**
+ * Advance the supplied position by one word left or right.
+ */
+void pfGUIEditBoxMod::IAdvanceWordFromPos(bool next, uint32_t& pos) const
+{
+    // If we're moving left, we want to move into the previous word first.
+    while (!next && pos > 0) {
+        if (IAdvanceChar(next, pos) == CharType::kNormal)
+            break;
+    }
+    // Now, keep moving until we advanced past a word breaker
+    while (next && pos < wcslen(fBuffer.c_str()) || !next && pos > 0) {
+        if (IAdvanceChar(next, pos) == CharType::kWordBreaker) {
+            // If we're moving left, we now want to stop before a word breaker, so go one back when we moved past one.
+            if (!next)
+                IAdvanceChar(true, pos);
+            break;
+        }
+    }
+}
+
+void pfGUIEditBoxMod::IDeleteChar(bool next)
+{
+    if (!next && fCursorPos > 0 || next && fCursorPos < wcslen(fBuffer.c_str())) {
+        if (!next)
+            IAdvanceChar(false, fCursorPos);
+        memmove(&fBuffer[fCursorPos], &fBuffer[fCursorPos + 1], (wcslen(&fBuffer[fCursorPos + 1]) + 1) * sizeof(wchar_t));
+    }
+}
+
+void pfGUIEditBoxMod::IDeleteWord(bool next)
+{
+    uint32_t oldCursor, newCursor;
+    oldCursor = newCursor = fCursorPos;
+    IAdvanceWordFromPos(next, newCursor);
+
+    if (oldCursor != newCursor) {
+        if (!next)
+            fCursorPos = newCursor;
+        int32_t count = next ? newCursor - oldCursor : oldCursor - newCursor;
+        memmove(&fBuffer[fCursorPos], &fBuffer[fCursorPos + count], (wcslen(&fBuffer[fCursorPos + count]) + 1) * sizeof(wchar_t));
+    }
+}
+
 void pfGUIEditBoxMod::PurgeDynaTextMapImage()
 {
     if (fDynTextMap != nullptr)
@@ -293,66 +365,34 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
                 SetCursorToEnd();
             }
             else if (key == KEY_LEFT && modifiers & pfGameGUIMgr::kCtrlDown) {
-                // Go back a word
-                if (fCursorPos > 0) {
-                    do {
-                        fCursorPos--;
-                    } while (fCursorPos > 0 && fBuffer[fCursorPos - 1] != L' ');
-                }
+                IAdvanceWordFromPos(false, fCursorPos);
             }
             else if( key == KEY_LEFT )
             {
                 if( fCursorPos > 0 )
-                    fCursorPos--;
+                    IAdvanceChar(false, fCursorPos);
             }
             else if (key == KEY_RIGHT && modifiers & pfGameGUIMgr::kCtrlDown) {
-                // Go forward a word
-                size_t end = wcslen(fBuffer.c_str());
-                if (fCursorPos < end) {
-                    do {
-                        fCursorPos++;
-                    } while (fCursorPos < end && fBuffer[fCursorPos - 1] != L' ');
-                }
+                IAdvanceWordFromPos(true, fCursorPos);
             }
             else if (key == KEY_RIGHT)
             {
-                if( fCursorPos < wcslen( fBuffer.c_str() ) )
-                    fCursorPos++;
+                if (fCursorPos < wcslen(fBuffer.c_str()))
+                    IAdvanceChar(true, fCursorPos);
             }
             else if (key == KEY_BACKSPACE && modifiers & pfGameGUIMgr::kCtrlDown) {
-                // Delete last word
-                if (fCursorPos > 0) {
-                    uint32_t removed = 0;
-                    do {
-                        fCursorPos--;
-                        removed++;
-                    } while (fCursorPos > 0 && fBuffer[fCursorPos - 1] != L' ');
-                    memmove(&fBuffer[fCursorPos], &fBuffer[fCursorPos + removed], (wcslen(&fBuffer[fCursorPos + removed]) + 1) * sizeof(wchar_t));
-                }
+                IDeleteWord(false);
             }
             else if (key == KEY_BACKSPACE)
             {
-                if( fCursorPos > 0 )
-                {
-                    fCursorPos--;
-                    memmove( &fBuffer[fCursorPos], &fBuffer[fCursorPos + 1], (wcslen( &fBuffer[fCursorPos + 1] ) + 1) * sizeof(wchar_t) );
-                }
+                IDeleteChar(false);
             }
             else if (key == KEY_DELETE && modifiers & pfGameGUIMgr::kCtrlDown) {
-                // Delete next word
-                size_t end = wcslen(fBuffer.c_str());
-                if (fCursorPos < end) {
-                    uint32_t removed = 0;
-                    do {
-                        removed++;
-                    } while (fCursorPos + removed < end && fBuffer[fCursorPos + removed - 1] != L' ');
-                    memmove(&fBuffer[fCursorPos], &fBuffer[fCursorPos + removed], (wcslen(&fBuffer[fCursorPos + removed]) + 1) * sizeof(wchar_t));
-                }
+                IDeleteWord(true);
             }
             else if (key == KEY_DELETE)
             {
-                if( fCursorPos < wcslen( fBuffer.c_str() ) )
-                    memmove( &fBuffer[fCursorPos], &fBuffer[fCursorPos + 1], (wcslen( &fBuffer[fCursorPos + 1] ) + 1) * sizeof(wchar_t) );          
+                IDeleteChar(true);
             }
             else if( key == KEY_ENTER )
             {

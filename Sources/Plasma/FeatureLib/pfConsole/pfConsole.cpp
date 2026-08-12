@@ -390,19 +390,6 @@ bool    pfConsole::MsgReceive( plMessage *msg )
 
 //// IHandleKey //////////////////////////////////////////////////////////////
 
-static inline bool IIsWordBoundary(const char c)
-{
-    if (c == ' ')
-        return true;
-    if (c == '_')
-        return true;
-    if (c == '.')
-        return true;
-    if (c == '\0')
-        return true;
-    return false;
-}
-
 void    pfConsole::IHandleKey( plKeyEventMsg *msg )
 {
     char            *c;
@@ -517,44 +504,27 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     }
     else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_LEFT)
     {
-        // Move one word back
-        if (fWorkingCursor > 0) {
-            do {
-                fWorkingCursor--;
-            } while (fWorkingCursor > 0 && !IIsWordBoundary(fWorkingLine[fWorkingCursor - 1]));
-        }
+        IAdvanceWordFromPos(false, fWorkingCursor);
     }
-    else if( msg->GetKeyCode() == KEY_LEFT )
+    else if (msg->GetKeyCode() == KEY_LEFT)
     {
-        if( fWorkingCursor > 0 )
-            fWorkingCursor--;
+        if (fWorkingCursor > 0)
+            IAdvanceChar(false, fWorkingCursor);
     }
     else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_RIGHT)
     {
-        // Move one word forward
-        size_t end = strlen(fWorkingLine);
-        if (fWorkingCursor < end) {
-            do {
-                fWorkingCursor++;
-            } while (fWorkingCursor < end && !IIsWordBoundary(fWorkingLine[fWorkingCursor - 1]));
-        }
+        IAdvanceWordFromPos(true, fWorkingCursor);
     }
     else if( msg->GetKeyCode() == KEY_RIGHT )
     {
-        if( fWorkingCursor < strlen( fWorkingLine ) )
-            fWorkingCursor++;
+        if (fWorkingCursor < strlen(fWorkingLine))
+            IAdvanceChar(true, fWorkingCursor);
     }
     else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_BACKSPACE)
     {
         // Delete last word
         if (fWorkingCursor > 0) {
-            uint32_t removed = 0;
-            do {
-                fWorkingCursor--;
-                removed++;
-            } while (fWorkingCursor > 0 && !IIsWordBoundary(fWorkingLine[fWorkingCursor - 1]));
-            memmove(&fWorkingLine[fWorkingCursor], &fWorkingLine[fWorkingCursor + removed], (strlen(&fWorkingLine[fWorkingCursor + removed]) + 1) * sizeof(char));
-
+            IDeleteWord(false);
             findAgain = false;
             findCounter = 0;
         } else if (fHelpMode)
@@ -566,15 +536,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     {
         if( fWorkingCursor > 0 )
         {
-            fWorkingCursor--;
-
-            c = &fWorkingLine[ fWorkingCursor ];
-            do
-            {
-                *c = *( c + 1 );
-                c++;
-            } while( *c != 0 );
-
+            IDeleteChar(false);
             findAgain = false;
             findCounter = 0;
         }
@@ -588,12 +550,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
         // Delete next word
         size_t end = strlen(fWorkingLine);
         if (fWorkingCursor < end) {
-            uint32_t removed = 0;
-            do {
-                removed++;
-            } while (fWorkingCursor + removed < end && !IIsWordBoundary(fWorkingLine[fWorkingCursor + removed - 1]));
-            memmove(&fWorkingLine[fWorkingCursor], &fWorkingLine[fWorkingCursor + removed], (strlen(&fWorkingLine[fWorkingCursor + removed]) + 1) * sizeof(char));
-
+            IDeleteWord(true);
             findAgain = false;
             findCounter = 0;
             IUpdateTooltip();
@@ -601,13 +558,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     }
     else if( msg->GetKeyCode() == KEY_DELETE )
     {
-        c = &fWorkingLine[ fWorkingCursor ];
-        do
-        {
-            *c = *( c + 1 );
-            c++;
-        } while( *c != 0 );
-
+        IDeleteChar(true);
         findAgain = false;
         findCounter = 0;
         IUpdateTooltip();
@@ -740,6 +691,82 @@ void    pfConsole::IHandleCharacter(const char c)
     for (i += 1; i > fWorkingCursor; --i)
         fWorkingLine[i] = fWorkingLine[i - 1];
     fWorkingLine[fWorkingCursor++] = c;
+}
+
+static inline bool IIsWordBreaker(const char c)
+{
+    if (c == ' ')
+        return true;
+    if (c == '_')
+        return true;
+    if (c == '.')
+        return true;
+    if (c == '\0')
+        return true;
+    return false;
+}
+
+/**
+ * Check the next/previous character and adjust our position output variable accordingly.
+ */
+pfConsole::CharType pfConsole::IAdvanceChar(bool next, uint32_t& pos) const
+{
+    hsAssert(pos >= 0, "out of range");
+    hsAssert(pos <= strlen(fWorkingLine), "out of range");
+    hsAssert(next || pos > 0, "advanced left at start of string");
+
+    char c = next ? fWorkingLine[pos] : fWorkingLine[pos - 1];
+    if (next)
+        pos++;
+    else
+        pos--;
+    if (IIsWordBreaker(c))
+        return CharType::kWordBreaker;
+    return CharType::kNormal;
+}
+
+/**
+ * Advance the supplied position by one word left or right.
+ */
+void pfConsole::IAdvanceWordFromPos(bool next, uint32_t& pos) const
+{
+    // If we're moving left, we want to move into the previous word first.
+    while (!next && pos > 0) {
+        if (IAdvanceChar(next, pos) == CharType::kNormal)
+            break;
+    }
+    // Now, keep moving until we advanced past a word breaker
+    while (next && pos < strlen(fWorkingLine) || !next && pos > 0) {
+        if (IAdvanceChar(next, pos) == CharType::kWordBreaker) {
+            // If we're moving left, we now want to stop before a word breaker, so go one back when we moved past one.
+            if (!next)
+                IAdvanceChar(true, pos);
+            break;
+        }
+    }
+}
+
+void pfConsole::IDeleteChar(bool next)
+{
+    if (!next && fWorkingCursor > 0 || next && fWorkingCursor < strlen(fWorkingLine)) {
+        if (!next)
+            IAdvanceChar(false, fWorkingCursor);
+        memmove(&fWorkingLine[fWorkingCursor], &fWorkingLine[fWorkingCursor + 1], (strlen(&fWorkingLine[fWorkingCursor + 1]) + 1) * sizeof(char));
+    }
+}
+
+void pfConsole::IDeleteWord(bool next)
+{
+    uint32_t oldCursor, newCursor;
+    oldCursor = newCursor = fWorkingCursor;
+    IAdvanceWordFromPos(next, newCursor);
+
+    if (oldCursor != newCursor) {
+        if (!next)
+            fWorkingCursor = newCursor;
+        int32_t count = next ? newCursor - oldCursor : oldCursor - newCursor;
+        memmove(&fWorkingLine[fWorkingCursor], &fWorkingLine[fWorkingCursor + count], (strlen(&fWorkingLine[fWorkingCursor + count]) + 1) * sizeof(char));
+    }
 }
 
 //// IAddLineCallback ////////////////////////////////////////////////////////
