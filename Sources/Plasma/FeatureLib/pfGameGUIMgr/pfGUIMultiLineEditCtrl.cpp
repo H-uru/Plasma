@@ -134,12 +134,14 @@ class pfMLScrollProc : public pfGUICtrlProcObject
 
 //// Constants ///////////////////////////////////////////////////////////////
 
+// Do not try to use these manually when typing. These are meant for rendering via Python and won't save or go over the network.
+
 constexpr wchar_t kColorCodeChar = (wchar_t)1;
 constexpr wchar_t kStyleCodeChar = (wchar_t)2;
 constexpr wchar_t kLinkCodeChar = (wchar_t)3;
-constexpr size_t kColorCodeSize = 5;
-constexpr size_t kStyleCodeSize = 3;
-constexpr size_t kLinkCodeSize = 3;
+constexpr size_t kColorCodeSize = 5; // 0x01, r, g, b, 0x01 - via InsertColor
+constexpr size_t kStyleCodeSize = 3; // 0x02, style_flag, 0x02 - via InsertStyle
+constexpr size_t kLinkCodeSize = 3; // 0x03, idx, 0x03 - via InsertLink and ClearLink at the end
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
