@@ -894,39 +894,14 @@ void ReadUnsignedFromMsg(const char16_t* curMsgPtr, unsigned* val) {
     (*val) = ((*curMsgPtr) << 16) + (*(curMsgPtr + 1));
 }
 
-//============================================================================
-bool ManifestRequestTrans::Recv (
-    const uint8_t  msg[],
-    unsigned    bytes
-) {
-    m_timeoutAtMs = hsTimer::GetMilliSeconds<uint32_t>() + NetTransGetTimeoutMs(); // Reset the timeout counter
-
-    const File2Cli_ManifestReply & reply = *(const File2Cli_ManifestReply *) msg;
-
+bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFileManifestEntry>& manifest, unsigned& numEntriesReceived)
+{
     uint32_t numFiles = reply.numFiles;
     uint32_t wcharCount = reply.wcharCount;
     const char16_t* curChar = reply.manifestData; // the pointer is not yet dereferenced here!
 
-    // tell the server we got the data
-    Cli2File_ManifestEntryAck manifestAck;
-    manifestAck.messageId = hsToLE32(kCli2File_ManifestEntryAck);
-    manifestAck.transId = hsToLE32(reply.transId);
-    manifestAck.messageBytes = hsToLE32(sizeof(manifestAck));
-    manifestAck.readerId = hsToLE32(reply.readerId);
-
-    m_conn->Send(&manifestAck, sizeof(manifestAck));
-
-    // if wcharCount is 2 or less, the data only contains the terminator "\0\0" and we
-    // don't need to convert anything (and we are done)
-    if ((IS_NET_ERROR(reply.result)) || (wcharCount <= 2)) {
-        // we have a problem... or we have nothing to so, so we're done
-        m_result    = reply.result;
-        m_state     = kTransStateComplete;
-        return true;
-    }
-
-    if (numFiles > m_manifest.size())
-        m_manifest.resize(numFiles); // reserve the space ahead of time
+    if (numFiles > manifest.size())
+        manifest.resize(numFiles); // reserve the space ahead of time
 
     // manifestData format: "clientFile\0downloadFile\0md5\0filesize\0zipsize\0flags\0...\0\0"
     bool done = false;
@@ -938,7 +913,7 @@ bool ManifestRequestTrans::Recv (
         }
 
         // copy the data over to our array (m_numEntriesReceived is the current index)
-        NetCliFileManifestEntry& entry = m_manifest[m_numEntriesReceived];
+        NetCliFileManifestEntry& entry = manifest[numEntriesReceived];
 
         // --------------------------------------------------------------------
         // read in the clientFilename
@@ -1044,16 +1019,49 @@ bool ManifestRequestTrans::Recv (
             return false; // screwy data
 
         // increment entries received
-        m_numEntriesReceived++;
-        if ((m_numEntriesReceived >= numFiles) && !done) {
+        numEntriesReceived++;
+        if (numEntriesReceived >= numFiles && !done) {
             // too much data, abort
             return false;
         }
     }
-    
+
+    return true;
+}
+
+//============================================================================
+bool ManifestRequestTrans::Recv (
+    const uint8_t  msg[],
+    unsigned    bytes
+) {
+    m_timeoutAtMs = hsTimer::GetMilliSeconds<uint32_t>() + NetTransGetTimeoutMs(); // Reset the timeout counter
+
+    const File2Cli_ManifestReply & reply = *(const File2Cli_ManifestReply *) msg;
+
+    // tell the server we got the data
+    Cli2File_ManifestEntryAck manifestAck;
+    manifestAck.messageId = hsToLE32(kCli2File_ManifestEntryAck);
+    manifestAck.transId = hsToLE32(reply.transId);
+    manifestAck.messageBytes = hsToLE32(sizeof(manifestAck));
+    manifestAck.readerId = hsToLE32(reply.readerId);
+
+    m_conn->Send(&manifestAck, sizeof(manifestAck));
+
+    // if wcharCount is 2 or less, the data only contains the terminator "\0\0" and we
+    // don't need to convert anything (and we are done)
+    if (IS_NET_ERROR(reply.result) || reply.wcharCount <= 2) {
+        // we have a problem... or we have nothing to so, so we're done
+        m_result    = reply.result;
+        m_state     = kTransStateComplete;
+        return true;
+    }
+
+    if (!IReceiveManifest(reply, m_manifest, m_numEntriesReceived)) {
+        return false;
+    }
+
     // check for completion
-    if (m_numEntriesReceived >= numFiles)
-    {
+    if (m_numEntriesReceived >= reply.numFiles) {
         // all entires received, mark as complete
         m_result    = reply.result;
         m_state     = kTransStateComplete;

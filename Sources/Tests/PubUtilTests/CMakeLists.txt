@@ -4,4 +4,5 @@ include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
 
 add_subdirectory(plLocalizationTest)
 add_subdirectory(plNetClientTest)
+add_subdirectory(plNetGameLibTest)
 add_subdirectory(plUnifiedTimeTest)
