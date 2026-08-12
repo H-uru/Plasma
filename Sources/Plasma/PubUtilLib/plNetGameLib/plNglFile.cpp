@@ -892,12 +892,16 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         manifest.resize(numFiles); // reserve the space ahead of time
 
     // manifestData format: "clientFile\0downloadFile\0md5\0filesize\0zipsize\0flags\0...\0\0"
-    bool done = false;
-    while (!done) {
-        if (wcharCount == 0)
-        {
-            done = true;
-            break;
+    while (wcharCount > 0) {
+        if (*curChar == L'\0') {
+            // we hit the terminator
+            curChar++;
+            wcharCount--;
+            // Check that there's no data after the terminator.
+            return wcharCount == 0;
+        } else if (numEntriesReceived >= numFiles) {
+            // too much data, abort
+            return false;
         }
 
         // copy the data over to our array (m_numEntriesReceived is the current index)
@@ -997,27 +1001,17 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
             return false; // screwy data
 
         // --------------------------------------------------------------------
-        // point it at either the second part of the terminator, or the next filename
+        // point it at either the next file or the terminator for the manifest
         curChar++;
         wcharCount--;
 
-        // do sanity checking
-        if (wcharCount != 0 && *curChar == L'\0') {
-            // we hit the terminator
-            if (wcharCount != 1)
-                return false; // invalid data, we shouldn't have any more
-            done = true; // we're done
-        }
-
         // increment entries received
         numEntriesReceived++;
-        if (numEntriesReceived >= numFiles && !done) {
-            // too much data, abort
-            return false;
-        }
     }
 
-    return true;
+    // Ran out of data without hitting the manifest terminator,
+    // meaning that the manifest is truncated.
+    return false;
 }
 
 //============================================================================
