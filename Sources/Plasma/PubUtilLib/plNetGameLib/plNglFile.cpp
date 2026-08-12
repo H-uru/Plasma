@@ -881,11 +881,9 @@ inline size_t FIXME_u16snlen(const char16_t* str, size_t maxlen)
 
 //============================================================================
 void ReadStringFromMsg(const char16_t* curMsgPtr, char16_t* destPtr, unsigned* length) {
-    if (!(*length)) {
-        size_t maxlen = FIXME_u16snlen(curMsgPtr, kNetDefaultStringSize - 1);   // Hacky sack
-        (*length) = maxlen;
-        destPtr[maxlen] = 0;    // Don't do this on fixed length, because there's no room for it
-    }
+    size_t maxlen = FIXME_u16snlen(curMsgPtr, kNetDefaultStringSize - 1); // Hacky sack
+    *length = maxlen;
+    destPtr[maxlen] = 0;
     memcpy(destPtr, curMsgPtr, *length * sizeof(char16_t));
 }
 
@@ -944,7 +942,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         // --------------------------------------------------------------------
         // read in the md5
         filenameLen = 32;
-        ReadStringFromMsg(curChar, entry.md5, &filenameLen);
+        memcpy(entry.md5, curChar, filenameLen * sizeof(char16_t));
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
         if ((*curChar != L'\0') || (wcharCount <= 0))
@@ -957,7 +955,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         // --------------------------------------------------------------------
         // read in the md5 for compressed files
         filenameLen = 32;
-        ReadStringFromMsg(curChar, entry.md5compressed, &filenameLen);
+        memcpy(entry.md5compressed, curChar, filenameLen * sizeof(char16_t));
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
         if ((*curChar != L'\0') || (wcharCount <= 0))
