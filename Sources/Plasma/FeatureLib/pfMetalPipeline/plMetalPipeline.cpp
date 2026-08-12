@@ -71,6 +71,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMetalVertexShader.h"
 #include "plPipeDebugFlags.h"
 #include "plPipeResReq.h"
+#include "plPipeline/pl3DPipelineSIMD.h"
 #include "plPipeline/plCubicRenderTarget.h"
 #include "plPipeline/plDebugText.h"
 #include "plPipeline/plDynamicEnvMap.h"
@@ -3968,66 +3969,6 @@ void plMetalPipeline::ISetCullMode(bool flip)
 plMetalDevice* plMetalPipeline::GetMetalDevice()  const
 {
     return &fDevice;
-}
-
-//// Local Static Stuff ///////////////////////////////////////////////////////
-
-// FIXME: CPU avatar stuff that should be evaluated once this moves onto the GPU.
-
-template <typename T>
-static inline void inlCopy(uint8_t*& src, uint8_t*& dst)
-{
-    T* src_ptr = reinterpret_cast<T*>(src);
-    T* dst_ptr = reinterpret_cast<T*>(dst);
-    *dst_ptr = *src_ptr;
-    src += sizeof(T);
-    dst += sizeof(T);
-}
-
-template <typename T>
-static inline const uint8_t* inlExtract(const uint8_t* src, T* val)
-{
-    const T* ptr = reinterpret_cast<const T*>(src);
-    *val = *ptr++;
-    return reinterpret_cast<const uint8_t*>(ptr);
-}
-
-template <>
-inline const uint8_t* inlExtract<hsPoint3>(const uint8_t* src, hsPoint3* val)
-{
-    const float* src_ptr = reinterpret_cast<const float*>(src);
-    float*       dst_ptr = reinterpret_cast<float*>(val);
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr = 1.f;
-    return reinterpret_cast<const uint8_t*>(src_ptr);
-}
-
-template <>
-inline const uint8_t* inlExtract<hsVector3>(const uint8_t* src, hsVector3* val)
-{
-    const float* src_ptr = reinterpret_cast<const float*>(src);
-    float*       dst_ptr = reinterpret_cast<float*>(val);
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr = 0.f;
-    return reinterpret_cast<const uint8_t*>(src_ptr);
-}
-
-template <typename T, size_t N>
-static inline void inlSkip(uint8_t*& src)
-{
-    src += sizeof(T) * N;
-}
-
-template <typename T>
-static inline uint8_t* inlStuff(uint8_t* dst, const T* val)
-{
-    T* ptr = reinterpret_cast<T*>(dst);
-    *ptr++ = *val;
-    return reinterpret_cast<uint8_t*>(ptr);
 }
 
 //// ISoftwareVertexBlend ///////////////////////////////////////////////////////
