@@ -144,5 +144,6 @@ template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
 ST::string hsSTStringFromUTF16LE(const void* buffer, size_t char16Count);
 ST::string hsSTStringFromTerminatedUTF16LE(const void* buffer, size_t bufferSize, size_t& consumedSize);
 std::vector<uint8_t> hsSTStringToUTF16LE(const ST::string& string);
+bool hsSTStringToFixedSizeUTF16LE(const ST::string& string, void* buffer, size_t bufferSize);
 
 #endif // hsEndian_inc

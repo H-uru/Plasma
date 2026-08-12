@@ -226,3 +226,65 @@ TEST(hsEndian, hsSTStringToUTF16LE)
     EXPECT_EQ(buffer.size(), sizeof(kTestStringUtf16));
     EXPECT_EQ(memcmp(buffer.data(), kTestStringUtf16, sizeof(kTestStringUtf16)), 0);
 }
+
+TEST(hsEndian, hsSTStringToFixedSizeUTF16LE)
+{
+    constexpr size_t bufferSize = sizeof(kTestStringUtf16) + 5;
+    // Force non-even alignment
+    alignas(char16_t) char allocation[bufferSize + 1];
+    char* buffer = allocation + 1;
+
+    // Enough space to output the full string:
+
+    memset(buffer, 0xaa, bufferSize);
+    EXPECT_TRUE(hsSTStringToFixedSizeUTF16LE(kTestString, buffer, bufferSize));
+    EXPECT_EQ(memcmp(buffer, kTestStringUtf16, sizeof(kTestStringUtf16)), 0);
+    EXPECT_EQ(memcmp(buffer + sizeof(kTestStringUtf16), "\0\0\0\0\0", 5), 0);
+
+    memset(buffer, 0xaa, bufferSize);
+    EXPECT_TRUE(hsSTStringToFixedSizeUTF16LE(kTestString, buffer, sizeof(kTestStringUtf16) + 2));
+    EXPECT_EQ(memcmp(buffer, kTestStringUtf16, sizeof(kTestStringUtf16)), 0);
+    EXPECT_EQ(memcmp(buffer + sizeof(kTestStringUtf16), "\0\0\xaa\xaa\xaa", 5), 0);
+
+    // Space for all characters except the last:
+
+    memset(buffer, 0xaa, bufferSize);
+    EXPECT_FALSE(hsSTStringToFixedSizeUTF16LE(kTestString, buffer, sizeof(kTestStringUtf16) + 1));
+    EXPECT_EQ(memcmp(buffer, kTestStringUtf16, sizeof(kTestStringUtf16) - 2), 0);
+    EXPECT_EQ(memcmp(buffer + sizeof(kTestStringUtf16) - 2, "\0\0\0\xaa\xaa\xaa\xaa", 7), 0);
+
+    memset(buffer, 0xaa, bufferSize);
+    EXPECT_FALSE(hsSTStringToFixedSizeUTF16LE(kTestString, buffer, sizeof(kTestStringUtf16)));
+    EXPECT_EQ(memcmp(buffer, kTestStringUtf16, sizeof(kTestStringUtf16) - 2), 0);
+    EXPECT_EQ(memcmp(buffer + sizeof(kTestStringUtf16) - 2, "\0\0\xaa\xaa\xaa\xaa\xaa", 7), 0);
+
+    // Space for only the first character:
+
+    memset(buffer, 0xaa, bufferSize);
+    EXPECT_FALSE(hsSTStringToFixedSizeUTF16LE(kTestString, buffer, 5));
+    EXPECT_EQ(memcmp(buffer, kTestStringUtf16, 2), 0);
+    EXPECT_EQ(memcmp(buffer + 2, "\0\0\0\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa", bufferSize - 2), 0);
+
+    memset(buffer, 0xaa, bufferSize);
+    EXPECT_FALSE(hsSTStringToFixedSizeUTF16LE(kTestString, buffer, 4));
+    EXPECT_EQ(memcmp(buffer, kTestStringUtf16, 2), 0);
+    EXPECT_EQ(memcmp(buffer + 2, "\0\0\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa", bufferSize - 2), 0);
+
+    // No space for any characters, only the terminator, at best:
+
+    memset(buffer, 0xaa, bufferSize);
+    EXPECT_FALSE(hsSTStringToFixedSizeUTF16LE(kTestString, buffer, 3));
+    EXPECT_EQ(memcmp(buffer, "\0\0\0\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa", bufferSize), 0);
+
+    memset(buffer, 0xaa, bufferSize);
+    EXPECT_FALSE(hsSTStringToFixedSizeUTF16LE(kTestString, buffer, 2));
+    EXPECT_EQ(memcmp(buffer, "\0\0\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa", bufferSize), 0);
+
+    memset(buffer, 0xaa, bufferSize);
+    EXPECT_FALSE(hsSTStringToFixedSizeUTF16LE(kTestString, buffer, 1));
+    EXPECT_EQ(memcmp(buffer, "\0\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa", bufferSize), 0);
+
+    memset(buffer, 0xaa, bufferSize);
+    EXPECT_FALSE(hsSTStringToFixedSizeUTF16LE(kTestString, buffer, 0));
+    EXPECT_EQ(memcmp(buffer, "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa", bufferSize), 0);
+}

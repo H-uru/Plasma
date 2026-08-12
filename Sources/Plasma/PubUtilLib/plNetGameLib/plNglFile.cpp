@@ -68,16 +68,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // It changes the logic by which the decision to attempt a reconnect is made.
 #define LOAD_BALANCER_HARDWARE
 
-static void StrCopyLE16(char16_t* dest, const char16_t source[], size_t chars) {
-    while ((chars > 1) && ((*dest = hsToLE16(*source++)) != 0)) {
-        --chars;
-        ++dest;
-    }
-    if (chars)
-        *dest = 0;
-}
-
-
 namespace Ngl { namespace File {
 /*****************************************************************************
 *
@@ -864,10 +854,11 @@ bool ManifestRequestTrans::Send () {
         return false;
 
     Cli2File_ManifestRequest manifestReq;
-    StrCopyLE16(manifestReq.group, m_group.to_utf16().data(), std::size(manifestReq.group));
     manifestReq.messageId = hsToLE32(kCli2File_ManifestRequest);
     manifestReq.transId = hsToLE32(m_transId);
     manifestReq.messageBytes = hsToLE32(sizeof(manifestReq));
+    bool ok = hsSTStringToFixedSizeUTF16LE(m_group, manifestReq.group, sizeof(manifestReq.group));
+    hsAssert(ok, "Requested a manifest name longer than the protocol allows - truncating...");
     manifestReq.buildId = hsToLE32(m_buildId);
 
     m_conn->Send(&manifestReq, sizeof(manifestReq));
@@ -1101,10 +1092,11 @@ bool DownloadRequestTrans::Send () {
 
     Cli2File_FileDownloadRequest filedownloadReq;
     const ST::utf16_buffer buffer = m_filename.AsString().to_utf16();
-    StrCopyLE16(filedownloadReq.filename, buffer.data(), std::size(filedownloadReq.filename));
     filedownloadReq.messageId = hsToLE32(kCli2File_FileDownloadRequest);
     filedownloadReq.transId = hsToLE32(m_transId);
     filedownloadReq.messageBytes = hsToLE32(sizeof(filedownloadReq));
+    bool ok = hsSTStringToFixedSizeUTF16LE(m_filename.AsString(), filedownloadReq.filename, sizeof(filedownloadReq.filename));
+    hsAssert(ok, "Requested a file name longer than the protocol allows - truncating...");
     filedownloadReq.buildId = hsToLE32(m_buildId);
 
     m_conn->Send(&filedownloadReq, sizeof(filedownloadReq));
