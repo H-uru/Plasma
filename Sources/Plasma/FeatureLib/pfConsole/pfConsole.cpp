@@ -392,7 +392,15 @@ bool    pfConsole::MsgReceive( plMessage *msg )
 
 static inline bool IIsWordBoundary(const char c)
 {
-    return strchr(" _.", c) != nullptr;
+    if (c == ' ')
+        return true;
+    if (c == '_')
+        return true;
+    if (c == '.')
+        return true;
+    if (c == '\0')
+        return true;
+    return false;
 }
 
 void    pfConsole::IHandleKey( plKeyEventMsg *msg )
@@ -511,7 +519,6 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     {
         // Move one word back
         if (fWorkingCursor > 0) {
-            fWorkingCursor--;
             do {
                 fWorkingCursor--;
             } while (fWorkingCursor > 0 && !IIsWordBoundary(fWorkingLine[fWorkingCursor - 1]));
