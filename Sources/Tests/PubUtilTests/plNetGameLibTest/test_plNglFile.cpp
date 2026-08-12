@@ -42,8 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <functional>
 #include <gtest/gtest.h>
+#include <string_theory/string>
 #include <string_view>
 #include <vector>
+
+#include "hsEndian.h"
 
 #include "pnNetProtocol/pnNpCli2File.h"
 
@@ -51,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetGameLib/plNglFile.h"
 
 using namespace std::literals::string_view_literals;
+using namespace ST::literals;
 
 // Can't put File2Cli_ManifestReply normally into a std::unique_ptr
 // because of the variable-size array field,
@@ -68,6 +72,9 @@ static std::unique_ptr<File2Cli_ManifestReply, ManifestReplyDeleter> IMakeManife
     uint8_t* replyData = new uint8_t[replySize];
 
     auto reply = reinterpret_cast<File2Cli_ManifestReply*>(replyData);
+    // In the real code, all of these fields are converted to native byte order
+    // before the message is passed to IReceiveManifest,
+    // so we also store them in native byte order here.
     reply->messageBytes = replySize;
     reply->messageId = kFile2Cli_ManifestReply;
     reply->transId = 42;
@@ -75,7 +82,12 @@ static std::unique_ptr<File2Cli_ManifestReply, ManifestReplyDeleter> IMakeManife
     reply->readerId = 42;
     reply->numFiles = numFiles;
     reply->wcharCount = manifestData.size();
-    memcpy(reply->manifestData, manifestData.data(), manifestSize);
+
+    // The real code leaves manifestData as little-endian, unlike the other fields,
+    // so we have to convert the test data to little-endian as well.
+    for (size_t i = 0; i < manifestData.size(); i++) {
+        reply->manifestData[i] = hsToLE16(manifestData[i]);
+    }
 
     return std::unique_ptr<File2Cli_ManifestReply, ManifestReplyDeleter>(reply, s_manifestReplyDeleter);
 }
@@ -94,10 +106,10 @@ TEST(plNglFile, IReceiveManifest_OneFile)
     EXPECT_EQ(numEntriesReceived, 1);
     EXPECT_EQ(manifest.size(), 1);
 
-    EXPECT_EQ(std::u16string_view(manifest[0].clientName), u"clientName"sv);
-    EXPECT_EQ(std::u16string_view(manifest[0].downloadName), u"downloadName"sv);
-    EXPECT_EQ(std::u16string_view(manifest[0].md5, std::size(manifest[0].md5)), u"d41d8cd98f00b204e9800998ecf8427e"sv);
-    EXPECT_EQ(std::u16string_view(manifest[0].md5compressed, std::size(manifest[0].md5compressed)), u"d1457b72c3fb323a2671125aef3eab5d"sv);
+    EXPECT_EQ(manifest[0].clientName, "clientName"_st);
+    EXPECT_EQ(manifest[0].downloadName, "downloadName"_st);
+    EXPECT_EQ(manifest[0].md5, "d41d8cd98f00b204e9800998ecf8427e"_st);
+    EXPECT_EQ(manifest[0].md5compressed, "d1457b72c3fb323a2671125aef3eab5d"_st);
     EXPECT_EQ(manifest[0].fileSize, 0x123456);
     EXPECT_EQ(manifest[0].zipSize, 0x789a);
     EXPECT_EQ(manifest[0].flags, 0xffeeccdd);
@@ -119,26 +131,26 @@ TEST(plNglFile, IReceiveManifest_ThreeFiles)
     EXPECT_EQ(numEntriesReceived, 3);
     EXPECT_EQ(manifest.size(), 3);
 
-    EXPECT_EQ(std::u16string_view(manifest[0].clientName), u"client0"sv);
-    EXPECT_EQ(std::u16string_view(manifest[0].downloadName), u"download0"sv);
-    EXPECT_EQ(std::u16string_view(manifest[0].md5, std::size(manifest[0].md5)), u"ddddddddddddddddddddddddddddddd0"sv);
-    EXPECT_EQ(std::u16string_view(manifest[0].md5compressed, std::size(manifest[0].md5compressed)), u"ccccccccccccccccccccccccccccccc0"sv);
+    EXPECT_EQ(manifest[0].clientName, "client0"_st);
+    EXPECT_EQ(manifest[0].downloadName, "download0"_st);
+    EXPECT_EQ(manifest[0].md5, "ddddddddddddddddddddddddddddddd0"_st);
+    EXPECT_EQ(manifest[0].md5compressed, "ccccccccccccccccccccccccccccccc0"_st);
     EXPECT_EQ(manifest[0].fileSize, 0x100020);
     EXPECT_EQ(manifest[0].zipSize, 0x300040);
     EXPECT_EQ(manifest[0].flags, 0x500060);
 
-    EXPECT_EQ(std::u16string_view(manifest[1].clientName), u"client1"sv);
-    EXPECT_EQ(std::u16string_view(manifest[1].downloadName), u"download1"sv);
-    EXPECT_EQ(std::u16string_view(manifest[1].md5, std::size(manifest[1].md5)), u"ddddddddddddddddddddddddddddddd1"sv);
-    EXPECT_EQ(std::u16string_view(manifest[1].md5compressed, std::size(manifest[1].md5compressed)), u"ccccccccccccccccccccccccccccccc1"sv);
+    EXPECT_EQ(manifest[1].clientName, "client1"_st);
+    EXPECT_EQ(manifest[1].downloadName, "download1"_st);
+    EXPECT_EQ(manifest[1].md5, "ddddddddddddddddddddddddddddddd1"_st);
+    EXPECT_EQ(manifest[1].md5compressed, "ccccccccccccccccccccccccccccccc1"_st);
     EXPECT_EQ(manifest[1].fileSize, 0x110021);
     EXPECT_EQ(manifest[1].zipSize, 0x310041);
     EXPECT_EQ(manifest[1].flags, 0x510061);
 
-    EXPECT_EQ(std::u16string_view(manifest[2].clientName), u"client2"sv);
-    EXPECT_EQ(std::u16string_view(manifest[2].downloadName), u"download2"sv);
-    EXPECT_EQ(std::u16string_view(manifest[2].md5, std::size(manifest[2].md5)), u"ddddddddddddddddddddddddddddddd2"sv);
-    EXPECT_EQ(std::u16string_view(manifest[2].md5compressed, std::size(manifest[2].md5compressed)), u"ccccccccccccccccccccccccccccccc2"sv);
+    EXPECT_EQ(manifest[2].clientName, "client2"_st);
+    EXPECT_EQ(manifest[2].downloadName, "download2"_st);
+    EXPECT_EQ(manifest[2].md5, "ddddddddddddddddddddddddddddddd2"_st);
+    EXPECT_EQ(manifest[2].md5compressed, "ccccccccccccccccccccccccccccccc2"_st);
     EXPECT_EQ(manifest[2].fileSize, 0x120022);
     EXPECT_EQ(manifest[2].zipSize, 0x320042);
     EXPECT_EQ(manifest[2].flags, 0x520062);
@@ -159,18 +171,18 @@ TEST(plNglFile, IReceiveManifest_ThreeFilesChunked)
     EXPECT_EQ(numEntriesReceived, 2);
     EXPECT_EQ(manifest.size(), 3); // IReceiveManifest resizes the manifest vector ahead of time
 
-    EXPECT_EQ(std::u16string_view(manifest[0].clientName), u"client0"sv);
-    EXPECT_EQ(std::u16string_view(manifest[0].downloadName), u"download0"sv);
-    EXPECT_EQ(std::u16string_view(manifest[0].md5, std::size(manifest[0].md5)), u"ddddddddddddddddddddddddddddddd0"sv);
-    EXPECT_EQ(std::u16string_view(manifest[0].md5compressed, std::size(manifest[0].md5compressed)), u"ccccccccccccccccccccccccccccccc0"sv);
+    EXPECT_EQ(manifest[0].clientName, "client0"_st);
+    EXPECT_EQ(manifest[0].downloadName, "download0"_st);
+    EXPECT_EQ(manifest[0].md5, "ddddddddddddddddddddddddddddddd0"_st);
+    EXPECT_EQ(manifest[0].md5compressed, "ccccccccccccccccccccccccccccccc0"_st);
     EXPECT_EQ(manifest[0].fileSize, 0x100020);
     EXPECT_EQ(manifest[0].zipSize, 0x300040);
     EXPECT_EQ(manifest[0].flags, 0x500060);
 
-    EXPECT_EQ(std::u16string_view(manifest[1].clientName), u"client1"sv);
-    EXPECT_EQ(std::u16string_view(manifest[1].downloadName), u"download1"sv);
-    EXPECT_EQ(std::u16string_view(manifest[1].md5, std::size(manifest[1].md5)), u"ddddddddddddddddddddddddddddddd1"sv);
-    EXPECT_EQ(std::u16string_view(manifest[1].md5compressed, std::size(manifest[1].md5compressed)), u"ccccccccccccccccccccccccccccccc1"sv);
+    EXPECT_EQ(manifest[1].clientName, "client1"_st);
+    EXPECT_EQ(manifest[1].downloadName, "download1"_st);
+    EXPECT_EQ(manifest[1].md5, "ddddddddddddddddddddddddddddddd1"_st);
+    EXPECT_EQ(manifest[1].md5compressed, "ccccccccccccccccccccccccccccccc1"_st);
     EXPECT_EQ(manifest[1].fileSize, 0x110021);
     EXPECT_EQ(manifest[1].zipSize, 0x310041);
     EXPECT_EQ(manifest[1].flags, 0x510061);
@@ -184,10 +196,10 @@ TEST(plNglFile, IReceiveManifest_ThreeFilesChunked)
     EXPECT_EQ(numEntriesReceived, 3);
     EXPECT_EQ(manifest.size(), 3);
 
-    EXPECT_EQ(std::u16string_view(manifest[2].clientName), u"client2"sv);
-    EXPECT_EQ(std::u16string_view(manifest[2].downloadName), u"download2"sv);
-    EXPECT_EQ(std::u16string_view(manifest[2].md5, std::size(manifest[2].md5)), u"ddddddddddddddddddddddddddddddd2"sv);
-    EXPECT_EQ(std::u16string_view(manifest[2].md5compressed, std::size(manifest[2].md5compressed)), u"ccccccccccccccccccccccccccccccc2"sv);
+    EXPECT_EQ(manifest[2].clientName, "client2"_st);
+    EXPECT_EQ(manifest[2].downloadName, "download2"_st);
+    EXPECT_EQ(manifest[2].md5, "ddddddddddddddddddddddddddddddd2"_st);
+    EXPECT_EQ(manifest[2].md5compressed, "ccccccccccccccccccccccccccccccc2"_st);
     EXPECT_EQ(manifest[2].fileSize, 0x120022);
     EXPECT_EQ(manifest[2].zipSize, 0x320042);
     EXPECT_EQ(manifest[2].flags, 0x520062);

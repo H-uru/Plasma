@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <algorithm>
 #include <mutex>
-#include <string>
 #include <string_theory/string>
 #include <utility>
 
@@ -746,10 +745,8 @@ bool CliFileConn::Recv_ManifestReply (
     msg->readerId = hsToLE32(msg->readerId);
     msg->numFiles = hsToLE32(msg->numFiles);
     msg->wcharCount = hsToLE32(msg->wcharCount);
-
-    for (size_t i = 0; i < msg->wcharCount; i++) {
-        msg->manifestData[i] = hsToLE16(msg->manifestData[i]);
-    }
+    // Intentionally don't convert manifestData to native byte order yet.
+    // IReceiveManifest later converts the byte order of each field in the manifest individually.
 
     NetTransRecv(msg->transId, (const uint8_t *)msg, msg->messageBytes);
 
@@ -871,26 +868,18 @@ void ManifestRequestTrans::Post () {
     m_callback(m_result, m_manifest);
 }
 
-// Neither char_traits nor C's string library have a "strnlen" equivalent for
-// char16_t strings...
-inline size_t FIXME_u16snlen(const char16_t* str, size_t maxlen)
-{
-    const char16_t* end = std::char_traits<char16_t>::find(str, maxlen, 0);
-    return end ? size_t(end - str) : maxlen;
-}
-
 //============================================================================
-void ReadStringFromMsg(const char16_t* curMsgPtr, char16_t* destPtr, size_t* length)
+ST::string ReadStringFromMsg(const char16_t* curMsgPtr, size_t* length)
 {
-    size_t maxlen = FIXME_u16snlen(curMsgPtr, kNetDefaultStringSize - 1); // Hacky sack
-    *length = maxlen;
-    destPtr[maxlen] = 0;
-    memcpy(destPtr, curMsgPtr, *length * sizeof(char16_t));
+    size_t consumedSize;
+    ST::string res = hsSTStringFromTerminatedUTF16LE(curMsgPtr, (kNetDefaultStringSize - 1) * sizeof(char16_t), consumedSize);
+    *length = consumedSize / sizeof(char16_t);
+    return res;
 }
 
 //============================================================================
 void ReadUnsignedFromMsg(const char16_t* curMsgPtr, unsigned* val) {
-    (*val) = ((*curMsgPtr) << 16) + (*(curMsgPtr + 1));
+    *val = (hsToLE16(*curMsgPtr) << 16) + hsToLE16(*(curMsgPtr + 1));
 }
 
 bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFileManifestEntry>& manifest, unsigned& numEntriesReceived)
@@ -917,7 +906,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         // --------------------------------------------------------------------
         // read in the clientFilename
         size_t filenameLen = 0;
-        ReadStringFromMsg(curChar, entry.clientName, &filenameLen);
+        entry.clientName = ReadStringFromMsg(curChar, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
         if ((*curChar != L'\0') || (wcharCount <= 0))
@@ -930,7 +919,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         // --------------------------------------------------------------------
         // read in the downloadFilename
         filenameLen = 0;
-        ReadStringFromMsg(curChar, entry.downloadName, &filenameLen);
+        entry.downloadName = ReadStringFromMsg(curChar, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
         if ((*curChar != L'\0') || (wcharCount <= 0))
@@ -943,7 +932,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         // --------------------------------------------------------------------
         // read in the md5
         filenameLen = 32;
-        memcpy(entry.md5, curChar, filenameLen * sizeof(char16_t));
+        entry.md5 = hsSTStringFromUTF16LE(curChar, filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
         if ((*curChar != L'\0') || (wcharCount <= 0))
@@ -956,7 +945,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         // --------------------------------------------------------------------
         // read in the md5 for compressed files
         filenameLen = 32;
-        memcpy(entry.md5compressed, curChar, filenameLen * sizeof(char16_t));
+        entry.md5compressed = hsSTStringFromUTF16LE(curChar, filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
         if ((*curChar != L'\0') || (wcharCount <= 0))
