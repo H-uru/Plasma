@@ -204,3 +204,29 @@ TEST(plNglFile, IReceiveManifest_ThreeFilesChunked)
     EXPECT_EQ(manifest[2].zipSize, 0x320042);
     EXPECT_EQ(manifest[2].flags, 0x520062);
 }
+
+TEST(plNglFile, IReceiveManifest_Truncated)
+{
+    std::vector<NetCliFileManifestEntry> manifest;
+    unsigned numEntriesReceived = 0;
+
+    auto reply = IMakeManifestReply(
+        1,
+        u"clientName\0downloadName\0d41d8cd98f00b204e9800998ecf8427e\0d1457b72c3fb323a2671125aef3eab5d\0\u0012\u3456\0\u0000\u789a\0\uffee\uccdd\0"sv
+        u"\0"sv
+    );
+
+    reply->wcharCount--;
+    EXPECT_FALSE(Ngl::File::IReceiveManifest(*reply, manifest, numEntriesReceived));
+    // If only the manifest terminator is missing, the entry itself is read fully.
+    EXPECT_EQ(numEntriesReceived, 1);
+
+    // wcharCount <= 2 is currently special-cased outside of IReceiveManifest, so ignore those cases for now.
+    while (reply->wcharCount > 3) {
+        reply->wcharCount--;
+        manifest.clear();
+        numEntriesReceived = 0;
+        EXPECT_FALSE(Ngl::File::IReceiveManifest(*reply, manifest, numEntriesReceived));
+        EXPECT_EQ(numEntriesReceived, 0);
+    }
+}

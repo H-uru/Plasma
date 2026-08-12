@@ -869,10 +869,10 @@ void ManifestRequestTrans::Post () {
 }
 
 //============================================================================
-ST::string ReadStringFromMsg(const char16_t* curMsgPtr, size_t* length)
+ST::string ReadStringFromMsg(const char16_t* curMsgPtr, size_t msgChar16Count, size_t* length)
 {
     size_t consumedSize;
-    ST::string res = hsSTStringFromTerminatedUTF16LE(curMsgPtr, (kNetDefaultStringSize - 1) * sizeof(char16_t), consumedSize);
+    ST::string res = hsSTStringFromTerminatedUTF16LE(curMsgPtr, msgChar16Count * sizeof(char16_t), consumedSize);
     *length = consumedSize / sizeof(char16_t);
     return res;
 }
@@ -906,10 +906,10 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         // --------------------------------------------------------------------
         // read in the clientFilename
         size_t filenameLen = 0;
-        entry.clientName = ReadStringFromMsg(curChar, &filenameLen);
+        entry.clientName = ReadStringFromMsg(curChar, wcharCount, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wcharCount <= 0))
+        if (wcharCount == 0 || *curChar != L'\0')
             return false; // something is screwy, abort and disconnect
 
         // point it at the downloadFile
@@ -919,10 +919,10 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         // --------------------------------------------------------------------
         // read in the downloadFilename
         filenameLen = 0;
-        entry.downloadName = ReadStringFromMsg(curChar, &filenameLen);
+        entry.downloadName = ReadStringFromMsg(curChar, wcharCount, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wcharCount <= 0))
+        if (wcharCount == 0 || *curChar != L'\0')
             return false; // something is screwy, abort and disconnect
 
         // point it at the md5
@@ -932,10 +932,13 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         // --------------------------------------------------------------------
         // read in the md5
         filenameLen = 32;
+        if (wcharCount < filenameLen) {
+            return false; // something is screwy, abort and disconnect
+        }
         entry.md5 = hsSTStringFromUTF16LE(curChar, filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wcharCount <= 0))
+        if (wcharCount == 0 || *curChar != L'\0')
             return false; // something is screwy, abort and disconnect
 
         // point it at the md5 for compressed files
@@ -945,10 +948,13 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         // --------------------------------------------------------------------
         // read in the md5 for compressed files
         filenameLen = 32;
+        if (wcharCount < filenameLen) {
+            return false; // something is screwy, abort and disconnect
+        }
         entry.md5compressed = hsSTStringFromUTF16LE(curChar, filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wcharCount <= 0))
+        if (wcharCount == 0 || *curChar != L'\0')
             return false; // something is screwy, abort and disconnect
 
         // point it at the first part of the filesize value (format: 0xHHHHLLLL)
@@ -961,7 +967,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         ReadUnsignedFromMsg(curChar, &entry.fileSize);
         curChar += 2;
         wcharCount -= 2;
-        if ((*curChar != L'\0') || (wcharCount <= 0))
+        if (wcharCount == 0 || *curChar != L'\0')
             return false; // screwy data
 
         // point it at the first part of the zipsize value (format: 0xHHHHLLLL)
@@ -974,7 +980,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         ReadUnsignedFromMsg(curChar, &entry.zipSize);
         curChar += 2;
         wcharCount -= 2;
-        if ((*curChar != L'\0') || (wcharCount <= 0))
+        if (wcharCount == 0 || *curChar != L'\0')
             return false; // screwy data
 
         // point it at the first part of the flags value (format: 0xHHHHLLLL)
@@ -987,7 +993,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         ReadUnsignedFromMsg(curChar, &entry.flags);
         curChar += 2;
         wcharCount -= 2;
-        if ((*curChar != L'\0') || (wcharCount <= 0))
+        if (wcharCount == 0 || *curChar != L'\0')
             return false; // screwy data
 
         // --------------------------------------------------------------------
@@ -996,15 +1002,12 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         wcharCount--;
 
         // do sanity checking
-        if (*curChar == L'\0') {
+        if (wcharCount != 0 && *curChar == L'\0') {
             // we hit the terminator
             if (wcharCount != 1)
                 return false; // invalid data, we shouldn't have any more
             done = true; // we're done
         }
-        else if (wcharCount < 14)
-            // we must have at least three 1-char strings, three nulls, three 32-bit ints, and 2-char terminator left (3+3+6+2)
-            return false; // screwy data
 
         // increment entries received
         numEntriesReceived++;
