@@ -2862,13 +2862,13 @@ bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAut
     const char16_t* curChar = reply.fileData;
     // Special case: 0 or 2 terminator chars are also accepted as a file list with 0 files,
     // even though following the pattern, it should be a single terminator.
-    if (wcharCount == 0 || (wcharCount == 2 && curChar[0] == L'\0' && curChar[1] == L'\0')) {
+    if (wcharCount == 0 || (wcharCount == 2 && curChar[0] == 0 && curChar[1] == 0)) {
         fileInfoArray.clear();
         return true;
     } else {
         // fileData format: "filename\0size\0filename\0size\0...\0\0"
         while (wcharCount > 0) {
-            if (*curChar == L'\0') {
+            if (*curChar == 0) {
                 // we hit the terminator
                 curChar++;
                 wcharCount--;
@@ -2883,7 +2883,7 @@ bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAut
             unsigned filenameLen = filenameConsumed / sizeof(char16_t);
             curChar += filenameLen; // advance the pointer
             wcharCount -= filenameLen; // keep track of the amount remaining
-            if (wcharCount == 0 || *curChar != L'\0')
+            if (wcharCount == 0 || *curChar != 0)
                 return false; // something is screwy, abort and disconnect
 
             curChar++; // point it at the first part of the size value (format: 0xHHHHLLLL)
@@ -2893,7 +2893,7 @@ bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAut
             unsigned size = (hsToLE16(*curChar) << 16) + hsToLE16(*(curChar + 1));
             curChar += 2;
             wcharCount -= 2;
-            if (wcharCount == 0 || *curChar != L'\0')
+            if (wcharCount == 0 || *curChar != 0)
                 return false; // screwy data
 
             // save the data in our array

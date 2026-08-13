@@ -893,13 +893,13 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
 
     // Special case: 0 or 2 terminator chars are also accepted as a manifest with 0 files,
     // even though following the pattern, it should be a single terminator.
-    if (wcharCount == 0 || (wcharCount == 2 && curChar[0] == L'\0' && curChar[1] == L'\0')) {
+    if (wcharCount == 0 || (wcharCount == 2 && curChar[0] == 0 && curChar[1] == 0)) {
         return true;
     }
 
     // manifestData format: "clientName\0downloadName\0md5\0md5compressed\0fileSize\0zipSize\0flags\0...\0\0"
     while (wcharCount > 0) {
-        if (*curChar == L'\0') {
+        if (*curChar == 0) {
             // we hit the terminator
             curChar++;
             wcharCount--;
@@ -919,7 +919,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         entry.clientName = ReadStringFromMsg(curChar, wcharCount, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
-        if (wcharCount == 0 || *curChar != L'\0')
+        if (wcharCount == 0 || *curChar != 0)
             return false; // something is screwy, abort and disconnect
 
         // point it at the downloadFile
@@ -932,7 +932,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         entry.downloadName = ReadStringFromMsg(curChar, wcharCount, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
-        if (wcharCount == 0 || *curChar != L'\0')
+        if (wcharCount == 0 || *curChar != 0)
             return false; // something is screwy, abort and disconnect
 
         // point it at the md5
@@ -948,7 +948,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         entry.md5 = hsSTStringFromUTF16LE(curChar, filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
-        if (wcharCount == 0 || *curChar != L'\0')
+        if (wcharCount == 0 || *curChar != 0)
             return false; // something is screwy, abort and disconnect
 
         // point it at the md5 for compressed files
@@ -964,7 +964,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         entry.md5compressed = hsSTStringFromUTF16LE(curChar, filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
-        if (wcharCount == 0 || *curChar != L'\0')
+        if (wcharCount == 0 || *curChar != 0)
             return false; // something is screwy, abort and disconnect
 
         // point it at the first part of the filesize value (format: 0xHHHHLLLL)
@@ -977,7 +977,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         ReadUnsignedFromMsg(curChar, &entry.fileSize);
         curChar += 2;
         wcharCount -= 2;
-        if (wcharCount == 0 || *curChar != L'\0')
+        if (wcharCount == 0 || *curChar != 0)
             return false; // screwy data
 
         // point it at the first part of the zipsize value (format: 0xHHHHLLLL)
@@ -990,7 +990,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         ReadUnsignedFromMsg(curChar, &entry.zipSize);
         curChar += 2;
         wcharCount -= 2;
-        if (wcharCount == 0 || *curChar != L'\0')
+        if (wcharCount == 0 || *curChar != 0)
             return false; // screwy data
 
         // point it at the first part of the flags value (format: 0xHHHHLLLL)
@@ -1003,7 +1003,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
         ReadUnsignedFromMsg(curChar, &entry.flags);
         curChar += 2;
         wcharCount -= 2;
-        if (wcharCount == 0 || *curChar != L'\0')
+        if (wcharCount == 0 || *curChar != 0)
             return false; // screwy data
 
         // --------------------------------------------------------------------
