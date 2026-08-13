@@ -1,6 +1,7 @@
 ## Indentation
 
-Always use spaces, not tabs.  4 spaces indent a block.  Continuation can be aligned to the previous line, or with double-indent:
+Always use spaces, not tabs.  4 spaces indent a block.  Continuation can be
+aligned to the previous line, or with double-indent:
 
 ```c++
 DoSomething(arg1, arg2, arg3,
@@ -16,7 +17,8 @@ DoSomethingElseWithLongFunctionName(
 
 ### Functions/Namespaces/Classes
 
-New line for opening brace.  Visibility specifiers are aligned with the container's braces.
+New line for opening brace.  Visibility specifiers are aligned with the
+container's braces.
 
 ```c++
 namespace plFoo
@@ -58,7 +60,8 @@ if (SomeLongCondition(x, y)
 
 ### Single-line blocks
 
-Braces are optional.  It is **never** acceptable to put a one-line block on the same line as the if statement.
+Braces are optional.  It is **never** acceptable to put a one-line block on the
+same line as the if statement.
 
 ```c++
 if (x < y)
@@ -80,7 +83,8 @@ void plFoo::Bar(int x)
 
 ## Switch statements
 
-Cases align with switch statement.  Braces are indented (excluding the ```break```) and used only when necessary.  Always include default, even if it is empty.
+Cases align with switch statement.  Braces are indented (excluding the `break`)
+and used only when necessary.  Always include default, even if it is empty.
 
 ```c++
 switch (condition) {
@@ -118,7 +122,9 @@ plMyOtherKlass::plMyOtherKlass(int x)
 
 ## Type Declarations
 
-Pointers and references bind to the type.  Do not put more than one pointer or reference declaration in the same line.  The first const is on the left of the type.
+Pointers and references bind to the type.  Do not put more than one pointer or
+reference declaration in the same line.  The first const is on the left of the
+type.
 
 ```c++
 unsigned int x;
@@ -197,9 +203,14 @@ void Foo(const _T& x)
 
 ## Naming Convention
 
-Public function names should start with an upper case letter, and then be camelCase.  Classes should have a prefix (usually 'pl') and then be followed by camelCase.
+Public function names should start with an upper case letter, and then be
+camelCase.  Classes should have a prefix (usually 'pl') and then be followed by
+camelCase.
 
-Member variables should start with an 'f' ("field") and then be camelCase.  Global variables should be avoided, but may use 'g' followed by camelCase.  Static variables should start with an 's'.  Local variables and parameters have no prefix.
+Member variables should start with an 'f' ("field") and then be camelCase.
+Global variables should be avoided, but may use 'g' followed by camelCase.
+Static variables should start with an 's'.  Local variables and parameters have
+no prefix.
 
 ```c++
 class plKlass
@@ -223,7 +234,9 @@ void Bar(int x, int y)
 
 ## Spacing
 
-Function calls and declarations should have no space before parens.  Control flow statements should have a space between the keyword and the parens.  Do not use parens around a ```return``` statement's parameter.
+Function calls and declarations should have no space before parens.  Control
+flow statements should have a space between the keyword and the parens.  Do not
+use parens around a `return` statement's parameter.
 
 ```c++
 int Foo(int x)
@@ -261,7 +274,8 @@ for (const auto& x : myList)
 
 ## Labels and goto
 
-Just Say No (tm).  It is acceptable to use other control flow tricks if absolutely positively necessary.
+Just Say No (tm).  It is acceptable to use other control flow tricks if
+absolutely positively necessary.
 
 ```c++
 do {
