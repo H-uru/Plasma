@@ -98,10 +98,10 @@ TEST(plNglFile, IReceiveManifest_Empty)
     unsigned numEntriesReceived = 0;
 
     // wcharCount == 0 currently special-cased outside of IReceiveManifest
-    //auto reply_0 = IMakeManifestReply(0, u""sv);
-    //EXPECT_TRUE(Ngl::File::IReceiveManifest(*reply_0, manifest, numEntriesReceived));
-    //EXPECT_EQ(numEntriesReceived, 0);
-    //EXPECT_TRUE(manifest.empty());
+    auto reply_0 = IMakeManifestReply(0, u""sv);
+    EXPECT_TRUE(Ngl::File::IReceiveManifest(*reply_0, manifest, numEntriesReceived));
+    EXPECT_EQ(numEntriesReceived, 0);
+    EXPECT_TRUE(manifest.empty());
 
     auto reply_1 = IMakeManifestReply(0, u"\0"sv);
     EXPECT_TRUE(Ngl::File::IReceiveManifest(*reply_1, manifest, numEntriesReceived));
@@ -109,10 +109,10 @@ TEST(plNglFile, IReceiveManifest_Empty)
     EXPECT_TRUE(manifest.empty());
 
     // wcharCount == 2 currently special-cased outside of IReceiveManifest
-    //auto reply_2 = IMakeManifestReply(0, u"\0\0"sv);
-    //EXPECT_TRUE(Ngl::File::IReceiveManifest(*reply_2, manifest, numEntriesReceived));
-    //EXPECT_EQ(numEntriesReceived, 0);
-    //EXPECT_TRUE(manifest.empty());
+    auto reply_2 = IMakeManifestReply(0, u"\0\0"sv);
+    EXPECT_TRUE(Ngl::File::IReceiveManifest(*reply_2, manifest, numEntriesReceived));
+    EXPECT_EQ(numEntriesReceived, 0);
+    EXPECT_TRUE(manifest.empty());
 }
 
 TEST(plNglFile, IReceiveManifest_OneFile)
@@ -244,8 +244,8 @@ TEST(plNglFile, IReceiveManifest_Truncated)
     // If only the manifest terminator is missing, the entry itself is read fully.
     EXPECT_EQ(numEntriesReceived, 1);
 
-    // wcharCount <= 2 is currently special-cased outside of IReceiveManifest, so ignore those cases for now.
-    while (reply->wcharCount > 3) {
+    // Stop before wcharCount == 0, which is a valid empty manifest.
+    while (reply->wcharCount > 1) {
         reply->wcharCount--;
         manifest.clear();
         numEntriesReceived = 0;

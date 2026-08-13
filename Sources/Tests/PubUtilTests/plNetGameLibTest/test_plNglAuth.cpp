@@ -148,7 +148,7 @@ TEST(plNglAuth, IReceiveFileList_Truncated)
         u"\0"sv
     );
 
-    // wcharCount == 2 is special-cased as valid regardless of contents, so stop there.
+    // Stop before wcharCount == 0, which is a valid empty manifest.
     while (reply->wcharCount > 3) {
         reply->wcharCount--;
         fileInfoArray.clear();

@@ -2860,9 +2860,9 @@ bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAut
 {
     uint32_t wcharCount = reply.wcharCount;
     const char16_t* curChar = reply.fileData;
-    // if wcharCount is 2, the data only contains the terminator "\0\0" and we
-    // don't need to convert anything
-    if (wcharCount == 0 || wcharCount == 2) {
+    // Special case: 0 or 2 terminator chars are also accepted as a file list with 0 files,
+    // even though following the pattern, it should be a single terminator.
+    if (wcharCount == 0 || (wcharCount == 2 && curChar[0] == L'\0' && curChar[1] == L'\0')) {
         fileInfoArray.clear();
         return true;
     } else {

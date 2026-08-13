@@ -891,6 +891,12 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
     if (numFiles > manifest.size())
         manifest.resize(numFiles); // reserve the space ahead of time
 
+    // Special case: 0 or 2 terminator chars are also accepted as a manifest with 0 files,
+    // even though following the pattern, it should be a single terminator.
+    if (wcharCount == 0 || (wcharCount == 2 && curChar[0] == L'\0' && curChar[1] == L'\0')) {
+        return true;
+    }
+
     // manifestData format: "clientName\0downloadName\0md5\0md5compressed\0fileSize\0zipSize\0flags\0...\0\0"
     while (wcharCount > 0) {
         if (*curChar == L'\0') {
@@ -1032,10 +1038,8 @@ bool ManifestRequestTrans::Recv (
 
     m_conn->Send(&manifestAck, sizeof(manifestAck));
 
-    // if wcharCount is 2 or less, the data only contains the terminator "\0\0" and we
-    // don't need to convert anything (and we are done)
-    if (IS_NET_ERROR(reply.result) || reply.wcharCount <= 2) {
-        // we have a problem... or we have nothing to so, so we're done
+    if (IS_NET_ERROR(reply.result)) {
+        // we have a problem...
         m_result    = reply.result;
         m_state     = kTransStateComplete;
         return true;
