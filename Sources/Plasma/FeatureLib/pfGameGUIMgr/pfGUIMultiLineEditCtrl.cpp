@@ -1292,8 +1292,8 @@ bool pfGUIMultiLineEditCtrl::IAdvanceWordFromPos(bool next, int32_t& pos) const
 {
     bool hitCtrlCode = false;
 
-    // If we're moving left, we want to move into the previous word first.
-    while (!next && pos > 0) {
+    // We want to move into the next/previous word first.
+    while (next && pos < (int32_t)fBuffer.size() - 1  || !next && pos > 0) {
         CharType charType = IAdvanceChar(next, pos);
         hitCtrlCode |= charType == CharType::kControlCode;
         if (charType == CharType::kNormal)
@@ -1306,7 +1306,16 @@ bool pfGUIMultiLineEditCtrl::IAdvanceWordFromPos(bool next, int32_t& pos) const
         if (charType == CharType::kWordBreaker) {
             // If we're moving left, we now want to stop before a word breaker, so go one back when we moved past one.
             if (!next)
-              IAdvanceChar(true, pos);
+                IAdvanceChar(true, pos);
+            break;
+        }
+    }
+    // Lastly, if moving right, we also wanna go to the end of the sequence if we have multiple word breakers in a row.
+    while (next && pos < (int32_t)fBuffer.size() - 1) {
+        CharType charType = IAdvanceChar(next, pos);
+        hitCtrlCode |= charType == CharType::kControlCode;
+        if (charType != CharType::kWordBreaker) {
+            IAdvanceChar(false, pos); // One back
             break;
         }
     }
@@ -1567,14 +1576,14 @@ void    pfGUIMultiLineEditCtrl::DeleteChar()
  */
 void pfGUIMultiLineEditCtrl::DeleteWord(bool next)
 {
-    int32_t oldCursor, newCursor;
-    oldCursor = newCursor = fCursorPos;
-    bool forceUpdate = IAdvanceWordFromPos(next, newCursor);
+    int32_t cursor, deletePos;
+    cursor = deletePos = fCursorPos;
+    bool forceUpdate = IAdvanceWordFromPos(next, deletePos);
 
-    if (oldCursor != newCursor) {
+    if (cursor != deletePos) {
         if (!next)
-            IMoveCursorTo(newCursor);
-        int32_t count = next ? newCursor - oldCursor : oldCursor - newCursor;
+            IMoveCursorTo(deletePos);
+        int32_t count = next ? deletePos - cursor : cursor - deletePos;
         const auto cursorIter = fBuffer.cbegin() + fCursorPos;
         fBuffer.erase(cursorIter, cursorIter + count);
         ISetGlobalBuffer(); // update the global buffer

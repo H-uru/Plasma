@@ -201,8 +201,8 @@ pfGUIEditBoxMod::CharType pfGUIEditBoxMod::IAdvanceChar(bool next, uint32_t& pos
  */
 void pfGUIEditBoxMod::IAdvanceWordFromPos(bool next, uint32_t& pos) const
 {
-    // If we're moving left, we want to move into the previous word first.
-    while (!next && pos > 0) {
+    // We want to move into the next/previous word first.
+    while (next && pos < wcslen(fBuffer.c_str()) || !next && pos > 0) {
         if (IAdvanceChar(next, pos) == CharType::kNormal)
             break;
     }
@@ -212,6 +212,13 @@ void pfGUIEditBoxMod::IAdvanceWordFromPos(bool next, uint32_t& pos) const
             // If we're moving left, we now want to stop before a word breaker, so go one back when we moved past one.
             if (!next)
                 IAdvanceChar(true, pos);
+            break;
+        }
+    }
+    // Lastly, if moving right, we also wanna go to the end of the sequence if we have multiple word breakers in a row.
+    while (next && pos < wcslen(fBuffer.c_str())) {
+        if (IAdvanceChar(next, pos) != CharType::kWordBreaker) {
+            IAdvanceChar(false, pos); // One back
             break;
         }
     }
@@ -228,14 +235,14 @@ void pfGUIEditBoxMod::IDeleteChar(bool next)
 
 void pfGUIEditBoxMod::IDeleteWord(bool next)
 {
-    uint32_t oldCursor, newCursor;
-    oldCursor = newCursor = fCursorPos;
-    IAdvanceWordFromPos(next, newCursor);
+    uint32_t cursor, deletePos;
+    cursor = deletePos = fCursorPos;
+    IAdvanceWordFromPos(next, deletePos);
 
-    if (oldCursor != newCursor) {
+    if (cursor != deletePos) {
         if (!next)
-            fCursorPos = newCursor;
-        int32_t count = next ? newCursor - oldCursor : oldCursor - newCursor;
+            fCursorPos = deletePos;
+        int32_t count = next ? deletePos - cursor : cursor - deletePos;
         memmove(&fBuffer[fCursorPos], &fBuffer[fCursorPos + count], (wcslen(&fBuffer[fCursorPos + count]) + 1) * sizeof(wchar_t));
     }
 }
