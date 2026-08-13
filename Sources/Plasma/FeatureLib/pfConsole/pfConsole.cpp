@@ -730,8 +730,8 @@ pfConsole::CharType pfConsole::IAdvanceChar(bool next, uint32_t& pos) const
  */
 void pfConsole::IAdvanceWordFromPos(bool next, uint32_t& pos) const
 {
-    // If we're moving left, we want to move into the previous word first.
-    while (!next && pos > 0) {
+    // We want to move into the next/previous word first.
+    while (next && pos < strlen(fWorkingLine) || !next && pos > 0) {
         if (IAdvanceChar(next, pos) == CharType::kNormal)
             break;
     }
@@ -741,6 +741,13 @@ void pfConsole::IAdvanceWordFromPos(bool next, uint32_t& pos) const
             // If we're moving left, we now want to stop before a word breaker, so go one back when we moved past one.
             if (!next)
                 IAdvanceChar(true, pos);
+            break;
+        }
+    }
+    // Lastly, if moving right, we also wanna go to the end of the sequence if we have multiple word breakers in a row.
+    while (next && pos < strlen(fWorkingLine)) {
+        if (IAdvanceChar(next, pos) != CharType::kWordBreaker) {
+            IAdvanceChar(false, pos); // One back
             break;
         }
     }
@@ -757,14 +764,14 @@ void pfConsole::IDeleteChar(bool next)
 
 void pfConsole::IDeleteWord(bool next)
 {
-    uint32_t oldCursor, newCursor;
-    oldCursor = newCursor = fWorkingCursor;
-    IAdvanceWordFromPos(next, newCursor);
+    uint32_t cursor, deletePos;
+    cursor = deletePos = fWorkingCursor;
+    IAdvanceWordFromPos(next, deletePos);
 
-    if (oldCursor != newCursor) {
+    if (cursor != deletePos) {
         if (!next)
-            fWorkingCursor = newCursor;
-        int32_t count = next ? newCursor - oldCursor : oldCursor - newCursor;
+            fWorkingCursor = deletePos;
+        int32_t count = next ? deletePos - cursor : cursor - deletePos;
         memmove(&fWorkingLine[fWorkingCursor], &fWorkingLine[fWorkingCursor + count], (strlen(&fWorkingLine[fWorkingCursor + count]) + 1) * sizeof(char));
     }
 }
