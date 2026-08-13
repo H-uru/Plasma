@@ -412,11 +412,14 @@ unsigned ConnGetId (ENetProtocol protocol);
 
 // For tests only
 
+struct Auth2Cli_FileListReply;
 struct File2Cli_ManifestReply;
+struct NetCliAuthFileInfo;
 struct NetCliFileManifestEntry;
 
-namespace Ngl { namespace File {
-    bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFileManifestEntry>& manifest, unsigned& numEntriesReceived);
-}}
+namespace Ngl {
+    namespace Auth { bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAuthFileInfo>& fileInfoArray); }
+    namespace File { bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFileManifestEntry>& manifest, unsigned& numEntriesReceived); }
+}
 
 #endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_INTERN_H

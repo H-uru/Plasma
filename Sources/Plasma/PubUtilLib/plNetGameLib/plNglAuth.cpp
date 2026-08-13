@@ -2856,19 +2856,14 @@ void FileListRequestTrans::Post () {
     m_callback(m_result, m_fileInfoArray);
 }
 
-//============================================================================
-bool FileListRequestTrans::Recv (
-    const uint8_t  msg[],
-    unsigned    bytes
-) {
-    const Auth2Cli_FileListReply & reply = *(const Auth2Cli_FileListReply *) msg;
-
+bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAuthFileInfo>& fileInfoArray)
+{
     uint32_t wcharCount = reply.wcharCount;
     const char16_t* curChar = reply.fileData;
     // if wcharCount is 2, the data only contains the terminator "\0\0" and we
     // don't need to convert anything
     if (wcharCount == 2)
-        m_fileInfoArray.clear();
+        fileInfoArray.clear();
     else
     {
         // fileData format: "filename\0size\0filename\0size\0...\0\0"
@@ -2902,7 +2897,7 @@ bool FileListRequestTrans::Recv (
                 return false; // screwy data
 
             // save the data in our array
-            NetCliAuthFileInfo& info = m_fileInfoArray.emplace_back();
+            NetCliAuthFileInfo& info = fileInfoArray.emplace_back();
             StrCopy(info.filename, filename, std::size(info.filename));
             info.filesize = size;
 
@@ -2919,6 +2914,20 @@ bool FileListRequestTrans::Recv (
             else if (wcharCount < 6) // we must have at least a 1 char string, '\0', size, and "\0\0" terminator left
                 return false; // screwy data
         }
+    }
+
+    return true;
+}
+
+//============================================================================
+bool FileListRequestTrans::Recv (
+    const uint8_t  msg[],
+    unsigned    bytes
+) {
+    const Auth2Cli_FileListReply & reply = *(const Auth2Cli_FileListReply *) msg;
+
+    if (!IReceiveFileList(reply, m_fileInfoArray)) {
+        return false;
     }
 
     m_result    = reply.result;

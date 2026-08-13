@@ -1,4 +1,5 @@
 set(plNetGameLibTest_SOURCES
+    test_plNglAuth.cpp
     test_plNglFile.cpp
 )
 
