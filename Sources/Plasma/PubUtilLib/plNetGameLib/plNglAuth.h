@@ -315,7 +315,7 @@ void NetCliAuthGetEncryptionKey (
 // File List
 //============================================================================
 struct NetCliAuthFileInfo {
-    char16_t    filename[kNetDefaultStringSize];
+    ST::string  filename;
     unsigned    filesize;
 };
 using FNetCliAuthFileListRequestCallback = std::function<void(

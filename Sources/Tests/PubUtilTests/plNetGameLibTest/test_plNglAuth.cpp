@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <functional>
 #include <gtest/gtest.h>
+#include <string_theory/string>
 #include <string_view>
 #include <vector>
 
@@ -53,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetGameLib/plNglAuth.h"
 
 using namespace std::literals::string_view_literals;
+using namespace ST::literals;
 
 // Can't put Auth2Cli_FileListReply normally into a std::unique_ptr
 // because of the variable-size array field,
@@ -93,7 +95,7 @@ TEST(plNglAuth, IReceiveFileList_OneFile)
     EXPECT_TRUE(Ngl::Auth::IReceiveFileList(*reply, fileInfoArray));
     EXPECT_EQ(fileInfoArray.size(), 1);
 
-    EXPECT_EQ(std::u16string_view(fileInfoArray[0].filename), u"filename"sv);
+    EXPECT_EQ(fileInfoArray[0].filename, "filename"_st);
     EXPECT_EQ(fileInfoArray[0].filesize, 0x123456);
 }
 
@@ -110,12 +112,12 @@ TEST(plNglAuth, IReceiveFileList_ThreeFiles)
     EXPECT_TRUE(Ngl::Auth::IReceiveFileList(*reply, fileInfoArray));
     EXPECT_EQ(fileInfoArray.size(), 3);
 
-    EXPECT_EQ(std::u16string_view(fileInfoArray[0].filename), u"filename0"sv);
+    EXPECT_EQ(fileInfoArray[0].filename, "filename0"_st);
     EXPECT_EQ(fileInfoArray[0].filesize, 0x100020);
 
-    EXPECT_EQ(std::u16string_view(fileInfoArray[1].filename), u"filename1"sv);
+    EXPECT_EQ(fileInfoArray[1].filename, "filename1"_st);
     EXPECT_EQ(fileInfoArray[1].filesize, 0x110021);
 
-    EXPECT_EQ(std::u16string_view(fileInfoArray[2].filename), u"filename2"sv);
+    EXPECT_EQ(fileInfoArray[2].filename, "filename2"_st);
     EXPECT_EQ(fileInfoArray[2].filesize, 0x120022);
 }

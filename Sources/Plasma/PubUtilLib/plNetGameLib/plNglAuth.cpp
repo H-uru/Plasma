@@ -2898,7 +2898,7 @@ bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAut
 
             // save the data in our array
             NetCliAuthFileInfo& info = fileInfoArray.emplace_back();
-            StrCopy(info.filename, filename, std::size(info.filename));
+            info.filename = ST::string::from_utf16(filename, filenameLen);
             info.filesize = size;
 
             // point it at either the second part of the terminator, or the next filename

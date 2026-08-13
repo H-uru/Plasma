@@ -334,7 +334,7 @@ void pfPatcherWorker::IGotAuthFileList(ENetError result, const std::vector<NetCl
             for (const auto& info : infos) {
                 PatcherLogYellow("\tEnqueuing Legacy File '{}'", info.filename);
 
-                plFileName fn = ST::string::from_utf16(info.filename);
+                plFileName fn = info.filename;
                 plFileSystem::CreateDir(fn.StripFileName());
 
                 // We purposefully do NOT Open this stream! This uses a special auth-file constructor that
