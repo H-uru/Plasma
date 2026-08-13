@@ -891,7 +891,7 @@ bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFil
     if (numFiles > manifest.size())
         manifest.resize(numFiles); // reserve the space ahead of time
 
-    // manifestData format: "clientFile\0downloadFile\0md5\0filesize\0zipsize\0flags\0...\0\0"
+    // manifestData format: "clientName\0downloadName\0md5\0md5compressed\0fileSize\0zipSize\0flags\0...\0\0"
     while (wcharCount > 0) {
         if (*curChar == L'\0') {
             // we hit the terminator
