@@ -121,3 +121,21 @@ TEST(plNglAuth, IReceiveFileList_ThreeFiles)
     EXPECT_EQ(fileInfoArray[2].filename, "filename2"_st);
     EXPECT_EQ(fileInfoArray[2].filesize, 0x120022);
 }
+
+TEST(plNglAuth, IReceiveFileList_Truncated)
+{
+    std::vector<NetCliAuthFileInfo> fileInfoArray;
+
+    auto reply = IMakeFileListReply(
+        u"filename\0\u0012\u3456\0"sv
+        u"\0"sv
+    );
+
+    // wcharCount == 2 is special-cased as valid regardless of contents, so stop there.
+    while (reply->wcharCount > 3) {
+        reply->wcharCount--;
+        fileInfoArray.clear();
+        EXPECT_FALSE(Ngl::Auth::IReceiveFileList(*reply, fileInfoArray));
+        EXPECT_TRUE(fileInfoArray.empty());
+    }
+}

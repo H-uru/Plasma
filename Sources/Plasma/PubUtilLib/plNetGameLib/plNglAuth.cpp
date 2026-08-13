@@ -2877,12 +2877,12 @@ bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAut
 
             // read in the filename
             size_t filenameConsumed;
-            ST::string filename = hsSTStringFromTerminatedUTF16LE(curChar, kNetDefaultStringSize - 1, filenameConsumed);
+            ST::string filename = hsSTStringFromTerminatedUTF16LE(curChar, wcharCount * sizeof(char16_t), filenameConsumed);
 
             unsigned filenameLen = filenameConsumed / sizeof(char16_t);
             curChar += filenameLen; // advance the pointer
             wcharCount -= filenameLen; // keep track of the amount remaining
-            if ((*curChar != L'\0') || (wcharCount <= 0))
+            if (wcharCount == 0 || *curChar != L'\0')
                 return false; // something is screwy, abort and disconnect
 
             curChar++; // point it at the first part of the size value (format: 0xHHHHLLLL)
@@ -2892,7 +2892,7 @@ bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAut
             unsigned size = (hsToLE16(*curChar) << 16) + hsToLE16(*(curChar + 1));
             curChar += 2;
             wcharCount -= 2;
-            if ((*curChar != L'\0') || (wcharCount <= 0))
+            if (wcharCount == 0 || *curChar != L'\0')
                 return false; // screwy data
 
             // save the data in our array
@@ -2910,8 +2910,6 @@ bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAut
                     return false; // invalid data, we shouldn't have any more
                 done = true; // we're done
             }
-            else if (wcharCount < 6) // we must have at least a 1 char string, '\0', size, and "\0\0" terminator left
-                return false; // screwy data
         }
     }
 
