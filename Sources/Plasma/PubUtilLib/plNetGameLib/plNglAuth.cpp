@@ -2876,11 +2876,10 @@ bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAut
             }
 
             // read in the filename
-            char16_t filename[kNetDefaultStringSize];
-            StrCopy(filename, curChar, std::size(filename));
-            filename[std::size(filename) - 1] = L'\0'; // make sure it's terminated
+            size_t filenameConsumed;
+            ST::string filename = hsSTStringFromTerminatedUTF16LE(curChar, kNetDefaultStringSize - 1, filenameConsumed);
 
-            unsigned filenameLen = std::char_traits<char16_t>::length(filename);
+            unsigned filenameLen = filenameConsumed / sizeof(char16_t);
             curChar += filenameLen; // advance the pointer
             wcharCount -= filenameLen; // keep track of the amount remaining
             if ((*curChar != L'\0') || (wcharCount <= 0))
@@ -2890,7 +2889,7 @@ bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAut
             wcharCount--;
             if (wcharCount < 4) // we have to have 2 chars for the size, and 2 for terminator at least
                 return false; // screwy data
-            unsigned size = ((*curChar) << 16) + (*(curChar + 1));
+            unsigned size = (hsToLE16(*curChar) << 16) + hsToLE16(*(curChar + 1));
             curChar += 2;
             wcharCount -= 2;
             if ((*curChar != L'\0') || (wcharCount <= 0))
@@ -2898,7 +2897,7 @@ bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAut
 
             // save the data in our array
             NetCliAuthFileInfo& info = fileInfoArray.emplace_back();
-            info.filename = ST::string::from_utf16(filename, filenameLen);
+            info.filename = filename;
             info.filesize = size;
 
             // point it at either the second part of the terminator, or the next filename
