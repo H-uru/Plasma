@@ -92,6 +92,29 @@ static std::unique_ptr<File2Cli_ManifestReply, ManifestReplyDeleter> IMakeManife
     return std::unique_ptr<File2Cli_ManifestReply, ManifestReplyDeleter>(reply, s_manifestReplyDeleter);
 }
 
+TEST(plNglFile, IReceiveManifest_Empty)
+{
+    std::vector<NetCliFileManifestEntry> manifest;
+    unsigned numEntriesReceived = 0;
+
+    // wcharCount == 0 currently special-cased outside of IReceiveManifest
+    //auto reply_0 = IMakeManifestReply(0, u""sv);
+    //EXPECT_TRUE(Ngl::File::IReceiveManifest(*reply_0, manifest, numEntriesReceived));
+    //EXPECT_EQ(numEntriesReceived, 0);
+    //EXPECT_TRUE(manifest.empty());
+
+    auto reply_1 = IMakeManifestReply(0, u"\0"sv);
+    EXPECT_TRUE(Ngl::File::IReceiveManifest(*reply_1, manifest, numEntriesReceived));
+    EXPECT_EQ(numEntriesReceived, 0);
+    EXPECT_TRUE(manifest.empty());
+
+    // wcharCount == 2 currently special-cased outside of IReceiveManifest
+    //auto reply_2 = IMakeManifestReply(0, u"\0\0"sv);
+    //EXPECT_TRUE(Ngl::File::IReceiveManifest(*reply_2, manifest, numEntriesReceived));
+    //EXPECT_EQ(numEntriesReceived, 0);
+    //EXPECT_TRUE(manifest.empty());
+}
+
 TEST(plNglFile, IReceiveManifest_OneFile)
 {
     std::vector<NetCliFileManifestEntry> manifest;

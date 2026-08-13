@@ -84,6 +84,23 @@ static std::unique_ptr<Auth2Cli_FileListReply, FileListReplyDeleter> IMakeFileLi
     return std::unique_ptr<Auth2Cli_FileListReply, FileListReplyDeleter>(reply, s_fileListReplyDeleter);
 }
 
+TEST(plNglAuth, IReceiveFileList_Empty)
+{
+    std::vector<NetCliAuthFileInfo> fileInfoArray;
+
+    auto reply_0 = IMakeFileListReply(u""sv);
+    EXPECT_TRUE(Ngl::Auth::IReceiveFileList(*reply_0, fileInfoArray));
+    EXPECT_TRUE(fileInfoArray.empty());
+
+    auto reply_1 = IMakeFileListReply(u"\0"sv);
+    EXPECT_TRUE(Ngl::Auth::IReceiveFileList(*reply_1, fileInfoArray));
+    EXPECT_TRUE(fileInfoArray.empty());
+
+    auto reply_2 = IMakeFileListReply(u"\0\0"sv);
+    EXPECT_TRUE(Ngl::Auth::IReceiveFileList(*reply_2, fileInfoArray));
+    EXPECT_TRUE(fileInfoArray.empty());
+}
+
 TEST(plNglAuth, IReceiveFileList_OneFile)
 {
     std::vector<NetCliAuthFileInfo> fileInfoArray;
