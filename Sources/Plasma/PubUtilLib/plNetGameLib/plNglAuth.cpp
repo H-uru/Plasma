@@ -2862,17 +2862,18 @@ bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAut
     const char16_t* curChar = reply.fileData;
     // if wcharCount is 2, the data only contains the terminator "\0\0" and we
     // don't need to convert anything
-    if (wcharCount == 2)
+    if (wcharCount == 0 || wcharCount == 2) {
         fileInfoArray.clear();
-    else
-    {
+        return true;
+    } else {
         // fileData format: "filename\0size\0filename\0size\0...\0\0"
-        bool done = false;
-        while (!done) {
-            if (wcharCount == 0)
-            {
-                done = true;
-                break;
+        while (wcharCount > 0) {
+            if (*curChar == L'\0') {
+                // we hit the terminator
+                curChar++;
+                wcharCount--;
+                // Check that there's no data after the terminator.
+                return wcharCount == 0;
             }
 
             // read in the filename
@@ -2900,20 +2901,15 @@ bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAut
             info.filename = filename;
             info.filesize = size;
 
-            // point it at either the second part of the terminator, or the next filename
+            // point it at either the next file or the terminator for the file list
             curChar++;
             wcharCount--;
-            if (*curChar == L'\0')
-            {
-                // we hit the terminator
-                if (wcharCount != 1)
-                    return false; // invalid data, we shouldn't have any more
-                done = true; // we're done
-            }
         }
+    
+        // Ran out of data without hitting the file list terminator,
+        // meaning that the file list is truncated.
+        return false;
     }
-
-    return true;
 }
 
 //============================================================================
