@@ -61,6 +61,7 @@ static void GetChangedCreatables(int minorVersion, std::vector<uint16_t>& creata
     ChangedCreatable(1, plLoadAvatarMsg); 
     ChangedCreatable(1, plArmatureMod);
     ChangedCreatable(2, plAvBrainHuman);
+    ChangedCreatable(3, plShader);
 }
 
 

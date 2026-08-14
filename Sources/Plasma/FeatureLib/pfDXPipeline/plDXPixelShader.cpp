@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDXPipeline.h"
 
 #include "plSurface/plShader.h"
+#include "plSurface/plShaderTable.h"
 
 
 plDXPixelShader::plDXPixelShader(plShader* owner)
@@ -67,11 +68,6 @@ void plDXPixelShader::Release()
     fHandle = nullptr;
     fPipe = nullptr;
     fErrorString.clear();
-}
-
-bool plDXPixelShader::VerifyFormat(uint8_t format) const
-{
-    return (fOwner->GetInputFormat() & format) == fOwner->GetInputFormat();
 }
 
 IDirect3DPixelShader9 *plDXPixelShader::GetShader(plDXPipeline* pipe)
@@ -95,7 +91,7 @@ HRESULT plDXPixelShader::ICreate(plDXPipeline* pipe)
     fPipe = nullptr;
     fErrorString.clear();
 
-    DWORD* shaderCodes = (DWORD*)(fOwner->GetDecl()->GetCodes());
+    DWORD* shaderCodes = (DWORD*)(plShaderTable::Decl(fOwner->GetShaderID())->GetCodes());
 
     if( !shaderCodes )
         return IOnError(-1, ST_LITERAL("Shaders must be compiled into the engine."));
