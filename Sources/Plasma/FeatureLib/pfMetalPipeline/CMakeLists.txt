@@ -123,7 +123,7 @@ if(NOT DEFINED CMAKE_XCODE_VERSION_MAJOR OR
     CMAKE_XCODE_VERSION_MAJOR VERSION_GREATER_EQUAL 13)
 
     add_metal_shader_library(pfMetalPipelineShadersMSL30
-        STANDARD macos-metal3.0
+        STANDARD metal3.0
         ${pfMetalPipeline_SHADERS}
     )
     target_include_directories(pfMetalPipelineShadersMSL30
@@ -136,5 +136,10 @@ if(NOT DEFINED CMAKE_XCODE_VERSION_MAJOR OR
     target_compile_definitions(pfMetalPipeline
         PRIVATE
         METAL_3_SDK
+    )
+
+    add_dependencies(
+        pfMetalPipeline
+        pfMetalPipelineShadersMSL30
     )
 endif()
