@@ -1290,37 +1290,43 @@ pfGUIMultiLineEditCtrl::CharType pfGUIMultiLineEditCtrl::IAdvanceChar(bool next,
  */
 bool pfGUIMultiLineEditCtrl::IAdvanceWordFromPos(bool next, int32_t& pos) const
 {
-    bool hitCtrlCode = false;
+    uint32_t hitCtrlCodeCount = 0;
 
     // We want to move into the next/previous word first.
     while (next && pos < (int32_t)fBuffer.size() - 1  || !next && pos > 0) {
         CharType charType = IAdvanceChar(next, pos);
-        hitCtrlCode |= charType == CharType::kControlCode;
+        if (charType == CharType::kControlCode)
+            hitCtrlCodeCount++;
         if (charType == CharType::kNormal)
             break;
     }
     // Now, keep moving until we advanced past a word breaker
     while (next && pos < (int32_t)fBuffer.size() - 1 || !next && pos > 0) {
         CharType charType = IAdvanceChar(next, pos);
-        hitCtrlCode |= charType == CharType::kControlCode;
+        if (charType == CharType::kControlCode)
+            hitCtrlCodeCount++;
         if (charType == CharType::kWordBreaker) {
             // If we're moving left, we now want to stop before a word breaker, so go one back when we moved past one.
-            if (!next)
-                IAdvanceChar(true, pos);
+            if (!next) {
+                if (IAdvanceChar(true, pos) == CharType::kControlCode)
+                    hitCtrlCodeCount--;
+            }
             break;
         }
     }
     // Lastly, if moving right, we also wanna go to the end of the sequence if we have multiple word breakers in a row.
     while (next && pos < (int32_t)fBuffer.size() - 1) {
         CharType charType = IAdvanceChar(next, pos);
-        hitCtrlCode |= charType == CharType::kControlCode;
+        if (charType == CharType::kControlCode)
+            hitCtrlCodeCount++;
         if (charType != CharType::kWordBreaker) {
-            IAdvanceChar(false, pos); // One back
+            if (IAdvanceChar(false, pos) == CharType::kControlCode) // Go one back
+                hitCtrlCodeCount--;
             break;
         }
     }
 
-    return hitCtrlCode;
+    return hitCtrlCodeCount > 0;
 }
 
 //// IMoveCursor /////////////////////////////////////////////////////////////
