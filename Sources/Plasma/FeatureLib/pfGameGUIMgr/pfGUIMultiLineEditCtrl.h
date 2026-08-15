@@ -147,13 +147,13 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         enum class CharType
         {
-          kNormal,
-          kWordBreaker,
-          kControlCode,
+            kNormal,
+            kWordBreaker,
+            kControlCode,
         };
         
-        CharType IAdvanceChar(bool next, int32_t &pos) const;
-        bool IAdvanceWordFromPos(bool next, int32_t &pos) const;
+        CharType IAdvanceChar(bool next, int32_t& pos) const;
+        bool IAdvanceWordFromPos(bool next, int32_t& pos) const;
 
         void    IMoveCursor( Direction dir );
         void    IMoveCursorTo( int32_t position );    // Updates selection

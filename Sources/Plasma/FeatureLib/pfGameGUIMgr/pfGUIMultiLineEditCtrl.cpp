@@ -1352,13 +1352,11 @@ void    pfGUIMultiLineEditCtrl::IMoveCursor( pfGUIMultiLineEditCtrl::Direction d
             break;
 
         case kOneBack:
-            if (cursor > 0)
-                IAdvanceChar(false, cursor);
+            while (cursor > 0 && IAdvanceChar(false, cursor) == CharType::kControlCode);
             break;
 
         case kOneForward:
-            if (cursor < (int32_t)fBuffer.size() - 1)
-                IAdvanceChar(true, cursor);
+            while (cursor < (int32_t)fBuffer.size() - 1 && IAdvanceChar(true, cursor) == CharType::kControlCode);
             break;
 
         case kOneWordBack:
