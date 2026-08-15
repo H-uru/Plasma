@@ -182,7 +182,6 @@ static inline bool IIsWordBreaker(const wchar_t c)
  */
 pfGUIEditBoxMod::CharType pfGUIEditBoxMod::IAdvanceChar(bool next, uint32_t& pos) const
 {
-    hsAssert(pos >= 0, "out of range");
     hsAssert(pos <= wcslen(fBuffer.c_str()), "out of range");
     hsAssert(next || pos > 0, "advanced left at start of string");
 
@@ -202,12 +201,13 @@ pfGUIEditBoxMod::CharType pfGUIEditBoxMod::IAdvanceChar(bool next, uint32_t& pos
 void pfGUIEditBoxMod::IAdvanceWordFromPos(bool next, uint32_t& pos) const
 {
     // We want to move into the next/previous word first.
-    while (next && pos < wcslen(fBuffer.c_str()) || !next && pos > 0) {
+    size_t len = wcslen(fBuffer.c_str());
+    while (next && pos < len || !next && pos > 0) {
         if (IAdvanceChar(next, pos) == CharType::kNormal)
             break;
     }
     // Now, keep moving until we advanced past a word breaker
-    while (next && pos < wcslen(fBuffer.c_str()) || !next && pos > 0) {
+    while (next && pos < len || !next && pos > 0) {
         if (IAdvanceChar(next, pos) == CharType::kWordBreaker) {
             // If we're moving left, we now want to stop before a word breaker, so go one back when we moved past one.
             if (!next)
@@ -216,7 +216,7 @@ void pfGUIEditBoxMod::IAdvanceWordFromPos(bool next, uint32_t& pos) const
         }
     }
     // Lastly, if moving right, we also wanna go to the end of the sequence if we have multiple word breakers in a row.
-    while (next && pos < wcslen(fBuffer.c_str())) {
+    while (next && pos < len) {
         if (IAdvanceChar(next, pos) != CharType::kWordBreaker) {
             IAdvanceChar(false, pos); // One back
             break;

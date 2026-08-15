@@ -664,10 +664,10 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
             fRenderInfo.fRenderFunc = &plFont::IRenderCharNull;
             int16_t prevX = fRenderInfo.fX;
             while (*string != 0) {
+                prevX = fRenderInfo.fX;
                 IRenderLoop(string, 1);
                 if (fRenderInfo.fX > fRenderInfo.fClipRect.fX)
                     break;
-                prevX = fRenderInfo.fX;
                 ++string;
             }
             fRenderInfo.fMaxWidth += fRenderInfo.fX - prevX;

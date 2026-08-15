@@ -711,7 +711,6 @@ static inline bool IIsWordBreaker(const char c)
  */
 pfConsole::CharType pfConsole::IAdvanceChar(bool next, uint32_t& pos) const
 {
-    hsAssert(pos >= 0, "out of range");
     hsAssert(pos <= strlen(fWorkingLine), "out of range");
     hsAssert(next || pos > 0, "advanced left at start of string");
 
