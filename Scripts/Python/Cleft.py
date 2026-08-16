@@ -104,7 +104,7 @@ class Cleft(ptResponder):
 
         # Add the age specific pages
         if loadTomahna:
-            pages += ["Cleft","tmnaDesert","MaleShortIdle","FemaleShortIdle","YeeshaFinalEncounter","FemaleTurnRight180","MaleTurnRight180","clftSndLogTracks","clftAtrusGoggles"]
+            pages += ["Cleft","tmnaDesert","YeeshaFinalEncounter","FemaleTurnRight180","MaleTurnRight180","clftSndLogTracks","clftAtrusGoggles"]
         else:
             pages += ["Desert","Cleft","FemaleCleftDropIn","MaleCleftDropIn","clftJCsDesert","clftJCsChasm"]
         if loadZandi:
