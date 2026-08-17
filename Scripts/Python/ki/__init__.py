@@ -1337,6 +1337,7 @@ class xKI(ptModifier):
         self.DetermineKIFlags()
         self.DetermineGZ()
         self.DetermineTextColor()
+        self.DetermineShowTimestamps()
 
         # Hide all dialogs first.
         KIMicroBlackbar.dialog.hide()
@@ -1662,6 +1663,19 @@ class xKI(ptModifier):
         self.chatMgr.chatTextColor = None
         PtDebugPrint("xKI.DetermineTextColor(): KI Text Color is not overridden.", level=kWarningLevel)
 
+
+    #~~~~~~~~~~~~~~~~~~~~~~#
+    #  KI Chat Timestamps  #
+    #~~~~~~~~~~~~~~~~~~~~~~#
+
+    ## Sets the KI Text Color from the Chronicle.
+    def DetermineShowTimestamps(self):
+        vault = ptVault()
+        entry = vault.findChronicleEntry(kChron.ShowTimestamps)
+        if entry is not None and entry.getValue() == "yes":
+            self.chatMgr.timestamps = True
+            return
+        self.chatMgr.timestamps = False
 
 
     #~~~~~~~~~~#

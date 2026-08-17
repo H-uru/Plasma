@@ -79,6 +79,7 @@ class xKIChat(object):
         self.privateChatChannel = 0
         self.toReplyToLastPrivatePlayerID = None
         self.chatTextColor = None
+        self.timestamps = False
 
         # Fading & blinking globals.
         self.currentFadeTick = 0
@@ -622,13 +623,18 @@ class xKIChat(object):
             bodyColor = self.chatTextColor
             mentionColor = self.chatTextColor
 
+        timestamp = ""
+        if self.timestamps:
+            timeStruct = time.localtime(PtGetServerTime())
+            timestamp = f"[{timeStruct.tm_hour}:{timeStruct.tm_min}] "
+
         for chatArea in (self.miniChatArea, self.microChatArea):
             with PtBeginGUIUpdate(chatArea):
                 savedPosition = chatArea.getScrollPosition()
                 wasAtEnd = chatArea.isAtEnd()
                 chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
                 chatArea.insertColor(headerColor)
-                chatArea.insertString(f"\n{contextPrefix if self.chatTextColor else ''}{chatHeaderFormatted}")
+                chatArea.insertString(f"\n{timestamp}{contextPrefix if self.chatTextColor else ''}{chatHeaderFormatted}")
                 chatArea.insertColor(bodyColor)
 
                 lastInsert = 0
@@ -1333,6 +1339,13 @@ class CommandsProcessor:
                 # argument was not 3 or 6 characters long, so it cannot be a valid hexadecimal color
                 self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Errors.MalformedChatSetTextColorCmd"), kChat.SystemMessage)
                 return
+
+    def ToggleChatTimestamps(self, args):
+        self.chatMgr.timestamps = not self.chatMgr.timestamps
+        chronVal = "yes" if self.chatMgr.timestamps else "no"
+        PtDebugPrint(f"xKIChat.ToggleChatTimestamps(): Setting KI Timestamps chronicle to: \"{chronVal}\".", level=kWarningLevel)
+        ptVault().addChronicleEntry(kChron.ShowTimestamps, kChron.ShowTimestampsType, chronVal)
+        self.chatMgr.DisplayStatusMessage(f"Chat timestamps {'enabled' if self.chatMgr.timestamps else 'disabled'}")
 
     #~~~~~~~~~~~~~~~~#
     # Jalak Commands #
