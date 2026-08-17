@@ -44,6 +44,8 @@ import re
 import time
 import random
 import inspect
+from dataclasses import dataclass
+from typing import Literal
 
 # Plasma Engine.
 from Plasma import *
@@ -79,7 +81,7 @@ class xKIChat(object):
         self.privateChatChannel = 0
         self.toReplyToLastPrivatePlayerID = None
         self.chatTextColor = None
-        self.timestamps = None
+        self.timestamps = ChatTimestampSettings()
 
         # Fading & blinking globals.
         self.currentFadeTick = 0
@@ -624,16 +626,16 @@ class xKIChat(object):
             mentionColor = self.chatTextColor
 
         timestamp = ""
-        if self.timestamps is not None:
-            timeZone = self.timestamps.get("zone");
-            if timeZone == "local":
+        if self.timestamps.enabled:
+            if self.timestamps.zone == "local":
                 timeStruct = time.localtime(PtGetServerTime())
-            elif timeZone == "utc":
+            elif self.timestamps.zone == "utc":
                 timeStruct = time.gmtime(PtGetServerTime())
-            else:
+            elif self.timestamps.zone == "ki":
                 timeStruct = time.gmtime(PtGetDniTime())
-            timeFormat = self.timestamps.get("format") or "%H:%M"
-            timestamp = f"[{time.strftime(timeFormat, timeStruct)}] "
+            else:
+                raise ValueError(self.timestamps.zone)
+            timestamp = f"[{time.strftime(self.timestamps.format, timeStruct)}] "
 
         for chatArea in (self.miniChatArea, self.microChatArea):
             with PtBeginGUIUpdate(chatArea):
@@ -910,6 +912,24 @@ class ChatFlags:
         string += "flags = {}".format(self.flags)
         return string
 
+
+## Helper for the chat timestamp format
+@dataclass
+class ChatTimestampSettings:
+    enabled: bool = False
+    zone: Literal["ki", "local", "utc"] = "ki"
+    format: str = "%H:%M"
+
+    @classmethod
+    def from_string(cls, value: str):
+        if not value:
+            return cls()
+        return cls(True, *value.split(';', 1))
+
+    def __str__(self) -> str:
+        if not self.enabled:
+            return ""
+        return f"{self.zone};{self.format}"
 
 ## Processes KI Chat commands.
 class CommandsProcessor:
@@ -1347,26 +1367,21 @@ class CommandsProcessor:
                 self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Errors.MalformedChatSetTextColorCmd"), kChat.SystemMessage)
                 return
 
-    def ToggleChatTimestamps(self, arg1 = "", arg2 = "%H:%M"):
+    def ToggleChatTimestamps(self, zone="", format="%H:%M"):
         # Docs on invalid params
-        if arg1 and arg1 not in ["ki", "utc", "local"]:
+        if zone and zone not in {"ki", "utc", "local"}:
             self.chatMgr.AddChatLine(None, "Usage: /timestamps <ki|utc|local> <format>. The first parameter defaults to 'ki' and the second to '%H:%M'. Use without parameters to toggle timestamps off again.", kChat.SystemMessage)
             return
 
-        # Toggle off if currently on and no params given
-        if self.chatMgr.timestamps is not None and not arg1:
-            self.chatMgr.timestamps = None
-            PtDebugPrint(f"xKIChat.ToggleChatTimestamps(): Setting KI Timestamps chronicle to empty", level=kWarningLevel)
-            ptVault().addChronicleEntry(kChron.ShowTimestamps, kChron.ShowTimestampsType, "")
-            self.chatMgr.AddChatLine(None, f"Chat timestamps disabled", 0)
-            return
+        # Toggle off if currently on and no params given, helper class will handle the chronicle conversion
+        self.chatMgr.timestamps.enabled = False if self.chatMgr.timestamps.enabled and not zone else True
+        self.chatMgr.timestamps.zone = zone or "ki"
+        self.chatMgr.timestamps.format = format
 
-        timeZone = arg1 if arg1 else "ki"
-        self.chatMgr.timestamps = { "zone": timeZone, "format": arg2 }
-        chronVal = f"{timeZone};{arg2}";
-        PtDebugPrint(f"xKIChat.ToggleChatTimestamps(): Setting KI Timestamps chronicle to: \"{chronVal}\".", level=kWarningLevel)
-        ptVault().addChronicleEntry(kChron.ShowTimestamps, kChron.ShowTimestampsType, chronVal)
-        self.chatMgr.AddChatLine(None, f"Chat timestamps enabled", 0)
+        # Helper class at ChatTimestampSettings will handle the chronicle conversion
+        PtDebugPrint(f"xKIChat.ToggleChatTimestamps(): Setting KI Timestamps chronicle to: \"{self.chatMgr.timestamps}\".", level=kWarningLevel)
+        ptVault().addChronicleEntry(kChron.ShowTimestamps, kChron.ShowTimestampsType, str(self.chatMgr.timestamps))
+        self.chatMgr.AddChatLine(None, f"Chat timestamps {'enabled' if self.chatMgr.timestamps.enabled else 'disabled'}", 0)
 
     #~~~~~~~~~~~~~~~~#
     # Jalak Commands #

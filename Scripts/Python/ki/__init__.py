@@ -1671,21 +1671,9 @@ class xKI(ptModifier):
     ## Sets the KI Text Color from the Chronicle.
     def DetermineShowTimestamps(self):
         self.chatMgr.timestamps = None
-        vault = ptVault()
-        entry = vault.findChronicleEntry(kChron.ShowTimestamps)
-        if entry is not None:
+        if entry := ptVault().findChronicleEntry(kChron.ShowTimestamps):
             if value := entry.getValue():
-                parts = value.strip().split(";", 1)
-                timeZone = "ki"
-                if parts[0]:
-                    timeZone = parts[0]
-                timeFormat = "%H:%M"
-                if len(parts) > 1 and parts[1]:
-                    timeFormat = parts[1]
-                self.chatMgr.timestamps = {
-                    "zone": timeZone,
-                    "format": timeFormat
-                }
+                self.chatMgr.timestamps = xKIChat.ChatTimestampSettings.from_string(value)
 
 
     #~~~~~~~~~~#
