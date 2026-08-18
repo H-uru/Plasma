@@ -1995,8 +1995,8 @@ bool plMetalPipeline::ISetShaders(const plMetalVertexBufferRef* vRef, const hsGM
 {
     hsAssert(vShader, "Can't handle programmable passes without vShader");
     hsAssert(pShader, "Can't handle programmable passes without pShader");
-    plShaderID::ID vertexShaderID = vShader->GetDecl()->GetID();
-    plShaderID::ID fragmentShaderID = pShader->GetDecl()->GetID();
+    plShaderID::ID vertexShaderID = vShader->GetShaderID();
+    plShaderID::ID fragmentShaderID = pShader->GetShaderID();
 
     plMetalDevice::plMetalLinkedPipeline* pipeline = plMetalDynamicMaterialPipelineState(&fDevice, vRef, blendMode.fBlendFlags, vertexShaderID, fragmentShaderID).GetRenderPipelineState();
     if (fState.fCurrentPipelineState != pipeline->pipelineState) {

@@ -40,32 +40,59 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plDXPixelShader_inc
-#define plDXPixelShader_inc
+#ifndef plShaderID_inc
+#define plShaderID_inc
 
-#include "plDXShader.h"
-
-class plShader;
-class plDXPipeline;
-
-struct IDirect3DPixelShader9;
-
-class plDXPixelShader : public plDXShader
+// When adding to the compiled table, make sure
+// you add the include in plShaderTable.cpp, or you'll
+// compile fine but have a nil shader (FFP) at runtime.
+namespace plShaderID
 {
-    HRESULT     ICreate(plDXPipeline* pipe) override; // On error, sets error string.
-    HRESULT     ISetConstants(plDXPipeline* pipe) override;
+    enum ID
+    {
+        Unregistered = 0,
+        vs_WaveFixedFin6,   //OBSOLETE
+        ps_WaveFixed,
+        vs_CompCosines,
+        ps_CompCosines,     //OBSOLETE
+        vs_ShoreLeave6,     //OBSOLETE
+        ps_ShoreLeave6,
+        vs_WaveRip,         //OBSOLETE
+        ps_WaveRip,
+        vs_WaveDec1Lay,     //OBSOLETE
+        vs_WaveDec2Lay11,   //OBSOLETE
+        vs_WaveDec2Lay12,   //OBSOLETE
+        vs_WaveDecEnv,      //OBSOLETE
+        ps_CbaseAbase,
+        ps_CalphaAbase,
+        ps_CalphaAMult,
+        ps_CalphaAadd,
+        ps_CaddAbase,
+        ps_CaddAMult,
+        ps_CaddAAdd,
+        ps_CmultAbase,
+        ps_CmultAMult,
+        ps_CmultAAdd,
+        ps_WaveDecEnv,
+        vs_WaveGraph2,
+        ps_WaveGraph,
+        vs_WaveGridFin,     //OBSOLETE
+        ps_WaveGrid,        //OBSOLETE
+        vs_BiasNormals,
+        ps_BiasNormals,
+        vs_ShoreLeave7,
+        vs_WaveRip7,
+        ps_MoreCosines,
+        vs_WaveDec1Lay_7,
+        vs_WaveDec2Lay11_7,
+        vs_WaveDec2Lay12_7,
+        vs_WaveDecEnv_7,
+        vs_WaveFixedFin7,
+        vs_GrassShader,
+        ps_GrassShader,
 
-    IDirect3DPixelShader9 *fHandle;
-
-public:
-    plDXPixelShader(plShader* owner);
-    virtual ~plDXPixelShader();
-
-    void            Release() override;
-    void            Link(plDXPixelShader** back) { plDXDeviceRef::Link((plDXDeviceRef**)back); }
-
-    IDirect3DPixelShader9 *GetShader(plDXPipeline* pipe);
+        kNumShaders
+    };
 };
 
-
-#endif // plDXPixelShader_inc
+#endif // plShaderID_inc

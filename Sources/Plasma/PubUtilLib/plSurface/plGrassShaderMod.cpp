@@ -222,12 +222,10 @@ void plGrassShaderMod::ISetupShaders()
 {
     if (!fVShader)
     {
-        plShader* vShader = new plShader;
+        plShader* vShader = new plShader(plShaderID::vs_GrassShader);
         ST::string buff = ST::format("{}_GrassVS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
         vShader->SetIsPixelShader(false);
-        vShader->SetInputFormat(1);
-        vShader->SetOutputFormat(0);
 
         vShader->SetNumConsts(plGrassVS::kNumConsts);
         vShader->SetVector(plGrassVS::kNumericConsts, 0.f, 0.5f, 1.f, 2.f);
@@ -242,20 +240,16 @@ void plGrassShaderMod::ISetupShaders()
         vShader->SetNumPipeConsts(1);
         vShader->SetPipeConst(0, plPipeConst::kLocalToNDC, plGrassVS::kLocalToNDC);
 
-        vShader->SetDecl(plShaderTable::Decl(plShaderID::vs_GrassShader));
         hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefGrassVS), plRefFlags::kActiveRef);
     }
 
     if (!fPShader)
     {
-        plShader* pShader = new plShader;
+        plShader* pShader = new plShader(plShaderID::ps_GrassShader);
         ST::string buff = ST::format("{}_GrassPS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
         pShader->SetIsPixelShader(true);
         pShader->SetNumConsts(0);
-        pShader->SetInputFormat(0);
-        pShader->SetOutputFormat(0);
-        pShader->SetDecl(plShaderTable::Decl(plShaderID::ps_GrassShader));
         hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefGrassPS), plRefFlags::kActiveRef);
     }
 
