@@ -40,56 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plWinDisplayHelper.h"
-#include "hsWindows.h"
+#include "plNullPipeline.h"
+#include "pl3DPipelineSIMD.h"
 
-#define HDC_INVALID_HANDLE_VALUE ((HDC)INVALID_HANDLE_VALUE)
-
-plWinDisplayHelper::plWinDisplayHelper()
-    : fCurrentDisplay(HDC_INVALID_HANDLE_VALUE)
-{
-}
-
-void plWinDisplayHelper::SetCurrentScreen(hsDisplayHndl display) const
-{
-    if (fCurrentDisplay == display)
-        return;
-
-    fCurrentDisplay = display;
-
-    fDisplayModes.clear();
-
-    DEVMODE dm{};
-    dm.dmSize = sizeof(DEVMODE);
-
-    for (int i = 0;; i++) {
-        if (!EnumDisplaySettings(nullptr, i, &dm))
-            break;
-
-        fDisplayModes.emplace_back(static_cast<int>(dm.dmPelsWidth), static_cast<int>(dm.dmPelsHeight), 32);
-    }
-
-    std::sort(fDisplayModes.begin(), fDisplayModes.end(), std::greater());
-    auto last = std::unique(fDisplayModes.begin(), fDisplayModes.end());
-    fDisplayModes.erase(last, fDisplayModes.end());
-}
-
-std::vector<plDisplayMode> plWinDisplayHelper::GetSupportedDisplayModes(
-        hsDisplayHndl display, int ColorDepth) const
-{
-    // Cache the current display so we can answer repeat requests quickly.
-    // SetCurrentScreen will catch redundant sets.
-    SetCurrentScreen(display);
-    return fDisplayModes;
-}
-
-hsDisplayHndl plWinDisplayHelper::DefaultDisplay() const
-{
-    if (fCurrentDisplay == HDC_INVALID_HANDLE_VALUE) {
-        HWND hWnd = GetActiveWindow();
-        HDC hDC = GetDC(hWnd);
-        SetCurrentScreen(hDC);
-    }
-
-    return fCurrentDisplay;
-}
+plNullPipeline::plNullPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devModeRec)
+    : pl3DPipeline(devModeRec)
+{}

@@ -76,24 +76,13 @@ private:
     static void Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl display);
 };
 
-//// Helper Classes ///////////////////////////////////////////////////////////
-
-//// The RenderPrimFunc lets you have one function which does a lot of stuff
-// around the actual call to render whatever type of primitives you have, instead
-// of duplicating everything because the one line to render is different.
-class plRenderPrimFunc
-{
-public:
-    virtual bool RenderPrims() const = 0; // return true on error
-};
-
 class plMetalPipeline : public pl3DPipeline<plMetalDevice>
 {
 protected:
     friend class plMetalDevice;
     friend class plMetalPlateManager;
     friend class plMetalMaterialShaderRef;
-    friend class plRenderTriListFunc;
+    friend class plMetalRenderTriListFunc;
     friend class plMetalTextFont;
 
     plMetalMaterialShaderRef* fMatRefList;
@@ -187,7 +176,6 @@ private:
     void IPreprocessAvatarTextures();
     void IDrawClothingQuad(float x, float y, float w, float h,
                            float uOff, float vOff, plMipmap* tex);
-    void IClearShadowSlaves();
 
     void ICreateDeviceObjects();
     void IReleaseDynDeviceObjects();
@@ -195,7 +183,6 @@ private:
     void IReleaseDynamicBuffers();
     void IReleaseDeviceObjects();
 
-    bool IIsViewLeftHanded();
     void ISetCullMode(bool flip = false);
 
     plLayerInterface* IPushOverBaseLayer(plLayerInterface* li);
