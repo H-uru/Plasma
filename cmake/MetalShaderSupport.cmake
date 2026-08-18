@@ -39,13 +39,19 @@ function(target_embed_metal_shader_libraries TARGET)
         ""
     )
 
+    # Build-order dependency is required regardless of how the embedding is
+    # done: XCODE_EMBED_RESOURCES is a packaging hint and does not, by itself,
+    # cause CMake to build the shader library before the embed phase runs.
+    foreach(SHADERLIB IN LISTS _temsl_UNPARSED_ARGUMENTS)
+        add_dependencies(${TARGET} ${SHADERLIB})
+    endforeach()
+
     if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.28 AND ${CMAKE_GENERATOR} STREQUAL "Xcode")
         set_target_properties(${TARGET} PROPERTIES
             XCODE_EMBED_RESOURCES "${_temsl_UNPARSED_ARGUMENTS}"
         )
     else()
         foreach(SHADERLIB IN LISTS _temsl_UNPARSED_ARGUMENTS)
-            add_dependencies(${TARGET} ${SHADERLIB})
             add_custom_command(TARGET ${TARGET} POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:${SHADERLIB}>" "$<TARGET_BUNDLE_CONTENT_DIR:${TARGET}>/Resources/$<TARGET_FILE_NAME:${SHADERLIB}>"
                 VERBATIM

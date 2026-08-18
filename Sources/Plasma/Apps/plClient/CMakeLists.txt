@@ -193,8 +193,14 @@ if(PLASMA_PIPELINE_METAL)
     target_embed_metal_shader_libraries(plClient
         pfMetalPipelineShadersMSL21
         pfMetalPipelineShadersMSL23
-        pfMetalPipelineShadersMSL30
     )
+
+    if(NOT DEFINED CMAKE_XCODE_VERSION_MAJOR OR
+        CMAKE_XCODE_VERSION_MAJOR VERSION_GREATER_EQUAL 13)
+        target_embed_metal_shader_libraries(plClient
+            pfMetalPipelineShadersMSL30
+        )
+    endif()
 endif()
 
 if(PLASMA_BUILD_RESOURCE_DAT)

@@ -12,15 +12,20 @@ endif()
 if("${CMAKE_GENERATOR}" STREQUAL "Xcode" OR (APPLE AND CMAKE_VERSION VERSION_GREATER_EQUAL "4.0"))
     set(CMAKE_Metal_COMPILER_XCODE_TYPE sourcecode.metal)
 
-    execute_process(COMMAND xcrun --find metal
-        OUTPUT_VARIABLE _xcrun_out OUTPUT_STRIP_TRAILING_WHITESPACE
-        ERROR_VARIABLE _xcrun_err RESULT_VARIABLE _xcrun_result
-    )
-
-    if(_xcrun_result EQUAL 0 AND EXISTS "${_xcrun_out}")
-        set(CMAKE_Metal_COMPILER "${_xcrun_out}")
-    else()
+    if(CMAKE_Metal_COMPILER)
+        # Specified via -D or a pre-made cache, resolve it like the branch below.
         _cmake_find_compiler_path(Metal)
+    else()
+        execute_process(COMMAND xcrun --find metal
+            OUTPUT_VARIABLE _xcrun_out OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_VARIABLE _xcrun_err RESULT_VARIABLE _xcrun_result
+        )
+
+        if(_xcrun_result EQUAL 0 AND EXISTS "${_xcrun_out}")
+            set(CMAKE_Metal_COMPILER "${_xcrun_out}")
+        else()
+            _cmake_find_compiler_path(Metal)
+        endif()
     endif()
 else()
     if(CMAKE_Metal_COMPILER)
@@ -60,6 +65,22 @@ if(CMAKE_Metal_COMPILER AND NOT CMAKE_Metal_COMPILER_VERSION)
         "Running the Metal compiler: \"${CMAKE_Metal_COMPILER}\" --version\n"
         "${output}\n"
     )
+
+    # Xcode ships a metal stub that xcrun happily reports even when the Metal
+    # Toolchain itself is missing, or when its on-demand cryptex mount is not
+    # available yet. Running the stub only prints
+    #   error: cannot execute tool 'metal' due to missing Metal Toolchain
+    # and exits non-zero, so reject it here. With the Xcode generator this is the
+    # only place that catches it, since CMakeTestMetalCompiler assumes a working
+    # compiler there and skips its try_compile; elsewhere it replaces a "compiler
+    # is broken" report, whose actual reason is buried in the try_compile output.
+    # CMAKE_Metal_COMPILER_FORCED opts out, as it does for the compiler test.
+    if(NOT result EQUAL 0 AND NOT CMAKE_Metal_COMPILER_FORCED)
+        string(STRIP "${output}" output)
+        string(REPLACE "\n" "\n  " output "${output}")
+        message(FATAL_ERROR "The Metal compiler\n  \"${CMAKE_Metal_COMPILER}\"\n"
+            "cannot be run:\n  ${output}\n")
+    endif()
 
     if(output MATCHES [[metal version ([0-9]+\.[0-9]+(\.[0-9]+)?)]])
         set(CMAKE_Metal_COMPILER_VERSION "${CMAKE_MATCH_1}")
