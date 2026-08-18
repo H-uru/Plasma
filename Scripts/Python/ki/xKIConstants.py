@@ -263,6 +263,8 @@ class kChron:
     BuddiesOnRequestType = 2
     CGZPlaying = "CGZPlaying"
     Party = "PartyAge"
+    ShowTimestamps = "KIShowTimestamps"
+    ShowTimestampsType = 2
 
 ## Color definitions.
 class kColors:
@@ -348,7 +350,8 @@ class kCommands:
         "/saveclothing": "SaveClothing",
         "/loadclothing": "LoadClothing",
         "/threaten": "CoopExample",
-        "/roll": "RollDice"
+        "/roll": "RollDice",
+        "/timestamps": "ToggleChatTimestamps"
     }
 
 ## Numeric limits for the KI.
