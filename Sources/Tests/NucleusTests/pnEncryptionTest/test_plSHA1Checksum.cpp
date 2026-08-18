@@ -45,6 +45,55 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnEncryption/plChecksum.h"
 #include <string_theory/string>
 
+TEST(plSHA1Checksum, lifecycle)
+{
+    plChecksum sum(plChecksum::Type::kSHA1);
+
+    // We can set the checksum value directly if no checksum is in progress.
+    EXPECT_NO_THROW(sum.SetFromHexString("da39a3ee5e6b4b0d3255bfef95601890afd80709"));
+    EXPECT_THROW(sum.SetFromHexString("1"), plChecksumException);
+
+    // Can't add to or finish until Start() is called.
+    EXPECT_THROW(sum.AddTo(1, (const uint8_t*)"a"), plChecksumException);
+    EXPECT_THROW(sum.Finish(), plChecksumException);
+
+    // Calling Start() twice doesn't make sense.
+    EXPECT_NO_THROW(sum.Start());
+    EXPECT_THROW(sum.Start(), plChecksumException);
+
+    // Now that we've started, we can't set the checksum value directly.
+    EXPECT_THROW(sum.SetFromHexString("da39a3ee5e6b4b0d3255bfef95601890afd80709"), plChecksumException);
+
+    // Can't get the value until Finish() is called.
+    EXPECT_THROW(sum.GetValue(), plChecksumException);
+
+    // Can't add after Finish() is called.
+    EXPECT_NO_THROW(sum.AddTo(1, (const uint8_t*)"a"));
+    EXPECT_NO_THROW(sum.Finish());
+    EXPECT_THROW(sum.AddTo(1, (const uint8_t*)"a"), plChecksumException);
+
+    // Value and size should work now.
+    EXPECT_NO_THROW(sum.GetSize());
+    EXPECT_NO_THROW(sum.GetValue());
+
+    // Should be able to restart and reuse the checksum object.
+    EXPECT_NO_THROW(sum.Start());
+    EXPECT_NO_THROW(sum.AddTo(1, (const uint8_t*)"a"));
+    EXPECT_NO_THROW(sum.Finish());
+
+    // We can set the checksum value directly if no checksum is in progress.
+    EXPECT_NO_THROW(sum.SetFromHexString("da39a3ee5e6b4b0d3255bfef95601890afd80709"));
+
+    // Moving invalidates the source.
+    plChecksum sum2 = std::move(sum);
+    EXPECT_THROW(sum.GetValue(), plChecksumException);
+    EXPECT_THROW(sum.GetSize(), plChecksumException);
+    EXPECT_THROW(sum.Start(), plChecksumException);
+    EXPECT_THROW(sum.AddTo(1, (const uint8_t*)"a"), plChecksumException);
+    EXPECT_THROW(sum.Finish(), plChecksumException);
+    EXPECT_THROW(sum.SetFromHexString("da39a3ee5e6b4b0d3255bfef95601890afd80709"), plChecksumException);
+}
+
 TEST(plSHA1Checksum, ctor_with_buffer)
 {
     const char buffer[] = "Hello World";
@@ -55,7 +104,7 @@ TEST(plSHA1Checksum, ctor_with_buffer)
                              0x77, 0xc5, 0xd8, 0x40,
                              0xbb, 0xc4, 0x86, 0xd0};
 
-    plSHA1Checksum sum(strlen(buffer), (const uint8_t*)buffer);
+    plChecksum sum(plChecksum::Type::kSHA1, strlen(buffer), (const uint8_t*)buffer);
 
     EXPECT_EQ(sizeof(value), sum.GetSize());
     EXPECT_EQ(0, memcmp(sum.GetValue(), value, 20));
@@ -72,7 +121,7 @@ TEST(plSHA1Checksum, update)
                              0x77, 0xc5, 0xd8, 0x40,
                              0xbb, 0xc4, 0x86, 0xd0};
 
-    plSHA1Checksum sum;
+    plChecksum sum(plChecksum::Type::kSHA1);
     sum.Start();
     sum.AddTo(strlen(buffer[0]), (const uint8_t*)buffer[0]);
     sum.AddTo(strlen(buffer[1]), (const uint8_t*)buffer[1]);
@@ -88,30 +137,30 @@ TEST(plSHA1Checksum, well_known_hashes)
     // From NIST FIPS-180
     const char case0_text[] = "";
     const char case0_digest[] = "da39a3ee5e6b4b0d3255bfef95601890afd80709";
-    plSHA1Checksum case0(strlen(case0_text), (const uint8_t*)case0_text);
+    plChecksum case0(plChecksum::Type::kSHA1, strlen(case0_text), (const uint8_t*)case0_text);
     EXPECT_STREQ(case0_digest, case0.GetAsHexString().c_str());
 
     const char case1_text[] = "abc";
     const char case1_digest[] = "a9993e364706816aba3e25717850c26c9cd0d89d";
-    plSHA1Checksum case1(strlen(case1_text), (const uint8_t*)case1_text);
+    plChecksum case1(plChecksum::Type::kSHA1, strlen(case1_text), (const uint8_t*)case1_text);
     EXPECT_STREQ(case1_digest, case1.GetAsHexString().c_str());
 
     const char case2_text[] = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
     const char case2_digest[] = "84983e441c3bd26ebaae4aa1f95129e5e54670f1";
-    plSHA1Checksum case2(strlen(case2_text), (const uint8_t*)case2_text);
+    plChecksum case2(plChecksum::Type::kSHA1, strlen(case2_text), (const uint8_t*)case2_text);
     EXPECT_STREQ(case2_digest, case2.GetAsHexString().c_str());
 
     const char case3_text[] = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmn"
                               "hijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu";
     const char case3_digest[] = "a49b2446a02c645bf419f995b67091253a04a259";
-    plSHA1Checksum case3(strlen(case3_text), (const uint8_t*)case3_text);
+    plChecksum case3(plChecksum::Type::kSHA1, strlen(case3_text), (const uint8_t*)case3_text);
     EXPECT_STREQ(case3_digest, case3.GetAsHexString().c_str());
 
     // 1,000,000 copies of 'a'
     uint8_t onek_a[1000];
     memset(onek_a, 'a', sizeof(onek_a));
     const char case4_digest[] = "34aa973cd4c4daa4f61eeb2bdbad27316534016f";
-    plSHA1Checksum case4;
+    plChecksum case4(plChecksum::Type::kSHA1);
     case4.Start();
     for (size_t i = 0; i < 1000; ++i)
         case4.AddTo(sizeof(onek_a), onek_a);
@@ -122,7 +171,7 @@ TEST(plSHA1Checksum, well_known_hashes)
     const char case5_text[] = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmno";
     const size_t case5_text_len = strlen(case5_text);
     const char case5_digest[] = "7789f0c9ef7bfc40d93311143dfbe69e2017f592";
-    plSHA1Checksum case5;
+    plChecksum case5(plChecksum::Type::kSHA1);
     case5.Start();
     for (size_t i = 0; i < 16777216; ++i)
         case5.AddTo(case5_text_len, (const uint8_t*)case5_text);

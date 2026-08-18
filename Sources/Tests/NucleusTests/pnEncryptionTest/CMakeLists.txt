@@ -2,6 +2,8 @@ set(pnEncryptionTest_SOURCES
     test_plMD5Checksum.cpp
     test_plSHAChecksum.cpp
     test_plSHA1Checksum.cpp
+    test_plSHA256Checksum.cpp
+    test_plSHA512Checksum.cpp
 )
 
 plasma_test(test_pnEncryption SOURCES ${pnEncryptionTest_SOURCES})
