@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNGLFILE_H
 
 #include <functional>
+#include <string_theory/string>
 #include <vector>
 
 #include "pnNetBase/pnNbConst.h"
@@ -90,10 +91,10 @@ void NetCliFileRegisterBuildIdUpdate (FNetCliFileBuildIdUpdateCallback callback)
 // Manifest
 //============================================================================
 struct NetCliFileManifestEntry {
-    char16_t    clientName[kNetDefaultStringSize]; // path and file on client side (for comparison)
-    char16_t    downloadName[kNetDefaultStringSize]; // path and file on server side (for download)
-    char16_t    md5[32];
-    char16_t    md5compressed[32]; // md5 for the compressed file
+    ST::string  clientName; // path and file on client side (for comparison)
+    ST::string  downloadName; // path and file on server side (for download)
+    ST::string  md5;
+    ST::string  md5compressed; // md5 for the compressed file
     unsigned    fileSize;
     unsigned    zipSize;
     unsigned    flags;
@@ -103,7 +104,7 @@ using FNetCliFileManifestRequestCallback = std::function<void(
     const std::vector<NetCliFileManifestEntry>& manifest
 )>;
 void NetCliFileManifestRequest (
-    const char16_t                      group[], // the group of files you want (empty or nil = all)
+    ST::string                          group, // the group of files you want (empty or nil = all)
     unsigned                            buildId, // 0 = get latest, other = get particular build (servers only)
     FNetCliFileManifestRequestCallback  callback
 );

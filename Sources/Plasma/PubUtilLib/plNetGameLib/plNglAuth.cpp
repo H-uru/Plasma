@@ -2856,6 +2856,62 @@ void FileListRequestTrans::Post () {
     m_callback(m_result, m_fileInfoArray);
 }
 
+bool IReceiveFileList(const Auth2Cli_FileListReply& reply, std::vector<NetCliAuthFileInfo>& fileInfoArray)
+{
+    uint32_t wcharCount = reply.wcharCount;
+    const char16_t* curChar = reply.fileData;
+    // Special case: 0 or 2 terminator chars are also accepted as a file list with 0 files,
+    // even though following the pattern, it should be a single terminator.
+    if (wcharCount == 0 || (wcharCount == 2 && curChar[0] == 0 && curChar[1] == 0)) {
+        fileInfoArray.clear();
+        return true;
+    } else {
+        // fileData format: "filename\0size\0filename\0size\0...\0\0"
+        while (wcharCount > 0) {
+            if (*curChar == 0) {
+                // we hit the terminator
+                curChar++;
+                wcharCount--;
+                // Check that there's no data after the terminator.
+                return wcharCount == 0;
+            }
+
+            // read in the filename
+            size_t filenameConsumed;
+            ST::string filename = hsSTStringFromTerminatedUTF16LE(curChar, wcharCount * sizeof(char16_t), filenameConsumed);
+
+            unsigned filenameLen = filenameConsumed / sizeof(char16_t);
+            curChar += filenameLen; // advance the pointer
+            wcharCount -= filenameLen; // keep track of the amount remaining
+            if (wcharCount == 0 || *curChar != 0)
+                return false; // something is screwy, abort and disconnect
+
+            curChar++; // point it at the first part of the size value (format: 0xHHHHLLLL)
+            wcharCount--;
+            if (wcharCount < 4) // we have to have 2 chars for the size, and 2 for terminator at least
+                return false; // screwy data
+            unsigned size = (hsToLE16(*curChar) << 16) + hsToLE16(*(curChar + 1));
+            curChar += 2;
+            wcharCount -= 2;
+            if (wcharCount == 0 || *curChar != 0)
+                return false; // screwy data
+
+            // save the data in our array
+            NetCliAuthFileInfo& info = fileInfoArray.emplace_back();
+            info.filename = filename;
+            info.filesize = size;
+
+            // point it at either the next file or the terminator for the file list
+            curChar++;
+            wcharCount--;
+        }
+    
+        // Ran out of data without hitting the file list terminator,
+        // meaning that the file list is truncated.
+        return false;
+    }
+}
+
 //============================================================================
 bool FileListRequestTrans::Recv (
     const uint8_t  msg[],
@@ -2863,62 +2919,8 @@ bool FileListRequestTrans::Recv (
 ) {
     const Auth2Cli_FileListReply & reply = *(const Auth2Cli_FileListReply *) msg;
 
-    uint32_t wcharCount = reply.wcharCount;
-    const char16_t* curChar = reply.fileData;
-    // if wcharCount is 2, the data only contains the terminator "\0\0" and we
-    // don't need to convert anything
-    if (wcharCount == 2)
-        m_fileInfoArray.clear();
-    else
-    {
-        // fileData format: "filename\0size\0filename\0size\0...\0\0"
-        bool done = false;
-        while (!done) {
-            if (wcharCount == 0)
-            {
-                done = true;
-                break;
-            }
-
-            // read in the filename
-            char16_t filename[kNetDefaultStringSize];
-            StrCopy(filename, curChar, std::size(filename));
-            filename[std::size(filename) - 1] = L'\0'; // make sure it's terminated
-
-            unsigned filenameLen = std::char_traits<char16_t>::length(filename);
-            curChar += filenameLen; // advance the pointer
-            wcharCount -= filenameLen; // keep track of the amount remaining
-            if ((*curChar != L'\0') || (wcharCount <= 0))
-                return false; // something is screwy, abort and disconnect
-
-            curChar++; // point it at the first part of the size value (format: 0xHHHHLLLL)
-            wcharCount--;
-            if (wcharCount < 4) // we have to have 2 chars for the size, and 2 for terminator at least
-                return false; // screwy data
-            unsigned size = ((*curChar) << 16) + (*(curChar + 1));
-            curChar += 2;
-            wcharCount -= 2;
-            if ((*curChar != L'\0') || (wcharCount <= 0))
-                return false; // screwy data
-
-            // save the data in our array
-            NetCliAuthFileInfo& info = m_fileInfoArray.emplace_back();
-            StrCopy(info.filename, filename, std::size(info.filename));
-            info.filesize = size;
-
-            // point it at either the second part of the terminator, or the next filename
-            curChar++;
-            wcharCount--;
-            if (*curChar == L'\0')
-            {
-                // we hit the terminator
-                if (wcharCount != 1)
-                    return false; // invalid data, we shouldn't have any more
-                done = true; // we're done
-            }
-            else if (wcharCount < 6) // we must have at least a 1 char string, '\0', size, and "\0\0" terminator left
-                return false; // screwy data
-        }
+    if (!IReceiveFileList(reply, m_fileInfoArray)) {
+        return false;
     }
 
     m_result    = reply.result;
@@ -2953,14 +2955,12 @@ bool FileDownloadRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    char16_t filename[kNetDefaultStringSize] {};
     const ST::utf16_buffer buffer = m_filename.AsString().to_utf16();
-    memcpy(filename, buffer.data(), std::min(sizeof(filename), buffer.size() * sizeof(char16_t)));
 
     const uintptr_t msg[] = {
         kCli2Auth_FileDownloadRequest,
         m_transId,
-        reinterpret_cast<uintptr_t>(filename),
+        reinterpret_cast<uintptr_t>(buffer.data()),
     };
 
     m_conn->Send(msg, std::size(msg));

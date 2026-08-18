@@ -125,12 +125,11 @@ struct pfPatcherQueuedFile
     uint32_t fFlags;
 
     pfPatcherQueuedFile(Type t, const NetCliFileManifestEntry& file)
-    : fType(t), fClientPath(plFileName(ST::string::from_utf16(file.clientName)).Normalize()),
-          fServerPath(ST::string::from_utf16(file.downloadName)), fChecksum(),
+        : fType(t), fClientPath(plFileName(file.clientName).Normalize()),
+          fServerPath(file.downloadName), fChecksum(),
           fFileSize(file.fileSize), fZipSize(file.zipSize), fFlags(file.flags)
     {
-        ST::string temp(file.md5, std::size(file.md5));
-        fChecksum.SetFromHexString(temp.c_str());
+        fChecksum.SetFromHexString(file.md5.c_str());
     }
 
     pfPatcherQueuedFile(Type t, plFileName path, uint32_t flags=0)
@@ -335,7 +334,7 @@ void pfPatcherWorker::IGotAuthFileList(ENetError result, const std::vector<NetCl
             for (const auto& info : infos) {
                 PatcherLogYellow("\tEnqueuing Legacy File '{}'", info.filename);
 
-                plFileName fn = ST::string::from_utf16(info.filename);
+                plFileName fn = info.filename;
                 plFileSystem::CreateDir(fn.StripFileName());
 
                 // We purposefully do NOT Open this stream! This uses a special auth-file constructor that
@@ -485,14 +484,14 @@ bool pfPatcherWorker::IssueRequest()
             });
             break;
         case Request::kManifest:
-            NetCliFileManifestRequest(req.fName.to_utf16().data(), 0, [this, group = req.fName](auto result, const auto& manifest) {
+            NetCliFileManifestRequest(req.fName, 0, [this, group = req.fName](auto result, const auto& manifest) {
                 IFileManifestDownloadCB(result, group, manifest);
             });
             break;
         case Request::kSecurePreloader:
             // so, yeah, this is usually the "SecurePreloader" manifest on the file server...
             // except on legacy servers, this may not exist, so we need to fall back without nuking everything!
-            NetCliFileManifestRequest(req.fName.to_utf16().data(), 0, [this, group = req.fName](auto result, const auto& manifest) {
+            NetCliFileManifestRequest(req.fName, 0, [this, group = req.fName](auto result, const auto& manifest) {
                 IPreloaderManifestDownloadCB(result, group, manifest);
             });
             break;

@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <algorithm>
 #include <mutex>
-#include <string>
 #include <string_theory/string>
 #include <utility>
 
@@ -61,23 +60,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetBase/pnNbSrvs.h"
 #include "pnNetCommon/plNetAddress.h"
 #include "pnNetProtocol/pnNpCli2File.h"
-#include "pnUtils/pnUtStr.h"
 
 #include "Intern.h"
 
 // Define this if the file servers are running behind load-balancing hardware.
 // It changes the logic by which the decision to attempt a reconnect is made.
 #define LOAD_BALANCER_HARDWARE
-
-static void StrCopyLE16(char16_t* dest, const char16_t source[], size_t chars) {
-    while ((chars > 1) && ((*dest = hsToLE16(*source++)) != 0)) {
-        --chars;
-        ++dest;
-    }
-    if (chars)
-        *dest = 0;
-}
-
 
 namespace Ngl { namespace File {
 /*****************************************************************************
@@ -171,7 +159,7 @@ struct BuildIdRequestTrans : NetFileTrans {
 //============================================================================
 struct ManifestRequestTrans : NetFileTrans {
     FNetCliFileManifestRequestCallback  m_callback;
-    char16_t                            m_group[kNetDefaultStringSize];
+    ST::string                          m_group;
     unsigned                            m_buildId;
 
     std::vector<NetCliFileManifestEntry>  m_manifest;
@@ -179,7 +167,7 @@ struct ManifestRequestTrans : NetFileTrans {
 
     ManifestRequestTrans (
         FNetCliFileManifestRequestCallback  callback,
-        const char16_t                      group[],
+        ST::string                          group,
         unsigned                            buildId
     );
 
@@ -757,11 +745,8 @@ bool CliFileConn::Recv_ManifestReply (
     msg->readerId = hsToLE32(msg->readerId);
     msg->numFiles = hsToLE32(msg->numFiles);
     msg->wcharCount = hsToLE32(msg->wcharCount);
-
-    // The manifest format includes \0 characters, so we can't just StrCopy
-    for (size_t i = 0; i < msg->wcharCount; i++) {
-        msg->manifestData[i] = hsToLE16(msg->manifestData[i]);
-    }
+    // Intentionally don't convert manifestData to native byte order yet.
+    // IReceiveManifest later converts the byte order of each field in the manifest individually.
 
     NetTransRecv(msg->transId, (const uint8_t *)msg, msg->messageBytes);
 
@@ -851,18 +836,14 @@ bool BuildIdRequestTrans::Recv (
 //============================================================================
 ManifestRequestTrans::ManifestRequestTrans (
     FNetCliFileManifestRequestCallback  callback,
-    const char16_t                      group[],
+    ST::string                          group,
     unsigned                            buildId
 ) : NetFileTrans(kManifestRequestTrans)
 ,   m_callback(std::move(callback))
+,   m_group(std::move(group))
 ,   m_numEntriesReceived(0)
 ,   m_buildId(buildId)
-{
-    if (group)
-        StrCopy(m_group, group, std::size(m_group));
-    else
-        m_group[0] = L'\0';
-}
+{}
 
 //============================================================================
 bool ManifestRequestTrans::Send () {
@@ -870,10 +851,11 @@ bool ManifestRequestTrans::Send () {
         return false;
 
     Cli2File_ManifestRequest manifestReq;
-    StrCopyLE16(manifestReq.group, m_group, std::size(manifestReq.group));
     manifestReq.messageId = hsToLE32(kCli2File_ManifestRequest);
     manifestReq.transId = hsToLE32(m_transId);
     manifestReq.messageBytes = hsToLE32(sizeof(manifestReq));
+    bool ok = hsSTStringToFixedSizeUTF16LE(m_group, manifestReq.group, sizeof(manifestReq.group));
+    hsAssert(ok, "Requested a manifest name longer than the protocol allows - truncating...");
     manifestReq.buildId = hsToLE32(m_buildId);
 
     m_conn->Send(&manifestReq, sizeof(manifestReq));
@@ -886,82 +868,58 @@ void ManifestRequestTrans::Post () {
     m_callback(m_result, m_manifest);
 }
 
-// Neither char_traits nor C's string library have a "strnlen" equivalent for
-// char16_t strings...
-inline size_t FIXME_u16snlen(const char16_t* str, size_t maxlen)
-{
-    const char16_t* end = std::char_traits<char16_t>::find(str, maxlen, 0);
-    return end ? size_t(end - str) : maxlen;
-}
-
 //============================================================================
-void ReadStringFromMsg(const char16_t* curMsgPtr, char16_t* destPtr, unsigned* length) {
-    if (!(*length)) {
-        size_t maxlen = FIXME_u16snlen(curMsgPtr, kNetDefaultStringSize - 1);   // Hacky sack
-        (*length) = maxlen;
-        destPtr[maxlen] = 0;    // Don't do this on fixed length, because there's no room for it
-    }
-    memcpy(destPtr, curMsgPtr, *length * sizeof(char16_t));
+ST::string ReadStringFromMsg(const char16_t* curMsgPtr, size_t msgChar16Count, size_t* length)
+{
+    size_t consumedSize;
+    ST::string res = hsSTStringFromTerminatedUTF16LE(curMsgPtr, msgChar16Count * sizeof(char16_t), consumedSize);
+    *length = consumedSize / sizeof(char16_t);
+    return res;
 }
 
 //============================================================================
 void ReadUnsignedFromMsg(const char16_t* curMsgPtr, unsigned* val) {
-    (*val) = ((*curMsgPtr) << 16) + (*(curMsgPtr + 1));
+    *val = (hsToLE16(*curMsgPtr) << 16) + hsToLE16(*(curMsgPtr + 1));
 }
 
-//============================================================================
-bool ManifestRequestTrans::Recv (
-    const uint8_t  msg[],
-    unsigned    bytes
-) {
-    m_timeoutAtMs = hsTimer::GetMilliSeconds<uint32_t>() + NetTransGetTimeoutMs(); // Reset the timeout counter
-
-    const File2Cli_ManifestReply & reply = *(const File2Cli_ManifestReply *) msg;
-
+bool IReceiveManifest(const File2Cli_ManifestReply& reply, std::vector<NetCliFileManifestEntry>& manifest, unsigned& numEntriesReceived)
+{
     uint32_t numFiles = reply.numFiles;
     uint32_t wcharCount = reply.wcharCount;
     const char16_t* curChar = reply.manifestData; // the pointer is not yet dereferenced here!
 
-    // tell the server we got the data
-    Cli2File_ManifestEntryAck manifestAck;
-    manifestAck.messageId = hsToLE32(kCli2File_ManifestEntryAck);
-    manifestAck.transId = hsToLE32(reply.transId);
-    manifestAck.messageBytes = hsToLE32(sizeof(manifestAck));
-    manifestAck.readerId = hsToLE32(reply.readerId);
+    if (numFiles > manifest.size())
+        manifest.resize(numFiles); // reserve the space ahead of time
 
-    m_conn->Send(&manifestAck, sizeof(manifestAck));
-
-    // if wcharCount is 2 or less, the data only contains the terminator "\0\0" and we
-    // don't need to convert anything (and we are done)
-    if ((IS_NET_ERROR(reply.result)) || (wcharCount <= 2)) {
-        // we have a problem... or we have nothing to so, so we're done
-        m_result    = reply.result;
-        m_state     = kTransStateComplete;
+    // Special case: 0 or 2 terminator chars are also accepted as a manifest with 0 files,
+    // even though following the pattern, it should be a single terminator.
+    if (wcharCount == 0 || (wcharCount == 2 && curChar[0] == 0 && curChar[1] == 0)) {
         return true;
     }
 
-    if (numFiles > m_manifest.size())
-        m_manifest.resize(numFiles); // reserve the space ahead of time
-
-    // manifestData format: "clientFile\0downloadFile\0md5\0filesize\0zipsize\0flags\0...\0\0"
-    bool done = false;
-    while (!done) {
-        if (wcharCount == 0)
-        {
-            done = true;
-            break;
+    // manifestData format: "clientName\0downloadName\0md5\0md5compressed\0fileSize\0zipSize\0flags\0...\0\0"
+    while (wcharCount > 0) {
+        if (*curChar == 0) {
+            // we hit the terminator
+            curChar++;
+            wcharCount--;
+            // Check that there's no data after the terminator.
+            return wcharCount == 0;
+        } else if (numEntriesReceived >= numFiles) {
+            // too much data, abort
+            return false;
         }
 
         // copy the data over to our array (m_numEntriesReceived is the current index)
-        NetCliFileManifestEntry& entry = m_manifest[m_numEntriesReceived];
+        NetCliFileManifestEntry& entry = manifest[numEntriesReceived];
 
         // --------------------------------------------------------------------
         // read in the clientFilename
-        unsigned filenameLen = 0;
-        ReadStringFromMsg(curChar, entry.clientName, &filenameLen);
+        size_t filenameLen = 0;
+        entry.clientName = ReadStringFromMsg(curChar, wcharCount, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wcharCount <= 0))
+        if (wcharCount == 0 || *curChar != 0)
             return false; // something is screwy, abort and disconnect
 
         // point it at the downloadFile
@@ -971,10 +929,10 @@ bool ManifestRequestTrans::Recv (
         // --------------------------------------------------------------------
         // read in the downloadFilename
         filenameLen = 0;
-        ReadStringFromMsg(curChar, entry.downloadName, &filenameLen);
+        entry.downloadName = ReadStringFromMsg(curChar, wcharCount, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wcharCount <= 0))
+        if (wcharCount == 0 || *curChar != 0)
             return false; // something is screwy, abort and disconnect
 
         // point it at the md5
@@ -984,10 +942,13 @@ bool ManifestRequestTrans::Recv (
         // --------------------------------------------------------------------
         // read in the md5
         filenameLen = 32;
-        ReadStringFromMsg(curChar, entry.md5, &filenameLen);
+        if (wcharCount < filenameLen) {
+            return false; // something is screwy, abort and disconnect
+        }
+        entry.md5 = hsSTStringFromUTF16LE(curChar, filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wcharCount <= 0))
+        if (wcharCount == 0 || *curChar != 0)
             return false; // something is screwy, abort and disconnect
 
         // point it at the md5 for compressed files
@@ -997,10 +958,13 @@ bool ManifestRequestTrans::Recv (
         // --------------------------------------------------------------------
         // read in the md5 for compressed files
         filenameLen = 32;
-        ReadStringFromMsg(curChar, entry.md5compressed, &filenameLen);
+        if (wcharCount < filenameLen) {
+            return false; // something is screwy, abort and disconnect
+        }
+        entry.md5compressed = hsSTStringFromUTF16LE(curChar, filenameLen);
         curChar += filenameLen; // advance the pointer
         wcharCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wcharCount <= 0))
+        if (wcharCount == 0 || *curChar != 0)
             return false; // something is screwy, abort and disconnect
 
         // point it at the first part of the filesize value (format: 0xHHHHLLLL)
@@ -1013,7 +977,7 @@ bool ManifestRequestTrans::Recv (
         ReadUnsignedFromMsg(curChar, &entry.fileSize);
         curChar += 2;
         wcharCount -= 2;
-        if ((*curChar != L'\0') || (wcharCount <= 0))
+        if (wcharCount == 0 || *curChar != 0)
             return false; // screwy data
 
         // point it at the first part of the zipsize value (format: 0xHHHHLLLL)
@@ -1026,7 +990,7 @@ bool ManifestRequestTrans::Recv (
         ReadUnsignedFromMsg(curChar, &entry.zipSize);
         curChar += 2;
         wcharCount -= 2;
-        if ((*curChar != L'\0') || (wcharCount <= 0))
+        if (wcharCount == 0 || *curChar != 0)
             return false; // screwy data
 
         // point it at the first part of the flags value (format: 0xHHHHLLLL)
@@ -1039,36 +1003,54 @@ bool ManifestRequestTrans::Recv (
         ReadUnsignedFromMsg(curChar, &entry.flags);
         curChar += 2;
         wcharCount -= 2;
-        if ((*curChar != L'\0') || (wcharCount <= 0))
+        if (wcharCount == 0 || *curChar != 0)
             return false; // screwy data
 
         // --------------------------------------------------------------------
-        // point it at either the second part of the terminator, or the next filename
+        // point it at either the next file or the terminator for the manifest
         curChar++;
         wcharCount--;
 
-        // do sanity checking
-        if (*curChar == L'\0') {
-            // we hit the terminator
-            if (wcharCount != 1)
-                return false; // invalid data, we shouldn't have any more
-            done = true; // we're done
-        }
-        else if (wcharCount < 14)
-            // we must have at least three 1-char strings, three nulls, three 32-bit ints, and 2-char terminator left (3+3+6+2)
-            return false; // screwy data
-
         // increment entries received
-        m_numEntriesReceived++;
-        if ((m_numEntriesReceived >= numFiles) && !done) {
-            // too much data, abort
-            return false;
-        }
+        numEntriesReceived++;
     }
-    
+
+    // Ran out of data without hitting the manifest terminator,
+    // meaning that the manifest is truncated.
+    return false;
+}
+
+//============================================================================
+bool ManifestRequestTrans::Recv (
+    const uint8_t  msg[],
+    unsigned    bytes
+) {
+    m_timeoutAtMs = hsTimer::GetMilliSeconds<uint32_t>() + NetTransGetTimeoutMs(); // Reset the timeout counter
+
+    const File2Cli_ManifestReply & reply = *(const File2Cli_ManifestReply *) msg;
+
+    // tell the server we got the data
+    Cli2File_ManifestEntryAck manifestAck;
+    manifestAck.messageId = hsToLE32(kCli2File_ManifestEntryAck);
+    manifestAck.transId = hsToLE32(reply.transId);
+    manifestAck.messageBytes = hsToLE32(sizeof(manifestAck));
+    manifestAck.readerId = hsToLE32(reply.readerId);
+
+    m_conn->Send(&manifestAck, sizeof(manifestAck));
+
+    if (IS_NET_ERROR(reply.result)) {
+        // we have a problem...
+        m_result    = reply.result;
+        m_state     = kTransStateComplete;
+        return true;
+    }
+
+    if (!IReceiveManifest(reply, m_manifest, m_numEntriesReceived)) {
+        return false;
+    }
+
     // check for completion
-    if (m_numEntriesReceived >= numFiles)
-    {
+    if (m_numEntriesReceived >= reply.numFiles) {
         // all entires received, mark as complete
         m_result    = reply.result;
         m_state     = kTransStateComplete;
@@ -1107,10 +1089,11 @@ bool DownloadRequestTrans::Send () {
 
     Cli2File_FileDownloadRequest filedownloadReq;
     const ST::utf16_buffer buffer = m_filename.AsString().to_utf16();
-    StrCopyLE16(filedownloadReq.filename, buffer.data(), std::size(filedownloadReq.filename));
     filedownloadReq.messageId = hsToLE32(kCli2File_FileDownloadRequest);
     filedownloadReq.transId = hsToLE32(m_transId);
     filedownloadReq.messageBytes = hsToLE32(sizeof(filedownloadReq));
+    bool ok = hsSTStringToFixedSizeUTF16LE(m_filename.AsString(), filedownloadReq.filename, sizeof(filedownloadReq.filename));
+    hsAssert(ok, "Requested a file name longer than the protocol allows - truncating...");
     filedownloadReq.buildId = hsToLE32(m_buildId);
 
     m_conn->Send(&filedownloadReq, sizeof(filedownloadReq));
@@ -1341,13 +1324,13 @@ void NetCliFileRegisterBuildIdUpdate (FNetCliFileBuildIdUpdateCallback callback)
 
 //============================================================================
 void NetCliFileManifestRequest (
-    const char16_t                      group[],
+    ST::string                          group,
     unsigned                            buildId,
     FNetCliFileManifestRequestCallback  callback
 ) {
     ManifestRequestTrans * trans = new ManifestRequestTrans(
         std::move(callback),
-        group,
+        std::move(group),
         buildId
     );
     NetTransSend(trans);
