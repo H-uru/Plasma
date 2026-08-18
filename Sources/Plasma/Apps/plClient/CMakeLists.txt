@@ -135,7 +135,25 @@ elseif(APPLE)
     )
 else()
     list(APPEND plClient_SOURCES
-        main.cpp
+        unix/plClient_Unix.cpp
+        unix/plInputSDL.cpp
+        unix/plLoginSDL.cpp
+        unix/sdlmain.cpp
+    )
+    list(APPEND plClient_HEADERS
+        unix/plClientUnix.h
+        unix/plInputSDL.h
+        unix/plLoginSDL.h
+    )
+
+    # The login window shows the same banner art the Win32 client embeds as
+    # IDB_BANNER and the macOS client bundles. The image is not platform
+    # specific; it only lives under Mac-Cocoa because that is where it landed
+    # first. The 2x copy is the one worth scaling from.
+    install(
+        FILES Mac-Cocoa/banner@2x.png
+        DESTINATION client
+        RENAME banner.png
     )
 endif()
 
@@ -260,6 +278,8 @@ target_link_libraries(
         $<$<BOOL:${PLASMA_PIPELINE_DX}>:pfDXPipeline>
         $<$<BOOL:${PLASMA_PIPELINE_GL}>:pfGLPipeline>
         $<$<BOOL:${PLASMA_PIPELINE_METAL}>:pfMetalPipeline>
+        $<$<BOOL:${PLASMA_PIPELINE_VULKAN}>:pfVulkanPipeline>
+        $<$<TARGET_EXISTS:SDL3::SDL3>:SDL3::SDL3>
         CURL::libcurl
         "$<$<PLATFORM_ID:Darwin>:-framework Cocoa>"
         "$<$<PLATFORM_ID:Darwin>:-framework QuartzCore>"

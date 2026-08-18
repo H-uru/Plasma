@@ -169,10 +169,11 @@ ST::string hsG3DDeviceRecord::GetG3DDeviceTypeName() const
         ST_LITERAL("OpenGL"),
         ST_LITERAL("Metal 2"),
         ST_LITERAL("Metal 3"),
+        ST_LITERAL("Vulkan"),
     };
 
     uint32_t devType = GetG3DDeviceType();
-    if( devType > hsG3DDeviceSelector::kNumDevTypes )
+    if( devType >= hsG3DDeviceSelector::kNumDevTypes )
         devType = hsG3DDeviceSelector::kDevTypeUnknown;
 
     return deviceNames[devType];
@@ -349,6 +350,7 @@ bool hsG3DDeviceSelector::GetRequested(hsG3DDeviceModeRecord *dmr, uint32_t devT
     hsG3DDeviceRecord* iD3D = nullptr;
     hsG3DDeviceRecord* iMetal2 = nullptr;
     hsG3DDeviceRecord* iMetal3 = nullptr;
+    hsG3DDeviceRecord* iVulkan = nullptr;
     hsG3DDeviceRecord* iOpenGL = nullptr;
     hsG3DDeviceRecord* device = nullptr;
 
@@ -387,10 +389,15 @@ bool hsG3DDeviceSelector::GetRequested(hsG3DDeviceModeRecord *dmr, uint32_t devT
             if (iMetal3 == nullptr || force)
                 iMetal3 = &record;
             break;
+
+        case kDevTypeVulkan:
+            if (iVulkan == nullptr || force)
+                iVulkan = &record;
+            break;
         }
     }
 
-    // Pick a default device (Priority D3D T&L, D3D HAL, Metal, OpenGL)
+    // Pick a default device (Priority D3D T&L, D3D HAL, Metal, Vulkan, OpenGL)
     if (iTnL != nullptr)
         device = iTnL;
     else if (iD3D != nullptr)
@@ -399,6 +406,8 @@ bool hsG3DDeviceSelector::GetRequested(hsG3DDeviceModeRecord *dmr, uint32_t devT
         device = iMetal3;
     else if (iMetal2 != nullptr)
         device = iMetal2;
+    else if (iVulkan != nullptr)
+        device = iVulkan;
     else if (iOpenGL != nullptr)
         device = iOpenGL;
     else

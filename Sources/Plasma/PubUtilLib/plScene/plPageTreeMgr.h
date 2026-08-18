@@ -112,7 +112,7 @@ public:
     virtual void    Reset(); // remove all nodes, nuke the space tree
     virtual bool    Empty() const { return fNodes.empty(); }
 
-    virtual int     Render(plPipeline* pipe);
+    virtual int     Render(plPipeline* pipe, bool renderPostOpaqueEffects = false);
 
     bool            Harvest(plVolumeIsect* isect, std::vector<plDrawVisList>& levList);
 

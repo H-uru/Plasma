@@ -613,6 +613,23 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtSupportsPlanarReflections, "Type: () ->
     return PyBool_FromLong(cyMisc::ArePlanarReflectionsSupported() ? 1 : 0);
 }
 
+PYTHON_GLOBAL_METHOD_DEFINITION(PtEnableAmbientOcclusion, args, "Params: on\nEnables/disables ambient occlusion")
+{
+    char on;
+    if (!PyArg_ParseTuple(args, "b", &on))
+    {
+        PyErr_SetString(PyExc_TypeError, "PtEnableAmbientOcclusion expects a boolean");
+        PYTHON_RETURN_ERROR;
+    }
+    cyMisc::EnableAmbientOcclusion(on != 0);
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtSupportsAmbientOcclusion, "Type: () -> bool\nReturns if ambient occlusion is supported")
+{
+    return PyBool_FromLong(cyMisc::IsAmbientOcclusionSupported() ? 1 : 0);
+}
+
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetSupportedDisplayModes, "Returns a list of supported resolutions")
 {
     std::vector<plDisplayMode> res;
@@ -647,7 +664,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetDesktopColorDepth, "Returns desktop 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetDefaultDisplayParams, "Returns the default resolution and display settings")
 {
     PipelineParams *pp = cyMisc::GetDefaultDisplayParams();
-    PyObject* tup = PyTuple_New(10);
+    PyObject* tup = PyTuple_New(11);
     PyTuple_SetItem(tup, 0, PyLong_FromLong((long)pp->Width));
     PyTuple_SetItem(tup, 1, PyLong_FromLong((long)pp->Height));
     PyTuple_SetItem(tup, 2, PyLong_FromLong((long)pp->Windowed));
@@ -658,6 +675,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetDefaultDisplayParams, "Returns the d
     PyTuple_SetItem(tup, 7, PyLong_FromLong((long)pp->VideoQuality));
     PyTuple_SetItem(tup, 8, PyLong_FromLong((long)pp->Shadows));
     PyTuple_SetItem(tup, 9, PyLong_FromLong((long)pp->PlanarReflections));
+    PyTuple_SetItem(tup, 10, PyLong_FromLong((long)pp->AmbientOcclusion.fEnabled));
     return tup;
 }
 
@@ -823,6 +841,8 @@ void cyMisc::AddPlasmaMethods4(PyObject* m)
 
         PYTHON_GLOBAL_METHOD(PtEnablePlanarReflections)
         PYTHON_GLOBAL_METHOD_NOARGS(PtSupportsPlanarReflections)
+        PYTHON_GLOBAL_METHOD(PtEnableAmbientOcclusion)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtSupportsAmbientOcclusion)
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetSupportedDisplayModes)
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetDesktopWidth)
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetDesktopHeight)

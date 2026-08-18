@@ -54,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfCamera/plVirtualCamNeu.h"
 #include "plAvatar/plAvatarClothing.h"
 #include "plDrawable/plAuxSpan.h"
+#include "plDrawable/plAccessSpan.h"
 #include "plDrawable/plDrawableSpans.h"
 #include "plDrawable/plGBufferGroup.h"
 #include "plGImage/plCubicEnvironmap.h"
@@ -74,6 +75,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plCubicRenderTarget.h"
 #include "plPipeline/plDebugText.h"
 #include "plPipeline/plDynamicEnvMap.h"
+#include "plPipeline/plFogEnvironment.h"
 #include "plProfile.h"
 #include "plQuality.h"
 #include "plScene/plRenderRequest.h"
@@ -186,6 +188,8 @@ plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, con
     fMatRefList = nullptr;
     fTextFontRefList = nullptr;
     fLightRefList = nullptr;
+    for (MTL::Buffer*& lightBuffer : fLightBuffers)
+        lightBuffer = nullptr;
 
     fCurrLayerIdx = 0;
     fDevice.fPipeline = this;
@@ -208,6 +212,7 @@ plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, con
     fDesktopParams = plDisplayHelper::GetInstance()->DesktopDisplayMode();
     
     fDevice.SetOutputLayer(reinterpret_cast<CA::MetalLayer*>(window));
+    fDevice.SetVSync(fVSync);
     // For now - set this once at startup. If the underlying device is allow to change on
     // the fly (eGPU, display change, etc) - revisit.
     fDevice.GetOutputLayer()->setDevice(fDevice.fMetalDevice);
@@ -227,6 +232,7 @@ plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, con
 
     fDevice.SetMaxAnsiotropy(fInitialPipeParams.AnisotropicLevel);
     fDevice.SetMSAASampleCount(fInitialPipeParams.AntiAliasingAmount);
+    fDevice.SetGTAOSettings(fInitialPipeParams.AmbientOcclusion);
 
     fCurrentRenderPassUniforms = (VertexUniforms*)calloc(sizeof(VertexUniforms), sizeof(char));
 
@@ -253,9 +259,20 @@ plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, con
 
 plMetalPipeline::~plMetalPipeline()
 {
-    if (plMetalPlateManager* pm = static_cast<plMetalPlateManager*>(fPlateMgr)) {
-        pm->IReleaseGeometry();
+    IClearShadowSlaves();
+    IReleaseDeviceObjects();
+
+    for (MTL::Buffer*& lightBuffer : fLightBuffers) {
+        if (lightBuffer) {
+            lightBuffer->release();
+            lightBuffer = nullptr;
+        }
     }
+
+    free(fCurrentRenderPassUniforms);
+    fCurrentRenderPassUniforms = nullptr;
+
+    fDevice.Shutdown();
 }
 
 void plMetalPipeline::ICreateDeviceObjects()
@@ -329,12 +346,76 @@ plTextFont* plMetalPipeline::MakeTextFont(ST::string face, uint16_t size)
 
 bool plMetalPipeline::OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly)
 {
-    // FIXME: What's this?
-    // Hoikas: It's for runtime reading/writing the vertices, mostly used by stuff like dynamic decals.
-    return false;
+    if (!d || !span) {
+        dst.SetType(plAccessSpan::kUndefined);
+        return false;
+    }
+
+    plGBufferGroup* group = d->GetBufferGroup(span->fGroupIdx);
+    if (!group || group->AreVertsVolatile()) {
+        dst.SetType(plAccessSpan::kUndefined);
+        return false;
+    }
+
+    CheckVertexBufferRef(group, span->fVBufferIdx);
+    auto* ref = static_cast<plMetalVertexBufferRef*>(
+        group->GetVertexBufferRef(span->fVBufferIdx));
+    if (!ref || !ref->GetBuffer() || span->fVLength == 0) {
+        dst.SetType(plAccessSpan::kUndefined);
+        return false;
+    }
+
+    if (!readOnly)
+        fDevice.WaitForIdle();
+
+    const uint32_t stride = ref->fVertexSize;
+    uint8_t* ptr = static_cast<uint8_t*>(ref->GetBuffer()->contents()) +
+                   size_t(span->fVStartIdx) * stride;
+    const int32_t offset = -int32_t(span->fVStartIdx) * int32_t(stride);
+    const uint8_t numWeights = (ref->fFormat & plGBufferGroup::kSkinWeightMask) >> 4;
+
+    plAccessVtxSpan& access = dst.AccessVtx();
+    access.SetVertCount(uint16_t(span->fVLength));
+    access.PositionStream(ptr, uint16_t(stride), offset);
+    ptr += sizeof(hsPoint3);
+
+    access.SetNumWeights(numWeights);
+    if (numWeights) {
+        access.WeightStream(ptr, uint16_t(stride), offset);
+        ptr += numWeights * sizeof(float);
+        if (ref->fFormat & plGBufferGroup::kSkinIndices) {
+            access.WgtIndexStream(ptr, uint16_t(stride), offset);
+            ptr += sizeof(uint32_t);
+        } else {
+            access.WgtIndexStream(nullptr, 0, offset);
+        }
+    }
+
+    access.NormalStream(ptr, uint16_t(stride), offset);
+    ptr += sizeof(hsVector3);
+    access.DiffuseStream(ptr, uint16_t(stride), offset);
+    ptr += sizeof(uint32_t);
+    access.SpecularStream(ptr, uint16_t(stride), offset);
+    ptr += sizeof(uint32_t);
+    access.UVWStream(ptr, uint16_t(stride), offset);
+    access.SetNumUVWs(plGBufferGroup::CalcNumUVs(ref->fFormat));
+    access.SetVtxDeviceRef(ref);
+    return true;
 }
 
-bool plMetalPipeline::CloseAccess(plAccessSpan& acc) { return false; }
+bool plMetalPipeline::CloseAccess(plAccessSpan& acc)
+{
+    if (!acc.HasAccessVtx())
+        return false;
+
+    auto* ref = static_cast<plMetalVertexBufferRef*>(acc.AccessVtx().GetVtxDeviceRef());
+    if (!ref || !ref->GetBuffer())
+        return false;
+
+    if (ref->GetBuffer()->storageMode() == MTL::StorageModeManaged)
+        ref->GetBuffer()->didModifyRange(NS::Range(0, ref->GetBuffer()->length()));
+    return true;
+}
 
 void plMetalPipeline::PushRenderRequest(plRenderRequest* req)
 {
@@ -399,8 +480,9 @@ void plMetalPipeline::PopRenderRequest(plRenderRequest* req)
 
 plRenderTarget* plMetalPipeline::PopRenderTarget()
 {
-    pl3DPipeline::PopRenderTarget();
+    plRenderTarget* target = pl3DPipeline::PopRenderTarget();
     fState.Reset();
+    return target;
 }
 
 void plMetalPipeline::ClearRenderTarget(plDrawable* d)
@@ -420,7 +502,7 @@ void plMetalPipeline::ClearRenderTarget(const hsColorRGBA* col, const float* dep
     if (fView.fRenderState & (kRenderClearColor | kRenderClearDepth)) {
         hsColorRGBA clearColor = col ? *col : GetClearColor();
         float       clearDepth = depth ? *depth : fView.GetClearDepth();
-        fDevice.Clear(fView.fRenderState & kRenderClearColor, { clearColor.r, clearColor.g, clearColor.b, clearColor.a }, fView.fRenderState & kRenderClearDepth, 1.0);
+        fDevice.Clear(fView.fRenderState & kRenderClearColor, { clearColor.r, clearColor.g, clearColor.b, clearColor.a }, fView.fRenderState & kRenderClearDepth, clearDepth);
         fState.Reset();
     }
 }
@@ -703,6 +785,9 @@ bool plMetalPipeline::BeginRender()
 bool plMetalPipeline::EndRender()
 {
     bool retVal = false;
+    fDeferShadowApply = false;
+    fRenderingDeferredShadows = false;
+    fDeferredShadowBatches.clear();
     fState.Reset();
 
     if (--fInSceneDepth == 0) {
@@ -763,6 +848,44 @@ void plMetalPipeline::RenderScreenElements()
         fView.fXformResetFlags = fView.kResetAll; // Text destroys view transforms
     }
     plProfile_EndTiming(Reset);
+}
+
+void plMetalPipeline::BeginOpaquePass()
+{
+    fDeferredShadowBatches.clear();
+    fDeferShadowApply = true;
+    fRenderingDeferredShadows = false;
+}
+
+void plMetalPipeline::IFlushDeferredShadows()
+{
+    fDeferShadowApply = false;
+    fRenderingDeferredShadows = true;
+
+    std::vector<plDeferredShadowBatch> batches = std::move(fDeferredShadowBatches);
+    fDeferredShadowBatches.clear();
+    for (plDeferredShadowBatch& batch : batches) {
+        if (batch.fDrawable && !batch.fVisList.empty())
+            RenderSpans(batch.fDrawable, batch.fVisList);
+    }
+
+    fRenderingDeferredShadows = false;
+}
+
+void plMetalPipeline::RenderPostOpaqueEffects()
+{
+    // Only the primary scene opts into this hook. Keep render requests excluded
+    // defensively so GUI dialogs can never composite AO over the finished world.
+    if (fView.fRenderRequest) {
+        fDeferShadowApply = false;
+        fDeferredShadowBatches.clear();
+        return;
+    }
+
+    fDevice.ApplyGTAO();
+    fState.Reset();
+    IFlushDeferredShadows();
+    fState.Reset();
 }
 
 bool plMetalPipeline::IsFullScreen() const { return fIsFullscreen; }
@@ -977,9 +1100,41 @@ bool plMetalPipeline::SetGamma10(const uint16_t* const tabR, const uint16_t* con
 
 bool plMetalPipeline::CaptureScreen(plMipmap* dest, bool flipVertical, uint16_t desiredWidth, uint16_t desiredHeight)
 {
-    // FIXME: Screen capture
-    // FIXME: Double fix me - wasn't this working?
-    return false;
+    if (!dest || !fDevice.GetOutputLayer())
+        return false;
+
+    const uint32_t width = uint32_t(fDevice.GetOutputLayer()->drawableSize().width);
+    const uint32_t height = uint32_t(fDevice.GetOutputLayer()->drawableSize().height);
+    if (width == 0 || height == 0)
+        return false;
+
+    std::vector<uint32_t> pixels(size_t(width) * height);
+    uint32_t capturedWidth = 0;
+    uint32_t capturedHeight = 0;
+    if (!fDevice.ReadLastDrawable(pixels.data(), pixels.size() * sizeof(uint32_t),
+                                  &capturedWidth, &capturedHeight)) {
+        return false;
+    }
+
+    if (dest->GetWidth() != capturedWidth || dest->GetHeight() != capturedHeight ||
+        dest->GetPixelSize() != 32) {
+        dest->Reset();
+        dest->Create(uint16_t(capturedWidth), uint16_t(capturedHeight),
+                     plMipmap::kARGB32Config, 1);
+    }
+
+    for (uint32_t y = 0; y < capturedHeight; y++) {
+        const uint32_t sourceY = flipVertical ? capturedHeight - 1 - y : y;
+        uint32_t* output = dest->GetAddr32(0, y);
+        const uint32_t* input = pixels.data() + size_t(sourceY) * capturedWidth;
+        for (uint32_t x = 0; x < capturedWidth; x++)
+            output[x] = input[x] | 0xff000000;
+    }
+
+    if (desiredWidth != 0 && desiredHeight != 0)
+        return dest->ResizeNicely(desiredWidth, desiredHeight, plMipmap::kDefaultFilter);
+
+    return true;
 }
 
 plMipmap* plMetalPipeline::ExtractMipMap(plRenderTarget* targ)
@@ -1051,13 +1206,21 @@ int plMetalPipeline::GetMaxAntiAlias(int Width, int Height, int ColorDepth)
 void plMetalPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync)
 {
     fIsFullscreen = !Windowed;
+    fVSync = vSync;
     Resize(Width, Height);
     fDevice.SetMaxAnsiotropy(MaxAnisotropicSamples);
+    fDevice.SetMSAASampleCount(uint8_t(std::max(1, NumAASamples)));
+    fDevice.SetVSync(vSync);
 }
 
 void plMetalPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>& visList)
 {
     plProfile_BeginTiming(RenderSpan);
+
+    if (fDeferShadowApply && !fRenderingDeferredShadows && fShadows.size() &&
+        !(fView.fRenderState & kRenderNoShadows) && !visList.empty()) {
+        fDeferredShadowBatches.push_back({ ice, visList });
+    }
 
     hsMatrix44                  lastL2W;
     size_t                      i, j;
@@ -1228,6 +1391,16 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
     }
     fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
 
+    if (fRenderingDeferredShadows) {
+        IHandleMaterialPass(material, 0, &span, vRef);
+        if (fShadows.size() && !(fView.fRenderState & kRenderNoShadows))
+            IRenderShadowsOntoSpan(render, &span, material, vRef);
+#ifdef HS_DEBUGGING
+        fDevice.CurrentRenderCommandEncoder()->popDebugGroup();
+#endif
+        return;
+    }
+
     IPushPiggyBacks(material);
     hsRefCnt_SafeAssign(fCurrMaterial, material);
     uint32_t pass;
@@ -1289,12 +1462,15 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
         }
 
         // Handle render of shadows onto geometry.
-        if (fShadows.size()) {
+        if (!fDeferShadowApply && fShadows.size() &&
+            !(fView.fRenderState & kRenderNoShadows)) {
             IRenderShadowsOntoSpan(render, &span, material, vRef);
         }
     }
 
-    if (span.GetNumAuxSpans() || (pass >= 0 && fShadows.size())) {
+    if (span.GetNumAuxSpans() ||
+        (pass >= 0 && !fDeferShadowApply && fShadows.size() &&
+         !(fView.fRenderState & kRenderNoShadows))) {
     }
 
 #ifdef HS_DEBUGGING
@@ -1817,10 +1993,16 @@ void plMetalPipeline::ISetPipeConsts(plShader* shader)
         const plPipeConst& pc = shader->GetPipeConst(i);
         switch (pc.fType) {
             case plPipeConst::kFogSet: {
-                float set[4];
-                // FIXME: Fog broken in dynamic pipeline
-                // IGetVSFogSet(set);
-                // shader->SetFloat4(pc.fReg, set);
+                float set[4] = { 1.f, 0.f, 0.f, 1.f };
+                hsColorRGBA unusedColor;
+                float start = 0.f;
+                float end = 0.f;
+                fView.GetDefaultFog().GetPipelineParams(&start, &end, &unusedColor);
+                if (end > start) {
+                    set[0] = -end;
+                    set[1] = 1.f / (start - end);
+                }
+                shader->SetFloat4(pc.fReg, set);
             } break;
             case plPipeConst::kLayAmbient: {
                 hsColorRGBA col = fCurrLay->GetAmbientColor();
@@ -1845,7 +2027,7 @@ void plMetalPipeline::ISetPipeConsts(plShader* shader)
             case plPipeConst::kTex3x4_7: {
                 int stage = pc.fType - plPipeConst::kTex3x4_0;
 
-                if (stage > fCurrNumLayers) {
+                if (stage >= fCurrNumLayers) {
                     // Ooops. This is bad, means the shader is expecting more layers than
                     // we actually have (or is just bogus). Assert and quietly continue.
                     hsAssert(false, "Shader asking for higher stage transform than we have");
@@ -1865,7 +2047,7 @@ void plMetalPipeline::ISetPipeConsts(plShader* shader)
             case plPipeConst::kTex2x4_7: {
                 int stage = pc.fType - plPipeConst::kTex2x4_0;
 
-                if (stage > fCurrNumLayers) {
+                if (stage >= fCurrNumLayers) {
                     // Ooops. This is bad, means the shader is expecting more layers than
                     // we actually have (or is just bogus). Assert and quietly continue.
                     hsAssert(false, "Shader asking for higher stage transform than we have");
@@ -1885,7 +2067,7 @@ void plMetalPipeline::ISetPipeConsts(plShader* shader)
             case plPipeConst::kTex1x4_7: {
                 int stage = pc.fType - plPipeConst::kTex1x4_0;
 
-                if (stage > fCurrNumLayers) {
+                if (stage >= fCurrNumLayers) {
                     // Ooops. This is bad, means the shader is expecting more layers than
                     // we actually have (or is just bogus). Assert and quietly continue.
                     hsAssert(false, "Shader asking for higher stage transform than we have");
@@ -3807,7 +3989,6 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
                 // projecting any number of shadow maps.
                 ISetupShadowRcvTextureStages(mat);
 
-                first = false;
             }
 
             // Now setup any state specific to this shadow slave.
@@ -3819,6 +4000,7 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             plShadowState shadowState;
             shadowState.opacity = first ? mat->GetLayer(0)->GetOpacity() : 1.f;
             ISetupShadowState(fShadows[i], shadowState);
+            first = false;
 
             struct plMetalFragmentShaderDescription passDescription{};
 

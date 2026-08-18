@@ -165,6 +165,7 @@ class plClothingOutfit : public plSynchedObject
 {
     friend class plDXPipeline;
     friend class plMetalPipeline;
+    friend class plVulkanPipeline;
 
 public:
     plArmatureMod *fAvatar;

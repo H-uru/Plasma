@@ -1,0 +1,50 @@
+#version 450
+#extension GL_GOOGLE_include_directive : require
+
+layout(local_size_x = 8, local_size_y = 8) in;
+
+#include "GTAOCommon.glsl"
+
+layout(set = 0, binding = 2) uniform sampler2D viewDepth;
+layout(set = 0, binding = 3) uniform usampler2D packedNormals;
+layout(r8ui, set = 0, binding = 13) uniform writeonly uimage2D outWorkingAO;
+layout(r8, set = 0, binding = 14) uniform writeonly image2D outEdges;
+
+layout(push_constant) uniform GTAOPushConstants
+{
+    uint sliceCount;
+    uint stepsPerSlice;
+} pushConstants;
+
+void main()
+{
+    ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
+    if (any(greaterThanEqual(pixel, gtao.viewportSize)))
+        return;
+
+    // No geometry here -- the sky, or the depth clear. Fully visible, and every
+    // edge open so the denoiser is free to blur across it.
+    float center = texelFetch(viewDepth, pixel, 0).r;
+    if (center >= gtao.skyViewDepth) {
+        imageStore(outWorkingAO, pixel, uvec4(170u));
+        imageStore(outEdges, pixel, vec4(1.0));
+        return;
+    }
+
+    ivec2 maxPixel = gtao.viewportSize - 1;
+    float left = texelFetch(viewDepth, clamp(pixel + ivec2(-1, 0), ivec2(0), maxPixel), 0).r;
+    float right = texelFetch(viewDepth, clamp(pixel + ivec2(1, 0), ivec2(0), maxPixel), 0).r;
+    float top = texelFetch(viewDepth, clamp(pixel + ivec2(0, -1), ivec2(0), maxPixel), 0).r;
+    float bottom = texelFetch(viewDepth, clamp(pixel + ivec2(0, 1), ivec2(0), maxPixel), 0).r;
+    imageStore(outEdges, pixel, vec4(GTAOPackEdges(GTAOCalculateEdges(center, left, right, top, bottom))));
+
+    uint index = GTAOHilbertIndex(uvec2(pixel) & 63u);
+    vec2 noise = fract(vec2(0.5) + float(index) *
+                       vec2(0.75487766624669276005, 0.56984029099805326591));
+    vec3 normal = GTAOUnpackNormal(texelFetch(packedNormals, pixel, 0).r);
+    float visibility = GTAOVisibility(pixel, pushConstants.sliceCount,
+                                      pushConstants.stepsPerSlice, noise,
+                                      normal, viewDepth);
+    imageStore(outWorkingAO, pixel,
+               uvec4(uint(clamp(visibility / GTAO_OCCLUSION_SCALE, 0.0, 1.0) * 255.0 + 0.5)));
+}

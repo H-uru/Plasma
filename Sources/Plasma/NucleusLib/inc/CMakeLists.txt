@@ -10,6 +10,7 @@ set(pnNucleusInc_HEADERS
     plCreatableIndex.h
     plCreatableStrings.h
     plDrawable.h
+    plGTAO.h
     plgDispatch.h
     plLoggable.h
     plPhysical.h

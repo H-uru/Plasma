@@ -124,6 +124,8 @@ public:
     bool           BeginRender() override;
     bool           EndRender() override;
     void           RenderScreenElements() override;
+    void           BeginOpaquePass() override;
+    void           RenderPostOpaqueEffects() override;
     bool           IsFullScreen() const override;
     void           Resize(uint32_t width, uint32_t height) override;
     void           LoadResources() override;
@@ -131,6 +133,10 @@ public:
     bool           SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) override;
     bool           SetGamma10(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) override;
     bool           Supports10BitGamma() const override { return true; };
+    bool           SupportsAmbientOcclusion() const override { return true; }
+    plGTAOSettings GetAmbientOcclusionSettings() const override { return fDevice.GetGTAOSettings(); }
+    void           SetAmbientOcclusionSettings(const plGTAOSettings& settings) override
+    { fDevice.SetGTAOSettings(settings); }
     bool           CaptureScreen(plMipmap* dest, bool flipVertical = false, uint16_t desiredWidth = 0, uint16_t desiredHeight = 0) override;
     plMipmap*      ExtractMipMap(plRenderTarget* targ) override;
     void           GetSupportedDisplayModes(std::vector<plDisplayMode>* res, int ColorDepth = 32) override;
@@ -167,6 +173,8 @@ public:
 
     void RegisterLight(plLightInfo* light) override;
     void UnRegisterLight(plLightInfo* light) override;
+
+    uint32_t GetMaxPiggyBacks() const { return fMaxPiggyBacks; }
 
 private:
     VertexUniforms* fCurrentRenderPassUniforms;
@@ -246,6 +254,18 @@ private:
     void ISetEnablePerPixelLighting(const bool enable);
 
     // Shadows
+    struct plDeferredShadowBatch
+    {
+        plDrawableSpans* fDrawable = nullptr;
+        std::vector<int16_t> fVisList;
+    };
+
+    std::vector<plDeferredShadowBatch> fDeferredShadowBatches;
+    bool fDeferShadowApply = false;
+    bool fRenderingDeferredShadows = false;
+
+    void IFlushDeferredShadows();
+
     std::vector<plRenderTarget*> fRenderTargetPool512;
     std::vector<plRenderTarget*> fRenderTargetPool256;
     std::vector<plRenderTarget*> fRenderTargetPool128;

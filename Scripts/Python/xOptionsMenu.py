@@ -1328,6 +1328,12 @@ class xOptionsMenu(ptModifier):
         videoField = ptGUIControlCheckBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoVerticalSyncCheckTag))
         videoField.setChecked(defaults[9])
 
+        effects = ptGUIControlCheckBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoDynamicReflectionsCheckTag))
+        if PtSupportsAmbientOcclusion():
+            effects.setChecked(defaults[10])
+        else:
+            effects.setChecked(defaults[9])
+
         vidRes =  str(defaults[0]) + "x" + str(defaults[1])
         videoField = ptGUIControlKnob(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResSliderTag))
 
@@ -1391,18 +1397,28 @@ class xOptionsMenu(ptModifier):
         else:
             videoField.setChecked(0)
 
-        dynReflCB = GraphicsSettingsDlg.dialog.getControlModFromTag(kVideoDynamicReflectionsCheckTag)
-        dynReflTB = GraphicsSettingsDlg.dialog.getControlModFromTag(kVideoDynamicReflectionsTextTag)
-        if PtSupportsPlanarReflections():
+        effectsCB = ptGUIControlCheckBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoDynamicReflectionsCheckTag))
+        effectsTB = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoDynamicReflectionsTextTag))
+        if PtSupportsAmbientOcclusion():
+            effectsTB.setString("Ambient Occlusion")
             respDisableItems.run(self.key, state="enableDynRefl")
-            dynReflCB.setChecked(bool(opts[xIniDisplay.kGraphicsDynamicReflections]))
-            dynReflCB.enable()
-            dynReflTB.setForeColor(ptColor().white())
+            ambientOcclusion = opts[xIniDisplay.kGraphicsAmbientOcclusion]
+            effectsCB.setChecked(ambientOcclusion == 1 or
+                                 (isinstance(ambientOcclusion, str) and ambientOcclusion.casefold() == "true"))
+            effectsCB.enable()
+            effectsTB.setForeColor(ptColor().white())
+        elif PtSupportsPlanarReflections():
+            effectsTB.setString("Dynamic Reflections")
+            respDisableItems.run(self.key, state="enableDynRefl")
+            effectsCB.setChecked(bool(opts[xIniDisplay.kGraphicsDynamicReflections]))
+            effectsCB.enable()
+            effectsTB.setForeColor(ptColor().white())
         else:
+            effectsTB.setString("Dynamic Reflections")
             respDisableItems.run(self.key, state="disableDynRefl")
-            dynReflCB.setChecked(False)
-            dynReflCB.disable()
-            dynReflTB.setForeColor(ptColor(0.839, 0.785, 0.695, 1))
+            effectsCB.setChecked(False)
+            effectsCB.disable()
+            effectsTB.setForeColor(ptColor(0.839, 0.785, 0.695, 1))
 
         # video res stuff
         vidRes = str(opts[xIniDisplay.kGraphicsWidth]) + "x" + str(opts[xIniDisplay.kGraphicsHeight])
@@ -1521,9 +1537,18 @@ class xOptionsMenu(ptModifier):
         gammaField = ptGUIControlKnob(GraphicsSettingsDlg.dialog.getControlFromTag(kGSDisplayGammaSlider))
         gamma = gammaField.getValue()
 
-        dynRefl = int(GraphicsSettingsDlg.dialog.getControlModFromTag(kVideoDynamicReflectionsCheckTag).isChecked())
+        effectsEnabled = int(GraphicsSettingsDlg.dialog.getControlModFromTag(kVideoDynamicReflectionsCheckTag).isChecked())
+        opts = xIniDisplay.GetGraphicsOptions()
+        if PtSupportsAmbientOcclusion():
+            ambientOcclusion = effectsEnabled
+            dynRefl = int(opts[xIniDisplay.kGraphicsDynamicReflections])
+        else:
+            ambientOcclusionOpt = opts[xIniDisplay.kGraphicsAmbientOcclusion]
+            ambientOcclusion = int(ambientOcclusionOpt == 1 or
+                                   (isinstance(ambientOcclusionOpt, str) and ambientOcclusionOpt.casefold() == "true"))
+            dynRefl = effectsEnabled
 
-        xIniDisplay.SetGraphicsOptions(width, height, colordepth, windowed, tex_quality, antialias, aniso, quality, shadowsstr, vsyncstr, shadow_quality, dynRefl)
+        xIniDisplay.SetGraphicsOptions(width, height, colordepth, windowed, tex_quality, antialias, aniso, quality, shadowsstr, vsyncstr, shadow_quality, dynRefl, ambientOcclusion)
         xIniDisplay.WriteIni()
         self.setNewChronicleVar("gamma", gamma)
 
@@ -1533,6 +1558,7 @@ class xOptionsMenu(ptModifier):
             PtSetGamma2(gamma)
             PtSetShadowVisDistance(shadow_quality)
             PtEnablePlanarReflections(dynRefl)
+            PtEnableAmbientOcclusion(ambientOcclusion)
 
             if shadows:
                 PtEnableShadows()
