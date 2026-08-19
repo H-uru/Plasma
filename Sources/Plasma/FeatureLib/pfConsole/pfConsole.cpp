@@ -502,29 +502,41 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
             IUpdateTooltip();
         }
     }
-    else if( msg->GetKeyCode() == KEY_LEFT )
+    else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_LEFT)
     {
-        if( fWorkingCursor > 0 )
-            fWorkingCursor--;
+        IAdvanceWordFromPos(false, fWorkingCursor);
+    }
+    else if (msg->GetKeyCode() == KEY_LEFT)
+    {
+        if (fWorkingCursor > 0)
+            IAdvanceChar(false, fWorkingCursor);
+    }
+    else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_RIGHT)
+    {
+        IAdvanceWordFromPos(true, fWorkingCursor);
     }
     else if( msg->GetKeyCode() == KEY_RIGHT )
     {
-        if( fWorkingCursor < strlen( fWorkingLine ) )
-            fWorkingCursor++;
+        if (fWorkingCursor < strlen(fWorkingLine))
+            IAdvanceChar(true, fWorkingCursor);
+    }
+    else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_BACKSPACE)
+    {
+        // Delete last word
+        if (fWorkingCursor > 0) {
+            IDeleteWord(false);
+            findAgain = false;
+            findCounter = 0;
+        } else if (fHelpMode)
+            fHelpMode = false;
+
+        IUpdateTooltip();
     }
     else if( msg->GetKeyCode() == KEY_BACKSPACE )
     {
         if( fWorkingCursor > 0 )
         {
-            fWorkingCursor--;
-
-            c = &fWorkingLine[ fWorkingCursor ];
-            do
-            {
-                *c = *( c + 1 );
-                c++;
-            } while( *c != 0 );
-
+            IDeleteChar(false);
             findAgain = false;
             findCounter = 0;
         }
@@ -533,15 +545,20 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
 
         IUpdateTooltip();
     }
+    else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_DELETE)
+    {
+        // Delete next word
+        size_t end = strlen(fWorkingLine);
+        if (fWorkingCursor < end) {
+            IDeleteWord(true);
+            findAgain = false;
+            findCounter = 0;
+            IUpdateTooltip();
+        }
+    }
     else if( msg->GetKeyCode() == KEY_DELETE )
     {
-        c = &fWorkingLine[ fWorkingCursor ];
-        do
-        {
-            *c = *( c + 1 );
-            c++;
-        } while( *c != 0 );
-
+        IDeleteChar(true);
         findAgain = false;
         findCounter = 0;
         IUpdateTooltip();
@@ -674,6 +691,88 @@ void    pfConsole::IHandleCharacter(const char c)
     for (i += 1; i > fWorkingCursor; --i)
         fWorkingLine[i] = fWorkingLine[i - 1];
     fWorkingLine[fWorkingCursor++] = c;
+}
+
+static inline bool IIsWordBreaker(const char c)
+{
+    if (c == ' ')
+        return true;
+    if (c == '_')
+        return true;
+    if (c == '.')
+        return true;
+    if (c == '\0')
+        return true;
+    return false;
+}
+
+/**
+ * Check the next/previous character and adjust our position output variable accordingly.
+ */
+pfConsole::CharType pfConsole::IAdvanceChar(bool next, uint32_t& pos) const
+{
+    hsAssert(pos <= strlen(fWorkingLine), "out of range");
+    hsAssert(next || pos > 0, "advanced left at start of string");
+
+    char c = next ? fWorkingLine[pos] : fWorkingLine[pos - 1];
+    if (next)
+        pos++;
+    else
+        pos--;
+    if (IIsWordBreaker(c))
+        return CharType::kWordBreaker;
+    return CharType::kNormal;
+}
+
+/**
+ * Advance the supplied position by one word left or right.
+ */
+void pfConsole::IAdvanceWordFromPos(bool next, uint32_t& pos) const
+{
+    // We want to move into the next/previous word first.
+    while (next && pos < strlen(fWorkingLine) || !next && pos > 0) {
+        if (IAdvanceChar(next, pos) == CharType::kNormal)
+            break;
+    }
+    // Now, keep moving until we advanced past a word breaker
+    while (next && pos < strlen(fWorkingLine) || !next && pos > 0) {
+        if (IAdvanceChar(next, pos) == CharType::kWordBreaker) {
+            // If we're moving left, we now want to stop before a word breaker, so go one back when we moved past one.
+            if (!next)
+                IAdvanceChar(true, pos);
+            break;
+        }
+    }
+    // Lastly, if moving right, we also wanna go to the end of the sequence if we have multiple word breakers in a row.
+    while (next && pos < strlen(fWorkingLine)) {
+        if (IAdvanceChar(next, pos) != CharType::kWordBreaker) {
+            IAdvanceChar(false, pos); // One back
+            break;
+        }
+    }
+}
+
+void pfConsole::IDeleteChar(bool next)
+{
+    if (!next && fWorkingCursor > 0 || next && fWorkingCursor < strlen(fWorkingLine)) {
+        if (!next)
+            IAdvanceChar(false, fWorkingCursor);
+        memmove(&fWorkingLine[fWorkingCursor], &fWorkingLine[fWorkingCursor + 1], (strlen(&fWorkingLine[fWorkingCursor + 1]) + 1) * sizeof(char));
+    }
+}
+
+void pfConsole::IDeleteWord(bool next)
+{
+    uint32_t cursor, deletePos;
+    cursor = deletePos = fWorkingCursor;
+    IAdvanceWordFromPos(next, deletePos);
+
+    if (cursor != deletePos) {
+        if (!next)
+            fWorkingCursor = deletePos;
+        int32_t count = next ? deletePos - cursor : cursor - deletePos;
+        memmove(&fWorkingLine[fWorkingCursor], &fWorkingLine[fWorkingCursor + count], (strlen(&fWorkingLine[fWorkingCursor + count]) + 1) * sizeof(char));
+    }
 }
 
 //// IAddLineCallback ////////////////////////////////////////////////////////

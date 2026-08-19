@@ -145,6 +145,16 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         int     fTopMargin,fLeftMargin,fBottomMargin,fRightMargin;
 
+        enum class CharType
+        {
+            kNormal,
+            kWordBreaker,
+            kControlCode,
+        };
+        
+        CharType IAdvanceChar(bool next, int32_t& pos) const;
+        bool IAdvanceWordFromPos(bool next, int32_t& pos) const;
+
         void    IMoveCursor( Direction dir );
         void    IMoveCursorTo( int32_t position );    // Updates selection
         void    ISetCursor( int32_t newPosition );    // Doesn't update selection
@@ -249,6 +259,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         void    ClearLink() { InsertLink(-1); }
 
         void    DeleteChar();
+        void    DeleteWord(bool next = true);
         void    ClearBuffer();
         void    SetBuffer(const ST::string& text);
         void    SetBuffer(const wchar_t *codedText, size_t length);
