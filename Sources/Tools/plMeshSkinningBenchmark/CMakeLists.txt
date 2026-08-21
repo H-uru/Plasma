@@ -1,0 +1,36 @@
+plasma_executable(plMeshSkinningBenchmark
+    FOLDER Tools
+    EXCLUDE_FROM_ALL
+    SOURCES
+        main.cpp
+        plAllCreatables.cpp
+)
+target_link_libraries(
+    plMeshSkinningBenchmark
+    PRIVATE
+        CoreLib
+        pnFactory
+        pnKeyedObject
+        pnNetCommon
+        pnNucleusInc
+        plDrawable
+        plGImage
+        plMessage
+        plPhysX
+        plPipeline
+        plPubUtilInc
+        plResMgr
+        pfAnimation
+        pfAudio
+        pfCamera
+        pfCharacter
+        pfConditional
+        pfGameGUIMgr
+        pfGameMgr
+        pfJournalBook
+        pfMessage
+        pfPython
+        pfSurface
+        string_theory
+)
+
