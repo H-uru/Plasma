@@ -15,6 +15,10 @@ Windows Clients & Tools
 * 64-bit Internal Client: `plasma-windows-x64-internal-release.zip`
 * 64-bit External Client: `plasma-windows-x64-external-release.zip`
 
+### arm64
+* 64-bit Internal Client: `plasma-windows-arm64-internal-release.zip`
+* 64-bit External Client: `plasma-windows-arm64-external-release.zip`
+
 macOS Clients & Tools
 ---------------------
 
@@ -28,8 +32,14 @@ macOS Clients & Tools
 
 Linux Clients & Tools
 ---------------------
+
+### x86_64
 * 64-bit Internal Client: `plasma-linux-x64-internal-release.zip`
 * 64-bit External Client: `plasma-linux-x64-external-release.zip`
+
+### arm64
+* 64-bit Internal Client: `plasma-linux-arm64-internal-release.zip`
+* 64-bit External Client: `plasma-linux-arm64-external-release.zip`
 
 3DS Max Age Building Plugins
 ----------------------------
