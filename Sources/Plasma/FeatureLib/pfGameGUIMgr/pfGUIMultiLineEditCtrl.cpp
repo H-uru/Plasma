@@ -1307,10 +1307,8 @@ bool pfGUIMultiLineEditCtrl::IAdvanceWordFromPos(bool next, int32_t& pos) const
             hitCtrlCodeCount++;
         if (charType == CharType::kWordBreaker) {
             // If we're moving left, we now want to stop before a word breaker, so go one back when we moved past one.
-            if (!next) {
-                if (IAdvanceChar(true, pos) == CharType::kControlCode)
-                    hitCtrlCodeCount--;
-            }
+            if (!next)
+                IAdvanceChar(true, pos);
             break;
         }
     }
