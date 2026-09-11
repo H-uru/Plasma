@@ -59,7 +59,6 @@ class plKey;
 class pyColor;
 class pyImage;
 class pyKey;
-namespace ST { class string; }
 
 class pyGUIControlListBox : public pyGUIControl
 {

@@ -46,13 +46,24 @@
         "name": "libuuid",
         "platform": "linux"
       },
+      "tl-expected",
       "zlib"
     ],
     "overrides": [
       {
         "name": "physx",
-        "version": "4.1.2#6",
+        "version": "4.1.2#7",
         "$comment": "Upstream vcpkg updated to PhysX 5, which drops support for several target platforms. Stick with 4.1.2 for now."
+      },
+      {
+        "name": "openal-soft",
+        "version": "1.24.3#1",
+        "$comment": "1.25.x causes a bunch of compiler issues on multiple platforms :("
+      },
+      {
+        "name": "fmt",
+        "version": "11.0.2#1",
+        "$comment": "Needed by openal-soft, and newer versions broke compatibility"
       }
     ],
     "features": {
@@ -61,12 +72,13 @@
         "dependencies": [
           {
             "name": "python3-cairosvg",
-            "host": true
+            "host": true,
+            "platform": "!(windows & arm64)"
           }
         ]
       }
     },
-    "builtin-baseline": "d5ec528843d29e3a52d745a64b469f810b2cedbf",
+    "builtin-baseline": "9e593bb18ea69cc5095e012465dcd675a822ed0d",
     "vcpkg-configuration": {
       "overlay-ports": ["./Scripts/Ports"],
       "overlay-triplets": ["./Scripts/Triplets"]

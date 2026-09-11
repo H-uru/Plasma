@@ -145,3 +145,24 @@ class ptGmMarker(ptGameCli):
     def startGame(self) -> None:
         """Request for the server to start the marker game."""
         ...
+
+class ptGmVarSync(ptGameCli):
+    """Legacy var sync game client."""
+
+    def createVariable(self, varName: str, value: Union[float, str]) -> None:
+        """Create a new variable on the server."""
+        ...
+
+    @staticmethod
+    def isSupported() -> bool:
+        """Checks for the presence of a server-side var sync game manager."""
+        ...
+
+    @staticmethod
+    def join(handler: Any) -> None:
+        """Join the common var sync game in the current Age."""
+        ...
+
+    def setVariable(self, varID: int, value: Union[float, str]) -> None:
+        """Change the value of a variable on the server."""
+        ...

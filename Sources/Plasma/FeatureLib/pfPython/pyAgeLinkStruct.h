@@ -64,13 +64,13 @@ private:
 
 protected:
     pyAgeLinkStruct();
-    pyAgeLinkStruct( plAgeLinkStruct * link );
+    pyAgeLinkStruct(const plAgeLinkStruct* link);
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptAgeLinkStruct);
     PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject *New(plAgeLinkStruct* link);
+    static PyObject* New(const plAgeLinkStruct* link);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyAgeLinkStruct object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyAgeLinkStruct); // converts a PyObject to a pyAgeLinkStruct (throws error if not correct type)
 
@@ -81,7 +81,7 @@ public:
     plAgeLinkStruct * GetAgeLink() { return &fAgeLink; }
     const plAgeLinkStruct * GetAgeLink() const { return &fAgeLink; }
     PyObject * GetAgeInfo(); // returns pyAgeInfoStructRef
-    void    SetAgeInfo( pyAgeInfoStruct & info );
+    void    SetAgeInfo(const pyAgeInfoStruct& info);
     ST::string GetParentAgeFilename();
     void    SetParentAgeFilename(ST::string parentname);
     void    CopyFrom( const pyAgeLinkStruct & other );
@@ -116,7 +116,7 @@ public:
     plAgeLinkStruct * GetAgeLink() { return &fAgeLink; }
     const plAgeLinkStruct * GetAgeLink() const { return &fAgeLink; }
     PyObject * GetAgeInfo(); // returns pyAgeInfoStructRef
-    void    SetAgeInfo( pyAgeInfoStruct & info );
+    void    SetAgeInfo(const pyAgeInfoStruct& info);
     void    CopyFrom( const pyAgeLinkStruct & other );
     void    CopyFromRef( const pyAgeLinkStructRef & other );
     void    SetLinkingRules( int v );

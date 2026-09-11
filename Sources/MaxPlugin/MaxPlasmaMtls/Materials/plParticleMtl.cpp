@@ -75,14 +75,14 @@ ClassDesc2* GetParticleMtlDesc() { return &plParticleMtlDesc; }
 ParamBlockDesc2 *GetParticlePB();
 #include "plParticleMtlPBDec.h"
 
-const char *plParticleMtl::NormalStrings[] = // Make sure these match up in order with the Normal enum (in the header)
+const TCHAR* plParticleMtl::NormalStrings[] = // Make sure these match up in order with the Normal enum (in the header)
 {
-    "Normal: View Facing",
-    "Normal: Up",
-    "Normal: Nearest Light",
-    "Normal: From Center",
-    "Normal: Vel x Up x Vel",
-    "Emissive"
+    _T("Normal: View Facing"),
+    _T("Normal: Up"),
+    _T("Normal: Nearest Light"),
+    _T("Normal: From Center"),
+    _T("Normal: Vel x Up x Vel"),
+    _T("Emissive"),
 };
 
 plParticleMtl::plParticleMtl(BOOL loading) : fBasicPB()//, fBM(), fUVGen()

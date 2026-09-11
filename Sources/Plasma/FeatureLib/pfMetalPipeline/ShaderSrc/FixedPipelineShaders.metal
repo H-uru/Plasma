@@ -69,6 +69,11 @@ enum plUVWSrcModifiers: uint32_t
 
 using namespace metal;
 
+constant const bool     perPixelLighting [[ function_constant(FunctionConstantPerPixelLighting)    ]];
+constant const bool     perVertexLighting = !perPixelLighting;
+constant const uint8_t  numBumpMaps [[ function_constant(FunctionConstantNumBumpMaps)    ]];
+constant const bool     bumpMap = numBumpMaps > 0;
+
 constant const uint8_t sourceType1 [[ function_constant(FunctionConstantSources + 0)    ]];
 constant const uint8_t sourceType2 [[ function_constant(FunctionConstantSources + 1)    ]];
 constant const uint8_t sourceType3 [[ function_constant(FunctionConstantSources + 2)    ]];
@@ -100,7 +105,7 @@ constant const uint32_t miscFlags8 [[ function_constant(FunctionConstantLayerFla
 constant const uint8_t sourceTypes[MAX_BLEND_PASSES] = { sourceType1, sourceType2, sourceType3, sourceType4, sourceType5, sourceType6, sourceType7, sourceType8};
 constant const uint32_t blendModes[MAX_BLEND_PASSES] = { blendModes1, blendModes2, blendModes3, blendModes4, blendModes5, blendModes6, blendModes7, blendModes8};
 constant const uint32_t miscFlags[MAX_BLEND_PASSES] = { miscFlags1, miscFlags2, miscFlags3, miscFlags4, miscFlags5, miscFlags6, miscFlags7, miscFlags8};
-    constant const uint8_t passCount = (sourceType1 > 0) + (sourceType2 > 0) + (sourceType3 > 0) + (sourceType4 > 0) + (sourceType5 > 0) + (sourceType6 > 0) + (sourceType7 > 0) + (sourceType8 > 0);
+constant const uint8_t passCount = (sourceType1 > 0) + (sourceType2 > 0) + (sourceType3 > 0) + (sourceType4 > 0) + (sourceType5 > 0) + (sourceType6 > 0) + (sourceType7 > 0) + (sourceType8 > 0);
     
 constant const bool has2DTexture1 = (sourceType1 == PassTypeTexture && hasLayer1);
 constant const bool has2DTexture2 = (sourceType2 == PassTypeTexture && hasLayer2);
@@ -119,6 +124,15 @@ constant const bool hasCubicTexture5 = (sourceType5 == PassTypeCubicTexture && h
 constant const bool hasCubicTexture6 = (sourceType6 == PassTypeCubicTexture && hasLayer6);
 constant const bool hasCubicTexture7 = (sourceType7 == PassTypeCubicTexture && hasLayer7);
 constant const bool hasCubicTexture8 = (sourceType8 == PassTypeCubicTexture && hasLayer8);
+    
+constant const bool hasBumpMap1 = (numBumpMaps > 0);
+constant const bool hasBumpMap2 = (numBumpMaps > 1);
+constant const bool hasBumpMap3 = (numBumpMaps > 2);
+constant const bool hasBumpMap4 = (numBumpMaps > 3);
+constant const bool hasBumpMap5 = (numBumpMaps > 4);
+constant const bool hasBumpMap6 = (numBumpMaps > 5);
+constant const bool hasBumpMap7 = (numBumpMaps > 6);
+constant const bool hasBumpMap8 = (numBumpMaps > 7);
 
 struct FragmentShaderArguments
 {
@@ -153,41 +167,138 @@ struct FragmentShaderArguments
 
 typedef struct
 {
-    float4 position [[position]];
-    float3 texCoord1 [[function_constant(hasLayer1)]];
-    float3 texCoord2 [[function_constant(hasLayer2)]];
-    float3 texCoord3 [[function_constant(hasLayer3)]];
-    float3 texCoord4 [[function_constant(hasLayer4)]];
-    float3 texCoord5 [[function_constant(hasLayer5)]];
-    float3 texCoord6 [[function_constant(hasLayer6)]];
-    float3 texCoord7 [[function_constant(hasLayer7)]];
-    float3 texCoord8 [[function_constant(hasLayer8)]];
-    half4 vtxColor [[ centroid_perspective ]];
+    float4 position  [[ position ]];
+    float4 worldPos  [[ function_constant(perPixelLighting) ]];
+    float3 normal    [[ function_constant(perPixelLighting) ]];
+    float3 texCoord1 [[ function_constant(hasLayer1) ]];
+    float3 texCoord2 [[ function_constant(hasLayer2) ]];
+    float3 texCoord3 [[ function_constant(hasLayer3) ]];
+    float3 texCoord4 [[ function_constant(hasLayer4) ]];
+    float3 texCoord5 [[ function_constant(hasLayer5) ]];
+    float3 texCoord6 [[ function_constant(hasLayer6) ]];
+    float3 texCoord7 [[ function_constant(hasLayer7) ]];
+    float3 texCoord8 [[ function_constant(hasLayer8) ]];
+    
+    float3 T    [[ function_constant(hasBumpMap1) ]];
+    float3 T1   [[ function_constant(hasBumpMap2) ]];
+    float3 T2   [[ function_constant(hasBumpMap3) ]];
+    float3 T3   [[ function_constant(hasBumpMap4) ]];
+    float3 T4   [[ function_constant(hasBumpMap5) ]];
+    float3 T5   [[ function_constant(hasBumpMap6) ]];
+    float3 T6   [[ function_constant(hasBumpMap7) ]];
+    float3 T7   [[ function_constant(hasBumpMap8) ]];
+    float3 B    [[ function_constant(hasBumpMap1) ]];
+    float3 B1   [[ function_constant(hasBumpMap2) ]];
+    float3 B2   [[ function_constant(hasBumpMap3) ]];
+    float3 B3   [[ function_constant(hasBumpMap4) ]];
+    float3 B4   [[ function_constant(hasBumpMap5) ]];
+    float3 B5   [[ function_constant(hasBumpMap6) ]];
+    float3 B6   [[ function_constant(hasBumpMap7) ]];
+    float3 B7   [[ function_constant(hasBumpMap8) ]];
+    
+    half4 vtxColor   [[ centroid_perspective ]];
     half4 fogColor;
 } ColorInOut;
 
+struct Lighting
+{
+    constant plMetalShaderLightSource* lights      [[ buffer(ShaderLights) ]];
+    constant plMetalShaderActiveLight* activeLights      [[ buffer(ShaderActiveLights) ]];
+    constant uint& lightCount [[ buffer(ShaderActiveLightCount)  ]];
+};
+    
+struct plTier1Bumpmap
+{
+    char2 dTangentIndex         [[ id(dTangentIndexID) ]];
+    texture2d<half> bumpTexture [[ id(textureID) ]];
+    sampler bumpTextureSampler  [[ id(samplerID) ]];
+    float scale                 [[ id(dScaleID) ]];
+};
+    
+#if __METAL_VERSION__ >= 300
+typedef plMetalBumpmap ShaderBumpMapType;
+#else
+typedef plTier1Bumpmap ShaderBumpMapType;
+#endif
 
 typedef struct
 {
     float4 position [[position, invariant]];
     float3 texCoord1;
 } ShadowCasterInOut;
-
-vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
-                                       constant VertexUniforms & uniforms   [[ buffer(    VertexShaderArgumentFixedFunctionUniforms) ]],
-                                       constant plMetalLights & lights      [[ buffer(VertexShaderArgumentLights) ]],
-                                       constant float4x4 & blendMatrix1     [[ buffer(VertexShaderArgumentBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]])
+    
+half4 calcLitMaterialColor(Lighting lighting,
+                           const half4 materialColor,
+                           constant plMaterialLightingDescriptor & materialLighting,
+                           const float4 position,
+                           const float3 normal)
 {
-    ColorInOut out;
-    // we should have been able to swizzle, but it didn't work in Xcode beta? Try again later.
-    const half4 inColor = half4(in.color.b, in.color.g, in.color.r, in.color.a) / half4(255.f);
-
-    const half3 MAmbient = mix(inColor.rgb, uniforms.ambientCol, uniforms.ambientSrc);
-    const half4 MDiffuse = mix(inColor, uniforms.diffuseCol, uniforms.diffuseSrc);
-    const half3 MEmissive = mix(inColor.rgb, uniforms.emissiveCol, uniforms.emissiveSrc);
-
     half3 LAmbient = half3(0.h, 0.h, 0.h);
     half3 LDiffuse = half3(0.h, 0.h, 0.h);
+    
+    const half3 MAmbient = mix(materialColor.rgb, materialLighting.ambientCol, materialLighting.ambientSrc);
+    const half4 MDiffuse = mix(materialColor, materialLighting.diffuseCol, materialLighting.diffuseSrc);
+    const half3 MEmissive = mix(materialColor.rgb, materialLighting.emissiveCol, materialLighting.emissiveSrc);
+    
+    for (size_t i = 0; i < lighting.lightCount; i++) {
+        constant const plMetalShaderActiveLight* activeLight = &lighting.activeLights[i];
+        constant const plMetalShaderLightSource& light = lighting.lights[activeLight->index];
+        if (activeLight->scale == 0.0h)
+            continue;
+
+        // direction.w is attenuation
+        float4 direction;
+
+        if (light.position.w == 0.f) {
+            // Directional Light with no attenuation
+            direction = float4(-(light.direction).xyz, 1.f);
+        } else {
+            // Omni Light in all directions
+            const float3 v2l = light.position.xyz - position.xyz;
+            const float distance = length(v2l);
+            
+            if (distance > light.range) {
+                continue;
+            }
+            
+            direction.xyz = normalize(v2l);
+
+            direction.w = 1.f / (light.constAtten + light.linAtten * distance + light.quadAtten * pow(distance, 2.f));
+
+            if (light.spotProps.x > 0.f) {
+                // Spot Light with cone falloff
+                const float theta = dot(direction.xyz, normalize(-light.direction).xyz);
+                // inner cutoff
+                const float gamma = light.spotProps.y;
+                // outer cutoff
+                const float phi = light.spotProps.z;
+                const float epsilon = (gamma - phi);
+                const float intensity = clamp((theta - phi) / epsilon, 0.f, 1.f);
+
+                direction.w *= pow(intensity, light.spotProps.x);
+            }
+        }
+
+        LAmbient.rgb = LAmbient.rgb + half3(direction.w * (light.ambient.rgb * activeLight->scale));
+        const float3 dotResult = dot(normal, direction.xyz);
+        LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (light.diffuse.rgb * activeLight->scale) * half3(max(0.f, dotResult) * direction.w);
+    }
+
+    const half3 ambient = (MAmbient.rgb) * clamp(materialLighting.globalAmb.rgb + LAmbient.rgb, 0.h, 1.h);
+    const half3 diffuse = clamp(LDiffuse.rgb, 0.h, 1.h);
+    return clamp(half4(ambient + diffuse + MEmissive.rgb, abs(materialLighting.invertAlpha - MDiffuse.a)), 0.h, 1.h);
+}
+
+vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
+                                       constant VertexUniforms & uniforms   [[ buffer(VertexShaderArgumentFixedFunctionUniforms) ]],
+                                       Lighting lighting [[ function_constant(perVertexLighting) ]],
+                                       constant plMaterialLightingDescriptor & materialLighting   [[ buffer(VertexShaderArgumentMaterialLighting), function_constant(perVertexLighting) ]],
+                                       constant float4x4 & blendMatrix1     [[ buffer(VertexShaderArgumentBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]],
+                                       device ShaderBumpMapType *bumpInfo [[ buffer(BumpState), function_constant(bumpMap) ]])
+{
+    ColorInOut out;
+    // FVF ARGB color is in little endian order, so we need to swizzle it into RGBA
+    const half4 inColor = half4(in.color.bgra);
 
     const float3 Ndirection = normalize(float4(in.normal, 0.f) * uniforms.localToWorldMatrix).xyz;
 
@@ -196,56 +307,17 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
         const float4 position2 = float4(in.position, 1.f) * blendMatrix1;
         position = (in.weight1 * position) + ((1.f - in.weight1) * position2);
     }
-
-    for (size_t i = 0; i < lights.count; i++) {
-        constant const plMetalShaderLightSource *lightSource = &lights.lampSources[i];
-        if (lightSource->scale == 0.0h)
-            continue;
-
-        // direction.w is attenuation
-        float4 direction;
-
-        if (lightSource->position.w == 0.f) {
-            // Directional Light with no attenuation
-            direction = float4(-(lightSource->direction).xyz, 1.f);
-        } else {
-            // Omni Light in all directions
-            const float3 v2l = lightSource->position.xyz - position.xyz;
-            const float distance = length(v2l);
-            
-            if (distance > lightSource->range) {
-                continue;
-            }
-            
-            direction.xyz = normalize(v2l);
-
-            direction.w = 1.f / (lightSource->constAtten + lightSource->linAtten * distance + lightSource->quadAtten * pow(distance, 2.f));
-
-            if (lightSource->spotProps.x > 0.f) {
-                // Spot Light with cone falloff
-                const float theta = dot(direction.xyz, normalize(-lightSource->direction).xyz);
-                // inner cutoff
-                const float gamma = lightSource->spotProps.y;
-                // outer cutoff
-                const float phi = lightSource->spotProps.z;
-                const float epsilon = (gamma - phi);
-                const float intensity = clamp((theta - phi) / epsilon, 0.f, 1.f);
-
-                direction.w *= pow(intensity, lightSource->spotProps.x);
-            }
-        }
-
-        LAmbient.rgb = LAmbient.rgb + half3(direction.w * (lightSource->ambient.rgb * lightSource->scale));
-        const float3 dotResult = dot(Ndirection, direction.xyz);
-        LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (lightSource->diffuse.rgb * lightSource->scale) * half3(max(0.f, dotResult) * direction.w);
+    
+    if (perPixelLighting) {
+        // send the world pos on to the pixel shader for lighting
+        out.worldPos = position;
+        out.normal = Ndirection;
+        
+        out.vtxColor = inColor;
+    } else {
+        out.vtxColor = calcLitMaterialColor(lighting, inColor, materialLighting, position, Ndirection);
     }
-
-    const half3 ambient = (MAmbient.rgb) * clamp(uniforms.globalAmb.rgb + LAmbient.rgb, 0.h, 1.h);
-    const half3 diffuse = clamp(LDiffuse.rgb, 0.h, 1.h);
-    const half4 material = half4(clamp(ambient + diffuse + MEmissive.rgb, 0.h, 1.h),
-                                 abs(uniforms.invVtxAlpha - MDiffuse.a));
-
-    out.vtxColor = half4(material.rgb, abs(uniforms.invVtxAlpha - MDiffuse.a));
+    
     const float4 vCamPosition = position * uniforms.worldToCameraMatrix;
     
     // Fog
@@ -253,10 +325,18 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
 
     const float4 cameraSpaceNormal = normalize(((float4(in.normal, 0.f) * uniforms.localToWorldMatrix) * uniforms.worldToCameraMatrix));
 
-    for (size_t layer=0; layer<num_layers; layer++) {
+    for (int layer=0; layer<num_layers; layer++) {
         (&out.texCoord1)[layer] = uniforms.sampleLocation(layer, &in.texCoord1, cameraSpaceNormal, vCamPosition);
     }
 
+    
+    for (int bumpMap=0; bumpMap<numBumpMaps; bumpMap++) {
+        const float4 T = float4((&in.texCoord1)[bumpInfo[bumpMap].dTangentIndex[0]], 0.f);
+        const float4 B = float4((&in.texCoord1)[bumpInfo[bumpMap].dTangentIndex[1]], 0.f);
+        (&out.T)[bumpMap] = normalize(uniforms.localToWorldMatrix * T). xyz;
+        (&out.B)[bumpMap] = normalize(uniforms.localToWorldMatrix * B).xyz;
+    }
+    
     out.position = vCamPosition * uniforms.projectionMatrix;
 
     return out;
@@ -420,9 +500,57 @@ half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 verte
 }
 
 fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
-                                      const FragmentShaderArguments fragmentShaderArgs)
+                                      const FragmentShaderArguments fragmentShaderArgs,
+                                      Lighting lighting [[ function_constant(perPixelLighting) ]],
+                                      constant plMaterialLightingDescriptor & materialLighting   [[ buffer(FragmentShaderArgumentMaterialLighting), function_constant(perPixelLighting) ]],
+                                      device ShaderBumpMapType *bumpInfo [[ buffer(BumpState), function_constant(bumpMap) ]])
 {
-    half4 currentColor = in.vtxColor;
+    half4 lightingContributionColor = half4(0.h);
+    
+    /*
+     This controls the bumpmap style:
+     - Additive bump maps do a secondary hilight pass on the material. This is
+     how Cyan shipped bump maps in Uru. These bump maps ignore the blue channel
+     of the normal map file.
+     - If bumpMapIsAdditive is false, full normal mapping is performed on a per
+     pixel basis. This is not how the engine shipped and will produce different
+     results than the original age artist may have expected. But it will be
+     proper normal mapping.
+     */
+    constexpr bool bumpMapIsAdditive = true;
+    constexpr bool performBaseLighting = bumpMapIsAdditive || !bumpMap;
+    
+    if (performBaseLighting) {
+        lightingContributionColor = perPixelLighting ? calcLitMaterialColor(
+            lighting,
+            in.vtxColor,
+            materialLighting,
+            in.worldPos,
+            in.normal
+       ) : in.vtxColor;
+    }
+    
+    if (bumpMap) {
+        float3 normal = 0.f;
+        for (int bumpIndex=0; bumpIndex<numBumpMaps; bumpIndex++) {
+            device ShaderBumpMapType& bump = bumpInfo[bumpIndex];
+            float3 sampleCoord = in.texCoord1;
+            half3 bumpNormal = bump.bumpTexture.sample(bump.bumpTextureSampler, sampleCoord.xy).rgb;
+            
+            bumpNormal -= 0.5f;
+            bumpNormal *= 2.f;
+            
+            float3x3 TBN = float3x3(in.T, in.B, in.normal);
+            normal += TBN * float3(bumpNormal) * bump.scale;
+        }
+        
+        normal = normalize(normal);
+        if (performBaseLighting) {
+            normal.z = 0.f;
+        }
+        lightingContributionColor += perPixelLighting ? calcLitMaterialColor(lighting, in.vtxColor, materialLighting, in.worldPos, normal) : in.vtxColor;
+    }
+    half4 currentColor = lightingContributionColor;
 
     /*
      SPECIAL PLASMA RULE:
@@ -450,7 +578,7 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
             }
         }
         
-        currentColor = half4(in.vtxColor.rgb, 1.0h) * currentColor;
+        currentColor = half4(lightingContributionColor.rgb, 1.h) * currentColor;
     }
     
     currentColor.rgb = mix(in.fogColor.rgb, currentColor.rgb, (float)clamp(in.fogColor.a, 0.0h, 1.0h));
@@ -617,6 +745,7 @@ fragment half4 shadowFragmentShader(ShadowCasterInOut in [[stage_in]])
 
 vertex ColorInOut shadowCastVertexShader(Vertex in                              [[ stage_in ]],
                                          constant VertexUniforms & uniforms     [[ buffer(    VertexShaderArgumentFixedFunctionUniforms) ]],
+                                         constant plMaterialLightingDescriptor & materialLighting   [[ buffer(    VertexShaderArgumentMaterialLighting) ]],
                                          constant plShadowState & shadowState   [[ buffer(VertexShaderArgumentShadowState) ]])
 {
     ColorInOut out;

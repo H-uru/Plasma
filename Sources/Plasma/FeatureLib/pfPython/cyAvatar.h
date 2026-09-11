@@ -63,7 +63,6 @@ class plMorphSequence;
 class pyColor;
 class pyKey;
 class pySceneObject;
-namespace ST { class string; }
 
 class cyAvatar
 {
@@ -411,6 +410,16 @@ public:
 
     bool SaveClothingToFile(plFileName filename);
     bool LoadClothingFromFile(plFileName filename);
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    //  Function   : FindBone
+    //  PARAMETERS : bonename - the name of the bone to find
+    //
+    //  PURPOSE    : Returns a reference to the scene object for the bone with the
+    //               given name.
+    //
+    PyObject* FindBone(const ST::string& boneName);
 
     /////////////////////////////////////////////////////////////////////////////
     //

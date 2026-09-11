@@ -58,8 +58,6 @@ class pfGUIValueCtrl;
 class plMessage;
 class pfScrollProc;
 
-namespace ST { class string; }
-
 class pfGUIListBoxMod : public pfGUIControlMod
 {
     friend class pfScrollProc;
@@ -175,7 +173,7 @@ class pfGUIListBoxMod : public pfGUIControlMod
 
         void    Refresh() override { IUpdate(); }
 
-        void        SetColorScheme(pfGUIColorScheme *newScheme) override;
+        void    SetColorScheme(hsRef<pfGUIColorScheme> newScheme) override;
 
         // Element manipulation
 

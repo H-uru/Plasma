@@ -39,19 +39,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Pch.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PCH_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Pch.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PCH_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PCH_H
 
-#include <thread>
+// The asio headers want _WIN32_WINNT defined,
+// otherwise they show a warning and define it themselves.
+// To ensure that our definition is visible to asio, include hsWindows.h first.
+#include "hsWindows.h"
 
-#include "plProduct.h"
-#include "pnNetBase/pnNetBase.h"
-#include "Private/pnAcAllIncludes.h"
+#include <asio/executor_work_guard.hpp>
+#include <asio/io_context.hpp>
+#include <asio/ip/tcp.hpp>
+#include <asio/steady_timer.hpp>
+#include <algorithm>
+#include <chrono>
+#include <list>
+#include <memory>
+#include <mutex>
+#include <thread>
+#include <utility>
+
+#include "hsLockGuard.h"
+#include "hsThread.h"
+#include "hsTimer.h"
+
+#include "pnNetCommon/plNetAddress.h"
+
+#include "pnAsyncCore.h"
+#include "pnAsyncCore_Private.h"
+
+#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PCH_H

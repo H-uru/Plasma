@@ -65,9 +65,9 @@ class GiraCave1(ptResponder):
 
     def OnServerInitComplete(self):
         if sdlSolved.value:
-            self.ageSDL = PtGetAgeSDL()
-            self.ageSDL.setFlags(sdlSolved.value,1,1)
-            self.ageSDL.sendToClients(sdlSolved.value)
+            ageSDL = PtGetAgeSDL()
+            ageSDL.setFlags(sdlSolved.value,1,1)
+            ageSDL.sendToClients(sdlSolved.value)
         else:
             PtDebugPrint("GiraCave.OnFirstUpdate():\tERROR: missing SDL var in max file")
         
@@ -79,7 +79,8 @@ class GiraCave1(ptResponder):
                 avatar = PtFindAvatar(events)
                 bugs = PtGetNumParticles(avatar.getKey())
                 if (bugs > 0):
-                    self.ageSDL[sdlSolved.value] = (1,)
+                    ageSDL = PtGetAgeSDL()
+                    ageSDL[sdlSolved.value] = (1,)
                     return
             
     

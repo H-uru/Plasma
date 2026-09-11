@@ -48,6 +48,7 @@ target_link_libraries(
         plInterp
         plMessage
         plModifier
+        plNetClient
         plSDL
 )
 

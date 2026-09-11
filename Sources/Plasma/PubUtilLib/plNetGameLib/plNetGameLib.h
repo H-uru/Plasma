@@ -39,22 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/plNetGameLib.h
-*   
-***/
 
 #ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNETGAMELIB_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNETGAMELIB_H
 
-#define PLNETGAMELIB_INCLUDED
-
-#ifdef PNNETDIAG_INCLUDED
-#error "plNetGameLib and pnNetDiag libraries may not be included in the same project because they invalidate each other's pnNetCli settings"
-#endif
-
-#include "Private/plNglAllIncludes.h"
+#include "plNglCore.h"
+#include "plNglAuth.h"
+#include "plNglGame.h"
+#include "plNglFile.h"
+#include "plNglGateKeeper.h"
 
 
 #endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PLNETGAMELIB_H

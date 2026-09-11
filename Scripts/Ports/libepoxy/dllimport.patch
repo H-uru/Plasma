@@ -1,0 +1,38 @@
+https://github.com/anholt/libepoxy/pull/296
+
+From f2328db7cd38c4e2875dba7eb803516805356e0b Mon Sep 17 00:00:00 2001
+From: Hailey Somerville <hailey@hailey.lol>
+Date: Sat, 20 Jan 2024 12:34:35 +1100
+Subject: [PATCH] don't dllimport if not building as shared
+
+---
+ include/epoxy/common.h | 2 +-
+ meson.build            | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/include/epoxy/common.h b/include/epoxy/common.h
+index cf58ab2f..11ee1aa9 100644
+--- a/include/epoxy/common.h
++++ b/include/epoxy/common.h
+@@ -38,7 +38,7 @@
+ #endif
+ 
+ #ifndef EPOXY_PUBLIC
+-# if defined(_MSC_VER)
++# if defined(_MSC_VER) && defined(EPOXY_SHARED)
+ #  define EPOXY_PUBLIC __declspec(dllimport) extern
+ # else
+ #  define EPOXY_PUBLIC extern
+diff --git a/meson.build b/meson.build
+index 76af8c59..3e58008d 100644
+--- a/meson.build
++++ b/meson.build
+@@ -142,6 +142,7 @@ libtype = get_option('default_library')
+ # Visibility compiler flags; we only use this for shared libraries
+ visibility_cflags = []
+ if libtype == 'shared'
++  common_cflags += [ '-DEPOXY_SHARED' ]
+   if host_system == 'windows'
+     conf.set('DLL_EXPORT', true)
+     conf.set('EPOXY_PUBLIC', '__declspec(dllexport) extern')
+

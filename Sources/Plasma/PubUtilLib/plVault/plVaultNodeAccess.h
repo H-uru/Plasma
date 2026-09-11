@@ -39,23 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plVault/plVaultNodeAccess.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULTNODEACCESS_H
-#error "Header $/Plasma20/Sources/Plasma/PubUtilLib/plVault/plVaultNodeAccess.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULTNODEACCESS_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULTNODEACCESS_H
 
 #include "hsGeometry3.h"
 #include "hsRefCnt.h"
 
-#include "pnNetProtocol/pnNetProtocol.h"
+#include "pnNetProtocol/pnNpCommon.h"
+#include "pnUUID/pnUUID.h"
 
 #include <string_theory/string>
+#include <utility>
+#include <vector>
 
 /*****************************************************************************
 *
@@ -65,7 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plAgeInfoStruct;
 class plAgeLinkStruct;
-struct plSpawnPointInfo;
+class plSpawnPointInfo;
 
 typedef std::vector<plSpawnPointInfo>   plSpawnPointVec;
 
@@ -269,7 +265,6 @@ struct VaultAgeInfoNode : NetVaultNodeAccess {
 
     VaultAgeInfoNode(hsWeakRef<NetVaultNode> node) : NetVaultNodeAccess(node) { }
 
-    const class plUnifiedTime * GetAgeTime () const;
     void CopyFrom (const plAgeInfoStruct * info);
     void CopyTo (plAgeInfoStruct * info) const;
 };
@@ -311,3 +306,5 @@ struct VaultMarkerGameNode : NetVaultNodeAccess {
     void GetMarkerData(std::vector<VaultMarker>& data) const;
     void SetMarkerData(const std::vector<VaultMarker>& data);
 };
+
+#endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULTNODEACCESS_H

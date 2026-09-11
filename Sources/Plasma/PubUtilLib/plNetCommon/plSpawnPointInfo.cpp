@@ -66,7 +66,7 @@ void plSpawnPointInfo::ReadOld( hsStream * s )
 {
     plMsgStdStringHelper::Peek( fTitle, s );
     plMsgStdStringHelper::Peek( fSpawnPt, s );
-    fCameraStack = "";
+    fCameraStack.clear();
 }
 
 void plSpawnPointInfo::Read( hsStream * s )

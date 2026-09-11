@@ -62,8 +62,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plModifier/plLayerSDLModifier.h"
 #include "plModifier/plSDLModifier.h"
 #include "plNetClient/plLinkEffectsMgr.h"
+#include "plNetClient/plNetClientMgr.h"
 #include "plSDL/plSDL.h"
-
 
 plLayerAnimationBase::~plLayerAnimationBase()
 {
@@ -418,13 +418,13 @@ plLayerLinkAnimation::plLayerLinkAnimation() :
     fFadeFlagsDirty()
 { 
     fIFaceCallback = new plEventCallbackMsg();
-    fIFaceCallback->fEvent = kTime;
+    fIFaceCallback->fEvent = plEventCallbackMsg::kTime;
     fIFaceCallback->fRepeats = 0;           
 }
 
 plLayerLinkAnimation::~plLayerLinkAnimation() 
 { 
-    hsRefCnt_SafeUnRef(fIFaceCallback);
+    fIFaceCallback->UnRef();
 }
 
 
@@ -517,7 +517,7 @@ uint32_t plLayerLinkAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignor
             {
                 // Either we're going opaque, or we were opaque and now we're fading.
                 // Tell the armature to re-eval its opacity settings.
-                plAvatarOpacityCallbackMsg *opacityMsg = new plAvatarOpacityCallbackMsg(fLinkKey, kStop);
+                plAvatarOpacityCallbackMsg *opacityMsg = new plAvatarOpacityCallbackMsg(fLinkKey, plEventCallbackMsg::kStop);
                 opacityMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
                 opacityMsg->Send();
             }               
@@ -678,8 +678,7 @@ uint32_t plLayerSDLAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore
         {
             if (!fVarName.empty())
             {
-                extern const plSDLModifier *ExternFindAgeSDL();
-                const plSDLModifier *sdlMod = ExternFindAgeSDL();
+                const plSDLModifier* sdlMod = plNetClientMgr::GetInstance()->GetAgeSDLModifier();
                 if (sdlMod)
                 {
                     fVar = sdlMod->GetStateCache()->FindVar(fVarName);

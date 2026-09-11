@@ -16,6 +16,15 @@ find_program(
     DOC "Path to pngcrush"
 )
 
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 4.0 AND CMAKE_CROSSCOMPILING)
+    set(Python3_ARTIFACTS_PREFIX "_HOST")
+    find_package(Python3 3.8 COMPONENTS Interpreter)
+endif()
+
+if(Python3_EXECUTABLE AND NOT Python3_HOST_EXECUTABLE)
+    set(Python3_HOST_EXECUTABLE "${Python3_EXECUTABLE}")
+endif()
+
 # Can we generate the resource.dat file?
 python_test_modules(
     MODULES cairosvg PIL
@@ -37,7 +46,7 @@ if(PLASMA_BUILD_RESOURCE_DAT)
 
     add_custom_command(
         OUTPUT ${external_DAT}
-        COMMAND "${Python3_EXECUTABLE}"
+        COMMAND "${Python3_HOST_EXECUTABLE}"
                 "${CMAKE_CURRENT_SOURCE_DIR}/external/makeres.py"
                 --render --package
                 ${OPTIMIZE_ARGUMENT}
@@ -64,6 +73,7 @@ set(plClient_SOURCES
     pfAllCreatables.cpp
     plAllCreatables.cpp
     plClient.cpp
+    plClientCreatable.cpp
     plClientLoader.cpp
     pnAllCreatables.cpp
 )
@@ -95,6 +105,7 @@ elseif(APPLE)
         Mac-Cocoa/NSString+StringTheory.mm
         Mac-Cocoa/PLSKeyboardEventMonitor.mm
         Mac-Cocoa/PLSView.mm
+        Mac-Cocoa/PLSLoginController.mm
         Mac-Cocoa/PLSLoginWindowController.mm
         Mac-Cocoa/PLSPatcherWindowController.mm
         Mac-Cocoa/PLSPatcher.mm
@@ -104,17 +115,23 @@ elseif(APPLE)
         Mac-Cocoa/NSString+StringTheory.h
         Mac-Cocoa/PLSKeyboardEventMonitor.h
         Mac-Cocoa/PLSView.h
+        Mac-Cocoa/PLSLoginController.h
         Mac-Cocoa/PLSLoginWindowController.h
         Mac-Cocoa/PLSPatcherWindowController.h
         Mac-Cocoa/PLSPatcher.h
         Mac-Cocoa/PLSServerStatus.h
     )
     list(APPEND plClient_RESOURCES
+        $<$<VERSION_GREATER_EQUAL:${XCODE_VERSION},26.0>:Mac-Cocoa/AppIcon.icon>
         Mac-Cocoa/banner.png
         Mac-Cocoa/banner@2x.png
         Mac-Cocoa/MainMenu.xib
         Mac-Cocoa/PLSLoginWindowController.xib
         Mac-Cocoa/PLSPatcherWindowController.xib
+    )
+    set_source_files_properties("Mac-Cocoa/AppIcon.icon" PROPERTIES
+        XCODE_EXPLICIT_FILE_TYPE "folder.iconcomposer.icon"
+        MACOSX_PACKAGE_LOCATION Resources
     )
 else()
     list(APPEND plClient_SOURCES
@@ -146,6 +163,8 @@ if(APPLE)
         MACOSX_BUNDLE_BUNDLE_VERSION "0.1"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
         RESOURCE "${plClient_XCODE_RESOURCES}"
+        XCODE_ATTRIBUTE_ASSETCATALOG_OTHER_FLAGS "$<$<VERSION_GREATER_EQUAL:${XCODE_VERSION},26>:--enable-icon-stack-fallback-generation=disabled>"
+        XCODE_ATTRIBUTE_GENERATE_INFOPLIST_FILE "YES"
         XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME AppIcon
         XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=Debug] "YES"
         XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=RelWithDebInfo] "YES"
@@ -175,6 +194,13 @@ if(PLASMA_PIPELINE_METAL)
         pfMetalPipelineShadersMSL21
         pfMetalPipelineShadersMSL23
     )
+
+    if(NOT DEFINED CMAKE_XCODE_VERSION_MAJOR OR
+        CMAKE_XCODE_VERSION_MAJOR VERSION_GREATER_EQUAL 13)
+        target_embed_metal_shader_libraries(plClient
+            pfMetalPipelineShadersMSL30
+        )
+    endif()
 endif()
 
 if(PLASMA_BUILD_RESOURCE_DAT)
@@ -196,6 +222,7 @@ target_link_libraries(
         pnFactory
         pnKeyedObject
         pnMessage
+        pnNetBase
         pnSceneObject
         plAgeLoader
         plAnimation
@@ -228,6 +255,7 @@ target_link_libraries(
         pfConsole
         pfConsoleCore
         $<$<PLATFORM_ID:Windows>:pfCrashHandler>
+        pfDisplayHelpers
         pfGameGUIMgr
         pfJournalBook
         pfLocalizationMgr
@@ -241,6 +269,8 @@ target_link_libraries(
         CURL::libcurl
         "$<$<PLATFORM_ID:Darwin>:-framework Cocoa>"
         "$<$<PLATFORM_ID:Darwin>:-framework QuartzCore>"
+        # Only need IOKit when targeting Mac OS X < 10.9
+        "$<$<AND:$<PLATFORM_ID:Darwin>,$<VERSION_LESS:${CMAKE_OSX_DEPLOYMENT_TARGET},10.9>>:-framework IOKit>"
         $<$<PLATFORM_ID:Darwin>:${LibArchive_LIBRARIES}>
 )
 target_include_directories(plClient PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -249,7 +279,7 @@ if(PLASMA_EXTERNAL_RELEASE)
     set_target_properties(plClient PROPERTIES OUTPUT_NAME "UruExplorer")
 endif(PLASMA_EXTERNAL_RELEASE)
 
-if(APPLE)
+if(APPLE AND NOT CMAKE_CROSSCOMPILING)
     # CMake will attempt to strip rpaths, thus preventing fixup_bundle from finding libraries.
     # Not sure why - turning that off.
     set_target_properties(plClient PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)

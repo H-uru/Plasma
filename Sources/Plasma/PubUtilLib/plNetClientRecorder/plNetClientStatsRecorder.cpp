@@ -120,7 +120,7 @@ void plNetClientStatsRecorder::ILogMsg(plNetMessage* msg, const char* preText)
                 fLog->AddLineF("\t{}", eventName);
             }
 
-            hsRefCnt_SafeUnRef(notifyMsg);
+            notifyMsg->UnRef();
         }
     }
     else if (plNetMsgSDLState* sdlMsg = plNetMsgSDLState::ConvertNoRef(msg))

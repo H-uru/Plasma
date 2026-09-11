@@ -66,6 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plOneShotCallbacks.h"
 #include "plModifier/plSDLModifier.h"
+#include "plNetClient/plNetClientMgr.h"
 #include "plSDL/plSDL.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -128,7 +129,7 @@ plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
     fCleanupChannels.push_back(timeChan);
 
 #ifdef SHOW_AG_CHANGES
-    hsStatusMessageF("\nAbout to Attach anim <%s>", GetName().c_str());
+    hsStatusMessageF("\nAbout to Attach anim <{}>", GetName());
     fMaster->DumpAniGraph("bone_pelvis", false, hsTimer::GetSysSeconds());
 #endif
 
@@ -194,20 +195,20 @@ void plAGAnimInstance::IInitAnimTimeConvert(plAnimTimeConvert* atc, plATCAnim* a
     // Set up our eval callbacks
     plAGInstanceCallbackMsg* instMsg;
 
-    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kStart);
+    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), plEventCallbackMsg::kStart);
     instMsg->fInstance = this;
     atc->AddCallback(instMsg);
-    hsRefCnt_SafeUnRef(instMsg);
+    instMsg->UnRef();
 
-    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kStop);
+    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), plEventCallbackMsg::kStop);
     instMsg->fInstance = this;
     atc->AddCallback(instMsg);
-    hsRefCnt_SafeUnRef(instMsg);
+    instMsg->UnRef();
 
-    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kSingleFrameAdjust);
+    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), plEventCallbackMsg::kSingleFrameAdjust);
     instMsg->fInstance = this;
     atc->AddCallback(instMsg);
-    hsRefCnt_SafeUnRef(instMsg);
+    instMsg->UnRef();
 
     atc->SetOwner(master);
     atc->ClearFlags();
@@ -262,8 +263,7 @@ void plAGAnimInstance::SearchForGlobals()
     const plAgeGlobalAnim *ageAnim = plAgeGlobalAnim::ConvertNoRef(fAnimation);
     if (ageAnim != nullptr && fSDLChannels.size() > 0)
     {
-        extern const plSDLModifier *ExternFindAgeSDL();
-        const plSDLModifier *sdlMod = ExternFindAgeSDL();
+        const plSDLModifier* sdlMod = plNetClientMgr::GetInstance()->GetAgeSDLModifier();
         if (!sdlMod)
             return;
 
@@ -315,7 +315,7 @@ void plAGAnimInstance::Detach()
 void plAGAnimInstance::DetachChannels()
 {
 #ifdef SHOW_AG_CHANGES
-    hsStatusMessageF("\nAbout to DETACH anim <%s>", GetName().c_str());
+    hsStatusMessageF("\nAbout to DETACH anim <{}>", GetName());
     fMaster->DumpAniGraph("bone_pelvis", false, hsTimer::GetSysSeconds());
 #endif
     plDetachMap::iterator i = fManualDetachChannels.begin();
@@ -346,7 +346,7 @@ void plAGAnimInstance::DetachChannels()
     fCleanupChannels.clear();
 
 #ifdef SHOW_AG_CHANGES
-    hsStatusMessageF("\nFinished DETACHING anim <%s>", GetName().c_str());
+    hsStatusMessageF("\nFinished DETACHING anim <{}>", GetName());
     fMaster->DumpAniGraph("bone_pelvis", false, hsTimer::GetSysSeconds());
 #endif
 }
@@ -475,7 +475,7 @@ double plAGAnimInstance::WorldToAnimTime(double foo)
 
 // AttachCallbacks --------------------------------------------------
 // ----------------
-void plAGAnimInstance::AttachCallbacks(plOneShotCallbacks *callbacks)
+void plAGAnimInstance::AttachCallbacks(hsWeakRef<plOneShotCallbacks> callbacks)
 {
     const plATCAnim *anim = plATCAnim::ConvertNoRef(fAnimation);
     if (callbacks && anim)
@@ -497,15 +497,15 @@ void plAGAnimInstance::AttachCallbacks(plOneShotCallbacks *callbacks)
                 float marker = anim->GetMarker(cb.fMarker);
                 hsAssert(marker != -1, "Bad marker name");
                 eventMsg->fEventTime = marker;
-                eventMsg->fEvent = kTime;
+                eventMsg->fEvent = plEventCallbackMsg::kTime;
             }
             else
             {
-                eventMsg->fEvent = kStop;
+                eventMsg->fEvent = plEventCallbackMsg::kStop;
             }
             
             animMsg.AddCallback(eventMsg);
-            hsRefCnt_SafeUnRef(eventMsg);
+            eventMsg->UnRef();
         }
         
         fTimeConvert->HandleCmd(&animMsg);
@@ -651,7 +651,7 @@ void DumpAGAllocs()
 
         uint16_t realClassIndex = al->fObject->ClassIndex();
 
-        hsStatusMessage(ST::format("agAlloc: an: {} ch: {}, cl: {}", al->fAnimName, al->fChannelName, plFactory::GetNameOfClass(realClassIndex)).c_str());
+        hsStatusMessageF("agAlloc: an: {} ch: {}, cl: {}", al->fAnimName, al->fChannelName, plFactory::GetNameOfClass(realClassIndex));
 
     }
     // it's not fast but it's safe and simple..

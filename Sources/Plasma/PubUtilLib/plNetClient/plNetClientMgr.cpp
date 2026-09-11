@@ -58,6 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetCommon/pnNetCommon.h"
 #include "pnSceneObject/plCoordinateInterface.h"
 
+#include "plAgeDescription/plAgeDescription.h"
 #include "plAgeLoader/plAgeLoader.h"
 #include "plAvatar/plAvatarClothing.h"
 #include "plAvatar/plAvatarMgr.h"
@@ -73,6 +74,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plVaultNotifyMsg.h"
 #include "plMessageBox/hsMessageBox.h"
 #include "plModifier/plResponderModifier.h"
+#include "plModifier/plSDLModifier.h"
 #include "plNetClientRecorder/plNetClientRecorder.h"
 #include "plNetCommon/plNetObjectDebugger.h"
 #include "plNetMessage/plNetMessage.h"
@@ -252,27 +254,25 @@ void plNetClientMgr::ICreateStatusLog() const
 //
 // override for plLoggable
 //
-bool plNetClientMgr::Log(const ST::string& str) const
+void plNetClientMgr::Log(const ST::string& str) const
 {
     if (str.empty()) {
-        return true;
+        return;
     }
 
     // prepend raw time
     ST::string buf2 = ST::format("{.2f} {}", hsTimer::GetSeconds(), ProcessTab(str.c_str()));
 
     if ( GetConsoleOutput() )
-        hsStatusMessage(buf2.c_str());
+        hsStatusMessage(buf2);
 
     GetLog();
 
     plNetObjectDebugger::GetInstance()->LogMsgIfMatch(buf2);
 
     if (fStatusLog) {
-        return fStatusLog->AddLine(buf2);
+        fStatusLog->AddLine(buf2);
     }
-
-    return true;
 }
 
 //
@@ -799,7 +799,11 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
         hsAssert(ref->fType==kAgeSDLHook, "unknown ref msg context");
         if (ref->GetContext()==plRefMsg::kOnCreate)
         {
-            hsAssert(fAgeSDLObjectKey == nullptr, "already have a ref to age sdl hook");
+            hsAssert(fAgeSDLObjectKey == nullptr || fAgeSDLObjectKey == ref->GetRef()->GetKey(), ST::format(
+                "Newly loaded age SDL hook object {} doesn't match the key {} we were told earlier",
+                ref->GetRef()->GetKey()->GetUoid().StringIze(),
+                fAgeSDLObjectKey->GetUoid().StringIze()
+            ).c_str());
             fAgeSDLObjectKey = ref->GetRef()->GetKey();
             DebugMsg("Age SDL hook object created, uoid={}", fAgeSDLObjectKey->GetUoid().StringIze());
         }
@@ -861,7 +865,7 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
     plCCRPetitionMsg* petMsg=plCCRPetitionMsg::ConvertNoRef(msg);
     if (petMsg)
     {
-        ISendCCRPetition(petMsg);
+        hsAssert(false, "CCR petitions are not implemented");
         return true;
     }
 
@@ -914,12 +918,14 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
     plClientMsg* clientMsg = plClientMsg::ConvertNoRef(msg);
     if (clientMsg && clientMsg->GetClientMsgFlag()==plClientMsg::kInitComplete)
     {
+#ifdef HS_DEBUGGING
         // add 1 debug object for age sdl
         if (plNetObjectDebugger::GetInstance())
         {
             plNetObjectDebugger::GetInstance()->RemoveDebugObject(ST_LITERAL("AgeSDLHook"));
             plNetObjectDebugger::GetInstance()->AddDebugObject(ST_LITERAL("AgeSDLHook"));
         }
+#endif
 
         // if we're linking to startup we don't need (or want) a player set
         ST::string ageName = NetCommGetStartupAge()->ageDatasetName;
@@ -1194,7 +1200,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
         plSceneObject *playerSO = plSceneObject::ConvertNoRef(playerKey->ObjectIsLoaded());
         if (!playerSO)
         {
-            hsStatusMessageF("Ignoring player page message for non-existant player.");
+            hsStatusMessage("Ignoring player page message for non-existant player.");
         }
         else
         if(playerMsg->fPlayer)
@@ -1275,6 +1281,18 @@ bool plNetClientMgr::IFindModifier(plSynchedObject* obj, int16_t classIdx)
     return cnt==0 ? false : true;
 }
 
+plUoid plNetClientMgr::GetAgeSDLObjectUoidForAge(const plAgeDescription& ageDesc)
+{
+    // if age is loaded
+    plLocation loc = plKeyFinder::Instance().FindLocation(ageDesc.GetAgeName(), plAgeDescription::GetCommonPage(plAgeDescription::kGlobal));
+    if (!loc.IsValid()) {
+        // check age desc
+        loc = ageDesc.CalcPageLocation("BuiltIn");
+    }
+
+    return plUoid(loc, plSceneObject::Index(), plSDL::kAgeSDLObjectName);
+}
+
 plUoid plNetClientMgr::GetAgeSDLObjectUoid(const ST::string& ageName) const
 {
     hsAssert(!ageName.empty(), "nil ageName");
@@ -1283,28 +1301,35 @@ plUoid plNetClientMgr::GetAgeSDLObjectUoid(const ST::string& ageName) const
     if (fAgeSDLObjectKey)
         return fAgeSDLObjectKey->GetUoid();
 
-    // if age is loaded
-    plLocation loc = plKeyFinder::Instance().FindLocation(ageName,plAgeDescription::GetCommonPage(plAgeDescription::kGlobal));
-    if (!loc.IsValid())
-    {
-        // check current age des
-        if (plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName() == ageName)
-            loc=plAgeLoader::GetInstance()->GetCurrAgeDesc().CalcPageLocation("BuiltIn");
-
-        if (!loc.IsValid())
-        {
-            // try to load age desc
-            std::unique_ptr<hsStream> stream = plAgeLoader::GetAgeDescFileStream(ageName);
-            if (stream)
-            {
-                plAgeDescription ad;
-                ad.Read(stream.get());
-                loc=ad.CalcPageLocation("BuiltIn");
-            }
-        }
+    std::unique_ptr<hsStream> stream = plAgeLoader::GetAgeDescFileStream(ageName);
+    if (stream) {
+        plAgeDescription ad;
+        ad.Read(stream.get());
+        return GetAgeSDLObjectUoidForAge(ad);
     }
 
-    return plUoid(loc, plSceneObject::Index(), plSDL::kAgeSDLObjectName);
+    return plUoid(plLocation(), plSceneObject::Index(), plSDL::kAgeSDLObjectName);
+}
+
+plSDLModifier* plNetClientMgr::GetAgeSDLModifier() const
+{
+    if (fAgeSDLObjectKey && fAgeSDLObjectKey->ObjectIsLoaded()) {
+        if (const plSceneObject* ageSDLHook = plSceneObject::ConvertNoRef(fAgeSDLObjectKey->GetObjectPtr())) {
+            plSDLModifier* sdlMod = plSDLModifier::ConvertNoRef(const_cast<plModifier*>(ageSDLHook->GetModifierByType(plSDLModifier::Index())));
+            if (sdlMod != nullptr) {
+                return sdlMod;
+            } else {
+                ErrorMsg("Cannot get age SDL, because the AgeSDLHook doesn't have a plSDLModifier");
+            }
+        } else {
+            ErrorMsg("Cannot get age SDL, because the AgeSDLHook isn't a scene object???");
+        }
+    } else {
+        ErrorMsg("Cannot get age SDL, because the AgeSDLHook isn't loaded yet");
+    }
+
+    // couldn't find one
+    return nullptr;
 }
 
 //

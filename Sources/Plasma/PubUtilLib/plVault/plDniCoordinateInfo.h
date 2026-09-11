@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class hsStream;
 class hsResMgr;
-namespace ST { class string; }
 
 class plDniCoordinateInfo : public plCreatable
 {

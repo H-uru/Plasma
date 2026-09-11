@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 
+#include "hsEndian.h"
 #include "hsExceptions.h"
 
 #include <cctype>
@@ -200,9 +201,8 @@ bool hsStream::IsTokenSeparator(char c)
 
 bool hsStream::GetToken(char *s, uint32_t maxLen, const char beginComment, const char endComment)
 {
-    char c;
-    char endCom;
-        endCom = endComment;
+    char c = 0;
+    char endCom = endComment;
 
     while( true )
     {
@@ -234,9 +234,8 @@ bool hsStream::GetToken(char *s, uint32_t maxLen, const char beginComment, const
 
 bool hsStream::ReadLn(char *s, uint32_t maxLen, const char beginComment, const char endComment)
 {
-    char c;
-    char endCom;
-        endCom = endComment;
+    char c = 0;
+    char endCom = endComment;
 
     while( true )
     {
@@ -269,7 +268,7 @@ bool hsStream::ReadLn(char *s, uint32_t maxLen, const char beginComment, const c
 bool hsStream::ReadLn(ST::string& s, const char beginComment, const char endComment)
 {
     ST::string_stream ss;
-    char c;
+    char c = 0;
     char endCom = endComment;
 
     while (true) {
@@ -447,10 +446,7 @@ uint32_t hsUNIXStream::Read(uint32_t bytes,  void* buffer)
     fPosition += numItems;
     if (numItems < bytes)
     {
-        if (!feof(fRef))
-        {
-            hsDebugMessage("Error on UNIX Read", ferror(fRef));
-        }
+        hsAssert(feof(fRef), ST::format("Error on UNIX Read (ferror = {})", ferror(fRef)).c_str());
     }
     return numItems;
 }
@@ -900,7 +896,7 @@ uint32_t hsQueueStream::Write(uint32_t byteCount, const void* buffer)
     {
 #if 0
         if (fReadCursor < fWriteCursor+length+1)
-            hsStatusMessage("ReadCursor wrapped\n");
+            hsStatusMessage("ReadCursor wrapped");
 #endif
         fReadCursor = std::min(fReadCursor, fWriteCursor+length+1);
         fReadCursor %= fSize;

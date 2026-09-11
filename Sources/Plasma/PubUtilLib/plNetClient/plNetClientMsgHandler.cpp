@@ -68,8 +68,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSDL/plSDL.h"
 #include "plVault/plVault.h"
 
-#include "pfMessage/pfKIMsg.h"      // Should be moved to PubUtil level
-
 ////////////////////////////////////////////////////////////////////////
 
 plNetClientMsgHandler::plNetClientMsgHandler(plNetClientMgr * mgr)

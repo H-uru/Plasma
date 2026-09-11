@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include <string>
+#include <string_theory/format>
 #include <ctime>
 
 #include "plSecureStream.h"
@@ -283,33 +284,28 @@ uint32_t plSecureStream::IRead(uint32_t bytes, void* buffer)
 {
     if (fRef == INVALID_HANDLE_VALUE)
         return 0;
-    uint32_t numItems = 0;
+    size_t numItems = 0;
 #if HS_BUILD_FOR_WIN32
-    bool success = (ReadFile(fRef, buffer, bytes, (LPDWORD)&numItems, nullptr) != 0);
+    DWORD numItemsDword = 0;
+    bool success = ReadFile(fRef, buffer, bytes, &numItemsDword, nullptr);
+    numItems = numItemsDword;
 #elif HS_BUILD_FOR_UNIX
     numItems = fread(buffer, bytes, 1, fRef);
     bool success = numItems != 0;
 #endif
     fPosition += numItems;
-    if ((unsigned)numItems < bytes)
+    if (numItems < bytes)
     {
-        if (success)
-        {
-            // EOF ocurred
-            char str[128];
-            sprintf(str, "Hit EOF on Windows read, only read %d out of requested %d bytes\n", numItems, bytes);
-            hsDebugMessage(str, 0);
-        }
-        else
+        if (!success)
         {
 #if HS_BUILD_FOR_WIN32
-            hsDebugMessage("Error on Windows read", GetLastError());
+            hsAssert(false, ST::format("Error on Windows read (GetLastError = {})", GetLastError()).c_str());
 #else
-            hsDebugMessage("Error on POSIX read", errno);
+            hsAssert(false, ST::format("Error on POSIX read (errno = {})", errno).c_str());
 #endif
         }
     }
-    return numItems;
+    return static_cast<uint32_t>(numItems);
 }
 
 void plSecureStream::IBufferFile()
@@ -655,14 +651,19 @@ std::unique_ptr<hsStream> plSecureStream::OpenSecureFile(const plFileName& fileN
     bool isEncrypted = IsSecureFile(fileName);
 
     std::unique_ptr<hsFileSystemStream> s;
-    if (isEncrypted)
+    if (isEncrypted) {
         s = std::make_unique<plSecureStream>(deleteOnExit, key);
-    else if (!requireEncryption)
+    } else if (!requireEncryption) {
         s = std::make_unique<hsUNIXStream>();
+    } else {
+        return nullptr;
+    }
 
-    if (s)
-        s->Open(fileName, "rb");
-    return s;
+    if (s->Open(fileName, "rb")) {
+        return s;
+    } else {
+        return nullptr;
+    }
 }
 
 std::unique_ptr<hsStream> plSecureStream::OpenSecureFileWrite(const plFileName& fileName, uint32_t* key /* = nullptr */)
@@ -674,8 +675,11 @@ std::unique_ptr<hsStream> plSecureStream::OpenSecureFileWrite(const plFileName& 
     s = std::make_unique<hsUNIXStream>();
 #endif
 
-    s->Open(fileName, "wb");
-    return s;
+    if (s->Open(fileName, "wb")) {
+        return s;
+    } else {
+        return nullptr;
+    }
 }
 
 //// GetSecureEncryptionKey //////////////////////////////////////////////////

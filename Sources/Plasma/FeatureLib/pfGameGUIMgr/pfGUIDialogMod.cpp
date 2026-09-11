@@ -78,7 +78,7 @@ pfGUIDialogMod::pfGUIDialogMod()
       fControlOfInterest(), fFocusCtrl(), fMousedCtrl(),
       fTagID(), fHandler(), fVersion(), fProcReceiver(),
       fDragMode(), fDragReceptive(), fDragTarget(),
-      fDragSource(), fColorScheme(new pfGUIColorScheme())
+      fDragSource(), fColorScheme(new pfGUIColorScheme(), hsStealRef)
 { }
 
 pfGUIDialogMod::~pfGUIDialogMod()
@@ -98,9 +98,6 @@ pfGUIDialogMod::~pfGUIDialogMod()
     }
 
     SetHandler(nullptr);
-
-    hsRefCnt_SafeUnRef( fColorScheme );
-    fColorScheme = nullptr;
 }
 
 //// ScreenToWorldPoint //////////////////////////////////////////////////////

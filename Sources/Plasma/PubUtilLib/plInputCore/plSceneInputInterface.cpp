@@ -843,8 +843,8 @@ void plSceneInputInterface::ILinkOffereeToAge()
                               link.GetAgeInfo()->GetAgeInstanceName());
         }
 
-        info.SetAgeUserDefinedName( title.c_str() );
-        info.SetAgeDescription( desc.c_str() );
+        info.SetAgeUserDefinedName(std::move(title));
+        info.SetAgeDescription(std::move(desc));
 
         link.GetAgeInfo()->CopyFrom(&info);
         if (!VaultRegisterOwnedAgeAndWait(&link)) {
@@ -867,7 +867,7 @@ void plSceneInputInterface::ILinkOffereeToAge()
     if (!fSpawnPoint.empty()) {
         plSpawnPointInfo spawnPoint;
         spawnPoint.SetName(fSpawnPoint);
-        link.SetSpawnPoint(spawnPoint);
+        link.SetSpawnPoint(std::move(spawnPoint));
     }
     
             

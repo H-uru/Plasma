@@ -55,5 +55,5 @@ enum
     kGateKeeper2Cli_AuthSrvIpAddressReply,
 };
 
-bool GateKeeper_Factory(QTreeWidget* logger, QString timeFmt, int direction,
+bool GateKeeper_Factory(QTreeWidget* logger, const QString& timeFmt, int direction,
                         ChunkBuffer& buffer);

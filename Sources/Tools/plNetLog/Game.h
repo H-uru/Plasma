@@ -57,5 +57,5 @@ enum
     kGame2Cli_GameMgrMsg,
 };
 
-bool Game_Factory(QTreeWidget* logger, QString timeFmt, int direction,
+bool Game_Factory(QTreeWidget* logger, const QString& timeFmt, int direction,
                   ChunkBuffer& buffer);

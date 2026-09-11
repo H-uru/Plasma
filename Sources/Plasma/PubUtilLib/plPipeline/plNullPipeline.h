@@ -65,7 +65,7 @@ public:
 class plNullPipeline : public pl3DPipeline<plNullPipelineDevice>
 {
 public:
-    plNullPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devModeRec)
+    plNullPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devModeRec)
         : pl3DPipeline(devModeRec) { }
 
     CLASSNAME_REGISTER(plNullPipeline);

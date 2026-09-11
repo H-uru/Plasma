@@ -89,6 +89,7 @@ class plLayerTargetContainer;
 class plLocation;
 class plMaxNode;
 class jvUniqueId;
+class plFileName;
 
 class plPlasmaMAXLayer : public plMaxMtlBase<Texmap>
 {
@@ -151,6 +152,7 @@ class plPlasmaMAXLayer : public plMaxMtlBase<Texmap>
         void RefreshBitmaps();
 
         bool    GetBitmapFileName( TCHAR* destFilename, int maxLength, int index = 0 );
+        plFileName GetBitmapFileName(int index = 0);
 
         // Virtual function called by plBMSampler to get various things while sampling the layer's image
         virtual bool    GetSamplerInfo( plBMSamplerData *samplerData ) { return false; }

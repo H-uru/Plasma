@@ -1,0 +1,298 @@
+From 8869985a73c84218dacf72c4c08e8c2fdd3b5558 Mon Sep 17 00:00:00 2001
+From: Adam Johnson <AdamJohnso@gmail.com>
+Date: Tue, 19 Aug 2025 17:13:59 -0500
+Subject: [PATCH 3/3] Remove `_winapi.CopyFile2()`.
+
+CopyFile2() is not supported on Windows 7. Comments in the source code
+indicate that shutil can handle this not being present.
+---
+ .../pycore_global_objects_fini_generated.h    |  3 -
+ Include/internal/pycore_global_strings.h      |  3 -
+ .../internal/pycore_runtime_init_generated.h  |  3 -
+ .../internal/pycore_unicodeobject_generated.h | 12 ----
+ Modules/_winapi.c                             | 61 ----------------
+ Modules/clinic/_winapi.c.h                    | 70 -------------------
+ 6 files changed, 152 deletions(-)
+
+diff --git a/Include/internal/pycore_global_objects_fini_generated.h b/Include/internal/pycore_global_objects_fini_generated.h
+index 75765254ded..8f4acf8f392 100644
+--- a/Include/internal/pycore_global_objects_fini_generated.h
++++ b/Include/internal/pycore_global_objects_fini_generated.h
+@@ -905,7 +905,6 @@ _PyStaticObjects_CheckRefcnt(PyInterpreterState *interp) {
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(exc_value));
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(excepthook));
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(exception));
+-    _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(existing_file_name));
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(exp));
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(extend));
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(extra_tokens));
+@@ -1057,7 +1056,6 @@ _PyStaticObjects_CheckRefcnt(PyInterpreterState *interp) {
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(namespaces));
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(narg));
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(ndigits));
+-    _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(new_file_name));
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(new_limit));
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(newline));
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(newlines));
+@@ -1111,7 +1109,6 @@ _PyStaticObjects_CheckRefcnt(PyInterpreterState *interp) {
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(priority));
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(progress));
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(progress_handler));
+-    _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(progress_routine));
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(proto));
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(protocol));
+     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(ps1));
+diff --git a/Include/internal/pycore_global_strings.h b/Include/internal/pycore_global_strings.h
+index 4f5bfd986f2..2092622a771 100644
+--- a/Include/internal/pycore_global_strings.h
++++ b/Include/internal/pycore_global_strings.h
+@@ -394,7 +394,6 @@ struct _Py_global_strings {
+         STRUCT_FOR_ID(exc_value)
+         STRUCT_FOR_ID(excepthook)
+         STRUCT_FOR_ID(exception)
+-        STRUCT_FOR_ID(existing_file_name)
+         STRUCT_FOR_ID(exp)
+         STRUCT_FOR_ID(extend)
+         STRUCT_FOR_ID(extra_tokens)
+@@ -546,7 +545,6 @@ struct _Py_global_strings {
+         STRUCT_FOR_ID(namespaces)
+         STRUCT_FOR_ID(narg)
+         STRUCT_FOR_ID(ndigits)
+-        STRUCT_FOR_ID(new_file_name)
+         STRUCT_FOR_ID(new_limit)
+         STRUCT_FOR_ID(newline)
+         STRUCT_FOR_ID(newlines)
+@@ -600,7 +598,6 @@ struct _Py_global_strings {
+         STRUCT_FOR_ID(priority)
+         STRUCT_FOR_ID(progress)
+         STRUCT_FOR_ID(progress_handler)
+-        STRUCT_FOR_ID(progress_routine)
+         STRUCT_FOR_ID(proto)
+         STRUCT_FOR_ID(protocol)
+         STRUCT_FOR_ID(ps1)
+diff --git a/Include/internal/pycore_runtime_init_generated.h b/Include/internal/pycore_runtime_init_generated.h
+index 460a6c79730..36ed94968aa 100644
+--- a/Include/internal/pycore_runtime_init_generated.h
++++ b/Include/internal/pycore_runtime_init_generated.h
+@@ -900,7 +900,6 @@ extern "C" {
+     INIT_ID(exc_value), \
+     INIT_ID(excepthook), \
+     INIT_ID(exception), \
+-    INIT_ID(existing_file_name), \
+     INIT_ID(exp), \
+     INIT_ID(extend), \
+     INIT_ID(extra_tokens), \
+@@ -1052,7 +1051,6 @@ extern "C" {
+     INIT_ID(namespaces), \
+     INIT_ID(narg), \
+     INIT_ID(ndigits), \
+-    INIT_ID(new_file_name), \
+     INIT_ID(new_limit), \
+     INIT_ID(newline), \
+     INIT_ID(newlines), \
+@@ -1106,7 +1104,6 @@ extern "C" {
+     INIT_ID(priority), \
+     INIT_ID(progress), \
+     INIT_ID(progress_handler), \
+-    INIT_ID(progress_routine), \
+     INIT_ID(proto), \
+     INIT_ID(protocol), \
+     INIT_ID(ps1), \
+diff --git a/Include/internal/pycore_unicodeobject_generated.h b/Include/internal/pycore_unicodeobject_generated.h
+index 90c61bcd090..f3d356dbfdd 100644
+--- a/Include/internal/pycore_unicodeobject_generated.h
++++ b/Include/internal/pycore_unicodeobject_generated.h
+@@ -1380,10 +1380,6 @@ _PyUnicode_InitStaticStrings(PyInterpreterState *interp) {
+     _PyUnicode_InternStatic(interp, &string);
+     assert(_PyUnicode_CheckConsistency(string, 1));
+     assert(PyUnicode_GET_LENGTH(string) != 1);
+-    string = &_Py_ID(existing_file_name);
+-    _PyUnicode_InternStatic(interp, &string);
+-    assert(_PyUnicode_CheckConsistency(string, 1));
+-    assert(PyUnicode_GET_LENGTH(string) != 1);
+     string = &_Py_ID(exp);
+     _PyUnicode_InternStatic(interp, &string);
+     assert(_PyUnicode_CheckConsistency(string, 1));
+@@ -1988,10 +1984,6 @@ _PyUnicode_InitStaticStrings(PyInterpreterState *interp) {
+     _PyUnicode_InternStatic(interp, &string);
+     assert(_PyUnicode_CheckConsistency(string, 1));
+     assert(PyUnicode_GET_LENGTH(string) != 1);
+-    string = &_Py_ID(new_file_name);
+-    _PyUnicode_InternStatic(interp, &string);
+-    assert(_PyUnicode_CheckConsistency(string, 1));
+-    assert(PyUnicode_GET_LENGTH(string) != 1);
+     string = &_Py_ID(new_limit);
+     _PyUnicode_InternStatic(interp, &string);
+     assert(_PyUnicode_CheckConsistency(string, 1));
+@@ -2204,10 +2196,6 @@ _PyUnicode_InitStaticStrings(PyInterpreterState *interp) {
+     _PyUnicode_InternStatic(interp, &string);
+     assert(_PyUnicode_CheckConsistency(string, 1));
+     assert(PyUnicode_GET_LENGTH(string) != 1);
+-    string = &_Py_ID(progress_routine);
+-    _PyUnicode_InternStatic(interp, &string);
+-    assert(_PyUnicode_CheckConsistency(string, 1));
+-    assert(PyUnicode_GET_LENGTH(string) != 1);
+     string = &_Py_ID(proto);
+     _PyUnicode_InternStatic(interp, &string);
+     assert(_PyUnicode_CheckConsistency(string, 1));
+diff --git a/Modules/_winapi.c b/Modules/_winapi.c
+index 47fb35a1615..65da8aee61b 100644
+--- a/Modules/_winapi.c
++++ b/Modules/_winapi.c
+@@ -2376,66 +2376,6 @@ _winapi_NeedCurrentDirectoryForExePath_impl(PyObject *module,
+ }
+ 
+ 
+-/*[clinic input]
+-_winapi.CopyFile2
+-
+-    existing_file_name: LPCWSTR
+-    new_file_name: LPCWSTR
+-    flags: DWORD
+-    progress_routine: object = None
+-
+-Copies a file from one name to a new name.
+-
+-This is implemented using the CopyFile2 API, which preserves all stat
+-and metadata information apart from security attributes.
+-
+-progress_routine is reserved for future use, but is currently not
+-implemented. Its value is ignored.
+-[clinic start generated code]*/
+-
+-static PyObject *
+-_winapi_CopyFile2_impl(PyObject *module, LPCWSTR existing_file_name,
+-                       LPCWSTR new_file_name, DWORD flags,
+-                       PyObject *progress_routine)
+-/*[clinic end generated code: output=43d960d9df73d984 input=fb976b8d1492d130]*/
+-{
+-    HRESULT hr;
+-    COPYFILE2_EXTENDED_PARAMETERS params = { sizeof(COPYFILE2_EXTENDED_PARAMETERS) };
+-
+-    if (PySys_Audit("_winapi.CopyFile2", "uuk",
+-                    existing_file_name, new_file_name, flags) < 0) {
+-        return NULL;
+-    }
+-
+-    params.dwCopyFlags = flags;
+-    /* For future implementation. We ignore the value for now so that
+-       users only have to test for 'CopyFile2' existing and not whether
+-       the additional parameter exists.
+-    if (progress_routine != Py_None) {
+-        params.pProgressRoutine = _winapi_CopyFile2ProgressRoutine;
+-        params.pvCallbackContext = Py_NewRef(progress_routine);
+-    }
+-    */
+-    Py_BEGIN_ALLOW_THREADS;
+-    hr = CopyFile2(existing_file_name, new_file_name, &params);
+-    Py_END_ALLOW_THREADS;
+-    /* For future implementation.
+-    if (progress_routine != Py_None) {
+-        Py_DECREF(progress_routine);
+-    }
+-    */
+-    if (FAILED(hr)) {
+-        if ((hr & 0xFFFF0000) == 0x80070000) {
+-            PyErr_SetFromWindowsErr(hr & 0xFFFF);
+-        } else {
+-            PyErr_SetFromWindowsErr(hr);
+-        }
+-        return NULL;
+-    }
+-    Py_RETURN_NONE;
+-}
+-
+-
+ static PyMethodDef winapi_functions[] = {
+     _WINAPI_CLOSEHANDLE_METHODDEF
+     _WINAPI_CONNECTNAMEDPIPE_METHODDEF
+@@ -2473,7 +2413,6 @@ static PyMethodDef winapi_functions[] = {
+     _WINAPI_GETFILETYPE_METHODDEF
+     _WINAPI__MIMETYPES_READ_WINDOWS_REGISTRY_METHODDEF
+     _WINAPI_NEEDCURRENTDIRECTORYFOREXEPATH_METHODDEF
+-    _WINAPI_COPYFILE2_METHODDEF
+     {NULL, NULL}
+ };
+ 
+diff --git a/Modules/clinic/_winapi.c.h b/Modules/clinic/_winapi.c.h
+index d7ad551908f..34850d5ac7a 100644
+--- a/Modules/clinic/_winapi.c.h
++++ b/Modules/clinic/_winapi.c.h
+@@ -1558,74 +1558,4 @@ exit:
+ 
+     return return_value;
+ }
+-
+-PyDoc_STRVAR(_winapi_CopyFile2__doc__,
+-"CopyFile2($module, /, existing_file_name, new_file_name, flags,\n"
+-"          progress_routine=None)\n"
+-"--\n"
+-"\n"
+-"Copies a file from one name to a new name.\n"
+-"\n"
+-"This is implemented using the CopyFile2 API, which preserves all stat\n"
+-"and metadata information apart from security attributes.\n"
+-"\n"
+-"progress_routine is reserved for future use, but is currently not\n"
+-"implemented. Its value is ignored.");
+-
+-#define _WINAPI_COPYFILE2_METHODDEF    \
+-    {"CopyFile2", _PyCFunction_CAST(_winapi_CopyFile2), METH_FASTCALL|METH_KEYWORDS, _winapi_CopyFile2__doc__},
+-
+-static PyObject *
+-_winapi_CopyFile2_impl(PyObject *module, LPCWSTR existing_file_name,
+-                       LPCWSTR new_file_name, DWORD flags,
+-                       PyObject *progress_routine);
+-
+-static PyObject *
+-_winapi_CopyFile2(PyObject *module, PyObject *const *args, Py_ssize_t nargs, PyObject *kwnames)
+-{
+-    PyObject *return_value = NULL;
+-    #if defined(Py_BUILD_CORE) && !defined(Py_BUILD_CORE_MODULE)
+-
+-    #define NUM_KEYWORDS 4
+-    static struct {
+-        PyGC_Head _this_is_not_used;
+-        PyObject_VAR_HEAD
+-        PyObject *ob_item[NUM_KEYWORDS];
+-    } _kwtuple = {
+-        .ob_base = PyVarObject_HEAD_INIT(&PyTuple_Type, NUM_KEYWORDS)
+-        .ob_item = { &_Py_ID(existing_file_name), &_Py_ID(new_file_name), &_Py_ID(flags), &_Py_ID(progress_routine), },
+-    };
+-    #undef NUM_KEYWORDS
+-    #define KWTUPLE (&_kwtuple.ob_base.ob_base)
+-
+-    #else  // !Py_BUILD_CORE
+-    #  define KWTUPLE NULL
+-    #endif  // !Py_BUILD_CORE
+-
+-    static const char * const _keywords[] = {"existing_file_name", "new_file_name", "flags", "progress_routine", NULL};
+-    static _PyArg_Parser _parser = {
+-        .keywords = _keywords,
+-        .format = "O&O&k|O:CopyFile2",
+-        .kwtuple = KWTUPLE,
+-    };
+-    #undef KWTUPLE
+-    LPCWSTR existing_file_name = NULL;
+-    LPCWSTR new_file_name = NULL;
+-    DWORD flags;
+-    PyObject *progress_routine = Py_None;
+-
+-    if (!_PyArg_ParseStackAndKeywords(args, nargs, kwnames, &_parser,
+-        _PyUnicode_WideCharString_Converter, &existing_file_name, _PyUnicode_WideCharString_Converter, &new_file_name, &flags, &progress_routine)) {
+-        goto exit;
+-    }
+-    return_value = _winapi_CopyFile2_impl(module, existing_file_name, new_file_name, flags, progress_routine);
+-
+-exit:
+-    /* Cleanup for existing_file_name */
+-    PyMem_Free((void *)existing_file_name);
+-    /* Cleanup for new_file_name */
+-    PyMem_Free((void *)new_file_name);
+-
+-    return return_value;
+-}
+ /*[clinic end generated code: output=91b39b70024fa232 input=a9049054013a1b77]*/
+-- 
+2.50.0.windows.2
+

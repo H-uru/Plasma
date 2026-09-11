@@ -43,17 +43,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsConfig.h"
 
 #if defined(HAVE_CPUID)
-#  if defined(_MSC_VER) || ((defined(_WIN32) || defined(_WIN64)) && defined(__INTEL_COMPILER))
-#    include <intrin.h>
-#    define MSC_COMPATIBLE
-#  elif defined(__GNUC__)
-#    include <cpuid.h>
-#    define GCC_COMPATIBLE
-#  else
-#    define SOFTWARE_ONLY
-#  endif
+#   if defined(_MSC_VER) || ((defined(_WIN32) || defined(_WIN64)) && defined(__INTEL_COMPILER))
+#       include <intrin.h>
+#       define MSC_COMPATIBLE
+#   elif defined(__GNUC__)
+#       include <cpuid.h>
+#       define GCC_COMPATIBLE
+#   else
+#       define SOFTWARE_ONLY
+#   endif
 #else
-#  define SOFTWARE_ONLY
+#   define SOFTWARE_ONLY
 #endif
 
 #include "hsCpuID.h"

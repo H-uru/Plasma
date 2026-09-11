@@ -51,9 +51,10 @@
 """Plasma 2.0 Net Constants"""
 
 from __future__ import annotations
+import enum
 from typing import *
 
-class PtLinkingRules:
+class PtLinkingRules(enum.IntEnum):
     kBasicLink = 0
     kOriginalBook = 1
     kSubAgeBook = 2

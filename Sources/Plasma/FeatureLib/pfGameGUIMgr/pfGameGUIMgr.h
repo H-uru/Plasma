@@ -146,7 +146,7 @@ class pfGameGUIMgr : public hsKeyedObject
         bool    fActivated;
         uint32_t  fActiveDlgCount;
 
-        pfGameUIInputInterface      *fInputConfig;
+        hsRef<pfGameUIInputInterface> fInputConfig;
         uint32_t                      fInputCtlIndex;
 
         uint32_t                      fDefaultCursor;

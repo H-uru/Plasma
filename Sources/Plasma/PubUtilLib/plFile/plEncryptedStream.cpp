@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plEncryptedStream.h"
 
 #include <ctime>
+#include <string_theory/format>
 #include <wchar.h>
 #include <algorithm>
 
@@ -174,20 +175,14 @@ uint32_t plEncryptedStream::IRead(uint32_t bytes, void* buffer)
 {
     if (!fRef)
         return 0;
-    int numItems = (int)(::fread(buffer, 1 /*size*/, bytes /*count*/, fRef));
+    size_t numItems = fread(buffer, 1 /*size*/, bytes /*count*/, fRef);
     fPosition += numItems;
-    if ((unsigned)numItems < bytes) {
-        if (feof(fRef)) {
-            // EOF ocurred
-            char str[128];
-            sprintf(str, "Hit EOF on UNIX Read, only read %d out of requested %d bytes\n", numItems, bytes);
-            hsDebugMessage(str, 0);
-        }
-        else {
-            hsDebugMessage("Error on UNIX Read", ferror(fRef));
+    if (numItems < bytes) {
+        if (!feof(fRef)) {
+            hsAssert(false, ST::format("Error on UNIX Read (ferror = {})", ferror(fRef)).c_str());
         }
     }
-    return numItems;
+    return static_cast<uint32_t>(numItems);
 }
 
 void plEncryptedStream::IBufferFile()
@@ -492,8 +487,11 @@ std::unique_ptr<hsStream> plEncryptedStream::OpenEncryptedFile(const plFileName&
     else
         s = std::make_unique<hsUNIXStream>();
 
-    s->Open(fileName, "rb");
-    return s;
+    if (s->Open(fileName, "rb")) {
+        return s;
+    } else {
+        return nullptr;
+    }
 }
 
 std::unique_ptr<hsStream> plEncryptedStream::OpenEncryptedFileWrite(const plFileName& fileName, uint32_t* cryptKey)
@@ -504,6 +502,9 @@ std::unique_ptr<hsStream> plEncryptedStream::OpenEncryptedFileWrite(const plFile
     else
         s = std::make_unique<hsUNIXStream>();
 
-    s->Open(fileName, "wb");
-    return s;
+    if (s->Open(fileName, "wb")) {
+        return s;
+    } else {
+        return nullptr;
+    }
 }

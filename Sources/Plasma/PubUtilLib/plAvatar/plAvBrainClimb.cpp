@@ -420,7 +420,7 @@ bool plAvBrainClimb::IAdvanceCurrentStage(double time, float elapsed, float &ove
 // ITRYSTAGETRANSITION
 bool plAvBrainClimb::ITryStageTransition(double time, float overage)
 {
-//  hsStatusMessageF("Got overage %f", overage);
+    //hsStatusMessageF("Got overage {}", overage);
     IChooseNextMode();
 
     bool result = true;

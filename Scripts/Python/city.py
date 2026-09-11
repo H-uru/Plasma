@@ -68,6 +68,7 @@ class city(ptResponder):
         self.id = 5026
         self.version = 1
 
+    def OnInit(self):
         global IsPublic
         global IsKadishGallery
 
@@ -102,8 +103,8 @@ class city(ptResponder):
             spTitle = "title unknown"
             spName = "spawn point unknown"
 
-        PtDebugPrint("city.__init__(): spTitle = ",spTitle)
-        PtDebugPrint("city.__init__(): spName = ",spName)
+        PtDebugPrint("city.OnInit(): spTitle = ",spTitle)
+        PtDebugPrint("city.OnInit(): spName = ",spName)
 
         ## NOT USING THIS FOR NOW - MAY NEED TO LOAD IN SPECIFIC PAGE(S) FOR FUTURE CITY AREAS...
 #        if spTitle == "KadishGallery":
@@ -121,7 +122,7 @@ class city(ptResponder):
         # For the non-public age, add all the remaining pages
         if not IsKadishGallery:
             pages += ["canyon","cavetjunction","courtyard","ferry","greatstair","guildhall","harbor","HarborReflect"]
-            pages += ["islmGreatZeroState","islmJCNote","islmNegilahnCreatureChartGUI","islmNickNote","islmPodMapGUI"]
+            pages += ["islmJCNote","islmNegilahnCreatureChartGUI","islmNickNote","islmPodMapGUI"]
             pages += ["islmWatsonLetterGUI","KahloPub","kahlopubtunnel","library","LibraryInterior"]
             pages += ["MuseumInteriorPage","palace","libraryDoors","museumDoor"]
             pages += ["islmBahroShoutFerry","islmBahroShoutLibrary","islmBahroShoutPalace"]

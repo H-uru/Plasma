@@ -98,7 +98,7 @@ void    plSoundEvent::SendCallbacks()
             plSoundMsg* sMsg = nullptr;
 
             // Ref to make sure the dispatcher doesn't delete it on us
-            hsRefCnt_SafeRef( msg );
+            msg->Ref();
             if( msg->fRepeats == 0 && fCallbackEndingFlags[ j ] == 0 )
             {
                 // Note: we get fancy here. We never want to remove the callback directly,
@@ -151,10 +151,10 @@ plSoundEvent::Types plSoundEvent::GetTypeFromCallbackMsg( plEventCallbackMsg *ms
 {
     switch( msg->fEvent )
     {
-        case ::kStart: return kStart;
-        case ::kTime:  return kTime;
-        case ::kStop:  return kStop;
-        case ::kLoop:  return kLoop;
+        case plEventCallbackMsg::kStart: return kStart;
+        case plEventCallbackMsg::kTime:  return kTime;
+        case plEventCallbackMsg::kStop:  return kStop;
+        case plEventCallbackMsg::kLoop:  return kLoop;
         default:       return kStop;
     }
 }

@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include <cmath>
+#include <string_theory/format>
 
 #include "plAnimEaseTypes.h"
 #include "plAnimTimeConvert.h"
@@ -175,14 +176,14 @@ void plAnimTimeConvert::ICheckTimeCallbacks(float frameStart, float frameStop)
 {
     for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
-        if (fCallbackMsgs[i]->fEvent == kTime)
+        if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kTime)
         {
             if( ITimeInFrame(fCallbackMsgs[i]->fEventTime, frameStart, frameStop) )
                 ISendCallback(i);
         }
-        else if (fCallbackMsgs[i]->fEvent == kBegin && ITimeInFrame(fBegin, frameStart, frameStop) )
+        else if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kBegin && ITimeInFrame(fBegin, frameStart, frameStop) )
             ISendCallback(i);
-        else if (fCallbackMsgs[i]->fEvent == kEnd && ITimeInFrame(fEnd, frameStart, frameStop) )
+        else if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kEnd && ITimeInFrame(fEnd, frameStart, frameStop) )
             ISendCallback(i);
 
     }
@@ -237,13 +238,13 @@ void plAnimTimeConvert::ISendCallback(hsSsize_t i)
     {
         fCallbackMsgs[i]->SetSender(fOwner ? fOwner->GetKey() : nullptr);
 
-        hsRefCnt_SafeRef(fCallbackMsgs[i]);
+        fCallbackMsgs[i]->Ref();
         plgDispatch::MsgSend(fCallbackMsgs[i]);
 
         // No more repeats, remove this callback from our list
         if (fCallbackMsgs[i]->fRepeats == 0)
         {
-            hsRefCnt_SafeUnRef(fCallbackMsgs[i]);
+            fCallbackMsgs[i]->UnRef();
             fCallbackMsgs.erase(fCallbackMsgs.begin() + i);
         }
         // If this isn't infinite, decrement the number of repeats
@@ -267,7 +268,7 @@ plAnimTimeConvert& plAnimTimeConvert::IStop(double time, float animTime)
 
     for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
-        if (fCallbackMsgs[i]->fEvent == kStop)
+        if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kStop)
         {
             ISendCallback(i);
         }
@@ -416,7 +417,7 @@ float plAnimTimeConvert::WorldToAnimTime(double wSecs)
         {
             for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
             {
-                if (fCallbackMsgs[i]->fEvent == kSingleFrameEval)
+                if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kSingleFrameEval)
                 {
                     ISendCallback(i);
                 }
@@ -665,7 +666,7 @@ void plAnimTimeConvert::SetCurrentAnimTime(float s, bool jump /* = false */)
     fCurrentAnimTime = s;
     for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
-        if (fCallbackMsgs[i]->fEvent == kSingleFrameAdjust)
+        if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kSingleFrameAdjust)
         {
             ISendCallback(i);
         }
@@ -760,7 +761,7 @@ float plAnimTimeConvert::GetBestStopDist(float min, float max, float norm, float
         }
     }
     
-    hsStatusMessageF("found stop point %f\n", bestTime);
+    hsStatusMessageF("found stop point {}", bestTime);
 
     if (bestTime == -1)
         bestTime = norm;
@@ -958,7 +959,7 @@ plAnimTimeConvert& plAnimTimeConvert::Start(double startTime)
     // check for a start callback
     for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
-        if (fCallbackMsgs[i]->fEvent == kStart)
+        if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kStart)
         {
             ISendCallback(i);
         }
@@ -991,7 +992,7 @@ plAnimTimeConvert& plAnimTimeConvert::Backwards()
     // check for a reverse callback
     for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
-        if (fCallbackMsgs[i]->fEvent == kReverse)
+        if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kReverse)
         {
             ISendCallback(i);
         }
@@ -1013,7 +1014,7 @@ plAnimTimeConvert& plAnimTimeConvert::Forewards()
     // check for a reverse callback
     for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
-        if (fCallbackMsgs[i]->fEvent == kReverse)
+        if (fCallbackMsgs[i]->fEvent == plEventCallbackMsg::kReverse)
         {
             ISendCallback(i);
         }

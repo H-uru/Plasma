@@ -1,0 +1,205 @@
+From 3ce54494c7109ebd36963f8c82cabb1bd320baa7 Mon Sep 17 00:00:00 2001
+From: Adam Johnson <AdamJohnso@gmail.com>
+Date: Tue, 19 Aug 2025 16:52:17 -0500
+Subject: [PATCH 1/3] Polyfill PathCch with WINE.
+
+---
+ Include/internal/pycore_fileutils.h |   2 +-
+ Modules/getpath.c                   |   2 +-
+ Modules/posixmodule.c               |   2 +-
+ PC/launcher2.c                      |   2 +-
+ PC/pyconfig.h                       |   3 +
+ PCbuild/_freeze_module.vcxproj      |   3 +-
+ PCbuild/pylauncher.vcxproj          |   3 +-
+ PCbuild/pythoncore.vcxproj          |   3 +-
+ PCbuild/pywlauncher.vcxproj         |   3 +-
+ Python/fileutils.c                  |   4 +-
+ Python/pathconfig.c                 |   2 +-
+ 11 files changed, 892 insertions(+), 11 deletions(-)
+ create mode 100644 PC/pathcch.c
+ create mode 100644 PC/pathcch_polyfill.h
+
+diff --git a/Include/internal/pycore_fileutils.h b/Include/internal/pycore_fileutils.h
+index 7c2b6ec0bff..75fab19913c 100644
+--- a/Include/internal/pycore_fileutils.h
++++ b/Include/internal/pycore_fileutils.h
+@@ -258,7 +258,7 @@ extern wchar_t *_Py_normpath_and_size(wchar_t *path, Py_ssize_t size, Py_ssize_t
+ // The Windows Games API family does not provide these functions
+ // so provide our own implementations. Remove them in case they get added
+ // to the Games API family
+-#if defined(MS_WINDOWS_GAMES) && !defined(MS_WINDOWS_DESKTOP)
++#if 0
+ #include <winerror.h>
+ 
+ extern HRESULT PathCchSkipRoot(const wchar_t *pszPath, const wchar_t **ppszRootEnd);
+diff --git a/Modules/getpath.c b/Modules/getpath.c
+index 0a310000751..cef0d7b4c46 100644
+--- a/Modules/getpath.c
++++ b/Modules/getpath.c
+@@ -11,7 +11,7 @@
+ 
+ #ifdef MS_WINDOWS
+ #  include <windows.h>            // GetFullPathNameW(), MAX_PATH
+-#  include <pathcch.h>
++#  include "pathcch_polyfill.h"
+ #endif
+ 
+ #ifdef __APPLE__
+diff --git a/Modules/posixmodule.c b/Modules/posixmodule.c
+index c21c6f06c72..8569a1c9105 100644
+--- a/Modules/posixmodule.c
++++ b/Modules/posixmodule.c
+@@ -29,7 +29,7 @@
+ #ifdef MS_WINDOWS
+ #  include <windows.h>
+ #  if !defined(MS_WINDOWS_GAMES) || defined(MS_WINDOWS_DESKTOP)
+-#    include <pathcch.h>
++#    include "pathcch_polyfill.h"
+ #  endif
+ #  include <winioctl.h>
+ #  include <lmcons.h>             // UNLEN
+diff --git a/PC/launcher2.c b/PC/launcher2.c
+index 7a78ed1655a..70806453b16 100644
+--- a/PC/launcher2.c
++++ b/PC/launcher2.c
+@@ -9,7 +9,7 @@
+ #define __STDC_WANT_LIB_EXT1__ 1
+ 
+ #include <windows.h>
+-#include <pathcch.h>
++#include "pathcch_polyfill.h"
+ #include <fcntl.h>
+ #include <io.h>
+ #include <shlobj.h>
+ diff --git a/PC/pyconfig.h b/PC/pyconfig.h
+index 7815bfcf8de..8dbac52dae2 100644
+--- a/PC/pyconfig.h
++++ b/PC/pyconfig.h
+@@ -48,6 +48,9 @@ WIN32 is still required for the locale module.
+ #define _CRT_NONSTDC_NO_DEPRECATE 1
+ #endif
+ 
++/* For use by static library patches to avoid pulling in pathcch.lib */
++#define DONT_HAVE_PATHCCH
++
+ #define HAVE_IO_H
+ #define HAVE_SYS_UTIME_H
+ #define HAVE_TEMPNAM
+diff --git a/PCbuild/_freeze_module.vcxproj b/PCbuild/_freeze_module.vcxproj
+index 3df0a072045..9db1a1c65e5 100644
+--- a/PCbuild/_freeze_module.vcxproj
++++ b/PCbuild/_freeze_module.vcxproj
+@@ -94,7 +94,7 @@
+     </ClCompile>
+     <Link>
+       <SubSystem>Console</SubSystem>
+-      <AdditionalDependencies>version.lib;ws2_32.lib;pathcch.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies>version.lib;ws2_32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+     </Link>
+   </ItemDefinitionGroup>
+@@ -175,6 +175,7 @@
+     <ClCompile Include="..\Parser\tokenizer.c" />
+     <ClCompile Include="..\PC\invalid_parameter_handler.c" />
+     <ClCompile Include="..\PC\msvcrtmodule.c" />
++    <ClCompile Include="..\PC\pathcch.c" />
+     <ClCompile Include="..\PC\winreg.c" />
+     <ClCompile Include="..\Python\_warnings.c" />
+     <ClCompile Include="..\Python\asdl.c" />
+diff --git a/PCbuild/pylauncher.vcxproj b/PCbuild/pylauncher.vcxproj
+index 35f2f7e505b..422ab2677f5 100644
+--- a/PCbuild/pylauncher.vcxproj
++++ b/PCbuild/pylauncher.vcxproj
+@@ -95,12 +95,13 @@
+       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+     </ClCompile>
+     <Link>
+-      <AdditionalDependencies>shell32.lib;pathcch.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies>shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+       <SubSystem>Console</SubSystem>
+     </Link>
+   </ItemDefinitionGroup>
+   <ItemGroup>
+     <ClCompile Include="..\PC\launcher2.c" />
++    <ClCompile Include="..\PC\pathcch.c" />
+   </ItemGroup>
+   <ItemGroup>
+     <None Include="..\PC\launcher.ico" />
+diff --git a/PCbuild/pythoncore.vcxproj b/PCbuild/pythoncore.vcxproj
+index b265264dc16..30429a365cd 100644
+--- a/PCbuild/pythoncore.vcxproj
++++ b/PCbuild/pythoncore.vcxproj
+@@ -106,7 +106,7 @@
+       <PreprocessorDefinitions Condition="$(IncludeExternals)">_Py_HAVE_ZLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+     </ClCompile>
+     <Link>
+-      <AdditionalDependencies>version.lib;ws2_32.lib;pathcch.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies>version.lib;ws2_32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+     </Link>
+   </ItemDefinitionGroup>
+   <ItemGroup>
+@@ -498,6 +498,7 @@
+     <ClCompile Include="..\Parser\string_parser.c" />
+     <ClCompile Include="..\Parser\peg_api.c" />
+     <ClCompile Include="..\PC\invalid_parameter_handler.c" />
++    <ClCompile Include="..\PC\pathcch.c" />
+     <ClCompile Include="..\PC\winreg.c" />
+     <ClCompile Include="..\PC\config.c" />
+     <ClCompile Include="..\PC\msvcrtmodule.c" />
+diff --git a/PCbuild/pywlauncher.vcxproj b/PCbuild/pywlauncher.vcxproj
+index e50b69aefe2..912c9d94c8c 100644
+--- a/PCbuild/pywlauncher.vcxproj
++++ b/PCbuild/pywlauncher.vcxproj
+@@ -95,12 +95,13 @@
+       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+     </ClCompile>
+     <Link>
+-      <AdditionalDependencies>shell32.lib;pathcch.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies>shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+       <SubSystem>Windows</SubSystem>
+     </Link>
+   </ItemDefinitionGroup>
+   <ItemGroup>
+     <ClCompile Include="..\PC\launcher2.c" />
++    <ClCompile Include="..\PC\pathcch.c" />
+   </ItemGroup>
+   <ItemGroup>
+     <None Include="..\PC\launcher.ico" />
+diff --git a/Python/fileutils.c b/Python/fileutils.c
+index c7521751cd2..fcefd649bb9 100644
+--- a/Python/fileutils.c
++++ b/Python/fileutils.c
+@@ -13,7 +13,7 @@
+ #  if defined(MS_WINDOWS_GAMES) && !defined(MS_WINDOWS_DESKTOP)
+ #    define PATHCCH_ALLOW_LONG_PATHS 0x01
+ #  else
+-#    include <pathcch.h>            // PathCchCombineEx
++#    include "pathcch_polyfill.h"   // PathCchCombineEx
+ #  endif
+ extern int winerror_to_errno(int);
+ #endif
+@@ -2229,7 +2229,7 @@ _Py_abspath(const wchar_t *path, wchar_t **abspath_p)
+ // but does not expose them yet. Load them dynamically until
+ // 1) they are officially exposed
+ // 2) we stop supporting older versions of the GDK which do not expose them
+-#if defined(MS_WINDOWS_GAMES) && !defined(MS_WINDOWS_DESKTOP)
++#if 0
+ HRESULT
+ PathCchSkipRoot(const wchar_t *path, const wchar_t **rootEnd)
+ {
+diff --git a/Python/pathconfig.c b/Python/pathconfig.c
+index be0f97c4b20..0d66f1c4f91 100644
+--- a/Python/pathconfig.c
++++ b/Python/pathconfig.c
+@@ -10,7 +10,7 @@
+ #include <wchar.h>
+ #ifdef MS_WINDOWS
+ #  include <windows.h>            // GetFullPathNameW(), MAX_PATH
+-#  include <pathcch.h>
++#  include "pathcch_polyfill.h"
+ #  include <shlwapi.h>
+ #endif
+ 
+-- 
+2.50.0.windows.2
+

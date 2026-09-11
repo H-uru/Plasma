@@ -95,6 +95,11 @@ bool pyKey::operator==(const pyKey &key) const
         return false;
 }
 
+void pyKey::setKey(plKey key)
+{
+    fKey = std::move(key);
+}
+
 ST::string pyKey::getName() const
 {
     return fKey ? fKey->GetName() : "nil";

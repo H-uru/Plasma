@@ -54,7 +54,6 @@ class plDXPipeline;
 class plRenderTarget;
 struct IDirect3DDevice9;
 struct IDirect3DSurface9;
-namespace ST { class string; }
 
 class plDXDevice
 {

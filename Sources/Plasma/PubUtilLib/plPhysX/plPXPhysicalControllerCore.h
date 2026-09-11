@@ -90,7 +90,7 @@ public:
     void SetMovementStrategy(plMovementStrategy* strategy) override;
 
     // Global location
-    void SetGlobalLoc(const hsMatrix44& l2w) override;
+    void SetGlobalLoc(const hsMatrix44& l2w, bool kinematic = true) override;
 
     // Local Sim Position
     void GetPositionSim(hsPoint3& pos) override;
@@ -201,6 +201,9 @@ public:
 
     // Update controllers when not performing a physics step
     static void UpdateNonPhysical(float alpha);
+
+    /** Invalidates the collision cache for the specified subworld. */
+    static void InvalidateCache(plKey world = {});
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     static bool fDebugDisplay;

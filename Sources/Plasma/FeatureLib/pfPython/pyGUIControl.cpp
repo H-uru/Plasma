@@ -61,6 +61,11 @@ pyGUIControl::pyGUIControl(plKey objkey)
     fGCkey = std::move(objkey);
 }
 
+void pyGUIControl::setKey(plKey key)
+{
+    fGCkey = std::move(key);
+}
+
 pyGUIControl& pyGUIControl::operator=(const pyGUIControl& other)
 {
     return Copy(other);
@@ -282,7 +287,7 @@ PyObject* pyGUIControl::GetForeColor() const
         pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             return pyColor::New(color->fForeColor.r,color->fForeColor.g,color->fForeColor.b,color->fForeColor.a);
         }
     }
@@ -296,7 +301,7 @@ PyObject* pyGUIControl::GetSelColor() const
         pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             return pyColor::New(color->fSelForeColor.r,color->fSelForeColor.g,color->fSelForeColor.b,color->fSelForeColor.a);
         }
     }
@@ -310,7 +315,7 @@ PyObject* pyGUIControl::GetBackColor() const
         pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             return pyColor::New(color->fBackColor.r,color->fBackColor.g,color->fBackColor.b,color->fBackColor.a);
         }
     }
@@ -324,7 +329,7 @@ PyObject* pyGUIControl::GetBackSelColor() const
         pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             return pyColor::New(color->fSelBackColor.r,color->fSelBackColor.g,color->fSelBackColor.b,color->fSelBackColor.a);
         }
     }
@@ -338,7 +343,7 @@ uint32_t pyGUIControl::GetFontSize() const
         pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             return color->fFontSize;
         }
     }
@@ -355,7 +360,7 @@ void pyGUIControl::SetForeColor( float r, float g, float b, float a )
         pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             if ( r >= 0.0 && r <= 1.0 )
                 color->fForeColor.r = r;
             if ( g >= 0.0 && g <= 1.0 )
@@ -375,7 +380,7 @@ void pyGUIControl::SetSelColor( float r, float g, float b, float a )
         pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             if ( r >= 0.0 && r <= 1.0 )
                 color->fSelForeColor.r = r;
             if ( g >= 0.0 && g <= 1.0 )
@@ -395,7 +400,7 @@ void pyGUIControl::SetBackColor( float r, float g, float b, float a )
         pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             if ( r >= 0.0 && r <= 1.0 )
                 color->fBackColor.r = r;
             if ( g >= 0.0 && g <= 1.0 )
@@ -415,7 +420,7 @@ void pyGUIControl::SetBackSelColor( float r, float g, float b, float a )
         pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             if ( r >= 0.0 && r <= 1.0 )
                 color->fSelBackColor.r = r;
             if ( g >= 0.0 && g <= 1.0 )
@@ -436,7 +441,7 @@ void pyGUIControl::SetFontSize(uint32_t fontsize)
         pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pfGUIColorScheme* color = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> color = pdmod->GetColorScheme();
             color->fFontSize = (uint8_t)fontsize;
         }
     }
@@ -450,7 +455,7 @@ void pyGUIControl::SetFontFlags(uint8_t fontFlags)
         pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if (pdmod)
         {
-            pfGUIColorScheme* colorscheme = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> colorscheme = pdmod->GetColorScheme();
             colorscheme->fFontFlags = fontFlags;
             pdmod->UpdateColorScheme();
         }
@@ -465,7 +470,7 @@ uint8_t pyGUIControl::GetFontFlags() const
         pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if (pdmod)
         {
-            pfGUIColorScheme* colorscheme = pdmod->GetColorScheme();
+            hsWeakRef<pfGUIColorScheme> colorscheme = pdmod->GetColorScheme();
             return colorscheme->fFontFlags;
         }
     }

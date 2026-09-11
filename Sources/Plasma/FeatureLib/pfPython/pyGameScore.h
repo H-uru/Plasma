@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class pfGameScore;
 class pyKey;
-namespace ST { class string; }
 
 class pyGameScore
 {

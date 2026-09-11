@@ -52,7 +52,7 @@ Mead, WA   99021
 class plClientLauncher
 {
 public:
-    typedef std::function<class pfPatcher*()> CreatePatcherFunc;
+    typedef std::function<class pfPatcher()> CreatePatcherFunc;
     typedef std::function<void(ENetError, const ST::string&)> ErrorFunc;
     typedef std::function<bool(const plFileName&)> InstallRedistFunc;
     typedef std::function<void(const plFileName&, const ST::string&)> LaunchClientFunc;
@@ -95,6 +95,7 @@ private:
 
     void IOnPatchComplete(ENetError result, const ST::string& msg);
     bool IApproveDownload(const plFileName& file);
+    void IGotFileServIPs(ENetError result, const ST::string& addr);
 
 public:
     plClientLauncher();

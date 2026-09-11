@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsExceptionStack.h"
+#include "hsMath.h"
 #include "hsWindows.h"
 
 #include "MaxMain/MaxAPI.h"
@@ -497,7 +498,7 @@ plController *hsControlConverter::MakeRotController(Control *control, plMaxNode 
                 TimeValue startTime = interval.Start(); // in ticks
                 TimeValue endTime = interval.End();     // in ticks
 
-                hsStatusMessage("Fixing up euler controller due to missing subcontrollers\n");
+                hsStatusMessage("Fixing up euler controller due to missing subcontrollers");
                 for(i=0; i<3; i++)
                 {
                     if (!rc->GetController(i))
@@ -633,7 +634,12 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
             Control* sub = (Control*)control->SubAnim(i);
             if (sub)
             {
-                IConvertSubTransform(sub, control->SubAnimName(i), node, tmc, start, end);
+#if MAX_VERSION_MAJOR < 24
+                MSTR subName = control->SubAnimName(i);
+#else
+                MSTR subName = control->SubAnimName(i, false);
+#endif
+                IConvertSubTransform(sub, subName, node, tmc, start, end);
             }
         }
 
@@ -1635,7 +1641,13 @@ bool hsControlConverter::GetControllerByName(Animatable* anim, const MSTR& name,
         {
             if (anim->SubAnim(i) == nullptr)
                 continue;
+
+#if MAX_VERSION_MAJOR < 24
             MSTR subName = anim->SubAnimName(i);
+#else
+            MSTR subName = anim->SubAnimName(i, false);
+#endif
+
             if( subName == name )
             {
                 fErrorMsg->Set(!anim->SubAnim(i), M2ST(name.data()), "Found controller by name, but nobody home").Check();
@@ -1990,7 +2002,13 @@ bool    hsControlConverter::IGetSubAnimByName( Animatable *anim, const MSTR& nam
         {
             if (anim->SubAnim(i) == nullptr)
                 continue;
+
+#if MAX_VERSION_MAJOR < 24
             MSTR subName = anim->SubAnimName(i);
+#else
+            MSTR subName = anim->SubAnimName(i, false);
+#endif
+
             if( subName == name )
             {
                 fErrorMsg->Set(!anim->SubAnim(i), M2ST(name.data()), "Found controller by name, but nobody home").Check();
@@ -2112,7 +2130,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, std::vector<h
         pFOVMsg->AddReceiver(pCamMod->GetKey());
         
         plEventCallbackMsg* pCall = new plEventCallbackMsg;
-        pCall->fEvent = kTime;
+        pCall->fEvent = plEventCallbackMsg::kTime;
         pCall->fEventTime = (*kfArray)[i].fFrame / MAX_FRAMES_PER_SEC;
         pCall->fIndex = i;
         pCall->AddReceiver(pCamMod->GetKey());
@@ -2123,7 +2141,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, std::vector<h
         pMsg->SetAnimName(ENTIRE_ANIMATION_NAME);
         pMsg->fTime = (*kfArray)[i].fFrame / MAX_FRAMES_PER_SEC;
         pMsg->AddCallback(pCall);
-        hsRefCnt_SafeUnRef(pCall);
+        pCall->UnRef();
         plConvert::Instance().AddMessageToQueue(pFOVMsg);
         plConvert::Instance().AddMessageToQueue(pMsg);
     }

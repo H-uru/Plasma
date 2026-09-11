@@ -52,9 +52,7 @@ from PlasmaTypes import *
 #globals
 variable = None
 
-BooleanVARs = [
-    "tldnPumpSwitchFunc"
-    ]
+BooleanVARs = []
 
 AgeStartedIn = None
 

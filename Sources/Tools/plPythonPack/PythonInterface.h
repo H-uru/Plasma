@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 class plFileName;
-namespace ST { class string; }
 
 namespace PythonInterface
 {

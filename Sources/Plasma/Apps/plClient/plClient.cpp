@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plAudible.h"
+#include "hsDebug.h"
 #include "plLoadMask.h"
 #include "plPipeDebugFlags.h"
 #include "plPipeResReq.h"
@@ -190,7 +191,7 @@ plClient::plClient()
     bPythonDebugConnected = false;
 #endif
 
-    hsStatusMessage("Constructing client\n");
+    hsStatusMessage("Constructing client");
     plClient::SetInstance(this);
     // gNextRoom[0] = '\0';
 
@@ -228,7 +229,7 @@ plClient::plClient()
 
 plClient::~plClient()
 {
-    hsStatusMessage("Destructing client\n");
+    hsStatusMessage("Destructing client");
 
     plClient::SetInstance(nullptr);
 
@@ -274,7 +275,7 @@ bool plClient::Shutdown()
     if (plAVIWriter::IsInitialized())
         plAVIWriter::Instance().Shutdown();
 
-    hsStatusMessage( "Shutting down client...\n" );
+    hsStatusMessage("Shutting down client...");
 
     // First, before anybody else goes away, write out our key mappings
     if( plInputInterfaceMgr::GetInstance() )
@@ -378,7 +379,7 @@ bool plClient::Shutdown()
 }
 
 void plClient::InitDLLs() {
-    hsStatusMessage("Init dlls client\n");
+    hsStatusMessage("Init dlls client");
 
     std::vector<plFileName> dlls = plFileSystem::ListDir("ModDLL",
 #if defined(HS_BUILD_FOR_WIN32)
@@ -420,11 +421,11 @@ void plClient::ShutdownDLLs()
 #ifdef HS_BUILD_FOR_WIN32
         BOOL ret = FreeLibrary(mod);
         if (!ret)
-            hsStatusMessage(ST::format("Failed to free lib: {}", hsCOMError(hsLastWin32Error, GetLastError())).c_str());
+            hsStatusMessageF("Failed to free lib: {}", hsCOMError(hsLastWin32Error, GetLastError()));
 #else
         int ret = dlclose(mod);
         if (ret)
-            hsStatusMessage(ST::format("Failed to free lib: {}", dlerror()).c_str());
+            hsStatusMessageF("Failed to free lib: {}", dlerror());
 #endif
     }
 
@@ -440,7 +441,7 @@ void plClient::InitAuxInits()
 
 void plClient::InitInputs()
 {
-    hsStatusMessage("InitInputs client\n");
+    hsStatusMessage("InitInputs client");
     fInputManager = new plInputManager( fWindowHndl );
     fInputManager->CreateInterfaceMod(fPipeline);
     fInputManager->RegisterAs( kInput_KEY );
@@ -476,7 +477,7 @@ void plClient::ISetGraphicsDefaults()
     plDynamicCamMap::SetEnabled(plPipeline::fDefaultPipeParams.PlanarReflections ? true : false);
 }
 
-plPipeline* plClient::ICreatePipeline(hsWindowHndl disp, hsWindowHndl hWnd, const hsG3DDeviceModeRecord* devMode)
+plPipeline* plClient::ICreatePipeline(hsDisplayHndl disp, hsWindowHndl hWnd, const hsG3DDeviceModeRecord* devMode)
 {
     uint32_t renderer = devMode->GetDevice()->GetG3DDeviceType();
 
@@ -491,20 +492,23 @@ plPipeline* plClient::ICreatePipeline(hsWindowHndl disp, hsWindowHndl hWnd, cons
 #endif
     
 #ifdef PLASMA_PIPELINE_METAL
-    if (renderer == hsG3DDeviceSelector::kDevTypeMetal)
+    if (renderer == hsG3DDeviceSelector::kDevTypeMetal2 ||
+        renderer == hsG3DDeviceSelector::kDevTypeMetal3)
         return new plMetalPipeline(disp, hWnd, devMode);
 #endif
 
     return new plNullPipeline(disp, hWnd, devMode);
 }
 
-bool plClient::InitPipeline(hsWindowHndl display, uint32_t devType)
+bool plClient::InitPipeline(hsDisplayHndl display, uint32_t devType)
 {
-    hsStatusMessage("InitPipeline client\n");
+    hsStatusMessage("InitPipeline client");
 
     hsG3DDeviceModeRecord dmr;
     hsG3DDeviceSelector devSel;
-    devSel.Enumerate(fWindowHndl);
+
+    plDisplayHelper* displayHelper = plDisplayHelper::GetInstance();
+    devSel.Enumerate(displayHelper->DefaultDisplay());
     devSel.RemoveUnusableDevModes(true);
 
     if (!devSel.GetRequested(&dmr, devType))
@@ -827,10 +831,9 @@ bool plClient::MsgReceive(plMessage* msg)
     plEventCallbackMsg* callback = plEventCallbackMsg::ConvertNoRef(msg);
     if( callback )
     {
-        ST::string str = ST::format("Callback event from {}\n", callback->GetSender()
-                            ? callback->GetSender()->GetName()
-                            : ST_LITERAL("Unknown"));
-        hsStatusMessage(str.c_str());
+        hsStatusMessageF("Callback event from {}", callback->GetSender()
+                         ? callback->GetSender()->GetName()
+                         : ST_LITERAL("Unknown"));
         static int gotten = 0;
         if( ++gotten > 5 )
         {
@@ -843,7 +846,7 @@ bool plClient::MsgReceive(plMessage* msg)
                 cmd->SetCmd(plAnimCmdMsg::kRemoveCallbacks);
                 cmd->AddCallback(callback);
                 plgDispatch::MsgSend(cmd);
-                hsRefCnt_SafeUnRef(callback);
+                callback->UnRef();
             }
             else if( aud )
             {
@@ -852,9 +855,9 @@ bool plClient::MsgReceive(plMessage* msg)
                 cmd->SetCmd(plSoundMsg::kRemoveCallbacks);
                 cmd->AddCallback(callback);
                 plgDispatch::MsgSend(cmd);
-                hsRefCnt_SafeUnRef(callback);
+                callback->UnRef();
             }
-            hsStatusMessage("Removed\n");
+            hsStatusMessage("Removed");
             gotten = 0;
         }
         return true;
@@ -1024,19 +1027,22 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
     for (int i = 0; i < locs.size(); i++)
     {
         const plLocation& loc = locs[i];
-
         const plPageInfo* info = plKeyFinder::Instance().GetLocationInfo(loc);
+        if (info == nullptr) {
+            ST::string msg = ST::format("Tried to load page with location {}, but it couldn't be found. Check that the page name in the .age file is correct and that the corresponding .prp file exists.", loc);
+            hsStatusMessage(msg);
+            hsAssert(false, msg.c_str());
+            continue;
+        }
+
         bool alreadyLoaded = (IFindRoomByLoc(loc) != -1);
         bool isLoading = IIsRoomLoading(loc);
-        if (!info || alreadyLoaded || isLoading)
-        {
+        if (alreadyLoaded || isLoading) {
             #ifdef HS_DEBUGGING
-            if (!info)
-                hsStatusMessageF("Ignoring LoadRoom request for location 0x%x because we can't find the location", loc.GetSequenceNumber());
-            else if (alreadyLoaded)
-                hsStatusMessageF("Ignoring LoadRoom request for %s-%s, since room is already loaded", info->GetAge().c_str(), info->GetPage().c_str());
+            if (alreadyLoaded)
+                hsStatusMessageF("Ignoring LoadRoom request for {}-{}, since room is already loaded", info->GetAge(), info->GetPage());
             else if (isLoading)
-                hsStatusMessageF("Ignoring LoadRoom request for %s-%s, since room is currently loading", info->GetAge().c_str(), info->GetPage().c_str());
+                hsStatusMessageF("Ignoring LoadRoom request for {}-{}, since room is currently loading", info->GetAge(), info->GetPage());
             #endif
 
             continue;
@@ -1049,14 +1055,18 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
         else
             allSameAge = false;
 
-//      hsStatusMessageF("+++ Loading room %s-%s", info.GetAge(), info.GetPage());
+        //hsStatusMessageF("+++ Loading room {}-{}", info.GetAge(), info.GetPage());
         numRooms++;
     }
 
-    if (numRooms == 0)
-        return;
-
     fNumLoadingRooms += numRooms;
+
+    if (fNumLoadingRooms == 0) {
+        hsStatusMessage("Received a load request for 0 rooms..? Assuming we're \"done loading\" a broken age with no pages.");
+        plAgeLoaded2Msg* msg = new plAgeLoaded2Msg();
+        msg->Send();
+        IStopProgress();
+    }
 }
 
 void plClient::ILoadNextRoom()
@@ -1256,7 +1266,7 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
         }
     }
 
-    hsRefCnt_SafeUnRef(fCurrentNode);
+    fCurrentNode->UnRef();
     plKey pRmKey = fCurrentNode->GetKey();
     plAgeLoader::GetInstance()->FinishedPagingInRoom(&pRmKey, 1);
     // *** this used to call "ActivateNode" (in physics) which wasn't implemented.
@@ -1272,7 +1282,7 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
         plgDispatch::MsgSend(loadmsg);
     }
     else
-        hsStatusMessageF("Done loading hold room %s, t=%f\n", pRmKey->GetName().c_str(), hsTimer::GetSeconds());
+        hsStatusMessageF("Done loading hold room {}, t={}", pRmKey->GetName(), hsTimer::GetSeconds());
 
     plLocation loc = pRmKey->GetUoid().GetLocation();
     for (auto it = fRoomsLoading.cbegin(); it != fRoomsLoading.cend(); ++it)
@@ -1296,7 +1306,7 @@ void plClient::IRoomUnloaded(plSceneNode* node)
     #endif
 
     fCurrentNode = node; 
-    hsRefCnt_SafeUnRef(fCurrentNode);
+    fCurrentNode->UnRef();
     plKey pRmKey = fCurrentNode->GetKey();
     if (plAgeLoader::GetInstance())
         plAgeLoader::GetInstance()->FinishedPagingOutRoom(&pRmKey, 1);
@@ -1407,7 +1417,7 @@ void    plClient::IStopProgress()
 //============================================================================
 bool plClient::StartInit()
 {
-    hsStatusMessage("Init client\n");
+    hsStatusMessage("Init client");
     fFlags.SetBit( kFlagIniting );
 
     pfLocalizationMgr::Initialize("dat");
@@ -1569,7 +1579,7 @@ bool plClient::MainLoop()
 #endif
 
 #ifdef PLASMA_EXTERNAL_RELEASE
-    if (DebugIsDebuggerPresent())
+    if (hsDebugIsDebuggerPresent())
     {
         NetCliAuthLogClientDebuggerConnect();
         SetDone(true);
@@ -1931,7 +1941,7 @@ void plClient::IProcessRenderRequests(std::vector<plRenderRequest*>& reqs)
     for (plRenderRequest* rr : reqs)
     {
         rr->Render(fPipeline, fPageMgr);
-        hsRefCnt_SafeUnRef(rr);
+        rr->UnRef();
     }
     reqs.clear();
 }
@@ -1957,7 +1967,7 @@ void plClient::IAddRenderRequest(plRenderRequest* req)
                 break;
         }
         fPreRenderRequests.insert(it, req);
-        hsRefCnt_SafeRef(req);
+        req->Ref();
     }
     else
     {
@@ -1968,7 +1978,7 @@ void plClient::IAddRenderRequest(plRenderRequest* req)
                 break;
         }
         fPostRenderRequests.insert(it, req);
-        hsRefCnt_SafeRef(req);
+        req->Ref();
     }
 }
 
@@ -2034,7 +2044,9 @@ void plClient::IDetectAudioVideoSettings()
     bool devmode = true;
     hsG3DDeviceModeRecord dmr;
     hsG3DDeviceSelector devSel;
-    devSel.Enumerate(fWindowHndl);
+
+    plDisplayHelper* displayHelper = plDisplayHelper::GetInstance();
+    devSel.Enumerate(displayHelper->DefaultDisplay());
     devSel.RemoveUnusableDevModes(true);
 
     if (!devSel.GetDefault(&dmr))
@@ -2061,8 +2073,8 @@ void plClient::IDetectAudioVideoSettings()
     else
 #endif
     {
-        plPipeline::fDefaultPipeParams.Width = hsG3DDeviceSelector::kDefaultWidth;
-        plPipeline::fDefaultPipeParams.Height = hsG3DDeviceSelector::kDefaultHeight;
+        plPipeline::fDefaultPipeParams.Width = mode->GetWidth();
+        plPipeline::fDefaultPipeParams.Height = mode->GetHeight();
     }
 
     plPipeline::fDefaultPipeParams.Shadows = 1;
@@ -2102,6 +2114,10 @@ void plClient::IDetectAudioVideoSettings()
 void plClient::IWriteDefaultAudioSettings(const plFileName& destFile)
 {
     std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFileWrite(destFile);
+    if (!stream) {
+        return;
+    }
+
     WriteBool(stream.get(), "Audio.Initialize",  true);
     WriteBool(stream.get(), "Audio.UseEAX", false);
     WriteInt(stream.get(), "Audio.SetPriorityCutoff", 6);
@@ -2117,6 +2133,9 @@ void plClient::IWriteDefaultAudioSettings(const plFileName& destFile)
 void plClient::IWriteDefaultGraphicsSettings(const plFileName& destFile)
 {
     std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFileWrite(destFile);
+    if (!stream) {
+        return;
+    }
 
     WriteInt(stream.get(), "Graphics.Width", plPipeline::fDefaultPipeParams.Width);
     WriteInt(stream.get(), "Graphics.Height", plPipeline::fDefaultPipeParams.Height);

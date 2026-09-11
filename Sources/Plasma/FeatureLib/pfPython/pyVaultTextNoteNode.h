@@ -53,8 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueDefinitions.h"
 #include "pyVaultNode.h"
 
-namespace ST { class string; }
-
 class pyVaultTextNoteNode : public pyVaultNode
 {
 protected:

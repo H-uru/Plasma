@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMetalPipelineState.h"
 
+#include "HeadSpin.h"
 #include "plDrawable/plGBufferGroup.h"
 #include "plGImage/plCubicEnvironmap.h"
 #include "plGImage/plMipmap.h"
@@ -110,6 +111,8 @@ void plMetalMaterialPassPipelineState::GetFunctionConstants(MTL::FunctionConstan
     constants->setConstantValues(&fFragmentShaderDescription.fPassTypes, MTL::DataTypeUChar, NS::Range(FunctionConstantSources, 8));
     constants->setConstantValues(&fFragmentShaderDescription.fBlendModes, MTL::DataTypeUInt, NS::Range(FunctionConstantBlendModes, 8));
     constants->setConstantValues(&fFragmentShaderDescription.fMiscFlags, MTL::DataTypeUInt, NS::Range(FunctionConstantLayerFlags, 8));
+    constants->setConstantValue(&fFragmentShaderDescription.fUsePerPixelLighting, MTL::DataTypeBool, FunctionConstantPerPixelLighting);
+    constants->setConstantValue(&fFragmentShaderDescription.fNumBumpMaps, MTL::DataTypeUChar, FunctionConstantNumBumpMaps);
 }
 
 size_t plMetalMaterialPassPipelineState::GetHash() const
@@ -154,7 +157,7 @@ void plMetalRenderSpanPipelineState::ConfigureVertexDescriptor(MTL::VertexDescri
         vertexDescriptor->attributes()->object(VertexAttributeTexcoord + i)->setOffset(baseUvOffset + (i * sizeof(hsPoint3)));
     }
 
-    vertexDescriptor->attributes()->object(VertexAttributeColor)->setFormat(MTL::VertexFormatUChar4);
+    vertexDescriptor->attributes()->object(VertexAttributeColor)->setFormat(MTL::VertexFormatUChar4Normalized);
     vertexDescriptor->attributes()->object(VertexAttributeColor)->setBufferIndex(0);
     vertexDescriptor->attributes()->object(VertexAttributeColor)->setOffset(colorOffset);
 
@@ -163,12 +166,13 @@ void plMetalRenderSpanPipelineState::ConfigureVertexDescriptor(MTL::VertexDescri
 
 void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode, MTL::RenderPipelineColorAttachmentDescriptor* descriptor)
 {
+    descriptor->setAlphaBlendOperation(MTL::BlendOperationAdd);
+    descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorZero);
+    descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
     if (blendMode & hsGMatState::kBlendNoColor) {
         // printf("glBlendFunc(GL_ZERO, GL_ONE);\n");
         descriptor->setSourceRGBBlendFactor(MTL::BlendFactorZero);
-        descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorZero);
         descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
-        descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
         return;
     }
     switch (blendMode & hsGMatState::kBlendMask) {
@@ -197,14 +201,10 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
         case hsGMatState::kBlendMult:
             if (blendMode & hsGMatState::kBlendInvertFinalColor) {
                 descriptor->setSourceRGBBlendFactor(MTL::BlendFactorZero);
-                descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorZero);
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceColor);
-                descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorOneMinusSourceColor);
             } else {
                 descriptor->setSourceRGBBlendFactor(MTL::BlendFactorZero);
-                descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorZero);
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorSourceColor);
-                descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorSourceColor);
             }
             break;
 
@@ -225,25 +225,18 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
         case hsGMatState::kBlendAddColorTimesAlpha:
             if (blendMode & hsGMatState::kBlendInvertFinalAlpha) {
                 descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
-                descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
-                descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
             } else {
                 descriptor->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
-                descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorSourceAlpha);
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
-                descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
             }
             break;
 
         // Overwrite final color onto FB
         case 0:
             descriptor->setRgbBlendOperation(MTL::BlendOperationAdd);
-            descriptor->setAlphaBlendOperation(MTL::BlendOperationAdd);
             descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
             descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorZero);
-            descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
-            descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorZero);
             break;
 
         default: {
@@ -267,23 +260,21 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
 MTL::Function* plMetalMaterialPassPipelineState::GetVertexFunction(MTL::Library* library)
 {
     NS::Error*                   error = nullptr;
-    MTL::FunctionConstantValues* constants = MTL::FunctionConstantValues::alloc()->init()->autorelease();
-    GetFunctionConstants(constants);
-    MTL::Function* function = library->newFunction(
-                                         NS::String::string("pipelineVertexShader", NS::ASCIIStringEncoding),
-                                         MakeFunctionConstants(),
-                                         &error)
-                                  ->autorelease();
-    return function;
+    MTL::Function* function = library->newFunction(NS::String::string("pipelineVertexShader", NS::ASCIIStringEncoding),
+                                                   MakeFunctionConstants(),
+                                                   &error);
+    hsAssert(!error, "Could not find vertex function");
+    return function->autorelease();
 }
 
 MTL::Function* plMetalMaterialPassPipelineState::GetFragmentFunction(MTL::Library* library)
 {
-    return library->newFunction(
-                      NS::String::string("pipelineFragmentShader", NS::ASCIIStringEncoding),
-                      MakeFunctionConstants(),
-                      (NS::Error**)nullptr)
-        ->autorelease();
+    NS::Error* error = nullptr;
+    MTL::Function* function = library->newFunction(NS::String::string("pipelineFragmentShader", NS::ASCIIStringEncoding),
+                                                   MakeFunctionConstants(),
+                                                   &error);
+    hsAssert(!error, "Could not find fragment function");
+    return function->autorelease();
 }
 
 plMetalMaterialPassPipelineState::~plMetalMaterialPassPipelineState()
@@ -353,7 +344,7 @@ void plMetalRenderShadowPipelineState::ConfigureBlend(MTL::RenderPipelineColorAt
     descriptor->setSourceRGBBlendFactor(MTL::BlendFactorZero);
     descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
     descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceColor);
-    descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorZero);
+    descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
 }
 
 const MTL::Function* plMetalRenderShadowCasterPipelineState::GetVertexFunction(MTL::Library* library)

@@ -80,6 +80,9 @@ public:
     void AddReceiver(pyKey& newReceiver);
     void RemoveReceiver(pyKey& oldReceiver);
 
+    void LocallyControlled(bool local);
+    bool LocallyControlled() const;
+
     PyObject* GetSceneObject();
 
     void AddBehavior(const ST::string& animationName, const ST::string& behaviorName, bool loop = true, bool randomStartPos = true,

@@ -52,9 +52,7 @@ from PlasmaTypes import *
 #globals
 variable = None
 
-BooleanVARs = [
-    "kemoJourneySymbolVis",
-]
+BooleanVARs = []
 
 
 AgeStartedIn = None

@@ -86,7 +86,7 @@ class pfColorListElement : public pfGUIListText
               fOverrideFontSize(fontsize)
         {}
 
-        virtual void SetText(ST::string text)
+        void SetText(ST::string text) override
         {
             fString1 = std::move(text);
         }

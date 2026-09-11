@@ -44,24 +44,89 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include <tuple>
-#include <vector>
+#include <type_traits>
 
-#include <Python.h>
-#include <string_theory/string>
+#include "plPythonCallable.h"
+#include "plPythonConvert.h"
+#include "pyObjectRef.h"
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// NAME: pyEnum
-//
-// PURPOSE: Base class stuff for enumeration support (you don't instance this
-//          class
-//
+// Helper functions used by the enum glue
 class pyEnum
 {
 public:
-    static void AddPlasmaConstantsClasses(PyObject *m);
-    static void MakeEnum(PyObject *m, const char* name, const std::vector<std::tuple<ST::string, Py_ssize_t>>& values);
+    class EnumValue
+    {
+        pyObjectRef fName;
+        pyObjectRef fValue;
+
+    public:
+        EnumValue() = delete;
+        EnumValue(const EnumValue&) = delete;
+
+        template <size_t _Sz, typename _ValueT>
+        EnumValue(const char (&name)[_Sz], _ValueT&& value)
+            : fName(PyUnicode_FromStringAndSize(name, _Sz - 1)),
+              fValue(plPython::ConvertFrom(static_cast<std::underlying_type_t<_ValueT>>(value)))
+        {
+            static_assert(std::is_enum_v<_ValueT>, "EnumValue can only be used with enumerations");
+            static_assert(std::is_integral_v<std::underlying_type_t<_ValueT>>, "EnumValue can only be used with enumerations with integral underlying types");
+        }
+
+        EnumValue(EnumValue&& move) noexcept
+            : fName(std::move(move.fName)),
+              fValue(std::move(move.fValue))
+        {
+        }
+
+        PyObject* ReleaseName() { return fName.Release(); }
+        PyObject* ReleaseValue() { return fValue.Release(); }
+    };
+
+private:
+    static inline void InsertEnumValue(PyObject* list, Py_ssize_t& i, EnumValue& arg)
+    {
+        PyObject* tuple = PyTuple_New(2);
+        PyTuple_SET_ITEM(tuple, 0, arg.ReleaseName());
+        PyTuple_SET_ITEM(tuple, 1, arg.ReleaseValue());
+        PyList_SET_ITEM(list, i, tuple);
+        i++;
+    }
+
+public:
+    template<size_t _Sz, typename... Args>
+    static void MakeEnum(PyObject* m, const char (&name)[_Sz], Args&&... args)
+    {
+        if (m == nullptr)
+            return;
+
+        pyObjectRef enumModule = PyImport_ImportModule("enum");
+        hsAssert(enumModule, "Failed to import enum module");
+        if (!enumModule)
+            return;
+
+        pyObjectRef intEnumClass = PyObject_GetAttrString(enumModule.Get(), "IntEnum");
+        if (!intEnumClass)
+            return;
+
+        pyObjectRef enumList = PyList_New(sizeof...(args));
+        Py_ssize_t  i = 0;
+        (InsertEnumValue(enumList.Get(), i, args), ...);
+
+        pyObjectRef newEnum = plPython::CallObject(
+            intEnumClass,
+            PyUnicode_FromStringAndSize(name, _Sz - 1),
+            std::move(enumList)
+        );
+
+        hsAssert(newEnum, "Failed to create enum");
+        if (newEnum) {
+            if (PyModule_AddObject(m, name, newEnum.Get()) == 0) {
+                // PyModule_AddObject steals a reference only on success.
+                // On error, we still own the reference.
+                newEnum.Release();
+            }
+        }
+    }
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -69,12 +134,12 @@ public:
 /////////////////////////////////////////////////////////////////////
 
 // the start of an enum block
-#define PYTHON_ENUM_START(enumName) std::vector<std::tuple<ST::string, Py_ssize_t>> enumName##_enumValues{
+#define PYTHON_ENUM_START(m, enumName) pyEnum::MakeEnum(m, #enumName
 
 // for each element of the enum
-#define PYTHON_ENUM_ELEMENT(enumName, elementName, elementValue) std::make_tuple(ST_LITERAL(#elementName), (Py_ssize_t)elementValue),
+#define PYTHON_ENUM_ELEMENT(enumName, elementName, elementValue) , pyEnum::EnumValue(#elementName, elementValue)
 
 // to finish off and define the enum
-#define PYTHON_ENUM_END(m, enumName) }; pyEnum::MakeEnum(m, #enumName, enumName##_enumValues);
+#define PYTHON_ENUM_END(m, enumName) );
 
 #endif  // pyEnum_h

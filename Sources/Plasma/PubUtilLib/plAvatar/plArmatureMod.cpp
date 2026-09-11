@@ -818,14 +818,18 @@ void plArmatureMod::SpawnAt(int spawnNum, double time)
         l2w = spawnObj->GetLocalToWorld();
         w2l = spawnObj->GetWorldToLocal();
     }
-    
-    if (fController)
-        fController->ResetAchievedLinearVelocity();
+
     plCoordinateInterface* ci = (plCoordinateInterface*)GetTarget(0)->GetCoordinateInterface();
     l2w.RemoveScale();
     w2l.RemoveScale();
     ci->SetTransform(l2w, w2l);
     ci->FlushTransform();
+
+    // Force the issue with the character controller
+    if (fController) {
+        fController->ResetAchievedLinearVelocity();
+        fController->SetGlobalLoc(l2w, false);
+    }
 
     if (IsLocalAvatar() && plVirtualCam1::Instance())
         plVirtualCam1::Instance()->SetCutNext();
@@ -1279,6 +1283,9 @@ bool plArmatureMod::MsgReceive(plMessage* msg)
             }
         }
 
+        // copy the user string over
+        fUserStr = avLoadMsg->GetUserStr();
+
         // We also want to use the trigger msg when loading an avatar
         MsgReceive(avLoadMsg->GetTriggerMsg());
 
@@ -1522,7 +1529,7 @@ void plArmatureMod::ILinkToPersonalAge()
     
     plSpawnPointInfo hutSpawnPoint;
     hutSpawnPoint.SetName(kPersonalAgeLinkInPointCloset);
-    link.SetSpawnPoint(hutSpawnPoint);
+    link.SetSpawnPoint(std::move(hutSpawnPoint));
     
     link.SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
     plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( &link );
@@ -1938,10 +1945,10 @@ bool plArmatureMod::IsLocalAvatar()
 
 bool plArmatureMod::IsLocalAI() const
 {
-    // Formerly a lot of silly cached rigamaroll... Now, we'll just rely
-    // on the fact that one player is the game master. HACK TURD if net groups
-    // are ever brought back.
-    return plNetClientApp::GetInstance()->IsLocallyOwned(this);
+    plAvBrainCritter* ai = plAvBrainCritter::ConvertNoRef(FindBrainByClass(plAvBrainCritter::Index()));
+    if (ai)
+        return ai->LocallyControlled();
+    return false; // not an AI, obviously not local
 }
 
 void plArmatureMod::SynchIfLocal(double timeNow, int force)
@@ -2402,18 +2409,18 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
         {
             plEventCallbackInterceptMsg *iMsg;
 
-            plArmatureEffectMsg *msg = new plArmatureEffectMsg(fEffects->GetKey(), kTime);
+            plArmatureEffectMsg *msg = new plArmatureEffectMsg(fEffects->GetKey(), plEventCallbackMsg::kTime);
             msg->fEventTime = time;
             msg->fTriggerIdx = AnimNameToIndex(anim->GetName());
             
             iMsg = new plEventCallbackInterceptMsg();
             iMsg->AddReceiver(fEffects->GetKey());
             iMsg->fEventTime = time;
-            iMsg->fEvent = kTime;
+            iMsg->fEvent = plEventCallbackMsg::kTime;
             iMsg->SetMessageRef(msg);
             atc->AddCallback(iMsg);
-            hsRefCnt_SafeUnRef(msg);
-            hsRefCnt_SafeUnRef(iMsg);
+            msg->UnRef();
+            iMsg->UnRef();
 
             plAvatarFootMsg* foot = new plAvatarFootMsg(GetKey(), this, isLeft);
             foot->fEventTime = time;
@@ -2421,11 +2428,11 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
             iMsg = new plEventCallbackInterceptMsg();
             iMsg->AddReceiver(fEffects->GetKey());
             iMsg->fEventTime = time;
-            iMsg->fEvent = kTime;
+            iMsg->fEvent = plEventCallbackMsg::kTime;
             iMsg->SetMessageRef(foot);
             atc->AddCallback(iMsg);
-            hsRefCnt_SafeUnRef(foot);
-            hsRefCnt_SafeUnRef(iMsg);
+            foot->UnRef();
+            iMsg->UnRef();
         }
     }
 }

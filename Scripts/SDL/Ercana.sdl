@@ -42,6 +42,14 @@
 #
 # State Description Language for Er'Cana
 
+STATEDESC ercaOvenScope
+{
+    VERSION 1
+    VAR INT   boolOperated[1]
+    VAR INT   OperatorID[1]
+
+}
+
 STATEDESC Ercana
 {
     VERSION 32

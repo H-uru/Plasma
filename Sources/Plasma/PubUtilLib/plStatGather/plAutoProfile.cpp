@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvatarMgr.h"
-#include "plContainer/plConfigInfo.h" // for plStringList
 #include "plMessage/plAgeLoadedMsg.h"
 #include "plMessage/plConsoleMsg.h"
 #include "plMessage/plTimerCallbackMsg.h"
@@ -75,11 +74,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <algorithm>
 #include <string_theory/string>
 #include <utility>
+#include <vector>
 
 class plAutoProfileImp : public plAutoProfile
 {
 protected:
-    plStringList fAges;
+    std::vector<ST::string> fAges;
     int fNextAge;
     int fNextSpawnPoint;
     ST::string fLastSpawnPointName;
@@ -344,8 +344,8 @@ bool plAutoProfileImp::MsgReceive(plMessage* msg)
             fLinkTime = hsTimer::GetTicks() - fLinkTime;
             float ms = hsTimer::GetMilliSeconds<float>(fLinkTime);
 
-            hsStatusMessageF("Age %s finished load, took %.1f ms",
-                fAges[fNextAge-1].c_str(),
+            hsStatusMessageF("Age {} finished load, took {.1f} ms",
+                fAges[fNextAge-1],
                 ms);
 
             plStatusLog::AddLineSF("agetimings.log", "Age {} took {.1f} ms",

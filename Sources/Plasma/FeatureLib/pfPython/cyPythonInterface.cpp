@@ -89,6 +89,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGameMgr.h"
 #include "pyGmBlueSpiral.h"
 #include "pyGmMarker.h"
+#include "pyGmVarSync.h"
 
 // GUIDialog and its controls
 #include "pyGUIDialog.h"
@@ -121,6 +122,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultTextNoteNode.h"
 #include "pyVaultAgeLinkNode.h"
 #include "pyVaultChronicleNode.h"
+#include "pyVaultPlayerNode.h"
 #include "pyVaultPlayerInfoNode.h"
 #include "pyVaultAgeInfoNode.h"
 #include "pyVaultAgeInfoListNode.h"
@@ -138,9 +140,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyNetLinkingMgr.h"
 #include "pyAgeInfoStruct.h"
 #include "pyAgeLinkStruct.h"
-
-// dni info source
-#include "pyDniInfoSource.h"
 
 // audio setting stuff
 #include "pyAudioControl.h"
@@ -179,6 +178,8 @@ bool    PythonInterface::IsInShutdown = false;           // whether we are _real
 
 PyObject* PythonInterface::stdOut = nullptr;            // python object of the stdout file
 PyObject* PythonInterface::stdErr = nullptr;            // python object of the err file
+
+PyObject* PythonInterface::builtInModuleName = nullptr;
 
 bool      PythonInterface::debug_initialized = false;   // has the debug been initialized yet?
 PyObject* PythonInterface::dbgMod = nullptr;            // display module for stdout and stderr
@@ -922,6 +923,10 @@ void PythonInterface::initPython()
     if (!ICheckedInit<PyConfig, Py_InitializeFromConfig, PyConfig_Clear>(config, dbgLog, "Core init failed!"))
         return;
 
+    // Create an interned string for __builtins__ so we don't have to keep converting the string over and over.
+    // Python LIKELY already has this string interned.
+    builtInModuleName = PyUnicode_InternFromString("__builtins__");
+
     // We now have enough Python to insert our PEP 451 import machinery.
     initPyPackHook();
 
@@ -1082,7 +1087,6 @@ void PythonInterface::AddPlasmaClasses(PyObject* plasmaMod)
     pyAudioControl::AddPlasmaClasses(plasmaMod);
     pyCluster::AddPlasmaClasses(plasmaMod);
     pyDniCoordinates::AddPlasmaClasses(plasmaMod);
-    pyDniInfoSource::AddPlasmaClasses(plasmaMod);
     pyDynamicText::AddPlasmaClasses(plasmaMod);
     pyImage::AddPlasmaClasses(plasmaMod);
     pyImageLibMod::AddPlasmaClasses(plasmaMod);
@@ -1143,6 +1147,7 @@ void PythonInterface::AddPlasmaClasses(PyObject* plasmaMod)
     pyVaultMarkerGameNode::AddPlasmaClasses(plasmaMod);
     pyVaultPlayerInfoListNode::AddPlasmaClasses(plasmaMod);
     pyVaultPlayerInfoNode::AddPlasmaClasses(plasmaMod);
+    pyVaultPlayerNode::AddPlasmaClasses(plasmaMod);
     pyVaultSDLNode::AddPlasmaClasses(plasmaMod);
     pyVaultSystemNode::AddPlasmaClasses(plasmaMod);
     pyVaultTextNoteNode::AddPlasmaClasses(plasmaMod);
@@ -1171,8 +1176,6 @@ void PythonInterface::AddPlasmaClasses(PyObject* plasmaMod)
 //
 void PythonInterface::AddPlasmaConstantsClasses(PyObject* plasmaConstantsMod)
 {
-    pyEnum::AddPlasmaConstantsClasses(plasmaConstantsMod);
-
     cyAvatar::AddPlasmaConstantsClasses(plasmaConstantsMod);
     cyMisc::AddPlasmaConstantsClasses(plasmaConstantsMod);
     cyAccountManagement::AddPlasmaConstantsClasses(plasmaConstantsMod);
@@ -1208,6 +1211,7 @@ void PythonInterface::AddPlasmaGameClasses(PyObject* plasmaGameMod)
     pyGameCli::AddPlasmaGameClasses(plasmaGameMod);
     pyGmBlueSpiral::AddPlasmaGameClasses(plasmaGameMod);
     pyGmMarker::AddPlasmaGameClasses(plasmaGameMod);
+    pyGmVarSync::AddPlasmaGameClasses(plasmaGameMod);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1265,6 +1269,9 @@ void PythonInterface::finiPython()
         if (usePythonDebugger)
             debugServer.Disconnect();
 #endif
+
+        Py_CLEAR(builtInModuleName);
+
         // let Python clean up after itself
         if (Py_FinalizeEx() != 0)
             dbgLog->AddLine("Hmm... Errors during Python shutdown.");
@@ -1447,7 +1454,7 @@ PyObject* PythonInterface::CreateModule(const char* module)
     {
         // clear it
         hsAssert(false, ST::format("ERROR! Creating a python module of the same name - {}", module).c_str());
-        _PyModule_Clear(m);
+        ClearModule(m);
     }
 
     // create the module
@@ -1457,12 +1464,12 @@ PyObject* PythonInterface::CreateModule(const char* module)
     d = PyModule_GetDict(m);
     // add in the built-ins
     // first make sure that we don't already have the builtins
-    if (PyDict_GetItemString(d, "__builtins__") == nullptr)
+    if (PyDict_GetItem(d, builtInModuleName) == nullptr)
     {
         // if we need the builtins then find the builtin module
         PyObject *bimod = PyImport_ImportModule("builtins");
         // then add the builtin dicitionary to our module's dictionary
-        if (bimod == nullptr || PyDict_SetItemString(d, "__builtins__", bimod) != 0) {
+        if (bimod == nullptr || PyDict_SetItem(d, builtInModuleName, bimod) != 0) {
             getOutputAndReset();
             return nullptr;
         }
@@ -1471,6 +1478,42 @@ PyObject* PythonInterface::CreateModule(const char* module)
     return m;
 }
 
+void PythonInterface::ClearModule(PyObject* m)
+{
+    hsAssert(PyModule_Check(m), "PythonInterface::ClearModule() called on a non-module object");
+    PyObject* dict = PyModule_GetDict(m);
+
+    // This is basically a reimplementation of the _PyModule_ClearDict function. It's been
+    // "private" forever but was finally removed from Python's public API as of 3.13. So,
+    // here we are.
+    Py_ssize_t pos = 0;
+    PyObject* key;
+    PyObject* value;
+
+    // First, clear everything that begins with a single underscore.
+    while (PyDict_Next(dict, &pos, &key, &value)) {
+        if (value == Py_None && !PyUnicode_Check(key))
+            continue;
+        if (!(PyUnicode_READ_CHAR(key, 0) == '_' && PyUnicode_READ_CHAR(key, 1) != '_'))
+            continue;
+        if (PyDict_SetItem(dict, key, Py_None) != 0)
+            PyErr_Print();
+    }
+
+    // Finally, clear everything except __builtins__
+    pos = 0;
+    while (PyDict_Next(dict, &pos, &key, &value)) {
+        if (value == Py_None || !PyUnicode_Check(key))
+            continue;
+        if (PyUnicode_Compare(key, builtInModuleName) != 0) {
+            if (PyErr_Occurred())
+                PyErr_Print();
+            continue;
+        }
+        if (PyDict_SetItem(dict, key, Py_None) != 0)
+            PyErr_Print();
+    }
+}
 
 /////////////////////////////////////////////////////////////////////////////
 //

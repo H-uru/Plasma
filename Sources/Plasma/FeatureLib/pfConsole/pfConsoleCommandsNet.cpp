@@ -45,11 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifdef PLASMA_EXTERNAL_RELEASE
-#define LIMIT_CONSOLE_COMMANDS 1
-#endif
-
 #include <string_theory/format>
+#include <tl/expected.hpp>
 
 #include "plgDispatch.h"
 #include "hsResMgr.h"
@@ -57,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 
 #include "pfConsole.h"
+#include "pfConsoleCommandUtilities.h"
 
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnKeyedObject/plKey.h"
@@ -73,6 +71,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAvatarMsg.h"
 #include "plMessage/plConsoleMsg.h"
 #include "plMessage/plOneShotMsg.h"
+#include "plModifier/plSDLModifier.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetClient/plNetLinkingMgr.h"
 #include "plNetCommon/plNetObjectDebugger.h"
@@ -86,109 +85,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVault/plVault.h"
 
 #include "pfConsoleCore/pfConsoleCmd.h"
-#include "pfPython/plPythonSDLModifier.h"
 
 // FIXME FIXME
 #include "../../Apps/plClient/plClient.h"
-
-#define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
 
 //// DO NOT REMOVE!!!!
 //// This is here so Microsoft VC won't decide to "optimize" this file out
 PF_CONSOLE_FILE_DUMMY(Net)
 //// DO NOT REMOVE!!!!
 
-//// Defining Console Commands ///////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
 //
-//  You define console commands by using the PF_CONSOLE_CMD macro. The format
-//  of the macro is:
+// Please see pfConsoleCommands.cpp for detailed instructions on
+// how to add console commands.
 //
-//      PF_CONSOLE_CMD( groupName, functionName, "paramList", "Help string" )
-//
-//  Where:
-//      - groupName is a string representing what command group the command
-//        is in. Subgroups are specified by an underscore, i.e. to put a command
-//        in the Draw subgroup of the Graphics group, you would specify
-//        "Graphics_Draw". Specifying "" means to put the command in the base
-//        command group--i.e. it has no group.
-//      - functionName is required; it specifies the function name (really?!?!).
-//        Function names must be globally unique, so you can't have a Draw
-//        function in both the Graphics and SceneAPI groups. Sorry. :(
-//      - paramList specifies the parameters and types to the function.
-//        The smallest list you can have is "", which means "no parameters".
-//        If you have parameters, it must be in a comma-delimited string.
-//        You can either specify types or labels and types, so you can say
-//        "int, float" or "int x, float value". Currently, the labels are only
-//        used when printing out usage strings, but they will be used later
-//        for auto-labeling GUI elements, so please put them in where viable.
-//
-//        White space does not matter. Valid types are int, float, char, string
-//        bool (auto-conversion of "true"/"false" strings to 1 or 0) and "...".
-//        "..." is a special type that means the same as the C equivalent:
-//        "there can be zero or more parameters here and I don't care what the
-//        type is" is the gist of it.
-//      - helpString is a short description of the function, which currently
-//        isn't used, but will be used in the future when implementing help
-//        (could you have guessed it? :) Please fill it in when the function
-//        name isn't obvious (i.e. SetFogColor doesn't really need one)
-//  
-//  The actual C code prototype looks like:
-//      void pfConsoleCmd_groupName_functionName(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&));
-//
-//  numParams is exactly what it sounds like. params is an array of console
-//  parameter objects, each of which are rather nifty in that they can be cast
-//  immediately to whatever type you asked for in your parameter list
-//  ("paramList" above). So if your paramList was "int", then params[ 0 ]
-//  can be cast to an int immediately, such as int x = params[ 0 ];
-//  If you attempt to cast a parameter to a type other than the one specified
-//  in the paramList, you get an hsAssert saying so, so don't do it! Any
-//  parameters that fall under "..." are automagically strings, but they can
-//  be cast to any valid type without an assert. So basically, if you want
-//  to still do your own conversion, just specify "..." as the entire paramList
-//  and treat the params array as if it were an array of strings.
-//
-//  Thus, the net result of the paramList is that it lets the console engine
-//  do the parameter parsing for you. If the paramters given to the function
-//  do not match the list (this includes too many or too few parameters), a
-//  usage string is printed out and the function is not called. Thus, the
-//  ONLY parameter error you can possibly have is casting a parameter object
-//  to a type other than you asked for. So don't do it!
-//
-//  (Note: this makes numParams almost obsolete; the only reason it still has
-//  a use is for "...", which of course allows variable number of parameters.)
-//
-//  PrintString is a function that lets you print output to the on-screen
-//  console. It is guaranteed to be non-null. Worst case is that it points
-//  to a dummy function that does nothing, but it will *always* be valid.
-//
-//  To define console command groups, you use the macro:
-//
-//      PF_CONSOLE_GROUP( group )
-//
-//  where "group" is the name without quotes of the group you want to create.
-//  To create a subgroup inside a group, use:
-//
-//      PF_CONSOLE_SUBGROUP( parent, group )
-//
-//  where "parent" is the parent group for the subgroup. "parent" can have
-//  underscores in it just like the group of a CONSOLE_CMD, so you can say
-//
-//      PF_CONSOLE_SUBGROUP( Graphics_Render, Drawing )
-//
-//  to create the Graphics_Render_Drawing subgroup. All groups must be
-//  defined before any commands that are in that group. Note that although
-//  the 
-//
-//////////////////////////////////////////////////////////////////////////////
-
-//
-// utility functions
-//
-//////////////////////////////////////////////////////////////////////////////
-plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, ST::string& statusStr, bool subString=false);
-plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, ST::string& statusStr, bool subString=false);
-plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
-                              ST::string statusStr, bool subString=false);
+/////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //// Network Group Commands //////////////////////////////////////////////////
@@ -319,6 +230,41 @@ PF_CONSOLE_CMD( Net,        // groupName
         PrintString("Linking disabled.");
     }
 }
+
+/**
+ * Parse spawn point info from a string entered by the user,
+ * returning a useful parse error message if the input is invalid.
+ *
+ * @param input Spawn point info string to parse
+ * @return Parsed spawn point info object on success, or parse error message on error
+ */
+static tl::expected<plSpawnPointInfo, ST::string> TryParseSpawnPointInfo(const ST::string& input)
+{
+    // Ignore any trailing semicolon.
+    ST::string inputNoSemicolon = input.trim_right(";");
+    // Fail on semicolon anywhere else.
+    if (inputNoSemicolon.contains(';')) {
+        return tl::unexpected(ST_LITERAL("Cannot contain a semicolon"));
+    }
+
+    // Check for the expected number of colon-separated parts.
+    // Title and spawn point name are required, camera stack is optional.
+    auto parts = inputNoSemicolon.split(':');
+    if (parts.size() < 2) {
+        return tl::unexpected(ST_LITERAL("Missing colon, expected e.g. " kDefaultSpawnPtTitle ":" kDefaultSpawnPtName));
+    } else if (parts.size() > 3) {
+        return tl::unexpected(ST::format("At most 2 colons allowed, found {}", parts.size() - 1));
+    }
+
+    plSpawnPointInfo ret;
+    ret.SetTitle(std::move(parts[0]));
+    ret.SetName(std::move(parts[1]));
+    if (parts.size() >= 3) {
+        ret.SetCameraStack(std::move(parts[2]));
+    }
+    return ret;
+}
+
 // GENERIC LINK. PLS WILL LOAD-BALANCE YOU TO A PUBLIC INSTANCE.
 PF_CONSOLE_CMD( Net,        // groupName
                LinkToAge,       // fxnName
@@ -326,7 +272,7 @@ PF_CONSOLE_CMD( Net,        // groupName
                "Link to an age." )  // helpString
 {   
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename(params[0]);
+    link.GetAgeInfo()->SetAgeFilename(std::move(params[0]));
     link.SetLinkingRules( plNetCommon::LinkingRules::kBasicLink );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age...");
@@ -340,7 +286,7 @@ PF_CONSOLE_CMD( Net,        // groupName
                "Link to a specific age by guid." )  // helpString
 {   
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename(params[0]);
+    link.GetAgeInfo()->SetAgeFilename(std::move(params[0]));
     //link.GetAgeInfo()->SetAgeInstanceName( params[0] );
     //link.GetAgeInfo()->SetAgeUserDefinedName( params[0] );
     plUUID guid(params[1]);
@@ -361,12 +307,26 @@ PF_CONSOLE_CMD( Net,        // groupName
 // LINK WITH ORIGINAL LINKING BOOK
 PF_CONSOLE_CMD( Net,
                LinkWithOriginalBook,
-               "string ageFilename, string spawnPt",
-               "Link to specified age using Original Age Linking Book rules" )
+               "string ageFilename, ...",
+               "Link to specified age using Original Age Linking Book rules. Optional second argument is a spawn point in the format Title:SpawnPointName (defaults to " kDefaultSpawnPtTitle ":" kDefaultSpawnPtName ")." )
 {
+    if (numParams > 2) {
+        PrintString(ST::format("Expected 1 or 2 arguments, not {}", numParams));
+        return;
+    }
+
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename(params[0]);
-    link.SpawnPoint() = plSpawnPointInfo(params[1], params[1]);
+    link.GetAgeInfo()->SetAgeFilename(std::move(params[0]));
+
+    if (numParams >= 2) {
+        auto res = TryParseSpawnPointInfo(params[1]);
+        if (!res.has_value()) {
+            PrintString(ST::format("Invalid spawn point: {}", res.error()));
+            return;
+        }
+        link.SetSpawnPoint(std::move(res.value()));
+    }
+
     link.SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age with original book...");
@@ -378,7 +338,7 @@ PF_CONSOLE_CMD( Net,
                "Link to specified age using Personal Age Linking Book rules" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename(params[0]);
+    link.GetAgeInfo()->SetAgeFilename(std::move(params[0]));
     link.SetLinkingRules( plNetCommon::LinkingRules::kOwnedBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age I own...");
@@ -390,7 +350,7 @@ PF_CONSOLE_CMD( Net,
                "Link to specified age using Personal Age Linking Book rules" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename(params[0]);
+    link.GetAgeInfo()->SetAgeFilename(std::move(params[0]));
     link.SetLinkingRules( plNetCommon::LinkingRules::kVisitBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age I can visit...");
@@ -402,7 +362,7 @@ PF_CONSOLE_CMD( Net,
                "Link to a sub-age of the current age" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename(params[0]);
+    link.GetAgeInfo()->SetAgeFilename(std::move(params[0]));
     link.SetLinkingRules( plNetCommon::LinkingRules::kSubAgeBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to a sub-age...");
@@ -471,7 +431,7 @@ PF_CONSOLE_CMD( Net,
     plNetLinkingMgr * lm = plNetLinkingMgr::GetInstance();
 
     plAgeInfoStruct info;
-    info.SetAgeFilename(params[0]);
+    info.SetAgeFilename(std::move(params[0]));
     
     plAgeLinkStruct link;
     if (!VaultGetOwnedAgeLink(&info, &link)) {
@@ -615,7 +575,7 @@ PF_CONSOLE_CMD( Net_DebugObject,        // groupName
                "bool dirtyOnly", // paramList
                "Dump the age SDL hook to the object debugger" ) // helpString
 {
-    const plPythonSDLModifier * mod = plPythonSDLModifier::FindAgeSDL();
+    const plSDLModifier* mod = plNetClientMgr::GetInstance()->GetAgeSDLModifier();
     mod->GetStateCache()->DumpToObjectDebugger("AgeSDLHook", params[0] );
 }
 
@@ -750,7 +710,7 @@ PF_CONSOLE_CMD( Net_Vault,
                "string stationName, string mtSpawnPt",
                "Register an MT Station with your Nexus" )
 {
-    VaultRegisterMTStation(params[0], params[1]);
+    VaultRegisterMTStation(std::move(params[0]), std::move(params[1]));
     PrintString("Registered MT Station.");
 }
 
@@ -763,7 +723,7 @@ PF_CONSOLE_CMD( Net_Vault,
 {
     plAgeLinkStruct link;
     link.GetAgeInfo()->SetAgeFilename(params[0]);
-    link.GetAgeInfo()->SetAgeInstanceName(params[0]);
+    link.GetAgeInfo()->SetAgeInstanceName(std::move(params[0]));
     plUUID guid = plUUID::Generate();
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
@@ -778,7 +738,7 @@ PF_CONSOLE_CMD( Net_Vault,
                "Remove the specified age from your bookshelf" )
 {
     plAgeInfoStruct info;
-    info.SetAgeFilename(params[0]);
+    info.SetAgeFilename(std::move(params[0]));
     bool success = VaultUnregisterOwnedAge(&info);
     PrintString(ST::format("Operation {}.", success ? "Successful" : "Failed"));
 }
@@ -791,7 +751,7 @@ PF_CONSOLE_CMD( Net_Vault,
 {
     plAgeLinkStruct link;
     link.GetAgeInfo()->SetAgeFilename(params[0]);
-    link.GetAgeInfo()->SetAgeInstanceName(params[0]);
+    link.GetAgeInfo()->SetAgeInstanceName(std::move(params[0]));
     plUUID guid = plUUID::Generate();
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
@@ -806,7 +766,7 @@ PF_CONSOLE_CMD( Net_Vault,
                "Remove all instances of the specified age from your private links" )
 {
     plAgeInfoStruct info;
-    info.SetAgeFilename(params[0]);
+    info.SetAgeFilename(std::move(params[0]));
 
     unsigned count = 0;
     while (VaultUnregisterVisitAge(&info))

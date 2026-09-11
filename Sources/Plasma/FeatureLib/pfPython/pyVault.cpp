@@ -456,9 +456,9 @@ bool pyVault::AmAgeCzar( const pyAgeInfoStruct * ageInfo )
     return VaultAmCzarOfAge(ageInstId);
 }
 
-void pyVault::RegisterMTStation( const ST::string& stationName, const ST::string& backLinkSpawnPtObjName )
+void pyVault::RegisterMTStation(ST::string stationName, ST::string backLinkSpawnPtObjName)
 {
-    VaultRegisterMTStation(stationName, backLinkSpawnPtObjName);
+    VaultRegisterMTStation(std::move(stationName), std::move(backLinkSpawnPtObjName));
 }
 
 void pyVault::RegisterOwnedAge( const pyAgeLinkStruct & link )
@@ -466,10 +466,10 @@ void pyVault::RegisterOwnedAge( const pyAgeLinkStruct & link )
     VaultRegisterOwnedAgeAndWait(link.GetAgeLink());
 }
 
-void pyVault::UnRegisterOwnedAge(const ST::string& ageFilename)
+void pyVault::UnRegisterOwnedAge(ST::string ageFilename)
 {
     plAgeInfoStruct info;
-    info.SetAgeFilename(ageFilename);
+    info.SetAgeFilename(std::move(ageFilename));
     VaultUnregisterOwnedAge(&info);
 }
 
@@ -486,13 +486,6 @@ void pyVault::UnRegisterVisitAge(const ST::string& guidstr)
     VaultUnregisterVisitAge(&info);
 }
 
-//============================================================================
-void _InvitePlayerToAge(ENetError result, void* state, void* param, hsWeakRef<RelVaultNode> node)
-{
-    if (result == kNetSuccess)
-        VaultSendNode(node, (uint32_t)((uintptr_t)param));
-}
-
 void pyVault::InvitePlayerToAge( const pyAgeLinkStruct & link, uint32_t playerID )
 {
     NetVaultNode templateNode;
@@ -500,14 +493,10 @@ void pyVault::InvitePlayerToAge( const pyAgeLinkStruct & link, uint32_t playerID
     VaultTextNoteNode visitAcc(&templateNode);
     visitAcc.SetNoteType(plVault::kNoteType_Visit);
     visitAcc.SetVisitInfo(*link.GetAgeLink()->GetAgeInfo());
-    VaultCreateNode(&templateNode, (FVaultCreateNodeCallback)_InvitePlayerToAge, nullptr, (void*)(uintptr_t)playerID);
-}
-
-//============================================================================
-void _UninvitePlayerToAge(ENetError result, void* state, void* param, hsWeakRef<RelVaultNode> node)
-{
-    if (result == kNetSuccess)
-        VaultSendNode(node, (uint32_t)((uintptr_t)param));
+    VaultCreateNode(&templateNode, [playerID](auto result, auto node) {
+        if (result == kNetSuccess)
+            VaultSendNode(node, playerID);
+    });
 }
 
 void pyVault::UnInvitePlayerToAge(const ST::string& str, uint32_t playerID)
@@ -528,7 +517,10 @@ void pyVault::UnInvitePlayerToAge(const ST::string& str, uint32_t playerID)
     VaultTextNoteNode visitAcc(&templateNode);
     visitAcc.SetNoteType(plVault::kNoteType_UnVisit);
     visitAcc.SetVisitInfo(info);
-    VaultCreateNode(&templateNode, (FVaultCreateNodeCallback)_UninvitePlayerToAge, nullptr, (void*)(uintptr_t)playerID);
+    VaultCreateNode(&templateNode, [playerID](auto result, auto node) {
+        if (result == kNetSuccess)
+            VaultSendNode(node, playerID);
+    });
 }
 
 //============================================================================
@@ -568,8 +560,8 @@ void pyVault::CreateNeighborhood()
 
     plUUID guid = plUUID::Generate();
     link.GetAgeInfo()->SetAgeInstanceGuid(&guid);
-    link.GetAgeInfo()->SetAgeUserDefinedName(title);
-    link.GetAgeInfo()->SetAgeDescription(desc);
+    link.GetAgeInfo()->SetAgeUserDefinedName(std::move(title));
+    link.GetAgeInfo()->SetAgeDescription(std::move(desc));
 
     VaultRegisterOwnedAge(&link);
 }

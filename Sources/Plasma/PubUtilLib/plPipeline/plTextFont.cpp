@@ -64,17 +64,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <memory>
 #include <utility>
 
-#ifdef HS_BUILD_FOR_WIN32
+#if defined(HS_BUILD_FOR_WIN32)
 #   include "plWinDpi/plWinDpi.h"
-#endif
-
-#if defined(HS_BUILD_FOR_APPLE)
-#import <CoreGraphics/CoreGraphics.h>
-#import <CoreText/CoreText.h>
-
-#include "hsDarwin.h"
+#elif defined(HS_BUILD_FOR_APPLE)
+#   include "hsDarwin.h"
+#   if defined(HS_BUILD_FOR_MACOS) && MAC_OS_X_VERSION_MAX_ALLOWED < 1090
+#       include <ApplicationServices/ApplicationServices.h>
+#   else
+#       include <CoreGraphics/CoreGraphics.h>
+#       include <CoreText/CoreText.h>
+#   endif
 #elif defined(HS_BUILD_FOR_UNIX)
-#include <fontconfig/fontconfig.h>
+#   include <fontconfig/fontconfig.h>
 #endif
 
 //// Constructor & Destructor /////////////////////////////////////////////////
@@ -118,12 +119,12 @@ uint16_t  *plTextFont::IInitFontTexture()
 
     SelectObject(hDC, hFont);
     
-    DWORD fontDataSize = GetFontData( hDC, 0, 0, 0, 0 );
+    DWORD fontDataSize = GetFontData( hDC, 0, 0, nullptr, 0 );
     void* fontData = std::malloc( fontDataSize );
     GetFontData(hDC, 0, 0, fontData, fontDataSize);
     ftError = FT_New_Memory_Face(library, (FT_Byte *) fontData, fontDataSize, 0, &face);
     ASSERT(ftError == FT_Err_Ok);
-    FT_UInt freeTypeResolution = plWinDpi::Instance().GetDpi();
+    FT_UInt freeTypeDPI = plWinDpi::Instance().GetDpi();
 
     DeleteDC( hDC );
     DeleteObject( hFont );
@@ -136,12 +137,36 @@ uint16_t  *plTextFont::IInitFontTexture()
     hsAssert(fulfilledFontDescriptor != nullptr, "Cannot create Mac font");
     CFRelease(fontName);
     CFRelease(fontDescriptor);
-    
-    CFURLRef fontURL = (CFURLRef) CTFontDescriptorCopyAttribute(fulfilledFontDescriptor, kCTFontURLAttribute);
-    CFStringRef fileSystemPath = CFURLCopyFileSystemPath(fontURL, kCFURLPOSIXPathStyle);
+
     char cPath[PATH_MAX];
+    CFURLRef fontURL = nullptr;
+
+#if !defined(HS_BUILD_FOR_MACOS) || (defined(HS_BUILD_FOR_MACOS) && MAC_OS_X_VERSION_MAX_ALLOWED >= 1060)
+    // On Mac, kCTFontURLAttribute is only supported in 10.6+
+    fontURL = static_cast<CFURLRef>(CTFontDescriptorCopyAttribute(
+                    fulfilledFontDescriptor, kCTFontURLAttribute));
+#endif
+
+#if defined(HS_BUILD_FOR_MACOS) && MAC_OS_X_VERSION_MIN_REQUIRED < 1060
+    // If kCTFontURLAttribute is not supported, this is the fallback:
+    if (!fontURL) {
+        CTFontRef font = CTFontCreateWithFontDescriptor(fulfilledFontDescriptor, 0, nullptr);
+        hsAssert(font != nullptr, "Cannot load Mac font");
+
+        ATSFontRef atsFont = CTFontGetPlatformFont(font, nullptr);
+        hsAssert(atsFont == 0, "Cannot load Mac platform font");
+
+        FSRef fsRef;
+        OSStatus status = ATSFontGetFileReference(atsFont, &fsRef);
+        CFRelease(font);
+
+        fontURL = CFURLCreateFromFSRef(nullptr, &fsRef);
+    }
+#endif
+
+    CFStringRef fileSystemPath = CFURLCopyFileSystemPath(fontURL, kCFURLPOSIXPathStyle);
     CFStringGetCString(fileSystemPath, cPath, PATH_MAX, kCFStringEncodingUTF8);
-    
+
     ftError = FT_New_Face(library, cPath, 0, &face);
     ASSERT(ftError == FT_Err_Ok);
     
@@ -149,7 +174,10 @@ uint16_t  *plTextFont::IInitFontTexture()
     CFRelease(fontURL);
     CFRelease(fileSystemPath);
     
-    FT_UInt freeTypeResolution = 192;
+    // Windows uses a base DPI of 96, while Mac uses a DPI of 72.
+    // To make sure everything aligns match Windows.
+    // FIXME: We don't update when the DPI changes at runtime
+    FT_UInt freeTypeDPI = fPipe->fBackingScale * 96;
     
     fTextureWidth *= 2;
     fTextureHeight *= 2;
@@ -188,10 +216,10 @@ uint16_t  *plTextFont::IInitFontTexture()
     ftError = FT_New_Face(library, filename, 0, &face);
     ASSERT(ftError == FT_Err_Ok);
 
-    FT_UInt freeTypeResolution = 96;
+    FT_UInt freeTypeDPI = 96;
 #endif
 
-    ftError = FT_Set_Char_Size(face, 0, fSize * 64, freeTypeResolution, freeTypeResolution);
+    ftError = FT_Set_Char_Size(face, 0, fSize * 64, freeTypeDPI, freeTypeDPI);
     ASSERT(ftError == FT_Err_Ok);
     FT_Size_Metrics fontMetrics = face->size->metrics;
 

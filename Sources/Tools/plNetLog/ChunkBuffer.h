@@ -94,8 +94,8 @@ public:
     QString readString()
     {
         unsigned short length = read<unsigned short>();
-        auto utf16 = std::make_unique<unsigned short[]>(length + 1);
-        chomp(utf16.get(), length * sizeof(unsigned short));
+        auto utf16 = std::make_unique<char16_t[]>(length + 1);
+        chomp(utf16.get(), length * sizeof(char16_t));
         utf16[length] = 0;
         return QString::fromUtf16(utf16.get(), length);
     }
@@ -115,8 +115,8 @@ public:
     QString readWPString()
     {
         _Tp length = read<_Tp>();
-        auto str = std::make_unique<unsigned short[]>(length + 1);
-        chomp(str.get(), length * sizeof(unsigned short));
+        auto str = std::make_unique<char16_t[]>(length + 1);
+        chomp(str.get(), length * sizeof(char16_t));
         str[length] = 0;
         return QString::fromUtf16(str, length);
     }

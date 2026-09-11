@@ -39,14 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plVault/plDniCoordinateInfo.cpp
-*   
-***/
 
-#include "Pch.h"
+#include "plDniCoordinateInfo.h"
 
+#include <string_theory/format>
+
+#include "hsStream.h"
 
 ///////////////////////////////////////////////////////////////////
 

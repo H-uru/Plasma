@@ -84,7 +84,7 @@ hsKeyedObject::~hsKeyedObject()
         // decrement our RefCnt. Unfortunately, we are here because of a call
         // to our destructor, in which case we don't want to go back into our
         // destructor again. So we'll just up the RefCnt, plKey::UnRegister will dec it back to 1.
-        hsRefCnt_SafeRef(fpKey->ObjectIsLoaded());
+        fpKey->ObjectIsLoaded()->Ref();
     }
     UnRegister(); 
 }
@@ -148,11 +148,9 @@ void hsKeyedObject::UnRegisterAsManual(plUoid& inUoid)
         plUoid myUoid = fpKey->GetUoid();
         if (!(inUoid == myUoid))
         {
-#if !HS_BUILD_FOR_UNIX      // disable for unix servers
             hsAssert(false,
                 ST::format("Request to Unregister wrong FixedKey, keyName={}, inUoid={}, myUoid={}",
                            fpKey->GetName(), inUoid, myUoid).c_str());
-#endif
         }
         plKeyImp::GetFromKey(fpKey)->UnRegister();
     }

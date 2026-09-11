@@ -119,7 +119,7 @@ class Personal(ptResponder):
             if cityInfo:
                 if cityInfo.getAgeInstanceGuid()==kEmptyGuid:
                     # we don't have it yet, so make it! (the callback will make it for us)
-                    PtGetPublicAgeList('city',self)
+                    PtGetPublicAgeList('city')
             else:
                 PtDebugPrint("hmm. city link has no age info node")
         else:

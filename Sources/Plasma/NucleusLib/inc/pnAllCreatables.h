@@ -43,7 +43,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pnAllCreatables_inc
 #define pnAllCreatables_inc
 
-#include "pnNucleusCreatables.h"
-#include "../../Apps/plClient/plClientCreatable.h"
+#include "pnFactory/plCreator.h"
+
+#include "plAudible.h"
+REGISTER_NONCREATABLE(plAudible);
+
+#include "plgDispatch.h"
+REGISTER_NONCREATABLE(plDispatchBase);
+
+#include "plDrawable.h"
+REGISTER_NONCREATABLE(plDrawable);
+
+#include "plPhysical.h"
+REGISTER_NONCREATABLE(plPhysical);
+
+#include "plPipeline.h"
+REGISTER_NONCREATABLE(plPipeline);
+
+#include "pnDispatch/pnDispatchCreatable.h"
+#include "pnKeyedObject/pnKeyedObjectCreatable.h"
+#include "pnMessage/pnMessageCreatable.h"
+#include "pnModifier/pnModifierCreatable.h"
+#include "pnNetCommon/pnNetCommonCreatable.h"
+#include "pnSceneObject/pnSceneObjectCreatable.h"
+#include "pnTimerCreatable.h"
 
 #endif // pnAllCreatables_inc

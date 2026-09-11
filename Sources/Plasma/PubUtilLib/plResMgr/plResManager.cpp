@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResManagerHelper.h"
 #include "plResMgrSettings.h"
 
+#include "hsStream.h"
 #include "hsTimer.h"
 #include "plTimerCallbackManager.h"
 
@@ -342,11 +343,8 @@ bool plResManager::ReadObject(plKeyImp* key)
         std::vector<plKey> children = fQueuedReads;
         fQueuedReads.clear();
 
-        for (int i = 0; i < children.size(); i++)
-        {
-            plKey childKey = children[i];
+        for (const auto& childKey : children)
             childKey->VerifyLoaded();
-        }
     }
 
     // we're done loading, and all our children are too, so send the notify
@@ -643,7 +641,7 @@ bool plResManager::SendRef(hsKeyedObject* ko, plRefMsg* refMsg, plRefFlags::Type
 {
     if (!ko)
         return false;
-    plKey key = ko->GetKey();
+    const plKey& key = ko->GetKey();
     return SendRef(key, refMsg, flags);
 }
 
@@ -709,7 +707,7 @@ plKey plResManager::ReadKeyNotifyMe(hsStream* stream, plRefMsg* msg, plRefFlags:
     }
     if(key->GetUoid().GetLoadMask().DontLoad())
     {
-        hsStatusMessageF("%s being skipped because of load mask", key->GetName().c_str());
+        hsStatusMessageF("{} being skipped because of load mask", key->GetName());
         hsRefCnt_SafeUnRef(msg);
         return nullptr;
     }
@@ -1040,14 +1038,14 @@ void plResManager::LoadAgeKeys(const ST::string& age)
     if (it != fHeldAgeKeys.end())
     {
         kResMgrLog(1, ILog(1, "Reffing age keys for age {}", age));
-        hsStatusMessageF("*** Reffing age keys for age %s ***\n", age.c_str());
+        hsStatusMessageF("*** Reffing age keys for age {} ***", age);
         plResAgeHolder* holder = it->second;
         holder->Ref();
     }
     else
     {
         kResMgrLog(1, ILog(1, "Loading age keys for age {}", age));
-        hsStatusMessageF("*** Loading age keys for age %s ***\n", age.c_str());
+        hsStatusMessageF("*** Loading age keys for age {} ***", age);
 
         plResAgeHolder* holder = new plResAgeHolder(age);
         fHeldAgeKeys[age] = holder;
@@ -1544,7 +1542,7 @@ static void sIReportLeak(plKeyImp* key, plRegistryPageNode* page)
     if (!alreadyDone)
     {
         // Print out page header
-        hsStatusMessageF("\tLeaks in page %s>%s[%08x]:\n", lastPage->GetPageInfo().GetAge().c_str(), lastPage->GetPageInfo().GetPage().c_str(), lastPage->GetPageInfo().GetLocation().GetSequenceNumber());
+        hsStatusMessageF("\tLeaks in page {}>{}[{08x}]:", lastPage->GetPageInfo().GetAge(), lastPage->GetPageInfo().GetPage(), lastPage->GetPageInfo().GetLocation().GetSequenceNumber());
         alreadyDone = true;
     }
 
@@ -1559,7 +1557,7 @@ static void sIReportLeak(plKeyImp* key, plRegistryPageNode* page)
         ss << "- " << key->GetDataLen() << " bytes - " << refsLeft << " refs left";
     else
         ss << "(key only, " << refsLeft << " refs left)";
-    hsStatusMessage(ss.to_string().c_str());
+    hsStatusMessage(ss.to_string());
 }
 
 //// UnloadPageObjects ///////////////////////////////////////////////////////

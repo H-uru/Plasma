@@ -39,47 +39,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plVault/Pch.h
-*   
-***/
 
 #ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PCH_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PCH_H
 
-#include "pnNetProtocol/pnNetProtocol.h"
-
 #include "plVault.h"
-#include "plDniCoordinateInfo.h"
 
 #include <algorithm>
-#include <atomic>
-#include <memory>
-#include <sstream>
-#include <string_theory/string>
-#include <unordered_map>
+#include <string_theory/string_stream>
 
-#include "hsGeometry3.h"
-#include "hsTimer.h"
+#include "hsStream.h"
 
-#include "pnDispatch/plDispatch.h"
-
-#include "plGImage/plJPEG.h"
-#include "plGImage/plMipmap.h"
-#include "plGImage/plPNG.h"
-#include "plMessage/plVaultNotifyMsg.h"
-#include "plNetClientComm/plNetClientComm.h"
-#include "plNetCommon/plNetCommon.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
-#include "plNetCommon/plSpawnPointInfo.h"
-#include "plNetGameLib/plNetGameLib.h"
 #include "plSDL/plSDL.h"
-#include "plStatusLog/plStatusLog.h"
-#include "plUnifiedTime/plUnifiedTime.h"
-
-#define KI_CONSTANTS_ONLY
-#include "pfMessage/pfKIMsg.h"  // for KI level constants =(
-#undef KI_CONSTANTS_ONLY
 
 #endif

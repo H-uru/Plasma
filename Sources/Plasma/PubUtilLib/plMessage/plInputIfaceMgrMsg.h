@@ -58,7 +58,7 @@ class plInputIfaceMgrMsg : public plMessage
     protected:
 
         uint8_t   fCommand;
-        plInputInterface    *fInterface;
+        hsRef<plInputInterface> fInterface;
         uint32_t  fPageID;
         ST::string  ageName;
         ST::string  ageFileName;
@@ -86,10 +86,7 @@ class plInputIfaceMgrMsg : public plMessage
             kSetShareAgeInstanceGuid,
         };
 
-        plInputIfaceMgrMsg() : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); fInterface = nullptr; fAvKey = nullptr; }
-        plInputIfaceMgrMsg(const plKey& receiver, uint8_t command) : plMessage(nullptr, receiver, nullptr) { fCommand = command; fInterface = nullptr; fAvKey = nullptr; }
-        plInputIfaceMgrMsg(uint8_t command) : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); fCommand = command; fInterface = nullptr; fAvKey = nullptr; }
-        plInputIfaceMgrMsg(uint8_t command, uint32_t pageID) : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); fCommand = command; fPageID = pageID; fInterface = nullptr; fAvKey = nullptr; }
+        plInputIfaceMgrMsg(uint8_t command = 0, uint32_t pageID = 0);
         ~plInputIfaceMgrMsg();
 
         CLASSNAME_REGISTER( plInputIfaceMgrMsg );
@@ -108,8 +105,8 @@ class plInputIfaceMgrMsg : public plMessage
         const plUUID&     GetAgeInstanceGuid() const { return ageInstanceGuid; }
         uint8_t           GetCommand() const { return fCommand; }
         uint32_t          GetPageID() const { return fPageID; }
-        void              SetIFace(plInputInterface *iface);
-        plInputInterface* GetIFace() const { return fInterface; }
+        void              SetIFace(hsRef<plInputInterface> iface);
+        hsWeakRef<plInputInterface> GetIFace() const { return fInterface; }
         plKey             GetAvKey() const { return fAvKey; }
         void              SetAvKey(const plKey& k ) { fAvKey = k; }
 };

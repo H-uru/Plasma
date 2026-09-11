@@ -422,15 +422,11 @@ def PtGetAgeInfo():
     ...
 
 def PtGetAgeName():
-    """DEPRECIATED - use ptDniInfoSource instead"""
+    """Returns filename of the current Age"""
     ...
 
 def PtGetAgeSDL():
     """Returns the global ptSDL for the current Age"""
-    ...
-
-def PtGetAgeTime():
-    """DEPRECIATED - use ptDniInfoSource instead"""
     ...
 
 def PtGetAgeTimeOfDayPercent():
@@ -570,9 +566,9 @@ def PtGetPrevAgeName():
     """Returns filename of previous age visited"""
     ...
 
-def PtGetPublicAgeList(ageName, cbObject=None):
+def PtGetPublicAgeList(ageName):
     """Get list of public ages for the given age name.
-    cbObject, if supplied should have a method called gotPublicAgeList(self,ageList). ageList is a list of tuple(ptAgeInfoStruct,nPlayersInAge)
+    The age list will be delivered asynchronously through the callback method gotPublicAgeList(self,ageList). ageList is a list of tuple(ptAgeInfoStruct,nPlayersInAge)
     """
     ...
 
@@ -1550,6 +1546,10 @@ class ptAvatar:
         """Exits the avatar from the subWorld where it was"""
         ...
 
+    def findBone(self, bone_name: str) -> ptSceneObject:
+        """Find the ptSceneObject for the requested bone"""
+        ...
+
     def getAllWithSameMesh(self, clothing_name):
         """Returns a lilst of all clothing items that use the same mesh as the specified one"""
         ...
@@ -2079,6 +2079,10 @@ class ptCritterBrain:
         """Returns how far away the brain can hear."""
         ...
 
+    def getLocallyControlled(self) -> bool:
+        """Are we the one making AI decisions? NOTE: Not set automatically, some python script needs to tell the brain this using setLocallyControlled()."""
+        ...
+
     def getSceneObject(self):
         """Returns the ptSceneObject this brain controls."""
         ...
@@ -2131,6 +2135,10 @@ class ptCritterBrain:
         """Set how far away the brain can hear (360 degree field of hearing)."""
         ...
 
+    def setLocallyControlled(self, local: bool) -> None:
+        """Tells the brain that we are the ones making all the AI decisions, and to prop location and other information to the server."""
+        ...
+
     def setSightCone(self, radians):
         """Set how wide the brain's field of view is in radians. Note that it is the total angle of the cone, half on one side of the brain's line of sight, half on the other."""
         ...
@@ -2172,25 +2180,6 @@ class ptDniCoordinates:
 
     def update(self):
         """Update these coordinates with the players current position"""
-        ...
-
-class ptDniInfoSource:
-    """DO NOT USE"""
-
-    def getAgeCoords(self):
-        """Current coords of the player in current age as a ptDniCoordinates"""
-        ...
-
-    def getAgeGuid(self):
-        """Unique identifier for this age instance"""
-        ...
-
-    def getAgeName(self):
-        """Name of current age"""
-        ...
-
-    def getAgeTime(self):
-        """Current time in current age (tbd)"""
         ...
 
 class ptDraw:
@@ -5392,6 +5381,41 @@ class ptVaultPlayerInfoNode(ptVaultNode):
 
     def playerSetOnline(self, state):
         """Not sure this should be used. Sets the state of the player online status for this player info node."""
+        ...
+
+class ptVaultPlayerNode(ptVaultNode):
+    """Plasma vault player node"""
+
+    def getAvatarShapeName(self):
+        """Returns the avatar's 'shape'"""
+        ...
+
+    def getOnlineTime(self):
+        """Returns the avatar's online time"""
+        ...
+
+    def getPlayerName(self):
+        """Returns the player's name"""
+        ...
+
+    def isDisabled(self):
+        """Is the avatar disabled?"""
+        ...
+
+    def setAvatarShapeName(self, name):
+        """Sets the avatar's 'shape'"""
+        ...
+
+    def setDisabled(self, state):
+        """Disables/enables the avatar"""
+        ...
+
+    def setOnlineTime(self, time):
+        """Sets the avatar's online time"""
+        ...
+
+    def setPlayerName(self, name):
+        """Sets the player's name"""
         ...
 
 class ptVaultSDLNode(ptVaultNode):

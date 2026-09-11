@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class pfGmMarker;
 class pyGmMarkerHandler;
-namespace ST { class string; }
 
 class pyGmMarker : public pyGameCli
 {

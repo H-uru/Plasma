@@ -76,13 +76,14 @@ void PythonInterface::initPython(const plFileName& rootDir, const std::vector<pl
         PyConfig_InitIsolatedConfig(&config);
         config.optimization_level = 2;
         config.write_bytecode = 0;
-        config.user_site_directory = 0;
+        config.site_import = 0;
         PyConfig_SetString(&config, &config.program_name, L"plasma");
 
         // Explicit module search paths so no build-env specific stuff gets in.
         IAddWideString(config.module_search_paths, rootDir);
         IAddWideString(config.module_search_paths, plFileName::Join(rootDir, "plasma"));
         IAddWideString(config.module_search_paths, plFileName::Join(rootDir, "system"));
+        IAddWideString(config.module_search_paths, plFileName::Join(rootDir, "system", "lib-dynload"));
         for (const auto& dir : extraDirs)
             IAddWideString(config.module_search_paths, plFileName::Join(rootDir, dir));
         config.module_search_paths_set = 1;
@@ -121,7 +122,27 @@ void PythonInterface::finiPython()
 //
 PyObject* PythonInterface::CompileString(const char *command, const plFileName& filename)
 {
-    PyObject* pycode = Py_CompileString(command, filename.AsString().c_str(), Py_file_input);
+    PyObject* filenameObj = PyUnicode_FromStringAndSize(
+        filename.AsString().c_str(),
+        filename.AsString().size()
+    );
+
+    PyCompilerFlags flags{};
+    flags.cf_feature_version = PY_MINOR_VERSION;
+
+    // Py_CompileString decodes the filename using the filesystem encoding.
+    // This is always UTF-8 on Windows as of Python 3.6 (see PEP 529), but we
+    // probably shouldn't rely on that. We always use UTF-8 internally, so
+    // pass the filename as a Python string object.
+    PyObject* pycode = Py_CompileStringObject(
+        command,
+        filenameObj,
+        Py_file_input,
+        &flags,
+        -1
+    );
+
+    Py_DECREF(filenameObj);
     return pycode;
 }
 
@@ -180,6 +201,10 @@ bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
     }
     // get the dictionaries for this module
     d = PyModule_GetDict(module);
+
+    if (!PyDict_GetItemString(d, "__builtins__"))
+        PyDict_SetItemString(d, "__builtins__", PyEval_GetBuiltins());
+
     // run the string
     v = PyEval_EvalCode(code, d, d);
     // check for errors and print them

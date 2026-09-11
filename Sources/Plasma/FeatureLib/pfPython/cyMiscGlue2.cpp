@@ -46,9 +46,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_view>
 #include <vector>
 
+#include "hsResMgr.h"
+
 #include "plMessage/plConfirmationMsg.h"
 #include "plMessage/plLOSRequestMsg.h"
+#include "plNetClientComm/plNetClientComm.h"
 #include "plNetCommon/plNetCommon.h"
+#include "plResMgr/plKeyFinder.h"
 #include "plResMgr/plLocalization.h"
 
 #include "plPythonCallable.h"
@@ -291,6 +295,11 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=
         PyErr_SetString(PyExc_TypeError, "PtPageInNode expects a string or list of strings, and optionally a string");
         PYTHON_RETURN_ERROR;
     }
+
+    if (ageName.empty()) {
+        ageName = NetCommGetAge()->ageDatasetName;
+    }
+
     std::vector<ST::string> nodeNames;
     if (PyUnicode_Check(nodeNameObj))
     {
@@ -316,7 +325,28 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=
         PYTHON_RETURN_ERROR;
     }
 
-    cyMisc::PageInNodes(nodeNames, ageName, netForce);
+    // In the past, some age scripts called this function in their __init__,
+    // which gets called during Max plugin startup where there is no ResMgr yet.
+    // This "worked" in the past, but isn't supported anymore.
+    // We still guard against this case so that scripts that haven't been updated
+    // will only cause Python errors and not hard-crash the Max plugin on startup.
+    // See: https://github.com/H-uru/Plasma/issues/1874
+    if (hsgResMgr::ResMgr() == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "No ResMgr present. PtPageInNode needs a ResMgr to find pages. If you are calling PtPageInNode from your Python modifier __init__, move the call into an OnInit callback to fix this error.");
+        PYTHON_RETURN_ERROR;
+    }
+
+    std::vector<plLocation> nodeLocs;
+    for (const auto& nodeName : nodeNames) {
+        plLocation nodeLoc = plKeyFinder::Instance().FindLocation(ageName, nodeName);
+        if (!nodeLoc.IsValid()) {
+            PyErr_SetString(PyExc_ValueError, ST::format("Age {} has no page named {}", ageName, nodeName).c_str());
+            PYTHON_RETURN_ERROR;
+        }
+        nodeLocs.emplace_back(nodeLoc);
+    }
+
+    cyMisc::PageInNodes(nodeLocs, netForce);
     PYTHON_RETURN_NONE;
 }
 
@@ -329,7 +359,25 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageOutNode, args, "Params: nodeName, netForce
         PyErr_SetString(PyExc_TypeError, "PtPageOutNode expects a string and bool");
         PYTHON_RETURN_ERROR;
     }
-    cyMisc::PageOutNode(nodeName, netForce);
+
+    // In the past, some age scripts called this function in their __init__,
+    // which gets called during Max plugin startup where there is no ResMgr yet.
+    // This "worked" in the past, but isn't supported anymore.
+    // We still guard against this case so that scripts that haven't been updated
+    // will only cause Python errors and not hard-crash the Max plugin on startup.
+    // See: https://github.com/H-uru/Plasma/issues/1874
+    if (hsgResMgr::ResMgr() == nullptr) {
+        PyErr_SetString(PyExc_RuntimeError, "No ResMgr present. PtPageOutNode needs a ResMgr to find pages. If you are calling PtPageOutNode from your Python modifier __init__, move the call into an OnInit callback to fix this error.");
+        PYTHON_RETURN_ERROR;
+    }
+
+    plLocation nodeLoc = plKeyFinder::Instance().FindLocation({}, nodeName);
+    if (!nodeLoc.IsValid()) {
+        PyErr_SetString(PyExc_ValueError, ST::format("Could not find any page named {}", nodeName).c_str());
+        PYTHON_RETURN_ERROR;
+    }
+
+    cyMisc::PageOutNodes({nodeLoc}, netForce);
     PYTHON_RETURN_NONE;
 }
 
@@ -598,7 +646,7 @@ void cyMisc::AddPlasmaMethods2(PyObject* m)
 
 void cyMisc::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtConfirmationResult)
+    PYTHON_ENUM_START(m, PtConfirmationResult)
     PYTHON_ENUM_ELEMENT(PtConfirmationResult, OK, plConfirmationMsg::Result::OK)
     PYTHON_ENUM_ELEMENT(PtConfirmationResult, Cancel, plConfirmationMsg::Result::Cancel)
     PYTHON_ENUM_ELEMENT(PtConfirmationResult, Yes, plConfirmationMsg::Result::Yes)
@@ -607,14 +655,14 @@ void cyMisc::AddPlasmaConstantsClasses(PyObject *m)
     PYTHON_ENUM_ELEMENT(PtConfirmationResult, Logout, plConfirmationMsg::Result::Logout)
     PYTHON_ENUM_END(m, PtConfirmationResult)
 
-    PYTHON_ENUM_START(PtConfirmationType)
+    PYTHON_ENUM_START(m, PtConfirmationType)
     PYTHON_ENUM_ELEMENT(PtConfirmationType, OK, plConfirmationMsg::Type::OK)
     PYTHON_ENUM_ELEMENT(PtConfirmationType, ConfirmQuit, plConfirmationMsg::Type::ConfirmQuit)
     PYTHON_ENUM_ELEMENT(PtConfirmationType, ForceQuit, plConfirmationMsg::Type::ForceQuit)
     PYTHON_ENUM_ELEMENT(PtConfirmationType, YesNo, plConfirmationMsg::Type::YesNo)
     PYTHON_ENUM_END(m, PtConfirmationType)
 
-    PYTHON_ENUM_START(PtCCRPetitionType)
+    PYTHON_ENUM_START(m, PtCCRPetitionType)
     PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kGeneralHelp,plNetCommon::PetitionTypes::kGeneralHelp)
     PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kBug,        plNetCommon::PetitionTypes::kBug)
     PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kFeedback,   plNetCommon::PetitionTypes::kFeedback)
@@ -624,7 +672,7 @@ void cyMisc::AddPlasmaConstantsClasses(PyObject *m)
     PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kTechnical,  plNetCommon::PetitionTypes::kTechnical)
     PYTHON_ENUM_END(m, PtCCRPetitionType)
 
-    PYTHON_ENUM_START(PtLanguage)
+    PYTHON_ENUM_START(m, PtLanguage)
     PYTHON_ENUM_ELEMENT(PtLanguage, kEnglish,       plLocalization::kEnglish)
     PYTHON_ENUM_ELEMENT(PtLanguage, kFrench,        plLocalization::kFrench)
     PYTHON_ENUM_ELEMENT(PtLanguage, kGerman,        plLocalization::kGerman)
@@ -638,13 +686,13 @@ void cyMisc::AddPlasmaConstantsClasses(PyObject *m)
     PYTHON_ENUM_ELEMENT(PtLanguage, kNumLanguages,  plLocalization::kNumLanguages)
     PYTHON_ENUM_END(m, PtLanguage)
 
-    PYTHON_ENUM_START(PtLOSReportType)
+    PYTHON_ENUM_START(m, PtLOSReportType)
     PYTHON_ENUM_ELEMENT(PtLOSReportType, kReportHit,        plLOSRequestMsg::kReportHit)
     PYTHON_ENUM_ELEMENT(PtLOSReportType, kReportMiss,       plLOSRequestMsg::kReportMiss)
     PYTHON_ENUM_ELEMENT(PtLOSReportType, kReportHitOrMiss,  plLOSRequestMsg::kReportHitOrMiss)
     PYTHON_ENUM_END(m, PtLOSReportType)
 
-    PYTHON_ENUM_START(PtLOSObjectType)
+    PYTHON_ENUM_START(m, PtLOSObjectType)
     PYTHON_ENUM_ELEMENT(PtLOSObjectType, kClickables,       kClickables)
     PYTHON_ENUM_ELEMENT(PtLOSObjectType, kCameraBlockers,   kCameraBlockers)
     PYTHON_ENUM_ELEMENT(PtLOSObjectType, kCustom,           kCustom)

@@ -51,8 +51,6 @@ struct hsPoint3;
 class plRelevanceRegion;
 class hsStream;
 
-namespace ST { class string; }
-
 class plRelevanceMgr : public hsKeyedObject
 {
 protected:

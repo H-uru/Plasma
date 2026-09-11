@@ -54,30 +54,63 @@ typedef __attribute__((__ext_vector_type__(3))) half half3;
 typedef __attribute__((__ext_vector_type__(4))) half half4;
 #endif
 
-enum plMetalVertexShaderArgument
+#if !defined(__METAL_VERSION__) && defined(METAL_3_SDK)
+// Declaration of texture2d for when this header is imported to
+// the renderer. Borrowed from Apple sample code.
+template <typename T>
+class texture2d : public MTL::ResourceID
 {
-    /// Material State
-    VertexShaderArgumentFixedFunctionUniforms           = 2,
-    /// Uniform table for Plasma dynamic shaders
-    VertexShaderArgumentMaterialShaderUniforms          = 3,
-    /// Light Table
-    VertexShaderArgumentLights                          = 4,
-    /// Blend matrix for GPU side animation blending
-    VertexShaderArgumentBlendMatrix1                    = 6,
-    /// Describes the state of a shadow caster for shadow cast shader
-    VertexShaderArgumentShadowState                     = 9
+public:
+    texture2d(MTL::ResourceID v) : MTL::ResourceID(v) {}
 };
 
-enum plMetalFragmentShaderArgumentIndex
+class sampler : public MTL::ResourceID
 {
+public:
+    sampler(MTL::ResourceID v) : MTL::ResourceID(v) {}
+};
+
+#define DEVICE
+
+#else
+
+#define DEVICE device
+
+#endif
+
+enum plMetalShaderArgument
+{
+    /// Material State
+    VertexShaderArgumentFixedFunctionUniforms = 2,
+    /// Uniform table for Plasma dynamic shaders
+    VertexShaderArgumentMaterialShaderUniforms = 3,
+    /// Light Table
+    ShaderLights = 4,
+    /// Material properties for vertex lighting
+    VertexShaderArgumentMaterialLighting = 5,
+    /// Blend matrix for GPU side animation blending
+    VertexShaderArgumentBlendMatrix1 = 6,
+    /// Describes the state of a shadow caster for shadow cast shader
+    VertexShaderArgumentShadowState = 9,
+    /// Table of active light indices/strengths for the material to be rendered
+    ShaderActiveLights = 12,
+    /// Count of the active lights for the material to be rendered
+    ShaderActiveLightCount = 13,
+    /// Bump/normal mapping information
+    BumpState = 14,
+
+    // FIXME: Plate shader is using a hardcoded argument in slot 1
     /// Texture is a legacy argument for the simpler plate shader
-    FragmentShaderArgumentTexture                       = 1,
+    FragmentShaderArgumentTexture = 1,
     /// Fragment uniforms
-    FragmentShaderArgumentShadowCastUniforms            = 4,
+    FragmentShaderArgumentShadowCastUniforms = 5,
+    // FIXME: Plate shader is using a hardcoded argument in slot 7
     /// Legacy argument buffer
-    FragmentShaderArgumentUniforms                      = 5,
+    FragmentShaderArgumentUniforms = 7,
     /// Layer index of alpha for shadow fragment shader
-    FragmentShaderArgumentShadowCastAlphaSrc            = 8
+    FragmentShaderArgumentShadowCastAlphaSrc = 8,
+    /// Material properties for vertex lighting
+    FragmentShaderArgumentMaterialLighting = 10,
 };
 
 enum plMetalVertexAttribute
@@ -110,6 +143,9 @@ enum plMetalFunctionConstant
     FunctionConstantLayerFlags                          = 18,
     /// Numbrer of weights in the FVF vertex layout.
     FunctionConstantNumWeights                          = 26,
+    /// Per pixel lighting enable flag
+    FunctionConstantPerPixelLighting                    = 27,
+    FunctionConstantNumBumpMaps                         = 28,
 };
 
 enum plMetalLayerPassType: uint8_t
@@ -154,7 +190,18 @@ struct plMetalShaderLightSource
     __fp16 constAtten;
     __fp16 linAtten;
     __fp16 quadAtten;
+};
+
+struct plMetalShaderActiveLight
+{
+    unsigned int index;
     __fp16 scale;
+    
+    plMetalShaderActiveLight(unsigned int indexIn, float scaleIn)
+    {
+        index = indexIn;
+        scale = scaleIn;
+    }
 };
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<plMetalShaderLightSource>, "plMetalShaderLightSource must be a trivial type!");
@@ -169,15 +216,8 @@ struct UVOutDescriptor
 static_assert(std::is_trivial_v<UVOutDescriptor>, "UVOutDescriptor must be a trivial type!");
 #endif
 
-struct VertexUniforms
+struct plMaterialLightingDescriptor
 {
-    // transformation
-    matrix_float4x4 projectionMatrix;
-    matrix_float4x4 localToWorldMatrix;
-    matrix_float4x4 cameraToWorldMatrix;
-    matrix_float4x4 worldToCameraMatrix;
-
-    // lighting
     half4 globalAmb;
     half3 ambientCol;
     uint8_t ambientSrc;
@@ -187,7 +227,24 @@ struct VertexUniforms
     uint8_t emissiveSrc;
     half3 specularCol;
     uint8_t specularSrc;
-    bool invVtxAlpha;
+    
+    bool invertAlpha;
+    
+#ifndef __METAL_VERSION__
+    bool operator==(const plMaterialLightingDescriptor& rhs) const
+    {
+        return memcmp(this, &rhs, sizeof(plMaterialLightingDescriptor)) == 0;
+    }
+#endif
+};
+
+struct VertexUniforms
+{
+    // transformation
+    matrix_float4x4 projectionMatrix;
+    matrix_float4x4 localToWorldMatrix;
+    matrix_float4x4 cameraToWorldMatrix;
+    matrix_float4x4 worldToCameraMatrix;
 
     uint8_t fogExponential;
     simd::float2 fogValues;
@@ -198,20 +255,16 @@ struct VertexUniforms
     float3 sampleLocation(size_t index, thread float3 *texCoords, const float4 cameraSpaceNormal, const float4 camPosition) constant;
     half4 calcFog(float4 camPosition) constant;
 #endif
+    
+#ifndef __METAL_VERSION__
+    bool operator==(const VertexUniforms& rhs) const
+    {
+        return memcmp(this, &rhs, sizeof(VertexUniforms)) == 0;
+    }
+#endif
 };
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<VertexUniforms>, "VertexUniforms must be a trivial type!");
-#endif
-
-#define kMetalMaxLightCount 32
-
-struct plMetalLights
-{
-    uint8_t count;
-    plMetalShaderLightSource lampSources[kMetalMaxLightCount];
-};
-#ifndef __METAL_VERSION__
-static_assert(std::is_trivial_v<plMetalLights>, "plMetalLights must be a trivial type!");
 #endif
 
 struct plShadowState
@@ -225,6 +278,24 @@ struct plShadowState
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<plShadowState>, "plShadowState must be a trivial type!");
 #endif
+
+typedef enum plMetalBumpMappingBufferLayout
+{
+    dTangentIndexID,
+    textureID,
+    samplerID,
+    dScaleID
+} plMetalBumpMappingBufferLayout;
+
+struct plMetalBumpmap
+{
+#if __METAL_VERSION__ >= 300 || defined(METAL_3_SDK)
+    texture2d<half> bumpTexture;
+    sampler         bumpTextureSampler;
+#endif
+    float       scale;
+    simd::char2 dTangentIndex;
+} __attribute__((aligned(4)));
 
 #endif /* ShaderTypes_h */
 

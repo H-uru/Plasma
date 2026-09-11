@@ -47,15 +47,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plInputCore/plInputInterface.h"
 
-plInputIfaceMgrMsg::~plInputIfaceMgrMsg()
+plInputIfaceMgrMsg::plInputIfaceMgrMsg(uint8_t command, uint32_t pageID)
+    : plMessage(nullptr, nullptr, nullptr),
+      fCommand(command),
+      fPageID(pageID)
 {
-    hsRefCnt_SafeUnRef(fInterface);
+    SetBCastFlag(kBCastByExactType);
 }
 
-void    plInputIfaceMgrMsg::SetIFace(plInputInterface* iface)
+plInputIfaceMgrMsg::~plInputIfaceMgrMsg()
+{}
+
+void plInputIfaceMgrMsg::SetIFace(hsRef<plInputInterface> iface)
 {
-    fInterface = iface;
-    hsRefCnt_SafeRef(fInterface);
+    fInterface = std::move(iface);
 }
 
 void plInputIfaceMgrMsg::Read(hsStream* s, hsResMgr* mgr)

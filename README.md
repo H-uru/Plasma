@@ -36,6 +36,7 @@ Plasma currently requires the following third-party libraries:
 - libcurl - http://curl.haxx.se/
 - string_theory - http://github.com/zrax/string_theory/
 - Standalone ASIO - https://think-async.com/Asio/
+- tl::expected - https://github.com/TartanLlama/expected
 
 The following libraries are optional:
 

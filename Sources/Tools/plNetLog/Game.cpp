@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Game.h"
 #include "GameMsg/Factory.h"
 
-bool Game_Factory(QTreeWidget* logger, QString timeFmt, int direction,
+bool Game_Factory(QTreeWidget* logger, const QString& timeFmt, int direction,
                   ChunkBuffer& buffer)
 {
     unsigned short msgId = buffer.read<unsigned short>();

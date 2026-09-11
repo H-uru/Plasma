@@ -61,6 +61,11 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 
+import re
+from typing import *
+import webbrowser
+import zlib
+
 import xJournalBookDefs
 
 
@@ -79,12 +84,32 @@ GUIType             = ptAttribString(14,"Book GUI Type",default="bkBook")
 # globals
 LocalAvatar = None
 
+# Konstants
+kJournalPageChronName = "LastJournalPage"
+
+# pfJournalBook's EsHTML will only allow links with integer events.
+# This isn't very friendly for age creators, so we'll let them specify
+# a url by doing <a href="https://foo.com">, and this regex will
+# convert that to an integer id. It will do the same for any tag, but
+# only <img> and <movie> are useful.
+_URL_REGEX = re.compile(r"(?P<href>href\s*=\s*(?P<quote>[\"\']?)\s*?(?P<url>https?:\/\/[^\s>]+)\s*?(?P=quote))(?=[^<]*>)", re.IGNORECASE)
+_HOST_REGEX = re.compile(R"(?:https?:\/\/)?(?:www\.)?([^\/?#]+).*", re.IGNORECASE)
+
+class JournalPageCache(NamedTuple):
+    JournalHash: str
+    PageNum: Union[int, str]
+
+
 class xJournalBookGUIPopup(ptModifier):
     "The Journal Book GUI Popup python code"
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 203
         self.version = 1
+
+        self.JournalBook: Optional[ptBook] = None
+        self._JournalHash: Optional[str] = None
+        self._OpenToPage: Optional[int] = None
 
     def OnFirstUpdate(self):
         pass
@@ -123,11 +148,30 @@ class xJournalBookGUIPopup(ptModifier):
                 # is it from the OpenBook? (we only have one book to worry about)
                 if event[0] == PtEventType.kBook:
                     PtDebugPrint("xJournalBookGUIPopup: BookNotify  event=%d, id=%d" % (event[1],event[2]),level=kDebugDumpLevel)
-                    if event[1] == PtBookEventTypes.kNotifyShow:
+                    if event[1] == PtBookEventTypes.kNotifyImageLink:
+                        PtDebugPrint("xJournalBookGUIPopup:Book: NotifyImageLink",level=kDebugDumpLevel)
+                        try:
+                            url = self.links[event[2]]
+                        except IndexError:
+                            pass
+                        else:
+                            def open_url(result):
+                                if result == PtConfirmationResult.Yes:
+                                    webbrowser.open_new_tab(url)
+
+                            hostname = _HOST_REGEX.sub(R"\1", url)
+                            PtDebugPrint(f"xJournalBookGUIPopup: NotifyImageLink: Prompting user to open {hostname=} {url=} {event[2]=}", level=kWarningLevel)
+                            PtLocalizedYesNoDialog(open_url, "KI.Messages.OpenHyperlink", hostname)
+                    elif event[1] == PtBookEventTypes.kNotifyShow:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyShow",level=kDebugDumpLevel)
                         # disable the KI
                         PtSendKIMessage(kDisableKIandBB,0)
-                    if event[1] == PtBookEventTypes.kNotifyHide:
+                        # open to requested page
+                        # use an explicit test against None because the walrus tests for truthiness
+                        if self._OpenToPage is not None:
+                            PtDebugPrint(f"xJournalBookGUIPopup:Book: NotifyShow - opening to page {self._OpenToPage}", level=kWarningLevel)
+                            self.JournalBook.open(self._OpenToPage)
+                    elif event[1] == PtBookEventTypes.kNotifyHide:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyHide",level=kDebugDumpLevel)
                         # re-enable KI
                         PtSendKIMessage(kEnableKIandBB,0)
@@ -135,11 +179,22 @@ class xJournalBookGUIPopup(ptModifier):
                         PtToggleAvatarClickability(True)
                     elif event[1] == PtBookEventTypes.kNotifyNextPage:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyNextPage",level=kDebugDumpLevel)
+                        self.ISavePage(self.JournalBook.getCurrentPage())
                     elif event[1] == PtBookEventTypes.kNotifyPreviousPage:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyPreviousPage",level=kDebugDumpLevel)
+                        self.ISavePage(self.JournalBook.getCurrentPage())
                     elif event[1] == PtBookEventTypes.kNotifyCheckUnchecked:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyCheckUncheck",level=kDebugDumpLevel)
-                        pass
+                    elif event[1] == PtBookEventTypes.kNotifyClose:
+                        PtDebugPrint("xJournalBookGUIPopup:Book: NotifyClose", level=kDebugDumpLevel)
+                        # if we're closing but not hiding, that means the user manually went to the
+                        # cover, so clear out the saved page such that the next "show" of this book
+                        # will open to the cover.
+                        if not event[2]:
+                            self.ISavePage(page=None)
+                    elif event[1] == PtBookEventTypes.kNotifyOpen:
+                        PtDebugPrint("xJournalBookGUIPopup:Book: NotifyOpen", level=kDebugDumpLevel)
+                        self.ISavePage(self.JournalBook.getCurrentPage())
 
     def IShowBook(self):
         self.JournalBook = None
@@ -164,26 +219,14 @@ class xJournalBookGUIPopup(ptModifier):
         journalContents = ""
         if Dynamic.value:
             inbox = ptVault().getGlobalInbox()
-            inboxChildList = inbox.getChildNodeRefList()
-            for child in inboxChildList:
-                PtDebugPrint("xJournalBookGUIPopupDyn: looking at node " + str(child), level=kDebugDumpLevel)
-                node = child.getChild()
-                folderNode = node.upcastToFolderNode()
-                if folderNode:
-                    PtDebugPrint("xJournalBookGUIPopupDyn: node is named %s" % (folderNode.getFolderName()), level=kDebugDumpLevel)
-                    if folderNode.getFolderName() == "Journals":
-                        folderNodeChildList = folderNode.getChildNodeRefList()
-                        for folderChild in folderNodeChildList:
-                            PtDebugPrint("xJournalBookGUIPopupDyn: looking at child node " + str(folderChild), level=kDebugDumpLevel)
-                            childNode = folderChild.getChild()
-                            textNode = childNode.upcastToTextNoteNode()
-                            if textNode:
-                                PtDebugPrint("xJournalBookGUIPopupDyn: child node is named %s" % (textNode.getTitle()), level=kDebugDumpLevel)
-                                # TODO: Convert this to use LocPath.value and migrate node values in DB if necessary once all PFMs
-                                #  are converted to use LocalizationPaths
-                                if textNode.getTitle() == JournalIdent:
-                                    journalContents = textNode.getText()
-                                    PtDebugPrint("xJournalBookGUIPopupDyn: journal contents are '%s'" % (journalContents), level=kDebugDumpLevel)
+            journalTemplate = ptVaultFolderNode(0)
+            journalTemplate.setFolderName("Journals")
+            if journalFolderNode := inbox.findNode(journalTemplate):
+                textTemplate = ptVaultTextNoteNode(0)
+                textTemplate.setTitle(JournalIdent)
+                if textNoteNode := journalFolderNode.findNode(textTemplate):
+                    textNoteNode = textNoteNode.upcastToTextNoteNode()
+                    journalContents = textNoteNode.getText()
         else:
             journalContents = PtGetLocalizedString(LocPath.value)
 
@@ -193,21 +236,83 @@ class xJournalBookGUIPopup(ptModifier):
         # hide the KI
         PtSendKIMessage(kDisableKIandBB, 0)
 
+        # update the hash for automatic page flipping
+        self._JournalHash = f"{zlib.crc32(JournalIdent.encode()):08x},{zlib.crc32(journalContents.encode()):08x}"
+        PtDebugPrint(f"xJournalBookGUIPopup.IShowBook(): {self._JournalHash=}", level=kDebugDumpLevel)
+        self._OpenToPage = self._CachedPage
+
         # now build the book
-        self.JournalBook = ptBook(journalContents, self.key)
+        self.JournalBook = ptBook(self.IPreprocessJournalContents(journalContents), self.key)
         self.JournalBook.setSize(BookWidth.value, BookHeight.value)
         self.JournalBook.setGUI(GUIType.value)
 
         # make sure there is a cover to show
-        if not StartOpen.value and not self.IsThereACover(journalContents):
-            self.JournalBook.show(1)
-        else:
-            self.JournalBook.show(StartOpen.value)
+        startOpen = StartOpen.value or not self.IsThereACover(journalContents)
+        self.JournalBook.show(startOpen)
 
+    def IPreprocessJournalContents(self, journalContents: str):
+        self.links = []
+        def replace_url(match: re.Match) -> str:
+            url = match.group("url")
+            event = len(self.links)
+
+            PtDebugPrint(f"xJournalBookGUIPopup.IPreprocessJournalContents(): Found {url=} {event=}")
+            self.links.append(url)
+            return f"link={event}"
+
+        newContent = _URL_REGEX.sub(replace_url, journalContents)
+        PtDebugPrint(
+            "xJournalBookGuiPopup.IPreprocessJournalContents(): The journal content has been preprocessed to:",
+            newContent,
+            level=kDebugDumpLevel
+        )
+        return newContent
 
     def IsThereACover(self, bookHtml):
-        # search the bookhtml string looking for a cover
-        idx = bookHtml.find('<cover')
-        if idx >= 0:
-            return 1
-        return 0
+        return "<cover" in bookHtml
+
+    def IIterateJournalCache(self, cache: str):
+        for i in cache.split():
+            entry = i.split(':')
+            if len(entry) < 2:
+                continue
+            yield JournalPageCache(entry[0], entry[1])
+
+    def IStringifyJournalCache(self, cache: Iterable[JournalPageCache]) -> str:
+        return ' '.join(f"{i.JournalHash}:{i.PageNum}" for i in cache)
+
+    @property
+    def _CachedPage(self) -> Optional[int]:
+        vault = ptVault()
+        if chron := vault.findChronicleEntry(kJournalPageChronName):
+            journals = self.IIterateJournalCache(chron.getValue())
+            if pageNum := next((i.PageNum for i in journals if i.JournalHash == self._JournalHash), None):
+                try:
+                    pageNum = int(pageNum)
+                except ValueError:
+                    PtDebugPrint(f"xJournalBookGUIPopup._CachedPage(): Unable to convert {pageNum=} to integer")
+                else:
+                    PtDebugPrint(f"xJournalBookGUIPopup._CachedPage(): {pageNum=}", level=kDebugDumpLevel)
+                    return pageNum
+
+    def ISavePage(self, page: Union[int, None]) -> None:
+        vault = ptVault()
+        if chron := vault.findChronicleEntry(kJournalPageChronName):
+            journals = [i for i in self.IIterateJournalCache(chron.getValue()) if i.JournalHash != self._JournalHash]
+            if page is not None:
+                journals.insert(0, JournalPageCache(self._JournalHash, page))
+
+            # Limit the chronicle to no more than 1024 characters due to some servers only allowing the
+            # Text_1 field to be that long.
+            chronValue = self.IStringifyJournalCache(journals)
+            while len(chronValue) > 1024 and journals:
+                journals.pop()
+                chronValue = self.IStringifyJournalCache(journals)
+
+            chron.setValue(chronValue)
+        elif page is not None:
+            journals = [JournalPageCache(self._JournalHash, page)]
+            chronValue = self.IStringifyJournalCache(journals)
+            vault.addChronicleEntry(kJournalPageChronName, 0, chronValue)
+        else:
+            PtDebugPrint("xJournalBookGUIPopup.ISavePage(): Got a request to remove the saved page, but the chronicle doesn't exist?")

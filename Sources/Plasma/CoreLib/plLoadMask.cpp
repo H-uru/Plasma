@@ -144,10 +144,11 @@ uint32_t plLoadMask::ValidateMasks(int num, plLoadMask masks[])
 }
 
 bool plLoadMask::ComputeRepMasks(
-                                   int num,
-                                   const int quals[], 
-                                   const int caps[], 
-                                   plLoadMask masks[])
+    int num,
+    const int quals[],
+    const int caps[],
+    plLoadMask masks[]
+)
 {
     bool retVal = false; // Okay till proven otherwise.
 

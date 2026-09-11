@@ -39,13 +39,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plVault/plVaultNodeAccess.cpp
-*   
-***/
 
-#include "Pch.h"
+#include "plVaultNodeAccess.h"
+
+#include <algorithm>
+#include <memory>
+#include <string_theory/string_stream>
+
+#include "hsStream.h"
+
+#include "plGImage/plJPEG.h"
+#include "plGImage/plPNG.h"
+#include "plNetCommon/plNetServerSessionInfo.h"
+#include "plSDL/plSDL.h"
+
+#include "plVaultConstants.h"
+#include "plVaultClientApi.h"
 
 /*****************************************************************************
 *
@@ -110,13 +119,13 @@ bool VaultTextNoteNode::GetVisitInfo (plAgeInfoStruct * info) {
         return false;
 
     if (!toks[kAgeFilename].empty())
-        info->SetAgeFilename(toks[kAgeFilename]);
+        info->SetAgeFilename(std::move(toks[kAgeFilename]));
     if (!toks[kAgeInstName].empty())
-        info->SetAgeInstanceName(toks[kAgeInstName]);
+        info->SetAgeInstanceName(std::move(toks[kAgeInstName]));
     if (!toks[kAgeUserName].empty())
-        info->SetAgeUserDefinedName(toks[kAgeUserName]);
+        info->SetAgeUserDefinedName(std::move(toks[kAgeUserName]));
     if (!toks[kAgeDesc].empty())
-        info->SetAgeDescription(toks[kAgeDesc]);
+        info->SetAgeDescription(std::move(toks[kAgeDesc]));
     if (!toks[kAgeInstGuid].empty()) {
         std::unique_ptr<plUUID> guid = std::make_unique<plUUID>(toks[kAgeInstGuid]);
         info->SetAgeInstanceGuid(guid.get());
@@ -266,18 +275,21 @@ bool VaultImageNode::ExtractImage (plMipmap ** dst) {
 *
 ***/
 
-struct MatchesSpawnPointTitle
+static plSpawnPointVec::const_iterator FindSpawnPointByTitle(const plSpawnPointVec& points, const ST::string& title)
 {
-    ST::string fTitle;
-    MatchesSpawnPointTitle( const ST::string & title ):fTitle( title ){}
-    bool operator ()( const plSpawnPointInfo & p ) const { return ( p.fTitle==fTitle ); }
-};
-struct MatchesSpawnPointName
+    return std::find_if(
+        points.begin(), points.end(),
+        [&title](const auto& p) { return p.GetTitle() == title; }
+    );
+}
+
+static plSpawnPointVec::const_iterator FindSpawnPointByName(const plSpawnPointVec& points, const ST::string& spawnPtName)
 {
-    ST::string fName;
-    MatchesSpawnPointName( const ST::string & name ):fName( name ){}
-    bool operator ()( const plSpawnPointInfo & p ) const { return ( p.fSpawnPt==fName ); }
-};
+    return std::find_if(
+        points.begin(), points.end(),
+        [&spawnPtName](const auto& p) { return p.GetName() == spawnPtName; }
+    );
+}
 
 //============================================================================
 bool VaultAgeLinkNode::CopyTo (plAgeLinkStruct * link) {
@@ -297,13 +309,13 @@ void VaultAgeLinkNode::AddSpawnPoint (const plSpawnPointInfo & point) {
 
     plSpawnPointVec points;
     GetSpawnPoints( &points );
-    if ( std::find_if( points.begin(), points.end(), MatchesSpawnPointTitle( point.fTitle ) )!=points.end() )
+    if (FindSpawnPointByTitle(points, point.GetTitle()) != points.end())
         return;
 
     // only check to see if the titles are the same... 
     //... so we can add the same spawnpoint as long as they have different titles
-        //if ( std::find_if( points.begin(), points.end(), MatchesSpawnPointName( point.fSpawnPt.c_str() ) )!=points.end() )
-        //  return;
+    //if (FindSpawnPointByName(points, point.fSpawnPt) != points.end())
+    //    return;
 
     points.push_back( point );
     SetSpawnPoints( points );
@@ -314,12 +326,12 @@ void VaultAgeLinkNode::RemoveSpawnPoint (const ST::string & spawnPtName) {
 
     plSpawnPointVec points;
     GetSpawnPoints( &points );                                                  
-    plSpawnPointVec::iterator it = std::find_if( points.begin(), points.end(), MatchesSpawnPointName( spawnPtName ) );
+    auto it = FindSpawnPointByName(points, spawnPtName);
     while ( it!=points.end() )
     {
         points.erase( it );
         SetSpawnPoints( points );
-        it = std::find_if( points.begin(), points.end(), MatchesSpawnPointName( spawnPtName ) );
+        it = FindSpawnPointByName(points, spawnPtName);
     }
 }
 
@@ -328,7 +340,7 @@ bool VaultAgeLinkNode::HasSpawnPoint (const ST::string & spawnPtName) const {
 
     plSpawnPointVec points;
     GetSpawnPoints( &points );                                                  
-    return ( std::find_if( points.begin(), points.end(), MatchesSpawnPointName( spawnPtName ) )!=points.end() );
+    return FindSpawnPointByName(points, spawnPtName) != points.end();
 }
 
 //============================================================================
@@ -348,11 +360,11 @@ void VaultAgeLinkNode::GetSpawnPoints (plSpawnPointVec * out) const {
         plSpawnPointInfo point;
         std::vector<ST::string> izer2 = token1->tokenize(":");
         if ( izer2.size() > 0)
-            point.fTitle = izer2[0];
+            point.SetTitle(std::move(izer2[0]));
         if ( izer2.size() > 1)
-            point.fSpawnPt = izer2[1];
+            point.SetName(std::move(izer2[1]));
         if ( izer2.size() > 2)
-            point.fCameraStack = izer2[2];
+            point.SetCameraStack(std::move(izer2[2]));
 
         out->push_back(point);
     }
@@ -364,9 +376,9 @@ void VaultAgeLinkNode::SetSpawnPoints (const plSpawnPointVec & in) {
     ST::string_stream ss;
     for ( unsigned i=0; i<in.size(); i++ ) {
         ss
-            << in[i].fTitle << ":"
-            << in[i].fSpawnPt << ":"
-            << in[i].fCameraStack << ";";
+            << in[i].GetTitle() << ":"
+            << in[i].GetName() << ":"
+            << in[i].GetCameraStack() << ";";
     }
     ST::string blob = ss.to_string();
     SetSpawnPoints(reinterpret_cast<const uint8_t *>(blob.c_str()), blob.size());
@@ -377,12 +389,6 @@ void VaultAgeLinkNode::SetSpawnPoints (const plSpawnPointVec & in) {
 *   VaultAgeInfoNode
 *
 ***/
-
-//============================================================================
-const class plUnifiedTime * VaultAgeInfoNode::GetAgeTime () const {
-    hsAssert(false, "eric, implement me.");
-    return nullptr;
-}
 
 //============================================================================
 void VaultAgeInfoNode::CopyFrom (const plAgeInfoStruct * info) {

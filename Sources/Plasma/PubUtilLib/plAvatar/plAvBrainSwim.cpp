@@ -272,14 +272,14 @@ bool plAvBrainSwim::Apply(double time, float elapsed)
             if (huBrain && !huBrain->fWalkingStrategy->IsOnGround())
             {
                 // We're jumping in! Trigger splash effect (sound)              
-                plArmatureEffectMsg *msg = new plArmatureEffectMsg(fAvMod->GetArmatureEffects()->GetKey(), kTime);
+                plArmatureEffectMsg *msg = new plArmatureEffectMsg(fAvMod->GetArmatureEffects()->GetKey(), plEventCallbackMsg::kTime);
                 msg->fEventTime = (float)time;
                 msg->fTriggerIdx = plArmatureMod::kImpact;
 
                 plEventCallbackInterceptMsg *iMsg = new plEventCallbackInterceptMsg;
                 iMsg->AddReceiver(fAvMod->GetArmatureEffects()->GetKey());
                 iMsg->fEventTime = (float)time;
-                iMsg->fEvent = kTime;
+                iMsg->fEvent = plEventCallbackMsg::kTime;
                 iMsg->SetMessageRef(msg);
                 iMsg->Send();
             }

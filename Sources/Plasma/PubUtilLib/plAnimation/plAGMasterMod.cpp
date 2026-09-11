@@ -52,6 +52,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plgDispatch.h"
 
+#include <string_theory/format>
+
 // other
 #include "plInterp/plAnimEaseTypes.h"
 #include "plInterp/plAnimTimeConvert.h"
@@ -313,7 +315,7 @@ void plAGMasterMod::DumpAniGraph(const char *justThisChannel, bool optimized, do
                     plMatrixChannel *topChannel = plMatrixChannel::ConvertNoRef(channel);
                     if(topChannel)
                     {
-                        hsStatusMessageF("AGModifier: <%s>", mod->GetChannelName().c_str());
+                        hsStatusMessageF("AGModifier: <{}>", mod->GetChannelName());
                         topChannel->Dump(1, optimized, time);
                     }
                 }
@@ -451,10 +453,10 @@ void plAGMasterMod::PlaySimpleAnim(const ST::string &name)
         instance->SetLoop(false);
         instance->Start();
 
-        plAGDetachCallbackMsg *msg = new plAGDetachCallbackMsg(GetKey(), kStop); 
+        plAGDetachCallbackMsg *msg = new plAGDetachCallbackMsg(GetKey(), plEventCallbackMsg::kStop); 
         msg->SetAnimName(name);
         instance->GetTimeConvert()->AddCallback(msg);
-        hsRefCnt_SafeUnRef(msg);
+        msg->UnRef();
     }
 }
 
@@ -599,7 +601,7 @@ void plAGMasterMod::DetachAnimation(const ST::string &name)
 void plAGMasterMod::DumpCurrentAnims(const char *header)
 {
     if(header)
-        hsStatusMessageF("Dumping Armature Anim Stack: %s", header);
+        hsStatusMessageF("Dumping Armature Anim Stack: {}", header);
     int nAnims = fAnimInstances.size();
     for(int i = nAnims - 1; i >= 0; i--)
     {
@@ -607,7 +609,7 @@ void plAGMasterMod::DumpCurrentAnims(const char *header)
         ST::string name = inst->GetName();
         float blend = inst->GetBlend();
 
-        hsStatusMessageF("%d: %s with blend of %f\n", i, name.c_str(), blend);
+        hsStatusMessageF("{}: {} with blend of {}", i, name, blend);
     }
 }
 
@@ -679,11 +681,11 @@ bool plAGMasterMod::MsgReceive(plMessage* msg)
     plAGInstanceCallbackMsg *agicMsg = plAGInstanceCallbackMsg::ConvertNoRef(msg);
     if (agicMsg)
     {
-        if (agicMsg->fEvent == kStart)
+        if (agicMsg->fEvent == plEventCallbackMsg::kStart)
         {
             IRegForEval(true);
         }
-        else if (agicMsg->fEvent == kStop)
+        else if (agicMsg->fEvent == plEventCallbackMsg::kStop)
         {
             if (!HasRunningAnims())
                 IRegForEval(false);

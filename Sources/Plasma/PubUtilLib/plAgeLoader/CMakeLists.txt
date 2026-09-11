@@ -23,6 +23,7 @@ target_link_libraries(
         plAgeDescription
         pnKeyedObject
         pnNetBase
+        tl::expected
     PRIVATE
         pnMessage
         pnNetCommon

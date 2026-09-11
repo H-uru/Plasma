@@ -90,19 +90,42 @@ class hsRef
 public:
     hsRef() : fObj() { }
     hsRef(std::nullptr_t) : fObj() { }
-    hsRef(_Ref *obj, hsStealRef_Type) : fObj(obj) { }
-    hsRef(const hsRef<_Ref> &copy) : fObj(copy.fObj) { if (fObj) fObj->Ref(); }
-    hsRef(hsRef<_Ref> &&move) : fObj(move.fObj) { move.fObj = nullptr; }
+
+    hsRef(_Ref* obj, hsStealRef_Type) : fObj(obj) {}
+
+    // Needed to allow passing an S* into an hsRef<T> parameter (where S is a subclass of T).
+    hsRef(_Ref* copy) : fObj(copy) { if (fObj) fObj->Ref(); }
+    // This is redundant with the next overload, but allows template argument deduction for hsRef(otherRef).
+    hsRef(const hsRef<_Ref>& copy) : fObj(copy.Get()) { if (fObj) fObj->Ref(); }
+    // Needed to allow passing an hsRef<S> into an hsRef<T> parameter (where S is a subclass of T).
+    template<class _OtherRef>
+    hsRef(const hsRef<_OtherRef>& copy) : fObj(copy.Get()) { if (fObj) fObj->Ref(); }
+    // Most of the other constructor and operator= overloads are duplicated for the same reasons.
+
+    hsRef(hsRef<_Ref>&& move) : fObj(move.Release()) {}
+    template<class _OtherRef>
+    hsRef(hsRef<_OtherRef>&& move) : fObj(move.Release()) {}
 
     ~hsRef() { if (fObj) fObj->UnRef(); }
 
     hsRef<_Ref> &operator=(const hsRef<_Ref> &copy)
     {
-        if (copy.fObj)
-            copy.fObj->Ref();
+        if (copy)
+            copy.Get()->Ref();
         if (fObj)
             fObj->UnRef();
-        fObj = copy.fObj;
+        fObj = copy.Get();
+        return *this;
+    }
+
+    template<class _OtherRef>
+    hsRef<_Ref>& operator=(const hsRef<_OtherRef>& copy)
+    {
+        if (copy)
+            copy.Get()->Ref();
+        if (fObj)
+            fObj->UnRef();
+        fObj = copy.Get();
         return *this;
     }
 
@@ -110,8 +133,16 @@ public:
     {
         if (fObj)
             fObj->UnRef();
-        fObj = move.fObj;
-        move.fObj = nullptr;
+        fObj = move.Release();
+        return *this;
+    }
+
+    template<class _OtherRef>
+    hsRef<_Ref>& operator=(hsRef<_OtherRef>&& move)
+    {
+        if (fObj)
+            fObj->UnRef();
+        fObj = move.Release();
         return *this;
     }
 
@@ -123,8 +154,12 @@ public:
         return *this;
     }
 
-    inline hsRef(const hsWeakRef<_Ref> &weak);
-    inline hsRef<_Ref> &operator=(const hsWeakRef<_Ref> &weak);
+    inline hsRef(const hsWeakRef<_Ref>& weak);
+    template<class _OtherRef>
+    inline hsRef(const hsWeakRef<_OtherRef>& weak);
+    inline hsRef<_Ref>& operator=(const hsWeakRef<_Ref>& weak);
+    template<class _OtherRef>
+    inline hsRef<_Ref>& operator=(const hsWeakRef<_OtherRef>& weak);
 
     bool operator==(const hsRef<_Ref> &other) const { return fObj == other.fObj; }
     bool operator!=(const hsRef<_Ref> &other) const { return fObj != other.fObj; }
@@ -149,6 +184,13 @@ public:
         if (fObj)
             fObj->UnRef();
         fObj = obj;
+    }
+
+    _Ref* Release()
+    {
+        _Ref* obj = fObj;
+        fObj = nullptr;
+        return obj;
     }
 
 private:
@@ -214,10 +256,31 @@ hsRef<_Ref>::hsRef(const hsWeakRef<_Ref> &weak) : fObj(weak.Get())
         fObj->Ref();
 }
 
+template<class _Ref>
+template<class _OtherRef>
+hsRef<_Ref>::hsRef(const hsWeakRef<_OtherRef>& weak) : fObj(weak.Get())
+{
+    if (fObj)
+        fObj->Ref();
+}
+
 template <class _Ref>
 hsRef<_Ref> &hsRef<_Ref>::operator=(const hsWeakRef<_Ref> &weak)
 {
     _Ref* weakObj = weak.Get();
+    if (weakObj)
+        weakObj->Ref();
+    if (fObj)
+        fObj->UnRef();
+    fObj = weakObj;
+    return *this;
+}
+
+template<class _Ref>
+template<class _OtherRef>
+hsRef<_Ref>& hsRef<_Ref>::operator=(const hsWeakRef<_OtherRef>& weak)
+{
+    _OtherRef* weakObj = weak.Get();
     if (weakObj)
         weakObj->Ref();
     if (fObj)

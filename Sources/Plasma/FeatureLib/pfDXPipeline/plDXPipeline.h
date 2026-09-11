@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/pl3DPipeline.h"
 #include "plDXSettings.h"
 #include "plDXDevice.h"
+#include "plDXEnumerate.h"
 
 #include "plSurface/plLayerInterface.h"
 #include "hsMatrix44.h"
@@ -612,6 +613,9 @@ protected:
                                          uint8_t , uint32_t, uint8_t *, uint32_t,
                                          uint32_t, uint16_t);
     static hsCpuFunctionDispatcher<blend_vert_buffer_ptr> blend_vert_buffer;
+
+private:
+    static plDXEnumerate enumerator;
 };
 
 

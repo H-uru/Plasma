@@ -296,12 +296,9 @@ class xKI(ptModifier):
         PtUnloadDialog("KIHelp")
         PtUnloadDialog("KIHelpMenu")
         PtUnloadDialog("KeyMapDialog")
-        PtUnloadDialog("GameSettingsDialog")
         PtUnloadDialog("CalibrationGUI")
         PtUnloadDialog("TrailerPreviewGUI")
-        PtUnloadDialog("KeyMap2Dialog")
         PtUnloadDialog("AdvancedGameSettingsDialog")
-        PtUnloadDialog("OptionsHelpGUI")
         PtUnloadDialog("bkNotebook")
         PtUnloadDialog("bkBahroRockBook")
         PtUnloadDialog("YeeshaPageGUI")
@@ -343,12 +340,9 @@ class xKI(ptModifier):
         PtLoadDialog("KIHelp")
         PtLoadDialog("KIHelpMenu")
         PtLoadDialog("KeyMapDialog")
-        PtLoadDialog("GameSettingsDialog")
         PtLoadDialog("CalibrationGUI")
         PtLoadDialog("TrailerPreviewGUI")
-        PtLoadDialog("KeyMap2Dialog")
         PtLoadDialog("AdvancedGameSettingsDialog")
-        PtLoadDialog("OptionsHelpGUI")
         PtLoadDialog("bkNotebook")
         PtLoadDialog("bkBahroRockBook")
         PtLoadDialog("YeeshaPageGUI")
@@ -1343,6 +1337,7 @@ class xKI(ptModifier):
         self.DetermineKIFlags()
         self.DetermineGZ()
         self.DetermineTextColor()
+        self.DetermineShowTimestamps()
 
         # Hide all dialogs first.
         KIMicroBlackbar.dialog.hide()
@@ -1668,6 +1663,16 @@ class xKI(ptModifier):
         self.chatMgr.chatTextColor = None
         PtDebugPrint("xKI.DetermineTextColor(): KI Text Color is not overridden.", level=kWarningLevel)
 
+
+    #~~~~~~~~~~~~~~~~~~~~~~#
+    #  KI Chat Timestamps  #
+    #~~~~~~~~~~~~~~~~~~~~~~#
+
+    ## Sets the KI Text Color from the Chronicle.
+    def DetermineShowTimestamps(self):
+        if entry := ptVault().findChronicleEntry(kChron.ShowTimestamps):
+            if value := entry.getValue():
+                self.chatMgr.timestamps = xKIChat.ChatTimestampSettings.from_string(value)
 
 
     #~~~~~~~~~~#

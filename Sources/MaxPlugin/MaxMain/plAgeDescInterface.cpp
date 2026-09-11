@@ -1279,14 +1279,10 @@ void plAgeDescInterface::ILoadAge( const plFileName &path, bool checkSeqNum )
     EnableWindow( GetDlgItem( fhDlg, IDC_SEQPREFIX_EDIT ), false );
     EnableWindow( GetDlgItem( fhDlg, IDC_SEQPREFIX_SPIN ), false );
 
-    aged.SeekFirstPage();
-    plAgePage *page;
-
     HWND hPage = GetDlgItem(fhDlg, IDC_PAGE_LIST);
-    while ((page = aged.GetNextPage()) != nullptr)
-    {
-        int idx = ListBox_AddString( hPage, ST2T(page->GetName()) );
-        ListBox_SetItemData( hPage, idx, (LPARAM)new plAgePage( *page ) );
+    for (const auto& page : aged.GetPages()) {
+        int idx = ListBox_AddString(hPage, ST2T(page.GetName()));
+        ListBox_SetItemData(hPage, idx, (LPARAM)new plAgePage(page));
     }
 }
 

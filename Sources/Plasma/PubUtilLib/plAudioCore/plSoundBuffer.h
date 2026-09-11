@@ -175,17 +175,17 @@ protected:
 public:
     void Run() override;
 
-    void Start() override
+    void Init()
     {
         fRunning = true;
-        hsThread::Start();
+        Start();
     }
 
-    void Stop() override
+    void Shutdown()
     {
         fRunning = false;
         fEvent.Signal();
-        hsThread::Stop();
+        Stop();
     }
 
     bool IsRunning() const { return fRunning; }

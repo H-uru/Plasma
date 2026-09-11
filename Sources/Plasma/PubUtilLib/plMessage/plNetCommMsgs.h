@@ -39,11 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plMessage/plNetCommMsgs.h
-*   
-***/
 
 #ifndef plNetCommMsgs_inc
 #define plNetCommMsgs_inc
@@ -57,14 +52,8 @@ struct NetCliAuthFileInfo;
 
 class plNetCommReplyMsg : public plMessage {
 public:
-    enum EParamType {
-        kParamTypeOther = 0,
-        kParamTypePython,
-    };
-
     ENetError   result;
     void *      param;
-    EParamType  ptype;
 
     plNetCommReplyMsg () { SetBCastFlag(kBCastByExactType); }
 

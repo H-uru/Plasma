@@ -72,8 +72,7 @@ public:
     hsQuat& SetFromMatrix44(const hsMatrix44& mat);
     void SetFromMatrix(const hsMatrix44 *mat);
     void SetFromSlerp(const hsQuat &q1, const hsQuat &q2, float t, int spin=0);
-    void Set(float X, float Y, float Z, float W)  
-        { fX = X; fY = Y; fZ = Z; fW = W; }
+    void Set(float X, float Y, float Z, float W) { fX = X; fY = Y; fZ = Z; fW = W; }
     void GetAngleAxis(float *rad, hsVector3 *axis) const;
     void SetAngleAxis(const float rad, const hsVector3 &axis);
 
@@ -105,8 +104,7 @@ public:
     float MagnitudeSquared();
 
     [[nodiscard]]
-    hsQuat Conjugate() const
-        { return hsQuat(-fX,-fY,-fZ,fW); }
+    hsQuat Conjugate() const { return hsQuat(-fX,-fY,-fZ,fW); }
 
     [[nodiscard]]
     hsQuat Inverse() const;
@@ -115,19 +113,16 @@ public:
     hsQuat operator-(const hsQuat&) const;
     hsQuat operator+(const hsQuat&) const;
     hsQuat operator*(const hsQuat&) const;
-    hsQuat operator*(float f) const
-        { return hsQuat(fX*f,fY*f,fZ*f,fW*f); }
-    hsQuat operator/(float f) const
-        { return hsQuat(fX/f,fY/f,fZ/f,fW/f); }
+    hsQuat operator*(float f) const { return hsQuat(fX*f,fY*f,fZ*f,fW*f); }
+    hsQuat operator/(float f) const { return hsQuat(fX/f,fY/f,fZ/f,fW/f); }
     hsQuat operator/(const hsQuat&) const;
 
     [[nodiscard]]
-    float Dot(const hsQuat &q2) const
-        {   return (fX*q2.fX + fY*q2.fY + fZ*q2.fZ + fW*q2.fW); }
+    float Dot(const hsQuat &q2) const { return (fX*q2.fX + fY*q2.fY + fZ*q2.fZ + fW*q2.fW); }
 
     // I/O
     void Read(hsStream *stream);
     void Write(hsStream *stream);
+};
 
-    };
 #endif

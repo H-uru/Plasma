@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsGDeviceRef.h"
+#include "plMetalDeviceRef.h"
 
 class plGBufferGroup;
 class plBitmap;

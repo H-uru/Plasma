@@ -127,7 +127,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfCamera/plVirtualCamNeu.h"
 
 #include <algorithm>
-#include <string_theory/string>
+#include <string_theory/format>
 #include <utility>
 
 //#define MF_TOSSER
@@ -517,6 +517,8 @@ bool plRenderTriListFunc::RenderPrims() const
 }   
 
 //// Constructor & Destructor /////////////////////////////////////////////////
+
+plDXEnumerate plDXPipeline::enumerator;
 
 uint32_t plDXPipeline::fTexUsed(0);
 uint32_t plDXPipeline::fTexManaged(0);
@@ -1347,7 +1349,7 @@ bool plDXPipeline::ICreateDevice(bool windowed)
 #ifdef DBG_WRITE_FORMATS
     for (D3DFORMAT fmt : fCurrentMode->fDepthFormats)
     {
-        hsDebugMessage(ST::format("-- Valid depth buffer format: {}", IGetDXFormatName(fmt)).c_str(), 0);
+        hsStatusMessageF("-- Valid depth buffer format: {}", IGetDXFormatName(fmt));
     }
 #endif
 
@@ -1381,13 +1383,13 @@ bool plDXPipeline::ICreateDevice(bool windowed)
         fSettings.fD3DCaps &= ~kCapsZBias;
 
 #ifdef DBG_WRITE_FORMATS
-    hsDebugMessage(ST::format("-- Requesting depth buffer format: {}", IGetDXFormatName(params.AutoDepthStencilFormat)).c_str(), 0);
+    hsStatusMessageF("-- Requesting depth buffer format: {}", IGetDXFormatName(params.AutoDepthStencilFormat));
 #endif
 
 
     params.BackBufferFormat = dispMode.Format;
 #ifdef DBG_WRITE_FORMATS
-    hsDebugMessage(ST::format("-- Requesting back buffer format: {}", IGetDXFormatName(params.BackBufferFormat)).c_str(), 0);
+    hsStatusMessageF("-- Requesting back buffer format: {}", IGetDXFormatName(params.BackBufferFormat));
 #endif
 
     params.hDeviceWindow = fDevice.fHWnd;
@@ -1679,7 +1681,7 @@ void    plDXPipeline::IReleaseDeviceObjects()
     {
         if( fLayerRef[i] )
         {
-            hsRefCnt_SafeUnRef(fLayerRef[i]);
+            fLayerRef[i]->UnRef();
             fLayerRef[i] = nullptr;
         }
     }
@@ -1689,9 +1691,10 @@ void    plDXPipeline::IReleaseDeviceObjects()
     hackOffscreens.clear();
 #endif // MF_ENABLE_HACKOFF
 
-    if( fULutTextureRef )
+    if (fULutTextureRef) {
         delete [] fULutTextureRef->fData;
-    hsRefCnt_SafeUnRef(fULutTextureRef);
+        fULutTextureRef->UnRef();
+    }
     fULutTextureRef = nullptr;
 
     while( fVtxBuffRefList )
@@ -1727,7 +1730,7 @@ void    plDXPipeline::IReleaseDeviceObjects()
         LONG ret;
         while( ret = fD3DDevice->Release() )
         {
-            hsStatusMessageF("%d - Error releasing device", ret);
+            hsStatusMessageF("{} - Error releasing device", ret);
         }
         fD3DDevice = nullptr;
     }
@@ -2196,7 +2199,7 @@ void    plDXPipeline::Resize( uint32_t width, uint32_t height )
     {
         /// Direct3D is reporting that we lost the device but are unable to reset
         /// it yet, so ignore.
-        hsStatusMessage( "Received Resize() request at an invalid time. Ignoring...\n" );
+        hsStatusMessage("Received Resize() request at an invalid time. Ignoring...");
         return;
     }
     if( !width && !height )
@@ -2240,7 +2243,7 @@ void    plDXPipeline::Resize( uint32_t width, uint32_t height )
     else
     {
         // Just for debug
-        hsStatusMessage( "Recreating the pipeline...\n" );
+        hsStatusMessage("Recreating the pipeline...");
     }
 
     // Recreate
@@ -3151,7 +3154,7 @@ bool plDXPipeline::EndRender()
     {
         if( fLayerRef[i] )
         {
-            hsRefCnt_SafeUnRef(fLayerRef[i]);
+            fLayerRef[i]->UnRef();
             fLayerRef[i] = nullptr;
         }
     }
@@ -3582,7 +3585,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
                     face->SetDeviceRef( new plDXRenderTargetRef( surfFormat, 0, face, false ) );
                     ( (plDXRenderTargetRef *)face->GetDeviceRef())->Link( &fRenderTargetRefList );
                     // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
-                    hsRefCnt_SafeUnRef( face->GetDeviceRef() );
+                    face->GetDeviceRef()->UnRef();
                 }
             }
 
@@ -3593,7 +3596,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
         else
         {
             ReleaseObject(depthSurface);
-            hsRefCnt_SafeUnRef(ref);
+            ref->UnRef();
             ref = nullptr;
         }
     }
@@ -3617,7 +3620,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
         else
         {
             ReleaseObject(depthSurface);
-            hsRefCnt_SafeUnRef(ref);
+            ref->UnRef();
             ref = nullptr;
         }
     }
@@ -3652,7 +3655,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
         else
         {
             ReleaseObject(depthSurface);
-            hsRefCnt_SafeUnRef(ref);
+            ref->UnRef();
             ref = nullptr;
         }
 
@@ -3779,7 +3782,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
                     face->SetDeviceRef( new plDXRenderTargetRef( surfFormat, 0, face, false ) );
                     ( (plDXRenderTargetRef *)face->GetDeviceRef())->Link( &fRenderTargetRefList );
                     // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
-                    hsRefCnt_SafeUnRef( face->GetDeviceRef() );
+                    face->GetDeviceRef()->UnRef();
                 }
             }
         
@@ -3790,7 +3793,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
         else
         {
             ReleaseObject(depthSurface);
-            hsRefCnt_SafeUnRef(ref);
+            ref->UnRef();
             ref = nullptr;
         }
     }
@@ -3814,7 +3817,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
         else
         {
             ReleaseObject(depthSurface);
-            hsRefCnt_SafeUnRef(ref);
+            ref->UnRef();
             ref = nullptr;
         }
     }
@@ -3841,7 +3844,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
         else
         {
             ReleaseObject(depthSurface);
-            hsRefCnt_SafeUnRef(ref);
+            ref->UnRef();
             ref = nullptr;
         }
 
@@ -4079,7 +4082,7 @@ void plDXPipeline::PushRenderRequest(plRenderRequest* req)
     fView.fRenderState = req->GetRenderState();
 
     fView.fRenderRequest = req;
-    hsRefCnt_SafeRef(fView.fRenderRequest);
+    fView.fRenderRequest->Ref();
 
     SetDrawableTypeMask(req->GetDrawableMask());
     SetSubDrawableTypeMask(req->GetSubDrawableMask());
@@ -4685,7 +4688,7 @@ hsGDeviceRef    *plDXPipeline::IMakeLightRef( plLightInfo *owner )
     lRef->fOwner = owner;
     owner->SetDeviceRef( lRef );
     // Unref now, since for now ONLY the BG owns the ref, not us (not until we use it, at least)
-    hsRefCnt_SafeUnRef( lRef );
+    lRef->UnRef();
 
     lRef->Link( &fLights.fRefList );
 
@@ -7420,7 +7423,7 @@ hsGDeviceRef    *plDXPipeline::MakeTextureRef( plLayerInterface* layer, plMipmap
         original->SetDeviceRef( ref );
         // Note: this is because SetDeviceRef() will ref it, and at this point,
         // only the bitmap should own the ref, not us. We ref/unref it on Use()
-        hsRefCnt_SafeUnRef( ref );  
+        ref->UnRef();  
     }
     else
         ref->Set( formatType, mmlvs, b->GetWidth(), b->GetHeight(), 
@@ -7547,7 +7550,7 @@ hsGDeviceRef    *plDXPipeline::IMakeCubicTextureRef( plLayerInterface* layer, pl
         cubic->SetDeviceRef( ref );
         // Note: this is because SetDeviceRef() will ref it, and at this point,
         // only the bitmap should own the ref, not us. We ref/unref it on Use()
-        hsRefCnt_SafeUnRef( ref );
+        ref->UnRef();
     }
     else
     {
@@ -8093,7 +8096,7 @@ void plDXPipeline::ISetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, pl
     vRef->fIndex = idx;
 
     owner->SetVertexBufferRef(idx, vRef);
-    hsRefCnt_SafeUnRef(vRef);
+    vRef->UnRef();
 }
 
 // ICheckStaticVertexBuffer ///////////////////////////////////////////////////////////////////////
@@ -8499,7 +8502,7 @@ void plDXPipeline::ISetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, plD
     iRef->SetRebuiltSinceUsed(true);
 
     owner->SetIndexBufferRef(idx, iRef);
-    hsRefCnt_SafeUnRef(iRef);
+    iRef->UnRef();
 
     iRef->SetVolatile(owner->AreIdxVolatile());
 }
@@ -8646,7 +8649,7 @@ void plDXPipeline::IEndAllocUnManaged()
 // a new age.
 void plDXPipeline::LoadResources()
 {
-    hsStatusMessageF("Begin Device Reload t=%f",hsTimer::GetSeconds());
+    hsStatusMessageF("Begin Device Reload t={}", hsTimer::GetSeconds());
     plNetClientApp::StaticDebugMsg("Begin Device Reload");
 
     // Just to be safe.
@@ -8704,7 +8707,7 @@ void plDXPipeline::LoadResources()
 
     plProfile_IncCount(PipeReload, 1);
 
-    hsStatusMessageF("End Device Reload t=%f",hsTimer::GetSeconds());
+    hsStatusMessageF("End Device Reload t={}", hsTimer::GetSeconds());
     plNetClientApp::StaticDebugMsg("End Device Reload");
 }
 
@@ -9126,7 +9129,7 @@ HRESULT plDXPipeline::ISetShaders(plShader* vShader, plShader* pShader)
         if( !vRef )
         {
             vRef = new plDXVertexShader(vShader);
-            hsRefCnt_SafeUnRef(vRef);
+            vRef->UnRef();
         }
         if( !vRef->IsLinked() )
             vRef->Link(&fVShaderRefList);
@@ -9154,7 +9157,7 @@ HRESULT plDXPipeline::ISetShaders(plShader* vShader, plShader* pShader)
         if( !pRef )
         {
             pRef = new plDXPixelShader(pShader);
-            hsRefCnt_SafeUnRef(pRef);
+            pRef->UnRef();
         }
         if( !pRef->IsLinked() )
             pRef->Link(&fPShaderRefList);

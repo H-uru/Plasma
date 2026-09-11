@@ -425,7 +425,7 @@ bool plWin32Sound::MsgReceive( plMessage* pMsg )
     plEventCallbackMsg *e = plEventCallbackMsg::ConvertNoRef( pMsg );
     if (e != nullptr)
     {
-        if( e->fEvent == kStop )
+        if( e->fEvent == plEventCallbackMsg::kStop )
         {
             fPlaying = false;
             fPlayOnReactivate = false;  // Just to make sure...

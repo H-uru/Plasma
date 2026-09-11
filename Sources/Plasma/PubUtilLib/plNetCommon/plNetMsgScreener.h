@@ -50,8 +50,6 @@ class plMessage;
 class plNetGameMember;
 class plNetMessage;
 
-namespace ST { class string; }
-
 //
 // Class which decides what game messages are allowed to be sent to the server.
 // Used both client and server-side.

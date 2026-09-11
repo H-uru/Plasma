@@ -51,8 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #    include <unistd.h>
 #endif
 
-#include "plProduct.h"
-
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnSceneObject/plSceneObject.h"
@@ -164,16 +162,6 @@ bool plAgeLoader::MsgReceive(plMessage* msg)
     return plReceiver::MsgReceive(msg);
 }
 
-//
-// read in the age desc file and page in/out the rooms belonging to the specified age.
-// return false on error
-//
-//============================================================================
-bool plAgeLoader::LoadAge(const ST::string& ageName)
-{
-    return ILoadAge(ageName);
-}
-
 //============================================================================
 void plAgeLoader::UpdateAge(const ST::string& ageName)
 {
@@ -194,21 +182,23 @@ void plAgeLoader::NotifyAgeLoaded( bool loaded )
 }
 
 
-//// ILoadAge ////////////////////////////////////////////////////////////////
-//  Does the loading-specific stuff for queueing an age to load
+//// LoadAge /////////////////////////////////////////////////////////////////
+// Read in the age desc file and page in/out the rooms belonging to the specified age.
+// Return false on error.
 
-bool plAgeLoader::ILoadAge(const ST::string& ageName)
+tl::expected<tl::monostate, ST::string> plAgeLoader::LoadAge(const ST::string& ageName)
 {
-    plNetClientApp* nc = plNetClientApp::GetInstance();
+    plNetClientMgr* nc = plNetClientMgr::GetInstance();
     ASSERT(!nc->GetFlagsBit(plNetClientApp::kPlayingGame));
 
     fAgeName = ageName;
 
     nc->DebugMsg( "Net: Loading age {}", fAgeName);
 
-    if ((fFlags & kLoadMask) != 0)
-        ErrorAssert(__LINE__, __FILE__, "Fatal Error:\nAlready loading or unloading an age.\n%s will now exit.",
-                                        plProduct::ShortName().c_str());
+    if ((fFlags & kLoadMask) != 0) {
+        hsAssert(false, "Already loading or unloading an age");
+        return tl::unexpected(ST_LITERAL("Already loading or unloading an age"));
+    }
 
     fFlags |= kLoadingAge;
     
@@ -236,30 +226,25 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
         {
             nc->ErrorMsg("Failed loading age.  Age desc file {} has nil stream", fAgeName);
             fFlags &= ~kLoadingAge;
-            return false;
+            return tl::unexpected(ST::format("Could not open .age file for {}", fAgeName));
         }
 
         ad.Read(stream.get());
         ad.SetAgeName(fAgeName);
     }
-    ad.SeekFirstPage();
-    
-    plAgePage *page;
+
     plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
 
     // Copy, exclude pages we want excluded, and collect our scene nodes
-    fCurAgeDescription.CopyFrom(ad);
-    while ((page = ad.GetNextPage()) != nullptr)
-    {
-        if( IsPageExcluded( page, fAgeName) )
+    fCurAgeDescription = ad;
+    for (const auto& page : ad.GetPages()) {
+        if (IsPageExcluded(&page, fAgeName))
             continue;
 
-        plKey roomKey = plKeyFinder::Instance().FindSceneNodeKey( fAgeName, page->GetName() );
+        plKey roomKey = plKeyFinder::Instance().FindSceneNodeKey(fAgeName, page.GetName());
         if (roomKey != nullptr)
             AddPendingPageInRoomKey( roomKey );
     }
-    ad.SeekFirstPage();
-
 
     // Tell the client to load-and-hold all the keys for this age, to make the loading process work better
     plClientMsg *loadAgeKeysMsg = new plClientMsg( plClientMsg::kLoadAgeKeys );
@@ -269,8 +254,13 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
     //
     // Load the Age's SDL Hook object (and it's python modifier)
     //  
-    plUoid oid=nc->GetAgeSDLObjectUoid(fAgeName);
+    plUoid oid = plNetClientMgr::GetAgeSDLObjectUoidForAge(ad);
     plKey ageSDLObjectKey = hsgResMgr::ResMgr()->FindKey(oid);
+    // Loading the AgeSDLHook also loads the VeryVerySpecialPythonFileMod,
+    // so the create notification only gets sent after the age Python has finished initializing.
+    // Some existing age scripts call PtGetAgeSDL *during* their initialization though, even though they shouldn't.
+    // To make those early calls work, tell plNetClientMgr the AgeSDLHook key now, before the create notification.
+    nc->SetAgeSDLObjectKey(ageSDLObjectKey);
     if (ageSDLObjectKey)
         hsgResMgr::ResMgr()->AddViaNotify(ageSDLObjectKey, new plGenRefMsg(nc->GetKey(), plRefMsg::kOnCreate, -1, 
         plNetClientMgr::kAgeSDLHook), plRefFlags::kActiveRef);
@@ -281,18 +271,38 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
     pMsg1->SetAgeName(fAgeName);
 
     // Loop and ref!
-    while ((page = ad.GetNextPage()) != nullptr)
-    {
-        if( IsPageExcluded( page, fAgeName) )
-        {
-            nc->DebugMsg("\tExcluding page {}\n", page->GetName());
+    for (const auto& page : ad.GetPages()) {
+        if (IsPageExcluded(&page, fAgeName)) {
+            nc->DebugMsg("\tExcluding page {}\n", page.GetName());
             continue;
         }
 
         nPages++;
 
-        pMsg1->AddRoomLoc(ad.CalcPageLocation(page->GetName()));
-        nc->DebugMsg("\tPaging in room {}\n", page->GetName());
+        plLocation pageLoc = ad.CalcPageLocation(page.GetName());
+        if (pageLoc.IsValid()) {
+            pMsg1->AddRoomLoc(pageLoc);
+            nc->DebugMsg("\tPaging in room {}", page.GetName());
+        } else {
+            ST::string msg = ST::format(
+                "Could not find page {} that is listed in the .age file for {}",
+                page.GetName(), fAgeName
+            );
+            nc->ErrorMsg("\t{}", msg);
+            hsAssert(false, msg.c_str());
+#ifndef HS_DEBUGGING
+            return tl::unexpected(std::move(msg));
+#endif
+        }
+    }
+
+    if (nPages == 0) {
+        ST::string msg = ST::format("Found no pages to load for age {}", fAgeName);
+        nc->ErrorMsg(msg);
+        hsAssert(false, ST::format("Found no pages to load for age {}. You will now link into the empty void and the game may misbehave.", fAgeName).c_str());
+#ifndef HS_DEBUGGING
+        return tl::unexpected(std::move(msg));
+#endif
     }
 
     pMsg1->Send(clientKey);
@@ -302,13 +312,7 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
     dumpAgeKeys->SetAgeName( fAgeName);
     dumpAgeKeys->Send( clientKey );
 
-    if ( nPages==0 )
-    {
-        // age is done loading because it has no pages?
-        fFlags &= ~kLoadingAge;
-    }
-
-    return true;
+    return tl::monostate();
 }
 
 //// plUnloadAgeCollector ////////////////////////////////////////////////////
@@ -336,11 +340,11 @@ class plUnloadAgeCollector : public plRegistryPageIterator
         }
 };
 
-//// IUnloadAge //////////////////////////////////////////////////////////////
+//// UnloadAge ///////////////////////////////////////////////////////////////
 //  Does the UNloading-specific stuff for queueing an age to unload.
-//  Far simpler that ILoadAge :)
+//  Far simpler that LoadAge :)
 
-bool    plAgeLoader::IUnloadAge()
+bool plAgeLoader::UnloadAge()
 {
     plNetClientApp* nc = plNetClientApp::GetInstance();
     nc->DebugMsg( "Net: Unloading age {}", fAgeName);

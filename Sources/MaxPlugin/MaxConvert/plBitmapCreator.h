@@ -72,7 +72,7 @@ public:
     float sig;
     bool    isStaticCubicEnvMap;
     bool    invertAlpha;
-    const MCHAR  *faceNames[ 6 ];
+    plFileName faceNames[ 6 ];
     uint32_t  maxDimension;
     uint8_t   clampFlags;
     bool    usePNG;
@@ -86,7 +86,6 @@ public:
         sig = 0;
         isStaticCubicEnvMap = false;
         invertAlpha = false;
-        faceNames[0] = faceNames[1] = faceNames[2] = faceNames[3] = faceNames[4] = faceNames[5] = nullptr;
         maxDimension = 0;
         clampFlags = 0;
         usePNG = false;

@@ -60,13 +60,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #cmakedefine USE_EGL
 #cmakedefine USE_SPEEX
 #cmakedefine USE_OPUS
+#cmakedefine USE_VIDEOTOOLBOX
 #cmakedefine USE_VPX
 #cmakedefine USE_WEBM
+#cmakedefine USE_WAYLAND
+#cmakedefine USE_X11
+#cmakedefine USE_XRANDR
 
 #cmakedefine HAVE_SYSCTL
 #cmakedefine HAVE_SYSDIR
 #cmakedefine HAVE_SYSINFO
 #cmakedefine HAVE_SHELLSCALINGAPI
 #cmakedefine HAVE_PTHREAD_SETNAME_NP
+#cmakedefine HAVE_STRNLEN
 
 #endif

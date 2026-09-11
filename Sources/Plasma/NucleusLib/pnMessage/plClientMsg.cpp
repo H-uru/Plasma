@@ -52,6 +52,7 @@ void plClientMsg::IReset()
 
 void plClientMsg::AddRoomLoc(const plLocation& loc)
 {
+    hsAssert(loc.IsValid(), "Trying to load an invalid room");
     if (loc.IsValid())
         fRoomLocs.emplace_back(loc);
     else

@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plCmdParser.h"
 #include "plFileSystem.h"
+#include "hsMain.inl"
 #include "plProduct.h"
 
 #include "plFilePatcher.h"
@@ -124,7 +125,7 @@ static void FileDownloadProgress(uint64_t bytesDown, uint64_t bytesTotal, const 
     fflush(stdout);
 }
 
-int main(int argc, char* argv[])
+static int hsMain(std::vector<ST::string> args)
 {
     enum { kArgServerIni, kArgDataOnly, kArgClientOnly, kArgQuiet, kArgHelp1, kArgHelp2 };
     const plCmdArgDef cmdLineArgs[] = {
@@ -135,12 +136,6 @@ int main(int argc, char* argv[])
         { kCmdArgFlagged | kCmdTypeBool,    "help",         kArgHelp1 },
         { kCmdArgFlagged | kCmdTypeBool,    "?",            kArgHelp2 },
     };
-
-    std::vector<ST::string> args;
-    args.reserve(argc);
-    for (size_t i = 0; i < argc; i++) {
-        args.emplace_back(ST::string::from_utf8(argv[i]));
-    }
 
     plCmdParser cmdParser(cmdLineArgs, std::size(cmdLineArgs));
     if (cmdParser.Parse(args)) {

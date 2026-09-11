@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetCommMsgs.h"
 
-#include "pnNetProtocol/pnNetProtocol.h"
+#include "pnNetProtocol/pnNpCommon.h"
 #include "plNetGameLib/plNetGameLib.h"
 
 plNetCommFileListMsg::plNetCommFileListMsg()

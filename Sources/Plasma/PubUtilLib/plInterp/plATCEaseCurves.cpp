@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimEaseTypes.h"
 #include "plAnimTimeConvert.h"
 
+#include "hsMath.h"
 #include "hsStream.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

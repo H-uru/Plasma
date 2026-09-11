@@ -1,7 +1,6 @@
 set(plFile_SOURCES
     plBrowseFolder.cpp
     plEncryptedStream.cpp
-    plInitFileReader.cpp
     plSecureStream.cpp
     plStreamSource.cpp
 )
@@ -9,7 +8,6 @@ set(plFile_SOURCES
 set(plFile_HEADERS
     plBrowseFolder.h
     plEncryptedStream.h
-    plInitFileReader.h
     plSecureStream.h
     plStreamSource.h
 )

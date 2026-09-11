@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include "hsMath.h"
 #include "plCreatableIndex.h"
 #include "plgDispatch.h"
 
@@ -230,14 +231,11 @@ protected:
             curPage = nullptr;
 
         // Load the page combo and select the saved page (if it's in there)
-        plAgePage *page;
-        aged.SeekFirstPage();
-        while ((page = aged.GetNextPage()) != nullptr)
-        {
-            int idx = ComboBox_AddString(hPageCombo, ST2T(page->GetName()));
-            if (curPage && (page->GetName() == curPage))
+        for (const auto& page : aged.GetPages()) {
+            int idx = ComboBox_AddString(hPageCombo, ST2T(page.GetName()));
+            if (curPage && page.GetName() == curPage)
                 ComboBox_SetCurSel(hPageCombo, idx);
-            ComboBox_SetItemData( hPageCombo, idx, (int)page->GetSeqSuffix() );
+            ComboBox_SetItemData(hPageCombo, idx, (int)page.GetSeqSuffix());
         }
     }
 
@@ -695,17 +693,12 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
         return;
     }
 
-    plAgePage   *page;
-    aged->SeekFirstPage();
-
-    while ((page = aged->GetNextPage()) != nullptr)
-    {
-        if( page->GetName().compare_i( compPBPageName ) == 0 )
-        {
-            fCompPB->SetValue( kInfoSeqSuffix, 0, (int)page->GetSeqSuffix() );
+    for (const auto& page : aged->GetPages()) {
+        if (page.GetName().compare_i(compPBPageName) == 0) {
+            fCompPB->SetValue(kInfoSeqSuffix, 0, (int)page.GetSeqSuffix());
 
             // Also re-copy the page name, just to make sure the case is correct
-            fCompPB->SetValue( kInfoPage, 0, ST2M(page->GetName()) );
+            fCompPB->SetValue(kInfoPage, 0, ST2M(page.GetName()));
             return;
         }
     }
@@ -778,13 +771,9 @@ int32_t   plPageInfoUtils::GetSeqNumFromAgeDesc( const ST::string& ageName, cons
     seqPrefix = aged->GetSequencePrefix();
 
     // Find our page
-    plAgePage *page;
-    aged->SeekFirstPage();
-    while ((page = aged->GetNextPage()) != nullptr)
-    {
-        if (page->GetName().compare_i(pageName) == 0)
-        {
-            seqSuffix = page->GetSeqSuffix();
+    for (const auto& page : aged->GetPages()) {
+        if (page.GetName().compare_i(pageName) == 0) {
+            seqSuffix = page.GetSeqSuffix();
             break;
         }
     }
@@ -2535,8 +2524,8 @@ bool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         plLayerTex *layer = GetBitmap( i );
         if (layer != nullptr)
         {
-            PBBitmap *texture = layer->GetPBBitmap();
-            if (texture != nullptr)
+            plFileName texturePath = layer->GetBitmapFileName();
+            if (texturePath.IsValid())
             {
                 uint32_t flags = plBitmap::kAlphaChannelFlag;
 
@@ -2544,10 +2533,10 @@ bool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 if (fCompPB->GetInt(kCompressImage, 0, i) == 0)
                 {
                     flags |= plBitmap::kForceNonCompressed;
-                    bMap = plLayerConverter::Instance().CreateSimpleTexture( M2ST(texture->bi.Name()), lib->GetKey()->GetUoid().GetLocation(), 0, flags );
+                    bMap = plLayerConverter::Instance().CreateSimpleTexture( texturePath, lib->GetKey()->GetUoid().GetLocation(), 0, flags );
                 }
                 else // compress using PNG compression scheme
-                    bMap = plLayerConverter::Instance().CreateSimpleTexture( M2ST(texture->bi.Name()), lib->GetKey()->GetUoid().GetLocation(), 0, flags, true );
+                    bMap = plLayerConverter::Instance().CreateSimpleTexture( texturePath, lib->GetKey()->GetUoid().GetLocation(), 0, flags, true );
                 if (bMap != nullptr)
                 {
                     hsgResMgr::ResMgr()->AddViaNotify( bMap->GetKey(), new plGenRefMsg( lib->GetKey(), 

@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plUUID;
 struct VaultMarker;
-namespace ST { class string; }
 
 class pyVaultMarkerGameNode : public pyVaultNode
 {

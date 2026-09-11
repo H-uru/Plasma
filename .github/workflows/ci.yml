@@ -5,11 +5,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
+env:
+  CMAKE_VERSION: "4.4.2"
+
 jobs:
   # HACK to enable/disable the max CI based on presence/absence of secret. See also:
   # https://github.com/actions/runner/issues/1138
   max-secrets:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     name: Check for Max SDK
     outputs:
       HAS_MACHINE_USER_TOKEN: ${{ steps.check.outputs.MACHINE_USER_TOKEN }}
@@ -21,14 +24,15 @@ jobs:
           MACHINE_USER_TOKEN: ${{ secrets.MACHINE_USER_REPO_READ }}
 
   windows:
-    runs-on: windows-2019
+    runs-on: ${{ matrix.platform.runner }}
     name: ${{ matrix.platform.str }}-${{ matrix.cfg.str }}
     needs: ["max-secrets"]
     strategy:
       matrix:
         platform:
-          - { generator: Visual Studio 16 2019, max-version: 7, arch: Win32, qt-arch: win32_msvc2019, qt-version: 5.15.2,  str: windows-x86 }
-          - { generator: Visual Studio 16 2019, max-version: 2022, arch: x64, qt-arch: win64_msvc2019_64, qt-version: 5.15.2,  str: windows-x64 }
+          - { generator: Visual Studio 17 2022, max-version: 7, arch: Win32, qt-arch: win32_msvc2019, qt-version: 5.15.2, runner: "windows-2022", str: windows-x86 }
+          - { generator: Visual Studio 18 2026, max-version: 2022, arch: x64, qt-arch: win64_msvc2022_64, qt-version: 6.9.1, runner: "windows-2025-vs2026", str: windows-x64 }
+          - { generator: Visual Studio 18 2026, arch: arm64, qt-arch: win64_msvc2022_arm64, qt-version: 6.9.1, runner: "windows-11-vs2026-arm", str: windows-arm64 }
         cfg:
           - { external: OFF, type: RelWithPDB, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
@@ -36,12 +40,12 @@ jobs:
 
     steps:
       - name: Checkout Plasma
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Checkout MaxSDK
         continue-on-error: true
         if: needs.max-secrets.outputs.HAS_MACHINE_USER_TOKEN == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: H-uruMachineUser/3dsMaxSDK
           token: ${{ secrets.MACHINE_USER_REPO_READ }}
@@ -49,18 +53,18 @@ jobs:
 
       - name: Install Qt
         continue-on-error: true
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           version: ${{ matrix.platform.qt-version }}
           arch: ${{ matrix.platform.qt-arch }}
           dir: ${{ github.workspace }}/qt
 
-      - name: Setup cmake
+      - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
-          cmake-version: '3.29.2'
+          cmake-version: ${{ env.CMAKE_VERSION }}
 
-      - name: Setup NuGet
+      - name: Configure NuGet
         run: |
           nuget sources add `
               -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" `
@@ -77,7 +81,7 @@ jobs:
         run: |
           cmake `
             -G "${{ matrix.platform.generator }}" -A "${{ matrix.platform.arch }}" `
-            -DPLASMA_BUILD_MAX_PLUGIN=ON `
+            -DPLASMA_BUILD_MAX_PLUGIN=${{ case(matrix.platform.max-version != '', 'ON', 'OFF') }} `
             -DPLASMA_BUILD_TESTS=ON `
             -DPLASMA_BUILD_TOOLS=ON `
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} `
@@ -96,7 +100,7 @@ jobs:
           cmake --build build --target INSTALL --config "${{ matrix.cfg.type }}" -j 4
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
@@ -112,38 +116,38 @@ jobs:
     needs: ["max-secrets"]
     if: github.event_name == 'push' && needs.max-secrets.outputs.HAS_MACHINE_USER_TOKEN == 'true'
 
-    runs-on: windows-2019
+    runs-on: windows-2022
     name: maxplugin-${{ matrix.cfg.str }}-${{ matrix.cfg.sdk-version }}
     strategy:
       matrix:
         cfg:
           # Max 7 and 2022 are tested in the x86 and x64 windows build jobs, respectively.
-          - { sdk-version: 2008, generator: Visual Studio 16 2019, arch: Win32, str: windows-x86 }
-          - { sdk-version: 2012, generator: Visual Studio 16 2019, arch: Win32, str: windows-x86 }
-          - { sdk-version: 2013, generator: Visual Studio 16 2019, arch: x64, str: windows-x64 }
-          - { sdk-version: 2017, generator: Visual Studio 16 2019, arch: x64, str: windows-x64 }
-          - { sdk-version: 2019, generator: Visual Studio 16 2019, arch: x64, str: windows-x64 }
-          - { sdk-version: 2020, generator: Visual Studio 16 2019, arch: x64, str: windows-x64 }
-          - { sdk-version: 2023, generator: Visual Studio 16 2019, arch: x64, str: windows-x64 }
-          - { sdk-version: 2024, generator: Visual Studio 16 2019, arch: x64, str: windows-x64 }
+          - { sdk-version: 2008, generator: Visual Studio 17 2022, arch: Win32, str: windows-x86 }
+          - { sdk-version: 2012, generator: Visual Studio 17 2022, arch: Win32, str: windows-x86 }
+          - { sdk-version: 2013, generator: Visual Studio 17 2022, arch: x64, str: windows-x64 }
+          - { sdk-version: 2017, generator: Visual Studio 17 2022, arch: x64, str: windows-x64 }
+          - { sdk-version: 2019, generator: Visual Studio 17 2022, arch: x64, str: windows-x64 }
+          - { sdk-version: 2020, generator: Visual Studio 17 2022, arch: x64, str: windows-x64 }
+          - { sdk-version: 2023, generator: Visual Studio 17 2022, arch: x64, str: windows-x64 }
+          - { sdk-version: 2024, generator: Visual Studio 17 2022, arch: x64, str: windows-x64 }
 
     steps:
       - name: Checkout Plasma
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Checkout MaxSDK
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: H-uruMachineUser/3dsMaxSDK
           token: ${{ secrets.MACHINE_USER_REPO_READ }}
           path: maxsdk
 
-      - name: Setup cmake
+      - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
-          cmake-version: '3.29.2'
+          cmake-version: ${{ env.CMAKE_VERSION }}
 
-      - name: Setup NuGet
+      - name: Configure NuGet
         run: |
           nuget sources add `
               -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" `
@@ -176,18 +180,20 @@ jobs:
           cmake --build build --target INSTALL --config Release -j 4
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: plasma-${{ matrix.cfg.str }}-max-${{ matrix.cfg.sdk-version }}
           path: build/install
 
+
   linux:
-    runs-on: ubuntu-22.04
+    runs-on: ${{ matrix.platform.runner }}
     name: ${{ matrix.platform.str }}-${{ matrix.cfg.str }}
     strategy:
       matrix:
         platform:
-          - { str: linux-x64 }
+          - { str: linux-x64, runner: "ubuntu-26.04" }
+          - { str: linux-arm64, runner: "ubuntu-26.04-arm" }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
@@ -195,27 +201,37 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
               autoconf \
+              autoconf-archive \
               cmake \
               libcairo2 \
+              libexpected-dev \
+              libltdl-dev \
               libsecret-1-dev \
               libtool \
+              libx11-dev \
+              libxfixes-dev \
+              libxrandr-dev \
+              mono-complete \
               nasm \
               ninja-build \
               qtbase5-dev
 
-      - name: Setup cmake
+      - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
-          cmake-version: '3.29.2'
+          cmake-version: ${{ env.CMAKE_VERSION }}
 
       - name: Setup NuGet
+        uses: nuget/setup-nuget@v4
+
+      - name: Configure NuGet
         run: |
           nuget sources add \
               -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
@@ -257,7 +273,7 @@ jobs:
           cmake --build build --target install -j 4
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
@@ -269,8 +285,8 @@ jobs:
     strategy:
       matrix:
         platform:
-          - { str: macos-arm64, arch: arm64, runner: "macos-14" }
-          - { str: macos-x64, arch: x86_64, runner: "macos-13" }
+          - { str: macos-arm64, arch: arm64, runner: "macos-26", qt-version: 6.11.1, min-deploy-target: 11.0 }
+          - { str: macos-x64, arch: x86_64, runner: "macos-15-intel", qt-version: 5.15.2, min-deploy-target: 10.14 }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
@@ -278,24 +294,34 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install dependencies
         run: |
           brew install -q \
-              qt@5 \
               autoconf \
+              autoconf-archive \
               automake \
               libtool \
               nasm \
+              nuget \
               python-setuptools
 
-      - name: Setup cmake
+      - name: Install Qt
+        continue-on-error: true
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ matrix.platform.qt-version }}
+          arch: clang_64
+          host: mac
+          dir: ${{ github.workspace }}/qt
+
+      - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
-          cmake-version: '3.29.2'
+          cmake-version: ${{ env.CMAKE_VERSION }}
 
-      - name: Setup NuGet
+      - name: Configure NuGet
         run: |
           nuget sources add \
               -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
@@ -314,12 +340,11 @@ jobs:
             -G Xcode \
             -DUSE_VCPKG=ON \
             -DCMAKE_OSX_ARCHITECTURES=${{ matrix.platform.arch }} \
-            -DCMAKE_OSX_DEPLOYMENT_TARGET=10.14 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ matrix.platform.min-deploy-target }} \
             -DCMAKE_FIND_FRAMEWORK=LAST \
             -DPLASMA_BUILD_TESTS=ON \
             -DPLASMA_BUILD_TOOLS=ON \
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} \
-            -DQt5_ROOT=$(brew --prefix qt@5) \
             -DVCPKG_INSTALL_OPTIONS=--clean-after-build \
             -S . -B build
         env:
@@ -340,7 +365,48 @@ jobs:
           cmake --build build --target install --config "${{ matrix.cfg.type }}" -j 2
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
+
+  stubs:
+    needs: [linux, macos, windows]
+    runs-on: ${{ matrix.platform.runner }}
+    name: stubs-${{ matrix.platform.str }}
+    strategy:
+      matrix:
+        platform:
+          - { str: macos-arm64, runner: "macos-26" }
+          - { str: macos-x64, runner: "macos-15-intel" }
+          - { str: linux-arm64, runner: "ubuntu-26.04-arm" }
+          - { str: linux-x64, runner: "ubuntu-26.04" }
+          - { str: windows-arm64, runner: "windows-11-vs2026-arm" }
+          - { str: windows-x64, runner: "windows-2025" }
+          - { str: windows-x86, runner: "windows-2022" }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: plasma-${{ matrix.platform.str }}-internal-release
+          path: build/install
+
+      - name: Set Permissions
+        if: runner.os != 'Windows'
+        run: |
+          chmod +x build/install/tools/plGeneratePythonStubs
+
+      - name: Check Python Stubs
+        shell: bash
+        run: |
+          build/install/tools/plGeneratePythonStubs -Client build/install/client -Stubs Scripts/Python/plasma
+          diff_output=$(git diff -- Scripts/Python/plasma)
+          if [[ -n "$diff_output" ]]; then
+            echo "::error::The Python stubs are out of date. Please run 'plGeneratePythonStubs' and commit the changes."
+            echo "$diff_output"
+            exit 1
+          fi

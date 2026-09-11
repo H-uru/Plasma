@@ -51,6 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cmath>
 
+#include "hsMath.h"
+
 #include "pnMessage/plSetNetGroupIDMsg.h"
 #include "pnSceneObject/plCoordinateInterface.h"
 #include "pnSceneObject/plSceneObject.h"
@@ -68,6 +70,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // ==========================================================================
 
 static std::vector<plPXPhysicalControllerCore*> gControllers;
+static std::set<plKey> gInvalidCacheWorlds;
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 bool plPXPhysicalControllerCore::fDebugDisplay = false;
@@ -443,7 +446,7 @@ void plPXPhysicalControllerCore::SetMovementStrategy(plMovementStrategy* strateg
     fMovementStrategy = strategy;
 }
 
-void plPXPhysicalControllerCore::SetGlobalLoc(const hsMatrix44& l2w)
+void plPXPhysicalControllerCore::SetGlobalLoc(const hsMatrix44& l2w, bool kinematic)
 {
     fLastGlobalLoc = l2w;
 
@@ -461,6 +464,17 @@ void plPXPhysicalControllerCore::SetGlobalLoc(const hsMatrix44& l2w)
     fLastLocalPosition = fLocalPosition;
 
     fController->setFootPosition(plPXConvert::ExtPoint(fLocalPosition));
+
+    // Normally, setting the foot position updates the underlying actor's kinematic target.
+    // On the next simulation step, this will cause the actor to move from the previous
+    // transform to the target, hitting and triggering anything along that path. That's generally
+    // what we want to do... except for in the case of things like changing Ages. So, in that
+    // case, we can forcibly set the current transform to the target to avoid that chaos.
+    if (!kinematic) {
+        physx::PxTransform kineTarget;
+        fController->getActor()->getKinematicTarget(kineTarget);
+        fController->getActor()->setGlobalPose(kineTarget);
+    }
 }
 
 void plPXPhysicalControllerCore::GetPositionSim(hsPoint3& pos)
@@ -669,6 +683,8 @@ plDrawableSpans* plPXPhysicalControllerCore::CreateProxy(hsGMaterial* mat, std::
     return myDraw;
 }
 
+// ==========================================================================
+
 void plPXPhysicalControllerCore::Apply(float delSecs)
 {
     plPXPhysicalControllerCore* controller;
@@ -681,8 +697,14 @@ void plPXPhysicalControllerCore::Apply(float delSecs)
         controller->fDbgCollisionInfo.clear();
 #endif
 
+        auto findIt = gInvalidCacheWorlds.find(controller->fWorldKey);
+        if (findIt != gInvalidCacheWorlds.end())
+            controller->fController->invalidateCache();
+
         controller->IApply(delSecs);
     }
+
+    gInvalidCacheWorlds.clear();
 }
 
 void plPXPhysicalControllerCore::Update(int numSubSteps, float alpha)
@@ -720,6 +742,13 @@ void plPXPhysicalControllerCore::UpdateNonPhysical(float alpha)
 #endif
     }
 }
+
+void plPXPhysicalControllerCore::InvalidateCache(plKey world)
+{
+    gInvalidCacheWorlds.emplace(std::move(world));
+}
+
+// ==========================================================================
 
 void plPXPhysicalControllerCore::ISynchProxy()
 {

@@ -466,7 +466,6 @@ class xOptionsMenu(ptModifier):
         "First update, load our dialogs"
         PtLoadDialog("OptionsMenuGUI",self.key)
         PtLoadDialog("KeyMapDialog",self.key)
-        PtLoadDialog("GameSettingsDialog",self.key)
         PtLoadDialog("CalibrationGUI",self.key)
         PtLoadDialog("TrailerPreviewGUI",self.key)
         PtLoadDialog("AdvancedGameSettingsDialog",self.key)
@@ -479,7 +478,6 @@ class xOptionsMenu(ptModifier):
     def __del__(self):
         "the destructor - unload any dialogs we loaded"
         PtUnloadDialog("KeyMapDialog")
-        PtUnloadDialog("GameSettingsDialog")
         PtUnloadDialog("CalibrationGUI")
         PtUnloadDialog("TrailerPreviewGUI")
         PtUnloadDialog("AdvancedGameSettingsDialog")

@@ -42,9 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plCmdParser.h"
+#include "hsDebug.h"
+#include "hsEndian.h"
 #include "plPipeline.h"
 #include "plProduct.h"
 #include "hsStream.h"
+#include "hsThread.h"
 #include "hsWindows.h"
 
 #include <process.h>
@@ -61,6 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "res/resource.h"
 
 #include "pnEncryption/plChallengeHash.h"
+#include "pnNetBase/pnNbSrvs.h"
 
 #include "plFile/plEncryptedStream.h"
 #include "plInputCore/plInputDevice.h"
@@ -80,6 +84,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfConsoleCore/pfServerIni.h"
 #include "pfCrashHandler/plCrashCli.h"
+#include "pfDisplayHelpers/plWinDisplayHelper.h"
 #include "pfPasswordStore/pfPasswordStore.h"
 
 //
@@ -181,7 +186,7 @@ void DebugMsgF(const char* format, ...);
 static void HandleDpiChange(HWND hWnd, UINT dpi, float scale, const RECT& rect)
 {
     // Inform the engine about the new DPI.
-    auto* msg = new plDisplayScaleChangedMsg(scale, plDisplayScaleChangedMsg::ConvertRect(rect));
+    auto* msg = new plDisplayScaleChangedMsg(scale, plWinDpi::ConvertRect(rect));
     msg->Send();
 }
 
@@ -473,25 +478,11 @@ void DeInitNetClientComm()
 // For error logging
 //
 static plStatusLog* s_DebugLog = nullptr;
-static void _DebugMessageProc(const char* msg)
-{
-#if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
-    s_DebugLog->AddLine(plStatusLog::kRed, msg);
-#endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
-}
 
-static void _StatusMessageProc(const char* msg)
+static void _StatusMessageProc(const ST::string& msg)
 {
 #if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
     s_DebugLog->AddLine(msg);
-#endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
-}
-
-template<typename... _Args>
-static void DebugMsg(const char* format, _Args&&... args)
-{
-#if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
-    s_DebugLog->AddLineF(plStatusLog::kYellow, format, std::forward<_Args>(args)...);
 #endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
 }
 
@@ -501,7 +492,6 @@ static void DebugInit()
     plStatusLogMgr& mgr = plStatusLogMgr::GetInstance();
     s_DebugLog = mgr.CreateStatusLog(30, "plasmadbg.log", plStatusLog::kFilledBackground |
                  plStatusLog::kDeleteForMe | plStatusLog::kAlignToTop | plStatusLog::kTimestamp);
-    hsSetDebugMessageProc(_DebugMessageProc);
     hsSetStatusMessageProc(_StatusMessageProc);
 #endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
 }
@@ -641,7 +631,11 @@ static void StoreHash(const ST::string& username, const ST::string& password, Lo
     std::regex_search(username.c_str(), match, re_domain);
     if (match.empty() || ST::string(match[2].str()).compare_i("gametap") == 0) {
         //  Plain Usernames...
-        plSHA1Checksum shasum(password.size(), reinterpret_cast<const uint8_t*>(password.c_str()));
+        plChecksum shasum(
+            plChecksum::Type::kSHA1,
+            password.size(),
+            reinterpret_cast<const uint8_t*>(password.c_str())
+        );
         uint32_t* dest = reinterpret_cast<uint32_t*>(pLoginParam->namePassHash);
         const uint32_t* from = reinterpret_cast<const uint32_t*>(shasum.GetValue());
 
@@ -743,11 +737,9 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
         case WM_INITDIALOG:
         {
             s_loginDlgRunning = true;
-            s_statusThread = std::thread([hwndDlg]() {
+            s_statusThread = hsThread::StartSimpleThread([hwndDlg] {
                 hsThread::SetThisThreadName(ST_LITERAL("LoginDialogShardStatus"));
-#ifdef USE_VLD
-                VLDEnable();
-#endif
+
                 ST::string statusUrl = GetServerStatusUrl();
                 CURL* hCurl = curl_easy_init();
 
@@ -871,7 +863,9 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
                         plFileName gipath = plFileName::Join(plFileSystem::GetInitPath(), "general.ini");
                         ST::string ini_str = ST::format("App.SetLanguage {}\n", plLocalization::GetLanguageName(new_language));
                         std::unique_ptr<hsStream> gini = plEncryptedStream::OpenEncryptedFileWrite(gipath);
-                        gini->WriteString(ini_str);
+                        if (gini) {
+                            gini->WriteString(ini_str);
+                        }
                     }
 
                     memset(&pLoginParam->authError, 0, sizeof(pLoginParam->authError));
@@ -1003,20 +997,17 @@ uint32_t ParseRendererArgument(const ST::string& requested)
 {
     using namespace ST::literals;
 
-    static std::unordered_set<ST::string, ST::hash_i, ST::equal_i> dx_args {
-        "directx"_st, "direct3d"_st, "dx"_st, "d3d"_st
-    };
+    static std::unordered_map<ST::string, uint32_t, ST::hash_i, ST::equal_i> args{
+        {"directx"_st, hsG3DDeviceSelector::kDevTypeDirect3D},
+        {"direct3d"_st, hsG3DDeviceSelector::kDevTypeDirect3D},
+        {"dx"_st, hsG3DDeviceSelector::kDevTypeDirect3D},
+        {"d3d"_st, hsG3DDeviceSelector::kDevTypeDirect3D},
+        {"opengl"_st, hsG3DDeviceSelector::kDevTypeOpenGL},
+        {"gl"_st, hsG3DDeviceSelector::kDevTypeOpenGL}};
 
-    static std::unordered_set<ST::string, ST::hash_i, ST::equal_i> gl_args {
-        "opengl"_st, "gl"_st
-    };
-
-    if (dx_args.find(requested) != dx_args.end())
-        return hsG3DDeviceSelector::kDevTypeDirect3D;
-
-    if (gl_args.find(requested) != gl_args.end())
-        return hsG3DDeviceSelector::kDevTypeOpenGL;
-
+    auto it = args.find(requested);
+    if (it != args.end())
+        return it->second;
     return hsG3DDeviceSelector::kDevTypeUnknown;
 }
 
@@ -1060,13 +1051,15 @@ bool WinInit(HINSTANCE hInst)
         );
     HDC hDC = GetDC(hWnd);
 
+    plDisplayHelper::SetInstance(new plWinDisplayHelper());
+
     gClient.SetClientWindow((hsWindowHndl)hWnd);
     gClient.SetClientDisplay((hsWindowHndl)hDC);
     gClient.Init();
     return true;
 }
 
-int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
+int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpCmdLine, int nCmdShow)
 {
     PF_CONSOLE_INIT_ALL()
 
@@ -1076,7 +1069,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     std::vector<ST::string> args;
     args.reserve(__argc);
     for (size_t i = 0; i < __argc; i++) {
-        args.push_back(ST::string::from_utf8(__argv[i]));
+        args.push_back(ST::string::from_wchar(__wargv[i]));
     }
 
     plCmdParser cmdParser(s_cmdLineArgs, std::size(s_cmdLineArgs));
@@ -1194,9 +1187,9 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     }
 #endif
 
-    // Set up to log errors by using hsDebugMessage
+    // Redirect hsStatusMessage to plasmadbg.log
     DebugInit();
-    DebugMsg("Plasma 2.0.{}.{} - {}", PLASMA2_MAJOR_VERSION, PLASMA2_MINOR_VERSION, plProduct::ProductString());
+    hsStatusMessageF("Plasma 2.0.{}.{} - {}", PLASMA2_MAJOR_VERSION, PLASMA2_MINOR_VERSION, plProduct::ProductString());
 
     FILE *serverIniFile = plFileSystem::Open(serverIni, "rb");
     if (serverIniFile)
@@ -1300,7 +1293,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         if (gPendingActivate)
             gClient->WindowActivate(gPendingActivateFlag);
         gClient->SetMessagePumpProc(PumpMessageQueueProc);
-        gClient.Start();
+        gClient.StartClient();
 
         // PhysX installs its own exception handler somewhere in PhysXCore.dll. Unfortunately, this code appears to suck
         // the big one. It actually makes us unable to attach with the Visual Studio debugger! We're going to override that

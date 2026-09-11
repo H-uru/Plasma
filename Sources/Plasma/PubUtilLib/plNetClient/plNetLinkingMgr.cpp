@@ -637,7 +637,7 @@ void plNetLinkingMgr::LinkToMyPersonalAge( uint32_t playerID )
 
     plSpawnPointInfo hutSpawnPoint;
     hutSpawnPoint.SetName(kPersonalAgeLinkInPointCloset);
-    link.SetSpawnPoint(hutSpawnPoint);
+    link.SetSpawnPoint(std::move(hutSpawnPoint));
 
     plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( &link );
     IDispatchMsg( pMsg, playerID );
@@ -810,7 +810,6 @@ void plNetLinkingMgr::IPostProcessLink()
                             fldr->GetNodeId(),
                             info->GetNodeId(),
                             NetCommGetPlayer()->playerInt,
-                            nullptr,
                             nullptr
                         );
             }
@@ -832,7 +831,6 @@ void plNetLinkingMgr::IPostProcessLink()
                             fldr->GetNodeId(),
                             info->GetNodeId(),
                             NetCommGetPlayer()->playerInt,
-                            nullptr,
                             nullptr
                         );
             }
@@ -949,7 +947,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink()
                             title = ST::format("{}'", nc->GetPlayerName());
                         else
                             title = ST::format("{}'s", nc->GetPlayerName());
-                        info->SetAgeUserDefinedName(title.c_str());
+                        info->SetAgeUserDefinedName(std::move(title));
                     }
                     if (!info->HasAgeDescription())
                     {
@@ -959,7 +957,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink()
                             desc = ST::format("{}' {}", nc->GetPlayerName(), info->GetAgeInstanceName());
                         else
                             desc = ST::format("{}'s {}", nc->GetPlayerName(), info->GetAgeInstanceName());
-                        info->SetAgeDescription(desc.c_str());
+                        info->SetAgeDescription(std::move(desc));
                     }
                     if (!info->HasAgeInstanceGuid()) {
                         plUUID newuuid = plUUID::Generate();
@@ -986,7 +984,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink()
                                     title = ST::format("{}'", nc->GetPlayerName());
                                 else
                                     title = ST::format("{}'s", nc->GetPlayerName());
-                                info->SetAgeUserDefinedName(title.c_str());
+                                info->SetAgeUserDefinedName(std::move(title));
                             }
 
                             if (!info->HasAgeDescription())
@@ -997,7 +995,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink()
                                     desc = ST::format("{}' {}", nc->GetPlayerName(), info->GetAgeInstanceName());
                                 else
                                     desc = ST::format("{}'s {}", nc->GetPlayerName(), info->GetAgeInstanceName());
-                                info->SetAgeDescription( desc.c_str() );
+                                info->SetAgeDescription(std::move(desc));
                             }
 
                             if (!info->HasAgeInstanceGuid()) {

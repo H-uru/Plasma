@@ -148,6 +148,7 @@ class grtzMarkerScopeGUI(ptModifier):
             legacyScore = xMarkerGameUtils.GetLegacyCGZMScore(mission)
             try:
                 scores = msg.getScores()
+                score = scores[0]
             except:
                 self._scores[mission] = 0
                 # If we have a score in the legacy chronicle, then force the ScoreSrv value
@@ -157,7 +158,6 @@ class grtzMarkerScopeGUI(ptModifier):
             else:
                 # Pick the lowest score in the list to use.
                 scores = sorted(scores, key=lambda x: x.getPoints())
-                score = scores[0]
                 self._scores[mission] = score
 
                 # All the other scores are garbage.

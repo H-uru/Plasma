@@ -524,16 +524,16 @@ void plResponderCmdAnim::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParam
         plNotetrackAnim notetrackAnim(animComp, nullptr);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
 
-        eventMsg->fEvent = kTime;
+        eventMsg->fEvent = plEventCallbackMsg::kTime;
         eventMsg->fEventTime = info.GetMarkerTime(waitInfo.point);
     }
     else
-        eventMsg->fEvent = kStop;
+        eventMsg->fEvent = plEventCallbackMsg::kStop;
 
     plMessageWithCallbacks *callbackMsg = plMessageWithCallbacks::ConvertNoRef(waitInfo.msg);
     callbackMsg->AddCallback(eventMsg);
     // AddCallback adds it's own ref, so remove ours (the default of 1)
-    hsRefCnt_SafeUnRef(eventMsg);
+    eventMsg->UnRef();
 }
 
 class plResponderAnimProc : public plAnimCompProc

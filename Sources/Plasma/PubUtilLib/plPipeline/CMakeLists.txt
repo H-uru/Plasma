@@ -74,7 +74,9 @@ target_link_libraries(plPipeline
         pfGameGUIMgr # plCaptureRender
         $<$<PLATFORM_ID:Windows>:plWinDpi>
         freetype
-        "$<$<PLATFORM_ID:Darwin>:-framework CoreText>"
+        "$<$<AND:$<PLATFORM_ID:Darwin>,$<VERSION_LESS:${CMAKE_OSX_DEPLOYMENT_TARGET},10.9>>:-framework ApplicationServices>"
+        "$<$<AND:$<PLATFORM_ID:Darwin>,$<VERSION_GREATER_EQUAL:${CMAKE_OSX_DEPLOYMENT_TARGET},10.9>>:-framework CoreGraphics>"
+        "$<$<AND:$<PLATFORM_ID:Darwin>,$<VERSION_GREATER_EQUAL:${CMAKE_OSX_DEPLOYMENT_TARGET},10.9>>:-framework CoreText>"
         $<$<AND:$<NOT:$<PLATFORM_ID:Windows>>,$<NOT:$<PLATFORM_ID:Darwin>>>:Fontconfig::Fontconfig>
     INTERFACE
         pnFactory

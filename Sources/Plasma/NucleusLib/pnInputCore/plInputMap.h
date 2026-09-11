@@ -50,8 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <map>
 #include <vector>
 
-namespace ST { class string; }
-
 class plInputMap
 {
 public:

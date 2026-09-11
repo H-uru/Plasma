@@ -62,17 +62,16 @@ class pyAgeInfoStruct
 private:
     plAgeInfoStruct fAgeInfo;
     mutable ST::string fAgeInstanceGuidStr;    // for getting Age Instance GUID
-    mutable ST::string fDisplayName;           // used by GetDisplayName()
 
 protected:
     pyAgeInfoStruct();
-    pyAgeInfoStruct(plAgeInfoStruct * info);
+    pyAgeInfoStruct(const plAgeInfoStruct* info);
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptAgeInfoStruct);
     PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject *New(plAgeInfoStruct *info);
+    static PyObject* New(const plAgeInfoStruct* info);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyAgeInfoStruct object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyAgeInfoStruct); // converts a PyObject to a pyAgeInfoStruct (throws error if not correct type)
 
@@ -85,13 +84,13 @@ public:
     void    CopyFrom( const pyAgeInfoStruct & other );
     void    CopyFromRef( const pyAgeInfoStructRef & other );
     ST::string GetAgeFilename() const;
-    void    SetAgeFilename( const ST::string & v );
+    void    SetAgeFilename(ST::string v);
     ST::string GetAgeInstanceName() const;
-    void    SetAgeInstanceName( const ST::string & v );
+    void    SetAgeInstanceName(ST::string v);
     ST::string GetAgeUserDefinedName() const;
-    void    SetAgeUserDefinedName( const ST::string & v );
+    void    SetAgeUserDefinedName(ST::string v);
     ST::string GetAgeDescription() const;
-    void    SetAgeDescription( const ST::string & v );
+    void    SetAgeDescription(ST::string v);
     ST::string GetAgeInstanceGuid() const;
     void    SetAgeInstanceGuid(const ST::string& guid);
     int32_t   GetAgeSequenceNumber() const;
@@ -108,7 +107,6 @@ private:
 
     plAgeInfoStruct & fAgeInfo;
     mutable ST::string fAgeInstanceGuidStr;   // for getting Age Instance GUID
-    mutable ST::string fDisplayName;          // used by GetDisplayName()
 
 protected:
     pyAgeInfoStructRef(): fAgeInfo( fDefaultAgeInfo ) {} // only here for the python glue... do NOT call directly
@@ -128,11 +126,11 @@ public:
     void    CopyFrom( const pyAgeInfoStruct & other );
     void    CopyFromRef( const pyAgeInfoStructRef & other );
     ST::string GetAgeFilename() const;
-    void    SetAgeFilename( const ST::string & v );
+    void    SetAgeFilename(ST::string v);
     ST::string GetAgeInstanceName() const;
-    void    SetAgeInstanceName( const ST::string & v );
+    void    SetAgeInstanceName(ST::string v);
     ST::string GetAgeUserDefinedName() const;
-    void    SetAgeUserDefinedName( const ST::string & v );
+    void    SetAgeUserDefinedName(ST::string v);
     ST::string GetAgeInstanceGuid() const;
     void    SetAgeInstanceGuid(const ST::string& guid);
     int32_t   GetAgeSequenceNumber() const;

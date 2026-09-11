@@ -68,6 +68,8 @@ class plFileName;
 class pfConsoleCmd;
 class pfConsoleCmdParam;
 class pfConsoleCmdGroup;
+using pfConsolePrintFunc = void (*)(const ST::string& str);
+
 class pfConsoleEngine
 {
     private:
@@ -86,10 +88,10 @@ class pfConsoleEngine
         ST::string GetCmdSignature(const ST::string& name);
 
         // Prints out the help for a given command (or group)
-        bool PrintCmdHelp(const ST::string& name, void (*PrintFn)(const ST::string&));
+        bool PrintCmdHelp(const ST::string& name, pfConsolePrintFunc PrintFn);
 
         // Breaks the given line into a command and parameters and runs the command
-        bool RunCommand(const ST::string& line, void (*PrintFn)(const ST::string&));
+        bool RunCommand(const ST::string& line, pfConsolePrintFunc PrintFn);
 
         // Executes the given file as a sequence of console commands
         bool    ExecuteFile( const plFileName &fileName );

@@ -23,16 +23,15 @@ set(pfPython_SOURCES
     pyColor.cpp
     pyCritterBrain.cpp
     pyDniCoordinates.cpp
-    pyDniInfoSource.cpp
     pyDrawControl.cpp
     pyDynamicText.cpp
-    pyEnum.cpp
     pyGameCli.cpp
     pyGameScore.cpp
     pyGameScoreMsg.cpp
     pyGlueHelpers.cpp
     pyGmBlueSpiral.cpp
     pyGmMarker.cpp
+    pyGmVarSync.cpp
     pyGrassShader.cpp
     pyGUIControl.cpp
     pyGUIControlButton.cpp
@@ -114,7 +113,6 @@ set(pfPython_HEADERS
     pyColor.h
     pyCritterBrain.h
     pyDniCoordinates.h
-    pyDniInfoSource.h
     pyDrawControl.h
     pyDynamicText.h
     pyEnum.h
@@ -126,6 +124,7 @@ set(pfPython_HEADERS
     pyGeometry3.h
     pyGmBlueSpiral.h
     pyGmMarker.h
+    pyGmVarSync.h
     pyGrassShader.h
     pyGUIControl.h
     pyGUIControlButton.h
@@ -203,7 +202,6 @@ set(pfPython_GLUE
     pyColorGlue.cpp
     pyCritterBrainGlue.cpp
     pyDniCoordinatesGlue.cpp
-    pyDniInfoSourceGlue.cpp
     pyDrawControlGlue.cpp
     pyDynamicTextGlue.cpp
     pyGameCliGlue.cpp
@@ -215,6 +213,7 @@ set(pfPython_GLUE
     pyGlueHelpers.h
     pyGmBlueSpiralGlue.cpp
     pyGmMarkerGlue.cpp
+    pyGmVarSyncGlue.cpp
     pyGrassShaderGlue.cpp
     pyGUIControlButtonGlue.cpp
     pyGUIControlCheckBoxGlue.cpp

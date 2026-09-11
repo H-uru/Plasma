@@ -45,10 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifdef PLASMA_EXTERNAL_RELEASE
-#define LIMIT_CONSOLE_COMMANDS 1
-#endif
-
 #include <string_theory/format>
 #include <string_theory/string>
 
@@ -57,6 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 
 #include "pfConsole.h"
+#include "pfConsoleCommandUtilities.h"
 
 #include "pnMessage/plNotifyMsg.h"
 #include "pnNetCommon/plNetApp.h"
@@ -91,8 +88,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCore/pfConsoleCmd.h"
 #include "pfMessage/plArmatureEffectMsg.h"
 
-#define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
-
 //// DO NOT REMOVE!!!!
 //// This is here so Microsoft VC won't decide to "optimize" this file out
 PF_CONSOLE_FILE_DUMMY(Avatar)
@@ -104,19 +99,6 @@ PF_CONSOLE_FILE_DUMMY(Avatar)
 // how to add console commands.
 //
 /////////////////////////////////////////////////////////////////
-
-
-
-/////////////////////////////////////////////////////////////////
-//
-// UTILITIES - LOCAL AND OTHERWISE
-//
-/////////////////////////////////////////////////////////////////
-
-plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, ST::string& statusStr, bool subString=false);
-plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, ST::string& statusStr, bool subString=false);
-plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
-                              ST::string& statusStr, bool subString=false);
 
 PF_CONSOLE_GROUP( Avatar )
 

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsWindows.h"
+#include "hsOptionalCall.h"
 #include <process.h>
 
 #include "hsThread.h"

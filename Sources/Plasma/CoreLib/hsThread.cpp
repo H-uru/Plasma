@@ -39,8 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef CoreLib_Thread
-#define CoreLib_Thread
 
 #include "hsThread.h"
 
@@ -48,20 +46,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vld.h>
 #endif
 
+void hsThread::InitThisThread()
+{
+    SetThisThreadName(ST_LITERAL("hsNoNameThread"));
+#ifdef USE_VLD
+    // Needs to be enabled for each thread except the WinMain
+    VLDEnable();
+#endif
+}
+
 void hsThread::Start()
 {
-    if (!fThread.joinable()) {
-        fThread = std::thread([this]() {
-            hsThread::SetThisThreadName(ST_LITERAL("hsNoNameThread"));
-#ifdef USE_VLD
-            // Needs to be enabled for each thread except the WinMain
-            VLDEnable();
-#endif
-            Run();
-            OnQuit();
-        });
-    } else
-        hsDebugMessage("Calling hsThread::Start() more than once", 0);
+    hsAssert(!fThread.joinable(), "Calling hsThread::Start() more than once");
+
+    fThread = StartSimpleThread([this] {
+        Run();
+        OnQuit();
+    });
 }
 
 void hsThread::Stop()
@@ -70,12 +71,3 @@ void hsThread::Stop()
     if (fThread.joinable())
         fThread.join();
 }
-
-void hsThread::StartDetached()
-{
-    Start();
-    if (fThread.joinable())
-        fThread.detach();
-}
-
-#endif // CoreLib_Thread

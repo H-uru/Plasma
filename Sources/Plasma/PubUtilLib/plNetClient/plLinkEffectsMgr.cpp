@@ -64,6 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAvatarMsg.h"
 #include "plMessage/plLinkToAgeMsg.h"
 #include "plMessage/plLoadAgeMsg.h"
+#include "plMessage/plOneShotCallbacks.h"
 #include "plMessage/plTransitionMsg.h"
 #include "plNetTransport/plNetTransportMember.h"
 
@@ -214,10 +215,10 @@ void plLinkEffectsMgr::ISendAllReadyCallbacks()
                 }
             }
 
-            hsRefCnt_SafeUnRef(fLinks[i]);
+            fLinks[i]->UnRef();
             fLinks.erase(fLinks.begin() + i);
 
-            hsStatusMessage("Done - removing link FX msg\n");
+            hsStatusMessage("Done - removing link FX msg");
         }
     }
 }
@@ -346,9 +347,9 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
         }
         
         if (pTriggerMsg->IsLeavingAge())
-            hsStatusMessage("Starting LinkOut FX\n");
+            hsStatusMessage("Starting LinkOut FX");
         else
-            hsStatusMessage("Starting LinkIn FX\n");
+            hsStatusMessage("Starting LinkIn FX");
         
         plLinkEffectBCMsg *BCMsg = new plLinkEffectBCMsg();
         BCMsg->fLinkKey = linkKey;
@@ -525,7 +526,7 @@ void plLinkEffectsMgr::WaitForEffect(plKey linkKey, float time)
 
     msg->fEffects++;
     plLinkCallbackMsg *callback = new plLinkCallbackMsg();
-    callback->fEvent = kStop;
+    callback->fEvent = plEventCallbackMsg::kStop;
     callback->fRepeats = 0;
     callback->fLinkKey = std::move(linkKey);
     double timeToDeliver = hsTimer::GetSysSeconds() + time;
@@ -545,7 +546,7 @@ plMessage *plLinkEffectsMgr::WaitForEffect(plKey linkKey)
     msg->fEffects++;
 
     plLinkCallbackMsg *callback = new plLinkCallbackMsg();
-    callback->fEvent = kStop;
+    callback->fEvent = plEventCallbackMsg::kStop;
     callback->fRepeats = 0;
     callback->fLinkKey = std::move(linkKey);
     callback->AddReceiver( GetKey() );

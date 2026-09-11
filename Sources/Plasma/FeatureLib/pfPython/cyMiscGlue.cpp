@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtFlashWindow, cyMisc::FlashWindow, "Flashes the client window if it is not focused");
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeName, "DEPRECIATED - use ptDniInfoSource instead")
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeName, "Returns filename of the current Age")
 {
     return PyUnicode_FromSTString(cyMisc::GetAgeName());
 }
@@ -62,11 +62,6 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeName, "DEPRECIATED - use ptDniInf
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeInfo, "Returns ptAgeInfoStruct of the current Age")
 {
     return cyMisc::GetAgeInfo();
-}
-
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeTime, "DEPRECIATED - use ptDniInfoSource instead")
-{
-    return PyLong_FromUnsignedLong(cyMisc::GetAgeTime());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetPrevAgeName, "Returns filename of previous age visited")
@@ -458,7 +453,6 @@ void cyMisc::AddPlasmaMethods(PyObject* m)
 
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetAgeName)
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetAgeInfo)
-        PYTHON_GLOBAL_METHOD_NOARGS(PtGetAgeTime)
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetPrevAgeName) 
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetPrevAgeInfo)
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetDniTime)

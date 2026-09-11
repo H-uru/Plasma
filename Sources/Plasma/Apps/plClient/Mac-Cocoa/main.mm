@@ -50,6 +50,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #import <QuartzCore/QuartzCore.h>
 
+#if defined(HS_BUILD_FOR_MACOS) && MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+#import <IOKit/pwr_mgt/IOPMLib.h>
+#endif
+
 // Cocoa client
 #import "NSString+StringTheory.h"
 #import "PLSKeyboardEventMonitor.h"
@@ -65,11 +69,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <unordered_set>
 
 // Plasma engine
+#include "hsDarwin.h"
 #include "plClient/plClient.h"
 #include "plClient/plClientLoader.h"
 #include "plCmdParser.h"
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfConsoleCore/pfServerIni.h"
+#include "pfDisplayHelpers/plMacDisplayHelper.h"
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
 #ifdef PLASMA_PIPELINE_GL
 #include "pfGLPipeline/plGLPipeline.h"
@@ -98,15 +104,108 @@ bool NeedsResolutionUpdate = false;
 
 std::vector<ST::string> args;
 
+struct PLSWakeLockHolder {
+private:
+#if !defined(HS_BUILD_FOR_MACOS) || MAC_OS_X_VERSION_MAX_ALLOWED >= 1090
+    id<NSObject> fActivity;
+#endif
+#if defined(HS_BUILD_FOR_MACOS) && MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+    IOPMAssertionID fAssertionID;
+#endif
+
+public:
+    PLSWakeLockHolder() {
+#if !defined(HS_BUILD_FOR_MACOS) || MAC_OS_X_VERSION_MAX_ALLOWED >= 1090
+        fActivity = nullptr;
+#endif
+#if defined(HS_BUILD_FOR_MACOS) && MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+        fAssertionID = 0;
+#endif
+    }
+
+    void startUserActivity() {
+#if !defined(HS_BUILD_FOR_MACOS) || MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+        fActivity = [[NSProcessInfo processInfo]
+                        beginActivityWithOptions:(NSActivityUserInitiated | NSActivityIdleDisplaySleepDisabled | NSActivityBackground)
+                                          reason:NSStringCreateWithSTString(plProduct::LongName())];
+#else
+#   if MAC_OS_X_VERSION_MAX_ALLOWED >= 1090 && defined(HAVE_BUILTIN_AVAILABLE)
+        if (__builtin_available(macOS 10.9, *)) {
+            fActivity = [[NSProcessInfo processInfo]
+                            beginActivityWithOptions:(NSActivityUserInitiated | NSActivityIdleDisplaySleepDisabled | NSActivityBackground)
+                                              reason:NSStringCreateWithSTString(plProduct::LongName())];
+        }
+        else
+#   endif
+        {
+#   if MAC_OS_X_VERSION_MAX_ALLOWED >= 1070
+#       if MAC_OS_X_VERSION_MIN_REQUIRED < 1070 && defined(HAVE_BUILTIN_AVAILABLE)
+            if (__builtin_available(macOS 10.7, *))
+#       endif
+                IOReturn result = IOPMAssertionCreateWithName(kIOPMAssertionTypePreventUserIdleDisplaySleep, kIOPMAssertionLevelOn, CFStringCreateWithSTString(plProduct::LongName()), &fAssertionID);
+#       if MAC_OS_X_VERSION_MIN_REQUIRED < 1070 && defined(HAVE_BUILTIN_AVAILABLE)
+            else
+#       endif
+#   endif
+#   if MAC_OS_X_VERSION_MIN_REQUIRED < 1070
+                IOReturn result = IOPMAssertionCreate(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, &fAssertionID);
+#   endif
+
+            if (result != kIOReturnSuccess) {
+                hsStatusMessage("Failed to acquire idle prevention assertion");
+            }
+        }
+#endif
+    }
+
+    void endUserActivity() {
+#if !defined(HS_BUILD_FOR_MACOS) || MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+        [[NSProcessInfo processInfo] endActivity:fActivity];
+        fActivity = nullptr;
+#else
+#   if MAC_OS_X_VERSION_MAX_ALLOWED >= 1090 && defined(HAVE_BUILTIN_AVAILABLE)
+        if (__builtin_available(macOS 10.9, *)) {
+            [[NSProcessInfo processInfo] endActivity:fActivity];
+            fActivity = nullptr;
+        }
+        else
+#   endif
+        {
+            IOPMAssertionRelease(fAssertionID);
+            fAssertionID = 0;
+        }
+#endif
+    }
+};
+
+static uint32_t ParseRendererArgument(const ST::string& requested)
+{
+    using namespace ST::literals;
+
+    static std::unordered_map<ST::string, uint32_t, ST::hash_i, ST::equal_i> args{
+        {"metal2"_st, hsG3DDeviceSelector::kDevTypeMetal2},
+        {"metal3"_st, hsG3DDeviceSelector::kDevTypeMetal3},
+        {"opengl"_st, hsG3DDeviceSelector::kDevTypeOpenGL},
+        {"gl"_st, hsG3DDeviceSelector::kDevTypeOpenGL}
+    };
+    
+    auto it = args.find(requested);
+    if (it != args.end())
+        return it->second;
+    return hsG3DDeviceSelector::kDevTypeUnknown;
+}
+
 @interface AppDelegate : NSWindowController <NSApplicationDelegate,
                                              NSWindowDelegate,
                                              PLSViewDelegate,
                                              PLSLoginWindowControllerDelegate,
                                              PLSPatcherDelegate>
 {
-   @public
-    plClientLoader gClient;
-    dispatch_source_t _displaySource;
+@public
+    plClientLoader      gClient;
+    dispatch_source_t   _displaySource;
+    plMacDisplayHelper* _displayHelper;
+    PLSWakeLockHolder   _wakeLockHolder;
 }
 
 @property(retain) PLSKeyboardEventMonitor* eventMonitor;
@@ -118,20 +217,47 @@ std::vector<ST::string> args;
 @property NSModalSession currentModalSession;
 @property PLSPatcher* patcher;
 @property PLSLoginWindowController* loginWindow;
+@property NSWindow* gameWindow;
 
 @end
 
 void plClient::IResizeNativeDisplayDevice(int width, int height, bool windowed)
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        AppDelegate* appDelegate = (AppDelegate*)[NSApp delegate];
-        if (((appDelegate.window.styleMask & NSWindowStyleMaskFullScreen) > 0) == windowed) {
-            [appDelegate.window toggleFullScreen:nil];
-        }
-        auto* msg = new plDisplayScaleChangedMsg(appDelegate.window.backingScaleFactor);
-        msg->Send();
-    });
+    // Client load is threaded so we might not receive this on the main thread
+    // We _need_ to do this on the main thread becuase it has AppKit calls.
+    if (NSThread.currentThread != NSThread.mainThread) {
+        // Even though I used NSThread above this is cleaner to send to
+        // the main thread in libDispatch
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            IResizeNativeDisplayDevice(width, height, windowed);
+        });
+        // Things should have completed on the main thread, don't continue
+        // on here.
+        return;
+    }
+    
+    AppDelegate* appDelegate = (AppDelegate*)[NSApp delegate];
+    
+    // Lock the aspect ratio and set window resolution
+    if (windowed) {
+        NSWindow* gameWindow = appDelegate.gameWindow;
+        CGFloat scale = gameWindow.backingScaleFactor;
+        NSSize size = NSMakeSize(width/scale, height/scale);
+        [gameWindow setContentSize:size];
+        gameWindow.aspectRatio = size;
+        [gameWindow center];
+    }
+    
+    appDelegate->gClient->GetPipeline()->Resize(width, height);
+    
+    // Toggle full screen if we need to
+    if (((appDelegate.window.styleMask & NSWindowStyleMaskFullScreen) > 0) == windowed) {
+        [appDelegate.window toggleFullScreen:nil];
+    }
+    auto* msg = new plDisplayScaleChangedMsg(appDelegate.window.backingScaleFactor);
+    msg->Send();
 }
+
 void plClient::IChangeResolution(int width, int height) {}
 void plClient::IUpdateProgressIndicator(plOperationProgress* progress) {}
 void plClient::ShowClientWindow() {}
@@ -193,13 +319,16 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
                                                        defer:NO];
     window.backgroundColor = NSColor.blackColor;
 
-    PLSView* view = [[PLSView alloc] init];
+    PLSView* view = [[PLSView alloc] initWithFrame:windowRect client:&gClient];
     self.plsView = view;
     window.contentView = view;
-    [window setDelegate:self];
-    
-    gClient.SetClientWindow((__bridge void *)view.layer);
-    gClient.SetClientDisplay((hsWindowHndl)NULL);
+    self.gameWindow = window;
+
+    _displayHelper = new plMacDisplayHelper();
+    plDisplayHelper::SetInstance(_displayHelper);
+
+    gClient.SetClientWindow((__bridge void*)view.layer);
+    gClient.SetClientDisplay([window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue]);
 
     self = [super initWithWindow:window];
     self.window.acceptsMouseMovedEvents = YES;
@@ -222,7 +351,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
             gClient->SetFlag(plClient::kFlagSkipIntroMovies);
         gClient->WindowActivate(TRUE);
         gClient->SetMessagePumpProc(PumpMessageQueueProc);
-        gClient.Start();
+        gClient.StartClient();
     });
 
     dispatch_async(loadingQueue, ^{
@@ -282,22 +411,6 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     }
 }
 
-- (void)renderView:(PLSView*)view didChangeOutputSize:(CGSize)size scale:(NSUInteger)scale
-{
-    [[NSRunLoop mainRunLoop]
-        performInModes:@[ @"PlasmaEventMode" ]
-                 block:^{
-                     auto* msg = new plDisplayScaleChangedMsg(scale);
-                     msg->Send();
-                     float aspectratio = (float)size.width / (float)size.height;
-                     pfGameGUIMgr::GetInstance()->SetAspectRatio(aspectratio);
-                     plMouseDevice::Instance()->SetDisplayResolution(size.width, size.height);
-                     AppDelegate* appDelegate = (AppDelegate*)[NSApp delegate];
-                     appDelegate->gClient->GetPipeline()->Resize((int)size.width, (int)size.height);
-                 }];
-    if (gClient->GetQuitIntro()) [self runLoop];
-}
-
 - (void)applicationDidFinishLaunching:(NSNotification*)notification
 {
     cmdParser.Parse(args);
@@ -351,8 +464,10 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     plPipeline::fInitialPipeParams.TextureQuality = 2;
     // if (cmdParser.IsSpecified(kArgPvdFile))
     //    plPXSimulation::SetDefaultDebuggerEndpoint(cmdParser.GetString(kArgPvdFile));
-    // if (cmdParser.IsSpecified(kArgRenderer))
-    //     gClient.SetRequestedRenderingBackend(ParseRendererArgument(cmdParser.GetString(kArgRenderer)));
+    if (cmdParser.IsSpecified(kArgRenderer))
+        gClient.SetRequestedRenderingBackend(
+            ParseRendererArgument(cmdParser.GetString(kArgRenderer))
+        );
 #endif
 
     NetCommStartup();
@@ -487,6 +602,8 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 - (void)startClient
 {
     PF_CONSOLE_INITIALIZE(Audio)
+    
+    [self.gameWindow setDelegate:self];
 
     self.plsView.delegate = self;
     // Create a window:
@@ -510,6 +627,8 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
                                                          inputManager:&gClient];
     ((PLSView*)self.window.contentView).inputManager = gClient->GetInputManager();
     [self.window makeFirstResponder:self.window.contentView];
+
+    _wakeLockHolder.startUserActivity();
 
     // Main loop
     if (gClient && !gClient->GetDone()) {
@@ -554,6 +673,8 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
         }
         NetCommShutdown();
     }
+
+    _wakeLockHolder.endUserActivity();
     return NSTerminateNow;
 }
 

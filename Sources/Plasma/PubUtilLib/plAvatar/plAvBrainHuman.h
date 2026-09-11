@@ -59,7 +59,6 @@ class plControlEventMsg;
 class plMatrixChannel;
 class plMatrixMultiplyApplicator;
 class plWalkingStrategy;
-namespace ST { class string; }
 
 class plAvBrainHuman : public plArmatureBrain
 {

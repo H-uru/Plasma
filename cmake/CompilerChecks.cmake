@@ -1,3 +1,19 @@
+macro(plasma_try_compile)
+    if(NOT DEFINED "${ARGV0}")
+        if(NOT CMAKE_REQUIRED_QUIET)
+            message(CHECK_START "Checking for ${ARGV0}")
+        endif()
+        try_compile(${ARGV})
+        if(NOT CMAKE_REQUIRED_QUIET)
+            if("${${ARGV0}}")
+                message(CHECK_PASS "Yes")
+            else()
+                message(CHECK_FAIL "No")
+            endif()
+        endif()
+    endif()
+endmacro()
+
 # Use LTCG if available.
 if(NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION)
     include(CheckIPOSupported)
@@ -15,21 +31,34 @@ include(CheckCXXSymbolExists)
 check_cxx_symbol_exists("sysinfo" "sys/sysinfo.h" HAVE_SYSINFO)
 # Check for pthread setname_np API
 check_cxx_symbol_exists(pthread_setname_np pthread.h HAVE_PTHREAD_SETNAME_NP)
+# Check for strnlen
+check_cxx_symbol_exists(strnlen string.h HAVE_STRNLEN)
+if(CMAKE_SYSTEM_NAME MATCHES "Darwin" AND CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS "10.7")
+    # strnlen is not available on Mac < 10.7, so we can't use it if we're
+    # targeting a lower version
+    set(HAVE_STRNLEN FALSE)
+endif()
 
 # Check for BSD style sysctl.
-try_compile(HAVE_SYSCTL ${PROJECT_BINARY_DIR}
-            ${PROJECT_SOURCE_DIR}/cmake/check_sysctl.cpp)
+plasma_try_compile(
+    HAVE_SYSCTL ${PROJECT_BINARY_DIR}
+    ${PROJECT_SOURCE_DIR}/cmake/check_sysctl.cpp
+)
 
 # Check for Apple sysdir header.
 CHECK_INCLUDE_FILE("sysdir.h" HAVE_SYSDIR)
 
 # Check for `__builtin_available()` Apple extension
-try_compile(HAVE_BUILTIN_AVAILABLE ${PROJECT_BINARY_DIR}
-            ${PROJECT_SOURCE_DIR}/cmake/check_builtin_available.cpp)
+plasma_try_compile(
+    HAVE_BUILTIN_AVAILABLE ${PROJECT_BINARY_DIR}
+    ${PROJECT_SOURCE_DIR}/cmake/check_builtin_available.cpp
+)
 
 # Check for CPUID headers
-try_compile(HAVE_CPUID ${PROJECT_BINARY_DIR}
-            ${PROJECT_SOURCE_DIR}/cmake/check_cpuid.cpp)
+plasma_try_compile(
+    HAVE_CPUID ${PROJECT_BINARY_DIR}
+    ${PROJECT_SOURCE_DIR}/cmake/check_cpuid.cpp
+)
 
 # Check for SIMD headers
 CHECK_INCLUDE_FILE("immintrin.h" HAVE_AVX2)

@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plNetClient/plNetCliAgeJoiner.cpp
-*
 *   Encapsulates all of the horrible ugliness that the age load process has become
 *   
 ***/
@@ -120,29 +118,6 @@ struct plNCAgeJoiner {
 };
 
 plNCAgeJoiner* plNCAgeJoiner::s_instance = nullptr;
-
-
-/*****************************************************************************
-*
-*   Local functions
-*
-***/
-
-//============================================================================
-void AgeVaultDownloadCallback (
-    ENetError           result,
-    void *              param
-) {
-    plNCAgeJoiner * joiner = (plNCAgeJoiner *)param;
-    if (IS_NET_ERROR(result)) {
-        joiner->Complete(false, "Failed to download age vault");
-    }
-    else {
-        // vault downloaded. start loading age data
-        plNetApp::StaticDebugMsg("AgeJoiner: Next:kLoadAge (vault downloaded)");
-        joiner->nextOp = plNCAgeJoiner::kLoadAge;
-    }
-}
 
 
 /*****************************************************************************
@@ -261,7 +236,10 @@ void plNCAgeJoiner::ExecNextOp () {
             ((plResManager*)hsgResMgr::ResMgr())->SetProgressBarProc(IResMgrProgressBarCallback);
 
             // Start loading age data
-            al->LoadAge(age.ageDatasetName);
+            auto res = al->LoadAge(age.ageDatasetName);
+            if (!res.has_value()) {
+                Complete(false, ST::format("Failed to load age {}: {}", age.ageDatasetName, res.error()).c_str());
+            }
         }
         break;
 
@@ -402,10 +380,16 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
             VaultDownloadNoCallbacks(
                 "AgeJoin",
                 ageVaultId,
-                AgeVaultDownloadCallback,
-                this,
-                nullptr, // FVaultDownloadProgressCallback
-                this
+                [this](auto result) {
+                    if (IS_NET_ERROR(result)) {
+                        Complete(false, "Failed to download age vault");
+                    } else {
+                        // vault downloaded. start loading age data
+                        plNetApp::StaticDebugMsg("AgeJoiner: Next:kLoadAge (vault downloaded)");
+                        nextOp = kLoadAge;
+                    }
+                },
+                nullptr
             );
         }
         else {
@@ -458,7 +442,13 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
     //========================================================================
     plInitialAgeStateLoadedMsg * stateMsg = plInitialAgeStateLoadedMsg::ConvertNoRef(msg);
     if(stateMsg) {
-        plNetObjectDebugger::GetInstance()->LogMsg(ST_LITERAL("OnServerInitComplete"));
+        if (plNetObjectDebugger::GetInstance()->GetNumDebugObjects() != 0) {
+            // Log this only if the debugger is actually in use.
+            // Avoids creating a NetObject.log file with only OnServerInitComplete messages
+            // if no objects are added to the debugger (which is the usual case for non-debug builds).
+            plNetObjectDebugger::GetInstance()->LogMsg(ST_LITERAL("OnServerInitComplete"));
+        }
+
         nc->SetFlagsBit(plNetClientApp::kLoadingInitialAgeState, false);
 
         const plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();

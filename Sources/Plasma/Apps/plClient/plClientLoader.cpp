@@ -81,7 +81,7 @@ void plClientLoader::Run()
     }
 }
 
-void plClientLoader::Start()
+void plClientLoader::StartClient()
 {
     fClient->ResizeDisplayDevice(fClient->GetPipeline()->Width(), fClient->GetPipeline()->Height(), !fClient->GetPipeline()->IsFullScreen());
     fClient->ShowClientWindow();
@@ -94,7 +94,7 @@ void plClientLoader::Start()
 void plClientLoader::ShutdownStart()
 {
     // Ensure that the client actually inited
-    hsThread::Stop();
+    Stop();
 
     // Now request the sane exit
     fClient->SetDone(true);

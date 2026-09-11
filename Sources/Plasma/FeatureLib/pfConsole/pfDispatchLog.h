@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plMessage;
 class plStatusLog;
-namespace ST { class string; }
 
 class plDispatchLog : public plDispatchLogBase
 {

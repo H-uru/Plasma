@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+// Used in Ahnonay around the edges of the island
+
 #include <metal_stdlib>
 using namespace metal;
 
@@ -58,13 +60,10 @@ typedef struct
     float4 CosConsts;
     float4 PiConsts;
     float4 NumericConsts;
-    float4 Tex0_Row0;
-    float4 Tex0_Row1;
+    float2x4 Tex0;
     float4 Tex1_Row0;
     float4 Tex1_Row1;
-    float4 L2WRow0;
-    float4 L2WRow1;
-    float4 L2WRow2;
+    float3x4 L2W;
     float4 Lengths;
     float4 WaterLevel;
     float4 DepthFalloff;
@@ -102,14 +101,7 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     vs_WaveDecEnv7InOut out;
 
     // Store our input position in world space in r6
-    float4 worldPosition = float4(0);
-    worldPosition.x = dot(float4(in.position, 1.0), uniforms.L2WRow0);
-    worldPosition.y = dot(float4(in.position, 1.0), uniforms.L2WRow1);
-    worldPosition.z = dot(float4(in.position, 1.0), uniforms.L2WRow2);
-    // Fill out our w (m4x3 doesn't touch w).
-    worldPosition.w = 1.0;
-
-    //
+    float4 worldPosition = float4(float4(in.position, 1.f) * uniforms.L2W, 1.f);
 
     // Input diffuse v5 color is:
     // v5.r = overall transparency
@@ -157,43 +149,15 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     // So r4.w is the depth of this vertex in feet.
 
     // Dot our position with our direction vectors.
-    float4 distance = uniforms.DirectionX * worldPosition.xxxx;
-    distance += uniforms.DirectionY * worldPosition.yyyy;
+    float4 phases = uniforms.DirectionX * worldPosition.xxxx;
+    phases += uniforms.DirectionY * worldPosition.yyyy;
 
     //
     //    dist = mad( dist, kFreq.xyzw, kPhase.xyzw);
-    distance = (distance * uniforms.Frequency) + uniforms.Phase;
-
-    //    // Now we need dist mod'd into range [-Pi..Pi]
-    //    dist *= rcp(kTwoPi);
-    distance += uniforms.PiConsts.zzzz;
-    distance *= 1.0f / uniforms.PiConsts.wwww;
-
-    //    dist = frac(dist);
-    distance = fract(distance);
-    //    dist *= kTwoPi;
-    distance *= uniforms.PiConsts.wwww;
-    //    dist += -kPi;
-    distance -= uniforms.PiConsts.zzzz;
-
-    //
-    //    sincos(dist, sinDist, cosDist);
-    // sin = r0 + r0^3 * vSin.y + r0^5 * vSin.z
-    // cos = 1 + r0^2 * vCos.y + r0^4 * vCos.z
-
-    float4 pow2 = distance * distance; // r0^2
-    float4 pow3 = pow2 * distance; // r0^3 - probably stall
-    float4 pow4 = pow2 * pow2; // r0^4
-    float4 pow5 = pow2 * pow3; // r0^5
-    float4 pow7 = pow2 * pow5; // r0^7
-
-    //r1
-    float4 cosDist = 1 + pow2 * uniforms.CosConsts.y + pow4 * uniforms.CosConsts.z;
-    //r2
-    float4 sinDist = distance + pow3 * uniforms.SinConsts.y + pow5 * uniforms.SinConsts.z;
-
-    cosDist = ((pow3 * pow3) * uniforms.CosConsts.w) + cosDist;
-    sinDist = (pow7 * uniforms.SinConsts.w) + sinDist;
+    phases = (phases * uniforms.Frequency) + uniforms.Phase;
+    
+    float4 cosPhases;
+    float4 sinPhases = fast::sincos(phases, cosPhases);
 
     // Calc our depth based filtering here into r4 (because we don't use it again
     // after here, and we need our filtering shortly).
@@ -204,8 +168,7 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     depth = clamp(depth, 0, 1);
 
     // Calc our filter (see above).
-    float4 inColor = float4(in.color) / 255.0f;
-    float4 filter = inColor.wwww * uniforms.Lengths;
+    float4 filter = in.color.wwww * uniforms.Lengths;
     filter = max(filter, uniforms.NumericConsts.xxxx);
     filter = min(filter, uniforms.NumericConsts.zzzz);
 
@@ -213,15 +176,15 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     // r2 == sinDist
     // r1 == cosDist
     //    sinDist *= filter;
-    sinDist *= filter;
+    sinPhases *= filter;
     //    sinDist *= kAmplitude.xyzw
-    sinDist *= uniforms.Amplitude;
+    sinPhases *= uniforms.Amplitude;
     // r5 is now T = sum(Ai * sin())
     // METAL NOTE: from here on, r5 is sinDist
     //    height = dp4(sinDist, kOne);
     //    accumPos.z += height; (but accumPos.z is currently 0).
     float4 accumPos = float4(0);
-    accumPos.x = dot(sinDist, uniforms.NumericConsts.zzzz);
+    accumPos.x = dot(sinPhases, uniforms.NumericConsts.zzzz);
     accumPos.y = accumPos.x * depth.z;
     accumPos.z = accumPos.y + uniforms.WaterLevel.w;
     worldPosition.z = max(worldPosition.z, accumPos.z); // CLAMP
@@ -231,7 +194,7 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     // r6.z == wave height clamped to never go beneath ground level
     //
     //    cosDist *= filter;
-    cosDist *= filter;
+    cosPhases *= filter;
     // Pos = (in.x + S, in.y + R, r6.z)
     // S = sum(k Dir.x A cos())
     // R = sum(k Dir.y A cos())
@@ -239,8 +202,8 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     // c31 = k Dir.y A
     //    S = sum(cosDist * c30);
     worldPosition.xy += float2(
-                              dot(cosDist, uniforms.QADirX),
-                              dot(cosDist, uniforms.QADirY)
+                              dot(cosPhases, uniforms.QADirX),
+                              dot(cosPhases, uniforms.QADirY)
                               );
 
     // Bias our vert up a bit to compensate for precision errors.
@@ -263,11 +226,7 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     // Now onto texture coordinate generation.
     //
     // First is the usual texture transform
-    out.texCoord0 = float4(
-                           dot(float4(in.texCoord1, 1.0), uniforms.Tex0_Row0),
-                           dot(float4(in.texCoord1, 1.0), uniforms.Tex0_Row1),
-                           uniforms.NumericConsts.zz
-                           );
+    out.texCoord0 = float4(float4(in.texCoord1, 1.0) * uniforms.Tex0, 0.f, 0.f);
 
     // Calculate our basis vectors as input into our tex3x3vspec
     // First we get our basis set off our surface. This is
@@ -327,21 +286,21 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
 
     // Okay, r1 currently has the vector of cosines, and r2 has vector of sines.
     // Everything will want that times amplitude, so go ahead and fold that in.
-    cosDist *= uniforms.Amplitude;
+    cosPhases *= uniforms.Amplitude;
 
-    r7.x = dot(sinDist, -uniforms.DirXSqKW);
-    r7.y = dot(sinDist, -uniforms.DirXDirYKW);
-    r7.z = dot(cosDist, -uniforms.DirXW);
+    r7.x = dot(sinPhases, -uniforms.DirXSqKW);
+    r7.y = dot(sinPhases, -uniforms.DirXDirYKW);
+    r7.z = dot(cosPhases, -uniforms.DirXW);
     r7.x += uniforms.NumericConsts.z;
 
     float4 r8 = float4(0);
-    r8.x = dot(sinDist, -uniforms.DirXDirYKW);
-    r8.y = dot(sinDist, -uniforms.DirYSqKW);
-    r8.z = dot(cosDist, -uniforms.DirYW);
+    r8.x = dot(sinPhases, -uniforms.DirXDirYKW);
+    r8.y = dot(sinPhases, -uniforms.DirYSqKW);
+    r8.z = dot(cosPhases, -uniforms.DirYW);
     r8.y = r8.y + uniforms.NumericConsts.z;
 
     float4 r9 = out.position;
-    r9.z = dot(cosDist, -uniforms.WK);
+    r9.z = dot(cosPhases, -uniforms.WK);
     r9.x = -r7.z;
     r9.y = -r8.z;
     r9.z = r9.z + uniforms.NumericConsts.z;
@@ -401,7 +360,7 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     out.texCoord3 = r2 * r10.xxxw;
 
     float4 matColor = uniforms.MatColor;
-    out.c1 = clamp(float4(in.color).yyyz/255.0 * matColor, 0.0, 1.0);
+    out.c1 = clamp(in.color.yyyz * matColor, 0.0, 1.0);
 
     return out;
 }
@@ -425,8 +384,8 @@ fragment float4 ps_WaveDecEnv(vs_WaveDecEnv7InOut in            [[ stage_in ]],
     float3 N = float3(u, v, w);
     float3 E = float3(in.texCoord1.w, in.texCoord2.w, in.texCoord3.w);
 
-    //float3 coord = reflect(E, N);
-    float3 coord = 2*(dot(N, E) / dot(N, N))*N - E;
+    // Invert the normal to an incident ray, then reflect
+    float3 coord = reflect(-E, N);
 
     // t3 now has our reflected environment map value
     // We've (presumably) attenuated the effect on a vertex basis

@@ -52,19 +52,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueDefinitions.h"
 #include "pyGUIControl.h"
 
-class pfGUIColorScheme;
 class plKey;
 class pyColor;
 class pyKey;
-namespace ST { class string; }
 
 class pyGUIControlTextBox : public pyGUIControl
 {
-private:
-    pfGUIColorScheme*       fOriginalColorScheme;
-
 protected:
-    pyGUIControlTextBox() : pyGUIControl(), fOriginalColorScheme() { } // for python glue only, do NOT call
+    pyGUIControlTextBox() : pyGUIControl() {} // for python glue only, do NOT call
     pyGUIControlTextBox(pyKey& gckey);
     pyGUIControlTextBox(plKey objkey);
 

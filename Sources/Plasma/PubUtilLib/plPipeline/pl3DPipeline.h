@@ -107,6 +107,22 @@ static const float kPerspLayerTrans  = 0.00002f;
 
 static const float kAvTexPoolShrinkThresh = 30.f; // seconds
 
+class plDisplayHelper
+{
+public:
+    virtual ~plDisplayHelper() {}
+
+    virtual const plDisplayMode&       DesktopDisplayMode() const = 0;
+    virtual std::vector<plDisplayMode> GetSupportedDisplayModes(hsDisplayHndl display, int ColorDepth = 32) const = 0;
+    virtual hsDisplayHndl DefaultDisplay() const = 0;
+
+    static plDisplayHelper* GetInstance() { return fCurrentDisplayHelper; }
+    static void             SetInstance(plDisplayHelper* helper) { fCurrentDisplayHelper = helper; }
+
+private:
+    static plDisplayHelper* fCurrentDisplayHelper;
+};
+
 template <class DeviceType>
 class pl3DPipeline : public plPipeline
 {

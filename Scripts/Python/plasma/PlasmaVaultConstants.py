@@ -51,9 +51,10 @@
 """Plasma 2.0 Vault Constants"""
 
 from __future__ import annotations
+import enum
 from typing import *
 
-class PtVaultCallbackTypes:
+class PtVaultCallbackTypes(enum.IntEnum):
     kVaultConnected = 1
     kVaultNodeSaved = 2
     kVaultNodeRefAdded = 3
@@ -64,7 +65,7 @@ class PtVaultCallbackTypes:
     kVaultNodeAdded = 8
     kVaultDisconnected = 9
 
-class PtVaultNodeTypes:
+class PtVaultNodeTypes(enum.IntEnum):
     kInvalidNode = 0
     kVNodeMgrPlayerNode = 2
     kVNodeMgrAgeNode = 3
@@ -80,7 +81,7 @@ class PtVaultNodeTypes:
     kAgeInfoListNode = 34
     kMarkerGameNode = 35
 
-class PtVaultNotifyTypes:
+class PtVaultNotifyTypes(enum.IntEnum):
     kRegisteredOwnedAge = 9
     kUnRegisteredOwnedAge = 10
     kRegisteredVisitAge = 11
@@ -88,7 +89,7 @@ class PtVaultNotifyTypes:
     kPublicAgeCreated = 13
     kPublicAgeRemoved = 14
 
-class PtVaultStandardNodes:
+class PtVaultStandardNodes(enum.IntEnum):
     kUserDefinedNode = 0
     kInboxFolder = 1
     kBuddyListFolder = 2
@@ -113,9 +114,9 @@ class PtVaultStandardNodes:
     kAvatarClosetFolder = 25
     kGlobalInboxFolder = 30
 
-class PtVaultTextNoteSubTypes:
+class PtVaultTextNoteSubTypes(enum.IntEnum):
     kGeneric = 0
 
-class PtVaultTextNoteTypes:
+class PtVaultTextNoteTypes(enum.IntEnum):
     kGeneric = 0
     kCCRPetition = 1

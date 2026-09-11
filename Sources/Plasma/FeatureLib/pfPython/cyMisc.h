@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct PipelineParams;
 class plDisplayMode;
 class plFileName;
+class plLocation;
 class plPipeline;
 class plUUID;
 class pyAgeInfoStruct;
@@ -64,7 +65,6 @@ class pyKey;
 class pyPlayer;
 class pyPoint3;
 class pySceneObject;
-namespace ST { class string; }
 
 typedef struct _object PyObject;
 
@@ -264,7 +264,7 @@ public:
 
 
     //
-    // Get Current age information - DEPRECIATED. Use ptDniInfoSource() object instead.
+    // Get Current age information
     //
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -281,7 +281,6 @@ public:
     static ST::string GetPrevAgeName();
     static PyObject* GetPrevAgeInfo();
     // current time in current age
-    static uint32_t GetAgeTime();
     static time_t GetDniTime();
     static time_t ConvertGMTtoDni(time_t time);
     static time_t GetServerTime(); // returns the current server time in GMT
@@ -562,12 +561,13 @@ public:
     /////////////////////////////////////////////////////////////////////////////
     //
     //  Function   : Paging functions
-    //  PARAMETERS : nodeName  - name of the page to load
+    //  PARAMETERS : nodeLocs - the nodes to (un)load
+    //               netForce - whether to propagate the (un)load to all other players
     //  
-    //  PURPOSE    : page in, or out a paritcular node
+    //  PURPOSE    : page in or out one or more nodes
     //
-    static void PageInNodes(const std::vector<ST::string>& nodeNames, const ST::string& age, bool netForce);
-    static void PageOutNode(const ST::string& nodeName, bool netForce);
+    static void PageInNodes(const std::vector<plLocation>& nodeLocs, bool netForce);
+    static void PageOutNodes(const std::vector<plLocation>& nodeLocs, bool netForce);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -745,11 +745,11 @@ public:
     //////////////////////////////////////////////////////////////////////////////
     //
     // Function   : GetPublicAgeList
-    // PARAMETERS : ageName, callback object
+    // PARAMETERS : ageName
     //
     // PURPOSE    : Get the list of public ages for the given age name.
     //
-    static void GetPublicAgeList(const ST::string& ageName, PyObject * cbObject = nullptr);
+    static void GetPublicAgeList(const ST::string& ageName);
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -785,7 +785,7 @@ public:
 
     static int GetNumCameras();
     static ST::string GetCameraNumber(int number);
-    static void RebuildCameraStack(const ST::string& name, const ST::string& ageName);
+    static PyObject* RebuildCameraStack(const ST::string& name, const ST::string& ageName);
     static void PyClearCameraStack();
     static void RecenterCamera();
     static bool IsFirstPerson();

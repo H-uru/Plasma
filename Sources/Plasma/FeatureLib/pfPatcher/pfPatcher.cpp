@@ -119,14 +119,14 @@ struct pfPatcherQueuedFile
     Type fType;
     plFileName fClientPath;
     plFileName fServerPath;
-    plMD5Checksum fChecksum;
+    plChecksum fChecksum;
     uint32_t fFileSize;
     uint32_t fZipSize;
     uint32_t fFlags;
 
     pfPatcherQueuedFile(Type t, const NetCliFileManifestEntry& file)
-    : fType(t), fClientPath(plFileName(ST::string::from_utf16(file.clientName)).Normalize()),
-          fServerPath(ST::string::from_utf16(file.downloadName)), fChecksum(),
+        : fType(t), fClientPath(plFileName(ST::string::from_utf16(file.clientName)).Normalize()),
+          fServerPath(ST::string::from_utf16(file.downloadName)), fChecksum(plChecksum::Type::kMD5),
           fFileSize(file.fileSize), fZipSize(file.zipSize), fFlags(file.flags)
     {
         ST::string temp(file.md5, std::size(file.md5));
@@ -134,7 +134,8 @@ struct pfPatcherQueuedFile
     }
 
     pfPatcherQueuedFile(Type t, plFileName path, uint32_t flags=0)
-        : fType(t), fClientPath(std::move(path)), fChecksum(), fFileSize(), fZipSize(), fFlags(flags)
+        : fType(t), fClientPath(std::move(path)), fChecksum(plChecksum::Type::kMD5),
+          fFileSize(), fZipSize(), fFlags(flags)
     { }
 
     pfPatcherQueuedFile(const pfPatcherQueuedFile& copy) = delete;
@@ -144,8 +145,8 @@ struct pfPatcherQueuedFile
 
 // ===================================================
 
-/** Patcher grunt work thread */
-struct pfPatcherWorker : public hsThread
+/** State for a patcher worker thread started by pfPatcher::Start */
+struct pfPatcherWorker final
 {
     /** Represents a File/Auth download request */
     struct Request
@@ -178,7 +179,6 @@ struct pfPatcherWorker : public hsThread
     pfPatcher::FileDownloadFunc fRedistUpdateDownloaded;
     pfPatcher::FileDownloadFunc fSelfPatch;
 
-    pfPatcher* fParent;
     volatile bool fStarted;
     volatile bool fRequestActive;
     volatile bool fWantPython;
@@ -190,11 +190,16 @@ struct pfPatcherWorker : public hsThread
     pfPatcherWorker();
     ~pfPatcherWorker();
 
-    void OnQuit() override;
+    void IAuthThingDownloadCB(ENetError result, const plFileName& filename, hsStream* writer);
+    void IGotAuthFileList(ENetError result, const std::vector<NetCliAuthFileInfo>& infos);
+    void IHandleManifestDownload(const ST::string& group, const std::vector<NetCliFileManifestEntry>& manifest);
+    void IPreloaderManifestDownloadCB(ENetError result, const ST::string& group, const std::vector<NetCliFileManifestEntry>& manifest);
+    void IFileManifestDownloadCB(ENetError result, const ST::string& group, const std::vector<NetCliFileManifestEntry>& manifest);
+    void IFileThingDownloadCB(ENetError result, const plFileName& filename, pfPatcherStream* stream);
 
     void EndPatch(ENetError result, const ST::string& msg={});
     bool IssueRequest();
-    void Run() override;
+    void Run();
     void IHashFile(pfPatcherQueuedFile& file);
     void IDecompressSound(const pfPatcherQueuedFile& sound) const;
     void ProcessFile();
@@ -304,94 +309,83 @@ public:
 
 // ===================================================
 
-static void IAuthThingDownloadCB(ENetError result, void* param, const plFileName& filename, hsStream* writer)
+void pfPatcherWorker::IAuthThingDownloadCB(ENetError result, const plFileName& filename, hsStream* writer)
 {
-    pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
-
     if (IS_NET_SUCCESS(result)) {
         PatcherLogGreen("\tDownloaded Legacy File '{}'", filename);
-        patcher->IssueRequest();
+        IssueRequest();
 
         // Now, we pass our RAM-backed file to the game code handlers. In the main client,
         // this will trickle down and add a new friend to plStreamSource. This should never
         // happen in any other app...
         writer->Rewind();
-        patcher->WhitelistFile(filename, true, writer);
+        WhitelistFile(filename, true, writer);
     } else {
         PatcherLogRed("\tDownloaded Failed: File '{}'", filename);
-        patcher->EndPatch(result, filename.AsString());
+        EndPatch(result, filename.AsString());
     }
 }
 
-static void IGotAuthFileList(ENetError result, void* param, const NetCliAuthFileInfo infoArr[], unsigned infoCount)
+void pfPatcherWorker::IGotAuthFileList(ENetError result, const std::vector<NetCliAuthFileInfo>& infos)
 {
-    pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
-
     if (IS_NET_SUCCESS(result)) {
         // so everything goes directly into the Requests deque because AuthSrv lists
         // don't have any hashes attached. WHY did eap think this was a good idea?!?!
         {
-            hsLockGuard(patcher->fRequestMut);
-            for (unsigned i = 0; i < infoCount; ++i) {
-                PatcherLogYellow("\tEnqueuing Legacy File '{}'", infoArr[i].filename);
+            hsLockGuard(fRequestMut);
+            for (const auto& info : infos) {
+                PatcherLogYellow("\tEnqueuing Legacy File '{}'", info.filename);
 
-                plFileName fn = ST::string::from_utf16(infoArr[i].filename);
+                plFileName fn = ST::string::from_utf16(info.filename);
                 plFileSystem::CreateDir(fn.StripFileName());
 
                 // We purposefully do NOT Open this stream! This uses a special auth-file constructor that
                 // utilizes a backing hsRAMStream. This will be fed to plStreamSource later...
-                pfPatcherStream* s = new pfPatcherStream(patcher, fn, infoArr[i].filesize);
-                patcher->fRequests.emplace_back(fn.AsString(), pfPatcherWorker::Request::kAuthFile, s);
+                pfPatcherStream* s = new pfPatcherStream(this, fn, info.filesize);
+                fRequests.emplace_back(fn.AsString(), Request::kAuthFile, s);
             }
         }
-        patcher->IssueRequest();
+        IssueRequest();
     } else {
         PatcherLogRed("\tSHIT! Some legacy manifest phailed");
-        patcher->EndPatch(result, "SecurePreloader failed");
+        EndPatch(result, "SecurePreloader failed");
     }
 }
 
-static void IHandleManifestDownload(pfPatcherWorker* patcher, const char16_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
+void pfPatcherWorker::IHandleManifestDownload(const ST::string& group, const std::vector<NetCliFileManifestEntry>& manifest)
 {
     PatcherLogGreen("\tDownloaded Manifest '{}'", group);
     {
-        hsLockGuard(patcher->fFileMut);
-        for (unsigned i = 0; i < entryCount; ++i)
-            patcher->fQueuedFiles.emplace_back(pfPatcherQueuedFile::Type::kManifestHash, manifest[i]);
-        patcher->fFileSignal.Signal();
+        hsLockGuard(fFileMut);
+        for (const auto& entry : manifest)
+            fQueuedFiles.emplace_back(pfPatcherQueuedFile::Type::kManifestHash, entry);
+        fFileSignal.Signal();
     }
-    patcher->IssueRequest();
+    IssueRequest();
 }
 
-static void IPreloaderManifestDownloadCB(ENetError result, void* param, const char16_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
+void pfPatcherWorker::IPreloaderManifestDownloadCB(ENetError result, const ST::string& group, const std::vector<NetCliFileManifestEntry>& manifest)
 {
-    pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
-
     if (IS_NET_SUCCESS(result)) {
-        IHandleManifestDownload(patcher, group, manifest, entryCount);
+        IHandleManifestDownload(group, manifest);
     } else {
-        patcher->EnqueuePreloaderLists();
-        patcher->IssueRequest();
+        EnqueuePreloaderLists();
+        IssueRequest();
     }
 }
 
-static void IFileManifestDownloadCB(ENetError result, void* param, const char16_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
+void pfPatcherWorker::IFileManifestDownloadCB(ENetError result, const ST::string& group, const std::vector<NetCliFileManifestEntry>& manifest)
 {
-    pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
-
     if (IS_NET_SUCCESS(result))
-        IHandleManifestDownload(patcher, group, manifest, entryCount);
+        IHandleManifestDownload(group, manifest);
     else {
         PatcherLogRed("\tDownload Failed: Manifest '{}'", group);
-        patcher->EndPatch(result, ST::string::from_utf16(group));
+        EndPatch(result, group);
     }
 }
 
-static void IFileThingDownloadCB(ENetError result, void* param, const plFileName& filename, hsStream* writer)
+void pfPatcherWorker::IFileThingDownloadCB(ENetError result, const plFileName& filename, pfPatcherStream* stream)
 {
-    pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
-    pfPatcherStream* stream = static_cast<pfPatcherStream*>(writer);
-
     // We need to explicitly close any underlying streams NOW because we
     // might be about to signal the client that this file needs to be acted
     // on, eg installed, decompressed from ogg to wave, etc. We can't wait
@@ -402,24 +396,23 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
 
     if (IS_NET_SUCCESS(result)) {
         PatcherLogGreen("\tDownloaded File '{}'", stream->GetFileName());
-        patcher->WhitelistFile(stream->GetFileName(), true);
-        if (patcher->fSelfPatch && stream->IsSelfPatch())
-            patcher->fSelfPatch(stream->GetFileName());
-        if (patcher->fRedistUpdateDownloaded && stream->IsRedistUpdate())
-            patcher->fRedistUpdateDownloaded(stream->GetFileName());
+        WhitelistFile(stream->GetFileName(), true);
+        if (fSelfPatch && stream->IsSelfPatch())
+            fSelfPatch(stream->GetFileName());
+        if (fRedistUpdateDownloaded && stream->IsRedistUpdate())
+            fRedistUpdateDownloaded(stream->GetFileName());
 
         // Punt the SFX decompression to the patcher thread (this is the main/draw thread)
         if (stream->RequiresSfxCache()) {
-            hsLockGuard(patcher->fFileMut);
-            patcher->fQueuedFiles.emplace_back(pfPatcherQueuedFile::Type::kSoundDecompress,
-                                               stream->GetFileName(), stream->GetFlags());
-            patcher->fFileSignal.Signal();
+            hsLockGuard(fFileMut);
+            fQueuedFiles.emplace_back(pfPatcherQueuedFile::Type::kSoundDecompress, stream->GetFileName(), stream->GetFlags());
+            fFileSignal.Signal();
         }
-        patcher->IssueRequest();
+        IssueRequest();
     } else {
         PatcherLogRed("\tDownloaded Failed: File '{}'", stream->GetFileName());
         stream->Unlink();
-        patcher->EndPatch(result, filename.AsString());
+        EndPatch(result, filename.AsString());
     }
 
     delete stream;
@@ -428,7 +421,7 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
 // ===================================================
 
 pfPatcherWorker::pfPatcherWorker() :
-    fStarted(false), fCurrBytes(0), fTotalBytes(0), fRequestActive(true), fParent(nullptr),
+    fStarted(false), fCurrBytes(0), fTotalBytes(0), fRequestActive(true),
     fWantPython(), fWantSDL()
 { }
 
@@ -448,12 +441,6 @@ pfPatcherWorker::~pfPatcherWorker()
         hsLockGuard(fFileMut);
         fQueuedFiles.clear();
     }
-}
-
-void pfPatcherWorker::OnQuit()
-{
-    // the thread's Run() has exited sanely... now we can commit hara-kiri
-    delete fParent;
 }
 
 void pfPatcherWorker::EndPatch(ENetError result, const ST::string& msg)
@@ -494,15 +481,21 @@ bool pfPatcherWorker::IssueRequest()
             if (fFileBeginDownload)
                 fFileBeginDownload(req.fStream->GetFileName());
 
-            NetCliFileDownloadRequest(req.fName, req.fStream, IFileThingDownloadCB, this);
+            NetCliFileDownloadRequest(req.fName, req.fStream, 0, [this, filename = req.fName, stream = req.fStream](auto result) {
+                IFileThingDownloadCB(result, filename, stream);
+            });
             break;
         case Request::kManifest:
-            NetCliFileManifestRequest(IFileManifestDownloadCB, this, req.fName.to_utf16().data());
+            NetCliFileManifestRequest(req.fName.to_utf16().data(), 0, [this, group = req.fName](auto result, const auto& manifest) {
+                IFileManifestDownloadCB(result, group, manifest);
+            });
             break;
         case Request::kSecurePreloader:
             // so, yeah, this is usually the "SecurePreloader" manifest on the file server...
             // except on legacy servers, this may not exist, so we need to fall back without nuking everything!
-            NetCliFileManifestRequest(IPreloaderManifestDownloadCB, this, req.fName.to_utf16().data());
+            NetCliFileManifestRequest(req.fName.to_utf16().data(), 0, [this, group = req.fName](auto result, const auto& manifest) {
+                IPreloaderManifestDownloadCB(result, group, manifest);
+            });
             break;
         case Request::kAuthFile:
             // ffffffuuuuuu
@@ -510,13 +503,19 @@ bool pfPatcherWorker::IssueRequest()
             if (fFileBeginDownload)
                 fFileBeginDownload(req.fStream->GetFileName());
 
-            NetCliAuthFileRequest(req.fName, req.fStream, IAuthThingDownloadCB, this);
+            NetCliAuthFileRequest(req.fName, req.fStream, [this, filename = req.fName, writer = req.fStream](auto result) {
+                IAuthThingDownloadCB(result, filename, writer);
+            });
             break;
         case Request::kPythonList:
-            NetCliAuthFileListRequest(u"Python", u"pak", IGotAuthFileList, this);
+            NetCliAuthFileListRequest(u"Python", u"pak", [this](auto result, const auto& infos) {
+                IGotAuthFileList(result, infos);
+            });
             break;
         case Request::kSdlList:
-            NetCliAuthFileListRequest(u"SDL", u"sdl", IGotAuthFileList, this);
+            NetCliAuthFileListRequest(u"SDL", u"sdl", [this](auto result, const auto& infos) {
+                IGotAuthFileList(result, infos);
+            });
             break;
         DEFAULT_FATAL(req.fType);
     }
@@ -527,7 +526,6 @@ bool pfPatcherWorker::IssueRequest()
 
 void pfPatcherWorker::Run()
 {
-    SetThisThreadName(ST_LITERAL("pfPatcherWorker"));
     // So here's the rub:
     // We have one or many manifests in the fRequests deque. We begin issuing those requests one-by one, starting here.
     // As we receive the answer, the NetCli thread populates fQueuedFiles and pings the fFileSignal semaphore, then issues the next request...
@@ -578,7 +576,7 @@ void pfPatcherWorker::IHashFile(pfPatcherQueuedFile& file)
     }
     plFileInfo mine(clientPathForComparison);
     if (mine.FileSize() == file.fFileSize) {
-        plMD5Checksum cliMD5(clientPathForComparison);
+        plChecksum cliMD5(plChecksum::Type::kMD5, clientPathForComparison);
         if (cliMD5 == file.fChecksum) {
             WhitelistFile(file.fClientPath, false);
             return;
@@ -695,7 +693,10 @@ plStatusLog* pfPatcher::GetLog()
 }
 
 pfPatcher::pfPatcher() : fWorker(new pfPatcherWorker) { }
+pfPatcher::pfPatcher(pfPatcher&& other) noexcept = default;
 pfPatcher::~pfPatcher() { }
+
+pfPatcher& pfPatcher::operator=(pfPatcher&& other) noexcept = default;
 
 // ===================================================
 
@@ -775,13 +776,16 @@ void pfPatcher::RequestManifest(const std::vector<ST::string>& mfs)
     );
 }
 
-bool pfPatcher::Start()
+void pfPatcher::Start()
 {
-    hsAssert(!fWorker->fStarted, "pfPatcher is one-use only. kthx.");
-    if (!fWorker->fStarted) {
-        fWorker->fParent = this; // wheeeee circular
-        fWorker->StartDetached();
-        return true;
+    hsAssert(fWorker, "pfPatcher is one-use only. kthx.");
+    if (!fWorker) {
+        return;
     }
-    return false;
+
+    // Ownership of the pfPatcherWorker moves from pfPatcher to the newly started patcher thread.
+    hsThread::StartSimpleThread([worker = std::move(fWorker)] {
+        hsThread::SetThisThreadName(ST_LITERAL("pfPatcherWorker"));
+        worker->Run();
+    }).detach();
 }

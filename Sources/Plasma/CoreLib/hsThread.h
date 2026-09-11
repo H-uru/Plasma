@@ -82,7 +82,7 @@ public:
 
     virtual ~hsThread()
     {
-        this->Stop();
+        Stop();
     }
 
     // Disable copying
@@ -90,15 +90,28 @@ public:
     void operator=(const hsThread &) = delete;
 
     virtual void    Run() = 0;      // override this to do your work
-    virtual void    Start();        // initializes stuff and calls your Run() method
-    virtual void    Stop();         // sets fQuit = true and the waits for the thread to stop
+    void Start(); // initializes stuff and calls your Run() method
+    void Stop(); // sets fQuit = true and the waits for the thread to stop
     virtual void    OnQuit() { }
 
-    // Start the thread in a detached state, so it will continue running
-    // in the background, and doesn't need to be joined.  NOTE: The thread
-    // must be able to manage itself -- destroying the hsThread object
-    // WILL NOT stop a detached thread!
-    void StartDetached();
+    // Runs initialization tasks that should happen at the start of all Plasma threads,
+    // such as enabling VLD if configured.
+    // Should only be called once and only inside a newly started thread.
+    static void InitThisThread();
+
+    // Start a std::thread that runs the given function.
+    // The new thread is automatically initialized using InitThisThread.
+    // This is a simpler alternative to a full hsThread.
+    // The template is used instead of std::function to allow passing uncopyable (move-only) lambdas.
+    // std::move_only_function would require C++23 :(
+    template<typename ThreadProc>
+    static std::thread StartSimpleThread(ThreadProc threadProc)
+    {
+        return std::thread([threadProc = std::move(threadProc)] {
+            InitThisThread();
+            threadProc();
+        });
+    }
 
     // Set a name for the current thread, to be displayed in debuggers and such.
     // If possible, don't use names longer than 15 characters,

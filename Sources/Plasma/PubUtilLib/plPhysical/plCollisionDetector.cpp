@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plCollisionDetector.h"
 
+#include "hsMath.h"
 #include "plgDispatch.h"
 #include "plPhysical.h"
 
@@ -441,7 +442,7 @@ void plObjectInVolumeAndFacingDetector::ICheckForTrigger()
         objView.Normalize();
 
         float dot = playerView * objView;
-//      hsStatusMessageF("Dot: %f Tolerance: %f", dot, fFacingTolerance);
+        //hsStatusMessageF("Dot: {} Tolerance: {}", dot, fFacingTolerance);
         bool facing = dot >= fFacingTolerance;
 
         bool movingForward = false;

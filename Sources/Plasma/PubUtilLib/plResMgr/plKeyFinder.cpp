@@ -253,12 +253,11 @@ void plKeyFinder::IGetNames(std::vector<ST::string>& names, const ST::string& se
     std::vector<plKey> keys;
     ReallyStupidSubstringSearch(searchName, index, keys);
 
-    for (int i = 0; i < keys.size(); i++)
+    for (const auto& key : keys)
     {
         // Only allow loaded ones to cut down on the crap
-        plKey key = keys[i];
         if (key->ObjectIsLoaded())
-            names.push_back(key->GetName());
+            names.emplace_back(key->GetName());
     }
 }
 

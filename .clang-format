@@ -33,6 +33,7 @@ ObjCBlockIndentWidth: 4
 SpacesInLineCommentPrefix:
   Minimum: 1
   Maximum: -1
+SpaceBeforeParens: ControlStatements
 SpacesBeforeTrailingComments: 1
 ---
 Language: ObjC
@@ -67,4 +68,5 @@ ObjCBlockIndentWidth: 4
 SpacesInLineCommentPrefix:
   Minimum: 1
   Maximum: -1
+SpaceBeforeParens: ControlStatements
 SpacesBeforeTrailingComments: 1

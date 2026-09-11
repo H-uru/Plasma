@@ -46,8 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/plKey.h"
 
-namespace ST { class string; }
-
 // Simple debugging tool, everything is public
 // This class collects a list of keyed objects that deal with
 // animation, to report info on them when requested.

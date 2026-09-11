@@ -191,14 +191,18 @@ public:
      */
     static plFileName Join(const plFileName &base, const plFileName &path,
                            const plFileName& path2)
-    { return Join(Join(base, path), path2); }
+    {
+        return Join(Join(base, path), path2);
+    }
 
     /** Join four path components together with the correct path separator.
      *  \todo Make this more efficient.
      */
     static plFileName Join(const plFileName &base, const plFileName &path,
                            const plFileName& path2, const plFileName &path3)
-    { return Join(Join(Join(base, path), path2), path3); }
+    {
+        return Join(Join(Join(base, path), path2), path3);
+    }
 
     /** Append UTF-8 data from a C-style string pointer to the end of this
      *  filename object.  Not to be confused with Join() -- do not use this
@@ -232,14 +236,18 @@ inline ST_FORMAT_TYPE(const plFileName &)
  *  will be shot by Zrax.
  */
 inline plFileName operator+(const plFileName &left, const char *right)
-{ return left.AsString() + right; }
+{
+    return left.AsString() + right;
+}
 
 /** Concatentate a plFileName with a string constant.  Not to be confused with
  *  plFileName::Join() -- do not use this for joining path components, or you
  *  will be shot by Zrax.
  */
 inline plFileName operator+(const char *left, const plFileName &right)
-{ return left + right.AsString(); }
+{
+    return left + right.AsString();
+}
 
 
 /** Structure to get information about a file by name.

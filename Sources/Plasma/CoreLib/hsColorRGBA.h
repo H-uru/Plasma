@@ -71,7 +71,7 @@ struct hsColor32 {
 
     int operator==(const hsColor32& aa) const
     {
-            return *(uint32_t*)&aa == *(uint32_t*)this;
+        return *(uint32_t*)&aa == *(uint32_t*)this;
     }
     int operator!=(const hsColor32& aa) { return !(aa == *this); }
 };

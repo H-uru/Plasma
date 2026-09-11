@@ -57,7 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueDefinitions.h"
 
 class plFileName;
-namespace ST { class string; }
 
 class pyStream
 {

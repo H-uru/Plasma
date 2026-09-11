@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsBitVector.h"
 #include "hsColorRGBA.h"
+#include "hsMath.h"
 #include "hsMatrix44.h"
 
 #include "pnSceneObject/plObjInterface.h"

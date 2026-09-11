@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plgDispatch.h"
 #include "hsGeometry3.h"
+#include "hsMath.h"
 #include "plPhysical.h"
 #include "hsQuat.h"
 #include "hsTimer.h"
@@ -64,6 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysicalControllerCore.h"
 
 #include <cmath>
+#include <string_theory/format>
 #include <vector>
 
 #include "pnEncryption/plRandom.h"
@@ -317,7 +319,7 @@ void plAvBrainHuman::IInitBoneMap()
             fAvMod->AddBoneMapping(id, bone);
         }
         else
-            hsStatusMessageF("Couldn't find standard bone %s.", name.c_str());
+            hsStatusMessageF("Couldn't find standard bone {}.", name);
     }
 }
 
@@ -627,7 +629,7 @@ bool plAvBrainHuman::IHandleTaskMsg(plAvTaskMsg *msg)
         plAvTask *task = taskM->GetTask();
         QueueTask(task);
     } else {
-        hsStatusMessageF("Couldn't recognize task message type.\n");
+        hsStatusMessage("Couldn't recognize task message type.");
         return plArmatureBrain::IHandleTaskMsg(msg);
     }
     return true;

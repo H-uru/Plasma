@@ -62,16 +62,95 @@ plProfile_Extern(PythonUpdate);
 
 namespace plPython
 {
+    class KwArg
+    {
+        pyObjectRef fName;
+        pyObjectRef fValue;
+
+    public:
+        KwArg() = delete;
+        KwArg(const KwArg&) = delete;
+
+        template<size_t _Sz, typename _ValueT>
+        KwArg(const char (&name)[_Sz], _ValueT&& value)
+            : fName(PyUnicode_FromStringAndSize(name, _Sz - 1)),
+              fValue(ConvertFrom(std::forward<_ValueT>(value)))
+        { }
+
+        KwArg(KwArg&& move) noexcept
+            : fName(std::move(move.fName)),
+              fValue(std::move(move.fValue))
+        {
+        }
+
+        PyObject* ReleaseName() { return fName.Release(); }
+        PyObject* ReleaseValue() { return fValue.Release(); }
+    };
+
+    inline PyObject* ConvertFrom(KwArg&& kwarg)
+    {
+        return kwarg.ReleaseValue();
+    }
+
     namespace _detail
     {
+        template <typename... Args>
+        struct PositionalAfterKwArg;
+
+        template <>
+        struct PositionalAfterKwArg<> : std::false_type
+        {
+        };
+
+        template <typename First, typename... Rest>
+        struct PositionalAfterKwArg<First, Rest...>
+        {
+            static constexpr bool value = [] {
+                using T = std::decay_t<First>;
+                if constexpr (std::is_same_v<T, KwArg>) {
+                    return (... || !std::is_same_v<std::decay_t<Rest>, KwArg>);
+                } else {
+                    return PositionalAfterKwArg<Rest...>::value;
+                }
+            }();
+        };
+
+        template <typename Arg>
+        inline void InsertKwName(PyObject* kwlist, Py_ssize_t& i, Arg& arg)
+        {
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, KwArg>) {
+                PyTuple_SET_ITEM(kwlist, i, arg.ReleaseName());
+                i++;
+            }
+        }
+
         template <size_t _NArgsfT, typename... Args>
         inline pyObjectRef VectorcallObject(PyObject* callable, PyObject* argsObjs[], Args&&... args)
         {
+            static_assert(
+                !PositionalAfterKwArg<Args...>::value,
+                "All positional arguments must come before any keyword arguments."
+            );
+
+            pyObjectRef kwlist;
+            constexpr size_t numKwds = ((std::is_same_v<std::decay_t<Args>, KwArg> ? 1 : 0) + ...);
+            if (numKwds > 0) {
+                kwlist = PyTuple_New(numKwds);
+                Py_ssize_t i = 0;
+                // Releases the keyword argment names into the kwlist tuple. We're using a function
+                // inside the fold expression to avoid instantiating both sides of a ternary, which
+                // happens even in compile time eliminated branches.
+                (InsertKwName(kwlist.Get(), i, args), ...);
+            }
+
             // Python's vectorcall protocol has an optimization whereby it can reuse the memory allocated
             // for the arguments array if you let it (ab)-use the first slot.
             {
                 argsObjs[0] = nullptr;
                 size_t i = 1; // Don't touch the first slot...
+                // Releases the converted argument values and any keyword argument values
+                // into the argsObjs array.
                 ((argsObjs[i++] = ConvertFrom(std::forward<Args>(args))), ...);
             }
 
@@ -80,8 +159,10 @@ namespace plPython
             pyObjectRef result = _PyObject_Vectorcall(
                 callable,
                 &argsObjs[1], // This is the optimization mentioned earlier.
-                (_NArgsfT - 1) | PY_VECTORCALL_ARGUMENTS_OFFSET, // Indicates we are passing args[1] instead of args[0]
-                nullptr
+                // The number of positional arguments
+                (_NArgsfT - numKwds - 1) | PY_VECTORCALL_ARGUMENTS_OFFSET, // Indicates we are passing args[1] instead of args[0]
+                // Tuple of keyword argument names
+                kwlist.Get()
             );
             plProfile_EndTiming(PythonUpdate);
 
@@ -115,17 +196,6 @@ namespace plPython
 #endif
             plProfile_EndTiming(PythonUpdate);
             return result;
-#if PY_VERSION_HEX >= 0x03090000
-        } else if constexpr (sizeof...(args) == 1) {
-            // Use Python's built-in vectorcall optimization for one argument.
-            // This API exists in Python 3.8 in a provisional form but is not
-            // exposed, so we can only use it on Python 3.9+.
-            pyObjectRef arg = ConvertFrom(std::forward<Args>(args)...);
-            plProfile_BeginTiming(PythonUpdate);
-            pyObjectRef result = PyObject_CallOneArg(callable, arg.Get());
-            plProfile_EndTiming(PythonUpdate);
-            return result;
-#endif
         } else if constexpr (sizeof...(args) < 64) {
             constexpr size_t nargs = sizeof...(args) + 1;
             PyObject* argsObjs[nargs];

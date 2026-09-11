@@ -110,12 +110,11 @@ fIface(),
 fAllOrNothing()
 {
     fNotify = new plNotifyMsg;
-    fInputIface = new plAxisInputInterface( this );
+    fInputIface.Steal(new plAxisInputInterface(this));
 }
 plAxisAnimModifier::~plAxisAnimModifier()
 {
     hsRefCnt_SafeUnRef(fNotify);
-    hsRefCnt_SafeUnRef( fInputIface );
 }
 
 
@@ -142,7 +141,7 @@ bool plAxisAnimModifier::MsgReceive(plMessage* msg)
     {
         // Send our notification to whomever cares;
         float time = 0.0f;
-        if (pCall->fEvent == kEnd)
+        if (pCall->fEvent == plEventCallbackMsg::kEnd)
             time = 1.0f;
         fNotify->ClearEvents();
         fNotify->SetSender(fNotificationKey); // so python can handle it.
@@ -150,8 +149,7 @@ bool plAxisAnimModifier::MsgReceive(plMessage* msg)
         fNotify->SetState(1.0f);
         fNotify->AddActivateEvent(true);
         fNotify->AddClickDragEvent(GetTarget()->GetKey(), plNetClientApp::GetInstance()->GetLocalPlayerKey(), time);
-        hsRefCnt_SafeRef(fNotify);
-        plgDispatch::MsgSend( fNotify );
+        fNotify->SendAndKeep();
         return true;
     }
         
@@ -285,12 +283,12 @@ bool plAxisAnimModifier::MsgReceive(plMessage* msg)
 
                 // add callbacks for beginning and end of animation
                 plEventCallbackMsg* pCall1 = new plEventCallbackMsg;
-                pCall1->fEvent = kBegin;
+                pCall1->fEvent = plEventCallbackMsg::kBegin;
                 pCall1->fRepeats = -1;
                 pCall1->AddReceiver(GetKey());
                 
                 plEventCallbackMsg* pCall2 = new plEventCallbackMsg;
-                pCall2->fEvent = kEnd;
+                pCall2->fEvent = plEventCallbackMsg::kEnd;
                 pCall2->fRepeats = -1;
                 pCall2->AddReceiver(GetKey());
 
@@ -301,8 +299,8 @@ bool plAxisAnimModifier::MsgReceive(plMessage* msg)
                 pMsg->SetAnimName(fAnimLabel);
                 pMsg->AddReceiver( fXAnim );
 
-                hsRefCnt_SafeUnRef( pCall1 );
-                hsRefCnt_SafeUnRef( pCall2 );
+                pCall1->UnRef();
+                pCall2->UnRef();
 
                 plgDispatch::MsgSend(pMsg);
             }
@@ -313,12 +311,12 @@ bool plAxisAnimModifier::MsgReceive(plMessage* msg)
                 
                 // add callbacks for beginning and end of animation
                 plEventCallbackMsg* pCall1 = new plEventCallbackMsg;
-                pCall1->fEvent = kBegin;
+                pCall1->fEvent = plEventCallbackMsg::kBegin;
                 pCall1->fRepeats = -1;
                 pCall1->AddReceiver(GetKey());
                 
                 plEventCallbackMsg* pCall2 = new plEventCallbackMsg;
-                pCall2->fEvent = kEnd;
+                pCall2->fEvent = plEventCallbackMsg::kEnd;
                 pCall2->fRepeats = -1;
                 pCall2->AddReceiver(GetKey());
 
@@ -329,8 +327,8 @@ bool plAxisAnimModifier::MsgReceive(plMessage* msg)
                 pMsg->AddReceiver( fYAnim );
                 pMsg->SetAnimName(fAnimLabel);
 
-                hsRefCnt_SafeUnRef( pCall1 );
-                hsRefCnt_SafeUnRef( pCall2 );
+                pCall1->UnRef();
+                pCall2->UnRef();
 
                 plgDispatch::MsgSend(pMsg);
             }

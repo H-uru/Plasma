@@ -84,8 +84,6 @@ enum ESrvType {
 *
 ***/
 
-namespace ST { class string; }
-
 unsigned GetAuthSrvHostnames (const ST::string*& addrs); // returns addrCount
 void SetAuthSrvHostname (const ST::string& addr);
 

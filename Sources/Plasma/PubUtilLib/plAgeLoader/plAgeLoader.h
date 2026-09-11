@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 
 #include <memory>
+#include <tl/expected.hpp>
 
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "plAgeDescription/plAgeDescription.h"
@@ -85,8 +86,6 @@ private:
     plStateDataRecord* fInitialAgeState;
     ST::string fAgeName;
 
-    bool ILoadAge(const ST::string& ageName);
-    bool IUnloadAge();
     void ISetInitialAgeState(plStateDataRecord* s);     // sent from server with joinAck
     const plStateDataRecord* IGetInitialAgeState() const { return fInitialAgeState; }
 
@@ -104,8 +103,8 @@ public:
     void Init();
     void Shutdown();
     bool MsgReceive(plMessage* msg) override;
-    bool LoadAge(const ST::string& ageName);
-    bool UnloadAge()                              { return IUnloadAge(); }
+    tl::expected<tl::monostate, ST::string> LoadAge(const ST::string& ageName);
+    bool UnloadAge();
     void UpdateAge(const ST::string& ageName);
     void NotifyAgeLoaded( bool loaded );
 

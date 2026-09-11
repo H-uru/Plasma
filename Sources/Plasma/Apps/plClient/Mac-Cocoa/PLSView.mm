@@ -41,9 +41,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #import "PLSView.h"
+
 #include <Metal/Metal.h>
 #include <QuartzCore/QuartzCore.h>
+
+#include "plInputCore/plInputManager.h"
 #include "plMessage/plInputEventMsg.h"
+
+#include "plClient/plClient.h"
+#include "plClient/plClientLoader.h"
 
 /*
  Plasma view for Cocoa
@@ -61,6 +67,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  */
 
 @interface PLSView ()
+{
+    plClientLoader* _gClient;
+}
 
 @property NSTrackingArea* mouseTrackingArea;
 #if PLASMA_PIPELINE_METAL
@@ -71,8 +80,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 @implementation PLSView
 
+- (plClientLoader&)gClient
+{
+    return *_gClient;
+}
+
 // MARK: View setup
-- (id)initWithFrame:(NSRect)frameRect
+- (instancetype)initWithFrame:(NSRect)frameRect client:(plClientLoader*)gClient
 {
     self = [super initWithFrame:frameRect];
 #if PLASMA_PIPELINE_METAL
@@ -83,6 +97,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     self.layer = self.metalLayer = layer;
 #endif
     self.layer.backgroundColor = NSColor.blackColor.CGColor;
+    _gClient = gClient;
     return self;
 }
 
@@ -128,6 +143,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     [self updateClientMouseLocation:event];
 }
 
+// MARK: Mouse scroll
+- (void)scrollWheel:(NSEvent *)event
+{
+    plMouseEventMsg* pMsg = new plMouseEventMsg;
+    float zDelta = [event scrollingDeltaY];
+    pMsg->SetWheelDelta(zDelta);
+    if (zDelta < 0)
+        pMsg->SetButton(kWheelNeg);
+    else
+        pMsg->SetButton(kWheelPos);
+
+    CGPoint windowLocation = [event locationInWindow];
+    CGPoint viewLocation = [self convertPoint:windowLocation fromView:nil];
+
+    NSRect windowViewBounds = self.bounds;
+    CGFloat xNormal = (windowLocation.x) / windowViewBounds.size.width;
+    CGFloat yNormal =
+        (windowViewBounds.size.height - windowLocation.y) / windowViewBounds.size.height;
+    pMsg->SetXPos(xNormal);
+    pMsg->SetYPos(yNormal);
+
+    pMsg->Send();
+}
+
 // MARK: Mouse movement
 - (void)mouseMoved:(NSEvent*)event
 {
@@ -170,11 +209,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
     if (event.type == NSEventTypeLeftMouseUp) {
         pBMsg->fButton |= kLeftButtonUp;
+        if (event.clickCount == 2) {
+            if (self.gClient)
+                self.gClient->SetQuitIntro(true);
+            pBMsg->fButton |= kLeftButtonDblClk;
+        }
     } else if (event.type == NSEventTypeRightMouseUp) {
         pBMsg->fButton |= kRightButtonUp;
+        if (event.clickCount == 2) {
+            if (self.gClient)
+                self.gClient->SetQuitIntro(true);
+            pBMsg->fButton |= kRightButtonDblClk;
+        }
     } else if (event.type == NSEventTypeLeftMouseDown) {
+        if (self.gClient)
+            self.gClient->SetQuitIntro(true);
         pBMsg->fButton |= kLeftButtonDown;
     } else if (event.type == NSEventTypeRightMouseDown) {
+        if (self.gClient)
+            self.gClient->SetQuitIntro(true);
         pBMsg->fButton |= kRightButtonDown;
     }
 
@@ -275,13 +328,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     if (newSize.width <= 0 || newSize.width <= 0) {
         return;
     }
-
-#if PLASMA_PIPELINE_METAL
-    _metalLayer.drawableSize = newSize;
-#endif
-    [self.delegate renderView:self
-          didChangeOutputSize:newSize
-                        scale:scaleFactor];
 }
 
 @end

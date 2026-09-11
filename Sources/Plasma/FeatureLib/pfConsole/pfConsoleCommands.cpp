@@ -45,15 +45,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifdef PLASMA_EXTERNAL_RELEASE
-#define LIMIT_CONSOLE_COMMANDS 1
-#endif
-
 #include <string_theory/format>
 #include <string_theory/stdio>
 
 #include "plgDispatch.h"
 #include "plFileSystem.h"
+#include "hsMath.h"
 #include "plPipeDebugFlags.h"
 #include "plPipeline.h"
 #include "plProduct.h"
@@ -62,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 
 #include "pfConsole.h"
+#include "pfConsoleCommandUtilities.h"
 #include "pfDispatchLog.h"
 
 #include "pnFactory/plFactory.h"
@@ -167,6 +165,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfCamera/plVirtualCamNeu.h"
 #include "pfConsoleCore/pfConsoleCmd.h"
 #include "pfConsoleCore/pfConsoleContext.h"
+#include "pfJournalBook/pfJournalBook.h"
 #include "pfMessage/pfBackdoorMsg.h"
 #include "pfMessage/plClothingMsg.h"
 #include "pfMessage/pfKIMsg.h"
@@ -178,8 +177,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // FIXME
 #include "../../Apps/plClient/plClient.h"
-
-#define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
 
 //// DO NOT REMOVE!!!!
 //// This is here so Microsoft VC won't decide to "optimize" this file out
@@ -221,7 +218,7 @@ PF_CONSOLE_FILE_DUMMY(Main)
 //        name isn't obvious (i.e. SetFogColor doesn't really need one)
 //  
 //  The actual C code prototype looks like:
-//      void pfConsoleCmd_groupName_functionName(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&));
+//      void pfConsoleCmd_groupName_functionName(int32_t numParams, pfConsoleCmdParam* params, pfConsolePrintFunc PrintString);
 //
 //  numParams is exactly what it sounds like. params is an array of console
 //  parameter objects, each of which are rather nifty in that they can be cast
@@ -268,101 +265,6 @@ PF_CONSOLE_FILE_DUMMY(Main)
 //  the 
 //
 //////////////////////////////////////////////////////////////////////////////
-
-//
-// utility functions
-//
-//////////////////////////////////////////////////////////////////////////////
-
-//
-// Find an object from name, type (int), and optionally age.
-// Name can be an alias specified by saying $foo
-//
-plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName,
-                       ST::string& statusStr, bool subString = false)
-{
-    if (name.empty())
-    {
-        statusStr = ST_LITERAL("Object name is nil");
-        return nullptr;
-    }
-    
-    if (type<0 || type>=plFactory::GetNumClasses())
-    {
-        statusStr = ST_LITERAL("Illegal class type val");
-        return nullptr;
-    }
-
-    plKey key;
-    // Try restricted to our age first, if we're not given an age name. This works
-    // around most of the problems associated with unused keys in pages causing the pages to be marked
-    // as not loaded and thus screwing up our searches
-    if (ageName.empty() && plNetClientMgr::GetInstance() != nullptr)
-    {
-        ST::string thisAge = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
-        if (!thisAge.empty())
-        {
-            key = plKeyFinder::Instance().StupidSearch(thisAge, ST::string(), type, name, subString);
-            if (key != nullptr)
-            {
-                statusStr = ST_LITERAL("Found Object");
-                return key;
-            }
-        }
-    }
-    // Fallback
-    key = plKeyFinder::Instance().StupidSearch(ageName, ST::string(), type, name, subString);
-
-    if (!key)
-    {
-        statusStr = ST_LITERAL("Can't find object");
-        return nullptr;
-    }
-    
-    if (!key->ObjectIsLoaded())
-    {
-        statusStr = ST_LITERAL("Object is not loaded");
-    }
-
-    statusStr = ST_LITERAL("Found Object");
-
-    return key;
-}
-
-//
-// Find a SCENEOBJECT from name, and optionally age.
-// Name can be an alias specified by saying $foo.
-// Will load the object if necessary.
-//
-plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName,
-                            ST::string& statusStr, bool subString = false)
-{
-    plKey key=FindObjectByName(name, plSceneObject::Index(), ageName, statusStr, subString);
-
-    if (!plSceneObject::ConvertNoRef(key ? key->ObjectIsLoaded() : nullptr))
-    {
-        statusStr = ST_LITERAL("Can't find SceneObject");
-        return nullptr;
-    }
-
-    return key;
-}
-
-//
-// Find an object from name, type (string) and optionally age.
-// Name can be an alias specified by saying $foo
-//
-plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
-                              ST::string& statusStr, bool subString = false)
-{
-    if (!typeName)
-    {
-        statusStr = ST_LITERAL("TypeName is nil");
-        return nullptr;
-    }
-    
-    return FindObjectByName(name, plFactory::FindClassIndex(typeName), ageName, statusStr, subString);
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //// Base Commands ///////////////////////////////////////////////////////////
@@ -464,6 +366,33 @@ PF_CONSOLE_BASE_CMD( DumpLogs, "string folderName", "Dumps all current logs to t
 {
     plStatusLogMgr::GetInstance().DumpLogs(params[0]);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//// Journal Commands ////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+#ifndef LIMIT_CONSOLE_COMMANDS
+
+PF_CONSOLE_GROUP(Journal)
+
+PF_CONSOLE_CMD(
+    Journal, ShowLinkRect,
+    "bool on",
+    ""
+)
+{
+    if (numParams != 1)
+        return;
+
+    pfJournalBook::ShowLinkRect((bool)params[0]);
+    if ((bool)params[0]) {
+        PrintString("Journals will now have link rects.");
+    } else {
+        PrintString("Journals will no longer have link rects.");
+    }
+}
+
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2108,13 +2037,13 @@ PF_CONSOLE_CMD( App,
     int reps = 1;
 
     const ST::string& eventStr = params[1];
-    CallbackEvent event;
+    plEventCallbackMsg::CallbackEvent event;
     if (eventStr.compare_i("Start") == 0) {
-        event = kStart;
+        event = plEventCallbackMsg::kStart;
     } else if (eventStr.compare_i("Stop") == 0) {
-        event = kStop;
+        event = plEventCallbackMsg::kStop;
     } else if (eventStr.compare_i("Time") == 0) {
-        event = kTime;
+        event = plEventCallbackMsg::kTime;
         if (numParams < 2) {
             PrintString("'Time' expects a timestamp (in seconds)");
             return;
@@ -2132,7 +2061,7 @@ PF_CONSOLE_CMD( App,
 
     plEventCallbackMsg* callback = new plEventCallbackMsg(plClient::GetInstance()->GetKey(), event, 0, secs, reps);
     cmd->AddCallback(callback);
-    hsRefCnt_SafeUnRef(callback);
+    callback->UnRef();
     plgDispatch::MsgSend(cmd);
 }
 
@@ -2162,13 +2091,13 @@ PF_CONSOLE_CMD( App,
     int reps = -1;
 
     const ST::string& eventStr = params[1];
-    CallbackEvent event;
+    plEventCallbackMsg::CallbackEvent event;
     if (eventStr.compare_i("Start") == 0) {
-        event = kStart;
+        event = plEventCallbackMsg::kStart;
     } else if (eventStr.compare_i("Stop") == 0) {
-        event = kStop;
+        event = plEventCallbackMsg::kStop;
     } else if (eventStr.compare_i("Time") == 0) {
-        event = kTime;
+        event = plEventCallbackMsg::kTime;
         secs = params[2];
     }
 
@@ -2179,7 +2108,7 @@ PF_CONSOLE_CMD( App,
 
     plEventCallbackMsg* callback = new plEventCallbackMsg(plClient::GetInstance()->GetKey(), event, 0, secs, reps);
     cmd->AddCallback(callback);
-    hsRefCnt_SafeUnRef(callback);
+    callback->UnRef();
     plgDispatch::MsgSend(cmd);
 }
 
@@ -2537,6 +2466,7 @@ PF_CONSOLE_CMD( Registry, ToggleDebugStats, "", "Toggles the debug statistics sc
         plStatusLogMgr::GetInstance().SetCurrStatusLog( "ResManager Status" );
         PrintString( "ResManager debug stats enabled" );
     }
+    on = !on;
 }
 
 PF_CONSOLE_CMD( Registry, SetLoggingLevel, "int level", "Sets the logging level for the registry. 0 is no logging, 3 is max detail." )
@@ -2569,7 +2499,7 @@ class pfConsoleActiveRefPeeker
 };
 
 // Not static so others can call it - making it even handier
-void MyHandyPrintFunction(const plKey &obj, void (*PrintString)(const ST::string&))
+void MyHandyPrintFunction(const plKey& obj, pfConsolePrintFunc PrintString)
 {
     if (obj->GetUoid().IsClone())
         PrintString(ST::format("{} refs on {}, clone {}:{}: loaded={}",
@@ -3207,10 +3137,17 @@ PF_CONSOLE_CMD( Nav, PageInNode,    // Group name, Function name
                 "string roomName",          // Params
                 "Pages in a scene node." )  // Help string
 {
+    ST::string pageName = params[0];
+    plLocation pageLoc = plKeyFinder::Instance().FindLocation({}, pageName);
+    if (!pageLoc.IsValid()) {
+        PrintString(ST::format("Could not find any page named {}", pageName));
+        return;
+    }
+
     plSynchEnabler ps(false);   // disable dirty tracking while paging in
     plClientMsg* pMsg1 = new plClientMsg(plClientMsg::kLoadRoom);
     pMsg1->AddReceiver( plClient::GetInstance()->GetKey() );
-    pMsg1->AddRoomLoc(plKeyFinder::Instance().FindLocation({}, params[0]));
+    pMsg1->AddRoomLoc(pageLoc);
     plgDispatch::MsgSend(pMsg1);
 }
 
@@ -3221,10 +3158,17 @@ PF_CONSOLE_CMD( Nav, PageOutNode,   // Group name, Function name
                 "string roomName",          // Params
                 "pages out a scene node." ) // Help string
 {
+    ST::string pageName = params[0];
+    plLocation pageLoc = plKeyFinder::Instance().FindLocation({}, pageName);
+    if (!pageLoc.IsValid()) {
+        PrintString(ST::format("Could not find any page named {}", pageName));
+        return;
+    }
+
     plSynchEnabler ps(false);   // disable dirty tracking while paging out
     plClientMsg* pMsg1 = new plClientMsg(plClientMsg::kUnloadRoom);
     pMsg1->AddReceiver( plClient::GetInstance()->GetKey() );
-    pMsg1->AddRoomLoc(plKeyFinder::Instance().FindLocation({}, params[0]));
+    pMsg1->AddRoomLoc(pageLoc);
     plgDispatch::MsgSend(pMsg1);
 }
 
@@ -4053,12 +3997,10 @@ namespace plWaveCmd {
     };
 };
 
-typedef void PrintFunk(const ST::string& str);
-
 static constexpr float FracToPercent(float f) { return 100.f * f; }
 static constexpr float PercentToFrac(float f) { return f / 100.f; }
 
-static void IDisplayWaveVal(PrintFunk PrintString, plWaveSet7* wave, plWaveCmd::Cmd cmd)
+static void IDisplayWaveVal(pfConsolePrintFunc PrintString, plWaveSet7* wave, plWaveCmd::Cmd cmd)
 {
     if( !wave )
         return;
@@ -4183,7 +4125,7 @@ static void IDisplayWaveVal(PrintFunk PrintString, plWaveSet7* wave, plWaveCmd::
     PrintString(msg);
 }
 
-static plWaveSet7* IGetWaveSet(PrintFunk PrintString, const ST::string& name)
+static plWaveSet7* IGetWaveSet(pfConsolePrintFunc PrintString, const ST::string& name)
 {
     ST::string status;
     plKey waveKey = FindObjectByName(name, plWaveSet7::Index(), {}, status, false);
@@ -4199,7 +4141,7 @@ static plWaveSet7* IGetWaveSet(PrintFunk PrintString, const ST::string& name)
     return waveSet;
 }
 
-static plWaveSet7* ICheckWaveParams(PrintFunk PrintString, const ST::string& name, int numParams, int n, plWaveCmd::Cmd cmd)
+static plWaveSet7* ICheckWaveParams(pfConsolePrintFunc PrintString, const ST::string& name, int numParams, int n, plWaveCmd::Cmd cmd)
 {
     if( !numParams )
     {
@@ -4215,7 +4157,7 @@ static plWaveSet7* ICheckWaveParams(PrintFunk PrintString, const ST::string& nam
     return waveSet;
 }
 
-static bool ISendWaveCmd1f(PrintFunk PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
+static bool ISendWaveCmd1f(pfConsolePrintFunc PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
 {
     plWaveSet7* wave = ICheckWaveParams(PrintString, params[0], numParams, 2, cmd);
     if( !wave )
@@ -4294,7 +4236,7 @@ static bool ISendWaveCmd1f(PrintFunk PrintString, pfConsoleCmdParam* params, int
     return true;
 }
 
-static bool ISendWaveCmd2f(PrintFunk PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
+static bool ISendWaveCmd2f(pfConsolePrintFunc PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
 {
     plWaveSet7* wave = ICheckWaveParams(PrintString, params[0], numParams, 3, cmd);
     if( !wave )
@@ -4336,7 +4278,7 @@ static bool ISendWaveCmd2f(PrintFunk PrintString, pfConsoleCmdParam* params, int
     return true;
 }
 
-static bool ISendWaveCmd3f(PrintFunk PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
+static bool ISendWaveCmd3f(pfConsolePrintFunc PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
 {
     plWaveSet7* wave = ICheckWaveParams(PrintString, params[0], numParams, 4, cmd);
     if( !wave )
@@ -4374,7 +4316,7 @@ static bool ISendWaveCmd3f(PrintFunk PrintString, pfConsoleCmdParam* params, int
     return true;
 }
 
-static bool ISendWaveCmd4c(PrintFunk PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
+static bool ISendWaveCmd4c(pfConsolePrintFunc PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
 {
     plWaveSet7* wave = ICheckWaveParams(PrintString, params[0], numParams, 4, cmd);
     if( !wave )
@@ -5199,8 +5141,6 @@ PF_CONSOLE_CMD( Mouse, ForceHide, "bool force", "Forces the mouse to be hidden (
 
 PF_CONSOLE_GROUP( Age )
 
-plPythonSDLModifier* ExternFindAgePySDL();
-
 template<typename _PrintStringT>
 void IShowSDL(const plStateDataRecord* rec, _PrintStringT&& PrintString)
 {
@@ -5223,7 +5163,7 @@ void IShowSDL(const plStateDataRecord* rec, _PrintStringT&& PrintString)
 
 PF_CONSOLE_CMD(Age, ShowPythonSDL, "", "Prints the Python AgeSDL values")
 {
-    plPythonSDLModifier* sdlMod = ExternFindAgePySDL();
+    plSDLModifier* sdlMod = plNetClientMgr::GetInstance()->GetAgeSDLModifier();
     if (sdlMod && sdlMod->GetStateCache() != nullptr) {
         IShowSDL(sdlMod->GetStateCache(), PrintString);
     } else {
@@ -5242,7 +5182,7 @@ PF_CONSOLE_CMD(Age, ShowVaultSDL, "", "Prints the age vault SDL values")
 
 PF_CONSOLE_CMD(Age, ResetPythonSDL, "", "Resets the Python Age SDL")
 {
-    plPythonSDLModifier* sdlMod = ExternFindAgePySDL();
+    plSDLModifier* sdlMod = plNetClientMgr::GetInstance()->GetAgeSDLModifier();
     if (sdlMod == nullptr) {
         PrintString("Python Age SDL not found");
         return;
@@ -5306,21 +5246,21 @@ PF_CONSOLE_CMD( Age, GetTimeOfDay, "string agedefnfile", "Gets the elapsed days 
 
 PF_CONSOLE_CMD( Age, SetSDLFloat, "string varName, float value, int index", "Set the value of an age global variable" )
 {
-    plPythonSDLModifier* sdlMod = ExternFindAgePySDL();
+    plPythonSDLModifier* sdlMod = plPythonSDLModifier::FindAgeSDL();
     if (sdlMod)
         sdlMod->SetItem(params[0], (int)params[2], (float)params[1]);
 }
 
 PF_CONSOLE_CMD( Age, SetSDLInt, "string varName, int value, int index", "Set the value of an age global variable" )
 {
-    plPythonSDLModifier* sdlMod = ExternFindAgePySDL();
+    plPythonSDLModifier* sdlMod = plPythonSDLModifier::FindAgeSDL();
     if (sdlMod)
         sdlMod->SetItem(params[0], (int)params[2], (int)params[1]);
 }
 
 PF_CONSOLE_CMD( Age, SetSDLBool, "string varName, bool value, int index", "Set the value of an age global variable" )
 {
-    plPythonSDLModifier* sdlMod = ExternFindAgePySDL();
+    plPythonSDLModifier* sdlMod = plPythonSDLModifier::FindAgeSDL();
     if (sdlMod)
         sdlMod->SetItem(params[0], (int)params[2], (bool)params[1]);
 }
@@ -5335,7 +5275,7 @@ PF_CONSOLE_CMD( Age, SetSDLBool, "string varName, bool value, int index", "Set t
 
 PF_CONSOLE_GROUP( ParticleSystem ) // Defines a main command group
 
-void UpdateParticleParam(const ST::string &objName, int32_t paramID, float value, void (*PrintString)(const ST::string&))
+void UpdateParticleParam(const ST::string& objName, int32_t paramID, float value, pfConsolePrintFunc PrintString)
 {
     ST::string status;
     plKey key = FindSceneObjectByName(objName, {}, status);

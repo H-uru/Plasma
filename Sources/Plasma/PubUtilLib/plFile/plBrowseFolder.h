@@ -50,14 +50,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // Gets a directory using the "Browse for Folder" dialog.
 //
-// path:        Buffer to recieve the path.  Should be MAX_PATH characters.
 // startPath:   Initial path.
 // title:       Not really the title of the dialog, but it's displayed above the
 //              folder list.  Could be used to give instructions.
 // hwndOwner:   Owner window for dialog box.
 //
-// Returns true if path contains a valid path, false otherwise (error or user
-// clicked cancel.
+// Returns the directory selected by the user,
+// or an empty plFileName if the user clicked cancel or on error.
 //
 
 class plBrowseFolder

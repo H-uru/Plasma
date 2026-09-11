@@ -39,17 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnNetCli/Intern.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_INTERN_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnNetCli/Intern.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_INTERN_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_INTERN_H
 
+#include <vector>
+
+#include "HeadSpin.h"
+
+struct NetMsgInitRecv;
+struct NetMsgInitSend;
+class plBigNum;
 
 namespace pnNetCli {
 
@@ -58,6 +58,8 @@ namespace pnNetCli {
 *   Channel
 *
 ***/
+
+struct NetMsgChannel;
 
 void NetMsgChannelLock(
     NetMsgChannel* channel
@@ -120,3 +122,5 @@ public:
 
 
 } using namespace pnNetCli;
+
+#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_INTERN_H

@@ -211,6 +211,7 @@ class Ahnonay(ptResponder):
             PtPageInNode("MaintRoom04")
             PtPageInNode("EngineerHut")
             PtPageInNode("ahnySphere04")
+        self.SetFogToSphere(newSphere)
 
     ###########################
     def OnPageLoad(self,what,who):
@@ -255,3 +256,16 @@ class Ahnonay(ptResponder):
         if target == "sphere":
             if self.sceneobject.isLocallyOwned():
                 ageSDL["ahnyCurrentSphere"] = (int(param),)
+
+    def SetFogToSphere(self, sphere: int):
+        # Set Fog for Sphere 1, 2, and 4 from TPotS values.
+        # Sphere 3 is using the default from Ahnonay.fni
+        if sphere == 1:
+            PtFogSetDefLinear(0, 1200, 2)
+            PtFogSetDefColor(ptColor(0.7, 0.7, 0.7))
+        elif sphere == 2:
+            PtFogSetDefLinear(0, 1800, 2)
+            PtFogSetDefColor(ptColor(0.1, 0.1, 0.1))
+        elif sphere == 4:
+            PtFogSetDefLinear(0, 10000, 1.5)
+            PtFogSetDefColor(ptColor(1.0, 1.0, 1.0))

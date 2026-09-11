@@ -52,6 +52,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetCommon/plNetApp.h"
 #include "pnNetCommon/plSynchedObject.h"
 
+#include <string_theory/format>
+
 struct plForwardCallback
 {
     std::vector<plKey> fOrigReceivers;
@@ -136,14 +138,14 @@ bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
                 fCallbacks[event] = fc;
 
 #if 0
-                hsStatusMessageF("Adding CBMsg, eventSender=%s, eventRemoteMsg=%d\n",                   
-                    event->GetSender() ? event->GetSender()->GetName().c_str() : "nil", fc->fNetPropogate);
+                hsStatusMessageF("Adding CBMsg, eventSender={}, eventRemoteMsg={}",
+                    event->GetSender() ? event->GetSender()->GetName() : ST_LITERAL("nil"), fc->fNetPropogate);
 #endif
             }
         }
 #if 0
-        hsStatusMessageF("Fwding CBMsg, sender=%s, remoteMsg=%d",
-            msg->GetSender() ? msg->GetSender()->GetName().c_str() : "nil", msg->HasBCastFlag(plMessage::kNetNonLocal));
+        hsStatusMessageF("Fwding CBMsg, sender={}, remoteMsg={}",
+            msg->GetSender() ? msg->GetSender()->GetName() : ST_LITERAL("nil"), msg->HasBCastFlag(plMessage::kNetNonLocal));
 #endif
         IForwardMsg(callbackMsg);
         
@@ -161,8 +163,8 @@ bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
             plForwardCallback *fc = it->second;
             if (--fc->fNumCallbacks == 0)
             {
-                hsStatusMessageF("plEventCallbackMsg received, erasing, sender=%s, remoteMsg=%d\n",
-                    msg->GetSender() ? msg->GetSender()->GetName().c_str() : "nil", msg->HasBCastFlag(plMessage::kNetNonLocal));
+                hsStatusMessageF("plEventCallbackMsg received, erasing, sender={}, remoteMsg={}",
+                    msg->GetSender() ? msg->GetSender()->GetName() : ST_LITERAL("nil"), msg->HasBCastFlag(plMessage::kNetNonLocal));
 
                 fCallbacks.erase(eventMsg);
 
@@ -176,16 +178,15 @@ bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
                 eventMsg->ClearReceivers();
                 eventMsg->AddReceivers(fc->fOrigReceivers);
                 eventMsg->SetSender(GetKey());
-                hsRefCnt_SafeRef(eventMsg);
-                eventMsg->Send();
+                eventMsg->SendAndKeep();
 
                 delete fc;
             }
         }
         else
         {
-            hsStatusMessageF("! Unknown plEventCallbackMsg received, sender=%s, remoteMsg=%d\n",
-                msg->GetSender() ? msg->GetSender()->GetName().c_str() : "nil", msg->HasBCastFlag(plMessage::kNetNonLocal));
+            hsStatusMessageF("! Unknown plEventCallbackMsg received, sender={}, remoteMsg={}",
+                msg->GetSender() ? msg->GetSender()->GetName() : ST_LITERAL("nil"), msg->HasBCastFlag(plMessage::kNetNonLocal));
             hsAssert(0, "Unknown plEventCallbackMsg received");
         }
         return true;
@@ -203,10 +204,9 @@ void plMsgForwarder::IForwardMsg(plMessage *msg)
         oldKeys.emplace_back(msg->GetReceiver(i));
 
     // Set to our receivers and send
-    hsRefCnt_SafeRef(msg);
     msg->ClearReceivers();
     msg->AddReceivers(fForwardKeys);
-    msg->Send();
+    msg->SendAndKeep();
 
     // Reset back to the original receivers.  This is so we don't screw up objects
     // who reuse their messages

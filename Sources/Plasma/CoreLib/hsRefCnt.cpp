@@ -55,15 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <unordered_set>
 #include <mutex>
 #include <string_theory/format>
+#include "hsDebug.h"
 #include "hsLockGuard.h"
-
-// hsDebugMessage can get overridden to dump to a file :(
-#ifdef _MSC_VER
-#   include "hsWindows.h"
-#   define _LeakDebug(message) OutputDebugString(message)
-#else
-#   define _LeakDebug(message) fputs(message, stderr)
-#endif
 
 struct _RefCountLeakCheck
 {
@@ -75,15 +68,15 @@ struct _RefCountLeakCheck
     {
         hsLockGuard(m_mutex);
 
-        _LeakDebug(ST::format("Refs tracked:  {} created, {} destroyed\n",
-                              m_added, m_removed).c_str());
+        hsDebugPrintToTerminal(ST::format("Refs tracked:  {} created, {} destroyed\n",
+                                          m_added, m_removed));
         if (m_refs.empty())
             return;
 
-        _LeakDebug(ST::format("    {} objects leaked...\n", m_refs.size()).c_str());
+        hsDebugPrintToTerminal(ST::format("    {} objects leaked...\n", m_refs.size()));
         for (hsRefCnt *ref : m_refs) {
-            _LeakDebug(ST::format("    {#08x} {}: {} refs remain\n",
-                       (uintptr_t)ref, typeid(*ref).name(), ref->RefCnt()).c_str());
+            hsDebugPrintToTerminal(ST::format("    {#08x} {}: {} refs remain\n",
+                                              (uintptr_t)ref, typeid(*ref).name(), ref->RefCnt()));
         }
     }
 
@@ -138,9 +131,9 @@ void hsRefCnt::UnRef(const char* tag)
 
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     if (tag)
-        DEBUG_MSG("Dec %p %s: %u", this, tag, fRefCnt - 1);
+        hsDebugPrintToTerminal(ST::format("Dec {#x} {}: {}", reinterpret_cast<uintptr_t>(this), tag, fRefCnt - 1));
     else
-        DEBUG_MSG("Dec %p: %u", this, fRefCnt - 1);
+        hsDebugPrintToTerminal(ST::format("Dec {#x}: {}", reinterpret_cast<uintptr_t>(this), fRefCnt - 1));
 #endif
 
     if (fRefCnt == 1)   // don't decrement if we call delete
@@ -153,9 +146,9 @@ void hsRefCnt::Ref(const char* tag)
 {
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     if (tag)
-        DEBUG_MSG("Inc %p %s: %u", this, tag, fRefCnt + 1);
+        hsDebugPrintToTerminal(ST::format("Inc {#x} {}: {}", reinterpret_cast<uintptr_t>(this), tag, fRefCnt + 1));
     else
-        DEBUG_MSG("Inc %p: %u", this, fRefCnt + 1);
+        hsDebugPrintToTerminal(ST::format("Inc {#x}: {}", reinterpret_cast<uintptr_t>(this), fRefCnt + 1));
 #endif
 
     ++fRefCnt;
@@ -164,7 +157,7 @@ void hsRefCnt::Ref(const char* tag)
 void hsRefCnt::TransferRef(const char* oldTag, const char* newTag)
 {
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
-    DEBUG_MSG("Inc %p %s: (xfer)", this, newTag);
-    DEBUG_MSG("Dec %p %s: (xfer)", this, oldTag);
+    hsDebugPrintToTerminal(ST::format("Inc {#x} {}: (xfer)", reinterpret_cast<uintptr_t>(this), newTag));
+    hsDebugPrintToTerminal(ST::format("Dec {#x} {}: (xfer)", reinterpret_cast<uintptr_t>(this), oldTag));
 #endif
 }

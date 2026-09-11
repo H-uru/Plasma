@@ -189,9 +189,7 @@ void plResManagerHelper::LoadAndHoldPageKeys( plRegistryPageNode *page )
 
     // Load and ref the keys
 #ifdef HS_DEBUGGING
-    char msg[ 256 ];
-    sprintf( msg, "*** Temporarily loading keys for room %s>%s based on FindKey() query, will drop in 1 sec ***", page->GetPageInfo().GetAge().c_str(), page->GetPageInfo().GetPage().c_str());
-    hsStatusMessage( msg );
+    hsStatusMessageF("*** Temporarily loading keys for room {}>{} based on FindKey() query, will drop in 1 sec ***", page->GetPageInfo().GetAge(), page->GetPageInfo().GetPage());
 #endif
     kResMgrLogF(2, 0xff80ff80, "Temporarily loading keys for room {}>{}, will drop in 1 sec", page->GetPageInfo().GetAge(), page->GetPageInfo().GetPage());
         
@@ -297,7 +295,7 @@ void    plResManagerHelper::EnableDebugScreen( bool enable )
 //          msg->SetTimeStamp( hsTimer::GetSysSeconds() + kUpdateDelay );
             msg->Send( GetKey() );
 
-            fDebugInput = new plResMgrDebugInterface( this );
+            fDebugInput.Steal(new plResMgrDebugInterface(this));
             plInputIfaceMgrMsg *imsg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
             imsg->SetIFace( fDebugInput );
             imsg->Send();
@@ -315,7 +313,6 @@ void    plResManagerHelper::EnableDebugScreen( bool enable )
             imsg->SetIFace( fDebugInput );
             imsg->Send();
 
-            hsRefCnt_SafeUnRef( fDebugInput );
             fDebugInput = nullptr;
         }
     }
@@ -434,8 +431,8 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
                         char line[ 128 ];
                         memset( line, ' ', sizeof( line ) - 1 );
                         line[ 127 ] = 0;
-                        if(page->GetPageInfo().GetPage().GetSize() < startPos - 2 )
-                            memcpy( line + 2, page->GetPageInfo().GetPage().c_str(), page->GetPageInfo().GetPage().GetSize() );
+                        if(page->GetPageInfo().GetPage().size() < startPos - 2 )
+                            memcpy( line + 2, page->GetPageInfo().GetPage().c_str(), page->GetPageInfo().GetPage().size() );
                         else
                             memcpy( line + 2, page->GetPageInfo().GetPage().c_str(), startPos - 2 );
 
@@ -481,10 +478,10 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
             if( key->ObjectIsLoaded() )
             {
                 fLoadedKeys++;
-                fLoadedSize += ((plKeyImp *)key)->GetDataLen();
+                fLoadedSize += plKeyImp::GetFromKey(key)->GetDataLen();
             }
             fTotalKeys++;
-            fTotalSize += ((plKeyImp *)key)->GetDataLen();
+            fTotalSize += plKeyImp::GetFromKey(key)->GetDataLen();
             return true;
         }
 };

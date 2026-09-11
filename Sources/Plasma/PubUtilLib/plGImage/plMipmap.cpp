@@ -64,6 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPNG.h"
 #include <cmath>
 #include <algorithm>
+#include <string_theory/format>
 
 plProfile_CreateMemCounter("Mipmaps", "Memory", MemMipmaps);
 
@@ -749,9 +750,7 @@ void    plMipmap::SetConfig( unsigned config )
             fSpace  = kGraySpace;
             fFlags  = kNoFlag;
             break;
-        default:
-            hsDebugMessage( "unknown config", config );
-            break;
+        DEFAULT_FATAL(config);
     }
 }
 
@@ -2210,46 +2209,54 @@ void    plMipmap::IRemoveFromMemRecord( uint8_t *image )
 void    plMipmap::IReportLeaks()
 {
     plRecord    *record, *next;
-    static char msg[ 512 ], m2[ 128 ];
     uint32_t      size;
 
 
-    hsStatusMessage( "--- plMipmap Leaks ---\n" );
+    hsStatusMessage("--- plMipmap Leaks ---");
     for (record = fRecords; record != nullptr; )
     {
         size = record->fHeight * record->fRowBytes;
+        ST::string sizeStr;
         if (size >= 1024) {
-            sprintf(msg, "%s, %4.1f kB: \t%dx%d, %d levels, %d bpr", record->fKeyName.c_str(),
-                    size / 1024.f, record->fWidth, record->fHeight, record->fNumLevels, record->fRowBytes);
+            sizeStr = ST::format("{4.1f} kB", size / 1024.f);
         } else {
-            sprintf(msg, "%s, %u bytes: \t%dx%d, %d levels, %d bpr", record->fKeyName.c_str(),
-                    size, record->fWidth, record->fHeight, record->fNumLevels, record->fRowBytes);
+            sizeStr = ST::format("{} bytes", size);
         }
 
+        ST::string compressionStr;
         if( record->fCompressionType != kDirectXCompression )
-            sprintf( m2, " UType: %d", record->fUncompressedInfo.fType );
+            compressionStr = ST::format("UType: {}", record->fUncompressedInfo.fType);
         else
-            sprintf( m2, " DXT%d BSz: %d", record->fDirectXInfo.fCompressionType, record->fDirectXInfo.fBlockSize );
-        strcat( msg, m2 );
+            compressionStr = ST::format("DXT{} BSz: {}", record->fDirectXInfo.fCompressionType, record->fDirectXInfo.fBlockSize);
 
+        ST::string creationMethodStr;
         switch( record->fCreationMethod )
         {
-            case plRecord::kViaCreate: strcat( msg, " via Create\n" ); break;
-            case plRecord::kViaRead: strcat( msg, " via Read\n" ); break;
-            case plRecord::kViaClipToMaxSize: strcat( msg, " via ClipToMaxSize\n" ); break;
-            case plRecord::kViaDetailMapConstructor: strcat( msg, " via DetailMapConstructor\n" ); break;
-            case plRecord::kViaCopyFrom: strcat( msg, " via CopyFrom\n" ); break;
-            case plRecord::kViaResize: strcat( msg, " via Resize\n" ); break;
+            case plRecord::kViaCreate: creationMethodStr = ST_LITERAL("Create"); break;
+            case plRecord::kViaRead: creationMethodStr = ST_LITERAL("Read"); break;
+            case plRecord::kViaClipToMaxSize: creationMethodStr = ST_LITERAL("ClipToMaxSize"); break;
+            case plRecord::kViaDetailMapConstructor: creationMethodStr = ST_LITERAL("DetailMapConstructor"); break;
+            case plRecord::kViaCopyFrom: creationMethodStr = ST_LITERAL("CopyFrom"); break;
+            case plRecord::kViaResize: creationMethodStr = ST_LITERAL("Resize"); break;
         }
 
-        hsStatusMessage( msg );
+        hsStatusMessageF(
+            "{}, {}: \t{}x{}, {} levels, {} bpr {} via {}",
+            record->fKeyName,
+            sizeStr,
+            record->fWidth, record->fHeight,
+            record->fNumLevels,
+            record->fRowBytes,
+            compressionStr,
+            creationMethodStr
+        );
 
         next = record->fNext;
         record->Unlink();
         delete record;
         record = next;
     }
-    hsStatusMessage( "--- End of plMipmap Leaks ---\n" );
+    hsStatusMessage("--- End of plMipmap Leaks ---");
 }
 
 #endif

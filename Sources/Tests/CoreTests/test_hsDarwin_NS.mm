@@ -47,20 +47,44 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 TEST(hsDarwin_Foundation, converts_to_ST_string)
 {
-    NSString* str = @"Test ö";
+    hsAutoreleasingScope;
+
+    NSString* str = @"Test 123";
     ST::string st = STStringFromNSString(str);
-    EXPECT_STREQ(st.c_str(), "Test \xc3\xb6");
+    EXPECT_STREQ(st.c_str(), "Test 123");
 }
 
 TEST(hsDarwin_Foundation, converts_to_NSString)
 {
+    hsAutoreleasingScope;
+
+    ST::string st = ST_LITERAL("Test 123");
+    NSString* nstr = NSStringCreateWithSTString(st);
+    EXPECT_EQ(YES, [nstr isEqualToString:@"Test 123"]);
+}
+
+TEST(hsDarwin_Foundation, converts_to_ST_string_UTF8)
+{
+    hsAutoreleasingScope;
+
+    NSString* str = [NSString stringWithUTF8String:"Test ö"];
+    ST::string st = STStringFromNSString(str);
+    EXPECT_STREQ(st.c_str(), "Test \xc3\xb6");
+}
+
+TEST(hsDarwin_Foundation, converts_to_NSString_UTF8)
+{
+    hsAutoreleasingScope;
+
     ST::string st = ST_LITERAL("Test ö");
     NSString* nstr = NSStringCreateWithSTString(st);
-    EXPECT_EQ(YES, [nstr isEqualToString:@"Test ö"]);
+    EXPECT_EQ(YES, [nstr isEqualToString:[NSString stringWithUTF8String:"Test ö"]]);
 }
 
 TEST(hsDarwin_Foundation, returns_retained_NSString)
 {
+    hsAutoreleasingScope;
+
     ST::string st = ST::format("{} Test {}", 12345, "Hello");
     NSString* nstr = NSStringCreateWithSTString(st);
     EXPECT_EQ(1, [nstr retainCount]);

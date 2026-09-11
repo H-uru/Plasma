@@ -69,7 +69,7 @@ pfConsoleEngine::~pfConsoleEngine()
 
 //// PrintCmdHelp ////////////////////////////////////////////////////////////
 
-bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const ST::string&))
+bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, pfConsolePrintFunc PrintFn)
 {
     pfConsoleParser parser(name);
     auto [group, token] = parser.ParseGroupAndName();
@@ -171,7 +171,7 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
 //  requires tokenizing the entire line and searching the tokens one by one,
 //  parsing them first as groups, then commands and then params.
 
-bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const ST::string&))
+bool pfConsoleEngine::RunCommand(const ST::string& line, pfConsolePrintFunc PrintFn)
 {
     pfConsoleParser parser(line);
     pfConsoleCmd* cmd = parser.ParseCommand();

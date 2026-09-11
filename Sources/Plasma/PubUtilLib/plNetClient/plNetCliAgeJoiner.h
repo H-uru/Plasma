@@ -39,11 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plNetClient/plNetCliAgeJoiner.h
-*   
-***/
 
 #ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETCLIENT_PLNETCLIAGEJOINER_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETCLIENT_PLNETCLIAGEJOINER_H

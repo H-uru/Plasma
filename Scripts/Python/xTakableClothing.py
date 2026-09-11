@@ -334,63 +334,76 @@ class xTakableClothing(ptModifier):
             return
 
         if id==actClickable.id:
-            avatar = PtGetLocalAvatar()
-            avatar.avatar.netForce(True)
-            currentgender = avatar.avatar.getAvatarClothingGroup()
-            if currentgender == kFemaleClothingGroup:
-                clothingNames = allFClothing
-                base = baseFClothing
-            else:
-                clothingNames = allMClothing
-                base = baseMClothing
-                
-            color1 = self.IGetTint(1)
-            color2 = self.IGetTint(2)
-            if boolHasHairColor.value:
-                PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  Using existing hair color since this is a hair item")
-                color1 = hairColor
-            if not boolStayVisible.value and ptVault().amOwnerOfCurrentAge():
-                ageSDL = PtGetAgeSDL()
-                ageSDL[stringVarName.value] = (not (boolShowOnTrue.value), )
-            self.IRemoveWornSet(self.IConflictsWithSet(base))
-            if base.find('Torso_GuildBlue') != -1 or base.find('Torso_GuildGreen') != -1 or base.find('Torso_GuildRed') != -1 or base.find('Torso_GuildYellow') != -1 or base.find('Torso_GuildWhite') !=  -1:
-                self.IRemoveOtherGuildShirt()
-                psnlSDL = xPsnlVaultSDL()
-                psnlSDL["guildAlliance"] = (guildSDLValues[base],)
-                PtDebugPrint(f"xTakableClothing: Guild set to: {guildSDLValues[base]}", level=kWarningLevel)
-            if not self.IItemInCloset():
-                avatar.avatar.addWardrobeClothingItem(base,ptColor().white(),ptColor().white())
-                item = self.IGetItem(base)
-                if hasattr(item, "description"):
-                    PtSendKIMessage(kKILocalChatStatusMsg, PtGetLocalizedString("KI.Messages.NewClothing", [item.description]))
-            else:
-                PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  You already have "+base+" so I'm not going to give it to you again")
-            acclist = avatar.avatar.getClosetClothingList(kAccessoryClothingItem)
-            accnamelist = [i[0] for i in acclist if i[0][4:14] == "AccGlasses" or i[0][1:] == "Reward_Goggles"]
-            worn = avatar.avatar.getAvatarClothingList()
-            wornnamelist = [worn[0] for i in worn]
-            for name in clothingNames:
-                self.IRemoveWornSet(self.IConflictsWithSet(name))
-                if name in accnamelist:
-                    for aitem in accnamelist:
-                        if aitem in wornnamelist and aitem != name:
-                            avatar.avatar.removeClothingItem(aitem)
-                PtDebugPrint(f"DEBUG: xTakableClothing.OnNotify():  Wearing {name}", level=kWarningLevel)
-                avatar.avatar.wearClothingItem(name ,0)
-                avatar.avatar.tintClothingItem(name, color1, 0)
-                avatar.avatar.tintClothingItemLayer(name, color2, 2, 1)
-                matchingItem = avatar.avatar.getMatchingClothingItem(name)
-                if isinstance(matchingItem, list):
-                    avatar.avatar.wearClothingItem(matchingItem[0], 0)
-                    avatar.avatar.tintClothingItem(matchingItem[0], color1, 0)
+            PtLocalizedYesNoDialog(self.TakeClothing, "KI.Messages.NewClothingConfirm")
 
-                    #START-->Hard Hat color fix
-                    if (matchingItem[0] == 'MReward_HardHat') or (matchingItem[0] == 'FRewardHardHat'):
-                        avatar.avatar.tintClothingItem(matchingItem[0], ptColor().orange(), 2, 1)
-                    else:                                      
-                        avatar.avatar.tintClothingItemLayer(matchingItem[0], color2, 2, 1)
-                    #END-->Hard Hat color fix
-                avatar.avatar.saveClothing()
+    def TakeClothing(self, value: int):
+        wearNow = value == PtConfirmationResult.Yes
+        avatar = PtGetLocalAvatar()
+        avatar.avatar.netForce(True)
+        currentgender = avatar.avatar.getAvatarClothingGroup()
+        if currentgender == kFemaleClothingGroup:
+            clothingNames = allFClothing
+            base = baseFClothing
+        else:
+            clothingNames = allMClothing
+            base = baseMClothing
+            
+        color1 = self.IGetTint(1)
+        color2 = self.IGetTint(2)
+        if boolHasHairColor.value:
+            PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  Using existing hair color since this is a hair item")
+            color1 = hairColor
+        if not boolStayVisible.value and ptVault().amOwnerOfCurrentAge():
+            ageSDL = PtGetAgeSDL()
+            ageSDL[stringVarName.value] = (not (boolShowOnTrue.value), )
+        if wearNow:
+            self.IRemoveWornSet(self.IConflictsWithSet(base))
+        worn = avatar.avatar.getAvatarClothingList()
+        wornnamelist = frozenset([i[0] for i in worn])
+        changeGuildShirt = False
+        if base.find('Torso_GuildBlue') != -1 or base.find('Torso_GuildGreen') != -1 or base.find('Torso_GuildRed') != -1 or base.find('Torso_GuildYellow') != -1 or base.find('Torso_GuildWhite') !=  -1:
+            changeGuildShirt = any((guildShirt in wornnamelist for guildShirt in guildSDLValues))
+            if changeGuildShirt:
+                PtDebugPrint("xTakableClothing: Found worn guild short, enforcing swap", level=kWarningLevel)
+            self.IRemoveOtherGuildShirt()
+            psnlSDL = xPsnlVaultSDL()
+            psnlSDL["guildAlliance"] = (guildSDLValues[base],)
+            PtDebugPrint(f"xTakableClothing: Guild set to: {guildSDLValues[base]}", level=kWarningLevel)
+        if not self.IItemInCloset():
+            avatar.avatar.addWardrobeClothingItem(base,ptColor().white(),ptColor().white())
+            item = self.IGetItem(base)
+            if hasattr(item, "description"):
+                PtSendKIMessage(kKILocalChatStatusMsg, PtGetLocalizedString("KI.Messages.NewClothing", [item.description]))
+        else:
+            PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  You already have "+base+" so I'm not going to give it to you again")
+
+        if not wearNow and not changeGuildShirt:
+            return
+    
+        acclist = avatar.avatar.getClosetClothingList(kAccessoryClothingItem)
+        accnamelist = [i[0] for i in acclist if i[0][4:14] == "AccGlasses" or i[0][1:] == "Reward_Goggles"]
+        for name in clothingNames:
+            self.IRemoveWornSet(self.IConflictsWithSet(name))
+            if name in accnamelist:
+                for aitem in accnamelist:
+                    if aitem in wornnamelist and aitem != name:
+                        avatar.avatar.removeClothingItem(aitem)
+            PtDebugPrint(f"DEBUG: xTakableClothing.OnNotify():  Wearing {name}", level=kWarningLevel)
+            avatar.avatar.wearClothingItem(name ,0)
+            avatar.avatar.tintClothingItem(name, color1, 0)
+            avatar.avatar.tintClothingItemLayer(name, color2, 2, 1)
+            matchingItem = avatar.avatar.getMatchingClothingItem(name)
+            if isinstance(matchingItem, list):
+                avatar.avatar.wearClothingItem(matchingItem[0], 0)
+                avatar.avatar.tintClothingItem(matchingItem[0], color1, 0)
+
+                #START-->Hard Hat color fix
+                if (matchingItem[0] == 'MReward_HardHat') or (matchingItem[0] == 'FRewardHardHat'):
+                    avatar.avatar.tintClothingItem(matchingItem[0], ptColor().orange(), 2, 1)
+                else:                                      
+                    avatar.avatar.tintClothingItemLayer(matchingItem[0], color2, 2, 1)
+                #END-->Hard Hat color fix
+            avatar.avatar.saveClothing()
 
     def IEnableClothing(self):
         PtDebugPrint("DEBUG: xTakableClothing.IEnableClothing():  Enabling clickable on %s..." % self.sceneobject.getName())

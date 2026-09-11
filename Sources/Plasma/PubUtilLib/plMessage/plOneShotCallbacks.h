@@ -77,9 +77,6 @@ protected:
     std::vector<plOneShotCallback> fCallbacks;
 
 public:
-    plOneShotCallbacks();
-    ~plOneShotCallbacks();
-
     void AddCallback(const ST::string &marker, plKey &receiver, int16_t user=0);
     int GetNumCallbacks();
     plOneShotCallback& GetCallback(int i);

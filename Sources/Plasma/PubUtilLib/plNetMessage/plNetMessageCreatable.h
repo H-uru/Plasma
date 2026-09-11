@@ -63,7 +63,6 @@ REGISTER_CREATABLE(plNetMsgObjectHelper);
 REGISTER_CREATABLE(plNetMsgObjectListHelper);
 REGISTER_CREATABLE(plNetMsgReceiversListHelper);
 REGISTER_CREATABLE(plNetMsgStreamHelper);
-REGISTER_CREATABLE(plNetMsgStreamableHelper);
 
 // CLIENT MSGS
 REGISTER_CREATABLE(plNetMsgGameMessage);

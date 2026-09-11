@@ -6,16 +6,18 @@ endif()
 
 FetchContent_Declare(
     metalcpp
-    URL_HASH_SHA256 0afd87ca851465191ae4e3980aa036c7e9e02fe32e7c760ac1a74244aae6023b
-    URL "https://developer.apple.com/metal/cpp/files/metal-cpp_macOS13.3_iOS16.4.zip"
+    GIT_REPOSITORY https://github.com/apple/metal-cpp.git
+    #release/metal-cpp_macOS13.3_iOS16.4
+    GIT_TAG        d72d46fccb230b53b28ff65fddbbe07ec693964b
 )
 
 FetchContent_MakeAvailable(metalcpp)
 
 set(pfMetalPipeline_SOURCES
+    plMetalArgumentBuffer.cpp
     plMetalDevice.cpp
     plMetalDeviceRefs.cpp
-    plMetalEnumerate.cpp
+    plMetalEnumerate.mm
     plMetalMaterialShaderRef.cpp
     plMetalPipeline.cpp
     plMetalPipelineState.cpp
@@ -29,8 +31,10 @@ set(pfMetalPipeline_SOURCES
 )
 
 set(pfMetalPipeline_HEADERS
+    plMetalArgumentBuffer.h
     plMetalDevice.h
     plMetalDeviceRef.h
+    plMetalLightRef.h
     plMetalMaterialShaderRef.h
     plMetalPipeline.h
     plMetalPipelineState.h
@@ -114,3 +118,28 @@ target_include_directories(pfMetalPipelineShadersMSL23
 set_target_properties(pfMetalPipelineShadersMSL23 PROPERTIES
     FOLDER FeatureLib
 )
+
+if(NOT DEFINED CMAKE_XCODE_VERSION_MAJOR OR
+    CMAKE_XCODE_VERSION_MAJOR VERSION_GREATER_EQUAL 13)
+
+    add_metal_shader_library(pfMetalPipelineShadersMSL30
+        STANDARD metal3.0
+        ${pfMetalPipeline_SHADERS}
+    )
+    target_include_directories(pfMetalPipelineShadersMSL30
+        PRIVATE
+        $<TARGET_PROPERTY:pnNucleusInc,INTERFACE_INCLUDE_DIRECTORIES>
+    )
+    set_target_properties(pfMetalPipelineShadersMSL30 PROPERTIES
+        FOLDER FeatureLib
+    )
+    target_compile_definitions(pfMetalPipeline
+        PRIVATE
+        METAL_3_SDK
+    )
+
+    add_dependencies(
+        pfMetalPipeline
+        pfMetalPipelineShadersMSL30
+    )
+endif()

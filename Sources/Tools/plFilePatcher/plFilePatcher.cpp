@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_theory/format>
 
 #include "pnAsyncCore/pnAsyncCore.h"
+#include "pnNetBase/pnNbSrvs.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "pfConsoleCore/pfServerIni.h"
 #include "pfPatcher/plManifests.h"
@@ -115,9 +116,9 @@ void plFilePatcher::IRequestFileSrvInfo()
     uint32_t num = GetGateKeeperSrvHostnames(addrs);
     NetCliGateKeeperStartConnect(addrs, num);
 
-    NetCliGateKeeperFileSrvIpAddressRequest([](ENetError result, void* param, const ST::string& addr) {
-        static_cast<plFilePatcher*>(param)->IHandleFileSrvInfo(result, addr);
-    }, this, true);
+    NetCliGateKeeperFileSrvIpAddressRequest(true, [this](auto result, const auto& addr) {
+        IHandleFileSrvInfo(result, addr);
+    });
 }
 
 void plFilePatcher::IHandleFileSrvInfo(ENetError result, const ST::string& addr)
@@ -137,19 +138,19 @@ void plFilePatcher::IHandleFileSrvInfo(ENetError result, const ST::string& addr)
 
 void plFilePatcher::IRunPatcher()
 {
-    pfPatcher* patcher = new pfPatcher();
-    patcher->OnFileDownloadDesired(std::bind(&plFilePatcher::IApproveDownload, this, std::placeholders::_1));
-    patcher->OnCompletion(std::bind(&plFilePatcher::IOnPatchComplete, this, std::placeholders::_1, std::placeholders::_2));
+    pfPatcher patcher;
+    patcher.OnFileDownloadDesired(std::bind(&plFilePatcher::IApproveDownload, this, std::placeholders::_1));
+    patcher.OnCompletion(std::bind(&plFilePatcher::IOnPatchComplete, this, std::placeholders::_1, std::placeholders::_2));
 
     if (fDownloadFunc)
-        patcher->OnFileDownloadBegin(fDownloadFunc);
+        patcher.OnFileDownloadBegin(fDownloadFunc);
 
     if (fProgressFunc)
-        patcher->OnProgressTick(fProgressFunc);
+        patcher.OnProgressTick(fProgressFunc);
 
     // Request everything, and then we'll filter the file list before we fetch
-    patcher->RequestManifest(plManifest::ClientImageManifest());
-    patcher->Start();
+    patcher.RequestManifest(plManifest::ClientImageManifest());
+    patcher.Start();
 }
 
 bool plFilePatcher::IApproveDownload(const plFileName& file)

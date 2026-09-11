@@ -60,6 +60,7 @@ class grsnPageMaster(ptResponder):
         self.id = 50100
         self.version = 1
 
+    def OnInit(self):
         global IsPublic
 
         parentname = None
@@ -75,9 +76,9 @@ class grsnPageMaster(ptResponder):
     
         if parentname == "Neighborhood":
             IsPublic = 1
-            PtDebugPrint("grsnPageMaster.__init__(): Garrison version = public")
+            PtDebugPrint("grsnPageMaster.OnInit(): Garrison version = public")
         else:
-            PtDebugPrint("grsnPageMaster.__init__(): Garrison version = Yeesha")
+            PtDebugPrint("grsnPageMaster.OnInit(): Garrison version = Yeesha")
 
         pages = []
 

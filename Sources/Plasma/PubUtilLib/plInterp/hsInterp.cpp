@@ -299,7 +299,7 @@ void hsInterp::LinInterp(const hsAffineParts* k1, const hsAffineParts* k2, float
     }
     
     if(k1->fF!=k2->fF)
-        hsStatusMessageF("WARNING: Inequality in affine parts flip value.");
+        hsStatusMessage("WARNING: Inequality in affine parts flip value.");
 
 //  hsAssert(k1->fF==k2->fF, "inequality in affine parts flip value");
     if (!(flags & kIgnorePartsPos))

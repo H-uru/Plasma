@@ -59,40 +59,25 @@ void plNetApp::SetInstance(plNetApp* app)
 }
 
 
-bool plNetApp::StaticErrorMsg(const ST::string& msg)
+void plNetApp::StaticErrorMsg(const ST::string& msg)
 {
-    if (!GetInstance()) {
-        return true;
+    if (plNetApp* app = GetInstance()) {
+        app->ErrorMsg(msg);
     }
-
-    return GetInstance()->ErrorMsg(msg);
 }
 
-bool plNetApp::StaticWarningMsg(const ST::string& msg)
+void plNetApp::StaticWarningMsg(const ST::string& msg)
 {
-    if (!GetInstance()) {
-        return true;
+    if (plNetApp* app = GetInstance()) {
+        app->WarningMsg(msg);
     }
-
-    return GetInstance()->WarningMsg(msg);
 }
 
-bool plNetApp::StaticAppMsg(const ST::string& msg)
+void plNetApp::StaticDebugMsg(const ST::string& msg)
 {
-    if (!GetInstance()) {
-        return true;
+    if (plNetApp* app = GetInstance()) {
+        app->DebugMsg(msg);
     }
-
-    return GetInstance()->AppMsg(msg);
-}
-
-bool plNetApp::StaticDebugMsg(const ST::string& msg)
-{
-    if (!GetInstance()) {
-        return true;
-    }
-
-    return GetInstance()->DebugMsg(msg);
 }
 
 

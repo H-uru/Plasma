@@ -2,6 +2,7 @@ set(pfConsole_SOURCES
     pfAudioConsoleCommands.cpp
     pfAvatarConsoleCommands.cpp
     pfConsole.cpp
+    pfConsoleCommandUtilities.cpp
     pfConsoleCommands.cpp
     pfConsoleCommandsNet.cpp
     pfConsoleDirSrc.cpp
@@ -11,6 +12,7 @@ set(pfConsole_SOURCES
 
 set(pfConsole_HEADERS
     pfConsole.h
+    pfConsoleCommandUtilities.h
     pfConsoleCreatable.h
     pfConsoleDirSrc.h
     pfDispatchLog.h
@@ -56,7 +58,6 @@ target_link_libraries(
         plPhysical
         plPhysX
         plPipeline
-        pfPython
         plResMgr
         plScene
         plSDL
@@ -68,9 +69,11 @@ target_link_libraries(
         pfAudio
         pfAnimation
         pfCamera
+        pfJournalBook
         pfMessage
         pfPython
         pfSurface
+        tl::expected
     INTERFACE
         pnFactory
 )

@@ -40,6 +40,7 @@
 #
 # *==LICENSE==*/
 
+import enum
 import os.path
 import re
 import textwrap
@@ -118,18 +119,42 @@ generated_module_header = """\
 docstring_type_prefix = "Type: "
 docstring_params_prefix = "Params: "
 
-def attr_sort_key(item: tuple[str, object]) -> tuple[int, str]:
+def is_special_attribute_name(name: str) -> bool:
+    """Return whether the given attribute name is a "special" attribute
+    that should never be output into the stubs.
+
+    Attributes of the form __foo__ have a special meaning to the Python language/runtime.
+    Attributes of the form _foo_ have a special meaning to standard library modules like enum.
+    Both kinds are mainly defined implicitly by Python or the stdlib and not explicitly by user code.
+    Sometimes, user code will explicitly define/override them,
+    but even then we don't want to write them into the stubs.
+
+    Attributes of the form __foo normally shouldn't appear
+    (such names are rewritten by Python at compile time),
+    but we ignore them regardless, just in case.
+    We intentionally don't ignore attributes of the form _foo,
+    because those are sometimes defined by user code.
+    """
+
+    return name.startswith("__") or (name.startswith("_") and name.endswith("_"))
+
+def attr_sort_key(item: tuple[str, object]) -> tuple:
     name, value = item
 
-    # Put functions, classes, and enums after "simple" attributes (constants and instance properties).
-    # (Note: callable includes both functions and classes).
-    if callable(value) or isinstance(value, PlasmaConstants.Enum):
-        order = 1
+    if isinstance(value, enum.Enum):
+        # Enum constants go after regular attributes.
+        # They are sorted by their value, then by name in case of duplicates.
+        return 1, value.value, name
     else:
-        order = 0
+        # Put functions and classes after "simple" attributes (constants and instance properties).
+        # (Note: callable includes both functions and classes.)
+        if callable(value):
+            order = 2
+        else:
+            order = 0
 
-    # Generally, we sort attributes by name (case-sensitive).
-    return order, name
+        # Generally, we sort attributes by name (case-sensitive).
+        return order, name
 
 def iter_attributes(obj: object) -> Iterable[tuple[str, object]]:
     attrs = sorted(obj.__dict__.items(), key=attr_sort_key)
@@ -143,10 +168,11 @@ def iter_attributes(obj: object) -> Iterable[tuple[str, object]]:
     while i < len(attrs):
         name, value = attrs[i]
 
-        # Ignore dunder attributes for the purposes of discovering base class dependencies.
+        # Ignore special attributes for the purposes of discovering base class dependencies.
         # Otherwise, the logic will get confused by special attributes
-        # whose value is a type object, such as __class__.
-        if not name.startswith("__") and isinstance(value, type):
+        # whose value is a type object, such as __class__,
+        # or _member_type_ on enum.Enum subclasses.
+        if not is_special_attribute_name(name) and isinstance(value, type):
             # Find all base classes that haven't been seen yet
             # and wrap them in (name, value) tuples.
             missing_bases = [
@@ -275,18 +301,6 @@ def generate_function_stub(kind: FunctionKind, name: str, signature: str, doc: s
     yield from add_indents("    ", format_docstring(doc))
     yield "    ..."
 
-def generate_enum_stub(name: str, enum_obj: PlasmaConstants.Enum) -> Iterable[str]:
-    yield f"class {name}:"
-
-    if enum_obj.lookup:
-        # Output enum constants sorted by their int value,
-        # falling back to sorting by name (case-sensitive) for constants with equal values.
-        for name, value in sorted(enum_obj.lookup.items(), key=lambda item: (int(item[1]), item[0])):
-            yield f"    {name} = {int(value)}"
-    else:
-        # Just in case we ever get an enum that contains *no* constants...
-        yield "    pass"
-
 def generate_class_stub(name: str, cls: type) -> Iterable[str]:
     if tuple(cls.__bases__) == (object,):
         class_parens = ""
@@ -303,6 +317,8 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
     yield f"class {name}{class_parens}:"
     yield from add_indents("    ", format_docstring(doc))
 
+    need_newline_before_constant = bool(doc)
+
     for name, value in iter_attributes(cls):
         if name == "__init__":
             # Special case for __init__: use the signature from the class docstring.
@@ -312,14 +328,14 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
                 # C-defined __init__ methods have a dummy docstring - don't output that.
                 yield from add_indents("    ", generate_function_stub("method", name, init_signature, ""))
             continue
-        elif name.startswith("__"):
+        elif is_special_attribute_name(name):
             # Ignore all other special attributes.
             continue
 
-        yield ""
-
         if isinstance(value, type):
+            yield ""
             yield from add_indents("    ", generate_class_stub(name, value))
+            need_newline_before_constant = True
         elif callable(value):
             kind: FunctionKind
             if isinstance(value, staticmethod):
@@ -328,7 +344,7 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
                 kind = "staticmethod"
                 # The __doc__ of staticmethod objects is staticmethod.__doc__,
                 # i. e. the docstring for staticmethod itself and not for the actual method!
-                # (Checked with Python 3.10.7.)
+                # (Checked with Python 3.12.9.)
                 # Unwrap it so that the code below can get at the proper docstring.
                 value = value.__func__
                 assert isinstance(value, types.BuiltinMethodType)
@@ -345,7 +361,9 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
                 kind = "method"
 
             signature, doc = parse_type_from_doc(value.__doc__)
+            yield ""
             yield from add_indents("    ", generate_function_stub(kind, name, signature, doc))
+            need_newline_before_constant = True
         elif isinstance(value, types.GetSetDescriptorType):
             # C-defined properties have class getset_descriptor (aka types.GetSetDescriptorType).
             # (Note: There is also member_descriptor aka types.MemberDescriptorType,
@@ -357,10 +375,24 @@ def generate_class_stub(name: str, cls: type) -> Iterable[str]:
             # because the type annotation syntax doesn't differentiate between read-only and read-write attributes.
             property_type, doc = parse_type_from_doc(value.__doc__)
             property_type = property_type or "Any"
+            yield ""
             yield f"    {name}: {property_type}"
             yield from add_indents("    ", format_docstring(doc))
+            need_newline_before_constant = True
         else:
-            yield f"    {name}: {format_qualified_name(type(value), cls.__module__)} = ... # = {value!r}"
+            if need_newline_before_constant:
+                yield ""
+
+            if issubclass(cls, enum.Enum) and type(value) is cls:
+                # Special case for enum constants:
+                # output just the value (not the enum constant object) with no explicit type annotation,
+                # like when defining an enum in plain Python.
+                assert isinstance(value, enum.Enum) # for less clever IDEs/type checkers
+                yield f"    {name} = {value.value}"
+            else:
+                yield f"    {name}: {format_qualified_name(type(value), cls.__module__)} = ... # = {value!r}"
+
+            need_newline_before_constant = False
 
 def generate_module_stub(module: types.ModuleType) -> Iterable[str]:
     yield generated_module_header
@@ -372,6 +404,11 @@ def generate_module_stub(module: types.ModuleType) -> Iterable[str]:
 
     # Hardcoded imports for type annotations:
     yield "from __future__ import annotations"
+
+    if "Constants" in module.__name__:
+        # Hackage until someone implements automatic generation of imports for base classes...
+        yield "import enum"
+
     if module.__name__ == "Plasma":
         # Some parameter default values in the Plasma module
         # use constant values from PlasmaConstants.
@@ -381,13 +418,11 @@ def generate_module_stub(module: types.ModuleType) -> Iterable[str]:
     yield "from typing import *"
 
     for name, value in iter_attributes(module):
-        if name.startswith("__"):
+        if is_special_attribute_name(name):
             continue
 
         yield ""
-        if isinstance(value, PlasmaConstants.Enum):
-            yield from generate_enum_stub(name, value)
-        elif isinstance(value, type):
+        if isinstance(value, type):
             yield from generate_class_stub(name, value)
         elif callable(value):
             signature, doc = parse_type_from_doc(value.__doc__)

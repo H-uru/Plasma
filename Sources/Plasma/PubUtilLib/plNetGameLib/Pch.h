@@ -39,37 +39,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Pch.h
-*   
-***/
 
 #ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PCH_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PCH_H
 
-#include <atomic>
-#include <type_traits>
+#include <algorithm>
+#include <chrono>
+#include <mutex>
+#include <string>
+#include <string_theory/string>
+#include <thread>
+#include <utility>
 
-#include "hsBitVector.h"
-#include "plProduct.h"
+#include "hsLockGuard.h"
+#include "hsEndian.h"
+#include "hsStream.h"
 #include "hsThread.h"
 #include "hsTimer.h"
+#include "plProduct.h"
 
 #include "pnAsyncCore/pnAsyncCore.h"
-#include "pnGameMgr/pnGameMgr.h"
-#include "pnEncryption/plBigNum.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnNetCli/pnNetCli.h"
+#include "pnNetCommon/plNetAddress.h"
+#include "pnNetProtocol/pnNpCommon.h"
+#include "pnUUID/pnUUID.h"
 
-#define USES_PROTOCOL_CLI2AUTH
-#define USES_PROTOCOL_CLI2GAME
-#define USES_PROTOCOL_CLI2FILE
-#define USES_PROTOCOL_CLI2CSR
-#define USES_PROTOCOL_CLI2GATEKEEPER
-#include "pnNetProtocol/pnNetProtocol.h"
-
-#include "Private/plNglAllIncludes.h"
+#include "plNetGameLib.h"
 #include "Intern.h"
 
 #endif

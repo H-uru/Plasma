@@ -158,12 +158,12 @@ static plSoundPreloader gLoaderThread;
 
 void plSoundBuffer::Init()
 {
-    gLoaderThread.Start();
+    gLoaderThread.Init();
 }
 
 void plSoundBuffer::Shutdown()
 {
-    gLoaderThread.Stop();
+    gLoaderThread.Shutdown();
 }
 
 //// Constructor/Destructor //////////////////////////////////////////////////

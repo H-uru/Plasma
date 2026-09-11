@@ -71,6 +71,8 @@ private:
     static PyObject* stdOut;    // python object of the stdout file
     static PyObject* stdErr;    // python object of the err file
 
+    static PyObject* builtInModuleName;
+
     static bool debug_initialized;    // has the debug been initialized yet?
     static PyObject* dbgMod;    // display module for stdout and stderr
     static PyObject* dbgOut;
@@ -142,6 +144,9 @@ public:
 
     // create a new module with built-ins
     static PyObject* CreateModule(const char* module);
+
+    /** Clears the dict of a Python module. Analagous to `_PyModule_Clear()`. */
+    static void ClearModule(PyObject* m);
 
     // Determine if the module name is unique
     static bool IsModuleNameUnique(const ST::string& module);

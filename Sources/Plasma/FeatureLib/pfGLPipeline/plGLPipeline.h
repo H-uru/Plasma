@@ -54,7 +54,7 @@ public:
     }
 
 private:
-    static void Enumerate(std::vector<hsG3DDeviceRecord>& records);
+    static void Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl display);
 };
 
 class plGLPipeline : public pl3DPipeline<plGLDevice>
@@ -62,7 +62,7 @@ class plGLPipeline : public pl3DPipeline<plGLDevice>
     friend class plGLPlateManager;
 
 public:
-    plGLPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode);
+    plGLPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode);
     virtual ~plGLPipeline() = default;
 
     CLASSNAME_REGISTER(plGLPipeline);

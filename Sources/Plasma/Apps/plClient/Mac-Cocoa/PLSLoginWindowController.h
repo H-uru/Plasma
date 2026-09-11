@@ -44,24 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetClient/plNetClientMgr.h"
 
+#import "PLSLoginController.h"
+
 NS_ASSUME_NONNULL_BEGIN
-
-@interface PLSLoginParameters : NSObject
-@property NSString* username;
-@property NSString* password;
-@property BOOL rememberPassword;
-
-- (void)load;
-- (void)save;
-- (void)makeCurrent;
-
-@end
-
-@interface PLSLoginController : NSObject
-
-+ (void)attemptLogin:(void (^)(ENetError))completion;
-
-@end
 
 @class PLSLoginWindowController;
 

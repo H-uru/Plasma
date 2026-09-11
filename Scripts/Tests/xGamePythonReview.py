@@ -142,6 +142,25 @@ def dump_dupe_id():
                 )
             )
 
+def dump_out_of_range_id():
+    global exitcode
+
+    # IDs can only be in the range of SIGNED 32-bit integers.
+    min_id, max_id = -2**31, 2**31-1
+    for id, files in found_ids.items():
+        if id < min_id or id > max_id:
+            exitcode = 1
+            for py_file in files:
+                print(
+                    result_str.format(
+                        status="WARNING",
+                        file=py_file.relative_to(repo_path),
+                        line="",
+                        message=f"PythonFileMod(TM) `id` ({id}) is out of range"
+                    )
+                )
+
+
 def get_duplicated_ids() -> Dict[int, Set[Path]]:
     return { selfid: files for selfid, files in found_ids.items() if len(files) > 1 }
 
@@ -185,4 +204,5 @@ for py_file in input_path.glob("*.py"):
             print("It's an import file!")
 
 dump_dupe_id()
+dump_out_of_range_id()
 sys.exit(exitcode)

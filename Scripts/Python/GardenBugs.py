@@ -97,9 +97,9 @@ class GardenBugs(ptResponder):
         return 0 # no chronicle var
 
     def OnServerInitComplete(self):
-        self.ageSDL = PtGetAgeSDL()
-        self.ageSDL[raining.value]=(0,)
-            
+        ageSDL = PtGetAgeSDL()
+        ageSDL[raining.value]=(0,)
+
         avatar = 0
         try:
             avatar = PtGetLocalAvatar()
@@ -160,8 +160,8 @@ class GardenBugs(ptResponder):
             return
 
         if (id == kRainStarting):
-            self.ageSDL = PtGetAgeSDL()
-            self.ageSDL[raining.value] = (1,)
+            ageSDL = PtGetAgeSDL()
+            ageSDL[raining.value] = (1,)
             PtSetParticleOffset(0,0,100,bugEmitter.value.getKey())
             PtDebugPrint("GardenBugs.OnTimer():\tIt's rain, bug cloud gone")
             if (localInTunnel or self.bugCount == 0):
@@ -212,8 +212,8 @@ class GardenBugs(ptResponder):
 
             if (self.bugCount > 19):
                 return
-            self.ageSDL = PtGetAgeSDL()
-            rain = self.ageSDL[raining.value][0]
+            ageSDL = PtGetAgeSDL()
+            rain = ageSDL[raining.value][0]
             if (rain):
                 PtDebugPrint("gardenBugs.OnNotify()-->\tnope, it's raining")
                 return
@@ -241,8 +241,8 @@ class GardenBugs(ptResponder):
 
         if (id == rainEnd.id):
             PtDebugPrint("gardenBugs.OnNotify()-->\train stopping")
-            self.ageSDL = PtGetAgeSDL()
-            self.ageSDL[raining.value] = (0,)
+            ageSDL = PtGetAgeSDL()
+            ageSDL[raining.value] = (0,)
             PtSetParticleOffset(0,0,4,bugEmitter.value.getKey())
         
         if (id == bharoCave.id and self.bugCount > 0):
@@ -265,8 +265,8 @@ class GardenBugs(ptResponder):
                 elif event[0]==1 and event[1]==0:
                     localInTunnel = False
                     PtDebugPrint("gardenBugs.OnNotify()-->\tlocal exit tunnel")
-                    self.ageSDL = PtGetAgeSDL()
-                    rain = self.ageSDL[raining.value][0]
+                    ageSDL = PtGetAgeSDL()
+                    rain = ageSDL[raining.value][0]
                     if (rain):
                         PtSetParticleDissentPoint(0,0,10000,avatar.getKey())
                         PtKillParticles(3.0,1,avatar.getKey())
@@ -294,8 +294,8 @@ class GardenBugs(ptResponder):
             PtKillParticles(0,1,local.getKey())
             
             local.avatar.unRegisterForBehaviorNotify(self.key)       
-            self.ageSDL = PtGetAgeSDL()
-            self.ageSDL[raining.value] = (0,)
+            ageSDL = PtGetAgeSDL()
+            ageSDL[raining.value] = (0,)
 
     def OnBehaviorNotify(self,behavior,id,state):
         global currentBehavior

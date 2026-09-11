@@ -16,9 +16,17 @@ set(gtest_build_tests OFF CACHE INTERNAL "Override gtest default")
 set(gtest_disable_pthreads OFF CACHE INTERNAL "Override gtest default")
 set(gtest_hide_internal_symbols ON CACHE INTERNAL "Override gtest default")
 
+# Put gtest's targets in the Tests folder,
+# not our default "CMakePredefinedTargets" folder.
+set(_PREV_CMAKE_FOLDER ${CMAKE_FOLDER})
+set(CMAKE_FOLDER "Tests")
+
 set(GOOGLETEST_VERSION 1.12.1)
 set(INSTALL_GTEST OFF CACHE INTERNAL "Override gtest default" FORCE)
 add_subdirectory(gtest EXCLUDE_FROM_ALL)
+
+set(CMAKE_FOLDER ${_PREV_CMAKE_FOLDER})
+unset(_PREV_CMAKE_FOLDER)
 
 include_directories(${GTEST_INCLUDE_DIR})
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})

@@ -52,7 +52,9 @@ if(USE_CLANG_TIDY)
             COMMAND ${CMAKE_COMMAND} -E remove_directory "${_TIDY_REPLACEMENTS_DIR}"
             COMMAND ${CMAKE_COMMAND} -E make_directory "${_TIDY_REPLACEMENTS_DIR}"
         )
+        set_target_properties(tidy_init PROPERTIES FOLDER tidy)
         add_custom_target(tidy DEPENDS tidy_init)
+        set_target_properties(tidy PROPERTIES FOLDER tidy)
         if(CLANG_APPLY_EXE)
             add_custom_target(fix
                 DEPENDS tidy
@@ -60,6 +62,7 @@ if(USE_CLANG_TIDY)
                 COMMAND ${CLANG_APPLY_EXE} "${_TIDY_REPLACEMENTS_DIR}"
                 WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
             )
+            set_target_properties(fix PROPERTIES FOLDER tidy)
         endif()
 
         # If we were on CMake 3.20, we could do this per-target...
@@ -92,16 +95,22 @@ function(plasma_sanitize_target TARGET)
                 endif()
             endforeach()
 
-            set(_TARGET_FIXES_FILE "${_TIDY_REPLACEMENTS_DIR}/${TARGET}.yaml")
-            add_custom_target(tidy_${TARGET}
-                DEPENDS tidy_init
-                COMMENT "Running clang-tidy on ${TARGET}..."
-                COMMAND_EXPAND_LISTS
-                COMMAND ${CLANG_TIDY_EXE} --quiet -p "${CMAKE_BINARY_DIR}" "-export-fixes=${_TARGET_FIXES_FILE}" "${_TIDY_SOURCES}"
-                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-                BYPRODUCTS "${_TARGET_FIXES_FILE}"
-            )
-            add_dependencies(tidy tidy_${TARGET})
+            # clang-tidy gives an error if no source files are passed,
+            # so create the target only if there are any source files.
+            # This is relevant for targets that only contain header files, such as pfFeatureInc.
+            if(_TIDY_SOURCES)
+                set(_TARGET_FIXES_FILE "${_TIDY_REPLACEMENTS_DIR}/${TARGET}.yaml")
+                add_custom_target(tidy_${TARGET}
+                    DEPENDS tidy_init
+                    COMMENT "Running clang-tidy on ${TARGET}..."
+                    COMMAND_EXPAND_LISTS
+                    COMMAND ${CLANG_TIDY_EXE} --quiet -p "${CMAKE_BINARY_DIR}" "-export-fixes=${_TARGET_FIXES_FILE}" "${_TIDY_SOURCES}"
+                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                    BYPRODUCTS "${_TARGET_FIXES_FILE}"
+                )
+                set_target_properties(tidy_${TARGET} PROPERTIES FOLDER tidy)
+                add_dependencies(tidy tidy_${TARGET})
+            endif()
         endif()
     endif()
 endfunction()

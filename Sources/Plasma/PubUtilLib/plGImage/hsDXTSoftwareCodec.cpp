@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsColorRGBA.h"
 #include "hsDXTSoftwareCodec.h"
+#include "hsEndian.h"
 #include "plMipmap.h"
 #include "hsCodecManager.h"
 

@@ -428,7 +428,7 @@ void pyGUIControlMultiLineEdit::AddPlasmaClasses(PyObject *m)
 
 void pyGUIControlMultiLineEdit::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtGUIMultiLineDirection)
+    PYTHON_ENUM_START(m, PtGUIMultiLineDirection)
     PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kLineStart,        pfGUIMultiLineEditCtrl::kLineStart)
     PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kLineEnd,          pfGUIMultiLineEditCtrl::kLineEnd)
     PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kBufferStart,      pfGUIMultiLineEditCtrl::kBufferStart)

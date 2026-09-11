@@ -50,13 +50,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAnimationEventConditionalObject : public plConditionalObject
 {
 protected:
-    CallbackEvent   fAction;
+    plEventCallbackMsg::CallbackEvent   fAction;
     plKey           fTarget;
 public:
     
     
     plAnimationEventConditionalObject() : fAction(), fTarget() { }
-    plAnimationEventConditionalObject(plKey pTargetModifier) : fTarget(std::move(pTargetModifier)), fAction(kEventEnd) { }
+    plAnimationEventConditionalObject(plKey pTargetModifier) : fTarget(std::move(pTargetModifier)), fAction(plEventCallbackMsg::kEventEnd) { }
     ~plAnimationEventConditionalObject() { }
     
     CLASSNAME_REGISTER( plAnimationEventConditionalObject );
@@ -70,7 +70,7 @@ public:
     void Evaluate() override { }
     void Reset() override { SetSatisfied(false); }
 
-    void SetEvent(const CallbackEvent b, float time = 0.0f);
+    void SetEvent(const plEventCallbackMsg::CallbackEvent b, float time = 0.0f);
     
 };
 

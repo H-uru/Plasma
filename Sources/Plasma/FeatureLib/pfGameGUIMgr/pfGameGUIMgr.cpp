@@ -129,7 +129,7 @@ pfGameGUIMgr    *pfGameGUIMgr::fInstance = nullptr;
 //// Constructor & Destructor ////////////////////////////////////////////////
 
 pfGameGUIMgr::pfGameGUIMgr()
-    : fActivated(), fInputCtlIndex(), fActiveDialogs(), fInputConfig(),
+    : fActivated(), fInputCtlIndex(), fActiveDialogs(),
       fDefaultCursor(plInputInterface::kCursorUp), fCursorOpacity(1.f), fAspectRatio(),
       fActiveDlgCount()
 {
@@ -149,8 +149,6 @@ pfGameGUIMgr::~pfGameGUIMgr()
 
     if( fActivated )
         IActivateGUI( false );
-
-    delete fInputConfig;
 }
 
 
@@ -285,6 +283,14 @@ void    pfGameGUIMgr::LoadDialog(const ST::string& name, plKey recvrKey, const S
         }
     }
 
+    plLocation pageLoc = plKeyFinder::Instance().FindLocation(ageName, name);
+    if (!pageLoc.IsValid()) {
+        ST::string msg = ST::format("Could not find page for dialog {} {}", name, ageName);
+        plStatusLog::AddLineS("plasmadbg.log", plStatusLog::kRed, msg);
+        hsAssert(false, msg.c_str());
+        return;
+    }
+
     plStatusLog::AddLineSF("plasmadbg.log", "Loading Dialog {} {} ... {}",
                            name, ageName, hsTimer::GetSeconds());
 
@@ -292,7 +298,7 @@ void    pfGameGUIMgr::LoadDialog(const ST::string& name, plKey recvrKey, const S
 
     plClientMsg *msg = new plClientMsg( plClientMsg::kLoadRoomHold );
     msg->AddReceiver( clientKey );
-    msg->AddRoomLoc(plKeyFinder::Instance().FindLocation(ageName, name));
+    msg->AddRoomLoc(pageLoc);
     msg->Send();
 }
 
@@ -471,7 +477,7 @@ void    pfGameGUIMgr::IActivateGUI( bool activate )
 
     if( activate )
     {
-        fInputConfig = new pfGameUIInputInterface( this );
+        fInputConfig.Steal(new pfGameUIInputInterface(this));
         plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
         msg->SetIFace( fInputConfig );
         msg->Send();
@@ -482,7 +488,6 @@ void    pfGameGUIMgr::IActivateGUI( bool activate )
         msg->SetIFace( fInputConfig );
         msg->Send();
 
-        hsRefCnt_SafeUnRef( fInputConfig );
         fInputConfig = nullptr;
     }
 

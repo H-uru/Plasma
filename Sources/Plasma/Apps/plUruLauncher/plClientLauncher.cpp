@@ -50,6 +50,7 @@ Mead, WA   99021
 #include "hsTimer.h"
 
 #include "pnAsyncCore/pnAsyncCore.h"
+#include "pnNetBase/pnNbSrvs.h"
 
 #include "plMessageBox/hsMessageBox.h"
 #include "plNetGameLib/plNetGameLib.h"
@@ -193,14 +194,6 @@ public:
             }
         }
     }
-
-    void Start() override
-    {
-        if (fRedistQueue.empty())
-            OnQuit();
-        else
-            hsThread::Start();
-    }
 };
 
 // ===================================================
@@ -258,8 +251,12 @@ void plClientLauncher::IOnPatchComplete(ENetError result, const ST::string& msg)
             PatchClient();
         } else {
             // cases 2 & 3 -- update any redistributables, then launch the client.
-            fInstallerThread->fParent = this;
-            fInstallerThread->Start();
+            if (fInstallerThread->fRedistQueue.empty()) {
+                LaunchClient();
+            } else {
+                fInstallerThread->fParent = this;
+                fInstallerThread->Start();
+            }
         }
     } else if (s_errorProc)
         s_errorProc(result, msg);
@@ -302,21 +299,21 @@ void plClientLauncher::PatchClient()
     }
     hsAssert(fPatcherFactory, "why is the patcher factory nil?");
 
-    pfPatcher* patcher = fPatcherFactory();
-    patcher->OnCompletion(std::bind(&plClientLauncher::IOnPatchComplete, this, std::placeholders::_1, std::placeholders::_2));
-    patcher->OnFileDownloadDesired(std::bind(&plClientLauncher::IApproveDownload, this, std::placeholders::_1));
-    patcher->OnSelfPatch([&](const plFileName& file) { fClientExecutable = file; });
-    patcher->OnRedistUpdate([&](const plFileName& file) { fInstallerThread->fRedistQueue.push_back(file); });
+    pfPatcher patcher = fPatcherFactory();
+    patcher.OnCompletion(std::bind(&plClientLauncher::IOnPatchComplete, this, std::placeholders::_1, std::placeholders::_2));
+    patcher.OnFileDownloadDesired(std::bind(&plClientLauncher::IApproveDownload, this, std::placeholders::_1));
+    patcher.OnSelfPatch([&](const plFileName& file) { fClientExecutable = file; });
+    patcher.OnRedistUpdate([&](const plFileName& file) { fInstallerThread->fRedistQueue.push_back(file); });
 
     // Let's get 'er done.
     if (hsCheckBits(fFlags, kHaveSelfPatched)) {
         if (hsCheckBits(fFlags, kClientImage))
-            patcher->RequestManifest(plManifest::ClientImageManifest());
+            patcher.RequestManifest(plManifest::ClientImageManifest());
         else
-            patcher->RequestManifest(plManifest::ClientManifest());
+            patcher.RequestManifest(plManifest::ClientManifest());
     } else
-        patcher->RequestManifest(plManifest::PatcherManifest());
-    patcher->Start();
+        patcher.RequestManifest(plManifest::PatcherManifest());
+    patcher.Start();
 }
 
 bool plClientLauncher::CompleteSelfPatch(const std::function<void()>& waitProc) const
@@ -348,9 +345,8 @@ bool plClientLauncher::CompleteSelfPatch(const std::function<void()>& waitProc) 
 
 // ===================================================
 
-static void IGotFileServIPs(ENetError result, void* param, const ST::string& addr)
+void plClientLauncher::IGotFileServIPs(ENetError result, const ST::string& addr)
 {
-    plClientLauncher* launcher = static_cast<plClientLauncher*>(param);
     NetCliGateKeeperDisconnect();
 
     if (IS_NET_SUCCESS(result)) {
@@ -359,7 +355,7 @@ static void IGotFileServIPs(ENetError result, void* param, const ST::string& add
         NetCliFileStartConnect(eapSucks, 1, true);
 
         // Who knows if we will actually connect. So let's start updating.
-        launcher->PatchClient();
+        PatchClient();
     } else if (s_errorProc)
         s_errorProc(result, "Failed to get FileServ addresses");
 }
@@ -390,7 +386,9 @@ void plClientLauncher::InitializeNetCore()
     uint32_t num = GetGateKeeperSrvHostnames(addrs);
 
     NetCliGateKeeperStartConnect(addrs, num);
-    NetCliGateKeeperFileSrvIpAddressRequest(IGotFileServIPs, this, true);
+    NetCliGateKeeperFileSrvIpAddressRequest(true, [this](auto result, const auto& addr) {
+        IGotFileServIPs(result, addr);
+    });
 
     // Windows is getting a little unreliable about reporting its own state, so we keep
     // track of whether or not we are active now.
@@ -466,7 +464,7 @@ void plClientLauncher::ParseArguments()
     std::vector<ST::string> args;
     args.reserve(__argc);
     for (size_t i = 0; i < __argc; i++) {
-        args.push_back(ST::string::from_utf8(__argv[i]));
+        args.push_back(ST::string::from_wchar(__wargv[i]));
     }
 
     plCmdParser cmdParser(cmdLineArgs, std::size(cmdLineArgs));

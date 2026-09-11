@@ -223,7 +223,7 @@ void plKeyImp::UnRegister()     // called from plRegistry
         fObjectPtr = nullptr;
         fNumActiveRefs = 0;
 
-        hsRefCnt_SafeUnRef(ko);
+        ko->UnRef();
     }
     IClearRefs();
     ClearNotifyCreated();
@@ -236,7 +236,7 @@ hsKeyedObject* plKeyImp::RefObject(plRefFlags::Type flags)
 
 #ifdef LOG_ACTIVE_REFS
     if (IsTrackedKey(this))
-        hsStatusMessageF("@@@ RefObject adding active ref to %s (%d total)", kObjName, fNumActiveRefs+1);
+        hsStatusMessageF("@@@ RefObject adding active ref to {} ({} total)", kObjName, fNumActiveRefs+1);
 #endif // LOG_ACTIVE_REFS
 
     IncActiveRefs();
@@ -253,7 +253,7 @@ void plKeyImp::UnRefObject(plRefFlags::Type flags)
 
 #ifdef LOG_ACTIVE_REFS
     if (IsTrackedKey(this))
-        hsStatusMessageF("@@@ UnRefObject releasing active ref to %s (%d total)", kObjName, fNumActiveRefs-1);
+        hsStatusMessageF("@@@ UnRefObject releasing active ref to {} ({} total)", kObjName, fNumActiveRefs-1);
 #endif // LOG_ACTIVE_REFS
     DecActiveRefs();
 
@@ -318,7 +318,7 @@ void plKeyImp::AddNotifyCreated(plRefMsg* msg, plRefFlags::Type flags)
 #ifdef LOG_ACTIVE_REFS
         if (IsTrackedKey(this))
         {
-            hsStatusMessageF("@@@ %s(%s) adding active ref to %s (%d total)", msg->GetReceiver(0)->GetName().c_str(),
+            hsStatusMessageF("@@@ {}({}) adding active ref to {} ({} total)", msg->GetReceiver(0)->GetName(),
                 plFactory::GetNameOfClass(msg->GetReceiver(0)->GetUoid().GetClassType()), kObjName, fNumActiveRefs+1);
         }
 #endif // LOG_ACTIVE_REFS
@@ -440,12 +440,12 @@ void plKeyImp::SetupNotify(plRefMsg* msg, plRefFlags::Type flags)
     // the KeyedObject is already Loaded, so we better go ahead and send the notify message just added.
     if (ko)
     {
-        hsRefCnt_SafeRef(ko);
+        ko->Ref();
         msg->SetRef(ko);
         msg->SetTimeStamp(hsTimer::GetSysSeconds());
 
         // Add ref, since Dispatch will unref this msg but we want to keep using it.
-        hsRefCnt_SafeRef(msg);
+        msg->Ref();
 
         SetNotified(GetNumNotifyCreated()-1);
         SatisfyPending(msg);
@@ -456,9 +456,9 @@ void plKeyImp::SetupNotify(plRefMsg* msg, plRefFlags::Type flags)
         plgDispatch::Dispatch()->MsgSend(msg);
 #endif
 
-        hsRefCnt_SafeUnRef(ko);
+        ko->UnRef();
     }
-    hsRefCnt_SafeUnRef(msg);
+    msg->UnRef();
 }
 
 // We could just call NotifyCreated() on all our fRefs, and then fix
@@ -489,8 +489,7 @@ void plKeyImp::INotifySelf(hsKeyedObject* ko)
                             ref->SetNotified(j);
                             ref->SatisfyPending(refMsg);
 
-                            hsRefCnt_SafeRef(refMsg);
-                            plgDispatch::MsgSend(refMsg);
+                            refMsg->SendAndKeep();
                             break;
                         }
                     }
@@ -516,7 +515,7 @@ void plKeyImp::NotifyCreated()
             msg->SetRef(ko);
             msg->SetTimeStamp(hsTimer::GetSysSeconds());
             msg->SetContext(plRefMsg::kOnCreate);
-            hsRefCnt_SafeRef(msg);
+            msg->Ref();
 
             SetNotified(i);
             SatisfyPending(msg);
@@ -538,8 +537,7 @@ void plKeyImp::INotifyDestroyed()
         msg->SetRef(ko);
         msg->SetTimeStamp(hsTimer::GetSysSeconds());
         msg->SetContext(plRefMsg::kOnDestroy);
-        hsRefCnt_SafeRef(msg);
-        msg->Send();
+        msg->SendAndKeep();
     }
     fNotified.Clear();
 }
@@ -603,8 +601,8 @@ void plKeyImp::IRelease(plKeyImp* iTargetKey)
     // it has been notified it is going away.
 #ifdef LOG_ACTIVE_REFS
     if (isActive && IsTrackedKey(iTargetKey))
-        hsStatusMessageF("@@@ %s(%s) releasing active ref on %s (%d total)", GetName().c_str(),
-                         plFactory::GetNameOfClass(GetUoid().GetClassType()), kObjName, iTargetKey->fNumActiveRefs-1);
+        hsStatusMessageF("@@@ {}({}) releasing active ref on {} ({} total)", GetName(),
+            plFactory::GetNameOfClass(GetUoid().GetClassType()), kObjName, iTargetKey->fNumActiveRefs-1);
 #endif // LOG_ACTIVE_REFS
 
     if (isActive && iTargetKey->GetActiveRefs() && !iTargetKey->DecActiveRefs())
@@ -628,8 +626,7 @@ void plKeyImp::IRelease(plKeyImp* iTargetKey)
             refMsg->SetRef(iTargetKey->ObjectIsLoaded());
             refMsg->SetTimeStamp(hsTimer::GetSysSeconds());
             refMsg->SetContext(plRefMsg::kOnRemove);
-            hsRefCnt_SafeRef(refMsg);
-            plgDispatch::MsgSend(refMsg);
+            refMsg->SendAndKeep();
         }
         hsRefCnt_SafeUnRef(refMsg);
     }
