@@ -220,6 +220,10 @@ class psnlYeeshaPageChanges(ptMultiModifier):
         else:
             if PageNumber.value == 10:
                 PtDebugPrint("psnlYeeshaPageChanges: Attempting to disable drawing and collision on %s..." % self.sceneobject.getName())
+            if PageNumber.value in (7, 16):
+                # YeeshaPage07 (kickable) / YeeshaPage16 (firemarbles): put the physical back
+                # at its default recipe pose before suppressing it, so it's correct if re-enabled.
+                self.sceneobject.physics.resetSyncState()
             self.sceneobject.draw.disable()
             self.sceneobject.physics.suppress(True)
 
