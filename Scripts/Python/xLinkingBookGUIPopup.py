@@ -313,15 +313,24 @@ class xLinkingBookGUIPopup(ptModifier):
                             if (OfferedBookMode and BookOfferer):
                                 self.HideBook()
                                 self.DoErcanaAndAhnonayStuff()
-                                #walk to the book and use it
-                                avatar=PtGetLocalAvatar()
-                                avatar.avatar.setReplyKey(self.key)
-                                shareBookSeek.run(avatar)
                                 OffereeWalking = True
                                 avID = PtGetClientIDFromAvatarKey(BookOfferer.getKey())
                                 PtNotifyOffererLinkAccepted(avID)
                                 ClosedBookToShare = 1
-                                PtDebugPrint("xLinkingBookGUIPopup: seeking avatar to use book offered")
+                                if shareBookSeek.value:
+                                    PtDebugPrint("xLinkingBookGUIPopup: seeking avatar to use book offered")
+                                    #walk to the book and use it
+                                    avatar=PtGetLocalAvatar()
+                                    avatar.avatar.setReplyKey(self.key)
+                                    shareBookSeek.run(avatar)
+                                else:
+                                    # If no seek point, just link immediately
+                                    PtDebugPrint("xLinkingBookGUIPopup: accepted link, notifying offerer of such",level=kDebugDumpLevel)
+                                    PtNotifyOffererLinkCompleted(avID)
+                                    PtToggleAvatarClickability(True)
+                                    OffereeWalking = False
+                                    OfferedBookMode = False
+                                    BookOfferer = None
                             else:
                                 self.HideBook(1)
                                 self.DoErcanaAndAhnonayStuff()
