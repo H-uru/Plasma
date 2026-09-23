@@ -68,5 +68,8 @@ target_link_libraries(plAudio
         pnFactory
 )
 
+target_compile_definitions(plAudio
+    PRIVATE AL_ALEXT_PROTOTYPES)
+
 source_group("Source Files" FILES ${plAudio_SOURCES})
 source_group("Header Files" FILES ${plAudio_HEADERS})
