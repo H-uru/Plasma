@@ -63,8 +63,8 @@ from PlasmaKITypes import *
 from PlasmaNetConstants import *
 import xLinkingBookDefs
 from xPsnlVaultSDL import *
-import time
 import re
+from contextlib import contextmanager
 
 
 # define the attributes that will be entered in max
@@ -107,6 +107,7 @@ kFirstPersonEnableTime = 0.5
 
 pelletCaveGUID = None
 
+kDebugTimerStartIdx = 1000
 
 class xLinkingBookGUIPopup(ptModifier):
     "The Linking Book GUI Popup python code"
@@ -1013,6 +1014,33 @@ class xLinkingBookGUIPopup(ptModifier):
             cam = ptCamera()
             cam.enableFirstPersonOverride()
 
+        # Debug Timers for our backdoor, see bottom of file
+        elif id >= kDebugTimerStartIdx:
+            PtDebugPrint(f"xLinkPanelGUIPopup Debug Timer: {id}")
+            try:
+                # Wrap in try because we want to show all books even if one has errors.
+                # Get book index based on timer id
+                bkIdx = (id - kDebugTimerStartIdx) // 2
+                defs = [x for x in xLinkingBookDefs.xAgeLinkingBooks]
+                age = defs[bkIdx]
+                if id % 2 == 0:
+                    # Show book on even timers.
+                    PtDebugPrint(f"xLinkPanelGUIPopup Showing Debug Panel for {age}")
+                    with self.OverrideTargetAge(age):
+                        self.IShowBookNoTreasure()
+                    PtGUICursorOff()
+                else:
+                    # Take screenshot on odd timers.
+                    PtSaveScreenShot(f"{age}.jpg", PtGetDesktopWidth(), PtGetDesktopHeight())
+                    self.HideBook(0)
+                    PtGUICursorOn()
+            finally:
+                # Start new timer unless we're done.
+                if id < kDebugTimerStartIdx + len(xLinkingBookDefs.xAgeLinkingBooks) * 2 - 1:
+                    PtAtTimeCallback(self.key, 0.5, id + 1)
+                else:
+                    PtSendKIMessage(kKIShowMiniKI, 0)
+                    PtSendKIMessage(kKILocalChatStatusMsg, "Done! Screenshots have been saved to the client folder.")
 
     def GetOwnedAgeLink(self, age):
         vault = ptAgeVault()
@@ -1204,4 +1232,30 @@ class xLinkingBookGUIPopup(ptModifier):
         linkMgr = ptNetLinkingMgr()
         linkMgr.linkToAge(als)
 
+    # ALERT! ALERT! HAXCON 1
+    # Demons and Devils reside here, ready to attack and torment you.
+    # Do not proceed without a level 20 hackventuring party.
+    def OnBackdoorMsg(self, target, param):
+        if target == "xlinkingbookgui" and param == "debugall":
+            # FIXME: Note that this will trigger on every linking book PFM in the age, which is not ideal but nothing we can easily fix right now.
+            # Recommended to not run this while in an age with multiple instances of this script. spyroom is my personal recommendation.
+            # We will now kick off a chain of timers for opening books and taking screenshots.
+            PtAtTimeCallback(self.key, 0.5, kDebugTimerStartIdx)
 
+    @contextmanager
+    def OverrideTargetAge(self, age: str):
+        global stringAgeRequested
+        global kGrsnTeamBook
+        prevTarget, prevRequested, prevRespVal, grsnTBTimer = TargetAge.value, stringAgeRequested, respLinkResponder.value, kGrsnTeamBook
+        TargetAge.value, stringAgeRequested = age, age
+        respLinkResponder.value = [] # Because cleft forces a link, we have to override this one too...
+        if age == "grsnTeamRmPurple" or age == "grsnTeamRmYellow":
+            # Special stupid case for the team rooms because the main script runs a 5s timer to close an open linking book.
+            # Manually change the timer id to 0 so the callback won't trigger.
+            kGrsnTeamBook = 0
+        try:
+            yield
+        finally:
+            TargetAge.value, stringAgeRequested = prevTarget, prevRequested
+            respLinkResponder.value = prevRespVal
+            kGrsnTeamBook = grsnTBTimer
