@@ -462,6 +462,7 @@ class ahnyQuabs(ptModifier):
 
         self._ageUnLoading = False
         self._brain = None
+        self._respawnQueue = []
         self._aiMsgHandlers = {
             PtAIMsgType.kBrainCreated: self.OnAIMsg_BrainCreated,
             PtAIMsgType.kArrivedAtGoal: self.OnAIMsg_ArrivedAtGoal,
@@ -627,7 +628,8 @@ class ahnyQuabs(ptModifier):
             PtDebugPrint(f"ahnyQuabs.OnAIMsg_BrainDestroyed(): I need to respawn {quab.name=}!", level=kWarningLevel)
             quab.respawn = True
             quab.pending = True
-            PtLoadAvatarModel(kQuabAvatarName, quabObjects.value[0].getKey(), userStr)
+            # defer the actual loading to the next Update so we do not respawn stuff if we ourselves quit the game
+            self._respawnQueue.append(userStr)
         elif not self._ageUnLoading and not self._brain.amOwner:
             PtDebugPrint(f"ahnyQuabs.OnAIMsg_BrainDestroyed(): {quab.name=} needs to be respawned, but I'm not the owner!", level=kWarningLevel)
         else:
@@ -639,6 +641,10 @@ class ahnyQuabs(ptModifier):
     def OnUpdate(self, secs, delta):
         if self._brain is None:
             return
+
+        # Handle deferred respawns
+        while self._respawnQueue:
+            PtLoadAvatarModel(kQuabAvatarName, quabObjects.value[0].getKey(), self._respawnQueue.pop(0))
 
         # Stash the current transform of each quab, just in case we need to respawn it.
         for quab, so in ((i, i.brain.getSceneObject()) for i in self._brain.quabs if not i.pending):
