@@ -79,6 +79,44 @@ def GetAllYeeshaPages(args):
         print("Could not find personal age SDL")
 
 
+def GetAllBahroWedges(args):
+    import Plasma
+    vault = Plasma.ptVault()
+    psnlSDL = vault.getPsnlAgeSDL()
+    if psnlSDL:
+        if args == "0":
+            newval = 0
+            print("xCheat.GetAllBahroWedges(): removing all Bahro wedges...")
+        else:
+            newval = 1
+            print("xCheat.GetAllBahroWedges(): adding all Bahro wedges...")
+        for i in range(1, 14):
+            FoundValue = psnlSDL.findVar(f"psnlBahroWedge{i:02}")
+            FoundValue.setInt(newval)
+        vault.updatePsnlAgeSDL(psnlSDL)
+    else:
+        print("Could not find personal age SDL")
+
+
+def GetAllCalendarStones(args):
+    import Plasma
+    vault = Plasma.ptVault()
+    psnlSDL = vault.getPsnlAgeSDL()
+    if psnlSDL:
+        if args == "0":
+            newval = 0
+            print("xCheat.GetAllCalendarStones(): removing all calendar stones...")
+        else:
+            newval = 1
+            print("xCheat.GetAllCalendarStones(): adding all calendar stones...")
+        for i in range(1, 13):
+            FoundValue = psnlSDL.findVar(f"psnlCalendarStone{i:02}")
+            FoundValue.setInt(newval)
+        vault.updatePsnlAgeSDL(psnlSDL)
+    else:
+        print("Could not find personal age SDL")
+
+
 def GetYeeshaPage(args):
     import Plasma
     import xLinkingBookDefs
