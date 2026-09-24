@@ -48,6 +48,11 @@ Enables/Disables a SDL variable based on the contents of another var:
 1) Is it meant to be enabled
 2) Check against a specified chance
 3) Is anyone nearby
+
+Setting the enabled var to 1 will enable randomization.
+A d100 roll <= chance on linking to the age will flip the state of the visbility var. (Vis -> Invis, Invis -> Vis)
+Avatars being present in the proximity region will prevent the state from changing
+A chance of 255 will force the state to be the opposite of the disabled state, instead of toggling.
 """
 
 from Plasma import *
@@ -118,16 +123,20 @@ class xRandomBoolChange(ptModifier):
             nearby = 0
 
         PtDebugPrint("RandomBoolChange script on object " + self.sceneobject.getName())
-        PtDebugPrint("Visible:" + str(visible))
-        PtDebugPrint("Enabled:" + str(enabled))
-        PtDebugPrint("Chance :" + str(chance))
-        PtDebugPrint("Nearby :" + str(nearby))
+        PtDebugPrint("Visible: " + str(visible))
+        PtDebugPrint("Enabled: " + str(enabled))
+        PtDebugPrint("Chance : " + str(chance))
+        PtDebugPrint("Nearby : " + str(nearby))
 
         # check if the object is enabled
         if enabled:
-            if not nearby:
+            if chance == 255:
+                visValue = 1 if boolEnable else 0
+                PtDebugPrint(f"Chance of 255!  Setting variable to {visValue} as it should always be the opposite of the disabled state")
+                ageSDL[strVarName.value] = (visValue,)
+            elif not nearby:
                 rint = xRandom.randint(0, 100)
-                PtDebugPrint("Random int:" + str(rint))
+                PtDebugPrint("Random int: " + str(rint))
                 if rint <= chance:
                     # we passed so take appropriate action
                     if visible:
