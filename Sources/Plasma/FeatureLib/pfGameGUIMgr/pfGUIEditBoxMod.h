@@ -80,6 +80,18 @@ class pfGUIEditBoxMod : public pfGUIControlMod
         void    IPostSetUpDynTextMap() override;
         void    IUpdate() override;
 
+        enum class CharType
+        {
+            kNormal,
+            kWordBreaker,
+        };
+
+        CharType IAdvanceChar(bool next, uint32_t& pos) const;
+        void     IAdvanceWordFromPos(bool next, uint32_t& pos) const;
+
+        void IDeleteChar(bool next);
+        void IDeleteWord(bool next);
+
     public:
         enum
         {

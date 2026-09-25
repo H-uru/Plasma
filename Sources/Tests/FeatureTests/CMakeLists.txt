@@ -7,5 +7,6 @@ include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib")
 include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib/inc")
 
 add_subdirectory(pfConsoleCoreTest)
+add_subdirectory(pfGameGUIMgrTest)
 add_subdirectory(pfPasswordStoreTest)
 add_subdirectory(pfPythonTest)
