@@ -288,7 +288,7 @@ if(APPLE AND NOT CMAKE_CROSSCOMPILING)
         [[
             include("BundleUtilities")
             fixup_bundle("${CMAKE_INSTALL_PREFIX}/client/$<TARGET_FILE_NAME:plClient>.app" "" "${searchDirs}" IGNORE_ITEM Python)
-            execute_process(COMMAND "codesign" "--remove-signature" "--deep" "-f" "${CMAKE_INSTALL_PREFIX}/client/$<TARGET_FILE_NAME:plClient>.app")
+            execute_process(COMMAND codesign --sign - --deep --force "${CMAKE_INSTALL_PREFIX}/client/$<TARGET_FILE_NAME:plClient>.app")
         ]]
         DESTINATION client
     )
