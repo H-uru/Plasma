@@ -48,7 +48,7 @@ class plFileName;
 
 namespace PythonInterface
 {
-    void initPython(const plFileName& rootDir, const std::vector<plFileName>& paths, FILE* outstream=stdout, FILE* errstream=stderr);
+    void initPython(const plFileName& rootDir, FILE* outstream=stdout, FILE* errstream=stderr);
     void finiPython();
 
     PyObject* CompileString(const char *command, const plFileName& filename);
