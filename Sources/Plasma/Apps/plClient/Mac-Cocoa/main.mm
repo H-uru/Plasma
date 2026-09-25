@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #import "PLSKeyboardEventMonitor.h"
 #import "PLSLoginWindowController.h"
 #import "PLSPatcherWindowController.h"
+#import "plDirectMetalRenderDestination.h"
 #import "PLSServerStatus.h"
 #import "PLSView.h"
 
@@ -195,6 +196,24 @@ static uint32_t ParseRendererArgument(const ST::string& requested)
     return hsG3DDeviceSelector::kDevTypeUnknown;
 }
 
+@class AppDelegate;
+
+// Stub placeholder for actual plClientWindow implementation
+class plClientWindow {
+
+};
+
+class plMacClientWindow: public plClientWindow, public plMetalWindow
+{
+public:
+    plMetalRenderDestinationType& metalRenderDestination() override {
+        return *fMetalRenderDestination;
+    }
+
+    std::unique_ptr<plMetalRenderDestinationType> fMetalRenderDestination;
+    ~plMacClientWindow() = default;
+};
+
 @interface AppDelegate : NSWindowController <NSApplicationDelegate,
                                              NSWindowDelegate,
                                              PLSViewDelegate,
@@ -206,6 +225,7 @@ static uint32_t ParseRendererArgument(const ST::string& requested)
     dispatch_source_t   _displaySource;
     plMacDisplayHelper* _displayHelper;
     PLSWakeLockHolder   _wakeLockHolder;
+    plMacClientWindow   _plasmaWindow;
 }
 
 @property(retain) PLSKeyboardEventMonitor* eventMonitor;
@@ -261,6 +281,7 @@ void plClient::IResizeNativeDisplayDevice(int width, int height, bool windowed)
 void plClient::IChangeResolution(int width, int height) {}
 void plClient::IUpdateProgressIndicator(plOperationProgress* progress) {}
 void plClient::ShowClientWindow() {}
+
 void plClient::FlashWindow()
 {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -327,7 +348,13 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
     _displayHelper = new plMacDisplayHelper();
     plDisplayHelper::SetInstance(_displayHelper);
 
-    gClient.SetClientWindow((__bridge void*)view.layer);
+    // Start the game with a direct render destination
+    // Components like the intro movie may want to draw
+    // before we're ready to start a vsync managed render
+    // destination.
+    _plasmaWindow.fMetalRenderDestination = std::make_unique<plMetalRenderDestination<plDirectMetalRenderDestination*>>((CAMetalLayer*)self.plsView.layer);
+
+    gClient.SetClientWindow(&_plasmaWindow);
     gClient.SetClientDisplay([window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue]);
 
     self = [super initWithWindow:window];
