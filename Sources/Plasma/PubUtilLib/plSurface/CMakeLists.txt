@@ -21,6 +21,7 @@ set(plSurface_HEADERS
     plLayerOr.h
     plLayerShadowBase.h
     plShader.h
+    plShaderID.h
     plShaderTable.h
     plSurfaceCreatable.h
 )

@@ -65,7 +65,6 @@ public:
     void            Release() override;
     void            Link(plDXVertexShader** back) { plDXDeviceRef::Link((plDXDeviceRef**)back); }
 
-    bool            VerifyFormat(uint8_t format) const;
     IDirect3DVertexShader9* GetShader(plDXPipeline* pipe);
 };
 

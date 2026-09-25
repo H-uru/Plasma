@@ -41,12 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "plShader.h"
-#include "plShaderTable.h"
 
 #include "HeadSpin.h"
 #include "hsColorRGBA.h"
 #include "hsGDeviceRef.h"
-#include "hsMatrix44.h"
 #include "hsStream.h"
 
 // Little shader const helper
@@ -72,10 +70,15 @@ void plShaderConst::Write(hsStream* s) const
 
 plShader::plShader()
 :   fFlags(),
-    fDeviceRef(),
-    fInput(),
-    fOutput(),
-    fDecl()
+    fID(plShaderID::Unregistered),
+    fDeviceRef()
+{
+}
+
+plShader::plShader(plShaderID::ID id)
+:   fFlags(),
+    fID(id),
+    fDeviceRef()
 {
 }
 
@@ -84,9 +87,9 @@ plShader::~plShader()
     delete fDeviceRef;
 }
 
-void plShader::SetDeviceRef(hsGDeviceRef* ref) const 
-{ 
-    hsRefCnt_SafeAssign(fDeviceRef, ref); 
+void plShader::SetDeviceRef(hsGDeviceRef* ref)
+{
+    hsRefCnt_SafeAssign(fDeviceRef, ref);
 }
 
 
@@ -280,44 +283,29 @@ const float* plShader::GetFloat4(size_t i) const
 
 void plShader::Read(hsStream* s, hsResMgr* mgr)
 {
-    fFlags = 0;
-
     hsKeyedObject::Read(s, mgr);
+
+    fFlags = s->ReadLE32();
 
     uint32_t n = s->ReadLE32();
     fConsts.resize(n);
     for (uint32_t i = 0; i < n; i++)
         fConsts[i].Read(s);
 
-    plShaderID::ID id = plShaderID::ID(s->ReadLE32());
-    SetDecl(plShaderTable::Decl(id));
-
-    fInput = s->ReadByte();
-    fOutput = s->ReadByte();
+    fID = plShaderID::ID(s->ReadLE32());
 }
 
 void plShader::Write(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Write(s, mgr);
 
+    s->WriteLE32(fFlags);
+
     s->WriteLE32((uint32_t)fConsts.size());
     for (const plShaderConst& konst : fConsts)
         konst.Write(s);
 
-    s->WriteLE32((uint32_t)fDecl->GetID());
-
-    s->WriteByte(fInput);
-    s->WriteByte(fOutput);
-}
-
-void plShader::SetDecl(const plShaderDecl* decl)
-{
-    fDecl = decl;
-}
-
-void plShader::SetDecl(plShaderID::ID id)
-{
-    SetDecl(plShaderTable::Decl(id));
+    s->WriteLE32((uint32_t)fID);
 }
 
 void plShader::SetNumPipeConsts(size_t n)
