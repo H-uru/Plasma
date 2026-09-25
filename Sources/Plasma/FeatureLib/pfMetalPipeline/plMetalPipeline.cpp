@@ -74,6 +74,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plCubicRenderTarget.h"
 #include "plPipeline/plDebugText.h"
 #include "plPipeline/plDynamicEnvMap.h"
+#include "plPipeline/plSoftwareMeshSkinner.h"
 #include "plProfile.h"
 #include "plQuality.h"
 #include "plScene/plRenderRequest.h"
@@ -4011,66 +4012,6 @@ plMetalDevice* plMetalPipeline::GetMetalDevice()  const
     return &fDevice;
 }
 
-//// Local Static Stuff ///////////////////////////////////////////////////////
-
-// FIXME: CPU avatar stuff that should be evaluated once this moves onto the GPU.
-
-template <typename T>
-static inline void inlCopy(uint8_t*& src, uint8_t*& dst)
-{
-    T* src_ptr = reinterpret_cast<T*>(src);
-    T* dst_ptr = reinterpret_cast<T*>(dst);
-    *dst_ptr = *src_ptr;
-    src += sizeof(T);
-    dst += sizeof(T);
-}
-
-template <typename T>
-static inline const uint8_t* inlExtract(const uint8_t* src, T* val)
-{
-    const T* ptr = reinterpret_cast<const T*>(src);
-    *val = *ptr++;
-    return reinterpret_cast<const uint8_t*>(ptr);
-}
-
-template <>
-inline const uint8_t* inlExtract<hsPoint3>(const uint8_t* src, hsPoint3* val)
-{
-    const float* src_ptr = reinterpret_cast<const float*>(src);
-    float*       dst_ptr = reinterpret_cast<float*>(val);
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr = 1.f;
-    return reinterpret_cast<const uint8_t*>(src_ptr);
-}
-
-template <>
-inline const uint8_t* inlExtract<hsVector3>(const uint8_t* src, hsVector3* val)
-{
-    const float* src_ptr = reinterpret_cast<const float*>(src);
-    float*       dst_ptr = reinterpret_cast<float*>(val);
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr = 0.f;
-    return reinterpret_cast<const uint8_t*>(src_ptr);
-}
-
-template <typename T, size_t N>
-static inline void inlSkip(uint8_t*& src)
-{
-    src += sizeof(T) * N;
-}
-
-template <typename T>
-static inline uint8_t* inlStuff(uint8_t* dst, const T* val)
-{
-    T* ptr = reinterpret_cast<T*>(dst);
-    *ptr++ = *val;
-    return reinterpret_cast<uint8_t*>(ptr);
-}
-
 //// ISoftwareVertexBlend ///////////////////////////////////////////////////////
 // Emulate matrix palette operations in software. The big difference between the hardware
 // and software versions is we only want to lock the vertex buffer once and blend all the
@@ -4144,7 +4085,7 @@ bool plMetalPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const std:
 
                         uint8_t* ptr = vRef->fOwner->GetVertBufferData(vRef->fIndex);
                         ptr += span.fVStartIdx * vRef->fOwner->GetVertexSize();
-                        IBlendVertBuffer((plSpan*)&span,
+                        plSoftwareMeshSkinner::BlendVertBuffer(&span,
                                          matrixPalette, span.fNumMatrices,
                                          ptr,
                                          vRef->fOwner->GetVertexFormat(),
@@ -4170,76 +4111,6 @@ bool plMetalPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const std:
     }
 
     return true;
-}
-
-//// IBlendVertsIntoBuffer ////////////////////////////////////////////////////
-//  Given a pointer into a buffer of verts that have blending data in the D3D
-//  format, blends them into the destination buffer given without the blending
-//  info.
-
-void plMetalPipeline::IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMatrices,
-                                       const uint8_t* src, uint8_t format, uint32_t srcStride,
-                                       uint8_t* dest, uint32_t destStride, uint32_t count,
-                                       uint16_t localUVWChans)
-{
-    simd_float4      pt_buf = {0.f, 0.f, 0.f, 1.f};
-    simd_float4      vec_buf = {0.f, 0.f, 0.f, 0.f};
-    hsPoint3*  pt = reinterpret_cast<hsPoint3*>(&pt_buf);
-    hsVector3* vec = reinterpret_cast<hsVector3*>(&vec_buf);
-
-    uint32_t indices;
-    float    weights[4];
-
-    // Dropped support for localUVWChans at templatization of code
-    hsAssert(localUVWChans == 0, "support for skinned UVWs dropped. reimplement me?");
-    const size_t uvChanSize = plGBufferGroup::CalcNumUVs(format) * sizeof(float) * 3;
-    uint8_t      numWeights = (format & plGBufferGroup::kSkinWeightMask) >> 4;
-
-    for (uint32_t i = 0; i < count; ++i) {
-        // Extract data
-        src = inlExtract<hsPoint3>(src, pt);
-
-        float weightSum = 0.f;
-        for (uint8_t j = 0; j < numWeights; ++j) {
-            src = inlExtract<float>(src, &weights[j]);
-            weightSum += weights[j];
-        }
-        weights[numWeights] = 1.f - weightSum;
-
-        if (format & plGBufferGroup::kSkinIndices)
-            src = inlExtract<uint32_t>(src, &indices);
-        else
-            indices = 1 << 8;
-        src = inlExtract<hsVector3>(src, vec);
-
-        // Destination buffers (float4 for SSE alignment)
-        simd_float4 destNorm_buf = (simd_float4){0.f, 0.f, 0.f, 0.f};
-        simd_float4 destPt_buf = (simd_float4){0.f, 0.f, 0.f, 1.f};
-
-        // Blend
-        for (uint32_t j = 0; j < numWeights + 1; ++j) {
-            float weight = weights[j];
-            if (weight) {
-                const simd_float4x4& simdMatrix = hsMatrix2SIMD(matrixPalette[indices & 0xFF]);
-                // Note: This bit is different than GL/DirectX. It's using acclerate so this is also accelerated on ARM through NEON or maybe even the Neural Engine.
-                destPt_buf += simd_mul(pt_buf, simdMatrix) * weight;
-                destNorm_buf += simd_mul(vec_buf, simdMatrix) * weight;
-            }
-            // ISkinVertexSSE41(matrixPalette[indices & 0xFF], weights[j], pt_buf, destPt_buf, vec_buf, destNorm_buf);
-            indices >>= 8;
-        }
-        // Probably don't really need to renormalize this. There errors are
-        // going to be subtle and "smooth".
-        /* hsFastMath::NormalizeAppr(destNorm); */
-
-        // Slam data into position now
-        dest = inlStuff<hsPoint3>(dest, reinterpret_cast<hsPoint3*>(&destPt_buf));
-        dest = inlStuff<hsVector3>(dest, reinterpret_cast<hsVector3*>(&destNorm_buf));
-
-        // Jump past colors and UVws
-        dest += sizeof(uint32_t) * 2 + uvChanSize;
-        src += sizeof(uint32_t) * 2 + uvChanSize;
-    }
 }
 
 // Resource checking
