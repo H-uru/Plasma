@@ -52,6 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 
+static_assert(sizeof(time_t) == sizeof(int64_t) && alignof(time_t) == alignof(int64_t),
+              "plUnifiedTime requires that time_t is a 64-bit type");
+
 struct tm * plUnifiedTime::IGetTime(const time_t * timer) const
 {
     struct tm * tm = nullptr;
@@ -78,7 +81,7 @@ plUnifiedTime::plUnifiedTime(Mode mode, struct tm src)
     : fSecs(mktime(&src)), fMicros(), fMode(mode)
 {}
 
-plUnifiedTime::plUnifiedTime(time_t t)
+plUnifiedTime::plUnifiedTime(int64_t t)
     : fSecs(t), fMicros(), fMode(kGmt)
 {}
 
@@ -102,7 +105,7 @@ void plUnifiedTime::SetSecsDouble(double secs)
     hsAssert(secs>=0, "plUnifiedTime::SetSecsDouble negative time");
     double x,y;
     x = modf(secs,&y);
-    fSecs = (time_t)y;
+    fSecs = (int64_t)y;
     fMicros = (uint32_t)(x*1000000);
 }
 
@@ -135,7 +138,7 @@ void plUnifiedTime::ToCurrentTime()
     hsAssert(res != 0, "timespec_get failed");
 #endif
 
-    fSecs = ts.tv_sec;
+    fSecs = (int64_t)ts.tv_sec;
     fMicros = ts.tv_nsec / 1000;
 }
 
@@ -172,7 +175,7 @@ bool plUnifiedTime::SetTime(short year, short month, short day, short hour, shor
 
 bool plUnifiedTime::GetTime(short &year, short &month, short &day, short &hour, short &minute, short &second) const
 {
-    struct tm* time = IGetTime(&fSecs);
+    struct tm* time = IGetTime((const time_t *)&fSecs);
     if (!time)
         return false;
     year = time->tm_year+1900;
@@ -205,11 +208,11 @@ struct tm * plUnifiedTime::GetTm(struct tm * ptm) const
 {
     if (ptm != nullptr)
     {
-        *ptm = *IGetTime(&fSecs);
+        *ptm = *IGetTime((const time_t *)&fSecs);
         return ptm;
     }
     else
-        return IGetTime(&fSecs);
+        return IGetTime((const time_t *)&fSecs);
 }
 
 int plUnifiedTime::GetYear() const
@@ -252,14 +255,21 @@ double plUnifiedTime::GetSecsDouble() const
 
 void plUnifiedTime::Read(hsStream* s)
 {
-    fSecs = (time_t)s->ReadLE32();
+    fSecs = (int64_t)s->ReadLE32();
+    if (fSecs == 0xFFFFFFFFLL)
+        fSecs = (int64_t)s->ReadLE64();
     s->ReadLE32(&fMicros);
     // preserve fMode
 }
 
 void plUnifiedTime::Write(hsStream* s) const
 {
-    s->WriteLE32((uint32_t)fSecs);
+    if (fSecs > (int64_t)std::numeric_limits<int32_t>::max()) {
+        s->WriteLE32(0xFFFFFFFF);
+        s->WriteLE64(fSecs);
+    } else {
+        s->WriteLE32((uint32_t)fSecs);
+    }
     s->WriteLE32(fMicros);
     // preserve fMode
 }
@@ -334,7 +344,7 @@ plUnifiedTime::operator struct tm() const
 ST::string plUnifiedTime::Format(const char * fmt) const
 {
     char buf[128];
-    struct tm * t = IGetTime(&fSecs);
+    struct tm * t = IGetTime((const time_t *)&fSecs);
     if (t == nullptr ||
         !strftime(buf, sizeof(buf), fmt, t))
         return {};
