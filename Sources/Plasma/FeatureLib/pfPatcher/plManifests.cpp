@@ -41,6 +41,8 @@ Mead, WA   99021
 *==LICENSE==*/
 
 #include "plManifests.h"
+
+#include "hsConfig.h"
 #include "plFileSystem.h"
 
 #include <string_theory/string>
@@ -48,8 +50,10 @@ Mead, WA   99021
 // Helper that returns the appropriate string per build
 #ifdef PLASMA_EXTERNAL_RELEASE
 #   define MANIFEST(in, ex) ex
+#   define MANIFEST_RELEASE_TYPE "External"
 #else
 #   define MANIFEST(in, ex) in
+#   define MANIFEST_RELEASE_TYPE "Internal"
 #endif // PLASMA_EXTERNAL_RELEASE
 
 #if defined(HS_BUILD_FOR_APPLE)
@@ -60,41 +64,79 @@ Mead, WA   99021
 #   define EXECUTABLE_SUFFIX ""
 #endif
 
+#if !defined(USE_PLATFORM_MANIFESTS)
+#   define MANIFEST_SUFFIX ""
+#elif (defined(__GNUC__) && defined(__x86_64__)) || (defined(_MSC_VER) && defined(_M_X64))
+#   define MANIFEST_SUFFIX "AMD64"
+#elif (defined(__GNUC__) && defined(__i386__)) || (defined(_MSC_VER) && defined(_M_IX86))
+#   define MANIFEST_SUFFIX ""
+#elif (defined(__GNUC__) && defined(__arm__)) || (defined(_MSC_VER) && defined(_M_ARM))
+#   define MANIFEST_SUFFIX "ARM"
+#elif (defined(__GNUC__) && defined(__aarch64__)) || (defined(_MSC_VER) && defined(_M_ARM64))
+#   define MANIFEST_SUFFIX "ARM64"
+#elif (defined(__GNUC__) && defined(__powerpc64__))
+#   define MANIFEST_SUFFIX "PPC64"
+#elif (defined(__GNUC__) && defined(__ppc__))
+#   define MANIFEST_SUFFIX "PPC"
+#else
+#   error "Unknown architecture in plManifest"
+#endif
+
+#if !defined(USE_PLATFORM_MANIFESTS)
+#   define MANIFEST_PREFIX ""
+#elif defined(HS_BUILD_FOR_WIN32)
+#   define MANIFEST_PREFIX ""
+#elif defined(HS_BUILD_FOR_MACOS)
+    // "mac" was used by the old Cider wrappers. To prevent silently overwriting these clients,
+    // we won't use that as our mac prefix.
+#   define MANIFEST_PREFIX "macos"
+#elif defined(HS_BUILD_FOR_LINUX)
+#   define MANIFEST_PREFIX "linux"
+#else
+#   error "Unknown OS in plManifest"
+#endif
+
 plFileName plManifest::ClientExecutable()
 {
-    return MANIFEST("plClient" EXECUTABLE_SUFFIX, "UruExplorer" EXECUTABLE_SUFFIX);
+    return ST_LITERAL(
+        MANIFEST("plClient", "UruExplorer")
+        EXECUTABLE_SUFFIX
+    );
 }
 
 plFileName plManifest::PatcherExecutable()
 {
+    // On macOS, due to the chaos of .app bundles, the client and
+    // patcher are the same executable at this time.
 #ifdef HS_BUILD_FOR_MACOS
-    return MANIFEST("plClient" EXECUTABLE_SUFFIX, "UruExplorer" EXECUTABLE_SUFFIX);
+    return ClientExecutable();
 #else
-    return MANIFEST("plUruLauncher" EXECUTABLE_SUFFIX, "UruLauncher" EXECUTABLE_SUFFIX);
+    return ST_LITERAL(
+        MANIFEST("plUruLauncher", "UruLauncher")
+        EXECUTABLE_SUFFIX
+    );
 #endif
 }
 
 ST::string plManifest::ClientManifest()
 {
-#ifdef HS_BUILD_FOR_MACOS
-    return MANIFEST("macThinInternal", "macThinExternal");
-#else
-    return MANIFEST("ThinInternal", "ThinExternal");
-#endif
+    return ST_LITERAL(
+        MANIFEST_PREFIX "Thin" MANIFEST_RELEASE_TYPE MANIFEST_SUFFIX
+    );
 }
 
 ST::string plManifest::ClientImageManifest()
 {
-#ifdef HS_BUILD_FOR_MACOS
-    return MANIFEST("macInternal", "macExternal");
-#else
-    return MANIFEST("Internal", "External");
-#endif
+    return ST_LITERAL(
+        MANIFEST_PREFIX MANIFEST_RELEASE_TYPE MANIFEST_SUFFIX
+    );
 }
 
 ST::string plManifest::PatcherManifest()
 {
-    return MANIFEST("InternalPatcher", "ExternalPatcher");
+    return ST_LITERAL(
+        MANIFEST_PREFIX MANIFEST_RELEASE_TYPE "Patcher" MANIFEST_SUFFIX
+    );
 }
 
 std::vector<ST::string> plManifest::EssentialGameManifests()
