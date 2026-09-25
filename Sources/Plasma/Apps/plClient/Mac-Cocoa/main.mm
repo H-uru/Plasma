@@ -42,9 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // System Frameworks
 #import <Cocoa/Cocoa.h>
-#ifdef PLASMA_PIPELINE_GL
-#import <OpenGL/gl.h>
-#endif
 #ifdef PLASMA_PIPELINE_METAL
 #import <Metal/Metal.h>
 #endif

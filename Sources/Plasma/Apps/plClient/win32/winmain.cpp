@@ -1053,8 +1053,8 @@ bool WinInit(HINSTANCE hInst)
 
     plDisplayHelper::SetInstance(new plWinDisplayHelper());
 
-    gClient.SetClientWindow((hsWindowHndl)hWnd);
-    gClient.SetClientDisplay((hsWindowHndl)hDC);
+    gClient.SetClientWindow(hWnd);
+    gClient.SetClientDisplay(hDC);
     gClient.Init();
     return true;
 }

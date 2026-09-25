@@ -46,12 +46,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pl3DPipeline.h"
 
+class plGBufferGroup;
+
 class plNullPipelineDevice
 {
+    class NullDeviceRef : public hsGDeviceRef
+    {
+    public:
+        plGBufferGroup* fOwner;
+        uint8_t* fData;
+        uint32_t fCount;
+        uint32_t fVertexSize;
+        uint32_t fFormat;
+        uint32_t fIndex;
+
+        void Release() { }
+        void Link(NullDeviceRef** back) { }
+        void Unlink() { }
+        bool IsLinked() { return true; }
+        bool Volatile() const { return false; }
+    };
+
 public:
-    typedef void VertexBufferRef;
-    typedef void IndexBufferRef;
-    typedef void TextureRef;
+    typedef NullDeviceRef VertexBufferRef;
+    typedef NullDeviceRef IndexBufferRef;
+    typedef NullDeviceRef TextureRef;
 
     bool InitDevice() { return true; }
     void SetRenderTarget(plRenderTarget* target) { }
@@ -65,14 +84,12 @@ public:
 class plNullPipeline : public pl3DPipeline<plNullPipelineDevice>
 {
 public:
-    plNullPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devModeRec)
-        : pl3DPipeline(devModeRec) { }
+    plNullPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devModeRec);
 
     CLASSNAME_REGISTER(plNullPipeline);
     GETINTERFACE_ANY(plNullPipeline, plPipeline);
 
     bool PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override { return false; }
-    bool PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override { return false; }
     plTextFont* MakeTextFont(ST::string face, uint16_t size) override { return nullptr; }
     void CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override { }
     void CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) override { }

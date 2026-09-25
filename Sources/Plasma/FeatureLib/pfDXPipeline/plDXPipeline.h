@@ -119,15 +119,6 @@ typedef LPDIRECT3D9 (WINAPI * Direct3DCreateProc)( UINT sdkVersion );
 
 //// Helper Classes ///////////////////////////////////////////////////////////
 
-//// The RenderPrimFunc lets you have one function which does a lot of stuff
-// around the actual call to render whatever type of primitives you have, instead
-// of duplicating everything because the one line to render is different.
-class plRenderPrimFunc
-{
-public:
-    virtual bool RenderPrims() const = 0; // return true on error
-};
-
 //// DX-specific Plate Manager implementation
 class plDXPlateManager : public plPlateManager
 {
@@ -401,15 +392,6 @@ protected:
     // Visualization of active occluders
     void            IMakeOcclusionSnap();
 
-    bool            IAvatarSort(plDrawableSpans* d, const std::vector<int16_t>& visList);
-    void            IBlendVertsIntoBuffer( plSpan* span, 
-                                            hsMatrix44* matrixPalette, int numMatrices,
-                                            const uint8_t *src, uint8_t format, uint32_t srcStride, 
-                                            uint8_t *dest, uint32_t destStride, uint32_t count, uint16_t localUVWChans )
-                                                { blend_vert_buffer.call(span, matrixPalette, numMatrices, src, format, srcStride, dest, destStride, count, localUVWChans); };
-    bool            ISoftwareVertexBlend(plDrawableSpans* drawable, const std::vector<int16_t>& visList);
-
-
     void            ILinkDevRef( plDXDeviceRef *ref, plDXDeviceRef **refList );
     void            IUnlinkDevRef( plDXDeviceRef *ref );
 
@@ -460,7 +442,6 @@ protected:
     // Transforms
     D3DMATRIX&     IMatrix44ToD3DMatrix( D3DMATRIX& dst, const hsMatrix44& src );
     void            ISetCullMode(bool flip=false);
-    bool inline   IIsViewLeftHanded();
     bool            IGetClearViewPort(D3DRECT& r);
     void            ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, hsMatrix44& lastL2W);
 
@@ -481,7 +462,6 @@ protected:
 
     /////// Shadow internals
     // Generation
-    void    IClearShadowSlaves();
     void    IPreprocessShadows();
     bool    IPrepShadowCaster(const plShadowCaster* caster);
     void    IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSpans* drawable, const plIcicle& span);
@@ -536,7 +516,6 @@ public:
 
     // Typical 3D device
     bool                        PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
-    bool                        PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
 
     void                        PushRenderRequest(plRenderRequest* req) override;
     void                        PopRenderRequest(plRenderRequest* req) override;
@@ -606,13 +585,6 @@ public:
     int             GetMaxAntiAlias(int Width, int Height, int ColorDepth) override;
 
     void RenderSpans(plDrawableSpans *ice, const std::vector<int16_t>& visList) override;
-
-    //  CPU-optimized functions
-protected:
-    typedef void(*blend_vert_buffer_ptr)(plSpan*, hsMatrix44*, int, const uint8_t *,
-                                         uint8_t , uint32_t, uint8_t *, uint32_t,
-                                         uint32_t, uint16_t);
-    static hsCpuFunctionDispatcher<blend_vert_buffer_ptr> blend_vert_buffer;
 
 private:
     static plDXEnumerate enumerator;
