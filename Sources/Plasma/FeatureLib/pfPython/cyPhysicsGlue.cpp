@@ -355,6 +355,9 @@ PYTHON_METHOD_DEFINITION(ptPhysics, setAngularVelocity, args)
     self->fThis->SetAngularVelocity(*velocityVec);
     PYTHON_RETURN_NONE;
 }
+
+PYTHON_BASIC_METHOD_DEFINITION(ptPhysics, resetSyncState, ResetSyncState)
+
 PYTHON_START_METHODS_TABLE(ptPhysics)
     PYTHON_METHOD(ptPhysics, netForce, "Params: forceFlag\nSpecify whether this object needs to use messages that are forced to the network\n"
                 "- This is to be used if your Python program is running on only one client\n"
@@ -386,6 +389,8 @@ PYTHON_START_METHODS_TABLE(ptPhysics)
                 "can be added back later."),
     PYTHON_METHOD(ptPhysics, setLinearVelocity, "Params: velocityVector\nSets the objects LinearVelocity to the specified vector"),
     PYTHON_METHOD(ptPhysics, setAngularVelocity, "Params: velocityVector\nSets the objects AngularVelocity to the specified vector"),
+    PYTHON_BASIC_METHOD(ptPhysics, resetSyncState, "Resets the physical to its default recipe pose (position, rotation, and velocities).\n"
+                "Same effect as the console command Physics.ResetKickables, but scoped to just this object."),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
