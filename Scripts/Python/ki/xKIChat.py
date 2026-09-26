@@ -827,22 +827,21 @@ class ChatFlags:
         else:
             self.__dict__["lockey"] = False
 
-        self.__dict__["channel"] = (kRTChatChannelMask & flags) / 256
+        self.__dict__["channel"] = (kRTChatChannelMask & flags) // 256
 
     def __setattr__(self, name, value):
 
         if name == "broadcast" and value:
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatPrivate
+            self.__dict__["flags"] &= ~kRTChatPrivate
 
         elif name == "ccrBcast":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatGlobal
             if value:
                 self.__dict__["flags"] |= kRTChatGlobal
             else:
                 self.__dict__["flags"] &= ~kRTChatGlobal
 
         elif name == "private":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatPrivate
+            self.__dict__["flags"] &= ~kRTChatPrivate
             if value:
                 self.__dict__["flags"] |= kRTChatPrivate
                 self.__dict__["broadcast"] = False
@@ -850,37 +849,37 @@ class ChatFlags:
                 self.__dict__["broadcast"] = True
 
         elif name == "admin":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatAdmin
+            self.__dict__["flags"] &= ~kRTChatAdmin
             if value:
                 self.__dict__["flags"] |= kRTChatAdmin
 
         elif name == "interAge":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatInterAge
+            self.__dict__["flags"] &= ~kRTChatInterAge
             if value:
                 self.__dict__["flags"] |= kRTChatInterAge
 
         elif name == "status":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatStatusMsg
+            self.__dict__["flags"] &= ~kRTChatStatusMsg
             if value:
                 self.__dict__["flags"] |= kRTChatStatusMsg
 
         elif name == "neighbors":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatNeighborsMsg
+            self.__dict__["flags"] &= ~kRTChatNeighborsMsg
             if value:
                 self.__dict__["flags"] |= kRTChatNeighborsMsg
 
         elif name == "subtitle":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatAudioSubtitleMsg
+            self.__dict__["flags"] &= ~kRTChatAudioSubtitleMsg
             if value:
                 self.__dict__["flags"] |= kRTChatAudioSubtitleMsg
 
         elif name == "lockey":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatLocKeyMsg
+            self.__dict__["flags"] &= ~kRTChatLocKeyMsg
             if value:
                 self.__dict__["flags"] |= kRTChatLocKeyMsg
 
         elif name == "channel":
-            flagsNoChannel = self.__dict__["flags"] & kRTChatNoChannel
+            flagsNoChannel = self.__dict__["flags"] & ~kRTChatChannelMask
             self.__dict__["flags"] = flagsNoChannel + (value * 256)
 
         self.__dict__[name] = value
