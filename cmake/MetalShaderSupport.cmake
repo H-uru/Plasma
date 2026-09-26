@@ -47,9 +47,16 @@ function(target_embed_metal_shader_libraries TARGET)
     endforeach()
 
     if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.28 AND ${CMAKE_GENERATOR} STREQUAL "Xcode")
-        set_target_properties(${TARGET} PROPERTIES
-            XCODE_EMBED_RESOURCES "${_temsl_UNPARSED_ARGUMENTS}"
-        )
+        get_target_property(_resources ${TARGET} XCODE_EMBED_RESOURCES)
+        if(_resources)
+            set_target_properties(${TARGET} PROPERTIES
+                XCODE_EMBED_RESOURCES "${_temsl_UNPARSED_ARGUMENTS};${_resources}"
+            )
+        else()
+            set_target_properties(${TARGET} PROPERTIES
+                XCODE_EMBED_RESOURCES "${_temsl_UNPARSED_ARGUMENTS}"
+            )
+        endif()
     else()
         foreach(SHADERLIB IN LISTS _temsl_UNPARSED_ARGUMENTS)
             add_custom_command(TARGET ${TARGET} POST_BUILD
