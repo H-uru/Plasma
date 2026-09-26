@@ -1,5 +1,7 @@
 set(plClipboard_SOURCES
     plClipboard.cpp
+    $<$<PLATFORM_ID:Darwin>:plClipboard_Mac.mm>
+
 )
 
 set(plClipboard_HEADERS
@@ -14,6 +16,8 @@ target_link_libraries(
     plClipboard
     PUBLIC
         CoreLib
+    PRIVATE
+        "$<$<PLATFORM_ID:Darwin>:-framework Cocoa>"
 )
 
 source_group("Source Files" FILES ${plClipboard_SOURCES})
