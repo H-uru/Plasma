@@ -222,6 +222,16 @@ class xKIChat(object):
             return
         msg = message.casefold()
 
+        # A prefix, not a command: strip it here so the rest of the message
+        # still routes normally. A bare "/dni" is filtered out before this.
+        useDniFont = False
+        if msg.startswith(kChat.DniFontPrefix + " "):
+            useDniFont = True
+            message = message[len(kChat.DniFontPrefix):].lstrip()
+            if not message:
+                return
+            msg = message.casefold()
+
         # Get any selected players.
         userListBox = KIMini.dialog.getControlModFromTag(kGUI.PlayerList)
         iSelect = userListBox.getSelection()
@@ -397,6 +407,8 @@ class xKIChat(object):
 
         # Add message to player's private chat channel.
         cFlags.channel = self.privateChatChannel
+        if useDniFont:
+            cFlags.dniFont = True
         if len(selPlyrList) == 0 and listenerOnly:
             if nobodyListening:
                 self.AddChatLine(None, PtGetLocalizedString("KI.Chat.NoOneListening"), kChat.SystemMessage)
@@ -637,6 +649,9 @@ class xKIChat(object):
                 raise ValueError(self.timestamps.zone)
             timestamp = f"[{time.strftime(self.timestamps.format, timeStruct)}] "
 
+        # Only ChatFlags carries this; a plain int cFlags never sets it.
+        useDniFont = isinstance(cFlags, ChatFlags) and cFlags.dniFont
+
         for chatArea in (self.miniChatArea, self.microChatArea):
             with PtBeginGUIUpdate(chatArea):
                 savedPosition = chatArea.getScrollPosition()
@@ -646,13 +661,18 @@ class xKIChat(object):
                 chatArea.insertString(f"\n{timestamp}{contextPrefix if self.chatTextColor else ''}{chatHeaderFormatted}")
                 chatArea.insertColor(bodyColor)
 
+                # Body only, so the timestamp and speaker name stay legible.
+                # Scoped to this line, so no closing code is needed.
+                if useDniFont:
+                    chatArea.insertFontFace(kChat.DniFontFace)
+
                 lastInsert = 0
 
                 # If we have player name mentions, we change text colors mid-message
                 for start, end, mention in chatMentions:
                     if start > lastInsert:
                         # Insert normal text up to the current name mention position
-                        chatArea.insertString(chatMessageFormatted[lastInsert:start], censorLevel=censorLevel)
+                        chatArea.insertString(chatMessageFormatted[lastInsert:start], censorLevel=censorLevel, urlDetection=not useDniFont)
 
                     lastInsert = end
                     
@@ -663,7 +683,7 @@ class xKIChat(object):
                 # If there is remaining text to display after last mention, write it
                 # Or if it was just a plain message with no mention of player's name
                 if lastInsert != len(chatMessageFormatted):
-                    chatArea.insertString(chatMessageFormatted[lastInsert:], censorLevel=censorLevel)
+                    chatArea.insertString(chatMessageFormatted[lastInsert:], censorLevel=censorLevel, urlDetection=not useDniFont)
 
                 chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
 
@@ -690,6 +710,34 @@ class xKIChat(object):
 
         # Update the fading controls.
         self.ResetFadeState()
+
+    ## Send and/or display a message rendered in the D'ni font.
+    # fromPlayer:   None for a status message (no speaker name shown).
+    # toPlayers:    None or [] broadcasts to the Age, ignoring listen distance.
+    #               Pass GetPlayersInChatDistance() for earshot only.
+    # netPropagate: False displays locally without sending.
+    def SendDniMessage(self, fromPlayer, toPlayers, message, netPropagate=True):
+
+        localPlayer = PtGetLocalPlayer()
+        isStatus = fromPlayer is None
+        toPlayers = list(toPlayers) if toPlayers else []
+
+        cFlags = ChatFlags(0)
+        # toSelf does not cross the wire. Set here so the local echo is not
+        # treated as an incoming PM, which would run it through CheckIfCanPM()
+        # and silently discard it.
+        cFlags.toSelf = True
+        if isStatus:
+            cFlags.status = True
+        elif toPlayers:
+            cFlags.private = True
+        cFlags.channel = self.privateChatChannel
+        cFlags.dniFont = True
+
+        if netPropagate:
+            PtSendRTChat(fromPlayer or localPlayer, toPlayers, message, cFlags.flags)
+
+        self.AddChatLine(fromPlayer, message, cFlags)
 
     ## Display a status message to the player (or players if net-propagated).
     def DisplayStatusMessage(self, message, netPropagate=0):
@@ -827,22 +875,26 @@ class ChatFlags:
         else:
             self.__dict__["lockey"] = False
 
-        self.__dict__["channel"] = (kRTChatChannelMask & flags) / 256
+        if flags & kRTChatDniFont:
+            self.__dict__["dniFont"] = True
+        else:
+            self.__dict__["dniFont"] = False
+
+        self.__dict__["channel"] = (kRTChatChannelMask & flags) // 256
 
     def __setattr__(self, name, value):
 
         if name == "broadcast" and value:
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatPrivate
+            self.__dict__["flags"] &= ~kRTChatPrivate
 
         elif name == "ccrBcast":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatGlobal
             if value:
                 self.__dict__["flags"] |= kRTChatGlobal
             else:
                 self.__dict__["flags"] &= ~kRTChatGlobal
 
         elif name == "private":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatPrivate
+            self.__dict__["flags"] &= ~kRTChatPrivate
             if value:
                 self.__dict__["flags"] |= kRTChatPrivate
                 self.__dict__["broadcast"] = False
@@ -850,37 +902,42 @@ class ChatFlags:
                 self.__dict__["broadcast"] = True
 
         elif name == "admin":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatAdmin
+            self.__dict__["flags"] &= ~kRTChatAdmin
             if value:
                 self.__dict__["flags"] |= kRTChatAdmin
 
         elif name == "interAge":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatInterAge
+            self.__dict__["flags"] &= ~kRTChatInterAge
             if value:
                 self.__dict__["flags"] |= kRTChatInterAge
 
         elif name == "status":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatStatusMsg
+            self.__dict__["flags"] &= ~kRTChatStatusMsg
             if value:
                 self.__dict__["flags"] |= kRTChatStatusMsg
 
         elif name == "neighbors":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatNeighborsMsg
+            self.__dict__["flags"] &= ~kRTChatNeighborsMsg
             if value:
                 self.__dict__["flags"] |= kRTChatNeighborsMsg
 
         elif name == "subtitle":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatAudioSubtitleMsg
+            self.__dict__["flags"] &= ~kRTChatAudioSubtitleMsg
             if value:
                 self.__dict__["flags"] |= kRTChatAudioSubtitleMsg
 
         elif name == "lockey":
-            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatLocKeyMsg
+            self.__dict__["flags"] &= ~kRTChatLocKeyMsg
             if value:
                 self.__dict__["flags"] |= kRTChatLocKeyMsg
 
+        elif name == "dniFont":
+            self.__dict__["flags"] &= ~kRTChatDniFont
+            if value:
+                self.__dict__["flags"] |= kRTChatDniFont
+
         elif name == "channel":
-            flagsNoChannel = self.__dict__["flags"] & kRTChatNoChannel
+            flagsNoChannel = self.__dict__["flags"] & ~kRTChatChannelMask
             self.__dict__["flags"] = flagsNoChannel + (value * 256)
 
         self.__dict__[name] = value
@@ -906,6 +963,8 @@ class ChatFlags:
             string += "subtitle "
         if self.lockey:
             string += "lockey "
+        if self.dniFont:
+            string += "dniFont "
         if self.ccrBcast:
             string += "ccrBcast "
         string += "channel = {} ".format(self.channel)

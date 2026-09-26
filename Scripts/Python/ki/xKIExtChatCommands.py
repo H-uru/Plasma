@@ -141,4 +141,7 @@ xChatSpecialHandledCommands = [
     Plasma.PtGetLocalizedString("KI.Commands.ChatBuddies"),
     Plasma.PtGetLocalizedString("KI.Commands.ChatAge"),
     "/r",
+    # Not a destination like the others. Listed here only so it reaches
+    # SendMessage instead of being rejected as an unknown command.
+    "/dni",
 ]

@@ -137,9 +137,11 @@ class pfMLScrollProc : public pfGUICtrlProcObject
 constexpr wchar_t kColorCodeChar = (wchar_t)1;
 constexpr wchar_t kStyleCodeChar = (wchar_t)2;
 constexpr wchar_t kLinkCodeChar = (wchar_t)3;
+constexpr wchar_t kFaceCodeChar = (wchar_t)4;
 constexpr size_t kColorCodeSize = 5;
 constexpr size_t kStyleCodeSize = 3;
 constexpr size_t kLinkCodeSize = 3;
+constexpr size_t kFaceCodeSize = 3;
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
@@ -472,6 +474,24 @@ void    pfGUIMultiLineEditCtrl::IReadStyleCode( int32_t &pos, uint8_t &fontFlags
     pos += kStyleCodeSize;      // We have a duplicate code at the end of this block, for searching backwards
 }
 
+//// IReadFaceCode //////////////////////////////////////////////////////////
+//  Reads a face code and advances pos. Index 0, or an index no longer in the
+//  table, resolves to the default face.
+
+void    pfGUIMultiLineEditCtrl::IReadFaceCode( int32_t &pos, ST::string &fontFace ) const
+{
+    const wchar_t *buffer = fBuffer.data() + pos;
+
+    hsAssert(buffer[0] == kFaceCodeChar, "Invalid position in IReadFaceCode()");
+    uint16_t idx = (uint16_t)buffer[ 1 ];
+    pos += kFaceCodeSize;       // Duplicate code at the end of the block, for searching backwards
+
+    if (idx < fFontFaceTable.size() && !fFontFaceTable[idx].empty())
+        fontFace = fFontFaceTable[idx];
+    else
+        fontFace = fFontFace;
+}
+
 inline bool pfGUIMultiLineEditCtrl::IIsRenderable( const wchar_t c )
 {
     return ( !IIsCodeChar( c ) && c != L'\n' && c != L'\t' );
@@ -479,7 +499,7 @@ inline bool pfGUIMultiLineEditCtrl::IIsRenderable( const wchar_t c )
 
 inline bool pfGUIMultiLineEditCtrl::IIsCodeChar( const wchar_t c )
 {
-    return (c == kColorCodeChar || c == kStyleCodeChar || c == kLinkCodeChar);
+    return (c == kColorCodeChar || c == kStyleCodeChar || c == kLinkCodeChar || c == kFaceCodeChar);
 }
 
 //// IFindLastCode Functions /////////////////////////////////////////////////
@@ -519,6 +539,31 @@ bool    pfGUIMultiLineEditCtrl::IFindLastStyleCode( int32_t pos, uint8_t &style,
     return false;
 }
 
+//// IFindLastFaceCode ///////////////////////////////////////////////////////
+//  Scans back for the face in effect. Stopping at the newline is what scopes a
+//  face to its own line, so callers never need to emit a closing code.
+
+bool    pfGUIMultiLineEditCtrl::IFindLastFaceCode( int32_t pos, ST::string &face, bool ignoreFirstCharacter ) const
+{
+    for( ; pos >= 0; pos -= IOffsetToNextCharFromPos( pos - 1 ) )
+    {
+        // Only \n stops the scan: soft-wrapped visual lines share a logical
+        // line and must inherit its face.
+        if (fBuffer[pos] == L'\n')
+            break;
+
+        if (fBuffer[pos] == kFaceCodeChar && !ignoreFirstCharacter)
+        {
+            IReadFaceCode( pos, face );
+            return true;
+        }
+        ignoreFirstCharacter = false;
+    }
+
+    face = fFontFace; // use our default face
+    return false;
+}
+
 //// IRenderLine /////////////////////////////////////////////////////////////
 //  Renders a null-terminated string to the dynamic text map at the location
 //  given. Takes into account style codes and special characters (like returns
@@ -529,14 +574,16 @@ uint32_t  pfGUIMultiLineEditCtrl::IRenderLine( uint16_t x, uint16_t y, int32_t s
     int32_t       pos;
     hsColorRGBA currColor = fFontColor;
     uint8_t       currStyle;
+    ST::string  currFace = fFontFace;
     const wchar_t *buffer = fBuffer.data();
 
-    // First, gotta go back from our starting position and find a color and style code to use
+    // First, gotta go back from our starting position and find a color, style and face code to use
     IFindLastColorCode( start, currColor );
     IFindLastStyleCode( start, currStyle );
+    IFindLastFaceCode( start, currFace );
 
     fDynTextMap->SetTextColor( currColor, HasFlag( kXparentBgnd ) ? true : false );
-    fDynTextMap->SetFont( fFontFace, fFontSize, GetColorScheme()->fFontFlags | currStyle,
+    fDynTextMap->SetFont( currFace, fFontSize, GetColorScheme()->fFontFlags | currStyle,
                             HasFlag( kXparentBgnd ) ? false : true );
     
     // Now, start from our start and go to the end and keep eating up as many chunks
@@ -573,8 +620,16 @@ uint32_t  pfGUIMultiLineEditCtrl::IRenderLine( uint16_t x, uint16_t y, int32_t s
                 // Read style and switch to that one
                 IReadStyleCode( pos, currStyle );
                 if( !dontRender )
-                    fDynTextMap->SetFont( fFontFace, fFontSize  , GetColorScheme()->fFontFlags | currStyle,
+                    fDynTextMap->SetFont( currFace, fFontSize  , GetColorScheme()->fFontFlags | currStyle,
                                             HasFlag( kXparentBgnd ) ? false : true );
+            }
+            else if (buffer[pos] == kFaceCodeChar)
+            {
+                // Set the font even when dontRender: IRecalcLineStarts() relies
+                // on the widths measured here to wrap correctly.
+                IReadFaceCode( pos, currFace );
+                fDynTextMap->SetFont( currFace, fFontSize, GetColorScheme()->fFontFlags | currStyle,
+                                        HasFlag( kXparentBgnd ) ? false : true );
             }
             else if (buffer[pos] == kLinkCodeChar)
             {
@@ -707,6 +762,8 @@ inline  int32_t   pfGUIMultiLineEditCtrl::IOffsetToNextChar( wchar_t stringChar 
         return kStyleCodeSize;
     else if (stringChar == kLinkCodeChar)
         return kLinkCodeSize;
+    else if (stringChar == kFaceCodeChar)
+        return kFaceCodeSize;
     else
         return 1;
 }
@@ -1459,6 +1516,47 @@ void    pfGUIMultiLineEditCtrl::IActuallyInsertStyle( int32_t pos, uint8_t style
     }
 }
 
+//// InsertFontFace /////////////////////////////////////////////////////////
+
+uint16_t pfGUIMultiLineEditCtrl::IRegisterFontFace( const ST::string &fontFace )
+{
+    if (fFontFaceTable.empty())
+        fFontFaceTable.push_back(ST::string()); // index 0 == default face
+
+    if (fontFace.empty())
+        return 0;
+
+    for (size_t i = 0; i < fFontFaceTable.size(); i++)
+    {
+        if (fFontFaceTable[i].compare_i(fontFace) == 0)
+            return (uint16_t)i;
+    }
+
+    fFontFaceTable.push_back(fontFace);
+    return (uint16_t)(fFontFaceTable.size() - 1);
+}
+
+void    pfGUIMultiLineEditCtrl::InsertFontFace( const ST::string &fontFace )
+{
+    IActuallyInsertFace( fCursorPos, IRegisterFontFace( fontFace ) );
+
+    IOffsetLineStarts(fCursorPos, kFaceCodeSize);
+    fCursorPos += kFaceCodeSize;
+    IRecalcFromCursor( true );  // Following characters change appearance
+}
+
+void    pfGUIMultiLineEditCtrl::IActuallyInsertFace( int32_t pos, uint16_t faceIndex )
+{
+    if (fBufferLimit == -1 || (int32_t)fBuffer.size() + 3 < fBufferLimit - 1)
+    {
+        fBuffer.insert(fBuffer.begin() + pos, {
+            kFaceCodeChar,
+            (wchar_t)faceIndex,
+            kFaceCodeChar
+        });
+    }
+}
+
 void    pfGUIMultiLineEditCtrl::InsertLink(int16_t linkId)
 {
     IActuallyInsertLink(fCursorPos, linkId);
@@ -1851,13 +1949,13 @@ void pfGUIMultiLineEditCtrl::DeleteLinesFromTop(int numLines)
         bool hitEnd = true; // did we hit the end of the buffer before we hit a newline?
 
         // search for the first newline and nuke it and everything before it
-        bool skippingColor = false, skippingStyle = false, skippingLink = false;
-        int curColorPos = 0, curStylePos = 0, curLinkPos = 0;
+        bool skippingColor = false, skippingStyle = false, skippingLink = false, skippingFace = false;
+        int curColorPos = 0, curStylePos = 0, curLinkPos = 0, curFacePos = 0;
         for (uint32_t curChar = 0; curChar < bufferLen - 1; ++curChar)
         {
             // we need to skip the crappy color and style "tags" so non-character values inside them
             // don't trigger our newline check
-            if (!skippingColor && !skippingStyle)
+            if (!skippingColor && !skippingStyle && !skippingFace)
             {
                 if (buffer[curChar] == kColorCodeChar)
                 {
@@ -1875,6 +1973,14 @@ void pfGUIMultiLineEditCtrl::DeleteLinesFromTop(int numLines)
                 {
                     curLinkPos = 0;
                     skippingLink = true;
+                    continue;
+                }
+                else if (buffer[curChar] == kFaceCodeChar)
+                {
+                    // Must be skipped: a face index of 10 is L'\n' and would
+                    // otherwise be counted as a line break here.
+                    curFacePos = 0;
+                    skippingFace = true;
                     continue;
                 }
             }
@@ -1902,6 +2008,15 @@ void pfGUIMultiLineEditCtrl::DeleteLinesFromTop(int numLines)
                 ++curLinkPos;
                 if (curLinkPos == kLinkCodeSize)
                     skippingLink = false;
+                else
+                    continue;
+            }
+
+            if (skippingFace)
+            {
+                ++curFacePos;
+                if (curFacePos == kFaceCodeSize)
+                    skippingFace = false;
                 else
                     continue;
             }
