@@ -232,6 +232,18 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertStyle, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertFontFace, args)
+{
+    ST::string fontFace;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &fontFace))
+    {
+        PyErr_SetString(PyExc_TypeError, "insertFontFace expects a string");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->InsertFontFace(fontFace);
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertLink, args)
 {
     int16_t linkId;
@@ -373,6 +385,7 @@ PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_METHOD(ptGUIControlMultiLineEdit, insertColor, "Params: color\nInserts an encoded color object at the current cursor position.\n"
                 "'color' is a ptColor object."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, insertStyle, "Params: style\nInserts an encoded font style at the current cursor position."),
+    PYTHON_METHOD(ptGUIControlMultiLineEdit, insertFontFace, "Params: fontFace\nInserts a font face change at the current cursor position. Applies to the rest of the line; pass an empty string for the default face."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, insertLink, "Type: (linkId: int) -> None\nInserts a link hotspot at the current cursor position."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, clearLink, "Type: () -> None\nEnds the hyperlink hotspot, if any, at the current cursor position."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, deleteChar, "Deletes a character at the current cursor position."),
