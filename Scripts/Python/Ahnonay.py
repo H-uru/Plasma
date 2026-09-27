@@ -81,13 +81,7 @@ class Ahnonay(ptResponder):
         owner = None
         myID = str(PtGetClientIDFromAvatarKey(PtGetLocalAvatar().getKey()))
 
-        ageStruct = ptAgeInfoStruct()
-        ageStruct.setAgeFilename("AhnonayCathedral")
-        ageLinkNode = agevault.getSubAgeLink(ageStruct)
-        if ageLinkNode:
-            localCathedralGuid = ageLinkNode.getAgeInfo().getAgeInstanceGuid()
-        else:
-            localCathedralGuid = None
+        localCathedralGuid = agevault.getAgeInfo().getParentAgeInstanceGuid()
 
         folder = vault.getAgesIOwnFolder()
         cathedralInfoTemplate = ptVaultAgeInfoNode(0)
@@ -161,7 +155,7 @@ class Ahnonay(ptResponder):
                 ageDataFolder.addNode(newNode)
 
             if volatile and linkid:
-                if volatile.getValue() == "1" and guid != linkid.getValue():
+                if volatile.getValue() == "1":
                     PtDebugPrint("Ahnonay.OnServerInitComplete(): In a new instance of Ahnonay so setting new vars")
                     linkid.setValue(guid)
                     locked.setValue("1")
