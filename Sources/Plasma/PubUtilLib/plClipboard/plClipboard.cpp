@@ -54,6 +54,8 @@ plClipboard& plClipboard::GetInstance()
     return theInstance;
 }
 
+#ifndef HS_BUILD_FOR_APPLE  // macOS implementation lives in plClipboard_Mac.mm
+
 bool plClipboard::IsTextInClipboard() 
 {
 #ifdef HS_BUILD_FOR_WIN32
@@ -138,3 +140,4 @@ void plClipboard::SetClipboardText(const ST::string& text)
 #endif
 }
 
+#endif // HS_BUILD_FOR_APPLE
