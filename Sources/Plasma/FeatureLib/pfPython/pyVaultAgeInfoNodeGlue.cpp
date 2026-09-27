@@ -164,6 +164,22 @@ PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeInstanceGuid, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getParentAgeInstanceGuid)
+{
+    return PyUnicode_FromSTString(self->fThis->GetParentAgeInstanceGuid().AsString());
+}
+
+PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setParentAgeInstanceGuid, args)
+{
+    ST::string guid;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guid)) {
+        PyErr_SetString(PyExc_TypeError, "setParentAgeInstanceGuid expects a string");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->SetParentAgeInstanceGuid(guid);
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeDescription)
 {
     return PyUnicode_FromSTString(self->fThis->GetAgeDescription());
@@ -267,6 +283,8 @@ PYTHON_START_METHODS_TABLE(ptVaultAgeInfoNode)
     PYTHON_METHOD(ptVaultAgeInfoNode, setAgeUserDefinedName, "Params: udname\nSets the user defined part of the name"),
     PYTHON_METHOD_NOARGS(ptVaultAgeInfoNode, getAgeInstanceGuid, "Returns the age instance guid"),
     PYTHON_METHOD(ptVaultAgeInfoNode, setAgeInstanceGuid, "Params: guid\nSets the age instance GUID"),
+    PYTHON_METHOD_NOARGS(ptVaultAgeInfoNode, getParentAgeInstanceGuid, "Returns the parent age instance guid"),
+    PYTHON_METHOD(ptVaultAgeInfoNode, setParentAgeInstanceGuid, "Params: guid\nSets the parent age instance GUID"),
     PYTHON_METHOD_NOARGS(ptVaultAgeInfoNode, getAgeDescription, "Returns the description of the age"),
     PYTHON_METHOD(ptVaultAgeInfoNode, setAgeDescription, "Params: description\nSets the description of the age"),
     PYTHON_METHOD_NOARGS(ptVaultAgeInfoNode, getAgeSequenceNumber, "Returns the sequence number of this instance of the age"),
