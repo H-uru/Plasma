@@ -577,7 +577,7 @@ class xBlueSpiral(ptResponder):
                 PtAtTimeCallback(self.key, 1, kCloseTheDoor)
             elif self._doorState == DoorState.Opening:
                 PtDebugPrint(f"xBlueSpiral.HandleGameOver(): Closing the door when it finishes opening", level=kWarningLevel)
-                self._doorState = DoorState.NeedToClose
+                self._doorState = DoorState.NeedsToClose
             else:
                 PtDebugPrint(f"xBlueSpiral.HandleGameOver(): sodium bromide {self._doorState=}")
 
