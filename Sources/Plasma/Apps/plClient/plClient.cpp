@@ -1604,6 +1604,9 @@ bool plClient::MainLoop()
     // Draw the stats
     plProfileManagerFull::Instance().Update();
 
+    if (GetDone())
+        return true;
+
     return false;
 }
 
