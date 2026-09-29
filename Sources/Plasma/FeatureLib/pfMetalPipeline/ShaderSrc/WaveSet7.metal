@@ -166,7 +166,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
 
     // Calc our filter (see above).
     float4 filteredAmp = in.color.wwww * uniforms.Lengths;
-    filteredAmp = clamp(filteredAmp, 0.1f, 1.f);
+    filteredAmp = clamp(filteredAmp, 0.f, 1.f);
 
     sines *= filteredAmp;
     sines *= uniforms.Amplitude;
@@ -387,7 +387,8 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     // Dot that with the computed normal
     float4 modColor = float4(0);
     // Remember: in.color.z is a wave scale factor
-    modColor.rgba = 1.f - (dot(-camToVertex.xyz, normal) * in.color.z);
+    // In.color is BGRA. Original code wanted z which means here we want y
+    modColor.rgba = 1.f - (dot(-camToVertex.xyz, normal) * in.color.y);
     // Remap the alpha to a range between 0.5..1
     modColor.a = (modColor.a + 1.f) * 0.5f;
     modColor *= depthFilter.yyyx; // HACKTESTCOLOR
