@@ -75,9 +75,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfile.h"
 #include "plStatusLog/plStatusLog.h"
 
-plProfile_CreateMemCounter("Vertices", "Memory", MemVertex);
-plProfile_CreateMemCounter("Indices", "Memory", MemIndex);
-plProfile_CreateMemCounter("Textures", "Memory", MemTexture);
+plProfile_Extern(MemVertex);
+plProfile_Extern(MemIndex);
+plProfile_Extern(MemTexture);
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Generic plDXDeviceRef Functions /////////////////////////////////////////

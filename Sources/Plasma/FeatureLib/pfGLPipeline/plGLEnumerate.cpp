@@ -47,10 +47,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plGLPipeline.h"
 
+#ifdef USE_WAYLAND
+#   include "hsOptionalCall.h"
+#   ifndef WL_DISPLAY_INTERFACE
+#   define WL_DISPLAY_INTERFACE
+    extern "C" const struct wl_interface wl_display_interface;
+    hsOptionalCallDecl("libwayland-client", wl_display_interface);
+#   endif
+#endif
+
 static bool fillDeviceRecord(hsG3DDeviceRecord& devRec, const ST::string& driverName,
         uint32_t provider, hsDisplayHndl display)
 {
-    if (epoxy_gl_version() < 33)
+    if (plGLVersion() < 21)
         return false;
 
     devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeOpenGL);
@@ -147,6 +156,16 @@ void plEGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displ
         };
 
         context = eglCreateContext(display, config, EGL_NO_CONTEXT, ctx_attrs);
+        if (context == EGL_NO_CONTEXT) {
+            EGLint ctx_attrs21[] = {
+                EGL_CONTEXT_MAJOR_VERSION, 2,
+                EGL_CONTEXT_MINOR_VERSION, 1,
+                EGL_NONE
+            };
+
+            context = eglCreateContext(display, config, EGL_NO_CONTEXT, ctx_attrs21);
+        }
+
         if (context == EGL_NO_CONTEXT)
             break;
 
@@ -190,7 +209,7 @@ void plEGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displ
 #include "hsWindows.h"
 #include <epoxy/wgl.h>
 
-void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displayHndl = INVALID_HANDLE_VALUE)
+void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displayHndl = (HDC)INVALID_HANDLE_VALUE)
 {
     HINSTANCE inst = GetModuleHandleW(nullptr);
     LPCWSTR className = L"GLTestClass";
@@ -202,6 +221,7 @@ void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displ
         WNDCLASSW tempClass = {};
         tempClass.lpfnWndProc = DefWindowProcW;
         tempClass.hInstance = inst;
+        tempClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
         tempClass.lpszClassName = className;
         tempClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 
@@ -434,11 +454,16 @@ void plGLEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplay
     plCGLEnumerate(records, mainDisplay);
 #endif
 
-#if defined(USE_X11)
-    // I hate this, but things go poorly if you try to use a Wayland display to
-    // set up a GLX context, so we need to know if we're running for X11 or not
-    plDisplayHelper* displayHelper = plDisplayHelper::GetInstance();
-    if (displayHelper && typeid(*displayHelper) == typeid(plX11DisplayHelper))
-        plGLXEnumerate(records, mainDisplay);
+#ifdef USE_X11
+#ifdef USE_WAYLAND
+    if (mainDisplay != nullptr) {
+        void* first_pointer = *(void**)mainDisplay;
+
+        if (first_pointer == &__wl_display_interface)
+            return;
+    }
+#endif
+
+    plGLXEnumerate(records, mainDisplay);
 #endif
 }

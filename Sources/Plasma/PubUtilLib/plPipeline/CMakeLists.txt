@@ -8,6 +8,7 @@ set(plPipeline_SOURCES
     plDTProgressMgr.cpp
     plDynamicEnvMap.cpp
     plFogEnvironment.cpp
+    plNullPipeline.cpp
     plPipelineViewSettings.cpp
     plPlates.cpp
     plRenderTarget.cpp
@@ -20,6 +21,7 @@ set(plPipeline_HEADERS
     hsG3DDeviceSelector.h
     hsWinRef.h
     pl3DPipeline.h
+    pl3DPipelineSIMD.h
     plCaptureRender.h
     plCubicRenderTarget.h
     plCubicRenderTargetModifier.h
@@ -46,6 +48,8 @@ plasma_library(plPipeline
     SOURCES ${plPipeline_SOURCES} ${plPipeline_HEADERS}
     PRECOMPILED_HEADERS Pch.h
 )
+plasma_target_simd_sources(plPipeline SSE3 pl3DPipeline.cpp)
+plasma_target_simd_sources(plPipeline SSE3 plNullPipeline.cpp)
 target_link_libraries(plPipeline
     PUBLIC
         CoreLib

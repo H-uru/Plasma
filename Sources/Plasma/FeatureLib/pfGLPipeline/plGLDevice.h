@@ -43,20 +43,69 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plGLDevice_h_
 
 #include "hsMatrix44.h"
+#include "plGLDeviceRef.h"
 
+#include <epoxy/gl.h>
 #include <string_theory/string>
 
 class plGLPipeline;
 class plRenderTarget;
 
+extern int plGLVersionOverride;
+
+inline int plGLVersion()
+{
+    // This exists for testing purposes to force the pipeline to behave as if a
+    // specific version of OpenGL were present, mainly for ensuring
+    // compatibility with older GL API versions on machines where newer
+    // versions are available by default. To pretend to be limited to a
+    // specific version, just return the GL version with the decimal removed as
+    // an integer:
+    return plGLVersionOverride != 0 ? plGLVersionOverride : epoxy_gl_version();
+}
+
 class plGLDevice
 {
+    friend void InitEGLDevice(plGLDevice* dev);
+    friend void InitWGLDevice(plGLDevice* dev);
+    friend void InitCGLDevice(plGLDevice* dev);
+
+    enum ContextType {
+        kNone = 0,
+        kWGL,
+        kCGL,
+        kEGL
+    };
+
+public:
+    typedef plGLVertexBufferRef VertexBufferRef;
+    typedef plGLIndexBufferRef  IndexBufferRef;
+
 protected:
-    ST::string fErrorMsg;
+    ST::string          fErrorMsg;
     plGLPipeline*       fPipeline;
+    ContextType         fContextType;
+    hsWindowHndl        fWindow;
+    hsDisplayHndl       fDevice;
+    void*               fDisplay;
+    void*               fSurface;
+    void*               fContext;
+    size_t              fActiveThread;
+    GLuint              fCurrentProgram;
+    GLfloat             fMatrixL2W[16];
+    GLfloat             fMatrixW2C[16];
+    GLfloat             fMatrixProj[16];
 
 public:
     plGLDevice();
+
+    void Setup(plGLPipeline* pipe, hsWindowHndl window, hsDisplayHndl device);
+    void Shutdown();
+
+    /**
+     * Initializes the OpenGL rendering context.
+     */
+    bool InitDevice();
 
     /**
      * Set rendering to the specified render target.
@@ -66,19 +115,42 @@ public:
      */
     void SetRenderTarget(plRenderTarget* target);
 
-    /** Translate our viewport into a D3D viewport. */
+    /** Translate our viewport into a GL viewport. */
     void SetViewport();
 
+    bool BeginRender();
+
+    /**
+     * Tell GL we're through rendering for this frame, and flip the back buffer
+     * to front.
+     */
+    bool EndRender();
+
+    /* Device Ref Functions **************************************************/
+    void SetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, VertexBufferRef* vRef);
+    void CheckStaticVertexBuffer(VertexBufferRef* vRef, plGBufferGroup* owner, uint32_t idx);
+    void FillStaticVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx);
+    void FillVolatileVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx);
+    void SetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, IndexBufferRef* iRef);
+    void CheckIndexBuffer(IndexBufferRef* iRef);
+    void FillIndexBufferRef(IndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx);
 
     void SetProjectionMatrix(const hsMatrix44& src);
     void SetWorldToCameraMatrix(const hsMatrix44& src);
     void SetLocalToWorldMatrix(const hsMatrix44& src);
 
-    struct VertexBufferRef;
-    struct IndexBufferRef;
     struct TextureRef;
 
     ST::string GetErrorString() const { return fErrorMsg; }
+    bool HasContext() const { return fContextType != kNone; }
+
+    const hsDisplayHndl GetDisplayDevice() const { return fDevice; }
+    const GLfloat* GetL2WMatrix() const { return fMatrixL2W; }
+    const GLfloat* GetW2CMatrix() const { return fMatrixW2C; }
+    const GLfloat* GetProjectionMatrix() const { return fMatrixProj; }
+
+    const GLuint GetCurrentProgram() const { return fCurrentProgram; }
+    void SetCurrentProgram(GLuint program) { fCurrentProgram = program; }
 };
 
 #endif

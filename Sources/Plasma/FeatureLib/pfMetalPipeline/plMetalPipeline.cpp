@@ -71,6 +71,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMetalVertexShader.h"
 #include "plPipeDebugFlags.h"
 #include "plPipeResReq.h"
+#include "plPipeline/pl3DPipelineSIMD.h"
 #include "plPipeline/plCubicRenderTarget.h"
 #include "plPipeline/plDebugText.h"
 #include "plPipeline/plDynamicEnvMap.h"
@@ -87,37 +88,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 uint32_t fDbgSetupInitFlags; // HACK temp only
 
-plProfile_CreateCounter("Feed Triangles", "Draw", DrawFeedTriangles);
-plProfile_CreateCounter("Draw Prim Static", "Draw", DrawPrimStatic);
-plProfile_CreateMemCounter("Total Texture Size", "Draw", TotalTexSize);
-plProfile_CreateCounter("Layer Change", "Draw", LayChange);
+plProfile_Extern(DrawFeedTriangles);
+plProfile_Extern(DrawPrimStatic);
+plProfile_Extern(TotalTexSize);
+plProfile_Extern(LayChange);
 plProfile_Extern(DrawTriangles);
 plProfile_Extern(MatChange);
-
-plProfile_CreateTimer("PrepShadows", "PipeT", PrepShadows);
-plProfile_CreateTimer("PrepDrawable", "PipeT", PrepDrawable);
-plProfile_CreateTimer("  Skin", "PipeT", Skin);
-plProfile_CreateTimer("RenderSpan", "PipeT", RenderSpan);
-plProfile_CreateTimer("  MergeCheck", "PipeT", MergeCheck);
-plProfile_CreateTimer("  MergeSpan", "PipeT", MergeSpan);
-plProfile_CreateTimer("  SpanTransforms", "PipeT", SpanTransforms);
-plProfile_CreateTimer("  SpanFog", "PipeT", SpanFog);
-plProfile_CreateTimer("  SelectLights", "PipeT", SelectLights);
-plProfile_CreateTimer("  SelectProj", "PipeT", SelectProj);
-plProfile_CreateTimer("  CheckDyn", "PipeT", CheckDyn);
-plProfile_CreateTimer("  CheckStat", "PipeT", CheckStat);
-plProfile_CreateTimer("  RenderBuff", "PipeT", RenderBuff);
-plProfile_CreateTimer("  RenderPrim", "PipeT", RenderPrim);
-plProfile_CreateTimer("PlateMgr", "PipeT", PlateMgr);
-plProfile_CreateTimer("DebugText", "PipeT", DebugText);
-plProfile_CreateTimer("Reset", "PipeT", Reset);
-
-plProfile_CreateCounterNoReset("Reload", "PipeC", PipeReload);
-plProfile_CreateCounter("AvRTPoolUsed", "PipeC", AvRTPoolUsed);
-plProfile_CreateCounter("AvRTPoolCount", "PipeC", AvRTPoolCount);
-plProfile_CreateCounter("AvRTPoolRes", "PipeC", AvRTPoolRes);
-plProfile_CreateCounter("AvRTShrinkTime", "PipeC", AvRTShrinkTime);
-plProfile_CreateCounter("NumSkin", "PipeC", NumSkin);
+plProfile_Extern(PrepShadows);
+plProfile_Extern(PrepDrawable);
+plProfile_Extern(Skin);
+plProfile_Extern(RenderSpan);
+plProfile_Extern(MergeCheck);
+plProfile_Extern(MergeSpan);
+plProfile_Extern(SpanTransforms);
+plProfile_Extern(SpanFog);
+plProfile_Extern(SelectLights);
+plProfile_Extern(SelectProj);
+plProfile_Extern(CheckDyn);
+plProfile_Extern(CheckStat);
+plProfile_Extern(RenderBuff);
+plProfile_Extern(RenderPrim);
+plProfile_Extern(PlateMgr);
+plProfile_Extern(DebugText);
+plProfile_Extern(Reset);
+plProfile_Extern(PipeReload);
+plProfile_Extern(AvRTPoolUsed);
+plProfile_Extern(AvRTPoolCount);
+plProfile_Extern(AvRTPoolRes);
+plProfile_Extern(AvRTShrinkTime);
+plProfile_Extern(NumSkin);
 
 #ifndef PLASMA_FORCE_PER_PIXEL_LIGHTING
 #define PLASMA_FORCE_PER_PIXEL_LIGHTING 0
@@ -132,44 +131,30 @@ constexpr size_t kMetalMaxLightCount = INT16_MAX;
 
 plMetalEnumerate plMetalPipeline::enumerator;
 
-class plRenderTriListFunc : public plRenderPrimFunc
+class plMetalRenderTriListFunc : public plRenderTriListFunc<plMetalDevice>
 {
-protected:
-    plMetalDevice* fDevice;
-    int            fBaseVertexIndex;
-    int            fVStart;
-    int            fVLength;
-    int            fIStart;
-    int            fNumTris;
-
 public:
-    plRenderTriListFunc(plMetalDevice* device, int baseVertexIndex,
+    plMetalRenderTriListFunc(plMetalDevice* device, int baseVertexIndex,
                         int vStart, int vLength, int iStart, int iNumTris)
-        : fDevice(device),
-          fBaseVertexIndex(baseVertexIndex),
-          fVStart(vStart),
-          fVLength(vLength),
-          fIStart(iStart),
-          fNumTris(iNumTris) {}
+        : plRenderTriListFunc(device, baseVertexIndex, vStart, vLength, iStart, iNumTris) {}
 
-    bool RenderPrims() const override;
+    bool RenderPrims() const override
+    {
+        plProfile_IncCount(DrawFeedTriangles, fNumTris);
+        plProfile_IncCount(DrawTriangles, fNumTris);
+        plProfile_Inc(DrawPrimStatic);
+
+        size_t uniformsSize = offsetof(VertexUniforms, uvTransforms) + sizeof(UVOutDescriptor) * fDevice->fPipeline->fCurrNumLayers;
+        if ( !(fDevice->fPipeline->fState.fCurrentVertexUniforms.has_value() && fDevice->fPipeline->fState.fCurrentVertexUniforms == *fDevice->fPipeline->fCurrentRenderPassUniforms) )
+        {
+            fDevice->fPipeline->fState.fCurrentVertexUniforms = *fDevice->fPipeline->fCurrentRenderPassUniforms;
+            fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms), VertexShaderArgumentFixedFunctionUniforms);
+        }
+
+        fDevice->CurrentRenderCommandEncoder()->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, fNumTris * 3, MTL::IndexTypeUInt16, fDevice->fCurrentIndexBuffer, (sizeof(uint16_t) * fIStart));
+    }
 };
 
-bool plRenderTriListFunc::RenderPrims() const
-{
-    plProfile_IncCount(DrawFeedTriangles, fNumTris);
-    plProfile_IncCount(DrawTriangles, fNumTris);
-    plProfile_Inc(DrawPrimStatic);
-
-    size_t uniformsSize = offsetof(VertexUniforms, uvTransforms) + sizeof(UVOutDescriptor) * fDevice->fPipeline->fCurrNumLayers;
-    if ( !(fDevice->fPipeline->fState.fCurrentVertexUniforms.has_value() && fDevice->fPipeline->fState.fCurrentVertexUniforms == *fDevice->fPipeline->fCurrentRenderPassUniforms) )
-    {
-        fDevice->fPipeline->fState.fCurrentVertexUniforms = *fDevice->fPipeline->fCurrentRenderPassUniforms;
-        fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms), VertexShaderArgumentFixedFunctionUniforms);
-    }
-    
-    fDevice->CurrentRenderCommandEncoder()->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, fNumTris * 3, MTL::IndexTypeUInt16, fDevice->fCurrentIndexBuffer, (sizeof(uint16_t) * fIStart));
-}
 
 plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord* devMode) : pl3DPipeline(devMode),
                                                                                                                     fRenderTargetRefList(),
@@ -1207,7 +1192,7 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
 
     /* Index Buffer stuff and drawing */
 
-    plRenderTriListFunc render(&fDevice, 0, vStart, vLength, iStart, iLength / 3);
+    plMetalRenderTriListFunc render(&fDevice, 0, vStart, vLength, iStart, iLength / 3);
 
     plProfile_EndTiming(RenderBuff);
 
@@ -1503,7 +1488,7 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
     fState.fCurrentVertexBuffer = vRef->GetBuffer();
     fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
 
-    plRenderTriListFunc render(&fDevice, 0, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength / 3);
+    plMetalRenderTriListFunc render(&fDevice, 0, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength / 3);
 
     for (int32_t pass = 0; pass < mRef->GetNumPasses(); pass++) {
         IHandleMaterialPass(material, pass, &span, vRef);
@@ -2969,18 +2954,6 @@ void plMetalPipeline::IDrawClothingQuad(float x, float y, float w, float h,
     return pipe;
 }*/
 
-// IClearShadowSlaves ///////////////////////////////////////////////////////////////////////////
-// At EndRender(), we need to clear our list of shadow slaves. They are only valid for one frame.
-void plMetalPipeline::IClearShadowSlaves()
-{
-    int i;
-    for (i = 0; i < fShadows.size(); i++) {
-        const plShadowCaster* caster = fShadows[i]->fCaster;
-        caster->GetKey()->UnRefObject();
-    }
-    fShadows.clear();
-}
-
 // Create all our video memory consuming D3D objects.
 bool plMetalPipeline::ICreateDynDeviceObjects()
 {
@@ -3774,7 +3747,7 @@ void plMetalPipeline::IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSp
     uint32_t iStart = span.fIPackedIdx;
     uint32_t iLength = span.fILength;
 
-    plRenderTriListFunc render(&fDevice, 0, vStart, vLength, iStart, iLength / 3);
+    plMetalRenderTriListFunc render(&fDevice, 0, vStart, vLength, iStart, iLength / 3);
 
     static hsMatrix44 emptyMatrix;
     hsMatrix44        m = emptyMatrix;
@@ -3980,26 +3953,13 @@ void plMetalPipeline::ISetupShadowSlaveTextures(plShadowSlave* slave)
     fCurrentRenderPassUniforms->uvTransforms[1].transform = hsMatrix2SIMD(cameraToLut);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//// View Stuff ///////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-//// IIsViewLeftHanded ////////////////////////////////////////////////////////
-//  Returns true if the combination of the local2world and world2camera
-//  matrices is left-handed.
-
-bool plMetalPipeline::IIsViewLeftHanded()
-{
-    return fView.GetViewTransform().GetOrthogonal() ^ (fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded) ? true : false;
-}
-
 //// ISetCullMode /////////////////////////////////////////////////////////////
 // Tests and sets the current winding order cull mode (CW, CCW, or none).
 // Will reverse the cull mode as necessary for left handed camera or local to world
 // transforms.
 void plMetalPipeline::ISetCullMode(bool flip)
 {
-    MTL::CullMode newCullMode = !IIsViewLeftHanded() ^ !flip ? MTL::CullModeFront : MTL::CullModeBack;
+    MTL::CullMode newCullMode = !fView.IsViewLeftHanded() ^ !flip ? MTL::CullModeFront : MTL::CullModeBack;
     if (fState.fCurrentCullMode != newCullMode) {
         fDevice.CurrentRenderCommandEncoder()->setCullMode(newCullMode);
         fState.fCurrentCullMode = newCullMode;
@@ -4009,66 +3969,6 @@ void plMetalPipeline::ISetCullMode(bool flip)
 plMetalDevice* plMetalPipeline::GetMetalDevice()  const
 {
     return &fDevice;
-}
-
-//// Local Static Stuff ///////////////////////////////////////////////////////
-
-// FIXME: CPU avatar stuff that should be evaluated once this moves onto the GPU.
-
-template <typename T>
-static inline void inlCopy(uint8_t*& src, uint8_t*& dst)
-{
-    T* src_ptr = reinterpret_cast<T*>(src);
-    T* dst_ptr = reinterpret_cast<T*>(dst);
-    *dst_ptr = *src_ptr;
-    src += sizeof(T);
-    dst += sizeof(T);
-}
-
-template <typename T>
-static inline const uint8_t* inlExtract(const uint8_t* src, T* val)
-{
-    const T* ptr = reinterpret_cast<const T*>(src);
-    *val = *ptr++;
-    return reinterpret_cast<const uint8_t*>(ptr);
-}
-
-template <>
-inline const uint8_t* inlExtract<hsPoint3>(const uint8_t* src, hsPoint3* val)
-{
-    const float* src_ptr = reinterpret_cast<const float*>(src);
-    float*       dst_ptr = reinterpret_cast<float*>(val);
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr = 1.f;
-    return reinterpret_cast<const uint8_t*>(src_ptr);
-}
-
-template <>
-inline const uint8_t* inlExtract<hsVector3>(const uint8_t* src, hsVector3* val)
-{
-    const float* src_ptr = reinterpret_cast<const float*>(src);
-    float*       dst_ptr = reinterpret_cast<float*>(val);
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr++ = *src_ptr++;
-    *dst_ptr = 0.f;
-    return reinterpret_cast<const uint8_t*>(src_ptr);
-}
-
-template <typename T, size_t N>
-static inline void inlSkip(uint8_t*& src)
-{
-    src += sizeof(T) * N;
-}
-
-template <typename T>
-static inline uint8_t* inlStuff(uint8_t* dst, const T* val)
-{
-    T* ptr = reinterpret_cast<T*>(dst);
-    *ptr++ = *val;
-    return reinterpret_cast<uint8_t*>(ptr);
 }
 
 //// ISoftwareVertexBlend ///////////////////////////////////////////////////////
