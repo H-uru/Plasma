@@ -11,6 +11,8 @@ set(plPipeline_SOURCES
     plPipelineViewSettings.cpp
     plPlates.cpp
     plRenderTarget.cpp
+    plSoftwareMeshSkinner.cpp
+    plSoftwareMeshSkinnerSSE3.cpp
     plStatusLogDrawer.cpp
     plTextFont.cpp
     plTransitionMgr.cpp
@@ -35,6 +37,7 @@ set(plPipeline_HEADERS
     plPipelineViewSettings.h
     plPlates.h
     plRenderTarget.h
+    plSoftwareMeshSkinner.h
     plStatusLogDrawer.h
     plStencil.h
     plTextFont.h
@@ -46,6 +49,7 @@ plasma_library(plPipeline
     SOURCES ${plPipeline_SOURCES} ${plPipeline_HEADERS}
     PRECOMPILED_HEADERS Pch.h
 )
+plasma_target_simd_sources(plPipeline SSE3 plSoftwareMeshSkinnerSSE3.cpp)
 target_link_libraries(plPipeline
     PUBLIC
         CoreLib
