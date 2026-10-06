@@ -123,10 +123,7 @@ class xRandomBoolChange(ptModifier):
             nearby = 0
 
         PtDebugPrint("RandomBoolChange script on object " + self.sceneobject.getName())
-        PtDebugPrint("Visible: " + str(visible))
-        PtDebugPrint("Enabled: " + str(enabled))
-        PtDebugPrint("Chance : " + str(chance))
-        PtDebugPrint("Nearby : " + str(nearby))
+        PtDebugPrint(f"{visible=} {enabled=} {chance=} {nearby=}")
 
         # check if the object is enabled
         if enabled:
