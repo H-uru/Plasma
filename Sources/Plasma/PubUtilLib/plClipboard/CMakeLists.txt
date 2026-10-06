@@ -1,7 +1,7 @@
 set(plClipboard_SOURCES
     plClipboard.cpp
     $<$<PLATFORM_ID:Darwin>:plClipboard_Mac.mm>
-
+    $<$<PLATFORM_ID:Windows>:plClipboard_Win.cpp>
 )
 
 set(plClipboard_HEADERS
