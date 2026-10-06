@@ -223,7 +223,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
             if PageNumber.value in {5, 16}:
                 # YeeshaPage07 (kickable) / YeeshaPage16 (firemarbles): put the physical back
                 # at its default recipe pose before suppressing it, so it's correct if re-enabled.
-                PtDebugPrint("psnlYeeshaPageChanges: Page was disabled, so we will reset the sync state on %s..." % self.sceneobject.getName())
+                PtDebugPrint(f"psnlYeeshaPageChanges: Page was disabled, so we will reset the sync state on {self.sceneobject.getName()}...")
                 self.sceneobject.physics.resetSyncState()
             self.sceneobject.draw.disable()
             self.sceneobject.physics.suppress(True)
