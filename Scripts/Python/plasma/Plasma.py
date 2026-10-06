@@ -2917,6 +2917,10 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """
         ...
 
+    def insertFontFace(self, fontFace):
+        """Inserts a font face change at the current cursor position. Applies to the rest of the line; pass an empty string for the default face."""
+        ...
+
     def insertLink(self, linkId: int) -> None:
         """Inserts a link hotspot at the current cursor position."""
         ...

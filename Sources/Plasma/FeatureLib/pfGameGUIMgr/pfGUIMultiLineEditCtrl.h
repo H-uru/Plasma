@@ -134,6 +134,10 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         hsColorRGBA fFontColor;
         uint8_t     fFontSize;
         uint8_t     fFontStyle;
+
+        // Buffer codes are fixed width, so a face code stores an index into
+        // this table instead of a face name. Index 0 means fFontFace.
+        std::vector<ST::string> fFontFaceTable;
         enum flagsSet
         {
             kFontFaceSet = 1,
@@ -159,9 +163,11 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         void    IReadColorCode( int32_t &pos, hsColorRGBA &color ) const;
         void    IReadStyleCode( int32_t &pos, uint8_t &fontStyle ) const;
+        void    IReadFaceCode( int32_t &pos, ST::string &fontFace ) const;
         uint32_t  IRenderLine( uint16_t x, uint16_t y, int32_t start, int32_t end, bool dontRender = false );
         bool    IFindLastColorCode( int32_t pos, hsColorRGBA &color, bool ignoreFirstCharacter = false ) const;
         bool    IFindLastStyleCode( int32_t pos, uint8_t &style, bool ignoreFirstCharacter = false ) const;
+        bool    IFindLastFaceCode( int32_t pos, ST::string &face, bool ignoreFirstCharacter = false ) const;
 
         inline static bool  IIsCodeChar( const wchar_t c );
         inline static bool  IIsRenderable( const wchar_t c );
@@ -170,6 +176,9 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         void    IActuallyInsertColor( int32_t pos, hsColorRGBA &color );
         void    IActuallyInsertStyle( int32_t pos, uint8_t style );
+        void    IActuallyInsertFace( int32_t pos, uint16_t faceIndex );
+
+        uint16_t IRegisterFontFace( const ST::string &fontFace );
         void    IActuallyInsertLink(int32_t pos, int16_t linkId);
 
         void    IUpdateScrollRange();
@@ -241,6 +250,13 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         void    InsertColor( hsColorRGBA &color );
         void    InsertStyle( uint8_t fontStyle );
+
+        /**
+         * Inserts a font face code at the cursor. Scoped to the current logical
+         * line: the face resets at the next newline, so no closing code is
+         * needed. Pass an empty string for the default face.
+         */
+        void    InsertFontFace( const ST::string &fontFace );
 
         /** Inserts a clickable hyperlink at the current cursor position. */
         void    InsertLink(int16_t linkId);
