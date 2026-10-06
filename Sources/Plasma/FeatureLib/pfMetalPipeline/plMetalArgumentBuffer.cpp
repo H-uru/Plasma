@@ -190,7 +190,7 @@ void plMetalLayerListArgumentBuffer::Set(const plLayerInterface* layer, const si
     // a draw) then we're ok and don't need to swap buffers.
     if(fBoundBufferIndex == fCurrentBufferIndex)
     {
-        MTL::Buffer* currentBuffer = fCurrentBufferIndex > -1 ? fBuffer[fCurrentBufferIndex].get() : nullptr;
+        MTL::Buffer* currentBuffer = fCurrentBufferIndex != -1 ? fBuffer[fCurrentBufferIndex].get() : nullptr;
         ConfigureBuffer();
         // Copy the previous layer list buffer into the new one
         // Only some layers might be updated - so we want to preserve the unchanged ones
