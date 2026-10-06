@@ -42,6 +42,8 @@ Mead, WA   99021
 
 #include "plClipboard.h"
 
+#include "hsDarwin.h"
+
 #include <string_theory/string>
 
 #import <AppKit/AppKit.h>
@@ -53,8 +55,11 @@ bool plClipboard::IsTextInClipboard()
 
 ST::string plClipboard::GetClipboardText()
 {
+    if (!IsTextInClipboard())
+        return ST::string();
+
     NSString* text = [[NSPasteboard generalPasteboard] stringForType:NSPasteboardTypeString];
-    return text ? ST::string::from_utf8([text UTF8String]) : ST::string();
+    return text ? STStringFromNSString(text) : ST::string();
 }
 
 void plClipboard::SetClipboardText(const ST::string& text)
@@ -62,7 +67,11 @@ void plClipboard::SetClipboardText(const ST::string& text)
     if (text.empty())
         return;
 
+    NSString* str = NSStringCreateWithSTString(text);
+
     NSPasteboard* pb = [NSPasteboard generalPasteboard];
     [pb clearContents];
-    [pb setString:[NSString stringWithUTF8String:text.c_str()] forType:NSPasteboardTypeString];
+    [pb setString:str forType:NSPasteboardTypeString];
+
+    [str release];
 }
