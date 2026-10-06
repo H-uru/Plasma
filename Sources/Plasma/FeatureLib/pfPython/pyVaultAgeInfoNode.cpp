@@ -234,6 +234,24 @@ void pyVaultAgeInfoNode::SetAgeInstanceGuid(const ST::string& sguid)
     }
 }
 
+plUUID pyVaultAgeInfoNode::GetParentAgeInstanceGuid() const
+{
+    if (fNode) {
+        VaultAgeInfoNode access(fNode);
+
+        return access.GetParentAgeInstanceGuid();
+    }
+    return kNilUuid;
+}
+
+void pyVaultAgeInfoNode::SetParentAgeInstanceGuid(const ST::string& sguid)
+{
+    if (fNode) {
+        VaultAgeInfoNode access(fNode);
+        access.SetParentAgeInstanceGuid(plUUID(sguid));
+    }
+}
+
 ST::string pyVaultAgeInfoNode::GetAgeDescription() const
 {
     if (fNode) {

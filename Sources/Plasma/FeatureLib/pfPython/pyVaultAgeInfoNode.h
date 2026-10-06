@@ -90,6 +90,9 @@ public:
     plUUID  GetAgeInstanceGuid() const;
     void    SetAgeInstanceGuid(const ST::string& guid);
 
+    plUUID GetParentAgeInstanceGuid() const;
+    void   SetParentAgeInstanceGuid(const ST::string& guid);
+
     ST::string GetAgeDescription() const;
     void     SetAgeDescription(const ST::string& v);
 
