@@ -126,7 +126,7 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisp
         // Xcode 13 should not be used to generate an actual
         // Mac client release if it does not compile the Metal 3
         // path. But this is useful for development.
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_VERSION_13_0
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= 130000
         if (@available(macOS 13.0, *)) {
             if ([device supportsFamily:MTLGPUFamilyMetal3]) {
                 devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeMetal3);
