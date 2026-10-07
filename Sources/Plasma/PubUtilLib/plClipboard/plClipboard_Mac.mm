@@ -42,31 +42,36 @@ Mead, WA   99021
 
 #include "plClipboard.h"
 
-#include "HeadSpin.h"
+#include "hsDarwin.h"
 
 #include <string_theory/string>
 
-plClipboard& plClipboard::GetInstance()
-{
-    static plClipboard theInstance;
-    return theInstance;
-}
-
-// Platform implementations live in plClipboard_Win.cpp and plClipboard_Mac.mm
-#if !defined(HS_BUILD_FOR_WIN32) && !defined(HS_BUILD_FOR_APPLE)
+#import <AppKit/AppKit.h>
 
 bool plClipboard::IsTextInClipboard()
 {
-    return false;
+    return [[NSPasteboard generalPasteboard] availableTypeFromArray:@[NSPasteboardTypeString]] != nil;
 }
 
 ST::string plClipboard::GetClipboardText()
 {
-    return ST::string();
+    if (!IsTextInClipboard())
+        return ST::string();
+
+    NSString* text = [[NSPasteboard generalPasteboard] stringForType:NSPasteboardTypeString];
+    return text ? STStringFromNSString(text) : ST::string();
 }
 
 void plClipboard::SetClipboardText(const ST::string& text)
 {
-}
+    if (text.empty())
+        return;
 
-#endif
+    NSString* str = NSStringCreateWithSTString(text);
+
+    NSPasteboard* pb = [NSPasteboard generalPasteboard];
+    [pb clearContents];
+    [pb setString:str forType:NSPasteboardTypeString];
+
+    [str release];
+}
