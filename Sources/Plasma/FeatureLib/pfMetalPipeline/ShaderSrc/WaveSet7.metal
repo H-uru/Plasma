@@ -394,7 +394,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
 
 fragment float4 ps_WaveFixed(vs_WaveFixedFin7InOut in           [[stage_in]],
                              texture2d<float> normalMap         [[ texture(0) ]],
-                             texturecube<float> environmentMap  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 3) ]])
+                             texturecube<float> environmentMap  [[ texture(3) ]])
 {
     // Short pixel shader. Use the texm3x3vspec to do a per-pixel
     // reflected lookup into our environment map.

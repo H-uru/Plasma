@@ -140,6 +140,7 @@ void plMetalTextFont::IDrawPrimitive(uint32_t count, plFontVertex* array)
     plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalTextFontPipelineState(fDevice).GetRenderPipelineState();
 
     fPipeline->fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
+    fPipeline->fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(fTexture, 0);
     constexpr size_t    maxCount = 4096 / (sizeof(plFontVertex) * 3);
     
     uint drawn = 0;

@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Metal/Metal.hpp>
 
 #include "plMetalDevice.h"
+#include "plSurface/plLayer.h"
 #include "ShaderTypes.h"
 
 class plMetalDevice;
@@ -86,12 +87,13 @@ protected:
     plMetalArgumentBufferTier fTier;
     // Current buffer in the triple buffer rotation
     size_t                      fCurrentBufferIndex;
+    // Size of each argument buffer
+    size_t                      fBufferSize;
 
 public:
     plMetalArgumentBuffer(plMetalDevice* device, size_t numElements)
-        : fDevice(device), fNumElements(numElements), fEncoder()
+        : fDevice(device), fNumElements(numElements), fEncoder(), fCurrentBufferIndex(-1)
     {
-        fCurrentBufferIndex = -1;
         auto tier = std::min(device->ArgumentBuffersTier(), static_cast<MTL::ArgumentBuffersTier>(plMetalArgumentBufferTier::Tier2));
         fTier = plMetalArgumentBufferTier(tier);
     };
@@ -132,16 +134,18 @@ private:
     {
         if (!fEncoder)
             fEncoder = NS::TransferPtr(fDevice->fMetalDevice->newArgumentEncoder(GetArgumentDescriptors()));
+        fBufferSize = fEncoder->encodedLength() * fNumElements;
         if (!fBuffer[fCurrentBufferIndex])
-            fBuffer[fCurrentBufferIndex] = NS::TransferPtr(fDevice->fMetalDevice->newBuffer(fEncoder->encodedLength() * fNumElements, MTL::CPUCacheModeWriteCombined));
+            fBuffer[fCurrentBufferIndex] = NS::TransferPtr(fDevice->fMetalDevice->newBuffer(fBufferSize, MTL::CPUCacheModeWriteCombined));
         // raw access to buffer not available in tier 1 argument buffers
         fValue = nullptr;
     }
 
     void ConfigureTier2()
     {
+        fBufferSize = sizeof(T) * fNumElements;
         if (!fBuffer[fCurrentBufferIndex])
-            fBuffer[fCurrentBufferIndex] = NS::TransferPtr(fDevice->fMetalDevice->newBuffer(sizeof(T) * fNumElements, MTL::CPUCacheModeWriteCombined));
+            fBuffer[fCurrentBufferIndex] = NS::TransferPtr(fDevice->fMetalDevice->newBuffer(fBufferSize, MTL::CPUCacheModeWriteCombined));
         fValue = static_cast<T*>(fBuffer[fCurrentBufferIndex]->contents());
         // Encoders are not used in tier 2 argument buffers
         fEncoder.reset();
@@ -171,6 +175,30 @@ protected:
 
 private:
     std::vector<plMetalBumpMapping> fBumps;
+};
+
+class plMetalLayerListArgumentBuffer final : public plMetalArgumentBuffer<plMetalLayer>
+{
+public:
+    void Set(const plLayerInterface* layers, const size_t index);
+    plMetalLayerListArgumentBuffer(plMetalDevice* device, size_t numElements);
+    void Bind(MTL::RenderCommandEncoder* encoder);
+    bool CheckBuffer(const plLayerInterface* layer, const size_t index);
+
+protected:
+    virtual NS::Array* GetArgumentDescriptors() const override;
+
+private:
+    size_t fBoundBufferIndex;
+    struct plMetalLayerRecord
+    {
+        MTL::Texture* texture;
+        MTL::Texture* texture3D;
+        MTL::SamplerState* sampler;
+
+        plMetalLayerRecord(): texture(), texture3D(), sampler() {}
+    };
+    std::vector<plMetalLayerRecord> fLayers;
 };
 
 #endif /* plMetalArgumentBuffer_hpp */
