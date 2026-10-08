@@ -49,7 +49,6 @@ from PlasmaTypes import *
 import abc
 from dataclasses import dataclass, field
 import enum
-import itertools
 import random
 from typing import *
 import weakref
@@ -71,6 +70,20 @@ kQuabAvatarName = "Quab"
 kQuabIdleBehNames = ("Idle02", "Idle03",)
 kQuabRunBehNames  = ("Run02", "Run03",)
 
+class _CloneState(enum.Flag):
+    kUnknown = 0
+    kReady = enum.auto()
+
+    kNeedsRespawn = enum.auto()
+    """Indicates the clone needs to be spawned on the next update loop"""
+
+    kNeedsXform = enum.auto()
+    """Formerly ``_QuabState.respawn``"""
+
+    kWaitingForAI = enum.auto()
+    """Formerly ``_QuabState.pending``"""
+
+
 @dataclass
 class _QuabVar:
     name: str
@@ -90,8 +103,7 @@ class _QuabState:
     brain: Optional[ptCritterBrain] = field(compare=False)
     lastXform: ptMatrix44 = field(compare=False)
     lastW2L: ptMatrix44 = field(compare=False)
-    respawn: bool = field(compare=False)
-    pending: bool = field(compare=False)
+    state: _CloneState = field(compare=False)
 
     def __init__(self, num: int):
         # Argh, Cyan's code offsets the quab name and variable indices!
@@ -106,8 +118,7 @@ class _QuabState:
         self.goalVarZ = _QuabVar(f"QuabGPZ{kMaxNumQuabs + num + 1}")
         self.brain = None
         self.lastXform = ptMatrix44()
-        self.respawn = False
-        self.pending = False
+        self.state = _CloneState.kUnknown
 
     @property
     def avatarListSorted(self) -> List[ptSceneobject]:
@@ -270,7 +281,10 @@ class _QuabGameBrain(abc.ABC):
 
     @property
     def numQuabs(self) -> int:
-        return len([i for i in self.quabState if i.brain is not None or i.pending])
+        return len([
+            i for i in self.quabState
+            if _CloneState.kReady in i.state or _CloneState.kWaitingForAI in i.state
+        ])
 
     @property
     def parent(self) -> ahnyQuabs:
@@ -460,9 +474,7 @@ class ahnyQuabs(ptModifier):
         self.id = 5946
         self.version = 2
 
-        self._ageUnLoading = False
         self._brain = None
-        self._respawnQueue = []
         self._aiMsgHandlers = {
             PtAIMsgType.kBrainCreated: self.OnAIMsg_BrainCreated,
             PtAIMsgType.kArrivedAtGoal: self.OnAIMsg_ArrivedAtGoal,
@@ -523,10 +535,6 @@ class ahnyQuabs(ptModifier):
         # Maybe we're ready to do this, maybe not.
         self.SpawnQuabs()
 
-    def BeginAgeUnLoad(self, localAv: ptSceneobject):
-        PtDebugPrint("ahnyQuabs.BeginAgeUnLoad(): Taking note of this.", level=kWarningLevel)
-        self._ageUnLoading = True
-
     def OnOwnershipChanged(self):
         PtDebugPrint(f"ahnyQuabs.OnOwnershipChanged(): {self.sceneobject.isLocallyOwned()=} {self._brain.amOwner=}", level=kWarningLevel)
         if self._brain.amOwner:
@@ -541,12 +549,15 @@ class ahnyQuabs(ptModifier):
         # Or, at worst, no quabs. So, to fix that, completely despawn and respawn all quabs.
         for quab in (i for i in self._brain.quabs if not i.brain.getLocallyControlled()):
             PtDebugPrint(f"ahnyQuabs.HandlerOwnershipChange(): Despawning {quab.name=}", level=kWarningLevel)
+            # The flags will be adjusted when we get the brain destroyed notification.
             PtUnLoadAvatarModel(quab.brain.getSceneObject().getKey())
 
-        # The underlying sceneobject has changed ownership, so the previous owner of the game might be gone. This could mean that
-        # quab brains have been thrown out from under us. Respawn any that should still be alive. This will NOT cause the
-        # ones despawned above to be respawned. They will be respawned after the brains get tossed.
-        self.SpawnQuabs(respawn=True)
+        # Ensure that the proper initial load of quabs is spawned in. We could have "missing" quabs
+        # if the ownership change happened at a very weird time, like the previous owner quit while
+        # setting things up. It shouldn't happen, but it's better to be safe than sorry. Any quabs
+        # that were forcibly pitched above will be respawned when we get their brain self-destruct
+        # notice.
+        self.SpawnQuabs()
 
     def AvatarPage(self, avatar: ptSceneobject, loading: bool, lastOut: bool):
         PtDebugPrint(
@@ -585,19 +596,21 @@ class ahnyQuabs(ptModifier):
         if quab := self._brain.findQuab(userStr):
             self._PrepCritterBrain(quab, brain)
 
-            if self._brain.amOwner:
-                if quab.respawn:
-                    PtDebugPrint(f"ahnyQuabs.OnAIMsg_BrainCreated(): {userStr=} was respawned, moving to previous location", level=kWarningLevel)
+            # This flag is set by the client spawning the quab, so we know that we're the creator
+            # of the quab. That's an implicit ownership check and good enough for me.
+            if _CloneState.kNeedsXform in quab.state:
+                PtDebugPrint(f"ahnyQuabs.OnAIMsg_BrainCreated(): {userStr=} moving to previous location", level=kWarningLevel)
 
-                    # We requested that the quab spawn into a specific spawn point (because we have to). Spawning is done by sending a WarpMsg
-                    # after the avatar is loaded. That means to override the spawn point, we need to send a WarpMsg from Python, otherwise any direct
-                    # transform settings we apply will simply be blown away by the WarpMsg. The only way to do this is to use the pPhysics.warp() functions.
-                    quabSO = brain.getSceneObject()
-                    quabSO.physics.netForce(True)
-                    quabSO.physics.warp(quab.lastXform)
-                    quab.respawn = False
-                if self._brain.ready:
-                    self._UpdateQuabGoal(quab, force=True, sync=True)
+                # We requested that the quab spawn into a specific spawn point (because we have to). Spawning is done by sending a WarpMsg
+                # after the avatar is loaded. That means to override the spawn point, we need to send a WarpMsg from Python, otherwise any direct
+                # transform settings we apply will simply be blown away by the WarpMsg. The only way to do this is to use the pPhysics.warp() functions.
+                quabSO = brain.getSceneObject()
+                quabSO.physics.netForce(True)
+                quabSO.physics.warp(quab.lastXform)
+                quab.state &= ~_CloneState.kNeedsXform
+
+            if self._brain.amOwner and self._brain.ready:
+                self._UpdateQuabGoal(quab, force=True, sync=True)
 
     def OnAIMsg_ArrivedAtGoal(self, brain: ptCritterBrain, userStr: str, goal: ptPoint3):
         PtDebugPrint(f"ahnyQuabs.OnAIMsg_ArrivedAtGoal(): {userStr=} {goal=}", level=kDebugDumpLevel)
@@ -622,18 +635,18 @@ class ahnyQuabs(ptModifier):
             return
 
         # IMPORTANT: Do *NOT* hold on to the quab's brain any longer. Bad things will happen!
+        quab.state &= ~_CloneState.kReady
         quab.brain = None
 
-        if not self._ageUnLoading and self._brain.amOwner:
-            PtDebugPrint(f"ahnyQuabs.OnAIMsg_BrainDestroyed(): I need to respawn {quab.name=}!", level=kWarningLevel)
-            quab.respawn = True
-            quab.pending = True
-            # defer the actual loading to the next Update so we do not respawn stuff if we ourselves quit the game
-            self._respawnQueue.append(userStr)
-        elif not self._ageUnLoading and not self._brain.amOwner:
-            PtDebugPrint(f"ahnyQuabs.OnAIMsg_BrainDestroyed(): {quab.name=} needs to be respawned, but I'm not the owner!", level=kWarningLevel)
-        else:
-            PtDebugPrint(f"ahnyQuabs.OnAIMsg_BrainDestroyed(): {quab.name=} says, 'Goodbye, cruel world!'", level=kWarningLevel)
+        # When a quab is killed by a player, its AI is not actually destroyed/unloaded. Instead, it's
+        # just allowed to chill below the Age. That means if we get here, the quab was unloaded
+        # by an ownership transfer (or by the respawn backdoor message). It needs to be respawned,
+        # but there's no formal rule around when the ownership transfer will actually happen. In
+        # practice, the new owner pitches anything the server hasn't already pitched due to bugs.
+        # So, register this quab for a respawn. On the next update loop that someone is the owner,
+        # it will be respawned and warped into the correct location.
+        PtDebugPrint(f"ahnyQuabs.OnAIMsg_BrainDestroyed(): Someone needs to respawn {quab.name=}!", level=kWarningLevel)
+        quab.state |= _CloneState.kNeedsRespawn | _CloneState.kWaitingForAI
 
     def OnAIMsg_GoToGoal(self, brain: ptCritterBrain, userStr: str, goal: ptPoint3, avoid: bool):
         PtDebugPrint(f"ahnyQuabs.OnAIMsg_GoToGoal(): {userStr=} {goal=} {avoid=}", level=kDebugDumpLevel)
@@ -642,20 +655,24 @@ class ahnyQuabs(ptModifier):
         if self._brain is None:
             return
 
-        # Handle deferred respawns
-        while self._respawnQueue:
-            PtLoadAvatarModel(kQuabAvatarName, quabObjects.value[0].getKey(), self._respawnQueue.pop(0))
-
-        # Stash the current transform of each quab, just in case we need to respawn it.
-        for quab, so in ((i, i.brain.getSceneObject()) for i in self._brain.quabs if not i.pending):
-            quab.lastXform = so.getLocalToWorld()
+        self._StashQuabXforms()
         self._UpdateQuabs(sync=True)
+
+    def _StashQuabXforms(self):
+        # Stash the current transform of each quab, just in case we need to respawn it.
+        for quab in self._brain.quabs:
+            if quab.brain is not None and _CloneState.kReady in quab.state:
+                quab.lastXform = quab.brain.getSceneObject().getLocalToWorld()
 
     def _UpdateQuabs(self, *, sync: bool = False):
         if not self._brain.ready:
             return
         if not self._brain.amOwner:
             return
+
+        for quab in self._brain.quabState:
+            if _CloneState.kNeedsRespawn in quab.state:
+                self._SpawnQuab(quab)
 
         quabs = list(self._brain.quabs)
         for quab in quabs:
@@ -742,7 +759,15 @@ class ahnyQuabs(ptModifier):
             PtDebugPrint(f"ahnyQuabs.OnQuabVarUpdate(): Valid goal {delVars=} {quab.brain.atGoal()=} {quab.goal=}", level=kDebugDumpLevel)
             quab.runAway(True, quab.goal)
 
-    def SpawnQuabs(self, *, respawn: bool = False):
+    def _SpawnQuab(self, quab: _QuabState):
+        """Respawns a specific quab that had previously been spawned and despawned"""
+        PtDebugPrint(f"ahnyQuabs._SpawnQuab(): I need to spawn {quab.name=}!", level=kWarningLevel)
+        PtLoadAvatarModel(kQuabAvatarName, quabObjects.value[0].getKey(), quab.name)
+        quab.state &= ~_CloneState.kNeedsRespawn
+        quab.state |= _CloneState.kNeedsXform
+
+    def SpawnQuabs(self):
+        """Spawns the initial load of quabs for the game"""
         if not self._brain.ready:
             PtDebugPrint(f"ahnyQuabs.SpawnQuabs(): {self._brain.__class__.__name__} is not ready!", level=kWarningLevel)
             return
@@ -759,20 +784,21 @@ class ahnyQuabs(ptModifier):
 
         # Count up from however many quabs there are (should be zero) to the
         # final number. Also, pair it with a non-spawned quab.
-        PtDebugPrint(f"ahnyQuabs.SpawnQuabs(): Spawning... {self._NumQuabs=} {self._brain.numQuabs=} {respawn=}", level=kWarningLevel)
+        PtDebugPrint(f"ahnyQuabs.SpawnQuabs(): Spawning... {self._NumQuabs=} {self._brain.numQuabs=}", level=kWarningLevel)
         counter = range(self._brain.numQuabs, self._NumQuabs)
-        quabs = itertools.takewhile(lambda x: x.brain is None and not x.pending, self._brain.quabState)
+        quabs = (
+            i for i in self._brain.quabState
+            if not (i.state & (_CloneState.kReady | _CloneState.kWaitingForAI))
+        )
         for i, quab in zip(counter, quabs):
             # We'll get him in OnAIMsg_OnBrainCreated()
             PtDebugPrint(f"ahnyQuabs.SpawnQuabs(): Spawning... {quab.name=}", level=kDebugDumpLevel)
+            quab.state |= _CloneState.kWaitingForAI
             PtLoadAvatarModel(kQuabAvatarName, qSpawns[i].getKey(), quab.name)
-            # We can't move him now - he's not actually loaded yet.
-            quab.respawn = respawn
-            quab.pending = True
 
     def _PrepCritterBrain(self, quab: _QuabState, brain: ptCritterBrain):
         quab.brain = brain
-        quab.pending = False
+        quab.state &= ~(_CloneState.kNeedsRespawn | _CloneState.kWaitingForAI)
 
         brain.addReceiver(self.key)
         brain.setLocallyControlled(self._brain.amOwner)
@@ -780,6 +806,8 @@ class ahnyQuabs(ptModifier):
             brain.addBehavior(beh, brain.idleBehaviorName())
         for beh in kQuabRunBehNames:
             brain.addBehavior(beh, brain.runBehaviorName(), randomStartPos=0)
+
+        quab.state |= _CloneState.kReady
 
     def OnBackdoorMsg(self, target: str, param: str):
         if not self._brain.amOwner:
