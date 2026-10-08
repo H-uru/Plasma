@@ -4055,6 +4055,12 @@ class ptPhysics:
         """
         ...
 
+    def resetSyncState(self):
+        """Resets the physical to its default recipe pose (position, rotation, and velocities).
+        Same effect as the console command Physics.ResetKickables, but scoped to just this object.
+        """
+        ...
+
     def rotate(self, radians, axis):
         """Rotates the attached sceneobject the specified radians around the specified axis"""
         ...
