@@ -247,6 +247,10 @@ static void IUnRegisterAs(T*& ko, plFixedKeyId id)
 
 bool plClient::Shutdown()
 {
+    // Unload the current age and trigger Python callback
+    if (plAgeLoader* al = plAgeLoader::GetInstance())
+        al->UnloadAge();
+
     plSynchEnabler ps(false);   // disable dirty state tracking during shutdown 
     delete fProgressBar;
 
