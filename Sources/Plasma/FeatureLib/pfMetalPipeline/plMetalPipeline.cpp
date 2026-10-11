@@ -2853,6 +2853,9 @@ void plMetalPipeline::IPreprocessAvatarTextures()
             NS::Error* error = nullptr;
             baseAvatarRenderState = fDevice.fMetalDevice->newRenderPipelineState(descriptor, &error);
 
+            // Guarantee that the layers argument buffers are immutable for performance reasons
+            descriptor->fragmentBuffers()->object(FragmentShaderLayers)->setMutability(MTL::MutabilityImmutable);
+
             descriptor->colorAttachments()->object(0)->setBlendingEnabled(true);
             descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
             descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
@@ -4286,6 +4289,10 @@ hsGDeviceRef* plMetalPipeline::MakeTextureRef(plBitmap* bitmap)
 
 void plMetalPipeline::IReloadTexture(plBitmap* bitmap, plMetalTextureRef* ref)
 {
+    // The D3D9 version of this function changes the contents of the texture.
+    // With Metal we need to explicitly buffer resources for double/triple
+    // buffering. Perform texture orphaning instead of updated the texture.
+
     plMipmap* mip = plMipmap::ConvertNoRef(bitmap);
     if (mip) {
         fDevice.MakeTextureRef(ref, mip);
