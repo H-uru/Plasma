@@ -213,6 +213,8 @@ void plMetalLayerListArgumentBuffer::Set(const plLayerInterface* layer, const si
         if (texture == nullptr) {
             layerRecord.texture = nullptr;
             layerRecord.texture3D = nullptr;
+            fEncoder->setTexture(nullptr, 1);
+            fEncoder->setTexture(nullptr, 0);
             return;
         }
         plMetalTextureRef* deviceTexture = (plMetalTextureRef*)texture->GetDeviceRef();
@@ -230,6 +232,7 @@ void plMetalLayerListArgumentBuffer::Set(const plLayerInterface* layer, const si
             layerRecord.texture3D = nullptr;
             fEncoder->setTexture(deviceTexture->fTexture, 0);
         }
+        layerRecord.textureGeneration = deviceTexture->fGeneration;
 
         MTL::SamplerState* samplerState = fDevice->SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(layer->GetClampFlags()));
         fLayers[layerIndex].sampler = samplerState;
@@ -263,6 +266,7 @@ void plMetalLayerListArgumentBuffer::Set(const plLayerInterface* layer, const si
             layerRecord.texture = deviceTexture->fTexture;
             buffer.texture = deviceTexture->fTexture->gpuResourceID();
         }
+        layerRecord.textureGeneration = deviceTexture->fGeneration;
 
         MTL::SamplerState* samplerState = fDevice->SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(layer->GetClampFlags()));
         layerRecord.sampler = samplerState;
@@ -293,8 +297,12 @@ bool plMetalLayerListArgumentBuffer::CheckBuffer(const plLayerInterface* layer, 
     if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
         if (fLayers[i].texture3D != deviceTexture->fTexture)
             return false;
+        if (fLayers[i].textureGeneration != deviceTexture->fGeneration)
+            return false;
     } else if (plMipmap::ConvertNoRef(texture) != nullptr || plRenderTarget::ConvertNoRef(texture) != nullptr) {
         if (fLayers[i].texture != deviceTexture->fTexture)
+            return false;
+        if (fLayers[i].textureGeneration != deviceTexture->fGeneration)
             return false;
     }
 

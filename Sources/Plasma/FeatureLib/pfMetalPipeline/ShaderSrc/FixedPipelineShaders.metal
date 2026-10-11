@@ -92,24 +92,6 @@ constant const uint8_t sourceTypes[MAX_BLEND_PASSES] = { sourceType1, sourceType
 constant const uint32_t blendModes[MAX_BLEND_PASSES] = { blendModes1, blendModes2, blendModes3, blendModes4, blendModes5, blendModes6, blendModes7, blendModes8};
 constant const uint8_t passCount = (sourceType1 > 0) + (sourceType2 > 0) + (sourceType3 > 0) + (sourceType4 > 0) + (sourceType5 > 0) + (sourceType6 > 0) + (sourceType7 > 0) + (sourceType8 > 0);
     
-constant const bool has2DTexture1 = (sourceType1 == PassTypeTexture && hasLayer1);
-constant const bool has2DTexture2 = (sourceType2 == PassTypeTexture && hasLayer2);
-constant const bool has2DTexture3 = (sourceType3 == PassTypeTexture && hasLayer3);
-constant const bool has2DTexture4 = (sourceType4 == PassTypeTexture && hasLayer4);
-constant const bool has2DTexture5 = (sourceType5 == PassTypeTexture && hasLayer5);
-constant const bool has2DTexture6 = (sourceType6 == PassTypeTexture && hasLayer6);
-constant const bool has2DTexture7 = (sourceType7 == PassTypeTexture && hasLayer7);
-constant const bool has2DTexture8 = (sourceType8 == PassTypeTexture && hasLayer8);
-
-constant const bool hasCubicTexture1 = (sourceType1 == PassTypeCubicTexture && hasLayer1);
-constant const bool hasCubicTexture2 = (sourceType2 == PassTypeCubicTexture && hasLayer2);
-constant const bool hasCubicTexture3 = (sourceType3 == PassTypeCubicTexture && hasLayer3);
-constant const bool hasCubicTexture4 = (sourceType4 == PassTypeCubicTexture && hasLayer4);
-constant const bool hasCubicTexture5 = (sourceType5 == PassTypeCubicTexture && hasLayer5);
-constant const bool hasCubicTexture6 = (sourceType6 == PassTypeCubicTexture && hasLayer6);
-constant const bool hasCubicTexture7 = (sourceType7 == PassTypeCubicTexture && hasLayer7);
-constant const bool hasCubicTexture8 = (sourceType8 == PassTypeCubicTexture && hasLayer8);
-    
 constant const bool hasBumpMap1 = (numBumpMaps > 0);
 constant const bool hasBumpMap2 = (numBumpMaps > 1);
 constant const bool hasBumpMap3 = (numBumpMaps > 2);
