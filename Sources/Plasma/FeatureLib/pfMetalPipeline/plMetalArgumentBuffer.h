@@ -195,6 +195,7 @@ private:
         MTL::Texture* texture;
         MTL::Texture* texture3D;
         MTL::SamplerState* sampler;
+        size_t textureGeneration;
 
         plMetalLayerRecord(): texture(), texture3D(), sampler() {}
     };
