@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plDrawable/plGBufferGroup.h"
 #include "plSurface/plShader.h"
+#include "plSurface/plShaderTable.h"
 
 plDXVertexShader::plDXVertexShader(plShader* owner)
 :   plDXShader(owner), fHandle()
@@ -67,11 +68,6 @@ void plDXVertexShader::Release()
     fHandle = nullptr;
     fPipe = nullptr;
     fErrorString.clear();
-}
-
-bool plDXVertexShader::VerifyFormat(uint8_t format) const
-{
-    return (fOwner->GetInputFormat() & format) == fOwner->GetInputFormat();
 }
 
 IDirect3DVertexShader9 *plDXVertexShader::GetShader(plDXPipeline* pipe)
@@ -98,7 +94,7 @@ HRESULT plDXVertexShader::ICreate(plDXPipeline* pipe)
     // We could store the compiled buffer and skip the assembly step
     // if we need to recreate the shader (e.g. on device lost).
     // But whatever.
-    DWORD* shaderCodes = (DWORD*)(fOwner->GetDecl()->GetCodes());
+    DWORD* shaderCodes = (DWORD*)(plShaderTable::Decl(fOwner->GetShaderID())->GetCodes());
 
     if( !shaderCodes )
         return IOnError(-1, ST_LITERAL("Shaders must be compiled into the engine."));

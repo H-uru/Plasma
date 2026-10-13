@@ -1804,7 +1804,7 @@ void plWaveSet7::IAddBumpBiasShaders(plLayer* layer)
 {
     if( !fBiasVShader )
     {
-        plShader* vShader = new plShader;
+        plShader* vShader = new plShader(vs_BiasNormals);
 
         ST::string buff = ST::format("{}_BiasVS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
@@ -1848,13 +1848,6 @@ void plWaveSet7::IAddBumpBiasShaders(plLayer* layer)
             0.f,
             1.f);
 
-        vShader->SetInputFormat(1);
-        vShader->SetOutputFormat(0);
-
-//      static const plShaderDecl vDecl("sha/vs_BiasNormals.inl");
-//      vShader->SetDecl(&vDecl);
-        vShader->SetDecl(plShaderTable::Decl(vs_BiasNormals));
-
         hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBiasVShader), plRefFlags::kActiveRef);
 
 
@@ -1867,20 +1860,13 @@ void plWaveSet7::IAddBumpBiasShaders(plLayer* layer)
 
     if( !fBiasPShader )
     {
-        plShader* pShader = new plShader;
+        plShader* pShader = new plShader(ps_BiasNormals);
 
         ST::string buff = ST::format("{}_BiasPS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
         pShader->SetIsPixelShader(true);
         
         pShader->SetNumConsts(plBiasPS::kNumConsts);
-
-        pShader->SetInputFormat(0);
-        pShader->SetOutputFormat(0);
-
-//      static const plShaderDecl pDecl("sha/ps_BiasNormals.inl");
-//      pShader->SetDecl(&pDecl);
-        pShader->SetDecl(plShaderTable::Decl(ps_BiasNormals));
 
         hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBiasPShader), plRefFlags::kActiveRef);
 
@@ -1901,7 +1887,7 @@ void plWaveSet7::IAddBumpVertexShader(hsGMaterial* mat, int iShader, int iFirst,
         {
             int iShader = iBase / kBumpPerPass;
 
-            plShader* vShader = new plShader;
+            plShader* vShader = new plShader(vs_CompCosines);
             ST::string buff = ST::format("{}_BumpVS_{}", GetKey()->GetName(), iShader);
             hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
             vShader->SetIsPixelShader(false);
@@ -1914,17 +1900,12 @@ void plWaveSet7::IAddBumpVertexShader(hsGMaterial* mat, int iShader, int iFirst,
                 1.f,
                 2.f);
 
-            vShader->SetInputFormat(1);
-            vShader->SetOutputFormat(0);
-
             vShader->SetNumPipeConsts(kBumpPerPass);
             int i;
             for( i = 0; i < kBumpPerPass; i++ )
             {
                 vShader->SetPipeConst(i, static_cast<plPipeConst::Type>(plPipeConst::kTex1x4_0 + i), plBumpVS::kUXform0 + i);
             }
-
-            vShader->SetDecl(plShaderTable::Decl(vs_CompCosines));
 
             hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iShader, kRefBumpVShader), plRefFlags::kActiveRef);
 
@@ -1946,7 +1927,7 @@ void plWaveSet7::IAddBumpPixelShader(hsGMaterial* mat, int iShader, int iFirst, 
         {
             int iShader = iBase / kBumpPerPass;
 
-            plShader* pShader = new plShader;
+            plShader* pShader = new plShader(ps_MoreCosines);
             ST::string buff = ST::format("{}_BumpPS_{}", GetKey()->GetName(), iShader);
             hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
             pShader->SetIsPixelShader(true);
@@ -1962,16 +1943,6 @@ void plWaveSet7::IAddBumpPixelShader(hsGMaterial* mat, int iShader, int iFirst, 
                     1.f,
                     1.f);
             }
-
-            pShader->SetInputFormat(0);
-            pShader->SetOutputFormat(0);
-
-        //  pShader->SetShaderFileName("sha/ps_CompCosines.inl");
-        //  pShader->SetShaderFileName("sha/ps_TestPos.inl");
-//          static const plShaderDecl moreDecl("sha/ps_MoreCosines.inl");
-//          pShader->SetDecl(&moreDecl);
-
-            pShader->SetDecl(plShaderTable::Decl(ps_MoreCosines));
 
             pShader->SetVector(plBumpPS::kHalfOne, 0.25f, 0.25f, 0.25f, 1.f);
 
@@ -2247,16 +2218,13 @@ void plWaveSet7::IAddShoreVertexShader(hsGMaterial* mat)
     if( !fShoreVShader )
     {
 
-        plShader* vShader = new plShader;
+        plShader* vShader = new plShader(vs_ShoreLeave7);
 
         ST::string buff = ST::format("{}_ShoreVS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
         vShader->SetIsPixelShader(false);
         
         vShader->SetNumConsts(plShoreVS::kNumConsts);
-
-        vShader->SetInputFormat(1); // This should really be one!!!
-        vShader->SetOutputFormat(0);
 
         vShader->SetVector(plShoreVS::kSinConsts, 1.f, -1.f/6.f, 1.f/120.f, -1.f/5040.f);
         vShader->SetVector(plShoreVS::kCosConsts, 1.f, -1.f/2.f, 1.f/24.f, -1.f/720.f);
@@ -2278,17 +2246,6 @@ void plWaveSet7::IAddShoreVertexShader(hsGMaterial* mat)
         vShader->SetPipeConst(3, plPipeConst::kLayRuntime, plShoreVS::kShoreTint);
         vShader->SetPipeConst(4, plPipeConst::kFogSet, plShoreVS::kFogSet);
 
-//      vShader->SetShaderFileName("sha/vs_Shore.inl");
-//      vShader->SetShaderFileName("sha/vs_ShoreSteep.inl");
-//      vShader->SetShaderFileName("sha/vs_ShoreSucks.inl");
-//      vShader->SetShaderFileName("sha/vs_ShoreLeave.inl");
-//      vShader->SetShaderFileName("sha/vs_ShoreLeave6.inl");
-//      vShader->SetDecl(plShaderTable::Decl(vs_ShoreLeave6));
-
-//      static const plShaderDecl decl("sha/vs_ShoreLeave7.inl");
-//      vShader->SetDecl(&decl);
-        vShader->SetDecl(plShaderTable::Decl(vs_ShoreLeave7));
-
         hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefShoreVShader), plRefFlags::kActiveRef);
 
         fShoreVShader = vShader;
@@ -2303,15 +2260,11 @@ void plWaveSet7::IAddShorePixelShader(hsGMaterial* mat)
 {
     if( !fShorePShader )
     {
-        plShader* pShader = new plShader;
+        plShader* pShader = new plShader(ps_ShoreLeave6);
 
         ST::string buff = ST::format("{}_ShorePS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
         pShader->SetIsPixelShader(true);
-
-//      pShader->SetShaderFileName("sha/ps_ShoreSucks.inl");
-//      pShader->SetShaderFileName("sha/ps_ShoreLeave6.inl");
-        pShader->SetDecl(plShaderTable::Decl(ps_ShoreLeave6));
 
         hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefShorePShader), plRefFlags::kActiveRef);
 
@@ -2326,16 +2279,13 @@ void plWaveSet7::IAddFixedVertexShader(hsGMaterial* mat, const int numUVWs)
     if( !fFixedVShader )
     {
 
-        plShader* vShader = new plShader;
+        plShader* vShader = new plShader(vs_WaveFixedFin7);
 
         ST::string buff = ST::format("{}_FixedVS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
         vShader->SetIsPixelShader(false);
         
         vShader->SetNumConsts(plFixedVS7::kNumConsts);
-
-        vShader->SetInputFormat(numUVWs);
-        vShader->SetOutputFormat(0);
 
         vShader->SetVector(plFixedVS7::kSinConsts, 1.f, -1.f/6.f, 1.f/120.f, -1.f/5040.f);
         vShader->SetVector(plFixedVS7::kCosConsts, 1.f, -1.f/2.f, 1.f/24.f, -1.f/720.f);
@@ -2351,16 +2301,6 @@ void plWaveSet7::IAddFixedVertexShader(hsGMaterial* mat, const int numUVWs)
         vShader->SetPipeConst(2, plPipeConst::kLocalToWorld, plFixedVS7::kLocalToWorld);
         vShader->SetPipeConst(3, plPipeConst::kLayRuntime, plFixedVS7::kWaterTint);
         vShader->SetPipeConst(4, plPipeConst::kFogSet, plFixedVS7::kFogSet);
-
-
-//      static const plShaderDecl decl("sha/vs_WaveFixedFin7.inl");
-//      vShader->SetDecl(&decl);
-        vShader->SetDecl(plShaderTable::Decl(vs_WaveFixedFin7));
-
-
-//      vShader->SetShaderFileName("sha/vs_WaveFixedFin6.inl");
-//      vShader->SetShaderFileName("sha/vs_WaveFixedFin.inl");
-//      vShader->SetShaderFileName("sha/vs_TestPos.inl");
 
         hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFixedVShader), plRefFlags::kActiveRef);
 
@@ -2399,21 +2339,14 @@ void plWaveSet7::IAddFixedPixelShader(hsGMaterial* mat)
 {
     if( !fFixedPShader )
     {
-        plShader* pShader = new plShader;
+        plShader* pShader = new plShader(ps_WaveFixed);
         ST::string buff = ST::format("{}_FixedPS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
         pShader->SetIsPixelShader(true);
         
 //      pShader->SetNumConsts(plFixedPS::kNumConsts);
         pShader->SetNumConsts(0);
-        
-        pShader->SetInputFormat(0);
-        pShader->SetOutputFormat(0);
-        
-//      pShader->SetShaderFileName("sha/ps_WaveFixed.inl");
-//      pShader->SetShaderFileName("sha/ps_TestPos.inl");
-        pShader->SetDecl(plShaderTable::Decl(ps_WaveFixed));
-        
+
         hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFixedPShader), plRefFlags::kActiveRef);
         
         fFixedPShader = pShader;
@@ -2427,14 +2360,11 @@ void plWaveSet7::IAddRipVertexShader(hsGMaterial* mat, const plRipVSConsts& ripC
 {
     if( !fRipVShader )
     {
-        plShader* vShader = new plShader;
+        plShader* vShader = new plShader(vs_WaveRip7);
         ST::string buff = ST::format("{}_RipVS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
         vShader->SetIsPixelShader(false);
         
-        vShader->SetInputFormat(1); // This should really be one!!!
-        vShader->SetOutputFormat(0);
-
         vShader->SetNumConsts(plRipVS::kNumConsts);
 
         vShader->SetVector(plRipVS::kSinConsts, 1.f, -1.f/6.f, 1.f/120.f, -1.f/5040.f);
@@ -2495,13 +2425,6 @@ void plWaveSet7::IAddRipVertexShader(hsGMaterial* mat, const plRipVSConsts& ripC
         vShader->SetPipeConst(2, plPipeConst::kLocalToWorld, plRipVS::kLocalToWorld);
         vShader->SetPipeConst(3, plPipeConst::kFogSet, plRipVS::kFogSet);
 
-//      vShader->SetShaderFileName("sha/vs_WaveRip.inl");
-//      vShader->SetDecl(plShaderTable::Decl(vs_WaveRip));
-
-//      static const plShaderDecl decl("sha/vs_WaveRip7.inl");
-//      vShader->SetDecl(&decl);
-        vShader->SetDecl(plShaderTable::Decl(vs_WaveRip7));
-
         hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefRipVShader), plRefFlags::kActiveRef);
 
         hsAssert(vShader == fRipVShader, "Should have been set by SendRef");
@@ -2515,18 +2438,12 @@ void plWaveSet7::IAddRipPixelShader(hsGMaterial* mat, const plRipVSConsts& ripCo
 {
     if( !fRipPShader )
     {
-        plShader* pShader = new plShader;
+        plShader* pShader = new plShader(ps_WaveRip);
         ST::string buff = ST::format("{}_RipPS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
         pShader->SetIsPixelShader(true);
         
         pShader->SetNumConsts(0);
-
-        pShader->SetInputFormat(0);
-        pShader->SetOutputFormat(0);
-
-//      pShader->SetShaderFileName("sha/ps_WaveRip.inl");
-        pShader->SetDecl(plShaderTable::Decl(ps_WaveRip));
 
         hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefRipPShader), plRefFlags::kActiveRef);
 
@@ -2546,12 +2463,6 @@ plShader* plWaveSet7::ICreateDecalVShader(DecalVType t)
             "vs_WaveDec2Lay11_7",
             "vs_WaveDec2Lay12_7",
             "vs_WaveDecEnv_7"
-        };
-        static const plShaderDecl shaderDecls[kNumDecalVShaders] = {
-            plShaderDecl("sha/vs_WaveDec1Lay_7.inl"),
-            plShaderDecl("sha/vs_WaveDec2Lay11_7.inl"),
-            plShaderDecl("sha/vs_WaveDec2Lay12_7.inl"),
-            plShaderDecl("sha/vs_WaveDecEnv_7.inl")
         };
 
         static const plShaderID::ID shaderIDs[kNumDecalVShaders] = {
@@ -2574,14 +2485,11 @@ plShader* plWaveSet7::ICreateDecalVShader(DecalVType t)
         };
 
 
-        plShader* vShader = new plShader;
+        plShader* vShader = new plShader(shaderIDs[t]);
         ST::string buff = ST::format("{}_{}", GetKey()->GetName(), fname[t]);
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
         vShader->SetIsPixelShader(false);
         
-        vShader->SetInputFormat(numUVWs[t]); // This should really be one!!!
-        vShader->SetOutputFormat(0);
-
         vShader->SetNumConsts(plWaveDecVS::kNumConsts);
 
         vShader->SetVector(plWaveDecVS::kSinConsts, 1.f, -1.f/6.f, 1.f/120.f, -1.f/5040.f);
@@ -2634,9 +2542,6 @@ plShader* plWaveSet7::ICreateDecalVShader(DecalVType t)
         {
             vShader->SetPipeConst(kNumPipe + i, plPipeConst::Type(plPipeConst::kTex2x4_0+i), plWaveDecVS::kTex0Transform + i);
         }
-
-//      vShader->SetDecl(&shaderDecls[t]);
-        vShader->SetDecl(plShaderTable::Decl(shaderIDs[t]));
 
         hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, t, kRefDecVShader), plRefFlags::kActiveRef);
 
@@ -2704,15 +2609,11 @@ plShader* plWaveSet7::ICreateDecalPShader(DecalPType t)
             ps_WaveDecEnv
         };
 
-        plShader* pShader = new plShader;
+        plShader* pShader = new plShader(shaderIDs[t]);
 
         ST::string buff = ST::format("{}_{}", GetKey()->GetName(), fname[t]);
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
         pShader->SetIsPixelShader(true);
-
-//      sprintf(buff, "sha/%s.inl", fname[t]);
-//      pShader->SetShaderFileName(buff);
-        pShader->SetDecl(plShaderTable::Decl(shaderIDs[t]));
 
         hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, t, kRefDecPShader), plRefFlags::kActiveRef);
 
@@ -4066,7 +3967,7 @@ void plWaveSet7::ICreateGraphShoreMaterials()
 void plWaveSet7::IAddGraphVShader(hsGMaterial* mat, size_t iPass)
 {
     if (!fGraphVShader[iPass]) {
-        plShader* vShader = new plShader;
+        plShader* vShader = new plShader(vs_WaveGraph2);
         ST::string buff = ST::format("{}_GraphVS_{}", GetKey()->GetName(), iPass);
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
         vShader->SetIsPixelShader(false);
@@ -4080,16 +3981,8 @@ void plWaveSet7::IAddGraphVShader(hsGMaterial* mat, size_t iPass)
                                                  hsConstants::two_pi<float>);
         vShader->SetVector(plGraphVS::kCosConsts, 1.f, -1.f/2.f, 1.f/24.f, -1.f/720.f);
 
-#ifndef TEST_UVWS
-        vShader->SetInputFormat(0);
-#else // TEST_UVWS
-        vShader->SetInputFormat(1);
-#endif // TEST_UVWS
-        vShader->SetOutputFormat(0);
-
 //      vShader->SetShaderFileName("sha/vs_WaveGraph.inl");
 //      vShader->SetShaderFileName("sha/vs_WaveGraph2.inl");
-        vShader->SetDecl(plShaderTable::Decl(vs_WaveGraph2));
 
         hsgResMgr::ResMgr()->SendRef(vShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iPass, kRefGraphVShader), plRefFlags::kActiveRef);
 
@@ -4102,18 +3995,14 @@ void plWaveSet7::IAddGraphVShader(hsGMaterial* mat, size_t iPass)
 void plWaveSet7::IAddGraphPShader(hsGMaterial* mat, size_t iPass)
 {
     if (!fGraphPShader[iPass]) {
-        plShader* pShader = new plShader;
+        plShader* pShader = new plShader(ps_WaveGraph);
         ST::string buff = ST::format("{}_GraphPS_{}", GetKey()->GetName(), iPass);
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
         pShader->SetIsPixelShader(true);
         
         pShader->SetNumConsts(plGraphPS::kNumConsts);
 
-        pShader->SetInputFormat(0);
-        pShader->SetOutputFormat(0);
-
 //      pShader->SetShaderFileName("sha/ps_WaveGraph.inl");
-        pShader->SetDecl(plShaderTable::Decl(ps_WaveGraph));
 
         hsgResMgr::ResMgr()->SendRef(pShader->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, iPass, kRefGraphPShader), plRefFlags::kActiveRef);
 

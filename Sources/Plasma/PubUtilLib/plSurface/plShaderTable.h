@@ -44,59 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plShaderTable_inc
 
 #include "HeadSpin.h"
-
-// When adding to the compiled table, make sure
-// you add the include in plShaderTable.cpp, or you'll
-// compile fine but have a nil shader (FFP) at runtime.
-namespace plShaderID
-{
-    enum ID
-    {
-        Unregistered = 0,
-            vs_WaveFixedFin6,   //OBSOLETE
-            ps_WaveFixed,
-            vs_CompCosines,
-            ps_CompCosines,     //OBSOLETE
-            vs_ShoreLeave6,     //OBSOLETE
-            ps_ShoreLeave6,
-            vs_WaveRip,         //OBSOLETE
-            ps_WaveRip,
-            vs_WaveDec1Lay,     //OBSOLETE
-            vs_WaveDec2Lay11,   //OBSOLETE
-            vs_WaveDec2Lay12,   //OBSOLETE
-            vs_WaveDecEnv,      //OBSOLETE
-            ps_CbaseAbase,
-            ps_CalphaAbase,
-            ps_CalphaAMult,
-            ps_CalphaAadd,
-            ps_CaddAbase,
-            ps_CaddAMult,
-            ps_CaddAAdd,
-            ps_CmultAbase,
-            ps_CmultAMult,
-            ps_CmultAAdd,
-            ps_WaveDecEnv,
-            vs_WaveGraph2,
-            ps_WaveGraph,
-            vs_WaveGridFin,     //OBSOLETE
-            ps_WaveGrid,        //OBSOLETE
-            vs_BiasNormals,
-            ps_BiasNormals,
-            vs_ShoreLeave7,
-            vs_WaveRip7,
-            ps_MoreCosines,
-            vs_WaveDec1Lay_7,
-            vs_WaveDec2Lay11_7,
-            vs_WaveDec2Lay12_7,
-            vs_WaveDecEnv_7,
-            vs_WaveFixedFin7,
-            vs_GrassShader,
-            ps_GrassShader,
-
-            kNumShaders
-    };
-};
-
+#include "plShaderID.h"
 
 class plShaderDecl
 {

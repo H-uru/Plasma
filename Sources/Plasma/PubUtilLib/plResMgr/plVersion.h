@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // If you change the minor, see GetChangedCreateables in plVersion.cpp
 
 #define PLASMA2_MAJOR_VERSION   70  // Major Version...every file will need to be reexported
-#define PLASMA2_MINOR_VERSION   2   // Minor Version...only files with the specified creatables
+#define PLASMA2_MINOR_VERSION   3   // Minor Version...only files with the specified creatables
                                     // will need to be reexported
 
 // Don't modify this, it's automatically updated when branches are made
@@ -288,6 +288,7 @@ public:
     0   02/12/07 bob    Reset for major version change
     1   03/29/07 jeff   Changed plLoadAvatarMsg and plArmatureMod to be more flexible
     2   06/28/07 jeff   Changed plAvBrainHuman format to store whether it's an actor or not
+    3   08/13/26 dpogue Changed plShader format (which I'm pretty sure was never used anywhere)
 */
 
 #endif // plVersion_h_inc
