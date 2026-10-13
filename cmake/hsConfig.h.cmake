@@ -74,4 +74,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #cmakedefine HAVE_PTHREAD_SETNAME_NP
 #cmakedefine HAVE_STRNLEN
 
+/* User settings */
+#cmakedefine USE_PLATFORM_MANIFESTS
+
 #endif
