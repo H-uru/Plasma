@@ -209,9 +209,7 @@ kRTChatAudioSubtitleMsg = 0x40
 kRTChatLocKeyMsg = 0x80
 
 # flags channel mask
-kRTChatFlagMask = 65535
 kRTChatChannelMask = 65280
-kRTChatNoChannel = 255
 
 # OnCCRMsg flags
 kCCRBeginCommunication=1
