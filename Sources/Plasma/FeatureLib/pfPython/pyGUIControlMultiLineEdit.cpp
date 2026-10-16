@@ -299,6 +299,19 @@ void pyGUIControlMultiLineEdit::InsertStyle( uint8_t fontStyle )
     }
 }
 
+void pyGUIControlMultiLineEdit::InsertFontFace( const ST::string& fontFace )
+{
+    if ( fGCkey )
+    {
+        // get the pointer to the modifier
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if ( pbmod )
+        {
+            pbmod->InsertFontFace(fontFace);
+        }
+    }
+}
+
 void pyGUIControlMultiLineEdit::InsertLink(int16_t linkId)
 {
     if (fGCkey)
