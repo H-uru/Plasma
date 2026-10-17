@@ -5091,7 +5091,7 @@ class ptVaultAgeInfoNode(ptVaultNode):
         """Returns the displayable version of the age name"""
         ...
 
-    def getParentAgeInstanceGuid(self):
+    def getParentAgeInstanceGuid(self) -> str:
         """Returns the parent age instance guid"""
         ...
 
@@ -5135,7 +5135,7 @@ class ptVaultAgeInfoNode(ptVaultNode):
         """Sets the user defined part of the name"""
         ...
 
-    def setParentAgeInstanceGuid(self, guid):
+    def setParentAgeInstanceGuid(self, guid: str):
         """Sets the parent age instance GUID"""
         ...
 
