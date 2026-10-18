@@ -223,6 +223,13 @@ class kChat:
     StartNumChatItems = 9
     StartOffScreenLine = 0
     ChatBlankLine = "  \n"
+
+    # Face must match the name inside the p2f header, not the filename.
+    # Falls back to Arial if the p2f files are missing from the dat folder.
+    DniFontFace = "Dnifont"
+    # Not a dispatched command: SendMessage strips it so the message still
+    # routes normally. Also listed in xChatSpecialHandledCommands.
+    DniFontPrefix = "/dni"
     
     # Chat message types.
     SelfMsg = 1

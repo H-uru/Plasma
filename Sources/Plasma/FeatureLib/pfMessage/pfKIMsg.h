@@ -163,7 +163,10 @@ class pfKIMsg : public plMessage
             kNeighborMsg    = 0x00000020,   // sending to all the neighbors
             kSubtitleMsg    = 0x00000040,
             kLocKeyMsg      = 0x00000080,
-            kChannelMask    = 0x0000ff00
+            kChannelMask    = 0x0000ff00,
+            // Low 16 bits are fully allocated. fFlags is a uint32 written with
+            // WriteLE32, so bits 16-31 are free and already serialize.
+            kDniFontMsg     = 0x00010000    // render this message in the D'ni face
         };
 
         static const char* kChronicleKILevel;

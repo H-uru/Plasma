@@ -100,6 +100,7 @@ public:
     void InsertString(const ST::string& string);
     void InsertColor(pyColor& color);
     void InsertStyle(uint8_t fontStyle);
+    void InsertFontFace(const ST::string& fontFace);
     void InsertLink(int16_t linkId);
     void ClearLink();
     void DeleteChar();
