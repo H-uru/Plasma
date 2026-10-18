@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMatrix44.h"
 
 #ifdef HAVE_NEON
-#include <arm64_neon.h>
+#include <arm_neon.h>
 
 #define MULTBEGIN(i) \
     xmm[0] = vld1q_f32(a.fMap[i]);

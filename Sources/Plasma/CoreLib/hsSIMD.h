@@ -81,7 +81,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 #ifdef HAVE_NEON
-#   include <arm64_neon.h>
+#   include <arm_neon.h>
 #endif
 
 #endif
