@@ -310,6 +310,12 @@ namespace plSoftwareMeshSkinner::_detail
         &IBlendVertBuffer<ISkinVertexFPU>,
         nullptr,                            // SSE1
         nullptr,                            // SSE2
-        &IBlendVertBuffer<ISkinVertexSSE3>
+        &IBlendVertBuffer<ISkinVertexSSE3>,
+        nullptr,                            // SSSE3
+        nullptr,                            // SSE41
+        nullptr,                            // SSE42
+        nullptr,                            // AVX
+        nullptr,                            // AVX2
+        &IBlendVertBuffer<ISkinVertexNEON>
     };
 }

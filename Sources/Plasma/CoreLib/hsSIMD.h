@@ -80,4 +80,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include <xmmintrin.h>
 #endif
 
+#ifdef HAVE_NEON
+#   include <arm64_neon.h>
+#endif
+
 #endif

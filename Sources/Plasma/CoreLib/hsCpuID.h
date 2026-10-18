@@ -99,7 +99,8 @@ struct hsCpuFunctionDispatcher {
                             func_ptr sse41 = nullptr,
                             func_ptr sse42 = nullptr,
                             func_ptr avx = nullptr,
-                            func_ptr avx2 = nullptr)
+                            func_ptr avx2 = nullptr,
+                            func_ptr neon = nullptr)
     {
         hsAssert(fpu, "FPU fallback function required.");
         const hsCpuId& cpu = hsCpuId::Instance();
@@ -141,6 +142,13 @@ struct hsCpuFunctionDispatcher {
 #ifdef HAVE_SSE1
         if (cpu.has_sse1 && sse1) {
             call = sse1;
+        } else
+#endif
+#ifdef HAVE_NEON
+        // Assuming 64 bit ARMv8 - NEON is always available in the mainstream spec
+        // 32 bit ARMv7 does not mandate NEON, but would require different instrinics anyway
+        if (true) {
+            call = neon;
         } else
 #endif
         {

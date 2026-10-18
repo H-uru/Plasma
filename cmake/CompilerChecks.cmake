@@ -70,6 +70,7 @@ CHECK_INCLUDE_FILE("tmmintrin.h" HAVE_SSE4)
 CHECK_INCLUDE_FILE("pmmintrin.h" HAVE_SSE3)
 CHECK_INCLUDE_FILE("emmintrin.h" HAVE_SSE2)
 CHECK_INCLUDE_FILE("xmmintrin.h" HAVE_SSE1)
+CHECK_INCLUDE_FILE("arm64_neon.h" HAVE_NEON)
 
 # Check for Windows Shell Scaling DPI support
 CHECK_INCLUDE_FILE("ShellScalingApi.h" HAVE_SHELLSCALINGAPI)
@@ -78,8 +79,8 @@ CHECK_INCLUDE_FILE("ShellScalingApi.h" HAVE_SHELLSCALINGAPI)
 # We can't do that project-wide or we'll just crash on launch with an illegal instruction on some
 # systems. So, we have another helper method...
 function(plasma_target_simd_sources TARGET)
-    set(_INSTRUCTION_SETS "SSE1;SSE2;SSE3;SSE4;SSE41;SSSE3;SSE42;AVX;AVX2")
-    set(_GCC_ARGS "-msse;-msse2;-msse3;-msse4;-msse4.1;-mssse3;-msse4.2;-mavx;-mavx2")
+    set(_INSTRUCTION_SETS "SSE1;SSE2;SSE3;SSE4;SSE41;SSSE3;SSE42;AVX;AVX2;NEON")
+    set(_GCC_ARGS "-msse;-msse2;-msse3;-msse4;-msse4.1;-mssse3;-msse4.2;-mavx;-mavx2;-fpu=neon")
     cmake_parse_arguments(PARSE_ARGV 1 _passf "" "SOURCE_GROUP" "${_INSTRUCTION_SETS}")
 
     # Hack: if we ever bump to CMake 3.17, use ZIP_LISTS.

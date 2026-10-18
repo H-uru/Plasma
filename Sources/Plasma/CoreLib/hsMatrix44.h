@@ -170,6 +170,7 @@ private:
 
     static hsMatrix44 mult_fpu(const hsMatrix44& a, const hsMatrix44& b);
     static hsMatrix44 mult_sse3(const hsMatrix44& a, const hsMatrix44& b);
+    static hsMatrix44 mult_neon(const hsMatrix44& a, const hsMatrix44& b);
 #ifdef HS_BUILD_FOR_APPLE
     static hsMatrix44 mult_accelerate(const hsMatrix44 &a, const hsMatrix44 &b);
 #endif
