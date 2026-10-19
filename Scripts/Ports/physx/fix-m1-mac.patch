@@ -1,0 +1,59 @@
+From cdbfc0f1283829c71b07e332ddd6ce2e5aa7d467 Mon Sep 17 00:00:00 2001
+From: Anne Marije van der Meer <anne.marije.meer@gmail.com>
+Date: Fri, 9 Dec 2022 22:04:14 -0800
+Subject: [PATCH] Fix build on M1 Mac
+
+---
+ .../include/unix/neon/PsUnixNeonInlineAoS.h   | 39 ++++++++-----------
+ 1 file changed, 17 insertions(+), 22 deletions(-)
+
+diff --git a/physx/source/foundation/include/unix/neon/PsUnixNeonInlineAoS.h b/physx/source/foundation/include/unix/neon/PsUnixNeonInlineAoS.h
+index 81b7a99d01..d3b1e2aed2 100644
+--- a/physx/source/foundation/include/unix/neon/PsUnixNeonInlineAoS.h
++++ b/physx/source/foundation/include/unix/neon/PsUnixNeonInlineAoS.h
+@@ -3567,28 +3567,23 @@ PX_FORCE_INLINE VecU32V V4U32SplatElement(VecU32V a)
+ template <int index>
+ PX_FORCE_INLINE Vec4V V4SplatElement(Vec4V a)
+ {
+-#if PX_UWP
+-	if(index == 0)
+-	{
+-		return vdupq_lane_f32(vget_low_f32(a), 0);
+-	}
+-	else if (index == 1)
+-	{
+-		return vdupq_lane_f32(vget_low_f32(a), 1);
+-	}
+-#else
+-	if(index < 2)
+-	{
+-		return vdupq_lane_f32(vget_low_f32(a), index);
+-	}
+-#endif
+-	else if(index == 2)
+-	{
+-		return vdupq_lane_f32(vget_high_f32(a), 0);
+-	}
+-	else if(index == 3)
+-	{
+-		return vdupq_lane_f32(vget_high_f32(a), 1);
++	switch(index){
++		case 0:
++		{
++			return vdupq_lane_f32(vget_low_f32(a), 0);
++		}
++		case 1:
++		{
++			return vdupq_lane_f32(vget_low_f32(a), 1);
++		}
++		case 2:
++		{
++			return vdupq_lane_f32(vget_high_f32(a), 0);
++		}
++		case 3:
++		{
++			return vdupq_lane_f32(vget_high_f32(a), 1);
++		}
+ 	}
+ }
+ 
