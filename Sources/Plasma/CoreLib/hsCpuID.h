@@ -144,7 +144,7 @@ struct hsCpuFunctionDispatcher {
             call = sse1;
         } else
 #endif
-#ifdef HAVE_NEON
+#if(defined HAVE_NEON && defined __aarch64__)
         // Assuming 64 bit ARMv8 - NEON is always available in the mainstream spec
         // 32 bit ARMv7 does not mandate NEON, but would require different instrinics anyway
         if (true) {
