@@ -65,6 +65,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #cmakedefine USE_WEBM
 #cmakedefine USE_WAYLAND
 #cmakedefine USE_X11
+#cmakedefine USE_XAW
+#cmakedefine USE_XFIXES
+#cmakedefine USE_XPM
 #cmakedefine USE_XRANDR
 
 #cmakedefine HAVE_SYSCTL
