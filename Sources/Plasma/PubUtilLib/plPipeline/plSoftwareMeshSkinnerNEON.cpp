@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMatrix44.h"
 #include "hsSIMD.h"
 
-#if defined(HAVE_NEON) && defined(__aarch64__)
+#if defined(HAVE_NEON)
 static inline void ISkinDpNEON(const float* src, float* dst, const float32x4_t& mc0,
                                const float32x4_t& mc1, const float32x4_t& mc2, const float32x4_t& mwt)
 {
@@ -68,7 +68,7 @@ namespace plSoftwareMeshSkinner::_detail
 void ISkinVertexNEON(const hsMatrix44& xfm, float wgt,
                      const float* srcBuf, float* dstBuf)
 {
-#if defined(HAVE_NEON) && defined(__aarch64__)
+#if defined(HAVE_NEON)
     float32x4_t mc0 = vld1q_f32(xfm.fMap[0]);
     float32x4_t mc1 = vld1q_f32(xfm.fMap[1]);
     float32x4_t mc2 = vld1q_f32(xfm.fMap[2]);

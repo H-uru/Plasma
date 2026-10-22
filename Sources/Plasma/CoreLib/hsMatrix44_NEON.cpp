@@ -34,8 +34,7 @@ work.
 
 You can contact Cyan Worlds, Inc. by email legal@cyan.com
  or by snail mail at:
-      Cyan Worlds, I
-      nc.
+      Cyan Worlds, Inc.
       14617 N Newport Hwy
       Mead, WA   99021
 
