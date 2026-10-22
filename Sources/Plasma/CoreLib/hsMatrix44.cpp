@@ -167,7 +167,13 @@ hsCpuFunctionDispatcher<hsMatrix44::mat_mult_ptr> hsMatrix44::mat_mult {
     &hsMatrix44::mult_fpu,
     nullptr,            // SSE1
     nullptr,            // SSE2
-    &hsMatrix44::mult_sse3
+    &hsMatrix44::mult_sse3,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    &hsMatrix44::mult_neon
 };
 
 hsPoint3 hsMatrix44::operator*(const hsPoint3& p) const
