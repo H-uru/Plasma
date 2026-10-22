@@ -1017,6 +1017,22 @@ PF_CONSOLE_CMD( Graphics, ForceGeForce2Quality, "", "Forces higher-level hardwar
 }
 #endif // PLASMA_PIPELINE_DX
 
+#ifdef PLASMA_PIPELINE_GL
+PF_CONSOLE_CMD(Graphics, ForceOpenGLVersion, "int version", "Forces the pipeline to render with the specified OpenGL version.")
+{
+    PF_SANITY_CHECK(pfConsole::GetPipeline() == nullptr, "This command MUST be used in an .ini file (before pipeline initialization)");
+
+    int version = (int)params[0];
+
+    extern int plGLVersionOverride;
+    plGLVersionOverride = version;
+
+    if (version)
+        PrintString(ST::format("Forced OpenGL to version: {.2}", 0.1f * version));
+    else
+        PrintString("Using default system OpenGL version");
+}
+#endif // PLASMA_PIPELINE_GL
 #endif // LIMIT_CONSOLE_COMMANDS
 
 

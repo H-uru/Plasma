@@ -87,7 +87,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plPipeline/plFogEnvironment.h"
 #include "plPipeline/plRenderTarget.h"
-#include "plPipeline/plSoftwareMeshSkinner.h"
 #include "plPipeline/plStatusLogDrawer.h"
 #include "plPipeline/hsWinRef.h"
 
@@ -163,7 +162,6 @@ void plReleaseObject(IUnknown* x)
 
 //// Local Static Stuff ///////////////////////////////////////////////////////
 
-/// Macros for getting/setting data in a D3D vertex buffer
 template<typename T>
 static inline void inlCopy(uint8_t*& src, uint8_t*& dst)
 {
@@ -232,34 +230,32 @@ const int kMaxProjectors = 100;
 plProfile_CreateMemCounter("Pipeline Surfaces", "Memory", MemPipelineSurfaces);
 plProfile_Extern(MemVertex);
 plProfile_Extern(MemIndex);
-plProfile_CreateCounter("Feed Triangles", "Draw", DrawFeedTriangles);
-plProfile_CreateCounter("Draw Prim Static", "Draw", DrawPrimStatic);
-plProfile_CreateMemCounter("Total Texture Size", "Draw", TotalTexSize);
-plProfile_CreateCounter("Layer Change", "Draw", LayChange);
+plProfile_Extern(DrawFeedTriangles);
+plProfile_Extern(DrawPrimStatic);
+plProfile_Extern(TotalTexSize);
+plProfile_Extern(LayChange);
 plProfile_Extern(DrawTriangles);
 plProfile_Extern(MatChange);
-
-plProfile_CreateCounterNoReset("Reload", "PipeC", PipeReload);
-
-plProfile_CreateTimer("PrepShadows", "PipeT", PrepShadows);
-plProfile_CreateTimer("PrepDrawable", "PipeT", PrepDrawable);
-plProfile_CreateTimer("  Skin", "PipeT", Skin);
-plProfile_CreateTimer("  AvSort", "PipeT", AvatarSort);
-plProfile_CreateTimer("     ClearLights", "PipeT", ClearLights);
-plProfile_CreateTimer("RenderSpan", "PipeT", RenderSpan);
-plProfile_CreateTimer("  MergeCheck", "PipeT", MergeCheck);
-plProfile_CreateTimer("  MergeSpan", "PipeT", MergeSpan);
-plProfile_CreateTimer("  SpanTransforms", "PipeT", SpanTransforms);
-plProfile_CreateTimer("  SpanFog", "PipeT", SpanFog);
-plProfile_CreateTimer("  SelectLights", "PipeT", SelectLights);
-plProfile_CreateTimer("  SelectProj", "PipeT", SelectProj);
-plProfile_CreateTimer("  CheckDyn", "PipeT", CheckDyn);
-plProfile_CreateTimer("  CheckStat", "PipeT", CheckStat);
-plProfile_CreateTimer("  RenderBuff", "PipeT", RenderBuff);
-plProfile_CreateTimer("  RenderPrim", "PipeT", RenderPrim);
-plProfile_CreateTimer("PlateMgr", "PipeT", PlateMgr);
-plProfile_CreateTimer("DebugText", "PipeT", DebugText);
-plProfile_CreateTimer("Reset", "PipeT", Reset);
+plProfile_Extern(PipeReload);
+plProfile_Extern(PrepShadows);
+plProfile_Extern(PrepDrawable);
+plProfile_Extern(Skin);
+plProfile_Extern(RenderSpan);
+plProfile_Extern(MergeCheck);
+plProfile_Extern(MergeSpan);
+plProfile_Extern(SpanTransforms);
+plProfile_Extern(SpanFog);
+plProfile_Extern(SelectLights);
+plProfile_Extern(SelectProj);
+plProfile_Extern(CheckDyn);
+plProfile_Extern(CheckStat);
+plProfile_Extern(RenderBuff);
+plProfile_Extern(RenderPrim);
+plProfile_Extern(PlateMgr);
+plProfile_Extern(DebugText);
+plProfile_Extern(Reset);
+plProfile_Extern(AvatarSort);
+plProfile_Extern(ClearLights);
 
 plProfile_CreateMemCounter("DefMem", "PipeC", DefaultMem);
 plProfile_CreateMemCounter("ManMem", "PipeC", ManagedMem);
@@ -269,19 +265,19 @@ plProfile_CreateMemCounterReset("fTexUsed", "PipeC", fTexUsed);
 plProfile_CreateMemCounterReset("fTexManaged", "PipeC", fTexManaged);
 plProfile_CreateMemCounterReset("fVtxUsed", "PipeC", fVtxUsed);
 plProfile_CreateMemCounterReset("fVtxManaged", "PipeC", fVtxManaged);
-plProfile_CreateCounter("Merge", "PipeC", SpanMerge);
+plProfile_Extern(SpanMerge);
 plProfile_CreateCounter("TexNum", "PipeC", NumTex);
 plProfile_CreateCounter("LiState", "PipeC", MatLightState);
-plProfile_CreateCounter("NumSkin", "PipeC", NumSkin);
-plProfile_CreateCounter("AvatarFaces", "PipeC", AvatarFaces);
+plProfile_Extern(AvatarFaces);
 plProfile_CreateCounter("VertexChange", "PipeC", VertexChange);
 plProfile_CreateCounter("IndexChange", "PipeC", IndexChange);
 plProfile_CreateCounter("DynVBuffs", "PipeC", DynVBuffs);
-plProfile_CreateCounter("EmptyList", "PipeC", EmptyList);
-plProfile_CreateCounter("AvRTPoolUsed", "PipeC", AvRTPoolUsed);
-plProfile_CreateCounter("AvRTPoolCount", "PipeC", AvRTPoolCount);
-plProfile_CreateCounter("AvRTPoolRes", "PipeC", AvRTPoolRes);
-plProfile_CreateCounter("AvRTShrinkTime", "PipeC", AvRTShrinkTime);
+plProfile_Extern(EmptyList);
+plProfile_Extern(AvRTPoolUsed);
+plProfile_Extern(AvRTPoolCount);
+plProfile_Extern(AvRTPoolRes);
+plProfile_Extern(AvRTShrinkTime);
+plProfile_Extern(NumSkin);
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 /// Fun inlines for keeping track of surface creation/deletion memory
@@ -432,43 +428,24 @@ void plDXPipeline::ProfilePoolMem(D3DPOOL poolType, uint32_t size, bool add, con
 // First, Declarations.
 
 // Adding a nil RenderPrim for turning off drawing
-class plRenderNilFunc : public plRenderPrimFunc
-{
-public:
-    plRenderNilFunc() {}
-
-    bool RenderPrims() const override { return false; }
-};
 static plRenderNilFunc sRenderNil;
 
-class plRenderTriListFunc : public plRenderPrimFunc
+class plDXRenderTriListFunc : public plRenderTriListFunc<IDirect3DDevice9>
 {
-protected:
-    LPDIRECT3DDEVICE9   fD3DDevice;
-    int                 fBaseVertexIndex;
-    int                 fVStart;
-    int                 fVLength;
-    int                 fIStart;
-    int                 fNumTris;
 public:
-    plRenderTriListFunc(LPDIRECT3DDEVICE9 d3dDevice, int baseVertexIndex,
+    plDXRenderTriListFunc(LPDIRECT3DDEVICE9 d3dDevice, int baseVertexIndex,
                         int vStart, int vLength, int iStart, int iNumTris)
-        : fD3DDevice(d3dDevice), fBaseVertexIndex(baseVertexIndex), fVStart(vStart), fVLength(vLength), fIStart(iStart), fNumTris(iNumTris) {}
+        : plRenderTriListFunc(d3dDevice, baseVertexIndex, vStart, vLength, iStart, iNumTris) {}
 
-    bool RenderPrims() const override;
+    bool RenderPrims() const override
+    {
+        plProfile_IncCount(DrawFeedTriangles, fNumTris);
+        plProfile_IncCount(DrawTriangles, fNumTris);
+        plProfile_Inc(DrawPrimStatic);
+
+        return FAILED(fDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, fBaseVertexIndex, fVStart, fVLength, fIStart, fNumTris));
+    }
 };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Implementations
-
-bool plRenderTriListFunc::RenderPrims() const
-{
-    plProfile_IncCount(DrawFeedTriangles, fNumTris);
-    plProfile_IncCount(DrawTriangles, fNumTris);
-    plProfile_Inc(DrawPrimStatic);
-
-    return FAILED( fD3DDevice->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, fBaseVertexIndex, fVStart, fVLength, fIStart, fNumTris ) );
-}   
 
 //// Constructor & Destructor /////////////////////////////////////////////////
 
@@ -2307,195 +2284,6 @@ bool  plDXPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visLis
 
 
     return !visList.empty();
-}
-
-struct plSortFace
-{
-    uint16_t      fIdx[3];
-    float    fDist;
-};
-
-struct plCompSortFace
-{
-    bool operator()( const plSortFace& lhs, const plSortFace& rhs) const
-    {
-        return lhs.fDist > rhs.fDist;
-    }
-};
-
-// IAvatarSort /////////////////////////////////////////////////////////////////////////
-// We handle avatar sort differently from the rest of the face sort. The reason is that
-// within the single avatar index buffer, we want to only sort the faces of spans requesting
-// a sort, and sort them in place.
-// Contrast that with the normal scene translucency sort. There, we sort all the spans in a drawble,
-// then we sort all the faces in that drawable, then for each span in the sorted span list, we extract
-// the faces for that span appending onto the index buffer. This gives great efficiency because
-// only the visible faces are sorted and they wind up packed into the front of the index buffer, which
-// permits more batching. See plDrawableSpans::SortVisibleSpans.
-// For the avatar, it's generally the case that all the avatar is visible or not, and there is only
-// one material, so neither of those efficiencies is helpful. Moreover, for the avatar the faces we
-// want sorted are a tiny subset of the avatar's faces. Moreover, and most importantly, for the avatar, we
-// want to preserve the order that spans are drawn, so, for example, the opaque base head will always be
-// drawn before the translucent hair fringe, which will always be drawn before the pink clear plastic baseball cap.
-bool plDXPipeline::IAvatarSort(plDrawableSpans* d, const std::vector<int16_t>& visList)
-{
-    plProfile_BeginTiming(AvatarSort);
-    for (int16_t visIdx : visList)
-    {
-        hsAssert(d->GetSpan(visIdx)->fTypeMask & plSpan::kIcicleSpan, "Unknown type for sorting faces");
-
-        plIcicle* span = (plIcicle*)d->GetSpan(visIdx);
-
-        if( span->fProps & plSpan::kPartialSort )
-        {
-            hsAssert(d->GetBufferGroup(span->fGroupIdx)->AreIdxVolatile(), "Badly setup buffer group - set PartialSort too late?");
-
-            const hsPoint3 viewPos = GetViewPositionWorld();
-
-            plGBufferGroup* group = d->GetBufferGroup(span->fGroupIdx);
-
-            plDXVertexBufferRef* vRef = (plDXVertexBufferRef*)group->GetVertexBufferRef(span->fVBufferIdx); 
-
-            const uint8_t* vdata = vRef->fData;
-            const uint32_t stride = vRef->fVertexSize;
-
-            const int numTris = span->fILength/3;
-            
-            static std::vector<plSortFace> sortScratch;
-            sortScratch.resize(numTris);
-
-            plProfile_IncCount(AvatarFaces, numTris);
-
-            // 
-            // Have three very similar sorts here, differing only on where the "position" of
-            // each triangle is defined, either as the center of the triangle, the nearest
-            // point on the triangle, or the farthest point on the triangle.
-            // Having tried all three on the avatar (the only thing this sort is used on),
-            // the best results surprisingly came from using the center of the triangle.
-            uint16_t* indices = group->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
-            int j;
-            for( j = 0; j < numTris; j++ )
-            {
-#if 1 // TRICENTER
-                uint16_t idx = *indices++;
-                sortScratch[j].fIdx[0] = idx;
-                hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
-
-                idx = *indices++;
-                sortScratch[j].fIdx[1] = idx;
-                pos += *(hsPoint3*)(vdata + idx * stride);
-
-                idx = *indices++;
-                sortScratch[j].fIdx[2] = idx;
-                pos += *(hsPoint3*)(vdata + idx * stride);
-
-                pos *= 0.3333f;
-
-                sortScratch[j].fDist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-#elif 0 // NEAREST
-                uint16_t idx = *indices++;
-                sortScratch[j].fIdx[0] = idx;
-                hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
-                float dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                float minDist = dist;
-
-                idx = *indices++;
-                sortScratch[j].fIdx[1] = idx;
-                pos = *(hsPoint3*)(vdata + idx * stride);
-                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                if( dist < minDist )
-                    minDist = dist;
-
-                idx = *indices++;
-                sortScratch[j].fIdx[2] = idx;
-                pos = *(hsPoint3*)(vdata + idx * stride);
-                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                if( dist < minDist )
-                    minDist = dist;
-
-                sortScratch[j].fDist = minDist;
-#elif 1 // FURTHEST
-                uint16_t idx = *indices++;
-                sortScratch[j].fIdx[0] = idx;
-                hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
-                float dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                float maxDist = dist;
-
-                idx = *indices++;
-                sortScratch[j].fIdx[1] = idx;
-                pos = *(hsPoint3*)(vdata + idx * stride);
-                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                if( dist > maxDist )
-                    maxDist = dist;
-
-                idx = *indices++;
-                sortScratch[j].fIdx[2] = idx;
-                pos = *(hsPoint3*)(vdata + idx * stride);
-                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                if( dist > maxDist )
-                    maxDist = dist;
-
-                sortScratch[j].fDist = maxDist;
-#endif // SORTTYPES
-            }
-
-            std::sort(sortScratch.begin(), sortScratch.end(), plCompSortFace());
-
-            indices = group->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
-            for (const plSortFace& iter : sortScratch)
-            {
-                *indices++ = iter.fIdx[0];
-                *indices++ = iter.fIdx[1];
-                *indices++ = iter.fIdx[2];
-            }
-
-            group->DirtyIndexBuffer(span->fIBufferIdx);
-        }
-    }
-    plProfile_EndTiming(AvatarSort);
-    return true;
-}
-
-// PrepForRender //////////////////////////////////////////////////////////////////
-// Make sure the given drawable and each of the spans to be drawn (as noted in the
-// indices in visList) is ready to be rendered.
-// This means:
-// a) select which lights will be used for each span
-// b) do any necessary sorting (if required, spans are already in sorted order in visList,
-//      so this only means face sorting).
-// c) do any necessary software skinning.
-// This is called once per render, and before any rendering actually starts. See plPageTreeMgr.cpp.
-// So any preperation needs to last until rendering actually begins. So cached information, like
-// which lights a span will use, needs to be stored on the span.
-bool plDXPipeline::PrepForRender(plDrawable* d, std::vector<int16_t>& visList, plVisMgr* visMgr)
-{
-    plProfile_TimingGuard(PrepDrawable);
-
-    plDrawableSpans *drawable = plDrawableSpans::ConvertNoRef(d);
-    if (!drawable)
-        return false;
-
-    // Find our lights
-    ICheckLighting(drawable, visList, visMgr);
-
-    // Sort our faces
-    if (drawable->GetNativeProperty(plDrawable::kPropSortFaces))
-        drawable->SortVisibleSpans(visList, this);
-
-    // Prep for render. This is gives the drawable a chance to
-    // do any last minute updates for its buffers, including
-    // generating particle tri lists.
-    drawable->PrepForRender(this);
-
-    // Any skinning necessary
-    if (!ISoftwareVertexBlend(drawable, visList))
-        return false;
-
-    // Avatar face sorting happens after the software skin.
-    if (drawable->GetNativeProperty(plDrawable::kPropPartialSort))
-        IAvatarSort(drawable, visList);
-
-    return true;
 }
 
 // ISetupTransforms //////////////////////////////////////////////////////////////////////////////////
@@ -5264,173 +5052,6 @@ void    plDXPipeline::IBottomLayer()
     }
 }
 
-// Special effects /////////////////////////////////////////////////////////////
-
-// IPushOverBaseLayer /////////////////////////////////////////////////////////
-// Sets fOverBaseLayer (if any) as a wrapper on top of input layer.
-// This allows the OverBaseLayer to intercept and modify queries of
-// the real current layer's properties (e.g. color or state).
-// fOverBaseLayer is set to only get applied to the base layer during
-// multitexturing.
-// Must be matched with call to IPopOverBaseLayer.
-plLayerInterface* plDXPipeline::IPushOverBaseLayer(plLayerInterface* li)
-{
-    if( !li )
-        return nullptr;
-
-    fOverLayerStack.push_back(li);
-
-    if( !fOverBaseLayer )
-        return fOverBaseLayer = li;
-
-    fForceMatHandle = true;
-    fOverBaseLayer = fOverBaseLayer->Attach(li);
-    fOverBaseLayer->Eval(fTime, fFrame, 0);
-    return fOverBaseLayer;
-}
-
-// IPopOverBaseLayer /////////////////////////////////////////////////////////
-// Removes fOverBaseLayer as wrapper on top of input layer.
-// Should match calls to IPushOverBaseLayer.
-plLayerInterface* plDXPipeline::IPopOverBaseLayer(plLayerInterface* li)
-{
-    if( !li )
-        return nullptr;
-
-    fForceMatHandle = true;
-
-    plLayerInterface* pop = fOverLayerStack.back();
-    fOverLayerStack.pop_back();
-    fOverBaseLayer = fOverBaseLayer->Detach(pop);
-
-    return pop;
-}
-
-// IPushOverAllLayer ///////////////////////////////////////////////////
-// Push fOverAllLayer (if any) as wrapper around the input layer.
-// fOverAllLayer is set to be applied to each layer during multitexturing.
-// Must be matched by call to IPopOverAllLayer
-plLayerInterface* plDXPipeline::IPushOverAllLayer(plLayerInterface* li)
-{
-    if( !li )
-        return nullptr;
-
-    fOverLayerStack.push_back(li);
-
-    if( !fOverAllLayer )
-    {
-        fOverAllLayer = li;
-        fOverAllLayer->Eval(fTime, fFrame, 0);
-        return fOverAllLayer;
-    }
-
-    fForceMatHandle = true;
-    fOverAllLayer = fOverAllLayer->Attach(li);
-    fOverAllLayer->Eval(fTime, fFrame, 0);
-
-    return fOverAllLayer;
-}
-
-// IPopOverAllLayer //////////////////////////////////////////////////
-// Remove fOverAllLayer as wrapper on top of input layer.
-// Should match calls to IPushOverAllLayer.
-plLayerInterface* plDXPipeline::IPopOverAllLayer(plLayerInterface* li)
-{
-    if( !li )
-        return nullptr;
-
-    fForceMatHandle = true;
-
-    plLayerInterface* pop = fOverLayerStack.back();
-    fOverLayerStack.pop_back();
-    fOverAllLayer = fOverAllLayer->Detach(pop);
-
-    return pop;
-}
-
-// PiggyBacks - used in techniques like projective lighting.
-// PiggyBacks are layers appended to each drawprimitive pass.
-// For example, if a material has 3 layers which will be drawn
-// in 2 passes,
-//      pass0: layer0+layer1
-//      pass1: layer2
-// Then if a piggyback layer layerPB is active, the actual rendering would be
-//      pass0: layer0+layer1+layerPB
-//      pass1: layer2 + layerPB
-
-// ISetNumActivePiggyBacks /////////////////////////////////////////////
-// Calculate the number of active piggy backs.
-int plDXPipeline::ISetNumActivePiggyBacks()
-{
-    return fActivePiggyBacks = std::min(static_cast<size_t>(fMaxPiggyBacks), fPiggyBackStack.size());
-}
-
-// IPushProjPiggyBack //////////////////////////////////////////////////
-// Push a projected texture on as a piggy back.
-void plDXPipeline::IPushProjPiggyBack(plLayerInterface* li)
-{
-    if( fView.fRenderState & plPipeline::kRenderNoPiggyBacks )
-        return;
-
-    fPiggyBackStack.push_back(li);
-    fActivePiggyBacks = fPiggyBackStack.size() - fMatPiggyBacks;
-    fForceMatHandle = true;
-}
-
-// IPopProjPiggyBacks /////////////////////////////////////////////////
-// Remove a projected texture from use as a piggy back.
-void plDXPipeline::IPopProjPiggyBacks()
-{
-    if( fView.fRenderState & plPipeline::kRenderNoPiggyBacks )
-        return;
-
-    fPiggyBackStack.resize(fMatPiggyBacks);
-    ISetNumActivePiggyBacks();
-    fForceMatHandle = true;
-}
-
-// IPushPiggyBacks ////////////////////////////////////////////////////
-// Push any piggy backs associated with a material, presumed to
-// be a light map because that's all they are used for.
-// Matched with IPopPiggyBacks
-void plDXPipeline::IPushPiggyBacks(hsGMaterial* mat)
-{
-    hsAssert(!fMatPiggyBacks, "Push/Pop Piggy mismatch");
-
-    if( fView.fRenderState & plPipeline::kRenderNoPiggyBacks )
-        return;
-
-    for (size_t i = 0; i < mat->GetNumPiggyBacks(); i++)
-    {
-        if( !mat->GetPiggyBack(i) )
-            continue;
-
-        if ((mat->GetPiggyBack(i)->GetMiscFlags() & hsGMatState::kMiscLightMap)
-            && IsDebugFlagSet(plPipeDbg::kFlagNoLightmaps))
-            continue;
-
-        fPiggyBackStack.push_back(mat->GetPiggyBack(i));
-        fMatPiggyBacks++;
-    }
-    ISetNumActivePiggyBacks();
-    fForceMatHandle = true;
-}
-
-// IPopPiggyBacks ///////////////////////////////////////////////////////
-// Pop any current piggy backs set from IPushPiggyBacks.
-// Matches IPushPiggyBacks.
-void plDXPipeline::IPopPiggyBacks()
-{
-    if( fView.fRenderState & plPipeline::kRenderNoPiggyBacks )
-        return;
-
-    fPiggyBackStack.resize(fPiggyBackStack.size() - fMatPiggyBacks);
-    fMatPiggyBacks = 0;
-
-    ISetNumActivePiggyBacks();
-    fForceMatHandle = true;
-}
-
 //// IHandleMaterial //////////////////////////////////////////////////////////
 //  Takes the starting "layer" and uses as many layers as possible in the given
 //  material and sets up the device to draw with it. Returns the first layer
@@ -7944,20 +7565,6 @@ void    plDXPipeline::IFormatTextureData( uint32_t formatType, uint32_t numPix, 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//// View Stuff ///////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-//// IIsViewLeftHanded ////////////////////////////////////////////////////////
-//  Returns true if the combination of the local2world and world2camera
-//  matrices is left-handed.
-
-bool  plDXPipeline::IIsViewLeftHanded()
-{
-    return fView.GetViewTransform().GetOrthogonal() ^ ( fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded ) ? true : false;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
 //// Transforms ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -8002,7 +7609,7 @@ void    plDXPipeline::ISetCullMode(bool flip)
     D3DCULL newCull = D3DCULL_NONE;
 
     if( !(fLayerState[0].fMiscFlags & hsGMatState::kMiscTwoSided) )
-        newCull = !IIsViewLeftHanded() ^ !flip ? D3DCULL_CW : D3DCULL_CCW;
+        newCull = !fView.IsViewLeftHanded() ^ !flip ? D3DCULL_CW : D3DCULL_CCW;
 
     if( newCull != fDevice.fCurrCullMode )
     {
@@ -8461,113 +8068,6 @@ void plDXPipeline::ISetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, plD
     iRef->SetVolatile(owner->AreIdxVolatile());
 }
 
-//// ISoftwareVertexBlend ///////////////////////////////////////////////////////
-// Emulate matrix palette operations in software. The big difference between the hardware
-// and software versions is we only want to lock the vertex buffer once and blend all the
-// verts we're going to in software, so the vertex blend happens once for an entire drawable.
-// In hardware, we want the opposite, to break it into managable chunks, manageable meaning
-// few enough matrices to fit into hardware registers. So for hardware version, we set up
-// our palette, draw a span or few, setup our matrix palette with new matrices, draw, repeat.
-bool      plDXPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const std::vector<int16_t>& visList)
-{
-    if (IsDebugFlagSet(plPipeDbg::kFlagNoSkinning))
-        return true;
-
-    if( drawable->GetSkinTime() == fRenderCnt )
-        return true;
-
-    const hsBitVector   &blendBits = drawable->GetBlendingSpanVector();
-
-    if( drawable->GetBlendingSpanVector().Empty() )
-    {
-        // This sucker doesn't have any skinning spans anyway. Just return
-        drawable->SetSkinTime( fRenderCnt );
-        return true;
-    }
-
-    plProfile_BeginTiming(Skin);
-
-    // lock the data buffer
-
-    // First, figure out which buffers we need to blend.
-    constexpr size_t kMaxBufferGroups = 20;
-    constexpr size_t kMaxVertexBuffers = 20;
-    static char blendBuffers[kMaxBufferGroups][kMaxVertexBuffers];
-    memset(blendBuffers, 0, kMaxBufferGroups * kMaxVertexBuffers * sizeof(**blendBuffers));
-
-    hsAssert(kMaxBufferGroups >= drawable->GetNumBufferGroups(), "Bigger than we counted on num groups skin.");
-
-    const std::vector<plSpan *>& spans = drawable->GetSpanArray();
-    for (int16_t idx : visList)
-    {
-        if (blendBits.IsBitSet(idx))
-        {
-            const plVertexSpan &vSpan = *(plVertexSpan *)spans[idx];
-            hsAssert(kMaxVertexBuffers > vSpan.fVBufferIdx, "Bigger than we counted on num buffers skin.");
-
-            blendBuffers[vSpan.fGroupIdx][vSpan.fVBufferIdx] = 1;
-            drawable->SetBlendingSpanVectorBit(idx, false);
-        }
-    }
-
-    // Now go through each of the group/buffer (= a real vertex buffer) pairs we found,
-    // and blend into it. We'll lock the buffer once, and then for each span that
-    // uses it, set the matrix palette and and then do the blend for that span.
-    // When we've done all the spans for a group/buffer, we unlock it and move on.
-    for (size_t i = 0; i < kMaxBufferGroups; i++)
-    {
-        for (size_t j = 0; j < kMaxVertexBuffers; j++)
-        {
-            if( blendBuffers[i][j] )
-            {
-                // Found one. Do the lock.
-                plDXVertexBufferRef* vRef = (plDXVertexBufferRef*)drawable->GetVertexRef(i, j);
-
-                hsAssert(vRef->fData, "Going into skinning with no place to put results!");
-
-                uint8_t*  destPtr = vRef->fData;
-
-                for (int16_t idx : visList)
-                {
-                    const plIcicle& span = *(plIcicle*)spans[idx];
-                    if( (span.fGroupIdx == i)&&(span.fVBufferIdx == j) )
-                    {
-                        plProfile_Inc(NumSkin);
-
-                        hsMatrix44* matrixPalette = drawable->GetMatrixPalette(span.fBaseMatrix);
-                        matrixPalette[0] = span.fLocalToWorld;
-
-                        uint8_t* ptr = vRef->fOwner->GetVertBufferData(vRef->fIndex);
-                        ptr += span.fVStartIdx * vRef->fOwner->GetVertexSize();
-                        plSoftwareMeshSkinner::BlendVertBuffer(&span,
-                                                matrixPalette, span.fNumMatrices,
-                                                ptr,
-                                                vRef->fOwner->GetVertexFormat(), 
-                                                vRef->fOwner->GetVertexSize(), 
-                                                destPtr + span.fVStartIdx * vRef->fVertexSize, 
-                                                vRef->fVertexSize, 
-                                                span.fVLength,
-                                                span.fLocalUVWChans );
-                        vRef->SetDirty(true);
-                    }
-                }
-                // Unlock and move on.
-            }
-        }
-    }
-
-    plProfile_EndTiming(Skin);
-
-    if( drawable->GetBlendingSpanVector().Empty() )
-    {
-        // Only do this if we've blended ALL of the spans. Thus, this becomes a trivial 
-        // rejection for all the skinning flags being cleared
-        drawable->SetSkinTime(fRenderCnt);
-    }
-
-    return true;
-}
-
 // IBeginAllocUnmanaged ///////////////////////////////////////////////////////////////////
 // Before allocating anything into POOL_DEFAULT, we must evict managed memory.
 // See LoadResources.
@@ -9023,7 +8523,7 @@ void plDXPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
     r = fD3DDevice->SetIndices( iRef->fD3DBuffer );
     hsAssert( r == D3D_OK, "Error trying to set the indices!" );
 
-    plRenderTriListFunc render(fD3DDevice, iRef->fOffset, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength/3);
+    plDXRenderTriListFunc render(fD3DDevice, iRef->fOffset, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength/3);
 
     // Now just loop through the aux material, rendering in as many passes as it takes.
     hsGMaterial* material = aux->fMaterial;
@@ -9145,7 +8645,7 @@ void    plDXPipeline::IRenderBufferSpan( const plIcicle& span,
         iRef->SetRebuiltSinceUsed(false);
     }
 
-    plRenderTriListFunc render(fD3DDevice, iRef->fOffset, vStart, vLength, iStart, iLength/3);
+    plDXRenderTriListFunc render(fD3DDevice, iRef->fOffset, vStart, vLength, iStart, iLength/3);
 
     plProfile_EndTiming(RenderBuff);
     ILoopOverLayers(render, material, span);
@@ -10600,7 +10100,7 @@ void plDXPipeline::IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSpans
     uint32_t                  iStart = span.fIPackedIdx;
     uint32_t                  iLength= span.fILength;
 
-    plRenderTriListFunc render(fD3DDevice, iRef->fOffset, vStart, vLength, iStart, iLength/3);
+    plDXRenderTriListFunc render(fD3DDevice, iRef->fOffset, vStart, vLength, iStart, iLength/3);
 
     static hsMatrix44 emptyMatrix;
     hsMatrix44 m = emptyMatrix;
@@ -11234,18 +10734,6 @@ void plDXPipeline::IPreprocessShadows()
     ISetAnisotropy(true);
 
     plProfile_EndTiming(PrepShadows);
-}
-
-// IClearShadowSlaves ///////////////////////////////////////////////////////////////////////////
-// At EndRender(), we need to clear our list of shadow slaves. They are only valid for one frame.
-void plDXPipeline::IClearShadowSlaves()
-{
-    for (plShadowSlave* shadow : fShadows)
-    {
-        const plShadowCaster* caster = shadow->fCaster;
-        caster->GetKey()->UnRefObject();
-    }
-    fShadows.clear();
 }
 
 
