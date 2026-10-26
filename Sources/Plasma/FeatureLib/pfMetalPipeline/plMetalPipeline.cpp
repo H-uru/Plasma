@@ -825,7 +825,7 @@ void plMetalPipeline::LoadResources()
 {
     hsStatusMessageF("Begin Device Reload t={}", hsTimer::GetSeconds());
     plNetClientApp::StaticDebugMsg("Begin Device Reload");
-
+    
     // Tell the light infos to unlink themselves
     while (fActiveLights)
         UnRegisterLight(fActiveLights);
@@ -1324,6 +1324,11 @@ void plMetalPipeline::IRenderProjection(const plRenderPrimFunc& render, plLightI
 
     plLayerInterface* proj = li->GetProjection();
     CheckTextureRef(proj);
+    plMetalLightRef* lightRef = static_cast<plMetalLightRef*>(li->GetDeviceRef());
+    if (!lightRef->fProjectionBuffer) {
+        lightRef->fProjectionBuffer = std::unique_ptr<plMetalLayerListArgumentBuffer>(new plMetalLayerListArgumentBuffer(&fDevice, 1));
+    }
+    lightRef->fProjectionBuffer->Set(proj, 0);
     plMetalTextureRef* tex = (plMetalTextureRef*)proj->GetTexture()->GetDeviceRef();
 
     IScaleLight(li, true);
@@ -1365,10 +1370,7 @@ void plMetalPipeline::IRenderProjection(const plRenderPrimFunc& render, plLightI
 
     fState.fCurrentPipelineState = linkedPipeline->pipelineState;
     fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
-    fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(tex->fTexture, 0);
-    MTL::SamplerState* samplerState = fDevice.SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(proj->GetClampFlags()));
-    fDevice.CurrentRenderCommandEncoder()->setFragmentSamplerState(samplerState, 0);
-    fState.layerStates[0].clampFlag = hsGMatState::hsGMatClampFlags(proj->GetClampFlags());
+    lightRef->fProjectionBuffer->Bind(fDevice.CurrentRenderCommandEncoder());
 
     // Okay, render it already.
 
@@ -1403,7 +1405,7 @@ void plMetalPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGM
 
         AppendLayerInterface(&layLightBase, false);
 
-        IHandleMaterialPass(material, iPass, &span, vRef, false);
+        IHandleMaterialPass(material, iPass, &span, vRef, false, plMetalMaterialRenderPass::Projection);
 
         IScaleLight(li, true);
         IBindLights();
@@ -1522,7 +1524,7 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
     }
 }
 
-bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, const plSpan* currSpan, const plMetalVertexBufferRef* vRef, const bool allowShaders)
+bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, const plSpan* currSpan, const plMetalVertexBufferRef* vRef, const bool allowShaders, const plMetalMaterialRenderPass renderPass)
 {
     plMetalMaterialShaderRef* mRef = static_cast<plMetalMaterialShaderRef*>(material->GetDeviceRef());
 
@@ -1602,13 +1604,7 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
                 return false;
             }
 
-            size_t idOffset = 0;
-            // Metal doesn't like mixing 2D and cubic textures. If this is a cubic texture, make sure it lands in the right ID range.
-            if (plCubicRenderTarget::ConvertNoRef(img)) {
-                idOffset = FragmentShaderArgumentAttributeCubicTextures;
-            }
-
-            fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(texRef->fTexture, i + idOffset);
+            fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(texRef->fTexture, i);
         }
         lay = IPopOverAllLayer(lay);
         lay = IPopOverBaseLayer(lay);
@@ -1654,46 +1650,41 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
             numActivePiggyBacks = fActivePiggyBacks;
         }
 
-        plMetalFragmentShaderDescription fragmentShaderDescription;
+        static plMetalFragmentShaderDescription fragmentShaderDescription;
 
         lay = IPopOverAllLayer(lay);
         lay = IPopOverBaseLayer(lay);
 
-        if (numActivePiggyBacks == 0 && fOverBaseLayer == nullptr && fOverAllLayer == nullptr) {
-            mRef->FastEncodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass);
+        // Plasma pulls piggybacks from the rear first, pull the number of active piggybacks
+        auto firstPiggyback = fPiggyBackStack.end() - numActivePiggyBacks;
+        auto lastPiggyback = fPiggyBackStack.end();
+        static std::vector<plLayerInterface*> piggybacks;
+        piggybacks = { fPiggyBackStack.end() - numActivePiggyBacks, lastPiggyback };
 
-            fragmentShaderDescription = mRef->GetFragmentShaderDescription(pass);
-        } else {
-            // Plasma pulls piggybacks from the rear first, pull the number of active piggybacks
-            auto firstPiggyback = fPiggyBackStack.end() - numActivePiggyBacks;
-            auto lastPiggyback = fPiggyBackStack.end();
-            
-            std::vector<plLayerInterface*> subPiggybacks(firstPiggyback, lastPiggyback);
-            
-            auto preEncodeTransform = [this](plLayerInterface* layer, uint32_t index) {
-                if (index == 0) {
-                    layer = IPushOverBaseLayer(layer);
-                }
-                layer = IPushOverAllLayer(layer);
-                
-                return layer;
-            };
+        auto preEncodeTransform = [this](plLayerInterface* layer, uint32_t index) {
+            if (index == 0) {
+                layer = IPushOverBaseLayer(layer);
+            }
+            layer = IPushOverAllLayer(layer);
 
-            auto postEncodeTransform = [this](plLayerInterface* layer, uint32_t index) {
-                layer = IPopOverAllLayer(layer);
-                if (index == 0)
-                    layer = IPopOverBaseLayer(layer);
-                return layer;
-            };
+            return layer;
+        };
 
-            mRef->EncodeArguments(fDevice.CurrentRenderCommandEncoder(),
-                                  fCurrentRenderPassUniforms,
-                                  pass,
-                                  &fragmentShaderDescription,
-                                  &subPiggybacks,
-                                  preEncodeTransform,
-                                  postEncodeTransform);
-        }
+        auto postEncodeTransform = [this](plLayerInterface* layer, uint32_t index) {
+            layer = IPopOverAllLayer(layer);
+            if (index == 0)
+                layer = IPopOverBaseLayer(layer);
+            return layer;
+        };
+
+        mRef->EncodeArguments(fDevice.CurrentRenderCommandEncoder(),
+                              fCurrentRenderPassUniforms,
+                              pass,
+                              &fragmentShaderDescription,
+                              &piggybacks,
+                              preEncodeTransform,
+                              postEncodeTransform,
+                              renderPass);
 
         if (!fragmentShaderDescription.fUsePerPixelLighting) {
             fragmentShaderDescription.fUsePerPixelLighting = PLASMA_FORCE_PER_PIXEL_LIGHTING;
@@ -2863,6 +2854,9 @@ void plMetalPipeline::IPreprocessAvatarTextures()
             NS::Error* error = nullptr;
             baseAvatarRenderState = fDevice.fMetalDevice->newRenderPipelineState(descriptor, &error);
 
+            // Guarantee that the layers argument buffers are immutable for performance reasons
+            descriptor->fragmentBuffers()->object(FragmentShaderLayers)->setMutability(MTL::MutabilityImmutable);
+
             descriptor->colorAttachments()->object(0)->setBlendingEnabled(true);
             descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
             descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
@@ -2932,34 +2926,34 @@ void plMetalPipeline::IDrawClothingQuad(float x, float y, float w, float h,
     }
     hsRefCnt_SafeAssign(fLayerRef[0], ref);
     fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(ref->fTexture, 0);
-
+    
     plAVTexVert ptr[4];
     plAVTexVert vert;
     vert.fPos[0] = x;
     vert.fPos[1] = y;
     vert.fUv[0] = uOff;
     vert.fUv[1] = 1.f + vOff;
-
+    
     // P0
     ptr[2] = vert;
-
+    
     // P1
     ptr[0] = vert;
     ptr[0].fPos[0] += w;
     ptr[0].fUv[0] += 1.f;
-
+    
     // P2
     ptr[1] = vert;
     ptr[1].fPos[0] += w;
     ptr[1].fUv[0] += 1.f;
     ptr[1].fPos[1] += h;
     ptr[1].fUv[1] -= 1.f;
-
+    
     // P3
     ptr[3] = vert;
     ptr[3].fPos[1] += h;
     ptr[3].fUv[1] -= 1.f;
-
+    
     fDevice.CurrentRenderCommandEncoder()->setVertexBytes(ptr, sizeof(ptr), 0);
     fDevice.CurrentRenderCommandEncoder()->drawPrimitives(MTL::PrimitiveType::PrimitiveTypeTriangleStrip, NS::UInteger(0), NS::UInteger(4));
 }
@@ -4166,6 +4160,10 @@ hsGDeviceRef* plMetalPipeline::MakeTextureRef(plBitmap* bitmap)
 
 void plMetalPipeline::IReloadTexture(plBitmap* bitmap, plMetalTextureRef* ref)
 {
+    // The D3D9 version of this function changes the contents of the texture.
+    // With Metal we need to explicitly buffer resources for double/triple
+    // buffering. Perform texture orphaning instead of updated the texture.
+
     plMipmap* mip = plMipmap::ConvertNoRef(bitmap);
     if (mip) {
         fDevice.MakeTextureRef(ref, mip);
@@ -4274,8 +4272,4 @@ void plMetalPipeline::plMetalPipelineCurrentState::Reset()
     fBoundMaterialProperties.reset();
     fCurrentCullMode.reset();
     fCurrentVertexUniforms.reset();
-
-    for (auto& layer : layerStates) {
-        layer.clampFlag = hsGMatState::hsGMatClampFlags(-1);
-    }
 }
