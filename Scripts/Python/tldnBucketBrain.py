@@ -1201,7 +1201,7 @@ class tldnBucketBrain(ptResponder):
                 fastforward = 1
             #--------------[ WCPswitch-->DumpQBoardQStop ]---------------
             elif curBucketState == kBucketStates.DumpQBoardQStop:
-                curBucketState = kBucektStates.DumpQBoard
+                curBucketState = kBucketStates.DumpQBoard
                 fastforward = 1
             #--------------[ WCPswitch-->DumpQStop ]---------------    
             elif curBucketState == kBucketStates.DumpQStop:
