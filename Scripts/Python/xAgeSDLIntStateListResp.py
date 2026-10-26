@@ -142,7 +142,7 @@ class xAgeSDLIntStateListResp(ptResponder):
         try:
             SDLvalue = ageSDL[strSDLVarName.value][0]
         except:
-            PtDebugPrint("ERROR: xAgeSDLIntShowHide.OnServerInitComplete():\tERROR: age sdl read failed, SDLvalue = %d by default. strSDLVarName = %s" % (intDefault.value,strSDLVarName.value))
+            PtDebugPrint("ERROR: xAgeSDLIntStateListResp.Initialize():\tERROR: age sdl read failed, SDLvalue = %d by default. strSDLVarName = %s" % (intDefault.value,strSDLVarName.value))
             SDLvalue = intDefault.value
 
         
@@ -155,8 +155,8 @@ class xAgeSDLIntStateListResp(ptResponder):
                 self.dictStates[int(decState[0])] = int(decState[1])
 
         except:  # oops, something bad happened while decomposing the list
-            PtDebugPrint("ERROR: xAgeSDLIntStateListResp.OnServerInitComplete():\tERROR: couldn't process state list")
-            PtDebugPrint("ERROR: xAgeSDLIntStateListResp.OnServerInitComplete():\tPlease enter states in the format: (val,stateNum)(val,stateNum)")
+            PtDebugPrint("ERROR: xAgeSDLIntStateListResp.Initialize():\tERROR: couldn't process state list")
+            PtDebugPrint("ERROR: xAgeSDLIntStateListResp.Initialize():\tPlease enter states in the format: (val,stateNum)(val,stateNum)")
             """
             import sys
             PtDebugPrint("ERROR: Caught Exception: ", sys.exc_type, " --> ", sys.exc_value)
