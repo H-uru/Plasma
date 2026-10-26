@@ -1619,7 +1619,7 @@ class nxusBookMachine(ptModifier):
 
     def IDoLink(self):
         if self.presentedBookAls is None:
-            ptDebugPrint("nxusBookMachine.IDoLink(): Tried to link without chosen book. This Is Bad Thing (R)")
+            PtDebugPrint("nxusBookMachine.IDoLink(): Tried to link without chosen book. This Is Bad Thing (R)")
         else:
             linkMgr = ptNetLinkingMgr()
             linkMgr.linkToAge(self.presentedBookAls)
