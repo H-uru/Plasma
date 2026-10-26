@@ -77,6 +77,7 @@ public:
     NetDhConstants fGameDhConstants;
     ST::string fGateKeeperHostname;
     NetDhConstants fGateKeeperDhConstants;
+    bool fSinglePlayerMode;
 
     pfServerIni()
         : fStatusUrl(),
@@ -88,7 +89,8 @@ public:
           fAuthDhConstants {kNetAuthDefaultDhGValue},
           fGameDhConstants {kNetGameDefaultDhGValue},
           fGateKeeperHostname(),
-          fGateKeeperDhConstants {kNetGateKeeperDefaultDhGValue}
+          fGateKeeperDhConstants {kNetGateKeeperDefaultDhGValue},
+          fSinglePlayerMode(false)
     {}
 
 private:

@@ -103,6 +103,8 @@ void pfServerIni::IParseOption(const std::vector<ST::string>& name, const ST::st
         fSignupUrl = value;
     } else if (name.size() == 2 && name[1].compare_i("DispName") == 0) {
         fDisplayName = value;
+    } else if (name.size() == 2 && name[1].compare_i("SinglePlayerMode") == 0) {
+        fSinglePlayerMode = value.compare_i("1") == 0;
     } else if (name.size() == 2 && name[1].compare_i("Port") == 0) {
         ParseIntegerInto(value, fPort);
     } else if (name.size() == 3 && name[1].compare_i("File") == 0 && name[2].compare_i("Host") == 0) {
@@ -190,6 +192,7 @@ void pfServerIni::Apply()
     gNetGameDhConstants = fGameDhConstants;
     SetGateKeeperSrvHostname(fGateKeeperHostname);
     gNetGateKeeperDhConstants = fGateKeeperDhConstants;
+    SetSinglePlayerMode(fSinglePlayerMode);
 }
 
 void pfServerIni::Load(const plFileName& fileName)

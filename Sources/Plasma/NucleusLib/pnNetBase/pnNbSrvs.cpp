@@ -122,6 +122,7 @@ void SetClientPort(unsigned port) {
 static ST::string s_serverStatusUrl;
 static ST::string s_serverSignupUrl;
 static ST::string s_serverName;
+static bool s_singlePlayerMode;
 
 //============================================================================
 ST::string GetServerStatusUrl () {
@@ -151,4 +152,16 @@ ST::string GetServerDisplayName () {
 //============================================================================
 void SetServerDisplayName (const ST::string& name) {
     s_serverName = name;
+}
+
+//============================================================================
+bool GetSinglePlayerMode()
+{
+    return s_singlePlayerMode;
+}
+
+//============================================================================
+void SetSinglePlayerMode(bool enabled)
+{
+    s_singlePlayerMode = enabled;
 }

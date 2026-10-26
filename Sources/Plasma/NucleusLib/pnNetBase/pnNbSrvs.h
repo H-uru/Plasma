@@ -105,4 +105,7 @@ void SetServerSignupUrl (const ST::string& url);
 ST::string GetServerDisplayName ();
 void SetServerDisplayName (const ST::string& name);
 
+bool GetSinglePlayerMode();
+void SetSinglePlayerMode(bool enabled);
+
 #endif // pnNbSrvs_inc
