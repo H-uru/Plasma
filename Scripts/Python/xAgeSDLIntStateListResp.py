@@ -142,7 +142,7 @@ class xAgeSDLIntStateListResp(ptResponder):
         try:
             SDLvalue = ageSDL[strSDLVarName.value][0]
         except:
-            PtDebugPrint("ERROR: xAgeSDLIntShowHide.OnServerInitComplete():\tERROR: age sdl read failed, SDLvalue = %d by default. stringVarName = %s" % (intDefault.value,stringVarName.value))
+            PtDebugPrint("ERROR: xAgeSDLIntShowHide.OnServerInitComplete():\tERROR: age sdl read failed, SDLvalue = %d by default. strSDLVarName = %s" % (intDefault.value,strSDLVarName.value))
             SDLvalue = intDefault.value
 
         
