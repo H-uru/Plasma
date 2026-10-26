@@ -1843,8 +1843,8 @@ class xOptionsMenu(ptModifier):
             field = ptGUIControlEditBox(dlg.getControlFromTag(cID))
             field.setSpecialCaptureKeyMode(1)
             # set the mapping
-            controlCode,spFlag,mpFlag = mapRow1[cID]
-            if controlCode is not None and ( ( spFlag and PtIsSinglePlayerMode() ) or ( mpFlag and not PtIsSinglePlayerMode() ) ):
+            controlCode = mapRow1[cID][0]
+            if controlCode:
                 # is the control code a console command?
                 if isinstance(controlCode, str):
                     field.setLastKeyCapture(km.getBindingKeyConsole(controlCode),km.getBindingFlagsConsole(controlCode))
@@ -1861,8 +1861,8 @@ class xOptionsMenu(ptModifier):
             field = ptGUIControlEditBox(dlg.getControlFromTag(cID))
             field.setSpecialCaptureKeyMode(1)
             # set the mapping
-            controlCode,spFlag,mpFlag = mapRow2[cID]
-            if controlCode is not None and ( ( spFlag and PtIsSinglePlayerMode() ) or ( mpFlag and not PtIsSinglePlayerMode() ) ):
+            controlCode = mapRow2[cID][0]
+            if controlCode:
                 # is the control code a console command?
                 if isinstance(controlCode, str):
                     # this shouldn't really happen!
