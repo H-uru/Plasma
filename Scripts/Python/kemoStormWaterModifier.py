@@ -122,7 +122,7 @@ class kemoStormWaterModifier(ptModifier):
 
                     startval = getattr(theWater.waveset, "get" + x[3:])()
 
-                    if ifisinstance(p, ptColor):
+                    if isinstance(p, ptColor):
                         PtDebugPrint("\tstartval = " + str( (startval.getRed(), startval.getGreen(), startval.getBlue()) ))
                         PtDebugPrint("\tsetting to " + str( (p.getRed(), p.getGreen(), p.getBlue()) ))
                     elif isinstance(p, (ptPoint3, ptVector3)):
@@ -136,7 +136,7 @@ class kemoStormWaterModifier(ptModifier):
 
                     endval = getattr(theWater.waveset, "get" + x[3:])()
 
-                    if ifisinstance(p, ptColor):
+                    if isinstance(p, ptColor):
                         PtDebugPrint("\tendval = " + str( (endval.getRed(), endval.getGreen(), endval.getBlue()) ))
                     elif isinstance(p, (ptPoint3, ptVector3)):
                         PtDebugPrint("\tendval = " + str( (endval.getX(), endval.getY(), endval.getZ()) ))
