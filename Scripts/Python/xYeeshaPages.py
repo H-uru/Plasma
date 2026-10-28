@@ -198,7 +198,7 @@ class xYeeshaPages(ptModifier):
             else:
                 ctrl.hide()
 
-        if PageNumber.value in YeeshaPageSketches:
-            if image := PtFindImage(YeeshaPageSketches[PageNumber.value]):
+        if image_name := YeeshaPageSketches.get(PageNumber.value):
+            if image := PtFindImage(image_name):
                 if layer := PtFindLayer(kLayerName, "GUI", kDialogName):
                     layer.setTexture(image[0])
