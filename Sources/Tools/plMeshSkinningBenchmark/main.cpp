@@ -206,11 +206,9 @@ static int hsMain(std::vector<ST::string> args)
     SkinningBenchmark<ISkinVertexSSE3>(ST_LITERAL("SSE3"), blendBuffers, drawable, spans);
 #endif
 
-    /*
 #ifdef HAVE_NEON
     SkinningBenchmark<ISkinVertexNEON>(ST_LITERAL("NEON"), blendBuffers, drawable, spans);
 #endif
-    */
 
     return 0;
 }

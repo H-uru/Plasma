@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #cmakedefine HAVE_SSE3
 #cmakedefine HAVE_SSE2
 #cmakedefine HAVE_SSE1
+#cmakedefine HAVE_NEON
 
 /* External library usage */
 #cmakedefine USE_EGL

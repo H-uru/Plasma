@@ -61,6 +61,7 @@ namespace plSoftwareMeshSkinner
     {
         void ISkinVertexFPU(const hsMatrix44& xfm, float wgt, const float* srcBuf, float* dstBuf);
         void ISkinVertexSSE3(const hsMatrix44& xfm, float wgt, const float* srcBuf, float* dstBuf);
+        void ISkinVertexNEON(const hsMatrix44& xfm, float wgt, const float* srcBuf, float* dstBuf);
 
         template <skin_vert_ptr T>
         void IBlendVertBuffer(const plSpan* span, hsMatrix44* matrixPalette, int numMatrices,

@@ -99,7 +99,8 @@ struct hsCpuFunctionDispatcher {
                             func_ptr sse41 = nullptr,
                             func_ptr sse42 = nullptr,
                             func_ptr avx = nullptr,
-                            func_ptr avx2 = nullptr)
+                            func_ptr avx2 = nullptr,
+                            func_ptr neon = nullptr)
     {
         hsAssert(fpu, "FPU fallback function required.");
         const hsCpuId& cpu = hsCpuId::Instance();
@@ -141,6 +142,11 @@ struct hsCpuFunctionDispatcher {
 #ifdef HAVE_SSE1
         if (cpu.has_sse1 && sse1) {
             call = sse1;
+        } else
+#endif
+#if defined(HAVE_NEON)
+        if (neon) {
+            call = neon;
         } else
 #endif
         {

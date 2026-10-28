@@ -49,6 +49,7 @@ plasma_library(plPipeline
     PRECOMPILED_HEADERS Pch.h
 )
 plasma_target_simd_sources(plPipeline SSE3 plSoftwareMeshSkinnerSSE3.cpp)
+plasma_target_simd_sources(plPipeline NEON plSoftwareMeshSkinnerNEON.cpp)
 target_link_libraries(plPipeline
     PUBLIC
         CoreLib
