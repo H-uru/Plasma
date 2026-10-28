@@ -244,7 +244,7 @@ kKMNextPreviousText = 830
 
 #
 # dictionary of:
-#    edit tagID to ( keyMap, singlePlayerFlag, multiPlayerFlag )
+#    edit tagID to ( keyMap, offlineModeFlag, onlineModeFlag )
 #
 #  where keyMap is a number if event binding
 #                  a string if console command
@@ -253,8 +253,8 @@ kKMNextPreviousText = 830
 
 class _KeyLine(NamedTuple):
     controlCode: Union[int, str, None]
-    singlePlayer: bool
-    multiPlayer: bool
+    offlineMode: bool
+    onlineMode: bool
 
 
 gKM1ControlCodesRow1 = {
