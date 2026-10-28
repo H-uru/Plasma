@@ -194,7 +194,7 @@ class Ahnonay(ptResponder):
             PtPageInNode("MaintRoom01")
             PtPageInNode("ahnySphere01")
             if PtIsSinglePlayerMode():
-                PtPageInNode("Sphere01Singleplayer")
+                PtPageInNode("Sphere01SinglePlayer")
         elif newSphere == 2:
             PtPageInNode("MaintRoom02")
             PtPageInNode("ahnySphere02")
