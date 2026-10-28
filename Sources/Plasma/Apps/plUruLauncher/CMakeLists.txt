@@ -4,6 +4,7 @@ set(plUruLauncher_HEADERS
 
 set(plUruLauncher_SOURCES
     plClientLauncher.cpp
+    pnAllCreatables.cpp
     winmain.cpp
 )
 
