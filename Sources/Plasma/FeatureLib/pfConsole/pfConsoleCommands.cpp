@@ -2351,14 +2351,19 @@ PF_CONSOLE_CMD(App,
     plNetClientApp::GetInstance()->SetFlagsBit(plNetClientApp::kDemoMode);
 }
 
+#ifndef LIMIT_CONSOLE_COMMANDS
+
 PF_CONSOLE_CMD(App,
                SinglePlayerMode,
                "",
                "Toggle the app to use single player mode behavior")
 {
-    SetSinglePlayerMode(!GetSinglePlayerMode());
-    PrintString(ST::format("SinglePlayerMode set to {}", GetSinglePlayerMode()));
+    plNetClientApp* nc = plNetClientApp::GetInstance();
+    nc->SetSinglePlayerMode(!nc->GetSinglePlayerMode());
+    PrintString(ST::format("SinglePlayerMode set to {}", nc->GetSinglePlayerMode()));
 }
+
+#endif // LIMIT_CONSOLE_COMMANDS
 
 PF_CONSOLE_CMD(App,
                BounceLogs,

@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleParser.h"
 
 #include "pnNetBase/pnNetBase.h"
+#include "pnNetCommon/plNetApp.h"
 
 #include "plFile/plEncryptedStream.h"
 
@@ -192,7 +193,8 @@ void pfServerIni::Apply()
     gNetGameDhConstants = fGameDhConstants;
     SetGateKeeperSrvHostname(fGateKeeperHostname);
     gNetGateKeeperDhConstants = fGateKeeperDhConstants;
-    SetSinglePlayerMode(fSinglePlayerMode);
+
+    plNetClientApp::GetInstance()->SetSinglePlayerMode(fSinglePlayerMode);
 }
 
 void pfServerIni::Load(const plFileName& fileName)

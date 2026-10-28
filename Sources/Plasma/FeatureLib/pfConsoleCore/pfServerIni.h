@@ -90,7 +90,7 @@ public:
           fGameDhConstants {kNetGameDefaultDhGValue},
           fGateKeeperHostname(),
           fGateKeeperDhConstants {kNetGateKeeperDefaultDhGValue},
-          fSinglePlayerMode(false)
+          fSinglePlayerMode()
     {}
 
 private:

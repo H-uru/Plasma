@@ -153,15 +153,3 @@ ST::string GetServerDisplayName () {
 void SetServerDisplayName (const ST::string& name) {
     s_serverName = name;
 }
-
-//============================================================================
-bool GetSinglePlayerMode()
-{
-    return s_singlePlayerMode;
-}
-
-//============================================================================
-void SetSinglePlayerMode(bool enabled)
-{
-    s_singlePlayerMode = enabled;
-}
