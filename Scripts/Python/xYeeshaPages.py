@@ -54,28 +54,50 @@ from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
 from xStartPathHelpers import *
 
-
-# define the attributes that will be entered in max
 actClickableBook = ptAttribActivator(1,"Act: Clickable Yeesha Page")
 PageNumber = ptAttribInt(2, "Yeesha Page Number")
 
-#Linking Books GUI tags
-DialogName="YeeshaPageGUI"
-kPageButton = 100
+# This file controls the GUI when finding a Yeesha Page.
+# Add yeesha page textures to be loaded by name here. (Mapping Page Number: Texture)
+# Just like link panels, they should probably be in BkBookImages or derivatives thereof.
+# For the equivalent place to add it to the relto book, see xLinkingBookDefs.py
+YeeshaPageSketches = {
+    1: "xyeeshapagealphasketch01*1#0.hsm",
+    2: "xyeeshapagealphasketch02*1#0.hsm",
+    3: "xyeeshapagealphasketch03*1#0.hsm",
+    4: "xyeeshapagealphasketch04*1#0.hsm",
+    5: "xyeeshapagealphasketch07*1#0.hsm",
+    6: "xyeeshapagealphasketch06*1#0.hsm",
+    7: "xyeeshapagealphasketch05*1#0.hsm",
+    8: "xyeeshapagealphasketch12*1#0.hsm",
+    9: "xyeeshapagealphasketch09*1#0.hsm",
+    10: "xyeeshapagealphasketch10*1#0.hsm",
+    12: "xyeeshapagealphasketch08*1#0.hsm",
+    13: "xyeeshapagealphasketch13*1#0.hsm",
+    14: "xyeeshapagealphasketchfireplace*1#0.hsm",
+    15: "xyeeshapagealphasketch15*1#0.hsm",
+    16: "xyeeshapagealphasketchfiremarbles*1#0.hsm",
+    17: "xyeeshapagealphasketchlushrelto*1#0.hsm",
+    18: "xyeeshapagealphasketchclock*1#0.hsm",
+    19: "xyeeshapagealphasketchbirds*1#0.hsm",
+    20: "xyeeshapagealphasketchcalendar*1#0.hsm",
+    21: "xyeeshapagealphasketchleaf*1#0.hsm",
+    22: "xyeeshapagealphasketchgrass*1#0.hsm",
+    23: "xyeeshapagealphasketchercaplant*1#0.hsm",
+    24: "xyeeshapagealphasketchstorm*1#0.hsm",
+    25: "xyeeshapagealphasketch14*1#0.hsm",
+    26: "xYeeshaPageVeelay7.dds",
+    32: "xYeeshaPageGreenBushes.dds",
+}
 
-kReltoLinkID = 1
-kStartFadeoutID = 2
+kDialogName = "YeeshaPageGUI"
+kLayerName = "YeeshaPageSketch"
 
-kWaitFadeoutSecs = 3.0
-kFadeOutSecs = 2.0
-kReltoLinkSecs = 4.0
-
-#Note: when adding more Ages to this script, be sure to also update IDrawLinkPanel() module below
-kYeeshaPage = list(range(200, 298, 1))
+kYeeshaPage = 201 # GUI element for the sketch
+kYeeshaPageHide = [208] # GUI elements to be hidden. 208 is for cleft imager page
 kYeeshaPageCancel = 299
 
 class xYeeshaPages(ptModifier):
-    "The Yeesha Page python code"
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 5225
@@ -85,13 +107,12 @@ class xYeeshaPages(ptModifier):
 
 
     def OnFirstUpdate(self):
-        PtLoadDialog(DialogName, self.key)
+        PtLoadDialog(kDialogName, self.key)
         pass
 
 
     def __del__(self):
-        "destructor - get rid of any dialogs that we might have loaded"
-        PtUnloadDialog(DialogName)
+        PtUnloadDialog(kDialogName)
 
          
     def OnServerInitComplete(self):
@@ -103,29 +124,25 @@ class xYeeshaPages(ptModifier):
 
 
     def OnNotify(self,state,id,events):
-        global LocalAvatar
-
         if state and id == actClickableBook.id and PtWasLocallyNotified(self.key):
-            PtLoadDialog(DialogName,self.key)
-            if ( PtIsDialogLoaded(DialogName) ):
+            PtLoadDialog(kDialogName,self.key)
+            if PtIsDialogLoaded(kDialogName):
                 self.IDrawLinkPanel()
-                PtShowDialog(DialogName)                        
+                PtShowDialog(kDialogName)                        
                     
 
     def OnGUINotify(self,id,control,event):
-
         if event == kExitMode:
-            PtHideDialog(DialogName)
+            PtHideDialog(kDialogName)
             return
         
         btnID = 0
         if isinstance(control,ptGUIControlButton):
             btnID = control.getTagID()
 
-        if event == 2 and btnID in kYeeshaPage:
+        if event == 2 and btnID == kYeeshaPage:
             PtDebugPrint("xYeeshaPages.OnGUINotify():\tPicked up page number: ", PageNumber.value)
-#            PtUnloadDialog(DialogName)
-            PtHideDialog(DialogName)
+            PtHideDialog(kDialogName)
             
             vault = ptVault()
                 
@@ -163,23 +180,17 @@ class xYeeshaPages(ptModifier):
                         vault = ptVault()
                         vault.addChronicleEntry("CleftSolved",1,"yes")
                         PtDebugPrint("Chronicle updated with variable 'CleftSolved'.",level=kDebugDumpLevel)
-                        #PtAtTimeCallback(self.key,kWaitFadeoutSecs,kStartFadeoutID)
 
             else:
                 PtDebugPrint("xYeeshaPages: Error trying to access the Chronicle psnlSDL. psnlSDL = %s" % ( psnlSDL))
 
         elif event == 2 and btnID == kYeeshaPageCancel:
-            PtHideDialog(DialogName)
-    
+            PtHideDialog(kDialogName)
 
 
     def IDrawLinkPanel(self):
-        global DialogName
-        mydialog = PtGetDialogFromString(DialogName)
-
-        #first hide them all
-#        PtDebugPrint("PageNumber = ", PageNumber.value)
-        for x in kYeeshaPage:
+        mydialog = PtGetDialogFromString(kDialogName)
+        for x in kYeeshaPageHide:
             try:
                 ctrl = mydialog.getControlModFromTag(x)
             except KeyError:
@@ -187,27 +198,7 @@ class xYeeshaPages(ptModifier):
             else:
                 ctrl.hide()
 
-        #now draw correct panel
-        mydialog.getControlModFromTag(kYeeshaPage[PageNumber.value]).show()
-        return
-
-#
-#    def OnTimer(self,id):
-#        if id == kStartFadeoutID:
-#            PtFadeOut(kFadeOutSecs,1)
-#            PtDebugPrint("\txYeeshaPages.OnTimer(): Linking the player from Cleft to Relto.  FadeOut over", kFadeOutSecs," seconds.")
-#            PtAtTimeCallback(self.key,kReltoLinkSecs,kReltoLinkID)
-#        elif id == kReltoLinkID:  
-#            #link back to Relto now
-#            linkmgr = ptNetLinkingMgr()
-#            ageLink = ptAgeLinkStruct()
-#            ageInfo = ageLink.getAgeInfo()
-#            temp = ptAgeInfoStruct()
-#            temp.copyFrom(ageInfo)
-#            ageInfo = temp
-#            ageInfo.setAgeFilename("Personal")
-#            ageLink.setAgeInfo(ageInfo)
-#            ageLink.setLinkingRules(PtLinkingRules.kOwnedBook)
-#            linkmgr.linkToAge(ageLink)
-
-
+        if image_name := YeeshaPageSketches.get(PageNumber.value):
+            if image := PtFindImage(image_name):
+                if layer := PtFindLayer(kLayerName, "GUI", kDialogName):
+                    layer.setTexture(image[0])
