@@ -117,6 +117,14 @@ void pfServerIni::IParseOption(const std::vector<ST::string>& name, const ST::st
         ParseBooleanInto(value, fSinglePlayerMode);
     } else if (name.size() == 2 && name[1].compare_i("Port") == 0) {
         ParseIntegerInto(value, fPort);
+    } else if (name.size() == 2 && name[1].compare_i("VoiceCodec") == 0) {
+        if (value.compare_i("Speex") == 0) {
+            fVoiceCodec = kSpeex;
+        } else if (value.compare_i("Opus") == 0) {
+            fVoiceCodec = kOpus;
+        } else {
+            throw pfServerIniParseException(ST::format("Unknown server.ini setting: {}", JoinCommandName(name)));
+        }
     } else if (name.size() == 3 && name[1].compare_i("File") == 0 && name[2].compare_i("Host") == 0) {
         fFileHostname = value;
     } else if (name.size() == 3 && name[1].compare_i("Auth") == 0) {

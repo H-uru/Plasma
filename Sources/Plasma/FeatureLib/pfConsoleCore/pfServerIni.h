@@ -67,6 +67,14 @@ public:
 class pfServerIni
 {
 public:
+    enum VoiceCodec
+    {
+        kUnspecified,
+        kSpeex,
+        kOpus,
+    };
+
+public:
     ST::string fStatusUrl;
     ST::string fSignupUrl;
     ST::string fDisplayName;
@@ -78,6 +86,7 @@ public:
     ST::string fGateKeeperHostname;
     NetDhConstants fGateKeeperDhConstants;
     bool fSinglePlayerMode;
+    VoiceCodec fVoiceCodec;
 
     pfServerIni()
         : fStatusUrl(),
@@ -90,7 +99,8 @@ public:
           fGameDhConstants {kNetGameDefaultDhGValue},
           fGateKeeperHostname(),
           fGateKeeperDhConstants {kNetGateKeeperDefaultDhGValue},
-          fSinglePlayerMode()
+          fSinglePlayerMode(),
+          fVoiceCodec()
     {}
 
 private:

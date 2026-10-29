@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFileSystem.h"
 #include "plPipeline.h"
 
+#include "plAudio/plVoiceChat.h"
 #include "plClientResMgr/plClientResMgr.h"
 #include "plMessageBox/hsMessageBox.h"
 #include "plNetClient/plNetClientMgr.h"
@@ -78,6 +79,17 @@ void plClientLoader::Run()
 
     plNetClientMgr* mgr = plNetClientMgr::GetInstance();
     mgr->SetSinglePlayerMode(fServerIni.fSinglePlayerMode);
+
+    // Because some shards are permanently stuck in the past, allow the server.ini
+    // to override the voice codec that we would prefer to use. Sigh.
+    switch (fServerIni.fVoiceCodec) {
+        case pfServerIni::kSpeex:
+            plVoiceRecorder::SetVoiceFlags(plVoiceFlags::kEncoded | plVoiceFlags::kEncodedSpeex);
+            break;
+        case pfServerIni::kOpus:
+            plVoiceRecorder::SetVoiceFlags(plVoiceFlags::kEncoded | plVoiceFlags::kEncodedOpus);
+            break;
+    }
 
     plSimulationMgr::Init();
     if (plSimulationMgr::GetInstance()) {
