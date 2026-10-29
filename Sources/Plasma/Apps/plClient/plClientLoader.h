@@ -44,8 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plClientLoader_inc
 
 #include "HeadSpin.h"
+#include "plFileSystem.h"
 #include "hsThread.h"
 #include "hsWindows.h"
+
+#include "pfConsoleCore/pfServerIni.h"
 
 class plClientLoader : private hsThread
 {
@@ -53,6 +56,8 @@ class plClientLoader : private hsThread
     hsWindowHndl fWindow;
     hsDisplayHndl fDisplay;
     uint32_t fDevType;
+
+    pfServerIni fServerIni;
 
     void OnQuit() override
     {
@@ -64,6 +69,13 @@ class plClientLoader : private hsThread
 
 public:
     plClientLoader() : fClient(), fWindow(), fDisplay(), fDevType() { }
+
+    /**
+     * Load the server.ini file and store the global server settings for
+     * use by the netcore. This should be done before Init() is called such
+     * that the server settings are available for the client init process.
+     */
+    void LoadServerIni(const plFileName& iniFile);
 
     /**
      * Initializes the client asyncrhonouslynn including: loading the localization, 

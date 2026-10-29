@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleParser.h"
 
 #include "pnNetBase/pnNetBase.h"
+#include "pnNetCommon/plNetApp.h"
 
 #include "plFile/plEncryptedStream.h"
 
@@ -63,6 +64,15 @@ static ST::string JoinCommandName(const std::vector<ST::string>& name) {
         joined << part;
     }
     return joined.to_string();
+}
+
+static void ParseBooleanInto(const ST::string& value, bool& out)
+{
+    ST::conversion_result res;
+    out = value.to_bool(res);
+    if (!res.ok() || !res.full_match()) {
+        throw pfServerIniParseException(ST::format("Invalid boolean value: {}", value));
+    }
 }
 
 static void ParseIntegerInto(const ST::string& value, unsigned int& out)
@@ -103,8 +113,18 @@ void pfServerIni::IParseOption(const std::vector<ST::string>& name, const ST::st
         fSignupUrl = value;
     } else if (name.size() == 2 && name[1].compare_i("DispName") == 0) {
         fDisplayName = value;
+    } else if (name.size() == 2 && name[1].compare_i("SinglePlayerMode") == 0) {
+        ParseBooleanInto(value, fSinglePlayerMode);
     } else if (name.size() == 2 && name[1].compare_i("Port") == 0) {
         ParseIntegerInto(value, fPort);
+    } else if (name.size() == 2 && name[1].compare_i("VoiceCodec") == 0) {
+        if (value.compare_i("Speex") == 0) {
+            fVoiceCodec = kSpeex;
+        } else if (value.compare_i("Opus") == 0) {
+            fVoiceCodec = kOpus;
+        } else {
+            throw pfServerIniParseException(ST::format("Unknown server.ini setting: {}", JoinCommandName(name)));
+        }
     } else if (name.size() == 3 && name[1].compare_i("File") == 0 && name[2].compare_i("Host") == 0) {
         fFileHostname = value;
     } else if (name.size() == 3 && name[1].compare_i("Auth") == 0) {
@@ -150,7 +170,7 @@ void pfServerIni::Parse(const plFileName& fileName)
 {
     std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFile(fileName);
     if (!stream) {
-        throw pfServerIniParseException(ST::format("File not found or could not be opened: {}", fileName));
+        throw pfServerIniParseException(ST::format("server.ini file not found or could not be opened: {}", fileName));
     }
 
     ST::string line;
@@ -190,6 +210,8 @@ void pfServerIni::Apply()
     gNetGameDhConstants = fGameDhConstants;
     SetGateKeeperSrvHostname(fGateKeeperHostname);
     gNetGateKeeperDhConstants = fGateKeeperDhConstants;
+
+    // fSinglePlayerMode is not applied here because it is not stored in a global variable.
 }
 
 void pfServerIni::Load(const plFileName& fileName)

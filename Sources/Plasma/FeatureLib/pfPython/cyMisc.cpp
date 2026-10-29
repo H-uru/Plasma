@@ -2039,7 +2039,7 @@ PyObject* cyMisc::CheckVisLOSFromCursor()
 //
 bool cyMisc::IsSinglePlayerMode()
 {
-    return false;
+    return plNetClientApp::GetInstance()->GetSinglePlayerMode();
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -67,6 +67,14 @@ public:
 class pfServerIni
 {
 public:
+    enum VoiceCodec
+    {
+        kUnspecified,
+        kSpeex,
+        kOpus,
+    };
+
+public:
     ST::string fStatusUrl;
     ST::string fSignupUrl;
     ST::string fDisplayName;
@@ -77,6 +85,8 @@ public:
     NetDhConstants fGameDhConstants;
     ST::string fGateKeeperHostname;
     NetDhConstants fGateKeeperDhConstants;
+    bool fSinglePlayerMode;
+    VoiceCodec fVoiceCodec;
 
     pfServerIni()
         : fStatusUrl(),
@@ -88,7 +98,9 @@ public:
           fAuthDhConstants {kNetAuthDefaultDhGValue},
           fGameDhConstants {kNetGameDefaultDhGValue},
           fGateKeeperHostname(),
-          fGateKeeperDhConstants {kNetGateKeeperDefaultDhGValue}
+          fGateKeeperDhConstants {kNetGateKeeperDefaultDhGValue},
+          fSinglePlayerMode(),
+          fVoiceCodec()
     {}
 
 private:
@@ -110,8 +122,12 @@ public:
 
     /**
      * Replace the global server configuration with the settings from this object.
-     * All settings are copied into global state,
-     * so this object doesn't need to be kept alive after this method returns.
+     * Only global server settings will be copied into the global state - these are
+     * things like the server hostname, port, and Diffie-Hellman constants. This does
+     * not apply any other settings that may be present in the server.ini file, such as
+     * those related to gameplay or client behavior that can only be handled once the
+     * client or engine is initialized. Those will need to be applied separately
+     * by the caller.
      */
     void Apply();
 
