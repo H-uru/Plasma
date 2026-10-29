@@ -165,12 +165,6 @@ class kdshShadowPath(ptResponder):
             RevealStairs.run(self.key,fastforward=1)
                 
 
-    def Load(self):
-        count = 1
-        while count < 5:
-            PtDebugPrint("kdshShadowPath.Load(): ageSDL[ShadowPathLight0",count,"]=%d" % (ageSDL["ShadowPathLight0" + str(count)][0]))
-            count = count + 1
-
     def OnNotify(self,state,id,events):
         global TwoOnFloor
         global baton
