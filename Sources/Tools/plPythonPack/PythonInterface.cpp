@@ -59,8 +59,7 @@ static inline void IAddWideString(PyWideStringList& list, const plFileName& file
     PyWideStringList_Append(&list, filename.AsString().to_wchar().data());
 }
 
-void PythonInterface::initPython(const plFileName& rootDir, const std::vector<plFileName>& extraDirs,
-                                 FILE* outstream, FILE* errstream)
+void PythonInterface::initPython(const plFileName& rootDir, FILE* outstream, FILE* errstream)
 {
     // if haven't been initialized then do it
     if (Py_IsInitialized() == 0) {
@@ -79,13 +78,11 @@ void PythonInterface::initPython(const plFileName& rootDir, const std::vector<pl
         config.site_import = 0;
         PyConfig_SetString(&config, &config.program_name, L"plasma");
 
-        // Explicit module search paths so no build-env specific stuff gets in.
-        IAddWideString(config.module_search_paths, rootDir);
-        IAddWideString(config.module_search_paths, plFileName::Join(rootDir, "plasma"));
+        // Set up Python stdlib module search paths - Python won't work at all without these.
+        // Don't add the Plasma modules or the files being packed -
+        // when building the .pak file, they are only parsed, not imported!
         IAddWideString(config.module_search_paths, plFileName::Join(rootDir, "system"));
         IAddWideString(config.module_search_paths, plFileName::Join(rootDir, "system", "lib-dynload"));
-        for (const auto& dir : extraDirs)
-            IAddWideString(config.module_search_paths, plFileName::Join(rootDir, dir));
         config.module_search_paths_set = 1;
 
         // initialize the Python stuff
@@ -190,23 +187,14 @@ bool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, Py_ssize_t* siz
 //
 bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
 {
-    PyObject *d, *v;
-    // make sure that we're given a good module... or at least one with an address
-    if ( !module )
-    {
-        // if no module was given then use just use the main module
-        module = PyImport_AddModule("__main__");
-        if (module == nullptr)
-            return false;
-    }
     // get the dictionaries for this module
-    d = PyModule_GetDict(module);
+    PyObject* d = PyModule_GetDict(module);
 
     if (!PyDict_GetItemString(d, "__builtins__"))
         PyDict_SetItemString(d, "__builtins__", PyEval_GetBuiltins());
 
     // run the string
-    v = PyEval_EvalCode(code, d, d);
+    PyObject* v = PyEval_EvalCode(code, d, d);
     // check for errors and print them
     if (v == nullptr)
     {
