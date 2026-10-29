@@ -66,6 +66,15 @@ static ST::string JoinCommandName(const std::vector<ST::string>& name) {
     return joined.to_string();
 }
 
+static void ParseBooleanInto(const ST::string& value, bool& out)
+{
+    ST::conversion_result res;
+    out = value.to_bool(res);
+    if (!res.ok() || !res.full_match()) {
+        throw pfServerIniParseException(ST::format("Invalid boolean value: {}", value));
+    }
+}
+
 static void ParseIntegerInto(const ST::string& value, unsigned int& out)
 {
     ST::conversion_result res;
@@ -105,7 +114,7 @@ void pfServerIni::IParseOption(const std::vector<ST::string>& name, const ST::st
     } else if (name.size() == 2 && name[1].compare_i("DispName") == 0) {
         fDisplayName = value;
     } else if (name.size() == 2 && name[1].compare_i("SinglePlayerMode") == 0) {
-        fSinglePlayerMode = value.compare_i("1") == 0;
+        ParseBooleanInto(value, fSinglePlayerMode);
     } else if (name.size() == 2 && name[1].compare_i("Port") == 0) {
         ParseIntegerInto(value, fPort);
     } else if (name.size() == 3 && name[1].compare_i("File") == 0 && name[2].compare_i("Host") == 0) {
