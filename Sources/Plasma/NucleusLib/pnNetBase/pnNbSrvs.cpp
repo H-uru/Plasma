@@ -122,7 +122,6 @@ void SetClientPort(unsigned port) {
 static ST::string s_serverStatusUrl;
 static ST::string s_serverSignupUrl;
 static ST::string s_serverName;
-static bool s_singlePlayerMode;
 
 //============================================================================
 ST::string GetServerStatusUrl () {
