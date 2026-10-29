@@ -51,6 +51,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysX/plSimulationMgr.h"
 #include "plResMgr/plResManager.h"
 
+
+void plClientLoader::LoadServerIni(const plFileName& iniFile)
+{
+    fServerIni.Parse(iniFile);
+    fServerIni.Apply();
+}
+
+// ===================================================
 void plClientLoader::Run()
 {
     SetThisThreadName(ST_LITERAL("plClientLoader"));
@@ -67,6 +75,9 @@ void plClientLoader::Run()
 
     fClient = new plClient;
     fClient->SetWindowHandle(fWindow);
+
+    plNetClientMgr* mgr = plNetClientMgr::GetInstance();
+    mgr->SetSinglePlayerMode(fServerIni.fSinglePlayerMode);
 
     plSimulationMgr::Init();
     if (plSimulationMgr::GetInstance()) {

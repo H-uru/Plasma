@@ -153,7 +153,7 @@ void pfServerIni::Parse(const plFileName& fileName)
 {
     std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFile(fileName);
     if (!stream) {
-        throw pfServerIniParseException(ST::format("File not found or could not be opened: {}", fileName));
+        throw pfServerIniParseException(ST::format("server.ini file not found or could not be opened: {}", fileName));
     }
 
     ST::string line;
@@ -194,7 +194,7 @@ void pfServerIni::Apply()
     SetGateKeeperSrvHostname(fGateKeeperHostname);
     gNetGateKeeperDhConstants = fGateKeeperDhConstants;
 
-    plNetClientApp::GetInstance()->SetSinglePlayerMode(fSinglePlayerMode);
+    // fSinglePlayerMode is not applied here because it is not stored in a global variable.
 }
 
 void pfServerIni::Load(const plFileName& fileName)

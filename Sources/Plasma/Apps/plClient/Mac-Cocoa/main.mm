@@ -429,19 +429,13 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     }
 
     plFileName serverIni = "server.ini";
-    if (cmdParser.IsSpecified(kArgServerIni)) serverIni = cmdParser.GetString(kArgServerIni);
+    if (cmdParser.IsSpecified(kArgServerIni))
+        serverIni = cmdParser.GetString(kArgServerIni);
 
-    FILE* serverIniFile = plFileSystem::Open(serverIni, "rb");
-    if (serverIniFile) {
-        fclose(serverIniFile);
-        try {
-            pfServerIni::Load(serverIni);
-        } catch (const pfServerIniParseException& exc) {
-            hsMessageBox(ST::format("Error in server.ini file. Please check your URU installation.\n{}", exc.what()), ST_LITERAL("Error"), hsMessageBoxNormal);
-            [NSApplication.sharedApplication terminate:nil];
-        }
-    } else {
-        hsMessageBox(ST_LITERAL("No server.ini file found.  Please check your URU installation."), ST_LITERAL("Error"), hsMessageBoxNormal);
+    try {
+        gClient.LoadServerIni(serverIni);
+    } catch (const pfServerIniParseException& exc) {
+        hsMessageBox(ST::format("Error in {} file. Please check your URU installation.\n{}", serverIni.GetFileName(), exc.what()), ST_LITERAL("Error"), hsMessageBoxNormal);
         [NSApplication.sharedApplication terminate:nil];
     }
 

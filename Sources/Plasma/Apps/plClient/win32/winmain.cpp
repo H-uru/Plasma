@@ -1191,20 +1191,10 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpCmdLine, int 
     DebugInit();
     hsStatusMessageF("Plasma 2.0.{}.{} - {}", PLASMA2_MAJOR_VERSION, PLASMA2_MINOR_VERSION, plProduct::ProductString());
 
-    FILE *serverIniFile = plFileSystem::Open(serverIni, "rb");
-    if (serverIniFile)
-    {
-        fclose(serverIniFile);
-        try {
-            pfServerIni::Load(serverIni);
-        } catch (const pfServerIniParseException& exc) {
-            hsMessageBox(ST::format("Error in server.ini file. Please check your URU installation.\n{}", exc.what()), ST_LITERAL("Error"), hsMessageBoxNormal);
-            return PARABLE_NORMAL_EXIT;
-        }
-    }
-    else
-    {
-        hsMessageBox(ST_LITERAL("No server.ini file found. Please check your URU installation."), ST_LITERAL("Error"), hsMessageBoxNormal);
+    try {
+        gClient.LoadServerIni(serverIni);
+    } catch (const pfServerIniParseException& exc) {
+        hsMessageBox(ST::format("Error in {} file. Please check your URU installation.\n{}", serverIni.GetFileName(), exc.what()), ST_LITERAL("Error"), hsMessageBoxNormal);
         return PARABLE_NORMAL_EXIT;
     }
 
