@@ -582,45 +582,7 @@ class psnlBookshelf(ptModifier):
                         PtDebugPrint("psnlBookshelf.OnNotify():\tERROR -- couldn't find ", objBookPicked, " in objLibrary")
                         return
 
-                    if ageName == "city" and PtIsSinglePlayerMode():
-                        citylink = self.GetOwnedAgeLink("city")
-                        bcolink = self.GetOwnedAgeLink("BaronCityOffice")
-                        
-                        citylinklocked = citylink and citylink.getLocked()
-                        bcolinklocked = bcolink and bcolink.getLocked()
-
-                        index = linkLibrary.index("city")
-                        objLock = objLocks.value[index]
-                        lockName = objLock.getName()
-
-                        # show as locked if both are locked, or one is locked and the other doesn't exist
-                        if ( citylinklocked is None or citylinklocked) and ( bcolinklocked is None or bcolinklocked):
-                            # find lock associated with this book
-                            objLockPicked = objLocks.value[index]
-                            lockName = objLockPicked.getName()
-                            # find the corresponding lock open responder modifier
-                            for rkey,rvalue in respOpenLock.byObject.items():
-                                parent = rvalue.getParentKey()
-                                if parent:
-                                    if lockName == parent.getName():
-                                        respOpenLock.run(self.key,objectName=rkey)
-                                        break
-                            boolPresentAfterLockOpen = True
-                            break
-                        else:
-                            bookName = objBookPicked.getName()
-                            # find the corresponding responder modifier and present the book to the player
-                            for rkey,rvalue in respPresentBook.byObject.items():
-                                parent = rvalue.getParentKey()
-                                if parent:
-                                    if bookName == parent.getName():
-                                        respPresentBook.run(self.key,objectName=rkey)
-                                        break
-                        self.UsingBook = 1
-                        actBookshelfExit.disable()
-                        return
-                    
-                    elif ageName == "Ahnonay":
+                    if ageName == "Ahnonay":
                         locked = 0
                         ageVault = ptAgeVault()
                         ageInfoNode = ageVault.getAgeInfo()
@@ -721,34 +683,6 @@ class psnlBookshelf(ptModifier):
             
         if id==respShelveBook.id:
             ageName = self.IGetAgeFromBook()
-            if ageName == "city" and PtIsSinglePlayerMode():
-                citylink = self.GetOwnedAgeLink("city")
-                bcolink = self.GetOwnedAgeLink("BaronCityOffice")
-                
-                citylinklocked = citylink and citylink.getLocked()
-                bcolinklocked = bcolink and bcolink.getLocked()
-
-                index = linkLibrary.index("city")
-                objLock = objLocks.value[index]
-                lockName = objLock.getName()
-
-                # show as locked if both are locked, or one is locked and the other doesn't exist
-                if ( citylinklocked is None or citylinklocked) and ( bcolinklocked is None or bcolinklocked):
-                    lockName = objLockPicked.getName()
-                    # find the corresponding responder modifier
-                    for rkey,rvalue in respCloseLock.byObject.items():
-                        parent = rvalue.getParentKey()
-                        if parent:
-                            if lockName == parent.getName():
-                                respCloseLock.run(self.key,objectName=rkey)
-                                objLockPicked = None
-                                break
-
-                #~ elif not boolLinkerIsMe:
-                else:
-                    boolShelfBusy = False
-                    self.IUpdateLinks()
-                return
             link = self.IGetLinkFromBook()
             # Do not use the age link node of a Hood child age for the city book clasp!
             if IsChildLink or ageName in kHardcodedInstances:
@@ -831,40 +765,6 @@ class psnlBookshelf(ptModifier):
                     lockName = objLockPicked.getName()
                     agename = self.IGetAgeFromBook()
 
-                    if agename == "city" and PtIsSinglePlayerMode():
-                        citylink = self.GetOwnedAgeLink("city")
-                        bcolink = self.GetOwnedAgeLink("BaronCityOffice")
-
-                        citylinklocked = citylink and citylink.getLocked()
-                        bcolinklocked = bcolink and bcolink.getLocked()
-
-                        if ( citylinklocked is None or citylinklocked) and ( bcolinklocked is None or bcolinklocked):
-                            for rkey,rvalue in respOpenLock.byObject.items():
-                                parent = rvalue.getParentKey()
-                                if parent:
-                                    if lockName == parent.getName():
-                                        respOpenLock.run(self.key,objectName=rkey)
-                                        break
-
-                            citylink and citylink.setLocked(0)
-                            bcolink and bcolink.setLocked(0)
-                        else:
-                            for rkey,rvalue in respCloseLock.byObject.items():
-                                parent = rvalue.getParentKey()
-                                if parent:
-                                    if lockName == parent.getName():
-                                        respCloseLock.run(self.key,objectName=rkey)
-                                        break
-
-                            citylink and citylink.setLocked(1)
-                            bcolink and bcolink.setLocked(1)
-                                
-                        if ( vault.inMyPersonalAge() ):
-                            citylink and citylink.save()
-                            bcolink and bcolink.save()
-                        
-                        return
-                        
                     link = self.IGetLinkFromBook()
                     # Do not use the age link node of a Hood child age for the city book clasp!
                     if IsChildLink or agename in kHardcodedInstances:
@@ -1290,7 +1190,7 @@ class psnlBookshelf(ptModifier):
                 PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tno matching book for KI's link to:", ageName, "...skipping to next")
                 continue
 
-            if ((ageName == "city" or ageName == "BaronCityOffice") and PtIsSinglePlayerMode()) or (ageName in CityBookAges.keys()):
+            if ageName in CityBookAges.keys():
                 continue
 
             if ageName in kPublicBooks:

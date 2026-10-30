@@ -478,13 +478,10 @@ def CanShowClothingItem(clothingItem):
     # make sure we're not supposed to hide the item
     if (clothingItem.internalOnly and PtIsInternalRelease()) or not clothingItem.internalOnly:
         if (clothingItem.nonStandardItem and ItemInWardrobe(clothingItem)) or not clothingItem.nonStandardItem:
-            if (PtIsSinglePlayerMode() and clothingItem.singlePlayer) or not PtIsSinglePlayerMode():
-                if CanShowSeasonal(clothingItem):
-                    return True
-                else:
-                    PtDebugPrint('CanShowClothingItem(): Hiding item %s because it is seasonal' % (clothingItem.name))
+            if CanShowSeasonal(clothingItem):
+                return True
             else:
-                PtDebugPrint('CanShowClothingItem(): Hiding item %s because it is a multiplayer-only option' % (clothingItem.name))
+                PtDebugPrint('CanShowClothingItem(): Hiding item %s because it is seasonal' % (clothingItem.name))
         else:
             PtDebugPrint('CanShowClothingItem(): Hiding item %s because it is optional and is not in your closet' % (clothingItem.name))
     else:
@@ -1942,7 +1939,6 @@ class ClothingItem:
         self.lastcolorLayer1=None
         self.lastcolorLayer2=None
         self.nonStandardItem = 0 # does this item need to be in the closet to display?
-        self.singlePlayer = 0 # can this item show up in singleplayer?
         self.internalOnly = 0 # is this item only showing up in internal builds?
         self.seasonal = 0 # does this item only show up on certain days?
         # dashes specify a range, commas specify a second, disconnected date
@@ -2068,8 +2064,6 @@ class ClothingItem:
                         if self.groupName not in clothingGroups:
                             PtDebugPrint('AvaCusta: Found clothing group %s adding it to our list of groups' % (self.groupName))
                             clothingGroups.append(self.groupName)
-                    elif ls == "singleplayer":
-                        self.singlePlayer = 1
                     elif ls == "needssort":
                         pass # this one was getting annoying
                     elif ls == "free":
