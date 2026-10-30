@@ -88,37 +88,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 uint32_t fDbgSetupInitFlags; // HACK temp only
 
-plProfile_CreateCounter("Feed Triangles", "Draw", DrawFeedTriangles);
-plProfile_CreateCounter("Draw Prim Static", "Draw", DrawPrimStatic);
-plProfile_CreateMemCounter("Total Texture Size", "Draw", TotalTexSize);
-plProfile_CreateCounter("Layer Change", "Draw", LayChange);
+plProfile_Extern(DrawFeedTriangles);
+plProfile_Extern(DrawPrimStatic);
+plProfile_Extern(TotalTexSize);
+plProfile_Extern(LayChange);
 plProfile_Extern(DrawTriangles);
 plProfile_Extern(MatChange);
-
-plProfile_CreateTimer("PrepShadows", "PipeT", PrepShadows);
-plProfile_CreateTimer("PrepDrawable", "PipeT", PrepDrawable);
-plProfile_CreateTimer("  Skin", "PipeT", Skin);
-plProfile_CreateTimer("RenderSpan", "PipeT", RenderSpan);
-plProfile_CreateTimer("  MergeCheck", "PipeT", MergeCheck);
-plProfile_CreateTimer("  MergeSpan", "PipeT", MergeSpan);
-plProfile_CreateTimer("  SpanTransforms", "PipeT", SpanTransforms);
-plProfile_CreateTimer("  SpanFog", "PipeT", SpanFog);
-plProfile_CreateTimer("  SelectLights", "PipeT", SelectLights);
-plProfile_CreateTimer("  SelectProj", "PipeT", SelectProj);
-plProfile_CreateTimer("  CheckDyn", "PipeT", CheckDyn);
-plProfile_CreateTimer("  CheckStat", "PipeT", CheckStat);
-plProfile_CreateTimer("  RenderBuff", "PipeT", RenderBuff);
-plProfile_CreateTimer("  RenderPrim", "PipeT", RenderPrim);
-plProfile_CreateTimer("PlateMgr", "PipeT", PlateMgr);
-plProfile_CreateTimer("DebugText", "PipeT", DebugText);
-plProfile_CreateTimer("Reset", "PipeT", Reset);
-
-plProfile_CreateCounterNoReset("Reload", "PipeC", PipeReload);
-plProfile_CreateCounter("AvRTPoolUsed", "PipeC", AvRTPoolUsed);
-plProfile_CreateCounter("AvRTPoolCount", "PipeC", AvRTPoolCount);
-plProfile_CreateCounter("AvRTPoolRes", "PipeC", AvRTPoolRes);
-plProfile_CreateCounter("AvRTShrinkTime", "PipeC", AvRTShrinkTime);
-plProfile_CreateCounter("NumSkin", "PipeC", NumSkin);
+plProfile_Extern(PrepShadows);
+plProfile_Extern(PrepDrawable);
+plProfile_Extern(Skin);
+plProfile_Extern(RenderSpan);
+plProfile_Extern(MergeCheck);
+plProfile_Extern(MergeSpan);
+plProfile_Extern(SpanTransforms);
+plProfile_Extern(SpanFog);
+plProfile_Extern(SelectLights);
+plProfile_Extern(SelectProj);
+plProfile_Extern(CheckDyn);
+plProfile_Extern(CheckStat);
+plProfile_Extern(RenderBuff);
+plProfile_Extern(RenderPrim);
+plProfile_Extern(PlateMgr);
+plProfile_Extern(DebugText);
+plProfile_Extern(Reset);
+plProfile_Extern(PipeReload);
+plProfile_Extern(AvRTPoolUsed);
+plProfile_Extern(AvRTPoolCount);
+plProfile_Extern(AvRTPoolRes);
+plProfile_Extern(AvRTShrinkTime);
+plProfile_Extern(NumSkin);
 
 #ifndef PLASMA_FORCE_PER_PIXEL_LIGHTING
 #define PLASMA_FORCE_PER_PIXEL_LIGHTING 0
@@ -133,44 +131,30 @@ constexpr size_t kMetalMaxLightCount = INT16_MAX;
 
 plMetalEnumerate plMetalPipeline::enumerator;
 
-class plRenderTriListFunc : public plRenderPrimFunc
+class plMetalRenderTriListFunc : public plRenderTriListFunc<plMetalDevice>
 {
-protected:
-    plMetalDevice* fDevice;
-    int            fBaseVertexIndex;
-    int            fVStart;
-    int            fVLength;
-    int            fIStart;
-    int            fNumTris;
-
 public:
-    plRenderTriListFunc(plMetalDevice* device, int baseVertexIndex,
+    plMetalRenderTriListFunc(plMetalDevice* device, int baseVertexIndex,
                         int vStart, int vLength, int iStart, int iNumTris)
-        : fDevice(device),
-          fBaseVertexIndex(baseVertexIndex),
-          fVStart(vStart),
-          fVLength(vLength),
-          fIStart(iStart),
-          fNumTris(iNumTris) {}
+        : plRenderTriListFunc(device, baseVertexIndex, vStart, vLength, iStart, iNumTris) {}
 
-    bool RenderPrims() const override;
+    bool RenderPrims() const override
+    {
+        plProfile_IncCount(DrawFeedTriangles, fNumTris);
+        plProfile_IncCount(DrawTriangles, fNumTris);
+        plProfile_Inc(DrawPrimStatic);
+
+        size_t uniformsSize = offsetof(VertexUniforms, uvTransforms) + sizeof(UVOutDescriptor) * fDevice->fPipeline->fCurrNumLayers;
+        if ( !(fDevice->fPipeline->fState.fCurrentVertexUniforms.has_value() && fDevice->fPipeline->fState.fCurrentVertexUniforms == *fDevice->fPipeline->fCurrentRenderPassUniforms) )
+        {
+            fDevice->fPipeline->fState.fCurrentVertexUniforms = *fDevice->fPipeline->fCurrentRenderPassUniforms;
+            fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms), VertexShaderArgumentFixedFunctionUniforms);
+        }
+
+        fDevice->CurrentRenderCommandEncoder()->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, fNumTris * 3, MTL::IndexTypeUInt16, fDevice->fCurrentIndexBuffer, (sizeof(uint16_t) * fIStart));
+    }
 };
 
-bool plRenderTriListFunc::RenderPrims() const
-{
-    plProfile_IncCount(DrawFeedTriangles, fNumTris);
-    plProfile_IncCount(DrawTriangles, fNumTris);
-    plProfile_Inc(DrawPrimStatic);
-
-    size_t uniformsSize = offsetof(VertexUniforms, uvTransforms) + sizeof(UVOutDescriptor) * fDevice->fPipeline->fCurrNumLayers;
-    if ( !(fDevice->fPipeline->fState.fCurrentVertexUniforms.has_value() && fDevice->fPipeline->fState.fCurrentVertexUniforms == *fDevice->fPipeline->fCurrentRenderPassUniforms) )
-    {
-        fDevice->fPipeline->fState.fCurrentVertexUniforms = *fDevice->fPipeline->fCurrentRenderPassUniforms;
-        fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms), VertexShaderArgumentFixedFunctionUniforms);
-    }
-    
-    fDevice->CurrentRenderCommandEncoder()->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, fNumTris * 3, MTL::IndexTypeUInt16, fDevice->fCurrentIndexBuffer, (sizeof(uint16_t) * fIStart));
-}
 
 plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord* devMode) : pl3DPipeline(devMode),
                                                                                                                     fRenderTargetRefList(),
@@ -1208,7 +1192,7 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
 
     /* Index Buffer stuff and drawing */
 
-    plRenderTriListFunc render(&fDevice, 0, vStart, vLength, iStart, iLength / 3);
+    plMetalRenderTriListFunc render(&fDevice, 0, vStart, vLength, iStart, iLength / 3);
 
     plProfile_EndTiming(RenderBuff);
 
@@ -1504,7 +1488,7 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
     fState.fCurrentVertexBuffer = vRef->GetBuffer();
     fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
 
-    plRenderTriListFunc render(&fDevice, 0, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength / 3);
+    plMetalRenderTriListFunc render(&fDevice, 0, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength / 3);
 
     for (int32_t pass = 0; pass < mRef->GetNumPasses(); pass++) {
         IHandleMaterialPass(material, pass, &span, vRef);
@@ -2621,169 +2605,6 @@ void plMetalPipeline::RestoreCurrentLightSources()
     fLightsDirty = true;
 }
 
-// Special effects /////////////////////////////////////////////////////////////
-
-// IPushOverBaseLayer /////////////////////////////////////////////////////////
-// Sets fOverBaseLayer (if any) as a wrapper on top of input layer.
-// This allows the OverBaseLayer to intercept and modify queries of
-// the real current layer's properties (e.g. color or state).
-// fOverBaseLayer is set to only get applied to the base layer during
-// multitexturing.
-// Must be matched with call to IPopOverBaseLayer.
-plLayerInterface* plMetalPipeline::IPushOverBaseLayer(plLayerInterface* li)
-{
-    if (!li)
-        return nullptr;
-
-    fOverLayerStack.emplace_back(li);
-
-    if (!fOverBaseLayer)
-        return fOverBaseLayer = li;
-
-    fForceMatHandle = true;
-    fOverBaseLayer = fOverBaseLayer->Attach(li);
-    fOverBaseLayer->Eval(fTime, fFrame, 0);
-    return fOverBaseLayer;
-}
-
-// IPopOverBaseLayer /////////////////////////////////////////////////////////
-// Removes fOverBaseLayer as wrapper on top of input layer.
-// Should match calls to IPushOverBaseLayer.
-plLayerInterface* plMetalPipeline::IPopOverBaseLayer(plLayerInterface* li)
-{
-    if (!li)
-        return nullptr;
-
-    fForceMatHandle = true;
-
-    plLayerInterface* pop = fOverLayerStack.back();
-    fOverLayerStack.pop_back();
-    fOverBaseLayer = fOverBaseLayer->Detach(pop);
-
-    return pop;
-}
-
-// IPushOverAllLayer ///////////////////////////////////////////////////
-// Push fOverAllLayer (if any) as wrapper around the input layer.
-// fOverAllLayer is set to be applied to each layer during multitexturing.
-// Must be matched by call to IPopOverAllLayer
-plLayerInterface* plMetalPipeline::IPushOverAllLayer(plLayerInterface* li)
-{
-    if (!li)
-        return nullptr;
-
-    fOverLayerStack.push_back(li);
-
-    if (!fOverAllLayer) {
-        fOverAllLayer = li;
-        fOverAllLayer->Eval(fTime, fFrame, 0);
-        return fOverAllLayer;
-    }
-
-    fForceMatHandle = true;
-    fOverAllLayer = fOverAllLayer->Attach(li);
-    fOverAllLayer->Eval(fTime, fFrame, 0);
-
-    return fOverAllLayer;
-}
-
-// IPopOverAllLayer //////////////////////////////////////////////////
-// Remove fOverAllLayer as wrapper on top of input layer.
-// Should match calls to IPushOverAllLayer.
-plLayerInterface* plMetalPipeline::IPopOverAllLayer(plLayerInterface* li)
-{
-    if (!li)
-        return nullptr;
-
-    fForceMatHandle = true;
-
-    plLayerInterface* pop = fOverLayerStack.back();
-    fOverLayerStack.pop_back();
-    fOverAllLayer = fOverAllLayer->Detach(pop);
-
-    return pop;
-}
-
-// IPushProjPiggyBack //////////////////////////////////////////////////
-// Push a projected texture on as a piggy back.
-void plMetalPipeline::IPushProjPiggyBack(plLayerInterface* li)
-{
-    if (fView.fRenderState & plPipeline::kRenderNoPiggyBacks)
-        return;
-
-    fPiggyBackStack.push_back(li);
-    fActivePiggyBacks = uint32_t(fPiggyBackStack.size()) - fMatPiggyBacks;
-    fForceMatHandle = true;
-}
-
-// IPopProjPiggyBacks /////////////////////////////////////////////////
-// Remove a projected texture from use as a piggy back.
-void plMetalPipeline::IPopProjPiggyBacks()
-{
-    if (fView.fRenderState & plPipeline::kRenderNoPiggyBacks)
-        return;
-
-    fPiggyBackStack.resize(fMatPiggyBacks);
-    ISetNumActivePiggyBacks();
-    fForceMatHandle = true;
-}
-
-// IPushPiggyBacks ////////////////////////////////////////////////////
-// Push any piggy backs associated with a material, presumed to
-// be a light map because that's all they are used for.
-// Matched with IPopPiggyBacks
-void plMetalPipeline::IPushPiggyBacks(hsGMaterial* mat)
-{
-    hsAssert(!fMatPiggyBacks, "Push/Pop Piggy mismatch");
-
-    if (fView.fRenderState & plPipeline::kRenderNoPiggyBacks)
-        return;
-
-    for (int i = 0; i < mat->GetNumPiggyBacks(); i++) {
-        if (!mat->GetPiggyBack(i))
-            continue;
-
-        if ((mat->GetPiggyBack(i)->GetMiscFlags() & hsGMatState::kMiscLightMap) && IsDebugFlagSet(plPipeDbg::kFlagNoLightmaps))
-            continue;
-
-        fPiggyBackStack.push_back(mat->GetPiggyBack(i));
-        fMatPiggyBacks++;
-    }
-    ISetNumActivePiggyBacks();
-    fForceMatHandle = true;
-}
-
-// IPopPiggyBacks ///////////////////////////////////////////////////////
-// Pop any current piggy backs set from IPushPiggyBacks.
-// Matches IPushPiggyBacks.
-void plMetalPipeline::IPopPiggyBacks()
-{
-    if (fView.fRenderState & plPipeline::kRenderNoPiggyBacks)
-        return;
-
-    fPiggyBackStack.resize(fPiggyBackStack.size() - fMatPiggyBacks);
-    fMatPiggyBacks = 0;
-
-    ISetNumActivePiggyBacks();
-    fForceMatHandle = true;
-}
-
-// PiggyBacks - used in techniques like projective lighting.
-// PiggyBacks are layers appended to each drawprimitive pass.
-// For example, if a material has 3 layers which will be drawn
-// in 2 passes,
-//      pass0: layer0+layer1
-//      pass1: layer2
-// Then if a piggyback layer layerPB is active, the actual rendering would be
-//      pass0: layer0+layer1+layerPB
-//      pass1: layer2 + layerPB
-
-// ISetNumActivePiggyBacks /////////////////////////////////////////////
-// Calculate the number of active piggy backs.
-size_t plMetalPipeline::ISetNumActivePiggyBacks()
-{
-    return fActivePiggyBacks = std::min(fMaxPiggyBacks, uint32_t(fPiggyBackStack.size()));
-}
 
 struct plAVTexVert
 {
@@ -2969,18 +2790,6 @@ void plMetalPipeline::IDrawClothingQuad(float x, float y, float w, float h,
     plMetalPipeline* pipe = new plMetalPipeline(disp, hWnd, devMode);
     return pipe;
 }*/
-
-// IClearShadowSlaves ///////////////////////////////////////////////////////////////////////////
-// At EndRender(), we need to clear our list of shadow slaves. They are only valid for one frame.
-void plMetalPipeline::IClearShadowSlaves()
-{
-    int i;
-    for (i = 0; i < fShadows.size(); i++) {
-        const plShadowCaster* caster = fShadows[i]->fCaster;
-        caster->GetKey()->UnRefObject();
-    }
-    fShadows.clear();
-}
 
 // Create all our video memory consuming D3D objects.
 bool plMetalPipeline::ICreateDynDeviceObjects()
@@ -3775,7 +3584,7 @@ void plMetalPipeline::IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSp
     uint32_t iStart = span.fIPackedIdx;
     uint32_t iLength = span.fILength;
 
-    plRenderTriListFunc render(&fDevice, 0, vStart, vLength, iStart, iLength / 3);
+    plMetalRenderTriListFunc render(&fDevice, 0, vStart, vLength, iStart, iLength / 3);
 
     static hsMatrix44 emptyMatrix;
     hsMatrix44        m = emptyMatrix;
@@ -3981,26 +3790,13 @@ void plMetalPipeline::ISetupShadowSlaveTextures(plShadowSlave* slave)
     fCurrentRenderPassUniforms->uvTransforms[1].transform = hsMatrix2SIMD(cameraToLut);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//// View Stuff ///////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-//// IIsViewLeftHanded ////////////////////////////////////////////////////////
-//  Returns true if the combination of the local2world and world2camera
-//  matrices is left-handed.
-
-bool plMetalPipeline::IIsViewLeftHanded()
-{
-    return fView.GetViewTransform().GetOrthogonal() ^ (fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded) ? true : false;
-}
-
 //// ISetCullMode /////////////////////////////////////////////////////////////
 // Tests and sets the current winding order cull mode (CW, CCW, or none).
 // Will reverse the cull mode as necessary for left handed camera or local to world
 // transforms.
 void plMetalPipeline::ISetCullMode(bool flip)
 {
-    MTL::CullMode newCullMode = !IIsViewLeftHanded() ^ !flip ? MTL::CullModeFront : MTL::CullModeBack;
+    MTL::CullMode newCullMode = !fView.IsViewLeftHanded() ^ !flip ? MTL::CullModeFront : MTL::CullModeBack;
     if (fState.fCurrentCullMode != newCullMode) {
         fDevice.CurrentRenderCommandEncoder()->setCullMode(newCullMode);
         fState.fCurrentCullMode = newCullMode;
@@ -4010,107 +3806,6 @@ void plMetalPipeline::ISetCullMode(bool flip)
 plMetalDevice* plMetalPipeline::GetMetalDevice()  const
 {
     return &fDevice;
-}
-
-//// ISoftwareVertexBlend ///////////////////////////////////////////////////////
-// Emulate matrix palette operations in software. The big difference between the hardware
-// and software versions is we only want to lock the vertex buffer once and blend all the
-// verts we're going to in software, so the vertex blend happens once for an entire drawable.
-// In hardware, we want the opposite, to break it into managable chunks, manageable meaning
-// few enough matrices to fit into hardware registers. So for hardware version, we set up
-// our palette, draw a span or few, setup our matrix palette with new matrices, draw, repeat.
-bool plMetalPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const std::vector<int16_t>& visList)
-{
-    if (IsDebugFlagSet(plPipeDbg::kFlagNoSkinning))
-        return true;
-
-    if (drawable->GetSkinTime() == fRenderCnt)
-        return true;
-
-    const hsBitVector& blendBits = drawable->GetBlendingSpanVector();
-
-    if (drawable->GetBlendingSpanVector().Empty()) {
-        // This sucker doesn't have any skinning spans anyway. Just return
-        drawable->SetSkinTime(fRenderCnt);
-        return true;
-    }
-
-    plProfile_BeginTiming(Skin);
-
-    // lock the data buffer
-
-    // First, figure out which buffers we need to blend.
-    const int   kMaxBufferGroups = 20;
-    const int   kMaxVertexBuffers = 20;
-    static char blendBuffers[kMaxBufferGroups][kMaxVertexBuffers];
-    memset(blendBuffers, 0, kMaxBufferGroups * kMaxVertexBuffers * sizeof(**blendBuffers));
-
-    hsAssert(kMaxBufferGroups >= drawable->GetNumBufferGroups(), "Bigger than we counted on num groups skin.");
-
-    const std::vector<plSpan*>& spans = drawable->GetSpanArray();
-    int                         i;
-    for (i = 0; i < visList.size(); i++) {
-        if (blendBits.IsBitSet(visList[i])) {
-            const plVertexSpan& vSpan = *(plVertexSpan*)spans[visList[i]];
-            hsAssert(kMaxVertexBuffers > vSpan.fVBufferIdx, "Bigger than we counted on num buffers skin.");
-
-            blendBuffers[vSpan.fGroupIdx][vSpan.fVBufferIdx] = 1;
-            drawable->SetBlendingSpanVectorBit(visList[i], false);
-        }
-    }
-
-    // Now go through each of the group/buffer (= a real vertex buffer) pairs we found,
-    // and blend into it. We'll lock the buffer once, and then for each span that
-    // uses it, set the matrix palette and and then do the blend for that span.
-    // When we've done all the spans for a group/buffer, we unlock it and move on.
-    int j;
-    for (i = 0; i < kMaxBufferGroups; i++) {
-        for (j = 0; j < kMaxVertexBuffers; j++) {
-            if (blendBuffers[i][j]) {
-                // Found one. Do the lock.
-                plMetalVertexBufferRef* vRef = (plMetalVertexBufferRef*)drawable->GetVertexRef(i, j);
-
-                hsAssert(vRef->fData, "Going into skinning with no place to put results!");
-
-                uint8_t* destPtr = vRef->fData;
-
-                int k;
-                for (k = 0; k < visList.size(); k++) {
-                    const plIcicle& span = *(plIcicle*)spans[visList[k]];
-                    if (span.fGroupIdx == i && span.fVBufferIdx == j) {
-                        plProfile_Inc(NumSkin);
-
-                        hsMatrix44* matrixPalette = drawable->GetMatrixPalette(span.fBaseMatrix);
-                        matrixPalette[0] = span.fLocalToWorld;
-
-                        uint8_t* ptr = vRef->fOwner->GetVertBufferData(vRef->fIndex);
-                        ptr += span.fVStartIdx * vRef->fOwner->GetVertexSize();
-                        plSoftwareMeshSkinner::BlendVertBuffer(&span,
-                                         matrixPalette, span.fNumMatrices,
-                                         ptr,
-                                         vRef->fOwner->GetVertexFormat(),
-                                         vRef->fOwner->GetVertexSize(),
-                                         destPtr + span.fVStartIdx * vRef->fVertexSize,
-                                         vRef->fVertexSize,
-                                         span.fVLength,
-                                         span.fLocalUVWChans);
-                        vRef->SetDirty(true);
-                    }
-                }
-                // Unlock and move on.
-            }
-        }
-    }
-
-    plProfile_EndTiming(Skin);
-
-    if (drawable->GetBlendingSpanVector().Empty()) {
-        // Only do this if we've blended ALL of the spans. Thus, this becomes a trivial
-        // rejection for all the skinning flags being cleared
-        drawable->SetSkinTime(fRenderCnt);
-    }
-
-    return true;
 }
 
 // Resource checking
