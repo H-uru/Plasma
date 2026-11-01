@@ -813,7 +813,7 @@ class xLinkingBookGUIPopup(ptModifier):
         return CityLinks	
 
 
-    def IShowBahroBook(self, linkDef: xLinkingBookDefs.BahroStone):
+    def IShowBahroBook(self, linkDef): # linkDef: xLinkingBookDefs.BahroStone, Type specification errors CI on Python 3.8
         global gLinkingBook
         global SpawnPointName_Dict
         global SpawnPointTitle_Dict

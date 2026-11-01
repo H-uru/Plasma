@@ -41,9 +41,9 @@
 # *==LICENSE==*/
 
 from dataclasses import dataclass
-from typing import Literal
+from enum import Enum
 from abc import ABC
-from enum import StrEnum
+from typing import *
 
 #############
 # Constants #
@@ -80,17 +80,17 @@ kShareBookDeleteID = 2
 ShareBook = f'<img src="xBookSharePage512*1#0.hsm" pos=0,0 blend=alpha><img src="xBookShareSymbolOnly*1#0.hsm" pos=128,128 blend=alpha link={kShareBookLinkID}>'
 kFirstLinkPanelID = 100
 
-class DRCStampType(StrEnum):
+class DRCStampType(Enum):
     NoStamp = ""
     Stamp1 = "xDRCBookRubberStamp*1#0.hsm"
     Stamp2 = "xDRCBookRubberStamp2*1#0.hsm"
 
-class DRCStampPosition(StrEnum):
+class DRCStampPosition(Enum):
     MidTop = "125,120"
     Top = "190,60"
     Center = "220,240"
 
-class DeleteBookmarkType(StrEnum):
+class DeleteBookmarkType(Enum):
     NoBookmark = ""
     Rough = f'<img src="xBookmarkDniZero*1#0.hsm" pos=15,0 blend=alpha link={kShareBookDeleteID}>'
     Fine = f'<img src="xBookmarkDniZero2*1#0.hsm" pos=20,0 blend=alpha link={kShareBookDeleteID}>'
@@ -122,14 +122,14 @@ class LinkingBook(LinkDefinition):
             return '<img src="xFanAgeStamp02*1#0.hsm" pos=0,0 resize=no blend=alpha>'
         if self.drcStamp == DRCStampType.NoStamp:
             return ""
-        return f'<img src="{self.drcStamp}" pos={self.drcStampPos} blend=alpha>'
+        return f'<img src="{self.drcStamp.value}" pos={self.drcStampPos.value} blend=alpha>'
 
     def getHTML(self, bookmark="", stamp="", share="", forceYeeshaStamp = False):
-        return f'{f'<cover src="{self.cover}">' if self.cover else ""}\
-            <font size=10>{bookmark}{stamp}{share if self.sharable and share else ""}{self.deleteBookmark}\
-            {"<pb>" if self.panelOnRight else ""}\
-            <img src="{self.linkPanel}" align=center blend=alpha {"" if self.disabled else f"link={kFirstLinkPanelID}"}>\
-            {'<img src="xYeeshaBookStampVSquish*1#0.hsm" pos=140,255 resize=no blend=alpha>' if self.yeeshaStamp or forceYeeshaStamp else ""}'
+        return (f'<cover src="{self.cover}">' if self.cover else "")\
+            + f'<font size=10>{bookmark}{stamp}{share if self.sharable and share else ""}{self.deleteBookmark.value}'\
+            + ("<pb>" if self.panelOnRight else "")\
+            + f'<img src="{self.linkPanel}" align=center blend=alpha {"" if self.disabled else f"link={kFirstLinkPanelID}"}>'\
+            + ('<img src="xYeeshaBookStampVSquish*1#0.hsm" pos=140,255 resize=no blend=alpha>' if self.yeeshaStamp or forceYeeshaStamp else "")
 
 @dataclass
 class BahroStone(LinkDefinition):
@@ -151,7 +151,7 @@ class LinkPage(LinkDefinition):
 ###############
 
 # Whole book GUI popups for LinkingBook and BahroStone types
-xAgeLinkingBooks: dict[str, LinkDefinition] = {
+xAgeLinkingBooks: Dict[str, LinkDefinition] = {
     "Neighborhood": LinkingBook(linkPanel="xLinkPanelBevinDefault*1#0.hsm", drcStamp=DRCStampType.Stamp2),
     "EderKemo": LinkingBook(linkPanel="xLinkPanelGardenDefault*1#0.hsm", sharable=True, yeeshaStamp=True),
     "EderTsogal": LinkingBook(linkPanel="xLinkPaneltsoGarden*1#0.hsm"),
@@ -222,7 +222,7 @@ xAgeLinkingBooks: dict[str, LinkDefinition] = {
 }
 
 # Pages that are added to existing Relto linking books
-xLinkingPages: dict[str, LinkPage] = {
+xLinkingPages: Dict[str, LinkPage] = {
     "Cleft": LinkPage(linkPanel="xLinkPanelCleftDesert*1#0.hsm", doublePageBreak=False),
     "nb01BevinBalcony": LinkPage(linkPanel="xLinkPanelBevinBalc01*1#0.hsm"),
     "nb01BevinBalcony02": LinkPage(linkPanel="xLinkPanelBevinBalc02*1#0.hsm"),
@@ -249,7 +249,7 @@ xLinkingPages: dict[str, LinkPage] = {
 # cross-references the book/page name with the age and spawn point it links to
 # if it goes to the default spawn point, just use "LinkInPointDefault"
 # BookName: ( AgeName, SpawnPoint )
-xLinkDestinations: dict[str, tuple[str, str]] = {
+xLinkDestinations: Dict[str, Tuple[str, str]] = {
     "Neighborhood":             ( "Neighborhood", "LinkInPointDefault" ),
     "EderKemo":                 ( "Garden", "LinkInPointDefault" ),
     "EderTsogal":               ( "EderTsogal", "LinkInPointDefault" ),
