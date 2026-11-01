@@ -268,21 +268,11 @@ class ahnyPressurePlates(ptModifier):
         global gLinkingBook
 
         try:
-            params = xLinkingBookDefs.xAgeLinkingBooks["AhnonayCathedral"]
-
-            if len(params) == 6:
-                sharable,width,height,stampdef,bookdef,gui = params
-            elif len(params) == 5:
-                sharable,width,height,stampdef,bookdef = params
-                gui = "BkBook"
-            else:
-                return
-
+            linkDef = xLinkingBookDefs.xAgeLinkingBooks["AhnonayCathedral"]
             PtSendKIMessage(kDisableKIandBB,0)
-            bookdef = bookdef.replace("%s", "")
-            gLinkingBook = ptBook(bookdef,self.key)
-            gLinkingBook.setSize( width, height )
-            gLinkingBook.setGUI(gui)
+            gLinkingBook = ptBook(linkDef.getHTML(),self.key)
+            gLinkingBook.setSize(linkDef.width, linkDef.height)
+            gLinkingBook.setGUI("BkBook")
             gLinkingBook.show(1)
 
         except LookupError:
