@@ -1844,7 +1844,7 @@ class xOptionsMenu(ptModifier):
             field.setSpecialCaptureKeyMode(1)
             # set the mapping
             controlCode = mapRow1[cID][0]
-            if controlCode:
+            if controlCode is not None:
                 # is the control code a console command?
                 if isinstance(controlCode, str):
                     field.setLastKeyCapture(km.getBindingKeyConsole(controlCode),km.getBindingFlagsConsole(controlCode))
@@ -1862,7 +1862,7 @@ class xOptionsMenu(ptModifier):
             field.setSpecialCaptureKeyMode(1)
             # set the mapping
             controlCode = mapRow2[cID][0]
-            if controlCode:
+            if controlCode is not None:
                 # is the control code a console command?
                 if isinstance(controlCode, str):
                     # this shouldn't really happen!
