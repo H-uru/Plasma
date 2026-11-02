@@ -39,15 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 //////////////////////////////////////////////////////////////////////////////
 //                                                                          //
 //  plEAXListenerMod                                                        //
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef EAX_SDK_AVAILABLE
-#include "plEAXStructures.h"
-#endif
 #include "HeadSpin.h"
 #include "plEAXListenerMod.h"
 #include "plIntersect/plSoftVolume.h"
@@ -56,20 +54,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudioSystem.h"
 #include "pnMessage/plAudioSysMsg.h"
 #include "pnMessage/plRefMsg.h"
-
-#ifdef EAX_SDK_AVAILABLE
-#include <eax-util.h>
-#endif
+#include "plEAXStructures.h"
 
 
 plEAXListenerMod::plEAXListenerMod()
-    : fSoftRegion(), fRegistered(), fGetsMessages()
+    : fReverbProps(new EFXEAXREVERBPROPERTIES),
+    fSoftRegion(nullptr), fRegistered(false), fGetsMessages(false)
 {
-    fListenerProps = new EAXREVERBPROPERTIES;
-
-#ifdef EAX_SDK_AVAILABLE
-    memcpy( fListenerProps, &REVERB_ORIGINAL_PRESETS[ ORIGINAL_GENERIC ], sizeof( EAXREVERBPROPERTIES ) );
-#endif
+    *fReverbProps = EFX_REVERB_PRESET_GENERIC;
 }
 
 plEAXListenerMod::~plEAXListenerMod()
@@ -84,10 +76,10 @@ plEAXListenerMod::~plEAXListenerMod()
         fGetsMessages = false;
     }
 
-    delete fListenerProps;
+    delete fReverbProps;
 }
 
-void    plEAXListenerMod::IRegister()
+void plEAXListenerMod::IRegister()
 {
     if( !fGetsMessages )
     {
@@ -107,7 +99,7 @@ void    plEAXListenerMod::IRegister()
     }
 }
 
-void    plEAXListenerMod::IUnRegister()
+void plEAXListenerMod::IUnRegister()
 {
     if (!fRegistered || GetKey() == nullptr)
         return;
@@ -163,7 +155,7 @@ bool    plEAXListenerMod::MsgReceive( plMessage* pMsg )
 
     return plSingleModifier::MsgReceive( pMsg );
 }
-        
+
 void plEAXListenerMod::Read( hsStream* s, hsResMgr* mgr )
 {
     plSingleModifier::Read( s, mgr );
@@ -171,31 +163,36 @@ void plEAXListenerMod::Read( hsStream* s, hsResMgr* mgr )
     // Read in the soft region
     mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, kRefSoftRegion ), plRefFlags::kActiveRef );
 
+    // Upgrade from EAX3.0 Listener Properties to OpenAL's EFX Reverb Properties
+    LPEAXLISTENERPROPERTIES listenerProps = new EAXLISTENERPROPERTIES();
+
     // Read the listener params
-    fListenerProps->ulEnvironment = s->ReadLE32();
-    fListenerProps->flEnvironmentSize = s->ReadLEFloat();
-    fListenerProps->flEnvironmentDiffusion = s->ReadLEFloat();
-    fListenerProps->lRoom = s->ReadLE32();
-    fListenerProps->lRoomHF = s->ReadLE32();
-    fListenerProps->lRoomLF = s->ReadLE32();
-    fListenerProps->flDecayTime = s->ReadLEFloat();
-    fListenerProps->flDecayHFRatio = s->ReadLEFloat();
-    fListenerProps->flDecayLFRatio = s->ReadLEFloat();
-    fListenerProps->lReflections = s->ReadLE32();
-    fListenerProps->flReflectionsDelay = s->ReadLEFloat();
-    //fListenerProps->vReflectionsPan;     // early reflections panning vector
-    fListenerProps->lReverb = s->ReadLE32();                  // late reverberation level relative to room effect
-    fListenerProps->flReverbDelay = s->ReadLEFloat();
-    //fListenerProps->vReverbPan;          // late reverberation panning vector
-    fListenerProps->flEchoTime = s->ReadLEFloat();
-    fListenerProps->flEchoDepth = s->ReadLEFloat();
-    fListenerProps->flModulationTime = s->ReadLEFloat();
-    fListenerProps->flModulationDepth = s->ReadLEFloat();
-    fListenerProps->flAirAbsorptionHF = s->ReadLEFloat();
-    fListenerProps->flHFReference = s->ReadLEFloat();
-    fListenerProps->flLFReference = s->ReadLEFloat();
-    fListenerProps->flRoomRolloffFactor = s->ReadLEFloat();
-    fListenerProps->ulFlags = s->ReadLE32();
+    listenerProps->ulEnvironment = s->ReadLE32();
+    listenerProps->flEnvironmentSize = s->ReadLEFloat();
+    listenerProps->flEnvironmentDiffusion = s->ReadLEFloat();
+    listenerProps->lRoom = s->ReadLE32();
+    listenerProps->lRoomHF = s->ReadLE32();
+    listenerProps->lRoomLF = s->ReadLE32();
+    listenerProps->flDecayTime = s->ReadLEFloat();
+    listenerProps->flDecayHFRatio = s->ReadLEFloat();
+    listenerProps->flDecayLFRatio = s->ReadLEFloat();
+    listenerProps->lReflections = s->ReadLE32();
+    listenerProps->flReflectionsDelay = s->ReadLEFloat();
+    //listenerProps->vReflectionsPan;
+    listenerProps->lReverb = s->ReadLE32();
+    listenerProps->flReverbDelay = s->ReadLEFloat();
+    //listenerProps->vReverbPan;
+    listenerProps->flEchoTime = s->ReadLEFloat();
+    listenerProps->flEchoDepth = s->ReadLEFloat();
+    listenerProps->flModulationTime = s->ReadLEFloat();
+    listenerProps->flModulationDepth = s->ReadLEFloat();
+    listenerProps->flAirAbsorptionHF = s->ReadLEFloat();
+    listenerProps->flHFReference = s->ReadLEFloat();
+    listenerProps->flLFReference = s->ReadLEFloat();
+    listenerProps->flRoomRolloffFactor = s->ReadLEFloat();
+    listenerProps->ulFlags = s->ReadLE32();
+
+    fReverbProps = ConvertEAXToEFX(listenerProps);
 
     // Done reading, time to tell the audio sys we exist
     IRegister();
@@ -208,45 +205,135 @@ void plEAXListenerMod::Write( hsStream* s, hsResMgr* mgr )
     // Write the soft region key
     mgr->WriteKey( s, fSoftRegion );
 
+    // Convert from EFX Reverb Properties back down to EAX3.0 Listener Properties
+    LPEAXLISTENERPROPERTIES listenerProps = ConvertEFXToEAX(fReverbProps);
+
     // Write the listener params
-    s->WriteLE32((uint32_t)fListenerProps->ulEnvironment);
-    s->WriteLEFloat( fListenerProps->flEnvironmentSize );
-    s->WriteLEFloat( fListenerProps->flEnvironmentDiffusion );
-    s->WriteLE32((int32_t)fListenerProps->lRoom);
-    s->WriteLE32((int32_t)fListenerProps->lRoomHF);
-    s->WriteLE32((int32_t)fListenerProps->lRoomLF);
-    s->WriteLEFloat( fListenerProps->flDecayTime );
-    s->WriteLEFloat( fListenerProps->flDecayHFRatio );
-    s->WriteLEFloat( fListenerProps->flDecayLFRatio );
-    s->WriteLE32((int32_t)fListenerProps->lReflections);
-    s->WriteLEFloat( fListenerProps->flReflectionsDelay );
-    //s->WriteLEFloat( fListenerProps->vReflectionsPan;     // early reflections panning vector
-    s->WriteLE32((int32_t)fListenerProps->lReverb);         // late reverberation level relative to room effect
-    s->WriteLEFloat( fListenerProps->flReverbDelay );
-    //s->WriteLEFloat( fListenerProps->vReverbPan;          // late reverberation panning vector
-    s->WriteLEFloat( fListenerProps->flEchoTime );
-    s->WriteLEFloat( fListenerProps->flEchoDepth );
-    s->WriteLEFloat( fListenerProps->flModulationTime );
-    s->WriteLEFloat( fListenerProps->flModulationDepth );
-    s->WriteLEFloat( fListenerProps->flAirAbsorptionHF );
-    s->WriteLEFloat( fListenerProps->flHFReference );
-    s->WriteLEFloat( fListenerProps->flLFReference );
-    s->WriteLEFloat( fListenerProps->flRoomRolloffFactor );
-    s->WriteLE32((uint32_t)fListenerProps->ulFlags);
+    s->WriteLE32((uint32_t)listenerProps->ulEnvironment);
+    s->WriteLEFloat(listenerProps->flEnvironmentSize);
+    s->WriteLEFloat(listenerProps->flEnvironmentDiffusion);
+    s->WriteLE32((int32_t)listenerProps->lRoom);
+    s->WriteLE32((int32_t)listenerProps->lRoomHF);
+    s->WriteLE32((int32_t)listenerProps->lRoomLF);
+    s->WriteLEFloat(listenerProps->flDecayTime);
+    s->WriteLEFloat(listenerProps->flDecayHFRatio);
+    s->WriteLEFloat(listenerProps->flDecayLFRatio);
+    s->WriteLE32((int32_t)listenerProps->lReflections);
+    s->WriteLEFloat(listenerProps->flReflectionsDelay);
+    //s->WriteLEFloat(listenerProps->vReflectionsPan);
+    s->WriteLE32((int32_t)listenerProps->lReverb);
+    s->WriteLEFloat(listenerProps->flReverbDelay);
+    //s->WriteLEFloat(listenerProps->vReverbPan);
+    s->WriteLEFloat(listenerProps->flEchoTime);
+    s->WriteLEFloat(listenerProps->flEchoDepth);
+    s->WriteLEFloat(listenerProps->flModulationTime);
+    s->WriteLEFloat(listenerProps->flModulationDepth);
+    s->WriteLEFloat(listenerProps->flAirAbsorptionHF);
+    s->WriteLEFloat(listenerProps->flHFReference);
+    s->WriteLEFloat(listenerProps->flLFReference);
+    s->WriteLEFloat(listenerProps->flRoomRolloffFactor);
+    s->WriteLE32((uint32_t)listenerProps->ulFlags);
+
+    delete listenerProps;
 }
 
-
-void    plEAXListenerMod::SetFromPreset( uint32_t preset )
+void plEAXListenerMod::SetFromPreset(EFXEAXREVERBPROPERTIES preset)
 {
-#ifdef EAX_SDK_AVAILABLE
-    memcpy( fListenerProps, &REVERB_ORIGINAL_PRESETS[ preset ], sizeof( EAXREVERBPROPERTIES ) );
-#endif
+    *fReverbProps = preset;
 }
 
-float   plEAXListenerMod::GetStrength()
+float plEAXListenerMod::GetStrength()
 {
     if (fSoftRegion == nullptr)
         return 0.f;
 
     return fSoftRegion->GetListenerStrength();
+}
+
+
+/* Helper functions for converting to EFX from deprecated EAX values */
+
+#include <math.h>
+
+inline float mB_to_gain(float mb)
+{
+    return powf(10.0f, mb / 2000.0f);
+}
+
+inline float gain_to_mB(float gain)
+{
+    return 2000.0f * log10f(gain);
+}
+
+LPEFXEAXREVERBPROPERTIES ConvertEAXToEFX(const LPEAXLISTENERPROPERTIES eax)
+{
+    float density;
+    auto  efx = new EFXEAXREVERBPROPERTIES();
+
+    density = powf(eax->flEnvironmentSize, 3.0f) / 16.0f;
+    efx->flDensity = (density > 1.0f) ? 1.0f : density;
+    efx->flDiffusion = eax->flEnvironmentDiffusion;
+    efx->flGain = mB_to_gain(eax->lRoom);
+    efx->flGainHF = mB_to_gain(eax->lRoomHF);
+    efx->flGainLF = mB_to_gain(eax->lRoomLF);
+    efx->flDecayTime = eax->flDecayTime;
+    efx->flDecayHFRatio = eax->flDecayHFRatio;
+    efx->flDecayLFRatio = eax->flDecayLFRatio;
+    efx->flReflectionsGain = mB_to_gain(eax->lReflections);
+    efx->flReflectionsDelay = eax->flReflectionsDelay;
+    efx->flReflectionsPan[0] = eax->vReflectionsPan.x;
+    efx->flReflectionsPan[1] = eax->vReflectionsPan.y;
+    efx->flReflectionsPan[2] = eax->vReflectionsPan.z;
+    efx->flLateReverbGain = mB_to_gain(eax->lReverb);
+    efx->flLateReverbDelay = eax->flReverbDelay;
+    efx->flLateReverbPan[0] = eax->vReverbPan.x;
+    efx->flLateReverbPan[1] = eax->vReverbPan.y;
+    efx->flLateReverbPan[2] = eax->vReverbPan.z;
+    efx->flEchoTime = eax->flEchoTime;
+    efx->flEchoDepth = eax->flEchoDepth;
+    efx->flModulationTime = eax->flModulationTime;
+    efx->flModulationDepth = eax->flModulationDepth;
+    efx->flAirAbsorptionGainHF = mB_to_gain(eax->flAirAbsorptionHF);
+    efx->flHFReference = eax->flHFReference;
+    efx->flLFReference = eax->flLFReference;
+    efx->flRoomRolloffFactor = eax->flRoomRolloffFactor;
+    efx->iDecayHFLimit =
+        (eax->ulFlags & EAXLISTENERFLAGS_DECAYHFLIMIT) ? 1 : 0;
+
+    return efx;
+}
+
+LPEAXLISTENERPROPERTIES ConvertEFXToEAX(const LPEFXEAXREVERBPROPERTIES efx)
+{
+    auto eax = new EAXLISTENERPROPERTIES();
+
+    eax->flEnvironmentSize = cbrtf(16.0f * efx->flDensity);
+    eax->flEnvironmentDiffusion = efx->flDiffusion;
+    eax->lRoom = gain_to_mB(efx->flGain);
+    eax->lRoomHF = gain_to_mB(efx->flGainHF);
+    eax->lRoomLF = gain_to_mB(efx->flGainLF);
+    eax->flDecayTime = efx->flDecayTime;
+    eax->flDecayHFRatio = efx->flDecayHFRatio;
+    eax->flDecayLFRatio = efx->flDecayLFRatio;
+    eax->lReflections = gain_to_mB(efx->flReflectionsGain);
+    eax->flReflectionsDelay = efx->flReflectionsDelay;
+    eax->vReflectionsPan.x = efx->flReflectionsPan[0];
+    eax->vReflectionsPan.y = efx->flReflectionsPan[1];
+    eax->vReflectionsPan.z = efx->flReflectionsPan[2];
+    eax->lReverb = gain_to_mB(efx->flLateReverbGain);
+    eax->flReverbDelay = efx->flLateReverbDelay;
+    eax->vReverbPan.x = efx->flLateReverbPan[0];
+    eax->vReverbPan.y = efx->flLateReverbPan[1];
+    eax->vReverbPan.z = efx->flLateReverbPan[2];
+    eax->flEchoTime = efx->flEchoTime;
+    eax->flEchoDepth = efx->flEchoDepth;
+    eax->flModulationTime = efx->flModulationTime;
+    eax->flModulationDepth = efx->flModulationDepth;
+    eax->flAirAbsorptionHF = gain_to_mB(efx->flAirAbsorptionGainHF);
+    eax->flHFReference = efx->flHFReference;
+    eax->flLFReference = efx->flLFReference;
+    eax->flRoomRolloffFactor = efx->flRoomRolloffFactor;
+    if (efx->iDecayHFLimit == 1)
+        eax->ulFlags |= EAXLISTENERFLAGS_DECAYHFLIMIT;
+    return eax;
 }
