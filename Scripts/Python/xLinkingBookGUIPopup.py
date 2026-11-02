@@ -510,6 +510,7 @@ class xLinkingBookGUIPopup(ptModifier):
             elif agePanel == "BahroCaveLower":
                 pelletCaveGUID = str(self.OnClickToLinkToPelletCaveFromAhnonay())
                 PtDebugPrint("pelletCaveGUID = ",pelletCaveGUID)
+
             try:
                 linkDef = xLinkingBookDefs.xAgeLinkingBooks[agePanel]
                 if isinstance(linkDef, xLinkingBookDefs.BahroStone):
@@ -518,21 +519,23 @@ class xLinkingBookGUIPopup(ptModifier):
                     return
                 elif not isinstance(linkDef, xLinkingBookDefs.LinkingBook):
                     PtDebugPrint(f"xLinkingBookGUIPopup: Unexpected link definition for age panel {agePanel}. You done a bad.")
-
-                stampdef = linkDef.getDRCStampHTML() if IsDRCStamped.value else ""
-                bookdef = linkDef.getHTML(stamp=stampdef, share=self.IAddShare())
-                SpawnPointName_Dict[0] = "LinkInPointDefault"
-                SpawnPointTitle_Dict[0] = agePanel
-                PtSendKIMessage(kDisableKIandBB,0)
-                gLinkingBook = ptBook(bookdef, self.key)
-                gLinkingBook.setSize(linkDef.width, linkDef.height)
-                # make sure there is a cover to show
-                if not showOpen and not linkDef.cover:
-                    showOpen = 1
-                gLinkingBook.setGUI("BkBook")
-                gLinkingBook.show(showOpen)
             except LookupError:
-                PtDebugPrint("xLinkingBookGUIPopup: could not find age %s's linking panel" % (agePanel),level=kErrorLevel)
+                PtDebugPrint(f"xLinkingBookGUIPopup: could not find age {agePanel}'s linking panel", level=kErrorLevel)
+                # Fall back to black void book
+                linkDef = xLinkingBookDefs.LinkingBook()
+
+            stampdef = linkDef.getDRCStampHTML() if IsDRCStamped.value else ""
+            bookdef = linkDef.getHTML(stamp=stampdef, share=self.IAddShare())
+            SpawnPointName_Dict[0] = "LinkInPointDefault"
+            SpawnPointTitle_Dict[0] = agePanel
+            PtSendKIMessage(kDisableKIandBB,0)
+            gLinkingBook = ptBook(bookdef, self.key)
+            gLinkingBook.setSize(linkDef.width, linkDef.height)
+            # make sure there is a cover to show
+            if not showOpen and not linkDef.cover:
+                showOpen = 1
+            gLinkingBook.setGUI("BkBook")
+            gLinkingBook.show(showOpen)
         else:
             PtDebugPrint("xLinkingBookGUIPopup: no age link panel" % (agePanel),level=kErrorLevel)
 
@@ -616,8 +619,9 @@ class xLinkingBookGUIPopup(ptModifier):
                 elif not isinstance(linkDef, xLinkingBookDefs.LinkingBook):
                     PtDebugPring(f"xLinkingBookGUIPopup: Unexpected link definition for agePanel {agePanel}. What are you doing!?")
             except LookupError:
-                PtDebugPrint(f"xLinkingBookGUIPopup: could not find age {agePanel}'s linking panel or SpawnPoint", level=kErrorLevel)
-                return
+                PtDebugPrint(f"xLinkingBookGUIPopup: could not find age {agePanel}'s linking panel", level=kErrorLevel)
+                # Fall back to black void book
+                linkDef = xLinkingBookDefs.LinkingBook()
 
             stampdef = linkDef.getDRCStampHTML() if IsDRCStamped.value else ""
 
@@ -649,7 +653,9 @@ class xLinkingBookGUIPopup(ptModifier):
                 try:
                     allPagesDef += xLinkingBookDefs.xLinkingPages[SpawnPointTitle_Dict[linkID]].getHTML(linkID)
                 except LookupError:
-                    PtDebugPrint("xLinkingBookGUIPopup: could not find treasure book page %s's linking panel" % (SpawnPointTitle_Dict[linkID]),level=kErrorLevel)
+                    PtDebugPrint(f"xLinkingBookGUIPopup: could not find treasure book page {SpawnPointTitle_Dict[linkID]}'s linking panel",level=kErrorLevel)
+                    # Fall back to black void page
+                    allPagesDef += xLinkingBookDefs.LinkPage().getHTML(linkID)
                     
             if allPagesDef != "":
                 #PtDebugPrint(allPagesDef)

@@ -142,9 +142,9 @@ class BahroStone(LinkDefinition):
 class LinkPage(LinkDefinition):
     doublePageBreak: bool = True # for the dual-panel Cleft book hackery
 
-    def getHTML(self, linkId: int):
-        return f'<pb>{"<pb>" if self.doublePageBreak else ""}\
-            <img src="{self.linkPanel}" align=center blend=alpha link={linkId}>'
+    def getHTML(self, linkId: Optional[int] = None):
+        link = f"link={linkId}" if linkId is not None else ""
+        return f'<pb>{"<pb>" if self.doublePageBreak else ""}<img src="{self.linkPanel}" align=center blend=alpha {link}>'
 
 ###############
 # Definitions #
@@ -237,7 +237,7 @@ xLinkingPages: Dict[str, LinkPage] = {
     "KadishGallery": LinkPage(linkPanel="xLinkPanelKadishGallery*1#0.hsm"),
     "BaronCityOffice": LinkPage(linkPanel="xLinkPanelBaronCityOffice*1#0.hsm"),
     "dsntShaftFall": LinkPage(linkPanel="xLinkPanelDescentShaftFall*1#0.hsm"),
-    "Spyroom": LinkPage(linkPanel="xLinkPanelSpyRoom*1#0.hsm"),
+    #"Spyroom": LinkPage(linkPanel="xLinkPanelSpyRoom*1#0.hsm"),
     "Kveer": LinkPage(linkPanel="xLinkPanelKveerGreatHall*1#0.hsm"),
     "YeeshaVault": LinkPage(linkPanel="xLinkPanelYeeshaVault*1#0.hsm"),
     "grtzGrtZeroLinkRm": LinkPage(linkPanel="xLinkPanelGrtZeroLinkRm*1#0.hsm"),
