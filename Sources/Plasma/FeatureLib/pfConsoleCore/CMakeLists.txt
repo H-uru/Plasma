@@ -24,6 +24,7 @@ target_link_libraries(
         CoreLib
     PRIVATE
         pnNetBase
+        pnNetCommon
         plFile
 )
 

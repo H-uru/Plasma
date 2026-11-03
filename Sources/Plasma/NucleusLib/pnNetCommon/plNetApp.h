@@ -167,7 +167,7 @@ public:
         kSilencePlayer,                     // player's outbound communication is shutoff
         kConsoleOutput,                     // net log output is echoed to console
         kLoadingInitialAgeState,            // set when we first link in to an age and are recving its initial state
-        kLaunchedFromSetup,                 // set if we were launched from the setup program
+        kSinglePlayerMode,                  // set if we want to run with singleplayer mechanics
         kCCRVaultConnected,                 // set if we've connected to the CCR vault 
         kNetClientCommInited,               // set if the netClientComm interface has been initialized
         kNeedToSendInitialAgeStateLoadedMsg,// internal use only, when we need to send plInitialAgeStateLoadedMsg
@@ -214,8 +214,8 @@ public:
     bool IsEnabled() const { return !GetFlagsBit(kDisabled); }
     bool InDemoMode() const { return GetFlagsBit(kDemoMode); }
     bool IsLoadingInitialAgeState() const { return GetFlagsBit(kLoadingInitialAgeState); }
-    void  SetLaunchedFromSetup(bool b) { SetFlagsBit(kLaunchedFromSetup, b);    }
-    bool GetLaunchedFromSetup() const { return GetFlagsBit(kLaunchedFromSetup); }
+    void SetSinglePlayerMode(bool b) { SetFlagsBit(kSinglePlayerMode, b); }
+    bool GetSinglePlayerMode() const { return GetFlagsBit(kSinglePlayerMode); }
     
     // CCR stuff
 #ifdef PLASMA_EXTERNAL_RELEASE

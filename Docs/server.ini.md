@@ -4,8 +4,7 @@ This is a complete list of all supported settings for the server.ini
 configuration file. See [example_server.ini](../example_server.ini) for a more
 practical example.
 
-The server.ini actually uses Plasma console commands, which are also used by
-.fni files. Unless indicated otherwise, all values should be surrounded with
+Unless indicated otherwise, all values should be surrounded with
 double quotes to avoid parsing issues with spaces or other symbols.
 
 To use a different configuration file than the default server.ini, you can run
@@ -109,3 +108,34 @@ standard *g* value for that server type is used. Most shards use these standard
 values, so there's usually no need to set these explicitly.
 
 The values are integers and shouldn't be quoted.
+
+## Server.SinglePlayerMode
+
+**Example:**
+
+```
+Server.SinglePlayerMode "true"
+```
+
+A switch to enable single player mechanics. Optional.
+
+This accepts `true` or non-zero integers as an argument. Shard admins or players with
+local testing clients can set it in their server.ini to opt into playing certain game
+mechanics in a singleplayer version. This effectively sets `PtIsSinglePlayerMode()`
+to true in the Python backend and should not be confused with an offline mode.
+
+## Server.VoiceCodec
+
+**Example:**
+
+```
+Server.VoiceCodec "Speex"
+```
+
+Change the codec used for voice chat. Optional. Accepted values: `Opus`, `Speex`.
+
+By default the H-uru client uses the Opus audio codec which is incompatible
+with legacy OU/MOULa clients that use Speex. The Opus packets were carefully
+crafted to not crash legacy clients, but no one can hear you if you bring
+a H-uru client to a legacy environment. With this option you can change your
+used codec to restore compatibility.
