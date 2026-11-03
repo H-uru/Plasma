@@ -121,6 +121,18 @@ class pfConsole : public hsKeyedObject
         void    IHandleKey( plKeyEventMsg *msg );
         void    IHandleCharacter(const char c);
 
+        enum class CharType
+        {
+            kNormal,
+            kWordBreaker,
+        };
+
+        CharType IAdvanceChar(bool next, uint32_t& pos) const;
+        void IAdvanceWordFromPos(bool next, uint32_t& pos) const;
+
+        void IDeleteChar(bool next);
+        void IDeleteWord(bool next);
+
         static uint32_t       fConsoleTextColor;
         static pfConsole    *fTheConsole;
         static void IAddLineCallback(const ST::string& string);
