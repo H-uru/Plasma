@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <vector>
 
-#include "plShaderTable.h"
+#include "plShaderID.h"
 
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
@@ -174,7 +174,7 @@ public:
     plPipeConst(Type t, uint16_t r) : fType(t), fReg(r) { }
 
     Type        fType;
-    uint16_t              fReg;
+    uint16_t    fReg;
 };
 
 typedef plPipeConst::Type plPipeConstType;
@@ -190,22 +190,19 @@ public:
         kShaderError        = 0x10,
         kShaderUnsupported  = 0x20
     };
+
 protected:
-    mutable uint32_t              fFlags;
+    uint32_t                    fFlags;
+    plShaderID::ID              fID;
 
     std::vector<plShaderConst>  fConsts;
-
-    mutable hsGDeviceRef*       fDeviceRef;
-
-    const plShaderDecl*         fDecl;
-
-    uint8_t                       fInput;
-    uint8_t                       fOutput;
-
     std::vector<plPipeConst>    fPipeConsts;
+
+    hsGDeviceRef*               fDeviceRef;
 
 public:
     plShader();
+    plShader(plShaderID::ID id);
     virtual ~plShader();
 
     CLASSNAME_REGISTER( plShader );
@@ -245,31 +242,23 @@ public:
     void                    SetFloat(size_t i, int chan, float v);
     void                    SetFloat4(size_t i, const float* const f);
 
-    const plShaderDecl*     GetDecl() const { return fDecl; }
-
-    void                    SetDecl(const plShaderDecl* p); // will reference (pointer copy)
-    void                    SetDecl(plShaderID::ID id);
-
     bool                    IsValid() const { return !(fFlags & kInvalid); }
-    void                    Invalidate() const { fFlags |= kInvalid; }
+    void                    Invalidate() { fFlags |= kInvalid; }
 
     bool                    IsPixelShader() const { return 0 != (fFlags & kIsPixel); }
     bool                    IsVertexShader() const { return !IsPixelShader(); }
     void                    SetIsPixelShader(bool on) { if(on)fFlags |= kIsPixel; else fFlags &= ~kIsPixel; }
 
+    plShaderID::ID          GetShaderID() const { return fID; }
+    void                    SetShaderID(plShaderID::ID id) { fID = id; }
+
     // These are only for use by the pipeline.
     hsGDeviceRef*           GetDeviceRef() const { return fDeviceRef; }
-    void                    SetDeviceRef(hsGDeviceRef* ref) const;
+    void                    SetDeviceRef(hsGDeviceRef* ref);
 
     const void*             GetConstBasePtr() const { return !fConsts.empty() ? &fConsts[0] : nullptr; }
 
     void                    CopyConsts(const plShader* src) { fConsts = src->fConsts; }
-
-    void                    SetInputFormat(uint8_t format) { fInput = format; }
-    void                    SetOutputFormat(uint8_t format) { fOutput = format; }
-
-    uint8_t                   GetInputFormat() const { return fInput; }
-    uint8_t                   GetOutputFormat() const { return fOutput; }
 
     size_t                  GetNumPipeConsts() const { return fPipeConsts.size(); }
     const plPipeConst&      GetPipeConst(size_t i) const { return fPipeConsts[i]; }
