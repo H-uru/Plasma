@@ -467,12 +467,9 @@ class xLinkingBookGUIPopup(ptModifier):
     def IShowBookNoTreasure(self):
         "Show the linking book with no treasure pages"
         global gLinkingBook
-        global SpawnPointName_Dict
-        global SpawnPointTitle_Dict
-        global kGrsnTeamBook
         global pelletCaveGUID
         showOpen = 0
-        #If this is a normal pedestal book, the panel is defined in the Max GUI. If this is the personal Age Bookshelf, the panel is passed in a note from psnlBookshelf. Determine the source here.
+        # If this is a normal pedestal book, the panel is defined in the Max GUI. If this is the personal Age Bookshelf, the panel is passed in a note from psnlBookshelf. Determine the source here.
         if len(actBookshelf.value) == 0:
             agePanel = TargetAge.value
             showOpen = 1  # start pedestal books open
@@ -481,10 +478,10 @@ class xLinkingBookGUIPopup(ptModifier):
             showOpen = 0    # start bookself books closed
         # did we find an agePanel to link with?
         if agePanel:
-            #this new section is specific to Tomahna
-            #it checks if a Tomahna panel is used to link with,
-            #if so it sets (or creates and sets, if not already present) a Tomahna chronicle entry to yes,
-            #which is then read in by Cleft.py to load in the Tomahna pages
+            # this new section is specific to Tomahna
+            # it checks if a Tomahna panel is used to link with,
+            # if so it sets (or creates and sets, if not already present) a Tomahna chronicle entry to yes,
+            # which is then read in by Cleft.py to load in the Tomahna pages
             if agePanel == "Cleft":
                 vault = ptVault()
                 if not vault.amOwnerOfCurrentAge():
@@ -540,17 +537,16 @@ class xLinkingBookGUIPopup(ptModifier):
             gLinkingBook.setGUI(linkDef.GUI)
             gLinkingBook.show(showOpen)
         else:
-            PtDebugPrint("xLinkingBookGUIPopup: no age link panel" % (agePanel),level=kErrorLevel)
+            PtDebugPrint("xLinkingBookGUIPopup: no age link panel", level=kErrorLevel)
 
 
     def IShowBookTreasure(self):
         PtDebugPrint("Show the linking book with all its treasure pages")
         global gLinkingBook
-        global CurrentPage
         global SpawnPointTitle_Dict
         global SpawnPointName_Dict
         showOpen = 0
-        #If this is a normal pedestal book, the panel is defined in the Max GUI. If this is the personal Age Bookshelf, the panel is passed in a note from psnlBookshelf. Determine the source here.
+        # If this is a normal pedestal book, the panel is defined in the Max GUI. If this is the personal Age Bookshelf, the panel is passed in a note from psnlBookshelf. Determine the source here.
         if len(actBookshelf.value) == 0:
             agePanel = TargetAge.value
             showOpen = 1  # start pedestal books open
@@ -558,7 +554,7 @@ class xLinkingBookGUIPopup(ptModifier):
         else:
             agePanel = stringAgeRequested
             fromBookshelf = 1
-            showOpen = 0    # start bookself books closed
+            showOpen = 0  # start bookself books closed
             # but if bookmarked... then turn to that page
             if CurrentPage > 1:
                 showOpen = 1  # start the book at the page where they left off
@@ -629,7 +625,7 @@ class xLinkingBookGUIPopup(ptModifier):
             stampdef = linkDef.getDRCStampMarkup() if IsDRCStamped.value else ""
 
             # bookmark link
-            if fromBookshelf and xLinkingBookDefs.kBookMarkID in SpawnPointTitle_Dict.keys():
+            if fromBookshelf and xLinkingBookDefs.kBookMarkID in SpawnPointTitle_Dict:
                 if SpawnPointTitle_Dict[xLinkingBookDefs.kBookMarkID] == 'JCSavePoint':
                     bookmark = xLinkingBookDefs.JCBookMark
                 elif SpawnPointTitle_Dict[xLinkingBookDefs.kBookMarkID] == 'SCSavePoint':
@@ -648,7 +644,7 @@ class xLinkingBookGUIPopup(ptModifier):
             allPagesDef = linkDef.getMarkup(bookmark, stampdef, self.IAddShare(), forceYeeshaStamp)
 
             # build the rest of the pages into the book
-            for linkID in SpawnPointTitle_Dict.keys():
+            for linkID in SpawnPointTitle_Dict:
                 if linkID == xLinkingBookDefs.kFirstLinkPanelID or linkID == xLinkingBookDefs.kBookMarkID:
                     continue
 
@@ -665,9 +661,8 @@ class xLinkingBookGUIPopup(ptModifier):
                 gLinkingBook = ptBook(allPagesDef, self.key)
                 gLinkingBook.setSize(linkDef.width, linkDef.height)
                 # make sure there is a cover to show
-                if not showOpen:
-                    if not linkDef.cover:
-                        showOpen = 1
+                if not showOpen and not linkDef.cover:
+                    showOpen = 1
                 gLinkingBook.setGUI(linkDef.GUI)
                 vault = ptVault()
                 if vault.amOwnerOfCurrentAge():
@@ -676,9 +671,9 @@ class xLinkingBookGUIPopup(ptModifier):
                     gLinkingBook.allowPageTurning(0)
                 gLinkingBook.show(showOpen)
             else:
-                PtDebugPrint("xLinkingBookGUIPopup: couldn't find the book definition for %s???" % (agePanel),level=kErrorLevel)
+                PtDebugPrint(f"xLinkingBookGUIPopup: couldn't find the book definition for {agePanel}???", level=kErrorLevel)
         else:
-            PtDebugPrint("xLinkingBookGUIPopup: no age link panel" % (agePanel),level=kErrorLevel)
+            PtDebugPrint("xLinkingBookGUIPopup: no age link panel", level=kErrorLevel)
 
 
     def IGetHoodLinkNode(self):
@@ -823,9 +818,6 @@ class xLinkingBookGUIPopup(ptModifier):
 
     def IShowBahroBook(self, linkDef: xLinkingBookDefs.BahroStone):
         global gLinkingBook
-        global SpawnPointName_Dict
-        global SpawnPointTitle_Dict
-        global OfferedBookMode
         PtDebugPrint("xLinkingBookGUIPopup: It's a Bahro Linking Tablet (BLT), so we get to do fun stuff now!")
         agePanel = TargetAge.value
         bookdef = linkDef.getMarkup(not OfferedBookMode)
@@ -838,14 +830,9 @@ class xLinkingBookGUIPopup(ptModifier):
         gLinkingBook.show(1) # this book is always open
 
     def IAddShare(self):
-        global OfferedBookMode
-        # if a pedestal book? (not a bookSelf book)
-        if len(actBookshelf.value) == 0:
-            # if we are not in offer book mode already
-            if not OfferedBookMode:
-                # yes, then return the bookHTML for a share book icon
-                return xLinkingBookDefs.ShareBook
-        # otherwise return empty string
+        # if a pedestal book (not a bookShelf book) and we are not in offer book mode already
+        if len(actBookshelf.value) == 0 and not OfferedBookMode:
+            return xLinkingBookDefs.ShareBook
         return ""
 
     def BuildTreasureLinks(self,ageRequested):
