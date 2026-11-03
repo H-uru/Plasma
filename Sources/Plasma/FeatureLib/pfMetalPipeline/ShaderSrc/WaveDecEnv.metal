@@ -87,11 +87,11 @@ typedef struct
 typedef struct
 {
     float4 position [[position]];
-    float4 c1;
+    float4 environmentTint;
     float4 texCoord0;
-    float4 texCoord1;
-    float4 texCoord2;
-    float4 texCoord3;
+    float4 basisRowX;
+    float4 basisRowY;
+    float4 basisRowZ;
     float fog;
 } vs_WaveDecEnv7InOut;
 
@@ -156,8 +156,8 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     //    dist = mad( dist, kFreq.xyzw, kPhase.xyzw);
     phases = (phases * uniforms.Frequency) + uniforms.Phase;
     
-    float4 cosPhases;
-    float4 sinPhases = fast::sincos(phases, cosPhases);
+    float4 cosines;
+    float4 sines = fast::sincos(phases, cosines);
 
     // Calc our depth based filtering here into r4 (because we don't use it again
     // after here, and we need our filtering shortly).
@@ -176,15 +176,15 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     // r2 == sinDist
     // r1 == cosDist
     //    sinDist *= filter;
-    sinPhases *= filter;
+    sines *= filter;
     //    sinDist *= kAmplitude.xyzw
-    sinPhases *= uniforms.Amplitude;
+    sines *= uniforms.Amplitude;
     // r5 is now T = sum(Ai * sin())
     // METAL NOTE: from here on, r5 is sinDist
     //    height = dp4(sinDist, kOne);
     //    accumPos.z += height; (but accumPos.z is currently 0).
     float4 accumPos = float4(0);
-    accumPos.x = dot(sinPhases, uniforms.NumericConsts.zzzz);
+    accumPos.x = dot(sines, uniforms.NumericConsts.zzzz);
     accumPos.y = accumPos.x * depth.z;
     accumPos.z = accumPos.y + uniforms.WaterLevel.w;
     worldPosition.z = max(worldPosition.z, accumPos.z); // CLAMP
@@ -194,7 +194,7 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     // r6.z == wave height clamped to never go beneath ground level
     //
     //    cosDist *= filter;
-    cosPhases *= filter;
+    cosines *= filter;
     // Pos = (in.x + S, in.y + R, r6.z)
     // S = sum(k Dir.x A cos())
     // R = sum(k Dir.y A cos())
@@ -202,8 +202,8 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     // c31 = k Dir.y A
     //    S = sum(cosDist * c30);
     worldPosition.xy += float2(
-                              dot(cosPhases, uniforms.QADirX),
-                              dot(cosPhases, uniforms.QADirY)
+                              dot(cosines, uniforms.QADirX),
+                              dot(cosines, uniforms.QADirY)
                               );
 
     // Bias our vert up a bit to compensate for precision errors.
@@ -286,38 +286,37 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
 
     // Okay, r1 currently has the vector of cosines, and r2 has vector of sines.
     // Everything will want that times amplitude, so go ahead and fold that in.
-    cosPhases *= uniforms.Amplitude;
+    cosines *= uniforms.Amplitude;
 
-    r7.x = dot(sinPhases, -uniforms.DirXSqKW);
-    r7.y = dot(sinPhases, -uniforms.DirXDirYKW);
-    r7.z = dot(cosPhases, -uniforms.DirXW);
-    r7.x += uniforms.NumericConsts.z;
+    float4 basisRowX, basisRowY, basisRowZ = float4(0);
 
-    float4 r8 = float4(0);
-    r8.x = dot(sinPhases, -uniforms.DirXDirYKW);
-    r8.y = dot(sinPhases, -uniforms.DirYSqKW);
-    r8.z = dot(cosPhases, -uniforms.DirYW);
-    r8.y = r8.y + uniforms.NumericConsts.z;
+    basisRowX.x = dot(sines, -uniforms.DirXSqKW);
+    basisRowX.y = dot(sines, -uniforms.DirXDirYKW);
+    basisRowX.z = dot(cosines, -uniforms.DirXW);
+    basisRowX.x += uniforms.NumericConsts.z;
 
-    float4 r9 = out.position;
-    r9.z = dot(cosPhases, -uniforms.WK);
-    r9.x = -r7.z;
-    r9.y = -r8.z;
-    r9.z = r9.z + uniforms.NumericConsts.z;
+    basisRowY.x = dot(sines, -uniforms.DirXDirYKW);
+    basisRowY.y = dot(sines, -uniforms.DirYSqKW);
+    basisRowY.z = dot(cosines, -uniforms.DirYW);
+    basisRowY.y = basisRowY.y + uniforms.NumericConsts.z;
+
+    basisRowZ.z = dot(cosines, -uniforms.WK);
+    basisRowZ.x = -basisRowX.z;
+    basisRowZ.y = -basisRowY.z;
+    basisRowZ.z = basisRowZ.z + uniforms.NumericConsts.z;
 
     // Okay, got everything we need, construct r1-3 as surface2world*texture2surface.
-    float4 r1, r2, r3 = float4(0);
-    r1.x = dot(r7.xyz, in.texCoord2);
-    r1.y = dot(r7.xyz, in.texCoord3);
-    r1.z = dot(r7.xyz, r5.xyz);
+    basisRowX.x = dot(basisRowX.xyz, in.texCoord2);
+    basisRowX.y = dot(basisRowX.xyz, in.texCoord3);
+    basisRowX.z = dot(basisRowX.xyz, r5.xyz);
 
-    r2.x = dot(r8.xyz, in.texCoord2);
-    r2.y = dot(r8.xyz, in.texCoord3);
-    r2.z = dot(r8.xyz, r5.xyz);
+    basisRowY.x = dot(basisRowY.xyz, in.texCoord2);
+    basisRowY.y = dot(basisRowY.xyz, in.texCoord3);
+    basisRowY.z = dot(basisRowY.xyz, r5.xyz);
 
-    r3.x = dot(r9.xyz, in.texCoord2);
-    r3.y = dot(r9.xyz, in.texCoord3);
-    r3.z = dot(r9.xyz, r5.xyz);
+    basisRowZ.x = dot(basisRowZ.xyz, in.texCoord2);
+    basisRowZ.y = dot(basisRowZ.xyz, in.texCoord3);
+    basisRowZ.z = dot(basisRowZ.xyz, r5.xyz);
 
     // Following section is debug only to skip the per-vert tangent space axes.
     //add r1, c13.zxxx, r7.zzxw;
@@ -328,39 +327,38 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     //mov r3.zw, c13.zz;
 
     // See vs_WaveFixedFin6.inl for derivation of the following
-    float4 r0 = worldPosition - uniforms.CameraPos;
-    r0 *= rsqrt(dot(r0.xyz, r0.xyz));
+    float3 camToVertex = (worldPosition - uniforms.CameraPos).xyz;
+    camToVertex = normalize(camToVertex);
 
-    float4 r10 = float4(0);
-    r10.x = dot(r0.xyz, uniforms.EnvAdjust.xyz);
-    r10.y = (r10.x * r10.x) - uniforms.EnvAdjust.w;
-
-    r10.z = (r10.y * rsqrt(r10.y)) + r10.x;
-    r0.xyz = (r0.xyz * r10.zzz) - uniforms.EnvAdjust.xyz;
+    const float3 D = camToVertex;
+    const float3 F = uniforms.EnvAdjust.xyz;
+    const float G = uniforms.EnvAdjust.w;
+    const float d = dot(D, F);
+    const float t = d + sqrt(abs((d * d) - G));
+    float3 envMapRay = (D * t) - F;
 
     // ATI 9000 is having trouble with eyeVec as computed. Normalizing seems to get it over the hump.
-    r0.xyz = normalize(r0.xyz);
+    envMapRay.xyz = normalize(envMapRay.xyz);
 
-    r1.w = -r0.x;
-    r2.w = -r0.y;
-    r3.w = -r0.z;
+    basisRowX.w = -envMapRay.x;
+    basisRowY.w = -envMapRay.y;
+    basisRowZ.w = -envMapRay.z;
 
     // Now r1-r3 are texture2world, with the eye-ray vector in .w. We just
     // need to normalize them and bung them into output UV's 1-3.
     // Note we're accounting for our environment map being flipped from
     // D3D (and all rational thought) by putting r2 into UV3 and r3 into UV2.
-    r10.w = uniforms.NumericConsts.z;
-    r10.x = rsqrt(dot(r1.xyz, r1.xyz));
-    out.texCoord1 = r1 * r10.xxxw;
+    out.basisRowX.xyz = normalize(basisRowX.xyz);
+    out.basisRowX.w = basisRowX.w * uniforms.NumericConsts.z;
 
-    r10.x = rsqrt(dot(r3.xyz, r3.xyz));
-    out.texCoord2 = r3 * r10.xxxw;
+    out.basisRowZ.xyz = normalize(basisRowY.xyz);
+    out.basisRowZ.w = basisRowY.w * uniforms.NumericConsts.z;
 
-    r10.x = rsqrt(dot(r2.xyz, r2.xyz));
-    out.texCoord3 = r2 * r10.xxxw;
+    out.basisRowY.xyz = normalize(basisRowZ.xyz);
+    out.basisRowY.w = basisRowZ.w * uniforms.NumericConsts.z;
 
     float4 matColor = uniforms.MatColor;
-    out.c1 = clamp(in.color.yyyz * matColor, 0.0, 1.0);
+    out.environmentTint = clamp(in.color.yyyz * matColor, 0.0, 1.0);
 
     return out;
 }
@@ -376,13 +374,13 @@ fragment float4 ps_WaveDecEnv(vs_WaveDecEnv7InOut in            [[ stage_in ]],
                               mag_filter::linear,
                               min_filter::linear,
                               address::repeat);
-    float4 t0 = 2 * (normalMap.sample(colorSampler, in.texCoord0.xy) - 0.5);
-    float u = dot(in.texCoord1.xyz, t0.xyz);
-    float v = dot(in.texCoord2.xyz, t0.xyz);
-    float w = dot(in.texCoord3.xyz, t0.xyz);
+    float4 normalMapValue = 2 * (normalMap.sample(colorSampler, in.texCoord0.xy) - 0.5);
+    float u = dot(in.basisRowX.xyz, normalMapValue.xyz);
+    float v = dot(in.basisRowY.xyz, normalMapValue.xyz);
+    float w = dot(in.basisRowZ.xyz, normalMapValue.xyz);
 
     float3 N = float3(u, v, w);
-    float3 E = float3(in.texCoord1.w, in.texCoord2.w, in.texCoord3.w);
+    float3 E = float3(in.basisRowX.w, in.basisRowY.w, in.basisRowZ.w);
 
     // Invert the normal to an incident ray, then reflect
     float3 coord = reflect(-E, N);
@@ -392,7 +390,7 @@ fragment float4 ps_WaveDecEnv(vs_WaveDecEnv7InOut in            [[ stage_in ]],
     // and have our color w/ attenuated alpha in v0. So all we need
     // is to multiply t3 by v0 into r0 and we're done.
     float4 out = float4(environmentMap.sample(colorSampler, coord));
-    out.rgb = (out.rgb * in.c1.rgb);
-    out.a = t0.a * in.c1.a;
+    out.rgb = (out.rgb * in.environmentTint.rgb);
+    out.a = normalMapValue.a * in.environmentTint.a;
     return out;
 }
