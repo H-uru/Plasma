@@ -270,9 +270,9 @@ class ahnyPressurePlates(ptModifier):
         try:
             linkDef = xLinkingBookDefs.xAgeLinkingBooks["AhnonayCathedral"]
             PtSendKIMessage(kDisableKIandBB,0)
-            gLinkingBook = ptBook(linkDef.getHTML(),self.key)
+            gLinkingBook = ptBook(linkDef.getMarkup(), self.key)
             gLinkingBook.setSize(linkDef.width, linkDef.height)
-            gLinkingBook.setGUI("BkBook")
+            gLinkingBook.setGUI(linkDef.GUI)
             gLinkingBook.show(1)
 
         except LookupError:

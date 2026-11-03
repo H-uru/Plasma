@@ -42,7 +42,7 @@
 
 from dataclasses import dataclass
 from enum import Enum
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import *
 
 #############
@@ -102,6 +102,11 @@ class DeleteBookmarkType(Enum):
 @dataclass
 class LinkDefinition(ABC):
     linkPanel: str = "xLinkPanelBlackVoid*1#0.hsm"
+    GUI: ClassVar[str] = "BkBook"
+
+    @abstractmethod
+    def getMarkup(self) -> str:
+        ...
 
 @dataclass
 class LinkingBook(LinkDefinition):
@@ -112,38 +117,49 @@ class LinkingBook(LinkDefinition):
     drcStamp: DRCStampType = DRCStampType.NoStamp
     drcStampPos: DRCStampPosition = DRCStampPosition.MidTop
     yeeshaStamp: bool = False
-    fanAgeNote: bool = False # for the Chiso book, overrides DRC stamp
+    # for the Chiso book, overrides DRC stamp
+    fanAgeNote: bool = False
     deleteBookmark: DeleteBookmarkType = DeleteBookmarkType.NoBookmark
-    panelOnRight: bool = True # for the dual-panel Cleft book hackery
+    # for the dual-panel Cleft book hackery
+    panelOnRight: bool = True
     disabled: bool = False
 
-    def getDRCStampHTML(self):
+    def getDRCStampMarkup(self):
         if self.fanAgeNote:
             return '<img src="xFanAgeStamp02*1#0.hsm" pos=0,0 resize=no blend=alpha>'
         if self.drcStamp == DRCStampType.NoStamp:
-            return ""
+            return ''
         return f'<img src="{self.drcStamp.value}" pos={self.drcStampPos.value} blend=alpha>'
 
-    def getHTML(self, bookmark="", stamp="", share="", forceYeeshaStamp = False):
-        return (f'<cover src="{self.cover}">' if self.cover else "")\
-            + f'<font size=10>{bookmark}{stamp}{share if self.sharable and share else ""}{self.deleteBookmark.value}'\
-            + ("<pb>" if self.panelOnRight else "")\
-            + f'<img src="{self.linkPanel}" align=center blend=alpha {"" if self.disabled else f"link={kFirstLinkPanelID}"}>'\
-            + ('<img src="xYeeshaBookStampVSquish*1#0.hsm" pos=140,255 resize=no blend=alpha>' if self.yeeshaStamp or forceYeeshaStamp else "")
+    def getMarkup(self, bookmark="", stamp="", share="", forceYeeshaStamp = False):
+        cover = f'<cover src="{self.cover}">' if self.cover else ""
+        yeeshaStamp = (
+            '<img src="xYeeshaBookStampVSquish*1#0.hsm" pos=140,255 resize=no blend=alpha>'
+            if self.yeeshaStamp or forceYeeshaStamp else ''
+        )
+        return (
+            f'{cover}<font size=10>{bookmark}{stamp}'
+            f'{share if self.sharable and share else ""}{self.deleteBookmark.value}'
+            f'{"<pb>" if self.panelOnRight else ""}'
+            f'<img src="{self.linkPanel}" align=center blend=alpha {"" if self.disabled else f"link={kFirstLinkPanelID}"}>'
+            f'{yeeshaStamp}'
+        )
 
 @dataclass
 class BahroStone(LinkDefinition):
+    GUI: ClassVar[str] = "bkBahroRockBook"
 
-    def getHTML(self, share: bool = False):
-        shareHTML = f'<img src="xBahroYeeshaShare*1#0.hsm" pos=0,0 blend=alpha link={kShareBookLinkID}>' if share else ""
-        return f'<font size=10>{shareHTML}<pb><img opacity=0.7 src="{self.linkPanel}" align=center link={kFirstLinkPanelID} blend=alpha>'
+    def getMarkup(self, share: bool = False):
+        shareMarkup = f'<img src="xBahroYeeshaShare*1#0.hsm" pos=0,0 blend=alpha link={kShareBookLinkID}>' if share else ''
+        return f'<font size=10>{shareMarkup}<pb><img opacity=0.7 src="{self.linkPanel}" align=center link={kFirstLinkPanelID} blend=alpha>'
 
 @dataclass
 class LinkPage(LinkDefinition):
-    doublePageBreak: bool = True # for the dual-panel Cleft book hackery
+    # for the dual-panel Cleft book hackery
+    doublePageBreak: bool = True
 
-    def getHTML(self, linkId: Optional[int] = None):
-        link = f"link={linkId}" if linkId is not None else ""
+    def getMarkup(self, linkId: Optional[int] = None):
+        link = f'link={linkId}' if linkId is not None else ''
         return f'<pb>{"<pb>" if self.doublePageBreak else ""}<img src="{self.linkPanel}" align=center blend=alpha {link}>'
 
 ###############
@@ -188,7 +204,8 @@ xAgeLinkingBooks: Dict[str, LinkDefinition] = {
     "Garden": LinkingBook(linkPanel="xLinkPanelGardenDefault*1#0.hsm"),
     "Spyroom": BahroStone(linkPanel="xLinkPanelSpyRoom*1#0.hsm"),
     "Cleft": LinkingBook(linkPanel="xLinkPanelCleftDesert*1#0.hsm"),
-    "CleftWithTomahna": LinkingBook(linkPanel="xLinkPanelTomahnaDesert*1#0.hsm", panelOnRight=False), # right site in pages below
+    # right site of the dual-link Cleft book in pages below
+    "CleftWithTomahna": LinkingBook(linkPanel="xLinkPanelTomahnaDesert*1#0.hsm", panelOnRight=False),
     "TomahnaFromCleft": LinkingBook(linkPanel="xLinkPanelTomahnaDesert*1#0.hsm"),
     "grsnTeamRmPurple": LinkingBook(linkPanel="xLinkPanelCleftDesert*1#0.hsm"),
     "grsnTeamRmYellow": LinkingBook(linkPanel="xLinkPanelTomahnaDesert*1#0.hsm"),
@@ -237,7 +254,7 @@ xLinkingPages: Dict[str, LinkPage] = {
     "KadishGallery": LinkPage(linkPanel="xLinkPanelKadishGallery*1#0.hsm"),
     "BaronCityOffice": LinkPage(linkPanel="xLinkPanelBaronCityOffice*1#0.hsm"),
     "dsntShaftFall": LinkPage(linkPanel="xLinkPanelDescentShaftFall*1#0.hsm"),
-    #"Spyroom": LinkPage(linkPanel="xLinkPanelSpyRoom*1#0.hsm"),
+    "Spyroom": LinkPage(linkPanel="xLinkPanelSpyRoom*1#0.hsm"),
     "Kveer": LinkPage(linkPanel="xLinkPanelKveerGreatHall*1#0.hsm"),
     "YeeshaVault": LinkPage(linkPanel="xLinkPanelYeeshaVault*1#0.hsm"),
     "grtzGrtZeroLinkRm": LinkPage(linkPanel="xLinkPanelGrtZeroLinkRm*1#0.hsm"),

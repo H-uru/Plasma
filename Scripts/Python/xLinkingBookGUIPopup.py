@@ -57,13 +57,15 @@ Major change over to using ptBook instead of LinkBooksGUI dialog
 First phase - keep hi level structure, only replace the bring up of books
 """
 
+# For the type specifier of IShowBahroBook
+from __future__ import annotations
+
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 from PlasmaNetConstants import *
 import xLinkingBookDefs
 from xPsnlVaultSDL import *
-import re
 from contextlib import contextmanager
 
 
@@ -511,30 +513,31 @@ class xLinkingBookGUIPopup(ptModifier):
                 pelletCaveGUID = str(self.OnClickToLinkToPelletCaveFromAhnonay())
                 PtDebugPrint("pelletCaveGUID = ",pelletCaveGUID)
 
-            try:
-                linkDef = xLinkingBookDefs.xAgeLinkingBooks[agePanel]
-                if isinstance(linkDef, xLinkingBookDefs.BahroStone):
-                    # this is a treasure book
-                    self.IShowBahroBook(linkDef)
-                    return
-                elif not isinstance(linkDef, xLinkingBookDefs.LinkingBook):
-                    PtDebugPrint(f"xLinkingBookGUIPopup: Unexpected link definition for age panel {agePanel}. You done a bad.")
-            except LookupError:
+            linkDef = xLinkingBookDefs.xAgeLinkingBooks.get(agePanel)
+            if linkDef is None:
                 PtDebugPrint(f"xLinkingBookGUIPopup: could not find age {agePanel}'s linking panel", level=kErrorLevel)
                 # Fall back to black void book
                 linkDef = xLinkingBookDefs.LinkingBook()
 
-            stampdef = linkDef.getDRCStampHTML() if IsDRCStamped.value else ""
-            bookdef = linkDef.getHTML(stamp=stampdef, share=self.IAddShare())
+            if isinstance(linkDef, xLinkingBookDefs.BahroStone):
+                # this is a treasure book
+                self.IShowBahroBook(linkDef)
+                return
+
+            # BahroStones are handled above so from here on we should have a LinkingBook type.
+            assert isinstance(linkDef, xLinkingBookDefs.LinkingBook), f"Unexpected link definition for age panel {agePanel}. You done a bad."
+            stampdef = linkDef.getDRCStampMarkup() if IsDRCStamped.value else ""
+            bookdef = linkDef.getMarkup(stamp=stampdef, share=self.IAddShare())
+
             SpawnPointName_Dict[0] = "LinkInPointDefault"
             SpawnPointTitle_Dict[0] = agePanel
-            PtSendKIMessage(kDisableKIandBB,0)
+            PtSendKIMessage(kDisableKIandBB, 0)
             gLinkingBook = ptBook(bookdef, self.key)
             gLinkingBook.setSize(linkDef.width, linkDef.height)
             # make sure there is a cover to show
             if not showOpen and not linkDef.cover:
                 showOpen = 1
-            gLinkingBook.setGUI("BkBook")
+            gLinkingBook.setGUI(linkDef.GUI)
             gLinkingBook.show(showOpen)
         else:
             PtDebugPrint("xLinkingBookGUIPopup: no age link panel" % (agePanel),level=kErrorLevel)
@@ -601,29 +604,29 @@ class xLinkingBookGUIPopup(ptModifier):
             
             # start with the first page
             
-            try:
-                linkDef = xLinkingBookDefs.xAgeLinkingBooks[agePanel]
-                if "NotPossible" in SpawnPointTitle_Dict.values():
-                   linkDef = xLinkingBookDefs.xAgeLinkingBooks["NotPossible"]
-                if "DisabledDesert" in SpawnPointTitle_Dict.values():
-                   linkDef = xLinkingBookDefs.xAgeLinkingBooks["DisabledDesert"]
+            linkDef = xLinkingBookDefs.xAgeLinkingBooks.get(agePanel)
+            if "NotPossible" in SpawnPointTitle_Dict.values():
+                linkDef = xLinkingBookDefs.xAgeLinkingBooks["NotPossible"]
+            if "DisabledDesert" in SpawnPointTitle_Dict.values():
+                linkDef = xLinkingBookDefs.xAgeLinkingBooks["DisabledDesert"]
 
-                if isinstance(linkDef, xLinkingBookDefs.BahroStone):
-                    if not fromBookshelf:
-                        # this is a treasure book
-                        self.IShowBahroBook(linkDef)
-                        return
-                    else:
-                        # Repack into a Linking Book
-                        linkDef = xLinkingBookDefs.LinkingBook(linkPanel=linkDef.linkPanel)
-                elif not isinstance(linkDef, xLinkingBookDefs.LinkingBook):
-                    PtDebugPring(f"xLinkingBookGUIPopup: Unexpected link definition for agePanel {agePanel}. What are you doing!?")
-            except LookupError:
+            if linkDef is None:
                 PtDebugPrint(f"xLinkingBookGUIPopup: could not find age {agePanel}'s linking panel", level=kErrorLevel)
                 # Fall back to black void book
                 linkDef = xLinkingBookDefs.LinkingBook()
 
-            stampdef = linkDef.getDRCStampHTML() if IsDRCStamped.value else ""
+            if isinstance(linkDef, xLinkingBookDefs.BahroStone):
+                if not fromBookshelf:
+                    # this is a treasure book
+                    self.IShowBahroBook(linkDef)
+                    return
+                else:
+                    # Repack into a Linking Book
+                    linkDef = xLinkingBookDefs.LinkingBook(linkPanel=linkDef.linkPanel)
+
+            # BahroStones are handled above so from here on we should have a LinkingBook type.
+            assert isinstance(linkDef, xLinkingBookDefs.LinkingBook), f"Unexpected link definition for agePanel {agePanel}. What are you doing!?"
+            stampdef = linkDef.getDRCStampMarkup() if IsDRCStamped.value else ""
 
             # bookmark link
             if fromBookshelf and xLinkingBookDefs.kBookMarkID in SpawnPointTitle_Dict.keys():
@@ -637,36 +640,35 @@ class xLinkingBookGUIPopup(ptModifier):
             else:
                 bookmark = ''
 
-            forceYeeshaStamp = False
-            if fromBookshelf and agePanel in xLinkingBookDefs.CityBookLinks:
+            forceYeeshaStamp = fromBookshelf and agePanel in xLinkingBookDefs.CityBookLinks
+            if forceYeeshaStamp:
                 PtDebugPrint("xLinkingBookGUIPopup: add yeesha stamps to first city link page")
-                forceYeeshaStamp = True
 
             # Get our first page definition
-            allPagesDef = linkDef.getHTML(bookmark, stampdef, self.IAddShare(), forceYeeshaStamp)
+            allPagesDef = linkDef.getMarkup(bookmark, stampdef, self.IAddShare(), forceYeeshaStamp)
 
             # build the rest of the pages into the book
-            #linkID = xLinkingBookDefs.kFirstLinkPanelID + 1
             for linkID in SpawnPointTitle_Dict.keys():
                 if linkID == xLinkingBookDefs.kFirstLinkPanelID or linkID == xLinkingBookDefs.kBookMarkID:
                     continue
-                try:
-                    allPagesDef += xLinkingBookDefs.xLinkingPages[SpawnPointTitle_Dict[linkID]].getHTML(linkID)
-                except LookupError:
-                    PtDebugPrint(f"xLinkingBookGUIPopup: could not find treasure book page {SpawnPointTitle_Dict[linkID]}'s linking panel",level=kErrorLevel)
-                    # Fall back to black void page
-                    allPagesDef += xLinkingBookDefs.LinkPage().getHTML(linkID)
-                    
+
+                pageDef = xLinkingBookDefs.xLinkingPages.get(SpawnPointTitle_Dict[linkID])
+                if pageDef is None:
+                    # We could fall back to a black void but there seem to be possibly erroneous pages, so log the case and skip
+                    PtDebugPrint(f"xLinkingBookGUIPopup: could not find treasure book page {SpawnPointTitle_Dict[linkID]}'s linking panel", level=kErrorLevel)
+                    continue
+
+                allPagesDef += pageDef.getMarkup(linkID)
+
             if allPagesDef != "":
-                #PtDebugPrint(allPagesDef)
-                PtSendKIMessage(kDisableKIandBB,0)
-                gLinkingBook = ptBook(allPagesDef,self.key)
+                PtSendKIMessage(kDisableKIandBB, 0)
+                gLinkingBook = ptBook(allPagesDef, self.key)
                 gLinkingBook.setSize(linkDef.width, linkDef.height)
                 # make sure there is a cover to show
                 if not showOpen:
                     if not linkDef.cover:
                         showOpen = 1
-                gLinkingBook.setGUI("BkBook")
+                gLinkingBook.setGUI(linkDef.GUI)
                 vault = ptVault()
                 if vault.amOwnerOfCurrentAge():
                    gLinkingBook.allowPageTurning(1)
@@ -819,20 +821,20 @@ class xLinkingBookGUIPopup(ptModifier):
         return CityLinks	
 
 
-    def IShowBahroBook(self, linkDef): # linkDef: xLinkingBookDefs.BahroStone, Type specification errors CI on Python 3.8
+    def IShowBahroBook(self, linkDef: xLinkingBookDefs.BahroStone):
         global gLinkingBook
         global SpawnPointName_Dict
         global SpawnPointTitle_Dict
         global OfferedBookMode
         PtDebugPrint("xLinkingBookGUIPopup: It's a Bahro Linking Tablet (BLT), so we get to do fun stuff now!")
         agePanel = TargetAge.value
-        bookdef = linkDef.getHTML(not OfferedBookMode)
+        bookdef = linkDef.getMarkup(not OfferedBookMode)
         SpawnPointName_Dict[0] = "LinkInPointDefault"
         SpawnPointTitle_Dict[0] = agePanel
         PtSendKIMessage(kDisableKIandBB,0)
         gLinkingBook = ptBook(bookdef,self.key)
         gLinkingBook.setSize(1, 1)
-        gLinkingBook.setGUI("bkBahroRockBook")
+        gLinkingBook.setGUI(linkDef.GUI)
         gLinkingBook.show(1) # this book is always open
 
     def IAddShare(self):
