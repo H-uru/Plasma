@@ -186,7 +186,9 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                             except:
                                 PtDebugPrint("ERROR: psnlYeeshaPageChanges.OnServerInitComplete():\tException occurred trying to access age SDL")
                         
-                    if PtIsSolo():
+                    # Anyone linking into an empty age will update the state.
+                    # EXCEPT: Only the owner can update the state of YeeshaPage07 (kickable) / YeeshaPage16 (firemarbles)
+                    if PtIsSolo() and (PageNumber.value not in {5, 16} or ptVault().inMyPersonalAge()):
                         newstate = self.UpdateState(CurrentValue, 0, SDLVar, AgeVault, ageSDL, 0)
                     else:
                         newstate = CurrentValue
@@ -217,6 +219,12 @@ class psnlYeeshaPageChanges(ptMultiModifier):
             
             respAudioStart.run(self.key,avatar=None,fastforward=0)
             respEnable.run(self.key,avatar=None,fastforward=0)
+
+            if val == 3 and PageNumber.value in {5, 16}:
+                # YeeshaPage07 (kickable) / YeeshaPage16 (firemarbles): pages that are turned off but still pending (state 3)
+                # have their physicals suppressed so nobody can move them. Only the owner can update their state (see OnServerInitComplete()).
+                PtDebugPrint(f"psnlYeeshaPageChanges: Page is pending off, supressing physicals on {self.sceneobject.getName()}...")
+                self.sceneobject.physics.suppress(True)
         else:
             if PageNumber.value == 10:
                 PtDebugPrint("psnlYeeshaPageChanges: Attempting to disable drawing and collision on %s..." % self.sceneobject.getName())
