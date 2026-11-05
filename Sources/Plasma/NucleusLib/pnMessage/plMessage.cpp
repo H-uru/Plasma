@@ -219,11 +219,6 @@ int plMsgStdStringHelper::Poke(const std::string & stringref, hsStream* stream, 
     );
 }
 
-int plMsgStdStringHelper::PokeBig(const std::string & stringref, hsStream* stream, const uint32_t peekOptions)
-{
-    return PokeBig(stringref.c_str(), stringref.length(), stream, peekOptions);
-}
-
 int plMsgStdStringHelper::Poke(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions)
 {
     plMessage::plStrLen strlen;
@@ -232,14 +227,6 @@ int plMsgStdStringHelper::Poke(const char * buf, uint32_t bufsz, hsStream* strea
     stream->WriteLE16(strlen);
     if (strlen)
         stream->Write(strlen,buf);
-    return stream->GetPosition();
-}
-
-int plMsgStdStringHelper::PokeBig(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions)
-{
-    stream->WriteLE32(bufsz);
-    if (bufsz)
-        stream->Write(bufsz,buf);
     return stream->GetPosition();
 }
 
@@ -254,12 +241,6 @@ int plMsgStdStringHelper::Poke(const ST::string & stringref, hsStream* stream, c
         buf.data(), (plMessage::plStrLen)buf.size(),
         stream, peekOptions
     );
-}
-
-int plMsgStdStringHelper::PokeBig(const ST::string & stringref, hsStream* stream, const uint32_t peekOptions)
-{
-    ST::char_buffer buf = stringref.to_latin_1();
-    return PokeBig(buf.data(), buf.size(), stream, peekOptions);
 }
 
 // STATIC
@@ -281,43 +262,10 @@ int plMsgStdStringHelper::Peek(std::string  & stringref, hsStream* stream, const
     return stream->GetPosition();
 }
 
-int plMsgStdStringHelper::PeekBig(std::string  & stringref, hsStream* stream, const uint32_t peekOptions)
-{
-    uint32_t bufsz = stream->ReadLE32();
-    stringref.erase();
-    if (bufsz <= stream->GetSizeLeft())
-    {
-        stringref.resize(bufsz);
-        if (bufsz)
-            stream->Read(bufsz, stringref.data());
-    }
-    else
-    {
-        hsAssert( false, "plMsgStdStringHelper::PeekBig: overflow peeking string." );
-    }
-    return stream->GetPosition();
-}
-
 int plMsgStdStringHelper::Peek(ST::string & stringref, hsStream* stream, const uint32_t peekOptions)
 {
     plMessage::plStrLen bufsz = stream->ReadLE16();
     hsAssert(bufsz <= stream->GetSizeLeft(), "plMsgStdStringHelper::Peek: overflow peeking string.");
-    if (bufsz == 0 || bufsz > stream->GetSizeLeft()) {
-        stringref.clear();
-        return stream->GetPosition();
-    }
-
-    ST::char_buffer buf;
-    buf.allocate(bufsz);
-    stream->Read(bufsz, buf.data());
-    stringref = ST::string::from_latin_1(buf);
-    return stream->GetPosition();
-}
-
-int plMsgStdStringHelper::PeekBig(ST::string & stringref, hsStream* stream, const uint32_t peekOptions)
-{
-    uint32_t bufsz = stream->ReadLE32();
-    hsAssert(bufsz <= stream->GetSizeLeft(), "plMsgStdStringHelper::PeekBig: overflow peeking string.");
     if (bufsz == 0 || bufsz > stream->GetSizeLeft()) {
         stringref.clear();
         return stream->GetPosition();

@@ -169,15 +169,10 @@ public:
 struct plMsgStdStringHelper
 {
     static int Poke(const std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int PokeBig(const std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
     static int Poke(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
-    static int PokeBig(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
     static int Poke(const ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int PokeBig(const ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
     static int Peek(std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int PeekBig(std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
     static int Peek(ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int PeekBig(ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
 };
 
 /////////////////////////////////////////////////////////////////
