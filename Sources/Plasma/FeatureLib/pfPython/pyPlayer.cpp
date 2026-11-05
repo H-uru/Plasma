@@ -49,36 +49,26 @@ pyPlayer::pyPlayer() // only used by python glue, do NOT call
 {
 }
 
-pyPlayer::pyPlayer(pyKey& avKey, const ST::string& pname, uint32_t pid, float distsq)
-{
-    fAvatarKey = avKey.getKey();
-    fPlayerName = pname;
-    fPlayerID = pid;
-    fDistSq = distsq;
-    fIsCCR = false;
-    fIsServer = false;
-}
+pyPlayer::pyPlayer(pyKey& avKey, ST::string pname, uint32_t pid, float distsq)
+    : fAvatarKey(avKey.getKey()), fPlayerName(std::move(pname)),
+      fPlayerID(pid), fDistSq(distsq), fIsCCR(), fIsServer()
+{ }
 
-pyPlayer::pyPlayer(plKey avKey, const ST::string& pname, uint32_t pid, float distsq)
-{
-    fAvatarKey = std::move(avKey);
-    fPlayerName = pname;
-    fPlayerID = pid;
-    fDistSq = distsq;
-    fIsCCR = false;
-    fIsServer = false;
-}
+pyPlayer::pyPlayer(plKey avKey, ST::string pname, uint32_t pid, float distsq)
+    : fAvatarKey(std::move(avKey)), fPlayerName(std::move(pname)),
+    fPlayerID(pid), fDistSq(distsq), fIsCCR(), fIsServer()
+{ }
 
 // another way to create a player with just a name and number
-pyPlayer::pyPlayer(const ST::string& pname, uint32_t pid)
-    : fPlayerName(pname), fPlayerID(pid), fDistSq(-1), fIsCCR(), fIsServer()
-{
-}
+pyPlayer::pyPlayer(ST::string pname, uint32_t pid)
+    : fPlayerName(std::move(pname)), fPlayerID(pid),
+      fDistSq(-1), fIsCCR(), fIsServer()
+{ }
 
-void pyPlayer::Init(plKey avKey, const ST::string& pname, uint32_t pid, float distsq) // used by python glue, do NOT call
+void pyPlayer::Init(plKey avKey, ST::string pname, uint32_t pid, float distsq) // used by python glue, do NOT call
 {
     fAvatarKey = std::move(avKey);
-    fPlayerName = pname;
+    fPlayerName = std::move(pname);
     fPlayerID = pid;
     fDistSq = distsq;
     fIsCCR = false;
