@@ -121,7 +121,7 @@ void plNetClientMgr::ISendDirtyState(double secs)
         }
 
         obj->CallDirtyNotifiers();
-        obj->SendSDLStateMsg(state->fSDLName.c_str(), state->fSendFlags);
+        obj->SendSDLStateMsg(state->fSDLName, state->fSendFlags);
     }
 
     plSynchedObject::ClearDirtyState(carryOvers);

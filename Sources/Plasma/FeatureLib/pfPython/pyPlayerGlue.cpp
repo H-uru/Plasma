@@ -97,7 +97,7 @@ PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
         PYTHON_RETURN_INIT_ERROR;
     }
 
-    self->fThis->Init(key, name.c_str(), (uint32_t)pid, distSeq);
+    self->fThis->Init(key, std::move(name), (uint32_t)pid, distSeq);
     PYTHON_RETURN_INIT_OK;
 }
 
@@ -180,24 +180,24 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_CUSTOM_TYPE(ptPlayer, "Params: avkey,name,playerID,distanceSq\nAnd optionally __init__(name,playerID)");
 
 // required functions for PyObject interoperability
-PyObject *pyPlayer::New(pyKey& avKey, const ST::string& pname, uint32_t pid, float distsq)
+PyObject *pyPlayer::New(pyKey& avKey, ST::string pname, uint32_t pid, float distsq)
 {
     ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, nullptr, nullptr);
-    newObj->fThis->Init(avKey.getKey(), pname, pid, distsq);
+    newObj->fThis->Init(avKey.getKey(), std::move(pname), pid, distsq);
     return (PyObject*)newObj;
 }
 
-PyObject *pyPlayer::New(plKey avKey, const ST::string& pname, uint32_t pid, float distsq)
+PyObject *pyPlayer::New(plKey avKey, ST::string pname, uint32_t pid, float distsq)
 {
     ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, nullptr, nullptr);
-    newObj->fThis->Init(std::move(avKey), pname, pid, distsq);
+    newObj->fThis->Init(std::move(avKey), std::move(pname), pid, distsq);
     return (PyObject*)newObj;
 }
 
-PyObject *pyPlayer::New(const ST::string& pname, uint32_t pid)
+PyObject *pyPlayer::New(ST::string pname, uint32_t pid)
 {
     ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, nullptr, nullptr);
-    newObj->fThis->Init(nullptr, pname, pid, -1);
+    newObj->fThis->Init(nullptr, std::move(pname), pid, -1);
     return (PyObject*)newObj;
 }
 

@@ -381,7 +381,7 @@ void plDispatch::IMsgDispatch()
                     float rcvTime = hsTimer::GetMilliSeconds<float>(rcvTicks);
                     // If the receiver takes more than 5 ms to process its message, log it
                     if (rcvTime > 5.f)
-                        plDispatchLogBase::GetInstance()->LogLongReceive(keyname.c_str(), className, clonePlayerID, msg, rcvTime);
+                        plDispatchLogBase::GetInstance()->LogLongReceive(keyname, className, clonePlayerID, msg, rcvTime);
                 }
 #endif // PLASMA_EXTERNAL_RELEASE
 
