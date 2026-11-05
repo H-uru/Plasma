@@ -77,7 +77,7 @@ void plNetClientMgr::IShowLists()
     str = ST::format("{}{} PlyrName={} PlyrID={} Join#={} ILIAS={} {.1f},{.1f},{.1f}",
         GetFlagsBit(kSendingVoice) ? "V" : " ",
         GetFlagsBit(kSendingActions) ? "A" : " ",
-        GetPlayerName().c_str(), GetPlayerID(),
+        GetPlayerName(), GetPlayerID(),
         GetJoinOrder(),
         IsLoadingInitialAgeState(),
         pos.fX, pos.fY, pos.fZ);
@@ -100,7 +100,7 @@ void plNetClientMgr::IShowLists()
         str = ST::format("{}{} {} dist={.1f}",
             mbr->GetTransportFlags() & plNetTransportMember::kSendingVoice ? "V" : " ",
             mbr->GetTransportFlags() & plNetTransportMember::kSendingActions ? "A" : " ",
-            mbr->AsString().c_str(),
+            mbr->AsString(),
             mbr->GetDistSq() != FLT_MAX ? sqrt(mbr->GetDistSq()) :-1.f);
         txt.DrawString(x,y,str);
         y+=yOff;
