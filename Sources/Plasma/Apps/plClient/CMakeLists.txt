@@ -103,6 +103,7 @@ elseif(APPLE)
     list(APPEND plClient_SOURCES
         Mac-Cocoa/main.mm
         Mac-Cocoa/NSString+StringTheory.mm
+        Mac-Cocoa/plDirectMetalRenderDestination.mm
         Mac-Cocoa/PLSKeyboardEventMonitor.mm
         Mac-Cocoa/PLSView.mm
         Mac-Cocoa/PLSLoginController.mm
@@ -113,6 +114,7 @@ elseif(APPLE)
     )
     list(APPEND plClient_HEADERS
         Mac-Cocoa/NSString+StringTheory.h
+        Mac-Cocoa/plDirectMetalRenderDestination.h
         Mac-Cocoa/PLSKeyboardEventMonitor.h
         Mac-Cocoa/PLSView.h
         Mac-Cocoa/PLSLoginController.h
