@@ -363,6 +363,19 @@ inline bool IRead(const uint8_t*& buf, size_t& bufsz, T& dest)
     return true;
 }
 
+inline bool IReadTime(const uint8_t*& buf, size_t& bufsz, int64_t& dest)
+{
+    uint32_t shortTime;
+    if (!IRead(buf, bufsz, shortTime))
+        return false;
+    if (shortTime == 0xFFFFFFFFU) {
+        return IRead(buf, bufsz, dest);
+    } else {
+        dest = (int64_t)shortTime;
+        return true;
+    }
+}
+
 template<>
 inline bool IRead<ST::string>(const uint8_t*& buf, size_t& bufsz, ST::string& dest)
 {
@@ -420,9 +433,10 @@ bool NetVaultNode::Read(const uint8_t* buf, size_t bufsz)
     }
 
 #define READ(field) if (fUsedFields & k##field) if (!IRead(buf, bufsz, f##field)) {fDirtyFields = 0; return false;}
+#define READ_TIME(field) if (fUsedFields & k##field) if (!IReadTime(buf, bufsz, f##field)) {fDirtyFields = 0; return false;}
     READ(NodeId);
-    READ(CreateTime);
-    READ(ModifyTime);
+    READ_TIME(CreateTime);
+    READ_TIME(ModifyTime);
     READ(CreateAgeName);
     READ(CreateAgeUuid);
     READ(CreatorAcct);
@@ -453,6 +467,7 @@ bool NetVaultNode::Read(const uint8_t* buf, size_t bufsz)
     READ(Blob_1);
     READ(Blob_2);
 #undef READ
+#undef READ_TIME
 
     fDirtyFields = 0;
     return bufsz == 0;
@@ -468,6 +483,17 @@ inline void IWrite(std::vector<uint8_t>* buffer, const T& value)
     buffer->resize(oldSize + sizeof(T));
     T leValue = hsToLE(value);
     memcpy(buffer->data() + oldSize, &leValue, sizeof(T));
+}
+
+inline void IWriteTime(std::vector<uint8_t>* buffer, int64_t value)
+{
+    if (value > (int64_t)std::numeric_limits<int32_t>::max()) {
+        IWrite(buffer, (uint32_t)0xFFFFFFFF);
+        IWrite(buffer, value);
+    } else {
+        uint32_t shortTime = (uint32_t)value;
+        IWrite(buffer, shortTime);
+    }
 }
 
 template<>
@@ -518,9 +544,10 @@ void NetVaultNode::Write(std::vector<uint8_t>* buf, uint32_t ioFlags)
     IWrite(buf, flags);
 
 #define WRITE(field) if (flags & k##field) IWrite(buf, f##field);
+#define WRITE_TIME(field) if (flags & k##field) IWriteTime(buf, f##field);
     WRITE(NodeId);
-    WRITE(CreateTime);
-    WRITE(ModifyTime);
+    WRITE_TIME(CreateTime);
+    WRITE_TIME(ModifyTime);
     WRITE(CreateAgeName);
     WRITE(CreateAgeUuid);
     WRITE(CreatorAcct);
@@ -551,6 +578,7 @@ void NetVaultNode::Write(std::vector<uint8_t>* buf, uint32_t ioFlags)
     WRITE(Blob_1);
     WRITE(Blob_2);
 #undef WRITE
+#undef WRITE_TIME
 
     if (ioFlags & kClearDirty)
         fDirtyFields = 0;

@@ -95,6 +95,8 @@ public:
     void            ReadLE16(size_t count, uint16_t values[]);
     uint32_t        ReadLE32();
     void            ReadLE32(size_t count, uint32_t values[]);
+    uint64_t        ReadLE64();
+    void            ReadLE64(size_t count, uint64_t values[]);
 
     void            WriteBOOL(bool value);
     void            WriteBool(bool value);
@@ -104,6 +106,8 @@ public:
     void            WriteLE16(size_t count, const uint16_t values[]);
     void            WriteLE32(uint32_t value);
     void            WriteLE32(size_t count, const uint32_t values[]);
+    void            WriteLE64(uint64_t value);
+    void            WriteLE64(size_t count, const uint64_t values[]);
 
     float           ReadLEFloat();
     void            ReadLEFloat(size_t count, float values[]);
@@ -125,6 +129,9 @@ public:
     template <typename T> inline void ReadLE32(T*) = delete;
     void ReadLE32(uint32_t* v) { *v = ReadLE32(); }
     void ReadLE32(int32_t* v) { *v = (int32_t)ReadLE32(); }
+    template <typename T> inline void ReadLE64(T*) = delete;
+    void ReadLE64(uint64_t* v) { *v = ReadLE64(); }
+    void ReadLE64(int64_t* v) { *v = (int64_t)ReadLE64(); }
     template <typename T> inline void ReadLEFloat(T*) = delete;
     void ReadLEFloat(float* v) { *v = ReadLEFloat(); }
     template <typename T> inline void ReadLEDouble(T*) = delete;
@@ -137,6 +144,8 @@ public:
     void WriteLE16(int16_t v) { WriteLE16((uint16_t)v); }
     template <typename T> void WriteLE32(T) = delete;
     void WriteLE32(int32_t v) { WriteLE32((uint32_t)v); }
+    template <typename T> void WriteLE64(T) = delete;
+    void WriteLE64(int64_t v) { WriteLE64((uint64_t)v); }
     template <typename T> void WriteLEFloat(T) = delete;
     template <typename T> void WriteLEDouble(T) = delete;
 };
