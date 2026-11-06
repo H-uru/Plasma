@@ -207,7 +207,7 @@ void plMessage::AddNetReceivers( const std::vector<uint32_t> & plrIDs )
 /////////////////////////////////////////////////////////////////
 
 // STATIC
-int plMsgStringHelper::Poke(const std::string & stringref, hsStream* stream, const uint32_t peekOptions)
+int plMsgStringHelper::Poke(const std::string& stringref, hsStream* stream, const uint32_t peekOptions)
 {
     hsAssert(
         stringref.length() < std::numeric_limits<plMessage::plStrLen>::max(),
@@ -219,18 +219,17 @@ int plMsgStringHelper::Poke(const std::string & stringref, hsStream* stream, con
     );
 }
 
-int plMsgStringHelper::Poke(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions)
+int plMsgStringHelper::Poke(const char* buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions)
 {
-    plMessage::plStrLen strlen;
-    hsAssert( bufsz<0xFFFF, "buf too big for plMsgStringHelper" );
-    strlen = (plMessage::plStrLen)bufsz;
+    hsAssert(bufsz < std::numeric_limits<plMessage::plStrLen>::max(), "buf too big for plMsgStringHelper" );
+    plMessage::plStrLen strlen = (plMessage::plStrLen)bufsz;
     stream->WriteLE16(strlen);
     if (strlen)
         stream->Write(strlen,buf);
     return stream->GetPosition();
 }
 
-int plMsgStringHelper::Poke(const ST::string & stringref, hsStream* stream, const uint32_t peekOptions)
+int plMsgStringHelper::Poke(const ST::string& stringref, hsStream* stream, const uint32_t peekOptions)
 {
     ST::char_buffer buf = stringref.to_latin_1();
     hsAssert(
@@ -244,21 +243,19 @@ int plMsgStringHelper::Poke(const ST::string & stringref, hsStream* stream, cons
 }
 
 // STATIC
-int plMsgStringHelper::Peek(std::string  & stringref, hsStream* stream, const uint32_t peekOptions)
+int plMsgStringHelper::Peek(std::string& stringref, hsStream* stream, const uint32_t peekOptions)
 {
-    plMessage::plStrLen strlen;
-    stream->ReadLE16(&strlen);
+    plMessage::plStrLen strlen = stream->ReadLE16();
+    hsAssert(strlen <= stream->GetSizeLeft(), "plMsgStringHelper::Peek: overflow peeking string.");
+    if (strlen == 0 || strlen > stream->GetSizeLeft()) {
+        stringref.clear();
+        return stream->GetPosition();
+    }
+
     stringref.erase();
-    if (strlen <= stream->GetSizeLeft())
-    {
-        stringref.resize(strlen);
-        if (strlen)
-            stream->Read(strlen, stringref.data());
-    }
-    else
-    {
-        hsAssert( false, "plMsgStringHelper::Peek: overflow peeking string." );
-    }
+    stringref.resize(strlen);
+    if (strlen)
+        stream->Read(strlen, stringref.data());
     return stream->GetPosition();
 }
 
