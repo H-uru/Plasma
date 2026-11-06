@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
 #include "plMetalDeviceRef.h"
+#include "plMetalArgumentBuffer.h"
 
 //// Definition ///////////////////////////////////////////////////////////////
 
@@ -59,6 +60,7 @@ public:
 
     uint32_t fBufferIndex;
     size_t   fPassIndex;
+    std::unique_ptr<plMetalLayerListArgumentBuffer> fProjectionBuffer;
 
     void             Link(plMetalLightRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
     plMetalLightRef* GetNext() { return (plMetalLightRef*)fNext; }

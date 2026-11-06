@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMetalArgumentBuffer.h"
 #include "plMetalDeviceRef.h"
 #include "plMetalPipelineState.h"
+#include "plMetalPipeline.h"
 
 class hsGMaterial;
 class plMetalPipeline;
@@ -90,7 +91,8 @@ public:
                                           plMetalFragmentShaderDescription* passDescription,
                                           std::vector<plLayerInterface*>* piggyBacks,
                                           const std::function<plLayerInterface* (plLayerInterface*, uint32_t)> preEncodeTransform,
-                                          const std::function<plLayerInterface* (plLayerInterface*, uint32_t)> postEncodeTransform);
+                                          const std::function<plLayerInterface* (plLayerInterface*, uint32_t)> postEncodeTransform,
+                                          const plMetalMaterialRenderPass renderPass = plMetalMaterialRenderPass::Primary);
     void                  FastEncodeArguments(MTL::RenderCommandEncoder* encoder, VertexUniforms* vertexUniforms, uint pass);
     // probably not a good idea to call prepareTextures directly
     // mostly just a hack to keep plates working for now
@@ -112,20 +114,22 @@ private:
 
     uint32_t fNumPasses;
     uint32_t IHandleMaterial(uint32_t layer,
+                             uint32_t pass,
                              plMetalFragmentShaderDescription* passDescription,
                              plMetalFragmentShaderArgumentBuffer* uniforms,
                              std::vector<plLayerInterface*>* piggybacks,
                              const std::function<plLayerInterface* (plLayerInterface*, uint32_t)>& preEncodeTransform,
-                             const std::function<plLayerInterface* (plLayerInterface*, uint32_t)>& postEncodeTransform);
+                             const std::function<plLayerInterface* (plLayerInterface*, uint32_t)>& postEncodeTransform,
+                             const plMetalMaterialRenderPass renderPass = plMetalMaterialRenderPass::Primary);
     bool     ICanEatLayer(plLayerInterface* lay);
     uint32_t ILayersAtOnce(uint32_t which);
 
     void IEatBumpmapLayers(uint32_t& layer, std::vector<plMetalBumpMapping>& bumpsOut);
     void IEncodeBumpmapLayers(const std::vector<plMetalBumpMapping>& bumps, uint32_t pass);
-    void IBuildLayerTexture(MTL::RenderCommandEncoder* encoder, const uint32_t offsetFromRootLayer, plLayerInterface* layer);
     void EncodeTransform(const plLayerInterface* layer, UVOutDescriptor* transform);
 
     std::vector<std::vector<plLayerInterface*>>                            fPasses;
+    std::vector<std::shared_ptr<plMetalLayerListArgumentBuffer>>               fLayerBuffers[2];
     std::vector<std::unique_ptr<plMetalBumpArgumentBuffer>>                fBumps;
     std::vector<struct plMetalFragmentShaderDescription>                   fFragmentShaderDescriptions;
 };

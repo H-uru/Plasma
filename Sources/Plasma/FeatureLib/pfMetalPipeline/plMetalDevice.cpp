@@ -950,10 +950,28 @@ void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef* tRef, plMipmap* im
 
     descriptor->setStorageMode(GetDefaultStorageMode());
 
+#ifdef HS_DEBUGGING
     tRef->fTexture = fMetalDevice->newTexture(descriptor);
+    // CFStringRef is typealias for a const?
+    // NS::String is not supposed to be const and we can't release
+    // a const NS::String. We know they toll free bridge because
+    // Apple guarantees the underlying storage is the same. Force
+    // the cast.
+    auto imgName = const_cast<NS::String *>(
+        reinterpret_cast<const NS::String *>(CFStringCreateWithSTString(img->GetKey()->GetName()))
+    );
+    tRef->fTexture->setLabel(imgName);
+    imgName->release();
+#endif
     PopulateTexture(tRef, img, 0);
     //}
 
+    // Metal will sometimes return an orphaned buffer with the same pointer value
+    // immediately. Keep track of a generation counter to ensure that we know the texture
+    // has changed.
+    // We can't use the texture dirty state - that controls the reload behavior we're
+    // already in.
+    tRef->fGeneration++;
     tRef->SetDirty(false);
 }
 
