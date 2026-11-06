@@ -90,7 +90,7 @@ void plCtrlCmd::Write(hsStream* stream, hsResMgr* mgr)
     fPt.Write(stream);
 
     // write cmd/string
-    plMsgCStringHelper::Poke(fCmd, stream);
+    plMsgStdStringHelper::Poke(fCmd, stream);
 }
 
 void plCtrlCmd::Read(hsStream* stream, hsResMgr* mgr)
@@ -100,7 +100,7 @@ void plCtrlCmd::Read(hsStream* stream, hsResMgr* mgr)
     fPt.Read(stream);
 
     // read cmd/string
-    plMsgCStringHelper::Peek(fCmd, stream);
+    plMsgStdStringHelper::Peek(fCmd, stream);
 }
 
 //// plDefaultKeyCatcher /////////////////////////////////////////////////////

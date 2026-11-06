@@ -765,7 +765,7 @@ int plNetMsgRoomsList::IPokeBuffer(hsStream* stream, uint32_t peekOptions)
             fRooms[i].Write(stream);
             
             // write room name for debugging
-            plMsgCStringHelper::Poke(fRoomNames[i],stream,peekOptions);
+            plMsgStdStringHelper::Poke(fRoomNames[i],stream,peekOptions);
         }
         
         bytes=stream->GetPosition();
@@ -785,7 +785,7 @@ int plNetMsgRoomsList::IPeekBuffer(hsStream* stream, uint32_t peekOptions)
         {
             fRooms[i].Read(stream);
             // read room name for debugging
-            plMsgCStringHelper::Peek(fRoomNames[i],stream,peekOptions);
+            plMsgStdStringHelper::Peek(fRoomNames[i],stream,peekOptions);
         }
         bytes=stream->GetPosition();
     }

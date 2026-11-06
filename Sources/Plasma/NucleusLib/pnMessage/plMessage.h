@@ -176,15 +176,6 @@ struct plMsgStdStringHelper
 };
 
 /////////////////////////////////////////////////////////////////
-// reads/writes your char * field  (deprecated)
-
-struct plMsgCStringHelper
-{
-    static int Poke(const ST::string & str, hsStream* stream, const uint32_t peekOptions=0);
-    static int Peek(ST::string & str, hsStream* stream, const uint32_t peekOptions=0);
-};
-
-/////////////////////////////////////////////////////////////////
 // reads/writes your type [] field
 // don't use with uint8_t ordered types like int16_t,32.
 // fine for int8_t, char, and IEEE formatted types like float, double.

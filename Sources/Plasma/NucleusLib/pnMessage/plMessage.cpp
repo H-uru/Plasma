@@ -278,36 +278,6 @@ int plMsgStdStringHelper::Peek(ST::string & stringref, hsStream* stream, const u
     return stream->GetPosition();
 }
 
-/////////////////////////////////////////////////////////////////
-
-int plMsgCStringHelper::Poke(const ST::string & str, hsStream* stream, const uint32_t peekOptions)
-{
-    ST::char_buffer buf = str.to_latin_1();
-    hsAssert(
-        buf.size() < std::numeric_limits<plMessage::plStrLen>::max(),
-        "string too big for plMsgCStringHelper"
-    );
-    stream->WriteLE16((plMessage::plStrLen)buf.size());
-    if (!buf.empty())
-        stream->Write(buf.size(), buf.data());
-    return stream->GetPosition();
-}
-
-int plMsgCStringHelper::Peek(ST::string & str, hsStream* stream, const uint32_t peekOptions)
-{
-    plMessage::plStrLen strlen = stream->ReadLE16();
-    if (strlen > stream->GetSizeLeft()) {
-        str.clear();
-        return stream->GetPosition();
-    }
-
-    ST::char_buffer buf;
-    buf.allocate(strlen);
-    stream->Read(strlen, buf.data());
-    str = ST::string::from_latin_1(buf);
-    return stream->GetPosition();
-}
-
 
 /////////////////////////////////////////////////////////////////
 
