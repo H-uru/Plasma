@@ -5,3 +5,4 @@ LingerTime=180
 SequencePrefix=19
 ReleaseVersion=0
 Page=garden,1
+Page=SinglePlayer,2
