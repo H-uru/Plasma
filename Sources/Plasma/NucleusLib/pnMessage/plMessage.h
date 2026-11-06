@@ -180,10 +180,6 @@ struct plMsgStdStringHelper
 
 struct plMsgCStringHelper
 {
-    static int Poke(const char * str, hsStream* stream, const uint32_t peekOptions=0);
-    // deletes str and reallocates. you must delete [] str;
-    static int Peek(char *& str, hsStream* stream, const uint32_t peekOptions=0);
-
     static int Poke(const ST::string & str, hsStream* stream, const uint32_t peekOptions=0);
     static int Peek(ST::string & str, hsStream* stream, const uint32_t peekOptions=0);
 };

@@ -280,36 +280,6 @@ int plMsgStdStringHelper::Peek(ST::string & stringref, hsStream* stream, const u
 
 /////////////////////////////////////////////////////////////////
 
-// STATIC
-int plMsgCStringHelper::Poke(const char * str, hsStream* stream, const uint32_t peekOptions)
-{
-    plMessage::plStrLen len = (str) ? (plMessage::plStrLen)strlen(str) : 0;
-    stream->WriteLE16(len);
-    if (len)
-        stream->Write(len,str);
-    return stream->GetPosition();
-}
-
-// STATIC
-int plMsgCStringHelper::Peek(char *& str, hsStream* stream, const uint32_t peekOptions)
-{
-    plMessage::plStrLen strlen;
-    stream->ReadLE16(&strlen);
-    delete [] str;
-    str = nullptr;
-    if (strlen <= stream->GetSizeLeft())
-    {
-        if (strlen)
-        {
-            str = new char[strlen+1];
-            if (strlen)
-                stream->Read(strlen, str);
-            str[strlen] = '\0';
-        }
-    }
-    return stream->GetPosition();
-}
-
 int plMsgCStringHelper::Poke(const ST::string & str, hsStream* stream, const uint32_t peekOptions)
 {
     ST::char_buffer buf = str.to_latin_1();
