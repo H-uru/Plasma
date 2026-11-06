@@ -99,6 +99,7 @@ kDoorSpinBackward       = 3
 kCloseTheDoor           = 4
 kGameOver               = 5
 kStartSpin              = 6
+kPopSingleplayerCam     = 7
 
 # Misk konstants
 kNumCloths              = 7
@@ -108,6 +109,9 @@ kTotalGameTime          = 60
 kGlowDisplayTime        = 2
 kGlowRestartTime        = 3
 kLegacyTableID          = 0
+
+kSingleplayerDoorCamera = "SingleplayerDoorCamera"
+kSingleplayerGameTimeMult = 2.0
 
 class DoorState(enum.IntEnum):
     Closed = 0
@@ -267,6 +271,9 @@ class _SDLBlueSpiralBrain(_BlueSpiralBrain):
         PtDebugPrint(f"_SDLBlueSpiralBrain.__init__(): Alive! {self.isLocallyOwned=}", level=kWarningLevel)
 
         self._spinStartTime = PtGetServerTime()
+        self._gameTime = kTotalGameTime
+        if PtIsSinglePlayerMode():
+            self._gameTime *= kSingleplayerGameTimeMult
 
         ageSDL = PtGetAgeSDL()
         ageSDL.setFlags(SDLBSRunning.value, 1, 1)
@@ -297,7 +304,7 @@ class _SDLBlueSpiralBrain(_BlueSpiralBrain):
         elif VARname == SDLBSRunning.value:
             if self.playing:
                 PtDebugPrint("_SDLBlueSpiralBrain.OnSDLNotify(): The game is afoot, start the UI stuff.", level=kWarningLevel)
-                self._spinStartTime = PtGetServerTime() + kSequenceTime + kTotalGameTime
+                self._spinStartTime = PtGetServerTime() + kSequenceTime + self._gameTime
                 PtAtTimeCallback(self.parent.key, kSequenceTime, kStartSpin)
                 self.parent.PlaySequence()
             else:
@@ -336,12 +343,12 @@ class _SDLBlueSpiralBrain(_BlueSpiralBrain):
     # =============================================================================================
 
     def _BeginGameTimer(self):
-        PtAtTimeCallback(self.parent.key, kTotalGameTime, kGameOver)
+        PtAtTimeCallback(self.parent.key, self._gameTime, kGameOver)
         self._spinStartTime = PtGetServerTime()
 
     @property
     def _gameTimeout(self) -> bool:
-        return (self._spinStartTime() - PtGetServerTime()) > kTotalGameTime
+        return (self._spinStartTime() - PtGetServerTime()) > self._gameTime
 
     # =============================================================================================
 
@@ -379,6 +386,7 @@ class xBlueSpiral(ptResponder):
         self._symbolSpinning = False
         self._numTicks = 0
         self._playCounter = 0
+        self._singleplayerCam = None
 
         random.seed()
         PtDebugPrint(f"xBlueSpiral: init  {self.version=}")
@@ -388,6 +396,8 @@ class xBlueSpiral(ptResponder):
             self._brain = _LegacyBlueSpiralBrain(self)
         else:
             self._brain = _SDLBlueSpiralBrain(self)
+
+        self._singleplayerCam = PtFindSceneobject(kSingleplayerDoorCamera, PtGetAgeName())
 
         ageSDL = PtGetAgeSDL()
         ageSDL.setFlags(SDLBSConsecutive.value, 1, 1)
@@ -438,6 +448,9 @@ class xBlueSpiral(ptResponder):
                 else:
                     PtDebugPrint(f"xBlueSpiral.OnNotify(): Showing that cloth ID:{clothNum} is instance cloth ID:{mappedClothNum}", level=kWarningLevel)
                     respBSDoor.run(self.key, state=str(mappedClothNum))
+                    if PtIsSinglePlayerMode() and self._singleplayerCam:
+                        self._singleplayerCam.pushCameraCut(PtGetLocalAvatar().getKey())
+                        PtAtTimeCallback(self.key, 4, kPopSingleplayerCam)
 
         # Somebody clicked on the door or we got a dupe resp callback
         elif id == clkBSDoor.id:
@@ -492,7 +505,10 @@ class xBlueSpiral(ptResponder):
             if self._brain.isLocallyOwned:
                 respBSSymbolSpin.run(self.key, state="fwdstart", netForce=True)
                 animBlueSpiral.animation.backwards(False)
-                animBlueSpiral.animation.speed(1.0)
+                speed = 1.0
+                if PtIsSinglePlayerMode():
+                    speed /= kSingleplayerGameTimeMult
+                animBlueSpiral.animation.speed(speed)
                 animBlueSpiral.animation.play()
 
         elif id == kDoorSpinBackward:
@@ -511,6 +527,10 @@ class xBlueSpiral(ptResponder):
                 respBSDoorOps.run(self.key, state="close", netPropagate=False)
             else:
                 PtDebugPrint(f"xBlueSpiral.OnTimer(): Someone wanted the door to close, but {self._doorState=}. Dropping request.")
+
+        elif id == kPopSingleplayerCam:
+            if self._singleplayerCam:
+                self._singleplayerCam.popCamera(PtGetLocalAvatar().getKey())
 
         self._brain.OnTimer(id)
 
@@ -572,10 +592,10 @@ class xBlueSpiral(ptResponder):
                 self.consecutive = 0
                 respBSSymbolSpin.run(self.key, state="fwdstop", netForce=True)
                 PtAtTimeCallback(self.key, 1, kDoorSpinBackward)
-            if self._doorState == DoorState.Open:
+            if self._doorState == DoorState.Open and not PtIsSinglePlayerMode():
                 PtDebugPrint(f"xBlueSpiral.HandleGameOver(): Closing the door in 1s...", level=kWarningLevel)
                 PtAtTimeCallback(self.key, 1, kCloseTheDoor)
-            elif self._doorState == DoorState.Opening:
+            elif self._doorState == DoorState.Opening and not PtIsSinglePlayerMode():
                 PtDebugPrint(f"xBlueSpiral.HandleGameOver(): Closing the door when it finishes opening", level=kWarningLevel)
                 self._doorState = DoorState.NeedsToClose
             else:
