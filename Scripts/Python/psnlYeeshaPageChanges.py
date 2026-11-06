@@ -65,6 +65,14 @@ clusterList = ptAttribClusterList(7, "Cluster Group object list")
 #globals
 HideCleftPole = 0
 
+# Pages with kickable physicals.
+# When disabled, the PageNumber.value listed here will have their physicals
+# put back to their default recipe pose before suppressing them.
+kPhysicalPages = {
+    5,  # YeeshaPage07 (kickable)
+    16, # YeeshaPage16 (firemarbles)
+}
+
 
 # Yeesha Pages available:
 #
@@ -187,8 +195,8 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                                 PtDebugPrint("ERROR: psnlYeeshaPageChanges.OnServerInitComplete():\tException occurred trying to access age SDL")
                         
                     # Anyone linking into an empty age will update the state.
-                    # EXCEPT: Only the owner can update the state of YeeshaPage07 (kickable) / YeeshaPage16 (firemarbles)
-                    if PtIsSolo() and (PageNumber.value not in {5, 16} or ptVault().inMyPersonalAge()):
+                    # EXCEPT: Only the owner can update the state of pages listed in kPhysicalPages
+                    if PtIsSolo() and (PageNumber.value not in kPhysicalPages or ptVault().inMyPersonalAge()):
                         newstate = self.UpdateState(CurrentValue, 0, SDLVar, AgeVault, ageSDL, 0)
                     else:
                         newstate = CurrentValue
@@ -202,7 +210,11 @@ class psnlYeeshaPageChanges(ptMultiModifier):
 
 
     def EnableDisable(self, val):
-        if val in self.enabledStateList:
+        # Pages listed in kPhysicalPages that are turned off but still pending (state 3) are treated as disabled, 
+        # Only the owner can update their state (see OnServerInitComplete()).
+        physicalPendingOff = val == 3 and PageNumber.value in kPhysicalPages
+
+        if val in self.enabledStateList and not physicalPendingOff:
             if PageNumber.value == 10:
                 PtDebugPrint("psnlYeeshaPageChanges: Attempting to enable drawing and collision on %s..." % self.sceneobject.getName())
             if PageNumber.value == 26:
@@ -219,18 +231,13 @@ class psnlYeeshaPageChanges(ptMultiModifier):
             
             respAudioStart.run(self.key,avatar=None,fastforward=0)
             respEnable.run(self.key,avatar=None,fastforward=0)
-
-            if val == 3 and PageNumber.value in {5, 16}:
-                # YeeshaPage07 (kickable) / YeeshaPage16 (firemarbles): pages that are turned off but still pending (state 3)
-                # have their physicals suppressed so nobody can move them. Only the owner can update their state (see OnServerInitComplete()).
-                PtDebugPrint(f"psnlYeeshaPageChanges: Page is pending off, supressing physicals on {self.sceneobject.getName()}...")
-                self.sceneobject.physics.suppress(True)
         else:
             if PageNumber.value == 10:
                 PtDebugPrint("psnlYeeshaPageChanges: Attempting to disable drawing and collision on %s..." % self.sceneobject.getName())
-            if PageNumber.value in {5, 16}:
-                # YeeshaPage07 (kickable) / YeeshaPage16 (firemarbles): put the physical back
-                # at its default recipe pose before suppressing it, so it's correct if re-enabled.
+            if physicalPendingOff:
+                PtDebugPrint(f"psnlYeeshaPageChanges: Page is pending off, disabling {self.sceneobject.getName()} without resetting its position...")
+            elif PageNumber.value in kPhysicalPages:
+                # Pages listed in kPhysicalPages will have their physicals put back at their default recipe pose before suppressing them.
                 PtDebugPrint(f"psnlYeeshaPageChanges: Page was disabled, so we will reset the sync state on {self.sceneobject.getName()}...")
                 self.sceneobject.physics.resetSyncState()
             self.sceneobject.draw.disable()
