@@ -85,7 +85,7 @@ void plNetSharedState::Read(hsStream* stream)
 {   
     Reset();
 
-    plMsgStdStringHelper::Peek(fName, stream);
+    plMsgStringHelper::Peek(fName, stream);
     int32_t num=stream->ReadLE32();
     fServerMayDelete = stream->ReadBool();
     
@@ -101,7 +101,7 @@ void plNetSharedState::Read(hsStream* stream)
 
 void plNetSharedState::Write(hsStream* stream)
 {   
-    plMsgStdStringHelper::Poke(fName, stream);
+    plMsgStringHelper::Poke(fName, stream);
     int32_t num=GetNumVars();
     stream->WriteLE32(num);
     

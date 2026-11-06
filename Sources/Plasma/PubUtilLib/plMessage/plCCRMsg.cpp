@@ -57,8 +57,8 @@ void plCCRPetitionMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
     
-    plMsgStdStringHelper::Peek(fNote, stream);
-    plMsgStdStringHelper::Peek(fTitle, stream);
+    plMsgStringHelper::Peek(fNote, stream);
+    plMsgStringHelper::Peek(fTitle, stream);
     stream->ReadByte(&fPetitionType);
 }
 
@@ -66,8 +66,8 @@ void plCCRPetitionMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
 
-    plMsgStdStringHelper::Poke(fNote, stream);
-    plMsgStdStringHelper::Poke(fTitle, stream);
+    plMsgStringHelper::Poke(fNote, stream);
+    plMsgStringHelper::Poke(fTitle, stream);
     stream->WriteByte(fPetitionType);
 }
 
@@ -105,7 +105,7 @@ plCCRCommunicationMsg::plCCRCommunicationMsg() : fType(kUnInit), fCCRPlayerID(kI
 void plCCRCommunicationMsg::Read(hsStream* stream, hsResMgr* mgr) 
 {
     plMessage::IMsgRead(stream, mgr);
-    plMsgStdStringHelper::Peek(fString, stream);    
+    plMsgStringHelper::Peek(fString, stream);
     fType = (Type)stream->ReadLE32();
     stream->ReadLE32(&fCCRPlayerID);
 }
@@ -114,7 +114,7 @@ void plCCRCommunicationMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
     
-    plMsgStdStringHelper::Poke(fString, stream);
+    plMsgStringHelper::Poke(fString, stream);
     stream->WriteLE32((uint32_t)fType);
     stream->WriteLE32(fCCRPlayerID);
 }

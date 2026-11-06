@@ -63,17 +63,17 @@ void plAgeInfoStruct::Read( hsStream * s, hsResMgr* )
 {
     s->ReadByte(&fFlags);
     if (IsFlagSet(kHasAgeFilename))
-        plMsgStdStringHelper::Peek(fAgeFilename,s);
+        plMsgStringHelper::Peek(fAgeFilename,s);
     if (IsFlagSet(kHasAgeInstanceName))
-        plMsgStdStringHelper::Peek(fAgeInstanceName,s);
+        plMsgStringHelper::Peek(fAgeInstanceName,s);
     if (IsFlagSet(kHasAgeInstanceGuid))
         fAgeInstanceGuid.Read( s );
     if (IsFlagSet(kHasAgeUserDefinedName))
-        plMsgStdStringHelper::Peek(fAgeUserDefinedName,s);
+        plMsgStringHelper::Peek(fAgeUserDefinedName,s);
     if (IsFlagSet(kHasAgeSequenceNumber))
         s->ReadLE32(&fAgeSequenceNumber);
     if (IsFlagSet(kHasAgeDescription))
-        plMsgStdStringHelper::Peek(fAgeDescription,s);
+        plMsgStringHelper::Peek(fAgeDescription,s);
     if (IsFlagSet(kHasAgeLanguage))
         s->ReadLE32(&fAgeLanguage);
     UpdateFlags();
@@ -84,17 +84,17 @@ void plAgeInfoStruct::Write( hsStream * s, hsResMgr* )
     UpdateFlags();
     s->WriteByte(fFlags);
     if ( IsFlagSet( kHasAgeFilename ) )
-        plMsgStdStringHelper::Poke(fAgeFilename,s);
+        plMsgStringHelper::Poke(fAgeFilename,s);
     if ( IsFlagSet( kHasAgeInstanceName ) )
-        plMsgStdStringHelper::Poke(fAgeInstanceName,s);
+        plMsgStringHelper::Poke(fAgeInstanceName,s);
     if ( IsFlagSet( kHasAgeInstanceGuid ) )
         fAgeInstanceGuid.Write( s );
     if ( IsFlagSet( kHasAgeUserDefinedName ) )
-        plMsgStdStringHelper::Poke(fAgeUserDefinedName,s);
+        plMsgStringHelper::Poke(fAgeUserDefinedName,s);
     if ( IsFlagSet( kHasAgeSequenceNumber ) )
         s->WriteLE32(fAgeSequenceNumber);
     if ( IsFlagSet( kHasAgeDescription ) )
-        plMsgStdStringHelper::Poke(fAgeDescription,s);
+        plMsgStringHelper::Poke(fAgeDescription,s);
     if ( IsFlagSet( kHasAgeLanguage ) )
         s->WriteLE32(fAgeLanguage);
 }
@@ -373,7 +373,7 @@ void plAgeLinkStruct::Read( hsStream * s, hsResMgr* m)
     if ( IsFlagSet( kHasSpawnPt_DEAD ) )
     {
         ST::string str;
-        plMsgStdStringHelper::Peek(str,s);
+        plMsgStringHelper::Peek(str,s);
         fSpawnPoint.SetName( str );
         if ( fSpawnPoint.GetName() == kDefaultSpawnPtName )
             fSpawnPoint.SetTitle( kDefaultSpawnPtTitle );
@@ -396,7 +396,7 @@ void plAgeLinkStruct::Read( hsStream * s, hsResMgr* m)
         s->ReadByte(&fAmCCR);
 
     if ( IsFlagSet( kHasParentAgeFilename ) )
-        plMsgStdStringHelper::Peek(fParentAgeFilename,s);
+        plMsgStringHelper::Peek(fParentAgeFilename,s);
 }
 
 void plAgeLinkStruct::Write( hsStream * s, hsResMgr* m)
@@ -411,7 +411,7 @@ void plAgeLinkStruct::Write( hsStream * s, hsResMgr* m)
     if ( IsFlagSet( kHasAmCCR ) )
         s->WriteByte(fAmCCR);
     if ( IsFlagSet( kHasParentAgeFilename ) )
-        plMsgStdStringHelper::Poke(fParentAgeFilename,s);
+        plMsgStringHelper::Poke(fParentAgeFilename,s);
 }
 
 void plAgeLinkStruct::SetParentAgeFilename(ST::string v)

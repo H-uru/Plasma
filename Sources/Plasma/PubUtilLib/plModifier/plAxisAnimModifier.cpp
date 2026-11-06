@@ -369,7 +369,7 @@ void plAxisAnimModifier::Read(hsStream* s, hsResMgr* mgr)
     if (fNotify)
         delete(fNotify);
     fNotify = pMsg;
-    plMsgStdStringHelper::Peek(fAnimLabel, s);
+    plMsgStringHelper::Peek(fAnimLabel, s);
 }
 
 void plAxisAnimModifier::Write(hsStream* s, hsResMgr* mgr)
@@ -380,5 +380,5 @@ void plAxisAnimModifier::Write(hsStream* s, hsResMgr* mgr)
     mgr->WriteKey(s, fNotificationKey);
     s->WriteBool(fAllOrNothing);
     mgr->WriteCreatable(s, fNotify);
-    plMsgStdStringHelper::Poke(fAnimLabel, s);
+    plMsgStringHelper::Poke(fAnimLabel, s);
 }

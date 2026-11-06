@@ -160,7 +160,7 @@ bool plVarDescriptor::Read(hsStream* s)
 
     fName=s->ReadSafeString();
 
-    plMsgStdStringHelper::Peek(fDisplayOptions, s);
+    plMsgStringHelper::Peek(fDisplayOptions, s);
 
     fCount=s->ReadLE32();
 
@@ -179,7 +179,7 @@ void plVarDescriptor::Write(hsStream* s) const
 {
     s->WriteByte(kVersion);
     s->WriteSafeString(fName);
-    plMsgStdStringHelper::Poke(fDisplayOptions, s);
+    plMsgStringHelper::Poke(fDisplayOptions, s);
     s->WriteLE32(fCount);
     s->WriteByte((uint8_t)fType);
     s->WriteSafeString(fDefault);

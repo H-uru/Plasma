@@ -314,7 +314,7 @@ void plClientGuid::Read(hsStream * s, hsResMgr* mgr)
     else if (IsFlagSet(kTempPlayerID))
         s->ReadLE32(&fPlayerID);
     if (IsFlagSet(kPlayerName))
-        plMsgStdStringHelper::Peek( fPlayerName, s );
+        plMsgStringHelper::Peek( fPlayerName, s );
     if (IsFlagSet(kCCRLevel))
         s->ReadByte(&fCCRLevel);
     if (IsFlagSet(kProtectedLogin))
@@ -328,7 +328,7 @@ void plClientGuid::Read(hsStream * s, hsResMgr* mgr)
     if (IsFlagSet(kReserved))
         fReserved = s->ReadBool();
     if (IsFlagSet(kClientKey))
-        plMsgStdStringHelper::Peek( fClientKey, s );
+        plMsgStringHelper::Peek( fClientKey, s );
 }
 
 void plClientGuid::Write(hsStream * s, hsResMgr* mgr)
@@ -341,7 +341,7 @@ void plClientGuid::Write(hsStream * s, hsResMgr* mgr)
     else if (IsFlagSet(kTempPlayerID))
         s->WriteLE32(fPlayerID);
     if (IsFlagSet(kPlayerName))
-        plMsgStdStringHelper::Poke( fPlayerName, s );
+        plMsgStringHelper::Poke( fPlayerName, s );
     if (IsFlagSet(kCCRLevel))
         s->WriteByte(fCCRLevel);
     if (IsFlagSet(kProtectedLogin))
@@ -355,7 +355,7 @@ void plClientGuid::Write(hsStream * s, hsResMgr* mgr)
     if (IsFlagSet(kReserved))
         s->WriteBool(fReserved);
     if (IsFlagSet(kClientKey))
-        plMsgStdStringHelper::Poke( fClientKey, s );
+        plMsgStringHelper::Poke( fClientKey, s );
 }
 
 void plClientGuid::CopyFrom(const plClientGuid * other)

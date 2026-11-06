@@ -162,11 +162,7 @@ public:
 //      c strings (char *)
 //      c arrays (type [])
 
-
-/////////////////////////////////////////////////////////////////
-// reads/writes your std::string field
-
-struct plMsgStdStringHelper
+struct plMsgStringHelper
 {
     static int Poke(const std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
     static int Poke(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
