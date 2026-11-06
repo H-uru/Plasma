@@ -144,6 +144,11 @@ public:
     //Set the Linear Velocity of the Object
     void SetLinearVelocity(pyVector3& velocity);
     void SetAngularVelocity(pyVector3& angVel);
+
+    // Reset the physical to its default recipe pose (position and rotation) and zero its
+    // velocities. Same effect as the console command Physics.ResetKickables, but scoped to
+    // just this object.
+    void ResetSyncState();
 };
 
 #endif  // cyPhysics_h
