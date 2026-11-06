@@ -116,7 +116,7 @@ void plControlEventMsg::Read(hsStream* stream, hsResMgr* mgr)
     fTurnToPt.Read(stream);
 
     // read cmd/string
-    plMsgCStringHelper::Peek(fCmd, stream);
+    plMsgStringHelper::Peek(fCmd, stream);
 }
 
 void plControlEventMsg::Write(hsStream* stream, hsResMgr* mgr)
@@ -128,7 +128,7 @@ void plControlEventMsg::Write(hsStream* stream, hsResMgr* mgr)
     fTurnToPt.Write(stream);
     
     // write cmd/string
-    plMsgCStringHelper::Poke(fCmd, stream);
+    plMsgStringHelper::Poke(fCmd, stream);
 }
 
 enum ControlEventMsgFlags
@@ -161,7 +161,7 @@ void plControlEventMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
 
     // read cmd/string
     if (contentFlags.IsBitSet(kControlEventMsgCmd))
-        plMsgCStringHelper::Peek(fCmd, s);
+        plMsgStringHelper::Peek(fCmd, s);
 }
 
 void plControlEventMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
@@ -189,7 +189,7 @@ void plControlEventMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     fTurnToPt.Write(s);
 
     // kControlEventMsgCmd,
-    plMsgCStringHelper::Poke(fCmd, s);
+    plMsgStringHelper::Poke(fCmd, s);
 }
 
 plKeyEventMsg::plKeyEventMsg()

@@ -237,7 +237,7 @@ void    plSynchedObject::Read(hsStream* stream, hsResMgr* mgr)
         for (uint16_t i = 0; i < num; i++)
         {
             ST::string s;
-            plMsgStdStringHelper::Peek(s, stream);
+            plMsgStringHelper::Peek(s, stream);
             fSDLExcludeList.push_back(s);
         }
     }
@@ -249,7 +249,7 @@ void    plSynchedObject::Read(hsStream* stream, hsResMgr* mgr)
         for (uint16_t i = 0; i < num; i++)
         {
             ST::string s;
-            plMsgStdStringHelper::Peek(s, stream);
+            plMsgStringHelper::Peek(s, stream);
             fSDLVolatileList.push_back(s);
         }
     }
@@ -267,7 +267,7 @@ void    plSynchedObject::Write(hsStream* stream, hsResMgr* mgr)
         SDLStateList::iterator it=fSDLExcludeList.begin();
         for(; it != fSDLExcludeList.end(); it++)
         {
-            plMsgStdStringHelper::Poke(*it, stream);
+            plMsgStringHelper::Poke(*it, stream);
         }
     }
 
@@ -278,7 +278,7 @@ void    plSynchedObject::Write(hsStream* stream, hsResMgr* mgr)
         SDLStateList::iterator it=fSDLVolatileList.begin();
         for(; it != fSDLVolatileList.end(); it++)
         {
-            plMsgStdStringHelper::Poke(*it, stream);
+            plMsgStringHelper::Poke(*it, stream);
         }
     }
 }

@@ -162,35 +162,13 @@ public:
 //      c strings (char *)
 //      c arrays (type [])
 
-
-/////////////////////////////////////////////////////////////////
-// reads/writes your std::string field
-
-struct plMsgStdStringHelper
+struct plMsgStringHelper
 {
-    static int Poke(const std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int PokeBig(const std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int Poke(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
-    static int PokeBig(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
-    static int Poke(const ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int PokeBig(const ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int Peek(std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int PeekBig(std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int Peek(ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int PeekBig(ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
-};
-
-/////////////////////////////////////////////////////////////////
-// reads/writes your char * field  (deprecated)
-
-struct plMsgCStringHelper
-{
-    static int Poke(const char * str, hsStream* stream, const uint32_t peekOptions=0);
-    // deletes str and reallocates. you must delete [] str;
-    static int Peek(char *& str, hsStream* stream, const uint32_t peekOptions=0);
-
-    static int Poke(const ST::string & str, hsStream* stream, const uint32_t peekOptions=0);
-    static int Peek(ST::string & str, hsStream* stream, const uint32_t peekOptions=0);
+    static int Poke(const std::string& stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int Poke(const char* buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
+    static int Poke(const ST::string& stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int Peek(std::string& stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int Peek(ST::string& stringref, hsStream* stream, const uint32_t peekOptions=0);
 };
 
 /////////////////////////////////////////////////////////////////

@@ -64,8 +64,8 @@ namespace SpawnPointInfoStreamFlags
 
 void plSpawnPointInfo::ReadOld( hsStream * s )
 {
-    plMsgStdStringHelper::Peek( fTitle, s );
-    plMsgStdStringHelper::Peek( fSpawnPt, s );
+    plMsgStringHelper::Peek( fTitle, s );
+    plMsgStringHelper::Peek( fSpawnPt, s );
     fCameraStack.clear();
 }
 
@@ -76,15 +76,15 @@ void plSpawnPointInfo::Read( hsStream * s )
 
     if ( flags.IsBitSet( SpawnPointInfoStreamFlags::kHasTitle ) )
     {
-        plMsgStdStringHelper::Peek( fTitle, s );
+        plMsgStringHelper::Peek( fTitle, s );
     }
     if ( flags.IsBitSet( SpawnPointInfoStreamFlags::kHasName ) )
     {
-        plMsgStdStringHelper::Peek( fSpawnPt, s );
+        plMsgStringHelper::Peek( fSpawnPt, s );
     }
     if ( flags.IsBitSet( SpawnPointInfoStreamFlags::kHasCameraStack ) )
     {
-        plMsgStdStringHelper::Peek( fCameraStack, s );
+        plMsgStringHelper::Peek( fCameraStack, s );
     }
 }
 
@@ -98,15 +98,15 @@ void plSpawnPointInfo::Write( hsStream * s ) const
 
     if ( flags.IsBitSet( SpawnPointInfoStreamFlags::kHasTitle ) )
     {
-        plMsgStdStringHelper::Poke( fTitle, s );
+        plMsgStringHelper::Poke( fTitle, s );
     }
     if ( flags.IsBitSet( SpawnPointInfoStreamFlags::kHasName ) )
     {
-        plMsgStdStringHelper::Poke( fSpawnPt, s );
+        plMsgStringHelper::Poke( fSpawnPt, s );
     }
     if ( flags.IsBitSet( SpawnPointInfoStreamFlags::kHasCameraStack ) )
     {
-        plMsgStdStringHelper::Poke( fCameraStack, s );
+        plMsgStringHelper::Poke( fCameraStack, s );
     }
 }
 

@@ -765,7 +765,7 @@ int plNetMsgRoomsList::IPokeBuffer(hsStream* stream, uint32_t peekOptions)
             fRooms[i].Write(stream);
             
             // write room name for debugging
-            plMsgCStringHelper::Poke(fRoomNames[i],stream,peekOptions);
+            plMsgStringHelper::Poke(fRoomNames[i],stream,peekOptions);
         }
         
         bytes=stream->GetPosition();
@@ -785,7 +785,7 @@ int plNetMsgRoomsList::IPeekBuffer(hsStream* stream, uint32_t peekOptions)
         {
             fRooms[i].Read(stream);
             // read room name for debugging
-            plMsgCStringHelper::Peek(fRoomNames[i],stream,peekOptions);
+            plMsgStringHelper::Peek(fRoomNames[i],stream,peekOptions);
         }
         bytes=stream->GetPosition();
     }
@@ -1069,7 +1069,7 @@ int plNetMsgVoice::IPokeBuffer(hsStream* stream, uint32_t peekOptions)
     plNetMessage::IPokeBuffer(stream, peekOptions);
     stream->WriteByte(fFlags);
     stream->WriteByte(fNumFrames);
-    plMsgStdStringHelper::Poke(fVoiceData, stream, peekOptions);
+    plMsgStringHelper::Poke(fVoiceData, stream, peekOptions);
     fReceivers.Poke(stream, peekOptions);
     return stream->GetPosition();
 }
@@ -1081,7 +1081,7 @@ int plNetMsgVoice::IPeekBuffer(hsStream* stream, uint32_t peekOptions)
     {
         stream->ReadByte(&fFlags);
         stream->ReadByte(&fNumFrames);
-        plMsgStdStringHelper::Peek(fVoiceData, stream, peekOptions);
+        plMsgStringHelper::Peek(fVoiceData, stream, peekOptions);
         fReceivers.Peek(stream, peekOptions);
         bytes=stream->GetPosition();
     }
@@ -1102,7 +1102,7 @@ void plNetMsgVoice::ReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kVoiceFlags))
         s->ReadByte(&fFlags);
     if(contentFlags.IsBitSet(kVoiceData))
-        plMsgStdStringHelper::Peek(fVoiceData, s);
+        plMsgStringHelper::Peek(fVoiceData, s);
 }
 
 void plNetMsgVoice::WriteVersion(hsStream* s, hsResMgr* mgr)
@@ -1118,7 +1118,7 @@ void plNetMsgVoice::WriteVersion(hsStream* s, hsResMgr* mgr)
     
     fReceivers.WriteVersion(s,mgr);
     s->WriteByte(fFlags);
-    plMsgStdStringHelper::Poke(fVoiceData, s);
+    plMsgStringHelper::Poke(fVoiceData, s);
 }
 
 void plNetMsgVoice::SetVoiceData(const void* data, size_t len)
