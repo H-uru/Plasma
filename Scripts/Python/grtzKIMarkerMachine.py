@@ -52,7 +52,6 @@ MinorVersionNumber = 4
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
-import xLinkingBookDefs
 from xPsnlVaultSDL import *
 
 aKISlotAct = ptAttribActivator(1,"KI Slot activator")

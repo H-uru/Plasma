@@ -57,13 +57,15 @@ Major change over to using ptBook instead of LinkBooksGUI dialog
 First phase - keep hi level structure, only replace the bring up of books
 """
 
+# For the type specifier of IShowBahroBook
+from __future__ import annotations
+
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 from PlasmaNetConstants import *
 import xLinkingBookDefs
 from xPsnlVaultSDL import *
-import re
 from contextlib import contextmanager
 
 
@@ -465,12 +467,9 @@ class xLinkingBookGUIPopup(ptModifier):
     def IShowBookNoTreasure(self):
         "Show the linking book with no treasure pages"
         global gLinkingBook
-        global SpawnPointName_Dict
-        global SpawnPointTitle_Dict
-        global kGrsnTeamBook
         global pelletCaveGUID
         showOpen = 0
-        #If this is a normal pedestal book, the panel is defined in the Max GUI. If this is the personal Age Bookshelf, the panel is passed in a note from psnlBookshelf. Determine the source here.
+        # If this is a normal pedestal book, the panel is defined in the Max GUI. If this is the personal Age Bookshelf, the panel is passed in a note from psnlBookshelf. Determine the source here.
         if len(actBookshelf.value) == 0:
             agePanel = TargetAge.value
             showOpen = 1  # start pedestal books open
@@ -479,10 +478,10 @@ class xLinkingBookGUIPopup(ptModifier):
             showOpen = 0    # start bookself books closed
         # did we find an agePanel to link with?
         if agePanel:
-            #this new section is specific to Tomahna
-            #it checks if a Tomahna panel is used to link with,
-            #if so it sets (or creates and sets, if not already present) a Tomahna chronicle entry to yes,
-            #which is then read in by Cleft.py to load in the Tomahna pages
+            # this new section is specific to Tomahna
+            # it checks if a Tomahna panel is used to link with,
+            # if so it sets (or creates and sets, if not already present) a Tomahna chronicle entry to yes,
+            # which is then read in by Cleft.py to load in the Tomahna pages
             if agePanel == "Cleft":
                 vault = ptVault()
                 if not vault.amOwnerOfCurrentAge():
@@ -510,51 +509,44 @@ class xLinkingBookGUIPopup(ptModifier):
             elif agePanel == "BahroCaveLower":
                 pelletCaveGUID = str(self.OnClickToLinkToPelletCaveFromAhnonay())
                 PtDebugPrint("pelletCaveGUID = ",pelletCaveGUID)
-            try:
-                params = xLinkingBookDefs.xAgeLinkingBooks[agePanel]
-                if len(params) == 6:
-                    sharable,width,height,stampdef,bookdef,gui = params
-                elif len(params) == 5:
-                    sharable,width,height,stampdef,bookdef = params
-                    gui = "BkBook"
-                else:
-                    # this is a treasure book
-                    linkingPanel,gui,shareName = params
-                    self.IShowBahroBook(linkingPanel,gui,shareName)
-                    return
-                if not IsDRCStamped.value:
-                    stampdef = xLinkingBookDefs.NoDRCStamp
-                if sharable:
-                    try:
-                        bookdef = bookdef % ('', stampdef,self.IAddShare())
-                    except:
-                        PtDebugPrint("xLinkingBookGUIPopup: %s's book definition can't be shared" % (agePanel),level=kErrorLevel)
-                else:
-                    bookdef = bookdef % ('', stampdef)
-                SpawnPointName_Dict[0] = "LinkInPointDefault"
-                SpawnPointTitle_Dict[0] = agePanel
-                PtSendKIMessage(kDisableKIandBB,0)
-                gLinkingBook = ptBook(bookdef,self.key)
-                gLinkingBook.setSize( width, height )
-                # make sure there is a cover to show
-                if not showOpen and not self.IsThereACover(bookdef):
-                    showOpen = 1
-                gLinkingBook.setGUI(gui)
-                gLinkingBook.show(showOpen)
-            except LookupError:
-                PtDebugPrint("xLinkingBookGUIPopup: could not find age %s's linking panel" % (agePanel),level=kErrorLevel)
+
+            linkDef = xLinkingBookDefs.xAgeLinkingBooks.get(agePanel)
+            if linkDef is None:
+                PtDebugPrint(f"xLinkingBookGUIPopup: could not find age {agePanel}'s linking panel", level=kErrorLevel)
+                # Fall back to black void book
+                linkDef = xLinkingBookDefs.LinkingBook()
+
+            if isinstance(linkDef, xLinkingBookDefs.BahroStone):
+                # this is a treasure book
+                self.IShowBahroBook(linkDef)
+                return
+
+            # BahroStones are handled above so from here on we should have a LinkingBook type.
+            assert isinstance(linkDef, xLinkingBookDefs.LinkingBook), f"Unexpected link definition for age panel {agePanel}. You done a bad."
+            stampdef = linkDef.getDRCStampMarkup() if IsDRCStamped.value else ""
+            bookdef = linkDef.getMarkup(stamp=stampdef, share=self.IAddShare())
+
+            SpawnPointName_Dict[0] = "LinkInPointDefault"
+            SpawnPointTitle_Dict[0] = agePanel
+            PtSendKIMessage(kDisableKIandBB, 0)
+            gLinkingBook = ptBook(bookdef, self.key)
+            gLinkingBook.setSize(linkDef.width, linkDef.height)
+            # make sure there is a cover to show
+            if not showOpen and not linkDef.cover:
+                showOpen = 1
+            gLinkingBook.setGUI(linkDef.GUI)
+            gLinkingBook.show(showOpen)
         else:
-            PtDebugPrint("xLinkingBookGUIPopup: no age link panel" % (agePanel),level=kErrorLevel)
+            PtDebugPrint("xLinkingBookGUIPopup: no age link panel", level=kErrorLevel)
 
 
     def IShowBookTreasure(self):
         PtDebugPrint("Show the linking book with all its treasure pages")
         global gLinkingBook
-        global CurrentPage
         global SpawnPointTitle_Dict
         global SpawnPointName_Dict
         showOpen = 0
-        #If this is a normal pedestal book, the panel is defined in the Max GUI. If this is the personal Age Bookshelf, the panel is passed in a note from psnlBookshelf. Determine the source here.
+        # If this is a normal pedestal book, the panel is defined in the Max GUI. If this is the personal Age Bookshelf, the panel is passed in a note from psnlBookshelf. Determine the source here.
         if len(actBookshelf.value) == 0:
             agePanel = TargetAge.value
             showOpen = 1  # start pedestal books open
@@ -562,7 +554,7 @@ class xLinkingBookGUIPopup(ptModifier):
         else:
             agePanel = stringAgeRequested
             fromBookshelf = 1
-            showOpen = 0    # start bookself books closed
+            showOpen = 0  # start bookself books closed
             # but if bookmarked... then turn to that page
             if CurrentPage > 1:
                 showOpen = 1  # start the book at the page where they left off
@@ -608,38 +600,32 @@ class xLinkingBookGUIPopup(ptModifier):
             
             # start with the first page
             
-            try:
-                params = xLinkingBookDefs.xAgeLinkingBooks[agePanel]
-                if len(params) == 6:
-                    sharable,width,height,stampdef,bookdef,gui = params
-                elif len(params) == 5:
-                    sharable,width,height,stampdef,bookdef = params
-                    gui = "BkBook"
-                else:
-                    linkingPanel,gui,shareName = params
-                    if not fromBookshelf:
-                        # this is a treasure book
-                        self.IShowBahroBook(linkingPanel,gui,shareName)
-                        return
-                    else:
-                        sharable, width, height, stampdef, gui = (0, 1.0, 1.0, xLinkingBookDefs.NoDRCStamp, "BkBook")
-                        bookdef = xLinkingBookDefs.BookStart1 + xLinkingBookDefs.DRCStampHolder + xLinkingBookDefs.NoShare + xLinkingBookDefs.LinkStart + linkingPanel + xLinkingBookDefs.LinkEnd
+            linkDef = xLinkingBookDefs.xAgeLinkingBooks.get(agePanel)
+            if "NotPossible" in SpawnPointTitle_Dict.values():
+                linkDef = xLinkingBookDefs.xAgeLinkingBooks["NotPossible"]
+            if "DisabledDesert" in SpawnPointTitle_Dict.values():
+                linkDef = xLinkingBookDefs.xAgeLinkingBooks["DisabledDesert"]
 
-                if 'NotPossible' in SpawnPointTitle_Dict.values():
-                   bookdef = xLinkingBookDefs.BookStart1 + xLinkingBookDefs.DRCStampHolder + xLinkingBookDefs.NoShare + xLinkingBookDefs.LinkStart + 'xLinkPanelBlackVoid' + xLinkingBookDefs.LinkEndNoLink
-                   sharable = 0
-                if 'DisabledDesert' in SpawnPointTitle_Dict.values():
-                   bookdef = xLinkingBookDefs.BookStart1 + xLinkingBookDefs.DRCStampHolder + xLinkingBookDefs.NoShare + xLinkingBookDefs.LinkStart + 'xLinkPanelCleftDesertDisabled' + xLinkingBookDefs.LinkEndNoLink
-                   sharable = 0
-                
-                if not IsDRCStamped.value:
-                    stampdef = xLinkingBookDefs.NoDRCStamp
-            except LookupError:
-                PtDebugPrint("xLinkingBookGUIPopup: could not find age %s's linking panel or SpawnPoint" % (agePanel),level=kErrorLevel)
-                return
+            if linkDef is None:
+                PtDebugPrint(f"xLinkingBookGUIPopup: could not find age {agePanel}'s linking panel", level=kErrorLevel)
+                # Fall back to black void book
+                linkDef = xLinkingBookDefs.LinkingBook()
+
+            if isinstance(linkDef, xLinkingBookDefs.BahroStone):
+                if not fromBookshelf:
+                    # this is a treasure book
+                    self.IShowBahroBook(linkDef)
+                    return
+                else:
+                    # Repack into a Linking Book
+                    linkDef = xLinkingBookDefs.LinkingBook(linkPanel=linkDef.linkPanel)
+
+            # BahroStones are handled above so from here on we should have a LinkingBook type.
+            assert isinstance(linkDef, xLinkingBookDefs.LinkingBook), f"Unexpected link definition for agePanel {agePanel}. What are you doing!?"
+            stampdef = linkDef.getDRCStampMarkup() if IsDRCStamped.value else ""
 
             # bookmark link
-            if fromBookshelf and xLinkingBookDefs.kBookMarkID in SpawnPointTitle_Dict.keys():
+            if fromBookshelf and xLinkingBookDefs.kBookMarkID in SpawnPointTitle_Dict:
                 if SpawnPointTitle_Dict[xLinkingBookDefs.kBookMarkID] == 'JCSavePoint':
                     bookmark = xLinkingBookDefs.JCBookMark
                 elif SpawnPointTitle_Dict[xLinkingBookDefs.kBookMarkID] == 'SCSavePoint':
@@ -650,46 +636,34 @@ class xLinkingBookGUIPopup(ptModifier):
             else:
                 bookmark = ''
 
-            if fromBookshelf and agePanel in xLinkingBookDefs.CityBookLinks:
+            forceYeeshaStamp = fromBookshelf and agePanel in xLinkingBookDefs.CityBookLinks
+            if forceYeeshaStamp:
                 PtDebugPrint("xLinkingBookGUIPopup: add yeesha stamps to first city link page")
-                bookdef = re.sub(r'<font size=10>(.*?)(?:<img src="xYeeshaBookStampVSquish\*1#0\.hsm" pos=140,255 resize=no blend=alpha>)?$', r'<font size=10>\1<img src="xYeeshaBookStampVSquish*1#0.hsm" pos=140,255 resize=no blend=alpha>', bookdef)
 
-            if sharable:
-                try:
-                    allPagesDef = bookdef % (bookmark, stampdef,self.IAddShare())
-                except:
-                    PtDebugPrint("xLinkingBookGUIPopup: %s's book definition can't be shared" % (agePanel),level=kErrorLevel)
-            else:
-                if agePanel == "CleftWithTomahna" and ptVault().amOwnerOfCurrentAge():
-                    allPagesDef = bookdef % (bookmark, stampdef, xLinkingBookDefs.kFirstLinkPanelID, xLinkingBookDefs.kFirstLinkPanelID + 1)
-                else:
-                    allPagesDef = bookdef % (bookmark, stampdef)
+            # Get our first page definition
+            allPagesDef = linkDef.getMarkup(bookmark, stampdef, self.IAddShare(), forceYeeshaStamp)
+
             # build the rest of the pages into the book
-            #linkID = xLinkingBookDefs.kFirstLinkPanelID + 1
-            if agePanel != "CleftWithTomahna":
-                for linkID in SpawnPointTitle_Dict.keys():
-                    if linkID == xLinkingBookDefs.kFirstLinkPanelID or linkID == xLinkingBookDefs.kBookMarkID:
-                        continue
-                    try:
-                        pagedef = xLinkingBookDefs.xLinkingPages[SpawnPointTitle_Dict[linkID]]
-                        # pages are not sharable at the moment, not sure if they ever will
-                        try:
-                            allPagesDef += pagedef % (linkID)
-                        except:
-                            PtDebugPrint("xLinkingBookGUIPopup: Treasure page %s's book definition doesn't look like a page???" % (SpawnPointTitle_Dict[linkID]),level=kErrorLevel)
-                    except LookupError:
-                        PtDebugPrint("xLinkingBookGUIPopup: could not find treasure book page %s's linking panel" % (SpawnPointTitle_Dict[linkID]),level=kErrorLevel)
-                    
+            for linkID in SpawnPointTitle_Dict:
+                if linkID == xLinkingBookDefs.kFirstLinkPanelID or linkID == xLinkingBookDefs.kBookMarkID:
+                    continue
+
+                pageDef = xLinkingBookDefs.xLinkingPages.get(SpawnPointTitle_Dict[linkID])
+                if pageDef is None:
+                    # We could fall back to a black void but there seem to be possibly erroneous pages, so log the case and skip
+                    PtDebugPrint(f"xLinkingBookGUIPopup: could not find treasure book page {SpawnPointTitle_Dict[linkID]}'s linking panel", level=kErrorLevel)
+                    continue
+
+                allPagesDef += pageDef.getMarkup(linkID)
+
             if allPagesDef != "":
-                PtDebugPrint(allPagesDef)
-                PtSendKIMessage(kDisableKIandBB,0)
-                gLinkingBook = ptBook(allPagesDef,self.key)
-                gLinkingBook.setSize( width, height )
+                PtSendKIMessage(kDisableKIandBB, 0)
+                gLinkingBook = ptBook(allPagesDef, self.key)
+                gLinkingBook.setSize(linkDef.width, linkDef.height)
                 # make sure there is a cover to show
-                if not showOpen:
-                    if not self.IsThereACover(allPagesDef):
-                        showOpen = 1
-                gLinkingBook.setGUI(gui)
+                if not showOpen and not linkDef.cover:
+                    showOpen = 1
+                gLinkingBook.setGUI(linkDef.GUI)
                 vault = ptVault()
                 if vault.amOwnerOfCurrentAge():
                    gLinkingBook.allowPageTurning(1)
@@ -697,9 +671,9 @@ class xLinkingBookGUIPopup(ptModifier):
                     gLinkingBook.allowPageTurning(0)
                 gLinkingBook.show(showOpen)
             else:
-                PtDebugPrint("xLinkingBookGUIPopup: couldn't find the book definition for %s???" % (agePanel),level=kErrorLevel)
+                PtDebugPrint(f"xLinkingBookGUIPopup: couldn't find the book definition for {agePanel}???", level=kErrorLevel)
         else:
-            PtDebugPrint("xLinkingBookGUIPopup: no age link panel" % (agePanel),level=kErrorLevel)
+            PtDebugPrint("xLinkingBookGUIPopup: no age link panel", level=kErrorLevel)
 
 
     def IGetHoodLinkNode(self):
@@ -842,43 +816,24 @@ class xLinkingBookGUIPopup(ptModifier):
         return CityLinks	
 
 
-    def IShowBahroBook(self,linkingPanel,gui,shareName):
+    def IShowBahroBook(self, linkDef: xLinkingBookDefs.BahroStone):
         global gLinkingBook
-        global SpawnPointName_Dict
-        global SpawnPointTitle_Dict
-        global OfferedBookMode
         PtDebugPrint("xLinkingBookGUIPopup: It's a Bahro Linking Tablet (BLT), so we get to do fun stuff now!")
         agePanel = TargetAge.value
-        # share book image is on the "first" page while the linking panel is on the "second" page
-        if OfferedBookMode:
-            bookdef = '<font size=10>' + getattr(xLinkingBookDefs, f'{shareName}NoShare') +'<pb>' + xLinkingBookDefs.TransLinkStart + linkingPanel + xLinkingBookDefs.LinkEnd
-        else:
-            bookdef = '<font size=10>' + getattr(xLinkingBookDefs, f'{shareName}Share')  +'<pb>' + xLinkingBookDefs.TransLinkStart + linkingPanel + xLinkingBookDefs.LinkEnd
+        bookdef = linkDef.getMarkup(not OfferedBookMode)
         SpawnPointName_Dict[0] = "LinkInPointDefault"
         SpawnPointTitle_Dict[0] = agePanel
         PtSendKIMessage(kDisableKIandBB,0)
         gLinkingBook = ptBook(bookdef,self.key)
-        gLinkingBook.setSize( 1, 1 )
-        gLinkingBook.setGUI(gui)
+        gLinkingBook.setSize(1, 1)
+        gLinkingBook.setGUI(linkDef.GUI)
         gLinkingBook.show(1) # this book is always open
 
     def IAddShare(self):
-        global OfferedBookMode
-        # if a pedestal book? (not a bookSelf book)
-        if len(actBookshelf.value) == 0:
-            # if we are not in offer book mode already
-            if not OfferedBookMode:
-                # yes, then return the bookHTML for a share book icon
-                return xLinkingBookDefs.ShareBook
-        # otherwise return empty string
+        # if a pedestal book (not a bookShelf book) and we are not in offer book mode already
+        if len(actBookshelf.value) == 0 and not OfferedBookMode:
+            return xLinkingBookDefs.ShareBook
         return ""
-
-    def IsThereACover(self,bookHtml):
-        # search the bookhtml string looking for a cover
-        idx = bookHtml.find('<cover')
-        if idx >= 0:
-            return 1
-        return 0
 
     def BuildTreasureLinks(self,ageRequested):
         PtDebugPrint("BuildTreasureLinks")

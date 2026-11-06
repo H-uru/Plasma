@@ -53,42 +53,10 @@ from PlasmaKITypes import *
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
 from xStartPathHelpers import *
+from xYeeshaPageDefs import YeeshaPages
 
 actClickableBook = ptAttribActivator(1,"Act: Clickable Yeesha Page")
 PageNumber = ptAttribInt(2, "Yeesha Page Number")
-
-# This file controls the GUI when finding a Yeesha Page.
-# Add yeesha page textures to be loaded by name here. (Mapping Page Number: Texture)
-# Just like link panels, they should probably be in BkBookImages or derivatives thereof.
-# For the equivalent place to add it to the relto book, see xLinkingBookDefs.py
-YeeshaPageSketches = {
-    1: "xyeeshapagealphasketch01*1#0.hsm",
-    2: "xyeeshapagealphasketch02*1#0.hsm",
-    3: "xyeeshapagealphasketch03*1#0.hsm",
-    4: "xyeeshapagealphasketch04*1#0.hsm",
-    5: "xyeeshapagealphasketch07*1#0.hsm",
-    6: "xyeeshapagealphasketch06*1#0.hsm",
-    7: "xyeeshapagealphasketch05*1#0.hsm",
-    8: "xyeeshapagealphasketch12*1#0.hsm",
-    9: "xyeeshapagealphasketch09*1#0.hsm",
-    10: "xyeeshapagealphasketch10*1#0.hsm",
-    12: "xyeeshapagealphasketch08*1#0.hsm",
-    13: "xyeeshapagealphasketch13*1#0.hsm",
-    14: "xyeeshapagealphasketchfireplace*1#0.hsm",
-    15: "xyeeshapagealphasketch15*1#0.hsm",
-    16: "xyeeshapagealphasketchfiremarbles*1#0.hsm",
-    17: "xyeeshapagealphasketchlushrelto*1#0.hsm",
-    18: "xyeeshapagealphasketchclock*1#0.hsm",
-    19: "xyeeshapagealphasketchbirds*1#0.hsm",
-    20: "xyeeshapagealphasketchcalendar*1#0.hsm",
-    21: "xyeeshapagealphasketchleaf*1#0.hsm",
-    22: "xyeeshapagealphasketchgrass*1#0.hsm",
-    23: "xyeeshapagealphasketchercaplant*1#0.hsm",
-    24: "xyeeshapagealphasketchstorm*1#0.hsm",
-    25: "xyeeshapagealphasketch14*1#0.hsm",
-    26: "xYeeshaPageVeelay7.dds",
-    32: "xYeeshaPageGreenBushes.dds",
-}
 
 kDialogName = "YeeshaPageGUI"
 kLayerName = "YeeshaPageSketch"
@@ -198,7 +166,7 @@ class xYeeshaPages(ptModifier):
             else:
                 ctrl.hide()
 
-        if image_name := YeeshaPageSketches.get(PageNumber.value):
+        if image_name := YeeshaPages.get(PageNumber.value):
             if image := PtFindImage(image_name):
                 if layer := PtFindLayer(kLayerName, "GUI", kDialogName):
                     layer.setTexture(image[0])

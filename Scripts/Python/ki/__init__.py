@@ -57,6 +57,7 @@ from xStartPathHelpers import *
 import time
 import xCensor
 import xLinkingBookDefs
+import xYeeshaPageDefs
 import xBookGUIs
 import re    # Used for CoD Fix.
 import os    # Used for saving pictures locally.
@@ -533,9 +534,9 @@ class xKI(ptModifier):
                                     linkmgr = ptNetLinkingMgr()
                                     linkmgr.linkToMyPersonalAgeWithYeeshaBook()
                                     PtToggleAvatarClickability(True)
-                    elif event[2] >= xLinkingBookDefs.kYeeshaPageStartID:
-                        whatpage = event[2] - xLinkingBookDefs.kYeeshaPageStartID
-                        sdlvar = xLinkingBookDefs.xYeeshaPages[whatpage][0]
+                    elif event[2] >= xYeeshaPageDefs.YeeshaPageStartID:
+                        whatpage = event[2] - xYeeshaPageDefs.YeeshaPageStartID
+                        sdlvar = xYeeshaPageDefs.YeeshaPageBookDefs[whatpage][0]
                         self.ToggleYeeshaPageSDL(sdlvar, 1)
                 elif event[1] == PtBookEventTypes.kNotifyShow:
                     pass
@@ -552,9 +553,9 @@ class xKI(ptModifier):
                 elif event[1] == PtBookEventTypes.kNotifyPreviousPage:
                     pass
                 elif event[1] == PtBookEventTypes.kNotifyCheckUnchecked:
-                    if event[2] >= xLinkingBookDefs.kYeeshaPageStartID:
-                        whatpage = event[2] - xLinkingBookDefs.kYeeshaPageStartID
-                        sdlvar = xLinkingBookDefs.xYeeshaPages[whatpage][0]
+                    if event[2] >= xYeeshaPageDefs.YeeshaPageStartID:
+                        whatpage = event[2] - xYeeshaPageDefs.YeeshaPageStartID
+                        sdlvar = xYeeshaPageDefs.YeeshaPageBookDefs[whatpage][0]
                         self.ToggleYeeshaPageSDL(sdlvar, 0)
                 return
         if state:
@@ -2355,7 +2356,7 @@ class xKI(ptModifier):
         vault = ptVault()
         psnlSDL = vault.getPsnlAgeSDL()
         if psnlSDL:
-            for SDLVar, page in xLinkingBookDefs.xYeeshaPages:
+            for SDLVar, page in xYeeshaPageDefs.YeeshaPageBookDefs:
                 FoundValue = psnlSDL.findVar(SDLVar)
                 if FoundValue is not None:
                     PtDebugPrint("xKI.GetYeeshaPageDefs(): The previous value of the SDL variable \"{}\" is {}.".format(SDLVar, FoundValue.getInt()), level=kDebugDumpLevel)

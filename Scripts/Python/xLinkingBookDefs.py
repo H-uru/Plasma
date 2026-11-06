@@ -39,14 +39,19 @@
 #       Mead, WA   99021
 #
 # *==LICENSE==*/
-from Plasma import *
 
-"""
-This module contains the definition strings for all the linking books
-"""
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from enum import Enum
+from typing import *
+
+#############
+# Constants #
+#############
+
+# Relto Book
 kYeeshaBookShareID = 0
 kYeeshaBookLinkID = 1
-kYeeshaPageStartID = 3
 YeeshaBookSizeWidth = 0.75
 YeeshaBookSizeHeight = 1.0
 xYeeshaBookBase = '<font size=10><cover src="xYeeshaBookCover*1#0.hsm">\
@@ -55,181 +60,213 @@ xYeeshaBookBase = '<font size=10><cover src="xYeeshaBookCover*1#0.hsm">\
 <pb>\
 <img src="xYeeshaBookLinkPanel*1#0.hsm" align=center link=1 blend=alpha>\
 <img src="xYeeshaBookStampSquare*1#0.hsm" pos=140,255 resize=no blend=alpha>'
-
 xYeeshaBookNoShare = '<font size=10><cover src="xYeeshaBookCover*1#0.hsm">\
 <img src="xYeeshaBookBorder*1#0.hsm" pos=0,0 blend=alpha>\
 <pb>\
 <img src="xYeeshaBookLinkPanel*1#0.hsm" align=center link=1 blend=alpha>\
 <img src="xYeeshaBookStampSquare*1#0.hsm" pos=140,255 resize=no blend=alpha>'
-
 xYeeshaBookBroke = '<font size=10><cover src="xYeeshaBookCover*1#0.hsm">\
 <img src="xYeeshaBookBorder*1#0.hsm" pos=0,0 blend=alpha>\
 <pb>\
 <img src="xLinkPanelBlackVoid*1#0.hsm" align=center link=1 blend=alpha>\
 <img src="xYeeshaBookStampSquare*1#0.hsm" pos=140,255 resize=no blend=alpha>'
 
-#===============================
-# Add Yeesha pages to the end of the list
-#  format: ( "SDLVarName", 'BookHtml')
-# ...and then added to the xYeeshaPages list in the order in the Yeesha book
-#
-xYeeshaPage1 = ( "YeeshaPage1",   '<pb><img src="xYeeshaPageAlphaSketch01*1#0.hsm" align=center check=00ff18,00800c,%d link=3>' )
-xYeeshaPage2 = ( "YeeshaPage2",   '<pb><img src="xYeeshaPageAlphaSketch02*1#0.hsm" align=center check=00ff18,00800c,%d link=4>' )
-xYeeshaPage3 = ( "YeeshaPage3",   '<pb><img src="xYeeshaPageAlphaSketch03*1#0.hsm" align=center check=00ff18,00800c,%d link=5>' )
-xYeeshaPage4 = ( "YeeshaPage4",   '<pb><img src="xYeeshaPageAlphaSketch04*1#0.hsm" align=center check=00ff18,00800c,%d link=6>' )
-xYeeshaPage5 = ( "YeeshaPage5",   '<pb><img src="xYeeshaPageAlphaSketch07*1#0.hsm" align=center check=00ff18,00800c,%d link=7>' )
-xYeeshaPage6 = ( "YeeshaPage6",   '<pb><img src="xYeeshaPageAlphaSketch06*1#0.hsm" align=center check=00ff18,00800c,%d link=8>' )
-xYeeshaPage7 = ( "YeeshaPage7",   '<pb><img src="xYeeshaPageAlphaSketch05*1#0.hsm" align=center check=00ff18,00800c,%d link=9>' )
-xYeeshaPage8 = ( "YeeshaPage8",   '<pb><img src="xYeeshaPageAlphaSketch12*1#0.hsm" align=center check=00ff18,00800c,%d link=10>' )
-xYeeshaPage9 = ( "YeeshaPage9",   '<pb><img src="xYeeshaPageAlphaSketch09*1#0.hsm" align=center check=00ff18,00800c,%d link=11>' )
-xYeeshaPage10 = ( "YeeshaPage10", '<pb><img src="xYeeshaPageAlphaSketch10*1#0.hsm" align=center check=00ff18,00800c,%d link=12>' )
-xYeeshaPage12 = ( "YeeshaPage12", '<pb><img src="xYeeshaPageAlphaSketch08*1#0.hsm" align=center check=00ff18,00800c,%d link=13>' )
-xYeeshaPage13 = ( "YeeshaPage13", '<pb><img src="xYeeshaPageAlphaSketch13*1#0.hsm" align=center check=00ff18,00800c,%d link=14>' )
-xYeeshaPage14 = ( "YeeshaPage14", '<pb><img src="xYeeshaPageAlphaSketchFireplace*1#0.hsm" align=center check=00ff18,00800c,%d link=15>' )
-xYeeshaPage15 = ( "YeeshaPage15", '<pb><img src="xYeeshaPageAlphaSketch15*1#0.hsm" align=center check=00ff18,00800c,%d link=16>' )
-xYeeshaPage16 = ( "YeeshaPage16", '<pb><img src="xYeeshaPageAlphaSketchFiremarbles*1#0.hsm" align=center check=00ff18,00800c,%d link=17>' )
-xYeeshaPage17 = ( "YeeshaPage17", '<pb><img src="xYeeshaPageAlphaSketchLushRelto*1#0.hsm" align=center check=00ff18,00800c,%d link=18>' )
-xYeeshaPage18 = ( "YeeshaPage18", '<pb><img src="xYeeshaPageAlphaSketchClock*1#0.hsm" align=center check=00ff18,00800c,%d link=19>' )
-xYeeshaPage19 = ( "YeeshaPage19", '<pb><img src="xYeeshaPageAlphaSketchBirds*1#0.hsm" align=center check=00ff18,00800c,%d link=20>' )
-xYeeshaPage20 = ( "YeeshaPage20", '<pb><img src="xYeeshaPageAlphaSketchCalendar*1#0.hsm" align=center check=00ff18,00800c,%d link=21>' )
-xYeeshaPage21 = ( "YeeshaPage21", '<pb><img src="xYeeshaPageAlphaSketchLeaf*1#0.hsm" align=center check=00ff18,00800c,%d link=22>' )
-xYeeshaPage22 = ( "YeeshaPage22", '<pb><img src="xYeeshaPageAlphaSketchGrass*1#0.hsm" align=center check=00ff18,00800c,%d link=23>' )
-xYeeshaPage23 = ( "YeeshaPage23", '<pb><img src="xYeeshaPageAlphaSketchErcaPlant*1#0.hsm" align=center check=00ff18,00800c,%d link=24>' )
-xYeeshaPage24 = ( "YeeshaPage24", '<pb><img src="xYeeshaPageAlphaSketchStorm*1#0.hsm" align=center check=00ff18,00800c,%d link=25>' )
-xYeeshaPage25 = ( "YeeshaPage25", '<pb><img src="xYeeshaPageAlphaSketch14*1#0.hsm" align=center check=00ff18,00800c,%d link=26>' )
-xYeeshaPage26 = ( "YeeshaPage26", '<pb><img src="xYeeshaPageVeelay7.dds" align=center check=00ff18,00800c,%d link=27>' )
-xYeeshaPage32 = ( "YeeshaPage32", '<pb><img src="xYeeshaPageGreenBushes.dds" align=center check=00ff18,00800c,%d link=28>' )
-
-
-xYeeshaPages = [ xYeeshaPage1, xYeeshaPage2, xYeeshaPage3, xYeeshaPage4, xYeeshaPage5, xYeeshaPage6, xYeeshaPage7,\
-                xYeeshaPage8, xYeeshaPage9, xYeeshaPage10, xYeeshaPage12, xYeeshaPage13, xYeeshaPage14, xYeeshaPage15,\
-                xYeeshaPage16, xYeeshaPage17, xYeeshaPage18, xYeeshaPage19, xYeeshaPage20, xYeeshaPage21, xYeeshaPage22,\
-                xYeeshaPage23, xYeeshaPage24, xYeeshaPage25, xYeeshaPage26, xYeeshaPage32 ]
-
-
-
-# create all the different types of book covers, DRC stamps and DRC stamp placements
-
-# Place holder for bookmark in bookstart, will be replaced with either bookmark or nothing
-BookStart1 = '<font size=10>%s' # include cover here when available
-
-DRCStampHolder = "%s"
-NoDRCStamp = ""
-DRCStamp1 = '<img src="xDRCBookRubberStamp*1#0.hsm" '
-DRCPos1 = 'pos=125,120 blend=alpha>'
-DRCStamp2 = '<img src="xDRCBookRubberStamp2*1#0.hsm" '
-DRCPos2 = 'pos=190,60 blend=alpha>'
-DRCPos3 = 'pos=220,240 blend=alpha>'
-YeeshaStamp = '<img src="xYeeshaBookStampVSquish*1#0.hsm" pos=140,255 resize=no blend=alpha>'
-# Fan Stamp
-FanAgeStamp = '<img src="xFanAgeStamp02*1#0.hsm" pos=0,0 resize=no blend=alpha>'
-
-
+# Other Book Constants
 kBookMarkID = 0
-#BookMark = '<img src="xBookJourneyClothBookmark*1#0.hsm" pos=120,0 resize=yes blend=alpha link=%d><pb><pb>' % kBookMarkID
-JCBookMark = '<img src="xBookJourneyClothBookmark*1#0.hsm" pos=120,0 resize=yes blend=alpha link=%d><pb><pb>' % kBookMarkID
-SCBookMark = '<img src="xBookSaveClothBookmark*1#0.hsm" pos=120,0 resize=yes blend=alpha link=%d><pb><pb>' % kBookMarkID
-#BookMark = '<img src="xLinkPanelBlackVoid*1#0.hsm" align=center blend=alpha link=%d>' % kBookMarkID
-
+JCBookMark = f'<img src="xBookJourneyClothBookmark*1#0.hsm" pos=120,0 resize=yes blend=alpha link={kBookMarkID}><pb><pb>'
+SCBookMark = f'<img src="xBookSaveClothBookmark*1#0.hsm" pos=120,0 resize=yes blend=alpha link={kBookMarkID}><pb><pb>'
 kShareBookLinkID = 1
 kShareBookDeleteID = 2
-NoShare = '<pb>'
-ShareHolder = '%s<pb>'
-ShareBook = '<img src="xBookSharePage512*1#0.hsm" pos=0,0 blend=alpha><img src="xBookShareSymbolOnly*1#0.hsm" pos=128,128 blend=alpha link=%d>' % kShareBookLinkID
-ShareBookDelete = '<img src="xBookmarkDniZero*1#0.hsm" pos=15,0 blend=alpha link=%d><pb>' % kShareBookDeleteID
-ShareBookDelete2 = '<img src="xBookmarkDniZero2*1#0.hsm" pos=20,0 blend=alpha link=%d><pb>' % kShareBookDeleteID
-BahroShare = '<img src="xBahroYeeshaShare*1#0.hsm" pos=0,0 blend=alpha link=%d>' % kShareBookLinkID
-BahroNoShare = ''
-
-LinkStart = '<img src="'
-TransLinkStart = '<img opacity=0.7 src="'
-#
+ShareBook = f'<img src="xBookSharePage512*1#0.hsm" pos=0,0 blend=alpha><img src="xBookShareSymbolOnly*1#0.hsm" pos=128,128 blend=alpha link={kShareBookLinkID}>'
 kFirstLinkPanelID = 100
-LinkEnd = '*1#0.hsm" align=center link=%d blend=alpha>' % kFirstLinkPanelID
-LinkEndPage = '*1#0.hsm" align=center link=%d blend=alpha>'
-LinkEndNoLink = '*1#0.hsm" align=center blend=alpha>'
-PageStart = '<pb>'
 
-#
-#  ( sharableFlag, bookWidth, bookHeight, DRCStampHTML, bookHTML, gui (optional) )
-#
-# if its a treasure book, you only need to specify the linking panel inside parenthesis
-xAgeLinkingBooks = {\
-    "Neighborhood":         ( 0, 1.0, 1.0, DRCStamp2+DRCPos1, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelBevinDefault' + LinkEnd ),
-    "EderKemo":             ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelGardenDefault' + LinkEnd + YeeshaStamp ),
-    "EderTsogal":           ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPaneltsoGarden' + LinkEnd ),
-    "EderDelin":            ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelEderDelinDefault' + LinkEnd ),
-    "BaronCityOffice":      ( 1, 1.0, 1.0, DRCStamp2+DRCPos1, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelBaronCityOffice' + LinkEnd + YeeshaStamp ),
-    "tldnUpperShroom":      ( 1, 1.0, 1.0, DRCStamp1+DRCPos2, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelUpperShroom' + LinkEnd + YeeshaStamp ),
-    "Garrison":             ( 1, 1.0, 1.0, DRCStamp2+DRCPos3, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelGarrisonDefault' + LinkEnd + YeeshaStamp ),
-    "GarrisonNoShare":      ( 0, 1.0, 1.0, DRCStamp2+DRCPos3, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelGarrisonDefault' + LinkEnd ),
-    "grsnNexus":            ( 0, 1.0, 1.0, DRCStamp2+DRCPos3, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelGarrisonNexus' + LinkEnd ),
-    "Nexus":                ( 0, 1.0, 1.0, DRCStamp2+DRCPos3, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelNexusDefault' + LinkEnd ),
-    "NexusShare":           ( 1, 1.0, 1.0, DRCStamp2+DRCPos3, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelNexusDefault' + LinkEnd + YeeshaStamp ),
-    "Teledahn":             ( 1, 1.0, 1.0, DRCStamp2+DRCPos1, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelTeledahnDefault' + LinkEnd + YeeshaStamp ),
-    "islmConcertHallFoyer": ( 'xLinkPanelConcertHallFoyer','bkBahroRockBook','Bahro' ),
-    "islmDakotahRoof":      ( 'xLinkPanelDokotahRoof','bkBahroRockBook','Bahro' ),
-    "islmPalaceBalcony02":  ( 'xLinkPanelPalaceBalc02','bkBahroRockBook','Bahro' ),
-    "islmPalaceBalcony03":  ( 'xLinkPanelPalaceBalc03','bkBahroRockBook','Bahro' ),
-    "KadishGallery":        ( 0, 1.0, 1.0, DRCStamp2+DRCPos1, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelKadishGallery' + LinkEnd + YeeshaStamp ),
-    "KadishFromGallery":    ( 1, 1.0, 1.0, DRCStamp2+DRCPos1, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelKadishFromGallery' + LinkEnd + YeeshaStamp ),
-    "Kadish":               ( 1, 1.0, 1.0, DRCStamp1+DRCPos2, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelKadishDefault' + LinkEnd + YeeshaStamp ),
-    "kdshGlowRmBalcony":    ( 'xLinkPanelKadishGlowBalc','bkBahroRockBook','Bahro' ),
-    #"Kveer":                ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelKveerGreatHall' + LinkEnd ),
-    "Kveer":                ( 'xLinkPanelKveerGreatHall','bkBahroRockBook','Bahro' ),
-    "dsntShaftFall":        ( 'xLinkPanelDescentShaftFall','bkBahroRockBook','Bahro' ),
-    "ercaSilo":             ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelErcanaSilo' + LinkEnd ),
-    "ercaPelletRoom":	  ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelErcanaPelletRoom' + LinkEnd ),
-    "MystLibrary":          ( 0, 1.0, 1.0, DRCStamp2+DRCPos1, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelMystLibrary' + LinkEnd ),
-    "YeeshaVault":          ( 1, 1.0, 1.0, DRCStamp1+DRCPos2, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelYeeshaVault' + LinkEnd + YeeshaStamp ),
-    "Gira":                 ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelGiraDefault' + LinkEnd + YeeshaStamp ),
-    "GiraFromKemo":         ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelGiraFromKemo' + LinkEnd ),
-    "nb01BevinBalcony":     ( 'xLinkPanelBevinBalc01','bkBahroRockBook','Bahro' ),
-    "nb01BevinBalcony02":   ( 'xLinkPanelBevinBalc02','bkBahroRockBook','Bahro' ),
-    "grsnPrison":           ( 'xLinkPanelGarrisonPrison','bkBahroRockBook','Bahro' ),
-    "tldnChoppedShroom":    ( 'xLinkPanelTeledahnChopShroom','bkBahroRockBook','Bahro' ),
-    "tldnLagoonDock":       ( 'xLinkPanelTeledahnDock','bkBahroRockBook','Bahro' ),
-    "Garden":               ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelGardenDefault' + LinkEnd ),
-    "Spyroom":              ( 'xLinkPanelSpyRoom','bkBahroRockBook','Bahro' ),
-    "Cleft":                ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelCleftDesert' + LinkEnd ),
-    "CleftWithTomahna":     ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + LinkStart + 'xLinkPanelTomahnaDesert' + LinkEndPage + PageStart + LinkStart + 'xLinkPanelCleftDesert' + LinkEndPage ),
-    "TomahnaFromCleft":     ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelTomahnaDesert' + LinkEnd ),
-    "grsnTeamRmPurple":     ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelCleftDesert' + LinkEnd ),
-    "grsnTeamRmYellow":     ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelTomahnaDesert' + LinkEnd ),
-    "grtzGrtZeroLinkRm":    ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelGrtZeroLinkRm' + LinkEnd + YeeshaStamp ),
-    "Ercana":     		  ( 1, 1.0, 1.0, DRCStamp1+DRCPos2, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelErcanaDefault' + LinkEnd + YeeshaStamp ),
-    "Ahnonay":     		  ( 0, 1.0, 1.0, DRCStamp2+DRCPos1, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelAhnonayVortex' + LinkEnd + YeeshaStamp ),
-    "AhnonayCathedral":   ( 1, 1.0, 1.0, DRCStamp2+DRCPos1, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelAhnonayTemple' + LinkEnd + YeeshaStamp ),
-    "Dereno":     		  ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelDerenoDefault' + LinkEnd + YeeshaStamp ),
-    "Negilahn":     	  ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelNegilahnDefault' + LinkEnd + YeeshaStamp ),
-    "Payiferen":     	  ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelPayiferenDefault' + LinkEnd + YeeshaStamp ),
-    "Minkata":     	  	  ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelMinkataDefault' + LinkEnd + YeeshaStamp ),
-    "Jalak":     	  	  ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelJalakDefault' + LinkEnd + YeeshaStamp ),
-    "Myst":     	  	  ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelMystLibrary' + LinkEnd + YeeshaStamp ),
-    "GuildPub-Writers":     ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelGuildPubWriters' + LinkEnd),
-    "GuildPub-Greeters":    ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelGuildPubGreeters' + LinkEnd),
-    "GuildPub-Maintainers": ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelGuildPubMaintainers' + LinkEnd),
-    "GuildPub-Messengers":  ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelGuildPubMessengers' + LinkEnd),
-    "GuildPub-Cartographers":     ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelGuildPubCartographers' + LinkEnd),
-    "PhilRelto":     	  ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelPhilsRelto' + LinkEnd ),
-    "Tetsonot":     	  ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelTetsonotDefault' + LinkEnd + YeeshaStamp ),
-    "NotPossible":          ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelBlackVoid' + LinkEndNoLink ),
-    #"DisabledDesert":       ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + 'You cant use someone elses desert' + LinkStart + 'xLinkPanelCleftDesertDisabled' + LinkEndNoLink ),
-    "DisabledDesert":       ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelCleftDesertDisabled' + LinkEndNoLink ),
-    "BahroCaveUpper":     ( 'xLinkPanelBahroCaveUpper','bkBahroRockBook','Bahro' ),
-    "BahroCaveLower":     ( 'xLinkPanelBahroCaveLower','bkBahroRockBook','Bahro' ),
-    "islmGreatTree":        ( 'xLinkPanelCityGreatTree','bkBahroRockBook','Bahro' ),
-# Begin Fan Ages
-    "GoMePubNew":           ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelgomepubnew' + LinkEnd ),
-    "VeeTsah":              ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelsheten' + LinkEnd ),
-    "ChisoPreniv":          ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisopreniv' + LinkEnd ),
-    "ChisoPrenivNote":      ( 0, 1.0, 1.0, FanAgeStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisopreniv' + LinkEnd ),
+class DRCStampType(Enum):
+    NoStamp = ""
+    Stamp1 = "xDRCBookRubberStamp*1#0.hsm"
+    Stamp2 = "xDRCBookRubberStamp2*1#0.hsm"
+
+class DRCStampPosition(Enum):
+    MidTop = "125,120"
+    Top = "190,60"
+    Center = "220,240"
+
+class DeleteBookmarkType(Enum):
+    NoBookmark = ""
+    Rough = f'<img src="xBookmarkDniZero*1#0.hsm" pos=15,0 blend=alpha link={kShareBookDeleteID}>'
+    Fine = f'<img src="xBookmarkDniZero2*1#0.hsm" pos=20,0 blend=alpha link={kShareBookDeleteID}>'
+
+######################
+# Helper dataclasses #
+######################
+
+@dataclass
+class LinkDefinition(ABC):
+    linkPanel: str = "xLinkPanelBlackVoid*1#0.hsm"
+    GUI: ClassVar[str] = "BkBook"
+
+    @abstractmethod
+    def getMarkup(self) -> str:
+        ...
+
+@dataclass
+class LinkingBook(LinkDefinition):
+    sharable: bool = False
+    width: float = 1.0
+    height: float = 1.0
+    cover: str = ""
+    drcStamp: DRCStampType = DRCStampType.NoStamp
+    drcStampPos: DRCStampPosition = DRCStampPosition.MidTop
+    yeeshaStamp: bool = False
+    # for the Chiso book, overrides DRC stamp
+    fanAgeNote: bool = False
+    deleteBookmark: DeleteBookmarkType = DeleteBookmarkType.NoBookmark
+    # for the dual-panel Cleft book hackery
+    panelOnRight: bool = True
+    disabled: bool = False
+
+    def getDRCStampMarkup(self):
+        if self.fanAgeNote:
+            return '<img src="xFanAgeStamp02*1#0.hsm" pos=0,0 resize=no blend=alpha>'
+        if self.drcStamp == DRCStampType.NoStamp:
+            return ''
+        return f'<img src="{self.drcStamp.value}" pos={self.drcStampPos.value} blend=alpha>'
+
+    def getMarkup(self, bookmark="", stamp="", share="", forceYeeshaStamp = False):
+        cover = f'<cover src="{self.cover}">' if self.cover else ""
+        yeeshaStamp = (
+            '<img src="xYeeshaBookStampVSquish*1#0.hsm" pos=140,255 resize=no blend=alpha>'
+            if self.yeeshaStamp or forceYeeshaStamp else ''
+        )
+        return (
+            f'{cover}<font size=10>{bookmark}{stamp}'
+            f'{share if self.sharable and share else ""}{self.deleteBookmark.value}'
+            f'{"<pb>" if self.panelOnRight else ""}'
+            f'<img src="{self.linkPanel}" align=center blend=alpha {"" if self.disabled else f"link={kFirstLinkPanelID}"}>'
+            f'{yeeshaStamp}'
+        )
+
+@dataclass
+class BahroStone(LinkDefinition):
+    GUI: ClassVar[str] = "bkBahroRockBook"
+
+    def getMarkup(self, share: bool = False):
+        shareMarkup = f'<img src="xBahroYeeshaShare*1#0.hsm" pos=0,0 blend=alpha link={kShareBookLinkID}>' if share else ''
+        return f'<font size=10>{shareMarkup}<pb><img opacity=0.7 src="{self.linkPanel}" align=center link={kFirstLinkPanelID} blend=alpha>'
+
+@dataclass
+class LinkPage(LinkDefinition):
+    # for the dual-panel Cleft book hackery
+    doublePageBreak: bool = True
+
+    def getMarkup(self, linkId: Optional[int] = None):
+        link = f'link={linkId}' if linkId is not None else ''
+        return f'<pb>{"<pb>" if self.doublePageBreak else ""}<img src="{self.linkPanel}" align=center blend=alpha {link}>'
+
+###############
+# Definitions #
+###############
+
+# Whole book GUI popups for LinkingBook and BahroStone types
+xAgeLinkingBooks: Dict[str, LinkDefinition] = {
+    "Neighborhood": LinkingBook(linkPanel="xLinkPanelBevinDefault*1#0.hsm", drcStamp=DRCStampType.Stamp2),
+    "EderKemo": LinkingBook(linkPanel="xLinkPanelGardenDefault*1#0.hsm", sharable=True, yeeshaStamp=True),
+    "EderTsogal": LinkingBook(linkPanel="xLinkPaneltsoGarden*1#0.hsm"),
+    "EderDelin": LinkingBook(linkPanel="xLinkPanelEderDelinDefault*1#0.hsm"),
+    "BaronCityOffice": LinkingBook(linkPanel="xLinkPanelBaronCityOffice*1#0.hsm", sharable=True, drcStamp=DRCStampType.Stamp2, yeeshaStamp=True),
+    "tldnUpperShroom": LinkingBook(linkPanel="xLinkPanelUpperShroom*1#0.hsm", sharable=True, drcStamp=DRCStampType.Stamp1, drcStampPos=DRCStampPosition.Top, yeeshaStamp=True),
+    "Garrison": LinkingBook(linkPanel="xLinkPanelGarrisonDefault*1#0.hsm", sharable=True, drcStamp=DRCStampType.Stamp2, drcStampPos=DRCStampPosition.Center, yeeshaStamp=True),
+    "GarrisonNoShare": LinkingBook(linkPanel="xLinkPanelGarrisonDefault*1#0.hsm", drcStamp=DRCStampType.Stamp2, drcStampPos=DRCStampPosition.Center, yeeshaStamp=True),
+    "grsnNexus": LinkingBook(linkPanel="xLinkPanelGarrisonNexus*1#0.hsm", drcStamp=DRCStampType.Stamp2, drcStampPos=DRCStampPosition.Center),
+    "Nexus": LinkingBook(linkPanel="xLinkPanelNexusDefault*1#0.hsm", drcStamp=DRCStampType.Stamp2, drcStampPos=DRCStampPosition.Center),
+    "NexusShare": LinkingBook(linkPanel="xLinkPanelNexusDefault*1#0.hsm", sharable=True, drcStamp=DRCStampType.Stamp2, drcStampPos=DRCStampPosition.Center, yeeshaStamp=True),
+    "Teledahn": LinkingBook(linkPanel="xLinkPanelTeledahnDefault*1#0.hsm", sharable=True, drcStamp=DRCStampType.Stamp2, yeeshaStamp=True),
+    "islmConcertHallFoyer": BahroStone(linkPanel="xLinkPanelConcertHallFoyer*1#0.hsm"),
+    "islmDakotahRoof": BahroStone(linkPanel="xLinkPanelDokotahRoof*1#0.hsm"),
+    "islmPalaceBalcony02": BahroStone(linkPanel="xLinkPanelPalaceBalc02*1#0.hsm"),
+    "islmPalaceBalcony03": BahroStone(linkPanel="xLinkPanelPalaceBalc03*1#0.hsm"),
+    "KadishGallery": LinkingBook(linkPanel="xLinkPanelKadishGallery*1#0.hsm", drcStamp=DRCStampType.Stamp2, yeeshaStamp=True),
+    "KadishFromGallery": LinkingBook(linkPanel="xLinkPanelKadishFromGallery*1#0.hsm", sharable=True, drcStamp=DRCStampType.Stamp2, yeeshaStamp=True),
+    "Kadish": LinkingBook(linkPanel="xLinkPanelKadishDefault*1#0.hsm", sharable=True, drcStamp=DRCStampType.Stamp1, drcStampPos=DRCStampPosition.Top, yeeshaStamp=True),
+    "kdshGlowRmBalcony": BahroStone(linkPanel="xLinkPanelKadishGlowBalc*1#0.hsm"),
+    "Kveer": BahroStone(linkPanel="xLinkPanelKveerGreatHall*1#0.hsm"),
+    "dsntShaftFall": BahroStone(linkPanel="xLinkPanelDescentShaftFall*1#0.hsm"),
+    "ercaSilo": LinkingBook(linkPanel="xLinkPanelErcanaSilo*1#0.hsm"),
+    "ercaPelletRoom": LinkingBook(linkPanel="xLinkPanelErcanaPelletRoom*1#0.hsm"),
+    "MystLibrary": LinkingBook(linkPanel="xLinkPanelMystLibrary*1#0.hsm", drcStamp=DRCStampType.Stamp2),
+    "YeeshaVault": LinkingBook(linkPanel="xLinkPanelYeeshaVault*1#0.hsm", sharable=True, drcStamp=DRCStampType.Stamp1, drcStampPos=DRCStampPosition.Top, yeeshaStamp=True),
+    "Gira": LinkingBook(linkPanel="xLinkPanelGiraDefault*1#0.hsm", sharable=True, yeeshaStamp=True),
+    "GiraFromKemo": LinkingBook(linkPanel="xLinkPanelGiraFromKemo*1#0.hsm", sharable=True),
+    "nb01BevinBalcony": BahroStone(linkPanel="xLinkPanelBevinBalc01*1#0.hsm"),
+    "nb01BevinBalcony02": BahroStone(linkPanel="xLinkPanelBevinBalc02*1#0.hsm"),
+    "grsnPrison": BahroStone(linkPanel="xLinkPanelGarrisonPrison*1#0.hsm"),
+    "tldnChoppedShroom": BahroStone(linkPanel="xLinkPanelTeledahnChopShroom*1#0.hsm"),
+    "tldnLagoonDock": BahroStone(linkPanel="xLinkPanelTeledahnDock*1#0.hsm"),
+    "Garden": LinkingBook(linkPanel="xLinkPanelGardenDefault*1#0.hsm"),
+    "Spyroom": BahroStone(linkPanel="xLinkPanelSpyRoom*1#0.hsm"),
+    "Cleft": LinkingBook(linkPanel="xLinkPanelCleftDesert*1#0.hsm"),
+    # right site of the dual-link Cleft book in pages below
+    "CleftWithTomahna": LinkingBook(linkPanel="xLinkPanelTomahnaDesert*1#0.hsm", panelOnRight=False),
+    "TomahnaFromCleft": LinkingBook(linkPanel="xLinkPanelTomahnaDesert*1#0.hsm"),
+    "grsnTeamRmPurple": LinkingBook(linkPanel="xLinkPanelCleftDesert*1#0.hsm"),
+    "grsnTeamRmYellow": LinkingBook(linkPanel="xLinkPanelTomahnaDesert*1#0.hsm"),
+    "grtzGrtZeroLinkRm": LinkingBook(linkPanel="xLinkPanelGrtZeroLinkRm*1#0.hsm", yeeshaStamp=True),
+    "Ercana": LinkingBook(linkPanel="xLinkPanelErcanaDefault*1#0.hsm", sharable=True, drcStamp=DRCStampType.Stamp1, drcStampPos=DRCStampPosition.Top, yeeshaStamp=True),
+    "Ahnonay": LinkingBook(linkPanel="xLinkPanelAhnonayVortex*1#0.hsm", drcStamp=DRCStampType.Stamp2, yeeshaStamp=True),
+    "AhnonayCathedral": LinkingBook(linkPanel="xLinkPanelAhnonayTemple*1#0.hsm", sharable=True, drcStamp=DRCStampType.Stamp2, yeeshaStamp=True),
+    "Dereno": LinkingBook(linkPanel="xLinkPanelDerenoDefault*1#0.hsm", sharable=True, yeeshaStamp=True),
+    "Negilahn": LinkingBook(linkPanel="xLinkPanelNegilahnDefault*1#0.hsm", sharable=True, yeeshaStamp=True),
+    "Payiferen": LinkingBook(linkPanel="xLinkPanelPayiferenDefault*1#0.hsm", sharable=True, yeeshaStamp=True),
+    "Minkata": LinkingBook(linkPanel="xLinkPanelMinkataDefault*1#0.hsm", sharable=True, yeeshaStamp=True),
+    "Jalak": LinkingBook(linkPanel="xLinkPanelJalakDefault*1#0.hsm", sharable=True, yeeshaStamp=True),
+    "Myst": LinkingBook(linkPanel="xLinkPanelMystLibrary*1#0.hsm", sharable=True, yeeshaStamp=True),
+    "GuildPub-Writers": LinkingBook(linkPanel="xLinkPanelGuildPubWriters*1#0.hsm", sharable=True),
+    "GuildPub-Greeters": LinkingBook(linkPanel="xLinkPanelGuildPubGreeters*1#0.hsm", sharable=True),
+    "GuildPub-Maintainers": LinkingBook(linkPanel="xLinkPanelGuildPubMaintainers*1#0.hsm", sharable=True),
+    "GuildPub-Messengers": LinkingBook(linkPanel="xLinkPanelGuildPubMessengers*1#0.hsm", sharable=True),
+    "GuildPub-Cartographers": LinkingBook(linkPanel="xLinkPanelGuildPubCartographers*1#0.hsm", sharable=True),
+    "PhilRelto": LinkingBook(linkPanel="xLinkPanelPhilsRelto*1#0.hsm"),
+    "Tetsonot": LinkingBook(linkPanel="xLinkPanelTetsonotDefault*1#0.hsm", sharable=True, yeeshaStamp=True),
+    "NotPossible": LinkingBook(linkPanel="xLinkPanelBlackVoid*1#0.hsm", disabled=True),
+    "DisabledDesert": LinkingBook(linkPanel="xLinkPanelCleftDesertDisabled*1#0.hsm", disabled=True),
+    "BahroCaveUpper": BahroStone(linkPanel="xLinkPanelBahroCaveUpper*1#0.hsm"),
+    "BahroCaveLower": BahroStone(linkPanel="xLinkPanelBahroCaveLower*1#0.hsm"),
+    "islmGreatTree": BahroStone(linkPanel="xLinkPanelCityGreatTree*1#0.hsm"),
+    # Begin Fan Ages
+    "GoMePubNew": LinkingBook(linkPanel="xlinkpanelgomepubnew*1#0.hsm"),
+    "VeeTsah": LinkingBook(linkPanel="xlinkpanelsheten*1#0.hsm"),
+    "ChisoPreniv": LinkingBook(linkPanel="xlinkpanelchisopreniv*1#0.hsm"),
+    "ChisoPrenivNote": LinkingBook(linkPanel="xlinkpanelchisopreniv*1#0.hsm", fanAgeNote=True),
 }
 
-# cross-references the book name with the age and spawn point it links to
+# Pages that are added to existing Relto linking books
+xLinkingPages: Dict[str, LinkPage] = {
+    "Cleft": LinkPage(linkPanel="xLinkPanelCleftDesert*1#0.hsm", doublePageBreak=False),
+    "nb01BevinBalcony": LinkPage(linkPanel="xLinkPanelBevinBalc01*1#0.hsm"),
+    "nb01BevinBalcony02": LinkPage(linkPanel="xLinkPanelBevinBalc02*1#0.hsm"),
+    "grsnPrison": LinkPage(linkPanel="xLinkPanelGarrisonPrison*1#0.hsm"),
+    "tldnChoppedShroom": LinkPage(linkPanel="xLinkPanelTeledahnChopShroom*1#0.hsm"),
+    "tldnLagoonDock": LinkPage(linkPanel="xLinkPanelTeledahnDock*1#0.hsm"),
+    "kdshGlowRmBalcony": LinkPage(linkPanel="xLinkPanelKadishGlowBalc*1#0.hsm"),
+    "islmPalaceBalcony02": LinkPage(linkPanel="xLinkPanelPalaceBalc02*1#0.hsm"),
+    "islmPalaceBalcony03": LinkPage(linkPanel="xLinkPanelPalaceBalc03*1#0.hsm"),
+    "islmDakotahRoof": LinkPage(linkPanel="xLinkPanelDokotahRoof*1#0.hsm"),
+    "islmConcertHallFoyer": LinkPage(linkPanel="xLinkPanelConcertHallFoyer*1#0.hsm"),
+    "KadishGallery": LinkPage(linkPanel="xLinkPanelKadishGallery*1#0.hsm"),
+    "BaronCityOffice": LinkPage(linkPanel="xLinkPanelBaronCityOffice*1#0.hsm"),
+    "dsntShaftFall": LinkPage(linkPanel="xLinkPanelDescentShaftFall*1#0.hsm"),
+    "Spyroom": LinkPage(linkPanel="xLinkPanelSpyRoom*1#0.hsm"),
+    "Kveer": LinkPage(linkPanel="xLinkPanelKveerGreatHall*1#0.hsm"),
+    "YeeshaVault": LinkPage(linkPanel="xLinkPanelYeeshaVault*1#0.hsm"),
+    "grtzGrtZeroLinkRm": LinkPage(linkPanel="xLinkPanelGrtZeroLinkRm*1#0.hsm"),
+    "islmGreatTree": LinkPage(linkPanel="xLinkPanelCityGreatTree*1#0.hsm"),
+    "BahroCaveUpper": LinkPage(linkPanel="xLinkPanelBahroCaveUpper*1#0.hsm"),
+    "BahroCaveLower": LinkPage(linkPanel="xLinkPanelBahroCaveLower*1#0.hsm"),
+}
+
+# cross-references the book/page name with the age and spawn point it links to
 # if it goes to the default spawn point, just use "LinkInPointDefault"
 # BookName: ( AgeName, SpawnPoint )
-xLinkDestinations = {\
+xLinkDestinations: Dict[str, Tuple[str, str]] = {
     "Neighborhood":             ( "Neighborhood", "LinkInPointDefault" ),
     "EderKemo":                 ( "Garden", "LinkInPointDefault" ),
     "EderTsogal":               ( "EderTsogal", "LinkInPointDefault" ),
@@ -250,10 +287,9 @@ xLinkDestinations = {\
     "Kadish":                   ( "Kadish", "LinkInPointDefault" ),
     "kdshGlowRmBalcony":        ( "Kadish", "LinkInPointGlowRmBalcony"),
     "Kveer":                    ( "Kveer", "LinkInPointDefault"),
-    #"Kveer":                    ( PageStart + NoShare + LinkStart + 'xLinkPanelKveerGreatHall' + LinkEndPage),
-    "dsntShaftFall":            ( "Descent", "LinkInPointShaftFall" ), # This age name may not be correct
-    "ercaSilo":                 ( "Ercana", "LinkInPointErcanaSilo" ), # This age name may not be correct
-    "ercaPelletRoom":           ( "Ercana", "LinkInPointPelletRoom" ), # This age name may not be correct
+    "dsntShaftFall":            ( "Descent", "LinkInPointShaftFall" ),
+    "ercaSilo":                 ( "Ercana", "LinkInPointErcanaSilo" ),
+    "ercaPelletRoom":           ( "Ercana", "LinkInPointPelletRoom" ),
     "MystLibrary":              ( "", "" ),
     "YeeshaVault":              ( "", "" ),
     "Gira":                     ( "Gira", "LinkInPointDefault" ),
@@ -269,66 +305,50 @@ xLinkDestinations = {\
     "TomahnaFromCleft":         ( "", "" ),
     "grsnTeamRmPurple":         ( "Garrison", "" ),
     "grsnTeamRmYellow":         ( "Garrison", "" ),
-    "Ercana":     		  ( "Ercana", "LinkInPointDefault" ),
-    "Ahnonay":     		  ( "Ahnonay", "LinkInPointDefault" ),
-    "AhnonayCathedral":   ( "AhnonayCathedral", "LinkInPointDefault" ),
-    "Negilahn":     		  ( "Negilahn", "LinkInPointDefault" ),
-    "Dereno":     		  ( "Dereno", "LinkInPointDefault" ),
-    "Payiferen":     		  ( "Payiferen", "LinkInPointDefault" ),
-    "Tetsonot":     		  ( "Tetsonot", "LinkInPointDefault" ),
+    "Ercana":                   ( "Ercana", "LinkInPointDefault" ),
+    "Ahnonay":                  ( "Ahnonay", "LinkInPointDefault" ),
+    "AhnonayCathedral":         ( "AhnonayCathedral", "LinkInPointDefault" ),
+    "Negilahn":                 ( "Negilahn", "LinkInPointDefault" ),
+    "Dereno":                   ( "Dereno", "LinkInPointDefault" ),
+    "Payiferen":                ( "Payiferen", "LinkInPointDefault" ),
+    "Tetsonot":                 ( "Tetsonot", "LinkInPointDefault" ),
     "grtzGrtZeroLinkRm":        ( "GreatZero", "LinkInPointDefault" ),
-    "Minkata":        		  ( "Minkata", "LinkInPointDefault" ),
-    "Jalak":        		  ( "Jalak", "LinkInPointDefault" ),
-    "Myst":        		  ( "Myst", "LinkInPointDefault" ),
+    "Minkata":                  ( "Minkata", "LinkInPointDefault" ),
+    "Jalak":                    ( "Jalak", "LinkInPointDefault" ),
+    "Myst":                     ( "Myst", "LinkInPointDefault" ),
     "GuildPub-Writers":         ( "GuildPub-Writers", "LinkInPointDefault" ),
     "GuildPub-Messengers":      ( "GuildPub-Messengers", "LinkInPointDefault" ),
     "GuildPub-Maintainers":     ( "GuildPub-Maintainers", "LinkInPointDefault" ),
     "GuildPub-Greeters":        ( "GuildPub-Greeters", "LinkInPointDefault" ),
     "GuildPub-Cartographers":   ( "GuildPub-Cartographers", "LinkInPointDefault" ),
-    "PhilRelto":        	  ( "PhilRelto", "LinkInPointDefault" ),
+    "PhilRelto":                ( "PhilRelto", "LinkInPointDefault" ),
     "Spyroom":                  ( "Spyroom", "LinkInPointDefault" ),
-   #"Spyroom":                  ( PageStart + NoShare + LinkStart + 'xLinkPanelSpyRoom' + LinkEndPage),
-    "islmGreatTree":      	  ( "city", "LinkInPointGreatTree" ),
+    "islmGreatTree":            ( "city", "LinkInPointGreatTree" ),
     "BahroCaveUpper":           ( "PelletBahroCave", "LinkInPointDefault" ),
     "BahroCaveLower":           ( "PelletBahroCave", "LinkInPointLower" ),
-# Begin Fan Ages
-    "Trevibdil":              ( "Trebivdil", "LinkInPointDefault" ),
-    "FehnirHouse":            ( "FehnirHouse", "LinkInPointDefault" ),
-    "GoMePubNew":             ( "GoMePubNew", "LinkInPointDefault" ),
-    "VeeTsah":                ( "VeeTsah", "LinkInPointDefault" ),
-    "Vothol":                 ( "Vothol", "LinkInPointDefault" ),
-    "ChisoPreniv":            ( "ChisoPreniv", "LinkInPointDefault" ),
-    "Serene":                 ( "Serene", "LinkInPointDefault" ),
-    "Tiam":                   ( "Tiam", "LinkInPointDefault" ),
-    "Elonin":                 ( "Elonin", "LinkInPointDefault" ),
-    "EderNaybree":            ( "EderNaybree", "LinkInPointDefault" ),
-    "FahetsHighgarden":       ( "FahetsHighgarden", "LinkInPointDefault" ),
+    # Begin Fan Ages
+    "Trevibdil":                ( "Trebivdil", "LinkInPointDefault" ),
+    "FehnirHouse":              ( "FehnirHouse", "LinkInPointDefault" ),
+    "GoMePubNew":               ( "GoMePubNew", "LinkInPointDefault" ),
+    "VeeTsah":                  ( "VeeTsah", "LinkInPointDefault" ),
+    "Vothol":                   ( "Vothol", "LinkInPointDefault" ),
+    "ChisoPreniv":              ( "ChisoPreniv", "LinkInPointDefault" ),
+    "Serene":                   ( "Serene", "LinkInPointDefault" ),
+    "Tiam":                     ( "Tiam", "LinkInPointDefault" ),
+    "Elonin":                   ( "Elonin", "LinkInPointDefault" ),
+    "EderNaybree":              ( "EderNaybree", "LinkInPointDefault" ),
+    "FahetsHighgarden":         ( "FahetsHighgarden", "LinkInPointDefault" ),
 }
 
-#
-#  ( pageHTML )
-#
-xLinkingPages = {\
-    "nb01BevinBalcony":     ( PageStart + NoShare + LinkStart + 'xLinkPanelBevinBalc01' + LinkEndPage ),
-    "nb01BevinBalcony02":   ( PageStart + NoShare + LinkStart + 'xLinkPanelBevinBalc02' + LinkEndPage ),
-    "grsnPrison":           ( PageStart + NoShare + LinkStart + 'xLinkPanelGarrisonPrison' + LinkEndPage ),
-    "tldnChoppedShroom":    ( PageStart + NoShare + LinkStart + 'xLinkPanelTeledahnChopShroom' + LinkEndPage ),
-    "tldnLagoonDock":       ( PageStart + NoShare + LinkStart + 'xLinkPanelTeledahnDock' + LinkEndPage ),
-    "kdshGlowRmBalcony":    ( PageStart + NoShare + LinkStart + 'xLinkPanelKadishGlowBalc' + LinkEndPage ),
-    "islmPalaceBalcony02":  ( PageStart + NoShare + LinkStart + 'xLinkPanelPalaceBalc02' + LinkEndPage ),
-    "islmPalaceBalcony03":  ( PageStart + NoShare + LinkStart + 'xLinkPanelPalaceBalc03' + LinkEndPage ),
-    "islmDakotahRoof":      ( PageStart + NoShare + LinkStart + 'xLinkPanelDokotahRoof' + LinkEndPage ),
-    "islmConcertHallFoyer": ( PageStart + NoShare + LinkStart + 'xLinkPanelConcertHallFoyer' + LinkEndPage),
-    "KadishGallery":        ( PageStart + NoShare + LinkStart + 'xLinkPanelKadishGallery' + LinkEndPage ),
-    "BaronCityOffice":      ( PageStart + NoShare + LinkStart + 'xLinkPanelBaronCityOffice' + LinkEndPage ),
-    "dsntShaftFall":        ( PageStart + NoShare + LinkStart + 'xLinkPanelDescentShaftFall' + LinkEndPage ),
-    "Spyroom":              ( PageStart + NoShare + LinkStart + 'xLinkPanelSpyRoom' + LinkEndPage),
-    "Kveer":                ( PageStart + NoShare + LinkStart + 'xLinkPanelKveerGreatHall' + LinkEndPage),
-    "YeeshaVault":          ( PageStart + NoShare + LinkStart + 'xLinkPanelYeeshaVault' + LinkEndPage),
-    "grtzGrtZeroLinkRm":    ( PageStart + NoShare + LinkStart + 'xLinkPanelGrtZeroLinkRm' + LinkEndPage),
-    "islmGreatTree":        ( PageStart + NoShare + LinkStart + 'xLinkPanelCityGreatTree' + LinkEndPage),
-    "BahroCaveUpper":       ( PageStart + NoShare + LinkStart + 'xLinkPanelBahroCaveUpper' + LinkEndPage ),
-    "BahroCaveLower":       ( PageStart + NoShare + LinkStart + 'xLinkPanelBahroCaveLower' + LinkEndPage ),
-}
-
-CityBookLinks = ["islmPalaceBalcony02", "islmPalaceBalcony03", "islmDakotahRoof", "KadishGallery", "BaronCityOffice", "dsntShaftFall", "grtzGrtZeroLinkRm", "Spyroom", "islmGreatTree", "Kveer"]
+CityBookLinks = [
+    "islmPalaceBalcony02",
+    "islmPalaceBalcony03",
+    "islmDakotahRoof",
+    "KadishGallery",
+    "BaronCityOffice",
+    "dsntShaftFall",
+    "grtzGrtZeroLinkRm",
+    "Spyroom",
+    "islmGreatTree",
+    "Kveer"
+]
