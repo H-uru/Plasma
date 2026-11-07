@@ -71,6 +71,7 @@ YeeshaPages = {
     24: "xyeeshapagealphasketchstorm*1#0.hsm", # thunderstorm
     25: "xyeeshapagealphasketch14*1#0.hsm", # Bahro poles
     26: "xYeeshaPageVeelay7.dds", # VeeTsah Sky
+    28: "xyeeshapagealphasketchblueflowers*1#0.hsm", # Blue Flowers
     32: "xYeeshaPageGreenBushes.dds", # Green Bushes
 }
 
