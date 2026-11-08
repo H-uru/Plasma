@@ -151,6 +151,7 @@ public:
     uint32_t                GetSubDrawableTypeMask() const { return fSubDrawableTypeMask; }
     void                    SetSubDrawableTypeMask(uint32_t mask) { fSubDrawableTypeMask = mask; }
 
+    bool                    IsViewLeftHanded() const { return (GetConstViewTransform().GetOrthogonal() ^ (fLocalToWorldLeftHanded ^ fWorldToCamLeftHanded)) != 0; }
 
     /** Initialize the ViewSettings to default (normal/neutral) values. */
     void    Reset(plPipeline* pipeline);
