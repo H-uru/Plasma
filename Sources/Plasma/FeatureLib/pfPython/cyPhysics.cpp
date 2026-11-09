@@ -48,11 +48,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsQuat.h"
 
+#include "plPhysical.h"
+
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plEnableMsg.h"
 #include "pnMessage/plWarpMsg.h"
 #include "pnSceneObject/plCoordinateInterface.h"
 #include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSimulationInterface.h"
 
 #include "plMessage/plAngularVelocityMsg.h"
 #include "plMessage/plDampMsg.h"
@@ -753,4 +756,29 @@ void cyPhysics::SetAngularVelocity(pyVector3& angVel)
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
     }
 
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : ResetSyncState
+//  PARAMETERS : none
+//
+//  PURPOSE    : Reset each receiver's physical to its default recipe pose and
+//               zero its velocities. Unlike the other calls in this file, this
+//               does not go through a plMessage - plPhysical::ResetSyncState()
+//               already dirties and broadcasts the SDL state itself.
+//
+void cyPhysics::ResetSyncState()
+{
+    for (const plKey& rcKey : fRecvr)
+    {
+        if (plSceneObject* obj = plSceneObject::ConvertNoRef(rcKey->ObjectIsLoaded()))
+        {
+            if (const plSimulationInterface* si = obj->GetSimulationInterface())
+            {
+                if (plPhysical* phys = si->GetPhysical())
+                    phys->ResetSyncState();
+            }
+        }
+    }
 }
