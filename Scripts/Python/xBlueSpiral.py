@@ -92,6 +92,8 @@ respTicClear05          = ptAttribResponder(32, "resp: Tic Clear 05")
 respTicClear06          = ptAttribResponder(33, "resp: Tic Clear 06")
 respTicClear07          = ptAttribResponder(34, "resp: Tic Clear 07")
 
+singlePlayerCamera      = ptAttribSceneobject(35, "singleplayer door camera")
+
 # Timer kallbak konstants
 kUpdateDoorDisplay      = 1
 kDoorSpinForward        = 2
@@ -99,7 +101,7 @@ kDoorSpinBackward       = 3
 kCloseTheDoor           = 4
 kGameOver               = 5
 kStartSpin              = 6
-kPopSingleplayerCam     = 7
+kPopSinglePlayerCam     = 7
 
 # Misk konstants
 kNumCloths              = 7
@@ -110,8 +112,7 @@ kGlowDisplayTime        = 2
 kGlowRestartTime        = 3
 kLegacyTableID          = 0
 
-kSingleplayerDoorCamera = "SingleplayerDoorCamera"
-kSingleplayerGameTimeMult = 2.0
+kSinglePlayerGameTimeMult = 2.0
 
 class DoorState(enum.IntEnum):
     Closed = 0
@@ -173,6 +174,10 @@ class _BlueSpiralBrain(abc.ABC):
 
     @abc.abstractproperty
     def solution(self) -> Sequence[int]:
+        ...
+
+    @abc.abstractproperty
+    def singlePlayer(self) -> bool:
         ...
 
     # =============================================================================================
@@ -256,6 +261,10 @@ class _LegacyBlueSpiralBrain(_BlueSpiralBrain):
     def solution(self) -> Sequence[int]:
         return self._solution
 
+    @property
+    def singlePlayer(self) -> bool:
+        return False
+
     # =============================================================================================
 
     def RegisterClothPress(self, clothNum: int) -> None:
@@ -271,9 +280,6 @@ class _SDLBlueSpiralBrain(_BlueSpiralBrain):
         PtDebugPrint(f"_SDLBlueSpiralBrain.__init__(): Alive! {self.isLocallyOwned=}", level=kWarningLevel)
 
         self._spinStartTime = PtGetServerTime()
-        self._gameTime = kTotalGameTime
-        if PtIsSinglePlayerMode():
-            self._gameTime *= kSingleplayerGameTimeMult
 
         ageSDL = PtGetAgeSDL()
         ageSDL.setFlags(SDLBSRunning.value, 1, 1)
@@ -304,7 +310,7 @@ class _SDLBlueSpiralBrain(_BlueSpiralBrain):
         elif VARname == SDLBSRunning.value:
             if self.playing:
                 PtDebugPrint("_SDLBlueSpiralBrain.OnSDLNotify(): The game is afoot, start the UI stuff.", level=kWarningLevel)
-                self._spinStartTime = PtGetServerTime() + kSequenceTime + self._gameTime
+                self._spinStartTime = PtGetServerTime() + kSequenceTime + self._gameDuration
                 PtAtTimeCallback(self.parent.key, kSequenceTime, kStartSpin)
                 self.parent.PlaySequence()
             else:
@@ -340,15 +346,23 @@ class _SDLBlueSpiralBrain(_BlueSpiralBrain):
         solution = PtGetAgeSDL()[SDLBSSolution.value][0]
         return [int(i) for i in solution.strip().split(" ")]
 
+    @property
+    def singlePlayer(self) -> bool:
+        return PtIsSinglePlayerMode()
+
     # =============================================================================================
 
     def _BeginGameTimer(self):
-        PtAtTimeCallback(self.parent.key, self._gameTime, kGameOver)
+        PtAtTimeCallback(self.parent.key, self._gameDuration, kGameOver)
         self._spinStartTime = PtGetServerTime()
 
     @property
+    def _gameDuration(self) -> int:
+        return kTotalGameTime * (kSinglePlayerGameTimeMult if self.singlePlayer else 1.0)
+
+    @property
     def _gameTimeout(self) -> bool:
-        return (self._spinStartTime() - PtGetServerTime()) > self._gameTime
+        return (self._spinStartTime() - PtGetServerTime()) > self._gameDuration
 
     # =============================================================================================
 
@@ -386,18 +400,15 @@ class xBlueSpiral(ptResponder):
         self._symbolSpinning = False
         self._numTicks = 0
         self._playCounter = 0
-        self._singleplayerCam = None
 
         random.seed()
         PtDebugPrint(f"xBlueSpiral: init  {self.version=}")
 
     def OnServerInitComplete(self):
-        if ptGmBlueSpiral.isSupported():
+        if ptGmBlueSpiral.isSupported() and not PtIsSinglePlayerMode():
             self._brain = _LegacyBlueSpiralBrain(self)
         else:
             self._brain = _SDLBlueSpiralBrain(self)
-
-        self._singleplayerCam = PtFindSceneobject(kSingleplayerDoorCamera, PtGetAgeName())
 
         ageSDL = PtGetAgeSDL()
         ageSDL.setFlags(SDLBSConsecutive.value, 1, 1)
@@ -448,9 +459,17 @@ class xBlueSpiral(ptResponder):
                 else:
                     PtDebugPrint(f"xBlueSpiral.OnNotify(): Showing that cloth ID:{clothNum} is instance cloth ID:{mappedClothNum}", level=kWarningLevel)
                     respBSDoor.run(self.key, state=str(mappedClothNum))
-                    if PtIsSinglePlayerMode() and self._singleplayerCam:
-                        self._singleplayerCam.pushCameraCut(PtGetLocalAvatar().getKey())
-                        PtAtTimeCallback(self.key, 4, kPopSingleplayerCam)
+                    if self._brain.singlePlayer and singlePlayerCamera.value:
+                        cam = ptCamera()
+                        cam.disableFirstPersonOverride()
+                        cam.undoFirstPerson()
+                        # The cloth can be spam clicked to make things very weird, so disable user interactions with the camera
+                        PtDisableMovementKeys()
+                        PtDisableMouseMovement()
+                        PtForceCursorHidden()
+                        PtSetGlobalClickability(False)
+                        singlePlayerCamera.value.pushCameraCut(PtGetLocalAvatar().getKey())
+                        PtAtTimeCallback(self.key, 4, kPopSinglePlayerCam)
 
         # Somebody clicked on the door or we got a dupe resp callback
         elif id == clkBSDoor.id:
@@ -506,8 +525,8 @@ class xBlueSpiral(ptResponder):
                 respBSSymbolSpin.run(self.key, state="fwdstart", netForce=True)
                 animBlueSpiral.animation.backwards(False)
                 speed = 1.0
-                if PtIsSinglePlayerMode():
-                    speed /= kSingleplayerGameTimeMult
+                if self._brain.singlePlayer:
+                    speed /= kSinglePlayerGameTimeMult
                 animBlueSpiral.animation.speed(speed)
                 animBlueSpiral.animation.play()
 
@@ -521,16 +540,24 @@ class xBlueSpiral(ptResponder):
                 animBlueSpiral.animation.resume()
 
         elif id == kCloseTheDoor:
-            if self._doorState == DoorState.Open:
+            if self._brain.singlePlayer:
+                PtDebugPrint("xBlueSpiral.OnTimer(): Ignoring request to close the door in single player mode.")
+            elif self._doorState == DoorState.Open:
                 PtDebugPrint("xBlueSpiral.OnTimer(): Closing the bahro door...", level=kWarningLevel)
                 # All clients run this timer callback at their own pace, so avoid a message storm.
                 respBSDoorOps.run(self.key, state="close", netPropagate=False)
             else:
                 PtDebugPrint(f"xBlueSpiral.OnTimer(): Someone wanted the door to close, but {self._doorState=}. Dropping request.")
 
-        elif id == kPopSingleplayerCam:
-            if self._singleplayerCam:
-                self._singleplayerCam.popCamera(PtGetLocalAvatar().getKey())
+        elif id == kPopSinglePlayerCam and singlePlayerCamera.value:
+            cam = ptCamera()
+            cam.enableFirstPersonOverride()
+            # Re-enable user controls
+            PtSetGlobalClickability(True)
+            PtForceCursorShown()
+            PtEnableMovementKeys()
+            PtEnableMouseMovement()
+            singlePlayerCamera.value.popCamera(PtGetLocalAvatar().getKey())
 
         self._brain.OnTimer(id)
 
@@ -592,10 +619,10 @@ class xBlueSpiral(ptResponder):
                 self.consecutive = 0
                 respBSSymbolSpin.run(self.key, state="fwdstop", netForce=True)
                 PtAtTimeCallback(self.key, 1, kDoorSpinBackward)
-            if self._doorState == DoorState.Open and not PtIsSinglePlayerMode():
+            if self._doorState == DoorState.Open:
                 PtDebugPrint(f"xBlueSpiral.HandleGameOver(): Closing the door in 1s...", level=kWarningLevel)
                 PtAtTimeCallback(self.key, 1, kCloseTheDoor)
-            elif self._doorState == DoorState.Opening and not PtIsSinglePlayerMode():
+            elif self._doorState == DoorState.Opening:
                 PtDebugPrint(f"xBlueSpiral.HandleGameOver(): Closing the door when it finishes opening", level=kWarningLevel)
                 self._doorState = DoorState.NeedsToClose
             else:
