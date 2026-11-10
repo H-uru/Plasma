@@ -468,7 +468,7 @@ class xBlueSpiral(ptResponder):
                         PtDisableMouseMovement()
                         PtForceCursorHidden()
                         PtSetGlobalClickability(False)
-                        singlePlayerCamera.value.pushCutsceneCamera(1, PtGetLocalAvatar().getKey())
+                        singlePlayerCamera.value.pushCutsceneCamera(True, PtGetLocalAvatar().getKey())
                         PtAtTimeCallback(self.key, 4, kPopSinglePlayerCam)
 
         # Somebody clicked on the door or we got a dupe resp callback
