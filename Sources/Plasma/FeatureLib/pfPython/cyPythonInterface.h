@@ -211,7 +211,7 @@ public:
     /**
      * Runs a python file in any arbitrary module
      */
-    static bool RunFile(const class plFileName& filename, PyObject* module=nullptr);
+    static bool RunFile(const class plFileName& filename, PyObject* module);
 
 
     /////////////////////////////////////////////////////////////////////////////
