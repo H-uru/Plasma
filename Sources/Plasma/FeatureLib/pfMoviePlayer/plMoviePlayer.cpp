@@ -119,11 +119,6 @@ public:
         return plMovieFrame::Format::I420;
     }
 
-    ~plVPXMovieFrame()
-    {
-        vpx_img_free(fImage);
-    }
-
 private:
     vpx_image_t* fImage;
 };
@@ -171,7 +166,6 @@ public:
         if (vpxFrame->fmt != VPX_IMG_FMT_I420) {
             // We only handle YUV 420 right now...
             hsAssert(0, "VPX decoded a frame in an unexpected format");
-            vpx_img_free(vpxFrame);
             return nullptr;
         }
 
