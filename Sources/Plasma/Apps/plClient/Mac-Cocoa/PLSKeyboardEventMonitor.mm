@@ -136,6 +136,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     BOOL down = event.type == NSEventTypeKeyDown;
 
     unsigned short keycode = [event keyCode];
+
+    // Combine the right-hand modifiers with the left-hand ones Plasma already uses
+    if (keycode == kVK_RightShift)   keycode = kVK_Shift;
+    if (keycode == kVK_RightOption)  keycode = kVK_Option;
+    if (keycode == kVK_RightControl) keycode = kVK_Control;
+
     // if it's a shift key event only way to derive up or down is through presence in the modifier
     // flag
     if (keycode == kVK_Shift) {
