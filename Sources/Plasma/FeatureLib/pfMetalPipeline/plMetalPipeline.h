@@ -62,6 +62,12 @@ class plShadowCaster;
 
 const uint kMaxSkinWeightsPerMaterial = 3;
 
+enum class plMetalMaterialRenderPass : uint8_t
+{
+    Primary,
+    Projection
+};
+
 class plMetalEnumerate
 {
 public:
@@ -147,7 +153,7 @@ public:
                                      uint32_t iStart, uint32_t iLength);
     void           IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux);
     void           IRenderAuxSpans(const plSpan& span);
-    bool           IHandleMaterialPass(hsGMaterial* material, uint32_t pass, const plSpan* currSpan, const plMetalVertexBufferRef* vRef, const bool allowShaders = true);
+    bool           IHandleMaterialPass(hsGMaterial* material, uint32_t pass, const plSpan* currSpan, const plMetalVertexBufferRef* vRef, const bool allowShaders = true, const plMetalMaterialRenderPass renderPass = plMetalMaterialRenderPass::Primary);
     plMetalDevice* GetMetalDevice() const;
 
     // Create and/or Refresh geometry buffers
@@ -283,15 +289,6 @@ private:
     /// Describes the state for the "fixed function" shader.
     struct plMetalPipelineCurrentState
     {
-        // notes state of a given layer for a draw pass
-        // index is the offset from the curent root layer
-        // for the draw pass, not the overall index in the
-        // material
-        struct plMetalPipelineLayerState
-        {
-            hsGMatState::hsGMatClampFlags clampFlag;
-        } layerStates[8];
-
         std::optional<MTL::CullMode>                   fCurrentCullMode;
         const MTL::RenderPipelineState*                fCurrentPipelineState;
         MTL::Buffer*                                   fCurrentVertexBuffer;

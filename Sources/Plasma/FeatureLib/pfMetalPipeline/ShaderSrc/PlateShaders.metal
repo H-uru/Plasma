@@ -54,12 +54,6 @@ using namespace metal;
 
 typedef struct
 {
-    array<texture2d<half>, 8> textures          [[ id(FragmentShaderArgumentAttributeTextures)  ]];
-    array<texturecube<half>, 8> cubicTextures   [[ id(FragmentShaderArgumentAttributeCubicTextures)  ]];
-} FragmentShaderArguments;
-
-typedef struct
-{
     float2 position [[attribute(VertexAttributePosition)]];
     float3 texCoord [[attribute(VertexAttributeTexcoord)]];
 } PlateVertex;

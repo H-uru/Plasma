@@ -266,6 +266,7 @@ public:
     int32_t          fLevels;
     MTL::Texture*    fTexture;
     MTL::PixelFormat fFormat;
+    size_t           fGeneration;
 
     void               Link(plMetalTextureRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
     plMetalTextureRef* const GetNext() { return (plMetalTextureRef*)fNext; }
@@ -273,7 +274,8 @@ public:
     plMetalTextureRef() : plMetalDeviceRef(),
                           fOwner(),
                           fTexture(),
-                          fLevels(1)
+                          fLevels(1),
+                          fGeneration(0)
     {
     }
 
