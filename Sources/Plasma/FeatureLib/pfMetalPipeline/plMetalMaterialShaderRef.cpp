@@ -156,11 +156,13 @@ void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder* en
         // }
 
         hsAssert(i - GetPassIndex(pass) >= 0, "Bad pass index during encode");
+        fLayerBuffers[0][pass]->Set(layer, i - GetPassIndex(pass));
         EncodeTransform(layer, &vertexUniforms->uvTransforms[i - GetPassIndex(pass)]);
-        IBuildLayerTexture(encoder, i - GetPassIndex(pass), layer);
     }
 
     encoder->setFragmentBuffer(fPassArgumentBuffers[pass], 0, FragmentShaderArgumentUniforms);
+
+    fLayerBuffers[0][pass]->Bind(encoder);
 
     if (fBumps[pass]) {
         auto& bump = fBumps[pass];
@@ -174,9 +176,12 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encode
                                                plMetalFragmentShaderDescription* passDescription,
                                                std::vector<plLayerInterface*>* piggyBacks,
                                                const std::function<plLayerInterface*(plLayerInterface*, uint32_t)> preEncodeTransform,
-                                               const std::function<plLayerInterface*(plLayerInterface*, uint32_t)> postEncodeTransform)
+                                               const std::function<plLayerInterface*(plLayerInterface*, uint32_t)> postEncodeTransform,
+                                               const plMetalMaterialRenderPass renderPass)
 {
-    std::vector<plLayerInterface*> layers = GetLayersForPass(pass);
+    static std::vector<plLayerInterface*> layers;
+    layers.clear();
+    layers = GetLayersForPass(pass);
 
     if (piggyBacks) {
         layers.insert(layers.end(), piggyBacks->begin(), piggyBacks->end());
@@ -185,10 +190,9 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encode
     plMetalFragmentShaderArgumentBuffer uniforms;
 
     IHandleMaterial(
-        GetPassIndex(pass), passDescription, &uniforms, piggyBacks,
+        GetPassIndex(pass), pass, passDescription, &uniforms, piggyBacks,
         [this, &preEncodeTransform, &encoder, &pass, &vertexUniforms](plLayerInterface* layer, uint32_t index) {
             layer = preEncodeTransform(layer, index);
-            IBuildLayerTexture(encoder, index, layer);
 
             plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
 
@@ -199,8 +203,11 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encode
         },
         [&postEncodeTransform](plLayerInterface* layer, uint32_t index) {
             return postEncodeTransform(layer, index);
-        }
+        },
+                    renderPass
     );
+    
+    fLayerBuffers[static_cast<uint8_t>(renderPass)][pass]->Bind(encoder);
 
     if (fBumps[pass]) {
         auto& bump = fBumps[pass];
@@ -263,7 +270,7 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
         plMetalFragmentShaderDescription passDescription;
 
         j = IHandleMaterial(
-            currLayer, &passDescription, layerBuffer, nullptr,
+            currLayer, fPasses.size(), &passDescription, layerBuffer, nullptr,
             [](plLayerInterface* layer, uint32_t index) {
                 return layer;
             },
@@ -277,15 +284,16 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
 
         passDescription.CacheHash();
 
-        std::vector<plLayerInterface*> layers(j);
+        static std::vector<plLayerInterface*> layers;
+        layers.resize(j - currLayer);
 
         // encode the colors for this pass into our buffer for fast rendering
         for (int layerOffset = 0; layerOffset < j - currLayer; layerOffset++) {
             plLayerInterface* layer = fMaterial->GetLayer(currLayer + layerOffset);
             layers[layerOffset] = layer;
-            IBuildLayerTexture(nullptr, layerOffset, layer);
+            fPipeline->CheckTextureRef(layer);
         }
-
+        
         fPasses.push_back(layers);
 
         if (argumentBuffer->storageMode() == MTL::StorageModeManaged) {
@@ -383,39 +391,6 @@ const hsGMatState plMetalMaterialShaderRef::ICompositeLayerState(const plLayerIn
     return state;
 }
 
-void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder* encoder, const uint32_t offsetFromRootLayer, plLayerInterface* layer)
-{
-    // Reminder: Encoder is allowed to be null when Plasma is precompiling pipeline states
-    // Metal needs to know if a shader is 2D or Cubic to compile shaders
-    // A null encoder signifies we should build the texture but not bind state
-
-    fPipeline->CheckTextureRef(layer);
-    plBitmap* texture = layer->GetTexture();
-
-    if (texture != nullptr && encoder) {
-        plMetalTextureRef* deviceTexture = (plMetalTextureRef*)texture->GetDeviceRef();
-        if (!deviceTexture) {
-            // FIXME: Better way to address missing textures than null pointers
-            encoder->setFragmentTexture(nullptr, FragmentShaderArgumentAttributeCubicTextures + offsetFromRootLayer);
-            encoder->setFragmentTexture(nullptr, FragmentShaderArgumentAttributeTextures + offsetFromRootLayer);
-            return;
-        }
-        hsAssert(offsetFromRootLayer <= 8, "Too many layers requested");
-        if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
-            encoder->setFragmentTexture(deviceTexture->fTexture, FragmentShaderArgumentAttributeCubicTextures + offsetFromRootLayer);
-        } else if (plMipmap::ConvertNoRef(texture) != nullptr || plRenderTarget::ConvertNoRef(texture) != nullptr) {
-            encoder->setFragmentTexture(deviceTexture->fTexture, FragmentShaderArgumentAttributeTextures + offsetFromRootLayer);
-        }
-
-        if (fPipeline->fState.layerStates[offsetFromRootLayer].clampFlag != layer->GetClampFlags()) {
-            MTL::SamplerState* samplerState = fPipeline->fDevice.SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(layer->GetClampFlags()));
-            encoder->setFragmentSamplerState(samplerState, offsetFromRootLayer);
-
-            fPipeline->fState.layerStates[offsetFromRootLayer].clampFlag = hsGMatState::hsGMatClampFlags(layer->GetClampFlags());
-        }
-    }
-}
-
 uint32_t plMetalMaterialShaderRef::ILayersAtOnce(uint32_t which)
 {
     uint32_t currNumLayers = 1;
@@ -488,11 +463,14 @@ bool plMetalMaterialShaderRef::ICanEatLayer(plLayerInterface* lay)
 }
 
 uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer,
+                                                   uint32_t pass,
                                                    plMetalFragmentShaderDescription* passDescription,
                                                    plMetalFragmentShaderArgumentBuffer* uniforms,
                                                    std::vector<plLayerInterface*>* piggybacks,
                                                    const std::function<plLayerInterface*(plLayerInterface*, uint32_t)>& preEncodeTransform,
-                                                   const std::function<plLayerInterface*(plLayerInterface*, uint32_t)>& postEncodeTransform)
+                                                   const std::function<plLayerInterface*(plLayerInterface*, uint32_t)>& postEncodeTransform,
+                                                   const plMetalMaterialRenderPass renderPass
+                                                   )
 {
     if (!fMaterial || layer >= fMaterial->GetNumLayers() || !fMaterial->GetLayer(layer)) {
         return -1;
@@ -556,12 +534,27 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer,
     }
 
     uint32_t currNumLayers = ILayersAtOnce(layer);
+    size_t totalNumLayers = (piggybacks ? piggybacks->size() : 0) + currNumLayers;
+    
+    auto& buffers = fLayerBuffers[static_cast<uint8_t>(renderPass)];
+    
+    if (buffers.size() <= pass)
+    {
+        buffers.resize(pass + 1);
+    }
+    
+    if ( !buffers[pass].get() || buffers[pass].get()->GetNumElements() != totalNumLayers)
+    {
+        buffers[pass] = std::make_shared<plMetalLayerListArgumentBuffer>(&fPipeline->fDevice, totalNumLayers);
+    }
 
     if (state.fMiscFlags & (hsGMatState::kMiscBumpDu | hsGMatState::kMiscBumpDw)) {
         // ISetBumpMatrices(currLay);
     }
 
     passDescription->Populate(currLay, 0);
+    fPipeline->CheckTextureRef(currLay);
+    buffers[pass]->Set(currLay, 0);
 
     postEncodeTransform(currLay, 0);
 
@@ -574,6 +567,8 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer,
         layPtr = preEncodeTransform(layPtr, i);
 
         passDescription->Populate(layPtr, i);
+        fPipeline->CheckTextureRef(layPtr);
+        buffers[pass]->Set(layPtr, i);
 
         layPtr = postEncodeTransform(layPtr, i);
     }
@@ -587,12 +582,14 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer,
             layPtr = preEncodeTransform(layPtr, i + currPiggyback);
 
             passDescription->Populate(layPtr, i + currPiggyback);
+            fPipeline->CheckTextureRef(layPtr);
+            buffers[pass]->Set(layPtr, i + currPiggyback);
 
             layPtr = postEncodeTransform(layPtr, i + currPiggyback);
         }
     }
 
-    passDescription->fNumLayers = (piggybacks ? piggybacks->size() : 0) + currNumLayers;
+    passDescription->fNumLayers = totalNumLayers;
 
     if (state.fBlendFlags & (hsGMatState::kBlendTest | hsGMatState::kBlendAlpha | hsGMatState::kBlendAddColorTimesAlpha) &&
         !(state.fBlendFlags & hsGMatState::kBlendAlphaAlways)) {
