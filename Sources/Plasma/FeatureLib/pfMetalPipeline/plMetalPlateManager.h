@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plMetalPlateManager_hpp
-#define plMetalPlateManager_hpp
+#ifndef plMetalPlateManager_h
+#define plMetalPlateManager_h
 
 #include <simd/simd.h>
 #include <stdio.h>
@@ -96,4 +96,4 @@ private:
     MTL::DepthStencilState* fDepthState;
 };
 
-#endif /* plMetalPlateManager_hpp */
+#endif
