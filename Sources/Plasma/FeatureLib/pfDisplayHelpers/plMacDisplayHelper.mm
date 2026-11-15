@@ -53,13 +53,17 @@ plMacDisplayHelper::plMacDisplayHelper()
 
 void plMacDisplayHelper::SetCurrentScreen(hsDisplayHndl display) const
 {
+    CFUUIDRef uuid = CFUUIDCreateFromUUIDBytes(nullptr, display);
+    CGDirectDisplayID displayID = CGDisplayGetDisplayIDFromUUID(uuid);
+    CFRelease(uuid);
+
     NSScreen* nsScreen;
     NSArray* screens = [NSScreen screens];
     for (NSUInteger i = 0; i < screens.count; i++) {
         NSScreen*     screen = [screens objectAtIndex:i];
         NSDictionary* deviceDescription = [screen deviceDescription];
         NSNumber*     screenID = [deviceDescription objectForKey:@"NSScreenNumber"];
-        if ([screenID unsignedIntValue] == display) {
+        if ([screenID unsignedIntValue] == displayID) {
             nsScreen = screen;
         }
     }
@@ -186,5 +190,8 @@ std::vector<plDisplayMode> plMacDisplayHelper::GetSupportedDisplayModes(
 
 hsDisplayHndl plMacDisplayHelper::DefaultDisplay() const
 {
-    return CGMainDisplayID();
+    CFUUIDRef uuid = CGDisplayCreateUUIDFromDisplayID(CGMainDisplayID());
+    CFUUIDBytes uuidBytes = CFUUIDGetUUIDBytes(uuid);
+    CFRelease(uuid);
+    return uuidBytes;
 }

@@ -85,8 +85,8 @@ namespace ST { class string; }
     // It has UIScreen but that's a Cocoa type.
     typedef void* hsDisplayHndl;
 #else
-    typedef uint32_t CGDirectDisplayID;
-    typedef CGDirectDisplayID hsDisplayHndl;
+    #import <CoreFoundation/CoreFoundation.h>
+    typedef CFUUIDBytes hsDisplayHndl;
 #endif
     typedef void* hsWindowHndl;
     typedef void* hsWindowInst;

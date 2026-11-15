@@ -271,28 +271,28 @@ void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displ
 #ifdef HS_BUILD_FOR_MACOS
 
 #include <AvailabilityMacros.h>
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 1090
-#   include <ApplicationServices/ApplicationServices.h>
-#else
+#include <ApplicationServices/ApplicationServices.h>
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1090
 #   include <CoreGraphics/CoreGraphics.h>
 #endif
 #include <OpenGL/OpenGL.h>
 
-void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records, CGDirectDisplayID displayHndl = kCGNullDirectDisplay)
+void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records, CFUUIDBytes displayHndl)
 {
     IGNORE_WARNINGS_BEGIN("deprecated-declarations")
     CGLPixelFormatObj pix = nullptr;
     CGLContextObj ctx = nullptr;
 
-    if (displayHndl == kCGNullDirectDisplay)
-        displayHndl = CGMainDisplayID();
+    CFUUIDRef uuid = CFUUIDCreateFromUUIDBytes(nullptr, displayHndl);
+    CGDirectDisplayID display = CGDisplayGetDisplayIDFromUUID(uuid);
+    CFRelease(uuid);
 
     do {
         CGLPixelFormatAttribute attribs[] = {
             kCGLPFAAccelerated,
             kCGLPFANoRecovery,
             kCGLPFADoubleBuffer,
-            kCGLPFADisplayMask, static_cast<CGLPixelFormatAttribute>(CGDisplayIDToOpenGLDisplayMask(displayHndl)),
+            kCGLPFADisplayMask, static_cast<CGLPixelFormatAttribute>(CGDisplayIDToOpenGLDisplayMask(display)),
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= 1070
             // OpenGL profiles introduced in 10.7 - These must be the last args
             kCGLPFAOpenGLProfile, static_cast<CGLPixelFormatAttribute>(kCGLOGLPVersion_3_2_Core),
