@@ -57,8 +57,8 @@ typedef NSInteger NSModalResponse;
 #endif
 
 struct hsMessageData {
-    const ST::string& message;
-    const ST::string& caption;
+    NSString* message;
+    NSString* caption;
     hsMessageBoxKind kind;
     hsMessageBoxIcon icon;
 };
@@ -90,15 +90,9 @@ __attribute__((visibility("hidden")))
 
     hsAutoreleasingScope;
 
-    NSString* nsMessage = NSStringCreateWithSTString(messageData->message);
-    NSString* nsCaption = NSStringCreateWithSTString(messageData->caption);
-
     NSAlert* alert = [NSAlert new];
-    alert.messageText = nsCaption;
-    alert.informativeText = nsMessage;
-
-    [nsMessage release];
-    [nsCaption release];
+    alert.messageText = messageData->caption;
+    alert.informativeText = messageData->message;
 
     auto icon = messageData->icon;
     if (icon == hsMessageBoxIconError)
@@ -153,8 +147,13 @@ hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& cap
 
     hsMessageBoxResult result = hsMBoxCancel;
 
+    hsAutoreleasingScope;
+
+    NSString* nsMessage = NSStringCreateWithSTString(message);
+    NSString* nsCaption = NSStringCreateWithSTString(caption);
+
     hsMessageBoxPresenter* presenter = [hsMessageBoxPresenter new];
-    hsMessageData messageData = { message, caption, kind, icon };
+    hsMessageData messageData{ nsMessage, nsCaption, kind, icon };
 
     presenter->messageData = &messageData;
     if ([NSThread isMainThread]) {
@@ -164,6 +163,9 @@ hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& cap
     }
 
     result = presenter->result;
+
+    [nsMessage release];
+    [nsCaption release];
 
     [presenter release];
 
