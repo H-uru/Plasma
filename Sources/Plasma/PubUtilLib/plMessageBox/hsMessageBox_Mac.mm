@@ -92,6 +92,19 @@ hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& cap
     if (hsMessageBox_SuppressPrompts)
         return hsMBoxOk;
 
+    // This function needs to be dispatched from the main thread
+    if (![NSThread isMainThread]) {
+        NSCondition *condition = [NSCondition new];
+        [condition lock];
+        __block hsMessageBoxResult result;
+        [NSRunLoop.mainRunLoop performInModes:@[NSRunLoopCommonModes] block:^{
+            result = hsMessageBox(message, caption, kind);
+            [condition signal];
+        }];
+        [condition wait];
+        return result;
+    }
+
     hsMessageBoxResult result = hsMBoxCancel;
 
     hsAutoreleasingScope;
@@ -141,11 +154,7 @@ hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& cap
 
     hsMessageBoxPresenter* presenter = [hsMessageBoxPresenter new];
 
-    if ([NSThread isMainThread]) {
-        [presenter showAlert:alert];
-    } else {
-        [presenter performSelectorOnMainThread:@selector(showAlert:) withObject:alert waitUntilDone:YES];
-    }
+    [presenter showAlert:alert];
 
     result = presenter->result;
 
