@@ -56,14 +56,23 @@ typedef NSInteger NSModalResponse;
 #   define NSAlertStyleWarning          NSWarningAlertStyle
 #endif
 
+struct hsMessageData
+{
+    NSString* message;
+    NSString* caption;
+    hsMessageBoxKind kind;
+    hsMessageBoxIcon icon;
+};
+
 #pragma mark - hsMessageBoxPresenter
 __attribute__((visibility("hidden")))
 @interface hsMessageBoxPresenter : NSObject {
 @public
     hsMessageBoxResult result;
+    hsMessageData *messageData;
 }
 
-- (void)showAlert:(NSAlert*)alert;
+- (void)showAlert;
 @end
 
 @implementation hsMessageBoxPresenter
@@ -76,36 +85,17 @@ __attribute__((visibility("hidden")))
     return self;
 }
 
-- (void)showAlert:(NSAlert*)alert
+- (void)showAlert
 {
-    NSModalResponse response = [alert runModal];
-
-    // This is only really safe for OK and Cancel
-    result = static_cast<hsMessageBoxResult>(response);
-}
-@end
-
-
-#pragma mark - hsMessageBox
-hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& caption, hsMessageBoxKind kind, hsMessageBoxIcon icon)
-{
-    if (hsMessageBox_SuppressPrompts)
-        return hsMBoxOk;
-
-    hsMessageBoxResult result = hsMBoxCancel;
+    result = hsMBoxCancel;
 
     hsAutoreleasingScope;
 
-    NSString* nsMessage = NSStringCreateWithSTString(message);
-    NSString* nsCaption = NSStringCreateWithSTString(caption);
-
     NSAlert* alert = [NSAlert new];
-    alert.messageText = nsCaption;
-    alert.informativeText = nsMessage;
+    alert.messageText = messageData->caption;
+    alert.informativeText = messageData->message;
 
-    [nsMessage release];
-    [nsCaption release];
-
+    auto icon = messageData->icon;
     if (icon == hsMessageBoxIconError)
         alert.alertStyle = NSAlertStyleCritical;
     else if (icon == hsMessageBoxIconQuestion)
@@ -117,6 +107,7 @@ hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& cap
     else
         alert.alertStyle = NSAlertStyleCritical;
 
+    auto kind = messageData->kind;
     if (kind == hsMessageBoxNormal)
         [alert addButtonWithTitle:@"OK"];
     else if (kind == hsMessageBoxAbortRetyIgnore) {
@@ -139,18 +130,45 @@ hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& cap
         [alert addButtonWithTitle:@"OK"];
     }
 
-    hsMessageBoxPresenter* presenter = [hsMessageBoxPresenter new];
+    NSModalResponse response = [alert runModal];
 
+    [alert release];
+
+    // This is only really safe for OK and Cancel
+    result = static_cast<hsMessageBoxResult>(response);
+}
+@end
+
+
+#pragma mark - hsMessageBox
+hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& caption, hsMessageBoxKind kind, hsMessageBoxIcon icon)
+{
+    if (hsMessageBox_SuppressPrompts)
+        return hsMBoxOk;
+
+    hsMessageBoxResult result = hsMBoxCancel;
+
+    hsAutoreleasingScope;
+
+    NSString* nsMessage = NSStringCreateWithSTString(message);
+    NSString* nsCaption = NSStringCreateWithSTString(caption);
+
+    hsMessageBoxPresenter* presenter = [hsMessageBoxPresenter new];
+    hsMessageData messageData{ nsMessage, nsCaption, kind, icon };
+
+    presenter->messageData = &messageData;
     if ([NSThread isMainThread]) {
-        [presenter showAlert:alert];
+        [presenter showAlert];
     } else {
-        [presenter performSelectorOnMainThread:@selector(showAlert:) withObject:alert waitUntilDone:YES];
+        [presenter performSelectorOnMainThread:@selector(showAlert) withObject:nil waitUntilDone:true];
     }
 
     result = presenter->result;
 
+    [nsMessage release];
+    [nsCaption release];
+
     [presenter release];
-    [alert release];
 
     return result;
 }
