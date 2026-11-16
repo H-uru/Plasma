@@ -56,7 +56,8 @@ typedef NSInteger NSModalResponse;
 #   define NSAlertStyleWarning          NSWarningAlertStyle
 #endif
 
-struct hsMessageData {
+struct hsMessageData
+{
     NSString* message;
     NSString* caption;
     hsMessageBoxKind kind;
