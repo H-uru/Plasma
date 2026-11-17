@@ -85,8 +85,26 @@ namespace ST { class string; }
     // It has UIScreen but that's a Cocoa type.
     typedef void* hsDisplayHndl;
 #else
-    #import <CoreFoundation/CoreFoundation.h>
-    typedef CFUUIDBytes hsDisplayHndl;
+    struct hsDisplayHndl
+    {
+        template <typename T>
+        using hsEnableIfUuidLike_t = std::enable_if_t<sizeof(T) == 16 && std::is_trivially_copyable_v<T>, int>;
+
+        uint8_t fBytes[16]{};
+
+        hsDisplayHndl() = default;
+
+        template <typename T, hsEnableIfUuidLike_t<T> = 0>
+        hsDisplayHndl(const T& value) { memcpy(fBytes, &value, sizeof(value)); }
+
+        template <typename T, hsEnableIfUuidLike_t<T> = 0>
+        operator T() const
+        {
+            T value;
+            memcpy(&value, fBytes, sizeof(fBytes));
+            return value;
+         }
+    };
 #endif
     typedef void* hsWindowHndl;
     typedef void* hsWindowInst;
