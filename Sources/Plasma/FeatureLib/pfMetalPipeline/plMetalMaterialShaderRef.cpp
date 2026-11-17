@@ -196,7 +196,7 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encode
 
             plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
 
-            assert(index - GetPassIndex(pass) >= 0);
+            hsAssert(index - GetPassIndex(pass) >= 0, "Index not valid for pass");
             EncodeTransform(layer, &vertexUniforms->uvTransforms[index]);
 
             return layer;
@@ -204,7 +204,7 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encode
         [&postEncodeTransform](plLayerInterface* layer, uint32_t index) {
             return postEncodeTransform(layer, index);
         },
-                    renderPass
+        renderPass
     );
     
     fLayerBuffers[static_cast<uint8_t>(renderPass)][pass]->Bind(encoder);
@@ -293,7 +293,7 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
             layers[layerOffset] = layer;
             fPipeline->CheckTextureRef(layer);
         }
-        
+
         fPasses.push_back(layers);
 
         if (argumentBuffer->storageMode() == MTL::StorageModeManaged) {
@@ -538,13 +538,11 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer,
     
     auto& buffers = fLayerBuffers[static_cast<uint8_t>(renderPass)];
     
-    if (buffers.size() <= pass)
-    {
+    if (buffers.size() <= pass) {
         buffers.resize(pass + 1);
     }
     
-    if ( !buffers[pass].get() || buffers[pass].get()->GetNumElements() != totalNumLayers)
-    {
+    if ( !buffers[pass].get() || buffers[pass].get()->GetNumElements() != totalNumLayers) {
         buffers[pass] = std::make_shared<plMetalLayerListArgumentBuffer>(&fPipeline->fDevice, totalNumLayers);
     }
 

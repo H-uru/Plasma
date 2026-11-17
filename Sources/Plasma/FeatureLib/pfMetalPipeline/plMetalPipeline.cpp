@@ -825,7 +825,7 @@ void plMetalPipeline::LoadResources()
 {
     hsStatusMessageF("Begin Device Reload t={}", hsTimer::GetSeconds());
     plNetClientApp::StaticDebugMsg("Begin Device Reload");
-    
+
     // Tell the light infos to unlink themselves
     while (fActiveLights)
         UnRegisterLight(fActiveLights);
@@ -1326,10 +1326,9 @@ void plMetalPipeline::IRenderProjection(const plRenderPrimFunc& render, plLightI
     CheckTextureRef(proj);
     plMetalLightRef* lightRef = static_cast<plMetalLightRef*>(li->GetDeviceRef());
     if (!lightRef->fProjectionBuffer) {
-        lightRef->fProjectionBuffer = std::unique_ptr<plMetalLayerListArgumentBuffer>(new plMetalLayerListArgumentBuffer(&fDevice, 1));
+        lightRef->fProjectionBuffer = std::make_unique<plMetalLayerListArgumentBuffer>(&fDevice, 1);
     }
     lightRef->fProjectionBuffer->Set(proj, 0);
-    plMetalTextureRef* tex = (plMetalTextureRef*)proj->GetTexture()->GetDeviceRef();
 
     IScaleLight(li, true);
     IBindLights();
@@ -1659,7 +1658,7 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
         auto firstPiggyback = fPiggyBackStack.end() - numActivePiggyBacks;
         auto lastPiggyback = fPiggyBackStack.end();
         static std::vector<plLayerInterface*> piggybacks;
-        piggybacks = { fPiggyBackStack.end() - numActivePiggyBacks, lastPiggyback };
+        piggybacks = { firstPiggyback, lastPiggyback };
 
         auto preEncodeTransform = [this](plLayerInterface* layer, uint32_t index) {
             if (index == 0) {

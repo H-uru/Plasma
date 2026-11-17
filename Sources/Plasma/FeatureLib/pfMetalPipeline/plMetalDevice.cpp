@@ -950,8 +950,8 @@ void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef* tRef, plMipmap* im
 
     descriptor->setStorageMode(GetDefaultStorageMode());
 
-#ifdef HS_DEBUGGING
     tRef->fTexture = fMetalDevice->newTexture(descriptor);
+#ifdef HS_DEBUGGING
     // CFStringRef is typealias for a const?
     // NS::String is not supposed to be const and we can't release
     // a const NS::String. We know they toll free bridge because
@@ -961,8 +961,8 @@ void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef* tRef, plMipmap* im
         reinterpret_cast<const NS::String *>(CFStringCreateWithSTString(img->GetKey()->GetName()))
     );
     tRef->fTexture->setLabel(imgName);
-    imgName->release();
 #endif
+    imgName->release();
     PopulateTexture(tRef, img, 0);
     //}
 

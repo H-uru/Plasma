@@ -178,7 +178,7 @@ plMetalLayerListArgumentBuffer::plMetalLayerListArgumentBuffer(plMetalDevice* de
 
 void plMetalLayerListArgumentBuffer::Set(const plLayerInterface* layer, const size_t layerIndex)
 {
-    assert(layerIndex < fNumElements);
+    hsAssert(layerIndex < fNumElements, "Trying to load a layer with not enough slots");
     if (CheckBuffer(layer, layerIndex)) {
         return;
     }
@@ -188,7 +188,7 @@ void plMetalLayerListArgumentBuffer::Set(const plLayerInterface* layer, const si
     // If the current buffer has never been bound (because
     // we're still in the middle of encoding multiple layers before
     // a draw) then we're ok and don't need to swap buffers.
-    if(fBoundBufferIndex == fCurrentBufferIndex)
+    if (fBoundBufferIndex == fCurrentBufferIndex)
     {
         MTL::Buffer* currentBuffer = fCurrentBufferIndex != -1 ? fBuffer[fCurrentBufferIndex].get() : nullptr;
         ConfigureBuffer();
@@ -207,7 +207,7 @@ void plMetalLayerListArgumentBuffer::Set(const plLayerInterface* layer, const si
     // Tier 2 devices are aligned with the CPU so we can send structs and pointers
     // directly without an encoder.
     if (fTier == plMetalArgumentBufferTier::Tier1) {
-        auto &layerRecord = fLayers[layerIndex];
+        auto& layerRecord = fLayers[layerIndex];
         plBitmap* texture = layer->GetTexture();
         fEncoder->setArgumentBuffer(GetBuffer(), 0, layerIndex);
         if (texture == nullptr) {
@@ -244,8 +244,8 @@ void plMetalLayerListArgumentBuffer::Set(const plLayerInterface* layer, const si
         // directly with the buffer, still populate the record.
         // Other functions in this class check the record and we don't
         // need to fork those between tier 1/2.
-        auto &layerRecord = fLayers[layerIndex];
-        auto &buffer = fValue[layerIndex];
+        auto& layerRecord = fLayers[layerIndex];
+        auto& buffer = fValue[layerIndex];
         plBitmap* texture = layer->GetTexture();
         if (texture == nullptr) {
             layerRecord.texture = nullptr;
@@ -318,9 +318,9 @@ void plMetalLayerListArgumentBuffer::Bind(MTL::RenderCommandEncoder* encoder)
     for (const auto& layer : fLayers) {
         // These textures can't go into a heap because they're shared by multiple
         // materials, boo. Mark them as needing to be resident one at a time.
-        if (layer.texture!=nullptr)
+        if (layer.texture != nullptr)
             encoder->useResource(layer.texture, MTL::ResourceUsageRead, MTL::RenderStageFragment);
-        if (layer.texture3D!=nullptr)
+        if (layer.texture3D != nullptr)
             encoder->useResource(layer.texture3D, MTL::ResourceUsageRead, MTL::RenderStageFragment);
     }
     encoder->setFragmentBuffer(GetBuffer(), 0, FragmentShaderLayers);

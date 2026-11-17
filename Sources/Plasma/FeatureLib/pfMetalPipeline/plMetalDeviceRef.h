@@ -275,7 +275,7 @@ public:
                           fOwner(),
                           fTexture(),
                           fLevels(1),
-                          fGeneration(0)
+                          fGeneration()
     {
     }
 

@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plMetalPlateManager_h
-#define plMetalPlateManager_h
+#ifndef plMetalPlateManager_hpp
+#define plMetalPlateManager_hpp
 
 #include <simd/simd.h>
 #include <stdio.h>
