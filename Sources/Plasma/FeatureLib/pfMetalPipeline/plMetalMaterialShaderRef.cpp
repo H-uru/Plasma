@@ -543,7 +543,7 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer,
     }
     
     if ( !buffers[pass].get() || buffers[pass].get()->GetNumElements() != totalNumLayers) {
-        buffers[pass] = std::make_shared<plMetalLayerListArgumentBuffer>(&fPipeline->fDevice, totalNumLayers);
+        buffers[pass] = std::make_unique<plMetalLayerListArgumentBuffer>(&fPipeline->fDevice, totalNumLayers);
     }
 
     if (state.fMiscFlags & (hsGMatState::kMiscBumpDu | hsGMatState::kMiscBumpDw)) {
