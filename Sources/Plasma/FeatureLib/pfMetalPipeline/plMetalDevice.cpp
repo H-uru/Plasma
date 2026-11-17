@@ -961,8 +961,8 @@ void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef* tRef, plMipmap* im
         reinterpret_cast<const NS::String *>(CFStringCreateWithSTString(img->GetKey()->GetName()))
     );
     tRef->fTexture->setLabel(imgName);
-#endif
     imgName->release();
+#endif
     PopulateTexture(tRef, img, 0);
     //}
 
