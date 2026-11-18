@@ -244,7 +244,7 @@ void plClient::IResizeNativeDisplayDevice(int width, int height, bool windowed)
         CGFloat scale = gameWindow.backingScaleFactor;
         NSSize size = NSMakeSize(width/scale, height/scale);
         [gameWindow setContentSize:size];
-        gameWindow.aspectRatio = size;
+        gameWindow.contentAspectRatio = size;
         [gameWindow center];
     }
     
