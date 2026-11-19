@@ -327,8 +327,13 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
     _displayHelper = new plMacDisplayHelper();
     plDisplayHelper::SetInstance(_displayHelper);
 
+    CGDirectDisplayID displayID = [window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue];
+    CFUUIDRef uuid = CGDisplayCreateUUIDFromDisplayID(displayID);
+    CFUUIDBytes uuidBytes = CFUUIDGetUUIDBytes(uuid);
+    CFRelease(uuid);
+
     gClient.SetClientWindow((__bridge void*)view.layer);
-    gClient.SetClientDisplay([window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue]);
+    gClient.SetClientDisplay(uuidBytes);
 
     self = [super initWithWindow:window];
     self.window.acceptsMouseMovedEvents = YES;

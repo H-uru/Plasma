@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <ApplicationServices/ApplicationServices.h>
 #include <CoreGraphics/CoreGraphics.h>
 #include <Foundation/Foundation.h>
 #include <Metal/Metal.h>
@@ -49,9 +50,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMetalPipeline.h"
 
-void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl display)
+void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displayHndl)
 {
-    id<MTLDevice> device = CGDirectDisplayCopyCurrentMetalDevice(display);
+    /*
+     Metal won't active the primary GPU on a dual GPU Macbook Pro
+     unless we ask for the default device. Ignore the display
+     handle, select the primary Metal device.
+
+     This isn't ideal for external GPU support but is also a
+     problem displayed by Apple's sample code such as
+     SelectingDeviceObjectsForGraphicsRendering.
+     */
+
+    id<MTLDevice> device = MTLCreateSystemDefaultDevice();
 
     if (device) {
         hsG3DDeviceRecord devRec;
@@ -72,7 +83,7 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisp
         devRec.SetLayersAtOnce(8);
 
         plDisplayHelper* displayHelper = plDisplayHelper::GetInstance();
-        for (const auto& mode : displayHelper->GetSupportedDisplayModes(display)) {
+        for (const auto& mode : displayHelper->GetSupportedDisplayModes(displayHndl)) {
             hsG3DDeviceMode devMode;
             devMode.SetWidth(mode.Width);
             devMode.SetHeight(mode.Height);
@@ -140,10 +151,17 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisp
         devRec.SetDriverName("Metal 2");
         records.emplace_back(devRec);
     }
+
+    [device release];
 }
 
 MTL::Device* plMetalEnumerate::DeviceForDisplay(hsDisplayHndl display)
 {
-    id<MTLDevice> device = CGDirectDisplayCopyCurrentMetalDevice(display);
+    CFUUIDRef uuid = CFUUIDCreateFromUUIDBytes(nullptr, display);
+    CGDirectDisplayID displayID = CGDisplayGetDisplayIDFromUUID(uuid);
+    CFRelease(uuid);
+
+    // Always pick the default Metal device - see note in enumerate
+    id<MTLDevice> device = MTLCreateSystemDefaultDevice();
     return static_cast<MTL::Device*>(device);
 }
