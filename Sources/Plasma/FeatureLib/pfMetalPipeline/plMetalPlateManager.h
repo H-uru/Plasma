@@ -96,4 +96,4 @@ private:
     MTL::DepthStencilState* fDepthState;
 };
 
-#endif /* plMetalPlateManager_hpp */
+#endif
