@@ -171,7 +171,7 @@ public:
 private:
     VertexUniforms* fCurrentRenderPassUniforms;
     plMaterialLightingDescriptor fCurrentRenderPassMaterialLighting;
-    
+
     bool fIsFullscreen;
 
     void ISelectLights(const plSpan* span, plMetalMaterialShaderRef* mRef, bool proj = false);
