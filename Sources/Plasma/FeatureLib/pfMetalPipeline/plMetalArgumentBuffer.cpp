@@ -138,6 +138,8 @@ bool plMetalBumpArgumentBuffer::CheckBuffer(const std::vector<plMetalBumpMapping
         auto& bump = bumps[i];
         if (bump.fTexture != fBumps[i].fTexture)
             return false;
+        if (bump.fSampler != fBumps[i].fSampler)
+            return false;
         if (bump.fDTangentUIndex != fBumps[i].fDTangentUIndex ||
             bump.fDTangentVIndex != fBumps[i].fDTangentVIndex) {
             return false;
@@ -197,7 +199,7 @@ void plMetalLayerListArgumentBuffer::Set(const plLayerInterface* layer, const si
         if (currentBuffer) {
             memcpy(fBuffer[fCurrentBufferIndex]->contents(), currentBuffer->contents(), fBufferSize);
             if (GetBuffer()->storageMode() == MTL::StorageModeManaged) {
-                GetBuffer()->didModifyRange(NS::Range(0, sizeof(plMetalLayer) * fNumElements));
+                GetBuffer()->didModifyRange(NS::Range(0, fBufferSize));
             }
         }
     }
@@ -210,20 +212,13 @@ void plMetalLayerListArgumentBuffer::Set(const plLayerInterface* layer, const si
         auto& layerRecord = fLayers[layerIndex];
         plBitmap* texture = layer->GetTexture();
         fEncoder->setArgumentBuffer(GetBuffer(), 0, layerIndex);
-        if (texture == nullptr) {
+        plMetalTextureRef* deviceTexture = texture ? (plMetalTextureRef*)texture->GetDeviceRef() : nullptr;
+        if (!deviceTexture) {
             layerRecord.texture = nullptr;
             layerRecord.texture3D = nullptr;
             fEncoder->setTexture(nullptr, 1);
             fEncoder->setTexture(nullptr, 0);
-            return;
-        }
-        plMetalTextureRef* deviceTexture = (plMetalTextureRef*)texture->GetDeviceRef();
-        if (!deviceTexture) {
-            layerRecord.texture = nullptr;
-            layerRecord.texture3D = nullptr;
-            return;
-        }
-        if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
+        } else if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
             layerRecord.texture3D = deviceTexture->fTexture;
             layerRecord.texture = nullptr;
             fEncoder->setTexture(deviceTexture->fTexture, 1);
@@ -232,7 +227,8 @@ void plMetalLayerListArgumentBuffer::Set(const plLayerInterface* layer, const si
             layerRecord.texture3D = nullptr;
             fEncoder->setTexture(deviceTexture->fTexture, 0);
         }
-        layerRecord.textureGeneration = deviceTexture->fGeneration;
+        if (deviceTexture)
+            layerRecord.textureGeneration = deviceTexture->fGeneration;
 
         MTL::SamplerState* samplerState = fDevice->SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(layer->GetClampFlags()));
         fLayers[layerIndex].sampler = samplerState;
@@ -247,18 +243,14 @@ void plMetalLayerListArgumentBuffer::Set(const plLayerInterface* layer, const si
         auto& layerRecord = fLayers[layerIndex];
         auto& buffer = fValue[layerIndex];
         plBitmap* texture = layer->GetTexture();
-        if (texture == nullptr) {
-            layerRecord.texture = nullptr;
-            layerRecord.texture3D = nullptr;
-            return;
-        }
-        plMetalTextureRef* deviceTexture = (plMetalTextureRef*)texture->GetDeviceRef();
+        plMetalTextureRef* deviceTexture = texture ? (plMetalTextureRef*)texture->GetDeviceRef() : nullptr;
+
         if (!deviceTexture) {
             layerRecord.texture = nullptr;
             layerRecord.texture3D = nullptr;
-            return;
-        }
-        if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
+            buffer.texture = MTL::ResourceID();
+            buffer.texture3D = MTL::ResourceID();
+        } else if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
             layerRecord.texture3D = deviceTexture->fTexture;
             layerRecord.texture = nullptr;
             buffer.texture3D = deviceTexture->fTexture->gpuResourceID();
@@ -266,7 +258,8 @@ void plMetalLayerListArgumentBuffer::Set(const plLayerInterface* layer, const si
             layerRecord.texture = deviceTexture->fTexture;
             buffer.texture = deviceTexture->fTexture->gpuResourceID();
         }
-        layerRecord.textureGeneration = deviceTexture->fGeneration;
+        if (deviceTexture)
+            layerRecord.textureGeneration = deviceTexture->fGeneration;
 
         MTL::SamplerState* samplerState = fDevice->SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(layer->GetClampFlags()));
         layerRecord.sampler = samplerState;
@@ -274,25 +267,21 @@ void plMetalLayerListArgumentBuffer::Set(const plLayerInterface* layer, const si
     }
 #endif
     if (GetBuffer()->storageMode() == MTL::StorageModeManaged) {
-        GetBuffer()->didModifyRange(NS::Range(sizeof(plMetalLayer) * layerIndex, sizeof(plMetalLayer)));
+        GetBuffer()->didModifyRange(NS::Range(fLayerSize * layerIndex, fLayerSize));
     }
 }
 
 bool plMetalLayerListArgumentBuffer::CheckBuffer(const plLayerInterface* layer, const size_t i)
 {
     plBitmap* texture = layer->GetTexture();
-    if ((texture == nullptr) != (fLayers[i].texture == nullptr)) {
+    plMetalTextureRef* deviceTexture = texture ? (plMetalTextureRef*)texture->GetDeviceRef() : nullptr;
+    if ((deviceTexture == nullptr) != (fLayers[i].texture == nullptr && fLayers[i].texture3D == nullptr)) {
         return false;
     }
     // If texture is null, then that implies fLayers[i].texture is null
     // See check above
-    if (texture == nullptr) {
+    if (deviceTexture == nullptr) {
         return true;
-    }
-    plMetalTextureRef* deviceTexture = (plMetalTextureRef*)texture->GetDeviceRef();
-    if (!deviceTexture) {
-        if (fLayers[i].texture != nullptr && fLayers[i].texture3D != nullptr)
-            return false;
     }
     if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
         if (fLayers[i].texture3D != deviceTexture->fTexture)

@@ -89,6 +89,8 @@ protected:
     size_t                      fCurrentBufferIndex;
     // Size of each argument buffer
     size_t                      fBufferSize;
+    // Size of each encoded layer in an argument buffer
+    size_t                      fLayerSize;
 
 public:
     plMetalArgumentBuffer(plMetalDevice* device, size_t numElements)
@@ -134,7 +136,8 @@ private:
     {
         if (!fEncoder)
             fEncoder = NS::TransferPtr(fDevice->fMetalDevice->newArgumentEncoder(GetArgumentDescriptors()));
-        fBufferSize = fEncoder->encodedLength() * fNumElements;
+        fLayerSize = fEncoder->encodedLength();
+        fBufferSize = fLayerSize * fNumElements;
         if (!fBuffer[fCurrentBufferIndex])
             fBuffer[fCurrentBufferIndex] = NS::TransferPtr(fDevice->fMetalDevice->newBuffer(fBufferSize, MTL::CPUCacheModeWriteCombined));
         // raw access to buffer not available in tier 1 argument buffers
@@ -143,7 +146,8 @@ private:
 
     void ConfigureTier2()
     {
-        fBufferSize = sizeof(T) * fNumElements;
+        fLayerSize = sizeof(T);
+        fBufferSize = fLayerSize * fNumElements;
         if (!fBuffer[fCurrentBufferIndex])
             fBuffer[fCurrentBufferIndex] = NS::TransferPtr(fDevice->fMetalDevice->newBuffer(fBufferSize, MTL::CPUCacheModeWriteCombined));
         fValue = static_cast<T*>(fBuffer[fCurrentBufferIndex]->contents());
