@@ -278,10 +278,10 @@ public:
     int64_t FileSize() const { return fFileSize; }
 
     /** Returns the creation time of the file. */
-    uint64_t CreateTime() const { return fCreateTime; }
+    int64_t CreateTime() const { return fCreateTime; }
 
     /** Returns the last modification time of the file. */
-    uint64_t ModifyTime() const { return fModifyTime; }
+    int64_t ModifyTime() const { return fModifyTime; }
 
     /** Returns \p true if this file is a directory. */
     bool IsDirectory() const { return (fFlags & kIsDirectory) != 0; }
@@ -292,7 +292,7 @@ public:
 private:
     plFileName fName;
     int64_t fFileSize;
-    uint64_t fCreateTime, fModifyTime;
+    int64_t fCreateTime, fModifyTime;
 
     enum {
         kEntryExists    = (1<<0),

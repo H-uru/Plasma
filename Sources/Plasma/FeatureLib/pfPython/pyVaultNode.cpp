@@ -199,7 +199,7 @@ PyObject* pyVaultNode::GetOwnerNode()
     PYTHON_RETURN_NONE;
 }
 
-uint32_t pyVaultNode::GetModifyTime()
+int64_t pyVaultNode::GetModifyTime()
 {
     if (fNode)
         return fNode->GetModifyTime();
@@ -229,14 +229,14 @@ PyObject* pyVaultNode::GetCreatorNode()
     PYTHON_RETURN_NONE;
 }
 
-uint32_t pyVaultNode::GetCreateTime()
+int64_t pyVaultNode::GetCreateTime()
 {
     if (fNode)
         return fNode->GetCreateTime();
     return 0;
 }
 
-uint32_t pyVaultNode::GetCreateAgeTime()
+int64_t pyVaultNode::GetCreateAgeTime()
 {
     hsAssert(false, "eric, port?");
 
