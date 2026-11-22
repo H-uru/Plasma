@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsThread.h"
 #include "plDSoundBuffer.h"
-#include <al.h>
 
 #include "plgDispatch.h"
 #include "plAudioSystem.h"
@@ -59,8 +58,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plEAXEffects.h"
 
 #include "plProfile.h"
-
 #include "plStatusLog/plStatusLog.h"
+
+#include <al.h>
 
 uint32_t plDSoundBuffer::fNumBuffers = 0;
 plProfile_CreateCounterNoReset( "Playing", "Sound", SoundPlaying );
@@ -193,6 +193,8 @@ bool plDSoundBuffer::FillBuffer(void *data, unsigned bytes, plWAVHeader *header)
 
     // Just make it quiet for now
     SetScalarVolume(0);
+
+    alSource3i(source, AL_AUXILIARY_SEND_FILTER, 1, 0, AL_FILTER_NULL);
     
     alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048f);
     alGetError();
@@ -265,7 +267,8 @@ bool plDSoundBuffer::SetupStreamingSource(plAudioFileReader *stream)
     }
     alSourcei(source, AL_BUFFER, 0);
     SetScalarVolume(0);
-    
+
+    alSource3i(source, AL_AUXILIARY_SEND_FILTER, 1, 0, AL_FILTER_NULL);
     
     alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048f);
     error = alGetError();
@@ -331,7 +334,9 @@ bool plDSoundBuffer::SetupStreamingSource(void *data, unsigned bytes)
     }
     alSourcei(source, AL_BUFFER, 0);
     SetScalarVolume(0);
-    
+
+    alSource3i(source, AL_AUXILIARY_SEND_FILTER, 1, 0, AL_FILTER_NULL);
+
     alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048f);
     error = alGetError();
     if( error != AL_NO_ERROR )
@@ -489,6 +494,8 @@ bool plDSoundBuffer::SetupVoiceSource()
     }
 
     SetScalarVolume(0);
+
+    alSource3i(source, AL_AUXILIARY_SEND_FILTER, 1, 0, AL_FILTER_NULL);
     
     alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048f);
     error = alGetError();
@@ -510,7 +517,7 @@ void plDSoundBuffer::UnQueueVoiceBuffers()
     unsigned buffersProcessed = BuffersProcessed();
     if(buffersProcessed)
         plStatusLog::AddLineSF("audio.log", "unqueuing buffers {}", buffersProcessed);
-    for(int i = 0; i < buffersProcessed; i++)
+    for(uint32_t i = 0; i < buffersProcessed; i++)
     {
         ALuint unQueued;
         alSourceUnqueueBuffers( source, 1, &unQueued );
@@ -532,7 +539,7 @@ bool plDSoundBuffer::VoiceFillBuffer(const void *data, size_t bytes, unsigned bu
         return false;
  
     ALenum error;
-    unsigned int size = bytes < STREAM_BUFFER_SIZE ? bytes : STREAM_BUFFER_SIZE;
+    size_t size = bytes < STREAM_BUFFER_SIZE ? bytes : STREAM_BUFFER_SIZE;
 
     ALenum format = IGetALFormat(fBufferDesc->fBitsPerSample, fBufferDesc->fNumChannels);
     alBufferData(bufferId, format, data, size, fBufferDesc->fNumSamplesPerSec);
