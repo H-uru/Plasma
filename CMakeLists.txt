@@ -179,6 +179,9 @@ if(PLASMA_EXTERNAL_RELEASE)
     add_definitions(-DPLASMA_EXTERNAL_RELEASE)
 endif(PLASMA_EXTERNAL_RELEASE)
 
+# Should the client use manifest names that differ based on the target platform?
+option(USE_PLATFORM_MANIFESTS "Use client manifest names based on the target platform" ON)
+
 # Pipeline Renderers
 cmake_dependent_option(PLASMA_PIPELINE_DX "Enable DirectX rendering pipeline?" ON "DirectX_FOUND" OFF)
 cmake_dependent_option(PLASMA_PIPELINE_GL "Enable OpenGL rendering pipeline?" ON "TARGET epoxy::epoxy" OFF)
