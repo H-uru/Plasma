@@ -662,13 +662,14 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
             // Advance left past any clipping area
             CharRenderFunc oldFunc = fRenderInfo.fRenderFunc;
             fRenderInfo.fRenderFunc = &plFont::IRenderCharNull;
-            int16_t prevX;
-            do
-            {
+            int16_t prevX = fRenderInfo.fX;
+            while (*string != 0) {
                 prevX = fRenderInfo.fX;
-                IRenderLoop( string, 1 );
+                IRenderLoop(string, 1);
+                if (fRenderInfo.fX > fRenderInfo.fClipRect.fX)
+                    break;
+                ++string;
             }
-            while( fRenderInfo.fX <= fRenderInfo.fClipRect.fX && *++string != 0 );
             fRenderInfo.fMaxWidth += fRenderInfo.fX - prevX;
             fRenderInfo.fDestPtr -= (fRenderInfo.fX - prevX) * fRenderInfo.fDestBPP;
             fRenderInfo.fX = prevX;
