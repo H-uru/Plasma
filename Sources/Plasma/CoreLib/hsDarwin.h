@@ -149,6 +149,29 @@ public:
 
 #endif // __OBJC__
 
+#ifdef HS_BUILD_FOR_MACOS
+
+#import <ApplicationServices/ApplicationServices.h>
+#import <CoreGraphics/CoreGraphics.h>
+
+inline CGDirectDisplayID CGDirectDisplayIDFromHSDisplay(hsDisplayHndl hdnl)
+{
+    CFUUIDRef uuid = CFUUIDCreateFromUUIDBytes(nullptr, hdnl);
+    CGDirectDisplayID displayID = CGDisplayGetDisplayIDFromUUID(uuid);
+    CFRelease(uuid);
+    return displayID;
+}
+
+inline hsDisplayHndl HSDisplayFromCGDirectDisplayID(CGDirectDisplayID displayID)
+{
+    CFUUIDRef uuid = CGDisplayCreateUUIDFromDisplayID(displayID);
+    CFUUIDBytes uuidBytes = CFUUIDGetUUIDBytes(uuid);
+    CFRelease(uuid);
+    return uuidBytes;
+}
+
+#endif
+
 #endif // HS_BUILD_FOR_APPLE
 
 #endif // _hsDarwin_inc_

@@ -157,10 +157,6 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records, hsDisp
 
 MTL::Device* plMetalEnumerate::DeviceForDisplay(hsDisplayHndl display)
 {
-    CFUUIDRef uuid = CFUUIDCreateFromUUIDBytes(nullptr, display);
-    CGDirectDisplayID displayID = CGDisplayGetDisplayIDFromUUID(uuid);
-    CFRelease(uuid);
-
     // Always pick the default Metal device - see note in enumerate
     id<MTLDevice> device = MTLCreateSystemDefaultDevice();
     return static_cast<MTL::Device*>(device);

@@ -270,6 +270,8 @@ void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displ
 #pragma region CGL_Enumerate
 #ifdef HS_BUILD_FOR_MACOS
 
+#include "hsDarwin.h"
+
 #include <AvailabilityMacros.h>
 #include <ApplicationServices/ApplicationServices.h>
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= 1090
@@ -277,15 +279,13 @@ void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displ
 #endif
 #include <OpenGL/OpenGL.h>
 
-void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records, CFUUIDBytes displayHndl)
+void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displayHndl)
 {
     IGNORE_WARNINGS_BEGIN("deprecated-declarations")
     CGLPixelFormatObj pix = nullptr;
     CGLContextObj ctx = nullptr;
 
-    CFUUIDRef uuid = CFUUIDCreateFromUUIDBytes(nullptr, displayHndl);
-    CGDirectDisplayID display = CGDisplayGetDisplayIDFromUUID(uuid);
-    CFRelease(uuid);
+    CGDirectDisplayID display = CGDirectDisplayIDFromHSDisplay(displayHndl);
 
     do {
         CGLPixelFormatAttribute attribs[] = {
