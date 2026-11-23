@@ -306,17 +306,20 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ s
     basisRowZ.z = basisRowZ.z + uniforms.NumericConsts.z;
 
     // Okay, got everything we need, construct r1-3 as surface2world*texture2surface.
-    basisRowX.x = dot(basisRowX.xyz, in.texCoord2);
-    basisRowX.y = dot(basisRowX.xyz, in.texCoord3);
-    basisRowX.z = dot(basisRowX.xyz, r5.xyz);
+    const float4 basisRowXTemp = basisRowX;
+    basisRowX.x = dot(basisRowXTemp.xyz, in.texCoord2);
+    basisRowX.y = dot(basisRowXTemp.xyz, in.texCoord3);
+    basisRowX.z = dot(basisRowXTemp.xyz, r5.xyz);
 
-    basisRowY.x = dot(basisRowY.xyz, in.texCoord2);
-    basisRowY.y = dot(basisRowY.xyz, in.texCoord3);
-    basisRowY.z = dot(basisRowY.xyz, r5.xyz);
+    const float4 basisRowYTemp = basisRowY;
+    basisRowY.x = dot(basisRowYTemp.xyz, in.texCoord2);
+    basisRowY.y = dot(basisRowYTemp.xyz, in.texCoord3);
+    basisRowY.z = dot(basisRowYTemp.xyz, r5.xyz);
 
-    basisRowZ.x = dot(basisRowZ.xyz, in.texCoord2);
-    basisRowZ.y = dot(basisRowZ.xyz, in.texCoord3);
-    basisRowZ.z = dot(basisRowZ.xyz, r5.xyz);
+    const float4 basisRowZTemp = basisRowZ;
+    basisRowZ.x = dot(basisRowZTemp.xyz, in.texCoord2);
+    basisRowZ.y = dot(basisRowZTemp.xyz, in.texCoord3);
+    basisRowZ.z = dot(basisRowZTemp.xyz, r5.xyz);
 
     // Following section is debug only to skip the per-vert tangent space axes.
     //add r1, c13.zxxx, r7.zzxw;
