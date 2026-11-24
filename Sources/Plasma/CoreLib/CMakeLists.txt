@@ -92,6 +92,7 @@ target_link_libraries(
         $<$<AND:$<CONFIG:Debug>,$<BOOL:${USE_VLD}>>:VLD::VLD>
         "$<$<PLATFORM_ID:Darwin>:-framework Accelerate>"
         "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
+        "$<$<PLATFORM_ID:Darwin>:-framework ApplicationServices>"
 )
 target_include_directories(
     CoreLib

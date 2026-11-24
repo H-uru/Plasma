@@ -152,7 +152,6 @@ public:
 #ifdef HS_BUILD_FOR_MACOS
 
 #include <ApplicationServices/ApplicationServices.h>
-#include <CoreGraphics/CoreGraphics.h>
 
 inline CGDirectDisplayID CGDirectDisplayIDFromHSDisplay(hsDisplayHndl hndl)
 {
