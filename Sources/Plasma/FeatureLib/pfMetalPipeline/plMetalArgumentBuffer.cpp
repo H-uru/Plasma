@@ -41,6 +41,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "plMetalArgumentBuffer.h"
+#include "plMetalDeviceRef.h"
+#include "plGImage/plBitmap.h"
+#include "plGImage/plMipmap.h"
+#include "plGImage/plCubicEnvironmap.h"
+#include "plPipeline/plCubicRenderTarget.h"
+
+// MARK: Bump argument buffer
 
 NS::Array* plMetalBumpArgumentBuffer::GetArgumentDescriptors() const
 {
@@ -131,6 +138,8 @@ bool plMetalBumpArgumentBuffer::CheckBuffer(const std::vector<plMetalBumpMapping
         auto& bump = bumps[i];
         if (bump.fTexture != fBumps[i].fTexture)
             return false;
+        if (bump.fSampler != fBumps[i].fSampler)
+            return false;
         if (bump.fDTangentUIndex != fBumps[i].fDTangentUIndex ||
             bump.fDTangentVIndex != fBumps[i].fDTangentVIndex) {
             return false;
@@ -140,4 +149,169 @@ bool plMetalBumpArgumentBuffer::CheckBuffer(const std::vector<plMetalBumpMapping
         }
     }
     return true;
+}
+
+// MARK: Layer argument buffer
+
+NS::Array* plMetalLayerListArgumentBuffer::GetArgumentDescriptors() const
+{
+    MTL::ArgumentDescriptor* descriptors[3];
+    descriptors[0] = MTL::ArgumentDescriptor::argumentDescriptor();
+    descriptors[0]->setIndex(0);
+    descriptors[0]->setDataType(MTL::DataTypeTexture);
+
+    descriptors[1] = MTL::ArgumentDescriptor::argumentDescriptor();
+    descriptors[1]->setIndex(1);
+    descriptors[1]->setDataType(MTL::DataTypeTexture);
+
+    descriptors[2] = MTL::ArgumentDescriptor::argumentDescriptor();
+    descriptors[2]->setIndex(2);
+    descriptors[2]->setDataType(MTL::DataTypeSampler);
+
+    NS::Array* array = NS::Array::array((const NS::Object* const*)descriptors, 3);
+    return array;
+}
+
+plMetalLayerListArgumentBuffer::plMetalLayerListArgumentBuffer(plMetalDevice* device, size_t numElements) : plMetalArgumentBuffer<plMetalLayer>(device, numElements)
+{
+    fLayers.resize(numElements);
+    fBoundBufferIndex = -1;
+}
+
+void plMetalLayerListArgumentBuffer::Set(const plLayerInterface* layer, const size_t layerIndex)
+{
+    hsAssert(layerIndex < fNumElements, "Trying to load a layer with not enough slots");
+    if (CheckBuffer(layer, layerIndex)) {
+        return;
+    }
+    // Check and see if the layer buffer has been bound for a draw.
+    // If it has - we'll have to swap to the next buffer in the ring
+    // so we don't cause a data race.
+    // If the current buffer has never been bound (because
+    // we're still in the middle of encoding multiple layers before
+    // a draw) then we're ok and don't need to swap buffers.
+    if (fBoundBufferIndex == fCurrentBufferIndex)
+    {
+        MTL::Buffer* currentBuffer = fCurrentBufferIndex != -1 ? fBuffer[fCurrentBufferIndex].get() : nullptr;
+        ConfigureBuffer();
+        // Copy the previous layer list buffer into the new one
+        // Only some layers might be updated - so we want to preserve the unchanged ones
+        if (currentBuffer) {
+            memcpy(fBuffer[fCurrentBufferIndex]->contents(), currentBuffer->contents(), fBufferSize);
+            if (GetBuffer()->storageMode() == MTL::StorageModeManaged) {
+                GetBuffer()->didModifyRange(NS::Range(0, fBufferSize));
+            }
+        }
+    }
+
+    // Older tier 1 devices don't have aligned structs and pointer sizes with the CPU
+    // so an encoder has to be used as a go between.
+    // Tier 2 devices are aligned with the CPU so we can send structs and pointers
+    // directly without an encoder.
+    if (fTier == plMetalArgumentBufferTier::Tier1) {
+        auto& layerRecord = fLayers[layerIndex];
+        plBitmap* texture = layer->GetTexture();
+        fEncoder->setArgumentBuffer(GetBuffer(), 0, layerIndex);
+        plMetalTextureRef* deviceTexture = texture ? (plMetalTextureRef*)texture->GetDeviceRef() : nullptr;
+        if (!deviceTexture) {
+            layerRecord.texture = nullptr;
+            layerRecord.texture3D = nullptr;
+            fEncoder->setTexture(nullptr, 1);
+            fEncoder->setTexture(nullptr, 0);
+        } else if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
+            layerRecord.texture3D = deviceTexture->fTexture;
+            layerRecord.texture = nullptr;
+            fEncoder->setTexture(deviceTexture->fTexture, 1);
+        } else if (plMipmap::ConvertNoRef(texture) != nullptr || plRenderTarget::ConvertNoRef(texture) != nullptr) {
+            layerRecord.texture = deviceTexture->fTexture;
+            layerRecord.texture3D = nullptr;
+            fEncoder->setTexture(deviceTexture->fTexture, 0);
+        }
+        if (deviceTexture)
+            layerRecord.textureGeneration = deviceTexture->fGeneration;
+
+        MTL::SamplerState* samplerState = fDevice->SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(layer->GetClampFlags()));
+        fLayers[layerIndex].sampler = samplerState;
+        fEncoder->setSamplerState(samplerState, 2);
+    }
+#ifdef METAL_3_SDK
+    else {
+        // Even though this path could track state differences
+        // directly with the buffer, still populate the record.
+        // Other functions in this class check the record and we don't
+        // need to fork those between tier 1/2.
+        auto& layerRecord = fLayers[layerIndex];
+        auto& buffer = fValue[layerIndex];
+        plBitmap* texture = layer->GetTexture();
+        plMetalTextureRef* deviceTexture = texture ? (plMetalTextureRef*)texture->GetDeviceRef() : nullptr;
+
+        if (!deviceTexture) {
+            layerRecord.texture = nullptr;
+            layerRecord.texture3D = nullptr;
+            buffer.texture = MTL::ResourceID();
+            buffer.texture3D = MTL::ResourceID();
+        } else if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
+            layerRecord.texture3D = deviceTexture->fTexture;
+            layerRecord.texture = nullptr;
+            buffer.texture3D = deviceTexture->fTexture->gpuResourceID();
+        } else if (plMipmap::ConvertNoRef(texture) != nullptr || plRenderTarget::ConvertNoRef(texture) != nullptr) {
+            layerRecord.texture = deviceTexture->fTexture;
+            buffer.texture = deviceTexture->fTexture->gpuResourceID();
+        }
+        if (deviceTexture)
+            layerRecord.textureGeneration = deviceTexture->fGeneration;
+
+        MTL::SamplerState* samplerState = fDevice->SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(layer->GetClampFlags()));
+        layerRecord.sampler = samplerState;
+        buffer.sampler = samplerState->gpuResourceID();
+    }
+#endif
+    if (GetBuffer()->storageMode() == MTL::StorageModeManaged) {
+        GetBuffer()->didModifyRange(NS::Range(fLayerSize * layerIndex, fLayerSize));
+    }
+}
+
+bool plMetalLayerListArgumentBuffer::CheckBuffer(const plLayerInterface* layer, const size_t i)
+{
+    plBitmap* texture = layer->GetTexture();
+    plMetalTextureRef* deviceTexture = texture ? (plMetalTextureRef*)texture->GetDeviceRef() : nullptr;
+    if ((deviceTexture == nullptr) != (fLayers[i].texture == nullptr && fLayers[i].texture3D == nullptr)) {
+        return false;
+    }
+    // If texture is null, then that implies fLayers[i].texture is null
+    // See check above
+    if (deviceTexture == nullptr) {
+        return true;
+    }
+    if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
+        if (fLayers[i].texture3D != deviceTexture->fTexture)
+            return false;
+        if (fLayers[i].textureGeneration != deviceTexture->fGeneration)
+            return false;
+    } else if (plMipmap::ConvertNoRef(texture) != nullptr || plRenderTarget::ConvertNoRef(texture) != nullptr) {
+        if (fLayers[i].texture != deviceTexture->fTexture)
+            return false;
+        if (fLayers[i].textureGeneration != deviceTexture->fGeneration)
+            return false;
+    }
+
+    
+    MTL::SamplerState* samplerState = fDevice->SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(layer->GetClampFlags()));
+    if (fLayers[i].sampler != samplerState)
+        return false;
+    return true;
+}
+
+void plMetalLayerListArgumentBuffer::Bind(MTL::RenderCommandEncoder* encoder)
+{
+    for (const auto& layer : fLayers) {
+        // These textures can't go into a heap because they're shared by multiple
+        // materials, boo. Mark them as needing to be resident one at a time.
+        if (layer.texture != nullptr)
+            encoder->useResource(layer.texture, MTL::ResourceUsageRead, MTL::RenderStageFragment);
+        if (layer.texture3D != nullptr)
+            encoder->useResource(layer.texture3D, MTL::ResourceUsageRead, MTL::RenderStageFragment);
+    }
+    encoder->setFragmentBuffer(GetBuffer(), 0, FragmentShaderLayers);
+    fBoundBufferIndex = fCurrentBufferIndex;
 }
