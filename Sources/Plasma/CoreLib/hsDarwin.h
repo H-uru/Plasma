@@ -151,12 +151,12 @@ public:
 
 #ifdef HS_BUILD_FOR_MACOS
 
-#import <ApplicationServices/ApplicationServices.h>
-#import <CoreGraphics/CoreGraphics.h>
+#include <ApplicationServices/ApplicationServices.h>
+#include <CoreGraphics/CoreGraphics.h>
 
-inline CGDirectDisplayID CGDirectDisplayIDFromHSDisplay(hsDisplayHndl hdnl)
+inline CGDirectDisplayID CGDirectDisplayIDFromHSDisplay(hsDisplayHndl hndl)
 {
-    CFUUIDRef uuid = CFUUIDCreateFromUUIDBytes(nullptr, hdnl);
+    CFUUIDRef uuid = CFUUIDCreateFromUUIDBytes(nullptr, hndl);
     CGDirectDisplayID displayID = CGDisplayGetDisplayIDFromUUID(uuid);
     CFRelease(uuid);
     return displayID;
