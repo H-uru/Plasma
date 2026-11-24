@@ -98,6 +98,9 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
 {
     vs_WaveFixedFin7InOut out;
 
+    // in color is bgra - swizzle it back
+    const float4 inColor = in.color.bgra;
+
     // Store our input position in world space in r6
     float4 worldPosition = float4(float4(in.position, 1.f) * uniforms.LocalToWorld, 1.f);
 
@@ -386,14 +389,12 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     // vector from this point to camera and normalize stashed in r5
     // Dot that with the computed normal
     float4 modColor = float4(0);
-    // Remember: in.color.z is a wave scale factor
-    // In.color is BGRA. Original code wanted z which means here we want y
-    modColor.rgba = 1.f - (dot(-camToVertex.xyz, normal) * in.color.y);
+    modColor.rgba = 1.f - (dot(-camToVertex.xyz, normal) * inColor.z);
     // Remap the alpha to a range between 0.5..1
     modColor.a = (modColor.a + 1.f) * 0.5f;
     modColor *= depthFilter.yyyx; // HACKTESTCOLOR
     // r in the color is the alpha factor of the vertex
-    modColor.a *= in.color.r * uniforms.WaterTint.w;
+    modColor.a *= inColor.r * uniforms.WaterTint.w;
     out.environmentTint = clamp(modColor * uniforms.EnvTint, 0, 1);
     out.waterTint = uniforms.WaterTint; // SEENORM
 
