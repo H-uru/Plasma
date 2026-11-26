@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "hsDarwin.h"
 #include "plMacDisplayHelper.h"
 #include "plPipeline.h"
 
@@ -53,13 +54,15 @@ plMacDisplayHelper::plMacDisplayHelper()
 
 void plMacDisplayHelper::SetCurrentScreen(hsDisplayHndl display) const
 {
+    CGDirectDisplayID displayID = CGDirectDisplayIDFromHSDisplay(display);
+
     NSScreen* nsScreen;
     NSArray* screens = [NSScreen screens];
     for (NSUInteger i = 0; i < screens.count; i++) {
         NSScreen*     screen = [screens objectAtIndex:i];
         NSDictionary* deviceDescription = [screen deviceDescription];
         NSNumber*     screenID = [deviceDescription objectForKey:@"NSScreenNumber"];
-        if ([screenID unsignedIntValue] == display) {
+        if ([screenID unsignedIntValue] == displayID) {
             nsScreen = screen;
         }
     }
@@ -186,5 +189,5 @@ std::vector<plDisplayMode> plMacDisplayHelper::GetSupportedDisplayModes(
 
 hsDisplayHndl plMacDisplayHelper::DefaultDisplay() const
 {
-    return CGMainDisplayID();
+    return HSDisplayFromCGDirectDisplayID(CGMainDisplayID());;
 }

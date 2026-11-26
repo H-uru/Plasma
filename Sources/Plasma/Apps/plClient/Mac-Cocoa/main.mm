@@ -327,8 +327,11 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
     _displayHelper = new plMacDisplayHelper();
     plDisplayHelper::SetInstance(_displayHelper);
 
+    CGDirectDisplayID displayID = [window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue];
+    hsDisplayHndl displayHndl = HSDisplayFromCGDirectDisplayID(displayID);
+
     gClient.SetClientWindow((__bridge void*)view.layer);
-    gClient.SetClientDisplay([window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue]);
+    gClient.SetClientDisplay(displayHndl);
 
     self = [super initWithWindow:window];
     self.window.acceptsMouseMovedEvents = YES;
